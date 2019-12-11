@@ -1,0 +1,32 @@
+CONSOLE MESSAGE: line 9: Created Database 'EmptyDatabase'
+CONSOLE MESSAGE: line 19: Created Database 'CompleteDatabase'
+
+== Running test suite: IndexedDB.requestDatabase
+-- Running test case: ClearDatabases
+-- Running test case: CreateAndRequestEmptyDatabase
+PASS: Database name should be 'EmptyDatabase'.
+PASS: Database version should be 123.
+PASS: Database should not have any object stores.
+
+-- Running test case: CreateAndRequestDatabaseWithStores
+PASS: Database name should be 'EmptyDatabase'.
+PASS: Database version should be 456.
+PASS: Database should have 3 object stores.
+PASS: Object store should have name 'Empty'.
+PASS: Object store keypath is null.
+PASS: Object store should not autoIncrement.
+PASS: Object store should have no indexes.
+PASS: Object store should have name 'Reviewers'.
+PASS: Object store keypath is null.
+PASS: Object store should autoIncrement.
+PASS: Object store should have 2 indexes.
+INDEX: {"name":"Name Index","keyPath":{"type":"string","string":"name"},"unique":false,"multiEntry":false}
+INDEX: {"name":"Email Index","keyPath":{"type":"string","string":"email"},"unique":true,"multiEntry":false}
+PASS: Object store should have name 'Stats'.
+PASS: Object store keypath is string type.
+PASS: Object store keypath is 'name''.
+PASS: Object store should not autoIncrement.
+PASS: Object store should have 2 indexes.
+INDEX: {"name":"Directory Name Index","keyPath":{"type":"string","string":"name"},"unique":true,"multiEntry":false}
+INDEX: {"name":"File Count Index","keyPath":{"type":"string","string":"count"},"unique":false,"multiEntry":false}
+

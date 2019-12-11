@@ -1,0 +1,59 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x34
+  RenderBlock {HTML} at (0,0) size 800x34
+    RenderBody {BODY} at (8,8) size 784x18
+      RenderInline {SPAN} at (0,0) size 20x17
+        RenderText {#text} at (0,0) size 20x17
+          text run at (0,0) width 20: "#\x{20E3}"
+      RenderText {#text} at (19,0) size 5x17
+        text run at (19,0) width 5: " "
+      RenderInline {SPAN} at (0,0) size 21x17
+        RenderText {#text} at (23,0) size 21x17
+          text run at (23,0) width 21: "0\x{20E3}"
+      RenderText {#text} at (43,0) size 5x17
+        text run at (43,0) width 5: " "
+      RenderInline {SPAN} at (0,0) size 21x17
+        RenderText {#text} at (47,0) size 21x17
+          text run at (47,0) width 21: "1\x{20E3}"
+      RenderText {#text} at (67,0) size 5x17
+        text run at (67,0) width 5: " "
+      RenderInline {SPAN} at (0,0) size 21x17
+        RenderText {#text} at (71,0) size 21x17
+          text run at (71,0) width 21: "2\x{20E3}"
+      RenderText {#text} at (91,0) size 5x17
+        text run at (91,0) width 5: " "
+      RenderInline {SPAN} at (0,0) size 21x17
+        RenderText {#text} at (95,0) size 21x17
+          text run at (95,0) width 21: "3\x{20E3}"
+      RenderText {#text} at (115,0) size 5x17
+        text run at (115,0) width 5: " "
+      RenderInline {SPAN} at (0,0) size 21x17
+        RenderText {#text} at (119,0) size 21x17
+          text run at (119,0) width 21: "4\x{20E3}"
+      RenderText {#text} at (139,0) size 5x17
+        text run at (139,0) width 5: " "
+      RenderInline {SPAN} at (0,0) size 21x17
+        RenderText {#text} at (143,0) size 21x17
+          text run at (143,0) width 21: "5\x{20E3}"
+      RenderText {#text} at (163,0) size 5x17
+        text run at (163,0) width 5: " "
+      RenderInline {SPAN} at (0,0) size 21x17
+        RenderText {#text} at (167,0) size 21x17
+          text run at (167,0) width 21: "6\x{20E3}"
+      RenderText {#text} at (187,0) size 5x17
+        text run at (187,0) width 5: " "
+      RenderInline {SPAN} at (0,0) size 21x17
+        RenderText {#text} at (191,0) size 21x17
+          text run at (191,0) width 21: "7\x{20E3}"
+      RenderText {#text} at (211,0) size 5x17
+        text run at (211,0) width 5: " "
+      RenderInline {SPAN} at (0,0) size 21x17
+        RenderText {#text} at (215,0) size 21x17
+          text run at (215,0) width 21: "8\x{20E3}"
+      RenderText {#text} at (235,0) size 5x17
+        text run at (235,0) width 5: " "
+      RenderInline {SPAN} at (0,0) size 21x17
+        RenderText {#text} at (239,0) size 21x17
+          text run at (239,0) width 21: "9\x{20E3}"
+      RenderText {#text} at (0,0) size 0x0

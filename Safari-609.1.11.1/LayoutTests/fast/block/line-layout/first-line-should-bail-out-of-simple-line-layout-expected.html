@@ -1,0 +1,21 @@
+<html>
+<head>
+<title>This tests that we properly bail out of simple line layout when first-line pseudo class is present.</title>
+<script>
+  if (window.internals)
+    internals.settings.setSimpleLineLayoutEnabled(false);
+</script>
+<style>
+  .outer::first-line{
+    color: red;
+  }
+
+  div {
+    color : blue;
+  }
+</style>
+</head>
+<body>
+<div class=outer><div><div><div>First line has color red<br> while this second line has color blue.</div></div></div></div>
+</body>
+</html>

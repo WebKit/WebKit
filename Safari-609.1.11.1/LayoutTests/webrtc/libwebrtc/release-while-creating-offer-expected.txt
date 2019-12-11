@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This test makes sure that RTCPeerConnection will free itself correctly even if released from the network thread.

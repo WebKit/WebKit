@@ -1,0 +1,35 @@
+<html>
+<head>
+  <style type="text/css" media="screen">
+    .one {
+      -webkit-perspective: 1000;
+      width: 10000000px;
+      height: 10000000px;
+      background-color: silver;
+    }
+
+    .two {
+      -webkit-perspective: 1000;
+      width: 24576px;
+      height: 10264px;
+      background-color: silver;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner)
+      testRunner.dumpAsText();
+  </script>
+</head>
+<body>
+
+  This test should not crash or hang.
+  <div class="one">
+    x
+  </div>
+
+  <div class="two">
+    x
+  </div>
+  
+</body>
+</html>

@@ -1,0 +1,63 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% colsepchar = user.settings.csv_colsepchar.value %]
+
+[% num_bugs = BLOCK %]Number of [% terms.bugs %][% END %]
+[% tbl_field_disp = field_descs.$tbl_field || tbl_field %]
+[% col_field_disp = field_descs.$col_field || col_field %]
+[% row_field_disp = field_descs.$row_field || row_field %]
+
+[% IF tbl_field %]
+  [% IF tbl_field == 'assigned_to' OR tbl_field == 'reporter'
+        OR tbl_field == 'qa_contact'
+  %]
+    [% tbl_disp = tbl FILTER email %]
+  [% ELSE %]
+    [% tbl_disp = tbl %]
+  [% END %]
+  [% tbl_field_disp FILTER csv %]: [% tbl_disp FILTER csv %]
+[% END %]
+[% IF row_field && col_field %]
+  [% row_field_disp _ ' / ' _ col_field_disp FILTER csv %]
+[% ELSIF row_field %]
+  [% row_field_disp FILTER csv %]
+[% ELSE %]
+  [% col_field_disp FILTER csv %]
+[% END %]
+[% IF col_field -%]
+  [% FOREACH col = col_names -%]
+    [% colsepchar %]
+    [% PROCESS value_display value = col field = col_field %]
+  [% END -%]
+[% ELSE -%]
+  [% colsepchar %][% num_bugs FILTER csv %]
+[% END %]
+
+[% FOREACH row = row_names %]
+  [% PROCESS value_display value = row field = row_field %]
+  [% FOREACH col = col_names %]
+    [% colsepchar %]
+    [% IF data.$tbl AND data.$tbl.$col AND data.$tbl.$col.$row %]
+      [% data.$tbl.$col.$row -%]
+    [% ELSE %]
+      [% -%]0
+    [% END %]
+  [% END %]
+
+[% END %]
+
+[% BLOCK value_display %]
+  [% SET disp_value = display_value(field, value) %]
+  [% IF field == 'assigned_to' OR field == 'reporter'
+           OR field == 'qa_contact'
+  %]
+    [% disp_value = value FILTER email %]
+  [% END %]
+  [% disp_value FILTER csv %]
+[% END %]

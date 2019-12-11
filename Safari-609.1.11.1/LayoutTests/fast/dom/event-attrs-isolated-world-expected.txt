@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 1: PASS: Main world object not visible in isolated world
+CONSOLE MESSAGE: line 1: PASS: Got back isolated world wrapper
+CONSOLE MESSAGE: line 1: PASS: Declarative onclick handler did not leak to the isolated world
+DOM wrappers should not leak across world boundaries via onevent attributes
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Got back main world wrapper
+PASS successfullyParsed is true
+
+TEST COMPLETE
+DOM wrappers should not leak across world boundaries via onevent attributes

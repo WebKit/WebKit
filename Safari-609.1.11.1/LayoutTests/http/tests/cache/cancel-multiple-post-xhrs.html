@@ -1,0 +1,18 @@
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpResourceLoadCallbacks();
+}
+
+var xhrs = new Array(3);
+for (var i = 0; i < 3; i++) {
+    xhrs[i] = new XMLHttpRequest();
+    xhrs[i].open("POST", 'resources/empty.txt', true);   
+    xhrs[i].send(i);
+}
+
+for (var i = 0; i < 3; i++)
+    xhrs[i].abort();
+</script>
+</body>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style type="text/css" media="screen">
+    img {
+      width: 200px;
+      height: 200px;
+      clip: rect(10px 150px 150px 10px);
+      position: absolute;
+      z-index: 1;
+    }
+    
+    .composited {
+      -webkit-transform: translateZ(0);
+      left: 200px;
+    }
+    
+    #layers {
+      position: relative;
+      top: 220px;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+    }
+      
+    function doTest() {
+      if (window.testRunner) {
+        document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
+        testRunner.notifyDone();
+      }
+    }
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+<body>
+
+  <img src="../resources/alpha-gradient-small.png">
+  <img class="composited" src="../resources/alpha-gradient-small.png">
+
+<pre id="layers">
+The layer tree goes here in DRT.
+</pre>
+  
+</body>
+</html>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:html="http://www.w3.org/1999/xhtml">
+	<desc>
+		<html:p>When the 'order' attribute of feConvolveMatrix is
+		omitted the effect is the same as if the value "3" were given.
+		Per <html:a href="https://bugzilla.mozilla.org/show_bug.cgi?id=478570">Bug 478570</html:a>
+		discussion and linked spec errata.</html:p>
+	</desc>
+	<defs>
+		<filter id="convoluted_lime" x="0%" y="0%" width="100%" height="100%">
+			<feFlood flood-color="lime"/>
+			<feConvolveMatrix kernelMatrix="
+				0 0 0
+				0 1 0
+				0 0 0"/>
+		</filter>
+	</defs>
+	<rect x="30" y="30" width="97" height="60" fill="red" filter="url(#convoluted_lime)"/>
+</svg>

@@ -1,0 +1,3 @@
+
+PASS EventSource: null character in response 
+

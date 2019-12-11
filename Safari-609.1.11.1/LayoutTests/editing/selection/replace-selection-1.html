@@ -1,0 +1,16 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<p>This tests for a bug when a selection is replaced by content with selectReplacement == true.  Below, you should see 'A new link' and  'link' should be selected.</p>
+<div id="test" contenteditable="true">A new link</div>
+
+<script>
+var s = window.getSelection();
+var e = document.getElementById("test");
+
+s.setBaseAndExtent(e.firstChild, 6, e.firstChild, 10);
+document.execCommand("InsertHTML", false, "<a id='link' href='http://www.google.com'>link</a>");
+e = document.getElementById("link");
+s.setBaseAndExtent(e.firstChild, 0, e.firstChild, 4);
+</script>

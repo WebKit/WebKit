@@ -1,0 +1,49 @@
+<html>
+<head>
+  <style>
+    div {
+        -webkit-transition: background-color .15s linear;
+    }
+    div.trans {
+        background-color: hsla(0, 50%, 50%, 1);
+    }
+  </style>
+  <script>
+    function checkRunning()
+    {
+      if (!window.testRunner) {
+        document.getElementById('result').innerHTML = "This test must be run in DRT."
+        return;
+      }
+        
+      var current = internals.numberOfActiveAnimations();
+      if (current == 0)
+        document.getElementById('result').innerHTML = "Number of active transitions is (0) as expected";
+      else
+        document.getElementById('result').innerHTML = "Number of active transitions is (" + current + ") but was expecting (0)";
+      testRunner.notifyDone();
+    }
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+  </script>
+</head>
+<body>
+
+<div id="foo">This should not be continually firing transitions</span>
+
+<script type="text/javascript" charset="utf-8">
+
+    document.getElementById('foo').addEventListener('webkitTransitionEnd', function() {
+        checkRunning()
+    });
+
+    setTimeout(function() { document.getElementById("foo").className="trans" }, 0);
+</script>
+
+<div id="result">
+</div>
+</body>
+</html>

@@ -1,0 +1,20 @@
+
+EVENT(canplaythrough)
+EVENT(play)
+EXPECTED (video.duration == 'Infinity') OK
+-webkit-media-text-track-container: classes: [hidden]
+-webkit-media-controls-enclosure: classes: []
+-webkit-media-controls-panel: classes: [paused show]
+-webkit-media-controls-play-button: classes: [paused]
+-webkit-media-controls-timeline: classes: []
+-webkit-media-controls-current-time-display: classes: [hour-long-time]
+-webkit-media-controls-time-remaining-display: classes: [hour-long-time hidden]
+-webkit-media-controls-toggle-closed-captions-button: classes: [hidden]
+-webkit-media-controls-fullscreen-button: classes: []
+none: classes: [mute-box]
+-webkit-media-controls-mute-button: classes: [muted]
+-webkit-media-controls-volume-slider-container: classes: [volume-box hiding]
+-webkit-media-controls-volume-slider: classes: []
+TEST(timeline == null || timeline.disabled) OK
+END OF TEST
+

@@ -1,0 +1,47 @@
+Test IndexedDB's cursor iteration with update and deletion.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+
+prepareDatabase():
+db = event.target.result
+Deleted all object stores.
+objectStore = db.createObjectStore('objectStore', {autoIncrement: true})
+objectStore.createIndex('key', 'key', {unique: false})
+
+onOpenSuccess():
+db = event.target.result
+t = db.transaction('objectStore', 'readwrite')
+objectStore = t.objectStore('objectStore')
+index = objectStore.index('key')
+index.openCursor()
+PASS JSON.stringify(cursor.value) is "{\"key\":\"key1\",\"value\":\"value1\"}"
+Update cursor
+Cursor continues
+
+PASS JSON.stringify(cursor.value) is "{\"key\":\"key1\",\"value\":\"value1\"}"
+Update cursor
+Cursor continues
+
+PASS JSON.stringify(cursor.value) is "{\"key\":\"key1\",\"value\":\"value3\"}"
+Update cursor
+Cursor continues
+
+PASS JSON.stringify(cursor.value) is "{\"key\":\"key2\",\"value\":\"value2\"}"
+Delete cursor
+Cursor continues
+
+PASS JSON.stringify(cursor.value) is "{\"key\":\"key2\",\"value\":\"value4\"}"
+Delete cursor
+Cursor continues
+
+PASS Successfully iterated whole array with cursor updates.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

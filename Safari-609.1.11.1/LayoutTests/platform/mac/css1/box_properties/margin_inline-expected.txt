@@ -1,0 +1,123 @@
+layer at (0,0) size 785x732
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x732
+  RenderBlock {HTML} at (0,0) size 785x732
+    RenderBody {BODY} at (8,8) size 769x716 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 769x18
+        RenderText {#text} at (0,0) size 363x18
+          text run at (0,0) width 363: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,34) size 769x45
+        RenderText {#text} at (0,0) size 352x45
+          text run at (0,0) width 344: ".zero {background-color: silver; margin: 0;}"
+          text run at (0,15) width 344: ".one {margin: 25px; background-color: aqua;}"
+          text run at (0,30) width 352: ".two {margin: -10px; background-color: aqua;}"
+      RenderBlock {HR} at (0,92) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,102) size 769x18 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 208x18
+          text run at (0,0) width 208: "This element has a class of zero."
+      RenderBlock {P} at (0,136) size 769x90 [bgcolor=#808080]
+        RenderText {#text} at (0,0) size 490x18
+          text run at (0,0) width 400: "This element is unstyled save for a background color of gray.. "
+          text run at (399,0) width 91: "It contains an "
+        RenderInline {SPAN} at (0,0) size 767x36 [bgcolor=#00FFFF]
+          RenderText {#text} at (514,0) size 148x18
+            text run at (514,0) width 148: "inline element of class "
+          RenderInline {TT} at (0,0) size 25x15
+            RenderText {#text} at (661,2) size 25x15
+              text run at (661,2) width 25: "one"
+          RenderText {#text} at (685,0) size 767x36
+            text run at (685,0) width 82: ", giving it an"
+            text run at (0,18) width 233: "aqua background and a 25px margin"
+        RenderText {#text} at (257,18) size 769x72
+          text run at (257,18) width 9: ". "
+          text run at (265,18) width 504: "Margins on inline elements does not affect line-height calculations, so all lines"
+          text run at (0,36) width 317: "in this element should have the same line-height. "
+          text run at (316,36) width 438: "However, there should be a 25px margin to the left side of the inline"
+          text run at (0,54) width 732: "box in the first line it appears, and a 25px margin to the right side of the inline element box in the last line where it"
+          text run at (0,72) width 53: "appears."
+      RenderBlock {P} at (0,242) size 769x18 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 208x18
+          text run at (0,0) width 208: "This element has a class of zero."
+      RenderBlock {P} at (0,276) size 769x72 [bgcolor=#808080]
+        RenderText {#text} at (0,0) size 490x18
+          text run at (0,0) width 400: "This element is unstyled save for a background color of gray.. "
+          text run at (399,0) width 91: "It contains an "
+        RenderInline {SPAN} at (0,0) size 766x36 [bgcolor=#00FFFF]
+          RenderText {#text} at (479,0) size 148x18
+            text run at (479,0) width 148: "inline element of class "
+          RenderInline {TT} at (0,0) size 25x15
+            RenderText {#text} at (626,2) size 25x15
+              text run at (626,2) width 25: "two"
+          RenderText {#text} at (650,0) size 766x36
+            text run at (650,0) width 116: ", giving it an aqua"
+            text run at (0,18) width 205: "background and a -10px margin"
+        RenderText {#text} at (194,18) size 760x54
+          text run at (194,18) width 9: ". "
+          text run at (202,18) width 547: "Margins on inline elements does not affect line-height calculations, so all lines in this"
+          text run at (0,36) width 274: "element should have the same line-height. "
+          text run at (273,36) width 487: "However, there should be a -10px margin to the left side of the inline box in"
+          text run at (0,54) width 750: "the first line it appears, and a -10px margin to the right side of the inline element box in the last line where it appears."
+      RenderBlock {P} at (0,364) size 769x18 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 208x18
+          text run at (0,0) width 208: "This element has a class of zero."
+      RenderTable {TABLE} at (0,382) size 769x334 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 767x332
+          RenderTableRow {TR} at (0,0) size 767x26
+            RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 161x18
+                RenderText {#text} at (4,4) size 161x18
+                  text run at (4,4) width 161: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,26) size 767x306
+            RenderTableCell {TD} at (0,166) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x18
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,26) size 755x306 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 747x18 [bgcolor=#C0C0C0]
+                RenderText {#text} at (0,0) size 208x18
+                  text run at (0,0) width 208: "This element has a class of zero."
+              RenderBlock {P} at (4,38) size 747x90 [bgcolor=#808080]
+                RenderText {#text} at (0,0) size 490x18
+                  text run at (0,0) width 400: "This element is unstyled save for a background color of gray.. "
+                  text run at (399,0) width 91: "It contains an "
+                RenderInline {SPAN} at (0,0) size 735x36 [bgcolor=#00FFFF]
+                  RenderText {#text} at (514,0) size 148x18
+                    text run at (514,0) width 148: "inline element of class "
+                  RenderInline {TT} at (0,0) size 25x15
+                    RenderText {#text} at (661,2) size 25x15
+                      text run at (661,2) width 25: "one"
+                  RenderText {#text} at (685,0) size 735x36
+                    text run at (685,0) width 50: ", giving"
+                    text run at (0,18) width 265: "it an aqua background and a 25px margin"
+                RenderText {#text} at (289,18) size 747x72
+                  text run at (289,18) width 9: ". "
+                  text run at (297,18) width 450: "Margins on inline elements does not affect line-height calculations, so"
+                  text run at (0,36) width 372: "all lines in this element should have the same line-height. "
+                  text run at (371,36) width 373: "However, there should be a 25px margin to the left side of"
+                  text run at (0,54) width 740: "the inline box in the first line it appears, and a 25px margin to the right side of the inline element box in the last line"
+                  text run at (0,72) width 109: "where it appears."
+              RenderBlock {P} at (4,144) size 747x18 [bgcolor=#C0C0C0]
+                RenderText {#text} at (0,0) size 208x18
+                  text run at (0,0) width 208: "This element has a class of zero."
+              RenderBlock {P} at (4,178) size 747x90 [bgcolor=#808080]
+                RenderText {#text} at (0,0) size 490x18
+                  text run at (0,0) width 400: "This element is unstyled save for a background color of gray.. "
+                  text run at (399,0) width 91: "It contains an "
+                RenderInline {SPAN} at (0,0) size 732x36 [bgcolor=#00FFFF]
+                  RenderText {#text} at (479,0) size 148x18
+                    text run at (479,0) width 148: "inline element of class "
+                  RenderInline {TT} at (0,0) size 25x15
+                    RenderText {#text} at (626,2) size 25x15
+                      text run at (626,2) width 25: "two"
+                  RenderText {#text} at (650,0) size 732x36
+                    text run at (650,0) width 82: ", giving it an"
+                    text run at (0,18) width 239: "aqua background and a -10px margin"
+                RenderText {#text} at (228,18) size 739x72
+                  text run at (228,18) width 9: ". "
+                  text run at (236,18) width 503: "Margins on inline elements does not affect line-height calculations, so all lines"
+                  text run at (0,36) width 317: "in this element should have the same line-height. "
+                  text run at (316,36) width 402: "However, there should be a -10px margin to the left side of the"
+                  text run at (0,54) width 722: "inline box in the first line it appears, and a -10px margin to the right side of the inline element box in the last line"
+                  text run at (0,72) width 109: "where it appears."
+              RenderBlock {P} at (4,284) size 747x18 [bgcolor=#C0C0C0]
+                RenderText {#text} at (0,0) size 208x18
+                  text run at (0,0) width 208: "This element has a class of zero."

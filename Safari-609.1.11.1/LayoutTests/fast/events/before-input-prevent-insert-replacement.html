@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+
+<div>To manually test, press and hold down 'a' and select one of the accented characters.</div>
+<div>You should observe that the replacement accented character does not replace 'a'.</div>
+<div>Then insert an emoji using the emoji picker. This should insert something into the editor.</div>
+<div>Finally, select all the content and attempt to replace it with an emoji. This should do nothing.</div>
+<div id="editable" onbeforeinput=handleInputEvent(event) oninput=handleInputEvent(event) contenteditable></div>
+<div id="output"></div>
+
+<script type="text/javascript">
+    let write = s => output.innerHTML += s + "<br>";
+    editable.focus();
+
+    if (window.testRunner && window.eventSender && testRunner.runUIScript) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        runTest();
+    }
+
+    async function runTest() {
+        write("(1) Typing 'a'...");
+        eventSender.keyDown("a");
+        write(`The editor now has text content: ${editable.textContent}`);
+        write("(2) Preventing default when replacing 'a' with 'b'...");
+        await UIHelper.replaceTextAtRange("b", 0, 1)
+        write(`The editor now has text content: ${editable.textContent}`);
+        write("(3) Inserting 'c' after 'a'...");
+        await UIHelper.replaceTextAtRange("c", 1, 0);
+        write(`The editor now has text content: ${editable.textContent}`);
+        write("(4) Selecting all and preventing replacement with 'd'...");
+        document.execCommand("SelectAll")
+        await UIHelper.replaceTextAtRange("d", 0, 2);
+        write(`The editor now has text content: ${editable.textContent}`);
+
+        testRunner.notifyDone();
+    }
+
+    function handleInputEvent(event)
+    {
+        let dataTransferString = event.dataTransfer ? `plain:"${event.dataTransfer.getData('text/plain')}", html:"${event.dataTransfer.getData('text/html')}"` : "(null)";
+        write(`(${event.target.id}): type=${event.type}, inputType=${event.inputType}, data=${event.data}, dataTransfer=${dataTransferString}`);
+
+        if (event.type === "beforeinput" && event.inputType === "insertReplacementText")
+            event.preventDefault();
+    }
+</script>
+</body>
+</html>

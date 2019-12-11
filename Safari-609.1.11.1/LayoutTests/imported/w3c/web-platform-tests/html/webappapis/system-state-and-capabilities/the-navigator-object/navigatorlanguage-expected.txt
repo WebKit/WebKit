@@ -1,0 +1,3 @@
+
+PASS NavigatorLanguage: the most preferred language is the one returned by navigator.language 
+

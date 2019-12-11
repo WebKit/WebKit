@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2015 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="48"
+    height="192">
+    <style>
+        svg { color: white; }
+    </style>
+    
+    <defs>
+        
+        <symbol id="console">
+            <rect x="5.03735352" y="5.03735352" width="37.925293" height="37.925293" rx="4" stroke="currentColor" stroke-width="2.5" fill="none"/>
+            <path d="M 13.164202 13.164202 L 24 24 L 13.164202 34.835798" stroke="currentColor" stroke-width="2.5" fill="none"/>
+            <path d="M 24 14 L 35 14" stroke="currentColor" stroke-width="2.5" fill="none"/>
+            <path d="M 29.5 24 L 34.9999999 24" stroke="currentColor" stroke-width="2.5" fill="none"/>
+            <path d="M 24 34 L 35 34" stroke="currentColor" stroke-width="2.5" fill="none"/>
+        </symbol>
+
+        <symbol id="debugger">
+            <path d="M 24.1320008 44.328125 C 32.1512251 44.328125 38.6520901 35.226914 38.6520901 24 C 38.6520901 12.773086 32.1512251 3.671875 24.1320008 3.671875 C 16.1127765 3.671875 9.61191153 12.773086 9.61191153 24 C 9.61191153 35.226914 16.1127765 44.328125 24.1320008 44.328125 Z" stroke="currentColor" stroke-width="2.5" fill="none"/>
+            <path d="M 13.7861328 10.5 L 34.4768075 10.5 L 13.7861328 10.5 Z" stroke="currentColor" stroke-width="2.5" fill="none"/>
+            <path d="M 24.25 11 L 24.25 44.328125" stroke="currentColor" stroke-width="2.5" fill="none"/>
+            <path d="M 34.1640625 37.0680804 L 39.9720982 42.8761161" stroke="currentColor" stroke-width="2.5" fill="none"/>
+            <path d="M 38.5200893 22.25 L 44.328125 22.25" stroke="currentColor" stroke-width="2.5" fill="none"/>
+            <path d="M 9.47991071 22.25 L 3.671875 22.25" stroke="currentColor" stroke-width="2.5" fill="none"/>
+            <path d="M 13.8359375 10.9319196 L 8.02790179 5.12388393" stroke="currentColor" stroke-width="2.5" fill="none"/>
+            <path d="M 34.1640625 10.9319196 L 39.9720982 5.12388393" stroke="currentColor" stroke-width="2.5" fill="none"/>
+            <path d="M 13.972 37.068 L 8.164 42.876" stroke="currentColor" stroke-width="2.5" fill="none"/>
+        </symbol>
+
+        <symbol id="shortcuts">
+            <path d="M 5 35.8242187 C 5 39.7527757 8.1847243 42.9375 12.1132812 42.9375 C 16.0418382 42.9375 19.2265625 39.7527757 19.2265625 35.8242187 L 19.2265625 11.9442883 C 19.2265625 8.1847243 16.0418382 5 12.1132812 5 C 8.1847243 5 5 8.1847243 5 12.1132812 C 5 16.0418382 8.1847243 19.2265625 12.1132812 19.2265625 L 35.8928161 19.2265625 C 39.7527757 19.2265625 42.9375 16.0418382 42.9375 12.1132812 C 42.9375 8.1847243 39.7527757 5 35.8242188 5 C 31.8956618 5 28.7109375 8.1847243 28.7109375 12.1132812 L 28.7109375 35.8190088 C 28.7109375 39.7527757 31.8956618 42.9375 35.8242187 42.9375 C 39.7527757 42.9375 42.9375 39.7527757 42.9375 35.8242188 C 42.9375 31.8956618 39.7527757 28.7109375 35.8242187 28.7109375 L 12.1184912 28.7109375 C 8.1847243 28.7109375 5 31.8956618 5 35.8242187 Z" stroke="currentColor" stroke-width="2.5" fill="none" />
+        </symbol>
+        
+        <symbol id="timeline">
+            <path d="M 24.625 7.57617187 L 24.625 24.5833333 L 15 24.5833333" stroke="currentColor" stroke-width="2.5" fill="none"/>
+            <path d="M 24 45.76 L 24 45.76 C 36.0177161 45.76 45.76 36.0177162 45.76 24 C 45.76 11.9822838 36.0177161 2.24 24 2.24 C 11.9822838 2.24 2.24 11.9822838 2.24 24 C 2.24 36.0177162 11.9822838 45.76 24 45.76 L 24 45.76 L 24 45.76 L 24 45.76 Z M 24 48 L 24 48 C 10.745166 48 0 37.254834 0 24 C 0 10.745166 10.745166 0 24 0 C 37.254834 0 48 10.745166 48 24 C 48 37.254834 37.254834 48 24 48 L 24 48 L 24 48 L 24 48 Z" fill="currentColor"/>
+        </symbol>
+
+    </defs>
+
+    <use y="0" xlink:href="#console"/>
+    <use y="48" xlink:href="#debugger"/>
+    <use y="96" xlink:href="#shortcuts"/>
+    <use y="144" xlink:href="#timeline"/>
+        
+</svg>

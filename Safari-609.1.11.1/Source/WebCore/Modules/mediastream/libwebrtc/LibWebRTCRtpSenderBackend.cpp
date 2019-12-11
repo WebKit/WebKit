@@ -1,0 +1,156 @@
+/*
+ * Copyright (C) 2018 Apple Inc.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "LibWebRTCRtpSenderBackend.h"
+
+#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
+
+#include "JSDOMPromiseDeferred.h"
+#include "LibWebRTCDTMFSenderBackend.h"
+#include "LibWebRTCPeerConnectionBackend.h"
+#include "LibWebRTCUtils.h"
+#include "RTCPeerConnection.h"
+#include "RTCRtpSender.h"
+#include "ScriptExecutionContext.h"
+
+namespace WebCore {
+
+LibWebRTCRtpSenderBackend::~LibWebRTCRtpSenderBackend()
+{
+    WTF::switchOn(m_source, [] (Ref<RealtimeOutgoingAudioSource>& source) {
+        source->stop();
+    }, [] (Ref<RealtimeOutgoingVideoSource>& source) {
+        source->stop();
+    }, [] (std::nullptr_t&) {
+    });
+}
+
+template<typename Source>
+static inline bool updateTrackSource(Source& source, MediaStreamTrack* track)
+{
+    if (!track) {
+        source.stop();
+        return true;
+    }
+    return source.setSource(track->privateTrack());
+}
+
+void LibWebRTCRtpSenderBackend::replaceTrack(ScriptExecutionContext& context, RTCRtpSender& sender, RefPtr<MediaStreamTrack>&& track, DOMPromiseDeferred<void>&& promise)
+{
+    if (!m_peerConnectionBackend) {
+        promise.reject(Exception { InvalidStateError, "No WebRTC backend"_s });
+        return;
+    }
+
+    auto* currentTrack = sender.track();
+
+    ASSERT(!track || !currentTrack || currentTrack->source().type() == track->source().type());
+    if (currentTrack) {
+    switch (currentTrack->source().type()) {
+    case RealtimeMediaSource::Type::None:
+        ASSERT_NOT_REACHED();
+        promise.reject(InvalidModificationError);
+        break;
+    case RealtimeMediaSource::Type::Audio:
+        if (!updateTrackSource(*audioSource(), track.get())) {
+            promise.reject(InvalidModificationError);
+            return;
+        }
+        break;
+    case RealtimeMediaSource::Type::Video:
+        if (!updateTrackSource(*videoSource(), track.get())) {
+            promise.reject(InvalidModificationError);
+            return;
+        }
+        break;
+    }
+    }
+
+    // FIXME: Remove this postTask once this whole function is executed as part of the RTCPeerConnection operation queue.
+    context.postTask([protectedSender = makeRef(sender), promise = WTFMove(promise), track = WTFMove(track), this](ScriptExecutionContext&) mutable {
+        if (protectedSender->isStopped())
+            return;
+
+        if (!track) {
+            protectedSender->setTrackToNull();
+            promise.resolve();
+            return;
+        }
+
+        bool hasTrack = protectedSender->track();
+        protectedSender->setTrack(track.releaseNonNull());
+
+        if (hasTrack) {
+            promise.resolve();
+            return;
+        }
+
+        m_source = nullptr;
+        m_peerConnectionBackend->setSenderSourceFromTrack(*this, *protectedSender->track());
+        promise.resolve();
+    });
+}
+
+RTCRtpSendParameters LibWebRTCRtpSenderBackend::getParameters() const
+{
+    if (!m_rtcSender)
+        return { };
+
+    m_currentParameters = m_rtcSender->GetParameters();
+    return toRTCRtpSendParameters(*m_currentParameters);
+}
+
+void LibWebRTCRtpSenderBackend::setParameters(const RTCRtpSendParameters& parameters, DOMPromiseDeferred<void>&& promise)
+{
+    if (!m_rtcSender) {
+        promise.reject(NotSupportedError);
+        return;
+    }
+
+    if (!m_currentParameters) {
+        promise.reject(Exception { InvalidStateError, "getParameters must be called before setParameters"_s });
+        return;
+    }
+
+    auto rtcParameters = WTFMove(*m_currentParameters);
+    updateRTCRtpSendParameters(parameters, rtcParameters);
+    m_currentParameters = WTF::nullopt;
+
+    auto error = m_rtcSender->SetParameters(rtcParameters);
+    if (!error.ok()) {
+        promise.reject(Exception { InvalidStateError, error.message() });
+        return;
+    }
+    promise.resolve();
+}
+
+std::unique_ptr<RTCDTMFSenderBackend> LibWebRTCRtpSenderBackend::createDTMFBackend()
+{
+    return makeUnique<LibWebRTCDTMFSenderBackend>(m_rtcSender->GetDtmfSender());
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(WEB_RTC) && USE(LIBWEBRTC)

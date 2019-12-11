@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+Test for <rdar://problem/6284708> AppCache crashes in ApplicationCacheResource::addType().
+
+checking
+downloading
+progress
+progress
+progress
+progress
+cached
+SUCCESS
+

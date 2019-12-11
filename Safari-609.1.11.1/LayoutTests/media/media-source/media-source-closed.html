@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-media-source</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var sourceTag;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function runTest() {
+        findMediaElement();
+
+        source = new MediaSource();
+        testExpected('source.readyState', 'closed');
+
+        waitForEventOn(source, 'sourceopen', sourceOpen);
+        video.src = URL.createObjectURL(source);
+    }
+
+    function sourceOpen() {
+        waitForEventOn(source, 'sourceclose', endTest);
+        run('video.src = ""');
+    }
+    
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

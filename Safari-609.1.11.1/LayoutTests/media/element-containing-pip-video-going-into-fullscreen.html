@@ -1,0 +1,73 @@
+<html>
+<head>
+    <title>Test element containing pip video going into fullscreen should exit pip</title>
+    <script src="media-file.js"></script>
+    <script src="video-test.js"></script>
+    <script>
+        if (window.internals)
+            window.internals.settings.setAllowsPictureInPictureMediaPlayback(true);
+
+        var enteredFullscreen = false;
+        var exitedPIP = false;
+
+        function init()
+        {
+            findMediaElement();
+            video.addEventListener('canplaythrough', oncanplaythrough);
+            video.src = findMediaFile('video', 'content/test');
+        }
+
+        function oncanplaythrough()
+        {
+            if (!('webkitSupportsPresentationMode' in video && 'webkitPresentationMode' in video)) {
+                failTest("Presentation mode is not supported in this video element.")
+                return;
+            }
+
+            consoleWrite("Video going into Picture-in-Picture");
+            video.addEventListener('webkitpresentationmodechanged', onfirstpresentationmodechanged);
+            runWithKeyDown(function(){ video.webkitSetPresentationMode('picture-in-picture'); });
+        }
+
+        function onfirstpresentationmodechanged()
+        {
+            testExpected("video.webkitPresentationMode", "picture-in-picture");
+            video.removeEventListener('webkitpresentationmodechanged', onfirstpresentationmodechanged);
+
+            consoleWrite("Element containing picture-in-picture video going into Full Screen");
+            videoContainer.addEventListener('webkitfullscreenchange', onfullscreenchange);
+            video.addEventListener('webkitpresentationmodechanged', onsecondpresentationmodechanged);
+            runWithKeyDown(function(){ videoContainer.webkitRequestFullscreen(); });
+        }
+
+        function onfullscreenchange()
+        {
+            enteredFullscreen = true;
+            if (exitedPIP)
+                checkFinalState();
+        }
+
+        function onsecondpresentationmodechanged()
+        {
+            exitedPIP = true;
+            if (enteredFullscreen)
+                checkFinalState();
+        }
+
+        function checkFinalState()
+        {
+            testExpected("document.webkitCurrentFullScreenElement", videoContainer);
+            testExpected("video.webkitPresentationMode", "inline");
+            endTest();
+        }
+
+    </script>
+</head>
+<body onload="init()">
+    Tests pip video going into fullscreen should exit pip<br>
+    <div id="videoContainer">
+        <video controls></video>
+    </div>
+</body>
+</html>
+

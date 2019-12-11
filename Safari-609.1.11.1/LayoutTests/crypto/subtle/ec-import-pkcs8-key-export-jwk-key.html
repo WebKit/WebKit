@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing a P-384 PKCS8 ECDH key and exporting it in JWK format");
+
+jsTestIsAsync = true;
+
+var pkcs8Key = hexStringToUint8Array("3081b6020100301006072a8648ce3d020106052b8104002204819e30819b02010104307fdf264b53c1a5e0c6be32f6736a73591f6a2d536c5ac6906b19ebe371ab71ec84c2b102def67aa0db451382604fb21aa1640362000413dcd0e8352158ca1ee5807c3f91d3b7331942baf7a48b0e3ad28fb6b665b1d8188dc01415058dbdb141f81e7cbf595861b1617b3deb5360b7e3dd0e48b92cdf957117cdefa77bc8f797b5b73a614028a83fc123a48c74eec9ca3c3e89322d57");
+var expectedJwkKey = {
+    kty: "EC",
+    ext: true,
+    key_ops: ["deriveBits", "deriveKey"],
+    crv: "P-384",
+    x: "E9zQ6DUhWMoe5YB8P5HTtzMZQrr3pIsOOtKPtrZlsdgYjcAUFQWNvbFB-B58v1lY",
+    y: "YbFhez3rU2C3490OSLks35VxF83vp3vI95e1tzphQCioP8EjpIx07snKPD6JMi1X",
+    d: "f98mS1PBpeDGvjL2c2pzWR9qLVNsWsaQaxnr43GrceyEwrEC3vZ6oNtFE4JgT7Ia",
+};
+var extractable = true;
+
+debug("Importing a key...");
+crypto.subtle.importKey("pkcs8", pkcs8Key, {name: "ECDH", namedCurve: "P-384"}, extractable, ["deriveKey", "deriveBits"]).then(function(key) {
+    return crypto.subtle.exportKey("jwk", key);
+}).then(function(result) {
+    privateKey = result;
+
+    shouldBe("privateKey.kty", "expectedJwkKey.kty");
+    shouldBe("privateKey.crv", "expectedJwkKey.crv");
+    shouldBe("privateKey.x", "expectedJwkKey.x");
+    shouldBe("privateKey.y", "expectedJwkKey.y");
+    shouldBe("privateKey.d", "expectedJwkKey.d");
+    shouldBe("privateKey.key_ops", "expectedJwkKey.key_ops");
+    shouldBe("privateKey.ext", "expectedJwkKey.ext");
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

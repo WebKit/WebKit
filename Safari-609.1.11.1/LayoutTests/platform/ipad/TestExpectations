@@ -1,0 +1,70 @@
+# Dark Mode is iPadOS 13 and later.
+css-dark-mode [ Pass ]
+css-dark-mode/older-systems [ Skip ]
+
+compositing/contents-format/ipad [ Pass ]
+
+# iPads don't zoom when form elements are focused
+fast/visual-viewport/ios/caret-after-focus-in-fixed.html [ Skip ]
+
+# These tests are designed for iPhone and crash on iPad
+media/modern-media-controls/media-documents/media-document-audio-ios-sizing.html [ Skip ]
+media/modern-media-controls/media-documents/media-document-video-iphone-sizing.html [ Skip ]
+
+# This test is iPad-specific
+media/modern-media-controls/media-documents/media-document-video-ipad-sizing.html [ Pass ]
+
+webkit.org/b/194221 fast/forms/datalist/datalist-textinput-suggestions-order.html [ Failure ]
+webkit.org/b/194221 fast/forms/datalist/datalist-show-hide.html [ Skip ]
+
+webkit.org/b/193970 compositing/ios/overflow-scroll-update-overlap.html [ ImageOnlyFailure ]
+
+webkit.org/b/194228 fast/media/invalid-media-query-list.html [ ImageOnlyFailure ]
+
+webkit.org/b/194234 media/modern-media-controls/media-documents/background-color-and-centering.html [ ImageOnlyFailure ]
+
+webkit.org/b/165311 platform/ipad/media/modern-media-controls/pip-support/pip-support-tap.html [ Skip ]
+
+webkit.org/b/194223 media/controls-strict.html [ Failure ]
+webkit.org/b/194223 media/controls-without-preload.html [ Skip ]
+webkit.org/b/194223 media/video-controls-rendering.html [ Failure ]
+webkit.org/b/194223 media/video-zoom-controls.html [ Failure ]
+
+webkit.org/b/194226 quicklook/word-legacy.html [ Failure ]
+webkit.org/b/194226 quicklook/word.html [ Failure ]
+
+webkit.org/b/194259 fast/events/ios/rotation/basic-rotation.html [ Skip ]
+webkit.org/b/194259 fast/events/ios/rotation/layout-viewport-during-rotation.html [ Skip ]
+webkit.org/b/194259 fast/events/ios/rotation/layout-viewport-during-safari-type-rotation.html [ Skip ]
+webkit.org/b/194259 fast/events/ios/rotation/resize-iframe-after-orientation-change.html [ Skip ]
+webkit.org/b/194259 fast/events/ios/rotation/safari-like-rotation.html [ Skip ]
+webkit.org/b/194259 fast/events/ios/viewport-no-width-value-allows-double-tap.html [ Skip ]
+
+# This tests an iphone-specific behavior so is expected to fail on iPad.
+fast/scrolling/ios/overflow-scrolling-touch-enabled-stacking.html [ ImageOnlyFailure ]
+
+# This test relies on the numeric keyboard having a different size than regular keyboard. This is not the case on iPad.
+fast/forms/ios/inputmode-change-update-keyboard.html [ Skip ]
+
+# <rdar://problem/51869921> REGRESSION (iOS 13) [ iPad Sim ] Layout Test http/tests/adClickAttribution/anchor-tag-attributes-validation.html is failing
+http/tests/adClickAttribution/anchor-tag-attributes-validation.html [ Failure ]
+
+# <rdar://problem/51865126> [ iPad Simulator ] 2 New Layout tests are failing on iOS 13 iPad Simulator testers fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-*
+fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-2.html [ Skip ]
+fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-1.html [ Skip ]
+
+# <rdar://problem/51918994> [ iPad Sim ] Layout test media/video-concurrent-visible-playback.html is a flaky timeout
+media/video-concurrent-visible-playback.html [ Pass Timeout ]
+
+# <rdar://problem/51920910> [ iPad Sim ] Layout test media/video-object-fit-change.html is a flaky timeout
+media/video-concurrent-visible-playback.html [ Pass Timeout ]
+
+# <rdar://problem/52914585> (Layout Test fast/forms/file/file-input-reset-using-open-panel.html is Failing)
+fast/forms/file/file-input-reset-using-open-panel.html [ ImageOnlyFailure ]
+
+# <rdar://problem/56512107> [ iOS ] Three editing/pasteboard/smart-paste-paragraph tests have been flaky since they landed in r243124 (203264)
+webkit.org/b/203264 editing/pasteboard/smart-paste-paragraph-001.html [ Pass ]
+webkit.org/b/203264 editing/pasteboard/smart-paste-paragraph-002.html [ Pass ]
+webkit.org/b/203264 editing/pasteboard/smart-paste-paragraph-004.html [ Pass ]
+
+media/picture-in-picture [ Pass ]

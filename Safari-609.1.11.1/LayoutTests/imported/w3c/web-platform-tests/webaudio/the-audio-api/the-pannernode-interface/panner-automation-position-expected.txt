@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 159: TypeError: undefined is not an object (evaluating 'panner.positionX.setValueAtTime')
+
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'panner.positionX.setValueAtTime')
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS > [0: 1-channel inverse rolloff: 1]  
+

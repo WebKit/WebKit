@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>WebGL vertexAttrib Conformance Tests</title>
+<script src="../../../resources/js-test.js"></script>
+<script src="resources/webgl-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<canvas id="canvas" width="2" height="2"> </canvas>
+<script>
+description("This test ensures WebGL implementations vertexAttrib can be set and read.");
+
+debug("");
+debug("Canvas.getContext");
+
+var gl = create3DContext(document.getElementById("canvas"));
+if (!gl) {
+  testFailed("context does not exist");
+} else {
+  testPassed("context exists");
+
+  debug("");
+  debug("Checking gl.vertexAttrib.");
+
+  gl.vertexAttrib4fv(0, [1, 2, 3, 4]);
+  shouldBe('gl.getVertexAttrib(0, gl.CURRENT_VERTEX_ATTRIB)[0]', '1');
+  shouldBe('gl.getVertexAttrib(0, gl.CURRENT_VERTEX_ATTRIB)[1]', '2');
+  shouldBe('gl.getVertexAttrib(0, gl.CURRENT_VERTEX_ATTRIB)[2]', '3');
+  shouldBe('gl.getVertexAttrib(0, gl.CURRENT_VERTEX_ATTRIB)[3]', '4');
+
+  gl.vertexAttrib1f(0, 5);
+  shouldBe('gl.getVertexAttrib(0, gl.CURRENT_VERTEX_ATTRIB)[0]', '5');
+  shouldBe('gl.getVertexAttrib(0, gl.CURRENT_VERTEX_ATTRIB)[1]', '0');
+  shouldBe('gl.getVertexAttrib(0, gl.CURRENT_VERTEX_ATTRIB)[2]', '0');
+  shouldBe('gl.getVertexAttrib(0, gl.CURRENT_VERTEX_ATTRIB)[3]', '1');
+}
+
+debug("");
+
+</script>
+</body>
+</html>

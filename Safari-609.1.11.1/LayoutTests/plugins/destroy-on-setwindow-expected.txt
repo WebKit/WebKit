@@ -1,0 +1,3 @@
+Test that a plug-in that causes its Widget to be destroyed during setWindow does not cause a crash.
+
+

@@ -1,0 +1,36 @@
+
+PASS .flexbox 1 
+PASS .flexbox 2 
+PASS .flexbox 3 
+PASS .flexbox 4 
+PASS .flexbox 5 
+PASS .flexbox 6 
+PASS .flexbox 7 
+PASS .flexbox 8 
+PASS .flexbox 9 
+PASS .flexbox 10 
+PASS .flexbox 11 
+PASS .flexbox 12 
+This test verifies that we consider flex items' cross sizes to be definite if the align value is stretch (the default)
+
+Tests that we get a definite size in the simple case.
+
+Tests that we get an definite size in a wrapping flexbox
+
+Tests that we get an indefinite size when not stretch-aligning
+
+Tests that we get an definite size in a definite-height flexbox
+
+Tests that we get an definite size in a nested flexbox where only the outer one has an explicit height
+
+Tests that we get an definite size in a nested flexbox where only the outer one has an explicit height and has an opposite direction.
+
+Tests that we respect min-height
+
+Tests that percentage sizes can also be definite
+
+Tests that we use a definite size even when a percentage size is not definite
+
+Tests that we don't mix up widths and heights
+
+

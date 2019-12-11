@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 22: SecurityError: Blocked a frame with origin "http://localhost:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 22: SecurityError: Blocked a frame with origin "http://localhost:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
+
+
+--------
+Frame: 'childFrame'
+--------
+
+This tests that plug-ins can access objects in other frames as allowed by the security model enforced in WebCore.
+SUCCESS

@@ -1,0 +1,4 @@
+
+PASS Initialize global state 
+PASS iframe fetches with a "document" Request.destination 
+

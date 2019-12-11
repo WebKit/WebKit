@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.setXSSAuditorEnabled(true);
+
+window.jsTestIsAsync = true;
+
+var frame;
+
+function runTest()
+{
+    function done()
+    {
+        // The URL of the iframe is not "data:,"; Otherwise, we wouldn't get here.
+        testPassed("received load event for iframe after initial iframe load led to a full page block.");
+        finishJSTest();
+    }
+
+    function loadDifferentURL()
+    {
+        frame.onload = done;
+        frame.src = "data:,#dummy"; // We add #dummy so that the URL will be different enough to attempt a new load.
+    }
+    frame.onload = loadDifferentURL;
+    frame.src = "http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?enable-full-block=1&q=<script>alert(/XSS/)</" + "script>";
+}
+
+window.onload = function ()
+{
+    frame = document.getElementById("frame");
+    runTest();
+}
+</script>
+</head>
+<body>
+    <script>
+        description("This tests that the URL of an iframe whose page triggered a full page block is not &quot;data:,&quot;.");
+    </script>
+    <iframe id="frame"></iframe>
+    <script src="/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+[object Math]
+ReferenceError: Use before declaration
+ReferenceError: Use before declaration
+[object Math]
+3.141592653589793
+undefined
+[object Object]
+undefined
+delicious
+[object JSON]
+ReferenceError: Use before declaration
+ReferenceError: Use before declaration
+[object JSON]
+function stringify() { [native code] }
+undefined
+[object Object]
+undefined
+no dice

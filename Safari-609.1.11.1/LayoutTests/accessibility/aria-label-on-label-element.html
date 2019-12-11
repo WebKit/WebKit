@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<label id="label1" for="input" aria-label="aria label">Some text</label>
+<input id="input" type="text" size=20>
+
+<label id="label2" for="input2">Some other text</label>
+<input id="input2" type="text" size=20>
+
+<label id="label3" for="input3" hidden aria-label="hidden aria label">hidden text</label>
+<input id="input3" type="text">
+
+<p id="p1">aria</p>
+<p id="p2">labelledby</p>
+<label for="input4" aria-labelledby="p1 p2">Some text</label>
+<input id="input4" type="text" size=20>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the aria-label attribute works on <label> element.");
+
+    if (window.accessibilityController) {
+    
+        // aria-label on the <label> element return a title for the input, instead of a title ui element.
+        // For ATK, it should return both, with the title ui element being the label element.
+        var input1 = accessibilityController.accessibleElementById("input");
+        var titleUIElement1 = input1.titleUIElement();
+        if (accessibilityController.platformName != "atk")
+            shouldBeTrue("!titleUIElement1");
+        else
+            shouldBeTrue("titleUIElement1.isEqual(accessibilityController.accessibleElementById('label1'))");
+
+        shouldBe("input1.title", "'AXTitle: aria label'");
+        
+        // Normal case.
+        var input2 = accessibilityController.accessibleElementById("input2");
+        var titleUIElement2 = input2.titleUIElement();
+        shouldBeTrue("titleUIElement2.isEqual(accessibilityController.accessibleElementById('label2'))");
+        
+        // Make sure when the input element has no rendered label, it won't cause crash.
+        var input3 = accessibilityController.accessibleElementById("input3");
+        shouldBe("input3.title", "'AXTitle: hidden aria label'");
+        
+        // aria-labelledby also works.
+        var input4 = accessibilityController.accessibleElementById("input4");
+        shouldBe("input4.title", "'AXTitle: aria labelledby'");
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

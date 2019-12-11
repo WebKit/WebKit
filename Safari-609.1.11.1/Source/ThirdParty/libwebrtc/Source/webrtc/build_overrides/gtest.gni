@@ -1,0 +1,19 @@
+# Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+# Include support for registering main function in multi-process tests.
+gtest_include_multiprocess = true
+
+# Include support for platform-specific operations across unit tests.
+gtest_include_platform_test = true
+
+# Exclude support for testing Objective C code on OS X and iOS.
+gtest_include_objc_support = true
+
+# Exclude support for flushing coverage files on iOS.
+gtest_include_ios_coverage = true

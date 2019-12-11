@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body>
+<script>
+    description("Tests that only the origin is sent as referrer in redirects to third-parties.");
+    jsTestIsAsync = true;
+    testRunner.dumpChildFramesAsText();
+
+    function openIframe(url, onLoadHandler) {
+        const element = document.createElement("iframe");
+        element.src = url;
+        if (onLoadHandler) {
+            element.onload = onLoadHandler;
+        }
+        document.body.appendChild(element);
+    }
+
+    let referrer;
+    setEnableFeature(true, function() {
+        fetch("resources/echo-referrer.php").then(function(response) {
+            return response.text();
+        }).then(function(data) {
+            referrer = data;
+            shouldBeEqualToString("referrer", "http://127.0.0.1:8000/resourceLoadStatistics/strip-referrer-to-origin-for-third-party-redirects.html");
+
+            openIframe("resources/redirect.php?redirectTo=http://localhost:8000/resourceLoadStatistics/resources/echo-referrer.php", function () {
+                setEnableFeature(false, finishJSTest);
+            });
+        }).catch(function(error) {
+            console.log(error.message);
+            setEnableFeature(false, finishJSTest);
+        });
+    });
+</script>
+</body>
+</html>

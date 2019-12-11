@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: line 53: TypeError: undefined is not an object (evaluating 'context.startRendering()
+                .then')
+
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'context.startRendering()
+                .then')
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS > [test] Tests attribute and basic functionality of DelayNode 
+PASS   delay.numberOfInputs is equal to 1. 
+PASS   delay.numberOfOutputs is equal to 1. 
+PASS   delay.delayTime.defaultValue is equal to 0. 
+PASS   delay.delayTime.value is equal to 0. 
+PASS   delay.delayTime.value = 0.5 is equal to 0.5. 
+

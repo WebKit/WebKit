@@ -1,0 +1,85 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="initial-scale=0.6666">
+<script>
+if (window.internals) {
+    window.internals.settings.setTextAutosizingEnabled(true);
+    window.internals.settings.setTextAutosizingUsesIdempotentMode(true);
+}
+</script>
+<script src="../../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div style="background: green;"><span id="target1" style="font-size: 12px;">Test</span></div>
+<div style="background: green; overflow: auto;"><span id="target2" style="float: right; font-size: 12px;">Test</span></div>
+<div style="background: green;"><span id="target3" style="display: inline-block; font-size: 12px; width: 20px;">Test</span></div>
+<div style="background: green;"><span style="display: inline-block; height: 12px; font-size: 12px;"><span id="target4">Test</span></span></div>
+<div style="background: green;"><span id="target5" style="position: absolute; left: 0px; top: 0px; font-size: 12px;">Test</span></div>
+<div style="background: green;"><span id="target6" style="display: none; font-size: 12px;">Test</span></div>
+<div style="background: green;"><span id="comparison" style="font-size: 12px;">Test<span>Test<span>Test<span id="target7">Test</span></span></span></span></div>
+<div style="background: green;"><span id="target8" style="font-size: 12px; -webkit-text-size-adjust: 100%">Test</span></div>
+<div style="background: green;"><span id="target9" style="font-size: 12px; display: inline-block;">Test</span></div>
+<div style="background: green;"><span id="target10" style="font-size: 12px; width: 20px; height: 12px;">Test</span></div>
+<div style="background: green;"><span id="target11" style="font-size: 12px; height: 20px; position: fixed; white-space: nowrap;">Test</span></div>
+<div style="background: green;"><span id="target12" style="font-size: 12px; height: 20px; position: fixed; float: right;">Test</span></div>
+<div style="background: green;"><span id="target13" style="font-size: 12px; height: 20px; position: fixed; float: right; overflow-x: hidden; width: 100px;">Test</span></div>
+<div style="background: green;"><span id="target14" style="font-size: 12px; height: 20px; width: 100px; float: right;">Test</span></div>
+<div style="background: green;"><span id="target15" style="font-size: 12px; overflow-y: hidden; float: right;">Test</span></div>
+<div style="background: green;"><span id="target16" style="font-size: 12px; float: right;">Test</span></div>
+<div style="background: green;"><span id="target17" style="font-size: 12px; -webkit-text-size-adjust: 100%;">Test</span></div>
+<div style="background: green; line-height: 1.25; max-height: 45px; font-size: 12px;">
+    <span>Test</span>
+    <br>
+    <span id="target18">Test</span>
+    <br>
+    <span>Test</span>
+</div>
+<div style="background: green; line-height: 20px; max-height: 20px; font-size: 12px;" id="target19">Test</div>
+<script>
+let result;
+function check(name, shouldGetAutosized) {
+    let target = document.getElementById(name);
+    target.offsetWidth;
+    result = Number.parseInt(window.getComputedStyle(target).getPropertyValue("font-size"));
+    debug(`Checking ${name}:`);
+    if (shouldGetAutosized)
+        shouldBeGreaterThanOrEqual("result", "13");
+    else
+        shouldBe("result", "12");
+}
+check("target1", true);
+check("target2", true);
+check("target3", false);
+check("target4", true);
+check("target5", true);
+check("target6", false);
+
+debug(`Checking target7:`);
+let target = document.getElementById("target7");
+target.offsetWidth;
+let comparison = document.getElementById("comparison");
+comparison.offsetWidth;
+result = Number.parseInt(window.getComputedStyle(target).getPropertyValue("font-size"));
+let result2 = Number.parseInt(window.getComputedStyle(comparison).getPropertyValue("font-size"));
+shouldBeGreaterThanOrEqual("result", "result2");
+
+check("target8", false);
+check("target9", true);
+check("target10", true);
+
+// Below are some common scenarios where we prefer (or prefer to not) adjust text size. These examples are inspired by
+// common patterns in real webpages.
+check("target11", true);
+check("target12", true);
+check("target13", false);
+check("target14", false);
+check("target15", true);
+check("target16", true);
+check("target17", false);
+check("target18", false);
+check("target19", true);
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

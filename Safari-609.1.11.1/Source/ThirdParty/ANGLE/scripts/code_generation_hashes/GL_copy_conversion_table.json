@@ -1,0 +1,8 @@
+{
+  "src/libANGLE/es3_copy_conversion_formats.json":
+    "54608f6f7d9aa7c59a8458ccf3ab9935",
+  "src/libANGLE/es3_copy_conversion_table_autogen.cpp":
+    "b20d198cf5e292c43170d4873b381b34",
+  "src/libANGLE/gen_copy_conversion_table.py":
+    "827a4a27cea1e11bef18fed9dce6dceb"
+}

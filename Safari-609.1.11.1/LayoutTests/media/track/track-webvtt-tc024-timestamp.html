@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>            
+
+            var numberOfTrackTests = 2;
+            
+            function trackLoaded()
+            {
+                numberOfTracksLoaded++;
+                if (numberOfTracksLoaded == numberOfTrackTests) {
+                    testTrack(0);
+                    testTrackError(1);
+                }
+            }
+            
+            function testTrack(i)
+            {
+                findMediaElement();
+                testExpected("video.textTracks[" + i + "].cues.length", "3");
+                
+                // Note: Timestamps are handled as ProcessingInstructions, but because ProcessingInstructions
+                // are used in XML and not HTML, they are ignored here.
+                // This should later be tested with oncuechange events.
+                var fragment = document.createDocumentFragment();
+                fragment.appendChild(document.createTextNode("This cue is painted on."));
+                
+                testExpected("video.textTracks[" + i + "].cues[0].getCueAsHTML().textContent", fragment.textContent);
+                
+                fragment = document.createDocumentFragment();
+                fragment.appendChild(document.createTextNode("I said Bear is coming!!!!"));
+                
+                testExpected("video.textTracks[" + i + "].cues[1].getCueAsHTML().textContent", fragment.textContent);
+
+                fragment = document.createDocumentFragment();
+                fragment.appendChild(document.createTextNode("I said Bear is coming now!!!!"));
+   
+                testExpected("video.textTracks[" + i + "].cues[2].getCueAsHTML().textContent", fragment.textContent);
+
+                allTestsEnded();
+            }
+
+            function testTrackError(i)
+            {
+                findMediaElement();
+                testExpected("video.textTracks[" + i + "].cues.length", "3");
+                
+                var fragment = document.createDocumentFragment();
+                fragment.appendChild(document.createTextNode("This cue is painted on.\nBut since the last two timestamps are out of order, they are ignored."));
+                
+                testExpected("video.textTracks[" + i + "].cues[0].getCueAsHTML().textContent", fragment.textContent);
+                
+                fragment = document.createDocumentFragment();
+                fragment.appendChild(document.createTextNode("I said Bear is coming!!!!\nAll of these timestamps are before the start of the cue, so get ignored."));
+                
+                testExpected("video.textTracks[" + i + "].cues[1].getCueAsHTML().textContent", fragment.textContent);
+
+                fragment = document.createDocumentFragment();
+                fragment.appendChild(document.createTextNode("I said Bear is coming now!!!!\nAll of these timestamps are after the end of the cue, so get ignored."));
+   
+                testExpected("video.textTracks[" + i + "].cues[2].getCueAsHTML().textContent", fragment.textContent);
+          
+                allTestsEnded();
+            }
+        </script>
+    </head>
+    <body onload="enableAllTextTracks()">
+        <p>Tests cues with &lt;timestamps&gt; tags.</p>
+        <video> 
+            <track src="captions-webvtt/tc024-timestamp.vtt" onload="trackLoaded()">
+            <track src="captions-webvtt/tc024-timestamp-bad.vtt" onload="trackLoaded()"> 
+        </video>
+    </body>
+</html>

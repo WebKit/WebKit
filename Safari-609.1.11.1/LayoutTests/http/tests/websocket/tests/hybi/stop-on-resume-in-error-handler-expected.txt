@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: WebSocket connection to 'ws://127.0.0.1:8880/websocket/tests/hybi/echo' failed: WebSocket is closed due to suspension.
+Tests that WebSocket correctly handles being stopped in the error event handler upon restoring from PageCache.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+pageshow - not from cache
+pagehide - entering cache
+pageshow - from cache
+PASS Page did enter and was restored from the page cache
+error event fired
+PASS wasRestoredFromPageCache is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

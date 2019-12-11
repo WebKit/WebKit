@@ -1,0 +1,6 @@
+
+FAIL onclose assert_unreached: handleEvent was called Reached unreachable code
+FAIL onopen assert_unreached: handleEvent was called Reached unreachable code
+FAIL onerror assert_unreached: handleEvent was called Reached unreachable code
+FAIL onmessage assert_unreached: handleEvent was called Reached unreachable code
+

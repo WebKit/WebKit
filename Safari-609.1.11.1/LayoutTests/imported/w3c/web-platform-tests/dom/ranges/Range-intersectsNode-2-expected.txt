@@ -1,0 +1,4 @@
+s0s1s2
+
+FAIL Range.intersectsNode() simple cases assert_false: [s0] range.intersectsNode(s1) expected false got true
+

@@ -1,0 +1,106 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% max_local = Param('maxlocalattachment') * 1024 %]
+[% max_limit = Param('maxattachmentsize')> max_local ? Param('maxattachmentsize') : max_local %]
+<tr class="attachment_data">
+  <th><label for="data">File</label>:</th>
+  <td>
+    <em>Enter the path to the file on your computer</em> (or
+    <a id="attachment_data_controller" href="javascript:TUI_toggle_class('attachment_text_field');
+                                             javascript:TUI_toggle_class('attachment_data')"
+    >paste text as attachment</a>).<br>
+    <input type="file" id="data" name="data" size="50" onchange="DataFieldHandler()">
+    <br><em>(File size limit: [% max_limit FILTER html %] KB)</em>
+  </td>
+</tr>
+<tr class="attachment_text_field">
+  <th><label for="attach_text">File</label>:</th>
+  <td>
+    <em>Paste the text to be added as an attachment</em> (or
+    <a id="attachment_text_field_controller" href="javascript:TUI_toggle_class('attachment_text_field');
+                                                   javascript:TUI_toggle_class('attachment_data')"
+    >attach a file</a>).<br>
+    <textarea id="attach_text" name="attach_text" cols="80" rows="15"
+              onkeyup="TextFieldHandler()" onblur="TextFieldHandler()"></textarea>
+  </td>
+</tr>
+<tr>
+  <th class="required"><label for="description">Description</label>:</th>
+  <td>
+    <em>Describe the attachment briefly.</em><br>
+    <input type="text" id="description" name="description" class="required"
+           size="60" maxlength="200">
+  </td>
+</tr>
+<tr[% ' class="expert_fields"' UNLESS bug.id %]>
+  <th>Content Type:</th>
+  <td>
+    <em>If the attachment is a patch, check the box below.</em><br>
+    <input type="checkbox" id="ispatch" name="ispatch" value="1"
+           onchange="setContentTypeDisabledState(this.form);">
+    <label for="ispatch">patch</label><br><br>
+    [%# Reset this whenever the page loads so that the JS state is up to date %]
+    <script type="text/javascript">
+      YAHOO.util.Event.onDOMReady(function() {
+          bz_fireEvent(document.getElementById('ispatch'), 'change');
+      });
+    </script>
+
+    <em>Otherwise, choose a method for determining the content type.</em><br>
+    <input type="radio" id="autodetect"
+           name="contenttypemethod" value="autodetect" checked="checked">
+      <label for="autodetect">auto-detect</label><br>
+    <input type="radio" id="list"
+           name="contenttypemethod" value="list">
+      <label for="list">select from list</label>:
+      <select name="contenttypeselection" id="contenttypeselection"
+              onchange="this.form.contenttypemethod[1].checked = true;">
+        [% PROCESS content_types %]
+      </select><br>
+    <input type="radio" id="manual"
+                 name="contenttypemethod" value="manual">
+      <label for="manual">enter manually</label>:
+      <input type="text" name="contenttypeentry" id="contenttypeentry"
+             size="30" maxlength="200"
+             onchange="if (this.value) this.form.contenttypemethod[2].checked = true;">
+  </td>
+</tr>
+<tr[% ' class="expert_fields"' UNLESS bug.id %]>
+  <td> </td>
+  <td>
+    [% IF flag_types && flag_types.size > 0 %]
+      [% PROCESS "flag/list.html.tmpl" %]<br>
+    [% END %]
+  </td>
+</tr>
+[%# if WEBKIT_CHANGES %]
+[% USE CGI %]
+[% cgi_product = CGI.param('product') %]
+[% PROCESS attachment/patchlegalese.html.tmpl product = cgi_product %]
+[%# endif // WEBKIT_CHANGES %]
+
+[% BLOCK content_types %]
+[%# WEBKIT_CHANGES: Added XHTML source and SVG image. %]
+  [% mimetypes = [{type => "text/plain", desc => "plain text"},
+                  {type => "text/html",  desc => "HTML source"},
+                  {type => "application/xhtml+xml", desc => "XHTML source"},
+                  {type => "image/svg+xml", desc => "SVG image"},
+                  {type => "application/xml", desc => "XML source"},
+                  {type => "image/gif",  desc => "GIF image"},
+                  {type => "image/jpeg", desc => "JPEG image"},
+                  {type => "image/png",  desc => "PNG image"},
+                  {type => "application/pdf", desc => "PDF document"},
+                  {type => "application/octet-stream", desc => "binary file"}]
+  %]
+  [% Hook.process("mimetypes", "attachment/createformcontents.html.tmpl") %]
+
+  [% FOREACH m = mimetypes %]
+    <option value="[% m.type FILTER html %]">[% m.desc FILTER html %] ([% m.type FILTER html %])</option>
+  [% END %]
+[% END %]

@@ -1,0 +1,17 @@
+span {
+  display: inline-block;
+  height: 68px;
+  width: 68px;
+}
+
+span.circle-css-cross-domain {
+  background-image: url('resources/image-with-css-cross-domain.svg');
+}
+
+embed {
+  display: inline-block;
+}
+
+iframe {
+  border-width: 0px;
+}

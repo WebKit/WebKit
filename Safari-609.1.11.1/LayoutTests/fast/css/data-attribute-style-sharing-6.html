@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+    <style>
+        /* Pack them to fit everything in 800*600 */
+        div > * {
+            padding: 5px;
+            width: 100px;
+            float: left;
+        }
+        :matches([data-webkit]) > * {
+            background-color: red;
+        }
+        :matches([data-webkit=foobar]) > * {
+            background-color: blue;
+        }
+    </style>
+</head>
+<body>
+    <p>Verify style sharing does not ignore data attributes.</p>
+    <div>
+        <div>
+            Padding
+            <span>No data-webkit<span>
+            <span>No data-webkit<span>
+            <span>No data-webkit<span>
+            Padding
+        </div>
+        <div data-webkit>
+            Padding
+            <span>data-webkit defined<span>
+            <span>data-webkit defined<span>
+            <span>data-webkit defined<span>
+            Padding
+        </div>
+        <div data-webkit="">
+            Padding
+            <span>data-webkit defined empty<span>
+            <span>data-webkit defined empty<span>
+            <span>data-webkit defined empty<span>
+            Padding
+        </div>
+        <div data-webkit="foobar">
+            Padding
+            <span>data-webkit is foobar<span>
+            <span>data-webkit is foobar<span>
+            <span>data-webkit is foobar<span>
+            Padding
+        </div>
+    </div>
+    <div>
+        <span>
+            Padding
+            <span>No data-webkit<span>
+            <span>No data-webkit<span>
+            <span>No data-webkit<span>
+            Padding
+        </span>
+        <span data-webkit>
+            Padding
+            <span>data-webkit defined<span>
+            <span>data-webkit defined<span>
+            <span>data-webkit defined<span>
+            Padding
+        </span>
+        <span data-webkit="">
+            Padding
+            <span>data-webkit defined empty<span>
+            <span>data-webkit defined empty<span>
+            <span>data-webkit defined empty<span>
+            Padding
+        </span>
+        <span data-webkit="foobar">
+            Padding
+            <span>data-webkit is foobar<span>
+            <span>data-webkit is foobar<span>
+            <span>data-webkit is foobar<span>
+            Padding
+        </span>
+    </div>
+    <div>
+        <input value="No data-webkit">
+        <input data-webkit value="data-webkit defined">
+        <input data-webkit="" value="data-webkit defined empty">
+        <input data-webkit="foobar" value="data-webkit is foobar">
+    </div>
+</body>
+</html>

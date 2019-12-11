@@ -1,0 +1,42 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function moveNSpacesAndType(n) {
+    for (i = 0; i < n; i++) {
+        moveSelectionForwardByCharacterCommand();
+    }
+    for (i = 0; i < 3; i++) {
+        typeCharacterCommand();
+    }
+}
+
+function editingTest() {
+    moveNSpacesAndType(4);
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+<div contenteditable id="root" class="editing">
+<span id="test">Foo    <i>  bar</i></span>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

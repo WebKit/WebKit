@@ -1,0 +1,71 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ domPasteAllowed=false useFlexibleViewport=true ignoreSynchronousMessagingTimeouts=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="./resources/dom-paste-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body {
+    margin: 0;
+}
+
+#copy {
+    width: 100%;
+    height: 50px;
+    border: 1px dashed black;
+}
+
+#editor {
+    width: 100%;
+    height: 100px;
+    border: 1px dashed silver;
+    text-align: center;
+}
+</style>
+</head>
+<body>
+<div id="editor" contenteditable></div>
+<iframe id="copy" src="data:text/html,<div id='copy' style='font-size: 40px; text-align: center;'>Click here to copy</div>
+    <script>
+    copy.addEventListener('click', () => {
+        getSelection().selectAllChildren(copy);
+        document.execCommand('Copy');
+        getSelection().removeAllRanges();
+    });
+    </script>"></iframe>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+jsTestIsAsync = true;
+
+const editor = document.getElementById("editor");
+
+description("Verifies that no menu is shown when the page programmatically triggers paste outside the scope of user interaction. This test requires WebKitTestRunner.");
+
+function checkDone() {
+    if (!window.doneCount)
+        doneCount = 0;
+
+    if (++doneCount == 2)
+        finishJSTest();
+}
+
+editor.addEventListener("click", event => {
+    editor.focus();
+    shouldBe("document.execCommand('Paste')", "true");
+    requestAnimationFrame(() => {
+        shouldBe("document.execCommand('Paste')", "false")
+        shouldBeEqualToString("editor.textContent", "Click here to copy");
+        checkDone();
+    });
+});
+
+addEventListener("load", async () => {
+    await UIHelper.activateAt(160, 125);
+    await triggerPasteMenuAfterActivatingLocation(160, 50);
+    checkDone();
+});
+</script>
+</body>
+</html>

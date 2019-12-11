@@ -1,0 +1,58 @@
+Tests MediaStreamTrack callbacks.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+
+**** calling mediaDevices.getUserMedia() ****
+PASS mediaDevices.getUserMedia succeeded.
+
+**** setup video element ****
+video.srcObject = mediaStream
+Event 'loadedmetadata'
+Event 'loadeddata'
+Event 'canplay'
+
+*** start playback ****
+video.play()
+Event 'canplaythrough'
+Event 'play'
+video.pause()
+
+**** check video element ****
+PASS video.videoWidth is mediaStream.getVideoTracks()[0].getSettings().width
+PASS video.videoHeight is mediaStream.getVideoTracks()[0].getSettings().height
+
+**** check video tracks ****
+PASS video.videoTracks.length is 1
+PASS video.videoTracks[0].id is mediaStream.getVideoTracks()[0].id
+PASS video.videoTracks[0].language is ""
+PASS video.videoTracks[0].kind is "main"
+
+video.videoTracks[0] properties:
+  track.id = <UUID>
+  track.kind = main
+  track.label = Mock video device 1
+  track.language = 
+  track.selected = true
+  track.sourceBuffer = null
+
+**** check audio tracks ****
+PASS video.audioTracks.length is 1
+PASS video.audioTracks[0].id is mediaStream.getAudioTracks()[0].id
+PASS video.audioTracks[0].language is ""
+PASS video.audioTracks[0].kind is "main"
+
+video.audioTracks[0] properties:
+  track.id = <UUID>
+  track.kind = main
+  track.label = Mock audio device 1
+  track.language = 
+  track.enabled = true
+  track.sourceBuffer = null
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

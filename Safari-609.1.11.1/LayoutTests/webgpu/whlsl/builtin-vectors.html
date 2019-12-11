@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Test loops.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+const checkFuncs = {
+    "uint": callUintFunction,
+    "int": callIntFunction,
+    "float": callFloatFunction
+};
+const typeNames = [ "uint", "int", "float" ];
+const sizes = [ 2, 3, 4 ];
+const elements = [ "x", "y", "z", "w" ];
+const initializerList = [ 1, 2, 3, 4 ];
+
+whlslTests.builtinVectorIndexSetters = async () =>
+{
+    let tests = [];
+    let src = "";
+    for (let typeName of typeNames) {
+        for (let size of sizes) {
+            for (let i = 0; i < size; i++) {
+                const functionName = `${typeName}${size}${elements[i]}`;
+                src += `${typeName} ${functionName}()
+                        {
+                            ${typeName}${size} x = ${typeName}${size}(${initializerList.slice(0, size).join(", ")});
+                            x[${i}] = 34;
+                            return x[${i}];
+                        }
+                        `;
+                tests.push({ type: typeName, name: functionName, expectation: 34 });
+            }
+        }
+    }
+
+    let program = src;
+    for (let test of tests) {
+        const checkFunc = checkFuncs[test.type];
+        assert_equals(await checkFunc(program, test.name, []), test.expectation);
+    }
+};
+
+whlslTests.builtinVectors = async () =>
+{
+    let program = `
+        int foo()
+        {
+            int2 a = int2(3, 4);
+            return a[0];
+        }
+        int foo2()
+        {
+            int2 a = int2(3, 4);
+            int3 b = int3(a, 5);
+            return b[1];
+        }
+        int foo3()
+        {
+            int3 a = int3(3, 4, 5);
+            int4 b = int4(6, a);
+            return b[1];
+        }
+        int foo4()
+        {
+            int2 a = int2(3, 4);
+            int2 b = int2(5, 6);
+            int4 c = int4(a, b);
+            return c[2];
+        }
+        bool foo5()
+        {
+            int4 a = int4(3, 4, 5, 6);
+            int2 b = int2(4, 5);
+            int4 c = int4(3, b, 6);
+            return all(a == c);
+        }
+        bool foo6()
+        {
+            int2 a = int2(4, 5);
+            int3 b = int3(3, a);
+            int3 c = int3(3, 4, 6);
+            return all(b == c);
+        }
+        uint foou()
+        {
+            uint2 a = uint2(3, 4);
+            return a[0];
+        }
+        uint foou2()
+        {
+            uint2 a = uint2(3, 4);
+            uint3 b = uint3(a, 5);
+            return b[1];
+        }
+        uint foou3()
+        {
+            uint3 a = uint3(3, 4, 5);
+            uint4 b = uint4(6, a);
+            return b[1];
+        }
+        uint foou4()
+        {
+            uint2 a = uint2(3, 4);
+            uint2 b = uint2(5, 6);
+            uint4 c = uint4(a, b);
+            return c[2];
+        }
+        bool foou5()
+        {
+            uint4 a = uint4(3, 4, 5, 6);
+            uint2 b = uint2(4, 5);
+            uint4 c = uint4(3, b, 6);
+            return all(a == c);
+        }
+        bool foou6()
+        {
+            uint2 a = uint2(4, 5);
+            uint3 b = uint3(3, a);
+            uint3 c = uint3(3, 4, 6);
+            return all(b == c);
+        }
+        float foof()
+        {
+            float2 a = float2(3., 4.);
+            return a[0];
+        }
+        float foof2()
+        {
+            float2 a = float2(3., 4.);
+            float3 b = float3(a, 5.);
+            return b[1];
+        }
+        float foof3()
+        {
+            float3 a = float3(3., 4., 5.);
+            float4 b = float4(6., a);
+            return b[1];
+        }
+        float foof4()
+        {
+            float2 a = float2(3., 4.);
+            float2 b = float2(5., 6.);
+            float4 c = float4(a, b);
+            return c[2];
+        }
+        bool foof5()
+        {
+            float4 a = float4(3., 4., 5., 6.);
+            float2 b = float2(4., 5.);
+            float4 c = float4(3., b, 6.);
+            return all(a == c);
+        }
+        bool foof6()
+        {
+            float2 a = float2(4., 5.);
+            float3 b = float3(3., a);
+            float3 c = float3(3., 4., 6.);
+            return all(b == c);
+        }
+    `;
+    assert_equals(await callIntFunction(program, "foo", []), 3);
+    assert_equals(await callIntFunction(program, "foo2", []), 4);
+    assert_equals(await callIntFunction(program, "foo3", []), 3);
+    assert_equals(await callIntFunction(program, "foo4", []), 5);
+    assert_equals(await callBoolFunction(program, "foo5", []), true);
+    assert_equals(await callBoolFunction(program, "foo6", []), false);
+    assert_equals(await callUintFunction(program, "foou", []), 3);
+    assert_equals(await callUintFunction(program, "foou2", []), 4);
+    assert_equals(await callUintFunction(program, "foou3", []), 3);
+    assert_equals(await callUintFunction(program, "foou4", []), 5);
+    assert_equals(await callBoolFunction(program, "foou5", []), true);
+    assert_equals(await callBoolFunction(program, "foou6", []), false);
+    assert_equals(await callFloatFunction(program, "foof", []), 3);
+    assert_equals(await callFloatFunction(program, "foof2", []), 4);
+    assert_equals(await callFloatFunction(program, "foof3", []), 3);
+    assert_equals(await callFloatFunction(program, "foof4", []), 5);
+    assert_equals(await callBoolFunction(program, "foof5", []), true);
+    assert_equals(await callBoolFunction(program, "foof6", []), false);
+};
+
+runTests(whlslTests);
+</script>
+</html>
+

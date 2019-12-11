@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<video src="../../content/test.mp4" style="position: absolute; left: 0; top: 0; width: 320px; height: 240px;" controls autoplay></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing the controls bar fades out as expected after the auto-hide delay expires upon first play.");
+
+const media = document.querySelector("video");
+const shadowRoot = window.internals.shadowRoot(media);
+
+media.addEventListener("play", (event) => {
+    shouldBecomeEqual("!!shadowRoot.querySelector('.media-controls')", "true", () => {
+        shouldBecomeEqual("shadowRoot.querySelector('.media-controls').classList.contains('faded')", "false", () => {
+            shouldBecomeEqual("shadowRoot.querySelector('.media-controls').classList.contains('faded')", "true", () => {
+                debug("");
+                media.remove();
+                finishJSTest();
+            });
+        });
+    });
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

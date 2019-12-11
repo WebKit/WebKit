@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<label id="label1">text</label>
+<label id="label2" role="heading">text</label>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+    description("This verifies that an ARIA role applied to a label element is not ignored.");
+
+    if (window.accessibilityController) {
+          var label = accessibilityController.accessibleElementById("label1");
+          debug("label without role: " + label.role);
+
+          label = accessibilityController.accessibleElementById("label2");
+          debug("label with role: " + label.role);
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

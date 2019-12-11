@@ -1,0 +1,4 @@
+
+PASS original => remote => original with mode: "no-cors" 
+PASS original => remote => original with mode: "cors" 
+

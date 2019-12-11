@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+<div id="content">
+  <div id="hidden1" style="visibility:hidden;">foo</div>
+  <div id="hidden2" style="display:none;">bar</div>
+
+  <input id="test1" aria-labelledby="hidden1">
+  <input id="test2" aria-describedby="hidden2">
+
+  <label for="test3" id="hidden3" style="display:none;">baz</label>
+  <input id="test3">
+
+  <table id="table">
+    <tr>
+      <td>cell 1</td>
+      <td style="visibility:hidden;">cell 2</td>
+      <td><div style="display:none;"><div>cell 3</div></td>
+      <td><div>cell 4</div></td>
+    </tr>
+  </table>
+  <input id="test4" aria-labelledby="table">
+  <input id="test5" aria-describedby="table">
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests text alternative calculation with hidden nodes.");
+
+    if (window.accessibilityController) {
+        for (var i = 1; i <= 5; i++) {
+            var axElement = accessibilityController.accessibleElementById("test" + i);
+            debug("Test " + i);
+            debug("\tW3C Name: " + platformValueForW3CName(axElement));
+            debug("\tW3C Description: " + platformValueForW3CDescription(axElement));
+         }
+       document.getElementById("content").style.visibility = "hidden";
+       document.getElementById("table").style.visibility = "hidden";
+    }
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

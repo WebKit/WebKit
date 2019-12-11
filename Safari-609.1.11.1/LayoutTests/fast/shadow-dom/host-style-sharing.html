@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <template id="for-host-1">
+      <style>
+      :host { border: 1px solid #f09; }
+      </style>
+      I &#9829; <slot name="what-I-love"><slot>
+    </template>
+
+    <template id="for-host-2">
+      <style>
+      :host { border: 1px solid #000; }
+      </style>
+      I <strike>&#9829;</strike> <slot name="what-I-hate"><slot>
+    </template>
+
+    <div id="host1">
+      <span name="what-I-love">Shadow DOM<span>
+    </div>
+
+    <div id="host2">
+      <span name="what-I-hate">Shadow DOM<span>
+    </div>
+
+    <script>
+      var host1 = document.querySelector('#host1');
+      var host1ShadowRoot = host1.attachShadow({mode: 'closed'});
+      var host1ShadowContent = document.importNode(document.querySelector('#for-host-1').content, true);
+      host1ShadowRoot.appendChild(host1ShadowContent);
+
+      var host2 = document.querySelector('#host2');
+      var host2ShadowRoot = host2.attachShadow({mode: 'closed'});
+      var host2ShadowContent = document.importNode(document.querySelector('#for-host-2').content, true);
+      host2ShadowRoot.appendChild(host2ShadowContent);
+    </script>
+  </body>
+</html>

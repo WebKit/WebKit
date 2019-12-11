@@ -1,0 +1,64 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # operations: array; bug activity since the user last displayed the attachment form,
+  #   used by bug/activity/table.html.tmpl to display recent changes that will
+  #   be overwritten if the user submits these changes.  See that template
+  #   for further documentation.
+  # attachment: object; the attachment being changed.
+  #%]
+
+[%# The global Bugzilla->cgi object is used to obtain form variable values. %]
+[% USE Bugzilla %]
+[% cgi = Bugzilla.cgi %]
+
+[% PROCESS global/header.html.tmpl title = "Mid-air collision!" %]
+
+<h1>Mid-air collision detected!</h1>
+
+<p>
+  Someone else has made changes to
+  <a href="attachment.cgi?id=[% attachment.id %]&amp;action=edit">attachment [% attachment.id %]</a>
+  of [% "$terms.bug $attachment.bug_id" FILTER bug_link(attachment.bug_id) FILTER none %]
+  at the same time you were trying to. The changes made were:
+</p>
+
+<p>
+  [% PROCESS "bug/activity/table.html.tmpl" incomplete_data=0 %]
+</p>
+
+[% IF cgi.param("comment") %]
+<p>
+  Your comment was:<br>
+  <blockquote><pre class="bz_comment_text">
+    [% cgi.param("comment") FILTER html %]
+  </pre></blockquote>
+</p>
+[% END %]
+
+<p>
+You have the following choices:
+</p>
+
+<ul>
+  <li>
+    <form method="post" action="attachment.cgi">
+      [% PROCESS "global/hidden-fields.html.tmpl" exclude="^Bugzilla_(login|password)$" %]
+      <input type="submit" id="process" value="Submit my changes anyway">
+        This will cause all of the above changes to be overwritten.
+    </form>
+  </li>
+  <li>
+    Throw away my changes, and
+    <a href="attachment.cgi?id=[% attachment.id %]&amp;action=edit">revisit
+    attachment [% attachment.id %]</a>
+  </li>
+</ul>
+
+[% PROCESS global/footer.html.tmpl %]

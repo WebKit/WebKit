@@ -1,0 +1,25 @@
+Testing basic functionality of WI.EventListenerSet.
+
+Registering listeners.
+Installing listeners.
+Dispatching events.
+Invoked callback for foo event.
+Invoked callback for bar event.
+Invoked callback for baz event.
+Uninstalling and disconnecting listeners.
+Registering listeners.
+Dispatching events.
+Invoked callback for foo event.
+Invoked callback for bar event.
+Invoked callback for baz event.
+Uninstalling listeners.
+Installing listeners.
+Dispatching events.
+Invoked callback for foo event.
+Invoked callback for bar event.
+Invoked callback for baz event.
+Unregistering everything.
+Dispatching events.
+Uninstalling and disconnecting listeners.
+Dispatching events.
+

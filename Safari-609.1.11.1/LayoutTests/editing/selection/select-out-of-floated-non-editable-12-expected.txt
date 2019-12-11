@@ -1,0 +1,12 @@
+block-level text before floats
+first float*
+To test manually, drag from the middle of the 'first-float' div to the right, into the space after the float. The selection should go to the end of the 'first float' element and not jump to the beginning.
+
+SUCCESS: Selected test is 'float*' as expected
+| <div>
+|   "block-level text before floats"
+| <div>
+|   id="target"
+|   style="float: left"
+|   "first <#selection-anchor>float*<#selection-focus>"
+

@@ -1,0 +1,3 @@
+
+FAIL Using null in postMessage's second argument assert_equals: expected (boolean) true but got (number) 1
+

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Test toDataURL to JPEG on a non-premultipledAlpha WebGL context.</title>
+<script src="../../../resources/js-test.js"></script>
+<script src="resources/webgl-test.js"> </script>
+<script src="resources/webgl-test-utils.js"> </script>
+</head>
+<body>
+<div id="description"></div><div id="console"></div>
+<script>
+var wtu = WebGLTestUtils;
+
+description("Test toDataURL on a non-premultipledAlpha WebGL context.");
+var canvas = document.createElement("canvas");
+var gl = wtu.create3DContext(canvas, { premultipliedAlpha: false, preserveDrawingBuffer: true });
+shouldBeUndefined('gl.getContextAttributes().premultipledAlpha');
+shouldBeTrue('gl.getContextAttributes().preserveDrawingBuffer');
+
+var program = wtu.setupTexturedQuad(gl);
+
+glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors from setup.");
+
+debug("");
+debug("Fill the WebGL canvas with solid white at 50% transparency.")
+var tex = gl.createTexture();
+wtu.fillTexture(gl, tex, 2, 2, [255, 255, 255, 128], 0);
+var loc = gl.getUniformLocation(program, "tex");
+gl.uniform1i(loc, 0);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+wtu.drawQuad(gl);
+glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors from drawing.");
+
+debug("Convert to a JPEG data URL.")
+var imageUrl = canvas.toDataURL("image/jpeg");
+shouldBeTrue('imageUrl && imageUrl.length > 0');
+var image = document.createElement("img");
+image.addEventListener("load", function() {
+    debug("Append the image to the document.")
+    document.body.appendChild(image);
+    finishJSTest();
+}, false);
+image.src = imageUrl;
+
+
+</script>
+</body>
+</html>

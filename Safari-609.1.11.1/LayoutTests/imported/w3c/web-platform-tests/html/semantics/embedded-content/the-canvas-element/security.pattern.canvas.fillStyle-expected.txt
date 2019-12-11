@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 31: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+security.pattern.canvas.fillStyle
+Setting fillStyle to a pattern of an unclean canvas makes the canvas origin-unclean
+Actual output:
+
+PASS Setting fillStyle to a pattern of an unclean canvas makes the canvas origin-unclean 
+

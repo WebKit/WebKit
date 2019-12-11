@@ -1,0 +1,23 @@
+<script>
+function scrollFrame()
+{
+    var frame = document.getElementById("frame");
+    frame.style.position.top = document.documentElement.clientHeight - 100;
+    frame.style.position.left = 0;
+
+    var location = 220;
+    var id = setInterval(function() {
+        if (location > 260) {
+            clearInterval(id);
+            testRunner.notifyDone();
+        }
+
+        document.getElementById("frame").contentWindow.scrollTo(0, location);
+        location += 5;
+    }, 100);
+}
+testRunner.waitUntilDone();
+</script>
+<body onload="scrollFrame();">
+<iframe id="frame" style="position:absolute; top:400px; left: 0px; width:500; height:200;" src="resources/scrolling-iframe-out-of-viewport-interior.html"/>
+</body>

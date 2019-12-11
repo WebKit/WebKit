@@ -1,0 +1,42 @@
+This test makes sure that the two shorthand properties which set font-variant-caps get resolved correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.getComputedStyle(document.getElementById('t1')).getPropertyValue('font-variant-caps') is "small-caps"
+PASS window.getComputedStyle(document.getElementById('t2')).getPropertyValue('font-variant-caps') is "small-caps"
+PASS window.getComputedStyle(document.getElementById('t3')).getPropertyValue('font-variant-caps') is "small-caps"
+PASS window.getComputedStyle(document.getElementById('t4')).getPropertyValue('font-variant-caps') is "small-caps"
+PASS window.getComputedStyle(document.getElementById('t5')).getPropertyValue('font-variant-caps') is "small-caps"
+PASS window.getComputedStyle(document.getElementById('t6')).getPropertyValue('font-variant-caps') is "small-caps"
+PASS window.getComputedStyle(document.getElementById('t7')).getPropertyValue('font-variant-caps') is "small-caps"
+PASS window.getComputedStyle(document.getElementById('t8')).getPropertyValue('font-variant-caps') is "small-caps"
+PASS window.getComputedStyle(document.getElementById('t9')).getPropertyValue('font-variant-caps') is "small-caps"
+PASS window.getComputedStyle(document.getElementById('t10')).getPropertyValue('font-variant-caps') is "normal"
+PASS window.getComputedStyle(document.getElementById('t11')).getPropertyValue('font-variant-caps') is "normal"
+PASS window.getComputedStyle(document.getElementById('t12')).getPropertyValue('font-variant-caps') is "normal"
+PASS window.getComputedStyle(document.getElementById('t13')).getPropertyValue('font-variant-caps') is "normal"
+PASS window.getComputedStyle(document.getElementById('t14')).getPropertyValue('font-variant-caps') is "normal"
+PASS window.getComputedStyle(document.getElementById('t15')).getPropertyValue('font-variant-caps') is "normal"
+PASS window.getComputedStyle(document.getElementById('t1')).getPropertyValue('font-variant') is "small-caps"
+PASS window.getComputedStyle(document.getElementById('t2')).getPropertyValue('font-variant') is "small-caps"
+PASS window.getComputedStyle(document.getElementById('t3')).getPropertyValue('font-variant') is "small-caps"
+PASS window.getComputedStyle(document.getElementById('t4')).getPropertyValue('font-variant') is "small-caps"
+PASS window.getComputedStyle(document.getElementById('t5')).getPropertyValue('font-variant') is "small-caps"
+PASS window.getComputedStyle(document.getElementById('t6')).getPropertyValue('font-variant') is "small-caps"
+PASS window.getComputedStyle(document.getElementById('t7')).getPropertyValue('font-variant') is "small-caps"
+PASS window.getComputedStyle(document.getElementById('t8')).getPropertyValue('font-variant') is "small-caps"
+PASS window.getComputedStyle(document.getElementById('t9')).getPropertyValue('font-variant') is "small-caps"
+PASS window.getComputedStyle(document.getElementById('t10')).getPropertyValue('font-variant') is "normal"
+PASS window.getComputedStyle(document.getElementById('t11')).getPropertyValue('font-variant') is "normal"
+PASS window.getComputedStyle(document.getElementById('t12')).getPropertyValue('font-variant') is "normal"
+PASS window.getComputedStyle(document.getElementById('t13')).getPropertyValue('font-variant') is "normal"
+PASS window.getComputedStyle(document.getElementById('t14')).getPropertyValue('font-variant') is "normal"
+PASS window.getComputedStyle(document.getElementById('t15')).getPropertyValue('font-variant') is "normal"
+PASS window.getComputedStyle(document.getElementById('t16')).getPropertyValue('font-variant') is "common-ligatures super small-caps lining-nums historical-forms simplified"
+PASS window.getComputedStyle(document.getElementById('t17')).getPropertyValue('font-variant') is "normal"
+PASS window.getComputedStyle(document.getElementById('t17')).getPropertyValue('font-variant-caps') is "normal"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

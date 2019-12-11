@@ -1,0 +1,43 @@
+<script>
+if (testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+<style>
+@keyframes color-keyframes {
+    from { color: red; }
+    to {  color: green; }
+}
+.color-animation {
+    animation-duration: 0.5s;
+    animation-name: color-keyframes;
+}
+#test { position: relative; }
+</style>
+<div id=test>
+Test that a simple animation on an element with a layer doesn't generate compositing updates.
+</div>
+<script>
+let initialCompositingUpdateCount = 0;
+
+if (window.internals)
+    internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+
+setTimeout(() => {
+    test.className = "color-animation";
+    if (window.internals) {
+        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+        initialCompositingUpdateCount = internals.compositingUpdateCount();
+    }
+}, 0);
+
+test.onanimationend = () => {
+    if (!window.internals)
+        return;
+    log.innerHTML += `compositingUpdateCount: ${internals.compositingUpdateCount() - initialCompositingUpdateCount}`;
+    testRunner.notifyDone();
+};
+
+</script>
+<div id=log></div>

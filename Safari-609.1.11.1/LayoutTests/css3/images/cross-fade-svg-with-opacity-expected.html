@@ -1,0 +1,24 @@
+<html>
+<head>
+    <title>Two identical gray squares should appear below.</title>
+    <style>
+    div {
+        width: 100px;
+        height: 100px;
+        margin: 8px 0px;
+    }
+
+    #crossfade {
+        background-image: -webkit-cross-fade(url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><rect fill='white' width='100' height='100'></rect></svg>"), url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><rect fill='black' width='100' height='100'></rect></svg>"), 50%);
+    }
+
+    #reference {
+        background-color: #808080;
+    }
+    </style>
+</head>
+<body>
+    <div id="reference"></div>
+    <div id="crossfade"></div>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<body>
+<style>
+#container div { width: 10px; height: 10px; }
+</style>
+<script src="/resources/js-test-pre.js"></script>
+<div id="container">
+</div>
+<script>
+
+description('This tests causing resource timing buffer to be full during a style recalc.<br>'
+    + 'WebKit should not hit a release assertion by dispatching an event synchronously.');
+
+function loadImagesInAnotherFrame(count)
+{
+    const iframe = document.createElement('iframe');
+    document.body.appendChild(iframe);
+    const doc = iframe.contentDocument;
+    let loadCount = 0;
+    for (let i = 0; i < count; i++) {
+        const image = doc.createElement('img');
+        image.src = '../../resources/square100.png?resource=' + i;
+        doc.body.appendChild(image);
+        image.onload = () => {
+            loadCount++;
+            if (loadCount == count)
+                startTest();
+        }
+    }
+}
+
+function startTest()
+{
+    evalAndLog('container.innerHTML = ""; resourcetimingbufferfullFired = false');
+    evalAndLog('performance.setResourceTimingBufferSize(3); performance.clearResourceTimings()');
+    shouldBe('performance.getEntriesByType("resource").length', '0');
+    evalAndLog('divsWithBackgroundImages(7); container.getBoundingClientRect()');
+    shouldBe('resources = performance.getEntriesByType("resource"); resources.length', '3');
+    shouldBeEqualToString('resources[0].initiatorType', 'css');
+    shouldBeEqualToString('new URL(resources[0].name).search', '?resource=0');
+    shouldBeEqualToString('new URL(resources[1].name).search', '?resource=1');
+    shouldBeEqualToString('new URL(resources[2].name).search', '?resource=2');
+    shouldBe('resourcetimingbufferfullEventCount', '0');
+}
+
+function divsWithBackgroundImages(count)
+{
+    const container = document.getElementById('container');
+    for (let i = 0; i < count; i++) {
+        const div = document.createElement('div');
+        div.style.backgroundImage = `url('../../resources/square100.png?resource=${i}')`;
+        container.appendChild(div);
+    }
+}
+
+setTimeout(finishJSTest, 3000);
+
+let resourcetimingbufferfullEventCount = 0;
+performance.onresourcetimingbufferfull = () => {
+    resourcetimingbufferfullEventCount++;
+    debug('');
+    debug('Inside resourcetimingbufferfull ' + resourcetimingbufferfullEventCount);
+    if (resourcetimingbufferfullEventCount == 2) {
+        shouldBe('resources = performance.getEntriesByType("resource"); resources.length', '3');
+        shouldBeEqualToString('new URL(resources[0].name).search', '?resource=3');
+        shouldBeEqualToString('new URL(resources[1].name).search', '?resource=4');
+        shouldBeEqualToString('new URL(resources[2].name).search', '?resource=5');
+    }
+    shouldBe('performance.clearResourceTimings(); performance.getEntriesByType("resource").length', '0');
+
+    if (resourcetimingbufferfullEventCount < 2)
+        return;
+
+    setTimeout(() => {
+        debug('');
+        debug('After resourcetimingbufferfull');
+        shouldBe('resources = performance.getEntriesByType("resource"); resources.length', '1');
+        shouldBeEqualToString('resources[0].initiatorType', 'css');
+        shouldBeEqualToString('new URL(resources[0].name).search', '?resource=6');
+        finishJSTest();
+    }, 0);
+}
+
+evalAndLog('loadImagesInAnotherFrame(7)');
+
+var jsTestIsAsync = true;
+
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

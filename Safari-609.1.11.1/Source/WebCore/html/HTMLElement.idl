@@ -1,0 +1,73 @@
+/*
+ * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+[
+    CustomConstructor(),
+    CustomPushEventHandlerScope,
+    ExportMacro=WEBCORE_EXPORT,
+    JSGenerateToNativeObject,
+] interface HTMLElement : Element {
+    // Metadata attributes.
+    [CEReactions, Reflect] attribute DOMString title;
+    [CEReactions, Reflect] attribute DOMString lang;
+    [CEReactions] attribute boolean translate;
+    [CEReactions] attribute DOMString dir;
+
+    // User interaction.
+    [CEReactions, Reflect] attribute boolean hidden;
+    void click();
+    [CEReactions, Reflect] attribute DOMString accessKey;
+    // readonly attribute DOMString accessKeyLabel; // FIXME: Not supported.
+    [CEReactions] attribute boolean draggable;
+    // [CEReactions] attribute HTMLMenuElement? contextMenu; // FIXME: Not supported.
+    [CEReactions] attribute boolean spellcheck;
+    // void forceSpellCheck(); // FIXME: Not supported.
+
+    [CEReactions] attribute [TreatNullAs=EmptyString] DOMString innerText;
+
+    // FIXME: Should be in a separate ElementContentEditable interface.
+    // https://html.spec.whatwg.org/#elementcontenteditable
+    [CEReactions] attribute DOMString contentEditable;
+    readonly attribute boolean isContentEditable;
+
+    // Extensions from CSSOM-view specification (https://drafts.csswg.org/cssom-view/#extensions-to-the-htmlelement-interface).
+    [ImplementedAs=offsetParentForBindings] readonly attribute Element? offsetParent;
+    [ImplementedAs=offsetTopForBindings] readonly attribute double offsetTop; // FIXME: Should be of type long.
+    [ImplementedAs=offsetLeftForBindings] readonly attribute double offsetLeft; // FIXME: Should be of type long.
+    readonly attribute double offsetWidth; // FIXME: Should be of type long.
+    readonly attribute double offsetHeight; // FIXME: Should be of type long.
+
+    // Non Standard but may get added to the specification (https://github.com/whatwg/html/issues/668).
+    [CEReactions] attribute [TreatNullAs=EmptyString] DOMString outerText;
+
+    // iOS autocorrect / autocapitalization extensions.
+    [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE, CEReactions] attribute boolean autocorrect;
+    [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE, CEReactions] attribute [TreatNullAs=EmptyString] DOMString autocapitalize;
+
+    // FIXME: We are the only browser to support this now that Blink dropped it (http://crbug.com/688943).
+    [CEReactions, Reflect] attribute DOMString webkitdropzone;
+
+    attribute DOMString inputMode;
+    [EnabledBySetting=EnterKeyHint] attribute DOMString enterKeyHint;
+};
+
+HTMLElement implements ElementCSSInlineStyle;
+HTMLElement implements GlobalEventHandlers;
+HTMLElement implements HTMLOrForeignElement;

@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 21: IFrame load event fired: the IFrame's location is 'about:blank'.
+'about:blank' should not be blocked by CSP.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS The IFrame should not have been blocked. It wasn't.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

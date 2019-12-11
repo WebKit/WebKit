@@ -1,0 +1,235 @@
+This test setting various attributes of a elements to JavaScript null.
+
+TEST SUCCEEDED: The value was null. [tested Node.nodeValue]
+TEST SUCCEEDED: The value was null. [tested Node.prefix]
+TEST SUCCEEDED: The value was the empty string. [tested Node.textContent]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLElement.title]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLElement.id]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLElement.lang]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLElement.dir]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLElement.className]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLElement.innerHTML]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLElement.innerText]
+TEST SUCCEEDED: Exception (SyntaxError: The string did not match the expected pattern.) was thrown as expected. [tested HTMLElement.contentEditable]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAnchorElement.accessKey]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAnchorElement.charset]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAnchorElement.coords]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAnchorElement.hreflang]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAnchorElement.name]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAnchorElement.rel]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAnchorElement.rev]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAnchorElement.shape]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAnchorElement.target]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAnchorElement.type]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAppletElement.align]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAppletElement.alt]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAppletElement.archive]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAppletElement.code]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAppletElement.height]
+TEST SUCCEEDED: The value was the string '0'. [tested HTMLAppletElement.hspace]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAppletElement.name]
+TEST SUCCEEDED: The value was the string '0'. [tested HTMLAppletElement.vspace]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAppletElement.width]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAreaElement.accessKey]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAreaElement.alt]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAreaElement.coords]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAreaElement.shape]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLAreaElement.target]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLBaseElement.target]
+
+
+TEST SUCCEEDED: The value was the empty string. [tested HTMLBodyElement.aLink]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLBodyElement.background]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLBodyElement.bgColor]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLBodyElement.link]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLBodyElement.text]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLBodyElement.vLink]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLBRElement.clear]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLButtonElement.accessKey]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLButtonElement.name]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLButtonElement.value]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLDivElement.align]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLEmbedElement.align]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLEmbedElement.name]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLEmbedElement.type]
+
+TEST SUCCEEDED: The value was the empty string. [tested HTMLFontElement.color]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLFontElement.face]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLFontElement.size]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLFormElement.name]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLFormElement.acceptCharset]
+TEST SUCCEEDED: The value was the string 'application/x-www-form-urlencoded'. [tested HTMLFormElement.encoding]
+TEST SUCCEEDED: The value was the string 'application/x-www-form-urlencoded'. [tested HTMLFormElement.enctype]
+TEST SUCCEEDED: The value was the string 'get'. [tested HTMLFormElement.method]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLFormElement.target]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLFrameElement.frameBorder]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLFrameElement.marginHeight]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLFrameElement.marginWidth]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLFrameElement.name]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLFrameElement.scrolling]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLFrameSetElement.cols]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLFrameSetElement.rows]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLHeadElement.profile]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLHeadingElement.align]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLHRElement.align]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLHRElement.size]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLHRElement.width]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLHtmlElement.version]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLIFrameElement.align]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLIFrameElement.frameBorder]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLIFrameElement.height]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLIFrameElement.marginHeight]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLIFrameElement.marginWidth]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLIFrameElement.name]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLIFrameElement.scrolling]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLIFrameElement.width]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLImageElement.name]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLImageElement.align]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLImageElement.alt]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLImageElement.border]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLImageElement.useMap]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLInputElement.accept]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLInputElement.accessKey]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLInputElement.align]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLInputElement.alt]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLInputElement.defaultValue]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLInputElement.name]
+TEST SUCCEEDED: The value was the string 'text'. [tested HTMLInputElement.type]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLInputElement.useMap]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLInputElement.value]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLLabelElement.accessKey]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLLabelElement.htmlFor]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLLegendElement.accessKey]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLLegendElement.align]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLLIElement.type]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLLinkElement.charset]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLLinkElement.hreflang]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLLinkElement.media]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLLinkElement.rel]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLLinkElement.rev]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLLinkElement.target]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLLinkElement.type]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLMapElement.name]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLMetaElement.content]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLMetaElement.httpEquiv]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLMetaElement.name]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLMetaElement.scheme]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLModElement.dateTime]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLObjectElement.code]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLObjectElement.align]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLObjectElement.archive]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLObjectElement.border]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLObjectElement.codeType]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLObjectElement.height]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLObjectElement.name]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLObjectElement.standby]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLObjectElement.type]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLObjectElement.useMap]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLObjectElement.width]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLOListElement.type]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLOptGroupElement.label]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLOptionElement.text]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLOptionElement.label]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLOptionElement.value]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLParagraphElement.align]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLParamElement.name]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLParamElement.type]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLParamElement.value]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLParamElement.valueType]
+
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLScriptElement.text]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLScriptElement.htmlFor]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLScriptElement.event]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLScriptElement.charset]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLScriptElement.type]
+
+TEST SUCCEEDED: The value was the empty string. [tested HTMLSelectElement.value]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLSelectElement.name]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLStyleElement.media]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLStyleElement.type]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableCaptionElement.align]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableCellElement.abbr]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableCellElement.align]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableCellElement.axis]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLTableCellElement.bgColor]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableCellElement.ch]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableCellElement.chOff]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableCellElement.headers]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableCellElement.height]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLTableCellElement.scope]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableCellElement.vAlign]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableCellElement.width]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableColElement.align]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableColElement.ch]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableColElement.chOff]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableColElement.vAlign]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableColElement.width]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableElement.align]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLTableElement.bgColor]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableElement.border]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLTableElement.cellPadding]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLTableElement.cellSpacing]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableElement.frame]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableElement.rules]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableElement.summary]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableElement.width]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableRowElement.align]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLTableRowElement.bgColor]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableRowElement.ch]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableRowElement.chOff]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableRowElement.vAlign]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableSectionElement.align]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableSectionElement.ch]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableSectionElement.chOff]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableSectionElement.vAlign]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTextAreaElement.defaultValue]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTextAreaElement.accessKey]
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTextAreaElement.name]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLTextAreaElement.value]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTitleElement.text]
+
+TEST SUCCEEDED: The value was the string 'null'. [tested HTMLUListElement.type]
+
+

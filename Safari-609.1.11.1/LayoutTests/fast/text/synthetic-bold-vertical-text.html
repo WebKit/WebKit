@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+This test makes sure that synthetic bold on vertical text doesn't draw outside of the bounds of the line box. The test passes if you see nothing below.
+<div style="position: relative;">
+<div id="test" style="position: absolute; left: 50px; top: 50px; font-family: 'Hiragino Maru Gothic ProN'; writing-mode: vertical-rl; font-weight: bold">Hello</div>
+<div id="cover" style="position: absolute; left: 50px; top: 50px; width: 40px; height: 50vh; background: white;"></div>
+</div>
+</body>
+</html>

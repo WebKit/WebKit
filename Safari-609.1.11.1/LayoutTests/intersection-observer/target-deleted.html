@@ -1,0 +1,38 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableIntersectionObserver=true ] -->
+<head>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/gc.js"></script>
+<body>
+
+<div id="target" style="width: 100px; height: 100px; background-color: green"></div>
+
+<script>
+    function observerShouldBeRemoved()
+    {
+        return new Promise(function(resolve) {
+            handle = setInterval(function() {
+                gc();
+                if (internals && internals.numberOfIntersectionObservers(document) == 0) {
+                    clearInterval(handle);
+                    resolve();
+                }
+            }, 10);
+        });
+    }
+
+    async_test(function(t) {
+        let observer = new IntersectionObserver(function(entries) {
+            if (entries[0].isIntersecting) {
+                entries[0].target.remove();
+                observerShouldBeRemoved().then(function() {
+                    t.done();
+                });
+            }
+        });
+        observer.observe(document.getElementById("target"));
+        assert_equals(internals.numberOfIntersectionObservers(document), 1);
+    }, "IntersectionObserver doesn't keep unreachable target alive");
+</script>
+</body>
+</html>

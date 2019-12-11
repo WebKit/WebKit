@@ -1,0 +1,76 @@
+<html>
+<head>
+  <style>
+    .box {
+      position: relative;
+      left: 0;
+      height: 100px;
+      width: 100px;
+      margin: 10px;
+      background-color: blue;
+    }
+    .transition {
+      -webkit-transition-property: left;
+      -webkit-transition-duration: 2s;
+    }
+    #box4 {
+      -webkit-transition-property: inherit;
+    }
+  </style>
+  <script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    var kExpecteds = [
+      'all', /* box1 */
+      'left', /* box2 */
+      'left', /* box3 */
+      'left', /* box4 */ /* inherits from box3 */
+      'left', /* box5 */
+      'all', /* box6 */ /* does NOT inherit */
+    ];
+    
+    function testProperties()
+    {
+      var result = '';
+
+      var boxes = document.body.getElementsByClassName('box');
+      for (var i = 0; i < boxes.length; ++i) {
+        var curBox = boxes[i];
+        var curProp = window.getComputedStyle(curBox).webkitTransitionProperty;
+        if (curProp == kExpecteds[i])
+          result += "PASS -- ";
+        else
+          result += "FAIL -- ";
+        result += "Box " + (i+1) + " computed transition property: " + curProp + " expected: " + kExpecteds[i] + "<br>";
+      }
+
+      document.body.removeChild(document.getElementById('container'));
+      document.getElementById('result').innerHTML = result;
+      if (window.testRunner)
+          testRunner.notifyDone();
+
+    }
+
+    window.addEventListener('load', testProperties, false);
+  </script>
+</head>
+<body>
+
+<div id="container">
+  <div id="box1" class="box"></div>
+  <div id="box2" class="box transition"></div>
+  <div id="box3" class="box transition">
+    <div id="box4" class="box"></div>
+  </div>
+  <div id="box5" class="box transition">
+    <div id="box6" class="box"></div>
+  </div>
+</div>
+
+<div id="result"></div>
+
+</body>
+</html>

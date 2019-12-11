@@ -1,0 +1,63 @@
+Tests that index validation for drawElements does not examine too many indices
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS WebGL context exists
+PASS Successfully enabled OES_element_index_uint extension
+PASS OES_element_index_uint listed as supported and getExtension succeeded
+Test that draws with unsigned integer indices produce the expected results
+PASS Draw 0 passed pixel test
+Testing with valid indices
+PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+PASS getError was expected value: NO_ERROR : 
+PASS gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_INT, 0) is undefined.
+PASS getError was expected value: NO_ERROR : 
+Testing with out-of-range indices
+Enable vertices, valid
+PASS getError was expected value: NO_ERROR : 
+PASS gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_INT, 0) is undefined.
+PASS getError was expected value: NO_ERROR : 
+Enable normals, out-of-range
+PASS getError was expected value: NO_ERROR : 
+PASS gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_INT, 0) is undefined.
+PASS getError was expected value: INVALID_OPERATION : 
+Test with enabled attribute that does not belong to current program
+Enable an extra attribute with null
+PASS getError was expected value: NO_ERROR : 
+PASS gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_INT, 0) is undefined.
+PASS getError was expected value: INVALID_OPERATION : 
+Enable an extra attribute with insufficient data buffer
+PASS getError was expected value: NO_ERROR : 
+PASS gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_INT, 0) is undefined.
+Pass large negative index to vertexAttribPointer
+PASS getError was expected value: INVALID_VALUE : 
+PASS gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_INT, 0) is undefined.
+Test that client data is always copied during bufferData and bufferSubData calls
+PASS gl.drawElements(gl.TRIANGLE_STRIP, 4, gl.UNSIGNED_INT, 4) generated expected GL error: NO_ERROR.
+PASS gl.drawElements(gl.TRIANGLE_STRIP, 4, gl.UNSIGNED_INT, 0) generated expected GL error: INVALID_OPERATION.
+PASS gl.drawElements(gl.TRIANGLE_STRIP, 4, gl.UNSIGNED_INT, 8) generated expected GL error: INVALID_OPERATION.
+PASS gl.drawElements(gl.TRIANGLE_STRIP, 4, gl.UNSIGNED_INT, 4) generated expected GL error: NO_ERROR.
+PASS gl.drawElements(gl.TRIANGLE_STRIP, 4, gl.UNSIGNED_INT, 0) generated expected GL error: INVALID_OPERATION.
+PASS gl.drawElements(gl.TRIANGLE_STRIP, 4, gl.UNSIGNED_INT, 8) generated expected GL error: INVALID_OPERATION.
+Test that updating the size of a vertex buffer is properly noticed by the WebGL implementation.
+PASS getError was expected value: NO_ERROR : after initialization
+PASS getError was expected value: NO_ERROR : after vertex setup
+PASS getError was expected value: NO_ERROR : after texture coord setup
+PASS getError was expected value: NO_ERROR : after vertex redefinition
+PASS getError was expected value: NO_ERROR : after texture coordinate / color redefinition
+PASS getError was expected value: NO_ERROR : after setting up indices
+PASS getError was expected value: NO_ERROR : after drawing
+Test out of range indices
+PASS gl.drawElements(gl.TRIANGLE_STRIP, 4, gl.UNSIGNED_INT, 4) generated expected GL error: NO_ERROR.
+PASS gl.drawElements(gl.TRIANGLE_STRIP, 4, gl.UNSIGNED_INT, 0) generated expected GL error: INVALID_OPERATION.
+PASS gl.drawElements(gl.TRIANGLE_STRIP, 4, gl.UNSIGNED_INT, 8) generated expected GL error: INVALID_OPERATION.
+Verifies that the index validation code which is within bufferSubData does not crash.
+PASS getError was expected value: INVALID_VALUE : after attempting to update a buffer outside of the allocated bounds
+PASS bufferSubData, when buffer object was initialized with null, did not crash
+PASS getError was expected value: NO_ERROR : there should be no errors
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

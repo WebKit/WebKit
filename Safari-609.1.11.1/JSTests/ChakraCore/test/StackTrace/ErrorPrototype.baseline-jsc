@@ -1,0 +1,49 @@
+Prototype is new Error()
+runtest@ErrorPrototype.js:46:38
+global code@ErrorPrototype.js:62:8
+
+Prototype has new Error()
+runtest@ErrorPrototype.js:46:38
+global code@ErrorPrototype.js:62:8
+
+Prototype is Error.prototype
+undefined
+
+Prototype has Error.prototype
+undefined
+
+Prototype is new RangeError()
+runtest@ErrorPrototype.js:48:43
+global code@ErrorPrototype.js:62:8
+
+Prototype has new RangeError()
+runtest@ErrorPrototype.js:48:43
+global code@ErrorPrototype.js:62:8
+
+Prototype is RangeError.prototype
+undefined
+
+Prototype has RangeError.prototype
+undefined
+
+Prototype is 123
+undefined
+
+Prototype has 123
+undefined
+
+Prototype is new String()
+undefined
+
+Prototype has new String()
+undefined
+
+throw Error.prototype
+undefined
+
+throw RangeError.prototype
+undefined
+
+throw TypeError.prototype
+undefined
+

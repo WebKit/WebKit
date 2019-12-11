@@ -1,0 +1,23 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<style>
+.scroll { position:relative; width:200px; height:200px; overflow:scroll }
+.scrollcontent { position:absolute; width:500px; height:500px; background:green; }
+.none { position:relative; top:150px; left:150px; width:100px; height:100px; background:blue; touch-action: none; }
+</style>
+<body>
+<div class="scroll"><div class="scrollcontent"><div class="none"></div></div></div>
+<div class="scroll target"><div class="scrollcontent"><div class="none"></div></div></div>
+<div class="scroll target" style="border:25px solid yellow"><div class="scrollcontent"><div class="none"></div></div></div>
+<pre id="results"></pre>
+<script>
+for (target of document.querySelectorAll(".target"))
+    target.scrollBy(150,150);
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+    results.innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION);
+</script>
+</body>
+</html>

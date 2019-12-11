@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+</head>
+
+<body onload="doTest()">
+    <div id="description"></div>
+    <div id="console"></div>
+</body>
+
+<script>
+    description(`
+        Based on RFC 6265 Section-5.4:
+        2. The user agent SHOULD sort the cookie-list in the following order:
+          a) Cookies with longer paths are listed before cookies with shorter paths.
+          b) Among cookies that have equal-length path fields, cookies with earlier
+             creation-times are listed before cookies with later creation-times.
+    `);
+    window.jsTestIsAsync = true;
+
+    function doTest() {
+        const resultUrl = 'resources/cookie-with-multiple-level-path.php';
+
+        setCookie('foo', 'bar', '/')
+            .then(() => setCookie('foo', 'buz', '/cookies/resources')) // override foo
+            .then(() => fetch(resultUrl))
+            .then(response => response.text())
+            .then(result => {
+                // a. foo=bar (created=T, path=/)
+                // b. foo=buz (created=T, path=/cookies/resources)
+                // then order must be: b => a
+                shouldBe(() => result, "'foo=buz; foo=bar'");
+                finishJSTest();
+            })
+            .catch((e) => {
+                testFailed("Exception caught");
+                console.log(e);
+                finishJSTest();
+            });
+    }
+
+    function setCookie(name, value, path) {
+        const url = '/cookies/resources/setCookies.cgi';
+        const cookie = prepareCookieHeader(name, value, path, 60);
+
+        return fetch(url, {headers: {"Set-Cookie": cookie}});
+    }
+
+    function prepareCookieHeader(name, value, path, maxAge = 30) {
+        const entries = [[name, value]];
+
+        if (path)
+            entries.push(['path', path]);
+
+        if (maxAge) {
+            const expires = new Date(Date.now() + maxAge * 1000);
+
+            entries.push(['expires', expires.toUTCString()]);
+            entries.push(['max-age', maxAge]);
+        } else
+            entries.push(['max-age', 0]);
+
+        return entries
+            .map(([name, value]) => name + '=' + value)
+            .join('; ');
+    }
+
+    function sleep(timeout) {
+        return new Promise((resolve) => {
+            setTimeout(resolve, timeout);
+        });
+    }
+</script>
+
+</html>

@@ -1,0 +1,70 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {UL} at (0,0) size 784x168
+        RenderListItem {LI} at (40,0) size 744x18
+          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderText {#text} at (0,0) size 91x18
+            text run at (0,0) width 91: "Default style: "
+          RenderBlock {PROGRESS} at (90,1) size 161x17
+            RenderProgress {DIV} at (0,0) size 160x16
+              RenderBlock {DIV} at (0,0) size 160x16 [bgcolor=#808080]
+                RenderBlock {DIV} at (0,0) size 16x16 [bgcolor=#008000]
+        RenderListItem {LI} at (40,18) size 744x18
+          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderText {#text} at (0,0) size 98x18
+            text run at (0,0) width 98: "Progress style: "
+          RenderBlock {PROGRESS} at (97,1) size 161x17 [bgcolor=#0000FF] [border: (3px solid #000066)]
+            RenderProgress {DIV} at (3,3) size 154x10
+              RenderBlock {DIV} at (0,0) size 154x10
+                RenderBlock {DIV} at (0,0) size 31x10 [bgcolor=#008000]
+        RenderListItem {LI} at (40,36) size 744x30
+          RenderListMarker at (-17,12) size 7x18: bullet
+          RenderText {#text} at (0,12) size 138x18
+            text run at (0,12) width 138: "Progress style (size): "
+          RenderBlock {PROGRESS} at (137,-1) size 301x31
+            RenderProgress {DIV} at (0,0) size 300x30
+              RenderBlock {DIV} at (0,0) size 300x30 [bgcolor=#808080]
+                RenderBlock {DIV} at (0,0) size 90x30 [bgcolor=#008000]
+        RenderListItem {LI} at (40,66) size 744x18
+          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderText {#text} at (0,0) size 66x18
+            text run at (0,0) width 66: "Bar style: "
+          RenderBlock {PROGRESS} at (65,1) size 161x17
+            RenderProgress {DIV} at (0,0) size 160x16
+              RenderBlock {DIV} at (0,0) size 160x16 [bgcolor=#FF0000] [border: (3px solid #990000)]
+                RenderBlock {DIV} at (3,3) size 62x10 [bgcolor=#008000]
+        RenderListItem {LI} at (40,84) size 744x18
+          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderText {#text} at (0,0) size 80x18
+            text run at (0,0) width 80: "Value style: "
+          RenderBlock {PROGRESS} at (79,1) size 161x17
+            RenderProgress {DIV} at (0,0) size 160x16
+              RenderBlock {DIV} at (0,0) size 160x16 [bgcolor=#808080]
+                RenderBlock {DIV} at (0,0) size 80x16 [bgcolor=#FFFF00] [border: (3px solid #999900)]
+        RenderListItem {LI} at (40,102) size 744x30
+          RenderListMarker at (-17,12) size 7x18: bullet
+          RenderText {#text} at (0,12) size 195x18
+            text run at (0,12) width 195: "Styling for all three elements: "
+          RenderBlock {PROGRESS} at (194,-1) size 161x31 [bgcolor=#0000FF] [border: (3px solid #000066)]
+            RenderProgress {DIV} at (3,3) size 154x24
+              RenderBlock {DIV} at (0,0) size 154x24 [bgcolor=#FF0000] [border: (3px solid #990000)]
+                RenderBlock {DIV} at (3,3) size 89x18 [bgcolor=#FFFF00] [border: (3px solid #999900)]
+        RenderListItem {LI} at (40,132) size 744x18
+          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderText {#text} at (0,0) size 235x18
+            text run at (0,0) width 235: "Removing appearance dynamically: "
+          RenderBlock {PROGRESS} at (234,1) size 161x17
+            RenderProgress {DIV} at (0,0) size 160x16
+              RenderBlock {DIV} at (0,0) size 160x16 [bgcolor=#808080]
+                RenderBlock {DIV} at (0,0) size 112x16 [bgcolor=#008000]
+        RenderListItem {LI} at (40,150) size 744x18
+          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderText {#text} at (0,0) size 278x18
+            text run at (0,0) width 278: "Giving progress style change dynamically: "
+          RenderBlock {PROGRESS} at (277,1) size 161x17 [bgcolor=#ADD8E6]
+            RenderProgress {DIV} at (0,0) size 160x16
+              RenderBlock {DIV} at (0,0) size 160x16
+                RenderBlock {DIV} at (0,0) size 128x16 [bgcolor=#008000]

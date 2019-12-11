@@ -1,0 +1,38 @@
+<style>
+    #original {
+        position: absolute;
+        top: 100px;
+        left: 100px;
+        width: 100px;
+        height: 100px;
+        background-color: blue;
+    }
+
+    #rotator {
+        position: absolute;
+        top: 100px;
+        left: 100px;
+        width: 100px;
+        height: 100px;
+        background-color: red;
+        animation: animation 5s infinite linear;
+    }
+
+    #cover {
+        position: absolute;
+        top: 150px;
+        left: 50px;
+        width: 200px;
+        height: 150px;
+        background-color: green;
+    }
+
+    @keyframes animation {
+        from { transform: rotate(40deg) translate(50%, 50%) }
+        to { transform: rotate(60deg) translate(50%, 50%) }
+    }
+</style>
+<p>You should not see any of the rotating red rectangle</p>
+<div id="original"></div>
+<div id="rotator"></div>
+<div id="cover"></div>

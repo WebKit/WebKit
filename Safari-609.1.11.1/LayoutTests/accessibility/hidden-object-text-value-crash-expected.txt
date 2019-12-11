@@ -1,0 +1,13 @@
+
+click
+Description text
+
+This tests that it won't cause a crash when computing the text value of an AX object that is hidden and has no node.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

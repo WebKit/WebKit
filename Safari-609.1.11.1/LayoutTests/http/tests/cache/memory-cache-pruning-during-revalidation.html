@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body onload="runTest()">
+<script src="/resources/js-test-pre.js"></script>
+<script>
+description("Make sure we don't crash if the memory cache is getting pruned while a resource is being revalidated.");
+window.jsTestIsAsync = true;
+
+function removeImageAndReload() {
+  img.remove();
+
+  img = document.createElement("img");
+  img.src = "/cache/resources/compass-no-cache.jpg"
+  img.onload = finishJSTest;
+  document.body.appendChild(img);
+
+  internals.clearMemoryCache();
+}
+
+function runTest() {
+    setTimeout(function() {
+        img = document.createElement("img");
+        img.src = "/cache/resources/compass-no-cache.jpg"
+        img.onload = removeImageAndReload;
+        document.body.appendChild(img);
+    }, 0);
+}
+</script>
+<script src="../resources/js-test-post.js"></script>
+<body>
+</html>

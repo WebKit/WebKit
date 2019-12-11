@@ -1,0 +1,72 @@
+# These symbols should only be needed to build with Xcode 5.x.
+# This should be removed once we no longer need to build with those versions.
+
+__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_13basic_istreamIcS2_EE
+__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE8_NS_13basic_ostreamIcS2_EE
+__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_14basic_iostreamIcS2_EE
+__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE16_NS_13basic_ostreamIcS2_EE
+__ZTCNSt3__119basic_istringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_13basic_istreamIcS2_EE
+__ZTCNSt3__119basic_ostringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_13basic_ostreamIcS2_EE
+__ZTTNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE
+__ZTTNSt3__119basic_istringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE
+__ZTTNSt3__119basic_ostringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE
+__ZTVNSt3__115basic_stringbufIcNS_11char_traitsIcEENS_9allocatorIcEEEE
+__ZTVNSt3__117bad_function_callE
+__ZTVNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE
+__ZTVNSt3__119basic_istringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE
+__ZTVNSt3__119basic_ostringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE
+
+# FIXME: The following symbols only appear in Debug builds with Xcode 5.x.
+# They should be removed from this list after determining how to remove the
+# weak externals from WebCore.
+
+# Soft-linked functions in source files.  Most probably have
+# __attribute__((visibility("default"))) declared in the original header
+# file, so if the compiler doesn't inline the redeclared method in the
+# SOFT_LINK() macro, it gets exported from WebCore.
+
+# Source/WebCore/platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm
+_AudioConverterConvertComplexBuffer
+_AudioConverterNew
+_MTAudioProcessingTapGetSourceAudio
+_MTAudioProcessingTapGetStorage
+
+# Source/WebCore/platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm
+_CVPixelBufferGetBaseAddress
+_CVPixelBufferGetBytesPerRow
+_CVPixelBufferGetDataSize
+_CVPixelBufferGetHeight
+_CVPixelBufferGetPixelFormatType
+_CVPixelBufferGetWidth
+_CVPixelBufferLockBaseAddress
+_CVPixelBufferUnlockBaseAddress
+_VTPixelTransferSessionCreate
+_VTPixelTransferSessionTransferImage
+
+# Source/WebCore/platform/cocoa/TelephoneNumberDetectorCocoa.cpp
+_DDDFAScannerCreateFromCache
+_DDDFAScannerFirstResultInUnicharArray
+# Source/WebCore/page/mac/ServicesOverlayController.mm
+_DDHighlightGetLayerWithContext
+_DDHighlightGetBoundingRect
+_DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection
+_DDHighlightPointIsOnHighlight
+
+
+# Subclasses of an exported C++ class in JavaScriptCore.
+
+# Source/JavaScriptCore/inspector/ScriptDebugServer.h
+__ZTVN9Inspector17ScriptDebugServer4TaskE
+# Source/JavaScriptCore/inspector/agents/InspectorDebuggerAgent.h
+__ZTVN9Inspector22InspectorDebuggerAgent8ListenerE
+
+# Member functions of an exported C++ class in WTF
+
+# Source/WTF/wtf/MediaTime.h
+__ZNK3WTF9MediaTime14hasBeenRoundedEv
+__ZNK3WTF9MediaTime14hasDoubleValueEv
+__ZNK3WTF9MediaTime18isNegativeInfiniteEv
+__ZNK3WTF9MediaTime18isPositiveInfiniteEv
+__ZNK3WTF9MediaTime7isValidEv
+__ZNK3WTF9MediaTime9timeScaleEv
+__ZNK3WTF9MediaTime9timeValueEv

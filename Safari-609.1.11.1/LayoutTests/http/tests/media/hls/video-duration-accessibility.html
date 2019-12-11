@@ -1,0 +1,59 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+    <head>
+        <script src=../../media-resources/video-test.js></script>
+        <script src=../../media-resources/media-controls.js></script>
+        <script>
+        if (window.accessibilityController) {
+            var controls;
+            var elapsedTimer, videoElement;
+            var seekTimes = [1, 2, 70, 130, 3670, 7300];
+            var seekCount = 0;
+            
+            function start() {
+                video = document.getElementById('video');
+                waitForEventOnce('canplaythrough', function() { video.play(); });
+                waitForEventOnce('play', playing);
+                waitForEventAndFail('stalled');
+                waitForEvent('seeked', seek);
+                video.src = "../resources/hls/generate-vod.php?duration=8000";
+            }
+
+            function playing() {
+                video.pause();
+                setTimeout(function() {
+                    testExpected('video.duration != Infinity', true);
+                    video.fastSeek(seekTimes[0]);
+                }, 200);
+            }
+            
+            function seek() {
+                seekCount++;
+                videoElement = accessibilityController.accessibleElementById("video");
+                elapsedTimer = videoElement.childAtIndex(0).childAtIndex(3);
+                
+                if (elapsedTimer.description.indexOf("Hours") !== -1)
+                    testExpected("elapsedTimer.description.indexOf('2 Hours') !== -1", true);
+                else if (elapsedTimer.description.indexOf("Hour") !== -1)
+                    testExpected("elapsedTimer.description.indexOf('1 Hour') !== -1", true);
+                else if (elapsedTimer.description.indexOf("Minutes") !== -1)
+                    testExpected("elapsedTimer.description.indexOf('2 Minutes') !== -1", true);
+                else if (elapsedTimer.description.indexOf("Minute") !== -1)
+                    testExpected("elapsedTimer.description.indexOf('1 Minute') !== -1", true);
+                else if (elapsedTimer.description.indexOf("Seconds") !== -1)
+                    testExpected("elapsedTimer.description.indexOf('2 Seconds') !== -1", true);
+                else if (elapsedTimer.description.indexOf("Second") !== -1)
+                    testExpected("elapsedTimer.description.indexOf('1 Second') !== -1", true);
+                
+                if (seekCount == seekTimes.length)
+                    endTest();
+                else
+                    video.fastSeek(seekTimes[seekCount]);
+            }
+        }
+        </script>
+    </head>
+    <body onload="start()">
+        <video width="640" id="video" controls></video>
+    </body>
+</html>

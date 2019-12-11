@@ -1,0 +1,25 @@
+Test calling getPropertyValue on computed styles for border radius properties.
+
+getPropertyValue(-webkit-border-top-right-radius): 10px 20px
+getPropertyCSSValue(-webkit-border-top-right-radius): [object CSSValueList]
+getPropertyValue(-webkit-border-top-right-radius): 10px
+getPropertyCSSValue(-webkit-border-top-right-radius): [object CSSPrimitiveValue]
+getPropertyValue(-webkit-border-top-left-radius): 10px 20px
+getPropertyCSSValue(-webkit-border-top-left-radius): [object CSSValueList]
+getPropertyValue(-webkit-border-top-left-radius): 10px
+getPropertyCSSValue(-webkit-border-top-left-radius): [object CSSPrimitiveValue]
+getPropertyValue(-webkit-border-bottom-right-radius): 10px 20px
+getPropertyCSSValue(-webkit-border-bottom-right-radius): [object CSSValueList]
+getPropertyValue(-webkit-border-bottom-right-radius): 10px
+getPropertyCSSValue(-webkit-border-bottom-right-radius): [object CSSPrimitiveValue]
+getPropertyValue(-webkit-border-bottom-left-radius): 10px 20px
+getPropertyCSSValue(-webkit-border-bottom-left-radius): [object CSSValueList]
+getPropertyValue(-webkit-border-bottom-left-radius): 10px
+getPropertyCSSValue(-webkit-border-bottom-left-radius): [object CSSPrimitiveValue]
+
+Test getting 0px value border radius.
+getPropertyValue(-webkit-border-top-left-radius): 0px
+getPropertyCSSValue(-webkit-border-top-left-radius): [object CSSPrimitiveValue]
+getPropertyValue(-webkit-border-top-left-radius): 0px
+getPropertyCSSValue(-webkit-border-top-left-radius): [object CSSPrimitiveValue]
+

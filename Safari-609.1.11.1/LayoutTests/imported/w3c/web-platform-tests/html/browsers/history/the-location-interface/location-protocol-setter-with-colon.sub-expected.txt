@@ -1,0 +1,5 @@
+
+PASS General setup 
+PASS Set location.protocol = location.protocol 
+PASS Set location.protocol to http:gunk 
+ 

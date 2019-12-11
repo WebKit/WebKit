@@ -1,0 +1,3 @@
+
+FAIL SVGAnimatedNumber interface - utilizing the surfaceScale property of SVGFESpecularLightingElement assert_throws: function "function () { feSpecularLightingElement.surfaceScale.baseVal = 'aString'; }" did not throw
+

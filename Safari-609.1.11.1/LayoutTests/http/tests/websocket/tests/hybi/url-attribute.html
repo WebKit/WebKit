@@ -1,0 +1,24 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script type="text/javascript">
+
+description("Both .URL and .url attributes should work (for compatibility reasons).");
+
+var url = "ws://127.0.0.1:8880/";
+var ws = new WebSocket(url);
+
+shouldBeEqualToString("ws.url", url);
+shouldBeEqualToString("ws.URL", url);
+shouldBeTrue("ws.URL === ws.url");
+
+</script>
+<script src="../../../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>
+

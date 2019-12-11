@@ -1,0 +1,327 @@
+<html>
+<head>
+<script src="../../../../resources/js-test-pre.js"></script>
+<style id="style" media="screen">
+.non-existent-class {
+    color: rgb(0, 0, 0);
+    clip: rect(0, 0, 1, 1);
+    content: counter(dummy, square);
+}
+</style>
+</head>
+<body>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function objCWrapperIsInstanceOf(node, className)
+{
+    if (!window.objCController)
+        return "only works under DumpRenderTree";
+    return !!objCController.isObjectInstanceOf(node, className);
+}
+
+function objCWrapperClass(node)
+{
+    if (!window.objCController)
+        return "only works under DumpRenderTree";
+    return objCController.className(node);
+}
+
+function objCObjectOfClass(name)
+{
+    if (!window.objCController)
+        return "only works under DumpRenderTree";
+    return objCController.objectOfClass(name);
+}
+
+function objCArrayOfString()
+{
+    if (!window.objCController)
+        return "only works under DumpRenderTree";
+    return objCController.arrayOfString();
+}
+
+function concatenateArray(array)
+{
+    var result = '';
+    for (i in array)
+        result += array[i];
+    return result;
+}
+
+function tagObjCWrapperClass(tagName)
+{
+    return objCWrapperClass(document.createElement(tagName));
+}
+
+function testTag(tagName, className, objCClassName)
+{
+    if (!objCClassName)
+        objCClassName = "DOM" + className;
+    if (window.objCController)
+        shouldBe("tagObjCWrapperClass('" + tagName + "')", "'" + objCClassName + "'");
+}
+
+function test(expression, className, objCClassName)
+{
+    if (!objCClassName)
+        objCClassName = "DOM" + className;
+    if (window.objCController)
+        shouldBe("objCWrapperClass(" + expression + ")", "'" + objCClassName + "'");
+}
+
+function runTest()
+{
+    // NOTE: This is a sister test to fast/dom/wrapper-class.html which test the JS wrapper classes.  Update accordingly.
+    description("This tests wrapper class names for Objective-C.");
+
+    stylesheet = document.getElementById("style").sheet;
+    root = document.documentElement;
+    xmlDocument = document.getElementById("xmlframe").contentDocument;
+
+    debug('Basics');
+    debug('');
+
+    test("document.createAttribute('test')", "Attr");
+    test("document.createComment('test')", "Comment");
+    test("document.createDocumentFragment()", "DocumentFragment");
+    test("document.implementation", "DOMImplementation", "DOMImplementation");
+    test("root.attributes", "NamedNodeMap");
+    test("document.createNodeIterator(root, 0, null, false)", "NodeIterator");
+    test("document.getElementsByTagName('div')", "HTMLCollection");
+    test("document.createRange()", "Range");
+    test("document.createTextNode('test')", "Text");
+    test("document.createTreeWalker(root, 0, null, false)", "TreeWalker");
+
+    debug('');
+    debug('XML');
+    debug('');
+
+    test("xmlDocument", "Document");
+    test("xmlDocument.createCDATASection('test')", "CDATASection");
+    test("xmlDocument.createElementNS('x', 'x', 'x')", "Element");
+    test("xmlDocument.createProcessingInstruction('target', 'test')", "ProcessingInstruction");
+
+    debug('');
+    debug('Events');
+    debug('');
+
+    test("document.createEvent('Event')", "Event");
+    test("document.createEvent('KeyboardEvent')", "KeyboardEvent");
+    test("document.createEvent('MouseEvent')", "MouseEvent");
+    test("document.createEvent('MutationEvent')", "MutationEvent");
+    test("document.createEvent('OverflowEvent')", "OverflowEvent");
+    test("document.createEvent('TextEvent')", "TextEvent");
+    test("document.createEvent('UIEvent')", "UIEvent");
+    test("document.createEvent('WheelEvent')", "WheelEvent");
+
+    debug('');
+    debug('CSS DOM');
+    debug('');
+
+    test("document.styleSheets", "StyleSheetList");
+    test("stylesheet", "CSSStyleSheet");
+    test("stylesheet.cssRules", "CSSRuleList");
+    test("stylesheet.cssRules.item(0)", "CSSStyleRule");
+    test("stylesheet.cssRules.item(0).style", "CSSStyleDeclaration");
+    test("stylesheet.cssRules.item(0).style.getPropertyCSSValue('color')", "CSSPrimitiveValue");
+    test("stylesheet.cssRules.item(0).style.getPropertyCSSValue('color').getRGBColorValue()", "RGBColor");
+    test("stylesheet.cssRules.item(0).style.getPropertyCSSValue('clip').getRectValue()", "Rect");
+    test("stylesheet.cssRules.item(0).style.getPropertyCSSValue('content')", "CSSValueList");
+    test("stylesheet.cssRules.item(0).style.getPropertyCSSValue('content').item(0).getCounterValue()", "Counter");
+    test("stylesheet.media", "MediaList");
+
+    debug('');
+    debug('XPath');
+    debug('');
+
+    test("document.createExpression('//*', document.createNSResolver(document))", "XPathExpression");
+    test("document.evaluate('//*', document, document.createNSResolver(document), 0, null)", "XPathResult");
+
+    debug('');
+    debug('Other');
+    debug('');
+
+    test("window", "Window", "DOMAbstractView");
+
+    debug('');
+    debug('HTML DOM');
+    debug('');
+
+    test("root.children", "HTMLCollection");
+    test("document", "HTMLDocument");
+    test("document.createElement('select').options", "HTMLOptionsCollection");
+
+    debug('');
+    debug('HTML Elements');
+    debug('');
+
+    testTag("a", "HTMLAnchorElement");
+    testTag("abbr", "HTMLElement");
+    testTag("acronym", "HTMLElement");
+    testTag("address", "HTMLElement");
+    testTag("applet", "HTMLAppletElement");
+    testTag("area", "HTMLAreaElement");
+    testTag("b", "HTMLElement");
+    testTag("base", "HTMLBaseElement");
+    testTag("basefont", "HTMLBaseFontElement");
+    testTag("bdo", "HTMLElement");
+    testTag("big", "HTMLElement");
+    testTag("blockquote", "HTMLBlockquoteElement", "DOMHTMLElement");
+    testTag("body", "HTMLBodyElement");
+    testTag("br", "HTMLBRElement");
+    testTag("button", "HTMLButtonElement");
+    testTag("canvas", "HTMLCanvasElement");
+    testTag("caption", "HTMLTableCaptionElement");
+    testTag("center", "HTMLElement");
+    testTag("cite", "HTMLElement");
+    testTag("code", "HTMLElement");
+    testTag("col", "HTMLTableColElement");
+    testTag("colgroup", "HTMLTableColElement");
+    testTag("dd", "HTMLElement");
+    testTag("del", "HTMLModElement");
+    testTag("dfn", "HTMLElement");
+    testTag("dir", "HTMLDirectoryElement");
+    testTag("div", "HTMLDivElement");
+    testTag("dl", "HTMLDListElement");
+    testTag("dt", "HTMLElement");
+    testTag("em", "HTMLElement");
+    testTag("embed", "HTMLEmbedElement");
+    testTag("fieldset", "HTMLFieldSetElement");
+    testTag("font", "HTMLFontElement");
+    testTag("form", "HTMLFormElement");
+    testTag("frame", "HTMLFrameElement");
+    testTag("frameset", "HTMLFrameSetElement");
+    testTag("head", "HTMLHeadElement");
+    testTag("h1", "HTMLHeadingElement");
+    testTag("h2", "HTMLHeadingElement");
+    testTag("h3", "HTMLHeadingElement");
+    testTag("h4", "HTMLHeadingElement");
+    testTag("h5", "HTMLHeadingElement");
+    testTag("h6", "HTMLHeadingElement");
+    testTag("hr", "HTMLHRElement");
+    testTag("html", "HTMLHtmlElement");
+    testTag("i", "HTMLElement");
+    testTag("iframe", "HTMLIFrameElement");
+    testTag("image", "HTMLElement");
+    testTag("img", "HTMLImageElement");
+    testTag("input", "HTMLInputElement");
+    testTag("ins", "HTMLModElement");
+    testTag("kbd", "HTMLElement");
+    testTag("keygen", "HTMLElement");
+    testTag("label", "HTMLLabelElement");
+    testTag("layer", "HTMLElement");
+    testTag("legend", "HTMLLegendElement");
+    testTag("li", "HTMLLIElement");
+    testTag("link", "HTMLLinkElement");
+    testTag("listing", "HTMLPreElement");
+    testTag("map", "HTMLMapElement");
+    testTag("marquee", "HTMLMarqueeElement");
+    testTag("menu", "HTMLMenuElement");
+    testTag("meta", "HTMLMetaElement");
+    testTag("nobr", "HTMLElement");
+    testTag("noembed", "HTMLElement");
+    testTag("noframes", "HTMLElement");
+    testTag("nolayer", "HTMLElement");
+    testTag("noscript", "HTMLElement");
+    testTag("object", "HTMLObjectElement");
+    testTag("ol", "HTMLOListElement");
+    testTag("optgroup", "HTMLOptGroupElement");
+    testTag("option", "HTMLOptionElement");
+    testTag("p", "HTMLParagraphElement");
+    testTag("param", "HTMLParamElement");
+    testTag("plaintext", "HTMLElement");
+    testTag("pre", "HTMLPreElement");
+    testTag("q", "HTMLQuoteElement");
+    testTag("s", "HTMLElement");
+    testTag("samp", "HTMLElement");
+    testTag("script", "HTMLScriptElement");
+    testTag("select", "HTMLSelectElement");
+    testTag("small", "HTMLElement");
+    testTag("span", "HTMLElement");
+    testTag("strike", "HTMLElement");
+    testTag("strong", "HTMLElement");
+    testTag("style", "HTMLStyleElement");
+    testTag("sub", "HTMLElement");
+    testTag("sup", "HTMLElement");
+    testTag("table", "HTMLTableElement");
+    testTag("tbody", "HTMLTableSectionElement");
+    testTag("td", "HTMLTableCellElement");
+    testTag("textarea", "HTMLTextAreaElement");
+    testTag("tfoot", "HTMLTableSectionElement");
+    testTag("th", "HTMLTableCellElement");
+    testTag("thead", "HTMLTableSectionElement");
+    testTag("title", "HTMLTitleElement");
+    testTag("tr", "HTMLTableRowElement");
+    testTag("tt", "HTMLElement");
+    testTag("u", "HTMLElement");
+    testTag("ul", "HTMLUListElement");
+    testTag("var", "HTMLElement");
+    testTag("wbr", "HTMLElement");
+    testTag("xmp", "HTMLPreElement");
+    
+    debug('');
+    debug('JavaScript types');
+    debug('');
+
+    shouldBeTrue("objCWrapperIsInstanceOf(null, 'nil')");
+    shouldBeTrue("objCWrapperIsInstanceOf(undefined, 'WebUndefined')");
+    shouldBeTrue("objCWrapperIsInstanceOf(0, 'NSNumber')");
+    shouldBeTrue("objCWrapperIsInstanceOf(1, 'NSNumber')");
+    shouldBeTrue("objCWrapperIsInstanceOf(false, 'NSNumber')");
+    shouldBeTrue("objCWrapperIsInstanceOf(true, 'NSNumber')");
+    shouldBeTrue("objCWrapperIsInstanceOf('', 'NSString')");
+    shouldBeTrue("objCWrapperIsInstanceOf({ }, 'WebScriptObject')");
+    shouldBeTrue("objCWrapperIsInstanceOf([ ], 'WebScriptObject')");
+
+    shouldBe("objCObjectOfClass('NSNull')", "null"); // can't test with typeof because typeof null is 'object'
+    shouldBe("typeof objCObjectOfClass('')", "'undefined'");
+    shouldBe("typeof objCObjectOfClass('WebUndefined')", "'undefined'");
+    shouldBe("typeof objCObjectOfClass('NSCFBoolean')", "'boolean'");
+    shouldBe("typeof objCObjectOfClass('NSCFNumber')", "'number'");
+    shouldBe("typeof objCObjectOfClass('NSCFString')", "'string'");
+    shouldBe("typeof objCObjectOfClass('WebScriptObject')", "'object'");
+    shouldBeTrue("objCObjectOfClass('NSArray') instanceof Array");
+
+    shouldBe("concatenateArray(objCArrayOfString())", "'onetwothree'");
+
+    shouldBe("let arr = objCArrayOfString(); arr.length", "3");
+    shouldThrow("let arr = objCArrayOfString(); arr.length = 0");
+    shouldThrow("let arr = objCArrayOfString(); arr.length = 5");
+    shouldThrow("let arr = objCArrayOfString(); arr.length = 0x40000000");
+    shouldBe("let arr = objCArrayOfString(); try { arr.length = 0 } catch(e) { } arr.length", "3");
+
+    // Not yet tested:
+
+    // CSSCharsetRule
+    // CSSFontFaceRule
+    // CSSImportRule
+    // CSSMediaRule
+    // CSSPageRule
+    // CSSRule
+    // CSSValue
+    // SVGColor
+    // SVGPaint
+    // SVGZoomEvent
+
+    // the various window sub-objects
+
+    // what else is missing?
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function frameLoaded()
+{
+    runTest();
+}
+
+</script>
+<p id="description"></p>
+<div id="console"></div>
+<iframe id="xmlframe" onload="frameLoaded()" style="height:0px" src="data:application/xhtml+xml,<?xml version='1.0' encoding='UTF-8'?><body/>"></iframe>
+</body>
+</html>

@@ -1,0 +1,3 @@
+
+FAIL restore() with an empty stack has no effect Can't find variable: OffscreenCanvas
+

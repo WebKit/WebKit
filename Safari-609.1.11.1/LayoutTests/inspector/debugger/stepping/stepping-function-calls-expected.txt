@@ -1,0 +1,1485 @@
+Checking pause locations when stepping in, out, and over statements with function calls.
+
+
+== Running test suite: Debugger.stepping.functionCalls
+-- Running test case: Debugger.stepping.MultipleStatementsOnOneLine1
+EXPRESSION: setTimeout(entryMultipleStatementsOnOneLine)
+STEPS: over, in, out, in, out, resume
+PAUSED (debugger-statement)
+PAUSE AT entryMultipleStatementsOnOneLine:20:5
+     16    }
+     17    
+     18    function entryMultipleStatementsOnOneLine() {
+ ->  19        |debugger;
+     20        a(); b();
+     21    }
+     22    
+
+ACTION: step-over
+PAUSE AT entryMultipleStatementsOnOneLine:21:5
+     17    
+     18    function entryMultipleStatementsOnOneLine() {
+     19        debugger;
+ ->  20        |a(); b();
+     21    }
+     22    
+     23    function entryMultipleCallsInOneStatement() {
+
+ACTION: step-in
+PAUSE AT a:12:5
+      8    }
+      9    
+     10    function a() {
+ ->  11        |return 1;
+     12    }
+     13    
+     14    function b() {
+
+ACTION: step-out
+PAUSE AT entryMultipleStatementsOnOneLine:21:10
+     17    
+     18    function entryMultipleStatementsOnOneLine() {
+     19        debugger;
+ ->  20        a(); |b();
+     21    }
+     22    
+     23    function entryMultipleCallsInOneStatement() {
+
+ACTION: step-in
+PAUSE AT b:16:5
+     12    }
+     13    
+     14    function b() {
+ ->  15        |return 2;
+     16    }
+     17    
+     18    function entryMultipleStatementsOnOneLine() {
+
+ACTION: step-out
+PAUSE AT entryMultipleStatementsOnOneLine:22:2
+     18    function entryMultipleStatementsOnOneLine() {
+     19        debugger;
+     20        a(); b();
+ ->  21    }|
+     22    
+     23    function entryMultipleCallsInOneStatement() {
+     24        debugger;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.MultipleStatementsOnOneLine2
+EXPRESSION: setTimeout(entryMultipleStatementsOnOneLine)
+STEPS: over, over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryMultipleStatementsOnOneLine:20:5
+     16    }
+     17    
+     18    function entryMultipleStatementsOnOneLine() {
+ ->  19        |debugger;
+     20        a(); b();
+     21    }
+     22    
+
+ACTION: step-over
+PAUSE AT entryMultipleStatementsOnOneLine:21:5
+     17    
+     18    function entryMultipleStatementsOnOneLine() {
+     19        debugger;
+ ->  20        |a(); b();
+     21    }
+     22    
+     23    function entryMultipleCallsInOneStatement() {
+
+ACTION: step-over
+PAUSE AT entryMultipleStatementsOnOneLine:21:10
+     17    
+     18    function entryMultipleStatementsOnOneLine() {
+     19        debugger;
+ ->  20        a(); |b();
+     21    }
+     22    
+     23    function entryMultipleCallsInOneStatement() {
+
+ACTION: step-over
+PAUSE AT entryMultipleStatementsOnOneLine:22:2
+     18    function entryMultipleStatementsOnOneLine() {
+     19        debugger;
+     20        a(); b();
+ ->  21    }|
+     22    
+     23    function entryMultipleCallsInOneStatement() {
+     24        debugger;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.MultipleCallsInOneStatement1
+EXPRESSION: setTimeout(entryMultipleCallsInOneStatement)
+STEPS: over, in, out, in, out, in, out, resume
+PAUSED (debugger-statement)
+PAUSE AT entryMultipleCallsInOneStatement:25:5
+     21    }
+     22    
+     23    function entryMultipleCallsInOneStatement() {
+ ->  24        |debugger;
+     25        add(a(), b());
+     26    }
+     27    
+
+ACTION: step-over
+PAUSE AT entryMultipleCallsInOneStatement:26:5
+     22    
+     23    function entryMultipleCallsInOneStatement() {
+     24        debugger;
+ ->  25        |add(a(), b());
+     26    }
+     27    
+     28    function entryMultilineStatement() {
+
+ACTION: step-in
+PAUSE AT a:12:5
+      8    }
+      9    
+     10    function a() {
+ ->  11        |return 1;
+     12    }
+     13    
+     14    function b() {
+
+ACTION: step-out
+PAUSE AT entryMultipleCallsInOneStatement:26:14
+     22    
+     23    function entryMultipleCallsInOneStatement() {
+     24        debugger;
+ ->  25        add(a(), |b());
+     26    }
+     27    
+     28    function entryMultilineStatement() {
+
+ACTION: step-in
+PAUSE AT b:16:5
+     12    }
+     13    
+     14    function b() {
+ ->  15        |return 2;
+     16    }
+     17    
+     18    function entryMultipleStatementsOnOneLine() {
+
+ACTION: step-out
+PAUSE AT entryMultipleCallsInOneStatement:26:5
+     22    
+     23    function entryMultipleCallsInOneStatement() {
+     24        debugger;
+ ->  25        |add(a(), b());
+     26    }
+     27    
+     28    function entryMultilineStatement() {
+
+ACTION: step-in
+PAUSE AT add:8:5
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+      6    function add(a, b) {
+ ->   7        |return a + b;
+      8    }
+      9    
+     10    function a() {
+
+ACTION: step-out
+PAUSE AT entryMultipleCallsInOneStatement:27:2
+     23    function entryMultipleCallsInOneStatement() {
+     24        debugger;
+     25        add(a(), b());
+ ->  26    }|
+     27    
+     28    function entryMultilineStatement() {
+     29        debugger;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.MultipleCallsInOneStatement2
+EXPRESSION: setTimeout(entryMultipleCallsInOneStatement)
+STEPS: over, in, out, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryMultipleCallsInOneStatement:25:5
+     21    }
+     22    
+     23    function entryMultipleCallsInOneStatement() {
+ ->  24        |debugger;
+     25        add(a(), b());
+     26    }
+     27    
+
+ACTION: step-over
+PAUSE AT entryMultipleCallsInOneStatement:26:5
+     22    
+     23    function entryMultipleCallsInOneStatement() {
+     24        debugger;
+ ->  25        |add(a(), b());
+     26    }
+     27    
+     28    function entryMultilineStatement() {
+
+ACTION: step-in
+PAUSE AT a:12:5
+      8    }
+      9    
+     10    function a() {
+ ->  11        |return 1;
+     12    }
+     13    
+     14    function b() {
+
+ACTION: step-out
+PAUSE AT entryMultipleCallsInOneStatement:26:14
+     22    
+     23    function entryMultipleCallsInOneStatement() {
+     24        debugger;
+ ->  25        add(a(), |b());
+     26    }
+     27    
+     28    function entryMultilineStatement() {
+
+ACTION: step-over
+PAUSE AT entryMultipleCallsInOneStatement:27:2
+     23    function entryMultipleCallsInOneStatement() {
+     24        debugger;
+     25        add(a(), b());
+ ->  26    }|
+     27    
+     28    function entryMultilineStatement() {
+     29        debugger;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.MultipleCallsInOneStatement3
+EXPRESSION: setTimeout(entryMultipleCallsInOneStatement)
+STEPS: over, in, in, in, in, in, in, in, in, in, resume
+PAUSED (debugger-statement)
+PAUSE AT entryMultipleCallsInOneStatement:25:5
+     21    }
+     22    
+     23    function entryMultipleCallsInOneStatement() {
+ ->  24        |debugger;
+     25        add(a(), b());
+     26    }
+     27    
+
+ACTION: step-over
+PAUSE AT entryMultipleCallsInOneStatement:26:5
+     22    
+     23    function entryMultipleCallsInOneStatement() {
+     24        debugger;
+ ->  25        |add(a(), b());
+     26    }
+     27    
+     28    function entryMultilineStatement() {
+
+ACTION: step-in
+PAUSE AT a:12:5
+      8    }
+      9    
+     10    function a() {
+ ->  11        |return 1;
+     12    }
+     13    
+     14    function b() {
+
+ACTION: step-in
+PAUSE AT a:13:2
+      9    
+     10    function a() {
+     11        return 1;
+ ->  12    }|
+     13    
+     14    function b() {
+     15        return 2;
+
+ACTION: step-in
+PAUSE AT entryMultipleCallsInOneStatement:26:14
+     22    
+     23    function entryMultipleCallsInOneStatement() {
+     24        debugger;
+ ->  25        add(a(), |b());
+     26    }
+     27    
+     28    function entryMultilineStatement() {
+
+ACTION: step-in
+PAUSE AT b:16:5
+     12    }
+     13    
+     14    function b() {
+ ->  15        |return 2;
+     16    }
+     17    
+     18    function entryMultipleStatementsOnOneLine() {
+
+ACTION: step-in
+PAUSE AT b:17:2
+     13    
+     14    function b() {
+     15        return 2;
+ ->  16    }|
+     17    
+     18    function entryMultipleStatementsOnOneLine() {
+     19        debugger;
+
+ACTION: step-in
+PAUSE AT entryMultipleCallsInOneStatement:26:5
+     22    
+     23    function entryMultipleCallsInOneStatement() {
+     24        debugger;
+ ->  25        |add(a(), b());
+     26    }
+     27    
+     28    function entryMultilineStatement() {
+
+ACTION: step-in
+PAUSE AT add:8:5
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+      6    function add(a, b) {
+ ->   7        |return a + b;
+      8    }
+      9    
+     10    function a() {
+
+ACTION: step-in
+PAUSE AT add:9:2
+      5    <script>
+      6    function add(a, b) {
+      7        return a + b;
+ ->   8    }|
+      9    
+     10    function a() {
+     11        return 1;
+
+ACTION: step-in
+PAUSE AT entryMultipleCallsInOneStatement:27:2
+     23    function entryMultipleCallsInOneStatement() {
+     24        debugger;
+     25        add(a(), b());
+ ->  26    }|
+     27    
+     28    function entryMultilineStatement() {
+     29        debugger;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.MultipleCallsInOneStatement4
+EXPRESSION: setTimeout(entryMultipleCallsInOneStatement)
+STEPS: over, in, over, over, in, over, over, in, over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryMultipleCallsInOneStatement:25:5
+     21    }
+     22    
+     23    function entryMultipleCallsInOneStatement() {
+ ->  24        |debugger;
+     25        add(a(), b());
+     26    }
+     27    
+
+ACTION: step-over
+PAUSE AT entryMultipleCallsInOneStatement:26:5
+     22    
+     23    function entryMultipleCallsInOneStatement() {
+     24        debugger;
+ ->  25        |add(a(), b());
+     26    }
+     27    
+     28    function entryMultilineStatement() {
+
+ACTION: step-in
+PAUSE AT a:12:5
+      8    }
+      9    
+     10    function a() {
+ ->  11        |return 1;
+     12    }
+     13    
+     14    function b() {
+
+ACTION: step-over
+PAUSE AT a:13:2
+      9    
+     10    function a() {
+     11        return 1;
+ ->  12    }|
+     13    
+     14    function b() {
+     15        return 2;
+
+ACTION: step-over
+PAUSE AT entryMultipleCallsInOneStatement:26:14
+     22    
+     23    function entryMultipleCallsInOneStatement() {
+     24        debugger;
+ ->  25        add(a(), |b());
+     26    }
+     27    
+     28    function entryMultilineStatement() {
+
+ACTION: step-in
+PAUSE AT b:16:5
+     12    }
+     13    
+     14    function b() {
+ ->  15        |return 2;
+     16    }
+     17    
+     18    function entryMultipleStatementsOnOneLine() {
+
+ACTION: step-over
+PAUSE AT b:17:2
+     13    
+     14    function b() {
+     15        return 2;
+ ->  16    }|
+     17    
+     18    function entryMultipleStatementsOnOneLine() {
+     19        debugger;
+
+ACTION: step-over
+PAUSE AT entryMultipleCallsInOneStatement:26:5
+     22    
+     23    function entryMultipleCallsInOneStatement() {
+     24        debugger;
+ ->  25        |add(a(), b());
+     26    }
+     27    
+     28    function entryMultilineStatement() {
+
+ACTION: step-in
+PAUSE AT add:8:5
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+      6    function add(a, b) {
+ ->   7        |return a + b;
+      8    }
+      9    
+     10    function a() {
+
+ACTION: step-over
+PAUSE AT add:9:2
+      5    <script>
+      6    function add(a, b) {
+      7        return a + b;
+ ->   8    }|
+      9    
+     10    function a() {
+     11        return 1;
+
+ACTION: step-over
+PAUSE AT entryMultipleCallsInOneStatement:27:2
+     23    function entryMultipleCallsInOneStatement() {
+     24        debugger;
+     25        add(a(), b());
+ ->  26    }|
+     27    
+     28    function entryMultilineStatement() {
+     29        debugger;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.MultipleCallsInOneStatement5
+EXPRESSION: setTimeout(entryMultilineStatement)
+STEPS: over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryMultilineStatement:30:5
+     26    }
+     27    
+     28    function entryMultilineStatement() {
+ ->  29        |debugger;
+     30        add(
+     31            a()
+     32            ,
+
+ACTION: step-over
+PAUSE AT entryMultilineStatement:31:5
+     27    
+     28    function entryMultilineStatement() {
+     29        debugger;
+ ->  30        |add(
+     31            a()
+     32            ,
+     33            b()
+
+ACTION: step-over
+PAUSE AT entryMultilineStatement:36:2
+     32            ,
+     33            b()
+     34        );
+ ->  35    }|
+     36    
+     37    function entryComplexLine() {
+     38        var x;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.MultipleCallsInOneStatement6
+EXPRESSION: setTimeout(entryMultilineStatement)
+STEPS: over, in, out, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryMultilineStatement:30:5
+     26    }
+     27    
+     28    function entryMultilineStatement() {
+ ->  29        |debugger;
+     30        add(
+     31            a()
+     32            ,
+
+ACTION: step-over
+PAUSE AT entryMultilineStatement:31:5
+     27    
+     28    function entryMultilineStatement() {
+     29        debugger;
+ ->  30        |add(
+     31            a()
+     32            ,
+     33            b()
+
+ACTION: step-in
+PAUSE AT a:12:5
+      8    }
+      9    
+     10    function a() {
+ ->  11        |return 1;
+     12    }
+     13    
+     14    function b() {
+
+ACTION: step-out
+PAUSE AT entryMultilineStatement:34:9
+     30        add(
+     31            a()
+     32            ,
+ ->  33            |b()
+     34        );
+     35    }
+     36    
+
+ACTION: step-over
+PAUSE AT entryMultilineStatement:36:2
+     32            ,
+     33            b()
+     34        );
+ ->  35    }|
+     36    
+     37    function entryComplexLine() {
+     38        var x;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.ComplexLine1
+EXPRESSION: setTimeout(entryComplexLine)
+STEPS: over, in, out, in, in, out, resume
+PAUSED (debugger-statement)
+PAUSE AT entryComplexLine:40:5
+     36    
+     37    function entryComplexLine() {
+     38        var x;
+ ->  39        |debugger;
+     40        a(); x = 1; b();
+     41    }
+     42    
+
+ACTION: step-over
+PAUSE AT entryComplexLine:41:5
+     37    function entryComplexLine() {
+     38        var x;
+     39        debugger;
+ ->  40        |a(); x = 1; b();
+     41    }
+     42    
+     43    function entryComplexStatement() {
+
+ACTION: step-in
+PAUSE AT a:12:5
+      8    }
+      9    
+     10    function a() {
+ ->  11        |return 1;
+     12    }
+     13    
+     14    function b() {
+
+ACTION: step-out
+PAUSE AT entryComplexLine:41:10
+     37    function entryComplexLine() {
+     38        var x;
+     39        debugger;
+ ->  40        a(); |x = 1; b();
+     41    }
+     42    
+     43    function entryComplexStatement() {
+
+ACTION: step-in
+PAUSE AT entryComplexLine:41:17
+     37    function entryComplexLine() {
+     38        var x;
+     39        debugger;
+ ->  40        a(); x = 1; |b();
+     41    }
+     42    
+     43    function entryComplexStatement() {
+
+ACTION: step-in
+PAUSE AT b:16:5
+     12    }
+     13    
+     14    function b() {
+ ->  15        |return 2;
+     16    }
+     17    
+     18    function entryMultipleStatementsOnOneLine() {
+
+ACTION: step-out
+PAUSE AT entryComplexLine:42:2
+     38        var x;
+     39        debugger;
+     40        a(); x = 1; b();
+ ->  41    }|
+     42    
+     43    function entryComplexStatement() {
+     44        var x;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.ComplexLine2
+EXPRESSION: setTimeout(entryComplexLine)
+STEPS: over, over, over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryComplexLine:40:5
+     36    
+     37    function entryComplexLine() {
+     38        var x;
+ ->  39        |debugger;
+     40        a(); x = 1; b();
+     41    }
+     42    
+
+ACTION: step-over
+PAUSE AT entryComplexLine:41:5
+     37    function entryComplexLine() {
+     38        var x;
+     39        debugger;
+ ->  40        |a(); x = 1; b();
+     41    }
+     42    
+     43    function entryComplexStatement() {
+
+ACTION: step-over
+PAUSE AT entryComplexLine:41:10
+     37    function entryComplexLine() {
+     38        var x;
+     39        debugger;
+ ->  40        a(); |x = 1; b();
+     41    }
+     42    
+     43    function entryComplexStatement() {
+
+ACTION: step-over
+PAUSE AT entryComplexLine:41:17
+     37    function entryComplexLine() {
+     38        var x;
+     39        debugger;
+ ->  40        a(); x = 1; |b();
+     41    }
+     42    
+     43    function entryComplexStatement() {
+
+ACTION: step-over
+PAUSE AT entryComplexLine:42:2
+     38        var x;
+     39        debugger;
+     40        a(); x = 1; b();
+ ->  41    }|
+     42    
+     43    function entryComplexStatement() {
+     44        var x;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.ComplexStatement1
+EXPRESSION: setTimeout(entryComplexStatement)
+STEPS: over, in, out, in, out, resume
+PAUSED (debugger-statement)
+PAUSE AT entryComplexStatement:46:5
+     42    
+     43    function entryComplexStatement() {
+     44        var x;
+ ->  45        |debugger;
+     46        add(a(), x = 1, b());
+     47    }
+     48    
+
+ACTION: step-over
+PAUSE AT entryComplexStatement:47:5
+     43    function entryComplexStatement() {
+     44        var x;
+     45        debugger;
+ ->  46        |add(a(), x = 1, b());
+     47    }
+     48    
+     49    function entryCommaExpression() {
+
+ACTION: step-in
+PAUSE AT a:12:5
+      8    }
+      9    
+     10    function a() {
+ ->  11        |return 1;
+     12    }
+     13    
+     14    function b() {
+
+ACTION: step-out
+PAUSE AT entryComplexStatement:47:21
+     43    function entryComplexStatement() {
+     44        var x;
+     45        debugger;
+ ->  46        add(a(), x = 1, |b());
+     47    }
+     48    
+     49    function entryCommaExpression() {
+
+ACTION: step-in
+PAUSE AT b:16:5
+     12    }
+     13    
+     14    function b() {
+ ->  15        |return 2;
+     16    }
+     17    
+     18    function entryMultipleStatementsOnOneLine() {
+
+ACTION: step-out
+PAUSE AT entryComplexStatement:47:5
+     43    function entryComplexStatement() {
+     44        var x;
+     45        debugger;
+ ->  46        |add(a(), x = 1, b());
+     47    }
+     48    
+     49    function entryCommaExpression() {
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.ComplexStatement2
+EXPRESSION: setTimeout(entryCommaExpression)
+STEPS: over, in, out, in, out, in, out, resume
+PAUSED (debugger-statement)
+PAUSE AT entryCommaExpression:51:5
+     47    }
+     48    
+     49    function entryCommaExpression() {
+ ->  50        |debugger;
+     51        a(), b(), a();
+     52    }
+     53    
+
+ACTION: step-over
+PAUSE AT entryCommaExpression:52:5
+     48    
+     49    function entryCommaExpression() {
+     50        debugger;
+ ->  51        |a(), b(), a();
+     52    }
+     53    
+     54    function entryDotPropertyAccessCall() {
+
+ACTION: step-in
+PAUSE AT a:12:5
+      8    }
+      9    
+     10    function a() {
+ ->  11        |return 1;
+     12    }
+     13    
+     14    function b() {
+
+ACTION: step-out
+PAUSE AT entryCommaExpression:52:10
+     48    
+     49    function entryCommaExpression() {
+     50        debugger;
+ ->  51        a(), |b(), a();
+     52    }
+     53    
+     54    function entryDotPropertyAccessCall() {
+
+ACTION: step-in
+PAUSE AT b:16:5
+     12    }
+     13    
+     14    function b() {
+ ->  15        |return 2;
+     16    }
+     17    
+     18    function entryMultipleStatementsOnOneLine() {
+
+ACTION: step-out
+PAUSE AT entryCommaExpression:52:15
+     48    
+     49    function entryCommaExpression() {
+     50        debugger;
+ ->  51        a(), b(), |a();
+     52    }
+     53    
+     54    function entryDotPropertyAccessCall() {
+
+ACTION: step-in
+PAUSE AT a:12:5
+      8    }
+      9    
+     10    function a() {
+ ->  11        |return 1;
+     12    }
+     13    
+     14    function b() {
+
+ACTION: step-out
+PAUSE AT entryCommaExpression:53:2
+     49    function entryCommaExpression() {
+     50        debugger;
+     51        a(), b(), a();
+ ->  52    }|
+     53    
+     54    function entryDotPropertyAccessCall() {
+     55        var o = {x:{x:{a}}};
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.ComplexStatement3
+EXPRESSION: setTimeout(entryCommaExpression)
+STEPS: over, in, in, in, in, over, over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryCommaExpression:51:5
+     47    }
+     48    
+     49    function entryCommaExpression() {
+ ->  50        |debugger;
+     51        a(), b(), a();
+     52    }
+     53    
+
+ACTION: step-over
+PAUSE AT entryCommaExpression:52:5
+     48    
+     49    function entryCommaExpression() {
+     50        debugger;
+ ->  51        |a(), b(), a();
+     52    }
+     53    
+     54    function entryDotPropertyAccessCall() {
+
+ACTION: step-in
+PAUSE AT a:12:5
+      8    }
+      9    
+     10    function a() {
+ ->  11        |return 1;
+     12    }
+     13    
+     14    function b() {
+
+ACTION: step-in
+PAUSE AT a:13:2
+      9    
+     10    function a() {
+     11        return 1;
+ ->  12    }|
+     13    
+     14    function b() {
+     15        return 2;
+
+ACTION: step-in
+PAUSE AT entryCommaExpression:52:10
+     48    
+     49    function entryCommaExpression() {
+     50        debugger;
+ ->  51        a(), |b(), a();
+     52    }
+     53    
+     54    function entryDotPropertyAccessCall() {
+
+ACTION: step-in
+PAUSE AT b:16:5
+     12    }
+     13    
+     14    function b() {
+ ->  15        |return 2;
+     16    }
+     17    
+     18    function entryMultipleStatementsOnOneLine() {
+
+ACTION: step-over
+PAUSE AT b:17:2
+     13    
+     14    function b() {
+     15        return 2;
+ ->  16    }|
+     17    
+     18    function entryMultipleStatementsOnOneLine() {
+     19        debugger;
+
+ACTION: step-over
+PAUSE AT entryCommaExpression:52:15
+     48    
+     49    function entryCommaExpression() {
+     50        debugger;
+ ->  51        a(), b(), |a();
+     52    }
+     53    
+     54    function entryDotPropertyAccessCall() {
+
+ACTION: step-over
+PAUSE AT entryCommaExpression:53:2
+     49    function entryCommaExpression() {
+     50        debugger;
+     51        a(), b(), a();
+ ->  52    }|
+     53    
+     54    function entryDotPropertyAccessCall() {
+     55        var o = {x:{x:{a}}};
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.ComplexStatement4
+EXPRESSION: setTimeout(entryCommaExpression)
+STEPS: over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryCommaExpression:51:5
+     47    }
+     48    
+     49    function entryCommaExpression() {
+ ->  50        |debugger;
+     51        a(), b(), a();
+     52    }
+     53    
+
+ACTION: step-over
+PAUSE AT entryCommaExpression:52:5
+     48    
+     49    function entryCommaExpression() {
+     50        debugger;
+ ->  51        |a(), b(), a();
+     52    }
+     53    
+     54    function entryDotPropertyAccessCall() {
+
+ACTION: step-over
+PAUSE AT entryCommaExpression:53:2
+     49    function entryCommaExpression() {
+     50        debugger;
+     51        a(), b(), a();
+ ->  52    }|
+     53    
+     54    function entryDotPropertyAccessCall() {
+     55        var o = {x:{x:{a}}};
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.DotPropertyAccessCallStepIn
+EXPRESSION: setTimeout(entryDotPropertyAccessCall)
+STEPS: over, in, out, resume
+PAUSED (debugger-statement)
+PAUSE AT entryDotPropertyAccessCall:57:5
+     53    
+     54    function entryDotPropertyAccessCall() {
+     55        var o = {x:{x:{a}}};
+ ->  56        |debugger;
+     57        o.x.x.a();
+     58    }
+     59    
+
+ACTION: step-over
+PAUSE AT entryDotPropertyAccessCall:58:5
+     54    function entryDotPropertyAccessCall() {
+     55        var o = {x:{x:{a}}};
+     56        debugger;
+ ->  57        |o.x.x.a();
+     58    }
+     59    
+     60    function entryBracketPropertyAccessCall() {
+
+ACTION: step-in
+PAUSE AT a:12:5
+      8    }
+      9    
+     10    function a() {
+ ->  11        |return 1;
+     12    }
+     13    
+     14    function b() {
+
+ACTION: step-out
+PAUSE AT entryDotPropertyAccessCall:59:2
+     55        var o = {x:{x:{a}}};
+     56        debugger;
+     57        o.x.x.a();
+ ->  58    }|
+     59    
+     60    function entryBracketPropertyAccessCall() {
+     61        var o = {x:{x:{a}}};
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.DotPropertyAccessCallStepOver
+EXPRESSION: setTimeout(entryDotPropertyAccessCall)
+STEPS: over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryDotPropertyAccessCall:57:5
+     53    
+     54    function entryDotPropertyAccessCall() {
+     55        var o = {x:{x:{a}}};
+ ->  56        |debugger;
+     57        o.x.x.a();
+     58    }
+     59    
+
+ACTION: step-over
+PAUSE AT entryDotPropertyAccessCall:58:5
+     54    function entryDotPropertyAccessCall() {
+     55        var o = {x:{x:{a}}};
+     56        debugger;
+ ->  57        |o.x.x.a();
+     58    }
+     59    
+     60    function entryBracketPropertyAccessCall() {
+
+ACTION: step-over
+PAUSE AT entryDotPropertyAccessCall:59:2
+     55        var o = {x:{x:{a}}};
+     56        debugger;
+     57        o.x.x.a();
+ ->  58    }|
+     59    
+     60    function entryBracketPropertyAccessCall() {
+     61        var o = {x:{x:{a}}};
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.BracketPropertyAccessCallStepIn
+EXPRESSION: setTimeout(entryBracketPropertyAccessCall)
+STEPS: over, in, out, resume
+PAUSED (debugger-statement)
+PAUSE AT entryBracketPropertyAccessCall:63:5
+     59    
+     60    function entryBracketPropertyAccessCall() {
+     61        var o = {x:{x:{a}}};
+ ->  62        |debugger;
+     63        o['x']['x']['a']();
+     64    }
+     65    
+
+ACTION: step-over
+PAUSE AT entryBracketPropertyAccessCall:64:5
+     60    function entryBracketPropertyAccessCall() {
+     61        var o = {x:{x:{a}}};
+     62        debugger;
+ ->  63        |o['x']['x']['a']();
+     64    }
+     65    
+     66    function entryUseCall() {
+
+ACTION: step-in
+PAUSE AT a:12:5
+      8    }
+      9    
+     10    function a() {
+ ->  11        |return 1;
+     12    }
+     13    
+     14    function b() {
+
+ACTION: step-out
+PAUSE AT entryBracketPropertyAccessCall:65:2
+     61        var o = {x:{x:{a}}};
+     62        debugger;
+     63        o['x']['x']['a']();
+ ->  64    }|
+     65    
+     66    function entryUseCall() {
+     67        debugger;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.FunctionPrototypeCallStepIn
+EXPRESSION: setTimeout(entryUseCall)
+STEPS: over, in, out, resume
+PAUSED (debugger-statement)
+PAUSE AT entryUseCall:68:5
+     64    }
+     65    
+     66    function entryUseCall() {
+ ->  67        |debugger;
+     68        add.call(null, 1, 2);
+     69    }
+     70    
+
+ACTION: step-over
+PAUSE AT entryUseCall:69:5
+     65    
+     66    function entryUseCall() {
+     67        debugger;
+ ->  68        |add.call(null, 1, 2);
+     69    }
+     70    
+     71    function entryUseApply() {
+
+ACTION: step-in
+PAUSE AT add:8:5
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+      6    function add(a, b) {
+ ->   7        |return a + b;
+      8    }
+      9    
+     10    function a() {
+
+ACTION: step-out
+PAUSE AT entryUseCall:70:2
+     66    function entryUseCall() {
+     67        debugger;
+     68        add.call(null, 1, 2);
+ ->  69    }|
+     70    
+     71    function entryUseApply() {
+     72        debugger;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.FunctionPrototypeApplyStepIn
+EXPRESSION: setTimeout(entryUseApply)
+STEPS: over, in, out, resume
+PAUSED (debugger-statement)
+PAUSE AT entryUseApply:73:5
+     69    }
+     70    
+     71    function entryUseApply() {
+ ->  72        |debugger;
+     73        a.apply(null, [1, 2]);
+     74    }
+     75    
+
+ACTION: step-over
+PAUSE AT entryUseApply:74:5
+     70    
+     71    function entryUseApply() {
+     72        debugger;
+ ->  73        |a.apply(null, [1, 2]);
+     74    }
+     75    
+     76    function entryAnonymousFunctionInvocation() {
+
+ACTION: step-in
+PAUSE AT a:12:5
+      8    }
+      9    
+     10    function a() {
+ ->  11        |return 1;
+     12    }
+     13    
+     14    function b() {
+
+ACTION: step-out
+PAUSE AT entryUseApply:75:2
+     71    function entryUseApply() {
+     72        debugger;
+     73        a.apply(null, [1, 2]);
+ ->  74    }|
+     75    
+     76    function entryAnonymousFunctionInvocation() {
+     77        debugger;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.AnonymousFunctionInvocationStepOver
+EXPRESSION: setTimeout(entryAnonymousFunctionInvocation)
+STEPS: over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryAnonymousFunctionInvocation:78:5
+     74    }
+     75    
+     76    function entryAnonymousFunctionInvocation() {
+ ->  77        |debugger;
+     78        (function() {
+     79            a();
+     80        })();
+
+ACTION: step-over
+PAUSE AT entryAnonymousFunctionInvocation:79:5
+     75    
+     76    function entryAnonymousFunctionInvocation() {
+     77        debugger;
+ ->  78        |(function() {
+     79            a();
+     80        })();
+     81    }
+
+ACTION: step-over
+PAUSE AT entryAnonymousFunctionInvocation:82:2
+     78        (function() {
+     79            a();
+     80        })();
+ ->  81    }|
+     82    
+     83    function entryFunctionWithConditionalReturn() {
+     84        function testCondition(condition) {
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.AnonymousFunctionInvocationStepOver
+EXPRESSION: setTimeout(entryAnonymousFunctionInvocation)
+STEPS: over, in, over, in, resume
+PAUSED (debugger-statement)
+PAUSE AT entryAnonymousFunctionInvocation:78:5
+     74    }
+     75    
+     76    function entryAnonymousFunctionInvocation() {
+ ->  77        |debugger;
+     78        (function() {
+     79            a();
+     80        })();
+
+ACTION: step-over
+PAUSE AT entryAnonymousFunctionInvocation:79:5
+     75    
+     76    function entryAnonymousFunctionInvocation() {
+     77        debugger;
+ ->  78        |(function() {
+     79            a();
+     80        })();
+     81    }
+
+ACTION: step-in
+PAUSE AT <anonymous>:80:9
+     76    function entryAnonymousFunctionInvocation() {
+     77        debugger;
+     78        (function() {
+ ->  79            |a();
+     80        })();
+     81    }
+     82    
+
+ACTION: step-over
+PAUSE AT <anonymous>:81:6
+     77        debugger;
+     78        (function() {
+     79            a();
+ ->  80        }|)();
+     81    }
+     82    
+     83    function entryFunctionWithConditionalReturn() {
+
+ACTION: step-in
+PAUSE AT entryAnonymousFunctionInvocation:82:2
+     78        (function() {
+     79            a();
+     80        })();
+ ->  81    }|
+     82    
+     83    function entryFunctionWithConditionalReturn() {
+     84        function testCondition(condition) {
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.FunctionWithConditionalReturn
+EXPRESSION: setTimeout(entryFunctionWithConditionalReturn)
+STEPS: over, in, in, in, in, in, in, in, in, resume
+PAUSED (debugger-statement)
+PAUSE AT entryFunctionWithConditionalReturn:90:5
+     86                return true;
+     87            return false;
+     88        }
+ ->  89        |debugger;
+     90        testCondition(true);
+     91        testCondition(false);
+     92    }
+
+ACTION: step-over
+PAUSE AT entryFunctionWithConditionalReturn:91:5
+     87            return false;
+     88        }
+     89        debugger;
+ ->  90        |testCondition(true);
+     91        testCondition(false);
+     92    }
+     93    
+
+ACTION: step-in
+PAUSE AT testCondition:86:13
+     82    
+     83    function entryFunctionWithConditionalReturn() {
+     84        function testCondition(condition) {
+ ->  85            if (|condition)
+     86                return true;
+     87            return false;
+     88        }
+
+ACTION: step-in
+PAUSE AT testCondition:87:13
+     83    function entryFunctionWithConditionalReturn() {
+     84        function testCondition(condition) {
+     85            if (condition)
+ ->  86                |return true;
+     87            return false;
+     88        }
+     89        debugger;
+
+ACTION: step-in
+PAUSE AT testCondition:89:6
+     85            if (condition)
+     86                return true;
+     87            return false;
+ ->  88        }|
+     89        debugger;
+     90        testCondition(true);
+     91        testCondition(false);
+
+ACTION: step-in
+PAUSE AT entryFunctionWithConditionalReturn:92:5
+     88        }
+     89        debugger;
+     90        testCondition(true);
+ ->  91        |testCondition(false);
+     92    }
+     93    
+     94    function entryEmptyFunction() {
+
+ACTION: step-in
+PAUSE AT testCondition:86:13
+     82    
+     83    function entryFunctionWithConditionalReturn() {
+     84        function testCondition(condition) {
+ ->  85            if (|condition)
+     86                return true;
+     87            return false;
+     88        }
+
+ACTION: step-in
+PAUSE AT testCondition:88:9
+     84        function testCondition(condition) {
+     85            if (condition)
+     86                return true;
+ ->  87            |return false;
+     88        }
+     89        debugger;
+     90        testCondition(true);
+
+ACTION: step-in
+PAUSE AT testCondition:89:6
+     85            if (condition)
+     86                return true;
+     87            return false;
+ ->  88        }|
+     89        debugger;
+     90        testCondition(true);
+     91        testCondition(false);
+
+ACTION: step-in
+PAUSE AT entryFunctionWithConditionalReturn:93:2
+     89        debugger;
+     90        testCondition(true);
+     91        testCondition(false);
+ ->  92    }|
+     93    
+     94    function entryEmptyFunction() {
+     95        function emptyFunction() { }
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.EmptyFunction
+EXPRESSION: setTimeout(entryEmptyFunction)
+STEPS: over, in, in, resume
+PAUSED (debugger-statement)
+PAUSE AT entryEmptyFunction:97:5
+     93    
+     94    function entryEmptyFunction() {
+     95        function emptyFunction() { }
+ ->  96        |debugger;
+     97        emptyFunction();
+     98    }
+     99    
+
+ACTION: step-over
+PAUSE AT entryEmptyFunction:98:5
+     94    function entryEmptyFunction() {
+     95        function emptyFunction() { }
+     96        debugger;
+ ->  97        |emptyFunction();
+     98    }
+     99    
+    100    // ---------
+
+ACTION: step-in
+PAUSE AT emptyFunction:96:33
+     92    }
+     93    
+     94    function entryEmptyFunction() {
+ ->  95        function emptyFunction() { }|
+     96        debugger;
+     97        emptyFunction();
+     98    }
+
+ACTION: step-in
+PAUSE AT entryEmptyFunction:99:2
+     95        function emptyFunction() { }
+     96        debugger;
+     97        emptyFunction();
+ ->  98    }|
+     99    
+    100    // ---------
+    101    
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+

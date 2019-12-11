@@ -1,0 +1,33 @@
+<script src="../../../../../js-test-resources/js-test-pre.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+var ws;
+
+function onSocketOpened() {
+    alert("WebSocket connection opened.");
+    finishJSTest();
+}
+
+function onSocketError() {
+    alert("WebSocket connection failed.");
+    ws.close();
+    finishJSTest();
+}
+
+function onSocketClosed() {
+    alert("WebSocket closed.");
+    finishJSTest();
+}
+
+try {
+    ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/echo");
+    ws.onopen = onSocketOpened;
+    ws.onerror = onSocketError;
+    ws.onclose = onSocketClosed;
+} catch (e) {
+    alert("Test failed: exception thrown");
+    finishJSTest();
+}
+</script>
+<script src="../../../../js-test-resources/js-test-post.js"></script>

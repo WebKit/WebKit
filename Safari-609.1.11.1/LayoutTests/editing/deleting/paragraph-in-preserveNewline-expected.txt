@@ -1,0 +1,73 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of #text > PRE > DIV > BODY > HTML > #document to 3 of #text > PRE > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of PRE > DIV > BODY > HTML > #document to 0 of PRE > DIV > BODY > HTML > #document toDOMRange:range from 0 of PRE > DIV > BODY > HTML > #document to 0 of PRE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of PRE > DIV > BODY > HTML > #document to 0 of PRE > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > PRE > DIV > BODY > HTML > #document to 3 of #text > PRE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of #text > PRE > DIV > BODY > HTML > #document to 3 of #text > PRE > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of PRE > DIV > BODY > HTML > #document to 0 of PRE > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > PRE > DIV > BODY > HTML > #document to 3 of #text > PRE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of #text > PRE > DIV > BODY > HTML > #document to 3 of #text > PRE > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of PRE > DIV > BODY > HTML > #document to 0 of PRE > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > PRE > DIV > BODY > HTML > #document to 3 of #text > PRE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+This tests for a bug where deleting a paragraph in preserveNewline text would introduce an extra line.  You should see '\nbar' below.
+
+initial state:
+| <pre>
+|   "foo
+bar"
+
+on mac:
+| <pre>
+|   "<#selection-caret>
+bar"
+
+after undo on mac:
+| <pre>
+|   "<#selection-anchor>foo<#selection-focus>
+bar"
+
+on win:
+| <pre>
+|   "<#selection-caret>
+bar"
+
+after undo on win:
+| <pre>
+|   "<#selection-anchor>foo<#selection-focus>
+bar"
+
+on unix:
+| <pre>
+|   "<#selection-caret>
+bar"
+
+after undo on unix:
+| <pre>
+|   "<#selection-anchor>foo<#selection-focus>
+bar"

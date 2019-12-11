@@ -1,0 +1,61 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # subject: subject line of message
+  # body: message body, shown before the query tables
+  # queries: array of hashes containing:
+  #     bugs: array containing hashes of fieldnames->values for each bug
+  #     title: the title given in the whine scheduling mechanism
+  #     name: the name of the query
+  #     columnlist: array of fieldnames to display in the mail
+  # author: user object for the person who scheduled this whine
+  # recipient: user object for the intended recipient of the message
+  #%]
+
+[% body %]
+
+[% IF author.login == recipient.login %]
+  To edit your whine schedule, visit the following URL:
+  [%+ urlbase %]editwhines.cgi
+[% ELSE %]
+  This search was scheduled by [% author.login %].
+[% END %]
+
+[% IF queries.size %]
+  [% FOREACH query=queries %]
+
+[%+ query.title +%] ([% query.bugs.size %] [%+ terms.bugs %])
+[%+ "-" FILTER repeat(query.title.length) %]
+
+  [% FOREACH bug=query.bugs %]
+  [% terms.Bug +%] [%+ bug.bug_id %]:
+  [%+ urlbase %]show_bug.cgi?id=[% bug.bug_id +%]
+  [% largest_title = 0 %]
+  [% FOREACH col = query.columnlist %]
+    [% NEXT IF col == 'bug_id' %]
+    [% IF field_descs.${col}.length > largest_title %]
+      [% largest_title = field_descs.${col}.length %]
+    [% END %]
+  [% END %]
+  [% FOREACH col = query.columnlist %]
+    [% NEXT IF col == 'bug_id' %]
+  [%+ " " FILTER repeat(largest_title - field_descs.${col}.length) %]
+  [% field_descs.$col %]: [% display_value($col, bug.$col) %]
+  [% END %]
+
+  [% END %]
+
+  [% IF author.login == recipient.login %]
+View as [% terms.bug %] list: [% urlbase %]buglist.cgi?cmdtype=runnamed&namedcmd=[% query.name FILTER uri %]
+  [% END %]
+  [% END %]
+[% ELSE %]
+
+  No [% terms.bugs %] were found that matched the search criteria.
+[% END %]

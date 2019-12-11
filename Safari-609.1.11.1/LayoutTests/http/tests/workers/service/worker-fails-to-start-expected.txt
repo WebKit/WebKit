@@ -1,0 +1,2 @@
+PASS: Rejected the promise as expected with message: TypeError: ReferenceError: Can't find variable: foo
+

@@ -1,0 +1,15 @@
+This test is for a bug when selection extends complete line on first paragraph and applying justifyCenter command will be applied to next paragraph also. Only first Paragraph with id "paragraph1" should have attribute style="text-align: center"
+| "
+    "
+| <p>
+|   id="paragraph1"
+|   style="text-align: center;"
+|   "<#selection-anchor>Paragraph one."
+| "
+    "
+| <p>
+|   id="paragraph2"
+|   <#selection-focus>
+|   "Paragraph two."
+| "
+"

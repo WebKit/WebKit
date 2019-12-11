@@ -1,0 +1,3 @@
+PASS foo
+PASS bar
+

@@ -1,0 +1,63 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (16,7) size 739x477
+      RenderSVGText {text} at (50,4) size 387x29 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 387x29
+          chunk 1 text run 1 at (50.00,27.00) startOffset 0 endOffset 37 width 386.87: "Test for opacity property on a group."
+      RenderSVGRect {rect} at (16,50) size 168x434 [fill={[type=SOLID] [color=#FF0000]}] [x=10.00] [y=30.00] [width=100.00] [height=260.00]
+      RenderSVGContainer {g} at (100,83) size 150x84
+        RenderSVGRect {rect} at (100,83) size 134x67 [fill={[type=SOLID] [color=#0000FF]}] [x=60.00] [y=50.00] [width=80.00] [height=40.00]
+        RenderSVGRect {rect} at (116,100) size 134x67 [fill={[type=SOLID] [color=#00FF00]}] [x=70.00] [y=60.00] [width=80.00] [height=40.00]
+      RenderSVGText {text} at (200,43) size 148x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 148x24
+          chunk 1 text run 1 at (200.00,62.00) startOffset 0 endOffset 16 width 147.48: "Group opacity: 1"
+      RenderSVGText {text} at (200,61) size 221x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 221x24
+          chunk 1 text run 1 at (200.00,80.00) startOffset 0 endOffset 25 width 220.12: "Blue rectangle opacity: 1"
+      RenderSVGText {text} at (200,79) size 236x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 236x24
+          chunk 1 text run 1 at (200.00,98.00) startOffset 0 endOffset 26 width 235.75: "Green rectangle opacity: 1"
+      RenderSVGContainer {g} at (100,183) size 150x84 [opacity=0.50]
+        RenderSVGRect {rect} at (100,183) size 134x67 [fill={[type=SOLID] [color=#0000FF]}] [x=60.00] [y=110.00] [width=80.00] [height=40.00]
+        RenderSVGRect {rect} at (116,200) size 134x67 [fill={[type=SOLID] [color=#00FF00]}] [x=70.00] [y=120.00] [width=80.00] [height=40.00]
+      RenderSVGText {text} at (200,103) size 165x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 165x24
+          chunk 1 text run 1 at (200.00,122.00) startOffset 0 endOffset 18 width 164.24: "Group opacity: 0.5"
+      RenderSVGText {text} at (200,121) size 221x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 221x24
+          chunk 1 text run 1 at (200.00,140.00) startOffset 0 endOffset 25 width 220.12: "Blue rectangle opacity: 1"
+      RenderSVGText {text} at (200,139) size 236x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 236x24
+          chunk 1 text run 1 at (200.00,158.00) startOffset 0 endOffset 26 width 235.75: "Green rectangle opacity: 1"
+      RenderSVGContainer {g} at (100,283) size 150x84
+        RenderSVGRect {rect} at (100,283) size 134x67 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=60.00] [y=170.00] [width=80.00] [height=40.00]
+        RenderSVGRect {rect} at (116,300) size 134x67 [opacity=0.50] [fill={[type=SOLID] [color=#00FF00]}] [x=70.00] [y=180.00] [width=80.00] [height=40.00]
+      RenderSVGText {text} at (200,163) size 148x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 148x24
+          chunk 1 text run 1 at (200.00,182.00) startOffset 0 endOffset 16 width 147.48: "Group opacity: 1"
+      RenderSVGText {text} at (200,181) size 237x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 237x24
+          chunk 1 text run 1 at (200.00,200.00) startOffset 0 endOffset 27 width 236.88: "Blue rectangle opacity: 0.5"
+      RenderSVGText {text} at (200,199) size 253x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 253x24
+          chunk 1 text run 1 at (200.00,218.00) startOffset 0 endOffset 28 width 252.52: "Green rectangle opacity: 0.5"
+      RenderSVGContainer {g} at (100,383) size 150x84 [opacity=0.50]
+        RenderSVGRect {rect} at (100,383) size 134x67 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=60.00] [y=230.00] [width=80.00] [height=40.00]
+        RenderSVGRect {rect} at (116,400) size 134x67 [opacity=0.50] [fill={[type=SOLID] [color=#00FF00]}] [x=70.00] [y=240.00] [width=80.00] [height=40.00]
+      RenderSVGText {text} at (200,223) size 165x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 165x24
+          chunk 1 text run 1 at (200.00,242.00) startOffset 0 endOffset 18 width 164.24: "Group opacity: 0.5"
+      RenderSVGText {text} at (200,241) size 237x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 237x24
+          chunk 1 text run 1 at (200.00,260.00) startOffset 0 endOffset 27 width 236.88: "Blue rectangle opacity: 0.5"
+      RenderSVGText {text} at (200,259) size 253x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 253x24
+          chunk 1 text run 1 at (200.00,278.00) startOffset 0 endOffset 28 width 252.52: "Green rectangle opacity: 0.5"
+    RenderSVGContainer {g} at (16,516) size 385x64
+      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 231x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.6 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

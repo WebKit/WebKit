@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 10: Error: Problem parsing d="none"
+CONSOLE MESSAGE: line 11: Error: Problem parsing d="# invalid"
+CONSOLE MESSAGE: line 12: Error: Problem parsing d="m 0 0 l 3 -4 z # ignored suffix v 123"
+CONSOLE MESSAGE: line 14: Error: Problem parsing d="m 0 0 l -9 11 -123 z # ignore last l parameter"
+
+PASS bounding 
+

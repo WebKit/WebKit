@@ -1,0 +1,84 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+
+        <script>            
+
+        var cueCount = 0;
+        var currentCue;
+        var testTrack;
+
+        var trackLoaded = false;
+        var videoCanPlayThrough = false;
+
+        function attemptTests()
+        {
+            if (!trackLoaded || !videoCanPlayThrough)
+                return;
+
+            testTrack = document.getElementById("testTrack");
+            testExpected("testTrack.track.cues.length", 3);
+            for (var i = 0; i < testTrack.track.cues.length; i++) {
+                testTrack.track.cues[i].addEventListener('enter', cueEntered);
+                testTrack.track.cues[i].addEventListener('exit', cueExited);
+            }
+            run("video.play()");
+            consoleWrite("");
+        }
+
+        function cueEntered()
+        {
+            consoleWrite("EVENT(enter)");
+
+            currentCue = event.target;
+
+            consoleWrite("This cue is the currently active cue:");
+            testExpected(currentCue, testTrack.track.activeCues[0]);
+            testExpected("currentCue.id", cueCount + 1);
+            consoleWrite("");
+        }
+
+        function cueExited()
+        {
+            consoleWrite("EVENT(exit)");
+            consoleWrite("");
+
+            ++cueCount;
+            if (cueCount == testTrack.track.cues.length)
+                endTest();
+        }
+
+        waitForEvent('canplaythrough',
+            function () 
+            {
+                videoCanPlayThrough = true;
+                attemptTests();
+            }
+        );
+        
+        function loaded()
+        {
+            trackLoaded = true;
+            attemptTests();
+        }
+
+        function start()
+        {
+            findMediaElement();
+            video.src = findMediaFile("video", "../content/test");
+        }
+
+        setCaptionDisplayMode('Automatic');
+        </script>
+    </head>
+    <body onload="start()">
+        <p>Tests that TextTrack's cues are indexed and updated in order during video playback. Test uses the enter and exits events on TextTrackCue.</p>
+        <video controls>
+            <track id="testTrack" src="captions-webvtt/cues-chrono-order.vtt" kind="captions" onload="loaded()" default>
+        </video>
+    </body>
+</html>

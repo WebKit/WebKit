@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 54x18
+          text run at (0,0) width 54: "Test for "
+        RenderInline {I} at (0,0) size 748x36
+          RenderInline {A} at (0,0) size 305x18 [color=#0000EE]
+            RenderText {#text} at (53,0) size 305x18
+              text run at (53,0) width 305: "http://bugs.webkit.org/show_bug.cgi?id=15208"
+          RenderText {#text} at (357,0) size 748x36
+            text run at (357,0) width 5: " "
+            text run at (361,0) width 387: "display:table causes the collapsed text to show at a different"
+            text run at (0,18) width 155: "position when expanded"
+        RenderText {#text} at (154,18) size 5x18
+          text run at (154,18) width 5: "."
+      RenderBlock {P} at (0,52) size 784x18
+        RenderText {#text} at (0,0) size 209x18
+          text run at (0,0) width 209: "This should say \x{201C}Lorem ipsum\x{201D}:"
+      RenderTable {DIV} at (0,86) size 86x18
+        RenderTableSection (anonymous) at (0,0) size 86x18
+          RenderTableRow (anonymous) at (0,0) size 86x18
+            RenderTableCell (anonymous) at (0,0) size 86x18 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 43x18
+                text run at (0,0) width 43: "Lorem"
+              RenderText {#text} at (42,0) size 44x18
+                text run at (42,0) width 5: " "
+                text run at (46,0) width 40: "ipsum"

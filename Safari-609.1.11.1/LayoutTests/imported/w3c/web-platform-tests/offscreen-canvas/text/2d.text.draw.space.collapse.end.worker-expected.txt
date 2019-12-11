@@ -1,0 +1,3 @@
+
+FAIL Space characters at the end of a line are collapsed (per CSS) Can't find variable: OffscreenCanvas
+

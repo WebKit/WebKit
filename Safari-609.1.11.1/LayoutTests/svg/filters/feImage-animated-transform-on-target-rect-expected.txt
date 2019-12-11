@@ -1,0 +1,2 @@
+Passes if rect is not rotated
+

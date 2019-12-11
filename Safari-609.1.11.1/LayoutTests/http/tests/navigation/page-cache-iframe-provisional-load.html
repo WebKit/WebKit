@@ -1,0 +1,50 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/resources/js-test-pre.js"></script>
+<script>
+description("A frame in provisional load stage should prevent page caching.");
+window.jsTestIsAsync = true;
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+
+    if (!window.sessionStorage.page_cache_provisional_load_test_started)
+        return;
+
+    delete window.sessionStorage.page_cache_provisional_load_test_started;
+
+    if (event.persisted)
+        testFailed("Page was restored from PageCache");
+    else
+        testPassed("Page was not restored from PageCache");
+
+    finishJSTest();
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    testFailed("pagehide - Page went into PageCache");
+}, false);
+
+function loadSubframeAndNavigateAway()
+{
+    window.sessionStorage.page_cache_provisional_load_test_started = true;
+
+    // Force a back navigation back to this page after the subframe starts provisional navigation.
+    var testFrame = document.getElementById("testFrame");
+    testFrame.onbeforeunload = function() {
+        setTimeout(function() {
+            window.location.href = "resources/page-cache-helper.html";
+        }, 0);
+    };
+    testFrame.src = "http://127.0.0.1:8000/navigation/resources/slow-resource.pl?delay=3000";
+}
+
+window.addEventListener('load', loadSubframeAndNavigateAway, false);
+
+</script>
+<iframe id="testFrame" src="about:blank"></iframe>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

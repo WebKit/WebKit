@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: [object DOMError]
+CONSOLE MESSAGE: Unhandled Promise Rejection: [object DOMError]
+CONSOLE MESSAGE: Unhandled Promise Rejection: [object DOMError]
+
+PASS video-only 
+FAIL Untitled assert_true: expected true got false
+PASS audio-only 
+FAIL Untitled 1 assert_true: expected true got false
+PASS video+audio 
+FAIL Untitled 2 assert_true: expected true got false
+

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-WebKit-CSP" content="form-action 'none'">
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        testRunner.clearBackForwardList();
+        testRunner.dumpBackForwardList();
+    }
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            document.getElementById('submit').click();
+        }, 0);
+    });
+    setTimeout(function () {
+        testRunner.notifyDone();
+    }, 1000);
+</script>
+</head>
+<body>
+    <form action='/navigation/resources/form-target.pl' id='theform' method='post'>
+        <input type='text' name='fieldname' value='fieldvalue'>
+        <input type='submit' id='submit' value='submit'>
+    </form>
+
+    <p>Tests that blocking form actions works correctly. If this test passes, you will see a console error, and will not see a page indicating a form was POSTed.</p>
+</body>
+</html>

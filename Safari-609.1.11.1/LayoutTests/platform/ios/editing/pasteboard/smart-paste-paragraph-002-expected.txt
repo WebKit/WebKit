@@ -1,0 +1,29 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of PRE > BODY > HTML > #document to 4 of PRE > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of PRE > BODY > HTML > #document to 0 of PRE > BODY > HTML > #document toDOMRange:range from 0 of PRE > BODY > HTML > #document to 0 of PRE > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of PRE > BODY > HTML > #document to 0 of PRE > BODY > HTML > #document toDOMRange:range from 0 of #text > SPAN > PRE > BODY > HTML > #document to 4 of #text > SPAN > PRE > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 12 of #text > PRE > BODY > HTML > #document to 12 of #text > PRE > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of PRE > BODY > HTML > #document to 3 of PRE > BODY > HTML > #document toDOMRange:range from 0 of PRE > PRE > BODY > HTML > #document to 0 of PRE > PRE > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+Tests: 
+Smart paste when pasting a paragraph between two paragraphs in a pre element.
+Expected Results: 
+A space should be added between the preexisting word and the word that's pasted. It should like this: 
+Test paragraph. 
+
+Test paragraph. 
+
+Last test paragraph.
+Test paragraph.
+
+Test paragraph.
+
+Last test paragraph.
+execCopyCommand: <span id="test">Test</span> paragraph. <br>Last test paragraph.
+execPasteCommand: <span id="test">Test</span> paragraph. <pre id="root" class="editing" style="word-wrap: break-word;"><span><br></span></pre><pre id="root" class="editing" style="word-wrap: break-word;"><span id="test">Test</span> paragraph.</pre><pre id="root" class="editing" style="word-wrap: break-word;"><br></pre>Last test paragraph.

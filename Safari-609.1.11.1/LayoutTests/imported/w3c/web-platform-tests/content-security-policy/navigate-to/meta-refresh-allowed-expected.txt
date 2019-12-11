@@ -1,0 +1,4 @@
+
+
+PASS Test that the child iframe navigation is allowed 
+

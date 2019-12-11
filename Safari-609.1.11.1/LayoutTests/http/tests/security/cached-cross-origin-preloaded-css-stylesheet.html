@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner) {
+   testRunner.dumpAsText();
+   testRunner.waitUntilDone();
+}
+function errorPreload(e)
+{
+    console.log("unexpected preload result " + e);
+    preloaded();
+}
+var numPreloads = 0;
+function preloaded()
+{
+    if (++numPreloads == 4)
+        doTests();
+}
+</script>
+<link rel=preload onload="preloaded()" onerror="errorPreload(1)" as=style href="http://localhost:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss1.css&contentType=text/css&allowCredentials">
+<link rel=preload onload="preloaded()" onerror="errorPreload(2)" as=style href="http://localhost:8080/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=xorigincss1.css&contentType=text/css&allowCredentials">
+<link rel=preload onload="preloaded()" onerror="errorPreload(3)" as=style crossorigin=use-credentials href="http://localhost:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=xorigincss2.css&contentType=text/css&allowCredentials">
+<link rel=preload onerror="preloaded()" onload="errorPreload(4)" as=style crossorigin=use-credentials href="http://localhost:8080/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss2.css&contentType=text/css&allowCredentials">
+<div id ="log"></div>
+<script>
+if (window.testRunner) {
+   testRunner.dumpAsText();
+   testRunner.waitUntilDone();
+}
+
+var maxResults = 5;
+var results = [];
+
+function checkDone()
+{
+    if (results.length !== maxResults)
+        return;
+    var log = "";
+    results.sort();
+    for (value of results)
+        log += "<br>" + value;
+    document.getElementById('log').innerHTML = log;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function logOnLoad(url, isCORS, expectSuccess)
+{
+    results.push((expectSuccess ? "PASS: " : "FAIL: ") + "loaded successfuly " + url + (isCORS ? " (cors mode)" : " (no-cors mode)"));
+    checkDone();
+}
+
+function logOnError(url, isCORS, expectSuccess)
+{
+    results.push((!expectSuccess ? "PASS: " : "FAIL: ") + "did not load " + url + (isCORS ? " (cors mode)" : " (no-cors mode)"));
+    checkDone();
+}
+
+function createLinkElement(url, isCORS, expectSuccess)
+{
+    link = document.createElement('link');
+    link.href = url;
+    link.rel = "stylesheet";
+    link.type = "text/css";
+    if (isCORS)
+        link.crossOrigin = "use-credentials";
+    link.onload = () => { logOnLoad(url, isCORS, expectSuccess); };
+    link.onerror = () => { logOnError(url, isCORS, expectSuccess); };
+    return link;
+}
+
+function doTests()
+{
+    document.body.appendChild(createLinkElement("http://localhost:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss1.css&contentType=text/css&allowCredentials", true, false));
+    document.body.appendChild(createLinkElement("http://localhost:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss1.css&contentType=text/css&allowCredentials", false, true));
+    document.body.appendChild(createLinkElement("http://localhost:8080/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=xorigincss1.css&contentType=text/css&allowCredentials", true, true));
+    document.body.appendChild(createLinkElement("http://localhost:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=xorigincss2.css&contentType=text/css&allowCredentials", true, true));
+    document.body.appendChild(createLinkElement("http://localhost:8080/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss2.css&contentType=text/css&allowCredentials", false, true));
+}
+</script>

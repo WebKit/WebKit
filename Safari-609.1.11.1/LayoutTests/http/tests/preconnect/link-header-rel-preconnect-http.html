@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that Link header's rel=preconnect works as expected over HTTP.");
+jsTestIsAsync = true;
+
+// If the feature is not supported on this platform, fail without a timeout.
+if (!document.createElement("link").relList.supports("preconnect"))
+    finishJSTest();
+
+internals.setConsoleMessageListener(function() {
+    finishJSTest();
+});
+var script = document.createElement("script");
+script.src = "resources/header-preconnect.php";
+document.body.appendChild(script);
+</script>
+</body>
+</html>

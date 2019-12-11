@@ -1,0 +1,88 @@
+CONSOLE MESSAGE: line 55: WebGL: INVALID_ENUM: bindBuffer: invalid target
+CONSOLE MESSAGE: line 57: WebGL: INVALID_ENUM: bufferData: invalid target
+CONSOLE MESSAGE: line 55: WebGL: INVALID_ENUM: bindBuffer: invalid target
+CONSOLE MESSAGE: line 57: WebGL: INVALID_ENUM: bufferData: invalid target
+CONSOLE MESSAGE: line 55: WebGL: INVALID_ENUM: bindBuffer: invalid target
+CONSOLE MESSAGE: line 57: WebGL: INVALID_ENUM: bufferData: invalid target
+CONSOLE MESSAGE: line 55: WebGL: INVALID_ENUM: bindBuffer: invalid target
+CONSOLE MESSAGE: line 57: WebGL: INVALID_ENUM: bufferData: invalid target
+CONSOLE MESSAGE: line 55: WebGL: INVALID_ENUM: bindBuffer: invalid target
+CONSOLE MESSAGE: line 57: WebGL: INVALID_ENUM: bufferData: invalid target
+CONSOLE MESSAGE: line 55: WebGL: INVALID_ENUM: bindBuffer: invalid target
+CONSOLE MESSAGE: line 57: WebGL: INVALID_ENUM: bufferData: invalid target
+Checks that using WebGL 2 buffer targets don't cause errors
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.INVALID_ENUM
+PASS context.getError() is context.INVALID_ENUM
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.INVALID_ENUM
+PASS context.getError() is context.INVALID_ENUM
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.INVALID_ENUM
+PASS context.getError() is context.INVALID_ENUM
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.INVALID_ENUM
+PASS context.getError() is context.INVALID_ENUM
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.INVALID_ENUM
+PASS context.getError() is context.INVALID_ENUM
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.INVALID_ENUM
+PASS context.getError() is context.INVALID_ENUM
+PASS context.getError() is context.NO_ERROR
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

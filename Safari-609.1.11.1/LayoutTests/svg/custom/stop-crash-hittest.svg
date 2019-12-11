@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <stop/>
+  <script>
+  if (window.testRunner)
+     testRunner.dumpAsText();
+  if (window.eventSender) {
+     eventSender.mouseMoveTo(200, 200);
+     eventSender.mouseDown();
+     eventSender.mouseUp();
+  }
+  </script>
+  <text x="10" y="25">PASS -- if this test doesn't crash it passes.</text>
+</svg>

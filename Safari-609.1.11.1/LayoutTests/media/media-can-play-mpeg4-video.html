@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="video-test.js"></script>
+        <script>
+            function start()
+            {
+                video = document.getElementsByTagName('video')[0];
+
+                testExpected("video.canPlayType('video/x-m4v')", "maybe");
+                testExpected("video.canPlayType('video/mp4')", "maybe");
+                testExpected("video.canPlayType('video/mp4; Codecs=\"avc1.4D400C\"')", "probably");
+                testExpected("video.canPlayType('        Video/MP4 ; CODECS=\"mp4v.20.8, mp4a.40.2\"')", "probably");
+
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <video controls></video>
+        <p>Test HTMLMediaElement <em>canPlayType()</em> method with multiple video mpeg4 MIME types.</p>
+        <p>These tests may be expected to fail if the WebKit port does not support the format.</p>
+    </body>
+</html>

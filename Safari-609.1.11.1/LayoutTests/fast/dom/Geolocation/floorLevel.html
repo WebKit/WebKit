@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+description("Tests support for Geolocation's floorLevel");
+jsTestIsAsync = true;
+
+const mockLatitude = 51.478;
+const mockLongitude = -0.166;
+const mockAccuracy = 100.0;
+const mockAltitude = 10.1;
+const mockAltitudeAccuracy = 0.1;
+const mockHeading = 223.3;
+const mockSpeed = 123.4;
+const mockFloorLevel = 3;
+
+if (window.testRunner) {
+    testRunner.setGeolocationPermission(true);
+    testRunner.setMockGeolocationPosition(mockLatitude, mockLongitude, mockAccuracy, mockAltitude, mockAltitudeAccuracy, mockHeading, mockSpeed, mockFloorLevel);
+}
+
+function checkPosition(position) {
+    coords = position.coords;
+    shouldBe("coords.latitude", "mockLatitude");
+    shouldBe("coords.longitude", "mockLongitude");
+    shouldBe("coords.accuracy", "mockAccuracy");
+    shouldBe("coords.altitude", "mockAltitude");
+    shouldBe("coords.altitudeAccuracy", "mockAltitudeAccuracy");
+    shouldBe("coords.heading", "mockHeading");
+    shouldBe("coords.speed", "mockSpeed");
+    shouldBe("coords.floorLevel", "mockFloorLevel");
+    finishJSTest();
+}
+
+navigator.geolocation.getCurrentPosition(checkPosition);
+</script>
+</body>
+</html>

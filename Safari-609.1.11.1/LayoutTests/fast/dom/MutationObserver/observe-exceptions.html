@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+<title></title>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+function runTest() {
+    window.observer = new MutationObserver(function(mutations) { });
+    shouldThrowErrorName('observer.observe()', 'TypeError');
+    shouldThrowErrorName('observer.observe(null)', 'TypeError');
+    shouldThrowErrorName('observer.observe(undefined)', 'TypeError');
+    shouldThrowErrorName('observer.observe(document.body)', 'TypeError');
+    shouldThrowErrorName('observer.observe(document.body, null)', 'TypeError');
+    shouldThrowErrorName('observer.observe(document.body, undefined)', 'TypeError');
+    shouldThrowErrorName('observer.observe(null, {attributes: true})', 'TypeError');
+    shouldThrowErrorName('observer.observe(undefined, {attributes: true})', 'TypeError');
+    shouldThrowErrorName('observer.observe(document.body, {subtree: true})', 'TypeError');
+    shouldNotThrow('observer.observe(document.body, {childList: true, attributeOldValue: true})');
+    shouldNotThrow('observer.observe(document.body, {attributes: true, characterDataOldValue: true})');
+    shouldNotThrow('observer.observe(document.body, {characterData: true, attributeFilter: ["id"]})');
+
+    shouldThrowErrorName('observer.observe(document.body, {attributes: false, attributeOldValue: true})', 'TypeError');
+    shouldThrowErrorName('observer.observe(document.body, {attributes: false, attributeFilter: ["id"]})', 'TypeError');
+    shouldThrowErrorName('observer.observe(document.body, {characterData: false, characterDataOldValue: true})', 'TypeError');
+
+    shouldThrowErrorName('observer.observe(document.body, {attributeFilter: 1})', 'TypeError');
+    shouldThrowErrorName('observer.observe(document.body, {attributeFilter: "abc"})', 'TypeError');
+    shouldNotThrow('x = { [Symbol.iterator]: function* () { yield "foo"; } }; observer.observe(document.body, {attributeFilter: x})');
+    shouldThrowErrorName('x = { [Symbol.iterator]: 1 }; observer.observe(document.body, {attributeFilter: x})', 'TypeError');
+    shouldThrowErrorName('x = { [Symbol.iterator]: null }; observer.observe(document.body, {attributeFilter: x})', 'TypeError');
+    shouldThrowErrorName('x = { [Symbol.iterator]: function* () { throw {name: "error", toString: () => "error"}; } }; '
+        + 'observer.observe(document.body, {attributeFilter: x})', 'error');
+}
+
+description('Test that WebKitMutationObserver.observe throws exceptions appropriately');
+
+runTest();
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

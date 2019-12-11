@@ -1,0 +1,10 @@
+Test for column-width property with zero value
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(divElement).webkitColumnWidth is "auto"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

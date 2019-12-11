@@ -1,0 +1,4 @@
+ALERT: PASS user agent object loaded.
+Tests that a HTML object element, in a user agent shadow tree, is allowed to load markup when the page has CSP policy: frame-src 'none'. This test FAILED if it timesout.
+
+

@@ -1,0 +1,21 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    internals.settings.setStorageBlockingPolicy('BlockThirdParty');
+}
+var async = new XMLHttpRequest();
+async.onreadystatechange = function () {
+    if (async.readyState === 4) {
+        alert("Verifying credentials are used when given: " + async.responseText);
+        var sync = new XMLHttpRequest();
+        sync.open("GET", 'resources/basic-auth.php', false);
+        sync.send();
+        alert("Verifying credentials are used preemptively for sync xhr: " + sync.responseText);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+};
+async.open('GET', 'resources/basic-auth.php', true, "username", "password");
+async.send();
+</script>

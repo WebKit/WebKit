@@ -1,0 +1,10 @@
+<body>
+The images below should load.<br>
+<img src="http://127.0.0.1:8000/resources/square100.png?not_local_host"><br>
+<img src="http://localhost:8000/resources/square100.png?whitelist"><br>
+<img src="http://127.0.0.1:8000/resources/square100.png?whitelist_before_localhost"><br>
+The images below should be blocked.<br>
+<img src="http://localhost:8000/resources/square100.png"><br>
+<img src="http://127.0.0.1:8000/resources/square100.png?localhost_not_at_end"><br>
+<img src="http://127.0.0.1:8000/resources/square100.png?ends_with_localhost"><br>
+</body>

@@ -1,0 +1,1465 @@
+# Copyright (C) 2019 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Format:
+# -
+#     title: main_level_title
+#     subs:
+#         -
+#             title: 2nd_level_title
+#             examples:
+#                 -
+#                     description: example_desciption
+#                     html: example_html
+-
+    title: Typography
+    subs:
+        -
+            title: Headings
+            examples:
+                -
+                    description: ~
+                    html: |-
+                        <h1>This is H1</h1>
+                        <h2>This is H2</h2>
+                        <h3>This is H3</h3>
+                        <h4>This is H4</h4>
+        -
+            title: Text
+            examples:
+                -
+                    description: |-
+                        Use class "text" along with different size class to control the font size.
+                    html: |-
+                        <div class="text">Default</div>
+                        <div class="text huge">This is Huge</div>
+                        <div class="text large">This is Large</div>
+                        <div class="text medium">This is medium</div>
+                        <div class="text small">This is small</div>
+                        <div class="text tiny">This is tiny</div>
+        -
+            title: "Text block"
+            examples:
+                -
+                    description: |-
+                        Use class "text" along with "block" to make inline-block text blocks.
+                    html: |-
+                        <div class="text block">
+                            <div class="text tiny">iMac 27" (Late 2012)</div>
+                            <div class="text small">iMac 13,2</div>
+                        </div>
+                        <div class="text block">
+                            <div class="text tiny">iMac 27" (Late 2013)</div>
+                            <div class="text small">iMac 14,2</div>
+                        </div>
+        -
+            title: Quote
+            examples:
+                -
+                    description: ~
+                    html: |-
+                        <pre>
+                            I am a quote
+                        </pre>
+-
+    title: Layout
+    subs:
+        -
+            title: ~
+            examples:
+                -
+                    description: ~
+                    html: |-
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="placeholder dimmer tiny"><p class="loader">col-12</p></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="placeholder dimmer tiny"><p class="loader">col-6</p></div>
+                            </div>
+                            <div class="col-6">
+                                <div class="placeholder dimmer tiny"><p class="loader">col-6</p></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <div class="placeholder dimmer tiny"><p class="loader">col-4</p></div>
+                            </div>
+                            <div class="col-8">
+                                <div class="placeholder dimmer tiny"><p class="loader">col-8</p></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-2">
+                                <div class="placeholder dimmer tiny"><p class="loader">col-2</p></div>
+                            </div>
+                            <div class="col-2">
+                                <div class="placeholder dimmer tiny"><p class="loader">col-2</p></div>
+                            </div>
+                            <div class="col-8">
+                                <div class="placeholder dimmer tiny"><p class="loader">col-8</p></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-1"><div class="placeholder dimmer tiny"><p class="loader">col-1</p></div></div>
+                            <div class="col-1"><div class="placeholder dimmer tiny"><p class="loader">col-1</p></div></div>
+                            <div class="col-1"><div class="placeholder dimmer tiny"><p class="loader">col-1</p></div></div>
+                            <div class="col-1"><div class="placeholder dimmer tiny"><p class="loader">col-1</p></div></div>
+                            <div class="col-1"><div class="placeholder dimmer tiny"><p class="loader">col-1</p></div></div>
+                            <div class="col-1"><div class="placeholder dimmer tiny"><p class="loader">col-1</p></div></div>
+                            <div class="col-1"><div class="placeholder dimmer tiny"><p class="loader">col-1</p></div></div>
+                            <div class="col-1"><div class="placeholder dimmer tiny"><p class="loader">col-1</p></div></div>
+                            <div class="col-1"><div class="placeholder dimmer tiny"><p class="loader">col-1</p></div></div>
+                            <div class="col-1"><div class="placeholder dimmer tiny"><p class="loader">col-1</p></div></div>
+                            <div class="col-1"><div class="placeholder dimmer tiny"><p class="loader">col-1</p></div></div>
+                            <div class="col-1"><div class="placeholder dimmer tiny"><p class="loader">col-1</p></div></div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-s-12">
+                                <div class="placeholder dimmer tiny"><p class="loader">col-s-12</p></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-s-6">
+                                <div class="placeholder dimmer tiny"><p class="loader">col-s-6</p></div>
+                            </div>
+                            <div class="col-s-6">
+                                <div class="placeholder dimmer tiny"><p class="loader">col-s-6</p></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-s-4">
+                                <div class="placeholder dimmer tiny"><p class="loader">col-s-4</p></div>
+                            </div>
+                            <div class="col-s-8">
+                                <div class="placeholder dimmer tiny"><p class="loader">col-s-8</p></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-s-2">
+                                <div class="placeholder dimmer tiny"><p class="loader">col-s-2</p></div>
+                            </div>
+                            <div class="col-s-2">
+                                <div class="placeholder dimmer tiny"><p class="loader">col-s-2</p></div>
+                            </div>
+                            <div class="col-s-8">
+                                <div class="placeholder dimmer tiny"><p class="loader">col-s-8</p></div>
+                            </div>
+                        </div>
+-
+    title: Elements
+    subs:
+        -
+            title: Topbar
+            examples:
+                -
+                    description: ~
+                    html: |-
+                        <div class="topbar">
+                            <div class="title">My App</div>
+                            <div class="actions">
+                                <div class="list">
+                                    <div class="item">
+                                        <a>link 1</a>
+                                    </div>
+                                    <div class="item">
+                                        <a>link 2</a>
+                                    </div>
+                                    <div class="item">
+                                        <a>link 3</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+        -
+            title: Section
+            examples:
+                -
+                    description: ~
+                    html: |-
+                        <div class="content">
+                            <div class="section">
+                                <div class="header">
+                                    <div class="title">
+                                        Title
+                                    </div>
+                                    <div class="actions">
+                                        <div class="list">
+                                            <div class="item">
+                                                action 1
+                                            </div>
+                                            <div class="item">
+                                                action 2
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="content">
+                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                                </div>
+                                <div class="actions">
+                                    <button class="button">Button 1</button>
+                                    <button class="button">Button 2</button>
+                                </div>
+                            </div>
+                        </div>
+                -
+                    description: |-
+                        Use "article" modifier to get rid of the border:
+                    html: |-
+                        <div class="content">
+                            <div class="section article">
+                                <div class="header">
+                                    <div class="title">
+                                        Title
+                                    </div>
+                                    <div class="actions">
+                                        <div class="list">
+                                            <div class="item">
+                                                action 1
+                                            </div>
+                                            <div class="item">
+                                                action 2
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="content">
+                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                                </div>
+                                <div class="actions">
+                                    <button class="button">Button 1</button>
+                                    <button class="button">Button 2</button>
+                                </div>
+                            </div>
+                        </div>
+        -
+            title: Placeholder
+            examples:
+                -
+                    description: ~
+                    html: |-
+                        <div class="placeholder"> <p class="loader">placeholder</p> </div>
+                        <div class="placeholder small"><p class="loader">placeholder small</p> </div>
+                        <div class="placeholder tiny"><p class="loader">placeholder tiny</p></div>
+                -
+                    description: |-
+                        Use "dimmer" modifier to make the placeholder dark
+                    html: |-
+                        <div class="placeholder dimmer"> <p class="loader">placeholder</p> </div>
+        -
+            title: Loader
+            examples:
+                -
+                    description: Size
+                    html: |-
+                        <div class="loader">
+                            <div class="spinner huge">
+                            </div>
+                            <div class="spinner large">
+                            </div>
+                            <div class="spinner">
+                            </div>
+                            <div class="spinner small">
+                            </div>
+                            <div class="spinner tiny">
+                            </div>
+                        </div>
+                -
+                    description: Color
+                    html: |-
+                        <div class="loader">
+                            <div class="spinner">
+                            </div>
+                            <div class="spinner blue">
+                            </div>
+                            <div class="spinner purple">
+                            </div>
+                            <div class="spinner green">
+                            </div>
+                            <div class="spinner orange">
+                            </div>
+                            <div class="spinner red">
+                            </div>
+                        </div>
+                -
+                    description:
+                        With Placeholder
+                    html: |-
+                        <div class="placeholder dimmer">
+                            <div class="loader">
+                                <div class="spinner">
+                                </div>
+                            </div>
+                        </div>
+        -
+            title: Progress bar
+            examples:
+                -
+                    description: Different colors with mixin
+                    html: |-
+                        <div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width:25%">25%</div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar success" style="width:50%">50%</div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar failed" style="width:75%">75%</div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar error" style="width:100%">100%</div>
+                            </div>
+                        </div>
+                -
+                    description: Mulit bar
+                    html: |-
+                        <div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" style="width:25%">25%</div>
+                                    <div class="progress-bar error" style="width:75%">75%</div>
+                                </div>
+                        </div>
+        -
+            title: List
+            examples:
+                -
+                    description: ~
+                    html: |-
+                        <div class="list">
+                            <div class="item">item 1</div>
+                            <div class="item">item 2</div>
+                            <div class="divider"></div>
+                            <div class="item">
+                                <div class="list">
+                                    <div class="item">item 1 lv2</div>
+                                    <div class="item">item 2 lv2</div>
+                                    <div class="divider"></div>
+                                    <div class="item">
+                                        <div class="list">
+                                            <div class="item">item 1 lv3</div>
+                                            <div class="item">item 2 lv3</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+        -
+            title: Sidebar
+            examples:
+                -
+                    description: ~
+                    html: |-
+                        <div class="sidebar">
+                            <div class="header">
+                                <div class="title">
+                                    Title
+                                </div>
+                            </div>
+                        </div>
+                        <div class="main">
+                        </div>
+        -
+            title: Drawer
+            examples:
+                -
+                    description: ~
+                    html: |-
+                        <div id="bottom-drawer" class="drawer">
+                            <div class="header">
+                                <div class="actions">
+                                    <a href="javascript:void(0)" onclick="closeDrawerFactory('bottom-drawer')()">Close</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="left-drawer" class="drawer left">
+                            <div class="header">
+                                <div class="actions">
+                                    <a href="javascript:void(0)" onclick="closeDrawerFactory('left-drawer')()">Close</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="right-drawer" class="drawer right">
+                            <div class="header">
+                                <div class="actions">
+                                    <a href="javascript:void(0)" onclick="closeDrawerFactory('right-drawer')()">Close</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="left-drawer-under-toolbar" class="drawer left under-topbar-with-actions">
+                            <div class="header">
+                                <div class="actions">
+                                    <a href="javascript:void(0)" onclick="closeDrawerFactory('left-drawer-under-toolbar')();closeTopbar()">Close</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <button class="button" onclick="openDrawerFactory('bottom-drawer')()">Open bottom</button>
+                            <button class="button" onclick="openDrawerFactory('left-drawer')()">Open left</button>
+                            <button class="button" onclick="openDrawerFactory('right-drawer')()">Open right</button>
+                            <button class="button" onclick="openDrawerFactory('left-drawer-under-toolbar')();openTopbar()">Open left under topbar</button>
+                        </div>
+                        <script>
+                            const closeDrawerFactory = (id) => (e) => document.getElementById(id).classList.remove("display");
+                            const openDrawerFactory = (id) => (e) => document.getElementById(id).classList.add("display");
+                            const closeTopbar = () => { document.getElementById("topbar").style.display = "none" };
+                            const openTopbar = () => {
+                                document.getElementById("topbar").style.display = "flex";
+                            };
+                        </script>
+        -
+            title: Table
+            examples:
+                -
+                    description: ~
+                    html: |-
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>title 1</th>
+                                    <th>title 2</th>
+                                    <th>title 3</th>
+                                    <th>title 4</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>col 1</td>
+                                    <td>col 2</td>
+                                    <td>col 3</td>
+                                    <td>col 4</td>
+                                </tr>
+                                <tr>
+                                    <td>col 1</td>
+                                    <td>col 2</td>
+                                    <td>col 3</td>
+                                    <td>col 4</td>
+                                </tr>
+                                <tr>
+                                    <td>col 1</td>
+                                    <td>col 2</td>
+                                    <td>col 3</td>
+                                    <td>col 4</td>
+                                </tr>
+                                <tr>
+                                    <td>col 1</td>
+                                    <td>col 2</td>
+                                    <td>col 3</td>
+                                    <td>col 4</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                -
+                    description: full-width
+                    html: |-
+                        <table class="table full-width">
+                            <thead>
+                                <tr>
+                                    <th>title 1</th>
+                                    <th>title 2</th>
+                                    <th>title 3</th>
+                                    <th>title 4</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>col 1</td>
+                                    <td>col 2</td>
+                                    <td>col 3</td>
+                                    <td>col 4</td>
+                                </tr>
+                                <tr>
+                                    <td>col 1</td>
+                                    <td>col 2</td>
+                                    <td>col 3</td>
+                                    <td>col 4</td>
+                                </tr>
+                                <tr>
+                                    <td>col 1</td>
+                                    <td>col 2</td>
+                                    <td>col 3</td>
+                                    <td>col 4</td>
+                                </tr>
+                                <tr>
+                                    <td>col 1</td>
+                                    <td>col 2</td>
+                                    <td>col 3</td>
+                                    <td>col 4</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                -
+                    description: Stripped
+                    html: |-
+                        <table class="table full-width stripped">
+                            <thead>
+                                <tr>
+                                    <th>title 1</th>
+                                    <th>title 2</th>
+                                    <th>title 3</th>
+                                    <th>title 4</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>col 1</td>
+                                    <td>col 2</td>
+                                    <td>col 3</td>
+                                    <td>col 4</td>
+                                </tr>
+                                <tr>
+                                    <td>col 1</td>
+                                    <td>col 2</td>
+                                    <td>col 3</td>
+                                    <td>col 4</td>
+                                </tr>
+                                <tr>
+                                    <td>col 1</td>
+                                    <td>col 2</td>
+                                    <td>col 3</td>
+                                    <td>col 4</td>
+                                </tr>
+                                <tr>
+                                    <td>col 1</td>
+                                    <td>col 2</td>
+                                    <td>col 3</td>
+                                    <td>col 4</td>
+                                </tr>
+                            </tbody>
+                        </table>
+        -
+            title: Inputs
+            examples:
+                -
+                    description: Input
+                    html: |-
+                        <div class="input">
+                            <input type="text" required/>
+                            <label>Text field1</label>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="input">
+                                    <input type="text" required/>
+                                    <label>Text field2</label>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="input">
+                                    <div class="prefix"><p>+1</p></div>
+                                    <input type="text" required/>
+                                    <label>Text field3</label>
+                                </div>
+                            </div>
+                        </div>
+                -
+                    description: Sliders
+                    html: |-
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="input">
+                                    <label>Range slider</label>
+                                    <input type="range" min="0" max="100" value="0"/>
+                                    <input type="number" min="0" max="100" value="0"/>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="input">
+                                    <input type="range" min="0" max="100"    value="80"/>
+                                    <input type="number" min="0" max="100" value="80"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input">
+                            <label>Double range input</label>
+                            <div class="double-range">
+                                <input type="number" min="0" max="100"    value="20"/>
+                                <div class="range">
+                                    <input type="range" min="0" max="100"    value="20"/>
+                                    <input type="range" min="0" max="100"    value="70"/>
+                                </div>
+                                <input type="number" min="0" max="100"    value="70"/>
+                            </div>
+                        </div>
+
+                -
+                    description: Number
+                    html: |-
+                        <div class="input">
+                            <input type="number" required min="0" max="100"/>
+                            <label>Number</label>
+                        </div>
+                        <div class="input">
+                            <input type="number" required min="0" max="10" value="11"/>
+                            <label>Number out of range</label>
+                        </div>
+                -
+                    description: Select
+                    html: |-
+                        <div class="input">
+                            <select required>
+                                <option></option>
+                                <option>option 1</option>
+                                <option>option 2</option>
+                                <option>option 3</option>
+                            </select>
+                            <label>Select</label>
+                        </div>
+                -
+                    description: Switch
+                    html: |-
+                        <div class="input">
+                            <label>Switch1</label>
+                            <label class="switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="input">
+                            <label>Switch2</label>
+                            <label class="switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                -
+                    description: Mixin
+                    html: |-
+                        <div class="input">
+                            <input type="text" required disabled/>
+                            <label>Disabled</label>
+                        </div>
+                        <div class="input">
+                            <input type="text" required disabled value="I am disabled"/>
+                            <label>Disabled with existing value</label>
+                        </div>
+                        <div class="input">
+                            <input class="invalid" type="text" required value="use invalid mixin to force invalid style"/>
+                            <label>Invalid</label>
+                        </div>
+                        <div class="input">
+                            <label>Invalid Range slider</label>
+                            <input class="invalid" type="range" min="0" max="100" value="101"/>
+                            <input type="number" min="0" max="100" value="101"/>
+                        </div>
+
+        -
+            title: Button
+            examples:
+                -
+                    description: ~
+                    html: |-
+                        <button class="button">Default</button>
+                        <button class="button primary">Primary</button>
+                        <button class="button danger">Danger</button>
+                -
+                    description: Size
+                    html: |-
+                        <button class="button huge">huge</button>
+                        <button class="button large">large</button>
+                        <button class="button medium">medium</button>
+                        <button class="button">small</button>
+                        <button class="button tiny">tiny</button>
+                -
+                    description: Disabled
+                    html: |-
+                        <button class="button" disabled>Default</button>
+                        <button class="button primary" disabled>Primary</button>
+                        <button class="button danger" disabled>Danger</button>
+        -
+            title: Switch
+            examples:
+                -
+                    description: ~
+                    html: |-
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+        -
+            title: Badge
+            examples:
+                -
+                    description: ~
+                    html: |-
+                        <div class="badge">
+                            <div class="text block">
+                                <div class="text tiny">iMac 27" (Late 2012)</div>
+                                <div class="text small">iMac 13,2</div>
+                            </div>
+                        </div>
+                        <div class="badge outline">
+                            <div class="text block">
+                                <div class="text tiny">iMac 27" (Late 2013)</div>
+                                <div class="text small">iMac 14,2</div>
+                            </div>
+                        </div>
+                        <div class="badge active">
+                            <div class="text block">
+                                <div class="text tiny">iMac 27" (Late 2013)</div>
+                                <div class="text small">iMac 14,2</div>
+                            </div>
+                        </div>
+        -
+            title: Dot
+            examples:
+                -
+                    description: ~
+                    html: |-
+                        <div class="dot"></div>
+                        <div class="dot success"></div>
+                        <div class="dot failed"></div>
+                        <div class="dot error"></div>
+                -
+                    description: Size
+                    html: |-
+                        <div class="dot small"></div>
+                        <div class="dot medium"></div>
+                        <div class="dot large"></div>
+                -
+                    description:
+                        With string inside
+                    html: |-
+                        <div class="dot success">
+                            <div class="text">&#10003</div>
+                        </div>
+                        <div class="dot failed">
+                            <div class="text">&#120247</div>
+                        </div>
+                        <div class="dot error">
+                            <div class="text">!</div>
+                        </div>
+                        <div class="dot success large">
+                            <div class="text">&#10003</div>
+                        </div>
+                        <div class="dot failed large">
+                            <div class="text">&#120247</div>
+                        </div>
+                        <div class="dot error large">
+                            <div class="text">!</div>
+                        </div>
+                -
+                    description: With image inside
+                    html: |-
+                        <div class="dot error">
+                            <img src="../icons/clock.svg">
+                        </div>
+                -
+                    description: Blink
+                    html: |-
+                        <div class="dot blink"></div>
+                        <div class="dot success blink"></div>
+                        <div class="dot failed blink"></div>
+                        <div class="dot error blink"></div>
+                -
+                    description:
+                        Dot selector
+                    html: |-
+                        <div class="dot selector">
+                            <label>
+                                <input type="radio" name="selector">
+                                <div class="dot success"></div>
+                            </label>
+                            <label>
+                                <input type="radio" name="selector">
+                                <div class="dot failed"></div>
+                            </label>
+                            <label>
+                                <input type="radio" name="selector">
+                                <div class="dot error"></div>
+                            </label>
+                        </div>
+        -
+            title: chip
+            examples:
+                -
+                    description: ~
+                    html: |-
+                        <div class="chip">
+                            <div class="dot small blink"></div>
+                            <div class="text block">
+                                <p>iPone</p>
+                            </div>
+                        </div>
+                        <div class="chip">
+                            <div class="dot small blink failed"></div>
+                            <div class="text block">
+                                <p>iPad</p>
+                            </div>
+                        </div>
+                        <div class="chip">
+                            <div class="dot small success"></div>
+                            <div class="text block">
+                                <p>Mac</p>
+                            </div>
+                        </div>
+                        <div class="chip">
+                            <div class="text block">
+                                <p>macOS</p>
+                            </div>
+                            <div class="text block">
+                                <a>X</a>
+                            </div>
+                        </div>
+                        <div class="chip">
+                            <div class="text block">
+                                <p>iOS</p>
+                            </div>
+                            <div class="text block">
+                                <a>X</a>
+                            </div>
+                        </div>
+                        <div class="chip">
+                            <div class="text block">
+                                <p>watchOS</p>
+                            </div>
+                            <div class="text block">
+                                <a>X</a>
+                            </div>
+                        </div>
+        -
+            title: Tabs
+            examples:
+                -
+                    description: ~
+                    html: |-
+                        <div class="tabs">
+                            <div class="title">
+                                Title
+                            </div>
+                            <div class="tab active">
+                                <a class="link">Tab 1</a>
+                            </div>
+                            <div class="tab">
+                                <a class="link">Tab 2</a>
+                            </div>
+                        </div>
+        -
+            title: Timeline
+            examples:
+                -
+                    description: ~
+                    html: |-
+                        <div class="timeline">
+                            <div class="header">
+                                <div class="series">
+                                    time line 1
+                                </div>
+                                <div class="series">
+                                    time line 2
+                                </div>
+                            </div>
+                            <div class="content">
+                                <div class="series">
+                                    <div class="dot">
+                                        <div class="tag">1231</div>
+                                    </div>
+                                    <div class="dot success">
+                                        <div class="tag">456</div>
+                                    </div>
+                                    <div class="dot"></div>
+                                    <div class="dot"></div>
+                                    <div class="dot error">
+                                        <div class="tag">123</div>
+                                    </div>
+                                    <div class="dot empty"></div>
+                                    <div class="dot"></div>
+                                    <div class="dot"></div>
+                                    <div class="dot"></div>
+                                    <div class="dot"></div>
+                                    <div class="dot"></div>
+                                    <div class="dot"></div>
+                                    <div class="dot"></div>
+                                    <div class="dot"></div>
+                                    <div class="dot"></div>
+                                    <div class="dot"></div>
+                                    <div class="dot"></div>
+                                    <div class="dot"></div>
+                                    <div class="dot"></div>
+                                </div>
+                                <div class="series">
+                                    <div class="dot empty"></div>
+                                    <div class="dot empty"></div>
+                                    <div class="dot">
+                                        <div class="tag">3533</div>
+                                    </div>
+                                    <div class="dot">
+                                        <div class="tag">3532</div>
+                                    </div>
+                                    <div class="dot">
+                                        <div class="tag">352</div>
+                                    </div>
+                                    <div class="dot">
+                                        <div class="tag">351</div>
+                                    </div>
+                                    <div class="dot">
+                                        <div class="tag">1</div>
+                                    </div>
+                                    <div class="dot">
+                                        <div class="tag">456</div>
+                                    </div>
+                                    <div class="dot"></div>
+                                    <div class="dot"></div>
+                                    <div class="dot"></div>
+                                    <div class="dot"></div>
+                                    <div class="dot"></div>
+                                    <div class="dot"></div>
+                                    <div class="dot"></div>
+                                    <div class="dot"></div>
+                                    <div class="dot"></div>
+                                    <div class="dot"></div>
+                                    <div class="dot"></div>
+                                </div>
+                                <div class="x-axis">
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            r1234567
+                                        </div>
+                                    </div>
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            r1234567
+                                        </div>
+                                    </div>
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            r1234567
+                                        </div>
+                                    </div>
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            r1234567
+                                        </div>
+                                    </div>
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            r1234567
+                                        </div>
+                                    </div>
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            I am a tag
+                                        </div>
+                                    </div>
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            I am a tag
+                                        </div>
+                                    </div>
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            I am a tag
+                                        </div>
+                                    </div>
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            I am a tag
+                                        </div>
+                                    </div>
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            I am a tag
+                                        </div>
+                                    </div>
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            I am a tag
+                                        </div>
+                                    </div>
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            I am a tag
+                                        </div>
+                                    </div>
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            I am a tag
+                                        </div>
+                                    </div>
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            I am a tag
+                                        </div>
+                                    </div>
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            I am a tag
+                                        </div>
+                                    </div>
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            I am a tag
+                                        </div>
+                                    </div>
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            I am a tag
+                                        </div>
+                                    </div>
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            I am a tag
+                                        </div>
+                                    </div>
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            I am a tag
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="x-axis">
+                                    <div class="scale group-4">
+                                        <div class="border-line-left"></div>
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            I am a tag
+                                        </div>
+                                        <div class="border-line-right"></div>
+                                    </div>
+                                    <div class="scale group-3">
+                                        <div class="border-line-left"></div>
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            I am a tag
+                                        </div>
+                                        <div class="border-line-right"></div>
+                                    </div>
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            I am a tag
+                                        </div>
+                                    </div>
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            I am a tag
+                                        </div>
+                                    </div>
+                                    <div class="scale group-10">
+                                        <div class="border-line-left"></div>
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            I am a tag
+                                        </div>
+                                        <div class="border-line-right"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                -
+                    description: co-revision timeline top x-axis
+                    html: |-
+                        <div class="timeline">
+                            <div class="header with-top-x-axis">
+                                <div class="series">
+                                    Debug
+                                </div>
+                                <div class="series">
+                                    Release
+                                </div>
+                            </div>
+                            <div class="content">
+                                <div class="x-axis top">
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            r244510
+                                        </div>
+                                    </div>
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            r244509
+                                        </div>
+                                    </div>
+                                    <div class="scale group-4">
+                                        <div class="border-line-left"></div>
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            r244508
+                                        </div>
+                                        <div class="border-line-right"></div>
+                                    </div>
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            r244507
+                                        </div>
+                                    </div>
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            r244506
+                                        </div>
+                                    </div>
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            r244505
+                                        </div>
+                                    </div>
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            r244504
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="series">
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                </div>
+                                <div class="series">
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                </div>
+                                <div class="x-axis">
+                                    <div class="scale group-3">
+                                        <div class="border-line-left"></div>
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            ac826a38
+                                        </div>
+                                        <div class="border-line-right"></div>
+                                    </div>
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            c3558d50
+                                        </div>
+                                    </div>
+                                    <div class="scale">
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            08637423
+                                        </div>
+                                    </div>
+                                    <div class="scale group-5">
+                                        <div class="border-line-left"></div>
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            c94feb63
+                                        </div>
+                                        <div class="border-line-right"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                -
+                    description: Only Group Scale
+                    html: |-
+                        <div class="timeline">
+                            <div class="header with-top-x-axis">
+                                <div class="series">
+                                    Debug
+                                </div>
+                                <div class="series">
+                                    Release
+                                </div>
+                            </div>
+                            <div class="content">
+                                <div class="x-axis top">
+                                    <div class="scale group-4">
+                                        <div class="border-line-left"></div>
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            r244508
+                                        </div>
+                                        <div class="border-line-right"></div>
+                                    </div>
+                                    <div class="scale group-4">
+                                        <div class="border-line-left"></div>
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            r244510
+                                        </div>
+                                        <div class="border-line-right"></div>
+                                    </div>
+                                </div>
+                                <div class="series">
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                </div>
+                                <div class="series">
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                    <div class="dot success"></div>
+                                </div>
+                                <div class="x-axis">
+                                    <div class="scale group-3">
+                                        <div class="border-line-left"></div>
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            ac826a38
+                                        </div>
+                                        <div class="border-line-right"></div>
+                                    </div>
+                                    <div class="scale group-5">
+                                        <div class="border-line-left"></div>
+                                        <div class="line"></div>
+                                        <div class="text">
+                                            c94feb63
+                                        </div>
+                                        <div class="border-line-right"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                -
+                    description: Large Series Label
+                    html: |-
+                            <div class="timeline">
+                                <div class="header with-top-x-axis">
+                                    <div class="series">
+                                        I am a very long and big series 1
+                                    </div>
+                                    <div class="series">
+                                        I am a very long and big series 2
+                                    </div>
+                                </div>
+                                <div class="content">
+                                    <div class="x-axis top">
+                                        <div class="scale">
+                                            <div class="line"></div>
+                                            <div class="text">
+                                                r244510
+                                            </div>
+                                        </div>
+                                        <div class="scale">
+                                            <div class="line"></div>
+                                            <div class="text">
+                                                r244509
+                                            </div>
+                                        </div>
+                                        <div class="scale group-4">
+                                            <div class="border-line-left"></div>
+                                            <div class="line"></div>
+                                            <div class="text">
+                                                r244508
+                                            </div>
+                                            <div class="border-line-right"></div>
+                                        </div>
+                                        <div class="scale">
+                                            <div class="line"></div>
+                                            <div class="text">
+                                                r244507
+                                            </div>
+                                        </div>
+                                        <div class="scale">
+                                            <div class="line"></div>
+                                            <div class="text">
+                                                r244506
+                                            </div>
+                                        </div>
+                                        <div class="scale">
+                                            <div class="line"></div>
+                                            <div class="text">
+                                                r244505
+                                            </div>
+                                        </div>
+                                        <div class="scale">
+                                            <div class="line"></div>
+                                            <div class="text">
+                                                r244504
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="series">
+                                        <div class="dot success"></div>
+                                        <div class="dot success"></div>
+                                        <div class="dot success"></div>
+                                        <div class="dot success"></div>
+                                        <div class="dot success"></div>
+                                        <div class="dot success"></div>
+                                        <div class="dot success"></div>
+                                        <div class="dot success"></div>
+                                        <div class="dot success"></div>
+                                        <div class="dot success"></div>
+                                    </div>
+                                    <div class="series">
+                                        <div class="dot success"></div>
+                                        <div class="dot success"></div>
+                                        <div class="dot success"></div>
+                                        <div class="dot success"></div>
+                                        <div class="dot success"></div>
+                                        <div class="dot success"></div>
+                                        <div class="dot success"></div>
+                                        <div class="dot success"></div>
+                                        <div class="dot success"></div>
+                                        <div class="dot success"></div>
+                                    </div>
+                                    <div class="x-axis">
+                                        <div class="scale group-3">
+                                            <div class="border-line-left"></div>
+                                            <div class="line"></div>
+                                            <div class="text">
+                                                ac826a38
+                                            </div>
+                                            <div class="border-line-right"></div>
+                                        </div>
+                                        <div class="scale">
+                                            <div class="line"></div>
+                                            <div class="text">
+                                                c3558d50
+                                            </div>
+                                        </div>
+                                        <div class="scale">
+                                            <div class="line"></div>
+                                            <div class="text">
+                                                08637423
+                                            </div>
+                                        </div>
+                                        <div class="scale group-5">
+                                            <div class="border-line-left"></div>
+                                            <div class="line"></div>
+                                            <div class="text">
+                                                c94feb63
+                                            </div>
+                                            <div class="border-line-right"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+        -
+            title: Lengend
+            examples:
+                -
+                    description: ~
+                    html: |-
+                        <div class="lengend">
+                            <div class="item">
+                                <div class="dot success">
+                                    <div class="text">✓</div>
+                                </div>
+                                <div class="label">Tests Pass</div>
+                            </div>
+                            <div class="item">
+                                <div class="dot failed"></div>
+                                <div class="label">Tests Failed</div>
+                            </div>
+                            <div class="item">
+                                <div class="dot error"><img src="../icons/clock.svg"></div>
+                                <div class="label">Tests have error</div>
+                            </div>
+                        </div>
+                -
+                    description: With horizontal mixin
+                    html: |-
+                        <div class="lengend horizontal">
+                            <div class="item">
+                                <div class="dot success">
+                                    <div class="text">✓</div>
+                                </div>
+                                <div class="label">Tests Pass</div>
+                            </div>
+                            <div class="item">
+                                <div class="dot failed"></div>
+                                <div class="label">Tests Failed</div>
+                            </div>
+                            <div class="item">
+                                <div class="dot error"><img src="../icons/clock.svg"></div>
+                                <div class="label">Tests have error</div>
+                            </div>
+                        </div>
+                -
+                    description: With timeline mixin
+                    html: |-
+                        <div class="lengend timeline">
+                            <div class="item">
+                                <div class="dot success">
+                                    <div class="text">✓</div>
+                                </div>
+                                <div class="label">Tests Pass</div>
+                            </div>
+                            <div class="item">
+                                <div class="dot failed"></div>
+                                <div class="label">Tests Failed</div>
+                            </div>
+                            <div class="item">
+                                <div class="dot error"><img src="../icons/clock.svg"></div>
+                                <div class="label">Tests have error</div>
+                            </div>
+                        </div>

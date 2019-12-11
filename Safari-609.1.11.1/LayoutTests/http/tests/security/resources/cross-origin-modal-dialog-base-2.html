@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dialog Content, Step 2</title>
+    <script>
+        function closeWindow()
+        {
+            if (window.testRunner) {
+                testRunner.abortModal();
+            }
+            close();
+        }
+    </script>
+</head>
+<body onload="closeWindow()">
+<script>
+    console.log("document.location.origin after setting location to a relative path: " + document.location.origin);
+</script>
+This is a modal dialog.
+</body>
+</html>

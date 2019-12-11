@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <!-- a => b => a -->
+        <pattern id="a" x="0" y="0" width=".25" height=".25">
+            <rect fill="lime" width="100%" height="100%"/>
+            <rect fill="url(#b)" width="100%" height="100%"/>
+        </pattern>
+        <pattern id="b" xlink:href="#a"/>
+        
+        <!-- l => m => n => l -->
+        <pattern id="l" x="0" y="0" width=".25" height=".25">
+            <rect fill="lime" width="100%" height="100%"/>
+            <rect fill="url(#m)" width="100%" height="100%"/>
+        </pattern>
+        <pattern id="m" xlink:href="#n"/>
+        <pattern id="n" xlink:href="#l"/>
+        
+        <!-- p => q -->
+        <pattern id="p" x="0" y="0" width=".25" height=".25">
+            <rect fill="lime" width="100%" height="100%"/>
+            <rect fill="url(#q)" width="100%" height="100%"/>
+        </pattern>
+        <pattern id="q"/>
+        
+        <!-- t => s -->
+        <pattern id="s" x="0" y="0" width=".25" height=".25">
+            <rect fill="lime" width="100%" height="100%"/>
+            <rect id="r" width="100%" height="100%"/>
+        </pattern>
+        <pattern id="t" xlink:href="#s"/>
+    </defs>
+    <g fill="none" stroke="black" stroke-width="1">
+        <circle cx="75" cy="75" fill="url(#a)" r="50"/>
+        <circle cx="200" cy="75" fill="url(#b)" r="50"/>
+
+        <circle cx="75" cy="200" fill="url(#l)" r="50"/>
+        <circle cx="200" cy="200" fill="url(#m)" r="50"/>
+        <circle cx="325" cy="200" fill="url(#n)" r="50"/>
+    
+        <circle cx="75" cy="325" fill="url(#p)" r="50"/>
+        <circle cx="200" cy="325" fill="url(#q)" r="50"/>
+    
+        <circle cx="75" cy="450" fill="url(#s)" r="50"/>
+        <circle cx="200" cy="450" fill="url(#t)" r="50"/>
+    </g>
+    <script>
+        // Add q => p to get p => q => p
+        document.getElementById("q").setAttributeNS("http://www.w3.org/1999/xlink", "href", "#p");        
+        
+        // Add s => t to get s => t => s
+        document.getElementById("r").setAttribute("fill", "url(#t)");
+        
+        // Force layout
+        document.documentElement.removeAttribute("class");
+    </script>
+</svg>

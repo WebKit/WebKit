@@ -1,0 +1,155 @@
+/*
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.toolbar .dashboard-container {
+    position: relative;
+    margin: 4px;
+    height: 22px;
+
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+body:matches(.page, .web-page) .toolbar .dashboard-container {
+    width: 36vw;
+    min-width: 350px;
+}
+
+body:not(.page, .web-page) .toolbar .dashboard-container {
+    width: 25vw;
+    min-width: 175px;
+}
+
+.toolbar.collapsed .dashboard-container {
+    min-width: 175px !important;
+    width: 175px !important;
+}
+
+/* Default styles for dashboards */
+.toolbar .dashboard {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    -webkit-padding-start: 10px;
+    -webkit-padding-end: 5px;
+    animation-duration: 0.4s;
+}
+
+.toolbar .dashboard.visible {
+    z-index: 1; /* Establish a stacking context. */
+}
+
+.toolbar .dashboard:not(.visible) {
+    display: none !important;
+}
+
+.toolbar .dashboard.slide-out-up {
+    animation-name: slide-top-edge;
+    animation-direction: reverse;
+}
+
+.toolbar .dashboard.slide-out-down {
+    animation-name: slide-bottom-edge;
+}
+
+.toolbar .dashboard.slide-in-up {
+    animation-name: slide-bottom-edge;
+    animation-direction: reverse;
+}
+
+.toolbar .dashboard.slide-in-down {
+    animation-name: slide-top-edge;
+}
+
+@keyframes slide-top-edge {
+    from {
+        transform: translateY(-30px);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes slide-bottom-edge {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(30px);
+    }
+}
+
+.dashboard-container .advance-arrow {
+    position: absolute;
+    width: 19px;
+    top: 0;
+    bottom: 0;
+    padding: 4px 0;
+    opacity: 0.6;
+
+    z-index: 2;
+    background-repeat: no-repeat;
+    background-size: 8px;
+    background-image: url(../Images/UpDownArrows.svg);
+
+    transition-property: opacity;
+    transition-duration: 0.2s;
+    background-clip: content-box;
+
+    --dashboard-advance-arrow-offset-end: 0px;
+}
+
+body[dir=ltr] .dashboard-container .advance-arrow {
+    right: var(--dashboard-advance-arrow-offset-end);
+}
+
+body[dir=rtl] .dashboard-container .advance-arrow {
+    left: var(--dashboard-advance-arrow-offset-end);
+}
+
+.dashboard-container .advance-arrow:hover {
+    opacity: 0.8;
+}
+
+.dashboard-container .advance-arrow:active {
+    opacity: 1;
+}
+
+.dashboard-container .advance-arrow.inactive {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.dashboard-container .advance-arrow.advance-forward {
+    top: 0;
+    background-position: 50% 4px;
+}
+
+.dashboard-container .advance-arrow.advance-backward {
+    bottom: 0;
+    background-position: 50% -4px;
+}

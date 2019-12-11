@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="svg-image-with-css-cross-domain.css"/>
+  </head>
+  <body>
+    <h1>WebKit bug</h1>
+    <h3>SVG circle with different-origin CSS. Ensure reuse caching over different origins work</h3>
+    <p>Expected: 2 orange circles.</p>
+    <p>
+      <span class="image">
+        <svg height="68" width="68" viewBox="-34 -34 68 68">
+          <circle cx="0" cy="0" r="24" stroke="red" stroke-width="2" fill="orange" />
+        </svg>	
+      </span>
+    </p>
+    <p>
+      <span class="image">
+        <svg height="68" width="68" viewBox="-34 -34 68 68">
+          <circle cx="0" cy="0" r="24" stroke="red" stroke-width="2" fill="orange" />
+        </svg>	
+      </span>
+    </p>
+  </body>
+</html>

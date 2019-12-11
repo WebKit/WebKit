@@ -1,0 +1,46 @@
+/*
+ * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
+// https://dom.spec.whatwg.org/#documentorshadowroot
+[
+    NoInterfaceObject,
+] interface DocumentOrShadowRoot {
+    // Extensions from Shadow DOM API (https://w3c.github.io/webcomponents/spec/shadow/#extensions-to-the-documentorshadowroot-mixin).
+    // DOMSelection? getSelection(); // FIXME: We currently have this on Document only.
+    Element? elementFromPoint(double x, double y);
+    sequence<Element> elementsFromPoint(double x, double y);
+    // CaretPosition? caretPositionFromPoint(double x, double y); // FIXME: Implement this.
+    readonly attribute Element? activeElement;
+
+    // Extensions from the CSSOM specification (https://drafts.csswg.org/cssom/#extensions-to-the-document-interface).
+    readonly attribute StyleSheetList styleSheets; // FIXME: Should be [SameObject].
+
+    // Extensions from Pointer Lock API (https://w3c.github.io/pointerlock/#extensions-to-the-documentorshadowroot-mixin).
+    [Conditional=POINTER_LOCK] readonly attribute Element? pointerLockElement;
+
+    // Extensions from Picture-in-Picture API (https://wicg.github.io/picture-in-picture/#documentorshadowroot-extension)
+    [Conditional=PICTURE_IN_PICTURE_API, EnabledBySetting=PictureInPictureAPI] readonly attribute Element? pictureInPictureElement;
+};

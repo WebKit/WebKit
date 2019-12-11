@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Custom Elements: The ':defined' pseudo-class applies to elements that are defined.</title>
+<link rel="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org"/>
+<link rel="help" href="https://w3c.github.io/webcomponents/spec/custom/#the-defined-element-pseudo-class-defined">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<link rel='stylesheet' href='../../resources/testharness.css'>
+</head>
+<body>
+<div id="log"></div>
+<script>
+setup({allow_uncaught_exception:true});
+
+var upgradeCandidate = document.createElement('my-element');
+
+test(function () {
+    assert_false(upgradeCandidate.matches(':defined'));
+}, 'The defined flag of a custom element must not be set if a custom element has not been upgraded yet');
+
+class MyElement extends HTMLElement {
+    constructor() {
+        super();
+        this.matchInsideConstructor = this.matches(':defined');
+    }
+}
+
+customElements.define('my-element', MyElement);
+
+test(function () {
+    assert_false(upgradeCandidate.matches(':defined'));
+}, 'The defined flag of a custom element must not be set if a custom element has not been upgraded yet even if the element has been defined');
+
+test(function () {
+    document.body.appendChild(upgradeCandidate);
+    assert_true(upgradeCandidate.matches(':defined'));
+    assert_false(!!upgradeCandidate.matchInsideConstructor, 'Upgrading a custom element must set defined flag after invoking the constructor');
+}, 'The defined flag of a custom element must be set when a custom element is successfully upgraded');
+
+test(function () {
+    var definedElement = document.createElement('my-element');
+    assert_true(definedElement.matches(':defined'));
+    assert_true(!!definedElement.matchInsideConstructor);
+}, 'The defined flag of a custom element must be set inside the HTMLElement constructor');
+
+test(function () {
+    var upgradedElement = document.createElement('my-element').cloneNode(true);
+    assert_true(upgradedElement.matches(':defined'));
+    assert_false(!!upgradedElement.matchInsideConstructor, 'Upgrading a custom element must set defined flag after invoking the constructor');
+}, 'The defined flag of an upgraded custom element must be set');
+
+document.write('<my-other-element></my-other-element>');
+
+test(function () {
+    var parserCreatedUnfefinedElement = document.querySelector('my-other-element');
+    assert_false(parserCreatedUnfefinedElement.matches(':defined'));
+    assert_false(!!parserCreatedUnfefinedElement.matchInsideConstructor);
+}, 'The defined flag of a custom element created by HTML parser must be unset if there is no matching definition');
+
+document.write('<my-element id="parser-created-defined-element"></my-element>');
+
+test(function () {
+    var parserCreatedDefinedElement = document.getElementById('parser-created-defined-element');
+    assert_true(parserCreatedDefinedElement.matches(':defined'));
+    assert_true(!!parserCreatedDefinedElement.matchInsideConstructor,
+        'The defined flag must be set inside HTMLElement constructor when HTMLParser creates a custom element synchronously');
+}, 'The defined flag of a custom element created by HTML parser must be set if there is a matching definition');
+
+class ReturnsAnotherNode extends HTMLElement {
+    constructor() {
+        super();
+        this.matchInsideConstructor = this.matches(':defined');
+        ReturnsAnotherNode.lastInstance = this;
+        return document.createTextNode('');
+    }
+}
+customElements.define('returns-another-node', ReturnsAnotherNode);
+
+var uncaughtError;
+window.onerror = function (message, url, lineNumber, columnNumber, error) { uncaughtError = error; return true; }
+document.write('<returns-another-node></returns-another-node>');
+window.onerror = null;
+
+test(function () {
+    var instance = document.querySelector('returns-another-node');
+    assert_equals(uncaughtError.name, 'TypeError', 'The HTML parser must report a TypeError when a custom element returns a non-Element node.');
+    assert_not_equals(instance, ReturnsAnotherNode.lastInstance, 'The element inserted by HTML parser must not be the one returned by super() call');
+    assert_true(instance instanceof HTMLElement, 'The element inserted by HTML parser must be a HTMLElement');
+    assert_false(instance instanceof ReturnsAnotherNode, 'The element inserted by HTML parser must be a custom element');
+    assert_false(instance.matches(':defined'), 'The defined flag must not be set on the element inserted by HTML parser');
+    assert_true(!!ReturnsAnotherNode.lastInstance.matchInsideConstructor,
+        'The defined flag must be set inside HTMLElement constructor when HTMLParser creates a custom element synchronously');
+}, 'The element inserted by HTML parser must not have the defined flag set if the constructor returns a Text node');
+
+test(function () {
+    var instance = document.createElement('returns-another-node-2');
+    try {
+        customElements.define('returns-another-node-2', class extends ReturnsAnotherNode {});
+    } catch (e) { }
+    assert_false(instance.matches(':defined'));
+    assert_false(!!instance.matchInsideConstructor,
+        'Creating a custom element must leave the defined flag unset when synchronous custom elements flag is not set');
+}, 'The defined flag of a custom element must be set after checking the returned result is an instance of HTMLElement when upgrading a custom element');
+
+test(function () {
+    var matchInsideConstructor = false;
+    class ThrowsException extends HTMLElement {
+        constructor() {
+            super();
+            matchInsideConstructor = this.matches(':defined');
+            throw {name: 'bad'};
+        }
+    };
+    customElements.define('throws-exception', ThrowsException);
+    var instance;
+    assert_throws({name: 'bad'}, function () { instance = new ThrowsException; });
+    assert_true(matchInsideConstructor);
+}, 'The defined flag of a custom element must be set inside a constructor when constructing a custom element synchronously'
+    + ' even if the constructor threw an exception later');
+
+test(function () {
+    var instance = document.createElement('throws-exception-2');
+    document.body.appendChild(instance);
+    var uncaughtError;
+    window.onerror = function (message, url, lineNumber, columnNumber, error) { uncaughtError = error; return true; }
+    customElements.define('throws-exception-2', class extends HTMLElement {
+        constructor() {
+            throw {name: 'bad'};
+        }
+    });
+    assert_equals(uncaughtError.name, 'bad');
+    assert_false(instance.matches(':defined'));
+}, 'The defined flag of a custom element must not be set when an upgrade of a custom element fails');
+
+</script>
+</body>
+</html>

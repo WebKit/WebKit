@@ -1,0 +1,14 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+test-loading-archive.html - didFinishLoading
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
+resources/helloworld.webarchive - willSendRequest <NSURLRequest URL resources/helloworld.webarchive, main document URL test-loading-archive.html, http method GET> redirectResponse (null)
+resources/helloworld.webarchive - didReceiveResponse <NSURLResponse resources/helloworld.webarchive, http status code 0>
+frame "<!--frame1-->" - didCommitLoadForFrame
+frame "<!--frame1-->" - didFinishDocumentLoadForFrame
+frame "<!--frame1-->" - didHandleOnloadEventsForFrame
+main frame - didHandleOnloadEventsForFrame
+frame "<!--frame1-->" - didFinishLoadForFrame
+main frame - didFinishLoadForFrame
+ This tests that doing a "normal load" of a webarchive (not using loadArchive) does not cause a cancelled error to be called.

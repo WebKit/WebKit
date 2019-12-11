@@ -1,0 +1,548 @@
+Example #1: Nested Stubs
+Ruritanian
+Population 
+Survey	All
+Genders	By Gender
+Males	Females
+All Regions	North	3333	1111	2222
+South	3333	1111	2222
+--------------------------
+
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 234.000, 27.0000 }
+AXSize: { 144.000, 66.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: Ruritanian<\n>Population <\n>Survey
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitGtk
+------------
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 234.000, 27.0000 }
+AXSize: { 144.000, 66.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: Ruritanian<\n>Population <\n>Survey
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitGtk
+------------
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 377.000, 27.0000 }
+AXSize: { 70.0000, 66.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: All<\n>Genders
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitGtk
+------------
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 446.000, 27.0000 }
+AXSize: { 120.000, 30.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: By Gender
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitGtk
+------------
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 446.000, 27.0000 }
+AXSize: { 120.000, 30.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: By Gender
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitGtk
+------------
+
+
+--------------------------
+
+AXRole: AXRowHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 227.000, 93.0000 }
+AXSize: { 90.0000, 60.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: All Regions
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:rowheader, tag:th, toolkit:WebKitGtk
+------------
+AXRole: AXRowHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 227.000, 93.0000 }
+AXSize: { 90.0000, 60.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: All Regions
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:rowheader, tag:th, toolkit:WebKitGtk
+------------
+
+
+--------------------------
+
+
+
+--------------------------
+
+
+
+--------------------------
+
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 227.000, 27.0000 }
+AXSize: { 143.000, 66.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: Ruritanian<\n>Population <\n>Survey
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitGtk
+------------
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 227.000, 27.0000 }
+AXSize: { 143.000, 66.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: Ruritanian<\n>Population <\n>Survey
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitGtk
+------------
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 370.000, 27.0000 }
+AXSize: { 69.0000, 66.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: All<\n>Genders
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitGtk
+------------
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 439.000, 27.0000 }
+AXSize: { 119.000, 30.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: By Gender
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitGtk
+------------
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 439.000, 27.0000 }
+AXSize: { 119.000, 30.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: By Gender
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitGtk
+------------
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 227.000, 27.0000 }
+AXSize: { 143.000, 66.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: Ruritanian<\n>Population <\n>Survey
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitGtk
+------------
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 227.000, 27.0000 }
+AXSize: { 143.000, 66.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: Ruritanian<\n>Population <\n>Survey
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitGtk
+------------
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 370.000, 27.0000 }
+AXSize: { 69.0000, 66.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: All<\n>Genders
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitGtk
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 439.000, 57.0000 }
+AXSize: { 52.0000, 36.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: Males
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:th, toolkit:WebKitGtk
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 491.000, 57.0000 }
+AXSize: { 67.0000, 36.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: Females
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:th, toolkit:WebKitGtk
+------------
+AXRole: AXRowHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 227.000, 93.0000 }
+AXSize: { 90.0000, 60.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: All Regions
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:rowheader, tag:th, toolkit:WebKitGtk
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 317.000, 93.0000 }
+AXSize: { 53.0000, 30.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: North
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:th, toolkit:WebKitGtk
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 370.000, 93.0000 }
+AXSize: { 69.0000, 30.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: 3333
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitGtk
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 439.000, 93.0000 }
+AXSize: { 52.0000, 30.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: 1111
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitGtk
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 491.000, 93.0000 }
+AXSize: { 67.0000, 30.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: 2222
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitGtk
+------------
+AXRole: AXRowHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 227.000, 93.0000 }
+AXSize: { 90.0000, 60.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: All Regions
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:rowheader, tag:th, toolkit:WebKitGtk
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 317.000, 123.000 }
+AXSize: { 53.0000, 30.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: South
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:th, toolkit:WebKitGtk
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 370.000, 123.000 }
+AXSize: { 69.0000, 30.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: 3333
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitGtk
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 439.000, 123.000 }
+AXSize: { 52.0000, 30.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: 1111
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitGtk
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 491.000, 123.000 }
+AXSize: { 67.0000, 30.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: 2222
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitGtk
+------------
+
+
+--------------------------
+
+
+
+--------------------------
+
+

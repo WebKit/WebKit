@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .filtered {
+            overflow: hidden;
+            margin: 40px;
+            padding: 20px;
+            height: 200px;
+            width: 200px;
+            background-color: silver;
+            border: 1px solid black;
+            filter: blur(1px);
+            box-shadow: 0 0 20px black;
+        }
+
+        .contents {
+            width: 100%;
+            height: 200%;
+            background-image: repeating-linear-gradient(blue, blue 50px, green 50px, green 100px);
+        }
+    </style>
+</head>
+<body>
+    <div class="filtered">
+        <div class="contents"></div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,12 @@
+Test linear distance model of AudioPannerNode.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS Distance model value matched expected value.
+PASS Number of impulses found matches number of panner nodes.
+PASS Distance gains are correct.
+PASS Distance test passed for distance model 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

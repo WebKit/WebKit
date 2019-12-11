@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<!--
+  To test the new CSS property -webkit-tap-highlight-color which is only supported when building
+  WebKit with ENABLE(TOUCH_EVENTS), we create a new div element and add -webkit-tap-highlight-color
+  in the element, then see whether we can get the specified tap highlight color from DOM.
+  WebKit ports can use this css property to get the customized tap highlight color from the webpage
+  which is set by web developers to make sure that tap highlight color fits their websites instead
+  of using the hardcode value provided by browsers.
+-->
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+var div = document.createElement("div");
+div.id = "touchtarget";
+div.style.width = "100px";
+div.style.height = "100px";
+div.style.color = "blue";
+div.innerText = "Touch Me!";
+div.style.webkitTapHighlightColor = "rgba(11, 22, 33, 0)";
+
+function onTouchStart()
+{
+    debug("Event: touch start");
+    shouldBeEqualToString("event.targetTouches[0].target.tagName", "DIV");
+    shouldBeEqualToString("event.targetTouches[0].target.id", "touchtarget");
+    shouldBeEqualToString("div.ownerDocument.defaultView.getComputedStyle(div, null).getPropertyValue('-webkit-tap-highlight-color')", "rgba(11, 22, 33, 0)");
+    div.style.webkitTapHighlightColor = "";  // Clear the customized tap highlight color
+}
+
+function onTouchEnd()
+{
+    debug("Event: touch end");
+    // Check the default value.
+    shouldBeFalse("div.ownerDocument.defaultView.getComputedStyle(div, null).getPropertyValue('-webkit-tap-highlight-color') == 'rgba(11, 22, 33, 0)'")
+    shouldBeNonNull("div.ownerDocument.defaultView.getComputedStyle(div, null).getPropertyValue('-webkit-tap-highlight-color')");
+    // Notify the test done.
+    isSuccessfullyParsed();
+    testRunner.notifyDone();
+}
+
+div.addEventListener("touchstart", onTouchStart, false);
+div.addEventListener("touchend", onTouchEnd, false);
+document.body.insertBefore(div, document.body.firstChild);
+
+function touchTargets()
+{
+    eventSender.clearTouchPoints();
+    eventSender.addTouchPoint(20, 20);
+    eventSender.touchStart();
+    eventSender.updateTouchPoint(0, 50, 50);
+    eventSender.touchMove();
+    eventSender.releaseTouchPoint(0);
+    eventSender.touchEnd();
+}
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+if (window.eventSender && eventSender.clearTouchPoints) {
+    description("Check tap highlight color in touch event");
+
+    touchTargets();
+} else {
+    debug("This test requires DumpRenderTree && WebKit built with ENABLE(TOUCH_EVENT).")
+}
+</script>
+</body>
+</html>

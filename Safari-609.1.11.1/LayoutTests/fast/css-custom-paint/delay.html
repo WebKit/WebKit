@@ -1,0 +1,43 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:CSSPaintingAPIEnabled=true ] -->
+<meta name="author" title="Justin Michaud" href="mailto:justin_michaud@webkit.org">
+<meta name="assert" content="Test that paint worklets repaint when modules are added, and correctly watch properties">
+<link rel="help" content="https://drafts.css-houdini.org/css-paint-api-1/">
+<script src="resources/testharness.js"></script>
+
+<script id="code" type="text/worklet">
+  class MyPaint {
+    static get inputProperties() { return ['--my-prop']; }
+
+    paint(ctx, geom, properties) {
+      if (properties.get('--my-prop') == 5) {
+        ctx.fillStyle = "green";
+      } else {
+        ctx.fillStyle = "red";
+      }
+      ctx.fillRect(0, 0, geom.width, geom.height);
+    }
+  }
+  registerPaint('my-paint', MyPaint);
+</script>
+
+<script type="text/javascript">
+  setTimeout(function() {
+    importWorklet(CSS.paintWorklet, document.getElementById('code').textContent);
+  }, 500);
+  // FIXME: This should use a promise once addModule supports it.
+  setTimeout(function() {
+    paint.style.setProperty('--my-prop', 5);
+  }, 2000);
+</script>
+
+<style>
+  #paint {
+    background-image: paint(my-paint);
+    width: 150px;
+    height: 150px;
+  }
+</style>
+
+<body>
+  <div id="paint"></div>
+</body>

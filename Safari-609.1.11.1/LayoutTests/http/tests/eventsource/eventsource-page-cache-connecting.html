@@ -1,0 +1,59 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that a page with an EventSource that is connecting can enter the PageCache.");
+jsTestIsAsync = true;
+let restoredFromPageCache = false;
+let receivedOpenEvent = false;
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+
+    if (event.persisted) {
+        testPassed("Page did enter and was restored from the page cache");
+        restoredFromPageCache = true;
+    }
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        testFailed("Page did not enter the page cache.");
+        finishJSTest();
+    }
+
+    eventSource = new EventSource("resources/infinite-event-stream.php");
+
+    eventSource.onerror = () => {
+        testFailed("Received error event");
+        finishJSTest();
+    }
+
+    eventSource.onopen = () => {
+        testPassed("Received open event");
+        shouldBeTrue("restoredFromPageCache");
+        receivedOpenEvent  = true;
+    }
+
+    eventSource.onmessage = () => {
+        testPassed("Received message");
+        shouldBeTrue("restoredFromPageCache");
+        shouldBeTrue("receivedOpenEvent");
+        finishJSTest();
+    }
+}, false);
+
+onload = () => {
+    setTimeout(() => {
+       window.location = "/navigation/resources/page-cache-helper.html"; 
+    }, 0);
+}
+
+</script>
+</body>
+</html>

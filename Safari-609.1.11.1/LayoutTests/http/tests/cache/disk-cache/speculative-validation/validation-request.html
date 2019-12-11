@@ -1,0 +1,54 @@
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script>
+description("Validates HTTP headers of speculative validation requests.");
+jsTestIsAsync = true;
+
+state = "warmup";
+
+var headersToCheck = ["Accept", "Accept-Encoding", "Accept-Language", "Connection", "Referer", "User-Agent"];
+var headerToCheck;
+
+function validationRequestHeader(headerName)
+{
+    return frames[0].allRequestHeaders[headerName];
+    
+}
+
+function frameLoaded()
+{
+    if (state == "warmup") {
+        initialHeaderValues = [];
+        for (var i = 0; i < headersToCheck.length; i++) {
+            headerToCheck = headersToCheck[i];
+            initialHeaderValues[headerToCheck] = validationRequestHeader(headerToCheck);
+        }
+        // Navigate frame to 'about:blank' to flush to subresource loads metadata to disk.
+        state = "flushingMetadata";
+        document.getElementById("testFrame").src = "about:blank";
+        return;
+    }
+    if (state == "flushingMetadata") {
+        // Navigate frame to its original location again. This time it should speculatively
+        // validate subresources as we have subresource loads metadata in the disk cache.
+        state = "speculativeRevalidation";
+        document.getElementById("testFrame").src = "resources/validation-request-frame.php";
+        return;
+    }
+    if (state == "speculativeRevalidation") {
+        // Validate the HTTP headers of the speculative validation request.
+        shouldBeEqualToString("validationRequestHeader('If-None-Match')", "123456789");
+        isCookieHeaderCorrect = validationRequestHeader('Cookie') === document.getElementById("testFrame").contentWindow.sentSetCookieHeader;
+        shouldBeTrue("isCookieHeaderCorrect");
+
+        for (var i = 0; i < headersToCheck.length; i++) {
+            headerToCheck = headersToCheck[i];
+            shouldBe("validationRequestHeader('" + headerToCheck + "')", "initialHeaderValues['" + headerToCheck + "']");
+        }
+        finishJSTest();
+        return;
+    }
+}
+
+</script>
+<iframe id="testFrame" src="resources/validation-request-frame.php" onload="frameLoaded()"></iframe>
+<script src="/js-test-resources/js-test-post.js"></script>

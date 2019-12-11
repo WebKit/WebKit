@@ -1,0 +1,107 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:CSSCustomPropertiesAndValuesEnabled=true ] -->
+<!-- https://chromium.googlesource.com/chromium/src/+/01ce431409e3a019858677626a983c55168da6dc/third_party/WebKit/LayoutTests/custom-properties/register-property.html -->
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+
+<style>
+  #parent1 {
+    width: 500px;
+    background: blue;
+  }
+  #child1 {
+    background: green;
+    --my-custom-prop: 100px;
+    width: var(--my-custom-prop);
+  }
+
+  #parent2 {
+    width: 500px;
+    background: blue;
+  }
+  #child2 {
+    background: green;
+    width: var(--my-custom-prop2);
+  }
+
+  #parent3 {
+    width: 500px;
+    background: blue;
+  }
+  #child3 {
+    background: green;
+    width: var(--my-custom-prop3);
+  }
+
+  #parent4 {
+    width: 500px;
+    background: blue;
+  }
+  #child4 {
+    background: green;
+    width: var(--my-custom-prop3, 300px);
+  }
+
+  #parent5 {
+    width: 500px;
+    background: blue;
+  }
+  #child5 {
+    background: green;
+    width: var(--my-custom-prop2, 300px);
+  }
+</style>
+<div>
+  <p> Specified </p>
+  <div id="parent1"><div id="child1"><p>100px green</p></div> </div>
+  <p> Not specified, use initial value </p>
+  <div id="parent2"><div id="child2"><p>200px green</p></div> </div>
+  <p> Not specified, but not registered so use initial value for width </p>
+  <div id="parent3"><div id="child3"><p>500px green</p></div> </div>
+  <p> Has a fallback for unregistered property </p>
+  <div id="parent4"><div id="child4"><p>300px green</p></div> </div>
+  <p> Has a fallback for a registered property </p>
+  <div id="parent5"><div id="child5"><p>200px green</p></div> </div>
+</div>
+<script>
+
+function test_prop(id, prop, expected) {
+  assert_equals(window.getComputedStyle(document.getElementById(id)).getPropertyValue(prop).trim(), expected);
+}
+
+test(function() {
+  CSS.registerProperty({
+    name: '--my-custom-prop',
+    syntax: '<length>',
+    inherits: false,
+    initialValue: '200px'
+  })
+
+  CSS.registerProperty({
+    name: '--my-custom-prop2',
+    syntax: '<length>',
+    inherits: false,
+    initialValue: '200px'
+  })
+}, "Registration is successful");
+test(function() {
+  test_prop('child1', 'width', '100px');
+  test_prop('child1', '--my-custom-prop', '100px');
+  test_prop('child1', '--my-custom-prop2', '200px');
+}, "JS Attributes are valid for element 1");
+test(function() {
+  test_prop('child2', 'width', '200px');
+  test_prop('child2', '--my-custom-prop', '200px');
+  test_prop('child2', '--my-custom-prop2', '200px');
+}, "JS Attributes are valid for element 2");
+test(function() {
+  test_prop('child3', 'width', '500px');
+  test_prop('child3', '--my-custom-prop3', '');
+  test_prop('child3', '--my-custom-prop2', '200px');
+}, "JS Attributes are valid for element 3");
+test(function() {
+  test_prop('child4', 'width', '300px');
+  test_prop('child5', 'width', '200px');
+  test_prop('child4', '--my-custom-prop2', '200px');
+  test_prop('child5', '--my-custom-prop2', '200px');
+}, "JS Attributes are valid for element 4 and 5");
+</script>

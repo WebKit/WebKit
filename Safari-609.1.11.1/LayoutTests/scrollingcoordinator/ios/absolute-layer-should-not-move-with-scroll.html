@@ -1,0 +1,68 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <style>
+        #scroller {
+            margin: 10px;
+            height: 300px;
+            width: 300px;
+            border: 1px solid black;
+            overflow: scroll;
+            opacity: 0.999; /* Make this a stacking context */
+        }
+        
+        .box {
+            width: 200px;
+            height: 200px;
+            background-color: gray;
+        }
+        
+        .absolute {
+            position: absolute;
+            top: 200px;
+            background-color: blue;
+            transform: translateZ(0); /* Currently need to trigger compositing */
+        }
+        
+        .scroll-content {
+            height: 2000px;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        function getUnstableScrollScript(x, y, scrollX, scrollY)
+        {
+            return `(function() {
+                uiController.scrollUpdatesDisabled = true;
+                uiController.immediateScrollElementAtContentPointToOffset(${x}, ${y}, ${scrollX}, ${scrollY});
+                uiController.doAfterPresentationUpdate(function() {
+                    uiController.uiScriptComplete();
+                });
+            })();`;
+        }
+
+        function doTest()
+        {
+            if (!testRunner.runUIScript)
+                return
+
+            testRunner.runUIScript(getUnstableScrollScript(50, 50, 0, 100), () => {
+                testRunner.notifyDone();
+            });
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div id="scroller">
+        <div class="scroll-content">
+            <div class="box"></div>
+            <div class="absolute box"></div>
+        </div>
+    </div>
+</body>
+</html>

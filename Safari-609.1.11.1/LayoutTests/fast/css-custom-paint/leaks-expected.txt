@@ -1,0 +1,10 @@
+Tests that using custom paint does not cause the paint worklet global scope to get leaked.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Worklet global scope did not leak
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

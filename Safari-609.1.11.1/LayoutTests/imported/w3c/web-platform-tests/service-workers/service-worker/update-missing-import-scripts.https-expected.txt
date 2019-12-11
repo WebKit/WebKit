@@ -1,0 +1,4 @@
+
+PASS Initialize global state 
+PASS Update service worker with new script that's missing importScripts() 
+

@@ -1,0 +1,97 @@
+layer at (0,0) size 785x848
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x848
+  RenderBlock {html} at (0,0) size 785x849
+    RenderBody {body} at (47,30) size 738x811
+      RenderBlock {div} at (0,0) size 738x810
+        RenderBlock {h1} at (0,0) size 679x31
+          RenderText {#text} at (0,0) size 385x30
+            text run at (0,0) width 385: "rightsizing to percentage width"
+        RenderBlock {h4} at (0,31) size 738x16
+          RenderText {#text} at (0,0) size 137x16
+            text run at (0,0) width 137: "WICD Core 1.0 #20-2"
+        RenderBlock (anonymous) at (0,66) size 738x300
+          RenderEmbeddedObject {object} at (0,0) size 296x295 [bgcolor=#FF0000]
+            layer at (0,0) size 295x295
+              RenderView at (0,0) size 295x295
+            layer at (0,0) size 295x295
+              RenderSVGRoot {svg} at (0,0) size 295x295
+                RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+                RenderSVGRect {rect} at (0,0) size 295x295 [fill={[type=SOLID] [color=#5588FF]}] [x=-3000.00] [y=-1000.00] [width=6200.00] [height=2200.00]
+                RenderSVGEllipse {circle} at (0,0) size 295x295 [fill={[type=SOLID] [color=#0000FF]}] [cx=100.00] [cy=100.00] [r=100.00]
+                RenderSVGContainer {g} at (39,88) size 217x121
+                  RenderSVGText {text} at (26,60) size 148x82 contains 1 chunk(s)
+                    RenderSVGInlineText {#text} at (0,0) size 147x82
+                      chunk 1 (middle anchor) text run 1 at (26.96,125.00) startOffset 0 endOffset 3 width 146.09: "SVG"
+          RenderText {#text} at (295,281) size 5x17
+            text run at (295,281) width 5: " "
+          RenderEmbeddedObject {object} at (299,147) size 149x148 [bgcolor=#FF0000]
+            layer at (0,0) size 148x148
+              RenderView at (0,0) size 148x148
+            layer at (0,0) size 148x148
+              RenderSVGRoot {svg} at (0,0) size 148x148
+                RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+                RenderSVGRect {rect} at (0,0) size 148x148 [fill={[type=SOLID] [color=#5588FF]}] [x=-3000.00] [y=-1000.00] [width=6200.00] [height=2200.00]
+                RenderSVGEllipse {circle} at (0,0) size 148x148 [fill={[type=SOLID] [color=#0000FF]}] [cx=100.00] [cy=100.00] [r=100.00]
+                RenderSVGContainer {g} at (19,44) size 110x61
+                  RenderSVGText {text} at (26,59) size 148x83 contains 1 chunk(s)
+                    RenderSVGInlineText {#text} at (0,0) size 148x82
+                      chunk 1 (middle anchor) text run 1 at (26.50,125.00) startOffset 0 endOffset 3 width 147.01: "SVG"
+          RenderText {#text} at (447,281) size 5x17
+            text run at (447,281) width 5: " "
+          RenderEmbeddedObject {object} at (451,221) size 75x74 [bgcolor=#FF0000]
+            layer at (0,0) size 74x74
+              RenderView at (0,0) size 74x74
+            layer at (0,0) size 74x74
+              RenderSVGRoot {svg} at (0,0) size 74x74
+                RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+                RenderSVGRect {rect} at (0,0) size 74x74 [fill={[type=SOLID] [color=#5588FF]}] [x=-3000.00] [y=-1000.00] [width=6200.00] [height=2200.00]
+                RenderSVGEllipse {circle} at (0,0) size 74x74 [fill={[type=SOLID] [color=#0000FF]}] [cx=100.00] [cy=100.00] [r=100.00]
+                RenderSVGContainer {g} at (9,22) size 56x31
+                  RenderSVGText {text} at (26,59) size 148x83 contains 1 chunk(s)
+                    RenderSVGInlineText {#text} at (0,0) size 148x82
+                      chunk 1 (middle anchor) text run 1 at (26.50,125.00) startOffset 0 endOffset 3 width 147.01: "SVG"
+          RenderText {#text} at (525,281) size 5x17
+            text run at (525,281) width 5: " "
+          RenderEmbeddedObject {object} at (529,258) size 38x37 [bgcolor=#FF0000]
+            layer at (0,0) size 37x37
+              RenderView at (0,0) size 37x37
+            layer at (0,0) size 37x37
+              RenderSVGRoot {svg} at (0,0) size 37x37
+                RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+                RenderSVGRect {rect} at (0,0) size 37x37 [fill={[type=SOLID] [color=#5588FF]}] [x=-3000.00] [y=-1000.00] [width=6200.00] [height=2200.00]
+                RenderSVGEllipse {circle} at (0,0) size 37x37 [fill={[type=SOLID] [color=#0000FF]}] [cx=100.00] [cy=100.00] [r=100.00]
+                RenderSVGContainer {g} at (4,11) size 29x16
+                  RenderSVGText {text} at (26,59) size 148x83 contains 1 chunk(s)
+                    RenderSVGInlineText {#text} at (0,0) size 148x82
+                      chunk 1 (middle anchor) text run 1 at (26.50,125.00) startOffset 0 endOffset 3 width 147.01: "SVG"
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {p} at (0,368) size 679x65
+          RenderText {#text} at (0,0) size 675x32
+            text run at (0,0) width 675: "Above there must be four times the same, square SVG child visible, each referenced by an object element with"
+            text run at (0,16) width 381: "different widths (40%, 20%, 10%, 5%) and no height defined. "
+          RenderBR {br} at (380,16) size 1x16
+          RenderBR {br} at (0,32) size 0x16
+          RenderText {#text} at (0,48) size 398x16
+            text run at (0,48) width 398: "Beyond there is the same, only with PNG images instead of SVG."
+        RenderBlock (anonymous) at (0,437) size 738x300
+          RenderImage {object} at (0,0) size 296x295 [bgcolor=#FF0000]
+          RenderText {#text} at (295,281) size 5x17
+            text run at (295,281) width 5: " "
+          RenderImage {object} at (299,147) size 149x148 [bgcolor=#FF0000]
+          RenderText {#text} at (447,281) size 5x17
+            text run at (447,281) width 5: " "
+          RenderImage {object} at (451,221) size 75x74 [bgcolor=#FF0000]
+          RenderText {#text} at (525,281) size 5x17
+            text run at (525,281) width 5: " "
+          RenderImage {object} at (529,258) size 38x37 [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {p} at (0,739) size 679x33
+          RenderText {#text} at (0,0) size 656x32
+            text run at (0,0) width 656: "This test has succeeded, if both rows look exactly the same (SVGs must be square!) and no red background"
+            text run at (0,16) width 92: "color is visible."
+        RenderBlock {p} at (0,777) size 679x33
+          RenderBR {br} at (0,0) size 0x16
+          RenderInline {a} at (0,0) size 31x16 [color=#000066]
+            RenderText {#text} at (0,16) size 31x16
+              text run at (0,16) width 31: "Back"

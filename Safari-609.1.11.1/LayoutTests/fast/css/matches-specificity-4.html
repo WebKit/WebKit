@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+<style>
+    /* The position of :matches() should override this rule. */
+    container > target {
+        border: 5px solid black;
+        color: blue;
+    }
+
+    /* A class rule should supersede the following :matches() because it has higher specificity. */
+    .target {
+        color: white;
+    }
+
+    /* The only subselector that matches is "container > target". It should override the simple "target"
+       selector but be superseded by anything larger than two tagnames. */
+    :matches(foo.bar, bar.foo, container > target, foo#bar, bar#foo) {
+        background-color: green;
+        color: purple;
+        border: 25px solid red;
+    }
+
+    /* Those two rules only have score one tagname, they cannot take precedence over :matches(). */
+    target {
+        background-color: red;
+    }
+    container > * {
+        color: black;
+    }
+
+    /* This rule should have the same specificity as the :matches() but higher position. */
+    container > target {
+        border: none;
+    }
+</style>
+</head>
+<body>
+    <p>This test the dynamic specificity of :matches() with a complex selector. The text succeed if the text "Target" shows up in white on green background.</p>
+    <container>
+        <target class="target">Target</target>
+    </container>
+</body>
+</html>

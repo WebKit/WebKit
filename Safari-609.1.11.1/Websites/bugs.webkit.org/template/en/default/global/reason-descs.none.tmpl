@@ -1,0 +1,28 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% SET reason_descs = {
+  ${constants.REL_ASSIGNEE} => "You are the assignee for the ${terms.bug}.",
+  ${constants.REL_REPORTER} => "You reported the ${terms.bug}.",
+  ${constants.REL_QA}       => "You are the QA Contact for the ${terms.bug}.",
+  ${constants.REL_CC}       => "You are on the CC list for the ${terms.bug}.",
+  ${constants.REL_GLOBAL_WATCHER} => "You are watching all $terms.bug changes.",
+} %]
+
+[% SET watch_reason_descs => {
+  ${constants.REL_ASSIGNEE} =>
+    "You are watching the assignee of the ${terms.bug}.",
+  ${constants.REL_REPORTER} =>
+    "You are watching the reporter of the ${terms.bug}.",
+  ${constants.REL_QA}       =>
+    "You are watching the QA Contact of the ${terms.bug}.",
+  ${constants.REL_CC}       =>
+    "You are watching someone on the CC list of the ${terms.bug}.",
+} %]
+
+[% Hook.process('end') %]

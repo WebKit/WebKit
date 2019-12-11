@@ -1,0 +1,14 @@
+ 
+Test texImage2D from a webgl canvas.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS Canvas should be red
+PASS Canvas should be green
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

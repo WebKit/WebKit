@@ -1,0 +1,111 @@
+Verify that changing a date with a delta that is too large for a date produces an invalid date/NaN
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing date creating at the max boundary
+PASS new Date(0).valueOf() is 0
+PASS new Date(8.64e15) instanceof Date is true
+PASS new Date(8.64e15).valueOf() is 8.64e15
+PASS new Date(8640000000000001) instanceof Date is true
+PASS new Date(8640000000000001).valueOf() is NaN
+PASS new Date(Infinity) instanceof Date is true
+PASS new Date(Infinity).valueOf() is NaN
+PASS new Date(-Infinity) instanceof Date is true
+PASS new Date(-Infinity).valueOf() is NaN
+Testing setMilliseconds()
+PASS new Date(0).setMilliseconds(Infinity).valueOf() is NaN
+PASS new Date(0).setMilliseconds(1.79769e+308).valueOf() is NaN
+PASS new Date(0).setMilliseconds(-1.79769e+308).valueOf() is NaN
+PASS new Date(8.64e15).setMilliseconds(new Date(8.64e15).getMilliseconds()).valueOf() is 8.64e15
+PASS new Date(8.64e15).setMilliseconds(new Date(8.64e15).getMilliseconds() + 1).valueOf() is NaN
+Testing setSeconds()
+PASS new Date(0).setSeconds(Infinity).valueOf() is NaN
+PASS new Date(0).setSeconds(1.79769e+308).valueOf() is NaN
+PASS new Date(0).setSeconds(-1.79769e+308).valueOf() is NaN
+PASS new Date(8.64e15).setSeconds(new Date(8.64e15).getSeconds()).valueOf() is 8.64e15
+PASS new Date(8.64e15).setSeconds(new Date(8.64e15).getSeconds() + 1).valueOf() is NaN
+Testing setMinutes()
+PASS new Date(0).setMinutes(Infinity).valueOf() is NaN
+PASS new Date(0).setMinutes(1.79769e+308).valueOf() is NaN
+PASS new Date(0).setMinutes(-1.79769e+308).valueOf() is NaN
+PASS new Date(8.64e15).setMinutes(new Date(8.64e15).getMinutes()).valueOf() is 8.64e15
+PASS new Date(8.64e15).setMinutes(new Date(8.64e15).getMinutes() + 1).valueOf() is NaN
+Testing setHours()
+PASS new Date(0).setHours(Infinity).valueOf() is NaN
+PASS new Date(0).setHours(1.79769e+308).valueOf() is NaN
+PASS new Date(0).setHours(-1.79769e+308).valueOf() is NaN
+PASS new Date(8.64e15).setHours(new Date(8.64e15).getHours()).valueOf() is 8.64e15
+PASS new Date(8.64e15).setHours(new Date(8.64e15).getHours() + 1).valueOf() is NaN
+Testing setDate()
+PASS new Date(0).setDate(Infinity).valueOf() is NaN
+PASS new Date(0).setDate(1.79769e+308).valueOf() is NaN
+PASS new Date(0).setDate(-1.79769e+308).valueOf() is NaN
+PASS new Date(0).setDate(9e15 / (24 * 60 * 60 * 1000)).valueOf() is NaN
+PASS new Date(8.64e15).setDate(new Date(8.64e15).getDate()).valueOf() is 8.64e15
+PASS new Date(8.64e15).setDate(new Date(8.64e15).getDate() + 1).valueOf() is NaN
+Testing setMonth()
+PASS new Date(0).setMonth(Infinity).valueOf() is NaN
+FAIL new Date(0).setMonth(1.79769e+308).valueOf() should be NaN. Was -28857600000.
+FAIL new Date(0).setMonth(-1.79769e+308).valueOf() should be NaN. Was -28857600000.
+PASS new Date(8.64e15).setMonth(new Date(8.64e15).getMonth()).valueOf() is 8.64e15
+PASS new Date(8.64e15).setMonth(new Date(8.64e15).getMonth() + 1).valueOf() is NaN
+Testing setYear()
+PASS new Date(0).setYear(Infinity).valueOf() is NaN
+FAIL new Date(0).setYear(1.79769e+308).valueOf() should be NaN. Was -62135596800000.
+FAIL new Date(0).setYear(-1.79769e+308).valueOf() should be NaN. Was -62135596800000.
+PASS new Date(8.64e15).setYear(new Date(8.64e15).getFullYear()).valueOf() is 8.64e15
+PASS new Date(8.64e15).setYear(new Date(8.64e15).getFullYear() + 1).valueOf() is NaN
+Testing setFullYear()
+PASS new Date(0).setFullYear(Infinity).valueOf() is NaN
+FAIL new Date(0).setFullYear(1.79769e+308).valueOf() should be NaN. Was -62135596800000.
+FAIL new Date(0).setFullYear(-1.79769e+308).valueOf() should be NaN. Was -62135596800000.
+PASS new Date(8.64e15).setFullYear(new Date(8.64e15).getFullYear()).valueOf() is 8.64e15
+PASS new Date(8.64e15).setFullYear(new Date(8.64e15).getFullYear() + 1).valueOf() is NaN
+Testing setUTCMilliseconds()
+PASS new Date(0).setUTCMilliseconds(Infinity).valueOf() is NaN
+PASS new Date(0).setUTCMilliseconds(1.79769e+308).valueOf() is NaN
+PASS new Date(0).setUTCMilliseconds(-1.79769e+308).valueOf() is NaN
+PASS new Date(8.64e15).setUTCMilliseconds(new Date(8.64e15).getUTCMilliseconds()).valueOf() is 8.64e15
+PASS new Date(8.64e15).setUTCMilliseconds(new Date(8.64e15).getUTCMilliseconds() + 1).valueOf() is NaN
+Testing setUTCSeconds()
+PASS new Date(0).setUTCSeconds(Infinity).valueOf() is NaN
+PASS new Date(0).setUTCSeconds(1.79769e+308).valueOf() is NaN
+PASS new Date(0).setUTCSeconds(-1.79769e+308).valueOf() is NaN
+PASS new Date(8.64e15).setUTCSeconds(new Date(8.64e15).getUTCSeconds()).valueOf() is 8.64e15
+PASS new Date(8.64e15).setUTCSeconds(new Date(8.64e15).getUTCSeconds() + 1).valueOf() is NaN
+Testing setUTCMinutes()
+PASS new Date(0).setUTCMinutes(Infinity).valueOf() is NaN
+PASS new Date(0).setUTCMinutes(1.79769e+308).valueOf() is NaN
+PASS new Date(0).setUTCMinutes(-1.79769e+308).valueOf() is NaN
+PASS new Date(8.64e15).setUTCMinutes(new Date(8.64e15).getUTCMinutes()).valueOf() is 8.64e15
+PASS new Date(8.64e15).setUTCMinutes(new Date(8.64e15).getUTCMinutes() + 1).valueOf() is NaN
+Testing setUTCHours()
+PASS new Date(0).setUTCHours(Infinity).valueOf() is NaN
+PASS new Date(0).setUTCHours(1.79769e+308).valueOf() is NaN
+PASS new Date(0).setUTCHours(-1.79769e+308).valueOf() is NaN
+PASS new Date(8.64e15).setUTCHours(new Date(8.64e15).getUTCHours()).valueOf() is 8.64e15
+PASS new Date(8.64e15).setUTCHours(new Date(8.64e15).getUTCHours() + 1).valueOf() is NaN
+Testing setUTCDate()
+PASS new Date(0).setUTCDate(Infinity).valueOf() is NaN
+PASS new Date(0).setUTCDate(1.79769e+308).valueOf() is NaN
+PASS new Date(0).setUTCDate(-1.79769e+308).valueOf() is NaN
+PASS new Date(0).setUTCDate(9e15 / (24 * 60 * 60 * 1000)).valueOf() is NaN
+PASS new Date(8.64e15).setUTCDate(new Date(8.64e15).getUTCDate()).valueOf() is 8.64e15
+PASS new Date(8.64e15).setUTCDate(new Date(8.64e15).getUTCDate() + 1).valueOf() is NaN
+Testing setUTCMonth()
+PASS new Date(0).setUTCMonth(Infinity).valueOf() is NaN
+FAIL new Date(0).setUTCMonth(1.79769e+308).valueOf() should be NaN. Was 0.
+FAIL new Date(0).setUTCMonth(-1.79769e+308).valueOf() should be NaN. Was 0.
+PASS new Date(8.64e15).setUTCMonth(new Date(8.64e15).getUTCMonth()).valueOf() is 8.64e15
+PASS new Date(8.64e15).setUTCMonth(new Date(8.64e15).getUTCMonth() + 1).valueOf() is NaN
+Testing setUTCFullYear()
+PASS new Date(0).setUTCFullYear(Infinity).valueOf() is NaN
+FAIL new Date(0).setUTCFullYear(1.79769e+308).valueOf() should be NaN. Was -62167219200000.
+FAIL new Date(0).setUTCFullYear(-1.79769e+308).valueOf() should be NaN. Was -62167219200000.
+PASS new Date(8.64e15).setUTCFullYear(new Date(8.64e15).getUTCFullYear()).valueOf() is 8.64e15
+PASS new Date(8.64e15).setUTCFullYear(new Date(8.64e15).getUTCFullYear() + 1).valueOf() is NaN
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

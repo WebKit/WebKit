@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p id="description">This tests to make sure that after a deletion, merging can merge into an editable region that's embedded in non-editable content that is collapsed by the deletion.</p>
+<div id="root" contenteditable="true">
+<table border="1" contenteditable="false"><tr><td><span id="start" contenteditable="true">foo</span></td></tr></table><span id="end">x</span>This sentence should be inside the editable cell.
+</div>
+
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+var start = document.getElementById("start");
+var end = document.getElementById("end");
+var sel = window.getSelection();
+var range = document.createRange();
+range.setStart(start, 0);
+range.setEnd(end, end.childNodes.length);
+sel.addRange(range);
+document.execCommand("Delete");
+Markup.description(description.textContent);
+Markup.dump("root");
+</script>
+</body>
+</html>

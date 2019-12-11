@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>            
+
+            var numberOfTrackTests = 2;
+            
+            function trackLoaded()
+            {
+                numberOfTracksLoaded++;
+                if (numberOfTracksLoaded == numberOfTrackTests) {
+                    testTrack(0);
+                    testTrackError(1);
+                }
+            }
+            
+            function testTrack(i)
+            {
+                findMediaElement();
+                testExpected("video.textTracks[" + i + "].cues.length", "3");
+                
+                var fragment = document.createDocumentFragment();
+                var cspan = document.createElement("span");
+                cspan.className = "black";
+                cspan.appendChild(document.createTextNode("Bear is Coming!!!!!"));
+                fragment.appendChild(cspan);
+ 
+                testExpected(fragment.isEqualNode(video.textTracks[i].cues[0].getCueAsHTML()), true);
+                
+                fragment = document.createDocumentFragment();
+                cspan = document.createElement("span");
+                cspan.className = "green";
+                cspan.appendChild(document.createTextNode("I said Bear is coming!!!!"));
+                fragment.appendChild(cspan);
+                
+                testExpected(fragment.isEqualNode(video.textTracks[i].cues[1].getCueAsHTML()), true);
+
+                fragment = document.createDocumentFragment();
+                fragment.appendChild(document.createTextNode("I said "));
+                cspan = document.createElement("span");
+                cspan.className = "red uppercase";
+                cspan.appendChild(document.createTextNode("Bear is coming now"));
+                fragment.appendChild(cspan);
+                fragment.appendChild(document.createTextNode("!!!!"));
+   
+                testExpected(fragment.isEqualNode(video.textTracks[i].cues[2].getCueAsHTML()), true);
+
+                allTestsEnded();
+            }
+
+            function testTrackError(i)
+            {
+                findMediaElement();
+                testExpected("video.textTracks[" + i + "].cues.length", "3");
+                
+                var fragment = document.createDocumentFragment();
+                var cspan = document.createElement("span");
+                cspan.appendChild(document.createTextNode("Bear is Coming!!!!!"));
+                fragment.appendChild(cspan);
+                fragment.appendChild(document.createTextNode("\nThe space signified an annotation start."));
+
+                testExpected(fragment.isEqualNode(video.textTracks[i].cues[0].getCueAsHTML()), true);
+                
+                fragment = document.createDocumentFragment();
+                cspan = document.createElement("span");
+                cspan.className = "red&large";
+                cspan.appendChild(document.createTextNode("I said Bear is coming!!!!"));
+                fragment.appendChild(cspan);
+                fragment.appendChild(document.createTextNode("\nProbably should only allow characters that CSS allows in class names."));
+
+                testExpected(fragment.isEqualNode(video.textTracks[i].cues[1].getCueAsHTML()), true);
+
+                fragment = document.createDocumentFragment();
+                fragment.appendChild(document.createTextNode("I said "));
+                cspan = document.createElement("span");
+                cspan.className = "9red upper+case";
+                cspan.appendChild(document.createTextNode("Bear is coming now"));
+                fragment.appendChild(cspan);
+                fragment.appendChild(document.createTextNode("!!!!\nProbably should only allow characters that CSS allows in class names."));
+
+                testExpected(fragment.isEqualNode(video.textTracks[i].cues[2].getCueAsHTML()), true);
+
+                allTestsEnded();
+            }
+        </script>
+    </head>
+    <body onload="enableAllTextTracks()">
+        <p>Tests cues with class markup &lt;c&gt;.</p>
+        <video> 
+            <track src="captions-webvtt/tc025-class.vtt" onload="trackLoaded()">
+            <track src="captions-webvtt/tc025-class-bad.vtt" onload="trackLoaded()">
+        </video>
+    </body>
+</html>

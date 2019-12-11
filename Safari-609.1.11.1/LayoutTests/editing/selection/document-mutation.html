@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test ensures WebKit adjusts the selection under document mutation.</p>
+<p> Examples are from:<br> http://www.w3.org/TR/DOM-Level-2-Traversal-Range/ranges.html#Level-2-Range-Mutation</p>
+<div id="test" contenteditable></div>
+<pre>
+<script>
+
+var test = document.getElementById('test');
+test.focus();
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var baseIsFirst = true;
+var selection = window.getSelection();
+
+function checkResult(expectedStartOffset, expectedEndOffset) {
+    var actualStartOffset = selection.getRangeAt(0).startOffset;
+    var actualEndOffset = selection.getRangeAt(0).endOffset;
+    if (actualStartOffset == expectedStartOffset && actualEndOffset == expectedEndOffset)
+        document.write('PASS: selection is (' + expectedStartOffset + ', ' + expectedEndOffset + ') "' + selection + '"\n');
+    else
+        document.write('FAIL: selection is (' + actualStartOffset + ', ' + actualEndOffset + ') "' + selection +
+            '" and expected selection is ' + '(' + expectedStartOffset + ', ' + expectedEndOffset + ')\n');
+}
+
+function setSelectionRange(startContainer, startOffset, endContainer, endOffset) {
+    if (baseIsFirst)
+        selection.setBaseAndExtent(startContainer, startOffset, endContainer, endOffset);
+    else
+        selection.setBaseAndExtent(endContainer, endOffset, startContainer, startOffset);
+}
+
+function runInsertionTest(actor, expectedStartOffset, expectedEndOffset) {
+    test.innerHTML = '<p>Abcd efgh XY blah ijkl</p>';
+
+    // Select "Y blah i"
+    setSelectionRange(test.firstChild.firstChild, 11, test.firstChild.firstChild, 19);
+    actor(test.firstChild.firstChild);
+    checkResult(expectedStartOffset, expectedEndOffset);
+}
+
+function runDeletionTest(actor, expectedStartOffset, expectedEndOffset) {
+    test.innerHTML = '<p>Abcd efgh The Range ijkl</p>';
+
+    // Select "he Range i"
+    setSelectionRange(test.firstChild.firstChild, 11, test.firstChild.firstChild, 21);
+    actor(test.firstChild.firstChild);
+    checkResult(expectedStartOffset, expectedEndOffset);
+}
+
+function deleteNodeContainingSelection(expectedStartOffset, expectedEndOffset) {
+    test.innerHTML = '<p>Abcd <em>efgh The Range ij</em>kl</p>';
+
+    // Select "he Range i"
+    setSelectionRange(test.firstChild.firstChild.nextSibling.firstChild, 6, test.firstChild.firstChild.nextSibling.firstChild, 16);
+    test.firstChild.removeChild(test.firstChild.firstChild.nextSibling);
+    checkResult(expectedStartOffset, expectedEndOffset);
+}
+
+function runTests() {
+    document.write('Insertion tests:\n');
+    runInsertionTest(function(node) { node.insertData(10, 'inserted text'); }, 24, 32);
+    runInsertionTest(function(node) { node.insertData(11, 'inserted text'); }, 11, 32);
+    runInsertionTest(function(node) { node.insertData(12, 'inserted text'); }, 11, 32);
+    runInsertionTest(function(node) { node.insertData(17, 'inserted text'); }, 11, 32);
+    runInsertionTest(function(node) { node.insertData(19, 'inserted text'); }, 11, 19);
+
+    document.write('\nDeletion tests:\n');
+    runDeletionTest(function(node) { node.deleteData(5, 8); }, 5, 13);
+    runDeletionTest(function(node) { node.deleteData(5, 17); }, 5, 5);
+    runDeletionTest(function(node) { node.deleteData(5, 6); }, 5, 15);
+    deleteNodeContainingSelection(1, 1);
+}
+
+document.write('Base is first\n\n');
+runTests();
+
+baseIsFirst = false;
+
+document.write('\n\nExtent is first\n\n');
+runTests();
+
+test.style.display = 'none';
+document.write('\nDONE');
+</script>
+</pre>
+</body>
+</html>

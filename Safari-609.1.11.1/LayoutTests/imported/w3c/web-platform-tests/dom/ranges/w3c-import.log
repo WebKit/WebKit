@@ -1,0 +1,51 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-attributes.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-cloneContents.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-cloneRange.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-collapse.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-commonAncestorContainer-2.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-commonAncestorContainer.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-compareBoundaryPoints.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-comparePoint-2.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-comparePoint.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-constructor.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-deleteContents.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-detach.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-extractContents.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-insertNode.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-intersectsNode-2.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-intersectsNode-binding.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-intersectsNode.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-isPointInRange.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-mutations-appendChild.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-mutations-appendData.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-mutations-dataChange.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-mutations-deleteData.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-mutations-insertBefore.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-mutations-insertData.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-mutations-removeChild.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-mutations-replaceChild.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-mutations-replaceData.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-mutations-splitText.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-mutations.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-selectNode.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-set.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-stringifier.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-surroundContents.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-test-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/StaticRange-constructor.html

@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x386
+  RenderBlock {HTML} at (0,0) size 800x386
+    RenderBody {BODY} at (8,8) size 784x370
+      RenderTable {TABLE} at (0,0) size 200x370 [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 200x206 [border: (3px solid #FFA500)]
+          RenderText {#text} at (78,3) size 44x37
+            text run at (78,3) width 44: "cap"
+        RenderTableSection {TBODY} at (1,207) size 198x162
+          RenderTableRow {TR} at (0,30) size 198x102
+            RenderTableCell {TD} at (30,62) size 54x38 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 45x36
+                text run at (1,1) width 45: "foo bar"
+                text run at (1,19) width 22: "baz"
+            RenderTableCell {TD} at (114,78) size 54x54 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 52x52 [border: (1px solid #008000)]
+                RenderBlock {DIV} at (1,1) size 402x302 [border: (1px solid #FF0000)]
+                  RenderText {#text} at (1,1) size 8x18
+                    text run at (1,1) width 8: "d"

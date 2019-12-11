@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <filter id="filter" filterUnits="userSpaceOnUse">
+            <feFlood id="feFlood" x="0" y="0" width="50" height="50" flood-color="green"/>
+        </filter>
+    </defs>
+    <use style="filter: url(#filter);"/>
+    <script>
+        var feFlood = document.querySelector("#feFlood");
+        feFlood.x.baseVal.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_NUMBER, 10);
+        feFlood.y.baseVal.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_NUMBER, 10);
+        feFlood.width.baseVal.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_NUMBER, 100);
+        feFlood.height.baseVal.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_NUMBER, 100);
+    </script>
+</svg>

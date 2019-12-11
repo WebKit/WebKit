@@ -1,0 +1,20 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ contentMode=desktop ] -->
+<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../resources/media-controls-utils.js" type="text/javascript"></script>
+<body>
+<video src="../../../content/test.mp4" style="width: 320px; height: 240px;" controls autoplay plays-inline></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing we use the iOS media controls when in modern compatibility mode on iOS.");
+
+const media = document.querySelector("video");
+media.addEventListener("play", () => {
+    shouldBeTrue("window.internals.shadowRoot(media).querySelector('.media-controls').classList.contains('ios')");
+    finishJSTest();
+});
+
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>

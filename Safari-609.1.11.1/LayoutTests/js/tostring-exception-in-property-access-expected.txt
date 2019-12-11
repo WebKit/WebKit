@@ -1,0 +1,15 @@
+This tests that the various subscript operators handle subscript string conversion exceptions correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS PASS: Exception caught -- Exception thrown by toString
+PASS target[""] is 'Did not assign to property when setter subscript threw'
+PASS PASS: Exception caught -- Exception thrown by toString
+PASS target[""] is 'Did not delete property when subscript threw'
+PASS PASS: Exception caught -- Exception thrown by toString
+PASS localTest is 'Did not assign to result when subscript threw.'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,7 @@
+2d.path.arc.default
+
+arc() with missing last argument defaults to clockwise
+
+
+FAIL arc() with missing last argument defaults to clockwise null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

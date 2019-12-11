@@ -1,0 +1,68 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+</style>
+<script src="../../resources/js-test-pre.js"></script>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+jsTestIsAsync = true;
+
+if (window.internals) {
+    internals.settings.setUnifiedTextCheckerEnabled(true);
+    internals.settings.setAsynchronousSpellCheckingEnabled(true);
+}
+
+function editingTest() {
+
+    var elem = document.getElementById("test");
+    var selection = window.getSelection();
+    selection.setPosition(elem, 6);
+
+    typeCharacterCommand('z');
+    typeCharacterCommand('z');
+    typeCharacterCommand(' ');
+    typeCharacterCommand('a');
+    typeCharacterCommand(' ');
+    typeCharacterCommand('a');
+    moveSelectionBackwardByWordCommand();
+    insertLineBreakCommand();
+
+    if (window.testRunner) {
+        selection.setPosition(elem, 0);
+        shouldBecomeEqual("internals.hasSpellingMarker(6, 2)", "true", function() {
+            document.getElementById("root").style.display = "none";
+            finishJSTest();
+        });
+    }
+
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+<script>
+description("Misspellings should be preserved when a line-break command "
+    + "splits a text node. You should see 'Hello,zz a' on the first line below, "
+    + "and 'a' on the second line. "
+    + "This test succeeds when 'zz' (and only 'zz') is marked as misspelled.");
+</script>
+<div contenteditable id="root" class="editing">
+<!-- wee need leading "Hello," to preserve the marker even after setPosition() -->
+<span id="test">Hello,</span>
+</div>
+<script>
+editingTest();
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

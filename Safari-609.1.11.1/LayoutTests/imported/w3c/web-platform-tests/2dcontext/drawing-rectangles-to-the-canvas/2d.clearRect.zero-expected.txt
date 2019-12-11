@@ -1,0 +1,8 @@
+2d.clearRect.zero
+clearRect of zero pixels has no effect
+Actual output:
+Expected output:
+
+
+PASS clearRect of zero pixels has no effect 
+

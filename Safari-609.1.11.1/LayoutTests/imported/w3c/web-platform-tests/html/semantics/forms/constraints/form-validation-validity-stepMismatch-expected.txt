@@ -1,0 +1,12 @@
+
+FAIL [INPUT in DATE status] The date type must be supported. assert_equals: The date type should be supported. expected "date" but got "text"
+FAIL [INPUT in MONTH status] The month type must be supported. assert_equals: The month type should be supported. expected "month" but got "text"
+FAIL [INPUT in WEEK status] The week type must be supported. assert_equals: The week type should be supported. expected "week" but got "text"
+FAIL [INPUT in TIME status] The time type must be supported. assert_equals: The time type should be supported. expected "time" but got "text"
+FAIL [INPUT in DATETIME-LOCAL status] The datetime-local type must be supported. assert_equals: The datetime-local type should be supported. expected "datetime-local" but got "text"
+PASS [INPUT in NUMBER status] The step attribute is not set 
+PASS [INPUT in NUMBER status] The step attribute is not set and the value attribute is a floating number 
+PASS [INPUT in NUMBER status] The value attribute is empty string 
+PASS [INPUT in NUMBER status] The value must match the step 
+PASS [INPUT in NUMBER status] The value must mismatch the step 
+

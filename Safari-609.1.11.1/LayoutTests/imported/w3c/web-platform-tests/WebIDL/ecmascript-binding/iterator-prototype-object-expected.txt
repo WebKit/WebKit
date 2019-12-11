@@ -1,0 +1,8 @@
+
+PASS Has %IteratorPrototype% as prototype 
+PASS next() exists and is writable, enumerable, and configurable 
+PASS next() throws TypeError when called on ineligible receiver 
+PASS Object.prototype.toString returns correct value 
+FAIL @@toStringTag has correct value undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(iteratorProto, Symbol.toStringTag).value')
+PASS Is specific to an interface 
+

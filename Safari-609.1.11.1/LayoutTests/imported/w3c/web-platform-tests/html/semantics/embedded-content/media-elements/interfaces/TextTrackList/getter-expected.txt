@@ -1,0 +1,5 @@
+
+PASS TextTrackList getter 
+PASS TextTrackList getter, no indexed set/create 
+FAIL TextTrackList getter, no indexed set/create (strict) assert_throws: function "function (){ video.textTracks[0] = 'foo'; }" did not throw
+

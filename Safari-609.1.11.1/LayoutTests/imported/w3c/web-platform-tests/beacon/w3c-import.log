@@ -1,0 +1,31 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/beacon/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-basic-blob.html
+/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-basic-blobMax.html
+/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-basic-buffersource.html
+/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-basic-buffersourceMax.html
+/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-basic-formdata.html
+/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-basic-formdataMax.html
+/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-basic-string.html
+/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-basic-stringMax.html
+/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-common.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-cors.sub.window.js
+/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-error.window.js
+/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-navigate.html
+/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-redirect.window.js
+/LayoutTests/imported/w3c/web-platform-tests/beacon/navigate.iFrame.sub.html

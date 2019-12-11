@@ -1,0 +1,13 @@
+<meta http-equiv="Content-Security-Policy" content="connect-src 'self';">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+promise_test((test) => {
+
+    return fetch("resources/subresource-redirect.php", { mode : "no-cors" }).then(() => {
+        assert_not_reached("fetch should fail");
+    }, (e) => {
+        assert_equals(e.message, "Blocked by Content Security Policy.");
+    });
+}, "Ensure CSP happens before content blocker checks");
+</script>

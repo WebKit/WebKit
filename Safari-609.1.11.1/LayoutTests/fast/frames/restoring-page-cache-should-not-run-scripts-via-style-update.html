@@ -1,0 +1,102 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests that pageshow event is fired before the object element loads when a document in the page cache is restored.</p>
+<div id="result"></div>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows();
+    internals.settings.setBackForwardCacheSupportsPlugins(true);
+}
+
+let newWindow;
+function start() {
+    result.textContent = 'Running...';
+    newWindow = window.open(URL.createObjectURL(newPage));
+}
+
+const newPage = new Blob([`<!DOCTYPE html>
+<html>
+<body>
+<p>This is new page.</p>
+<iframe id="iframe2"></iframe>
+<iframe id="iframe1"></iframe>
+<script>
+window.pageShowed = false;
+
+iframe2.onload = () => {
+    opener.postMessage({step: 'opened'}, '*');
+}
+onmessage = () => {
+    opener.postMessage({step: 'ready'}, '*');
+}
+
+iframe1.contentDocument.body.innerHTML = '<span>hello</span>';
+iframe2.src = URL.createObjectURL(opener.subframePage);
+
+</scr` + `ipt>
+</body>
+</html>`], {'type': 'text/html'});
+
+window.subframePage = new Blob([`<!DOCTYPE html>
+<html>
+<body>
+<object id="object1"></object>
+<script>
+window.addEventListener('pagehide', () => {
+    const object1 = window.object1;
+    object1.remove();
+    document.body.appendChild(object1);
+    object1.addEventListener('beforeload', () => {
+        top.opener.postMessage({step: 'check', pageShowed: !!top.iframe1.contentDocument.body.firstChild.offsetHeight}, '*');
+    }, {once: true});
+});
+</sc` + `ript>
+</body>
+</html>`], {'type': 'text/html'});
+
+const secondPage = new Blob([`<!DOCTYPE html>
+<html>
+<body onload="opener.postMessage({step: 'navigated'}, '*')">
+<p>second page.</p>
+</body>
+</html>`], {'type': 'text/html'});
+
+let isLastStep = false;
+onmessage = (event) => {
+    if (isLastStep && event.data.step != 'check')
+        return;
+    switch (event.data.step) {
+    case 'opened':
+        newWindow.postMessage('getready', '*');
+        break;
+    case 'ready':
+        newWindow.location = URL.createObjectURL(secondPage);
+        break;
+    case 'navigated':
+        isLastStep = true;
+        newWindow.history.back();
+        break;
+    case 'check':
+        result.textContent = event.data.pageShowed ? 'PASS' : 'FAIL';
+        newWindow.close();
+        if (window.testRunner)
+            testRunner.notifyDone();
+        break;
+    }
+}
+
+if (window.testRunner)
+    window.onload = start;
+else
+    document.write('<button onclick="start()">Start</button>');
+
+setTimeout(() => testRunner.notifyDone(), 3000);
+
+</script>
+</body>
+</html>

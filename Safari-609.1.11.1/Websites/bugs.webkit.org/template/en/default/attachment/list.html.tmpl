@@ -1,0 +1,194 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% RETURN UNLESS attachments.size || Param("maxattachmentsize") || Param("maxlocalattachment") %]
+
+<script src="[% 'js/status-bubble.js' FILTER mtime %]"></script>
+<script type="text/javascript">
+<!--
+window.addEventListener('message', handleStatusBubbleMessage, false);
+
+function toggle_display(link) {
+    var table = document.getElementById("attachment_table");
+    var view_all = document.getElementById("view_all");
+    var hide_obsolete_url_parameter = "&hide_obsolete=1";
+    // Store current height for scrolling later
+    var originalHeight = table.offsetHeight;
+    var rows = YAHOO.util.Dom.getElementsByClassName(
+        'bz_tr_obsolete', 'tr', table);
+
+    for (var i = 0; i < rows.length; i++) {
+        bz_toggleClass(rows[i], 'bz_default_hidden');
+    }
+
+    if (YAHOO.util.Dom.hasClass(rows[0], 'bz_default_hidden')) {
+        link.innerHTML = "Show Obsolete";
+        view_all.href = view_all.href + hide_obsolete_url_parameter 
+    }
+    else {
+        link.innerHTML = "Hide Obsolete";
+        view_all.href = view_all.href.replace(hide_obsolete_url_parameter,"");
+    }
+
+    var newHeight = table.offsetHeight;
+    // This scrolling makes the window appear to not move at all.
+    window.scrollBy(0, newHeight - originalHeight);
+
+    return false;
+}
+//-->
+</script>
+
+<br>
+<table id="attachment_table">
+  <tr id="a0">
+    <th colspan="[% show_attachment_flags ? 3 : 2 %]" class="left">
+      Attachments
+    </th>
+  </tr>
+
+  [% count = 0 %]
+  [% obsolete_attachments = 0 %]
+  [% user_cache = template_cache.users %]
+
+  [% FOREACH attachment = attachments %]
+    [% count = count + 1 %]
+    [% IF !attachment.isprivate || user.is_insider || attachment.attacher.id == user.id %]
+      [% IF attachment.isobsolete %]
+        [% obsolete_attachments = obsolete_attachments + 1 %]
+      [% END %]
+      <tr id="a[% count %]" class="[% "bz_contenttype_" _ attachment.contenttype
+                     FILTER css_class_quote %]
+                 [% " bz_patch" IF attachment.ispatch %]
+                 [% " bz_private" IF attachment.isprivate %]
+                 [% " bz_tr_obsolete bz_default_hidden" 
+                     IF attachment.isobsolete %]"
+[%# if WEBKIT_CHANGES %]
+                 [% IF attachment.ispatch && !attachment.isobsolete %] style="background-color: rgb(255,255,200);" [% END %]
+[%# endif // WEBKIT_CHANGES %]
+      >
+        <td>
+          [% IF attachment.datasize %]
+            <a href="attachment.cgi?id=[% attachment.id %]"
+               title="View the content of the attachment">
+          [% END %]
+          <b>[% attachment.description FILTER html FILTER obsolete(attachment.isobsolete) %]</b>
+          [% "</a>" IF attachment.datasize %]
+
+          <span class="bz_attach_extra_info">
+            [% IF attachment.datasize %]
+              ([% attachment.datasize FILTER unitconvert %],
+              [% IF attachment.ispatch %]
+                patch)
+              [% ELSE %]
+                [%+ attachment.contenttype FILTER html %])
+              [% END %]
+            [% ELSE %]
+              (<em>deleted</em>)
+            [% END %]
+
+            <br>
+            <a href="#attach_[% attachment.id %]"
+               title="Go to the comment associated with the attachment">
+              [%- attachment.attached FILTER time("%Y-%m-%d %H:%M %Z") %]</a>,
+
+            [%# No need to recreate the exact same template if we already have it. %]
+            [% attacher_id = attachment.attacher.id %]
+            [% UNLESS user_cache.$attacher_id %]
+              [% user_cache.$attacher_id = BLOCK %]
+                [% INCLUDE global/user.html.tmpl who = attachment.attacher %]
+              [% END %]
+            [% END %]
+            [% user_cache.$attacher_id FILTER none %]
+          </span>
+        </td>
+
+        [% IF show_attachment_flags %]
+          <td class="bz_attach_flags">
+            [% IF attachment.flags.size == 0 %]
+              <i>no flags</i>
+            [% ELSE %]
+              [% FOREACH flag = attachment.flags %]
+                [% IF user.id %]
+                  <span title="[% flag.setter.identity FILTER html %]">[% flag.setter.nick FILTER html %]</span>:
+                [% ELSIF flag.setter.name %]
+                  <span title="[% flag.setter.name FILTER html %]">[% flag.setter.nick FILTER html %]</span>:
+                [% ELSE %]
+                  [% flag.setter.nick FILTER html %]:
+                [% END %]
+                [%+ flag.type.name FILTER html %][% flag.status %]
+                [%+ IF flag.status == "?" && flag.requestee %]
+                  [% IF user.id %]
+                    (<span title="[% flag.requestee.identity FILTER html %]">[% flag.requestee.nick FILTER html %]</span>)
+                  [% ELSIF flag.requestee.name %]
+                    (<span title="[% flag.requestee.name FILTER html %]">[% flag.requestee.nick FILTER html %]</span>)
+                  [% ELSE %]
+                    ([% flag.requestee.nick FILTER html %])
+                  [% END %]
+                [% END %]<br>
+              [% END %]
+            [% END %]
+          </td>
+        [% END %]
+
+        <td>
+[%# if WEBKIT_CHANGES %]
+          [% IF attachment.ispatch && user.id %]
+          <a href="attachment.cgi?id=[% attachment.id %]&amp;action=review">Review Patch</a> |
+          [% END %]
+[%# endif // WEBKIT_CHANGES %]
+          <a href="attachment.cgi?id=[% attachment.id %]&amp;action=edit">Details</a>
+[%# if WEBKIT_CHANGES %]
+          [% IF attachment.ispatch %]
+            | <a href="attachment.cgi?id=[% attachment.id %]&amp;action=prettypatch">Formatted Diff</a>
+          [% END %]
+[%# endif // WEBKIT_CHANGES %]
+          [% IF attachment.ispatch && feature_enabled('patch_viewer') %]
+            | <a href="attachment.cgi?id=[% attachment.id %]&amp;action=diff">Diff</a>
+          [% END %]
+          [% Hook.process("action") %]
+[%# if WEBKIT_CHANGES %]
+          [% IF attachment.ispatch %]
+          <div class="statusBubble">
+            <iframe src="https://webkit-queues.webkit.org/status-bubble/[% attachment.id %]"
+                    style="width: 0px; height: 20px; border: none;" scrolling="no" onload="handleStatusBubbleLoad(this)">
+            </iframe>
+            <iframe src="https://ews.webkit.org/status-bubble/[% attachment.id %]/"
+                    style="width: 0px; height: 20px; border: none;" scrolling="no" onload="handleStatusBubbleLoadNewEWS(this)">
+            </iframe>
+          </div>
+          [% END %]
+[%# endif // WEBKIT_CHANGES %]
+        </td>
+      </tr>
+    [% END %]
+  [% END %]
+
+  <tr class="bz_attach_footer">
+    <td colspan="[% show_attachment_flags ? 3 : 2 %]">
+      [% IF attachments.size %]
+        <span class="bz_attach_view_hide">
+          [% IF obsolete_attachments %]
+            <a href="#a0" onclick="return toggle_display(this);">Show
+              Obsolete</a> ([% obsolete_attachments %])
+          [% END %]
+          [% IF Param("allow_attachment_display") %]
+            <a id="view_all" href="attachment.cgi?bugid=
+                  [%- bugid %]&amp;action=viewall
+                  [%- "&amp;hide_obsolete=1" IF obsolete_attachments %]">View All</a>
+          [% END %]
+        </span>
+      [% END %]
+      [% IF Param("maxattachmentsize") || Param("maxlocalattachment") %]
+        <a href="attachment.cgi?bugid=[% bugid %]&amp;action=enter">Add an attachment</a>
+        (proposed patch, testcase, etc.)
+      [% END %]
+    </td>
+  </tr>
+</table>
+<br>

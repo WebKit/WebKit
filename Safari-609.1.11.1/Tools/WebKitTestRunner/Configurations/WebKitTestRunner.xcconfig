@@ -1,0 +1,43 @@
+//
+// Copyright (C) 2010-2015 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+// BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
+//
+
+#include "BaseTarget.xcconfig"
+
+LD_RUNPATH_SEARCH_PATHS = "@loader_path";
+
+PRODUCT_NAME = WebKitTestRunner;
+GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+OTHER_LDFLAGS[sdk=macosx*] = $(inherited) -lWebKitTestRunner -framework Carbon -framework Cocoa -framework JavaScriptCore -framework WebKit;
+STRIP_STYLE = debugging;
+SKIP_INSTALL[sdk=iphone*] = YES;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = mac/*;
+INCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = mac/main.mm;
+
+CODE_SIGN_ENTITLEMENTS[sdk=macosx*] = Configurations/WebKitTestRunner.entitlements;
+
+CODE_SIGN_IDENTITY[sdk=macosx*] = $(CODE_SIGN_IDENTITY_$(CONFIGURATION));
+CODE_SIGN_IDENTITY_Debug = $(CODE_SIGN_IDENTITY_$(USE_INTERNAL_SDK));
+CODE_SIGN_IDENTITY_Release = $(CODE_SIGN_IDENTITY_$(USE_INTERNAL_SDK));
+CODE_SIGN_IDENTITY_YES = $(WK_ENGINEERING_CODE_SIGN_IDENTITY);

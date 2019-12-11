@@ -1,0 +1,42 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>RTCCertificate Tests</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+promise_test(t => {
+    return promise_rejects(t, 'NotSupportedError', RTCPeerConnection.generateCertificate('ECDSA'));
+}, 'generateCertificate() with algorithm as a string fails');
+
+promise_test(t => {
+    return promise_rejects(t, 'NotSupportedError', RTCPeerConnection.generateCertificate({
+        name: 'ECDSA',
+        namedCurve: 'P-257'
+    }));
+}, 'generateCertificate() with unsupported ECDSA curve');
+
+promise_test(t => {
+    return promise_rejects(t, 'NotSupportedError', RTCPeerConnection.generateCertificate({
+        name: 'RSASSA-PKCS1-v1_5',
+        modulusLength: 2048,
+        publicExponent: new Uint8Array([1, 0, 1]),
+        hash: 'SHA-255'
+    }));
+}, 'generateCertificate() with unsupported RSA hash');
+
+promise_test(t => {
+    return RTCPeerConnection.generateCertificate({
+        name: 'RSASSA-PKCS1-v1_5',
+        publicExponent: new Uint8Array([]),
+        hash: 'SHA-256'
+    });
+}, 'generateCertificate() with missing modulusLength should skip publicExponent');
+
+promise_test(t => {
+    return RTCPeerConnection.generateCertificate({
+        name: 'RSASSA-PKCS1-v1_5',
+        modulusLength: 0,
+        hash: 'SHA-256'
+    });
+}, 'generateCertificate() with missing exponent should skip modulusLength');
+</script>

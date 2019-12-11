@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script>
+promise_test(async (test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(false);
+    await navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(assert_unreached, (e) => {
+        assert_equals(e.name, "NotAllowedError");
+    });
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+    await navigator.mediaDevices.getUserMedia({video:true});
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(false);
+    await navigator.mediaDevices.getUserMedia({video:true});
+
+    await navigator.mediaDevices.getUserMedia({audio:true}).then(assert_unreached, (e) => {
+        assert_equals(e.name, "NotAllowedError");
+    });
+}, "Testing same page getUserMedia deny persistency, the first denied request being audio and video, the second granted request being video");
+        </script>
+    </body>
+</html>

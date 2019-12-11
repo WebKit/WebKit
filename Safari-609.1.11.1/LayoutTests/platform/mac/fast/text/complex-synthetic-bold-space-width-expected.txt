@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 259x18
+          text run at (0,0) width 259: "These lines should have the same width:"
+      RenderBlock {DIV} at (0,18) size 784x42
+        RenderText {#text} at (0,0) size 108x20
+          text run at (0,0) width 108: ". . . . . . . . a"
+        RenderBR {BR} at (107,16) size 1x0
+        RenderText {#text} at (0,21) size 108x20
+          text run at (0,21) width 108: ". . . . . . . . a\x{300}"

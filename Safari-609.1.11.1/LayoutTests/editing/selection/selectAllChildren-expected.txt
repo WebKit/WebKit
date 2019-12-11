@@ -1,0 +1,7 @@
+foobar
+Success: s.anchorNode is [object Text].
+Success: s.anchorOffset is 0.
+Success: s.focusNode is [object Text].
+Success: s.focusOffset is 0.
+Success: window.getSelection() is foo.
+Success: window.getSelection() is foobar.

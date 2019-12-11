@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Test import execution order.');
+window.count = 0;
+
+// Module will be executed asynchronously.
+window.jsTestIsAsync = true;
+debug('Module is not executed yet.');
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+<script>
+(async function () {
+    await import(`./resources/module-execution-order-mixed.js`);
+    shouldBe("count++", "4");
+    await import(`./resources/module-execution-order-mixed-2.js`);
+    shouldBe("count++", "6");
+    finishJSTest();
+}());
+</script>
+</body>
+</html>

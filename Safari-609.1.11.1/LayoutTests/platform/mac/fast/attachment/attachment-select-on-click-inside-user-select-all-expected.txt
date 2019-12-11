@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x93
+  RenderBlock {HTML} at (0,0) size 800x93
+    RenderBody {BODY} at (8,8) size 784x77
+      RenderBlock {DIV} at (0,0) size 784x77
+        RenderText {#text} at (0,54) size 73x18
+          text run at (0,54) width 73: "text before "
+        RenderAttachment {ATTACHMENT} at (72,0) size 77x77
+        RenderText {#text} at (148,54) size 63x18
+          text run at (148,54) width 63: " text after"
+selection start: position 0 of child 0 {#text} of child 1 {DIV} of body
+selection end:   position 11 of child 2 {#text} of child 1 {DIV} of body

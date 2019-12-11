@@ -1,0 +1,7 @@
+This tests re-opening the select element popup after closing it by bluring the focus. WebKit should re-open the popup intead of hitting a debug assert.
+To manually test, after the popup which opened as this test is dismissed (click elsewhere to dismiss it if not). Clicking on the select element should then open the popup menu.
+
+
+PASS - popup closed by blur
+PASS - popup opened after closed by blur
+

@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<script src="../../resources/js-test-pre.js"></script>
+<body id="body" tabindex="0">
+
+<ol>
+<li id="item1"><p>First line</p>second line</li>
+<li id="item2">Long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long</p></li>
+</ol>
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that when list item has text of multiple lines we only speak the list marker for the first line.");
+
+    if (window.accessibilityController) {
+        var listItem1 = accessibilityController.accessibleElementById("item1");
+        var p1 = listItem1.childAtIndex(0);
+        var firstLineRange = p1.textMarkerRangeForElement(p1);
+        debug(p1.stringForTextMarkerRange(firstLineRange));
+        
+        // Get second line.
+        var firstLineEnd = p1.endTextMarkerForTextMarkerRange(firstLineRange);
+        var secondLineRange = p1.lineTextMarkerRangeForTextMarker(p1.nextTextMarker(firstLineEnd));
+        debug(p1.stringForTextMarkerRange(secondLineRange));
+        
+        // Soft lines.
+        var listItem2 = accessibilityController.accessibleElementById("item2");
+        var item2Range = listItem2.textMarkerRangeForElement(listItem2);
+        var firstLineStart = listItem2.startTextMarkerForTextMarkerRange(item2Range);
+        firstLineRange = listItem2.lineTextMarkerRangeForTextMarker(firstLineStart);
+        debug(listItem2.stringForTextMarkerRange(firstLineRange));
+        
+        firstLineEnd = listItem2.endTextMarkerForTextMarkerRange(firstLineRange);
+        secondLineRange = listItem2.lineTextMarkerRangeForTextMarker(listItem2.nextTextMarker(firstLineEnd));
+        debug(listItem2.stringForTextMarkerRange(secondLineRange));
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+
+</body>
+</html>
+

@@ -1,0 +1,78 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # settings:      a hash of hashes, keyed by setting name.
+  #                Each hash contains:
+  #                 is_enabled    - boolean
+  #                 default_value - string (global default for this setting)
+  #                 value         - string (user-defined preference)
+  #                 is_default    - boolean (true if user has no preference)
+  #%]
+
+[% PROCESS global/header.html.tmpl
+  title = "Default Preferences"
+  style_urls = ['skins/standard/admin.css']
+%]
+
+[% PROCESS "global/setting-descs.none.tmpl" %]
+
+<p>
+  This lets you edit the default preferences values. The Default Value displayed
+  for each preference will apply to all users who do not choose their own value,
+  and to anyone who is not logged in.
+</p>
+
+<div>
+  The 'Enabled' checkbox controls whether or not this preference is available to users:
+  <ul>
+    <li>If it is checked, users will be allowed to choose their own value if they desire.</li>
+    <li>If it is not checked, the Default Value will automatically apply to everyone.</li>
+  </ul>
+</div>
+
+    <form id="settings" method="post" action="editsettings.cgi">
+      <table id="admin_table">
+        <tr class="column_header">
+          <th>Preference Text</th>
+          <th>Default Value</th>
+          <th>Enabled</th>
+        </tr>
+
+        [% FOREACH name = settings.keys.sort %]
+          [% checkbox_name = name _ '-enabled' %]
+          <tr>
+            <td>
+              [% setting_descs.$name OR name FILTER html %]
+            </td>
+            <td>
+              <select name="[% name FILTER html %]" id="[% name FILTER html %]">
+                [% FOREACH x = settings.${name}.legal_values %]
+                    <option value="[% x FILTER html %]"
+                      [% " selected=\"selected\"" IF x == settings.${name}.default_value %]>
+                      [% setting_descs.${x} OR x FILTER html %]
+                    </option>
+                [% END %]
+              </select>
+            </td>
+            <td class="center">
+              <input type="checkbox"
+                name="[% checkbox_name FILTER html %]"
+                id="[% checkbox_name FILTER html %]"
+                [% " checked=\"checked\"" IF settings.${name}.is_enabled %]>
+            </td>
+          </tr>
+        [% END %]
+      </table>
+
+    <input type="hidden" name="action" value="update">
+    <input type="hidden" name="token" value="[% token FILTER html %]">
+    <input type="submit" id="update" value="Submit Changes">
+  </form>
+
+[% PROCESS global/footer.html.tmpl %]

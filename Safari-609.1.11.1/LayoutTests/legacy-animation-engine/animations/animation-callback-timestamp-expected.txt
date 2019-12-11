@@ -1,0 +1,5 @@
+PASS All the differences between requestAnimationFrame() callback timestamps and Performance.now() were within 3ms.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

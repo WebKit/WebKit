@@ -1,0 +1,10 @@
+This tests that a pip window is returned correctly when a video element enters the Picture-in-Picture mode.
+
+RUN(internals.settings.setAllowsPictureInPictureMediaPlayback(true))
+RUN(internals.setPictureInPictureAPITestEnabled(video, true))
+RUN(video.src = findMediaFile("video", "../content/test"))
+EVENT(canplaythrough)
+EXPECTED (pipWindow.width > '0') OK
+EXPECTED (pipWindow.height > '0') OK
+END OF TEST
+

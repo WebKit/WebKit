@@ -1,0 +1,3 @@
+
+PASS Multiple dispatchEvent() and cancelBubble 
+

@@ -1,0 +1,47 @@
+<HTML>
+<HEAD>
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</HEAD>
+<BODY style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space; ">
+<script>
+    var console_messages = document.createElement("ol");
+    
+    function log(message)
+    {
+        var item = document.createElement("li");
+        item.appendChild(document.createTextNode(String(message).replace(/0x[0-9a-fA-F]{8}/g, "0xXXXXXXXX").replace(/\n/g, "\\n").replace(/\t/g, "\\t")));
+        console_messages.appendChild(item);
+    }
+    
+    if (window.testRunner) {
+        
+        try {
+        
+            testRunner.dumpAsText();
+        
+            window.getSelection().setPosition(document.body, 0);
+
+			// should not be (0, 0, 0, 0)
+            log("(0, 0): " + textInputController.firstRectForCharacterRange(0, 0));
+
+            document.body.innerHTML = "";
+
+        } catch (ex) {
+            log("Exception: " + ex.description);
+        }
+        
+        var console = document.createElement("p");
+        console.appendChild(console_messages);
+        document.body.appendChild(console);
+        
+    } else {
+        document.write("(cannot run interactively)");
+    }
+</script>
+</BODY>
+</HTML>

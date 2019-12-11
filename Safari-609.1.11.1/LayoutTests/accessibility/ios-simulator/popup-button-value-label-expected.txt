@@ -1,0 +1,14 @@
+  
+This tests that a popup button will return the selected item through its value attribute instead of its label attribute.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pass.stringValue is 'AXValue: item 1'
+PASS pass.description is 'AXLabel: '
+PASS pass.stringValue is 'AXValue: item 2'
+PASS pass.description is 'AXLabel: Popup'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

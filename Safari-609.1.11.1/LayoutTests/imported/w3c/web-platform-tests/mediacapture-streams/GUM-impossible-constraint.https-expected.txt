@@ -1,0 +1,9 @@
+When prompted, accept to share your video stream.
+
+Description
+
+This test checks that setting an impossible mandatory constraint (width >=1G) in getUserMedia works
+
+
+FAIL Tests that setting an impossible constraint in getUserMedia fails assert_equals: The name of the not satisfied error is given in error.constraint expected "width" but got ""
+

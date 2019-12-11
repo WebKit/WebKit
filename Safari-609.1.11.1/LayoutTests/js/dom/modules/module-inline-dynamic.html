@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Test inlined module.');
+
+// Module will be executed asynchronously.
+window.jsTestIsAsync = true;
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+<script>
+debug('Module is not executed yet.');
+(function () {
+    var element = document.createElement("script");
+    element.textContent = `
+        import Cocoa from "./resources/module-inline-dynamic.js";
+        var cocoa = new Cocoa();
+
+        debug("Module execution is confined in the module environment.");
+        shouldBeEqualToString("typeof cocoa", "undefined");
+
+        window.exportedCocoa = cocoa;
+        shouldBeEqualToString("typeof exportedCocoa", "object");
+        shouldBeEqualToString("exportedCocoa.taste()", "awesome");
+        finishJSTest();
+    `;
+    element.type = "module";
+    document.body.appendChild(element);
+} ());
+</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/audio-testing.js"></script>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+
+<body>
+<script>
+description("Tests that ConvolverNode buffer rate must match context rate.");
+
+var context = new webkitOfflineAudioContext(1, 256, 44100);
+var convolver = context.createConvolver();
+
+shouldThrowErrorName("convolver.buffer = context.createBuffer(1, 256, 22050)", "NotSupportedError");
+shouldNotThrow("convolver.buffer = context.createBuffer(1, 256, 44100)");
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 16: ReferenceError: Can't find variable: SharedWorker
+
+FAIL Test the name property of shared workers mixing constructor options and constructor strings ReferenceError: Can't find variable: SharedWorker
+

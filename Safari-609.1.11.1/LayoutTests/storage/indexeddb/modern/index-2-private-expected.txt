@@ -1,0 +1,160 @@
+This tests indexes are left in appropriate states after aborted transactions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+Initial upgrade needed: Old version - 0 New version - 1
+get "good" result is: [object Object]
+bar is good
+baz is bad
+getKey "good" result is: 1
+get "bad" result is: undefined
+getKey "bad" result is: undefined
+get "multiEntry" result is: undefined
+getKey "multiEntry" result is: undefined
+get "test" result is: undefined
+getKey "test" result is: undefined
+count result is: 2
+
+get "good" result is: undefined
+getKey "good" result is: undefined
+get "bad" result is: [object Object]
+bar is good
+baz is bad
+getKey "bad" result is: 1
+get "multiEntry" result is: undefined
+getKey "multiEntry" result is: undefined
+get "test" result is: undefined
+getKey "test" result is: undefined
+count result is: 1
+
+get "good" result is: [object Object]
+bar is good
+baz is bad
+getKey "good" result is: 1
+get "bad" result is: undefined
+getKey "bad" result is: undefined
+get "multiEntry" result is: [object Object]
+bar is multiEntry,test
+getKey "multiEntry" result is: 2
+get "test" result is: [object Object]
+bar is multiEntry,test
+getKey "test" result is: 2
+count result is: 3
+
+Initial upgrade versionchange transaction complete
+Deleted key 1 from objectstore
+
+get "good" result is: undefined
+getKey "good" result is: undefined
+get "bad" result is: undefined
+getKey "bad" result is: undefined
+get "multiEntry" result is: undefined
+getKey "multiEntry" result is: undefined
+get "test" result is: undefined
+getKey "test" result is: undefined
+count result is: 1
+
+get "good" result is: undefined
+getKey "good" result is: undefined
+get "bad" result is: undefined
+getKey "bad" result is: undefined
+get "multiEntry" result is: undefined
+getKey "multiEntry" result is: undefined
+get "test" result is: undefined
+getKey "test" result is: undefined
+count result is: 0
+
+get "good" result is: undefined
+getKey "good" result is: undefined
+get "bad" result is: undefined
+getKey "bad" result is: undefined
+get "multiEntry" result is: [object Object]
+bar is multiEntry,test
+getKey "multiEntry" result is: 2
+get "test" result is: [object Object]
+bar is multiEntry,test
+getKey "test" result is: 2
+count result is: 2
+
+Cleared objectstore
+
+get "good" result is: undefined
+getKey "good" result is: undefined
+get "bad" result is: undefined
+getKey "bad" result is: undefined
+get "multiEntry" result is: undefined
+getKey "multiEntry" result is: undefined
+get "test" result is: undefined
+getKey "test" result is: undefined
+count result is: 0
+
+get "good" result is: undefined
+getKey "good" result is: undefined
+get "bad" result is: undefined
+getKey "bad" result is: undefined
+get "multiEntry" result is: undefined
+getKey "multiEntry" result is: undefined
+get "test" result is: undefined
+getKey "test" result is: undefined
+count result is: 0
+
+get "good" result is: undefined
+getKey "good" result is: undefined
+get "bad" result is: undefined
+getKey "bad" result is: undefined
+get "multiEntry" result is: undefined
+getKey "multiEntry" result is: undefined
+get "test" result is: undefined
+getKey "test" result is: undefined
+count result is: 0
+
+All done. Moving on to final part
+readwrite transaction aborted
+get "good" result is: [object Object]
+bar is good
+baz is bad
+getKey "good" result is: 1
+get "bad" result is: undefined
+getKey "bad" result is: undefined
+get "multiEntry" result is: undefined
+getKey "multiEntry" result is: undefined
+get "test" result is: undefined
+getKey "test" result is: undefined
+count result is: 2
+
+get "good" result is: undefined
+getKey "good" result is: undefined
+get "bad" result is: [object Object]
+bar is good
+baz is bad
+getKey "bad" result is: 1
+get "multiEntry" result is: undefined
+getKey "multiEntry" result is: undefined
+get "test" result is: undefined
+getKey "test" result is: undefined
+count result is: 1
+
+get "good" result is: [object Object]
+bar is good
+baz is bad
+getKey "good" result is: 1
+get "bad" result is: undefined
+getKey "bad" result is: undefined
+get "multiEntry" result is: [object Object]
+bar is multiEntry,test
+getKey "multiEntry" result is: 2
+get "test" result is: [object Object]
+bar is multiEntry,test
+getKey "test" result is: 2
+count result is: 3
+
+readwrite transaction complete
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

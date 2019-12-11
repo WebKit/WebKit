@@ -1,0 +1,13 @@
+X XX X
+XX X
+X XXX
+X
+XX XXX
+X XX X
+XX X
+X XXX
+X
+XX XXX
+
+PASS .grid 1 
+

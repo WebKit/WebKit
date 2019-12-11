@@ -1,0 +1,21 @@
+This tests copying and pasting content across shadow boundaries.
+To test manually, copy text blow starting from "hello" ending with "WebKit", and paste into the green box below. All the text shoul be copied & pasted.
+
+pasted html:
+| <div>
+|   id="host1"
+|   style="font-style: italic;"
+|   <span>
+|     style="display: contents; color: blue;"
+|     <b>
+|       "hello"
+|   " "
+|   "world"
+| <div>
+|   id="host2"
+|   <u>
+|     "WebKit <#selection-caret>"
+
+text/plain:
+| "hello world
+WebKit "

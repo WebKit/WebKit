@@ -1,0 +1,110 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+if (is_android) {
+  import("//build/config/android/config.gni")
+  import("//build/config/android/rules.gni")
+}
+
+rtc_source_set("arch") {
+  sources = [
+    "arch.h",
+  ]
+}
+
+rtc_source_set("asm_defines") {
+  sources = [
+    "asm_defines.h",
+  ]
+}
+
+rtc_source_set("fallthrough") {
+  sources = [
+    "fallthrough.h",
+  ]
+}
+
+rtc_source_set("file_wrapper") {
+  sources = [
+    "file_wrapper.cc",
+    "file_wrapper.h",
+  ]
+  deps = [
+    "..:checks",
+    "..:criticalsection",
+    "..:safe_conversions",
+  ]
+}
+
+rtc_source_set("ignore_warnings") {
+  sources = [
+    "ignore_warnings.h",
+  ]
+}
+
+rtc_source_set("inline") {
+  sources = [
+    "inline.h",
+  ]
+}
+
+rtc_source_set("unused") {
+  sources = [
+    "unused.h",
+  ]
+}
+
+rtc_source_set("rtc_export") {
+  sources = [
+    "rtc_export.h",
+  ]
+}
+
+if (is_mac || is_ios) {
+  rtc_source_set("cocoa_threading") {
+    sources = [
+      "cocoa_threading.h",
+      "cocoa_threading.mm",
+    ]
+    deps = [
+      "..:checks",
+    ]
+    libs = [ "Foundation.framework" ]
+  }
+}
+
+rtc_source_set("thread_registry") {
+  sources = [
+    "thread_registry.h",
+  ]
+  deps = [
+    "..:rtc_base_approved",
+  ]
+  if (is_android && !build_with_chromium) {
+    sources += [ "thread_registry.cc" ]
+    deps += [
+      "../../sdk/android:native_api_stacktrace",
+      "//third_party/abseil-cpp/absl/base:core_headers",
+    ]
+  }
+}
+
+rtc_source_set("warn_current_thread_is_deadlocked") {
+  sources = [
+    "warn_current_thread_is_deadlocked.h",
+  ]
+  deps = []
+  if (is_android && !build_with_chromium) {
+    sources += [ "warn_current_thread_is_deadlocked.cc" ]
+    deps += [
+      "..:logging",
+      "../../sdk/android:native_api_stacktrace",
+    ]
+  }
+}

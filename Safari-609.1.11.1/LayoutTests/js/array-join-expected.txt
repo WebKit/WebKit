@@ -1,0 +1,43 @@
+Verify Array.prototype.join() properties
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Function properties
+PASS typeof Array.prototype.join is "function"
+PASS Array.prototype.join.name is "join"
+PASS Array.prototype.join.length is 1
+PASS Object.getOwnPropertyDescriptor(Array.prototype, 'join').configurable is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype, 'join').enumerable is false
+PASS Object.getOwnPropertyDescriptor(Array.prototype, 'join').writable is true
+Int32 Array
+PASS [1, 2, 3].join() is "1,2,3"
+PASS [1, 2, 3].join('') is "123"
+PASS [1, 2, 3].join('柰') is "1柰2柰3"
+Double Array
+PASS [Math.PI, Math.E, 6.626].join() is "3.141592653589793,2.718281828459045,6.626"
+PASS [Math.PI, Math.E, 6.626].join('') is "3.1415926535897932.7182818284590456.626"
+PASS [Math.PI, Math.E, 6.626].join('柰') is "3.141592653589793柰2.718281828459045柰6.626"
+Contiguous Array
+PASS [1, 'WebKit', { toString: () => { return 'IsIncredible'} }].join() is "1,WebKit,IsIncredible"
+PASS [1, 'WebKit', { toString: () => { return 'IsIncredible'} }].join('') is "1WebKitIsIncredible"
+PASS [1, 'WebKit', { toString: () => { return 'IsIncredible'} }].join('柰') is "1柰WebKit柰IsIncredible"
+Sparse Array
+PASS smallSparseArray.join() is "WebKit,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,15"
+PASS smallSparseArray.join('') is "WebKit15"
+PASS smallSparseArray.join('柰') is "WebKit柰柰柰柰柰柰柰柰柰柰柰柰柰柰柰柰柰柰柰柰柰柰柰柰柰柰柰柰柰柰柰柰柰柰柰柰柰柰柰柰柰柰15"
+PASS largeSparseArray1.join('') is "WebKit42"
+PASS largeSparseArray2.join('') is "WebKit42"
+Out of memory
+PASS oversizedArray.join('') threw exception Error: Out of memory.
+ToLength is called first on "this", followed by ToString on the separator. Followed by ToString on each element.
+PASS Array.prototype.join.call(calleeObject, separatorObject) is "WebKit0柰WebKit1"
+PASS callSequence.join(', ') is "calle.length, length.valueOf, separator.toString, calle.get 0, index0.toString, calle.get 1, index0.toString"
+We use ToLength on the object's length, not ToInt32 or ToUInt32.
+PASS Array.prototype.join.call(lengthyObject) is ""
+PASS Array.prototype.join.call(lengthyObject) is ""
+PASS Array.prototype.join.call(lengthyObject) is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

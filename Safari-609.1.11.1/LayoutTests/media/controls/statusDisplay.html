@@ -1,0 +1,47 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+    <head>
+        <script src="../media-file.js"></script>
+        <script src="controls-test-helpers.js"></script>
+        <script>
+            var tester = new ControlsTest()
+                .whenReady(runTests)
+                .start();
+
+            function runTests()
+            {
+                currentState = tester.currentState;
+                tester.test("We are using the apple idiom")
+                    .value(currentState.idiom)
+                    .isEqualTo("apple");
+
+                tester.startNewSection("Get the status label state");
+                var statusDisplayLabelState = tester.stateForControlsElement("Status Display");
+
+                tester.test("Name is 'Status Display'")
+                    .value(statusDisplayLabelState.name)
+                    .isEqualTo("Status Display");
+
+                tester.test("Has hidden class")
+                    .value(statusDisplayLabelState.className)
+                    .isEqualTo("hidden");
+
+                tester.test("Content is Empty")
+                    .value(statusDisplayLabelState.textContent)
+                    .isEmptyString();
+
+                tester.test("CSS display: none")
+                    .value(statusDisplayLabelState.computedStyle.display)
+                    .isEqualTo("none");
+
+                tester.end();
+            }
+
+        </script>
+    </head>
+    <body>
+        <p>This tests for the content in the status display.</p>
+        <p>This test only runs in DRT!</p>
+        <video controls></video>
+    </body>
+</html>

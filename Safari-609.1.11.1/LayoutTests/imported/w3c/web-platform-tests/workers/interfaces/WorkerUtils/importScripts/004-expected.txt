@@ -1,0 +1,3 @@
+
+FAIL importScripts broken script assert_true: expected SyntaxError expected true got "Error: Script error."
+

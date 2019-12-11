@@ -1,0 +1,52 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x268
+  RenderBlock {HTML} at (0,0) size 800x268
+    RenderBody {BODY} at (8,16) size 784x244
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 776x36
+          text run at (0,0) width 776: "Test passes if each of the orange boxes is sandwiched between two blue boxes and all blue and orange boxes are below the"
+          text run at (0,18) width 99: "big yellow box."
+layer at (8,68) size 192x192
+  RenderBlock (relative positioned) {DIV} at (0,52) size 192x192 [bgcolor=#FFFF00]
+    RenderBlock (anonymous) at (0,0) size 192x18
+    RenderBlock (anonymous) at (0,36) size 192x18
+    RenderBlock (anonymous) at (0,72) size 192x18
+    RenderBlock (anonymous) at (0,108) size 192x18
+      RenderText {#text} at (0,0) size 0x0
+layer at (8,260) size 66x18
+  RenderInline (relative positioned) {DIV} at (0,0) size 66x18 [bgcolor=#0000FF]
+    RenderText {#text} at (0,0) size 66x18
+      text run at (0,0) width 66: "Filler Text"
+layer at (8,278) size 192x18
+  RenderBlock (anonymous) at (0,18) size 192x18
+    RenderBlock {DIV} at (0,0) size 192x18 [bgcolor=#FFA500]
+      RenderText {#text} at (0,0) size 66x18
+        text run at (0,0) width 66: "Filler Text"
+layer at (8,296) size 66x18
+  RenderInline (relative positioned) {DIV} at (0,0) size 66x18 [bgcolor=#0000FF]
+layer at (8,488) size 66x18
+  RenderInline (relative positioned) {DIV} at (0,0) size 66x18
+    RenderText {#text} at (0,0) size 66x18
+      text run at (0,0) width 66: "Filler Text"
+layer at (8,506) size 192x18
+  RenderBlock (anonymous) at (0,54) size 192x18
+    RenderBlock {DIV} at (0,0) size 192x18 [bgcolor=#FFA500]
+      RenderText {#text} at (0,0) size 66x18
+        text run at (0,0) width 66: "Filler Text"
+layer at (8,332) size 66x18
+  RenderInline (relative positioned) {DIV} at (0,0) size 66x18 [bgcolor=#0000FF]
+    RenderText {#text} at (0,0) size 0x0
+layer at (8,524) size 66x18
+  RenderInline (relative positioned) {DIV} at (0,0) size 66x18
+    RenderText {#text} at (0,0) size 66x18
+      text run at (0,0) width 66: "Filler Text"
+layer at (8,350) size 192x18
+  RenderBlock (anonymous) at (0,90) size 192x18
+    RenderBlock {DIV} at (0,0) size 192x18 [bgcolor=#FFA500]
+      RenderText {#text} at (0,0) size 66x18
+        text run at (0,0) width 66: "Filler Text"
+layer at (8,368) size 66x18
+  RenderInline (relative positioned) {DIV} at (0,0) size 66x18 [bgcolor=#0000FF]
+    RenderText {#text} at (0,0) size 66x18
+      text run at (0,0) width 66: "Filler Text"

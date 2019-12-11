@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body id="body">
+
+<fieldset>
+    <div>
+        <input id="1">
+        <label for="1">1</label>
+    </div>
+    <div>
+        <input id="2">
+        <label for="2">2</label>
+    </div>
+</fieldset>
+
+<p id="description"></p>
+<div id="console"></div>
+<div id="notifications"></div>
+
+<script>
+
+    description("This tests that calling focus on a render object when it doesn't result in a selection change won't leave isSynchronizingSelection set to true.");
+
+    var webArea = 0;
+    var axTextStateSyncOne = 0;
+    var axTextStateSyncTwo = 0;
+    var selectCount = 0;
+    var focusCount = 0;
+
+    // Notification ordering:
+    // The first tab will result in a selection and focus notification pair         selectCount=1, focusCount=1
+    // takeFocus() will result in a focus notification                              selectCount=1, focusCount=2
+    // The second tab will result in another selection and focus notification pair  selectCount=2, focusCount=3
+    function notificationCallback(notification, userInfo) {
+        if (notification == "AXSelectedTextChanged") {
+            selectCount++;
+            if (selectCount == 1) {
+                axTextStateSyncOne = userInfo["AXTextStateSync"];
+                shouldBe("axTextStateSyncOne", "undefined");
+
+                shouldBe("accessibilityController.accessibleElementById(\"1\").isFocusable", "true");
+                accessibilityController.accessibleElementById("1").takeFocus();
+            } else if (selectCount == 2) {
+                axTextStateSyncTwo = userInfo["AXTextStateSync"];
+                shouldBe("axTextStateSyncTwo", "undefined");
+            }
+        } else if (notification == "AXFocusChanged") {
+            focusCount++;
+            if (focusCount == 2) {
+                eventSender.scheduleAsynchronousKeyDown("\t");
+            }
+        }
+        if (selectCount == 2 && focusCount == 3) {
+            webArea.removeNotificationListener();
+            finishJSTest();
+        }
+    }
+
+    if (window.accessibilityController) {
+        jsTestIsAsync = true;
+        testRunner.overridePreference("WebKitTabToLinksPreferenceKey", 1);
+
+        accessibilityController.enableEnhancedAccessibility(true);
+        webArea = accessibilityController.rootElement.childAtIndex(0);
+
+        var addedNotification = webArea.addNotificationListener(notificationCallback);
+        shouldBe("addedNotification", "true");
+
+        eventSender.keyDown("\t");
+        shouldBe("accessibilityController.focusedElement.isEqual(accessibilityController.accessibleElementById(\"1\"))", "true");
+    }
+
+</script>
+</body>
+</html>

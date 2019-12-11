@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<select id="testSelect">
+<option value="option_1">Option 1</option>
+<option name="0" value="option_2">Option 2</option>
+<script>
+description("Test that HTMLOptionsCollection's indexed properties take precedence over named properties");
+
+var options = document.getElementById("testSelect").options;
+shouldBe("options.length", "2");
+shouldBeEqualToString("options[0].value", "option_1"); // Would return option_2 if named properties took precedence over indexed properties.
+shouldBeEqualToString("options.item(0).value", "option_1");
+shouldBeEqualToString("options[1].value", "option_2");
+shouldBeEqualToString("options.item(1).value", "option_2");
+shouldBeUndefined("options[2]");
+shouldBeNull("options.item(2)");
+shouldBeEqualToString("options.namedItem('0').value", "option_2");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+<ul id="useful-links">
+  <li id="links-actions">
+      [% PROCESS "global/common-links.html.tmpl" qs_suffix = "_bottom" %]
+  </li>
+
+  [%# Saved searches %]
+
+  [% IF user.showmybugslink OR user.queries.size %]
+    <li id="links-saved">
+      <ul class="links">
+        [% print_pipe = 0 %]
+        [% IF user.showmybugslink %]
+          [% filtered_username = user.login FILTER uri %]
+          <li>
+            <a href="[% Param('mybugstemplate').replace('%userid%', filtered_username) %]">My [% terms.Bugs %]</a>
+          </li>
+          [% print_pipe = 1 %]
+        [% END %]
+
+        [% FOREACH q = user.queries %]
+          [% NEXT UNLESS q.link_in_footer %]
+          <li>
+            [% '<span class="separator">| </span>' IF print_pipe %]
+            <a href="buglist.cgi?cmdtype=runnamed&amp;namedcmd=[% q.name FILTER uri %]">[% q.name FILTER html %]</a>
+          </li>
+          [% print_pipe = 1 %]
+        [% END %]
+      </ul>
+    </li>
+  [% END %]
+
+  [% IF user.queries_subscribed.size %]
+    <li id="links-shared">
+      <ul class="links">
+        [% FOREACH q = user.queries_subscribed %]
+          <li>
+            [% '<span class="separator">| </span>' UNLESS loop.first %]
+            <a href="buglist.cgi?cmdtype=dorem&amp;remaction=run&amp;namedcmd=
+                     [%- q.name FILTER uri %]&amp;sharer_id=[% q.user.id FILTER uri %]"
+               class="shared" title="Shared by [% q.user.identity FILTER html %]">
+              [%- q.name FILTER html %]</a>
+          </li>
+        [% END %]
+      </ul>
+    </li>
+  [% END %]
+
+  [% IF user.reports.size %]
+    <li id="reports-saved">
+      <ul class="links">
+        [% FOREACH r = user.reports %]
+          <li>
+            [% '<span class="separator">| </span>' UNLESS loop.first %]
+            <a href="report.cgi?[% r.query FILTER html %]&amp;saved_report_id=
+                     [%~ r.id FILTER uri %]">[% r.name FILTER html %]</a>
+          </li>
+        [% END %]
+      </ul>
+    </li>
+  [% END %]
+
+  [%# Sections of links to more things users can do on this installation. %]
+  [% Hook.process("end") %]
+</ul>

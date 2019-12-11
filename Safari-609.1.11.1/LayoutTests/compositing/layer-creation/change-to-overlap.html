@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style type="text/css" media="screen">
+    #box {
+        height: 170px;
+        width: 320px;
+        float: left;
+        margin-top: 55px;
+        background-color: silver;
+        will-change: transform;
+    }
+    
+    #overlay {
+        position: absolute;
+        width: 150px;
+        height: 50px;
+        top: 5px;
+        left: 5px;
+        background-color: rgba(0, 128, 0, 0.9);
+    }
+    
+    pre {
+        clear: both;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function doTest()
+    {
+        // Need to wait for compositing layers to be updated.
+        window.setTimeout(function() {
+          document.getElementById('overlay').style.height = '150px';
+            if (window.testRunner) {
+                testRunner.displayAndTrackRepaints(); // Painting has to happen to detect overlap.
+                document.getElementById('layers').innerHTML = window.internals.layerTreeAsText(document);
+                testRunner.notifyDone();
+            }
+        }, 0);
+    }
+
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+<body>
+    <div id="box"></div>
+    <div id="overlay"></div>
+    
+    <pre id="layers">Layer tree appears here in DRT.</pre>
+</body>
+</html>

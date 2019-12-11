@@ -1,0 +1,195 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+    <head>
+        <style>
+            .bordered {
+                border-top: 20px solid black;
+                border-bottom: 10px solid black;
+                border-left: 15px solid black;
+                border-right: 9px solid black;
+            }
+            .padded {
+                padding-left: 20px;
+                padding-right: 10px;
+                padding-top: 15px;
+                padding-bottom: 9px;
+            }
+            .horizontalGallery {
+                width: 30px;
+                height: 30px;
+                overflow-y: hidden;
+                overflow-x: auto;
+                margin: 2px;
+                -webkit-overflow-scrolling: touch;
+                scroll-snap-type: x mandatory;
+            }
+            .horizontalGalleryDrawer {
+                width: 180px;
+                height: 30px;
+            }
+            .verticalGallery {
+                width: 30px;
+                height: 30px;
+                display: inline-block;
+                overflow-x: hidden;
+                overflow-y: auto;
+                margin: 2px;
+                -webkit-overflow-scrolling: touch;
+                scroll-snap-type: y mandatory;
+            }
+            .verticalGalleryDrawer {
+                width: 30px;
+                height: 180px;
+            }
+            .colorBox {
+                height: 30px;
+                width: 30px;
+                float: left;
+            }
+            .colorBox {
+                scroll-snap-align: start;
+            }
+            #itemH0, #itemV0 { background-color: red; }
+            #itemH1, #itemV1 { background-color: green; }
+            #itemH2, #itemV2 { background-color: blue; }
+            #itemH3, #itemV3 { background-color: aqua; }
+            #itemH4, #itemV4 { background-color: yellow; }
+            #itemH5, #itemV5 { background-color: fuchsia; }
+        </style>
+        <script src="../../resources/js-test.js"></script>
+        <script>
+        function reportResult(horizontalTargetID, verticalTargetID)
+        {
+            var horizontalTarget = document.getElementById(horizontalTargetID);
+            var verticalTarget = document.getElementById(verticalTargetID);
+
+            debug("Scroll-snap offsets for " + horizontalTargetID + ": " + window.internals.scrollSnapOffsets(horizontalTarget));
+            debug("Scroll-snap offsets for " + verticalTargetID + ": " + window.internals.scrollSnapOffsets(verticalTarget));
+        }
+
+        function runTest()
+        {
+            reportResult('horizontalTarget', 'verticalTarget');
+            reportResult('horizontalBorderedTarget', 'verticalBorderedTarget');
+            reportResult('horizontalPaddedTarget', 'verticalPaddedTarget');
+            reportResult('horizontalBorderedPaddedTarget', 'verticalBorderedPaddedTarget');
+            reportResult('horizontalRotatedTarget', 'verticalRotatedTarget')
+
+            finishJSTest();
+        }
+
+        function onLoad()
+        {
+            jsTestIsAsync = true;
+            if (window.testRunner)
+                setTimeout(runTest, 0);
+        }
+        </script>
+    </head>
+    <body onload="onLoad();">
+        <div style="position: relative; width: 300px">
+            <div>Tests that the scroll-snap feature works properly in overflow regions.</div>
+            <div class="horizontalGallery" id="horizontalTarget">
+                <div class="horizontalGalleryDrawer">
+                    <div id="itemH0" class="colorBox"></div>
+                    <div id="itemH1" class="colorBox"></div>
+                    <div id="itemH2" class="colorBox"></div>
+                    <div id="itemH3" class="colorBox"></div>
+                    <div id="itemH4" class="colorBox"></div>
+                    <div id="itemH5" class="colorBox"></div>
+                </div>
+            </div>
+            <div class="verticalGallery" id="verticalTarget">
+                <div class="verticalGalleryDrawer">
+                    <div id="itemV0" class="colorBox"></div>
+                    <div id="itemV1" class="colorBox"></div>
+                    <div id="itemV2" class="colorBox"></div>
+                    <div id="itemV3" class="colorBox"></div>
+                    <div id="itemV4" class="colorBox"></div>
+                    <div id="itemV5" class="colorBox"></div>
+                </div>
+            </div>
+            <div class="horizontalGallery bordered" id="horizontalBorderedTarget">
+                <div class="horizontalGalleryDrawer">
+                    <div id="itemH0" class="colorBox"></div>
+                    <div id="itemH1" class="colorBox"></div>
+                    <div id="itemH2" class="colorBox"></div>
+                    <div id="itemH3" class="colorBox"></div>
+                    <div id="itemH4" class="colorBox"></div>
+                    <div id="itemH5" class="colorBox"></div>
+                </div>
+            </div>
+            <div class="verticalGallery bordered" id="verticalBorderedTarget">
+                <div class="verticalGalleryDrawer">
+                    <div id="itemV0" class="colorBox"></div>
+                    <div id="itemV1" class="colorBox"></div>
+                    <div id="itemV2" class="colorBox"></div>
+                    <div id="itemV3" class="colorBox"></div>
+                    <div id="itemV4" class="colorBox"></div>
+                    <div id="itemV5" class="colorBox"></div>
+                </div>
+            </div>
+            <div class="horizontalGallery padded" id="horizontalPaddedTarget">
+                <div class="horizontalGalleryDrawer">
+                    <div id="itemH0" class="colorBox"></div>
+                    <div id="itemH1" class="colorBox"></div>
+                    <div id="itemH2" class="colorBox"></div>
+                    <div id="itemH3" class="colorBox"></div>
+                    <div id="itemH4" class="colorBox"></div>
+                    <div id="itemH5" class="colorBox"></div>
+                </div>
+            </div>
+            <div class="verticalGallery padded" id="verticalPaddedTarget">
+                <div class="verticalGalleryDrawer">
+                    <div id="itemV0" class="colorBox"></div>
+                    <div id="itemV1" class="colorBox"></div>
+                    <div id="itemV2" class="colorBox"></div>
+                    <div id="itemV3" class="colorBox"></div>
+                    <div id="itemV4" class="colorBox"></div>
+                    <div id="itemV5" class="colorBox"></div>
+                </div>
+            </div>
+            <div class="horizontalGallery bordered padded" id="horizontalBorderedPaddedTarget">
+                <div class="horizontalGalleryDrawer">
+                    <div id="itemH0" class="colorBox"></div>
+                    <div id="itemH1" class="colorBox"></div>
+                    <div id="itemH2" class="colorBox"></div>
+                    <div id="itemH3" class="colorBox"></div>
+                    <div id="itemH4" class="colorBox"></div>
+                    <div id="itemH5" class="colorBox"></div>
+                </div>
+            </div>
+            <div class="verticalGallery bordered padded" id="verticalBorderedPaddedTarget">
+                <div class="verticalGalleryDrawer">
+                    <div id="itemV0" class="colorBox"></div>
+                    <div id="itemV1" class="colorBox"></div>
+                    <div id="itemV2" class="colorBox"></div>
+                    <div id="itemV3" class="colorBox"></div>
+                    <div id="itemV4" class="colorBox"></div>
+                    <div id="itemV5" class="colorBox"></div>
+                </div>
+            </div>
+            <div class="horizontalGallery bordered padded" id="horizontalRotatedTarget" style="-webkit-transform: rotate(20deg)">
+                <div class="horizontalGalleryDrawer">
+                    <div id="itemH0" class="colorBox"></div>
+                    <div id="itemH1" class="colorBox"></div>
+                    <div id="itemH2" class="colorBox"></div>
+                    <div id="itemH3" class="colorBox"></div>
+                    <div id="itemH4" class="colorBox"></div>
+                    <div id="itemH5" class="colorBox"></div>
+                </div>
+            </div>
+            <div class="verticalGallery bordered padded" id="verticalRotatedTarget" style="-webkit-transform: rotate(-20deg)">
+                <div class="verticalGalleryDrawer">
+                    <div id="itemV0" class="colorBox"></div>
+                    <div id="itemV1" class="colorBox"></div>
+                    <div id="itemV2" class="colorBox"></div>
+                    <div id="itemV3" class="colorBox"></div>
+                    <div id="itemV4" class="colorBox"></div>
+                    <div id="itemV5" class="colorBox"></div>
+                </div>
+            </div>
+            <div id="console"></div>
+        </div>
+    </body>
+</html>

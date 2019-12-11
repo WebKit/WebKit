@@ -1,0 +1,7 @@
+2d.path.isPointInPath.edge
+
+isPointInPath() counts points on the path as being inside
+
+
+FAIL isPointInPath() counts points on the path as being inside null is not an object (evaluating 'ctx.rect')
+

@@ -1,0 +1,11 @@
+Array.isArray(x): true
+x.length: 3
+x === y: true
+x.baz: 5
+x[0]: 3
+y[1]: null
+x[5]: undefined
+post update -- y[1]: non-null
+post update -- x[5] !== null: true
+post update -- x[5].bar: 3
+post update -- y[6]: 10

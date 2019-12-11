@@ -1,0 +1,12 @@
+<p>This test intentionally lets the video keep playing past endTest() to ensure
+that shutdown is clean, since DumpRenderTree used to crash in this case.</p>
+
+<video autoplay id="video"></video>
+<script src=media-file.js></script>
+<script src=video-test.js></script>
+<script type="text/javascript">
+if (window.testRunner)
+  testRunner.dumpAsText();
+waitForEvent("playing", null, true);
+video.src = findMediaFile("video", "content/test");
+</script>

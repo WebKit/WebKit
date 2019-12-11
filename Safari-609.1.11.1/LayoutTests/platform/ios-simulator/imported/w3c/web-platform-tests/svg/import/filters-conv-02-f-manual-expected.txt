@@ -1,0 +1,39 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (150,61) size 500x310
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGResourceFilter {filter} [id="convolve-without-order"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feConvolveMatrix order="width=3 height=3" kernelMatrix="[1.00, 1.00, 1.00, 1.00, -8.00, 1.00, 1.00, 1.00, 1.00]" divisor="1.00" bias="0.00" target="(1,1)" edgeMode="DUPLICATE" kernelUnitLength="(1,1)" preserveAlpha="1"]
+            [SourceGraphic]
+        RenderSVGResourceFilter {filter} [id="convolve-with-order1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feConvolveMatrix order="width=3 height=3" kernelMatrix="[1.00, 1.00, 1.00, 1.00, -8.00, 1.00, 1.00, 1.00, 1.00]" divisor="1.00" bias="0.00" target="(1,1)" edgeMode="DUPLICATE" kernelUnitLength="(1,1)" preserveAlpha="1"]
+            [SourceGraphic]
+        RenderSVGResourceFilter {filter} [id="convolve-with-order2"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feConvolveMatrix order="width=3 height=3" kernelMatrix="[1.00, 1.00, 1.00, 1.00, -8.00, 1.00, 1.00, 1.00, 1.00]" divisor="1.00" bias="0.00" target="(1,1)" edgeMode="DUPLICATE" kernelUnitLength="(1,1)" preserveAlpha="1"]
+            [SourceGraphic]
+      RenderSVGText {text} at (108,36) size 264x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 263x22
+          chunk 1 (middle anchor) text run 1 at (108.51,54.00) startOffset 0 endOffset 34 width 262.99: "feConvolveMatrix 'order' attribute"
+      RenderSVGImage {image} at (150,166) size 167x168
+        [filter="convolve-without-order"] RenderSVGResourceFilter {filter} at (90,100) size 100x100
+      RenderSVGText {text} at (108,211) size 54x12 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 53x11
+          chunk 1 (middle anchor) text run 1 at (108.99,220.00) startOffset 0 endOffset 13 width 52.03: "without order"
+      RenderSVGImage {image} at (316,166) size 168x168
+        [filter="convolve-with-order1"] RenderSVGResourceFilter {filter} at (190,100) size 100x100
+      RenderSVGText {text} at (216,211) size 38x12 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 38x11
+          chunk 1 (middle anchor) text run 1 at (216.17,220.00) startOffset 0 endOffset 9 width 37.66: "order=\"3\""
+      RenderSVGImage {image} at (483,166) size 167x168
+        [filter="convolve-with-order2"] RenderSVGResourceFilter {filter} at (290,100) size 100x100
+      RenderSVGText {text} at (312,211) size 46x12 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 46x11
+          chunk 1 (middle anchor) text run 1 at (312.42,220.00) startOffset 0 endOffset 11 width 45.17: "order=\"3 3\""
+    RenderSVGContainer {g} at (16,516) size 385x64
+      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 231x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.9 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

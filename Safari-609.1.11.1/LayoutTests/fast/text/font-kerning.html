@@ -1,0 +1,32 @@
+<style>
+    .kerning-none { font-kerning: none; }
+    .kerning-auto { font-kerning: auto; }
+    .kerning-normal { font-kerning: normal; }
+    .webkit-kerning-none { -webkit-font-kerning: none; }
+    .webkit-kerning-auto { -webkit-font-kerning: auto; }
+    .webkit-kerning-normal { -webkit-font-kerning: normal; }
+</style>
+<body style="font-size: 36px;">
+    <div>
+        <div class="kerning-none">AVAVAVAV</div>
+        <div class="kerning-auto">AVAVAVAV</div>
+        <div class="kerning-normal">AVAVAVAV</div>
+    </div>
+    <div style="text-rendering: optimizelegibility">
+        <div class="kerning-none">AVAVAVAV</div>
+        <div class="kerning-auto">AVAVAVAV</div>
+        <div class="kerning-normal">AVAVAVAV</div>
+    </div>
+    <div style="position: absolute; left: 300px; top: 8px;">
+        <div>
+            <div class="webkit-kerning-none">AVAVAVAV</div>
+            <div class="webkit-kerning-auto">AVAVAVAV</div>
+            <div class="webkit-kerning-normal">AVAVAVAV</div>
+        </div>
+        <div style="text-rendering: optimizelegibility">
+            <div class="webkit-kerning-none">AVAVAVAV</div>
+            <div class="webkit-kerning-auto">AVAVAVAV</div>
+            <div class="webkit-kerning-normal">AVAVAVAV</div>
+        </div>
+    </div>
+</body>

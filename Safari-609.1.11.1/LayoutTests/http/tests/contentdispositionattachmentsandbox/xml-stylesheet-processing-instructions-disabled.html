@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+    internals.settings.setContentDispositionAttachmentSandboxEnabled(true);
+</script>
+<p>This test verifies that xml-stylesheet processing instructions are disabled when 'Content-Disposition: attachment' sandboxing is enabled. A security error will be logged to the console if the test passes.</p>
+<iframe src="resources/xml-stylesheet-processing-instructions-frame.php"></iframe>

@@ -1,0 +1,104 @@
+# Global rules
+exclude #$
+exclude ChangeLog
+exclude CMakeLists.txt.user
+exclude Makefile
+exclude PlatformAppleWin.cmake
+exclude PlatformMac.cmake
+exclude PlatformWPE.cmake
+exclude PlatformWin.cmake
+exclude PlatformWinCairo.cmake
+exclude tags$
+exclude ~$
+exclude \.#$
+exclude \.bak$
+exclude \.cproject$
+exclude \.git$
+exclude \.gitattributes$
+exclude \.gitignore$
+exclude \.icns$
+exclude \.lproj$
+exclude \.m$
+exclude \.mm$
+exclude \.nib$
+exclude \.o$
+exclude \.order$
+exclude \.orig$
+exclude \.pdf$
+exclude \.plist$
+exclude \.project$
+exclude \.props$
+exclude \.pyc$
+exclude \.pyo$
+exclude \.rej$
+exclude \.rtf$
+exclude \.sb$
+exclude \.sb\.in$
+exclude \.settings$
+exclude \.svn$
+exclude \.sw[a-p]$
+exclude \.vcxproj$
+exclude \.xib$
+exclude \.xcconfig$
+exclude \.xcodeproj$
+
+# Exclude directories from other ports
+exclude .*\/(Configurations|mac|ios|cf|cg|cocoa|Cocoa|objc|avfoundation|ca|curl|win|wpe)\/.*$
+
+directory Source
+exclude Source/JavaScriptCore/tests
+exclude Source/ThirdParty/capstone
+exclude Source/ThirdParty/libwebrtc
+exclude Source/ThirdParty/qunit
+exclude Source/ThirdParty/openvr
+exclude Source/WebCore/platform/audio/resources
+exclude Source/WebCore/bindings/scripts/test
+exclude Source/WebCore/Resources
+exclude Source/WebKitLegacy/.*
+exclude Source/cmake/OptionsWinCairo.cmake$
+exclude Source/cmake/OptionsWindows.cmake$
+exclude Source/cmake/OptionsAppleWin.cmake$
+exclude Source/cmake/OptionsWPE.cmake$
+exclude Source/WebInspectorUI/Tools
+
+exclude Source/WebKit/Resources
+directory Source/WebKit/Resources/gtk
+
+exclude Source/WebKit/gtk/NEWS$
+
+# We do want to include the NEWS, but we want it to be in the root of the archive.
+file Source/WebKit/gtk/NEWS NEWS
+
+file Source/WebCore/en.lproj/mediaControlsLocalizedStrings.js Source/WebCore/en.lproj/mediaControlsLocalizedStrings.js
+file Source/WebInspectorUI/Localizations/en.lproj/localizedStrings.js Source/WebInspectorUI/Localizations/en.lproj/localizedStrings.js
+
+# Include only the resources we actually build
+file Source/WebCore/Resources/missingImage.png
+file Source/WebCore/Resources/missingImage@2x.png
+file Source/WebCore/Resources/panIcon.png
+file Source/WebCore/Resources/plugIns.js
+file Source/WebCore/Resources/textAreaResizeCorner.png
+file Source/WebCore/Resources/textAreaResizeCorner@2x.png
+file Source/WebCore/platform/audio/resources/Composite.wav
+
+directory Tools/gtk
+exclude Tools/gtk/patches
+exclude Tools/gtk/jhbuild.modules
+exclude Tools/gtk/jhbuildrc
+exclude Tools/gtk/make-dist.py
+exclude Tools/gtk/ycm_extra_conf.py
+
+file Tools/glib/common.py
+file Tools/glib/generate-inspector-gresource-manifest.py
+
+directory Tools/gtkdoc
+directory Tools/MiniBrowser
+directory Tools/TestWebKitAPI
+
+file CMakeLists.txt
+file Tools/CMakeLists.txt
+file Tools/PlatformGTK.cmake
+
+directory ${CMAKE_BINARY_DIR}/Documentation/webkit2gtk-${WEBKITGTK_API_VERSION}/html/webkit2gtk-${WEBKITGTK_API_VERSION} Documentation/webkit2gtk-${WEBKITGTK_API_VERSION}/html
+directory ${CMAKE_BINARY_DIR}/Documentation/webkitdomgtk-${WEBKITGTK_API_VERSION}/html/webkitdomgtk-${WEBKITGTK_API_VERSION} Documentation/webkitdomgtk-${WEBKITGTK_API_VERSION}/html
+directory ${CMAKE_BINARY_DIR}/Documentation/jsc-glib-${WEBKITGTK_API_VERSION}/html/jsc-glib-${WEBKITGTK_API_VERSION} Documentation/jsc-glib-${WEBKITGTK_API_VERSION}/html

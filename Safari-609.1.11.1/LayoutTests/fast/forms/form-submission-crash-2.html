@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+jsTestIsAsync = true;
+var form1;
+var submit1;
+
+function start() {
+    form1 = document.createElement('form');
+    submit1 = document.createElement('input');
+    submit1.type = 'submit';
+    form1.action = 'javascript:crash()';
+    form1.appendChild(submit1);
+    setTimeout(function() {
+        submit1.click();
+        testPassed('if not crashed.');
+        finishJSTest();
+    }, 0);
+}
+
+function crash() {
+    form1.removeChild(submit1);
+    form1 = null;
+    gc();
+}
+window.onload = start;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>

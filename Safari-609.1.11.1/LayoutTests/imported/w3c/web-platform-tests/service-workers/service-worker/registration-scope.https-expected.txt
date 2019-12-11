@@ -1,0 +1,10 @@
+
+PASS Scope including URL-encoded slash 
+PASS Scope including URL-encoded backslash 
+PASS Scope including URL-encoded multibyte characters 
+PASS Scope including non-escaped multibyte characters 
+PASS Scope including self-reference 
+PASS Scope including parent-reference 
+PASS Scope including consecutive slashes 
+PASS Scope URL is same-origin filesystem: URL 
+

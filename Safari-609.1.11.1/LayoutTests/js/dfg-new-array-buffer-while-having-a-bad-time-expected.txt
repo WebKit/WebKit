@@ -1,0 +1,12 @@
+Tests that DFG NewArrayBuffer works when having a bad time.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS foo()[0] is "foo" on all iterations including after DFG tier-up.
+PASS foo()[1] is 42 on all iterations including after DFG tier-up.
+PASS foo()[2] is 23.5 on all iterations including after DFG tier-up.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

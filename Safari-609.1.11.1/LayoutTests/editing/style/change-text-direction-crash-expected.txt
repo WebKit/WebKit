@@ -1,0 +1,33 @@
+This test verifies that programmatically setting the text direction using editing commands doesn't crash.
+
+MakeTextWritingDirectionLeftToRight:
+| "foo"
+| <div>
+|   <span>
+|     id="bar"
+|     style="unicode-bidi: embed;"
+|     "<#selection-anchor>a×ªbc"
+| <div>
+|   <#selection-focus>
+|   "baz"
+
+MakeTextWritingDirectionRightToLeft:
+| "foo"
+| <div>
+|   <span>
+|     id="bar"
+|     style="unicode-bidi: embed; direction: rtl;"
+|     "<#selection-anchor>a×ªbc"
+| <div>
+|   <#selection-focus>
+|   "baz"
+
+MakeTextWritingDirectionNatural:
+| "foo"
+| <div>
+|   <span>
+|     id="bar"
+|     "<#selection-anchor>a×ªbc"
+| <div>
+|   <#selection-focus>
+|   "baz"

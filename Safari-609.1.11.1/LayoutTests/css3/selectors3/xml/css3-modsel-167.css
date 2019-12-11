@@ -1,0 +1,3 @@
+
+  p:first-line { background-color: red; }
+  p::first-line { background-color: lime; }

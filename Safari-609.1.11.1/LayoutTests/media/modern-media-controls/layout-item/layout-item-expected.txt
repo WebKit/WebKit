@@ -1,0 +1,17 @@
+Testing the LayoutItem class.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Creating a LayoutItem and setting a layout delegate after construction.
+PASS itemWithNoParameter.layoutTraits === LayoutTraits.Unknown is true
+PASS !!(itemWithNoParameter.layoutTraits | LayoutTraits.macOS) is true
+PASS !!(itemWithNoParameter.layoutTraits | LayoutTraits.Fullscreen) is true
+
+Creating a LayoutItem with a layout delegate set at construction.
+PASS !!(itemWithLayoutDelegate.layoutTraits | LayoutTraits.macOS) is true
+PASS !!(itemWithLayoutDelegate.layoutTraits | LayoutTraits.Fullscreen) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

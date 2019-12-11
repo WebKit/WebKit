@@ -1,0 +1,150 @@
+<style>
+    @font-face {
+        font-family: webkit-one;
+        font-style: italic;
+        src: local(Courier), local('Courier New');
+    }
+
+    @font-face {
+        font-family: webkit-one;
+        font-style: normal;
+        src: local(Helvetica), local(Arial);
+    }
+
+    @font-face {
+        font-family: webkit-one;
+        font-style: italic;
+        font-weight: 700;
+        src: local(Papyrus);
+    }
+
+    @font-face {
+        font-family: webkit-two;
+        font-style: italic;
+        src: url(../../resources/Ahem.ttf);
+    }
+
+    @font-face {
+        font-family: webkit-three;
+        src: url(../../resources/Ahem.ttf);
+    }
+
+    @font-face {
+        font-family: webkit-four;
+        font-style: normal;
+        src: url(../../resources/Ahem.ttf);
+    }
+
+    @font-face {
+        font-family: webkit-five;
+        font-weight: 100;
+        src: url(../../resources/Ahem.ttf);
+    }
+
+    @font-face {
+        font-family: webkit-six;
+        font-weight: 400;
+        src: local(Courier), local('Courier New');
+    }
+
+    @font-face {
+        font-family: webkit-six;
+        font-weight: 700;
+        src: local(Helvetica), local(Arial);
+    }
+
+    @font-face {
+        font-family: webkit-six;
+        font-weight: 900;
+        src: local(Papyrus);
+    }
+
+    @font-face {
+        font-family: webkit-seven;
+        font-weight: 300;
+        src: local(Courier), local('Courier New');
+    }
+
+    @font-face {
+        font-family: webkit-seven;
+        font-weight: 600;
+        src: local(Helvetica), local(Arial);
+    }
+
+    @font-face {
+        font-family: webkit-eight;
+        font-weight: 100;
+        src: local(Courier), local('Courier New');
+    }
+
+    @font-face {
+        font-family: webkit-eight;
+        font-weight: 900;
+        src: local(Helvetica), local(Arial);
+    }
+
+    div { border: 1px solid lightblue; margin: 4px; }
+</style>
+
+<p>
+    Each font name in that font:
+</p>
+<div style="font-family: webkit-one;">
+    <b>Helvetica bold</b> Helvetica <i>Courier syn. italic <b>Papyrus syn. bold syn. italic</b></i>
+</div>
+
+<div style="font-family: webkit-six;">
+    <span style="font-weight: 100">Courier</span>
+    <span style="font-weight: 200">Courier</span>
+    <span style="font-weight: 300">Courier</span>
+    <span style="font-weight: 400">Courier</span>
+    <span style="font-weight: 500">Courier</span>
+    <span style="font-weight: 600">Helvetica Bold</span>
+    <span style="font-weight: 700">Helvetica Bold</span>
+    <span style="font-weight: 800">Papyrus syn. bold</span>
+    <span style="font-weight: 900">Papyrus syn. bold</span>
+</div>
+
+<div style="font-family: webkit-seven;">
+    <span style="font-weight: 100">Courier</span>
+    <span style="font-weight: 200">Courier</span>
+    <span style="font-weight: 300">Courier</span>
+    <span style="font-weight: 400">Courier</span>
+    <span style="font-weight: 500">Courier</span>
+    <span style="font-weight: 600">Helvetica Bold</span>
+    <span style="font-weight: 700">Helvetica Bold</span>
+    <span style="font-weight: 800">Helvetica Bold</span>
+    <span style="font-weight: 900">Helvetica Bold</span>
+</div>
+
+<div style="font-family: webkit-eight;">
+    <span style="font-weight: 100">Courier</span>
+    <span style="font-weight: 200">Courier</span>
+    <span style="font-weight: 300">Courier</span>
+    <span style="font-weight: 400">Courier</span>
+    <span style="font-weight: 500">Courier</span>
+    <span style="font-weight: 600">Helvetica Bold</span>
+    <span style="font-weight: 700">Helvetica Bold</span>
+    <span style="font-weight: 800">Helvetica Bold</span>
+    <span style="font-weight: 900">Helvetica Bold</span>
+</div>
+
+<p>Times followed by Ahem (normal):</p>
+<div style="font-family: webkit-two;">
+    Times <i>AHEM</i>
+</div>
+
+<p>Ahem (normal):</p>
+<div style="font-family: webkit-three;">
+    AHEM <i>AHEM</i>
+</div>
+
+<p>Ahem (normal) followed by Ahem (synthetic bold):</p>
+<div style="font-family: webkit-five;">
+    AHEM <b>AHEM</b>
+</div>
+
+<p>Ahem (normal) followed by Ahem (synthetic italics):</p>
+<div style="font-family: webkit-four;">
+    AHEM <i>AHEM</i>
+</div>

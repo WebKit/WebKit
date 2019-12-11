@@ -1,0 +1,33 @@
+Tests for event listener async stack traces.
+
+
+== Running test suite: AsyncStackTrace.EventListener
+-- Running test case: AsyncStackTrace.EventListener.AddEventListener
+PAUSED
+CALL STACK:
+0: [F] handleClick
+1: [F] triggerEventListener
+2: [P] Global Code
+ASYNC CALL STACK:
+3: --- addEventListener ---
+4: [F] triggerEventListener
+5: [P] Global Code
+
+-- Running test case: AsyncStackTrace.EventListener.AddAttributeEventListener
+PAUSED
+CALL STACK:
+0: [F] handleClick
+1: [F] triggerAttributeEventListener
+2: [P] Global Code
+3: [F] triggerAttributeEventListener
+4: [P] Global Code
+
+-- Running test case: AsyncStackTrace.EventListener.ReplaceAttributeEventListener
+PAUSED
+CALL STACK:
+0: [F] handleClick2
+1: [F] replaceAttributeEventListener
+2: [P] Global Code
+3: [F] replaceAttributeEventListener
+4: [P] Global Code
+

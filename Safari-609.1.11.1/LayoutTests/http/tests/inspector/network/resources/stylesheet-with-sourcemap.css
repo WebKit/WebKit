@@ -1,0 +1,22 @@
+div {
+  background-color: #ABC;
+  width: 200px;
+  height: 100px;
+  margin: 20px; }
+
+.div1 {
+  border-top-left-radius: 10px;
+  -moz-border-radius-topleft: 10px;
+  -webkit-border-top-left-radius: 10px; }
+
+.div2 {
+  border-top-left-radius: 20px;
+  -moz-border-radius-topleft: 20px;
+  -webkit-border-top-left-radius: 20px; }
+
+.div3 {
+  border-top-left-radius: 30px;
+  -moz-border-radius-topleft: 30px;
+  -webkit-border-top-left-radius: 30px; }
+
+/*# sourceMappingURL=stylesheet-with-sourcemap.css.map */

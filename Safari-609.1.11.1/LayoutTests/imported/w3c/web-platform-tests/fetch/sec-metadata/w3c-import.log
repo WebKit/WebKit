@@ -1,0 +1,33 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fetch/sec-metadata/README.md
+/LayoutTests/imported/w3c/web-platform-tests/fetch/sec-metadata/embed.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/sec-metadata/fetch.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/sec-metadata/font.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/sec-metadata/iframe.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/sec-metadata/img.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/sec-metadata/object.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/sec-metadata/report.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/sec-metadata/report.tentative.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/fetch/sec-metadata/script.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/sec-metadata/serviceworker.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/sec-metadata/sharedworker.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/sec-metadata/style.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/sec-metadata/track.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/sec-metadata/window-open.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/sec-metadata/worker.tentative.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/sec-metadata/xslt.tentative.https.sub.html

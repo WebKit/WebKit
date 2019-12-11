@@ -1,0 +1,3 @@
+
+PASS Testing that pointer events are dispatched prior to compatibility mouse events. 
+

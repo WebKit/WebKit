@@ -1,0 +1,13 @@
+Test CSS formatting.
+
+
+== Running test suite: CSSFormatter
+-- Running test case: CSSFormatter
+PASS: basic.css
+PASS: comment.css
+PASS: gradient.css
+PASS: keyframes.css
+PASS: media-query.css
+PASS: selectors.css
+PASS: wrapping.css
+

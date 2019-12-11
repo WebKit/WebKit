@@ -1,0 +1,53 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that a page that has called window.open() goes into the page cache.");
+window.jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.setCanOpenWindows();
+
+window.addEventListener("pageshow", function(event) {
+    if (!window.sessionStorage.didStartPageCacheAfterWindowOpenTest) {
+        if (event.persisted)
+            testFailed("page was restored from the page cache.");
+        else
+            testPassed("page was not restored from the page cache.");
+        return;
+    }
+
+    delete window.sessionStorage.didStartPageCacheAfterWindowOpenTest;
+
+    if (event.persisted)
+        testPassed("page was restored from the page cache.");
+    else
+        testFailed("page was not restored from the page cache.");
+
+    finishJSTest();
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    if (event.persisted)
+        testPassed("page was saved to the page cache.");
+    else
+        testFailed("page was not saved to the page cache.");
+}, false);
+
+window.addEventListener("load", function() {
+    newWindow = open("about:blank");
+    otherWindowDocument = newWindow.document;
+
+    setTimeout(function() {
+        // Force a back navigation back to this page.
+        window.sessionStorage.didStartPageCacheAfterWindowOpenTest = true;
+        window.location.href = "resources/page-cache-helper.html";
+    }, 0);
+}, false);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

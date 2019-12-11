@@ -1,0 +1,33 @@
+This tests that separators support range value attributes, but only if focusable.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+test1 tabindex='0'
+minValue: 25
+intValue: 40
+maxValue: 75
+AXValueDescription: 40%
+
+test2 tabindex=(null)
+minValue: 0
+intValue: 0
+maxValue: 0
+AXValueDescription: 
+
+test3 tabindex='0'
+minValue: 0
+intValue: 50
+maxValue: 100
+AXValueDescription: 50%
+
+test4 tabindex=(null)
+minValue: 0
+intValue: 0
+maxValue: 0
+AXValueDescription: 
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

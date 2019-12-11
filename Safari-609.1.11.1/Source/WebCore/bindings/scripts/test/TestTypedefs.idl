@@ -1,0 +1,93 @@
+/*
+ * Copyright (C) 2013 Google Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
+ *     * Neither the name of Google Inc. nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+// This IDL file is for testing the bindings code generator and for tracking
+// changes in its output.
+
+[
+    Constructor(STRING hello, TEST_CALLBACK_FUNCTION testCallbackFunction, TEST_CALLBACK_INTERFACE testCallbackInterface),
+] interface TestTypedefs {
+    attribute ULONGLONG unsignedLongLongAttr;
+
+    attribute SCRIPT_VALUE serializedScriptValue;
+    
+    static readonly attribute T TestSubObj;
+
+    void func(optional SEQUENCE_OF_LONGS x = []);
+
+    void setShadow(DOUBLE width, DOUBLE height, unrestricted float blur, optional STRING color, optional DOUBLE alpha);
+
+    ULONGLONG methodWithSequenceArg(sequence<SCRIPT_VALUE> sequenceArg);
+
+    void nullableSequenceArg(SEQUENCE_OF_STRINGS? sequenceArg);
+    void sequenceOfNullablesArg(sequence<STRING?> sequenceArg);
+    void nullableSequenceOfNullablesArg(SEQUENCE_OF_NULLABLE_STRINGS? sequenceArg);
+    void nullableSequenceOfUnionsArg(sequence<(STRING or SEQUENCE_OF_STRINGS)>? sequenceArg);
+
+    void unionArg(UNION_STRING_LONG unionArg);
+
+    void funcWithClamp([Clamp] ULONGLONG arg1, optional [Clamp] ULONGLONG arg2);
+    void funcWithClampInTypedef(CLAMPED_LONG arg);
+
+    attribute [Clamp] ULONGLONG attributeWithClamp;
+    attribute CLAMPED_LONG attributeWithClampInTypedef;
+
+    SVGPOINT pointFunction();
+
+    [MayThrowException] SEQUENCE_OF_STRINGS stringSequenceFunction(SEQUENCE_OF_STRINGS values);
+    [MayThrowException] sequence<STRING> stringSequenceFunction2(sequence<STRING> values);
+
+    boolean callWithSequenceThatRequiresInclude(sequence<TestEventTarget> sequenceArg);
+
+    // Exceptions
+    [MayThrowException] void methodWithException();
+
+    // Builtin Typedefs
+    attribute BufferSource bufferSourceAttr;
+    attribute DOMTimeStamp domTimeStampAttr;
+};
+
+typedef unrestricted float         DOUBLE;
+typedef unsigned long long         ULONGLONG;
+typedef SerializedScriptValue      SCRIPT_VALUE;
+typedef sequence<long>             SEQUENCE_OF_LONGS;
+typedef long?                      NULLABLE_LONG;
+typedef [Clamp] long               CLAMPED_LONG;
+typedef SVGPoint                   SVGPOINT;
+typedef DOMString                  STRING;
+typedef sequence<DOMString>        SEQUENCE_OF_STRINGS;
+typedef sequence<DOMString?>       SEQUENCE_OF_NULLABLE_STRINGS;
+typedef TestCallbackFunction       TEST_CALLBACK_FUNCTION;
+typedef TestCallbackInterface      TEST_CALLBACK_INTERFACE;
+typedef TestSubObjConstructor      T;
+typedef Int32Array                 ARRAY;
+typedef DOMException               E;
+typedef TestEventTarget            TEST_EVENT_TARGET;
+typedef (DOMString or long)        UNION_STRING_LONG;

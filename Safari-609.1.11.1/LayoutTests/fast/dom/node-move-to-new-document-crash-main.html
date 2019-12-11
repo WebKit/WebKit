@@ -1,0 +1,36 @@
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that moving nodes across documents does not crash.");
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function runTest()
+{
+    root = document.getElementById('root').contentDocument;
+    test = root.getElementById('test');
+    var doc = document.implementation.createDocument(null, "test");
+    doc.adoptNode(test);
+    test.appendChild(root.getElementById('svg').cloneNode(0));
+    document.open();
+    document.write('PASS');
+    document.close();
+    setTimeout('finish();', 0);
+}
+
+function finish()
+{
+    gc();
+    document.adoptNode(test);
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+<object data="resources/node-move-to-new-document-crash.svg" id="root" onload="runTest()"/></object>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

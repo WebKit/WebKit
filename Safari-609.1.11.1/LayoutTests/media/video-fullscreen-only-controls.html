@@ -1,0 +1,33 @@
+<!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<body>
+    <p>This tests that when inline-playback is restricted, the video element's "controls" are always shown while inline.</p>
+    <video id="video" width="300"></video>
+    <script src=media-file.js></script>
+    <script src=video-test.js></script>
+    <script src=media-controls.js></script>
+    <script>
+
+    var shadowRoot;
+    var panel;
+
+    run("internals.settings.setAllowsInlineMediaPlayback(false)");
+
+    var video = document.getElementById('video');
+    video.src = findMediaFile("video", "content/test");
+
+    testExpected("video.hasAttribute('controls')", false);
+    testExpected("video.controls", false);
+
+    if (window.internals) {
+        testExpected("shadowRoot = internals.shadowRoot(video)", null, "!=");
+        testExpected("panel = mediaControlsElement(shadowRoot.firstChild, '-webkit-media-controls-panel')", null, "!=");
+        testExpected("internals.shadowPseudoId(panel)", "-webkit-media-controls-panel");
+        testExpected("document.defaultView.getComputedStyle(panel)['display']", 'none', "!=");
+        testExpected("document.defaultView.getComputedStyle(panel)['height']", '20px', ">=");
+    }
+    else
+        logResult(false, "window.internals == undefined");
+
+    endTest();
+    </script>
+</body>

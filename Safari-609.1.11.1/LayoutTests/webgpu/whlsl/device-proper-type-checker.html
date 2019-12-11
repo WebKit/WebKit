@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+const shaderSource = `
+struct Point {
+    float x;
+    float y;
+}
+
+[numthreads(1, 1, 1)]
+compute void computeShader(device Point[] buffer : register(u0), float3 threadID : SV_DispatchThreadID) {
+    float x = buffer[0].x;
+    float y = buffer[0].y;
+    x += 1.0;
+    y += 1.0;
+    buffer[0].x = x;
+    buffer[0].y = y;
+}
+`;
+
+async function start(device) {
+    const shaderModule = device.createShaderModule({code: shaderSource});
+    const computeStage = {module: shaderModule, entryPoint: "computeShader"};
+
+    const bindGroupLayoutDescriptor = {bindings: [{binding: 0, visibility: 7, type: "storage-buffer"}]};
+    const bindGroupLayout = device.createBindGroupLayout(bindGroupLayoutDescriptor);
+    const pipelineLayoutDescriptor = {bindGroupLayouts: [bindGroupLayout]};
+    const pipelineLayout = device.createPipelineLayout(pipelineLayoutDescriptor);
+
+    const computePipelineDescriptor = {computeStage, layout: pipelineLayout};
+    const computePipeline = device.createComputePipeline(computePipelineDescriptor);
+
+    const size = Float32Array.BYTES_PER_ELEMENT * 2;
+
+    const bufferDescriptor = {size, usage: GPUBufferUsage.MAP_WRITE | GPUBufferUsage.COPY_SRC};
+    const buffer = device.createBuffer(bufferDescriptor);
+    const bufferArrayBuffer = await buffer.mapWriteAsync();
+    const bufferFloat32Array = new Float32Array(bufferArrayBuffer);
+    bufferFloat32Array[0] = 42.0;
+    bufferFloat32Array[1] = 43.0;
+    buffer.unmap();
+
+    const resultsBufferDescriptor = {size, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ};
+    const resultsBuffer = device.createBuffer(resultsBufferDescriptor);
+
+    const bufferBinding = {buffer: resultsBuffer, size};
+    const bindGroupBinding = {binding: 0, resource: bufferBinding};
+    const bindGroupDescriptor = {layout: bindGroupLayout, bindings: [bindGroupBinding]};
+    const bindGroup = device.createBindGroup(bindGroupDescriptor);
+
+    const commandEncoder = device.createCommandEncoder(); // {}
+    commandEncoder.copyBufferToBuffer(buffer, 0, resultsBuffer, 0, size);
+    const computePassEncoder = commandEncoder.beginComputePass();
+    computePassEncoder.setPipeline(computePipeline);
+    computePassEncoder.setBindGroup(0, bindGroup);
+    computePassEncoder.dispatch(1, 1, 1);
+    computePassEncoder.endPass();
+    const commandBuffer = commandEncoder.finish();
+    device.getQueue().submit([commandBuffer]);
+
+    const resultsArrayBuffer = await resultsBuffer.mapReadAsync();
+    const resultsFloat32Array = new Float32Array(resultsArrayBuffer);
+    if (resultsFloat32Array[0] == 43.0
+        && resultsFloat32Array[1] == 44.0)
+        testPassed("");
+    else
+        testFailed("");
+    resultsBuffer.unmap();
+}
+window.jsTestIsAsync = true;
+getBasicDevice().then(function(device) {
+    start(device).then(function() {
+        finishJSTest();
+    }, function() {
+        testFailed("");
+        finishJSTest();
+    });
+}, function() {
+    testPassed("");
+    finishJSTest();
+});
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

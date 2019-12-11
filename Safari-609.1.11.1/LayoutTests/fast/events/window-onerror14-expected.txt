@@ -1,0 +1,5 @@
+Test that error is treated as handled when window.onerror return value is 'true'. Bug 67119.
+
+Uncaught error should *not* be printed in console when window.onerror returns true.
+window.onerror invoked.
+

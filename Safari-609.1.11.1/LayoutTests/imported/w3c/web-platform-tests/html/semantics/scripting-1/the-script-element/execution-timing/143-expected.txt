@@ -1,0 +1,3 @@
+
+PASS scheduler: SVG nested inline script that document.writes inline script  
+

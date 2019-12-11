@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 8: PASS: window.localStorage WAS accessible
+
+Test that we can access localStorage from a file URL even if universal access is turned off.

@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 1: PASS: my data URL in no-cors mode is throwing rich messages
+CONSOLE MESSAGE: line 1: PASS: my error is rich
+Trying to load data URLs scripts. If being loaded, the scripts should throw error messages.
+
+Received error 'PASS: my data URL in no-cors mode is throwing rich messages' from 'data:text/script, throw 'PASS: my data URL in no-cors mode is throwing rich messages';', location 1:69.
+PASS: loaded script in no-cors mode
+Received error 'PASS: my error is rich' from 'data:text/script, throw 'PASS: my error is rich';', location 1:32.
+PASS: loaded script in cors mode
+DONE
+

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../../media-resources/video-test.js></script>
+        <script src=../../media-resources/media-file.js></script>
+
+        <script>
+            var track;
+
+            function addtrack(event)
+            {
+                tracks = event.target;
+                run("track = video.textTracks[0]");
+                run("track.mode = 'hidden'");
+                waitForEvent('cuechange', cuechange, false, true, track);
+            }
+
+            function cuechange()
+            {
+                consoleWrite("<br><em>** Seek, should not crash.</em>");
+                run("video.currentTime = 5"); 
+                waitForEventAndEnd("seeked");
+            }
+
+            function errorCallbackVideo(event)
+            {
+                logResult(true, "errorCallbackVideo called.");
+                consoleWrite("");
+                endTest();
+            }
+
+            function errorCallbackTextTracks(event)
+            {
+                logResult(true, "errorCallbackTextTracks called.");
+                consoleWrite("");
+                endTest();
+            }
+
+            function start()
+            {
+                consoleWrite("<br><em>** Set video.src, wait for media data to load</em>");
+                findMediaElement();
+                
+                waitForEvent('addtrack', addtrack, false, true, video.textTracks);
+                waitForEvent('error', errorCallbackVideo, false, false, video);
+                waitForEvent('error', errorCallbackTextTracks, false, false, video.textTracks);
+
+                video.oncanplaythrough = () => { video.removeAttribute('oncanplaythrough'); video.play() };
+
+                run("video.src = 'http://127.0.0.1:8000/media/resources/hls/metadata/prog_index.m3u8'");
+
+                consoleWrite("");
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <video controls></video>
+        <p>Test that seeking HLS streams containing metadata tracks does not crash.</p>
+    </body>
+</html>

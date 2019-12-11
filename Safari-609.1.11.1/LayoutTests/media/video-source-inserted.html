@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+    <head>
+        <title>networkState after inserting &lt;source&gt; test</title>
+        <script src=video-test.js></script>
+    </head>
+    <body>
+        <video controls><source></video>
+
+        <p>Test that a &lt;source&gt; inserted when networkState is NETWORK_NO_SOURCE triggers
+        resource selection, immediately changing networkState to NETWORK_NO_SOURCE.</p>
+
+        <script>
+            consoleWrite("&lt;source&gt; inserted by the parser.");
+            video = document.querySelector('video');
+            testExpected("video.networkState", HTMLMediaElement.prototype.NETWORK_NO_SOURCE, "==");
+
+            consoleWrite("<br>&lt;video&gt; created with script.");
+            video = document.createElement('video');
+            testExpected("video.networkState", HTMLMediaElement.prototype.NETWORK_EMPTY, "==");
+            consoleWrite("&lt;source&gt; inserted by script.");
+            video.appendChild(document.createElement('source'));
+            testExpected("video.networkState", HTMLMediaElement.prototype.NETWORK_NO_SOURCE, "==");
+            if (window.testRunner)
+                testRunner.notifyDone();
+        </script>
+
+    </body>
+</html>

@@ -1,0 +1,16 @@
+Tests using floating-point angles with 'turn' unit.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testDiv.style['-webkit-transform'] is ""
+testDiv.style['-webkit-transform'] = 'rotate(0.5turn)'
+PASS testDiv.style['-webkit-transform'] is "rotate(0.5turn)"
+testDiv.style['-webkit-transform'] = 'rotate(calc(2turn * 1.5))'
+PASS testDiv.style['-webkit-transform'] is "rotate(calc(3turn))"
+testDiv.style['-webkit-transform'] = 'rotate(calc(1turn * 2 + 2.5deg))'
+PASS testDiv.style['-webkit-transform'] is "rotate(calc(722.5deg))"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

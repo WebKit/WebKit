@@ -1,0 +1,39 @@
+app-id: org.webkit.WPEQT
+runtime: org.kde.Platform
+runtime-version: "5.12"
+# Control the exact version of the Sdk/Runtime that is being used.
+sdk-hash: d6efa24e27c1c878ad4fde76b73c96a11be32b598ae87aefbe339ee4bb19a8be
+runtime-hash: 101871e091000616ad2b635e06c414eb0e1c4e1c34292a205c5239935ee5ea44
+sdk: org.kde.Sdk
+command: %(COMMAND)s
+finish-args:
+  # Basically no sandboxing, the goal here is to make it flexible
+  # for developers, not really to isolate (openning all devices
+  # to allow acces video cameras until we have a portal at least).
+  - --share=ipc
+  - --socket=x11
+  - --socket=wayland
+  - --device=all
+  - --share=network
+  - --socket=pulseaudio
+  - --system-talk-name=org.freedesktop.GeoClue2
+  - --system-talk-name=org.a11y.Bus
+  - --filesystem=host
+  - --socket=system-bus
+  - --talk-name=org.freedesktop.Flatpak
+  - --env=GST_PRESET_PATH=/app/share/gstreamer-1.0/presets/
+build-options:
+  cflags: -O2 -g
+  cxxflags: -O2 -g
+  strip: false
+  no-debuginfo: true
+modules:
+  - org.webkit.CommonModules.yaml
+  - org.webkit.WPEModules.yaml
+
+  # This module is not actually built.
+  - name: org.webkit.WPEQT
+    buildsystem: cmake
+    sources:
+    - type: dir
+      path: /app/webkit/Source/WebKit/UIProcess/API/wpe/qt

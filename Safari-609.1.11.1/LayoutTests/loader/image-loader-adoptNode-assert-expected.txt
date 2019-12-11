@@ -1,0 +1,2 @@
+Blocked access to external URL http://foo.com/blarg.jpg
+Test passes if it does not ASSERT

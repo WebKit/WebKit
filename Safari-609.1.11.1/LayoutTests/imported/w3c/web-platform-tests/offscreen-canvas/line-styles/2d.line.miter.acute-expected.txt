@@ -1,0 +1,7 @@
+2d.line.miter.acute
+
+Miter joins are drawn correctly with acute angles
+
+
+FAIL Miter joins are drawn correctly with acute angles null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

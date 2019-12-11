@@ -1,0 +1,7 @@
+2d.shadow.image.basic
+
+Shadows are drawn for images
+
+
+FAIL Shadows are drawn for images null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

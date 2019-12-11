@@ -1,0 +1,69 @@
+{
+    "domain": "DOMDebugger",
+    "description": "DOM debugging allows setting breakpoints on particular DOM operations and events. JavaScript execution will stop on these operations as if there was a regular breakpoint set.",
+    "debuggableTypes": ["page", "web-page"],
+    "targetTypes": ["page", "worker"],
+    "types": [
+        {
+            "id": "DOMBreakpointType",
+            "type": "string",
+            "enum": ["subtree-modified", "attribute-modified", "node-removed"],
+            "description": "DOM breakpoint type."
+        },
+        {
+            "id": "EventBreakpointType",
+            "type": "string",
+            "enum": ["animation-frame", "interval", "listener", "timeout"],
+            "description": "Event breakpoint type."
+        }
+    ],
+    "commands": [
+        {
+            "name": "setDOMBreakpoint",
+            "description": "Sets breakpoint on particular operation with DOM.",
+            "parameters": [
+                { "name": "nodeId", "$ref": "DOM.NodeId", "description": "Identifier of the node to set breakpoint on." },
+                { "name": "type", "$ref": "DOMBreakpointType", "description": "Type of the operation to stop upon." }
+            ]
+        },
+        {
+            "name": "removeDOMBreakpoint",
+            "description": "Removes DOM breakpoint that was set using <code>setDOMBreakpoint</code>.",
+            "parameters": [
+                { "name": "nodeId", "$ref": "DOM.NodeId", "description": "Identifier of the node to remove breakpoint from." },
+                { "name": "type", "$ref": "DOMBreakpointType", "description": "Type of the breakpoint to remove." }
+            ]
+        },
+        {
+            "name": "setEventBreakpoint",
+            "description": "Sets breakpoint on particular event of given type.",
+            "parameters": [
+                { "name": "breakpointType", "$ref": "EventBreakpointType" },
+                { "name": "eventName", "type": "string", "optional": true, "description": "The name of the specific event to stop on." }
+            ]
+        },
+        {
+            "name": "removeEventBreakpoint",
+            "description": "Removes breakpoint on particular event of given type.",
+            "parameters": [
+                { "name": "breakpointType", "$ref": "EventBreakpointType" },
+                { "name": "eventName", "type": "string", "optional": true, "description": "The name of the specific event to stop on." }
+            ]
+        },
+        {
+            "name": "setURLBreakpoint",
+            "description": "Sets breakpoint on network activity for the given URL.",
+            "parameters": [
+                { "name": "url", "type": "string", "description": "Resource URL substring or regular expression. All requests having this substring in the URL will get stopped upon. An empty string will pause on all requests." },
+                { "name": "isRegex", "type": "boolean", "optional": true, "description": "Whether the URL string is a regular expression." }
+            ]
+        },
+        {
+            "name": "removeURLBreakpoint",
+            "description": "Removes breakpoint from network activity for the given URL.",
+            "parameters": [
+                { "name": "url", "type": "string", "description": "Resource URL substring. An empty string will stop pausing on all requests." }
+            ]
+        }
+    ]
+}

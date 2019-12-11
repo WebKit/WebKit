@@ -1,0 +1,3 @@
+
+PASS XMLHttpRequest: open() in document that is not fully active (but may be active) should throw 
+

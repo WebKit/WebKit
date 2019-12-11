@@ -1,0 +1,44 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description('Tests that a page with pending ping loads can enter PageCache.');
+window.jsTestIsAsync = true;
+
+let afterPageCacheRestore = false;
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+
+    if (event.persisted) {
+        testPassed("Page did enter and was restored from the page cache");
+        finishJSTest();
+    }
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        testFailed("Page did not enter the page cache.");
+        finishJSTest();
+    }
+
+    testPing2.click();
+}, false);
+
+window.addEventListener('load', function() {
+    testPing1.click();
+    setTimeout(function() {
+        testLink.click();
+    }, 0);
+}, false);
+
+</script>
+<a id="testPing1" href="javascript:void(0);" ping="/resources/load-and-stall.cgi?name=load-and-stall.cgi&stallFor=3&stallAt=0&mimeType=text/plain&bar" style="display: none;"></a>
+<a id="testPing2" href="javascript:void(0);" ping="/resources/load-and-stall.cgi?name=load-and-stall.cgi&stallFor=3&stallAt=0&mimeType=text/plain&baz" style="display: none;"></a>
+<a id="testLink" href="resources/page-cache-helper.html" ping="/resources/load-and-stall.cgi?name=load-and-stall.cgi&stallFor=3&stallAt=0&mimeType=text/plain&foo">Click me</a>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

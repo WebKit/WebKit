@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (16,41) size 644x241
+      RenderSVGText {text} at (10,24) size 386x20 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 386x20
+          chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 52 width 385.69: "Test pointer events with shapes that have clip paths"
+      RenderSVGResourceClipper {clipPath} [id="c"] [clipPathUnits=userSpaceOnUse]
+      RenderSVGRect {rect} at (16,133) size 84x84 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=80.00] [width=50.00] [height=50.00]
+      RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FF0000]}] [x=10.00] [y=80.00] [width=50.00] [height=50.00]
+        [clipPath="c"] RenderSVGResourceClipper {clipPath} at (0,0) size 0x0
+      RenderSVGContainer {g} at (16,230) size 433x52
+        RenderSVGText {text} at (10,138) size 260x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 260x15
+            chunk 1 text run 1 at (10.00,150.00) startOffset 0 endOffset 44 width 259.02: "Move the pointing device over the rectangle."
+        RenderSVGText {text} at (10,154) size 185x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 185x15
+            chunk 1 text run 1 at (10.00,166.00) startOffset 0 endOffset 36 width 184.48: "If it is red, you've already failed."
+    RenderSVGContainer {g} at (16,517) size 381x62
+      RenderSVGText {text} at (10,310) size 229x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 229x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.4 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

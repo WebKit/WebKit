@@ -1,0 +1,31 @@
+<html>
+  <head>
+      <script src=../../media-resources/media-file.js></script>
+      <script src=../../media-resources/video-test.js></script>
+      <script>
+          if (window.testRunner)
+              testRunner.dumpAsText(true); // To get pixels.
+
+          function start() {
+              findMediaElement();
+  
+              waitForEventAndEnd('ended');
+              waitForEvent('seeked', function() {
+                  video.play();
+              });
+              waitForEvent('loadedmetadata', function() {
+                  video.currentTime = video.duration - 0.5;
+              } );
+
+              var mediaFile = findMediaFile("audio", "../../../media/content/test");
+              var type = mimeTypeForExtension(mediaFile.split('.').pop());
+              video.src = "http://127.0.0.1:8000/media/video-throttled-load.cgi?name=" + mediaFile + "&throttle=50&nph=1&type=" + type;
+              video.load();
+          }
+      </script>
+    </head>
+    <body onload="start()">
+      <video controls></video>
+      <p>Test that the painted buffered range contains currentTime.</p>
+    </body>
+</html>

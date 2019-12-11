@@ -1,0 +1,26 @@
+<html>
+<head>
+    <title>Test if navigator.plugins is (mostly) empty when plugins are disabled.</title>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.setPluginsEnabled(false);
+    testRunner.dumpAsText();
+}
+
+var hasNonApplicationPlugin = false;
+
+for (var i = 0; i < navigator.plugins.length; ++i) {
+    var plugin = navigator.plugins[i];
+
+    // Application plugins have an empty filename and are OK even when plugins are disabled.
+    if (plugin.filename != "") {
+        hasNonApplicationPlugin = true;
+        document.write("Found non-application plug-in: " + plugin.name + "<br>");
+    }
+}
+
+document.write(hasNonApplicationPlugin ? "Failed!" : "Passed!");
+</script>
+</body>
+</html>

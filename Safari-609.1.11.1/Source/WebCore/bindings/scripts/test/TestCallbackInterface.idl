@@ -1,0 +1,56 @@
+/*
+ * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ * 3.  Neither the name of Apple Inc. ("Apple") nor the names of
+ *     its contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+enum TestCallbackInterfaceEnum { "value1", "value2" };
+
+dictionary TestCallbackInterfaceDictionary { 
+    required USVString requiredMember;
+    long optionalMember;
+};
+
+[
+    Conditional=TEST_CONDITIONAL,
+] callback interface TestCallbackInterface {
+    // Constants
+    const unsigned short CONSTANT1 = 1;
+    const unsigned short CONSTANT2 = 2;
+
+    // Operations.
+    void callbackWithNoParam();
+    void callbackWithArrayParam(Float32Array arrayParam);
+    void callbackWithSerializedScriptValueParam(SerializedScriptValue srzParam, DOMString strParam);
+    [Custom] long customCallback(TestObj testObjParam, TestNode testNodeParam);
+    void callbackWithStringList(DOMStringList listParam);
+    void callbackWithBoolean(boolean boolParam);
+    void callbackRequiresThisToPass(long longParam, TestNode testNodeParam);
+    DOMString callbackWithAReturnValue();
+    [RethrowException] DOMString callbackThatRethrowsExceptions(TestCallbackInterfaceEnum enumParam);
+    [SkipCallbackInvokeCheck] DOMString callbackThatSkipsInvokeCheck(TestCallbackInterfaceDictionary dictionaryParam);
+    [CallbackThisObject=TestNode] DOMString callbackWithThisObject(TestObj testObjParam);
+};

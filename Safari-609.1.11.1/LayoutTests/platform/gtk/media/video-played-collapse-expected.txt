@@ -1,0 +1,45 @@
+Test of the media element 'played' attribute
+
+EVENT(loadstart)
+EVENT(loadedmetadata)
+EVENT(canplay)
+Test 1 OK
+
+Test playing when there are no ranges
+RUN(video.play())
+RUN(video.pause())
+EVENT(pause)
+Test 2 OK
+Test 3 OK
+Test 4 OK
+
+Create a new range
+RUN(video.play())
+RUN(video.pause())
+EVENT(pause)
+Test 5 OK
+Test 6 OK
+Test 7 OK
+Test 8 OK
+Test 9 OK
+
+Test playing from one range into another, should collapse the two ranges
+RUN(video.play())
+RUN(video.pause())
+EVENT(pause)
+Test 10 OK
+Test 11 OK
+Test 12 OK
+
+Test looping
+RUN(video.loop = true)
+RUN(video.play())
+RUN(video.pause())
+EVENT(pause)
+Test 13 OK
+Test 14 OK
+Test 15 OK
+Test 16 OK
+Test 17 OK
+END OF TEST
+

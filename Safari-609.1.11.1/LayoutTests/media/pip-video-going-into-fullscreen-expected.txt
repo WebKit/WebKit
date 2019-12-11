@@ -1,0 +1,9 @@
+Tests pip video going into fullscreen should exit pip
+
+Going into Picture-in-Picture
+EXPECTED (video.webkitPresentationMode == 'picture-in-picture') OK
+Going into Full Screen from Picture-in-Picture
+EXPECTED (document.webkitCurrentFullScreenElement == '[object HTMLVideoElement]') OK
+EXPECTED (video.webkitPresentationMode == 'fullscreen') OK
+END OF TEST
+

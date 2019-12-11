@@ -1,0 +1,43 @@
+Tests to ensure that Function.apply works correctly for Arrays, arguments and array-like objects.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS argumentsApply1(1, 2, 3) is 1
+PASS argumentsApply2(1, 2, 3) is 2
+PASS argumentsApply3(1, 2, 3) is 3
+PASS argumentsApplyLength(1, 2, 3) is 3
+PASS argumentsApplyExcessArguments(1, 2, 3) is 3
+PASS executedAdditionalArgument is true
+PASS arrayApply1([1, 2, 3]) is 1
+PASS arrayApply2([1, 2, 3]) is 2
+PASS arrayApply3([1, 2, 3]) is 3
+PASS arrayApplyLength([1, 2, 3]) is 3
+PASS argumentsApplyDelete1(1, 2, 3) is 1
+PASS argumentsApplyDelete2(1, 2, 3) is undefined
+PASS argumentsApplyDelete3(1, 2, 3) is 3
+PASS argumentsApplyDeleteLength(1, 2, 3) is 3
+PASS arrayApplyDelete1([1, 2, 3]) is 1
+PASS arrayApplyDelete2([1, 2, 3]) is undefined
+PASS arrayApplyDelete3([1, 2, 3]) is 3
+PASS arrayApplyDeleteLength([1, 2, 3]) is 3
+PASS argumentsApplyChangeLength1(1) is 2
+PASS argumentsApplyChangeLength2(1) is 2
+PASS argumentsApplyChangeLength3(1) is 2
+PASS argumentsApplyChangeLength4(1) is 0
+PASS argumentsApplyChangeLength5(1) is 0
+PASS arrayApplyChangeLength1() is 2
+PASS arrayApplyChangeLength2() is 2
+PASS arrayApplyChangeLength3() is 2
+PASS arrayApplyChangeLength4() is 0
+PASS var a = []; a.length = 0xFFFE; [].constructor.apply('', a).length is 0xFFFE
+PASS var a = []; a.length = 0xFFFF; [].constructor.apply('', a).length is 0xFFFF
+PASS var a = []; a.length = 0x10000; [].constructor.apply('', a).length is 0x10000
+PASS var a = []; a.length = 0x10001; [].constructor.apply('', a).length threw exception RangeError: Maximum call stack size exceeded..
+PASS var a = []; a.length = 0xFFFFFFFE; [].constructor.apply('', a).length threw exception RangeError: Maximum call stack size exceeded..
+PASS var a = []; a.length = 0xFFFFFFFF; [].constructor.apply('', a).length threw exception RangeError: Maximum call stack size exceeded..
+PASS (function(a,b,c,d){ return d ? -1 : (a+b+c); }).apply(undefined, {length:3, 0:100, 1:20, 2:3}) is 123
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

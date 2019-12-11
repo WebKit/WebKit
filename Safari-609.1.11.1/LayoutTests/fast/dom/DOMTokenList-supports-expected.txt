@@ -1,0 +1,66 @@
+Test support for DOMTokenList.supports()
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS DOMTokenList.prototype.supports is an instance of Function
+
+* HTMLLinkElement.relList
+PASS link.relList.__proto__ is DOMTokenList.prototype
+PASS link.relList.supports(linkRelSupportedValues[i]) is true
+PASS link.relList.supports(linkRelSupportedValues[i].toUpperCase()) is true
+PASS link.relList.supports(linkRelSupportedValues[i]) is true
+PASS link.relList.supports(linkRelSupportedValues[i].toUpperCase()) is true
+PASS link.relList.supports(linkRelSupportedValues[i]) is true
+PASS link.relList.supports(linkRelSupportedValues[i].toUpperCase()) is true
+PASS link.relList.supports(linkRelSupportedValues[i]) is true
+PASS link.relList.supports(linkRelSupportedValues[i].toUpperCase()) is true
+PASS link.relList.supports('unsupported') is false
+
+* HTMLAnchorElement.relList
+PASS anchor.relList.__proto__ is DOMTokenList.prototype
+PASS anchor.relList.supports(anchorRelSupportedValues[i]) is true
+PASS anchor.relList.supports(anchorRelSupportedValues[i].toUpperCase()) is true
+PASS anchor.relList.supports(anchorRelSupportedValues[i]) is true
+PASS anchor.relList.supports(anchorRelSupportedValues[i].toUpperCase()) is true
+PASS anchor.relList.supports('unsupported') is false
+
+* HTMLAreaElement.relList
+PASS area.relList.__proto__ is DOMTokenList.prototype
+PASS area.relList.supports(areaRelSupportedValues[i]) is true
+PASS area.relList.supports(areaRelSupportedValues[i].toUpperCase()) is true
+PASS area.relList.supports(areaRelSupportedValues[i]) is true
+PASS area.relList.supports(areaRelSupportedValues[i].toUpperCase()) is true
+PASS area.relList.supports('unsupported') is false
+
+* HTMLIFrameElement.sandbox
+PASS iframe.sandbox.__proto__ is DOMTokenList.prototype
+PASS iframe.sandbox.supports(iframeSandboxSupportedValues[i]) is true
+PASS iframe.sandbox.supports(iframeSandboxSupportedValues[i].toUpperCase()) is true
+PASS iframe.sandbox.supports(iframeSandboxSupportedValues[i]) is true
+PASS iframe.sandbox.supports(iframeSandboxSupportedValues[i].toUpperCase()) is true
+PASS iframe.sandbox.supports(iframeSandboxSupportedValues[i]) is true
+PASS iframe.sandbox.supports(iframeSandboxSupportedValues[i].toUpperCase()) is true
+PASS iframe.sandbox.supports(iframeSandboxSupportedValues[i]) is true
+PASS iframe.sandbox.supports(iframeSandboxSupportedValues[i].toUpperCase()) is true
+PASS iframe.sandbox.supports(iframeSandboxSupportedValues[i]) is true
+PASS iframe.sandbox.supports(iframeSandboxSupportedValues[i].toUpperCase()) is true
+PASS iframe.sandbox.supports(iframeSandboxSupportedValues[i]) is true
+PASS iframe.sandbox.supports(iframeSandboxSupportedValues[i].toUpperCase()) is true
+PASS iframe.sandbox.supports('unsupported') is false
+
+* HTMLLinkElement.sizes
+PASS link.sizes.__proto__ is DOMTokenList.prototype
+PASS link.sizes.supports('token') threw exception TypeError: Type error.
+
+* HTMLOutputElement.htmlFor
+PASS output.htmlFor.__proto__ is DOMTokenList.prototype
+PASS output.htmlFor.supports('token') threw exception TypeError: Type error.
+
+* HTMLElement.dropzone
+FAIL HTMLElement.dropzone is not supported.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

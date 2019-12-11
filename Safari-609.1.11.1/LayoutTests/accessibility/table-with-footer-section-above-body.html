@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="content">
+<table id="table1" cellspacing="0" role="grid">
+    <thead>
+        <tr role="row"><th>Name</th><th>Position</th><th>Office</th><th>Age</th><th>Start date</th><th>Salary</th></tr>
+    </thead>
+
+    <tfoot>
+        <tr role="row"><th>Name</th><th>Position</th><th>Office</th><th>Age</th><th>Start date</th><th>Salary</th></tr>
+    </tfoot>
+
+    <tbody>
+        <tr><td>a</td><td>b</td><td>c</td><td>d</td></tr>
+    </tbody>
+</table>
+
+<table id="table2" cellspacing="0">
+    <thead>
+        <tr><th>Name</th><th>Position</th><th>Office</th><th>Age</th><th>Start date</th><th>Salary</th></tr>
+    </thead>
+
+    <tfoot>
+        <tr><th>Name</th><th>Position</th><th>Office</th><th>Age</th><th>Start date</th><th>Salary</th></tr>
+    </tfoot>
+
+    <tbody>
+        <tr><td>a</td><td>b</td><td>c</td><td>d</td></tr>
+    </tbody>
+</table>
+
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the row span information for the cells in the body is not offset by the footer section, even though the footer section is above the body in the DOM. This tests tables that have a role=grid and without.");
+
+    if (window.accessibilityController) {
+     
+        var table = accessibilityController.accessibleElementById("table1");
+        var testCell = table.cellForColumnAndRow(0, 1);
+        if (accessibilityController.platformName != "atk")
+            debug("Table1 cell content at {0, 1}: " + testCell.childAtIndex(0).stringValue);
+        else
+            debug("Table1 cell content at {0, 1}: " + testCell.stringValue);
+        debug("Table1 cell range at {0, 1}: " + testCell.rowIndexRange());
+
+        testCell = table.cellForColumnAndRow(0, 2);
+        if (accessibilityController.platformName != "atk")
+            debug("Table1 cell content at {0, 2}: " + testCell.childAtIndex(0).stringValue);
+        else
+            debug("Table1 cell content at {0, 2}: " + testCell.stringValue);
+        debug("Table1 cell range at {0, 2}: " + testCell.rowIndexRange());
+
+        table = accessibilityController.accessibleElementById("table2");
+        testCell = table.cellForColumnAndRow(0, 1);
+        if (accessibilityController.platformName != "atk")
+            debug("Table2 cell content at {0, 1}: " + testCell.childAtIndex(0).stringValue);
+        else
+            debug("Table2 cell content at {0, 1}: " + testCell.stringValue);
+        debug("Table2 cell range at {0, 1}: " + testCell.rowIndexRange());
+
+        testCell = table.cellForColumnAndRow(0, 2);
+        if (accessibilityController.platformName != "atk")
+            debug("Table2 cell content at {0, 2}: " + testCell.childAtIndex(0).stringValue);
+        else
+            debug("Table2 cell content at {0, 2}: " + testCell.stringValue);
+        debug("Table2 cell range at {0, 2}: " + testCell.rowIndexRange());
+
+        document.getElementById("content").style.visibility = "hidden";
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

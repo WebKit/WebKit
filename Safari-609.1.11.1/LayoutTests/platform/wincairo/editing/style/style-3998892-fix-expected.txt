@@ -1,0 +1,46 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 4 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > DIV > DIV > DIV > BODY > HTML > #document to 3 of #text > B > DIV > DIV > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > DIV > DIV > DIV > BODY > HTML > #document to 3 of #text > B > DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x182 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x83
+          RenderText {#text} at (0,0) size 66x26
+            text run at (0,0) width 66: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,27) size 111x27
+            text run at (0,27) width 111: "Bug fix for "
+          RenderInline {A} at (0,0) size 257x27 [color=#0000EE]
+            RenderText {#text} at (111,27) size 257x27
+              text run at (111,27) width 257: "<rdar://problem/3998892>"
+          RenderText {#text} at (368,27) size 685x55
+            text run at (368,27) width 317: " REGRESSION (Mail): bolding a"
+            text run at (0,55) width 91: "selection "
+            text run at (91,55) width 542: "from end of line changes unselected text on starting line."
+        RenderBlock {DIV} at (14,113) size 756x55
+          RenderText {#text} at (0,0) size 189x26
+            text run at (0,0) width 189: "Expected Results: "
+          RenderBR {BR} at (189,21) size 0x0
+          RenderText {#text} at (0,27) size 595x27
+            text run at (0,27) width 595: "Should see first line (\"foo\") not bold; second line (\"bar\") bold."
+      RenderBlock {DIV} at (0,206) size 784x59
+        RenderBlock {DIV} at (0,0) size 784x59 [border: (2px solid #FF0000)]
+          RenderBlock {DIV} at (2,2) size 780x28
+            RenderText {#text} at (0,0) size 32x27
+              text run at (0,0) width 32: "foo"
+          RenderBlock {DIV} at (2,30) size 780x27
+            RenderInline {B} at (0,0) size 36x26
+              RenderText {#text} at (0,0) size 36x26
+                text run at (0,0) width 36: "bar"
+selection start: position 3 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of body
+selection end:   position 3 of child 0 {#text} of child 0 {B} of child 3 {DIV} of child 1 {DIV} of child 3 {DIV} of body

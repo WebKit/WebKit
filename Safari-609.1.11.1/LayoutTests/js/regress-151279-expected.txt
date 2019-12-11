@@ -1,0 +1,10 @@
+Regression test for https://webkit.org/b/151279.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Properly handled megamorphic tail call from a JS entry function
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

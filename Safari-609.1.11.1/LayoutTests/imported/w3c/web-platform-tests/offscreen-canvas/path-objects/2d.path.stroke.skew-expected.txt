@@ -1,0 +1,7 @@
+2d.path.stroke.skew
+
+Strokes lines are skewed by the current transformation matrix
+
+
+FAIL Strokes lines are skewed by the current transformation matrix null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

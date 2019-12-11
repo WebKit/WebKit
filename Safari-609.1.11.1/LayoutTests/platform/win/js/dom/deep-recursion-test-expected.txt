@@ -1,0 +1,14 @@
+This test how deep we can recurse, and that we get an exception when we do, as opposed to a stack overflow.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL: RangeError: Maximum call stack size exceeded.
+PASS msg is 'RangeError: Maximum call stack size exceeded.'
+PASS msg is 'RangeError: Maximum call stack size exceeded.'
+PASS msg is 'RangeError: Maximum call stack size exceeded.'
+PASS msg is 'RangeError: Maximum call stack size exceeded.'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

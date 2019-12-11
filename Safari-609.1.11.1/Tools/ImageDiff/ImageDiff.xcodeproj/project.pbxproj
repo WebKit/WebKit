@@ -1,0 +1,225 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 48;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		7A41C8F01EC1F8FF003DBC76 /* PlatformImageCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A41C8EF1EC1F8FF003DBC76 /* PlatformImageCG.cpp */; };
+		7A41C8F21EC1F919003DBC76 /* ImageDiff.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A41C8F11EC1F919003DBC76 /* ImageDiff.cpp */; };
+		7A41C8F41EC1F935003DBC76 /* PlatformImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A41C8F31EC1F935003DBC76 /* PlatformImage.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		31DF42CA1EBBBBFE0096ED44 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		31DF42C41EBBBBB90096ED44 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		31DF42C51EBBBBB90096ED44 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
+		31DF42C61EBBBBB90096ED44 /* ImageDiff.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ImageDiff.xcconfig; sourceTree = "<group>"; };
+		31DF42CC1EBBBBFE0096ED44 /* ImageDiff */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ImageDiff; sourceTree = BUILT_PRODUCTS_DIR; };
+		7A41C8EF1EC1F8FF003DBC76 /* PlatformImageCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformImageCG.cpp; sourceTree = "<group>"; };
+		7A41C8F11EC1F919003DBC76 /* ImageDiff.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageDiff.cpp; sourceTree = "<group>"; };
+		7A41C8F31EC1F935003DBC76 /* PlatformImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformImage.cpp; sourceTree = "<group>"; };
+		7A41C8F51EC1F946003DBC76 /* PlatformImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformImage.h; sourceTree = "<group>"; };
+		A1B89B9A221E02AD00EB4CEA /* SDKVariant.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = SDKVariant.xcconfig; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		31DF42C91EBBBBFE0096ED44 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		31A5D0391EBBBB0400D3F11B = {
+			isa = PBXGroup;
+			children = (
+				7A41C8F11EC1F919003DBC76 /* ImageDiff.cpp */,
+				7A41C8F31EC1F935003DBC76 /* PlatformImage.cpp */,
+				7A41C8F51EC1F946003DBC76 /* PlatformImage.h */,
+				31DF42C31EBBBB5E0096ED44 /* Configurations */,
+				31DF42C01EBBBB210096ED44 /* cg */,
+				31DF42CD1EBBBBFE0096ED44 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		31DF42C01EBBBB210096ED44 /* cg */ = {
+			isa = PBXGroup;
+			children = (
+				7A41C8EF1EC1F8FF003DBC76 /* PlatformImageCG.cpp */,
+			);
+			path = cg;
+			sourceTree = "<group>";
+		};
+		31DF42C31EBBBB5E0096ED44 /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				31DF42C41EBBBBB90096ED44 /* Base.xcconfig */,
+				31DF42C51EBBBBB90096ED44 /* DebugRelease.xcconfig */,
+				31DF42C61EBBBBB90096ED44 /* ImageDiff.xcconfig */,
+				A1B89B9A221E02AD00EB4CEA /* SDKVariant.xcconfig */,
+			);
+			name = Configurations;
+			path = cg/Configurations;
+			sourceTree = "<group>";
+		};
+		31DF42CD1EBBBBFE0096ED44 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				31DF42CC1EBBBBFE0096ED44 /* ImageDiff */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		31DF42CB1EBBBBFE0096ED44 /* ImageDiff */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 31DF42D11EBBBBFE0096ED44 /* Build configuration list for PBXNativeTarget "ImageDiff" */;
+			buildPhases = (
+				31DF42C81EBBBBFE0096ED44 /* Sources */,
+				31DF42C91EBBBBFE0096ED44 /* Frameworks */,
+				31DF42CA1EBBBBFE0096ED44 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ImageDiff;
+			productName = ImageDiff;
+			productReference = 31DF42CC1EBBBBFE0096ED44 /* ImageDiff */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		31A5D03A1EBBBB0400D3F11B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0900;
+				TargetAttributes = {
+					31DF42CB1EBBBBFE0096ED44 = {
+						CreatedOnToolsVersion = 9.0;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 31A5D03D1EBBBB0400D3F11B /* Build configuration list for PBXProject "ImageDiff" */;
+			compatibilityVersion = "Xcode 8.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 31A5D0391EBBBB0400D3F11B;
+			productRefGroup = 31DF42CD1EBBBBFE0096ED44 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				31DF42CB1EBBBBFE0096ED44 /* ImageDiff */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		31DF42C81EBBBBFE0096ED44 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7A41C8F21EC1F919003DBC76 /* ImageDiff.cpp in Sources */,
+				7A41C8F41EC1F935003DBC76 /* PlatformImage.cpp in Sources */,
+				7A41C8F01EC1F8FF003DBC76 /* PlatformImageCG.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		31A5D03E1EBBBB0400D3F11B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 31DF42C51EBBBBB90096ED44 /* DebugRelease.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		31A5D03F1EBBBB0400D3F11B /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 31DF42C51EBBBBB90096ED44 /* DebugRelease.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		31DF42C71EBBBBD80096ED44 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 31DF42C41EBBBBB90096ED44 /* Base.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
+		31DF42D21EBBBBFE0096ED44 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 31DF42C61EBBBBB90096ED44 /* ImageDiff.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		31DF42D31EBBBBFE0096ED44 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 31DF42C61EBBBBB90096ED44 /* ImageDiff.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		31DF42D41EBBBBFE0096ED44 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 31DF42C61EBBBBB90096ED44 /* ImageDiff.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		31A5D03D1EBBBB0400D3F11B /* Build configuration list for PBXProject "ImageDiff" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				31A5D03E1EBBBB0400D3F11B /* Debug */,
+				31A5D03F1EBBBB0400D3F11B /* Release */,
+				31DF42C71EBBBBD80096ED44 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		31DF42D11EBBBBFE0096ED44 /* Build configuration list for PBXNativeTarget "ImageDiff" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				31DF42D21EBBBBFE0096ED44 /* Debug */,
+				31DF42D31EBBBBFE0096ED44 /* Release */,
+				31DF42D41EBBBBFE0096ED44 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 31A5D03A1EBBBB0400D3F11B /* Project object */;
+}

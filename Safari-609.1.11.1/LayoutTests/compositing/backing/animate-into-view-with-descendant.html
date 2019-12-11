@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .wrapper {
+            position: relative;
+            margin-top: 50px;
+            margin-left: -50px;
+            width: 952px;
+            height: 82px;
+            border: 1px solid black;
+            perspective: 2000px;
+        }
+        
+        .middle {
+            position: absolute;
+            top: 15px;
+            left: 544px;
+            padding: 10px;
+            animation-fill-mode: forwards;
+            animation-duration: 3s;
+            animation-name: bounce;
+        }
+        
+        .letter {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 9px;
+            height: 31px;
+            position: absolute;
+            background-color: silver;
+            transform: translateZ(0);
+        }
+
+        @keyframes bounce {
+            0% { transform: matrix3d(1.5, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 1, 0, -565.25, 7.75, 0, 1); }
+            19% { transform: matrix3d(1.5, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 1, 0, -565.25, 7.75, 0, 1); }
+            25% { transform: matrix3d(1.1558, 0, 0, 0, -0.00666, 0.7771, 0, 0, 0, 0, 1, 0, -504.006, -41.6730, 0, 1); }
+            47% { transform: matrix3d(1.5, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 1, 0, -283.75, 7.75, 0, 1); }
+            60% { transform: matrix3d(1.3906, 0, 0, 0, 0.073394, 0.6825, 0, 0, 0, 0, 1, 0, -143.645, 4.920146, 0, 1); }
+            89% { transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); }
+            100% { transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); }
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function dumpLayers()
+        {
+            var layersResult = document.getElementById('layers');
+            if (window.testRunner)
+                layersResult.innerText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED);
+        }
+    </script>
+</head>
+<body>
+
+<div class="wrapper">
+    <div id="target" class="middle">
+        <div class="letter">T</div>
+    </div>
+</div>
+
+<pre id="layers">Layer tree goes here in DRT</pre>
+
+<script>
+    let animator = document.getElementById('target');
+    animator.addEventListener('animationstart', () => {
+        requestAnimationFrame(() => {
+            dumpLayers();
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    });
+</script>
+</body>
+</html>

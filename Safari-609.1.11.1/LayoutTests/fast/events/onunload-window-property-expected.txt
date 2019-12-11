@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 13: Use of window.alert is not allowed while unloading a page.
+You should have seen an unload alert appear.

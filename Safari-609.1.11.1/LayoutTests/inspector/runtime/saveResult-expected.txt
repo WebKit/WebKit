@@ -1,0 +1,36 @@
+Tests for the Runtime.saveResult command ($n values).
+
+
+== Running test suite: Runtime.saveResult
+-- Running test case: SavePrimitiveValue1
+PASS: Value 123 should become $1.
+
+-- Running test case: SavePrimitiveValue2
+PASS: Value true should become $2.
+
+-- Running test case: RepeatPrimitiveValue1
+PASS: Value 123 should have existed as $1.
+
+-- Running test case: $1MatchesValue1
+PASS: $1 value should be 123.
+
+-- Running test case: SaveObject1
+PASS: New Object {"x":100,"y":200} should become $3.
+
+-- Running test case: SaveObject2
+PASS: New Object {"x":100,"y":200} should become $4.
+
+-- Running test case: RepeatSaveObject1
+PASS: Repeat Object should have existed as $3.
+
+-- Running test case: NoContextWithPrimitiveShouldUseMainContext
+PASS: Value 999 should become $5.
+PASS: Value 999 should have existed as $5.
+
+-- Running test case: ClearConsoleShouldResetValues
+PASS: Value 999 should become $1.
+
+-- Running test case: EvaluateWithSaveIndex
+PASS: Evaluated result 990 should become $2.
+PASS: Evaluated result 999 should match previous value $1.
+

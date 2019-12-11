@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 18: SyntaxError: Unexpected token '}'
+CONSOLE MESSAGE: line 19: SyntaxError: Unexpected token '}'
+
+FAIL Invalid uncompiled raw handlers should only be compiled once. assert_equals: expected 1 but got 2
+

@@ -1,0 +1,3 @@
+
+FAIL Shadows are not drawn for transparent parts of images Can't find variable: OffscreenCanvas
+

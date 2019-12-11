@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <div id="clickable_div_in_subframe">beautiful brown eyes</div>
+</body>
+<head>
+    <script>
+        function debug(s) {
+            top.document.querySelector("#console").innerText += s + "\n";
+        }
+
+        function logEvent(e) {
+            debug(e.target.id + " got " + event.type + " at " + event.x + "," + event.y);
+        }
+
+        window.onload = function() {
+            var clickable_div_in_subframe = document.querySelector("#clickable_div_in_subframe");
+
+            clickable_div_in_subframe.onmousemove = function(event) {
+                logEvent(event);
+            };
+
+            clickable_div_in_subframe.onmouseover= function(event) {
+                logEvent(event);
+            };
+
+            clickable_div_in_subframe.onclick = function(event) {
+                logEvent(event);
+
+                var overlapping_div_in_main_frame = top.document.querySelector("#overlapping_div_in_main_frame");
+
+                // Give overlapping_div_in_main_frame a renderer. It should now be right under the cursor.
+                overlapping_div_in_main_frame.style.display = "block";
+
+                // Force clickable_div_in_subframe to lose its renderer.
+                this.style.display = "none";
+                this.clientHeight;
+
+                // Force clickable_div_in_subframe to gain a new renderer.
+                this.style.display = "block";
+                this.clientHeight;
+            };
+        };
+    </script>
+</head>
+</html>

@@ -1,0 +1,45 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+.cell { 
+    padding: 12px; 
+    font-size: 24px;
+    height: 48px; 
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    for (i = 0; i < 4; i++)
+        moveSelectionForwardByCharacterCommand();    
+    extendSelectionForwardByWordCommand();    
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+<div contenteditable id="root" class="editing">
+<div id="test">foo<span class="Apple-tab-span" style="white-space:pre">	</span>bar</div>
+</div>
+
+<!-- 
+    Specifically checks test case in bug:
+    <rdar://problem/3917929> REGRESSION (Mail): Command-left-arrow leaves insertion point too high after specific steps
+-->
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

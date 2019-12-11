@@ -1,0 +1,7 @@
+2d.imageData.put.dirty.rect1
+
+putImageData() only modifies areas inside the dirty rectangle, using width and height
+
+
+FAIL putImageData() only modifies areas inside the dirty rectangle, using width and height null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

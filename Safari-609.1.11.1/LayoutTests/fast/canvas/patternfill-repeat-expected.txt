@@ -1,0 +1,3 @@
+There should be one big square below containing four squares. Top left square should be filled with 3 rows of 2 and bit Apple images. Top right square should be 2 and a bit rows with one Apple image column along the left edge of the square. Bottom left square should be one row with three Apple images along the top of the square. Bottom right square should be one Apple image in top left corner.
+
+

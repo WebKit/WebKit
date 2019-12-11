@@ -1,0 +1,11 @@
+Tests scrolling to an anchor in a zoomed page with a header scrolls to the correct location.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.scrollingElement.scrollTop is 1019
+PASS document.scrollingElement.scrollLeft is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Anchor is here

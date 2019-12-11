@@ -1,0 +1,42 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+iframe, #text {
+    width: 320px;
+    overflow: scroll;
+}
+
+#text {
+    line-height: 2.5;
+    height: 200px;
+    font-size: 40px;
+}
+</style>
+</head>
+<body>
+<iframe srcdoc="
+    <body contenteditable style='font-size: 20px'>Hello world</body>
+    <script>getSelection().selectAllChildren(document.body);</script>
+"></iframe>
+<div id="text">Here's to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. The ones who see things differently. They're not fond of rules. And they have no respect for the status quo.</div>
+</body>
+<script>
+jsTestIsAsync = true;
+document.querySelector("iframe").focus();
+
+description("This test verifies that we don't crash while scrolling an overflow scrolling container during layout, if the selection is in an editable element in a focused subframe.");
+
+const text = document.getElementById("text");
+text.scrollTo(0, 1000);
+addEventListener("load", () => {
+    text.addEventListener("scroll", () => {
+        text.textContent = "";
+        testPassed("Successfully removed the text.");
+        finishJSTest();
+    });
+    text.scrollTo(0, 500);
+});
+</script>
+</html>

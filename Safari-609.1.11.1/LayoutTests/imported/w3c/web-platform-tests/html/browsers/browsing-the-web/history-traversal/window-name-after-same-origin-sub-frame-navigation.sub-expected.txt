@@ -1,0 +1,4 @@
+
+
+PASS Test that the window name is correct 
+

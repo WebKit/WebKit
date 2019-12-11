@@ -1,0 +1,6 @@
+context.unrecognised.nullsuffix
+Context name "2d" plus a "\0" suffix is unrecognised
+Actual output:
+
+PASS Context name "2d" plus a "\0" suffix is unrecognised 
+

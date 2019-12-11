@@ -1,0 +1,48 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:WebAnimationsCSSIntegrationEnabled=true ] -->
+<html>
+<head>
+<style>
+
+#target {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+    transition: transform 10ms;
+}
+
+</style>
+</head>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<div id="target"></div>
+
+<script>
+
+function waitNFrames(numberOfFrames, continuation)
+{
+    let elapsedFrames = 0;
+    (function rAFCallback() {
+        if (elapsedFrames++ >= numberOfFrames)
+            continuation();
+        else
+            requestAnimationFrame(rAFCallback);
+    })();
+}
+
+async_test(t => {
+    requestAnimationFrame(() => {
+        const target = document.getElementById("target");
+        target.style.transform = "translate3d(100px, 0, 0)";
+        target.getAnimations()[0].finished.then(() => {
+            waitNFrames(3, () => {
+                assert_equals(internals.acceleratedAnimationsForElement(target).length, 0, "There should be no accelerated animation after the animation completed.");
+                t.done();
+            });
+        });
+    });
+}, "An accelerated CSS transition should remove its animation upon completion.");
+
+</script>
+</body>
+</html>

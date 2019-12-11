@@ -1,0 +1,5 @@
+ALERT: PASS
+
+EVENT(loadedmetadata)
+END OF TEST
+

@@ -1,0 +1,62 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+<style>
+    body, html {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+    }
+    select {
+        width: 200px;
+        height: 200px;
+    }
+</style>
+<script src="../../../../resources/basic-gestures.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<script>
+    async function run()
+    {
+        if (!window.testRunner)
+            return;
+
+        await tapAtPoint(100, 100);
+        await UIHelper.selectFormAccessoryPickerRow(0);
+        doneEvaluatingUIScript = true;
+        checkDone();
+    }
+
+    function checkDone()
+    {
+        if (window.doneEvaluatingUIScript && window.valueChanged && window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+</head>
+<body onload="run()">
+    <select multiple id="select"><option>This is an option.</option></select>
+    <pre id="output"></pre>
+</body>
+<script>
+    select.addEventListener("change", () => {
+        if (window.internals) {
+            const renderTreeAsText = internals.elementRenderTreeAsText(document.documentElement);
+            const expectedOptionValue = "This is an option.";
+            if (renderTreeAsText.indexOf(expectedOptionValue) != -1)
+                output.textContent = "PASS";
+            else
+                output.textContent = `FAIL: expected '${expectedOptionValue}' in render tree dump:\n${renderTreeAsText}`;
+        }
+
+        select.blur();
+        valueChanged = true;
+        checkDone();
+    });
+
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+</script>
+</html>

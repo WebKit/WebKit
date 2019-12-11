@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: PLUGIN: getFocusEvent
+CONSOLE MESSAGE: PLUGIN: mouseDown at (12, 12)
+CONSOLE MESSAGE: PLUGIN: mouseUp at (12, 12)
+CONSOLE MESSAGE: PLUGIN: keyDown 'a'
+CONSOLE MESSAGE: PLUGIN: keyUp 'a'
+CONSOLE MESSAGE: PLUGIN: keyDown 'b'
+CONSOLE MESSAGE: PLUGIN: keyUp 'b'
+CONSOLE MESSAGE: PLUGIN: keyDown 'c'
+CONSOLE MESSAGE: PLUGIN: keyUp 'c'
+
+This test checks if a plug-in can receive keyboard events sent from eventSender. This is a test for Bug 34936.

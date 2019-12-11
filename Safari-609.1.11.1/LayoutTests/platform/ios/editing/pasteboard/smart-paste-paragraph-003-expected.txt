@@ -1,0 +1,25 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of BODY > HTML > #document to 3 of BODY > HTML > #document toDOMRange:range from 0 of DIV > #document-fragment to 0 of DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > #document-fragment to 0 of DIV > #document-fragment toDOMRange:range from 0 of DIV > #document-fragment to 0 of DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > #document-fragment to 0 of DIV > #document-fragment toDOMRange:range from 0 of #text > DIV > #document-fragment to 4 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertText:Test paragraph. replacingDOMRange:range from 16 of #text > DIV > #document-fragment to 16 of #text > DIV > #document-fragment givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 32 of #text > DIV > #document-fragment to 32 of #text > DIV > #document-fragment toDOMRange:range from 1 of #text > DIV > #document-fragment to 1 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+Tests: 
+Smart paste when pasting a paragraph between two paragraphs in an input element.
+Expected Results: 
+A newline should be added between the preexisting paragraphs and the paragraph that's pasted. It should like this: 
+Test paragraph. 
+
+Test paragraph. 
+
+Last test paragraph.
+
+

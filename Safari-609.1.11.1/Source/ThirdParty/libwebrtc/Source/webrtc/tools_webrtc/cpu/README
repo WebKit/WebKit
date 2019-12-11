@@ -1,0 +1,12 @@
+This directory contains a little utility for doing CPU measurements.
+It requires a Python package, psutil, to be installed.
+See: https://pypi.python.org/pypi/psutil
+
+On mac you can install this package like so:
+sudo ARCHFLAGS='-Wno-error=unused-command-line-argument-hard-error-in-future' easy_install psutil
+
+On Windows:
+- TBD (see link above)
+
+On Linux:
+- TBD (see link above)

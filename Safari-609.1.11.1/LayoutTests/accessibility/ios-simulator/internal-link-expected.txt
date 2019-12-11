@@ -1,0 +1,23 @@
+Name 
+
+
+Linked Element 
+
+
+Go to greeting 
+
+
+Hello World!
+This tests that internal links return their linked elements, and that the returned object is indeed an accessible element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS linked1.description is 'AXLabel: Linked Element'
+PASS linked1.isIgnored is false
+PASS linked2.description is 'AXLabel: Hello World!'
+PASS linked2.isIgnored is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

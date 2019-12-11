@@ -1,0 +1,9 @@
+{
+    "domain": "PageOnly",
+    "targetTypes": "pagee",
+    "commands": [
+        {
+            "name": "enable"
+        }
+    ]
+}

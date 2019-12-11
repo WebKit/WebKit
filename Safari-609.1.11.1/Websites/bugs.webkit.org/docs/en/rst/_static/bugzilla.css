@@ -1,0 +1,21 @@
+@import 'default.css';
+
+dt { font-weight: bold; }
+
+/* Custom roles */
+.param    { font-weight: bold; }
+.paramval { font-family: monospace; }
+.group    { font-family: monospace; }
+.field    { font-weight: bold; }
+.command  { font-family: monospace; font-size: 130% }
+
+.admonition-todo {
+  background-color: lightpink;
+  border: 2px darkred solid;
+}
+
+/* Make Buggie's antenna not take up so much space */
+.logo {
+  display: block;
+  margin-top: -20px;
+}

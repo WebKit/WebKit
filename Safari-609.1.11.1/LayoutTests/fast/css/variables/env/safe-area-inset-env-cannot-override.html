@@ -1,0 +1,37 @@
+<script>
+if (window.internals)
+    internals.settings.setConstantPropertiesEnabled(true);
+</script>
+<style>
+html {
+    --safe-area-inset-bottom: 50px;
+    safe-area-inset-left: 50px;
+}
+
+#a {
+    position: absolute;
+    --safe-area-inset-right: 100px;
+    safe-area-inset-top: 100px;
+    left: env(safe-area-inset-right);
+    top: env(safe-area-inset-top);
+    width: 100px;
+    height: 100px;
+    background-color: green;
+}
+
+#b {
+    position: absolute;
+    --safe-area-inset-bottom: 200px;
+    safe-area-inset-left: 200px;
+    left: env(safe-area-inset-bottom);
+    top: env(safe-area-inset-left);
+    width: 100px;
+    height: 100px;
+    background-color: blue;
+}
+</style>
+<body>
+<div id="a"></div>
+<div id="b"></div>
+<p>The boxes should both be at 0, 0.</p>
+

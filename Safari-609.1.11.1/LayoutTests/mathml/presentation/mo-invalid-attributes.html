@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+  <head>
+    <title>mo invalid attributes</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+
+    <!-- This test verifies that invalid attributes are ignored. Note that
+         attributes are case-sensitive. -->
+
+    <!-- This operator should be infix. -->
+    _<math><mi>x</mi><mo form="INVALID">+</mo><mi>x</mi></math>_<br/>
+    _<math><mi>x</mi><mo form="pReFiX">+</mo><mi>x</mi></math>_<br/>
+
+    <!-- This operator should not be stretchy. -->
+    _<math><mo stretchy="INVALID">|</mo><mspace height="2em" depth="2em"/></math>_<br/>
+    _<math><mo stretchy="Strechy">|</mo><mspace height="2em" depth="2em"/></math>_<br/>
+
+    <!-- This operator should have the default spacing. -->
+    _<math><mo lspace="INVALID">X</mo></math>_<br/>
+    _<math><mo rspace="INVALID">X</mo></math>_<br/>
+    _<math><mo lspace="INVALID" rspace="INVALID">X</mo></math>_<br/>
+
+  </body>
+</html>

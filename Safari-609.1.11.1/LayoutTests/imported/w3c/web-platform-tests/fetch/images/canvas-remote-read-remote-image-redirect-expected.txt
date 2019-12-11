@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 18: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+
+PASS Load a no-cors image from a same-origin URL that redirects to a cross-origin URL that redirects to the initial origin 
+

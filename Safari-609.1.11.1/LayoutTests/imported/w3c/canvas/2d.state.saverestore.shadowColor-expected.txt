@@ -1,0 +1,5 @@
+2d.state.saverestore.shadowColor
+save()/restore() works for shadowColor
+Spec references: 2d.state.shadowColor
+Actual output:
+Passed

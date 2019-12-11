@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+
+<body id="body">
+
+<div id="content">
+
+<div role="grid" id="table">
+  <div role="presentational" aria-label="hello">
+     <div role="presentational" aria-haspopup="true">
+         <div role="row"> 
+             <div role="gridcell">hello</div>
+             <div role="gridcell">hello</div>
+             <div role="gridcell">hello</div>
+         </div>
+      </div>
+  </div>
+</div>
+
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("This tests that in an aria table a row will report its parent as the table.");
+
+if (window.accessibilityController) {
+    var table = accessibilityController.accessibleElementById("table");
+    var row = table.rowAtIndex(0);
+    shouldBe("row.role", "'AXRole: AXRow'");
+    shouldBe("row.parentElement().role", "'AXRole: AXTable'");
+
+    document.getElementById("content").style.visibility = "hidden";
+}
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

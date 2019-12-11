@@ -1,0 +1,5 @@
+Test for http://bugs.webkit.org/show_bug.cgi?id=14972 Moving cursor down in contentEditable section fails if styled line-height:1em.
+
+PASS
+
+Pressing the down arrow when the caret is on this line should move it to this line. 

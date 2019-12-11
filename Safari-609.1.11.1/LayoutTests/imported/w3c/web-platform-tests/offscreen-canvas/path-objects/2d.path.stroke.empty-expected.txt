@@ -1,0 +1,7 @@
+2d.path.stroke.empty
+
+Empty subpaths are not stroked
+
+
+FAIL Empty subpaths are not stroked null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

@@ -1,0 +1,19 @@
+This test looks for the dispatch of the onshow event handler.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Notification.permission is "default"
+PASS onerror event handler was called
+Granting permission to http://127.0.0.1:8000
+PASS Notification.permission is "granted"
+PASS onshow event handler was called
+Denying permission to http://127.0.0.1:8000
+PASS Notification.permission is "denied"
+PASS onerror event handler was called
+Resetting all permissions
+PASS Notification.permission is "default"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

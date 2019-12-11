@@ -1,0 +1,6 @@
+
+PASS Basic video stats 
+PASS Sender stats 
+PASS Receiver stats 
+PASS Check ssrc is not changing in inbound rtp stats 
+

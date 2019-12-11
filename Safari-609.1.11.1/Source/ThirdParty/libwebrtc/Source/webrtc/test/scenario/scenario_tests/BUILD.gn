@@ -1,0 +1,30 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+if (rtc_include_tests) {
+  rtc_test("scenario_tests") {
+    testonly = true
+    sources = [
+      "bbr_performance.cc",
+    ]
+    deps = [
+      "../:scenario",
+      "../..:test_main",
+      "../../:field_trial",
+      "../../:fileutils",
+      "../../:test_common",
+      "../../:test_support",
+      "../../../modules/congestion_controller/bbr",
+      "../../../rtc_base:rtc_base_approved",
+      "../../../rtc_base/experiments:field_trial_parser",
+      "//testing/gtest",
+    ]
+  }
+}

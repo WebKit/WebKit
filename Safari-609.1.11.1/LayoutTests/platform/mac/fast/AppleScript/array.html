@@ -1,0 +1,42 @@
+<html>
+<head>
+<title>do JavaScript - converting JavaScript arrays to AppleScript</title>
+</head>
+<body>
+<script type="text/javascript">
+
+    var console_messages = document.createElement("ol");
+    
+    function log(message)
+    {
+        var item = document.createElement("li");
+        item.appendChild(document.createTextNode(message));
+        console_messages.appendChild(item);
+    }
+    if (window.testRunner) {
+        
+        try {
+        
+            testRunner.dumpAsText();
+            
+            log(appleScriptController.doJavaScript("new Array(1, 2, 'three');"));
+            log(appleScriptController.doJavaScript("arr = new Array; arr['a'] = 'a'; arr[2] = 2; arr;"));
+            log(appleScriptController.doJavaScript("arr = new Array; arr[0] = 0; arr[1] = arr; arr;"));
+
+// This takes ~10 seconds on my G4/1.25
+//            log(appleScriptController.doJavaScript("arr = new Array; arr[1] = 1; arr[10001] = 10001; arr;"));
+            
+        } catch (ex) {
+            log("Exception: " + ex.description);
+        }
+
+        var console = document.createElement("p");
+        console.appendChild(console_messages);
+        document.body.appendChild(console);
+        
+    } else {
+        document.write("(cannot run interactively)");
+    }
+</script>
+</body>
+</html>

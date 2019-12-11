@@ -1,0 +1,18 @@
+Pointer Events capture test - lostpointercapture order
+
+Test Description: This test checks if lostpointercapture is handled asynchronously and prior to all subsequent events. Complete the following actions:
+Press and hold left mouse button over "Set Capture" button and move a little. "gotpointercapture" should be logged inside of the black rectangle
+"lostpointercapture" should be logged inside of the black rectangle after pointerup
+
+Test passes if lostpointercapture is dispatched after releasing the mouse button and before any additional pointer events.
+
+
+Pointer Events Capture Test
+
+The following pointer types were detected: mouse.
+
+The following events were logged: gotpointercapture@target0, lostpointercapture@target0.
+
+
+PASS lostpointercapture is dispatched prior to subsequent events 
+

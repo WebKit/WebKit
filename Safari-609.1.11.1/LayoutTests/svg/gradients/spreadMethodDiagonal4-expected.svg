@@ -1,0 +1,70 @@
+<html><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="2000px" height="2000px">
+    <linearGradient id="base-grad" x1="-100%" y1="-100%" x2="-50%" y2="-50%">
+        <stop stop-color="green" offset="0"/>
+        <stop stop-color="green" offset="0.5"/>
+        <stop stop-color="blue" offset="0.5"/>
+        <stop stop-color="blue" offset="1"/>
+    </linearGradient>
+
+    <linearGradient id="pad-grad" xlink:href="#base-grad" spreadMethod="pad" />
+    <linearGradient id="pad-reflect" xlink:href="#base-grad" spreadMethod="reflect" />
+    <linearGradient id="pad-repeat" xlink:href="#base-grad" spreadMethod="repeat" />
+
+    <mask id="mymask0">
+      <g transform="translate(-10 -50) scale(0.5) rotate(-7) translate(-200 0)">
+        <rect x="100" y="120" width="1100" height="105" fill="white" />
+      </g>
+    </mask>
+    <mask id="mymask0-inv">
+      <rect x="0" y="0" width="2000" height="2000" fill="white" />
+      <g transform="translate(-10 -50) scale(0.5) rotate(-7) translate(-200 0)">
+        <rect x="100" y="120" width="1100" height="105" fill="black" />
+      </g>
+    </mask>
+
+    <mask id="mymask">
+      <g transform="translate(-10 -50) scale(0.5) rotate(-7) translate(-200 0)">
+        <rect x="100" y="400" width="1100" height="105" fill="white" />
+      </g>
+    </mask>
+    <mask id="mymask-inv">
+      <rect x="0" y="0" width="2000" height="2000" fill="white" />
+      <g transform="translate(-10 -50) scale(0.5) rotate(-7) translate(-200 0)">
+        <rect x="100" y="400" width="1100" height="105" fill="black" />
+      </g>
+    </mask>
+
+    <mask id="mymask2">
+      <g transform="translate(-10 -50) scale(0.5) rotate(-7) translate(-200 0)">
+        <rect x="100" y="510" width="1100" height="55" fill="white" />
+        <rect x="100" y="620" width="1100" height="55" fill="white" />
+      </g>
+    </mask>
+    <mask id="mymask2-inv">
+      <rect x="0" y="0" width="2000" height="2000" fill="white" />
+      <g transform="translate(-10 -50) scale(0.5) rotate(-7) translate(-200 0)">
+        <rect x="100" y="510" width="1100" height="55" fill="black" />
+        <rect x="100" y="620" width="1100" height="55" fill="black" />
+      </g>
+    </mask>
+
+    <g transform="translate(200 0) rotate(7) scale(2)">
+      <rect x="10" y="35" width="460" height="55" fill="blue" mask="url(#mymask0-inv)"/>
+      <rect x="10" y="35" width="460" height="55" fill="green" mask="url(#mymask0)" />
+
+      <rect x="10" y="120" width="460" height="55" fill="green" mask="url(#mymask-inv)"/>
+      <rect x="10" y="120" width="460" height="55" fill="blue" mask="url(#mymask)" />
+
+      <rect x="10" y="205" width="460" height="55" fill="blue" mask="url(#mymask2-inv)"/>
+      <rect x="10" y="205" width="460" height="55" fill="green" mask="url(#mymask2)"/>
+    </g>
+
+    <rect x="180" y="65" width="50" height="55" fill="grey" />
+
+    <rect x="100" y="120" width="1100" height="10" fill="grey" />
+    <rect x="100" y="295" width="1100" height="10" fill="grey" />
+    <rect x="100" y="400" width="1100" height="10" fill="grey" />
+    <rect x="100" y="460" width="1100" height="10" fill="grey" />
+    <rect x="100" y="517" width="1100" height="10" fill="grey" />
+    <rect x="100" y="570" width="1100" height="10" fill="grey" />
+</svg></html>

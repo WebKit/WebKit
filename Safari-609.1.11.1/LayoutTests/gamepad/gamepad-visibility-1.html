@@ -1,0 +1,56 @@
+<head>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(msg)
+{
+    document.getElementById("logger").innerHTML += msg + "<br>";
+}
+
+function finishTest()
+{
+    if (testRunner)
+        testRunner.notifyDone();
+}
+
+var timeoutCount = 0;
+
+function spinABit()
+{
+    if (timeoutCount == 20) {
+        log("No connect event seen in 20 run loop spins. Yay.");
+        finishTest();
+    }
+
+    ++timeoutCount;
+    setTimeout(spinABit, 0);
+}
+
+function handleGamepadConnect()
+{
+    log("Connect event seen! Should NOT have been seen");
+    finishTest();
+}
+
+function runTest() {
+    addEventListener("gamepadconnected", handleGamepadConnect);
+
+    // Connecting the gamepad and changing axis values should *not* make it visible.
+    // Only button presses should expose it.
+    testRunner.setMockGamepadDetails(0, "Test Joystick", 2, 2);
+    testRunner.connectMockGamepad(0);
+    testRunner.setMockGamepadAxisValue(0, 0, 0.7);
+    testRunner.setMockGamepadAxisValue(0, 1, -1.0);
+
+    setTimeout(spinABit, 0);
+}
+
+</script>
+</head>
+<body onload="runTest();">
+<div id="logger"></div>
+</body>

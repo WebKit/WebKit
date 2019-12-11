@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<h3>text</h3>
+<div class="text" role="log" aria-live="polite" id="visibleText"></div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that a div element with nothing in, but one that has an ARIA role, will not be ignored by accessibility.");
+
+    if (window.accessibilityController) {
+
+          document.getElementById("body").focus();
+          var body = accessibilityController.focusedElement;
+          shouldBe("body.childAtIndex(1).role", "'AXRole: AXGroup'");
+          shouldBe("body.childAtIndex(1).subrole", "'AXSubrole: AXApplicationLog'");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

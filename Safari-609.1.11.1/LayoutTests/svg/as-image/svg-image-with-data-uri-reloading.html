@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    img {
+      width: 200px;
+      height: 200px;
+      background-color: red;
+    }
+  </style>
+</head>
+<body>
+  <img src="resources/image-with-nested-data-uri-images.svg">
+  <script>
+    if (window.testRunner)
+      testRunner.waitUntilDone();
+      
+    window.addEventListener("load", function() {
+      setTimeout(function () {
+        if (location.hash == "") {
+          location.hash = "#reloading";
+          location.reload(true);
+        } else if (location.hash == "#reloading") {
+          location.hash = "#finished";
+          if (window.testRunner)
+            testRunner.notifyDone();
+        }
+      }, 200);
+    });
+  </script>
+</body>
+</html>

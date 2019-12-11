@@ -1,0 +1,39 @@
+<!doctype html><!-- webkit-test-runner [ experimental:CoreMathMLEnabled=false ] -->
+<html>
+  <head>
+    <title>mathvariant</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+    <!-- Note: This test requires a font with Mathematical Alphanumeric Symbols. -->
+
+    <!-- This tests the mathvariant attribute. The default value is "italic" on
+         single-char <mi> elements and "normal" otherwise. -->
+    <div>
+      <math>
+        <mi mathvariant="normal">A</mi>
+      </math><br/>
+      <math>
+        <mi>A</mi>
+      </math><br/>
+      <math>
+        <mtext mathvariant="italic">A</mtext>
+      </math><br/>
+      <math>
+        <mi mathvariant="bold">A</mi>
+      </math><br/>
+      <math>
+        <mi mathvariant="bold-italic">A</mi>
+      </math>
+    </div>
+
+    <!-- This tests the deprecated font style attributes. -->
+    <math>
+      <mtext fontsize="2em">A</mtext>
+      <mtext fontfamily="sans-serif">A</mtext>
+      <mtext fontstyle="italic">A</mtext>
+      <mtext fontweight="bold">A</mtext>
+    </math>
+    
+  </body>
+</html>

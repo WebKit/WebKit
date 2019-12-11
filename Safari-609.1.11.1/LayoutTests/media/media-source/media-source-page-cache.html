@@ -1,0 +1,55 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-media-source</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    window.addEventListener("pageshow", function(event) {
+        consoleWrite("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+        if (event.persisted) {
+            consoleWrite("PASS: Page was restored from Page Cache");
+            endTest();
+        }
+    });
+
+    window.addEventListener("pagehide", function(event) {
+        consoleWrite("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+        if (!event.persisted) {
+            consoleWrite("FAIL: Page failed to enter the Page Cache");
+            endTest();
+        }
+    });
+
+    onload = () => {
+        setTimeout(() => {
+            findMediaElement();
+
+            source = new MediaSource();
+            waitForEvent('sourceopen', sourceOpen, false, false, source);
+            run('video.src = URL.createObjectURL(source)');
+        }, 0);
+    }
+
+    function sourceOpen() {
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+        testExpected('source.sourceBuffers[0]', sourceBuffer);
+        setTimeout(() => {
+            testLink.click();
+        }, 0);
+    }
+    
+    </script>
+</head>
+<body>
+    <video></video>
+    <a id="testLink" href="../../fast/history/resources/page-cache-helper.html" style="display: none">Link</a>
+</body>
+</html>

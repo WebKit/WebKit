@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 4: SyntaxError: Unexpected identifier 'error'
+This tests that a line number and error message is printed for a parse error in a separate source file using new Function().

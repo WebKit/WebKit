@@ -1,0 +1,10 @@
+This tests auto-substitution with a multi-line text works.
+To manually test, open Language & Text system preference and setup "helloleworld" to be replaced by
+"helloworld" (copy paste it) and reload this page. You should see hello and world in two distinct lines.
+| <div>
+|   "hello"
+| <div>
+|   "world"
+| <div>
+|   <#selection-caret>
+|   <br>

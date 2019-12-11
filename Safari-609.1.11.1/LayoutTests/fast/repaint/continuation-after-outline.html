@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Test for http://bugs.webkit.org/show_bug.cgi?id=13680</title>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        function runTest()
+        {
+            document.getElementById('t').style.outline = '';
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+    </script>
+</head>
+<body onload="setTimeout(runTest, 0);">
+    <div style="width: 50px; text-align: center;">
+        <span id="t" style="outline: auto;"><div style="width: 30px; height:40px; background-color: silver; margin: auto"></div>
+            x
+        </span>
+    </div>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            var playingCount = 0;
+            var playThroughCount = 0;
+            var videos = [];
+
+            function logEvent(evt)
+            {
+                consoleWrite("EVENT(" + evt.type + ")");
+            }
+
+            function playing(evt)
+            {
+                logEvent(evt);
+                ++playingCount;
+
+                switch (playingCount) {
+                case 1:
+                    consoleWrite("<br>*** Play the second video ***");
+                    run('videos[1].play()');
+                    break;
+                case 2:
+                    consoleWrite("<br>*** Play the third video ***");
+                    run('videos[2].play()');
+                    break;
+                case 3:
+                    consoleWrite("<br>*** Play the fourth video, the third should pause ***");
+                    run('videos[3].play()');
+                    break;
+                }
+            }
+
+            function pause(evt)
+            {
+                logEvent(evt);
+                consoleWrite("");
+                testExpected('videos[0].paused', false);
+                testExpected('videos[1].paused', false);
+                testExpected('videos[2].paused', true);
+                testExpected('videos[3].paused', false);
+                endTest();
+            }
+
+            function canplaythrough(evt)
+            {
+                logEvent(evt);
+
+                if (++playThroughCount < 4)
+                    return;
+
+                consoleWrite("");
+
+                testExpected('videos[0].audioTracks.length', '0');
+                testExpected('videos[1].audioTracks.length', '0');
+                testExpected('videos[2].audioTracks.length', '1');
+                testExpected('videos[3].audioTracks.length', '1')
+
+                consoleWrite("<br>*** Play the first video ***");
+                run('videos[0].play()');
+            }
+
+            function start()
+            {
+                if (!window.internals) {
+                    failTest('This test requires window.internals.');
+                    return;
+                }
+
+                run("internals.setMediaSessionRestrictions('videoaudio', 'ConcurrentPlaybackNotPermitted')");
+                run("internals.setMediaSessionRestrictions('video', '')");
+
+                videos = document.getElementsByTagName('video');
+                for (var i = 0; i < videos.length; ++i) {
+                    video = videos[i];
+                    video.addEventListener("canplaythrough", canplaythrough);
+                    video.addEventListener('playing', playing);
+                    video.addEventListener('pause', pause);
+                    run(`videos[${i}].src = findMediaFile("video", "${ i < 2 ? "content/test-video-only" : "content/test" }")`);
+                }
+                consoleWrite("");
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <video controls id="one"></video>
+        <video controls id="two"></video>
+        <video controls id="three"></video>
+        <video controls id="four"></video>
+        <p>Test play() of multiple video elements when some are of a type that allows concurrent playback and others are not.</p>
+    </body>
+</html>

@@ -1,0 +1,7 @@
+PASS
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Verifies that tapping an element with a stylus dispatches a click event. To manually test, tap the black square above and check that the text in the square reads 'PASS'.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

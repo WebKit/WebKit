@@ -1,0 +1,6 @@
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/js-mislabeled-as-html.js
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/js-mislabeled-as-html.js
+CONSOLE MESSAGE: line 2659: Error: assert_true: The cross-origin script should execute expected true got false
+
+FAIL Untitled Error: assert_true: The cross-origin script should execute expected true got false
+

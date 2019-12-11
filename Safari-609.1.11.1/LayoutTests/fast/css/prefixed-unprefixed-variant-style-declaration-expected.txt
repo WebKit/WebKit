@@ -1,0 +1,399 @@
+Test the prefixed or the unprefixed variant of a property allows reading from the CSS OM with both the prefixed and unprefixed variant.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Setting "transition-property" to "width"
+PASS element.style.transitionProperty
+PASS element.style.webkitTransitionProperty
+PASS element.style.getPropertyValue("transition-property")
+PASS element.style.getPropertyValue("-webkit-transition-property")
+PASS element.style.getPropertyCSSValue("transition-property")
+PASS element.style.getPropertyCSSValue("-webkit-transition-property")
+PASS getComputedStyle(element).transitionProperty
+PASS getComputedStyle(element).webkitTransitionProperty
+PASS getComputedStyle(element).getPropertyValue("transition-property")
+PASS getComputedStyle(element).getPropertyValue("-webkit-transition-property")
+PASS getComputedStyle(element).getPropertyCSSValue("transition-property")
+PASS getComputedStyle(element).getPropertyCSSValue("-webkit-transition-property")
+PASS element.style.cssText
+
+Setting "-webkit-transition-property" to "width"
+PASS element.style.transitionProperty
+PASS element.style.webkitTransitionProperty
+PASS element.style.getPropertyValue("transition-property")
+PASS element.style.getPropertyValue("-webkit-transition-property")
+PASS element.style.getPropertyCSSValue("transition-property")
+PASS element.style.getPropertyCSSValue("-webkit-transition-property")
+PASS getComputedStyle(element).transitionProperty
+PASS getComputedStyle(element).webkitTransitionProperty
+PASS getComputedStyle(element).getPropertyValue("transition-property")
+PASS getComputedStyle(element).getPropertyValue("-webkit-transition-property")
+PASS getComputedStyle(element).getPropertyCSSValue("transition-property")
+PASS getComputedStyle(element).getPropertyCSSValue("-webkit-transition-property")
+PASS element.style.cssText
+
+Setting "transition-duration" to "1s"
+PASS element.style.transitionDuration
+PASS element.style.webkitTransitionDuration
+PASS element.style.getPropertyValue("transition-duration")
+PASS element.style.getPropertyValue("-webkit-transition-duration")
+PASS element.style.getPropertyCSSValue("transition-duration")
+PASS element.style.getPropertyCSSValue("-webkit-transition-duration")
+PASS getComputedStyle(element).transitionDuration
+PASS getComputedStyle(element).webkitTransitionDuration
+PASS getComputedStyle(element).getPropertyValue("transition-duration")
+PASS getComputedStyle(element).getPropertyValue("-webkit-transition-duration")
+PASS getComputedStyle(element).getPropertyCSSValue("transition-duration")
+PASS getComputedStyle(element).getPropertyCSSValue("-webkit-transition-duration")
+PASS element.style.cssText
+
+Setting "-webkit-transition-duration" to "1s"
+PASS element.style.transitionDuration
+PASS element.style.webkitTransitionDuration
+PASS element.style.getPropertyValue("transition-duration")
+PASS element.style.getPropertyValue("-webkit-transition-duration")
+PASS element.style.getPropertyCSSValue("transition-duration")
+PASS element.style.getPropertyCSSValue("-webkit-transition-duration")
+PASS getComputedStyle(element).transitionDuration
+PASS getComputedStyle(element).webkitTransitionDuration
+PASS getComputedStyle(element).getPropertyValue("transition-duration")
+PASS getComputedStyle(element).getPropertyValue("-webkit-transition-duration")
+PASS getComputedStyle(element).getPropertyCSSValue("transition-duration")
+PASS getComputedStyle(element).getPropertyCSSValue("-webkit-transition-duration")
+PASS element.style.cssText
+
+Setting "transition-timing-function" to "linear"
+PASS element.style.transitionTimingFunction
+PASS element.style.webkitTransitionTimingFunction
+PASS element.style.getPropertyValue("transition-timing-function")
+PASS element.style.getPropertyValue("-webkit-transition-timing-function")
+PASS element.style.getPropertyCSSValue("transition-timing-function")
+PASS element.style.getPropertyCSSValue("-webkit-transition-timing-function")
+PASS getComputedStyle(element).transitionTimingFunction
+PASS getComputedStyle(element).webkitTransitionTimingFunction
+PASS getComputedStyle(element).getPropertyValue("transition-timing-function")
+PASS getComputedStyle(element).getPropertyValue("-webkit-transition-timing-function")
+PASS getComputedStyle(element).getPropertyCSSValue("transition-timing-function")
+PASS getComputedStyle(element).getPropertyCSSValue("-webkit-transition-timing-function")
+PASS element.style.cssText
+
+Setting "-webkit-transition-timing-function" to "linear"
+PASS element.style.transitionTimingFunction
+PASS element.style.webkitTransitionTimingFunction
+PASS element.style.getPropertyValue("transition-timing-function")
+PASS element.style.getPropertyValue("-webkit-transition-timing-function")
+PASS element.style.getPropertyCSSValue("transition-timing-function")
+PASS element.style.getPropertyCSSValue("-webkit-transition-timing-function")
+PASS getComputedStyle(element).transitionTimingFunction
+PASS getComputedStyle(element).webkitTransitionTimingFunction
+PASS getComputedStyle(element).getPropertyValue("transition-timing-function")
+PASS getComputedStyle(element).getPropertyValue("-webkit-transition-timing-function")
+PASS getComputedStyle(element).getPropertyCSSValue("transition-timing-function")
+PASS getComputedStyle(element).getPropertyCSSValue("-webkit-transition-timing-function")
+PASS element.style.cssText
+
+Setting "transition-delay" to "0.5s"
+PASS element.style.transitionDelay
+PASS element.style.webkitTransitionDelay
+PASS element.style.getPropertyValue("transition-delay")
+PASS element.style.getPropertyValue("-webkit-transition-delay")
+PASS element.style.getPropertyCSSValue("transition-delay")
+PASS element.style.getPropertyCSSValue("-webkit-transition-delay")
+PASS getComputedStyle(element).transitionDelay
+PASS getComputedStyle(element).webkitTransitionDelay
+PASS getComputedStyle(element).getPropertyValue("transition-delay")
+PASS getComputedStyle(element).getPropertyValue("-webkit-transition-delay")
+PASS getComputedStyle(element).getPropertyCSSValue("transition-delay")
+PASS getComputedStyle(element).getPropertyCSSValue("-webkit-transition-delay")
+PASS element.style.cssText
+
+Setting "-webkit-transition-delay" to "0.5s"
+PASS element.style.transitionDelay
+PASS element.style.webkitTransitionDelay
+PASS element.style.getPropertyValue("transition-delay")
+PASS element.style.getPropertyValue("-webkit-transition-delay")
+PASS element.style.getPropertyCSSValue("transition-delay")
+PASS element.style.getPropertyCSSValue("-webkit-transition-delay")
+PASS getComputedStyle(element).transitionDelay
+PASS getComputedStyle(element).webkitTransitionDelay
+PASS getComputedStyle(element).getPropertyValue("transition-delay")
+PASS getComputedStyle(element).getPropertyValue("-webkit-transition-delay")
+PASS getComputedStyle(element).getPropertyCSSValue("transition-delay")
+PASS getComputedStyle(element).getPropertyCSSValue("-webkit-transition-delay")
+PASS element.style.cssText
+
+Setting "animation-name" to "foo"
+PASS element.style.animationName
+PASS element.style.webkitAnimationName
+PASS element.style.getPropertyValue("animation-name")
+PASS element.style.getPropertyValue("-webkit-animation-name")
+PASS element.style.getPropertyCSSValue("animation-name")
+PASS element.style.getPropertyCSSValue("-webkit-animation-name")
+PASS getComputedStyle(element).animationName
+PASS getComputedStyle(element).webkitAnimationName
+PASS getComputedStyle(element).getPropertyValue("animation-name")
+PASS getComputedStyle(element).getPropertyValue("-webkit-animation-name")
+PASS getComputedStyle(element).getPropertyCSSValue("animation-name")
+PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-name")
+PASS element.style.cssText
+
+Setting "-webkit-animation-name" to "foo"
+PASS element.style.animationName
+PASS element.style.webkitAnimationName
+PASS element.style.getPropertyValue("animation-name")
+PASS element.style.getPropertyValue("-webkit-animation-name")
+PASS element.style.getPropertyCSSValue("animation-name")
+PASS element.style.getPropertyCSSValue("-webkit-animation-name")
+PASS getComputedStyle(element).animationName
+PASS getComputedStyle(element).webkitAnimationName
+PASS getComputedStyle(element).getPropertyValue("animation-name")
+PASS getComputedStyle(element).getPropertyValue("-webkit-animation-name")
+PASS getComputedStyle(element).getPropertyCSSValue("animation-name")
+PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-name")
+PASS element.style.cssText
+
+Setting "animation-duration" to "1s"
+PASS element.style.animationDuration
+PASS element.style.webkitAnimationDuration
+PASS element.style.getPropertyValue("animation-duration")
+PASS element.style.getPropertyValue("-webkit-animation-duration")
+PASS element.style.getPropertyCSSValue("animation-duration")
+PASS element.style.getPropertyCSSValue("-webkit-animation-duration")
+PASS getComputedStyle(element).animationDuration
+PASS getComputedStyle(element).webkitAnimationDuration
+PASS getComputedStyle(element).getPropertyValue("animation-duration")
+PASS getComputedStyle(element).getPropertyValue("-webkit-animation-duration")
+PASS getComputedStyle(element).getPropertyCSSValue("animation-duration")
+PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-duration")
+PASS element.style.cssText
+
+Setting "-webkit-animation-duration" to "1s"
+PASS element.style.animationDuration
+PASS element.style.webkitAnimationDuration
+PASS element.style.getPropertyValue("animation-duration")
+PASS element.style.getPropertyValue("-webkit-animation-duration")
+PASS element.style.getPropertyCSSValue("animation-duration")
+PASS element.style.getPropertyCSSValue("-webkit-animation-duration")
+PASS getComputedStyle(element).animationDuration
+PASS getComputedStyle(element).webkitAnimationDuration
+PASS getComputedStyle(element).getPropertyValue("animation-duration")
+PASS getComputedStyle(element).getPropertyValue("-webkit-animation-duration")
+PASS getComputedStyle(element).getPropertyCSSValue("animation-duration")
+PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-duration")
+PASS element.style.cssText
+
+Setting "animation-timing-function" to "linear"
+PASS element.style.animationTimingFunction
+PASS element.style.webkitAnimationTimingFunction
+PASS element.style.getPropertyValue("animation-timing-function")
+PASS element.style.getPropertyValue("-webkit-animation-timing-function")
+PASS element.style.getPropertyCSSValue("animation-timing-function")
+PASS element.style.getPropertyCSSValue("-webkit-animation-timing-function")
+PASS getComputedStyle(element).animationTimingFunction
+PASS getComputedStyle(element).webkitAnimationTimingFunction
+PASS getComputedStyle(element).getPropertyValue("animation-timing-function")
+PASS getComputedStyle(element).getPropertyValue("-webkit-animation-timing-function")
+PASS getComputedStyle(element).getPropertyCSSValue("animation-timing-function")
+PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-timing-function")
+PASS element.style.cssText
+
+Setting "-webkit-animation-timing-function" to "linear"
+PASS element.style.animationTimingFunction
+PASS element.style.webkitAnimationTimingFunction
+PASS element.style.getPropertyValue("animation-timing-function")
+PASS element.style.getPropertyValue("-webkit-animation-timing-function")
+PASS element.style.getPropertyCSSValue("animation-timing-function")
+PASS element.style.getPropertyCSSValue("-webkit-animation-timing-function")
+PASS getComputedStyle(element).animationTimingFunction
+PASS getComputedStyle(element).webkitAnimationTimingFunction
+PASS getComputedStyle(element).getPropertyValue("animation-timing-function")
+PASS getComputedStyle(element).getPropertyValue("-webkit-animation-timing-function")
+PASS getComputedStyle(element).getPropertyCSSValue("animation-timing-function")
+PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-timing-function")
+PASS element.style.cssText
+
+Setting "animation-iteration-count" to "5"
+PASS element.style.animationIterationCount
+PASS element.style.webkitAnimationIterationCount
+PASS element.style.getPropertyValue("animation-iteration-count")
+PASS element.style.getPropertyValue("-webkit-animation-iteration-count")
+PASS element.style.getPropertyCSSValue("animation-iteration-count")
+PASS element.style.getPropertyCSSValue("-webkit-animation-iteration-count")
+PASS getComputedStyle(element).animationIterationCount
+PASS getComputedStyle(element).webkitAnimationIterationCount
+PASS getComputedStyle(element).getPropertyValue("animation-iteration-count")
+PASS getComputedStyle(element).getPropertyValue("-webkit-animation-iteration-count")
+PASS getComputedStyle(element).getPropertyCSSValue("animation-iteration-count")
+PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-iteration-count")
+PASS element.style.cssText
+
+Setting "-webkit-animation-iteration-count" to "5"
+PASS element.style.animationIterationCount
+PASS element.style.webkitAnimationIterationCount
+PASS element.style.getPropertyValue("animation-iteration-count")
+PASS element.style.getPropertyValue("-webkit-animation-iteration-count")
+PASS element.style.getPropertyCSSValue("animation-iteration-count")
+PASS element.style.getPropertyCSSValue("-webkit-animation-iteration-count")
+PASS getComputedStyle(element).animationIterationCount
+PASS getComputedStyle(element).webkitAnimationIterationCount
+PASS getComputedStyle(element).getPropertyValue("animation-iteration-count")
+PASS getComputedStyle(element).getPropertyValue("-webkit-animation-iteration-count")
+PASS getComputedStyle(element).getPropertyCSSValue("animation-iteration-count")
+PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-iteration-count")
+PASS element.style.cssText
+
+Setting "animation-direction" to "reverse"
+PASS element.style.animationDirection
+PASS element.style.webkitAnimationDirection
+PASS element.style.getPropertyValue("animation-direction")
+PASS element.style.getPropertyValue("-webkit-animation-direction")
+PASS element.style.getPropertyCSSValue("animation-direction")
+PASS element.style.getPropertyCSSValue("-webkit-animation-direction")
+PASS getComputedStyle(element).animationDirection
+PASS getComputedStyle(element).webkitAnimationDirection
+PASS getComputedStyle(element).getPropertyValue("animation-direction")
+PASS getComputedStyle(element).getPropertyValue("-webkit-animation-direction")
+PASS getComputedStyle(element).getPropertyCSSValue("animation-direction")
+PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-direction")
+PASS element.style.cssText
+
+Setting "-webkit-animation-direction" to "reverse"
+PASS element.style.animationDirection
+PASS element.style.webkitAnimationDirection
+PASS element.style.getPropertyValue("animation-direction")
+PASS element.style.getPropertyValue("-webkit-animation-direction")
+PASS element.style.getPropertyCSSValue("animation-direction")
+PASS element.style.getPropertyCSSValue("-webkit-animation-direction")
+PASS getComputedStyle(element).animationDirection
+PASS getComputedStyle(element).webkitAnimationDirection
+PASS getComputedStyle(element).getPropertyValue("animation-direction")
+PASS getComputedStyle(element).getPropertyValue("-webkit-animation-direction")
+PASS getComputedStyle(element).getPropertyCSSValue("animation-direction")
+PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-direction")
+PASS element.style.cssText
+
+Setting "animation-play-state" to "paused"
+PASS element.style.animationPlayState
+PASS element.style.webkitAnimationPlayState
+PASS element.style.getPropertyValue("animation-play-state")
+PASS element.style.getPropertyValue("-webkit-animation-play-state")
+PASS element.style.getPropertyCSSValue("animation-play-state")
+PASS element.style.getPropertyCSSValue("-webkit-animation-play-state")
+PASS getComputedStyle(element).animationPlayState
+PASS getComputedStyle(element).webkitAnimationPlayState
+PASS getComputedStyle(element).getPropertyValue("animation-play-state")
+PASS getComputedStyle(element).getPropertyValue("-webkit-animation-play-state")
+PASS getComputedStyle(element).getPropertyCSSValue("animation-play-state")
+PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-play-state")
+PASS element.style.cssText
+
+Setting "-webkit-animation-play-state" to "paused"
+PASS element.style.animationPlayState
+PASS element.style.webkitAnimationPlayState
+PASS element.style.getPropertyValue("animation-play-state")
+PASS element.style.getPropertyValue("-webkit-animation-play-state")
+PASS element.style.getPropertyCSSValue("animation-play-state")
+PASS element.style.getPropertyCSSValue("-webkit-animation-play-state")
+PASS getComputedStyle(element).animationPlayState
+PASS getComputedStyle(element).webkitAnimationPlayState
+PASS getComputedStyle(element).getPropertyValue("animation-play-state")
+PASS getComputedStyle(element).getPropertyValue("-webkit-animation-play-state")
+PASS getComputedStyle(element).getPropertyCSSValue("animation-play-state")
+PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-play-state")
+PASS element.style.cssText
+
+Setting "animation-delay" to "0.5s"
+PASS element.style.animationDelay
+PASS element.style.webkitAnimationDelay
+PASS element.style.getPropertyValue("animation-delay")
+PASS element.style.getPropertyValue("-webkit-animation-delay")
+PASS element.style.getPropertyCSSValue("animation-delay")
+PASS element.style.getPropertyCSSValue("-webkit-animation-delay")
+PASS getComputedStyle(element).animationDelay
+PASS getComputedStyle(element).webkitAnimationDelay
+PASS getComputedStyle(element).getPropertyValue("animation-delay")
+PASS getComputedStyle(element).getPropertyValue("-webkit-animation-delay")
+PASS getComputedStyle(element).getPropertyCSSValue("animation-delay")
+PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-delay")
+PASS element.style.cssText
+
+Setting "-webkit-animation-delay" to "0.5s"
+PASS element.style.animationDelay
+PASS element.style.webkitAnimationDelay
+PASS element.style.getPropertyValue("animation-delay")
+PASS element.style.getPropertyValue("-webkit-animation-delay")
+PASS element.style.getPropertyCSSValue("animation-delay")
+PASS element.style.getPropertyCSSValue("-webkit-animation-delay")
+PASS getComputedStyle(element).animationDelay
+PASS getComputedStyle(element).webkitAnimationDelay
+PASS getComputedStyle(element).getPropertyValue("animation-delay")
+PASS getComputedStyle(element).getPropertyValue("-webkit-animation-delay")
+PASS getComputedStyle(element).getPropertyCSSValue("animation-delay")
+PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-delay")
+PASS element.style.cssText
+
+Setting "animation-fill-mode" to "forwards"
+PASS element.style.animationFillMode
+PASS element.style.webkitAnimationFillMode
+PASS element.style.getPropertyValue("animation-fill-mode")
+PASS element.style.getPropertyValue("-webkit-animation-fill-mode")
+PASS element.style.getPropertyCSSValue("animation-fill-mode")
+PASS element.style.getPropertyCSSValue("-webkit-animation-fill-mode")
+PASS getComputedStyle(element).animationFillMode
+PASS getComputedStyle(element).webkitAnimationFillMode
+PASS getComputedStyle(element).getPropertyValue("animation-fill-mode")
+PASS getComputedStyle(element).getPropertyValue("-webkit-animation-fill-mode")
+PASS getComputedStyle(element).getPropertyCSSValue("animation-fill-mode")
+PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-fill-mode")
+PASS element.style.cssText
+
+Setting "-webkit-animation-fill-mode" to "forwards"
+PASS element.style.animationFillMode
+PASS element.style.webkitAnimationFillMode
+PASS element.style.getPropertyValue("animation-fill-mode")
+PASS element.style.getPropertyValue("-webkit-animation-fill-mode")
+PASS element.style.getPropertyCSSValue("animation-fill-mode")
+PASS element.style.getPropertyCSSValue("-webkit-animation-fill-mode")
+PASS getComputedStyle(element).animationFillMode
+PASS getComputedStyle(element).webkitAnimationFillMode
+PASS getComputedStyle(element).getPropertyValue("animation-fill-mode")
+PASS getComputedStyle(element).getPropertyValue("-webkit-animation-fill-mode")
+PASS getComputedStyle(element).getPropertyCSSValue("animation-fill-mode")
+PASS getComputedStyle(element).getPropertyCSSValue("-webkit-animation-fill-mode")
+PASS element.style.cssText
+
+Setting "transform" to "matrix(1, 0, 0, 1, 1, 1)"
+PASS element.style.transform
+PASS element.style.webkitTransform
+PASS element.style.getPropertyValue("transform")
+PASS element.style.getPropertyValue("-webkit-transform")
+PASS element.style.getPropertyCSSValue("transform")
+PASS element.style.getPropertyCSSValue("-webkit-transform")
+PASS getComputedStyle(element).transform
+PASS getComputedStyle(element).webkitTransform
+PASS getComputedStyle(element).getPropertyValue("transform")
+PASS getComputedStyle(element).getPropertyValue("-webkit-transform")
+PASS getComputedStyle(element).getPropertyCSSValue("transform")
+PASS getComputedStyle(element).getPropertyCSSValue("-webkit-transform")
+PASS element.style.cssText
+
+Setting "-webkit-transform" to "matrix(1, 0, 0, 1, 1, 1)"
+PASS element.style.transform
+PASS element.style.webkitTransform
+PASS element.style.getPropertyValue("transform")
+PASS element.style.getPropertyValue("-webkit-transform")
+PASS element.style.getPropertyCSSValue("transform")
+PASS element.style.getPropertyCSSValue("-webkit-transform")
+PASS getComputedStyle(element).transform
+PASS getComputedStyle(element).webkitTransform
+PASS getComputedStyle(element).getPropertyValue("transform")
+PASS getComputedStyle(element).getPropertyValue("-webkit-transform")
+PASS getComputedStyle(element).getPropertyCSSValue("transform")
+PASS getComputedStyle(element).getPropertyCSSValue("-webkit-transform")
+PASS element.style.cssText
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

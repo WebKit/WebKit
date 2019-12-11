@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Test that all enabled tracks are included in the track menu</title>
+        <script src="media-controls.js"></script>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script src="trackmenu-test.js"></script>
+        <script>
+            function startTest()
+            {
+                showTrackMenu();
+                window.setTimeout(testInitialState, 50);
+            }
+
+            function testInitialState()
+            {
+                trackListItems = captionTrackMenuList();
+                consoleWrite("<br>*** Initially both tracks are disabled so neither should be selected.");
+                testExpected("video.textTracks[0].mode", "disabled");
+                testExpected("video.textTracks[1].mode", "disabled");
+                consoleWrite("");
+                listTrackMenu();
+
+                consoleWrite("<br>*** Enable both tracks.");
+                run("video.textTracks[0].mode = 'showing'");
+                run("video.textTracks[1].mode = 'showing'");
+
+                // Hide and show the track menu so it will be rebuilt.
+                window.setTimeout(function() { testMenuAfterEnablingTracks(); }, 50);
+                hideTrackMenu();
+                showTrackMenu();
+            }
+
+            function testMenuAfterEnablingTracks()
+            {
+                consoleWrite("<br>*** Both tracks are enabled so both should be selected.");
+                trackListItems = captionTrackMenuList();
+                testExpected("video.textTracks[0].mode", "showing");
+                testExpected("video.textTracks[1].mode", "showing");
+                consoleWrite("");
+                listTrackMenu();
+
+                consoleWrite("");
+                endTest();
+            }
+
+            function start()
+            {
+                findMediaElement();
+                video.src = findMediaFile('video', 'content/test');
+                waitForEvent('canplaythrough', startTest);
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <p>Test that all enabled tracks are included in the track menu.</p>
+        <video width="500" height="300" controls>
+            <track kind="captions" label="English Captions 1" src="track/captions-webvtt/captions-fast.vtt" srclang="en">
+            <track kind="captions" label="English Captions 2" src="track/captions-webvtt/captions-fast.vtt" srclang="en">
+        </video>
+    </body>
+</html>
+

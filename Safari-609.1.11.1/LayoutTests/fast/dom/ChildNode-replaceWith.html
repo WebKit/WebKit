@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("Tests ChildNode.replaceWith((Node or DOMString)...)");
+function test(t, createChild)
+{
+    type = t;
+    debug("<b>Test " + type + ".replaceWith((Node or DOMString)...).</b>");
+    
+    debug("Test with no arguments.");
+    parent = document.createElement('div');
+    child = createChild();
+    parent.appendChild(child);
+    child.replaceWith();
+    shouldBe("parent.childNodes.length", "0");
+    debug("");
+
+    debug("Test with a single element.");
+    parent = document.createElement('div');
+    child = createChild();
+    parent.appendChild(child);
+    d1 = document.createElement("div");
+    child.replaceWith(d1);
+    shouldBe("parent.childNodes.length", "1");
+    shouldBe("parent.childNodes[0]", "d1");
+    debug("");
+    
+    debug("Test with a single string.");
+    parent = document.createElement('div');
+    child = createChild();
+    parent.appendChild(child);
+    child.replaceWith('hello');
+    shouldBe("parent.childNodes.length", "1");
+    shouldBe("parent.childNodes[0].data", "'hello'");
+    debug("");
+    
+    debug("Test with a both strings and elements.");
+    parent = document.createElement('div');
+    child = createChild();
+    parent.appendChild(child);
+    d1 = document.createElement("div");
+    child.replaceWith('hello', d1);
+    shouldBe("parent.childNodes.length", "2");
+    shouldBeType("parent.childNodes[0]", "Text");
+    shouldBe("parent.childNodes[0].data", "'hello'");
+    shouldBeType("parent.childNodes[1]", "Element");
+    shouldBe("parent.childNodes[1]", "d1");
+    debug("");
+    
+    debug("Test conversion to string");
+    parent = document.createElement('div');
+    child = createChild();
+    parent.appendChild(child);
+    child.replaceWith(null, undefined, 7);
+    shouldBe("parent.childNodes.length", "3");
+    shouldBeType("parent.childNodes[0]", "Text");
+    shouldBe("parent.childNodes[0].data", "'null'");
+    shouldBeType("parent.childNodes[1]", "Text");
+    shouldBe("parent.childNodes[1].data", "'undefined'");
+    shouldBeType("parent.childNodes[2]", "Text");
+    shouldBe("parent.childNodes[2].data", "'7'");
+    debug("");
+    
+    debug("Test a child without a parent.");
+    child = createChild();
+    d1 = document.createElement("div");
+    shouldNotThrow("child.replaceWith(d1)");
+    debug("");
+    
+    debug("Test replacing with an existing sibling.");
+    parent = document.createElement('div');
+    child = createChild();
+    parent.appendChild(child);
+    d1 = document.createElement("div");
+    parent.appendChild(d1);
+    d2 = document.createElement("div");
+    parent.appendChild(d2);
+    child.replaceWith(d1);
+    shouldBe("parent.childNodes.length", "2");
+    shouldBeType("parent.childNodes[0]", "Element");
+    shouldBe("parent.childNodes[0]", "d1");
+    shouldBeType("parent.childNodes[1]", "Element");
+    shouldBe("parent.childNodes[1]", "d2");
+    debug("");
+
+    debug("Test replacing a child with itself.");
+    parent = document.createElement('div');
+    child = createChild();
+    parent.appendChild(child);
+    child.replaceWith(child);
+    shouldBe("parent.childNodes.length", "1");
+    shouldBeType("parent.childNodes[0]", type);
+    shouldBe("parent.childNodes[0]", "child");
+    debug("");
+
+    debug("Test replacing a child with itself and another node.");
+    parent = document.createElement('div');
+    child = createChild();
+    parent.appendChild(child);
+    d1 = document.createElement("div");
+    child.replaceWith(child, d1);
+    shouldBe("parent.childNodes.length", "2");
+    shouldBeType("parent.childNodes[0]", type);
+    shouldBe("parent.childNodes[0]", "child");
+    shouldBeType("parent.childNodes[1]", "Element");
+    shouldBe("parent.childNodes[1]", "d1");
+    debug("");
+
+    debug("Test replacing a child with itself and a sibling.");
+    parent = document.createElement('div');
+    child = createChild();
+    parent.appendChild(child);
+    d1 = document.createElement("div");
+    parent.appendChild(d1);
+    child.replaceWith(d1, child);
+    shouldBe("parent.childNodes.length", "2");
+    shouldBeType("parent.childNodes[0]", "Element");
+    shouldBe("parent.childNodes[0]", "d1");
+    shouldBeType("parent.childNodes[1]", type);
+    shouldBe("parent.childNodes[1]", "child");
+    debug("");
+
+    debug("");
+}
+
+test("Element", function() { return document.createElement("div"); });
+test("Text", function() { return document.createTextNode("text node text"); });
+test("Comment", function() { return document.createComment("comment text"); });
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

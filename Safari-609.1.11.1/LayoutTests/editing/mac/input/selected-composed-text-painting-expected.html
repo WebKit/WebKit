@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<body>
+<p>Test that selected unconfirmed text ignores ::selection rules.
+To test manually, type anything using Kotoeri Hiragana, and press down arrow. The text should not become invisible.</p>
+<input id="test" type="text">
+<script>
+
+var test = document.getElementById('test');
+test.focus();
+
+var markedText = textInputController.makeAttributedString("ひらがな");
+markedText.addAttribute("NSUnderline", 2);
+textInputController.setMarkedText(markedText, 0, 4);
+
+</script>
+</body>
+</html>

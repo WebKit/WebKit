@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests entering HTMLPlugInElement::isReplacementObscured() while the top document's style tree is dirty.<br>
+WebKit should update the layout of all documents and should not hit any debug assertions.</p>
+<style> input:focus { border: solid 5px black; } </style>
+<script>
+
+if (window.testRunner) {
+    testRunner.setPluginSupportedMode("none");
+    testRunner.dumpAsText();
+}
+
+document.body.getBoundingClientRect();
+
+const frame = document.createElement('iframe');
+document.body.appendChild(frame);
+const frameDocument = frame.contentDocument;
+frameDocument.body.innerHTML = '<object name="testPlugin" type="application/x-webkit-test-netscape" width="200" height="200"></object>';
+
+frameDocument.addEventListener('beforeload', () => {
+    console.log('2. beforeload for the object fires and dirties the style tree');
+    const input = document.createElement('input');
+    input.setAttribute('autofocus', '');
+    document.body.appendChild(input);
+}, true);
+
+console.log('1. Updating the layout with an embed object inside an iframe');
+const rect = frameDocument.querySelector('object').getBoundingClientRect();
+console.log('3. Updated layout. The test passed.');
+
+document.write('PASS');
+
+</script>
+</body>
+</html>

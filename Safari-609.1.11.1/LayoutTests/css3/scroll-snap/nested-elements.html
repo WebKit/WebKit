@@ -1,0 +1,148 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <title>Snap points - nested snap coordinates</title>
+    <style>
+        .scrollable {
+            overflow: scroll;
+            -webkit-overflow-scrolling: touch;
+            height: 300px;
+            margin: 0 10px;
+        }
+    
+        .center-snap-receiver {
+            scroll-snap-type: y mandatory;
+        }
+    
+        .snap-point {
+            margin-top: 100px;
+            width: 15px;
+            height: 15px;
+            background-color: blue;
+            scroll-snap-align: start;
+        }
+    
+        .snap-point::after {
+            font-size: 1em;
+            position: relative;
+            content: '+';
+        }
+    
+        .nested > .snap-point {
+            margin-left: 50px;
+            background-color: red;
+        }
+        .nested > .nested > .snap-point {
+            margin-left: 100px;
+            background-color: blue;
+            opacity: 0.1;
+        }
+    
+        .large-content {
+            height: 3000px;
+            width: 100%;
+        }
+    
+        .small-content {
+            height: 200px;
+            width: 100%;
+        }
+
+        .invalidContainer {
+            height: 300px;
+            margin: 0 10px;
+            opacity: 0.5;
+            overflow: hidden;
+        }
+    </style>
+        <script src="../../resources/js-test.js"></script>
+        <script>
+        function runTest()
+        {
+            var container = document.getElementById('container');
+            debug("Scroll-snap offsets for 'container': " + window.internals.scrollSnapOffsets(container));
+
+            var invalidContainer = document.getElementById('invalidContainer');
+            try {
+                testFailed("Scroll-snap offsets for 'invalidContainer': " + window.internals.scrollSnapOffsets(invalidContainer));
+            } catch(ex) {
+                testPassed("Scroll-snap offsets for 'invalidContainer': UNDEFINED");
+            }
+
+            finishJSTest();
+        }
+
+        function onLoad()
+        {
+            jsTestIsAsync = true;
+            if (window.testRunner)
+                setTimeout(runTest, 0);
+       }
+        </script>
+</head>
+<body onload="onLoad();">
+    <div id="container" class="center-snap-receiver scrollable">
+        <div class="snap-point"></div>
+        <div class="nested">
+            <div class="snap-point"></div>
+        </div>
+        <div class="nested">
+            <div class="nested">
+                <div class="snap-point"></div>
+            </div>
+        </div>
+        <div class="snap-point"></div>
+        <div class="snap-point"></div>
+        <div class="nested">
+            <div class="snap-point"></div>
+        </div>
+        <div class="nested">
+            <div class="nested">
+                <div class="snap-point"></div>
+            </div>
+        </div>
+        <div class="nested">
+            <div class="snap-point"></div>
+        </div>
+        <div class="snap-point"></div>
+        <div class="nested">
+            <div class="snap-point"></div>
+        </div>
+        <div class="snap-point"></div>
+        <div class="snap-point"></div>
+        <div class="nested">
+            <div class="snap-point"></div>
+        </div>
+         <div class="snap-point"></div>
+        <div class="nested">
+            <div class="snap-point"></div>
+        </div>
+        <div class="nested">
+            <div class="nested">
+                <div class="snap-point"></div>
+            </div>
+        </div>
+         <div class="snap-point"></div>
+        <div class="nested">
+            <div class="snap-point"></div>
+        </div>
+        <div class="nested">
+            <div class="nested">
+                <div class="snap-point"></div>
+            </div>
+        </div>
+        <div class="large-content"></div>
+    </div>
+    <div id="invalidContainer" class="center-snap-receiver invalidContainer">
+        <div class="snap-point"></div>
+        <div class="nested">
+            <div class="snap-point"></div>
+        </div>
+        <div class="nested">
+            <div class="nested">
+                <div class="snap-point"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

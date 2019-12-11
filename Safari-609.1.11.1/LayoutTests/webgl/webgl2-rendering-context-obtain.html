@@ -1,0 +1,8 @@
+<div id="result">PASS if a "webgl2" context can be obtained.</div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+if (!(document.createElement("canvas").getContext("webgl2") instanceof WebGL2RenderingContext))
+    document.getElementById("result").innerHTML = "FAIL";
+</script>

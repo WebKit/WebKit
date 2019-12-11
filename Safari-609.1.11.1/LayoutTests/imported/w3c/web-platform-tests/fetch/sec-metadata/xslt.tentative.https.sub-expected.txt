@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 1: Unsafe attempt to load URL https://www.localhost:9443/fetch/sec-metadata/resources/record-header.py?file=xslt-same-site from origin https://localhost:9443. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe attempt to load URL https://www.not-web-platform.test:9443/fetch/sec-metadata/resources/record-header.py?file=xslt-cross-site from origin https://localhost:9443. Domains, protocols and ports must match.
+
+
+FAIL Same-Origin xslt assert_not_equals: Empty Sec-Metadata header. got disallowed value ""
+FAIL Same-site xslt assert_equals: destination expected (string) "xslt" but got (undefined) undefined
+FAIL Cross-site xslt assert_equals: destination expected (string) "xslt" but got (undefined) undefined
+

@@ -1,0 +1,15 @@
+PASS initialSelectionRects.length is 1
+PASS initialSelectionRects[0].left is 0
+PASS initialSelectionRects[0].top is 0
+PASS initialSelectionRects[0].width is 309
+PASS initialSelectionRects[0].height is 114
+PASS finalSelectionRects.length is 1
+PASS finalSelectionRects[0].left is 0
+PASS finalSelectionRects[0].top is 0
+PASS finalSelectionRects[0].width is 309
+PASS finalSelectionRects[0].height is 114
+PASS successfullyParsed is true
+
+TEST COMPLETE
+WebKit
+

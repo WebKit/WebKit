@@ -1,0 +1,56 @@
+<html>
+
+<head>
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+
+<script>
+</script>
+</head>
+<style>
+div {
+    border: 1px dotted blue;
+    min-height: 20px;
+    width: 90%;
+}
+</style>
+
+<script>
+function foo() {
+    var selection = window.getSelection();
+    var bar = 1;
+    var divs = document.getElementsByTagName("div");
+    for (var i = 0; divs[i]; i++) {
+        selection.setPosition(divs[i], 0);
+        document.execCommand("InsertText", false, 'c');   
+    }
+}
+</script>
+<body onload="foo()">
+
+<p>This tests the ability to start editing in blocks that are visible, but have little or no content.  Each of the divs below should be able to accept a caret.</p>
+
+<p>This div contains some text.</p>
+<div contentEditable="true">
+hello
+</div>
+
+<p>This div is completely empty.</p>
+<div contentEditable="true"></div>
+
+<p>This div contains some collapsable whitespace (a '\n').</p>
+<div contentEditable="true">
+</div>
+
+<p>This div contains a self-closing p tag.</p>
+<div contentEditable="true"><p /></div>
+
+<p>This div contains a self-closing p tag and some collapsable whitespace (two '\n's before and after the self closing p.</p>
+<div contentEditable="true">
+<p />
+</div>
+
+</body>
+</html>

@@ -1,0 +1,83 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (132,47) size 668x387
+    RenderSVGContainer {g} at (0,0) size 0x0
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGPath {path} at (133,166) size 534x268 [fill={[type=SOLID] [color=#000000]}] [data="M 80 100 L 80 260 M 400 100 L 400 260"]
+    RenderSVGText {text} at (120,28) size 240x27 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 240x27
+        chunk 1 (middle anchor) text run 1 at (120.00,50.00) startOffset 0 endOffset 24 width 240.00: "Text 'inline-size' \x{2014} 006"
+    RenderSVGContainer {a} at (187,98) size 426x23
+      RenderSVGText {text} at (112,59) size 256x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 255x14
+          chunk 1 (middle anchor) text run 1 at (112.80,70.00) startOffset 0 endOffset 49 width 254.40: "https://svgwg.org/svg2-draft/text.html#InlineSize"
+    RenderSVGContainer {g} at (132,166) size 551x268
+      RenderSVGContainer {g} at (132,166) size 551x268
+        RenderSVGContainer {use} at (132,166) size 536x268
+          RenderSVGPath {path} at (132,166) size 536x268 [stroke={[type=SOLID] [color=#ADD8E6]}] [data="M 80 100 L 80 260 M 400 100 L 400 260"]
+        RenderSVGText {text} at (80,100) size 330x119 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 282x18
+            RenderSVGInlineText {#text} at (0,0) size 282x18
+              chunk 1 text run 1 at (80.00,114.80) startOffset 0 endOffset 39 width 282.00: "Lorem ipsum dolor sit amet, consectetur"
+          RenderSVGInlineText {#text} at (282,0) size 5x18
+            chunk 1 text run 1 at (362.00,114.80) startOffset 0 endOffset 1 width 4.20: " "
+          RenderSVGTSpan {tspan} at (0,0) size 289x36
+            RenderSVGInlineText {#text} at (0,20) size 77x18
+              chunk 1 text run 1 at (80.00,134.80) startOffset 0 endOffset 11 width 76.20: "adipiscing "
+            RenderSVGTSpan {tspan} at (0,0) size 40x36
+              RenderSVGInlineText {#text} at (76,5) size 40x35
+                chunk 1 text run 1 at (156.20,134.80) startOffset 0 endOffset 4 width 39.60: "elit"
+            RenderSVGInlineText {#text} at (115,20) size 173x18
+              chunk 1 text run 1 at (195.80,134.80) startOffset 0 endOffset 23 width 172.80: ", sed do eiusmod tempor"
+          RenderSVGInlineText {#text} at (288,20) size 5x18
+            chunk 1 text run 1 at (368.60,134.80) startOffset 0 endOffset 1 width 4.20: " "
+          RenderSVGTSpan {tspan} at (0,0) size 326x18
+            RenderSVGInlineText {#text} at (0,40) size 326x18
+              chunk 1 text run 1 at (80.00,154.80) startOffset 0 endOffset 47 width 325.20: "incididunt ut labore et dolore magna aliqua. Ut"
+          RenderSVGInlineText {#text} at (325,40) size 5x18
+            chunk 1 text run 1 at (405.20,154.80) startOffset 0 endOffset 1 width 4.20: " "
+          RenderSVGTSpan {tspan} at (0,0) size 283x36
+            RenderSVGInlineText {#text} at (0,60) size 168x18
+              chunk 1 text run 1 at (80.00,174.80) startOffset 0 endOffset 22 width 167.40: "enim ad minim veniam, "
+            RenderSVGTSpan {tspan} at (0,0) size 59x36
+              RenderSVGInlineText {#text} at (167,45) size 58x35
+                chunk 1 text run 1 at (247.40,174.80) startOffset 0 endOffset 4 width 57.60: "quis"
+            RenderSVGInlineText {#text} at (225,60) size 58x18
+              chunk 1 text run 1 at (305.00,174.80) startOffset 0 endOffset 8 width 57.60: " nostrud"
+          RenderSVGInlineText {#text} at (282,60) size 5x18
+            chunk 1 text run 1 at (362.60,174.80) startOffset 0 endOffset 1 width 4.20: " "
+          RenderSVGTSpan {tspan} at (0,0) size 319x18
+            RenderSVGInlineText {#text} at (0,80) size 197x18
+              chunk 1 text run 1 at (80.00,194.80) startOffset 0 endOffset 29 width 196.20: "exercitation ullamco laboris "
+            RenderSVGTSpan {tspan} at (0,0) size 12x10
+              RenderSVGInlineText {#text} at (196,87) size 12x9
+                chunk 1 text run 1 at (276.20,194.80) startOffset 0 endOffset 4 width 11.40: "nisi"
+            RenderSVGInlineText {#text} at (207,80) size 111x18
+              chunk 1 text run 1 at (287.60,194.80) startOffset 0 endOffset 17 width 111.00: " ut aliquip ex ea"
+          RenderSVGInlineText {#text} at (318,80) size 5x18
+            chunk 1 text run 1 at (398.60,194.80) startOffset 0 endOffset 1 width 4.20: " "
+          RenderSVGTSpan {tspan} at (0,0) size 152x18
+            RenderSVGInlineText {#text} at (0,100) size 152x18
+              chunk 1 text run 1 at (80.00,214.80) startOffset 0 endOffset 18 width 151.20: "commodo consequat."
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+    RenderSVGContainer {g} at (133,143) size 667x59
+      RenderSVGContainer {g} at (133,143) size 667x59
+        RenderSVGText {text} at (80,86) size 1670x36 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,14) size 363x18
+            chunk 1 text run 1 at (80.00,114.80) startOffset 0 endOffset 51 width 362.40: "Lorem ipsum dolor sit amet, consectetur adipiscing "
+          RenderSVGTSpan {tspan} at (0,0) size 40x35
+            RenderSVGInlineText {#text} at (362,0) size 40x35
+              chunk 1 text run 1 at (442.40,114.80) startOffset 0 endOffset 4 width 39.60: "elit"
+          RenderSVGInlineText {#text} at (402,14) size 674x18
+            chunk 1 text run 1 at (482.00,114.80) startOffset 0 endOffset 94 width 673.80: ", sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, "
+          RenderSVGTSpan {tspan} at (0,0) size 59x35
+            RenderSVGInlineText {#text} at (1075,0) size 58x35
+              chunk 1 text run 1 at (1155.80,114.80) startOffset 0 endOffset 4 width 57.60: "quis"
+          RenderSVGInlineText {#text} at (1133,14) size 258x18
+            chunk 1 text run 1 at (1213.40,114.80) startOffset 0 endOffset 38 width 258.00: " nostrud exercitation ullamco laboris "
+          RenderSVGTSpan {tspan} at (0,0) size 12x10
+            RenderSVGInlineText {#text} at (1391,21) size 12x9
+              chunk 1 text run 1 at (1471.40,114.80) startOffset 0 endOffset 4 width 11.40: "nisi"
+          RenderSVGInlineText {#text} at (1402,14) size 267x18
+            chunk 1 text run 1 at (1482.80,114.80) startOffset 0 endOffset 36 width 266.40: " ut aliquip ex ea commodo consequat."

@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 16: before super
+CONSOLE MESSAGE: line 19: after super
+Pause in constructor before super should not crash.
+
+
+== Running test suite: PauseInConstructorBeforeSuper
+-- Running test case: TriggerPauseInConstructorBeforeSuper
+PASS: Paused
+PASS: `this` should be undefined and not cause a crash.
+PASS: Resumed
+

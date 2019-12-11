@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<script>
+
+function checkLocalStorage(event) {
+    window.webkit.messageHandlers.testHandler.postMessage(window.localStorage.getItem('key'));
+}
+
+checkLocalStorage();
+window.addEventListener("storage", checkLocalStorage);
+
+</script>

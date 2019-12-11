@@ -1,0 +1,1726 @@
+Test the parsing of :matches(selectorList) for querySelector and style.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+3 valid selectors
+PASS document.querySelector(":matches(foobar, foobar, foobar)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar, foobar)"
+PASS document.querySelector(":matches(foobar, foobar, foobar    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar, foobar)"
+PASS document.querySelector(":matches(foobar, foobar, .class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar, .class)"
+PASS document.querySelector(":matches(foobar, foobar, .class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar, .class)"
+PASS document.querySelector(":matches(foobar, foobar, :last-child)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar, :last-child)"
+PASS document.querySelector(":matches(foobar, foobar, :last-child    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar, :last-child)"
+PASS document.querySelector(":matches(foobar, foobar, ::first-letter)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar, ::first-letter)"
+PASS document.querySelector(":matches(foobar, foobar, ::first-letter    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar, ::first-letter)"
+PASS document.querySelector(":matches(foobar, foobar, ::before)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar, ::before)"
+PASS document.querySelector(":matches(foobar, foobar, ::before    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar, ::before)"
+PASS document.querySelector(":matches(foobar, foobar, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar, foobar#id.class)"
+PASS document.querySelector(":matches(foobar, foobar, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar, foobar#id.class)"
+PASS document.querySelector(":matches(foobar, foobar, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar, #id:empty)"
+PASS document.querySelector(":matches(foobar, foobar, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar, #id:empty)"
+PASS document.querySelector(":matches(foobar, foobar, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar, a b)"
+PASS document.querySelector(":matches(foobar, foobar, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar, a b)"
+PASS document.querySelector(":matches(foobar, foobar, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar, a ~ b)"
+PASS document.querySelector(":matches(foobar, foobar, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar, a ~ b)"
+PASS document.querySelector(":matches(foobar, foobar, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar, foobar, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar, foobar, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar, foobar, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar, .class, .class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, .class, .class)"
+PASS document.querySelector(":matches(foobar, .class, .class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, .class, .class)"
+PASS document.querySelector(":matches(foobar, .class, :last-child)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, .class, :last-child)"
+PASS document.querySelector(":matches(foobar, .class, :last-child    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, .class, :last-child)"
+PASS document.querySelector(":matches(foobar, .class, ::first-letter)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, .class, ::first-letter)"
+PASS document.querySelector(":matches(foobar, .class, ::first-letter    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, .class, ::first-letter)"
+PASS document.querySelector(":matches(foobar, .class, ::before)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, .class, ::before)"
+PASS document.querySelector(":matches(foobar, .class, ::before    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, .class, ::before)"
+PASS document.querySelector(":matches(foobar, .class, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, .class, foobar#id.class)"
+PASS document.querySelector(":matches(foobar, .class, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, .class, foobar#id.class)"
+PASS document.querySelector(":matches(foobar, .class, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, .class, #id:empty)"
+PASS document.querySelector(":matches(foobar, .class, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, .class, #id:empty)"
+PASS document.querySelector(":matches(foobar, .class, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, .class, a b)"
+PASS document.querySelector(":matches(foobar, .class, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, .class, a b)"
+PASS document.querySelector(":matches(foobar, .class, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, .class, a ~ b)"
+PASS document.querySelector(":matches(foobar, .class, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, .class, a ~ b)"
+PASS document.querySelector(":matches(foobar, .class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, .class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar, .class, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, .class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar, .class, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, .class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar, .class, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, .class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar, :last-child, :last-child)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :last-child, :last-child)"
+PASS document.querySelector(":matches(foobar, :last-child, :last-child    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :last-child, :last-child)"
+PASS document.querySelector(":matches(foobar, :last-child, ::first-letter)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :last-child, ::first-letter)"
+PASS document.querySelector(":matches(foobar, :last-child, ::first-letter    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :last-child, ::first-letter)"
+PASS document.querySelector(":matches(foobar, :last-child, ::before)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :last-child, ::before)"
+PASS document.querySelector(":matches(foobar, :last-child, ::before    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :last-child, ::before)"
+PASS document.querySelector(":matches(foobar, :last-child, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :last-child, foobar#id.class)"
+PASS document.querySelector(":matches(foobar, :last-child, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :last-child, foobar#id.class)"
+PASS document.querySelector(":matches(foobar, :last-child, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :last-child, #id:empty)"
+PASS document.querySelector(":matches(foobar, :last-child, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :last-child, #id:empty)"
+PASS document.querySelector(":matches(foobar, :last-child, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :last-child, a b)"
+PASS document.querySelector(":matches(foobar, :last-child, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :last-child, a b)"
+PASS document.querySelector(":matches(foobar, :last-child, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :last-child, a ~ b)"
+PASS document.querySelector(":matches(foobar, :last-child, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :last-child, a ~ b)"
+PASS document.querySelector(":matches(foobar, :last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar, :last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar, :last-child, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :last-child, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar, :last-child, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :last-child, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar, ::first-letter, ::first-letter)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::first-letter, ::first-letter)"
+PASS document.querySelector(":matches(foobar, ::first-letter, ::first-letter    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::first-letter, ::first-letter)"
+PASS document.querySelector(":matches(foobar, ::first-letter, ::before)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::first-letter, ::before)"
+PASS document.querySelector(":matches(foobar, ::first-letter, ::before    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::first-letter, ::before)"
+PASS document.querySelector(":matches(foobar, ::first-letter, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::first-letter, foobar#id.class)"
+PASS document.querySelector(":matches(foobar, ::first-letter, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::first-letter, foobar#id.class)"
+PASS document.querySelector(":matches(foobar, ::first-letter, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::first-letter, #id:empty)"
+PASS document.querySelector(":matches(foobar, ::first-letter, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::first-letter, #id:empty)"
+PASS document.querySelector(":matches(foobar, ::first-letter, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::first-letter, a b)"
+PASS document.querySelector(":matches(foobar, ::first-letter, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::first-letter, a b)"
+PASS document.querySelector(":matches(foobar, ::first-letter, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::first-letter, a ~ b)"
+PASS document.querySelector(":matches(foobar, ::first-letter, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::first-letter, a ~ b)"
+PASS document.querySelector(":matches(foobar, ::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar, ::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar, ::first-letter, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::first-letter, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar, ::first-letter, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::first-letter, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar, ::before, ::before)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::before, ::before)"
+PASS document.querySelector(":matches(foobar, ::before, ::before    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::before, ::before)"
+PASS document.querySelector(":matches(foobar, ::before, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::before, foobar#id.class)"
+PASS document.querySelector(":matches(foobar, ::before, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::before, foobar#id.class)"
+PASS document.querySelector(":matches(foobar, ::before, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::before, #id:empty)"
+PASS document.querySelector(":matches(foobar, ::before, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::before, #id:empty)"
+PASS document.querySelector(":matches(foobar, ::before, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::before, a b)"
+PASS document.querySelector(":matches(foobar, ::before, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::before, a b)"
+PASS document.querySelector(":matches(foobar, ::before, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::before, a ~ b)"
+PASS document.querySelector(":matches(foobar, ::before, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::before, a ~ b)"
+PASS document.querySelector(":matches(foobar, ::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar, ::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar, ::before, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::before, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar, ::before, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, ::before, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar, foobar#id.class, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar#id.class, foobar#id.class)"
+PASS document.querySelector(":matches(foobar, foobar#id.class, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar#id.class, foobar#id.class)"
+PASS document.querySelector(":matches(foobar, foobar#id.class, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar#id.class, #id:empty)"
+PASS document.querySelector(":matches(foobar, foobar#id.class, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar#id.class, #id:empty)"
+PASS document.querySelector(":matches(foobar, foobar#id.class, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar#id.class, a b)"
+PASS document.querySelector(":matches(foobar, foobar#id.class, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar#id.class, a b)"
+PASS document.querySelector(":matches(foobar, foobar#id.class, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar#id.class, a ~ b)"
+PASS document.querySelector(":matches(foobar, foobar#id.class, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar#id.class, a ~ b)"
+PASS document.querySelector(":matches(foobar, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar, foobar#id.class, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar#id.class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar, foobar#id.class, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, foobar#id.class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar, #id:empty, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, #id:empty, #id:empty)"
+PASS document.querySelector(":matches(foobar, #id:empty, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, #id:empty, #id:empty)"
+PASS document.querySelector(":matches(foobar, #id:empty, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, #id:empty, a b)"
+PASS document.querySelector(":matches(foobar, #id:empty, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, #id:empty, a b)"
+PASS document.querySelector(":matches(foobar, #id:empty, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, #id:empty, a ~ b)"
+PASS document.querySelector(":matches(foobar, #id:empty, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, #id:empty, a ~ b)"
+PASS document.querySelector(":matches(foobar, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar, #id:empty, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, #id:empty, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar, #id:empty, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, #id:empty, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar, a b, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, a b, a b)"
+PASS document.querySelector(":matches(foobar, a b, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, a b, a b)"
+PASS document.querySelector(":matches(foobar, a b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, a b, a ~ b)"
+PASS document.querySelector(":matches(foobar, a b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, a b, a ~ b)"
+PASS document.querySelector(":matches(foobar, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar, a b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar, a b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar, a ~ b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, a ~ b, a ~ b)"
+PASS document.querySelector(":matches(foobar, a ~ b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, a ~ b, a ~ b)"
+PASS document.querySelector(":matches(foobar, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar, a ~ b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar, a ~ b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(.class, .class, .class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, .class, .class)"
+PASS document.querySelector(":matches(.class, .class, .class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, .class, .class)"
+PASS document.querySelector(":matches(.class, .class, :last-child)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, .class, :last-child)"
+PASS document.querySelector(":matches(.class, .class, :last-child    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, .class, :last-child)"
+PASS document.querySelector(":matches(.class, .class, ::first-letter)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, .class, ::first-letter)"
+PASS document.querySelector(":matches(.class, .class, ::first-letter    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, .class, ::first-letter)"
+PASS document.querySelector(":matches(.class, .class, ::before)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, .class, ::before)"
+PASS document.querySelector(":matches(.class, .class, ::before    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, .class, ::before)"
+PASS document.querySelector(":matches(.class, .class, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, .class, foobar#id.class)"
+PASS document.querySelector(":matches(.class, .class, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, .class, foobar#id.class)"
+PASS document.querySelector(":matches(.class, .class, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, .class, #id:empty)"
+PASS document.querySelector(":matches(.class, .class, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, .class, #id:empty)"
+PASS document.querySelector(":matches(.class, .class, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, .class, a b)"
+PASS document.querySelector(":matches(.class, .class, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, .class, a b)"
+PASS document.querySelector(":matches(.class, .class, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, .class, a ~ b)"
+PASS document.querySelector(":matches(.class, .class, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, .class, a ~ b)"
+PASS document.querySelector(":matches(.class, .class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, .class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(.class, .class, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, .class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(.class, .class, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, .class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(.class, .class, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, .class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(.class, :last-child, :last-child)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :last-child, :last-child)"
+PASS document.querySelector(":matches(.class, :last-child, :last-child    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :last-child, :last-child)"
+PASS document.querySelector(":matches(.class, :last-child, ::first-letter)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :last-child, ::first-letter)"
+PASS document.querySelector(":matches(.class, :last-child, ::first-letter    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :last-child, ::first-letter)"
+PASS document.querySelector(":matches(.class, :last-child, ::before)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :last-child, ::before)"
+PASS document.querySelector(":matches(.class, :last-child, ::before    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :last-child, ::before)"
+PASS document.querySelector(":matches(.class, :last-child, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :last-child, foobar#id.class)"
+PASS document.querySelector(":matches(.class, :last-child, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :last-child, foobar#id.class)"
+PASS document.querySelector(":matches(.class, :last-child, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :last-child, #id:empty)"
+PASS document.querySelector(":matches(.class, :last-child, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :last-child, #id:empty)"
+PASS document.querySelector(":matches(.class, :last-child, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :last-child, a b)"
+PASS document.querySelector(":matches(.class, :last-child, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :last-child, a b)"
+PASS document.querySelector(":matches(.class, :last-child, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :last-child, a ~ b)"
+PASS document.querySelector(":matches(.class, :last-child, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :last-child, a ~ b)"
+PASS document.querySelector(":matches(.class, :last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(.class, :last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(.class, :last-child, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :last-child, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(.class, :last-child, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :last-child, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(.class, ::first-letter, ::first-letter)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::first-letter, ::first-letter)"
+PASS document.querySelector(":matches(.class, ::first-letter, ::first-letter    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::first-letter, ::first-letter)"
+PASS document.querySelector(":matches(.class, ::first-letter, ::before)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::first-letter, ::before)"
+PASS document.querySelector(":matches(.class, ::first-letter, ::before    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::first-letter, ::before)"
+PASS document.querySelector(":matches(.class, ::first-letter, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::first-letter, foobar#id.class)"
+PASS document.querySelector(":matches(.class, ::first-letter, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::first-letter, foobar#id.class)"
+PASS document.querySelector(":matches(.class, ::first-letter, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::first-letter, #id:empty)"
+PASS document.querySelector(":matches(.class, ::first-letter, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::first-letter, #id:empty)"
+PASS document.querySelector(":matches(.class, ::first-letter, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::first-letter, a b)"
+PASS document.querySelector(":matches(.class, ::first-letter, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::first-letter, a b)"
+PASS document.querySelector(":matches(.class, ::first-letter, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::first-letter, a ~ b)"
+PASS document.querySelector(":matches(.class, ::first-letter, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::first-letter, a ~ b)"
+PASS document.querySelector(":matches(.class, ::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(.class, ::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(.class, ::first-letter, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::first-letter, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(.class, ::first-letter, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::first-letter, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(.class, ::before, ::before)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::before, ::before)"
+PASS document.querySelector(":matches(.class, ::before, ::before    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::before, ::before)"
+PASS document.querySelector(":matches(.class, ::before, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::before, foobar#id.class)"
+PASS document.querySelector(":matches(.class, ::before, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::before, foobar#id.class)"
+PASS document.querySelector(":matches(.class, ::before, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::before, #id:empty)"
+PASS document.querySelector(":matches(.class, ::before, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::before, #id:empty)"
+PASS document.querySelector(":matches(.class, ::before, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::before, a b)"
+PASS document.querySelector(":matches(.class, ::before, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::before, a b)"
+PASS document.querySelector(":matches(.class, ::before, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::before, a ~ b)"
+PASS document.querySelector(":matches(.class, ::before, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::before, a ~ b)"
+PASS document.querySelector(":matches(.class, ::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(.class, ::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(.class, ::before, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::before, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(.class, ::before, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, ::before, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(.class, foobar#id.class, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, foobar#id.class, foobar#id.class)"
+PASS document.querySelector(":matches(.class, foobar#id.class, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, foobar#id.class, foobar#id.class)"
+PASS document.querySelector(":matches(.class, foobar#id.class, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, foobar#id.class, #id:empty)"
+PASS document.querySelector(":matches(.class, foobar#id.class, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, foobar#id.class, #id:empty)"
+PASS document.querySelector(":matches(.class, foobar#id.class, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, foobar#id.class, a b)"
+PASS document.querySelector(":matches(.class, foobar#id.class, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, foobar#id.class, a b)"
+PASS document.querySelector(":matches(.class, foobar#id.class, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, foobar#id.class, a ~ b)"
+PASS document.querySelector(":matches(.class, foobar#id.class, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, foobar#id.class, a ~ b)"
+PASS document.querySelector(":matches(.class, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(.class, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(.class, foobar#id.class, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, foobar#id.class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(.class, foobar#id.class, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, foobar#id.class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(.class, #id:empty, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, #id:empty, #id:empty)"
+PASS document.querySelector(":matches(.class, #id:empty, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, #id:empty, #id:empty)"
+PASS document.querySelector(":matches(.class, #id:empty, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, #id:empty, a b)"
+PASS document.querySelector(":matches(.class, #id:empty, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, #id:empty, a b)"
+PASS document.querySelector(":matches(.class, #id:empty, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, #id:empty, a ~ b)"
+PASS document.querySelector(":matches(.class, #id:empty, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, #id:empty, a ~ b)"
+PASS document.querySelector(":matches(.class, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(.class, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(.class, #id:empty, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, #id:empty, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(.class, #id:empty, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, #id:empty, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(.class, a b, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, a b, a b)"
+PASS document.querySelector(":matches(.class, a b, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, a b, a b)"
+PASS document.querySelector(":matches(.class, a b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, a b, a ~ b)"
+PASS document.querySelector(":matches(.class, a b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, a b, a ~ b)"
+PASS document.querySelector(":matches(.class, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(.class, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(.class, a b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(.class, a b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(.class, a ~ b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, a ~ b, a ~ b)"
+PASS document.querySelector(":matches(.class, a ~ b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, a ~ b, a ~ b)"
+PASS document.querySelector(":matches(.class, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(.class, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(.class, a ~ b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(.class, a ~ b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(.class, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(.class, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(.class, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:last-child, :last-child, :last-child)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :last-child, :last-child)"
+PASS document.querySelector(":matches(:last-child, :last-child, :last-child    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :last-child, :last-child)"
+PASS document.querySelector(":matches(:last-child, :last-child, ::first-letter)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :last-child, ::first-letter)"
+PASS document.querySelector(":matches(:last-child, :last-child, ::first-letter    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :last-child, ::first-letter)"
+PASS document.querySelector(":matches(:last-child, :last-child, ::before)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :last-child, ::before)"
+PASS document.querySelector(":matches(:last-child, :last-child, ::before    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :last-child, ::before)"
+PASS document.querySelector(":matches(:last-child, :last-child, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :last-child, foobar#id.class)"
+PASS document.querySelector(":matches(:last-child, :last-child, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :last-child, foobar#id.class)"
+PASS document.querySelector(":matches(:last-child, :last-child, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :last-child, #id:empty)"
+PASS document.querySelector(":matches(:last-child, :last-child, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :last-child, #id:empty)"
+PASS document.querySelector(":matches(:last-child, :last-child, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :last-child, a b)"
+PASS document.querySelector(":matches(:last-child, :last-child, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :last-child, a b)"
+PASS document.querySelector(":matches(:last-child, :last-child, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :last-child, a ~ b)"
+PASS document.querySelector(":matches(:last-child, :last-child, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :last-child, a ~ b)"
+PASS document.querySelector(":matches(:last-child, :last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(:last-child, :last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(:last-child, :last-child, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :last-child, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:last-child, :last-child, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :last-child, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:last-child, ::first-letter, ::first-letter)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::first-letter, ::first-letter)"
+PASS document.querySelector(":matches(:last-child, ::first-letter, ::first-letter    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::first-letter, ::first-letter)"
+PASS document.querySelector(":matches(:last-child, ::first-letter, ::before)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::first-letter, ::before)"
+PASS document.querySelector(":matches(:last-child, ::first-letter, ::before    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::first-letter, ::before)"
+PASS document.querySelector(":matches(:last-child, ::first-letter, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::first-letter, foobar#id.class)"
+PASS document.querySelector(":matches(:last-child, ::first-letter, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::first-letter, foobar#id.class)"
+PASS document.querySelector(":matches(:last-child, ::first-letter, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::first-letter, #id:empty)"
+PASS document.querySelector(":matches(:last-child, ::first-letter, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::first-letter, #id:empty)"
+PASS document.querySelector(":matches(:last-child, ::first-letter, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::first-letter, a b)"
+PASS document.querySelector(":matches(:last-child, ::first-letter, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::first-letter, a b)"
+PASS document.querySelector(":matches(:last-child, ::first-letter, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::first-letter, a ~ b)"
+PASS document.querySelector(":matches(:last-child, ::first-letter, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::first-letter, a ~ b)"
+PASS document.querySelector(":matches(:last-child, ::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(:last-child, ::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(:last-child, ::first-letter, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::first-letter, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:last-child, ::first-letter, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::first-letter, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:last-child, ::before, ::before)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::before, ::before)"
+PASS document.querySelector(":matches(:last-child, ::before, ::before    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::before, ::before)"
+PASS document.querySelector(":matches(:last-child, ::before, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::before, foobar#id.class)"
+PASS document.querySelector(":matches(:last-child, ::before, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::before, foobar#id.class)"
+PASS document.querySelector(":matches(:last-child, ::before, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::before, #id:empty)"
+PASS document.querySelector(":matches(:last-child, ::before, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::before, #id:empty)"
+PASS document.querySelector(":matches(:last-child, ::before, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::before, a b)"
+PASS document.querySelector(":matches(:last-child, ::before, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::before, a b)"
+PASS document.querySelector(":matches(:last-child, ::before, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::before, a ~ b)"
+PASS document.querySelector(":matches(:last-child, ::before, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::before, a ~ b)"
+PASS document.querySelector(":matches(:last-child, ::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(:last-child, ::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(:last-child, ::before, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::before, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:last-child, ::before, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, ::before, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:last-child, foobar#id.class, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, foobar#id.class, foobar#id.class)"
+PASS document.querySelector(":matches(:last-child, foobar#id.class, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, foobar#id.class, foobar#id.class)"
+PASS document.querySelector(":matches(:last-child, foobar#id.class, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, foobar#id.class, #id:empty)"
+PASS document.querySelector(":matches(:last-child, foobar#id.class, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, foobar#id.class, #id:empty)"
+PASS document.querySelector(":matches(:last-child, foobar#id.class, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, foobar#id.class, a b)"
+PASS document.querySelector(":matches(:last-child, foobar#id.class, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, foobar#id.class, a b)"
+PASS document.querySelector(":matches(:last-child, foobar#id.class, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, foobar#id.class, a ~ b)"
+PASS document.querySelector(":matches(:last-child, foobar#id.class, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, foobar#id.class, a ~ b)"
+PASS document.querySelector(":matches(:last-child, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(:last-child, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(:last-child, foobar#id.class, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, foobar#id.class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:last-child, foobar#id.class, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, foobar#id.class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:last-child, #id:empty, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, #id:empty, #id:empty)"
+PASS document.querySelector(":matches(:last-child, #id:empty, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, #id:empty, #id:empty)"
+PASS document.querySelector(":matches(:last-child, #id:empty, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, #id:empty, a b)"
+PASS document.querySelector(":matches(:last-child, #id:empty, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, #id:empty, a b)"
+PASS document.querySelector(":matches(:last-child, #id:empty, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, #id:empty, a ~ b)"
+PASS document.querySelector(":matches(:last-child, #id:empty, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, #id:empty, a ~ b)"
+PASS document.querySelector(":matches(:last-child, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(:last-child, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(:last-child, #id:empty, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, #id:empty, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:last-child, #id:empty, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, #id:empty, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:last-child, a b, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, a b, a b)"
+PASS document.querySelector(":matches(:last-child, a b, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, a b, a b)"
+PASS document.querySelector(":matches(:last-child, a b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, a b, a ~ b)"
+PASS document.querySelector(":matches(:last-child, a b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, a b, a ~ b)"
+PASS document.querySelector(":matches(:last-child, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(:last-child, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(:last-child, a b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:last-child, a b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:last-child, a ~ b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, a ~ b, a ~ b)"
+PASS document.querySelector(":matches(:last-child, a ~ b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, a ~ b, a ~ b)"
+PASS document.querySelector(":matches(:last-child, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(:last-child, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(:last-child, a ~ b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:last-child, a ~ b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(:last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(:last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:last-child, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:last-child, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:last-child, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::first-letter, ::first-letter, ::first-letter)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::first-letter, ::first-letter)"
+PASS document.querySelector(":matches(::first-letter, ::first-letter, ::first-letter    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::first-letter, ::first-letter)"
+PASS document.querySelector(":matches(::first-letter, ::first-letter, ::before)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::first-letter, ::before)"
+PASS document.querySelector(":matches(::first-letter, ::first-letter, ::before    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::first-letter, ::before)"
+PASS document.querySelector(":matches(::first-letter, ::first-letter, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::first-letter, foobar#id.class)"
+PASS document.querySelector(":matches(::first-letter, ::first-letter, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::first-letter, foobar#id.class)"
+PASS document.querySelector(":matches(::first-letter, ::first-letter, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::first-letter, #id:empty)"
+PASS document.querySelector(":matches(::first-letter, ::first-letter, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::first-letter, #id:empty)"
+PASS document.querySelector(":matches(::first-letter, ::first-letter, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::first-letter, a b)"
+PASS document.querySelector(":matches(::first-letter, ::first-letter, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::first-letter, a b)"
+PASS document.querySelector(":matches(::first-letter, ::first-letter, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::first-letter, a ~ b)"
+PASS document.querySelector(":matches(::first-letter, ::first-letter, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::first-letter, a ~ b)"
+PASS document.querySelector(":matches(::first-letter, ::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::first-letter, ::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::first-letter, ::first-letter, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::first-letter, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::first-letter, ::first-letter, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::first-letter, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::first-letter, ::before, ::before)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::before, ::before)"
+PASS document.querySelector(":matches(::first-letter, ::before, ::before    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::before, ::before)"
+PASS document.querySelector(":matches(::first-letter, ::before, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::before, foobar#id.class)"
+PASS document.querySelector(":matches(::first-letter, ::before, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::before, foobar#id.class)"
+PASS document.querySelector(":matches(::first-letter, ::before, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::before, #id:empty)"
+PASS document.querySelector(":matches(::first-letter, ::before, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::before, #id:empty)"
+PASS document.querySelector(":matches(::first-letter, ::before, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::before, a b)"
+PASS document.querySelector(":matches(::first-letter, ::before, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::before, a b)"
+PASS document.querySelector(":matches(::first-letter, ::before, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::before, a ~ b)"
+PASS document.querySelector(":matches(::first-letter, ::before, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::before, a ~ b)"
+PASS document.querySelector(":matches(::first-letter, ::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::first-letter, ::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::first-letter, ::before, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::before, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::first-letter, ::before, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, ::before, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::first-letter, foobar#id.class, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, foobar#id.class, foobar#id.class)"
+PASS document.querySelector(":matches(::first-letter, foobar#id.class, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, foobar#id.class, foobar#id.class)"
+PASS document.querySelector(":matches(::first-letter, foobar#id.class, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, foobar#id.class, #id:empty)"
+PASS document.querySelector(":matches(::first-letter, foobar#id.class, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, foobar#id.class, #id:empty)"
+PASS document.querySelector(":matches(::first-letter, foobar#id.class, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, foobar#id.class, a b)"
+PASS document.querySelector(":matches(::first-letter, foobar#id.class, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, foobar#id.class, a b)"
+PASS document.querySelector(":matches(::first-letter, foobar#id.class, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, foobar#id.class, a ~ b)"
+PASS document.querySelector(":matches(::first-letter, foobar#id.class, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, foobar#id.class, a ~ b)"
+PASS document.querySelector(":matches(::first-letter, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::first-letter, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::first-letter, foobar#id.class, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, foobar#id.class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::first-letter, foobar#id.class, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, foobar#id.class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::first-letter, #id:empty, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, #id:empty, #id:empty)"
+PASS document.querySelector(":matches(::first-letter, #id:empty, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, #id:empty, #id:empty)"
+PASS document.querySelector(":matches(::first-letter, #id:empty, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, #id:empty, a b)"
+PASS document.querySelector(":matches(::first-letter, #id:empty, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, #id:empty, a b)"
+PASS document.querySelector(":matches(::first-letter, #id:empty, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, #id:empty, a ~ b)"
+PASS document.querySelector(":matches(::first-letter, #id:empty, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, #id:empty, a ~ b)"
+PASS document.querySelector(":matches(::first-letter, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::first-letter, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::first-letter, #id:empty, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, #id:empty, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::first-letter, #id:empty, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, #id:empty, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::first-letter, a b, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, a b, a b)"
+PASS document.querySelector(":matches(::first-letter, a b, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, a b, a b)"
+PASS document.querySelector(":matches(::first-letter, a b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, a b, a ~ b)"
+PASS document.querySelector(":matches(::first-letter, a b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, a b, a ~ b)"
+PASS document.querySelector(":matches(::first-letter, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::first-letter, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::first-letter, a b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::first-letter, a b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::first-letter, a ~ b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, a ~ b, a ~ b)"
+PASS document.querySelector(":matches(::first-letter, a ~ b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, a ~ b, a ~ b)"
+PASS document.querySelector(":matches(::first-letter, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::first-letter, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::first-letter, a ~ b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::first-letter, a ~ b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::first-letter, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::first-letter, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::first-letter, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::before, ::before, ::before)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, ::before, ::before)"
+PASS document.querySelector(":matches(::before, ::before, ::before    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, ::before, ::before)"
+PASS document.querySelector(":matches(::before, ::before, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, ::before, foobar#id.class)"
+PASS document.querySelector(":matches(::before, ::before, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, ::before, foobar#id.class)"
+PASS document.querySelector(":matches(::before, ::before, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, ::before, #id:empty)"
+PASS document.querySelector(":matches(::before, ::before, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, ::before, #id:empty)"
+PASS document.querySelector(":matches(::before, ::before, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, ::before, a b)"
+PASS document.querySelector(":matches(::before, ::before, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, ::before, a b)"
+PASS document.querySelector(":matches(::before, ::before, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, ::before, a ~ b)"
+PASS document.querySelector(":matches(::before, ::before, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, ::before, a ~ b)"
+PASS document.querySelector(":matches(::before, ::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, ::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::before, ::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, ::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::before, ::before, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, ::before, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::before, ::before, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, ::before, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::before, foobar#id.class, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, foobar#id.class, foobar#id.class)"
+PASS document.querySelector(":matches(::before, foobar#id.class, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, foobar#id.class, foobar#id.class)"
+PASS document.querySelector(":matches(::before, foobar#id.class, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, foobar#id.class, #id:empty)"
+PASS document.querySelector(":matches(::before, foobar#id.class, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, foobar#id.class, #id:empty)"
+PASS document.querySelector(":matches(::before, foobar#id.class, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, foobar#id.class, a b)"
+PASS document.querySelector(":matches(::before, foobar#id.class, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, foobar#id.class, a b)"
+PASS document.querySelector(":matches(::before, foobar#id.class, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, foobar#id.class, a ~ b)"
+PASS document.querySelector(":matches(::before, foobar#id.class, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, foobar#id.class, a ~ b)"
+PASS document.querySelector(":matches(::before, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::before, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::before, foobar#id.class, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, foobar#id.class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::before, foobar#id.class, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, foobar#id.class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::before, #id:empty, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, #id:empty, #id:empty)"
+PASS document.querySelector(":matches(::before, #id:empty, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, #id:empty, #id:empty)"
+PASS document.querySelector(":matches(::before, #id:empty, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, #id:empty, a b)"
+PASS document.querySelector(":matches(::before, #id:empty, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, #id:empty, a b)"
+PASS document.querySelector(":matches(::before, #id:empty, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, #id:empty, a ~ b)"
+PASS document.querySelector(":matches(::before, #id:empty, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, #id:empty, a ~ b)"
+PASS document.querySelector(":matches(::before, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::before, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::before, #id:empty, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, #id:empty, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::before, #id:empty, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, #id:empty, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::before, a b, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, a b, a b)"
+PASS document.querySelector(":matches(::before, a b, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, a b, a b)"
+PASS document.querySelector(":matches(::before, a b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, a b, a ~ b)"
+PASS document.querySelector(":matches(::before, a b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, a b, a ~ b)"
+PASS document.querySelector(":matches(::before, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::before, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::before, a b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::before, a b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::before, a ~ b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, a ~ b, a ~ b)"
+PASS document.querySelector(":matches(::before, a ~ b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, a ~ b, a ~ b)"
+PASS document.querySelector(":matches(::before, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::before, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::before, a ~ b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::before, a ~ b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::before, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(::before, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(::before, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar#id.class, foobar#id.class, foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, foobar#id.class, foobar#id.class)"
+PASS document.querySelector(":matches(foobar#id.class, foobar#id.class, foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, foobar#id.class, foobar#id.class)"
+PASS document.querySelector(":matches(foobar#id.class, foobar#id.class, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, foobar#id.class, #id:empty)"
+PASS document.querySelector(":matches(foobar#id.class, foobar#id.class, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, foobar#id.class, #id:empty)"
+PASS document.querySelector(":matches(foobar#id.class, foobar#id.class, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, foobar#id.class, a b)"
+PASS document.querySelector(":matches(foobar#id.class, foobar#id.class, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, foobar#id.class, a b)"
+PASS document.querySelector(":matches(foobar#id.class, foobar#id.class, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, foobar#id.class, a ~ b)"
+PASS document.querySelector(":matches(foobar#id.class, foobar#id.class, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, foobar#id.class, a ~ b)"
+PASS document.querySelector(":matches(foobar#id.class, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar#id.class, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar#id.class, foobar#id.class, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, foobar#id.class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar#id.class, foobar#id.class, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, foobar#id.class, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar#id.class, #id:empty, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, #id:empty, #id:empty)"
+PASS document.querySelector(":matches(foobar#id.class, #id:empty, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, #id:empty, #id:empty)"
+PASS document.querySelector(":matches(foobar#id.class, #id:empty, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, #id:empty, a b)"
+PASS document.querySelector(":matches(foobar#id.class, #id:empty, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, #id:empty, a b)"
+PASS document.querySelector(":matches(foobar#id.class, #id:empty, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, #id:empty, a ~ b)"
+PASS document.querySelector(":matches(foobar#id.class, #id:empty, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, #id:empty, a ~ b)"
+PASS document.querySelector(":matches(foobar#id.class, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar#id.class, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar#id.class, #id:empty, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, #id:empty, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar#id.class, #id:empty, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, #id:empty, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar#id.class, a b, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, a b, a b)"
+PASS document.querySelector(":matches(foobar#id.class, a b, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, a b, a b)"
+PASS document.querySelector(":matches(foobar#id.class, a b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, a b, a ~ b)"
+PASS document.querySelector(":matches(foobar#id.class, a b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, a b, a ~ b)"
+PASS document.querySelector(":matches(foobar#id.class, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar#id.class, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar#id.class, a b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar#id.class, a b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar#id.class, a ~ b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, a ~ b, a ~ b)"
+PASS document.querySelector(":matches(foobar#id.class, a ~ b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, a ~ b, a ~ b)"
+PASS document.querySelector(":matches(foobar#id.class, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar#id.class, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar#id.class, a ~ b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar#id.class, a ~ b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar#id.class, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(foobar#id.class, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foobar#id.class, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(#id:empty, #id:empty, #id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, #id:empty, #id:empty)"
+PASS document.querySelector(":matches(#id:empty, #id:empty, #id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, #id:empty, #id:empty)"
+PASS document.querySelector(":matches(#id:empty, #id:empty, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, #id:empty, a b)"
+PASS document.querySelector(":matches(#id:empty, #id:empty, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, #id:empty, a b)"
+PASS document.querySelector(":matches(#id:empty, #id:empty, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, #id:empty, a ~ b)"
+PASS document.querySelector(":matches(#id:empty, #id:empty, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, #id:empty, a ~ b)"
+PASS document.querySelector(":matches(#id:empty, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(#id:empty, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, #id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(#id:empty, #id:empty, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, #id:empty, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(#id:empty, #id:empty, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, #id:empty, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(#id:empty, a b, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, a b, a b)"
+PASS document.querySelector(":matches(#id:empty, a b, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, a b, a b)"
+PASS document.querySelector(":matches(#id:empty, a b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, a b, a ~ b)"
+PASS document.querySelector(":matches(#id:empty, a b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, a b, a ~ b)"
+PASS document.querySelector(":matches(#id:empty, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(#id:empty, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(#id:empty, a b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(#id:empty, a b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(#id:empty, a ~ b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, a ~ b, a ~ b)"
+PASS document.querySelector(":matches(#id:empty, a ~ b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, a ~ b, a ~ b)"
+PASS document.querySelector(":matches(#id:empty, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(#id:empty, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(#id:empty, a ~ b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(#id:empty, a ~ b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(#id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(#id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(#id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(#id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(#id:empty, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(#id:empty, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#id:empty, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(a b, a b, a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, a b, a b)"
+PASS document.querySelector(":matches(a b, a b, a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, a b, a b)"
+PASS document.querySelector(":matches(a b, a b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, a b, a ~ b)"
+PASS document.querySelector(":matches(a b, a b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, a b, a ~ b)"
+PASS document.querySelector(":matches(a b, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(a b, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(a b, a b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(a b, a b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, a b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(a b, a ~ b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, a ~ b, a ~ b)"
+PASS document.querySelector(":matches(a b, a ~ b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, a ~ b, a ~ b)"
+PASS document.querySelector(":matches(a b, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(a b, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(a b, a ~ b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(a b, a ~ b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(a b, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(a b, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a b, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(a ~ b, a ~ b, a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a ~ b, a ~ b, a ~ b)"
+PASS document.querySelector(":matches(a ~ b, a ~ b, a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a ~ b, a ~ b, a ~ b)"
+PASS document.querySelector(":matches(a ~ b, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a ~ b, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(a ~ b, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a ~ b, a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(a ~ b, a ~ b, :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a ~ b, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(a ~ b, a ~ b, :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a ~ b, a ~ b, :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a ~ b, :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(a ~ b, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a ~ b, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(a ~ b, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(a ~ b, :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:-webkit-any(.selector, #tama, #hanayo, #midoriko), :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS document.querySelector(":matches(:nth-child(2n of a, b, c), :nth-child(2n of a, b, c), :nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(:nth-child(2n of a, b, c), :nth-child(2n of a, b, c), :nth-child(2n of a, b, c))"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

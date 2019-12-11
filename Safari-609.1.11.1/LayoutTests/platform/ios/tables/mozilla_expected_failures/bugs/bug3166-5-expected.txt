@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
+      RenderTable {TABLE} at (0,0) size 784x158 [border: (3px solid #008000)]
+        RenderBlock {CAPTION} at (0,0) size 784x26 [border: (3px solid #FFA500)]
+          RenderText {#text} at (354,3) size 76x19
+            text run at (354,3) width 76: "caption text"
+        RenderTableSection {TBODY} at (3,29) size 778x126
+          RenderTableRow {TR} at (0,2) size 778x122
+            RenderTableCell {TD} at (2,2) size 774x122 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 752x119
+                text run at (1,1) width 752: "table text which should wrap table text which should wrap table text which should wrap table text which should wrap"
+                text run at (1,21) width 752: "table text which should wrap table text which should wrap table text which should wrap table text which should wrap"
+                text run at (1,41) width 752: "table text which should wrap table text which should wrap table text which should wrap table text which should wrap"
+                text run at (1,61) width 752: "table text which should wrap table text which should wrap table text which should wrap table text which should wrap"
+                text run at (1,81) width 752: "table text which should wrap table text which should wrap table text which should wrap table text which should wrap"
+                text run at (1,101) width 185: "table text which should wrap"

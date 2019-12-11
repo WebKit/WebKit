@@ -1,0 +1,7 @@
+2d.drawImage.svg
+
+drawImage() of an SVG image
+
+
+PASS drawImage() of an SVG image 
+

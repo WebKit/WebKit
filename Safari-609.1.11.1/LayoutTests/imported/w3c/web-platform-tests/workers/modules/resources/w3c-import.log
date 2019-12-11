@@ -1,0 +1,49 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/credentials.py
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/dynamic-import-and-then-static-import-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/dynamic-import-given-url-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/dynamic-import-remote-origin-credentials-checker-worker.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/dynamic-import-remote-origin-referrer-checker-worker.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/dynamic-import-remote-origin-script-worker.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/dynamic-import-same-origin-credentials-checker-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/dynamic-import-same-origin-referrer-checker-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/dynamic-import-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/empty-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/eval-dynamic-import-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/export-on-dynamic-import-script.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/export-on-dynamic-import-script.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/export-on-load-script.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/export-on-load-script.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/export-on-static-import-script.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/export-on-static-import-script.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/import-meta-url-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/import-scripts-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/import-test-cases.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/nested-dynamic-import-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/nested-static-import-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/new-worker-window.html
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/post-message-on-load-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/referrer-checker.py
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/static-import-and-then-dynamic-import-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/static-import-non-existent-script-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/static-import-remote-origin-credentials-checker-worker.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/static-import-remote-origin-referrer-checker-worker.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/static-import-remote-origin-script-worker.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/static-import-same-origin-credentials-checker-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/static-import-same-origin-referrer-checker-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/modules/resources/static-import-worker.js

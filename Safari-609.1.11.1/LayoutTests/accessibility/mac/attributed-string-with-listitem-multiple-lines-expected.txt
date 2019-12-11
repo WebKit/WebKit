@@ -1,0 +1,17 @@
+First line
+
+second line
+Long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long
+This tests that when list item has text of multiple lines we only speak the list marker for the first line.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+1. First line
+second line
+2. Long long long long long long long long long long long long long long long long long long long long long long 
+long long long long long long long long long long long long long
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

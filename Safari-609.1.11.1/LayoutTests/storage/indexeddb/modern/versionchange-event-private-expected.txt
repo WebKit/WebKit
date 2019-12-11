@@ -1,0 +1,21 @@
+This test: -Opens a connection to a database at version 1, creating the database -Commits the version change transaction for that database -Opens a second connection to that database, requesting version 1 -Opens a third connection to that database, requesting version 2 -Makes sure the first and second connections get the versionchange event -Closes the first and second connections -Makes sure the versionchange transaction for the second connection starts successfully
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+upgradeneeded (firstPhase): old version - 0 new version - 1
+Version change complete (firstPhase). Database version is now - 1
+First version change successful
+Open success (secondPhase)
+thirdPhase - Requested database connection with version 2
+Expected upgrade needed (thirdPhase)
+firstPhase connection had received oldVersion: 1, newVersion: 2
+secondPhase connection had received oldVersion: 1, newVersion: 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

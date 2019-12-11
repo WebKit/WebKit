@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+shouldBeEqualToString("typeof console", "object");
+shouldBeEqualToString("console.toString()", "[object Console]");
+shouldBe("console", "console");
+
+// <https://webkit.org/b/157782> console namespace breaks putting properties on console.__proto__
+shouldNotBe("Object.getPrototypeOf(console)", "Object.getPrototypeOf({})");
+
+var consoleDescriptor = Object.getOwnPropertyDescriptor(window, "console");
+shouldBeTrue('consoleDescriptor.configurable');
+shouldBeTrue('consoleDescriptor.writable');
+shouldBeFalse('consoleDescriptor.enumerable');
+
+// Console methods don't care what their this object is.
+console.log("log message");
+console.log.call(null, "log message");
+console.log.call(undefined, "log message");
+console.log.call(console, "log message");
+console.log.call(123, "log message");
+console.log.call("ignore", "log message");
+console.log.bind(console, "log message");
+console.log.bind(console)("log message");
+[1,2,3].forEach(console.log);
+
+// All properties should be enumerable.
+var property, descriptor;
+var enumerablePropertyCount = 0;
+for (property in console) {
+    enumerablePropertyCount++;
+    descriptor = Object.getOwnPropertyDescriptor(console, property);
+
+    debug("");
+    debug(`console.${property}`);
+    shouldBeEqualToString(`typeof console.${property}`, "function");
+    shouldBe(`console.${property}.length`, '0');
+    shouldBeTrue('descriptor.configurable');
+    shouldBeTrue('descriptor.writable');
+    shouldBeTrue('descriptor.enumerable');
+}
+
+debug("");
+shouldBe("Object.getOwnPropertyNames(console).length", "enumerablePropertyCount");
+
+const fuzzingArguments = [
+	`undefined`,
+	`null`,
+	`1`,
+	`"test"`,
+	`[]`,
+	`{}`,
+	`window`,
+	`console`,
+];
+
+debug("");
+debug("fuzzing of target for console.record");
+shouldNotThrow(`console.record()`);
+for (let argument of fuzzingArguments)
+	shouldNotThrow(`console.record(${argument})`);
+
+debug("");
+debug("fuzzing of options for console.record");
+for (let argument of fuzzingArguments)
+	shouldNotThrow(`console.record({}, ${argument})`);
+
+debug("");
+debug("fuzzing of target for console.recordEnd");
+shouldNotThrow(`console.recordEnd()`);
+for (let argument of fuzzingArguments)
+	shouldNotThrow(`console.recordEnd(${argument})`);
+
+debug("");
+debug("ensure multiple calls don't throw");
+shouldNotThrow(`console.recordEnd(window.canvas)`);
+shouldNotThrow(`console.recordEnd(window.canvas)`);
+shouldNotThrow(`console.recordEnd(window.canvas)`);
+shouldNotThrow(`console.record(window.canvas)`);
+shouldNotThrow(`console.record(window.canvas)`);
+shouldNotThrow(`console.record(window.canvas)`);
+
+debug("");
+debug("fuzzing of target for console.screenshot");
+shouldNotThrow(`console.screenshot()`);
+for (let argument of fuzzingArguments)
+    shouldNotThrow(`console.screenshot(${argument})`);
+
+debug("");
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+<canvas id="canvas"></canvas>
+</body>
+</html>

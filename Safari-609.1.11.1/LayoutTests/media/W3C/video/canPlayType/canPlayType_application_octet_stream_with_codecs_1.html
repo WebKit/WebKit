@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+ <head>
+  <title>video.canPlayType() - can never play application/octet-stream with a codecs parameter</title>
+  <script src="../../w3cwrapper.js"></script>
+ </head>
+ <body>
+  <p><a href="http://dev.w3.org/html5/spec/Overview.html#mime-types">spec reference</a></p>
+  <video id="v">
+  </video>
+  <div id="log"></div>
+  <script>
+test(function() {
+ assert_equals(
+  document.getElementById("v").canPlayType('application/octet-stream; codecs="vp8, vorbis"'),
+  "",
+  "videoElement.canPlayType('application/octet-stream; codecs=...') should always return the empty string");
+});
+  </script>
+ </body>
+</html>

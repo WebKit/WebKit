@@ -1,0 +1,6 @@
+* Tests that a client is removed from the list of service worker clients while it is in the page cache
+
+PASS: service worker has initially 2 clients
+PASS: page is about to enter page cache
+PASS: service worker has only 1 client after 1 entered page cache
+

@@ -1,0 +1,22 @@
+To manually test this, recompose existing text via IME and observe the resulting debug messages.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+beforeinput(inputType = 'deleteByComposition', data = 'null', cancelable = true)
+input(inputType = 'deleteByComposition', data = 'null', cancelable = false)
+beforeinput(inputType = 'insertCompositionText', data = 'abc', cancelable = false)
+input(inputType = 'insertCompositionText', data = 'abc', cancelable = false)
+beforeinput(inputType = 'insertCompositionText', data = 'def', cancelable = false)
+input(inputType = 'insertCompositionText', data = 'def', cancelable = false)
+beforeinput(inputType = 'insertCompositionText', data = 'ghi', cancelable = false)
+input(inputType = 'insertCompositionText', data = 'ghi', cancelable = false)
+beforeinput(inputType = 'deleteCompositionText', data = 'null', cancelable = false)
+input(inputType = 'deleteCompositionText', data = 'null', cancelable = false)
+beforeinput(inputType = 'insertFromComposition', data = 'ghi', cancelable = true)
+input(inputType = 'insertFromComposition', data = 'ghi', cancelable = false)
+compositionend(data = 'ghi')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

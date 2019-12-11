@@ -1,0 +1,199 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+if (is_android) {
+  import("//build/config/android/config.gni")
+  import("//build/config/android/rules.gni")
+}
+import("../webrtc.gni")
+
+rtc_static_library("system_wrappers") {
+  visibility = [ "*" ]
+  sources = [
+    "include/clock.h",
+    "include/cpu_info.h",
+    "include/ntp_time.h",
+    "include/rtp_to_ntp_estimator.h",
+    "include/sleep.h",
+    "source/clock.cc",
+    "source/cpu_features.cc",
+    "source/cpu_info.cc",
+    "source/rtp_to_ntp_estimator.cc",
+    "source/sleep.cc",
+  ]
+
+  defines = []
+  libs = []
+  deps = [
+    ":cpu_features_api",
+    "../api:array_view",
+    "../api/units:timestamp",
+    "../modules:module_api_public",
+    "../rtc_base:checks",
+    "../rtc_base/synchronization:rw_lock_wrapper",
+    "../rtc_base/system:arch",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+
+  if (is_android) {
+    if (build_with_mozilla) {
+      include_dirs = [
+        "/config/external/nspr",
+        "/nsprpub/lib/ds",
+        "/nsprpub/pr/include",
+      ]
+    } else {
+      deps += [ ":cpu_features_android" ]
+    }
+
+    libs += [ "log" ]
+  }
+
+  if (is_linux) {
+    if (!build_with_chromium) {
+      deps += [ ":cpu_features_linux" ]
+    }
+
+    libs += [ "rt" ]
+  }
+
+  if (is_win) {
+    libs += [ "winmm.lib" ]
+
+    # Windows needs ../rtc_base due to include of
+    # webrtc/rtc_base/win32.h in source/clock.cc.
+    deps += [ "../rtc_base" ]
+  }
+
+  deps += [
+    "../rtc_base:rtc_base_approved",
+    "../rtc_base:rtc_numerics",
+  ]
+}
+
+rtc_source_set("cpu_features_api") {
+  sources = [
+    "include/cpu_features_wrapper.h",
+  ]
+}
+
+rtc_source_set("field_trial") {
+  visibility = [ "*" ]
+  public = [
+    "include/field_trial.h",
+  ]
+  sources = [
+    "source/field_trial.cc",
+  ]
+  if (rtc_exclude_field_trial_default) {
+    defines = [ "WEBRTC_EXCLUDE_FIELD_TRIAL_DEFAULT" ]
+  }
+  deps = [
+    "../rtc_base:checks",
+    "../rtc_base:logging",
+    "//third_party/abseil-cpp/absl/strings",
+  ]
+  if (build_with_chromium) {
+    # When WebRTC is built as part of Chromium it should exclude the default
+    # implementation of field_trial unless it is building for NACL or
+    # Chromecast.
+    if (!is_nacl && !is_chromecast) {
+      deps += [ "../../webrtc_overrides:field_trial" ]
+    }
+  }
+}
+
+rtc_source_set("event_wrapper") {
+  visibility = [
+    "../modules/video_coding",
+    "../modules/video_coding:video_coding_unittests",
+  ]
+  sources = [
+    "include/event_wrapper.h",
+    "source/event.cc",
+  ]
+  deps = [
+    "../rtc_base:rtc_event",
+  ]
+}
+
+rtc_source_set("metrics") {
+  visibility = [ "*" ]
+  public = [
+    "include/metrics.h",
+  ]
+  sources = [
+    "source/metrics.cc",
+  ]
+  if (rtc_exclude_metrics_default) {
+    defines = [ "WEBRTC_EXCLUDE_METRICS_DEFAULT" ]
+  }
+  deps = [
+    "../rtc_base:checks",
+    "../rtc_base:rtc_base_approved",
+  ]
+  if (build_with_chromium) {
+    deps += [ "../../webrtc_overrides:metrics" ]
+  }
+}
+
+if (is_android && !build_with_mozilla) {
+  rtc_static_library("cpu_features_android") {
+    sources = [
+      "source/cpu_features_android.c",
+    ]
+
+    deps = [
+      "//third_party/android_sdk:cpu_features",
+    ]
+  }
+}
+
+if (is_linux) {
+  rtc_static_library("cpu_features_linux") {
+    sources = [
+      "source/cpu_features_linux.c",
+    ]
+    deps = [
+      ":cpu_features_api",
+      "../rtc_base/system:arch",
+    ]
+  }
+}
+
+if (rtc_include_tests) {
+  rtc_test("system_wrappers_unittests") {
+    testonly = true
+    sources = [
+      "source/clock_unittest.cc",
+      "source/field_trial_unittest.cc",
+      "source/metrics_default_unittest.cc",
+      "source/metrics_unittest.cc",
+      "source/ntp_time_unittest.cc",
+      "source/rtp_to_ntp_estimator_unittest.cc",
+    ]
+
+    deps = [
+      ":field_trial",
+      ":metrics",
+      ":system_wrappers",
+      "../rtc_base:checks",
+      "../rtc_base:rtc_base_approved",
+      "../test:test_main",
+      "../test:test_support",
+      "//testing/gtest",
+      "//third_party/abseil-cpp/absl/strings",
+    ]
+
+    if (is_android) {
+      deps += [ "//testing/android/native_test:native_test_support" ]
+
+      shard_timeout = 900
+    }
+  }
+}

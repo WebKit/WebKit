@@ -1,0 +1,10 @@
+[
+  {
+    "trigger": {
+      "url-filter": "/.well-known/ad-click-attribution/"
+    },
+    "action": {
+      "type": "block"
+    }
+  }
+]

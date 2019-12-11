@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test for Bug 33687: window.onload never fires if page contains a &lt;script src=foo>
+    whose load is cancelled by resource load delegate returning null from willSendRequest</title>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.setWillSendRequestReturnsNull(true);
+        }
+
+        window.onload = function() {
+            var result = document.getElementById("result");
+            if (!window.testRunner) {
+                result.innerText = "This test can only be run in DumpRenderTree.";
+                return;
+            }
+            result.innerText = "PASSED";
+        };
+    </script>
+    <script src="http://www.example.com/"></script>
+</head>
+<body>
+    <p>Test for <a href="http://webkit.org/b/33687">Bug 33687: window.onload never fires if page
+    contains a &lt;script src=foo> whose load is cancelled by resource load delegate returning null
+    from willSendRequest</a>. If the test passes, you should see the word "PASSED" below.</p>
+    <div id=result>FAILED</div>
+</body>
+</html>
+

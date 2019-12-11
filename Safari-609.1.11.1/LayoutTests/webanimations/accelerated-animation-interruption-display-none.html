@@ -1,0 +1,57 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:WebAnimationsCSSIntegrationEnabled=true ] -->
+<html>
+<head>
+<style>
+
+#target {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+    animation: foo linear 10s;
+}
+
+@keyframes foo {
+    from { transform: "translateX(100px)" };
+    to { transform: "none" };
+}
+
+</style>
+</head>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<div id="target"></div>
+
+<script>
+
+function waitNFrames(numberOfFrames, continuation)
+{
+    let elapsedFrames = 0;
+    (function rAFCallback() {
+        if (elapsedFrames++ >= numberOfFrames)
+            continuation();
+        else
+            requestAnimationFrame(rAFCallback);
+    })();
+}
+
+async_test(t => {
+    const initialNumberOfTimelineInvalidations = internals.numberOfAnimationTimelineInvalidations();
+    waitNFrames(3, () => {
+        assert_greater_than(internals.numberOfAnimationTimelineInvalidations(), initialNumberOfTimelineInvalidations, "There should be updates made to the timeline as an animation is set up.");
+
+        document.getElementById("target").style.display = "none";
+
+        waitNFrames(2, () => {
+            const numberOfTimelineInvalidationsAfterInterruption = internals.numberOfAnimationTimelineInvalidations();
+            requestAnimationFrame(() => {
+                assert_equals(internals.numberOfAnimationTimelineInvalidations(), numberOfTimelineInvalidationsAfterInterruption, "There should not be any updates made to the timeline after interrupting the single running animation.");
+                t.done();
+            });
+        });
+    });
+}, "Interrupting an animation by setting 'display: none' should stop invalidating the animation timeline.");
+
+</script>
+</body>
+</html>

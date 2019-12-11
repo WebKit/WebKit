@@ -1,0 +1,4 @@
+
+FAIL Range.cloneContents should invoke constructor in tree order assert_array_equals: property 0, expected "root-0" but got "root-0-0"
+FAIL Range.extractContents should invoke constructor in tree order assert_array_equals: property 0, expected "root-0" but got "root-0-0"
+

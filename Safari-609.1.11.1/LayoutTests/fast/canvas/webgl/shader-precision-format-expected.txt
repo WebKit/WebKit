@@ -1,0 +1,56 @@
+WebGL shader precision format test.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Tests that WebGLShaderPrecisionFormat class and getShaderPrecisionFormat work.
+
+
+Test that getShaderPrecisionFormat returns a WebGLShaderPrecisionFormat object.
+
+PASS gl.getShaderPrecisionFormat(gl.VERTEX_SHADER, gl.LOW_FLOAT) instanceof WebGLShaderPrecisionFormat is true
+PASS gl.getShaderPrecisionFormat(gl.VERTEX_SHADER, gl.MEDIUM_FLOAT) instanceof WebGLShaderPrecisionFormat is true
+PASS gl.getShaderPrecisionFormat(gl.VERTEX_SHADER, gl.HIGH_FLOAT) instanceof WebGLShaderPrecisionFormat is true
+PASS gl.getShaderPrecisionFormat(gl.VERTEX_SHADER, gl.LOW_INT) instanceof WebGLShaderPrecisionFormat is true
+PASS gl.getShaderPrecisionFormat(gl.VERTEX_SHADER, gl.MEDIUM_INT) instanceof WebGLShaderPrecisionFormat is true
+PASS gl.getShaderPrecisionFormat(gl.VERTEX_SHADER, gl.HIGH_INT) instanceof WebGLShaderPrecisionFormat is true
+PASS gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.LOW_FLOAT) instanceof WebGLShaderPrecisionFormat is true
+PASS gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.MEDIUM_FLOAT) instanceof WebGLShaderPrecisionFormat is true
+PASS gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT) instanceof WebGLShaderPrecisionFormat is true
+PASS gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.LOW_INT) instanceof WebGLShaderPrecisionFormat is true
+PASS gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.MEDIUM_INT) instanceof WebGLShaderPrecisionFormat is true
+PASS gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_INT) instanceof WebGLShaderPrecisionFormat is true
+
+Test that getShaderPrecisionFormat throws an error with invalid parameters.
+
+PASS gl.getShaderPrecisionFormat(gl.HIGH_INT, gl.VERTEX_SHADER) generated expected GL error: INVALID_ENUM.
+
+Test that WebGLShaderPrecisionFormat values are sensible.
+
+PASS shaderPrecisionFormat.rangeMin >= 1 is true
+PASS shaderPrecisionFormat.rangeMax >= 1 is true
+PASS shaderPrecisionFormat.precision >= 8 is true
+PASS shaderPrecisionFormat.rangeMin >= 14 is true
+PASS shaderPrecisionFormat.rangeMax >= 14 is true
+PASS shaderPrecisionFormat.precision >= 10 is true
+PASS shaderPrecisionFormat.rangeMin >= 62 is true
+PASS shaderPrecisionFormat.rangeMax >= 62 is true
+PASS shaderPrecisionFormat.precision >= 16 is true
+PASS shaderPrecisionFormat.rangeMin >= 8 is true
+PASS shaderPrecisionFormat.rangeMax >= 8 is true
+PASS shaderPrecisionFormat.precision == 0 is true
+PASS shaderPrecisionFormat.rangeMin >= 10 is true
+PASS shaderPrecisionFormat.rangeMax >= 10 is true
+PASS shaderPrecisionFormat.precision == 0 is true
+PASS shaderPrecisionFormat.rangeMin >= 16 is true
+PASS shaderPrecisionFormat.rangeMax >= 16 is true
+PASS shaderPrecisionFormat.precision == 0 is true
+
+Test that getShaderPrecisionFormat returns the same thing every call.
+
+PASS shaderPrecisionFormat.rangeMin == shaderPrecisionFormat2.rangeMin is true
+PASS shaderPrecisionFormat.rangeMax == shaderPrecisionFormat2.rangeMax is true
+PASS shaderPrecisionFormat.precision == shaderPrecisionFormat2.precision is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

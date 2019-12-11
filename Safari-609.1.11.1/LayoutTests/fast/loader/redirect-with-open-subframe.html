@@ -1,0 +1,15 @@
+<html>
+<body>
+<iframe id="ifrm" src="about:blank"></iframe>
+<script>
+    document.getElementById("ifrm").contentDocument.open();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+    var newDoc = "SUCCESS<script>if (window.testRunner) testRunner.notifyDone();</scr" + "ipt>";
+    setTimeout("window.location='data:text/html," + newDoc + "'", 500);
+</script>
+<div>FAILURE: should redirect.</div>
+</body>
+</html>

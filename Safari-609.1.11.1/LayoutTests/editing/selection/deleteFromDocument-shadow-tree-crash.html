@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+ function runTest() {
+    document.getElementById('input_0').disabled = true;
+    document.getElementById('input_0').setRangeText("abc");
+    window.getSelection().extend(document.getElementById('input_0'), 0);
+    window.getSelection().deleteFromDocument();
+
+     if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>This test passes if it does not crash.</p>
+<input id=input_0 type="search">
+</body>
+</html>

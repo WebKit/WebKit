@@ -1,0 +1,13 @@
+Tests that requestAnimationFrame callbacks are not invoked while modal dialogs are displayed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Setting callback
+Showing modal dialog
+Returned from modal dialog
+Callback fired
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

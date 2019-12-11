@@ -1,0 +1,154 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% PROCESS "global/js-products.html.tmpl" %]
+
+[% PROCESS global/header.html.tmpl
+  title = 'Administer Flag Types'
+  style_urls = ['skins/standard/admin.css']
+  onload="var f = document.flagtype_form; selectProduct(f.product, f.component, '__All__');"
+  javascript_urls=["js/productform.js"]
+  doc_section = "administering/flags.html"
+%]
+
+<p>
+  Flags are markers that identify whether [% terms.abug %] or attachment has been granted
+  or denied some status.  Flags appear in the UI as a name and a status symbol
+  ("+" for granted, "-" for denied, and "?" for statuses requested by users).
+</p>
+
+<p>
+  For example, you might define a "review" status for users to request review
+  for their patches.  When a patch writer requests review, the string "review?"
+  will appear in the attachment.  When a patch reviewer reviews the patch,
+  either the string "review+" or the string "review-" will appear in the patch,
+  depending on whether the patch passed or failed review.
+</p>
+
+<p>
+  You can restrict the list of flag types to those available for a given product
+  and component. If a product is selected with no component, only flag types
+  which are available to at least one component of the product are shown.
+</p>
+
+<form id="flagtype_form" name="flagtype_form" action="editflagtypes.cgi" method="get">
+  <div class="inline">
+    <label for="product">Product:</label>
+    [% INCLUDE "global/product-select.html.tmpl"
+      id       => "product"
+      name     => "product"
+      add      => "__Any__"
+      onchange => "selectProduct(this, this.form.component, '__Any__');"
+      products => products
+    %]
+  </div>
+
+  <div class="inline">
+    <label for="component">Component:</label>
+    <select name="component">
+      <option value="">__Any__</option>
+      [% FOREACH comp = components %]
+        <option value="[% comp FILTER html %]"
+          [%+ 'selected="selected"' IF selected_component == comp %]>
+          [%- comp FILTER html %]</option>
+      [% END %]
+    </select>
+  </div>
+
+  <div class="inline">
+    <input type="checkbox" id="show_flag_counts" name="show_flag_counts" value="1"
+      [%+ 'checked="checked"' IF show_flag_counts %]>
+    <label for="show_flag_counts">Show flag counts</label>
+  </div>
+
+  <input type="submit" id="submit" value="Filter">
+</form>
+
+<h3>Flag Types for [% terms.Bugs %]</h3>
+
+[% PROCESS display_flag_types types=bug_types types_id='bugs' %]
+
+<p>
+  <a href="editflagtypes.cgi?action=enter&amp;target_type=bug">Create Flag Type for [% terms.Bugs %]</a>
+</p>
+
+<h3>Flag Types for Attachments</h3>
+
+[% PROCESS display_flag_types types=attachment_types types_id='attachments' %]
+
+<p>
+  <a href="editflagtypes.cgi?action=enter&amp;target_type=attachment">Create Flag Type For Attachments</a>
+</p>
+
+[% PROCESS global/footer.html.tmpl %]
+
+
+[% BLOCK display_flag_types %]
+  <table id="flag_types_[% types_id FILTER html %]">
+
+    <tr class="column_header">
+      <th>Edit name ...</th>
+      <th>Description</th>
+      <th>Sortkey</th>
+      <th>Properties</th>
+      <th>Grant group</th>
+      <th>Request group</th>
+      [% IF show_flag_counts %]
+        <th>Flags</th>
+        [%# Note to translators: translate the strings in quotes only. %]
+        [% state_desc = {granted = 'granted' denied = 'denied' pending = 'pending'} %]
+      [% END %]
+      <th>Actions</th>
+    </tr>
+
+    [% FOREACH type = types %]
+
+      <tr class="[% IF type.is_active %]active[% ELSE %]inactive[% END %]">
+        <td class="nowrap">
+          <a href="editflagtypes.cgi?action=edit&amp;id=[% type.id %]">[% type.name FILTER html %]</a>
+        </td>
+        <td>[% type.description FILTER html %]</td>
+        <td class="right">[% type.sortkey FILTER html %]</td>
+        <td>
+          [% IF type.is_requestable %]
+            <span class="requestable">requestable</span>
+          [% END %]
+          [% IF type.is_requestable && type.is_requesteeble %]
+            <span class="requesteeble">(specifically)</span>
+          [% END %]
+          [% IF type.is_multiplicable %]
+            <span class="multiplicable">multiplicable</span>
+          [% END %]
+        </td>
+        <td>[% IF type.grant_group %][% type.grant_group.name FILTER html %][% END %]</td>
+        <td>[% IF type.request_group %][% type.request_group.name FILTER html %][% END %]</td>
+        [% IF show_flag_counts %]
+          <td>
+            [% FOREACH state = ['granted', 'pending', 'denied'] %]
+              [% bug_list = bug_lists.${type.id}.$state || [] %]
+              [% IF bug_list.size %]
+                <a href="buglist.cgi?bug_id=[% bug_list.unique.nsort.join(",") FILTER html %]">
+                  [% bug_list.size FILTER html %] [%+ state_desc.$state FILTER html %]
+                </a>
+                <br>
+              [% ELSE %]
+                0 [% state_desc.$state FILTER html %]<br>
+              [% END %]
+            [% END %]
+          </td>
+        [% END %]
+        <td>
+          <a href="editflagtypes.cgi?action=copy&amp;id=[% type.id %]">Copy</a>
+          | <a href="editflagtypes.cgi?action=confirmdelete&amp;id=[% type.id %]">Delete</a>
+        </td>
+      </tr>
+
+    [% END %]
+
+  </table>
+[% END %]

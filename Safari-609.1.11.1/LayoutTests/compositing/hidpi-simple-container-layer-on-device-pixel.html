@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that simple compositing container layer takes fractional device pixel into account when painting.
+Simple and non-simple codepath should paint on the same positions.</title>
+<head>
+<style>
+  div {
+    background: green;
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    -webkit-transform: translateZ(0);
+  }
+</style>
+</head>
+<body>
+<p id="container"></p>
+<script>
+  var container = document.getElementById("container");
+  adjustment = 0.1;
+  for (i = 0; i < 10; ++i) {
+    adjustment+=0.1;
+    for (j = 0; j < 10; ++j) {
+      var e = document.createElement("div");
+      e.style.top = (11 * i + j * adjustment) + "px";
+      e.style.left = (11 * j + i * adjustment) + "px";
+      container.appendChild(e);
+    }
+  }
+</script>
+</body>
+</html>

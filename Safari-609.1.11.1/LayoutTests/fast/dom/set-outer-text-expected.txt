@@ -1,0 +1,8 @@
+Replaced node using outerText.
+removing node using outerText.
+Testing adding br
+using outerText.
+PASS: replace
+PASS: remove
+PASS: empty text node
+PASS: line break

@@ -1,0 +1,18 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<code><p id="paragraph" style="font-size: 200px;">START DRAGGING</p></code>
+<script>
+function select(node) {
+    let range = document.createRange(node);
+    range.setStartBefore(node);
+    range.setEndAfter(node);
+    getSelection().removeAllRanges();
+    getSelection().addRange(range);
+}
+
+select(paragraph.childNodes[0]);
+document.body.addEventListener("dragstart", () => {
+    getSelection().removeAllRanges();
+    paragraph.textContent = "PASS";
+    paragraph.style.color = "green";
+});
+</script>

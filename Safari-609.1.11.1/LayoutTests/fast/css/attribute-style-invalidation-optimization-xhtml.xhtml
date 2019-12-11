@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+* {
+    color: black;
+}
+[CamelCase] {
+    color: pink;
+}
+</style>
+</head>
+<body>
+    <div>
+        <!-- With renderer -->
+        <target></target>
+    </div>
+    <div style="display:none;">
+        <!-- Without renderer -->
+        <target></target>
+    </div>
+</body>
+<script><![CDATA[
+// It is okay to increase the amount of invalidation in this test for correctness if necessary.
+description('Test that we only invalidate the style when changing an attribute referenced by a stylesheet. This test requires the internals object to work properly.');
+
+function shouldNeedStyleRecalc(expected) {
+    var testFunction = expected ? shouldBeTrue : shouldBeFalse;
+    testFunction("window.internals.nodeNeedsStyleRecalc(document.querySelectorAll(\"target\")[0])");
+    testFunction("window.internals.nodeNeedsStyleRecalc(document.querySelectorAll(\"target\")[1])");
+}
+
+function setAttribute(name, value) {
+    var allTargets = document.querySelectorAll("target");
+    allTargets[0].setAttribute(name, value);
+    allTargets[1].setAttribute(name, value);
+}
+
+function removeAttribute(name) {
+    var allTargets = document.querySelectorAll("target");
+    allTargets[0].removeAttribute(name);
+    allTargets[1].removeAttribute(name);
+}
+
+function getStyle() {
+    var allTargets = document.querySelectorAll("target");
+    getComputedStyle(allTargets[0]).color;
+    getComputedStyle(allTargets[1]).color;
+}
+
+// Force a layout to ensure we don't have dirty styles.
+var offsetTop = document.documentElement.offsetTop;
+shouldNeedStyleRecalc(false);
+
+debug("Changing the attribute 'foo', it is not referenced by any stylesheet and should not cause any invalidation.");
+setAttribute("foo", "bar");
+shouldNeedStyleRecalc(false);
+
+debug("Changing the attribute 'CamelCase'. It is used by the stylesheet and should cause the target to be invalidated.");
+setAttribute("CamelCase", "");
+shouldNeedStyleRecalc(true);
+
+debug("Getting the computed style should for the style to be resolved.");
+getStyle();
+shouldNeedStyleRecalc(false);
+
+debug("Removing the attribute should also invalidate the style.");
+removeAttribute("CamelCase");
+shouldNeedStyleRecalc(true);
+
+debug("Getting the computed style should for the style to be resolved.");
+getStyle();
+shouldNeedStyleRecalc(false)
+
+debug("Changing the attribute 'camelcase'. Since XML attributes are case sensitive, this does not invalidate the style since it is a different attribute.");
+setAttribute("camelcase", "");
+shouldNeedStyleRecalc(false);
+
+debug("Changing the attribute 'CAMELCASE'. Same deal, this is a different attribute.");
+setAttribute("CAMELCASE", "");
+shouldNeedStyleRecalc(false);
+]]></script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+    var mediaElement;
+    function createMediaElement(parameters) {
+        if (parameters.type === 'video')
+            mediaElement = document.createElement('video');
+        else if (parameters.type === 'audio')
+            mediaElement = document.createElement('audio');
+        else
+            throw 'Necessary parameter not provided';
+
+        if (parameters.autoplay)
+            mediaElement.autoplay = true;
+
+        if (parameters.muted)
+            mediaElement.muted = true;
+
+        if (parameters.controls)
+            mediaElement.controls = true;
+
+        if (parameters.hasAudio)
+            mediaElement.src = 'video-with-audio.mp4';
+        else
+            mediaElement.src = 'video-without-audio.mp4';
+
+        document.body.appendChild(mediaElement);
+    }
+
+    function playing() {
+        window.webkit.messageHandlers.testHandler.postMessage('playing');
+    }
+
+    function notPlaying() {
+        window.webkit.messageHandlers.testHandler.postMessage('not playing');
+    }
+
+    function play() {
+        mediaElement.play().then(playing, notPlaying);
+    }
+
+    function unmute() {
+        mediaElement.muted = false;
+    }
+    </script>
+</head>
+<body>
+</body>
+</html>

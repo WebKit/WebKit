@@ -1,0 +1,50 @@
+if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
+    set(GSTREAMER_COMPONENTS app pbutils)
+    SET_AND_EXPOSE_TO_BUILD(USE_GSTREAMER TRUE)
+    if (ENABLE_VIDEO)
+        list(APPEND GSTREAMER_COMPONENTS video mpegts tag gl)
+    endif ()
+
+    if (ENABLE_WEB_AUDIO)
+        list(APPEND GSTREAMER_COMPONENTS audio fft)
+        SET_AND_EXPOSE_TO_BUILD(USE_WEBAUDIO_GSTREAMER TRUE)
+    endif ()
+
+    find_package(GStreamer 1.10.0 REQUIRED COMPONENTS ${GSTREAMER_COMPONENTS})
+
+    if (ENABLE_WEB_AUDIO)
+        if (NOT PC_GSTREAMER_AUDIO_FOUND OR NOT PC_GSTREAMER_FFT_FOUND)
+            message(FATAL_ERROR "WebAudio requires the audio and fft GStreamer libraries. Please check your gst-plugins-base installation.")
+        else ()
+            SET_AND_EXPOSE_TO_BUILD(USE_WEBAUDIO_GSTREAMER TRUE)
+        endif ()
+    endif ()
+
+    if (ENABLE_VIDEO)
+        if (NOT PC_GSTREAMER_APP_FOUND OR NOT PC_GSTREAMER_PBUTILS_FOUND OR NOT PC_GSTREAMER_TAG_FOUND OR NOT PC_GSTREAMER_VIDEO_FOUND)
+            message(FATAL_ERROR "Video playback requires the following GStreamer libraries: app, pbutils, tag, video. Please check your gst-plugins-base installation.")
+        endif ()
+    endif ()
+
+    if (USE_GSTREAMER_MPEGTS AND NOT PC_GSTREAMER_MPEGTS_FOUND)
+        message(FATAL_ERROR "GStreamer MPEG-TS is needed for USE_GSTREAMER_MPEGTS.")
+    endif ()
+
+    if (USE_GSTREAMER_GL AND NOT PC_GSTREAMER_GL_FOUND)
+        message(FATAL_ERROR "GStreamerGL is needed for USE_GSTREAMER_GL.")
+    endif ()
+
+    SET_AND_EXPOSE_TO_BUILD(USE_GSTREAMER TRUE)
+endif ()
+
+if (ENABLE_MEDIA_SOURCE AND PC_GSTREAMER_VERSION VERSION_LESS "1.14")
+    message(FATAL_ERROR "GStreamer 1.14 is needed for ENABLE_MEDIA_SOURCE.")
+endif ()
+
+if (ENABLE_MEDIA_STREAM OR ENABLE_WEB_RTC)
+    SET_AND_EXPOSE_TO_BUILD(USE_LIBWEBRTC TRUE)
+    SET_AND_EXPOSE_TO_BUILD(WEBRTC_WEBKIT_BUILD TRUE)
+else ()
+    SET_AND_EXPOSE_TO_BUILD(USE_LIBWEBRTC FALSE)
+    SET_AND_EXPOSE_TO_BUILD(WEBRTC_WEBKIT_BUILD FALSE)
+endif ()

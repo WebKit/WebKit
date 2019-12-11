@@ -1,0 +1,6 @@
+base-image2.png has MIME type image/png
+This test requires DumpRenderTree to see the log of what resources are loaded.
+
+<base href="bogus/foo.html">
+<img src="base-image2.png">
+

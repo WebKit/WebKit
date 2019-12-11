@@ -1,0 +1,3 @@
+
+FAIL isPointInPath() counts points on the path as being inside Can't find variable: OffscreenCanvas
+

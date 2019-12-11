@@ -1,0 +1,5 @@
+
+FAIL URL.domainToUnicode valid input URL.domainToUnicode is not a function. (In 'URL.domainToUnicode(domain)', 'URL.domainToUnicode' is undefined)
+FAIL URL.domainToUnicode valid encoded input URL.domainToUnicode is not a function. (In 'URL.domainToUnicode(domain)', 'URL.domainToUnicode' is undefined)
+FAIL URL.domainToUnicode invalid input URL.domainToUnicode is not a function. (In 'URL.domainToUnicode(domain)', 'URL.domainToUnicode' is undefined)
+

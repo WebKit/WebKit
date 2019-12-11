@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<head>
+    <style>
+        div {
+            width: 200px;
+            height: 200px;
+        }
+
+        div.gradient {
+            background-image: -webkit-linear-gradient(bottom right, #FF0000 0%, #0000FF 100%);
+        }
+
+        div.image {
+            background-image: url("resources/gradient.png");
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.overridePreference("WebKitShouldInvertColors", "1");
+    </script>
+</head>
+<body>
+    <p>Test inverted color drawing for &lt;<a href="http://webkit.org/b/77382">webkit.org/b/77382</a>&gt;. This test must be run in DumpRenderTree.</p>
+    <div class="image"></div>
+    <div class="gradient"></div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+<head>
+    <title>Test that an audio file in a video element should not have a fullscreen button</title>
+    <script src=media-file.js></script>
+    <script src=media-controls.js></script>
+    <script src=video-test.js></script>
+    <script>
+        var video;
+        var panel;
+        var fullscreenButton;
+
+        function init()
+        {
+            video = document.querySelector("video");
+
+            consoleWrite("");
+            consoleWrite("** Playing the video **");
+            run("video.play()");
+        }
+
+        function test()
+        {
+            consoleWrite("** Testing if the fullscreen button is hidden **");
+            if (window.internals) {
+                fullscreenButton = mediaControlsElement(internals.shadowRoot(video).firstChild, "-webkit-media-controls-fullscreen-button");
+                testExpected("fullscreenButton.classList.contains('hidden')", true);
+                testRunner.notifyDone();
+            }
+        }
+
+    </script>
+</head>
+<body onload="init()">
+    Tests that an audio file in a video element should not have a fullscreen button<br>
+    <video src="content/silence.wav" onplay="test()" controls></video>
+</body>
+</html>

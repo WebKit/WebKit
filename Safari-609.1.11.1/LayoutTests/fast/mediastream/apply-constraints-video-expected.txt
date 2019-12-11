@@ -1,0 +1,77 @@
+Tests applyConstraints on a video stream track.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS stream.getVideoTracks().length is 1
+PASS stream.getAudioTracks().length is 0
+PASS video.videoTracks.length is 1
+PASS video.audioTracks.length is 0
+
+** Constraint: {"width":640,"height":480,"frameRate":30} - set width, height, and frame rate to valid values.
+PASS settings['width'] is 640
+PASS settings['height'] is 480
+PASS settings['frameRate'] is 30
+
+** Constraint: {"width":320,"height":240} - change width and height, frame rate should remain unchanged.
+PASS settings['width'] is 320
+PASS settings['height'] is 240
+PASS settings['frameRate'] is 30
+
+** Constraint: {"width":{"exact":2000}} - the 'exact' constraint can't be satisfied, promise should reject and no settings should change.
+PASS Promise was rejected
+PASS error.constraint is "width"
+PASS settings['width'] is 320
+PASS settings['height'] is 240
+PASS settings['frameRate'] is 30
+
+** Constraint: {"width":640,"height":{"min":3000}} - the 'min' constraint can't be satisfied, promise should reject and no settings should change.
+PASS Promise was rejected
+PASS error.constraint is "height"
+PASS settings['width'] is 320
+PASS settings['height'] is 240
+PASS settings['frameRate'] is 30
+
+** Constraint: {"frameRate":{"max":8}} - the 'max' constraint can't be satisfied, promise should reject and no settings should change.
+PASS Promise was rejected
+PASS error.constraint is "frameRate"
+PASS settings['frameRate'] is 30
+
+** Constraint: {"width":{"exact":640}} - the 'exact' constraint can be satisfied.
+PASS settings['width'] is 640
+PASS settings['height'] is 480
+
+** Constraint: {"width":{"min":300,"ideal":5000}} - the 'ideal' constraint can't be satisfied but the 'min' can, maximum value should be chosen.
+PASS settings['width'] is 1280
+PASS settings['height'] is 720
+
+** Constraint: {"width":{"min":320,"ideal":640},"height":{"min":480,"ideal":720}} - 'ideal' and 'min' constraints can be satisfied, 'ideal' should be chosen.
+PASS settings['width'] is 640
+PASS settings['height'] is 720
+
+** Constraint: {"width":5000} - ideal width is greater than track capability, should be clamped to the maximum value.
+PASS settings['width'] is 1280
+
+** Constraint: {"width":100,"height":100,"frameRate":4} - frameRate value is less than track capabilities, should be clamped to the minimum values.
+PASS settings['width'] is 100
+PASS settings['height'] is 100
+PASS settings['frameRate'] is 5
+
+** Constraint: {"frameRate":20} - set frame rate, width and height should remain unchanged
+PASS settings['width'] is 100
+PASS settings['height'] is 100
+PASS settings['frameRate'] is 20
+
+** Constraint: {"facingMode":"xnvironment","height":720} - illegal facing mode value should be ignored, height should change.
+PASS settings['facingMode'] is "user"
+PASS settings['width'] is 1280
+PASS settings['height'] is 720
+
+** Constraint: {"WITDH":400,"frameRate":30} - unknown constraint should be ignored, frame rate should change.
+PASS settings['width'] is 1280
+PASS settings['frameRate'] is 30
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

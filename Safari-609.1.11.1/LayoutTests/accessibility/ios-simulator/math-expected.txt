@@ -1,0 +1,38 @@
+Raman scattering study of the 
+Fe
+1
+−
+x
+Co
+x
+Sb
+2
+ and 
+(
+0
+≤
+x
+≤
+1
+)
+ single crystals.
+This test the math role type will be an accessibility element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS group.childrenCount is 5
+PASS group.childAtIndex(0).description is 'AXLabel: Raman scattering study of the'
+PASS group.childAtIndex(1).description is 'AXLabel:  F e sub 1  minus x, end subscript. C o sub x, S b sub 2, math'
+PASS group.childAtIndex(2).description is 'AXLabel: and'
+PASS group.childAtIndex(3).description is 'AXLabel:   open, 0  less than or equal to x  less than or equal to 1,  close, math'
+PASS group.childAtIndex(4).description is 'AXLabel: single crystals.'
+PASS group.childAtIndex(0).isIgnored is false
+PASS group.childAtIndex(1).isIgnored is false
+PASS group.childAtIndex(2).isIgnored is false
+PASS group.childAtIndex(3).isIgnored is false
+PASS group.childAtIndex(4).isIgnored is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

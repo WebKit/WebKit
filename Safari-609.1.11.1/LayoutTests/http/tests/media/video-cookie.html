@@ -1,0 +1,38 @@
+<html>
+<head>
+</head>
+<body onload="loadCookie()">
+<video id="video"></video>
+<script src=../../media-resources/video-test.js></script>
+<script src=../../media-resources/media-file.js></script>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.setAlwaysAcceptCookies(true);
+        testRunner.waitUntilDone();
+    }
+
+    function loadCookie () {
+        var movie = findMediaFile("video", "resources/test");
+        var frame = document.createElement("iframe");
+        document.body.appendChild(frame);
+
+        frame.addEventListener('load', function () {
+                video = document.getElementById('video');
+                video.src="http://127.0.0.1:8000/media/resources/video-cookie-check-cookie.php";
+                video.play();
+        });
+
+        frame.width = 0;
+        frame.height = 0;
+        frame.src = "http://127.0.0.1:8000/media/resources/setCookie.cgi?name=" + movie;
+    }
+
+    waitForEvent("canplay", function () {
+        if (window.testRunner)
+            window.testRunner.notifyDone();
+    } );
+</script>
+Tests that the media player will send the relevant cookies when requesting the media file.<br/>
+</body>
+</html>

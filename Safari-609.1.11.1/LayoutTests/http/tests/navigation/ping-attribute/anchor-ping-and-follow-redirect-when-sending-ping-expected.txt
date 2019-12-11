@@ -1,0 +1,7 @@
+Ping sent successfully
+CONTENT_TYPE: text/ping
+HTTP_HOST: 127.0.0.1:8000
+HTTP_PING_FROM: http://127.0.0.1:8000/navigation/ping-attribute/anchor-ping-and-follow-redirect-when-sending-ping.html
+HTTP_PING_TO: javascript:checkPing()
+REQUEST_METHOD: POST
+REQUEST_URI: /navigation/resources/save-Ping.php

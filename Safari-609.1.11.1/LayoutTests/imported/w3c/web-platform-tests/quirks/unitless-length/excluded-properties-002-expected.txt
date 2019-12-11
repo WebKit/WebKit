@@ -1,0 +1,13 @@
+
+PASS Property background-blend-mode does not support quirky length 
+FAIL Property background-size does not support quirky length assert_not_equals: got disallowed value "1234px"
+PASS Property box-shadow does not support quirky length 
+PASS Property clip-path does not support quirky length 
+PASS Property column-span does not support quirky length 
+PASS Property filter does not support quirky length 
+PASS Property mask does not support quirky length 
+PASS Property object-position does not support quirky length 
+PASS Property perspective-origin does not support quirky length 
+PASS Property text-shadow does not support quirky length 
+PASS Property transform-origin does not support quirky length 
+

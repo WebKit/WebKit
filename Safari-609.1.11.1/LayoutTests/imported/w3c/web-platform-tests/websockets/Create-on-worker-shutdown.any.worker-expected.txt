@@ -1,0 +1,3 @@
+
+FAIL WebSocket created after a worker self.close() Can't find variable: Worker
+

@@ -1,0 +1,22 @@
+<p>This tests for a bug moving down by a line from a line just above a ToDo, and moving up by a line from just below a ToDo.</p>
+<div id="div" contenteditable="true">
+<div id="above">Click anywhere in this line and move down.</div>
+<table border="1" contenteditable="false"><tr><td>The caret <span style="color: blue;" contenteditable="true">should</span> always go into the editable region.</td></tr></table>
+<div id="below">Click anywhere in this line and move up.</div>
+</div>
+
+<script>
+if (window.testRunner)
+    window.testRunner.dumpEditingCallbacks();
+var selection = window.getSelection();
+var above = document.getElementById("above").firstChild;
+selection.setPosition(above, 0);
+selection.modify("move", "forward", "line");
+selection.setPosition(above, above.length);
+selection.modify("move", "forward", "line");
+var below = document.getElementById("below").firstChild;
+selection.setPosition(below, 0);
+selection.modify("move", "backward", "line");
+selection.setPosition(below, below.length);
+selection.modify("move", "backward", "line");
+</script>

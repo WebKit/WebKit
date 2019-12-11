@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Bad add.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.casts = async () =>
+{
+    let program = `
+        struct Foo {
+            int x;
+        }
+        struct Bar {
+            int y;
+        }
+        operator Bar(Foo foo) {
+            Bar b;
+            b.y = foo.x + 7;
+            return b;
+        }
+        int baz(int z) {
+            Foo foo;
+            foo.x = z;
+            Bar b = Bar(foo);
+            return b.y;
+        }
+    `;
+    assert_equals(await callIntFunction(program, "baz", [makeInt(6)]), 13);
+}
+
+whlslTests.selfCasts = async () =>
+{
+    let program = `
+        struct Foo {
+            int x;
+        }
+        int foo()
+        {
+            Foo foo;
+            foo.x = 21;
+            Foo bar = Foo(foo);
+            bar.x = 42;
+            return foo.x + bar.x;
+        }
+    `;
+    assert_equals(await callIntFunction(program, "foo", []), 21 + 42);
+}
+
+runTests(whlslTests);
+</script>
+</html>
+

@@ -1,0 +1,40 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+From: [% Param('mailfrom') %]
+To: [% to %]
+Subject: [% terms.Bug %] [%+ bugid %] Some or all of your votes have been removed.
+X-Bugzilla-Type: voteremoved
+
+Some or all of your votes have been removed from [% terms.bug %] [%+ bugid %].
+
+You had [% votesold FILTER html %] [%+ IF votesold == 1 %]vote[% ELSE %]votes[% END
+%] on this [% terms.bug %], but [% votesremoved FILTER html %] have been removed.
+
+[% IF votesnew %]
+You still have [% votesnew FILTER html %] [%+ IF votesnew == 1 %]vote[% ELSE %]votes[% END %] on this [% terms.bug %].
+[% ELSE %]
+You have no more votes remaining on this [% terms.bug %].
+[% END %]
+
+Reason:
+[% IF reason == "votes_bug_moved" %]
+  This [% terms.bug %] has been moved to a different product.
+
+[% ELSIF reason == "votes_too_many_per_bug" %]
+  The rules for voting on this product has changed;
+  you had too many votes for a single [% terms.bug %].
+
+[% ELSIF reason == "votes_too_many_per_user" %]
+  The rules for voting on this product has changed; you had
+  too many total votes, so all votes have been removed.
+[% END %]
+
+
+
+[% urlbase %]show_bug.cgi?id=[% bugid %]

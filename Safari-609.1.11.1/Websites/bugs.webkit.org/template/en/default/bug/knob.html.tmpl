@@ -1,0 +1,84 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+<div id="status">
+  [% PROCESS bug/field.html.tmpl
+      no_tds = 1
+      field  = bug_fields.bug_status
+      value  = bug.bug_status
+      override_legal_values = bug.choices.bug_status
+      editable = bug.choices.bug_status.size > 1
+  %]
+
+  [% IF bug.resolution 
+        OR bug.check_can_change_field('resolution', bug.resolution, 1)
+  %]
+    <noscript><br>resolved&nbsp;as&nbsp;</noscript>
+  [% END %]
+
+  <span id="resolution_settings">
+  [% PROCESS bug/field.html.tmpl
+      no_tds = 1
+      field  = bug_fields.resolution
+      value  = bug.resolution
+      override_legal_values = bug.choices.resolution
+      editable = bug.check_can_change_field('resolution', bug.resolution, 1)
+  %]
+  </span>
+
+  [% IF bug.check_can_change_field('dup_id', 0, 1) %]
+    <noscript><br> duplicate</noscript>
+    <span id="duplicate_settings">of
+      <span id="dup_id_container" class="bz_default_hidden">
+        [% "${terms.bug} ${bug.dup_id}" FILTER bug_link(bug.dup_id) FILTER none %]
+        (<a href="#" id="dup_id_edit_action">edit</a>)
+      </span
+      ><input id="dup_id" name="dup_id" size="6"
+              value="[% bug.dup_id FILTER html %]">
+    </span>
+    [% IF bug.dup_id %]
+        <noscript>[% bug.dup_id FILTER bug_link(bug.dup_id) FILTER none %]</noscript>
+    [% END %]
+    <div id="dup_id_discoverable" class="bz_default_hidden">
+      <a href="#" id="dup_id_discoverable_action">Mark as Duplicate</a>
+    </div>
+  [% ELSIF bug.dup_id %]
+    <noscript><br> duplicate</noscript>
+    <span id="duplicate_display">of 
+      [% "${terms.bug} ${bug.dup_id}" FILTER bug_link(bug.dup_id) FILTER none %]</span>
+  [% END %]
+</div>
+
+<script type="text/javascript">
+  var close_status_array = [
+    [% FOREACH status = bug.choices.bug_status %]
+      [% NEXT IF status.is_open %]
+      '[% status.name FILTER js %]'[% ',' UNLESS loop.last %]
+    [% END %]
+  ];
+  YAHOO.util.Dom.removeClass('dup_id_discoverable', 'bz_default_hidden');
+  hideEditableField( "dup_id_container", "dup_id", 'dup_id_edit_action',
+                     'dup_id', '[% bug.dup_id FILTER js %]' )
+  showHideStatusItems( "",  ['[% "is_duplicate" IF bug.dup_id %]',
+                             '[% bug.bug_status FILTER js %]']);
+  YAHOO.util.Event.addListener( 'bug_status', "change", showHideStatusItems,
+                                ['[% "is_duplicate" IF bug.dup_id %]',
+                                 '[% bug.bug_status FILTER js %]']);
+  YAHOO.util.Event.addListener( 'resolution', "change", showDuplicateItem);
+  YAHOO.util.Event.addListener( 'dup_id_discoverable_action',
+                                'click',
+                                setResolutionToDuplicate,
+                                '[% Param('duplicate_or_move_bug_status')
+                                                                FILTER js %]');
+  YAHOO.util.Event.addListener( window, 'load',  showHideStatusItems,
+                              ['[% "is_duplicate" IF bug.dup_id %]',
+                               '[% bug.bug_status FILTER js %]'] );
+
+  [% INCLUDE "bug/field-events.js.tmpl" field = select_fields.bug_status %]
+  [% INCLUDE "bug/field-events.js.tmpl" field = select_fields.resolution %]
+</script>

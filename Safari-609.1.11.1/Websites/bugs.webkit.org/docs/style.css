@@ -1,0 +1,97 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * This Source Code Form is "Incompatible With Secondary Licenses", as
+ * defined by the Mozilla Public License, v. 2.0.
+ */
+
+/* This style file is used by the API documentation */
+
+body {
+  background: white;
+  color: #111;
+  padding: 0 1em;
+  font-family: Verdana, Arial, sans-serif;
+}
+
+a:link, a:active { color: #36415c; }
+a:visited { color: #666; }
+a:hover   { color: #888; }
+
+h1 {
+  font-size: 150%;
+  font-weight: bold;
+  border-bottom: 2px solid #ccc;
+}
+h2 {
+  font-size: 125%;
+  font-weight: bold;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 8px;
+}
+h3 {
+  font-size: 115%;
+  font-weight: bold;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+/* This makes Description/Params/Returns look nice. */
+dd   { margin-top: .2em; }
+dd p { margin-top: 0; }
+dl   { margin-bottom: 1em; }
+
+/* This makes the names of functions slightly larger, in Gecko. */
+body > dl > dt code { font-size: 1.35em; }
+
+#pod h1 a, #pod h2 a, #pod h3 a {
+  color: #36415c;
+  text-decoration: none;
+}
+
+pre, code, tt, kbd, samp {
+  /* Unfortunately, the default monospace fonts on most browsers
+     look odd with relative sizing. */
+  font-size: 12px;
+}
+
+.code {
+  background: #eed;
+  border: 1px solid #ccc;
+}
+
+pre.code, pre.programlisting, pre.screen {
+  margin-left: 10px;
+  padding: 0.5em;
+  background: #eed;
+  border: 1px solid #ccc;
+}
+
+/* Special styles for the Contents page */
+
+.contentspage dt {
+  font-size: large;
+  font-weight: bold;
+}
+
+.pod_desc_table {
+  border-collapse: collapse;
+  table-layout: auto;
+  border: 1px solid #ccc;
+}
+
+.pod_desc_table th {
+  text-align: left;
+}
+
+.pod_desc_table td, .pod_desc_table th {
+  padding: .25em;
+  border-top: 1px solid #ccc;
+}
+
+.pod_desc_table .odd th, .pod_desc_table .odd td {
+  background-color: #eee;
+}
+
+.pod_desc_table

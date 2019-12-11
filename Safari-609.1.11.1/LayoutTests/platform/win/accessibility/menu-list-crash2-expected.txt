@@ -1,0 +1,13 @@
+TEST
+TEST
+This tests that there's no crash if we hide menu list and then try to access accessibility information.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Role before removal: AXRole: AXComboBox
+Role after removal: AXRole: 
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

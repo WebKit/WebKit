@@ -1,0 +1,38 @@
+Testing the default appearance and forced appearance features.
+
+
+== Running test suite: ForcePageAppearance
+-- Running test case: Default appearance should be light
+PASS: WI.cssManager.defaultAppearance should be Light.
+PASS: WI.cssManager.forcedAppearance should be null.
+PASS: expectEqual("150px", "150px")
+PASS: expectEqual("rgb(0, 0, 0)", "rgb(0, 0, 0)")
+
+-- Running test case: Force appearance to Dark
+PASS: WI.cssManager.defaultAppearance should be Light.
+PASS: WI.cssManager.forcedAppearance should be Dark.
+PASS: DOMNodeStyles should need refresh.
+PASS: expectEqual("200px", "200px")
+PASS: expectEqual("rgb(255, 255, 255)", "rgb(255, 255, 255)")
+
+-- Running test case: Switch to Dark appearance by default
+PASS: WI.cssManager.defaultAppearance should be Dark.
+PASS: WI.cssManager.forcedAppearance should be Dark.
+PASS: DOMNodeStyles should need refresh.
+PASS: expectEqual("200px", "200px")
+PASS: expectEqual("rgb(255, 255, 255)", "rgb(255, 255, 255)")
+
+-- Running test case: Force appearance to Light
+PASS: WI.cssManager.defaultAppearance should be Dark.
+PASS: WI.cssManager.forcedAppearance should be Light.
+PASS: DOMNodeStyles should need refresh.
+PASS: expectEqual("150px", "150px")
+PASS: expectEqual("rgb(0, 0, 0)", "rgb(0, 0, 0)")
+
+-- Running test case: Disable forced appearance
+PASS: WI.cssManager.defaultAppearance should be Dark.
+PASS: WI.cssManager.forcedAppearance should be null.
+PASS: DOMNodeStyles should need refresh.
+PASS: expectEqual("200px", "200px")
+PASS: expectEqual("rgb(255, 255, 255)", "rgb(255, 255, 255)")
+

@@ -1,0 +1,83 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    var nodeStyles;
+
+    function validateMatchedSelectors()
+    {
+        var found = false;
+
+        for (var i = 0; i < nodeStyles.matchedRules.length; ++i) {
+            var rule = nodeStyles.matchedRules[i];
+            if (rule.type !== WI.CSSStyleSheet.Type.UserAgent)
+                continue;
+            if (rule.selectorText.indexOf("::-webkit-media-text-track-container") === -1)
+                continue;
+
+            found = true;
+            var index = 0;
+            for (var selector of rule.selectors) {
+                var matches = rule.matchedSelectorIndices.includes(index);
+                InspectorTest.log(selector.text + (matches ? " MATCHES" : ""));
+                index++;
+            }
+            break;
+        }
+
+        if (!found)
+            InspectorTest.log("Failed to find a ::-webkit-media-text-track-container UserAgent style. Test may need to change.");
+
+        InspectorTest.completeTest();
+    }
+
+    function onStylesRefreshed()
+    {
+        nodeStyles.removeEventListener(WI.DOMNodeStyles.Event.Refreshed, onStylesRefreshed, this);
+        validateMatchedSelectors();
+    }
+
+    WI.domManager.requestDocument(function(documentNode) {
+        WI.domManager.querySelector(documentNode.id, "#node1", function(contentNodeId) {
+            try { 
+                if (contentNodeId) {
+                    var domNode = WI.domManager.nodeForId(contentNodeId);
+                    domNode.getSubtree(1, function() {
+                        var shadowRootDocument = domNode.children[0];
+                        shadowRootDocument.getSubtree(2, function() {
+                            var shadowRoot = shadowRootDocument.children[0];
+                            for (var i = 0; i < shadowRoot.children.length; ++i) {
+                                var shadowNode = shadowRoot.children[i];
+                                if (shadowNode.getAttribute("pseudo") === "-webkit-media-text-track-container") {
+                                    nodeStyles = WI.cssManager.stylesForNode(shadowNode);
+                                    if (nodeStyles.needsRefresh)
+                                        nodeStyles.addEventListener(WI.DOMNodeStyles.Event.Refreshed, onStylesRefreshed, this);
+                                    else
+                                        validateMatchedSelectors();
+                                    return;
+                                }
+                            }
+                        });
+                    });
+                } else {
+                    InspectorTest.log("DOM node not found.");
+                    InspectorTest.completeTest();
+                }
+            } catch (e) {
+                InspectorTest.log("Exception: " + e.message);
+                InspectorTest.log("Failed to find a ::-webkit-media-text-track-container shadow element under an <audio>. Test may need to change.");
+                InspectorTest.completeTest();
+            }
+        });
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that pseudo element selectors correctly show matching selector information.</p>
+
+    <audio id="node1" controls>
+</body>
+</html>

@@ -1,0 +1,10 @@
+Tests that requestAnimationFrame is not throttled in zero-sized subframes
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testFrame.contentWindow.internals.isRequestAnimationFrameThrottled() is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

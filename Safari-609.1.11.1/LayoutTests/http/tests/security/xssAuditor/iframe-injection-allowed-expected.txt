@@ -1,0 +1,2 @@
+This test passes because the injected iframe is from the same host as the child frame.
+

@@ -1,0 +1,18 @@
+CONSOLE MESSAGE: ResizeObserver loop completed with undelivered notifications.
+ResizeObserver tests
+
+t1
+t2
+ 
+
+PASS ResizeObserver implemented 
+PASS guard 
+PASS test0: simple observation 
+PASS test1: multiple observation on same element trigger only one 
+PASS test2: throw exception when observing non-element 
+PASS test3: disconnect stops all notifications 
+PASS test4: unobserve target stops notifications, unobserve non-observed does nothing 
+PASS test5: observe img 
+PASS test6: iframe notifications 
+FAIL test7: callback.this assert_equals: callback.this is ResizeObserver expected (object) object "[object ResizeObserver]" but got (undefined) undefined
+

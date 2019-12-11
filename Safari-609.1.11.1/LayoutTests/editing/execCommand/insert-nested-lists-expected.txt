@@ -1,0 +1,94 @@
+Verifies that 'InsertNestedUnorderedList' and 'InsertNestedOrderedList' work as expected. This test requires WebKitTestRunner or DumpRenderTree.
+
+After unordered list insertion:
+| <ul>
+|   <li>
+|     "foo<#selection-caret>"
+|     <br>
+
+After typing and ordered sublist insertion:
+| <ul>
+|   <li>
+|     "foo"
+|     <br>
+|   <ol>
+|     <li>
+|       "bar<#selection-caret>"
+
+After the second unordered list insertion:
+| <ul>
+|   <li>
+|     "foo"
+|     <br>
+|   <ol>
+|     <li>
+|       "bar"
+|     <ul>
+|       <li>
+|         <#selection-caret>
+
+After undoing the last list insertion:
+| <ul>
+|   <li>
+|     "foo"
+|     <br>
+|   <ol>
+|     <li>
+|       "bar<#selection-caret>"
+
+After redoing the last list insertion:
+| <ul>
+|   <li>
+|     "foo"
+|     <br>
+|   <ol>
+|     <li>
+|       "bar"
+|     <ul>
+|       <li>
+|         <#selection-caret>
+
+After selecting a range and inserting another unordered list:
+| <ul>
+|   <li>
+|     "foo"
+|     <br>
+|   <ol>
+|     <li>
+|       "bar"
+|     <ul>
+|       <li>
+|         <#selection-caret>
+|       <ul>
+|         <li>
+
+After outdenting:
+| <ul>
+|   <li>
+|     "foo"
+|     <br>
+|   <ol>
+|     <li>
+|       "bar"
+|     <li>
+|       <#selection-caret>
+|       <br>
+|     <ul>
+|       <ul>
+|         <li>
+
+After outdenting again:
+| <ul>
+|   <li>
+|     "foo"
+|     <br>
+|   <ol>
+|     <li>
+|       "bar"
+|   <li>
+|     "baz<#selection-caret>"
+|     <br>
+|   <ol>
+|     <ul>
+|       <ul>
+|         <li>

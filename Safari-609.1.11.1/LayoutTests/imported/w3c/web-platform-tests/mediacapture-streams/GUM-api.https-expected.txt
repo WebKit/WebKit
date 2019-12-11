@@ -1,0 +1,7 @@
+Description
+
+This test checks for the presence of the navigator.mediaDevices.getUserMedia method.
+
+
+PASS mediaDevices.getUserMedia() is present on navigator 
+

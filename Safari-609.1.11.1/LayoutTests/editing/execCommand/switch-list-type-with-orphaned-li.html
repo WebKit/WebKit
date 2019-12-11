@@ -1,0 +1,24 @@
+<script src="../../resources/dump-as-markup.js"></script>
+<body>
+<div id="test" contenteditable>
+<ul>
+    <li>webkit</li>
+</ul>
+<li>rocks</li>
+<ul>
+    <li>because of</li>
+</ul>
+<ol>
+    <li>you</li>
+</ol>
+</div>
+<script>
+Markup.description('This tests switching multiple lists with an orphaned list child to an ordered list.');
+
+var test = document.getElementById('test');
+window.getSelection().selectAllChildren(test);
+document.execCommand('InsertOrderedList', false, null);
+
+Markup.dump('test');
+</script>
+</body>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Tests deleting window operations works as expected");
+
+function testFunction(functionName)
+{
+    shouldBeType("window." + functionName, "Function");
+    evalAndLog("window." + functionName + " = 1");
+    shouldBe("window." + functionName, "1");
+    shouldBeTrue("delete window." + functionName);
+    shouldBeUndefined("window." + functionName);
+    debug("");
+}
+
+testFunction("postMessage");
+testFunction("focus");
+testFunction("blur");
+testFunction("close");
+testFunction("open");
+testFunction("showModalDialog");
+testFunction("alert");
+testFunction("confirm");
+testFunction("prompt");
+testFunction("stop");
+testFunction("scroll");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

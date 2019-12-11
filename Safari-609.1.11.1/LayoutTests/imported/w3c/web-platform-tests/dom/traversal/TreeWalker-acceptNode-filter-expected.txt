@@ -1,0 +1,13 @@
+
+PASS Testing with raw function filter 
+PASS Testing with object filter 
+PASS Testing with null filter 
+PASS Testing with undefined filter 
+PASS Testing with object lacking acceptNode property 
+PASS Testing with object with non-function acceptNode property 
+PASS Testing with function having acceptNode function 
+PASS Testing with filter function that throws 
+PASS rethrows errors when getting `acceptNode` 
+PASS performs `Get` on every traverse 
+PASS Testing with filter object that throws 
+Test JS objects as NodeFilters

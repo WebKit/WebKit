@@ -1,0 +1,5 @@
+PASS 1/2
+PASS 2/2
+
+FAIL Expecting logs: ["violated-directive=style-src-elem","PASS"] assert_unreached: Logging timeout, expected logs violated-directive=style-src-elem not sent. Reached unreachable code
+

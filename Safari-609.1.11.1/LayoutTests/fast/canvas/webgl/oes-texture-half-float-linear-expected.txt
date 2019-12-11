@@ -1,0 +1,223 @@
+CONSOLE MESSAGE: line 639: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
+CONSOLE MESSAGE: line 639: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
+CONSOLE MESSAGE: line 639: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
+CONSOLE MESSAGE: line 639: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
+CONSOLE MESSAGE: line 639: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
+CONSOLE MESSAGE: line 639: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
+CONSOLE MESSAGE: line 639: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
+CONSOLE MESSAGE: line 639: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
+CONSOLE MESSAGE: line 639: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
+CONSOLE MESSAGE: line 639: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
+CONSOLE MESSAGE: line 639: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
+CONSOLE MESSAGE: line 639: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
+CONSOLE MESSAGE: line 639: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
+CONSOLE MESSAGE: line 639: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
+CONSOLE MESSAGE: line 639: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
+CONSOLE MESSAGE: line 639: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
+CONSOLE MESSAGE: line 639: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
+CONSOLE MESSAGE: line 639: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
+CONSOLE MESSAGE: line 639: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
+CONSOLE MESSAGE: line 639: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
+CONSOLE MESSAGE: line 639: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
+CONSOLE MESSAGE: line 639: WebGL: drawArrays: texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete', or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.
+This test verifies the functionality of the OES_texture_half_float_linear extension, if it is available.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+ PASS Successfully enabled OES_texture_half_float extension
+
+testing target: TEXTURE_2D, testing format: RGBA, magFilter is: NEAREST, minFilter is: NEAREST, OES_texture_half_float_linear is not enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with non-Linear filter should succeed with NO_ERROR no matter whether OES_texture_half_float_linear is enabled or not
+PASS should be 255,255,255,255
+
+testing target: TEXTURE_2D, testing format: RGBA, magFilter is: NEAREST, minFilter is: LINEAR, OES_texture_half_float_linear is not enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_half_float_linear isn't enabled
+PASS should be 0,0,0,255
+
+testing target: TEXTURE_2D, testing format: RGBA, magFilter is: NEAREST, minFilter is: NEAREST_MIPMAP_NEAREST, OES_texture_half_float_linear is not enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with non-Linear filter should succeed with NO_ERROR no matter whether OES_texture_half_float_linear is enabled or not
+PASS should be 255,255,255,255
+
+testing target: TEXTURE_2D, testing format: RGBA, magFilter is: NEAREST, minFilter is: NEAREST_MIPMAP_LINEAR, OES_texture_half_float_linear is not enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_half_float_linear isn't enabled
+PASS should be 0,0,0,255
+
+testing target: TEXTURE_2D, testing format: RGBA, magFilter is: NEAREST, minFilter is: LINEAR_MIPMAP_NEAREST, OES_texture_half_float_linear is not enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_half_float_linear isn't enabled
+PASS should be 0,0,0,255
+
+testing target: TEXTURE_2D, testing format: RGBA, magFilter is: NEAREST, minFilter is: LINEAR_MIPMAP_LINEAR, OES_texture_half_float_linear is not enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_half_float_linear isn't enabled
+PASS should be 0,0,0,255
+
+testing target: TEXTURE_2D, testing format: RGBA, magFilter is: LINEAR, minFilter is: NEAREST, OES_texture_half_float_linear is not enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_half_float_linear isn't enabled
+PASS should be 0,0,0,255
+
+testing target: TEXTURE_2D, testing format: RGBA, magFilter is: LINEAR, minFilter is: LINEAR, OES_texture_half_float_linear is not enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_half_float_linear isn't enabled
+PASS should be 0,0,0,255
+
+testing target: TEXTURE_2D, testing format: RGBA, magFilter is: LINEAR, minFilter is: NEAREST_MIPMAP_NEAREST, OES_texture_half_float_linear is not enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_half_float_linear isn't enabled
+PASS should be 0,0,0,255
+
+testing target: TEXTURE_2D, testing format: RGBA, magFilter is: LINEAR, minFilter is: NEAREST_MIPMAP_LINEAR, OES_texture_half_float_linear is not enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_half_float_linear isn't enabled
+PASS should be 0,0,0,255
+
+testing target: TEXTURE_2D, testing format: RGBA, magFilter is: LINEAR, minFilter is: LINEAR_MIPMAP_NEAREST, OES_texture_half_float_linear is not enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_half_float_linear isn't enabled
+PASS should be 0,0,0,255
+
+testing target: TEXTURE_2D, testing format: RGBA, magFilter is: LINEAR, minFilter is: LINEAR_MIPMAP_LINEAR, OES_texture_half_float_linear is not enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_half_float_linear isn't enabled
+PASS should be 0,0,0,255
+
+testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: NEAREST, minFilter is: NEAREST, OES_texture_half_float_linear is not enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with non-Linear filter should succeed with NO_ERROR no matter whether OES_texture_half_float_linear is enabled or not
+PASS should be 255,255,255,255
+
+testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: NEAREST, minFilter is: LINEAR, OES_texture_half_float_linear is not enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_half_float_linear isn't enabled
+PASS should be 0,0,0,255
+
+testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: NEAREST, minFilter is: NEAREST_MIPMAP_NEAREST, OES_texture_half_float_linear is not enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with non-Linear filter should succeed with NO_ERROR no matter whether OES_texture_half_float_linear is enabled or not
+PASS should be 255,255,255,255
+
+testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: NEAREST, minFilter is: NEAREST_MIPMAP_LINEAR, OES_texture_half_float_linear is not enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_half_float_linear isn't enabled
+PASS should be 0,0,0,255
+
+testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: NEAREST, minFilter is: LINEAR_MIPMAP_NEAREST, OES_texture_half_float_linear is not enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_half_float_linear isn't enabled
+PASS should be 0,0,0,255
+
+testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: NEAREST, minFilter is: LINEAR_MIPMAP_LINEAR, OES_texture_half_float_linear is not enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_half_float_linear isn't enabled
+PASS should be 0,0,0,255
+
+testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: LINEAR, minFilter is: NEAREST, OES_texture_half_float_linear is not enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_half_float_linear isn't enabled
+PASS should be 0,0,0,255
+
+testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: LINEAR, minFilter is: LINEAR, OES_texture_half_float_linear is not enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_half_float_linear isn't enabled
+PASS should be 0,0,0,255
+
+testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: LINEAR, minFilter is: NEAREST_MIPMAP_NEAREST, OES_texture_half_float_linear is not enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_half_float_linear isn't enabled
+PASS should be 0,0,0,255
+
+testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: LINEAR, minFilter is: NEAREST_MIPMAP_LINEAR, OES_texture_half_float_linear is not enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_half_float_linear isn't enabled
+PASS should be 0,0,0,255
+
+testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: LINEAR, minFilter is: LINEAR_MIPMAP_NEAREST, OES_texture_half_float_linear is not enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_half_float_linear isn't enabled
+PASS should be 0,0,0,255
+
+testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: LINEAR, minFilter is: LINEAR_MIPMAP_LINEAR, OES_texture_half_float_linear is not enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should produce [0, 0, 0, 1.0] with NO_ERROR if OES_texture_half_float_linear isn't enabled
+PASS should be 0,0,0,255
+
+testing target: TEXTURE_2D, testing format: RGBA, magFilter is: NEAREST, minFilter is: NEAREST, OES_texture_half_float_linear is enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with non-Linear filter should succeed with NO_ERROR no matter whether OES_texture_half_float_linear is enabled or not
+PASS should be 255,255,255,255
+
+testing target: TEXTURE_2D, testing format: RGBA, magFilter is: NEAREST, minFilter is: LINEAR, OES_texture_half_float_linear is enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should succeed with NO_ERROR if OES_texture_half_float is enabled
+PASS should be 255,255,255,255
+
+testing target: TEXTURE_2D, testing format: RGBA, magFilter is: NEAREST, minFilter is: NEAREST_MIPMAP_NEAREST, OES_texture_half_float_linear is enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with non-Linear filter should succeed with NO_ERROR no matter whether OES_texture_half_float_linear is enabled or not
+PASS should be 255,255,255,255
+
+testing target: TEXTURE_2D, testing format: RGBA, magFilter is: NEAREST, minFilter is: NEAREST_MIPMAP_LINEAR, OES_texture_half_float_linear is enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should succeed with NO_ERROR if OES_texture_half_float is enabled
+PASS should be 255,255,255,255
+
+testing target: TEXTURE_2D, testing format: RGBA, magFilter is: NEAREST, minFilter is: LINEAR_MIPMAP_NEAREST, OES_texture_half_float_linear is enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should succeed with NO_ERROR if OES_texture_half_float is enabled
+PASS should be 255,255,255,255
+
+testing target: TEXTURE_2D, testing format: RGBA, magFilter is: NEAREST, minFilter is: LINEAR_MIPMAP_LINEAR, OES_texture_half_float_linear is enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should succeed with NO_ERROR if OES_texture_half_float is enabled
+PASS should be 255,255,255,255
+
+testing target: TEXTURE_2D, testing format: RGBA, magFilter is: LINEAR, minFilter is: NEAREST, OES_texture_half_float_linear is enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should succeed with NO_ERROR if OES_texture_half_float is enabled
+PASS should be 255,255,255,255
+
+testing target: TEXTURE_2D, testing format: RGBA, magFilter is: LINEAR, minFilter is: LINEAR, OES_texture_half_float_linear is enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should succeed with NO_ERROR if OES_texture_half_float is enabled
+PASS should be 255,255,255,255
+
+testing target: TEXTURE_2D, testing format: RGBA, magFilter is: LINEAR, minFilter is: NEAREST_MIPMAP_NEAREST, OES_texture_half_float_linear is enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should succeed with NO_ERROR if OES_texture_half_float is enabled
+PASS should be 255,255,255,255
+
+testing target: TEXTURE_2D, testing format: RGBA, magFilter is: LINEAR, minFilter is: NEAREST_MIPMAP_LINEAR, OES_texture_half_float_linear is enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should succeed with NO_ERROR if OES_texture_half_float is enabled
+PASS should be 255,255,255,255
+
+testing target: TEXTURE_2D, testing format: RGBA, magFilter is: LINEAR, minFilter is: LINEAR_MIPMAP_NEAREST, OES_texture_half_float_linear is enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should succeed with NO_ERROR if OES_texture_half_float is enabled
+PASS should be 255,255,255,255
+
+testing target: TEXTURE_2D, testing format: RGBA, magFilter is: LINEAR, minFilter is: LINEAR_MIPMAP_LINEAR, OES_texture_half_float_linear is enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should succeed with NO_ERROR if OES_texture_half_float is enabled
+PASS should be 255,255,255,255
+
+testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: NEAREST, minFilter is: NEAREST, OES_texture_half_float_linear is enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with non-Linear filter should succeed with NO_ERROR no matter whether OES_texture_half_float_linear is enabled or not
+PASS should be 255,255,255,255
+
+testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: NEAREST, minFilter is: LINEAR, OES_texture_half_float_linear is enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should succeed with NO_ERROR if OES_texture_half_float is enabled
+PASS should be 255,255,255,255
+
+testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: NEAREST, minFilter is: NEAREST_MIPMAP_NEAREST, OES_texture_half_float_linear is enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with non-Linear filter should succeed with NO_ERROR no matter whether OES_texture_half_float_linear is enabled or not
+PASS should be 255,255,255,255
+
+testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: NEAREST, minFilter is: NEAREST_MIPMAP_LINEAR, OES_texture_half_float_linear is enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should succeed with NO_ERROR if OES_texture_half_float is enabled
+PASS should be 255,255,255,255
+
+testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: NEAREST, minFilter is: LINEAR_MIPMAP_NEAREST, OES_texture_half_float_linear is enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should succeed with NO_ERROR if OES_texture_half_float is enabled
+PASS should be 255,255,255,255
+
+testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: NEAREST, minFilter is: LINEAR_MIPMAP_LINEAR, OES_texture_half_float_linear is enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should succeed with NO_ERROR if OES_texture_half_float is enabled
+PASS should be 255,255,255,255
+
+testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: LINEAR, minFilter is: NEAREST, OES_texture_half_float_linear is enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should succeed with NO_ERROR if OES_texture_half_float is enabled
+PASS should be 255,255,255,255
+
+testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: LINEAR, minFilter is: LINEAR, OES_texture_half_float_linear is enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should succeed with NO_ERROR if OES_texture_half_float is enabled
+PASS should be 255,255,255,255
+
+testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: LINEAR, minFilter is: NEAREST_MIPMAP_NEAREST, OES_texture_half_float_linear is enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should succeed with NO_ERROR if OES_texture_half_float is enabled
+PASS should be 255,255,255,255
+
+testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: LINEAR, minFilter is: NEAREST_MIPMAP_LINEAR, OES_texture_half_float_linear is enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should succeed with NO_ERROR if OES_texture_half_float is enabled
+PASS should be 255,255,255,255
+
+testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: LINEAR, minFilter is: LINEAR_MIPMAP_NEAREST, OES_texture_half_float_linear is enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should succeed with NO_ERROR if OES_texture_half_float is enabled
+PASS should be 255,255,255,255
+
+testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: LINEAR, minFilter is: LINEAR_MIPMAP_LINEAR, OES_texture_half_float_linear is enabled
+PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should succeed with NO_ERROR if OES_texture_half_float is enabled
+PASS should be 255,255,255,255
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

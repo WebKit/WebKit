@@ -1,0 +1,586 @@
+# Copyright (C) 2010-2019 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+messages -> WebPage LegacyReceiver {
+    SetInitialFocus(bool forward, bool isKeyboardEventValid, WebKit::WebKeyboardEvent event, WebKit::CallbackID callbackID)
+    SetActivityState(OptionSet<WebCore::ActivityState::Flag> activityState, WebKit::ActivityStateChangeID activityStateChangeID, Vector<WebKit::CallbackID> callbackIDs)
+    SetLayerHostingMode(enum:uint8_t WebKit::LayerHostingMode layerHostingMode)
+
+    SetBackgroundColor(Optional<WebCore::Color> color)
+
+    AddConsoleMessage(WebCore::FrameIdentifier frameID, enum:uint8_t JSC::MessageSource messageSource, enum:uint8_t JSC::MessageLevel messageLevel, String message, uint64_t requestID)
+    SendCSPViolationReport(WebCore::FrameIdentifier frameID, URL reportURL, IPC::FormDataReference reportData)
+    EnqueueSecurityPolicyViolationEvent(WebCore::FrameIdentifier frameID, WebCore::SecurityPolicyViolationEvent::Init eventInit)
+
+    TestProcessIncomingSyncMessagesWhenWaitingForSyncReply() -> (bool handled) Synchronous
+
+#if PLATFORM(COCOA)
+    SetTopContentInsetFenced(float contentInset, IPC::Attachment fencePort)
+#endif
+    SetTopContentInset(float contentInset)
+
+    SetUnderlayColor(WebCore::Color color)
+
+    ViewWillStartLiveResize()
+    ViewWillEndLiveResize()
+
+    ExecuteEditCommandWithCallback(String name, String argument, WebKit::CallbackID callbackID)
+    KeyEvent(WebKit::WebKeyboardEvent event)
+    MouseEvent(WebKit::WebMouseEvent event)
+#if PLATFORM(IOS_FAMILY)
+    SetViewportConfigurationViewLayoutSize(WebCore::FloatSize size, double scaleFactor, double minimumEffectiveDeviceWidth)
+    SetMaximumUnobscuredSize(WebCore::FloatSize size)
+    SetDeviceOrientation(int32_t deviceOrientation)
+    SetOverrideViewportArguments(Optional<WebCore::ViewportArguments> arguments)
+    DynamicViewportSizeUpdate(WebCore::FloatSize viewLayoutSize, WebCore::FloatSize maximumUnobscuredSize, WebCore::FloatRect targetExposedContentRect, WebCore::FloatRect targetUnobscuredRect, WebCore::FloatRect targetUnobscuredRectInScrollViewCoordinates, WebCore::RectEdges<float> targetUnobscuredSafeAreaInsets, double scale, int32_t deviceOrientation, uint64_t dynamicViewportSizeUpdateID)
+
+    HandleTap(WebCore::IntPoint point, OptionSet<WebKit::WebEvent::Modifier> modifiers, WebKit::TransactionID lastLayerTreeTransactionId)
+    PotentialTapAtPosition(uint64_t requestID, WebCore::FloatPoint point, bool shouldRequestMagnificationInformation)
+    CommitPotentialTap(OptionSet<WebKit::WebEvent::Modifier> modifiers, WebKit::TransactionID lastLayerTreeTransactionId, WebCore::PointerID pointerId)
+    CancelPotentialTap()
+    TapHighlightAtPosition(uint64_t requestID, WebCore::FloatPoint point)
+    DidRecognizeLongPress()
+    HandleDoubleTapForDoubleClickAtPoint(WebCore::IntPoint point, OptionSet<WebKit::WebEvent::Modifier> modifiers, WebKit::TransactionID lastLayerTreeTransactionId)
+    InspectorNodeSearchMovedToPosition(WebCore::FloatPoint point)
+    InspectorNodeSearchEndedAtPosition(WebCore::FloatPoint point)
+    BlurFocusedElement()
+    SelectWithGesture(WebCore::IntPoint point, uint32_t granularity, uint32_t gestureType, uint32_t gestureState, bool isInteractingWithFocusedElement, WebKit::CallbackID callbackID)
+    UpdateSelectionWithTouches(WebCore::IntPoint point, uint32_t touches, bool baseIsStart, WebKit::CallbackID callbackID)
+    SelectWithTwoTouches(WebCore::IntPoint from, WebCore::IntPoint to, uint32_t gestureType, uint32_t gestureState, WebKit::CallbackID callbackID)
+    ExtendSelection(uint32_t granularity)
+    SelectWordBackward()
+    MoveSelectionByOffset(int32_t offset, WebKit::CallbackID callbackID)
+    SelectTextWithGranularityAtPoint(WebCore::IntPoint point, uint32_t granularity, bool isInteractingWithFocusedElement, WebKit::CallbackID callbackID)
+    SelectPositionAtBoundaryWithDirection(WebCore::IntPoint point, uint32_t granularity, uint32_t direction, bool isInteractingWithFocusedElement, WebKit::CallbackID callbackID)
+    MoveSelectionAtBoundaryWithDirection(uint32_t granularity, uint32_t direction, WebKit::CallbackID callbackID)
+    SelectPositionAtPoint(WebCore::IntPoint point, bool isInteractingWithFocusedElement, WebKit::CallbackID callbackID)
+    BeginSelectionInDirection(uint32_t direction, WebKit::CallbackID callbackID)
+    UpdateSelectionWithExtentPoint(WebCore::IntPoint point, bool isInteractingWithFocusedElement, WebKit::CallbackID callbackID)
+    UpdateSelectionWithExtentPointAndBoundary(WebCore::IntPoint point, uint32_t granularity, bool isInteractingWithFocusedElement, WebKit::CallbackID callbackID)
+    RequestDictationContext(WebKit::CallbackID callbackID)
+    ReplaceDictatedText(String oldText, String newText)
+    ReplaceSelectedText(String oldText, String newText)
+    RequestAutocorrectionData(String textForAutocorrection) -> (struct WebKit::WebAutocorrectionData data) Async
+    ApplyAutocorrection(String correction, String originalText, WebKit::CallbackID callbackID)
+    SyncApplyAutocorrection(String correction, String originalText) -> (bool autocorrectionApplied) Synchronous
+    RequestAutocorrectionContext()
+    RequestEvasionRectsAboveSelection() -> (Vector<WebCore::FloatRect> rects) Async
+    GetPositionInformation(struct WebKit::InteractionInformationRequest request) -> (struct WebKit::InteractionInformationAtPosition information) Synchronous
+    RequestPositionInformation(struct WebKit::InteractionInformationRequest request)
+    StartInteractionWithElementContextOrPosition(Optional<WebCore::ElementContext> elementContext, WebCore::IntPoint point)
+    StopInteraction()
+    PerformActionOnElement(uint32_t action)
+    FocusNextFocusedElement(bool isForward, WebKit::CallbackID callbackID)
+    SetFocusedElementValue(String value)
+    AutofillLoginCredentials(String username, String password)
+    SetFocusedElementValueAsNumber(double value)
+    SetFocusedElementSelectedIndex(uint32_t index, bool allowMultipleSelection)
+    ApplicationWillResignActive()
+    ApplicationDidEnterBackground(bool isSuspendedUnderLock)
+    ApplicationDidFinishSnapshottingAfterEnteringBackground()
+    ApplicationWillEnterForeground(bool isSuspendedUnderLock)
+    ApplicationDidBecomeActive()
+    ContentSizeCategoryDidChange(String contentSizeCategory)
+    GetSelectionContext(WebKit::CallbackID callbackID)
+    SetAllowsMediaDocumentInlinePlayback(bool allows)
+    HandleTwoFingerTapAtPoint(WebCore::IntPoint point, OptionSet<WebKit::WebEvent::Modifier> modifiers, uint64_t requestID)
+    HandleStylusSingleTapAtPoint(WebCore::IntPoint point, uint64_t requestID)
+    SetForceAlwaysUserScalable(bool userScalable)
+    GetRectsForGranularityWithSelectionOffset(uint32_t granularity, int32_t offset, WebKit::CallbackID callbackID)
+    GetRectsAtSelectionOffsetWithText(int32_t offset, String text, WebKit::CallbackID callbackID)
+    StoreSelectionForAccessibility(bool shouldStore)
+    StartAutoscrollAtPosition(WebCore::FloatPoint positionInWindow)
+    CancelAutoscroll()
+    RequestFocusedElementInformation(WebKit::CallbackID callbackID)
+    HardwareKeyboardAvailabilityChanged(bool keyboardIsAttached)
+    SetIsShowingInputViewForFocusedElement(bool showingInputView)
+    UpdateSelectionWithDelta(int64_t locationDelta, int64_t lengthDelta) -> () Async
+    RequestDocumentEditingContext(struct WebKit::DocumentEditingContextRequest request) -> (struct WebKit::DocumentEditingContext response) Async
+GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType command)
+#endif
+
+    SetControlledByAutomation(bool controlled)
+
+    ConnectInspector(String targetId, Inspector::FrontendChannel::ConnectionType connectionType)
+    DisconnectInspector(String targetId)
+    SendMessageToTargetBackend(String targetId, String message)
+
+#if ENABLE(REMOTE_INSPECTOR)
+    SetIndicating(bool indicating);
+#endif
+
+#if ENABLE(IOS_TOUCH_EVENTS)
+    ResetPotentialTapSecurityOrigin()
+    TouchEventSync(WebKit::WebTouchEvent event) -> (bool handled) Synchronous
+#endif
+#if !ENABLE(IOS_TOUCH_EVENTS) && ENABLE(TOUCH_EVENTS)
+    TouchEvent(WebKit::WebTouchEvent event)
+#endif
+
+#if ENABLE(POINTER_EVENTS)
+    CancelPointer(WebCore::PointerID pointerId, WebCore::IntPoint documentPoint)
+    TouchWithIdentifierWasRemoved(WebCore::PointerID pointerId)
+#endif
+
+#if ENABLE(INPUT_TYPE_COLOR)
+    DidEndColorPicker()
+    DidChooseColor(WebCore::Color color)
+#endif
+
+#if ENABLE(DATALIST_ELEMENT)
+    DidSelectDataListOption(String selectedOption);
+    DidCloseSuggestions();
+#endif
+
+#if ENABLE(CONTEXT_MENUS)
+    ContextMenuHidden()
+    ContextMenuForKeyEvent()
+#endif
+
+    ScrollBy(uint32_t scrollDirection, uint32_t scrollGranularity)
+    CenterSelectionInVisibleArea()
+
+    GoToBackForwardItem(uint64_t navigationID, struct WebCore::BackForwardItemIdentifier backForwardItemID, enum:uint8_t WebCore::FrameLoadType backForwardType, enum:bool WebCore::ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, Optional<WebKit::WebsitePoliciesData> websitePolicies)
+    TryRestoreScrollPosition()
+
+    LoadURLInFrame(URL url, String referrer, WebCore::FrameIdentifier frameID)
+    LoadDataInFrame(IPC::DataReference data, String MIMEType, String encodingName, URL baseURL, WebCore::FrameIdentifier frameID)
+    LoadRequest(struct WebKit::LoadParameters loadParameters)
+    LoadRequestWaitingForProcessLaunch(struct WebKit::LoadParameters loadParameters, URL resourceDirectoryURL, WebKit::WebPageProxyIdentifier pageID, bool checkAssumedReadAccessToResourceURL)
+    LoadData(struct WebKit::LoadParameters loadParameters)
+    LoadAlternateHTML(struct WebKit::LoadParameters loadParameters)
+
+    NavigateToPDFLinkWithSimulatedClick(String url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint)
+
+    Reload(uint64_t navigationID, uint32_t reloadOptions, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
+    StopLoading()
+
+    StopLoadingFrame(WebCore::FrameIdentifier frameID)
+    
+    RestoreSession(Vector<WebKit::BackForwardListItemState> itemStates)
+    UpdateBackForwardListForReattach(Vector<WebKit::BackForwardListItemState> itemStates)
+    SetCurrentHistoryItemForReattach(struct WebKit::BackForwardListItemState itemState)
+
+    DidRemoveBackForwardItem(struct WebCore::BackForwardItemIdentifier backForwardItemID)
+
+    UpdateWebsitePolicies(struct WebKit::WebsitePoliciesData websitePolicies)
+    DidReceivePolicyDecision(WebCore::FrameIdentifier frameID, uint64_t listenerID, WebCore::PolicyCheckIdentifier policyCheckIdentifier, enum:uint8_t WebCore::PolicyAction policyAction, uint64_t navigationID, WebKit::DownloadID downloadID, Optional<WebKit::WebsitePoliciesData> websitePolicies)
+    ContinueWillSubmitForm(WebCore::FrameIdentifier frameID, uint64_t listenerID)
+
+    ClearSelection()
+    RestoreSelectionInFocusedEditableElement()
+
+    # Callbacks.
+    GetContentsAsString(WebKit::CallbackID callbackID)
+#if PLATFORM(COCOA)
+    GetContentsAsAttributedString() -> (struct WebKit::AttributedString result) Async
+#endif
+#if ENABLE(MHTML)
+    GetContentsAsMHTMLData(WebKit::CallbackID callbackID)
+#endif
+    GetMainResourceDataOfFrame(WebCore::FrameIdentifier frameID, WebKit::CallbackID callbackID)
+    GetResourceDataFromFrame(WebCore::FrameIdentifier frameID, String resourceURL, WebKit::CallbackID callbackID)
+    GetRenderTreeExternalRepresentation(WebKit::CallbackID callbackID)
+    GetSelectionOrContentsAsString(WebKit::CallbackID callbackID)
+    GetSelectionAsWebArchiveData(WebKit::CallbackID callbackID)
+    GetSourceForFrame(WebCore::FrameIdentifier frameID, WebKit::CallbackID callbackID)
+    GetWebArchiveOfFrame(WebCore::FrameIdentifier frameID, WebKit::CallbackID callbackID)
+    RunJavaScriptInMainFrameScriptWorld(String script, bool forceUserGesture, Optional<String> worldName, WebKit::CallbackID callbackID)
+    RunJavaScriptInFrame(WebCore::FrameIdentifier frameID, String script, bool forceUserGesture, WebKit::CallbackID callbackID)
+    ForceRepaint(WebKit::CallbackID callbackID)
+
+    SelectAll()
+    ScheduleFullEditorStateUpdate()
+
+#if PLATFORM(COCOA)
+    # Dictionary support.
+    PerformDictionaryLookupOfCurrentSelection()
+    PerformDictionaryLookupAtLocation(WebCore::FloatPoint point)
+#endif
+
+#if ENABLE(DATA_DETECTION)
+    DetectDataInAllFrames(uint64_t types) -> (struct WebKit::DataDetectionResult result) Async
+    RemoveDataDetectedLinks() -> (struct WebKit::DataDetectionResult result) Async
+#endif
+
+    ChangeFont(WebCore::FontChanges changes)
+    ChangeFontAttributes(WebCore::FontAttributeChanges changes)
+
+    PreferencesDidChange(struct WebKit::WebPreferencesStore store)
+
+    SetUserAgent(String userAgent)
+    SetCustomTextEncodingName(String encodingName)
+
+    SuspendActiveDOMObjectsAndAnimations()
+    ResumeActiveDOMObjectsAndAnimations()
+
+    Close()
+    TryClose()
+
+    SetEditable(bool editable)
+    ValidateCommand(String name, WebKit::CallbackID callbackID)
+    ExecuteEditCommand(String name, String argument)
+
+    IncreaseListLevel()
+    DecreaseListLevel()
+    ChangeListType()
+
+    SetBaseWritingDirection(enum:uint8_t WebCore::WritingDirection direction)
+
+    SetNeedsFontAttributes(bool needsFontAttributes)
+
+    RequestFontAttributesAtSelectionStart(WebKit::CallbackID callbackID)
+
+    DidRemoveEditCommand(uint64_t commandID)
+    ReapplyEditCommand(uint64_t commandID)
+    UnapplyEditCommand(uint64_t commandID)
+
+    SetPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor)
+    SetPageZoomFactor(double zoomFactor)
+    SetTextZoomFactor(double zoomFactor)
+    WindowScreenDidChange(uint32_t displayID)
+
+    AccessibilitySettingsDidChange()
+
+    ScalePage(double scale, WebCore::IntPoint origin)
+    ScalePageInViewCoordinates(double scale, WebCore::IntPoint centerInViewCoordinates)
+    ScaleView(double scale)
+
+    SetUseFixedLayout(bool fixed)
+    SetFixedLayoutSize(WebCore::IntSize size)
+    ListenForLayoutMilestones(OptionSet<WebCore::LayoutMilestone> layoutMilestones)
+    SetSuppressScrollbarAnimations(bool suppressAnimations)
+
+    SetEnableVerticalRubberBanding(bool enableVerticalRubberBanding)
+    SetEnableHorizontalRubberBanding(bool enableHorizontalRubberBanding)
+
+    SetBackgroundExtendsBeyondPage(bool backgroundExtendsBeyondPage)
+
+    SetPaginationMode(uint32_t mode)
+    SetPaginationBehavesLikeColumns(bool behavesLikeColumns)
+    SetPageLength(double pageLength)
+    SetGapBetweenPages(double gap)
+    SetPaginationLineGridEnabled(bool lineGridEnabled)
+
+    PostInjectedBundleMessage(String messageName, WebKit::UserData messageBody)
+
+    # Find.
+    FindString(String string, uint32_t findOptions, unsigned maxMatchCount, Optional<WebKit::CallbackID> callbackID)
+    FindStringMatches(String string, uint32_t findOptions, unsigned maxMatchCount)
+    GetImageForFindMatch(uint32_t matchIndex)
+    SelectFindMatch(uint32_t matchIndex)
+    IndicateFindMatch(uint32_t matchIndex)
+    HideFindUI()
+    CountStringMatches(String string, uint32_t findOptions, unsigned maxMatchCount)
+    ReplaceMatches(Vector<uint32_t> matchIndices, String replacementText, bool selectionOnly, WebKit::CallbackID callbackID)
+    
+    AddMIMETypeWithCustomContentProvider(String mimeType)
+
+    # Drag and drop.
+#if PLATFORM(GTK) && ENABLE(DRAG_SUPPORT)
+    PerformDragControllerAction(enum:uint8_t WebKit::DragControllerAction action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, struct WebKit::WebSelectionData selection, uint32_t flags)
+#endif
+#if !PLATFORM(GTK) && ENABLE(DRAG_SUPPORT)
+    PerformDragControllerAction(enum:uint8_t WebKit::DragControllerAction action, WebCore::DragData dragData, WebKit::SandboxExtension::Handle sandboxExtensionHandle, WebKit::SandboxExtension::HandleArray sandboxExtensionsForUpload)
+#endif
+#if ENABLE(DRAG_SUPPORT)
+    DidStartDrag()
+    DragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t operation)
+    DragCancelled()
+#endif
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT)
+    RequestDragStart(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t allowedActions)
+    RequestAdditionalItemsForDragSession(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t allowedActions)
+    InsertDroppedImagePlaceholders(Vector<WebCore::IntSize> imageSize) -> (Vector<WebCore::IntRect> dropPreviewRects, Optional<WebCore::TextIndicatorData> textIndicator) Async
+    DidConcludeDrop()
+#endif
+
+    # Popup menu.
+    DidChangeSelectedIndexForActivePopupMenu(int32_t newIndex)
+    SetTextForActivePopupMenu(int32_t index)
+#if PLATFORM(GTK)
+    FailedToShowPopupMenu()
+#endif
+
+#if ENABLE(CONTEXT_MENUS)
+    # Context menu.
+    DidSelectItemFromActiveContextMenu(WebKit::WebContextMenuItemData menuItem)
+#endif
+
+    # Open panel.
+#if PLATFORM(IOS_FAMILY)
+    DidChooseFilesForOpenPanelWithDisplayStringAndIcon(Vector<String> fileURLs, String displayString, IPC::DataReference iconData)
+#endif
+    DidChooseFilesForOpenPanel(Vector<String> fileURLs)
+    DidCancelForOpenPanel()
+    DidCompleteShareSheet(bool wasGranted, uint64_t callbackID)
+#if ENABLE(SANDBOX_EXTENSIONS)
+    ExtendSandboxForFilesFromOpenPanel(WebKit::SandboxExtension::HandleArray sandboxExtensions)
+#endif
+
+    # Spelling and grammar.
+    AdvanceToNextMisspelling(bool startBeforeSelection)
+    ChangeSpellingToWord(String word)
+    DidFinishCheckingText(uint64_t requestID, Vector<WebCore::TextCheckingResult> result)
+    DidCancelCheckingText(uint64_t requestID)
+#if USE(APPKIT)
+    UppercaseWord()
+    LowercaseWord()
+    CapitalizeWord()
+#endif
+#if PLATFORM(COCOA)
+    SetSmartInsertDeleteEnabled(bool isSmartInsertDeleteEnabled)
+#endif
+
+#if ENABLE(GEOLOCATION)
+    # Geolocation
+    DidReceiveGeolocationPermissionDecision(uint64_t geolocationID, bool allowed)
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+    # MediaSteam
+    UserMediaAccessWasGranted(uint64_t userMediaID, WebCore::CaptureDevice audioDevice, WebCore::CaptureDevice videoDevice, String mediaDeviceIdentifierHashSalt) -> () Async
+    UserMediaAccessWasDenied(uint64_t userMediaID, uint64_t reason, String invalidConstraint)
+    CaptureDevicesChanged()
+#endif
+
+#if ENABLE(WEB_RTC)
+    DisableICECandidateFiltering()
+    EnableICECandidateFiltering()
+#endif
+#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
+    EnableEnumeratingAllNetworkInterfaces()
+    DisableEnumeratingAllNetworkInterfaces()
+#endif
+
+    StopAllMediaPlayback();
+    SuspendAllMediaPlayback();
+    ResumeAllMediaPlayback();
+
+    # Notification
+    DidReceiveNotificationPermissionDecision(uint64_t notificationID, bool allowed)
+
+    # Printing.
+    BeginPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo)
+    EndPrinting()
+    ComputePagesForPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebKit::CallbackID callbackID)
+#if PLATFORM(COCOA)
+    DrawRectToImage(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize, WebKit::CallbackID callbackID)
+    DrawPagesToPDF(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, uint32_t first, uint32_t count, WebKit::CallbackID callbackID)
+#if PLATFORM(IOS_FAMILY)
+    ComputePagesForPrintingAndDrawToPDF(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebKit::CallbackID callbackID) -> (uint32_t pageCount) Synchronous
+#endif
+    DrawToPDF(WebCore::FrameIdentifier frameID, Optional<WebCore::FloatRect> rect, WebKit::CallbackID callbackID)
+#endif
+#if PLATFORM(GTK)
+    DrawPagesForPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo, WebKit::CallbackID callbackID)
+#endif
+
+    # Media
+    SetMediaVolume(float volume)
+    SetMuted(WebCore::MediaProducer::MutedStateFlags muted)
+    SetMayStartMediaWhenInWindow(bool mayStartMedia)
+    StopMediaCapture()
+
+#if ENABLE(MEDIA_SESSION)
+    HandleMediaEvent(uint32_t eventType)
+    SetVolumeOfMediaElement(double volume, uint64_t elementID)
+#endif
+
+    SetCanRunBeforeUnloadConfirmPanel(bool canRunBeforeUnloadConfirmPanel)
+    SetCanRunModal(bool canRunModal)
+
+#if PLATFORM(GTK)
+    SetComposition(String text, Vector<WebCore::CompositionUnderline> underlines, struct WebKit::EditingRange selectionRange)
+    ConfirmComposition(String text)
+
+    CollapseSelectionInFrame(WebCore::FrameIdentifier frameID)
+
+    GetCenterForZoomGesture(WebCore::IntPoint centerInViewCoordinates) -> (WebCore::IntPoint center) Synchronous
+#endif
+
+#if PLATFORM(COCOA)
+    # Complex text input support for plug-ins.
+    SendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, String textInput)
+
+    WindowAndViewFramesChanged(WebCore::FloatRect windowFrameInScreenCoordinates, WebCore::FloatRect windowFrameInUnflippedScreenCoordinates, WebCore::FloatRect viewFrameInWindowCoordinates, WebCore::FloatPoint accessibilityViewCoordinates)
+    SetMainFrameIsScrollable(bool isScrollable)
+    RegisterUIProcessAccessibilityTokens(IPC::DataReference elemenToken, IPC::DataReference windowToken)
+    GetStringSelectionForPasteboard() -> (String stringValue) Synchronous
+    GetDataSelectionForPasteboard(String pasteboardType) -> (WebKit::SharedMemory::Handle handle, uint64_t size) Synchronous
+    ReadSelectionFromPasteboard(String pasteboardName) -> (bool result) Synchronous
+
+#if ENABLE(SERVICE_CONTROLS)
+    ReplaceSelectionWithPasteboardData(Vector<String> types, IPC::DataReference data)
+#endif
+
+    ShouldDelayWindowOrderingEvent(WebKit::WebMouseEvent event) -> (bool result) Synchronous
+    AcceptsFirstMouse(int eventNumber, WebKit::WebMouseEvent event) -> (bool result) Synchronous
+
+    SetTextAsync(String text)
+    InsertTextAsync(String text, struct WebKit::EditingRange replacementRange, struct WebKit::InsertTextOptions options)
+    HasMarkedText() -> (bool hasMarkedText) Async
+    GetMarkedRangeAsync(WebKit::CallbackID callbackID)
+    GetSelectedRangeAsync(WebKit::CallbackID callbackID)
+    CharacterIndexForPointAsync(WebCore::IntPoint point, WebKit::CallbackID callbackID);
+    FirstRectForCharacterRangeAsync(struct WebKit::EditingRange range, WebKit::CallbackID callbackID);
+    SetCompositionAsync(String text, Vector<WebCore::CompositionUnderline> underlines, struct WebKit::EditingRange selectionRange, struct WebKit::EditingRange replacementRange)
+    ConfirmCompositionAsync()
+#endif
+#if PLATFORM(MAC)
+    InsertDictatedTextAsync(String text, struct WebKit::EditingRange replacementRange, Vector<WebCore::DictationAlternative> dictationAlternatives, bool registerUndoGroup)
+    AttributedSubstringForCharacterRangeAsync(struct WebKit::EditingRange range, WebKit::CallbackID callbackID);
+    FontAtSelection(WebKit::CallbackID callbackID)
+#endif
+
+    SetAlwaysShowsHorizontalScroller(bool alwaysShowsHorizontalScroller)
+    SetAlwaysShowsVerticalScroller(bool alwaysShowsVerticalScroller)
+
+    SetMinimumSizeForAutoLayout(WebCore::IntSize size)
+    SetAutoSizingShouldExpandToViewHeight(bool shouldExpand)
+
+    SetViewportSizeForCSSViewportUnits(Optional<WebCore::IntSize> viewportSize)
+
+#if PLATFORM(COCOA)
+    HandleAlternativeTextUIResult(String result)
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    WillStartUserTriggeredZooming();
+#endif
+
+    SetScrollPinningBehavior(uint32_t pinning)
+    SetScrollbarOverlayStyle(Optional<uint32_t> scrollbarStyle)
+
+    GetBytecodeProfile(WebKit::CallbackID callbackID)
+
+    GetSamplingProfilerOutput(WebKit::CallbackID callbackID)
+    
+    TakeSnapshot(WebCore::IntRect snapshotRect, WebCore::IntSize bitmapSize, uint32_t options, WebKit::CallbackID callbackID)
+#if PLATFORM(MAC)
+    PerformImmediateActionHitTestAtLocation(WebCore::FloatPoint location)
+    ImmediateActionDidUpdate()
+    ImmediateActionDidCancel()
+    ImmediateActionDidComplete()
+
+    DataDetectorsDidPresentUI(WebCore::PageOverlay::PageOverlayID pageOverlay)
+    DataDetectorsDidChangeUI(WebCore::PageOverlay::PageOverlayID pageOverlay)
+    DataDetectorsDidHideUI(WebCore::PageOverlay::PageOverlayID pageOverlay)
+
+    HandleAcceptedCandidate(struct WebCore::TextCheckingResult acceptedCandidate)
+
+    SetUseSystemAppearance(bool useSystemAppearance);
+
+    SetHeaderBannerHeightForTesting(int height);
+    SetFooterBannerHeightForTesting(int height);
+#endif
+
+    EffectiveAppearanceDidChange(bool useDarkAppearance, bool useElevatedUserInterfaceLevel);
+
+#if PLATFORM(COCOA)
+    RequestActiveNowPlayingSessionInfo(WebKit::CallbackID callbackID)
+#endif
+
+    SetShouldDispatchFakeMouseMoveEvents(bool shouldDispatchFakeMouseMoveEvents)
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
+    PlaybackTargetSelected(uint64_t contextId, WebCore::MediaPlaybackTargetContext target)
+    PlaybackTargetAvailabilityDidChange(uint64_t contextId, bool available)
+    SetShouldPlayToPlaybackTarget(uint64_t contextId, bool shouldPlay)
+    PlaybackTargetPickerWasDismissed(uint64_t contextId);
+#endif
+
+#if ENABLE(POINTER_LOCK)
+    DidAcquirePointerLock()
+    DidNotAcquirePointerLock()
+    DidLosePointerLock()
+#endif
+
+    clearWheelEventTestMonitor()
+    SetShouldScaleViewToFitDocument(bool shouldScaleViewToFitDocument)
+
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+    DidEndRequestInstallMissingMediaPlugins(uint32_t result)
+#endif
+
+    SetUserInterfaceLayoutDirection(uint32_t direction)
+
+    DidGetLoadDecisionForIcon(bool decision, WebKit::CallbackID loadIdentifier, WebKit::OptionalCallbackID newCallbackID)
+    SetUseIconLoadingClient(bool useIconLoadingClient)
+
+#if ENABLE(GAMEPAD)
+    GamepadActivity(Vector<WebKit::GamepadData> gamepadDatas, bool shouldMakeGamepadsVisible)
+#endif
+
+    FrameBecameRemote(WebCore::FrameIdentifier frameID, struct WebCore::GlobalFrameIdentifier remoteFrameIdentifier, struct WebCore::GlobalWindowIdentifier remoteWindowIdentifier)
+
+    RegisterURLSchemeHandler(uint64_t identifier, String scheme)
+
+    URLSchemeTaskDidPerformRedirection(uint64_t handlerIdentifier, uint64_t taskIdentifier, WebCore::ResourceResponse response, WebCore::ResourceRequest request)
+    URLSchemeTaskDidReceiveResponse(uint64_t handlerIdentifier, uint64_t taskIdentifier, WebCore::ResourceResponse response)
+    URLSchemeTaskDidReceiveData(uint64_t handlerIdentifier, uint64_t taskIdentifier, IPC::SharedBufferDataReference data)
+    URLSchemeTaskDidComplete(uint64_t handlerIdentifier, uint64_t taskIdentifier, WebCore::ResourceError error)
+
+    SetIsSuspended(bool suspended)
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    InsertAttachment(String identifier, Optional<uint64_t> fileSize, String fileName, String contentType, WebKit::CallbackID callbackID)
+    UpdateAttachmentAttributes(String identifier, Optional<uint64_t> fileSize, String contentType, String fileName, IPC::SharedBufferDataReference enclosingImageData, WebKit::CallbackID callbackID)
+#endif
+
+#if ENABLE(APPLICATION_MANIFEST)
+    GetApplicationManifest(WebKit::CallbackID callbackID)
+#endif
+
+    SetDefersLoading(bool defersLoading)
+
+    UpdateCurrentModifierState(OptionSet<WebCore::PlatformEvent::Modifier> modifiers)
+    SimulateDeviceOrientationChange(double alpha, double beta, double gamma)
+
+#if ENABLE(SPEECH_SYNTHESIS)
+    SpeakingErrorOccurred()
+    BoundaryEventOccurred(bool wordBoundary, unsigned charIndex)
+    VoicesDidChange()
+#endif
+
+    TextInputContextsInRect(WebCore::FloatRect rect) -> (Vector<struct WebCore::ElementContext> contexts) Async
+    FocusTextInputContext(struct WebCore::ElementContext context) -> (bool success) Async
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    WasLoadedWithDataTransferFromPrevalentResource()
+#endif
+
+#if USE(SYSTEM_PREVIEW)
+    SystemPreviewActionTriggered(struct WebCore::SystemPreviewInfo previewInfo, String message)
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    SendMessageToWebExtension(struct WebKit::UserMessage userMessage)
+    SendMessageToWebExtensionWithReply(struct WebKit::UserMessage userMessage) -> (struct WebKit::UserMessage replyMessage) Async
+#endif
+
+    StartTextManipulations(Vector<WebCore::TextManipulationController::ExclusionRule> exclusionRules) -> () Async
+    CompleteTextManipulation(WebCore::TextManipulationController::ItemIdentifier itemID, Vector<WebCore::TextManipulationController::ManipulationToken> tokens) -> (enum:uint8_t WebCore::TextManipulationController::ManipulationResult result) Async
+    
+    SetOverriddenMediaType(String mediaType)
+}

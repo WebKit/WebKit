@@ -1,0 +1,10 @@
+Tests that lax same-site cookies are sent on a cross-site history navigation.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Was able to read the cookie after the back navigation
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

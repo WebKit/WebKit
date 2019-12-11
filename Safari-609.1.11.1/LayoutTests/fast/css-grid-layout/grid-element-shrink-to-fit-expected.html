@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<style>
+.grid {
+    background-color: grey;
+}
+
+.regularGrid {
+    height: 100px;
+}
+
+.outOfFlowGrid {
+    width: 200px;
+    height: 100px;
+}
+
+.firstRowFirstColumn {
+    position: absolute;
+    background-color: blue;
+    width: 100px;
+    height: 40px;
+    top: 0px;
+}
+
+.firstRowSecondColumn {
+    position: absolute;
+    background-color: lime;
+    width: 50px;
+    height: 40px;
+    left: 50%;
+}
+
+.secondRowFirstColumn {
+    position: absolute;
+    background-color: purple;
+    width: 40px;
+    height: 40px;
+    top: 50px;
+}
+
+.secondRowSecondColumn {
+    position: absolute;
+    background-color: orange;
+    width: 30px;
+    height: 40px;
+    top: 50px;
+    left: 50%;
+}
+
+.testContainer {
+    position: relative;
+}
+</style>
+<body>
+
+<p>This test checks that the shrink-to-fit behavior is applied to out-of-flow positioned elements.</p>
+
+<div class="testContainer">
+  <div class="grid regularGrid">
+     <div class="firstRowFirstColumn"></div>
+     <div class="firstRowSecondColumn"></div>
+     <div class="secondRowFirstColumn"></div>
+     <div class="secondRowSecondColumn"></div>
+  </div>
+</div>
+
+<div class="testContainer" style="width: 200px;">
+  <div class="grid outOfFlowGrid">
+    <div class="one firstRowFirstColumn"></div>
+    <div class="two firstRowSecondColumn"></div>
+    <div class="three secondRowFirstColumn"></div>
+    <div class="four secondRowSecondColumn"></div>
+  </div>
+</div>
+
+<div class="testContainer" style="width: 200px;">
+  <div class="grid outOfFlowGrid">
+     <div class="firstRowFirstColumn"></div>
+     <div class="firstRowSecondColumn"></div>
+     <div class="secondRowFirstColumn"></div>
+     <div class="secondRowSecondColumn"></div>
+  </div>
+</div>
+
+<div class="testContainer" style="width: 200px;">
+  <div class="grid outOfFlowGrid">
+     <div class="firstRowFirstColumn"></div>
+     <div class="firstRowSecondColumn"></div>
+     <div class="secondRowFirstColumn"></div>
+     <div class="secondRowSecondColumn"></div>
+  </div>
+</div>
+
+
+</body>
+</html>

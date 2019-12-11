@@ -1,0 +1,16 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setCanOpenWindows();
+    testRunner.waitUntilDone();
+}
+
+var popup = window.open('resources/destination.html');
+document.write('location: ' + popup.location + '<br/>');
+var props = ['href', 'pathname', 'host', 'hostname', 'hash', 'port',
+             'protocol', 'search'];
+for (var i = 0; i < props.length; ++i) {
+  var prop = props[i];
+  document.write(prop + ': ' + popup.location[prop] + '<br/>');
+}
+</script>

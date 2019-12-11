@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script src="resources/promise-utils.js"></script>
+    </head>
+    <body>
+        <script>
+            if (window.internals)
+                internals.useMockRTCPeerConnectionFactory("");
+
+            let stream;
+            let midAssignedByA;
+            let event;
+
+            description("Test the case where an RTCRtpTransceiver gets a remotely assigned mid and also unmute the associated source");
+
+            if (window.testRunner)
+                testRunner.setUserMediaPermission(true);
+            else {
+                debug("This test can not be run without the testRunner");
+                finishJSTest();
+            }
+
+            const pcA = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+            const pcB = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+
+            pcA.ontrack = function (evt) {
+                testPassed("A: got remote track event");
+            };
+
+            pcB.ontrack = function (e) {
+                event = e;
+
+                testPassed("B: got remote track event");
+                shouldBeType("event.track", "MediaStreamTrack");
+
+                event.track.onunmute = function () {
+                    testPassed("B: remote track unmute event");
+                    finishJSTest();
+                };
+            };
+
+            navigator.mediaDevices.getUserMedia({ "audio": true })
+            .then(function (s) {
+                stream = s;
+
+                evalAndLog("pcA.addTrack(stream.getAudioTracks()[0], stream)");
+                debug("A's transceiver is not yet associated with a media description and should have a null mid");
+                shouldBeNull("pcA.getTransceivers()[0].mid");
+
+                return pcA.createOffer();
+            })
+            .then(function (offer) {
+                return pcA.setLocalDescription(offer);
+            })
+            .then(function () {
+                debug("A: local offer set (mid gets defined)");
+
+                evalAndLog("midAssignedByA = pcA.getTransceivers()[0].mid");
+                shouldBeTrue("midAssignedByA !== null");
+
+                evalAndLog("pcB.addTrack(stream.getAudioTracks()[0], stream)");
+                debug("B's transceiver is not yet associated with a media description and should have a null mid");
+                shouldBeNull("pcB.getTransceivers()[0].mid");
+
+                return pcB.setRemoteDescription(pcA.localDescription);
+            })
+            .then(function () {
+                debug("B: remote offer set (mid gets defined)");
+
+                debug("B's transceiver should get its mid from the remote side (A)");
+                shouldBe("pcB.getTransceivers()[0].mid", "midAssignedByA");
+
+                return pcB.createAnswer();
+            })
+            .then(function (answer) {
+                return pcB.setLocalDescription(answer);
+            })
+            .then(function () {
+                return pcA.setRemoteDescription(pcB.localDescription);
+            })
+            .then(function () {
+                testPassed("Offer/answer dialog completed")
+
+                window.internals.emulateRTCPeerConnectionPlatformEvent(pcB, "unmute-remote-sources-by-mid");
+            })
+            .catch(function (error) {
+                testFailed("Error in promise chain: " + error);
+                finishJSTest();
+            });
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

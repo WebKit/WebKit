@@ -1,0 +1,24 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Tests that scripts which have a for-event other than window.onload are not executed.");
+
+document.write('<script for="window">testPassed(\'for=window\');</scr' + 'ipt>');
+document.write('<script for="anything">testPassed(\'for=anything\');</scr' + 'ipt>');
+document.write('<script event="onload">testPassed(\'event=onload\');</scr' + 'ipt>');
+document.write('<script event="anything">testPassed(\'event=anything\');</scr' + 'ipt>');
+document.write('<script for="window" event="onload">testPassed(\'for=window event=onload\');</scr' + 'ipt>');
+document.write('<script for="window" event="onload()">testPassed(\'for=window event=onload()\');</scr' + 'ipt>');
+document.write('<script for="  WINDOW  " event="  ONLOAD()  ">testPassed(\'for=WINDOW event=ONLOAD()\');</scr' + 'ipt>');
+document.write('<script for="window" event="onresize">testFailed(\'for=window event=onresize\');</scr' + 'ipt>');
+document.write('<script for="document" event="onload">testFailed(\'for=document event=onload\');</scr' + 'ipt>');
+document.write('<script for="document" event="onclick">testFailed(\'for=document event=onclick\');</scr' + 'ipt>');
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
+

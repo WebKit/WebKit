@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that requestAnimationFrame is throttled in subframes are inside scrolled overflow scroll");
+window.jsTestIsAsync = true;
+
+function scrollOverflow()
+{
+
+    debug("Scrolling overflow.");
+    var container = document.getElementById('container');
+    container.scrollLeft = window.innerWidth + 10;
+
+    debug("requestAnimationFrame should still not be throttled");
+    shouldBeFalse("testFrame.contentWindow.internals.isRequestAnimationFrameThrottled()");
+    
+    finishJSTest();
+}
+
+function runTest()
+{
+    testFrame = document.getElementById("testFrame");
+    debug("Frame is initially inside the viewport so requestAnimationFrame should not be throttled");
+    shouldBeFalse("testFrame.contentWindow.internals.isRequestAnimationFrameThrottled()");
+    scrollOverflow();
+}
+</script>
+<style>
+#container {
+    position: absolute;
+    left: 0;
+    width: 300px;
+    height: 200px;
+    overflow-x: auto;
+    background: silver;
+}
+
+#testFrame {
+    width: 2000px;
+    height: 100px;
+    border: 2px solid black;
+    will-change: transform;
+}
+
+</style>
+<div id="container">
+    <iframe id="testFrame" src="resources/requestAnimationFrame-frame.html" onload="runTest()"></iframe>
+</div>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

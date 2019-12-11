@@ -1,0 +1,793 @@
+CONSOLE MESSAGE: line 3: console.log
+CONSOLE MESSAGE: line 3: console.warn
+CONSOLE MESSAGE: line 3: console.error
+CONSOLE MESSAGE: line 3: console.debug
+CONSOLE MESSAGE: line 3: console.info
+CONSOLE MESSAGE: line 3: assertion message
+CONSOLE MESSAGE: line 3: string message
+CONSOLE MESSAGE: line 3: message
+CONSOLE MESSAGE: line 3: message
+CONSOLE MESSAGE: line 3: message
+CONSOLE MESSAGE: line 3: message
+CONSOLE MESSAGE: line 3: message
+CONSOLE MESSAGE: line 3: [object Object]
+CONSOLE MESSAGE: line 3: [object Object]
+CONSOLE MESSAGE: line 3: groupName
+CONSOLE MESSAGE: groupName
+CONSOLE MESSAGE: line 3: collapsedGroupName
+CONSOLE MESSAGE: collapsedGroupName
+
+STEP: console.log('console.log')
+{
+  "_source": "console-api",
+  "_level": "log",
+  "_messageText": "console.log",
+  "_type": "log",
+  "_url": null,
+  "_line": 3,
+  "_column": 12,
+  "_repeatCount": 1,
+  "_parameters": [
+    {
+      "_type": "string",
+      "_description": "console.log",
+      "_hasChildren": false,
+      "_value": "console.log"
+    }
+  ],
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.warn('console.warn')
+{
+  "_source": "console-api",
+  "_level": "warning",
+  "_messageText": "console.warn",
+  "_type": "log",
+  "_url": null,
+  "_line": 3,
+  "_column": 13,
+  "_repeatCount": 1,
+  "_parameters": [
+    {
+      "_type": "string",
+      "_description": "console.warn",
+      "_hasChildren": false,
+      "_value": "console.warn"
+    }
+  ],
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.error('console.error')
+{
+  "_source": "console-api",
+  "_level": "error",
+  "_messageText": "console.error",
+  "_type": "log",
+  "_url": null,
+  "_line": 3,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_parameters": [
+    {
+      "_type": "string",
+      "_description": "console.error",
+      "_hasChildren": false,
+      "_value": "console.error"
+    }
+  ],
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.debug('console.debug')
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "console.debug",
+  "_type": "log",
+  "_url": null,
+  "_line": 3,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_parameters": [
+    {
+      "_type": "string",
+      "_description": "console.debug",
+      "_hasChildren": false,
+      "_value": "console.debug"
+    }
+  ],
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.info('console.info')
+{
+  "_source": "console-api",
+  "_level": "info",
+  "_messageText": "console.info",
+  "_type": "log",
+  "_url": null,
+  "_line": 3,
+  "_column": 13,
+  "_repeatCount": 1,
+  "_parameters": [
+    {
+      "_type": "string",
+      "_description": "console.info",
+      "_hasChildren": false,
+      "_value": "console.info"
+    }
+  ],
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.assert(false, 'assertion message')
+{
+  "_source": "console-api",
+  "_level": "error",
+  "_messageText": "assertion message",
+  "_type": "assert",
+  "_url": null,
+  "_line": 3,
+  "_column": 15,
+  "_repeatCount": 1,
+  "_parameters": [
+    {
+      "_type": "string",
+      "_description": "assertion message",
+      "_hasChildren": false,
+      "_value": "assertion message"
+    }
+  ],
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.trace()
+{
+  "_source": "console-api",
+  "_level": "log",
+  "_messageText": "",
+  "_type": "trace",
+  "_url": null,
+  "_line": 3,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.log('string message', string)
+{
+  "_source": "console-api",
+  "_level": "log",
+  "_messageText": "string message",
+  "_type": "log",
+  "_url": null,
+  "_line": 3,
+  "_column": 12,
+  "_repeatCount": 1,
+  "_parameters": [
+    {
+      "_type": "string",
+      "_description": "string message",
+      "_hasChildren": false,
+      "_value": "string message"
+    },
+    {
+      "_type": "string",
+      "_description": "string",
+      "_hasChildren": false,
+      "_value": "string"
+    }
+  ],
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.log('message', object, object)
+{
+  "_source": "console-api",
+  "_level": "log",
+  "_messageText": "message",
+  "_type": "log",
+  "_url": null,
+  "_line": 3,
+  "_column": 12,
+  "_repeatCount": 1,
+  "_parameters": [
+    {
+      "_type": "string",
+      "_description": "message",
+      "_hasChildren": false,
+      "_value": "message"
+    },
+    {
+      "_type": "object",
+      "_objectId": "<filtered>",
+      "_description": "Object",
+      "_hasChildren": true,
+      "_preview": {
+        "_type": "object",
+        "_description": "Object",
+        "_lossless": true,
+        "_overflow": false,
+        "_properties": [
+          {
+            "_name": "a",
+            "_type": "number",
+            "_value": "1"
+          }
+        ],
+        "_entries": null
+      }
+    },
+    {
+      "_type": "object",
+      "_objectId": "<filtered>",
+      "_description": "Object",
+      "_hasChildren": true,
+      "_preview": {
+        "_type": "object",
+        "_description": "Object",
+        "_lossless": true,
+        "_overflow": false,
+        "_properties": [
+          {
+            "_name": "a",
+            "_type": "number",
+            "_value": "1"
+          }
+        ],
+        "_entries": null
+      }
+    }
+  ],
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.error('message', object)
+{
+  "_source": "console-api",
+  "_level": "error",
+  "_messageText": "message",
+  "_type": "log",
+  "_url": null,
+  "_line": 3,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_parameters": [
+    {
+      "_type": "string",
+      "_description": "message",
+      "_hasChildren": false,
+      "_value": "message"
+    },
+    {
+      "_type": "object",
+      "_objectId": "<filtered>",
+      "_description": "Object",
+      "_hasChildren": true,
+      "_preview": {
+        "_type": "object",
+        "_description": "Object",
+        "_lossless": true,
+        "_overflow": false,
+        "_properties": [
+          {
+            "_name": "a",
+            "_type": "number",
+            "_value": "1"
+          }
+        ],
+        "_entries": null
+      }
+    }
+  ],
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.warn('message', object)
+{
+  "_source": "console-api",
+  "_level": "warning",
+  "_messageText": "message",
+  "_type": "log",
+  "_url": null,
+  "_line": 3,
+  "_column": 13,
+  "_repeatCount": 1,
+  "_parameters": [
+    {
+      "_type": "string",
+      "_description": "message",
+      "_hasChildren": false,
+      "_value": "message"
+    },
+    {
+      "_type": "object",
+      "_objectId": "<filtered>",
+      "_description": "Object",
+      "_hasChildren": true,
+      "_preview": {
+        "_type": "object",
+        "_description": "Object",
+        "_lossless": true,
+        "_overflow": false,
+        "_properties": [
+          {
+            "_name": "a",
+            "_type": "number",
+            "_value": "1"
+          }
+        ],
+        "_entries": null
+      }
+    }
+  ],
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.debug('message', object)
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "message",
+  "_type": "log",
+  "_url": null,
+  "_line": 3,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_parameters": [
+    {
+      "_type": "string",
+      "_description": "message",
+      "_hasChildren": false,
+      "_value": "message"
+    },
+    {
+      "_type": "object",
+      "_objectId": "<filtered>",
+      "_description": "Object",
+      "_hasChildren": true,
+      "_preview": {
+        "_type": "object",
+        "_description": "Object",
+        "_lossless": true,
+        "_overflow": false,
+        "_properties": [
+          {
+            "_name": "a",
+            "_type": "number",
+            "_value": "1"
+          }
+        ],
+        "_entries": null
+      }
+    }
+  ],
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.info('message', object)
+{
+  "_source": "console-api",
+  "_level": "info",
+  "_messageText": "message",
+  "_type": "log",
+  "_url": null,
+  "_line": 3,
+  "_column": 13,
+  "_repeatCount": 1,
+  "_parameters": [
+    {
+      "_type": "string",
+      "_description": "message",
+      "_hasChildren": false,
+      "_value": "message"
+    },
+    {
+      "_type": "object",
+      "_objectId": "<filtered>",
+      "_description": "Object",
+      "_hasChildren": true,
+      "_preview": {
+        "_type": "object",
+        "_description": "Object",
+        "_lossless": true,
+        "_overflow": false,
+        "_properties": [
+          {
+            "_name": "a",
+            "_type": "number",
+            "_value": "1"
+          }
+        ],
+        "_entries": null
+      }
+    }
+  ],
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.dir(object)
+{
+  "_source": "console-api",
+  "_level": "log",
+  "_messageText": "[object Object]",
+  "_type": "dir",
+  "_url": null,
+  "_line": 3,
+  "_column": 12,
+  "_repeatCount": 1,
+  "_parameters": [
+    {
+      "_type": "object",
+      "_objectId": "<filtered>",
+      "_description": "Object",
+      "_hasChildren": true,
+      "_preview": {
+        "_type": "object",
+        "_description": "Object",
+        "_lossless": true,
+        "_overflow": false,
+        "_properties": [
+          {
+            "_name": "a",
+            "_type": "number",
+            "_value": "1"
+          }
+        ],
+        "_entries": null
+      }
+    }
+  ],
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.dirxml(object)
+{
+  "_source": "console-api",
+  "_level": "log",
+  "_messageText": "[object Object]",
+  "_type": "dirxml",
+  "_url": null,
+  "_line": 3,
+  "_column": 15,
+  "_repeatCount": 1,
+  "_parameters": [
+    {
+      "_type": "object",
+      "_objectId": "<filtered>",
+      "_description": "Object",
+      "_hasChildren": true,
+      "_preview": {
+        "_type": "object",
+        "_description": "Object",
+        "_lossless": true,
+        "_overflow": false,
+        "_properties": [
+          {
+            "_name": "a",
+            "_type": "number",
+            "_value": "1"
+          }
+        ],
+        "_entries": null
+      }
+    }
+  ],
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.group('groupName')
+{
+  "_source": "console-api",
+  "_level": "log",
+  "_messageText": "groupName",
+  "_type": "startGroup",
+  "_url": null,
+  "_line": 3,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_parameters": [
+    {
+      "_type": "string",
+      "_description": "groupName",
+      "_hasChildren": false,
+      "_value": "groupName"
+    }
+  ],
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.groupEnd('groupName')
+{
+  "_source": "console-api",
+  "_level": "log",
+  "_messageText": "groupName",
+  "_type": "endGroup",
+  "_url": null,
+  "_line": 0,
+  "_column": 0,
+  "_repeatCount": 1,
+  "_parameters": [
+    {
+      "_type": "string",
+      "_description": "groupName",
+      "_hasChildren": false,
+      "_value": "groupName"
+    }
+  ],
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.groupCollapsed('collapsedGroupName')
+{
+  "_source": "console-api",
+  "_level": "log",
+  "_messageText": "collapsedGroupName",
+  "_type": "startGroupCollapsed",
+  "_url": null,
+  "_line": 3,
+  "_column": 23,
+  "_repeatCount": 1,
+  "_parameters": [
+    {
+      "_type": "string",
+      "_description": "collapsedGroupName",
+      "_hasChildren": false,
+      "_value": "collapsedGroupName"
+    }
+  ],
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.groupEnd('collapsedGroupName')
+{
+  "_source": "console-api",
+  "_level": "log",
+  "_messageText": "collapsedGroupName",
+  "_type": "endGroup",
+  "_url": null,
+  "_line": 0,
+  "_column": 0,
+  "_repeatCount": 1,
+  "_parameters": [
+    {
+      "_type": "string",
+      "_description": "collapsedGroupName",
+      "_hasChildren": false,
+      "_value": "collapsedGroupName"
+    }
+  ],
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count()
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "default: 1",
+  "_type": "log",
+  "_url": null,
+  "_line": 3,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count()
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "default: 2",
+  "_type": "log",
+  "_url": null,
+  "_line": 3,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count("default")
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "default: 3",
+  "_type": "log",
+  "_url": null,
+  "_line": 3,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count('')
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": ": 1",
+  "_type": "log",
+  "_url": null,
+  "_line": 3,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count('    ')
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "    : 1",
+  "_type": "log",
+  "_url": null,
+  "_line": 3,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count('')
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": ": 2",
+  "_type": "log",
+  "_url": null,
+  "_line": 3,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count('    ')
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "    : 2",
+  "_type": "log",
+  "_url": null,
+  "_line": 3,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count(string)
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "string: 1",
+  "_type": "log",
+  "_url": null,
+  "_line": 3,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count(string)
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "string: 2",
+  "_type": "log",
+  "_url": null,
+  "_line": 3,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count(object)
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "[object Object]: 1",
+  "_type": "log",
+  "_url": null,
+  "_line": 3,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count(object)
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "[object Object]: 2",
+  "_type": "log",
+  "_url": null,
+  "_line": 3,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count(otherObject)
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "[object Object]: 3",
+  "_type": "log",
+  "_url": null,
+  "_line": 3,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count(otherObject)
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "[object Object]: 4",
+  "_type": "log",
+  "_url": null,
+  "_line": 3,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count(number)
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "42: 1",
+  "_type": "log",
+  "_url": null,
+  "_line": 3,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+STEP: console.count(number)
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "42: 2",
+  "_type": "log",
+  "_url": null,
+  "_line": 3,
+  "_column": 14,
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+

@@ -1,0 +1,37 @@
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Checks the value of detached subframe properties.");
+onload = function()
+{
+    detachedWindow = frames[0];
+    document.body.removeChild(document.getElementsByTagName("iframe")[0]);
+
+    // Chrome and Firefox agree with us.
+    shouldBeTrue("!!detachedWindow.postMessage");
+    shouldBeTrue("!!detachedWindow.close");
+    shouldBeTrue("!!detachedWindow.locationbar");
+    shouldBeTrue("!!detachedWindow.history");
+    shouldBeTrue("!!detachedWindow.screen");
+    shouldBeTrue("!!detachedWindow.location");
+    shouldBeTrue("!!detachedWindow.navigator");
+    shouldBeTrue("detachedWindow.closed");
+    shouldBeNull("detachedWindow.top");
+    shouldBeNull("detachedWindow.opener");
+    shouldBeNull("detachedWindow.parent");
+    shouldBeNull("detachedWindow.frameElement"); // Technically, Chrome returns undefined here, not null.
+    shouldBe("detachedWindow.window", "detachedWindow");
+    shouldBe("detachedWindow.frames", "detachedWindow");
+    shouldBe("detachedWindow.self", "detachedWindow");
+
+    // Chrome returns undefined but Firefox has a valid object.
+    shouldBeTrue("!detachedWindow.localStorage");
+    shouldBeTrue("!!detachedWindow.document");
+    shouldBeTrue("!!detachedWindow.XMLHttpRequest");
+    shouldBeTrue("!!detachedWindow.getComputedStyle");
+
+    // Chrome returns undefined but Firefox throws an exception.
+    shouldBe("detachedWindow.innerHeight", "0");
+    shouldBe("detachedWindow.innerWidth", "0");
+}
+</script>
+<iframe src="about:blank"></iframe>

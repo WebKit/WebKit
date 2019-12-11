@@ -1,0 +1,7 @@
+2d.gradient.radial.transform.3
+
+Radial gradient transforms do not experience broken caching effects
+
+
+FAIL Radial gradient transforms do not experience broken caching effects null is not an object (evaluating 'ctx.createRadialGradient')
+

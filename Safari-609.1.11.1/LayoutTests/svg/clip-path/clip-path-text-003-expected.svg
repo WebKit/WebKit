@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<text x="20" y="150" fill="green" style="font-size:60px; font-weight:bold;">CLIP</text>
+<polygon points="0 0, 200 0, 200 200, 0 200, 0 50, 150 50, 150 150, 50 150, 50 50, 0 50" fill-rule="evenodd" fill="green"/>
+</svg>

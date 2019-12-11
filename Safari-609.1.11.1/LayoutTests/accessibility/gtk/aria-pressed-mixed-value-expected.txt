@@ -1,0 +1,12 @@
+Verifies the exposure of a mixed value of aria-pressed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+test1: AXRole: AXToggleButton is indeterminate: true
+test2: AXRole: AXToggleButton is indeterminate: false
+test3: AXRole: AXToggleButton is indeterminate: false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

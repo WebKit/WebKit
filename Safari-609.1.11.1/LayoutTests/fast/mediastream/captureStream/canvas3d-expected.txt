@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 23: Turning drawing buffer preservation for the WebGL canvas being captured
+  
+ 
+
+PASS captureStream with 3d context drawing - not buffered initially 
+PASS captureStream with 3d context drawing - buffered initially 
+

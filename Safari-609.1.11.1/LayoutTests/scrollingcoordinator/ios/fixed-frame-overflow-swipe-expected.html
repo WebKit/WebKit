@@ -1,0 +1,86 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true internal:AsyncOverflowScrollingEnabled=true internal:AsyncFrameScrollingEnabled=true ] -->
+<html>
+<head>
+    <meta name='viewport' content='initial-scale=1.0'>
+    <style>
+        .scroller {
+            margin: 10px;
+            height: 300px;
+            width: 300px;
+            border: 1px solid black;
+            overflow: scroll;
+            z-index: 0;
+            position: relative;
+        }
+        
+        .fixed {
+            position: fixed;
+            top: 0px;
+            width: 200px;
+            height: 200px;
+            background-color: green;
+        }
+    </style>
+    <script src='../../resources/ui-helper.js'></script>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        async function doTest()
+        {
+            if (!window.testRunner)
+                return;
+
+            if (!testRunner.runUIScript)
+                return;
+
+            await UIHelper.ensurePresentationUpdate();
+            frame.contentDocument.querySelector('.scroller').scrollTo(0, 200);
+            await UIHelper.ensurePresentationUpdate();
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <iframe id='frame' width=300 height=400 srcdoc="<!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                .scroller {
+                    margin: 10px;
+                    height: 300px;
+                    width: 300px;
+                    border: 1px solid black;
+                    overflow: scroll;
+                    z-index: 0;
+                    position: relative;
+                }
+
+                .fixed {
+                    position: fixed;
+                    bottom: 0px;
+                    right: 0px;
+                    width: 200px;
+                    height: 200px;
+                    background-color: green;
+                }
+                .spacer {
+                    height: 1000px;
+                    border: 2px solid blue;
+                }
+            </style>
+        </head>
+        <body>
+            <div class='scroller'>
+                <div class='fixed'></div>
+                <div class='spacer'></div>
+            </div>
+        </body>
+        </html>"
+    ></iframe>
+</body>
+</html>

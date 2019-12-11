@@ -1,0 +1,16 @@
+Tests for timeout event breakpoint functionality (DOMDebugger) in a Worker.
+
+
+== Running test suite: Worker.DOMDebugger.EventBreakpoint.Timeout
+-- Running test case: Worker.DOMDebugger.EventBreakpoint.Timeout.Basic
+PASS: Should have paused.
+PASS: Pause reason should have been Timeout.
+CALL STACK:
+0: [F] timeout
+ASYNC CALL STACK:
+1: --- setTimeout ---
+2: [F] triggerTimeout
+3: [F] handleMessage
+4: --- addEventListener ---
+5: [P] Global Code
+

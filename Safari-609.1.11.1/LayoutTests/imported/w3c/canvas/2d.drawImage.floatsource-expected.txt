@@ -1,0 +1,7 @@
+2d.drawImage.floatsource
+Spec references: 2d.drawImage.paint
+Actual output:
+Expected output:
+
+Passed
+

@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div role="grid" id="grid">
+    <div role="row">
+        <span id="test" role="columnheader" aria-readonly="true">Placeholder content</span>
+        <span role="columnheader">header 2</span>
+        <span role="columnheader">header 3</span>
+    </div>
+
+    <div role="row">
+        <span role="rowheader" id="obj1">obj1</span>    
+        <span role="gridcell">obj2</span>
+        <span role="gridcell">obj3</span>
+    </div>
+
+    <div role="row">
+        <span role="rowheader">obj1</span>
+        <span role="gridcell">obj2</span>
+        <span role="gridcell">obj3</span>
+    </div>
+</div>
+
+
+
+<div id="console"></div>
+
+<script>
+
+    description("This tests that ARIA rowheader and columnheader roles are identified correctly.");
+
+    if (window.accessibilityController) {
+
+          var grid = accessibilityController.accessibleElementById("grid");
+
+          var output = grid.attributesOfColumnHeaders();
+          output += "\n";
+          output += grid.attributesOfRowHeaders();
+          document.getElementById("console").innerText = output;
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div>Implicit defaults</div>
+<input type="range" id="slider">
+<input id="combo" type="text" role="combobox" placeholder="Placeholder" value="text">
+<div id="listbox" role="listbox">
+    <div id="option1" role="option" aria-selected="true">Option</div>
+</div>
+<div id="menu" role="menu">
+    <div role="menuitem" id="item1" tabindex="0">Menu item 1</div>
+</div>
+<div id="menubar" role="menubar">menubar</div>
+<div role="radiogroup" id="radiogroup">
+    <div role="radio" aria-label="radio 1" aria-checked="false">radio 1</div>
+</div>
+<div role="separator" id="separator"></div>
+<div role="tablist" id="tablist">
+<div role="toolbar" id="toolbar" aria-label="test toolbar"><li>item one</div>
+<ul id="tree" role="tree">
+    <li id="treeitem1" role="treeitem">tree item</li>
+</ul>
+<table id="treegrid" role="treegrid">
+<tbody>
+    <tr><td role="gridcell" colspan="3">cell</tr>
+    <tr><td role="gridcell" colspan="3">cell2</tr>
+</tbody>
+</table>
+
+<br>
+<div>Authored orientation</div>
+<div role="radiogroup" id="radiogroup2" aria-orientation="vertical">
+    <div role="radio" aria-label="radio 1" aria-checked=false>radio 1</div>
+</div>
+<table id="treegrid2" role="treegrid" aria-orientation="horizontal">
+<tbody>
+    <tr><td role="gridcell" colspan="3">cell</tr>
+    <tr><td role="gridcell" colspan="3">cell2</tr>
+</tbody>
+</table>
+<div role="separator" id="separator2" aria-orientation="undefined"></div>
+<span role="slider" id="slider2" aria-orientation="undefined" aria-valuenow=5 aria-valuemin=0 aria-valuemax=10>X</span>
+<div role="listbox" id="listbox2" aria-orientation="horizontal">
+    <div id="option2" role="option" aria-selected="true">Option</div>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test makes sure that aria-orientation works correctly and the implicit defaults are defined on different roles.");
+
+    if (window.accessibilityController) {
+          // Test implicit defaults on some roles.
+          var slider = accessibilityController.accessibleElementById("slider");
+          shouldBe("slider.orientation", "'AXOrientation: AXHorizontalOrientation'");
+          
+          var combobox = accessibilityController.accessibleElementById("combo");
+          shouldBe("combobox.orientation", "'AXOrientation: AXUnknownOrientation'");
+          
+          var listbox = accessibilityController.accessibleElementById("listbox");
+          shouldBe("listbox.orientation", "'AXOrientation: AXVerticalOrientation'");
+          
+          var menu = accessibilityController.accessibleElementById("menu");
+          shouldBe("menu.orientation", "'AXOrientation: AXVerticalOrientation'");
+          
+          var menubar = accessibilityController.accessibleElementById("menubar");
+          shouldBe("menubar.orientation", "'AXOrientation: AXHorizontalOrientation'");
+
+          var radiogroup = accessibilityController.accessibleElementById("radiogroup");
+          shouldBe("radiogroup.orientation", "'AXOrientation: AXUnknownOrientation'");
+
+          var separator = accessibilityController.accessibleElementById("separator");
+          shouldBe("separator.orientation", "'AXOrientation: AXHorizontalOrientation'");
+          
+          var tablist = accessibilityController.accessibleElementById("tablist");
+          shouldBe("tablist.orientation", "'AXOrientation: AXHorizontalOrientation'");
+          
+          var toolbar = accessibilityController.accessibleElementById("toolbar");
+          shouldBe("toolbar.orientation", "'AXOrientation: AXHorizontalOrientation'");
+          
+          var tree = accessibilityController.accessibleElementById("tree");
+          shouldBe("tree.orientation", "'AXOrientation: AXVerticalOrientation'");
+
+          var treegrid = accessibilityController.accessibleElementById("treegrid");
+          shouldBe("treegrid.orientation", "'AXOrientation: AXUnknownOrientation'");
+          
+          // Test authored aria-orientation are correct.
+          var radiogroup2 = accessibilityController.accessibleElementById("radiogroup2");
+          shouldBe("radiogroup2.orientation", "'AXOrientation: AXVerticalOrientation'");
+          
+          var treegrid2 = accessibilityController.accessibleElementById("treegrid2");
+          shouldBe("treegrid2.orientation", "'AXOrientation: AXHorizontalOrientation'");
+
+          var separator2 = accessibilityController.accessibleElementById("separator2");
+          shouldBe("separator2.orientation", "'AXOrientation: AXUnknownOrientation'");
+          
+          var slider2 = accessibilityController.accessibleElementById("slider2");
+          shouldBe("slider2.orientation", "'AXOrientation: AXUnknownOrientation'");
+
+          var listbox2 = accessibilityController.accessibleElementById("listbox2");
+          shouldBe("listbox2.orientation", "'AXOrientation: AXHorizontalOrientation'");
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

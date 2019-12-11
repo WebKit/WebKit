@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div role="application">
+  <span id="slider" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"></span>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+window.jsTestIsAsync = true;
+
+description("This tests the exposure of attributes for an ARIA slider.");
+
+var valueChangedNotifications = 0;
+
+function notificationCallback(element, notification) {
+    if (element.role == "AXRole: AXSlider" && notification == "AXValueChanged")
+        valueChangedNotifications++;
+}
+
+if (window.testRunner && window.accessibilityController) {
+    testRunner.dumpAsText();
+
+    slider = document.getElementById("slider");
+    slider.focus();
+
+    axSlider = accessibilityController.focusedElement;
+    accessibilityController.addNotificationListener(notificationCallback);
+
+    shouldBe("axSlider.role", "'AXRole: AXSlider'");
+    shouldBe("axSlider.intValue", "50");
+    shouldBe("axSlider.minValue", "0");
+    shouldBe("axSlider.maxValue", "100");
+
+    slider.setAttribute("aria-valuenow", "75");
+    shouldBe("axSlider.intValue", "75");
+
+    slider.setAttribute("aria-valuenow", "35");
+    shouldBe("axSlider.intValue", "35");
+
+    window.setTimeout(function() {
+        if (window.accessibilityController)
+            accessibilityController.removeNotificationListener();
+
+        shouldBe("valueChangedNotifications", "2");
+        finishJSTest();
+    },
+    0);
+}
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+Checking pause locations when stepping with "stepOut".
+
+
+== Running test suite: Debugger.stepOut
+-- Running test case: Debugger.stepOut.function
+PAUSED (debugger-statement)
+PAUSE AT entry1:8:5
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+      6    function entry1() {
+ ->   7        |debugger;
+      8        let x = 1;
+      9        let y = 2;
+     10    }
+
+RESUMED
+
+-- Running test case: Debugger.stepOut.eval
+PAUSED (debugger-statement)
+PAUSE AT Eval Code:1:1
+--- Source Unavailable ---
+
+RESUMED
+
+-- Running test case: Debugger.stepOut.innerFunction
+PAUSED (debugger-statement)
+PAUSE AT beta:24:9
+     20            beta();
+     21        }
+     22        function beta() {
+ ->  23            |debugger;
+     24        }
+     25        alpha();
+     26    }
+
+PAUSE AT alpha:22:6
+     18    function entry3() {
+     19        function alpha() {
+     20            beta();
+ ->  21        }|
+     22        function beta() {
+     23            debugger;
+     24        }
+
+PAUSE AT entry3:27:2
+     23            debugger;
+     24        }
+     25        alpha();
+ ->  26    }|
+     27    
+     28    function entry4() {
+     29        (function() {
+
+RESUMED
+
+-- Running test case: Debugger.stepOut.anonymousFunction
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:31:9
+     27    
+     28    function entry4() {
+     29        (function() {
+ ->  30            |debugger;
+     31            let inner = 1;
+     32        })();
+     33        let outer = 2;
+
+PAUSE AT entry4:34:5
+     30            debugger;
+     31            let inner = 1;
+     32        })();
+ ->  33        |let outer = 2;
+     34    }
+     35    
+     36    // ---------
+
+RESUMED
+

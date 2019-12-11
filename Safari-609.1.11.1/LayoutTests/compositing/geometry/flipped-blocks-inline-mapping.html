@@ -1,0 +1,33 @@
+<style>
+    .container {
+      -webkit-writing-mode: horizontal-bt;
+      height: 100px;
+      border: 1px solid black;
+    }
+    div {
+      height: 20px;
+    }
+    .box {
+      width: 20px;
+      height: 20px;
+      background-color: blue;
+    }
+    
+    .transformed {
+      -webkit-transform: translateZ(0);
+    }
+    span {
+      opacity: 0.8;
+    }
+    
+</style>
+<div class="container">
+    <span>
+        <div class="transformed box"></div>
+        <div style="display: inline-block">This test should not assert in debug builds</div>
+    </span>
+</div>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+</script>

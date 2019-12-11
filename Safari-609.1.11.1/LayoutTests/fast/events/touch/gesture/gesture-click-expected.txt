@@ -1,0 +1,10 @@
+This tests basic gesture callbacks.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Gesture manager not implemented on this platform.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

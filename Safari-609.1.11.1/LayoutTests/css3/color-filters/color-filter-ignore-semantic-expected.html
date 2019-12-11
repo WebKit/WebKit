@@ -1,0 +1,36 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableColorFilter=true ] -->
+<html>
+    <head>
+        <title>CSS Test: Don't apply -apple-color-filter to semantic colors</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+        <link rel="match" href="-apple-color-filter-ignore-semantic-expected.html">
+
+        <style type="text/css">
+            .test
+            {
+                width: 100px;
+                height: 100px;
+                margin: 10px;
+                float: left;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="test" style="background-color: rgb(0, 255, 255);"></div>
+        <div class="test" style="background-color: rgb(0, 255, 255);"></div>
+        <div class="test" style="background-color: text"></div>
+        <div class="test" style="background-color: highlight"></div>
+        <div class="test" style="background-color: window"></div>
+        <div class="test" style="background-color: -apple-system-text-background"></div>
+        <div class="test" style="background-color: -apple-system-header-text"></div>
+        <div class="test" style="background-color: -apple-system-alternate-selected"></div>
+        <div class="test" style="background-color: -apple-system-label"></div>
+        <div class="test" style="background-color: -apple-system-secondary-label"></div>
+        <div class="test" style="background-color: -apple-system-tertiary-label"></div>
+        <div class="test" style="background-color: -apple-system-quaternary-label"></div>
+        <div class="test" style="background-color: -apple-system-grid"></div>
+        <div class="test" style="background-color: -apple-system-blue-color"></div>
+        <div class="test" style="background-color: -apple-system-even-alternating-content-background"></div>
+        <div class="test" style="background-color: -apple-system-odd-alternating-content-background"></div>
+    </body>
+</html>

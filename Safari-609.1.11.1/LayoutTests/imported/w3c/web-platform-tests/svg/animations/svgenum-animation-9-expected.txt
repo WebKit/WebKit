@@ -1,0 +1,4 @@
+test
+
+PASS Test SVGTextPathSpacingType/SVGTextPathMethodType enumeration animations 
+

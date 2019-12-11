@@ -1,0 +1,23 @@
+Tests for value sanitization algorithm.
+
+
+Email with multiple:
+PASS input.value is "tkent@chromium.org,tkent@example.!!!"
+Email without multiple:
+PASS input.value is "tkent@chromium.org, tkent@example.***"
+
+Number:
+PASS input.value is "65536"
+PASS input.value = "256"; input.value is "256"
+PASS input.value = ""; input.value is ""
+
+Range:
+PASS input.value is "50"
+
+Text:
+PASS input.value is " foo bar "
+PASS document.getSelection().toString() is " foo bar "
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

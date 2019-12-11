@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Geometry Interfaces: DOMPoint and DOMPointReadOnly interface tests.</title>
+    <link rel="author" title="Dirk Schulze" href="mailto:dschulze@adobe.com" />
+    <link rel="help" href="http://www.w3.org/TR/geometry-1/#DOMPoint">
+    <link rel="help" href="http://dev.w3.org/fxtf/geometry/#dictdef-dompointinit">
+    <link rel="help" href="http://www.w3.org/TR/geometry-1/#dom-dompoint-dompoint">
+    <link rel="help" href="http://www.w3.org/TR/geometry-1/#dom-dompointreadonly-dompoint-x">
+    <link rel="help" href="http://www.w3.org/TR/geometry-1/#dom-dompointreadonly-dompoint-y">
+    <link rel="help" href="http://www.w3.org/TR/geometry-1/#dom-dompointreadonly-dompoint-z">
+    <link rel="help" href="http://www.w3.org/TR/geometry-1/#dom-dompointreadonly-dompoint-w">
+    <script src="../resources/testharness.js"></script>
+    <script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+    <p>Test DOMPoint and DOMPointReadOnly interfaces</p>
+    <div id="log"></div>
+    <script>
+        test(function() {
+            checkDOMPoint(new DOMPoint(), {x:0, y:0, z:0, w:1});
+        },'testConstructor0');
+        test(function() {
+            checkDOMPoint(new DOMPoint(1), {x:1, y:0, z:0, w:1})
+        },'testConstructor1');
+        test(function() {
+            checkDOMPoint(new DOMPoint(1, 2), {x:1, y:2, z:0, w:1});
+        },'testConstructor2');
+        test(function() {
+            checkDOMPoint(new DOMPoint(1, 2, 3), {x:1, y:2, z:3, w:1});
+        },'testConstructor3');
+        test(function() {
+            checkDOMPoint(new DOMPoint(1, 2, 3, 4), {x:1, y:2, z:3, w:4});
+        },'testConstructor4');
+        test(function() {
+            checkDOMPoint(new DOMPoint(1, 2, 3, 4, 5), {x:1, y:2, z:3, w:4});
+        },'testConstructor5');
+
+        // Dictionary constructors are in http://www.w3.org/TR/geometry-1 but not http://dev.w3.org/fxtf/geometry.
+        test(function() {
+            checkDOMPoint(new DOMPoint({x:1, y:2, z:3, w:4}), {x:1, y:2, z:3, w:4});
+        },'testDictionaryConstructor1');
+        test(function() {
+            checkDOMPoint(new DOMPoint({}), {x:0, y:0, z:0, w:1});
+        },'testDictionaryConstructor2');
+        test(function() {
+            checkDOMPoint(new DOMPoint({x:1}), {x:1, y:0, z:0, w:1});
+        },'testDictionaryConstructor3');
+        test(function() {
+            checkDOMPoint(new DOMPoint({y:3, w:0.5}), {x:0, y:3, z:0, w:0.5});
+        },'testDictionaryConstructor4');
+
+        test(function() {
+            checkDOMPoint(DOMPoint.fromPoint({}), {x:0, y:0, z:0, w:1});
+        },'testConstructorDOMPointInit0');
+        test(function() {
+            checkDOMPoint(DOMPoint.fromPoint({x:1}), {x:1, y:0, z:0, w:1});
+        },'testConstructorDOMPointInit1');
+        test(function() {
+            checkDOMPoint(DOMPoint.fromPoint({x:1, y:2}), {x:1, y:2, z:0, w:1});
+        },'testConstructorDOMPointInit2');
+        test(function() {
+            checkDOMPoint(DOMPoint.fromPoint({x:1, y:2, z:3}), {x:1, y:2, z:3, w:1});
+        },'testConstructorDOMPointInit3');
+        test(function() {
+            checkDOMPoint(DOMPoint.fromPoint({x:1, y:2, z:3, w:4}), {x:1, y:2, z:3, w:4});
+        },'testConstructorDOMPointInit4');
+        test(function() {
+            checkDOMPoint(DOMPoint.fromPoint({x:1, y:2, z:3, w:4, v:5}), {x:1, y:2, z:3, w:4});
+        },'testConstructorDOMPointInit5');
+        test(function() {
+            checkDOMPoint(DOMPoint.fromPoint({x:1, z:3}), {x:1, y:0, z:3, w:1});
+        },'testConstructorDOMPointInit2irregular');
+        test(function() {
+            checkDOMPoint(DOMPoint.fromPoint({x:1, y: undefined, z:3}), {x:1, y:0, z:3, w:1});
+        },'testConstructorDOMPointInit2undefined');
+        test(function() {
+            checkDOMPoint(new DOMPointReadOnly(), {x:0, y:0, z:0, w:1});
+        },'testReadonlyConstructor1');
+        test(function() {
+            checkDOMPoint(new DOMPoint(1, NaN), {x:1, y:NaN, z:0, w:1});
+        },'testConstructor2NaN');
+        test(function() {
+            checkDOMPoint(new DOMPoint(1, Number.POSITIVE_INFINITY), {x:1, y:Infinity, z:0, w:1});
+        },'testConstructor2Infinity');
+        test(function() {
+            var p = DOMPoint.fromPoint({});
+            assert_true(p instanceof DOMPoint);
+        },'testFromPointReturnType');
+        test(function() {
+            var p = DOMPointReadOnly.fromPoint({});
+            assert_true(p instanceof DOMPointReadOnly);
+        },'testFromPointReadOnlyReturnType');
+        test(function() {
+            var p = new DOMPointReadOnly();
+            p.x = 1;
+            p.y = Math.PI;
+            p.z = 3.2;
+            p.w = 4;
+            checkDOMPoint(p, {x:0, y:0, z:0, w:1});
+        },'testReadonlyAttributes');
+        test(function() {
+            var p = new DOMPoint();
+            p.x = 1;
+            p.y = Math.PI;
+            p.z = 3.2;
+            p.w = 4;
+            checkDOMPoint(p, {x:1, y:Math.PI, z:3.2, w:4});
+        },'testAttributes');
+        test(function() {
+            var p = new DOMPoint(0, 0, 0, 1);
+            p.x = undefined;
+            p.y = undefined;
+            p.z = undefined;
+            p.w = undefined;
+            checkDOMPoint(p, {x:NaN, y:NaN, z:NaN, w:NaN});
+        },'testAttributesUndefined');
+        test(function() {
+            var p = new DOMPoint(0, 0, 0, 1);
+            p.x = NaN;
+            p.y = Number.POSITIVE_INFINITY;
+            p.z = Number.NEGATIVE_INFINITY;
+            p.w = Infinity;
+            checkDOMPoint(p, {x:NaN, y:Infinity, z:-Infinity, w:Infinity});
+        },'testAttributesNaNInfinity');
+        test(function() {
+            var p = DOMPoint.fromPoint({x:1, y:3.1415927, z:3.2, w:4});
+            assert_equals(JSON.stringify(p.toJSON()), "{\"x\":1,\"y\":3.1415927,\"z\":3.2,\"w\":4}");
+        },'testSerializer');
+        test(function() {
+            var p = DOMPointReadOnly.fromPoint({x:1, y:3.1415927, z:3.2, w:4});
+            assert_equals(JSON.stringify(p.toJSON()), "{\"x\":1,\"y\":3.1415927,\"z\":3.2,\"w\":4}");
+        },'testReadonlySerializer');
+
+        function checkDOMPoint(p, exp) {
+            assert_equals(p.x, exp.x, "Expected value for x is " + exp.x);
+            assert_equals(p.y, exp.y, "Expected value for y is " + exp.y);
+            assert_equals(p.z, exp.z, "Expected value for z is " + exp.z);
+            assert_equals(p.w, exp.w, "Expected value for w is " + exp.w);
+        }
+    </script>
+</body>
+</html>

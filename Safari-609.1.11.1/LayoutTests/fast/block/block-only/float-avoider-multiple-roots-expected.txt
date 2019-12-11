@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x220
+  RenderBlock {HTML} at (0,0) size 800x220
+    RenderBody {BODY} at (8,8) size 784x204
+      RenderBlock {DIV} at (0,0) size 202x102 [border: (1px solid #FF0000)]
+        RenderBlock (floating) {DIV} at (1,1) size 12x52 [border: (1px solid #0000FF)]
+        RenderBlock (floating) {DIV} at (13,1) size 12x32 [border: (1px solid #0000FF)]
+        RenderBlock (floating) {DIV} at (1,57) size 12x32 [border: (1px solid #0000FF)]
+      RenderBlock {DIV} at (0,102) size 202x102 [border: (1px solid #FF0000)]
+        RenderBlock (floating) {DIV} at (1,1) size 12x52 [border: (1px solid #0000FF)]
+        RenderBlock (floating) {DIV} at (13,1) size 12x32 [border: (1px solid #0000FF)]
+layer at (21,41) size 182x12 clip at (22,42) size 180x10
+  RenderBlock {DIV} at (13,33) size 182x12 [border: (1px solid #008000)]
+layer at (21,53) size 182x12 clip at (22,54) size 180x10
+  RenderBlock {DIV} at (13,45) size 182x12 [border: (1px solid #008000)]
+layer at (21,65) size 182x12 clip at (22,66) size 180x10
+  RenderBlock {DIV} at (13,57) size 182x12 [border: (1px solid #008000)]
+layer at (27,143) size 182x12 clip at (28,144) size 180x10
+  RenderBlock {DIV} at (19,33) size 182x12 [border: (1px solid #008000)]
+layer at (27,155) size 182x12 clip at (28,156) size 180x10
+  RenderBlock {DIV} at (19,45) size 182x12 [border: (1px solid #008000)]
+layer at (27,167) size 182x12 clip at (28,168) size 180x10
+  RenderBlock {DIV} at (19,57) size 182x12 [border: (1px solid #008000)]

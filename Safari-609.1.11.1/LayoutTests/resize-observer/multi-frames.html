@@ -1,0 +1,117 @@
+<!doctype html><!-- webkit-test-runner [ experimental:ResizeObserverEnabled=true ] -->
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="./resources/resizeTestHelper.js"></script>
+<p>ResizeObserver tests</p>
+<div id="target1" style="width:100px;height:100px;">t1
+    <div id="target2" style="width:100px;height:100px;">t2
+        <iframe id="iframe1" src="./resources/iframe1.html"></iframe>
+    </div>
+</div>
+<div id="target3" style="width:100px;height:100px;">t3</div>
+
+<div id="log"></div>
+<script type="text/javascript">
+'use strict';
+
+function test0() {
+    let t1 = document.querySelector('#target1');
+    let t2 = document.querySelector('#target2');
+    let it1 = document.querySelector("#iframe1").contentDocument.querySelector("#iframe1-target1");
+
+    let helper = new ResizeTestHelper(
+        "test0: depth of target from child frame",
+    [
+        {
+            setup: observer => {
+                observer.observe(t1);
+                observer.observe(t2);
+                observer.observe(it1);
+            },
+            notify: (entries, observer) => {
+                assert_equals(entries.length, 3, "3 entries");
+                assert_equals(entries[0].target, t1, "observe target from child frame");
+                assert_equals(entries[1].target, t2, "observe target from child frame");
+                assert_equals(entries[2].target, it1, "observe target from child frame");
+            }
+        },
+        {
+            setup: observer => {
+                t2.style.width = "50px";
+                it1.style.width = "50px";
+            },
+            notify: (entries, observer) => {
+                assert_equals(entries.length, 2, "2 entries");
+                assert_equals(entries[0].target, t2, "t2 deeper than t1");
+                assert_equals(entries[1].target, it1, "it1 deeper than t1");
+            }
+        },
+        {
+            setup: observer => {
+                it1.style.width = "25px";
+            },
+            notify: (entries, observer) => {
+                assert_equals(entries.length, 1, "1 entry");
+                assert_equals(entries[0].target, it1, "it1 deeper than t2");
+            }
+        }
+    ]);
+    return helper.start();
+}
+
+function test1() {
+    let t1 = document.querySelector('#target1');
+    let t3 = document.querySelector('#target3');
+    let it1 = document.querySelector("#iframe1").contentDocument.querySelector("#iframe1-target1");
+
+    let helper = new ResizeTestHelper(
+        "test1: observed element move to new document",
+    [
+        {
+            setup: observer => {
+                observer.observe(t1);
+                observer.observe(t3);
+                observer.observe(it1);
+            },
+            notify: (entries, observer) => {
+                assert_equals(entries.length, 3, "3 entries");
+                assert_equals(entries[0].target, t1, "move to new document");
+                assert_equals(entries[1].target, t3, "move to new document");
+                assert_equals(entries[2].target, it1, "move to new document");
+            }
+        },
+        {
+            setup: observer => {
+                t3.parentElement.removeChild(t3);
+                it1.parentElement.appendChild(t3);
+                t3.style.width = "25px";
+            },
+            notify: (entries, observer) => {
+                assert_equals(entries.length, 1, "1 entry");
+                assert_equals(entries[0].target, t3, "still observed after moving to new document");
+            }
+        }
+    ]);
+    return helper.start();
+}
+
+function startTest() {
+    let guard;
+    test(_ => {
+        assert_own_property(window, "ResizeObserver");
+        guard = async_test('guard');
+    }, "ResizeObserver implemented");
+
+    test0()
+        .then(() => { return test1(); })
+        .then(() => { guard.done(); });
+}
+
+window.addEventListener('message', function(event) {
+    switch(event.data) {
+        case 'readyToTest':
+            startTest();
+        break;
+    }
+});
+</script>

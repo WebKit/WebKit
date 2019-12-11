@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+<div style="height: 300px; overflow-y: hidden;" id="outerDiv">
+    <div style="height: 100px; width:300px; background: red; overflow:hidden" id="upperDiv"></div>
+    <div style="height: 200px; width:300px; background: green; overflow:hidden" id="lowerDiv"></div>
+</div>
+<script src="resources/text-based-repaint.js" type="text/javascript"></script>
+<script>
+    repaintTest = function() {
+        document.getElementById('upperDiv').style.height = '0';
+        document.getElementById('lowerDiv').style.height = '300px';
+    };
+    runRepaintTest();
+</script>
+</body>
+</html>

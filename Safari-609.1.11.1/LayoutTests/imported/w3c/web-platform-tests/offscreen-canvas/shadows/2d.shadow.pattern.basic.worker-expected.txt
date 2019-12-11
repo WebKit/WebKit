@@ -1,0 +1,3 @@
+
+FAIL Shadows are drawn for fill patterns Can't find variable: OffscreenCanvas
+

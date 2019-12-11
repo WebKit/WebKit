@@ -1,0 +1,7 @@
+
+PASS setLocalDescription with valid offer should succeed 
+FAIL setLocalDescription with type offer and null sdp should use lastOffer generated from createOffer promise_test: Unhandled rejection with value: object "OperationError: Expect line: v="
+FAIL setLocalDescription() with offer not created by own createOffer() should reject with InvalidModificationError assert_throws: function "function () { throw e }" threw object "OperationError: Failed to set local offer sdp: Failed to apply the description for 0: Local fingerprint does not match identity. Expected: sha-256 E6:E8:76:7F:DE:42:8F:0E:00:46:2E:18:43:C7:6F:85:04:B8:BE:C7:18:39:8E:12:1F:69:24:2C:26:0F:DA:A4 Got: sha-256 FC:1E:43:7D:F6:B9:B2:57:2E:FE:F4:12:4F:17:EC:20:DB:0F:70:A7:72:10:84:4D:10:3B:8B:D1:12:0C:80:FA" that is not a DOMException InvalidModificationError: property "code" is equal to 0, expected 13
+FAIL Set created offer other than last offer should reject with InvalidModificationError assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Creating and setting offer multiple times should succeed 
+

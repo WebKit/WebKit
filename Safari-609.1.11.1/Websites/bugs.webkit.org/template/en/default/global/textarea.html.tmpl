@@ -1,0 +1,55 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  #
+  # id:             (optional) The "id"-attribute of the textarea.
+  # name:           (optional) The "name"-attribute of the textarea.
+  # accesskey:      (optional) The "accesskey"-attribute of the textarea.
+  # classes:        (optional) The "class"-attribute of the textarea.
+  # wrap:           (deprecated; optional) The "wrap"-attribute of the textarea.
+  # disabled:       (optional) Disable the textarea.
+  # readonly:       (optional) Prevent the textarea from being edited.
+  # minrows:        (required) Number of rows the textarea shall have initially
+  #                 and when not having focus.
+  # maxrows:        (optional) Number of rows the textarea shall have if
+  #                 maximized (which happens on getting focus). If not given,
+  #                 the textarea doesn't maximize when getting focus.
+  # defaultrows:    (optional) Number of rows the textarea shall have if
+  #                 the zoom_textareas user preference if off. If not given,
+  #                 minrows will be used.
+  # cols:           (required) Number of columns the textarea shall have.
+  # defaultcontent: (optional) Default content for the textarea.
+  # mandatory:      (optional) Boolean specifying whether or not the textarea
+  #                 is mandatory.
+  # field_hidden:   (optional) True if the field is hidden. Only useful if
+  #                 the field is mandatory.
+  #%]
+
+<textarea [% IF name %]name="[% name FILTER html %]"[% END %]
+          [% IF id %] id="[% id FILTER html %]"[% END %]
+          [% IF accesskey %] accesskey="[% accesskey FILTER html %]"[% END %]
+          [% IF classes %] class="[% classes FILTER html %]"[% END %]
+          [% IF wrap %] wrap="[% wrap FILTER html %]"[% END %]
+          [% IF disabled %] disabled="disabled"[% END %]
+          [% IF readonly %] readonly="readonly"[% END %]
+          [% IF defaultrows && user.settings.zoom_textareas.value == 'off' %]
+            rows="[% defaultrows FILTER html %]"
+          [% ELSE %]
+            rows="[% minrows FILTER html %]"
+          [% END %]
+          cols="[% cols FILTER html %]"
+          [% IF maxrows && user.settings.zoom_textareas.value == 'on' %]
+            onFocus="this.rows=[% maxrows FILTER html %]"
+          [% END %]
+          [% IF mandatory %]
+            data-required="true" [% 'aria-required="true" required' UNLESS field_hidden %]
+          [% END %]
+          [% IF onchange %]
+            onchange="[% onchange FILTER html %]"
+          [% END %]>[% defaultcontent FILTER html %]</textarea>

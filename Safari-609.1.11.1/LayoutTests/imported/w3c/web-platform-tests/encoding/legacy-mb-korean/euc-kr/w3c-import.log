@@ -1,0 +1,84 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-cseuckr.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-csksc56011987.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-errors.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-iso-ir-149.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-korean.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-ks_c_5601-1987.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-ks_c_5601-1989.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-ksc5601.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-ksc_5601.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-windows-949.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decoder.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-cseuckr.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-cseuckr.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-csksc56011987.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-csksc56011987.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-errors-han.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-errors-han.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-errors-hangul.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-errors-hangul.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-errors-misc.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-errors-misc.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-iso-ir-149.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-iso-ir-149.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-korean.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-korean.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-ks_c_5601-1987.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-ks_c_5601-1987.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-ks_c_5601-1989.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-ks_c_5601-1989.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-ksc5601.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-ksc5601.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-ksc_5601.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-ksc_5601.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-windows-949.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form-windows-949.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-form.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-href-errors-han.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-href-errors-han.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-href-errors-misc.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-href-errors-misc.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-href.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encode-href.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-encoder.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr_chars-cseuckr.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr_chars-cseuckr.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr_chars-csksc56011987.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr_chars-csksc56011987.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr_chars-iso-ir-149.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr_chars-iso-ir-149.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr_chars-korean.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr_chars-korean.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr_chars-ks_c_5601-1987.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr_chars-ks_c_5601-1987.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr_chars-ks_c_5601-1989.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr_chars-ks_c_5601-1989.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr_chars-ksc5601.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr_chars-ksc5601.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr_chars-ksc_5601.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr_chars-ksc_5601.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr_chars-windows-949.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr_chars-windows-949.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr_chars.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr_chars.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr_errors.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr_errors.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr_index.js

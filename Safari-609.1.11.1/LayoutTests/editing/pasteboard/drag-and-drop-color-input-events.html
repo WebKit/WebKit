@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test.js"></script>
+</head>
+<body onload="runTest()">
+    <p id="description"></p>
+    <input type=color id="src" value="#ff0000">
+    <input type=color id="dest" value="#000000">
+    <div id="console"></div>
+</body>
+<script>
+description('This test verifies that the input and change events fire when changing the value of a color input via drag and drop. To test manually, drag the color input on the left onto the color input on the right.');
+
+jsTestIsAsync = true;
+
+var src = document.getElementById('src');
+var dest = document.getElementById('dest');
+
+var changeFired = false;
+var inputFired = false;
+
+function tryFinishTest() {
+    if (!changeFired || !inputFired) {
+        return;
+    }
+
+    shouldBeEqualToString("src.value", "#ff0000");
+    shouldBeEqualToString("dest.value", "#ff0000");
+    finishJSTest();
+}
+
+function runTest() {
+    if (!window.testRunner)
+        return;
+
+    dest.addEventListener("change", function(e) {
+        changeFired = true;
+        tryFinishTest();
+    });
+
+    dest.addEventListener("input", function(e) {
+        inputFired = true;
+        tryFinishTest();
+    });
+
+    eventSender.mouseMoveTo(src.offsetLeft + src.offsetWidth / 2, src.offsetTop + src.offsetHeight / 2);
+    eventSender.mouseDown();
+    eventSender.leapForward(200);
+    eventSender.mouseMoveTo(dest.offsetLeft + dest.offsetWidth / 2, dest.offsetTop + dest.offsetHeight / 2);
+    eventSender.mouseUp();
+    eventSender.leapForward(200);
+}
+</script>
+</html>

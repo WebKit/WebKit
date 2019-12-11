@@ -1,0 +1,4 @@
+
+PASS Test single skipWaiting() when no client attached 
+PASS skipWaiting 
+

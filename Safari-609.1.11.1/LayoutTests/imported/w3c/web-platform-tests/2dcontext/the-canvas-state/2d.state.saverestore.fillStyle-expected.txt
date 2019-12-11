@@ -1,0 +1,6 @@
+2d.state.saverestore.fillStyle
+save()/restore() works for fillStyle
+Actual output:
+
+PASS save()/restore() works for fillStyle 
+

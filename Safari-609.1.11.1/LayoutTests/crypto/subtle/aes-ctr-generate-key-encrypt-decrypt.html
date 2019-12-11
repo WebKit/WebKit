@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test encrypting&decrypting using AES-CTR algorithm with a generated 256bit key");
+
+jsTestIsAsync = true;
+var plainText = "Hello, World!Hello, World!Hello, World!Hello, World!";
+var aesCtrParams = {
+    name: "aes-ctr",
+    counter: asciiToUint8Array("jnOw99oOZFLIEPMr"),
+    length: 8,
+}
+
+debug("Generating a key...");
+crypto.subtle.generateKey({name: "aes-ctr", length: 256}, true, ["decrypt", "encrypt"]).then(function(result) {
+    key = result;
+    debug("Encrypting...");
+    return crypto.subtle.encrypt(aesCtrParams, key, asciiToUint8Array(plainText));
+}).then(function(result) {
+    cipherText = result;
+    shouldNotBeEqualToString("bytesToASCIIString(cipherText)", plainText);
+    debug("Decrypting...");
+    return crypto.subtle.decrypt(aesCtrParams, key, cipherText);
+}).then(function(result) {
+    decryptedText = result;
+
+    shouldBe("bytesToASCIIString(decryptedText)", "plainText");
+
+    finishJSTest();
+});
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

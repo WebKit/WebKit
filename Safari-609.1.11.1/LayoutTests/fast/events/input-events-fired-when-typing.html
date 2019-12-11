@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+        var expectedTargetID = "foo";
+
+        function contentEditable()
+        {
+            return document.querySelector("#foo");
+        }
+
+        function plainText()
+        {
+            return document.querySelector("#bar");
+        }
+
+        function beginTest()
+        {
+            if (!window.eventSender || !window.internals || !window.testRunner)
+                return;
+
+            internals.settings.setInputEventsEnabled(true);
+            testRunner.dumpAsText();
+            contentEditable().focus();
+            eventSender.keyDown("a", []);
+
+            expectedTargetID = "bar";
+            plainText().focus();
+            eventSender.keyDown("b", []);
+        }
+
+        function checkInputEvent(event)
+        {
+            debug("Fired `oninput`!");
+            shouldBeDefined("event.__lookupGetter__('inputType')");
+            shouldBeDefined("event.__lookupGetter__('data')");
+            shouldBeDefined("event.__lookupGetter__('dataTransfer')");
+            shouldBeDefined("event.getTargetRanges");
+            shouldBe("event.target.id", "expectedTargetID");
+            shouldBe("event.bubbles", "true");
+            shouldBe("event.cancelable", "false");
+            shouldBe("event.composed", "true");
+        }
+
+        function checkBeforeInputEvent(event)
+        {
+            debug("Fired `onbeforeinput`!");
+            shouldBeDefined("event.__lookupGetter__('inputType')");
+            shouldBeDefined("event.__lookupGetter__('data')");
+            shouldBeDefined("event.__lookupGetter__('dataTransfer')");
+            shouldBeDefined("event.getTargetRanges");
+            shouldBe("event.target.id", "expectedTargetID");
+            shouldBe("event.bubbles", "true");
+            shouldBe("event.cancelable", "true");
+            shouldBe("event.composed", "true");
+        }
+    </script>
+</head>
+
+<body onload=beginTest()>
+    <div id="foo" contenteditable oninput=checkInputEvent(event) onbeforeinput=checkBeforeInputEvent(event)></div>
+    <input id="bar" oninput=checkInputEvent(event) onbeforeinput=checkBeforeInputEvent(event)></input>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+
+</html>

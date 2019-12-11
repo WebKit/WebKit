@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="test">First line of text<br>
+<button id="button" aria-hidden="true">button</button>
+<br>Third line of text</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests the ability to search for accessible elements from an ignored element.");
+    
+    if (window.accessibilityController) {
+        
+        document.getElementById("body").focus();
+        var containerElement = accessibilityController.focusedElement;
+        
+        var element = accessibilityController.accessibleElementById("test").childAtIndex(0);
+        var markerRange = element.textMarkerRangeForElement(element);
+        shouldBe("element.stringForTextMarkerRange(markerRange)", "'First line of text'");
+        
+        // Try to get the ignored element using line text marker calls
+        var textMarker = element.endTextMarkerForTextMarkerRange(markerRange);
+        textMarker = element.nextTextMarker(textMarker);
+        textMarker = element.nextTextMarker(textMarker);
+        var lineRange = element.lineTextMarkerRangeForTextMarker(textMarker);
+        shouldBe("element.stringForTextMarkerRange(lineRange)", "'button'");
+        
+        textMarker = element.startTextMarkerForTextMarkerRange(lineRange);
+        var startElement = element.accessibilityElementForTextMarker(textMarker);
+        
+        // Search forward
+        var resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXAnyTypeSearchKey", "", false);
+        shouldBe("resultElement.stringValue", "'AXValue: Third line of text'");
+        
+        // Search backward
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, false, "AXAnyTypeSearchKey", "", false);
+        shouldBe("resultElement.stringValue", "'AXValue: First line of text'");
+    }
+        
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

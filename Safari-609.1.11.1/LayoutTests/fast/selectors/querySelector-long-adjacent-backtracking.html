@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div style="display:none">
+  <ul>
+    <!-- Correct sequence. -->
+    <li></li>
+    <div></div>
+    <li></li>
+    <blockquote></blockquote>
+    <li></li>
+
+    <!-- Lacks the ending <li>. -->
+    <li></li>
+    <div></div>
+    <li></li>
+    <blockquote></blockquote>
+
+    <!-- Lacks the <blockquote>. -->
+    <li></li>
+    <div></div>
+    <li></li>
+    <li></li>
+
+    <!-- Lacks the middle <li>. -->
+    <li></li>
+    <div></div>
+    <blockquote></blockquote>
+    <li></li>
+
+    <!-- Lacks the <div>. -->
+    <li></li>
+    <li></li>
+    <blockquote></blockquote>
+    <li></li>
+
+    <span id=target>Target</span>
+    <div>
+  </ul>
+</div>
+</body>
+<script>
+description('Test backtracking with a long sequence of direct sibling relations.');
+
+shouldBe('document.querySelectorAll("li+div+li+blockquote+li~span").length', '1');
+shouldBeEqualToString('document.querySelectorAll("li+div+li+blockquote+li~span")[0].id', 'target');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

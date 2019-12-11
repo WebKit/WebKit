@@ -1,0 +1,34 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true internal:AsyncFrameScrollingEnabled=true ] -->
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/basic-gestures.js"></script>
+<style>
+body { overflow: hidden }
+.scroll-content { width: 500px; height: 5000px; border: 2px solid green; }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function waitPromise(delay)
+{
+    return new Promise(resolve => setTimeout(resolve, delay));
+}
+
+async function runTest() {
+    if (!window.testRunner)
+        return;
+
+    await touchAndDragFromPointToPoint(150, 300, 150, 150);
+    await liftUpAtPoint(150, 150);
+    await waitPromise(50);
+
+    testRunner.notifyDone();
+}
+</script>
+<body onload="runTest()">
+<div class="scroll-content">
+This document shouldn't be scrollable.
+</div>
+</body>
+</html>

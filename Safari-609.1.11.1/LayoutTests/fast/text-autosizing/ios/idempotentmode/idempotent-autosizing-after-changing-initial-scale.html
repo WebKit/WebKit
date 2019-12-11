@@ -1,0 +1,157 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true contentMode=mobile ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body, html {
+    margin: 0;
+}
+
+.no-autosizing {
+    -webkit-text-size-adjust: none;
+}
+
+pre, code {
+    color: white;
+    background-color: black;
+    padding: 4px;
+}
+
+.container {
+    border: 1px solid black;
+    padding: 8px 12px 12px 12px;
+}
+
+#text0, #text5 {
+    font-size: 8px;
+}
+
+#text1, #text6 {
+    font-size: 12px;
+}
+
+#text2, #text7 {
+    font-size: 14px;
+}
+
+#text3, #text8 {
+    font-size: 16px;
+}
+
+#text4, #text9 {
+    font-size: 20px;
+}
+
+table, td {
+    border: 1px solid gray;
+}
+
+thead, tfoot {
+    background-color: tomato;
+    color: white;
+}
+
+th, td {
+    padding: 4px;
+}
+</style>
+<script src="../../../../resources/ui-helper.js"></script>
+<script type="text/javascript">
+if (window.internals && window.testRunner) {
+    internals.settings.setTextAutosizingEnabled(true);
+    internals.settings.setTextAutosizingUsesIdempotentMode(true);
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+async function dumpTextSizes(description) {
+    if (window.testRunner)
+        await UIHelper.ensurePresentationUpdate();
+
+    const table = document.querySelector("template#table").content.cloneNode("true").firstElementChild;
+    table.querySelector(".description").textContent = description;
+    for (let index = 0; index < 10; ++index) {
+        const computedFontSize = getComputedStyle(document.querySelector(`#text${index}`)).fontSize;
+        table.querySelector(`.text${index}`).textContent = computedFontSize;
+    }
+
+    document.body.appendChild(table);
+    document.body.appendChild(document.createElement("br"));
+}
+
+addEventListener("load", async () => {
+    const metaViewport = document.querySelector("meta");
+    await dumpTextSizes("At initial scale 1");
+
+    metaViewport.content = "width=device-width, initial-scale=0.5";
+    await dumpTextSizes("After changing initial scale to 0.5");
+
+    metaViewport.content = "width=device-width, initial-scale=0.75";
+    await dumpTextSizes("After changing initial scale to 0.75");
+
+    metaViewport.content = "width=device-width, initial-scale=1.0";
+    await dumpTextSizes("After changing initial scale back to 1");
+
+    metaViewport.content = "width=device-width, initial-scale=1.25";
+    await dumpTextSizes("After changing initial scale to 1.25");
+
+    document.querySelector(".text-containers").remove();
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>
+</head>
+<body>
+    <template id="table">
+        <table>
+            <thead>
+                <tr>
+                    <th colspan="2" class="description"></th>
+                </tr>
+                <tr>
+                    <th>none</th>
+                    <th>auto</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="text0"></td>
+                    <td class="text5"></td>
+                </tr>
+                <tr>
+                    <td class="text1"></td>
+                    <td class="text6"></td>
+                </tr>
+                <tr>
+                    <td class="text2"></td>
+                    <td class="text7"></td>
+                </tr>
+                <tr>
+                    <td class="text3"></td>
+                    <td class="text8"></td>
+                </tr>
+                <tr>
+                    <td class="text4"></td>
+                    <td class="text9"></td>
+                </tr>
+            </tbody>
+        </table>
+    </template>
+    <div class="text-containers">
+        <div class="container no-autosizing">
+            <p id="text0">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean laoreet nisi felis, eu scelerisque dolor imperdiet in.</p>
+            <p id="text1">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean laoreet nisi felis, eu scelerisque dolor imperdiet in.</p>
+            <p id="text2">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean laoreet nisi felis, eu scelerisque dolor imperdiet in.</p>
+            <p id="text3">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean laoreet nisi felis, eu scelerisque dolor imperdiet in.</p>
+            <p id="text4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean laoreet nisi felis, eu scelerisque dolor imperdiet in.</p>
+        </div>
+        <div class="container">
+            <p id="text5">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean laoreet nisi felis, eu scelerisque dolor imperdiet in.</p>
+            <p id="text6">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean laoreet nisi felis, eu scelerisque dolor imperdiet in.</p>
+            <p id="text7">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean laoreet nisi felis, eu scelerisque dolor imperdiet in.</p>
+            <p id="text8">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean laoreet nisi felis, eu scelerisque dolor imperdiet in.</p>
+            <p id="text9">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean laoreet nisi felis, eu scelerisque dolor imperdiet in.</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+
+FAIL Enter, Exit events for a cue with negative duration assert_equals: expected 1 but got 0
+

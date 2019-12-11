@@ -1,0 +1,5 @@
+Test for http://bugs.webkit.org/show_bug.cgi?id=16490 ASSERT in ~FrameView while viewing/reloading WICD test case.
+
+
+PASS
+

@@ -1,0 +1,908 @@
+# FIXME: Add support for global settings.
+# FIXME: Add support for custom getters/setters.
+
+defaultTextEncodingName:
+  type: String
+ftpDirectoryTemplatePath:
+  type: String
+localStorageDatabasePath:
+  type: String
+editableLinkBehavior:
+  type: EditableLinkBehavior
+  initial: EditableLinkDefaultBehavior
+textDirectionSubmenuInclusionBehavior:
+  type: TextDirectionSubmenuInclusionBehavior
+  initial: TextDirectionSubmenuAutomaticallyIncluded
+pdfImageCachingPolicy:
+  type: PDFImageCachingPolicy
+  initial: PDFImageCachingDefault
+passwordEchoDurationInSeconds:
+  type: double
+  initial: 1
+
+# Sets the magnification value for validation message timer.  If the
+# magnification value is N, a validation message disappears automatically after
+# <message length> * N / 1000 seconds.  If N is equal to or less than 0, a
+# validation message doesn't disappears automaticaly.
+validationMessageTimerMagnification:
+  type: int
+  initial: 50
+
+# Number of pixels below which 2D canvas is rendered in software
+# even if hardware acceleration is enabled.
+# Hardware acceleration is useful for large canvases where it can avoid the
+# pixel bandwidth between the CPU and GPU. But GPU acceleration comes at
+# a price - extra back-buffer and texture copy. Small canvases are also
+# widely used for stylized fonts. Anti-aliasing text in hardware at that
+# scale is generally slower. So below a certain size it is better to
+# draw canvas in software.
+minimumAccelerated2dCanvasSize:
+  type: int
+  initial: 257*256
+
+maximumAccelerated2dCanvasSize:
+  type: unsigned
+  initial: 5120*2880
+
+layoutFallbackWidth:
+  type: int
+  initial: 980
+deviceWidth:
+  type: int
+  initial: 0
+deviceHeight:
+  type: int
+  initial: 0
+
+# Allow clients concerned with memory consumption to set a quota on session storage
+# since the memory used won't be released until the Page is destroyed.
+sessionStorageQuota:
+  type: unsigned
+  initial: StorageMap::noQuota
+
+minimumFontSize:
+  type: int
+  initial: 0
+  onChange: setNeedsRecalcStyleInAllFrames
+minimumLogicalFontSize:
+  type: int
+  initial: 0
+  onChange: setNeedsRecalcStyleInAllFrames
+defaultFontSize:
+  type: int
+  initial: 16
+  onChange: setNeedsRecalcStyleInAllFrames
+defaultFixedFontSize:
+  type: int
+  initial: 13
+  onChange: setNeedsRecalcStyleInAllFrames
+
+editingBehaviorType:
+  type: EditingBehaviorType
+  initial: editingBehaviorTypeForPlatform()
+maximumHTMLParserDOMTreeDepth:
+  type: unsigned
+  initial: defaultMaximumHTMLParserDOMTreeDepth
+
+# This setting only affects site icon image loading if loadsImagesAutomatically setting is false and this setting is true.
+# All other permutations still heed loadsImagesAutomatically setting.
+loadsSiteIconsIgnoringImageLoadingSetting:
+  initial: false
+
+caretBrowsingEnabled:
+  initial: false
+preventKeyboardDOMEventDispatch:
+  initial: false
+localStorageEnabled:
+  initial: false
+allowUniversalAccessFromFileURLs:
+  initial: true
+allowFileAccessFromFileURLs:
+  initial: true
+allowSettingAnyXHRHeaderFromFileURLs:
+  initial: false
+allowCrossOriginSubresourcesToAskForCredentials:
+  initial: false
+needsStorageAccessFromFileURLsQuirk:
+  initial: true
+needsFrameNameFallbackToIdQuirk:
+  initial: false
+useAnonymousModeWhenFetchingMaskImages:
+  initial: true
+javaScriptCanOpenWindowsAutomatically:
+  initial: false
+javaScriptCanAccessClipboard:
+  initial: false
+shouldPrintBackgrounds:
+  initial: false
+clipboardAccessPolicy:
+  type: ClipboardAccessPolicy
+  initial: ClipboardAccessPolicy::RequiresUserGesture
+asyncClipboardAPIEnabled:
+  initial: false
+
+textAreasAreResizable:
+  initial: false
+  onChange: setNeedsRecalcStyleInAllFrames
+authorAndUserStylesEnabled:
+  initial: true
+  onChange: setNeedsRecalcStyleInAllFrames
+  inspectorOverride: true
+userStyleSheetLocation:
+  type: URL
+  onChange: userStyleSheetLocationChanged
+acceleratedCompositingEnabled:
+  initial: true
+  onChange: setNeedsRecalcStyleInAllFrames
+acceleratedCompositedAnimationsEnabled:
+  initial: true
+  onChange: setNeedsRecalcStyleInAllFrames
+showDebugBorders:
+  initial: false
+  onChange: setNeedsRecalcStyleInAllFrames
+showRepaintCounter:
+  initial: false
+  onChange: setNeedsRecalcStyleInAllFrames
+visibleDebugOverlayRegions:
+  type: DebugOverlayRegions
+  initial: 0
+showTiledScrollingIndicator:
+  initial: false
+resourceUsageOverlayVisible:
+  initial: false
+  onChange: resourceUsageOverlayVisibleChanged
+  condition: RESOURCE_USAGE
+disableScreenSizeOverride:
+  initial: false
+
+googleAntiFlickerOptimizationQuirkEnabled:
+  initial: true
+
+# This is a quirk we are pro-actively applying to old applications. It changes keyboard event dispatching,
+# making keyIdentifier available on keypress events, making charCode available on keydown/keyup events,
+# and getting keypress dispatched in more cases.
+needsKeyboardEventDisambiguationQuirks:
+  initial: false
+
+# This is an iOS-specific quirk. Unlike Mac, keyboard operations are asynchronous and hence a DOM update as
+# a result of text insertion or deletion does not occur within the same event loop iteration as a dispatched
+# DOM keydown event. Some sites, notably Google Sheets, schedule timers on keypress and expect on a DOM update
+# to have occurred on expiration. When enabled, this quirk puts all such scheduled timers in a holding tank
+# until the keyboard performs the insertion or deletion. This gives Google Sheets the illusion that the DOM
+# update happened within the same event loop iteration that the keypress event was dispatched in.
+needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk:
+  initial: false
+
+treatsAnyTextCSSLinkAsStylesheet:
+  initial: false
+shrinksStandaloneImagesToFit:
+  initial: true
+backForwardCacheSupportsPlugins:
+  initial: false
+showsURLsInToolTips:
+  initial: false
+showsToolTipOverTruncatedText:
+  initial: false
+forceFTPDirectoryListings:
+  initial: false
+developerExtrasEnabled:
+  initial: false
+scriptMarkupEnabled:
+  initial: true
+needsSiteSpecificQuirks:
+  initial: false
+  inspectorOverride: true
+domTimersThrottlingEnabled:
+  initial: true
+webArchiveDebugModeEnabled:
+  initial: false
+  conditional: WEB_ARCHIVE
+localFileContentSniffingEnabled:
+  initial: false
+offlineWebApplicationCacheEnabled:
+  initial: false
+enforceCSSMIMETypeInNoQuirksMode:
+  initial: true
+usesEncodingDetector:
+  initial: false
+canvasUsesAcceleratedDrawing:
+  initial: false
+acceleratedDrawingEnabled:
+  initial: false
+displayListDrawingEnabled:
+  initial: false
+acceleratedFiltersEnabled:
+  initial: false
+useLegacyTextAlignPositionedElementBehavior:
+  initial: false
+javaScriptRuntimeFlags:
+  type: JSC::RuntimeFlags
+
+# FIXME: This should really be disabled by default as it makes platforms that don't support the feature download files
+# they can't use by. Leaving enabled for now to not change existing behavior.
+downloadableBinaryFontsEnabled:
+  initial: defaultDownloadableBinaryFontsEnabled()
+
+xssAuditorEnabled:
+  initial: false
+acceleratedCompositingForFixedPositionEnabled:
+  initial: defaultAcceleratedCompositingForFixedPositionEnabled
+rubberBandingForSubScrollableRegionsEnabled:
+  initial: true
+  conditional: RUBBER_BANDING
+
+experimentalNotificationsEnabled:
+  initial: false
+webGLEnabled:
+  initial: false
+webGLErrorsToConsoleEnabled:
+  initial: true
+unhandledPromiseRejectionToConsoleEnabled:
+  initial: true
+forceWebGLUsesLowPower:
+  initial: false
+accelerated2dCanvasEnabled:
+  initial: false
+loadDeferringEnabled:
+  initial: true
+webAudioEnabled:
+  initial: false
+paginateDuringLayoutEnabled:
+  initial: false
+fullScreenEnabled:
+  initial: false
+  conditional: FULLSCREEN_API
+asynchronousSpellCheckingEnabled:
+  initial: false
+
+# This feature requires an implementation of ValidationMessageClient.
+interactiveFormValidationEnabled:
+  initial: false
+
+usePreHTML5ParserQuirks:
+  initial: false
+hyperlinkAuditingEnabled:
+  initial: false
+crossOriginCheckInGetMatchedCSSRulesDisabled:
+  initial: false
+forceCompositingMode:
+  initial: false
+shouldInjectUserScriptsInInitialEmptyDocument:
+  initial: false
+fixedElementsLayoutRelativeToFrame:
+  initial: false
+allowDisplayOfInsecureContent:
+  initial: false
+allowRunningOfInsecureContent:
+  initial: false
+requiresUserGestureToLoadVideo:
+  initial: defaultRequiresUserGestureToLoadVideo
+videoPlaybackRequiresUserGesture:
+  initial: defaultVideoPlaybackRequiresUserGesture
+audioPlaybackRequiresUserGesture:
+  initial: defaultAudioPlaybackRequiresUserGesture
+mainContentUserGestureOverrideEnabled:
+  initial: false
+mediaUserGestureInheritsFromDocument:
+  initial: false
+allowsInlineMediaPlayback:
+  initial: defaultAllowsInlineMediaPlayback
+allowsInlineMediaPlaybackAfterFullscreen:
+  initial: true
+inlineMediaPlaybackRequiresPlaysInlineAttribute:
+  initial: defaultInlineMediaPlaybackRequiresPlaysInlineAttribute
+allowsPictureInPictureMediaPlayback:
+  initial: defaultAllowsPictureInPictureMediaPlayback
+pictureInPictureAPIEnabled:
+  initial: true
+mediaControlsScaleWithPageZoom:
+  initial: defaultMediaControlsScaleWithPageZoom
+invisibleAutoplayNotPermitted:
+  initial: false
+passwordEchoEnabled:
+  initial: false
+suppressesIncrementalRendering:
+  initial: false
+incrementalRenderingSuppressionTimeoutInSeconds:
+  type: double
+  initial: defaultIncrementalRenderingSuppressionTimeoutInSeconds
+backspaceKeyNavigationEnabled:
+  initial: true
+shouldDisplaySubtitles:
+  initial: false
+  conditional: VIDEO_TRACK
+shouldDisplayCaptions:
+  initial: false
+  conditional: VIDEO_TRACK
+shouldDisplayTextDescriptions:
+  initial: false
+  conditional: VIDEO_TRACK
+genericCueAPIEnabled:
+    initial: false
+    conditional: VIDEO_TRACK
+scrollingCoordinatorEnabled:
+  initial: false
+scrollingTreeIncludesFrames:
+  initial: defaultScrollingTreeIncludesFrames
+scrollAnimatorEnabled:
+  initial: true
+  conditional: SMOOTH_SCROLLING
+forceUpdateScrollbarsOnMainThreadForPerformanceTesting:
+  initial: false
+notificationsEnabled:
+  initial: true
+
+# Some apps needs isLoadingInAPISense to account for active subresource loaders.
+needsIsLoadingInAPISenseQuirk:
+  initial: false
+
+shouldRespectImageOrientation:
+  initial: defaultShouldRespectImageOrientation
+imageSubsamplingEnabled:
+  initial: defaultImageSubsamplingEnabled
+wantsBalancedSetDefersLoadingBehavior:
+  initial: false
+requestAnimationFrameEnabled:
+  initial: true
+requestIdleCallbackEnabled:
+  initial: false
+
+HTTPSUpgradeEnabled:
+  initial: false
+
+thirdPartyIframeRedirectBlockingEnabled:
+  initial: true
+
+cookieEnabled:
+  initial: true
+mediaEnabled:
+  initial: defaultMediaEnabled
+DOMPasteAllowed:
+  initial: false
+
+domPasteAccessRequestsEnabled:
+  initial: false
+
+# When enabled, window.blur() does not change focus, and
+# window.focus() only changes focus when invoked from the context that
+# created the window.
+windowFocusRestricted:
+  initial: true
+
+diagnosticLoggingEnabled:
+  initial: false
+
+delegatesPageScaling:
+  initial: false
+
+plugInSnapshottingEnabled:
+  initial: false
+
+snapshotAllPlugIns:
+  initial: false
+
+autostartOriginPlugInSnapshottingEnabled:
+  initial: true
+
+primaryPlugInSnapshotDetectionEnabled:
+  initial: true
+
+maximumPlugInSnapshotAttempts:
+  type: unsigned
+  initial: 20
+
+frameFlattening:
+  type: FrameFlattening
+  initial: FrameFlattening::Disabled
+  onChange: setNeedsRelayoutAllFrames
+
+asyncFrameScrollingEnabled:
+  initial: false
+  onChange: setNeedsRelayoutAllFrames
+
+asyncOverflowScrollingEnabled:
+  initial: false
+  onChange: setNeedsRelayoutAllFrames
+
+legacyOverflowScrollingTouchEnabled:
+  initial: true
+  onChange: setNeedsRelayoutAllFrames
+  conditional: OVERFLOW_SCROLLING_TOUCH
+
+webSecurityEnabled:
+  initial: true
+  inspectorOverride: true
+spatialNavigationEnabled:
+  initial: false
+
+autoscrollForDragAndDropEnabled:
+  initial: false
+
+unifiedTextCheckerEnabled:
+  initial: defaultUnifiedTextCheckerEnabled
+
+logsPageMessagesToSystemConsoleEnabled:
+  initial: false
+
+backForwardCacheExpirationInterval:
+  type: Seconds
+  initial: 30_min
+
+# Some apps could have a default video poster if it is not set.
+defaultVideoPosterURL:
+  type: String
+
+smartInsertDeleteEnabled:
+  initial: defaultSmartInsertDeleteEnabled
+selectTrailingWhitespaceEnabled:
+  initial: defaultSelectTrailingWhitespaceEnabled
+selectionAcrossShadowBoundariesEnabled:
+  initial: true
+
+useLegacyBackgroundSizeShorthandBehavior:
+  initial: false
+fixedBackgroundsPaintRelativeToDocument:
+  initial: defaultFixedBackgroundsPaintRelativeToDocument
+
+textAutosizingEnabled:
+  initial: defaultTextAutosizingEnabled()
+  onChange: setNeedsRecalcStyleInAllFrames
+  conditional: TEXT_AUTOSIZING
+textAutosizingWindowSizeOverride:
+  type: IntSize
+  onChange: setNeedsRecalcStyleInAllFrames
+  conditional: TEXT_AUTOSIZING
+minimumZoomFontSize:
+  type: float
+  initial: defaultMinimumZoomFontSize()
+  conditional: TEXT_AUTOSIZING
+textAutosizingUsesIdempotentMode:
+  initial: false
+  onChange: setNeedsRecalcStyleInAllFrames
+  conditional: TEXT_AUTOSIZING
+
+subpixelAntialiasedLayerTextEnabled:
+  initial: false
+  onChange: setNeedsRecalcStyleInAllFrames
+simpleLineLayoutEnabled:
+  initial: true
+  onChange: setNeedsRecalcStyleInAllFrames
+simpleLineLayoutDebugBordersEnabled:
+  initial: false
+  onChange: setNeedsRecalcStyleInAllFrames
+
+contentChangeObserverEnabled:
+  initial: defaultContentChangeObserverEnabled()
+
+subpixelCSSOMElementMetricsEnabled:
+  initial: false
+
+useGiantTiles:
+  initial: false
+
+mediaSourceEnabled:
+  initial: platformDefaultMediaSourceEnabled()
+  conditional: MEDIA_SOURCE
+
+sourceBufferChangeTypeEnabled:
+  initial: true
+  conditional: MEDIA_SOURCE
+
+# FIXME: Rename to allowMultiElementImplicitFormSubmission once we upstream the iOS changes to WebView.mm.
+allowMultiElementImplicitSubmission:
+  initial: false
+
+allowsAirPlayForMediaPlayback:
+  initial: true
+  conditional: WIRELESS_PLAYBACK_TARGET
+
+remotePlaybackEnabled:
+  initial: true
+  conditional: WIRELESS_PLAYBACK_TARGET
+
+shouldConvertPositionStyleOnCopy:
+  initial: false
+
+maxParseDuration:
+  type: double
+  initial: -1
+standalone:
+  initial: false
+telephoneNumberParsingEnabled:
+  initial: false
+mediaDataLoadsAutomatically:
+  initial: defaultMediaDataLoadsAutomatically
+alwaysUseAcceleratedOverflowScroll:
+  initial: false
+imageControlsEnabled:
+  initial: false
+  conditional: SERVICE_CONTROLS
+
+enableInheritURIQueryComponent:
+  initial: false
+
+aggressiveTileRetentionEnabled:
+  initial: false
+temporaryTileCohortRetentionEnabled:
+  initial: true
+
+useImageDocumentForSubframePDF:
+  initial: false
+dataDetectorTypes:
+  type: DataDetectorTypes
+  initial: DataDetectorTypeNone
+  conditional: DATA_DETECTION
+
+# Allow SourceBuffers to store up to 304MB each, enough for approximately five minutes
+# of 1080p video and stereo audio.
+maximumSourceBufferSize:
+  type: int
+  initial: 318767104
+  conditional: MEDIA_SOURCE
+
+serviceControlsEnabled:
+  initial: false
+  conditional: SERVICE_CONTROLS
+
+appleMailPaginationQuirkEnabled:
+  initial: false
+
+deferredCSSParserEnabled:
+  initial: false
+
+repaintOutsideLayoutEnabled:
+  initial: false
+
+httpEquivEnabled:
+  initial: true
+
+# Some ports (e.g. iOS) might choose to display attachments inline, regardless of whether the response includes the
+# HTTP header "Content-Disposition: attachment". This setting enables a sandbox around these attachments. The sandbox
+# enforces all frame sandbox flags (see enum SandboxFlag in SecurityContext.h), and also disables <meta http-equiv>
+# processing and subframe loading.
+contentDispositionAttachmentSandboxEnabled:
+  initial: false
+
+userInterfaceDirectionPolicy:
+  type: UserInterfaceDirectionPolicy
+  initial: UserInterfaceDirectionPolicy::Content
+systemLayoutDirection:
+  type: TextDirection
+  initial: TextDirection::LTR
+
+allowContentSecurityPolicySourceStarToMatchAnyProtocol:
+  initial: false
+
+selectionPaintingWithoutSelectionGapsEnabled:
+  initial: false
+
+shouldConvertInvalidURLsToBlank:
+  initial: true
+
+springTimingFunctionEnabled:
+  initial: false
+
+colorFilterEnabled:
+  initial: false
+  onChange: setNeedsRecalcStyleInAllFrames
+
+punchOutWhiteBackgroundsInDarkMode:
+  initial: false
+  onChange: setNeedsRecalcStyleInAllFrames
+
+treatIPAddressAsDomain:
+  initial: false
+
+mediaPreloadingEnabled:
+  initial: false
+
+layoutViewportHeightExpansionFactor:
+  type: double
+  initial: 0
+  onChange: setNeedsRecalcStyleInAllFrames
+
+# Runtime-enabled features
+visualViewportEnabled:
+  initial: true
+  onChange: setNeedsRecalcStyleInAllFrames
+
+visualViewportAPIEnabled:
+  initial: false
+
+syntheticEditingCommandsEnabled:
+  initial: true
+
+CSSOMViewScrollingAPIEnabled:
+  initial: false
+
+inputEventsEnabled:
+  initial: true
+
+quickTimePluginReplacementEnabled:
+  initial: defaultQuickTimePluginReplacementEnabled
+youTubeFlashPluginReplacementEnabled:
+  initial: defaultYouTubeFlashPluginReplacementEnabled
+
+forcedColorsAreInvertedAccessibilityValue:
+  type: ForcedAccessibilityValue
+  initial: defaultForcedColorsAreInvertedAccessibilityValue
+forcedDisplayIsMonochromeAccessibilityValue:
+  type: ForcedAccessibilityValue
+  initial: defaultForcedDisplayIsMonochromeAccessibilityValue
+forcedPrefersReducedMotionAccessibilityValue:
+  type: ForcedAccessibilityValue
+  initial: defaultForcedPrefersReducedMotionAccessibilityValue
+forcedSupportsHighDynamicRangeValue:
+  type: ForcedAccessibilityValue
+  initial: defaultForcedSupportsHighDynamicRangeValue
+  onChange: setNeedsRecalcStyleInAllFrames
+
+largeImageAsyncDecodingEnabled:
+  initial: true
+animatedImageAsyncDecodingEnabled:
+  initial: true
+webkitImageReadyEventEnabled:
+  initial: false
+
+shouldSuppressTextInputFromEditingDuringProvisionalNavigation:
+  initial: false
+
+langAttributeAwareFormControlUIEnabled:
+  initial: false
+
+subresourceIntegrityEnabled:
+  initial: true
+
+linkPreconnectEnabled:
+  initial: false
+
+beaconAPIEnabled:
+  initial: false
+
+geolocationFloorLevelEnabled:
+  initial: true
+
+constantPropertiesEnabled:
+  initial: false
+
+viewportFitEnabled:
+  initial: false
+
+allowMediaContentTypesRequiringHardwareSupportAsFallback:
+  initial: false
+
+storageAccessAPIEnabled:
+  initial: true
+
+timeWithoutMouseMovementBeforeHidingControls:
+  type: Seconds
+  initial: 3_s
+
+fontFallbackPrefersPictographs:
+  initial: false
+  onChange: setNeedsRecalcStyleInAllFrames
+
+fontLoadTimingOverride:
+  type: FontLoadTimingOverride
+  initial: FontLoadTimingOverride::None
+shouldIgnoreFontLoadCompletions:
+  initial: false
+
+applePayCapabilityDisclosureAllowed:
+  conditional: APPLE_PAY
+  initial: true
+applePayEnabled:
+  conditional: APPLE_PAY
+  initial: defaultApplePayEnabled
+applePayRemoteUIEnabled:
+  conditional: APPLE_PAY_REMOTE_UI
+  initial: true
+paymentRequestEnabled:
+  conditional: PAYMENT_REQUEST
+  initial: false
+
+javaEnabled:
+  initial: false
+  getter: isJavaEnabled
+javaEnabledForLocalFiles:
+  initial: true
+  getter: isJavaEnabledForLocalFiles
+
+# Unlike the imagesEnabled setting, this only suppresses the network load of
+# the image URL. A cached image will still be rendered if requested.
+loadsImagesAutomatically:
+  initial: false
+  onChange: imagesEnabledChanged
+imagesEnabled:
+  initial: true
+  getter: areImagesEnabled
+  onChange: imagesEnabledChanged
+  inspectorOverride: true
+scriptEnabled:
+  initial: false
+  getter: isScriptEnabled
+  inspectorOverride: true
+pluginsEnabled:
+  initial: false
+  getter: arePluginsEnabled
+  onChange: pluginsEnabledChanged
+
+usesBackForwardCache:
+  initial: false
+  onChange: usesBackForwardCacheChanged
+
+dnsPrefetchingEnabled:
+  initial: false
+  onChange: dnsPrefetchingEnabledChanged
+
+backgroundShouldExtendBeyondPage:
+  initial: false
+  onChange: backgroundShouldExtendBeyondPageChanged
+
+scrollingPerformanceLoggingEnabled:
+  initial: false
+  onChange: scrollingPerformanceLoggingEnabledChanged
+
+hiddenPageDOMTimerThrottlingEnabled:
+  initial: false
+  onChange: hiddenPageDOMTimerThrottlingStateChanged
+hiddenPageDOMTimerThrottlingAutoIncreases:
+  initial: false
+  onChange: hiddenPageDOMTimerThrottlingStateChanged
+hiddenPageCSSAnimationSuspensionEnabled:
+  initial: false
+  onChange: hiddenPageCSSAnimationSuspensionEnabledChanged
+
+storageBlockingPolicy:
+  type: SecurityOrigin::StorageBlockingPolicy
+  initial: SecurityOrigin::AllowAllStorage
+  onChange: storageBlockingPolicyChanged
+
+shouldAllowUserInstalledFonts:
+  initial: true
+  onChange: setNeedsRecalcStyleInAllFrames
+
+resizeObserverEnabled:
+  initial: false
+  conditional: RESIZE_OBSERVER
+
+# Only set by Layout Tests.
+mediaTypeOverride:
+  type: String
+  initial: '"screen"'
+  onChange: mediaTypeOverrideChanged
+
+animatedImageDebugCanvasDrawingEnabled:
+  initial: false
+
+fontRenderingMode:
+  type: FontRenderingMode
+  initial: FontRenderingMode::Normal
+
+preferMIMETypeForImages:
+  initial: false
+
+forcePendingWebGLPolicy:
+  initial: false
+  getter: isForcePendingWebGLPolicy
+
+mediaKeysStorageDirectory:
+  type: String
+
+mediaDeviceIdentifierStorageDirectory:
+  type: String
+  conditional: MEDIA_STREAM
+
+# FIXME: This quirk is needed because of Radar 4674537 and 5211271. We need to phase it out once Adobe
+# can fix the bug from their end.
+needsAdobeFrameReloadingQuirk:
+  initial: false
+  getter: needsAcrobatFrameReloadingQuirk
+
+passiveTouchListenersAsDefaultOnDocument:
+  initial: true
+
+touchEventEmulationEnabled:
+  initial: false
+  getter: isTouchEventEmulationEnabled
+  conditional: TOUCH_EVENTS
+
+deviceOrientationEventEnabled:
+  type: bool
+  initial: true
+  conditional: DEVICE_ORIENTATION
+
+deviceOrientationPermissionAPIEnabled:
+  type: bool
+  initial: false
+  conditional: DEVICE_ORIENTATION
+
+shouldEnableTextAutosizingBoost:
+  type: bool
+  initial: false
+  conditional: TEXT_AUTOSIZING
+  onChange: shouldEnableTextAutosizingBoostChanged
+
+mediaCapabilitiesEnabled:
+  initial: false
+
+mediaCapabilitiesExtensionsEnabled:
+  type: bool
+  initial: false
+
+hdrMediaCapabilitiesEnabled:
+  type: bool
+  initial: false
+
+clientCoordinatesRelativeToLayoutViewport:
+  initial: false
+  onChange: setNeedsRecalcStyleInAllFrames
+
+incompleteImageBorderEnabled:
+  initial: false
+
+shouldDeferAsynchronousScriptsUntilAfterDocumentLoad:
+  initial: false
+
+shouldIgnoreMetaViewport:
+  initial: false
+
+videoQualityIncludesDisplayCompositingEnabled:
+  initial: false
+  conditional: VIDEO
+
+editableImagesEnabled:
+  initial: false
+
+adClickAttributionEnabled:
+  initial: false
+
+coreMathMLEnabled:
+  initial: false
+  onChange: setNeedsRecalcStyleInAllFrames
+
+blockingOfSmallPluginsEnabled:
+  initial: true
+
+shouldDecidePolicyBeforeLoadingQuickLookPreview:
+  initial: false
+
+shouldDispatchSyntheticMouseEventsWhenModifyingSelection:
+  initial: false
+
+shouldDispatchSyntheticMouseOutAfterSyntheticClick:
+  initial: false
+
+allowViewportShrinkToFitContent:
+  initial: true
+
+webRTCEncryptionEnabled:
+  initial: true
+  inspectorOverride: true
+
+isThirdPartyCookieBlockingEnabled:
+  initial: false
+
+isLoggedInAPIEnabled:
+  initial: false
+
+enterKeyHintEnabled:
+  initial: false
+
+# Deprecated
+
+iceCandidateFilteringEnabled:
+  initial: true
+  onChange: iceCandidateFilteringEnabledChanged
+  inspectorOverride: true
+
+mockCaptureDevicesEnabled:
+  initial: false
+  conditional: MEDIA_STREAM
+  onChange: mockCaptureDevicesEnabledChanged
+  inspectorOverride: true
+
+mediaCaptureRequiresSecureConnection:
+  initial: true
+  conditional: MEDIA_STREAM
+  inspectorOverride: true

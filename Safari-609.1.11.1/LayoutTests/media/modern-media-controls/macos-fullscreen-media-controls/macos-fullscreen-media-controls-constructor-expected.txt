@@ -1,0 +1,40 @@
+Testing the MacOSFullscreenMediaControls constructor.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mediaControls.element.localName is "div"
+PASS mediaControls.element.className is "media-controls mac fullscreen"
+PASS mediaControls.layoutTraits is LayoutTraits.macOS | LayoutTraits.Fullscreen
+
+Controls bar
+PASS mediaControls.bottomControlsBar.children.length is 4
+PASS mediaControls.bottomControlsBar.children[1] instanceof ButtonsContainer is true
+PASS mediaControls.bottomControlsBar.children[2] instanceof ButtonsContainer is true
+PASS mediaControls.bottomControlsBar.children[3] instanceof ButtonsContainer is true
+
+Left container
+PASS mediaControls.bottomControlsBar.children[1].children is [mediaControls.volumeDownButton, mediaControls.volumeSlider, mediaControls.volumeUpButton]
+PASS mediaControls.bottomControlsBar.children[1].element.className is "buttons-container left"
+PASS mediaControls.bottomControlsBar.children[1].leftMargin is 12
+PASS mediaControls.bottomControlsBar.children[1].rightMargin is 0
+PASS mediaControls.bottomControlsBar.children[1].buttonMargin is 6
+
+Center container
+PASS mediaControls.bottomControlsBar.children[2].children is [mediaControls.rewindButton, mediaControls.playPauseButton, mediaControls.forwardButton]
+PASS mediaControls.bottomControlsBar.children[2].element.className is "buttons-container center"
+PASS mediaControls.bottomControlsBar.children[2].leftMargin is 27
+PASS mediaControls.bottomControlsBar.children[2].rightMargin is 27
+PASS mediaControls.bottomControlsBar.children[2].buttonMargin is 27
+
+Right container
+PASS mediaControls.bottomControlsBar.children[3].children is [mediaControls.airplayButton, mediaControls.pipButton, mediaControls.tracksButton, mediaControls.fullscreenButton]
+PASS mediaControls.bottomControlsBar.children[3].element.className is "buttons-container right"
+PASS mediaControls.bottomControlsBar.children[3].leftMargin is 12
+PASS mediaControls.bottomControlsBar.children[3].rightMargin is 12
+PASS mediaControls.bottomControlsBar.children[3].buttonMargin is 16
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

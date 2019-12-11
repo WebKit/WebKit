@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<img id="foo" name="bar">
+<script src="../resources/runner.js"></script>
+<script>
+
+var imageElement = document.querySelector("img");
+
+imageElement.id = "foo";
+
+PerfTestRunner.measureRunsPerSecond({
+    description: "This benchmark covers 'getElementById' in Dromaeo/dom-query.html, and other DOM methods that return a Node object.",
+    run: function() {
+        for (var i = 0; i < 100000; i++)
+            imageElement.id =  i % 2 ? "foo1" : "foo0";
+}});
+</script>
+</body>
+</html>

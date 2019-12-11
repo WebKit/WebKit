@@ -1,0 +1,19 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows(true);
+    testRunner.setCloseRemainingWindowsWhenComplete(true);
+}
+
+var win = window.open('data:application/x-webkit-test-netscape,');
+setTimeout(function() {
+    win.location.reload();
+    setTimeout(function() {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 100);
+}, 100);
+</script>
+This test passes if it doesn't crash. To run manually, please disable your
+popup blocker.

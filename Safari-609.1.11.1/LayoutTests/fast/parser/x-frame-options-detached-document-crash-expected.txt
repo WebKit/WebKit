@@ -1,0 +1,1 @@
+This checks that writing an X-Frame-Options meta tag to a detached document does not crash.

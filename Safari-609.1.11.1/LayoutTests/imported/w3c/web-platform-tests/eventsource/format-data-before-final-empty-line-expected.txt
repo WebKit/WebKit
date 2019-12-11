@@ -1,0 +1,3 @@
+
+PASS EventSource: a data before final empty line 
+

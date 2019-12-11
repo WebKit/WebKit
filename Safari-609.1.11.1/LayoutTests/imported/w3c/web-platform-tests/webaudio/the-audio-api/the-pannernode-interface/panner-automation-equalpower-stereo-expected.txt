@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 37: TypeError: undefined is not an object (evaluating 'panner.positionX.value = x')
+
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'panner.positionX.value = x')
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS > [test] Equal-power panner model of AudioPannerNode with stereo source 
+

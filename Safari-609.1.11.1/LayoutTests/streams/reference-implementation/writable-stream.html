@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<script src='../../resources/testharness.js'></script>
+<script src='../../resources/testharnessreport.js'></script>
+<script src='resources/streams-utils.js'></script>
+<script>
+// This is updated till https://github.com/whatwg/streams/commit/4ba861e6f60c248060811830e11271c84b439cc3
+
+function writeArrayToStream(array, writableStream) {
+    array.forEach(function(chunk) { writableStream.write(chunk); })
+    return writableStream.close();
+}
+
+var test1 = async_test('error argument is given to start method');
+test1.step(function() {
+    var error;
+    var ws = new WritableStream({
+        start: function(error_) {
+            error = error_;
+        }
+    });
+
+    // Now error the stream after its construction.
+    var passedError = new Error('horrible things');
+    error(passedError);
+    assert_equals(ws.state, 'errored');
+    ws.closed.catch(test1.step_func(function(r) {
+        assert_equals(r, passedError);
+        test1.done();
+    }));
+});
+
+var test2 = async_test('Underlying sink\'s write won\'t be called until start finishes');
+test2.step(function() {
+    var expectWriteCall = false;
+
+    var resolveStartPromise;
+    var ws = new WritableStream({
+        start: function() {
+            return new Promise(test2.step_func(function(resolve) { resolveStartPromise = resolve; }));
+        },
+        write: function(chunk) {
+            if (expectWriteCall) {
+                assert_equals(chunk, 'a');
+                test2.done();
+            } else {
+                assert_unreached('Unexpected write call');
+            }
+        },
+        close: function() {
+            assert_unreached('Unexpected close call');
+        }
+    });
+
+    ws.write('a');
+    assert_equals(ws.state, 'waiting', 'writable stream should be waiting, not ' + ws.state);
+
+    // Wait and see that write won't be called.
+    setTimeout(test2.step_func(function() {
+        expectWriteCall = true;
+        resolveStartPromise();
+    }), 200);
+});
+
+var test3 = async_test('Underlying sink\'s close won\'t be called until start finishes');
+test3.step(function() {
+    var expectCloseCall = false;
+
+    var resolveStartPromise;
+    var ws = new WritableStream({
+        start: function() {
+            return new Promise(test3.step_func(function(resolve, reject) { resolveStartPromise = resolve; }));
+        },
+        write: function(chunk) {
+            assert_unreached('Unexpected write call');
+        },
+        close: function() {
+            if (expectCloseCall) {
+                test3.done();
+            } else {
+                assert_unreached('Unexpected close call');
+            }
+        }
+    });
+    ws.close('a');
+    assert_equals(ws.state, 'closing');
+
+    // Wait and see that write won't be called.
+    setTimeout(test3.step_func(function() {
+        expectCloseCall = true;
+        resolveStartPromise();
+    }), 200);
+});
+
+var test4 = async_test('Fulfillment value of ws.close() call must be undefined even if the underlying sink returns a non-undefined value');
+test4.step(function() {
+    var ws = new WritableStream({
+        close: function() {
+            return 'Hello';
+        }
+    });
+
+    var closePromise = ws.close('a');
+    closePromise.then(test4.step_func(function(value) {
+        assert_equals(value, undefined, 'fulfillment value must be undefined');
+        test4.done();
+    })).catch(test4.step_func(function() {
+        assert_unreached('closePromise is rejected');
+    }));
+});
+
+var test5 = async_test('Underlying sink\'s write or close are never invoked if start throws');
+test5.step(function() {
+    var passedError = new Error('horrible things');
+
+    try {
+        var ws = new WritableStream({
+            start: function() {
+                throw passedError;
+            },
+            write: function(chunk) {
+                assert_unreached('Unexpected write call');
+            },
+            close: function() {
+                assert_unreached('Unexpected close call');
+            }
+        });
+    } catch (e) {
+        assert_equals(e, passedError);
+        test5.done();
+    }
+    assert_unreached('Constructor didn\'t throw');
+});
+
+var test6 = async_test('Underlying sink\'s write or close are never invoked if the promise returned by start is rejected');
+test6.step(function() {
+    var ws = new WritableStream({
+        start: function() {
+            return Promise.reject();
+        },
+        write: function(chunk) {
+            assert_unreached('Unexpected write call');
+        },
+        close: function() {
+            assert_unreached('Unexpected close call');
+        }
+    });
+
+    // Wait and see that write or close won't be called.
+    setTimeout(test6.step_func(function() {
+        test6.done();
+    }), 500);
+});
+
+test(function() {
+    new WritableStream() // WritableStream constructed with no errors.
+}, 'WritableStream can be constructed with no arguments');
+
+test(function() {
+    var ws = new WritableStream();
+
+    assert_equals(typeof ws.write, 'function', 'has a write method');
+    assert_equals(typeof ws.abort, 'function', 'has an abort method');
+    assert_equals(typeof ws.close, 'function', 'has a close method');
+
+    assert_equals(ws.state, 'writable', 'state starts out writable');
+
+    assert_true('ready' in ws, 'has a ready property');
+    assert_true('then' in ws.ready, 'ready property is a thenable');
+    assert_true('closed' in ws, 'has a closed property');
+    assert_true('then' in ws.closed, 'closed property is thenable');
+}, 'WritableStream instances have the correct methods and properties');
+
+var test7 = async_test('WritableStream with simple input, processed asynchronously');
+test7.step(function() {
+    var storage;
+    var ws = new WritableStream({
+        start: function() {
+            storage = [];
+        },
+
+        write: function(chunk) {
+            return new Promise(test7.step_func(function(resolve) {
+                setTimeout(test7.step_func(function() {
+                    storage.push(chunk);
+                    resolve();
+                }), 0);
+            }));
+        },
+
+        close: function() {
+            return new Promise(test7.step_func(function(resolve) { setTimeout(test7.step_func(resolve), 0); }));
+        }
+    });
+
+    var input = [1, 2, 3, 4, 5];
+    writeArrayToStream(input, ws).then(
+        test7.step_func(function() {
+            assert_array_equals(storage, input, 'correct data was relayed to underlying sink');
+            test7.done();
+        }),
+        test7.step_func(function(r) { assert_unreached(r); })
+    );
+});
+
+var test8 = async_test('WritableStream with simple input, processed synchronously');
+test8.step(function() {
+    var storage;
+    var ws = new WritableStream({
+        start: function() {
+            storage = [];
+        },
+
+        write: function(chunk) {
+            storage.push(chunk);
+        },
+    });
+
+    var input = [1, 2, 3, 4, 5];
+    writeArrayToStream(input, ws).then(
+        test8.step_func(function() {
+            assert_array_equals(storage, input, 'correct data was relayed to underlying sink');
+            test8.done();
+        }),
+        test8.step_func(function(r) { assert_unreached(r); })
+    );
+});
+
+var test9 = async_test('WritableStream is writable and ready fulfills immediately if the strategy does not apply backpressure');
+test9.step(function() {
+    var ws = new WritableStream({}, {
+        highWaterMark: Infinity,
+        size() { return 0; }
+    });
+
+    assert_equals(ws.state, 'writable');
+
+    ws.ready.then(test9.step_func(function() {
+        test9.done('ready promise was fulfilled');
+    }));
+});
+
+var test10 = async_test('Fulfillment value of ws.write() call must be undefined even if the underlying sink returns a non-undefined value');
+test10.step(function() {
+    var ws = new WritableStream({
+        write: function() {
+            return 'Hello';
+        }
+    });
+
+    var writePromise = ws.write('a');
+    writePromise.then(test10.step_func(function(value) {
+        assert_equals(value, undefined, 'fulfillment value must be undefined');
+        test10.done();
+    })).catch(test10.step_func(function() { assert_unreached('writePromise is rejected'); }));
+});
+</script>

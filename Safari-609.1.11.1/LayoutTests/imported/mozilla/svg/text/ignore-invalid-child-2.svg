@@ -1,0 +1,13 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="200">
+  <text x="100" y="100" style="font: 16px sans-serif">
+    <tspan>
+      ab
+      <progress xmlns="http://www.w3.org/1999/xhtml">cd</progress>
+      ef
+    </tspan>
+  </text>
+</svg>

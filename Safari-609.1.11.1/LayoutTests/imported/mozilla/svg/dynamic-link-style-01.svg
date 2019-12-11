@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <title>Testcase for dynamic changes to link styles</title>
+
+    <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=398105 -->
+	
+    <style type="text/css">
+      a:link rect { fill: red; }
+    </style>
+
+    <a xlink:href="do-not-visit-me.xxx" id="r">
+        <rect width="100%" height="100%" fill="lime" />
+    </a>
+    
+    <script>
+    function doTest() {
+      document.getElementById('r').removeAttribute('xlink:href');
+      document.documentElement.removeAttribute("class");
+      if (window.testRunner)
+        testRunner.notifyDone();
+    }
+
+    if (window.testRunner)
+      testRunner.waitUntilDone();
+
+    setTimeout(doTest, 100);
+    </script>
+</svg>

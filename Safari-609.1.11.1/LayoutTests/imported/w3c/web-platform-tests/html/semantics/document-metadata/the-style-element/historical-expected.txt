@@ -1,0 +1,3 @@
+
+PASS style.scoped should not be supported 
+

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/utils.js"></script>
+<script src="/common/get-host-info.sub.js"></script>
+<script>
+const RESOURCES_DIR = "/WebKit/beacon/resources/";
+
+function pollResult(test, id) {
+  var checkUrl = RESOURCES_DIR + "beacon-preflight.py?cmd=get&id=" + id;
+
+  return new Promise(resolve => {
+    step_timeout(test.step_func(() => {
+      fetch(checkUrl).then(response => {
+        response.json().then(body => {
+          resolve(body);
+        });
+      });
+    }), 1000);
+  });
+}
+
+promise_test(function(test) {
+  var testBase = get_host_info().HTTP_REMOTE_ORIGIN + RESOURCES_DIR;
+  var id = "f470f43c-258c-4c82-b880-ace3bcdb211c"; // Use a static token since the URL is logged.
+  var target = encodeURIComponent(testBase + "beacon-preflight.py?allowCors=1&cmd=put&id=" + id);
+
+  // 307 & 308 redirections are the only ones that maintain the POST method.
+  var testUrl = RESOURCES_DIR + "redirect.py?redirect_status=307&location=" + target;
+
+  assert_true(navigator.sendBeacon(testUrl), "sendBeacon should return true");
+  return pollResult(test, id) .then(result => {
+    // Redirected URL contains "&count=" which the content filter blocks.
+    assert_equals(result['beacon'], 0, "Did not receive beacon")
+  });
+}, "Content extensions should be able to block beacon redirects");
+</script>

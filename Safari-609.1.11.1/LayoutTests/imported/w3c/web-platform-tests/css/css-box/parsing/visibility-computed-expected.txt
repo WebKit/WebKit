@@ -1,0 +1,5 @@
+
+PASS Property visibility value 'visible' computes to 'visible' 
+PASS Property visibility value 'hidden' computes to 'hidden' 
+PASS Property visibility value 'collapse' computes to 'collapse' 
+

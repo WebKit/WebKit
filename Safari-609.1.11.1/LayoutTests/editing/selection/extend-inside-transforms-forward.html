@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style> p { margin: 0px; } </style>
+</head>
+<body>
+<div style="font-family: monospace; monospace; -webkit-transform: rotate(-45deg); width: 200px; height: 200px; -webkit-transform-origin: top right; font-size:50px;">
+<p>hello</p>
+<p>world</p>
+</div>
+<script>
+
+// This test ensures WebKit can extend selection vertically inside transform.
+
+window.getSelection().setPosition(document.getElementsByTagName('p')[0].firstChild, 2);
+window.getSelection().modify('extend', 'forward', 'line');
+
+</script>
+</body>
+</html>

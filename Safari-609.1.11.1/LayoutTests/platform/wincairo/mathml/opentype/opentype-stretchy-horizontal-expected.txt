@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x124
+  RenderBlock {HTML} at (0,0) size 800x124
+    RenderBody {BODY} at (8,16) size 784x92
+      RenderBlock {P} at (0,0) size 784x20
+        RenderMathMLMath {math} at (0,9) size 10x11
+          RenderMathMLRow {mstyle} at (0,0) size 10x11
+            RenderMathMLUnderOver {mover} at (0,0) size 10x11
+              RenderMathMLOperator {mo} at (0,1) size 10x10
+                RenderBlock (anonymous) at (0,0) size 1x2
+                  RenderText {#text} at (0,-4) size 1x10
+                    text run at (0,-4) width 1: "\x{219C}"
+              RenderMathMLSpace {mspace} at (1,0) size 8x1
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,36) size 784x20
+        RenderMathMLMath {math} at (0,9) size 20x11
+          RenderMathMLRow {mstyle} at (0,0) size 20x11
+            RenderMathMLUnderOver {mover} at (0,0) size 20x11
+              RenderMathMLOperator {mo} at (0,1) size 20x10
+                RenderBlock (anonymous) at (0,0) size 1x2
+                  RenderText {#text} at (0,-4) size 1x10
+                    text run at (0,-4) width 1: "\x{219C}"
+              RenderMathMLSpace {mspace} at (2,0) size 16x1
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,72) size 784x20
+        RenderMathMLMath {math} at (0,9) size 150x11
+          RenderMathMLRow {mstyle} at (0,0) size 150x11
+            RenderMathMLUnderOver {mover} at (0,0) size 150x11
+              RenderMathMLOperator {mo} at (0,1) size 150x10
+                RenderBlock (anonymous) at (0,0) size 1x2
+                  RenderText {#text} at (0,-4) size 1x10
+                    text run at (0,-4) width 1: "\x{219C}"
+              RenderMathMLSpace {mspace} at (0,0) size 150x1
+        RenderText {#text} at (0,0) size 0x0

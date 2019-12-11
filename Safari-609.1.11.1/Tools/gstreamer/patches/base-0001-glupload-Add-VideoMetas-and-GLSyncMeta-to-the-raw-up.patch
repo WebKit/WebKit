@@ -1,0 +1,82 @@
+From 7c30b4ac59a9cb69221a86f2f0723f5fdf035b2a Mon Sep 17 00:00:00 2001
+From: Thibault Saunier <tsaunier@igalia.com>
+Date: Fri, 27 Sep 2019 11:10:43 -0300
+Subject: [PATCH] glupload: Add VideoMetas and GLSyncMeta to the raw uploaded
+ buffers
+
+This is done by reusing `gst_gl_memory_setup_buffer` avoiding to
+duplicate code.
+
+Without a VideoMeta, mapping those buffers lead to GstBuffer mapping the
+buffer in system memory even when specifying the GL flags (through the
+buffer merging mechanism) making the result totally broken.
+---
+ gst-libs/gst/gl/gstglupload.c  | 32 +++++++++++---------------------
+ tests/check/libs/gstglupload.c |  2 ++
+ 2 files changed, 13 insertions(+), 21 deletions(-)
+
+diff --git a/gst-libs/gst/gl/gstglupload.c b/gst-libs/gst/gl/gstglupload.c
+index bc6db7e0a..67ec4f4e9 100644
+--- a/gst-libs/gst/gl/gstglupload.c
++++ b/gst-libs/gst/gl/gstglupload.c
+@@ -1293,33 +1293,23 @@ _raw_data_upload_perform (gpointer impl, GstBuffer * buffer,
+       (raw->upload->context));
+ 
+   /* FIXME Use a buffer pool to cache the generated textures */
+-  /* FIXME: multiview support with separated left/right frames? */
+   *outbuf = gst_buffer_new ();
+-  for (i = 0; i < n_mem; i++) {
+-    GstGLBaseMemory *tex;
+-
+-    raw->params->parent.wrapped_data = raw->in_frame->frame.data[i];
+-    raw->params->plane = i;
+-    raw->params->tex_format =
+-        gst_gl_format_from_video_info (raw->upload->context, in_info, i);
+-
+-    tex =
+-        gst_gl_base_memory_alloc (allocator,
+-        (GstGLAllocationParams *) raw->params);
+-    if (!tex) {
+-      gst_buffer_unref (*outbuf);
+-      *outbuf = NULL;
+-      GST_ERROR_OBJECT (raw->upload, "Failed to allocate wrapped texture");
+-      return GST_GL_UPLOAD_ERROR;
+-    }
++  raw->params->parent.context = raw->upload->context;
++  if (gst_gl_memory_setup_buffer ((GstGLMemoryAllocator *) allocator, *outbuf,
++          raw->params, NULL, raw->in_frame->frame.data, n_mem)) {
+ 
+-    _raw_upload_frame_ref (raw->in_frame);
+-    gst_buffer_append_memory (*outbuf, (GstMemory *) tex);
++    for (i = 0; i < n_mem; i++)
++      _raw_upload_frame_ref (raw->in_frame);
++    gst_buffer_add_gl_sync_meta (raw->upload->context, *outbuf);
++  } else {
++    GST_ERROR_OBJECT (raw->upload, "Failed to allocate wrapped texture");
++    gst_buffer_unref (*outbuf);
++    return GST_GL_UPLOAD_ERROR;
+   }
+   gst_object_unref (allocator);
+-
+   _raw_upload_frame_unref (raw->in_frame);
+   raw->in_frame = NULL;
++
+   return GST_GL_UPLOAD_DONE;
+ }
+ 
+diff --git a/tests/check/libs/gstglupload.c b/tests/check/libs/gstglupload.c
+index 74bff2b83..eff2f18ba 100644
+--- a/tests/check/libs/gstglupload.c
++++ b/tests/check/libs/gstglupload.c
+@@ -281,6 +281,8 @@ GST_START_TEST (test_upload_data)
+   res = gst_gl_upload_perform_with_buffer (upload, inbuf, &outbuf);
+   fail_unless (res == GST_GL_UPLOAD_DONE, "Failed to upload buffer");
+   fail_unless (GST_IS_BUFFER (outbuf));
++  fail_unless (gst_buffer_get_video_meta (outbuf));
++  fail_unless (gst_buffer_get_gl_sync_meta (outbuf));
+ 
+   res = gst_buffer_map (outbuf, &map_info, GST_MAP_READ | GST_MAP_GL);
+   fail_if (res == FALSE, "Failed to map gl memory");
+-- 
+2.21.0
+

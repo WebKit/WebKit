@@ -1,0 +1,184 @@
+This test checks String.prototype.toLocaleUpperCase().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS String.prototype.toLocaleUpperCase.length is 0
+PASS ''.toLocaleUpperCase() is ''
+PASS String.prototype.toLocaleUpperCase.call({ toString() { return 'a' } }) is 'A'
+PASS String.prototype.toLocaleUpperCase.call({ toString() { throw Error('1') } }) threw exception Error: 1.
+PASS String.prototype.toLocaleUpperCase.call(null) threw exception TypeError: Type error.
+PASS String.prototype.toLocaleUpperCase.call(undefined) threw exception TypeError: Type error.
+PASS 'a'.toLocaleUpperCase(9) is 'A'
+PASS 'i'.toLocaleUpperCase({ length: 4, 1: 'az', 3: 'en' }) is '\u0130'
+PASS 'a'.toLocaleUpperCase('x-some-thing') is 'A'
+PASS 'a'.toLocaleUpperCase(Object.create(null, { length: { get() { throw Error('a') } } })) threw exception Error: a.
+PASS 'a'.toLocaleUpperCase(Object.create(null, { length: { value: 1 }, 0: { get() { throw Error('b') } } })) threw exception Error: b.
+PASS 'a'.toLocaleUpperCase([ { toString() { throw Error('c') } } ]) threw exception Error: c.
+PASS 'a'.toLocaleUpperCase([ 5 ]) threw exception TypeError: locale value must be a string or object.
+PASS 'a'.toLocaleUpperCase('') threw exception RangeError: invalid language tag: .
+PASS 'a'.toLocaleUpperCase('a') threw exception RangeError: invalid language tag: a.
+PASS 'a'.toLocaleUpperCase('abcdefghij') threw exception RangeError: invalid language tag: abcdefghij.
+PASS 'a'.toLocaleUpperCase('#$') threw exception RangeError: invalid language tag: #$.
+PASS 'a'.toLocaleUpperCase('en-@-abc') threw exception RangeError: invalid language tag: en-@-abc.
+PASS 'a'.toLocaleUpperCase('en-u') threw exception RangeError: invalid language tag: en-u.
+PASS 'a'.toLocaleUpperCase('en-u-kn-true-u-ko-true') threw exception RangeError: invalid language tag: en-u-kn-true-u-ko-true.
+PASS 'a'.toLocaleUpperCase('en-x') threw exception RangeError: invalid language tag: en-x.
+PASS 'a'.toLocaleUpperCase('en-*') threw exception RangeError: invalid language tag: en-*.
+PASS 'a'.toLocaleUpperCase('en-') threw exception RangeError: invalid language tag: en-.
+PASS 'a'.toLocaleUpperCase('en--US') threw exception RangeError: invalid language tag: en--US.
+PASS 'AbCdEfGhIjKlMnOpQRStuvWXyZ0123456789'.toLocaleUpperCase() is 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+PASS 'àéîöœøūñ'.toLocaleUpperCase() is 'ÀÉÎÖŒØŪÑ'
+PASS 'i'.toLocaleUpperCase('und') is 'I'
+PASS '\u0130'.toLocaleUpperCase('az') is '\u0130'
+PASS 'I'.toLocaleUpperCase('az') is 'I'
+PASS 'i'.toLocaleUpperCase('az') is '\u0130'
+PASS '\u0131'.toLocaleUpperCase('az') is 'I'
+PASS 'I\u0307'.toLocaleUpperCase('lt') is 'I\u0307'
+PASS 'J\u0307'.toLocaleUpperCase('lt') is 'J\u0307'
+PASS '\u0069\u0307'.toLocaleUpperCase('lt') is '\u0069'.toLocaleUpperCase('und')
+PASS '\u0069\u0323\u0307'.toLocaleUpperCase('lt') is '\u0069'.toLocaleUpperCase('und') + '\u0323'
+PASS '\u0069\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\u0069'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\u006A\u0307'.toLocaleUpperCase('lt') is '\u006A'.toLocaleUpperCase('und')
+PASS '\u006A\u0323\u0307'.toLocaleUpperCase('lt') is '\u006A'.toLocaleUpperCase('und') + '\u0323'
+PASS '\u006A\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\u006A'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\u012F\u0307'.toLocaleUpperCase('lt') is '\u012F'.toLocaleUpperCase('und')
+PASS '\u012F\u0323\u0307'.toLocaleUpperCase('lt') is '\u012F'.toLocaleUpperCase('und') + '\u0323'
+PASS '\u012F\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\u012F'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\u0249\u0307'.toLocaleUpperCase('lt') is '\u0249'.toLocaleUpperCase('und')
+PASS '\u0249\u0323\u0307'.toLocaleUpperCase('lt') is '\u0249'.toLocaleUpperCase('und') + '\u0323'
+PASS '\u0249\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\u0249'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\u0268\u0307'.toLocaleUpperCase('lt') is '\u0268'.toLocaleUpperCase('und')
+PASS '\u0268\u0323\u0307'.toLocaleUpperCase('lt') is '\u0268'.toLocaleUpperCase('und') + '\u0323'
+PASS '\u0268\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\u0268'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\u029D\u0307'.toLocaleUpperCase('lt') is '\u029D'.toLocaleUpperCase('und')
+PASS '\u029D\u0323\u0307'.toLocaleUpperCase('lt') is '\u029D'.toLocaleUpperCase('und') + '\u0323'
+PASS '\u029D\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\u029D'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\u02B2\u0307'.toLocaleUpperCase('lt') is '\u02B2'.toLocaleUpperCase('und')
+PASS '\u02B2\u0323\u0307'.toLocaleUpperCase('lt') is '\u02B2'.toLocaleUpperCase('und') + '\u0323'
+PASS '\u02B2\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\u02B2'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\u03F3\u0307'.toLocaleUpperCase('lt') is '\u03F3'.toLocaleUpperCase('und')
+PASS '\u03F3\u0323\u0307'.toLocaleUpperCase('lt') is '\u03F3'.toLocaleUpperCase('und') + '\u0323'
+PASS '\u03F3\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\u03F3'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\u0456\u0307'.toLocaleUpperCase('lt') is '\u0456'.toLocaleUpperCase('und')
+PASS '\u0456\u0323\u0307'.toLocaleUpperCase('lt') is '\u0456'.toLocaleUpperCase('und') + '\u0323'
+PASS '\u0456\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\u0456'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\u0458\u0307'.toLocaleUpperCase('lt') is '\u0458'.toLocaleUpperCase('und')
+PASS '\u0458\u0323\u0307'.toLocaleUpperCase('lt') is '\u0458'.toLocaleUpperCase('und') + '\u0323'
+PASS '\u0458\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\u0458'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\u1D62\u0307'.toLocaleUpperCase('lt') is '\u1D62'.toLocaleUpperCase('und')
+PASS '\u1D62\u0323\u0307'.toLocaleUpperCase('lt') is '\u1D62'.toLocaleUpperCase('und') + '\u0323'
+PASS '\u1D62\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\u1D62'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\u1D96\u0307'.toLocaleUpperCase('lt') is '\u1D96'.toLocaleUpperCase('und')
+PASS '\u1D96\u0323\u0307'.toLocaleUpperCase('lt') is '\u1D96'.toLocaleUpperCase('und') + '\u0323'
+PASS '\u1D96\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\u1D96'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\u1DA4\u0307'.toLocaleUpperCase('lt') is '\u1DA4'.toLocaleUpperCase('und')
+PASS '\u1DA4\u0323\u0307'.toLocaleUpperCase('lt') is '\u1DA4'.toLocaleUpperCase('und') + '\u0323'
+PASS '\u1DA4\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\u1DA4'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\u1DA8\u0307'.toLocaleUpperCase('lt') is '\u1DA8'.toLocaleUpperCase('und')
+PASS '\u1DA8\u0323\u0307'.toLocaleUpperCase('lt') is '\u1DA8'.toLocaleUpperCase('und') + '\u0323'
+PASS '\u1DA8\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\u1DA8'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\u1E2D\u0307'.toLocaleUpperCase('lt') is '\u1E2D'.toLocaleUpperCase('und')
+PASS '\u1E2D\u0323\u0307'.toLocaleUpperCase('lt') is '\u1E2D'.toLocaleUpperCase('und') + '\u0323'
+PASS '\u1E2D\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\u1E2D'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\u1ECB\u0307'.toLocaleUpperCase('lt') is '\u1ECB'.toLocaleUpperCase('und')
+PASS '\u1ECB\u0323\u0307'.toLocaleUpperCase('lt') is '\u1ECB'.toLocaleUpperCase('und') + '\u0323'
+PASS '\u1ECB\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\u1ECB'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\u2071\u0307'.toLocaleUpperCase('lt') is '\u2071'.toLocaleUpperCase('und')
+PASS '\u2071\u0323\u0307'.toLocaleUpperCase('lt') is '\u2071'.toLocaleUpperCase('und') + '\u0323'
+PASS '\u2071\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\u2071'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\u2148\u0307'.toLocaleUpperCase('lt') is '\u2148'.toLocaleUpperCase('und')
+PASS '\u2148\u0323\u0307'.toLocaleUpperCase('lt') is '\u2148'.toLocaleUpperCase('und') + '\u0323'
+PASS '\u2148\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\u2148'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\u2149\u0307'.toLocaleUpperCase('lt') is '\u2149'.toLocaleUpperCase('und')
+PASS '\u2149\u0323\u0307'.toLocaleUpperCase('lt') is '\u2149'.toLocaleUpperCase('und') + '\u0323'
+PASS '\u2149\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\u2149'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\u2C7C\u0307'.toLocaleUpperCase('lt') is '\u2C7C'.toLocaleUpperCase('und')
+PASS '\u2C7C\u0323\u0307'.toLocaleUpperCase('lt') is '\u2C7C'.toLocaleUpperCase('und') + '\u0323'
+PASS '\u2C7C\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\u2C7C'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\uD835\uDC22\u0307'.toLocaleUpperCase('lt') is '\uD835\uDC22'.toLocaleUpperCase('und')
+PASS '\uD835\uDC22\u0323\u0307'.toLocaleUpperCase('lt') is '\uD835\uDC22'.toLocaleUpperCase('und') + '\u0323'
+PASS '\uD835\uDC22\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\uD835\uDC22'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\uD835\uDC23\u0307'.toLocaleUpperCase('lt') is '\uD835\uDC23'.toLocaleUpperCase('und')
+PASS '\uD835\uDC23\u0323\u0307'.toLocaleUpperCase('lt') is '\uD835\uDC23'.toLocaleUpperCase('und') + '\u0323'
+PASS '\uD835\uDC23\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\uD835\uDC23'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\uD835\uDC56\u0307'.toLocaleUpperCase('lt') is '\uD835\uDC56'.toLocaleUpperCase('und')
+PASS '\uD835\uDC56\u0323\u0307'.toLocaleUpperCase('lt') is '\uD835\uDC56'.toLocaleUpperCase('und') + '\u0323'
+PASS '\uD835\uDC56\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\uD835\uDC56'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\uD835\uDC57\u0307'.toLocaleUpperCase('lt') is '\uD835\uDC57'.toLocaleUpperCase('und')
+PASS '\uD835\uDC57\u0323\u0307'.toLocaleUpperCase('lt') is '\uD835\uDC57'.toLocaleUpperCase('und') + '\u0323'
+PASS '\uD835\uDC57\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\uD835\uDC57'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\uD835\uDC8A\u0307'.toLocaleUpperCase('lt') is '\uD835\uDC8A'.toLocaleUpperCase('und')
+PASS '\uD835\uDC8A\u0323\u0307'.toLocaleUpperCase('lt') is '\uD835\uDC8A'.toLocaleUpperCase('und') + '\u0323'
+PASS '\uD835\uDC8A\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\uD835\uDC8A'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\uD835\uDC8B\u0307'.toLocaleUpperCase('lt') is '\uD835\uDC8B'.toLocaleUpperCase('und')
+PASS '\uD835\uDC8B\u0323\u0307'.toLocaleUpperCase('lt') is '\uD835\uDC8B'.toLocaleUpperCase('und') + '\u0323'
+PASS '\uD835\uDC8B\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\uD835\uDC8B'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\uD835\uDCBE\u0307'.toLocaleUpperCase('lt') is '\uD835\uDCBE'.toLocaleUpperCase('und')
+PASS '\uD835\uDCBE\u0323\u0307'.toLocaleUpperCase('lt') is '\uD835\uDCBE'.toLocaleUpperCase('und') + '\u0323'
+PASS '\uD835\uDCBE\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\uD835\uDCBE'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\uD835\uDCBF\u0307'.toLocaleUpperCase('lt') is '\uD835\uDCBF'.toLocaleUpperCase('und')
+PASS '\uD835\uDCBF\u0323\u0307'.toLocaleUpperCase('lt') is '\uD835\uDCBF'.toLocaleUpperCase('und') + '\u0323'
+PASS '\uD835\uDCBF\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\uD835\uDCBF'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\uD835\uDCF2\u0307'.toLocaleUpperCase('lt') is '\uD835\uDCF2'.toLocaleUpperCase('und')
+PASS '\uD835\uDCF2\u0323\u0307'.toLocaleUpperCase('lt') is '\uD835\uDCF2'.toLocaleUpperCase('und') + '\u0323'
+PASS '\uD835\uDCF2\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\uD835\uDCF2'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\uD835\uDCF3\u0307'.toLocaleUpperCase('lt') is '\uD835\uDCF3'.toLocaleUpperCase('und')
+PASS '\uD835\uDCF3\u0323\u0307'.toLocaleUpperCase('lt') is '\uD835\uDCF3'.toLocaleUpperCase('und') + '\u0323'
+PASS '\uD835\uDCF3\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\uD835\uDCF3'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\uD835\uDD26\u0307'.toLocaleUpperCase('lt') is '\uD835\uDD26'.toLocaleUpperCase('und')
+PASS '\uD835\uDD26\u0323\u0307'.toLocaleUpperCase('lt') is '\uD835\uDD26'.toLocaleUpperCase('und') + '\u0323'
+PASS '\uD835\uDD26\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\uD835\uDD26'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\uD835\uDD27\u0307'.toLocaleUpperCase('lt') is '\uD835\uDD27'.toLocaleUpperCase('und')
+PASS '\uD835\uDD27\u0323\u0307'.toLocaleUpperCase('lt') is '\uD835\uDD27'.toLocaleUpperCase('und') + '\u0323'
+PASS '\uD835\uDD27\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\uD835\uDD27'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\uD835\uDD5A\u0307'.toLocaleUpperCase('lt') is '\uD835\uDD5A'.toLocaleUpperCase('und')
+PASS '\uD835\uDD5A\u0323\u0307'.toLocaleUpperCase('lt') is '\uD835\uDD5A'.toLocaleUpperCase('und') + '\u0323'
+PASS '\uD835\uDD5A\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\uD835\uDD5A'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\uD835\uDD5B\u0307'.toLocaleUpperCase('lt') is '\uD835\uDD5B'.toLocaleUpperCase('und')
+PASS '\uD835\uDD5B\u0323\u0307'.toLocaleUpperCase('lt') is '\uD835\uDD5B'.toLocaleUpperCase('und') + '\u0323'
+PASS '\uD835\uDD5B\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\uD835\uDD5B'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\uD835\uDD8E\u0307'.toLocaleUpperCase('lt') is '\uD835\uDD8E'.toLocaleUpperCase('und')
+PASS '\uD835\uDD8E\u0323\u0307'.toLocaleUpperCase('lt') is '\uD835\uDD8E'.toLocaleUpperCase('und') + '\u0323'
+PASS '\uD835\uDD8E\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\uD835\uDD8E'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\uD835\uDD8F\u0307'.toLocaleUpperCase('lt') is '\uD835\uDD8F'.toLocaleUpperCase('und')
+PASS '\uD835\uDD8F\u0323\u0307'.toLocaleUpperCase('lt') is '\uD835\uDD8F'.toLocaleUpperCase('und') + '\u0323'
+PASS '\uD835\uDD8F\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\uD835\uDD8F'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\uD835\uDDC2\u0307'.toLocaleUpperCase('lt') is '\uD835\uDDC2'.toLocaleUpperCase('und')
+PASS '\uD835\uDDC2\u0323\u0307'.toLocaleUpperCase('lt') is '\uD835\uDDC2'.toLocaleUpperCase('und') + '\u0323'
+PASS '\uD835\uDDC2\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\uD835\uDDC2'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\uD835\uDDC3\u0307'.toLocaleUpperCase('lt') is '\uD835\uDDC3'.toLocaleUpperCase('und')
+PASS '\uD835\uDDC3\u0323\u0307'.toLocaleUpperCase('lt') is '\uD835\uDDC3'.toLocaleUpperCase('und') + '\u0323'
+PASS '\uD835\uDDC3\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\uD835\uDDC3'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\uD835\uDDF6\u0307'.toLocaleUpperCase('lt') is '\uD835\uDDF6'.toLocaleUpperCase('und')
+PASS '\uD835\uDDF6\u0323\u0307'.toLocaleUpperCase('lt') is '\uD835\uDDF6'.toLocaleUpperCase('und') + '\u0323'
+PASS '\uD835\uDDF6\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\uD835\uDDF6'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\uD835\uDDF7\u0307'.toLocaleUpperCase('lt') is '\uD835\uDDF7'.toLocaleUpperCase('und')
+PASS '\uD835\uDDF7\u0323\u0307'.toLocaleUpperCase('lt') is '\uD835\uDDF7'.toLocaleUpperCase('und') + '\u0323'
+PASS '\uD835\uDDF7\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\uD835\uDDF7'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\uD835\uDE2A\u0307'.toLocaleUpperCase('lt') is '\uD835\uDE2A'.toLocaleUpperCase('und')
+PASS '\uD835\uDE2A\u0323\u0307'.toLocaleUpperCase('lt') is '\uD835\uDE2A'.toLocaleUpperCase('und') + '\u0323'
+PASS '\uD835\uDE2A\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\uD835\uDE2A'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\uD835\uDE2B\u0307'.toLocaleUpperCase('lt') is '\uD835\uDE2B'.toLocaleUpperCase('und')
+PASS '\uD835\uDE2B\u0323\u0307'.toLocaleUpperCase('lt') is '\uD835\uDE2B'.toLocaleUpperCase('und') + '\u0323'
+PASS '\uD835\uDE2B\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\uD835\uDE2B'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\uD835\uDE5E\u0307'.toLocaleUpperCase('lt') is '\uD835\uDE5E'.toLocaleUpperCase('und')
+PASS '\uD835\uDE5E\u0323\u0307'.toLocaleUpperCase('lt') is '\uD835\uDE5E'.toLocaleUpperCase('und') + '\u0323'
+PASS '\uD835\uDE5E\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\uD835\uDE5E'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\uD835\uDE5F\u0307'.toLocaleUpperCase('lt') is '\uD835\uDE5F'.toLocaleUpperCase('und')
+PASS '\uD835\uDE5F\u0323\u0307'.toLocaleUpperCase('lt') is '\uD835\uDE5F'.toLocaleUpperCase('und') + '\u0323'
+PASS '\uD835\uDE5F\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\uD835\uDE5F'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\uD835\uDE92\u0307'.toLocaleUpperCase('lt') is '\uD835\uDE92'.toLocaleUpperCase('und')
+PASS '\uD835\uDE92\u0323\u0307'.toLocaleUpperCase('lt') is '\uD835\uDE92'.toLocaleUpperCase('und') + '\u0323'
+PASS '\uD835\uDE92\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\uD835\uDE92'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\uD835\uDE93\u0307'.toLocaleUpperCase('lt') is '\uD835\uDE93'.toLocaleUpperCase('und')
+PASS '\uD835\uDE93\u0323\u0307'.toLocaleUpperCase('lt') is '\uD835\uDE93'.toLocaleUpperCase('und') + '\u0323'
+PASS '\uD835\uDE93\uD800\uDDFD\u0307'.toLocaleUpperCase('lt') is '\uD835\uDE93'.toLocaleUpperCase('und') + '\uD800\uDDFD'
+PASS '\u0130'.toLocaleUpperCase('tr') is '\u0130'
+PASS 'I'.toLocaleUpperCase('tr') is 'I'
+PASS 'i'.toLocaleUpperCase('tr') is '\u0130'
+PASS '\u0131'.toLocaleUpperCase('tr') is 'I'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

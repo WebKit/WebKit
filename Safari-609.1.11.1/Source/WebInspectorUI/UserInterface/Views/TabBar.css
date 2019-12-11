@@ -1,0 +1,418 @@
+/*
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.tab-bar {
+    position: absolute;
+    top: var(--toolbar-height);
+    left: 0;
+    right: 0;
+    height: var(--tab-bar-height);
+
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    border-bottom: var(--tab-item-medium-border-style);
+
+    background-image: linear-gradient(to bottom, hsl(0, 0%, 78%), hsl(0, 0%, 72%));
+    background-size: 100% 200%;
+
+    white-space: nowrap;
+    overflow: hidden;
+
+    outline: none;
+
+    --tab-item-dark-border-color: hsl(0, 0%, 59%);
+    --tab-item-medium-border-color: hsl(0, 0%, 65%);
+    --tab-item-light-border-color: hsl(0, 0%, 85%);
+    --tab-item-extra-light-border-color: hsl(0, 0%, 92%);
+
+    --tab-item-medium-border-style: 1px solid var(--tab-item-medium-border-color);
+    --tab-item-light-border-style: 1px solid var(--tab-item-light-border-color);
+}
+
+body.window-inactive .tab-bar {
+    border-bottom-color: var(--tab-item-light-border-color);
+
+    background-image: none !important;
+    background-color: var(--tab-item-extra-light-border-color) !important;
+}
+
+.tab-bar > .top-border {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+
+    background-color: var(--tab-item-medium-border-color);
+
+    z-index: 0;
+}
+
+body.window-inactive .tab-bar > .top-border {
+    background-color: var(--tab-item-light-border-color);
+}
+
+.tab-bar > .item {
+    display: flex;
+    flex-grow: 1;
+
+    position: relative;
+
+    z-index: 1;
+
+    align-items: center;
+
+    padding: 0 6px;
+
+    min-width: 24px;
+    overflow: hidden;
+
+    background-image: linear-gradient(to bottom, hsl(0, 0%, 78%), hsl(0, 0%, 72%));
+    background-size: 100% 200%;
+
+    border-top: var(--tab-item-medium-border-style);
+
+    height: 100%;
+    line-height: 15px;
+    outline: none;
+
+    /* FIXME: These cause noticeable transitions when focusing the window. Fix that with JavaScript? */
+    /* transition-property: background-position, border-color; */
+    /* transition-duration: 250ms; */
+    /* transition-delay: 50ms; */
+}
+
+.tab-bar.calculate-width > .item {
+    flex: initial;
+}
+
+body[dir=ltr] .tab-bar > :nth-child(n + 2 of .item),
+body[dir=ltr] .tab-bar.dragging-tab > .item.selected {
+    border-left: var(--tab-item-medium-border-style);
+}
+
+body[dir=rtl] .tab-bar > :nth-child(n + 2 of .item),
+body[dir=rtl] .tab-bar.dragging-tab > .item.selected {
+    border-right: var(--tab-item-medium-border-style);
+}
+
+.tab-bar > .item.pinned {
+    width: 24px;
+    flex: none;
+    justify-content: center;
+}
+
+.tab-bar > .item.pinned.tab-picker {
+    width: 18px;
+    min-width: initial;
+}
+
+.tab-bar > .item:not(.disabled).selected {
+    border-top-color: hsl(0, 0%, 74%);
+    background-image: linear-gradient(to bottom, hsl(0, 0%, 87%), hsl(0, 0%, 82%));
+    background-size: 100% 100%;
+}
+
+.tab-bar:not(.animating) > .item:not(.selected, .disabled):hover {
+    background-image: linear-gradient(to bottom, hsl(0, 0%, 67%), hsl(0, 0%, 64%));
+    border-top-color: var(--tab-item-dark-border-color);
+}
+
+body[dir=ltr] .tab-bar:not(.animating) > .item:not(.selected, .disabled):hover,
+body[dir=ltr] .tab-bar:not(.animating) > .item:not(.selected, .disabled):hover + .item {
+    border-left-color: var(--tab-item-dark-border-color);
+}
+
+body[dir=rtl] .tab-bar:not(.animating) > .item:not(.selected, .disabled):hover,
+body[dir=rtl] .tab-bar:not(.animating) > .item:not(.selected, .disabled):hover + .item {
+    border-right-color: var(--tab-item-dark-border-color);
+}
+
+body.window-inactive .tab-bar > .item {
+    border-top-color: var(--tab-item-light-border-color) !important;
+
+    background-image: none !important;
+    background-color: var(--tab-item-extra-light-border-color) !important;
+
+    transition: none;
+}
+
+body[dir=ltr].window-inactive .tab-bar > .item {
+    border-left-color: var(--tab-item-light-border-color) !important;
+}
+
+body[dir=rtl].window-inactive .tab-bar > .item {
+    border-right-color: var(--tab-item-light-border-color) !important;
+}
+
+body.window-inactive .tab-bar > .item.selected {
+    background-image: none !important;
+    background-color: hsl(0, 0%, 96%) !important;
+}
+
+.tab-bar > .item > .close {
+    width: 16px;
+    height: 16px;
+
+    min-width: 16px;
+    min-height: 16px;
+
+    opacity: 0;
+
+    border-radius: 2px;
+
+    background-image: url(../Images/Close.svg);
+    background-repeat: no-repeat;
+
+    transition-property: background-color, opacity;
+    transition-duration: 250ms, 500ms;
+    transition-delay: 0s, 50ms;
+
+    -webkit-margin-end: 4px;
+}
+
+body:not(.window-inactive) .tab-bar > .item:hover > .close {
+    opacity: 0.6;
+}
+
+body:not(.window-inactive) .tab-bar.single-tab > .item.default-tab:hover > .close {
+    opacity: 0;
+}
+
+.tab-bar.single-tab > .item.default-tab > .close {
+    pointer-events: none;
+}
+
+.tab-bar > .item > .close:hover {
+    background-color: hsla(0, 0%, 0%, 0.2);
+}
+
+.tab-bar > .item > .close:active {
+    opacity: 0.8 !important;
+}
+
+.tab-bar > .item > .flex-space {
+    display: flex;
+    flex: 1;
+}
+
+.tab-bar > .item.ephemeral > .flex-space:last-child {
+    -webkit-margin-end: 16px;
+}
+
+.tab-bar > .item > .icon {
+    width: 16px;
+    height: 16px;
+
+    min-width: 16px;
+    min-height: 16px;
+
+    opacity: 0.55; /* Assumes black glyphs. */
+
+    -webkit-user-drag: none;
+}
+
+.tab-bar > .item.pinned > .icon {
+    width: 15px;
+    height: 15px;
+    min-width: 15px;
+    min-height: 15px;
+}
+
+.tab-bar > .item.selected > .icon {
+    opacity: 0.7;
+}
+
+.tab-bar > .item.disabled > .icon {
+    opacity: 0.35;
+}
+
+@media not (prefers-color-scheme: dark) {
+    .tab-bar:not(.animating) > .item:not(.selected, .disabled):hover > .icon {
+        opacity: 0.6;
+    }
+}
+
+.tab-bar > .item > .title {
+    color: hsla(0, 0%, 0%, 0.55);
+
+    display: flex;
+
+    min-width: 0;
+    max-width: 400px;
+}
+
+.tab-bar:not(.collapsed) > .item > .title {
+    -webkit-margin-start: 6px;
+}
+
+.tab-bar > .item > .title > .content {
+    min-width: 0;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tab-bar:not(.animating) > .item:not(.selected):hover > .title {
+    color: hsla(0, 0%, 0%, 0.6);
+}
+
+.tab-bar > .item.selected > .title {
+    color: hsla(0, 0%, 0%, 0.7);
+}
+
+.tab-bar.collapsed > .item {
+    justify-content: center;
+}
+
+.tab-bar.collapsed > .item:not(.pinned) > .icon {
+    display: none;
+}
+
+.tab-bar.collapsed > .item > .flex-space {
+    display: none;
+}
+
+.tab-bar.collapsed > .item > .close {
+    display: none;
+    -webkit-margin-end: 0;
+}
+
+.tab-bar.collapsed > .item:hover > .close {
+    display: inline-block;
+    position: absolute;
+}
+
+.tab-bar.collapsed > .item.ephemeral:hover > .icon {
+    display: none;
+}
+
+.tab-bar.collapsed > .item.ephemeral:hover > .title {
+    visibility: hidden;
+}
+
+.tab-bar.static-layout {
+    position: relative;
+}
+
+.tab-bar.static-layout > .item {
+    position: absolute !important;
+    top: 0;
+}
+
+.tab-bar.animating.closing-tab > .item {
+    transition-property: left;
+    transition-duration: 250ms;
+    transition-timing-function: ease-in-out;
+}
+
+.tab-bar.animating:matches(.expanding-tabs, .inserting-tab) > .item {
+    transition-property: left, width;
+    transition-duration: 250ms;
+    transition-timing-function: ease-in-out;
+}
+
+.tab-bar.animating.inserting-tab > .item.being-inserted {
+    z-index: 2;
+    min-width: 0 !important;
+    padding: 0 !important;
+}
+
+.tab-bar.dragging-tab > .item.selected,
+.tab-bar.static-layout:not(.animating.inserting-tab):not(.dragging-tab) > .item:nth-last-child(1 of :not(.pinned)),
+.tab-bar.animating.closing-tab > .item.selected {
+    border-right: var(--tab-item-medium-border-style);
+}
+
+body.window-inactive .tab-bar.dragging-tab > .item.selected,
+body.window-inactive .tab-bar.static-layout:not(.animating.inserting-tab):not(.dragging-tab) > .item:nth-last-child(1 of :not(.pinned)),
+body.window-inactive .tab-bar.animating.closing-tab > .item.selected {
+    border-right-color: var(--tab-item-light-border-color) !important;
+}
+
+.tab-bar.dragging-tab > .item.selected {
+    z-index: 2;
+    pointer-events: none;
+}
+
+@media (prefers-color-scheme: dark) {
+    .tab-bar {
+        background-image: linear-gradient(to bottom, hsl(0, 0%, 12%), hsl(0, 0%, 10%));
+
+        --tab-item-border-color: hsl(0, 0%, 36%);
+
+        /* FIXME: <https://webkit.org/b/189769> Dark Mode: use semantic color names */
+        --tab-item-dark-border-color: var(--tab-item-border-color);
+        --tab-item-medium-border-color: var(--tab-item-border-color);
+        --tab-item-light-border-color: var(--tab-item-border-color);
+        --tab-item-extra-light-border-color: var(--tab-item-border-color);
+    }
+
+    .tab-bar > .item {
+        background-image: linear-gradient(to bottom, hsl(0, 0%, 12%), hsl(0, 0%, 10%));
+    }
+
+    .tab-bar > .item > .title {
+        color: white !important;
+    }
+
+    .tab-bar > .item:not(.disabled).selected {
+        background-image: linear-gradient(to bottom, hsl(0, 0%, 23%), hsl(0, 0%, 21%));
+        border-top-color: hsl(0, 0%, 37%);
+    }
+
+    .tab-bar:not(.animating) > .item:not(.selected):hover {
+        background-image: linear-gradient(to bottom, hsl(0, 0%, 11%), hsl(0, 0%, 9%));
+    }
+
+    .tab-bar > .item > .close,
+    .tab-bar > .item > .icon {
+        filter: var(--filter-invert);
+    }
+
+    body.window-inactive .tab-bar {
+        --tab-item-border-color: hsl(0, 0%, 34%);
+        border-bottom-color: var(--tab-item-border-color);
+
+        background-image: none !important;
+        background-color: hsl(0, 0%, 13%) !important;
+    }
+
+    body.window-inactive .tab-bar > .item {
+        background-image: none !important;
+        background-color: hsl(0, 0%, 13%) !important;
+    }
+
+    body.window-inactive .tab-bar > .item.selected {
+        background-color: hsl(0, 0%, 19%) !important;
+    }
+
+    body.window-inactive .tab-bar > .item > .title {
+        color: hsl(0, 0%, 58%) !important;
+    }
+}

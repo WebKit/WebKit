@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (10,10) size 220x100
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceLinearGradient {linearGradient} [id="linGrad"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,1)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#00FF00]
+      RenderSVGResourceRadialGradient {radialGradient} [id="radGrad"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.50] [focalRadius=0.00]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#00FF00]
+      RenderSVGResourceFilter {filter} [id="f1"] [filterUnits=objectBoundingBox] [primitiveUnits=objectBoundingBox]
+        [feDisplacementMap scale="64.00" xChannelSelector="RED" yChannelSelector="GREEN"]
+          [feTile]
+            [feComposite operation="OVER"]
+              [feFlood flood-color="#000000" flood-opacity="1.00"]
+              [feFlood flood-color="#000000" flood-opacity="1.00"]
+          [SourceGraphic]
+    RenderSVGImage {image} at (10,10) size 100x100
+      [filter="f1"] RenderSVGResourceFilter {filter} at (10,10) size 100x100
+    RenderSVGImage {image} at (130,10) size 100x100
+      [filter="f1"] RenderSVGResourceFilter {filter} at (130,10) size 100x100

@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div id="grid1" role="grid" tabindex="0"></div>
+<div id="grid2" role="grid" aria-multiselectable="true" tabindex="0"></div>
+<div id="grid3" role="grid" aria-multiselectable="false" tabindex="0"></div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests that aria-multiselectable is exposed correctly for grids.");
+    if (window.accessibilityController) {
+        var gridMultiselectableUnspecified = accessibilityController.accessibleElementById("grid1");
+        shouldBe("gridMultiselectableUnspecified.isMultiSelectable", "true");
+
+        var gridMultiselectableTrue = accessibilityController.accessibleElementById("grid2");
+        shouldBe("gridMultiselectableTrue.isMultiSelectable", "true");
+
+        var gridMultiselectableFalse = accessibilityController.accessibleElementById("grid3");
+        shouldBe("gridMultiselectableFalse.isMultiSelectable", "false");
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+Exec insertOrderedList twice in all the cells of a table removes the previously inserted list items:
+
+Before:
+| <table>
+|   border="1"
+|   <tbody>
+|     id="element"
+|     <tr>
+|       <td>
+|         "<#selection-anchor>fsdf"
+|       <td>
+|         "fsdf"
+|     <tr>
+|       <td>
+|         "gghfg"
+|       <td>
+|         "fsfg"
+|   <tbody>
+| <#selection-focus>
+
+After:
+| <table>
+|   border="1"
+|   <tbody>
+|     id="element"
+|     <tr>
+|       <td>
+|         "<#selection-anchor>fsdf"
+|         <br>
+|       <td>
+|         "fsdf"
+|         <br>
+|     <tr>
+|       <td>
+|         "gghfg"
+|         <br>
+|       <td>
+|         "fsfg<#selection-focus>"
+|         <br>
+|   <tbody>

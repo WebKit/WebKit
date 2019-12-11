@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=media-file.js></script>
+    <script src=video-test.js></script>
+    <script>
+
+        // The test.mp4 file has sync samples at the following presentation time stamps:
+        // 0.0000, 0.7968, 1.5936, 2.3904, 3.1872, 3.9840, 4.7808, 5.5776
+        seekedCount = 0;
+
+        function setup()
+        {
+            findMediaElement();
+            waitForEvent('canplaythrough', canplaythrough);
+
+            // Other media files may have sync samples at completely different points, so
+            // explicitly use the .mp4 here.
+            video.src = "content/test.mp4";
+        }
+
+        function canplaythrough()
+        {
+            consoleWrite('<br><em>Seek to a specific time:</em>');
+            run('video.currentTime = 2.5');
+            waitForEventOnce('seeked', prepareTest);
+        }
+
+        function prepareTest()
+        {
+            testExpected('video.currentTime', 2.5);
+
+            consoleWrite('<br><em>Set currentTime shortly after calling fastSeek():</em>');
+            run('video.fastSeek(4.6)');
+
+            run('setTimeout(function() { video.currentTime = 2.5; }, 10)');
+            waitForEvent('seeked', runTest);
+            seekedCount = 0;
+            consoleWrite('');
+
+            // The second 'seeked' event is occasionally not sent, so fail the test it we don't
+            // get it in 1.5 seconds instead of waiting for the full timeout.
+            // https://bugs.webkit.org/show_bug.cgi?id=147944
+            failTestIn(1500);
+        }
+
+        function runTest()
+        {
+            if (++seekedCount == 1)
+                return;
+
+            testExpected('video.currentTime', 2.5);
+            consoleWrite('');
+            endTest();
+        }
+
+    </script>
+</head>
+<body onload="setup()">
+    <video controls></video>
+    <p>Test that setting currentTime immediately after fastSeek() works correctly.</p>
+</body>
+</html>

@@ -1,0 +1,85 @@
+Input:
+<b>bold</b>
+<span style="font-weight: 100">font weight 100</span>
+<span style="font-weight: 200">font weight 200</span>
+<span style="font-weight: 300">font weight 300</span>
+<span style="font-weight: 400">font weight 400</span>
+<span style="font-weight: 500">font weight 500</span>
+<span style="font-weight: 600">font weight 600</span>
+<span style="font-weight: 700">font weight 700</span>
+<span style="font-weight: 800">font weight 800</span>
+<span style="font-weight: 900">font weight 900</span>
+
+Output:
+NSParagraphStyle:
+Alignment 4
+    LineSpacing: 0
+    ParagraphSpacing: 0
+    ParagraphSpacingBefore: 0
+    HeadIndent: 0
+    TailIndent: 0
+    FirstLineHeadIndent: 0
+    LineHeight: 0/0
+    LineHeightMultiple: 0
+    LineBreakMode: 0
+    Tabs: ()
+    DefaultTabInterval: 36
+    Blocks: (
+)
+    Lists: (
+)
+    BaseWritingDirection: 0
+    HyphenationFactor: 0
+    TighteningForTruncation: YES
+    HeaderLevel: 0
+[bold]
+    NSFont: Times-Bold 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: #000000 (sRGB)
+    NSStrokeWidth: 0
+[ font weight 100 font weight 200 font weight 300 font weight 400 font weight 500 ]
+    NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: #000000 (sRGB)
+    NSStrokeWidth: 0
+[font weight 600]
+    NSFont: Times-Bold 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: #000000 (sRGB)
+    NSStrokeWidth: 0
+[ ]
+    NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: #000000 (sRGB)
+    NSStrokeWidth: 0
+[font weight 700]
+    NSFont: Times-Bold 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: #000000 (sRGB)
+    NSStrokeWidth: 0
+[ ]
+    NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: #000000 (sRGB)
+    NSStrokeWidth: 0
+[font weight 800]
+    NSFont: Times-Bold 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: #000000 (sRGB)
+    NSStrokeWidth: 0
+[ ]
+    NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: #000000 (sRGB)
+    NSStrokeWidth: 0
+[font weight 900]
+    NSFont: Times-Bold 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: #000000 (sRGB)
+    NSStrokeWidth: 0
+[ ]
+    NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: #000000 (sRGB)
+    NSStrokeWidth: 0
+

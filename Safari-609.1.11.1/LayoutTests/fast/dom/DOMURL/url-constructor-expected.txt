@@ -1,0 +1,21 @@
+Test getting the username attribute of a URL object.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+One-parameter constructor - valid URL
+PASS url.href is 'http://user:pass@example.com/path?query#fragment'
+One-parameter constructor - invalid URL should throw
+PASS url = new URL("%^$#") threw exception TypeError: Type error.
+One-parameter constructor - relative URL not valid against default base
+PASS url = new URL("foobar") threw exception TypeError: Type error.
+URL with string base
+PASS url.href is 'http://example.com/path/to/nowhere?ok'
+URL with URL base
+PASS url.href is 'http://example.com/path/to/nowhere?ok'
+URL with URL base that itself has a base
+PASS url.href is 'http://example.com/are/we/nowhere?ok'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

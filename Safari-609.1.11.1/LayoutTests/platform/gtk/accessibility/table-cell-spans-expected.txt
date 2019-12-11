@@ -1,0 +1,124 @@
+Cell A
+COLSPAN="2"
+ROWSPAN="2"	Cell B
+COLSPAN="2"
+2,3	2,4
+Cell C
+ROWSPAN="2"	3,2	3,3	3,4
+4,2	4,3	4,4
+----------------------
+{ 0, 0 }
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 156.000, 9.00000 }
+AXSize: { 244.000, 78.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: Cell A<\n>COLSPAN="2"<\n>ROWSPAN="2"
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitGtk
+{0, 2}, {0, 2}
+
+----------------------
+{ 1, 1 }
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 156.000, 9.00000 }
+AXSize: { 244.000, 78.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: Cell A<\n>COLSPAN="2"<\n>ROWSPAN="2"
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitGtk
+{0, 2}, {0, 2}
+
+----------------------
+{ 3, 0 }
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 149.000, 87.0000 }
+AXSize: { 123.000, 60.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: Cell C<\n>ROWSPAN="2"
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitGtk
+{2, 2}, {0, 1}
+
+----------------------
+{ 2, 0 }
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 149.000, 87.0000 }
+AXSize: { 123.000, 60.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: Cell C<\n>ROWSPAN="2"
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitGtk
+{2, 2}, {0, 1}
+
+----------------------
+{ 2, 3 }
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition: { 514.000, 87.0000 }
+AXSize: { 123.000, 30.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: 3,4
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitGtk
+{2, 1}, {3, 1}
+
+----------------------
+{ 10, 10 }
+
+{0, 0}, {0, 0}
+
+

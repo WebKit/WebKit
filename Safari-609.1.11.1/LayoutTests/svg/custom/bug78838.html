@@ -1,0 +1,19 @@
+<!-- This test passes if there is no crash. -->
+<script>
+function go() {
+
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    q = document.getElementById('root').contentDocument;
+    q.firstChild.setAttribute('style', 'content:counter(item)');
+
+    document.designMode = 'on';
+    q.execCommand('selectAll');
+    q.execCommand('insertImage');
+    q.getElementById('x').appendChild( q.firstChild.cloneNode(1) );
+    q.execCommand('undo');
+}
+</script>
+<object data="resources/bug78838.svg" id="root" onload="go()"/></object>
+<p>PASSED</p>

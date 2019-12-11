@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<body>
+<div id="container" style="display: none;"></div>
+<script src="../resources/magnitude-perf.js"></script>
+<script>
+
+var container = document.getElementById('container');
+
+function setupFunction(magnitude)
+{
+    container.innerHTML = '';
+    for (var i = 0; i < magnitude; i++)
+        container.appendChild(document.createElement('div'));
+}
+
+function test(magnitude)
+{
+    container.children[0].class = 'first item';
+    container.children[container.children.length - 1].class = 'last item';
+}
+
+Magnitude.description("Tests that accessing the last item in children HTMLCollection is a constant time operation.");
+Magnitude.run(setupFunction, test, Magnitude.CONSTANT);
+
+</script>
+</body>
+</html>

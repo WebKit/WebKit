@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>CSS Test: Baseline on an empty cell</title>
+        <meta name="flags" content="">
+        <meta name="assert" content="There should be no red.">
+        <style type="text/css">
+            div
+            {
+                border-style: dashed;
+                border-collapse: collapse;
+                display: inline-table;
+                table-layout: fixed;
+            }
+            #row
+            {
+                display: table-row;
+            }
+            #abs
+            {
+                display: block;
+                position: absolute;
+                top: 3em;
+                height: 4em;
+                width: 4em;
+                background-color:green;
+            }
+            #cell
+            {
+                display: table-cell;
+                height: 4em;
+                width: 4em;
+                background-color:red;
+            }
+            #text
+            {
+                border-style: none;
+                display: block;
+                position: absolute;
+                top: 8em;
+            }
+        </style>
+    </head>
+    <body>
+        <p style="font: 1em Ahem;">Test</p>
+        <div id="table">
+            <div id="row">
+                <div id="cell"></div>
+            </div>
+        </div>
+        <div id="abs">
+        </div>
+        <div id="text">There should be no red.</div>
+    </body>
+</html>

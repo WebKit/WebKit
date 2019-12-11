@@ -1,0 +1,22 @@
+<html>
+<head>
+<script>
+window.onunload = function () {
+    try {
+        var url = '1251.html';
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url, false);
+        xhr.send(null);
+        window.parent.completed("PASS: sync XHR completed successfully");
+    } catch (e) {
+        window.parent.completed("FAIL: sync XHR during unload failed: " + e.message);
+    }
+};
+window.onload = function () {
+    window.parent.subframeLoaded();
+};
+</script>
+</head>
+<body>
+</body>
+</html>

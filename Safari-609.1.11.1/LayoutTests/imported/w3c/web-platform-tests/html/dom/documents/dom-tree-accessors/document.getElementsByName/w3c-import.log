@@ -1,0 +1,31 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-case-xhtml.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-case.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-id-xhtml.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-id.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-interface.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-liveness.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-namespace-xhtml.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-namespace.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-newelements-xhtml.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-newelements.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-null-undef-xhtml.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-null-undef.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-param-xhtml.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-param.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-same.html

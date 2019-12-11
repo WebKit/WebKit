@@ -1,0 +1,258 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (14,0) size 756x344 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (3,3) size 750x12
+          RenderBlock (floating) {DIV} at (0,0) size 53x11
+            RenderText {#text} at (0,0) size 53x11
+              text run at (0,0) width 53: "ActiveBorder"
+          RenderBlock (floating) {DIV} at (130,0) size 620x11 [bgcolor=#FFFFFF]
+            RenderText {#text} at (0,0) size 3x11
+              text run at (0,0) width 3: " "
+          RenderBlock (generated) at (0,11) size 750x1
+            RenderText at (0,0) size 0x0
+        RenderBlock {DIV} at (3,15) size 750x12
+          RenderBlock (floating) {DIV} at (0,0) size 58x11
+            RenderText {#text} at (0,0) size 58x11
+              text run at (0,0) width 58: "ActiveCaption"
+          RenderBlock (floating) {DIV} at (130,0) size 620x11 [bgcolor=#CCCCCC]
+            RenderText {#text} at (0,0) size 3x11
+              text run at (0,0) width 3: " "
+          RenderBlock (generated) at (0,11) size 750x1
+            RenderText at (0,0) size 0x0
+        RenderBlock {DIV} at (3,27) size 750x12
+          RenderBlock (floating) {DIV} at (0,0) size 60x11
+            RenderText {#text} at (0,0) size 60x11
+              text run at (0,0) width 60: "AppWorkspace"
+          RenderBlock (floating) {DIV} at (130,0) size 620x11 [bgcolor=#FFFFFF]
+            RenderText {#text} at (0,0) size 3x11
+              text run at (0,0) width 3: " "
+          RenderBlock (generated) at (0,11) size 750x1
+            RenderText at (0,0) size 0x0
+        RenderBlock {DIV} at (3,39) size 750x12
+          RenderBlock (floating) {DIV} at (0,0) size 48x11
+            RenderText {#text} at (0,0) size 48x11
+              text run at (0,0) width 48: "Background"
+          RenderBlock (floating) {DIV} at (130,0) size 620x11 [bgcolor=#6363CE]
+            RenderText {#text} at (0,0) size 3x11
+              text run at (0,0) width 3: " "
+          RenderBlock (generated) at (0,11) size 750x1
+            RenderText at (0,0) size 0x0
+        RenderBlock {DIV} at (3,51) size 750x12
+          RenderBlock (floating) {DIV} at (0,0) size 46x11
+            RenderText {#text} at (0,0) size 46x11
+              text run at (0,0) width 46: "ButtonFace"
+          RenderBlock (floating) {DIV} at (130,0) size 620x11 [bgcolor=#C0C0C0]
+            RenderText {#text} at (0,0) size 3x11
+              text run at (0,0) width 3: " "
+          RenderBlock (generated) at (0,11) size 750x1
+            RenderText at (0,0) size 0x0
+        RenderBlock {DIV} at (3,63) size 750x12
+          RenderBlock (floating) {DIV} at (0,0) size 67x11
+            RenderText {#text} at (0,0) size 67x11
+              text run at (0,0) width 67: "ButtonHighlight"
+          RenderBlock (floating) {DIV} at (130,0) size 620x11 [bgcolor=#DDDDDD]
+            RenderText {#text} at (0,0) size 3x11
+              text run at (0,0) width 3: " "
+          RenderBlock (generated) at (0,11) size 750x1
+            RenderText at (0,0) size 0x0
+        RenderBlock {DIV} at (3,75) size 750x12
+          RenderBlock (floating) {DIV} at (0,0) size 60x11
+            RenderText {#text} at (0,0) size 60x11
+              text run at (0,0) width 60: "ButtonShadow"
+          RenderBlock (floating) {DIV} at (130,0) size 620x11 [bgcolor=#888888]
+            RenderText {#text} at (0,0) size 3x11
+              text run at (0,0) width 3: " "
+          RenderBlock (generated) at (0,11) size 750x1
+            RenderText at (0,0) size 0x0
+        RenderBlock {DIV} at (3,87) size 750x12
+          RenderBlock (floating) {DIV} at (0,0) size 46x11
+            RenderText {#text} at (0,0) size 46x11
+              text run at (0,0) width 46: "ButtonText"
+          RenderBlock (floating) {DIV} at (130,0) size 620x11 [bgcolor=#000000]
+            RenderText {#text} at (0,0) size 3x11
+              text run at (0,0) width 3: " "
+          RenderBlock (generated) at (0,11) size 750x1
+            RenderText at (0,0) size 0x0
+        RenderBlock {DIV} at (3,99) size 750x12
+          RenderBlock (floating) {DIV} at (0,0) size 50x11
+            RenderText {#text} at (0,0) size 50x11
+              text run at (0,0) width 50: "CaptionText"
+          RenderBlock (floating) {DIV} at (130,0) size 620x11 [bgcolor=#000000]
+            RenderText {#text} at (0,0) size 3x11
+              text run at (0,0) width 3: " "
+          RenderBlock (generated) at (0,11) size 750x1
+            RenderText at (0,0) size 0x0
+        RenderBlock {DIV} at (3,111) size 750x12
+          RenderBlock (floating) {DIV} at (0,0) size 37x11
+            RenderText {#text} at (0,0) size 37x11
+              text run at (0,0) width 37: "GrayText"
+          RenderBlock (floating) {DIV} at (130,0) size 620x11 [bgcolor=#808080]
+            RenderText {#text} at (0,0) size 3x11
+              text run at (0,0) width 3: " "
+          RenderBlock (generated) at (0,11) size 750x1
+            RenderText at (0,0) size 0x0
+        RenderBlock {DIV} at (3,123) size 750x13
+          RenderBlock (floating) {DIV} at (0,0) size 39x11
+            RenderText {#text} at (0,0) size 39x11
+              text run at (0,0) width 39: "Highlight"
+          RenderBlock (floating) {DIV} at (130,0) size 620x11 [bgcolor=#B5D5FF]
+            RenderText {#text} at (0,0) size 3x11
+              text run at (0,0) width 3: " "
+          RenderBlock (generated) at (0,11) size 750x1
+            RenderText at (0,0) size 0x0
+        RenderBlock {DIV} at (3,136) size 750x12
+          RenderBlock (floating) {DIV} at (0,0) size 57x11
+            RenderText {#text} at (0,0) size 57x11
+              text run at (0,0) width 57: "HighlightText"
+          RenderBlock (floating) {DIV} at (130,0) size 620x11 [bgcolor=#000000]
+            RenderText {#text} at (0,0) size 3x11
+              text run at (0,0) width 3: " "
+          RenderBlock (generated) at (0,11) size 750x1
+            RenderText at (0,0) size 0x0
+        RenderBlock {DIV} at (3,148) size 750x12
+          RenderBlock (floating) {DIV} at (0,0) size 58x11
+            RenderText {#text} at (0,0) size 58x11
+              text run at (0,0) width 58: "InactiveBorder"
+          RenderBlock (floating) {DIV} at (130,0) size 620x11 [bgcolor=#FFFFFF]
+            RenderText {#text} at (0,0) size 3x11
+              text run at (0,0) width 3: " "
+          RenderBlock (generated) at (0,11) size 750x1
+            RenderText at (0,0) size 0x0
+        RenderBlock {DIV} at (3,160) size 750x12
+          RenderBlock (floating) {DIV} at (0,0) size 63x11
+            RenderText {#text} at (0,0) size 63x11
+              text run at (0,0) width 63: "InactiveCaption"
+          RenderBlock (floating) {DIV} at (130,0) size 620x11 [bgcolor=#FFFFFF]
+            RenderText {#text} at (0,0) size 3x11
+              text run at (0,0) width 3: " "
+          RenderBlock (generated) at (0,11) size 750x1
+            RenderText at (0,0) size 0x0
+        RenderBlock {DIV} at (3,172) size 750x12
+          RenderBlock (floating) {DIV} at (0,0) size 81x11
+            RenderText {#text} at (0,0) size 81x11
+              text run at (0,0) width 81: "InactiveCaptionText"
+          RenderBlock (floating) {DIV} at (130,0) size 620x11 [bgcolor=#7F7F7F]
+            RenderText {#text} at (0,0) size 3x11
+              text run at (0,0) width 3: " "
+          RenderBlock (generated) at (0,11) size 750x1
+            RenderText at (0,0) size 0x0
+        RenderBlock {DIV} at (3,184) size 750x12
+          RenderBlock (floating) {DIV} at (0,0) size 64x11
+            RenderText {#text} at (0,0) size 64x11
+              text run at (0,0) width 64: "InfoBackground"
+          RenderBlock (floating) {DIV} at (130,0) size 620x11 [bgcolor=#FBFCC5]
+            RenderText {#text} at (0,0) size 3x11
+              text run at (0,0) width 3: " "
+          RenderBlock (generated) at (0,11) size 750x1
+            RenderText at (0,0) size 0x0
+        RenderBlock {DIV} at (3,196) size 750x12
+          RenderBlock (floating) {DIV} at (0,0) size 34x11
+            RenderText {#text} at (0,0) size 34x11
+              text run at (0,0) width 34: "InfoText"
+          RenderBlock (floating) {DIV} at (130,0) size 620x11 [bgcolor=#000000]
+            RenderText {#text} at (0,0) size 3x11
+              text run at (0,0) width 3: " "
+          RenderBlock (generated) at (0,11) size 750x1
+            RenderText at (0,0) size 0x0
+        RenderBlock {DIV} at (3,208) size 750x12
+          RenderBlock (floating) {DIV} at (0,0) size 23x11
+            RenderText {#text} at (0,0) size 23x11
+              text run at (0,0) width 23: "Menu"
+          RenderBlock (floating) {DIV} at (130,0) size 620x11 [bgcolor=#C0C0C0]
+            RenderText {#text} at (0,0) size 3x11
+              text run at (0,0) width 3: " "
+          RenderBlock (generated) at (0,11) size 750x1
+            RenderText at (0,0) size 0x0
+        RenderBlock {DIV} at (3,220) size 750x12
+          RenderBlock (floating) {DIV} at (0,0) size 41x11
+            RenderText {#text} at (0,0) size 41x11
+              text run at (0,0) width 41: "MenuText"
+          RenderBlock (floating) {DIV} at (130,0) size 620x11 [bgcolor=#000000]
+            RenderText {#text} at (0,0) size 3x11
+              text run at (0,0) width 3: " "
+          RenderBlock (generated) at (0,11) size 750x1
+            RenderText at (0,0) size 0x0
+        RenderBlock {DIV} at (3,232) size 750x12
+          RenderBlock (floating) {DIV} at (0,0) size 36x11
+            RenderText {#text} at (0,0) size 36x11
+              text run at (0,0) width 36: "Scrollbar"
+          RenderBlock (floating) {DIV} at (130,0) size 620x11 [bgcolor=#FFFFFF]
+            RenderText {#text} at (0,0) size 3x11
+              text run at (0,0) width 3: " "
+          RenderBlock (generated) at (0,11) size 750x1
+            RenderText at (0,0) size 0x0
+        RenderBlock {DIV} at (3,244) size 750x12
+          RenderBlock (floating) {DIV} at (0,0) size 80x11
+            RenderText {#text} at (0,0) size 80x11
+              text run at (0,0) width 80: "ThreeDDarkShadow"
+          RenderBlock (floating) {DIV} at (130,0) size 620x11 [bgcolor=#666666]
+            RenderText {#text} at (0,0) size 3x11
+              text run at (0,0) width 3: " "
+          RenderBlock (generated) at (0,11) size 750x1
+            RenderText at (0,0) size 0x0
+        RenderBlock {DIV} at (3,256) size 750x13
+          RenderBlock (floating) {DIV} at (0,0) size 47x11
+            RenderText {#text} at (0,0) size 47x11
+              text run at (0,0) width 47: "ThreeDFace"
+          RenderBlock (floating) {DIV} at (130,0) size 620x11 [bgcolor=#C0C0C0]
+            RenderText {#text} at (0,0) size 3x11
+              text run at (0,0) width 3: " "
+          RenderBlock (generated) at (0,11) size 750x1
+            RenderText at (0,0) size 0x0
+        RenderBlock {DIV} at (3,269) size 750x12
+          RenderBlock (floating) {DIV} at (0,0) size 68x11
+            RenderText {#text} at (0,0) size 68x11
+              text run at (0,0) width 68: "ThreeDHighlight"
+          RenderBlock (floating) {DIV} at (130,0) size 620x11 [bgcolor=#DDDDDD]
+            RenderText {#text} at (0,0) size 3x11
+              text run at (0,0) width 3: " "
+          RenderBlock (generated) at (0,11) size 750x1
+            RenderText at (0,0) size 0x0
+        RenderBlock {DIV} at (3,281) size 750x12
+          RenderBlock (floating) {DIV} at (0,0) size 83x11
+            RenderText {#text} at (0,0) size 83x11
+              text run at (0,0) width 83: "ThreeDLightShadow"
+          RenderBlock (floating) {DIV} at (130,0) size 620x11 [bgcolor=#C0C0C0]
+            RenderText {#text} at (0,0) size 3x11
+              text run at (0,0) width 3: " "
+          RenderBlock (generated) at (0,11) size 750x1
+            RenderText at (0,0) size 0x0
+        RenderBlock {DIV} at (3,293) size 750x12
+          RenderBlock (floating) {DIV} at (0,0) size 61x11
+            RenderText {#text} at (0,0) size 61x11
+              text run at (0,0) width 61: "ThreeDShadow"
+          RenderBlock (floating) {DIV} at (130,0) size 620x11 [bgcolor=#888888]
+            RenderText {#text} at (0,0) size 3x11
+              text run at (0,0) width 3: " "
+          RenderBlock (generated) at (0,11) size 750x1
+            RenderText at (0,0) size 0x0
+        RenderBlock {DIV} at (3,305) size 750x12
+          RenderBlock (floating) {DIV} at (0,0) size 34x11
+            RenderText {#text} at (0,0) size 34x11
+              text run at (0,0) width 34: "Window"
+          RenderBlock (floating) {DIV} at (130,0) size 620x11 [bgcolor=#FFFFFF]
+            RenderText {#text} at (0,0) size 3x11
+              text run at (0,0) width 3: " "
+          RenderBlock (generated) at (0,11) size 750x1
+            RenderText at (0,0) size 0x0
+        RenderBlock {DIV} at (3,317) size 750x12
+          RenderBlock (floating) {DIV} at (0,0) size 59x11
+            RenderText {#text} at (0,0) size 59x11
+              text run at (0,0) width 59: "WindowFrame"
+          RenderBlock (floating) {DIV} at (130,0) size 620x11 [bgcolor=#CCCCCC]
+            RenderText {#text} at (0,0) size 3x11
+              text run at (0,0) width 3: " "
+          RenderBlock (generated) at (0,11) size 750x1
+            RenderText at (0,0) size 0x0
+        RenderBlock {DIV} at (3,329) size 750x12
+          RenderBlock (floating) {DIV} at (0,0) size 52x11
+            RenderText {#text} at (0,0) size 52x11
+              text run at (0,0) width 52: "WindowText"
+          RenderBlock (floating) {DIV} at (130,0) size 620x11 [bgcolor=#000000]
+            RenderText {#text} at (0,0) size 3x11
+              text run at (0,0) width 3: " "
+          RenderBlock (generated) at (0,11) size 750x1
+            RenderText at (0,0) size 0x0

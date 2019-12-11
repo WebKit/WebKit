@@ -1,0 +1,1 @@
+This tests that a <meta http-equiv="Content-Security-Policy-Report-Only"> is ignored if it is not a descendent of <head>. This test PASSED if there are no console warnings. Otherwise, it FAILED.

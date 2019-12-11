@@ -1,0 +1,20 @@
+<p>This tests that a dominant blank plugin that starts off screen and is moved in to view autoplays</p>
+<div id="result">FAIL</div>
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+        setTimeout(function() {
+            var embed = document.getElementById("plugin");
+            embed.style.left = "0px";
+            setTimeout(function () {
+                var result = document.getElementById("result");
+                var embed = document.getElementById("plugin");
+                if (!internals.isPluginSnapshotted(embed))
+                    result.innerHTML = "PASS";
+                testRunner.notifyDone();
+            }, 500); 
+        }, 500 );
+    }
+</script>
+<embed id="plugin" src="../resources/orange.mov" width="600" height="600" style="position:relative; left:-600px;"></embed>

@@ -1,0 +1,22 @@
+Tests that requestAnimationFrame is throttled in subframes that are cross-origin, and not in same-origin frames
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Received message: frameload
+Received message: frameload
+Checking that requestAnimationFrame is throttled in cross origin frame
+Received message: throttled[cross]: true
+Received message: throttled[same]: false
+PASS throttledState['cross'] is "true"
+PASS throttledState['same'] is "false"
+Interacted with cross-origin frame
+Interacted with same-origin frame
+Received message: throttled[cross]: false
+Received message: throttled[same]: false
+PASS throttledState['cross'] is "false"
+PASS throttledState['same'] is "false"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

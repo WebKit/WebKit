@@ -1,0 +1,51 @@
+Test of getActiveAttrib and getActiveUniform
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS getError was expected value: NO_ERROR : 
+PASS context.getActiveUniform(program, 0).name is 'u_modelViewProjMatrix'
+PASS context.getActiveUniform(program, 0).type is context.FLOAT_MAT4
+PASS context.getActiveUniform(program, 0).size is 1
+PASS context.getActiveUniform(program, 1) is null
+PASS getError was expected value: INVALID_VALUE : 
+PASS context.getActiveUniform(program, -1) is null
+PASS getError was expected value: INVALID_VALUE : 
+PASS context.getActiveUniform(null, 0) is null
+PASS getError was expected value: INVALID_VALUE : 
+PASS info[ii] is non-null.
+PASS info[ii] is non-null.
+PASS info[ii].name is expected[ii].name
+PASS info[ii].type is expected[ii].type
+PASS info[ii].size is expected[ii].size
+PASS info[ii].name is expected[ii].name
+PASS info[ii].type is expected[ii].type
+PASS info[ii].size is expected[ii].size
+PASS info2[ii] is non-null.
+PASS info2[ii] is non-null.
+PASS info2[ii].name is expected2[ii].name
+PASS info2[ii].type is expected2[ii].type
+PASS info2[ii].size is expected2[ii].size
+PASS info2[ii].name is expected2[ii].name
+PASS info2[ii].type is expected2[ii].type
+PASS info2[ii].size is expected2[ii].size
+PASS context.getActiveAttrib(program, 2) is null
+PASS getError was expected value: INVALID_VALUE : 
+PASS context.getActiveAttrib(program, -1) is null
+PASS getError was expected value: INVALID_VALUE : 
+PASS context.getActiveAttrib(null, 0) is null
+PASS getError was expected value: INVALID_VALUE : 
+PASS getError was expected value: NO_ERROR : 
+Check trying to get attribs from different context
+PASS context2.getActiveAttrib(program, 0) is null
+PASS getError was expected value: INVALID_OPERATION : 
+PASS context2.getActiveUniform(program, 0) is null
+PASS getError was expected value: INVALID_OPERATION : 
+Check trying to get attribs from deleted program
+PASS context.getActiveUniform(program, 0) is null
+PASS getError was expected value: INVALID_VALUE : 
+PASS context.getActiveAttrib(program, 0) is null
+PASS getError was expected value: INVALID_VALUE : 
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

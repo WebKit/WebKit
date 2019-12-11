@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        console.log("window.name should equal \"\" after a cross-origin main frame navigation.");
+        document.location = "resources/window-name-test.html?localhost";
+    </script>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script>
+var test = PerfTestRunner.loadFile("./resources/RegionsShapesContentNoShapes.html");
+
+PerfTestRunner.measureTime({run: function() {
+    var iframe = document.createElement("iframe");
+
+    iframe.style.height = '600px';
+    document.body.appendChild(iframe);
+    iframe.contentDocument.open();
+    iframe.contentDocument.write(test);
+    iframe.contentDocument.close();
+    iframe.style.width = '800px';
+    iframe.offsetTop;
+    document.body.removeChild(iframe);
+
+    var iframe2 = iframe.cloneNode();
+    iframe2.style.height = '600px';
+    document.body.appendChild(iframe2);
+    iframe2.contentDocument.open();
+    iframe2.contentDocument.write(test);
+    iframe2.contentDocument.close();
+    iframe2.style.width = '600px';
+    iframe2.offsetTop;
+    document.body.removeChild(iframe2);
+
+    var iframe3 = iframe.cloneNode();
+    iframe3.style.height = '600px';
+    document.body.appendChild(iframe3);
+    iframe3.contentDocument.open();
+    iframe3.contentDocument.write(test);
+    iframe3.contentDocument.close();
+    iframe3.style.width = '400px';
+    iframe3.offsetTop;
+    document.body.removeChild(iframe3);
+
+}});
+</script>
+</body>

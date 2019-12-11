@@ -1,0 +1,17 @@
+
+PASS undefined 
+PASS null 
+PASS false 
+PASS true 
+PASS 1 
+PASS NaN 
+PASS Infinity 
+PASS string 
+FAIL date Can't find variable: sameDate
+PASS regex 
+PASS self 
+FAIL array Can't find variable: assert_array_equals_
+FAIL object Can't find variable: assert_object_equals_
+PASS error 
+PASS unreached 
+

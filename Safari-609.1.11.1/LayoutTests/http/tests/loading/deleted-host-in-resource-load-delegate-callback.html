@@ -1,0 +1,37 @@
+<html>
+<head>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function runTest()
+{
+    if (!sessionStorage.firstLoadDone) {
+        sessionStorage.firstLoadDone = "yes";
+        window.location.reload();
+        return;
+    }
+    
+    delete sessionStorage.firstLoadDone;
+    if (window.testRunner) {
+        testRunner.dispatchPendingLoadRequests();
+        setTimeout(testRunner.notifyDone(), 0);
+    } else {
+        alert("You might get a crash in Safari after dismissing this alert.");
+    }
+}
+
+</script>
+</head>
+<body onload="runTest();">
+This test is for rdar://problem/6727495.<br>
+It loads a page with some image resources, then reloads itself.  When the page is reloaded, the image resources are revalidated and then some javascript is run as a result.<br>
+In Safari, that javascript opened a modal dialog which spun up an inner run loop which caused a Loader::Host that was currently in the middle of a resource load delegate callback to be deleted.<br>
+If you do not crash, you pass.<br>
+<img src="resources/snow-shoes-vs-pie.png"></img><br>
+<img src="resources/snow-shoes-vs-pie-copy.png"></img>
+</body>
+</html>

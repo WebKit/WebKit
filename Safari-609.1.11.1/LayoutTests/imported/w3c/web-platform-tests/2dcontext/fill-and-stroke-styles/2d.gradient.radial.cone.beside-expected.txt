@@ -1,0 +1,7 @@
+2d.gradient.radial.cone.beside
+Actual output:
+Expected output:
+
+
+PASS Canvas test: 2d.gradient.radial.cone.beside 
+

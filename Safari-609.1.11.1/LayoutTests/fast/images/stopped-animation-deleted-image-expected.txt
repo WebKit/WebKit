@@ -1,0 +1,10 @@
+Ensure the image stops animating if it is removed from the document before finishing decoding the current frame.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.imageFrameIndex(image) is frameIndex
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

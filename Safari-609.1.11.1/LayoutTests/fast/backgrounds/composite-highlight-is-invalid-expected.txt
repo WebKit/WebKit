@@ -1,0 +1,3 @@
+Tests that highlight is treated the same as an invalid value for a composite operation:
+PASS
+

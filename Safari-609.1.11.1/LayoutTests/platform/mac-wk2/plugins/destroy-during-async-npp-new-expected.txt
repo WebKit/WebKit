@@ -1,0 +1,8 @@
+Tests that removing a plug-in element during its NPP_New via an NPN_Invoke resulting in its NPP_Destroy being called doesn't crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Didn't crash yet.
+PASS Still didn't crash yet.
+

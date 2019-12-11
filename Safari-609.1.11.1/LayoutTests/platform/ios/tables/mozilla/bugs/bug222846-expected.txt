@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x208
+  RenderBlock {HTML} at (0,0) size 800x208
+    RenderBody {BODY} at (8,8) size 784x192
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 211x19
+          text run at (0,0) width 211: "Both tables should look identical"
+      RenderTable {TABLE} at (0,20) size 200x86 [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 200x38
+          RenderText {#text} at (52,1) size 96x36
+            text run at (52,1) width 96: "caption"
+        RenderTableSection {TBODY} at (1,39) size 198x46
+          RenderTableRow {TR} at (0,2) size 198x42
+            RenderTableCell {TD} at (2,2) size 194x42 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,3) size 63x36
+                text run at (2,3) width 63: "cell1"
+      RenderTable {TABLE} at (0,106) size 200x86 [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 200x38
+          RenderText {#text} at (52,1) size 96x36
+            text run at (52,1) width 96: "caption"
+        RenderTableSection {TBODY} at (1,39) size 198x46
+          RenderTableRow {TR} at (0,2) size 198x42
+            RenderTableCell {TD} at (2,2) size 194x42 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,3) size 63x36
+                text run at (2,3) width 63: "cell1"

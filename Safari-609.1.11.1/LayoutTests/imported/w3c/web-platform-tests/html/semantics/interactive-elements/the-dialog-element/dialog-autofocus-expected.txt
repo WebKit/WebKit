@@ -1,0 +1,6 @@
+      
+ 
+
+
+FAIL autofocus when a modal dialog is opened assert_equals: expected Element node <button id="outer-button" autofocus=""></button> but got Element node <button id="another-button" autofocus=""></button>
+

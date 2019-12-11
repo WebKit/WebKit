@@ -1,0 +1,6 @@
+This test ensures WebKit does not execute the default event handler of keydown when the user presses TAB key while IME composition is taking place.
+To test manually, type "kyo" using Japanese hiragana keyboard in the first text field, and press TAB key.
+WebKit should not move the focus to the second text field.
+
+PASS
+

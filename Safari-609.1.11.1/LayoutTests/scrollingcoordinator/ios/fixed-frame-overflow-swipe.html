@@ -1,0 +1,84 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true internal:AsyncOverflowScrollingEnabled=true internal:AsyncFrameScrollingEnabled=true ] -->
+<html>
+<head>
+    <meta name='viewport' content='initial-scale=1.0'>
+    <style>
+        .scroller {
+            margin: 10px;
+            height: 300px;
+            width: 300px;
+            border: 1px solid black;
+            overflow: scroll;
+            z-index: 0;
+            position: relative;
+        }
+        
+        .fixed {
+            position: fixed;
+            top: 0px;
+            width: 200px;
+            height: 200px;
+            background-color: green;
+        }
+    </style>
+    <script src='../../resources/basic-gestures.js'></script>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        async function doTest()
+        {
+            if (!window.testRunner)
+                return;
+
+            if (!testRunner.runUIScript)
+                return;
+
+            await touchAndDragFromPointToPoint(50, 200, 50, 50);
+            await liftUpAtPoint(50, 200);
+
+            testRunner.notifyDone();
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <iframe width=300 height=400 srcdoc="<!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                .scroller {
+                    margin: 10px;
+                    height: 300px;
+                    width: 300px;
+                    border: 1px solid black;
+                    overflow: scroll;
+                    z-index: 0;
+                    position: relative;
+                }
+
+                .fixed {
+                    position: fixed;
+                    bottom: 0px;
+                    right: 0px;
+                    width: 200px;
+                    height: 200px;
+                    background-color: green;
+                }
+                .spacer {
+                    height: 1000px;
+                    border: 2px solid blue;
+                }
+            </style>
+        </head>
+        <body>
+            <div class='scroller'>
+                <div class='fixed'></div>
+                <div class='spacer'></div>
+            </div>
+        </body>
+        </html>"
+    ></iframe>
+</body>
+</html>

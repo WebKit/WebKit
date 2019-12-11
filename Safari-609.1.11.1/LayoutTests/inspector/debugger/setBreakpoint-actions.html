@@ -1,0 +1,128 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script src="../../http/tests/inspector/resources/console-test.js"></script>
+<script src="../../http/tests/inspector/resources/probe-test.js"></script>
+<script src="resources/breakpoint.js"></script>
+<script>
+function test()
+{
+    InspectorProtocol.sendCommand("Console.enable", {});
+    InspectorProtocol.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.setBreakpointsActive", {active: true});
+
+    var isExpectingLogs = false;
+    var isExpectingSounds = false;
+    var isExpectingSamples = false;
+    var logCount = 0;
+    var soundCount = 0;
+    var sampleCount = 0;
+    const expectedLogCount = 6;
+    const expectedSoundCount = 2;
+    const expectedSampleCount = 2;
+
+    function receivedAllExpectedOutput() {
+        return logCount === expectedLogCount && sampleCount === expectedSampleCount && soundCount === expectedSoundCount;
+    }
+
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    {
+        if (/resources\/breakpoint\.js$/.test(messageObject.params.url)) {
+            ProtocolTest.log("Found breakpoint.js");
+            var scriptIdentifier = messageObject.params.scriptId;
+            var location = {scriptId: scriptIdentifier, lineNumber: 18, columnNumber: 0};
+            var options = {
+                condition: "a > 10",
+                autoContinue: true,
+                actions: [
+                    {"type": "log", "data": "log-action-before"},
+                    {"type": "sound"},
+                    {"type": "evaluate", "data": "(function() { console.log('eval-action', a, b); })()"},
+                    {"type": "log", "data": "log-action-after"},
+                    {"type": "probe", "data": "a"}
+                ]
+            };
+
+            InspectorProtocol.sendCommand("Debugger.setBreakpoint", {location: location, options: options}, function(responseObject) {
+                InspectorProtocol.checkForError(responseObject);
+                breakpointIdentifier = responseObject.result.breakpointId;
+                ProtocolTest.log("Running breakpointActions a few times that should not trigger");
+                InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointActions(1)"});
+                InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointActions(2, 12)"});
+                InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointActions(2, {x:1,y:2})"}, function() {
+                    isExpectingLogs = true;
+                    isExpectingSounds = true;
+                    isExpectingSamples = true;
+                    ProtocolTest.log("Running breakpointActions to triggering the breakpoint actions");
+                    InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointActions(12, {x:1,y:2})"}, function() {
+                        InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointActions(100, document.body)"});
+                    });
+                });
+            });
+        }
+    }
+
+    InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject)
+    {
+        ProtocolTest.log("Hit Breakpoint!");
+
+        ProtocolTest.log("FAIL: should not have hit breakpoint, autoContinue was true");
+        ProtocolTest.completeTest();
+    }
+
+    InspectorProtocol.eventHandler["Debugger.playBreakpointActionSound"] = function(messageObject)
+    {
+        if (!isExpectingSounds) {
+            ProtocolTest.log("FAIL: unexpected breakpoint sound.");
+            ProtocolTest.completeTest();
+            return;
+        }
+
+        ProtocolTest.log("PASS: Breakpoint Sound");
+
+        ++soundCount;
+
+        if (receivedAllExpectedOutput())
+            ProtocolTest.completeTest();
+    }
+
+    InspectorProtocol.eventHandler["Debugger.didSampleProbe"] = function(messageObject)
+    {
+        if (!isExpectingSamples) {
+            ProtocolTest.log("FAIL: unexpected probe sample, probe samples should only have come from breakpoint actions.");
+            ProtocolTest.completeTest();
+            return;
+        }
+
+        var simplifiedSample = ProtocolTest.Probe.sanitizeProbeSample(messageObject);
+        ProtocolTest.log("PASS: Probe sample payload: " + JSON.stringify(simplifiedSample.payload));
+
+        ++sampleCount;
+
+        if (receivedAllExpectedOutput())
+            ProtocolTest.completeTest();
+    }
+
+    InspectorProtocol.eventHandler["Console.messageAdded"] = function(messageObject)
+    {
+        if (!isExpectingLogs) {
+            ProtocolTest.log("FAIL: unexpected log, logs should only have come from breakpoint actions.");
+            ProtocolTest.completeTest();
+            return;
+        }
+
+        var message = ProtocolTest.Console.sanitizeConsoleMessage(messageObject);
+        ProtocolTest.log("PASS: Console Message: " + JSON.stringify(message));
+
+        ++logCount;
+
+        if (receivedAllExpectedOutput())
+            ProtocolTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Debugger.setBreakpoint options.actions</p>
+</body>
+</html>

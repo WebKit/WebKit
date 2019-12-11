@@ -1,0 +1,3 @@
+Tests that the named item created for an image with an ID is correctly removed. The test passes, if you see a "PASS" message in the div below.
+
+PASS

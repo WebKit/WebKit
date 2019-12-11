@@ -1,0 +1,49 @@
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(msg) {
+    document.getElementById("logger").innerHTML += msg + "<br>";
+}
+
+var object = "aaaaaaaaaa";
+for (var i = 0; i < 16; ++i)
+    object += object;
+
+function click()
+{
+    var testDiv = document.getElementById("test");
+    eventSender.mouseMoveTo(testDiv.offsetLeft + 5, testDiv.offsetTop + 5);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+window.onload = click;
+
+var count = 1;
+
+function clicked()
+{
+    try {
+        history.pushState(object, object, object);
+    } catch (e) {
+        log("User gesture: " + e);
+        if (window.testRunner)
+            testRunner.notifyDone();    
+    }
+
+    log("Successfully added item: " + count + " times");
+    ++count;
+
+    setTimeout(click, 0);
+}
+
+</script>
+<body>
+Test should not crash.<br>
+<div id="test" onclick="clicked();">Click to test pushState through a user gesture</div>
+<div id="logger"></div>
+</body>

@@ -1,0 +1,658 @@
+Test the parsing of attribute selector with the case-insensitive value flag (e.g. [foo=bar i]). This test covers the most basic cases.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Basic cases of valid selectors.
+PASS document.querySelector("[foo=bar i]") did not throw exception.
+PASS document.querySelector("[*|foo=bar i]") did not throw exception.
+PASS document.querySelector("[|foo=bar i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"bar\" i]"
+PASS document.querySelector("foo bar [foo=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [*|foo=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [|foo=bar i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [*|foo=\"bar\" i]"
+PASS document.querySelector(":nth-child(2n+1 of [foo=bar i])") did not throw exception.
+PASS document.querySelector(":nth-child(2n+1 of [*|foo=bar i])") did not throw exception.
+PASS document.querySelector(":nth-child(2n+1 of [|foo=bar i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [foo=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [foo=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [*|foo=\"bar\" i])"
+PASS document.querySelector(":nth-last-child(2n+1 of [foo=bar i])") did not throw exception.
+PASS document.querySelector(":nth-last-child(2n+1 of [*|foo=bar i])") did not throw exception.
+PASS document.querySelector(":nth-last-child(2n+1 of [|foo=bar i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [foo=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [foo=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [*|foo=\"bar\" i])"
+PASS document.querySelector(":matches(foo, [foo=bar i], bar)") did not throw exception.
+PASS document.querySelector(":matches(foo, [*|foo=bar i], bar)") did not throw exception.
+PASS document.querySelector(":matches(foo, [|foo=bar i], bar)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [*|foo=\"bar\" i], bar)"
+PASS document.querySelector(":not([foo=bar i])") did not throw exception.
+PASS document.querySelector(":not([*|foo=bar i])") did not throw exception.
+PASS document.querySelector(":not([|foo=bar i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([foo=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([foo=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([*|foo=\"bar\" i])"
+PASS document.querySelector("[foo=\"bar\" i]") did not throw exception.
+PASS document.querySelector("[*|foo=\"bar\" i]") did not throw exception.
+PASS document.querySelector("[|foo=\"bar\" i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"bar\" i]"
+PASS document.querySelector("foo bar [foo=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [*|foo=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [|foo=\"bar\" i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [*|foo=\"bar\" i]"
+PASS document.querySelector(":nth-child(2n+1 of [foo=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":nth-child(2n+1 of [*|foo=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":nth-child(2n+1 of [|foo=\"bar\" i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [foo=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [foo=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [*|foo=\"bar\" i])"
+PASS document.querySelector(":nth-last-child(2n+1 of [foo=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":nth-last-child(2n+1 of [*|foo=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":nth-last-child(2n+1 of [|foo=\"bar\" i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [foo=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [foo=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [*|foo=\"bar\" i])"
+PASS document.querySelector(":matches(foo, [foo=\"bar\" i], bar)") did not throw exception.
+PASS document.querySelector(":matches(foo, [*|foo=\"bar\" i], bar)") did not throw exception.
+PASS document.querySelector(":matches(foo, [|foo=\"bar\" i], bar)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [*|foo=\"bar\" i], bar)"
+PASS document.querySelector(":not([foo=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":not([*|foo=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":not([|foo=\"bar\" i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([foo=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([foo=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([*|foo=\"bar\" i])"
+PASS document.querySelector("[foo~=bar i]") did not throw exception.
+PASS document.querySelector("[*|foo~=bar i]") did not throw exception.
+PASS document.querySelector("[|foo~=bar i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"bar\" i]"
+PASS document.querySelector("foo bar [foo~=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [*|foo~=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [|foo~=bar i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [*|foo~=\"bar\" i]"
+PASS document.querySelector(":nth-child(2n+1 of [foo~=bar i])") did not throw exception.
+PASS document.querySelector(":nth-child(2n+1 of [*|foo~=bar i])") did not throw exception.
+PASS document.querySelector(":nth-child(2n+1 of [|foo~=bar i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [foo~=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [foo~=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [*|foo~=\"bar\" i])"
+PASS document.querySelector(":nth-last-child(2n+1 of [foo~=bar i])") did not throw exception.
+PASS document.querySelector(":nth-last-child(2n+1 of [*|foo~=bar i])") did not throw exception.
+PASS document.querySelector(":nth-last-child(2n+1 of [|foo~=bar i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [foo~=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [foo~=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [*|foo~=\"bar\" i])"
+PASS document.querySelector(":matches(foo, [foo~=bar i], bar)") did not throw exception.
+PASS document.querySelector(":matches(foo, [*|foo~=bar i], bar)") did not throw exception.
+PASS document.querySelector(":matches(foo, [|foo~=bar i], bar)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo~=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo~=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [*|foo~=\"bar\" i], bar)"
+PASS document.querySelector(":not([foo~=bar i])") did not throw exception.
+PASS document.querySelector(":not([*|foo~=bar i])") did not throw exception.
+PASS document.querySelector(":not([|foo~=bar i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([foo~=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([foo~=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([*|foo~=\"bar\" i])"
+PASS document.querySelector("[foo~=\"bar\" i]") did not throw exception.
+PASS document.querySelector("[*|foo~=\"bar\" i]") did not throw exception.
+PASS document.querySelector("[|foo~=\"bar\" i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"bar\" i]"
+PASS document.querySelector("foo bar [foo~=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [*|foo~=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [|foo~=\"bar\" i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [*|foo~=\"bar\" i]"
+PASS document.querySelector(":nth-child(2n+1 of [foo~=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":nth-child(2n+1 of [*|foo~=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":nth-child(2n+1 of [|foo~=\"bar\" i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [foo~=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [foo~=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [*|foo~=\"bar\" i])"
+PASS document.querySelector(":nth-last-child(2n+1 of [foo~=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":nth-last-child(2n+1 of [*|foo~=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":nth-last-child(2n+1 of [|foo~=\"bar\" i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [foo~=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [foo~=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [*|foo~=\"bar\" i])"
+PASS document.querySelector(":matches(foo, [foo~=\"bar\" i], bar)") did not throw exception.
+PASS document.querySelector(":matches(foo, [*|foo~=\"bar\" i], bar)") did not throw exception.
+PASS document.querySelector(":matches(foo, [|foo~=\"bar\" i], bar)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo~=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo~=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [*|foo~=\"bar\" i], bar)"
+PASS document.querySelector(":not([foo~=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":not([*|foo~=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":not([|foo~=\"bar\" i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([foo~=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([foo~=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([*|foo~=\"bar\" i])"
+PASS document.querySelector("[foo|=bar i]") did not throw exception.
+PASS document.querySelector("[*|foo|=bar i]") did not throw exception.
+PASS document.querySelector("[|foo|=bar i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"bar\" i]"
+PASS document.querySelector("foo bar [foo|=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [*|foo|=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [|foo|=bar i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [*|foo|=\"bar\" i]"
+PASS document.querySelector(":nth-child(2n+1 of [foo|=bar i])") did not throw exception.
+PASS document.querySelector(":nth-child(2n+1 of [*|foo|=bar i])") did not throw exception.
+PASS document.querySelector(":nth-child(2n+1 of [|foo|=bar i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [foo|=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [foo|=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [*|foo|=\"bar\" i])"
+PASS document.querySelector(":nth-last-child(2n+1 of [foo|=bar i])") did not throw exception.
+PASS document.querySelector(":nth-last-child(2n+1 of [*|foo|=bar i])") did not throw exception.
+PASS document.querySelector(":nth-last-child(2n+1 of [|foo|=bar i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [foo|=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [foo|=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [*|foo|=\"bar\" i])"
+PASS document.querySelector(":matches(foo, [foo|=bar i], bar)") did not throw exception.
+PASS document.querySelector(":matches(foo, [*|foo|=bar i], bar)") did not throw exception.
+PASS document.querySelector(":matches(foo, [|foo|=bar i], bar)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo|=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo|=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [*|foo|=\"bar\" i], bar)"
+PASS document.querySelector(":not([foo|=bar i])") did not throw exception.
+PASS document.querySelector(":not([*|foo|=bar i])") did not throw exception.
+PASS document.querySelector(":not([|foo|=bar i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([foo|=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([foo|=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([*|foo|=\"bar\" i])"
+PASS document.querySelector("[foo|=\"bar\" i]") did not throw exception.
+PASS document.querySelector("[*|foo|=\"bar\" i]") did not throw exception.
+PASS document.querySelector("[|foo|=\"bar\" i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"bar\" i]"
+PASS document.querySelector("foo bar [foo|=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [*|foo|=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [|foo|=\"bar\" i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [*|foo|=\"bar\" i]"
+PASS document.querySelector(":nth-child(2n+1 of [foo|=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":nth-child(2n+1 of [*|foo|=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":nth-child(2n+1 of [|foo|=\"bar\" i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [foo|=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [foo|=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [*|foo|=\"bar\" i])"
+PASS document.querySelector(":nth-last-child(2n+1 of [foo|=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":nth-last-child(2n+1 of [*|foo|=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":nth-last-child(2n+1 of [|foo|=\"bar\" i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [foo|=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [foo|=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [*|foo|=\"bar\" i])"
+PASS document.querySelector(":matches(foo, [foo|=\"bar\" i], bar)") did not throw exception.
+PASS document.querySelector(":matches(foo, [*|foo|=\"bar\" i], bar)") did not throw exception.
+PASS document.querySelector(":matches(foo, [|foo|=\"bar\" i], bar)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo|=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo|=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [*|foo|=\"bar\" i], bar)"
+PASS document.querySelector(":not([foo|=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":not([*|foo|=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":not([|foo|=\"bar\" i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([foo|=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([foo|=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([*|foo|=\"bar\" i])"
+PASS document.querySelector("[foo^=bar i]") did not throw exception.
+PASS document.querySelector("[*|foo^=bar i]") did not throw exception.
+PASS document.querySelector("[|foo^=bar i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"bar\" i]"
+PASS document.querySelector("foo bar [foo^=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [*|foo^=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [|foo^=bar i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [*|foo^=\"bar\" i]"
+PASS document.querySelector(":nth-child(2n+1 of [foo^=bar i])") did not throw exception.
+PASS document.querySelector(":nth-child(2n+1 of [*|foo^=bar i])") did not throw exception.
+PASS document.querySelector(":nth-child(2n+1 of [|foo^=bar i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [foo^=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [foo^=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [*|foo^=\"bar\" i])"
+PASS document.querySelector(":nth-last-child(2n+1 of [foo^=bar i])") did not throw exception.
+PASS document.querySelector(":nth-last-child(2n+1 of [*|foo^=bar i])") did not throw exception.
+PASS document.querySelector(":nth-last-child(2n+1 of [|foo^=bar i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [foo^=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [foo^=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [*|foo^=\"bar\" i])"
+PASS document.querySelector(":matches(foo, [foo^=bar i], bar)") did not throw exception.
+PASS document.querySelector(":matches(foo, [*|foo^=bar i], bar)") did not throw exception.
+PASS document.querySelector(":matches(foo, [|foo^=bar i], bar)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo^=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo^=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [*|foo^=\"bar\" i], bar)"
+PASS document.querySelector(":not([foo^=bar i])") did not throw exception.
+PASS document.querySelector(":not([*|foo^=bar i])") did not throw exception.
+PASS document.querySelector(":not([|foo^=bar i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([foo^=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([foo^=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([*|foo^=\"bar\" i])"
+PASS document.querySelector("[foo^=\"bar\" i]") did not throw exception.
+PASS document.querySelector("[*|foo^=\"bar\" i]") did not throw exception.
+PASS document.querySelector("[|foo^=\"bar\" i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"bar\" i]"
+PASS document.querySelector("foo bar [foo^=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [*|foo^=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [|foo^=\"bar\" i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [*|foo^=\"bar\" i]"
+PASS document.querySelector(":nth-child(2n+1 of [foo^=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":nth-child(2n+1 of [*|foo^=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":nth-child(2n+1 of [|foo^=\"bar\" i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [foo^=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [foo^=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [*|foo^=\"bar\" i])"
+PASS document.querySelector(":nth-last-child(2n+1 of [foo^=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":nth-last-child(2n+1 of [*|foo^=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":nth-last-child(2n+1 of [|foo^=\"bar\" i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [foo^=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [foo^=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [*|foo^=\"bar\" i])"
+PASS document.querySelector(":matches(foo, [foo^=\"bar\" i], bar)") did not throw exception.
+PASS document.querySelector(":matches(foo, [*|foo^=\"bar\" i], bar)") did not throw exception.
+PASS document.querySelector(":matches(foo, [|foo^=\"bar\" i], bar)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo^=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo^=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [*|foo^=\"bar\" i], bar)"
+PASS document.querySelector(":not([foo^=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":not([*|foo^=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":not([|foo^=\"bar\" i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([foo^=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([foo^=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([*|foo^=\"bar\" i])"
+PASS document.querySelector("[foo$=bar i]") did not throw exception.
+PASS document.querySelector("[*|foo$=bar i]") did not throw exception.
+PASS document.querySelector("[|foo$=bar i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"bar\" i]"
+PASS document.querySelector("foo bar [foo$=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [*|foo$=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [|foo$=bar i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [*|foo$=\"bar\" i]"
+PASS document.querySelector(":nth-child(2n+1 of [foo$=bar i])") did not throw exception.
+PASS document.querySelector(":nth-child(2n+1 of [*|foo$=bar i])") did not throw exception.
+PASS document.querySelector(":nth-child(2n+1 of [|foo$=bar i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [foo$=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [foo$=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [*|foo$=\"bar\" i])"
+PASS document.querySelector(":nth-last-child(2n+1 of [foo$=bar i])") did not throw exception.
+PASS document.querySelector(":nth-last-child(2n+1 of [*|foo$=bar i])") did not throw exception.
+PASS document.querySelector(":nth-last-child(2n+1 of [|foo$=bar i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [foo$=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [foo$=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [*|foo$=\"bar\" i])"
+PASS document.querySelector(":matches(foo, [foo$=bar i], bar)") did not throw exception.
+PASS document.querySelector(":matches(foo, [*|foo$=bar i], bar)") did not throw exception.
+PASS document.querySelector(":matches(foo, [|foo$=bar i], bar)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo$=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo$=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [*|foo$=\"bar\" i], bar)"
+PASS document.querySelector(":not([foo$=bar i])") did not throw exception.
+PASS document.querySelector(":not([*|foo$=bar i])") did not throw exception.
+PASS document.querySelector(":not([|foo$=bar i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([foo$=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([foo$=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([*|foo$=\"bar\" i])"
+PASS document.querySelector("[foo$=\"bar\" i]") did not throw exception.
+PASS document.querySelector("[*|foo$=\"bar\" i]") did not throw exception.
+PASS document.querySelector("[|foo$=\"bar\" i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"bar\" i]"
+PASS document.querySelector("foo bar [foo$=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [*|foo$=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [|foo$=\"bar\" i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [*|foo$=\"bar\" i]"
+PASS document.querySelector(":nth-child(2n+1 of [foo$=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":nth-child(2n+1 of [*|foo$=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":nth-child(2n+1 of [|foo$=\"bar\" i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [foo$=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [foo$=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [*|foo$=\"bar\" i])"
+PASS document.querySelector(":nth-last-child(2n+1 of [foo$=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":nth-last-child(2n+1 of [*|foo$=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":nth-last-child(2n+1 of [|foo$=\"bar\" i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [foo$=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [foo$=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [*|foo$=\"bar\" i])"
+PASS document.querySelector(":matches(foo, [foo$=\"bar\" i], bar)") did not throw exception.
+PASS document.querySelector(":matches(foo, [*|foo$=\"bar\" i], bar)") did not throw exception.
+PASS document.querySelector(":matches(foo, [|foo$=\"bar\" i], bar)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo$=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo$=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [*|foo$=\"bar\" i], bar)"
+PASS document.querySelector(":not([foo$=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":not([*|foo$=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":not([|foo$=\"bar\" i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([foo$=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([foo$=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([*|foo$=\"bar\" i])"
+PASS document.querySelector("[foo*=bar i]") did not throw exception.
+PASS document.querySelector("[*|foo*=bar i]") did not throw exception.
+PASS document.querySelector("[|foo*=bar i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"bar\" i]"
+PASS document.querySelector("foo bar [foo*=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [*|foo*=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [|foo*=bar i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [*|foo*=\"bar\" i]"
+PASS document.querySelector(":nth-child(2n+1 of [foo*=bar i])") did not throw exception.
+PASS document.querySelector(":nth-child(2n+1 of [*|foo*=bar i])") did not throw exception.
+PASS document.querySelector(":nth-child(2n+1 of [|foo*=bar i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [foo*=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [foo*=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [*|foo*=\"bar\" i])"
+PASS document.querySelector(":nth-last-child(2n+1 of [foo*=bar i])") did not throw exception.
+PASS document.querySelector(":nth-last-child(2n+1 of [*|foo*=bar i])") did not throw exception.
+PASS document.querySelector(":nth-last-child(2n+1 of [|foo*=bar i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [foo*=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [foo*=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [*|foo*=\"bar\" i])"
+PASS document.querySelector(":matches(foo, [foo*=bar i], bar)") did not throw exception.
+PASS document.querySelector(":matches(foo, [*|foo*=bar i], bar)") did not throw exception.
+PASS document.querySelector(":matches(foo, [|foo*=bar i], bar)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo*=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo*=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [*|foo*=\"bar\" i], bar)"
+PASS document.querySelector(":not([foo*=bar i])") did not throw exception.
+PASS document.querySelector(":not([*|foo*=bar i])") did not throw exception.
+PASS document.querySelector(":not([|foo*=bar i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([foo*=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([foo*=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([*|foo*=\"bar\" i])"
+PASS document.querySelector("[foo*=\"bar\" i]") did not throw exception.
+PASS document.querySelector("[*|foo*=\"bar\" i]") did not throw exception.
+PASS document.querySelector("[|foo*=\"bar\" i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"bar\" i]"
+PASS document.querySelector("foo bar [foo*=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [*|foo*=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [|foo*=\"bar\" i]") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [*|foo*=\"bar\" i]"
+PASS document.querySelector(":nth-child(2n+1 of [foo*=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":nth-child(2n+1 of [*|foo*=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":nth-child(2n+1 of [|foo*=\"bar\" i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [foo*=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [foo*=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of [*|foo*=\"bar\" i])"
+PASS document.querySelector(":nth-last-child(2n+1 of [foo*=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":nth-last-child(2n+1 of [*|foo*=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":nth-last-child(2n+1 of [|foo*=\"bar\" i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [foo*=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [foo*=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of [*|foo*=\"bar\" i])"
+PASS document.querySelector(":matches(foo, [foo*=\"bar\" i], bar)") did not throw exception.
+PASS document.querySelector(":matches(foo, [*|foo*=\"bar\" i], bar)") did not throw exception.
+PASS document.querySelector(":matches(foo, [|foo*=\"bar\" i], bar)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo*=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo*=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [*|foo*=\"bar\" i], bar)"
+PASS document.querySelector(":not([foo*=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":not([*|foo*=\"bar\" i])") did not throw exception.
+PASS document.querySelector(":not([|foo*=\"bar\" i])") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([foo*=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([foo*=\"bar\" i])"
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not([*|foo*=\"bar\" i])"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

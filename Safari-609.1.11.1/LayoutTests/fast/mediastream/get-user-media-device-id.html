@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test passing capture device IDs to getUserMedia</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script>
+    let deviceIds = [];
+
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    promise_test(async (test) => {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        assert_true(devices.length <= 2, "before getting permission, at most 1 camera and 1 microphone are exposed");
+        devices.forEach((device) => {
+            assert_true(device.deviceId.length == 0 , "device.deviceId is empty before permission to capture");
+        });
+    }, "Device IDs should be empty initially");
+
+    promise_test((test) => {
+        return navigator.mediaDevices.getUserMedia({ audio:true, video:true })
+            .then((stream) => {
+                return navigator.mediaDevices.enumerateDevices();
+            }).then(devices => {
+                devices.forEach((device) => {
+                    let kind = device.kind == "audioinput" ? "audio" : "video";
+                    deviceIds.push({ type: kind, id : device.deviceId});
+                });
+            });
+    }, "Collect device IDs");
+
+    let constraints = { };
+
+    promise_test((test) => {
+        deviceIds.forEach((info) => {
+            constraints[info.type] = { deviceId: { exact: info.id } };
+        });
+    
+        var audioTrack, videoTrack;
+        return navigator.mediaDevices.getUserMedia(constraints)
+            .then((stream) => {
+                assert_equals(stream.getAudioTracks().length, 1, "correct number of audio tracks");
+                assert_equals(stream.getVideoTracks().length, 1, "correct number of audio tracks");
+
+                videoTrack = stream.getVideoTracks()[0];
+                audioTrack = stream.getAudioTracks()[0];
+                return navigator.mediaDevices.enumerateDevices();
+            }).then(devices => {
+                var ids = devices.map(device => device.deviceId);
+                assert_true(ids.indexOf(videoTrack.getSettings().deviceId) !== -1 , "deviceId for video track should be respected");
+                assert_true(ids.indexOf(audioTrack.getSettings().deviceId) !== -1 , "deviceId for audio track should be respected");
+                assert_equals(audioTrack.getSettings().groupId, videoTrack.getSettings().groupId, "groupId should match");
+            })
+
+    }, "Pass device IDs as exact constraints");
+    
+    promise_test((test) => {
+        deviceIds.forEach((info) => {
+            constraints[info.type] = { deviceId: info.id };
+        });
+    
+        return navigator.mediaDevices.getUserMedia(constraints)
+            .then((stream) => {
+                assert_equals(stream.getAudioTracks().length, 1, "correct number of audio tracks");
+                assert_equals(stream.getVideoTracks().length, 1, "correct number of video tracks");
+            })
+
+    }, "Pass device IDs as optional constraints");
+
+    promise_test(async (test) => {
+        await navigator.mediaDevices.getUserMedia({ audio: {deviceId: {exact: ""}}});
+        await navigator.mediaDevices.getUserMedia({ video: {deviceId: {exact: [""]}}});
+        await navigator.mediaDevices.getUserMedia({ audio: {deviceId: {exact: undefined}}});
+
+        await navigator.mediaDevices.getUserMedia({ audio: {deviceId: {exact: null}}}).then(assert_unreached, () => { });
+        await navigator.mediaDevices.getUserMedia({ audio: {deviceId: {exact: "test"}}}).then(assert_unreached, () => { });
+    }, "Exact device IDs with special values: empty string, null, undefined");
+
+    promise_test(async (test) => {
+        await navigator.mediaDevices.getUserMedia({video: true});
+        const devices  = await navigator.mediaDevices.enumerateDevices();
+        for (let device of devices) {
+            if (device.kind === "audioinput") {
+                const stream = await navigator.mediaDevices.getUserMedia({audio: {deviceId: device.deviceId}});
+                assert_equals(stream.getAudioTracks()[0].getSettings().deviceId, device.deviceId, "Matching audio device id");
+            } else {
+                const stream = await navigator.mediaDevices.getUserMedia({video: {deviceId: device.deviceId}});
+                assert_equals(stream.getVideoTracks()[0].getSettings().deviceId, device.deviceId, "Matching video device id");
+            }
+        }
+    }, "Ideal deviceId constraints");
+
+    </script>
+</head>
+<body>
+</body>
+</html>

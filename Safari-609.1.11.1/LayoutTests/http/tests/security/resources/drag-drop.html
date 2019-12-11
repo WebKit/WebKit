@@ -1,0 +1,16 @@
+<script>
+    window.addEventListener("message", receiveMessage, false);
+    
+    function receiveMessage(event)
+    {
+        if (document.body.innerHTML.match(/Dragme/i))
+            alert("FAIL");
+        else
+            alert("PASS");
+        
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+<body contenteditable="true">
+</body>

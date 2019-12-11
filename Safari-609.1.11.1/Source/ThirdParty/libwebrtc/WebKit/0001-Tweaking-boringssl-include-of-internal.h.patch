@@ -1,0 +1,26 @@
+From a313567bcfb59aebc82033cfb05da36bb30e082f Mon Sep 17 00:00:00 2001
+From: Youenn Fablet <youenn@apple.com>
+Date: Thu, 14 Dec 2017 13:44:16 -0800
+Subject: [PATCH 1/8] Tweaking boringssl include of internal.h
+
+---
+ .../Source/third_party/boringssl/src/crypto/fipsmodule/aes/aes.c        | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Source/ThirdParty/libwebrtc/Source/third_party/boringssl/src/crypto/fipsmodule/aes/aes.c b/Source/ThirdParty/libwebrtc/Source/third_party/boringssl/src/crypto/fipsmodule/aes/aes.c
+index a988b395931..005d333144a 100644
+--- a/Source/ThirdParty/libwebrtc/Source/third_party/boringssl/src/crypto/fipsmodule/aes/aes.c
++++ b/Source/ThirdParty/libwebrtc/Source/third_party/boringssl/src/crypto/fipsmodule/aes/aes.c
+@@ -52,7 +52,9 @@
+ 
+ #include <openssl/cpu.h>
+ 
++#if !defined(OPENSSL_NO_ASM) && (defined(OPENSSL_X86) || defined(OPENSSL_X86_64) || defined(OPENSSL_ARM))
+ #include "internal.h"
++#endif
+ #include "../modes/internal.h"
+ 
+ 
+-- 
+2.13.5 (Apple Git-94)
+

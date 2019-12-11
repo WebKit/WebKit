@@ -1,0 +1,9 @@
+When prompted, accept to share your video stream.
+
+Description
+
+This test checks that the video track of MediaStream object returned by the success callback in getUserMedia is correctly initialized.
+
+
+PASS getUserMedia({video:true}) creates a stream with a properly initialized video track 
+

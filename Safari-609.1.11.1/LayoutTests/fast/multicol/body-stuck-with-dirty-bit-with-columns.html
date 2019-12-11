@@ -1,0 +1,39 @@
+<title>This tests that we don't leave any renderer dirty when layout is done. PASS if no crash or assert in debug.</title>
+<style>
+*{
+    -webkit-columns: 55px 87;
+    overflow-y: scroll;
+    -webkit-background-composite: source-out;
+    width: 0%;
+}
+*|* {
+    display: inline-flex;
+}
+</style>
+<summary id="id_0">
+    aa
+    <progress></progress>
+</summary>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+setTimeout(function() {
+    if (window.localStorage.stage == 3) {
+        delete window.localStorage.stage;
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.notifyDone();
+        }
+    } else {
+        if (window.localStorage.stage)
+        	window.localStorage.stage++;
+        else
+        	window.localStorage.stage = 1;
+        window.scrollTo(0,document.body.scrollHeight);
+        v_0 = document.getElementById('id_0');
+        v_0.removeChild(v_0.childNodes[0]);
+        location.reload();
+    }
+}, 0);
+</script>

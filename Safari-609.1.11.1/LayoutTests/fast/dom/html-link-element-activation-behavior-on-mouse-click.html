@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="master"></div>
+<iframe id="frame" src="resources/html-link-element-activation-behavior-on-mouse-click-step1.html"></iframe>
+<script>
+description("This tests html link element activation behavior on mouse click");
+function start(){
+    frame.postMessage("mouse:click", "*");
+}
+function listener(event){
+    shouldBeEqualToString("event.data", "test:ok")
+    finishJSTest();
+}
+var frame = document.getElementById("frame").contentWindow;
+window.addEventListener("message", listener);
+frame.onload = start;
+window.jsTestIsAsync = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

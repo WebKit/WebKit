@@ -1,0 +1,50 @@
+<html>
+<head>
+<title>Original Title</title>
+<link rel="shortcut icon" type="image/x-icon" href="http://test.com/foofavicon.ico"/>
+<link rel="shortcut icon" type="image/x-icon" href="http://test.com/barfavicon.ico"/>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+function runTests() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    // check that the URL list in the document is as we expect
+    var expectedURL0 = "http://test.com/barfavicon.ico";
+    var expectedURL1 = "http://test.com/foofavicon.ico";
+    var iconURLs = window.internals.shortcutIconURLs();
+
+	// Note: This test used to dynamically change a 3rd icon URL and verify the new URL is in the set.
+	// We currently have no plans to support that in WebKit.
+
+	var didFail = false;
+    if (iconURLs.length != 2) {
+        testFailed('Icon URLs list has ' + iconURLs.length + ' elements, should have 2');
+		didFail = true;
+	}
+	
+	var urlSet = new Object;
+	iconURLs.forEach(function(url) {
+		urlSet[url] = true;
+	});
+	
+	if (!urlSet[expectedURL0]) {
+		testFailed('Expected url ' + expectedURL0 + ' in the URL set, but it was not there');
+		didFail = true;
+	}
+	if (!urlSet[expectedURL1]) {
+		testFailed('Expected url ' + expectedURL1 + ' in the URL set, but it was not there');
+		didFail = true;
+	}
+	
+	if (!didFail)
+        testPassed('PASS URL list matches expected');
+}
+
+</script>
+</head>
+<body onload='runTests();'>
+</div>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<html>
+<body>
+<embed name="plg" type="application/x-webkit-test-netscape"></embed>
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=7656">bug 7656<a/>:
+Query string always appended to Flash URLs, instead of being replaced</p>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    
+    try {
+        
+        loc = window.location.href;
+        
+        if (loc.indexOf('?') == -1) {
+            window.location.href = loc + "?1";
+        } else {
+            
+            if (loc.substring(loc.indexOf('?'), loc.length) == "?1") {
+                plg.getURL("?2", "_self");
+            } else {
+                query = loc.substring(loc.indexOf('?'), loc.length);
+                document.write(query == "?2" ? 
+                    "SUCCESS" : "FAILURE: " + query);
+                
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
+        }
+    } catch (ex) {
+        alert("Exception: " + ex.description);
+    }
+</script>
+</body>
+</html>

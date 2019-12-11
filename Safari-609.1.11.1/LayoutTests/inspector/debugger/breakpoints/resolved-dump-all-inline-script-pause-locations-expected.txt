@@ -1,0 +1,233 @@
+CONSOLE MESSAGE: line 4: here 1
+CONSOLE MESSAGE: line 6: here 2
+Checking all resolved breakpoint locations in a script.
+
+
+
+== Running test suite: Debugger.resolvedBreakpoint.dumpAllLocations
+-- Running test case: Debugger.resolvedBreakpoint.dumpAllLocations.InlineScript
+
+INSERTING AT: 3:0
+PAUSES AT: 3:0
+      0    <body>
+      1        <button id="one">One</button>
+      2        <button id="two">Two</button>
+-=>   3    |    <script>console.log("here 1");document.getElementById("one").addEventListener("click", (event) => { console.log("one"); console.log(event); });</script>
+      4        <script>
+      5        console.log("here 2");document.getElementById("two").addEventListener("click", (event) => { console.log("two"); console.log(event); });
+      6        </script>
+
+INSERTING AT: 3:1
+PAUSES AT: 3:12
+      0    <body>
+      1        <button id="one">One</button>
+      2        <button id="two">Two</button>
+-=>   3     #   <script>|console.log("here 1");document.getElementById("one").addEventListener("click", (event) => { console.log("one"); console.log(event); });</script>
+      4        <script>
+      5        console.log("here 2");document.getElementById("two").addEventListener("click", (event) => { console.log("two"); console.log(event); });
+      6        </script>
+
+INSERTING AT: 3:13
+PAUSES AT: 3:34
+      0    <body>
+      1        <button id="one">One</button>
+      2        <button id="two">Two</button>
+-=>   3        <script>c#onsole.log("here 1");|document.getElementById("one").addEventListener("click", (event) => { console.log("one"); console.log(event); });</script>
+      4        <script>
+      5        console.log("here 2");document.getElementById("two").addEventListener("click", (event) => { console.log("two"); console.log(event); });
+      6        </script>
+
+INSERTING AT: 3:35
+PAUSES AT: 3:104
+      0    <body>
+      1        <button id="one">One</button>
+      2        <button id="two">Two</button>
+-=>   3        <script>console.log("here 1");d#ocument.getElementById("one").addEventListener("click", (event) => { |console.log("one"); console.log(event); });</script>
+      4        <script>
+      5        console.log("here 2");document.getElementById("two").addEventListener("click", (event) => { console.log("two"); console.log(event); });
+      6        </script>
+
+INSERTING AT: 3:105
+PAUSES AT: 3:124
+      0    <body>
+      1        <button id="one">One</button>
+      2        <button id="two">Two</button>
+-=>   3        <script>console.log("here 1");document.getElementById("one").addEventListener("click", (event) => { c#onsole.log("one"); |console.log(event); });</script>
+      4        <script>
+      5        console.log("here 2");document.getElementById("two").addEventListener("click", (event) => { console.log("two"); console.log(event); });
+      6        </script>
+
+INSERTING AT: 3:125
+PAUSES AT: 3:144
+      0    <body>
+      1        <button id="one">One</button>
+      2        <button id="two">Two</button>
+-=>   3        <script>console.log("here 1");document.getElementById("one").addEventListener("click", (event) => { console.log("one"); c#onsole.log(event); |});</script>
+      4        <script>
+      5        console.log("here 2");document.getElementById("two").addEventListener("click", (event) => { console.log("two"); console.log(event); });
+      6        </script>
+
+INSERTING AT: 4:0
+PAUSES AT: 5:4
+      1        <button id="one">One</button>
+      2        <button id="two">Two</button>
+      3        <script>console.log("here 1");document.getElementById("one").addEventListener("click", (event) => { console.log("one"); console.log(event); });</script>
+ ->   4    #    <script>
+ =>   5        |console.log("here 2");document.getElementById("two").addEventListener("click", (event) => { console.log("two"); console.log(event); });
+      6        </script>
+      7    </body>
+      8    
+
+INSERTING AT: 5:5
+PAUSES AT: 5:26
+      2        <button id="two">Two</button>
+      3        <script>console.log("here 1");document.getElementById("one").addEventListener("click", (event) => { console.log("one"); console.log(event); });</script>
+      4        <script>
+-=>   5        c#onsole.log("here 2");|document.getElementById("two").addEventListener("click", (event) => { console.log("two"); console.log(event); });
+      6        </script>
+      7    </body>
+      8    
+
+INSERTING AT: 5:27
+PAUSES AT: 5:96
+      2        <button id="two">Two</button>
+      3        <script>console.log("here 1");document.getElementById("one").addEventListener("click", (event) => { console.log("one"); console.log(event); });</script>
+      4        <script>
+-=>   5        console.log("here 2");d#ocument.getElementById("two").addEventListener("click", (event) => { |console.log("two"); console.log(event); });
+      6        </script>
+      7    </body>
+      8    
+
+INSERTING AT: 5:97
+PAUSES AT: 5:116
+      2        <button id="two">Two</button>
+      3        <script>console.log("here 1");document.getElementById("one").addEventListener("click", (event) => { console.log("one"); console.log(event); });</script>
+      4        <script>
+-=>   5        console.log("here 2");document.getElementById("two").addEventListener("click", (event) => { c#onsole.log("two"); |console.log(event); });
+      6        </script>
+      7    </body>
+      8    
+
+INSERTING AT: 5:117
+PAUSES AT: 5:136
+      2        <button id="two">Two</button>
+      3        <script>console.log("here 1");document.getElementById("one").addEventListener("click", (event) => { console.log("one"); console.log(event); });</script>
+      4        <script>
+-=>   5        console.log("here 2");document.getElementById("two").addEventListener("click", (event) => { console.log("two"); c#onsole.log(event); |});
+      6        </script>
+      7    </body>
+      8    
+
+
+INSERTING AT: 3:0
+PAUSES AT: 3:0
+      0    <body>
+      1        <button id="one">One</button>
+      2        <button id="two">Two</button>
+-=>   3    |    <script>console.log("here 1");document.getElementById("one").addEventListener("click", (event) => { console.log("one"); console.log(event); });</script>
+      4        <script>
+      5        console.log("here 2");document.getElementById("two").addEventListener("click", (event) => { console.log("two"); console.log(event); });
+      6        </script>
+
+INSERTING AT: 3:1
+PAUSES AT: 3:12
+      0    <body>
+      1        <button id="one">One</button>
+      2        <button id="two">Two</button>
+-=>   3     #   <script>|console.log("here 1");document.getElementById("one").addEventListener("click", (event) => { console.log("one"); console.log(event); });</script>
+      4        <script>
+      5        console.log("here 2");document.getElementById("two").addEventListener("click", (event) => { console.log("two"); console.log(event); });
+      6        </script>
+
+INSERTING AT: 3:13
+PAUSES AT: 3:34
+      0    <body>
+      1        <button id="one">One</button>
+      2        <button id="two">Two</button>
+-=>   3        <script>c#onsole.log("here 1");|document.getElementById("one").addEventListener("click", (event) => { console.log("one"); console.log(event); });</script>
+      4        <script>
+      5        console.log("here 2");document.getElementById("two").addEventListener("click", (event) => { console.log("two"); console.log(event); });
+      6        </script>
+
+INSERTING AT: 3:35
+PAUSES AT: 3:104
+      0    <body>
+      1        <button id="one">One</button>
+      2        <button id="two">Two</button>
+-=>   3        <script>console.log("here 1");d#ocument.getElementById("one").addEventListener("click", (event) => { |console.log("one"); console.log(event); });</script>
+      4        <script>
+      5        console.log("here 2");document.getElementById("two").addEventListener("click", (event) => { console.log("two"); console.log(event); });
+      6        </script>
+
+INSERTING AT: 3:105
+PAUSES AT: 3:124
+      0    <body>
+      1        <button id="one">One</button>
+      2        <button id="two">Two</button>
+-=>   3        <script>console.log("here 1");document.getElementById("one").addEventListener("click", (event) => { c#onsole.log("one"); |console.log(event); });</script>
+      4        <script>
+      5        console.log("here 2");document.getElementById("two").addEventListener("click", (event) => { console.log("two"); console.log(event); });
+      6        </script>
+
+INSERTING AT: 3:125
+PAUSES AT: 3:144
+      0    <body>
+      1        <button id="one">One</button>
+      2        <button id="two">Two</button>
+-=>   3        <script>console.log("here 1");document.getElementById("one").addEventListener("click", (event) => { console.log("one"); c#onsole.log(event); |});</script>
+      4        <script>
+      5        console.log("here 2");document.getElementById("two").addEventListener("click", (event) => { console.log("two"); console.log(event); });
+      6        </script>
+
+INSERTING AT: 4:0
+PAUSES AT: 5:4
+      1        <button id="one">One</button>
+      2        <button id="two">Two</button>
+      3        <script>console.log("here 1");document.getElementById("one").addEventListener("click", (event) => { console.log("one"); console.log(event); });</script>
+ ->   4    #    <script>
+ =>   5        |console.log("here 2");document.getElementById("two").addEventListener("click", (event) => { console.log("two"); console.log(event); });
+      6        </script>
+      7    </body>
+      8    
+
+INSERTING AT: 5:5
+PAUSES AT: 5:26
+      2        <button id="two">Two</button>
+      3        <script>console.log("here 1");document.getElementById("one").addEventListener("click", (event) => { console.log("one"); console.log(event); });</script>
+      4        <script>
+-=>   5        c#onsole.log("here 2");|document.getElementById("two").addEventListener("click", (event) => { console.log("two"); console.log(event); });
+      6        </script>
+      7    </body>
+      8    
+
+INSERTING AT: 5:27
+PAUSES AT: 5:96
+      2        <button id="two">Two</button>
+      3        <script>console.log("here 1");document.getElementById("one").addEventListener("click", (event) => { console.log("one"); console.log(event); });</script>
+      4        <script>
+-=>   5        console.log("here 2");d#ocument.getElementById("two").addEventListener("click", (event) => { |console.log("two"); console.log(event); });
+      6        </script>
+      7    </body>
+      8    
+
+INSERTING AT: 5:97
+PAUSES AT: 5:116
+      2        <button id="two">Two</button>
+      3        <script>console.log("here 1");document.getElementById("one").addEventListener("click", (event) => { console.log("one"); console.log(event); });</script>
+      4        <script>
+-=>   5        console.log("here 2");document.getElementById("two").addEventListener("click", (event) => { c#onsole.log("two"); |console.log(event); });
+      6        </script>
+      7    </body>
+      8    
+
+INSERTING AT: 5:117
+PAUSES AT: 5:136
+      2        <button id="two">Two</button>
+      3        <script>console.log("here 1");document.getElementById("one").addEventListener("click", (event) => { console.log("one"); console.log(event); });</script>
+      4        <script>
+-=>   5        console.log("here 2");document.getElementById("two").addEventListener("click", (event) => { console.log("two"); c#onsole.log(event); |});
+      6        </script>
+      7    </body>
+      8    
+
+

@@ -1,0 +1,19 @@
+Test the case where an RTCRtpTransceiver gets a remotely assigned mid and also unmute the associated source
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+pcA.addTrack(stream.getAudioTracks()[0], stream)
+A's transceiver is not yet associated with a media description and should have a null mid
+PASS pcA.getTransceivers()[0].mid is null
+A: local offer set (mid gets defined)
+midAssignedByA = pcA.getTransceivers()[0].mid
+FAIL midAssignedByA !== null should be true. Was false.
+pcB.addTrack(stream.getAudioTracks()[0], stream)
+B's transceiver is not yet associated with a media description and should have a null mid
+PASS pcB.getTransceivers()[0].mid is null
+FAIL Error in promise chain: TypeError: Argument 1 ('description') to RTCPeerConnection.setRemoteDescription must be an instance of RTCSessionDescription
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

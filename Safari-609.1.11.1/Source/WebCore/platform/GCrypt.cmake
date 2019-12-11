@@ -1,0 +1,12 @@
+if (ENABLE_WEB_CRYPTO)
+    list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
+        "platform/SourcesGCrypt.txt"
+    )
+endif ()
+
+list(APPEND WebCore_LIBRARIES
+    ${LIBGCRYPT_LIBRARIES}
+)
+list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
+    ${LIBGCRYPT_INCLUDE_DIRS}
+)

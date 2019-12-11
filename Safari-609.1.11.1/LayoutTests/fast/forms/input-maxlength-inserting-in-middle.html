@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<input type="text" maxlength="3" value="abc">
+<script>
+
+description('This test attempts to insert a character in the middle of a text field with maxlength.');
+
+var input = document.querySelector('input');
+input.focus();
+input.selectionStart = 1;
+input.selectionEnd = 1;
+shouldBeEqualToString('input.value', 'abc');
+shouldBeEqualToString('input.getAttribute("maxlength")', '3');
+
+input.oninput = function () {
+    shouldBeEqualToString('input.value', 'abc');
+}
+
+if (window.eventSender)
+    eventSender.keyDown('1');
+else
+    debug('To test manually, type in "1" into the text field. It should fail.');
+
+var successfullyParsed = true;
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

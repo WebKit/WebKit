@@ -1,0 +1,11 @@
+Test window.onerror will be fired when the dependent module throw an error.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Module is not executed yet.
+Executing the dependent module
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

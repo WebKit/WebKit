@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/resources/js-test-pre.js"></script>
+<script>
+
+description('This tests calling setData with a HTML in a null origin document. The HTML should be sanitized in another document');
+jsTestIsAsync = true;
+
+if (window.internals)
+    internals.settings.setCustomPasteboardDataEnabled(true);
+
+onmessage = (event) => {
+    originalHTML = event.data.originalHTML;
+    htmlReadInSameDocument = event.data.html;
+    shouldBeEqualToString('htmlReadInSameDocument', originalHTML);
+    typesInSameDocument = event.data.types;
+    shouldBeEqualToString('JSON.stringify(typesInSameDocument)', '["text/html"]');
+    itemsInSameDocument = event.data.items;
+    shouldBeEqualToString('JSON.stringify(itemsInSameDocument)', '[{"kind":"string","type":"text/html"}]');
+    document.getElementById('destination').focus();
+    if (window.testRunner)
+        document.execCommand('paste');
+}
+
+function doPaste(event) {
+    shouldBeTrue('html = event.clipboardData.getData("text/html"); html.includes("hello")');
+    shouldBeTrue('html.includes(", world")');
+    shouldBeFalse('html.includes("secret")');
+    shouldBeFalse('html.includes("dangerousCode")');
+    shouldBeEqualToString('JSON.stringify(event.clipboardData.types)', '["text/html"]');
+    shouldBeEqualToString('JSON.stringify(Array.from(event.clipboardData.items).map((item) => ({kind: item.kind, type: item.type})))',
+        '[{"kind":"string","type":"text/html"}]');
+    document.getElementById('destination').remove();
+    finishJSTest();
+}
+
+</script>
+<iframe src="http://localhost:8000/security/clipboard/resources/copy-html.html"></iframe>
+<div id="destination" onpaste="doPaste(event)" contenteditable>3. Paste here</div>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

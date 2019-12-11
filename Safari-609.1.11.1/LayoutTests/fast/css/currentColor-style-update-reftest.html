@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            function forceLayout() {
+                // We must make sure to hit the cache.
+                var firstParagraph = document.querySelector("p");
+                var originalOffset = firstParagraph.offsetLeft;
+                firstParagraph.style.marginLeft = '42px';
+                var newOffset = firstParagraph.offsetLeft;
+                if (originalOffset == newOffset)
+                    document.write("Something horribly wrong happened to the layout.");
+                firstParagraph.style.marginLeft = '0';
+            }
+
+            document.addEventListener("DOMContentLoaded", forceLayout);
+
+
+            function runTest() {
+                forceLayout();
+
+                var target1 = document.getElementById("target1");
+                target1.classList.add("container2");
+
+                var target2 = document.getElementById("target2");
+                target2.setAttribute("class", "container1");
+
+                var target3 = document.getElementById("target3");
+                target3.style.color = "red";
+
+                var target4 = document.getElementById("target4");
+                target4.style.color = "blue";
+
+                var target5 = document.getElementById("target5");
+                target5.setAttribute("style", "color: red");
+
+                var target6 = document.getElementById("target6");
+                target6.setAttribute("style", "color: blue");
+            }
+
+            window.addEventListener("load", runTest);
+        </script>
+        <style>
+            .container1 {
+                color: blue;
+            }
+            .container2 {
+                color: red;
+            }
+            div {
+                margin: 4px;
+            }
+            div > span {
+                border: 1px solid currentColor;
+            }
+        </style>
+    </head>
+    <body>
+        <p>This test verifies that the value of currentColor is updated correctly when the style is updated. If the text is successful, each of the line should be styled as described by its text.</p>
+
+        <div class="container1">
+            <span>This text and border should be blue.</span>
+        </div>
+        <div class="container2">
+            <span>This text and border should be red.</span>
+        </div>
+        <div id="target1">
+            <span>This text and border should be red.</span>
+        </div>
+        <div id="target2">
+            <span>This text and border should be blue.</span>
+        </div>
+        <div id="target3">
+            <span>This text and border should be red.</span>
+        </div>
+        <div id="target4">
+            <span>This text and border should be blue.</span>
+        </div>
+        <div id="target5">
+            <span>This text and border should be red.</span>
+        </div>
+        <div id="target6">
+            <span>This text and border should be blue.</span>
+        </div>
+    </body>
+</html>

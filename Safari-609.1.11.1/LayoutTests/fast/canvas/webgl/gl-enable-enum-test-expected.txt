@@ -1,0 +1,80 @@
+This test ensures WebGL implementations allow OpenGL ES 2.0 features to be turned on but not non OpenGL ES 2.0 features.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Canvas.getContext
+PASS context exists
+
+Checking gl.ENABLE enums.
+PASS gl.enable must set INVALID_ENUM when passed GL_ALPHA_TEST
+PASS gl.enable must set INVALID_ENUM when passed GL_AUTO_NORMAL
+PASS gl.enable must set INVALID_ENUM when passed GL_CLIP_PLANE0
+PASS gl.enable must set INVALID_ENUM when passed GL_CLIP_PLANE1
+PASS gl.enable must set INVALID_ENUM when passed GL_COLOR_LOGIC_OP
+PASS gl.enable must set INVALID_ENUM when passed GL_COLOR_MATERIAL
+PASS gl.enable must set INVALID_ENUM when passed GL_COLOR_SUM
+PASS gl.enable must set INVALID_ENUM when passed GL_COLOR_TABLE
+PASS gl.enable must set INVALID_ENUM when passed GL_FOG
+PASS gl.enable must set INVALID_ENUM when passed GL_HISTOGRAM
+PASS gl.enable must set INVALID_ENUM when passed GL_INDEX_LOGIC_OP
+PASS gl.enable must set INVALID_ENUM when passed GL_LIGHT0
+PASS gl.enable must set INVALID_ENUM when passed GL_LIGHT1
+PASS gl.enable must set INVALID_ENUM when passed GL_LIGHTING
+PASS gl.enable must set INVALID_ENUM when passed GL_LINE_SMOOTH
+PASS gl.enable must set INVALID_ENUM when passed GL_LINE_STIPPLE
+PASS gl.enable must set INVALID_ENUM when passed GL_MAP1_COLOR_4
+PASS gl.enable must set INVALID_ENUM when passed GL_MAP1_INDEX
+PASS gl.enable must set INVALID_ENUM when passed GL_MAP1_NORMAL
+PASS gl.enable must set INVALID_ENUM when passed GL_MAP1_TEXTURE_COORD_1
+PASS gl.enable must set INVALID_ENUM when passed GL_MAP1_TEXTURE_COORD_2
+PASS gl.enable must set INVALID_ENUM when passed GL_MAP1_TEXTURE_COORD_3
+PASS gl.enable must set INVALID_ENUM when passed GL_MAP1_TEXTURE_COORD_4
+PASS gl.enable must set INVALID_ENUM when passed GL_MAP1_VERTEX_3
+PASS gl.enable must set INVALID_ENUM when passed GL_MAP1_VERTEX_4
+PASS gl.enable must set INVALID_ENUM when passed GL_MAP2_COLOR_4
+PASS gl.enable must set INVALID_ENUM when passed GL_MAP2_INDEX
+PASS gl.enable must set INVALID_ENUM when passed GL_MAP2_NORMAL
+PASS gl.enable must set INVALID_ENUM when passed GL_MAP2_TEXTURE_COORD_1
+PASS gl.enable must set INVALID_ENUM when passed GL_MAP2_TEXTURE_COORD_2
+PASS gl.enable must set INVALID_ENUM when passed GL_MAP2_TEXTURE_COORD_3
+PASS gl.enable must set INVALID_ENUM when passed GL_MAP2_TEXTURE_COORD_4
+PASS gl.enable must set INVALID_ENUM when passed GL_MAP2_VERTEX_3
+PASS gl.enable must set INVALID_ENUM when passed GL_MAP2_VERTEX_4
+PASS gl.enable must set INVALID_ENUM when passed GL_MINMAX
+PASS gl.enable must set INVALID_ENUM when passed GL_MULTISAMPLE
+PASS gl.enable must set INVALID_ENUM when passed GL_NORMALIZE
+PASS gl.enable must set INVALID_ENUM when passed GL_POINT_SMOOTH
+PASS gl.enable must set INVALID_ENUM when passed GL_POINT_SPRITE
+PASS gl.enable must set INVALID_ENUM when passed GL_POLYGON_OFFSET_LINE
+PASS gl.enable must set INVALID_ENUM when passed GL_POLYGON_OFFSET_POINT
+PASS gl.enable must set INVALID_ENUM when passed GL_POLYGON_SMOOTH
+PASS gl.enable must set INVALID_ENUM when passed GL_POLYGON_STIPPLE
+PASS gl.enable must set INVALID_ENUM when passed GL_POST_COLOR_MATRIX_COLOR_TABLE
+PASS gl.enable must set INVALID_ENUM when passed GL_POST_CONVOLUTION_COLOR_TABLE
+PASS gl.enable must set INVALID_ENUM when passed GL_RESCALE_NORMAL
+PASS gl.enable must set INVALID_ENUM when passed GL_SAMPLE_ALPHA_TO_ONE
+PASS gl.enable must set INVALID_ENUM when passed GL_TEXTURE_1D
+PASS gl.enable must set INVALID_ENUM when passed GL_TEXTURE_2D
+PASS gl.enable must set INVALID_ENUM when passed GL_TEXTURE_3D
+PASS gl.enable must set INVALID_ENUM when passed GL_TEXTURE_CUBE_MAP
+PASS gl.enable must set INVALID_ENUM when passed GL_TEXTURE_GEN_Q
+PASS gl.enable must set INVALID_ENUM when passed GL_TEXTURE_GEN_R
+PASS gl.enable must set INVALID_ENUM when passed GL_TEXTURE_GEN_S
+PASS gl.enable must set INVALID_ENUM when passed GL_TEXTURE_GEN_T
+PASS gl.enable must set INVALID_ENUM when passed GL_VERTEX_PROGRAM_POINT_SIZE
+PASS gl.enable must set INVALID_ENUM when passed GL_VERTEX_PROGRAM_TWO_SIDE
+PASS gl.enable must succeed when passed gl.BLEND
+PASS gl.enable must succeed when passed gl.CULL_FACE
+PASS gl.enable must succeed when passed gl.DEPTH_TEST
+PASS gl.enable must succeed when passed gl.DITHER
+PASS gl.enable must succeed when passed gl.POLYGON_OFFSET_FILL
+PASS gl.enable must succeed when passed gl.SAMPLE_ALPHA_TO_COVERAGE
+PASS gl.enable must succeed when passed gl.SAMPLE_COVERAGE
+PASS gl.enable must succeed when passed gl.SCISSOR_TEST
+PASS gl.enable must succeed when passed gl.STENCIL_TEST
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

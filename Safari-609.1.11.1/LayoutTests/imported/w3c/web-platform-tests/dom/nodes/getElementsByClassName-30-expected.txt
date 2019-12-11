@@ -1,0 +1,32 @@
+
+PASS big element listing 
+a abbr acronym
+address
+b bdo big
+blockquote
+
+button
+center
+cite code del dfn
+dir
+li
+div
+dd
+em font
+label legend
+h1
+
+i       ins kbd
+menu
+
+ol
+p
+
+pre
+q s samp   small span strike strong sub sup colgroup
+caption
+th
+td
+ tt u
+ul
+var

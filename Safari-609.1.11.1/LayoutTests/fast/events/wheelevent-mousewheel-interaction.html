@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="help" href="http://www.w3.org/TR/DOM-Level-3-Events/#events-WheelEvent">
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+function runTest() {
+    var div = document.getElementById('target');
+    div.addEventListener('wheel', wheelHandler);
+    div.addEventListener('mousewheel', mouseWheelHandler);
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(div.offsetLeft + 5, div.offsetTop + 5);
+        eventSender.mouseScrollBy(10, 20);
+    } else {
+        debug("FAIL: This test requires window.eventSender.");
+        finishJSTest();
+    }
+}
+
+var testEvent;
+function wheelHandler(e) {
+    testEvent = e;
+    testPassed("Standard wheel event was fired.");
+    shouldBe("testEvent.__proto__", "WheelEvent.prototype");
+
+    setTimeout(finishJSTest, 100);
+}
+
+function mouseWheelHandler(e) {
+    testFailed("mousewheel event should not have fired.");
+}
+
+</script>
+</head>
+<body>
+<span id="parent">
+    <div id="target" style="border:solid 1px green; width:220px; height:70px; overflow:scroll">
+        TOP TOP TOP TOP TOP TOP TOP
+        Scroll mouse wheel over here
+        Scroll mouse wheel over here
+        Scroll mouse wheel over here
+        Scroll mouse wheel over here
+        Scroll mouse wheel over here
+        Scroll mouse wheel over here
+        END END END END END END END
+    </div>
+</span>
+<script>
+description("Tests the interaction between the standard 'wheel' event and the non-standard 'mousewheel' one");
+window.jsTestIsAsync = true;
+
+runTest();
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

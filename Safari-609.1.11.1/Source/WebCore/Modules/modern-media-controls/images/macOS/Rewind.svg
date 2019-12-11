@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="24px" height="16px" viewBox="0 0 24 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch -->
+    <title>macOS-Rewind</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="macOS-Rewind" fill="#000000">
+            <path d="M0.8,9.3 C0.8,9.3 0,8.9 0,8.4 C0,7.9 0.8,7.5 0.8,7.5 L10.6,1.3 C10.6,1.3 11.3,0.7 11.7,1 C12.1,1.2 12,2.2 12,2.2 L12,14.7 C12,14.7 12.1,15.7 11.7,15.9 C11.4,16.1 10.6,15.6 10.6,15.6 L0.8,9.3 Z" id="Shape"></path>
+            <path d="M12.8,9.3 C12.8,9.3 12,8.9 12,8.4 C12,7.9 12.8,7.5 12.8,7.5 L22.6,1.3 C22.6,1.3 23.3,0.7 23.7,1 C24.1,1.2 24,2.2 24,2.2 L24,14.7 C24,14.7 24.1,15.7 23.7,15.9 C23.4,16.1 22.6,15.6 22.6,15.6 L12.8,9.3 Z" id="Shape"></path>
+        </g>
+    </g>
+</svg>

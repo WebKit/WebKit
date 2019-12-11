@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/async-stack-trace-test.js"></script>
+<script>
+
+function triggerChainedRequestAnimationFrame(count) {
+    if (count <= 0)
+        return;
+
+    function handleAnimationFrame() {
+        if (!--count) {
+            debugger;
+            return;
+        }
+        requestAnimationFrame(handleAnimationFrame);
+    }
+
+    requestAnimationFrame(handleAnimationFrame);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("AsyncStackTrace.Truncate");
+
+    function addTruncateTestCase(suite, args) {
+        function setup(resolve) {
+            this.savedStackTraceDepth = WI.debuggerManager.asyncStackTraceDepth;
+            InspectorTest.log(`Set maximum stack trace depth = ${args.maximumStackTraceSize}.`);
+            WI.debuggerManager.asyncStackTraceDepth = args.maximumStackTraceSize;
+            resolve();
+        }
+        function teardown(resolve) {
+            WI.debuggerManager.asyncStackTraceDepth = this.savedStackTraceDepth;
+            resolve();
+        }
+        addAsyncStackTraceTestCase(suite, {...args, setup, teardown});
+    }
+
+    function isTruncated(stackTrace) {
+        while (stackTrace) {
+            if (stackTrace.truncated)
+                return true;
+            stackTrace = stackTrace.parentStackTrace;
+        }
+        return false;
+    }
+
+    addTruncateTestCase(suite, {
+        name: "AsyncStackTrace.DisableAsyncStackTrace",
+        description: "Check that no async stack trace is present when the maximum depth is set to zero.",
+        expression: "triggerChainedRequestAnimationFrame(1)",
+        maximumStackTraceSize: 0,
+        pausedHandler(stackTrace) {
+            InspectorTest.expectNull(stackTrace.parentStackTrace, "Async stack trace should be null.");
+        }
+    });
+
+    addTruncateTestCase(suite, {
+        name: "AsyncStackTrace.CheckTruncated",
+        description: "Check that an async stack trace that exceeds the maximum depth is truncated.",
+        expression: "triggerChainedRequestAnimationFrame(20)",
+        maximumStackTraceSize: 10,
+        pausedHandler(stackTrace) {
+            InspectorTest.expectThat(isTruncated(stackTrace), "Async stack trace should be truncated.");
+        }
+    });
+
+    addTruncateTestCase(suite, {
+        name: "AsyncStackTrace.CheckNotTruncated",
+        description: "Check that an async stack trace is not truncated when below the maximum depth.",
+        expression: "triggerChainedRequestAnimationFrame(1)",
+        maximumStackTraceSize: 10,
+        pausedHandler(stackTrace) {
+            InspectorTest.expectFalse(isTruncated(stackTrace), "Async stack trace should not be truncated.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for truncating async stack traces that exceed the maximum async stack trace depth.</p>
+</body>
+</html>

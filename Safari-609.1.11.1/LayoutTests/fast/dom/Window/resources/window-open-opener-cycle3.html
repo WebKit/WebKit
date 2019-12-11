@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+
+if (window.testRunner)
+    testRunner.setCanOpenWindows();
+
+onload = function() {
+    root = opener.opener;
+    open("", "foo");
+    if (opener.opener === self)
+        root.testPassed("opener.opener === self");
+    else
+        root.testFailed("opener.opener !== self");
+    root.tryNavigateFoo();
+}
+</script>
+</body>
+</html>

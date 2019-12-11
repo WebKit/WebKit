@@ -1,0 +1,7 @@
+2d.text.draw.fill.maxWidth.bound
+
+fillText handles maxWidth based on line size, not bounding box size
+
+
+FAIL fillText handles maxWidth based on line size, not bounding box size null is not an object (evaluating 'ctx.font = '50px CanvasTest'')
+

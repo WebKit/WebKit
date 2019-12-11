@@ -1,0 +1,9 @@
+When prompted, accept to share your audio and video stream.
+
+Description
+
+This test checks that distinct mediastream tracks have distinct ids.
+
+
+PASS Tests that distinct mediastream tracks have distinct ids  
+

@@ -1,0 +1,37 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<body>
+<video src="../../content/test.mp4" autoplay controls></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing that control are shown in fullscreen when the controls attribute is not present.");
+
+const media = document.querySelector("video");
+
+media.addEventListener("play", () => {
+
+    shouldBeFalse("media.webkitDisplayingFullscreen");
+    shouldBeEqualToString("getComputedStyle(window.internals.shadowRoot(media).querySelector('.media-controls-container')).webkitCursorVisibility", "auto");
+    debug("");
+
+    media.addEventListener("webkitfullscreenchange", () => {
+        shouldBeTrue("media.webkitDisplayingFullscreen");
+        shouldBeEqualToString("getComputedStyle(window.internals.shadowRoot(media).querySelector('.media-controls-container')).webkitCursorVisibility", "auto-hide");
+        debug("");
+        button.remove();
+        media.remove();
+        finishJSTest();
+    });
+
+    const button = document.body.appendChild(document.createElement("div"));
+    button.setAttribute("style", "position: absolute; left: 0; top: 0;");
+    button.innerText = "Enter fullscreen";
+    button.addEventListener("click", () => media.webkitEnterFullscreen());
+    pressOnElement(button);
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

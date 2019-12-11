@@ -1,0 +1,21 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+<head>
+<style>
+video {
+    width: 300px;
+    height: 300px;
+}
+video::-webkit-media-controls-fullscreen-button,
+video::-webkit-media-controls-timeline-container,
+video::-webkit-media-controls-mute-button,
+video::-webkit-media-controls-wireless-playback-picker-button {
+    display: none;
+}
+</style>
+</head>
+<body>
+<p>This test makes sure that video posters are displayed even after the source is loaded</p>
+<video controls poster="../resources/simple_image.png"></video>
+</body>
+</html>

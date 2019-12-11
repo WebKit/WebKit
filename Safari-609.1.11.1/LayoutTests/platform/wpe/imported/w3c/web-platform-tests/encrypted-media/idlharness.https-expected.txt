@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 832: Unhandled Promise Rejection: MediaKeyMessageEventInit inherits EventInit, but EventInit is undefined.
+Description
+
+This test verifies that implementations of the Encrypted Media Extensions API match its WebIDL definition.
+
+
+Harness Error (FAIL), message = MediaKeyMessageEventInit inherits EventInit, but EventInit is undefined.
+
+PASS Partial interface Navigator: original interface defined 
+PASS Partial interface HTMLMediaElement: original interface defined 
+

@@ -1,0 +1,9 @@
+initial.colour
+Initial state is transparent black
+Output should be transparent black (not transparent anything-else), but manual verification can only confirm that it's transparent - it's not possible to make the actual blackness visible.
+Actual output:
+Expected output:
+
+
+PASS Initial state is transparent black 
+

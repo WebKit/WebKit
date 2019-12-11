@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        iframe {
+            width: 400px;
+            height: 300px;
+        }
+        .composited {
+            transform: translateZ(1px);
+            padding: 10px;
+            width: 500px;
+        }
+
+        .masked {
+            -webkit-mask-image: url(../resources/alpha-gradient.png);
+            -webkit-mask-repeat: repeat-x;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+        
+        function geRemoveViewScript()
+        {
+            return `
+            (function() {
+                uiController.removeViewFromWindow(function() {
+                    uiController.uiScriptComplete('');
+                });
+            })();`
+        }
+        
+        function getReinsertViewScript()
+        {
+            return `
+            (function() {
+                uiController.addViewToWindow(function() {
+                    uiController.uiScriptComplete('');
+                });
+            })();`
+        }
+        
+        function getLayerTree()
+        {
+            if (window.internals)
+                return internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+            
+            return "";
+        }
+
+        function doTest()
+        {
+            if (!testRunner.runUIScript)
+                return;
+
+            let beforeLayers = getLayerTree();
+
+            testRunner.runUIScript(geRemoveViewScript(), function(result) {
+                
+                    testRunner.runUIScript(getReinsertViewScript(), function(result) {
+                        let afterLayers = getLayerTree();
+                        
+                        document.getElementById('before-layers').textContent = beforeLayers;
+                        document.getElementById('after-layers').textContent = afterLayers;
+                        
+                        testRunner.notifyDone();
+                    });
+            });
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div class="composited">
+        <iframe src="resources/composited-subframe.html"></iframe>
+    </div>
+
+<pre id="before-layers">Layer tree goes here</pre>
+<pre id="after-layers">Layer tree goes here</pre>
+</body>
+</html>

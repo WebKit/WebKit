@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<div id="parentNode">
+<div id="previousSibling"></div><div id="target"><div id="firstChild"></div><div id="lastChild"></div></div><div id="nextSibling"></div>
+</div>
+
+<script>
+description(`Test function calls should not overlap with effects of DOMJIT's nodeType accessor since it is pure.`);
+
+function test()
+{
+    var target = document.getElementById('target');
+    var firstChild = document.getElementById('firstChild');
+    var lastChild = document.getElementById('lastChild');
+    for (var i = 0; i < 1e4; ++i) {
+        var ret1 = target.nodeType;
+        target.appendChild(lastChild);
+        var ret2 = target.nodeType;
+        if (ret1 !== Node.ELEMENT_NODE || ret2 !== Node.ELEMENT_NODE)
+            return false;
+    }
+    return true;
+}
+
+shouldBeTrue(`test()`);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

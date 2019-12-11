@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function ownerWindow()
+{
+    var owner = window.parent;
+    if (owner === this)
+        owner = window.opener;
+    return owner;
+}
+
+function receiveMessage(messageEvent)
+{
+    if (messageEvent.source !== ownerWindow())
+        ownerWindow().postMessage(messageEvent.data, "*"); // Forward to owner
+    else {
+        // From owner
+        if (messageEvent.data === "new-window")
+            window.open("referrer-policy-postmessage.php");
+        else if (messageEvent.data === "new-subframe") {
+            var subframe = document.createElement("iframe");
+            subframe.src = "referrer-policy-postmessage.php";
+            document.body.appendChild(subframe);
+        }
+    }
+}
+
+window.addEventListener("message", receiveMessage, false);
+ownerWindow().postMessage("ready", "*");
+</script>
+</head>
+</html>

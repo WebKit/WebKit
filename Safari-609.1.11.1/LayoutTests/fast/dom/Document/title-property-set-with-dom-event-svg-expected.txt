@@ -1,0 +1,1 @@
+Test that setting title of a SVG document while there is a registred DOMNodeInserted event handler which indirectly deletes title doesn't crash.

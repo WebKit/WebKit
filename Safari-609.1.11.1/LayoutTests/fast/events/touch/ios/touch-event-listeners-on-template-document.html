@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="../../../../resources/js-test-pre.js"></script>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+    <meta name="viewport" content="initial-scale=1">
+</head>
+<body>
+    <div id="wrapper">
+        <template>
+            <div>FAIL: this should not be visible!</div>
+        </template>
+    </div>
+    <script>
+        description("Check touch event listener on the document of a template. This should not crash or make ASAN mad.");
+        window.jsTestIsAsync = true;
+
+
+        function getTapScript(x, y)
+        {
+            return `
+            (function() {
+                uiController.singleTapAtPoint(${x}, ${y}, function() {
+                    uiController.uiScriptComplete("Tapped (" + ${x} + ", " + ${y} + ")");
+                });
+            })();`
+        }
+
+        function setup()
+        {
+            let template = document.getElementsByTagName("template")[0];
+            let templateDocument = template.content.firstChild.ownerDocument;
+            document.addEventListener('touchstart', () => { debug("PASS I am making a note here: huge success"); });
+            templateDocument.addEventListener('touchstart', () => { debug("FAIL this should not be called"); });
+        }
+
+        function runTest()
+        {
+            setup();
+            gc();
+
+            testRunner.runUIScript(getTapScript(50, 50), function(result) {
+                debug(result);
+                document.getElementById("wrapper").innerHTML = "";
+                gc();
+                finishJSTest();
+            });
+        }
+        window.addEventListener('load', runTest, false);
+    </script>
+    <script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

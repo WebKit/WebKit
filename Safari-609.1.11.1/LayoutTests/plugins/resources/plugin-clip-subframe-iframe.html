@@ -1,0 +1,11 @@
+<script>
+var lastMessage;
+function windowWasSet(msg) {
+    if (msg != lastMessage)
+        console.log(msg);
+    lastMessage = msg;
+}
+</script>
+
+<embed id="testCPlugin" type="application/x-webkit-test-netscape" test="log-npp-set-window"></embed>
+<div id="output"></div>

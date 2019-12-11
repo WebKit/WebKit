@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x50
+  RenderBlock {test} at (0,0) size 800x50
+    RenderBlock {p} at (0,16) size 800x18
+      RenderText {#text} at (0,0) size 621x18
+        text run at (0,0) width 621: "You should see after this paragraph the words GENERATED CONTENT over green background"
+      RenderInline (generated) at (0,0) size 174x18 [bgcolor=#00FF00]
+        RenderText at (620,0) size 174x18
+          text run at (620,0) width 174: "GENERATED CONTENT"

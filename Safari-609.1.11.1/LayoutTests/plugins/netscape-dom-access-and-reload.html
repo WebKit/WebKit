@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function runTest()
+{
+    // Make the plugin retrieve a DOM element to itself. This exercises
+    // https://bugs.webkit.org/show_bug.cgi?id=80428
+    document.getElementById("testPlugin").testDOMAccess();
+
+    var callReload = true;
+    if (window.sessionStorage) {
+        if (window.sessionStorage.netscapeDomAccessAndReloadHasReloaded)
+            callReload = false;
+        else
+            window.sessionStorage.netscapeDomAccessAndReloadHasReloaded = 1;
+    }
+
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    
+    if (callReload) {
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        location.reload();
+    } else {
+        window.GCController.collect();
+        // Note we could also collect the number of live nodes, but that seems
+        // more likely to give spurious failures. When an HTMLPluginElement is
+        // improperly retained, its owning Document also survives, so we'll
+        // detect an excess Document.
+        if (internals && internals.numberOfLiveDocuments) {
+            var numberOfLiveDocuments = internals.numberOfLiveDocuments();
+            if (numberOfLiveDocuments == 1) {
+                document.getElementById("result").innerHTML = "SUCCESS";
+            }
+        } else {
+              document.getElementById("result").innerHTML = "FAILED; This test is only valid in DumpRenderTree, and only when the Inspector is enabled.";
+        }
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.notifyDone();
+        }
+    }
+}
+</script>
+</head>
+<body onload="runTest();">
+<p>This page tests reloading a Netscape plug-in that accesses its own DOM element. See https://bugs.webkit.org/show_bug.cgi?id=80428, "HTMLPluginElement is not destroyed on reload or navigation if getNPObject is called".
+
+If it succeeds, you should see SUCCESS below.
+<embed id="testPlugin" type="application/x-webkit-test-netscape" width="200" height="200"></embed>
+<div id="result">FAILURE</div>
+</body>
+</html>

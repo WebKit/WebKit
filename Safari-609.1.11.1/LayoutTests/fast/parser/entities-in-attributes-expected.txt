@@ -1,0 +1,4 @@
+Test parsing of HTML entities in XHTML attributes.
+
+
+SUCCESS

@@ -1,0 +1,54 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .box {
+            position: absolute;
+            height: 200px;
+            width: 200px;
+            background-color: blue;
+        }
+        
+        .scroller {
+            margin: 60px;
+            overflow: scroll;
+            border: 1px solid black;
+            width: 220px;
+            height: 220px;
+        }
+        
+        .scrolled-contents {
+            height: 1000px;
+        }
+        
+        .outside {
+            z-index: 1;
+            top: 20px;
+            left: 20px;
+            background-color: green;
+        }
+        
+        .back {
+            z-index: 0;
+        }
+        
+        .front {
+            z-index: 2;
+            top: 120px;
+            left: 120px;
+            width: 160px;
+            height: 160px;
+            background-color: orange;
+        }
+    </style>
+</head>
+<body>
+    <div class="outside box"></div>
+    <div class="scroller">
+        <div class="scrolled-contents">
+            <div class="back box"></div>
+            <div class="front box"></div>
+        </div>
+    </div>
+</body>
+</html>

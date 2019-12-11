@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test unwrapping a JWK key with AES-CTR using an imported key");
+
+jsTestIsAsync = true;
+
+var extractable = true;
+var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
+var jwkKey = {
+    kty: "oct",
+    alg: "A128CBC",
+    use: "enc",
+    key_ops: ["encrypt"],
+    ext: true,
+    k: "am5Pdzk5b09aRkxJRVBNcg",
+};
+var aesCtrParams = {
+    name: "aes-ctr",
+    counter: asciiToUint8Array("jnOw99oOZFLIEPMr"),
+    length: 8,
+}
+var wrappedKey = hexStringToUint8Array("96be4de93c08cec8b53046ba31deedd35ab9dead0c86fe41b66cca58a6ba2ced4a55915a1991450dcffd50a533b041cf2b981a53c4136682a0f809e801af10a5bd54cac4e3bb7b345405b73e0bfe51141b23f33d714f81ed7067af");
+
+
+crypto.subtle.importKey("raw", rawKey, "aes-ctr", extractable, ["unwrapKey"]).then(function(unwrappingKey) {
+    return crypto.subtle.unwrapKey("jwk", wrappedKey, unwrappingKey, aesCtrParams, {name: "aes-cbc"}, extractable, ["encrypt"]);
+}).then(function(cryptoKey) {
+    return crypto.subtle.exportKey("jwk", cryptoKey);
+}).then(function(result) {
+    unwrappedKey = result;
+
+    shouldBe("unwrappedKey.kty", "jwkKey.kty");
+    shouldBe("unwrappedKey.alg", "jwkKey.alg");
+    shouldBe("unwrappedKey.key_ops", "jwkKey.key_ops");
+    shouldBe("unwrappedKey.ext", "jwkKey.ext");
+    shouldBe("unwrappedKey.k", "jwkKey.k");
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

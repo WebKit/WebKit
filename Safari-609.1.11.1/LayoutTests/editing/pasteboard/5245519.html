@@ -1,0 +1,13 @@
+<div id="description">This tests for a crash when pasting content that contains Apple-style-spans that don't have renderers.' You should see 'Hello World!'</div>
+<div id="edit" contenteditable="true"><br></div>
+
+<script>
+edit = document.getElementById("edit");
+description = document.getElementById("description");
+edit.focus();
+document.execCommand("InsertHTML", false, "Hello <span style='display:none;' class='Apple-style-span'></span>World!");
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    document.body.innerText = description.innerText + "\n" + edit.innerHTML;
+}
+</script>

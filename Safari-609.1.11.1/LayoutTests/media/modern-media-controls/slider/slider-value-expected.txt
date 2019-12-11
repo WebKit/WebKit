@@ -1,0 +1,35 @@
+Testing the Slider value property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS slider.value is 0
+
+Now we'll drag to the slider thumb from 10px to 30px within the slider's bounds
+controlValueWillStartChanging
+controlValueDidChange, value = 0.048
+controlValueDidChange, value = 0.053
+controlValueDidChange, value = 0.058
+controlValueDidChange, value = 0.063
+controlValueDidChange, value = 0.068
+controlValueDidChange, value = 0.073
+controlValueDidChange, value = 0.078
+controlValueDidChange, value = 0.083
+controlValueDidChange, value = 0.088
+controlValueDidChange, value = 0.093
+controlValueDidChange, value = 0.098
+controlValueDidChange, value = 0.103
+controlValueDidChange, value = 0.108
+controlValueDidChange, value = 0.113
+controlValueDidChange, value = 0.118
+controlValueDidChange, value = 0.123
+controlValueDidChange, value = 0.128
+controlValueDidChange, value = 0.133
+controlValueDidChange, value = 0.138
+controlValueDidChange, value = 0.143
+controlValueDidChange, value = 0.148
+controlValueDidStopChanging
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<svg width="500" height="300" xmlns="http://www.w3.org/2000/svg">
+  <g id="group1" role="button">
+    <title>SVG TITLE 1</title>
+    <rect x="10" y="10" width="200" height="100"
+      style="fill:none; stroke:blue; stroke-width:1px"/>
+  </g>
+</svg>
+
+<div id="console"></div>
+
+<script>
+
+    description("This tests SVG group elements are accessible and that the svg:title element is returned properly.");
+
+    if (window.accessibilityController) {
+
+          debug("Verify that the SVG group is returned as an accessible element.");
+          var group1 = accessibilityController.accessibleElementById("group1");
+          shouldBe("group1.description", "'AXLabel: SVG TITLE 1'");
+          shouldBeFalse("group1.isIgnored");
+
+          debug("\nVerify that you can hit-test to the SVG group.");
+          var hitTestElement = accessibilityController.elementAtPoint(group1.clickPointX, group1.clickPointY);
+          shouldBeTrue("hitTestElement.isEqual(group1)");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+/*
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+// https://gpuweb.github.io/gpuweb
+
+typedef unsigned long u32;
+typedef unsigned long long u64;
+
+[
+    Conditional=WEBGPU,
+    EnabledAtRuntime=WebGPU,
+    ImplementedAs=WebGPUBufferCopyView
+] dictionary GPUBufferCopyView {
+    required WebGPUBuffer buffer;
+    u64 offset = 0;
+    required u32 rowPitch;
+    required u32 imageHeight;
+};
+
+[
+    Conditional=WEBGPU,
+    EnabledAtRuntime=WebGPU,
+    ImplementedAs=WebGPUTextureCopyView
+] dictionary GPUTextureCopyView {
+    required WebGPUTexture texture;
+    u32 mipLevel = 0;
+    u32 arrayLayer = 0;
+    GPUOrigin3D origin; // {x: 0, y: 0, z: 0}
+};
+
+[
+    Conditional=WEBGPU,
+    EnabledAtRuntime=WebGPU,
+    ImplementationLacksVTable,
+    InterfaceName=GPUCommandEncoder
+] interface WebGPUCommandEncoder {
+    WebGPURenderPassEncoder beginRenderPass(WebGPURenderPassDescriptor descriptor);
+    WebGPUComputePassEncoder beginComputePass();
+
+    void copyBufferToBuffer(
+        WebGPUBuffer src,
+        u64 srcOffset,
+        WebGPUBuffer dst,
+        u64 dstOffset,
+        u64 size);
+
+    void copyBufferToTexture(
+        GPUBufferCopyView source,
+        GPUTextureCopyView destination,
+        GPUExtent3D copySize);
+
+    void copyTextureToBuffer(
+        GPUTextureCopyView source,
+        GPUBufferCopyView destination,
+        GPUExtent3D copySize);
+
+    void copyTextureToTexture(
+        GPUTextureCopyView source,
+        GPUTextureCopyView destination,
+        GPUExtent3D copySize);
+
+    WebGPUCommandBuffer finish();
+};

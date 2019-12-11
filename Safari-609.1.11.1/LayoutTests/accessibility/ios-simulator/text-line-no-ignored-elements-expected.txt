@@ -1,0 +1,11 @@
+text linetext line
+This test ensures that when asking for a line of text, we do not include objects that should be ignored. The image in this example should not appear so the array of elements should be size of 2.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS array.length is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

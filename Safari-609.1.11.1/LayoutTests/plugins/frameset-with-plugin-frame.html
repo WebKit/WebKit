@@ -1,0 +1,15 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<html>
+<script type="text/javascript" charset="utf-8">
+    if (window.testRunner && window.internals) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        internals.settings.setFrameFlattening("FullyEnabled")
+        internals.settings.setBackForwardCacheSupportsPlugins(true);
+    }
+</script>
+
+<frameset rows="100%,*" cols="*" frameborder="NO" border="false" framespacing="0" bordercolor="#000000"> 
+    <frame src="resources/plugin-frame.html" scrolling="auto">
+</frameset>
+</html>

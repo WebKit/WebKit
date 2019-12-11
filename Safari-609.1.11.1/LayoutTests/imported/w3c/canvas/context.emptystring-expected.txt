@@ -1,0 +1,5 @@
+context.emptystring
+getContext with empty string returns null
+Spec references: context.unrecognised
+Actual output:
+Passed

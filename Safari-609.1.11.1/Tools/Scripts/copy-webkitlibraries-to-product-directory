@@ -1,0 +1,145 @@
+#!/usr/bin/env perl
+
+# Copyright (C) 2005-2017 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+use strict;
+use warnings;
+use File::Spec;
+use FindBin;
+use Getopt::Long qw(:config pass_through);
+use lib $FindBin::Bin;
+use webkitdirs;
+
+my $showHelp = 0;
+my $wksi = 0;
+my $clean = 0;
+my $useFullLibPaths = 0;
+my $osxVersion;
+my $force = 0;
+
+determineXcodeSDK();
+
+my $programName = basename($0);
+my $usage = <<EOF;
+Usage: $programName [options]
+  --help                        Show this help message
+  --[no-]wksi                   Obsolete. Does nothing. Remove once we are sure nobody passes this option any more.
+  --clean                       Clean the libraries (default: $clean)
+  --[no-]use-full-lib-paths     Toggle using full library paths
+  --sdk=<sdk>                   Use a specific Xcode SDK
+  --device                      Use the current iphoneos.internal SDK (iOS only)
+  --simulator                   Use the current iphonesimulator SDK (iOS only)
+  --osx-version=<version>       Set the OS X version to use when deciding what to copy.
+  --[no-]force                  Toggle forcing the copy - i.e. ignoring timestamps (default: $force)
+EOF
+
+GetOptions(
+    'help' => \$showHelp,
+    'wksi!' => \$wksi,
+    'clean' => \$clean,
+    'use-full-lib-paths!' => \$useFullLibPaths,
+    'osx-version=s' => \$osxVersion,
+    'force!' => \$force
+);
+
+if ($showHelp) {
+   print STDERR $usage;
+   exit 1;
+}
+
+my $productDir = shift @ARGV;
+if ($productDir) {
+    $productDir = File::Spec->rel2abs($productDir);
+} else {
+    $productDir = $ENV{BUILT_PRODUCTS_DIR} || productDir();
+}
+
+if (!isIOSWebKit() && !$osxVersion &&!isAnyWindows()) {
+    $osxVersion = `sw_vers -productVersion | cut -d. -f-2`;
+    chomp($osxVersion);
+}
+
+chdirWebKit();
+
+sub executeRanlib($)
+{
+    my ($library) = @_;
+    my @args;
+    push @args, ("-sdk", xcodeSDK()) if xcodeSDK();
+    push @args, "ranlib";
+    push @args, "-no_warning_for_no_symbols" if isIOSWebKit();
+    system("xcrun", @args, $library) == 0 or die;
+}
+
+sub unpackIfNecessary
+{
+    my ($targetDir, $sampleFile, $package, $hasLibraries) = @_;
+    if ($force || !-e $sampleFile || -M $sampleFile > -M $package) {
+        print "Unpacking $package into $targetDir\n";
+        (system("tar -C $targetDir -xmf $package") == 0) or die;
+        if ($hasLibraries) {
+            foreach my $library (`tar -tf $package`) {
+                chomp $library;
+                print "   Ranlib $library\n";
+                executeRanlib($targetDir . "/" . $library);
+            }
+        }
+        return 1;
+    }
+    return 0;
+}
+
+sub dittoHeaders
+{
+    my ($srcHeader, $header) = @_;
+    if ($force || !-e $header || -M $header > -M $srcHeader) {
+        print "Updating $header\n";
+        (system("ditto", $srcHeader, $header) == 0) or die;
+    }
+}
+
+if ($clean) {
+    print "Cleaning.\n";    
+    unlink glob "$productDir/libLTO*" or die if glob "$productDir/libLTO*";
+}
+
+sub fileContains
+{
+    my ($filename, $string) = @_;
+    open my $fileHandle, '<', $filename or die;
+    while (<$fileHandle>) {
+        return 1 if /^$string$/;
+    }
+    return 0;
+}
+
+sub isContentOfFileEqualToString($$)
+{
+    my ($filename, $string) = @_;
+    open my $fileHandle, '<', $filename or die;
+    binmode $fileHandle;
+    my $contents = <$fileHandle>;
+    return $contents eq $string;
+}
+

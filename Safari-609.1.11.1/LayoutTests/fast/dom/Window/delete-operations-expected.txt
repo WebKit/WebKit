@@ -1,0 +1,75 @@
+Tests deleting window operations works as expected
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.postMessage is an instance of Function
+window.postMessage = 1
+PASS window.postMessage is 1
+PASS delete window.postMessage is true
+PASS window.postMessage is undefined.
+
+PASS window.focus is an instance of Function
+window.focus = 1
+PASS window.focus is 1
+PASS delete window.focus is true
+PASS window.focus is undefined.
+
+PASS window.blur is an instance of Function
+window.blur = 1
+PASS window.blur is 1
+PASS delete window.blur is true
+PASS window.blur is undefined.
+
+PASS window.close is an instance of Function
+window.close = 1
+PASS window.close is 1
+PASS delete window.close is true
+PASS window.close is undefined.
+
+PASS window.open is an instance of Function
+window.open = 1
+PASS window.open is 1
+PASS delete window.open is true
+PASS window.open is undefined.
+
+PASS window.showModalDialog is an instance of Function
+window.showModalDialog = 1
+PASS window.showModalDialog is 1
+PASS delete window.showModalDialog is true
+PASS window.showModalDialog is undefined.
+
+PASS window.alert is an instance of Function
+window.alert = 1
+PASS window.alert is 1
+PASS delete window.alert is true
+PASS window.alert is undefined.
+
+PASS window.confirm is an instance of Function
+window.confirm = 1
+PASS window.confirm is 1
+PASS delete window.confirm is true
+PASS window.confirm is undefined.
+
+PASS window.prompt is an instance of Function
+window.prompt = 1
+PASS window.prompt is 1
+PASS delete window.prompt is true
+PASS window.prompt is undefined.
+
+PASS window.stop is an instance of Function
+window.stop = 1
+PASS window.stop is 1
+PASS delete window.stop is true
+PASS window.stop is undefined.
+
+PASS window.scroll is an instance of Function
+window.scroll = 1
+PASS window.scroll is 1
+PASS delete window.scroll is true
+PASS window.scroll is undefined.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

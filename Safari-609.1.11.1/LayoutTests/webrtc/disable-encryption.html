@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Testing connection with and without encryption</title>
+    <script src="../resources/testharness.js"></script>
+    <script src="../resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <video id="video" autoplay playsinline></video>
+    <script src ="routines.js"></script>
+    <script>
+promise_test(async (test) => {
+    if (window.internals)
+        internals.setEnableWebRTCEncryption(false);
+    const localStream = await navigator.mediaDevices.getUserMedia({video: true});
+
+    video.srcObject = await new Promise((resolve, reject) => {
+        createConnections((localConnection) => {
+            localConnection.addTrack(localStream.getVideoTracks()[0], localStream);
+        }, (remoteConnection) => {
+            remoteConnection.ontrack = (event) => {
+                resolve(event.streams[0]);
+            };
+        });
+        setTimeout(() => { reject("Test timed out"); }, 5000);
+    });
+
+    await video.play();
+}, "Basic data channel exchange without encryption");
+
+promise_test(async (test) => {
+    if (!window.internals)
+        return Promise.rejects("Test needs internals");
+
+    internals.setEnableWebRTCEncryption(false);
+    const pc1 = new RTCPeerConnection();
+
+    internals.setEnableWebRTCEncryption(true);
+    const pc2 = new RTCPeerConnection();
+
+    pc1.addTransceiver('audio');
+    const offer = await pc1.createOffer();
+    await pc1.setLocalDescription(offer);
+
+    return promise_rejects(test, 'InvalidAccessError', pc2.setRemoteDescription(offer));
+}, "Make sure a pc with encryption and a pc without encryption cannot talk");
+    </script>
+  </body>
+</html>

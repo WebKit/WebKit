@@ -1,0 +1,45 @@
+This test checks that the value of -webkit-text-align-last is properly inherited to the child.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Value of ancestor is 'start':
+PASS window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-align-last').cssText is 'start'
+PASS window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-align-last').cssText is 'start'
+
+Value of ancestor is 'end':
+PASS window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-align-last').cssText is 'end'
+PASS window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-align-last').cssText is 'end'
+
+Value of ancestor is 'left':
+PASS window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-align-last').cssText is 'left'
+PASS window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-align-last').cssText is 'left'
+
+Value of ancestor is 'right':
+PASS window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-align-last').cssText is 'right'
+PASS window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-align-last').cssText is 'right'
+
+Value of ancestor is 'center':
+PASS window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-align-last').cssText is 'center'
+PASS window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-align-last').cssText is 'center'
+
+Value of ancestor is 'justify':
+PASS window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-align-last').cssText is 'justify'
+PASS window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-align-last').cssText is 'justify'
+
+Value of ancestor is 'auto':
+PASS window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-align-last').cssText is 'auto'
+PASS window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-align-last').cssText is 'auto'
+
+Value of ancestor is 'start, while child is 'end':
+PASS window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-align-last').cssText is 'start'
+PASS window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-align-last').cssText is 'end'
+
+Value of ancestor is 'left, while child is 'right':
+PASS window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-align-last').cssText is 'left'
+PASS window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-align-last').cssText is 'right'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+hello world

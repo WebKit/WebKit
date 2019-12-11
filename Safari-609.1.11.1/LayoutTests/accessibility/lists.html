@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+<body id="body">
+    
+    <ul>
+      <li>test 1</li>
+      <li>test 2</li>
+    </ul>
+
+    <ol>
+      <li>test 1</li>
+      <li>test 2</li>
+    </ol>
+
+    <dl>
+      <dt>term 1</dt>
+      <dd>meaning 2</dd>
+
+      <dt>term b</dt>
+      <dd>meaning 1</dd>
+      <dd>meaning 2</dd>
+    </dl>
+
+    <BR><BR><BR><BR>
+    <div id="result"></div>    
+
+    <script>
+        if (window.accessibilityController) {
+            var result = document.getElementById("result");
+
+            var bodyElement = document.getElementById("body");
+            bodyElement.focus();
+            body = accessibilityController.focusedElement;
+            result.innerText += body.attributesOfChildren() + "\n\n"; 
+
+            var olList = body.childAtIndex(0);
+            result.innerText += olList.attributesOfChildren() + "\n\n"; 
+
+            var ulList = body.childAtIndex(1);
+            result.innerText += ulList.attributesOfChildren() + "\n\n"; 
+
+            var dlList = body.childAtIndex(2);
+            result.innerText += dlList.attributesOfChildren() + "\n\n"; 
+            
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+Implicit defaults
+ 
+Option
+Menu item 1
+menubar
+radio 1
+item one
+tree item
+cell
+cell2
+
+Authored orientation
+radio 1
+cell
+cell2
+X
+Option
+This test makes sure that aria-orientation works correctly and the implicit defaults are defined on different roles.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS slider.orientation is 'AXOrientation: AXHorizontalOrientation'
+PASS combobox.orientation is 'AXOrientation: AXUnknownOrientation'
+PASS listbox.orientation is 'AXOrientation: AXVerticalOrientation'
+PASS menu.orientation is 'AXOrientation: AXVerticalOrientation'
+PASS menubar.orientation is 'AXOrientation: AXHorizontalOrientation'
+PASS radiogroup.orientation is 'AXOrientation: AXUnknownOrientation'
+PASS separator.orientation is 'AXOrientation: AXHorizontalOrientation'
+PASS tablist.orientation is 'AXOrientation: AXHorizontalOrientation'
+PASS toolbar.orientation is 'AXOrientation: AXHorizontalOrientation'
+PASS tree.orientation is 'AXOrientation: AXVerticalOrientation'
+PASS treegrid.orientation is 'AXOrientation: AXUnknownOrientation'
+PASS radiogroup2.orientation is 'AXOrientation: AXVerticalOrientation'
+PASS treegrid2.orientation is 'AXOrientation: AXHorizontalOrientation'
+PASS separator2.orientation is 'AXOrientation: AXUnknownOrientation'
+PASS slider2.orientation is 'AXOrientation: AXUnknownOrientation'
+PASS listbox2.orientation is 'AXOrientation: AXHorizontalOrientation'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

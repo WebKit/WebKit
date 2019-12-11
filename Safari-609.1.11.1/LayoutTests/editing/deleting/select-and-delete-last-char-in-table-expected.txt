@@ -1,0 +1,17 @@
+In this test the last character of a single-cell table is selected and then deleted using the backspace key. The whole table is deleted.
+
+BeforeDeletion:
+| "First"
+| <table>
+|   border="1"
+|   <tbody>
+|     <tr>
+|       <td>
+|         id="test"
+|         "<#selection-anchor>1<#selection-focus>"
+| "Second"
+
+AfterDeletion:
+| "First<#selection-caret>"
+| <br>
+| "Second"

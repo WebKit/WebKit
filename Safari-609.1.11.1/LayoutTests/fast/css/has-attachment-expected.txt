@@ -1,0 +1,11 @@
+This tests the :has-attachment pseudoclass.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(target).clear is "both"
+PASS getComputedStyle(target).clear is "none"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

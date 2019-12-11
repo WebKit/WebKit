@@ -1,0 +1,4 @@
+
+FAIL TextTrackCue.onexit assert_true: dispatching event expected true got false
+FAIL TextTrackCue.addEventListener/removeEventListener assert_true: expected true got false
+

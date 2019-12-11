@@ -1,0 +1,350 @@
+Checking pause locations when stepping in, out, and over class constructors and methods.
+
+
+== Running test suite: Debugger.stepping.classes
+-- Running test case: Debugger.stepping.ClassBasicStepOver
+EXPRESSION: setTimeout(entryClassBasic)
+STEPS: over, over, over, over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryClassBasic:58:5
+     54    class Child2 extends Base {};
+     55    
+     56    function entryClassBasic() {
+ ->  57        |debugger;
+     58        let o = new Child;
+     59        o.baseMethod();
+     60        o.childMethod();
+
+ACTION: step-over
+PAUSE AT entryClassBasic:59:5
+     55    
+     56    function entryClassBasic() {
+     57        debugger;
+ ->  58        |let o = new Child;
+     59        o.baseMethod();
+     60        o.childMethod();
+     61        o.method();
+
+ACTION: step-over
+PAUSE AT entryClassBasic:60:5
+     56    function entryClassBasic() {
+     57        debugger;
+     58        let o = new Child;
+ ->  59        |o.baseMethod();
+     60        o.childMethod();
+     61        o.method();
+     62    }
+
+ACTION: step-over
+PAUSE AT entryClassBasic:61:5
+     57        debugger;
+     58        let o = new Child;
+     59        o.baseMethod();
+ ->  60        |o.childMethod();
+     61        o.method();
+     62    }
+     63    
+
+ACTION: step-over
+PAUSE AT entryClassBasic:62:5
+     58        let o = new Child;
+     59        o.baseMethod();
+     60        o.childMethod();
+ ->  61        |o.method();
+     62    }
+     63    
+     64    function entryClassDefaultConstructor() {
+
+ACTION: step-over
+PAUSE AT entryClassBasic:63:2
+     59        o.baseMethod();
+     60        o.childMethod();
+     61        o.method();
+ ->  62    }|
+     63    
+     64    function entryClassDefaultConstructor() {
+     65        debugger;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.ClassBasicStepIn
+EXPRESSION: setTimeout(entryClassBasic)
+STEPS: over, in, in, out, over, over, in, out, in, out, in, in, out, out, resume
+PAUSED (debugger-statement)
+PAUSE AT entryClassBasic:58:5
+     54    class Child2 extends Base {};
+     55    
+     56    function entryClassBasic() {
+ ->  57        |debugger;
+     58        let o = new Child;
+     59        o.baseMethod();
+     60        o.childMethod();
+
+ACTION: step-over
+PAUSE AT entryClassBasic:59:5
+     55    
+     56    function entryClassBasic() {
+     57        debugger;
+ ->  58        |let o = new Child;
+     59        o.baseMethod();
+     60        o.childMethod();
+     61        o.method();
+
+ACTION: step-in
+PAUSE AT Child:35:9
+     31    class Child extends Base {
+     32        constructor()
+     33        {
+ ->  34            |super();
+     35            this._child = true;
+     36        }
+     37    
+
+ACTION: step-in
+PAUSE AT Base:18:9
+     14    class Base {
+     15        constructor()
+     16        {
+ ->  17            |this._base = true;
+     18        }
+     19    
+     20        baseMethod()
+
+ACTION: step-out
+PAUSE AT Child:36:9
+     32        constructor()
+     33        {
+     34            super();
+ ->  35            |this._child = true;
+     36        }
+     37    
+     38        childMethod()
+
+ACTION: step-over
+PAUSE AT Child:37:6
+     33        {
+     34            super();
+     35            this._child = true;
+ ->  36        }|
+     37    
+     38        childMethod()
+     39        {
+
+ACTION: step-over
+PAUSE AT entryClassBasic:60:5
+     56    function entryClassBasic() {
+     57        debugger;
+     58        let o = new Child;
+ ->  59        |o.baseMethod();
+     60        o.childMethod();
+     61        o.method();
+     62    }
+
+ACTION: step-in
+PAUSE AT baseMethod:23:9
+     19    
+     20        baseMethod()
+     21        {
+ ->  22            |a();
+     23        }
+     24    
+     25        method()
+
+ACTION: step-out
+PAUSE AT entryClassBasic:61:5
+     57        debugger;
+     58        let o = new Child;
+     59        o.baseMethod();
+ ->  60        |o.childMethod();
+     61        o.method();
+     62    }
+     63    
+
+ACTION: step-in
+PAUSE AT childMethod:41:9
+     37    
+     38        childMethod()
+     39        {
+ ->  40            |b();
+     41        }
+     42    
+     43        method()
+
+ACTION: step-out
+PAUSE AT entryClassBasic:62:5
+     58        let o = new Child;
+     59        o.baseMethod();
+     60        o.childMethod();
+ ->  61        |o.method();
+     62    }
+     63    
+     64    function entryClassDefaultConstructor() {
+
+ACTION: step-in
+PAUSE AT method:46:9
+     42    
+     43        method()
+     44        {
+ ->  45            |super.method();
+     46            b();
+     47        }
+     48    
+
+ACTION: step-in
+PAUSE AT method:28:9
+     24    
+     25        method()
+     26        {
+ ->  27            |a();
+     28        }
+     29    }
+     30    
+
+ACTION: step-out
+PAUSE AT method:47:9
+     43        method()
+     44        {
+     45            super.method();
+ ->  46            |b();
+     47        }
+     48    
+     49        get name() { return this._name; }
+
+ACTION: step-out
+PAUSE AT entryClassBasic:63:2
+     59        o.baseMethod();
+     60        o.childMethod();
+     61        o.method();
+ ->  62    }|
+     63    
+     64    function entryClassDefaultConstructor() {
+     65        debugger;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.ClassDefaultConstructor
+EXPRESSION: setTimeout(entryClassDefaultConstructor)
+STEPS: over, in, in, out, out, resume
+PAUSED (debugger-statement)
+PAUSE AT entryClassDefaultConstructor:66:5
+     62    }
+     63    
+     64    function entryClassDefaultConstructor() {
+ ->  65        |debugger;
+     66        let o = new Child2;
+     67    }
+     68    
+
+ACTION: step-over
+PAUSE AT entryClassDefaultConstructor:67:5
+     63    
+     64    function entryClassDefaultConstructor() {
+     65        debugger;
+ ->  66        |let o = new Child2;
+     67    }
+     68    
+     69    function entryClassGetterSetter() {
+
+ACTION: step-in
+PAUSE AT Child2:1:23
+--- Source Unavailable ---
+
+ACTION: step-in
+PAUSE AT Base:18:9
+     14    class Base {
+     15        constructor()
+     16        {
+ ->  17            |this._base = true;
+     18        }
+     19    
+     20        baseMethod()
+
+ACTION: step-out
+PAUSE AT Child2:1:40
+--- Source Unavailable ---
+
+ACTION: step-out
+PAUSE AT entryClassDefaultConstructor:68:2
+     64    function entryClassDefaultConstructor() {
+     65        debugger;
+     66        let o = new Child2;
+ ->  67    }|
+     68    
+     69    function entryClassGetterSetter() {
+     70        let o = new Child;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.ClassGetterSetter
+EXPRESSION: setTimeout(entryClassGetterSetter)
+STEPS: over, in, out, in, out, resume
+PAUSED (debugger-statement)
+PAUSE AT entryClassGetterSetter:72:5
+     68    
+     69    function entryClassGetterSetter() {
+     70        let o = new Child;
+ ->  71        |debugger;
+     72        var name = o.name;
+     73        o.name = "Name";
+     74    }
+
+ACTION: step-over
+PAUSE AT entryClassGetterSetter:73:5
+     69    function entryClassGetterSetter() {
+     70        let o = new Child;
+     71        debugger;
+ ->  72        |var name = o.name;
+     73        o.name = "Name";
+     74    }
+     75    
+
+ACTION: step-in
+PAUSE AT name:50:18
+     46            b();
+     47        }
+     48    
+ ->  49        get name() { |return this._name; }
+     50        set name(x) { this._name = x; }
+     51        
+     52    }
+
+ACTION: step-out
+PAUSE AT entryClassGetterSetter:74:5
+     70        let o = new Child;
+     71        debugger;
+     72        var name = o.name;
+ ->  73        |o.name = "Name";
+     74    }
+     75    
+     76    // ---------
+
+ACTION: step-in
+PAUSE AT name:51:19
+     47        }
+     48    
+     49        get name() { return this._name; }
+ ->  50        set name(x) { |this._name = x; }
+     51        
+     52    }
+     53    
+
+ACTION: step-out
+PAUSE AT entryClassGetterSetter:75:2
+     71        debugger;
+     72        var name = o.name;
+     73        o.name = "Name";
+ ->  74    }|
+     75    
+     76    // ---------
+     77    
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+

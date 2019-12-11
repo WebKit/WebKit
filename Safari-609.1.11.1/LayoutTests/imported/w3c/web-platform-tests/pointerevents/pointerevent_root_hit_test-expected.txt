@@ -1,0 +1,3 @@
+
+PASS pointerevent_root_hit_test 
+

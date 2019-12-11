@@ -1,0 +1,25 @@
+<!doctype html>
+<html class="reftest-wait">
+  <head>
+    <title>href style</title>
+    <meta charset="utf-8"/>
+    <script>
+      function runTest() {
+        if (window.eventSender) {
+          eventSender.keyDown('\t'); // focus #Link
+          eventSender.keyDown('\t'); // focus #FocusedLink
+          document.documentElement.removeAttribute("class");
+        }
+      }
+    </script>
+  </head>
+  <body onload="runTest()">
+
+    <math>
+      <mrow><mtext>Non-Link</mtext></mrow>
+      <mrow href="#Link"><mtext>Link</mtext></mrow>
+      <mrow href="#FocusedLink"><mtext>Focused Link</mtext></mrow>
+    </math>
+
+  </body>
+</html>

@@ -1,0 +1,9 @@
+This test checks that the Function constructor places a newline after the opening brace, for compatibility reasons. It passes if there are no syntax error exceptions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+    .box {
+        height: 200px;
+        width: 200px;
+        margin: 10px;
+        border: 1px solid black;
+    }
+    .middle {
+        position: absolute;
+        transform: translateZ(0);
+        transform-style: preserve-3d;
+    }
+    
+    .clipping {
+        position: absolute;
+        overflow: hidden;
+    }
+    
+    .composited {
+        transform: translateZ(0);
+    }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+    </script>
+</head>
+<body>
+    <div class="middle box">
+        <div class="clipping box">
+            <div class="composited box">
+                This test should not assert in debug builds.
+            </div>
+        </div>
+    </div>
+</body>
+</html>

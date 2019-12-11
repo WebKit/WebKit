@@ -1,0 +1,4 @@
+
+PASS Setup worker 
+PASS Ensure self.indexedDB is not null or undefined in service worker 
+

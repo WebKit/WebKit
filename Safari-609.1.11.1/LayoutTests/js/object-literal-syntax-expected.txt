@@ -1,0 +1,46 @@
+Make sure that we correctly identify parse errors in object literals
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ({a:1, get a(){}}) did not throw exception.
+PASS ({a:1, set a(x){}}) did not throw exception.
+PASS ({get a(){}, a:1}) did not throw exception.
+PASS ({set a(x){}, a:1}) did not throw exception.
+PASS ({get a(){}, get a(){}}) did not throw exception.
+PASS ({set a(x){}, set a(x){}}) did not throw exception.
+PASS ({set a(x){}, get a(){}, set a(x){}}) did not throw exception.
+PASS (function(){({a:1, get a(){}})}) did not throw exception.
+PASS (function(){({a:1, set a(x){}})}) did not throw exception.
+PASS (function(){({get a(){}, a:1})}) did not throw exception.
+PASS (function(){({set a(x){}, a:1})}) did not throw exception.
+PASS (function(){({get a(){}, get a(){}})}) did not throw exception.
+PASS (function(){({set a(x){}, set a(x){}})}) did not throw exception.
+PASS (function(){({set a(x){}, get a(){}, set a(x){}})}) did not throw exception.
+PASS ({a:1, a:1, a:1}), true is true
+PASS ({get a(){}, set a(x){}}), true is true
+PASS ({set a(x){}, get a(){}}), true is true
+PASS (function(){({a:1, a:1, a:1})}), true is true
+PASS (function(){({get a(){}, set a(x){}})}), true is true
+PASS (function(){({set a(x){}, get a(){}})}), true is true
+PASS ({get a(){}}) did not throw exception.
+PASS ({set a(x){}}) did not throw exception.
+PASS ({set a([x, y]){}}) did not throw exception.
+PASS ({set a({x, y}){}}) did not throw exception.
+PASS ({get a(x){}}) threw exception SyntaxError: Unexpected identifier 'x'. getter functions must have no parameters..
+PASS ({b:1, get a(x){}}) threw exception SyntaxError: Unexpected identifier 'x'. getter functions must have no parameters..
+PASS ({get a([x]){}}) threw exception SyntaxError: Unexpected token '['. getter functions must have no parameters..
+PASS ({get a({x}){}}) threw exception SyntaxError: Unexpected token '{'. getter functions must have no parameters..
+PASS ({set a(){}}) threw exception SyntaxError: Unexpected token ')'. setter functions must have one parameter..
+PASS ({b:1, set a(){}}) threw exception SyntaxError: Unexpected token ')'. setter functions must have one parameter..
+PASS ({set a(){}}) threw exception SyntaxError: Unexpected token ')'. setter functions must have one parameter..
+PASS ({set a(x{}}) threw exception SyntaxError: Unexpected token '{'. Expected a ')' after a parameter declaration..
+PASS ({set a({}}) threw exception SyntaxError: Unexpected token '}'. Expected a ')' after a parameter declaration..
+PASS ({set a((x)){}}) threw exception SyntaxError: Unexpected token '('. Expected a parameter pattern or a ')' in parameter list..
+PASS ({set a(x, y){}}) threw exception SyntaxError: Unexpected token ','. setter functions must have one parameter..
+PASS ({set a([x], y){}}) threw exception SyntaxError: Unexpected token ','. setter functions must have one parameter..
+PASS ({set a({x}, y){}}) threw exception SyntaxError: Unexpected token ','. setter functions must have one parameter..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

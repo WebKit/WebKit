@@ -1,0 +1,32 @@
+<html>
+<head>
+<title>CSS4 media query test: prefers-reduced-motion.</title>
+<style type="text/css">
+#a { color: black; }
+#b { color: black; }
+#c { color: black; }
+#d { color: black; }
+</style>
+<script>
+window.addEventListener("load", function () {
+
+    if (!window.internals) {
+        ["a", "b", "c", "d"].forEach(id => { document.getElementById(id).textContent = "This expected result requires DRT/WKTR."; });
+        return;
+    }
+
+    if (window.internals.userPrefersReducedMotion())
+        ["a", "b", "c"].forEach(id => { document.getElementById(id).style.color = "green"; });
+    else
+        document.getElementById("d").style.color = "green";
+
+}, false);
+</script>
+</head>
+<body>
+  <p id="a">This text should be green if the user requested reduced motion. Black otherwise.</p>
+  <p id="b">This text should be green if the user requested reduced motion. Black otherwise.</p>
+  <p id="c">This text should be green if the user requested reduced motion. Black otherwise.</p>
+  <p id="d">This text should be green if the user has not requested reduced motion. Black otherwise.</p>
+</body>
+</html>

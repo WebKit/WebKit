@@ -1,0 +1,69 @@
+
+PASS idl_test setup 
+PASS MediaRecorder interface: existence and properties of interface object 
+PASS MediaRecorder interface object length 
+PASS MediaRecorder interface object name 
+PASS MediaRecorder interface: existence and properties of interface prototype object 
+PASS MediaRecorder interface: existence and properties of interface prototype object's "constructor" property 
+PASS MediaRecorder interface: existence and properties of interface prototype object's @@unscopables property 
+FAIL MediaRecorder interface: attribute stream assert_true: The prototype object must have a property "stream" expected true got false
+FAIL MediaRecorder interface: attribute mimeType assert_true: The prototype object must have a property "mimeType" expected true got false
+PASS MediaRecorder interface: attribute state 
+FAIL MediaRecorder interface: attribute onstart assert_true: The prototype object must have a property "onstart" expected true got false
+PASS MediaRecorder interface: attribute onstop 
+PASS MediaRecorder interface: attribute ondataavailable 
+FAIL MediaRecorder interface: attribute onpause assert_true: The prototype object must have a property "onpause" expected true got false
+FAIL MediaRecorder interface: attribute onresume assert_true: The prototype object must have a property "onresume" expected true got false
+PASS MediaRecorder interface: attribute onerror 
+FAIL MediaRecorder interface: attribute videoBitsPerSecond assert_true: The prototype object must have a property "videoBitsPerSecond" expected true got false
+FAIL MediaRecorder interface: attribute audioBitsPerSecond assert_true: The prototype object must have a property "audioBitsPerSecond" expected true got false
+PASS MediaRecorder interface: operation start(unsigned long) 
+PASS MediaRecorder interface: operation stop() 
+FAIL MediaRecorder interface: operation pause() assert_own_property: interface prototype object missing non-static operation expected property "pause" missing
+FAIL MediaRecorder interface: operation resume() assert_own_property: interface prototype object missing non-static operation expected property "resume" missing
+FAIL MediaRecorder interface: operation requestData() assert_own_property: interface prototype object missing non-static operation expected property "requestData" missing
+FAIL MediaRecorder interface: operation isTypeSupported(DOMString) assert_own_property: interface object missing static operation expected property "isTypeSupported" missing
+PASS MediaRecorder must be primary interface of [object MediaRecorder] 
+PASS Stringification of [object MediaRecorder] 
+FAIL MediaRecorder interface: [object MediaRecorder] must inherit property "stream" with the proper type assert_inherits: property "stream" not found in prototype chain
+FAIL MediaRecorder interface: [object MediaRecorder] must inherit property "mimeType" with the proper type assert_inherits: property "mimeType" not found in prototype chain
+PASS MediaRecorder interface: [object MediaRecorder] must inherit property "state" with the proper type 
+FAIL MediaRecorder interface: [object MediaRecorder] must inherit property "onstart" with the proper type assert_inherits: property "onstart" not found in prototype chain
+PASS MediaRecorder interface: [object MediaRecorder] must inherit property "onstop" with the proper type 
+PASS MediaRecorder interface: [object MediaRecorder] must inherit property "ondataavailable" with the proper type 
+FAIL MediaRecorder interface: [object MediaRecorder] must inherit property "onpause" with the proper type assert_inherits: property "onpause" not found in prototype chain
+FAIL MediaRecorder interface: [object MediaRecorder] must inherit property "onresume" with the proper type assert_inherits: property "onresume" not found in prototype chain
+PASS MediaRecorder interface: [object MediaRecorder] must inherit property "onerror" with the proper type 
+FAIL MediaRecorder interface: [object MediaRecorder] must inherit property "videoBitsPerSecond" with the proper type assert_inherits: property "videoBitsPerSecond" not found in prototype chain
+FAIL MediaRecorder interface: [object MediaRecorder] must inherit property "audioBitsPerSecond" with the proper type assert_inherits: property "audioBitsPerSecond" not found in prototype chain
+PASS MediaRecorder interface: [object MediaRecorder] must inherit property "start(unsigned long)" with the proper type 
+PASS MediaRecorder interface: calling start(unsigned long) on [object MediaRecorder] with too few arguments must throw TypeError 
+PASS MediaRecorder interface: [object MediaRecorder] must inherit property "stop()" with the proper type 
+FAIL MediaRecorder interface: [object MediaRecorder] must inherit property "pause()" with the proper type assert_inherits: property "pause" not found in prototype chain
+FAIL MediaRecorder interface: [object MediaRecorder] must inherit property "resume()" with the proper type assert_inherits: property "resume" not found in prototype chain
+FAIL MediaRecorder interface: [object MediaRecorder] must inherit property "requestData()" with the proper type assert_inherits: property "requestData" not found in prototype chain
+PASS MediaRecorder interface: [object MediaRecorder] must inherit property "isTypeSupported(DOMString)" with the proper type 
+FAIL MediaRecorder interface: calling isTypeSupported(DOMString) on [object MediaRecorder] with too few arguments must throw TypeError assert_own_property: interface object must have static operation as own property expected property "isTypeSupported" missing
+PASS BlobEvent interface: existence and properties of interface object 
+PASS BlobEvent interface object length 
+PASS BlobEvent interface object name 
+PASS BlobEvent interface: existence and properties of interface prototype object 
+PASS BlobEvent interface: existence and properties of interface prototype object's "constructor" property 
+PASS BlobEvent interface: existence and properties of interface prototype object's @@unscopables property 
+PASS BlobEvent interface: attribute data 
+FAIL BlobEvent interface: attribute timecode assert_true: The prototype object must have a property "timecode" expected true got false
+PASS BlobEvent must be primary interface of [object BlobEvent] 
+PASS Stringification of [object BlobEvent] 
+PASS BlobEvent interface: [object BlobEvent] must inherit property "data" with the proper type 
+FAIL BlobEvent interface: [object BlobEvent] must inherit property "timecode" with the proper type assert_inherits: property "timecode" not found in prototype chain
+PASS MediaRecorderErrorEvent interface: existence and properties of interface object 
+PASS MediaRecorderErrorEvent interface object length 
+PASS MediaRecorderErrorEvent interface object name 
+PASS MediaRecorderErrorEvent interface: existence and properties of interface prototype object 
+PASS MediaRecorderErrorEvent interface: existence and properties of interface prototype object's "constructor" property 
+PASS MediaRecorderErrorEvent interface: existence and properties of interface prototype object's @@unscopables property 
+PASS MediaRecorderErrorEvent interface: attribute error 
+FAIL MediaRecorderErrorEvent must be primary interface of undefined assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL Stringification of undefined assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL MediaRecorderErrorEvent interface: undefined must inherit property "error" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+

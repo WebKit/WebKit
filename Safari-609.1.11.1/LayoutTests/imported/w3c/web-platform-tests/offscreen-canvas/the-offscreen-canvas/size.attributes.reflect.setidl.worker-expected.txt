@@ -1,0 +1,3 @@
+
+FAIL Setting IDL attributes updates IDL and content attributes Can't find variable: OffscreenCanvas
+

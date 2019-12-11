@@ -1,0 +1,28 @@
+CONSOLE MESSAGE: line 215: TypeError: status.setAttribute is not a function. (In 'status.setAttribute("fill", passes == 7 ? "lime" : "red")', 'status.setAttribute' is undefined)
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (0,0) size 800x600
+      RenderSVGViewportContainer {svg} at (0,0) size 0x0
+        RenderSVGViewportContainer {svg} at (0,0) size 0x0
+        RenderSVGViewportContainer {svg} at (0,0) size 0x0
+        RenderSVGViewportContainer {svg} at (0,0) size 0x0
+      RenderSVGContainer {g} at (16,81) size 108x18
+        RenderSVGContainer {g} at (16,81) size 108x18 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,50.00)}]
+          RenderSVGRect {rect} at (16,85) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+          RenderSVGText {text} at (10,-1) size 55x11 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 55x11
+              chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 10 width 54.01: "value: 480"
+      RenderSVGRect {rect} at (0,0) size 800x600 [x=0.00] [y=0.00] [width=480.00] [height=360.00]
+    RenderSVGContainer {g} at (16,517) size 381x62
+      RenderSVGText {text} at (10,310) size 229x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 229x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.5 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGContainer {g} at (0,0) size 800x39
+      RenderSVGRect {rect} at (0,0) size 800x36 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
+      RenderSVGText {text} at (206,-1) size 68x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 68x23
+          chunk 1 (middle anchor) text run 1 at (206.46,18.00) startOffset 0 endOffset 5 width 67.09: "DRAFT"

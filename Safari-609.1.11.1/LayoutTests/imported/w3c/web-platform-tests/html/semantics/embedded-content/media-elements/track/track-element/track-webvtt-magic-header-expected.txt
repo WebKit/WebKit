@@ -1,0 +1,4 @@
+
+
+PASS Magic file header "WEBVTT" leads to the file properly recognized as a WebVTT file 
+

@@ -1,0 +1,21 @@
+Tests that if you perform a user delete with an open database connection, and then you re-open the same database, that the new database is actually new.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+Initial upgrade needed: Old version - 0 New version - 1
+Created an objectStore an put a value in it
+Value was stored in objectStore
+Version change transaction completed. Version is now 1. About to request clearAllDatabases
+Requested clearAllDatabases
+Database connection error'ed out. Opening a new connection.
+Reopened upgrade needed: Old version - 0 New version - 1
+[PASS] The database has no object stores, meaning it is new
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

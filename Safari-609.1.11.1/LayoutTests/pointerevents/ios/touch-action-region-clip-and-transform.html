@@ -1,0 +1,52 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<style>
+.root { position:relative; width:200px; height:200px; will-change:transform; background:green; margin-bottom:200px; }
+.container { width:200px; height:200px; background:red; }
+.larger { width:300px; height:300px; }
+.relative { position:relative }
+.none { width:100px; height:100px; background:blue; touch-action: none; }
+.clip { overflow:hidden; }
+.transform { transform:translate(150px, 150px); }
+.negtransform { transform:translate(-50px, -50px); }
+</style>
+<body>
+<div class="root">
+    <div class="container clip">
+        <div class="none transform"></div>
+    </div>
+</div>
+<div class="root">
+    <div class="container relative clip">
+        <div class="none transform"></div>
+    </div>
+</div>
+<div class="root">
+    <div class="container relative clip">
+        <div class="none transform relative"></div>
+    </div>
+</div>
+<div class="root">
+    <div class="container clip transform">
+        <div class="none negtransform"></div>
+    </div>
+</div>
+<div class="root">
+    <div class="container relative clip transform">
+        <div class="none negtransform"></div>
+    </div>
+</div>
+<div class="root clip">
+    <div class="container relative clip transform">
+        <div class="none negtransform"></div>
+    </div>
+</div>
+<pre id="results"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+    results.innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION);
+</script>
+</body>
+</html>

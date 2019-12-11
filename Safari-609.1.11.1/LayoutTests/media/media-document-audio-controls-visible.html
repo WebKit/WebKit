@@ -1,0 +1,32 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+<head>
+    <script src='video-test.js'></script>
+    <script src='media-controls.js'></script>
+    <script>
+        var panel;
+
+        function runTest()
+        {
+            if (!window.internals) {
+                failTest('This test must be run in DumpRenderTree or WebKitTestRunner.');
+                return;
+            }
+
+            video = document.getElementById('fr').contentDocument.querySelector('video');
+            panel = mediaControlsElement(internals.shadowRoot(video).firstChild, '-webkit-media-controls-panel');
+        
+            testExpected('panel.offsetWidth', 1, '>');
+            testExpected('panel.offsetHeight', 1, '>');
+
+            endTest();
+        }
+    </script>
+</head>
+<body>
+    <p>
+        This tests that in a standalone media document with audio content, the media element has visible controls.
+    </p>
+    <pre id='console'></pre>
+    <iframe src='content/test.wav' id='fr' width=380 height=330 onload='runTest()'></iframe>
+</body>

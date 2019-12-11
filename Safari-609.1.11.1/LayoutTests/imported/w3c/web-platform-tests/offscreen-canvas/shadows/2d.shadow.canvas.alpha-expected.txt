@@ -1,0 +1,7 @@
+2d.shadow.canvas.alpha
+
+Shadows are drawn correctly for partially-transparent canvases
+
+
+FAIL Shadows are drawn correctly for partially-transparent canvases null is not an object (evaluating 'ctx2.fillStyle = 'rgba(255, 0, 0, 0.5)'')
+

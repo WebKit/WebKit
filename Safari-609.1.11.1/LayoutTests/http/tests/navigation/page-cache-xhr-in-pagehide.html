@@ -1,0 +1,68 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/resources/js-test-pre.js"></script>
+<script>
+description('Tests that a page with a loading XMLHttpRequest goes into the page cache.');
+window.jsTestIsAsync = true;
+
+var restoredFromPageCache = false;
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+
+    if (event.persisted) {
+        testPassed("Page did enter and was restored from the page cache");
+        restoredFromPageCache = true;
+    }
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        testFailed("Page did not enter the page cache.");
+        finishJSTest();
+    }
+    xhr = new XMLHttpRequest();
+    xhr.onload = xhrLoaded;
+    xhr.onabort = xhrAbort;
+    xhr.onerror = xhrError;
+    // Slow loading XHR (3-second stall).
+    xhr.open("GET", "/resources/load-and-stall.cgi?name=load-and-stall.cgi&stallFor=3&stallAt=0&mimeType=text/plain", true);
+    xhr.send();
+}, false);
+
+function xhrLoaded()
+{
+    testFailed("The XMLHttpRequest should not haved loaded");
+    finishJSTest();
+}
+
+function xhrAbort() {
+    testFailed("Executed the XHR abort handler unexpectedly");
+    finishJSTest();
+}
+
+function xhrError() {
+    if (restoredFromPageCache)
+    	testPassed("Executed the XHR error handler after restoring from PageCache");
+    else
+        testFailed("Executed the XHR error handler before entering PageCache");
+    shouldBe("xhr.status", "0");
+    finishJSTest();
+}
+
+window.addEventListener('load', function() {
+    // This needs to happen in a setTimeout because a navigation inside the onload handler would
+    // not create a history entry.
+    setTimeout(function() {
+      // Force a back navigation back to this page.
+      window.location.href = "resources/page-cache-helper.html";
+    }, 0);
+}, false);
+
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

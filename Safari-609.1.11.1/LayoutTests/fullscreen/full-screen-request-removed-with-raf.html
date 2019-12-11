@@ -1,0 +1,56 @@
+
+<script src="full-screen-test.js"></script>
+<script>
+    
+    window.addEventListener('load', (ev) => {
+        var target = document.querySelector('#target');
+        var didRemoveChild = false;
+
+        document.addEventListener('webkitfullscreenchange', (ev) => {
+            if (!didRemoveChild) {
+                // The 'webkitfullscreenchange' event was fired before the rAF() timer. This is not a
+                // successful test, but not a failure either.
+                removeTarget();
+                consoleWrite("SUCCESS");
+
+            } else if (document.webkitCurrentFullScreenElement && !document.webkitCurrentFullScreenElement.ownerDocument)
+                consoleWrite("FAIL: document.webkitCurrentFullScreenElement.ownerDocument is NULL!");
+            else
+                consoleWrite("SUCCESS");
+
+            document.webkitExitFullscreen();
+            endTest();    
+        }, {once: true});
+
+        document.addEventListener('webkitfullscreenerror', (ev) => {
+            consoleWrite("SUCCESS");
+            endTest();    
+        }, {once: true});
+
+        function removeTarget()
+        {
+            if (didRemoveChild)
+                return;
+            consoleWrite("Removed child element.");
+            target.parentNode.removeChild(target);
+            didRemoveChild = true;
+            consoleWrite("");
+        }
+
+        function test()
+        {
+            target.webkitRequestFullScreen();
+            window.requestAnimationFrame(removeTarget);
+        }  
+
+        runWithKeyDown(test);
+    });
+
+</script>
+
+<p>Tests that fullscreen is not entered if the fullscreen element ancestor is removed with rAF while entering fullscreen.</p>
+
+<div id=ancestor>
+    <span id=target>Fullscreen target!</span>
+</div>
+

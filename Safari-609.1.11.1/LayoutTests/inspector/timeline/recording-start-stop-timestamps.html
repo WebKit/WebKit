@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    var recordingStartTime = NaN;
+    var recordingEndTime = NaN;
+
+    function check(condition, message)
+    {
+        InspectorTest.log((condition ? "PASS" : "FAIL") + ": " + message);
+    }
+
+    WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, (event) => {
+        if (WI.timelineManager.capturingState === WI.TimelineManager.CapturingState.Active) {
+            InspectorTest.assert(typeof event.data.startTime === "number");
+            InspectorTest.assert(event.data.startTime > 0);
+
+            if (isNaN(recordingStartTime)) {
+                InspectorTest.log("PASS: 1st CapturingStarted had startTime");
+            } else {
+                InspectorTest.assert(event.data.startTime > recordingStartTime, "FAIL: 2nd CapturingStarted should be > 1st CapturingStarted");
+                InspectorTest.log("PASS: 2nd CapturingStarted had startTime > 1st CapturingStarted");
+                InspectorTest.assert(event.data.startTime > recordingEndTime, "FAIL: 2nd CapturingStarted should be > 1st CapturingStopped");
+                InspectorTest.log("PASS: 2nd CapturingStarted had startTime > 1st CapturingStopped");
+            }
+
+            recordingStartTime = event.data.startTime;
+            return;
+        }
+
+        if (WI.timelineManager.capturingState === WI.TimelineManager.CapturingState.Inactive) {
+            InspectorTest.assert(typeof event.data.endTime === "number");
+            InspectorTest.assert(event.data.endTime > 0);
+
+            if (isNaN(recordingEndTime)) {
+                InspectorTest.log("PASS: 1st CapturingStopped had endTime");
+                InspectorTest.assert(event.data.endTime > recordingStartTime, "FAIL: 1st CapturingStopped should be > 1st CapturingStarted");
+                InspectorTest.log("PASS: 1st CapturingStopped had endTime > 1st CapturingStarted");
+            } else {
+                InspectorTest.assert(event.data.endTime > recordingEndTime, "FAIL: 2nd CapturingStopped should be > 1st CapturingStopped");
+                InspectorTest.log("PASS: 2nd CapturingStopped had endTime > 1st CapturingStopped");
+                InspectorTest.assert(event.data.endTime > recordingStartTime, "FAIL: 2nd CapturingStopped should be > 2nd CapturingStarted");
+                InspectorTest.log("PASS: 2nd CapturingStopped had endTime > 2nd CapturingStarted");
+                InspectorTest.completeTest();
+            }
+
+            recordingEndTime = event.data.endTime;
+            return;
+        }
+    });
+
+    TimelineAgent.start()
+        .then(function() { return TimelineAgent.stop(); })
+        .then(function() { return TimelineAgent.start(); })
+        .then(function() { return TimelineAgent.stop(); });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that timeline start and stop events have timestamps and are ordered reasonably.</p>
+</body>
+</html>

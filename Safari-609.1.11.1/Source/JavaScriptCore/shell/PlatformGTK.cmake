@@ -1,0 +1,3 @@
+list(APPEND jsc_LIBRARIES
+    ${GLIB_LIBRARIES}
+)

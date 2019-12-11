@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="resources/audio-testing.js"></script>
+<script src="resources/audiobuffersource-testing.js"></script>
+</head>
+
+<body>
+
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Tests that AudioBufferSourceNode validates start and stop calls.");
+
+var bufferSource;
+
+function runTest() {
+    window.jsTestIsAsync = true;
+
+    var sampleRate = 44100.0;
+    var numberOfFrames = 32;
+    var context = new webkitOfflineAudioContext(1, numberOfFrames, sampleRate);
+    bufferSource = context.createBufferSource();
+    bufferSource.buffer = createTestBuffer(context, numberOfFrames);
+    bufferSource.connect(context.destination);
+
+    // 'stop' should be called only after 'start'.
+    shouldThrowErrorName("bufferSource.stop(0)", "InvalidStateError");
+    bufferSource.start(0);
+
+    // 'start' should be called only once.
+    shouldThrowErrorName("bufferSource.start(0)", "InvalidStateError");
+    bufferSource.stop(0);
+
+    // 'stop' should be called only once.
+    shouldThrowErrorName("bufferSource.stop(0)", "InvalidStateError");
+
+    context.oncomplete = finishJSTest;
+    context.startRendering();
+}
+
+runTest();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <style>
+        #elements .panel {
+            min-height: 250px;
+        }
+
+        #elements {
+            height: 600px;
+            columns: 2;
+            -webkit-columns: 2;
+            border: 2px solid black;
+        }
+
+        .list-group-item {
+            overflow: hidden;
+            padding: 20px;
+            border: 2px solid gray;
+        }
+
+        .list-group-item:first-child {
+            border-radius: 10px;
+        }
+
+        .list-group-item:last-child {
+            border-radius: 10px;
+        }
+        </style> 
+</head>
+<body>
+<div id="elements" class="container-fluid">
+    
+    <div class="panel panel-default" style="height: 600px">
+    </div>
+    <div class="panel panel-default">
+        <ul class="list-group">
+            <li class="list-group-item">Can you see this?</li>
+            <li class="list-group-item">You should see text above and below this text.</li>
+            <li class="list-group-item">Can you see this?</li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,498 @@
+layer at (0,0) size 785x4053
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x4053
+  RenderBlock {HTML} at (0,0) size 785x4053
+    RenderBody {BODY} at (8,8) size 769x4037 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 769x18
+        RenderText {#text} at (0,0) size 363x18
+          text run at (0,0) width 363: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,34) size 769x810
+        RenderText {#text} at (0,0) size 554x810
+          text run at (0,0) width 297: "P.one {color: green; rotation: 70deg;}"
+          text run at (0,15) width 172: "P.oneb {color: green;}"
+          text run at (0,30) width 227: "P.oneb {color: invalidValue;}"
+          text run at (0,45) width 266: "P.two {background-color: inherit;}"
+          text run at (0,60) width 211: "H1 + P.three {color: blue;}"
+          text run at (0,75) width 196: "P.four + H1 {color: red;}"
+          text run at (0,90) width 258: "P.five {background-color: \"red\";}"
+          text run at (0,105) width 398: "P.sixa {border-width: medium; border-style: solid;}"
+          text run at (0,120) width 391: "P.sixb {border-width: funny; border-style: solid;}"
+          text run at (0,135) width 383: "P.sixc {border-width: 50zu; border-style: solid;}"
+          text run at (0,150) width 367: "P.sixd {border-width: px; border-style: solid;}"
+          text run at (0,165) width 94: "@three-dee {"
+          text run at (0,180) width 180: " @background-lighting {"
+          text run at (0,195) width 133: "  azimuth: 30deg;"
+          text run at (0,210) width 157: "  elevation: 190deg;"
+          text run at (0,225) width 24: "  }"
+          text run at (0,240) width 180: " P.seven { color: red }"
+          text run at (0,255) width 16: " }"
+          text run at (0,270) width 180: "P.eight {COLOR: GREEN;}"
+          text run at (0,285) width 188: "OL:wait {color: maroon;}"
+          text run at (0,300) width 266: "P.ten:first-child {color: maroon;}"
+          text run at (0,315) width 203: "UL:lang(fr) {color: gray;}"
+          text run at (0,330) width 242: "BLOCKQUOTE[href] {color: navy;}"
+          text run at (0,345) width 281: "ACRONYM[href=\"foo\"] {color: purple;}"
+          text run at (0,360) width 289: "ADDRESS[href~=\"foo\"] {color: purple;}"
+          text run at (0,375) width 242: "SPAN[lang|=\"fr\"] {color: #c37;}"
+          text run at (0,390) width 94: "@media tty {"
+          text run at (0,405) width 133: " H1 {color: red;}"
+          text run at (0,420) width 188: " P.sixteen {color: red;}"
+          text run at (0,435) width 16: " }"
+          text run at (0,450) width 94: "@three-dee {"
+          text run at (0,465) width 203: " P.seventeen {color: red }"
+          text run at (0,480) width 16: " }"
+          text run at (0,495) width 554: "P.eighteena {text-decoration: underline overline line-through diagonal;"
+          text run at (0,510) width 406: "            font: bold highlighted 100% sans-serif;}"
+          text run at (0,525) width 554: "P.eighteenb {text-decoration: underline overline line-through diagonal;"
+          text run at (0,540) width 367: "            font: bold highlighted 100% serif;}"
+          text run at (0,555) width 375: "EM, P.nineteena ! EM, STRONG {font-size: 200%; }"
+          text run at (0,570) width 0: " "
+          text run at (0,585) width 125: "// UL.nineteenb,"
+          text run at (0,600) width 196: "P.nineteenb {color: red;}"
+          text run at (0,615) width 0: " "
+          text run at (0,630) width 352: "P.twentya {rotation-code: \"}\"; color: blue;} "
+          text run at (0,645) width 383: "P.twentyb {rotation-code: \"\\\"}\\\"\"; color: green;}"
+          text run at (0,660) width 391: "P.twentyonea {rotation-code: '}'; color: purple;} "
+          text run at (0,675) width 406: "P.twentyoneb {rotation-code: '\\'}\\''; color: green;}"
+          text run at (0,690) width 102: "P.twentytwo {"
+          text run at (0,705) width 367: " type-display: @threedee {rotation-code: '}';};"
+          text run at (0,720) width 110: " color: green;"
+          text run at (0,735) width 16: " }"
+          text run at (0,750) width 274: "P.twentythree {text-indent: 0.5in;}"
+          text run at (0,765) width 110: " color: maroon"
+          text run at (0,780) width 203: "P.twentyfour {color: red;}"
+          text run at (0,795) width 0: " "
+      RenderBlock {HR} at (0,857) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,875) size 769x18 [color=#008000]
+        RenderText {#text} at (0,0) size 493x18
+          text run at (0,0) width 493: "This paragraph should be green, because only the rotation should be ignored."
+      RenderBlock {P} at (0,909) size 769x18 [color=#008000]
+        RenderText {#text} at (0,0) size 634x18
+          text run at (0,0) width 634: "This paragraph should be green, since error-checking should be done before calculating specificity."
+      RenderBlock {P} at (0,943) size 769x36
+        RenderText {#text} at (0,0) size 568x18
+          text run at (0,0) width 568: "This paragraph should have a solid gray background (or a white grid), because in CSS1, "
+        RenderInline {CODE} at (0,0) size 56x15
+          RenderText {#text} at (567,2) size 56x15
+            text run at (567,2) width 56: "inherit"
+        RenderText {#text} at (622,0) size 769x36
+          text run at (622,0) width 147: " is an invalid keyword,"
+          text run at (0,18) width 530: "and in CSS2, it will cause the gray background (not the white grid) to be inherited."
+      RenderBlock {P} at (0,995) size 769x18
+        RenderText {#text} at (0,0) size 649x18
+          text run at (0,0) width 649: "This paragraph should be black, since in CSS1, the selector is invalid, and in CSS2, it does not apply."
+      RenderBlock {P} at (0,1029) size 769x18
+        RenderText {#text} at (0,0) size 649x18
+          text run at (0,0) width 649: "This paragraph should be black, since in CSS1, the selector is invalid, and in CSS2, it does not apply."
+      RenderBlock {P} at (0,1063) size 769x18
+        RenderText {#text} at (0,0) size 532x18
+          text run at (0,0) width 532: "This paragraph should have a white background, since keywords cannot be quoted."
+      RenderBlock {P} at (0,1097) size 769x42 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 731x36
+          text run at (3,3) width 656: "This paragraph should have a medium-width border around it (the same as the next three paragraphs). "
+          text run at (658,3) width 76: "This should"
+          text run at (3,21) width 365: "cause the user agent to use the default value of 'medium'."
+      RenderBlock {P} at (0,1155) size 769x42 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 754x36
+          text run at (3,3) width 754: "This paragraph should have a medium-width border around it (the same as the previous and the next two paragraphs),"
+          text run at (3,21) width 233: "because the border-width is invalid. "
+          text run at (235,21) width 444: "This should cause the user agent to use the default value of 'medium'."
+      RenderBlock {P} at (0,1213) size 769x60 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 754x54
+          text run at (3,3) width 754: "This paragraph should have a medium-width border around it (the same as the next and the previous two paragraphs),"
+          text run at (3,21) width 599: "because the border-width units are invalid, and therefore the border-width should be ignored. "
+          text run at (601,21) width 139: "This should cause the"
+          text run at (3,39) width 302: "user agent to use the default value of 'medium'."
+      RenderBlock {P} at (0,1289) size 769x60 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 758x54
+          text run at (3,3) width 758: "This paragraph should have a medium-width border around it (the same as the previous three paragraphs), because the"
+          text run at (3,21) width 558: "border-width does not have any value to go with its pixel unit, and is therefore invalid. "
+          text run at (560,21) width 170: "This should cause the user"
+          text run at (3,39) width 271: "agent to use the default value of 'medium'."
+      RenderBlock {P} at (0,1365) size 769x18
+        RenderText {#text} at (0,0) size 676x18
+          text run at (0,0) width 676: "This paragraph should be black, because the style declaration that applies to it is within an invalid at-rule."
+      RenderBlock {P} at (0,1399) size 769x36 [color=#008000]
+        RenderText {#text} at (0,0) size 739x36
+          text run at (0,0) width 210: "This paragraph should be green. "
+          text run at (209,0) width 530: "CSS is case-insensitive, unless required to be case sensitive due to interaction with"
+          text run at (0,18) width 278: "other standards (e.g., font names or URLs.)"
+      RenderBlock {OL} at (0,1451) size 769x18
+        RenderListItem {LI} at (40,0) size 729x18
+          RenderListMarker at (-20,0) size 16x18: "1"
+          RenderText {#text} at (0,0) size 635x18
+            text run at (0,0) width 635: "This ordered list item should be black, because the declaration has an invalid pseudo-class selector."
+      RenderBlock {P} at (0,1485) size 769x36
+        RenderText {#text} at (0,0) size 765x36
+          text run at (0,0) width 765: "This paragraph should be black, because, in CSS1, :first-child is an invalid pseudo-class, and in CSS2, this paragraph is"
+          text run at (0,18) width 113: "not the first child."
+      RenderBlock {UL} at (0,1537) size 769x36
+        RenderListItem {LI} at (40,0) size 729x36
+          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderText {#text} at (0,0) size 704x36
+            text run at (0,0) width 704: "This unordered list item should be black, because, according to CSS1, the selector is invalid, and according to"
+            text run at (0,18) width 232: "CSS2, the selector should not apply."
+      RenderBlock {BLOCKQUOTE} at (40,1589) size 689x36
+        RenderText {#text} at (0,0) size 654x36
+          text run at (0,0) width 654: "This blockquote should be black, because, according to CSS1, the selector is invalid, and according to"
+          text run at (0,18) width 232: "CSS2, the selector should not apply."
+      RenderBlock {P} at (0,1641) size 769x36
+        RenderInline {ACRONYM} at (0,0) size 761x36
+          RenderText {#text} at (0,0) size 761x36
+            text run at (0,0) width 761: "This acronym should be black, because, according to CSS1, the selector is invalid, and according to CSS2, the selector"
+            text run at (0,18) width 110: "should not apply."
+      RenderBlock {ADDRESS} at (0,1693) size 769x36
+        RenderText {#text} at (0,0) size 756x36
+          text run at (0,0) width 756: "This address should be black, because, according to CSS1, the selector is invalid, and according to CSS2, the selector"
+          text run at (0,18) width 110: "should not apply."
+      RenderBlock {P} at (0,1745) size 769x36
+        RenderInline {SPAN} at (0,0) size 734x36
+          RenderText {#text} at (0,0) size 734x36
+            text run at (0,0) width 734: "This span should be black, because, according to CSS1, the selector is invalid, and according to CSS2, the selector"
+            text run at (0,18) width 110: "should not apply."
+      RenderBlock {P} at (0,1797) size 769x36
+        RenderText {#text} at (0,0) size 755x36
+          text run at (0,0) width 680: "This paragraph should be black, because the style declaration that applies to it is within an invalid at-rule. "
+          text run at (679,0) width 76: "However, it"
+          text run at (0,18) width 617: "is valid in CSS2, so if this is being viewed on a tty browser that supports CSS2, it should be red."
+      RenderBlock {P} at (0,1849) size 769x18
+        RenderText {#text} at (0,0) size 676x18
+          text run at (0,0) width 676: "This paragraph should be black, because the style declaration that applies to it is within an invalid at-rule."
+      RenderBlock {P} at (0,1883) size 769x72
+        RenderText {#text} at (0,0) size 753x18
+          text run at (0,0) width 753: "The text of this paragraph should be normal (that is, it should not be underlined, overlined, stricken, or bold), because"
+        RenderInline {CODE} at (0,0) size 63x15
+          RenderText {#text} at (0,20) size 63x15
+            text run at (0,20) width 63: "diagonal"
+        RenderText {#text} at (62,18) size 231x18
+          text run at (62,18) width 231: " is not a valid keyword, making the "
+        RenderInline {CODE} at (0,0) size 118x15
+          RenderText {#text} at (292,20) size 118x15
+            text run at (292,20) width 118: "text-decoration"
+        RenderText {#text} at (409,18) size 135x18
+          text run at (409,18) width 57: " invalid. "
+          text run at (465,18) width 79: "In addition, "
+        RenderInline {CODE} at (0,0) size 87x15
+          RenderText {#text} at (543,20) size 87x15
+            text run at (543,20) width 87: "highlighted"
+        RenderText {#text} at (629,18) size 762x36
+          text run at (629,18) width 133: " is not a valid part of"
+          text run at (0,36) width 24: "the "
+        RenderInline {CODE} at (0,0) size 32x15
+          RenderText {#text} at (23,38) size 32x15
+            text run at (23,38) width 32: "font"
+        RenderText {#text} at (54,36) size 732x36
+          text run at (54,36) width 184: " property, making it invalid. "
+          text run at (237,36) width 495: "Therefore, this paragraph's font should be the UA default, and match the next"
+          text run at (0,54) width 72: "paragraph. "
+          text run at (71,54) width 197: "If this is not the case, then the "
+        RenderInline {CODE} at (0,0) size 32x15
+          RenderText {#text} at (267,56) size 32x15
+            text run at (267,56) width 32: "font"
+        RenderText {#text} at (298,54) size 255x18
+          text run at (298,54) width 255: " declaration is being improperly parsed."
+      RenderBlock {P} at (0,1971) size 769x72
+        RenderText {#text} at (0,0) size 753x18
+          text run at (0,0) width 753: "The text of this paragraph should be normal (that is, it should not be underlined, overlined, stricken, or bold), because"
+        RenderInline {CODE} at (0,0) size 63x15
+          RenderText {#text} at (0,20) size 63x15
+            text run at (0,20) width 63: "diagonal"
+        RenderText {#text} at (62,18) size 231x18
+          text run at (62,18) width 231: " is not a valid keyword, making the "
+        RenderInline {CODE} at (0,0) size 118x15
+          RenderText {#text} at (292,20) size 118x15
+            text run at (292,20) width 118: "text-decoration"
+        RenderText {#text} at (409,18) size 135x18
+          text run at (409,18) width 57: " invalid. "
+          text run at (465,18) width 79: "In addition, "
+        RenderInline {CODE} at (0,0) size 87x15
+          RenderText {#text} at (543,20) size 87x15
+            text run at (543,20) width 87: "highlighted"
+        RenderText {#text} at (629,18) size 762x36
+          text run at (629,18) width 133: " is not a valid part of"
+          text run at (0,36) width 24: "the "
+        RenderInline {CODE} at (0,0) size 32x15
+          RenderText {#text} at (23,38) size 32x15
+            text run at (23,38) width 32: "font"
+        RenderText {#text} at (54,36) size 760x36
+          text run at (54,36) width 184: " property, making it invalid. "
+          text run at (237,36) width 523: "Therefore, this paragraph's font should be the UA default, and match the previous"
+          text run at (0,54) width 72: "paragraph. "
+          text run at (71,54) width 197: "If this is not the case, then the "
+        RenderInline {CODE} at (0,0) size 32x15
+          RenderText {#text} at (267,56) size 32x15
+            text run at (267,56) width 32: "font"
+        RenderText {#text} at (298,54) size 255x18
+          text run at (298,54) width 255: " declaration is being improperly parsed."
+      RenderBlock {P} at (0,2059) size 769x54
+        RenderText {#text} at (0,0) size 542x18
+          text run at (0,0) width 513: "The text of this paragraph should be normal size because the selector is invalid. "
+          text run at (512,0) width 30: "The "
+        RenderInline {EM} at (0,0) size 102x18
+          RenderText {#text} at (541,0) size 102x18
+            text run at (541,0) width 102: "emphasized text"
+        RenderText {#text} at (642,0) size 56x18
+          text run at (642,0) width 56: " and the "
+        RenderInline {STRONG} at (0,0) size 741x36
+          RenderText {#text} at (697,0) size 741x36
+            text run at (697,0) width 44: "strong"
+            text run at (0,18) width 26: "text"
+        RenderText {#text} at (25,18) size 736x36
+          text run at (25,18) width 711: " within it should also be normal size, since the entire ruleset should be skipped (since in some future version of"
+          text run at (0,36) width 603: "CSS, there could be an operator within the selector that has higher precedence than a comma)."
+      RenderBlock {P} at (0,2129) size 769x36
+        RenderText {#text} at (0,0) size 474x18
+          text run at (0,0) width 474: "This paragraph should be black, because the line before the declaration is "
+        RenderInline {STRONG} at (0,0) size 23x18
+          RenderText {#text} at (473,0) size 23x18
+            text run at (473,0) width 23: "not"
+        RenderText {#text} at (495,0) size 759x36
+          text run at (495,0) width 264: " a comment and therefore the selector for"
+          text run at (0,18) width 141: "P.nineteenb is invalid."
+      RenderBlock {P} at (0,2181) size 769x18 [color=#0000FF]
+        RenderText {#text} at (0,0) size 480x18
+          text run at (0,0) width 480: "This paragraph should be blue, because only the first declaration is invalid."
+      RenderBlock {P} at (0,2215) size 769x18 [color=#008000]
+        RenderText {#text} at (0,0) size 488x18
+          text run at (0,0) width 488: "This paragraph should be green, because only the first declaration is invalid."
+      RenderBlock {P} at (0,2249) size 769x18 [color=#800080]
+        RenderText {#text} at (0,0) size 493x18
+          text run at (0,0) width 493: "This paragraph should be purple, because only the first declaration is invalid."
+      RenderBlock {P} at (0,2283) size 769x18 [color=#008000]
+        RenderText {#text} at (0,0) size 488x18
+          text run at (0,0) width 488: "This paragraph should be green, because only the first declaration is invalid."
+      RenderBlock {P} at (0,2317) size 769x18 [color=#008000]
+        RenderText {#text} at (0,0) size 488x18
+          text run at (0,0) width 488: "This paragraph should be green, because only the first declaration is invalid."
+      RenderBlock {P} at (0,2351) size 769x18
+        RenderText {#text} at (48,0) size 612x18
+          text run at (48,0) width 494: "This paragraph should be indented half an inch, but it should not be maroon. "
+          text run at (541,0) width 119: "It should be black."
+      RenderBlock {P} at (0,2385) size 769x36
+        RenderText {#text} at (0,0) size 767x36
+          text run at (0,0) width 767: "This paragraph should be black, because the color declaration after the previous ruleset should be considered part of the"
+          text run at (0,18) width 632: "selector for this ruleset, and this ruleset therefore has an invalid selector and should not be applied."
+      RenderTable {TABLE} at (0,2437) size 769x1600 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 767x1598
+          RenderTableRow {TR} at (0,0) size 767x26
+            RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 161x18
+                RenderText {#text} at (4,4) size 161x18
+                  text run at (4,4) width 161: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,26) size 767x1572
+            RenderTableCell {TD} at (0,799) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x18
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,26) size 755x1572 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 747x18 [color=#008000]
+                RenderText {#text} at (0,0) size 493x18
+                  text run at (0,0) width 493: "This paragraph should be green, because only the rotation should be ignored."
+              RenderBlock {P} at (4,38) size 747x18 [color=#008000]
+                RenderText {#text} at (0,0) size 634x18
+                  text run at (0,0) width 634: "This paragraph should be green, since error-checking should be done before calculating specificity."
+              RenderBlock {P} at (4,72) size 747x36
+                RenderText {#text} at (0,0) size 568x18
+                  text run at (0,0) width 568: "This paragraph should have a solid gray background (or a white grid), because in CSS1, "
+                RenderInline {CODE} at (0,0) size 56x15
+                  RenderText {#text} at (567,2) size 56x15
+                    text run at (567,2) width 56: "inherit"
+                RenderText {#text} at (622,0) size 705x36
+                  text run at (622,0) width 83: " is an invalid"
+                  text run at (0,18) width 594: "keyword, and in CSS2, it will cause the gray background (not the white grid) to be inherited."
+              RenderBlock {P} at (4,124) size 747x18
+                RenderText {#text} at (0,0) size 649x18
+                  text run at (0,0) width 649: "This paragraph should be black, since in CSS1, the selector is invalid, and in CSS2, it does not apply."
+              RenderBlock {P} at (4,158) size 747x18
+                RenderText {#text} at (0,0) size 649x18
+                  text run at (0,0) width 649: "This paragraph should be black, since in CSS1, the selector is invalid, and in CSS2, it does not apply."
+              RenderBlock {P} at (4,192) size 747x18
+                RenderText {#text} at (0,0) size 532x18
+                  text run at (0,0) width 532: "This paragraph should have a white background, since keywords cannot be quoted."
+              RenderBlock {P} at (4,226) size 747x42 [border: (3px solid #000000)]
+                RenderText {#text} at (3,3) size 731x36
+                  text run at (3,3) width 656: "This paragraph should have a medium-width border around it (the same as the next three paragraphs). "
+                  text run at (658,3) width 76: "This should"
+                  text run at (3,21) width 365: "cause the user agent to use the default value of 'medium'."
+              RenderBlock {P} at (4,284) size 747x60 [border: (3px solid #000000)]
+                RenderText {#text} at (3,3) size 694x54
+                  text run at (3,3) width 670: "This paragraph should have a medium-width border around it (the same as the previous and the next two"
+                  text run at (3,21) width 317: "paragraphs), because the border-width is invalid. "
+                  text run at (319,21) width 378: "This should cause the user agent to use the default value of"
+                  text run at (3,39) width 63: "'medium'."
+              RenderBlock {P} at (4,360) size 747x60 [border: (3px solid #000000)]
+                RenderText {#text} at (3,3) size 711x54
+                  text run at (3,3) width 670: "This paragraph should have a medium-width border around it (the same as the next and the previous two"
+                  text run at (3,21) width 683: "paragraphs), because the border-width units are invalid, and therefore the border-width should be ignored. "
+                  text run at (685,21) width 29: "This"
+                  text run at (3,39) width 411: "should cause the user agent to use the default value of 'medium'."
+              RenderBlock {P} at (4,436) size 747x60 [border: (3px solid #000000)]
+                RenderText {#text} at (3,3) size 734x54
+                  text run at (3,3) width 734: "This paragraph should have a medium-width border around it (the same as the previous three paragraphs), because"
+                  text run at (3,21) width 582: "the border-width does not have any value to go with its pixel unit, and is therefore invalid. "
+                  text run at (584,21) width 139: "This should cause the"
+                  text run at (3,39) width 302: "user agent to use the default value of 'medium'."
+              RenderBlock {P} at (4,512) size 747x18
+                RenderText {#text} at (0,0) size 676x18
+                  text run at (0,0) width 676: "This paragraph should be black, because the style declaration that applies to it is within an invalid at-rule."
+              RenderBlock {P} at (4,546) size 747x36 [color=#008000]
+                RenderText {#text} at (0,0) size 739x36
+                  text run at (0,0) width 210: "This paragraph should be green. "
+                  text run at (209,0) width 530: "CSS is case-insensitive, unless required to be case sensitive due to interaction with"
+                  text run at (0,18) width 278: "other standards (e.g., font names or URLs.)"
+              RenderBlock {OL} at (4,598) size 747x18
+                RenderListItem {LI} at (40,0) size 707x18
+                  RenderListMarker at (-20,0) size 16x18: "1"
+                  RenderText {#text} at (0,0) size 635x18
+                    text run at (0,0) width 635: "This ordered list item should be black, because the declaration has an invalid pseudo-class selector."
+              RenderBlock {P} at (4,632) size 747x36
+                RenderText {#text} at (0,0) size 683x36
+                  text run at (0,0) width 683: "This paragraph should be black, because, in CSS1, :first-child is an invalid pseudo-class, and in CSS2, this"
+                  text run at (0,18) width 196: "paragraph is not the first child."
+              RenderBlock {UL} at (4,684) size 747x36
+                RenderListItem {LI} at (40,0) size 707x36
+                  RenderListMarker at (-17,0) size 7x18: bullet
+                  RenderText {#text} at (0,0) size 704x36
+                    text run at (0,0) width 704: "This unordered list item should be black, because, according to CSS1, the selector is invalid, and according to"
+                    text run at (0,18) width 232: "CSS2, the selector should not apply."
+              RenderBlock {BLOCKQUOTE} at (44,736) size 667x36
+                RenderText {#text} at (0,0) size 654x36
+                  text run at (0,0) width 654: "This blockquote should be black, because, according to CSS1, the selector is invalid, and according to"
+                  text run at (0,18) width 232: "CSS2, the selector should not apply."
+              RenderBlock {P} at (4,788) size 747x36
+                RenderInline {ACRONYM} at (0,0) size 707x36
+                  RenderText {#text} at (0,0) size 707x36
+                    text run at (0,0) width 707: "This acronym should be black, because, according to CSS1, the selector is invalid, and according to CSS2, the"
+                    text run at (0,18) width 164: "selector should not apply."
+              RenderBlock {ADDRESS} at (4,840) size 747x36
+                RenderText {#text} at (0,0) size 701x36
+                  text run at (0,0) width 701: "This address should be black, because, according to CSS1, the selector is invalid, and according to CSS2, the"
+                  text run at (0,18) width 165: "selector should not apply."
+              RenderBlock {P} at (4,892) size 747x36
+                RenderInline {SPAN} at (0,0) size 734x36
+                  RenderText {#text} at (0,0) size 734x36
+                    text run at (0,0) width 734: "This span should be black, because, according to CSS1, the selector is invalid, and according to CSS2, the selector"
+                    text run at (0,18) width 110: "should not apply."
+              RenderBlock {P} at (4,944) size 747x36
+                RenderText {#text} at (0,0) size 742x36
+                  text run at (0,0) width 680: "This paragraph should be black, because the style declaration that applies to it is within an invalid at-rule. "
+                  text run at (679,0) width 63: "However,"
+                  text run at (0,18) width 630: "it is valid in CSS2, so if this is being viewed on a tty browser that supports CSS2, it should be red."
+              RenderBlock {P} at (4,996) size 747x18
+                RenderText {#text} at (0,0) size 676x18
+                  text run at (0,0) width 676: "This paragraph should be black, because the style declaration that applies to it is within an invalid at-rule."
+              RenderBlock {P} at (4,1030) size 747x72
+                RenderText {#text} at (0,0) size 699x36
+                  text run at (0,0) width 699: "The text of this paragraph should be normal (that is, it should not be underlined, overlined, stricken, or bold),"
+                  text run at (0,18) width 55: "because "
+                RenderInline {CODE} at (0,0) size 64x15
+                  RenderText {#text} at (54,20) size 64x15
+                    text run at (54,20) width 64: "diagonal"
+                RenderText {#text} at (117,18) size 230x18
+                  text run at (117,18) width 230: " is not a valid keyword, making the "
+                RenderInline {CODE} at (0,0) size 118x15
+                  RenderText {#text} at (346,20) size 118x15
+                    text run at (346,20) width 118: "text-decoration"
+                RenderText {#text} at (463,18) size 135x18
+                  text run at (463,18) width 58: " invalid. "
+                  text run at (520,18) width 78: "In addition, "
+                RenderInline {CODE} at (0,0) size 87x15
+                  RenderText {#text} at (597,20) size 87x15
+                    text run at (597,20) width 87: "highlighted"
+                RenderText {#text} at (683,18) size 735x36
+                  text run at (683,18) width 52: " is not a"
+                  text run at (0,36) width 106: "valid part of the "
+                RenderInline {CODE} at (0,0) size 32x15
+                  RenderText {#text} at (105,38) size 32x15
+                    text run at (105,38) width 32: "font"
+                RenderText {#text} at (136,36) size 716x36
+                  text run at (136,36) width 184: " property, making it invalid. "
+                  text run at (319,36) width 397: "Therefore, this paragraph's font should be the UA default, and"
+                  text run at (0,54) width 171: "match the next paragraph. "
+                  text run at (170,54) width 196: "If this is not the case, then the "
+                RenderInline {CODE} at (0,0) size 32x15
+                  RenderText {#text} at (365,56) size 32x15
+                    text run at (365,56) width 32: "font"
+                RenderText {#text} at (396,54) size 255x18
+                  text run at (396,54) width 255: " declaration is being improperly parsed."
+              RenderBlock {P} at (4,1118) size 747x72
+                RenderText {#text} at (0,0) size 699x36
+                  text run at (0,0) width 699: "The text of this paragraph should be normal (that is, it should not be underlined, overlined, stricken, or bold),"
+                  text run at (0,18) width 55: "because "
+                RenderInline {CODE} at (0,0) size 64x15
+                  RenderText {#text} at (54,20) size 64x15
+                    text run at (54,20) width 64: "diagonal"
+                RenderText {#text} at (117,18) size 230x18
+                  text run at (117,18) width 230: " is not a valid keyword, making the "
+                RenderInline {CODE} at (0,0) size 118x15
+                  RenderText {#text} at (346,20) size 118x15
+                    text run at (346,20) width 118: "text-decoration"
+                RenderText {#text} at (463,18) size 135x18
+                  text run at (463,18) width 58: " invalid. "
+                  text run at (520,18) width 78: "In addition, "
+                RenderInline {CODE} at (0,0) size 87x15
+                  RenderText {#text} at (597,20) size 87x15
+                    text run at (597,20) width 87: "highlighted"
+                RenderText {#text} at (683,18) size 735x36
+                  text run at (683,18) width 52: " is not a"
+                  text run at (0,36) width 106: "valid part of the "
+                RenderInline {CODE} at (0,0) size 32x15
+                  RenderText {#text} at (105,38) size 32x15
+                    text run at (105,38) width 32: "font"
+                RenderText {#text} at (136,36) size 716x36
+                  text run at (136,36) width 184: " property, making it invalid. "
+                  text run at (319,36) width 397: "Therefore, this paragraph's font should be the UA default, and"
+                  text run at (0,54) width 198: "match the previous paragraph. "
+                  text run at (197,54) width 196: "If this is not the case, then the "
+                RenderInline {CODE} at (0,0) size 32x15
+                  RenderText {#text} at (392,56) size 32x15
+                    text run at (392,56) width 32: "font"
+                RenderText {#text} at (423,54) size 256x18
+                  text run at (423,54) width 256: " declaration is being improperly parsed."
+              RenderBlock {P} at (4,1206) size 747x54
+                RenderText {#text} at (0,0) size 542x18
+                  text run at (0,0) width 513: "The text of this paragraph should be normal size because the selector is invalid. "
+                  text run at (512,0) width 30: "The "
+                RenderInline {EM} at (0,0) size 102x18
+                  RenderText {#text} at (541,0) size 102x18
+                    text run at (541,0) width 102: "emphasized text"
+                RenderText {#text} at (642,0) size 56x18
+                  text run at (642,0) width 56: " and the "
+                RenderInline {STRONG} at (0,0) size 741x36
+                  RenderText {#text} at (697,0) size 741x36
+                    text run at (697,0) width 44: "strong"
+                    text run at (0,18) width 26: "text"
+                RenderText {#text} at (25,18) size 736x36
+                  text run at (25,18) width 711: " within it should also be normal size, since the entire ruleset should be skipped (since in some future version of"
+                  text run at (0,36) width 603: "CSS, there could be an operator within the selector that has higher precedence than a comma)."
+              RenderBlock {P} at (4,1276) size 747x36
+                RenderText {#text} at (0,0) size 474x18
+                  text run at (0,0) width 474: "This paragraph should be black, because the line before the declaration is "
+                RenderInline {STRONG} at (0,0) size 23x18
+                  RenderText {#text} at (473,0) size 23x18
+                    text run at (473,0) width 23: "not"
+                RenderText {#text} at (495,0) size 737x36
+                  text run at (495,0) width 242: " a comment and therefore the selector"
+                  text run at (0,18) width 164: "for P.nineteenb is invalid."
+              RenderBlock {P} at (4,1328) size 747x18 [color=#0000FF]
+                RenderText {#text} at (0,0) size 480x18
+                  text run at (0,0) width 480: "This paragraph should be blue, because only the first declaration is invalid."
+              RenderBlock {P} at (4,1362) size 747x18 [color=#008000]
+                RenderText {#text} at (0,0) size 488x18
+                  text run at (0,0) width 488: "This paragraph should be green, because only the first declaration is invalid."
+              RenderBlock {P} at (4,1396) size 747x18 [color=#800080]
+                RenderText {#text} at (0,0) size 493x18
+                  text run at (0,0) width 493: "This paragraph should be purple, because only the first declaration is invalid."
+              RenderBlock {P} at (4,1430) size 747x18 [color=#008000]
+                RenderText {#text} at (0,0) size 488x18
+                  text run at (0,0) width 488: "This paragraph should be green, because only the first declaration is invalid."
+              RenderBlock {P} at (4,1464) size 747x18 [color=#008000]
+                RenderText {#text} at (0,0) size 488x18
+                  text run at (0,0) width 488: "This paragraph should be green, because only the first declaration is invalid."
+              RenderBlock {P} at (4,1498) size 747x18
+                RenderText {#text} at (48,0) size 612x18
+                  text run at (48,0) width 494: "This paragraph should be indented half an inch, but it should not be maroon. "
+                  text run at (541,0) width 119: "It should be black."
+              RenderBlock {P} at (4,1532) size 747x36
+                RenderText {#text} at (0,0) size 743x36
+                  text run at (0,0) width 743: "This paragraph should be black, because the color declaration after the previous ruleset should be considered part of"
+                  text run at (0,18) width 656: "the selector for this ruleset, and this ruleset therefore has an invalid selector and should not be applied."

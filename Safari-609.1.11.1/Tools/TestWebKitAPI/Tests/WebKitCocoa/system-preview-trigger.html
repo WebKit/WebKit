@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<body>
+<a rel="ar"></a>
+<script>
+window.addEventListener("load", function () {
+    const a = document.querySelector("a");
+
+    const elementID = internals.elementIdentifier(a);
+    const pageID = internals.pageIdentifier(document);
+    const documentID = internals.documentIdentifier(document);
+
+    a.addEventListener("message", function (event) {
+        window.webkit.messageHandlers.testSystemPreview.postMessage({ message: "triggered", action: event.data });
+    });
+
+    const msg = { message: "loaded", elementID, pageID, documentID };
+    window.webkit.messageHandlers.testSystemPreview.postMessage(msg);
+});
+
+
+
+</script>
+

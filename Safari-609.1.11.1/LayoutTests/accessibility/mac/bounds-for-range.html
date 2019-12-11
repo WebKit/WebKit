@@ -1,0 +1,48 @@
+<html>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+<body>
+
+    <div id="result"></div>
+    
+    <br><br><br>
+    <div>By ISABEL KERSHNER and GRAHAM BOWLEY&nbsp;<span class="timestamp">3:23 PM ET</span></div>
+    <a href="nowhere" id="message">
+    Embroiled in a high-profile corruption investigation, Israels prime minister says he will resign as soon as his party chooses a new leader in September elections.
+    </a>
+     
+    <script>
+        if (window.accessibilityController) {
+            var result = document.getElementById("result");
+
+            var labeledItem = document.getElementById("message");
+            labeledItem.focus();
+
+            var textChild = accessibilityController.focusedElement.childAtIndex(0);
+            result.innerText += "----------------------\n";
+            result.innerText += textChild.allAttributes() + "\n";
+            result.innerText += "----------------------\n";
+            result.innerText += textChild.parameterizedAttributeNames() + "\n"; 
+            result.innerText += "----------------------\n";
+
+            var bounds = textChild.boundsForRange(6,10);
+            result.innerText += bounds + "\n"; 
+ 
+            bounds = textChild.boundsForRange(1,35);
+            result.innerText += bounds + "\n"; 
+
+            bounds = textChild.boundsForRange(0,1);
+            result.innerText += bounds + "\n"; 
+
+            bounds = textChild.boundsForRange(0,100000);
+            result.innerText += bounds + "\n"; 
+
+            bounds = textChild.boundsForRange(5,0);
+            result.innerText += bounds + "\n"; 
+
+        }
+    </script>
+</body>
+</html>

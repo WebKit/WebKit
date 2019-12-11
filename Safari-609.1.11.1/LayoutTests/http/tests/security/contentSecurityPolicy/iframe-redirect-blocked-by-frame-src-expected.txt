@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Refused to load http://localhost:8000/security/contentSecurityPolicy/resources/alert-fail.html because it does not appear in the frame-src directive of the Content Security Policy.
+Tests that an <iframe> that loads a cross-origin page via a redirect is blocked by the Content Security Policy frame-src directive. This test PASSED if there is a console warning message.
+
+

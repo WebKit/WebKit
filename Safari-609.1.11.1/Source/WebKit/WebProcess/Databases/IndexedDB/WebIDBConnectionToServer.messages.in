@@ -1,0 +1,53 @@
+# Copyright (C) 2016 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#if ENABLE(INDEXED_DATABASE)
+
+messages -> WebIDBConnectionToServer {
+    DidDeleteDatabase(WebCore::IDBResultData result)
+    DidOpenDatabase(WebCore::IDBResultData result)
+    DidAbortTransaction(WebCore::IDBResourceIdentifier transactionIdentifier, WebCore::IDBError error)
+    DidCommitTransaction(WebCore::IDBResourceIdentifier transactionIdentifier, WebCore::IDBError error)
+    DidCreateObjectStore(WebCore::IDBResultData result)
+    DidDeleteObjectStore(WebCore::IDBResultData result)
+    DidRenameObjectStore(WebCore::IDBResultData result)
+    DidClearObjectStore(WebCore::IDBResultData result)
+    DidCreateIndex(WebCore::IDBResultData result)
+    DidDeleteIndex(WebCore::IDBResultData result)
+    DidRenameIndex(WebCore::IDBResultData result)
+    DidPutOrAdd(WebCore::IDBResultData result)
+    DidGetRecord(WebKit::WebIDBResult result)
+    DidGetAllRecords(WebKit::WebIDBResult result)
+    DidGetCount(WebCore::IDBResultData result)
+    DidDeleteRecord(WebCore::IDBResultData result)
+    DidOpenCursor(WebKit::WebIDBResult result)
+    DidIterateCursor(WebKit::WebIDBResult result)
+
+    FireVersionChangeEvent(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier requestIdentifier, uint64_t requestedVersion)
+    DidStartTransaction(WebCore::IDBResourceIdentifier transactionIdentifier, WebCore::IDBError error)
+    DidCloseFromServer(uint64_t databaseConnectionIdentifier, WebCore::IDBError error) final;
+    NotifyOpenDBRequestBlocked(WebCore::IDBResourceIdentifier requestIdentifier, uint64_t oldVersion, uint64_t newVersion)
+
+    DidGetAllDatabaseNames(uint64_t callbackID, Vector<String> databaseNames)
+}
+
+#endif // ENABLE(INDEXED_DATABASE)

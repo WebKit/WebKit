@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Blocked script execution in 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/sandbox.php?sandbox=allow-top-navigation' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
+CONSOLE MESSAGE: line 9: Sandbox access violation: Blocked a frame at "http://127.0.0.1:8000" from accessing a frame at "http://127.0.0.1:8000".  The frame being accessed is sandboxed and lacks the "allow-same-origin" flag.
+ALERT: PASS: Iframe was in a unique origin
+

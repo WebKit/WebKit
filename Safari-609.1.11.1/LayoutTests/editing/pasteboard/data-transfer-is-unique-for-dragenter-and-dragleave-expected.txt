@@ -1,0 +1,10 @@
+PASS dragstart for source had an unique dataTransfer object
+PASS dragenter for passover had an unique dataTransfer object
+PASS dragenter for destination had an unique dataTransfer object
+PASS dragleave for passover had an unique dataTransfer object
+PASS dragover for destination had an unique dataTransfer object
+PASS drop for destination had an unique dataTransfer object
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 12: Error: Out of memory
+Test we do not pause on a OutOfMemory Exception.
+
+
+== Running test suite: Debugger.OutOfMemoryException
+-- Running test case: Debugger.OutOfMemoryException.NoPause
+Uncaught exception in test page: Error: Out of memory [no-pause-out-of-memory-exception.html:12]
+PASS: Should not pause on OutOfMemory Exception.
+

@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGContainer {g} at (120,23) size 472x343
+      RenderSVGText {text} at (75,14) size 281x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 281x14
+          chunk 1 text run 1 at (75.00,25.00) startOffset 0 endOffset 55 width 280.07: "Test 'tref' element with an external referenced string."
+      RenderSVGText {text}
+        RenderSVGInline {tref} at (0,0) size 0x0
+        RenderSVGInlineText {#text} at (0,0) size 0x0
+      RenderSVGRect {rect} at (120,304) size 436x39 [stroke={[type=SOLID] [color=#000000]}] [x=73.00] [y=183.00] [width=260.00] [height=22.00]
+      RenderSVGText {text} at (73,206) size 156x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 156x14
+          chunk 1 text run 1 at (73.00,217.00) startOffset 0 endOffset 34 width 155.40: "'tref' to a string in another file"
+    RenderSVGText {text} at (10,304) size 269x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 269x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 268.20: "$Revision: 1.6 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+selection start: position 0 of child 0 {#text} of child 3 {text} of child 13 {g} of child 30 {svg} of document
+selection end:   position 16 of child 0 {#text} of child 15 {text} of child 30 {svg} of document

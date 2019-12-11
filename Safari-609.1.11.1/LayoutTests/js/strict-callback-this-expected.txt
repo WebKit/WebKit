@@ -1,0 +1,23 @@
+This tests that a call to array/string prototype methods pass the correct this value (undefined) to strict callees.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testArrayPrototypeSort(strictThrowThisString) is undefinedString
+PASS testArrayPrototypeFilter(strictThrowThisString) is undefinedString
+PASS testArrayPrototypeMap(strictThrowThisString) is undefinedString
+PASS testArrayPrototypeEvery(strictThrowThisString) is undefinedString
+PASS testArrayPrototypeForEach(strictThrowThisString) is undefinedString
+PASS testArrayPrototypeSome(strictThrowThisString) is undefinedString
+PASS testStringPrototypeReplace(strictThrowThisString) is undefinedString
+PASS testArrayPrototypeSort(nonstrictThrowThisString) is globalObjectString
+PASS testArrayPrototypeFilter(nonstrictThrowThisString) is globalObjectString
+PASS testArrayPrototypeMap(nonstrictThrowThisString) is globalObjectString
+PASS testArrayPrototypeEvery(nonstrictThrowThisString) is globalObjectString
+PASS testArrayPrototypeForEach(nonstrictThrowThisString) is globalObjectString
+PASS testArrayPrototypeSome(nonstrictThrowThisString) is globalObjectString
+PASS testStringPrototypeReplace(nonstrictThrowThisString) is globalObjectString
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,36 @@
+<picture>
+    <source srcset="/resources/redirect-to-video-if-accepted.php?video=test.mp4" type="video/mp4">
+    <source srcset="/resources/redirect-to-video-if-accepted.php?video=test.ogv" type="video/ogv">
+    <img src="/resources/square100.png">
+</picture>
+<br>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText(true);
+    testRunner.waitUntilDone();
+}
+
+function endTest() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function logResult(text) {
+    document.body.appendChild(document.createTextNode(text));
+}
+
+var img = document.querySelector('img');
+img.addEventListener('load', event => {
+    if (img.currentSrc.endsWith('square100.png'))
+        logResult('FAIL: <img> fallback selected.');
+    else
+        logResult('PASS: video source selected.');
+
+    endTest();
+});
+
+img.addEventListener('error', event => {
+    logResult('FAIL: <img> threw error.');
+    endTest();
+});
+</script>

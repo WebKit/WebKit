@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: Ignoring duplicate Content-Security-Policy directive 'block-all-mixed-content'.
+
+This tests that we emit a console warning when block-all-mixed-content is listed more than once.

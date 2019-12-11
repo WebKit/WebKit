@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cache Storage: testing persistency</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+    <div id="check">
+    </div>
+    <script>
+    promise_test(test => {
+        return self.caches.keys().then(keys => {
+            var pending = [];
+            for (key of keys)
+                pending.push(self.caches.delete(keys[0]));
+            return Promise.all(pending);
+        });
+    }, "Cleaning existing caches");
+
+    promise_test(test => {
+        check.innerHTML = "<iframe id='cacheFrame' src='resources/cache-remove-twice-iframe.html'></iframe>";
+        
+        var cacheName = "test-remove-twice";
+        return new Promise((resolve, reject) => {
+            window.addEventListener("message", test.step_func((event) => {
+                return Promise.all([self.caches.open(cacheName), cacheFrame.contentWindow.caches.open(cacheName) ]).then(() => {
+                    return Promise.all([self.caches.delete(cacheName), cacheFrame.contentWindow.caches.delete(cacheName)]);
+                }).then(resolve, reject);
+	    }));
+	});
+    }, "Removing the same cache from two different documents");
+
+   promise_test(test => {
+        return self.caches.keys().then(keys => {
+            var pending = [];
+            for (key of keys)
+                pending.push(self.caches.delete(keys[0]));
+            return Promise.all(pending);
+        });
+    }, "Cleaning added caches");
+    </script>
+</body>
+</html>
+

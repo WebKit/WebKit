@@ -1,0 +1,4 @@
+This tests determining the primary snapshotted plugin does not hit an assertion.
+
+PASS
+

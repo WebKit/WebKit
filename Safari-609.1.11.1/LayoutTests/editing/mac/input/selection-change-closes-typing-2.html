@@ -1,0 +1,31 @@
+<html>
+<body>
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=32905">bug 32905</a>:
+With Pinyin Simplified IM, a wrong character is deleted from google.com suggestion.</p>
+<p>Should say PASS: </p>
+<textarea id="test"></textarea>
+<script type="text/javascript">
+
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var testInput = document.getElementById("test");
+    testInput.focus();
+
+    if (window.testRunner) {
+        
+        try {
+            textInputController.setMarkedText("P", 1, 0);
+            testInput.value="PAS";
+            eventSender.keyDown("S");
+
+            document.getElementsByTagName("p")[1].innerHTML += testInput.value;
+
+        } catch (ex) {
+            document.write("Exception: " + ex.description);
+        }
+    } else
+        document.write("This test only runs in automated mode<br>");
+</script>
+</body>
+</html>

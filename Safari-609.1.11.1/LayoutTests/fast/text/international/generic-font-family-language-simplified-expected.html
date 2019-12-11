@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+This test makes sure that generic font families consult with the system language preferences for Chinese when we can't tell
+from the lang if we should use Simplified Chinese of Traditional Chinese.
+<div lang="zh-hans" style="font-size: 50px;">
+<div style="font-family: sans-serif;">&#x900f;&#x904e;</div>
+<div style="font-family: serif;">&#x900f;&#x904e;</div>
+<div style="font-family: -webkit-standard;">&#x900f;&#x904e;</div>
+<div style="font-family: fixed;">&#x900f;&#x904e;</div>
+</div>
+</body>
+</html>

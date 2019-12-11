@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        html {
+            -webkit-transform: translateZ(0);
+        }
+        body {
+            height: 2000px;
+            background-image: url('../../../compositing/resources/simple_image.png');
+            background-size: 200px 200px;
+            background-attachment: fixed;
+            overflow: hidden; /* hide scrollbar */
+        }
+    </style>
+    <script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+    
+    function doTest()
+    {
+        window.setTimeout(function() {
+            window.scrollTo(0, 223);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 0);
+    }
+    
+    window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+</body>
+</html>

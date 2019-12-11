@@ -1,0 +1,26 @@
+<html>
+<head>
+<title>required and valueMissing on checkboxes</title>
+<script language="JavaScript" type="text/javascript">
+    function log(message) {
+        document.getElementById("console").innerHTML += "<li>"+message+"</li>";
+    }
+
+    function test() {
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        v = document.getElementsByName("victim");
+
+        log(!v[0].validity.valueMissing && v[1].validity.valueMissing ? "SUCCESS" : "FAILURE");
+    }
+</script>
+</head>
+<body onload="test()">
+<p>There are two checkboxes below, both are required, only one is checked.</p>
+<input name="victim" type="checkbox" required checked/>
+<input name="victim" type="checkbox" required />
+<hr>
+<ol id="console"></ol>
+</body>
+</html>

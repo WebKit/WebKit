@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 58: ReferenceError: Can't find variable: wp_test
+CONSOLE MESSAGE: line 52: ReferenceError: Can't find variable: test_true
+Description
+
+This test validates that the performance.mark() method throws a SYNTAX_ERR exception whenever a navigation timing attribute is provided for the name parameter.
+
+
+FAIL window.performance User Timing mark() method is throwing the proper exceptions ReferenceError: Can't find variable: wp_test
+

@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+    test(function() {
+        assert_throws(new TypeError, () => { navigator.sendBeacon("/", new ReadableStream()) });
+    }, "Beacon with a ReadableStream body should fail.");
+</script>

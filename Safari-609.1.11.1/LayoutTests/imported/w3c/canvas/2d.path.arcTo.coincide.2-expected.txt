@@ -1,0 +1,7 @@
+2d.path.arcTo.coincide.2
+arcTo() draws a straight line to P1 if P1 = P2
+Spec references: 2d.path.arcTo.coincide.12
+Actual output:
+Expected output:
+
+Passed

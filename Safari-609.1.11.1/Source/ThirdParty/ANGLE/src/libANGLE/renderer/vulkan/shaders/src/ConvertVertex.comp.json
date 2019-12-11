@@ -1,0 +1,37 @@
+{
+    "Description": [
+        "Copyright 2018 The ANGLE Project Authors. All rights reserved.",
+        "Use of this source code is governed by a BSD-style license that can be",
+        "found in the LICENSE file.",
+        "",
+        "ConvertVertex.comp.json: Build parameters for ConvertVertex.comp."
+    ],
+    "Flags": [
+        "IsAligned"
+    ],
+    "Conversion": [
+        "SintToSint",
+        "UintToUint",
+        "SintToFloat",
+        "UintToFloat",
+        "SnormToFloat",
+        "UnormToFloat",
+        "FixedToFloat",
+        "FloatToFloat",
+        "A2BGR10SintToSint",
+        "A2BGR10UintToUint",
+        "A2BGR10SintToFloat",
+        "A2BGR10UintToFloat",
+        "A2BGR10SnormToFloat",
+        "RGB10A2SintToFloat",
+        "RGB10A2UintToFloat",
+        "RGB10A2SnormToFloat",
+        "RGB10A2UnormToFloat",
+        "RGB10X2SintToFloat",
+        "RGB10X2UintToFloat",
+        "RGB10X2SnormToFloat",
+        "RGB10X2UnormToFloat",
+        "HalfFloatToHalfFloat"
+    ]
+}
+

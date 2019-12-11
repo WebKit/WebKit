@@ -1,0 +1,103 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<meta name=viewport content="width=device-width, initial-scale=1">
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+#editor {
+    font-size: 24px;
+    width: 320px;
+    height: 200px;
+    overflow: scroll;
+}
+
+#console, #description {
+    width: 100%;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+function rectsAreEqual(rects, otherRects)
+{
+    if (rects.length != otherRects.length)
+        return false;
+
+    for (let i = 0; i < rects.length; ++i) {
+        if (rects[i].top != otherRects[i].top
+            || rects[i].left != otherRects[i].left
+            || rects[i].width != otherRects[i].width
+            || rects[i].height != otherRects[i].height)
+            return false;
+    }
+
+    return true;
+}
+
+async function waitForSelectionRectsToChange(fromRects)
+{
+    let rects = fromRects;
+    while (rectsAreEqual(rects, fromRects))
+        rects = await UIHelper.getUISelectionViewRects();
+    return rects;
+}
+
+addEventListener("load", async function() {
+    description("This test verifies that a selection in a fast scrollable area is kept up to date after scrolling. To test manually, tap the button and scroll the editable area down; the selection move to account for the new scroll position.");
+
+    const editor = document.getElementById("editor");
+    const button = document.querySelector("button");
+    button.addEventListener("click", event => {
+        editor.focus();
+        getSelection().selectAllChildren(document.getElementById("select-target"));
+        event.preventDefault();
+    });
+
+    await UIHelper.activateElementAndWaitForInputSession(button);
+    selectionRectsBefore = await waitForSelectionRectsToChange([]);
+
+    await UIHelper.immediateScrollElementAtContentPointToOffset(150, 100, 0, 50);
+    selectionRectsAfter = await waitForSelectionRectsToChange(selectionRectsBefore);
+
+    shouldBe("selectionRectsBefore[0].top", "108");
+    shouldBe("selectionRectsBefore[0].width", "320");
+    shouldBe("selectionRectsBefore[0].left", "0");
+    shouldBe("selectionRectsBefore[0].height", "29");
+    shouldBe("selectionRectsBefore[1].top", "137");
+    shouldBe("selectionRectsBefore[1].width", "172");
+    shouldBe("selectionRectsBefore[1].left", "0");
+    shouldBe("selectionRectsBefore[1].height", "30");
+
+    shouldBe("selectionRectsAfter[0].top", "58");
+    shouldBe("selectionRectsAfter[0].width", "320");
+    shouldBe("selectionRectsAfter[0].left", "0");
+    shouldBe("selectionRectsAfter[0].height", "29");
+    shouldBe("selectionRectsAfter[1].top", "87");
+    shouldBe("selectionRectsAfter[1].width", "172");
+    shouldBe("selectionRectsAfter[1].left", "0");
+    shouldBe("selectionRectsAfter[1].height", "30");
+
+    editor.remove();
+    button.remove();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<div id="editor" contenteditable>
+    <p>The quick brown fox jumped over the lazy dog.</p>
+    <p id="select-target">The quick brown fox jumped over the lazy dog.</p>
+    <p>The quick brown fox jumped over the lazy dog.</p>
+</div>
+<button>Click to select text</button>
+<div id="description"></div>
+<div id="console"></div>
+</body>
+</html>

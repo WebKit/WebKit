@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style id="style-container">
+</style>
+</head>
+<body>
+</body>
+<script>
+description('Test the parsing of :matches(selectorList) for querySelector and style.');
+
+function testInvalidSelector(selectorString) {
+    shouldThrowErrorName('document.querySelector(":matches(' + selectorString + ')")', 'SyntaxError');
+
+    var styleContainer = document.getElementById('style-container');
+    styleContainer.innerHTML = ':matches(' + selectorString + ') { }';
+    shouldBe("document.getElementById('style-container').sheet.cssRules.length", "0");
+    styleContainer.innerHTML = '';
+}
+
+var validSelectorsPart1 = [
+    // Basic types.
+    "*",
+    "#id",
+    ":first-child",
+    ":visited",
+
+    // Pseudo elements.
+    "::first-line",
+    "::after",
+
+    // Compound selectors.
+    ".class:not(.notclass)",
+
+    // Complex selectors.
+    "a > b",
+    "a + b",
+    "a + b > c ~ d e + g",
+
+    // Functional pseudo classes.
+    ":not(:link)",
+    ":not(:matches(cocoa, cappuccino))",
+];
+
+var invalidSelectors = [
+    // Not selectors.
+    "",
+    "    ",
+    ",",
+
+    ".123class",
+    "#123id",
+    "[]",
+    "()",
+    ")",
+    "{}",
+    "}",
+
+    // Unbalanced parenthesized functional pseudo classes.
+    ":not(",
+    ":matches(",
+    ":nth-child(2n+1 of",
+];
+
+debug("3 :matches(valid, valid, invalid) selectors");
+for (var i = 0; i < validSelectorsPart1.length; ++i) {
+    for (var j = i; j < validSelectorsPart1.length; ++j) {
+        for (var k = 0; k < invalidSelectors.length; ++k) {
+            var selectorString = validSelectorsPart1[i] + ',' + validSelectorsPart1[j] + ',' + invalidSelectors[k];
+            testInvalidSelector(selectorString);
+        }
+    }
+}
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

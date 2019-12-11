@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/utils.js"></script>
+<script>
+    const RESOURCES_DIR = "/WebKit/beacon/resources/";
+
+    // We should expect 64KiB of rolling quota for any type of keep-alive request sent.
+    var expectedQuota = 65536;
+
+    function checkBeaconReceived(id)
+    {
+        return new Promise(function(resolve, reject) {
+            var checkUrl = RESOURCES_DIR + "beacon-preflight.py?cmd=get&id=" + id;
+            fetch(checkUrl).then(response => {
+                response.json().then(result => {
+                    resolve(result['beacon'] == 1);
+                });
+            }, reject);
+        });
+    }
+
+    function waitForBeacon(id)
+    {
+        return new Promise(function(resolve, reject) {
+            checkBeaconReceived(id).then(wasReceived => {
+                if (wasReceived) {
+                    resolve();
+                    return;
+                }
+                setTimeout(function() {
+                    waitForBeacon(id).then(resolve, reject);
+                }, 10);
+            });
+        });
+    }
+
+    function createPayload(payloadSize)
+    {
+        return new Blob(["*".repeat(payloadSize)]);
+    }
+
+    test(function() {
+        assert_false(navigator.sendBeacon("/", createPayload(expectedQuota + 1)));
+    }, "Beacon with a body above the Quota Limit should fail.");
+
+    promise_test(function() {
+        var id = self.token();
+        var target = RESOURCES_DIR + "beacon-preflight.py?allowCors=1&cmd=put&id=" + id;
+
+        assert_true(navigator.sendBeacon(target, createPayload(expectedQuota)), "Beacon with a body at the Quota Limit should succeed.");
+        assert_false(navigator.sendBeacon("/", createPayload(1)), "Second beacon should not be sent because we reached the quota");
+        return waitForBeacon(id).then(function() {
+            assert_true(navigator.sendBeacon(target, createPayload(1)), "Allocated quota should be returned once the beacon is no longer in flight");
+        });
+    }, "Multiple Beacons Quota Limit");
+</script>

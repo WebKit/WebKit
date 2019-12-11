@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/recording-utilities.js"></script>
+<script src="resources/shaderProgram-utilities-webgl.js"></script>
+<script id="vertex-shader" type="x-shader/x-vertex">
+    attribute vec4 test;
+    void main(void) {
+        gl_Position = test;
+    }
+</script>
+<script id="fragment-shader" type="x-shader/x-fragment">
+    precision mediump float;
+
+    void main(void) {
+        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+    }
+</script>
+<script src="resources/recording-webgl2.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.recordingWebGL2");
+
+    suite.addTestCase({
+        name: "Canvas.recordingWebGL2.multipleFrames",
+        description: "Check that recording data is serialized correctly for multiple frames.",
+        test(resolve, reject) {
+            startRecording(WI.Canvas.ContextType.WebGL2, resolve, reject);
+        },
+        timeout: -1,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Test that CanvasManager is able to record actions made to WebGL2 canvas contexts.</p>
+</body>
+</html>

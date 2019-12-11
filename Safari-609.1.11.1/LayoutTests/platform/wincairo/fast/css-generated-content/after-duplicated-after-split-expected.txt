@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 51x19
+          text run at (0,0) width 51: "Test for "
+        RenderInline {I} at (0,0) size 331x19
+          RenderInline {A} at (0,0) size 154x19 [color=#0000EE]
+            RenderText {#text} at (51,0) size 154x19
+              text run at (51,0) width 154: "rdar://problem/7898436"
+          RenderText {#text} at (205,0) size 177x19
+            text run at (205,0) width 177: " :after content is duplicated"
+        RenderText {#text} at (382,0) size 4x19
+          text run at (382,0) width 4: "."
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 482x19
+          text run at (0,0) width 482: "The test passed if the word \x{201C}not\x{201D} appears exactly once in the following sentence:"
+      RenderBlock {DIV} at (0,72) size 784x226
+        RenderBlock (anonymous) at (0,0) size 784x113
+          RenderText {#text} at (0,2) size 455x109
+            text run at (0,2) width 455: "The test did"
+          RenderInline {SPAN} at (0,0) size 0x0
+            RenderInline {B} at (0,0) size 0x0
+        RenderBlock (anonymous) at (0,113) size 784x0
+          RenderBlock {DIV} at (0,0) size 784x0
+        RenderBlock (anonymous) at (0,113) size 784x113
+          RenderInline {SPAN} at (0,0) size 147x109
+            RenderInline {B} at (0,0) size 0x0
+            RenderInline (generated) at (0,0) size 147x109
+              RenderText at (0,2) size 147x109
+                text run at (0,2) width 147: "not "
+          RenderText {#text} at (147,2) size 152x109
+            text run at (147,2) width 152: "fail."

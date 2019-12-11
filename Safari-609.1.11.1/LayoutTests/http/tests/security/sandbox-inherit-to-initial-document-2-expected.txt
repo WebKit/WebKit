@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 35: Blocked script execution in 'about:blank' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
+Test how sandbox flags get inherited to initial document in subframe.
+
+PASS
+

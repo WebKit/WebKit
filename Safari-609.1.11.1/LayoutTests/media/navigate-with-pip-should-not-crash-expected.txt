@@ -1,0 +1,10 @@
+Navigate to another page while video is playing in pip should not crash
+
+
+Video frame loaded.
+Going into Picture-in-Picture
+EXPECTED (mediaElement.webkitPresentationMode == 'picture-in-picture') OK
+EXPECTED (mediaElement.paused == 'false') OK
+EXPECTED (videoframe.contentDocument.location == 'about:blank') OK
+END OF TEST
+

@@ -1,0 +1,4 @@
+Testing that the inspector scripts are loaded and the main frame URL can be received.
+
+Main frame: main-frame-resource.html
+

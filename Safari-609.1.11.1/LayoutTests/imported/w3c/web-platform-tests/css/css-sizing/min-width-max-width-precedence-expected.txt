@@ -1,0 +1,3 @@
+
+PASS When used value is resolved, min-width should win over max-width 
+

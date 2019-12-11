@@ -1,0 +1,36 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width">
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+</script>
+</head>
+<body>
+<p>
+Tests that the download attribute is ignored if 
+<a id="dl" href="http://localhost:8080/resources/pass-notify-done.html" download="FAIL.pdf" target="targetFrame">the link</a> is cross origin.
+<p>
+<p>It should navigate the subframe instead of downloading the file.</p>
+<iframe name="targetFrame"></iframe>
+<script>
+    function click(elmt)
+    {
+        if (!window.eventSender)
+            return;
+
+        UIHelper.activateAt(elmt.offsetLeft + 5, elmt.offsetTop + 5);
+    }
+
+    function runTest()
+    {
+        var link = document.getElementById("dl");
+        click(link);
+    }
+    onload = runTest;
+</script>
+</body>
+</html>

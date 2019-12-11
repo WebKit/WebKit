@@ -1,0 +1,9 @@
+EXPECTED (internals.parseHEVCCodecParameters("bad-parameter") == 'null') OK
+EXPECTED (internals.parseHEVCCodecParameters("hvc1") == 'null') OK
+EXPECTED (internals.parseHEVCCodecParameters("hev1.1.6.L93") === '{ 0, 1, 6, false, 93 }') OK
+EXPECTED (internals.parseHEVCCodecParameters("hev1.A4.41.H120") === '{ 1, 4, 65, true, 120 }') OK
+EXPECTED (internals.parseHEVCCodecParameters("hev1.B1.4.L63") === '{ 2, 1, 4, false, 63 }') OK
+EXPECTED (internals.parseHEVCCodecParameters("hev1.D1.4.L63") == 'null') OK
+EXPECTED (internals.parseHEVCCodecParameters("hev1.B1.4.L68000") == 'null') OK
+END OF TEST
+

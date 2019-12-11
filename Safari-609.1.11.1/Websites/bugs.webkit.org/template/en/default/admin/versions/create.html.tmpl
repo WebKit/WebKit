@@ -1,0 +1,41 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # product: object; Bugzilla::Product object representing the product to
+  #               which the version is being created for
+  #%]
+  
+[% title = BLOCK %]Add Version to Product '[% product.name FILTER html %]'[% END %]
+[% subheader = BLOCK %]This page allows you to add a new version to product
+                '[% product.name FILTER html %]'.[% END %]
+[% PROCESS global/header.html.tmpl
+  title = title
+  subheader = subheader
+  style_urls = ['skins/standard/admin.css']
+%]
+
+<form method="post" action="editversions.cgi">
+  <table id="admin_table_edit">
+    <tr>
+      <th><label for="version">Version:</label></th>
+      <td><input id="version" size="64" maxlength="64" name="version"
+                 value="" required></td>
+    </tr>
+  </table>
+  <input type="submit" id="create" value="Add">
+  <input type="hidden" name="action" value="new">
+  <input type="hidden" name='product' value="[% product.name FILTER html %]">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
+</form>
+
+[% PROCESS admin/versions/footer.html.tmpl
+    no_add_version_link = 1
+ %]
+
+[% PROCESS global/footer.html.tmpl %]

@@ -1,0 +1,11 @@
+
+FAIL When the context is created, imageSmoothingEnabled must be set to true. null is not an object (evaluating 'ctx.imageSmoothingEnabled')
+FAIL On getting imageSmoothingEnabled, the user agent must return the last value it was set to. null is not an object (evaluating 'ctx.imageSmoothingEnabled = false')
+FAIL Test that image smoothing is actually on by default. null is not an object (evaluating 'imgctx.fillStyle = "#F00"')
+FAIL Test that image smoothing works when imageSmoothingEnabled is set to true null is not an object (evaluating 'ctx.imageSmoothingEnabled = true')
+FAIL Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) works with drawImage(). null is not an object (evaluating 'imgctx.fillStyle = "#F00"')
+FAIL Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) works with fillRect and createPattern(). null is not an object (evaluating 'imgctx.fillStyle = "#F00"')
+FAIL Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) works with fill() and createPattern(). null is not an object (evaluating 'imgctx.fillStyle = "#F00"')
+FAIL Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) works with stroke() and createPattern(). null is not an object (evaluating 'imgctx.fillStyle = "#F00"')
+FAIL Test that imageSmoothingEnabled = false (nearest-neighbor interpolation) still works after repaints. null is not an object (evaluating 'ctx.clearRect')
+

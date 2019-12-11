@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x279
+  RenderBlock {HTML} at (0,0) size 800x279
+    RenderBody {BODY} at (8,16) size 784x247
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 268x19
+          text run at (0,0) width 268: "The two diagrams below should be identical."
+      RenderBlock {DIV} at (0,36) size 784x211
+        RenderBlock {P} at (40,0) size 520x40 [color=#0000FF] [bgcolor=#00FFFF] [border: none (40px solid #FF00FF) none (40px solid #FF00FF)]
+          RenderText {#text} at (80,0) size 360x40
+            text run at (80,0) width 360: "X X X X X"
+        RenderBlock {P} at (0,56) size 784x155
+          RenderEmbeddedObject {OBJECT} at (0,0) size 300x150
+            layer at (0,0) size 600x135
+              RenderView at (0,0) size 300x135
+            layer at (0,0) size 300x135
+              RenderBlock {HTML} at (0,0) size 300x135
+                RenderBody {BODY} at (0,0) size 300x135
+                  RenderImage {IMG} at (0,0) size 600x40
+          RenderText {#text} at (0,0) size 0x0

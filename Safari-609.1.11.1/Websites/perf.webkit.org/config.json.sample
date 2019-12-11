@@ -1,0 +1,45 @@
+{
+    "siteTitle": "WebKit Performance Dashboard",
+    "debug": true,
+    "jsonCacheMaxAge": 600,
+    "dataDirectory": "public/data/",
+    "uploadDirectory": "uploaded",
+    "uploadFileLimitInMB": 800,
+    "uploadUserQuotaInMB": 8192,
+    "uploadTotalQuotaInMB": 102400,
+    "database": {
+        "host": "localhost",
+        "port": "5432",
+        "username": "webkit-perf-db-user",
+        "password": "password",
+        "name": "webkit-perf-db"
+    },
+    "universalSlavePassword": null,
+    "maintenanceMode": false,
+    "maintenanceDirectory": "reported/",
+    "testServer": {
+        "port": 8180,
+        "config": "/tmp/org.webkit.perf.test-config.json",
+        "httpdConfig": "server-tests/resources/test-server.conf",
+        "httpdPID": "/tmp/org.webkit.perf.test-httpd.pid",
+        "httpdErrorLog": "server-tests/resources/test-server.log",
+        "httpdMutexDir": "/tmp/org.webkit.perf.tests/"
+    },
+    "testDatabaseName": "test-db",
+    "clusterStart": [2000, 1, 1, 0, 0],
+    "clusterSize": [0, 2, 0],
+    "cacheDirectory": "public/data/remote-cache/",
+    "remoteServer": {
+        "httpdConfig": "tools/remote-server-relay.conf",
+        "httpdPID": "tools/remote-server-relay.pid",
+        "httpdErrorLog": "tools/remote-server-relay.log",
+        "httpdMutexDir": "/tmp/org.webkit.perf.remote/",
+        "url": "https://perf.webkit.org",
+        "basicAuth": {
+            "username": "username",
+            "password": "password"
+        }
+    },
+    "defaultDashboard": [[]],
+    "dashboards": {}
+}

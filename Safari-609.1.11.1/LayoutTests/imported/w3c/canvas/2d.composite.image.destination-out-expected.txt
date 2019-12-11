@@ -1,0 +1,7 @@
+2d.composite.image.destination-out
+Spec references: 2d.composite.destination-out
+Actual output:
+Expected output:
+
+Passed
+

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<style>
+    #host {
+        width: 100px;
+        height: 100px;
+    }
+</style>
+<body>
+    <p>Test passes if you see a single 100px by 100px green box below.</p>
+    <div id="host"></div>
+    <svg>
+        <linearGradient id="gradient">
+            <stop offset="0" stop-color="red" />
+        </linearGradient>
+    </svg>
+    <template>
+        <svg viewbox="0 0 100 100">
+            <linearGradient id="gradient">
+                <stop offset="0" stop-color="green" />
+            </linearGradient>
+            <linearGradient id="blue-gradient">
+                <stop offset="0" stop-color="blue" />
+            </linearGradient>
+            <linearGradient id="gradientUse" fill="red" href="#blue-gradient" />
+            <rect id="rect" width="100" height="100" fill="url(#gradientUse)" />
+        </svg>
+    </template>
+    <script>
+        window.onload = () => {
+            if (window.testRunner)
+                testRunner.waitUntilDone();
+
+            const shadowRoot = host.attachShadow({mode: 'closed'});
+            shadowRoot.appendChild(document.querySelector('template').content.cloneNode(true));
+
+            requestAnimationFrame(() => {
+                shadowRoot.querySelector('#gradientUse').setAttribute('href', '#gradient');
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        }
+    </script>
+</body>
+</html>

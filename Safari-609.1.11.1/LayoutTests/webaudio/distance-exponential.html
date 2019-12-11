@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <script src="resources/audio-testing.js"></script>
+    <script src="../resources/js-test.js"></script>
+    <script src="resources/distance-model-testing.js"></script>
+  </head>
+
+  <body>
+    <div id="description"></div>
+    <div id="console"></div>
+
+    <script>
+      description("Test exponential distance model of AudioPannerNode.");
+
+      function runTest() {
+          window.jsTestIsAsync = true;
+
+          // Create offline audio context.
+          context = new webkitOfflineAudioContext(2, sampleRate * renderLengthSeconds, sampleRate);
+
+          // Temp panner node so we can get the exponential value.
+          var tempPanner = context.createPanner();
+          createTestAndRun(context, "exponential");
+      }
+
+      runTest();
+
+    </script>
+  </body>
+</html>

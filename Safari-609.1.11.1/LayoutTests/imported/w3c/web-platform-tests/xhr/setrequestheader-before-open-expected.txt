@@ -1,0 +1,3 @@
+
+PASS setRequestHeader invoked before open() 
+

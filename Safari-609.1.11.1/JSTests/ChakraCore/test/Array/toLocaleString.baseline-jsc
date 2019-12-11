@@ -1,0 +1,37 @@
+0. Non Object
+1 --> 
+NaN --> 
+true --> 
+TypeError : null is not an object (evaluating 'Array.prototype.toLocaleString.apply(o)')
+TypeError : undefined is not an object (evaluating 'Array.prototype.toLocaleString.apply(o)')
+
+
+1. Object, length not uint32
+length: true --> 
+length: abc --> 
+length: 1.234 --> 
+length: [object Object] --> 
+
+
+2. Array: normal
+0,1.23,NaN,true,abc,[object Object],,0,1,2
+
+
+3. Array: element toLocaleString not callable
+0,[object Object]
+
+
+4. Array: element toLocaleString
+0,anObject,,,another Object,1,a 3rd Object,2
+
+
+5. Object: normal
+0,1.23,NaN,true,abc,[object Object],,0,1,2
+
+
+6. Object: element toLocaleString not callable
+0,[object Object]
+
+
+7. Object: element toLocaleString
+0,anObject,,,another Object,1,a 3rd Object,2

@@ -1,0 +1,59 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+	<title>Tests that we make a compositing layer for an abspost element inside something that paints into the scroller</title>
+    <style>
+	    .scroller {
+	        overflow: scroll;
+	        margin: 10px;
+	        background-color: silver;
+	        border: 1px solid black;
+	        padding: 10px;
+	        width: 200px;
+	        height: 150px;
+	    }
+
+	    .stacking {
+			border: 2px solid gray;
+			padding: 20px;
+	        opacity: 0.75;
+	    }
+
+	    .box {
+	        width: 100px;
+	        height: 100px;
+			background-color: blue;
+	    }
+	
+	    .absolute {
+	        position: absolute;
+	        left: 100px;
+	    }
+
+	    .scrolling-content {
+	        height: 1000px;
+	    }
+    </style>
+    <script>
+	    if (window.testRunner)
+	        testRunner.dumpAsText();
+
+	    window.addEventListener('load', () => {
+	        if (window.internals)
+	            document.getElementById('scrollingTree').innerText = window.internals.scrollingStateTreeAsText() + "\n";
+	    }, false);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="scroller">
+            <div class="scrolling-content">
+                <div class="stacking">
+                    <div class="absolute stationary box"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+<pre id="scrollingTree"></pre>
+</body>
+</html>

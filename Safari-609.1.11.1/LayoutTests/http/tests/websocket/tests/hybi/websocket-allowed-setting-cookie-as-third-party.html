@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../../js-test-resources/js-test.js"></script>
+    <script src="../../../cookies/resources/cookie-utilities.js"></script>
+    <script>
+        window.jsTestIsAsync = true;
+
+        async function testThirdPartyCookie()
+        {
+            shouldBeEqualToString("document.location.host", "127.0.0.1:8000");
+            debug("<br>Setting third-party cookie 'foo' through cross-origin WebSocket handshake.");
+            await setCookieUsingWebSocketFromHost("localhost");
+            let iframeElement = document.createElement("iframe");
+            iframeElement.src = "http://localhost:8000/cookies/resources/echo-cookies.php";
+            iframeElement.onload = finishJSTest;
+            debug("<br>Opening localhost third-party iframe to check its cookies.");
+            document.body.appendChild(iframeElement);
+        }
+
+        async function runTest()
+        {
+            switch (document.location.hash) {
+                case "":
+                    // Navigate to localhost to set first-party cookie 'setAsFirstParty'.
+                    document.location.href = "http://localhost:8000/websocket/tests/hybi/websocket-allowed-setting-cookie-as-third-party.html#setCookieAsFirstParty";
+                    break;
+                case "#setCookieAsFirstParty":
+                    await setCookie("setAsFirstParty", "value");
+                    // Navigate back to 127.0.0.1 to test third-party cookie.
+                    document.location.href = "http://127.0.0.1:8000/websocket/tests/hybi/websocket-allowed-setting-cookie-as-third-party.html#didSetCookieAsFirstParty";
+                    break;
+                case "#didSetCookieAsFirstParty":
+                    testRunner.dumpChildFramesAsText();
+                    await testThirdPartyCookie();
+                    break;
+            }
+        }
+    </script>
+</head>
+<body>
+<div id="output"></div>
+<script>
+    description("Tests WebSocket Set-Cookie behavior for third-parties with existing cookies.");
+    runTest();
+</script>
+</body>
+</html>

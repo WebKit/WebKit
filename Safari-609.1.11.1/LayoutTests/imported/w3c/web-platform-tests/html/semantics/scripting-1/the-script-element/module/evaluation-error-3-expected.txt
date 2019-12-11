@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 2: [object Object]
+
+FAIL Test that exceptions during evaluation lead to error events on window, and that exceptions are remembered.
+ assert_array_equals: lengths differ, expected 6 got 3
+

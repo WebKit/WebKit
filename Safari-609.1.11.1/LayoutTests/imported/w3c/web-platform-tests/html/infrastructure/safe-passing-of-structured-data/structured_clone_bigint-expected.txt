@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 31: SyntaxError: No identifiers allowed directly after numeric literal
+
+FAIL 2.7 Safe passing of structured data SyntaxError: No identifiers allowed directly after numeric literal
+

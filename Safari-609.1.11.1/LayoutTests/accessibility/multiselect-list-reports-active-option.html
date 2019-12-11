@@ -1,0 +1,81 @@
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script>
+    jsTestIsAsync = true;
+
+    function runTest() {
+        description("This tests that navigating in a multiselect list updates selection and the active selected option and sends a notification.");
+
+        if (window.accessibilityController) {
+            var menulist = document.getElementById("menulist");
+            menulist.focus();
+            window.accessibleMenulist = accessibilityController.focusedElement;
+            window.accessibleOne = accessibleMenulist.childAtIndex(0);
+            window.accessibleTwo = accessibleMenulist.childAtIndex(1);
+            window.accessibleThree = accessibleMenulist.childAtIndex(2);
+
+            function listListener(notification) {
+                document.getElementById("console").innerText += "List notification: " + notification + "\n";
+            }
+            accessibleMenulist.addNotificationListener(listListener);
+
+            shouldBe("accessibleOne.isSelected", "true");
+            shouldBe("accessibleOne.isSelectedOptionActive", "true");
+            shouldBe("accessibleTwo.isSelected", "false");
+            shouldBe("accessibleTwo.isSelectedOptionActive", "false");
+            shouldBe("accessibleThree.isSelected", "false");
+            shouldBe("accessibleThree.isSelectedOptionActive", "false");
+
+            // Change the selected index by simulating a down arrow keydown event.
+            var event = document.createEvent('KeyboardEvents');
+            event.initKeyboardEvent('keydown', true, true, document.defaultView, 'Down', 0, false, false, false, false, false);
+            menulist.dispatchEvent(event);
+
+            shouldBe("accessibleOne.isSelected", "false");
+            shouldBe("accessibleOne.isSelectedOptionActive", "false");
+            shouldBe("accessibleTwo.isSelected", "true");
+            shouldBe("accessibleTwo.isSelectedOptionActive", "true");
+            shouldBe("accessibleThree.isSelected", "false");
+            shouldBe("accessibleThree.isSelectedOptionActive", "false");
+
+            // Extend the selection by simulating a Shift + Down Arrow keydown event.
+            var event = document.createEvent('KeyboardEvents');
+            event.initKeyboardEvent('keydown', true, true, document.defaultView, 'Down', 0, false, false, true, false, false);
+            menulist.dispatchEvent(event);
+
+            shouldBe("accessibleOne.isSelected", "false");
+            shouldBe("accessibleOne.isSelectedOptionActive", "false");
+            shouldBe("accessibleTwo.isSelected", "true");
+            shouldBe("accessibleTwo.isSelectedOptionActive", "false");
+            shouldBe("accessibleThree.isSelected", "true");
+            shouldBe("accessibleThree.isSelectedOptionActive", "true");
+        }
+
+        // Make the test finish quickly whether we get the notification or not.
+        window.setTimeout(function() {
+            if (window.accessibilityController)
+                accessibleMenulist.removeNotificationListener();
+            finishJSTest();
+        }, 10);
+    }
+
+    window.addEventListener('load', function() {
+        setTimeout(runTest, 10);
+    }, false);
+</script>
+</head>
+<body>
+
+<select multiple id="menulist">
+  <option selected>One</option>
+  <option>Two</option>
+  <option>Three</option>
+  <option>Four</option>
+</select>
+
+<p id="description"></p>
+<div id="console"></div>
+
+</body>
+</html>

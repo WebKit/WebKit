@@ -1,0 +1,46 @@
+<html>
+<head>
+<script>
+function print(message, color) 
+{
+    var paragraph = document.createElement("div");
+    paragraph.appendChild(document.createTextNode(message));
+    paragraph.style.fontFamily = "monospace";
+    if (color)
+        paragraph.style.color = color;
+    document.getElementById("console").appendChild(paragraph);
+}
+
+function test() 
+{
+    if (!window.testRunner) {
+        print("FAIL: This test can only run from inside DumpRenderTree.", "red");
+        return;
+    }
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    
+    document.body.style.myCustomProperty = new String("1");
+    new Date(); // allocate another object to create heap entropy
+    // Collecting on a timeout seems to make the crash more reproducible -- not exactly sure why
+    setTimeout('GCController.collectOnAlternateThread(true);', 0);
+    setTimeout('document.body.style.myCustomProperty; print("PASS: you didn\'t crash"); testRunner.notifyDone();', 1);
+    
+    // fail-safe
+    setTimeout('print("FAIL: Test hung -- bailing out"); testRunner.notifyDone();', 2);
+}
+
+</script>
+</head>
+
+<body onload="test();">
+<p>This page tests for a crash when accessing a custom property on a DOM object after the garbage collector
+   has run on an alternate thread.</p>
+<p>If the test passes, you'll see a 'PASS' message below.</p>
+<hr>
+
+<div id='console'></div>
+
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <style>
+        body {
+            width: 1300px;
+            height: 2000px;
+        }
+        
+        .fixed {
+            position: fixed;
+            top: 10px;
+            left: 12px;
+            height: 100px;
+            width: 100px;
+            background-color: blue;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+
+        function getDragUIScript(startX, startY, endX, endY)
+        {
+            return `(function() {
+                var movedFingerDownStream = {
+                    events : [
+                        {
+                            inputType : "hand",
+                            timeOffset : 0,
+                            touches : [
+                                {
+                                    inputType : "finger",
+                                    phase : "began",
+                                    id : 1,
+                                    x : ${startX},
+                                    y : ${startY}
+                                }
+                            ]
+                        },
+                        {
+                            interpolate : "linear",
+                            timestep: 0.025,
+                            startEvent : {
+                                inputType : "hand",
+                                timeOffset : 0,
+                                touches : [
+                                    {
+                                        inputType : "finger",
+                                        phase : "moved",
+                                        id : 1,
+                                        x : ${startX},
+                                        y : ${startY}
+                                    }
+                                ]
+                            },
+                            endEvent : {
+                                inputType : "hand",
+                                timeOffset : 0.15,
+                                touches : [
+                                    {
+                                        inputType : "finger",
+                                        phase : "moved",
+                                        id : 1,
+                                        x : ${endX},
+                                        y : ${endY}
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                };
+
+                uiController.sendEventStream(JSON.stringify(movedFingerDownStream), function() {
+                    uiController.doAfterVisibleContentRectUpdate(function () {
+                        uiController.uiScriptComplete(JSON.stringify(uiController.contentVisibleRect));
+                    });
+                });
+            })();`;
+        }
+
+        function getFingerUpUIScript(x, y)
+        {
+            return `(function() {
+                uiController.liftUpAtPoint(${x}, ${y}, 1, function() {
+                    uiController.uiScriptComplete('');
+                });
+            })();`;
+        }
+
+        function doTest()
+        {
+            if (!testRunner.runUIScript)
+                return
+
+            window.setTimeout(function() {
+                var xPos = 100;
+                var startY = 300;
+                var endY = 100;
+                // Send touch down and moves (keep the finger down).
+                testRunner.runUIScript(getDragUIScript(xPos, startY, xPos, endY), function(visibleRectAfterScroll) {
+                    var result = 'visibleRectAfterScroll: ' + visibleRectAfterScroll + '\n' + internals.layerTreeAsText(document);
+                    document.getElementById('layers').textContent = result;
+                    // Now send the final touch up.
+                    testRunner.runUIScript(getFingerUpUIScript(xPos, endY), function() {
+                        testRunner.notifyDone();
+                    });
+                });
+            }, 0);
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<div class="fixed"></div>
+<pre id="layers"></pre>
+</body>
+</html>

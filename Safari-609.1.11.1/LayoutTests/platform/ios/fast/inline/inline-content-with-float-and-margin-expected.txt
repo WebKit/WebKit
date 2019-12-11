@@ -1,0 +1,59 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+layer at (8,8) size 102x52 clip at (9,9) size 100x50
+  RenderBlock {DIV} at (0,0) size 102x52 [border: (1px solid #008000)]
+    RenderText {#text} at (29,1) size 66x14
+      text run at (29,1) width 66: "foobar foobar"
+    RenderBlock (floating) {SPAN} at (11,11) size 8x22 [border: (1px solid #0000FF)]
+      RenderText {#text} at (1,1) size 6x14
+        text run at (1,1) width 6: "2"
+    RenderText {#text} at (29,16) size 66x14
+      text run at (29,16) width 66: "foobar foobar"
+layer at (8,60) size 102x52 clip at (9,61) size 100x50
+  RenderBlock {DIV} at (0,52) size 102x52 [border: (1px solid #008000)]
+    RenderText {#text} at (19,1) size 66x14
+      text run at (19,1) width 66: "foobar foobar"
+    RenderBlock (floating) {SPAN} at (11,1) size 8x22 [border: (1px solid #0000FF)]
+      RenderText {#text} at (1,1) size 6x14
+        text run at (1,1) width 6: "2"
+    RenderText {#text} at (19,16) size 66x14
+      text run at (19,16) width 66: "foobar foobar"
+layer at (8,112) size 102x52 clip at (9,113) size 100x50
+  RenderBlock {DIV} at (0,104) size 102x52 [border: (1px solid #008000)]
+    RenderText {#text} at (19,1) size 66x14
+      text run at (19,1) width 66: "foobar foobar"
+    RenderBlock (floating) {SPAN} at (1,1) size 8x22 [border: (1px solid #0000FF)]
+      RenderText {#text} at (1,1) size 6x14
+        text run at (1,1) width 6: "2"
+    RenderText {#text} at (19,16) size 66x14
+      text run at (19,16) width 66: "foobar foobar"
+layer at (8,164) size 102x52 clip at (9,165) size 100x50
+  RenderBlock {DIV} at (0,156) size 102x52 [border: (1px solid #008000)]
+    RenderText {#text} at (1,1) size 66x14
+      text run at (1,1) width 66: "foobar foobar"
+    RenderBlock (floating) {SPAN} at (83,11) size 8x22 [border: (1px solid #0000FF)]
+      RenderText {#text} at (1,1) size 6x14
+        text run at (1,1) width 6: "2"
+    RenderText {#text} at (1,16) size 66x14
+      text run at (1,16) width 66: "foobar foobar"
+layer at (8,216) size 102x52 clip at (9,217) size 100x50
+  RenderBlock {DIV} at (0,208) size 102x52 [border: (1px solid #008000)]
+    RenderText {#text} at (1,1) size 66x14
+      text run at (1,1) width 66: "foobar foobar"
+    RenderBlock (floating) {SPAN} at (93,1) size 8x22 [border: (1px solid #0000FF)]
+      RenderText {#text} at (1,1) size 6x14
+        text run at (1,1) width 6: "2"
+    RenderText {#text} at (1,16) size 66x14
+      text run at (1,16) width 66: "foobar foobar"
+layer at (8,268) size 102x52 clip at (9,269) size 100x50
+  RenderBlock {DIV} at (0,260) size 102x52 [border: (1px solid #008000)]
+    RenderText {#text} at (1,1) size 66x14
+      text run at (1,1) width 66: "foobar foobar"
+    RenderBlock (floating) {SPAN} at (83,1) size 8x22 [border: (1px solid #0000FF)]
+      RenderText {#text} at (1,1) size 6x14
+        text run at (1,1) width 6: "2"
+    RenderText {#text} at (1,16) size 66x14
+      text run at (1,16) width 66: "foobar foobar"

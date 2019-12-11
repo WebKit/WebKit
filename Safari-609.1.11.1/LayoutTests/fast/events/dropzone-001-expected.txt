@@ -1,0 +1,77 @@
+This test checks that drag-and-drop support works and conforms to the HTML 5 specification.
+For each effectAllowed, iterates through the possible dropEffects: none, copy, move, link, dummy.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+When effectAllowed == "uninitialized"
+
+Received drop event for allowedEffect uninitialized and chosenDropEffect none
+Received drop event for allowedEffect uninitialized and chosenDropEffect copy
+Received drop event for allowedEffect uninitialized and chosenDropEffect move
+Received drop event for allowedEffect uninitialized and chosenDropEffect link
+Received drop event for allowedEffect uninitialized and chosenDropEffect dummy
+
+When effectAllowed == "undefined"
+
+Received drop event for allowedEffect undefined and chosenDropEffect none
+Received drop event for allowedEffect undefined and chosenDropEffect copy
+Received drop event for allowedEffect undefined and chosenDropEffect move
+Received drop event for allowedEffect undefined and chosenDropEffect link
+Received drop event for allowedEffect undefined and chosenDropEffect dummy
+
+When effectAllowed == "none"
+
+
+When effectAllowed == "all"
+
+Received drop event for allowedEffect all and chosenDropEffect none
+Received drop event for allowedEffect all and chosenDropEffect copy
+Received drop event for allowedEffect all and chosenDropEffect move
+Received drop event for allowedEffect all and chosenDropEffect link
+Received drop event for allowedEffect all and chosenDropEffect dummy
+
+When effectAllowed == "copy"
+
+Received drop event for allowedEffect copy and chosenDropEffect none
+Received drop event for allowedEffect copy and chosenDropEffect copy
+Received drop event for allowedEffect copy and chosenDropEffect dummy
+
+When effectAllowed == "move"
+
+Received drop event for allowedEffect move and chosenDropEffect move
+
+When effectAllowed == "link"
+
+Received drop event for allowedEffect link and chosenDropEffect link
+
+When effectAllowed == "copyMove"
+
+Received drop event for allowedEffect copyMove and chosenDropEffect none
+Received drop event for allowedEffect copyMove and chosenDropEffect copy
+Received drop event for allowedEffect copyMove and chosenDropEffect move
+Received drop event for allowedEffect copyMove and chosenDropEffect dummy
+
+When effectAllowed == "copyLink"
+
+Received drop event for allowedEffect copyLink and chosenDropEffect none
+Received drop event for allowedEffect copyLink and chosenDropEffect copy
+Received drop event for allowedEffect copyLink and chosenDropEffect link
+Received drop event for allowedEffect copyLink and chosenDropEffect dummy
+
+When effectAllowed == "linkMove"
+
+Received drop event for allowedEffect linkMove and chosenDropEffect move
+Received drop event for allowedEffect linkMove and chosenDropEffect link
+
+When effectAllowed == "dummy"
+
+Received drop event for allowedEffect dummy and chosenDropEffect none
+Received drop event for allowedEffect dummy and chosenDropEffect copy
+Received drop event for allowedEffect dummy and chosenDropEffect move
+Received drop event for allowedEffect dummy and chosenDropEffect link
+Received drop event for allowedEffect dummy and chosenDropEffect dummy
+
+TEST COMPLETE
+

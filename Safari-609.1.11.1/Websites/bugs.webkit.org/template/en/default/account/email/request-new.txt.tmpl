@@ -1,0 +1,47 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # token: random string used to authenticate the transaction.
+  # expiration_ts: expiration date of the token.
+  # email: email address of the new account.
+  #%]
+
+From: [% Param('mailfrom') %]
+To: [% email %]
+Subject: [% terms.Bugzilla %]: confirm account creation
+X-Bugzilla-Type: admin
+
+[%+ terms.Bugzilla %] has received a request to create a user account
+using your email address ([% email %]).
+
+To continue creating an account using this email address, visit the 
+following link by [% expiration_ts FILTER time("%B %e, %Y at %H:%M %Z") %]:
+
+[%+ urlbase %]token.cgi?t=[% token FILTER uri %]&a=request_new_account
+
+If you did not receive this email before [% expiration_ts FILTER time("%B %e, %Y at %H:%M %Z") %] or
+you wish to create an account using a different email address you can begin
+again by going to:
+
+[%+ urlbase %]createaccount.cgi
+
+[% IF Param('createemailregexp') == '.*' && Param('emailsuffix') == '' %]
+PRIVACY NOTICE: [% terms.Bugzilla %] is an open [% terms.bug %] tracking system. Activity on most
+[%+ terms.bugs %], including email addresses, will be visible to the public. We recommend
+using a secondary account or free web email service (such as Gmail, Yahoo,
+Hotmail, or similar) to avoid receiving spam at your primary email address.
+[% END %]
+
+If you do not wish to create an account, or if this request was made in
+error you can do nothing or visit the following link:
+
+[%+ urlbase %]token.cgi?t=[% token FILTER uri %]&a=cancel_new_account
+
+If the above links do not work, or you have any other issues regarding
+your account, please contact administration at [% Param('maintainer') %].

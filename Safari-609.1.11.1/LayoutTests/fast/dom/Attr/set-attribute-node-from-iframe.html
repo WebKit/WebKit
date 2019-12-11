@@ -1,0 +1,22 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<iframe></iframe>
+<div id="toBeMoved"></div>
+<script>
+description("ownerDocument of Attr should be set on setAttributeNode");
+
+var elementToBeMoved = document.getElementById("toBeMoved");
+iframeElement = document.getElementsByTagName("iframe")[0];
+iframeDocument = iframeElement.contentWindow.document;
+
+shouldBe('attr = iframeDocument.createAttribute("foo"); attr.ownerDocument', 'iframeDocument');
+shouldBe('elementToBeMoved.setAttributeNode(attr); attr.ownerDocument', 'document');
+shouldBe('iframeDocument.documentElement.appendChild(elementToBeMoved); attr.ownerDocument', 'iframeDocument');
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

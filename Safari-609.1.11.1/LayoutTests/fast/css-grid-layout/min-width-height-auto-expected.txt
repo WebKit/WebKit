@@ -1,0 +1,18 @@
+This test checks min-width|height auto behavior for grids
+
+XXXX
+PASS
+XXXX
+PASS
+XXXX
+PASS
+XXXX
+PASS
+XXXX
+PASS
+XXXX
+PASS
+XXXX
+PASS
+XXXX
+PASS

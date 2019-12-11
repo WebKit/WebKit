@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<div>Test is passing if not crashing</div>
+<div id ="log"></div>
+<script>
+if (window.testRunner) {
+   testRunner.dumpAsText();
+   testRunner.waitUntilDone();
+}
+
+function createLinkElement(isCORS, handler)
+{
+    link = document.createElement('link');
+    link.href = "http://127.0.0.1:8080/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=cssStyle.css&contentType=text/css&allowCredentials"
+    link.rel = "stylesheet";
+    link.type = "text/css";
+    if (isCORS)
+        link.crossOrigin = "use-credentials";
+    link.onload = handler;
+    link.onerror = () => { console.log("Unexpected error loading link"); }
+    return link;
+}
+
+document.body.appendChild(createLinkElement(false, function() {
+    setTimeout(function() {
+        document.body.appendChild(createLinkElement(true, function() {
+            if (window.internals)
+                internals.beginSimulatedMemoryPressure();
+            if (window.internals)
+                internals.endSimulatedMemoryPressure();
+            document.getElementById('log').innerHTML = "PASS";
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }));
+    }, 1000);
+}));
+</script>

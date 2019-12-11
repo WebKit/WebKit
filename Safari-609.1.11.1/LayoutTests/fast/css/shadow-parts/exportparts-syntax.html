@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CSS Shadow Parts - exportparts list syntax</title>
+    <link href="http://www.apple.com/" rel="author" title="Apple">
+    <link href="https://drafts.csswg.org/css-shadow-parts/" rel="help">
+    <script src="../../../resources/testharness.js"></script>
+    <script src="../../../resources/testharnessreport.js"></script>
+    <script src="../../../imported/w3c/web-platform-tests/css/css-shadow-parts/support/shadow-helper.js"></script>
+  </head>
+  <body>
+    <style>
+      ::part(part1) { color: green; }
+      ::part(export-part2) { color: green; }
+      ::part(export-part3-good) { color: green; }
+      ::part(export-part3-error) { color: blue; }
+      ::part(export-part4-part5) { color: green; }
+      ::part(export-part4-part5) { color: green; }
+      ::part(export-part6-name1) { color: blue; }
+      ::part(export-part6-name2) { color: green; }
+      ::part(export-part6-name1)::before { color: green; }
+      ::part(export-part6-name2)::after { color: green; }
+    </style>
+    <script>installCustomElement("custom-element-inner", "custom-element-inner-template");</script>
+    <template id="custom-element-inner-template">
+      <style>
+        span { color: red; }
+        #part6::before { content: "(before "; color: red; }
+        #part6::after { content: " after)"; color: red; }
+      </style>
+      <span id="part1" part="part1">Part 1</span>
+      <span id="part2" part="part2">Part 2</span>
+      <span id="part3" part="part3">Part 3</span>
+      <span id="part4" part="part4">Part 4</span>
+      <span id="part5" part="part5">Part 5</span>
+      <span id="part6" part="part6">Part 6</span>
+    </template>
+    <script>installCustomElement("custom-element-outer", "custom-element-outer-template");</script>
+    <template id="custom-element-outer-template">
+        <custom-element-inner id="c-e-inner" exportparts="part1, part2:export-part2,part3:export-part3-error:,,
+            ,:, : ,: :,part3:export-part3-good,part4:export-part4-part5, part5:export-part4-part5, part6:export-part6-name1, part6:export-part6-name2"></custom-element-inner>
+    </template>
+    The following text should be green:
+    <div id="target">
+        <div><custom-element-outer id="c-e-outer"></custom-element-outer></div>
+    </div>
+    <script>
+      "use strict";
+      const colorGreen = "rgb(0, 128, 0)";
+      test(function() {
+        const part = getElementByShadowIds(document, ["c-e-outer", "c-e-inner", "part1"]);
+        assert_equals(window.getComputedStyle(part).color, colorGreen);
+      }, "Shortcut notation");
+      test(function() {
+        const part = getElementByShadowIds(document, ["c-e-outer", "c-e-inner", "part2"]);
+        assert_equals(window.getComputedStyle(part).color, colorGreen);
+      }, "Full notation");
+      test(function() {
+        const part = getElementByShadowIds(document, ["c-e-outer", "c-e-inner", "part3"]);
+        assert_equals(window.getComputedStyle(part).color, colorGreen);
+      }, "Skip bad entries");
+      test(function() {
+        const part1 = getElementByShadowIds(document, ["c-e-outer", "c-e-inner", "part4"]);
+        assert_equals(window.getComputedStyle(part1).color, colorGreen);
+        const part2 = getElementByShadowIds(document, ["c-e-outer", "c-e-inner", "part5"]);
+        assert_equals(window.getComputedStyle(part2).color, colorGreen);
+      }, "Mapping multiple parts to a single export");
+      test(function() {
+        const part = getElementByShadowIds(document, ["c-e-outer", "c-e-inner", "part6"]);
+        assert_equals(window.getComputedStyle(part).color, colorGreen);
+        assert_equals(window.getComputedStyle(part, "::before").color, colorGreen);
+        assert_equals(window.getComputedStyle(part, "::after").color, colorGreen);
+      }, "Multiple exports for a single part");
+    </script>
+  </body>
+</html>

@@ -1,0 +1,27 @@
+This tests that Math.min and Math.max for doubles works correctly in the DFG JIT.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS doMin(1.5, 2.5) is 1.5
+PASS doMin(2.5, 1.5) is 1.5
+PASS doMin(1.5, 1.5) is 1.5
+PASS doMin(2.5, 2.5) is 2.5
+PASS doMin(1.5, NaN) is NaN
+PASS doMin(2.5, NaN) is NaN
+PASS doMin(NaN, 1.5) is NaN
+PASS doMin(NaN, 2.5) is NaN
+PASS doMin(NaN, NaN) is NaN
+PASS doMax(1.5, 2.5) is 2.5
+PASS doMax(2.5, 1.5) is 2.5
+PASS doMax(1.5, 1.5) is 1.5
+PASS doMax(2.5, 2.5) is 2.5
+PASS doMax(1.5, NaN) is NaN
+PASS doMax(2.5, NaN) is NaN
+PASS doMax(NaN, 1.5) is NaN
+PASS doMax(NaN, 2.5) is NaN
+PASS doMax(NaN, NaN) is NaN
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

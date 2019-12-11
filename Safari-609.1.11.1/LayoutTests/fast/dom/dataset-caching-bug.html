@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<div id="user"></div>
+<script>
+description("Tests for a caching bug on DOMStringMap causing us to return an outdated value.");
+
+const div = document.getElementById("user");
+let success = true;
+for (var i = 0; i < 100000; ++i) {
+    if (i == 90000)
+        div.setAttribute("data-test", "value");
+
+    if (!div.dataset.test) {
+        if (i >= 90000) {
+            testFailed("div.dataset.test returned undefined but should not have");
+            success = false;
+            break;
+        }
+    } else {
+        if (i < 90000) {
+            testFailed("div.dataset.test did not return undefined but should have");
+            success = false;
+            break;
+        }
+    }
+}
+
+if (success)
+    testPassed("The bug did not reproduce.");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

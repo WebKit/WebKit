@@ -1,0 +1,5 @@
+Drop files anywhere on this page. The page will try to intercept the drop--it should succeed but not be able to use dataTransfer.getData
+
+Dropped file: file:///home/slave/webkitgtk/gtk-linux-64-release/build/LayoutTests/fast/events/resources/file-for-drop-with-file-paths.html
+
+Dropped types: text/uri-list,Files,URL

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script>
+        window.jsTestIsAsync = true;
+
+        if (window.internals)
+            internals.eventThrottlingBehaviorOverride = 'unresponsive';
+
+        function getUIScript()
+        {
+            return `
+            (function() {
+                uiController.didEndScrollingCallback = function() {
+                    uiController.uiScriptComplete();
+                }
+                uiController.scrollToOffset(0, 500);
+            })();`
+        }
+
+        var receivedScrollEvent = false;
+        function scrolled()
+        {
+            receivedScrollEvent = true;
+        }
+
+        function runTest()
+        {
+            if (!testRunner.runUIScript)
+                return;
+
+            if (testRunner.runUIScript) {
+                testRunner.runUIScript(getUIScript(), function() {
+                    shouldBe('receivedScrollEvent', 'false');
+                    finishJSTest();
+                });
+            }
+        }
+        window.addEventListener('load', runTest, false);
+    </script>
+</head>
+<body onscroll="scrolled()">
+
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

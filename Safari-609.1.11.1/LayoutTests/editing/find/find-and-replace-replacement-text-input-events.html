@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <p>Verifies that find and replace fires input events of type "insertReplacementText". This test requires WebKitTestRunner.</p>
+    <div id="editor" contenteditable>
+        <p>Apple banana orange.</p>
+        <p>Kiwi banana pear.</p>
+    </div>
+    <input type="text" id="field" value="Apple banana orange.">
+    <pre id="output"></pre>
+</body>
+<script>
+let write = s => output.innerHTML += s + "<br>";
+
+function toString(range) {
+    if (!range)
+        return "null";
+
+    return `(${range.startContainer}#${range.startOffset},${range.endContainer}#${range.endOffset})`;
+}
+
+function logInputEvent(event) {
+    write(`(${event.target.id}):
+        type=${event.type},
+        inputType=${event.inputType},
+        range=${toString(event.getTargetRanges()[0])},
+        data=${event.data},
+        dataTransfer=${event.dataTransfer}`);
+}
+
+editor.addEventListener("beforeinput", logInputEvent);
+editor.addEventListener("input", logInputEvent);
+field.addEventListener("beforeinput", logInputEvent);
+field.addEventListener("input", logInputEvent);
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.findStringMatchesInPage("banana", []);
+    testRunner.replaceFindMatchesAtIndices([0, 1, 2], "watermelon", false);
+
+    write("---");
+
+    getSelection().setBaseAndExtent(editor.children[0], 0, editor.children[0], 1);
+    testRunner.replaceFindMatchesAtIndices([], "Pineapple", false);
+
+    write("---");
+
+    field.focus();
+    field.setSelectionRange(0, 0);
+    testRunner.replaceFindMatchesAtIndices([], "Guava", false);
+}
+</script>
+</html>

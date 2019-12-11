@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: "FontFeaturesTestOTF";
+    src: url("resources/FontWithFeatures.otf") format("opentype");
+}
+@font-face {
+    font-family: "FontFeaturesTestTTF";
+    src: url("resources/FontWithFeatures.ttf") format("truetype");
+}
+</style>
+</head>
+<body>
+<p>This test is a dump-render-tree test which makes sure that the following properties are appropriately applied:</p>
+<ul>
+<li>-webkit-font-variant-ligatures</li>
+<li>-webkit-font-variant-position</li>
+<li>-webkit-font-variant-caps</li>
+<li>-webkit-font-variant-numeric</li>
+<li>-webkit-font-variant-alternates</li>
+<li>-webkit-font-variant-east-asian</li>
+</ul>
+The test passes if there is a particular sequence of checks and x characters below. Note that some x characters are expected.
+<div id="insertionPoint" style="font-size: 20px;"></div>
+<div id="insertionPoint2" style="font-size: 20px;"></div>
+<div id="insertionPoint3" style="font-size: 20px;"></div>
+<div id="insertionPoint4" style="font-size: 20px;"></div>
+<script>
+var insertionPoint = document.getElementById("insertionPoint");
+var insertionPoint2 = document.getElementById("insertionPoint2");
+var insertionPoint3 = document.getElementById("insertionPoint3");
+var insertionPoint4 = document.getElementById("insertionPoint4");
+function addElement(pointToInsert, fontFamily, property, value, text) {
+    var element = document.createElement("span");
+    element.textContent = text;
+    element.setAttribute("style", "font-family: " + fontFamily + "; " + property + ": " + value + ";");
+    pointToInsert.appendChild(element);
+    pointToInsert.appendChild(document.createTextNode(" "));
+}
+
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-ligatures", "common-ligatures", "C");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-ligatures", "common-ligatures", "D");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-ligatures", "no-common-ligatures", "C");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-ligatures", "no-common-ligatures", "D");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-ligatures", "discretionary-ligatures", "E");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-ligatures", "no-discretionary-ligatures", "E");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-ligatures", "historical-ligatures", "F");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-ligatures", "no-historical-ligatures", "F");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-ligatures", "contextual", "G");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-ligatures", "no-contextual", "G");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-position", "sub", "H");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-position", "super", "I");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-caps", "unicase", "N");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-caps", "titling-caps", "O");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-numeric", "lining-nums", "P");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-numeric", "oldstyle-nums", "Q");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-numeric", "proportional-nums", "R");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-numeric", "tabular-nums", "S");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-numeric", "diagonal-fractions", "T");
+//addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-numeric", "stacked-fractions", "U");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-numeric", "ordinal", "V");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-numeric", "slashed-zero", "W");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-alternates", "historical-forms", "X");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-east-asian", "jis78", "Y");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-east-asian", "jis83", "Z");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-east-asian", "jis90", "a");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-east-asian", "jis04", "b");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-east-asian", "simplified", "c");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-east-asian", "traditional", "d");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-east-asian", "full-width", "e");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-east-asian", "proportional-width", "f");
+addElement(insertionPoint, "FontFeaturesTestOTF", "font-variant-east-asian", "ruby", "g");
+
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-ligatures", "common-ligatures", "C");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-ligatures", "common-ligatures", "D");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-ligatures", "no-common-ligatures", "C");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-ligatures", "no-common-ligatures", "D");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-ligatures", "discretionary-ligatures", "G");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-ligatures", "no-discretionary-ligatures", "G");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-ligatures", "historical-ligatures", "I");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-ligatures", "no-historical-ligatures", "I");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-ligatures", "contextual", "L");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-ligatures", "no-contextual", "L");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-position", "sub", "O");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-position", "super", "P");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-caps", "unicase", "Y");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-caps", "titling-caps", "a");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-numeric", "lining-nums", "c");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-numeric", "oldstyle-nums", "d");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-numeric", "proportional-nums", "f");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-numeric", "tabular-nums", "g");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-numeric", "diagonal-fractions", "i");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-numeric", "stacked-fractions", "j");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-numeric", "ordinal", "Q");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-numeric", "slashed-zero", "k");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-alternates", "historical-forms", "K");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-east-asian", "jis78", "m");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-east-asian", "jis83", "n");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-east-asian", "jis90", "o");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-east-asian", "jis04", "p");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-east-asian", "simplified", "q");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-east-asian", "traditional", "r");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-east-asian", "full-width", "t");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-east-asian", "proportional-width", "u");
+addElement(insertionPoint2, "FontFeaturesTestTTF", "font-variant-east-asian", "ruby", "v");
+
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-ligatures", "common-ligatures", "C");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-ligatures", "common-ligatures", "D");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-ligatures", "no-common-ligatures", "C");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-ligatures", "no-common-ligatures", "D");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-ligatures", "discretionary-ligatures", "E");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-ligatures", "no-discretionary-ligatures", "E");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-ligatures", "historical-ligatures", "F");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-ligatures", "no-historical-ligatures", "F");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-ligatures", "contextual", "G");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-ligatures", "no-contextual", "G");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-position", "sub", "H");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-position", "super", "I");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-caps", "unicase", "N");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-caps", "titling-caps", "O");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-numeric", "lining-nums", "P");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-numeric", "oldstyle-nums", "Q");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-numeric", "proportional-nums", "R");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-numeric", "tabular-nums", "S");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-numeric", "diagonal-fractions", "T");
+//addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-numeric", "stacked-fractions", "U");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-numeric", "ordinal", "V");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-numeric", "slashed-zero", "W");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-alternates", "historical-forms", "X");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-east-asian", "jis78", "Y");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-east-asian", "jis83", "Z");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-east-asian", "jis90", "a");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-east-asian", "jis04", "b");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-east-asian", "simplified", "c");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-east-asian", "traditional", "d");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-east-asian", "full-width", "e");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-east-asian", "proportional-width", "f");
+addElement(insertionPoint3, "FontWithFeaturesOTF", "font-variant-east-asian", "ruby", "g");
+
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-ligatures", "common-ligatures", "C");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-ligatures", "common-ligatures", "D");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-ligatures", "no-common-ligatures", "C");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-ligatures", "no-common-ligatures", "D");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-ligatures", "discretionary-ligatures", "G");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-ligatures", "no-discretionary-ligatures", "G");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-ligatures", "historical-ligatures", "I");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-ligatures", "no-historical-ligatures", "I");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-ligatures", "contextual", "L");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-ligatures", "no-contextual", "L");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-position", "sub", "O");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-position", "super", "P");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-caps", "unicase", "Y");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-caps", "titling-caps", "a");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-numeric", "lining-nums", "c");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-numeric", "oldstyle-nums", "d");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-numeric", "proportional-nums", "f");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-numeric", "tabular-nums", "g");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-numeric", "diagonal-fractions", "i");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-numeric", "stacked-fractions", "j");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-numeric", "ordinal", "Q");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-numeric", "slashed-zero", "k");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-alternates", "historical-forms", "K");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-east-asian", "jis78", "m");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-east-asian", "jis83", "n");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-east-asian", "jis90", "o");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-east-asian", "jis04", "p");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-east-asian", "simplified", "q");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-east-asian", "traditional", "r");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-east-asian", "full-width", "t");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-east-asian", "proportional-width", "u");
+addElement(insertionPoint4, "FontWithFeaturesTTF", "font-variant-east-asian", "ruby", "v");
+</script>
+</body>
+</html>

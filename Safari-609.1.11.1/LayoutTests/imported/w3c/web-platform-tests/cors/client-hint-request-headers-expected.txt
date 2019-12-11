@@ -1,0 +1,22 @@
+CONSOLE MESSAGE: line 26: Request header field save-data is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: line 26: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/cors-makeheader.py?headers=x-print, due to access control checks.
+CONSOLE MESSAGE: line 46: Request header field y-print is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: line 46: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/cors-makeheader.py?headers=x-print due to access control checks.
+CONSOLE MESSAGE: line 53: Request header field device-memory is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: line 53: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/cors-makeheader.py?headers=x-print due to access control checks.
+CONSOLE MESSAGE: line 60: Request header field dpr is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: line 60: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/cors-makeheader.py?headers=x-print due to access control checks.
+CONSOLE MESSAGE: line 67: Request header field width is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: line 67: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/cors-makeheader.py?headers=x-print due to access control checks.
+CONSOLE MESSAGE: line 74: Request header field viewport-width is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: line 74: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/cors-makeheader.py?headers=x-print due to access control checks.
+Request headers
+
+
+FAIL Client hint headers are simple headers  A network error occurred.
+PASS Unspecified request headers are disallowed 
+PASS Unextractable device-memory client hint header is disallowed 
+PASS Unextractable DPR client hint header is disallowed 
+PASS Unextractable width client hint header is disallowed 
+PASS Unextractable viewport-width client hint header is disallowed 
+

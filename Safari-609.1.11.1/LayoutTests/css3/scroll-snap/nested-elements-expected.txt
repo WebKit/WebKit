@@ -1,0 +1,6 @@
+Scroll-snap offsets for 'container': vertical = { 0, 100, 215, 330, 445, 560, 675, 790, 905, 1020, 1135, 1250, 1365, 1480, 1595, 1710, 1825, 1940, 2055, 2170, 4900 }
+PASS Scroll-snap offsets for 'invalidContainer': UNDEFINED
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

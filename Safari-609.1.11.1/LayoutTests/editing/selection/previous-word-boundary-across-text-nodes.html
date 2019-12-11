@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test checks moving to the previous word boundary across multiple text nodes.<br>
+For example, when "I" and "'ll" are put in a separate text node, we should not erroneously report the previous word boundary to be between "'" and "ll".</p>
+<div id="tests" style="font-size: 20px;" >
+<div contenteditable><span>I</span>'ll</div>
+<div contenteditable><span>I'</span>ll</div>
+<div contenteditable><span>I'l</span>l</div>
+<div contenteditable>I'<span>ll</span></div>
+<div contenteditable>I<span>'l</span>l</div>
+<div contenteditable><span>e</span>&#x301;'ll</div>
+<div contenteditable><span>e&#x301;</span>'ll</div>
+<div contenteditable><span>e&#x301;'</span>ll</div>
+<div contenteditable><span>e&#x301;'l</span>l</div>
+<div contenteditable>e<span>&#x301;</span>'ll</div>
+<div contenteditable>e<span>&#x301;'</span>ll</div>
+<div contenteditable>e<span>&#x301;'l</span>l</div>
+<div contenteditable>e<span>&#x301;'ll</span></div>
+<div contenteditable>e&#x301;<span>'</span>ll</div>
+<div contenteditable>e&#x301;<span>'l</span>l</div>
+<div contenteditable>e&#x301;<span>'ll</span></div>
+<div contenteditable>e&#x301;<span>'</span>ll</div>
+<div contenteditable>e&#x301;<span>'l</span>l</div>
+<div contenteditable>e&#x301;<span>'ll</span></div>
+<div contenteditable>e&#x301;'<span>l</span>l</div>
+</div>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+function selectWordBackward(container) {
+    getSelection().collapse(container, container.childNodes.length);
+    getSelection().modify('extend', 'backward', 'word');
+}
+
+var tests = document.getElementById('tests').children;
+for (var i = 0; i < tests.length; i++) {
+    var container = tests[i];
+    shouldBeEqualToString("selectWordBackward(container); /* " + container.innerHTML + " */ getSelection().toString();", container.textContent);
+}
+document.getElementById('tests').style.display = 'none';
+
+</script>
+</body>
+</html>

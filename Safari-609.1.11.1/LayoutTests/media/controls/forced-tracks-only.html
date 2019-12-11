@@ -1,0 +1,59 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+    <head>
+        <script src="../video-test.js"></script>
+        <script src="../media-file.js"></script>
+        <script src="../trackmenu-test.js"></script>
+        <script src="../media-controls.js"></script>
+        <script src="controls-test-helpers.js"></script>
+        <script>
+            var tester = new ControlsTest()
+                .whenReady(testSetup)
+                .start();
+
+            function testSetup()
+            {
+                findMediaElement();
+
+                var currentState = tester.currentState;
+                tester.test("We are using the apple idiom")
+                    .value(currentState.idiom)
+                    .isEqualTo("apple");
+
+                tester.test("All text tracks accounted for")
+                    .value(tester.video.textTracks.length)
+                    .isEqualTo("2");
+
+                tester.test("Text track 1 not visible")
+                    .value(tester.video.textTracks[0].mode)
+                    .isEqualTo("disabled");
+
+                tester.test("Text track 2 not visible")
+                    .value(tester.video.textTracks[1].mode)
+                    .isEqualTo("disabled");
+
+                var statusState = tester.stateForControlsElement("Track Menu", true);
+
+                tester.test("Menu name is 'Track Menu'")
+                    .value(statusState.name)
+                    .isEqualTo("Track Menu");
+
+                var captionMenu = getTrackListElement();
+                tester.test("Menu does not exist")
+                    .value(captionMenu)
+                    .isEqualTo(null);
+
+                tester.end();
+            }
+
+        </script>
+    </head>
+    <body>
+        <p>This verifies that the track menu is not visible when a file has only forced tracks.</p>
+        <p>This test only runs in DRT!</p>
+        <video width="500" height="300" controls>
+            <track label="z" kind="forced" src="track/captions-webvtt/captions-fast.vtt" srclang="ja">
+            <track label="y" kind="forced" src="track/captions-webvtt/captions-fast.vtt" srclang="en-au">
+        </video>
+    </body>
+</html>

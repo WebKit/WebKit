@@ -1,0 +1,24 @@
+This tests hang when listifying nested lists with an orphaned list child in between (see bug 33668).
+| "
+"
+| <ol>
+|   <ol>
+|     <li>
+|       "hello"
+|   "
+    world
+    "
+|   <ol>
+|     <li>
+|       "WebKit"
+|     <li>
+|       "rocks"
+|     "
+        "
+|     <ol>
+|       <li>
+|         "<#selection-caret>because of you"
+|   "
+    "
+| "
+"

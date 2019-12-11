@@ -1,0 +1,143 @@
+# These are the layout test expectations for Apple's iOS device port of WebKit (both WebKit1 and WebKit2).
+#
+# See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
+#
+
+compositing/canvas/accelerated-canvas-compositing-size-limit.html [ Failure ]
+compositing/canvas/accelerated-canvas-compositing.html [ Failure ]
+compositing/backgrounds/fixed-backgrounds.html [ ImageOnlyFailure ]
+compositing/contents-scale/non-decomposable-matrix.html [ ImageOnlyFailure ]
+compositing/hidpi-compositing-vs-non-compositing-check-on-testing-framework.html [ ImageOnlyFailure ]
+
+css3/filters/backdrop/backdrop-filter-with-reflection-add-backdrop.html [ ImageOnlyFailure ]
+css3/filters/backdrop/backdrop-filter-with-reflection-value-change.html [ ImageOnlyFailure ]
+css3/filters/backdrop/backdrop-filter-with-reflection.html [ ImageOnlyFailure ]
+
+fast/canvas/canvas-alphaImageData-behavior.html [ Failure ]
+fast/canvas/canvas-crash.html [ Failure ]
+fast/canvas/canvas-createPattern-fillRect-shadow.html [ Failure ]
+fast/canvas/canvas-draw-canvas-on-canvas-shadow.html [ Failure ]
+fast/canvas/canvas-drawImage-shadow.html [ Failure ]
+fast/canvas/canvas-fillRect-gradient-shadow.html [ Failure ]
+fast/canvas/canvas-getImageData.html [ Failure ]
+fast/canvas/canvas-render-layer.html [ Failure ]
+fast/canvas/canvas-scale-shadowBlur.html [ Failure ]
+fast/canvas/canvas-scale-strokePath-shadow.html [ Failure ]
+fast/canvas/rgba-parsing.html [ Failure ]
+fast/canvas/set-colors.html [ Failure ]
+fast/dom/Window/window-postmessage-clone-deep-array.html [ Failure ]
+fast/forms/input-text-word-wrap.html [ Failure ]
+fast/forms/search-rtl.html [ Failure ]
+fast/forms/search-vertical-alignment.html [ Failure ]
+fast/forms/searchfield-heights.html [ Failure ]
+fast/forms/visual-hebrew-text-field.html [ Failure ]
+fast/harness/perftests/perf-runner-compute-statistics.html [ Failure ]
+fast/harness/perftests/runs-per-second-iterations.html [ Failure ]
+fast/harness/perftests/runs-per-second-log.html [ Failure ]
+fast/scrolling/ios/touch-scroll-pointer-events-none.html [ Failure ]
+fast/scrolling/ios/touch-scroll-visibility-hidden.html [ Failure ]
+fast/scrolling/scrolling-tree-includes-frame.html [ Failure ]
+fast/viewport/ios/ipad/width-is-device-width.html [ Failure ]
+
+fast/css/object-fit/object-fit-canvas.html [ ImageOnlyFailure ]
+fast/filter-image/filter-image-blur.html [ ImageOnlyFailure ]
+fast/multicol/flexbox-rows.html [ ImageOnlyFailure ]
+
+fast/mediacapturefromelement/CanvasCaptureMediaStream-2d-events.html [ Crash ]
+fast/mediacapturefromelement/CanvasCaptureMediaStream-webgl-events.html [ Crash ]
+fast/multicol/newmulticol/multicol-inside-multicol.html [ Crash ]
+
+http/tests/cache/partitioned-cache.html [ Failure ]
+http/tests/loading/server-redirect-for-provisional-load-caching.html [ Failure ]
+http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url.html [ Failure ]
+http/tests/security/XFrameOptions/x-frame-options-deny-multiple-clients.html [ Failure ]
+http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW.html [ Failure ]
+
+http/tests/fetch/redirectmode-and-preload.html [ Skip ]
+http/tests/incremental/frame-focus-before-load.html [ Skip ]
+http/tests/preload/download_resources.html [ Skip ]
+http/tests/preload/onerror_event.html [ Skip ]
+http/tests/preload/onload_event.html [ Skip ]
+http/tests/websocket/tests/hybi/multiple-connections.html [ Skip ]
+
+imported/w3c/web-platform-tests/IndexedDB/keypath-special-identifiers.htm [ Failure ]
+imported/w3c/web-platform-tests/cssom-view/Screen-pixelDepth-Screen-colorDepth001.html [ Failure ]
+imported/w3c/web-platform-tests/cssom-view/scrolling-quirks-vs-nonquirks.html [ Failure ]
+imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.png.complexcolours.html [ Failure ]
+
+imported/blink/compositing/child-transform-layer-with-foreground-layer.html [ ImageOnlyFailure ]
+imported/blink/fast/canvas/canvas-unbalanced-save.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/IndexedDB/idbcursor-update-exception-order.htm [ Skip ]
+imported/w3c/web-platform-tests/xhr/send-redirect-bogus-sync.htm [ Skip ]
+imported/w3c/web-platform-tests/xhr/send-send.htm [ Skip ]
+imported/w3c/web-platform-tests/cssom/ttwf-cssom-document-extension.html [ Skip ]
+imported/w3c/web-platform-tests/dom/nodes/Element-childElement-null-xhtml.xhtml [ Skip ]
+imported/w3c/web-platform-tests/dom/nodes/getElementsByClassName-06.htm [ Skip ]
+imported/w3c/web-platform-tests/html/dom/elements/global-attributes/id-name-specialcase.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/fallback.multiple.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/size.attributes.setAttribute.empty.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toBlob.null.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.zerosize.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/forms/attributes-common-to-form-controls/disabled-elements-01.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/option-text-spaces.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/dir.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/indeterminate.html [ Skip ]
+imported/w3c/web-platform-tests/html/syntax/parsing/template/clearing-the-stack-back-to-a-given-context/clearing-stack-back-to-a-table-body-context.html [ Skip ]
+imported/w3c/web-platform-tests/html/syntax/parsing/template/clearing-the-stack-back-to-a-given-context/clearing-stack-back-to-a-table-row-context.html [ Skip ]
+imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-processing-algorithm.html [ Skip ]
+imported/w3c/web-platform-tests/html/webappapis/scripting/events/onerroreventhandler.html [ Skip ]
+imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-data-url.html [ Skip ]
+imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-with-cross-frame-event-listeners-1.html [ Skip ]
+imported/w3c/web-platform-tests/shadow-dom/Extensions-to-Event-Interface.html [ Skip ]
+imported/w3c/web-platform-tests/streams/byte-length-queuing-strategy.html [ Skip ]
+imported/w3c/web-platform-tests/streams/piping/close-propagation-forward.serviceworker.https.html [ Skip ]
+imported/w3c/web-platform-tests/streams/readable-streams/garbage-collection.serviceworker.https.html [ Skip ]
+imported/w3c/web-platform-tests/user-timing/idlharness.html [ Skip ]
+
+js/dom/deep-recursion-test.html [ Failure ]
+
+js/stringimpl-to-jsstring-on-large-strings-2.html [ Crash ]
+js/stringimpl-to-jsstring-on-large-strings-3.html [ Crash ]
+
+loader/go-back-to-different-window-size.html [ Crash ]
+
+media/audio-controls-rendering.html [ Failure ]
+media/audio-controls-timeline-in-media-document.html [ Failure ]
+media/audio-repaint.html [ Failure ]
+media/track/track-cue-overlap-snap-to-lines-not-set.html [ Failure ]
+media/video-canvas-createPattern.html [ Failure ]
+media/video-canvas-drawing-output.html [ Failure ]
+media/video-load-preload-metadata.html [ Failure ]
+media/video-played-collapse.html [ Failure ]
+media/video-played-reset.html [ Failure ]
+
+media/track/track-cues-pause-on-exit.html [ Skip ]
+media/video-played-ranges-1.html [ Skip ]
+
+media/invalid-media-url-crash.html [ Crash ]
+
+svg/custom/pattern-reference.svg [ Crash ]
+
+quicklook/numbers.html [ ImageOnlyFailure ]
+
+scrollbars/overflow-scrollbar-combinations.html [ Timeout ]
+
+security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ ImageOnlyFailure ]
+
+security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ ImageOnlyFailure ]
+
+# <rdar://problem/32575766>, need to handle media sandbox correctly
+webrtc
+
+workers/bomb.html [ Skip ]
+
+# https://bugs.webkit.org/show_bug.cgi?id=175437
+webgl/webgl-box-shadow.html
+webgl/webgl-border.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=175736
+fast/canvas/webgl/gl-teximage.html [ Failure ]
+fast/canvas/webgl/match-page-color-space.html [ ImageOnlyFailure ]
+fast/canvas/webgl/premultiplyalpha-test.html [ Failure ]

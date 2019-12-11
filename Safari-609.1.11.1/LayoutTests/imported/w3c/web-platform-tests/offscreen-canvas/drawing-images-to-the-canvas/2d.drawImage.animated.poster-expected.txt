@@ -1,0 +1,7 @@
+2d.drawImage.animated.poster
+
+drawImage() of an APNG draws the poster frame
+
+
+PASS drawImage() of an APNG draws the poster frame 
+

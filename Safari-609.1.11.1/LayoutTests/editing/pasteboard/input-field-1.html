@@ -1,0 +1,34 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
+</script>
+<script>
+function log(str) {
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode(str));
+    var console = document.getElementById("console");
+    console.appendChild(li);
+}
+function shouldBe(expected, actual) {
+    if (expected != actual)
+        log("Failure. Expected: " + expected + ", Actual: " + actual);
+    else
+        log("Passed");
+}
+</script>
+
+<p>This tests Copy/Paste of a input field.</p>
+<div id="div" contenteditable="true"><input type="text"></div>
+<ul id="console"></ul>
+<script>
+var div = document.getElementById("div");
+div.focus();
+document.execCommand("SelectAll");
+
+document.execCommand("Copy");
+var sel = window.getSelection();
+sel.modify("move", "forward", "character");
+document.execCommand("Paste");
+
+shouldBe(document.getElementsByTagName("input").length, 2);
+</script>

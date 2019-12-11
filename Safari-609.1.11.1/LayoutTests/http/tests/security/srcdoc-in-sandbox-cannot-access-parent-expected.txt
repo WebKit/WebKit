@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 4: SecurityError: Sandbox access violation: Blocked a frame at "null" from accessing a cross-origin frame.  The frame requesting access is sandboxed and lacks the "allow-same-origin" flag.
+PASS
+

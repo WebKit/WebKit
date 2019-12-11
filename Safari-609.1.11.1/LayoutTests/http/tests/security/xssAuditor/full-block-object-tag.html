@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="http://localhost:8000/security/xssAuditor/resources/utilities.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+    testRunner.setXSSAuditorEnabled(true);
+}
+</script>
+</head>
+<body>
+<p>There should be no content in the iframe below:</p>
+<iframe id="frame" name="frame" onload="checkIfFrameLocationMatchesSrcAndCallDone('frame')" src="http://127.0.0.1:8000/security/xssAuditor/resources/echo-intertag.pl?test=/security/xssAuditor/full-block-object-tag.html&enable-full-block=1&q=<object name='plugin' type='application/x-webkit-test-netscape'><param name='movie' value='http://localhost:8000/security/xssAuditor/resources/dummy.swf' /></object>">
+</iframe>
+</body>
+</html>

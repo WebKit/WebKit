@@ -1,0 +1,30 @@
+Tests that TextTrack's cues are indexed and updated in order during video playback. Test uses the enter and exits events on TextTrackCue.
+
+
+EVENT(canplaythrough)
+EXPECTED (testTrack.track.cues.length == '3') OK
+RUN(video.play())
+
+EVENT(enter)
+This cue is the currently active cue:
+EXPECTED ([object VTTCue] == '[object VTTCue]') OK
+EXPECTED (currentCue.id == '1') OK
+
+EVENT(exit)
+
+EVENT(enter)
+This cue is the currently active cue:
+EXPECTED ([object VTTCue] == '[object VTTCue]') OK
+EXPECTED (currentCue.id == '2') OK
+
+EVENT(exit)
+
+EVENT(enter)
+This cue is the currently active cue:
+EXPECTED ([object VTTCue] == '[object VTTCue]') OK
+EXPECTED (currentCue.id == '3') OK
+
+EVENT(exit)
+
+END OF TEST
+

@@ -1,0 +1,40 @@
+<style>
+.inlineRoot {
+	border: 1px solid green;
+	width: 400px;
+	height: 20px;
+	overflow: hidden;
+	font-size: 12px;
+}
+
+.breakStart {
+    border-left: 10px solid green;
+}
+
+.breakEnd {
+    border-right: 10px solid red;
+}
+
+.breakBoth {
+    border: 10px solid blue;
+}
+</style>
+
+<div class=inlineRoot>1<span class=breakBoth>2</span>3</div>
+<div class=inlineRoot>1<span class=breakStart>2</span>3</div>
+<div class=inlineRoot>1<span class=breakEnd>2</span>3</div>
+<div class=inlineRoot><span class=breakStart>1</span><span class=breakBoth>2</span><span class=breakEnd>3</span></div>
+<div class=inlineRoot><span class=breakStart><span class=breakEnd><span class=breakBoth>1</span></span></span></div>
+<div class=inlineRoot><span class=breakEnd><span class=breakStart><span class=breakBoth>1</span></span></span></div>
+<div class=inlineRoot><span class=breakStart>1</span><span class=breakStart>2</span><span class=breakStart>3</span></div>
+<div class=inlineRoot><span class=breakEnd>1</span><span class=breakEnd>2</span><span class=breakEnd>3</span></div>
+<div class=inlineRoot><span class=breakBoth>1</span><span class=breakBoth>2</span><span class=breakBoth>3</span></div>
+<div class=inlineRoot><span class=breakStart><span class=breakStart><span class=breakStart>1</span>2</span>3</span></div>
+<div class=inlineRoot><span class=breakEnd><span class=breakEnd><span class=breakEnd>1</span>2</span>3</span></div>
+<div class=inlineRoot><span class=breakBoth><span class=breakBoth><span class=breakBoth>1</span>2</span>3</span></div>
+<div class=inlineRoot>1<span class=breakStart>2<span class=breakStart><span class=breakStart>3</span>4</span>5</span>6</div>
+<div class=inlineRoot>1<span class=breakEnd>2<span class=breakEnd><span class=breakEnd>3</span>4</span>5</span>6</div>
+<div class=inlineRoot>1<span class=breakBoth>2<span class=breakBoth><span class=breakBoth>3</span>4</span>5</span>6</div>
+<div class=inlineRoot>1<span class=breakStart>2<span class=breakBoth><span class=breakEnd>3</span>4</span>5</span>6</div>
+<div class=inlineRoot>1<span class=breakEnd>2<span class=breakBoth><span class=breakStart>3</span>4</span>5</span>6</div>
+<div class=inlineRoot>1<span class=breakBoth>2<span class=breakEnd><span class=breakStart>3</span>4</span>5</span>6</div>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+* {
+    background-color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+    border-top-color: rgb(0, 0, 0);
+}
+[*|data-webkit='one' i] {
+    background-color: rgb(1, 2, 3);
+}
+[*|data-webkit='two' i] {
+    color: rgb(4, 5, 6);
+}
+[*|data-webkit='three' i] {
+    border-top-color: rgb(7, 8, 9);
+}
+
+</style>
+</head>
+<body>
+    <div>
+        <!-- With renderer -->
+        <div id="target1"></div>
+        <div id="target2"></div>
+    </div>
+    <div style="display:none;">
+        <!-- Without renderer -->
+        <div id="target3"></div>
+        <div id="target4"></div>
+    </div>
+</body>
+<script>
+description('Case insensitive value matching does not affect the name matching in any way. This test checks the attribute name is check case-sensitively regardless of the case-insensitive flag for the value.');
+
+function setupAttributes(element) {
+    element.setAttributeNS('', 'data-WebKit', 'one');
+    element.setAttributeNS('', 'data-WEBKIT', 'two');
+    element.setAttributeNS('', 'data-webkit', 'three');
+}
+function setupAttributesWithNamespace(element) {
+    element.setAttributeNS('http://www.webkit.org', 'data-WebKit', 'one');
+    element.setAttributeNS('http://www.webkit.org', 'data-WEBKIT', 'two');
+    element.setAttributeNS('http://www.webkit.org', 'data-webkit', 'three');
+}
+
+var target1 = document.getElementById('target1');
+setupAttributes(target1);
+var target2 = document.getElementById('target2');
+setupAttributesWithNamespace(target2);
+
+var target3 = document.getElementById('target3');
+setupAttributes(target3);
+var target4 = document.getElementById('target4');
+setupAttributesWithNamespace(target4);
+
+shouldBe('document.querySelectorAll("div[id^=target i]").length', '4');
+for (var i = 0; i < 4; ++i) {
+    shouldBeEqualToString('getComputedStyle(document.querySelectorAll("div[id^=target i]")[' + i + ']).backgroundColor', 'rgb(255, 255, 255)');
+    shouldBeEqualToString('getComputedStyle(document.querySelectorAll("div[id^=target i]")[' + i + ']).color', 'rgb(0, 0, 0)');
+    shouldBeEqualToString('getComputedStyle(document.querySelectorAll("div[id^=target i]")[' + i + ']).borderTopColor', 'rgb(7, 8, 9)');
+}
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<script>
+window.jsTestIsAsync = true;
+
+// Move rawKeyDown() and rawKeyUp() to ui-helper.js if they turn out to be useful in other tests.
+function rawKeyDown(key)
+{
+    if (!window.testRunner)
+        return Promise.resolve();
+
+    return new Promise((resolve) => {
+        testRunner.runUIScript(`uiController.rawKeyDown("${key}");`, resolve);
+    });
+}
+
+function rawKeyUp(key)
+{
+    if (!window.testRunner)
+        return Promise.resolve();
+
+    return new Promise((resolve) => {
+        testRunner.runUIScript(`uiController.rawKeyUp("${key}");`, resolve);
+    });
+}
+
+function logKeyEvent(event)
+{
+    let pieces = [];
+    for (let propertyName of ["type", "key", "code", "keyIdentifier", "keyCode", "charCode", "keyCode", "which", "altKey", "ctrlKey", "metaKey", "shiftKey", "location", "keyLocation"])
+        pieces.push(`${propertyName}: ${event[propertyName]}`);
+    debug(pieces.join(", "));
+}
+
+async function runTest()
+{
+    document.body.addEventListener("keydown", logKeyEvent);
+    document.body.addEventListener("keyup", logKeyEvent);
+
+    debug("<br>Press e, g then release e, g (in order):");
+
+    let keyEvent;
+    keyEvent = await UIHelper.callFunctionAndWaitForEvent(() => rawKeyDown("e"), document.body, "keydown");
+    if (keyEvent.key !== "e")
+        testFailed("Did not press e");
+    keyEvent = await UIHelper.callFunctionAndWaitForEvent(() => rawKeyDown("g"), document.body, "keydown");
+    if (keyEvent.key !== "g")
+        testFailed("Did not press g");
+    await UIHelper.callFunctionAndWaitForEvent(() => rawKeyUp("e"), document.body, "keyup");
+    await UIHelper.callFunctionAndWaitForEvent(() => rawKeyUp("g"), document.body, "keyup");
+
+    debug("<br>Press the Left Option, Right Option then release the Left Option, Right Option (in order):");
+
+    keyEvent = await UIHelper.callFunctionAndWaitForEvent(() => rawKeyDown("leftAlt"), document.body, "keydown");
+    if (keyEvent.key !== "Alt" || keyEvent.location !== 1)
+        testFailed("Did not press left Option");
+    keyEvent = await UIHelper.callFunctionAndWaitForEvent(() => rawKeyDown("rightAlt"), document.body, "keydown");
+    if (keyEvent.key !== "Alt" || keyEvent.location !== 2)
+        testFailed("Did not press right Option");
+    await UIHelper.callFunctionAndWaitForEvent(() => rawKeyUp("leftAlt"), document.body, "keyup");
+    await UIHelper.callFunctionAndWaitForEvent(() => rawKeyUp("rightAlt"), document.body, "keyup");
+
+    document.body.removeEventListener("keydown", logKeyEvent);
+    document.body.removeEventListener("keyup", logKeyEvent);
+    finishJSTest();
+}
+
+description("This tests that pressing and releasing keys dispatches DOM keydown and keyup events in the same order the keys were pressed and released.");
+runTest();
+</script>
+</body>
+</html>

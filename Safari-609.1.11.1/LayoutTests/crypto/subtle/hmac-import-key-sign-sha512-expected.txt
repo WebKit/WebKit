@@ -1,0 +1,10 @@
+Test signing with HMAC SHA-512 using an imported key
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS bytesToHexString(signature) is expectedSignature
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,2 @@
+Exception: SyntaxError: 'arguments' is not a valid function name in strict mode.
+at strictargs3-deferred.js:8

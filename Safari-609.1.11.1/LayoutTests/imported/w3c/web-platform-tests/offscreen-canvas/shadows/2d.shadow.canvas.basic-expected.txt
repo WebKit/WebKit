@@ -1,0 +1,7 @@
+2d.shadow.canvas.basic
+
+Shadows are drawn for canvases
+
+
+FAIL Shadows are drawn for canvases null is not an object (evaluating 'ctx2.fillStyle = '#f00'')
+

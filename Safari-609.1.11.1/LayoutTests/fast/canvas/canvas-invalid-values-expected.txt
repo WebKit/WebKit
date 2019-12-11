@@ -1,0 +1,54 @@
+Test that setting various CanvasRenderingContext2D properties to invalid values has no effect.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS trySettingMiterLimit(1) is 1
+PASS trySettingMiterLimit(0) is 1.5
+PASS trySettingMiterLimit(-1) is 1.5
+PASS trySettingMiterLimit(Infinity) is 1.5
+PASS trySettingMiterLimit(-Infinity) is 1.5
+PASS trySettingMiterLimit(NaN) is 1.5
+PASS trySettingMiterLimit('string') is 1.5
+PASS trySettingMiterLimit(true) is 1
+PASS trySettingMiterLimit(false) is 1.5
+PASS trySettingLineWidth(1) is 1
+PASS trySettingLineWidth(0) is 1.5
+PASS trySettingLineWidth(-1) is 1.5
+PASS trySettingLineWidth(Infinity) is 1.5
+PASS trySettingLineWidth(-Infinity) is 1.5
+PASS trySettingLineWidth(NaN) is 1.5
+PASS trySettingLineWidth('string') is 1.5
+PASS trySettingLineWidth(true) is 1
+PASS trySettingLineWidth(false) is 1.5
+PASS trySettingShadowBlur(1) is 1
+PASS trySettingShadowBlur(0) is 0
+PASS trySettingShadowBlur(-1) is 1.5
+PASS trySettingShadowBlur(Infinity) is 1.5
+PASS trySettingShadowBlur(-Infinity) is 1.5
+PASS trySettingShadowBlur(NaN) is 1.5
+PASS trySettingShadowBlur('string') is 1.5
+PASS trySettingShadowBlur(true) is 1
+PASS trySettingShadowBlur(false) is 0
+PASS trySettingShadowOffsetX(1) is 1
+PASS trySettingShadowOffsetX(0) is 0
+PASS trySettingShadowOffsetX(-1) is -1
+PASS trySettingShadowOffsetX(Infinity) is 1.5
+PASS trySettingShadowOffsetX(-Infinity) is 1.5
+PASS trySettingShadowOffsetX(NaN) is 1.5
+PASS trySettingShadowOffsetX('string') is 1.5
+PASS trySettingShadowOffsetX(true) is 1
+PASS trySettingShadowOffsetX(false) is 0
+PASS trySettingShadowOffsetY(1) is 1
+PASS trySettingShadowOffsetY(0) is 0
+PASS trySettingShadowOffsetY(-1) is -1
+PASS trySettingShadowOffsetY(Infinity) is 1.5
+PASS trySettingShadowOffsetY(-Infinity) is 1.5
+PASS trySettingShadowOffsetY(NaN) is 1.5
+PASS trySettingShadowOffsetY('string') is 1.5
+PASS trySettingShadowOffsetY(true) is 1
+PASS trySettingShadowOffsetY(false) is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

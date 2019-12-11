@@ -1,0 +1,15 @@
+This tests programming scrolling via element.scrollIntoView to an element inside an iframe position well above the viewport top
+WebKit should clamp the scroll top to 0px.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.documentElement.scrollTop is 0
+PASS visualViewport.pageTop is 0
+PASS iframe.contentDocument.documentElement.scrollTop is 0
+PASS iframe.contentWindow.visualViewport.pageTop > 900 is true
+PASS iframe.contentWindow.visualViewport.pageTop is target.offsetTop + target.offsetHeight - iframe.clientHeight
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

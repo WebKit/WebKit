@@ -1,0 +1,7 @@
+2d.path.transformation.multiple
+
+Transformations are applied while building paths, not when drawing
+
+
+FAIL Transformations are applied while building paths, not when drawing null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

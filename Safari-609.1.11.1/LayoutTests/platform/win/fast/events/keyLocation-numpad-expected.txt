@@ -1,0 +1,9 @@
+Test for bug 16410: Implement isKeypadEvent() on Windows
+
+keydown: DOM_KEY_LOCATION_NUMPAD
+keyup: DOM_KEY_LOCATION_NUMPAD
+keydown: DOM_KEY_LOCATION_NUMPAD
+keyup: DOM_KEY_LOCATION_NUMPAD
+keydown: DOM_KEY_LOCATION_NUMPAD
+keyup: DOM_KEY_LOCATION_NUMPAD
+

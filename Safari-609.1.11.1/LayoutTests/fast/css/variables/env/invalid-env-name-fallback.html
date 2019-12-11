@@ -1,0 +1,21 @@
+<script>
+if (window.internals)
+    internals.settings.setConstantPropertiesEnabled(true);
+</script>
+<style>
+div {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background-color: green;
+
+    --valid-fallback: 100px;
+
+    top: env(some-unknown-name, var(--valid-fallback));
+    left: env(--some-invalid-name, var(--valid-fallback));
+}
+</style>
+<body>
+<div></div>
+<p>The box should be at 100, 100.</p>
+

@@ -1,0 +1,80 @@
+#!/bin/bash
+#
+# Copyright (C) 2019 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+#
+
+if [[ -z "${SCRIPT_HEADER_VISIBILITY}" ]]; then
+    exit 0
+fi
+
+ditto "${SCRIPT_INPUT_FILE}" "${SCRIPT_OUTPUT_FILE_0}"
+header="${SCRIPT_OUTPUT_FILE_0}"
+
+if [[ ${USE_INTERNAL_SDK} == "YES" ]]; then
+    USE_APPLE_INTERNAL_SDK=1
+else
+    USE_APPLE_INTERNAL_SDK=0
+fi
+
+if [[ ${WK_PLATFORM_NAME} == macosx ]]; then
+    unifdefOptions="-DTARGET_OS_IPHONE=0 -DTARGET_OS_SIMULATOR=0"
+elif [[ ${WK_PLATFORM_NAME} == *simulator* ]]; then
+    unifdefOptions="-DTARGET_OS_IPHONE=1 -DTARGET_OS_SIMULATOR=1 -DUSE_APPLE_INTERNAL_SDK=${USE_APPLE_INTERNAL_SDK}"
+else
+    unifdefOptions="-DTARGET_OS_IPHONE=1 -DTARGET_OS_SIMULATOR=0 -DUSE_APPLE_INTERNAL_SDK=${USE_APPLE_INTERNAL_SDK}"
+fi
+
+# FIXME: We should consider making this logic general purpose so as to support keeping or removing
+# code guarded by an arbitrary feature define. For now it's sufficient to process touch- and gesture-
+# guarded code.
+for featureDefine in "ENABLE_TOUCH_EVENTS" "ENABLE_IOS_GESTURE_EVENTS"
+do
+    # We assume a disabled feature is either undefined or has the empty string as its value.
+    eval "isFeatureEnabled=\$$featureDefine"
+    if [[ -z $isFeatureEnabled ]]; then
+        unifdefOptions="$unifdefOptions -D$featureDefine=0"
+    else
+        unifdefOptions="$unifdefOptions -D$featureDefine=1"
+    fi
+done
+
+unifdef -B ${unifdefOptions} -o "${header}.unifdef" "${header}"
+case $? in
+    0) rm "${header}".unifdef ;;
+    1) mv "${header}"{.unifdef,} ;;
+    *) exit 1 ;;
+esac
+
+if [[ "${header}" == "./WebKitAvailability.h" ]]; then
+    exit 0
+fi
+
+if [[ ${WK_PLATFORM_NAME} != macosx ]]; then
+    sed -E -e "s/ *WEBKIT_((CLASS_|ENUM_)?(AVAILABLE|DEPRECATED))_MAC\([^)]+\)//g" < "${header}" > "${header}.sed"
+    if cmp -s "${header}" "${header}.sed"; then
+        rm "${header}.sed"
+    else
+        mv "${header}.sed" "${header}"
+    fi
+fi

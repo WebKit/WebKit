@@ -1,0 +1,43 @@
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(msg) {
+    document.getElementById("logger").innerHTML += msg + "<br>";
+}
+
+var object = "aaaaaaaaaa";
+for (var i = 0; i < 16; ++i)
+    object += object;
+
+var count = 1;
+
+function iframeClicked()
+{
+    try {
+        history.pushState(object, object, object);
+    } catch (e) {
+        log("Expected exception: " + e);
+        if (window.testRunner)
+            testRunner.notifyDone();    
+    }
+
+    log("iFrame successfully added item: " + count + " times");
+    ++count;
+
+    if (count > 50) {
+        log("This has gone on for way too long");
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+
+    setTimeout(window.parent.click, 0);
+}
+
+</script>
+<body>
+<div id="logger"></div>
+</body>

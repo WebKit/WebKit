@@ -1,0 +1,8 @@
+size.attributes.parse.minus
+Parsing of non-negative integers
+Actual output:
+Expected output:
+
+
+PASS Parsing of non-negative integers 
+

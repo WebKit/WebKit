@@ -1,0 +1,110 @@
+#!/usr/bin/env python
+
+# Copyright (C) 2009, 2015 Apple Inc.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import gzip, optparse, os, shutil, subprocess, sys, zipfile
+
+sourceRootDirectory = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+archiveFile = os.path.join(sourceRootDirectory, "layout-test-results.zip")
+
+def main():
+    parser = optparse.OptionParser("usage: %prog [options] [action]")
+    parser.add_option("--platform", dest="platform")
+    parser.add_option("--debug", action="store_const", const="debug", dest="configuration")
+    parser.add_option("--release", action="store_const", const="release", dest="configuration")
+
+    options, (action, ) = parser.parse_args()
+    if not options.platform:
+        parser.error("Platform is required")
+    if not options.configuration:
+        parser.error("Configuration is required")
+    if action not in ('archive'):
+        parser.error("Action is required")
+
+    layoutTestResultsDir = os.path.abspath(os.path.join(sourceRootDirectory, "layout-test-results"))
+    return archive_test_results(options.configuration, options.platform, layoutTestResultsDir)
+
+def gzip_file(root, name):
+    with open(os.path.join(root, name), 'rb') as f_in, gzip.open(os.path.join(root, name + '.gz'), 'wb') as f_out:
+        shutil.copyfileobj(f_in, f_out)
+        os.remove(os.path.join(root, name))
+
+def compress_spindumps(layoutTestResultsDir):
+    file_patterns = ('-spindump.txt','-sample.txt')
+    for root, dirs, files in os.walk(layoutTestResultsDir):
+        for name in files:
+            for pattern in file_patterns:        
+                if pattern in name:
+                    gzip_file(root, name)
+
+def archive_test_results(configuration, platform, layoutTestResultsDir):
+    assert platform in ('mac', 'win', 'gtk', 'wincairo', 'ios', 'wpe')
+
+    try:
+        os.unlink(archiveFile)
+    except OSError, e:
+        if e.errno != 2:
+            raise
+
+    try:
+        # Ensure that layoutTestResultsDir exists since we cannot archive a directory that does not exist
+        os.makedirs(layoutTestResultsDir)
+    except OSError, e:
+        if e.errno != 17:
+            raise
+
+    open(os.path.join(layoutTestResultsDir, '.placeholder'), 'w').close()
+
+    if platform in ('mac', 'ios'):
+        compress_spindumps(layoutTestResultsDir)
+        if subprocess.call(["ditto", "-c", "-k", "--sequesterRsrc", "--zlibCompressionLevel", "2", layoutTestResultsDir, archiveFile]):
+            return 1
+    elif platform in ('win', 'gtk', 'wpe'):
+        if subprocess.call(["zip", "-r", "-2", archiveFile, "."], cwd=layoutTestResultsDir):
+            return 1
+    elif platform == 'wincairo':
+        with zipfile.ZipFile(archiveFile, 'w', zipfile.ZIP_DEFLATED) as archiveZip:
+            for path, dirNames, fileNames in os.walk(layoutTestResultsDir):
+                relativePath = os.path.relpath(path, layoutTestResultsDir)
+                for fileName in fileNames:
+                    archiveZip.write(os.path.join(path, fileName), os.path.join(relativePath, fileName))
+
+    try:
+        shutil.rmtree(layoutTestResultsDir)
+    except OSError, e:
+
+        # Python in Cygwin throws a mysterious exception with errno of 90
+        # when removing the layout test result directory after successfully
+        # deleting its contents, claiming "Directory not empty".
+        # We can safely ignore this since it was the directory contents that
+        # we are most interested in deleting.
+        # Python in Cygwin will also sometimes throw errno 2 or 16 if a process
+        # is holding a file open. There's no point in failing to create the
+        # archive just because some other process is behaving badly. See
+        # <http://webkit.org/b/55581> and <http://webkit.org/b/166720>.
+        if e.errno != 90 and e.errno != 2 and e.errno != 16:
+            raise
+
+if __name__ == '__main__':
+    sys.exit(main())

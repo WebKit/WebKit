@@ -1,0 +1,96 @@
+<!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<body onload="initialChecksBeforePlay()">
+<p>
+    This tests:<br>
+    1. Initially, toolbar is visible, "Show Controls" button is not.<br>
+    2. After the video controls fade out, they can be shown when VoiceOver or a keyboard user clicks the invisible "Show Controls" button.<br>
+    3. When the video is paused, the controls become visible and the "Show Controls" button is hidden.<br>
+</p>
+
+<video id="video" controls onplaying="testPlaying()"  onpause="testPausing()" src="content/long-test.mp4"></video><br>
+
+<p id="result">
+    FAIL: Test did not run.<br>
+</p>
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    var result = document.getElementById("result");
+    result.innerHTML = "";
+    // Initially, the showControls Button should be hidden.
+    var root = internals.shadowRoot(document.getElementById("video"));
+    var button = root.firstChild.querySelector('button');
+    var controls = root.firstChild.querySelector('[role="toolbar"]');
+    var video = document.getElementById('video');
+
+    function isElementHidden(elem) {
+        return (elem.hidden && getComputedStyle(elem).display === 'none')
+    }
+    function initialChecksBeforePlay() {
+        // Before we start, check to make sure toolbar is in place and showControlsbutton is hidden.
+        result.innerHTML += (!isElementHidden(controls))? 'PASS<br>': 'FAIL: Controls are not available at the beginning.<br>';
+        result.innerHTML += (isElementHidden(button))? 'PASS<br>': 'FAIL: "Show Controls" button is not hidden initially.<br>';
+
+        video.play();
+    }
+
+    function testPlaying() {
+        // Make sure we are getting the updated root and button.
+        root = internals.shadowRoot(document.getElementById("video"));
+
+        // We give it a 100ms buffer for the video to set all the properties before sending mouse events.
+        setTimeout(function () {
+            // Mouse over the video then mouse out to hide controls more quickly.
+            eventSender.mouseMoveTo(150,150);
+            eventSender.mouseMoveTo(0,0);
+        }, 100);
+
+        // 300ms after the mouse events, all UI changes should complete and we can start making assertions.
+        setTimeout(function() {
+            // Make sure we are getting the latest copy of the element.
+            controls = root.firstChild.querySelector('[role="toolbar"]');
+            result.innerHTML += !controls? 'PASS<br>': 'FAIL: Toolbar still around after mouseout.<br>';
+
+            // Make sure we are getting the latest copy of the element.
+            button = root.firstChild.querySelector('button');
+            result.innerHTML += !isElementHidden(button)? 'PASS<br>': 'FAIL: Button should be visible.<br>';
+
+            if(button && !isElementHidden(button)) {
+                button.focus();
+                eventSender.keyDown(' ');
+            } else 
+                result.innerHTML += 'FAIL: "Show Controls" button is hidden or unavailable.<br>';
+
+            // Make sure we are getting the latest copy of the element.
+            controls = root.firstChild.querySelector('[role="toolbar"]');
+            result.innerHTML += controls? 'PASS<br>': 'FAIL: Toolbar should exist<br>';
+
+            eventSender.mouseMoveTo(150,150);
+            eventSender.mouseMoveTo(0,0);
+
+            setTimeout(function () {
+                controls = root.firstChild.querySelector('[role="toolbar"]');
+                result.innerHTML += !controls? 'PASS<br>': 'FAIL: Toolbar should not exist<br>';
+                // We are done testing playing state, moving on to testing the paused state.
+                video.pause();
+            }, 300);
+        }, 400);
+    }
+
+    function testPausing() {
+        // We are giving 100ms + 300s buffer for the video to set its properties and make UI changes.
+        setTimeout(function () {
+            controls = root.firstChild.querySelector('[role="toolbar"]');
+            result.innerHTML += controls? 'PASS<br>': 'FAIL: Toolbar should exist<br>';
+
+            button = root.firstChild.querySelector('button');
+            result.innerHTML += isElementHidden(button)? 'PASS<br>': 'FAIL: Button should not be visible.<br>';
+
+            testRunner.notifyDone();
+        }, 400);
+    }
+</script>
+</body>

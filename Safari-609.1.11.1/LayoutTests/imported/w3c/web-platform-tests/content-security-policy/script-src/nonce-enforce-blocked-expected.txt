@@ -1,0 +1,3 @@
+
+FAIL Unnonced scripts generate reports. assert_unreached: '<script' attribute, no execution. Reached unreachable code
+

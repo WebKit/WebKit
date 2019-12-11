@@ -1,0 +1,40 @@
+<html>
+<head>
+    <style>
+        input
+        , input::-webkit-search-cancel-button
+        , input::-webkit-search-results-button
+        , input::-webkit-search-decoration
+        , input::-webkit-search-results-decoration
+        , input::-webkit-slider-thumb
+        , input::-webkit-file-upload-button
+        , button
+            { -webkit-box-shadow: red 5px 5px 0; }
+    </style>
+<head>
+<body>
+    <p>
+        Tests that box shadow is not applied to Aqua-themed controls.
+    </p>
+    <p>
+        You should not see any red on this page.
+    </p>
+    <div id="a">
+        <input type="search" value="Search">
+    </div>
+    <div id="b">
+        <input type="search" results="0">
+    </div>
+    <div id="c">
+        <input type="search" results="1">
+    </div>
+    <input type="radio">
+    <input type="checkbox">
+    <input type="range">
+    <input type="file" style="-webkit-box-shadow: none;">
+    <input type="button" value="Button" style="font-size: 20px">
+    <input type="button" value="Button">
+    <input type="button" value="Button" style="font-size: 5px">
+    <button style="font-size: 20px;">Button</button>
+</body>
+</html>

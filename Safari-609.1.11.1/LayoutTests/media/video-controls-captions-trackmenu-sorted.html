@@ -1,0 +1,101 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+    <head>
+        <title>Testing that the list of tracks is sorted</title>
+        <script src="media-controls.js"></script>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script src="trackmenu-test.js"></script>
+        <script>
+            var test = 0;
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            function textTrackMenuItems()
+            {
+                // Show and hide the menu to force a recalculation.
+                clickCCButton();
+                clickCCButton();
+
+                var trackListElement = getTrackListElement();
+                if (!trackListElement)
+                    return;
+                var trackListSection = trackListElement.querySelector("ul");
+                if (!trackListSection) {
+                    failTest("There should be a ul element in track list menu");
+                    return;
+                }
+                return trackListSection.querySelectorAll("li");
+            }
+
+            function testSortedMenu()
+            {
+                switch (test)
+                {
+                case 0:
+                    consoleWrite("<br><i>** Test with preferred language set to English, track type set to captions<" + "/i>");
+                    run("internals.settings.setShouldDisplayTrackKind('Captions', true)");
+                    window.setTimeout(testSortedMenu, 0);
+                    break;
+
+                case 1:
+                    trackMenuItems = textTrackMenuItems();
+                    testExpected("trackMenuItems[0].textContent", "Off");
+                    testExpected("trackMenuItems[1].textContent", "Auto (Recommended)");
+                    testExpected("trackMenuItems[2].textContent", "u (English)");
+                    testExpected("trackMenuItems[3].textContent", "y (English-Australia)");
+                    testExpected("trackMenuItems[4].textContent", "v (English)");
+                    testExpected("trackMenuItems[5].textContent", "x (English-Australia)");
+                    testExpected("trackMenuItems[6].textContent", "w (Japanese)");
+                    testExpected("trackMenuItems[7].textContent", "z (Japanese)");
+                    testExpected("video.textTracks.length", 6);
+                    testExpected("trackMenuItems.length", 8);
+
+                    consoleWrite("<br><i>** Change preferred language to Japanese, change preference to subtitles<" + "/i>");
+                    run("internals.setUserPreferredLanguages(['ja'])");
+                    run("internals.settings.setShouldDisplayTrackKind('Captions', false)");
+                    run("internals.settings.setShouldDisplayTrackKind('Subtitles', true)");
+
+                    window.setTimeout(testSortedMenu, 0);
+                break;
+
+                case 2:
+                    trackMenuItems = textTrackMenuItems();
+                    testExpected("trackMenuItems[0].textContent", "Off");
+                    testExpected("trackMenuItems[1].textContent", "Auto (Recommended)");
+                    testExpected("trackMenuItems[2].textContent", "z (Japanese)");
+                    testExpected("trackMenuItems[3].textContent", "v (English)");
+                    testExpected("trackMenuItems[4].textContent", "x (English-Australia)");
+                    testExpected("video.textTracks.length", 6);
+                    testExpected("trackMenuItems.length", 5);
+
+                    consoleWrite("");
+                    endTest();
+                break;
+                }
+
+                ++test;
+            }
+
+            function start()
+            {
+                findMediaElement();
+                video.src = findMediaFile('video', 'content/test');
+                waitForEvent('canplaythrough', function () { startTrackMenuTest(testSortedMenu); });
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <p>Test that captions and subtitles are sorted in the menu according to user preferences.</p>
+        <video width="500" height="300" controls>
+            <track label="z" kind="subtitles" src="track/captions-webvtt/captions-fast.vtt" srclang="ja">
+            <track label="y" kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="en-au">
+            <track label="x" kind="subtitles" src="track/captions-webvtt/captions-fast.vtt" srclang="en-au">
+            <track label="w" kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="ja">
+            <track label="v" kind="subtitles" src="track/captions-webvtt/captions-fast.vtt" srclang="en">
+            <track label="u" kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="en">
+        </video>
+    </body>
+</html>
+

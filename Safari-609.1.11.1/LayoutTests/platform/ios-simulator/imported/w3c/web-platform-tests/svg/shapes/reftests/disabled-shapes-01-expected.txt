@@ -1,0 +1,43 @@
+CONSOLE MESSAGE: line 13: Error: Invalid negative value for <rect> attribute width="-10"
+CONSOLE MESSAGE: line 15: Error: Invalid negative value for <rect> attribute height="-10"
+CONSOLE MESSAGE: line 30: Error: Invalid negative value for <circle> attribute r="-10"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 0x0
+    RenderSVGContainer {g} at (0,0) size 0x0
+      RenderSVGContainer {g} at (0,0) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,50.00)}]
+        RenderSVGRect {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=0.00] [height=0.00]
+        RenderSVGRect {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=0.00] [height=10.00]
+        RenderSVGRect {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=-10.00] [height=10.00]
+        RenderSVGRect {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=10.00] [height=0.00]
+        RenderSVGRect {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=10.00] [height=-10.00]
+        RenderSVGRect {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=0.00] [height=0.00]
+        RenderSVGRect {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=0.00] [height=10.00]
+        RenderSVGRect {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=0.00] [height=0.00]
+        RenderSVGRect {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=0.00] [height=10.00]
+        RenderSVGRect {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=0.00] [height=0.00]
+        RenderSVGRect {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=10.00] [height=0.00]
+        RenderSVGRect {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=0.00] [height=0.00]
+        RenderSVGRect {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=10.00] [height=0.00]
+        RenderSVGRect {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=0.00] [height=0.00]
+      RenderSVGContainer {g} at (0,0) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,50.00)}]
+        RenderSVGEllipse {circle} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=0.00]
+        RenderSVGEllipse {circle} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=0.00]
+        RenderSVGEllipse {circle} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=-10.00]
+        RenderSVGEllipse {circle} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=0.00]
+        RenderSVGEllipse {circle} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=0.00]
+        RenderSVGEllipse {circle} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=0.00]
+      RenderSVGContainer {g} at (0,0) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,50.00)}]
+        RenderSVGEllipse {ellipse} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [rx=0.00] [ry=0.00]
+        RenderSVGEllipse {ellipse} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [rx=0.00] [ry=0.00]
+        RenderSVGEllipse {ellipse} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [rx=0.00] [ry=10.00]
+        RenderSVGEllipse {ellipse} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [rx=0.00] [ry=0.00]
+        RenderSVGEllipse {ellipse} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [rx=10.00] [ry=0.00]
+        RenderSVGEllipse {ellipse} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [rx=0.00] [ry=0.00]
+        RenderSVGEllipse {ellipse} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [rx=0.00] [ry=0.00]
+        RenderSVGEllipse {ellipse} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [rx=0.00] [ry=10.00]
+        RenderSVGEllipse {ellipse} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [rx=0.00] [ry=0.00]
+        RenderSVGEllipse {ellipse} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [rx=0.00] [ry=0.00]
+        RenderSVGEllipse {ellipse} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [rx=10.00] [ry=0.00]
+        RenderSVGEllipse {ellipse} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000] [stroke width=100.00]}] [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [rx=0.00] [ry=0.00]

@@ -1,0 +1,13 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableColorFilter=true ] -->
+<html>
+<head>
+    <title>-apple-color-filter should not affect attributed string colors</title>
+    <script src="resources/dump-attributed-string.js"></script>
+</head>
+<body>
+<div style="-apple-color-filter: apple-invert-lightness()">
+    <span style="color: blue; background-color: #EEE">This text is blue</span>
+    <span style="color: yellow; background-color: maroon">This text is yellow</span>
+</div>
+</body>
+</html>

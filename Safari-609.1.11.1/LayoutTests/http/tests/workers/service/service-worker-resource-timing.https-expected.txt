@@ -1,0 +1,4 @@
+
+PASS Setup worker 
+PASS Verify service worker had 2 ResourceTiming entries 
+

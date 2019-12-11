@@ -1,0 +1,27 @@
+<head>
+    <meta name="viewport" content="width=device-width">
+    <style>
+    :root {
+        color-scheme: dark;
+        -apple-color-filter: apple-invert-lightness();
+    }
+    </style>
+</head>
+
+<body>
+    <div id="rich" contenteditable>Hello world</div>
+    <script>
+    function deselectText()
+    {
+        blur();
+        getSelection().removeAllRanges();
+    }
+
+    function selectRichText()
+    {
+        deselectText();
+        let text = rich.childNodes[0];
+        getSelection().setBaseAndExtent(text, 0, text, text.data.length);
+    }
+    </script>
+</body>

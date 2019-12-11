@@ -1,0 +1,47 @@
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script src="resources/cache-test.js"></script>
+<body>
+<script>
+
+var testMatrix =
+[
+ [
+  {},
+  { responseHeaders: {'Cache-control': 'max-age=0' } },
+  { responseHeaders: {'Cache-control': 'max-age=100' } },
+  ],
+ [
+  {},
+  { responseHeaders: {'Cache-control': 'no-store' } },
+  { responseHeaders: {'Cache-control': 'no-cache' } },
+  ],
+ [
+  {},
+  { responseHeaders: {'ETag': 'match' } },
+  { responseHeaders: {'ETag': 'nomatch' } },
+  ],
+ [
+  {},
+  { responseHeaders: {'Cache-control': 'must-revalidate' } },
+  ],
+ ];
+
+description("Test permutations of various cache headers when using back navigation cache policy");
+
+// Simulate cache behavior on back navigation.
+internals.setOverrideCachePolicy("ReturnCacheDataElseLoad");
+
+var tests = generateTests(testMatrix);
+
+debug("running " + tests.length + " tests");
+debug("");
+
+runTests(tests, function () {
+    debug("Testing high priority resources");
+    debug("");
+    internals.setOverrideResourceLoadPriority("ResourceLoadPriorityVeryHigh");
+    runTests(tests);
+});
+
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>

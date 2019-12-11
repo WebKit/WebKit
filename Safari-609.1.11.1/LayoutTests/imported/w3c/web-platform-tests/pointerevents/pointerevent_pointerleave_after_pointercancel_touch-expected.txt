@@ -1,0 +1,13 @@
+pointerleave after pointercancel
+
+Test Description: This test checks if pointerleave event triggers after pointercancel. Start touch on the black rectangle and move your touch to scroll in any direction.
+
+Note: this test is for touch devices only
+
+Pointer Events pointerleave tests
+
+The following pointer types were detected: touch.
+
+
+PASS pointerleave event received 
+

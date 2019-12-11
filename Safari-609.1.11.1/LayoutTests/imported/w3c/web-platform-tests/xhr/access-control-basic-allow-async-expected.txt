@@ -1,0 +1,3 @@
+
+PASS Basic async cross-origin XHR request 
+

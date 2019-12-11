@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-append-acb-no-frame-lost</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var fullAppend;
+    var bufferedSamples;
+
+    function parseSampleDescriptionElements(string) {
+        const itemsString = /\s*\{(.*)\}\s*$/.exec(string)[1];
+        const ret = {};
+        for (let itemString of itemsString.split(/,\s*/)) {
+            const match = /([^(]+)\(([^)]+)\)/.exec(itemString);
+            ret[match[1]] = match[2];
+        }
+        return ret;
+    }
+
+    function roundMediaTimeDescription(string) {
+        const match = /\{\d+\/\d+ = (\d+\.\d+)\}/.exec(string);
+        return parseFloat(match[1]).toFixed(3);
+    }
+
+    function simplifySampleDescription(sampleDescription) {
+        // Round the timestamps and remove some fields to hopefully eliminate differences between platforms that are not
+        // relevant for this test.
+        const items = parseSampleDescriptionElements(sampleDescription);
+        return `{PTS(${roundMediaTimeDescription(items["PTS"])}), DTS(${roundMediaTimeDescription(items["DTS"])
+            }), duration(${roundMediaTimeDescription(items["duration"])}), presentationSize(${items["presentationSize"]})}`;
+    }
+
+    window.addEventListener('load', async () => {
+        findMediaElement();
+        source = new MediaSource();
+        testExpected('source.readyState', 'closed');
+        const sourceOpened = waitFor(source, 'sourceopen');
+
+        const videoSource = document.createElement('source');
+        videoSource.type = 'video/mp4; codecs="avc1.4d401f"';
+        videoSource.src = URL.createObjectURL(source);
+        video.appendChild(videoSource);
+
+        await sourceOpened;
+        run('sourceBuffer = source.addSourceBuffer(\'video/mp4; codecs="avc1.4d401f"\')');
+
+        const chunkSize = 1e6;
+
+        fullAppend = await (await fetch("content/test-green-6s-320x240.mp4")).arrayBuffer();
+        for (let i = 0; i < fullAppend.byteLength; i += chunkSize) {
+            sourceBuffer.appendBuffer(fullAppend.slice(i, Math.min(fullAppend.byteLength, i + chunkSize)));
+            await waitFor(sourceBuffer, 'updateend');
+        }
+        consoleWrite("Appended 6 seconds of 320x240");
+
+        fullAppend = await (await fetch("content/test-red-3s-480x360.mp4")).arrayBuffer();
+        for (let i = 0; i < fullAppend.byteLength; i += chunkSize) {
+            sourceBuffer.appendBuffer(fullAppend.slice(i, Math.min(fullAppend.byteLength, i + chunkSize)));
+            await waitFor(sourceBuffer, 'updateend');
+        }
+        consoleWrite("Replaced first 3 seconds with 480x360");
+
+        const trackId = sourceBuffer.videoTracks.item(0).id;
+        bufferedSamples = internals.bufferedSamplesForTrackID(sourceBuffer, trackId);
+        consoleWrite(bufferedSamples.map(simplifySampleDescription).join("<br>"));
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

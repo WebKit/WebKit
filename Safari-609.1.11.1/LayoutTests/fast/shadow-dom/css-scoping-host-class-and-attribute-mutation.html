@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<p>Test passes if you see a single 100px by 100px green box below.</p>
+
+<div id=host1></div>
+<div id=host2 class="red"></div>
+<div id=host3></div>
+<div id=host4></div>
+<div id=host5></div>
+
+<template id=shadow1>
+<style>
+:host(.green) div {
+    background-color: green;
+}
+div {
+    width: 100px;
+    height: 20px;
+    background-color: red;
+}
+</style>
+<nav><div></div></nav>
+</template>
+
+<template id=shadow2>
+<style>
+:host(.red) > div {
+    background-color: red;
+}
+div {
+    width: 100px;
+    height: 20px;
+    background-color: green;
+}
+</style>
+<div></div>
+</template>
+
+<template id=shadow3>
+<style>
+:host([color=green]) div {
+    background-color: green;
+}
+div {
+    width: 100px;
+    height: 20px;
+    background-color: red;
+}
+</style>
+<div></div>
+</template>
+
+<template id=shadow4>
+<style>
+:host(#green) div {
+    background-color: green;
+}
+div {
+    width: 100px;
+    height: 20px;
+    background-color: red;
+}
+</style>
+<div></div>
+</template>
+
+<template id=shadow5>
+<style>
+:host div.green {
+    background-color: green;
+}
+div {
+    width: 100px;
+    height: 20px;
+    background-color: red;
+}
+</style>
+<div></div>
+</template>
+
+<div id=log></div>
+
+<script>
+function checkColor(host, expected)
+{
+    const div = host.shadowRoot.querySelector("div");
+    const color = getComputedStyle(div).backgroundColor;
+    const width = getComputedStyle(div).width;
+    if (color != expected)
+        log.innerHTML += `FAIL: unexpected background color ${color}<br>`;
+    if (width != "100px")
+        log.innerHTML += `FAIL: unexpected width ${width}<br>`;
+}
+
+function test(hostselector, shadowselector, mutation) {
+    const host = document.querySelector(hostselector);
+    const shadowTemplate = document.querySelector(shadowselector);
+
+    host.attachShadow({ mode: 'open' });
+    host.shadowRoot.appendChild(shadowTemplate.content.cloneNode(true));
+
+    checkColor(host, "rgb(255, 0, 0)");
+
+    mutation(host);
+
+    checkColor(host, "rgb(0, 128, 0)");
+}
+
+test("#host1", "#shadow1", (host) => {
+    host.classList.add('green');
+});
+test("#host2", "#shadow2", (host) => {
+    host.classList.remove('red');
+ });
+test("#host3", "#shadow3", (host) => {
+    host.setAttribute('color','green');
+});
+test("#host4", "#shadow4", (host) => {
+   host.setAttribute('id','green');
+});
+test("#host5", "#shadow5", (host) => {
+   host.shadowRoot.querySelector('div').classList.add('green');
+});
+
+</script>
+</body>
+</html>

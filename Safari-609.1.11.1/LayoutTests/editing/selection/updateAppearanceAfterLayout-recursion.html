@@ -1,0 +1,17 @@
+<script>
+if (window.testRunner) {
+    internals.settings.setTelephoneNumberParsingEnabled(true);
+    testRunner.dumpAsText();
+}
+</script>
+<div id=edit>edit</div>
+<div id=target>target</div>
+<script>
+window.getSelection().selectAllChildren(edit);
+target.offsetWidth;
+const link = document.createElement("link");
+link.setAttribute("rel", "stylesheet");
+link.setAttribute("href", "data:text/css,"+Math.random());
+document.head.appendChild(link);
+location.hash = "#target";
+</script>

@@ -1,0 +1,8 @@
+
+PASS WritableStream.prototype.closed enforces a brand check 
+PASS WritableStream.prototype.ready enforces a brand check 
+PASS WritableStream.prototype.state enforces a brand check 
+PASS WritableStream.prototype.abort enforces a brand check 
+PASS WritableStream.prototype.write enforces a brand check 
+PASS WritableStream.prototype.close enforces a brand check 
+

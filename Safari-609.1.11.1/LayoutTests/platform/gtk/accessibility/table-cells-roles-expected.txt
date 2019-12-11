@@ -1,0 +1,32 @@
+table
+No	Country	Capital
+1.	Poland	Warsaw
+2.	Russia	Moscow
+3.	Ukraine	Kiev
+All	3 countries	3 capitals
+
+
+table2
+No	Country	Capital
+1.	Germany	Berlin
+2.	Sweden	Stockholm
+3.	Norway	Oslo
+
+
+This test checks the correctness of roles for different cases of table cells.
+
+The table cell at (2,0) currently has role  AXRole: AXColumnHeader .
+The table cell at (1,2) currently has role  AXRole: AXCell .
+The table cell at (2,3) currently has role  AXRole: AXCell .
+The table cell at (1,4) currently has role  AXRole: AXCell .
+The table cell at (0,2) currently has role  AXRole: AXRowHeader .
+The table cell at (0,4) currently has role  AXRole: AXRowHeader .
+
+The table2 cell at (2,0) currently has role  AXRole: AXColumnHeader .
+The table2 cell at (1,2) currently has role  AXRole: AXCell .
+The table2 cell at (2,3) currently has role  AXRole: AXCell .
+The table2 cell at (0,2) currently has role  AXRole: AXRowHeader .
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

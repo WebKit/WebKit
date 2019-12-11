@@ -1,0 +1,35 @@
+<body>
+<script src="full-screen-test.js"></script>
+<div><span></span></div>
+<script>
+    // Bail out early if the full screen API is not enabled or is missing:
+    if (Element.prototype.webkitRequestFullScreen == undefined) {
+        logResult(false, "Element.prototype.webkitRequestFullScreen == undefined");
+        endTest();
+    } else {
+        var callback;
+        var fullscreenChanged = function(event)
+        {
+            if (callback)
+                callback(event)
+        };
+        waitForEvent(document, 'webkitfullscreenchange', fullscreenChanged);
+    
+        var span = document.getElementsByTagName('span')[0];
+    
+        var spanEnteredFullScreen = function(event) {
+            callback = spanExitedFullScreen;
+            testExpected("document.webkitCurrentFullScreenElement", span);
+            span.parentNode.removeChild(span);
+        };
+    
+        var spanExitedFullScreen = function(event) {
+            callback = null;
+            testExpected("document.webkitCurrentFullScreenElement", null);
+            endTest();
+        };
+    
+        callback = spanEnteredFullScreen;
+        runWithKeyDown(function(){span.webkitRequestFullScreen()});
+    }
+</script>

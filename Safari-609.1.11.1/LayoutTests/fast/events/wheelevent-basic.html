@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="help" href="http://www.w3.org/TR/DOM-Level-3-Events/#events-WheelEvent">
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+var eventDeltaX = 0;
+var eventDeltaY = 0;
+var scrollDeltaX;
+var scrollDeltaY;
+
+jsTestIsAsync = true;
+
+var testDiv;
+function runTest() {
+    // Basic checks.
+    shouldBe('WheelEvent.prototype.__proto__', 'MouseEvent.prototype');
+    shouldBe('WheelEvent.DOM_DELTA_PIXEL', '0x00');
+    shouldBe('WheelEvent.DOM_DELTA_LINE', '0x01');
+    shouldBe('WheelEvent.DOM_DELTA_PAGE', '0x02');
+
+    testDiv = document.getElementById('target');
+    shouldBeNull('window.onwheel');
+    shouldBeNull('document.onwheel');
+    shouldBeNull('testDiv.onwheel');
+    testDiv.addEventListener('wheel', wheelHandler);
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(testDiv.offsetLeft + 5, testDiv.offsetTop + 5);
+        eventSender.mouseScrollBy(-1, -2);
+    } else {
+        debug("FAIL: This test requires window.eventSender.");
+    }
+}
+
+var testEvent;
+function wheelHandler(e) {
+    debug("Wheel event fired");
+    testEvent = e;
+    shouldBe("testEvent.__proto__", "WheelEvent.prototype");
+    shouldBe("testEvent.__proto__.__proto__", "MouseEvent.prototype");
+    shouldBeTrue("testEvent.deltaX > 0");
+    shouldBeTrue("testEvent.deltaY > 0");
+    shouldBe("testEvent.deltaZ", "0");
+    shouldBe("testEvent.deltaMode", "WheelEvent.DOM_DELTA_PIXEL")
+    eventDeltaX = e.deltaX;
+    eventDeltaY = e.deltaY;
+}
+
+function scrollHandler()
+{
+    debug("Scroll event fired");
+    scrollDeltaX = testDiv.scrollLeft;
+    scrollDeltaY = testDiv.scrollTop;
+    shouldBe("eventDeltaX", "scrollDeltaX");
+    shouldBe("eventDeltaY", "scrollDeltaY");
+
+    finishJSTest();
+}
+
+</script>
+</head>
+<body>
+<span id="parent">
+    <div id="target" style="border:solid 1px green; width:100px; height:70px; overflow:scroll; white-space:nowrap;" onscroll="scrollHandler()">
+        TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP<br/>
+        Scroll mouse wheel over here<br/>
+        Scroll mouse wheel over here<br/>
+        Scroll mouse wheel over here<br/>
+        Scroll mouse wheel over here<br/>
+        Scroll mouse wheel over here<br/>
+        Scroll mouse wheel over here<br/>
+        END END END END END END END END END END END END END END<br/>
+    </div>
+</span>
+<div id="console"></div>
+<script>
+description("Tests the basic functionality of the standard wheel event");
+
+runTest();
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

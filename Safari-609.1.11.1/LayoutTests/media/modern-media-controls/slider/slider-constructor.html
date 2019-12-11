@@ -1,0 +1,26 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing the <code>Slider</code> constructor.");
+
+const slider = new Slider;
+
+shouldBeEqualToString("slider.element.localName", "div");
+shouldBeEqualToString("slider.element.className.trim()", "slider");
+shouldBe("slider.children.length", "2");
+shouldBeEqualToString("slider.children[0].element.localName", "div");
+shouldBeEqualToString("slider.children[1].element.localName", "input");
+shouldBeEqualToString("slider.children[1].element.type", "range");
+shouldBeEqualToString("slider.children[1].element.min", "0");
+shouldBeEqualToString("slider.children[1].element.max", "1");
+shouldBeEqualToString("slider.children[1].element.step", "0.001");
+
+const sliderWithCSSClassName = new Slider("foo");
+shouldBeEqualToString("sliderWithCSSClassName.element.className", "slider foo");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

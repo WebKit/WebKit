@@ -1,0 +1,54 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x384
+  RenderBlock {HTML} at (0,0) size 800x384
+    RenderBody {BODY} at (8,16) size 784x352
+      RenderBlock {P} at (0,0) size 784x18 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 297x18
+          text run at (0,0) width 297: "This paragraph should have green background"
+      RenderBlock {ADDRESS} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 234x18
+          text run at (0,0) width 234: "And this address should be unstyled."
+      RenderBlock {P} at (0,68) size 784x18 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 332x18
+          text run at (0,0) width 332: "This paragraph should also have green background!"
+      RenderBlock {P} at (0,102) size 784x18
+        RenderText {#text} at (0,0) size 244x18
+          text run at (0,0) width 244: "But this one should be unstyled again."
+      RenderBlock {DL} at (0,136) size 784x216
+        RenderBlock {DT} at (0,0) size 784x18
+          RenderText {#text} at (0,0) size 128x18
+            text run at (0,0) width 128: "First definition term"
+        RenderBlock {DD} at (40,18) size 744x18
+          RenderText {#text} at (0,0) size 95x18
+            text run at (0,0) width 95: "First definition"
+        RenderBlock {DT} at (0,36) size 784x18 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 374x18
+            text run at (0,0) width 374: "Second definition term that should have green background"
+        RenderBlock {DD} at (40,54) size 744x18 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 341x18
+            text run at (0,0) width 341: "Second definition that should have green background"
+        RenderBlock {DT} at (0,72) size 784x18 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 363x18
+            text run at (0,0) width 363: "Third definition term that should have green background"
+        RenderBlock {DD} at (40,90) size 744x18 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 329x18
+            text run at (0,0) width 329: "Third definition that should have green background"
+        RenderBlock {DT} at (0,108) size 784x18
+          RenderText {#text} at (0,0) size 142x18
+            text run at (0,0) width 142: "Fourth definition term"
+        RenderBlock {DD} at (40,126) size 744x18
+          RenderText {#text} at (0,0) size 109x18
+            text run at (0,0) width 109: "Fourth definition"
+        RenderBlock {DT} at (0,144) size 784x18 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 358x18
+            text run at (0,0) width 358: "Fifth definition term that should have green background"
+        RenderBlock {DD} at (40,162) size 744x18 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 325x18
+            text run at (0,0) width 325: "Fifth definition that should have green background"
+        RenderBlock {DT} at (0,180) size 784x18 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 361x18
+            text run at (0,0) width 361: "Sixth definition term that should have green background"
+        RenderBlock {DD} at (40,198) size 744x18 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 328x18
+            text run at (0,0) width 328: "Sixth definition that should have green background"

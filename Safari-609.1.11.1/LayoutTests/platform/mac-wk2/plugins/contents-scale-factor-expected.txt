@@ -1,0 +1,12 @@
+Tests that plug-ins can query for the contents scale factor
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS plugin1.contentsScaleFactor is 1.0
+PASS plugin1.cachedContentsScaleFactor is 1.0
+PASS plugin1.contentsScaleFactor is 2.0
+PASS plugin1.cachedContentsScaleFactor is 2.0
+PASS plugin2.contentsScaleFactor is 2.0
+PASS plugin2.cachedContentsScaleFactor is 2.0
+

@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Cross-origin script load denied by Cross-Origin Resource Sharing policy.
+This test passes if the script does not load.
+
+PASS

@@ -1,0 +1,163 @@
+<!doctype html>
+<html>
+<head>
+<style>
+div {
+    float: left;
+    border: 1px solid red;
+}
+input {
+    background-color: white;
+    color: black;
+}
+.read-only {
+    background-color: lime;
+}
+.read-write {
+    color: red;
+}
+</style>
+</head>
+<body>
+    <p>Test the basic styling of the &lt;input&gt; types with the selectors :read-only and :read-write.</p>
+    <div>
+        <input type="hidden" value="hidden" class="read-only">
+        <input type="hidden" value="hidden" readonly class="read-only">
+        <input type="hidden" value="hidden" disabled class="read-only">
+        <input type="hidden" value="hidden" readonly disabled class="read-only">
+    </div>
+    <div>
+        <input type="text" value="text" class="read-write">
+        <input type="text" value="text" readonly class="read-only">
+        <input type="text" value="text" disabled class="read-only">
+        <input type="text" value="text" readonly disabled class="read-only">
+    </div>
+    <div>
+        <input type="search" value="search" class="read-write">
+        <input type="search" value="search" readonly class="read-only">
+        <input type="search" value="search" disabled class="read-only">
+        <input type="search" value="search" readonly disabled class="read-only">
+    </div>
+    <div>
+        <input type="tel" value="tel" class="read-write">
+        <input type="tel" value="tel" readonly class="read-only">
+        <input type="tel" value="tel" disabled class="read-only">
+        <input type="tel" value="tel" readonly disabled class="read-only">
+    </div>
+    <div>
+        <input type="url" value="url" class="read-write">
+        <input type="url" value="url" readonly class="read-only">
+        <input type="url" value="url" disabled class="read-only">
+        <input type="url" value="url" readonly disabled class="read-only">
+    </div>
+    <div>
+        <input type="email" value="email" class="read-write">
+        <input type="email" value="email" readonly class="read-only">
+        <input type="email" value="email" disabled class="read-only">
+        <input type="email" value="email" readonly disabled class="read-only">
+    </div>
+    <div>
+        <input type="password" value="password" class="read-write">
+        <input type="password" value="password" readonly class="read-only">
+        <input type="password" value="password" disabled class="read-only">
+        <input type="password" value="password" readonly disabled class="read-only">
+    </div>
+    <div>
+        <input type="datetime" value="datetime" class="read-write">
+        <input type="datetime" value="datetime" readonly class="read-only">
+        <input type="datetime" value="datetime" disabled class="read-only">
+        <input type="datetime" value="datetime" readonly disabled class="read-only">
+    </div>
+    <div>
+        <input type="date" value="date" class="read-write">
+        <input type="date" value="date" readonly class="read-only">
+        <input type="date" value="date" disabled class="read-only">
+        <input type="date" value="date" readonly disabled class="read-only">
+    </div>
+    <div>
+        <input type="month" value="month" class="read-write">
+        <input type="month" value="month" readonly class="read-only">
+        <input type="month" value="month" disabled class="read-only">
+        <input type="month" value="month" readonly disabled class="read-only">
+    </div>
+    <div>
+        <input type="week" value="week" class="read-write">
+        <input type="week" value="week" readonly class="read-only">
+        <input type="week" value="week" disabled class="read-only">
+        <input type="week" value="week" readonly disabled class="read-only">
+    </div>
+    <div>
+        <input type="time" value="time" class="read-write">
+        <input type="time" value="time" readonly class="read-only">
+        <input type="time" value="time" disabled class="read-only">
+        <input type="time" value="time" readonly disabled class="read-only">
+    </div>
+    <div>
+        <input type="datetime-local" value="datetime-local" class="read-write">
+        <input type="datetime-local" value="datetime-local" readonly class="read-only">
+        <input type="datetime-local" value="datetime-local" disabled class="read-only">
+        <input type="datetime-local" value="datetime-local" readonly disabled class="read-only">
+    </div>
+    <div>
+        <input type="number" value="number" class="read-write">
+        <input type="number" value="number" readonly class="read-only">
+        <input type="number" value="number" disabled class="read-only">
+        <input type="number" value="number" readonly disabled class="read-only">
+    </div>
+    <div>
+        <input type="range" value="range" class="read-only">
+        <input type="range" value="range" readonly class="read-only">
+        <input type="range" value="range" disabled class="read-only">
+        <input type="range" value="range" readonly disabled class="read-only">
+    </div>
+    <div>
+        <input type="color" value="color" class="read-only">
+        <input type="color" value="color" readonly class="read-only">
+        <input type="color" value="color" disabled class="read-only">
+        <input type="color" value="color" readonly disabled class="read-only">
+    </div>
+    <div>
+        <input type="checkbox" value="checkbox" class="read-only">
+        <input type="checkbox" value="checkbox" readonly class="read-only">
+        <input type="checkbox" value="checkbox" disabled class="read-only">
+        <input type="checkbox" value="checkbox" readonly disabled class="read-only">
+    </div>
+    <div>
+        <input type="radio" value="radio" class="read-only">
+        <input type="radio" value="radio" readonly class="read-only">
+        <input type="radio" value="radio" disabled class="read-only">
+        <input type="radio" value="radio" readonly disabled class="read-only">
+    </div>
+    <div>
+        <input type="file" value="file" class="read-only">
+        <input type="file" value="file" readonly class="read-only">
+        <input type="file" value="file" disabled class="read-only">
+        <input type="file" value="file" readonly disabled class="read-only">
+    </div>
+    <div>
+        <input type="submit" value="submit" class="read-only">
+        <input type="submit" value="submit" readonly class="read-only">
+        <input type="submit" value="submit" disabled class="read-only">
+        <input type="submit" value="submit" readonly disabled class="read-only">
+    </div>
+    <div>
+        <input type="image" value="image" class="read-only">
+        <input type="image" value="image" readonly class="read-only">
+        <input type="image" value="image" disabled class="read-only">
+        <input type="image" value="image" readonly disabled class="read-only">
+    </div>
+    <div>
+        <input type="reset" value="reset" class="read-only">
+        <input type="reset" value="reset" readonly class="read-only">
+        <input type="reset" value="reset" disabled class="read-only">
+        <input type="reset" value="reset" readonly disabled class="read-only">
+    </div>
+    <div>
+        <input type="button" value="button" class="read-only">
+        <input type="button" value="button" readonly class="read-only">
+        <input type="button" value="button" disabled class="read-only">
+        <input type="button" value="button" readonly disabled class="read-only">
+    </div>
+
+</body>
+</html>

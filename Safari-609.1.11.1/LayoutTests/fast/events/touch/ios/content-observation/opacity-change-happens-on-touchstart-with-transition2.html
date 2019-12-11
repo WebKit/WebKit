@@ -1,0 +1,49 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<title>This tests the case when the touch target is initially hidden.</title>
+<script src="../../../../../resources/basic-gestures.js"></script>
+<style>
+#tapthis {
+    opacity: 0;
+    width: 400px;
+    height: 400px;
+    border: 1px solid green;
+    transition: opacity 20ms ease-out 10ms;
+}
+</style>
+<script>
+async function test() {
+    if (!window.testRunner || !testRunner.runUIScript)
+        return;
+    if (window.internals)
+        internals.settings.setContentChangeObserverEnabled(true);
+
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+
+    let rect = tapthis.getBoundingClientRect();
+    let x = rect.left + rect.width / 2;
+    let y = rect.top + rect.height / 2;
+
+    await tapAtPoint(x, y);
+}
+</script>
+</head>
+<body onload="test()">
+<button id=tapthis></button>
+<div>PASS if 'clicked' text is not shown below.</div>
+<pre id=result></pre>
+<script>
+tapthis.addEventListener("touchstart", function( event ) {
+    tapthis.style.opacity = "1";
+    if (window.testRunner)
+        setTimeout("testRunner.notifyDone()", 250);
+}, false);
+
+tapthis.addEventListener("click", function( event ) {   
+    result.innerHTML = "clicked";
+}, false);
+</script>
+</body>
+</html>

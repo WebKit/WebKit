@@ -1,0 +1,32 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 5 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of OL > DIV > BODY > HTML > #document to 0 of OL > DIV > BODY > HTML > #document toDOMRange:range from 0 of LI > UL > SPAN > DIV > BODY > HTML > #document to 0 of LI > UL > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of OL > DIV > BODY > HTML > #document to 0 of OL > DIV > BODY > HTML > #document toDOMRange:range from 0 of LI > UL > DIV > BODY > HTML > #document to 0 of LI > UL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of OL > DIV > BODY > HTML > #document to 0 of OL > DIV > BODY > HTML > #document toDOMRange:range from 0 of LI > UL > DIV > BODY > HTML > #document to 0 of LI > UL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 10 of DIV > BODY > HTML > #document to 10 of DIV > BODY > HTML > #document toDOMRange:range from 0 of LI > OL > DIV > BODY > HTML > #document to 0 of LI > OL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+This test checks to see if InsertOrderedList can switch the list type of list items.
+
+This should be in an ordered list.
+This should be in an unordered list. 
+
+This should be in an ordered list.
+This should be in an ordered list.
+This should be in an unordered list.
+This should be in an ordered list.
+This should be in an unordered list.
+This should be in an ordered list.
+This should not be in a list.
+This should be in an ordered list.
+<ol style="border: 1px solid red;"> <li>This should be in an ordered list.</li> </ol><span id="item1"><ul><li><span id="item1">This should be in an unordered list.</span>&nbsp;</li></ul></span><ol style="border: 1px solid red;"><br> This should be in an ordered list. <li>This should be in an ordered list.</li> </ol><ul><li>This should be in an unordered list.</li></ul><ol style="border: 1px solid red;"><li>This should be in an ordered list.</li> </ol><ul><li>This should be in an unordered list.</li></ul><ol style="border: 1px solid red;"> <li>This should be in an ordered list.</li> </ol> This should not be in a list.<br><ol><li>This should be in an ordered list.</li></ol>

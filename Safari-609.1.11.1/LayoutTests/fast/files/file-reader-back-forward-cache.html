@@ -1,0 +1,72 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+
+<script>
+let fileReader;
+const testString = 'x'.repeat(10 * 1024);
+let didRestoreFromBackForwardCache = false;
+let successfulyLoaded = false;
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+
+    if (event.persisted) {
+        testPassed("Page did enter and was restored from the page cache");
+        didRestoreFromBackForwardCache = true;
+    }
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        testFailed("Page did not enter the page cache.");
+        finishJSTest();
+    }
+}, false);
+
+function onLoad()
+{
+    if (!didRestoreFromBackForwardCache)
+        return;
+
+    testPassed("Received load event after restoring from the cache");
+    successfulyLoaded = true;
+}
+
+function onLoadEnd()
+{
+    if (didRestoreFromBackForwardCache && successfulyLoaded) {
+        testPassed("Received loadend event");
+        finishJSTest();
+        return;
+    }
+
+    setTimeout(() => {
+        fileReader.readAsText(new Blob([testString]));
+    }, 0);
+}
+
+function runTest() {
+    description("Tests that an active FileReader that not prevent entering the back/forward cache.");
+    window.jsTestIsAsync = true;
+
+    setTimeout(() => {
+        fileReader = new FileReader();
+        fileReader.addEventListener("load", onLoad, false);
+        fileReader.addEventListener("loadend", onLoadEnd, false);
+
+        fileReader.readAsText(new Blob([testString]));
+
+        // Force a back navigation back to this page.
+        window.location.href = "../history/resources/page-cache-helper.html";
+    }, 0);
+}
+
+onload = runTest;
+
+</script>
+</body>
+</html>

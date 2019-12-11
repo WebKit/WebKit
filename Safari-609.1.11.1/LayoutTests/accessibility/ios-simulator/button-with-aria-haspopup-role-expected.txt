@@ -1,0 +1,29 @@
+This tests the platform attributes exposed for buttons with aria-haspopup
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS element.hasAttribute('aria-haspopup') is true
+AX popupValue = 'menu'
+test1 has trait haspopup = true with aria-haspopup attribute = dialog
+AX popupValue = 'dialog'
+test2 has trait haspopup = true with aria-haspopup attribute = grid
+AX popupValue = 'grid'
+test3 has trait haspopup = true with aria-haspopup attribute = listbox
+AX popupValue = 'listbox'
+test4 has trait haspopup = true with aria-haspopup attribute = menu
+AX popupValue = 'menu'
+test5 has trait haspopup = true with aria-haspopup attribute = tree
+AX popupValue = 'tree'
+test6 has trait haspopup = false with aria-haspopup attribute = null
+AX popupValue = 'false'
+test7 has trait haspopup = false with aria-haspopup attribute = false
+AX popupValue = 'false'
+test8 has trait haspopup = false with aria-haspopup attribute = foo
+AX popupValue = 'false'
+test9 has trait haspopup = false with aria-haspopup attribute = 
+AX popupValue = 'false'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

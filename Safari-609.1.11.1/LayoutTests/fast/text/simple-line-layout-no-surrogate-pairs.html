@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>This tests that we don't use simple line layout for surrogate pairs.</title>
+<style>
+div {
+    color: white;
+    font-family: Arial;
+}
+</style>
+<script>
+if (window.internals) {
+    internals.settings.setSimpleLineLayoutDebugBordersEnabled(true);
+    internals.settings.setSimpleLineLayoutEnabled(true);
+}
+</script>
+</head>
+<body>
+<div>&#xd800;</div>
+<div>&#x1D306;</div>
+<div>&#xdb7f;</div>
+</body>
+</html>

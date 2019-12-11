@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<body>
+<style>
+summary.withpadding::-webkit-details-marker {
+    padding: 8px 16px 24px 32px;
+    border-width: 8px 16px 24px 32px;
+    border-style: solid;
+    border-color: lime;
+}
+
+summary.nopadding::-webkit-details-marker {
+    border: 8px solid lime;
+    width: 48px;
+    height: 24px;
+}
+
+details {
+    font-size: 24px;
+}
+</style>
+<div style="-webkit-writing-mode: horizontal-tb;">
+<details><summary class="withpadding">Summary</summary></details>
+</div>
+<div style="-webkit-writing-mode: vertical-rl;">
+<details><summary class="withpadding">Summary</summary></details>
+</div>
+
+<div style="-webkit-writing-mode: horizontal-tb;">
+<details><summary class="nopadding">Summary</summary></details>
+</div>
+<div style="-webkit-writing-mode: vertical-rl;">
+<details><summary class="nopadding">Summary</summary></details>
+</div>
+</body>
+

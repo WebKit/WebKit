@@ -1,0 +1,8 @@
+2d.line.join.bevel
+lineJoin 'bevel' is rendered correctly
+Actual output:
+Expected output:
+
+
+PASS lineJoin 'bevel' is rendered correctly 
+

@@ -1,0 +1,45 @@
+layer at (0,0) size 992x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 984x155 [border: (2px solid #0000FF)]
+        RenderTableSection {TBODY} at (2,2) size 980x151
+          RenderTableRow {TR} at (0,2) size 980x147
+            RenderTableCell {TD} at (2,2) size 218x147 [border: (1px solid #C0C0C0)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 214x143 [border: (2px solid #008000)]
+                RenderTableSection {TBODY} at (2,2) size 210x139
+                  RenderTableRow {TR} at (0,2) size 210x93
+                    RenderTableCell {TD} at (2,2) size 206x93 [border: (1px solid #C0C0C0)] [r=0 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (2,2) size 152x37 [border: (2px solid #FF0000)]
+                        RenderTableSection {TBODY} at (2,2) size 148x33
+                          RenderTableRow {TR} at (0,2) size 148x29
+                            RenderTableCell {TD} at (2,2) size 144x29 [border: (1px solid #C0C0C0)] [r=0 c=0 rs=1 cs=1]
+                              RenderTextControl {INPUT} at (4,4) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                              RenderText {#text} at (0,0) size 0x0
+                      RenderTable {TABLE} at (2,39) size 202x52 [border: (2px solid #FF0000)]
+                        RenderTableSection {TBODY} at (2,2) size 198x48
+                          RenderTableRow {TR} at (0,2) size 198x44
+                            RenderTableCell {TD} at (2,2) size 194x44 [border: (1px solid #C0C0C0)] [r=0 c=0 rs=1 cs=1]
+                              RenderText {#text} at (2,2) size 171x39
+                                text run at (2,2) width 171: "THIS TABLE NEEDS TO"
+                                text run at (2,22) width 67: "BE HERE"
+                  RenderTableRow {TR} at (0,97) size 210x40
+                    RenderTableCell {TD} at (2,97) size 206x40 [border: (1px solid #C0C0C0)] [r=1 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (2,2) size 202x36 [border: (2px solid #FF0000)]
+                        RenderTableSection {TBODY} at (2,2) size 198x32
+                          RenderTableRow {TR} at (0,2) size 198x28
+                            RenderTableCell {TD} at (2,2) size 194x28 [border: (1px solid #C0C0C0)] [r=0 c=0 rs=1 cs=1]
+                              RenderMenuList {SELECT} at (4,4) size 186x20 [bgcolor=#FFFFFF03] [border: (1px solid #4C4C4C)]
+                                RenderBlock (anonymous) at (6,3) size 174x14
+                                  RenderText at (0,0) size 154x14
+                                    text run at (0,0) width 154: "USE THIS JAVASCRIPT HERE"
+                              RenderText {#text} at (0,0) size 0x0
+            RenderTableCell {TD} at (222,2) size 756x44 [border: (1px solid #C0C0C0)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 752x39
+                text run at (2,2) width 752: "KEEPoTHEoTEXToHEREoASoLONGoASoPOSSIBLEooKEEPoTHEoTEXToHEREoASoLONGoASoPOSSIBLE"
+                text run at (2,22) width 602: "THIS SIMULATES THE PROBLEM ON THE WWW.MAPBLAST.COM/ \"CREATE MAP\""
+layer at (35,31) size 122x14 scrollWidth 133
+  RenderBlock {DIV} at (6,3) size 123x15
+    RenderText {#text} at (0,0) size 133x14
+      text run at (0,0) width 133: "THIS NEEDS THIS VALUE"

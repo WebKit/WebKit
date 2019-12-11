@@ -1,0 +1,41 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
+      RenderTable {TABLE} at (0,0) size 598x581
+        RenderTableSection {TBODY} at (0,0) size 598x581
+          RenderTableRow {TR} at (0,0) size 598x234
+            RenderTableCell {TD} at (0,0) size 152x20 [bgcolor=#CCCC9C] [r=0 c=0 rs=2 cs=1]
+              RenderText {#text} at (0,0) size 96x19
+                text run at (0,0) width 96: "xxxxxxxxxxxx"
+              RenderBR {BR} at (96,15) size 0x0
+            RenderTableCell {TD} at (152,0) size 3x38 [bgcolor=#D3D3D3] [r=0 c=1 rs=1 cs=1]
+              RenderBlock {HR} at (0,8) size 3x2 [border: (1px inset #000000)]
+              RenderBlock (anonymous) at (0,18) size 3x20
+                RenderBR {BR} at (0,0) size 0x19
+            RenderTableCell {TD} at (155,0) size 91x114 [bgcolor=#FFA500] [r=0 c=2 rs=1 cs=1]
+              RenderBlock {HR} at (0,8) size 91x2 [border: (1px inset #000000)]
+              RenderBlock (anonymous) at (0,18) size 91x20
+                RenderBR {BR} at (0,0) size 0x19
+              RenderBlock {HR} at (0,46) size 91x2 [border: (1px inset #000000)]
+              RenderBlock (anonymous) at (0,56) size 91x20
+                RenderBR {BR} at (0,0) size 0x19
+              RenderBlock {HR} at (0,84) size 91x2 [border: (1px inset #000000)]
+              RenderBlock (anonymous) at (0,94) size 91x20
+                RenderBR {BR} at (0,0) size 0x19
+          RenderTableRow {TR} at (0,234) size 598x56
+            RenderTableCell {TD} at (152,234) size 446x56 [r=1 c=1 rs=1 cs=5]
+              RenderImage {IMG} at (0,0) size 446x56
+              RenderBR {BR} at (446,56) size 0x0
+          RenderTableRow {TR} at (0,290) size 598x118
+            RenderTableCell {TD} at (0,290) size 152x291 [r=2 c=0 rs=2 cs=1]
+              RenderImage {IMG} at (0,0) size 152x291
+              RenderBR {BR} at (152,291) size 0x0
+            RenderTableCell {TD} at (152,290) size 446x118 [r=2 c=1 rs=1 cs=5]
+              RenderImage {IMG} at (0,0) size 446x118
+              RenderBR {BR} at (446,118) size 0x0
+          RenderTableRow {TR} at (0,408) size 598x173
+            RenderTableCell {TD} at (152,408) size 446x173 [r=3 c=1 rs=1 cs=5]
+              RenderImage {IMG} at (0,0) size 446x173
+              RenderBR {BR} at (446,173) size 0x0

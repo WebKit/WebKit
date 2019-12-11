@@ -1,0 +1,17 @@
+This test calls comparePoint on detached nodes. They should compare nodes when they're in the same detached tree and throw otherwise.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS var range = new Range; range.setStart(detachedDiv, 0); range.comparePoint(detachedDiv, 0); is 0
+PASS var range = new Range; range.setStart(detachedDiv, 0); range.comparePoint(detachedDiv, 1); is 1
+PASS var range = new Range; range.setStart(detachedDiv, 2); range.comparePoint(detachedDiv, 1); is -1
+PASS var range = new Range; range.setStart(spanInDetachedDiv1, 0); range.comparePoint(spanInDetachedDiv2, 0); is 1
+PASS var range = new Range; range.setStart(spanInDetachedDiv2, 0); range.comparePoint(spanInDetachedDiv1, 0); is -1
+PASS var range = new Range; range.setStart(spanInDetachedDiv1, 0); range.comparePoint(spanInDetachedDiv1, 0); is 0
+PASS var range = new Range; range.setStart(detachedDiv, 0); range.comparePoint(detachedP, 0); threw exception WrongDocumentError: The object is in the wrong document..
+PASS var range = new Range; range.setStart(spanInDetachedDiv1, 0); range.comparePoint(spanInDetachedP, 0); threw exception WrongDocumentError: The object is in the wrong document..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

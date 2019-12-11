@@ -1,0 +1,23 @@
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(source.duration = loader.duration())
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(canvas = document.createElement("canvas"))
+RUN(gl = canvas.getContext("webgl"))
+RUN(texture = gl.createTexture())
+RUN(gl.bindTexture(gl.TEXTURE_2D, texture))
+RUN(gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR))
+RUN(gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR))
+RUN(gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE))
+RUN(gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE))
+RUN(gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video))
+RUN(video.play())
+Wait for currentTime to advance beyond 0s.
+EVENT(timeupdate)
+EXPECTED (video.getVideoPlaybackQuality().totalVideoFrames > '0') OK
+END OF TEST
+

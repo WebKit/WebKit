@@ -1,0 +1,56 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<script>
+
+description("Test that initial values implicitly set via a shorthand property override previously defined shorthand properties.");
+
+function testStyle(cssText, property, expected) {
+    var element = document.body.appendChild(document.createElement("div"));
+    element.setAttribute("style", cssText);
+
+    var actual = getComputedStyle(element).getPropertyValue(property);
+    if (actual === expected)
+        testPassed(property);
+    else
+        testFailed(`expected that setting "${cssText}" would compute ${property} to "${expected}" but got "${actual}"`);
+
+    element.remove();
+}
+
+debug("Transition properties");
+testStyle("transition-property: none; transition: 1s;", "transition-property", "all");
+testStyle("transition-duration: 1s; transition: none;", "transition-duration", "0s");
+testStyle("transition-timing-function: linear; transition: none;", "transition-timing-function", "ease");
+testStyle("transition-delay: 1s; transition: none;", "transition-delay", "0s");
+
+debug("");
+debug("Prefixed transition properties");
+testStyle("-webkit-transition-property: none; transition: 1s;", "transition-property", "all");
+testStyle("-webkit-transition-property: none; -webkit-transition: 1s;", "transition-property", "all");
+testStyle("transition-property: none; transition: 1s;", "transition-property", "all");
+testStyle("transition-property: none; -webkit-transition: 1s;", "transition-property", "all");
+
+debug("");
+debug("Animation properties");
+testStyle("animation-name: foo; animation: 1s;", "animation-name", "none");
+testStyle("animation-duration: 1s; animation: none;", "animation-duration", "0s");
+testStyle("animation-timing-function: linear; animation: none;", "animation-timing-function", "ease");
+testStyle("animation-iteration-count: 5; animation: none;", "animation-iteration-count", "1");
+testStyle("animation-direction: reverse; animation: none;", "animation-direction", "normal");
+testStyle("animation-play-state: paused; animation: none;", "animation-play-state", "running");
+testStyle("animation-delay: 1s; animation: none;", "animation-delay", "0s");
+testStyle("animation-fill-mode: forwards; animation: none;", "animation-fill-mode", "none");
+
+debug("");
+debug("Prefixed animation properties");
+testStyle("-webkit-animation-name: foo; -webkit-animation: none;", "-webkit-animation-name", "none");
+testStyle("-webkit-animation-name: foo; animation: none;", "animation-name", "none");
+testStyle("animation-name: foo; -webkit-animation: none;", "-webkit-animation-name", "none");
+testStyle("animation-name: foo; animation: none;", "animation-name", "none");
+
+debug("");
+successfullyParsed = true;
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

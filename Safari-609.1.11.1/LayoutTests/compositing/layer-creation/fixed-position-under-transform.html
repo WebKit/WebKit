@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body {
+        height: 5000px;
+        overflow-x: hidden;
+    }
+
+    #transform {
+        z-index: 0;
+        /* transform establishes a fixed pos container, so translate to make up for scroll offset so indicator is still underneath overlap */
+        -webkit-transform:translate3d(0px, 1000px, 0px);
+    }
+
+    #indicator {
+        width: 256px;
+        height: 256px;
+        background-color: red;
+        position: fixed;
+        left: 100px;
+        top: 100px;
+    }
+
+    #overlap {
+        width: 500px;
+        height: 500px;
+        background-color: green;
+        position: fixed;
+        left: 0px;
+        top: 0px;
+    }
+</style>
+<script>
+    function doTest() {
+        window.scrollTo(0, 1000);
+        if (window.testRunner) {
+            document.getElementById('layertree').innerText = window.internals.layerTreeAsText(document);
+            testRunner.dumpAsText(true);
+        }
+    }
+    window.addEventListener("load", doTest, false);
+</script>
+</head>
+<body>
+    <!-- the red indicator should be covered by the green overlap element -->
+    <div id="transform">
+        <div id="indicator"></div>
+    </div>
+    <div id="overlap"></div>
+
+    <pre id="layertree"></pre>
+</body>
+</html>

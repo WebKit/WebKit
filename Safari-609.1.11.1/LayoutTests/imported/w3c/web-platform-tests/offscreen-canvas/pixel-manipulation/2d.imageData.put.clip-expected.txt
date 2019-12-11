@@ -1,0 +1,7 @@
+2d.imageData.put.clip
+
+putImageData() is not affected by clipping regions
+
+
+FAIL putImageData() is not affected by clipping regions null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

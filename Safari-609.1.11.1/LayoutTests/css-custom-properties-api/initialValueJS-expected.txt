@@ -1,0 +1,27 @@
+Specified
+
+100px green
+
+Not specified, use initial value
+
+200px green
+
+Not specified, but not registered so use initial value for width
+
+500px green
+
+Has a fallback for unregistered property
+
+300px green
+
+Has a fallback for a registered property
+
+200px green
+
+
+PASS Registration is successful 
+PASS JS Attributes are valid for element 1 
+PASS JS Attributes are valid for element 2 
+PASS JS Attributes are valid for element 3 
+PASS JS Attributes are valid for element 4 and 5 
+

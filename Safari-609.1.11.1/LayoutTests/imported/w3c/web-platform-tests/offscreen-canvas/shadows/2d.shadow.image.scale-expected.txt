@@ -1,0 +1,7 @@
+2d.shadow.image.scale
+
+Shadows are drawn correctly for scaled images
+
+
+FAIL Shadows are drawn correctly for scaled images null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

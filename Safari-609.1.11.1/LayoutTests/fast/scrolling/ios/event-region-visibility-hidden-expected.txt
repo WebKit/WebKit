@@ -1,0 +1,47 @@
+ 
+  
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 4
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 204.00 204.00)
+          (drawsContent 1)
+          (event region
+            (rect (2,2) width=50 height=50)
+          )
+        )
+        (GraphicsLayer
+          (position 216.00 8.00)
+          (bounds 204.00 204.00)
+          (drawsContent 1)
+          (event region
+            (rect (2,2) width=50 height=50)
+          )
+        )
+        (GraphicsLayer
+          (position 424.00 8.00)
+          (bounds 204.00 204.00)
+          (drawsContent 1)
+          (event region
+            (rect (152,152) width=50 height=50)
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 217.00)
+          (bounds 204.00 204.00)
+          (drawsContent 1)
+          (event region
+            (rect (152,152) width=50 height=50)
+          )
+        )
+      )
+    )
+  )
+)
+

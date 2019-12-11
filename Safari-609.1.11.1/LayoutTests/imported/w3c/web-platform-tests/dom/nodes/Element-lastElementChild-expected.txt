@@ -1,0 +1,5 @@
+Test of lastElementChild
+
+
+PASS lastElementChild 
+The result of this test is logged above.

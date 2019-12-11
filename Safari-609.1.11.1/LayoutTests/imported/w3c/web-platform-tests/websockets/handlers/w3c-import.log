@@ -1,0 +1,40 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/basic_auth_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/echo-cookie_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/echo-query_v13_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/echo-query_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/echo_close_data_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/echo_exit_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/echo_raw_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/echo_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/empty-message_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/handshake_no_protocol_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/handshake_protocol_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/handshake_sleep_2_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/invalid_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/origin_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/protocol_array_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/protocol_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/referrer_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/set-cookie-secure_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/set-cookie_http_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/set-cookie_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/simple_handshake_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/sleep_10_v13_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/stash_responder_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/wrong_accept_key_wsh.py

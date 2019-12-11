@@ -1,0 +1,446 @@
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../resources/webgl_test_files/conformance/extensions/webgl-compressed-texture-size-limit.html
+[ 1: PASS ] Successfully enabled WEBGL_compressed_texture_s3tc extension
+[ 2: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 0, size is 16384x4
+[ 3: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 1, size is 8192x2
+[ 4: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 2, size is 4096x1
+[ 5: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 3, size is 2048x1
+[ 6: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 4, size is 1024x1
+[ 7: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 5, size is 512x1
+[ 8: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 6, size is 256x1
+[ 9: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 7, size is 128x1
+[ 10: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 8, size is 64x1
+[ 11: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 9, size is 32x1
+[ 12: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 10, size is 16x1
+[ 13: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 11, size is 8x1
+[ 14: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 12, size is 4x1
+[ 15: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 13, size is 2x1
+[ 16: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 14, size is 1x1
+[ 17: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width and height out of bounds: should generate INVALID_VALUE. level is 0, size is 16388x16388
+[ 18: PASS ] getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. level is 15, size is 256x256
+[ 19: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width or height out of bounds for specified level: should generate INVALID_VALUE. level is 14, size is 256x256
+[ 20: PASS ] Successfully enabled WEBGL_compressed_texture_s3tc extension
+[ 21: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 0, size is 16384x4
+[ 22: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 1, size is 8192x2
+[ 23: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 2, size is 4096x1
+[ 24: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 3, size is 2048x1
+[ 25: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 4, size is 1024x1
+[ 26: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 5, size is 512x1
+[ 27: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 6, size is 256x1
+[ 28: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 7, size is 128x1
+[ 29: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 8, size is 64x1
+[ 30: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 9, size is 32x1
+[ 31: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 10, size is 16x1
+[ 32: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 11, size is 8x1
+[ 33: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 12, size is 4x1
+[ 34: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 13, size is 2x1
+[ 35: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 14, size is 1x1
+[ 36: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width and height out of bounds: should generate INVALID_VALUE. level is 0, size is 16388x16388
+[ 37: PASS ] getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. level is 15, size is 256x256
+[ 38: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width or height out of bounds for specified level: should generate INVALID_VALUE. level is 14, size is 256x256
+[ 39: PASS ] Successfully enabled WEBGL_compressed_texture_s3tc extension
+[ 40: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 0, size is 16384x4
+[ 41: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 1, size is 8192x2
+[ 42: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 2, size is 4096x1
+[ 43: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 3, size is 2048x1
+[ 44: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 4, size is 1024x1
+[ 45: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 5, size is 512x1
+[ 46: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 6, size is 256x1
+[ 47: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 7, size is 128x1
+[ 48: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 8, size is 64x1
+[ 49: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 9, size is 32x1
+[ 50: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 10, size is 16x1
+[ 51: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 11, size is 8x1
+[ 52: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 12, size is 4x1
+[ 53: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 13, size is 2x1
+[ 54: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 14, size is 1x1
+[ 55: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width and height out of bounds: should generate INVALID_VALUE. level is 0, size is 16388x16388
+[ 56: PASS ] getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. level is 15, size is 256x256
+[ 57: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width or height out of bounds for specified level: should generate INVALID_VALUE. level is 14, size is 256x256
+[ 58: PASS ] Successfully enabled WEBGL_compressed_texture_s3tc extension
+[ 59: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 0, size is 16384x4
+[ 60: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 1, size is 8192x2
+[ 61: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 2, size is 4096x1
+[ 62: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 3, size is 2048x1
+[ 63: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 4, size is 1024x1
+[ 64: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 5, size is 512x1
+[ 65: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 6, size is 256x1
+[ 66: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 7, size is 128x1
+[ 67: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 8, size is 64x1
+[ 68: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 9, size is 32x1
+[ 69: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 10, size is 16x1
+[ 70: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 11, size is 8x1
+[ 71: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 12, size is 4x1
+[ 72: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 13, size is 2x1
+[ 73: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 14, size is 1x1
+[ 74: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width and height out of bounds: should generate INVALID_VALUE. level is 0, size is 16388x16388
+[ 75: PASS ] getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. level is 15, size is 256x256
+[ 76: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width or height out of bounds for specified level: should generate INVALID_VALUE. level is 14, size is 256x256
+[ 77: PASS ] Successfully enabled WEBGL_compressed_texture_s3tc extension
+[ 78: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 0, size is 2048x2048
+[ 79: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 1, size is 1024x1024
+[ 80: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 2, size is 512x512
+[ 81: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 3, size is 256x256
+[ 82: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 4, size is 128x128
+[ 83: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 5, size is 64x64
+[ 84: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 6, size is 32x32
+[ 85: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 7, size is 16x16
+[ 86: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 8, size is 8x8
+[ 87: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 9, size is 4x4
+[ 88: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 10, size is 2x2
+[ 89: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 11, size is 1x1
+[ 90: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width and height out of bounds: should generate INVALID_VALUE. level is 0, size is 16388x16388
+[ 91: PASS ] getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. level is 15, size is 256x256
+[ 92: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width or height out of bounds for specified level: should generate INVALID_VALUE. level is 14, size is 256x256
+[ 93: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 0, size is 2048x2048
+[ 94: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 1, size is 1024x1024
+[ 95: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 2, size is 512x512
+[ 96: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 3, size is 256x256
+[ 97: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 4, size is 128x128
+[ 98: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 5, size is 64x64
+[ 99: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 6, size is 32x32
+[ 100: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 7, size is 16x16
+[ 101: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 8, size is 8x8
+[ 102: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 9, size is 4x4
+[ 103: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 10, size is 2x2
+[ 104: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 11, size is 1x1
+[ 105: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width and height out of bounds: should generate INVALID_VALUE. level is 0, size is 16388x16388
+[ 106: PASS ] getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. level is 15, size is 256x256
+[ 107: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width or height out of bounds for specified level: should generate INVALID_VALUE. level is 14, size is 256x256
+[ 108: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 0, size is 2048x2048
+[ 109: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 1, size is 1024x1024
+[ 110: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 2, size is 512x512
+[ 111: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 3, size is 256x256
+[ 112: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 4, size is 128x128
+[ 113: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 5, size is 64x64
+[ 114: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 6, size is 32x32
+[ 115: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 7, size is 16x16
+[ 116: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 8, size is 8x8
+[ 117: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 9, size is 4x4
+[ 118: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 10, size is 2x2
+[ 119: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 11, size is 1x1
+[ 120: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width and height out of bounds: should generate INVALID_VALUE. level is 0, size is 16388x16388
+[ 121: PASS ] getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. level is 15, size is 256x256
+[ 122: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width or height out of bounds for specified level: should generate INVALID_VALUE. level is 14, size is 256x256
+[ 123: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 0, size is 2048x2048
+[ 124: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 1, size is 1024x1024
+[ 125: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 2, size is 512x512
+[ 126: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 3, size is 256x256
+[ 127: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 4, size is 128x128
+[ 128: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 5, size is 64x64
+[ 129: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 6, size is 32x32
+[ 130: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 7, size is 16x16
+[ 131: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 8, size is 8x8
+[ 132: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 9, size is 4x4
+[ 133: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 10, size is 2x2
+[ 134: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 11, size is 1x1
+[ 135: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width and height out of bounds: should generate INVALID_VALUE. level is 0, size is 16388x16388
+[ 136: PASS ] getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. level is 15, size is 256x256
+[ 137: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width or height out of bounds for specified level: should generate INVALID_VALUE. level is 14, size is 256x256
+[ 138: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 0, size is 2048x2048
+[ 139: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 1, size is 1024x1024
+[ 140: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 2, size is 512x512
+[ 141: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 3, size is 256x256
+[ 142: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 4, size is 128x128
+[ 143: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 5, size is 64x64
+[ 144: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 6, size is 32x32
+[ 145: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 7, size is 16x16
+[ 146: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 8, size is 8x8
+[ 147: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 9, size is 4x4
+[ 148: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 10, size is 2x2
+[ 149: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 11, size is 1x1
+[ 150: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width and height out of bounds: should generate INVALID_VALUE. level is 0, size is 16388x16388
+[ 151: PASS ] getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. level is 15, size is 256x256
+[ 152: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width or height out of bounds for specified level: should generate INVALID_VALUE. level is 14, size is 256x256
+[ 153: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 0, size is 2048x2048
+[ 154: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 1, size is 1024x1024
+[ 155: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 2, size is 512x512
+[ 156: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 3, size is 256x256
+[ 157: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 4, size is 128x128
+[ 158: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 5, size is 64x64
+[ 159: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 6, size is 32x32
+[ 160: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 7, size is 16x16
+[ 161: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 8, size is 8x8
+[ 162: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 9, size is 4x4
+[ 163: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 10, size is 2x2
+[ 164: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 11, size is 1x1
+[ 165: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width and height out of bounds: should generate INVALID_VALUE. level is 0, size is 16388x16388
+[ 166: PASS ] getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. level is 15, size is 256x256
+[ 167: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width or height out of bounds for specified level: should generate INVALID_VALUE. level is 14, size is 256x256
+[ 168: PASS ] Successfully enabled WEBGL_compressed_texture_s3tc extension
+[ 169: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 0, size is 2048x2048
+[ 170: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 1, size is 1024x1024
+[ 171: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 2, size is 512x512
+[ 172: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 3, size is 256x256
+[ 173: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 4, size is 128x128
+[ 174: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 5, size is 64x64
+[ 175: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 6, size is 32x32
+[ 176: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 7, size is 16x16
+[ 177: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 8, size is 8x8
+[ 178: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 9, size is 4x4
+[ 179: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 10, size is 2x2
+[ 180: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 11, size is 1x1
+[ 181: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width and height out of bounds: should generate INVALID_VALUE. level is 0, size is 16388x16388
+[ 182: PASS ] getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. level is 15, size is 256x256
+[ 183: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width or height out of bounds for specified level: should generate INVALID_VALUE. level is 14, size is 256x256
+[ 184: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 0, size is 2048x2048
+[ 185: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 1, size is 1024x1024
+[ 186: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 2, size is 512x512
+[ 187: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 3, size is 256x256
+[ 188: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 4, size is 128x128
+[ 189: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 5, size is 64x64
+[ 190: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 6, size is 32x32
+[ 191: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 7, size is 16x16
+[ 192: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 8, size is 8x8
+[ 193: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 9, size is 4x4
+[ 194: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 10, size is 2x2
+[ 195: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 11, size is 1x1
+[ 196: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width and height out of bounds: should generate INVALID_VALUE. level is 0, size is 16388x16388
+[ 197: PASS ] getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. level is 15, size is 256x256
+[ 198: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width or height out of bounds for specified level: should generate INVALID_VALUE. level is 14, size is 256x256
+[ 199: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 0, size is 2048x2048
+[ 200: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 1, size is 1024x1024
+[ 201: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 2, size is 512x512
+[ 202: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 3, size is 256x256
+[ 203: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 4, size is 128x128
+[ 204: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 5, size is 64x64
+[ 205: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 6, size is 32x32
+[ 206: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 7, size is 16x16
+[ 207: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 8, size is 8x8
+[ 208: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 9, size is 4x4
+[ 209: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 10, size is 2x2
+[ 210: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 11, size is 1x1
+[ 211: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width and height out of bounds: should generate INVALID_VALUE. level is 0, size is 16388x16388
+[ 212: PASS ] getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. level is 15, size is 256x256
+[ 213: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width or height out of bounds for specified level: should generate INVALID_VALUE. level is 14, size is 256x256
+[ 214: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 0, size is 2048x2048
+[ 215: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 1, size is 1024x1024
+[ 216: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 2, size is 512x512
+[ 217: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 3, size is 256x256
+[ 218: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 4, size is 128x128
+[ 219: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 5, size is 64x64
+[ 220: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 6, size is 32x32
+[ 221: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 7, size is 16x16
+[ 222: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 8, size is 8x8
+[ 223: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 9, size is 4x4
+[ 224: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 10, size is 2x2
+[ 225: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 11, size is 1x1
+[ 226: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width and height out of bounds: should generate INVALID_VALUE. level is 0, size is 16388x16388
+[ 227: PASS ] getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. level is 15, size is 256x256
+[ 228: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width or height out of bounds for specified level: should generate INVALID_VALUE. level is 14, size is 256x256
+[ 229: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 0, size is 2048x2048
+[ 230: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 1, size is 1024x1024
+[ 231: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 2, size is 512x512
+[ 232: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 3, size is 256x256
+[ 233: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 4, size is 128x128
+[ 234: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 5, size is 64x64
+[ 235: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 6, size is 32x32
+[ 236: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 7, size is 16x16
+[ 237: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 8, size is 8x8
+[ 238: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 9, size is 4x4
+[ 239: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 10, size is 2x2
+[ 240: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 11, size is 1x1
+[ 241: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width and height out of bounds: should generate INVALID_VALUE. level is 0, size is 16388x16388
+[ 242: PASS ] getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. level is 15, size is 256x256
+[ 243: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width or height out of bounds for specified level: should generate INVALID_VALUE. level is 14, size is 256x256
+[ 244: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 0, size is 2048x2048
+[ 245: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 1, size is 1024x1024
+[ 246: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 2, size is 512x512
+[ 247: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 3, size is 256x256
+[ 248: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 4, size is 128x128
+[ 249: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 5, size is 64x64
+[ 250: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 6, size is 32x32
+[ 251: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 7, size is 16x16
+[ 252: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 8, size is 8x8
+[ 253: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 9, size is 4x4
+[ 254: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 10, size is 2x2
+[ 255: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 11, size is 1x1
+[ 256: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width and height out of bounds: should generate INVALID_VALUE. level is 0, size is 16388x16388
+[ 257: PASS ] getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. level is 15, size is 256x256
+[ 258: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width or height out of bounds for specified level: should generate INVALID_VALUE. level is 14, size is 256x256
+[ 259: PASS ] Successfully enabled WEBGL_compressed_texture_s3tc extension
+[ 260: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 0, size is 2048x2048
+[ 261: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 1, size is 1024x1024
+[ 262: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 2, size is 512x512
+[ 263: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 3, size is 256x256
+[ 264: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 4, size is 128x128
+[ 265: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 5, size is 64x64
+[ 266: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 6, size is 32x32
+[ 267: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 7, size is 16x16
+[ 268: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 8, size is 8x8
+[ 269: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 9, size is 4x4
+[ 270: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 10, size is 2x2
+[ 271: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 11, size is 1x1
+[ 272: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width and height out of bounds: should generate INVALID_VALUE. level is 0, size is 16388x16388
+[ 273: PASS ] getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. level is 15, size is 256x256
+[ 274: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width or height out of bounds for specified level: should generate INVALID_VALUE. level is 14, size is 256x256
+[ 275: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 0, size is 2048x2048
+[ 276: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 1, size is 1024x1024
+[ 277: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 2, size is 512x512
+[ 278: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 3, size is 256x256
+[ 279: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 4, size is 128x128
+[ 280: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 5, size is 64x64
+[ 281: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 6, size is 32x32
+[ 282: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 7, size is 16x16
+[ 283: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 8, size is 8x8
+[ 284: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 9, size is 4x4
+[ 285: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 10, size is 2x2
+[ 286: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 11, size is 1x1
+[ 287: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width and height out of bounds: should generate INVALID_VALUE. level is 0, size is 16388x16388
+[ 288: PASS ] getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. level is 15, size is 256x256
+[ 289: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width or height out of bounds for specified level: should generate INVALID_VALUE. level is 14, size is 256x256
+[ 290: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 0, size is 2048x2048
+[ 291: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 1, size is 1024x1024
+[ 292: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 2, size is 512x512
+[ 293: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 3, size is 256x256
+[ 294: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 4, size is 128x128
+[ 295: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 5, size is 64x64
+[ 296: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 6, size is 32x32
+[ 297: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 7, size is 16x16
+[ 298: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 8, size is 8x8
+[ 299: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 9, size is 4x4
+[ 300: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 10, size is 2x2
+[ 301: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 11, size is 1x1
+[ 302: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width and height out of bounds: should generate INVALID_VALUE. level is 0, size is 16388x16388
+[ 303: PASS ] getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. level is 15, size is 256x256
+[ 304: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width or height out of bounds for specified level: should generate INVALID_VALUE. level is 14, size is 256x256
+[ 305: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 0, size is 2048x2048
+[ 306: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 1, size is 1024x1024
+[ 307: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 2, size is 512x512
+[ 308: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 3, size is 256x256
+[ 309: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 4, size is 128x128
+[ 310: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 5, size is 64x64
+[ 311: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 6, size is 32x32
+[ 312: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 7, size is 16x16
+[ 313: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 8, size is 8x8
+[ 314: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 9, size is 4x4
+[ 315: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 10, size is 2x2
+[ 316: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 11, size is 1x1
+[ 317: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width and height out of bounds: should generate INVALID_VALUE. level is 0, size is 16388x16388
+[ 318: PASS ] getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. level is 15, size is 256x256
+[ 319: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width or height out of bounds for specified level: should generate INVALID_VALUE. level is 14, size is 256x256
+[ 320: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 0, size is 2048x2048
+[ 321: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 1, size is 1024x1024
+[ 322: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 2, size is 512x512
+[ 323: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 3, size is 256x256
+[ 324: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 4, size is 128x128
+[ 325: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 5, size is 64x64
+[ 326: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 6, size is 32x32
+[ 327: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 7, size is 16x16
+[ 328: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 8, size is 8x8
+[ 329: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 9, size is 4x4
+[ 330: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 10, size is 2x2
+[ 331: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 11, size is 1x1
+[ 332: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width and height out of bounds: should generate INVALID_VALUE. level is 0, size is 16388x16388
+[ 333: PASS ] getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. level is 15, size is 256x256
+[ 334: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width or height out of bounds for specified level: should generate INVALID_VALUE. level is 14, size is 256x256
+[ 335: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 0, size is 2048x2048
+[ 336: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 1, size is 1024x1024
+[ 337: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 2, size is 512x512
+[ 338: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 3, size is 256x256
+[ 339: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 4, size is 128x128
+[ 340: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 5, size is 64x64
+[ 341: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 6, size is 32x32
+[ 342: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 7, size is 16x16
+[ 343: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 8, size is 8x8
+[ 344: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 9, size is 4x4
+[ 345: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 10, size is 2x2
+[ 346: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 11, size is 1x1
+[ 347: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width and height out of bounds: should generate INVALID_VALUE. level is 0, size is 16388x16388
+[ 348: PASS ] getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. level is 15, size is 256x256
+[ 349: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width or height out of bounds for specified level: should generate INVALID_VALUE. level is 14, size is 256x256
+[ 350: PASS ] Successfully enabled WEBGL_compressed_texture_s3tc extension
+[ 351: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 0, size is 2048x2048
+[ 352: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 1, size is 1024x1024
+[ 353: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 2, size is 512x512
+[ 354: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 3, size is 256x256
+[ 355: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 4, size is 128x128
+[ 356: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 5, size is 64x64
+[ 357: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 6, size is 32x32
+[ 358: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 7, size is 16x16
+[ 359: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 8, size is 8x8
+[ 360: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 9, size is 4x4
+[ 361: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 10, size is 2x2
+[ 362: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 11, size is 1x1
+[ 363: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width and height out of bounds: should generate INVALID_VALUE. level is 0, size is 16388x16388
+[ 364: PASS ] getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. level is 15, size is 256x256
+[ 365: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width or height out of bounds for specified level: should generate INVALID_VALUE. level is 14, size is 256x256
+[ 366: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 0, size is 2048x2048
+[ 367: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 1, size is 1024x1024
+[ 368: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 2, size is 512x512
+[ 369: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 3, size is 256x256
+[ 370: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 4, size is 128x128
+[ 371: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 5, size is 64x64
+[ 372: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 6, size is 32x32
+[ 373: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 7, size is 16x16
+[ 374: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 8, size is 8x8
+[ 375: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 9, size is 4x4
+[ 376: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 10, size is 2x2
+[ 377: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 11, size is 1x1
+[ 378: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width and height out of bounds: should generate INVALID_VALUE. level is 0, size is 16388x16388
+[ 379: PASS ] getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. level is 15, size is 256x256
+[ 380: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width or height out of bounds for specified level: should generate INVALID_VALUE. level is 14, size is 256x256
+[ 381: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 0, size is 2048x2048
+[ 382: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 1, size is 1024x1024
+[ 383: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 2, size is 512x512
+[ 384: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 3, size is 256x256
+[ 385: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 4, size is 128x128
+[ 386: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 5, size is 64x64
+[ 387: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 6, size is 32x32
+[ 388: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 7, size is 16x16
+[ 389: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 8, size is 8x8
+[ 390: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 9, size is 4x4
+[ 391: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 10, size is 2x2
+[ 392: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 11, size is 1x1
+[ 393: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width and height out of bounds: should generate INVALID_VALUE. level is 0, size is 16388x16388
+[ 394: PASS ] getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. level is 15, size is 256x256
+[ 395: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width or height out of bounds for specified level: should generate INVALID_VALUE. level is 14, size is 256x256
+[ 396: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 0, size is 2048x2048
+[ 397: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 1, size is 1024x1024
+[ 398: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 2, size is 512x512
+[ 399: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 3, size is 256x256
+[ 400: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 4, size is 128x128
+[ 401: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 5, size is 64x64
+[ 402: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 6, size is 32x32
+[ 403: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 7, size is 16x16
+[ 404: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 8, size is 8x8
+[ 405: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 9, size is 4x4
+[ 406: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 10, size is 2x2
+[ 407: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 11, size is 1x1
+[ 408: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width and height out of bounds: should generate INVALID_VALUE. level is 0, size is 16388x16388
+[ 409: PASS ] getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. level is 15, size is 256x256
+[ 410: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width or height out of bounds for specified level: should generate INVALID_VALUE. level is 14, size is 256x256
+[ 411: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 0, size is 2048x2048
+[ 412: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 1, size is 1024x1024
+[ 413: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 2, size is 512x512
+[ 414: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 3, size is 256x256
+[ 415: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 4, size is 128x128
+[ 416: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 5, size is 64x64
+[ 417: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 6, size is 32x32
+[ 418: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 7, size is 16x16
+[ 419: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 8, size is 8x8
+[ 420: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 9, size is 4x4
+[ 421: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 10, size is 2x2
+[ 422: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 11, size is 1x1
+[ 423: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width and height out of bounds: should generate INVALID_VALUE. level is 0, size is 16388x16388
+[ 424: PASS ] getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. level is 15, size is 256x256
+[ 425: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width or height out of bounds for specified level: should generate INVALID_VALUE. level is 14, size is 256x256
+[ 426: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 0, size is 2048x2048
+[ 427: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 1, size is 1024x1024
+[ 428: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 2, size is 512x512
+[ 429: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 3, size is 256x256
+[ 430: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 4, size is 128x128
+[ 431: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 5, size is 64x64
+[ 432: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 6, size is 32x32
+[ 433: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 7, size is 16x16
+[ 434: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 8, size is 8x8
+[ 435: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 9, size is 4x4
+[ 436: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 10, size is 2x2
+[ 437: PASS ] getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR.level is 11, size is 1x1
+[ 438: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width and height out of bounds: should generate INVALID_VALUE. level is 0, size is 16388x16388
+[ 439: PASS ] getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. level is 15, size is 256x256
+[ 440: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : width or height out of bounds for specified level: should generate INVALID_VALUE. level is 14, size is 256x256
+[ 441: PASS ] successfullyParsed is true
+[ FAIL ] 56 failures reported
+

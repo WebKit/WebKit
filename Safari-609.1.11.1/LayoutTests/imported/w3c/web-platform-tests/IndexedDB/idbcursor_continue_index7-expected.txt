@@ -1,0 +1,3 @@
+
+PASS IDBCursor.continue() - index - throw TransactionInactiveError 
+

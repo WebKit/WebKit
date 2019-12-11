@@ -1,0 +1,28 @@
+ 
+Tests texSubImage2D with bad arguments
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS getError was expected value: NO_ERROR : Setup should succeed
+PASS getError was expected value: INVALID_VALUE : null argument
+PASS getError was expected value: INVALID_VALUE : y + height > texture height
+PASS getError was expected value: INVALID_VALUE : x + width > texture width
+PASS getError was expected value: INVALID_VALUE : negative x
+PASS getError was expected value: INVALID_VALUE : negative y
+PASS getError was expected value: INVALID_VALUE : negative level
+PASS getError was expected value: INVALID_ENUM : bad target
+PASS getError was expected value: NO_ERROR : good args
+PASS getError was expected value: INVALID_OPERATION : format not same as original
+PASS getError was expected value: INVALID_OPERATION : type not same as original
+PASS getError was expected value: NO_ERROR : make texture RGB
+PASS getError was expected value: NO_ERROR : format same as original RGB
+PASS getError was expected value: INVALID_OPERATION : format not same as original RGB
+PASS getError was expected value: INVALID_OPERATION : type not same as original RGB
+PASS getError was expected value: NO_ERROR : make texture RGBA 4_4_4_4
+PASS getError was expected value: NO_ERROR : format same as original RGBA 4_4_4_4
+PASS getError was expected value: INVALID_OPERATION : format not same as original RGBA 4_4_4_4
+PASS getError was expected value: INVALID_OPERATION : type not same as original RGBA 4_4_4_4
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

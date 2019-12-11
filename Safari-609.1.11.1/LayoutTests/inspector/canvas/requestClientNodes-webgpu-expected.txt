@@ -1,0 +1,9 @@
+z
+Test that CanvasAgent tracks changes in the client nodes of a WebGPU device.
+
+
+== Running test suite: Canvas.requestClientNodes.WebGPU
+-- Running test case: Canvas.requestClientNodes.WebGPU.Create
+PASS: There should be one client node.
+PASS: Client node "canvas" is valid.
+

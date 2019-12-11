@@ -1,0 +1,47 @@
+<html>
+<head>
+</head>
+<body>
+<svg width="100" height="200">
+    <g>
+        <text y="20"><tspan id="tspan">PASS</tspan></text>
+    </g>
+ <br>   
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+document.execCommand("SelectAll");
+function remove_tspan() {
+var elem = document.getElementById("tspan");
+for (i=0;i<elem.childNodes.length;i++) {
+  elem.parentNode.appendChild(elem.childNodes[i]);
+}
+elem.parentNode.removeChild(elem);
+}
+remove_tspan();
+var head = document.getElementsByTagName("head")[0];
+var style = document.createElement("style");
+style.type = "text/css";
+style.innerHTML="* { \n\
+-webkit-animation-name: name; \n\
+-webkit-animation-duration: 0.01s; \n\
+} \n\
+@-webkit-keyframes name { \n\
+  from { \n\
+    -webkit-column-rule-color: #7e4e51; \n\
+  } \n\
+  to { \n\
+    -webkit-column-rule-color: rgb(19,55,215); \n\
+  } \n\
+} \n\
+";
+head.appendChild(style);
+
+if (window.testRunner)
+    setTimeout("testRunner.notifyDone()", 50);
+</script>
+</svg>
+</body>
+</html>

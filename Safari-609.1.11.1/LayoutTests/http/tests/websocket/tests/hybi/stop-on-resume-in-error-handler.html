@@ -1,0 +1,62 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script>
+description("Tests that WebSocket correctly handles being stopped in the error event handler upon restoring from PageCache.");
+
+var wasRestoredFromPageCache = false;
+
+window.jsTestIsAsync = true;
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+
+    if (event.persisted) {
+        testPassed("Page did enter and was restored from the page cache");
+        wasRestoredFromPageCache = true;
+    }
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        testFailed("Page did not enter the page cache.");
+        finishJSTest();
+    }
+}, false);
+
+var totalLoaded = 0;
+function loaded() {
+    totalLoaded++;
+    if (totalLoaded < 2)
+        return;
+
+    testFrame = document.getElementById("testFrame");
+    ws = testFrame.contentWindow.ws;
+    ws.onerror = function(ev) {
+        debug("error event fired");
+        shouldBeTrue("wasRestoredFromPageCache");
+        testFrame.remove();
+        setTimeout(function() {
+             finishJSTest();
+        }, 500);
+    }
+    ws.onclose = function(ev) {
+        testFailed("Close event should not have fired.");
+    }
+
+    setTimeout(function() {
+        // Force a back navigation back to this page.
+        window.location.href = "/navigation/resources/page-cache-helper.html";
+    }, 0);
+}
+
+window.onload = loaded;
+
+</script>
+<iframe id="testFrame" src="resources/page-cache-websocket.html" onload="loaded()"></iframe>
+<script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: NotSupportedError: The operation is not supported.
+
+Harness Error (FAIL), message = The operation is not supported.
+
+NOTRUN Check if video.loop is set to true that expecting the seeking event is fired more than once 
+

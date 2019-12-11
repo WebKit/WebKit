@@ -1,0 +1,20 @@
+glaznev@webrtc.org
+juberti@webrtc.org
+perkj@webrtc.org
+tkchin@webrtc.org
+tommi@webrtc.org
+kwiberg@webrtc.org
+steveanton@webrtc.org
+shampson@webrtc.org
+
+per-file peer_connection*=hbos@webrtc.org
+
+per-file *.gn=phoglund@webrtc.org
+per-file *.gni=phoglund@webrtc.org
+
+per-file DEPS=mbonadei@webrtc.org
+per-file DEPS=kwiberg@webrtc.org
+
+per-file *media_transport*=sukhanov@webrtc.org
+per-file *media_transport*=psla@webrtc.org
+per-file *media_transport*=mellem@webrtc.org

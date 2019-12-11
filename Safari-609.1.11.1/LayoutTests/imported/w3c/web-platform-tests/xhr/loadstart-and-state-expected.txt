@@ -1,0 +1,4 @@
+
+PASS open() during loadstart 
+PASS abort() during loadstart 
+

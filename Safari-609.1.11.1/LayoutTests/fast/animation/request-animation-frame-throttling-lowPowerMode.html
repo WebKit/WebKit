@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Test that requestAnimationFrame gets throttled in low power mode.");
+
+let rAFHandle;
+let i = 0;
+function doWork()
+{
+    i++;
+    rAFHandle = requestAnimationFrame(doWork);
+}
+
+shouldBeFalse("internals.isRequestAnimationFrameThrottled()");
+shouldBe("internals.requestAnimationFrameInterval", "Infinity");
+evalAndLog("rAFHandle = requestAnimationFrame(doWork);");
+shouldBeFalse("internals.isRequestAnimationFrameThrottled()");
+shouldBe("internals.requestAnimationFrameInterval", "0.015");
+evalAndLog("internals.setLowPowerModeEnabled(true);");
+shouldBeTrue("internals.isRequestAnimationFrameThrottled()");
+shouldBe("internals.requestAnimationFrameInterval", "0.030");
+evalAndLog("cancelAnimationFrame(rAFHandle);");
+shouldBeTrue("internals.isRequestAnimationFrameThrottled()");
+shouldBe("internals.requestAnimationFrameInterval", "0.030");
+evalAndLog("rAFHandle = requestAnimationFrame(doWork);");
+shouldBeTrue("internals.isRequestAnimationFrameThrottled()");
+shouldBe("internals.requestAnimationFrameInterval", "0.030");
+evalAndLog("internals.setLowPowerModeEnabled(false);");
+shouldBeFalse("internals.isRequestAnimationFrameThrottled()");
+shouldBe("internals.requestAnimationFrameInterval", "0.015");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

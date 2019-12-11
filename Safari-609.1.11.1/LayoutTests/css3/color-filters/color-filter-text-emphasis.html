@@ -1,0 +1,36 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableColorFilter=true ] -->
+<html>
+    <head>
+        <title>CSS Test: -apple-color-filter affects text-emphasis color</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+        <link rel="match" href="-apple-color-filter-text-emphasis-expected.html">
+
+        <meta name="assert" content="-apple-color-filter affects the color of text-emphasis">
+        <style type="text/css">
+            .test
+            {
+                font: 120px Ahem;
+                color: rgb(255, 128, 255);
+                -apple-color-filter: invert();
+                margin: 10px;
+            }
+
+            .over
+            {
+                -webkit-text-emphasis: "m";
+                -webkit-text-emphasis-position: over;
+            }
+            
+            .under
+            {
+                -webkit-text-emphasis: "m";
+                -webkit-text-emphasis-position: under;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test passes if there are two shapes which are entirely green.</p>
+        <div class="test over">A</div>
+        <div class="test under">A</div>
+    </body>
+</html>

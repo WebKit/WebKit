@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: line 12: Web SQL is deprecated. Please use IndexedDB instead.
+CONSOLE MESSAGE: line 22: Web SQL is deprecated. Please use IndexedDB instead.
+This iframe should return only one security error:
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+No exception
+
+SecurityError

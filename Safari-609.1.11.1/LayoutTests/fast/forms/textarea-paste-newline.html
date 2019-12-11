@@ -1,0 +1,26 @@
+<script>
+function test()
+{
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    var ta = document.getElementById("ta");
+    ta.value = "abc\n";
+    ta.focus();
+    ta.setSelectionRange(0, 4);
+    document.execCommand("cut");
+    document.execCommand("paste");
+    var result1 = ta.value;
+    ta.setSelectionRange(0, 0);
+    document.execCommand("paste");
+    var result2 = ta.value;
+
+    if (result1 == "abc\n" && result2 == "abc\nabc\n")
+        document.write("<p>Hooray, the test was successful!</p>");
+    else if (result1 == "")
+        document.write("<p>The test failed; doesn't work in release builds of Safari because paste is not allowed.</p>");
+    else
+        document.write("<p>The test failed, result 1 was '" + result1.replace("\n", "\\n") + "' and result 2 was '" + result2.replace("\n", "\\n") + "'.</p>");
+}
+</script>
+<body onload="test()">
+<p><textarea id="ta"></textarea></p>

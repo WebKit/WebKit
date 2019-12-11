@@ -1,0 +1,29 @@
+<html> 
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <button id="test" onclick="popup()" style="display:none"></button>
+        <div id="console"></div>
+        <script> 
+            var win;
+            function popup() {
+                win = window.open("about:blank", "blank");
+                shouldBeNull("win");
+            }
+
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.setCanOpenWindows();
+                testRunner.setPopupBlockingEnabled(true);
+                testRunner.setCloseRemainingWindowsWhenComplete(true);
+                testRunner.waitUntilDone();
+            }
+
+            document.getElementById("test").click();
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        </script> 
+    </body> 
+</html>

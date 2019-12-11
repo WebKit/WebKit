@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test-pre.js"></script>
+<script>
+description("Tests that silent WebAudio rendering gets interrupted in hidden pages.");
+jsTestIsAsync = true;
+
+document.onvisibilitychange = function() {
+    if (document.hidden) {
+        shouldBecomeEqual("context.state", "'interrupted'", showPage);
+    } else {
+        shouldBecomeEqual("context.state", "'running'", finishJSTest);
+    }
+}
+
+function showPage()
+{
+    debug("* Setting page visibility to visible");
+    if (window.testRunner)
+        testRunner.setPageVisibility("visible");
+}
+
+function hidePage()
+{
+    debug("* Setting page visibility to hidden");
+    if (window.testRunner)
+        testRunner.setPageVisibility("hidden");
+}
+
+onload = function() {
+    context = new (window.AudioContext || window.webkitAudioContext)();
+
+    audioElement = document.createElement("audio");
+    audioElement.loop = true;
+    audioElement.muted = true;
+    audioElement.src = "../media/content/test.wav";
+    source = context.createMediaElementSource(audioElement);
+
+    var gainNode = context.createGain();
+    source.connect(gainNode);
+    gainNode.connect(context.destination);
+    gainNode.gain.value = 0; // Mute.
+
+    shouldBecomeEqual("context.state", "'running'", hidePage);
+}
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

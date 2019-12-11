@@ -1,0 +1,16 @@
+<html>
+<head>
+    <script>
+        window.onload = function() {
+            var selection = window.getSelection();
+            if (selection.setBaseAndExtent)
+                selection.setBaseAndExtent(document.body, 0, document.body, 10);
+            else if (selection.selectAllChildren)
+                selection.selectAllChildren(document.body);
+        }
+    </script>
+</head>
+<body>
+    FOREIGN DOMAIN
+</body>
+</html>

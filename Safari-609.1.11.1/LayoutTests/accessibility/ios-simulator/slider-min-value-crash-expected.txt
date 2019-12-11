@@ -1,0 +1,11 @@
+This tests that accessing the min/max value of a detached ax object won't cause crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS sliderObj.minValue is 25
+PASS sliderObj.minValue is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

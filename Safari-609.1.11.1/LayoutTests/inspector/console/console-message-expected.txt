@@ -1,0 +1,49 @@
+CONSOLE MESSAGE: line 1: log
+CONSOLE MESSAGE: line 1: info
+CONSOLE MESSAGE: line 1: warn
+CONSOLE MESSAGE: line 1: error
+CONSOLE MESSAGE: line 1: debug
+Tests that console.log and related APIs cause Console.messageAdded events to be generated with correct source, type, level, and parameter types.
+
+
+== Running test suite: Console.MessagesFromCommandLineAPI
+-- Running test case: ConsoleLogString
+Evaluating expression: console.log("log");
+PASS: ConsoleMessage type should be 'console-api'.
+PASS: ConsoleMessage level should be 'log'.
+PASS: ConsoleMessage text should be 'log'.
+PASS: ConsoleMessage parameters.length === 1
+PASS: ConsoleMessage parameter 0 should have type 'string'.
+
+-- Running test case: ConsoleInfoString
+Evaluating expression: console.info("info");
+PASS: ConsoleMessage type should be 'console-api'.
+PASS: ConsoleMessage level should be 'info'.
+PASS: ConsoleMessage text should be 'info'.
+PASS: ConsoleMessage parameters.length === 1
+PASS: ConsoleMessage parameter 0 should have type 'string'.
+
+-- Running test case: ConsoleWarnString
+Evaluating expression: console.warn("warn");
+PASS: ConsoleMessage type should be 'console-api'.
+PASS: ConsoleMessage level should be 'warning'.
+PASS: ConsoleMessage text should be 'warn'.
+PASS: ConsoleMessage parameters.length === 1
+PASS: ConsoleMessage parameter 0 should have type 'string'.
+
+-- Running test case: ConsoleErrorString
+Evaluating expression: console.error("error");
+PASS: ConsoleMessage type should be 'console-api'.
+PASS: ConsoleMessage level should be 'error'.
+PASS: ConsoleMessage text should be 'error'.
+PASS: ConsoleMessage parameters.length === 1
+PASS: ConsoleMessage parameter 0 should have type 'string'.
+
+-- Running test case: ConsoleDebugString
+Evaluating expression: console.debug("debug");
+PASS: ConsoleMessage type should be 'console-api'.
+PASS: ConsoleMessage level should be 'debug'.
+PASS: ConsoleMessage text should be 'debug'.
+PASS: ConsoleMessage parameters.length === 1
+PASS: ConsoleMessage parameter 0 should have type 'string'.
+

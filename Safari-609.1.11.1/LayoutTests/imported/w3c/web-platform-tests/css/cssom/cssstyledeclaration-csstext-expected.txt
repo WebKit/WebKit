@@ -1,0 +1,10 @@
+
+PASS uppercase property 
+PASS uppercase value 
+PASS overwriting with invalid value 
+PASS use rgb 
+PASS cssText order 
+PASS another cssText order (non-alphabetical order) 
+PASS whitespaces in value 
+PASS invalid property does not appear 
+

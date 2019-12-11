@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 4: Trying to call enumerateDevices from a frame without correct 'allow' attribute.
+      
+PASS: "allow" attribute respected in all iframes

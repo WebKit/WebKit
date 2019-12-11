@@ -1,0 +1,15 @@
+Put mouse here and do the following:
+Perform two text zooms (in). (Command+ in Safari)
+Scroll down to the bottom. Be sure to scroll far enough that a rubberband animation is triggered.
+Perform two text zooms (out). (Commmand- in Safari)
+TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP TOPEND END END END END END END END END END END END END
+Tests that scroll dimensions return to correct size after rubber banding while zoomed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS Page properly handled rubber banding state.
+This should be at the very bottom of the page.

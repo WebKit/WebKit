@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id=editor contenteditable><font face="Hiragino Kaku Gothic ProN">hello</font></div>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+Markup.description('This tests copying and pasting text with a font that influences the used line-height value.\n'
+ + 'To manually test, copy and paste the selected content below. WebKit should not generate line-height property in the pasted content.')
+
+var editor = document.getElementById('editor');
+editor.focus();
+document.execCommand('selectAll', false, null);
+
+Markup.noAutoDump();
+function dumpEditor() {
+    Markup.dump(editor);
+    Markup.notifyDone();
+}
+
+if (document.queryCommandEnabled('paste')) {
+    document.execCommand('copy', false, null);
+    document.execCommand('paste', false, null);
+    dumpEditor();
+} else
+    document.onpaste = function () { setTimeout(dumpEditor, 0); }
+
+</script>
+</body>
+</html>

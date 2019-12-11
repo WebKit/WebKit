@@ -1,0 +1,32 @@
+<html>
+<head>
+<body>
+<p>Test the behavior of a sync XMLHttpRequest that encounters an infinite redirection loop.</p>
+<script>
+
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    try {
+        if (window.XMLHttpRequest) {
+            req = new XMLHttpRequest();
+        } else {
+            try {
+                req = new ActiveXObject("Msxml2.XMLHTTP");
+            } catch (ex) {
+                req = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+        }
+        
+        req.open('GET', 'resources/infinite-loop.php', false);
+        req.send(null);
+
+        document.write("Status: " + req.status);
+        
+    } catch (ex) {
+        document.write("Exception " + ex.name + "; code=" + ex.code + "; number=" + ex.number + " (" + (ex.number & 0xFFFF) + "); message='" + ex.message + "'");
+    }
+
+</script>
+</body>
+</html>

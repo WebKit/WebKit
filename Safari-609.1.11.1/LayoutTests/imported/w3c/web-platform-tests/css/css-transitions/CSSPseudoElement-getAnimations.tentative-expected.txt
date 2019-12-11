@@ -1,0 +1,3 @@
+
+FAIL getAnimations sorts simultaneous transitions by name assert_equals: Got pseudo-element target expected "[object CSSPseudoElement]" but got "[object Element]"
+

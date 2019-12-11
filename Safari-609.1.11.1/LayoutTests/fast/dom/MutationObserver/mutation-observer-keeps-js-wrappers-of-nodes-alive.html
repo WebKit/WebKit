@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests that JS wrappers of nodes in a mutation record do not get collected.</p>
+<pre id="log"></pre>
+<script src="../../../resources/gc.js"></script>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const nodeCount = 5;
+const iterationCount = 5;
+
+async function runAll() {
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    for (let j = 0; j < iterationCount; ++j) {
+        runTest();
+        gc();
+        await Promise.resolve();
+    }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+async function runTest() {
+    let container = document.createElement('div');
+    container.myState = 'alive';
+    observer.observe(container, {subtree: true, childList: true, attributes: true});
+
+    for (let i = 0; i < nodeCount; ++i) {
+        const child = document.createElement('span');
+        child.myState = 'alive';
+        container.appendChild(child);
+    }
+    container.textContent = '';
+}
+
+const observer = new MutationObserver((recordList) => {
+    let deadCount = 0;
+    for (const record of recordList) {
+        for (const node of record.addedNodes) {
+            if (node.myState != 'alive')
+                deadCount++;
+        }
+        for (const node of record.removedNodes) {
+            if (node.myState != 'alive')
+                deadCount++;
+        }
+    }
+    document.getElementById('log').textContent += (deadCount ? `FAIL - ${deadCount} nodes lost JS wrappers` : 'PASS') + '\n';
+});
+
+runAll();
+
+</script>
+</body>
+</html>

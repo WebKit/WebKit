@@ -1,0 +1,24 @@
+URL: https://github.com/google/googletest
+Version: 1.8.0
+License: BSD
+License File: LICENSE
+
+Description:
+Google's framework for writing C++ tests on a variety of platforms
+(Linux, Mac OS X, Windows, Windows CE, Symbian, etc).  Based on the
+xUnit architecture.  Supports automatic test discovery, a rich set of
+assertions, user-defined assertions, death tests, fatal and non-fatal
+failures, various options for running the tests, and XML test report
+generation.
+
+Local Modifications:
+- Remove everything but:
+  googletest-release-1.8.0/googletest/
+   CHANGES
+   CONTRIBUTORS
+   include
+   LICENSE
+   README.md
+   src
+- Suppress unsigned overflow instrumentation in the LCG
+  https://github.com/google/googletest/pull/1066

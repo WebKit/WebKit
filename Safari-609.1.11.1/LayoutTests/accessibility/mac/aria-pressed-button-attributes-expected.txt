@@ -1,0 +1,17 @@
+Foo
+Bar
+This tests role=button with aria-pressed will create an AXCheckbox:AXToggle on Mac with the right AXValue
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Button1: AXRole: AXCheckBox
+Button1: AXSubrole: AXToggle
+Button1: AXValue: 1
+Button2: AXRole: AXCheckBox
+Button2: AXSubrole: AXToggle
+Button2: AXValue: 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

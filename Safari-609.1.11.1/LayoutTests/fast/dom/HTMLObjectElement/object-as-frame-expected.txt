@@ -1,0 +1,15 @@
+PASS window.frames.length is 2
+PASS window.frames[0].frameElement.name is "frame"
+PASS window.frames[0].frameElement.contentWindow is window.frames[0].frameElement.contentDocument.defaultView
+PASS window.frames[0].frameElement.contentWindow.document is window.frames[0].frameElement.contentDocument
+PASS window.frames[1].frameElement.name is "obj"
+PASS window.frames[1].frameElement.contentWindow is window.frames[1].frameElement.contentDocument.defaultView
+PASS window.frames[1].frameElement.contentWindow.document is window.frames[1].frameElement.contentDocument
+Loading 'data:text/html,Updated contents of iframe' in iframe...
+Loading 'data:text/html,Updated contents of object' in object...
+PASS window.frames[0].location.toString() is "data:text/html,Updated contents of iframe"
+PASS window.frames[1].location.toString() is "data:text/html,Updated contents of object"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

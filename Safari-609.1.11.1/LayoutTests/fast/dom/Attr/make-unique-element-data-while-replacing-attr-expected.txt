@@ -1,0 +1,11 @@
+Test making the element data unique while replacing an Attr node.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS element.getAttribute("width") is "a"
+PASS element.getAttribute("width") is "b"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

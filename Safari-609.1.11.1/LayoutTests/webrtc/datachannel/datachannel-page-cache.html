@@ -1,0 +1,30 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+t = async_test();
+
+window.addEventListener("pageshow", function(event) {
+    if (event.persisted)
+        t.done();
+});
+
+window.addEventListener("pagehide", t.step_func((event) => {
+    if (!event.persisted)
+        assert_uneached("Page failed to enter page cache");
+}));
+
+onload = () => {
+    setTimeout(async () => {
+        const pc = new RTCPeerConnection();
+        const channel = pc.createDataChannel("test");
+        const offer = await pc.createOffer();
+        await pc.setLocalDescription(offer);
+        window.location = "../../fast/history/resources/page-cache-helper.html";
+    }, 0);
+};
+</script>
+</html>

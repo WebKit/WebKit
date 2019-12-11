@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that th is text-align centered when parent has initial value.</title>
+<style>
+    table { 
+    width: 500px; border: 1px solid green; 
+}
+</style>
+<table><tbody>
+    <tr><th>no explicit style</th></tr>
+    <tr><th style="text-align: initial">th initial</th></tr>
+    <tr><th style="text-align: start">th start</th></tr>
+    <tr><th style="text-align: center">th center</th></tr>
+    <tr><th style="text-align: end">th end</th></tr>
+    <tr style="text-align: initial"><th>tr initial</th></tr>
+    <tr style="text-align: start"><th>tr start</th></tr>
+    <tr style="text-align: center"><th>tr center</th></tr>
+    <tr style="text-align: end"><th>tr end</th></tr>
+    <tr style="text-align: initial"><th style="text-align: initial">tr initial, th initial</th></tr>
+    <tr style="text-align: initial"><th style="text-align: start">tr initial, th start</th></tr>
+    <tr style="text-align: start"><th style="text-align: start">tr start, th start</th></tr>
+    <tr style="text-align: end"><th style="text-align: initial">tr end, th initial</th></tr>
+    <tr style="text-align: end"><th style="text-align: start">tr end, th start</th></tr>
+</tbody></table>
+</body>
+</html>

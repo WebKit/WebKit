@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2016 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 16 16">
+    <circle stroke="rgb(179, 114, 76)" fill="rgb(224, 166, 133)" cx="8" cy="8" r="7.5"/>
+    <rect stroke="rgb(179, 114, 76)" stroke-width="2" x="4" y="4" width="2" height="8" rx="0.25"/>
+    <rect stroke="rgb(179, 114, 76)" stroke-width="2" x="7" y="4" width="2" height="8" rx="0.25"/>
+    <rect stroke="rgb(179, 114, 76)" stroke-width="2" x="10" y="4" width="2" height="8" rx="0.25"/>
+    <rect fill="white" x="4" y="4" width="2" height="8" rx="0.25"/>
+    <rect fill="white" x="7" y="4" width="2" height="8" rx="0.25"/>
+    <rect fill="white" x="10" y="4" width="2" height="8" rx="0.25"/>
+    <rect stroke="rgb(179, 114, 76)" stroke-width="2" x="3" y="6" width="10" height="4" rx="0.25"/>
+    <rect fill="white" x="3" y="6" width="10" height="4" rx="0.25"/>
+</svg>

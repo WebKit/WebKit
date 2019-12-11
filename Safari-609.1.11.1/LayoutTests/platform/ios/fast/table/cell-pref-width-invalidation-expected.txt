@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 784x26
+        RenderTableSection {TBODY} at (0,0) size 784x26
+          RenderTableRow {TR} at (0,2) size 784x22
+            RenderTableCell {TD} at (2,2) size 62x22 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (66,12) size 716x2 [r=0 c=1 rs=1 cs=1]
+      RenderBlock {DIV} at (0,26) size 784x0
+layer at (11,11) size 60x20
+  RenderBlock {DIV} at (1,1) size 60x20
+    RenderText {#text} at (0,0) size 56x19
+      text run at (0,0) width 56: "Success!"

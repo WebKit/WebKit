@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableColorFilter=true ] -->
+<html>
+    <head>
+        <title>CSS Test: -apple-color-filter affects box-shadow color</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+        <link rel="match" href="-apple-color-filter-box-shadow-expected.html">
+
+        <meta name="assert" content="-apple-color-filter affects box-shadow color">
+        <style type="text/css">
+            .test
+            {
+                width: 200px;
+                height: 200px;
+                background-color: rgb(255, 128, 255);
+                box-shadow: 50px 50px 0 yellow;
+                -apple-color-filter: invert();
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test passes if there is a green square with an offset blue square behind it.</p>
+        <div class="test"></div>
+    </body>
+</html>

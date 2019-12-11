@@ -1,0 +1,12 @@
+
+PASS org.w3.clearkey, temporary, webm, initData longer than 64Kb characters 
+PASS org.w3.clearkey, temporary, cenc, initData longer than 64Kb characters 
+PASS org.w3.clearkey, temporary, keyids, initData longer than 64Kb characters 
+PASS org.w3.clearkey, temporary, cenc, invalid initdata (size too large) 
+PASS org.w3.clearkey, temporary, cenc, invalid initdata (not pssh) 
+PASS org.w3.clearkey, temporary, cenc, invalid key id length (4 instead of 2) 
+PASS org.w3.clearkey, temporary, cenc, invalid data size (32 instead of 16) 
+PASS org.w3.clearkey, temporary, cenc, invalid initdata (second box has incorrect size) 
+PASS org.w3.clearkey, temporary, keyids, invalid initdata (too short key ID) 
+PASS org.w3.clearkey, temporary, keyids, invalid initdata (too long key ID) 
+

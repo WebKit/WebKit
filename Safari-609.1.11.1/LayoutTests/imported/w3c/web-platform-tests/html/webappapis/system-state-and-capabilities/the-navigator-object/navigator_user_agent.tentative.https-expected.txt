@@ -1,0 +1,4 @@
+
+FAIL navigator.getUserAgent() is exposed. assert_true: expected true got false
+FAIL navigator.getUserAgent() returns a UserAgentMetadata object. navigator.getUserAgent is not a function. (In 'navigator.getUserAgent()', 'navigator.getUserAgent' is undefined)
+

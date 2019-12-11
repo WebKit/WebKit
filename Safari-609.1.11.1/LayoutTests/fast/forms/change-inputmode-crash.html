@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<span id="target" tabindex="0" style="width: 100px; height: 100px;"></span>
+<script>
+description("This test verifies that changing the inputmode attribute after changing focus does not cause a crash. To manually run the test, load the page and verify that a crash does not occur.");
+
+target = document.getElementById("target");
+target.focus();
+target.setAttribute("inputmode", "url");
+shouldBe("document.activeElement", "target");
+</script>
+</body>
+</html>

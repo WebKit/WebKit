@@ -1,0 +1,55 @@
+Tests that operations marked as [Unforgeable] are indeed readonly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* Location (non refied)
+
+- Location.reload
+PASS Object.getOwnPropertyDescriptor(testObject, testPropertyName).writable is false
+PASS testObject[testPropertyName] = false did not throw exception.
+PASS testObject[testPropertyName] is not false
+PASS 'use strict'; testObject[testPropertyName] = 3 threw exception TypeError: Attempted to assign to readonly property..
+PASS testObject[testPropertyName] is not 3
+
+- Location.assign
+PASS Object.getOwnPropertyDescriptor(testObject, testPropertyName).writable is false
+PASS testObject[testPropertyName] = false did not throw exception.
+PASS testObject[testPropertyName] is not false
+PASS 'use strict'; testObject[testPropertyName] = 3 threw exception TypeError: Attempted to assign to readonly property..
+PASS testObject[testPropertyName] is not 3
+
+- Location.replace
+PASS Object.getOwnPropertyDescriptor(testObject, testPropertyName).writable is false
+PASS testObject[testPropertyName] = false did not throw exception.
+PASS testObject[testPropertyName] is not false
+PASS 'use strict'; testObject[testPropertyName] = 3 threw exception TypeError: Attempted to assign to readonly property..
+PASS testObject[testPropertyName] is not 3
+
+* Location (reified)
+
+- Location.reload
+PASS Object.getOwnPropertyDescriptor(testObject, testPropertyName).writable is false
+PASS testObject[testPropertyName] = false did not throw exception.
+PASS testObject[testPropertyName] is not false
+PASS 'use strict'; testObject[testPropertyName] = 3 threw exception TypeError: Attempted to assign to readonly property..
+PASS testObject[testPropertyName] is not 3
+
+- Location.assign
+PASS Object.getOwnPropertyDescriptor(testObject, testPropertyName).writable is false
+PASS testObject[testPropertyName] = false did not throw exception.
+PASS testObject[testPropertyName] is not false
+PASS 'use strict'; testObject[testPropertyName] = 3 threw exception TypeError: Attempted to assign to readonly property..
+PASS testObject[testPropertyName] is not 3
+
+- Location.replace
+PASS Object.getOwnPropertyDescriptor(testObject, testPropertyName).writable is false
+PASS testObject[testPropertyName] = false did not throw exception.
+PASS testObject[testPropertyName] is not false
+PASS 'use strict'; testObject[testPropertyName] = 3 threw exception TypeError: Attempted to assign to readonly property..
+PASS testObject[testPropertyName] is not 3
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

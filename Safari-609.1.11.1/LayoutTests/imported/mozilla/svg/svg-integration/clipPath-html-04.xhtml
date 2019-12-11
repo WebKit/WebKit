@@ -1,0 +1,27 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:svg="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+<head>
+<style>
+.unit { display:inline-block; width:100px; height:1px; }
+</style>
+</head>
+<body style="margin:0; width:350px; line-height:100px;">
+  <span class="unit"/><span class="unit"
+  /><span style="clip-path:url(#c1); background:lime;"><span class="unit"/><span class="unit"
+  /></span>
+
+  <svg:svg height="0">
+    <!-- so that other documents can svg:use this one and force it to
+         load before onload -->
+    <svg:g id="empty" />
+    <svg:clipPath id="c1">
+      <svg:rect x="50" y="0" width="200" height="200"/>
+    </svg:clipPath>
+  </svg:svg>
+</body>
+</html>

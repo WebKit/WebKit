@@ -1,0 +1,67 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <title>Nested absolutes move with the overflow but are not stacking descendants: need two 'move' nodes</title>
+    <style>
+        .scrollcontent {
+            height: 500px;
+        }
+        .scroller {
+            position:absolute;
+            margin: 20px;
+            overflow: scroll;
+            height: 300px;
+            width: 300px;
+            border: 2px solid black;
+        }
+    
+        .absolute {
+            position:absolute;
+            left: 50px;
+            top: 50px;
+            width: 100px;
+            height: 100px;
+            background: gray;
+            border: 2px solid green;
+        }
+    
+        .inner {
+            left:25px;
+            top:25px;
+            width: 300px;
+        }
+
+        .scrollcontent {
+            height: 500px;
+            background-image: repeating-linear-gradient(white, silver 200px);
+        }
+        
+        .sharing-preventer {
+            transform: translateZ(0);
+            margin: 10px;
+            width: 10px;
+            height: 10px;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        window.addEventListener('load', () => {
+            if (window.internals)
+                document.getElementById('tree').innerText = internals.scrollingStateTreeAsText();
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="sharing-preventer"></div>
+        <div class="absolute">abs
+            <div class="sharing-preventer"></div>
+            <div class="inner absolute">abs</div>
+        </div>
+        <div class="scrollcontent"></div>
+    </div>
+<pre id="tree"></pre>
+</body>
+</html>

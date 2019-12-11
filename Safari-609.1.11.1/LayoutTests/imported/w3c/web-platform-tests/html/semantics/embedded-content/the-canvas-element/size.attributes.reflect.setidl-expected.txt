@@ -1,0 +1,8 @@
+size.attributes.reflect.setidl
+Setting IDL attributes updates IDL and content attributes
+Actual output:
+Expected output:
+
+
+PASS Setting IDL attributes updates IDL and content attributes 
+

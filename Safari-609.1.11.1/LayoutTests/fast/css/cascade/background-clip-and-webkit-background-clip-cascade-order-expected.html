@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: "Ahem";
+    src: url("../../../resources/Ahem.ttf");
+}
+
+body {
+    background-color: white;
+    font-family: "Ahem";
+    font-size: 20px; /* For some reason this needs to be multiple of 10 for the test to pass (why?). */
+}
+
+#background-clip-before-webkit-background-clip-expected-result {
+    color: #00FF00;
+}
+</style>
+</head>
+<body>
+    <!-- Test: -webkit-background-clip before background-clip -->
+    <img src="../resources/green-128x128.png" width="128" height="128">
+    <!-- Test: background-clip before -webkit-background-clip -->
+    <span id="background-clip-before-webkit-background-clip-expected-result">X</span>
+</body>
+</html>

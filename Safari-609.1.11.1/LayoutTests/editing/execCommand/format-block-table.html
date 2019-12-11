@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/dump-as-markup.js"></script>
+<div id="test0" contenteditable>
+<table><tr><td>hello</td><td>world</td></tr></table>
+</div>
+<div id="test1" contenteditable>
+<table><tr><td>hello</td><td>world</td></tr></table>
+</div>
+<div id="test2" contenteditable>
+<table><tr><td><p>hello</p><div>world</div></td><td>WebKit</td></tr></table>
+</div>
+<div id="test3" contenteditable>
+<table><tr><td><ul><li>hello</li><li>world</li></ul></td><td>WebKit</td></tr></table>
+</div>
+<script>
+
+function testIndentation(containerId, selector, value) {
+    var container = document.getElementById(containerId);
+    selector(container);
+    Markup.dump(container, 'Formatting');
+    document.execCommand('FormatBlock', false, value);
+    Markup.dump(container, 'by ' + value + ' yields');
+}
+
+function selectAll(container) {
+    window.getSelection().selectAllChildren(container);
+}
+
+function selectFirstCell(container) {
+    window.getSelection().selectAllChildren(container.getElementsByTagName('td')[0]);
+}
+
+testIndentation('test0', selectAll, 'p');
+testIndentation('test1', selectFirstCell, 'blockquote');
+testIndentation('test2', selectFirstCell, 'h3');
+testIndentation('test3', selectFirstCell, 'address');
+
+</script>
+</body>
+</html>

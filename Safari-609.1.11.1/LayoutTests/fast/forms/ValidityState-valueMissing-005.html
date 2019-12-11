@@ -1,0 +1,32 @@
+<html>
+<head>
+<title>required and valueMissing on unaccepted input types</title>
+<script language="JavaScript" type="text/javascript">
+    function log(message) {
+        document.getElementById("console").innerHTML += "<li>"+message+"</li>";
+    }
+
+    function test() {
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        v = document.getElementsByName("victim");
+
+        for (i = 0; i < v.length; i++)
+            log(!v[i].validity.valueMissing ? "SUCCESS" : "FAILURE");
+    }
+</script>
+</head>
+<body onload="test()">
+<p>There's a list of form control elements below, required attribute does not apply to them:
+validity.valueMissing should be false.</p>
+<input name="victim" type="hidden" required />
+<input name="victim" type="range" required />
+<input name="victim" type="image" required />
+<input name="victim" type="reset" required />
+<input name="victim" type="button" required />
+<input name="victim" type="submit" required />
+<hr>
+<ol id="console"></ol>
+</body>
+</html>

@@ -1,0 +1,7 @@
+2d.shadow.stroke.cap.2
+
+Shadows are drawn for stroke caps
+
+
+FAIL Shadows are drawn for stroke caps null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

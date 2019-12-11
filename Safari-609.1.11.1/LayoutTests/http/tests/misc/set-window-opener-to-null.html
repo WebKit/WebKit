@@ -1,0 +1,55 @@
+<html>
+<script>
+if (window.testRunner) {
+  testRunner.setCanOpenWindows();
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+  testRunner.globalFlag = false;
+}
+
+var w = window.open("http://127.0.0.1:8000/misc/resources/content-iframe.html");
+w.opener = null;
+
+function wait_to_start() {
+  var child_window_opened;
+
+  // polling testRunner.globalFlag or w.document
+  if (window.testRunner) {
+    child_window_opened = testRunner.globalFlag;
+  } else {
+    // polling w.document is not very reliable cross browsers,
+    // it works in chrome for manual testsing.
+    // We might want to change it to using postMessage when it
+    // is supported.
+    child_window_opened = !w.document;
+  }
+
+  if (!child_window_opened) {
+    setTimeout(wait_to_start, 30);
+    return;
+  }
+
+  var e = document.getElementById('console');
+  e.innerHTML = w.opener == null ? 'PASS' : 'FAIL';
+
+  w.close();
+
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+
+window.onload = wait_to_start;
+
+</script>
+<body>
+This tests that following code works in Chrome:
+<pre>
+var w = window.open(...);
+w.opener = null;
+</pre>
+After new page finishes loading, its opener should stay as null.
+
+<p>
+<div id="console">Running ...<div>
+</body>
+</html>

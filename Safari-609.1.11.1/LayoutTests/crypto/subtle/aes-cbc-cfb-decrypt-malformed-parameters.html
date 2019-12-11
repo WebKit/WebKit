@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test decrypting using AES-CBC/AES-CFB with malformed parameters");
+
+jsTestIsAsync = true;
+
+var extractable = false;
+var cipherText = hexStringToUint8Array("2ffa4618784dfd414b22c40c6330d022");
+var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
+
+crypto.subtle.importKey("raw", rawKey, "aes-cbc", extractable, ["decrypt"]).then(function(result) {
+    key = result;
+    // Wrong iv length
+    shouldReject('crypto.subtle.decrypt({name: "aes-cbc", iv: asciiToUint8Array("")}, key, cipherText)');
+    shouldReject('crypto.subtle.decrypt({name: "aes-cbc", iv: asciiToUint8Array("j")}, key, cipherText)');
+    shouldReject('crypto.subtle.decrypt({name: "aes-cbc", iv: asciiToUint8Array("jnOw99oOZFLIEPMrd")}, key, cipherText)');
+
+    finishJSTest();
+});
+
+crypto.subtle.importKey("raw", rawKey, "aes-cfb-8", extractable, ["decrypt"]).then(function(result) {
+    key = result;
+    // Wrong iv length
+    shouldReject('crypto.subtle.decrypt({name: "aes-cfb-8", iv: asciiToUint8Array("")}, key, cipherText)');
+    shouldReject('crypto.subtle.decrypt({name: "aes-cfb-8", iv: asciiToUint8Array("j")}, key, cipherText)');
+    shouldReject('crypto.subtle.decrypt({name: "aes-cfb-8", iv: asciiToUint8Array("jnOw99oOZFLIEPMrd")}, key, cipherText)');
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

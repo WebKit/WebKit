@@ -1,0 +1,46 @@
+<html> 
+<head>
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+    text-decoration: underline;
+}
+</style>
+<script src="../../resources/dump-as-markup.js"></script>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+<script>
+
+function editingTest() {
+    if (window.testRunner)
+         testRunner.dumpAsText();
+    for (i = 0; i < 6; i++)
+        typeCharacterCommand();
+    typeCharacterCommand(' ');
+    for (i = 0; i < 6; i++)
+        typeCharacterCommand();
+    typeCharacterCommand(' ');
+    for (i = 0; i < 6; i++)
+        typeCharacterCommand();
+    moveSelectionBackwardByWordCommand();
+    moveSelectionBackwardByWordCommand();
+    extendSelectionForwardByWordCommand();
+    underlineCommand();
+    document.body.appendChild(document.createTextNode(document.getElementById('root').innerHTML));
+}
+
+</script>
+<title>Editing Test</title>
+</head> 
+<body>
+<div contenteditable id="root" class="editing">
+<span id="test"></span>
+</div>
+<script>
+Markup.description('This tests removing underline from stylesheet (.editing has underline). Because text-decoration that comes from a style rule cannot be pushed down, the underline should stay. (see bug 27809).');
+runEditingTest();
+Markup.dump('root');
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+The following text should be green:
+
+PASS Complex selector for host works 
+

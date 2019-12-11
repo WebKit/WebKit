@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+</head>
+
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Basic tests for AudioNode API.");
+
+var context = 0;
+var context2 = 0;
+
+function runTest() {
+    context = new webkitAudioContext();
+    window.audioNode = context.createBufferSource();
+
+    // Check input and output numbers of AudioSourceNode.
+    if (audioNode.numberOfInputs === 0)
+        testPassed("Source AudioNode has no inputs.");
+    else
+        testFailed("Source AudioNode should not have inputs.");
+    
+    if (audioNode.numberOfOutputs === 1)
+        testPassed("Source AudioNode has one output.");
+    else
+        testFailed("Source AudioNode should have one output.");
+
+    // Check input and output numbers of AudioDestinationNode
+    if (context.destination.numberOfInputs === 1)
+        testPassed("Destination AudioNode has one input.");
+    else
+        testFailed("Destination AudioNode should have one input.");
+
+    if (context.destination.numberOfOutputs === 0)
+        testPassed("Destination AudioNode has no outputs.");
+    else
+        testFailed("Destination AudioNode should have no outputs.");
+
+    // Try calling connect() method with illegal values.
+
+    shouldThrowErrorName("audioNode.connect(0, 0, 0)", "TypeError");
+    shouldThrowErrorName("audioNode.connect(null, 0, 0)", "TypeError");
+
+    try {
+        audioNode.connect(context.destination, 5, 0);
+        testFailed("connect() exception should be thrown for illegal output index.");
+    } catch(e) {
+        testPassed("connect() exception thrown for illegal output index.");
+    }
+
+    try {
+        audioNode.connect(context.destination, 0, 5);
+        testFailed("connect() exception should be thrown for illegal input index.");
+    } catch(e) {
+        testPassed("connect() exception thrown for illegal input index.");
+    }
+
+    // Try calling connect() with proper values.
+    try {
+        audioNode.connect(context.destination, 0, 0);
+        testPassed("audioNode.connect(context.destination) succeeded.");
+    } catch(e) {
+        testFailed("audioNode.connect(context.destination) failed.");
+    }
+    
+    // Create a new context and try to connect the other context's node to this one.
+    try {
+        context2 = new webkitAudioContext();
+        window.audioNode.connect(context2.destination);
+        testFailed("exception should be thrown when connecting to other context's node.");
+    } catch(e) {
+        testPassed("exception thrown when connecting to other context's node.");
+    }
+
+    // Create a new context with too many arguments
+    try {
+        context2 = new webkitAudioContext(0, 0);
+        testPassed("exception should not be thrown when creating audio context with too many arguments.");
+    } catch(e) {
+        testFailed("exception thrown when creating audio context with too many arguments.");
+    }
+
+    // Ensure it is an EventTarget
+    try {
+        audioNode.addEventListener('testEvent', function(){
+            testPassed("AudioNode is an EventTarget");
+        });
+        audioNode.dispatchEvent(new Event('testEvent'));
+    } catch(e) {
+        testFailed("exception shouldn't be thrown when testing whether audio node is an event target");
+    }
+}
+
+runTest();
+
+</script>
+</body>
+</html>

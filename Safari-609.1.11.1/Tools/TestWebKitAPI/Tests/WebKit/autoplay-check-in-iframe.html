@@ -1,0 +1,16 @@
+<html>
+    <head>
+        <script>
+            function pageLoaded() {
+                window.onmessage = function(event) {
+                    try {
+                        window.webkit.messageHandlers.testHandler.postMessage(event.data);
+                    } catch(e) { }
+                };
+            }
+        </script>
+    </head>
+    <body onload="pageLoaded()">
+        <iframe src="autoplay-check-frame.html"></iframe>
+    </body>
+</html>

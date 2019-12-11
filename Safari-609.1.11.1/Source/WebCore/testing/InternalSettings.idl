@@ -1,0 +1,124 @@
+/*
+ * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+enum ForcedAccessibilityValue { "system", "on", "off" };
+enum FrameFlatteningValue { "Disabled", "EnabledForNonFullScreenIFrames", "FullyEnabled" };
+enum FontLoadTimingOverride { "Block", "Swap", "Failure" };
+
+[
+    NoInterfaceObject,
+    JSGenerateToJSObject,
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+] interface InternalSettings : InternalSettingsGenerated {
+    [MayThrowException] void setTouchEventEmulationEnabled(boolean enabled);
+
+    // Fonts, text
+    [MayThrowException] void setStandardFontFamily(DOMString family, DOMString script);
+    [MayThrowException] void setSerifFontFamily(DOMString family, DOMString script);
+    [MayThrowException] void setSansSerifFontFamily(DOMString family, DOMString script);
+    [MayThrowException] void setFixedFontFamily(DOMString family, DOMString script);
+    [MayThrowException] void setCursiveFontFamily(DOMString family, DOMString script);
+    [MayThrowException] void setFantasyFontFamily(DOMString family, DOMString script);
+    [MayThrowException] void setPictographFontFamily(DOMString family, DOMString script);
+    [MayThrowException] void setFontFallbackPrefersPictographs(boolean preferPictographs);
+    [MayThrowException] void setFontLoadTimingOverride(FontLoadTimingOverride override);
+    [MayThrowException] void setShouldIgnoreFontLoadCompletions(boolean ignore);
+
+    [MayThrowException] void setTextAutosizingEnabled(boolean enabled);
+    [MayThrowException] void setTextAutosizingWindowSizeOverride(long width, long height);
+    [MayThrowException] void setTextAutosizingUsesIdempotentMode(boolean enabled);
+
+    // Media
+    [MayThrowException] void setCanStartMedia(boolean enabled);
+    [Conditional=VIDEO_TRACK, MayThrowException] void setShouldDisplayTrackKind(DOMString kind, boolean enabled);
+    [Conditional=VIDEO_TRACK, MayThrowException] boolean shouldDisplayTrackKind(DOMString trackKind);
+    [MayThrowException] void setDefaultVideoPosterURL(DOMString poster);
+    [MayThrowException] void setTimeWithoutMouseMovementBeforeHidingControls(unrestricted double time);
+    [MayThrowException] void setMediaTypeOverride(DOMString mediaTypeOverride);
+    void setAllowsAirPlayForMediaPlayback(boolean available);
+    [Conditional=MEDIA_STREAM, MayThrowException] void setMediaCaptureRequiresSecureConnection(boolean enable);
+
+    [MayThrowException] void setForcePendingWebGLPolicy(boolean forced);
+
+    [MayThrowException] void setQuickTimePluginReplacementEnabled(boolean enabled);
+    [MayThrowException] void setYouTubeFlashPluginReplacementEnabled(boolean enabled);
+
+    // Editing, forms
+    [MayThrowException] void setEditingBehavior(DOMString behavior);
+    [MayThrowException] void setShouldConvertPositionStyleOnCopy(boolean convertPosition);
+    [MayThrowException] void setPreferMIMETypeForImages(boolean preferMimeTypeForImage);
+
+    // Other switches
+    [MayThrowException] void setUseDarkAppearance(boolean enabled);
+    [MayThrowException] void setStorageBlockingPolicy(DOMString policy);
+    [MayThrowException] void setImagesEnabled(boolean enabled);
+    [MayThrowException] void setPDFImageCachingPolicy(DOMString policy);
+    [MayThrowException] void setUseLegacyBackgroundSizeShorthandBehavior(boolean enabled);
+    [MayThrowException] void setAutoscrollForDragAndDropEnabled(boolean enabled);
+    [MayThrowException] void setBackgroundShouldExtendBeyondPage(boolean hasExtendedBackground);
+    [MayThrowException] void setScrollingTreeIncludesFrames(boolean enabled);
+    [MayThrowException] void setAllowUnclampedScrollPosition(boolean allowUnclamped);
+    [MayThrowException] void setAnimatedImageDebugCanvasDrawingEnabled(boolean enable);
+
+    [MayThrowException] void setMinimumTimerInterval(unrestricted double intervalInSeconds);
+    [MayThrowException] void setAllowsInlineMediaPlayback(boolean allows);
+    [MayThrowException] void setAllowsInlineMediaPlaybackAfterFullscreen(boolean allows);
+    [MayThrowException] void setInlineMediaPlaybackRequiresPlaysInlineAttribute(boolean requires);
+    [MayThrowException] void setFrameFlattening(FrameFlatteningValue frameFlattening);
+    [MayThrowException] void setIncompleteImageBorderEnabled(boolean enabled);
+    [MayThrowException] void setShouldDispatchSyntheticMouseEventsWhenModifyingSelection(boolean shouldDispatch);
+    [MayThrowException] void setShouldDispatchSyntheticMouseOutAfterSyntheticClick(boolean shouldDispatch);
+
+    // RuntimeEnabledFeatures.
+    void setIndexedDBWorkersEnabled(boolean enabled);
+    void setWebGL2Enabled(boolean enabled);
+    void setWebGPUEnabled(boolean enabled);
+    void setWebVREnabled(boolean enabled);
+    void setScreenCaptureEnabled(boolean enabled);
+
+    [MayThrowException] DOMString userInterfaceDirectionPolicy();
+    [MayThrowException] void setUserInterfaceDirectionPolicy(DOMString policy);
+    [MayThrowException] DOMString systemLayoutDirection();
+    [MayThrowException] void setSystemLayoutDirection(DOMString direction);
+
+    [MayThrowException] boolean deferredCSSParserEnabled();
+    [MayThrowException] void setDeferredCSSParserEnabled(boolean enabled);
+
+    [MayThrowException] void setShouldMockBoldSystemFontForAccessibility(boolean shouldMock);
+
+    attribute ForcedAccessibilityValue forcedColorsAreInvertedAccessibilityValue;
+    attribute ForcedAccessibilityValue forcedDisplayIsMonochromeAccessibilityValue;
+    attribute ForcedAccessibilityValue forcedPrefersReducedMotionAccessibilityValue;
+    attribute ForcedAccessibilityValue forcedSupportsHighDynamicRangeValue;
+
+    [MayThrowException] void setShouldManageAudioSessionCategory(boolean should);
+    [MayThrowException] void setCustomPasteboardDataEnabled(boolean enabled);
+
+    [EnabledAtRuntime=WebAnimations] boolean webAnimationsCSSIntegrationEnabled();
+
+    void setShouldDeactivateAudioSession(boolean shouldDeactivate);
+};
+

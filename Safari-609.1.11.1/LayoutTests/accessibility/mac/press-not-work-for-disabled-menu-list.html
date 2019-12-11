@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div id="content">
+
+<select id="test0" disabled>
+     <option value="1">Cork</option>
+     <option value="2">Cupertino</option>
+     <option value="3">London</option>
+     <option value="4">New York</option>
+     <option value="5">Singapore</option>
+     <option value="6">Tokyo</option>
+</select>
+
+<select id="test1" disabled aria-disabled="false">
+    <option value="1">Cork</option>
+    <option value="2">Cupertino</option>
+    <option value="3">London</option>
+    <option value="4">New York</option>
+    <option value="5">Singapore</option>
+    <option value="6">Tokyo</option>
+</select>
+
+<select id="test2" disabled aria-disabled="true">
+    <option value="1">Cork</option>
+    <option value="2">Cupertino</option>
+    <option value="3">London</option>
+    <option value="4">New York</option>
+    <option value="5">Singapore</option>
+    <option value="6">Tokyo</option>
+</select>
+
+<p id="description"></p>
+<div id="console"></div>
+
+</div>
+
+<script>
+    description("This tests that menu lists that are disabled will not be triggered by AXPress actions.");
+
+    // We don't test for enabled controls because opening menu lists waits on the UI process to display the menu.
+    var testCount = 3, testIndex = 0;
+    var lists = [null, null, null];
+
+    function testNextList() {
+        if (testIndex >= testCount) {
+            finishJSTest();
+            return;
+        }
+
+        var menulist = accessibilityController.accessibleElementById("test" + testIndex);
+        menulist.addNotificationListener(pressListener);
+        menulist.press();
+        lists[testIndex] = menulist;
+    }
+
+    function pressListener(notification) {
+        lists[testIndex].removeNotificationListener(pressListener);
+
+        debug("Got notification: " + notification);
+
+        testIndex++;
+        testNextList();
+    }
+
+    if (window.accessibilityController) {
+        jsTestIsAsync = true;
+        testNextList();
+    }
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

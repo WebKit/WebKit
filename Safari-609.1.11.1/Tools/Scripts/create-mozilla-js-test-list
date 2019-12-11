@@ -1,0 +1,149 @@
+#!/usr/bin/env ruby
+
+# Copyright (C) 2013 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+require 'pathname'
+require 'yaml'
+
+def toSet(array)
+    hash = {}
+    array.each {
+        | value |
+        hash[value] = true
+    }
+    hash
+end
+
+# Negative mozilla tests that we pass just fine.
+EXPECT_NO_FAIL =
+    toSet(["js1_2/function/function-001-n.js",
+           "js1_3/Script/function-001-n.js",
+           "js1_3/regress/function-001-n.js"])
+
+EXPECT_FAIL =
+    toSet(["ecma_2/Exceptions/function-001.js",
+           "ecma_2/RegExp/regress-001.js",
+           "ecma_3/FunExpr/fe-001.js",
+           "ecma_3/Statements/regress-194364.js",
+           "ecma_3/Unicode/uc-001.js",
+           "js1_2/Objects/toString-001.js",
+           "js1_2/function/Function_object.js",
+           "js1_2/function/regexparg-1.js",
+           "js1_2/operator/equality.js",
+           "js1_2/regexp/RegExp_lastIndex.js",
+           "js1_2/regexp/regress-6359.js",
+           "js1_2/regexp/regress-9141.js",
+           "js1_2/regexp/simple_form.js",
+           "js1_2/regexp/string_split.js",
+           "js1_2/version120/boolean-001.js",
+           "js1_2/version120/regress-99663.js",
+           "js1_3/Script/script-001.js",
+           "js1_5/Exceptions/catchguard-001.js",
+           "js1_5/Exceptions/catchguard-002.js",
+           "js1_5/Exceptions/catchguard-003.js",
+           "js1_5/Exceptions/errstack-001.js",
+           "js1_5/Exceptions/regress-50447.js",
+           "js1_5/GetSet/getset-001.js",
+           "js1_5/GetSet/getset-002.js",
+           "js1_5/GetSet/getset-003.js",
+           "js1_5/Object/regress-90596-001.js",
+           "js1_5/Object/regress-90596-002.js",
+           "js1_5/Object/regress-96284-001.js",
+           "js1_5/Object/regress-96284-002.js",
+           "js1_5/Regress/regress-44009.js",
+           "js1_5/Regress/regress-103602.js",
+           "js1_5/Regress/regress-104077.js",
+           "js1_5/Regress/regress-127557.js",
+           "js1_5/Regress/regress-172699.js",
+           "js1_5/Regress/regress-179524.js",
+           "js1_5/Scope/regress-220584.js",
+           "js1_5/Scope/scope-001.js",
+           "js1_6/Regress/regress-301574.js",
+           "js1_6/Regress/regress-309242.js",
+           "js1_6/Regress/regress-314887.js",
+           "js1_6/String/regress-306591.js"])
+
+SKIPPED =
+    toSet(["ecma/Date/15.9.2.1.js",
+           "ecma/Date/15.9.2.2-1.js",
+           "ecma/Date/15.9.2.2-2.js",
+           "ecma/Date/15.9.2.2-3.js",
+           "ecma/Date/15.9.2.2-4.js",
+           "ecma/Date/15.9.2.2-5.js",
+           "ecma/Date/15.9.2.2-6.js",
+           "ecma_3/Date/15.9.5.7.js",
+           "ecma/Date/15.9.5.14.js",
+           "ecma/Date/15.9.5.31-1.js",
+           "ecma/Date/15.9.5.34-1.js"])
+          
+$me = Pathname.new(ARGV[0])
+$list = []
+
+def recurse(directory, shells, countdown)
+    toRecurse = []
+    toRun = []
+    directory.each_child {
+        | entry |
+        if entry.basename.to_s == "shell.js"
+            shells = shells + [entry]
+        elsif entry.directory?
+            toRecurse << entry
+        elsif entry.basename.to_s =~ /\.js$/ and countdown <= 0
+            toRun << entry
+        end
+    }
+    toRecurse.each {
+        | entry |
+        recurse(entry, shells, countdown - 1)
+    }
+    toRun.each {
+        | entry |
+        testPath = entry.relative_path_from($me).to_s
+        mode = :normal
+        if entry.basename.to_s =~ /-n\.js/
+            mode = :negative
+        end
+        if SKIPPED[testPath]
+            mode = :skip
+        end
+        if EXPECT_FAIL[testPath]
+            mode = :fail
+        end
+        if EXPECT_NO_FAIL[testPath]
+            mode = :normal
+        end
+        $list << {
+            "path" => testPath,
+            "cmd" => "defaultRunMozillaTest :#{mode}, " + shells.map {
+                | shell |
+                shell.relative_path_from(directory).to_s.inspect
+            }.join(", ")
+        }
+    }
+end
+
+recurse($me, [], 2)
+
+puts $list.to_yaml
+

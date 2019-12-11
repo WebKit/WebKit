@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/inspector-test.js"></script>
+<script>
+function createIFrame(option) {
+    let iframe = document.createElement("iframe");
+    iframe.src = `resources/x-frame-options.php?option=${option}`;
+    document.body.appendChild(iframe);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.XFrameOptions");
+
+    suite.addTestCase({
+        name: "Network.XFrameOptions.Denied",
+        description: "Ensure that X-Frame-Options/CSP denials are recieved.",
+        async test() {
+            const option = "DENY";
+            InspectorTest.evaluateInPage(`createIFrame("${option}")`);
+
+            let event = await WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived);
+
+            let resource = event.target;
+            InspectorTest.expectEqual(resource.responseHeaders["X-Frame-Options"], option, "X-Frame-Options headers should match.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Network.XFrameOptions.Sameorigin",
+        description: "Ensure that X-Frame-Options/CSP denials are recieved.",
+        async test() {
+            const option = "SAMEORIGIN";
+            InspectorTest.evaluateInPage(`createIFrame("${option}")`);
+
+            let event = await WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived);
+
+            let resource = event.target;
+            InspectorTest.expectEqual(resource.responseHeaders["X-Frame-Options"], option, "X-Frame-Options headers should match.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for various X-Frame-Options headers.</p>
+</body>
+</html>

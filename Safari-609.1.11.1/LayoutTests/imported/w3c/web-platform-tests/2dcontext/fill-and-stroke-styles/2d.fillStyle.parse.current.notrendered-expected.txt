@@ -1,0 +1,8 @@
+2d.fillStyle.parse.current.basic
+currentColor is computed from the canvas element
+Actual output:
+Expected output:
+
+
+PASS currentColor is computed from the canvas element even when element is not rendered 
+

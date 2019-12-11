@@ -1,0 +1,40 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableInspectorAdditions=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("The test to ensure that modifying the result of getPath doesn't affect the context.");
+
+function shouldHaveCurrentPointEqualTo(path, expected) {
+    shouldEvaluateTo(path + ".currentX", expected[0]);
+    shouldEvaluateTo(path + ".currentY", expected[1]);
+}
+
+var ctx1 = document.createElement("canvas").getContext("2d");
+
+var copiedPath = ctx1.getPath();
+ctx1.moveTo(1, 1);
+shouldHaveCurrentPointEqualTo("copiedPath", [0, 0]);
+
+copiedPath.moveTo(2, 2);
+var newPath = ctx1.getPath();
+shouldHaveCurrentPointEqualTo("newPath", [1, 1]);
+
+ctx1.setPath(copiedPath);
+var modifiedPath = ctx1.getPath();
+shouldHaveCurrentPointEqualTo("modifiedPath", [2, 2]);
+
+var ctx2 = document.createElement("canvas").getContext("2d");
+ctx2.moveTo(2, 2);
+
+var ctx1Path = ctx1.getPath();
+var ctx2Path = ctx2.getPath();
+shouldBe("ctx1Path.currentX", "ctx2Path.currentX");
+shouldBe("ctx1Path.currentY", "ctx2Path.currentY");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger/debugger-test.js"></script>
+<script src="resources/script-for-breakpoint-actions.js"></script>
+<script>
+function test()
+{
+    let breakpointPromise = new WI.WrappedPromise;
+    WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, function() {
+        InspectorTest.startTracingBreakpoints();
+        InspectorTest.startTracingProbes();
+
+        var currentTicks = 0;
+        const expectedTicks = 2;
+
+        function incrementTick(event)
+        {
+            InspectorTest.log("Hit test checkpoint event #" + currentTicks + " with type: " + event.type);
+            if (++currentTicks === expectedTicks)
+                InspectorTest.completeTest();
+        }
+
+        WI.Probe.addEventListener(WI.Probe.Event.SampleAdded, incrementTick);
+
+        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, function(event) {
+
+            var scriptObject = event.data.script;
+
+            if (!/script\-for\-breakpoint\-actions\.js$/.test(scriptObject.url))
+                return;
+
+            var location = scriptObject.createSourceCodeLocation(4, 0);
+            // Create the breakpoint and its actions before sending anything to the backend.
+            var breakpoint = new WI.Breakpoint(location);
+            breakpoint.autoContinue = true;
+            for (var i of [0, 1])
+                breakpoint.createAction(WI.BreakpointAction.Type.Probe, null, "a");
+
+            WI.debuggerManager.addBreakpoint(breakpoint);
+
+            breakpoint.addEventListener(WI.Breakpoint.Event.ResolvedStateDidChange, function() {
+                InspectorTest.expectThat(breakpoint.resolved, "Breakpoint should be resolved.");
+            });
+
+
+            breakpointPromise.resolve();
+          });
+    });
+
+    let reloadPromise = InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+    InspectorTest.reloadPage();
+    Promise.all([
+        reloadPromise,
+        breakpointPromise.promise
+    ])
+    .then(() => {
+        InspectorTest.evaluateInPage("breakpointActions(12, {x:1,y:2})");
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that the probe manager properly handles addition and removal of related probes.</p>
+</body>
+</html>

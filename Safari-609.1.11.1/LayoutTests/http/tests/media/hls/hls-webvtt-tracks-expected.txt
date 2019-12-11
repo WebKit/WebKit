@@ -1,0 +1,9 @@
+
+EVENT(addtrack)
+EXPECTED (video.textTracks.length == '1') OK
+RUN(video.textTracks[0].mode = 'showing')
+EVENT(cuechange)
+EXPECTED (video.textTracks[0].activeCues.length == '1') OK
+EXPECTED (video.textTracks[0].activeCues[0].text == 'Subtitle Test') OK
+END OF TEST
+

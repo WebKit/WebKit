@@ -1,0 +1,32 @@
+
+FAIL Commits styles assert_approx_equals: expected 0.2 +/- 0.0001 but got 0.10000000149011612
+FAIL Commits styles for an animation that has been removed assert_approx_equals: expected 0.2 +/- 0.0001 but got 0.10000000149011612
+FAIL Commits shorthand styles assert_equals: expected "20px" but got "10px"
+FAIL Commits logical properties assert_equals: expected "20px" but got "10px"
+FAIL Commits values calculated mid-interval assert_approx_equals: expected 0.45 +/- 0.0001 but got 1
+FAIL Commits variables as their computed values assert_approx_equals: expected 0.5 +/- 0.0001 but got 1
+FAIL Commits em units as pixel values assert_approx_equals: expected 100 +/- 0.0001 but got 784
+FAIL Commits the intermediate value of an animation in the middle of stack assert_approx_equals: expected 0.4 +/- 0.0001 but got 0.10000000149011612
+FAIL Triggers mutation observers when updating style assert_equals: Should have one mutation record expected 1 but got 0
+PASS Does NOT trigger mutation observers when the change to style is redundant 
+FAIL Throws if the target element is a pseudo element assert_throws: function "() => {
+    animation.commitStyles();
+  }" did not throw
+FAIL Throws if the target element is not something with a style attribute assert_throws: function "() => {
+    animation.commitStyles();
+  }" did not throw
+FAIL Throws if the target effect is display:none assert_throws: function "() => {
+    animation.commitStyles();
+  }" did not throw
+FAIL Throws if the target effect's ancestor is display:none assert_throws: function "() => {
+    animation.commitStyles();
+  }" did not throw
+PASS Treats display:contents as rendered 
+FAIL Treats display:contents in a display:none subtree as not rendered assert_throws: function "() => {
+    animation.commitStyles();
+  }" did not throw
+FAIL Throws if the target effect is disconnected assert_throws: function "() => {
+    animation.commitStyles();
+  }" did not throw
+FAIL Checks the pseudo element condition before the not rendered condition undefined is not an object (evaluating 'pseudo.element.remove')
+

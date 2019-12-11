@@ -1,0 +1,212 @@
+/*
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+typedef USVString CSSOMString;
+
+[
+    CheckSecurity,
+    CustomDefineOwnProperty,
+    CustomDeleteProperty,
+    CustomGetOwnPropertyNames,
+    CustomGetOwnPropertySlot,
+    CustomGetPrototype,
+    CustomHeapSnapshot,
+    CustomPreventExtensions,
+    CustomProxyToJSObject,
+    CustomPut,
+    CustomToStringName,
+    ExportMacro=WEBCORE_EXPORT,
+    ImplicitThis,
+    InterfaceName=Window,
+    IsImmutablePrototypeExoticObject,
+    IsImmutablePrototypeExoticObjectOnPrototype,
+    JSCustomMarkFunction,
+    JSCustomToNativeObject,
+    JSLegacyParent=JSDOMWindowBase,
+    LegacyUnenumerableNamedProperties,
+    Global=Window,
+    Exposed=Window,
+] interface DOMWindow : EventTarget {
+    // The current browsing context.
+    [DoNotCheckSecurity, Unforgeable, CustomGetter] readonly attribute WindowProxy window;
+    [Replaceable, DoNotCheckSecurityOnGetter, CustomGetter] readonly attribute WindowProxy self;
+    [Unforgeable] readonly attribute Document document;
+    attribute DOMString name;
+    [DoNotCheckSecurity, PutForwards=href, Unforgeable] readonly attribute Location location;
+    readonly attribute History history;
+    [EnabledAtRuntime=CustomElements, ImplementedAs=ensureCustomElementRegistry] readonly attribute CustomElementRegistry customElements;
+    [Replaceable] readonly attribute BarProp locationbar;
+    [Replaceable] readonly attribute BarProp menubar;
+    [Replaceable] readonly attribute BarProp personalbar;
+    [Replaceable] readonly attribute BarProp scrollbars;
+    [Replaceable] readonly attribute BarProp statusbar;
+    [Replaceable] readonly attribute BarProp toolbar;
+    attribute DOMString status;
+    [DoNotCheckSecurity, CallWith=IncumbentDocument, ForwardDeclareInHeader] void close();
+    [DoNotCheckSecurity, ForwardDeclareInHeader] readonly attribute boolean closed;
+    void stop();
+    [DoNotCheckSecurity, CallWith=IncumbentWindow, ForwardDeclareInHeader] void focus();
+    [DoNotCheckSecurity, ForwardDeclareInHeader] void blur();
+
+    // Other browsing contexts.
+    [Replaceable, DoNotCheckSecurityOnGetter, CustomGetter] readonly attribute WindowProxy frames;
+    [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute unsigned long length;
+    [DoNotCheckSecurityOnGetter, Unforgeable] readonly attribute WindowProxy? top;
+    [DoNotCheckSecurityOnGetter, CustomSetter] attribute WindowProxy? opener;
+    [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute WindowProxy? parent;
+    [CheckSecurityForNode] readonly attribute Element? frameElement;
+    [CallWith=ActiveWindow&FirstWindow, MayThrowException] WindowProxy? open(optional USVString url = "", optional DOMString target = "_blank", optional [TreatNullAs=EmptyString] DOMString features = "");
+
+    // The user agent.
+    readonly attribute Navigator navigator;
+    readonly attribute DOMApplicationCache applicationCache;
+
+    // User prompts.
+    void alert();
+    void alert(DOMString message);
+    [ImplementedAs=confirmForBindings]boolean confirm(optional DOMString message = "");
+    DOMString? prompt(optional DOMString message = "", optional DOMString defaultValue = "");
+    void print();
+
+    long requestAnimationFrame(RequestAnimationFrameCallback callback); // FIXME: Should return an unsigned long.
+    void cancelAnimationFrame(long handle); // FIXME: handle should be an unsigned long.
+
+    [EnabledBySetting=requestIdleCallback] unsigned long requestIdleCallback(IdleRequestCallback callback, optional IdleRequestOptions options);
+    [EnabledBySetting=requestIdleCallback] void cancelIdleCallback(unsigned long handle);
+
+    [CallWith=GlobalObject&IncumbentWindow, DoNotCheckSecurity, ForwardDeclareInHeader, MayThrowException] void postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
+
+    // Obsolete members, still part of the HTML specification (https://html.spec.whatwg.org/#Window-partial).
+    void captureEvents(); // Not implemented. Also not in modern standards. Empty function may help compatibility with legacy content.
+    void releaseEvents(); // Not implemented. Also not in modern standards. Empty function may help compatibility with legacy content.
+
+    // WebStorage (https://html.spec.whatwg.org/multipage/webstorage.html#the-sessionstorage-attribute).
+    readonly attribute Storage sessionStorage;
+
+    // WebStorage (https://html.spec.whatwg.org/multipage/webstorage.html#the-localstorage-attribute).
+    readonly attribute Storage localStorage;
+
+    // Extensions from the CSSOM specification (https://drafts.csswg.org/cssom/#extensions-to-the-window-interface).
+    [NewObject] CSSStyleDeclaration getComputedStyle(Element element, optional CSSOMString? pseudoElement = null);
+
+    // Extensions from the CSSOM-View specification (https://drafts.csswg.org/cssom-view/#extensions-to-the-window-interface).
+    [NewObject] MediaQueryList matchMedia(CSSOMString query);
+    [Replaceable] readonly attribute Screen screen; // FIXME: Should be [SameObject].
+
+    // Browsing context (CSSOM-View).
+    void moveTo(optional unrestricted float x = NaN, optional unrestricted float y = NaN); // FIXME: Parameters should be mandatory and of type long.
+    void moveBy(optional unrestricted float x = NaN, optional unrestricted float y = NaN); // FIXME: Parameters should be mandatory and of type long.
+    void resizeTo(optional unrestricted float width = NaN, optional unrestricted float height = NaN); // Parameters should be mandatory and of type long.
+    void resizeBy(optional unrestricted float x = NaN, optional unrestricted float y = NaN); // FIXME: Parameters should be mandatory and of type long.
+
+    // Viewport (CSSOM-View).
+    [Replaceable] readonly attribute long innerHeight;
+    [Replaceable] readonly attribute long innerWidth;
+
+    // Viewport scrolling (CSSOM-View).
+    [Replaceable] readonly attribute double scrollX;
+    [Replaceable, ImplementedAs=scrollX] readonly attribute double pageXOffset;
+    [Replaceable] readonly attribute double scrollY;
+    [Replaceable, ImplementedAs=scrollY] readonly attribute double pageYOffset;
+    [ImplementedAs=scrollTo] void scroll(optional ScrollToOptions options);
+    [ImplementedAs=scrollTo] void scroll(unrestricted double x, unrestricted double y);
+    void scrollTo(optional ScrollToOptions options);
+    void scrollTo(unrestricted double x, unrestricted double y);
+    void scrollBy(optional ScrollToOptions option);
+    void scrollBy(unrestricted double x, unrestricted double y);
+
+    // Visual Viewport (https://wicg.github.io/ViewportAPI/spec.html)
+    [EnabledBySetting=VisualViewportAPI, Replaceable] readonly attribute VisualViewport visualViewport; // FIXME: Should be [SameObject]. https://bugs.webkit.org/show_bug.cgi?id=163414
+
+    // Client (CSSOM-View).
+    [Replaceable] readonly attribute long screenX;
+    [Replaceable] readonly attribute long screenY;
+    [Replaceable] readonly attribute long outerWidth;
+    [Replaceable] readonly attribute long outerHeight;
+    [Replaceable] readonly attribute double devicePixelRatio;
+
+    // Extensions from the Selection API (https://www.w3.org/TR/selection-api/#extensions-to-window-interface).
+    DOMSelection? getSelection();
+
+    // Extensions in Compatibility specification (https://compat.spec.whatwg.org/#windoworientation-interface).
+    [Conditional=ORIENTATION_EVENTS] readonly attribute long orientation;
+
+    // Non standard.
+    [Replaceable, CustomGetter] readonly attribute Event event;
+    attribute DOMString defaultStatus;
+    [ImplementedAs=defaultStatus] attribute DOMString defaultstatus; // For compatibility with legacy content.
+    boolean find(optional DOMString string = "undefined", optional boolean caseSensitive = false, optional boolean backwards = false, optional boolean wrap = false, optional boolean wholeWord = false, optional boolean searchInFrames = false, optional boolean showDialog = false); // FIXME: Using "undefined" as default parameter value is wrong.
+    [Replaceable] readonly attribute  boolean offscreenBuffering;
+    [Replaceable] readonly attribute long screenLeft;
+    [Replaceable] readonly attribute long screenTop;
+    long webkitRequestAnimationFrame(RequestAnimationFrameCallback callback);
+    [ImplementedAs=cancelAnimationFrame] void webkitCancelAnimationFrame(long id);
+    [ImplementedAs=cancelAnimationFrame] void webkitCancelRequestAnimationFrame(long id);
+
+    // Non standard but may get added (https://github.com/whatwg/html/issues/2379).
+    [Replaceable] readonly attribute Navigator clientInformation;
+
+    // FIXME: This was removed from the CSSOM View specification.
+    readonly attribute StyleMedia styleMedia;
+
+    // FIXME: We should probably deprecate this (https://bugs.webkit.org/show_bug.cgi?id=79653).
+    // Blink already deprecated it (https://bugs.chromium.org/p/chromium/issues/detail?id=437569).
+    CSSRuleList getMatchedCSSRules(optional Element? element = null, optional DOMString? pseudoElement = null);
+
+    // FIXME: This has been dropped from the HTML specification and by other browsers.
+    [Custom] any showModalDialog(DOMString url, optional any dialogArgs, optional DOMString featureArgs);
+
+    // FIXME: Blink has already dropped these (https://bugs.chromium.org/p/chromium/issues/detail?id=398352).
+    WebKitPoint webkitConvertPointFromPageToNode(optional Node? node = null, optional WebKitPoint? p = null);
+    WebKitPoint webkitConvertPointFromNodeToPage(optional Node? node = null, optional WebKitPoint? p = null);
+
+    // Internal operations, not exposed to the Web.
+    [MayThrowException, EnabledForWorld=shadowRootIsAlwaysOpen] NodeList collectMatchingElementsInFlatTree(Node scope, DOMString selectors);
+    [MayThrowException, EnabledForWorld=shadowRootIsAlwaysOpen] Element? matchingElementInFlatTree(Node scope, DOMString selectors);
+
+    // iOS Gesture API event handlers.
+    [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongesturechange;
+    [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongestureend;
+    [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongesturestart;
+
+    // Event handler from DeviceOrientation Event Specification (https://w3c.github.io/deviceorientation/spec-source-orientation.html#devicemotion).
+    [NotEnumerable, Conditional=DEVICE_ORIENTATION] attribute EventHandler ondevicemotion; // FIXME: Should be enumerable.
+
+    // Event handler from DeviceOrientation Event Specification (https://w3c.github.io/deviceorientation/spec-source-orientation.html#deviceorientation)
+    [NotEnumerable, Conditional=DEVICE_ORIENTATION] attribute EventHandler ondeviceorientation; // FIXME: Should be enumerable.
+
+    // Non standard event handlers.
+    [NotEnumerable, ImplementedAs=onwebkitAnimationEnd] attribute EventHandler onwebkitanimationend;
+    [NotEnumerable, ImplementedAs=onwebkitAnimationIteration] attribute EventHandler onwebkitanimationiteration;
+    [NotEnumerable, ImplementedAs=onwebkitAnimationStart] attribute EventHandler onwebkitanimationstart;
+    [NotEnumerable, ImplementedAs=onwebkitTransitionEnd] attribute EventHandler onwebkittransitionend;
+};
+
+DOMWindow implements GlobalCrypto;
+DOMWindow implements GlobalEventHandlers;
+DOMWindow implements GlobalPerformance;
+DOMWindow implements WindowEventHandlers;
+DOMWindow implements WindowOrWorkerGlobalScope;

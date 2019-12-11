@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="base-uri http://example.com">
+    <base href="http://example.com/">
+    <script src="http://localhost:8000/js-test-resources/js-test-pre.js"></script>
+    <script>
+        description('Check that base URIs can be set if they do not violate the page\'s policy.');
+
+        shouldBeEqualToString('document.baseURI', 'http://example.com/');
+    </script>
+    <script src="http://localhost:8000/js-test-resources/js-test-post.js"></script>
+</head>
+<body>
+</html>

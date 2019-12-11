@@ -1,0 +1,68 @@
+Tests for ES6 class syntax "super"
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS (new Base) instanceof Base
+PASS (new Derived) instanceof Derived
+PASS (new DerivedWithEval) instanceof DerivedWithEval
+PASS (new DerivedWithEval(true)):::ReferenceError: Cannot access uninitialized variable.
+PASS (new Derived).callBaseMethod():::baseMethodValue
+PASS x = (new Derived).callBaseMethod; x():::baseMethodValue
+PASS (new Derived).callBaseMethodInGetter:::baseMethodValue
+PASS (new Derived).callBaseMethodInSetter = 1; valueInSetter:::baseMethodValue
+PASS (new Derived).baseMethodInGetterSetter:::(new Base).baseMethod
+PASS (new Derived).baseMethodInGetterSetter = 1; valueInSetter:::(new Base).baseMethod
+PASS Derived.staticMethod():::"base3"
+PASS (new SecondDerived).chainMethod().toString():::["base", "derived", "secondDerived"].toString()
+PASS x = class extends Base { constructor() { super(); } super() {} }
+PASS x = class extends Base { constructor() { super(); } method() { super() } }:::SyntaxError: super is not valid in this context.
+PASS x = class extends Base { constructor() { super(); } method() { super } }:::SyntaxError: super is not valid in this context.
+PASS x = class extends Base { constructor() { super(); } method() { return new super } }:::SyntaxError: Cannot use new with super.
+PASS x = class extends Base { constructor() { super(); } method1() { delete (super.foo) } method2() { delete super["foo"] } }
+PASS (new x).method1():::ReferenceError: Cannot delete a super property
+PASS (new x).method2():::ReferenceError: Cannot delete a super property
+PASS (new (class { constructor() { super.property = "ABC"; } })).property === "ABC"
+PASS (new (class extends Base { constructor() { super(); super.property = "ABC"; } })).property === "ABC"
+PASS (new (class { constructor() { var arr = () => super.property = "ABC"; arr(); } })).property === "ABC"
+PASS (new (class { constructor() { var async_arr = async () => super.property = "ABC"; async_arr(); } })).property === "ABC"
+PASS (new (class { constructor() { eval('super.property = "ABC"'); } })).property === "ABC"
+PASS (new (class { constructor() { var arr = () => eval('super.property = "ABC"'); arr(); } })).property === "ABC"
+PASS new (class { constructor() { return undefined; } }) instanceof Object
+PASS new (class { constructor() { return 1; } }) instanceof Object
+PASS new (class extends Base { constructor() { return undefined } }):::ReferenceError: Cannot access uninitialized variable.
+PASS new (class extends Base { constructor() { super(); return undefined } }) instanceof Object
+PASS x = { }; new (class extends Base { constructor() { return x } });:::x
+PASS x instanceof Base
+PASS new (class extends Base { constructor() { } }):::ReferenceError: Cannot access uninitialized variable.
+PASS new (class extends Base { constructor() { return 1; } }):::TypeError: Cannot return a non-object type in the constructor of a derived class.
+PASS new (class extends null { constructor() { return undefined } }):::ReferenceError: Cannot access uninitialized variable.
+PASS new (class extends null { constructor() { super(); return undefined } }):::TypeError: function is not a constructor (evaluating 'super()')
+PASS x = { }; new (class extends null { constructor() { return x } });:::x
+PASS x instanceof Object
+PASS new (class extends null { constructor() { } }):::ReferenceError: Cannot access uninitialized variable.
+PASS new (class extends null { constructor() { return 1; } }):::TypeError: Cannot return a non-object type in the constructor of a derived class.
+PASS new (class extends null { constructor() { super() } }):::TypeError: function is not a constructor (evaluating 'super()')
+PASS new (class { constructor() { super() } }):::SyntaxError: super is not valid in this context.
+PASS function x() { super(); }:::SyntaxError: super is not valid in this context.
+PASS new (class extends Object { constructor() { function x() { super() } } }):::SyntaxError: super is not valid in this context.
+PASS new (class extends Object { constructor() { function x() { super.method } } }):::SyntaxError: super is not valid in this context.
+PASS function x() { super.method(); }:::SyntaxError: super is not valid in this context.
+PASS function x() { super(); }:::SyntaxError: super is not valid in this context.
+PASS eval("super.method()"):::SyntaxError: super is not valid in this context.
+PASS eval("super()"):::SyntaxError: super is not valid in this context.
+PASS (function () { eval("super.method()");})():::SyntaxError: super is not valid in this context.
+PASS (function () { eval("super()");})():::SyntaxError: super is not valid in this context.
+PASS new (class { constructor() { (function () { eval("super()");})(); } }):::SyntaxError: super is not valid in this context.
+PASS (new (class { method() { (function () { eval("super.method()");})(); }})).method():::SyntaxError: super is not valid in this context.
+PASS new (class extends Base { constructor() { super(); super();}}):::ReferenceError: 'super()' can't be called more than once in a constructor.
+PASS (new class D extends class { m() {}} { constructor() { eval('super["m"]()') } }):::ReferenceError: Cannot access uninitialized variable.
+PASS new class extends class { m() {}} { constructor() { super["m"](super()) } }:::ReferenceError: Cannot access uninitialized variable.
+PASS (new class D extends class { m() {}} { constructor(f) { super[f()]() } }(()=>"m")):::ReferenceError: Cannot access uninitialized variable.
+PASS (new class D extends class { m() {}} { constructor() { super(); eval('super["m"]()') } })
+PASS new class extends class { m() {}} { constructor() { super(); super["m"](super()) } }:::ReferenceError: 'super()' can't be called more than once in a constructor.
+PASS (new class D extends class { m() {}} { constructor(f) { super(); super[f()]() } }(()=>"m"))
+PASS successfullyParsed
+
+TEST COMPLETE
+

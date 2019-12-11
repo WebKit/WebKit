@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../resources/log-pause-location.js"></script>
+<script>
+function a() {
+    return 1;
+}
+
+function entryDebuggerStatement() {
+    debugger;
+    debugger;
+    debugger;
+}
+
+function entryBlockStatement() {
+    debugger;
+    {
+        let x = 1;
+    }
+}
+
+function entryWithStatement() {
+    let o = {x:1, y:2};
+    debugger;
+    with (o)
+        a();
+    with (o) {
+        a();
+    }
+}
+
+function entryLabeledStatement() {
+    let arr = [];
+    debugger;
+label:
+    {
+        arr.push(1);
+        break label;
+        arr.push(2);
+    }
+}
+
+function entryLabelBreakLoop() {
+    debugger;
+outer:
+    for (let i = 0; ; ++i) {
+        for (let j = 0; j < 2; ++j) {
+            if (i === 1 && j === 0)
+                break outer;
+            a();
+        }
+    }
+}
+
+function entryVariableDeclaration() {
+    debugger;
+    var a = 1,
+        x = 1;
+    let b = 2,
+        y = 2;
+    const c = 3,
+        z = 3;
+}
+
+function entryDestructuring() {
+    var o = {x:1, y:2};
+    var arr = [1, 2];
+    debugger;
+    var {x, y} = o;
+    var [w, z] = arr;
+}
+
+function entryIfWithDotExpression() {
+    var o = {condition: true};
+    debugger;
+    if (o.condition)
+        a();
+}
+
+function entryIfWithBracketExpression() {
+    var o = {condition: true};
+    debugger;
+    if (o["condition"])
+        a();
+}
+
+function entryIfWithTaggedTemplate() {
+    debugger;
+    if (String.raw`test`)
+        a();
+}
+
+
+// FIXME: Not Yet Tested
+// - Iterators
+// - Spread (...)
+// - Generators (function*, yield)
+// - Import / Export statements
+
+// ---------
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.stepping.misc");
+
+    window.initializeSteppingTestSuite(suite);
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.DebuggerStatement",
+        description: "Should be able to step through debugger statements.",
+        expression: "setTimeout(entryDebuggerStatement)",
+        steps: [
+            "over",
+                "in",   // debugger
+                "over", // debugger
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.BlockStatement",
+        description: "Should be able to step through debugger statements.",
+        expression: "setTimeout(entryBlockStatement)",
+        steps: [
+            "over",
+                "over", // let x = 1
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.WithStatement",
+        description: "Should be able to step through with statements.",
+        expression: "setTimeout(entryWithStatement)",
+        steps: [
+            "over",
+                "over", // with (o)
+                "over", // a()
+                "over", // with (o)
+                "over", // a()
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.LabeledStatement",
+        description: "Should be able to step through label statements.",
+        expression: "setTimeout(entryLabeledStatement)",
+        steps: [
+            "over",
+                "over", // arr.push(1)
+                "over", // break outer
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.LabelBreakLoop",
+        description: "Should be able to step through loops with break label.",
+        expression: "setTimeout(entryLabelBreakLoop)",
+        steps: [
+            "over",
+                "in",   // let i = 0 - before inner for
+                "in",   // let j = 0 - before condition
+                "in",   // (j < 2) [j=0] - before if
+                "over", // if [false] - before a()
+                "over", // a();
+                "over", // ++j
+                "over", // (j < 2) [j=1] - before if
+                "over", // if [false] - before a()
+                "over", // a();
+                "over", // ++j
+                "over", // (j < 2) [j=2] - before ++i
+                "in",   // ++i - before let j = 0
+                "in",   // j = 0 - before condition
+                "in",   // (j < 2) - before if
+                "in",   // if [true] - before break
+                "in",   // break - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.VariableDeclaration",
+        description: "Should be able to step through variable declarations.",
+        expression: "setTimeout(entryVariableDeclaration)",
+        steps: [
+            "over",
+                       // FIXME: Opportunity to pause at assignment expressions.
+                "in",  // a = 1, x = 1
+                "in",  // b = 2, y = 2
+                "in",  // c = 3, z = 3
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.Destructuring",
+        description: "Should be able to step through destructuring assignment.",
+        expression: "setTimeout(entryDestructuring)",
+        steps: [
+            "over",
+                "in",  // var {x, y} = o;
+                "in",  // var [w, z] = arr
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.IfWithDotExpression",
+        description: "Should step to the entire expression, not the dot.",
+        expression: "setTimeout(entryIfWithDotExpression)",
+        steps: [
+            "over",
+                "in",    // o.condition
+                "over",  // a
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.IfWithBracketExpression",
+        description: "Should step to the entire expression, not the bracket dot.",
+        expression: "setTimeout(entryIfWithBracketExpression)",
+        steps: [
+            "over",
+                "in",    // o["condition"]
+                "over",  // a
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.IfWithTaggedTemplate",
+        description: "Should step to the entire expression, not the template.",
+        expression: "setTimeout(entryIfWithTaggedTemplate)",
+        steps: [
+            "over",
+                "in",    // String.raw`test`
+                "over",  // a
+            "resume",
+        ]
+    });
+
+    loadMainPageContent().then(() => {
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Checking pause locations when stepping in, out, and over misc statements.</p>
+</body>
+</html>

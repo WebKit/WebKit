@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script src="form-validation.js"></script>
+<iframe id="testFrame" src="resources/form-validation-iframe.html"></iframe>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Tests that the form validation message goes away when its element's iframe gets detached.");
+jsTestIsAsync = true;
+
+onload = function() {
+    var testFrame = document.getElementById("testFrame");
+    testFrame.contentDocument.getElementById("required_text_input_submit").click();
+
+    testFrame.remove();
+    testFrame = null;
+    gc();
+
+    getValidationMessage().then((_message) => {
+        message = _message;
+        shouldBeEqualToString("message", "");
+        finishJSTest();
+    });
+}
+</script>
+</body>
+<html>

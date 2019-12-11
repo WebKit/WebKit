@@ -1,0 +1,137 @@
+<body>
+<p>Test Worker constructor functionality. Should print a series of PASS messages, followed with DONE.</p>
+<div id=result></div>
+<script>
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+var testCases = [
+    "testArgumentException",
+    "testRecursiveWorkerCreation",
+    "testNoArgument",
+    "testEmptyScriptUrl",
+    "testInvalidScriptUrl",
+    "testNotExistentScriptUrl",
+    "testSuccessWorkerCreation",
+];
+var testIndex = 0;
+
+function runNextTest()
+{
+    if (testIndex < testCases.length) {
+        testIndex++;
+        window[testCases[testIndex - 1]]();
+    } else {
+        log("DONE");
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+}
+
+function testArgumentException()
+{
+    try {
+        new Worker({toString:function(){throw "exception"}})
+        log("FAIL: toString exception not propagated.");
+    } catch (ex) {
+        if (ex == "exception")
+            log("PASS: toString exception propagated correctly.");
+        else
+            log("FAIL: unexpected exception (" + ex + ") received instead of one propagated from toString.");
+    }
+    runNextTest();
+}
+
+function testRecursiveWorkerCreation()
+{
+    try {
+        var foo = {toString:function(){new Worker(foo)}}
+        new Worker(foo);
+        log("FAIL: no exception when trying to create workers recursively");
+    } catch (ex) {
+        log("PASS: trying to create workers recursively resulted in an exception (" + ex + ")");
+    }
+    runNextTest();
+}
+
+function testNoArgument()
+{
+    try {
+        new Worker();
+        log("FAIL: invoking Worker constructor without arguments did not result in an exception");
+    } catch (ex) {
+        log("PASS: invoking Worker constructor without arguments resulted in an exception (" + ex + ")");
+    }
+    runNextTest();
+}
+
+function testEmptyScriptUrl()
+{
+    try {
+        var worker = new Worker("");
+        worker.onerror = function() {
+            log("FAIL: onerror invoked for an empty script URL.");
+            runNextTest();
+        }
+    } catch (ex) {
+        log("PASS: invoking Worker constructor with empty script URL resulted in an exception (" + ex + ")");
+        runNextTest();
+    }
+}
+
+function testInvalidScriptUrl()
+{
+    try {
+        var worker = new Worker("http://invalid:123$");
+        worker.onerror = function() {
+            log("FAIL: onerror invoked for an invalid script URL.");
+            runNextTest();
+        }
+    } catch (ex) {
+        log("PASS: invoking Worker constructor with invalid script URL resulted in an exception (" + ex + ")");
+        runNextTest();
+    }
+}
+
+function testNotExistentScriptUrl()
+{
+    try {
+        var worker = new Worker("does-not-exist.js");
+        worker.onerror = function() {
+            log("PASS: onerror invoked for a script that could not be loaded.");
+            runNextTest();
+        }
+    } catch (ex) {
+        log("FAIL: unexpected exception " + ex);
+        runNextTest();
+    }
+}
+
+function testSuccessWorkerCreation()
+{
+    try {
+        var worker = new Worker("resources/worker-common.js");
+        // Make sure attributes from both Worker and AbstractWorker are visible.
+        if (!worker.postMessage)
+            log("FAIL: worker.postMessage did not exist.");
+        else if (!worker.addEventListener)
+            log("FAIL: worker.addEventListener did not exist.");
+        else
+            log("PASS: Successfully created worker.");
+    } catch (ex) {
+        log("FAIL: unexpected exception (" + ex + ") thrown when creating worker");
+    }
+    runNextTest();
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+runNextTest();
+
+</script>
+</body>

@@ -1,0 +1,20 @@
+{
+  "scripts/egl.xml":
+    "842e24514c4cfe09fba703c17a0fd292",
+  "scripts/egl_angle_ext.xml":
+    "fc2e249239fb1365f6d145cdf1a3cfcf",
+  "scripts/gen_proc_table.py":
+    "02cd0bf313b513b2f2966cd6ef7a1c24",
+  "scripts/gl.xml":
+    "b470cb06b06cbbe7adb2c8129ec85708",
+  "scripts/gl_angle_ext.xml":
+    "82d1e91d75d8935a44312da31adca77c",
+  "scripts/registry_xml.py":
+    "a002559d0c36f3c78c08ba99f9849c6c",
+  "scripts/wgl.xml":
+    "aa96419c582af2f6673430e2847693f4",
+  "src/libGL/proc_table_wgl_autogen.cpp":
+    "6844abf06aa6fb7a26878acb0d69df07",
+  "src/libGLESv2/proc_table_egl_autogen.cpp":
+    "b0f231c1a858dbb285b736678d86f3f5"
+}

@@ -1,0 +1,65 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <title>Tests that the bounds of the layer for non-scrolled clipping is not intersected with the scroller's clip</title>
+    <style>
+        #scroller {
+            overflow-y: scroll;
+            height: 300px;
+            width: 300px;
+            margin: 20px;
+            border: 13px solid black;
+            box-shadow: 0 0 7px black;
+            padding: 8px;
+        }
+        
+        .clipping {
+            overflow: hidden;
+            margin: 10px;
+            width: 100px;
+            height: 200px;
+            border: 2px solid gray;
+        }
+
+        .box {
+            margin-top: 50px;
+            margin-left: 30px;
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+        }
+        
+        .composited {
+            transform: translateZ(0);
+            box-shadow: 0 0 4px black;
+        }
+
+        .spacer {
+            height: 200px;
+            width: 20px;
+            background-color: silver;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        window.addEventListener('load', () => {
+            scroller.scrollTo(0, 300);
+            if (window.internals)
+                document.getElementById('layers').innerText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_CLIPPING);
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="scroller">
+        <div class="spacer"></div>
+        <div class="clipping">
+            <div class="composited box"></div>
+        </div>
+        <div class="spacer"></div>
+    </div>
+<pre id="layers"></pre>
+</body>
+</html>
+

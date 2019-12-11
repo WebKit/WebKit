@@ -1,0 +1,3 @@
+
+PASS Getter with CDATA section 
+

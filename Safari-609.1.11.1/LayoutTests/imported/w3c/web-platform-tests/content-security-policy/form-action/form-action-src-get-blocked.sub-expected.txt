@@ -1,0 +1,7 @@
+
+  
+Tests that disallowed form actions are blocked with GET and redirects.
+
+
+FAIL Expecting logs: ["violated-directive=form-action","TEST COMPLETE"] assert_unreached: Logging timeout, expected logs violated-directive=form-action not sent. Reached unreachable code
+">

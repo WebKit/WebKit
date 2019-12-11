@@ -1,0 +1,14 @@
+	leading text, tab-size in px.
+	leading text, tab-size in em.
+	leading text, tab-size in spaces.
+	leading text, tab-size in fraction.
+leading text	trailing text, tab-size in px.
+leading text	trailing text, tab-size in em.
+leading text	trailing text, tab-size in spaces.
+leading text	trailing text, tab-size in fraction.
+Some spaces... '         ' ... for size reference.
+A space... ' ' ... for size reference.
+'leading text', for size reference.
+
+PASS Test tab-size measurements 
+

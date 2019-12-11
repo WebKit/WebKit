@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Paste rich text from firefox</title>
+    </head>
+    <body>
+        <p><b>BUG ID:</b>
+        <a href="https://bugs.webkit.org/show_bug.cgi?id=26791">Bugzilla bug 26791</a>
+        [Gtk] Paste of rich text from firefox results garbled markup
+        </p>
+        <h1>Paste rich text from firefox</h1>
+        <p>
+        <b>STEPS TO TEST:</b><br>
+        <ol>
+            <li>Launch FireFox to browse <a href="http://www.apple.com">http://www.apple.com</a></li>
+            <li>Select that text or picture from FireFox page</li>
+            <li>Copy them use <b>Ctrl-C</b> / Option-C, (or just select them on Linux)</li>
+            <li>Back in WebkitGtk, click inside the EditableArea below, </li>
+            <li>Paste them use <b>Ctrl-V</b> / Option-V, (or just Middle Mouse Click on Linux)</li>
+        </ol>
+        <p><b>Ensure</b> that text or picture has been pasted with formats and no garbled.</p>
+        <div title="EditableArea" contentEditable="true" 
+            style="display: block; border: 1px solid green; margin: 5px; padding: 15px;">
+            <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br />
+        </div>
+        </p>
+    </body>
+</html>
+

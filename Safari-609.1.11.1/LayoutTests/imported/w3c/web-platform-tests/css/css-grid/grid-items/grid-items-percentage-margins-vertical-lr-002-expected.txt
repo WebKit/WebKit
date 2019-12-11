@@ -1,0 +1,30 @@
+
+PASS .grid 1 
+PASS .grid 2 
+PASS .grid 3 
+PASS .grid 4 
+PASS .grid 5 
+PASS .grid 6 
+PASS .grid 7 
+PASS .grid 8 
+Direction LTR
+
+Item margin-left: 50%;
+X
+Item margin-right: 50%;
+X
+Item margin-top: 50%;
+X
+Item margin-bottom: 50%;
+X
+Direction RTL
+
+Item margin-left: 50%;
+X
+Item margin-right: 50%;
+X
+Item margin-top: 50%;
+X
+Item margin-bottom: 50%;
+X
+

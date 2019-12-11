@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<style>
+* { color: red; }
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.addUserStyleSheet("div { width:0; }", true);
+}
+</script>
+</head>
+<body>
+This test requires layout test runner.
+<div id="target">FAIL</div>
+<script>
+var style = document.createElement("style");
+style.innerText = "* { color: blue; }";
+document.head.insertBefore(style, document.getElementsByTagName("style")[0]);
+if (document.getElementById('target').offsetWidth == 0)
+    document.getElementById('target').innerHTML = 'PASS';
+</script>
+</body>
+</html>

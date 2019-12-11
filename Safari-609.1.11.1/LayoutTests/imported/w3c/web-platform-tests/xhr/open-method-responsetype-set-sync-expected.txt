@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: line 22: Synchronous HTTP(S) requests made from the window context cannot have XMLHttpRequest.responseType set.
+CONSOLE MESSAGE: line 22: Synchronous HTTP(S) requests made from the window context cannot have XMLHttpRequest.responseType set.
+CONSOLE MESSAGE: line 22: Synchronous HTTP(S) requests made from the window context cannot have XMLHttpRequest.responseType set.
+CONSOLE MESSAGE: line 22: Synchronous HTTP(S) requests made from the window context cannot have XMLHttpRequest.responseType set.
+CONSOLE MESSAGE: line 22: Synchronous HTTP(S) requests made from the window context cannot have XMLHttpRequest.responseType set.
+
+PASS XMLHttpRequest: open() sync request not allowed if responseType is set (arraybuffer) 
+PASS XMLHttpRequest: open() sync request not allowed if responseType is set (blob) 
+PASS XMLHttpRequest: open() sync request not allowed if responseType is set (json) 
+PASS XMLHttpRequest: open() sync request not allowed if responseType is set (text) 
+PASS XMLHttpRequest: open() sync request not allowed if responseType is set (document) 
+

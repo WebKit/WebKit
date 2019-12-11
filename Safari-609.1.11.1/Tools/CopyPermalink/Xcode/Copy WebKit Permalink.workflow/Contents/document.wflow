@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AMApplicationBuild</key>
+	<string>428</string>
+	<key>AMApplicationVersion</key>
+	<string>2.7</string>
+	<key>AMDocumentVersion</key>
+	<string>2</string>
+	<key>actions</key>
+	<array>
+		<dict>
+			<key>action</key>
+			<dict>
+				<key>AMAccepts</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Optional</key>
+					<true/>
+					<key>Types</key>
+					<array>
+						<string>com.apple.applescript.object</string>
+					</array>
+				</dict>
+				<key>AMActionVersion</key>
+				<string>1.0</string>
+				<key>AMApplication</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>AMParameterProperties</key>
+				<dict>
+					<key>source</key>
+					<dict/>
+				</dict>
+				<key>AMProvides</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Types</key>
+					<array>
+						<string>com.apple.applescript.object</string>
+					</array>
+				</dict>
+				<key>ActionBundlePath</key>
+				<string>/System/Library/Automator/Run JavaScript.action</string>
+				<key>ActionName</key>
+				<string>Run JavaScript</string>
+				<key>ActionParameters</key>
+				<dict>
+					<key>source</key>
+					<string>/*
+ *  Copyright (C) 2017 Apple Inc. All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
+ *  are met:
+ *  1. Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ *  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ *  BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ *  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ *  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ *  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ *  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ *  THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+ObjC.import("Cocoa");
+
+var g_isSVN;
+var g_isGit;
+var g_isGitSVN;
+var g_lastSVNInfo;
+
+var App = Application.currentApplication();
+App.includeStandardAdditions = true;
+
+function run(input, parameters) {
+    var xcodeDocument = xcodeActiveDocument();
+    if (!xcodeDocument)
+        return;
+
+    var xcodeDocumentPath = xcodeDocument.path();
+    determineVCSFromPath(xcodeDocumentPath);
+
+    if (!pathIsInWebKitCheckout(xcodeDocumentPath))
+        return;
+
+    var lineNumber = xcodeSelectedLineInDocument(xcodeDocument);
+    var path = pathRelativeToRepositoryRootForPath(xcodeDocumentPath);
+    var revisionInfo = revisionInfoForPath(xcodeDocumentPath);
+    var annotateBlame = $.NSEvent.modifierFlags &amp; $.NSAlternateKeyMask;
+
+    App.setTheClipboardTo(permalinkForPath(path, lineNumber, revisionInfo, annotateBlame));
+}
+
+function pathIsInWebKitCheckout(path)
+{
+    var repositoryURL = revisionInfoForPath(path).repositoryURL;
+    return !!repositoryURL.match(/^\w+:\/\/\w+\.webkit.org/);
+}
+
+function permalinkForPath(path, lineNumber, revisionInfo, annotateBlame)
+{
+    var revision = revisionInfo.revision ? "?rev=" + revisionInfo.revision : "";
+    var lineNumber = lineNumber ? "#L" + lineNumber : "";
+    var branch = revisionInfo.branch || "trunk";
+    var withBlame = annotateBlame ? "&amp;annotate=blame" : "";
+    return `https://trac.webkit.org/browser/${branch}/${path}${revision}${withBlame}${lineNumber}`;
+}
+
+// MARK: Xcode
+
+function xcodeActiveDocument()
+{
+    var xcode = Application("Xcode");
+    var windows = xcode.windows();
+    var numberOfWindows = windows.length;
+    if (!numberOfWindows)
+        return null;
+
+    // The title of an Xcode Workspace window is the title of the document in the editor pane.
+    // Ignore windows without a name (e.g. "Edit all occurrences of a symbol" pop-up menu).
+    var documentName;
+    for (var i = 0; !documentName &amp;&amp; i &lt; numberOfWindows; ++i)
+        documentName = windows[i].name();
+    if (!documentName)
+        return null;
+
+    // The title of a modified document that has not been saved will have a suffix. Remove
+    // the suffix.
+    const editedSuffix = " — Edited";
+    if (documentName.endsWith(editedSuffix))
+        documentName = documentName.substr(0, documentName.lastIndexOf(editedSuffix));
+    return xcode.documents.byName(documentName);
+}
+
+function xcodeSelectedLineInDocument(xcodeDocument)
+{
+    if (!xcodeDocument)
+        return -1;
+    var range = xcodeDocument.selectedCharacterRange();
+    if (!range)
+        return -1;
+    var beginPosition = range[0] - 1;
+    if (!beginPosition)
+        return 0;
+    // FIXME: It would be more efficient to count the CRLF, CR, or LF characters
+    // in the substring from [0, beginPosition].
+    var lines = xcodeDocument.text().split(/\r?\n|\r/);
+    var numberOfLines = lines.length;
+    var characterCount = 0;
+    var i = 0;
+    do {
+        characterCount += lines[i].length + 1;
+        if (characterCount &gt; beginPosition)
+            break;
+    } while (++i &lt; numberOfLines);
+    return i + 1;
+}
+
+// MARK: VCS utilities
+
+function determineVCSFromPath(path)
+{
+    if (!isDirectory(path))
+        path = dirname(path);
+
+    g_isSVN = false;
+    g_isGit = false;
+    g_isGitSVN = false;
+
+    if (isSVNDirectory(path)) {
+        g_isSVN = true;
+        return;
+    }
+
+    if (isGitSVNDirectory(path)) {
+        g_isGit = true;
+        g_isGitSVN = true;
+        return;
+    }
+
+    if (isGitDirectory(path)) {
+        g_isGit = true;
+        return;
+    }
+}
+
+function pathRelativeToRepositoryRootForPath(path)
+{
+    var directoryInCheckout = isDirectory(path) ? path : dirname(path);
+    if (g_isSVN)
+        return svnPathRelativeToRepositoryRootForPath(path, directoryInCheckout);
+    if (g_isGit)
+        return gitPathRelativeToRepositoryRootForPath(path, directoryInCheckout);
+    return "";
+}
+
+function gitPathRelativeToRepositoryRootForPath(path, directoryInCheckout)
+{
+    return App.doShellScript(`git -C '${directoryInCheckout}' ls-tree --full-name --name-only HEAD '${path}'`);
+}
+
+function svnPathRelativeToRepositoryRootForPath(path, directoryInCheckout)
+{
+    return svnInfoForPath(path, directoryInCheckout).path;
+}
+
+function revisionInfoForPath(path)
+{
+    var directoryInCheckout = isDirectory(path) ? path : dirname(path);
+    if (g_isSVN || g_isGitSVN)
+        return svnRevisionInfoForPath(path, directoryInCheckout);
+    if (g_isGit)
+        return gitRevisionInfoForPath(path, directoryInCheckout);
+    return "";
+}
+
+function svnRevisionInfoForPath(path, directoryInCheckout)
+{
+    var svnInfo = svnInfoForPath(path, directoryInCheckout);
+    return { "branch": svnInfo.branch, "revision": svnInfo.revision, "repositoryURL": svnInfo.repositoryRoot };
+}
+
+function gitRevisionInfoForPath(path, directoryInCheckout)
+{
+    var repositoryURL = App.doShellScript(`git -C '${directoryInCheckout}' remote get-url origin`);
+    var revision = App.doShellScript(`git -C '${directoryInCheckout}' log -1 --format='%H' '${path}'`);
+    var branch = App.doShellScript(`git -C '${directoryInCheckout}' symbolic-ref -q HEAD`);
+    branch = branch.replace(/^refs\/heads\//, "") || "master";
+    return { branch, revision, repositoryURL };
+}
+
+function svnInfoForPath(path, directoryInCheckout)
+{
+    if (g_lastSVNInfo &amp;&amp; g_lastSVNInfo.path === path) {
+        // FIXME: We should also ensure that the checkout directory for the cached SVN info is
+        // the same as the specified checkout directory.
+        return g_lastSVNInfo;
+    }
+
+    var svnInfoCommand = "svn info";
+    if (g_isGitSVN)
+        svnInfoCommand = "git " + svnInfoCommand;
+    var output = App.doShellScript(`cd '${directoryInCheckout}' &amp;&amp; ${svnInfoCommand} '${path}'`, {"alteringLineEndings": false});
+    if (!output)
+        return { };
+
+    var temp = { };
+    var lines = output.split("\n");
+    for (var line of lines) {
+        var [key, value] = line.split(": ", 2);
+        if (key &amp;&amp; value)
+            temp[key] = value;
+    }
+    var svnInfo = {
+        "pathAsURL": temp["URL"],
+        "repositoryRoot": temp["Repository Root"],
+        "revision": temp["Revision"],
+    };
+    var branch = svnInfo.pathAsURL.replace(svnInfo.repositoryRoot + "/", "");
+    branch = branch.substr(0, branch.indexOf("/"));
+    svnInfo.branch = branch;
+
+    // Although tempting to use temp["Path"] we cannot because it is relative to directoryInCheckout.
+    // And directoryInCheckout may not be the top-level checkout directory. We need to compute the
+    // relative path with respect to the top-level checkout directory.
+    svnInfo.path = svnInfo.pathAsURL.replace(`${svnInfo.repositoryRoot}/${branch}/`, "");
+
+    g_lastSVNInfo = svnInfo;
+
+    return svnInfo;
+}
+
+function isSVNDirectory(directory)
+{
+    try {
+        App.doShellScript(`cd '${directory}' &amp;&amp; svn info &gt; /dev/null 2&gt;&amp;1`);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+function isGitDirectory(directory)
+{
+    try {
+        App.doShellScript(`git -C '${directory}' rev-parse &gt; /dev/null 2&gt;&amp;1`);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+function isGitSVNDirectory(directory)
+{
+    var output = "";
+    try {
+        output = App.doShellScript(`git -C '${directory}' config --get svn-remote.svn.fetch 2&gt;&amp;1`);
+    } catch (e) { }
+    return output !== "";
+}
+
+// MARK: Utilities
+
+function isDirectory(path)
+{
+    try {
+        return App.infoFor(path).folder;
+    } catch (e) {
+        return false;
+    }
+}
+
+function dirname(path)
+{
+    return path.substr(0, path.lastIndexOf("/"));
+}
+</string>
+				</dict>
+				<key>BundleIdentifier</key>
+				<string>com.apple.Automator.RunJavaScript</string>
+				<key>CFBundleVersion</key>
+				<string>1.0</string>
+				<key>CanShowSelectedItemsWhenRun</key>
+				<false/>
+				<key>CanShowWhenRun</key>
+				<true/>
+				<key>Category</key>
+				<array>
+					<string>AMCategoryUtilities</string>
+				</array>
+				<key>Class Name</key>
+				<string>RunJavaScriptAction</string>
+				<key>InputUUID</key>
+				<string>0C0655EF-7893-4A61-ADD0-BA803AF3C2CD</string>
+				<key>Keywords</key>
+				<array>
+					<string>Run</string>
+					<string>JavaScript</string>
+				</array>
+				<key>OutputUUID</key>
+				<string>5BAD8148-07E0-4FA2-AAA1-990A7BE926FC</string>
+				<key>UUID</key>
+				<string>24BFD6CC-7A96-42C2-8469-5D83FA921DB2</string>
+				<key>UnlocalizedApplications</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>arguments</key>
+				<dict>
+					<key>0</key>
+					<dict>
+						<key>default value</key>
+						<string>function run(input, parameters) {
+	
+	// Your script goes here
+
+	return input;
+}</string>
+						<key>name</key>
+						<string>source</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>0</string>
+					</dict>
+				</dict>
+				<key>isViewVisible</key>
+				<true/>
+				<key>location</key>
+				<string>480.500000:316.000000</string>
+				<key>nibPath</key>
+				<string>/System/Library/Automator/Run JavaScript.action/Contents/Resources/Base.lproj/main.nib</string>
+			</dict>
+			<key>isViewVisible</key>
+			<true/>
+		</dict>
+	</array>
+	<key>connectors</key>
+	<dict/>
+	<key>workflowMetaData</key>
+	<dict>
+		<key>serviceApplicationBundleID</key>
+		<string>com.apple.dt.Xcode</string>
+		<key>serviceApplicationPath</key>
+		<string>/Applications/Xcode.app</string>
+		<key>serviceInputTypeIdentifier</key>
+		<string>com.apple.Automator.nothing</string>
+		<key>serviceOutputTypeIdentifier</key>
+		<string>com.apple.Automator.nothing</string>
+		<key>serviceProcessesInput</key>
+		<integer>0</integer>
+		<key>workflowTypeIdentifier</key>
+		<string>com.apple.Automator.servicesMenu</string>
+	</dict>
+</dict>
+</plist>

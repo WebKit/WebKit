@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+</script>
+</head>
+<body id="body">
+
+<a id="button1" href="#" onclick="return toggle(event);" onkeypress="return handleKeyPress(event);" role="button" aria-pressed="false" tabindex="0">Bold</a>
+<button id="button2" onclick="return toggle(event);" aria-pressed="true">Italic</button>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This makes sure that toggle buttons are exposed properly on iOS");
+
+    if (window.accessibilityController) {
+
+        var button1 = accessibilityController.accessibleElementById("button1");
+        debug("Button1 : " + button1.description);
+        debug("Button1 : " + button1.stringValue);
+
+        var button2 = accessibilityController.accessibleElementById("button2");
+        debug("Button2 : " + button2.description);
+        debug("Button2 : " + button2.stringValue);
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

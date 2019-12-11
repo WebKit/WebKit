@@ -1,0 +1,118 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<style>
+    @import url(resources/external.css?1) (min-width: 0px);
+
+    body { color: red; }
+    @media (min-width: 1px) { body { color: red; } }
+    @media (min-width: 2px) { @supports(display: block) { body { color: red; } } }
+</style>
+<style media="(min-width: 3px)">
+    body { color: red;}
+</style>
+<link rel="stylesheet" href="resources/external.css?2" media="(min-width: 4px)">
+<style>
+    div#x { z-index: 100; }
+    #x { z-index: 200; }
+    div { z-index: 300; }
+
+    div::first-line { z-index: 1; }
+    div::first-letter { z-index: 2; }
+    div::marker { z-index: 3; }
+    div::before { z-index: 4; }
+    div::after { z-index: 5; }
+    div::selection { z-index: 6; }
+    div::-webkit-scrollbar { z-index: 7; }
+    div::-webkit-scrollbar-thumb { z-index: 8; }
+    div::-webkit-scrollbar-button { z-index: 9; }
+    div::-webkit-scrollbar-track { z-index: 10; }
+    div::-webkit-scrollbar-track-piece { z-index: 11; }
+    div::-webkit-scrollbar-corner { z-index: 12; }
+    div::-webkit-resizer { z-index: 13; }
+</style>
+<script>
+function test()
+{
+    Promise.resolve()
+    .then(() => {
+        ProtocolTest.log("Enabling Page domain...");
+        return InspectorProtocol.awaitCommand({
+            method: "Page.enable",
+            params: {},
+        });
+    })
+    .then(() => {
+        ProtocolTest.log("Requesting document...");
+        return InspectorProtocol.awaitCommand({
+            method: "DOM.getDocument",
+            params: {},
+        });
+    })
+    .then(({root}) => {
+        ProtocolTest.log("Querying for \"div#x\"...");
+        return InspectorProtocol.awaitCommand({
+            method: "DOM.querySelector",
+            params: {
+                nodeId: root.nodeId,
+                selector: "div#x",
+            },
+        });
+    })
+    .then(({nodeId}) => {
+        ProtocolTest.log("Getting matched styles for \"div#x\"...");
+        return InspectorProtocol.awaitCommand({
+            method: "CSS.getMatchedStylesForNode",
+            params: {
+                nodeId,
+                includePseudo: true,
+                includeInherited: true,
+            },
+        });
+    })
+    .then(({matchedCSSRules, pseudoElements, inherited}) => {
+        function filterRuleMatches(ruleMatches) {
+            return ruleMatches.filter((ruleMatch) => ruleMatch.rule.origin !== "user-agent");
+        }
+
+        function replacer(key, value) {
+            if (key === "ruleId" || key === "styleId" || key === "range" || key === "sourceLine" || key === "sourceURL")
+                return "<filtered>";
+            return value;
+        }
+
+        ProtocolTest.log("");
+        ProtocolTest.log("Matched:");
+        matchedCSSRules = filterRuleMatches(matchedCSSRules);
+        ProtocolTest.json(matchedCSSRules, replacer);
+
+        ProtocolTest.log("");
+        ProtocolTest.log("Pseudo:");
+        pseudoElements = pseudoElements.filter((pseudoIdMatch) => {
+            pseudoIdMatch.matches = filterRuleMatches(pseudoIdMatch.matches);
+            return pseudoIdMatch.matches.length;
+        });
+        ProtocolTest.json(pseudoElements, replacer);
+
+        ProtocolTest.log("");
+        ProtocolTest.log("Inherited:");
+        inherited = inherited.filter((inheritedStyleEntry) => {
+            inheritedStyleEntry.matchedCSSRules = filterRuleMatches(inheritedStyleEntry.matchedCSSRules);
+            return inheritedStyleEntry.matchedCSSRules.length;
+        });
+        ProtocolTest.json(inherited, replacer);
+    })
+    .catch((error) => {
+        ProtocolTest.log(error);
+    })
+    .finally(() => {
+        ProtocolTest.completeTest();
+    });
+}
+</script>
+</head>
+<body onLoad="runTest()">
+<p>Testing CSS.getMatchedStylesForNode.</p>
+<div id="x"></div>
+</body>
+</html>

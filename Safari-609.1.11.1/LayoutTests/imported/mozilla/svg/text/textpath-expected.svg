@@ -1,0 +1,33 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <path id="p" d="M 100,100 h 50 v 200" fill="none" stroke="red" stroke-width="1"/>
+  <g style="font: 30px monospace">
+    <text x="100" y="100">a</text>
+  </g>
+  <script><![CDATA[
+    function put(s, x, y, r) {
+      var e = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      e.setAttribute("x", x);
+      e.setAttribute("y", y);
+      e.setAttribute("rotate", r);
+      e.textContent = s;
+      g.appendChild(e);
+    }
+
+    var s = "a.b.c.d.e.";
+    var text = document.getElementsByTagName("text")[0];
+    var g = text.parentNode;
+    var adv = text.getSubStringLength(0, 1);
+    for (var i = 1; i < s.length; i++) {
+      var x = i * adv;
+      if (x + adv / 2 < 50) {
+        put(s[i], 100 + x, 100, 0);
+      } else {
+        put(s[i], 150, 50 + x, 90);
+      }
+    }
+  ]]></script>
+</svg>

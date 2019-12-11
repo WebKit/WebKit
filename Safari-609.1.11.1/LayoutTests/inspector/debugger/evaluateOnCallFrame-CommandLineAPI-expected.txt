@@ -1,0 +1,56 @@
+Tests for the Debugger.evaluateOnCallFrame with the Command Line API.
+
+
+== Running test suite: Debugger.evaluateOnCallFrame.CommandLineAPI
+-- Running test case: ValidateCallFrames
+PASS: Strict call frame is `bar`.
+PASS: Non-strict call frame is `foo`.
+PASS: `a` should be 5 in `bar`.
+PASS: `b` should be 123 in `bar`.
+PASS: `c` should be 0 in `bar`.
+PASS: `this` should be undefined in `bar`.
+PASS: `a` should be 1 in `foo`.
+PASS: `b` should be 2 in `foo`.
+PASS: `c` should be 6 in `foo`.
+PASS: `this` should be 'my-this-object' in `foo`.
+
+-- Running test case: AccessCommandLineAPI
+PASS: CommandLineAPI `keys` can be accessed in the `bar` strict call frame.
+PASS: CommandLineAPI `keys` can be accessed in the `foo` non-strict call frame.
+PASS: CommandLineAPI `keys` should work with a simple object.
+
+-- Running test case: AccessGlobalVariable
+PASS: Should be able to access var in global scope in strict call frame.
+PASS: Should be able to access let in global scope in strict call frame.
+PASS: Should be able to access const in global scope in strict call frame.
+PASS: Should be able to access var in global scope in non-strict call frame.
+PASS: Should be able to access let in global scope in non-strict call frame.
+PASS: Should be able to access const in global scope in non-strict call frame.
+
+-- Running test case: NoVariablesCreatedOnCallFrame
+PASS: Should not be able to access local var created in earlier eval on strict call frame.
+PASS: Should not be able to access local let created in earlier eval on strict call frame.
+PASS: Should not be able to access local const created in earlier eval on strict call frame.
+PASS: Should be able to access local var created in earlier eval on non-strict call frame.
+PASS: Should not be able to access local let created in earlier eval on non-strict call frame.
+PASS: Should not be able to access local const created in earlier eval on non-strict call frame.
+
+-- Running test case: NonStrictAndStrictEvaluations
+PASS: Non-strict evaluation. Should be able to access arguments.callee.
+PASS: Strict evaluation. Should not be able to access arguments.callee.
+
+-- Running test case: CommandLineAPIDoesNotShadowLocalVariables
+PASS: Local variable `keys` should not be shadowed by CommandLineAPI `keys` function in call frame for `foo`.
+
+-- Running test case: CommandLineAPIDoesNotShadowGlobalVariables
+PASS: CommandLineAPI `keys` can be accessed in the `bar` strict call frame.
+PASS: Global assignment to `keys` should be okay.
+PASS: Global variable `keys` should not be shadowed by CommandLineAPI `keys` function in call frame for `bar`.
+PASS: CommandLineAPI `keys` can be accessed in the `bar` strict call frame after deleting global variable `keys`.
+
+-- Running test case: CommandLineAPIDoesNotShadowGlobalObjectProperties
+PASS: `values` should be `window.values` and not shadowed by CommandLineAPI `values` function in strict call frame.
+PASS: `values` should be `window.values` and not shadowed by CommandLineAPI `values` function in non-strict call frame.
+
+-- Running test case: Complete
+

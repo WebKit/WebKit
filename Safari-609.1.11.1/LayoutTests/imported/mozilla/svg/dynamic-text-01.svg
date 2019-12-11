@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" onload="m();">
+	<title>Testcase for dynamic text changes</title>
+	<!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=423998 -->
+	<script>
+		function m() {
+		document.getElementById("text1").firstChild.nodeValue = "Test1";
+		document.getElementById("text2").setAttribute("x", "200");
+		document.getElementById("text3").setAttribute("font-size", "50");
+		document.getElementById("text4").setAttribute("font-size", "50");
+		document.getElementById("text5").setAttribute("transform", "translate(50,0)");
+		document.getElementById("text6").removeAttribute("filter");
+		}
+	</script>
+	<filter id="shadow" filterUnits="objectBoundingBox">
+		<feGaussianBlur in="SourceAlpha" stdDeviation="5"/>
+	</filter>
+	<text id="text1" x="50" y="100" font-size="50"> </text>
+	<text id="text2" x="0" y="100" font-size="50">Test2</text>
+	<text id="text3" x="50" y="200" font-size="5">Test3</text>
+	<text id="text4" x="200" y="200" font-size="100">Test4</text>
+	<text id="text5" x="0" y="300" font-size="50">Test5</text>
+	<text id="text6" x="200" y="300" filter="url(#shadow)" font-size="50">Test6</text>
+</svg>

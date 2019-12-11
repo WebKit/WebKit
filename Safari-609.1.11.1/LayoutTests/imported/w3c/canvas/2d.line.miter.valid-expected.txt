@@ -1,0 +1,5 @@
+2d.line.miter.valid
+Setting miterLimit to valid values works
+Spec references: 2d.miterLimit.set 2d.miterLimit.get
+Actual output:
+Passed

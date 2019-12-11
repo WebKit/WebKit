@@ -1,0 +1,47 @@
+Test tagname's case-sensitivity when matching SVG-in-HTML with Element.closest().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Basic cases, tagname alone.
+PASS document.getElementById('target1').closest('Container').getAttribute('class') is "container3"
+PASS document.getElementById('target1').closest('container').getAttribute('class') is "container3"
+PASS document.getElementById('target1').closest('CONTAINER').getAttribute('class') is "container3"
+PASS document.getElementById('target2').closest('Container') is null
+PASS document.getElementById('target2').closest('container').getAttribute('class') is "container3"
+PASS document.getElementById('target2').closest('CONTAINER') is null
+PASS document.getElementById('target3').closest('Container').getAttribute('class') is "container3"
+PASS document.getElementById('target3').closest('container').getAttribute('class') is "container2"
+PASS document.getElementById('target3').closest('CONTAINER').getAttribute('class') is "container1"
+
+Compound selectors.
+PASS document.getElementById('target1').closest('Container[class^="container"]').getAttribute('class') is "container3"
+PASS document.getElementById('target1').closest('container[class^="container"]').getAttribute('class') is "container3"
+PASS document.getElementById('target1').closest('CONTAINER[class^="container"]').getAttribute('class') is "container3"
+PASS document.getElementById('target2').closest('Container[class^="container"]') is null
+PASS document.getElementById('target2').closest('container[class^="container"]').getAttribute('class') is "container3"
+PASS document.getElementById('target2').closest('CONTAINER[class^="container"]') is null
+PASS document.getElementById('target3').closest('Container[class^="container"]').getAttribute('class') is "container3"
+PASS document.getElementById('target3').closest('container[class^="container"]').getAttribute('class') is "container2"
+PASS document.getElementById('target3').closest('CONTAINER[class^="container"]').getAttribute('class') is "container1"
+
+Complex selectors.
+PASS document.getElementById('target1').closest('div Container').getAttribute('class') is "container3"
+PASS document.getElementById('target1').closest('div container').getAttribute('class') is "container3"
+PASS document.getElementById('target1').closest('div CONTAINER').getAttribute('class') is "container3"
+PASS document.getElementById('target2').closest('div Container') is null
+PASS document.getElementById('target2').closest('div container').getAttribute('class') is "container3"
+PASS document.getElementById('target2').closest('div CONTAINER') is null
+PASS document.getElementById('target3').closest('div Container').getAttribute('class') is "container3"
+PASS document.getElementById('target3').closest('div container').getAttribute('class') is "container2"
+PASS document.getElementById('target3').closest('div CONTAINER').getAttribute('class') is "container1"
+PASS document.getElementById('target3').closest('container > Container').getAttribute('class') is "container3"
+PASS document.getElementById('target3').closest('CONTAINER > Container') is null
+PASS document.getElementById('target3').closest('Container > Container') is null
+PASS document.getElementById('target3').closest('CONTAINER > container').getAttribute('class') is "container2"
+PASS document.getElementById('target3').closest('Container > container') is null
+PASS document.getElementById('target3').closest('container > container') is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

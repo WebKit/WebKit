@@ -1,0 +1,7 @@
+2d.shadow.transform.1
+Shadows take account of transformations
+Spec references: 2d.shadow.render
+Actual output:
+Expected output:
+
+Passed

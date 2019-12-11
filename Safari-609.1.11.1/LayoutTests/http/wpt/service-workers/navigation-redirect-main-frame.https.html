@@ -1,0 +1,41 @@
+<html>
+<head>
+<title>Service Worker redirections and callbacks</title>
+</head>
+<body>
+<script>
+async function doTest()
+{
+    if (window.location.hash === "#redirected") {
+        if (window.testRunner)
+            document.body.innerHTML = testRunner.didReceiveServerRedirectForProvisionalNavigation ? "PASS" : "FAIL";
+        else
+            document.body.innerHTML = "PASS";
+        if (window.testRunner) {
+            testRunner.clearDidReceiveServerRedirectForProvisionalNavigation();
+            testRunner.notifyDone();
+        }
+        return;
+    }
+    var registration = await navigator.serviceWorker.register("navigation-redirect-main-frame-worker.js", { scope : "resources" });
+    var activeWorker = registration.active;
+    if (!activeWorker) {
+        activeWorker = registration.installing;
+        await new Promise(resolve => {
+            activeWorker.addEventListener('statechange', () => {
+                if (activeWorker.state === "activated")
+                    resolve(registration);
+            });
+        });
+    }
+    window.location = "resources";
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+doTest();
+</script>
+</body>
+</html>

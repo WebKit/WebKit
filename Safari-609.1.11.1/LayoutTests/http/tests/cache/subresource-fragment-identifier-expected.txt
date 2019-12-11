@@ -1,0 +1,5 @@
+   Test that resources with fragment identifiers are loaded only once.
+Resource requests:
+
+
+bg_pattern.jpg

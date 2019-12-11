@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style type="text/css" media="screen">
+    span {
+        position: relative;
+        padding: 10px;
+    }
+    
+    .composited {
+        position: absolute;
+        width: 200px;
+        height: 100px;
+        border: 1px solid black;
+        -webkit-transform: translateZ(0);
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function doTest()
+    {
+        window.setTimeout(function() {
+            var testNode = document.getElementById('test');
+            testNode.removeChild(testNode.firstChild);
+        }, 0);
+    }
+    
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+<body>
+  
+    <p>This should not assert in debug builds.</p>
+    <div class="composited"></div>
+    <span id="test">test</span>
+</body>
+</html>

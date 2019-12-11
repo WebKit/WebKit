@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>            
+
+            var numberOfTrackTests = 2;
+            
+            function trackLoaded()
+            {
+                numberOfTracksLoaded++;
+                if (numberOfTracksLoaded == numberOfTrackTests) {
+                    testTrack(0);
+                    testTrackError(1);
+                }
+            }
+            
+            function testTrack(i)
+            {
+                findMediaElement();
+                testExpected("video.textTracks[" + i + "].cues.length", "4");
+                
+                var fragment = document.createDocumentFragment();
+                fragment.appendChild(document.createTextNode("The following bear is bold:\n"));
+                var bold = document.createElement("b");
+                bold.appendChild(document.createTextNode("Bear"));
+                fragment.appendChild(bold);
+                fragment.appendChild(document.createTextNode(" is Coming!!!!!"));
+                
+                testExpected(fragment.isEqualNode(video.textTracks[i].cues[0].getCueAsHTML()), true);
+                
+                fragment = document.createDocumentFragment();
+                fragment.appendChild(document.createTextNode("The following bear is in italics and has a class of \"larger\":\n"));
+                var italics = document.createElement("i");
+                italics.className = "larger";
+                italics.appendChild(document.createTextNode("Bear"));
+                fragment.appendChild(italics);
+                fragment.appendChild(document.createTextNode(" is Coming!!!!!"));
+                
+                testExpected(fragment.isEqualNode(video.textTracks[i].cues[1].getCueAsHTML()), true);
+
+                fragment = document.createDocumentFragment();
+                fragment.appendChild(document.createTextNode("The following bear is underlined even though the element has a blank:\nI said "));
+                var underline = document.createElement("u");
+                underline.appendChild(document.createTextNode("Bear"));
+                fragment.appendChild(underline);
+                fragment.appendChild(document.createTextNode(" is coming!!!!"));
+   
+                testExpected(fragment.isEqualNode(video.textTracks[i].cues[2].getCueAsHTML()), true);
+   
+                fragment = document.createDocumentFragment();
+                fragment.appendChild(document.createTextNode("The following bear is ruby annotated:\nI said "));
+                var ruby = document.createElement("ruby");
+                ruby.appendChild(document.createTextNode("Bear"));
+                var rt = document.createElement("rt");
+                rt.appendChild(document.createTextNode("bear with me"));
+                ruby.appendChild(rt);
+                fragment.appendChild(ruby);
+                fragment.appendChild(document.createTextNode(" is coming!!!!"));
+   
+                testExpected(fragment.isEqualNode(video.textTracks[i].cues[3].getCueAsHTML()), true);
+
+                allTestsEnded();
+            }
+
+            function testTrackError(i)
+            {
+                findMediaElement();
+                testExpected("video.textTracks[" + i + "].cues.length", "4");
+                
+                var fragment = document.createDocumentFragment();
+                fragment.appendChild(document.createTextNode("The following bear starts bold but end is broken:\n"));
+                var bold = document.createElement("b");
+                bold.appendChild(document.createTextNode("Bear"));
+                bold.appendChild(document.createTextNode(" is Coming!!!!!"));
+                fragment.appendChild(bold);
+
+                testExpected(fragment.isEqualNode(video.textTracks[i].cues[0].getCueAsHTML()), true);
+    
+                fragment = document.createDocumentFragment();
+                fragment.appendChild(document.createTextNode("The following bear is not in italics but the markup is removed:\n"));
+                fragment.appendChild(document.createTextNode("Bear"));
+                fragment.appendChild(document.createTextNode(" is Coming!!!!!"));
+
+                testExpected(fragment.isEqualNode(video.textTracks[i].cues[1].getCueAsHTML()), true);
+  
+                
+                fragment = document.createDocumentFragment();
+                fragment.appendChild(document.createTextNode("The following bear is not underlined and markup is removed:\nI said "));
+                fragment.appendChild(document.createTextNode("Bear"));
+                fragment.appendChild(document.createTextNode(" is coming!!!!"));
+
+                testExpected(fragment.isEqualNode(video.textTracks[i].cues[2].getCueAsHTML()), true);
+
+                fragment = document.createDocumentFragment();
+                fragment.appendChild(document.createTextNode("The following bear is not ruby annotated and markup is removed:\nI said "));
+                fragment.appendChild(document.createTextNode("Bear"));
+                fragment.appendChild(document.createTextNode("bear with me"));
+                fragment.appendChild(document.createTextNode(" is coming!!!!"));
+
+                testExpected(fragment.isEqualNode(video.textTracks[i].cues[3].getCueAsHTML()), true);
+                
+                allTestsEnded();
+            }
+        </script>
+    </head>
+    <body onload="enableAllTextTracks()">
+        <p>Tests cues with &lt;b&gt;, &lt;i&gt;, &lt;u&gt;, &lt;rt&gt; and &lt;ruby&gt; tags.</p>
+        <video> 
+            <track src="captions-webvtt/tc023-markup.vtt" onload="trackLoaded()">
+            <track src="captions-webvtt/tc023-markup-bad.vtt" onload="trackLoaded()">
+        </video>
+    </body>
+</html>

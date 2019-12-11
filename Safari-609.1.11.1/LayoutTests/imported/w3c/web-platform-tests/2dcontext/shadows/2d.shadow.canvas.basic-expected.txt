@@ -1,0 +1,8 @@
+2d.shadow.canvas.basic
+Shadows are drawn for canvases
+Actual output:
+Expected output:
+
+
+PASS Shadows are drawn for canvases 
+

@@ -1,0 +1,22 @@
+Test some of the issues of the difference between attrib 0 on OpenGL vs WebGL
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS g_attribLocation is gl.getAttribLocation(g_program, 'vPosition')
+PASS g_attribLocation is gl.getAttribLocation(g_program, 'vPosition')
+PASS getError was expected value: NO_ERROR : drawing using attrib 0 with 3 verts
+PASS getError was expected value: NO_ERROR : drawing using attrib 3 with 60000 verts
+PASS getError was expected value: NO_ERROR : drawing using attrib 0 with 3 verts
+PASS getError was expected value: NO_ERROR : drawing using attrib 3 with 60000 verts
+PASS getError was expected value: NO_ERROR : drawing using attrib 0 with 3 verts
+PASS getError was expected value: NO_ERROR : drawing using attrib 3 with 60000 verts
+PASS getError was expected value: NO_ERROR : drawing using attrib 0 with 3 verts
+PASS getError was expected value: NO_ERROR : drawing using attrib 3 with 60000 verts
+PASS getError was expected value: NO_ERROR : drawing using attrib 0 with 3 verts
+PASS getError was expected value: NO_ERROR : drawing using attrib 3 with 60000 verts
+PASS canvas should be 0, 0, 0, 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

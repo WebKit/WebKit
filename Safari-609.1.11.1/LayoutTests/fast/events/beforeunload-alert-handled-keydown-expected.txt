@@ -1,0 +1,12 @@
+CONFIRM NAVIGATION: PASS: a beforeunload alert was shown.
+Tests that the beforeunload alert is shown when the user has typed a character into a field. This test passes if you see a 'CONFIRM NAVIGATION' message at the top.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Simulate user typing letter 'a' into the field.
+PASS testInput.value is "a"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

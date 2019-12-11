@@ -1,0 +1,49 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .container {
+            height: 200px;
+            width: 200px;
+            border: 1px solid black;
+            overflow: scroll;
+        }
+        .contents {
+            height: 500px;
+            width: 500px;
+            background-color: silver;
+        }
+    </style>
+	<script src="../../resources/js-test-pre.js"></script>
+    <script>
+		jsTestIsAsync = true;
+		description("Tests a programmatic scroll to a negative offset does not result in negative scrollLeft/scrollTop");
+
+		var scroller;
+		function doScroll()
+        {
+            scroller = document.getElementById('scroller');
+			scroller.scrollLeft = 50;
+
+			setTimeout(() => {
+    			scroller.addEventListener('scroll', (event) => {
+    				shouldBe("scroller.scrollLeft", "0");
+    				shouldBe("scroller.scrollLeft", "0");
+    				finishJSTest();
+    			}, false);
+
+				scroller.scrollLeft = -200;
+				scroller.scrollTop = -100;
+			}, 0)
+        }
+        window.addEventListener('load', doScroll, false);
+    </script>
+</head>
+<body>
+    <div id="scroller" class="container">
+        <div class="contents">
+        </div>
+    </div>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

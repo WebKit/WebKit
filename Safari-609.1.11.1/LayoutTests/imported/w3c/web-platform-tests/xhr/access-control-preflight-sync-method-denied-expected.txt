@@ -1,0 +1,3 @@
+
+PASS Sync request denied at preflight because of non-CORS-safelisted method 
+

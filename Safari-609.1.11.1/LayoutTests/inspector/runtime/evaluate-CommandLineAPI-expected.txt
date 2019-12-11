@@ -1,0 +1,41 @@
+Tests for the Runtime.evaluate with the Command Line API.
+
+
+== Running test suite: Runtime.evaluate.CommandLineAPI
+-- Running test case: AccessCommandLineAPI
+PASS: CommandLineAPI `keys` can be accessed.
+PASS: CommandLineAPI `keys` should work with a simple object.
+
+-- Running test case: AccessGlobalVariable
+PASS: Should be able to access var in global scope.
+PASS: Should be able to access let in global scope.
+PASS: Should be able to access const in global scope.
+
+-- Running test case: CreateGlobalVariable
+PASS: Should be able to access created var in global scope.
+PASS: Should be able to access created let in global scope.
+PASS: Should be able to access created const in global scope.
+
+-- Running test case: CreateGlobalClass
+PASS: Should be able to access class created in earlier evaluation.
+
+-- Running test case: ExpectedExceptionCreatingDuplicateLexicalGlobalVariables
+PASS: Should be an exception defining a lexical global multiple times.
+
+-- Running test case: NonStrictAndStrictEvaluations
+PASS: Non-strict evaluation. Should be able to access arguments.callee.
+PASS: Script evaluation. Should not be able to access arguments.callee.
+
+-- Running test case: CommandLineAPIDoesNotShadowVariables
+PASS: `keys` is currently CommandLineAPI function.
+PASS: Creating global `keys` variable should be okay.
+PASS: Global `keys` variable should not be shadowed by CommandLineAPI function.
+
+-- Running test case: CommandLineAPIDoesNotShadowGlobalObjectProperties
+PASS: `values` should be `window.values` and not shadowed by CommandLineAPI `values` function.
+
+-- Running test case: NonStrictEvalHoistEvaluations
+PASS: Should be able to access var in global scope.
+PASS: Should be able to hoist function to var in global scope.
+PASS: Should be able to hoist function to var in global scope and keep it.
+

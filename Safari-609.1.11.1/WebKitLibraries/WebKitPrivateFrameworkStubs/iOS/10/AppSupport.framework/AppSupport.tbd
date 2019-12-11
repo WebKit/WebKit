@@ -1,0 +1,23 @@
+--- !tapi-tbd-v2
+archs:
+  - armv7
+  - armv7s
+  - arm64
+  - i386
+  - x86_64
+exports:
+  -
+    archs:
+      - armv7
+      - armv7s
+      - arm64
+      - i386
+      - x86_64
+    symbols:
+      - _CPCopyBundleIdentifierFromAuditToken
+    objc-classes:
+      - _CPNetworkObserver
+install-name: /System/Library/PrivateFrameworks/AppSupport.framework/AppSupport
+objc-constraint: none
+platform: ios
+...

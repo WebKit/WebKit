@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+var audioTrack;
+
+function go() {
+    var constraints = { audio: true, video: true};
+    navigator.mediaDevices.getUserMedia(constraints).then(gotUserMedia);
+}
+
+function gotUserMedia(stream) {
+    audioTrack = stream.getAudioTracks()[0];
+    stream.removeTrack(audioTrack);
+
+    stream.getTracks().forEach(track => { track.stop(); });
+}
+</script>
+</head>
+<body onload="go()">
+    <div>This tests the behavior of the media capture indicator when a live MediaStreamTrack is removed from a MediaStream, and all the other tracks are stopped. The page should request access to the camera and microphone, and then display a audio-capture icon. If the page displays a camera icon or no capture icon at all, the test has failed.</div>
+</body>
+</html>

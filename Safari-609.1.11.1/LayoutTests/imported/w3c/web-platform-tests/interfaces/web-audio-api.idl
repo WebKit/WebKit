@@ -1,0 +1,18 @@
+// Source: Web Audio API (https://webaudio.github.io/web-audio-api/)
+
+enum ChannelCountMode {
+  "max",
+  "clamped-max",
+  "explicit"
+};
+
+enum ChannelInterpretation {
+  "speakers",
+  "discrete"
+};
+
+dictionary AudioNodeOptions {
+  unsigned long channelCount;
+  ChannelCountMode channelCountMode;
+  ChannelInterpretation channelInterpretation;
+};

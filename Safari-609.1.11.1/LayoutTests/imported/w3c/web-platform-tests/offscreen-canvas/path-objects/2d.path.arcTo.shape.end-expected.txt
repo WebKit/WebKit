@@ -1,0 +1,7 @@
+2d.path.arcTo.shape.end
+
+arcTo() does not draw anything from P1 to P2
+
+
+FAIL arcTo() does not draw anything from P1 to P2 null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

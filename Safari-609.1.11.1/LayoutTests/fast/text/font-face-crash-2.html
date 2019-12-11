@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+(function() {
+    var font = new FontFace("WebFont", "url('notarealfont')", {});
+    font.loaded;
+    font.load();
+    document.fonts.add(font);
+})();
+if (window.GCController)
+    GCController.collect();
+document.fonts.forEach(function(font) {
+    if (font.family == "WebFont")
+        font.loaded;
+});
+</script>
+This test makes sure that if we construct two JSFontFaces for the same FontFace, and call "loaded" on both of them, that there is no ASSERT.
+</body>
+</html>

@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html style="position:absolute; left:100px; top:100px; width:100px; height:100px; background:green;">
+<head>
+<script>
+// This test ensures we paint the entirety of the root background even when zooming page out
+if (window.internals)
+    internals.setPageScaleFactor(0.5);
+</script>
+</head>
+<body>
+</body>

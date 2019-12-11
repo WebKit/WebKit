@@ -1,0 +1,15 @@
+This verifies that ARIA cell spans are ignored when native cell spans are set.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+columnheader1 spans 3 row(s) and 2 column(s).
+columnheader2 spans 10 row(s) and 10 column(s).
+columnheader3 spans 10 row(s) and 3 column(s).
+cell1 spans 2 row(s) and 2 column(s).
+cell2 spans 10 row(s) and 10 column(s).
+cell3 spans 3 row(s) and 10 column(s).
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

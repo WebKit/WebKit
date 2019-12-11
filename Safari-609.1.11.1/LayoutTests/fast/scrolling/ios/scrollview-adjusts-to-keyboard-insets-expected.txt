@@ -1,0 +1,6 @@
+This tests focusing an element right above the keyboard. WebKit should scroll the document to reveal the element and then scroll back when the keyboard is dismissed.
+To manually test, focus the text field below on iPad to bring up the docked software keyboard.
+The document should scroll. Dimiss the keyboard and the document should scroll back to its original position.
+PASS - the document did scroll on focus
+PASS - the document did scroll on blur
+

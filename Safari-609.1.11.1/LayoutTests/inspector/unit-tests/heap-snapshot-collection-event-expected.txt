@@ -1,0 +1,20 @@
+Testing HeapSnapshot CollectionEvent between snapshots.
+
+
+== Running test suite: HeapSnapshot.CollectionEvent
+-- Running test case: HeapSnapshot
+PASS: Should not have an error creating a snapshot.
+PASS: Should create HeapSnapshotProxy snapshot.
+
+-- Running test case: HeapSnapshotCollectionEvent
+PASS: Should not have an error creating a snapshot.
+PASS: Received HeapSnapshot.CollectionEvent.
+PASS: Collection should include at least 200 nodes (100 objects and 100 strings).
+PASS: Collection should affect the first snapshot.
+
+-- Running test case: HeapSnapshot.prototype.update
+PASS: 0 Objects were dead before.
+PASS: At least 100 Objects are dead after.
+PASS: 0 strings were dead before.
+PASS: At least 100 strings are dead after.
+

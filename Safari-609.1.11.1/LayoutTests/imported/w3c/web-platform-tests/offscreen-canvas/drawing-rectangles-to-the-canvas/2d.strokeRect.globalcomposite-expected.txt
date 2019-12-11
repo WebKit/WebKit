@@ -1,0 +1,7 @@
+2d.strokeRect.globalcomposite
+
+strokeRect is not affected by globalCompositeOperation
+
+
+FAIL strokeRect is not affected by globalCompositeOperation null is not an object (evaluating 'ctx.globalCompositeOperation = 'source-in'')
+

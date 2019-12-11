@@ -1,0 +1,16 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+</head>
+<body>
+<p>
+This test makes sure that math is being performed before rounding occurs.
+In the following run, the "aa" has a fractional x-coordinate value of
+between .3 and .5. In addition that run's width also has this property.
+If you round the x-coordinate and width before you add them together to
+get the coordinate of the right-side of the run, you would see that the
+run is a pixel shorter than it should be.
+</p>
+<u>aaaa</u> <u>aaaaa</u>
+</body>
+</html>

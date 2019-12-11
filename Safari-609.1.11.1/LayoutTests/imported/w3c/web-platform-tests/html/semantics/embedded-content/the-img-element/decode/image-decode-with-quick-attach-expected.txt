@@ -1,0 +1,4 @@
+
+
+PASS HTMLImageElement.prototype.decode(), attach to DOM before promise resolves. 
+

@@ -1,0 +1,22 @@
+x
+ 
+1
+ 
++
+ 
+static
+ 
+text
+This tests that the text inside MathML token elements is exposed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+AXRole: AXStatic: AXValue: 1
+AXRole: AXStatic: AXValue: +
+AXRole: AXStatic: AXValue: static
+AXRole: AXStatic: AXValue: text
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

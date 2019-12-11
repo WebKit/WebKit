@@ -1,0 +1,25 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing the <code>SkipBackButton</code> class.");
+
+const skipBackButton = new SkipBackButton({ layoutTraits: LayoutTraits.macOS });
+
+shouldBeEqualToString("skipBackButton.element.localName", "button");
+shouldBeTrue('skipBackButton.element.classList.contains("skip-back")');
+shouldBe("skipBackButton.iconName", "Icons.SkipBack");
+
+const iOSSkipBackButton = new SkipBackButton({ layoutTraits: LayoutTraits.iOS });
+
+shouldBecomeEqual('skipBackButton.image.element.style.webkitMaskImage.includes("macOS/SkipBack15.svg")', "true", () => {
+    shouldBecomeEqual('iOSSkipBackButton.image.element.style.webkitMaskImage.includes("iOS/SkipBack15.svg")', "true", finishJSTest);
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

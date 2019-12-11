@@ -1,0 +1,85 @@
+This documentation explains how to compile Capstone with CMake, focus on
+using Microsoft Visual C as the compiler.
+
+To compile Capstone on *nix, see COMPILE.TXT.
+
+To compile Capstone on Windows using Visual Studio, see COMPILE_MSVC.TXT.
+
+                        *-*-*-*-*-*
+
+This documentation requires CMake & Windows SDK or MS Visual Studio installed on
+your machine.
+
+Get CMake for free from http://www.cmake.org.
+
+
+
+(0) Tailor Capstone to your need.
+
+  Out of 12 archtitectures supported by Capstone (Arm, Arm64, M68K, Mips, PPC,
+  Sparc, SystemZ, X86, XCore, M680X, TMS320C64x & EVM), if you just need several selected archs,
+  run "cmake" with the unwanted archs disabled (set to 0) as followings.
+
+  - CAPSTONE_ARM_SUPPORT: support ARM. Run cmake with -DCAPSTONE_ARM_SUPPORT=0 to remove ARM.
+  - CAPSTONE_ARM64_SUPPORT: support ARM64. Run cmake with -DCAPSTONE_ARM64_SUPPORT=0 to remove ARM64.
+  - CAPSTONE_M680X_SUPPORT: support M680X. Run cmake with -DCAPSTONE_M680X_SUPPORT=0 to remove M680X.
+  - CAPSTONE_M68K_SUPPORT: support M68K. Run cmake with -DCAPSTONE_M68K_SUPPORT=0 to remove M68K.
+  - CAPSTONE_MIPS_SUPPORT: support Mips. Run cmake with -DCAPSTONE_MIPS_SUPPORT=0 to remove Mips.
+  - CAPSTONE_PPC_SUPPORT: support PPC. Run cmake with -DCAPSTONE_PPC_SUPPORT=0 to remove PPC.
+  - CAPSTONE_SPARC_SUPPORT: support Sparc. Run cmake with -DCAPSTONE_SPARC_SUPPORT=0 to remove Sparc.
+  - CAPSTONE_SYSZ_SUPPORT: support SystemZ. Run cmake with -DCAPSTONE_SYSZ_SUPPORT=0 to remove SystemZ.
+  - CAPSTONE_XCORE_SUPPORT: support XCore. Run cmake with -DCAPSTONE_XCORE_SUPPORT=0 to remove XCore.
+  - CAPSTONE_X86_SUPPORT: support X86. Run cmake with -DCAPSTONE_X86_SUPPORT=0 to remove X86.
+  - CAPSTONE_X86_TMS320C64X: support TMS320C64X. Run cmake with -DCAPSTONE_TMS320C64X_SUPPORT=0 to remove TMS320C64X.
+  - CAPSTONE_X86_M680X: support M680X. Run cmake with -DCAPSTONE_M680X_SUPPORT=0 to remove M680X.
+  - CAPSTONE_X86_EVM: support EVM. Run cmake with -DCAPSTONE_EVM_SUPPORT=0 to remove EVM.
+
+  By default, all 10 architectures are compiled in.
+
+
+  Besides, Capstone also allows some more customization via following macros.
+
+  - CAPSTONE_USE_SYS_DYN_MEM: change this to OFF to use your own dynamic memory management.
+  - CAPSTONE_BUILD_DIET: change this to ON to make the binaries more compact.
+  - CAPSTONE_X86_REDUCE: change this to ON to make X86 binary smaller.
+  - CAPSTONE_X86_ATT_DISABLE: change this to ON to disable AT&T syntax on x86.
+
+  By default, Capstone use system dynamic memory management, and both DIET and X86_REDUCE
+  modes are disabled. To use your own memory allocations, turn ON both DIET &
+  X86_REDUCE, run "cmake" with: -DCAPSTONE_USE_SYS_DYN_MEM=0 -DCAPSTONE_BUILD_DIET=1 -DCAPSTONE_X86_REDUCE=1
+
+
+  For each option, refer to docs/README for more details.
+
+
+
+(1) CMake allows you to generate different generators to build Capstone. Below is
+    some examples on how to build Capstone on Windows with CMake.
+
+
+  (*) To build Capstone using Nmake of Windows SDK, do:
+
+      mkdir build
+      cd build
+      ..\nmake.bat
+
+  After this, find the samples test*.exe, capstone.lib & capstone.dll
+  in the same directory.
+
+
+
+  (*) To build Capstone using Visual Studio, choose the generator accordingly to the
+  version of Visual Studio on your machine. For example, with Visual Studio 2013, do:
+
+      mkdir build
+      cd build
+      cmake -G "Visual Studio 12" ..
+
+  After this, find capstone.sln in the same directory. Open it with Visual Studio
+  and build the solution including libraries & all test as usual.
+
+
+
+(2) You can make sure the prior steps successfully worked by launching one of the
+  testing binary (test*.exe).
+

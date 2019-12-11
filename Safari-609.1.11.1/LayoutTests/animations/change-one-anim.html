@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Animation using matrix()</title>
+    <style type="text/css" media="screen">
+        #box {
+            position: relative;
+            height: 20px;
+            width: 20px;
+            background-color: #9bb;
+            -webkit-animation-name: horiz, vert;
+            -webkit-animation-duration: 1s;
+            -webkit-animation-iteration-count: infinite;
+            -webkit-animation-direction: alternate;
+            -webkit-animation-timing-function: linear;
+         }
+         
+         @-webkit-keyframes horiz {
+            from { left: 0px; }
+            to { left:300px; }
+         }
+         @-webkit-keyframes vert {
+            from { top: 0px; }
+            to { top: 300px; }
+         }
+    </style>
+    <script src="resources/animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        
+        const expectedValues = [
+          // [animation-name, time, element-id, property, expected-value, tolerance]
+          [null, 0.75, "box", "left", 150, 40],
+          [null, 0.75, "box", "top", 225, 40],
+        ];
+
+        function removeAnim()
+        {
+            var target = document.getElementById("box");
+            var left = window.getComputedStyle(target).left;
+            target.style.webkitAnimationName = "vert";
+            target.style.left = left;
+        }
+        
+        function setup()
+        {
+            setTimeout("removeAnim()", 500);
+        }
+
+        runAnimationTest(expectedValues, setup);
+    </script>
+</head>
+<body>
+This test performs two animations, left and top. It animates over 1 second.
+At 0.5 second it removes the left animation and the top animation should continue
+from where it left off.
+<div id="box">
+</div>
+<div id="result">
+</div>
+</body>
+</html>

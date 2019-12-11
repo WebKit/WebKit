@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 58: ReferenceError: Can't find variable: wp_test
+CONSOLE MESSAGE: line 30: ReferenceError: Can't find variable: test_true
+Description
+
+This test validates exception scenarios of invoking performance.mark() with param of "secureConnectionStart".
+
+
+FAIL exception test of performance.mark ReferenceError: Can't find variable: wp_test
+

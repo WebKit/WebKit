@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script src=../media-controls.js></script>
+
+        <script>
+
+        var testTrack;
+        var testCueDisplayBox;
+        var seekedCount = 0;
+        var direction;
+
+        var info = ["تجربة",
+                    "\t1234",
+                    "تجربة\nLTR new line, but cue should be RTL",
+                    "LTR cue تجربة",
+                    ";1234تجربة",
+                    "\t०१२३४५६७८९  \t"];
+
+        function testCueStyle()
+        {
+            endTest();
+        }
+
+        function seeked()
+        {
+            testCueDisplayBox = textTrackDisplayElement(video, 'display');
+
+            consoleWrite("");
+            consoleWrite("** Jump to next cue **");
+            testExpected("video.currentTime", (seekedCount / 2) + .25);
+            testExpected("testTrack.track.activeCues.length", 1);
+            testExpected("testTrack.track.activeCues[0].text", info[seekedCount]);
+            testExpected("testCueDisplayBox.innerText", info[seekedCount]);
+
+            direction = seekedCount % 2 ? "ltr" : "rtl";
+
+            consoleWrite("");
+            consoleWrite("** The position should be default and CSS direction set to " + direction + " **");
+            testExpected("2 * testCueDisplayBox.offsetLeft == video.videoWidth - testCueDisplayBox.offsetWidth", true);
+
+            testExpected("getComputedStyle(testCueDisplayBox).direction", direction);
+
+            if (++seekedCount == info.length)
+                endTest();
+            else {
+                consoleWrite("");
+                run("video.currentTime = " + (video.currentTime + .5));
+                return;
+            }
+        }
+
+        function loaded()
+        {
+            consoleWrite("Test that directionality is set correctly on cues.");
+            testTrack = document.querySelector('track');
+
+            findMediaElement();
+            video.src = findMediaFile('video', '../content/test');
+
+            consoleWrite("");
+            consoleWrite("** RTL cues alternate with LTR cues **");
+            waitForEvent('seeked', seeked);
+            waitForEvent('canplaythrough', function() { video.currentTime = .25; });
+        }
+
+        setCaptionDisplayMode('Automatic');
+        </script>
+    </head>
+    <body onload="loaded()">
+        <video controls >
+            <track src="captions-webvtt/captions-rtl.vtt" kind="captions" default>
+        </video>
+    </body>
+</html>

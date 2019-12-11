@@ -1,0 +1,56 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:WebAnimationsCSSIntegrationEnabled=false ] -->
+
+<html>
+<head>
+    <style>
+        .box {
+            width: 120px;
+            height: 100px;
+            background-color: blue;
+            margin: 180px 100px;
+            position: relative;
+            box-shadow: 0 0 10px black;
+            -webkit-transform-origin: 80% 20%;
+            transition: -webkit-transform 10s;
+        }
+        
+        .dot {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 4px;
+            width: 4px;
+            background-color: silver;
+        }
+        
+        body.changed .box {
+            -webkit-transform: scale(1.3) rotate(45deg);
+        }
+    </style>
+    <script src="../../../compositing/resources/compositing-test-utils.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function runTest()
+        {
+            makeDots(42, 42);
+            
+            window.setTimeout(function() {
+                document.body.classList.add('changed');
+                window.setTimeout(dumpLayersWithoutTransforms, 0);
+            }, 0);
+        }
+        
+        window.addEventListener('load', runTest, false);
+    </script>
+</head>
+<body>
+
+    <div class="box">
+    </div>
+<pre id="layers"></pre>
+</body>
+</html>

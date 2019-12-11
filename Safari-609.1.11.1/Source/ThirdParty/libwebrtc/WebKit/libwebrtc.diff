@@ -1,0 +1,2568 @@
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/api/audio_codecs/ilbc/audio_encoder_ilbc.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/api/audio_codecs/ilbc/audio_encoder_ilbc.cc
+index 896ed238cc3..4d028c9aaf4 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/api/audio_codecs/ilbc/audio_encoder_ilbc.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/api/audio_codecs/ilbc/audio_encoder_ilbc.cc
+@@ -33,7 +33,7 @@ int GetIlbcBitrate(int ptime) {
+       // 50 bytes per frame of 30 ms => (approx) 13333 bits/s.
+       return 13333;
+     default:
+-      FATAL();
++      RTC_FATAL();
+   }
+ }
+ }  // namespace
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/api/mediatypes.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/api/mediatypes.cc
+index 599542db08f..140d0ae9625 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/api/mediatypes.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/api/mediatypes.cc
+@@ -28,7 +28,7 @@ std::string MediaTypeToString(MediaType type) {
+     case MEDIA_TYPE_DATA:
+       return kMediaTypeData;
+   }
+-  FATAL();
++  RTC_FATAL();
+   // Not reachable; avoids compile warning.
+   return "";
+ }
+@@ -41,7 +41,7 @@ MediaType MediaTypeFromString(const std::string& type_str) {
+   } else if (type_str == kMediaTypeData) {
+     return MEDIA_TYPE_DATA;
+   }
+-  FATAL();
++  RTC_FATAL();
+   // Not reachable; avoids compile warning.
+   return static_cast<MediaType>(-1);
+ }
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/audio/remix_resample.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/audio/remix_resample.cc
+index cc59e2a823c..b1158da213f 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/audio/remix_resample.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/audio/remix_resample.cc
+@@ -55,7 +55,7 @@ void RemixAndResample(const int16_t* src_data,
+ 
+   if (resampler->InitializeIfNeeded(sample_rate_hz, dst_frame->sample_rate_hz_,
+                                     audio_ptr_num_channels) == -1) {
+-    FATAL() << "InitializeIfNeeded failed: sample_rate_hz = " << sample_rate_hz
++    RTC_FATAL() << "InitializeIfNeeded failed: sample_rate_hz = " << sample_rate_hz
+             << ", dst_frame->sample_rate_hz_ = " << dst_frame->sample_rate_hz_
+             << ", audio_ptr_num_channels = " << audio_ptr_num_channels;
+   }
+@@ -69,7 +69,7 @@ void RemixAndResample(const int16_t* src_data,
+       resampler->Resample(audio_ptr, src_length, dst_frame->mutable_data(),
+                           AudioFrame::kMaxDataSizeSamples);
+   if (out_length == -1) {
+-    FATAL() << "Resample failed: audio_ptr = " << audio_ptr
++    RTC_FATAL() << "Resample failed: audio_ptr = " << audio_ptr
+             << ", src_length = " << src_length
+             << ", dst_frame->mutable_data() = " << dst_frame->mutable_data();
+   }
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/common_audio/wav_file.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/common_audio/wav_file.cc
+index 1b8bcbd923c..90a89281e5c 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/common_audio/wav_file.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/common_audio/wav_file.cc
+@@ -63,7 +63,7 @@ WavReader::WavReader(rtc::PlatformFile file) {
+     if (!rtc::ClosePlatformFile(file)) {
+       RTC_LOG(LS_ERROR) << "Can't close file.";
+     }
+-    FATAL() << "Could not open wav file for reading.";
++    RTC_FATAL() << "Could not open wav file for reading.";
+   }
+ 
+   ReadableWavFile readable(file_handle_);
+@@ -148,7 +148,7 @@ WavWriter::WavWriter(rtc::PlatformFile file,
+     if (!rtc::ClosePlatformFile(file)) {
+       RTC_LOG(LS_ERROR) << "Can't close file.";
+     }
+-    FATAL() << "Could not open wav file for writing.";
++    RTC_FATAL() << "Could not open wav file for writing.";
+   }
+ 
+   RTC_CHECK(CheckWavParameters(num_channels_, sample_rate_, kWavFormat,
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/video_frame_buffer.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/video_frame_buffer.cc
+index f4f138fccb5..5f89b4acb96 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/video_frame_buffer.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/video_frame_buffer.cc
+@@ -272,7 +272,7 @@ rtc::scoped_refptr<PlanarYuvBuffer> WrapYuvBuffer(
+       return WrapI444Buffer(width, height, y_plane, y_stride, u_plane, u_stride,
+                             v_plane, v_stride, no_longer_used);
+     default:
+-      FATAL() << "Unexpected frame buffer type.";
++      RTC_FATAL() << "Unexpected frame buffer type.";
+       return nullptr;
+   }
+ }
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/codecs/cng/audio_encoder_cng.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/codecs/cng/audio_encoder_cng.cc
+index 9a2926143d0..476954fe60d 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/codecs/cng/audio_encoder_cng.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/codecs/cng/audio_encoder_cng.cc
+@@ -171,7 +171,7 @@ AudioEncoder::EncodedInfo AudioEncoderCng::EncodeImpl(
+       break;
+     }
+     case Vad::kError: {
+-      FATAL();  // Fails only if fed invalid data.
++      RTC_FATAL();  // Fails only if fed invalid data.
+       break;
+     }
+   }
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/codecs/ilbc/audio_encoder_ilbc.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/codecs/ilbc/audio_encoder_ilbc.cc
+index 8801fd55590..35e6fc64a62 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/codecs/ilbc/audio_encoder_ilbc.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_coding/codecs/ilbc/audio_encoder_ilbc.cc
+@@ -41,7 +41,7 @@ int GetIlbcBitrate(int ptime) {
+       // 50 bytes per frame of 30 ms => (approx) 13333 bits/s.
+       return 13333;
+     default:
+-      FATAL();
++      RTC_FATAL();
+   }
+ }
+ 
+@@ -148,7 +148,7 @@ size_t AudioEncoderIlbcImpl::RequiredOutputSizeBytes() const {
+     case 6:
+       return 2 * 50;
+     default:
+-      FATAL();
++      RTC_FATAL();
+   }
+ }
+ 
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp9/vp9_noop.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp9/vp9_noop.cc
+new file mode 100644
+index 00000000000..b058c2d6728
+--- /dev/null
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_coding/codecs/vp9/vp9_noop.cc
+@@ -0,0 +1,43 @@
++/*
++ *  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
++ *
++ *  Use of this source code is governed by a BSD-style license
++ *  that can be found in the LICENSE file in the root of the source
++ *  tree. An additional intellectual property rights grant can be found
++ *  in the file PATENTS.  All contributing project authors may
++ *  be found in the AUTHORS file in the root of the source tree.
++ *
++ */
++
++#if !defined(RTC_DISABLE_VP9)
++#error
++#endif  // !defined(RTC_DISABLE_VP9)
++
++#include "modules/video_coding/codecs/vp9/include/vp9.h"
++
++#include "api/video_codecs/sdp_video_format.h"
++#include "rtc_base/checks.h"
++
++namespace webrtc {
++
++std::vector<SdpVideoFormat> SupportedVP9Codecs() {
++  return std::vector<SdpVideoFormat>();
++}
++
++std::unique_ptr<VP9Encoder> VP9Encoder::Create() {
++  RTC_NOTREACHED();
++  return nullptr;
++}
++
++std::unique_ptr<VP9Encoder> VP9Encoder::Create(
++    const cricket::VideoCodec& codec) {
++  RTC_NOTREACHED();
++  return nullptr;
++}
++
++std::unique_ptr<VP9Decoder> VP9Decoder::Create() {
++  RTC_NOTREACHED();
++  return nullptr;
++}
++
++}  // namespace webrtc
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/tcpport.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/tcpport.cc
+index e018ea755d6..0d7aea9d60a 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/tcpport.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/tcpport.cc
+@@ -351,11 +351,21 @@ TCPConnection::TCPConnection(TCPPort* port,
+                         << ", port() Network:" << port->Network()->ToString();
+     const std::vector<rtc::InterfaceAddress>& desired_addresses =
+         port_->Network()->GetIPs();
++
++#if defined(WEBRTC_WEBKIT_BUILD)
++     RTC_DCHECK(socket->GetLocalAddress().IsLoopbackIP() ||
++                (std::find_if(desired_addresses.begin(), desired_addresses.end(),
++                             [this](const rtc::InterfaceAddress& addr) {
++                               return socket_->GetLocalAddress().ipaddr() ==
++                                      addr;
++                             }) != desired_addresses.end()));
++ #else
+     RTC_DCHECK(std::find_if(desired_addresses.begin(), desired_addresses.end(),
+                             [this](const rtc::InterfaceAddress& addr) {
+                               return socket_->GetLocalAddress().ipaddr() ==
+                                      addr;
+                             }) != desired_addresses.end());
++#endif
+     ConnectSocketSignals(socket);
+   }
+ }
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/pc/peerconnectionfactory.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/pc/peerconnectionfactory.cc
+index 37c6a0b0bcf..75261508b27 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/pc/peerconnectionfactory.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/pc/peerconnectionfactory.cc
+@@ -261,7 +261,7 @@ RtpCapabilities PeerConnectionFactory::GetRtpSenderCapabilities(
+       return RtpCapabilities();
+   }
+   // Not reached; avoids compile warning.
+-  FATAL();
++  RTC_FATAL();
+ }
+ 
+ RtpCapabilities PeerConnectionFactory::GetRtpReceiverCapabilities(
+@@ -288,7 +288,7 @@ RtpCapabilities PeerConnectionFactory::GetRtpReceiverCapabilities(
+       return RtpCapabilities();
+   }
+   // Not reached; avoids compile warning.
+-  FATAL();
++  RTC_FATAL();
+ }
+ 
+ rtc::scoped_refptr<AudioSourceInterface>
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/pc/rtpparametersconversion.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/pc/rtpparametersconversion.cc
+index bf3bce3daa3..865685d73c4 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/pc/rtpparametersconversion.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/pc/rtpparametersconversion.cc
+@@ -61,7 +61,7 @@ RTCErrorOr<cricket::FeedbackParam> ToCricketFeedbackParam(
+       return cricket::FeedbackParam(cricket::kRtcpFbParamTransportCc);
+   }
+   // Not reached; avoids compile warning.
+-  FATAL();
++  RTC_FATAL();
+ }
+ 
+ template <typename C>
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/checks.h b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/checks.h
+index 9de6d47573c..5cf0679910e 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/checks.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/checks.h
+@@ -80,7 +80,7 @@ RTC_NORETURN void rtc_FatalMessage(const char* file, int line, const char* msg);
+ //   messages if the condition doesn't hold. Prefer them to raw RTC_CHECK and
+ //   RTC_DCHECK.
+ //
+-// - FATAL() aborts unconditionally.
++// - RTC_FATAL() aborts unconditionally.
+ //
+ // TODO(ajm): Ideally, checks.h would be combined with logging.h, but
+ // consolidation with system_wrappers/logging.h should happen first.
+@@ -348,9 +348,9 @@ class FatalLogCall final {
+ #define RTC_NOTREACHED() RTC_DCHECK(RTC_UNREACHABLE_CODE_HIT)
+ 
+ // TODO(bugs.webrtc.org/8454): Add an RTC_ prefix or rename differently.
+-#define FATAL()                                                    \
++#define RTC_FATAL()                                                    \
+   rtc::webrtc_checks_impl::FatalLogCall<false>(__FILE__, __LINE__, \
+-                                               "FATAL()") &        \
++                                               "RTC_FATAL()") &        \
+       rtc::webrtc_checks_impl::LogStreamer<>()
+ 
+ // Performs the integer division a/b and returns the result. CHECKs that the
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/flags.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/flags.cc
+index bcce0dafbc0..6b43b91e026 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/flags.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/flags.cc
+@@ -81,7 +81,7 @@ void Flag::SetToDefault() {
+       variable_->s = default_.s;
+       return;
+   }
+-  FATAL() << "unreachable code";
++  RTC_FATAL() << "unreachable code";
+ }
+ 
+ static const char* Type2String(Flag::Type type) {
+@@ -95,7 +95,7 @@ static const char* Type2String(Flag::Type type) {
+     case Flag::STRING:
+       return "string";
+   }
+-  FATAL() << "unreachable code";
++  RTC_FATAL() << "unreachable code";
+ }
+ 
+ static void PrintFlagValue(Flag::Type type, FlagValue* p) {
+@@ -113,7 +113,7 @@ static void PrintFlagValue(Flag::Type type, FlagValue* p) {
+       printf("%s", p->s);
+       return;
+   }
+-  FATAL() << "unreachable code";
++  RTC_FATAL() << "unreachable code";
+ }
+ 
+ void Flag::Print(bool print_current_value) {
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/location.h b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/location.h
+index 513bc263651..718d9589348 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/location.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/location.h
+@@ -50,7 +50,7 @@ class Location {
+ #define RTC_FROM_HERE RTC_FROM_HERE_WITH_FUNCTION(__FUNCTION__)
+ 
+ #define RTC_FROM_HERE_WITH_FUNCTION(function_name) \
+-  ::rtc::Location(function_name, __FILE__ ":" STRINGIZE(__LINE__))
++  ::rtc::Location(function_name, __FILE__ ":" RTC_STRINGIZE(__LINE__))
+ 
+ }  // namespace rtc
+ 
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/logging.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/logging.cc
+index bb4fbfaae25..44ec3f50c19 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/logging.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/logging.cc
+@@ -20,28 +20,26 @@
+ #include <CoreServices/CoreServices.h>
+ #elif defined(WEBRTC_ANDROID)
+ #include <android/log.h>
+-
+ // Android has a 1024 limit on log inputs. We use 60 chars as an
+ // approx for the header/tag portion.
+ // See android/system/core/liblog/logd_write.c
+ static const int kMaxLogLineSize = 1024 - 60;
+ #endif  // WEBRTC_MAC && !defined(WEBRTC_IOS) || WEBRTC_ANDROID
+ 
+-#include <stdio.h>
+-#include <string.h>
++#include <limits.h>
+ #include <time.h>
++
+ #include <algorithm>
+ #include <cstdarg>
+ #include <vector>
+ 
+-#include "rtc_base/checks.h"
+ #include "rtc_base/criticalsection.h"
+ #include "rtc_base/logging.h"
+ #include "rtc_base/platform_thread_types.h"
++#include "rtc_base/never_destroyed.h"
+ #include "rtc_base/stringencode.h"
+ #include "rtc_base/strings/string_builder.h"
+ #include "rtc_base/stringutils.h"
+-#include "rtc_base/thread_annotations.h"
+ #include "rtc_base/timeutils.h"
+ 
+ namespace rtc {
+@@ -65,20 +63,19 @@ const char* FilenameFromPath(const char* file) {
+     return (end1 > end2) ? end1 + 1 : end2 + 1;
+ }
+ 
+-// Global lock for log subsystem, only needed to serialize access to streams_.
+-CriticalSection g_log_crit;
++// Global lock for log subsystem, only needed to serialize access to streamList().
++CriticalSection& logCriticalScope() {
++  static auto scope = makeNeverDestroyed<>(CriticalSection { });
++  return scope.get();
++}
++
+ }  // namespace
+ 
+ // Inefficient default implementation, override is recommended.
+ void LogSink::OnLogMessage(const std::string& msg,
+                            LoggingSeverity severity,
+                            const char* tag) {
+-  OnLogMessage(tag + (": " + msg), severity);
+-}
+-
+-void LogSink::OnLogMessage(const std::string& msg,
+-                           LoggingSeverity /* severity */) {
+-  OnLogMessage(msg);
++  OnLogMessage(tag + (": " + msg));
+ }
+ 
+ /////////////////////////////////////////////////////////////////////////////
+@@ -91,7 +88,15 @@ bool LogMessage::log_to_stderr_ = true;
+ // Note: we explicitly do not clean this up, because of the uncertain ordering
+ // of destructors at program exit.  Let the person who sets the stream trigger
+ // cleanup by setting to null, or let it leak (safe at program exit).
+-LogMessage::StreamList LogMessage::streams_ RTC_GUARDED_BY(g_log_crit);
++typedef std::pair<LogSink*, LoggingSeverity> StreamAndSeverity;
++typedef std::list<StreamAndSeverity> StreamList;
++
++// The output streams and their associated severities
++StreamList& streamList()
++    RTC_EXCLUSIVE_LOCKS_REQUIRED(logCriticalScope()) {
++        static auto stream_list = makeNeverDestroyed<>(StreamList { });
++  return stream_list.get();
++}
+ 
+ // Boolean options default to false (0)
+ bool LogMessage::thread_, LogMessage::timestamp_;
+@@ -105,6 +110,7 @@ LogMessage::LogMessage(const char* file,
+                        LogErrorContext err_ctx,
+                        int err)
+     : severity_(sev) {
++
+   if (timestamp_) {
+     // Use SystemTimeMillis so that even if tests use fake clocks, the timestamp
+     // in log messages represents the real system time.
+@@ -205,13 +211,13 @@ LogMessage::~LogMessage() {
+ #endif
+   }
+ 
+-  CritScope cs(&g_log_crit);
+-  for (auto& kv : streams_) {
++  CritScope cs(&logCriticalScope());
++  for (auto& kv : streamList()) {
+     if (severity_ >= kv.second) {
+ #if defined(WEBRTC_ANDROID)
+       kv.first->OnLogMessage(str, severity_, tag_);
+ #else
+-      kv.first->OnLogMessage(str, severity_);
++      kv.first->OnLogMessage(str);
+ #endif
+     }
+   }
+@@ -254,7 +260,7 @@ void LogMessage::LogTimestamps(bool on) {
+ 
+ void LogMessage::LogToDebug(LoggingSeverity min_sev) {
+   g_dbg_sev = min_sev;
+-  CritScope cs(&g_log_crit);
++  CritScope cs(&logCriticalScope());
+   UpdateMinLogSeverity();
+ }
+ 
+@@ -263,9 +269,9 @@ void LogMessage::SetLogToStderr(bool log_to_stderr) {
+ }
+ 
+ int LogMessage::GetLogToStream(LogSink* stream) {
+-  CritScope cs(&g_log_crit);
++  CritScope cs(&logCriticalScope());
+   LoggingSeverity sev = LS_NONE;
+-  for (auto& kv : streams_) {
++  for (auto& kv : streamList()) {
+     if (!stream || stream == kv.first) {
+       sev = std::min(sev, kv.second);
+     }
+@@ -274,16 +280,16 @@ int LogMessage::GetLogToStream(LogSink* stream) {
+ }
+ 
+ void LogMessage::AddLogToStream(LogSink* stream, LoggingSeverity min_sev) {
+-  CritScope cs(&g_log_crit);
+-  streams_.push_back(std::make_pair(stream, min_sev));
++  CritScope cs(&logCriticalScope());
++  streamList().push_back(std::make_pair(stream, min_sev));
+   UpdateMinLogSeverity();
+ }
+ 
+ void LogMessage::RemoveLogToStream(LogSink* stream) {
+-  CritScope cs(&g_log_crit);
+-  for (StreamList::iterator it = streams_.begin(); it != streams_.end(); ++it) {
++  CritScope cs(&logCriticalScope());
++  for (StreamList::iterator it = streamList().begin(); it != streamList().end(); ++it) {
+     if (stream == it->first) {
+-      streams_.erase(it);
++      streamList().erase(it);
+       break;
+     }
+   }
+@@ -342,9 +348,9 @@ void LogMessage::ConfigureLogging(const char* params) {
+ }
+ 
+ void LogMessage::UpdateMinLogSeverity()
+-    RTC_EXCLUSIVE_LOCKS_REQUIRED(g_log_crit) {
++    RTC_EXCLUSIVE_LOCKS_REQUIRED(logCriticalScope()) {
+   LoggingSeverity min_sev = g_dbg_sev;
+-  for (const auto& kv : streams_) {
++  for (const auto& kv : streamList()) {
+     const LoggingSeverity sev = kv.second;
+     min_sev = std::min(min_sev, sev);
+   }
+@@ -458,11 +464,8 @@ bool LogMessage::IsNoop(LoggingSeverity severity) {
+   // TODO(tommi): We're grabbing this lock for every LogMessage instance that
+   // is going to be logged. This introduces unnecessary synchronization for
+   // a feature that's mostly used for testing.
+-  CritScope cs(&g_log_crit);
+-  if (streams_.size() > 0)
+-    return false;
+-
+-  return true;
++  CritScope cs(&logCriticalScope());
++  return streamList().size() == 0;
+ }
+ 
+ void LogMessage::FinishPrintStream() {
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/never_destroyed.h b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/never_destroyed.h
+new file mode 100644
+index 00000000000..fcc62e35534
+--- /dev/null
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/never_destroyed.h
+@@ -0,0 +1,69 @@
++/*
++ * Copyright (C) 2018 Apple Inc. All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
++ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
++ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
++ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
++ * THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#pragma once
++
++#include <type_traits>
++#include <utility>
++
++namespace rtc {
++
++template<typename T> class NeverDestroyed {
++public:
++    template<typename... Args> NeverDestroyed(Args&&... args)
++    {
++        new (storagePointer()) T(std::forward<Args>(args)...);
++    }
++
++    NeverDestroyed(NeverDestroyed&& other)
++    {
++        new (storagePointer()) T(std::move(*other.storagePointer()));
++    }
++
++    operator T&() { return *storagePointer(); }
++    T& get() { return *storagePointer(); }
++
++    operator const T&() const { return *storagePointer(); }
++    const T& get() const { return *storagePointer(); }
++
++private:
++    NeverDestroyed(const NeverDestroyed&) = delete;
++    NeverDestroyed& operator=(const NeverDestroyed&) = delete;
++
++    using PointerType = typename std::remove_const<T>::type*;
++
++    PointerType storagePointer() const { return const_cast<PointerType>(reinterpret_cast<const T*>(&m_storage)); }
++
++    // FIXME: Investigate whether we should allocate a hunk of virtual memory
++    // and hand out chunks of it to NeverDestroyed instead, to reduce fragmentation.
++    typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type m_storage;
++};
++
++template<typename T> inline NeverDestroyed<T> makeNeverDestroyed(T&& argument)
++{
++    return NeverDestroyed<T>(std::move(argument));
++}
++
++} // namespace rtc
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/numerics/safe_conversions.h b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/numerics/safe_conversions.h
+index 58efcaa746a..48c212e4d49 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/numerics/safe_conversions.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/numerics/safe_conversions.h
+@@ -63,11 +63,11 @@ inline Dst saturated_cast(Src value) {
+ 
+     // Should fail only on attempting to assign NaN to a saturated integer.
+     case internal::TYPE_INVALID:
+-      FATAL();
++      RTC_FATAL();
+       return std::numeric_limits<Dst>::max();
+   }
+ 
+-  FATAL();
++  RTC_FATAL();
+   return static_cast<Dst>(value);
+ }
+ 
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/opensslcertificate.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/opensslcertificate.cc
+index 4e61b86f3ba..4e325dcec01 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/opensslcertificate.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/opensslcertificate.cc
+@@ -244,11 +244,11 @@ std::unique_ptr<SSLCertificate> OpenSSLCertificate::Clone() const {
+ std::string OpenSSLCertificate::ToPEMString() const {
+   BIO* bio = BIO_new(BIO_s_mem());
+   if (!bio) {
+-    FATAL() << "Unreachable code.";
++    RTC_FATAL() << "Unreachable code.";
+   }
+   if (!PEM_write_bio_X509(bio, x509_)) {
+     BIO_free(bio);
+-    FATAL() << "Unreachable code.";
++    RTC_FATAL() << "Unreachable code.";
+   }
+   BIO_write(bio, "\0", 1);
+   char* buffer;
+@@ -264,11 +264,11 @@ void OpenSSLCertificate::ToDER(Buffer* der_buffer) const {
+   // Calculates the DER representation of the certificate, from scratch.
+   BIO* bio = BIO_new(BIO_s_mem());
+   if (!bio) {
+-    FATAL() << "Unreachable code.";
++    RTC_FATAL() << "Unreachable code.";
+   }
+   if (!i2d_X509_bio(bio, x509_)) {
+     BIO_free(bio);
+-    FATAL() << "Unreachable code.";
++    RTC_FATAL() << "Unreachable code.";
+   }
+   char* data = nullptr;
+   size_t length = BIO_get_mem_data(bio, &data);
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/physicalsocketserver.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/physicalsocketserver.cc
+index 4ad2857c00c..7448a7e0427 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/physicalsocketserver.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/physicalsocketserver.cc
+@@ -596,7 +596,7 @@ bool SocketDispatcher::Initialize() {
+ #elif defined(WEBRTC_POSIX)
+   fcntl(s_, F_SETFL, fcntl(s_, F_GETFL, 0) | O_NONBLOCK);
+ #endif
+-#if defined(WEBRTC_IOS)
++#if defined(WEBRTC_IOS) || (defined(WEBRTC_MAC) && defined(WEBRTC_WEBKIT_BUILD))
+   // iOS may kill sockets when the app is moved to the background
+   // (specifically, if the app doesn't use the "voip" UIBackgroundMode). When
+   // we attempt to write to such a socket, SIGPIPE will be raised, which by
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/stringize_macros.h b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/stringize_macros.h
+index aee8d14551d..38c6f1836bd 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/stringize_macros.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/stringize_macros.h
+@@ -8,7 +8,7 @@
+  *  be found in the AUTHORS file in the root of the source tree.
+  */
+ 
+-// Modified from the Chromium original:
++// Modified from the Chxsromium original:
+ // src/base/strings/stringize_macros.h
+ 
+ // This file defines preprocessor macros for stringizing preprocessor
+@@ -33,6 +33,6 @@
+ // Then:
+ //   STRINGIZE(A) produces "FOO"
+ //   STRINGIZE(B(y)) produces "myobj->FunctionCall(y)"
+-#define STRINGIZE(x) STRINGIZE_NO_EXPANSION(x)
++#define RTC_STRINGIZE(x) STRINGIZE_NO_EXPANSION(x)
+ 
+ #endif  // RTC_BASE_STRINGIZE_MACROS_H_
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/virtualsocketserver.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/virtualsocketserver.cc
+index 79694112c81..bfce0f54541 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/virtualsocketserver.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/virtualsocketserver.cc
+@@ -1026,9 +1026,9 @@ void VirtualSocketServer::UpdateDelayDistribution() {
+   }
+ }
+ 
+-static double PI = 4 * atan(1.0);
+ 
+ static double Normal(double x, double mean, double stddev) {
++  static double PI = 4 * atan(1.0);
+   double a = (x - mean) * (x - mean) / (2 * stddev * stddev);
+   return exp(-a) / (stddev * sqrt(2 * PI));
+ }
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/WebKit/EncoderUtilities.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/WebKit/EncoderUtilities.h
+new file mode 100644
+index 00000000000..5b9bdfda114
+--- /dev/null
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/WebKit/EncoderUtilities.h
+@@ -0,0 +1,50 @@
++/*
++ * Copyright (C) 2018 Apple Inc. All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
++ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
++ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
++ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
++ * THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#pragma once
++
++#include "VideoProcessingSoftLink.h"
++
++#if ENABLE_VCP_ENCODER
++
++#define CompressionSessionRef VCPCompressionSessionRef
++#define CompressionSessionSetProperty webrtc::VCPCompressionSessionSetProperty
++#define CompressionSessionGetPixelBufferPool webrtc::VCPCompressionSessionGetPixelBufferPool
++#define CompressionSessionEncodeFrame webrtc::VCPCompressionSessionEncodeFrame
++#define CompressionSessionCreate webrtc::VCPCompressionSessionCreate
++#define kCodecTypeH264 kVCPCodecType4CC_H264
++#define CompressionSessionInvalidate webrtc::VCPCompressionSessionInvalidate
++
++#else
++
++#define CompressionSessionRef VTCompressionSessionRef
++#define CompressionSessionSetProperty VTSessionSetProperty
++#define CompressionSessionGetPixelBufferPool VTCompressionSessionGetPixelBufferPool
++#define CompressionSessionEncodeFrame VTCompressionSessionEncodeFrame
++#define CompressionSessionCreate VTCompressionSessionCreate
++#define kCodecTypeH264 kCMVideoCodecType_H264
++#define CompressionSessionInvalidate VTCompressionSessionInvalidate
++
++#endif
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/WebKit/VideoProcessingSoftLink.cpp b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/WebKit/VideoProcessingSoftLink.cpp
+new file mode 100644
+index 00000000000..101e87c6677
+--- /dev/null
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/WebKit/VideoProcessingSoftLink.cpp
+@@ -0,0 +1,78 @@
++/*
++ * Copyright (C) 2018 Apple Inc. All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
++ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
++ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
++ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
++ * THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#include "VideoProcessingSoftLink.h"
++
++#if ENABLE_VCP_ENCODER
++
++#include "rtc_base/logging.h"
++#import <dlfcn.h>
++#import <objc/runtime.h>
++
++// Macros copied from <wtf/cocoa/SoftLinking.h>
++#define SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(functionNamespace, framework) \
++    namespace functionNamespace { \
++    void* framework##Library(bool isOptional) \
++    { \
++        static void* frameworkLibrary; \
++        static dispatch_once_t once; \
++        dispatch_once(&once, ^{ \
++            frameworkLibrary = dlopen("/System/Library/PrivateFrameworks/" #framework ".framework/" #framework, RTLD_NOW); \
++            if (!isOptional && !frameworkLibrary) \
++                RTC_LOG(LS_ERROR) << "Cannot open framework: " << dlerror(); \
++        }); \
++        return frameworkLibrary; \
++    } \
++    }
++
++#define SOFT_LINK_FUNCTION_FOR_SOURCE(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
++    extern "C" { \
++    resultType functionName parameterDeclarations; \
++    } \
++    namespace functionNamespace { \
++    static resultType init##framework##functionName parameterDeclarations; \
++    resultType (*softLink##framework##functionName) parameterDeclarations = init##framework##functionName; \
++    static resultType init##framework##functionName parameterDeclarations \
++    { \
++        static dispatch_once_t once; \
++        dispatch_once(&once, ^{ \
++            softLink##framework##functionName = (resultType (*) parameterDeclarations) dlsym(framework##Library(), #functionName); \
++            if (!softLink##framework##functionName) \
++                RTC_LOG(LS_ERROR) << "Cannot find function ##functionName: " << dlerror(); \
++        }); \
++        return softLink##framework##functionName parameterNames; \
++    } \
++}
++
++SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(webrtc, VideoProcessing)
++
++SOFT_LINK_FUNCTION_FOR_SOURCE(webrtc, VideoProcessing, VCPCompressionSessionSetProperty, OSStatus, (VCPCompressionSessionRef session, CFStringRef key, CFTypeRef value), (session, key, value))
++SOFT_LINK_FUNCTION_FOR_SOURCE(webrtc, VideoProcessing, VCPCompressionSessionGetPixelBufferPool, CVPixelBufferPoolRef, (VCPCompressionSessionRef session), (session))
++SOFT_LINK_FUNCTION_FOR_SOURCE(webrtc, VideoProcessing, VCPCompressionSessionEncodeFrame, OSStatus, (VCPCompressionSessionRef session, CVImageBufferRef buffer, CMTime timestamp, CMTime time, CFDictionaryRef dictionary, void* data, VTEncodeInfoFlags* flags), (session, buffer, timestamp, time, dictionary, data, flags))
++SOFT_LINK_FUNCTION_FOR_SOURCE(webrtc, VideoProcessing, VCPCompressionSessionCreate, OSStatus, (CFAllocatorRef allocator1, int32_t value1 , int32_t value2, CMVideoCodecType type, CFDictionaryRef dictionary1, CFDictionaryRef dictionary2, CFAllocatorRef allocator3, VTCompressionOutputCallback callback, void* data, VCPCompressionSessionRef* session), (allocator1, value1, value2, type, dictionary1, dictionary2, allocator3, callback, data, session))
++SOFT_LINK_FUNCTION_FOR_SOURCE(webrtc, VideoProcessing, VCPCompressionSessionInvalidate, void, (VCPCompressionSessionRef session), (session))
++SOFT_LINK_FUNCTION_FOR_SOURCE(webrtc, VideoProcessing, VPModuleInitialize, void, (), ())
++
++#endif // ENABLE_VCP_ENCODER
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/WebKit/VideoProcessingSoftLink.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/WebKit/VideoProcessingSoftLink.h
+new file mode 100644
+index 00000000000..cf866d8a8db
+--- /dev/null
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/WebKit/VideoProcessingSoftLink.h
+@@ -0,0 +1,140 @@
++/*
++ * Copyright (C) 2018 Apple Inc. All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
++ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
++ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
++ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
++ * THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#pragma once
++
++#ifdef __APPLE__
++#include <Availability.h>
++#include <AvailabilityMacros.h>
++#include <TargetConditionals.h>
++
++// Macro taken from WTF/wtf/Platform.h
++#if defined __has_include && __has_include(<CoreFoundation/CFPriv.h>)
++
++#if (defined(TARGET_IPHONE_SIMULATOR)  && TARGET_IPHONE_SIMULATOR)
++#define ENABLE_VCP_ENCODER 0
++#elif (defined(TARGET_OS_IPHONE)  && TARGET_OS_IPHONE)
++#define ENABLE_VCP_ENCODER 1
++#elif (defined(TARGET_OS_MAC) && TARGET_OS_MAC)
++#define ENABLE_VCP_ENCODER 1
++#endif
++
++#endif
++
++#if !defined(ENABLE_VCP_ENCODER)
++#define ENABLE_VCP_ENCODER 0
++#endif
++
++#if !defined(ALWAYS_INLINE)
++#define ALWAYS_INLINE inline
++#endif
++
++#ifdef __cplusplus
++#define WTF_EXTERN_C_BEGIN extern "C" {
++#define WTF_EXTERN_C_END }
++#else
++#define WTF_EXTERN_C_BEGIN
++#define WTF_EXTERN_C_END
++#endif
++
++// Macros copied from <wtf/cocoa/SoftLinking.h>
++#define SOFT_LINK_FRAMEWORK_FOR_HEADER(functionNamespace, framework) \
++    namespace functionNamespace { \
++    extern void* framework##Library(bool isOptional = false); \
++    bool is##framework##FrameworkAvailable(); \
++    inline bool is##framework##FrameworkAvailable() { \
++        return framework##Library(true) != nullptr; \
++    } \
++    }
++
++#define SOFT_LINK_FUNCTION_FOR_HEADER(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
++    WTF_EXTERN_C_BEGIN \
++    resultType functionName parameterDeclarations; \
++    WTF_EXTERN_C_END \
++    namespace functionNamespace { \
++    extern resultType (*softLink##framework##functionName) parameterDeclarations; \
++    inline resultType softLink_##framework##_##functionName parameterDeclarations \
++    { \
++        return softLink##framework##functionName parameterNames; \
++    } \
++    } \
++    ALWAYS_INLINE resultType functionName parameterDeclarations \
++    {\
++        return functionNamespace::softLink##framework##functionName parameterNames; \
++    }
++
++#define SOFT_LINK_FRAMEWORK_OPTIONAL(framework) \
++    static void* framework##Library() \
++    { \
++        static void* frameworkLibrary = dlopen("/System/Library/Frameworks/" #framework ".framework/" #framework, RTLD_NOW); \
++        return frameworkLibrary; \
++    }
++
++#define SOFT_LINK_POINTER_OPTIONAL(framework, name, type) \
++    static type init##name(); \
++    static type (*get##name)() = init##name; \
++    static type pointer##name; \
++    \
++    static type name##Function() \
++    { \
++        return pointer##name; \
++    } \
++    \
++    static type init##name() \
++    { \
++        void** pointer = static_cast<void**>(dlsym(framework##Library(), #name)); \
++        if (pointer) \
++            pointer##name = (__bridge type)(*pointer); \
++        get##name = name##Function; \
++        return pointer##name; \
++    }
++
++#if ENABLE_VCP_ENCODER
++
++#include <VideoProcessing/VideoProcessing.h>
++
++SOFT_LINK_FRAMEWORK_FOR_HEADER(webrtc, VideoProcessing)
++
++SOFT_LINK_FUNCTION_FOR_HEADER(webrtc, VideoProcessing, VCPCompressionSessionSetProperty, OSStatus, (VCPCompressionSessionRef session, CFStringRef key, CFTypeRef value), (session, key, value))
++#define VCPCompressionSessionSetProperty softLink_VideoProcessing_VCPCompressionSessionSetProperty
++
++SOFT_LINK_FUNCTION_FOR_HEADER(webrtc, VideoProcessing, VCPCompressionSessionGetPixelBufferPool, CVPixelBufferPoolRef, (VCPCompressionSessionRef session), (session))
++#define VCPCompressionSessionGetPixelBufferPool softLink_VideoProcessing_VCPCompressionSessionGetPixelBufferPool
++
++SOFT_LINK_FUNCTION_FOR_HEADER(webrtc, VideoProcessing, VCPCompressionSessionEncodeFrame, OSStatus, (VCPCompressionSessionRef session, CVImageBufferRef buffer, CMTime timestamp, CMTime time, CFDictionaryRef dictionary, void * data, VTEncodeInfoFlags * flags), (session, buffer, timestamp, time, dictionary, data, flags))
++#define VCPCompressionSessionEncodeFrame softLink_VideoProcessing_VCPCompressionSessionEncodeFrame
++
++SOFT_LINK_FUNCTION_FOR_HEADER(webrtc, VideoProcessing, VCPCompressionSessionCreate, OSStatus, (CFAllocatorRef allocator1, int32_t value1 , int32_t value2, CMVideoCodecType type, CFDictionaryRef dictionary1, CFDictionaryRef dictionary2, CFAllocatorRef allocator3, VTCompressionOutputCallback callback, void * data, VCPCompressionSessionRef *session), (allocator1, value1, value2, type, dictionary1, dictionary2, allocator3, callback, data, session))
++#define VCPCompressionSessionCreate softLink_VideoProcessing_VCPCompressionSessionCreate
++
++SOFT_LINK_FUNCTION_FOR_HEADER(webrtc, VideoProcessing, VCPCompressionSessionInvalidate, void, (VCPCompressionSessionRef session), (session))
++#define VCPCompressionSessionInvalidate softLink_VideoProcessing_VCPCompressionSessionInvalidate
++
++SOFT_LINK_FUNCTION_FOR_HEADER(webrtc, VideoProcessing, VPModuleInitialize, void, (), ())
++#define VPModuleInitialize softLink_VideoProcessing_VPModuleInitialize
++
++#endif // ENABLE_VCP_ENCODER
++
++#endif // __APPLE__
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/WebKit/WebKitUtilities.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/WebKit/WebKitUtilities.h
+new file mode 100644
+index 00000000000..ef1456eddd3
+--- /dev/null
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/WebKit/WebKitUtilities.h
+@@ -0,0 +1,54 @@
++/*
++ * Copyright (C) 2018 Apple Inc. All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
++ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
++ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
++ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
++ * THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#pragma once
++
++#include "api/video/video_frame_buffer.h"
++#include "rtc_base/scoped_ref_ptr.h"
++#include "webrtc/media/engine/webrtcvideodecoderfactory.h"
++#include "webrtc/media/engine/webrtcvideoencoderfactory.h"
++
++typedef struct __CVBuffer* CVPixelBufferRef;
++
++namespace webrtc {
++
++class VideoDecoderFactory;
++class VideoEncoderFactory;
++class VideoFrame;
++
++enum class WebKitCodecSupport { H264, H264AndVP8 };
++
++std::unique_ptr<webrtc::VideoEncoderFactory> createWebKitEncoderFactory(WebKitCodecSupport);
++std::unique_ptr<webrtc::VideoDecoderFactory> createWebKitDecoderFactory(WebKitCodecSupport);
++
++void setApplicationStatus(bool isActive);
++
++void setH264HardwareEncoderAllowed(bool);
++bool isH264HardwareEncoderAllowed();
++
++CVPixelBufferRef pixelBufferFromFrame(const VideoFrame&, const std::function<CVPixelBufferRef(size_t, size_t)>&);
++rtc::scoped_refptr<webrtc::VideoFrameBuffer> pixelBufferToFrame(CVPixelBufferRef);
++
++}
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/WebKit/WebKitUtilities.mm b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/WebKit/WebKitUtilities.mm
+new file mode 100644
+index 00000000000..65eefa36f2d
+--- /dev/null
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/WebKit/WebKitUtilities.mm
+@@ -0,0 +1,185 @@
++/*
++ * Copyright (C) 2018 Apple Inc. All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
++ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
++ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
++ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
++ * THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#include "WebKitUtilities.h"
++
++//#include "Common/RTCUIApplicationStatusObserver.h"
++#import "WebRTC/RTCVideoCodecH264.h"
++
++#include "api/video/video_frame.h"
++#include "native/src/objc_frame_buffer.h"
++#include "third_party/libyuv/include/libyuv/convert_from.h"
++#include "webrtc/rtc_base/checks.h"
++#include "Framework/Headers/WebRTC/RTCVideoCodecFactory.h"
++#include "Framework/Headers/WebRTC/RTCVideoFrame.h"
++#include "Framework/Headers/WebRTC/RTCVideoFrameBuffer.h"
++#include "Framework/Native/api/video_decoder_factory.h"
++#include "Framework/Native/api/video_encoder_factory.h"
++/*
++#if !defined(WEBRTC_IOS)
++__attribute__((objc_runtime_name("WK_RTCUIApplicationStatusObserver")))
++@interface RTCUIApplicationStatusObserver : NSObject
++
+++ (instancetype)sharedInstance;
+++ (void)prepareForUse;
++
++- (BOOL)isApplicationActive;
++
++@end
++#endif
++
++@implementation RTCUIApplicationStatusObserver {
++    BOOL _isActive;
++}
++
+++ (instancetype)sharedInstance {
++    static id sharedInstance;
++    static dispatch_once_t onceToken;
++    dispatch_once(&onceToken, ^{
++        sharedInstance = [[self alloc] init];
++    });
++
++    return sharedInstance;
++}
++
+++ (void)prepareForUse {
++    __unused RTCUIApplicationStatusObserver *observer = [self sharedInstance];
++}
++
++- (id)init {
++    _isActive = YES;
++    return self;
++}
++
++- (void)setActive {
++    _isActive = YES;
++}
++
++- (void)setInactive {
++    _isActive = NO;
++}
++
++- (BOOL)isApplicationActive {
++    return _isActive;
++}
++
++@end
++*/
++namespace webrtc {
++
++void setApplicationStatus(bool isActive)
++{
++/*
++    if (isActive)
++        [[RTCUIApplicationStatusObserver sharedInstance] setActive];
++    else
++        [[RTCUIApplicationStatusObserver sharedInstance] setInactive];
++ */
++}
++
++std::unique_ptr<webrtc::VideoEncoderFactory> createWebKitEncoderFactory(WebKitCodecSupport codecSupport)
++{
++#if ENABLE_VCP_ENCODER
++    static std::once_flag onceFlag;
++    std::call_once(onceFlag, [] {
++        webrtc::VPModuleInitialize();
++    });
++#endif
++    return ObjCToNativeVideoEncoderFactory(codecSupport == WebKitCodecSupport::H264AndVP8 ? [[RTCDefaultVideoEncoderFactory alloc] init] : [[RTCVideoEncoderFactoryH264 alloc] init]);
++}
++
++std::unique_ptr<webrtc::VideoDecoderFactory> createWebKitDecoderFactory(WebKitCodecSupport codecSupport)
++{
++    return ObjCToNativeVideoDecoderFactory(codecSupport == WebKitCodecSupport::H264AndVP8 ? [[RTCDefaultVideoDecoderFactory alloc] init] : [[RTCVideoDecoderFactoryH264 alloc] init]);
++}
++
++static bool h264HardwareEncoderAllowed = true;
++void setH264HardwareEncoderAllowed(bool allowed)
++{
++    h264HardwareEncoderAllowed = allowed;
++}
++
++bool isH264HardwareEncoderAllowed()
++{
++    return h264HardwareEncoderAllowed;
++}
++
++rtc::scoped_refptr<webrtc::VideoFrameBuffer> pixelBufferToFrame(CVPixelBufferRef pixelBuffer)
++{
++    RTCCVPixelBuffer *frameBuffer = [[RTCCVPixelBuffer alloc] initWithPixelBuffer:pixelBuffer];
++    return new rtc::RefCountedObject<ObjCFrameBuffer>(frameBuffer);
++}
++
++static bool CopyVideoFrameToPixelBuffer(const rtc::scoped_refptr<webrtc::I420BufferInterface>& frame, CVPixelBufferRef pixel_buffer) {
++    RTC_DCHECK(pixel_buffer);
++    RTC_DCHECK(CVPixelBufferGetPixelFormatType(pixel_buffer) == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange || CVPixelBufferGetPixelFormatType(pixel_buffer) == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange);
++    RTC_DCHECK_EQ(CVPixelBufferGetHeightOfPlane(pixel_buffer, 0), static_cast<size_t>(frame->height()));
++    RTC_DCHECK_EQ(CVPixelBufferGetWidthOfPlane(pixel_buffer, 0), static_cast<size_t>(frame->width()));
++
++    if (CVPixelBufferLockBaseAddress(pixel_buffer, 0) != kCVReturnSuccess)
++        return false;
++
++    uint8_t* dst_y = reinterpret_cast<uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixel_buffer, 0));
++    int dst_stride_y = CVPixelBufferGetBytesPerRowOfPlane(pixel_buffer, 0);
++
++    uint8_t* dst_uv = reinterpret_cast<uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixel_buffer, 1));
++    int dst_stride_uv = CVPixelBufferGetBytesPerRowOfPlane(pixel_buffer, 1);
++
++    int result = libyuv::I420ToNV12(
++        frame->DataY(), frame->StrideY(),
++        frame->DataU(), frame->StrideU(),
++        frame->DataV(), frame->StrideV(),
++        dst_y, dst_stride_y, dst_uv, dst_stride_uv,
++        frame->width(), frame->height());
++
++    CVPixelBufferUnlockBaseAddress(pixel_buffer, 0);
++
++    if (result)
++        return false;
++
++    return true;
++}
++
++
++CVPixelBufferRef pixelBufferFromFrame(const VideoFrame& frame, const std::function<CVPixelBufferRef(size_t, size_t)>& makePixelBuffer)
++{
++    if (frame.video_frame_buffer()->type() != VideoFrameBuffer::Type::kNative) {
++        rtc::scoped_refptr<const I420BufferInterface> buffer = frame.video_frame_buffer()->GetI420();
++
++        auto pixelBuffer = makePixelBuffer(buffer->width(), buffer->height());
++        if (pixelBuffer)
++            CopyVideoFrameToPixelBuffer(frame.video_frame_buffer()->GetI420(), pixelBuffer);
++        return pixelBuffer;
++    }
++
++    auto *frameBuffer = static_cast<ObjCFrameBuffer*>(frame.video_frame_buffer().get())->wrapped_frame_buffer();
++    if (![frameBuffer isKindOfClass:[RTCCVPixelBuffer class]])
++        return nullptr;
++
++    auto *rtcPixelBuffer = (RTCCVPixelBuffer *)frameBuffer;
++    return rtcPixelBuffer.pixelBuffer;
++}
++
++}
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/peerconnection/RTCEncodedImage+Private.mm b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/peerconnection/RTCEncodedImage+Private.mm
+index 6f2d1f46d9c..f9901bd327e 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/peerconnection/RTCEncodedImage+Private.mm
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/peerconnection/RTCEncodedImage+Private.mm
+@@ -56,6 +56,7 @@ - (webrtc::EncodedImage)nativeEncodedImage {
+   encodedImage.rotation_ = webrtc::VideoRotation(self.rotation);
+   encodedImage._completeFrame = self.completeFrame;
+   encodedImage.qp_ = self.qp ? self.qp.intValue : -1;
++  encodedImage.SetSpatialIndex(self.spatialIndex);
+   encodedImage.content_type_ = (self.contentType == RTCVideoContentTypeScreenshare) ?
+       webrtc::VideoContentType::SCREENSHARE :
+       webrtc::VideoContentType::UNSPECIFIED;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/peerconnection/RTCRtpEncodingParameters.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/peerconnection/RTCRtpEncodingParameters.h
+index ba50bde649f..dabff725abb 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/peerconnection/RTCRtpEncodingParameters.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/peerconnection/RTCRtpEncodingParameters.h
+@@ -15,6 +15,7 @@
+ NS_ASSUME_NONNULL_BEGIN
+ 
+ RTC_OBJC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCRtpEncodingParameters")))
+ @interface RTCRtpEncodingParameters : NSObject
+ 
+ /** Controls whether the encoding is currently transmitted. */
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/peerconnection/RTCVideoEncoderSettings+Private.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/peerconnection/RTCVideoEncoderSettings+Private.h
+index 5b062455bc0..72af732b23b 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/peerconnection/RTCVideoEncoderSettings+Private.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/peerconnection/RTCVideoEncoderSettings+Private.h
+@@ -22,4 +22,11 @@ NS_ASSUME_NONNULL_BEGIN
+ 
+ @end
+ 
++@interface RTCVideoBitrateAllocation (Private)
++
++- (instancetype)initWithNativeVideoBitrateAllocation:(const webrtc::VideoBitrateAllocation *__nullable)videoBitrateAllocation;
++- (webrtc::VideoBitrateAllocation)nativeVideoBitrateAllocation;
++
++@end
++
+ NS_ASSUME_NONNULL_END
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/peerconnection/RTCVideoEncoderSettings+Private.mm b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/peerconnection/RTCVideoEncoderSettings+Private.mm
+index 6fb81dbb8af..82b5ba7bc0f 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/peerconnection/RTCVideoEncoderSettings+Private.mm
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/peerconnection/RTCVideoEncoderSettings+Private.mm
+@@ -12,6 +12,23 @@
+ 
+ #import "helpers/NSString+StdString.h"
+ 
++@implementation RTCVideoEncoderSettings {
++  webrtc::VideoCodec _nativeVideoCodec;
++}
++
++@synthesize name = _name;
++@synthesize width = _width;
++@synthesize height = _height;
++@synthesize startBitrate = _startBitrate;
++@synthesize maxBitrate = _maxBitrate;
++@synthesize minBitrate = _minBitrate;
++@synthesize targetBitrate = _targetBitrate;
++@synthesize maxFramerate = _maxFramerate;
++@synthesize qpMax = _qpMax;
++@synthesize mode = _mode;
++
++@end
++
+ @implementation RTCVideoEncoderSettings (Private)
+ 
+ - (instancetype)initWithNativeVideoCodec:(const webrtc::VideoCodec *)videoCodec {
+@@ -20,6 +37,7 @@ - (instancetype)initWithNativeVideoCodec:(const webrtc::VideoCodec *)videoCodec
+       const char *codecName = CodecTypeToPayloadString(videoCodec->codecType);
+       self.name = [NSString stringWithUTF8String:codecName];
+ 
++      _nativeVideoCodec = *videoCodec;
+       self.width = videoCodec->width;
+       self.height = videoCodec->height;
+       self.startBitrate = videoCodec->startBitrate;
+@@ -36,18 +54,28 @@ - (instancetype)initWithNativeVideoCodec:(const webrtc::VideoCodec *)videoCodec
+ }
+ 
+ - (webrtc::VideoCodec)nativeVideoCodec {
+-  webrtc::VideoCodec videoCodec;
+-  videoCodec.width = self.width;
+-  videoCodec.height = self.height;
+-  videoCodec.startBitrate = self.startBitrate;
+-  videoCodec.maxBitrate = self.maxBitrate;
+-  videoCodec.minBitrate = self.minBitrate;
+-  videoCodec.targetBitrate = self.targetBitrate;
+-  videoCodec.maxBitrate = self.maxBitrate;
+-  videoCodec.qpMax = self.qpMax;
+-  videoCodec.mode = (webrtc::VideoCodecMode)self.mode;
+-
+-  return videoCodec;
++  return _nativeVideoCodec;
++}
++
++@end
++
++@implementation RTCVideoBitrateAllocation {
++  webrtc::VideoBitrateAllocation _nativeVideoBitrateAllocation;
++}
++
++@end
++
++@implementation RTCVideoBitrateAllocation (Private)
++
++- (instancetype)initWithNativeVideoBitrateAllocation:(const webrtc::VideoBitrateAllocation *)videoBitrateAllocation {
++  if (self = [super init]) {
++    _nativeVideoBitrateAllocation = *videoBitrateAllocation;
++  }
++  return self;
++}
++
++- (webrtc::VideoBitrateAllocation)nativeVideoBitrateAllocation {
++  return _nativeVideoBitrateAllocation;
+ }
+ 
+ @end
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/video_codec/RTCVideoCodecConstants.mm b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/video_codec/RTCVideoCodecConstants.mm
+index acbf126170c..1447d3b27e1 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/video_codec/RTCVideoCodecConstants.mm
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/video_codec/RTCVideoCodecConstants.mm
+@@ -13,5 +13,5 @@
+ 
+ #include "media/base/mediaconstants.h"
+ 
+-NSString *const kRTCVideoCodecVp8Name = @(cricket::kVp8CodecName);
+-NSString *const kRTCVideoCodecVp9Name = @(cricket::kVp9CodecName);
++NSString *const kRTCVideoCodecVp8Name = @"VP8";
++NSString *const kRTCVideoCodecVp9Name = @"VP9";
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/video_codec/RTCVideoEncoderVP8.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/video_codec/RTCVideoEncoderVP8.h
+index 8d87a898931..08d18504222 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/video_codec/RTCVideoEncoderVP8.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/video_codec/RTCVideoEncoderVP8.h
+@@ -14,6 +14,7 @@
+ #import "RTCVideoEncoder.h"
+ 
+ RTC_OBJC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoEncoderVP8")))
+ @interface RTCVideoEncoderVP8 : NSObject
+ 
+ /* This returns a VP8 encoder that can be returned from a RTCVideoEncoderFactory injected into
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/video_codec/RTCWrappedNativeVideoEncoder.mm b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/video_codec/RTCWrappedNativeVideoEncoder.mm
+index 9afd54f55f5..b9634779f1f 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/video_codec/RTCWrappedNativeVideoEncoder.mm
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/video_codec/RTCWrappedNativeVideoEncoder.mm
+@@ -58,6 +58,11 @@ - (int)setBitrate:(uint32_t)bitrateKbit framerate:(uint32_t)framerate {
+   return 0;
+ }
+ 
++- (int)setRateAllocation:(nonnull RTCVideoBitrateAllocation *)allocation framerate:(uint32_t)framerate {
++  RTC_NOTREACHED();
++  return 0;
++}
++
+ - (NSString *)implementationName {
+   RTC_NOTREACHED();
+   return nil;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/video_frame_buffer/RTCNativeI420Buffer.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/video_frame_buffer/RTCNativeI420Buffer.h
+index 9a904f5396a..dc903bc4bca 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/video_frame_buffer/RTCNativeI420Buffer.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/video_frame_buffer/RTCNativeI420Buffer.h
+@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
+ 
+ /** RTCI420Buffer implements the RTCI420Buffer protocol */
+ RTC_OBJC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCI420Buffer")))
+ @interface RTCI420Buffer : NSObject<RTCI420Buffer>
+ @end
+ 
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/video_frame_buffer/RTCNativeMutableI420Buffer.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/video_frame_buffer/RTCNativeMutableI420Buffer.h
+index 6cd5110460b..7cfa950abb6 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/video_frame_buffer/RTCNativeMutableI420Buffer.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/api/video_frame_buffer/RTCNativeMutableI420Buffer.h
+@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
+ 
+ /** Mutable version of RTCI420Buffer */
+ RTC_OBJC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCMutableI420Buffer")))
+ @interface RTCMutableI420Buffer : RTCI420Buffer<RTCMutableI420Buffer>
+ @end
+ 
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCCodecSpecificInfo.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCCodecSpecificInfo.h
+index e2ae4cafa11..9dc44c12af8 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCCodecSpecificInfo.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCCodecSpecificInfo.h
+@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
+  *  Corresponds to webrtc::CodecSpecificInfo.
+  */
+ RTC_OBJC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCCodecSpecificInfo")))
+ @protocol RTCCodecSpecificInfo <NSObject>
+ @end
+ 
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCEncodedImage.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCEncodedImage.h
+index 670c7276ff7..7994ce64a1f 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCEncodedImage.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCEncodedImage.h
+@@ -31,6 +31,7 @@ typedef NS_ENUM(NSUInteger, RTCVideoContentType) {
+ 
+ /** Represents an encoded frame. Corresponds to webrtc::EncodedImage. */
+ RTC_OBJC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCEncodedImage")))
+ @interface RTCEncodedImage : NSObject
+ 
+ @property(nonatomic, strong) NSData *buffer;
+@@ -47,6 +48,7 @@ RTC_OBJC_EXPORT
+ @property(nonatomic, assign) BOOL completeFrame;
+ @property(nonatomic, strong) NSNumber *qp;
+ @property(nonatomic, assign) RTCVideoContentType contentType;
++@property(nonatomic, assign) int spatialIndex;
+ 
+ @end
+ 
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCEncodedImage.m b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCEncodedImage.m
+index 024a57c541b..85cd5e298e4 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCEncodedImage.m
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCEncodedImage.m
+@@ -26,5 +26,6 @@ @implementation RTCEncodedImage
+ @synthesize completeFrame = _completeFrame;
+ @synthesize qp = _qp;
+ @synthesize contentType = _contentType;
++@synthesize spatialIndex = _spatialIndex;
+ 
+ @end
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCI420Buffer.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCI420Buffer.h
+index a6c7e41bcba..cfa14f8af23 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCI420Buffer.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCI420Buffer.h
+@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
+ 
+ /** Protocol for RTCYUVPlanarBuffers containing I420 data */
+ RTC_OBJC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCI420Buffer")))
+ @protocol RTCI420Buffer <RTCYUVPlanarBuffer>
+ @end
+ 
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCRtpFragmentationHeader.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCRtpFragmentationHeader.h
+index 2e26b08b8af..fbbc68a8ef6 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCRtpFragmentationHeader.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCRtpFragmentationHeader.h
+@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
+ 
+ /** Information for header. Corresponds to webrtc::RTPFragmentationHeader. */
+ RTC_OBJC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCRtpFragmentationHeader")))
+ @interface RTCRtpFragmentationHeader : NSObject
+ 
+ @property(nonatomic, strong) NSArray<NSNumber *> *fragmentationOffset;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCRtpFragmentationHeader.m b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCRtpFragmentationHeader.m
+index 8049abc411e..6cf21ddc2a1 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCRtpFragmentationHeader.m
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCRtpFragmentationHeader.m
+@@ -17,4 +17,5 @@ @implementation RTCRtpFragmentationHeader
+ @synthesize fragmentationTimeDiff = _fragmentationTimeDiff;
+ @synthesize fragmentationPlType = _fragmentationPlType;
+ 
+-@end
+\ No newline at end of file
++@end
++
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoCodecInfo.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoCodecInfo.h
+index 2162caaa21f..4e643d94347 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoCodecInfo.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoCodecInfo.h
+@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
+ 
+ /** Holds information to identify a codec. Corresponds to webrtc::SdpVideoFormat. */
+ RTC_OBJC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoCodecInfo")))
+ @interface RTCVideoCodecInfo : NSObject <NSCoding>
+ 
+ - (instancetype)init NS_UNAVAILABLE;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoDecoder.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoDecoder.h
+index 18c6f6b0006..534420d3955 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoDecoder.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoDecoder.h
+@@ -23,6 +23,7 @@ typedef void (^RTCVideoDecoderCallback)(RTCVideoFrame *frame);
+ 
+ /** Protocol for decoder implementations. */
+ RTC_OBJC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoDecoder")))
+ @protocol RTCVideoDecoder <NSObject>
+ 
+ - (void)setCallback:(RTCVideoDecoderCallback)callback;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoDecoderFactory.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoDecoderFactory.h
+index 3e24153b82c..cb95fa3f134 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoDecoderFactory.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoDecoderFactory.h
+@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
+ 
+ /** RTCVideoDecoderFactory is an Objective-C version of webrtc::VideoDecoderFactory. */
+ RTC_OBJC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoDecoderFactory")))
+ @protocol RTCVideoDecoderFactory <NSObject>
+ 
+ - (nullable id<RTCVideoDecoder>)createDecoder:(RTCVideoCodecInfo *)info;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoEncoder.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoEncoder.h
+index c5257674d83..5291bb1342b 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoEncoder.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoEncoder.h
+@@ -19,7 +19,11 @@
+ #import "RTCVideoFrame.h"
+ 
+ NS_ASSUME_NONNULL_BEGIN
+-
++/*
++namespace webrtc {
++class VideoBitrateAllocation;
++};
++*/
+ /** Callback block for encoder. */
+ typedef BOOL (^RTCVideoEncoderCallback)(RTCEncodedImage *frame,
+                                         id<RTCCodecSpecificInfo> info,
+@@ -27,6 +31,7 @@ typedef BOOL (^RTCVideoEncoderCallback)(RTCEncodedImage *frame,
+ 
+ /** Protocol for encoder implementations. */
+ RTC_OBJC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoEncoder")))
+ @protocol RTCVideoEncoder <NSObject>
+ 
+ - (void)setCallback:(RTCVideoEncoderCallback)callback;
+@@ -37,6 +42,7 @@ RTC_OBJC_EXPORT
+     codecSpecificInfo:(nullable id<RTCCodecSpecificInfo>)info
+            frameTypes:(NSArray<NSNumber *> *)frameTypes;
+ - (int)setBitrate:(uint32_t)bitrateKbit framerate:(uint32_t)framerate;
++- (int)setRateAllocation: (RTCVideoBitrateAllocation *)allocation framerate:(uint32_t)framerate;
+ - (NSString *)implementationName;
+ 
+ /** Returns QP scaling settings for encoder. The quality scaler adjusts the resolution in order to
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoEncoderFactory.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoEncoderFactory.h
+index 20c603d6fe6..cbe9ea492ae 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoEncoderFactory.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoEncoderFactory.h
+@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
+ 
+ /** RTCVideoEncoderFactory is an Objective-C version of webrtc::VideoEncoderFactory. */
+ RTC_OBJC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoEncoderFactory")))
+ @protocol RTCVideoEncoderFactory <NSObject>
+ 
+ - (nullable id<RTCVideoEncoder>)createEncoder:(RTCVideoCodecInfo *)info;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoEncoderQpThresholds.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoEncoderQpThresholds.h
+index 2b48f45ce0a..68cfd66df47 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoEncoderQpThresholds.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoEncoderQpThresholds.h
+@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
+ 
+ /** QP thresholds for encoder. Corresponds to webrtc::VideoEncoder::QpThresholds. */
+ RTC_OBJC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoEncoderQpThresholds")))
+ @interface RTCVideoEncoderQpThresholds : NSObject
+ 
+ - (instancetype)initWithThresholdsLow:(NSInteger)low high:(NSInteger)high;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoEncoderSettings.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoEncoderSettings.h
+index 69e04cac70f..ae3bf5fb5f1 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoEncoderSettings.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoEncoderSettings.h
+@@ -21,6 +21,7 @@ typedef NS_ENUM(NSUInteger, RTCVideoCodecMode) {
+ 
+ /** Settings for encoder. Corresponds to webrtc::VideoCodec. */
+ RTC_OBJC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoEncoderSettings")))
+ @interface RTCVideoEncoderSettings : NSObject
+ 
+ @property(nonatomic, strong) NSString *name;
+@@ -40,4 +41,9 @@ RTC_OBJC_EXPORT
+ 
+ @end
+ 
++RTC_OBJC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoBitrateAllocation")))
++@interface RTCVideoBitrateAllocation : NSObject
++@end
++
+ NS_ASSUME_NONNULL_END
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoFrame.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoFrame.h
+index 9aca7433f34..bde09c50c9d 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoFrame.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoFrame.h
+@@ -26,6 +26,7 @@ typedef NS_ENUM(NSInteger, RTCVideoRotation) {
+ 
+ // RTCVideoFrame is an ObjectiveC version of webrtc::VideoFrame.
+ RTC_OBJC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoFrame")))
+ @interface RTCVideoFrame : NSObject
+ 
+ /** Width without rotation applied. */
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoFrameBuffer.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoFrameBuffer.h
+index bb9e6fba631..186ad0889bf 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoFrameBuffer.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/base/RTCVideoFrameBuffer.h
+@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
+ 
+ // RTCVideoFrameBuffer is an ObjectiveC version of webrtc::VideoFrameBuffer.
+ RTC_OBJC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoFrameBuffer")))
+ @protocol RTCVideoFrameBuffer <NSObject>
+ 
+ @property(nonatomic, readonly) int width;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCCodecSpecificInfoH264.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCCodecSpecificInfoH264.h
+index ece9570a13b..e947dc6e623 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCCodecSpecificInfoH264.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCCodecSpecificInfoH264.h
+@@ -10,7 +10,7 @@
+ 
+ #import <Foundation/Foundation.h>
+ 
+-#import "RTCCodecSpecificInfo.h"
++#import "base/RTCCodecSpecificInfo.h"
+ #import "RTCMacros.h"
+ 
+ /** Class for H264 specific config. */
+@@ -20,6 +20,7 @@ typedef NS_ENUM(NSUInteger, RTCH264PacketizationMode) {
+ };
+ 
+ RTC_OBJC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCCodecSpecificInfoH264")))
+ @interface RTCCodecSpecificInfoH264 : NSObject <RTCCodecSpecificInfo>
+ 
+ @property(nonatomic, assign) RTCH264PacketizationMode packetizationMode;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCCodecSpecificInfoH264.mm b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCCodecSpecificInfoH264.mm
+index 57f2411e3bb..63e8bd7f42a 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCCodecSpecificInfoH264.mm
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCCodecSpecificInfoH264.mm
+@@ -20,6 +20,7 @@ @synthesize packetizationMode = _packetizationMode;
+ - (webrtc::CodecSpecificInfo)nativeCodecSpecificInfo {
+   webrtc::CodecSpecificInfo codecSpecificInfo;
+   codecSpecificInfo.codecType = webrtc::kVideoCodecH264;
++  codecSpecificInfo.codec_name = [kRTCVideoCodecH264Name cStringUsingEncoding:NSUTF8StringEncoding];
+   codecSpecificInfo.codecSpecific.H264.packetization_mode =
+       (webrtc::H264PacketizationMode)_packetizationMode;
+ 
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoDecoderFactory.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoDecoderFactory.h
+index 7ca9463a593..d11460300d5 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoDecoderFactory.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoDecoderFactory.h
+@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
+  *  codecs, create custom implementations of RTCVideoEncoderFactory and RTCVideoDecoderFactory.
+  */
+ RTC_OBJC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCDefaultVideoDecoderFactory")))
+ @interface RTCDefaultVideoDecoderFactory : NSObject <RTCVideoDecoderFactory>
+ @end
+ 
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoDecoderFactory.m b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoDecoderFactory.m
+index bdb18517caf..c7d08caa9c9 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoDecoderFactory.m
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoDecoderFactory.m
+@@ -15,7 +15,7 @@
+ #import "api/video_codec/RTCVideoCodecConstants.h"
+ #import "api/video_codec/RTCVideoDecoderVP8.h"
+ #import "base/RTCVideoCodecInfo.h"
+-#if defined(RTC_ENABLE_VP9)
++#if !defined(RTC_DISABLE_VP9)
+ #import "api/video_codec/RTCVideoDecoderVP9.h"
+ #endif
+ 
+@@ -26,7 +26,7 @@ @implementation RTCDefaultVideoDecoderFactory
+     return [[RTCVideoDecoderH264 alloc] init];
+   } else if ([info.name isEqualToString:kRTCVideoCodecVp8Name]) {
+     return [RTCVideoDecoderVP8 vp8Decoder];
+-#if defined(RTC_ENABLE_VP9)
++#if !defined(RTC_DISABLE_VP9)
+   } else if ([info.name isEqualToString:kRTCVideoCodecVp9Name]) {
+     return [RTCVideoDecoderVP9 vp9Decoder];
+ #endif
+@@ -39,7 +39,7 @@ @implementation RTCDefaultVideoDecoderFactory
+   return @[
+     [[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecH264Name],
+     [[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecVp8Name],
+-#if defined(RTC_ENABLE_VP9)
++#if !defined(RTC_DISABLE_VP9)
+     [[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecVp9Name],
+ #endif
+   ];
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoEncoderFactory.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoEncoderFactory.h
+index c45e54362b2..9323256cead 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoEncoderFactory.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoEncoderFactory.h
+@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
+  *  codecs, create custom implementations of RTCVideoEncoderFactory and RTCVideoDecoderFactory.
+  */
+ RTC_OBJC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCDefaultVideoEncoderFactory")))
+ @interface RTCDefaultVideoEncoderFactory : NSObject <RTCVideoEncoderFactory>
+ 
+ @property(nonatomic, retain) RTCVideoCodecInfo *preferredCodec;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoEncoderFactory.m b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoEncoderFactory.m
+index b72296b64f3..b01c0746792 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoEncoderFactory.m
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCDefaultVideoEncoderFactory.m
+@@ -15,7 +15,7 @@
+ #import "api/video_codec/RTCVideoCodecConstants.h"
+ #import "api/video_codec/RTCVideoEncoderVP8.h"
+ #import "base/RTCVideoCodecInfo.h"
+-#if defined(RTC_ENABLE_VP9)
++#if !defined(RTC_DISABLE_VP9)
+ #import "api/video_codec/RTCVideoEncoderVP9.h"
+ #endif
+ 
+@@ -44,7 +44,7 @@ @implementation RTCDefaultVideoEncoderFactory
+ 
+   RTCVideoCodecInfo *vp8Info = [[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecVp8Name];
+ 
+-#if defined(RTC_ENABLE_VP9)
++#if !defined(RTC_DISABLE_VP9)
+   RTCVideoCodecInfo *vp9Info = [[RTCVideoCodecInfo alloc] initWithName:kRTCVideoCodecVp9Name];
+ #endif
+ 
+@@ -52,7 +52,7 @@ @implementation RTCDefaultVideoEncoderFactory
+     constrainedHighInfo,
+     constrainedBaselineInfo,
+     vp8Info,
+-#if defined(RTC_ENABLE_VP9)
++#if !defined(RTC_DISABLE_VP9)
+     vp9Info,
+ #endif
+   ];
+@@ -63,7 +63,7 @@ @implementation RTCDefaultVideoEncoderFactory
+     return [[RTCVideoEncoderH264 alloc] initWithCodecInfo:info];
+   } else if ([info.name isEqualToString:kRTCVideoCodecVp8Name]) {
+     return [RTCVideoEncoderVP8 vp8Encoder];
+-#if defined(RTC_ENABLE_VP9)
++#if !defined(RTC_DISABLE_VP9)
+   } else if ([info.name isEqualToString:kRTCVideoCodecVp9Name]) {
+     return [RTCVideoEncoderVP9 vp9Encoder];
+ #endif
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCH264ProfileLevelId.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCH264ProfileLevelId.h
+index 56b353215a2..d022297674e 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCH264ProfileLevelId.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCH264ProfileLevelId.h
+@@ -48,6 +48,7 @@ typedef NS_ENUM(NSUInteger, RTCH264Level) {
+ };
+ 
+ RTC_OBJC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCH264ProfileLevelId")))
+ @interface RTCH264ProfileLevelId : NSObject
+ 
+ @property(nonatomic, readonly) RTCH264Profile profile;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCH264ProfileLevelId.mm b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCH264ProfileLevelId.mm
+index 359656cb97b..3d5c8337246 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCH264ProfileLevelId.mm
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCH264ProfileLevelId.mm
+@@ -19,23 +19,35 @@
+ #include "media/base/h264_profile_level_id.h"
+ #include "media/base/mediaconstants.h"
+ 
++#if !defined(WEBRTC_WEBKIT_BUILD)
+ namespace {
+ 
+ NSString *MaxSupportedProfileLevelConstrainedHigh();
+ NSString *MaxSupportedProfileLevelConstrainedBaseline();
+ 
+ }  // namespace
++#endif
+ 
+-NSString *const kRTCVideoCodecH264Name = @(cricket::kH264CodecName);
++NSString *const kRTCVideoCodecH264Name = @"H264";
+ NSString *const kRTCLevel31ConstrainedHigh = @"640c1f";
+ NSString *const kRTCLevel31ConstrainedBaseline = @"42e01f";
++
++#if defined(WEBRTC_WEBKIT_BUILD)
++NSString *const kRTCMaxSupportedH264ProfileLevelConstrainedHigh =
++    @"640c1f";
++NSString *const kRTCMaxSupportedH264ProfileLevelConstrainedBaseline =
++    @"42e01f";
++#else
+ NSString *const kRTCMaxSupportedH264ProfileLevelConstrainedHigh =
+     MaxSupportedProfileLevelConstrainedHigh();
+ NSString *const kRTCMaxSupportedH264ProfileLevelConstrainedBaseline =
+     MaxSupportedProfileLevelConstrainedBaseline();
++#endif
+ 
+ namespace {
+ 
++#if !defined(WEBRTC_WEBKIT_BUILD)
++
+ #if defined(WEBRTC_IOS)
+ 
+ using namespace webrtc::H264;
+@@ -73,6 +85,8 @@ NSString *MaxSupportedProfileLevelConstrainedHigh() {
+   return kRTCLevel31ConstrainedHigh;
+ }
+ 
++#endif
++
+ }  // namespace
+ 
+ @interface RTCH264ProfileLevelId ()
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderFactoryH264.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderFactoryH264.h
+index 4fcff1dff79..fdabd807480 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderFactoryH264.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderFactoryH264.h
+@@ -14,5 +14,6 @@
+ #import "RTCVideoDecoderFactory.h"
+ 
+ RTC_OBJC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoDecoderFactoryH264")))
+ @interface RTCVideoDecoderFactoryH264 : NSObject <RTCVideoDecoderFactory>
+ @end
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH264.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH264.h
+index b860276206c..b10d1e6a099 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH264.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH264.h
+@@ -14,5 +14,6 @@
+ #import "RTCVideoDecoder.h"
+ 
+ RTC_OBJC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoDecoderH264")))
+ @interface RTCVideoDecoderH264 : NSObject <RTCVideoDecoder>
+ @end
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH264.mm b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH264.mm
+index 3bfb918bf61..1c18fab17df 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH264.mm
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH264.mm
+@@ -19,10 +19,6 @@
+ #import "helpers.h"
+ #import "helpers/scoped_cftyperef.h"
+ 
+-#if defined(WEBRTC_IOS)
+-#import "helpers/UIDevice+RTCDevice.h"
+-#endif
+-
+ #include "modules/video_coding/include/video_error_codes.h"
+ #include "rtc_base/checks.h"
+ #include "rtc_base/logging.h"
+@@ -251,9 +247,7 @@ - (void)configureDecompressionSession {
+ - (void)destroyDecompressionSession {
+   if (_decompressionSession) {
+ #if defined(WEBRTC_IOS)
+-    if ([UIDevice isIOS11OrLater]) {
+-      VTDecompressionSessionWaitForAsynchronousFrames(_decompressionSession);
+-    }
++    VTDecompressionSessionWaitForAsynchronousFrames(_decompressionSession);
+ #endif
+     VTDecompressionSessionInvalidate(_decompressionSession);
+     CFRelease(_decompressionSession);
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderFactoryH264.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderFactoryH264.h
+index c64405e4dac..5f6f78dfa9a 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderFactoryH264.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderFactoryH264.h
+@@ -14,5 +14,6 @@
+ #import "RTCVideoEncoderFactory.h"
+ 
+ RTC_OBJC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoEncoderFactoryH264")))
+ @interface RTCVideoEncoderFactoryH264 : NSObject <RTCVideoEncoderFactory>
+ @end
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.h
+index a9c05580a41..7714b25eaa4 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.h
+@@ -15,6 +15,7 @@
+ #import "RTCVideoEncoder.h"
+ 
+ RTC_OBJC_EXPORT
++__attribute__((objc_runtime_name("WK_RTCVideoEncoderH264")))
+ @interface RTCVideoEncoderH264 : NSObject <RTCVideoEncoder>
+ 
+ - (instancetype)initWithCodecInfo:(RTCVideoCodecInfo *)codecInfo;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm
+index f6690b6d861..a14357fb80c 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm
+@@ -9,39 +9,68 @@
+  *
+  */
+ 
+-#import "RTCVideoEncoderH264.h"
++#import "WebRTC/RTCVideoCodecH264.h"
+ 
+ #import <VideoToolbox/VideoToolbox.h>
+ #include <vector>
+ 
+-#if defined(WEBRTC_IOS)
+-#import "helpers/UIDevice+RTCDevice.h"
+-#endif
+-#import "RTCCodecSpecificInfoH264.h"
+-#import "RTCH264ProfileLevelId.h"
+-#import "api/peerconnection/RTCRtpFragmentationHeader+Private.h"
+-#import "api/peerconnection/RTCVideoCodecInfo+Private.h"
+-#import "base/RTCCodecSpecificInfo.h"
+-#import "base/RTCI420Buffer.h"
+-#import "base/RTCVideoEncoder.h"
+-#import "base/RTCVideoFrame.h"
+-#import "base/RTCVideoFrameBuffer.h"
+-#import "components/video_frame_buffer/RTCCVPixelBuffer.h"
+-#import "helpers.h"
+-
++#import "PeerConnection/RTCVideoCodec+Private.h"
++#import "WebRTC/RTCVideoCodec.h"
++#import "WebRTC/RTCVideoFrame.h"
++#import "WebRTC/RTCVideoFrameBuffer.h"
+ #include "common_video/h264/h264_bitstream_parser.h"
+ #include "common_video/h264/profile_level_id.h"
+ #include "common_video/include/bitrate_adjuster.h"
++#import "helpers.h"
+ #include "modules/include/module_common_types.h"
+ #include "modules/video_coding/include/video_error_codes.h"
+ #include "rtc_base/buffer.h"
+ #include "rtc_base/logging.h"
+ #include "rtc_base/timeutils.h"
+-#include "sdk/objc/components/video_codec/nalu_rewriter.h"
++#include "sdk/objc/Framework/Classes/VideoToolbox/nalu_rewriter.h"
++#include "system_wrappers/include/clock.h"
+ #include "third_party/libyuv/include/libyuv/convert_from.h"
+ 
+-@interface RTCVideoEncoderH264 ()
++#include "sdk/WebKit/EncoderUtilities.h"
++#include "sdk/WebKit/WebKitUtilities.h"
++
++#import <dlfcn.h>
++#import <objc/runtime.h>
++
++SOFT_LINK_FRAMEWORK_OPTIONAL(VideoToolBox)
++SOFT_LINK_POINTER_OPTIONAL(VideoToolBox, kVTVideoEncoderSpecification_Usage, NSString *)
++
++#if !ENABLE_VCP_ENCODER && !defined(WEBRTC_IOS)
++static inline bool isStandardFrameSize(int32_t width, int32_t height)
++{
++    // FIXME: Envision relaxing this rule, something like width and height dividable by 4 or 8 should be good enough.
++    if (width == 1280)
++        return height == 720;
++    if (width == 720)
++        return height == 1280;
++    if (width == 960)
++        return height == 540;
++    if (width == 540)
++        return height == 960;
++    if (width == 640)
++        return height == 480;
++    if (width == 480)
++        return height == 640;
++    if (width == 288)
++        return height == 352;
++    if (width == 352)
++        return height == 288;
++    if (width == 320)
++        return height == 240;
++    if (width == 240)
++        return height == 320;
++    return false;
++}
++#endif
+ 
++__attribute__((objc_runtime_name("WK_RTCSingleVideoEncoderH264")))
++@interface RTCSingleVideoEncoderH264 : NSObject <RTCVideoEncoder>
++- (instancetype)initWithCodecInfo:(RTCVideoCodecInfo *)codecInfo simulcastIndex: (int)index;
+ - (void)frameWasEncoded:(OSStatus)status
+                   flags:(VTEncodeInfoFlags)infoFlags
+            sampleBuffer:(CMSampleBufferRef)sampleBuffer
+@@ -51,7 +80,6 @@ - (void)frameWasEncoded:(OSStatus)status
+            renderTimeMs:(int64_t)renderTimeMs
+               timestamp:(uint32_t)timestamp
+                rotation:(RTCVideoRotation)rotation;
+-
+ @end
+ 
+ namespace {  // anonymous namespace
+@@ -70,7 +98,7 @@ const OSType kNV12PixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
+ // Struct that we pass to the encoder per frame to encode. We receive it again
+ // in the encoder callback.
+ struct RTCFrameEncodeParams {
+-  RTCFrameEncodeParams(RTCVideoEncoderH264 *e,
++  RTCFrameEncodeParams(RTCSingleVideoEncoderH264 *e,
+                        RTCCodecSpecificInfoH264 *csi,
+                        int32_t w,
+                        int32_t h,
+@@ -85,7 +113,7 @@ struct RTCFrameEncodeParams {
+     }
+   }
+ 
+-  RTCVideoEncoderH264 *encoder;
++  RTCSingleVideoEncoderH264 *encoder;
+   RTCCodecSpecificInfoH264 *codecSpecificInfo;
+   int32_t width;
+   int32_t height;
+@@ -173,8 +201,8 @@ void compressionOutputCallback(void *encoder,
+                                 rotation:encodeParams->rotation];
+ }
+ 
+-// Extract VideoToolbox profile out of the webrtc::SdpVideoFormat. If there is
+-// no specific VideoToolbox profile for the specified level, AutoLevel will be
++// Extract VideoToolbox profile out of the cricket::VideoCodec. If there is no
++// specific VideoToolbox profile for the specified level, AutoLevel will be
+ // returned. The user must initialize the encoder with a resolution and
+ // framerate conforming to the selected H264 level regardless.
+ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
+@@ -280,23 +308,26 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
+ }
+ }  // namespace
+ 
+-@implementation RTCVideoEncoderH264 {
++@implementation RTCSingleVideoEncoderH264 {
+   RTCVideoCodecInfo *_codecInfo;
+   std::unique_ptr<webrtc::BitrateAdjuster> _bitrateAdjuster;
+   uint32_t _targetBitrateBps;
+-  uint32_t _encoderFrameRate;
+   uint32_t _encoderBitrateBps;
+   RTCH264PacketizationMode _packetizationMode;
+   CFStringRef _profile;
+   RTCVideoEncoderCallback _callback;
+   int32_t _width;
+   int32_t _height;
+-  VTCompressionSessionRef _compressionSession;
++  CompressionSessionRef _compressionSession;
+   CVPixelBufferPoolRef _pixelBufferPool;
+   RTCVideoCodecMode _mode;
+ 
+   webrtc::H264BitstreamParser _h264BitstreamParser;
+   std::vector<uint8_t> _frameScaleBuffer;
++
++  webrtc::VideoCodec _nativeVideoCodec;
++  int _simulcastIndex;
++  bool _disableEncoding;
+ }
+ 
+ // .5 is set as a mininum to prevent overcompensating for large temporary
+@@ -306,12 +337,13 @@ @implementation RTCVideoEncoderH264 {
+ // drastically reduced bitrate, so we want to avoid that. In steady state
+ // conditions, 0.95 seems to give us better overall bitrate over long periods
+ // of time.
+-- (instancetype)initWithCodecInfo:(RTCVideoCodecInfo *)codecInfo {
++- (instancetype)initWithCodecInfo:(RTCVideoCodecInfo *)codecInfo simulcastIndex:(int)index {
+   if (self = [super init]) {
+     _codecInfo = codecInfo;
+     _bitrateAdjuster.reset(new webrtc::BitrateAdjuster(.5, .95));
+     _packetizationMode = RTCH264PacketizationModeNonInterleaved;
+     _profile = ExtractProfile([codecInfo nativeSdpVideoFormat]);
++    _simulcastIndex = index;
+     RTC_LOG(LS_INFO) << "Using profile " << CFStringToString(_profile);
+     RTC_CHECK([codecInfo.name isEqualToString:kRTCVideoCodecH264Name]);
+   }
+@@ -330,11 +362,13 @@ - (NSInteger)startEncodeWithSettings:(RTCVideoEncoderSettings *)settings
+   _width = settings.width;
+   _height = settings.height;
+   _mode = settings.mode;
++  _nativeVideoCodec = settings.nativeVideoCodec;
++
++  RTC_DCHECK(_nativeVideoCodec.numberOfSimulcastStreams != 1);
+ 
+   // We can only set average bitrate on the HW encoder.
+-  _targetBitrateBps = settings.startBitrate * 1000;  // startBitrate is in kbps.
++  _targetBitrateBps = settings.startBitrate;
+   _bitrateAdjuster->SetTargetBitrateBps(_targetBitrateBps);
+-  _encoderFrameRate = settings.maxFramerate;
+ 
+   // TODO(tkchin): Try setting payload size via
+   // kVTCompressionPropertyKey_MaxH264SliceBytes.
+@@ -357,6 +391,10 @@ - (NSInteger)encode:(RTCVideoFrame *)frame
+     isKeyframeRequired = YES;
+   }
+ 
++  if (_disableEncoding) {
++    return WEBRTC_VIDEO_CODEC_ERROR;
++  }
++
+   CVPixelBufferRef pixelBuffer = nullptr;
+   if ([frame.buffer isKindOfClass:[RTCCVPixelBuffer class]]) {
+     // Native frame buffer
+@@ -434,9 +472,9 @@ - (NSInteger)encode:(RTCVideoFrame *)frame
+   encodeParams->codecSpecificInfo.packetizationMode = _packetizationMode;
+ 
+   // Update the bitrate if needed.
+-  [self setBitrateBps:_bitrateAdjuster->GetAdjustedBitrateBps() frameRate:_encoderFrameRate];
++  [self setBitrateBps:_bitrateAdjuster->GetAdjustedBitrateBps()];
+ 
+-  OSStatus status = VTCompressionSessionEncodeFrame(_compressionSession,
++  OSStatus status = CompressionSessionEncodeFrame(_compressionSession,
+                                                     pixelBuffer,
+                                                     presentationTimeStamp,
+                                                     kCMTimeInvalid,
+@@ -467,10 +505,10 @@ - (void)setCallback:(RTCVideoEncoderCallback)callback {
+   _callback = callback;
+ }
+ 
+-- (int)setBitrate:(uint32_t)bitrateKbit framerate:(uint32_t)framerate {
+-  _targetBitrateBps = 1000 * bitrateKbit;
++- (int)setBitrate:(uint32_t)bitrateBps framerate:(uint32_t)framerate {
++  _targetBitrateBps = bitrateBps;
+   _bitrateAdjuster->SetTargetBitrateBps(_targetBitrateBps);
+-  [self setBitrateBps:_bitrateAdjuster->GetAdjustedBitrateBps() frameRate:framerate];
++  [self setBitrateBps:_bitrateAdjuster->GetAdjustedBitrateBps()];
+   return WEBRTC_VIDEO_CODEC_OK;
+ }
+ 
+@@ -503,6 +541,11 @@ - (BOOL)resetCompressionSessionIfNeededWithFrame:(RTCVideoFrame *)frame {
+   OSType framePixelFormat = [self pixelFormatOfFrame:frame];
+ 
+   if (_compressionSession) {
++#if defined(WEBRTC_WEBKIT_BUILD)
++    if (!_pixelBufferPool) {
++      return NO;
++    }
++#endif
+     // The pool attribute `kCVPixelBufferPixelFormatTypeKey` can contain either an array of pixel
+     // formats or a single pixel format.
+     NSDictionary *poolAttributes =
+@@ -516,6 +559,11 @@ - (BOOL)resetCompressionSessionIfNeededWithFrame:(RTCVideoFrame *)frame {
+       compressionSessionPixelFormats = @[ (NSNumber *)pixelFormats ];
+     }
+ 
++    if ([frame.buffer isKindOfClass:[RTCCVPixelBuffer class]]) {
++      RTCCVPixelBuffer *rtcPixelBuffer = (RTCCVPixelBuffer *)frame.buffer;
++      framePixelFormat = CVPixelBufferGetPixelFormatType(rtcPixelBuffer.pixelBuffer);
++    }
++
+     if (![compressionSessionPixelFormats
+             containsObject:[NSNumber numberWithLong:framePixelFormat]]) {
+       resetCompressionSession = YES;
+@@ -533,6 +581,7 @@ - (BOOL)resetCompressionSessionIfNeededWithFrame:(RTCVideoFrame *)frame {
+ 
+ - (int)resetCompressionSessionWithPixelFormat:(OSType)framePixelFormat {
+   [self destroyCompressionSession];
++  _disableEncoding = false;
+ 
+   // Set source image buffer attributes. These attributes will be present on
+   // buffers retrieved from the encoder's pixel buffer pool.
+@@ -559,22 +608,26 @@ - (int)resetCompressionSessionWithPixelFormat:(OSType)framePixelFormat {
+     CFRelease(pixelFormat);
+     pixelFormat = nullptr;
+   }
+-  CFMutableDictionaryRef encoder_specs = nullptr;
+-#if defined(WEBRTC_MAC) && !defined(WEBRTC_IOS)
++  CFDictionaryRef encoderSpecs = nullptr;
++#if !defined(WEBRTC_IOS)
++  auto useHardwareEncoder = webrtc::isH264HardwareEncoderAllowed() ? kCFBooleanTrue : kCFBooleanFalse;
+   // Currently hw accl is supported above 360p on mac, below 360p
+   // the compression session will be created with hw accl disabled.
+-  encoder_specs = CFDictionaryCreateMutable(
+-      nullptr, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+-  CFDictionarySetValue(encoder_specs,
+-                       kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder,
+-                       kCFBooleanTrue);
++  CFTypeRef sessionKeys[] = { kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder, kVTVideoEncoderSpecification_RequireHardwareAcceleratedVideoEncoder, kVTCompressionPropertyKey_RealTime };
++  CFTypeRef sessionValues[] = { useHardwareEncoder, useHardwareEncoder, kCFBooleanTrue };
++  encoderSpecs = CFDictionaryCreate(kCFAllocatorDefault, sessionKeys, sessionValues, 3, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
++#else
++  CFTypeRef sessionKeys[] = { kVTCompressionPropertyKey_RealTime };
++  CFTypeRef sessionValues[] = { kCFBooleanTrue };
++  encoderSpecs = CFDictionaryCreate(kCFAllocatorDefault, sessionKeys, sessionValues, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+ #endif
++
+   OSStatus status =
+-      VTCompressionSessionCreate(nullptr,  // use default allocator
++      CompressionSessionCreate(nullptr,  // use default allocator
+                                  _width,
+                                  _height,
+-                                 kCMVideoCodecType_H264,
+-                                 encoder_specs,  // use hardware accelerated encoder if available
++                                 kCodecTypeH264,
++                                 encoderSpecs,  // use hardware accelerated encoder if available
+                                  sourceAttributes,
+                                  nullptr,  // use default compressed data allocator
+                                  compressionOutputCallback,
+@@ -584,32 +637,113 @@ - (int)resetCompressionSessionWithPixelFormat:(OSType)framePixelFormat {
+     CFRelease(sourceAttributes);
+     sourceAttributes = nullptr;
+   }
+-  if (encoder_specs) {
+-    CFRelease(encoder_specs);
+-    encoder_specs = nullptr;
++  if (encoderSpecs) {
++    CFRelease(encoderSpecs);
++    encoderSpecs = nullptr;
+   }
++
++#if ENABLE_VCP_ENCODER || defined(WEBRTC_IOS)
+   if (status != noErr) {
+     RTC_LOG(LS_ERROR) << "Failed to create compression session: " << status;
+     return WEBRTC_VIDEO_CODEC_ERROR;
+   }
++#endif
+ #if defined(WEBRTC_MAC) && !defined(WEBRTC_IOS)
+   CFBooleanRef hwaccl_enabled = nullptr;
+-  status = VTSessionCopyProperty(_compressionSession,
++  if (status == noErr) {
++    status = VTSessionCopyProperty(_compressionSession,
+                                  kVTCompressionPropertyKey_UsingHardwareAcceleratedVideoEncoder,
+                                  nullptr,
+                                  &hwaccl_enabled);
++  }
+   if (status == noErr && (CFBooleanGetValue(hwaccl_enabled))) {
+     RTC_LOG(LS_INFO) << "Compression session created with hw accl enabled";
+   } else {
+     RTC_LOG(LS_INFO) << "Compression session created with hw accl disabled";
++
++#if !ENABLE_VCP_ENCODER && !defined(WEBRTC_IOS)
++    if (!isStandardFrameSize(_width, _height)) {
++      _disableEncoding = true;
++      RTC_LOG(LS_ERROR) << "Using H264 software encoder with non standard size is not supported";
++      return WEBRTC_VIDEO_CODEC_ERROR;
++    }
++
++    if (!getkVTVideoEncoderSpecification_Usage()) {
++      _disableEncoding = true;
++      RTC_LOG(LS_ERROR) << "RTCSingleVideoEncoderH264 cannot create a H264 software encoder";
++      return WEBRTC_VIDEO_CODEC_ERROR;
++    }
++
++    CFDictionaryRef ioSurfaceValue = CreateCFTypeDictionary(nullptr, nullptr, 0);
++    int64_t pixelFormatType = framePixelFormat;
++    CFNumberRef pixelFormat = CFNumberCreate(nullptr, kCFNumberLongType, &pixelFormatType);
++
++    const size_t attributesSize = 3;
++    CFTypeRef keys[attributesSize] = {
++      kCVPixelBufferOpenGLCompatibilityKey,
++      kCVPixelBufferIOSurfacePropertiesKey,
++      kCVPixelBufferPixelFormatTypeKey
++    };
++    CFTypeRef values[attributesSize] = {
++      kCFBooleanTrue,
++      ioSurfaceValue,
++      pixelFormat};
++    CFDictionaryRef sourceAttributes = CreateCFTypeDictionary(keys, values, attributesSize);
++
++    if (ioSurfaceValue) {
++      CFRelease(ioSurfaceValue);
++      ioSurfaceValue = nullptr;
++    }
++    if (pixelFormat) {
++      CFRelease(pixelFormat);
++      pixelFormat = nullptr;
++    }
++
++    CFMutableDictionaryRef encoderSpecs = CFDictionaryCreateMutable(nullptr, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
++    CFDictionarySetValue(encoderSpecs, kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder, kCFBooleanFalse);
++    int usageValue = 1;
++    CFNumberRef usage = CFNumberCreate(nullptr, kCFNumberIntType, &usageValue);
++    CFDictionarySetValue(encoderSpecs, (__bridge CFStringRef)getkVTVideoEncoderSpecification_Usage(), usage);
++
++    if (usage) {
++      CFRelease(usage);
++      usage = nullptr;
++    }
++
++    [self destroyCompressionSession];
++
++    OSStatus status =
++      CompressionSessionCreate(nullptr,  // use default allocator
++                                 _width,
++                                 _height,
++                                 kCodecTypeH264,
++                                 encoderSpecs,
++                                 sourceAttributes,
++                                 nullptr,  // use default compressed data allocator
++                                 compressionOutputCallback,
++                                 nullptr,
++                                 &_compressionSession);
++    if (sourceAttributes) {
++      CFRelease(sourceAttributes);
++      sourceAttributes = nullptr;
++    }
++    if (encoderSpecs) {
++      CFRelease(encoderSpecs);
++      encoderSpecs = nullptr;
++    }
++    if (status != noErr) {
++      return WEBRTC_VIDEO_CODEC_ERROR;
++    }
++#endif
+   }
+ #endif
+   [self configureCompressionSession];
+ 
++#if !defined(WEBRTC_WEBKIT_BUILD)
+   // The pixel buffer pool is dependent on the compression session so if the session is reset, the
+   // pool should be reset as well.
+-  _pixelBufferPool = VTCompressionSessionGetPixelBufferPool(_compressionSession);
+-
++  _pixelBufferPool = CompressionSessionGetPixelBufferPool(_compressionSession);
++#endif
+   return WEBRTC_VIDEO_CODEC_OK;
+ }
+ 
+@@ -618,7 +752,11 @@ - (void)configureCompressionSession {
+   SetVTSessionProperty(_compressionSession, kVTCompressionPropertyKey_RealTime, true);
+   SetVTSessionProperty(_compressionSession, kVTCompressionPropertyKey_ProfileLevel, _profile);
+   SetVTSessionProperty(_compressionSession, kVTCompressionPropertyKey_AllowFrameReordering, false);
+-  [self setEncoderBitrateBps:_targetBitrateBps frameRate:_encoderFrameRate];
++#if ENABLE_VCP_ENCODER
++  if (auto key = getkVTVideoEncoderSpecification_Usage())
++      SetVTSessionProperty(_compressionSession, (__bridge CFStringRef)key, 1);
++#endif
++  [self setEncoderBitrateBps:_targetBitrateBps];
+   // TODO(tkchin): Look at entropy mode and colorspace matrices.
+   // TODO(tkchin): Investigate to see if there's any way to make this work.
+   // May need it to interop with Android. Currently this call just fails.
+@@ -635,7 +773,7 @@ - (void)configureCompressionSession {
+ 
+ - (void)destroyCompressionSession {
+   if (_compressionSession) {
+-    VTCompressionSessionInvalidate(_compressionSession);
++    CompressionSessionInvalidate(_compressionSession);
+     CFRelease(_compressionSession);
+     _compressionSession = nullptr;
+     _pixelBufferPool = nullptr;
+@@ -646,17 +784,15 @@ - (NSString *)implementationName {
+   return @"VideoToolbox";
+ }
+ 
+-- (void)setBitrateBps:(uint32_t)bitrateBps frameRate:(uint32_t)frameRate {
+-  if (_encoderBitrateBps != bitrateBps || _encoderFrameRate != frameRate) {
+-    [self setEncoderBitrateBps:bitrateBps frameRate:frameRate];
++- (void)setBitrateBps:(uint32_t)bitrateBps {
++  if (_encoderBitrateBps != bitrateBps) {
++    [self setEncoderBitrateBps:bitrateBps];
+   }
+ }
+ 
+-- (void)setEncoderBitrateBps:(uint32_t)bitrateBps frameRate:(uint32_t)frameRate {
++- (void)setEncoderBitrateBps:(uint32_t)bitrateBps {
+   if (_compressionSession) {
+     SetVTSessionProperty(_compressionSession, kVTCompressionPropertyKey_AverageBitRate, bitrateBps);
+-    SetVTSessionProperty(
+-        _compressionSession, kVTCompressionPropertyKey_ExpectedFrameRate, frameRate);
+ 
+     // TODO(tkchin): Add a helper method to set array value.
+     int64_t dataLimitBytesPerSecondValue =
+@@ -668,7 +804,7 @@ - (void)setEncoderBitrateBps:(uint32_t)bitrateBps frameRate:(uint32_t)frameRate
+         CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &oneSecondValue);
+     const void *nums[2] = {bytesPerSecond, oneSecond};
+     CFArrayRef dataRateLimits = CFArrayCreate(nullptr, nums, 2, &kCFTypeArrayCallBacks);
+-    OSStatus status = VTSessionSetProperty(
++    OSStatus status = CompressionSessionSetProperty(
+         _compressionSession, kVTCompressionPropertyKey_DataRateLimits, dataRateLimits);
+     if (bytesPerSecond) {
+       CFRelease(bytesPerSecond);
+@@ -680,11 +816,10 @@ - (void)setEncoderBitrateBps:(uint32_t)bitrateBps frameRate:(uint32_t)frameRate
+       CFRelease(dataRateLimits);
+     }
+     if (status != noErr) {
+-      RTC_LOG(LS_ERROR) << "Failed to set data rate limit with code: " << status;
++      RTC_LOG(LS_ERROR) << "Failed to set data rate limit";
+     }
+ 
+     _encoderBitrateBps = bitrateBps;
+-    _encoderFrameRate = frameRate;
+   }
+ }
+ 
+@@ -698,7 +833,7 @@ - (void)frameWasEncoded:(OSStatus)status
+               timestamp:(uint32_t)timestamp
+                rotation:(RTCVideoRotation)rotation {
+   if (status != noErr) {
+-    RTC_LOG(LS_ERROR) << "H264 encode failed with code: " << status;
++    RTC_LOG(LS_ERROR) << "H264 encode failed: " << status;
+     return;
+   }
+   if (infoFlags & kVTEncodeInfo_FrameDropped) {
+@@ -743,6 +878,7 @@ - (void)frameWasEncoded:(OSStatus)status
+   frame.rotation = rotation;
+   frame.contentType = (_mode == RTCVideoCodecModeScreensharing) ? RTCVideoContentTypeScreenshare :
+                                                                   RTCVideoContentTypeUnspecified;
++  frame.spatialIndex = _simulcastIndex;
+   frame.flags = webrtc::VideoSendTiming::kInvalid;
+ 
+   int qp;
+@@ -758,9 +894,88 @@ - (void)frameWasEncoded:(OSStatus)status
+   _bitrateAdjuster->Update(frame.buffer.length);
+ }
+ 
+-- (nullable RTCVideoEncoderQpThresholds *)scalingSettings {
+-  return [[RTCVideoEncoderQpThresholds alloc] initWithThresholdsLow:kLowH264QpThreshold
+-                                                               high:kHighH264QpThreshold];
++- (RTCVideoEncoderQpThresholds *)scalingSettings {
++  return [[RTCVideoEncoderQpThresholds alloc] initWithThresholdsLow:kLowH264QpThreshold high:kHighH264QpThreshold];
++}
++
++- (int)setRateAllocation:(RTCVideoBitrateAllocation *)allocation framerate:(uint32_t)framerate {
++  return 0;
++}
++
++@end
++
++@implementation RTCVideoEncoderH264 {
++  NSMutableArray<RTCSingleVideoEncoderH264*> *_codecs;
++  RTCVideoCodecInfo *_codecInfo;
++}
++- (instancetype)initWithCodecInfo:(RTCVideoCodecInfo *)codecInfo {
++  if (self = [super init]) {
++    _codecInfo = codecInfo;
++  }
++  return self;
++}
++
++- (void)setCallback:(RTCVideoEncoderCallback)callback {
++  for (RTCSingleVideoEncoderH264 *codec : _codecs)
++    [codec setCallback:callback];
++}
++
++- (NSInteger)startEncodeWithSettings:(RTCVideoEncoderSettings *)settings numberOfCores:(int)numberOfCores {
++    auto nativeCodecSettings = settings.nativeVideoCodec;
++
++  _codecs = [[NSMutableArray alloc] init];
++  for (unsigned index = 0 ; index < nativeCodecSettings.numberOfSimulcastStreams; ++index) {
++    auto codec = [[RTCSingleVideoEncoderH264 alloc] initWithCodecInfo:_codecInfo simulcastIndex:index];
++    [_codecs addObject:codec];
++
++    auto codecSettings = nativeCodecSettings;
++    codecSettings.width = nativeCodecSettings.simulcastStream[index].width;
++    codecSettings.height = nativeCodecSettings.simulcastStream[index].height;
++    codecSettings.maxBitrate = nativeCodecSettings.simulcastStream[index].maxBitrate;
++    codecSettings.targetBitrate = nativeCodecSettings.simulcastStream[index].targetBitrate;
++    codecSettings.minBitrate = nativeCodecSettings.simulcastStream[index].minBitrate;
++    codecSettings.qpMax = nativeCodecSettings.simulcastStream[index].qpMax;
++    codecSettings.active = true;
++
++    auto *settings = [[RTCVideoEncoderSettings alloc] initWithNativeVideoCodec:&codecSettings];
++    [codec startEncodeWithSettings:settings numberOfCores:numberOfCores];
++  }
++  return 0;
++}
++
++- (NSInteger)releaseEncoder {
++  for (RTCSingleVideoEncoderH264 *codec : _codecs)
++    [codec releaseEncoder];
++  _codecs = nil;
++  return 0;
++}
++
++- (NSInteger)encode:(RTCVideoFrame *)frame codecSpecificInfo:(nullable id<RTCCodecSpecificInfo>)info frameTypes:(NSArray<NSNumber *> *)frameTypes {
++  int result = 0;
++  for (RTCSingleVideoEncoderH264 *codec : _codecs)
++    result |= [codec encode:frame codecSpecificInfo:info frameTypes:frameTypes];
++  return result;
++}
++
++- (int)setRateAllocation:(RTCVideoBitrateAllocation *)bitRateAllocation framerate:(uint32_t) framerate {
++  int result = 0;
++  unsigned counter = 0;
++  auto nativeBitRateAllocation = bitRateAllocation.nativeVideoBitrateAllocation;
++  for (RTCSingleVideoEncoderH264 *codec : _codecs)
++    result |= [codec setBitrate:nativeBitRateAllocation.GetSpatialLayerSum(counter++) framerate:framerate];
++  return result;
++}
++
++- (NSString *)implementationName {
++  return @"VideoToolbox";
++}
++
++- (RTCVideoEncoderQpThresholds *)scalingSettings {
++  return [[RTCVideoEncoderQpThresholds alloc] initWithThresholdsLow:kLowH264QpThreshold high:kHighH264QpThreshold];
++}
++
++- (int)setBitrate:(uint32_t)bitrateKbit framerate:(uint32_t)framerate {
++  return 0;
+ }
+ 
+ @end
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/UIDevice+H264Profile.mm b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/UIDevice+H264Profile.mm
+index 852c3d4702f..a015f7ca15c 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/UIDevice+H264Profile.mm
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/UIDevice+H264Profile.mm
+@@ -24,9 +24,6 @@ struct SupportedH264Profile {
+ 
+ constexpr SupportedH264Profile kH264MaxSupportedProfiles[] = {
+     // iPhones with at least iOS 9
+-    {RTCDeviceTypeIPhoneXS, {kProfileHigh, kLevel5_2}},      // https://support.apple.com/kb/SP779
+-    {RTCDeviceTypeIPhoneXSMax, {kProfileHigh, kLevel5_2}},   // https://support.apple.com/kb/SP780
+-    {RTCDeviceTypeIPhoneXR, {kProfileHigh, kLevel5_2}},      // https://support.apple.com/kb/SP781
+     {RTCDeviceTypeIPhoneX, {kProfileHigh, kLevel5_2}},       // https://support.apple.com/kb/SP770
+     {RTCDeviceTypeIPhone8, {kProfileHigh, kLevel5_2}},       // https://support.apple.com/kb/SP767
+     {RTCDeviceTypeIPhone8Plus, {kProfileHigh, kLevel5_2}},   // https://support.apple.com/kb/SP768
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/helpers.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/helpers.cc
+index ac957f1b497..46daf44ecac 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/helpers.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/helpers.cc
+@@ -35,12 +35,12 @@ std::string CFStringToString(const CFStringRef cf_string) {
+ }
+ 
+ // Convenience function for setting a VT property.
+-void SetVTSessionProperty(VTSessionRef session,
++void SetVTSessionProperty(CompressionSessionRef session,
+                           CFStringRef key,
+                           int32_t value) {
+   CFNumberRef cfNum =
+       CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &value);
+-  OSStatus status = VTSessionSetProperty(session, key, cfNum);
++  OSStatus status = CompressionSessionSetProperty(session, key, cfNum);
+   CFRelease(cfNum);
+   if (status != noErr) {
+     std::string key_string = CFStringToString(key);
+@@ -50,13 +50,13 @@ void SetVTSessionProperty(VTSessionRef session,
+ }
+ 
+ // Convenience function for setting a VT property.
+-void SetVTSessionProperty(VTSessionRef session,
++void SetVTSessionProperty(CompressionSessionRef session,
+                           CFStringRef key,
+                           uint32_t value) {
+   int64_t value_64 = value;
+   CFNumberRef cfNum =
+       CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &value_64);
+-  OSStatus status = VTSessionSetProperty(session, key, cfNum);
++  OSStatus status = CompressionSessionSetProperty(session, key, cfNum);
+   CFRelease(cfNum);
+   if (status != noErr) {
+     std::string key_string = CFStringToString(key);
+@@ -66,9 +66,9 @@ void SetVTSessionProperty(VTSessionRef session,
+ }
+ 
+ // Convenience function for setting a VT property.
+-void SetVTSessionProperty(VTSessionRef session, CFStringRef key, bool value) {
++void SetVTSessionProperty(CompressionSessionRef session, CFStringRef key, bool value) {
+   CFBooleanRef cf_bool = (value) ? kCFBooleanTrue : kCFBooleanFalse;
+-  OSStatus status = VTSessionSetProperty(session, key, cf_bool);
++  OSStatus status = CompressionSessionSetProperty(session, key, cf_bool);
+   if (status != noErr) {
+     std::string key_string = CFStringToString(key);
+     RTC_LOG(LS_ERROR) << "VTSessionSetProperty failed to set: " << key_string
+@@ -77,10 +77,10 @@ void SetVTSessionProperty(VTSessionRef session, CFStringRef key, bool value) {
+ }
+ 
+ // Convenience function for setting a VT property.
+-void SetVTSessionProperty(VTSessionRef session,
++void SetVTSessionProperty(CompressionSessionRef session,
+                           CFStringRef key,
+                           CFStringRef value) {
+-  OSStatus status = VTSessionSetProperty(session, key, value);
++  OSStatus status = CompressionSessionSetProperty(session, key, value);
+   if (status != noErr) {
+     std::string key_string = CFStringToString(key);
+     std::string val_string = CFStringToString(value);
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/helpers.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/helpers.h
+index 0683ea79e56..0c669e8bce6 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/helpers.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/helpers.h
+@@ -16,6 +16,8 @@
+ #include <VideoToolbox/VideoToolbox.h>
+ #include <string>
+ 
++#include "sdk/WebKit/EncoderUtilities.h"
++
+ // Convenience function for creating a dictionary.
+ inline CFDictionaryRef CreateCFTypeDictionary(CFTypeRef* keys,
+                                               CFTypeRef* values,
+@@ -29,18 +31,18 @@ inline CFDictionaryRef CreateCFTypeDictionary(CFTypeRef* keys,
+ std::string CFStringToString(const CFStringRef cf_string);
+ 
+ // Convenience function for setting a VT property.
+-void SetVTSessionProperty(VTSessionRef session, CFStringRef key, int32_t value);
++void SetVTSessionProperty(CompressionSessionRef session, CFStringRef key, int32_t value);
+ 
+ // Convenience function for setting a VT property.
+-void SetVTSessionProperty(VTSessionRef session,
++void SetVTSessionProperty(CompressionSessionRef session,
+                           CFStringRef key,
+                           uint32_t value);
+ 
+ // Convenience function for setting a VT property.
+-void SetVTSessionProperty(VTSessionRef session, CFStringRef key, bool value);
++void SetVTSessionProperty(CompressionSessionRef session, CFStringRef key, bool value);
+ 
+ // Convenience function for setting a VT property.
+-void SetVTSessionProperty(VTSessionRef session,
++void SetVTSessionProperty(CompressionSessionRef session,
+                           CFStringRef key,
+                           CFStringRef value);
+ 
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/native/src/objc_video_encoder_factory.mm b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/native/src/objc_video_encoder_factory.mm
+index fafad7466ec..ae45033a570 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/native/src/objc_video_encoder_factory.mm
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/native/src/objc_video_encoder_factory.mm
+@@ -90,6 +90,11 @@ class ObjCVideoEncoder : public VideoEncoder {
+     return [encoder_ setBitrate:bitrate framerate:framerate];
+   }
+ 
++  int32_t SetRateAllocation(const VideoBitrateAllocation& allocation, uint32_t framerate) {
++    auto *rtcAllocation = [[RTCVideoBitrateAllocation alloc] initWithNativeVideoBitrateAllocation:&allocation];
++    return [encoder_ setRateAllocation: rtcAllocation framerate:framerate];
++  }
++
+   VideoEncoder::EncoderInfo GetEncoderInfo() const {
+     EncoderInfo info;
+     info.supports_native_handle = true;

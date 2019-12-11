@@ -1,0 +1,31 @@
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../resources/webgl_test_files/conformance2/rendering/blitframebuffer-stencil-only.html
+[ 1: PASS ] WebGL context exists
+[ 2: PASS ] getError was expected value: NO_ERROR : after program initialization
+[ 3: PASS ] gl.getProgramParameter(program, gl.LINK_STATUS) is true
+[ 4: PASS ] getError was expected value: NO_ERROR : query uniform location
+[ 5: PASS ] colorLoc is non-null.
+[ 6: PASS ] getError was expected value: NO_ERROR : after buffer init
+[ 7: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 8: PASS ] getError was expected value: NO_ERROR : after buffer init
+[ 9: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 10: PASS ] getError was expected value: NO_ERROR : after drawQuad
+[ 11: PASS ] getError was expected value: NO_ERROR : after drawQuad
+[ 12: PASS ] getError was expected value: NO_ERROR : after drawQuad
+[ 13: PASS ] getError was expected value: NO_ERROR : after drawQuad
+[ 14: PASS ] getError was expected value: NO_ERROR : after test
+[ 15: FAIL ] stencil test should be green at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 16: PASS ] getError was expected value: NO_ERROR : after buffer init
+[ 17: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 18: PASS ] getError was expected value: NO_ERROR : after buffer init
+[ 19: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 20: PASS ] getError was expected value: NO_ERROR : after drawQuad
+[ 21: PASS ] getError was expected value: NO_ERROR : after drawQuad
+[ 22: PASS ] getError was expected value: NO_ERROR : after drawQuad
+[ 23: PASS ] getError was expected value: NO_ERROR : after drawQuad
+[ 24: PASS ] getError was expected value: NO_ERROR : after test
+[ 25: FAIL ] stencil test should be green at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 26: PASS ] successfullyParsed is true
+[ FAIL ] 2 failures reported
+

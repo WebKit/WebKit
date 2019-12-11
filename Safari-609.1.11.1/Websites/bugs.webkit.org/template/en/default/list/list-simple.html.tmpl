@@ -1,0 +1,31 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # title: string. The title for this page. (optional)
+  #%]
+
+[% DEFAULT title = "$terms.Bug List" %]
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>[% title FILTER html %]</title>
+    <base href="[% urlbase FILTER html %]">
+    <link href="[% 'skins/standard/buglist.css' FILTER mtime %]" 
+          rel="stylesheet" type="text/css">
+  </head>
+
+  <body>
+    [% IF bugs.size == 0 %]
+      <h3>[% terms.zeroSearchResults %].</h3>
+    [% ELSE %]
+      [% PROCESS list/table.html.tmpl %]
+    [% END %]
+  </body>
+</html>

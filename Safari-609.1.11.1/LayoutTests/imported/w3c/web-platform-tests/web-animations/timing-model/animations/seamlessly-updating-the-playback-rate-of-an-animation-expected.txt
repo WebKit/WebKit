@@ -1,0 +1,11 @@
+
+PASS Updating the playback rate maintains the current time 
+PASS Updating the playback rate while running makes the animation pending 
+PASS Updating the playback rate on a play-pending animation maintains the current time 
+PASS Updating the playback rate on a pause-pending animation maintains the current time 
+PASS If a pending playback rate is set multiple times, the latest wins 
+PASS In the idle state, the playback rate is applied immediately 
+PASS In the paused state, the playback rate is applied immediately 
+PASS Updating the playback rate on a finished animation maintains the current time 
+PASS Updating the playback rate to zero on a finished animation maintains the current time 
+

@@ -1,0 +1,127 @@
+
+Scrolling tree on non-scrollable
+
+
+(Frame scrolling node
+  (scrollable area size 785 600)
+  (contents size 785 640)
+  (parent relative scrollable rect at (0,0) size 800x600)
+  (scrollable area parameters 
+    (horizontal scroll elasticity 2)
+    (vertical scroll elasticity 2)
+    (horizontal scrollbar mode 0)
+    (vertical scrollbar mode 0)
+    (has enabled vertical scrollbar 1))
+  (layout viewport at (0,0) size 785x600)
+  (min layout viewport origin (0,0))
+  (max layout viewport origin (0,40))
+  (behavior for fixed 0)
+  (children 1
+    (Frame hosting node
+      (parent relative scrollable rect at (30,30) size 600x500)
+      (children 1
+        (Frame scrolling node
+          (scrollable area size 600 500)
+          (contents size 600 500)
+          (parent relative scrollable rect at (0,0) size 600x500)
+          (scrollable area parameters 
+            (horizontal scroll elasticity 0)
+            (vertical scroll elasticity 0)
+            (horizontal scrollbar mode 0)
+            (vertical scrollbar mode 0))
+          (layout viewport at (0,0) size 600x500)
+          (min layout viewport origin (0,0))
+          (max layout viewport origin (0,0))
+          (behavior for fixed 0)
+          (children 1
+            (Frame hosting node
+              (parent relative scrollable rect at (10,52) size 500x400)
+              (children 1
+                (Frame scrolling node
+                  (scrollable area size 485 400)
+                  (contents size 485 1024)
+                  (parent relative scrollable rect at (0,0) size 500x400)
+                  (scrollable area parameters 
+                    (horizontal scroll elasticity 0)
+                    (vertical scroll elasticity 0)
+                    (horizontal scrollbar mode 0)
+                    (vertical scrollbar mode 0)
+                    (has enabled vertical scrollbar 1))
+                  (layout viewport at (0,0) size 485x400)
+                  (min layout viewport origin (0,0))
+                  (max layout viewport origin (0,624))
+                  (behavior for fixed 0)
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
+Scrolling tree on scrollable
+
+
+(Frame scrolling node
+  (scrollable area size 785 600)
+  (contents size 785 640)
+  (parent relative scrollable rect at (0,0) size 800x600)
+  (scrollable area parameters 
+    (horizontal scroll elasticity 2)
+    (vertical scroll elasticity 2)
+    (horizontal scrollbar mode 0)
+    (vertical scrollbar mode 0)
+    (has enabled vertical scrollbar 1))
+  (layout viewport at (0,0) size 785x600)
+  (min layout viewport origin (0,0))
+  (max layout viewport origin (0,40))
+  (behavior for fixed 0)
+  (children 1
+    (Frame hosting node
+      (parent relative scrollable rect at (30,30) size 600x500)
+      (children 1
+        (Frame scrolling node
+          (scrollable area size 585 500)
+          (contents size 585 1024)
+          (parent relative scrollable rect at (0,0) size 600x500)
+          (scrollable area parameters 
+            (horizontal scroll elasticity 0)
+            (vertical scroll elasticity 0)
+            (horizontal scrollbar mode 0)
+            (vertical scrollbar mode 0)
+            (has enabled vertical scrollbar 1))
+          (layout viewport at (0,0) size 585x500)
+          (min layout viewport origin (0,0))
+          (max layout viewport origin (0,524))
+          (behavior for fixed 0)
+          (children 1
+            (Frame hosting node
+              (parent relative scrollable rect at (10,52) size 500x400)
+              (children 1
+                (Frame scrolling node
+                  (scrollable area size 485 400)
+                  (contents size 485 1024)
+                  (parent relative scrollable rect at (0,0) size 500x400)
+                  (scrollable area parameters 
+                    (horizontal scroll elasticity 0)
+                    (vertical scroll elasticity 0)
+                    (horizontal scrollbar mode 0)
+                    (vertical scrollbar mode 0)
+                    (has enabled vertical scrollbar 1))
+                  (layout viewport at (0,0) size 485x400)
+                  (min layout viewport origin (0,0))
+                  (max layout viewport origin (0,624))
+                  (behavior for fixed 0)
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
+

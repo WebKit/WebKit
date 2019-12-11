@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+
+function fetchCSRFfToken(fileInput, progressElement) {
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'generate-csrf-token', true);
+        xhr.onload = () => {
+            let content;
+            try {
+                content = JSON.parse(xhr.responseText);
+            } catch (error) {
+                return reject(error + ':' + xhr.responseText);
+            }
+            if (content['status'] != 'OK')
+                reject(content['status']);
+            else
+                resolve(content['token']);
+        }
+        xhr.onerror = reject;
+        xhr.send('{}');
+    });
+}
+
+function upload(fileInput, progressElement) {
+    fetchCSRFfToken().then((token) => {
+        const xhr = new XMLHttpRequest();
+        const formData = new FormData();
+        formData.append('token', token);
+        formData.append('newFile', fileInput.files[0]);
+
+        xhr.open('POST', 'upload-file', true);
+        xhr.onload = function () {
+            alert(xhr.response);
+        }
+        xhr.onerror = function () {
+            alert('error: ' + xhr.response);
+        }
+        xhr.upload.onprogress = function (event) {
+            if (event.lengthComputable) {
+                progressElement.max = event.total;
+                progressElement.value = event.loaded;
+            }
+        }
+        xhr.send(formData);
+    }, (error) => {
+        alert(`Failed to fetch the CSRF token: ${error}`);
+    });
+}
+
+</script>
+<p>Upload a new custom root. <b>This is for debuging purpose only. The uploaded file will be deleted.</b></p>
+<input id=file type="file">
+<button onclick="upload(file, p)">Upload</button>
+<progress id=p></progress>
+</body>
+</html>

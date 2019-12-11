@@ -1,0 +1,18 @@
+<!DOCTYPE HTML>
+
+<link rel="stylesheet" href="resources/blending-style.css">
+<style>
+   .parent {
+       width: 300px;
+       height: 300px;
+       position: absolute;
+       clip: rect(0px, 100px, 100px, 0px);
+   }
+</style>
+
+<p>This test checks that blending works if the isolating layer is absolute positioned and has a clip rect.<br />
+Test passes if you see a green rectangle.</p>
+
+<div class="isolating lime parent">
+    <div class="accelerated black hugebox difference"></div>
+</div>

@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 58: ReferenceError: Can't find variable: wp_test
+CONSOLE MESSAGE: line 25: ReferenceError: Can't find variable: test_true
+Description
+
+This test validates exception scenarios of invoking mark() and measure() without parameter.
+
+
+FAIL exception test of performance.mark and performance.measure ReferenceError: Can't find variable: wp_test
+

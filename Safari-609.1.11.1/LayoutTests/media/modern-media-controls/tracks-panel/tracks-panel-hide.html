@@ -1,0 +1,40 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing a <code>TracksPanel</code> is hidden with an animation.");
+
+const tracksPanel = new TracksPanel;
+const container = new LayoutNode;
+
+document.body.appendChild(container.element);
+
+debug("tracksPanel.presentInParent(container)");
+tracksPanel.presentInParent(container);
+
+scheduler.frameDidFire = function()
+{
+    shouldBeTrue("tracksPanel.presented");
+
+    debug("");
+    debug("tracksPanel.hide()");
+    window.requestAnimationFrame(() => {
+        tracksPanel.hide();
+        shouldBeFalse("tracksPanel.presented");
+        tracksPanel.element.addEventListener("transitionend", (event) => {
+            debug("");
+            debug("Transition ended");
+            shouldBeFalse("tracksPanel.presented");
+            debug("");
+            finishJSTest();
+        });
+    });
+    scheduler.frameDidFire = null;
+}
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

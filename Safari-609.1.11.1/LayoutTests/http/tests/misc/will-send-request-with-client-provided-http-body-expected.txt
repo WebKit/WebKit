@@ -1,0 +1,5 @@
+This tests that the http body set by willSendRequestForFrame is sent.
+
+Request body before setWillSendRequestAddsHTTPBody: This body should be sent
+Request body after setWillSendRequestAddsHTTPBody: This body should also be sent
+

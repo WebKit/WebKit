@@ -1,0 +1,5 @@
+
+FAIL Basic Access-Control-Expose-Headers: * support assert_equals: expected (string) "X" but got (object) null
+PASS * for credentialed fetches only matches literally 
+FAIL * can be one of several values assert_equals: expected (string) "X" but got (object) null
+

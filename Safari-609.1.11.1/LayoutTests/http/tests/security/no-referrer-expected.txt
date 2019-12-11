@@ -1,0 +1,8 @@
+JavaScript: PASS
+HTTP Referer: PASS
+External script (HTTP Referer): PASS
+External script (JavaScript): PASS
+Sync XHR: PASS
+ASync XHR: PASS
+DONE
+

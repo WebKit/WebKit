@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/resources/abe.png because it does not appear in the img-src directive of the Content Security Policy.
+ALERT: BLOCKED in main world
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/resources/abe.png because it does not appear in the img-src directive of the Content Security Policy.
+ALERT: BLOCKED in isolated world
+CONSOLE MESSAGE: line 38: EvalError: Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'unsafe-inline'".
+
+ALERT: BLOCKED eval() in main world
+ALERT: Called eval() in isolated world
+This test ensures that scripts run in isolated worlds are affected by the page's content security policy. Extensions, for example, should not be able to load any resource they like.
+
+

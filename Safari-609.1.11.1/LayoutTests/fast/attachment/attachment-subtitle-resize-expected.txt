@@ -1,0 +1,13 @@
+This tests that attachments which resize will only grow in width, never shrink.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS wideAttachmentWidth > skinnyAttachmentWidth
+PASS Attachment starts out skinny.
+PASS Attachment resized from skinny to wide becomes wide.
+PASS Attachment resized from wide to skinny remains wide.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+  

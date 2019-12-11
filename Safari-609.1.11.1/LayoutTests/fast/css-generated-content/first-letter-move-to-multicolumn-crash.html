@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we can move first-letter elements to column content and back.</title>
+<style>
+.original::first-letter{ 
+    -webkit-columns: 2;
+}
+.newClass::first-letter{
+    float: left;
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function runTest() {
+    li.style.webkitColumns = "2";
+    li.offsetParent;
+
+    li.className = "newClass";
+    li.style.cssText = "letter-spacing: 10px;"
+    li.offsetParent;
+
+    li.style.webkitColumns = "2";
+    li.offsetParent;
+}
+</script>
+</head>
+<body onload="runTest()">
+PASS if no crash or ASSERT.
+<li class=original id="li">f<script></script>
+</li>
+</body>
+</html>

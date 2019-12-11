@@ -1,0 +1,98 @@
+This tests to see if position:fixed gets converted to position:absolute upon copy/paste
+
+first test - before:
+| <html>
+|   <head>
+|     "
+"
+|     <meta>
+|       content="text/html; charset=utf-8"
+|       http-equiv="Content-type"
+|     "
+"
+|     <script>
+|       src="../../resources/dump-as-markup.js"
+|       type="text/javascript"
+|     "
+"
+|   "
+"
+|   <body>
+|     "
+abc"
+|     <div>
+|       style="position: fixed; left: 0px; top: 0px;"
+|       "def"
+|     "ghi
+"
+|     <br>
+|     "
+
+"
+|     <script>
+|       "
+
+Markup.description('This tests to see if position:fixed gets converted to position:absolute upon copy/paste');
+
+document.designMode = 'on';
+
+if (window.internals)
+    window.internals.settings.setShouldConvertPositionStyleOnCopy(true);
+
+var s = window.getSelection();
+
+Markup.dump('test1', 'first test - before');
+document.execCommand("SelectAll");
+document.execCommand("Cut");
+document.execCommand("Paste");
+Markup.dump('test1', 'first test - after');
+
+"
+
+first test - after:
+| <html>
+|   <head>
+|     "
+"
+|     <meta>
+|       content="text/html; charset=utf-8"
+|       http-equiv="Content-type"
+|     "
+"
+|     <script>
+|       src="../../resources/dump-as-markup.js"
+|       type="text/javascript"
+|     "
+"
+|   "
+"
+|   <body>
+|     <div>
+|       style="position: relative;"
+|       "abc"
+|       <div>
+|         style="position: absolute; left: 0px; top: 0px;"
+|         "def"
+|       "ghi <#selection-caret>"
+|     "
+
+"
+|     <script>
+|       "
+
+Markup.description('This tests to see if position:fixed gets converted to position:absolute upon copy/paste');
+
+document.designMode = 'on';
+
+if (window.internals)
+    window.internals.settings.setShouldConvertPositionStyleOnCopy(true);
+
+var s = window.getSelection();
+
+Markup.dump('test1', 'first test - before');
+document.execCommand("SelectAll");
+document.execCommand("Cut");
+document.execCommand("Paste");
+Markup.dump('test1', 'first test - after');
+
+"

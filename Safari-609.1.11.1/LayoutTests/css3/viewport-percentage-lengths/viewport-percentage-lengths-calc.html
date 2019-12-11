@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<style>
+    body {
+        width: 100vw;
+        height: 100vh;
+    }
+    #target {
+        width: calc(100vw - 50vw);
+        height: calc(25vh + 50vh);
+        margin-top: calc(25vh + 10px);
+        margin-bottom: calc(25vw - 10px);
+        margin-left: calc(25vw + 25%);
+        margin-right: calc(50vw - 25%);
+    }
+</style>
+<html>
+    <div id="target"></div>
+</html>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+function vw(x) {
+    return x * window.innerWidth / 100;
+}
+
+function vh(x) {
+    return x * window.innerHeight / 100;
+}
+
+function px(n) {
+    return "'" + n + "px'";
+}
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+description("Test for calc support with viewport units.");
+
+target = document.getElementById("target");
+style = window.getComputedStyle(target,null);
+shouldBe('style.getPropertyValue("width")', px(vw(100) - vw(50)));
+shouldBe('style.getPropertyValue("height")', px(vh(25) + vh(50)));
+shouldBe('style.getPropertyValue("margin-top")', px(vh(25) + 10));
+shouldBe('style.getPropertyValue("margin-bottom")', px(vw(25) - 10));
+shouldBe('style.getPropertyValue("margin-left")', px(vw(25) + vw(25)));
+shouldBe('style.getPropertyValue("margin-right")', px(vw(50) - vw(25)));
+</script>
+<script src="../../resources/js-test-post.js"></script>

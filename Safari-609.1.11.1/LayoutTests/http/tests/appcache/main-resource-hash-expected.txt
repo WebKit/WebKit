@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+Test that offline applications' main resources are not affected by URL hashes.
+
+Should say SUCCESS:
+
+SUCCESS
+  

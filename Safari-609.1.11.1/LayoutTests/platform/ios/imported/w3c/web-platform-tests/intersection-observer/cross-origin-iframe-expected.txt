@@ -1,0 +1,8 @@
+
+
+PASS Intersection observer test with no explicit root and target in a cross-origin iframe. 
+PASS First rAF 
+PASS topDocument.scrollingElement.scrollTop = 200 
+FAIL iframeDocument.scrollingElement.scrollTop = 250 assert_equals: expected 1 but got 0
+FAIL topDocument.scrollingElement.scrollTop = 100 assert_equals: expected 1 but got 0
+

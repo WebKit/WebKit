@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>CSS Test: Inline-block non-replaced elements with 'margin-left' and 'margin-right' set to 'auto'</title>
+        <link rel="author" title="Microsoft" href="http://www.microsoft.com/">
+        <link rel="help" href="http://www.w3.org/TR/CSS21/visudet.html#inlineblock-width">
+        <meta name="flags" content="ahem">
+        <meta name="assert" content="When 'margin-left' and 'margin-right' are set to 'auto' the used value becomes '0'.">
+        <style type="text/css">
+            #div1
+            {
+                border: solid black;
+                height: 2in;
+                width: 2in;
+            }
+            div div
+            {
+                background-color: red;
+                color: blue;
+                display: inline-block;
+                font: 1in/1em Ahem;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test passes if the blue box is in the upper-left corner of the black box and there is no red visible on the page.</p>
+        <div id="div1">
+            <div>X</div>
+        </div>
+    </body>
+</html>

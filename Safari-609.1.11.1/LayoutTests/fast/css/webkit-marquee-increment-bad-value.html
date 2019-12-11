@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test-pre.js"></script>
+<marquee id="myMarquee"></marquee>
+
+<script>
+description("Makes sure we don't crash in the StyleBuilder if bad values are used for -webkit-marquee-increment property.");
+
+var badValues = [
+    "1px 2px", // a list.
+    "url(\"resources/border-image.png\")", // an image url.
+    "copy", // a cursor.
+];
+
+var testElement = document.getElementById("myMarquee");
+for (var i = 0; i < badValues.length; ++i) {
+    testElement.style["-webkit-marquee-increment"] = badValues[i];
+    document.defaultView.getComputedStyle(testElement)["-webkit-marquee-increment"];
+    testPassed("No crash for " + badValues[i] + " value");
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>

@@ -1,0 +1,5 @@
+
+EVENT(canplaythrough)
+EVENT(ended)
+END OF TEST
+

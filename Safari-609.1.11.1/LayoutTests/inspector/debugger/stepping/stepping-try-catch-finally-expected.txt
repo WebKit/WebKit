@@ -1,0 +1,336 @@
+Checking pause locations when stepping in, out, and over try/catch/finally statements.
+
+
+== Running test suite: Debugger.stepping.try-catch-finally
+-- Running test case: Debugger.stepping.TryCatchNoError
+EXPRESSION: setTimeout(entryTryCatchNoError)
+STEPS: over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryTryCatchNoError:20:5
+     16    }
+     17    
+     18    function entryTryCatchNoError() {
+ ->  19        |debugger;
+     20        try {
+     21            a();
+     22        } catch (e) {
+
+ACTION: step-over
+PAUSE AT entryTryCatchNoError:22:9
+     18    function entryTryCatchNoError() {
+     19        debugger;
+     20        try {
+ ->  21            |a();
+     22        } catch (e) {
+     23            shouldNotBeReached();
+     24        }
+
+ACTION: step-over
+PAUSE AT entryTryCatchNoError:26:2
+     22        } catch (e) {
+     23            shouldNotBeReached();
+     24        }
+ ->  25    }|
+     26    
+     27    function entryTryCatchFinallyNoError() {
+     28        debugger;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.TryCatchFinallyNoError
+EXPRESSION: setTimeout(entryTryCatchFinallyNoError)
+STEPS: over, over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryTryCatchFinallyNoError:29:5
+     25    }
+     26    
+     27    function entryTryCatchFinallyNoError() {
+ ->  28        |debugger;
+     29        try {
+     30            a();
+     31        } catch (e) {
+
+ACTION: step-over
+PAUSE AT entryTryCatchFinallyNoError:31:9
+     27    function entryTryCatchFinallyNoError() {
+     28        debugger;
+     29        try {
+ ->  30            |a();
+     31        } catch (e) {
+     32            shouldNotBeReached();
+     33        } finally {
+
+ACTION: step-over
+PAUSE AT entryTryCatchFinallyNoError:35:9
+     31        } catch (e) {
+     32            shouldNotBeReached();
+     33        } finally {
+ ->  34            |b();
+     35        }   
+     36    }
+     37    
+
+ACTION: step-over
+PAUSE AT entryTryCatchFinallyNoError:37:2
+     33        } finally {
+     34            b();
+     35        }   
+ ->  36    }|
+     37    
+     38    function entryTryExplicitThrow() {
+     39        debugger;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.TryExplicitThrow.NoPauseOnException
+EXPRESSION: setTimeout(entryTryExplicitThrow)
+STEPS: over, over, over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryTryExplicitThrow:40:5
+     36    }
+     37    
+     38    function entryTryExplicitThrow() {
+ ->  39        |debugger;
+     40        try {
+     41            throw new Error;
+     42        } catch (e) {
+
+ACTION: step-over
+PAUSE AT entryTryExplicitThrow:42:9
+     38    function entryTryExplicitThrow() {
+     39        debugger;
+     40        try {
+ ->  41            |throw new Error;
+     42        } catch (e) {
+     43            a();
+     44        } finally {
+
+ACTION: step-over
+PAUSE AT entryTryExplicitThrow:44:9
+     40        try {
+     41            throw new Error;
+     42        } catch (e) {
+ ->  43            |a();
+     44        } finally {
+     45            b();
+     46        }   
+
+ACTION: step-over
+PAUSE AT entryTryExplicitThrow:46:9
+     42        } catch (e) {
+     43            a();
+     44        } finally {
+ ->  45            |b();
+     46        }   
+     47    }
+     48    
+
+ACTION: step-over
+PAUSE AT entryTryExplicitThrow:48:2
+     44        } finally {
+     45            b();
+     46        }   
+ ->  47    }|
+     48    
+     49    function entryTryRuntimeException() {
+     50        debugger;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.TryExplicitThrow.PauseOnException
+EXPRESSION: setTimeout(entryTryExplicitThrow)
+STEPS: over, over, over, over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryTryExplicitThrow:40:5
+     36    }
+     37    
+     38    function entryTryExplicitThrow() {
+ ->  39        |debugger;
+     40        try {
+     41            throw new Error;
+     42        } catch (e) {
+
+ACTION: step-over
+PAUSE AT entryTryExplicitThrow:42:9
+     38    function entryTryExplicitThrow() {
+     39        debugger;
+     40        try {
+ ->  41            |throw new Error;
+     42        } catch (e) {
+     43            a();
+     44        } finally {
+
+ACTION: step-over
+PAUSE AT entryTryExplicitThrow:42:24
+     38    function entryTryExplicitThrow() {
+     39        debugger;
+     40        try {
+ ->  41            throw new Error|;
+     42        } catch (e) {
+     43            a();
+     44        } finally {
+
+ACTION: step-over
+PAUSE AT entryTryExplicitThrow:44:9
+     40        try {
+     41            throw new Error;
+     42        } catch (e) {
+ ->  43            |a();
+     44        } finally {
+     45            b();
+     46        }   
+
+ACTION: step-over
+PAUSE AT entryTryExplicitThrow:46:9
+     42        } catch (e) {
+     43            a();
+     44        } finally {
+ ->  45            |b();
+     46        }   
+     47    }
+     48    
+
+ACTION: step-over
+PAUSE AT entryTryExplicitThrow:48:2
+     44        } finally {
+     45            b();
+     46        }   
+ ->  47    }|
+     48    
+     49    function entryTryRuntimeException() {
+     50        debugger;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.TryRuntimeException.NoPauseOnException
+EXPRESSION: setTimeout(entryTryRuntimeException)
+STEPS: over, over, over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryTryRuntimeException:51:5
+     47    }
+     48    
+     49    function entryTryRuntimeException() {
+ ->  50        |debugger;
+     51        try {
+     52            [].x.x;
+     53        } catch (e) {
+
+ACTION: step-over
+PAUSE AT entryTryRuntimeException:53:9
+     49    function entryTryRuntimeException() {
+     50        debugger;
+     51        try {
+ ->  52            |[].x.x;
+     53        } catch (e) {
+     54            a();
+     55        } finally {
+
+ACTION: step-over
+PAUSE AT entryTryRuntimeException:55:9
+     51        try {
+     52            [].x.x;
+     53        } catch (e) {
+ ->  54            |a();
+     55        } finally {
+     56            b();
+     57        }   
+
+ACTION: step-over
+PAUSE AT entryTryRuntimeException:57:9
+     53        } catch (e) {
+     54            a();
+     55        } finally {
+ ->  56            |b();
+     57        }   
+     58    }
+     59    
+
+ACTION: step-over
+PAUSE AT entryTryRuntimeException:59:2
+     55        } finally {
+     56            b();
+     57        }   
+ ->  58    }|
+     59    
+     60    function entryTryFinallyNoError() {
+     61        try {
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.TryRuntimeException.PauseOnException
+EXPRESSION: setTimeout(entryTryRuntimeException)
+STEPS: over, over, over, over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryTryRuntimeException:51:5
+     47    }
+     48    
+     49    function entryTryRuntimeException() {
+ ->  50        |debugger;
+     51        try {
+     52            [].x.x;
+     53        } catch (e) {
+
+ACTION: step-over
+PAUSE AT entryTryRuntimeException:53:9
+     49    function entryTryRuntimeException() {
+     50        debugger;
+     51        try {
+ ->  52            |[].x.x;
+     53        } catch (e) {
+     54            a();
+     55        } finally {
+
+ACTION: step-over
+PAUSE AT entryTryRuntimeException:53:13
+     49    function entryTryRuntimeException() {
+     50        debugger;
+     51        try {
+ ->  52            [].x|.x;
+     53        } catch (e) {
+     54            a();
+     55        } finally {
+
+ACTION: step-over
+PAUSE AT entryTryRuntimeException:55:9
+     51        try {
+     52            [].x.x;
+     53        } catch (e) {
+ ->  54            |a();
+     55        } finally {
+     56            b();
+     57        }   
+
+ACTION: step-over
+PAUSE AT entryTryRuntimeException:57:9
+     53        } catch (e) {
+     54            a();
+     55        } finally {
+ ->  56            |b();
+     57        }   
+     58    }
+     59    
+
+ACTION: step-over
+PAUSE AT entryTryRuntimeException:59:2
+     55        } finally {
+     56            b();
+     57        }   
+ ->  58    }|
+     59    
+     60    function entryTryFinallyNoError() {
+     61        try {
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+

@@ -1,0 +1,2009 @@
+# These are the layout test expectations for Apple's iOS port of WebKit1.
+#
+# See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
+
+editing/input/focus-change-with-marked-text.html [ Pass ]
+http/tests/security/xss-DENIED-xsl-external-entity-no-logging.xml [ Pass ]
+
+# No service worker implementation for WK1
+imported/w3c/web-platform-tests/service-workers [ Skip ]
+imported/w3c/web-platform-tests/server-timing/service_worker_idl.html [ Skip ]
+http/wpt/service-workers [ Skip ]
+http/wpt/cache-storage [ Skip ]
+http/tests/cache-storage [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/request/destination [ Skip ]
+imported/w3c/web-platform-tests/fetch/cross-origin-resource-policy [ Skip ]
+
+# Skip WebRTC for now in WK1
+imported/w3c/web-platform-tests/webrtc [ Skip ]
+webrtc [ Skip ]
+
+# Not supported on WK1
+media/no-fullscreen-when-hidden.html [ Skip ]
+
+# Skip pointerevents on WK1
+pointerevents [ Skip ]
+imported/w3c/web-platform-tests/pointerevents [ Skip ]
+
+# Datalist is unsupported in WK1
+fast/forms/datalist [ WontFix ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element [ WontFix ]
+
+# DOM paste access requests are not implemented in WebKit1.
+editing/async-clipboard/clipboard-change-data-while-reading.html [ Skip ]
+
+# testRunner.queueLoad() does not support loading data URLs in iOS WK1
+http/tests/security/contentSecurityPolicy/navigate-self-to-data-url.html [ Skip ]
+
+# <input type=color> is not supported in WebKit1 on iOS.
+fast/forms/color/input-color-onchange-event.html [ Failure ]
+fast/forms/color/input-color-readonly.html [ Failure ]
+fast/forms/color/input-value-sanitization-color.html [ Failure ]
+fast/forms/color/color-setrangetext.html [ Failure ]
+
+# <rdar://problem/6501130> LayoutTests: Enable editing tests after we support editing
+editing/deleting/4922367.html
+editing/deleting/5126166.html
+editing/deleting/5144139-2.html
+editing/deleting/5206311-1.html
+editing/deleting/5433862-2.html
+editing/deleting/5483370.html
+editing/deleting/backspace-at-table-cell-beginning.html
+editing/deleting/delete-and-cleanup.html
+editing/deleting/delete-at-start-or-end.html
+editing/deleting/delete-block-merge-contents-025.html
+editing/deleting/delete-br-in-last-table-cell.html
+editing/deleting/delete-cell-contents.html
+editing/deleting/delete-empty-table.html
+editing/deleting/delete-last-char-in-table.html
+editing/deleting/delete-select-all-001.html
+editing/deleting/delete-table-cell-contents.html
+editing/deleting/delete-to-select-table.html
+editing/deleting/forward-delete-empty-table-cell.html
+editing/deleting/smart-delete-across-editable-boundaries.html
+editing/deleting/table-cells.html
+editing/execCommand/5119244.html
+editing/execCommand/5432254-1.html
+editing/execCommand/5432254-2.html
+editing/execCommand/5543472-1.html
+editing/execCommand/5543472-2.html
+editing/execCommand/5543472-3.html
+editing/execCommand/5658933-2.html
+editing/execCommand/5658933-3.html
+editing/execCommand/format-block-table.html
+editing/execCommand/indent-empty-table-cell.html
+editing/execCommand/indent-images-2.html
+editing/execCommand/indent-images.html
+editing/execCommand/indent-right-after-table.html
+editing/execCommand/remove-format-in-table-cell.html
+editing/inserting/5058163-1.html
+editing/inserting/6609479-1.html
+editing/inserting/6609479.html
+editing/inserting/insert-images-in-pre-x-crash.html
+editing/inserting/insert-paragraph-01.html
+editing/inserting/insert-paragraph-02.html
+editing/inserting/insert-without-enclosing-block.html
+editing/inserting/paragraph-separator-in-table-1.html
+editing/inserting/paragraph-separator-in-table-2.html
+editing/inserting/typing-003.html
+editing/selection/3690703-2.html
+editing/selection/3690703.html
+editing/selection/3690719.html
+editing/selection/4895428-1.html
+editing/selection/4895428-4.html
+editing/selection/5076323-1.html
+editing/selection/5076323-2.html
+editing/selection/5076323-3.html
+editing/selection/7152-2.html
+editing/selection/caret-after-keypress.html
+editing/selection/caret-before-select.html
+editing/selection/editable-non-editable-crash.html
+editing/selection/move-by-line-001.html
+editing/selection/move-by-line-cycles-in-table.html
+editing/selection/move-left-right.html
+editing/selection/skip-non-editable-1.html
+editing/selection/table-caret-3.html
+editing/selection/table-lineboundary.html
+editing/spelling/context-menu-suggestions-subword-selection.html
+editing/spelling/spelling-with-whitespace-selection.html
+editing/style/background-color-retained.html
+editing/style/remove-underline-across-paragraph-in-bold.html
+editing/style/remove-underline-across-paragraph.html
+editing/style/remove-underline-after-paragraph-in-bold.html
+editing/style/remove-underline-after-paragraph.html
+editing/style/remove-underline-from-stylesheet.html
+editing/style/remove-underline-in-bold.html
+editing/style/remove-underline.html
+editing/style/table-selection.html
+editing/style/typing-style-003.html
+editing/style/unbold-in-bold.html
+editing/style/underline.html
+editing/undo/undo-after-event-edited.html
+editing/unsupported-content/table-type-after.html
+editing/unsupported-content/table-type-before.html
+
+# Zooming works differently in iOS DRT
+fast/zooming/uiscript-zooming.html [ Failure ]
+
+# Not supported on WK1
+accessibility/ios-simulator/speak-selection-content.html [ Skip ]
+accessibility/ios-simulator/accessibility-events-setting.html [ Skip ]
+accessibility/ios-simulator/unobscured-content-rect.html [ Skip ]
+
+# FIXME: Tests that fail due to lack of textInputController <rdar://problem/5106287>
+editing/inserting/insert-composition-whitespace.html [ Failure ]
+
+# FIXME: Tests failing because they produce the wrong markup <rdar://problem/10127241> 
+editing/inserting/insert-before-link-1.html [ Failure ]
+editing/inserting/insert-paragraph-03.html [ Failure ]
+editing/inserting/paragraph-outside-nested-divs.html [ Failure ]
+editing/inserting/typing-tab-designmode-forms.html [ Failure ]
+editing/inserting/typing-tab-designmode.html [ Failure ]
+editing/style/4916887.html [ Failure ]
+editing/style/5017613-1.html [ Failure ]
+editing/style/5017613-2.html [ Failure ]
+editing/style/5046875-1.html [ Failure ]
+editing/style/5279521.html [ Failure ]
+editing/style/apple-style-editable-mix.html [ Failure ]
+
+# Editing tests that time out:
+editing/deleting/delete-button-background-image-none.html
+editing/input/page-up-down-scrolls.html
+editing/selection/caret-at-bidi-boundary.html
+editing/spelling/context-menu-suggestions-multiword-selection.html
+editing/spelling/delete-into-misspelled-word.html
+editing/spelling/design-mode-spellcheck-off.html
+editing/spelling/editing-word-with-marker-2.html
+editing/spelling/grammar-edit-word.html
+editing/spelling/grammar.html
+editing/spelling/inline-spelling-markers-hidpi.html
+editing/spelling/inline-spelling-markers.html
+editing/spelling/markers.html
+editing/spelling/move-cursor-around-misspelled-word.html
+editing/spelling/spellcheck-attribute.html
+editing/spelling/spelling-attribute-at-child.html
+editing/spelling/spelling-attribute-change.html
+editing/spelling/spelling-backspace-between-lines.html
+editing/spelling/spelling-backward.html
+editing/spelling/spelling-changed-text.html
+editing/spelling/spelling-double-clicked-word.html
+editing/spelling/spelling-exactly-selected-word.html
+editing/spelling/spelling-hasspellingmarker.html
+editing/spelling/spelling-insert-html.html
+editing/spelling/spelling-linebreak.html
+editing/spelling/spelling-marker-description.html
+editing/spelling/spelling-with-punctuation-selection.html
+editing/style/apply-style-join-child-text-nodes-crash.html
+
+# Editing tests that fail:
+editing/caret/color-span-inside-editable-background.html [ ImageOnlyFailure ]
+editing/caret/color-span-inside-editable.html [ ImageOnlyFailure ]
+editing/deleting/collapse-whitespace-3587601-fix.html [ Failure ]
+editing/deleting/delete-3608445-fix.html [ Failure ]
+editing/deleting/delete-3608462-fix.html [ Failure ]
+editing/deleting/delete-3775172-fix.html [ Failure ]
+editing/deleting/delete-3800834-fix.html [ Failure ]
+editing/deleting/delete-3857753-fix.html [ Failure ]
+editing/deleting/delete-3865854-fix.html [ Failure ]
+editing/deleting/delete-3928305-fix.html [ Failure ]
+editing/deleting/delete-3959464-fix.html [ Failure ]
+editing/deleting/delete-4038408-fix.html [ Failure ]
+editing/deleting/delete-4083333-fix.html [ Failure ]
+editing/deleting/delete-after-span-ws-001.html [ Failure ]
+editing/deleting/delete-after-span-ws-002.html [ Failure ]
+editing/deleting/delete-after-span-ws-003.html [ Failure ]
+editing/deleting/delete-all-text-in-text-field-assertion.html [ Failure ]
+editing/deleting/delete-and-undo.html [ Failure ]
+editing/deleting/delete-at-paragraph-boundaries-001.html [ Failure Pass ]
+editing/deleting/delete-block-contents-001.html [ Failure ]
+editing/deleting/delete-block-contents-002.html [ Failure ]
+editing/deleting/delete-br-002.html [ Failure ]
+editing/deleting/delete-br-004.html [ Failure ]
+editing/deleting/delete-br-005.html [ Failure ]
+editing/deleting/delete-br-006.html [ Failure ]
+editing/deleting/delete-br-009.html [ Failure ]
+editing/deleting/delete-br-011.html [ Failure ]
+editing/deleting/delete-by-word-001.html [ Failure ]
+editing/deleting/delete-by-word-002.html [ Failure ]
+editing/deleting/delete-emoji.html [ Failure ]
+editing/deleting/delete-image-004.html [ Failure ]
+editing/deleting/delete-leading-ws-001.html [ Failure ]
+editing/deleting/delete-ligature-001.html [ Failure ]
+editing/deleting/delete-ligature-003.html [ Failure ]
+editing/deleting/delete-line-011.html [ Failure ]
+editing/deleting/delete-line-end-ws-001.html [ Failure ]
+editing/deleting/delete-line-end-ws-002.html [ Failure ]
+editing/deleting/delete-tab-001.html [ Failure ]
+editing/deleting/delete-tab-004.html [ Failure ]
+editing/deleting/delete-ws-fixup-001.html [ Failure ]
+editing/deleting/merge-paragraph-from-address.html [ Failure ]
+editing/deleting/merge-paragraph-from-h6-with-style-2.html [ Failure ]
+editing/deleting/merge-paragraph-from-h6-with-style.html [ Failure ]
+editing/deleting/merge-paragraph-from-h6.html [ Failure ]
+editing/deleting/merge-paragraph-from-listing.html [ Failure ]
+editing/deleting/merge-paragraph-from-p-with-style-2.html [ Failure ]
+editing/deleting/merge-paragraph-from-p-with-style-3.html [ Failure ]
+editing/deleting/merge-paragraph-from-p-with-style.html [ Failure ]
+editing/deleting/merge-paragraph-into-blockquote.html [ Failure ]
+editing/deleting/merge-paragraph-into-h1-with-dir-2.html [ Failure ]
+editing/deleting/merge-paragraph-into-h1-with-dir.html [ Failure ]
+editing/deleting/merge-paragraph-into-h1-with-style.html [ Failure ]
+editing/deleting/merge-paragraph-into-h1.html [ Failure ]
+editing/deleting/merge-paragraph-into-pre.html [ Failure ]
+editing/deleting/paragraph-in-preserveNewline.html [ Failure ]
+editing/deleting/skip-virama-001.html [ Failure ]
+editing/deleting/smart-delete-002.html [ Failure ]
+editing/deleting/smart-delete-across-editable-boundaries-2.html [ Failure ]
+editing/deleting/smart-editing-disabled-mac.html [ Failure ]
+editing/deleting/whitespace-pre-1.html [ Failure ]
+editing/execCommand/4580583-1.html [ Failure ]
+editing/execCommand/4580583-2.html [ Failure ]
+editing/execCommand/4641880-2.html [ Failure ]
+editing/execCommand/4747450.html [ Failure ]
+editing/execCommand/4924441.html [ Failure ]
+editing/execCommand/button.html [ Failure ]
+editing/execCommand/convert-style-elements-to-spans.html [ Failure ]
+editing/execCommand/createLink.html [ Failure ]
+editing/execCommand/delete-selection-has-style.html [ Failure ]
+editing/execCommand/format-block-multiple-paragraphs-in-pre.html [ Failure ]
+editing/execCommand/format-block-with-braces.html [ Failure ]
+editing/execCommand/format-block-with-trailing-br.html [ Failure ]
+editing/execCommand/forward-delete-no-scroll.html [ Failure ]
+editing/execCommand/hilitecolor.html [ Failure ]
+editing/execCommand/indent-nested-lists-4.html [ Failure ]
+editing/execCommand/indent-nested-lists-7.html [ Failure ]
+editing/execCommand/indent-pre.html [ Failure ]
+editing/execCommand/insert-line-break-no-scroll.html [ Failure ]
+editing/execCommand/outdent-nested-lists-4.html [ Failure ]
+editing/execCommand/query-command-state.html [ Failure ]
+editing/execCommand/remove-format-multiple-elements-mac.html [ Failure ]
+editing/execCommand/remove-format-multiple-elements-win.html [ Failure ]
+editing/execCommand/remove-formatting-2.html [ Failure ]
+editing/execCommand/remove-list-item-1.html [ Failure Pass ]
+editing/execCommand/selectAll.html [ Failure ]
+editing/execCommand/toggle-link-mac.html [ Failure ]
+editing/execCommand/toggle-unlink-mac.html [ Failure ]
+editing/execCommand/unlink.html [ Failure ]
+editing/input/caret-at-the-edge-of-contenteditable.html [ Failure ]
+editing/input/caret-at-the-edge-of-input.html [ Failure ]
+editing/input/editable-container-with-word-wrap-normal.html [ Failure ]
+editing/input/emacs-ctrl-o.html [ Failure ]
+editing/input/ime-composition-clearpreedit.html [ Failure ]
+editing/input/option-page-up-down.html [ Failure ]
+editing/input/password-echo-passnode.html [ Failure ]
+editing/input/password-echo-passnode2.html [ Failure ]
+editing/input/password-echo-passnode3.html [ Failure ]
+editing/input/password-echo-textnode.html [ Failure ]
+editing/input/reveal-caret-of-multiline-contenteditable.html [ Failure ]
+editing/input/reveal-caret-of-multiline-input.html [ Failure ]
+editing/input/reveal-caret-of-transformed-multiline-input.html [ Failure ]
+editing/input/reveal-edit-on-input-vertically.html [ Failure ]
+editing/input/scroll-viewport-page-up-down.html [ Failure ]
+editing/input/select-all-clear-input-method.html [ Failure ]
+editing/input/setting-input-value-cancel-ime-composition.html [ Failure ]
+editing/input/style-change-during-input.html [ Failure ]
+editing/inserting/4840662.html [ Failure ]
+editing/inserting/4875189-2.html [ Failure ]
+editing/inserting/4960120-1.html [ Failure ]
+editing/inserting/4960120-2.html [ Failure ]
+editing/inserting/insert-3800346-fix.html [ Failure ]
+editing/inserting/insert-br-007.html [ Failure ]
+editing/inserting/insert-character-in-first-letter-crash.html [ Failure ]
+editing/inserting/insert-tab-001.html [ Failure ]
+editing/secure-input/password-input-changed-type.html [ Failure ]
+editing/secure-input/password-input-focusing-to-different-frame.html [ Failure ]
+editing/secure-input/password-input-focusing.html [ Failure ]
+editing/secure-input/removed-password-input.html [ Failure ]
+editing/secure-input/reset-state-on-navigation.html [ Failure ]
+editing/selection/4889598.html [ Failure ]
+editing/selection/5195166-1.html [ Failure ]
+editing/selection/5354455-1.html [ Failure ]
+editing/selection/6476.html [ Failure ]
+editing/selection/7152-1.html [ Failure ]
+editing/selection/anchor-focus1.html [ Failure ]
+editing/selection/anchor-focus2.html [ Failure ]
+editing/selection/anchor-focus3.html [ Failure ]
+editing/selection/block-cursor-overtype-mode.html [ Failure ]
+editing/selection/caret-bidi-first-and-last-letters.html [ Failure ]
+editing/selection/caret-in-empty-inline-1.html [ Failure ]
+editing/selection/caret-in-empty-inline-2.html [ Failure ]
+editing/selection/caret-mode-paragraph-keys-navigation.html [ Failure ]
+editing/selection/click-in-focusable-link-should-not-clear-selection.html [ Failure ]
+editing/selection/collapse-selection-in-bidi.html [ Failure ]
+editing/selection/context-menu-on-text.html [ Failure ]
+editing/selection/context-menu-text-selection.html [ Failure ]
+editing/selection/context-menu-text-selection-lookup.html [ Failure ]
+editing/selection/directionality-after-undo-replace.html [ Failure ]
+editing/selection/double-click-selection-with-dom-mutation.html [ Failure ]
+editing/selection/doubleclick-beside-cr-span.html [ Failure ]
+editing/selection/doubleclick-crash.html [ Failure ]
+editing/selection/doubleclick-inline-first-last-contenteditable.html [ Failure ]
+editing/selection/doubleclick-japanese-text.html [ Failure ]
+editing/selection/doubleclick-whitespace.html [ Failure ]
+editing/selection/drag-select-rapidly.html [ Failure ]
+editing/selection/drag-start-event-client-x-y.html [ Failure ]
+editing/selection/drag-text-delay.html [ Failure ]
+editing/selection/editable-div-clear-on-keydown.html [ Failure ]
+editing/selection/editable-links.html [ Failure ]
+editing/selection/extend-after-mouse-selection.html [ Failure ]
+editing/selection/extend-by-character-006.html [ Failure ]
+editing/selection/extend-by-sentence-001.html [ Failure ]
+editing/selection/extend-by-word-001.html [ Failure ]
+editing/selection/extend-forward-by-word-over-non-editable.html [ Failure ]
+editing/selection/extend-inside-transforms-backward.html [ Failure ]
+editing/selection/extend-inside-transforms-forward.html [ Failure ]
+editing/selection/extend-selection-after-double-click.html [ Failure ]
+editing/selection/extend-selection-bidi.html [ Failure ]
+editing/selection/extend-selection-enclosing-block-mac.html [ Failure ]
+editing/selection/extend-selection-enclosing-block-win.html [ Failure ]
+editing/selection/extend-selection-word.html [ Failure ]
+editing/selection/extend-to-line-boundary.html [ Failure ]
+editing/selection/fake-drag.html [ Failure ]
+editing/selection/find-yensign-and-backslash.html [ Failure ]
+editing/selection/focus-body.html [ Failure ]
+editing/selection/internal-caret-rect.html [ Failure ]
+editing/selection/last-empty-inline.html [ Failure ]
+editing/selection/modify-up-on-rtl-wrapping-text.html [ Failure ]
+editing/selection/move-begin-end.html [ Failure ]
+editing/selection/move-between-blocks-no-001.html [ Failure Pass ]
+editing/selection/move-between-lines-of-different-editabilities.html [ Failure ]
+editing/selection/move-by-character-6.html [ Failure ]
+editing/selection/move-by-word-001.html [ Failure ]
+editing/selection/move-by-word-visually-multi-line.html [ Failure ]
+editing/selection/programmatic-selection-on-mac-is-directionless.html [ Failure ]
+editing/selection/rtl-move-selection-right-left.html [ Failure ]
+editing/selection/select-all-001.html [ Failure ]
+editing/selection/select-all-002.html [ Failure ]
+editing/selection/select-all-003.html [ Failure ]
+editing/selection/select-all-004.html [ Failure ]
+editing/selection/select-bidi-run.html [ Failure ]
+editing/selection/select-line-break-with-opposite-directionality.html [ Failure ]
+editing/selection/select-out-of-editable.html [ Failure ]
+editing/selection/select-out-of-floated-contenteditable.html [ Failure ]
+editing/selection/select-out-of-floated-input.html [ Failure ]
+editing/selection/select-out-of-floated-textarea.html [ Failure ]
+editing/selection/selection-extend-should-not-move-across-caret-on-mac.html [ Failure ]
+editing/selection/shift-click.html [ Failure ]
+editing/selection/shrink-selection-after-shift-pagedown.html [ Failure ]
+editing/selection/unrendered-001.html [ Failure ]
+editing/selection/unrendered-002.html [ Failure ]
+editing/selection/unrendered-003.html [ Failure ]
+editing/selection/unrendered-004.html [ Failure ]
+editing/selection/unrendered-005.html [ Failure ]
+editing/selection/user-select-all-selection.html [ Failure ]
+editing/selection/user-select-all-with-shift.html [ Failure ]
+editing/spelling/centering-misspelling-dots.html [ Failure ]
+editing/spelling/context-menu-suggestions.html [ Failure ]
+editing/spelling/misspelling-dots-dont-extend-beyond-words.html [ Failure ]
+editing/spelling/spellcheck-input-search-crash.html [ Failure ]
+editing/spelling/spelling-unified-emulation.html [ Failure ]
+editing/style/5046875-2.html [ Failure ]
+editing/style/5084241.html [ Failure ]
+editing/style/fore-color-by-name.html [ Failure ]
+editing/style/make-text-writing-direction-inline-mac.html [ Failure ]
+editing/style/push-down-font-styles-mac.html [ Failure ]
+editing/style/push-down-font-styles-win.html [ Failure ]
+editing/style/push-down-implicit-styles-around-list-mac.html [ Failure ]
+editing/style/push-down-implicit-styles-around-list-win.html [ Failure ]
+editing/style/push-down-implicit-styles-mac.html [ Failure ]
+editing/style/style-3681552-fix-001.html [ Failure ]
+editing/style/style-3690704-fix.html [ Failure ]
+editing/style/style-boundary-002.html [ Failure ]
+editing/style/style-boundary-003.html [ Failure ]
+editing/style/stylewithcss-without-selection.html [ Failure ]
+editing/style/text-indent.html [ Failure ]
+editing/style/toggle-style-bold-italic-mixed-editability.html [ Failure ]
+editing/style/toggle-style-bold-italic.html [ Failure ]
+editing/style/typing-style-001.html [ Failure ]
+editing/style/typing-style-002.html [ Failure ]
+editing/text-iterator/first-letter-word-boundary.html [ Failure ]
+editing/undo/4063751.html [ Failure ]
+editing/undo/5378473.html [ Failure ]
+editing/undo/redo-split-text-node.html [ Failure ]
+editing/undo/redo-split-text-with-removal.html [ Failure ]
+editing/undo/redo-style.html [ Failure ]
+editing/undo/redo-typing-001.html [ Failure ]
+editing/undo/remove-css-property-and-remove-style.html [ Failure ]
+editing/undo/replace-by-span-then-remove.html [ Failure ]
+editing/undo/replace-text-in-node-preserving-markers-crash.html [ Failure ]
+editing/undo/undo-after-setting-value.html [ Failure ]
+editing/undo/undo-deleteWord.html [ Failure ]
+editing/undo/undo-iframe-location-change.html [ Failure ]
+editing/undo/undo-indent.html [ Failure ]
+editing/undo/undo-misspellings.html [ Failure ]
+editing/undo/undo-smart-delete-reversed-selection.html [ Failure ]
+editing/undo/undo-smart-delete-word.html [ Failure ]
+editing/undo/undo-typing-001.html [ Failure ]
+editing/unsupported-content/list-delete-001.html [ Failure ]
+editing/unsupported-content/list-delete-003.html [ Failure ]
+editing/unsupported-content/table-delete-002.html [ Failure ]
+fast/forms/textfield-outline.html [ Failure ]
+platform/ios/ios/fast/coordinates/mouse-event-zoomed.html [ Failure ]
+platform/ios/ios/fast/coordinates/page-offsets.html [ Failure ]
+platform/ios/ios/fast/coordinates/range-client-rects.html [ Failure ]
+
+# <rdar://problem/12068794> Many editing/inserting tests have editing delegate callbacks out of order from baseline
+editing/inserting/editing-empty-divs.html [ Failure Pass ]
+editing/inserting/insert-3654864-fix.html [ Failure ]
+editing/inserting/insert-3775316-fix.html [ Failure ]
+editing/inserting/insert-after-delete-001.html [ Failure ]
+editing/inserting/insert-at-end-01.html [ Failure ]
+editing/inserting/insert-at-end-02.html [ Failure ]
+editing/inserting/insert-br-001.html [ Failure ]
+editing/inserting/insert-br-002.html [ Failure ]
+editing/inserting/insert-br-003.html [ Failure ]
+editing/inserting/insert-br-004.html [ Failure ]
+editing/inserting/insert-br-005.html [ Failure ]
+editing/inserting/insert-br-006.html [ Failure ]
+editing/inserting/insert-br-008.html [ Failure ]
+editing/inserting/insert-div-001.html [ Failure ]
+editing/inserting/insert-div-002.html [ Failure ]
+editing/inserting/insert-div-003.html [ Failure ]
+editing/inserting/insert-div-004.html [ Failure ]
+editing/inserting/insert-div-005.html [ Failure ]
+editing/inserting/insert-div-006.html [ Failure ]
+editing/inserting/insert-div-007.html [ Failure ]
+editing/inserting/insert-div-008.html [ Failure ]
+editing/inserting/insert-div-021.html [ Failure ]
+editing/inserting/insert-space-in-empty-doc.html [ Failure ]
+editing/inserting/insert-tab-002.html [ Failure ]
+editing/inserting/insert-tab-004.html [ Failure ]
+editing/inserting/insert-thai-characters-001.html [ Failure ]
+editing/inserting/typing-001.html [ Failure ]
+editing/inserting/typing-around-br-001.html [ Failure ]
+editing/inserting/typing-around-image-001.html [ Failure ]
+editing/unsupported-content/list-type-after.html [ Failure ]
+editing/unsupported-content/list-type-before.html [ Failure ]
+
+# Editing tests that are flaky:
+editing/deleting/25322-2.html [ Failure Pass ]
+editing/deleting/4866671.html [ Failure Pass ]
+editing/deleting/5546763.html [ Failure Pass ]
+editing/deleting/5847330-2.html [ Failure Pass ]
+editing/deleting/delete-before-block-image-1.html [ Failure Pass ]
+editing/execCommand/25320.html [ Failure Pass ]
+editing/execCommand/4786404-2.html [ Failure Pass ]
+editing/execCommand/4916235.html [ Failure Pass ]
+editing/execCommand/4916583.html [ Failure Pass ]
+editing/execCommand/4920488.html [ Failure Pass ]
+editing/execCommand/4920742-1.html [ Failure Pass ]
+editing/execCommand/4928635.html [ Failure Pass ]
+editing/execCommand/5062376.html [ Failure Pass ]
+editing/execCommand/5142012-3.html [ Failure Pass ]
+editing/execCommand/5144139-1.html [ Failure Pass ]
+editing/execCommand/5164796.html [ Failure Pass ]
+editing/execCommand/5207369.html [ Failure Pass ]
+editing/execCommand/5210032.html [ Failure Pass ]
+editing/execCommand/5573879.html [ Failure Pass ]
+editing/execCommand/5604313.html [ Failure Pass ]
+editing/input/insert-wrapping-space-in-textarea.html [ Failure Pass ]
+editing/input/set-value-on-input-and-delete.html [ Failure Pass ]
+editing/input/set-value-on-input-and-forward-delete.html [ Failure Pass ]
+editing/input/set-value-on-input-and-type-input.html [ Failure Pass ]
+editing/input/set-value-on-input-and-type-textarea.html [ Failure Pass ]
+editing/inserting/5378847.html [ Failure Pass ]
+editing/inserting/5607069-1.html [ Failure Pass ]
+editing/inserting/5607069-2.html [ Failure Pass ]
+editing/inserting/5607069-3.html [ Failure Pass ]
+editing/inserting/5685601-1.html [ Failure Pass ]
+editing/inserting/5685601-2.html [ Failure Pass ]
+editing/inserting/5685601-3.html [ Failure Pass ]
+editing/inserting/5803706-1.html [ Failure Pass ]
+editing/inserting/5803706-2.html [ Failure Pass ]
+editing/inserting/5994480-2.html [ Failure Pass ]
+editing/inserting/5994480.html [ Failure Pass ]
+editing/inserting/6104369-2.html [ Failure Pass ]
+editing/inserting/6104369.html [ Failure Pass ]
+editing/inserting/6703873-2.html [ Failure Pass ]
+editing/inserting/caret-position.html [ Failure Pass ]
+editing/selection/51344.html [ Failure Pass ]
+editing/selection/find-in-text-control.html [ Failure Pass ]
+editing/selection/hit-test-on-text-with-line-height.html [ Failure Pass ]
+editing/style/apply-font-size-to-multiple-nodes.html [ Failure Pass ]
+editing/style/block-style-004.html [ Failure Pass ]
+editing/style/block-style-005.html [ Failure Pass ]
+editing/style/block-style-006.html [ Failure Pass ]
+editing/style/bold-with-dom-changes.html [ Failure Pass ]
+editing/style/font-face-unquote.html [ Failure Pass ]
+editing/style/fontsize-1.html [ Failure Pass ]
+editing/style/heading-text-after-hr.html [ Failure Pass ]
+editing/style/highlight-insert-paragraph.html [ Failure Pass ]
+editing/text-iterator/rtl-selection-crash.html [ Failure Pass ]
+editing/text-iterator/thai-cursor-movement.html [ Failure Pass ]
+editing/unsupported-content/table-delete-001.html [ Failure Pass ]
+editing/unsupported-content/table-delete-003.html [ Failure Pass ]
+
+# Compositing tests that fail:
+compositing/animation/layer-for-filling-animation.html [ Failure ]
+legacy-animation-engine/compositing/animation/layer-for-filling-animation.html [ Failure ]
+compositing/backing/backface-visibility-flip.html [ Failure ]
+legacy-animation-engine/compositing/backing/backface-visibility-flip.html [ Failure ]
+compositing/backing/child-layer-no-backing.html [ Failure ]
+compositing/backing/inline-block-no-backing.html [ Failure ]
+compositing/backing/no-backing-for-clip-overhang.html [ Failure ]
+compositing/backing/no-backing-for-clip-overlap.html [ Failure ]
+compositing/backing/no-backing-for-clip.html [ Failure ]
+compositing/backing/no-backing-for-perspective.html [ Failure ]
+compositing/backing/whitespace-nodes-no-backing.html [ Failure ]
+compositing/columns/composited-columns.html [ Failure ]
+compositing/columns/composited-in-paginated-rl.html [ Failure ]
+compositing/columns/composited-in-paginated-writing-mode-rl.html [ Failure ]
+compositing/columns/composited-in-paginated.html [ Failure ]
+compositing/columns/composited-lr-paginated-repaint.html [ Failure ]
+compositing/columns/composited-rl-paginated-repaint.html [ Failure ]
+compositing/columns/hittest-composited-in-paginated.html [ Failure ]
+compositing/columns/rotated-in-paginated.html [ Failure ]
+compositing/columns/untransformed-composited-in-paginated.html [ Failure ]
+compositing/contents-opaque/control-layer.html [ Failure ]
+compositing/contents-scale/rasterization-scale.html [ ImageOnlyFailure ]
+compositing/contents-scale/rounded-contents-scale.html [ Failure ]
+compositing/contents-scale/scaled-ancestor.html [ Failure ]
+compositing/contents-scale/simple-scale.html [ Failure ]
+compositing/contents-scale/z-translate.html [ Failure ]
+compositing/fixed-image-loading.html [ Failure ]
+compositing/fixed-positioned-pseudo-content-no-compositing.html [ Failure ]
+compositing/geometry/bounds-ignores-hidden-composited-descendant.html [ Failure ]
+compositing/geometry/bounds-ignores-hidden-dynamic-negzindex.html [ Failure ]
+compositing/geometry/composited-in-columns.html [ Failure ]
+compositing/geometry/fixed-position-composited-switch.html [ Failure ]
+compositing/geometry/layer-due-to-layer-children-deep-switch.html [ Failure ]
+compositing/geometry/layer-due-to-layer-children-switch.html [ Failure ]
+compositing/geometry/limit-layer-bounds-fixed-positioned.html [ Failure ]
+compositing/geometry/limit-layer-bounds-fixed.html [ Failure ]
+compositing/geometry/limit-layer-bounds-opacity-transition.html [ Failure ]
+legacy-animation-engine/compositing/geometry/limit-layer-bounds-opacity-transition.html [ Failure ]
+compositing/geometry/limit-layer-bounds-overflow-root.html [ Failure ]
+compositing/geometry/vertical-scroll-composited.html [ Failure ]
+compositing/iframes/composited-parent-iframe.html [ Failure ]
+compositing/iframes/connect-compositing-iframe-delayed.html [ Failure ]
+compositing/iframes/connect-compositing-iframe.html [ Failure ]
+compositing/iframes/connect-compositing-iframe2.html [ Failure ]
+compositing/iframes/connect-compositing-iframe3.html [ Failure ]
+compositing/iframes/enter-compositing-iframe.html [ Failure ]
+compositing/iframes/iframe-resize.html [ Failure ]
+compositing/iframes/iframe-size-to-zero.html [ Failure ]
+compositing/iframes/iframe-src-change.html [ Failure ]
+compositing/iframes/invisible-nested-iframe-show.html [ Failure ]
+compositing/iframes/leave-compositing-iframe.html [ Failure ]
+compositing/iframes/overlapped-iframe.html [ Failure ]
+compositing/iframes/overlapped-nested-iframes.html [ Failure ]
+compositing/iframes/page-cache-layer-tree.html [ Failure ]
+compositing/iframes/scrolling-iframe.html [ Failure ]
+compositing/images/positioned-image-content-rect.html [ ImageOnlyFailure ]
+compositing/images/truncated-direct-png-image.html [ ImageOnlyFailure ]
+compositing/layers-inside-overflow-scroll.html [ Failure ]
+compositing/layer-creation/fixed-position-and-transform.html [ Failure ]
+compositing/layer-creation/fixed-position-change-out-of-view-in-view.html [ Failure ]
+compositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html [ Failure ]
+compositing/layer-creation/fixed-position-out-of-view-scaled.html [ Failure ]
+compositing/layer-creation/fixed-position-out-of-view.html [ Failure ]
+compositing/layer-creation/fixed-position-transformed-into-view.html [ Failure ]
+compositing/layer-creation/fixed-position-under-transform.html [ Failure ]
+compositing/layer-creation/no-compositing-for-preserve-3d.html [ Failure ]
+compositing/layer-creation/no-compositing-for-sticky.html [ Failure ]
+compositing/layer-creation/overflow-scroll-overlap.html [ Failure ]
+compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants.html [ Failure ]
+compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2.html [ Failure ]
+compositing/overflow/composited-scrolling-paint-phases.html [ Failure ]
+compositing/overflow/content-gains-scrollbars.html [ Failure ]
+compositing/overflow/overflow-scroll.html [ Failure ]
+compositing/overflow/overflow-scrollbar-layers.html [ Failure ]
+compositing/overflow/overflow-scrollbar-layer-positions.html [ Failure ]
+compositing/overflow/scrollbar-painting.html [ Failure ]
+compositing/repaint/fixed-background-scroll.html [ Failure ]
+compositing/repaint/invalidations-on-composited-layers.html [ Failure ]
+compositing/repaint/resize-repaint.html [ Failure ]
+compositing/rtl/rtl-absolute-overflow-scrolled.html [ Failure ]
+compositing/rtl/rtl-absolute-overflow.html [ Failure ]
+compositing/rtl/rtl-fixed-overflow-scrolled.html [ Failure ]
+compositing/rtl/rtl-fixed-overflow.html [ Failure ]
+compositing/rtl/rtl-fixed.html [ Failure ]
+compositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ]
+compositing/rtl/rtl-iframe-absolute.html [ Failure ]
+compositing/rtl/rtl-iframe-fixed.html [ Failure ]
+compositing/rtl/rtl-iframe-relative.html [ Failure ]
+compositing/scrolling/touch-scroll-to-clip.html [ Failure ]
+compositing/tiled-layers-hidpi.html [ Failure ]
+compositing/tiling/backface-preserve-3d-tiled.html [ Failure ]
+compositing/tiling/crash-reparent-tiled-layer.html [ Failure ]
+compositing/tiling/empty-to-tiled.html [ ImageOnlyFailure ]
+compositing/tiling/huge-layer-with-layer-children-resize.html [ Failure ]
+compositing/tiling/huge-layer-with-layer-children.html [ Failure ]
+compositing/tiling/rotated-tiled-clamped.html [ Failure ]
+compositing/tiling/rotated-tiled-preserve3d-clamped.html [ Failure ]
+compositing/tiling/tile-cache-zoomed.html [ Failure ]
+compositing/tiling/tiled-layer-resize.html [ Failure ]
+compositing/visibility/visibility-image-layers-dynamic.html [ Failure ]
+compositing/visible-rect/animated.html [ Failure ]
+legacy-animation-engine/compositing/visible-rect/animated.html [ Failure ]
+compositing/visible-rect/2d-transformed.html [ Failure ]
+compositing/visible-rect/3d-transformed.html [ Failure ]
+compositing/visible-rect/clipped-by-viewport.html [ Failure ]
+compositing/visible-rect/clipped-visible-rect.html [ Failure ]
+compositing/visible-rect/flipped-preserve-3d.html [ Failure ]
+compositing/visible-rect/iframe-and-layers.html [ Failure ]
+compositing/visible-rect/nested-transform.html [ Failure ]
+compositing/visible-rect/scrolled.html [ Failure ]
+compositing/contents-scale/incremental-change.html [ ImageOnlyFailure ]
+compositing/overlap-blending/nested-overlap-overflow.html [ ImageOnlyFailure ]
+compositing/overlap-blending/reflection-opacity-huge.html [ ImageOnlyFailure ]
+compositing/text-on-scaled-layer.html [ ImageOnlyFailure ]
+compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
+compositing/ios/rtl-overflow-scrolling-2.html [ ImageOnlyFailure ]
+
+# Compositing tests that are flaky:
+compositing/cliprect-and-position-change-on-compositing-layer.html [ ImageOnlyFailure Pass ]
+compositing/masks/cease-tiled-mask.html [ ImageOnlyFailure Pass ]
+compositing/reflections/repaint-with-reflection.html [ ImageOnlyFailure Pass ]
+compositing/repaint/clipped-layer-size-change.html [ ImageOnlyFailure Pass ]
+
+# CSS tests that fail:
+css2.1/20110323/abspos-containing-block-initial-001.htm [ Failure ]
+css2.1/20110323/abspos-containing-block-initial-007.htm [ Failure ]
+css2.1/20110323/c543-txt-decor-000.html [ Failure ]
+css2.1/t0803-c5502-mrgn-r-03-c.html [ Failure ]
+css2.1/t0803-c5504-mrgn-l-03-c.html [ Failure ]
+css2.1/t0804-c5507-padn-r-03-f.html [ Failure ]
+css2.1/t0804-c5509-padn-l-03-f-g.html [ Failure ]
+css2.1/t0804-c5510-padn-02-f.html [ Failure ]
+css2.1/t0805-c5518-brdr-t-01-e.html [ Failure ]
+css2.1/t0805-c5519-brdr-r-00-a.html [ Failure ]
+css2.1/t0805-c5520-brdr-b-01-e.html [ Failure ]
+css2.1/t0805-c5521-brdr-l-00-a.html [ Failure ]
+css2.1/t0805-c5521-brdr-l-01-e.html [ Failure ]
+css2.1/t0805-c5521-ibrdr-l-00-a.html [ Failure ]
+css2.1/t0905-c414-flt-02-c.html [ Failure ]
+css2.1/t0905-c414-flt-03-c.html [ Failure ]
+css2.1/t0905-c414-flt-04-c.html [ Failure ]
+css2.1/t0905-c414-flt-fit-01-d-g.html [ Failure ]
+css2.1/t0905-c5525-fltblck-01-d.html [ Failure ]
+css2.1/t0905-c5525-fltcont-00-d-g.html [ Failure ]
+css2.1/t0905-c5525-flthw-00-c-g.html [ Failure ]
+css2.1/t0905-c5525-fltwidth-00-c-g.html [ Failure ]
+css2.1/t0905-c5525-fltwidth-02-c-g.html [ Failure ]
+css2.1/t0905-c5525-fltwidth-03-c-g.html [ Failure ]
+css2.1/t0905-c5525-fltwrap-00-b.html [ Failure ]
+css2.1/t0905-c5526-flthw-00-c-g.html [ Failure ]
+css2.1/t090501-c414-flt-01-b.html [ Failure ]
+css2.1/t090501-c414-flt-03-b-g.html [ Failure ]
+css2.1/t090501-c5525-flt-l-00-b-g.html [ Failure ]
+css2.1/t090501-c5525-flt-r-00-b-g.html [ Failure ]
+css2.1/t1001-abs-pos-cb-01-b.html [ Failure ]
+css2.1/t1001-abs-pos-cb-02-b.html [ Failure ]
+css2.1/t1001-abs-pos-cb-03-b.html [ Failure ]
+css2.1/t1001-abs-pos-cb-04-b.html [ Failure ]
+css2.1/t1001-abs-pos-cb-05-b.html [ Failure ]
+css2.1/t1001-abs-pos-cb-06-b.html [ Failure ]
+css2.1/t1001-abs-pos-cb-07-b.html [ Failure ]
+css2.1/t1001-abs-pos-cb-08-b.html [ Failure ]
+css2.1/t1001-abs-pos-cb-09-b.html [ Failure ]
+css2.1/t100304-c43-rpl-bbx-01-d-g.html [ Failure ]
+css2.1/t1202-counter-08-b.html [ Failure ]
+css2.1/t1202-counter-09-b.html [ Failure ]
+css2.1/t1202-counter-13-b.html [ Failure ]
+css2.1/t1202-counter-14-b.html [ Failure ]
+css2.1/t1202-counters-08-b.html [ Failure ]
+css2.1/t1202-counters-09-b.html [ Failure ]
+css2.1/t1202-counters-13-b.html [ Failure ]
+css2.1/t1202-counters-14-b.html [ Failure ]
+css2.1/t1205-c566-list-stl-01-c-g.html [ Failure ]
+css2.1/t1508-c527-font-00-b.html [ Failure ]
+css2.1/t1508-c527-font-01-b.html [ Failure ]
+css2.1/t1508-c527-font-02-b.html [ Failure ]
+css2.1/t1508-c527-font-03-b.html [ Failure ]
+css2.1/t1508-c527-font-04-b.html [ Failure ]
+css2.1/t1508-c527-font-05-b.html [ Failure ]
+css2.1/t1508-c527-font-06-b.html [ Failure ]
+css2.1/t1508-c527-font-07-b.html [ Failure ]
+css2.1/t1508-c527-font-08-b.html [ Failure ]
+css2.1/t1508-c527-font-09-b.html [ Failure ]
+css2.1/t1508-c527-font-10-c.html [ Failure ]
+css3/blending/blend-mode-isolation-flags-turn-on-stacking-context.html [ Failure ]
+css3/filters/animation-from-initial-values-with-color-matrix.html [ ImageOnlyFailure ]
+legacy-animation-engine/css3/filters/animation-from-initial-values-with-color-matrix.html [ ImageOnlyFailure ]
+css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection-add.html [ ImageOnlyFailure ]
+css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection.html [ ImageOnlyFailure ]
+css3/filters/backdrop/backdrop-filter-with-clip-path.html [ ImageOnlyFailure ]
+css3/flexbox/content-height-with-scrollbars.html [ ImageOnlyFailure ]
+
+# CSS tests that pass:
+css3/flexbox/csswg/ttwf-reftest-flex-wrap-reverse.html [ Pass ]
+css3/flexbox/csswg/ttwf-reftest-flex-wrap.html [ Pass ]
+css3/flexbox/image-percent-max-height.html [ Pass ]
+
+# Perf tests that are flaky:
+perf/typing-at-end-of-line.html [ Failure Pass ]
+
+# Scrollbar tests that are flaky:
+scrollbars/scrollbar-click-does-not-blur-content.html [ Failure Pass ]
+
+# MathML tests that time out:
+mathml/opentype/munderover-layout-resize.html
+mathml/presentation/mo-invisible.html
+
+# MathML tests that fail:
+mathml/opentype/large-operators-displaystyle-dynamic.html [ ImageOnlyFailure ]
+mathml/presentation/mo-stretch-update.html [ ImageOnlyFailure ]
+
+# SVG tests that fail:
+imported/mozilla/svg/dynamic-class-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-gradient-contents-02.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-inner-svg-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-link-style-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-mask-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-mask-contents-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-pattern-02.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-pattern-contents-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-pattern-contents-02.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-small-object-scaled-up-02.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-stroke-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-stroke-opacity-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-stroke-width-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-use-02.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-use-05.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-use-nested-01b.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/path-04.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/pattern-live-01b.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/overflow-on-outer-svg-02d.xhtml [ ImageOnlyFailure ]
+imported/mozilla/svg/stroke-width-percentage-02b.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/suspend-02.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/suspend-03.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/suspend-04.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/suspend-06.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/suspend-07.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/suspend-08.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/smil/motion/animateMotion-values-linear-1.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/text/dynamic-font-size-3.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/text/dynamic-font-size-4.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/text/multiple-x-percentages.svg [ ImageOnlyFailure ]
+svg/animations/animate-linear-discrete-additive-b.svg [ ImageOnlyFailure ]
+svg/animations/animate-linear-discrete-additive-c.svg [ ImageOnlyFailure ]
+svg/animations/animate-linear-discrete-additive.svg [ ImageOnlyFailure ]
+svg/animations/animate-marker-orienttype-4.html [ ImageOnlyFailure ]
+svg/animations/animateMotion-additive-1.svg [ ImageOnlyFailure ]
+svg/animations/animateMotion-additive-2a.svg [ ImageOnlyFailure ]
+svg/animations/animateMotion-additive-2b.svg [ ImageOnlyFailure ]
+svg/animations/animateMotion-additive-2c.svg [ ImageOnlyFailure ]
+svg/animations/animateMotion-additive-2d.svg [ ImageOnlyFailure ]
+svg/animations/animateTransform-accumulation.svg [ ImageOnlyFailure ]
+svg/animations/animateTransform-by-scale-1.svg [ ImageOnlyFailure ]
+svg/animations/animateTransform-by-scale.svg [ ImageOnlyFailure ]
+svg/animations/animateTransform-from-by-from-to-comparision.svg [ ImageOnlyFailure ]
+svg/animations/animateTransform-from-by-scale.svg [ ImageOnlyFailure ]
+svg/animations/animateTransform-rotate-around-point.svg [ ImageOnlyFailure ]
+svg/animations/animateTransform-skewX.svg [ ImageOnlyFailure ]
+svg/animations/animateTransform-skewY.svg [ ImageOnlyFailure ]
+svg/animations/animateTransform-translate.svg [ ImageOnlyFailure ]
+svg/animations/length-list-animation.svg [ ImageOnlyFailure ]
+svg/animations/mozilla/animateMotion-by-1.svg [ ImageOnlyFailure ]
+svg/animations/multiple-animateTransform-additive-sum.svg [ ImageOnlyFailure ]
+svg/animations/path-animation.svg [ ImageOnlyFailure ]
+svg/animations/polygon-set.svg [ ImageOnlyFailure ]
+svg/animations/polyline-set.svg [ ImageOnlyFailure ]
+svg/animations/repeating-path-animation.svg [ ImageOnlyFailure ]
+svg/batik/text/textEffect.svg [ Failure ]
+svg/custom/filter-update-different-root.html [ ImageOnlyFailure ]
+svg/custom/getscreenctm-in-scrollable-div-area-nested.xhtml [ Failure ]
+svg/custom/root-size-attribute-changes.html [ ImageOnlyFailure ]
+svg/custom/svg-fonts-fallback.xhtml [ Failure ]
+svg/filters/feTurbulence_bad_seeds.html [ ImageOnlyFailure ]
+svg/hittest/text-with-multiple-tspans.svg [ ImageOnlyFailure ]
+svg/hittest/text-with-text-node-and-content-elements.svg [ ImageOnlyFailure ]
+svg/overflow/visual-overflow-change.html [ ImageOnlyFailure ]
+svg/stroke/animated-non-scaling-stroke.html [ ImageOnlyFailure ]
+svg/text/modify-tspan-position-bug.html [ ImageOnlyFailure ]
+svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ Failure ]
+svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml [ Failure ]
+svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml [ Failure ]
+svg/zoom/page/zoom-svg-through-object-with-auto-size.html [ Failure ]
+svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml [ Failure ]
+
+# LayoutTests/fast tests that fail:
+fast/animation/request-animation-frame-throttle-subframe.html [ Failure ]
+fast/block/collapse-anon-block-with-float-siblings-only.html [ ImageOnlyFailure ]
+fast/block/min-max-height-percent-height-child.html [ Failure ]
+fast/block/positioning/auto/vertical-rl/007.html [ Failure ]
+fast/block/positioning/vertical-rl/fixed-positioning.html [ Failure ]
+fast/css-grid-layout/grid-container-margin-border-padding-scrollbar.html [ Failure ]
+fast/css-grid-layout/grid-percent-track-scrollbar.html [ Failure ]
+fast/css/animation-pseudo-style-change.html [ ImageOnlyFailure ]
+legacy-animation-engine/fast/css/animation-pseudo-style-change.html [ ImageOnlyFailure ]
+fast/css/nested-rounded-corners.html [ Failure ]
+fast/css/relative-positioned-block-crash.html [ Failure ]
+fast/css/sticky/sticky-overflowing.html [ ImageOnlyFailure ]
+fast/css/variables/test-suite/096.html [ ImageOnlyFailure ]
+fast/css/viewport-percentage-compute-box-height.html [ ImageOnlyFailure ]
+fast/css/viewport-percentage-compute-box-width.html [ ImageOnlyFailure ]
+fast/css/viewport-units-dynamic.html [ Failure ]
+fast/css/zoom-body-scroll.html [ Failure ]
+fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-altered.html [ ImageOnlyFailure ]
+fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect.html [ ImageOnlyFailure ]
+fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll.html [ Failure ]
+fast/dom/Element/getBoundingClientRect-getClientRects-relative-to-viewport.html [ Failure ]
+fast/dom/Element/scrollLeft-Quirks.html [ Failure ]
+fast/dom/Element/scrollLeft.html [ Failure ]
+fast/dom/Element/scrollTop-Quirks.html [ Failure ]
+fast/dom/Element/scrollTop.html [ Failure ]
+fast/dom/Range/getBoundingClientRect-getClientRects-relative-to-viewport.html [ Failure ]
+fast/dom/Window/Plug-ins.html [ Failure ]
+fast/dom/Window/window-lookup-precedence.html [ Failure ]
+fast/dom/Window/window-postmessage-clone-deep-array.html [ Failure ]
+fast/dom/Window/window-scroll-arguments.html [ Failure ]
+fast/dom/assign-to-window-status.html [ Failure ]
+fast/dom/elementFromPoint-relative-to-viewport.html [ Failure ]
+fast/dom/elementFromPoint-scaled-scrolled.html [ Failure ]
+fast/dom/scroll-element-to-rect.html [ Failure ]
+fast/dom/zoom-scroll-page-test.html [ Failure ]
+fast/dynamic/text-combine.html [ Failure ]
+fast/events/controlclick-no-onclick.html [ Failure ]
+fast/events/ghostly-mousemoves-in-subframe.html [ Failure ]
+fast/events/mousedown-in-subframe-scrollbar.html [ Failure ]
+fast/events/no-blur-on-page-leave.html [ Failure ]
+fast/events/scale-and-scroll-window.html [ Failure ]
+fast/events/updateLayoutForHitTest.html [ Failure ]
+fast/flexbox/clear-overflow-before-scroll-update.html [ Failure ]
+fast/forms/basic-buttons.html [ Failure ]
+fast/forms/date/date-interactive-validation-required.html [ Failure ]
+fast/forms/datetime/datetime-interactive-validation-required.html [ Failure ]
+fast/forms/datetimelocal/datetimelocal-interactive-validation-required.html [ Failure ]
+fast/forms/input-maxlength-ime-completed.html [ Failure ]
+fast/forms/input-maxlength-ime-preedit.html [ Failure ]
+fast/forms/input-text-scroll-left-on-blur.html [ Failure Pass ]
+fast/forms/interactive-validation-assertion-by-validate-twice.html [ Failure ]
+fast/forms/interactive-validation-prevented.html [ Failure ]
+fast/forms/month/month-interactive-validation-required.html [ Failure ]
+fast/forms/number/number-interactive-validation-required.html [ Failure ]
+fast/forms/search-placeholder-value-changed.html [ ImageOnlyFailure ]
+fast/forms/search-rtl.html [ Failure ]
+fast/forms/textarea-newline.html [ Failure ]
+fast/forms/time/time-interactive-validation-required.html [ Failure ]
+fast/forms/validation-message-on-checkbox.html [ Failure ]
+fast/forms/validation-message-on-menulist.html [ Failure Crash ]
+fast/forms/validation-message-on-radio.html [ Failure ]
+fast/forms/validation-message-on-range.html [ Failure ]
+fast/forms/validation-message-on-textarea.html [ Failure ]
+fast/forms/week/week-interactive-validation-required.html [ Failure ]
+fast/gradients/viewport-units-gradient.html [ ImageOnlyFailure ]
+fast/harness/show-modal-dialog.html [ Failure ]
+fast/html/details-remove-summary-1-and-click.html [ Failure ]
+fast/html/details-remove-summary-4-and-click.html [ Failure ]
+fast/html/set-text-direction.html [ Failure ]
+fast/inline/continuation-outlines-with-layers.html [ Failure ]
+fast/layers/scroll-rect-to-visible.html [ Failure ]
+fast/loader/file-protocol-fragment.html [ Failure ]
+fast/loader/scroll-position-restored-on-back.html [ Failure ]
+fast/loader/user-stylesheet-fast-path.html [ Failure ]
+fast/misc/subtree-layouts.html [ ImageOnlyFailure ]
+fast/multicol/nested-filter-in-columns.html [ ImageOnlyFailure ]
+fast/overflow/child-100percent-height-inside-fixed-container-with-overflow-auto.html [ Failure ]
+fast/overflow/overflow-focus-ring.html [ Failure ]
+fast/overflow/overflow-update-transform.html [ Failure ]
+fast/overflow/replaced-child-100percent-height-inside-fixed-container-with-overflow-auto.html [ Failure ]
+# fast/overflow/scroll-vertical-not-horizontal.html [ Failure ]
+fast/scrolling/overlay-scrollbars-scroll-corner.html [ ImageOnlyFailure ]
+fast/scrolling/programmatic-document-rtl-scrollIntoView.html [ Failure ]
+fast/scrolling/rtl-initial-scroll-position.html [ ImageOnlyFailure ]
+fast/scrolling/rtl-scrollbars-sticky-overflow-scroll-2.html [ ImageOnlyFailure ]
+fast/scrolling/rtl-scrollbars-sticky-overflow-scroll.html [ ImageOnlyFailure ]
+fast/shapes/shape-outside-floats/shape-outside-insert-svg-shape.html [ ImageOnlyFailure ]
+fast/text/crash-complex-unknown-font.html [ ImageOnlyFailure ]
+fast/text/decorations-with-text-combine.html [ Failure ]
+fast/text/delete-hard-break-character.html [ Failure ]
+fast/text/font-selection-font-variant.html [ ImageOnlyFailure ]
+fast/text/hyphenate-limit-before-after.html [ Failure ]
+fast/text/international/text-combine-image-test.html [ Failure ]
+fast/text/multiple-text-shadow-overflow-layout-rect.html [ ImageOnlyFailure ]
+fast/text/svg-font-invalid-glyph-path-failure.html [ ImageOnlyFailure ]
+fast/text/svg-small-caps.html [ ImageOnlyFailure ]
+fast/text/text-combine-placement.html [ ImageOnlyFailure ]
+fast/text/text-rendering-with-input-selection.html [ ImageOnlyFailure ]
+fast/text/undefined-glyph-with-ligature.html [ ImageOnlyFailure ]
+fast/text/word-space-between-inlines.html [ ImageOnlyFailure ]
+fast/transforms/transformed-caret.html [ Failure ]
+fast/transforms/transformed-focused-text-input.html [ Failure ]
+fast/writing-mode/Kusa-Makura-background-canvas.html [ Failure ]
+http/tests/navigation/page-cache-iframe-no-current-historyItem.html [ Failure ]
+
+# JavaScripts tests that fail:
+js/dom/deep-recursion-test.html [ Failure ]
+
+# iOS-specific tests that fail:
+platform/ios/ios/storage/domstorage/5mb-quota.html [ Failure ]
+
+# LayoutTests/fast test that time out:
+fast/block/positioning/vertical-rl/001.html
+fast/body-propagation/background-color/001-xhtml.xhtml
+fast/body-propagation/background-image/001-xhtml.xhtml
+fast/body-propagation/overflow/001-xhtml.xhtml
+fast/borders/0px-borders-no-line-height.html
+fast/box-decoration-break/box-decoration-break-parsing.html
+fast/box-shadow/basic-shadows.html
+fast/css/reload-non-styled-element-crash.html
+fast/dom/HTMLLinkElement/prefetch.html
+fast/dom/Window/window-postmessage-clone-frames.html
+fast/dom/Window/window-postmessage-clone.html
+fast/dom/Window/window-resize-contents.html
+fast/forms/interactive-validation-crash-by-style-override.html
+fast/forms/interactive-validation-select-crash.html
+fast/forms/select-empty-optgroup.html
+fast/forms/validation-message-in-relative-body.html
+fast/frames/lots-of-iframes.html
+fast/frames/lots-of-objects.html
+fast/images/animated-gif-webkit-transform.html
+
+# LayoutTests/fast tests that are flaky:
+fast/html/tab-order.html
+fast/block/br-with-clearance-after-collapsing-space.html [ ImageOnlyFailure Pass ]
+fast/dynamic/selection-gets-cleared-when-part-of-it-gets-removed.html [ ImageOnlyFailure Pass ]
+fast/forms/number/number-placeholder-with-unacceptable-value.html [ ImageOnlyFailure Pass ]
+fast/overflow/border-radius-clipping-2.html [ ImageOnlyFailure Pass ]
+fast/dom/HTMLDocument/active-element-frames.html [ Failure Pass ]
+fast/dom/HTMLDocument/activeElement.html [ Failure Pass ]
+fast/dom/remove-body-during-body-replacement2.html [ Failure Pass ]
+fast/events/beforeload-input-time-crash.html [ Failure Pass ]
+fast/events/onsearch-enter.html [ Failure Pass ]
+fast/forms/11423.html [ Failure Pass ]
+fast/forms/25153.html [ Failure Pass ]
+fast/forms/8250.html [ Failure Pass ]
+fast/forms/ValidityState-tooLong-input.html [ Failure Pass ]
+fast/forms/ValidityState-tooLong-textarea.html [ Failure Pass ]
+fast/forms/ValidityState-valueMissing-002.html [ Failure Pass ]
+fast/forms/number/number-blur-twice.html [ Failure Pass ]
+fast/forms/number/number-commit-valid-only.html [ Failure Pass ]
+fast/forms/number/number-keyoperation.html [ Failure Pass ]
+fast/forms/number/number-l10n-input.html [ Failure Pass ]
+fast/frames/detach-frame-during-focus.html [ Failure Pass ]
+fast/images/crossfade-client-not-removed-crash.html [ Failure Pass ]
+legacy-animation-engine/fast/images/crossfade-client-not-removed-crash.html [ Failure Pass ]
+
+# SVG tests that are flaky:
+imported/mozilla/svg/as-image/img-dyn-1.html [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-filter-contents-01a.svg [ ImageOnlyFailure Pass ]
+imported/mozilla/svg/dynamic-gradient-contents-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-marker-02.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-marker-03.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-opacity-property-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-small-object-scaled-up-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-text-04.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-text-05.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-text-07.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-text-08.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/filters/feConvolveMatrix-1.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/filters/feConvolveMatrix-2.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/filters/feSpecularLighting-1.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/filters/feTurbulence-offset.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/foreignObject-ancestor-style-change-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/image/image-opacity-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/image/image-opacity-02.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/image/image-rotate-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/image/image-translate-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/image/image-x-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/image/image-xy-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/image/image-y-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/non-scaling-stroke-03.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/outer-svg-border-and-padding-01.svg [ ImageOnlyFailure Pass Timeout ]
+imported/mozilla/svg/pattern-live-01a.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/smil/anim-feConvolveMatrix-order-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/smil/motion/animateMotion-values-paced-1a.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/smil/transform/rotate-angle-1.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/stroke-width-percentage-02a.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/text/dynamic-dominant-baseline.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/text/dynamic-font-size-2.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/text/dynamic-font-size.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/text/multiple-x-percentages-2-iframe.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/text/simple-fill-color-dynamic.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/text/text-shadow.svg [ ImageOnlyFailure ]
+
+# Misc tests that assert:
+compositing/overflow/overflow-positioning.html
+legacy-animation-engine/compositing/overflow/overflow-positioning.html
+css3/filters/filter-animation-from-none-hw.html
+legacy-animation-engine/css3/filters/filter-animation-from-none-hw.html
+fast/css/image-set-value-not-removed-crash.html
+legacy-animation-engine/fast/css/image-set-value-not-removed-crash.html
+fast/css3-text/css3-text-decoration/text-decoration-unprefix.html
+fast/dom/offset-parent-positioned-and-inline.html
+fast/forms/input-live-pseudo-selectors.html
+fast/inline/inline-box-adjust-position-crash2.html
+fast/ruby/text-emphasis.html
+fast/text/emphasis-height-crash.html
+fast/text/emphasis-vertical.html
+fast/text/emphasis.html
+transitions/cubic-bezier-overflow-transform.html
+legacy-animation-engine/transitions/cubic-bezier-overflow-transform.html
+
+# Misc tests that time out:
+editing/execCommand/enabling-and-selection-2.html
+fast/forms/image/image-error-event-modifies-type-crash.html
+fast/images/animated-gif-iframe-webkit-transform.html
+fast/images/animated-gif-zooming.html
+fast/loader/recursive-before-unload-crash.html
+security/block-test-no-port.html
+security/block-test.html
+
+# Animation tests that fail:
+animations/cross-fade-background-image.html [ ImageOnlyFailure ]
+legacy-animation-engine/animations/cross-fade-background-image.html [ ImageOnlyFailure ]
+animations/fill-forwards-auto-height.html [ ImageOnlyFailure ]
+legacy-animation-engine/animations/fill-forwards-auto-height.html [ ImageOnlyFailure ]
+animations/stop-animation-on-suspend.html [ Pass Failure ]
+legacy-animation-engine/animations/stop-animation-on-suspend.html [ Pass Failure ]
+animations/suspend-resume-animation-events.html [ Pass Failure ]
+legacy-animation-engine/animations/suspend-resume-animation-events.html [ Pass Failure ]
+
+# IndexedDB is not supported on iOS WK1.
+storage/indexeddb
+imported/w3c/IndexedDB-private-browsing
+imported/w3c/web-platform-tests/IndexedDB
+fast/history/page-cache-indexed-closed-db.html
+fast/history/page-cache-indexed-opened-db.html
+crypto/subtle/rsa-indexeddb-non-exportable-private.html
+crypto/subtle/rsa-indexeddb-non-exportable.html
+crypto/subtle/rsa-indexeddb-private.html
+crypto/subtle/rsa-indexeddb.html
+
+# ShouldOpenExternalURLs not yet supported in WK1
+loader/navigation-policy [ Skip ]
+
+# HTTP tests that time out:
+http/tests/cookies/double-quoted-value-with-semi-colon.html
+http/tests/cookies/http-get-cookie-set-in-js.html
+http/tests/cookies/js-get-and-set-http-only-cookie.html
+http/tests/css/border-image-loading.html
+http/tests/css/cross-fade-reload.html
+http/tests/css/css-image-loading.html
+http/tests/dom/document-contentType-meta.html
+http/tests/dom/document-contentType-xhr.html
+http/tests/dom/document-contentType.html
+http/tests/download/basic-ascii.html
+http/tests/download/inherited-encoding-form-submission-result.html
+http/tests/eventsource/eventsource-bad-mime-type.html
+http/tests/eventsource/eventsource-content-type-charset.html
+http/tests/eventsource/eventsource-cors-basic.html
+http/tests/eventsource/workers/eventsource-simple.html
+http/tests/fileapi/blob-url-in-subframe.html
+http/tests/fileapi/create-blob-url-from-data-url.html
+http/tests/fileapi/xhr-send-form-data-filename-escaping.html
+http/tests/fileapi/xhr-send-form-data-mimetype-normalization.html
+http/tests/globalhistory/history-delegate-basic-302-redirect.html
+http/tests/globalhistory/history-delegate-basic-refresh-redirect.html
+http/tests/globalhistory/history-delegate-basic-title.html
+http/tests/globalhistory/history-delegate-basic-visited-links.html
+http/tests/history/back-during-onload-triggered-by-back.html
+http/tests/history/back-to-post.php
+http/tests/history/back-with-fragment-change.php
+http/tests/history/cross-origin-replace-history-object-child.html
+http/tests/local/blob/send-sliced-data-blob.html
+http/tests/local/formdata/send-form-data-with-empty-blob-filename.html
+http/tests/local/formdata/send-form-data-with-string-containing-null.html
+http/tests/navigation/anchor-basic.html
+http/tests/navigation/anchor-frames-cross-origin.html
+http/tests/navigation/anchor-frames-gbk.html
+http/tests/security/contentSecurityPolicy/media-src-blocked.html
+http/tests/security/contentSecurityPolicy/media-src-track-block.html
+http/tests/security/inactive-document-with-empty-security-origin.html
+http/tests/security/isolatedWorld/all-window-properties.html
+http/tests/security/isolatedWorld/cross-origin-xhr.html
+http/tests/canvas/webgl/origin-clean-conformance.html
+http/tests/cookies/multiple-cookies.html
+http/tests/cookies/set-cookie-on-redirect.html
+http/tests/eventsource/eventsource-cors-no-server.html
+http/tests/eventsource/eventsource-cors-non-http.html
+http/tests/globalhistory/history-delegate-pushstate.html
+http/tests/globalhistory/history-delegate-replacestate.html
+http/tests/history/cross-origin-replace-history-object.html
+http/tests/history/history-navigations-set-referrer.html
+http/tests/images/jpeg-partial-load.html
+http/tests/images/png-partial-load-no-alpha.html
+http/tests/incremental/frame-focus-before-load.html
+http/tests/incremental/pause-in-script-element.pl
+http/tests/navigation/metaredirect-frames.html
+http/tests/security/frameNavigation/context-for-location-assign.html
+
+# HTTP tests that fail:
+http/tests/loading/progress-finished-callback.html [ Failure ]
+http/tests/misc/acid3.html [ Failure ]
+http/tests/navigation/anchor-frames.html [ Failure ]
+http/tests/navigation/javascriptlink-frames.html [ Failure ]
+http/tests/navigation/postredirect-basic.html [ Failure ]
+http/tests/navigation/postredirect-goback1.html [ Failure ]
+http/tests/navigation/target-blank-opener-post.html [ Failure ]
+http/tests/navigation/target-blank-opener.html [ Failure ]
+http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html [ Failure ]
+http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html [ Failure ]
+http/tests/security/aboutBlank/xss-DENIED-set-opener.html [ Failure ]
+http/tests/security/contentSecurityPolicy/object-src-url-allowed.html [ Failure ]
+http/tests/security/cross-origin-local-storage-wk1.html [ Failure ]
+http/tests/security/frameNavigation/not-opener.html [ Failure ]
+http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Failure ]
+http/tests/security/mixedContent/insecure-css-in-main-frame.html [ Failure ]
+http/tests/security/mixedContent/insecure-iframe-in-main-frame.html [ Failure ]
+http/tests/security/mixedContent/insecure-image-in-main-frame.html [ Failure ]
+http/tests/security/mixedContent/insecure-plugin-in-iframe.html [ Failure ]
+http/tests/security/mixedContent/insecure-xhr-in-main-frame.html [ Failure ]
+http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html [ Failure ]
+http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html [ Failure ]
+http/tests/security/popup-allowed-by-sandbox-is-sandboxed.html [ Failure ]
+http/tests/security/redirect-BLOCKED-to-localURL.html [ Failure ]
+http/tests/security/video-cross-origin-accessfailure.html [ Failure ]
+http/tests/security/video-cross-origin-readback.html [ Failure ]
+http/tests/security/xssAuditor/link-opens-new-window.html [ Failure ]
+
+http/tests/plugins/nounsupported-plugin.html [ Skip ]
+http/tests/plugins/supported-plugin-all-origin-visibility.html [ Skip ]
+http/tests/plugins/supported-plugin-origin-specific-visibility.html [ Skip ]
+http/tests/plugins/supported-plugin-on-specific-origin.html [ Skip ]
+http/tests/plugins/unsupported-plugin-on-specific-origin.html [ Skip ]
+plugins/unsupported-plugin.html [ Skip ]
+
+# HTTP tests that assert:
+http/tests/navigation/metaredirect-basic.html
+http/tests/navigation/metaredirect-goback.html
+
+# Disk cache is WK2 only
+http/tests/cache/disk-cache
+
+# Async image decoding is WK2 only
+fast/images/async-image-background-change.html
+fast/images/async-image-src-change.html
+http/tests/multipart/multipart-async-image.html
+
+# Flaky as of 06/08/2015
+animations/animation-direction-reverse-hardware-opacity.html [ Failure Pass ]
+legacy-animation-engine/animations/animation-direction-reverse-hardware-opacity.html [ Failure Pass ]
+animations/animation-direction-reverse-hardware.html [ Failure Pass ]
+legacy-animation-engine/animations/animation-direction-reverse-hardware.html [ Failure Pass ]
+animations/animation-direction-reverse-timing-functions-hardware.html [ Failure Pass ]
+legacy-animation-engine/animations/animation-direction-reverse-timing-functions-hardware.html [ Failure Pass ]
+animations/animation-direction-reverse.html [ Failure Pass ]
+legacy-animation-engine/animations/animation-direction-reverse.html [ Failure Pass ]
+animations/animation-hit-test-transform.html [ Failure Pass ]
+legacy-animation-engine/animations/animation-hit-test-transform.html [ Failure Pass ]
+compositing/layer-creation/mismatched-rotated-transform-transition-overlap.html [ Failure Pass ]
+legacy-animation-engine/compositing/layer-creation/mismatched-rotated-transform-transition-overlap.html [ Failure Pass ]
+compositing/layer-creation/mismatched-transform-transition-overlap.html [ Failure Pass ]
+legacy-animation-engine/compositing/layer-creation/mismatched-transform-transition-overlap.html [ Failure Pass ]
+compositing/layer-creation/scale-rotation-transition-overlap.html [ Failure Pass ]
+legacy-animation-engine/compositing/layer-creation/scale-rotation-transition-overlap.html [ Failure Pass ]
+compositing/layer-creation/translate-scale-transition-overlap.html [ Failure Pass ]
+legacy-animation-engine/compositing/layer-creation/translate-scale-transition-overlap.html [ Failure Pass ]
+compositing/layer-creation/translate-transition-overlap.html [ Failure Pass ]
+legacy-animation-engine/compositing/layer-creation/translate-transition-overlap.html [ Failure Pass ]
+css3/filters/backdrop/animation.html [ Failure Pass ]
+legacy-animation-engine/css3/filters/backdrop/animation.html [ Failure Pass ]
+css3/filters/composited-during-animation.html [ Failure Pass ]
+legacy-animation-engine/css3/filters/composited-during-animation.html [ Failure Pass ]
+css3/filters/filter-animation-from-none-multi.html [ Failure Pass ]
+legacy-animation-engine/css3/filters/filter-animation-from-none-multi.html [ Failure Pass ]
+css3/filters/filter-animation-from-none.html [ Failure Pass ]
+legacy-animation-engine/css3/filters/filter-animation-from-none.html [ Failure Pass ]
+css3/filters/filter-animation-hw.html [ Failure Pass ]
+legacy-animation-engine/css3/filters/filter-animation-hw.html [ Failure Pass ]
+css3/filters/filter-animation-multi-hw.html [ Failure Pass ]
+legacy-animation-engine/css3/filters/filter-animation-multi-hw.html [ Failure Pass ]
+css3/filters/filter-animation-multi.html [ Failure Pass ]
+legacy-animation-engine/css3/filters/filter-animation-multi.html [ Failure Pass ]
+css3/filters/filter-animation.html [ Failure Pass ]
+legacy-animation-engine/css3/filters/filter-animation.html [ Failure Pass ]
+fast/events/onchange-searchfield.html [ Failure Pass ]
+fast/workers/worker-exception-during-navigation.html [ Failure Pass ]
+fast/workers/worker-finish-crash.html [ Failure Pass ]
+http/tests/cache/partitioned-cache-iframe.html [ Failure Pass ]
+transitions/interrupted-all-transition.html [ Failure Pass ]
+legacy-animation-engine/transitions/interrupted-all-transition.html [ Failure Pass ]
+fast/forms/auto-fill-button/hide-auto-fill-button-when-input-becomes-readonly.html [ ImageOnlyFailure Pass ]
+svg/as-image/svg-image-with-data-uri-background.html [ ImageOnlyFailure Pass ]
+svg/as-image/svg-image-with-data-uri-reloading.html [ ImageOnlyFailure Pass ]
+svg/as-image/svg-image-with-svg-data-uri.html [ ImageOnlyFailure Pass ]
+svg/as-image/svg-no-intrinsic-size-switching.html [ ImageOnlyFailure Pass ]
+animations/animation-iteration-event-destroy-renderer.html [ Timeout Pass ]
+legacy-animation-engine/animations/animation-iteration-event-destroy-renderer.html [ Timeout Pass ]
+transitions/transition-hit-test-transform.html [ Timeout Pass ]
+legacy-animation-engine/transitions/transition-hit-test-transform.html [ Timeout Pass ]
+
+# Failures as of 06/08/2015
+compositing/contents-scale/animating.html [ Failure ]
+legacy-animation-engine/compositing/contents-scale/animating.html [ Failure ]
+compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint.html [ Failure ]
+compositing/repaint/iframes/compositing-iframe-scroll-repaint.html [ Failure ]
+compositing/repaint/iframes/compositing-iframe-with-fixed-background-doc-repaint.html [ Failure ]
+compositing/tiling/transform-origin-tiled.html [ Failure ]
+compositing/visible-rect/coverage-clipped.html [ Failure ]
+compositing/visible-rect/coverage-scrolling.html [ Failure ]
+compositing/visible-rect/iframe-with-layers-outside-viewport.html [ Failure ]
+compositing/visible-rect/mask-layer-coverage.html [ Failure ]
+css2.1/t1202-counter-04-b.html [ Failure ]
+css2.1/t1202-counters-04-b.html [ Failure ]
+css3/blending/blend-mode-simple.html [ Failure ]
+css3/filters/backdrop/backdrop-filter-does-not-size-properly-absolute.html [ Failure ]
+css3/filters/backdrop/backdrop-filter-with-cliprect.html [ Failure ]
+css3/filters/backdrop/backdrop-filter-with-mask.html [ Failure ]
+editing/execCommand/nsresponder-outdent.html [ Failure ]
+editing/inserting/12882.html [ Failure ]
+editing/inserting/4875189-1.html [ Failure ]
+editing/inserting/4959067.html [ Failure ]
+editing/inserting/5002441.html [ Failure ]
+fast/attachment/attachment-select-on-click-inside-user-select-all.html [ Failure ]
+fast/attachment/attachment-select-on-click.html [ Pass ]
+fast/block/basic/011.html [ Failure ]
+fast/block/basic/minheight.html [ Failure ]
+fast/block/margin-collapse/103.html [ Failure ]
+fast/canvas/canvas-css-size-after-height-change-with-display-flex.html [ ImageOnlyFailure ]
+fast/css/002.html [ Failure ]
+fast/css/font-face-multiple-faces.html [ Failure ]
+fast/css/font-face-opentype.html [ Failure ]
+fast/css/font-face-repeated-url.html [ Failure ]
+fast/css/font-face-synthetic-bold-italic.html [ Failure ]
+fast/css/font-face-weight-matching.html [ Failure ]
+fast/css/font-family-pictograph.html [ Failure ]
+fast/dom/DeviceMotion/window-property.html [ Failure ]
+fast/dom/Element/body-scrollLeft-basics-quirks.html [ Failure ]
+fast/dom/Element/body-scrollTop-basics-quirks.html [ Failure ]
+fast/dom/HTMLImageElement/sizes/image-sizes-invalids.html [ Failure ]
+fast/dom/focus-contenteditable.html [ Failure ]
+fast/dom/timer-throttling-subframe.html [ Failure ]
+fast/forms/auto-fill-button/input-auto-fill-button.html [ Failure ]
+fast/forms/listbox-visible-size.html [ Failure ]
+fast/forms/search-styled.html [ Failure ]
+fast/invalid/008.html [ Failure ]
+fast/overflow/003.xml [ Failure ]
+fast/overflow/infiniteRecursion.html [ Failure ]
+fast/table/rowindex.html [ Failure ]
+fast/text/basic/generic-family-reset.html [ Failure ]
+fast/text/cg-fallback-bolding.html [ Failure ]
+fast/text/fallback-traits-fixup.html [ Failure ]
+fast/text/international/003.html [ Failure ]
+fast/text/international/bidi-explicit-embedding.html [ Failure ]
+fast/text/international/bidi-layout-across-linebreak.html [ Failure ]
+fast/text/international/bold-bengali.html [ Failure ]
+fast/text/international/danda-space.html [ Failure ]
+fast/text/international/thai-baht-space.html [ Failure ]
+fast/text/midword-break-before-surrogate-pair-2.html [ Failure ]
+fast/text/shadow-no-blur.html [ Failure ]
+fast/text/simple-line-layout-text-stroke-width.html [ Failure ]
+fast/text/svg-font-face-with-kerning.html [ Failure ]
+fast/text/unicode-variation-selector.html [ Failure ]
+fast/text/vertical-rl-rtl-linebreak.html [ Failure ]
+fast/writing-mode/broken-ideograph-small-caps.html [ Failure ]
+fast/writing-mode/broken-ideographic-font.html [ Failure ]
+fast/writing-mode/japanese-rl-text-with-broken-font.html [ Failure ]
+platform/ios/ios/fast/text/underline-scaling.html [ Failure ]
+compositing/masks/compositing-clip-path-on-subpixel-position.html [ ImageOnlyFailure ]
+fast/borders/dashed-border-on-subpixel-position.html [ ImageOnlyFailure ]
+fast/borders/dotted-border-on-subpixel-position.html [ ImageOnlyFailure ]
+fast/forms/select/select-painting.html [ ImageOnlyFailure ]
+fast/images/background-image-size-changes-fractional-position.html [ ImageOnlyFailure ]
+fast/masking/clip-path-on-subpixel-position.html [ ImageOnlyFailure ]
+fast/text/hidpi-text-selection-gap-between-words.html [ ImageOnlyFailure ]
+svg/animations/animate-keytimes-crash.html [ ImageOnlyFailure ]
+svg/filters/feMorphology-radius-cases.svg [ ImageOnlyFailure ]
+
+# Time outs as of 06/08/2015
+fast/fixed-layout/fixed-layout.html
+
+# Flaky as of 06/09/2015
+svg/dom/SVGScriptElement/script-set-href.svg [ Failure Pass ]
+fast/text/text-combine-style-change-no-layout.html [ ImageOnlyFailure Pass ]
+http/tests/websocket/tests/hybi/invalid-subprotocol-characters.html
+fast/css3-text/css3-word-spacing-percentage/word-spacing-change-font.html [ ImageOnlyFailure Pass ]
+
+# Failures as of 06/09/2015
+fast/files/file-reader-sandbox-iframe.html [ Failure Pass ]
+
+webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
+
+fast/dom/timer-fire-after-page-pause.html [ Pass ]
+
+# Latest iOS failures as of Sept 1, 2015
+accessibility/ios-simulator/iframe-access.html [ Failure ]
+accessibility/ios-simulator/press-fires-touch-events.html [ Failure ]
+compositing/iframes/display-none-subframe.html [ Failure ]
+css3/blending/blend-mode-simple-composited.html [ Failure ]
+editing/selection/caret-mode-document-begin-end.html [ Failure ]
+fast/xsl/xslt-extra-content-at-end.xml [ Failure ]
+fast/xsl/xslt-missing-namespace-in-xslt.xml [ Failure ]
+js/dom/JSON-stringify.html [ Failure ]
+editing/selection/update-selection-by-style-change.html [ ImageOnlyFailure ]
+svg/repaint/buffered-rendering-dynamic-image.html [ ImageOnlyFailure ]
+
+accessibility/ios-simulator/focus-change-notifications.html [ Skip ]
+accessibility/ios-simulator/header-elements.html [ Skip ]
+accessibility/ios-simulator/identifier.html [ Skip ]
+compositing/masks/compositing-clip-path-and-mask.html [ Skip ]
+compositing/masks/compositing-clip-path-change-no-repaint.html [ Skip ]
+compositing/overflow/clip-content-under-overflow-controls.html [ Skip ]
+compositing/overflow/clip-descendents.html [ Skip ]
+compositing/overlap-blending/children-opacity-no-overlap.html [ Skip ]
+compositing/overlap-blending/nested-non-overlap-clipping.html [ Skip ]
+compositing/patterns/direct-pattern-compositing-change.html [ Skip ]
+compositing/patterns/direct-pattern-compositing-contain-no-repeat.html [ Skip ]
+compositing/patterns/direct-pattern-compositing-contain.html [ Skip ]
+compositing/reflections/become-simple-composited-reflection.html [ Skip ]
+compositing/reflections/compositing-change-inside-reflection.html [ Skip ]
+compositing/reflections/deeply-nested-reflections.html [ Skip ]
+compositing/reflections/direct-image-object-fit-reflected.html [ Skip ]
+compositing/reflections/empty-reflection-with-mask.html [ Skip ]
+compositing/reflections/masked-reflection-on-composited.html [ Skip ]
+compositing/repaint/absolute-painted-into-composited-ancestor.html [ Skip ]
+compositing/repaint/composited-document-element.html [ Skip ]
+compositing/repaint/content-into-overflow.html [ Skip ]
+compositing/rtl/rtl-absolute.html [ Skip ]
+compositing/video/video-controls-layer-creation.html [ Skip ]
+fast/css-grid-layout/flex-content-sized-columns-resize.html [ Skip ]
+fast/css-grid-layout/flex-factor-sum-less-than-1.html [ Skip ]
+fast/css-grid-layout/float-not-protruding-into-next-grid-item.html [ Skip ]
+http/tests/contentfiltering/load-substitute-data-from-appcache.html [ Skip ]
+http/tests/contentfiltering/modify-redirect-request-url.html [ Skip ]
+http/tests/incremental/slow-utf8-css.html [ Skip ]
+http/tests/incremental/slow-utf8-html.pl [ Skip ]
+http/tests/incremental/slow-utf8-text.pl [ Skip ]
+
+# Changing system language is not supported in DumpRenderTree.
+fast/text/international/system-language [ Skip ]
+
+# Imported Blink tests.
+imported/blink/compositing/layer-creation/iframe-clip-removed.html [ ImageOnlyFailure ]
+imported/blink/compositing/repaint/end-of-opacity-transition.html [ ImageOnlyFailure Pass ]
+legacy-animation-engine/imported/blink/compositing/repaint/end-of-opacity-transition.html [ ImageOnlyFailure Pass ]
+imported/blink/compositing/squashing/invalidate-on-grouped-mapping-reorder.html [ ImageOnlyFailure Pass ]
+imported/blink/compositing/squashing/squash-overflow-hidden-scrolltop.html [ ImageOnlyFailure Pass ]
+imported/blink/css3/blending/mix-blend-mode-has-ancestor-clipping-layer.html [ ImageOnlyFailure Pass ]
+imported/blink/css3/blending/mix-blend-mode-with-squashing-layer.html [ ImageOnlyFailure Pass ]
+imported/blink/css3/blending/svg-isolation-add-opacity.html [ ImageOnlyFailure Pass ]
+imported/blink/css3/blending/svg-isolation-remove-isolation.html [ ImageOnlyFailure Pass ]
+imported/blink/fast/canvas/canvas-state-persistence-no-dirty.html [ ImageOnlyFailure Pass ]
+imported/blink/fast/canvas/canvas-unbalanced-save.html [ ImageOnlyFailure Pass ]
+imported/blink/fast/forms/relayout-shifts-inner-editor.html [ ImageOnlyFailure Pass ]
+imported/blink/fast/multicol/dynamic/relayout-spanner-parent-inside-overflow-hidden.html [ ImageOnlyFailure Pass ]
+imported/blink/fast/text-autosizing/print-autosizing.html [ ImageOnlyFailure Pass ]
+imported/blink/fast/text-autosizing/subtree-relayout-input.html [ ImageOnlyFailure Pass ]
+imported/blink/fast/text-autosizing/subtree-relayout.html [ ImageOnlyFailure Pass ]
+imported/blink/fast/text/international/repaint-glyph-bounds.html [ ImageOnlyFailure Pass ]
+imported/blink/fast/masking/mask-serializing.html [ Crash Pass ]
+imported/blink/fast/multicol/newmulticol/multicol-becomes-regular-block.html [ Crash Pass ]
+imported/blink/fast/scrolling/fractional-scroll-offset-iframe-fixed-position.html [ ImageOnlyFailure ]
+imported/blink/fast/css-grid-layout/stale-grid-layout-2.html [ Failure Pass ]
+imported/blink/svg/animations/animateTransform-to-mismatched-types.html [ ImageOnlyFailure ]
+imported/blink/svg/animations/no-attr-radialgradient-spreadmethod.svg [ ImageOnlyFailure ]
+imported/blink/svg/as-object/history-navigation.html [ ImageOnlyFailure ]
+imported/blink/svg/custom/viewport-resource-inval.svg [ ImageOnlyFailure ]
+imported/blink/svg/markers/animate-refY.svg [ ImageOnlyFailure ]
+
+imported/blink/svg/filters/feColorMatrix-setAttribute-crash1.html [ Pass Failure ]
+imported/blink/storage/indexeddb/blob-basics-metadata.html [ Failure ]
+imported/blink/storage/indexeddb/empty-blob-file.html [ Failure ]
+
+webkit.org/b/155495 compositing/visible-rect/animated-from-none.html [ Failure Pass ]
+webkit.org/b/155495 legacy-animation-engine/compositing/visible-rect/animated-from-none.html [ Failure Pass ]
+
+# <a download> is not supported in WK1 yet.
+webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-download-synthetic-click.html [ Skip ]
+webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-download-user-triggered-synthetic-click.html [ Skip ]
+webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download.html [ Skip ]
+webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-backslash.html [ Skip ]
+webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-doublequote.html [ Skip ]
+webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-slashes.html [ Skip ]
+webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-unicode.html [ Skip ]
+webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-then-revoke.html [ Skip ]
+webkit.org/b/156069 http/tests/download/area-download.html [ Skip ]
+webkit.org/b/156069 http/tests/security/anchor-download-allow-blob.html [ Skip ]
+webkit.org/b/156069 http/tests/security/anchor-download-allow-data.html [ Skip ]
+webkit.org/b/156069 http/tests/security/anchor-download-allow-sameorigin.html [ Skip ]
+webkit.org/b/156069 http/tests/security/anchor-download-block-crossorigin.html [ Skip ]
+webkit.org/b/156069 http/tests/download/anchor-download-no-value.html [ Skip ]
+
+# testRunner.setShouldDownloadUndisplayableMIMETypes() is not supported on WK1.
+fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download.html [ Skip ]
+fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download-async-delegate.html [ Skip ]
+http/tests/download/convert-cached-load-to-download.html [ Skip ]
+
+webkit.org/b/137572 scrollbars/scrollbar-iframe-click-does-not-blur-content.html [ Failure ]
+
+# This test relies on a settings option that we can only set with WKRT.
+js/dom/regress-157246.html
+
+fast/scrolling/ios/clipping-ancestor-with-accelerated-scrolling-ancestor.html [ Failure ]
+fast/scrolling/ios/overflow-scrolling-ancestor-clip-size.html [ Failure ]
+fast/scrolling/ios/overflow-scrolling-ancestor-clip.html [ Failure ]
+fast/scrolling/ios/scrollTo-at-page-load.html [ Failure ]
+fast/scrolling/ios/scrolling-content-clip-to-viewport.html [ Failure ]
+fast/scrolling/ios/touch-stacking.html [ Failure ]
+fast/scrolling/ios/touch-scroll-visibility-hidden.html [ Skip ]
+
+# These tests require API for finding string which is not available in WK1.
+# See https://webkit.org/b/178789#c15
+platform/ios/fast/scrolling/find-text-in-overflow-node-indicator-position-limit.html [ ImageOnlyFailure ]
+platform/ios/fast/scrolling/find-text-in-overflow-node-indicator-position.html [ ImageOnlyFailure ]
+platform/ios/fast/scrolling/find-text-in-overflow-node.html [ Failure ]
+platform/ios/fast/scrolling/find-text-in-subframe.html [ Failure ]
+
+# dumpPolicyDelegateCallbacks is not supported in DumpRenderTree
+fast/loader/iframe-src-invalid-url.html [ Skip ]
+
+webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ Pass Timeout ]
+
+webkit.org/b/158237 fast/scrolling/scroll-container-horizontally.html [ Timeout ]
+
+# FIXME: Many media tests fail
+media
+
+# fast tests that pass
+fast/text/emoji-gender.html [ Pass ]
+fast/css/ancestor-of-hovered-element-removed.html [ Pass ]
+fast/images/animated-gif-no-layout.html [ Pass ]
+fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement-2.html [ Pass ]
+
+# w3c tests that fail
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-anchor-name.html [ Failure ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-id-top.html [ Failure ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-top.html [ Failure ]
+
+# w3c tests that pass
+imported/w3c/canvas/2d.line.cap.round.html [ Pass ]
+
+# import tests that pass
+imported/mozilla/svg/smil/transform/rotate-angle-4.svg [ Pass ]
+imported/mozilla/svg/smil/transform/rotate-angle-5.svg [ Pass ]
+imported/mozilla/svg/text/textLength-6.svg [ Pass ]
+
+# Timeout as of 08/26/2016
+fast/dom/Geolocation/window-close-crash.html [ Timeout ]
+security/contentSecurityPolicy/image-with-blob-url-allowed-by-img-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html [ Timeout ]
+security/contentSecurityPolicy/image-with-blob-url-blocked-by-img-src-star.html [ Timeout ]
+security/contentSecurityPolicy/video-with-blob-url-allowed-by-media-src-star.html [ Timeout ]
+
+# Flaky as of 08/26/2016
+editing/execCommand/indent-no-visible-contents-crash.html [ Crash Pass ]
+fast/canvas/fallback-content.html [ Crash Pass ]
+fast/dom/onerror-img.html [ Crash Pass ]
+fast/events/focus-change-crash2.html [ Crash Pass ]
+fast/events/media-focus-in-standalone-media-document.html [ Crash Pass ]
+fast/forms/implicit-submission.html [ Crash Failure ]
+fast/parser/strip-script-attrs-on-input.html [ Timeout Crash Pass ]
+fast/replaced/replaced-child-of-absolute-with-auto-height.html [ Crash Pass ]
+fast/scrolling/ios/overflow-div-scrolling.html [ Crash Failure ]
+http/tests/loading/multiple-prioritization.html [ Crash Pass ]
+http/tests/navigation/page-cache-iframe-provisional-load.html [ Crash Pass Failure ]
+imported/blink/editing/execCommand/4128080-2.html [ Crash Failure ]
+imported/blink/editing/undo/crash-redo-with-iframes.html [ Crash Pass ]
+imported/blink/paint/deprecatedpaintlayer/non-self-painting-layer-overrides-visibility.html [ Crash Pass ]
+platform/ios/ios/fast/coordinates/document-elementFromPoint.html [ Timeout Failure ]
+platform/ios/ios/fast/coordinates/touch-event-zoomed.html [ Crash Timeout ]
+platform/ios/ios/fast/coordinates/touch-event.html [ Crash Timeout ]
+security/contentSecurityPolicy/blocks-video.html [ Crash Pass ]
+
+# Font tests that fail
+fonts/use-typo-metrics-1.html [ ImageOnlyFailure ]
+
+# Flaky as of 08/28/2016
+compositing/scrolling/touch-scrolling-repaint-spans.html [ ImageOnlyFailure Pass ]
+compositing/scrolling/touch-scrolling-repaint.html [ ImageOnlyFailure Pass ]
+compositing/tiling/offscreen-tiled-layer.html [ Pass Failure ]
+compositing/visible-rect/backing-change-height-from-zero.html [ Pass Failure ]
+css3/calc/transforms-translate.html [ ImageOnlyFailure Pass ]
+fast/css-generated-content/after-with-inline-continuation.html [ ImageOnlyFailure Pass ]
+fast/css/cascade/background-clip-and-webkit-background-clip-cascade-order.html [ ImageOnlyFailure Pass ]
+fast/css3-text/font-synthesis.html [ ImageOnlyFailure Pass ]
+fast/dom/HTMLImageElement/sizes/image-sizes-2x.html [ Pass Failure ]
+fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ ImageOnlyFailure Pass ]
+legacy-animation-engine/fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ ImageOnlyFailure Pass ]
+fast/replaced/table-percent-height.html [ Pass Failure ]
+fast/ruby/ruby-justification-hittest.html [ Pass Failure ]
+fast/shadow-dom/trusted-event-scoped-flags.html [ Pass Failure ]
+fast/sub-pixel/compositing-layers-on-subpixel-position.html [ ImageOnlyFailure Pass ]
+fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden-tall.html [ Pass Failure ]
+fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden.html [ Pass Failure ]
+fast/viewport/ios/width-is-device-width-overflowing-no-shrink-to-fit.html [ Pass Failure ]
+fast/viewport/ios/width-is-device-width-overflowing.html [ Pass Failure ]
+fast/viewport/ios/width-is-device-width.html [ Pass Failure ]
+fast/zooming/ios/zoom-to-scale.html [ Pass Failure Timeout ]
+http/tests/security/contentSecurityPolicy/report-only-from-header.php [ Pass Failure ]
+imported/blink/css3/blending/svg-isolation-add-filter.html [ Pass ImageOnlyFailure ]
+imported/blink/css3/blending/svg-isolation-add-isolation.html [ Pass ImageOnlyFailure ]
+imported/blink/css3/blending/svg-isolation-remove-opacity.html [ Pass ImageOnlyFailure ]
+imported/blink/css3/calc/viewport-unit.html [ Pass ImageOnlyFailure ]
+imported/blink/fast/multicol/span/overflow-on-multicol.html [ Pass ImageOnlyFailure ]
+imported/blink/fast/pagination/viewport-x-horizontal-bt-rtl.html [ Pass ImageOnlyFailure ]
+imported/blink/fast/pagination/viewport-x-horizontal-tb-rtl.html [ Pass ImageOnlyFailure ]
+imported/blink/fast/pagination/viewport-x-vertical-rl-ltr.html [ Pass ImageOnlyFailure ]
+imported/blink/fast/pagination/viewport-x-vertical-rl-rtl.html [ Pass ImageOnlyFailure ]
+imported/blink/fast/pagination/viewport-y-horizontal-bt-ltr.html [ Pass ImageOnlyFailure ]
+imported/blink/fast/pagination/viewport-y-horizontal-bt-rtl.html [ Pass ImageOnlyFailure ]
+imported/blink/svg/custom/svg-fonts-unloaded-segment.html [ Pass ImageOnlyFailure ]
+imported/blink/svg/custom/svg-root-with-opacity.html [ Pass ImageOnlyFailure ]
+imported/mozilla/svg/filters/feImage-1.svg [ Pass ImageOnlyFailure ]
+imported/mozilla/svg/text-scale-02.svg [ Pass ImageOnlyFailure ]
+imported/mozilla/svg/text/clipPath-applied.svg [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-large-001.xht [ Pass ImageOnlyFailure ]
+perf/mouse-event.html [ Pass Failure ]
+platform/ios/ios/fast/fixed/auto-position-fixed.html [ Pass Failure ]
+svg/transforms/transformed-text-fill-pattern.html [ Pass ImageOnlyFailure ]
+transforms/hittest-translated-content-off-to-infinity-and-back.html [ Pass ImageOnlyFailure ]
+
+# Flaky as of 08/29/2016
+compositing/child-layer-with-subpixel-gap-needs-repaint-when-parent-moves.html [ Pass ImageOnlyFailure ]
+compositing/filters/opacity-change-on-filtered-paints-into-ancestor.html [ Pass ImageOnlyFailure ]
+compositing/masks/compositing-clip-path-mask-change.html [ Pass ImageOnlyFailure ]
+compositing/masks/solid-color-masked.html [ Pass ImageOnlyFailure ]
+compositing/repaint/foreground-layer-change.html [ ImageOnlyFailure Pass ]
+css3/filters/filter-repaint-shadow-layer-child.html [ ImageOnlyFailure Pass ]
+css3/filters/remove-filter-repaint.html [ ImageOnlyFailure Pass ]
+css3/font-feature-settings-font-face-rendering.html [ ImageOnlyFailure Pass ]
+css3/viewport-percentage-lengths/css3-viewport-percentage-lengths-getStyle.html [ Pass Failure ]
+css3/viewport-percentage-lengths/css3-viewport-percentage-lengths-vh-absolute.html [ ImageOnlyFailure Pass ]
+css3/viewport-percentage-lengths/css3-viewport-percentage-lengths-vh.html [ ImageOnlyFailure Pass ]
+css3/viewport-percentage-lengths/css3-viewport-percentage-lengths-vmax.html [ ImageOnlyFailure Pass ]
+css3/viewport-percentage-lengths/css3-viewport-percentage-lengths-vmin-absolute.html [ ImageOnlyFailure Pass ]
+css3/viewport-percentage-lengths/css3-viewport-percentage-lengths-vmin.html [ ImageOnlyFailure Pass ]
+css3/viewport-percentage-lengths/css3-viewport-percentage-lengths-vw.html [ ImageOnlyFailure Pass ]
+css3/viewport-percentage-lengths/viewport-percentage-image-size.html [ ImageOnlyFailure Pass ]
+css3/viewport-percentage-lengths/viewport-percentage-lengths-calc.html [ Pass Failure ]
+css3/viewport-percentage-lengths/viewport-percentage-vertical-align.html [ ImageOnlyFailure Pass ]
+editing/deleting/delete-at-paragraph-boundaries-004.html [ Pass Failure ]
+editing/deleting/delete-at-paragraph-boundaries-010.html [ Pass Failure ]
+editing/deleting/delete-block-merge-contents-001.html [ Pass Failure ]
+editing/deleting/delete-block-merge-contents-003.html [ Failure Pass ]
+editing/deleting/delete-block-merge-contents-004.html [ Failure Pass ]
+editing/deleting/delete-block-merge-contents-005.html [ Failure Pass ]
+editing/deleting/delete-block-merge-contents-008.html [ Failure Pass ]
+editing/deleting/delete-block-merge-contents-015.html [ Failure Pass ]
+editing/deleting/delete-block-merge-contents-017.html [ Failure Pass ]
+editing/deleting/delete-block-merge-contents-019.html [ Failure Pass ]
+editing/deleting/delete-block-merge-contents-020.html [ Failure Pass ]
+editing/deleting/delete-block-merge-contents-021.html [ Failure Pass ]
+editing/deleting/delete-br-001.html [ Failure Pass ]
+editing/deleting/delete-br-007.html [ Failure Pass ]
+editing/deleting/delete-br-008.html [ Failure Pass ]
+editing/deleting/delete-contiguous-ws-001.html [ Failure Pass ]
+editing/deleting/delete-ligature-002.html [ Failure Pass ]
+editing/deleting/delete-line-003.html [ Failure Pass ]
+editing/deleting/delete-line-004.html [ Failure Pass ]
+editing/deleting/delete-line-006.html [ Failure Pass ]
+editing/deleting/delete-line-008.html [ Failure Pass ]
+editing/deleting/delete-line-012.html [ Failure Pass ]
+editing/deleting/delete-line-014.html [ Failure Pass ]
+editing/deleting/delete-line-016.html [ Failure Pass ]
+editing/deleting/delete-tab-002.html [ Failure Pass ]
+editing/deleting/delete-tab-003.html [ Failure Pass ]
+editing/deleting/delete-ws-fixup-003.html [ Failure Pass ]
+editing/deleting/delete-ws-fixup-004.html [ Failure Pass ]
+editing/deleting/merge-endOfParagraph.html [ Failure Pass ]
+editing/deleting/pruning-after-merge-2.html [ Failure Pass ]
+editing/execCommand/indent-selection.html [ Failure Pass ]
+editing/execCommand/insertHorizontalRule.html [ Failure Pass ]
+editing/input/scroll-to-edge-if-line-break-at-end-of-document-contenteditable.html [ Failure Pass ]
+editing/input/scroll-to-edge-if-paragraph-separator-at-end-of-document-contenteditable.html [ Failure Pass ]
+editing/inserting/4278698.html [ Failure Pass ]
+editing/inserting/before-after-input-element.html [ Failure Pass ]
+editing/inserting/insert-br-quoted-003.html [ Failure Pass ]
+editing/inserting/insert-br-quoted-005.html [ Failure Pass ]
+editing/inserting/insert-div-014.html [ Failure Pass ]
+editing/inserting/insert-div-023.html [ Failure Pass ]
+editing/inserting/insert-div-024.html [ Failure Pass ]
+editing/inserting/insert-div-026.html [ Failure Pass ]
+editing/inserting/insert-tab-003.html [ Failure Pass ]
+editing/inserting/inserting-trailing-space-and-letter.html [ Pass ImageOnlyFailure ]
+editing/inserting/paragraph-separator-03.html [ Failure Pass ]
+editing/inserting/typing-002.html [ Failure Pass ]
+editing/selection/editable-html-element.html [ Failure Pass ]
+editing/selection/focus_editable_html.html [ Failure Pass ]
+editing/selection/mixed-editability-5.html [ Failure Pass ]
+editing/spelling/spelling.html [ Failure Pass ]
+editing/style/create-block-for-style-001.html [ Failure Pass ]
+editing/style/create-block-for-style-003.html [ Failure Pass ]
+editing/style/create-block-for-style-004.html [ Failure Pass ]
+editing/style/create-block-for-style-009.html [ Failure Pass ]
+editing/style/create-block-for-style-011.html [ Failure Pass ]
+editing/style/style-3681552-fix-002.html [ Failure Pass ]
+editing/style/style-boundary-001.html [ Failure Pass ]
+editing/undo/undo-delete-boundary.html [ Failure Pass ]
+fast/block/nested-renderers.html [ Crash Pass ]
+fast/box-shadow/box-shadow-with-zero-radius.html [ Pass ImageOnlyFailure ]
+fast/dom/HTMLObjectElement/beforeload-set-text-crash.xhtml [ Crash Pass ]
+fast/dom/URL-attribute-reflection.html [ Crash Pass ]
+fast/dynamic/window-scrollbars-test.html [ Failure Pass ]
+fast/events/check-defocus-event-order-when-triggered-by-tab.html [ Failure Pass ]
+fast/events/event-input-contentEditable.html [ Failure Pass ]
+fast/events/focus-change-crash.html [ Failure Pass ]
+fast/events/onchange-passwordfield.html [ Failure Pass ]
+fast/events/onchange-textfield.html [ Failure Pass ]
+fast/forms/input-maxlength-inserting-in-middle.html [ Failure Pass ]
+fast/forms/input-placeholder-paint-order-2.html [ Pass ImageOnlyFailure ]
+fast/forms/input-text-option-delete.html [ Failure Pass ]
+fast/forms/number/number-input-changeevent.html [ Failure Pass ]
+fast/forms/onchange-enter-submit.html [ Failure Pass ]
+fast/forms/textinput-not-fired-on-enter-in-input.html [ Failure Pass ]
+fast/history/history-length.html [ Crash Pass ]
+fast/history/page-cache-geolocation-active-oneshot.html [ Failure Pass ]
+fast/inline/out-of-flow-positioned-render-replaced-box-moves.html [ Pass ImageOnlyFailure ]
+fast/images/large-size-image-crash.html [ Crash Pass ]
+fast/multicol/newmulticol/hide-box-horizontal-bt.html [ Pass ImageOnlyFailure ]
+fast/multicol/newmulticol/hide-box-vertical-lr.html [ Pass ImageOnlyFailure ]
+fast/multicol/newmulticol/hide-box-vertical-rl.html [ Pass ImageOnlyFailure ]
+fast/overflow/scrollbar-restored.html [ Failure Pass ]
+fast/replaced/iframe-with-percentage-height-within-table-with-anonymous-table-cell.html [ Failure Pass ]
+fast/replaced/iframe-with-percentage-height-within-table-with-table-cell-ignore-height.html [ Failure Pass ]
+fast/shapes/shape-outside-floats/shape-outside-rounded-inset.html [ Pass ImageOnlyFailure ]
+fast/sub-pixel/simple-clipping.html [ Pass ImageOnlyFailure ]
+fonts/cursive.html [ Pass Crash ]
+http/tests/dom/window-open-about-webkit-org-and-access-document.html [ Failure Pass ]
+http/tests/fetch/fetch-in-worker-crash.html [ Failure Pass ]
+http/tests/loading/preload-img-srcset-sizes.html [ Failure Pass ]
+http/tests/navigation/page-cache-pending-image-load.html [ Crash Pass Failure ]
+http/tests/navigation/relativeanchor-basic.html [ Failure Pass ]
+http/tests/navigation/relativeanchor-goback.html [ Failure Pass ]
+http/tests/security/cross-origin-indexeddb.html [ Crash Pass ]
+http/tests/security/cross-origin-indexeddb-allowed.html [ Crash Pass ]
+http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-open.html [ Failure Pass ]
+http/tests/security/dataURL/xss-DENIED-from-javascript-url-window-open.html [ Failure Pass ]
+http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-window-open.html [ Failure Pass ]
+http/tests/security/dataURL/xss-DENIED-to-data-url-window-open.html [ Failure Pass ]
+http/tests/security/javascriptURL/xss-DENIED-from-javascript-url-in-foreign-domain-window-open.html [ Failure Pass ]
+http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-window-open.html [ Failure Pass ]
+http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml [ Failure Pass ]
+http/tests/storage/callbacks-are-called-in-correct-context.html [ Failure Pass ]
+http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Failure Pass ]
+http/tests/xmlhttprequest/failed-auth.html [ Failure Pass ]
+ietestcenter/css3/flexbox/flexbox-layout-001.htm [ Pass ImageOnlyFailure ]
+imported/blink/compositing/reorder-z-with-style.html [ Timeout Pass ImageOnlyFailure ]
+imported/blink/fast/css/fixed-overlaps-absolute-in-clip.html [ Pass ImageOnlyFailure ]
+imported/blink/fast/multicol/dynamic/add-spanner-inside-overflow-hidden.html [ Pass ImageOnlyFailure Crash ]
+imported/blink/scrollbars/avoid-double-scrollbars-when-html-element-is-not-the-renderview.html [ Pass ImageOnlyFailure ]
+imported/blink/storage/indexeddb/blob-delete-objectstore-db.html [ Crash Pass Failure ]
+imported/blink/storage/indexeddb/blob-valid-after-deletion.html [ Crash Pass Failure ]
+imported/blink/storage/indexeddb/blob-valid-before-commit.html [ Crash Pass Failure ]
+imported/mozilla/svg/filters/filter-marked-line-02.svg [ Pass ImageOnlyFailure ]
+imported/mozilla/svg/filters/filter-marked-line-03.svg [ Pass ImageOnlyFailure ]
+imported/mozilla/svg/filters/filter-marked-line-04.svg [ Pass ImageOnlyFailure ]
+imported/mozilla/svg/filters/filter-marked-line-05.svg [ Pass ImageOnlyFailure ]
+imported/mozilla/svg/filters/filter-marked-line-06.svg [ Pass ImageOnlyFailure ]
+imported/mozilla/svg/filters/filter-marked-line-07.svg [ Pass ImageOnlyFailure ]
+imported/mozilla/svg/filters/filter-marked-line-08.svg [ Pass ImageOnlyFailure ]
+imported/mozilla/svg/filters/filter-marked-line-09.svg [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-column-rule-001.xht [ Pass ImageOnlyFailure ]
+js/large-expressions.html [ Failure Pass ]
+perf/append-text-nodes-without-renderers.html [ Pass Failure ]
+perf/show-hide-table-rows.html [ Pass Failure ]
+security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html [ Pass ImageOnlyFailure ]
+svg/animations/list-wrapper-assertion.svg [ Pass ImageOnlyFailure ]
+svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ Pass ImageOnlyFailure ]
+svg/animations/svg-animation-order.html [ Pass ImageOnlyFailure ]
+svg/animations/svglengthlist-animation-3.html [ Pass Failure ]
+svg/as-image/svg-image-with-data-uri-use-data-uri.svg [ Pass ImageOnlyFailure ]
+svg/custom/composited-svg-with-opacity.html [ Pass ImageOnlyFailure ]
+svg/custom/svg-pending-twice.html [ Pass ImageOnlyFailure ]
+svg/W3C-I18N/g-dirLTR-ubNone.svg [ Pass Failure ]
+tables/hittesting/filltable-stress.html [ Failure Pass ]
+transitions/svg-text-shadow-transition.html [ Failure Pass ]
+legacy-animation-engine/transitions/svg-text-shadow-transition.html [ Failure Pass ]
+
+# Mark editing tests of iOS simulator WK1 release build that have different delegate callback order than those of debug build as failure
+[ Release ] editing/deleting/delete-at-paragraph-boundaries-002.html [ Failure ]
+[ Release ] editing/deleting/delete-at-paragraph-boundaries-003.html [ Failure ]
+[ Release ] editing/deleting/delete-at-paragraph-boundaries-005.html [ Failure ]
+[ Release ] editing/deleting/delete-at-paragraph-boundaries-006.html [ Failure ]
+[ Release ] editing/deleting/delete-at-paragraph-boundaries-007.html [ Failure ]
+[ Release ] editing/deleting/delete-at-paragraph-boundaries-008.html [ Failure ]
+[ Release ] editing/deleting/delete-at-paragraph-boundaries-009.html [ Failure ]
+[ Release ] editing/deleting/delete-at-paragraph-boundaries-011.html [ Failure ]
+[ Release ] editing/deleting/delete-block-contents-003.html [ Failure ]
+[ Release ] editing/deleting/delete-block-merge-contents-002.html [ Failure ]
+[ Release ] editing/deleting/delete-block-merge-contents-006.html [ Failure ]
+[ Release ] editing/deleting/delete-block-merge-contents-007.html [ Failure ]
+[ Release ] editing/deleting/delete-block-merge-contents-009.html [ Failure ]
+[ Release ] editing/deleting/delete-block-merge-contents-012.html [ Failure ]
+[ Release ] editing/deleting/delete-block-merge-contents-013.html [ Failure ]
+[ Release ] editing/deleting/delete-block-merge-contents-014.html [ Failure ]
+[ Release ] editing/deleting/delete-block-merge-contents-016.html [ Failure ]
+[ Release ] editing/deleting/delete-block-merge-contents-018.html [ Failure ]
+[ Release ] editing/deleting/delete-block-merge-contents-022.html [ Failure ]
+[ Release ] editing/deleting/delete-block-merge-contents-023.html [ Failure ]
+[ Release ] editing/deleting/delete-block-merge-contents-024.html [ Failure ]
+[ Release ] editing/deleting/delete-br-003.html [ Failure ]
+[ Release ] editing/deleting/delete-br-010.html [ Failure ]
+[ Release ] editing/deleting/delete-hr.html [ Failure ]
+[ Release ] editing/deleting/delete-image-002.html [ Failure ]
+[ Release ] editing/deleting/delete-line-002.html [ Failure ]
+[ Release ] editing/deleting/delete-line-005.html [ Failure ]
+[ Release ] editing/deleting/delete-line-007.html [ Failure ]
+[ Release ] editing/deleting/delete-line-009.html [ Failure ]
+[ Release ] editing/deleting/delete-line-010.html [ Failure ]
+[ Release ] editing/deleting/delete-line-013.html [ Failure ]
+[ Release ] editing/deleting/delete-line-015.html [ Failure ]
+[ Release ] editing/deleting/delete-line-017.html [ Failure ]
+[ Release ] editing/deleting/delete-listitem-002.html [ Failure ]
+[ Release ] editing/deleting/delete-selection-001.html [ Failure ]
+[ Release ] editing/deleting/delete-ws-fixup-002.html [ Failure ]
+[ Release ] editing/deleting/list-item-1.html [ Failure ]
+[ Release ] editing/deleting/merge-unrendered-space.html [ Failure ]
+[ Release ] editing/inserting/insert-3778059-fix.html [ Failure ]
+[ Release ] editing/inserting/insert-br-at-tabspan-001.html [ Failure ]
+[ Release ] editing/inserting/insert-br-at-tabspan-003.html [ Failure ]
+[ Release ] editing/inserting/insert-br-quoted-001.html [ Failure ]
+[ Release ] editing/inserting/insert-br-quoted-002.html [ Failure ]
+[ Release ] editing/inserting/insert-br-quoted-004.html [ Failure ]
+[ Release ] editing/inserting/insert-br-quoted-006.html [ Failure ]
+[ Release ] editing/inserting/insert-div-009.html [ Failure ]
+[ Release ] editing/inserting/insert-div-012.html [ Failure ]
+[ Release ] editing/inserting/insert-div-016.html [ Failure ]
+[ Release ] editing/inserting/insert-div-017.html [ Failure ]
+[ Release ] editing/inserting/insert-div-018.html [ Failure ]
+[ Release ] editing/inserting/insert-div-020.html [ Failure ]
+[ Release ] editing/inserting/insert-div-022.html [ Failure ]
+[ Release ] editing/inserting/insert-div-025.html [ Failure ]
+[ Release ] editing/inserting/insert-div-027.html [ Failure ]
+[ Release ] editing/inserting/insert-paragraph-04.html [ Failure ]
+[ Release ] editing/inserting/insert-text-at-tabspan-001.html [ Failure ]
+[ Release ] editing/inserting/insert-text-at-tabspan-002.html [ Failure ]
+[ Release ] editing/inserting/insert-text-at-tabspan-003.html [ Failure ]
+[ Release ] editing/inserting/return-key-with-selection-003.html [ Failure ]
+[ Release ] editing/selection/replace-selection-1.html [ Failure ]
+[ Release ] editing/style/block-styles-007.html [ Failure ]
+[ Release ] editing/style/create-block-for-style-002.html [ Failure ]
+[ Release ] editing/style/create-block-for-style-007.html [ Failure ]
+[ Release ] editing/style/create-block-for-style-010.html [ Failure ]
+[ Release ] editing/style/create-block-for-style-012.html [ Failure ]
+[ Release ] editing/style/create-block-for-style-013.html [ Failure ]
+[ Release ] editing/style/relative-font-size-change-002.html [ Failure ]
+[ Release ] editing/style/relative-font-size-change-003.html [ Failure ]
+[ Release ] editing/style/relative-font-size-change-004.html [ Failure ]
+[ Release ] editing/style/style-3998892-fix.html [ Failure ]
+[ Release ] editing/style/style-boundary-004.html [ Failure ]
+[ Release ] editing/undo/undo-delete.html [ Failure ]
+
+# Flaky as of 08/30/2016
+css3/device-adapt/viewport-width-not-affecting-next-page.html [ Pass Failure ]
+editing/execCommand/4641880-1.html [ Pass Failure ]
+editing/execCommand/insertHTML.html [ Pass Failure ]
+editing/input/composition-underline-rtl.html [ Pass ImageOnlyFailure ]
+editing/inserting/insert-html-crash-01.html [ Pass Failure ]
+editing/selection/mixed-editability-3.html [ Failure Pass ]
+editing/style/relative-font-size-change-001.html [ Pass Failure ]
+fast/forms/placeholder-set-attribute.html [ Pass ImageOnlyFailure ]
+fast/forms/textarea/textarea-placeholder-paint-order-2.html [ Pass ImageOnlyFailure ]
+fast/forms/validation-message-on-listbox.html [ Failure Crash ]
+fast/inline/layout-after-inserting-nested-br.html [ Pass ImageOnlyFailure ]
+fast/masking/parsing-clip-path-shape.html [ Pass Failure ]
+fast/overflow/horizontal-scroll-after-back.html [ Pass Failure ]
+fast/replaced/percent-height-in-anonymous-block.html [ Crash Failure ]
+fast/replaced/table-percent-width.html [ Crash Pass ]
+fast/table/fixed-size-table-with-fixed-size-content.html [ Pass ImageOnlyFailure ]
+fast/text/simple-line-wordspacing.html [ Pass ImageOnlyFailure ]
+fetch/fetch-error-messages.html [ Crash Pass ]
+http/tests/navigation/metaredirect-subframeload.html [ Crash Pass ]
+http/tests/security/xss-DENIED-xml-external-entity.xhtml [ Pass Failure ]
+http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml [ Pass Failure ]
+http/tests/security/xss-DENIED-xsl-external-entity.xml [ Skip ]
+imported/blink/compositing/ancestor-painted-layer-should-appear.html [ Pass ImageOnlyFailure ]
+imported/blink/compositing/invisible-subtree-compositing-and-preserves-3d.html [ Pass ImageOnlyFailure ]
+imported/blink/compositing/will-change/stacking-context-creation.html [ Pass ImageOnlyFailure ]
+imported/blink/fast/animation/last-child-assert.html [ Crash Pass Failure ]
+legacy-animation-engine/imported/blink/fast/animation/last-child-assert.html [ Crash Pass Failure ]
+imported/blink/fast/multicol/basic-rtl.html [ Crash Pass ImageOnlyFailure ]
+imported/blink/fast/multicol/hit-test-translate-z.html [ Pass Failure ]
+imported/blink/fast/sub-pixel/clip-sub-pixel-composited-layer.html [ Pass ImageOnlyFailure ]
+imported/blink/paint/invalidation/fixed-position-descendant-paint-offset-indirect.html [ Pass ImageOnlyFailure ]
+imported/blink/paint/tables/tbody-fixedposition.html [ Pass ImageOnlyFailure ]
+imported/blink/svg/hittest/rect-hittest.html [ Pass Failure ]
+imported/blink/svg/hittest/rect-miterlimit.html [ Pass Failure ]
+imported/mozilla/svg/dynamic-use-01.svg [ Pass ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-use-06.svg [ Pass ImageOnlyFailure ]
+imported/mozilla/svg/tspan-rotate-01.svg [ Pass ImageOnlyFailure ]
+imported/mozilla/svg/tspan-rotate-02.svg [ Pass ImageOnlyFailure ]
+imported/mozilla/svg/tspan-rotate-03.svg [ Pass ImageOnlyFailure ]
+imported/mozilla/svg/tspan-rotate-04.svg [ Pass ImageOnlyFailure ]
+imported/mozilla/svg/tspan-rotate-05.svg [ Pass ImageOnlyFailure ]
+imported/mozilla/svg/tspan-xy-01.svg [ Pass ImageOnlyFailure ]
+platform/ios/ios/plugin/youtube-flash-plugin-iframe.html [ Pass Failure ]
+svg/text/add-tspan-position-bug.html [ Pass ImageOnlyFailure ]
+security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star.html [ Skip ]
+svg/text/hidpi-text-selection-rect-position.html [ Pass ImageOnlyFailure ]
+transforms/2d/perspective-not-fixed-container.html [ Pass ImageOnlyFailure ]
+transforms/3d/hit-testing/hover-rotated-negative-z.html [ Pass Failure ]
+transforms/3d/hit-testing/hover-rotated-with-children-negative-z.html [ Pass Failure ]
+transforms/3d/point-mapping/3d-point-mapping-2.html [ Pass Timeout ]
+transforms/3d/point-mapping/3d-point-mapping-deep.html [ Pass Timeout ]
+
+# Flaky as of 08/31/2016
+editing/selection/mixed-editability-4.html [ Failure Pass ]
+editing/selection/mixed-editability-9.html [ Failure Pass ]
+fast/forms/textfield-onchange-deletion.html [ Failure Pass ]
+imported/blink/fast/css/viewport-percentage-compute-box-sizing-border-box.html [ Pass ImageOnlyFailure ]
+imported/blink/fast/css/viewport-percentage-compute-quirks.html [ Pass ImageOnlyFailure ]
+imported/blink/fast/css/viewport-percentage-compute-with-scrollbars.html [ Pass ImageOnlyFailure ]
+imported/blink/fast/css/viewport-percentage-compute.html [ Pass ImageOnlyFailure ]
+
+# Flaky as of 09/01/2016
+editing/deleting/delete-listitem-001.html [ Pass Failure ]
+editing/deleting/delete-trailing-ws-002.html [ Pass Failure ]
+editing/deleting/pruning-after-merge-1.html [ Pass Failure ]
+editing/inserting/editable-html-element.html [ Pass Failure ]
+fast/css/text-overflow-input-focus-placeholder.html [ Pass ImageOnlyFailure ]
+fast/parser/external-entities-in-xslt.xml [ Pass Failure ]
+fast/scrolling/rtl-scrollbars.html [ Pass ImageOnlyFailure ]
+fast/text/orthogonal-writing-mode-containing-block-frameView-resize-relayout.html [ Pass ImageOnlyFailure ]
+http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure Pass ]
+imported/blink/compositing/squashing/abspos-under-abspos-overflow-scroll.html [ Pass ImageOnlyFailure ]
+imported/blink/compositing/squashing/attempting-to-squash-into-compositing-container.html [ Pass ImageOnlyFailure ]
+imported/blink/compositing/squashing/attempting-to-squash-into-stacking-ancestor.html [ Pass ImageOnlyFailure ]
+imported/blink/compositing/squashing/squashed-clip-parent.html [ Pass ImageOnlyFailure ]
+imported/blink/editing/style/justify-left-crash.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-auto-block-children-002.xht [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-margin-002.xht [ Pass ImageOnlyFailure ]
+svg/animations/reset-animation-crash.html [ Pass ImageOnlyFailure ]
+svg/css/use-window-inactive-crash.html [ Pass ImageOnlyFailure ]
+transitions/cancel-transition.html [ Pass Failure ]
+legacy-animation-engine/transitions/cancel-transition.html [ Pass Failure ]
+
+# Flaky as of 09/14/2016 after migrating bots to iOS 10.
+css3/blending/blend-mode-isolation-flags-turn-off-blending.html [ Pass Failure ]
+css3/font-variant-small-caps-synthesis-coverage.html [ Pass ImageOnlyFailure ]
+css3/font-variant-synthesis-jdaggett.html [ Pass ImageOnlyFailure ]
+css3/masking/mask-base64.html [ Pass ImageOnlyFailure ]
+editing/deleting/delete-image-001.html [ Pass Failure ]
+editing/deleting/delete-image-003.html [ Pass Failure ]
+editing/deleting/delete-line-001.html [ Pass Failure ]
+editing/deleting/delete-trailing-ws-001.html [ Pass Failure ]
+editing/deleting/merge-different-styles.html [ Pass Failure ]
+fast/borders/hidpi-border-clipping-right-after-move.html [ Pass ImageOnlyFailure ]
+fast/forms/input-select-webkit-user-select-none.html [ Crash Failure ]
+fast/forms/textarea-live-pseudo-selectors.html [ Crash Failure ]
+fast/text/font-weights.html [ Pass Failure ]
+http/tests/loading/preload-append-scan.php [ Crash Failure Pass ]
+http/tests/security/appcache-switching-private-browsing.html [ Pass Failure ]
+http/tests/security/contentSecurityPolicy/blob-url-does-not-match-source-self.html [ Pass ImageOnlyFailure ]
+http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-fetch-in-main-frame.html [ Pass Failure ]
+imported/blink/imported/csswg-test/css-writing-modes-3/bidi-embed-001.html [ Pass ImageOnlyFailure ]
+imported/blink/imported/csswg-test/css-writing-modes-3/bidi-embed-002.html [ Pass ImageOnlyFailure ]
+imported/blink/imported/csswg-test/css-writing-modes-3/bidi-embed-004.html [ Pass ImageOnlyFailure ]
+imported/blink/imported/csswg-test/css-writing-modes-3/bidi-embed-005.html [ Pass ImageOnlyFailure ]
+imported/blink/imported/csswg-test/css-writing-modes-3/bidi-embed-006.html [ Pass ImageOnlyFailure ]
+imported/blink/imported/csswg-test/css-writing-modes-3/bidi-embed-011.html [ Pass ImageOnlyFailure ]
+imported/blink/imported/csswg-test/css-writing-modes-3/bidi-isolate-007.html [ Pass ImageOnlyFailure ]
+imported/blink/imported/csswg-test/css-writing-modes-3/bidi-isolate-override-006.html [ Pass ImageOnlyFailure ]
+imported/blink/imported/csswg-test/css-writing-modes-3/bidi-isolate-override-009.html [ Pass ImageOnlyFailure ]
+imported/blink/imported/csswg-test/css-writing-modes-3/bidi-plaintext-010.html [ Pass ImageOnlyFailure ]
+imported/blink/imported/csswg-test/css-writing-modes-3/bidi-unset-002.html [ Pass ImageOnlyFailure ]
+imported/blink/imported/csswg-test/css-writing-modes-3/bidi-unset-006.html [ Pass ImageOnlyFailure ]
+imported/blink/imported/csswg-test/css-writing-modes-3/block-embed-003.html [ Pass ImageOnlyFailure ]
+imported/blink/imported/csswg-test/css-writing-modes-3/block-override-004.html [ Pass ImageOnlyFailure ]
+imported/blink/imported/csswg-test/css-writing-modes-3/block-override-isolate-001.html [ Pass ImageOnlyFailure ]
+imported/blink/imported/csswg-test/css-writing-modes-3/block-override-isolate-004.html [ Pass ImageOnlyFailure ]
+imported/blink/paint/inline/self-painting-continuation-outline.html [ Crash Pass ImageOnlyFailure ]
+platform/ios/ios/fast/coordinates/element-client-rects.html [ Crash Timeout ]
+perf/array-reverse.html [ Pass Failure ]
+
+# Failure as of 09/14/2016 after migrating bots to iOS 10.
+css2.1/t040302-c61-ex-len-00-b-a.html [ Failure ]
+css2.1/t040302-c61-rel-len-00-b-ag.html [ Failure ]
+css2.1/t100801-c544-valgn-01-d-ag.html [ Failure ]
+css2.1/t100801-c544-valgn-03-d-agi.html [ Failure ]
+css2.1/t100801-c548-ln-ht-02-b-ag.html [ Failure ]
+css2.1/t1507-c526-font-sz-02-b-a.html [ Failure ]
+css2.1/t1601-c547-indent-00-b-a.html [ Failure ]
+css2.1/t1604-c542-letter-sp-00-b-a.html [ Failure ]
+css3/flexbox/csswg/flexbox_flex-natural-mixed-basis-auto.html [ ImageOnlyFailure ]
+[ Debug ] editing/inserting/insert-div-025.html [ Failure ]
+fast/dom/Element/scrolling-funtions-on-body-quirks.html [ Failure ]
+fast/dom/Element/scrolling-funtions-on-body.html [ Failure ]
+fast/text/atsui-negative-spacing-features.html [ Failure ]
+fast/text/atsui-spacing-features.html [ Failure ]
+fast/text/international/hebrew-vowels.html [ Failure ]
+fast/text/khmer-lao-font.html [ Failure ]
+
+# Timeout as of 09/14/2016 after migrating bots to iOS 10.
+[ Debug ] css3/flexbox/position-absolute-child.html [ Timeout ]
+fast/events/scoped/editing-commands.html [ Timeout ]
+fast/forms/selection-direction.html [ Timeout ]
+
+# Failure as of 09/21/2016
+css2.1/t1008-c44-ln-box-02-d-ag.html [ Failure ]
+fast/text-autosizing/ios/text-size-adjust-inline-style.html [ ImageOnlyFailure ]
+
+# Flaky as of 09/21/2016
+css3/blending/blend-mode-body-composited-child-background-color.html [ Pass ImageOnlyFailure ]
+css3/blending/blend-mode-body-composited-child.html [ Pass ImageOnlyFailure ]
+editing/deleting/delete-character-001.html [ Pass Failure ]
+editing/deleting/non-smart-delete.html [ Pass Failure ]
+editing/inserting/insert-text-with-newlines.html [ Pass Failure ]
+fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-removed.html [ Pass ImageOnlyFailure ]
+fast/dynamic/remove-node-inside-selection.html [ Pass ImageOnlyFailure ]
+imported/blink/fast/css/user-select-none.html [ Pass ImageOnlyFailure ]
+imported/blink/imported/csswg-test/css-writing-modes-3/bidi-isolate-008.html [ Pass ImageOnlyFailure ]
+imported/blink/imported/csswg-test/css-writing-modes-3/bidi-isolate-010.html [ Pass ImageOnlyFailure ]
+imported/blink/imported/csswg-test/css-writing-modes-3/bidi-isolate-011.html [ Pass ImageOnlyFailure ]
+imported/blink/imported/csswg-test/css-writing-modes-3/bidi-isolate-override-001.html [ Pass ImageOnlyFailure ]
+imported/blink/imported/csswg-test/css-writing-modes-3/bidi-normal-002.html [ Pass ImageOnlyFailure ]
+imported/blink/imported/csswg-test/css-writing-modes-3/bidi-normal-004.html [ Pass ImageOnlyFailure ]
+imported/blink/imported/csswg-test/css-writing-modes-3/bidi-normal-005.html [ Pass ImageOnlyFailure ]
+imported/blink/imported/csswg-test/css-writing-modes-3/bidi-override-001.html [ Pass ImageOnlyFailure ]
+imported/blink/imported/csswg-test/css-writing-modes-3/bidi-plaintext-004.html [ Pass ImageOnlyFailure ]
+imported/blink/imported/csswg-test/css-writing-modes-3/bidi-unset-007.html [ Pass ImageOnlyFailure ]
+imported/blink/imported/csswg-test/css-writing-modes-3/block-embed-001.html [ Pass ImageOnlyFailure ]
+imported/mozilla/svg/text/clipPath-content.svg [ Pass ImageOnlyFailure ]
+
+# Skipping timeouts that are impacting testing
+# https://bugs.webkit.org/show_bug.cgi?id=173169
+compositing/overflow/overflow-compositing-descendant.html [ Skip ]
+compositing/overflow/scroll-ancestor-update.html [ Skip ]
+compositing/video/poster.html [ Skip ]
+compositing/video/video-border-radius.html [ Skip ]
+compositing/video/video-object-position.html [ Skip ]
+fast/canvas/canvas-createPattern-video-loading.html [ Skip ]
+fast/canvas/canvas-createPattern-video-modify.html [ Skip ]
+fast/dom/beforeload/video-before-load.html [ Skip ]
+fast/dom/FileList-iterator.html [ Skip ]
+fast/dom/HTMLAnchorElement/anchor-file-blob-download-no-extension.html [ Skip ]
+fast/forms/scroll-into-view-and-show-validation-message.html [ Skip ]
+fast/forms/navigation-dismisses-validation-bubbles.html [ Skip ]
+fast/forms/validation-bubble-disappears-when-input-detached.html [ Skip ]
+fast/forms/validation-bubble-disappears-when-input-moved.html [ Skip ]
+fast/forms/validation-bubble-disappears-when-input-no-longer-visible.html [ Skip ]
+fast/forms/validation-custom-message.html [ Skip ]
+fast/forms/validation-message-detached-iframe.html [ Skip ]
+fast/forms/validation-message-detached-iframe2.html [ Skip ]
+fast/forms/validation-messages.html [ Skip ]
+fast/mediacapturefromelement/CanvasCaptureMediaStream-webgl-events.html [ Skip ]
+fast/visual-viewport/rtl-zoomed-rects.html [ Skip ]
+fast/visual-viewport/zoomed-fixed-scroll-down-then-up.html [ Skip ]
+fast/visual-viewport/zoomed-rects.html [ Skip ]
+http/tests/appcache/video.html [ Skip ]
+http/tests/download/anchor-download-attribute-content-disposition.html [ Skip ]
+http/tests/download/anchor-download-no-extension.html [ Skip ]
+http/tests/misc/empty-urls.html [ Skip ]
+http/tests/security/canvas-remote-read-remote-video-allowed-anonymous.html [ Skip ]
+http/tests/security/canvas-remote-read-remote-video-allowed-with-credentials.html [ Skip ]
+http/tests/security/canvas-remote-read-remote-video-blocked-no-crossorigin.html [ Skip ]
+http/tests/security/canvas-remote-read-remote-video-localhost.html [ Skip ]
+http/tests/security/canvas-remote-read-remote-video-redirect.html [ Skip ]
+http/tests/security/contentSecurityPolicy/audio-redirect-allowed.html [ Skip ]
+http/tests/security/contentSecurityPolicy/audio-redirect-blocked.html [ Skip ]
+http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html [ Skip ]
+http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-video.html [ Skip ]
+http/tests/security/contentSecurityPolicy/video-redirect-allowed.html [ Skip ]
+http/tests/security/contentSecurityPolicy/video-redirect-blocked.html [ Skip ]
+
+# Hover test does not apply
+fast/css/deferred-parsing/hover-test.html [ Skip ]
+
+# There is not NetworkProcess in WK1, so it can't crash.
+http/tests/websocket/tests/hybi/network-process-crash-error.html [ Skip ]
+
+# This was a WK2-only fix.
+http/tests/css/filters-on-iframes.html [ Skip ]
+
+webkit.org/b/172092 [ Release ] fast/parser/adoption-agency-unload-iframe-4.html [ Timeout ]
+
+# FIXME: For some reason EventSender.keyDown() does not work.
+webkit.org/b/178490 fast/text/scroll-text-overflow-ellipsis.html [ Skip ]
+
+# User-installed fonts test infrastructure is not present in WK1
+webkit.org/b/180062 fast/text/user-installed-fonts [ ImageOnlyFailure ]
+
+# rdar://problem/34716163 Breaks subsequent tests using response.xml
+http/tests/xmlhttprequest/range-test.html [ Skip ]
+
+# Skip anything related to WebAuthN
+http/wpt/credential-management/ [ Skip ]
+http/wpt/webauthn/ [ Skip ]
+imported/w3c/web-platform-tests/credential-management/ [ Skip ]
+
+webkit.org/b/189594 imported/w3c/web-platform-tests/css/css-animations/pending-style-changes-001.html [ Pass Failure ]
+
+# Not supported on WK1
+css-custom-properties-api [ Skip ]
+fast/css-custom-paint [ Skip ]
+css-typedom [ Skip ]
+
+webkit.org/b/188762 fast/writing-mode/english-rl-text-with-spelling-marker.html [ ImageOnlyFailure ]
+
+# WK1 Inspector cannot leverage InspectorAdditions runtime enabled features
+inspector/canvas/recording-html-2d.html
+
+webkit.org/b/159724 [ Debug ] imported/w3c/web-platform-tests/xhr/send-redirect-post-upload.htm [ Skip ]
+
+# Skip IsLoggedIn
+http/tests/is-logged-in/ [ Skip ]
+
+# Stale-while-revalidate is not supported on WK1
+imported/w3c/web-platform-tests/fetch/stale-while-revalidate [ Skip ]

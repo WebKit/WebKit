@@ -1,0 +1,17 @@
+This test that fieldset.elements attribute returns an HTMLCollection and not an HTMLFormControlsCollection.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+ 
+                                      
+
+PASS elementsList instanceof HTMLCollection is true
+PASS elementsList instanceof HTMLFormControlsCollection is false
+PASS elementsList.length is 24
+PASS inputcommonElement instanceof RadioNodeList is false
+PASS inputcommonElement instanceof HTMLInputElement is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

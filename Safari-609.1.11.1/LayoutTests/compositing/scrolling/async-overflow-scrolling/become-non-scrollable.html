@@ -1,0 +1,51 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <title>Tests an overflow scroll stops compositing if its content shrinks</title>
+    <style>
+        .scrollable {
+            overflow-y: scroll;
+            height: 300px;
+            width: 300px;
+            margin: 10px;
+            border: 1px solid black;
+        }
+    
+        .contents {
+            height: 500px;
+            width: 20px;
+            background-color: silver;
+        }
+        
+        .contents.changed {
+            height: 100px;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.querySelector('.contents').classList.add('changed');
+
+                if (window.internals)
+                    document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scrollable">
+        <div class="contents"></div>
+    </div>
+<p>There should be no layers.</p>
+<pre id="layers"></pre>
+</body>
+</html>
+

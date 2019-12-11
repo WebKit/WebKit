@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'">
+<script type="text/javascript" src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script type="text/javascript" src="../../http/tests/inspector/debugger/debugger-test.js"></script>
+<script type="text/javascript" src="resources/script-for-breakpoint-actions.js"></script>
+<script>
+function runBreakpointActions()
+{
+    setTimeout(function() { breakpointActions(42, {x:220, y:284}); }, 0);
+}
+
+function action(a, b)
+{
+    TestPage.addResult("Breakpoint action evaluated. a:(" + a + ") b:(" + b + ")");
+    TestPage.completeTest();
+}
+
+function test()
+{
+    let breakpointPromise = new WI.WrappedPromise;
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, function(event) {
+        var scriptObject = event.data.script;
+
+        if (!/script\-for\-breakpoint\-actions\.js$/.test(scriptObject.url))
+            return;
+
+        var location = scriptObject.createSourceCodeLocation(4, 0);
+        // Create the breakpoint and its actions before sending anything to the backend.
+        var breakpoint = new WI.Breakpoint(location);
+        breakpoint.autoContinue = true;
+        breakpoint.createAction(WI.BreakpointAction.Type.Evaluate, null, "action(a, b)");
+
+        WI.debuggerManager.addBreakpoint(breakpoint);
+
+        breakpointPromise.resolve()
+    });
+
+    let reloadPromise = InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+    InspectorTest.reloadPage();
+    Promise.all([
+        reloadPromise,
+        breakpointPromise.promise
+    ])
+    .then(() => {
+        InspectorTest.evaluateInPage("runBreakpointActions()");
+    });
+
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that "Evaluate JavaScript" breakpoint actions work correctly in the presence of a Content Security Policy that doesn't include 'unsafe-eval'.</p>
+</body>
+</html>

@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: line 54: Refused to apply inline style because it violates the following Content Security Policy directive: "style-src 'nonce-nonceynonce'". Either the 'unsafe-inline' keyword, a hash ('sha256-pckGv9YvNcB5xy+Y4fbqhyo+ib850wyiuWeNbZvLi00='), or a nonce ('nonce-...') is required to enable inline execution.
+
+CONSOLE MESSAGE: Refused to apply inline style because it violates the following Content Security Policy directive: "style-src 'nonce-nonceynonce'". Either the 'unsafe-inline' keyword, a hash ('sha256-pckGv9YvNcB5xy+Y4fbqhyo+ib850wyiuWeNbZvLi00='), or a nonce ('nonce-...') is required to enable inline execution.
+
+CONSOLE MESSAGE: line 54: Refused to apply inline style because it violates the following Content Security Policy directive: "style-src 'nonce-nonceynonce'". Either the 'unsafe-inline' keyword, a hash ('sha256-QSqLgiKqPxCeZH1d3vWR+4HJOthCVhvG1P/AFaVJfR4='), or a nonce ('nonce-...') is required to enable inline execution.
+
+A test paragraph
+
+This is a testharness.js-based test.
+PASS Test that paragraph remains green and error events received. 
+Harness: the test ran to completion.
+

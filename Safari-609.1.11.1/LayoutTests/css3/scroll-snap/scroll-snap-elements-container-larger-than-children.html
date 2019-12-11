@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #outer-container {
+                width: 300px;
+                height: 300px;
+                overflow-y: hidden;
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+            }
+            #inner-container {
+                width: 1800px;
+                height: 300px;
+            }
+            .snap-child {
+                height: 300px;
+                float: left;
+                min-width: 200px;
+                scroll-snap-align: start;
+            }
+        </style>
+        <script src="../../resources/js-test.js"></script>
+        <script>
+            function runTest()
+            {
+                var container = document.getElementById("outer-container");
+                debug("Scroll-snap offsets: " + window.internals.scrollSnapOffsets(container));
+
+                finishJSTest();
+            }
+
+            function onLoad()
+            {
+                jsTestIsAsync = true;
+                if (window.testRunner)
+                    setTimeout(runTest, 0);
+            }
+        </script>
+    </head>
+    <body onload=onLoad()>
+        <div style="position: relative; height: 500px; width: 500px">
+            <div id="outer-container">
+                <div id="inner-container">
+                    <div id="item0" class="snap-child"></div>
+                    <div id="item1" class="snap-child"></div>
+                    <div id="item2" class="snap-child"></div>
+                    <div id="item3" class="snap-child"></div>
+                    <div id="item4" class="snap-child"></div>
+                    <div id="item5" class="snap-child"></div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

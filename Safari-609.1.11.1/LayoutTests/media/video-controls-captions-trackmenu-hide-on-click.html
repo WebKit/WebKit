@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Selecting from a list of tracks</title>
+        <script src="media-controls.js"></script>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script src="trackmenu-test.js"></script>
+        <script>
+            var displayStyle;
+
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            function startTest()
+            {
+                // By this point the captions menu should be visible. Check that it is.
+                window.setTimeout(testMenuIsVisible, 100);
+            }
+
+            function testMenuIsVisible()
+            {
+                var trackListElement = getTrackListElement();
+                displayStyle = window.getComputedStyle(trackListElement.parentNode).display;
+                consoleWrite("*** Track menu should be visible " + displayStyle);
+                testExpected("displayStyle", "block");
+                // Now, click in the top corner of the video element in order to
+                // dismiss the menu.
+                var boundingRect = video.getBoundingClientRect();
+                var x = boundingRect.left + 2;
+                var y = boundingRect.top + 2;
+                eventSender.mouseMoveTo(x, y);
+                eventSender.mouseDown();
+                eventSender.mouseUp();
+                window.setTimeout(function() { testMenuIsInvisible(); }, 100);
+            }
+
+            function testMenuIsInvisible()
+            {
+                var trackListElement = getTrackListElement();
+                displayStyle = window.getComputedStyle(trackListElement.parentNode).display;
+                consoleWrite("*** Track menu should be invisible " + displayStyle);
+                testExpected("displayStyle", "none");
+                endTest();
+            }
+
+            function start()
+            {
+                findMediaElement();
+                video.src = findMediaFile('video', 'content/test');
+                waitForEvent('canplaythrough', function () { startTrackMenuTest(startTest); });
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <p>Test that we are able to trigger the list of captions, and then click elsewhere to hide it.</p>
+        <video width="500" height="300" controls>
+            <track kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="en">
+        </video>
+    </body>
+</html>
+

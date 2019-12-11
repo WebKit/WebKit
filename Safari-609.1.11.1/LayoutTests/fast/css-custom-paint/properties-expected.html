@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:CSSPaintingAPIEnabled=true ] -->
+
+<style>
+canvas {
+  display: block;
+}
+</style>
+
+<canvas id="paint" style="width: 150px; height: 150px;" ></canvas>
+<canvas id="paint2" style="width: 150px; height: 150px;" ></canvas>
+
+<script id="code">
+for (canvasID of ['paint', 'paint2']) {
+  const canvas = document.getElementById(canvasID);
+  canvas.width = 150 * window.devicePixelRatio;
+  canvas.height = 150 * window.devicePixelRatio;
+
+  const ctx = canvas.getContext('2d');
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+  for (var i = 0; i < 6; i++){
+    for (var j = 0; j < 6; j++){
+      ctx.fillStyle = 'rgb(' + Math.floor(255 - 42.5 * i) + ',' +
+                       Math.floor(255 - 42.5 * j) + ',0)';
+      ctx.fillRect(j * 25, i * 25, 25, 25);
+    }
+  }
+}
+</script>

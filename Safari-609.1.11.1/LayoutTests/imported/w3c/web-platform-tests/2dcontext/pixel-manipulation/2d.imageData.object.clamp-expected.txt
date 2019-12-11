@@ -1,0 +1,6 @@
+2d.imageData.object.clamp
+ImageData.data clamps numbers to [0, 255]
+Actual output:
+
+PASS ImageData.data clamps numbers to [0, 255] 
+

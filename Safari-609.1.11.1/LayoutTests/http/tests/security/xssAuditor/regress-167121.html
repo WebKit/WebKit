@@ -1,0 +1,51 @@
+<body>
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.setXSSAuditorEnabled(true);
+
+window.jsTestIsAsync = true;
+
+var frame;
+var locationStr;
+
+function runTest()
+{
+    function loadDifferentURL()
+    {
+        frame.onload = null;
+
+        let g = function () {};
+        g.prototype = frame.contentWindow;
+
+        let a = Reflect.construct(Intl.NumberFormat, [], g);
+        try {
+            Intl.NumberFormat.prototype.__lookupGetter__("format").call(a).constructor('var str = String(location); var i = str.search("security/xssAuditor"); console.log(".../" + str.substr(i))')();
+        } catch (e) {
+            console.log("Caught: " + e);
+        }
+
+        finishJSTest();
+    }
+    frame.onload = loadDifferentURL;
+    frame.src = "http://localhost:8000/security/xssAuditor/resources/echo-dom-write-location.html"
+}
+
+window.onload = function ()
+{
+    frame = document.getElementById("frame");
+    runTest();
+}
+</script>
+</head>
+<body>
+    <script>
+        description("This tests that the URL of an iframe whose page triggered a full page block is not &quot;data:,&quot;.");
+    </script>
+    <iframe id="frame"></iframe>
+    <script src="/resources/js-test-post.js"></script>
+</body>
+</html>

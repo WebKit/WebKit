@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function getPressScript()
+        {
+            return `
+            (function() {
+                uiController.longPressAtPoint(30, 20, function() {
+                    uiController.uiScriptComplete();
+                });
+            })();`
+        }
+    
+        function runTest()
+        {
+            if (!testRunner.runUIScript)
+                return;
+
+            var output = '';
+            var target = document.getElementById('target');
+            if (testRunner.runUIScript) {
+                testRunner.runUIScript(getPressScript(), function(result) {
+                    var selectionText = document.getSelection().toString();
+                    if (selectionText == "PressMe")
+                        output += 'FAILED: Selected: ' + selectionText;
+                    else
+                        output += 'PASS: no selection made';
+                    output += '<br>';
+                    document.getElementById('target').innerHTML = output;
+                    testRunner.notifyDone();
+                });
+            }
+        }
+
+        window.addEventListener('load', runTest, false);
+    </script>
+    <style>
+        #target {
+            height: 100px;
+            width: 200px;
+            background-color: silver;
+        }
+    </style>
+    <meta name="viewport" content="initial-scale=1">
+</head>
+<body>
+<div id="target">
+	<textarea>PressMe</textarea>
+    This test requires UIScriptController to run.
+</div>
+</body>
+</html>

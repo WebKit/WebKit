@@ -1,0 +1,6 @@
+* Tests that a client is re-added to the list of service worker clients when it is restored from the page cache
+
+PASS: service worker has initially 2 clients
+PASS: page is about to enter page cache
+PASS: service worker now has 2 clients again after restoring the second one from page cache
+

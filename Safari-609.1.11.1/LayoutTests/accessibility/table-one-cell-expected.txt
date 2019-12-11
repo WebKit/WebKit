@@ -1,0 +1,32 @@
+Pick Your Location!
+Get specific content for your area. 
+http://web.apple.com
+AXRole: AXGroup
+AXSubrole: (null)
+AXRoleDescription: group
+AXChildren: <array of size 3>
+AXHelp: 
+AXParent: <AXGroup>
+AXSize: NSSize: {135, 90}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXGroup>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXGroup>
+AXEndTextMarker: <AXGroup>
+AXVisited: 0
+AXLinkedUIElements: <array of size 0>
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXGroup>
+AXLanguage: 
+AXDOMIdentifier: 
+AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXGroup>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
+AXElementBusy: 0
+

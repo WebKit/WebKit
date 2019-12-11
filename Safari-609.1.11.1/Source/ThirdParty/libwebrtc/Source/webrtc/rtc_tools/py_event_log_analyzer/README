@@ -1,0 +1,32 @@
+This file describes how to set up and use the RTP log analyzer.
+
+First build the tool with
+
+    ninja -C out/my_build webrtc:rtp_analyzer
+
+The tool is built by default, so
+
+    ninja -C out/my_build
+
+is enough.
+
+After building, run the tool as follows:
+
+    ./out/my_build/rtp_analyzer.sh [options] <rtc event log>
+
+where <rtc event log> is a recorded RTC event log, which is stored in
+protobuf format. Such logs are generated in multiple ways, e.g. by
+Chrome through the chrome://webrtc-internals page.
+
+Options:
+  -h, --help            show this help message and exit
+  --dump_header_to_stdout
+                        print header info to stdout; similar to rtp_analyze
+  --query_sample_rate   always query user for real sample rate
+
+The script has been tested to work in python versions 3.4.1 and 2.7.6,
+but should work in all python versions.
+
+Working versions of NumPy (http://www.numpy.org/) and matplotlib
+(http://matplotlib.org/) are needed to run this tool. See this link
+with installation instructions (http://www.scipy.org/install.html).

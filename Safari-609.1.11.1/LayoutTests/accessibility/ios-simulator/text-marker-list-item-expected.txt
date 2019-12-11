@@ -1,0 +1,11 @@
+item 1
+This test ensures that when asking for the string for a range, it includes the list item marker
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS text is '1. item 1'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

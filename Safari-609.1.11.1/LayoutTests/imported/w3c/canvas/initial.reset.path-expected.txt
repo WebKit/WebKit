@@ -1,0 +1,7 @@
+initial.reset.path
+Resetting the canvas state resets the current path
+Spec references: initial.reset
+Actual output:
+Expected output:
+
+Passed

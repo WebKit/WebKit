@@ -1,0 +1,66 @@
+
+*** Creating screen capture stream
+PASS displayStream is an instance of Object
+PASS displayStream.getTracks().length is 1
+PASS displayStream.getVideoTracks().length is 1
+PASS screenCaptureTrack.muted is false
+
+*** Creating camera and microphone stream
+PASS cameraStream is an instance of Object
+PASS cameraStream.getTracks().length is 2
+PASS microphoneCaptureTrack.muted is false
+PASS cameraCaptureTrack.muted is false
+
+*** Muting screen capture
+EVENT: mute
+PASS screenCaptureTrack.muted is true
+PASS microphoneCaptureTrack.muted is false
+PASS cameraCaptureTrack.muted is false
+PASS window.internals.pageMediaState().includes(HasMutedDisplayCaptureDevice) became true
+PASS window.internals.pageMediaState().includes(HasActiveDisplayCaptureDevice) became false
+PASS window.internals.pageMediaState().includes(HasActiveAudioCaptureDevice) became true
+PASS window.internals.pageMediaState().includes(HasMutedAudioCaptureDevice) became false
+PASS window.internals.pageMediaState().includes(HasActiveAudioCaptureDevice) became true
+PASS window.internals.pageMediaState().includes(HasMutedAudioCaptureDevice) became false
+
+*** Muting camera and microphone
+EVENT: mute
+EVENT: mute
+PASS screenCaptureTrack.muted is true
+PASS microphoneCaptureTrack.muted is true
+PASS cameraCaptureTrack.muted is true
+PASS window.internals.pageMediaState().includes(HasMutedDisplayCaptureDevice) became true
+PASS window.internals.pageMediaState().includes(HasActiveDisplayCaptureDevice) became false
+PASS window.internals.pageMediaState().includes(HasMutedAudioCaptureDevice) became true
+PASS window.internals.pageMediaState().includes(HasActiveAudioCaptureDevice) became false
+PASS window.internals.pageMediaState().includes(HasMutedVideoCaptureDevice) became true
+PASS window.internals.pageMediaState().includes(HasActiveVideoCaptureDevice) became false
+
+*** Unmuting camera and microphone
+EVENT: unmute
+EVENT: unmute
+PASS screenCaptureTrack.muted is true
+PASS microphoneCaptureTrack.muted is false
+PASS cameraCaptureTrack.muted is false
+PASS window.internals.pageMediaState().includes(HasMutedDisplayCaptureDevice) became true
+PASS window.internals.pageMediaState().includes(HasActiveDisplayCaptureDevice) became false
+PASS window.internals.pageMediaState().includes(HasActiveAudioCaptureDevice) became true
+PASS window.internals.pageMediaState().includes(HasMutedAudioCaptureDevice) became false
+PASS window.internals.pageMediaState().includes(HasActiveAudioCaptureDevice) became true
+PASS window.internals.pageMediaState().includes(HasMutedAudioCaptureDevice) became false
+
+*** Unmuting screen capture
+EVENT: unmute
+PASS screenCaptureTrack.muted is false
+PASS microphoneCaptureTrack.muted is false
+PASS cameraCaptureTrack.muted is false
+PASS window.internals.pageMediaState().includes(HasActiveDisplayCaptureDevice) became true
+PASS window.internals.pageMediaState().includes(HasMutedDisplayCaptureDevice) became false
+PASS window.internals.pageMediaState().includes(HasActiveAudioCaptureDevice) became true
+PASS window.internals.pageMediaState().includes(HasMutedAudioCaptureDevice) became false
+PASS window.internals.pageMediaState().includes(HasActiveAudioCaptureDevice) became true
+PASS window.internals.pageMediaState().includes(HasMutedAudioCaptureDevice) became false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

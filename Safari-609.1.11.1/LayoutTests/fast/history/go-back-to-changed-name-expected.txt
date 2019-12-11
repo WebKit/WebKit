@@ -1,0 +1,3 @@
+This page tests that navigating back to a window that has changed its name doesn't fire an ASSERT.
+
+PASS: You didn't crash.

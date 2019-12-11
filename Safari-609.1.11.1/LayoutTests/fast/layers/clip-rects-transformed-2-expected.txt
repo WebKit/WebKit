@@ -1,0 +1,5 @@
+Test 2/2 for rdar://problem/7398987 Assertion failure in RenderLayer::updateClipRects when a plug-in’s enclosing layer is enclosed by a transformed layer.
+
+This test should not cause an assertion faliure.
+
+

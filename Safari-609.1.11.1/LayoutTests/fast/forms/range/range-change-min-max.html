@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body>
+<input type="range" id="test" value="100" min="0" max="200">
+<script>
+var test = document.getElementById("test");
+test.offsetWidth; // Force layout.
+test.min = 80;
+test.max = 140;
+</script>
+</body>
+</html>

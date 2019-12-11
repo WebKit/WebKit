@@ -1,0 +1,35 @@
+
+    
+Verify that :active remain consistent when the focus is changing.
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+    Initial state
+PASS elementsWithActiveStyle() is []
+PASS elementsMatchingSelector(":active") is []
+PASS elementsMatchingSelector(":focus") is []
+On Mouse Down
+PASS elementsWithActiveStyle() is ["html", "body", "webkit-test", "labelable-ancestor", "labelable-parent", "target"]
+PASS elementsMatchingSelector(":active") is ["html", "body", "webkit-test", "labelable-ancestor", "labelable-parent", "target"]
+After Mouse Down
+PASS elementsWithActiveStyle() is ["html", "body", "webkit-test", "labelable-ancestor", "labelable-parent", "target"]
+PASS elementsMatchingSelector(":active") is ["html", "body", "webkit-test", "labelable-ancestor", "labelable-parent", "target"]
+Focus the target
+PASS elementsWithActiveStyle() is ["html", "body", "webkit-test", "labelable-ancestor", "labelable-parent", "target"]
+PASS elementsMatchingSelector(":active") is ["html", "body", "webkit-test", "labelable-ancestor", "labelable-parent", "target"]
+PASS elementsMatchingSelector(":focus") is ["target"]
+Focus input2
+PASS elementsWithActiveStyle() is ["html", "body", "webkit-test", "labelable-ancestor", "labelable-parent", "target"]
+PASS elementsMatchingSelector(":active") is ["html", "body", "webkit-test", "labelable-ancestor", "labelable-parent", "target"]
+PASS elementsMatchingSelector(":focus") is ["input2"]
+Focus the target
+PASS elementsWithActiveStyle() is ["html", "body", "webkit-test", "labelable-ancestor", "labelable-parent", "target"]
+PASS elementsMatchingSelector(":active") is ["html", "body", "webkit-test", "labelable-ancestor", "labelable-parent", "target"]
+PASS elementsMatchingSelector(":focus") is ["target"]
+Focus input1
+PASS elementsWithActiveStyle() is ["html", "body", "webkit-test", "labelable-ancestor", "labelable-parent", "target"]
+PASS elementsMatchingSelector(":active") is ["html", "body", "webkit-test", "labelable-ancestor", "labelable-parent", "target"]
+PASS elementsMatchingSelector(":focus") is ["input1"]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

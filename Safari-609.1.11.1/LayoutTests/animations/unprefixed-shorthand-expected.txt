@@ -1,0 +1,137 @@
+Test the unprefixed animation shorthand.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Setting animation: waldo
+Check animation-name
+PASS animationStyle.cssText is 'waldo'
+Check animation-duration
+PASS animationStyle.cssText is '0s'
+Check animation-delay
+PASS animationStyle.cssText is '0s'
+Check animation-timing-function
+PASS animationStyle.cssText is 'ease'
+Check animation-iteration-count
+PASS animationStyle.cssText is '1'
+Check animation-direction
+PASS animationStyle.cssText is 'normal'
+Check animation-fill-mode
+PASS animationStyle.cssText is 'none'
+
+Setting animation: waldo 2s
+Check animation-name
+PASS animationStyle.cssText is 'waldo'
+Check animation-duration
+PASS animationStyle.cssText is '2s'
+Check animation-delay
+PASS animationStyle.cssText is '0s'
+Check animation-timing-function
+PASS animationStyle.cssText is 'ease'
+Check animation-iteration-count
+PASS animationStyle.cssText is '1'
+Check animation-direction
+PASS animationStyle.cssText is 'normal'
+Check animation-fill-mode
+PASS animationStyle.cssText is 'none'
+
+Setting animation: 3s banana 500ms
+Check animation-name
+PASS animationStyle.cssText is 'banana'
+Check animation-duration
+PASS animationStyle.cssText is '3s'
+Check animation-delay
+PASS animationStyle.cssText is '0.5s'
+Check animation-timing-function
+PASS animationStyle.cssText is 'ease'
+Check animation-iteration-count
+PASS animationStyle.cssText is '1'
+Check animation-direction
+PASS animationStyle.cssText is 'normal'
+Check animation-fill-mode
+PASS animationStyle.cssText is 'none'
+
+Setting animation: infinite alternate eggs 5s
+Check animation-name
+PASS animationStyle.cssText is 'eggs'
+Check animation-duration
+PASS animationStyle.cssText is '5s'
+Check animation-delay
+PASS animationStyle.cssText is '0s'
+Check animation-timing-function
+PASS animationStyle.cssText is 'ease'
+Check animation-iteration-count
+PASS animationStyle.cssText is 'infinite'
+Check animation-direction
+PASS animationStyle.cssText is 'alternate'
+Check animation-fill-mode
+PASS animationStyle.cssText is 'none'
+
+Setting animation: forwards normal ease-in-out bacon 1s 2s
+Check animation-name
+PASS animationStyle.cssText is 'bacon'
+Check animation-duration
+PASS animationStyle.cssText is '1s'
+Check animation-delay
+PASS animationStyle.cssText is '2s'
+Check animation-timing-function
+PASS animationStyle.cssText is 'ease-in-out'
+Check animation-iteration-count
+PASS animationStyle.cssText is '1'
+Check animation-direction
+PASS animationStyle.cssText is 'normal'
+Check animation-fill-mode
+PASS animationStyle.cssText is 'forwards'
+
+Setting animation: pastrami 100ms cubic-bezier(0, 0, 1, 1) alternate-reverse
+Check animation-name
+PASS animationStyle.cssText is 'pastrami'
+Check animation-duration
+PASS animationStyle.cssText is '0.1s'
+Check animation-delay
+PASS animationStyle.cssText is '0s'
+Check animation-timing-function
+PASS animationStyle.cssText is 'cubic-bezier(0, 0, 1, 1)'
+Check animation-iteration-count
+PASS animationStyle.cssText is '1'
+Check animation-direction
+PASS animationStyle.cssText is 'alternate-reverse'
+Check animation-fill-mode
+PASS animationStyle.cssText is 'none'
+
+Setting animation: slightly-invalid 2s a
+Check animation-name
+PASS animationStyle.cssText is 'none'
+Check animation-duration
+PASS animationStyle.cssText is '0s'
+Check animation-delay
+PASS animationStyle.cssText is '0s'
+Check animation-timing-function
+PASS animationStyle.cssText is 'ease'
+Check animation-iteration-count
+PASS animationStyle.cssText is '1'
+Check animation-direction
+PASS animationStyle.cssText is 'normal'
+Check animation-fill-mode
+PASS animationStyle.cssText is 'none'
+
+Setting animation: completely invalid
+Check animation-name
+PASS animationStyle.cssText is 'none'
+Check animation-duration
+PASS animationStyle.cssText is '0s'
+Check animation-delay
+PASS animationStyle.cssText is '0s'
+Check animation-timing-function
+PASS animationStyle.cssText is 'ease'
+Check animation-iteration-count
+PASS animationStyle.cssText is '1'
+Check animation-direction
+PASS animationStyle.cssText is 'normal'
+Check animation-fill-mode
+PASS animationStyle.cssText is 'none'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

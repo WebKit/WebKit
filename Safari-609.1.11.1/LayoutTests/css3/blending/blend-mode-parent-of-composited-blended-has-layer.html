@@ -1,0 +1,16 @@
+<!DOCTYPE HTML>
+<!-- Test if the parent of a composited layer with mix-blend-mode is promoted. -->
+
+<link rel="stylesheet" href="resources/blending-style.css">
+
+<div class="box">
+    <div class="accelerated margin10 box difference"></div>
+</div>
+<pre id="layerTree"></pre>
+<script>
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
+
+    var text = document.getElementById("layerTree");
+    text.innerHTML = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+</script>

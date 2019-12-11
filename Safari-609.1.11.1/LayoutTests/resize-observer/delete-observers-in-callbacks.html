@@ -1,0 +1,65 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:ResizeObserverEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/gc.js"></script>
+</head>
+<body>
+<div id="target1" style="width:100px;height:100px;">t1
+</div>
+
+<script>
+function startTest() {
+
+    // Delete the next observer.
+    let notifiedObserver1 = false;
+    let observer1 = new ResizeObserver( entries => {
+        if (observer2) {
+            observer2.disconnect();
+            observer2 = null;
+            gc();
+        }
+        notifiedObserver1 = true;
+    });
+
+    // Deleted before delivering.
+    let observer2 = new ResizeObserver( entries => {
+        assert_unreached("observer2 is deleted before notifying");
+    } );
+
+    // Delete the provious observer.
+    let notifiedObserver3 = false;
+    let observer3 = new ResizeObserver( entries => {
+        if (observer1) {
+            assert_true(notifiedObserver1, "observer1 is notified before observer3");
+            observer1.disconnect();
+            observer1 = null;
+            gc();
+        }
+        notifiedObserver3 = true;
+    });
+    // observer4 should be notified.
+    let observer4 = new ResizeObserver( entries => {
+        assert_true(notifiedObserver3, "observer3 is notified before observer4");
+        done();
+    });
+
+    let t1 = document.querySelector('#target1');
+    observer1.observe(t1);
+    observer2.observe(t1);
+    observer3.observe(t1);
+    observer4.observe(t1);
+}
+
+test(_ => {
+    assert_own_property(window, "ResizeObserver");
+}, "ResizeObserver implemented");
+
+promise_test(async () => {
+    return startTest();
+}, 'Test deleting observer in callbacks');
+
+</script>
+</body>
+</html>

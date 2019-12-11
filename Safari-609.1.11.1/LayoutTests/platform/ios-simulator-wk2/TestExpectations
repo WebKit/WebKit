@@ -1,0 +1,84 @@
+# These are the layout test expectations for Apple's iOS simulator port of WebKit2
+#
+# See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
+#
+
+editing/inserting/insert-paragraph-selection-outside-contenteditable.html [ Failure ]
+fast/events/offsetX-offsetY.html [ Failure ]
+fast/hidpi/image-srcset-invalid-descriptor.html [ Failure ]
+http/tests/cookies/js-get-and-set-http-only-cookie.html [ Failure ]
+http/tests/security/cross-origin-worker-indexeddb-allowed.html [ Failure ]
+http/tests/security/cross-origin-worker-indexeddb.html [ Failure ]
+
+fast/events/scroll-to-anchor-vertical-lr-writing-mode.html [ ImageOnlyFailure ]
+fast/events/scroll-to-anchor-vertical-writing-mode.html [ ImageOnlyFailure ]
+fast/sub-pixel/sub-pixel-composited-layers.html [ ImageOnlyFailure ]
+
+webkit.org/b/152439 compositing/overflow/dynamic-composited-scrolling-status.html [ Pass Failure ]
+
+webkit.org/b/173178 [ Release ] svg/animations/svglength-element-removed-crash.svg [ Skip ]
+
+webkit.org/b/173010 js/slow-stress/Int32Array-alloc-huge.html [ Pass Timeout ]
+
+webkit.org/b/174183 animations/resume-after-page-cache.html [ Pass Failure ]
+webkit.org/b/174183 legacy-animation-engine/animations/resume-after-page-cache.html [ Pass Failure ]
+
+webkit.org/b/173861 http/tests/webrtc/filtering-ice-candidate-same-origin-frame2.html [ Skip ]
+webkit.org/b/173861 http/tests/webrtc/filtering-ice-candidate-same-origin-frame.html [ Skip ]
+webkit.org/b/173861 http/tests/webrtc/filtering-ice-candidate-cross-origin-frame.html [ Skip ]
+
+webkit.org/b/172384 fast/hidpi/hidpi-long-page-with-inset-element.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/175865 quicklook/multi-sheet-numbers-09.html [ Pass Failure ]
+
+webkit.org/b/187699 [ Debug ] fast/forms/submit-change-fragment.html [ Pass Timeout ]
+
+webkit.org/b/194368 http/tests/workers/service/basic-register-exceptions.html [ Pass Failure ]
+
+webkit.org/b/196218 performance-api/performance-observer-periodic.html [ Pass Failure ]
+
+webkit.org/b/196228 http/tests/cache-storage/cache-clearing-origin.https.html [ Pass Failure ]
+webkit.org/b/196228 http/tests/cache-storage/cache-records-persistency.https.html [ Pass Failure ]
+
+webkit.org/b/196233 fast/viewport/ios/initial-scale-after-changing-view-scale.html [ Pass Timeout ]
+
+webkit.org/b/162975 http/tests/cache/disk-cache/memory-cache-revalidation-updates-disk-cache.html [ Pass Failure ]
+
+webkit.org/b/196112 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-bold.html [ Pass ImageOnlyFailure ]
+webkit.org/b/196112 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-double-struck.html [ Pass ImageOnlyFailure ]
+webkit.org/b/196112 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-italic.html [ Pass ImageOnlyFailure ]
+
+http/wpt/cache-storage/quota-third-party.https.html [ Slow ]
+http/wpt/fetch/response-opaque-clone.html [ Slow ]
+http/wpt/cache-storage/cache-put-keys.https.any.html [ Slow ]
+http/wpt/cache-storage/cache-quota-after-restart.any.html [ Slow ]
+http/wpt/cache-storage/cache-quota.any.html [ Slow ]
+http/wpt/cache-storage/cache-put-keys.https.any.worker.html [ Slow ]
+http/wpt/cache-storage/a-cache-open.https.html [ Slow ]
+http/wpt/cache-storage/cache-quota-add.any.html [ Slow ]
+
+webkit.org/b/196403 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-stop.html [ Pass Failure ]
+
+webkit.org/b/195341 fast/viewport/ios/constant-width-viewport-after-changing-view-scale.html [ Pass Failure ]
+
+webkit.org/b/186581 [ Debug ] fast/parser/xml-error-adopted.xml [ Pass Timeout ]
+
+webkit.org/b/196944 imported/w3c/web-platform-tests/hr-time/test_cross_frame_start.html [ Pass Failure ]
+
+webkit.org/b/197207 http/wpt/resource-timing/rt-resources-per-frame.html [ Pass Failure ]
+
+webkit.org/b/182849 imported/w3c/web-platform-tests/xhr/event-upload-progress-crossorigin.htm [ Pass Failure ]
+
+imported/w3c/web-platform-tests/IndexedDB/keypath-special-identifiers.htm [ Slow ]
+
+webkit.org/b/172001 scrollingcoordinator/ios/sync-layer-positions-after-scroll.html [ Pass Failure ]
+
+# NearField.framework doesn't present in the simulator, and therefore skip all WebAuthn NFC tests
+http/wpt/webauthn/ctap-nfc-failure.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-create-failure-nfc.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-create-success-nfc.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-get-failure-nfc.https.html [ Skip ]
+http/wpt/webauthn/public-key-credential-get-success-nfc.https.html [ Skip ]
+
+webkit.org/b/203157 scrollingcoordinator/ios/non-stable-viewport-scroll.html [ Pass Failure ]
+

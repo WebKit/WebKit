@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (66,13) size 685x468
+      RenderSVGText {text} at (40,8) size 411x43 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 411x42
+          chunk 1 text run 1 at (40.00,42.00) startOffset 0 endOffset 29 width 410.19: "Basic paint: fill properties."
+      RenderSVGRect {rect} at (124,115) size 169x270 [stroke={[type=SOLID] [color=#000000]}] [x=75.00] [y=70.00] [width=100.00] [height=160.00]
+      RenderSVGRect {rect} at (457,115) size 169x270 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#008000]}] [x=275.00] [y=70.00] [width=100.00] [height=160.00]
+      RenderSVGText {text} at (75,246) size 161x43 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 161x42
+          chunk 1 text run 1 at (75.00,280.00) startOffset 0 endOffset 11 width 160.66: "fill=\"none\""
+      RenderSVGText {text} at (275,246) size 173x43 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 173x42
+          chunk 1 text run 1 at (275.00,280.00) startOffset 0 endOffset 12 width 172.65: "fill=\"green\""
+    RenderSVGContainer {g} at (16,516) size 385x64
+      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 231x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.7 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

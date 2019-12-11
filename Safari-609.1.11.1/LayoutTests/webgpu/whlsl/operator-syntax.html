@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Some operators should be syntax errors.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.operatorSyntax = async () =>
+{
+    await checkFail(`
+        struct Foo { }
+        int operator.foo(Foo) { return 42; }
+    `);
+    await checkFail(`
+        struct Foo { }
+        int operator.foo=(Foo) { return 42; }
+    `);
+
+    await checkFail(`
+        struct Foo { }
+        thread int* operator&.foo(Foo) { int x; return &x; }
+    `);
+
+    await checkFail(`
+        struct Foo { }
+        int operator[](Foo, uint) { return 42; }
+    `);
+
+    await checkFail(`
+        struct Foo { }
+        int operator[]=(Foo, uint) { return 42; }
+    `);
+
+    await checkFail(`
+        struct Foo { }
+        thread int* operator&[](Foo, uint) { int x; return &x; }
+    `);
+}
+
+runTests(whlslTests);
+</script>
+</html>

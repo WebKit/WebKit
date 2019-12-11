@@ -1,0 +1,85 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+    <head>
+        <title>Selecting from a list of tracks</title>
+        <script src="media-controls.js"></script>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script src="trackmenu-test.js"></script>
+        <script>
+
+            function finishTest()
+            {
+                testExpected("video.textTracks[0].mode", "disabled");
+                testExpected("video.textTracks[1].mode", "showing");
+                listTrackMenu();
+
+                consoleWrite("");
+                endTest();
+            }
+
+            function trackLoaded()
+            {
+                consoleWrite("<br>EVENT(load)");
+
+                consoleWrite("<br>*** The new track should be selected because it is in the preferred language.");
+                testExpected("event.target.srclang", "en");
+                testExpected("event.target.readyState", HTMLTrackElement.LOADED);
+
+                showMenu(finishTest);
+            }
+
+            function startTest()
+            {
+                trackListElement = getTrackListElement();
+                if (!trackListElement)
+                    return;
+
+                consoleWrite("<br>** The preferred language is set to English, but the Spanish track should be enabled because it is available");
+                listTrackMenu();
+                testExpected("video.textTracks[0].mode", "showing");
+                clickCCButton();
+
+                consoleWrite("<br>*** Add a text track in the preferred language.");
+                run("track = document.createElement('track')");
+                run("track.setAttribute('kind', 'captions')");
+                uri = 'data:text/vtt,' + encodeURIComponent('WEBVTT\n\n00:00:00.000 --> 00:00:01.000\nCaption 1\n');
+                run("track.src = '" + uri + "'");
+                run("track.setAttribute('srclang', 'en')");
+                run("track.setAttribute('onload', 'trackLoaded()')");
+                run("video.appendChild(track)");
+            }
+
+            function showMenu(nextFunction)
+            {
+                clickCCButton();
+                window.setTimeout(nextFunction, 100);
+            }
+
+            function canplaythrough()
+            {
+                consoleWrite("<br>*** Set the user's preferred language to English, enable automatic caption selection.");
+                run("internals.setUserPreferredLanguages(['en'])");
+                run("internals.setCaptionDisplayMode('AlwaysOn')");
+                window.setTimeout(function() { showMenu(startTest) }, 100);
+            }
+
+            function start()
+            {
+                findMediaElement();
+                video.src = findMediaFile('video', 'content/test');
+                setCaptionDisplayMode('Automatic');
+
+                waitForEvent('canplaythrough', canplaythrough);
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <p>Test that we update the menu when the selected track changes.</p>
+        <video width="500" height="300" controls>
+            <track kind="captions" title="Commentary" src="track/captions-webvtt/captions-fast.vtt" srclang="es">
+        </video>
+    </body>
+</html>
+

@@ -1,0 +1,7 @@
+2d.composite.uncovered.fill.source-in
+
+fill() draws pixels not covered by the source object as (0,0,0,0), and does not leave the pixels unchanged.
+
+
+FAIL fill() draws pixels not covered by the source object as (0,0,0,0), and does not leave the pixels unchanged. null is not an object (evaluating 'ctx.fillStyle = 'rgba(0, 255, 0, 0.5)'')
+

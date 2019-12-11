@@ -1,0 +1,27 @@
+** Start first video with user gesture.
+RUN(window.internals.settings.setVideoPlaybackRequiresUserGesture(true);)
+RUN(video1 = document.createElement("video"))
+RUN(video1.src = findMediaFile("video", "content/test"))
+RUN(document.body.appendChild(video1))
+EXPECTED (window.internals.pageMediaState().includes('HasUserInteractedWithMediaElement') == 'false') OK
+RUN(video1.play())
+EXPECTED (window.internals.pageMediaState().includes('HasUserInteractedWithMediaElement') == 'true') OK
+EVENT(playing)
+RUN(video1.currentTime = video1.duration - 0.2)
+EVENT(ended)
+
+** Start second video without user gesture but within inheritance window, should succeed.
+RUN(video2 = document.createElement("video"))
+RUN(video2.src = findMediaFile("video", "content/test"))
+RUN(document.body.appendChild(video2))
+Promise resolved OK
+RUN(video2.currentTime = video2.duration - 0.2)
+EVENT(ended)
+
+** Start third video without user gesture but after inheritance window, should fail.
+RUN(video3 = document.createElement("video"))
+RUN(video3.src = findMediaFile("video", "content/test"))
+RUN(document.body.appendChild(video3))
+Promise rejected correctly OK
+END OF TEST
+

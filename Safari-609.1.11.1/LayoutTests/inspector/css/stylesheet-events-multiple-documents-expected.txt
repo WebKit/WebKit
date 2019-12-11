@@ -1,0 +1,19 @@
+CSS.styleSheetAdded and CSS.styleSheetRemoved for multiple documents.
+
+
+== Running test suite: CSS.StyleSheetEvents.MultipleDocuments
+-- Running test case: CheckStyleSheets
+PASS: Should be one stylesheets.
+URL: inspector/css/resources/external.css <mainframe>
+
+-- Running test case: CheckStyleSheetsAfterAddingSubframe
+PASS: Should be two stylesheets.
+PASS: New StyleSheet is for a subframe
+URL: inspector/css/resources/external.css <mainframe>
+URL: inspector/css/resources/external.css <childframe>
+
+-- Running test case: CheckStyleSheetsAfterRemovingSubframe
+PASS: Should be one stylesheet.
+PASS: Removed StyleSheet is for a subframe
+URL: inspector/css/resources/external.css <mainframe>
+

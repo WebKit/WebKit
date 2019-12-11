@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .horizontalGallery {
+                width: 400px;
+                height: 50px;
+                overflow-y: hidden;
+                overflow-x: auto;
+            }
+            .verticalGallery {
+                width: 400px;
+                height: 50px;
+                display: inline-block;
+                overflow-x: hidden;
+                overflow-y: auto;
+            }
+            .horizontalGalleryDrawer {
+                width: 3000px;
+                height: 50px;
+            }
+            .verticalGalleryDrawer {
+                width: 400px;
+                height: 300px;
+            }
+            .colorBox {
+                height: 50px;
+                width: 400px;
+                float: left;
+            }
+
+            .noInitial {
+                scroll-snap-type: both;
+                scroll-snap-align: center;
+                scroll-padding: 20px;
+                scroll-snap-margin: 1px;
+            }
+
+            .initialType {
+                scroll-snap-type: initial;
+                scroll-snap-align: center;
+                scroll-padding: 20px;
+                scroll-snap-margin: 1px;
+            }
+
+            .initialPadding {
+                scroll-snap-type: both;
+                scroll-snap-align: center;
+                scroll-padding: initial;
+                scroll-snap-margin: 1px;
+            }
+
+            .initialMargin {
+                scroll-snap-type: both;
+                scroll-snap-align: center;
+                scroll-padding: 20px;
+                scroll-snap-margin: initial;
+            }
+
+            .initialAlign {
+                scroll-snap-type: both;
+                scroll-snap-align: initial;
+                scroll-padding: 20px;
+                scroll-snap-margin: 1px;
+            }
+
+            .allInitial {
+                scroll-snap-type: initial;
+                scroll-snap-align: initial;
+                scroll-padding: initial;
+                scroll-snap-margin: initial;
+            }
+
+            #item0 { background-color: red; }
+            #item1 { background-color: green; }
+            #item2 { background-color: blue; }
+            #item3 { background-color: aqua; }
+            #item4 { background-color: yellow; }
+            #item5 { background-color: fuchsia; }
+        </style>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <div style="width: 400px">
+            <div id="noInitial" class="horizontalGallery noInitial">
+                <div class="horizontalGalleryDrawer">
+                    <div id="item0" class="colorBox"></div>
+                    <div id="item1" class="colorBox"></div>
+                    <div id="item2" class="colorBox"></div>
+                    <div id="item3" class="colorBox"></div>
+                    <div id="item4" class="colorBox"></div>
+                    <div id="item5" class="colorBox"></div>
+                </div>
+            </div>
+            <div id="initialType" class="horizontalGallery initialType" style="scroll-snap-type: initial">
+                <div class="horizontalGalleryDrawer">
+                    <div id="item0" class="colorBox"></div>
+                    <div id="item1" class="colorBox"></div>
+                    <div id="item2" class="colorBox"></div>
+                    <div id="item3" class="colorBox"></div>
+                    <div id="item4" class="colorBox"></div>
+                    <div id="item5" class="colorBox"></div>
+                </div>
+            </div>
+            <div id="initialPadding" class="horizontalGallery initialPadding" style="scroll-padding: initial">
+                <div class="horizontalGalleryDrawer">
+                    <div id="item0" class="colorBox"></div>
+                    <div id="item1" class="colorBox"></div>
+                    <div id="item2" class="colorBox"></div>
+                    <div id="item3" class="colorBox"></div>
+                    <div id="item4" class="colorBox"></div>
+                    <div id="item5" class="colorBox"></div>
+                </div>
+            </div>
+            <div id="initialMargin" class="horizontalGallery initialMargin" style="scroll-snap-margin: initial">
+                <div class="horizontalGalleryDrawer">
+                    <div id="item0" class="colorBox"></div>
+                    <div id="item1" class="colorBox"></div>
+                    <div id="item2" class="colorBox"></div>
+                    <div id="item3" class="colorBox"></div>
+                    <div id="item4" class="colorBox"></div>
+                    <div id="item5" class="colorBox"></div>
+                </div>
+            </div>
+            <div id="initialAlign" class="horizontalGallery initialAlign" style="scroll-snap-align: initial">
+                <div class="horizontalGalleryDrawer">
+                    <div id="item0" class="colorBox"></div>
+                    <div id="item1" class="colorBox"></div>
+                    <div id="item2" class="colorBox"></div>
+                    <div id="item3" class="colorBox"></div>
+                    <div id="item4" class="colorBox"></div>
+                    <div id="item5" class="colorBox"></div>
+                </div>
+            </div>
+            <div id="allInitial" class="horizontalGallery allInitial" style="scroll-snap-type: initial; scroll-padding: initial; scroll-snap-margin: initial; scroll-snap-align: initial;">
+                <div class="horizontalGalleryDrawer">
+                    <div id="item0" class="colorBox"></div>
+                    <div id="item1" class="colorBox"></div>
+                    <div id="item2" class="colorBox"></div>
+                    <div id="item3" class="colorBox"></div>
+                    <div id="item4" class="colorBox"></div>
+                    <div id="item5" class="colorBox"></div>
+                </div>
+            </div>
+            <div id="allInitialY" class="verticalGallery noInitial" style="scroll-snap-type: initial; scroll-padding: initial; scroll-snap-margin: initial; scroll-snap-align: initial;">
+                <div class="verticalGalleryDrawer">
+                    <div id="item0" class="colorBox"></div>
+                    <div id="item1" class="colorBox"></div>
+                    <div id="item2" class="colorBox"></div>
+                    <div id="item3" class="colorBox"></div>
+                    <div id="item4" class="colorBox"></div>
+                    <div id="item5" class="colorBox"></div>
+                </div>
+            </div>
+        </div>
+        <div id="console"></div>
+        <script>
+        description("Tests 'initial' on scroll snap properties.");
+
+        var noInitial = document.getElementById('noInitial');
+        shouldBeEmptyString("noInitial.style['scroll-snap-type']");
+        shouldBeEqualToString("window.getComputedStyle(noInitial).getPropertyValue('scroll-snap-type')", "both proximity");
+        shouldBeEmptyString("noInitial.style['scroll-padding']");
+        shouldBeEqualToString("window.getComputedStyle(noInitial).getPropertyValue('scroll-padding')", "20px");
+        shouldBeEmptyString("noInitial.style['scroll-snap-margin']");
+        shouldBeEqualToString("window.getComputedStyle(noInitial).getPropertyValue('scroll-snap-margin')", "1px");
+        shouldBeEmptyString("noInitial.style['scroll-snap-align']");
+        shouldBeEqualToString("window.getComputedStyle(noInitial).getPropertyValue('scroll-snap-align')", "center center");
+
+        var initialType = document.getElementById('initialType');
+        shouldBeEqualToString("initialType.style['scroll-snap-type']", "initial");
+        shouldBeEqualToString("window.getComputedStyle(initialType).getPropertyValue('scroll-snap-type')", "none");
+        shouldBeEmptyString("initialType.style['scroll-padding']");
+        shouldBeEqualToString("window.getComputedStyle(initialType).getPropertyValue('scroll-padding')", "20px");
+        shouldBeEmptyString("initialType.style['scroll-snap-margin']");
+        shouldBeEqualToString("window.getComputedStyle(initialType).getPropertyValue('scroll-snap-margin')", "1px");
+        shouldBeEmptyString("initialType.style['scroll-snap-align']");
+        shouldBeEqualToString("window.getComputedStyle(initialType).getPropertyValue('scroll-snap-align')", "center center");
+
+        var initialPadding = document.getElementById('initialPadding');
+        shouldBeEmptyString("initialPadding.style['scroll-snap-type']");
+        shouldBeEqualToString("window.getComputedStyle(initialPadding).getPropertyValue('scroll-snap-type')", "both proximity");
+        shouldBeEqualToString("initialPadding.style['scroll-padding']", "initial");
+        shouldBeEqualToString("window.getComputedStyle(initialPadding).getPropertyValue('scroll-padding')", "0px");
+        shouldBeEmptyString("initialPadding.style['scroll-snap-margin']");
+        shouldBeEqualToString("window.getComputedStyle(initialPadding).getPropertyValue('scroll-snap-margin')", "1px");
+        shouldBeEmptyString("initialPadding.style['scroll-snap-align']");
+        shouldBeEqualToString("window.getComputedStyle(initialPadding).getPropertyValue('scroll-snap-align')", "center center");
+
+        var initialMargin = document.getElementById('initialMargin');
+        shouldBeEmptyString("initialMargin.style['scroll-snap-type']");
+        shouldBeEqualToString("window.getComputedStyle(initialMargin).getPropertyValue('scroll-snap-type')", "both proximity");
+        shouldBeEmptyString("initialMargin.style['scroll-padding']");
+        shouldBeEqualToString("window.getComputedStyle(initialMargin).getPropertyValue('scroll-padding')", "20px");
+        shouldBeEqualToString("initialMargin.style['scroll-snap-margin']", "initial");
+        shouldBeEqualToString("window.getComputedStyle(initialMargin).getPropertyValue('scroll-snap-margin')", "0px");
+        shouldBeEmptyString("initialMargin.style['scroll-snap-align']");
+        shouldBeEqualToString("window.getComputedStyle(initialMargin).getPropertyValue('scroll-snap-align')", "center center");
+
+        var initialAlign = document.getElementById('initialAlign');
+        shouldBeEmptyString("initialAlign.style['scroll-snap-type']");
+        shouldBeEqualToString("window.getComputedStyle(initialAlign).getPropertyValue('scroll-snap-type')", "both proximity");
+        shouldBeEmptyString("initialAlign.style['scroll-padding']");
+        shouldBeEqualToString("window.getComputedStyle(initialAlign).getPropertyValue('scroll-padding')", "20px");
+        shouldBeEmptyString("initialAlign.style['scroll-snap-margin']");
+        shouldBeEqualToString("window.getComputedStyle(initialAlign).getPropertyValue('scroll-snap-margin')", "1px");
+        shouldBeEqualToString("initialAlign.style['scroll-snap-align']", "initial");
+        shouldBeEqualToString("window.getComputedStyle(initialAlign).getPropertyValue('scroll-snap-align')", "none none");
+
+        var allInitial = document.getElementById('allInitial');
+        shouldBeEqualToString("allInitial.style['scroll-snap-type']", "initial");
+        shouldBeEqualToString("window.getComputedStyle(allInitial).getPropertyValue('scroll-snap-type')", "none");
+        shouldBeEqualToString("allInitial.style['scroll-padding']", "initial");
+        shouldBeEqualToString("window.getComputedStyle(allInitial).getPropertyValue('scroll-padding')", "0px");
+        shouldBeEqualToString("allInitial.style['scroll-snap-margin']", "initial");
+        shouldBeEqualToString("window.getComputedStyle(allInitial).getPropertyValue('scroll-snap-margin')", "0px");
+        shouldBeEqualToString("allInitial.style['scroll-snap-align']", "initial");
+        shouldBeEqualToString("window.getComputedStyle(allInitial).getPropertyValue('scroll-snap-align')", "none none");
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>
+

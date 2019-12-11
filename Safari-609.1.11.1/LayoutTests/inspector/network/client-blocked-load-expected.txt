@@ -1,0 +1,9 @@
+Tests that there is no crash when the client blocks a resource load.
+
+
+== Running test suite: ClientBlockedResourceLoad
+-- Running test case: TriggerBlockedResourceLoad
+PASS: Resource should be created.
+PASS: Request url should be rewritten to the null string.
+PASS: Resource load should fail.
+

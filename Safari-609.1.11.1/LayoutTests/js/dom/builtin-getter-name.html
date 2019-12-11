@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Builtin JS getter names</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+
+function tryGetOwnPropertyDescriptorGetName(obj, property, expectedName)
+{
+    let descriptor = Object.getOwnPropertyDescriptor(obj, property);
+    assert_true(!!descriptor, `Should find property descriptor for ${property}`);
+
+    let getter = descriptor.get;
+    assert_true(!!getter, `Should find getter for ${property}`);
+
+    let getterName = getter.name;
+    assert_equals(getterName, expectedName);
+}
+
+test(() => {
+    tryGetOwnPropertyDescriptorGetName(Response.prototype, 'body', 'get body');
+    tryGetOwnPropertyDescriptorGetName(Response.prototype, 'bodyUsed', 'get bodyUsed');
+}, 'FetchResponse property names');
+
+test(() => {
+    tryGetOwnPropertyDescriptorGetName(ReadableStream.prototype, 'locked', 'get locked');
+}, 'ReadableStream property names');
+
+test(() => {
+    let stream = new ReadableStream();
+    let reader = stream.getReader();
+    tryGetOwnPropertyDescriptorGetName(reader.__proto__, 'closed', 'get closed');
+}, 'ReadableStreamDefaultReader property names');
+
+test(() => {
+    let stream = new ReadableStream({
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+    let reader = stream.getReader({ mode: 'byob' });
+    tryGetOwnPropertyDescriptorGetName(reader.__proto__, 'closed', 'get closed');
+}, 'ReadableStreamBYOBReader property names');
+
+test(() => {
+    tryGetOwnPropertyDescriptorGetName(WritableStream.prototype, 'closed', 'get closed');
+    tryGetOwnPropertyDescriptorGetName(WritableStream.prototype, 'ready', 'get ready');
+    tryGetOwnPropertyDescriptorGetName(WritableStream.prototype, 'state', 'get state');
+}, 'WritableStream property names');
+
+</script>
+</body>
+</html>

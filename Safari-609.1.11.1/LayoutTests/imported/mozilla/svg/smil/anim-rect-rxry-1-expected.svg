@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+  <g fill="blue" stroke="red" stroke-width="10" transform="translate(10 10)">
+    <!-- Squares -->
+    <rect x="0" width="40" height="40"/>
+    <rect x="60" width="40" height="40"/>
+    <rect x="120" width="40" height="40"/>
+    <rect x="180" width="40" height="40"/>
+
+    <!-- rx=0 ry=20 -->
+    <rect x="0" y="60" width="40" height="40" rx="0" ry="20"/>
+    <rect x="60" y="60" width="40" height="40" rx="0" ry="20"/>
+    <rect x="120" y="60" width="40" height="40" rx="0" ry="20"/>
+    <rect x="180" y="60" width="40" height="40" rx="0" ry="20"/>
+    <rect x="240" y="60" width="40" height="40" rx="0" ry="20"/>
+
+    <!-- rx=20 (hence ry=20) -->
+    <rect x="0" y="120" width="40" height="40" rx="20"/>
+    <rect x="60" y="120" width="40" height="40" rx="20"/>
+    <rect x="120" y="120" width="40" height="40" rx="20"/>
+    <rect x="180" y="120" width="40" height="40" rx="20"/>
+    <rect x="240" y="120" width="40" height="40" rx="20"/>
+    <rect x="300" y="120" width="40" height="40" rx="20"/>
+  </g>
+</svg>

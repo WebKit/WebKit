@@ -1,0 +1,1665 @@
+# Hungarian translation for webkit-gtk.
+# Copyright (C) 2010, 2016. Free Software Foundation, Inc.
+# This file is distributed under the same license as the webkit package.
+#
+# Gabor Kelemen <kelemeng at gnome dot hu>, 2010, 2016.
+# Balázs Úr <urbalazs at gmail dot com>, 2016.
+msgid ""
+msgstr ""
+"Project-Id-Version: webkit master\n"
+"Report-Msgid-Bugs-To: https://bugs.webkit.org/\n"
+"POT-Creation-Date: 2016-10-18 02:30+0000\n"
+"PO-Revision-Date: 2016-10-19 06:11+0200\n"
+"Last-Translator: Gabor Kelemen <kelemeng at ubuntu dot com>\n"
+"Language-Team: Hungarian <openscope at googlegroups dot com>\n"
+"Language: hu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Lokalize 1.5\n"
+"Plural-Forms:  nplurals=2; plural=(n != 1);\n"
+
+#: ../ErrorsGtk.cpp:32
+msgid "Load request cancelled"
+msgstr "A betöltési kérés megszakítva"
+
+#: ../ErrorsGtk.cpp:37
+msgid "Not allowed to use restricted network port"
+msgstr "A korlátozott hálózati port használata nem engedélyezett"
+
+#: ../ErrorsGtk.cpp:42
+msgid "Blocked by content blocker"
+msgstr "A tartalomblokkoló blokkolta"
+
+#: ../ErrorsGtk.cpp:47
+msgid "URL cannot be shown"
+msgstr "Az URL nem jeleníthető meg"
+
+#: ../ErrorsGtk.cpp:52
+msgid "Frame load was interrupted"
+msgstr "A keret betöltése megszakítva"
+
+#: ../ErrorsGtk.cpp:57
+msgid "Content with the specified MIME type cannot be shown"
+msgstr "Nem jeleníthető meg a megadott MIME-típusú tartalom"
+
+#: ../ErrorsGtk.cpp:62
+msgid "File does not exist"
+msgstr "A fájl nem létezik"
+
+#: ../ErrorsGtk.cpp:67
+msgid "Plugin will handle load"
+msgstr "Bővítmény kezeli a betöltést"
+
+#: ../ErrorsGtk.cpp:77
+msgid "User cancelled the download"
+msgstr "A felhasználó megszakította a letöltést"
+
+#: ../ErrorsGtk.cpp:92
+msgid "Printer not found"
+msgstr "A nyomtató nem található"
+
+#: ../ErrorsGtk.cpp:97
+msgid "Invalid page range"
+msgstr "Érvénytelen oldaltartomány"
+
+#: ../LocalizedStringsGtk.cpp:55 ../LocalizedStringsGtk.cpp:60
+msgid "Submit"
+msgstr "Elküldés"
+
+#: ../LocalizedStringsGtk.cpp:65
+msgid "Reset"
+msgstr "Visszaállítás"
+
+#: ../LocalizedStringsGtk.cpp:70
+msgid "Details"
+msgstr "Részletek"
+
+#: ../LocalizedStringsGtk.cpp:75
+msgid "This is a searchable index. Enter search keywords: "
+msgstr "Ez egy kereshető indexfájl. Írja be a keresendő kulcsszót: "
+
+#: ../LocalizedStringsGtk.cpp:80
+msgid "Choose File"
+msgstr "Válasszon fájlt"
+
+#: ../LocalizedStringsGtk.cpp:85
+msgid "Choose Files"
+msgstr "Válasszon fájlokat"
+
+#: ../LocalizedStringsGtk.cpp:90 ../LocalizedStringsGtk.cpp:95
+msgid "(None)"
+msgstr "(Nincs)"
+
+#: ../LocalizedStringsGtk.cpp:100
+msgid "Open Link in New _Window"
+msgstr "Hivatkozás megnyitása új _ablakban"
+
+#: ../LocalizedStringsGtk.cpp:105
+msgid "_Download Linked File"
+msgstr "Hi_vatkozott fájl letöltése"
+
+#: ../LocalizedStringsGtk.cpp:110
+msgid "Copy Link Loc_ation"
+msgstr "Link _helyének másolása"
+
+#: ../LocalizedStringsGtk.cpp:115
+msgid "Open _Image in New Window"
+msgstr "Ké_p megnyitása új ablakban"
+
+#: ../LocalizedStringsGtk.cpp:120
+msgid "Sa_ve Image As"
+msgstr "Kép _mentése másként"
+
+#: ../LocalizedStringsGtk.cpp:125
+msgid "Cop_y Image"
+msgstr "Kép má_solása"
+
+#: ../LocalizedStringsGtk.cpp:130
+msgid "Copy Image _Address"
+msgstr "Kép _címének másolása"
+
+#: ../LocalizedStringsGtk.cpp:135
+msgid "Open _Video in New Window"
+msgstr "Videó megnyitása új _ablakban"
+
+#: ../LocalizedStringsGtk.cpp:140
+msgid "Open _Audio in New Window"
+msgstr "Hang megnyitása új _ablakban"
+
+#: ../LocalizedStringsGtk.cpp:145
+msgid "Download _Video"
+msgstr "_Videó letöltése"
+
+#: ../LocalizedStringsGtk.cpp:150
+msgid "Download _Audio"
+msgstr "_Hang letöltése"
+
+#: ../LocalizedStringsGtk.cpp:155
+msgid "Cop_y Video Link Location"
+msgstr "Videohivatko_zás helyének másolása"
+
+#: ../LocalizedStringsGtk.cpp:160
+msgid "Cop_y Audio Link Location"
+msgstr "Hanghivatko_zás helyének másolása"
+
+#: ../LocalizedStringsGtk.cpp:165
+msgid "_Toggle Media Controls"
+msgstr "_Médiavezérlők be/ki"
+
+#: ../LocalizedStringsGtk.cpp:170
+msgid "_Show Media Controls"
+msgstr "Mé_diavezérlők megjelenítése"
+
+#: ../LocalizedStringsGtk.cpp:175
+msgid "_Hide Media Controls"
+msgstr "Mé_diavezérlők elrejtése"
+
+#: ../LocalizedStringsGtk.cpp:180
+msgid "Toggle Media _Loop Playback"
+msgstr "Média ismé_telt lejátszása be/ki"
+
+#: ../LocalizedStringsGtk.cpp:185
+msgid "Switch Video to _Fullscreen"
+msgstr "Videó teljes _képernyőre"
+
+#: ../LocalizedStringsGtk.cpp:190
+msgid "_Play"
+msgstr "_Lejátszás"
+
+#: ../LocalizedStringsGtk.cpp:195
+msgid "_Pause"
+msgstr "_Szünet"
+
+#: ../LocalizedStringsGtk.cpp:200
+msgid "_Mute"
+msgstr "_Némítás"
+
+#: ../LocalizedStringsGtk.cpp:205
+msgid "Open _Frame in New Window"
+msgstr "Keret megnyitása új _ablakban"
+
+#: ../LocalizedStringsGtk.cpp:228
+msgid "_Insert Unicode Control Character"
+msgstr "_Unicode vezérlőkarakter beszúrása"
+
+#: ../LocalizedStringsGtk.cpp:233
+msgid "Input _Methods"
+msgstr "Beviteli mó_dok"
+
+#: ../LocalizedStringsGtk.cpp:256
+msgid "_Reload"
+msgstr "Új_ratöltés"
+
+#: ../LocalizedStringsGtk.cpp:273
+msgid "No Guesses Found"
+msgstr "Nincsenek tippek"
+
+#: ../LocalizedStringsGtk.cpp:278
+msgid "_Ignore Spelling"
+msgstr "Írásmó_d mellőzése"
+
+#: ../LocalizedStringsGtk.cpp:283
+msgid "_Learn Spelling"
+msgstr "Írásmód megtan_ulása"
+
+#: ../LocalizedStringsGtk.cpp:288
+msgid "_Search the Web"
+msgstr "Keresés a _weben"
+
+#: ../LocalizedStringsGtk.cpp:293
+msgid "_Look Up in Dictionary"
+msgstr "Keresés s_zótárban"
+
+#: ../LocalizedStringsGtk.cpp:298
+msgid "_Open Link"
+msgstr "_Hivatkozás megnyitása"
+
+#: ../LocalizedStringsGtk.cpp:303
+msgid "Ignore _Grammar"
+msgstr "N_yelvhelyesség mellőzése"
+
+#: ../LocalizedStringsGtk.cpp:308
+msgid "Spelling and _Grammar"
+msgstr "Helyesírás és nyel_vhelyesség"
+
+#: ../LocalizedStringsGtk.cpp:313
+msgid "_Show Spelling and Grammar"
+msgstr "Helyesírás és nyel_vhelyesség megjelenítése"
+
+#: ../LocalizedStringsGtk.cpp:313
+msgid "_Hide Spelling and Grammar"
+msgstr "Helyesírás és nyelvhelyesség _elrejtése"
+
+#: ../LocalizedStringsGtk.cpp:318
+msgid "_Check Document Now"
+msgstr "_Dokumentum ellenőrzése most"
+
+#: ../LocalizedStringsGtk.cpp:323
+msgid "Check Spelling While _Typing"
+msgstr "Helyesírás ellenőrzése _gépeléskor"
+
+#: ../LocalizedStringsGtk.cpp:328
+msgid "Check _Grammar With Spelling"
+msgstr "_Nyelvhelyesség ellenőrzése a helyesírással"
+
+#: ../LocalizedStringsGtk.cpp:333
+msgid "_Font"
+msgstr "_Betűkészlet"
+
+#: ../LocalizedStringsGtk.cpp:356
+msgid "_Outline"
+msgstr "_Körvonal"
+
+#: ../LocalizedStringsGtk.cpp:361
+msgid "Inspect _Element"
+msgstr "Elem _vizsgálata"
+
+#: ../LocalizedStringsGtk.cpp:366
+msgid "LRM _Left-to-right mark"
+msgstr "LRM _Balról-jobbra jel"
+
+#: ../LocalizedStringsGtk.cpp:371
+msgid "RLM _Right-to-left mark"
+msgstr "RLM J_obbról-balra jel"
+
+#: ../LocalizedStringsGtk.cpp:376
+msgid "LRE Left-to-right _embedding"
+msgstr "LRE Balról-jobbra beá_gyazás"
+
+#: ../LocalizedStringsGtk.cpp:381
+msgid "RLE Right-to-left e_mbedding"
+msgstr "RLE Jobbról-balra b_eágyazás"
+
+#: ../LocalizedStringsGtk.cpp:386
+msgid "LRO Left-to-right _override"
+msgstr "LRO Balról-jobbra _felülbírálás"
+
+#: ../LocalizedStringsGtk.cpp:391
+msgid "RLO Right-to-left o_verride"
+msgstr "RLO Jobbról-balra f_elülbírálás"
+
+#: ../LocalizedStringsGtk.cpp:396
+msgid "PDF _Pop directional formatting"
+msgstr "PDF Irányformázás _visszakapása"
+
+#: ../LocalizedStringsGtk.cpp:401
+msgid "ZWS _Zero width space"
+msgstr "ZWS N_ull szélességű szóköz"
+
+#: ../LocalizedStringsGtk.cpp:406
+msgid "ZWJ Zero width _joiner"
+msgstr "ZWJ Null szélességű ö_sszekötő"
+
+#: ../LocalizedStringsGtk.cpp:411
+msgid "ZWNJ Zero width _non-joiner"
+msgstr "ZWNJ Null szélességű _nem-összekötő"
+
+#: ../LocalizedStringsGtk.cpp:416
+msgid "No recent searches"
+msgstr "Nincsenek legutóbbi keresések"
+
+#: ../LocalizedStringsGtk.cpp:421
+msgid "Recent searches"
+msgstr "Legutóbbi keresések"
+
+#: ../LocalizedStringsGtk.cpp:426
+msgid "_Clear recent searches"
+msgstr "Legutóbbi keresések _törlése"
+
+#: ../LocalizedStringsGtk.cpp:431
+msgid "definition"
+msgstr "meghatározás"
+
+#: ../LocalizedStringsGtk.cpp:436
+msgid "description list"
+msgstr "leíráslista"
+
+#: ../LocalizedStringsGtk.cpp:441
+msgid "term"
+msgstr "kifejezés"
+
+#: ../LocalizedStringsGtk.cpp:446
+msgid "description"
+msgstr "leírás"
+
+#: ../LocalizedStringsGtk.cpp:451
+#| msgid "Details"
+msgid "details"
+msgstr "részletek"
+
+#: ../LocalizedStringsGtk.cpp:456
+msgid "summary"
+msgstr "összegzés"
+
+#: ../LocalizedStringsGtk.cpp:461
+msgid "figure"
+msgstr "ábra"
+
+#: ../LocalizedStringsGtk.cpp:466
+msgid "output"
+msgstr "kimenet"
+
+#: ../LocalizedStringsGtk.cpp:471
+msgid "email field"
+msgstr "e-mail mező"
+
+#: ../LocalizedStringsGtk.cpp:476
+msgid "telephone number field"
+msgstr "telefonszám mező"
+
+#: ../LocalizedStringsGtk.cpp:481
+msgid "URL field"
+msgstr "URL mező"
+
+#: ../LocalizedStringsGtk.cpp:486
+msgid "date field"
+msgstr "dátum mező"
+
+#: ../LocalizedStringsGtk.cpp:491
+msgid "time field"
+msgstr "idő mező"
+
+#: ../LocalizedStringsGtk.cpp:496
+msgid "footer"
+msgstr "lábléc"
+
+#: ../LocalizedStringsGtk.cpp:501
+msgid "cancel"
+msgstr "mégse"
+
+#: ../LocalizedStringsGtk.cpp:506
+msgid "password auto fill"
+msgstr "jelszó automatikus kitöltése"
+
+#: ../LocalizedStringsGtk.cpp:511
+msgid "contact info auto fill"
+msgstr "kapcsolatinformációk automatikus kitöltése"
+
+#: ../LocalizedStringsGtk.cpp:516
+msgid "press"
+msgstr "nyomja meg"
+
+#: ../LocalizedStringsGtk.cpp:521
+msgid "select"
+msgstr "válassza ki"
+
+#: ../LocalizedStringsGtk.cpp:526
+msgid "activate"
+msgstr "aktiválja"
+
+#: ../LocalizedStringsGtk.cpp:531
+msgid "uncheck"
+msgstr "törölje"
+
+#: ../LocalizedStringsGtk.cpp:536
+msgid "check"
+msgstr "jelölje be"
+
+#: ../LocalizedStringsGtk.cpp:541
+msgid "jump"
+msgstr "ugrás"
+
+#: ../LocalizedStringsGtk.cpp:561
+msgid "Missing Plug-in"
+msgstr "Hiányzó bővítmény"
+
+#: ../LocalizedStringsGtk.cpp:567
+msgid "Plug-in Failure"
+msgstr "Bővítményhiba"
+
+#. FIXME: If this file gets localized, this should really be localized as one string with a wildcard for the number.
+#: ../LocalizedStringsGtk.cpp:585
+msgid " files"
+msgstr " fájl"
+
+#: ../LocalizedStringsGtk.cpp:590
+msgid "Unknown"
+msgstr "Ismeretlen"
+
+#: ../LocalizedStringsGtk.cpp:595
+#, c-format
+msgctxt "Title string for images"
+msgid "%s  (%dx%d pixels)"
+msgstr "%s (%dx%d képpont)"
+
+#: ../LocalizedStringsGtk.cpp:606
+msgid "Loading..."
+msgstr "Betöltés…"
+
+#: ../LocalizedStringsGtk.cpp:611
+msgid "Live Broadcast"
+msgstr "Élő műsorszórás"
+
+#: ../LocalizedStringsGtk.cpp:617
+msgid "audio playback"
+msgstr "hanglejátszás"
+
+#: ../LocalizedStringsGtk.cpp:619
+msgid "video playback"
+msgstr "videolejátszás"
+
+#: ../LocalizedStringsGtk.cpp:621
+msgid "mute"
+msgstr "némítás"
+
+#: ../LocalizedStringsGtk.cpp:623
+msgid "unmute"
+msgstr "hang be"
+
+#: ../LocalizedStringsGtk.cpp:625
+msgid "play"
+msgstr "lejátszás"
+
+#: ../LocalizedStringsGtk.cpp:627
+msgid "pause"
+msgstr "szünet"
+
+#: ../LocalizedStringsGtk.cpp:629
+msgid "movie time"
+msgstr "film ideje"
+
+#: ../LocalizedStringsGtk.cpp:631
+msgid "timeline slider thumb"
+msgstr "idővonal-csúszka gombja"
+
+#: ../LocalizedStringsGtk.cpp:633
+msgid "back 30 seconds"
+msgstr "vissza 30 másodpercet"
+
+#: ../LocalizedStringsGtk.cpp:635
+msgid "return to realtime"
+msgstr "vissza valós időbe"
+
+#: ../LocalizedStringsGtk.cpp:637
+msgid "elapsed time"
+msgstr "eltelt idő"
+
+#: ../LocalizedStringsGtk.cpp:639
+msgid "remaining time"
+msgstr "fennmaradó idő"
+
+#: ../LocalizedStringsGtk.cpp:641
+msgid "status"
+msgstr "állapot"
+
+#: ../LocalizedStringsGtk.cpp:643
+msgid "enter fullscreen"
+msgstr "teljes képernyőre váltás"
+
+#: ../LocalizedStringsGtk.cpp:645
+msgid "exit fullscreen"
+msgstr "teljes képernyő elhagyása"
+
+#: ../LocalizedStringsGtk.cpp:647
+msgid "fast forward"
+msgstr "gyorsan előre"
+
+#: ../LocalizedStringsGtk.cpp:649
+msgid "fast reverse"
+msgstr "gyorsan vissza"
+
+#: ../LocalizedStringsGtk.cpp:651
+msgid "show closed captions"
+msgstr "zárt fejezetek megjelenítése"
+
+#: ../LocalizedStringsGtk.cpp:653
+msgid "hide closed captions"
+msgstr "zárt fejezetek elrejtése"
+
+#: ../LocalizedStringsGtk.cpp:655
+msgid "media controls"
+msgstr "médiavezérlők"
+
+#: ../LocalizedStringsGtk.cpp:664
+msgid "audio element playback controls and status display"
+msgstr "hangelem lejátszási vezérlőelemei és állapotkijelzése"
+
+#: ../LocalizedStringsGtk.cpp:666
+msgid "video element playback controls and status display"
+msgstr "videoelem lejátszási vezérlőelemei és állapotkijelzése"
+
+#: ../LocalizedStringsGtk.cpp:668
+msgid "mute audio tracks"
+msgstr "hangsávok némítása"
+
+#: ../LocalizedStringsGtk.cpp:670
+msgid "unmute audio tracks"
+msgstr "hangsávok némítása ki"
+
+#: ../LocalizedStringsGtk.cpp:672
+msgid "begin playback"
+msgstr "lejátszás elkezdése"
+
+#: ../LocalizedStringsGtk.cpp:674
+msgid "pause playback"
+msgstr "lejátszás szüneteltetése"
+
+#: ../LocalizedStringsGtk.cpp:676
+msgid "movie time scrubber"
+msgstr "filmidő-csúszka"
+
+#: ../LocalizedStringsGtk.cpp:678
+msgid "movie time scrubber thumb"
+msgstr "filmidő-csúszka gombja"
+
+#: ../LocalizedStringsGtk.cpp:680
+msgid "seek movie back 30 seconds"
+msgstr "film visszatekerése 30 másodperccel"
+
+#: ../LocalizedStringsGtk.cpp:682
+msgid "return streaming movie to real time"
+msgstr "sugárzott film visszaállítása valós időre"
+
+#: ../LocalizedStringsGtk.cpp:684
+msgid "current movie time in seconds"
+msgstr "aktuális film ideje másodpercben"
+
+#: ../LocalizedStringsGtk.cpp:686
+msgid "number of seconds of movie remaining"
+msgstr "a filmből hátralévő másodpercek száma"
+
+#: ../LocalizedStringsGtk.cpp:688
+msgid "current movie status"
+msgstr "aktuális film állapota"
+
+#: ../LocalizedStringsGtk.cpp:690
+msgid "seek quickly back"
+msgstr "gyors visszatekerés"
+
+#: ../LocalizedStringsGtk.cpp:692
+msgid "seek quickly forward"
+msgstr "gyors előretekerés"
+
+#: ../LocalizedStringsGtk.cpp:694
+msgid "Play movie in fullscreen mode"
+msgstr "Film lejátszása teljes képernyőn"
+
+#: ../LocalizedStringsGtk.cpp:696
+msgid "Exit fullscreen mode"
+msgstr "Teljes képernyős mód elhagyása"
+
+#: ../LocalizedStringsGtk.cpp:698
+msgid "start displaying closed captions"
+msgstr "zárt fejezetek megjelenítésének megkezdése"
+
+#: ../LocalizedStringsGtk.cpp:700
+msgid "stop displaying closed captions"
+msgstr "zárt fejezetek megjelenítésének befejezése"
+
+#: ../LocalizedStringsGtk.cpp:709
+msgid "indefinite time"
+msgstr "meghatározatlan idő"
+
+#: ../LocalizedStringsGtk.cpp:739
+msgid "value missing"
+msgstr "hiányzik az érték"
+
+#: ../LocalizedStringsGtk.cpp:775
+msgid "type mismatch"
+msgstr "nem megfelelő típus"
+
+#: ../LocalizedStringsGtk.cpp:798
+msgid "pattern mismatch"
+msgstr "nem megfelelő minta"
+
+#: ../LocalizedStringsGtk.cpp:803
+msgid "too short"
+msgstr "túl rövid"
+
+#: ../LocalizedStringsGtk.cpp:808
+msgid "too long"
+msgstr "túl hosszú"
+
+#: ../LocalizedStringsGtk.cpp:813
+msgid "range underflow"
+msgstr "tartomány-alulcsordulás"
+
+#: ../LocalizedStringsGtk.cpp:818
+msgid "range overflow"
+msgstr "tartomány-túlcsordulás"
+
+#: ../LocalizedStringsGtk.cpp:823
+msgid "step mismatch"
+msgstr "nem megfelelő lépés"
+
+#: ../LocalizedStringsGtk.cpp:828
+msgid "Unacceptable TLS certificate"
+msgstr "Elfogadhatatlan TLS-tanúsítvány"
+
+#: ../LocalizedStringsGtk.cpp:845
+msgctxt "Menu section heading for subtitles"
+msgid "Subtitles"
+msgstr "Feliratok"
+
+#: ../LocalizedStringsGtk.cpp:850
+msgctxt ""
+"Menu item label for the track that represents disabling closed captions"
+msgid "Off"
+msgstr "Ki"
+
+#: ../LocalizedStringsGtk.cpp:855
+msgctxt "Menu item label for the automatically chosen track"
+msgid "Auto"
+msgstr "Automatikus"
+
+#: ../LocalizedStringsGtk.cpp:860
+msgctxt "Menu item label for a closed captions track that has no other name"
+msgid "No label"
+msgstr "Nincs címke"
+
+#: ../LocalizedStringsGtk.cpp:865
+msgctxt "Menu item label for an audio track that has no other name"
+msgid "No label"
+msgstr "Nincs címke"
+
+#: ../LocalizedStringsGtk.cpp:871
+msgctxt "Snapshotted Plug-In"
+msgid "Title of the label to show on a snapshotted plug-in"
+msgstr "A bővítményről készített pillanatképen megjelenítendő címke felirata"
+
+#: ../LocalizedStringsGtk.cpp:876
+msgctxt "Click to restart"
+msgid "Subtitle of the label to show on a snapshotted plug-in"
+msgstr "A bővítményről készített pillanatképen megjelenítendő címke alcíme"
+
+#: ../../../../WebKit2/NetworkProcess/Downloads/soup/DownloadSoup.cpp:100
+#, c-format
+msgid ""
+"Cannot determine destination URI for download with suggested filename %s"
+msgstr "Nem határozható meg a cél URI a(z) %s javasolt fájlnevű letöltéshez"
+
+#. Title of the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:93
+msgid "Authentication Required"
+msgstr "Hitelesítés szükséges"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:104
+msgid "_Cancel"
+msgstr "Mé_gse"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:110
+msgid "_Authenticate"
+msgstr "_Hitelesítés"
+
+#. Prompt on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:122
+#, c-format
+msgid "Authentication required by %s:%i"
+msgstr "Hitelesítés szükséges ehhez: %s:%i"
+
+#. Label on the HTTP authentication dialog. %s is a (probably English) message from the website.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:131
+#, c-format
+msgid "The site says: “%s”"
+msgstr "Az oldal válasza: „%s”"
+
+#. Check button on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:138
+msgid "_Remember password"
+msgstr "Jelszó _megjegyzése"
+
+#. Entry on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:147
+msgid "_Username"
+msgstr "_Felhasználónév"
+
+#. Entry on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:159
+msgid "_Password"
+msgstr "_Jelszó"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:164
+msgid "Destination"
+msgstr "Cél"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:165
+msgid "The local URI to where the download will be saved"
+msgstr "Helyi URI, ahová a letöltés mentésre kerül"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:177
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:123
+msgid "Response"
+msgstr "Válasz"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:178
+msgid "The response of the download"
+msgstr "A letöltés válasza"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:195
+msgid "Estimated Progress"
+msgstr "Becsült előrehaladás"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:196
+msgid "Determines the current progress of the download"
+msgstr "Meghatározza a letöltés jelenlegi előrehaladását"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:214
+msgid "Allow Overwrite"
+msgstr "Felülírás engedélyezése"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:215
+msgid "Whether the destination may be overwritten"
+msgstr "A cél felülírható-e"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:142
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:328
+#, c-format
+msgid "Unknown favicon for page %s"
+msgstr "Ismeretlen favicon ezen oldalhoz: %s"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:148
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:284
+#, c-format
+msgid "Page %s does not have a favicon"
+msgstr "A(z) %s oldal nem rendelkezik faviconnal"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:278
+msgid "Favicons database not initialized yet"
+msgstr "A faviconok adatbázisa még nincs előkészítve"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:129
+msgid "MIME types filter"
+msgstr "MIME-típusok szűrője"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:130
+msgid "The filter currently associated with the request"
+msgstr "A kéréshez jelenleg társított szűrő"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:143
+msgid "MIME types"
+msgstr "MIME-típusok"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:144
+msgid "The list of MIME types associated with the request"
+msgstr "A kéréshez társított MIME-típusok listája"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:158
+msgid "Select multiple files"
+msgstr "Válasszon ki több fájlt"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:159
+msgid "Whether the file chooser should allow selecting multiple files"
+msgstr "A fájlválasztó engedélyezze-e több fájl kiválasztását"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:172
+msgid "Selected files"
+msgstr "Kijelölt fájlok"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:173
+msgid "The list of selected files associated with the request"
+msgstr "A kéréshez társított kijelölt fájlok listája"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:190
+msgid "Search text"
+msgstr "Szöveg keresése"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:191
+msgid "Text to search for in the view"
+msgstr "A nézetben keresendő szöveg"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:203
+msgid "Search Options"
+msgstr "Keresési beállítások"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:204
+msgid "Search options to be used in the search operation"
+msgstr "A keresési műveletben használandó keresési beállítások"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:217
+msgid "Maximum matches count"
+msgstr "Találatok maximális száma"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:218
+msgid "The maximum number of matches in a given text to report"
+msgstr "Adott szövegben jelentendő találatok maximális száma"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:230
+msgid "WebView"
+msgstr "Webnézet"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:231
+msgid "The WebView associated with this find controller"
+msgstr "A keresés vezérlőhöz társított webnézet"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:152
+msgid "Context"
+msgstr "Környezet"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:153
+msgid "Flags with the context of the WebKitHitTestResult"
+msgstr "A WebKitHitTestResult kontextusát tartalmazó jelzők"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:166
+msgid "Link URI"
+msgstr "Hivatkozás URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:167
+msgid "The link URI"
+msgstr "A hivatkozás URI-címe"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:179
+msgid "Link Title"
+msgstr "Hivatkozás címe"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:180
+msgid "The link title"
+msgstr "A hivatkozás címe"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:192
+msgid "Link Label"
+msgstr "Hivatkozás felirata"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:193
+msgid "The link label"
+msgstr "A hivatkozás felirata"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:205
+msgid "Image URI"
+msgstr "Kép URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:206
+msgid "The image URI"
+msgstr "A kép URI-címe"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:218
+msgid "Media URI"
+msgstr "Média URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:219
+msgid "The media URI"
+msgstr "A média URI-címe"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:113
+msgid "Navigation action"
+msgstr "Navigációs akció"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:114
+msgid "The WebKitNavigationAction triggering this decision"
+msgstr "A döntést kiváltó WebKitNavigationAction"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:130
+msgid "Navigation type"
+msgstr "Navigáció típusa"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:131
+msgid "The type of navigation triggering this decision"
+msgstr "A döntést kiváltó navigáció típusa"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:150
+msgid "Mouse button"
+msgstr "Egérgomb"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:151
+msgid "The mouse button used if this decision was triggered by a mouse event"
+msgstr "A használt egérgomb, ha ezt a döntést egéresemény váltotta ki"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:169
+msgid "Mouse event modifiers"
+msgstr "Egéresemény módosítói"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:170
+msgid "The modifiers active if this decision was triggered by a mouse event"
+msgstr "Az aktív módosítók, ha ezt a döntést egéresemény váltotta ki"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:185
+msgid "Navigation URI request"
+msgstr "Navigációs URI kérés"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:186
+msgid "The URI request that is associated with this navigation"
+msgstr "A navigációhoz társított URI kérés"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:201
+msgid "Frame name"
+msgstr "Keretnév"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:202
+msgid "The name of the new frame this navigation action targets"
+msgstr "A navigációs művelet által célzott új keret neve"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:146
+msgid "Web View"
+msgstr "Webnézet"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:147
+msgid "The web view that will be printed"
+msgstr "A nyomtatandó webnézet"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:159
+msgid "Print Settings"
+msgstr "Nyomtatási beállítások"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:160
+msgid "The initial print settings for the print operation"
+msgstr "A nyomtatási művelet kiinduló nyomtatási beállításai"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:171
+msgid "Page Setup"
+msgstr "Oldalbeállítás"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:172
+msgid "The initial page setup for the print operation"
+msgstr "A nyomtatási művelet kiinduló oldalbeállításai"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:91
+msgid "Response URI request"
+msgstr "Válasz URI kérés"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:92
+msgid "The URI request that is associated with this policy decision"
+msgstr "A házirenddöntéshez társított URI kérés"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:105
+msgid "URI response"
+msgstr "URI válasz"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:106
+msgid "The URI response that is associated with this policy decision"
+msgstr "A házirenddöntéshez társított URI válasz"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:508
+msgid "Enable JavaScript"
+msgstr "JavaScript engedélyezése"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:509
+msgid "Enable JavaScript."
+msgstr "JavaScript engedélyezése."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:523
+msgid "Auto load images"
+msgstr "Képek automatikus betöltése"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:524
+msgid "Load images automatically."
+msgstr "Képek automatikus betöltése."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:537
+msgid "Load icons ignoring image load setting"
+msgstr "Ikonok betöltése a képbetöltési beállítást figyelmen kívül hagyva"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:538
+msgid "Whether to load site icons ignoring image load setting."
+msgstr ""
+"Betöltendők-e az oldal ikonjai a képbetöltési beállítások figyelmen kívül "
+"hagyásával."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:555
+msgid "Enable offline web application cache"
+msgstr "Kapcsolat nélküli webalkalmazás-gyorsítótár engedélyezése"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:556
+msgid "Whether to enable offline web application cache."
+msgstr "Webalkalmazások kapcsolat nélküli gyorsítótárának engedélyezése."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:572
+msgid "Enable HTML5 local storage"
+msgstr "HTML5 helyi tárolás engedélyezése"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:573
+msgid "Whether to enable HTML5 Local Storage support."
+msgstr "HTML5 helyi tárolás támogatásának engedélyezése."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:590
+msgid "Enable HTML5 database"
+msgstr "HTML5 adatbázis engedélyezése"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:591
+msgid "Whether to enable HTML5 database support."
+msgstr "A HTML5 adatbázis-támogatás engedélyezése."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:604
+msgid "Enable XSS auditor"
+msgstr "XSS-auditáló engedélyezése"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:605
+msgid "Whether to enable the XSS auditor."
+msgstr "Az XSS auditáló bekapcsolandó-e."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:620
+msgid "Enable frame flattening"
+msgstr "Keretlapítás bekapcsolása"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:621
+msgid "Whether to enable frame flattening."
+msgstr "A keretlapítás bekapcsolandó-e."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:633
+msgid "Enable plugins"
+msgstr "Bővítmények engedélyezése"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:634
+msgid "Enable embedded plugin objects."
+msgstr "Beágyazott bővítményobjektumok engedélyezése."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:646
+msgid "Enable Java"
+msgstr "Java engedélyezése"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:647
+msgid "Whether Java support should be enabled."
+msgstr "A Java támogatása engedélyezett-e."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:660
+msgid "JavaScript can open windows automatically"
+msgstr "A JavaScript automatikusan megnyithat ablakokat"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:661
+msgid "Whether JavaScript can open windows automatically."
+msgstr "A JavaScript megnyithat-e automatikusan ablakokat."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:676
+msgid "Enable hyperlink auditing"
+msgstr "Hiperhivatkozás-auditálás bekapcsolása"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:677
+msgid "Whether <a ping> should be able to send pings."
+msgstr "Az <a ping> képes legyen-e pingek küldésére."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:689
+msgid "Default font family"
+msgstr "Alapértelmezett betűkészletcsalád"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:690
+msgid ""
+"The font family to use as the default for content that does not specify a "
+"font."
+msgstr "A betűt meg nem adó tartalom alapértelmezett betűkészletcsaládja."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:703
+msgid "Monospace font family"
+msgstr "Rögzített szélességű betűkészletcsalád"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:704
+msgid "The font family used as the default for content using monospace font."
+msgstr ""
+"A rögzített szélességű betűt használó tartalom alapértelmezett "
+"betűkészletcsaládja."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:716
+msgid "Serif font family"
+msgstr "Talpas betűkészletcsalád"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:717
+msgid "The font family used as the default for content using serif font."
+msgstr "A talpas betűt használó tartalom alapértelmezett betűkészletcsaládja."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:729
+msgid "Sans-serif font family"
+msgstr "Talpatlan betűkészletcsalád"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:730
+msgid "The font family used as the default for content using sans-serif font."
+msgstr ""
+"A talpatlan betűt használó tartalom alapértelmezett betűkészletcsaládja."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:742
+msgid "Cursive font family"
+msgstr "Dőlt betűkészletcsalád"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:743
+msgid "The font family used as the default for content using cursive font."
+msgstr "A dőlt betűt használó tartalom alapértelmezett betűkészletcsaládja."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:755
+msgid "Fantasy font family"
+msgstr "Fantázia betűkészletcsalád"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:756
+msgid "The font family used as the default for content using fantasy font."
+msgstr ""
+"A „fantázia” betűt használó tartalom alapértelmezett betűkészletcsaládja."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:768
+msgid "Pictograph font family"
+msgstr "Piktográf betűkészlet-család"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:769
+msgid "The font family used as the default for content using pictograph font."
+msgstr ""
+"A „piktográf” betűt használó tartalom alapértelmezett betűkészletcsaládja."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:782
+msgid "Default font size"
+msgstr "Alapértelmezett betűméret"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:783
+msgid "The default font size used to display text."
+msgstr "A szöveg megjelenítésére használt alapértelmezett betűméret."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:796
+msgid "Default monospace font size"
+msgstr "Alapértelmezett rögzített szélességű betűméret"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:797
+msgid "The default font size used to display monospace text."
+msgstr ""
+"A rögzített szélességű szöveg megjelenítésére használt alapértelmezett "
+"betűméret."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:811
+msgid "Minimum font size"
+msgstr "Minimális betűméret"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:812
+msgid "The minimum font size used to display text."
+msgstr "A szöveg megjelenítésére használt minimális betűméret."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:824
+msgid "Default charset"
+msgstr "Alapértelmezett karakterkészlet"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:825
+msgid ""
+"The default text charset used when interpreting content with unspecified "
+"charset."
+msgstr ""
+"A meg nem adott karakterkészletű tartalom értelmezéséhez alapértelmezetten "
+"használandó karakterkódolás."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:838
+msgid "Enable private browsing"
+msgstr "Privát böngészés engedélyezése"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:839
+msgid "Whether to enable private browsing"
+msgstr "Privát böngészés engedélyezendő-e"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:851
+msgid "Enable developer extras"
+msgstr "Fejlesztői extrák engedélyezése"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:852
+msgid "Whether to enable developer extras"
+msgstr "Engedélyezve legyenek-e a fejlesztői extrák"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:864
+msgid "Enable resizable text areas"
+msgstr "Átméretezhető szövegterületek engedélyezése"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:865
+msgid "Whether to enable resizable text areas"
+msgstr "Engedélyezve legyenek-e az átméretezhető szövegterületek"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:880
+msgid "Enable tabs to links"
+msgstr "Lapok engedélyezése a hivatkozásokra"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:881
+msgid "Whether to enable tabs to links"
+msgstr "Engedélyezve legyenek-e lapok a hivatkozásokra"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:894
+msgid "Enable DNS prefetching"
+msgstr "DNS-előtöltés engedélyezése"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:895
+msgid "Whether to enable DNS prefetching"
+msgstr "Engedélyezve legyen-e DNS-előtöltés"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:907
+msgid "Enable Caret Browsing"
+msgstr "Kurzoros böngészés engedélyezése"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:908
+msgid "Whether to enable accessibility enhanced keyboard navigation"
+msgstr "Akadálymentes billentyűzetnavigáció engedélyezése"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:923
+msgid "Enable Fullscreen"
+msgstr "Teljes képernyős mód bekapcsolása"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:924
+msgid "Whether to enable the Javascript Fullscreen API"
+msgstr "A JavaScript Fullscreen API engedélyezése"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:936
+msgid "Print Backgrounds"
+msgstr "Hátterek nyomtatása"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:937
+msgid "Whether background images should be drawn during printing"
+msgstr "A háttérképeket ki kell-e rajzolni nyomtatáskor"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:955
+msgid "Enable WebAudio"
+msgstr "WebAudio engedélyezése"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:956
+msgid "Whether WebAudio content should be handled"
+msgstr "A WebAudio tartalom kezelendő-e"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:970
+msgid "Enable WebGL"
+msgstr "WebGL engedélyezése"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:971
+msgid "Whether WebGL content should be rendered"
+msgstr "A WebGL tartalom megjelenítendő-e"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:988
+msgid "Allow modal dialogs"
+msgstr "Kizárólagos párbeszédablakok engedélyezése"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:989
+msgid "Whether it is possible to create modal dialogs"
+msgstr "Lehetséges-e kizárólagos ablakok létrehozása"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1004
+msgid "Zoom Text Only"
+msgstr "Csak a szöveg nagyítása"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1005
+msgid "Whether zoom level of web view changes only the text size"
+msgstr "A webnézet nagyítási szintje csak a szövegméretet változtatja-e"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1019
+msgid "JavaScript can access clipboard"
+msgstr "A vágólap elérhető JavaScriptből"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1020
+msgid "Whether JavaScript can access Clipboard"
+msgstr "A vágólap elérhető-e JavaScriptből"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1036
+msgid "Media playback requires user gesture"
+msgstr "A médialejátszás felhasználói gesztust igényel"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1037
+msgid "Whether media playback requires user gesture"
+msgstr "A médialejátszás felhasználói gesztust igényel-e"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1051
+msgid "Media playback allows inline"
+msgstr "A médialejátszás engedélyezi a beágyazást"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1052
+msgid "Whether media playback allows inline"
+msgstr "A médialejátszás engedélyezi-e a beágyazást"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1066
+msgid "Draw compositing indicators"
+msgstr "Kompozitálásjelzők rajzolása"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1067
+msgid "Whether to draw compositing borders and repaint counters"
+msgstr "A kompozitálási szegélyek és újrarajzolás-számlálók kirajzolandók-e"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1086
+msgid "Enable Site Specific Quirks"
+msgstr "Oldalspecifikus kerülő megoldások engedélyezése"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1087
+msgid "Enables the site-specific compatibility workarounds"
+msgstr "Engedélyezi az oldalspecifikus kompatibilitási kerülő megoldásokat"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1107
+msgid "Enable page cache"
+msgstr "Oldalgyorsítótár engedélyezése"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1108
+msgid "Whether the page cache should be used"
+msgstr "Az oldalgyorsítótár használható-e"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1127
+msgid "User agent string"
+msgstr "Felhasználói ügynök karakterlánc"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1128
+msgid "The user agent string"
+msgstr "A felhasználói ügynököt jelző karakterlánc"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1140
+msgid "Enable smooth scrolling"
+msgstr "Finom görgetés bekapcsolása"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1141
+msgid "Whether to enable smooth scrolling"
+msgstr "A finom görgetés engedélyezve van-e"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1158
+msgid "Enable accelerated 2D canvas"
+msgstr "Gyorsított 2D vászon engedélyezése"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1159
+msgid "Whether to enable accelerated 2D canvas"
+msgstr "A gyorsított 2D vászon engedélyezett-e"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1174
+msgid "Write console messages on stdout"
+msgstr "Konzolos üzenetek kiírása a szabványos kimenetre"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1175
+msgid "Whether to write console messages on stdout"
+msgstr "A konzolos üzenetek kiírandók-e a szabványos kimenetre"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1193
+msgid "Enable MediaStream"
+msgstr "MediaStream engedélyezése"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1194
+msgid "Whether MediaStream content should be handled"
+msgstr "A MediaStream tartalom kezelendő-e"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1213
+msgid "Enable Spatial Navigation"
+msgstr "Térbeli navigáció bekapcsolása"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1214
+msgid "Whether to enable Spatial Navigation support."
+msgstr "A térbeli navigáció támogatása bekapcsolandó-e."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1233
+msgid "Enable MediaSource"
+msgstr "MediaSource engedélyezése"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1234
+msgid "Whether MediaSource should be enabled."
+msgstr "A MediaSource engedélyezett-e."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1252
+msgid "Allow file access from file URLs"
+msgstr "Fájlelérés engedélyezése fájl URL-címekből"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1253
+msgid "Whether file access is allowed from file URLs."
+msgstr "A fájlelérés engedélyezett-e fájl URL-címekből."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1272
+msgid "Allow universal access from the context of file scheme URLs"
+msgstr "Akadálymentesítés engedélyezése a fájlséma URL-címeinek környezetéből"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1273
+msgid ""
+"Whether or not universal access is allowed from the context of file scheme "
+"URLs"
+msgstr ""
+"Az akadálymentesítés engedélyezett-e a fájlséma URL-címeinek környezetéből."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:96
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:105
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:110
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:917
+msgid "URI"
+msgstr "URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:97
+msgid "The URI to which the request will be made."
+msgstr "A lekérdezés erre az UTI-címre fog vonatkozni."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:106
+msgid "The URI for which the response was made."
+msgstr "A válasz erre az URI-címre készült."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:117
+msgid "Status Code"
+msgstr "Állapotkód"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:118
+msgid "The status code of the response as returned by the server."
+msgstr "A kiszolgáló által visszaadott válasz állapotkódja."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:130
+msgid "Content Length"
+msgstr "Tartalomhossz"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:131
+msgid "The expected content length of the response."
+msgstr "A válasz várt tartalomhossza."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:143
+msgid "MIME Type"
+msgstr "MIME-típus"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:144
+msgid "The MIME type of the response"
+msgstr "A válasz MIME-típusa"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:156
+msgid "Suggested Filename"
+msgstr "Javasolt fájlnév"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:157
+msgid "The suggested filename for the URI response"
+msgstr "Az URI válasz javasolt fájlneve"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:173
+msgid "HTTP Headers"
+msgstr "HTTP-fejlécek"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:174
+msgid "The The HTTP headers of the response"
+msgstr "A válasz HTTP fejlécei"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:127
+msgid "Inspected URI"
+msgstr "Vizsgált URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:128
+msgid "The URI that is currently being inspected"
+msgstr "A jelenleg vizsgált URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:139
+msgid "Attached Height"
+msgstr "Csatolt magasság"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:140
+msgid "The height that the inspector view should have when it is attached"
+msgstr "A vizsgálónézet magassága, amikor csatolásra kerül"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:157
+msgid "Can Attach"
+msgstr "Csatolható"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:158
+msgid ""
+"Whether the inspector can be attached to the same window that contains the "
+"inspected view"
+msgstr "A vizsgáló csatlakoztatható a vizsgált nézetet tartalmazó ablakhoz"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:111
+msgid "The current active URI of the resource"
+msgstr "Az erőforrás aktuális aktív URI-címe"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:124
+msgid "The response of the resource"
+msgstr "Az erőforrás válasza"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebViewBase.cpp:1242
+msgid "Website running in fullscreen mode"
+msgstr "A weboldal teljes képernyős módban van"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:362
+msgid "Are you sure you want to leave this page?"
+msgstr "Biztosan elhagyja ezt az oldalt?"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:363
+msgid "Stay on Page"
+msgstr "Maradás ezen az oldalon"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:363
+msgid "Leave Page"
+msgstr "Oldal elhagyása"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:558
+msgid "Select Files"
+msgstr "Válasszon fájlokat"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:558
+msgid "Select File"
+msgstr "Válasszon fájlt"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:620
+msgid "Acknowledge"
+msgstr "Tudomásul vettem"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:807
+msgid "Web Context"
+msgstr "Webkontextus"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:808
+msgid "The web context for the view"
+msgstr "A nézet webes kontextusa"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:825
+msgid "Related WebView"
+msgstr "Kapcsolódó webnézet"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:826
+msgid ""
+"The related WebKitWebView used when creating the view to share the same web "
+"process"
+msgstr ""
+"A webfolyamat megosztásához használt nézet létrehozásakor használt, "
+"kapcsolódó WebKitWebView"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:842
+msgid "WebView settings"
+msgstr "Webnézet beállításai"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:843
+msgid "The WebKitSettings of the view"
+msgstr "A nézet WebKitSettings-ei"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:859
+msgid "WebView user content manager"
+msgstr "WebView felhasználóitartalom-kezelő"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:860
+msgid "The WebKitUserContentManager of the view"
+msgstr "A nézet WebKitUserContentManager-e"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:873
+msgid "Title"
+msgstr "Cím"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:874
+msgid "Main frame document title"
+msgstr "Fő keretdokumentum címe"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:892
+msgid "Estimated Load Progress"
+msgstr "Becsült betöltési haladás"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:893
+msgid "An estimate of the percent completion for a document load"
+msgstr "Egy dokumentumbetöltés százalékos készültségének becslése"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:905
+msgid "Favicon"
+msgstr "Favicon"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:906
+msgid "The favicon associated to the view, if any"
+msgstr "A nézethez társított favicon, ha van"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:918
+msgid "The current active URI of the view"
+msgstr "A nézet aktuális aktív URI-címe"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:933
+msgid "Zoom level"
+msgstr "Nagyítás mértéke"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:934
+msgid "The zoom level of the view content"
+msgstr "A nézettartalom nagyítási szintje"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:953
+msgid "Is Loading"
+msgstr "Betölt"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:954
+msgid "Whether the view is loading a page"
+msgstr "A nézet egy oldalt tölt-e be"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:974
+msgid "Whether the view is playing audio"
+msgstr "A nézet hangot játszik-e le"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:991
+msgid "Editable"
+msgstr "Szerkeszthető"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:992
+msgid "Whether the content can be modified by the user."
+msgstr "A tartalom módosítható-e a felhasználó által."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2955
+msgid "An exception was raised in JavaScript"
+msgstr "A JavaScript kivételt dobott"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3415
+msgid "There was an error creating the snapshot"
+msgstr "Hiba történt a pillanatkép létrehozásakor"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:210
+msgid "Geometry"
+msgstr "Geometria"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:211
+msgid "The size and position of the window on the screen."
+msgstr "Az ablak mérete és pozíciója a képernyőn."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:223
+msgid "Toolbar Visible"
+msgstr "Az eszköztár látható"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:224
+msgid "Whether the toolbar should be visible for the window."
+msgstr "Az ablakhoz megjelenjen-e az eszköztár."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:236
+msgid "Statusbar Visible"
+msgstr "Állapotsor látható"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:237
+msgid "Whether the statusbar should be visible for the window."
+msgstr "Az ablakhoz megjelenjen-e az állapotsor."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:249
+msgid "Scrollbars Visible"
+msgstr "Görgetősávok láthatók"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:250
+msgid "Whether the scrollbars should be visible for the window."
+msgstr "Az ablakhoz megjelenjenek-e a görgetősávok."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:262
+msgid "Menubar Visible"
+msgstr "Menüsáv látható"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:263
+msgid "Whether the menubar should be visible for the window."
+msgstr "Az ablakhoz megjelenjen-e a menüsáv."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:275
+msgid "Locationbar Visible"
+msgstr "Címsáv látható"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:276
+msgid "Whether the locationbar should be visible for the window."
+msgstr "Az ablakhoz megjelenjen-e a címsáv."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:287
+msgid "Resizable"
+msgstr "Átméretezhető"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:288
+msgid "Whether the window can be resized."
+msgstr "Az ablak átméretezhető-e."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:300
+msgid "Fullscreen"
+msgstr "Teljes képernyő"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:301
+msgid "Whether window will be displayed fullscreen."
+msgstr "Az ablak teljes képernyőn jelenik-e meg."
+
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:178
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:183
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:186
+msgid "Web Inspector"
+msgstr "Webfigyelő"
+

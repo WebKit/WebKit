@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests if flooring the transformed boxes' coordinates produce the same result as if there was no transform present.</title>
+<head>
+<style>
+  div {
+    background: green;
+    width: 50px;
+    height: 200px;
+    position: absolute;
+  }
+</style>
+</head>
+<body>
+<div style="left: 0.5px; top: 0.5px;"></div><div style="left: 51px; top: 1px;"></div>
+<div style="left: 101.5px; top: 1.5px;"></div><div style="left: 152px; top: 2px;"></div>
+</script>
+</body>
+</html>

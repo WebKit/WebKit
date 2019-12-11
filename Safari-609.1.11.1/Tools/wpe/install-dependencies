@@ -1,0 +1,360 @@
+#!/usr/bin/env bash
+
+# This script needs to be run with root rights.
+if [ $UID -ne 0 ]; then
+    sudo $0
+    exit $?
+fi
+
+function printNotSupportedMessageAndExit() {
+    echo
+    echo "Currently this script only works for distributions supporting apt-get, dnf or pacman."
+    echo "Please add support for your distribution and submit the patch at https://bugs.webkit.org"
+    echo
+    exit 1
+}
+
+function checkInstaller {
+    # apt-get - Debian based distributions
+    apt-get --version &> /dev/null
+    if [ $? -eq 0 ]; then
+        installDependenciesWithApt
+        exit 0
+    fi
+
+    # dnf - Fedora
+    dnf --version &> /dev/null
+    if [ $? -eq 0 ]; then
+        installDependenciesWithDnf
+        exit 0
+    fi
+
+    # pacman - Arch Linux
+    # pacman --version and pacman --help both return non-0
+    pacman -Ss &> /dev/null
+    if [ $? -eq 0 ]; then
+        installDependenciesWithPacman
+        exit 0
+    fi
+
+    printNotSupportedMessageAndExit
+}
+
+
+# If the package $1 is available, prints it. Otherwise prints $2.
+# Useful for handling when a package is renamed on new versions of Debian/Ubuntu.
+function aptIfElse {
+    if apt-cache show $1 &>/dev/null; then
+        echo $1
+    else
+        echo $2
+    fi
+}
+
+function installDependenciesWithApt {
+    # These are dependencies necessary for building WPE.
+    packages=" \
+        autoconf \
+        automake \
+        autopoint \
+        autotools-dev \
+        bubblewrap \
+        cmake \
+        g++ \
+        gawk \
+        gcc \
+        gperf \
+        gtk-doc-tools \
+        intltool \
+        itstool \
+        libasound2-dev \
+        libevent-dev \
+        libgbm-dev \
+        libgnutls28-dev \
+        libgstreamer1.0-dev \
+        libgstreamer-plugins-bad1.0-dev \
+        libgstreamer-plugins-base1.0-dev \
+        libicu-dev \
+        libjpeg-dev \
+        libfile-copy-recursive-perl \
+        $(aptIfElse libpng-dev libpng12-dev) \
+        libseccomp-dev \
+        libsqlite3-dev \
+        libtasn1-6-dev \
+        libtool \
+        libwebp-dev \
+        libwoff-dev \
+        libxml2-dev \
+        libxslt1-dev \
+        ninja-build \
+        patch \
+        pkg-config \
+        ruby \
+        zlib1g-dev"
+
+    # These are dependencies necessary for running tests.
+    packages="$packages \
+        apache2 \
+        curl \
+        gdb \
+        libapache2-mod-bw \
+        libapache2-mod-php \
+        php-json \
+        libcgi-pm-perl \
+        psmisc \
+        pulseaudio-utils \
+        python-gi \
+        python-psutil \
+        ruby \
+        ruby-highline \
+        ruby-json"
+
+    # These are dependencies necessary for building the jhbuild.
+    packages="$packages \
+        git \
+        gsettings-desktop-schemas-dev \
+        libegl1-mesa-dev \
+        libexpat1-dev \
+        libfdk-aac-dev \
+        libgles2-mesa-dev \
+        libluajit-5.1-dev \
+        libmount-dev \
+        libopus-dev \
+        liborc-0.4-dev \
+        libproxy-dev \
+        libpsl-dev \
+        libpulse-dev \
+        libsrtp2-dev \
+        libtheora-dev \
+        libtool-bin \
+        libvorbis-dev \
+        libvpx-dev \
+        libxcb-xkb-dev \
+        libxkbcommon-dev \
+        libxml-libxml-perl \
+        libxrandr-dev \
+        libwayland-dev \
+        luajit \
+        python3-setuptools \
+        yasm"
+
+    # These are dependencies necessary for using webkit-patch
+    packages="$packages \
+        git-svn \
+        subversion"
+
+    apt-get install $packages
+}
+
+function installDependenciesWithPacman {
+    # These are dependencies necessary for building WPE.
+    packages=" \
+        alsa-lib \
+        autoconf \
+        automake \
+        bubblewrap \
+        cmake \
+        file \
+        findutils \
+        gawk \
+        gcc \
+        gnutls \
+        gperf \
+        gtk-doc \
+        grep \
+        groff \
+        gstreamer \
+        gst-plugins-bad \
+        gst-plugins-base-libs \
+        gzip \
+        icu \
+        intltool \
+        itstool \
+        libevent \
+        libjpeg-turbo \
+        libpng \
+        libseccomp \
+        libtasn1 \
+        libtool \
+        libwebp \
+        libxml2 \
+        libxslt \
+        m4 \
+        make \
+        ninja \
+        patch \
+        perl-file-copy-recursive \
+        pkg-config \
+        ruby
+        sed \
+        sqlite \
+        texinfo \
+        which \
+        zlib \
+        woff2"
+
+    # These are dependencies necessary for running tests.
+    # Note: apache-mod_bw, ruby-json and ruby-highline are available in the AUR
+    packages="$packages \
+        apache \
+        curl \
+        gdb \
+        perl-cgi \
+        php-apache \
+        psmisc \
+        pulseaudio \
+        python2 \
+        python2-gobject \
+        python2-lxml \
+        python2-psutil \
+        ruby"
+
+    # These are dependencies necessary for building the jhbuild.
+    packages="$packages \
+        expat \
+        git \
+        gsettings-desktop-schemas \
+        libfdk-aac \
+        libproxy \
+        libpsl \
+        libpulse \
+        libsrtp \
+        libtheora \
+        libvorbis \
+        libvpx \
+        libxcb \
+        libxkbcommon \
+        luajit \
+        mesa \
+        mesa-libgl \
+        opus \
+        orc \
+        perl-xml-libxml \
+        python-setuptools \
+        util-linux \
+        v4l-utils \
+        xorg-xrandr \
+        wayland \
+        yasm"
+
+    # These are dependencies necessary for using webkit-patch
+    packages="$packages \
+        svn"
+    pacman -S --needed $packages
+
+	cat <<-EOF
+
+The following packages are available from AUR, and needed for running tests:
+
+    apache-mod_bw ruby-json ruby-highline
+
+Instructions on how to use the AUR can be found on the Arch Wiki:
+
+    https://wiki.archlinux.org/index.php/Arch_User_Repository
+
+You will also need to follow the instructions on the wiki to make 'python'
+call python2 in the WebKit folder:
+
+    https://wiki.archlinux.org/index.php/Python#Dealing_with_version_problem_in_build_scripts
+
+Alternatively, you may use a Python 2.x virtualenv while hacking on WPE:
+
+    https://wiki.archlinux.org/index.php/Python/Virtual_environment
+
+EOF
+}
+
+function installDependenciesWithDnf {
+    # These are dependencies necessary for building WebKitWPE.
+    packages=" \
+        autoconf \
+        automake \
+        alsa-lib-devel \
+        bubblewrap \
+        cmake \
+        gcc-c++ \
+        gnutls-devel \
+        gperf \
+        gstreamer1-devel \
+        gstreamer1-plugins-bad-free-devel \
+        gstreamer1-plugins-base-devel \
+        gtk-doc \
+        intltool \
+        itstool \
+        libevent-devel \
+        libicu-devel \
+        libjpeg-turbo-devel \
+        libpng-devel \
+        libseccomp-devel \
+        libtasn1-devel \
+        libtool \
+        libwebp-devel \
+        libxml2-devel \
+        libxslt-devel \
+        ninja-build \
+        patch \
+        perl-File-Copy-Recursive \
+        perl-JSON-PP \
+        perl-Time-HiRes \
+        perl-version \
+        ruby \
+        sqlite-devel \
+        zlib-devel"
+
+    # These are dependencies necessary for running tests.
+    packages="$packages \
+        curl \
+        gdb \
+        httpd \
+        mod_bw \
+        mod_ssl \
+        perl-CGI \
+        php \
+        php-json \
+        psmisc \
+        pulseaudio-utils \
+        python2-psutil \
+        python-gobject-base \
+        ruby \
+        rubygem-highline \
+        rubygem-json"
+
+    # These are dependencies necessary for building the jhbuild.
+    packages="$packages \
+        expat-devel \
+        fdk-aac-devel \
+        git \
+        gsettings-desktop-schemas-devel \
+        libmount-devel \
+        libproxy-devel \
+        libpsl-devel \
+        libsrtp-devel \
+        libtheora-devel \
+        libv4l-devel \
+        libvorbis-devel \
+        libvpx-devel \
+        libxcb-devel \
+        libxkbcommon-devel \
+        libXrandr-devel \
+        luajit \
+        luajit-devel \
+        mesa-libGLES-devel \
+        mesa-libEGL-devel \
+        opus-devel \
+        orc-devel \
+        perl-XML-LibXML \
+        pulseaudio-libs-devel \
+        python3-setuptools \
+        wayland-devel \
+        woff2-devel \
+        yasm"
+
+    # These are dependencies necessary for using webkit-patch
+    packages="$packages
+        git-svn \
+        subversion"
+
+    dnf install $packages
+}
+
+checkInstaller

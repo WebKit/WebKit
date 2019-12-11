@@ -1,0 +1,12 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 5 of BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of BODY > HTML > #document to 1 of BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of BODY > HTML > #document to 1 of BODY > HTML > #document toDOMRange:range from 8 of #text > TD > TR > TBODY > TABLE > BODY > HTML > #document to 8 of #text > TD > TR > TBODY > TABLE > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 8 of #text > TD > TR > TBODY > TABLE > BODY > HTML > #document to 8 of #text > TD > TR > TBODY > TABLE > BODY > HTML > #document toDOMRange:range from 0 of BODY > HTML > #document to 0 of BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of BODY > HTML > #document to 0 of BODY > HTML > #document toDOMRange:range from 0 of TD > TR > TBODY > TABLE > BODY > HTML > #document to 0 of TD > TR > TBODY > TABLE > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+cell one	cell two
+

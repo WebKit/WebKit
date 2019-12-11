@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+    input {
+        background-color: rgb(1, 2, 3);
+    }
+    :indeterminate {
+        background-color: rgb(4, 5, 6);
+    }
+</style>
+</head>
+<body>
+    <div id="with-renderer">
+        <!-- With renderer -->
+        <input type="radio" name="group1" id="radio1">
+        <input type="radio" name="group1" id="radio2">
+        <input type="radio" name="group1" id="radio3">
+        <input type="radio" name="group1" id="radio4">
+        <input type="radio" name="group1" id="radio5">
+    </div>
+    <div style="display:none;">
+        <!-- Without renderer -->
+        <input type="radio" name="group2" id="radio6">
+        <input type="radio" name="group2" id="radio7">
+        <input type="radio" name="group2" id="radio8">
+        <input type="radio" name="group2" id="radio9">
+        <input type="radio" name="group2" id="radio10">
+    </div>
+</body>
+<script>
+
+description('Verify that we do not invalidate more than needed to satisfy :indeterminate');
+let allInputs = document.querySelectorAll("input");
+
+function elementsNeedingStyleRecalc() {
+    let elementsRequiringNeedStyleRecalc = []
+    for (let inputElement of allInputs) {
+        let needsStyleRecalc = window.internals.nodeNeedsStyleRecalc(inputElement);
+        if (needsStyleRecalc)
+            elementsRequiringNeedStyleRecalc.push(inputElement.id);
+    }
+    return elementsRequiringNeedStyleRecalc;
+}
+
+function elementsWithIndeterminateStyle() {
+    let elements = [];
+    for (let inputElement of allInputs) {
+        let backgroundColor = getComputedStyle(inputElement).backgroundColor;
+        if (backgroundColor === "rgb(4, 5, 6)")
+            elements.push(inputElement.id);
+    }
+    return elements;
+}
+
+function checkedElements() {
+    let elements = [];
+    for (let inputElement of allInputs) {
+        if (inputElement.checked)
+            elements.push(inputElement.id);
+    }
+    return elements;
+}
+
+// Force a layout to ensure we don't have dirty styles.
+var offsetTop = document.documentElement.offsetTop;
+
+// Initial state.
+shouldBe("elementsNeedingStyleRecalc()", '[]');
+shouldBe("elementsWithIndeterminateStyle()", '["radio1", "radio2", "radio3", "radio4", "radio5", "radio6", "radio7", "radio8", "radio9", "radio10"]');
+shouldBe("checkedElements()", '[]');
+
+// Check radio3. All the group1 require style recalc.
+debug("Check radio3");
+document.getElementById("radio3").checked = true;
+shouldBe("elementsNeedingStyleRecalc()", '["radio1", "radio2", "radio3", "radio4", "radio5"]');
+shouldBe("elementsWithIndeterminateStyle()", '["radio6", "radio7", "radio8", "radio9", "radio10"]');
+shouldBe("checkedElements()", '["radio3"]');
+
+// Check radio8. All the group1 require style recalc.
+debug("Check radio8");
+document.getElementById("radio8").checked = true;
+shouldBe("elementsNeedingStyleRecalc()", '["radio6", "radio7", "radio8", "radio9", "radio10"]');
+shouldBe("elementsWithIndeterminateStyle()", '[]');
+shouldBe("checkedElements()", '["radio3", "radio8"]');
+
+// Checking radio4, we should not need to invalidate anything but the two modified elements.
+debug("Check radio4");
+document.getElementById("radio4").checked = true;
+shouldBe("elementsNeedingStyleRecalc()", '["radio3", "radio4"]');
+shouldBe("elementsWithIndeterminateStyle()", '[]');
+shouldBe("checkedElements()", '["radio4", "radio8"]');
+
+// Checking radio9, we should not need to invalidate anything but the two modified elements.
+debug("Check radio9");
+document.getElementById("radio9").checked = true;
+shouldBe("elementsNeedingStyleRecalc()", '["radio8", "radio9"]');
+shouldBe("elementsWithIndeterminateStyle()", '[]');
+shouldBe("checkedElements()", '["radio4", "radio9"]');
+
+// Hide the elements to make the results prettier.
+document.getElementById("with-renderer").style.display = "none";
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

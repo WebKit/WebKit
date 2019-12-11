@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<!--  Copyright © 2017 Mozilla and World Wide Web Consortium, (Massachusetts Institute of Technology, ERCIM, Keio University, Beihang).  -->
+<meta charset="utf-8">
+<title>Test for validity of payment method identifiers when calling updateWith() method</title>
+<link rel="help" href="https://www.w3.org/TR/payment-request/#updatewith()-method">
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+"use strict";
+setup({ explicit_done: true, explicit_timeout: true });
+const validMethod = Object.freeze({
+  supportedMethods: "https://:@wpt.fyi:443/payment-request",
+});
+
+const validMethods = Object.freeze([validMethod]);
+
+const validAmount = Object.freeze({
+  currency: "USD",
+  value: "1.0",
+});
+
+const validTotal = Object.freeze({
+  label: "Default Total",
+  amount: validAmount,
+});
+
+const validShippingOption = Object.freeze({
+  id: "standard",
+  label: "Shipping option",
+  amount: validAmount,
+  selected: true,
+});
+
+const validDetails = Object.freeze({
+  total: validTotal,
+  shippingOptions: [validShippingOption],
+});
+
+const validModifier = Object.freeze({
+  supportedMethods: "basic-card",
+  total: validTotal,
+});
+
+test(() => {
+  try {
+    new PaymentRequest(validMethods, validDetails);
+  } catch (err) {
+    done();
+    throw err;
+  }
+}, "smoke test");
+
+function runTest(button, { invalidMethod }) {
+  button.disabled = true;
+  const applePay = Object.freeze({
+      supportedMethods: "https://apple.com/apple-pay",
+      data: {
+          version: 2,
+          merchantIdentifier: '',
+          merchantCapabilities: ['supports3DS'],
+          supportedNetworks: ['visa', 'masterCard'],
+          countryCode: 'US',
+      },
+  });
+  user_activation_test(async t => {
+    const request = new PaymentRequest(
+      [applePay],
+      validDetails,
+      { requestShipping: true }
+    );
+    request.onmerchantvalidation = event => {
+        event.complete({ });
+    };
+    const listener = ev => {
+      const invalidModifier = Object.assign({}, validModifier, {
+        supportedMethods: invalidMethod,
+      });
+      const invalidDetails = Object.assign({}, validDetails, {
+        modifiers: [validModifier, invalidModifier],
+      });
+      ev.updateWith(invalidDetails);
+    };
+    // We test against a valid and an invalid modifier
+    request.onshippingaddresschange = listener;
+    // request.addEventListener("shippingaddresschange", listener, { once: true });
+    const showPromise = request.show();
+    await promise_rejects(t, new RangeError(), showPromise);
+  }, button.textContent.trim());
+}
+</script>
+<ol>
+  <li>
+    <button id="button1">
+      Must throw if the URL has a password.
+    </button>
+  </li>
+  <li>
+    <button id="button2">
+      Must throw if the URL has a username.
+    </button>
+  </li>
+  <li>
+    <button id="button3">
+      Must throw if the URL has a username and a password.
+    </button>
+  </li>
+  <li>
+    <button id="button4">
+      Must throw if it's http, and has a username and password.
+    </button>
+  </li>
+  <li>
+    <button id="button5">
+      Must throw if the URL is invalid (port range).
+    </button>
+  </li>
+  <li>
+    <button id="button6">
+      Must throw if the PMI contains characters that are out of range.
+    </button>
+  </li>
+  <li>
+    <button id="button7">
+      Must throw if not https.
+    </button>
+  </li>
+  <li>
+    <button id="button8">
+      Must throw if the standardized PMI contains characters outside the ascii range.
+    </button>
+  </li>
+  <li>
+    <button id="button9">
+      Must throw if standardized PMI has uppercase characters.
+    </button>
+  </li>
+</ol>
+<script>
+    async function runTests()
+    {
+        await runTest(document.getElementById("button1"), {invalidMethod: 'https://:password@example.com'});
+        await runTest(document.getElementById("button2"), {invalidMethod: 'https://username@example.com'});
+        await runTest(document.getElementById("button3"), {invalidMethod: 'https://username:password@example.com/pay'});
+        await runTest(document.getElementById("button4"), {invalidMethod: 'http://username:password@example.com/pay'});
+        await runTest(document.getElementById("button5"), {invalidMethod: 'http://foo.com:100000000/pay'});
+        await runTest(document.getElementById("button6"), {invalidMethod: 'basic-💳'});
+        await runTest(document.getElementById("button7"), {invalidMethod: 'not-https://wpt.fyi/payment-request'});
+        await runTest(document.getElementById("button8"), {invalidMethod: '¡basic-*-card!'});
+        await runTest(document.getElementById("button9"), {invalidMethod: 'Basic-Card'});
+        done();
+    }
+    runTests();
+</script>

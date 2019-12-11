@@ -1,0 +1,4 @@
+frame "<!--frame1-->" - has 1 onunload handler(s)
+
+PASS Same-origin navigation started from unload handler 
+

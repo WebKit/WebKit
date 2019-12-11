@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+    iframe {
+        margin: 50px;
+        border: 2px solid black;
+        width: 600px;
+        height: 600px;
+    }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+            window.internals.settings.setScrollingTreeIncludesFrames(true);
+        }
+
+        function frameDidChange()
+        {
+            window.setTimeout(function() {
+                if (window.testRunner) {
+                    var scrollingTree = internals.scrollingStateTreeAsText();
+                    var layerTree = internals.layerTreeAsText(document);
+                    
+                    var resultElement = document.getElementById('result');
+                    resultElement.textContent = scrollingTree + layerTree;
+                    
+                    testRunner.notifyDone();
+                }
+            }, 0);
+        }
+    </script>
+</head>
+<body>
+<iframe src="resources/layouting-frame.html"></iframe>
+<pre id="result">Results</pre>
+</body>
+</html>

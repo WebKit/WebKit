@@ -1,0 +1,55 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/colgroup_valign_bottom.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/colgroup_valign_top.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/form-in-tables-xhtml.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/form-in-tables.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/hidden-attr.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-attribute.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-2-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-3q-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-3q.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-3s-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-3s.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-cell-width-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-cell-width-s-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-cell-width-s.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-cell-width.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-direction-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-direction.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-layout-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-layout-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-layout.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-row-direction-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-row-direction.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-row-group-direction-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-row-group-direction.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-ua-stylesheet.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-vspace-hspace-s.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-vspace-hspace.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-width-150percent-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-width-150percent.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-width-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-width-s-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-width-s.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-width.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/transformed-tbody-tr-collapsed-border-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/transformed-tbody-tr-collapsed-border.html

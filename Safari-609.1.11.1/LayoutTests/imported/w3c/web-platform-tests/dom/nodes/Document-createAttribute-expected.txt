@@ -1,0 +1,32 @@
+
+PASS HTML document.createAttribute("") should throw 
+PASS XML document.createAttribute("") should throw 
+PASS HTML document.createAttribute("invalid^Name") should throw 
+PASS XML document.createAttribute("invalid^Name") should throw 
+PASS HTML document.createAttribute("\\") should throw 
+PASS XML document.createAttribute("\\") should throw 
+PASS HTML document.createAttribute("'") should throw 
+PASS XML document.createAttribute("'") should throw 
+PASS HTML document.createAttribute("\"") should throw 
+PASS XML document.createAttribute("\"") should throw 
+PASS HTML document.createAttribute("0") should throw 
+PASS XML document.createAttribute("0") should throw 
+PASS HTML document.createAttribute("0:a") should throw 
+PASS XML document.createAttribute("0:a") should throw 
+PASS HTML document.createAttribute("x") 
+PASS XML document.createAttribute("x") 
+PASS HTML document.createAttribute("X") 
+PASS XML document.createAttribute("X") 
+FAIL HTML document.createAttribute(":") The string contains invalid characters.
+FAIL XML document.createAttribute(":") The string contains invalid characters.
+FAIL HTML document.createAttribute("a:0") The string contains invalid characters.
+FAIL XML document.createAttribute("a:0") The string contains invalid characters.
+PASS HTML document.createAttribute("title") 
+PASS XML document.createAttribute("title") 
+PASS HTML document.createAttribute("TITLE") 
+PASS XML document.createAttribute("TITLE") 
+PASS HTML document.createAttribute(null) 
+PASS XML document.createAttribute(null) 
+PASS HTML document.createAttribute(undefined) 
+PASS XML document.createAttribute(undefined) 
+

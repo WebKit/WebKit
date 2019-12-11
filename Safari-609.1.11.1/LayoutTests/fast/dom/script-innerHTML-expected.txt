@@ -1,0 +1,3 @@
+Should say PASS:
+
+PASS

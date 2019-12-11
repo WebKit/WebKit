@@ -1,0 +1,49 @@
+# Copyright (C) 2017 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#if ENABLE(SERVICE_WORKER)
+
+messages -> WebSWClientConnection {
+    # When possible, these messages can be implemented directly by WebCore::SWServer::Connection
+    JobRejectedInServer(WebCore::ServiceWorkerJobIdentifier jobDataIdentifier, struct WebCore::ExceptionData exception)
+    RegistrationJobResolvedInServer(WebCore::ServiceWorkerJobIdentifier jobDataIdentifier, struct WebCore::ServiceWorkerRegistrationData registration, enum:bool WebCore::ShouldNotifyWhenResolved shouldNotifyWhenResolved)
+    UnregistrationJobResolvedInServer(WebCore::ServiceWorkerJobIdentifier jobDataIdentifier, bool unregistrationResult)
+    StartScriptFetchForServer(WebCore::ServiceWorkerJobIdentifier jobDataIdentifier, WebCore::ServiceWorkerRegistrationKey registrationKey, WebCore::FetchOptions::Cache cachePolicy)
+    UpdateRegistrationState(WebCore::ServiceWorkerRegistrationIdentifier identifier, enum:uint8_t WebCore::ServiceWorkerRegistrationState state, Optional<WebCore::ServiceWorkerData> serviceWorkerIdentifier)
+    UpdateWorkerState(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, enum:uint8_t WebCore::ServiceWorkerState state)
+    FireUpdateFoundEvent(WebCore::ServiceWorkerRegistrationIdentifier identifier)
+    SetRegistrationLastUpdateTime(WebCore::ServiceWorkerRegistrationIdentifier identifier, WallTime lastUpdateTime)
+    SetRegistrationUpdateViaCache(WebCore::ServiceWorkerRegistrationIdentifier identifier, enum:uint8_t WebCore::ServiceWorkerUpdateViaCache updateViaCache);
+    NotifyClientsOfControllerChange(HashSet<WebCore::DocumentIdentifier> contextIdentifiers, struct WebCore::ServiceWorkerData newController)
+
+    SetSWOriginTableIsImported()
+    SetSWOriginTableSharedMemory(WebKit::SharedMemory::Handle handle)
+    PostMessageToServiceWorkerClient(WebCore::DocumentIdentifier destinationContextIdentifier, struct WebCore::MessageWithMessagePorts message, struct WebCore::ServiceWorkerData source, String sourceOrigin)
+
+    DidMatchRegistration(uint64_t matchRequestIdentifier, Optional<WebCore::ServiceWorkerRegistrationData> data)
+    DidGetRegistrations(uint64_t matchRequestIdentifier, Vector<WebCore::ServiceWorkerRegistrationData> registrations)
+    RegistrationReady(uint64_t registrationReadyRequestIdentifier, struct WebCore::ServiceWorkerRegistrationData data)
+
+    SetDocumentIsControlled(WebCore::DocumentIdentifier temporaryDocumentIdentifier, struct WebCore::ServiceWorkerRegistrationData data) -> (bool isSuccess) Async
+}
+
+#endif // ENABLE(SERVICE_WORKER)

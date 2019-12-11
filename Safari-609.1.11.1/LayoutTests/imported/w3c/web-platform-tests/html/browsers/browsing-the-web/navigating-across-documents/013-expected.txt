@@ -1,0 +1,3 @@
+
+FAIL Link with onclick navigation to javascript url with delayed document.write and href navigation  assert_array_equals: property 0, expected "after script" but got "javascript"
+ Test

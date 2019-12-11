@@ -1,0 +1,7 @@
+2d.path.arcTo.negative
+
+arcTo() with negative radius throws an exception
+
+
+FAIL arcTo() with negative radius throws an exception assert_throws: function "function () { ctx.arcTo(0, 0, 0, 0, -1); }" threw object "TypeError: null is not an object (evaluating 'ctx.arcTo')" that is not a DOMException INDEX_SIZE_ERR: property "code" is equal to undefined, expected 1
+

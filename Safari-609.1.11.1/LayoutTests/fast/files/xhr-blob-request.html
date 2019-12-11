@@ -1,0 +1,129 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Test a XMLHttpRequest request of a Blob URL responds appropriately.</title>
+    <meta name="author" title="Canon Research France" href="https://www.crf.canon.fr">
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script>
+var array = new Int8Array([0, 1, 2, 3]);
+var blob = new Blob(array);
+var url = URL.createObjectURL(blob);
+
+function test_allowed_method_sync(method) {
+    test (() => {
+        var req = new XMLHttpRequest;
+        var onLoad = false;
+        req.open(method, url, false);
+
+        req.onerror = function(evt) {
+            assert_unreached('Error callback called for synchronous ' + method + ' XHR');
+        }
+
+        req.onload = function() {
+            onLoad = true;
+        }
+
+        try {
+            req.send();
+            assert_true(onLoad);
+        }
+        catch(e) {
+            assert_unreached('Exception thrown for synchronous ' + method + ' XHR');
+        }
+    }, 'Synchronous XHR request should succeed with ' + method);
+}
+
+function test_notAllowed_method_sync(method) {
+    test (() => {
+        var req = new XMLHttpRequest;
+        var onError = false;
+        req.open(method, url, false);
+
+        req.onerror = function(evt) {
+            onError = true;
+        }
+
+        req.onload = function() {
+            assert_unreached('Exception should be thrown for synchronous ' + method + ' XHR');
+        }
+
+        assert_throws('NetworkError', () => { req.send(); }, 'Exception thrown for synchronous ' + method + ' XHR');
+
+        assert_false(onError, 'Error callback is called');
+    }, 'Synchronous XHR request should throw exception with ' + method);
+}
+
+function create_async_xhr_promise(method) {
+    return new Promise(function(resolve) {
+        var req = new XMLHttpRequest;
+        var status = { "onError" : false, "onLoad" : false };
+
+        req.open(method, url, true);
+
+        req.onerror = function(evt) {
+            status.onError = true;
+        }
+
+        req.onload = function() {
+            status.onLoad = true;
+        }
+
+        req.onloadend = function() {
+            resolve(status);
+        }
+
+        try {
+            req.send();
+        }
+        catch(e) {
+            assert_unreached('Exception thrown');
+        }
+    });
+}
+
+function test_method_async(method, shouldLoad) {
+    promise_test(() => {
+        return create_async_xhr_promise(method).then((res) => {
+            assert_equals(res.onError, !shouldLoad, 'XHR request calls onError callback');
+            assert_equals(res.onLoad, shouldLoad, 'XHR request is loaded');
+        })
+    }, 'Asynchronous XHR request should ' + (shouldLoad ? 'succeed' : 'calls onError callback') + ' with ' + method);
+}
+
+
+
+function test_forbidden_method(request) {
+    test(() => {
+        assert_throws('SecurityError', () => {
+            var req = new XMLHttpRequest;
+            req.open(request, url);
+        })
+    }, 'Exception should be thrown for ' + request + ' request');
+}
+test_forbidden_method('TRACE');
+test_forbidden_method('TRACK');
+test_forbidden_method('CONNECT');
+
+test_allowed_method_sync('GET');
+test_notAllowed_method_sync('OPTIONS');
+test_notAllowed_method_sync('HEAD');
+test_notAllowed_method_sync('PUT');
+test_notAllowed_method_sync('DELETE');
+test_notAllowed_method_sync('INVALID');
+test_notAllowed_method_sync('POST');
+
+test_method_async('GET', true);
+test_method_async('OPTIONS',false);
+test_method_async('HEAD',false);
+test_method_async('PUT',false);
+test_method_async('DELETE',false);
+test_method_async('INVALID',false);
+test_method_async('POST',false);
+done()
+
+</script>
+</body>
+</html>

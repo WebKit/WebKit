@@ -1,0 +1,19 @@
+OPEN FILE PANEL
+Upload
+
+Upload
+
+Upload
+
+This tests that if a non-native action type is exposed as a control, then we will look for descendants to call press() on.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Press performed on fileupload
+Press performed on button
+Press performed on checkbox
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

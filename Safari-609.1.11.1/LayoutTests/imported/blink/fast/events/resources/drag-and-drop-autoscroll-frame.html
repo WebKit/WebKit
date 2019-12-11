@@ -1,0 +1,37 @@
+<html>
+<head>
+<style type="text/css">
+#draggable {
+  padding: 5pt;
+  border: 3px solid #00cc00;
+  background: #00cccc;
+  width: 80px;
+  cursor: hand;
+}
+</style>
+<script src="drag-and-drop-autoscroll-frame.js"></script>
+</head>
+<body>
+<div id="container">
+<p id="description"></p>
+Manual steps:
+<ol>
+<li>Drag "Drop Me" to edge of window</li>
+<li>You should see scrolling</li>
+</ol>
+<div id="draggable" draggable="true">Drop Me</div>
+<div id="scrollbars" style="overflow: scroll"><div>scrollbars</div></div>
+<table id="sample" border="1" style="width:2000; height:2000;">
+<tr><td width="50%">North West</td><td width="50%">North East</td></tr>
+<tr><td width="50%">South West</td><td width="50%">South East</td></tr>
+</table>
+</div>
+<div id="console"></div>
+<script src="../../../resources/js-test.js"></script>
+<script>
+if (window.testRunner)
+    window.jsTestIsAsync = true;
+description('Check autoscroll of frame by drag-and-drop');
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+This tests deleting an object store with an index, when aborting the transaction would *not* restore that object store, and makes sure the transaction successfully aborts
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+first put success
+second put success
+Aborted!
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

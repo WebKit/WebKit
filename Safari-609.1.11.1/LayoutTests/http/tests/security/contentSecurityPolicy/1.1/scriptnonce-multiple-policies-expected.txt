@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 13: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 13: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 14: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 14: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+ALERT: PASS
+Tests that an inline script is allowed to execute only if its nonce appears in all policies. This test PASSED if there are two console warnings and a JavaScript alert with message PASS. Otherwise, it FAILED.

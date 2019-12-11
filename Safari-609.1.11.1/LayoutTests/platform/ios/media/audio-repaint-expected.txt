@@ -1,0 +1,42 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600 isolatesBlending
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 717x19
+          text run at (0,0) width 626: "This tests that in a html document with inline audio content, the media element repaints correctly "
+          text run at (625,0) width 92: "while playing."
+      RenderBlock (anonymous) at (0,36) size 784x196
+        RenderMedia {AUDIO} at (0,0) size 260x39
+        RenderBR {BR} at (260,39) size 0x0
+        RenderBR {BR} at (260,103) size 0x0
+        RenderBR {BR} at (260,196) size 0x0
+layer at (8,44) size 260x39 scrollHeight 89
+  RenderFlexibleBox {DIV} at (0,0) size 260x39
+layer at (8,44) size 260x39
+  RenderBlock (positioned) {DIV} at (0,0) size 260x39
+layer at (8,44) size 260x39
+  RenderFlexibleBox {DIV} at (0,0) size 260x39 [bgcolor=#D4D4D4]
+layer at (12,44) size 42x39 blendMode: plus-darker
+  RenderButton {BUTTON} at (4,0) size 42x39 [bgcolor=#000000]
+layer at (8,83) size 260x39 isolatesBlending
+  RenderMedia {AUDIO} at (0,39) size 260x39
+layer at (8,83) size 260x39 scrollHeight 89
+  RenderFlexibleBox {DIV} at (0,0) size 260x39
+layer at (8,83) size 260x39
+  RenderBlock (positioned) {DIV} at (0,0) size 260x39
+layer at (8,83) size 260x39
+  RenderFlexibleBox {DIV} at (0,0) size 260x39 [bgcolor=#D4D4D4]
+layer at (12,83) size 42x39 blendMode: plus-darker
+  RenderButton {BUTTON} at (4,0) size 42x39 [bgcolor=#000000]
+layer at (8,174) size 260x39 isolatesBlending
+  RenderMedia {AUDIO} at (0,130) size 260x39
+layer at (8,174) size 260x39 scrollHeight 89
+  RenderFlexibleBox {DIV} at (0,0) size 260x39
+layer at (8,174) size 260x39 backgroundClip at (17,141) size 260x39 clip at (17,141) size 260x39
+  RenderBlock (positioned) {DIV} at (0,0) size 260x39
+layer at (8,174) size 260x39 backgroundClip at (17,141) size 260x39 clip at (17,141) size 260x39
+  RenderFlexibleBox {DIV} at (0,0) size 260x39 [bgcolor=#D4D4D4]
+layer at (12,174) size 42x39 backgroundClip at (17,141) size 260x39 clip at (17,141) size 260x39 blendMode: plus-darker
+  RenderButton {BUTTON} at (4,0) size 42x39 [bgcolor=#000000]

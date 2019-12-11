@@ -1,0 +1,4 @@
+
+
+PASS document-open-cancels-javascript-url-navigation 
+

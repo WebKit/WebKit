@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <script src="../../resources/js-test-pre.js"></script>
+    <title>Unicode XML character entities used for the style attribute of an element's style.</title>
+  </head>
+  <body>
+    <p id=target style="0&#x7652C;">x</p>
+  <script>
+      description("This test verifies the parsing of unicode html entities used as an invalid style attribute.");
+
+      var paragraphElement = document.getElementById('target');
+      shouldBeEqualToString('paragraphElement.getAttribute("style")', '0\ud999\udd2c');
+      shouldBeEqualToString('paragraphElement.style.cssText', '');
+  </script>
+  <script src="../../resources/js-test-post.js"></script>
+  </body>
+</html>

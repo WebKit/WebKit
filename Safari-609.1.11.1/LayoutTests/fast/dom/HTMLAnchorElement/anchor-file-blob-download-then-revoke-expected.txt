@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 37: PASS: URL was revoked
+Download started.
+Downloading URL with suggested filename "foo.txt"
+Download completed.
+The suggested filename above should be "foo.txt" and the download should succeed.
+
+Memory backed blob URL

@@ -1,0 +1,144 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+  
+[%# INTERFACE:
+  # col_field: string. Name of the field being plotted as columns.
+  # row_field: string. Name of the field being plotted as rows.
+  # tbl_field: string. Name of the field being plotted as tables.
+  # tbl_names: array. List of values for the field being plotted as tables.
+  # time: integer. Seconds since the epoch.
+  # data: <depends on format>. Data to plot. 
+  # format: string. Format of the individual reports.
+  # width: integer. For image charts, height of the image.
+  # height: integer. For image charts, width of the image.
+  # imagebase: string. Base URL for chart image.
+  # switchbase: string. Base URL for format switching.
+  # cumulate: boolean. For bar/line charts, whether to cumulate data sets.
+  #%]
+
+[% DEFAULT width = 1024
+           height = 600
+%]
+
+[% IF min_width AND width < min_width %]
+  [% width = min_width %]
+[% END %]
+
+[%# We ignore row_field for pie charts %]
+[% IF format == "pie" %]
+  [% row_field = "" %]
+[% END %]
+
+[% tbl_field_disp = field_descs.$tbl_field || tbl_field %]
+[% col_field_disp = field_descs.$col_field || col_field %]
+[% row_field_disp = field_descs.$row_field || row_field %]
+[% switchbase     = switchbase FILTER html %]
+
+[% title = BLOCK %]
+  Report: 
+  [% IF tbl_field %]
+    [% tbl_field_disp FILTER html %]
+  [% END %]
+  [% " / " IF tbl_field AND (col_field OR row_field) %]
+  [% IF row_field %]
+    [% row_field_disp FILTER html %]
+  [% END %]
+  [% " / " IF col_field AND row_field %]
+  [% col_field_disp FILTER html %]
+[% END %]
+
+[% time = time FILTER time('%Y-%m-%d %H:%M:%S') FILTER html %]
+
+[% PROCESS global/header.html.tmpl 
+  header_addl_info = time
+  style_urls = ['skins/standard/buglist.css']
+  yui = ['datatable']
+%]
+
+[% IF debug %]
+  [% FOREACH query = queries %]
+    <p>[% query.sql FILTER html %]</p>
+  [% END %]
+[% END %]
+
+<div class="center">
+  [% FOREACH tbl = tbl_names %]
+    [% IF tbl == "-total-" %]
+      [% tbl_disp = "Total" %]
+    [% ELSE %]
+      [% tbl_disp = tbl %]
+    [% END %]
+
+    [% IF format == "table" %]
+      [% PROCESS "reports/report-table.html.tmpl" %]
+    [% ELSE %]
+      [% IF tbl %]
+        <h2>[% tbl_disp FILTER email FILTER html %]</h2>
+      [% END %]
+      
+      [% imageurl = BLOCK %]report.cgi?[% imagebase FILTER html %]&amp;format=
+        [% format FILTER uri %]&amp;ctype=png&amp;action=plot&amp;
+        [% IF tbl_field %]
+          [% IF tbl != "-total-" %]
+            [% tbl_field FILTER uri %]=[% tbl FILTER uri %]&amp;
+          [% ELSE %]
+            [% FOREACH tblname = tbl_names %]
+              [% IF tblname != "-total-" %]
+                [% tbl_field FILTER uri %]=[% tblname FILTER uri %]&amp;
+              [% END %]
+            [% END %]
+          [% END %]
+        [% END %]width=[% width %]&amp;height=[% height %]
+      [% END %]
+
+      <img id="graphical_report" alt="Graphical report results" src="[% imageurl %]">
+    [% END %]
+    <br>
+  [% END %]  
+
+  [% formats = [ { name => "pie",   description => "Pie" },
+                 { name => "bar",   description => "Bar" },
+                 { name => "line",  description => "Line" },
+                 { name => "table", description => "Table" } ] %]
+
+  [% formaturl = "report.cgi?$switchbase&amp;width=$width&amp;height=$height&amp;action=wrap" %]
+  <p>
+    [% FOREACH other_format = formats %]
+      [% NEXT IF other_format.name == "pie" AND row_field AND col_field %]
+      [% UNLESS other_format.name == format %]
+        <a href="[% formaturl %]&amp;format=[% other_format.name %]">
+      [% END %]
+      [% other_format.description FILTER html %]
+      [% "</a>" UNLESS other_format.name == format %] |
+    [% END %]
+    <a href="[% formaturl %]&amp;ctype=csv&amp;format=table">CSV</a>
+  </p>
+
+  [% IF format == "table" %]
+    <a href="query.cgi?[% switchbase %]&amp;format=report-table">Edit this report</a>
+  [% ELSE %]
+    <a href="query.cgi?[% switchbase %]&amp;chart_format=
+             [%~ format FILTER uri %]&amp;format=report-graph&amp;cumulate=[% cumulate %]">
+      Edit this report</a>
+  [% END %]
+  |
+  [% IF saved_report_id %]
+    <a href="report.cgi?action=del&amp;saved_report_id=[% saved_report_id FILTER uri %]&amp;token=
+             [%~ issue_hash_token(['delete_report', saved_report_id]) FILTER uri %]">Forget this report</a>
+  [% ELSE %]
+    <form method="get" action="report.cgi" class="inline">
+      <input type="submit" id="remember" value="Remember report"> as
+      <input type="hidden" name="query" value="[% switchbase %]&amp;format=[% format FILTER uri %]&amp;action=wrap">
+      <input type="hidden" name="action" value="add">
+      <input type="hidden" name="token" value="[% issue_hash_token(['save_report']) FILTER html %]">
+      <input type="text" id="name" name="name" size="20" value="" maxlength="64">
+    </form>
+  [% END %]
+</div>
+
+[% PROCESS global/footer.html.tmpl %]

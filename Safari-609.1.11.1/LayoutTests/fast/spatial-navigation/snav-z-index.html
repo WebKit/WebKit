@@ -1,0 +1,80 @@
+<html>
+  <head>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script src="resources/spatial-navigation-utils.js"></script>
+    <script type="application/javascript">
+
+    var resultMap = [
+      ["Down", "p11"],
+      ["Down", "p12"],
+      ["Down", "s25"],
+      ["Up", "p12"],
+      ["Left", "s13"],
+      ["Up", "s12"],
+      ["Right", "p11"],
+      ["Right", "p21"],
+      ["Up", "start"],
+      ["DONE", "DONE"]
+    ];
+
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.setSpatialNavigationEnabled(true);
+      testRunner.overridePreference("WebKitTabToLinksPreferenceKey", 1);
+      testRunner.waitUntilDone();
+    }
+
+    function runTest()
+    {
+      // starting the test itself: get to a known place.
+      document.getElementById("start").focus();
+
+      initTest(resultMap, testCompleted);
+    }
+
+    function testCompleted()
+    {
+      if (window.testRunner)
+        testRunner.notifyDone();
+    }
+
+    window.onload = runTest;
+    </script>
+    <script src="../resources/js-test-post.js"></script>
+    <style>
+    div.simple { border: 3px solid red;}
+    div.simple:focus { border: 3px solid gray;}
+    div.positioned { border: 3px solid blue;}
+    div.positioned:focus{ border: 3px solid gray;}
+    #popup {position: absolute; top:120; left:240; border: 8px solid black; z-index:1000}
+    </style>
+  </head>
+<body id="some-content" xmlns="http://www.w3.org/1999/xhtml" style="padding:20px">
+<div id="popup">
+<table><tr><td>
+<div tabindex="1" id="p11" class="positioned"><img src="resources/green.png" width=160px height=60px></div>
+<div tabindex="2" id="p12" class="positioned"><img src="resources/green.png" width=160px height=60px></div>
+</td><td>
+<div tabindex="1" id="p21" class="positioned"><img src="resources/green.png" width=160px height=60px></div>
+<div tabindex="2" id="p22" class="positioned"><img src="resources/green.png" width=160px height=60px></div>
+</td></tr></table>
+</div>
+
+<table>
+<tr><td>
+<div tabindex="1" id="s11" class="simple"><img src="resources/green.png" width=160px height=60px></div>
+<div tabindex="2" id="s12" class="simple"><img src="resources/green.png" width=160px height=60px></div>
+<div tabindex="3" id="s13" class="simple"><img src="resources/green.png" width=160px height=60px></div>
+<div tabindex="4" id="s14" class="simple"><img src="resources/green.png" width=160px height=60px></div>
+<div tabindex="5" id="s15" class="simple"><img src="resources/green.png" width=160px height=60px></div>
+</td><td>
+<div tabindex="1" id="start" class="simple"><img src="resources/green.png" width=160px height=60px></div>
+<div tabindex="2" id="s22" class="simple"><img src="resources/green.png" width=160px height=60px></div>
+<div tabindex="3" id="s23" class="simple"><img src="resources/green.png" width=160px height=60px></div>
+<div tabindex="4" id="s24" class="simple"><img src="resources/green.png" width=160px height=60px></div>
+<div tabindex="5" id="s25" class="simple"><img src="resources/green.png" width=160px height=60px></div>
+</td></tr></table>
+<div id="console"></div>
+This test is testing that we prefer focusable elements with absolute positioning over other elements.
+</body>
+</html>

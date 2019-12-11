@@ -1,0 +1,8 @@
+size.attributes.style
+Canvas size is independent of CSS resizing
+Actual output:
+Expected output:
+
+
+PASS Canvas size is independent of CSS resizing 
+

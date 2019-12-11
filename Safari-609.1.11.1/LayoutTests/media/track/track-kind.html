@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script src=../media-controls.js></script>
+        <script>
+
+            var trackElement;
+            function setKind(value)
+            {
+                consoleWrite("<b>++ '" + value + "'</b>");
+                consoleWrite("<b> set via DOM</b>");
+                run("trackElement.removeAttribute('kind')");
+                run("trackElement.kind = '" + value + "'");
+                testExpected("trackElement.getAttribute('kind')", value);
+                testExpected("trackElement.kind", value);
+                testExpected("trackElement.track.kind", value);
+                consoleWrite("<b> and via attribute</b>");
+                run("trackElement.removeAttribute('kind')");
+                run("trackElement.setAttribute('kind', '" + value + "')");
+                testExpected("trackElement.kind", value);
+                testExpected("trackElement.track.kind", value);
+                testExpected("trackElement.getAttribute('kind')", value);
+                testExpected("textTrackDisplayElement(video, 'display').innerText", "Lorem ipsum dolor sit amet, ");
+                consoleWrite("");
+
+            }
+
+            function testKind()
+            {
+                consoleWrite("<b>++ Test default attribute value</b>");
+                testExpected("trackElement.getAttribute('kind')", null);
+                testExpected("trackElement.kind", "subtitles");
+                testExpected("video.textTracks[0].kind", "subtitles");
+                consoleWrite("");
+
+                consoleWrite("<b>*** Set to bogus value, should return default</b>");
+                consoleWrite("<b> set via DOM</b>");
+                var value = "english-metadata"
+                run("trackElement.removeAttribute('kind')");
+                run("trackElement.kind = '" + value + "'");
+                testExpected("trackElement.getAttribute('kind')", value);
+                testExpected("trackElement.kind", "metadata");
+                testExpected("trackElement.track.kind", "metadata");
+                consoleWrite("<b> and via attribute</b>");
+                run("trackElement.removeAttribute('kind')");
+                run("trackElement.setAttribute('kind', '" + value + "')");
+                testExpected("trackElement.kind", "metadata");
+                testExpected("trackElement.track.kind", "metadata");
+                testExpected("trackElement.getAttribute('kind')", value);
+                consoleWrite("");
+
+                run("trackElement.removeAttribute('kind')");
+                testExpected("trackElement.kind", "subtitles");
+                testExpected("video.textTracks[0].kind", "subtitles");
+                consoleWrite("");
+
+                consoleWrite("<b>*** Set to known values</b>");
+                setKind("subtitles");
+
+                setKind("captions");
+
+                setKind("descriptions");
+
+                setKind("chapters");
+
+                setKind("metadata");
+
+                endTest();
+            }
+            
+            function loaded()
+            {
+                findMediaElement();
+                trackElement = document.getElementById('track_1');
+
+                waitForEventsAndCall([[video, 'canplaythrough'], [trackElement, 'load']], testKind);
+
+                video.src = findMediaFile('video', '../content/counting');
+            }
+
+            setCaptionDisplayMode('Automatic');
+
+        </script>
+    </head>
+    <body onload="loaded()">
+        <p>Tests that the 'kind' attribute is set properly and that cues are only visible when 'kind' is set to 'captions' or 'subtitles'.</p>
+        <video>
+            <track id=track_1 src="captions-webvtt/metadata.vtt" default>
+        </video>
+    </body>
+</html>

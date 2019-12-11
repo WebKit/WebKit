@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Operator+ overload.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.operatorWithoutUninferrableTypeVariable = async () => {
+    let program = `
+        struct Foo {
+            int x;
+        }
+        Foo operator+(Foo a, Foo b)
+        {
+            Foo result;
+            result.x = a.x + b.x;
+            return result;
+        }
+        int foo()
+        {
+            Foo a;
+            a.x = 645;
+            Foo b;
+            b.x = -35;
+            return (a + b).x;
+        }
+    `;
+    assert_equals(await callIntFunction(program, "foo", []), 645 - 35);
+}
+
+runTests(whlslTests);
+</script>
+</html>

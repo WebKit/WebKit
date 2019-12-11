@@ -1,0 +1,14 @@
+This test sets a cookie, then follows a link with a ping attribute where the ping URL matches a 'block-cookie' rule.   
+
+--------
+Frame: 'link_frame'
+--------
+Link with ping was clicked.
+
+--------
+Frame: 'result_frame'
+--------
+Ping received.
+HTTP_HOST: 127.0.0.1:8000
+REQUEST_URI: /contentextensions/resources/save-ping.php?test=contentextensions-block-cookies-in-ping
+No cookies in ping.

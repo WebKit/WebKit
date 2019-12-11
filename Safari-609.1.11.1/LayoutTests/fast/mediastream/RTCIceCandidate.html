@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            description("Tests RTCIceCandidate.");
+
+            var initializer = {candidate:"foo", sdpMid:"bar", sdpMLineIndex:6};
+            var candidate;
+            shouldNotThrow('candidate = new RTCIceCandidate(initializer);');
+            shouldBe('candidate.candidate', '"foo"');
+            shouldBe('candidate.sdpMid', '"bar"');
+            shouldBe('candidate.sdpMLineIndex', '6');
+            shouldBeDefined('RTCIceCandidate.prototype.toJSON');
+            shouldBeTrue('Object.getOwnPropertyDescriptor(RTCIceCandidate.prototype, "toJSON").enumerable');
+            shouldBeTrue('Object.getOwnPropertyDescriptor(RTCIceCandidate.prototype, "toJSON").writable');
+            shouldBeTrue('Object.getOwnPropertyDescriptor(RTCIceCandidate.prototype, "toJSON").configurable');
+            shouldBe('RTCIceCandidate.prototype.toJSON.length', '0');
+            shouldBe('RTCIceCandidate.prototype.toJSON.name', '"toJSON"');
+
+            var jsonMap = candidate.toJSON();
+            shouldBeTrue('Object.getOwnPropertyDescriptor(jsonMap, "candidate").enumerable');
+            shouldBeTrue('Object.getOwnPropertyDescriptor(jsonMap, "candidate").writable');
+            shouldBeTrue('Object.getOwnPropertyDescriptor(jsonMap, "candidate").configurable');
+
+            var childRTCIceCandidate = function() {};
+            childRTCIceCandidate.prototype = Object.create(RTCIceCandidate.prototype);
+            var childCandidate = new childRTCIceCandidate();
+            shouldThrow('childCandidate.toJSON();');
+
+            shouldBeEqualToString('JSON.stringify(candidate.toJSON())', '{"candidate":"foo","sdpMid":"bar","sdpMLineIndex":6}');
+            candidate.newAttribute = "new value";
+            shouldBeEqualToString('JSON.stringify(candidate.toJSON())', '{"candidate":"foo","sdpMid":"bar","sdpMLineIndex":6}');
+            candidate.sdpMLineIndex = "not a number";
+            shouldBeEqualToString('JSON.stringify(candidate.toJSON())', '{"candidate":"foo","sdpMid":"bar","sdpMLineIndex":6}');
+            candidate.sdpMid = 7;
+            shouldBeEqualToString('JSON.stringify(candidate.toJSON())', '{"candidate":"foo","sdpMid":"bar","sdpMLineIndex":6}');
+            candidate.sdpMid = null;
+            shouldBeEqualToString('JSON.stringify(candidate.toJSON())', '{"candidate":"foo","sdpMid":"bar","sdpMLineIndex":6}');
+
+            debug("");
+
+            debug("Attributes are readonly");
+            evalAndLog('candidate.candidate = "foo-updated"');
+            shouldBe('candidate.candidate', '"foo"');
+            evalAndLog('candidate.sdpMid = "bar-updated"');
+            shouldBe('candidate.sdpMid', '"bar"');
+            evalAndLog('candidate.sdpMLineIndex = 7');
+            shouldBe('candidate.sdpMLineIndex', '6');
+            debug("");
+
+            debug("Dictionary argument is mandatory.");
+            shouldThrow('new RTCIceCandidate();');
+
+            debug("One of the 'sdpMid' or 'sdpMLineIndex' members must be present (and not null or undefined).");
+            shouldThrow('new RTCIceCandidate({candidate:"foo"});');
+            shouldThrow('new RTCIceCandidate({candidate:"foo", sdpMid: null});');
+            shouldThrow('new RTCIceCandidate({candidate:"foo", sdpMid: undefined});');
+            shouldThrow('new RTCIceCandidate({candidate:"foo", sdpMLineIndex: null});');
+            shouldThrow('new RTCIceCandidate({candidate:"foo", sdpMLineIndex: undefined});');
+            shouldThrow('new RTCIceCandidate({candidate:"foo", sdpMid: null, sdpMLineIndex: null});');
+            shouldThrow('new RTCIceCandidate({candidate:"foo", sdpMid: undefined, sdpMLineIndex: undefined});');
+            debug("");
+
+            debug("Test that sdpMid or sdpMLineIndex explicitly set to null or undefined, results in a null value.");
+            shouldNotThrow('candidate = new RTCIceCandidate({candidate:"foo", sdpMid: null, sdpMLineIndex: 1});');
+            shouldBeNull("candidate.sdpMid");
+            shouldBe("candidate.sdpMLineIndex", "1");
+
+            shouldNotThrow('candidate = new RTCIceCandidate({candidate:"foo", sdpMid: undefined, sdpMLineIndex: 1});');
+            shouldBeNull("candidate.sdpMid");
+            shouldBe("candidate.sdpMLineIndex", "1");
+
+            shouldNotThrow('candidate = new RTCIceCandidate({candidate:"foo", sdpMid: "foo", sdpMLineIndex: null});');
+            shouldBe("candidate.sdpMid", "'foo'");
+            shouldBeNull("candidate.sdpMLineIndex");
+
+            shouldNotThrow('candidate = new RTCIceCandidate({candidate:"foo", sdpMid: "foo", sdpMLineIndex: undefined});');
+            shouldBe("candidate.sdpMid", "'foo'");
+            shouldBeNull("candidate.sdpMLineIndex");
+            debug("");
+
+            debug("When one of the 'sdpMid' or 'sdpMLineIndex' members is set, the other must be null.");
+            shouldNotThrow('candidate = new RTCIceCandidate({candidate:"foo", sdpMid:"bar"});');
+            shouldBe('candidate.sdpMid', '"bar"');
+            shouldBe('candidate.sdpMLineIndex', 'null');
+            shouldNotThrow('candidate = new RTCIceCandidate({candidate:"foo", sdpMLineIndex:6});');
+            shouldBe('candidate.sdpMid', 'null');
+            shouldBe('candidate.sdpMLineIndex', '6');
+            debug("");
+
+            debug("Conversion of sdpMLineIndex to unsigned short, following WebIDL rules without [Clamp] or [EnforceRange]");
+            shouldBe('(new RTCIceCandidate({candidate:"foo", sdpMLineIndex:"a"})).sdpMLineIndex', '0');
+            shouldBe('(new RTCIceCandidate({candidate:"foo", sdpMLineIndex:-1})).sdpMLineIndex', '65535');
+            shouldBe('(new RTCIceCandidate({candidate:"foo", sdpMLineIndex:65536})).sdpMLineIndex', '0');
+            shouldBe('(new RTCIceCandidate({candidate:"foo", sdpMLineIndex:65537})).sdpMLineIndex', '1');
+            debug("");
+
+            debug("Some bad input");
+            shouldThrow('new RTCIceCandidate(5);');
+            shouldThrow('new RTCIceCandidate("foobar");');
+            shouldThrow('new RTCIceCandidate(candidate:"");');
+
+            window.successfullyParsed = true;
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

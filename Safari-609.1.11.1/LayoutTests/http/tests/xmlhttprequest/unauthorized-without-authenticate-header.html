@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script>
+        function doTest() {
+            description(`This tests that the request doesn't sends another request for 401 response
+                        without www-authenticate header. If it does, the request never stops by
+                        repeated request sending. Test passes if the request returns without 
+                        displaying authentication callenge UI.`);
+            window.jsTestIsAsync = true;
+
+            const xhr = new XMLHttpRequest();
+            xhr.onload = xhr.onerror = function() {
+                shouldBe(() => xhr.status, "401");
+                finishJSTest();
+            }
+
+            xhr.open('GET', 'resources/no-authenticate-header-401.php');
+            xhr.send(null);
+        }
+    </script>
+</head>
+
+<body onload="doTest()">
+    <div id="description"></div>
+    <div id="console"></div>
+</body>
+
+</html>

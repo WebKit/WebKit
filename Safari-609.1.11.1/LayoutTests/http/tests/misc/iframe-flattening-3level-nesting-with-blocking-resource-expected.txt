@@ -1,0 +1,3 @@
+This test verifies that nested iframes do not cause assertion failure, when 3 level nesting is applied with blocking resource at the bottommost iframe. PASS if no assert in debug.
+
+

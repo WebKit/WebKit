@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+html, body {
+    width: 100%;
+    height: 100%;
+}
+</style>
+<body contenteditable>
+    <div id="source">Copy me</div>
+    <pre id="output">
+        To manually test, copy the above text and paste anywhere in the body.
+        This will dump the contents of the DataTransfer on copy and paste events as output text.
+        You should see the custom types "text" and "url" written to the DataTransfer as custom
+        data exposed on the DataTransfer's item list, on both copy and paste.
+    </pre>
+</body>
+<script>
+
+function write(markup) {
+    output.insertAdjacentHTML("beforeend", markup);
+}
+
+function outputForFile(file) {
+    return file ? `(name = '${file.name}', size = ${file.size} bytes, type = '${file.type}')` : "(null)";
+}
+
+globalStringLoadCount = 0;
+currentStringLoadCount = 0;
+
+function loadString(item) {
+    currentStringLoadCount++;
+    const outputElementId = `string-${++globalStringLoadCount}`;
+    item.getAsString(string => {
+        document.getElementById(outputElementId).textContent = string;
+        currentStringLoadCount--;
+        if (!currentStringLoadCount && window.didFinishLoadingAllStrings)
+            didFinishLoadingAllStrings();
+    });
+    return `<span id=${outputElementId}></span>`;
+}
+
+function writeOutputForEvent(event) {
+    write(`<br><h3>*** Handling ${event.type} ***</h3>`);
+    write(`<div><strong>Types => data</strong></div>`);
+    for (const type of event.clipboardData.types)
+        write(`<div>${type} => "${event.clipboardData.getData(type)}"</div>`);
+    let index = 0;
+    write(`<div><strong>Item list</strong></div>`);
+    for (const item of event.clipboardData.items) {
+        if (item.kind === "file")
+            write(`<div>[${index++}] => ${outputForFile(item.getAsFile())}</div>`);
+        else
+            write(`<div>[${index++}] => (type = "${item.type}", string = "${loadString(item)}")</div>`);
+    }
+    write(`<div><strong>File list</strong></div>`);
+    index = 0;
+    for (const file of event.clipboardData.files)
+        write(`<div>[${index++}] => ${outputForFile(file)}</div>`);
+}
+
+function setCustomData(event) {
+    output.textContent = "";
+
+    event.clipboardData.setData("text/html", "<i>HTML data written using setData</i>");
+    event.clipboardData.items.add("plain text data written using items.add", "text/plain");
+    event.clipboardData.items.add("https://www.webkit.org/", "text/uri-list");
+    event.clipboardData.setData("using setData", "data written using DataTransfer.setData");
+    event.clipboardData.items.add("data written using DataTransferItemList.add", "using add");
+
+    // Per the spec, "text" and "url" will be normalized to "text/plain" and "text/uri-list" when using
+    // DataTransfer.getData. However, this custom data should still be accessible through DataTransferItems.
+    event.clipboardData.items.add("this should be custom data", "text");
+    event.clipboardData.items.add("this should also be custom data", "url");
+
+    writeOutputForEvent(event);
+}
+
+getSelection().setBaseAndExtent(source, 0, source, 1);
+
+document.body.addEventListener("paste", event => {
+    event.preventDefault();
+    writeOutputForEvent(event);
+});
+source.addEventListener("copy", event => {
+    event.preventDefault();
+    setCustomData(event);
+});
+
+if (window.testRunner && window.internals) {
+    internals.settings.setCustomPasteboardDataEnabled(true);
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+
+    document.execCommand("Copy");
+    document.execCommand("Paste");
+
+    didFinishLoadingAllStrings = () => testRunner.notifyDone();
+}
+</script>

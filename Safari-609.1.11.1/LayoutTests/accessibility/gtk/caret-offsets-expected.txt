@@ -1,0 +1,48 @@
+A text header
+
+A paragraph with a link in the middle
+
+A list item
+Block span in a list item
+Inline span in a list item
+Block span in a link in a list item
+Inline span in a link in a list item
+  
+a table cell		
+Block span in a link in a table cell
+Inline span in a link in a table cell	
+Block span in a table cell
+Inline span in a table cell
+This test is replicated from old file testatk.c and tests various scenarios of caret movement: setting caret offset and receiving text-caret-moved signal.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS root.childrenCount is 5
+PASS setCaretOffset(h1, 5) is true
+PASS caretMovedData is "Heading|5"
+PASS caretMovedData is "Paragraph|5"
+PASS caretMovedData is "Paragraph|20"
+PASS caretMovedData became "Paragraph|30"
+PASS setCaretOffset(link, 5) is true
+PASS caretMovedData is "Paragraph|17"
+PASS list.role is "AXRole: AXList"
+PASS list.childrenCount is 3
+PASS setCaretOffset(listItem, 1) is false
+PASS setCaretOffset(listItem, 5) is true
+PASS caretMovedData is "ListItem|5"
+PASS comboBox.role is "AXRole: AXComboBox"
+PASS menuPopup.role is "AXRole: AXMenu"
+PASS comboBoxOption.role is "AXRole: AXMenuItem"
+PASS setCaretOffset(comboBoxOption, 1) is false
+PASS textEntry.role is "AXRole: AXTextField"
+PASS caretMovedData is "TextField|5"
+PASS table.role is "AXRole: AXTable"
+PASS table.childrenCount is 1
+PASS row.role is "AXRole: AXRow"
+PASS tableCell.role is "AXRole: AXCell"
+PASS caretMovedData became "Cell|2"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

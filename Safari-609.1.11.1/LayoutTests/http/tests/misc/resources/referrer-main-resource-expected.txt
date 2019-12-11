@@ -1,0 +1,1 @@
+PASS: The server didn't receive a referrer.

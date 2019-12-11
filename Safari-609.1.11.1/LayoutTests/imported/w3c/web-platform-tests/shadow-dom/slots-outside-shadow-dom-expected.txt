@@ -1,0 +1,4 @@
+foo
+
+FAIL Light DOM slot element should be in flattened assignedNodes assert_array_equals: property 0, expected Element node <slot>foo</slot> but got Text node "foo"
+

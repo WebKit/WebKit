@@ -1,0 +1,7 @@
+2d.line.miter.lineedge
+
+Miter joins are not drawn when the miter limit is exceeded at the corners of a zero-height rectangle
+
+
+FAIL Miter joins are not drawn when the miter limit is exceeded at the corners of a zero-height rectangle null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

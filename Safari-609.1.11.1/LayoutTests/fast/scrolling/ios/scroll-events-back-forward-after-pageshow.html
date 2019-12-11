@@ -1,0 +1,62 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../../../resources/js-test-pre.js"></script>
+  <style>
+    body {
+      height: 2000px;
+    }
+  </style>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description('Tests that scroll event listeners still work after going back to a page in the page cache.');
+
+function testScrollListener(message)
+{
+  window.scrollBy(0, 10);
+}
+
+var scrollEventCount = 0;
+window.addEventListener('scroll', function(e) {
+  ++scrollEventCount;
+}, false);
+
+var pageShowCount = 0;
+function onPageShow()
+{
+  debug('pageshow ' + pageShowCount);
+  if (++pageShowCount == 2) {
+    setTimeout(function() {
+      debug('delayed until after pageshow');
+      testScrollListener('After going back');
+      window.setTimeout(function() {
+        shouldBe('scrollEventCount', '1');
+        finishJSTest();
+      }, 10);
+    }, 10);
+  }
+}
+
+function onPageLoad()
+{
+    // Navigate in a timeout to make sure we create a history entry.
+    setTimeout(function() {
+      window.location.href = 'resources/jump-back.html';
+    }, 0);
+};
+
+window.addEventListener('load', onPageLoad, false);
+window.addEventListener('pageshow', onPageShow, false);
+
+var successfullyParsed = true;
+var jsTestIsAsync = true;
+</script> 
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

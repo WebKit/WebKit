@@ -1,0 +1,322 @@
+html {
+    font-family: "Helvetica Neue","Helvetica",sans-serif;
+    font-size: 62.5%;
+    font-synthesis: none;
+}
+
+body {
+    margin: 0;
+    background-color: #28289f;
+    width: 100%;
+    font-size: 1.6rem;
+    font-weight: 400;
+    line-height: 1.4;
+    color: #c0c040;
+    box-sizing: border-box;
+    padding: 6vw 9vw;
+}
+
+header,
+main,
+footer {
+    box-sizing: border-box;
+    max-width: 780px;
+    margin: 0 auto;
+}
+
+p a {
+    color: #c0c040;
+    text-decoration: none;
+}
+
+p a:hover {
+    text-decoration: underline;
+}
+
+header {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+h2,
+.indicator {
+    font-size: 3rem;
+    color: #e0e0e0;
+    font-weight: 500;
+    line-height: 1.25;
+    margin: 0;
+}
+
+p {
+    color: #ffffff;
+    font-size: 1.8rem;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fade-in 1s ease-in 200ms forwards;
+}
+
+.about h2 {
+    margin-top: 3rem;
+}
+
+.logo {
+    width: 36rem;
+    height: auto;
+    white-space: nowrap;
+    overflow: hidden;
+    margin: 1px 1rem 1px 0;
+    font-size: 7rem;
+    font-style: italic;
+}
+
+.start {
+    flex: 1;
+    display: block;
+    position: relative;
+    background-color: transparent;
+    border: 5px solid #c0c040;
+    font-size: 3rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #c0c040;
+
+    opacity: 0;
+    animation: flicker-in 500ms ease-out 1s forwards;
+
+}
+
+.start.ready {
+    transition: background 0.2s ease-out, color 0.2s ease-out;
+    cursor: pointer;
+}
+
+.start.ready:hover {
+    background-color: #c0c040;
+    color: #2C2C3C;
+}
+
+.start:after {
+    content: '';
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    border-top: 3rem solid #c0c040;
+    border-right: 0 solid transparent;
+    border-bottom: 0 solid transparent;
+    border-left: 3rem solid transparent;
+}
+
+.start.ready .testrun {
+    opacity: 0;
+}
+
+.tests {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.test {
+    position: relative;
+    flex: 1;
+    border-bottom: 1px solid #979797;
+    margin-right: 1rem;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fade-in 1s ease-out 700ms forwards;
+    min-width: 40%;
+}
+
+.test:nth-child(odd) {
+    animation-delay: 900ms;
+}
+
+.overall h2,
+.test h2 {
+    border-bottom: 1px solid #979797;
+}
+
+.test .running {
+    color: #ffffff;
+}
+
+#status {
+    line-height: 5.4rem;
+}
+
+.failed {
+    color: #ff5744;
+}
+
+#status.failed {
+    font-size: 1.5rem;
+}
+
+.test .failed:before {
+    content: '\2716';
+}
+
+.test .running:before {
+    content: '\25b8';
+}
+
+.score {
+    color: #c0c0c0;
+    margin: 1rem 0;
+    position: relative;
+}
+
+.score label {
+    text-transform: uppercase;
+    letter-spacing: 0.02rem;
+    font-weight: 500;
+    display: block;
+    line-height: 1;
+}
+
+.score .value {
+    font-size: 6.4rem;
+    font-weight: 600;
+
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.score .units {
+    font-size: 4rem;
+    font-weight: 600;
+
+}
+
+.score .margin {
+    color: #9B9B9B;
+    position: absolute;
+    font-size: 2rem;
+    top: 2rem;
+    margin-left: 0.2rem;
+}
+
+.overall {
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fade-in 1s ease-out 500ms forwards;
+}
+
+.overall .score  {
+    color: #ffffff;
+}
+
+.overall .margin  {
+    top: 0.5rem;
+}
+
+.about h2 {
+    margin-top: 3rem;
+    opacity: 0;
+    animation: fade-in 1s ease-out 500ms forwards;
+}
+
+.button {
+    display: inline-block;
+    position: relative;
+    border: 5px solid #c0c040;
+    padding: 1rem 3rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    transition: background 0.2s ease-out, color 0.2s ease-out;
+}
+
+.button:hover {
+    background-color: #c0c040;
+    color: #2C2C3C;
+    text-decoration: none;
+}
+
+.button.return:before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    border-top: 2rem solid #c0c040;
+    border-right: 2rem solid transparent;
+    border-bottom: 0 solid transparent;
+    border-left: 0 solid transparent;
+}
+
+#magic {
+    opacity: 0;
+}
+
+@keyframes fade-in {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes scale-in {
+  0%   { opacity: 0; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes flicker-in {
+  0%   { opacity: 0; }
+  30%  { opacity: 0.3; }
+  40%  { opacity: 0; }
+  50%  { opacity: 0.1; }
+  60%  { opacity: 0; }
+  70%  { opacity: 0.4; }
+  80%  { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes wipe-in {
+  0%   { width: 0; }
+  100%  { width: 100vw; }
+}
+
+@media only screen and (max-width: 784px) {
+    .logo {
+        width: 100%;
+        margin-bottom: 1rem;
+        margin: 0 0 1rem 0;
+    }
+    .start {
+        width: 100%;
+    }
+    .test {
+        flex: none;
+        width: 100%;
+    }
+    #status {
+        line-height: 4.3rem;
+    }
+    .start {
+        font-size: 2.1rem;
+    }
+    #status.failed {
+        font-size: 1.4rem;
+    }
+    p {
+        font-size: 1.6rem;
+    }
+}
+
+@media only screen and (max-width: 320px) {
+    #status {
+        line-height: 3.8rem;
+    }
+    .start {
+        font-size: 1.9rem;
+    }
+    #status.failed {
+        font-size: 1.1rem;
+    }
+    p {
+        font-size: 1.4rem;
+    }
+}

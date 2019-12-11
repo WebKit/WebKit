@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 11: 0
+CONSOLE MESSAGE: line 11: 1
+Test that terminating an ongoing fetch in a worker does not cause a crash.
+
+PASS: No crash.

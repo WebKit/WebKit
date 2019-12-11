@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<div id="testDiv" style="position: absolute;"></div>
+<script>
+description("Tests using floating-point angles with 'turn' unit.");
+
+var testDiv = document.getElementById("testDiv");
+
+// -webkit-transform:rotate(0deg);
+shouldBeEmptyString("testDiv.style['-webkit-transform']");
+evalAndLog("testDiv.style['-webkit-transform'] = 'rotate(0.5turn)'");
+shouldBeEqualToString("testDiv.style['-webkit-transform']", "rotate(0.5turn)");
+
+evalAndLog("testDiv.style['-webkit-transform'] = 'rotate(calc(2turn * 1.5))'");
+shouldBeEqualToString("testDiv.style['-webkit-transform']", "rotate(calc(3turn))");
+
+evalAndLog("testDiv.style['-webkit-transform'] = 'rotate(calc(1turn * 2 + 2.5deg))'");
+shouldBeEqualToString("testDiv.style['-webkit-transform']", "rotate(calc(722.5deg))");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>

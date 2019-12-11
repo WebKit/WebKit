@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 1: SyntaxError: Unexpected identifier 'sensitive'
+Test that error events won't reveal any potentially sensitive script content if the latter is loaded from a different domain after a redirect. The test passes if you don't see any data from the linked resource. Bug 52903.
+
+error event message: Script error. at : 0:0 null

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runRepaintTest()">
+    <script xlink:href="../../fast/repaint/resources/repaint.js"/>
+    <text x="20" y="60" font-family="Ahem" font-size="50px" style="text-shadow: 200px 200px 5px red">X</text>
+    <text x="170" y="60" font-family="Ahem" font-size="50px" style="text-shadow: 200px 200px 5px red">X</text>
+
+    <script>
+        function repaintTest() {
+            document.getElementsByTagName('text')[1].setAttribute("x", 171);
+        }
+    </script>
+</svg>

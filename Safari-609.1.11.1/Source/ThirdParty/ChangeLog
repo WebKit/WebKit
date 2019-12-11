@@ -1,0 +1,3197 @@
+2019-11-01  Tim Horton  <timothy_horton@apple.com>
+
+        macCatalyst: Get TestWebKitAPI building
+        https://bugs.webkit.org/show_bug.cgi?id=203728
+
+        Reviewed by Alexey Proskuryakov.
+
+        * gtest/xcode/Config/General.xcconfig:
+        * gtest/xcode/Config/SDKVariant.xcconfig: Added.
+        Add SDKVariant.xcconfig to gtest so that it builds into the correct directory.
+
+2019-08-29  Keith Rollin  <krollin@apple.com>
+
+        Update .xcconfig symbols to reflect the current set of past and future product versions.
+        https://bugs.webkit.org/show_bug.cgi?id=200720
+        <rdar://problem/54305032>
+
+        Reviewed by Alex Christensen.
+
+        Remove version symbols related to old OS's we no longer support,
+        ensure that version symbols are defined for OS's we do support.
+
+        * gtest/xcode/Config/DebugProject.xcconfig:
+        * gtest/xcode/Config/ReleaseProject.xcconfig:
+
+2019-07-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix static analyzer build
+        https://bugs.webkit.org/show_bug.cgi?id=200201
+
+        Reviewed by Anders Carlsson.
+
+        * Makefile: Add an analyze target, as this makefile is now used for full builds,
+        including static analyzer ones.
+
+2019-04-29  Alex Christensen  <achristensen@webkit.org>
+
+        <rdar://problem/50299396> Fix internal High Sierra build
+        https://bugs.webkit.org/show_bug.cgi?id=197388
+
+        * gtest/xcode/Config/General.xcconfig:
+
+2019-04-28  Andy Estes  <aestes@apple.com>
+
+        Fix the watchOS engineering build.
+
+        * Makefile: Started building libwebrtc on watchOS.
+
+2019-04-25  Alex Christensen  <achristensen@webkit.org>
+
+        Start using C++17
+        https://bugs.webkit.org/show_bug.cgi?id=197131
+
+        Reviewed by Darin Adler.
+
+        * gtest/xcode/Config/General.xcconfig:
+
+2018-10-30  Don Olmstead  <don.olmstead@sony.com>
+
+        [PlayStation] Enable JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=191072
+
+        Reviewed by Brent Fulgham.
+
+        Add platform files for the PlayStation port.
+
+        * gtest/PlatformPlayStation.cmake: Added.
+
+2018-10-08  Dan Bernstein  <mitz@apple.com>
+
+        gtest part of [Xcode] Update some build settings as recommended by Xcode 10
+        https://bugs.webkit.org/show_bug.cgi?id=190250
+
+        Reviewed by Anders Carlsson.
+
+        Didn’t turn on any of the warnings Xcode recommended for this third-party test support
+        library.
+
+        * gtest/xcode/Config/DebugProject.xcconfig: Set the deployment target in engineering builds
+          like we do in other projects. This addresses a build-time warning when building clients
+          of the library that its deployment target doesn’t match theirs.
+        * gtest/xcode/Config/ReleaseProject.xcconfig: Ditto.
+
+        * gtest/xcode/gtest.xcodeproj/project.pbxproj: Let Xcode update LastUpgradeCheck.
+
+2018-09-05  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Allow port specific options on gtest
+        https://bugs.webkit.org/show_bug.cgi?id=189313
+
+        Reviewed by Alex Christensen.
+
+        Allows a port to configure options within gtest for its platform.
+        The library type can be set otherwise it defaults to shared. Also the
+        compile definitions are propogated to TestWebKitAPI through a global
+        property.
+
+        * gtest/CMakeLists.txt:
+        * gtest/PlatformWin.cmake: Added.
+
+2018-09-04  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Update googletest
+        https://bugs.webkit.org/show_bug.cgi?id=175722
+
+        Reviewed by Brent Fulgham.
+
+        * gtest/:
+        Update to 1.8.1.
+
+        * gtest/CMakeLists.txt:
+        * gtest/xcode/:
+        Keep our versions of these build files, making any necessary additive updates
+        and removing WTF/JSC dependencies so that we stop forking third-party source.
+
+2018-07-17  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Update xdgmime
+        https://bugs.webkit.org/show_bug.cgi?id=187727
+
+        Reviewed by Carlos Garcia Campos.
+
+        * xdgmime/README:
+        * xdgmime/README.webkit:
+        * xdgmime/src/xdgmime.c:
+        (_xdg_mime_mime_type_subclass):
+        * xdgmime/src/xdgmimecache.c:
+        (_xdg_mime_cache_new_from_file):
+        (_xdg_mime_cache_get_mime_type_for_file):
+        (_xdg_mime_cache_mime_type_subclass):
+
+2018-07-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Another memory issue in xdgmime
+        https://bugs.webkit.org/show_bug.cgi?id=187239
+
+        Reviewed by Carlos Garcia Campos.
+
+        Sync the end of xdg_mime_get_mime_type_for_file() with _xdg_mime_cache_get_mime_type_for_file()
+        to avoid a memory issue.
+
+        I'm pretty sure this code is never executed by either Chromium or WebKit, but I'm not
+        comfortable with leaving it broken.
+
+        * xdgmime/README.webkit:
+        * xdgmime/src/xdgmime.c:
+        (xdg_mime_get_mime_type_for_file):
+
+2018-06-30  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Fix off-by-one error in xdg_mime_get_simple_globs
+        https://bugs.webkit.org/show_bug.cgi?id=186554
+
+        Reviewed by Daniel Bates.
+
+        We have an off-by-one error here in some code that was added for WebKit. (This is not an
+        issue with upstream xdgmime.)
+
+        No new tests. This problem is caught by TestDownloads, but only when running with ASan
+        enabled.
+
+        * xdgmime/src/xdgmimecache.c:
+        (get_simple_globs):
+        * xdgmime/src/xdgmimeglob.c:
+        (get_simple_globs):
+
+2018-06-27  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        MIME type subclass check should guard against small strings
+        https://bugs.webkit.org/show_bug.cgi?id=186977
+
+        Reviewed by Carlos Garcia Campos.
+
+        Sadly, this code is duplicated between two different files because it is not good.
+
+        * xdgmime/README.webkit:
+        * xdgmime/src/xdgmime.c:
+        (ends_with):
+        (xdg_mime_is_super_type):
+        * xdgmime/src/xdgmimecache.c:
+        (ends_with):
+        (is_super_type):
+
+2018-06-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Update xdgmime
+        https://bugs.webkit.org/show_bug.cgi?id=186907
+
+        Reviewed by Carlos Garcia Campos.
+
+        Only one change, fixes https://bugs.freedesktop.org/show_bug.cgi?id=97372.
+
+        * xdgmime/README.webkit:
+        * xdgmime/src/xdgmimeint.c:
+        (_xdg_binary_or_text_fallback):
+
+2018-05-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r232052.
+
+        Breaks internal builds.
+
+        Reverted changeset:
+
+        "Use more C++17"
+        https://bugs.webkit.org/show_bug.cgi?id=185176
+        https://trac.webkit.org/changeset/232052
+
+2018-05-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use more C++17
+        https://bugs.webkit.org/show_bug.cgi?id=185176
+
+        Reviewed by JF Bastien.
+
+        * gtest/xcode/Config/General.xcconfig:
+
+2018-05-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [Win] Use C++17 in MSVC
+        https://bugs.webkit.org/show_bug.cgi?id=185232
+
+        Reviewed by Alex Christensen.
+
+        Use std::tuple instead of std::tr1::tuple since std::tr1::tuple is removed in C++17 MSVC.
+        In a subsequent patch, we will upgrade gtest too.
+
+        * gtest/include/gtest/internal/gtest-param-util-generated.h:
+        (testing::internal::CartesianProductHolder2::operator ParamGenerator< ::std::tuple<T1, T2> > const):
+        (testing::internal::CartesianProductHolder3::operator ParamGenerator< ::std::tuple<T1, T2, T3> > const):
+        (testing::internal::CartesianProductHolder4::operator ParamGenerator< ::std::tuple<T1, T2, T3, T4> > const):
+        (testing::internal::CartesianProductHolder5::operator ParamGenerator< ::std::tuple<T1, T2, T3, T4, T5> > const):
+        (testing::internal::CartesianProductHolder6::operator ParamGenerator< ::std::tuple<T1, T2, T3, T4, T5, T6> > const):
+        (testing::internal::CartesianProductHolder7:: const):
+        (testing::internal::CartesianProductHolder8:: const):
+        (testing::internal::CartesianProductHolder9:: const):
+        (testing::internal::CartesianProductHolder10:: const):
+        (testing::internal::CartesianProductHolder2::operator ParamGenerator< ::std::tr1::tuple<T1, T2> > const): Deleted.
+        (testing::internal::CartesianProductHolder3::operator ParamGenerator< ::std::tr1::tuple<T1, T2, T3> > const): Deleted.
+        (testing::internal::CartesianProductHolder4::operator ParamGenerator< ::std::tr1::tuple<T1, T2, T3, T4> > const): Deleted.
+        (testing::internal::CartesianProductHolder5::operator ParamGenerator< ::std::tr1::tuple<T1, T2, T3, T4, T5> > const): Deleted.
+        (testing::internal::CartesianProductHolder6::operator ParamGenerator< ::std::tr1::tuple<T1, T2, T3, T4, T5, T6> > const): Deleted.
+        * gtest/include/gtest/internal/gtest-tuple.h:
+
+2018-05-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Fix some -Wstring-op-truncation warnings
+        https://bugs.webkit.org/show_bug.cgi?id=185496
+
+        Reviewed by Alex Christensen.
+
+        Disable this warning when building gtest.
+
+        * gtest/CMakeLists.txt:
+
+2018-05-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] Build cleanly with GCC 8 and ICU 60
+        https://bugs.webkit.org/show_bug.cgi?id=185462
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * xdgmime/CMakeLists.txt: Silence -Wno-cast-function-type. I'm not fighting xdg-mime.
+
+2018-05-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC][GTK][JSCONLY] Use capstone disassembler
+        https://bugs.webkit.org/show_bug.cgi?id=185283
+
+        Reviewed by Michael Catanzaro.
+
+        Add capstone to ThirdParty. We build capstone as a static library,
+        and link it against JSC. We only build disassembler for target architecture.
+        So for MIPS target, we only enable MIPS part of capstone.
+
+        We also remove unnecessary architectures in capstone, XCore, PowerPC, SystemZ, etc.
+        This is simply done by deleting these architecture directories.
+
+        We pick "next" branch instead of "master" branch since "next" branch is actively
+        developed.
+
+        * capstone/CMakeLists.txt: Added.
+        * capstone/Source/.appveyor.yml: Added.
+        * capstone/Source/.gitattributes: Added.
+        * capstone/Source/.gitignore: Added.
+        * capstone/Source/.travis.yml: Added.
+        * capstone/Source/CMakeLists.txt: Added.
+        * capstone/Source/COMPILE.TXT: Added.
+        * capstone/Source/COMPILE_CMAKE.TXT: Added.
+        * capstone/Source/COMPILE_MSVC.TXT: Added.
+        * capstone/Source/CREDITS.TXT: Added.
+        * capstone/Source/ChangeLog-capstone: Added.
+        * capstone/Source/HACK.TXT: Added.
+        * capstone/Source/LEB128.h: Added.
+        (decodeULEB128):
+        * capstone/Source/LICENSE.TXT: Added.
+        * capstone/Source/LICENSE_LLVM.TXT: Added.
+        * capstone/Source/MCDisassembler.h: Added.
+        * capstone/Source/MCFixedLenDisassembler.h: Added.
+        * capstone/Source/MCInst.c: Added.
+        (MCInst_Init):
+        (MCInst_clear):
+        (MCInst_insert0):
+        (MCInst_setOpcode):
+        (MCInst_setOpcodePub):
+        (MCInst_getOpcode):
+        (MCInst_getOpcodePub):
+        (MCInst_getOperand):
+        (MCInst_getNumOperands):
+        (MCInst_addOperand2):
+        (MCOperand_Init):
+        (MCOperand_isValid):
+        (MCOperand_isReg):
+        (MCOperand_isImm):
+        (MCOperand_isFPImm):
+        (MCOperand_getReg):
+        (MCOperand_setReg):
+        (MCOperand_getImm):
+        (MCOperand_setImm):
+        (MCOperand_getFPImm):
+        (MCOperand_setFPImm):
+        (MCOperand_CreateReg1):
+        (MCOperand_CreateReg0):
+        (MCOperand_CreateImm1):
+        (MCOperand_CreateImm0):
+        * capstone/Source/MCInst.h: Added.
+        * capstone/Source/MCInstrDesc.c: Added.
+        (MCOperandInfo_isPredicate):
+        (MCOperandInfo_isOptionalDef):
+        * capstone/Source/MCInstrDesc.h: Added.
+        * capstone/Source/MCRegisterInfo.c: Added.
+        (MCRegisterInfo_InitMCRegisterInfo):
+        (DiffListIterator_init):
+        (DiffListIterator_getVal):
+        (DiffListIterator_next):
+        (DiffListIterator_isValid):
+        (MCRegisterInfo_getMatchingSuperReg):
+        (MCRegisterInfo_getSubReg):
+        (MCRegisterInfo_getRegClass):
+        (MCRegisterClass_contains):
+        * capstone/Source/MCRegisterInfo.h: Added.
+        * capstone/Source/Makefile: Added.
+        * capstone/Source/MathExtras.h: Added.
+        (Hi_32):
+        (Lo_32):
+        (isUIntN):
+        (isMask_32):
+        (isMask_64):
+        (isShiftedMask_32):
+        (isShiftedMask_64):
+        (isPowerOf2_32):
+        (CountLeadingZeros_32):
+        (CountLeadingOnes_32):
+        (CountLeadingZeros_64):
+        (CountLeadingOnes_64):
+        (CountTrailingZeros_32):
+        (CountTrailingOnes_32):
+        (CountTrailingZeros_64):
+        (CountTrailingOnes_64):
+        (CountPopulation_32):
+        (CountPopulation_64):
+        (Log2_32):
+        (Log2_64):
+        (Log2_32_Ceil):
+        (Log2_64_Ceil):
+        (GreatestCommonDivisor64):
+        (BitsToDouble):
+        (BitsToFloat):
+        (DoubleToBits):
+        (FloatToBits):
+        (MinAlign):
+        (NextPowerOf2):
+        (RoundUpToAlignment):
+        (OffsetToAlignment):
+        (abs64):
+        (SignExtend32):
+        (SignExtend64):
+        (countLeadingZeros):
+        * capstone/Source/README.md: Added.
+        * capstone/Source/RELEASE_NOTES: Added.
+        * capstone/Source/SStream.c: Added.
+        (SStream_Init):
+        (SStream_concat0):
+        (SStream_concat):
+        (printInt64Bang):
+        (printUInt64Bang):
+        (printInt64):
+        (printInt32BangDec):
+        (printInt32Bang):
+        (printInt32):
+        (printUInt32Bang):
+        (printUInt32):
+        * capstone/Source/SStream.h: Added.
+        * capstone/Source/TODO: Added.
+        * capstone/Source/arch/ARM/ARMAddressingModes.h: Added.
+        (ARM_AM_getAddrOpcStr):
+        (ARM_AM_getShiftOpcStr):
+        (ARM_AM_getShiftOpcEncoding):
+        (ARM_AM_getAMSubModeStr):
+        (rotr32):
+        (rotl32):
+        (getSORegOpc):
+        (getSORegOffset):
+        (ARM_AM_getSORegShOp):
+        (getSOImmValImm):
+        (getSOImmValRot):
+        (getSOImmValRotate):
+        (getSOImmVal):
+        (isSOImmTwoPartVal):
+        (getSOImmTwoPartFirst):
+        (getSOImmTwoPartSecond):
+        (getThumbImmValShift):
+        (isThumbImmShiftedVal):
+        (getThumbImm16ValShift):
+        (isThumbImm16ShiftedVal):
+        (getThumbImmNonShiftedVal):
+        (getT2SOImmValSplatVal):
+        (getT2SOImmValRotateVal):
+        (getT2SOImmVal):
+        (getT2SOImmValRotate):
+        (isT2SOImmTwoPartVal):
+        (getT2SOImmTwoPartFirst):
+        (getT2SOImmTwoPartSecond):
+        (ARM_AM_getAM2Opc):
+        (getAM2Offset):
+        (getAM2Op):
+        (getAM2ShiftOpc):
+        (getAM2IdxMode):
+        (getAM3Opc):
+        (getAM3Offset):
+        (getAM3Op):
+        (getAM3IdxMode):
+        (getAM4SubMode):
+        (getAM4ModeImm):
+        (ARM_AM_getAM5Opc):
+        (ARM_AM_getAM5Offset):
+        (ARM_AM_getAM5Op):
+        (createNEONModImm):
+        (getNEONModImmOpCmode):
+        (getNEONModImmVal):
+        (ARM_AM_decodeNEONModImm):
+        (getFPImmFloat):
+        * capstone/Source/arch/ARM/ARMBaseInfo.h: Added.
+        (ARMCC_getOppositeCondition):
+        (ARMCC_ARMCondCodeToString):
+        (ARM_PROC_IFlagsToString):
+        (ARM_PROC_IModToString):
+        (ARM_MB_MemBOptToString):
+        (ARM_ISB_InstSyncBOptToString):
+        (isARMLowRegister):
+        (ARMII_AddrModeToString):
+        * capstone/Source/arch/ARM/ARMDisassembler.c: Added.
+        (ITStatus_push_back):
+        (ITStatus_instrInITBlock):
+        (ITStatus_instrLastInITBlock):
+        (ITStatus_getITCC):
+        (ITStatus_advanceITState):
+        (ITStatus_setITState):
+        (Check):
+        (ARM_getFeatureBits):
+        (DecodePredicateOperand):
+        (ARM_init):
+        (checkDecodedInstruction):
+        (_ARM_getInstruction):
+        (AddThumb1SBit):
+        (AddThumbPredicate):
+        (UpdateThumbVFPPredicate):
+        (_Thumb_getInstruction):
+        (Thumb_getInstruction):
+        (ARM_getInstruction):
+        (DecodeGPRnopcRegisterClass):
+        (DecodeGPRwithAPSRRegisterClass):
+        (DecodetGPRRegisterClass):
+        (DecodetcGPRRegisterClass):
+        (DecoderGPRRegisterClass):
+        (DecodeDPRRegisterClass):
+        (DecodeDPR_8RegisterClass):
+        (DecodeDPR_VFP2RegisterClass):
+        (DecodeDPairRegisterClass):
+        (DecodeCCOutOperand):
+        (DecodeSORegImmOperand):
+        (DecodeSORegRegOperand):
+        (DecodeRegListOperand):
+        (DecodeSPRRegListOperand):
+        (DecodeDPRRegListOperand):
+        (DecodeBitfieldMaskOperand):
+        (DecodeCopMemInstruction):
+        (DecodeAddrMode2IdxInstruction):
+        (DecodeSORegMemOperand):
+        (DecodeAddrMode3Instruction):
+        (DecodeRFEInstruction):
+        (DecodeQADDInstruction):
+        (DecodeMemMultipleWritebackInstruction):
+        (DecodeCPSInstruction):
+        (DecodeT2CPSInstruction):
+        (DecodeT2MOVTWInstruction):
+        (DecodeArmMOVTWInstruction):
+        (DecodeSMLAInstruction):
+        (DecodeAddrModeImm12Operand):
+        (DecodeAddrMode5Operand):
+        (DecodeAddrMode7Operand):
+        (DecodeT2BInstruction):
+        (DecodeBranchImmInstruction):
+        (DecodeAddrMode6Operand):
+        (DecodeVLDInstruction):
+        (DecodeVLDST1Instruction):
+        (DecodeVLDST2Instruction):
+        (DecodeVLDST3Instruction):
+        (DecodeVLDST4Instruction):
+        (DecodeVSTInstruction):
+        (DecodeVLD1DupInstruction):
+        (DecodeVLD2DupInstruction):
+        (DecodeVLD3DupInstruction):
+        (DecodeVLD4DupInstruction):
+        (DecodeNEONModImmInstruction):
+        (DecodeVSHLMaxInstruction):
+        (DecodeShiftRight8Imm):
+        (DecodeShiftRight16Imm):
+        (DecodeShiftRight32Imm):
+        (DecodeShiftRight64Imm):
+        (DecodeTBLInstruction):
+        (DecodeThumbAddSpecialReg):
+        (DecodeThumbBROperand):
+        (DecodeT2BROperand):
+        (DecodeThumbCmpBROperand):
+        (DecodeThumbAddrModeRR):
+        (DecodeThumbAddrModeIS):
+        (DecodeThumbAddrModePC):
+        (DecodeThumbAddrModeSP):
+        (DecodeT2AddrModeSOReg):
+        (DecodeT2LoadShift):
+        (DecodeT2LoadImm8):
+        (DecodeT2LoadImm12):
+        (DecodeT2LoadT):
+        (DecodeT2LoadLabel):
+        (DecodeT2Imm8S4):
+        (DecodeT2AddrModeImm8s4):
+        (DecodeT2AddrModeImm0_1020s4):
+        (DecodeT2Imm8):
+        (DecodeT2AddrModeImm8):
+        (DecodeT2LdStPre):
+        (DecodeT2AddrModeImm12):
+        (DecodeThumbAddSPImm):
+        (DecodeThumbAddSPReg):
+        (DecodeThumbCPS):
+        (DecodePostIdxReg):
+        (DecodeThumbBLXOffset):
+        (DecodeCoprocessor):
+        (DecodeThumbTableBranch):
+        (DecodeThumb2BCCInstruction):
+        (DecodeT2SOImm):
+        (DecodeThumbBCCTargetOperand):
+        (DecodeThumbBLTargetOperand):
+        (DecodeMemBarrierOption):
+        (DecodeInstSyncBarrierOption):
+        (DecodeMSRMask):
+        (DecodeBankedReg):
+        (DecodeDoubleRegLoad):
+        (DecodeDoubleRegStore):
+        (DecodeLDRPreImm):
+        (DecodeLDRPreReg):
+        (DecodeSTRPreImm):
+        (DecodeSTRPreReg):
+        (DecodeVLD1LN):
+        (DecodeVST1LN):
+        (DecodeVLD2LN):
+        (DecodeVST2LN):
+        (DecodeVLD3LN):
+        (DecodeVST3LN):
+        (DecodeVLD4LN):
+        (DecodeVST4LN):
+        (DecodeVMOVSRR):
+        (DecodeVMOVRRS):
+        (DecodeIT):
+        (DecodeT2LDRDPreInstruction):
+        (DecodeT2STRDPreInstruction):
+        (DecodeT2Adr):
+        (DecodeT2ShifterImmOperand):
+        (DecodeSwap):
+        (DecodeVCVTD):
+        (DecodeVCVTQ):
+        (DecodeLDR):
+        (DecodeMRRC2):
+        * capstone/Source/arch/ARM/ARMDisassembler.h: Added.
+        * capstone/Source/arch/ARM/ARMGenAsmWriter.inc: Added.
+        * capstone/Source/arch/ARM/ARMGenDisassemblerTables.inc: Added.
+        * capstone/Source/arch/ARM/ARMGenInstrInfo.inc: Added.
+        * capstone/Source/arch/ARM/ARMGenRegisterInfo.inc: Added.
+        * capstone/Source/arch/ARM/ARMGenSubtargetInfo.inc: Added.
+        * capstone/Source/arch/ARM/ARMInstPrinter.c: Added.
+        (get_op_access):
+        (set_mem_access):
+        (op_addImm):
+        (ARM_getRegName):
+        (translateShiftImm):
+        (printRegImmShift):
+        (printRegName):
+        (ARM_printInst):
+        (printOperand):
+        (printThumbLdrLabelOperand):
+        (printSORegRegOperand):
+        (printSORegImmOperand):
+        (printAM2PreOrOffsetIndexOp):
+        (printAddrModeTBB):
+        (printAddrModeTBH):
+        (printAddrMode2Operand):
+        (printAddrMode2OffsetOperand):
+        (printAM3PreOrOffsetIndexOp):
+        (printAddrMode3Operand):
+        (printAddrMode3OffsetOperand):
+        (printPostIdxImm8Operand):
+        (printPostIdxRegOperand):
+        (printPostIdxImm8s4Operand):
+        (printAddrMode5Operand):
+        (printAddrMode6Operand):
+        (printAddrMode7Operand):
+        (printAddrMode6OffsetOperand):
+        (printBitfieldInvMaskImmOperand):
+        (printMemBOption):
+        (printInstSyncBOption):
+        (printShiftImmOperand):
+        (printPKHLSLShiftImm):
+        (printPKHASRShiftImm):
+        (printRegisterList):
+        (printGPRPairOperand):
+        (printSetendOperand):
+        (printCPSIMod):
+        (printCPSIFlag):
+        (printMSRMaskOperand):
+        (printBankedRegOperand):
+        (printPredicateOperand):
+        (printMandatoryPredicateOperand):
+        (printSBitModifierOperand):
+        (printNoHashImmediate):
+        (printPImmediate):
+        (printCImmediate):
+        (printCoprocOptionImm):
+        (printAdrLabelOperand):
+        (printThumbS4ImmOperand):
+        (printThumbSRImm):
+        (printThumbITMask):
+        (printThumbAddrModeRROperand):
+        (printThumbAddrModeImm5SOperand):
+        (printThumbAddrModeImm5S1Operand):
+        (printThumbAddrModeImm5S2Operand):
+        (printThumbAddrModeImm5S4Operand):
+        (printThumbAddrModeSPOperand):
+        (printT2SOOperand):
+        (printAddrModeImm12Operand):
+        (printT2AddrModeImm8Operand):
+        (printT2AddrModeImm8s4Operand):
+        (printT2AddrModeImm0_1020s4Operand):
+        (printT2AddrModeImm8OffsetOperand):
+        (printT2AddrModeImm8s4OffsetOperand):
+        (printT2AddrModeSoRegOperand):
+        (printFPImmOperand):
+        (printNEONModImmOperand):
+        (printImmPlusOneOperand):
+        (printRotImmOperand):
+        (printModImmOperand):
+        (printFBits16):
+        (printFBits32):
+        (printVectorIndex):
+        (printVectorListOne):
+        (printVectorListTwo):
+        (printVectorListTwoSpaced):
+        (printVectorListThree):
+        (printVectorListFour):
+        (printVectorListOneAllLanes):
+        (printVectorListTwoAllLanes):
+        (printVectorListThreeAllLanes):
+        (printVectorListFourAllLanes):
+        (printVectorListTwoSpacedAllLanes):
+        (printVectorListThreeSpacedAllLanes):
+        (printVectorListFourSpacedAllLanes):
+        (printVectorListThreeSpaced):
+        (printVectorListFourSpaced):
+        (ARM_addVectorDataType):
+        (ARM_addVectorDataSize):
+        (ARM_addReg):
+        (ARM_addUserMode):
+        (ARM_addSysReg):
+        * capstone/Source/arch/ARM/ARMInstPrinter.h: Added.
+        * capstone/Source/arch/ARM/ARMMapping.c: Added.
+        (ARM_reg_name2):
+        (ARM_insn_name):
+        (ARM_rel_branch):
+        (ARM_blx_to_arm_mode):
+        (ARM_reg_access):
+        * capstone/Source/arch/ARM/ARMMapping.h: Added.
+        * capstone/Source/arch/ARM/ARMMappingInsn.inc: Added.
+        * capstone/Source/arch/ARM/ARMMappingInsnOp.inc: Added.
+        * capstone/Source/arch/ARM/ARMModule.c: Added.
+        (init):
+        (option):
+        (ARM_enable):
+        * capstone/Source/arch/Mips/MipsDisassembler.c: Added.
+        (getFeatureBits):
+        (Mips_init):
+        (readInstruction16):
+        (readInstruction32):
+        (MipsDisassembler_getInstruction):
+        (Mips_getInstruction):
+        (getReg):
+        (DecodeINSVE_DF_4):
+        (DecodeAddiGroupBranch_4):
+        (DecodeDaddiGroupBranch_4):
+        (DecodeBlezlGroupBranch_4):
+        (DecodeBgtzlGroupBranch_4):
+        (DecodeBgtzGroupBranch_4):
+        (DecodeBlezGroupBranch_4):
+        (DecodeCPU16RegsRegisterClass):
+        (DecodeGPR64RegisterClass):
+        (DecodeGPRMM16RegisterClass):
+        (DecodeGPRMM16ZeroRegisterClass):
+        (DecodeGPRMM16MovePRegisterClass):
+        (DecodeGPR32RegisterClass):
+        (DecodePtrRegisterClass):
+        (DecodeDSPRRegisterClass):
+        (DecodeFGR64RegisterClass):
+        (DecodeFGR32RegisterClass):
+        (DecodeCCRRegisterClass):
+        (DecodeFCCRegisterClass):
+        (DecodeCCRegisterClass):
+        (DecodeFGRCCRegisterClass):
+        (DecodeMem):
+        (DecodeCacheOp):
+        (DecodeCacheOpMM):
+        (DecodeCacheOpR6):
+        (DecodeSyncI):
+        (DecodeMSA128Mem):
+        (DecodeMemMMImm4):
+        (DecodeMemMMSPImm5Lsl2):
+        (DecodeMemMMGPImm7Lsl2):
+        (DecodeMemMMReglistImm4Lsl2):
+        (DecodeMemMMImm12):
+        (DecodeMemMMImm16):
+        (DecodeFMem):
+        (DecodeFMem2):
+        (DecodeFMem3):
+        (DecodeFMemCop2R6):
+        (DecodeSpecial3LlSc):
+        (DecodeHWRegsRegisterClass):
+        (DecodeAFGR64RegisterClass):
+        (DecodeACC64DSPRegisterClass):
+        (DecodeHI32DSPRegisterClass):
+        (DecodeLO32DSPRegisterClass):
+        (DecodeMSA128BRegisterClass):
+        (DecodeMSA128HRegisterClass):
+        (DecodeMSA128WRegisterClass):
+        (DecodeMSA128DRegisterClass):
+        (DecodeMSACtrlRegisterClass):
+        (DecodeCOP2RegisterClass):
+        (DecodeBranchTarget):
+        (DecodeJumpTarget):
+        (DecodeBranchTarget21):
+        (DecodeBranchTarget26):
+        (DecodeBranchTarget7MM):
+        (DecodeBranchTarget10MM):
+        (DecodeBranchTargetMM):
+        (DecodeJumpTargetMM):
+        (DecodeAddiur2Simm7):
+        (DecodeUImm6Lsl2):
+        (DecodeLiSimm7):
+        (DecodeSimm4):
+        (DecodeSimm16):
+        (DecodeLSAImm):
+        (DecodeInsSize):
+        (DecodeExtSize):
+        (DecodeSimm19Lsl2):
+        (DecodeSimm18Lsl3):
+        (DecodeSimm9SP):
+        (DecodeANDI16Imm):
+        (DecodeUImm5lsl2):
+        (DecodeRegListOperand):
+        (DecodeRegListOperand16):
+        (DecodeMovePRegPair):
+        (DecodeSimm23Lsl2):
+        * capstone/Source/arch/Mips/MipsDisassembler.h: Added.
+        * capstone/Source/arch/Mips/MipsGenAsmWriter.inc: Added.
+        * capstone/Source/arch/Mips/MipsGenDisassemblerTables.inc: Added.
+        * capstone/Source/arch/Mips/MipsGenInstrInfo.inc: Added.
+        * capstone/Source/arch/Mips/MipsGenRegisterInfo.inc: Added.
+        * capstone/Source/arch/Mips/MipsGenSubtargetInfo.inc: Added.
+        * capstone/Source/arch/Mips/MipsInstPrinter.c: Added.
+        (set_mem_access):
+        (isReg):
+        (MipsFCCToString):
+        (printRegName):
+        (Mips_printInst):
+        (printOperand):
+        (printUnsignedImm):
+        (printUnsignedImm8):
+        (printMemOperand):
+        (printMemOperandEA):
+        (printFCCOperand):
+        (printRegisterPair):
+        (printAlias1):
+        (printAlias2):
+        (printAlias):
+        (printRegisterList):
+        * capstone/Source/arch/Mips/MipsInstPrinter.h: Added.
+        * capstone/Source/arch/Mips/MipsMapping.c: Added.
+        (Mips_get_insn_id):
+        (Mips_group_name):
+        (Mips_map_insn):
+        (Mips_map_register):
+        * capstone/Source/arch/Mips/MipsMapping.h: Added.
+        * capstone/Source/arch/Mips/MipsMappingInsn.inc: Added.
+        * capstone/Source/arch/Mips/MipsModule.c: Added.
+        (init):
+        (option):
+        (Mips_enable):
+        * capstone/Source/capstone.pc.in: Added.
+        * capstone/Source/config.mk: Added.
+        * capstone/Source/cs.c: Added.
+        (cs_kern_os_calloc):
+        (cs_version):
+        (cs_support):
+        (cs_errno):
+        (cs_strerror):
+        (cs_open):
+        (cs_close):
+        (fill_insn):
+        (skipdata_size):
+        (cs_option):
+        (skipdata_opstr):
+        (cs_disasm):
+        (cs_disasm_ex):
+        (cs_free):
+        (cs_malloc):
+        (cs_disasm_iter):
+        (cs_reg_name):
+        (cs_insn_name):
+        (cs_group_name):
+        (cs_insn_group):
+        (cs_reg_read):
+        (cs_reg_write):
+        (cs_op_count):
+        (cs_op_index):
+        (cs_regs_access):
+        * capstone/Source/cs_priv.h: Added.
+        * capstone/Source/functions.mk: Added.
+        * capstone/Source/include/capstone/arm.h: Added.
+        * capstone/Source/include/capstone/arm64.h: Added.
+        * capstone/Source/include/capstone/capstone.h: Added.
+        * capstone/Source/include/capstone/evm.h: Added.
+        * capstone/Source/include/capstone/m680x.h: Added.
+        * capstone/Source/include/capstone/m68k.h: Added.
+        * capstone/Source/include/capstone/mips.h: Added.
+        * capstone/Source/include/capstone/platform.h: Added.
+        * capstone/Source/include/capstone/ppc.h: Added.
+        * capstone/Source/include/capstone/sparc.h: Added.
+        * capstone/Source/include/capstone/systemz.h: Added.
+        * capstone/Source/include/capstone/tms320c64x.h: Added.
+        * capstone/Source/include/capstone/x86.h: Added.
+        * capstone/Source/include/capstone/xcore.h: Added.
+        * capstone/Source/include/windowsce/intrin.h: Added.
+        * capstone/Source/include/windowsce/stdint.h: Added.
+        * capstone/Source/make.sh: Added.
+        * capstone/Source/nmake-x86.bat: Added.
+        * capstone/Source/nmake.bat: Added.
+        * capstone/Source/pkgconfig.mk: Added.
+        * capstone/Source/utils.c: Added.
+        (make_id2insn):
+        (insn_find):
+        (name2id):
+        (id2name):
+        (count_positive):
+        (count_positive8):
+        (cs_strdup):
+        (cs_snprintf):
+        (arr_exist8):
+        (arr_exist):
+        * capstone/Source/utils.h: Added.
+        * capstone/capstone-Revision.txt: Added.
+
+2018-03-05  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Split JSC header copying into public and private targets
+        https://bugs.webkit.org/show_bug.cgi?id=183251
+
+        Reviewed by Konstantin Tokarev.
+
+        * gtest/CMakeLists.txt:
+
+2018-02-06  Don Olmstead  <don.olmstead@sony.com>
+
+        Remove WebCore/ForwardingHeaders directory
+        https://bugs.webkit.org/show_bug.cgi?id=182347
+
+        Reviewed by Keith Miller.
+
+        * gtest/CMakeLists.txt:
+        * gtest/include/gtest/internal/gtest-port.h:
+
+2018-02-05  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, silence -Wimplicit-fallthrough in openvr
+        https://bugs.webkit.org/show_bug.cgi?id=182117
+
+        * openvr/patches/cmake-build.patch:
+        * openvr/src/CMakeLists.txt:
+
+2018-02-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        Lots of build warnings from Source/ThirdParty/openvr
+        https://bugs.webkit.org/show_bug.cgi?id=182117
+
+        Reviewed by Michael Catanzaro.
+
+        Suppress OpenVR compiler warnings by listing -Wno-unknown-pragmas,
+        -Wno-unused-parameter and -Wno-unused-variable options among the
+        libopenvr_api.so CXX flags.
+
+        CMake configuration warning about default project variables for the
+        openvr_api project is avoided by removing the openvr_api project and
+        instead setting the OPENVR_SOURCE_DIR to the path of the OpenVR
+        source directory under Source/ThirdParty/.
+
+        Another compiler warning is removed by fixing the return condition in
+        the Path_WriteBinaryFile() function to perform an equality comparison
+        instead of an assignment. This has already been fixed upstream.
+
+        All changes to the OpenVR code are reflected in the separately-managed
+        patch files kept in the patches/ directory.
+
+        * openvr/README.webkit:
+        * openvr/patches/Path_WriteBinaryFile-fix-return-condition.patch: Added.
+        * openvr/patches/cmake-build.patch:
+        * openvr/src/CMakeLists.txt:
+        * openvr/src/vrcommon/pathtools_public.cpp:
+        (Path_WriteBinaryFile):
+
+2018-01-30  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Make WTF headers copies
+        https://bugs.webkit.org/show_bug.cgi?id=182274
+
+        Reviewed by Alex Christensen.
+
+        * gtest/CMakeLists.txt:
+
+2018-01-27  Dan Bernstein  <mitz@apple.com>
+
+        HaveInternalSDK includes should be "#include?"
+        https://bugs.webkit.org/show_bug.cgi?id=179670
+
+        * gtest/xcode/Config/General.xcconfig:
+
+2018-01-18  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebVR] Add OpenVR to the tree and to the build
+        https://bugs.webkit.org/show_bug.cgi?id=177298
+
+        Reviewed by Žan Doberšek.
+
+        Adding the required parts of OpenVR library to the tree. This will be used as a backend for
+        the eventual WebVR implementation.
+
+        * openvr/CMakeLists.txt: Added.
+        * openvr/LICENSE: Added.
+        * openvr/README.md: Added.
+        * openvr/README.webkit: Added. Includes specifics changes made to the original library to
+        accommodate it to the WebKit build system.
+        * openvr/Toolchain-clang.cmake: Added.
+        * openvr/headers/openvr.h: Added.
+        (vr::ButtonMaskFromId):
+        (vr::NotificationBitmap_t::NotificationBitmap_t):
+        (vr::VRToken):
+        (vr::COpenVRContext::COpenVRContext):
+        (vr::COpenVRContext::CheckClear):
+        (vr::COpenVRContext::VRSystem):
+        (vr::COpenVRContext::VRChaperone):
+        (vr::COpenVRContext::VRChaperoneSetup):
+        (vr::COpenVRContext::VRCompositor):
+        (vr::COpenVRContext::VROverlay):
+        (vr::COpenVRContext::VRResources):
+        (vr::COpenVRContext::VRScreenshots):
+        (vr::COpenVRContext::VRRenderModels):
+        (vr::COpenVRContext::VRExtendedDisplay):
+        (vr::COpenVRContext::VRSettings):
+        (vr::COpenVRContext::VRApplications):
+        (vr::COpenVRContext::VRTrackedCamera):
+        (vr::COpenVRContext::VRDriverManager):
+        (vr::OpenVRInternal_ModuleContext):
+        (vr::VRSystem):
+        (vr::VRChaperone):
+        (vr::VRChaperoneSetup):
+        (vr::VRCompositor):
+        (vr::VROverlay):
+        (vr::VRScreenshots):
+        (vr::VRRenderModels):
+        (vr::VRApplications):
+        (vr::VRSettings):
+        (vr::VRResources):
+        (vr::VRExtendedDisplay):
+        (vr::VRTrackedCamera):
+        (vr::VRDriverManager):
+        (vr::COpenVRContext::Clear):
+        (vr::VR_Init):
+        (vr::VR_Shutdown):
+        * openvr/headers/openvr_api.cs: Added.
+        * openvr/headers/openvr_api.json: Added.
+        * openvr/headers/openvr_capi.h: Added.
+        * openvr/headers/openvr_driver.h: Added.
+        (vr::ButtonMaskFromId):
+        (vr::IVRDriverDirectModeComponent::CreateSwapTextureSet):
+        (vr::IVRDriverDirectModeComponent::DestroySwapTextureSet):
+        (vr::IVRDriverDirectModeComponent::DestroyAllSwapTextureSets):
+        (vr::IVRDriverDirectModeComponent::GetNextSwapTextureSetIndex):
+        (vr::IVRDriverDirectModeComponent::SubmitLayer):
+        (vr::IVRDriverDirectModeComponent::Present):
+        (vr::CVRPropertyHelpers::CVRPropertyHelpers):
+        (vr::CVRPropertyHelpers::TrackedDeviceToPropertyContainer):
+        (vr::CVRPropertyHelpers::GetProperty):
+        (vr::CVRPropertyHelpers::SetProperty):
+        (vr::CVRPropertyHelpers::GetStringProperty):
+        (vr::CVRPropertyHelpers::SetStringProperty):
+        (vr::CVRPropertyHelpers::GetPropertyHelper):
+        (vr::CVRPropertyHelpers::GetBoolProperty):
+        (vr::CVRPropertyHelpers::GetFloatProperty):
+        (vr::CVRPropertyHelpers::GetInt32Property):
+        (vr::CVRPropertyHelpers::GetUint64Property):
+        (vr::CVRPropertyHelpers::SetBoolProperty):
+        (vr::CVRPropertyHelpers::SetFloatProperty):
+        (vr::CVRPropertyHelpers::SetInt32Property):
+        (vr::CVRPropertyHelpers::SetUint64Property):
+        (vr::CVRPropertyHelpers::SetPropertyError):
+        (vr::CVRPropertyHelpers::EraseProperty):
+        (vr::CVRHiddenAreaHelpers::CVRHiddenAreaHelpers):
+        (vr::CVRHiddenAreaHelpers::GetPropertyEnum):
+        (vr::CVRHiddenAreaHelpers::SetHiddenArea):
+        (vr::CVRHiddenAreaHelpers::GetHiddenArea):
+        (vr::VRDriverContext):
+        (vr::COpenVRDriverContext::COpenVRDriverContext):
+        (vr::COpenVRDriverContext::VRSettings):
+        (vr::COpenVRDriverContext::VRPropertiesRaw):
+        (vr::COpenVRDriverContext::VRProperties):
+        (vr::COpenVRDriverContext::VRHiddenArea):
+        (vr::COpenVRDriverContext::VRServerDriverHost):
+        (vr::COpenVRDriverContext::VRWatchdogHost):
+        (vr::COpenVRDriverContext::VRDriverLog):
+        (vr::COpenVRDriverContext::VRDriverHandle):
+        (vr::OpenVRInternal_ModuleServerDriverContext):
+        (vr::VRSettings):
+        (vr::VRPropertiesRaw):
+        (vr::VRProperties):
+        (vr::VRHiddenArea):
+        (vr::VRDriverLog):
+        (vr::VRServerDriverHost):
+        (vr::VRWatchdogHost):
+        (vr::VRDriverHandle):
+        (vr::COpenVRDriverContext::Clear):
+        (vr::COpenVRDriverContext::InitServer):
+        (vr::COpenVRDriverContext::InitWatchdog):
+        (vr::InitServerDriverContext):
+        (vr::InitWatchdogDriverContext):
+        (vr::CleanupDriverContext):
+        * openvr/patches/cmake-build.patch: Added.
+        * openvr/src/CMakeLists.txt: Added.
+        * openvr/src/Info.plist: Added.
+        * openvr/src/README: Added.
+        * openvr/src/ivrclientcore.h: Added.
+        * openvr/src/json/json-forwards.h: Added.
+        * openvr/src/json/json.h: Added.
+        (std::swap):
+        * openvr/src/jsoncpp.cpp: Added.
+        (Json::codePointToUTF8):
+        (Json::isControlCharacter):
+        (Json::uintToString):
+        (Json::fixNumericLocale):
+        (Json::Features::Features):
+        (Json::Features::all):
+        (Json::Features::strictMode):
+        (Json::containsNewLine):
+        (Json::Reader::Reader):
+        (Json::Reader::parse):
+        (Json::Reader::readValue):
+        (Json::Reader::skipCommentTokens):
+        (Json::Reader::readToken):
+        (Json::Reader::skipSpaces):
+        (Json::Reader::match):
+        (Json::Reader::readComment):
+        (Json::normalizeEOL):
+        (Json::Reader::addComment):
+        (Json::Reader::readCStyleComment):
+        (Json::Reader::readCppStyleComment):
+        (Json::Reader::readNumber):
+        (Json::Reader::readString):
+        (Json::Reader::readObject):
+        (Json::Reader::readArray):
+        (Json::Reader::decodeNumber):
+        (Json::Reader::decodeDouble):
+        (Json::Reader::decodeString):
+        (Json::Reader::decodeUnicodeCodePoint):
+        (Json::Reader::decodeUnicodeEscapeSequence):
+        (Json::Reader::addError):
+        (Json::Reader::recoverFromError):
+        (Json::Reader::addErrorAndRecover):
+        (Json::Reader::currentValue):
+        (Json::Reader::getNextChar):
+        (Json::Reader::getLocationLineAndColumn const):
+        (Json::Reader::getLocationSnippet const):
+        (Json::Reader::getFormatedErrorMessages const):
+        (Json::Reader::getFormattedErrorMessages const):
+        (Json::Reader::getStructuredErrors const):
+        (Json::Reader::pushError):
+        (Json::Reader::good const):
+        (Json::OurFeatures::all):
+        (Json::OurReader::OurReader):
+        (Json::OurReader::parse):
+        (Json::OurReader::readValue):
+        (Json::OurReader::skipCommentTokens):
+        (Json::OurReader::readToken):
+        (Json::OurReader::skipSpaces):
+        (Json::OurReader::match):
+        (Json::OurReader::readComment):
+        (Json::OurReader::addComment):
+        (Json::OurReader::readCStyleComment):
+        (Json::OurReader::readCppStyleComment):
+        (Json::OurReader::readNumber):
+        (Json::OurReader::readString):
+        (Json::OurReader::readStringSingleQuote):
+        (Json::OurReader::readObject):
+        (Json::OurReader::readArray):
+        (Json::OurReader::decodeNumber):
+        (Json::OurReader::decodeDouble):
+        (Json::OurReader::decodeString):
+        (Json::OurReader::decodeUnicodeCodePoint):
+        (Json::OurReader::decodeUnicodeEscapeSequence):
+        (Json::OurReader::addError):
+        (Json::OurReader::recoverFromError):
+        (Json::OurReader::addErrorAndRecover):
+        (Json::OurReader::currentValue):
+        (Json::OurReader::getNextChar):
+        (Json::OurReader::getLocationLineAndColumn const):
+        (Json::OurReader::getFormattedErrorMessages const):
+        (Json::OurReader::getStructuredErrors const):
+        (Json::OurReader::pushError):
+        (Json::OurReader::good const):
+        (Json::OurCharReader::OurCharReader):
+        (Json::OurCharReader::parse):
+        (Json::CharReaderBuilder::CharReaderBuilder):
+        (Json::CharReaderBuilder::~CharReaderBuilder):
+        (Json::CharReaderBuilder::newCharReader const):
+        (Json::getValidReaderKeys):
+        (Json::CharReaderBuilder::validate const):
+        (Json::CharReaderBuilder::operator[]):
+        (Json::CharReaderBuilder::strictMode):
+        (Json::CharReaderBuilder::setDefaults):
+        (Json::parseFromStream):
+        (Json::operator>>):
+        (Json::ValueIteratorBase::ValueIteratorBase):
+        (Json::ValueIteratorBase::deref const):
+        (Json::ValueIteratorBase::increment):
+        (Json::ValueIteratorBase::decrement):
+        (Json::ValueIteratorBase::computeDistance const):
+        (Json::ValueIteratorBase::isEqual const):
+        (Json::ValueIteratorBase::copy):
+        (Json::ValueIteratorBase::key const):
+        (Json::ValueIteratorBase::index const):
+        (Json::ValueIteratorBase::name const):
+        (Json::ValueIteratorBase::memberName const):
+        (Json::ValueConstIterator::ValueConstIterator):
+        (Json::operator=):
+        (Json::ValueIterator::ValueIterator):
+        (Json::ValueIterator::operator=):
+        (Json::InRange):
+        (Json::integerToDouble):
+        (Json::duplicateStringValue):
+        (Json::duplicateAndPrefixStringValue):
+        (Json::decodePrefixedString):
+        (Json::releaseStringValue):
+        (Json::Exception::Exception):
+        (Json::throw):
+        (Json::RuntimeError::RuntimeError):
+        (Json::LogicError::LogicError):
+        (Json::throwRuntimeError):
+        (Json::throwLogicError):
+        (Json::Value::CommentInfo::CommentInfo):
+        (Json::Value::CommentInfo::~CommentInfo):
+        (Json::Value::CommentInfo::setComment):
+        (Json::Value::CZString::CZString):
+        (Json::Value::CZString::~CZString):
+        (Json::Value::CZString::swap):
+        (Json::Value::CZString::operator=):
+        (Json::Value::CZString::operator< const):
+        (Json::Value::CZString::operator== const):
+        (Json::Value::CZString::index const):
+        (Json::Value::CZString::data const):
+        (Json::Value::CZString::length const):
+        (Json::Value::CZString::isStaticString const):
+        (Json::Value::Value):
+        (Json::Value::~Value):
+        (Json::Value::operator=):
+        (Json::Value::swapPayload):
+        (Json::Value::swap):
+        (Json::Value::type const):
+        (Json::Value::compare const):
+        (Json::Value::operator< const):
+        (Json::Value::operator<= const):
+        (Json::Value::operator>= const):
+        (Json::Value::operator> const):
+        (Json::Value::operator== const):
+        (Json::Value::operator!= const):
+        (Json::Value::asCString const):
+        (Json::Value::getString const):
+        (Json::Value::asString const):
+        (Json::Value::asConstString const):
+        (Json::Value::asInt const):
+        (Json::Value::asUInt const):
+        (Json::Value::asInt64 const):
+        (Json::Value::asUInt64 const):
+        (Json::Value::asLargestInt const):
+        (Json::Value::asLargestUInt const):
+        (Json::Value::asDouble const):
+        (Json::Value::asFloat const):
+        (Json::Value::asBool const):
+        (Json::Value::isConvertibleTo const):
+        (Json::Value::size const):
+        (Json::Value::empty const):
+        (Json::Value::operator! const):
+        (Json::Value::clear):
+        (Json::Value::resize):
+        (Json::Value::operator[]):
+        (Json::Value::operator[] const):
+        (Json::Value::initBasic):
+        (Json::Value::resolveReference):
+        (Json::Value::get const):
+        (Json::Value::isValidIndex const):
+        (Json::Value::find const):
+        (Json::Value::append):
+        (Json::Value::removeMember):
+        (Json::Value::removeIndex):
+        (Json::Value::isMember const):
+        (Json::Value::getMemberNames const):
+        (Json::IsIntegral):
+        (Json::Value::isNull const):
+        (Json::Value::isBool const):
+        (Json::Value::isInt const):
+        (Json::Value::isUInt const):
+        (Json::Value::isInt64 const):
+        (Json::Value::isUInt64 const):
+        (Json::Value::isIntegral const):
+        (Json::Value::isDouble const):
+        (Json::Value::isNumeric const):
+        (Json::Value::isString const):
+        (Json::Value::isArray const):
+        (Json::Value::isObject const):
+        (Json::Value::setComment):
+        (Json::Value::hasComment const):
+        (Json::Value::getComment const):
+        (Json::Value::setOffsetStart):
+        (Json::Value::setOffsetLimit):
+        (Json::Value::getOffsetStart const):
+        (Json::Value::getOffsetLimit const):
+        (Json::Value::toStyledString const):
+        (Json::Value::begin const):
+        (Json::Value::end const):
+        (Json::Value::begin):
+        (Json::Value::end):
+        (Json::PathArgument::PathArgument):
+        (Json::Path::Path):
+        (Json::Path::makePath):
+        (Json::Path::addPathInArg):
+        (Json::Path::invalidPath):
+        (Json::Path::resolve const):
+        (Json::Path::make const):
+        (Json::containsControlCharacter):
+        (Json::containsControlCharacter0):
+        (Json::valueToString):
+        (Json::valueToQuotedString):
+        (Json::strnpbrk):
+        (Json::valueToQuotedStringN):
+        (Json::Writer::~Writer):
+        (Json::FastWriter::FastWriter):
+        (Json::FastWriter::enableYAMLCompatibility):
+        (Json::FastWriter::dropNullPlaceholders):
+        (Json::FastWriter::omitEndingLineFeed):
+        (Json::FastWriter::write):
+        (Json::FastWriter::writeValue):
+        (Json::StyledWriter::StyledWriter):
+        (Json::StyledWriter::write):
+        (Json::StyledWriter::writeValue):
+        (Json::StyledWriter::writeArrayValue):
+        (Json::StyledWriter::isMultineArray):
+        (Json::StyledWriter::pushValue):
+        (Json::StyledWriter::writeIndent):
+        (Json::StyledWriter::writeWithIndent):
+        (Json::StyledWriter::indent):
+        (Json::StyledWriter::unindent):
+        (Json::StyledWriter::writeCommentBeforeValue):
+        (Json::StyledWriter::writeCommentAfterValueOnSameLine):
+        (Json::StyledWriter::hasCommentForValue):
+        (Json::StyledStreamWriter::StyledStreamWriter):
+        (Json::StyledStreamWriter::write):
+        (Json::StyledStreamWriter::writeValue):
+        (Json::StyledStreamWriter::writeArrayValue):
+        (Json::StyledStreamWriter::isMultineArray):
+        (Json::StyledStreamWriter::pushValue):
+        (Json::StyledStreamWriter::writeIndent):
+        (Json::StyledStreamWriter::writeWithIndent):
+        (Json::StyledStreamWriter::indent):
+        (Json::StyledStreamWriter::unindent):
+        (Json::StyledStreamWriter::writeCommentBeforeValue):
+        (Json::StyledStreamWriter::writeCommentAfterValueOnSameLine):
+        (Json::StyledStreamWriter::hasCommentForValue):
+        (Json::BuiltStyledStreamWriter::BuiltStyledStreamWriter):
+        (Json::BuiltStyledStreamWriter::write):
+        (Json::BuiltStyledStreamWriter::writeValue):
+        (Json::BuiltStyledStreamWriter::writeArrayValue):
+        (Json::BuiltStyledStreamWriter::isMultineArray):
+        (Json::BuiltStyledStreamWriter::pushValue):
+        (Json::BuiltStyledStreamWriter::writeIndent):
+        (Json::BuiltStyledStreamWriter::writeWithIndent):
+        (Json::BuiltStyledStreamWriter::indent):
+        (Json::BuiltStyledStreamWriter::unindent):
+        (Json::BuiltStyledStreamWriter::writeCommentBeforeValue):
+        (Json::BuiltStyledStreamWriter::writeCommentAfterValueOnSameLine):
+        (Json::BuiltStyledStreamWriter::hasCommentForValue):
+        (Json::StreamWriter::StreamWriter):
+        (Json::StreamWriter::~StreamWriter):
+        (Json::StreamWriter::Factory::~Factory):
+        (Json::StreamWriterBuilder::StreamWriterBuilder):
+        (Json::StreamWriterBuilder::~StreamWriterBuilder):
+        (Json::StreamWriterBuilder::newStreamWriter const):
+        (Json::getValidWriterKeys):
+        (Json::StreamWriterBuilder::validate const):
+        (Json::StreamWriterBuilder::operator[]):
+        (Json::StreamWriterBuilder::setDefaults):
+        (Json::writeString):
+        (Json::operator<<):
+        * openvr/src/openvr_api_public.cpp: Added.
+        (vr::VR_GetInitToken):
+        (vr::VR_InitInternal2):
+        (vr::VR_InitInternal):
+        (vr::VR_ShutdownInternal):
+        (vr::VR_LoadHmdSystemInternal):
+        (vr::VR_GetGenericInterface):
+        (vr::VR_IsInterfaceVersionValid):
+        (vr::VR_IsHmdPresent):
+        (vr::VR_IsRuntimeInstalled):
+        (vr::VR_RuntimePath):
+        (vr::VR_GetVRInitErrorAsSymbol):
+        (vr::VR_GetVRInitErrorAsEnglishDescription):
+        (vr::VR_GetStringForHmdError):
+        * openvr/src/vrcommon/dirtools_public.cpp: Added.
+        (BCreateDirectoryRecursive):
+        (BCreateDirectory):
+        * openvr/src/vrcommon/dirtools_public.h: Added.
+        * openvr/src/vrcommon/envvartools_public.cpp: Added.
+        (GetEnvironmentVariable):
+        (SetEnvironmentVariable):
+        * openvr/src/vrcommon/envvartools_public.h: Added.
+        * openvr/src/vrcommon/hmderrors_public.cpp: Added.
+        (GetEnglishStringForHmdError):
+        (GetIDForVRInitError):
+        * openvr/src/vrcommon/hmderrors_public.h: Added.
+        * openvr/src/vrcommon/pathtools_public.cpp: Added.
+        (Path_GetExecutablePath):
+        (Path_GetWorkingDirectory):
+        (Path_SetWorkingDirectory):
+        (Path_StripFilename):
+        (Path_StripDirectory):
+        (Path_StripExtension):
+        (Path_GetExtension):
+        (Path_IsAbsolute):
+        (Path_MakeAbsolute):
+        (Path_FixSlashes):
+        (Path_GetSlash):
+        (Path_Join):
+        (Path_RemoveTrailingSlash):
+        (Path_Compact):
+        (Path_GetThisModulePath):
+        (Path_IsDirectory):
+        (Path_IsAppBundle):
+        (Path_Exists):
+        (Path_FindParentDirectoryRecursively):
+        (Path_FindParentSubDirectoryRecursively):
+        (Path_ReadBinaryFile):
+        (Path_WriteBinaryFile):
+        (Path_ReadTextFile):
+        (Path_WriteStringToTextFile):
+        (Path_WriteStringToTextFileAtomic):
+        (Path_FilePathToUrl):
+        (Path_UrlToFilePath):
+        (GetUserDocumentsPath):
+        * openvr/src/vrcommon/pathtools_public.h: Added.
+        * openvr/src/vrcommon/sharedlibtools_public.cpp: Added.
+        (SharedLib_Load):
+        (SharedLib_GetFunction):
+        (SharedLib_Unload):
+        * openvr/src/vrcommon/sharedlibtools_public.h: Added.
+        * openvr/src/vrcommon/strtools_public.cpp: Added.
+        (StringHasPrefix):
+        (StringHasPrefixCaseSensitive):
+        (StringHasSuffix):
+        (StringHasSuffixCaseSensitive):
+        (UTF16to8):
+        (UTF8to16):
+        (strcpy_safe):
+        (StringToUpper):
+        (StringToLower):
+        (ReturnStdString):
+        (BufferToStdString):
+        (Uint64ToString):
+        (StringToUint64):
+        (cIntToHexDigit):
+        (iHexCharToInt):
+        (V_URLEncodeInternal):
+        (V_URLDecodeInternal):
+        (V_URLEncode):
+        (V_URLDecode):
+        (V_StripExtension):
+        * openvr/src/vrcommon/strtools_public.h: Added.
+        (stricmp):
+        (strnicmp):
+        (wcsncpy_s):
+        (strncpy_s):
+        (strtoull):
+        * openvr/src/vrcommon/vrpathregistry_public.cpp: Added.
+        (GetAppSettingsPath):
+        (CVRPathRegistry_Public::CVRPathRegistry_Public):
+        (CVRPathRegistry_Public::GetOpenVRConfigPath):
+        (CVRPathRegistry_Public::GetVRPathRegistryFilename):
+        (ParseStringListFromJson):
+        (StringListToJson):
+        (CVRPathRegistry_Public::ToJsonString):
+        (CVRPathRegistry_Public::BLoadFromFile):
+        (CVRPathRegistry_Public::BSaveToFile const):
+        (CVRPathRegistry_Public::GetRuntimePath const):
+        (CVRPathRegistry_Public::GetConfigPath const):
+        (CVRPathRegistry_Public::GetLogPath const):
+        (CVRPathRegistry_Public::GetPaths):
+        * openvr/src/vrcommon/vrpathregistry_public.h: Added.
+
+2017-12-14  David Kilzer  <ddkilzer@apple.com>
+
+        Enable -Wstrict-prototypes for WebKit
+        <https://webkit.org/b/180757>
+        <rdar://problem/36024132>
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * gtest/xcode/Config/General.xcconfig:
+        (WARNING_CFLAGS): Add semicolon.
+        (CLANG_WARN_STRICT_PROTOTYPES): Add. Set to YES.
+
+2017-10-05  Frederic Wang  <fwang@igalia.com>
+
+        Remove WOFF2 from Source/ThirdParty.
+        https://bugs.webkit.org/show_bug.cgi?id=177862
+
+        Reviewed by Michael Catanzaro.
+
+        * woff2/CMakeLists.txt: Removed.
+        * woff2/LICENSE: Removed.
+        * woff2/README.webkit: Removed.
+        * woff2/include/woff2/decode.h: Removed.
+        * woff2/include/woff2/encode.h: Removed.
+        * woff2/include/woff2/output.h: Removed.
+        * woff2/src/buffer.h: Removed.
+        * woff2/src/convert_woff2ttf_*.cc: Removed.
+        * woff2/src/file.h: Removed.
+        * woff2/src/font.cc: Removed.
+        * woff2/src/font.h: Removed.
+        * woff2/src/glyph.cc: Removed.
+        * woff2/src/glyph.h: Removed.
+        * woff2/src/normalize.cc: Removed.
+        * woff2/src/normalize.h: Removed.
+        * woff2/src/port.h: Removed.
+        * woff2/src/round.h: Removed.
+        * woff2/src/store_bytes.h: Removed.
+        * woff2/src/table_tags.cc: Removed.
+        * woff2/src/table_tags.h: Removed.
+        * woff2/src/transform.cc: Removed.
+        * woff2/src/transform.h: Removed.
+        * woff2/src/variable_length.cc: Removed.
+        * woff2/src/variable_length.h: Removed.
+        * woff2/src/woff2_common.cc: Removed.
+        * woff2/src/woff2_common.h: Removed.
+        * woff2/src/woff2_compress.cc: Removed.
+        * woff2/src/woff2_dec.cc: Removed.
+        * woff2/src/woff2_decompress.cc: Removed.
+        * woff2/src/woff2_enc.cc: Removed.
+        * woff2/src/woff2_info.cc: Removed.
+        * woff2/src/woff2_out.cc: Removed.
+        * woff2/update.sh: Removed.
+
+2017-10-05  Frederic Wang  <fwang@igalia.com>
+
+        Update Source/ThirdParty/woff2 to 22c256bc457777744ba14b7325a6e8e0e7dec91c
+        https://bugs.webkit.org/show_bug.cgi?id=177994
+
+        Reviewed by Michael Catanzaro.
+
+        * woff2/CMakeLists.txt: Also consider the directory for public headers.
+        * woff2/README.webkit:
+        * woff2/include/woff2/decode.h: Renamed from Source/ThirdParty/woff2/src/woff2_dec.h.
+        * woff2/include/woff2/encode.h: Renamed from Source/ThirdParty/woff2/src/woff2_enc.h.
+        (woff2::WOFF2Params::WOFF2Params):
+        * woff2/include/woff2/output.h: Renamed from Source/ThirdParty/woff2/src/woff2_out.h.
+        (woff2::WOFF2Out::~WOFF2Out):
+        (woff2::WOFF2StringOut::MaxSize):
+        * woff2/src/buffer.h:
+        * woff2/src/convert_woff2ttf_*.cc:
+        * woff2/src/file.h:
+        * woff2/src/font.cc:
+        * woff2/src/font.h:
+        * woff2/src/glyph.cc:
+        * woff2/src/glyph.h:
+        * woff2/src/normalize.cc:
+        * woff2/src/normalize.h:
+        * woff2/src/port.h:
+        * woff2/src/round.h:
+        * woff2/src/store_bytes.h:
+        * woff2/src/table_tags.cc:
+        * woff2/src/table_tags.h:
+        * woff2/src/transform.cc:
+        * woff2/src/transform.h:
+        * woff2/src/variable_length.cc:
+        * woff2/src/variable_length.h:
+        * woff2/src/woff2_common.cc:
+        * woff2/src/woff2_common.h:
+        * woff2/src/woff2_compress.cc:
+        * woff2/src/woff2_dec.cc:
+        * woff2/src/woff2_decompress.cc:
+        * woff2/src/woff2_enc.cc:
+        * woff2/src/woff2_info.cc:
+        * woff2/src/woff2_out.cc:
+        * woff2/update.sh: Also consider directory for public headers.
+
+2017-10-03  Frederic Wang  <fwang@igalia.com>
+
+        Remove Brotli from Source/ThirdParty
+        https://bugs.webkit.org/show_bug.cgi?id=177804
+
+        Reviewed by Michael Catanzaro.
+
+        * brotli/CMakeLists.txt: Removed.
+        * brotli/LICENSE: Removed.
+        * brotli/README.webkit: Removed.
+        * brotli/common/constants.h: Removed.
+        * brotli/common/dictionary.bin: Removed.
+        * brotli/common/dictionary.c: Removed.
+        * brotli/common/dictionary.h: Removed.
+        * brotli/common/version.h: Removed.
+        * brotli/dec/bit_reader.c: Removed.
+        * brotli/dec/bit_reader.h: Removed.
+        * brotli/dec/context.h: Removed.
+        * brotli/dec/decode.c: Removed.
+        * brotli/dec/huffman.c: Removed.
+        * brotli/dec/huffman.h: Removed.
+        * brotli/dec/port.h: Removed.
+        * brotli/dec/prefix.h: Removed.
+        * brotli/dec/state.c: Removed.
+        * brotli/dec/state.h: Removed.
+        * brotli/dec/transform.h: Removed.
+        * brotli/include/brotli/decode.h: Removed.
+        * brotli/include/brotli/encode.h: Removed.
+        * brotli/include/brotli/port.h: Removed.
+        * brotli/include/brotli/types.h: Removed.
+        * brotli/update.sh: Removed.
+        * woff2/CMakeLists.txt: Use Brotli's include and library paths found by CMake.
+
+2017-10-05  Frederic Wang  <fwang@igalia.com>
+
+        Upgrade Brotli to version 1.0.1 and WOFF2 to latest upstream
+        https://bugs.webkit.org/show_bug.cgi?id=177768
+
+        Reviewed by Michael Catanzaro.
+
+        * brotli/CMakeLists.txt:
+        * brotli/README.webkit:
+        * brotli/common/constants.h: Added.
+        * brotli/common/dictionary.bin: Added.
+        * brotli/common/dictionary.c: Added.
+        * brotli/common/dictionary.h: Added.
+        * brotli/common/version.h: Added.
+        * brotli/dec/Makefile: Removed.
+        * brotli/dec/bit_reader.c:
+        * brotli/dec/bit_reader.h:
+        * brotli/dec/context.h:
+        * brotli/dec/decode.c:
+        * brotli/dec/decode.h: Removed.
+        * brotli/dec/dictionary.c: Removed.
+        * brotli/dec/dictionary.h: Removed.
+        * brotli/dec/huffman.c:
+        * brotli/dec/huffman.h:
+        * brotli/dec/port.h:
+        (BrotliDump):
+        (BrotliRBit):
+        * brotli/dec/prefix.h:
+        * brotli/dec/state.c:
+        * brotli/dec/state.h:
+        * brotli/dec/transform.h:
+        * brotli/dec/types.h: Removed.
+        * brotli/include/brotli/decode.h: Added.
+        * brotli/include/brotli/encode.h: Added.
+        * brotli/include/brotli/port.h: Added.
+        * brotli/include/brotli/types.h: Added.
+        * brotli/update.sh:
+        * woff2/CMakeLists.txt:
+        * woff2/README.webkit:
+        * woff2/src/buffer.h:
+        (woff2::Buffer::Buffer):
+        (woff2::Buffer::Read):
+        * woff2/src/convert_woff2ttf_*.cc: Added.
+        * woff2/src/font.cc:
+        * woff2/src/glyph.cc:
+        * woff2/src/normalize.cc:
+        * woff2/src/port.h:
+        * woff2/src/store_bytes.h:
+        (woff2::Store16):
+        * woff2/src/variable_length.cc:
+        * woff2/src/woff2_common.cc:
+        * woff2/src/woff2_dec.cc:
+        * woff2/src/woff2_decompress.cc:
+        * woff2/src/woff2_enc.cc:
+        * woff2/src/woff2_info.cc: Added.
+
+2017-08-08  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [CMake] Properly test if compiler supports compiler flags
+        https://bugs.webkit.org/show_bug.cgi?id=174490
+
+        Reviewed by Konstantin Tokarev.
+
+        * brotli/CMakeLists.txt:
+        * gtest/CMakeLists.txt:
+        * woff2/CMakeLists.txt:
+        * xdgmime/CMakeLists.txt:
+
+2017-07-17  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [CMake] Macros in WebKitMacros.cmake should be prefixed with WEBKIT_ namespace
+        https://bugs.webkit.org/show_bug.cgi?id=174547
+
+        Reviewed by Alex Christensen.
+
+        * brotli/CMakeLists.txt:
+        * woff2/CMakeLists.txt:
+        * xdgmime/CMakeLists.txt:
+
+2017-07-13  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Fix compiler warnings when building with GCC 7
+        https://bugs.webkit.org/show_bug.cgi?id=174463
+
+        Reviewed by Darin Adler.
+
+        * brotli/CMakeLists.txt:
+
+2017-05-11  Don Olmstead  <don.olmstead@am.sony.com>
+
+        [CMake] Add HAVE check for regex.h
+        https://bugs.webkit.org/show_bug.cgi?id=171950
+
+        Reviewed by Michael Catanzaro.
+
+        * gtest/include/gtest/internal/gtest-port.h:
+
+2017-04-19  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] ../../Source/ThirdParty/xdgmime/src/xdgmimecache.c:200:62: warning: pointer of type ‘void *’ used in arithmetic [-Wpointer-arith]
+        https://bugs.webkit.org/show_bug.cgi?id=171026
+
+        Reviewed by Carlos Garcia Campos.
+
+        * xdgmime/README.webkit:
+        * xdgmime/src/xdgmimecache.c:
+        (cache_magic_matchlet_compare_to_data):
+
+2017-03-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix the build after r214338.
+
+        Add missing files I forgot to git add again.
+
+        * xdgmime/CMakeLists.txt: Added.
+        * xdgmime/README: Added.
+        * xdgmime/README.webkit: Added.
+
+2017-03-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add MIMETypeRegistry implementation using xdgmime and remove the GTK+ one
+        https://bugs.webkit.org/show_bug.cgi?id=170001
+
+        Reviewed by Michael Catanzaro.
+
+        Add xdgmime to ThirdParty.
+
+        * xdgmime/CMakeLists.txt: Added.
+        * xdgmime/README: Added.
+        * xdgmime/README.webkit: Added.
+        * xdgmime/src/xdgmime.c: Added.
+        * xdgmime/src/xdgmime.h: Added.
+        * xdgmime/src/xdgmimealias.c: Added.
+        * xdgmime/src/xdgmimealias.h: Added.
+        * xdgmime/src/xdgmimecache.c: Added.
+        * xdgmime/src/xdgmimecache.h: Added.
+        * xdgmime/src/xdgmimeglob.c: Added.
+        * xdgmime/src/xdgmimeglob.h: Added.
+        * xdgmime/src/xdgmimeicon.c: Added.
+        * xdgmime/src/xdgmimeicon.h: Added.
+        * xdgmime/src/xdgmimeint.c: Added.
+        * xdgmime/src/xdgmimeint.h: Added.
+        * xdgmime/src/xdgmimemagic.c: Added.
+        * xdgmime/src/xdgmimemagic.h: Added.
+        * xdgmime/src/xdgmimeparent.c: Added.
+        * xdgmime/src/xdgmimeparent.h: Added.
+
+2017-03-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Add stubs for xdgmime sources to ThirdParty.
+
+        This is in preparation for bug #170001, to try to bypass the SVN hook that doesn't allow to commit source files
+        containing tabs. I'm committing empty files, so that once those files are known by SVN I can set the
+        allow-tabs property and then commit the actual contents.
+
+        * xdgmime/src/xdgmime.c: Added.
+        * xdgmime/src/xdgmime.h: Added.
+        * xdgmime/src/xdgmimealias.c: Added.
+        * xdgmime/src/xdgmimealias.h: Added.
+        * xdgmime/src/xdgmimecache.c: Added.
+        * xdgmime/src/xdgmimecache.h: Added.
+        * xdgmime/src/xdgmimeglob.c: Added.
+        * xdgmime/src/xdgmimeglob.h: Added.
+        * xdgmime/src/xdgmimeicon.c: Added.
+        * xdgmime/src/xdgmimeicon.h: Added.
+        * xdgmime/src/xdgmimeint.c: Added.
+        * xdgmime/src/xdgmimeint.h: Added.
+        * xdgmime/src/xdgmimemagic.c: Added.
+        * xdgmime/src/xdgmimemagic.h: Added.
+        * xdgmime/src/xdgmimeparent.c: Added.
+        * xdgmime/src/xdgmimeparent.h: Added.
+
+2017-02-09  Alex Christensen  <achristensen@webkit.org>
+
+        Build libwebrtc on bots without using it yet
+        https://bugs.webkit.org/show_bug.cgi?id=168062
+
+        Reviewed by Brent Fulgham.
+
+        * Makefile:
+
+2017-01-23  Timothy Hatcher  <timothy@hatcher.name>
+
+        gtest fails to link on Linux due to missing -lpthread
+        https://bugs.webkit.org/show_bug.cgi?id=167313
+
+        * gtest/CMakeLists.txt: Remove find_package(Threads) that was added in my last commit.
+        This is assumed to already happen in the platform cmake options file.
+
+2017-01-23  Timothy Hatcher  <timothy@hatcher.name>
+
+        gtest fails to link on Linux due to missing -lpthread
+        https://bugs.webkit.org/show_bug.cgi?id=167313
+
+        Reviewed by Alex Christensen.
+
+        * gtest/CMakeLists.txt: Add call to find_package(Threads) before testing CMAKE_USE_PTHREADS_INIT.
+        Without the find_package call, CMAKE_USE_PTHREADS_INIT was always false for me. Also explicitly
+        define GTEST_HAS_PTHREAD to 0 when CMAKE_USE_PTHREADS_INIT is false to prevent gtest-port.h from
+        setting GTEST_HAS_PTHREAD based on the platform.
+
+2017-01-20  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] Add libwebrtc build infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=167207
+
+        Reviewed by Alex Christensen.
+
+        Checking-in files used for building libwebrtc.
+        The principle is the following:
+        - Select a revision of libwebrtc
+        - Ask libwebrtc build system to generate the project.json (something like gn gen --ide json ...)
+        - Copy project.json here and the libwebrtc selected revision in a libwebrtc/libwebrtc folder.
+        - Call Tools/Scripts/generate-libwebrtc-cmake which will update CMakeLists.txt
+        - Build libwebrtc with CMake
+
+        * libwebrtc/CMakeLists.txt: Added (Generated by Tools/Scripts/generate-libwebrtc-cmake using project.json as input).
+        * libwebrtc/Makefile: Added.
+        * libwebrtc/WebKit/project.json: Added (Generated by libwebrtc build system).
+        * libwebrtc/WebKit/rtc_sdk_framework_objc_info_plist.plist: Added.
+        * libwebrtc/libwebrtc.xcodeproj/project.pbxproj: Added.
+
+2016-12-10  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [cmake] Include WTF, JSC, and WebCore headers automatically to targers using them
+        https://bugs.webkit.org/show_bug.cgi?id=165686
+
+        Reviewed by Michael Catanzaro.
+
+        This change reduces duplication of include path lists between modules,
+        and reduces future need for fixes like r209605 (broken build because of
+        WebCore header suddenly becoming used in WebKit2).
+
+        * gtest/CMakeLists.txt:
+
+2016-12-06  Alexey Proskuryakov  <ap@apple.com>
+
+        Correct SDKROOT values in xcconfig files
+        https://bugs.webkit.org/show_bug.cgi?id=165487
+        rdar://problem/29539209
+
+        Reviewed by Dan Bernstein.
+
+        Fix suggested by Dan Bernstein.
+
+        * gtest/xcode/Config/DebugProject.xcconfig:
+        * gtest/xcode/Config/ReleaseProject.xcconfig:
+
+2016-09-28  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Unreviewed, woff2 upgrade introduces compiler warnings
+        https://bugs.webkit.org/show_bug.cgi?id=162678
+
+        * woff2/CMakeLists.txt:
+
+2016-09-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        woff2 upgrade introduces compiler warnings
+        https://bugs.webkit.org/show_bug.cgi?id=162678
+
+        Reviewed by Alex Christensen.
+
+        * woff2/CMakeLists.txt:
+
+2016-09-28  Khaled Hosny  <khaledhosny@eglug.org>
+
+        Update woff2 to latest revision
+        https://bugs.webkit.org/show_bug.cgi?id=162608
+
+        Reviewed by Michael Catanzaro.
+
+        * woff2/CMakeLists.txt:
+        * woff2/README.webkit:
+        * woff2/src/file.h:
+        (woff2::GetFileContent):
+        (woff2::SetFileContents):
+        * woff2/src/font.cc:
+        * woff2/src/font.h:
+        * woff2/src/glyph.cc:
+        * woff2/src/store_bytes.h:
+        (woff2::Store16):
+        * woff2/src/transform.cc:
+        * woff2/src/woff2_common.cc:
+        * woff2/src/woff2_compress.cc:
+        * woff2/src/woff2_dec.cc:
+        * woff2/src/woff2_dec.h:
+        * woff2/src/woff2_decompress.cc:
+        * woff2/src/woff2_enc.cc:
+        * woff2/src/woff2_out.cc: Added.
+        * woff2/src/woff2_out.h: Added.
+        (woff2::WOFF2Out::~WOFF2Out):
+        (woff2::WOFF2StringOut::MaxSize):
+
+2016-09-28  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [cmake] Suppress Clang warnings in brotli and woff2
+        https://bugs.webkit.org/show_bug.cgi?id=162663
+
+        Reviewed by Michael Catanzaro.
+
+        * brotli/CMakeLists.txt:
+        * woff2/CMakeLists.txt:
+
+2016-09-27  Konstantin Tokarev  <annulen@yandex.ru> and Vitaliy Slobodin  <vitaliy.slobodin@gmail.com>
+
+        Fixed compilation of WOFF2 on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=162570
+
+        Reviewed by Alex Christensen.
+
+        * woff2/CMakeLists.txt: Avoid passing GCC-specific flags to other
+        compilers.
+        * woff2/src/port.h: Include assert.h.
+
+2016-06-19  Frederic Wang  <fred.wang@free.fr>
+
+        Update Brotli to version 0.4.0
+        https://bugs.webkit.org/show_bug.cgi?id=158907
+
+        Reviewed by Michael Catanzaro.
+
+        * brotli/README.webkit:
+        * brotli/dec/bit_reader.h:
+        * brotli/dec/decode.c:
+        * brotli/dec/decode.h:
+        * brotli/dec/huffman.c:
+        * brotli/dec/huffman.h:
+        * brotli/dec/port.h:
+        (BrotliDump):
+        * brotli/dec/state.c:
+        * brotli/dec/state.h:
+
+2016-05-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        woff2_dec.cc triggers -Wsign-compare, -Wunused-but-set-variable
+        https://bugs.webkit.org/show_bug.cgi?id=157732
+
+        Reviewed by Darin Adler.
+
+        * woff2/CMakeLists.txt:
+
+2016-05-22  Brady Eidson  <beidson@apple.com>
+
+        Move to C++14.
+        https://bugs.webkit.org/show_bug.cgi?id=157948
+
+        Reviewed by Michael Catanzaro.
+
+        * gtest/xcode/Config/General.xcconfig:
+
+2016-03-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, line ending fixes.
+
+        * gtest/codegear/gtest_all.cc:
+        * gtest/codegear/gtest_link.cc:
+
+2016-03-10  Frederic Wang  <fwang@igalia.com>
+
+        [GTK] Add support for WOFF2
+        https://bugs.webkit.org/show_bug.cgi?id=152616
+
+        Reviewed by Carlos Garcia Campos.
+
+        We import the source of the third-party brotli and woff2 libraries because release packages do not exist yet.
+        The script to update source from upstream as well as the makefile to compile relevant files are based on similar code from Mozilla.
+
+        * brotli/CMakeLists.txt: Added. We force BROTLI_BUILD_PORTABLE by default, see https://github.com/google/brotli/issues/307.
+        * brotli/LICENSE: Added.
+        * brotli/README.webkit: Added.
+        * brotli/dec/Makefile: Added.
+        * brotli/dec/bit_reader.c: Added.
+        * brotli/dec/bit_reader.h: Added.
+        * brotli/dec/context.h: Added.
+        * brotli/dec/decode.c: Added.
+        * brotli/dec/decode.h: Added.
+        * brotli/dec/dictionary.c: Added.
+        * brotli/dec/dictionary.h: Added.
+        * brotli/dec/huffman.c: Added.
+        * brotli/dec/huffman.h: Added.
+        * brotli/dec/port.h: Added.
+        (BrotliRBit):
+        * brotli/dec/prefix.h: Added.
+        * brotli/dec/state.c: Added.
+        * brotli/dec/state.h: Added.
+        * brotli/dec/transform.h: Added.
+        * brotli/dec/types.h: Added.
+        * brotli/update.sh: Added. This script helps to get the latest version of the decoder source code.
+        * woff2/CMakeLists.txt: Added. We only compile the decoder files.
+        * woff2/LICENSE: Added.
+        * woff2/README.webkit: Added.
+        * woff2/src/buffer.h: Added.
+        (woff2::Failure):
+        (woff2::Buffer::Buffer):
+        (woff2::Buffer::Skip):
+        (woff2::Buffer::Read):
+        (woff2::Buffer::ReadU8):
+        (woff2::Buffer::ReadU16):
+        (woff2::Buffer::ReadS16):
+        (woff2::Buffer::ReadU24):
+        (woff2::Buffer::ReadU32):
+        (woff2::Buffer::ReadS32):
+        (woff2::Buffer::ReadTag):
+        (woff2::Buffer::ReadR64):
+        (woff2::Buffer::buffer):
+        (woff2::Buffer::offset):
+        (woff2::Buffer::length):
+        (woff2::Buffer::set_offset):
+        * woff2/src/file.h: Added.
+        (woff2::GetFileContent):
+        (woff2::SetFileContents):
+        * woff2/src/font.cc: Added.
+        * woff2/src/font.h: Added.
+        * woff2/src/glyph.cc: Added.
+        * woff2/src/glyph.h: Added.
+        (woff2::Glyph::Glyph):
+        * woff2/src/normalize.cc: Added.
+        * woff2/src/normalize.h: Added.
+        * woff2/src/port.h: Added.
+        (woff2::Log2Floor):
+        * woff2/src/round.h: Added.
+        (woff2::Round4):
+        * woff2/src/store_bytes.h: Added.
+        (woff2::StoreU32):
+        (woff2::Store16):
+        (woff2::StoreBytes):
+        * woff2/src/table_tags.cc: Added.
+        * woff2/src/table_tags.h: Added.
+        * woff2/src/transform.cc: Added.
+        * woff2/src/transform.h: Added.
+        * woff2/src/variable_length.cc: Added.
+        * woff2/src/variable_length.h: Added.
+        * woff2/src/woff2_common.cc: Added.
+        * woff2/src/woff2_common.h: Added.
+        (woff2::Table::operator<):
+        * woff2/src/woff2_compress.cc: Added.
+        * woff2/src/woff2_dec.cc: Added.
+        * woff2/src/woff2_dec.h: Added.
+        * woff2/src/woff2_decompress.cc: Added.
+        * woff2/src/woff2_enc.cc: Added.
+        * woff2/src/woff2_enc.h: Added.
+        (woff2::WOFF2Params::WOFF2Params):
+        * woff2/update.sh: Added. This script helps to get the latest upstream version.
+
+2016-01-09  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Allow overriding the frameworks directory independently of using a staging install path
+        https://bugs.webkit.org/show_bug.cgi?id=152926
+
+        Reviewed by Tim Horton.
+
+        Introduce a new build setting, WK_OVERRIDE_FRAMEWORKS_DIR. When not empty, it determines
+        where the frameworks are installed. Setting USE_STAGING_INSTALL_PATH to YES sets
+        WK_OVERRIDE_FRAMEWORKS_DIR to $(SYSTEM_LIBRARY_DIR)/StagedFrameworks/Safari.
+
+        Account for the possibility of WK_OVERRIDE_FRAMEWORKS_DIR containing spaces.
+
+        * gtest/xcode/Config/General.xcconfig:
+          Add quotes to account for spaces.
+        * gtest/xcode/Config/ProductionProject.xcconfig:
+        - Replace STAGED_FRAMEWORKS_SEARCH_PATH in FRAMEWORK_SEARCH_PATHS with
+          WK_OVERRIDE_FRAMEWORKS_DIR and add quotes to account for spaces.
+        - Define WEBCORE_FRAMEWORKS_DIR based on WK_OVERRIDE_FRAMEWORKS_DIR.
+
+2016-01-04  Alexey Proskuryakov  <ap@apple.com>
+
+        gtest should use the same SDK as other projects
+        https://bugs.webkit.org/show_bug.cgi?id=152718
+        rdar://problem/23566856
+
+        Reviewed by Alex Christensen.
+
+        gtest configuration attempted to use USE_INTERNAL_SDK without ever defining it.
+
+        * gtest/xcode/Config/DebugProject.xcconfig:
+        * gtest/xcode/Config/General.xcconfig:
+        * gtest/xcode/Config/ReleaseProject.xcconfig:
+
+2016-01-02  Ting-Wei Lan  <lantw44@gmail.com>
+
+        Remove usage of environ in gtest
+        https://bugs.webkit.org/show_bug.cgi?id=138420
+
+        Reviewed by Michael Catanzaro.
+
+        FreeBSD libc.so.7 does not contain an environ symbol, which causes
+        undefined reference problem when using -Wl,--no-undefined. As gtest
+        only uses environ as an argument to call execve, we can simply remove
+        its usage by replacing execve with execv.
+
+        * gtest/src/gtest-death-test.cc:
+
+2015-12-01  Dana Burkart  <dburkart@apple.com>
+
+        Remove Mountain Lion support from gtest
+        https://bugs.webkit.org/show_bug.cgi?id=151705
+
+        Reviewed by Darin Adler.
+
+        * gtest/xcode/Config/General.xcconfig:
+
+2015-11-02  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Add tvOS and watchOS to SUPPORTED_PLATFORMS
+        https://bugs.webkit.org/show_bug.cgi?id=150819
+
+        Reviewed by Dan Bernstein.
+
+        This tells Xcode to include these platforms in its Devices dropdown, making it possible to build in the IDE.
+
+        * gtest/xcode/Config/General.xcconfig:
+
+2015-08-20  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up CMake build after r188673
+        https://bugs.webkit.org/show_bug.cgi?id=148234
+
+        Reviewed by Tim Horton.
+
+        * gtest/CMakeLists.txt:
+        gtest needs to be a static library on Windows to not crash.
+
+2015-08-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Switch Windows build to Visual Studio 2015
+        https://bugs.webkit.org/show_bug.cgi?id=147887
+        <rdar://problem/22235098>
+
+        Reviewed by Alex Christensen.
+
+        Update Visual Studio project file settings to use the current Visual
+        Studio and compiler. Continue targeting binaries to run on our minimum
+        supported configuration of Windows 7.
+
+        * gtest/msvc/gtest-md.vcxproj:
+
+2015-08-10  Alex Christensen  <achristensen@webkit.org>
+
+        [Win] Unreviewed build fix after r188239.
+
+        * gtest/CMakeLists.txt:
+        VS2015 requires __STDC_LIMIT_MACROS to be defined for INTMAX_MAX to be defined.
+
+2015-08-10  Alex Christensen  <achristensen@webkit.org>
+
+        Build TestWebKitAPI with CMake on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=147851
+
+        Reviewed by Chris Dumez.
+
+        * gtest/CMakeLists.txt:
+        Include DerivedSources to find WTF/WTFHeaderDetection.h.
+
+2015-05-26  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/21104551> Update build settings
+
+        Reviewed by Anders Carlsson.
+
+        * gtest/xcode/Config/General.xcconfig:
+
+2015-05-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Move Windows build target to Windows 7 (or newer)
+        https://bugs.webkit.org/show_bug.cgi?id=144890
+        <rdar://problem/20707307>
+
+        Reviewed by Anders Carlsson.
+
+        Update linked SDK and minimal Windows level to be compatible with
+        Windows 7 or newer.
+
+        * gtest/msvc/gtest-md.vcxproj:
+
+2015-05-07  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/19317140> [Xcode] Remove usage of AspenFamily.xcconfig in Source/
+        https://bugs.webkit.org/show_bug.cgi?id=144727
+
+        Reviewed by Darin Adler.
+
+        * gtest/xcode/Config/General.xcconfig: Don’t include AspenFamily.xcconfig.
+
+2015-04-01  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [CMake] Make gtest/CMakeLists.txt more readable
+        https://bugs.webkit.org/show_bug.cgi?id=143295
+
+        Reviewed by Csaba Osztrogonác.
+
+        gtest/CMakeLists.txt has used add_library() and include_directory() directly.
+        This patch adds GTEST_INCLUDE_DIRECTORIES and GTEST_SOURCES, and use it.
+
+        * gtest/CMakeLists.txt:
+
+2015-03-29  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CMake] Update old CMakeList.txt in gtest
+        https://bugs.webkit.org/show_bug.cgi?id=143192
+
+        Reviewed by Darin Adler.
+
+        CMake ports have used cmake/gtest/CMakeLists.txt instead of ThirdParty/test/CMakeLists.txt
+        in order to build gtest. However it looks ThirdParty/test/CMakeLists.txt won't be used anymore.
+        So this patch moves cmake/gtest/CMakeLists.txt to ThirdPart/test/CMakeLists.txt, and use it.
+
+        * gtest/CMakeLists.txt:
+
+2014-12-26  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/19348208> REGRESSION (r177027): iOS builds use the wrong toolchain
+        https://bugs.webkit.org/show_bug.cgi?id=139950
+
+        Reviewed by David Kilzer.
+
+        * gtest/xcode/Config/General.xcconfig: Only define TOOLCHAINS when building for OS X, doing so
+        in a manner that works with Xcode 5.1.1.
+
+2014-12-09  David Kilzer  <ddkilzer@apple.com>
+
+        Switch from using PLATFORM_NAME to SDK selectors in ANGLE, bmalloc, gtest, JavaScriptCore, WTF
+        <http://webkit.org/b/139212>
+
+        Reviewed by Joseph Pecoraro.
+
+        * gtest/xcode/Config/General.xcconfig:
+        - Only set SDKROOT and TOOLCHAINS on OS X.
+
+2014-10-30  Dana Burkart  <dburkart@apple.com>
+
+        <rdar://problem/18821260> Prepare for the mysterious future
+
+        Reviewed by Lucas Forschler.
+
+        * gtest/xcode/Config/General.xcconfig:
+
+2014-09-18  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix.
+
+        * gtest/msvc/gtest-md.vcxproj: Make sure we use static linking for gtest on
+        normal debug build to match the rest of WebKit.
+
+2014-09-09  Benjamin Poulain  <bpoulain@apple.com>
+
+        Disable the "unreachable-code" warning
+        https://bugs.webkit.org/show_bug.cgi?id=136677
+
+        Reviewed by Darin Adler.
+
+        * gtest/xcode/Config/General.xcconfig:
+
+2014-09-06  Darin Adler  <darin@apple.com>
+
+        Make updates suggested by new version of Xcode
+        https://bugs.webkit.org/show_bug.cgi?id=136603
+
+        Reviewed by Mark Rowe.
+
+        * gtest/xcode/Config/General.xcconfig: Moved CLANG_WARN_BOOL_CONVERSION,
+        CLANG_WARN_ENUM_CONVERSION, CLANG_WARN_INT_CONVERSION, and COMBINE_HIDPI_IMAGES
+        here from project file.  Added CLANG_WARN_UNREACHABLE_CODE, ENABLE_STRICT_OBJC_MSGSEND,
+        and GCC_WARN_64_TO_32_BIT_CONVERSION as suggested by Xcode upgrade check.
+
+        * gtest/xcode/gtest.xcodeproj/project.pbxproj: Updated LastUpgradeCheck and removed
+        things that are redundant with the xcconfig file above.
+
+2014-08-22  Renato Nagy  <nagy.renato@stud.u-szeged.hu>
+
+        Remove LevelDB.
+        https://bugs.webkit.org/show_bug.cgi?id=136170
+
+        Reviewed by Gyuyoung Kim.
+
+        * leveldb/AUTHORS: Removed.
+        * leveldb/LICENSE: Removed.
+        * leveldb/Makefile: Removed.
+        * leveldb/NEWS: Removed.
+        * leveldb/README: Removed.
+        * leveldb/TODO: Removed.
+        * leveldb/build_detect_platform: Removed.
+        * leveldb/db/builder.cc: Removed.
+        * leveldb/db/builder.h: Removed.
+        * leveldb/db/c.cc: Removed.
+        * leveldb/db/c_test.c: Removed.
+        * leveldb/db/corruption_test.cc: Removed.
+        * leveldb/db/db_bench.cc: Removed.
+        * leveldb/db/db_impl.cc: Removed.
+        * leveldb/db/db_impl.h: Removed.
+        * leveldb/db/db_iter.cc: Removed.
+        * leveldb/db/db_iter.h: Removed.
+        * leveldb/db/db_test.cc: Removed.
+        * leveldb/db/dbformat.cc: Removed.
+        * leveldb/db/dbformat.h: Removed.
+        * leveldb/db/dbformat_test.cc: Removed.
+        * leveldb/db/filename.cc: Removed.
+        * leveldb/db/filename.h: Removed.
+        * leveldb/db/filename_test.cc: Removed.
+        * leveldb/db/leveldb_main.cc: Removed.
+        * leveldb/db/log_format.h: Removed.
+        * leveldb/db/log_reader.cc: Removed.
+        * leveldb/db/log_reader.h: Removed.
+        * leveldb/db/log_test.cc: Removed.
+        * leveldb/db/log_writer.cc: Removed.
+        * leveldb/db/log_writer.h: Removed.
+        * leveldb/db/memtable.cc: Removed.
+        * leveldb/db/memtable.h: Removed.
+        * leveldb/db/repair.cc: Removed.
+        * leveldb/db/skiplist.h: Removed.
+        * leveldb/db/skiplist_test.cc: Removed.
+        * leveldb/db/snapshot.h: Removed.
+        * leveldb/db/table_cache.cc: Removed.
+        * leveldb/db/table_cache.h: Removed.
+        * leveldb/db/version_edit.cc: Removed.
+        * leveldb/db/version_edit.h: Removed.
+        * leveldb/db/version_edit_test.cc: Removed.
+        * leveldb/db/version_set.cc: Removed.
+        * leveldb/db/version_set.h: Removed.
+        * leveldb/db/version_set_test.cc: Removed.
+        * leveldb/db/write_batch.cc: Removed.
+        * leveldb/db/write_batch_internal.h: Removed.
+        * leveldb/db/write_batch_test.cc: Removed.
+        * leveldb/doc/bench/db_bench_sqlite3.cc: Removed.
+        * leveldb/doc/bench/db_bench_tree_db.cc: Removed.
+        * leveldb/doc/benchmark.html: Removed.
+        * leveldb/doc/doc.css: Removed.
+        * leveldb/doc/impl.html: Removed.
+        * leveldb/doc/index.html: Removed.
+        * leveldb/doc/log_format.txt: Removed.
+        * leveldb/doc/table_format.txt: Removed.
+        * leveldb/helpers/memenv/memenv.cc: Removed.
+        * leveldb/helpers/memenv/memenv.h: Removed.
+        * leveldb/helpers/memenv/memenv_test.cc: Removed.
+        * leveldb/include/leveldb/c.h: Removed.
+        * leveldb/include/leveldb/cache.h: Removed.
+        * leveldb/include/leveldb/comparator.h: Removed.
+        * leveldb/include/leveldb/db.h: Removed.
+        * leveldb/include/leveldb/env.h: Removed.
+        * leveldb/include/leveldb/filter_policy.h: Removed.
+        * leveldb/include/leveldb/iterator.h: Removed.
+        * leveldb/include/leveldb/options.h: Removed.
+        * leveldb/include/leveldb/slice.h: Removed.
+        * leveldb/include/leveldb/status.h: Removed.
+        * leveldb/include/leveldb/table.h: Removed.
+        * leveldb/include/leveldb/table_builder.h: Removed.
+        * leveldb/include/leveldb/write_batch.h: Removed.
+        * leveldb/port/README: Removed.
+        * leveldb/port/atomic_pointer.h: Removed.
+        * leveldb/port/port.h: Removed.
+        * leveldb/port/port_example.h: Removed.
+        * leveldb/port/port_posix.cc: Removed.
+        * leveldb/port/port_posix.h: Removed.
+        * leveldb/port/thread_annotations.h: Removed.
+        * leveldb/port/win/stdint.h: Removed.
+        * leveldb/table/block.cc: Removed.
+        * leveldb/table/block.h: Removed.
+        * leveldb/table/block_builder.cc: Removed.
+        * leveldb/table/block_builder.h: Removed.
+        * leveldb/table/filter_block.cc: Removed.
+        * leveldb/table/filter_block.h: Removed.
+        * leveldb/table/filter_block_test.cc: Removed.
+        * leveldb/table/format.cc: Removed.
+        * leveldb/table/format.h: Removed.
+        * leveldb/table/iterator.cc: Removed.
+        * leveldb/table/iterator_wrapper.h: Removed.
+        * leveldb/table/merger.cc: Removed.
+        * leveldb/table/merger.h: Removed.
+        * leveldb/table/table.cc: Removed.
+        * leveldb/table/table_builder.cc: Removed.
+        * leveldb/table/table_test.cc: Removed.
+        * leveldb/table/two_level_iterator.cc: Removed.
+        * leveldb/table/two_level_iterator.h: Removed.
+        * leveldb/util/arena.cc: Removed.
+        * leveldb/util/arena.h: Removed.
+        * leveldb/util/arena_test.cc: Removed.
+        * leveldb/util/bloom.cc: Removed.
+        * leveldb/util/bloom_test.cc: Removed.
+        * leveldb/util/cache.cc: Removed.
+        * leveldb/util/cache_test.cc: Removed.
+        * leveldb/util/coding.cc: Removed.
+        * leveldb/util/coding.h: Removed.
+        * leveldb/util/coding_test.cc: Removed.
+        * leveldb/util/comparator.cc: Removed.
+        * leveldb/util/crc32c.cc: Removed.
+        * leveldb/util/crc32c.h: Removed.
+        * leveldb/util/crc32c_test.cc: Removed.
+        * leveldb/util/env.cc: Removed.
+        * leveldb/util/env_posix.cc: Removed.
+        * leveldb/util/env_test.cc: Removed.
+        * leveldb/util/filter_policy.cc: Removed.
+        * leveldb/util/hash.cc: Removed.
+        * leveldb/util/hash.h: Removed.
+        * leveldb/util/histogram.cc: Removed.
+        * leveldb/util/histogram.h: Removed.
+        * leveldb/util/logging.cc: Removed.
+        * leveldb/util/logging.h: Removed.
+        * leveldb/util/mutexlock.h: Removed.
+        * leveldb/util/options.cc: Removed.
+        * leveldb/util/posix_logger.h: Removed.
+        * leveldb/util/random.h: Removed.
+        * leveldb/util/status.cc: Removed.
+        * leveldb/util/testharness.cc: Removed.
+        * leveldb/util/testharness.h: Removed.
+        * leveldb/util/testutil.cc: Removed.
+        * leveldb/util/testutil.h: Removed.
+
+2014-08-11  Andy Estes  <aestes@apple.com>
+
+        [iOS] Get rid of iOS.xcconfig
+        https://bugs.webkit.org/show_bug.cgi?id=135809
+
+        Reviewed by Joseph Pecoraro.
+
+        All iOS.xcconfig did was include AspenFamily.xcconfig, so there's no need for the indirection.
+
+        * gtest/xcode/Config/General.xcconfig:
+        * gtest/xcode/Config/iOS.xcconfig: Removed.
+        * gtest/xcode/gtest.xcodeproj/project.pbxproj:
+
+2014-03-25  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Remove the autotools build
+        https://bugs.webkit.org/show_bug.cgi?id=130717
+
+        Reviewed by Anders Carlsson.
+
+        * gtest/GNUmakefile.am: Removed.
+        * leveldb/GNUmakefile.am: Removed.
+
+2014-03-25  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        [EFL] Add ARM64 build support
+        https://bugs.webkit.org/show_bug.cgi?id=130506
+
+        Rubber stamped by Gyuyoung Kim.
+
+        * leveldb/port/atomic_pointer.h: Set ARCH_CPU_ARM_FAMILY when __aarch64__ is defined.
+
+2014-03-14  Landry Breuil  <landry@openbsd.org>
+
+        Fix leveldb build on OpenBSD/NetBSD by using the FreeBSD codepaths.
+        https://bugs.webkit.org/show_bug.cgi?id=129966
+
+        Reviewed by Andreas Kling.
+
+        * leveldb/GNUmakefile.am:
+        * leveldb/port/port_posix.h:
+
+2014-01-12  Andy Estes  <aestes@apple.com>
+
+        Fix the Mac build after r161777.
+
+        * gtest/xcode/Config/General.xcconfig: AspenFamily.xcconfig excludes
+        macosx from SUPPORTED_PLATFORMS, so add it back in ourselves.
+
+2014-01-11  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Upstream gtest
+        <http://webkit.org/b/126811>
+
+        Reviewed by Mark Rowe.
+
+        * gtest/xcode/Config/General.xcconfig: Include iOS.xcconfig.
+        * gtest/xcode/Config/iOS.xcconfig: Added.
+        * gtest/xcode/gtest.xcodeproj/project.pbxproj: Add iOS.xcconfig.
+        Sort.
+
+2013-12-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Switch WebKit solution to Visual Studio 2013
+        https://bugs.webkit.org/show_bug.cgi?id=125192
+
+        Reviewed by Anders Carlsson.
+
+        * gtest/msvc/gtest-md.vcxproj: Update for VS2013
+
+2013-11-15  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed, gtest project file cleanup.
+
+        * gtest/msvc/gtest-md.vcxproj:
+
+2013-10-24  Mark Rowe  <mrowe@apple.com>
+
+        Remove references to OS X 10.7 from Xcode configuration settings.
+
+        Now that we're not building for OS X 10.7 they're no longer needed.
+
+        Reviewed by Anders Carlsson.
+
+        * gtest/xcode/Config/General.xcconfig:
+
+2013-10-24  Mark Rowe  <mrowe@apple.com>
+
+        <rdar://problem/15312643> Prepare for the mysterious future.
+
+        Reviewed by David Kilzer.
+
+        * gtest/xcode/Config/General.xcconfig:
+
+2013-10-10  Mark Rowe  <mrowe@apple.com>
+
+        <rdar://problem/13341666> WebKit should always build against an SDK.
+
+        Have all projects default to building against the OS X Internal SDK for the Production
+        configuration. For the Debug and Release configurations, look for UseInternalSDK.xcconfig
+        to determine whether the OS X Internal SDK should be used. If not, use the normal OS X SDK.
+
+        Reviewed by Dan Bernstein.
+
+        * gtest/xcode/Config/General.xcconfig:
+        * gtest/xcode/Config/ProductionProject.xcconfig:
+
+2013-10-06  Dan Bernstein  <mitz@apple.com>
+
+        Build against the Xcode default toolchain when targeting OS X 10.8.
+
+        This fixes the build after r156632 in configurations that use another toolchain
+        by default.
+
+        * gtest/xcode/Config/General.xcconfig:
+
+2013-10-06  Darin Adler  <darin@apple.com>
+
+        Remove unneeded ScriptGCEvent class
+        https://bugs.webkit.org/show_bug.cgi?id=122390
+
+        Reviewed by Anders Carlsson.
+
+        * gtest/xcode/gtest.xcodeproj/project.pbxproj: Let Xcode update this file.
+        Not really part of this bug fix, but good to land anyway.
+
+2013-09-29  Darin Adler  <darin@apple.com>
+
+        Take some Xcode advice about turning on additional warnings in ANGLE and gtest
+        https://bugs.webkit.org/show_bug.cgi?id=122087
+
+        Reviewed by Mark Rowe.
+
+        * gtest/xcode/Config/General.xcconfig: Added some warnings that Xcode 5 suggested.
+
+2013-09-06  Alberto Garcia  <berto@igalia.com>
+
+        GTest: add support for FreeBSD and Hurd
+        https://bugs.webkit.org/show_bug.cgi?id=120870
+
+        Patch by Emilio Pozuelo Monfort <pochu@debian.org>
+        Reviewed by Gustavo Noronha Silva.
+
+        * gtest/include/gtest/internal/gtest-port.h:
+
+2013-09-05  Anders Carlsson  <andersca@apple.com>
+
+        Enable C++11 wherever we build C++ files that include wtf/Platform.h
+        https://bugs.webkit.org/show_bug.cgi?id=120782
+
+        Reviewed by Andreas Kling.
+
+        Set CLANG_CXX_LANGUAGE_STANDARD to gnu++0x.
+
+        * gtest/xcode/Config/General.xcconfig:
+
+2013-08-20  Alex Christensen  <achristensen@apple.com>
+
+        Use PlatformArchitecture to distinguish between 32-bit and 64-bit builds on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=119512
+
+        Reviewed by Brent Fulgham.
+
+        * gtest/msvc/gtest-md.vcxproj:
+        Replaced obj32, bin32, and lib32 with macros for 64-bit build.
+
+2013-07-23  David Farler  <dfarler@apple.com>
+
+        Provide optional OTHER_CFLAGS, OTHER_CPPFLAGS, OTHER_LDFLAGS additions for building with ASAN
+        https://bugs.webkit.org/show_bug.cgi?id=117762
+
+        Reviewed by Mark Rowe.
+
+        * gtest/xcode/Config/General.xcconfig:
+        Add ASAN_OTHER_CFLAGS, CPLUSPLUSFLAGS, LDFLAGS.
+        * gtest/xcode/Config/StaticLibraryTarget.xcconfig:
+        Add ASAN_OTHER_CFLAGS, CPLUSPLUSFLAGS.
+
+2013-07-27  Mark Rowe  <mrowe@apple.com>
+
+        Fix builds against an SDK.
+
+        * gtest/xcode/Config/FrameworkTarget.xcconfig: Ensure that gtest.framework is installed
+        in a location compatible with the SDK generation process.
+
+2013-07-19  Alex Christensen  <achristensen@apple.com>
+
+        Added x64 configuration to Visual Studio build.
+        https://bugs.webkit.org/show_bug.cgi?id=118888
+
+        Reviewed by Brent Fulgham.
+
+        * gtest/msvc/gtest-md.vcxproj:
+
+2013-07-18  Roger Fong  <roger_fong@apple.com>
+
+        Make sure to link against _debug binaries when appropriate.
+        <rdar://problem/14473010>.
+
+        * gtest/msvc/gtest-md.vcxproj:
+
+2013-06-17  Darin Adler  <darin@apple.com>
+
+        Sort all the Xcode project files
+        https://bugs.webkit.org/show_bug.cgi?id=117696
+
+        Reviewed by Anders Carlsson.
+
+        * gtest/xcode/Samples/FrameworkSample/WidgetFramework.xcodeproj/project.pbxproj: Ran the sort-Xcode-project-file script.
+        * gtest/xcode/gtest.xcodeproj/project.pbxproj: Ran the sort-Xcode-project-file script.
+
+2013-06-18  Roger Fong  <roger_fong@apple.com>
+
+        Replace tools32 folder with tools and update WebKit Windows solution accordingly.
+        <rdar://problem/14118143>.
+
+        Rubberstamped by Brent Fulgham.
+
+        * gtest/msvc/gtest-md.vcxproj:
+
+2013-06-03  Roger Fong  <roger_fong@apple.com>
+
+        Nuke VS2005 files from the tree.
+        <rdar://problem/14042021>.
+
+        Rubberstamped by Brent Fulgham.
+
+        * gtest/msvc/gtest-md.sln: Removed.
+        * gtest/msvc/gtest-md.vcproj: Removed.
+        * gtest/msvc/gtest.sln: Removed.
+        * gtest/msvc/gtest.vcproj: Removed.
+        * gtest/msvc/gtest_main-md.vcproj: Removed.
+        * gtest/msvc/gtest_main.vcproj: Removed.
+        * gtest/msvc/gtest_prod_test-md.vcproj: Removed.
+        * gtest/msvc/gtest_prod_test.vcproj: Removed.
+        * gtest/msvc/gtest_unittest-md.vcproj: Removed.
+        * gtest/msvc/gtest_unittest.vcproj: Removed.
+
+2013-04-26  Roger Fong  <roger_fong@apple.com>
+
+        Make Apple Windows VS2010 build results into and get dependencies from __32 suffixed folders.
+        Make the DebugSuffix configuration use _debug dependencies.
+
+        * gtest/msvc/gtest-md.vcxproj:
+
+2013-04-09  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove the WebKit copy of GLU and the file using it
+        https://bugs.webkit.org/show_bug.cgi?id=114249
+
+        Reviewed by Darin Adler.
+
+        * glu/.gitignore: Removed.
+        * glu/LICENSE.txt: Removed.
+        * glu/README.webkit: Removed.
+        * glu/glu.gyp: Removed.
+        * glu/gluos.h: Removed.
+        * glu/internal_glu.h: Removed.
+        * glu/libtess/GNUmakefile: Removed.
+        * glu/libtess/Imakefile: Removed.
+        * glu/libtess/README: Removed.
+        * glu/libtess/alg-outline: Removed.
+        * glu/libtess/dict-list.h: Removed.
+        * glu/libtess/dict.c: Removed.
+        * glu/libtess/dict.h: Removed.
+        * glu/libtess/geom.c: Removed.
+        * glu/libtess/geom.h: Removed.
+        * glu/libtess/memalloc.c: Removed.
+        * glu/libtess/memalloc.h: Removed.
+        * glu/libtess/mesh.c: Removed.
+        * glu/libtess/mesh.h: Removed.
+        * glu/libtess/normal.c: Removed.
+        * glu/libtess/normal.h: Removed.
+        * glu/libtess/priorityq-heap.c: Removed.
+        * glu/libtess/priorityq-heap.h: Removed.
+        * glu/libtess/priorityq-sort.h: Removed.
+        * glu/libtess/priorityq.c: Removed.
+        * glu/libtess/priorityq.h: Removed.
+        * glu/libtess/render.c: Removed.
+        * glu/libtess/render.h: Removed.
+        * glu/libtess/sweep.c: Removed.
+        * glu/libtess/sweep.h: Removed.
+        * glu/libtess/tess.c: Removed.
+        * glu/libtess/tess.h: Removed.
+        * glu/libtess/tessmono.c: Removed.
+        * glu/libtess/tessmono.h: Removed.
+
+2013-04-08  Benjamin Poulain  <benjamin@webkit.org>
+
+        Remove gyp from ThirdParty
+        https://bugs.webkit.org/show_bug.cgi?id=114244
+
+        Rubberstamped by Ryosuke Niwa.
+
+        * gyp: Removed.
+
+2013-04-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Made USE(JSC) unconditional
+        https://bugs.webkit.org/show_bug.cgi?id=114058
+
+        Reviewed by Anders Carlsson.
+
+        * gtest/include/gtest/internal/gtest-port.h:
+
+2013-03-29  Martin Robinson  <mrobinson@igalia.com>
+
+        Update the version of gyp in the repository
+        https://bugs.webkit.org/show_bug.cgi?id=113540
+
+        Reviewed by Nico Weber.
+
+        * gyp: Update gyp to r1605.
+
+2013-03-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Move libLevelDB.la setup into a separate GNUmakefile.am
+        https://bugs.webkit.org/show_bug.cgi?id=112947
+
+        Reviewed by Martin Robinson.
+
+        * leveldb/GNUmakefile.am: Added, sets up the libLevelDB.la library.
+
+2013-03-20  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Build WinCairo port under VS2010.
+        https://bugs.webkit.org/show_bug.cgi?id=112861
+
+        Reviewed by Tim Horton.
+
+        * gtest/msvc/gtest-md.vcxproj: Add WinCairo targets.
+
+2013-03-07  Andrew Bortz  <andrew@abortz.net>
+
+        Replace Mersenne Twister RNG with a simple but fast RNG
+        https://bugs.webkit.org/show_bug.cgi?id=111533
+
+        Reviewed by Adam Barth.
+
+        This code is no longer used.
+
+        * mt19937ar.c: Removed.
+
+2013-02-20  Roger Fong  <roger_fong@apple.com>
+
+       Get VS2010 Solution B&I ready.
+        <rdar://problem/1322988>
+
+        Rubberstamped by Timothy Horton.
+        
+        Add Production configuration. 
+
+        * gtest/msvc/gtest-md.vcxproj:
+
+2013-02-14  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, set svn:eol-style native for .sln, .vcproj, and .vsprops files.
+        https://bugs.webkit.org/show_bug.cgi?id=96934
+
+        * gtest/msvc/gtest-md.sln: Modified property svn:eol-style.
+        * gtest/msvc/gtest.sln: Modified property svn:eol-style.
+
+2013-02-14  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, set svn:eol-style CRLF for .sln files.
+
+        * gtest/msvc/gtest-md.sln: Added property svn:eol-style.
+        * gtest/msvc/gtest.sln: Added property svn:eol-style.
+
+2013-02-14  Roger Fong  <roger_fong@apple.com>
+
+        Add gtest-md VS2010 project files.
+        https://bugs.webkit.org/show_bug.cgi?id=107034.
+
+        Reviewed by Brent Fulgham.
+
+        * gtest/msvc/gtest-md.sln: Added property svn:eol-style.
+        * gtest/msvc/gtest.sln: Added property svn:eol-style.
+
+2013-02-05  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Compile WTF tests of TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=108935
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add qmake build system .pro file for building gtest as static library.
+
+        * gtest/gtest.pro: Added.
+
+2013-02-05  Paweł Forysiuk  <tuxator@o2.pl>
+
+        Building with MinGW compiler dies with gtest errors
+        https://bugs.webkit.org/show_bug.cgi?id=108470
+
+        Reviewed by Martin Robinson.
+
+        Variable Libraries_libgtest_la_CXXFLAGS blindly assumes that
+        pthreads will always be enabled. Make using pthreads for gtest
+        conditional on the build target.
+
+        * gtest/GNUmakefile.am: Set Libraries_libgtest_la_CXXFLAGS accordingly to the build target.
+
+2013-01-23  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, set svn:eol-style to CRLF on Windows .sln files.
+
+        * gtest/msvc/gtest-md.sln: Added property svn:eol-style.
+        * gtest/msvc/gtest.sln: Added property svn:eol-style.
+
+2013-01-17  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Build with LevelDB when IndexedDB is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=103220
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add the leveldb 1.9.0 source code to the ThirdParty dependencies.
+        We cannot depend on leveldb provided by the distribution, because
+        it sometimes breaks API compatibility.
+
+        * leveldb: Imported from the 1.9.0 leveldb source tarball.
+
+2013-01-09  David Farler  <dfarler@apple.com>
+
+        Change ARCHS to generic setting to work with multiple platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=106478
+
+        Reviewed by Anders Carlsson.
+
+        * gtest/xcode/Config/General.xcconfig: ARCHS = $(ARCHS_STANDARD_32_64_BIT);
+
+2012-10-28  Mark Rowe  <mrowe@apple.com>
+
+        Simplify Xcode configuration settings that used to vary between OS versions.
+
+        Reviewed by Dan Bernstein.
+
+        * gtest/xcode/Config/General.xcconfig:
+
+2012-10-28  Mark Rowe  <mrowe@apple.com>
+
+        Remove references to unsupported OS and Xcode versions.
+
+        Reviewed by Anders Carlsson.
+
+        * gtest/xcode/Config/CompilerVersion.xcconfig: Removed.
+        * gtest/xcode/Config/General.xcconfig:
+
+2012-10-27  Dan Bernstein  <mitz@apple.com>
+
+        REAL_PLATFORM_NAME build setting is no longer needed
+        https://bugs.webkit.org/show_bug.cgi?id=100587
+
+        Reviewed by Mark Rowe.
+
+        Removed the definition of REAL_PLATFORM_NAME and replaced references to it with references
+        to PLATFORM_NAME.
+
+        * gtest/xcode/Config/CompilerVersion.xcconfig:
+        * gtest/xcode/Config/General.xcconfig:
+
+2012-08-23  Mark Rowe  <mrowe@apple.com>
+
+        Make gtest build with the latest version of clang.
+
+        Reviewed by Dan Bernstein.
+
+        * gtest/src/gtest-internal-inl.h:
+        (GTestFlagSaver): Remove an unused member.
+
+2012-07-03  Tony Chang  <tony@chromium.org>
+
+        [chromium] Unreviewed, update .gitignore to handle VS2010 files.
+
+        * glu/.gitignore:
+
+2012-06-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix gcc build after r121302
+        https://bugs.webkit.org/show_bug.cgi?id=90055
+
+        Reviewed by Mark Rowe.
+
+        Assume RTTI is disabled so that gtest builds under XCode 3.2.6.
+
+        * gtest/xcode/Config/General.xcconfig:
+
+2012-04-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * gtest/GNUmakefile.am: Add source code files included by
+        gtest_all.cc to EXTRA_DIST.
+
+2012-04-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Build and run TestWebKitAPI WebKit2 unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=84446
+
+        Reviewed by Philippe Normand.
+
+        * gtest/GNUmakefile.am: Do not build libgtestmain anymmore since
+        all tests use now a custom main to make sure WTF threads are
+        initialized.
+
+2012-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Build and run TestWebKitAPI unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=84325
+
+        Reviewed by Philippe Normand.
+
+        * gtest/GNUmakefile.am: Added.
+
+2012-03-30  David Barr  <davidbarr@chromium.org>
+
+        Split up top-level .gitignore and .gitattributes
+        https://bugs.webkit.org/show_bug.cgi?id=82687
+
+        Reviewed by Tor Arne Vestbø.
+
+        * glu/.gitignore: Added.
+
+2012-03-09  Ashod Nakashian  <ashodnakashian@yahoo.com>
+
+        Bash scripts should support LF endings only
+        https://bugs.webkit.org/show_bug.cgi?id=79509
+
+        Reviewed by David Kilzer.
+
+        * gtest/xcode/Samples/FrameworkSample/runtests.sh: Added property svn:executable.
+        * gtest/xcode/Scripts/runtests.sh: Added property svn:executable.
+
+2012-03-08  Jessie Berlin  <jberlin@apple.com>
+
+        More Windows build fixing.
+
+        * gtest/msvc/gtest-md.vcproj:
+
+2012-03-07  Jessie Berlin  <jberlin@apple.com>
+
+        Clean Windows build fails after r110033
+        https://bugs.webkit.org/show_bug.cgi?id=80553
+
+        Rubber-stamped by Jon Honeycutt and Eric Seidel.
+
+        * gtest/msvc/gtest-md.vcproj:
+        Add the new JavaScriptCore include directory to the include path.
+
+2012-02-21  Sam Weinig  <sam@webkit.org>
+
+        Attempt to fix the Snow Leopard build.
+
+        * gtest/xcode/Config/General.xcconfig:
+
+2012-02-21  Sam Weinig  <sam@webkit.org>
+
+        Use libc++ when building with Clang on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=78981
+
+        Reviewed by Dan Bernstein.
+
+        * gtest/xcode/Config/General.xcconfig:
+        In addition to enabling libc++ when building with Clang,
+        disable gtest's use of tr1::tuple, which doesn't exist in
+        libc++.
+
+2012-01-25  Mark Rowe  <mrowe@apple.com>
+
+        Build in to an alternate location when USE_STAGING_INSTALL_PATH is set.
+
+        <rdar://problem/10609417> Adopt USE_STAGING_INSTALL_PATH
+
+        Reviewed by David Kilzer.
+
+        * gtest/xcode/Config/ProductionProject.xcconfig: Ensure that the staged frameworks path
+        is in the framework search path when USE_STAGING_INSTALL_PATH is set. Look for the WebCore
+        framework in the staged frameworks directory when USE_STAGING_INSTALL_PATH is set.
+
+2012-01-06  Anders Carlsson  <andersca@apple.com>
+
+        Make JavaScriptCore.framework a reference and put it in a Frameworks group
+        https://bugs.webkit.org/show_bug.cgi?id=75740
+
+        Reviewed by Mark Rowe.
+
+        * gtest/xcode/gtest.xcodeproj/project.pbxproj:
+
+2012-01-05  Dan Bernstein  <mitz@apple.com>
+
+        Made Debug/Release builds of gtest build only for the active architecture.
+
+        Reviewed by Dave Kilzer.
+
+        * gtest/xcode/Config/DebugProject.xcconfig:
+        * gtest/xcode/Config/ProductionProject.xcconfig:
+        * gtest/xcode/Config/ReleaseProject.xcconfig:
+
+2012-01-04  David Kilzer  <ddkilzer@apple.com>
+
+        Remove HEADER_SEARCH_PATHS from Production configurations for gtest
+
+        Reviewed by Mark Rowe.
+
+        * gtest/xcode/gtest.xcodeproj/project.pbxproj: Remove
+        HEADER_SEARCH_PATHS from Production configurations to match
+        changes made for Debug and Release configurations in r104091.
+
+2012-01-04  David Kilzer  <ddkilzer@apple.com>
+
+        TestWebKitAPI has issues due to FastMalloc incompatibility
+        <http://webkit.org/b/66521>
+        <rdar://problem/10607911>
+
+        Reviewed by David Levin.
+
+        Original patch by Dmitry Lomov <dslomov@google.com>.
+
+        This patch ensures that gtest uses the FastMalloc new and delete
+        operators that are defined in JavaScriptCore.
+
+        * gtest/README.WebKit: Update with project changes.
+        * gtest/include/gtest/internal/gtest-port.h: Import necessary
+        headers to use FastMalloc in gtest.
+        * gtest/msvc/gtest-md.vcproj: Add include directories to find
+        WTF headers.
+        * gtest/xcode/Config/DebugProject.xcconfig: Define
+        WEBCORE_PRIVATE_HEADERS_DIR for Debug builds.
+        * gtest/xcode/Config/General.xcconfig: Define
+        HEADER_SEARCH_PATHS in terms of WEBCORE_PRIVATE_HEADERS_DIR.
+        * gtest/xcode/Config/ProductionProject.xcconfig: Define
+        WEBCORE_PRIVATE_HEADERS_DIR for Production builds.  This
+        overrides the value in ReleaseProject.xcconfig.
+        * gtest/xcode/Config/ReleaseProject.xcconfig: Define
+        WEBCORE_PRIVATE_HEADERS_DIR for Release builds.
+        * gtest/xcode/gtest.xcodeproj/project.pbxproj:
+        - Remove local HEADER_SEARCH_PATHS definitions.
+        - Link to JavaScriptCore.framework when building
+          gtest.framework.
+
+2012-01-03  David Kilzer  <ddkilzer@apple.com>
+
+        Add Production configuration to gtest Xcode project
+        <http://webkit.org/b/75153>
+
+        Reviewed by Adam Roben.
+
+        * gtest/README.WebKit: Updated.
+        * gtest/xcode/Config/ProductionProject.xcconfig: Added.
+        * gtest/xcode/gtest.xcodeproj/project.pbxproj:
+        - Added Production configuration based on Release configuration.
+        - Made Production the default configuration.
+
+2011-12-25  Darin Adler  <darin@apple.com>
+
+        * gtest/xcode/gtest.xcodeproj: Added property svn:ignore.
+
+2011-11-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        100,000 !!!
+
+        Reviewed by Zoltan Herczeg.
+
+        * ChangeLog: Point out revision 100,000.
+
+2011-08-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix build when GCC 4.2 is not installed.
+
+        * gtest/xcode/Config/CompilerVersion.xcconfig: Copied from Source/WebCore/Configurations/CompilerVersion.xcconfig.
+        * gtest/xcode/Config/General.xcconfig:
+        Use the same compiler version as other projects do.
+
+2011-08-19  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r93426.
+        http://trac.webkit.org/changeset/93426
+        https://bugs.webkit.org/show_bug.cgi?id=66607
+
+        Broke the Mac build by not building gtest.framework anymore
+        (Requested by andersca on #webkit).
+
+        * gtest/README.WebKit:
+        * gtest/include/gtest/internal/gtest-port.h:
+        * gtest/msvc/gtest-md.vcproj:
+        * gtest/xcode/Config/General.xcconfig:
+        * gtest/xcode/gtest.xcodeproj/project.pbxproj:
+
+2011-08-18  Dmitry Lomov  <dslomov@google.com>
+
+        TestWebKitAPI breaks on Windows due to fast malloc incompatibility.
+        https://bugs.webkit.org/show_bug.cgi?id=66521
+
+        This patch ensures that gtest uses new and delete operators that are defined in JavaScriptCore.
+
+        Reviewed by David Levin.
+
+        * gtest/include/gtest/internal/gtest-port.h:
+        * gtest/msvc/gtest-md.vcproj:
+        * gtest/README.WebKit:
+        * gtest/xcode/Config/General.xcconfig:
+        * gtest/xcode/gtest.xcodeproj/project.pbxproj:
+
+2011-08-09  Mark Rowe  <mrowe@apple.com>
+
+        Fix gtest to compile in the release configuration with clang.
+
+        This change was made upstream in r443.
+
+        * gtest/src/gtest.cc:
+
+2011-08-04  Mark Rowe  <mrowe@apple.com>
+
+        Future-proof Xcode configuration settings.
+
+        * gtest/xcode/Config/General.xcconfig:
+
+2011-08-03  Dmitry Lomov  <dslomov@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=61812
+        TestWebKitApi breaks in release mode due to gtest incompatibility with fast malloc
+
+        Disable fast malloc for offending class (::std::strstream) in gtest.
+        This looks like the most non-intrusive solution.
+
+        Reviewed by David Levin.
+
+        * gtest/include/gtest/internal/gtest-port.h:
+        (testing::internal::StrStream::operator new):
+        (testing::internal::StrStream::operator new[]):
+        (testing::internal::StrStream::operator delete):
+        (testing::internal::StrStream::operator delete[]):
+
+2011-07-05  Adam Barth  <abarth@webkit.org>
+
+        Import qunit JavaScript unit testing framework
+        https://bugs.webkit.org/show_bug.cgi?id=63967
+
+        Reviewed by Eric Seidel.
+
+        We're going to use this unit testing framework to test garden-o-matic.
+
+        * qunit: Added.
+
+2011-06-04  Adam Barth  <abarth@webkit.org>
+
+        * glu: Added property svn:ignore.
+            - For glu.xcodeproj, which is generated from glu.gyp.
+
+2011-05-24  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Unfork glu sources as much as possible.
+        https://bugs.webkit.org/show_bug.cgi?id=61365
+
+        Restore the glu sources closer to the original version on oss.sgi.com
+        by removing the WebKit-specific include paths, restoring the include
+        order, and renaming the glu* functions via #defines rather than in
+        the source.
+
+        * glu/README.webkit:
+        Update the README to reflect the changes from trunk.
+        * glu/glu.gyp:
+        Add Source/Thirdparty/glu as an include path, so we can remove the
+        hardcoded paths from the source files.
+        * glu/gluos.h:
+        Add #defines to rename the glu entry points to internal_*.
+        * glu/internal_glu.h:
+        * glu/libtess/dict.c:
+        * glu/libtess/geom.c:
+        * glu/libtess/geom.h:
+        * glu/libtess/memalloc.c:
+        * glu/libtess/mesh.c:
+        * glu/libtess/mesh.h:
+        * glu/libtess/normal.c:
+        * glu/libtess/normal.h:
+        * glu/libtess/priorityq-heap.c:
+        * glu/libtess/priorityq-sort.h:
+        * glu/libtess/priorityq.c:
+        * glu/libtess/priorityq.h:
+        * glu/libtess/render.c:
+        * glu/libtess/render.h:
+        * glu/libtess/sweep.c:
+        * glu/libtess/sweep.h:
+        * glu/libtess/tess.c:
+        * glu/libtess/tess.h:
+        * glu/libtess/tessmono.c:
+        Remove WebKit-specific include paths, and internal_ prefixes from glu
+        entry points.  Restore include order to original source order.
+
+2011-05-19  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] remove <(library) variable
+        https://bugs.webkit.org/show_bug.cgi?id=61158
+
+        This was for a build experiment; we can just use the correct value now.
+
+        * glu/glu.gyp:
+        * gyp/test/library/src/library.gyp:
+
+2011-05-12  Jeff Miller  <jeffm@apple.com>
+
+        Ignore Visual Studio *.user files.
+
+        * gtest/msvc: Added property svn:ignore.
+
+2011-05-12  Adam Roben  <aroben@apple.com>
+
+        Windows production build fix
+
+        * gtest/msvc/gtest-md.vcproj: Fix the OutputDirectory and IntermediateDirectory attributes
+        for all configurations.
+
+2011-05-12  Adam Roben  <aroben@apple.com>
+
+        A little gtest cleanup after r86287
+
+        * gtest/msvc/gtest-md.vcproj: Added Debug_All and Production configurations to match our
+        other projects. (At some point all the settings should be moved into .vsprops files to match
+        our other projects, too.)
+

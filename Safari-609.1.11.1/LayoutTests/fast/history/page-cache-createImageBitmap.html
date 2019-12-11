@@ -1,0 +1,62 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<img src="../dom/resources/abe.png">
+<a id="testLink" style="display: none" href="resources/page-cache-helper.html">Link</a>
+<script>
+description('Tests that a page with a pending createImageBitmap promise is able to enter the page cache.');
+jsTestIsAsync = true;
+let restoredFromPageCache = false;
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+    if (event.persisted) {
+        debug("PASS - Page did enter and was restored from the page cache");
+        restoredFromPageCache = true;
+    }
+});
+
+function createImage()
+{
+    createImageBitmap(blob).then((result) => {
+        imageBitmap = result;
+        shouldBeTrue("!!imageBitmap");
+        shouldBeTrue("restoredFromPageCache");
+        finishJSTest();
+    }, () => {
+        createImage();
+    });
+}
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        debug("FAIL - Page did not enter the page cache.");
+        finishJSTest();
+    }
+
+    createImage();
+});
+
+window.addEventListener('load', function() {
+    setTimeout(() => {
+        let img = document.querySelector('img');
+        let canvas = document.createElement('canvas');
+        canvas.width = img.clientWidth;
+        canvas.height = img.clientHeight;
+
+        let context = canvas.getContext('2d');
+        context.drawImage(img, 0, 0);
+        canvas.toBlob((_blob) => {
+            blob = _blob;
+            testLink.click();
+        }, 'image/png');
+    }, 0);
+});
+</script>
+</body>
+</html>

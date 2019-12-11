@@ -1,0 +1,112 @@
+# Copyright (c) 2017 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")  # This contains def of 'rtc_enable_protobuf'
+
+rtc_source_set("aec_dump") {
+  visibility = [ "*" ]
+  sources = [
+    "aec_dump_factory.h",
+  ]
+
+  deps = [
+    "../",
+    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base/system:file_wrapper",
+    "../../../rtc_base/system:rtc_export",
+  ]
+}
+
+rtc_source_set("mock_aec_dump") {
+  testonly = true
+  sources = [
+    "mock_aec_dump.cc",
+    "mock_aec_dump.h",
+  ]
+
+  deps = [
+    "../",
+    "../../../test:test_support",
+  ]
+}
+
+rtc_source_set("mock_aec_dump_unittests") {
+  testonly = true
+
+  sources = [
+    "aec_dump_integration_test.cc",
+  ]
+
+  deps = [
+    ":mock_aec_dump",
+    "..:api",
+    "../",
+    "../../../rtc_base:rtc_base_approved",
+    "//testing/gtest",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
+if (rtc_enable_protobuf) {
+  rtc_source_set("aec_dump_impl") {
+    sources = [
+      "aec_dump_impl.cc",
+      "aec_dump_impl.h",
+      "capture_stream_info.cc",
+      "capture_stream_info.h",
+      "write_to_file_task.cc",
+      "write_to_file_task.h",
+    ]
+
+    deps = [
+      ":aec_dump",
+      "../",
+      "../../../api/audio:audio_frame_api",
+      "../../../api/task_queue",
+      "../../../rtc_base:checks",
+      "../../../rtc_base:protobuf_utils",
+      "../../../rtc_base:rtc_base_approved",
+      "../../../rtc_base:rtc_task_queue",
+      "../../../rtc_base/system:file_wrapper",
+      "../../../system_wrappers",
+      "//third_party/abseil-cpp/absl/memory",
+    ]
+
+    deps += [ "../:audioproc_debug_proto" ]
+  }
+
+  rtc_source_set("aec_dump_unittests") {
+    testonly = true
+    defines = []
+    deps = [
+      ":aec_dump",
+      ":aec_dump_impl",
+      "..:audioproc_debug_proto",
+      "../",
+      "../../../rtc_base:task_queue_for_test",
+      "../../../test:fileutils",
+      "../../../test:test_support",
+      "//testing/gtest",
+    ]
+    sources = [
+      "aec_dump_unittest.cc",
+    ]
+  }
+}
+
+rtc_source_set("null_aec_dump_factory") {
+  assert_no_deps = [ ":aec_dump_impl" ]
+  sources = [
+    "null_aec_dump_factory.cc",
+  ]
+
+  deps = [
+    ":aec_dump",
+    "../",
+  ]
+}

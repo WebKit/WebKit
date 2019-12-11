@@ -1,0 +1,57 @@
+CONSOLE MESSAGE: line 67: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: line 67: XMLHttpRequest cannot load blob:null/d1801cd6-cf38-4d13-a661-fbd8810e7007 due to access control checks.
+CONSOLE MESSAGE: line 13: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: line 13: XMLHttpRequest cannot load blob:null/0d6efa45-4589-4ae0-b3fb-5f51b004946e#fragment due to access control checks.
+CONSOLE MESSAGE: line 31: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: line 31: XMLHttpRequest cannot load blob:null/c4553d08-4b95-4306-b37b-360bfe282412 due to access control checks.
+CONSOLE MESSAGE: line 31: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: line 31: XMLHttpRequest cannot load blob:null/8f66f90e-8ca2-4a13-bb25-c3f8a2443688?querystring due to access control checks.
+CONSOLE MESSAGE: line 31: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: line 31: XMLHttpRequest cannot load blob:null/81f47b74-8c88-4abb-a2fa-68e0469512ed/path due to access control checks.
+CONSOLE MESSAGE: line 4: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: line 4: Fetch API cannot load blob:null/23463417-46d8-432d-9e4a-decaa7db24a0#fragment due to access control checks.
+CONSOLE MESSAGE: line 8: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: line 8: Fetch API cannot load blob:null/4750b3fc-6988-4dc1-a5b7-6e9fec56083d due to access control checks.
+CONSOLE MESSAGE: line 8: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: line 8: Fetch API cannot load blob:null/97c5ff0a-bce2-4055-b299-72fa555e417c?querystring due to access control checks.
+CONSOLE MESSAGE: line 8: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: line 8: Fetch API cannot load blob:null/79df7f44-df14-49b2-9211-63492d09951c/path due to access control checks.
+CONSOLE MESSAGE: line 4: Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: line 4: Fetch API cannot load blob:null/e65cf001-c90c-48b1-b0a3-1c0f211e6d37 due to access control checks.
+
+PASS Generated Blob URLs are unique 
+PASS Blob URL starts with "blob:" 
+PASS Blob URL starts with "blob:" for Files 
+PASS Origin of Blob URL matches our origin 
+PASS Blob URL parses correctly 
+PASS Origin of Blob URL matches our origin for Files 
+PASS Blob URLs can be used in XHR 
+FAIL XHR with a fragment should succeed promise_test: Unhandled rejection with value: "Got unexpected error event"
+PASS XHR of a revoked URL should fail 
+PASS Only exact matches should revoke URLs, using XHR 
+PASS Appending a query string should cause XHR to fail 
+PASS Appending a path should cause XHR to fail 
+PASS XHR with method "HEAD" should fail 
+PASS XHR with method "POST" should fail 
+PASS XHR with method "DELETE" should fail 
+PASS XHR with method "OPTIONS" should fail 
+PASS XHR with method "PUT" should fail 
+PASS XHR with method "CUSTOM" should fail 
+PASS XHR should return Content-Type from Blob 
+FAIL Revoke blob URL after open(), will fetch assert_unreached: Got unexpected error event Reached unreachable code
+PASS Blob URLs can be used in fetch 
+FAIL fetch with a fragment should succeed promise_test: Unhandled rejection with value: object "TypeError: Cross origin requests are only supported for HTTP."
+PASS fetch of a revoked URL should fail 
+PASS Only exact matches should revoke URLs, using fetch 
+PASS Appending a query string should cause fetch to fail 
+PASS Appending a path should cause fetch to fail 
+PASS fetch with method "HEAD" should fail 
+PASS fetch with method "POST" should fail 
+PASS fetch with method "DELETE" should fail 
+PASS fetch with method "OPTIONS" should fail 
+PASS fetch with method "PUT" should fail 
+PASS fetch with method "CUSTOM" should fail 
+PASS fetch should return Content-Type from Blob 
+FAIL Revoke blob URL after creating Request, will fetch promise_test: Unhandled rejection with value: object "TypeError: Cross origin requests are only supported for HTTP."
+PASS Revoke blob URL after calling fetch, fetch should succeed 
+

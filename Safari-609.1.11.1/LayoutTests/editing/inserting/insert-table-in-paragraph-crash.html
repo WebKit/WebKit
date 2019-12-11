@@ -1,0 +1,19 @@
+<!DOCTYPE>
+<html>
+<body>
+<div id="editor" contenteditable="true"></div>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+Markup.description('This tests pasting a table element wrapped in p. WebKit should not crash.');
+
+var editor = document.getElementById('editor');
+
+editor.focus();
+document.execCommand('InsertHTML', false, '<p><table><tbody><tr><td>stats</td></tr></tbody></table></p>');
+
+Markup.dump(editor);
+
+</script>
+</body>
+</html>

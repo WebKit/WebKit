@@ -1,0 +1,31 @@
+CONSOLE MESSAGE: line 2: Error: Script error.
+Test importScripts with error.
+
+
+AT_TARGET: 2,
+BUBBLING_PHASE: 3,
+CAPTURING_PHASE: 1,
+NONE: 0,
+bubbles: false,
+cancelBubble: false,
+cancelable: true,
+colno: 14,
+composed: false,
+composedPath: function composedPath() { [native code] },
+currentTarget: [object Worker],
+defaultPrevented: false,
+error: null,
+eventPhase: 2,
+filename: http://127.0.0.1:8000/workers/resources/worker-importScripts-error.js,
+initEvent: function initEvent() { [native code] },
+isTrusted: true,
+lineno: 2,
+message: Error: Script error.,
+preventDefault: function preventDefault() { [native code] },
+returnValue: true,
+srcElement: [object Worker],
+stopImmediatePropagation: function stopImmediatePropagation() { [native code] },
+stopPropagation: function stopPropagation() { [native code] },
+target: [object Worker],
+type: error
+

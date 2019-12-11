@@ -1,0 +1,310 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x280
+  RenderBlock {HTML} at (0,0) size 800x280
+    RenderBody {BODY} at (8,8) size 784x264
+      RenderMathMLMath {math} at (0,0) size 113x35
+        RenderMathMLRow {mrow} at (0,0) size 113x35
+          RenderMathMLOperator {mo} at (0,4) size 8x27
+            RenderBlock (anonymous) at (0,0) size 7x16
+              RenderText {#text} at (0,0) size 7x16
+                text run at (0,0) width 7: "("
+          RenderMathMLOperator {mo} at (8,4) size 8x27
+            RenderBlock (anonymous) at (0,0) size 7x16
+              RenderText {#text} at (0,0) size 7x16
+                text run at (0,0) width 7: ")"
+          RenderMathMLOperator {mo} at (16,4) size 7x27
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "{"
+          RenderMathMLOperator {mo} at (23,4) size 7x27
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "}"
+          RenderMathMLOperator {mo} at (30,4) size 6x27
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "["
+          RenderMathMLOperator {mo} at (36,4) size 6x27
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "]"
+          RenderMathMLOperator {mo} at (42,4) size 6x27
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "\x{2308}"
+          RenderMathMLOperator {mo} at (48,4) size 6x27
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "\x{2309}"
+          RenderMathMLOperator {mo} at (54,4) size 6x27
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "\x{230A}"
+          RenderMathMLOperator {mo} at (60,4) size 6x27
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "\x{230B}"
+          RenderMathMLOperator {mo} at (66,0) size 14x35
+            RenderBlock (anonymous) at (0,0) size 9x19
+              RenderText {#text} at (0,3) size 9x16
+                text run at (0,3) width 9: "\x{222B}"
+          RenderMathMLOperator {mo} at (79,4) size 10x27
+            RenderBlock (anonymous) at (0,0) size 5x16
+              RenderText {#text} at (0,0) size 5x16
+                text run at (0,0) width 5: "|"
+          RenderMathMLOperator {mo} at (88,4) size 9x20
+            RenderBlock (anonymous) at (0,0) size 8x16
+              RenderText {#text} at (0,0) size 8x16
+                text run at (0,0) width 8: "\x{2016}"
+          RenderMathMLOperator {mo} at (96,8) size 17x13
+            RenderBlock (anonymous) at (0,0) size 7x13
+              RenderText {#text} at (0,-1) size 7x16
+                text run at (0,-1) width 7: "\x{2225}"
+      RenderText {#text} at (112,8) size 5x18
+        text run at (112,8) width 5: " "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderMathMLMath {math} at (0,34) size 140x141
+        RenderMathMLRow {mrow} at (0,0) size 140x141
+          RenderMathMLOperator {mo} at (0,0) size 12x141
+            RenderBlock (anonymous) at (0,0) size 7x16
+              RenderText {#text} at (0,0) size 7x16
+                text run at (0,0) width 7: "("
+          RenderMathMLOperator {mo} at (12,0) size 12x141
+            RenderBlock (anonymous) at (0,0) size 7x16
+              RenderText {#text} at (0,0) size 7x16
+                text run at (0,0) width 7: ")"
+          RenderMathMLOperator {mo} at (24,0) size 11x141
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "{"
+          RenderMathMLOperator {mo} at (35,0) size 11x141
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "}"
+          RenderMathMLOperator {mo} at (46,0) size 6x141
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "["
+          RenderMathMLOperator {mo} at (52,0) size 6x141
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "]"
+          RenderMathMLOperator {mo} at (58,0) size 6x141
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "\x{2308}"
+          RenderMathMLOperator {mo} at (64,0) size 6x141
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "\x{2309}"
+          RenderMathMLOperator {mo} at (70,0) size 6x141
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "\x{230A}"
+          RenderMathMLOperator {mo} at (76,0) size 6x141
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "\x{230B}"
+          RenderMathMLOperator {mo} at (82,0) size 21x141
+            RenderBlock (anonymous) at (0,0) size 9x19
+              RenderText {#text} at (0,3) size 9x16
+                text run at (0,3) width 9: "\x{222B}"
+          RenderMathMLOperator {mo} at (102,0) size 11x141
+            RenderBlock (anonymous) at (0,0) size 5x16
+              RenderText {#text} at (0,0) size 5x16
+                text run at (0,0) width 5: "|"
+          RenderMathMLOperator {mo} at (112,4) size 12x69
+            RenderBlock (anonymous) at (0,0) size 8x16
+              RenderText {#text} at (0,0) size 8x16
+                text run at (0,0) width 8: "\x{2016}"
+          RenderMathMLOperator {mo} at (123,0) size 17x76
+            RenderBlock (anonymous) at (0,0) size 7x13
+              RenderText {#text} at (0,-1) size 7x16
+                text run at (0,-1) width 7: "\x{2225}"
+          RenderMathMLSpace {mspace} at (139,0) size 0x76
+      RenderText {#text} at (139,95) size 5x18
+        text run at (139,95) width 5: " "
+      RenderMathMLMath {math} at (143,55) size 139x95
+        RenderMathMLRow {mrow} at (0,0) size 139x95
+          RenderMathMLOperator {mo} at (0,4) size 12x91
+            RenderBlock (anonymous) at (0,0) size 7x16
+              RenderText {#text} at (0,0) size 7x16
+                text run at (0,0) width 7: "("
+          RenderMathMLOperator {mo} at (12,4) size 12x91
+            RenderBlock (anonymous) at (0,0) size 7x16
+              RenderText {#text} at (0,0) size 7x16
+                text run at (0,0) width 7: ")"
+          RenderMathMLOperator {mo} at (24,4) size 11x91
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "{"
+          RenderMathMLOperator {mo} at (35,4) size 11x91
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "}"
+          RenderMathMLOperator {mo} at (46,4) size 6x91
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "["
+          RenderMathMLOperator {mo} at (52,4) size 6x91
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "]"
+          RenderMathMLOperator {mo} at (58,4) size 6x91
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "\x{2308}"
+          RenderMathMLOperator {mo} at (64,4) size 6x91
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "\x{2309}"
+          RenderMathMLOperator {mo} at (70,4) size 6x91
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "\x{230A}"
+          RenderMathMLOperator {mo} at (76,4) size 6x91
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "\x{230B}"
+          RenderMathMLOperator {mo} at (82,4) size 21x91
+            RenderBlock (anonymous) at (0,0) size 9x19
+              RenderText {#text} at (0,3) size 9x16
+                text run at (0,3) width 9: "\x{222B}"
+          RenderMathMLOperator {mo} at (102,15) size 11x69
+            RenderBlock (anonymous) at (0,0) size 5x16
+              RenderText {#text} at (0,0) size 5x16
+                text run at (0,0) width 5: "|"
+          RenderMathMLOperator {mo} at (112,0) size 11x59
+            RenderBlock (anonymous) at (0,0) size 8x16
+              RenderText {#text} at (0,0) size 8x16
+                text run at (0,0) width 8: "\x{2016}"
+          RenderMathMLOperator {mo} at (122,4) size 17x51
+            RenderBlock (anonymous) at (0,0) size 7x13
+              RenderText {#text} at (0,-1) size 7x16
+                text run at (0,-1) width 7: "\x{2225}"
+          RenderMathMLSpace {mspace} at (138,4) size 0x51
+      RenderText {#text} at (281,95) size 5x18
+        text run at (281,95) width 5: " "
+      RenderMathMLMath {math} at (285,86) size 113x36
+        RenderMathMLRow {mrow} at (0,0) size 113x36
+          RenderMathMLOperator {mo} at (0,3) size 8x32
+            RenderBlock (anonymous) at (0,0) size 7x16
+              RenderText {#text} at (0,0) size 7x16
+                text run at (0,0) width 7: "("
+          RenderMathMLOperator {mo} at (8,3) size 8x32
+            RenderBlock (anonymous) at (0,0) size 7x16
+              RenderText {#text} at (0,0) size 7x16
+                text run at (0,0) width 7: ")"
+          RenderMathMLOperator {mo} at (16,2) size 6x32
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "{"
+          RenderMathMLOperator {mo} at (22,2) size 6x32
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "}"
+          RenderMathMLOperator {mo} at (28,3) size 6x32
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "["
+          RenderMathMLOperator {mo} at (34,3) size 6x32
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "]"
+          RenderMathMLOperator {mo} at (40,3) size 6x32
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "\x{2308}"
+          RenderMathMLOperator {mo} at (46,3) size 6x32
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "\x{2309}"
+          RenderMathMLOperator {mo} at (52,3) size 6x32
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "\x{230A}"
+          RenderMathMLOperator {mo} at (58,3) size 6x32
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "\x{230B}"
+          RenderMathMLOperator {mo} at (64,1) size 14x35
+            RenderBlock (anonymous) at (0,0) size 9x19
+              RenderText {#text} at (0,3) size 9x16
+                text run at (0,3) width 9: "\x{222B}"
+          RenderMathMLOperator {mo} at (77,3) size 10x32
+            RenderBlock (anonymous) at (0,0) size 5x16
+              RenderText {#text} at (0,0) size 5x16
+                text run at (0,0) width 5: "|"
+          RenderMathMLOperator {mo} at (86,0) size 11x27
+            RenderBlock (anonymous) at (0,0) size 8x16
+              RenderText {#text} at (0,0) size 8x16
+                text run at (0,0) width 8: "\x{2016}"
+          RenderMathMLOperator {mo} at (96,7) size 17x13
+            RenderBlock (anonymous) at (0,0) size 7x13
+              RenderText {#text} at (0,-1) size 7x16
+                text run at (0,-1) width 7: "\x{2225}"
+          RenderMathMLSpace {mspace} at (112,3) size 0x21
+      RenderText {#text} at (397,95) size 5x18
+        text run at (397,95) width 5: " "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderMathMLMath {math} at (0,174) size 149x91
+        RenderMathMLRoot {msqrt} at (0,0) size 149x91
+          RenderMathMLOperator {mo} at (12,7) size 12x70
+            RenderBlock (anonymous) at (0,0) size 7x16
+              RenderText {#text} at (0,0) size 7x16
+                text run at (0,0) width 7: "("
+          RenderMathMLOperator {mo} at (24,7) size 12x70
+            RenderBlock (anonymous) at (0,0) size 7x16
+              RenderText {#text} at (0,0) size 7x16
+                text run at (0,0) width 7: ")"
+          RenderMathMLOperator {mo} at (36,7) size 10x70
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "{"
+          RenderMathMLOperator {mo} at (46,7) size 10x70
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "}"
+          RenderMathMLOperator {mo} at (56,6) size 6x72
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "["
+          RenderMathMLOperator {mo} at (62,6) size 6x72
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "]"
+          RenderMathMLOperator {mo} at (68,6) size 6x72
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "\x{2308}"
+          RenderMathMLOperator {mo} at (74,6) size 6x72
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "\x{2309}"
+          RenderMathMLOperator {mo} at (80,6) size 6x72
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "\x{230A}"
+          RenderMathMLOperator {mo} at (86,6) size 6x72
+            RenderBlock (anonymous) at (0,0) size 6x16
+              RenderText {#text} at (0,0) size 6x16
+                text run at (0,0) width 6: "\x{230B}"
+          RenderMathMLOperator {mo} at (92,4) size 22x75
+            RenderBlock (anonymous) at (0,0) size 9x19
+              RenderText {#text} at (0,3) size 9x16
+                text run at (0,3) width 9: "\x{222B}"
+          RenderMathMLOperator {mo} at (113,7) size 11x69
+            RenderBlock (anonymous) at (0,0) size 5x16
+              RenderText {#text} at (0,0) size 5x16
+                text run at (0,0) width 5: "|"
+          RenderMathMLOperator {mo} at (123,3) size 10x48
+            RenderBlock (anonymous) at (0,0) size 8x16
+              RenderText {#text} at (0,0) size 8x16
+                text run at (0,0) width 8: "\x{2016}"
+          RenderMathMLOperator {mo} at (132,6) size 17x42
+            RenderBlock (anonymous) at (0,0) size 7x13
+              RenderText {#text} at (0,-1) size 7x16
+                text run at (0,-1) width 7: "\x{2225}"
+          RenderMathMLSpace {mspace} at (148,6) size 0x42
+      RenderText {#text} at (0,0) size 0x0

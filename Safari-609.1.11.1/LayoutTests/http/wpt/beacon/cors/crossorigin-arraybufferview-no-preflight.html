@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>SendBeacon cross origin with an ArrayBuffer / ArrayBufferView payload should not do a CORS preflight</title>
+    <script src=/resources/testharness.js></script>
+    <script src=/resources/testharnessreport.js></script>
+  </head>
+  <body>
+    <script src="/common/utils.js"></script>
+    <script src="/common/get-host-info.sub.js"></script>
+    <script>
+var RESOURCES_DIR = "/WebKit/beacon/resources/";
+
+function pollResult(test, id) {
+  var checkUrl = RESOURCES_DIR + "beacon-preflight.py?cmd=get&id=" + id;
+
+  return new Promise(resolve => {
+    step_timeout(test.step_func(() => {
+      fetch(checkUrl).then(response => {
+        response.json().then(body => {
+          resolve(body);
+        });
+      });
+    }), 1000);
+  });
+}
+
+function testCORSPreflight(what) {
+  var testBase = get_host_info().HTTPS_REMOTE_ORIGIN + RESOURCES_DIR;
+
+  promise_test(async function(test) {
+    var id = "ca33c073-1cf0-41e5-bbd4-55969fb1a6c7";
+    var testUrl = testBase + "beacon-preflight.py?allowCors=1&cmd=put&id=" + id;
+    if (window.testRunner) {
+      window.testRunner.setAllowsAnySSLCertificate(false);
+      window.testRunner.terminateNetworkProcess();
+      await fetch("").then(() => { }, () => { });
+    }
+
+    assert_true(navigator.sendBeacon(testUrl, what), "sendBeacon succeeded");
+    const result = await pollResult(test, id);
+    assert_equals(result['preflight'], 0, "Did not receive CORS preflight")
+    assert_equals(result['beacon'], 0, "Did not receive beacon")
+  }, "Beacon load should not be sent if server is not trusted.");
+
+  promise_test(async function(test) {
+    var id = self.token();
+    var testUrl = testBase + "beacon-preflight.py?allowCors=1&cmd=put&id=" + id;
+    if (window.testRunner) {
+      window.testRunner.setAllowsAnySSLCertificate(true);
+      window.testRunner.terminateNetworkProcess();
+      await fetch("").then(() => { }, () => { });
+    }
+
+    assert_true(navigator.sendBeacon(testUrl, what), "SendBeacon Succeeded");
+    return pollResult(test, id) .then(result => {
+      assert_equals(result['preflight'], 0, "Did not receive CORS preflight")
+      assert_equals(result['beacon'], 1, "Received beacon")
+    });
+  }, "Should send beacon with no CORS preflight");
+}
+
+function stringToArrayBufferView(input) {
+  var buffer = new ArrayBuffer(input.length * 2);
+  var view = new Uint16Array(buffer);
+
+  // dumbly copy over the bytes
+  for (var i = 0, len = input.length; i < len; i++) {
+    view[i] = input.charCodeAt(i);
+  }
+  return view;
+}
+
+testCORSPreflight(stringToArrayBufferView("123"));
+    </script>
+  </body>
+</html>

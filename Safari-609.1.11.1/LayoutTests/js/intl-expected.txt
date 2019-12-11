@@ -1,0 +1,64 @@
+This test checks the behavior of the Intl object as described in the ECMAScript Internationalization API Specification (ECMA-402 2.0).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Intl is an instance of Object
+PASS typeof Intl is 'object'
+PASS Object.prototype.toString.call(Intl) is '[object Object]'
+PASS Object.getPrototypeOf(Intl) === Object.prototype is true
+PASS new Intl threw exception TypeError: Object is not a constructor (evaluating 'new Intl').
+PASS Intl() threw exception TypeError: Intl is not a function. (In 'Intl()', 'Intl' is an instance of Object).
+PASS Object.keys(Intl).length is 0
+PASS delete Intl; is true
+PASS 'Intl' in global() is false
+PASS Intl.getCanonicalLocales.length is 1
+PASS Intl.getCanonicalLocales() is an instance of Array
+PASS Intl.getCanonicalLocales.call(null, 'en') is [ 'en' ]
+PASS Intl.getCanonicalLocales.call({}, 'en') is [ 'en' ]
+PASS Intl.getCanonicalLocales.call(1, 'en') is [ 'en' ]
+PASS Intl.getCanonicalLocales(9) is []
+PASS Intl.getCanonicalLocales('en') is [ 'en' ]
+PASS Intl.getCanonicalLocales({ length: 4, 1: 'en', 0: 'es', 3: 'de' }) is [ 'es', 'en', 'de' ]
+PASS Intl.getCanonicalLocales([ 'en', 'pt', 'en', 'es' ]) is [ 'en', 'pt', 'es' ]
+PASS Intl.getCanonicalLocales('En-laTn-us-variant2-variant1-1abc-U-ko-tRue-A-aa-aaa-x-RESERVED') is [ 'en-Latn-US-variant2-variant1-1abc-a-aa-aaa-u-ko-true-x-reserved' ]
+PASS Intl.getCanonicalLocales('no-bok') is [ 'nb' ]
+PASS Intl.getCanonicalLocales('X-some-thing') is [ 'x-some-thing' ]
+PASS Intl.getCanonicalLocales(Object.create(null, { length: { get() { throw Error('a') } } })) threw exception Error: a.
+PASS Intl.getCanonicalLocales(Object.create(null, { length: { value: 1 }, 0: { get() { throw Error('b') } } })) threw exception Error: b.
+PASS Intl.getCanonicalLocales([ { toString() { throw Error('c') } } ]) threw exception Error: c.
+PASS Intl.getCanonicalLocales([ 5 ]) threw exception TypeError: locale value must be a string or object.
+PASS Intl.getCanonicalLocales('') threw exception RangeError: invalid language tag: .
+PASS Intl.getCanonicalLocales('a') threw exception RangeError: invalid language tag: a.
+PASS Intl.getCanonicalLocales('abcdefghij') threw exception RangeError: invalid language tag: abcdefghij.
+PASS Intl.getCanonicalLocales('#$') threw exception RangeError: invalid language tag: #$.
+PASS Intl.getCanonicalLocales('en-@-abc') threw exception RangeError: invalid language tag: en-@-abc.
+PASS Intl.getCanonicalLocales('en-u') threw exception RangeError: invalid language tag: en-u.
+PASS Intl.getCanonicalLocales('en-u-kn-true-u-ko-true') threw exception RangeError: invalid language tag: en-u-kn-true-u-ko-true.
+PASS Intl.getCanonicalLocales('en-x') threw exception RangeError: invalid language tag: en-x.
+PASS Intl.getCanonicalLocales('en-*') threw exception RangeError: invalid language tag: en-*.
+PASS Intl.getCanonicalLocales('en-') threw exception RangeError: invalid language tag: en-.
+PASS Intl.getCanonicalLocales('en--US') threw exception RangeError: invalid language tag: en--US.
+PASS Intl.getCanonicalLocales('de') did not throw exception.
+PASS Intl.getCanonicalLocales('de-DE') did not throw exception.
+PASS Intl.getCanonicalLocales('DE-de') did not throw exception.
+PASS Intl.getCanonicalLocales('cmn') did not throw exception.
+PASS Intl.getCanonicalLocales('cmn-Hans') did not throw exception.
+PASS Intl.getCanonicalLocales('CMN-hANS') did not throw exception.
+PASS Intl.getCanonicalLocales('cmn-hans-cn') did not throw exception.
+PASS Intl.getCanonicalLocales('es-419') did not throw exception.
+PASS Intl.getCanonicalLocales('es-419-u-nu-latn-cu-bob') did not throw exception.
+PASS Intl.getCanonicalLocales('i-klingon') did not throw exception.
+PASS Intl.getCanonicalLocales('cmn-hans-cn-t-ca-u-ca-x-t-u') did not throw exception.
+PASS Intl.getCanonicalLocales('enochian-enochian') did not throw exception.
+PASS Intl.getCanonicalLocales('de-gregory-u-ca-gregory') did not throw exception.
+PASS Intl.getCanonicalLocales('aa-a-foo-x-a-foo-bar') did not throw exception.
+PASS Intl.getCanonicalLocales('x-en-US-12345') did not throw exception.
+PASS Intl.getCanonicalLocales('x-12345-12345-en-US') did not throw exception.
+PASS Intl.getCanonicalLocales('x-en-US-12345-12345') did not throw exception.
+PASS Intl.getCanonicalLocales('x-en-u-foo') did not throw exception.
+PASS Intl.getCanonicalLocales('x-en-u-foo-u-bar') did not throw exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

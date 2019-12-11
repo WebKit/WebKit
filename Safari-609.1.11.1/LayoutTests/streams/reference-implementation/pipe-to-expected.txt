@@ -1,0 +1,49 @@
+CONSOLE MESSAGE: line 2687: TypeError: undefined is not an object (evaluating 'e.message')
+CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: horrible things
+CONSOLE MESSAGE: line 301: Unhandled Promise Rejection: Error: horrible things
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: line 2687: TypeError: undefined is not an object (evaluating 'e.message')
+CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
+CONSOLE MESSAGE: line 2687: TypeError: undefined is not an object (evaluating 'e.message')
+CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
+CONSOLE MESSAGE: line 2687: TypeError: undefined is not an object (evaluating 'e.message')
+CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: horrible things
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: horrible things
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: line 714: Unhandled Promise Rejection: Error: horrible things
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: I don't like you.
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: I don't like you.
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: I don't like you.
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: I don't like you.
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: I don't like you.
+
+Harness Error (FAIL), message = I don't like you.
+
+PASS Piping from a ReadableStream from which lots of data are readable synchronously 
+PASS Piping from a ReadableStream in readable state to a WritableStream in closing state 
+PASS Piping from a ReadableStream in readable state to a WritableStream in errored state 
+PASS Piping from a ReadableStream in the readable state which becomes closed after pipeTo call to a WritableStream in the writable state 
+PASS Piping from a ReadableStream in the readable state which becomes errored after pipeTo call to a WritableStream in the writable state 
+PASS Piping from an empty ReadableStream which becomes non-empty after pipeTo call to a WritableStream in the writable state 
+PASS Piping from an empty ReadableStream which becomes errored after pipeTo call to a WritableStream in the writable state 
+PASS Piping from an empty ReadableStream to a WritableStream in the writable state which becomes errored after a pipeTo call 
+PASS Piping from a non-empty ReadableStream to a WritableStream in the waiting state which becomes writable after a pipeTo call 
+PASS Piping from a non-empty ReadableStream to a WritableStream in waiting state which becomes errored after a pipeTo call 
+PASS Piping from a non-empty ReadableStream which becomes errored after pipeTo call to a WritableStream in the waiting state 
+PASS Piping from a non-empty ReadableStream to a WritableStream in the waiting state where both become ready after a pipeTo 
+PASS Piping from an empty ReadableStream to a WritableStream in the waiting state which becomes writable after a pipeTo call 
+PASS Piping from an empty ReadableStream which becomes closed after a pipeTo call to a WritableStream in the waiting state whose writes never complete 
+PASS Piping from an empty ReadableStream which becomes errored after a pipeTo call to a WritableStream in the waiting state 
+PASS Piping to a duck-typed asynchronous "writable stream" works 
+PASS Piping to a stream that has been aborted passes through the error as the cancellation reason 
+PASS Piping to a stream and then aborting it passes through the error as the cancellation reason 
+PASS Piping to a stream that has been closed propagates a TypeError cancellation reason backward 
+PASS Piping to a stream and then closing it propagates a TypeError cancellation reason backward 
+PASS Piping to a stream that errors on write should pass through the error as the cancellation reason 
+PASS Piping to a stream that errors on write should not pass through the error if the stream is already closed 
+PASS Piping to a stream that errors soon after writing should pass through the error as the cancellation reason 
+

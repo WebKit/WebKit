@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<input type="text" id="test" value="Select the last word">
+<script>
+window.jsTestIsAsync = true;
+
+function testSelectAll()
+{
+    function checkResultAndDone() {
+        shouldBeZero('document.getElementById("test").selectionStart');
+        shouldBe('document.getElementById("test").selectionEnd', 'document.getElementById("test").value.length');
+
+        document.body.removeChild(document.getElementById("test"));
+
+        finishJSTest();
+    }
+    document.addEventListener("selectionchange", checkResultAndDone, { once: true });
+    if (window.testRunner)
+        UIHelper.keyDown("a", ["metaKey"]);
+}
+
+async function runTest()
+{
+    let testElement = document.getElementById("test");
+    console.assert(testElement.value.indexOf("word") !== -1);
+
+    if (window.testRunner)
+        await UIHelper.activateElement(testElement);
+    else
+        testElement.focus();
+
+    document.addEventListener("selectionchange", testSelectAll, { once: true });
+    testElement.setSelectionRange(testElement.value.indexOf("word"), testElement.value.length);
+}
+
+description("This tests that pressing Command + A selects all the text even when there is an existing range selction. To run this test by hand, press Command + A.");
+runTest();
+</script>
+</body>
+</html>

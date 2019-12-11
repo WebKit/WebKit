@@ -1,0 +1,22 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function callback() {
+    if (window.GCController)
+        return GCController.collect();
+
+    // Force garbage collection
+    for (let i=0; i < 100; i++)
+        var a = new Uint8Array(1024*1024);
+}
+
+function run() {
+   var c = document.createElement("canvas");
+   c.toBlob(callback);
+   var ctx = c.getContext("bitmaprenderer");
+}
+
+window.addEventListener("load", run, false);
+</script>
+Should not crash.

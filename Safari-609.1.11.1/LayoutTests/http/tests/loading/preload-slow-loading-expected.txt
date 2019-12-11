@@ -1,0 +1,8 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+non-existant-1 has MIME type text/html
+non-existant-2 has MIME type text/html
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+");

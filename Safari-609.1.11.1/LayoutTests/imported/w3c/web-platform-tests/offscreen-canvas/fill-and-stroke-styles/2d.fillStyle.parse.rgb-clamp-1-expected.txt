@@ -1,0 +1,7 @@
+2d.fillStyle.parse.rgb-clamp-1
+
+Assumes colours are clamped to [0,255].
+
+
+FAIL OffscreenCanvas test: 2d.fillStyle.parse.rgb-clamp-1 null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

@@ -1,0 +1,51 @@
+Test that we do not invalidate the style of <form> excessively when matching :valid based on the associated elements.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.internals.nodeNeedsStyleRecalc(document.getElementById("form1-with-renderer")) is false
+PASS window.internals.nodeNeedsStyleRecalc(document.getElementById("form2-with-renderer")) is false
+PASS window.internals.nodeNeedsStyleRecalc(document.getElementById("form1-without-renderer")) is false
+PASS window.internals.nodeNeedsStyleRecalc(document.getElementById("form2-without-renderer")) is false
+PASS getComputedStyle(document.getElementById("form1-with-renderer")).color is "rgb(0, 1, 2)"
+PASS getComputedStyle(document.getElementById("form2-with-renderer")).color is "rgb(0, 1, 2)"
+PASS getComputedStyle(document.getElementById("form1-without-renderer")).color is "rgb(0, 1, 2)"
+PASS getComputedStyle(document.getElementById("form2-without-renderer")).color is "rgb(0, 1, 2)"
+PASS window.internals.nodeNeedsStyleRecalc(document.getElementById("form1-with-renderer")) is true
+PASS window.internals.nodeNeedsStyleRecalc(document.getElementById("form2-with-renderer")) is true
+PASS window.internals.nodeNeedsStyleRecalc(document.getElementById("form1-without-renderer")) is true
+PASS window.internals.nodeNeedsStyleRecalc(document.getElementById("form2-without-renderer")) is true
+PASS getComputedStyle(document.getElementById("form1-with-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("form2-with-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("form1-without-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("form2-without-renderer")).color is "rgb(0, 0, 0)"
+PASS window.internals.nodeNeedsStyleRecalc(document.getElementById("form1-with-renderer")) is false
+PASS window.internals.nodeNeedsStyleRecalc(document.getElementById("form2-with-renderer")) is false
+PASS window.internals.nodeNeedsStyleRecalc(document.getElementById("form1-without-renderer")) is false
+PASS window.internals.nodeNeedsStyleRecalc(document.getElementById("form2-without-renderer")) is false
+PASS getComputedStyle(document.getElementById("form1-with-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("form2-with-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("form1-without-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("form2-without-renderer")).color is "rgb(0, 0, 0)"
+PASS window.internals.nodeNeedsStyleRecalc(document.getElementById("form1-with-renderer")) is false
+PASS window.internals.nodeNeedsStyleRecalc(document.getElementById("form2-with-renderer")) is false
+PASS window.internals.nodeNeedsStyleRecalc(document.getElementById("form1-without-renderer")) is false
+PASS window.internals.nodeNeedsStyleRecalc(document.getElementById("form2-without-renderer")) is false
+PASS getComputedStyle(document.getElementById("form1-with-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("form2-with-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("form1-without-renderer")).color is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("form2-without-renderer")).color is "rgb(0, 0, 0)"
+PASS window.internals.nodeNeedsStyleRecalc(document.getElementById("form1-with-renderer")) is true
+PASS window.internals.nodeNeedsStyleRecalc(document.getElementById("form2-with-renderer")) is true
+PASS window.internals.nodeNeedsStyleRecalc(document.getElementById("form1-without-renderer")) is true
+PASS window.internals.nodeNeedsStyleRecalc(document.getElementById("form2-without-renderer")) is true
+PASS getComputedStyle(document.getElementById("form1-with-renderer")).color is "rgb(0, 1, 2)"
+PASS getComputedStyle(document.getElementById("form2-with-renderer")).color is "rgb(0, 1, 2)"
+PASS getComputedStyle(document.getElementById("form1-without-renderer")).color is "rgb(0, 1, 2)"
+PASS getComputedStyle(document.getElementById("form2-without-renderer")).color is "rgb(0, 1, 2)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+     
+      
+     

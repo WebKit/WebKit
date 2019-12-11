@@ -1,0 +1,12 @@
+When prompted, accept to share your video stream.
+
+Description
+
+This test checks that a disabled video track in a MediaStream is rendered as blackness.
+
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Tests that a disabled video track in a MediaStream is rendered as blackness Test timed out
+

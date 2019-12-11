@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/util.js"></script>
+</head>
+<body>
+<div id="container">
+  <div id="destination" contentEditable></div>
+</div>
+
+<script>
+
+description("Spell check sugestions should not be pupulated when user selects multiple words that are not a single misspelling. "
+    + "To test manually, type 'wellcome home.', select 'wellcome home', and context-click on the selection. "
+    + "The test suceeds when the context menu has no spell check suggestions.");
+
+initSpellTest("destination", "wellcome home.", function(textNode) {
+    spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
+    shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
+    shouldBeEqualToString("window.getSelection().toString()", "");
+
+    // Context click on 'wellcome' to get its spell check suggestions.
+    var x = destination.offsetParent.offsetLeft + destination.offsetLeft + 40;
+    var y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    contextMenuItemsWithSpellingSuggestions = eventSender.contextClick();
+    // Esc key to hide the context menu.
+    eventSender.keyDown(String.fromCharCode(0x001B), null);
+
+    // Select the text "wellcome home".
+    var multiWordRange = document.createRange();
+    multiWordRange.setStart(textNode, 0);
+    multiWordRange.setEnd(textNode, 13);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(multiWordRange);
+
+    shouldBeEqualToString("window.getSelection().toString()", "wellcome home");
+
+    // Context click on "wellcome home" to check its spell check suggestions.
+    x = destination.offsetParent.offsetLeft + destination.offsetLeft + 40;
+    y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    contextMenuItemsWithoutSpellingSuggestions = eventSender.contextClick();
+    // Esc key to hide the context menu.
+    eventSender.keyDown(String.fromCharCode(0x001B), null);
+
+    shouldBeEqualToString("window.getSelection().toString()", "wellcome home");
+    shouldBeTrue("contextMenuItemsWithoutSpellingSuggestions < contextMenuItemsWithSpellingSuggestions");
+    spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
+    shouldBecomeEqualToString("spellingMarkerRange.toString()", "wellcome", finishJSTest);
+});
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

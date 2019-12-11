@@ -1,0 +1,7 @@
+2d.shadow.transform.1
+
+Shadows take account of transformations
+
+
+FAIL Shadows take account of transformations null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

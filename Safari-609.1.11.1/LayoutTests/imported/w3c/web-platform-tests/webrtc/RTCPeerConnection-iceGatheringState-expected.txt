@@ -1,0 +1,5 @@
+
+PASS Initial iceGatheringState should be new 
+PASS iceGatheringState should eventually become complete after setLocalDescription 
+FAIL connection with one data channel should eventually have connected connection state undefined is not an object (evaluating 'pc2.sctp.transport')
+

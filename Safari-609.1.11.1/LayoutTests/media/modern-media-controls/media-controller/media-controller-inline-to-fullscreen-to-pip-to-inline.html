@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<video src="../../content/test.mp4" style="position: absolute; top: 0; left: 0; width: 320px; height: 240px;" controls autoplay></video>
+<div id="shadow"></div>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing that entering fullscreen, then going into picture-in-picture and then going back to inline presents inline controls.");
+
+if (window.internals)
+    window.internals.settings.setAllowsPictureInPictureMediaPlayback(true);
+
+const media = document.querySelector("video");
+const shadowRoot = window.internals.shadowRoot(media);
+
+media.addEventListener("play", () => {
+    debug("");
+    debug("Media started playing, we pause it and enter fullscreen by clicking on the matching button.");
+    shouldBeTrue("shadowRoot.querySelector('.media-controls').classList.contains('inline')");
+
+    media.pause();
+    window.requestAnimationFrame(() => clickOnElement(shadowRoot.querySelector("button.fullscreen")));
+});
+
+let previousPresentationMode = media.webkitPresentationMode;
+media.addEventListener("webkitpresentationmodechanged", () => {
+    if (previousPresentationMode === media.webkitPresentationMode)
+        return;
+
+    previousPresentationMode = media.webkitPresentationMode;
+
+    debug("");
+    debug(`Media received a webkitpresentationmodechanged event, media.webkitPresentationMode = ${media.webkitPresentationMode}.`);
+
+    switch (media.webkitPresentationMode) {
+    case "fullscreen":
+        window.requestAnimationFrame(() => {
+            shouldBeTrue("shadowRoot.querySelector('.media-controls').classList.contains('fullscreen')");
+
+            debug("");
+            debug("We enter picture-in-picture by clicking on the matching button.");
+            clickOnElement(shadowRoot.querySelector("button.pip"));
+        });
+        break;
+    case "picture-in-picture":
+        debug("");
+        debug("We exit picture-in-picture.");
+        window.setTimeout(() => media.webkitSetPresentationMode("inline"));
+        break;
+    case "inline":
+        window.requestAnimationFrame(() => {
+            shouldBeTrue("shadowRoot.querySelector('.media-controls').classList.contains('inline')");
+
+            debug("");
+            media.remove();
+            finishJSTest();
+        });
+        break;
+    }
+});
+
+function clickOnElement(element)
+{
+    const bounds = element.getBoundingClientRect();
+    eventSender.mouseMoveTo(bounds.left + 1, bounds.top + 1);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

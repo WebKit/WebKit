@@ -1,0 +1,17 @@
+CONSOLE MESSAGE: line 1: SecurityError: Blocked a frame with origin "null" from accessing a cross-origin frame. Protocols, domains, and ports must match.
+This tests that a data: URL loaded in an iframe inside another data: URL loaded iframe doesn't have access to the main frame.
+
+
+PASS: Cross frame access from a data: URL inside another data: URL was denied.
+
+--------
+Frame: 'aFrame'
+--------
+Inner iframe.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+Inner-inner iframe.

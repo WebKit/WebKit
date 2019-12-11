@@ -1,0 +1,42 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../editing.js"></script>
+
+<script>
+function runTest() {
+    jsTestIsAsync = true;
+    getSelection().setBaseAndExtent(source, 0, source, 1);
+
+    if (!window.testRunner) {
+        document.getElementById("description").innerHTML = `To manually test, select the text below and paste into the
+            editable area. There should be misspelling markers below both words.`;
+        return;
+    }
+
+    internals.settings.setUnifiedTextCheckerEnabled(true);
+    internals.settings.setAsynchronousSpellCheckingEnabled(true);
+    internals.setAutomaticTextReplacementEnabled(false);
+    internals.setAutomaticSpellingCorrectionEnabled(false);
+
+    copyCommand();
+    document.getElementById("editor").focus();
+    pasteCommand();
+    shouldBecomeEqual("internals.hasSpellingMarker(0, 5)", "true", () => {
+        shouldBeTrue("internals.hasSpellingMarker(6, 5)", "true");
+        finishJSTest();
+    });
+}
+</script>
+</head>
+
+<body>
+    <div id="description"></div>
+    <div id="source">Helol wordl this is a test</div>
+    <div contenteditable style="margin-bottom: 1em; border: 1px orange dashed;" id="editor"></div>
+    <script>
+        runTest();
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

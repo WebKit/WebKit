@@ -1,0 +1,5 @@
+The following two lines should look identically:
+
+一筆€镕
+
+一筆€镕

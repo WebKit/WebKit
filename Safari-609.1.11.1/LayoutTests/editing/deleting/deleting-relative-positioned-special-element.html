@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/dump-as-markup.js"></script>
+    <style> p { position: relative; } </style>
+</head>
+
+<body>
+<div id="container" contenteditable><p>1</p><p id="paragraphToDelete">2</p><p>3</p><p>4</p></div>
+
+<script>
+    Markup.description('This test is for a bug when delete commands is applied on paragraph with positioning other than static then the below paragraph are incorrectly collapsed, 3 & 4 should not be merged as 43');
+
+    getSelection().collapse(paragraphToDelete, 1);
+    Markup.dump('container', 'BeforeDeletion');
+
+    document.execCommand("Delete", false, null);
+    Markup.dump('container', 'AfterDeletion');
+</script>
+<body>
+</html>

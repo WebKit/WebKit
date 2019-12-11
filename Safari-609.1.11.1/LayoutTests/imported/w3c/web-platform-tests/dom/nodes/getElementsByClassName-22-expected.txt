@@ -1,0 +1,10 @@
+
+PASS move item in collection order 
+test link #foo
+text caption
+TEXT head
+td text1text
+td text
+td te xt
+TEXT foot
+xt te

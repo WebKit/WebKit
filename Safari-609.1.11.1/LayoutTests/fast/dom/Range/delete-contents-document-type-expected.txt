@@ -1,0 +1,12 @@
+Checks that Range.deleteContents() is able to delete a docType
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testDocument.doctype is not null
+PASS range.deleteContents() did not throw exception.
+PASS testDocument.doctype is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

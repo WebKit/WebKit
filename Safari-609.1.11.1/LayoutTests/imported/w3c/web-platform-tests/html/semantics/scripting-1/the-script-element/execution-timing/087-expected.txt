@@ -1,0 +1,4 @@
+FAILED (This TC requires JavaScript enabled)
+
+PASS  scheduler: multiple defer scripts, one slow loading 
+

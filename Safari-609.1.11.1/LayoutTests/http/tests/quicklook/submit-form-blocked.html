@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="resources/tap-run-test-hyperlink.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+}
+</script>
+</head>
+<body>
+<p>This test verifies that form submission is blocked using QuickLook to preview a Microsoft Word document. This test PASSED only if a security error is logged to the console.</p>
+<iframe src="resources/submit-form-blocked.docx" onload="runTest(this)"></iframe>
+</body>
+</html>

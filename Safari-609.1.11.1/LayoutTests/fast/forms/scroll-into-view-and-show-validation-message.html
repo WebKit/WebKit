@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script src="form-validation.js"></script>
+<form>
+  <button id="button">Submit</button>
+  <div style="height:800px; background:red"></div>
+  <input type=text required>
+</form>
+<script>
+description("Tests that the validation bubble is shown even if the invalid field needs to be scrolled into view.");
+jsTestIsAsync = true;
+
+onload = function() {
+    button.click();
+
+    getValidationMessage().then((_message) => {
+        if (_message !== "Fill out this field")
+            testFailed("Unexpected message: " + _message);
+
+        // Make sure the message stays visible.
+        setTimeout(() => {
+            getValidationMessage().then((_message) => {
+                message = _message;
+                shouldBeEqualToString("message", "Fill out this field");
+                finishJSTest();
+            });
+        }, 10);
+    });
+}
+</script>
+</body>
+</html>

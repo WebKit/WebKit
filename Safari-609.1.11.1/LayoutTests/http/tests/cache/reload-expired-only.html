@@ -1,0 +1,27 @@
+<body>
+<script>
+if (testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setCanOpenWindows();
+    testRunner.waitUntilDone();
+}
+const testWindow = window.open('http://127.0.0.1:8000/cache/resources/document-with-cached-unique-script.html');
+
+var firstNumber;
+window.addEventListener("message", (event) => {
+    if (firstNumber) {
+        const secondNumber = event.data;
+        if (firstNumber == secondNumber)
+            document.body.innerHTML = "PASS";
+        else
+            document.body.innerHTML = `FAIL: firstNumber={$firstNumber} secondNumber={$secondNumber}`;
+        if (testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+    firstNumber = event.data;
+    if (testWindow.internals)
+        testWindow.internals.reloadExpiredOnly();
+});
+
+</script>

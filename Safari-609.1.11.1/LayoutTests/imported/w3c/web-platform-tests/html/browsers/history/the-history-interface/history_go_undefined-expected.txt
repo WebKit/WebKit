@@ -1,0 +1,8 @@
+main frame - has 1 onunload handler(s)
+main frame - has 1 onunload handler(s)
+main frame - has 1 onunload handler(s)
+main frame - has 1 onunload handler(s)
+main frame - has 1 onunload handler(s)
+
+FAIL history.forward() with session history assert_array_equals: Pages opened during history navigation property 2, expected 2 but got 3
+

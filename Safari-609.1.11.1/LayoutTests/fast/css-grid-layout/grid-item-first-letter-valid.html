@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+    .item::first-letter { line-height: 100px; }
+</style>
+
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.grid'); checkLayout('.inline-grid');">
+<p>This test grid item's first-letter pseudo-element should be valid.</p>
+
+<div class="grid">
+    <div class="item" data-expected-height=100>The first item.</div>
+    <div class="item" data-expected-height=100>The second item.</div>
+</div>
+
+<div class="inline-grid">
+    <div class="item" data-expected-height=100>The first item.</div>
+    <div class="item" data-expected-height=100>The second item.</div>
+</div>
+
+</body>
+</html>

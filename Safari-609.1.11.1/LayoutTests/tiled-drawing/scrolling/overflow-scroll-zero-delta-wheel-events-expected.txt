@@ -1,0 +1,2 @@
+PASS Wheel events with delta of zero were not sent to the DOM.
+

@@ -1,0 +1,67 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ shouldIgnoreMetaViewport=true ] -->
+<html>
+<head>
+    <style>
+        #square {
+            position: absolute;
+            width: 10vw;
+            height: 10vh;
+            border: 2px solid black;
+        }
+
+        #output {
+            width: 100%;
+            height: 100%;
+            overflow: scroll;
+        }
+
+        body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    async function waitForWidthToBecome(targetWidth) {
+        return new Promise(async resolve => {
+            do {
+                await UIHelper.ensurePresentationUpdate();
+            } while (innerWidth !== targetWidth)
+            resolve();
+        });
+    }
+
+    addEventListener("load", async function() {
+        const appendOutput = message => {
+            output.appendChild(document.createTextNode(message));
+            output.appendChild(document.createElement("br"));
+        };
+
+        await UIHelper.ensureVisibleContentRectUpdate();
+
+        for (let targetMinimumEffectiveWidth of [0, 640, 768, 834, 980, 1024, 1112, 1280, 1336]) {
+            appendOutput(`setMinimumEffectiveWidth(${targetMinimumEffectiveWidth.toFixed(2)})`);
+            await UIHelper.setMinimumEffectiveWidth(targetMinimumEffectiveWidth);
+            await waitForWidthToBecome(Math.max(targetMinimumEffectiveWidth, screen.width));
+            appendOutput(`window size: [${innerWidth}, ${innerHeight}]`);
+            appendOutput(`square size: [${square.clientWidth}, ${square.clientHeight}]`);
+            appendOutput(`zoom scale: ${(await UIHelper.zoomScale()).toFixed(2)}`);
+            appendOutput("");
+        }
+
+        testRunner.notifyDone();
+    });
+    </script>
+</head>
+
+<body>
+    <div id="square"></div>
+    <pre id="output"></pre>
+</body>
+</html>

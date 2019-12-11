@@ -1,0 +1,53 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 4 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 1 of #text > DIV > DIV > DIV > BODY > HTML > #document to 4 of #text > DIV > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of DIV > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > DIV > DIV > DIV > BODY > HTML > #document to 3 of #text > DIV > DIV > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > DIV > DIV > DIV > BODY > HTML > #document to 3 of #text > DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x266 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x111
+          RenderText {#text} at (0,0) size 66x26
+            text run at (0,0) width 66: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,27) size 740x55
+            text run at (0,27) width 740: "Pasting styles we should not remove during the \"smoosh styles\" process. This"
+            text run at (0,55) width 151: "tests the fix for "
+          RenderInline {A} at (0,0) size 257x27 [color=#0000EE]
+            RenderText {#text} at (151,55) size 257x27
+              text run at (151,55) width 257: "<rdar://problem/3972665>"
+          RenderText {#text} at (408,55) size 729x55
+            text run at (408,55) width 321: " 8A360: HTML message partially"
+            text run at (0,83) width 553: "truncated on left hand side, text-indent from Script Editor"
+        RenderBlock {DIV} at (14,141) size 756x111
+          RenderText {#text} at (0,0) size 189x26
+            text run at (0,0) width 189: "Expected Results: "
+          RenderBR {BR} at (189,21) size 0x0
+          RenderText {#text} at (0,27) size 753x55
+            text run at (0,27) width 753: "Should see this content in the red box below: foo. Note that there should be no"
+            text run at (0,55) width 140: "visible indent. "
+          RenderBR {BR} at (140,76) size 0x0
+          RenderText {#text} at (0,83) size 180x27
+            text run at (0,83) width 180: "This demonstrates "
+          RenderInline {A} at (0,0) size 52x27 [color=#0000EE]
+            RenderText {#text} at (180,83) size 52x27
+              text run at (180,83) width 52: "a bug"
+          RenderText {#text} at (232,83) size 251x27
+            text run at (232,83) width 251: ", the caret is one pixel off."
+      RenderBlock {DIV} at (0,290) size 784x32
+        RenderBlock {DIV} at (0,0) size 784x32 [border: (2px solid #FF0000)]
+          RenderBlock {DIV} at (42,2) size 740x28
+            RenderText {#text} at (-40,0) size 32x27
+              text run at (-40,0) width 32: "foo"
+caret: position 3 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of body

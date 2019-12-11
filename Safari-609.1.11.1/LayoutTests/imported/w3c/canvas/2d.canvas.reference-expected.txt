@@ -1,0 +1,5 @@
+2d.canvas.reference
+CanvasRenderingContext2D.canvas refers back to its canvas
+Spec references: 2d.canvas
+Actual output:
+Passed

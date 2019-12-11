@@ -1,0 +1,8 @@
+http://127.0.0.1:8000/navigation/redirect-to-fragment2.html - didFinishLoading
+http://127.0.0.1:8000/navigation/resources/redirect-to-fragment2.php - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/navigation/resources/redirect-to-fragment2.php, main document URL http://127.0.0.1:8000/navigation/redirect-to-fragment2.html, http method GET> redirectResponse (null)
+http://127.0.0.1:8000/navigation/resources/redirect-to-fragment2.php - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/navigation/resources/redirect-preserves-fragment.php#bar, main document URL http://127.0.0.1:8000/navigation/redirect-to-fragment2.html, http method GET> redirectResponse <NSURLResponse http://127.0.0.1:8000/navigation/resources/redirect-to-fragment2.php, http status code 302>
+http://127.0.0.1:8000/navigation/resources/redirect-to-fragment2.php - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/navigation/resources/success.html#bar, main document URL http://127.0.0.1:8000/navigation/redirect-to-fragment2.html, http method GET> redirectResponse <NSURLResponse http://127.0.0.1:8000/navigation/resources/redirect-preserves-fragment.php#bar, http status code 302>
+http://127.0.0.1:8000/navigation/resources/redirect-to-fragment2.php - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/navigation/resources/success.html#bar, http status code 200>
+Test passes if WebKit keeps fragment identifier from first redirected URL.
+
+

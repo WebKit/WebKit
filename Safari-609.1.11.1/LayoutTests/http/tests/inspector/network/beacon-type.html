@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function triggerBeaconWith204Response() {
+    navigator.sendBeacon("resources/beacon.php?status=204");
+}
+
+function triggerBeaconWith404Response() {
+    navigator.sendBeacon("resources/beacon.php?status=404");
+}
+
+function triggerBeaconWithData() {
+    navigator.sendBeacon("resources/beacon.php", "SENDING-DATA");
+}
+
+// ----
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Resource.Type.Beacon");
+
+    function addTestCase({name, description, expression, resourceHandler}) {
+        suite.addTestCase({
+            name, description,
+            test(resolve, reject) {
+                let resource = null;
+                InspectorTest.evaluateInPage(expression);
+                WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded)
+                    .then((event) => {
+                        resource = event.data.resource;
+                        alwaysTest(resource);
+                        if (resource.isLoading()) {
+                            return Promise.race([
+                                resource.awaitEvent(WI.Resource.Event.LoadingDidFinish),
+                                resource.awaitEvent(WI.Resource.Event.LoadingDidFail),
+                            ]);
+                        }
+                    })
+                    .then(() => { resourceHandler(resource); })
+                    .then(resolve, reject);
+            }
+        });
+    }
+
+    function alwaysTest(resource) {
+        InspectorTest.expectEqual(resource.type, WI.Resource.Type.Beacon, "Resource should be Beacon type.");
+        InspectorTest.expectEqual(resource.requestMethod, "POST", "Resource should be a POST request.");
+    }
+
+    addTestCase({
+        name: "Resource.Type.Beacon.204",
+        description: "Send a beacon that gets a 204 response.",
+        expression: "triggerBeaconWith204Response()",
+        resourceHandler(resource) {
+            InspectorTest.expectEqual(resource.statusCode, 204, "Resource should have a 204 response.");
+            InspectorTest.expectThat(!resource.requestData, "Resource should not have request data.");
+        }
+    });
+
+    addTestCase({
+        name: "Resource.Type.Beacon.404",
+        description: "Send a beacon that gets a 404 response.",
+        expression: "triggerBeaconWith404Response()",
+        resourceHandler(resource) {
+            InspectorTest.expectEqual(resource.statusCode, 404, "Resource should have a 404 response.");
+            InspectorTest.expectThat(!resource.requestData, "Resource should not have request data.");
+        }
+    });
+
+    addTestCase({
+        name: "Resource.Type.Beacon.WithData",
+        description: "Send a beacon that gets a 404 response.",
+        expression: "triggerBeaconWithData()",
+        resourceHandler(resource) {
+            InspectorTest.expectEqual(resource.statusCode, 200, "Resource should have a 200 response.");
+            InspectorTest.expectEqual(resource.requestData, "SENDING-DATA", "Resource should have 'SENDING-DATA' request data.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for Resource.Type.Beacon.</p>
+</body>
+</html>

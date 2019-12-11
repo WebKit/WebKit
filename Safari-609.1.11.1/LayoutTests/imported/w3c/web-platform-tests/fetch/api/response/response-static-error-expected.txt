@@ -1,0 +1,3 @@
+
+PASS Check response returned by static method error() 
+

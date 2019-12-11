@@ -1,0 +1,7 @@
+2d.shadow.gradient.basic
+
+Shadows are drawn for gradient fills
+
+
+FAIL Shadows are drawn for gradient fills null is not an object (evaluating 'ctx.createLinearGradient')
+

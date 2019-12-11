@@ -1,0 +1,55 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true internal:LegacyOverflowScrollingTouchEnabled=false ] -->
+<html>
+<head>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+
+#scrollable {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 200px;
+    height: 200px;
+
+    overflow: scroll;
+    background-color: green;
+}
+
+</style>
+</head>
+<body>
+<div id="scrollable"></div>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script src="../../resources/basic-gestures.js"></script>
+<script>
+
+'use strict';
+
+target_test({ width: "200px", height: "2000px" }, (target, test) => {
+    const scrollable = document.querySelector("#scrollable");
+    scrollable.appendChild(target);
+
+    target.style.touchAction = "pan-y";
+    target.style.backgroundColor = "blue";
+
+    const eventTracker = new EventTracker(target, ["pointerdown", "pointerup", "pointercancel"]);
+
+    touchAndDragFromPointToPoint(150, 100, 50, 100)
+    .then(() => touchAndDragFromPointToPoint(50, 100, 50, 50))
+    .then(() => liftUpAtPoint(50, 50))
+    .then(() => {
+        assert_equals(scrollable.scrollTop, 0, "The page was not scrolled vertically.");
+        eventTracker.assertMatchesEvents([
+            { type: "pointerdown" },
+            { type: "pointerup" }
+        ]);
+        test.done();
+    });
+}, "Testing that panning in the x-axis first on an element with touch-action: pan-y prevents future vertical scrolling within an 'overflow: scroll' element.");
+
+</script>
+</body>
+</html>

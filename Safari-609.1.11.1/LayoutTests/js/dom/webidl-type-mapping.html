@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Exercise WebIDL type conversions.");
+
+quiet = true;
+evalAndLog("converter = window.internals.typeConversions()");
+debug("");
+
+function verifyAttribute(attribute)
+{
+    shouldBeTrue("'" + attribute + "' in converter", quiet);
+    shouldBeTrue("typeof converter." + attribute + " === 'number'", quiet);
+    evalAndLog("converter." + attribute + " = 123", quiet);
+    shouldBe("converter." + attribute, "123", quiet);
+    evalAndLog("converter." + attribute + " = 0", quiet);
+    shouldBe("converter." + attribute, "0", quiet);
+}
+
+function convert(attribute, value, expected)
+{
+    if (arguments.length < 3) {
+        expected = value;
+    }
+    evalAndLog("converter." + attribute + " = " + value);
+    shouldBe("converter." + attribute, expected);
+}
+
+function convertThrows(attribute, value)
+{
+    shouldThrow("converter." + attribute + " = " + value);
+}
+
+function testNonNumericToNumeric(attribute)
+{
+    convert(attribute, "false", "0");
+    convert(attribute, "true", "1");
+    convert(attribute, "''", "0");
+    convert(attribute, "'1'", "1");
+    convert(attribute, "'abc'", "0");
+    convert(attribute, "null", "0");
+    convert(attribute, "undefined", "0");
+}
+
+function testNonNumericToNumericEnforceRange(attribute)
+{
+    convert(attribute, "false", "0");
+    convert(attribute, "true", "1");
+    convert(attribute, "''", "0");
+    convert(attribute, "'1'", "1");
+    convertThrows(attribute, "'abc'");
+    convert(attribute, "null", "0");
+    convertThrows(attribute, "undefined");
+}
+// 
+type = "testLong";
+verifyAttribute(type);
+convert(type, "0");
+convert(type, "-0", "0");
+convert(type, "-1");
+convert(type, "1");
+convert(type, "0x7F");
+convert(type, "0x80");
+convert(type, "0xFF");
+convert(type, "-0x80");
+convert(type, "-0x81");
+convert(type, "0x7FFF");
+convert(type, "0x8000");
+convert(type, "0xFFFF");
+convert(type, "-0x8000");
+convert(type, "-0x8001");
+convert(type, "0x7FFFFFFF");
+convert(type, "0x80000000", "-0x80000000");
+convert(type, "0xFFFFFFFF", "-1");
+convert(type, "-0x80000000");
+convert(type, "-0x80000001", "0x7FFFFFFF");
+convert(type, "0xDCBA9876543210", "0x76543210");
+convert(type, "Number.MAX_VALUE", "0");
+convert(type, "Number.MIN_VALUE", "0");
+convert(type, "-Number.MAX_VALUE", "0");
+convert(type, "-Number.MIN_VALUE", "0");
+convert(type, "1.99", "1");
+convert(type, "-1.99", "-1");
+convert(type, "Infinity", "0");
+convert(type, "-Infinity", "0");
+convert(type, "NaN", "0");
+testNonNumericToNumeric(type);
+convertThrows(type, "{valueOf:function(){throw new Error('custom');}}");
+debug("");
+
+type = "testEnforceRangeLong";
+verifyAttribute(type);
+convert(type, "0");
+convert(type, "-0", "0");
+convert(type, "-1");
+convert(type, "1");
+convert(type, "0x7F");
+convert(type, "0x80");
+convert(type, "0xFF");
+convert(type, "-0x80");
+convert(type, "-0x81");
+convert(type, "0x7FFF");
+convert(type, "0x8000");
+convert(type, "0xFFFF");
+convert(type, "-0x8000");
+convert(type, "-0x8001");
+convert(type, "0x7FFFFFFF");
+convertThrows(type, "0x80000000");
+convertThrows(type, "0xFFFFFFFF");
+convert(type, "-0x80000000");
+convertThrows(type, "-0x80000001");
+convertThrows(type, "0xDCBA9876543210");
+convertThrows(type, "Number.MAX_VALUE");
+convert(type, "Number.MIN_VALUE", "0");
+convertThrows(type, "-Number.MAX_VALUE");
+convert(type, "-Number.MIN_VALUE", "0");
+convert(type, "1.99", "1");
+convert(type, "-1.99", "-1");
+convertThrows(type, "Infinity");
+convertThrows(type, "-Infinity");
+convertThrows(type, "NaN");
+testNonNumericToNumericEnforceRange(type);
+convertThrows(type, "{valueOf:function(){throw new Error('custom');}}");
+debug("");
+
+type = "testUnsignedLong";
+verifyAttribute(type);
+convert(type, "0");
+convert(type, "-0", "0");
+convert(type, "-1", "0xFFFFFFFF");
+convert(type, "1");
+convert(type, "0x7F");
+convert(type, "0x80");
+convert(type, "0xFF");
+convert(type, "-0x80", "0xFFFFFF80");
+convert(type, "-0x81", "0xFFFFFF7F");
+convert(type, "0x7FFF");
+convert(type, "0x8000");
+convert(type, "0xFFFF");
+convert(type, "-0x8000", "0xFFFF8000");
+convert(type, "-0x8001", "0xFFFF7FFF");
+convert(type, "0x7FFFFFFF");
+convert(type, "0x80000000");
+convert(type, "0xFFFFFFFF");
+convert(type, "-0x80000000", "0x80000000");
+convert(type, "-0x80000001", "0x7FFFFFFF");
+convert(type, "0xDCBA9876543210", "0x76543210");
+convert(type, "Number.MAX_VALUE", "0");
+convert(type, "Number.MIN_VALUE", "0");
+convert(type, "-Number.MAX_VALUE", "0");
+convert(type, "-Number.MIN_VALUE", "0");
+convert(type, "1.99", "1");
+convert(type, "-1.99", "0xFFFFFFFF");
+convert(type, "Infinity", "0");
+convert(type, "-Infinity", "0");
+convert(type, "NaN", "0");
+testNonNumericToNumeric(type);
+convertThrows(type, "{valueOf:function(){throw new Error('custom');}}");
+debug("");
+
+type = "testEnforceRangeUnsignedLong";
+verifyAttribute(type);
+convert(type, "0");
+convert(type, "-0", "0");
+convertThrows(type, "-1");
+convert(type, "1");
+convert(type, "0x7F");
+convert(type, "0x80");
+convert(type, "0xFF");
+convertThrows(type, "-0x80");
+convertThrows(type, "-0x81");
+convert(type, "0x7FFF");
+convert(type, "0x8000");
+convert(type, "0xFFFF");
+convertThrows(type, "-0x8000");
+convertThrows(type, "-0x8001");
+convert(type, "0x7FFFFFFF");
+convert(type, "0x80000000");
+convert(type, "0xFFFFFFFF");
+convertThrows(type, "-0x80000000");
+convertThrows(type, "-0x80000001");
+convertThrows(type, "0xDCBA9876543210");
+convertThrows(type, "Number.MAX_VALUE");
+convert(type, "Number.MIN_VALUE", "0");
+convertThrows(type, "-Number.MAX_VALUE");
+convert(type, "-Number.MIN_VALUE", "0");
+convert(type, "1.99", "1");
+convertThrows(type, "-1.99");
+convertThrows(type, "Infinity");
+convertThrows(type, "-Infinity");
+convertThrows(type, "NaN");
+testNonNumericToNumericEnforceRange(type);
+convertThrows(type, "{valueOf:function(){throw new Error('custom');}}");
+debug("");
+
+type = "testLongLong";
+verifyAttribute(type);
+convert(type, "0");
+convert(type, "-0", "0");
+convert(type, "-1");
+convert(type, "1");
+convert(type, "0x7F");
+convert(type, "0x80");
+convert(type, "0xFF");
+convert(type, "-0x80");
+convert(type, "-0x81");
+convert(type, "0x7FFF");
+convert(type, "0x8000");
+convert(type, "0xFFFF");
+convert(type, "-0x8000");
+convert(type, "-0x8001");
+convert(type, "0x7FFFFFFF");
+convert(type, "0x80000000");
+convert(type, "0xFFFFFFFF");
+convert(type, "-0x80000000");
+convert(type, "-0x80000001");
+convert(type, "0xDCBA9876543210");
+convert(type, "Number.MIN_VALUE", "0");
+convert(type, "-Number.MIN_VALUE", "0");
+convert(type, "Number.MAX_VALUE", "0");
+convert(type, "-Number.MAX_VALUE", "0");
+convert(type, "1.99", "1");
+convert(type, "-1.99", "-1");
+convert(type, "Infinity", "0");
+convert(type, "-Infinity", "0");
+convert(type, "NaN", "0");
+testNonNumericToNumeric(type);
+convertThrows(type, "{valueOf:function(){throw new Error('custom');}}");
+debug("");
+
+type = "testEnforceRangeLongLong";
+verifyAttribute(type);
+convert(type, "0");
+convert(type, "-0", "0");
+convert(type, "-1");
+convert(type, "1");
+convert(type, "0x7F");
+convert(type, "0x80");
+convert(type, "0xFF");
+convert(type, "-0x80");
+convert(type, "-0x81");
+convert(type, "0x7FFF");
+convert(type, "0x8000");
+convert(type, "0xFFFF");
+convert(type, "-0x8000");
+convert(type, "-0x8001");
+convert(type, "0x7FFFFFFF");
+convert(type, "0x80000000");
+convert(type, "0xFFFFFFFF");
+convert(type, "-0x80000000");
+convert(type, "-0x80000001");
+convertThrows(type, "0xDCBA9876543210");
+convert(type, "Number.MIN_VALUE", "0");
+convert(type, "-Number.MIN_VALUE", "0");
+convertThrows(type, "Number.MAX_VALUE");
+convertThrows(type, "-Number.MAX_VALUE");
+convert(type, "1.99", "1");
+convert(type, "-1.99", "-1");
+convertThrows(type, "Infinity");
+convertThrows(type, "-Infinity");
+convertThrows(type, "NaN", "0");
+testNonNumericToNumericEnforceRange(type);
+convertThrows(type, "{valueOf:function(){throw new Error('custom');}}");
+debug("");
+
+type = "testUnsignedLongLong";
+verifyAttribute(type);
+convert(type, "0");
+convert(type, "-0", "0");
+convert(type, "-1", "0xFFFFFFFFFFFFFFFF");
+convert(type, "1");
+convert(type, "0x7F");
+convert(type, "0x80");
+convert(type, "0xFF");
+convert(type, "-0x80", "0xFFFFFFFFFFFFFF80");
+convert(type, "-0x81", "0xFFFFFFFFFFFFFF7F");
+convert(type, "0x7FFF");
+convert(type, "0x8000");
+convert(type, "0xFFFF");
+convert(type, "-0x8000", "0xFFFFFFFFFFFF8000");
+convert(type, "-0x8001", "0xFFFFFFFFFFFF7FFF");
+convert(type, "0x7FFFFFFF");
+convert(type, "0x80000000");
+convert(type, "0xFFFFFFFF");
+convert(type, "-0x80000000", "0xFFFFFFFF80000000");
+convert(type, "-0x80000001", "0xFFFFFFFF7FFFFFFF");
+convert(type, "0xDCBA9876543210");
+convert(type, "Number.MIN_VALUE", "0");
+convert(type, "-Number.MIN_VALUE", "0");
+convert(type, "Number.MAX_VALUE", "0");
+convert(type, "-Number.MAX_VALUE", "0");
+convert(type, "1.99", "1");
+convert(type, "-1.99", "0xFFFFFFFFFFFFFFFF");
+convert(type, "Infinity", "0");
+convert(type, "-Infinity", "0");
+convert(type, "NaN", "0");
+testNonNumericToNumeric(type);
+convertThrows(type, "{valueOf:function(){throw new Error('custom');}}");
+debug("");
+
+type = "testEnforceRangeUnsignedLongLong";
+verifyAttribute(type);
+convert(type, "0");
+convert(type, "-0", "0");
+convertThrows(type, "-1");
+convert(type, "1");
+convert(type, "0x7F");
+convert(type, "0x80");
+convert(type, "0xFF");
+convertThrows(type, "-0x80");
+convertThrows(type, "-0x81");
+convert(type, "0x7FFF");
+convert(type, "0x8000");
+convert(type, "0xFFFF");
+convertThrows(type, "-0x8000");
+convertThrows(type, "-0x8001");
+convert(type, "0x7FFFFFFF");
+convert(type, "0x80000000");
+convert(type, "0xFFFFFFFF");
+convertThrows(type, "-0x80000000");
+convertThrows(type, "-0x80000001");
+convertThrows(type, "0xDCBA9876543210");
+convert(type, "Number.MIN_VALUE", "0");
+convert(type, "-Number.MIN_VALUE", "0");
+convertThrows(type, "Number.MAX_VALUE");
+convertThrows(type, "-Number.MAX_VALUE");
+convert(type, "1.99", "1");
+convertThrows(type, "-1.99");
+convertThrows(type, "Infinity");
+convertThrows(type, "-Infinity");
+convertThrows(type, "NaN");
+testNonNumericToNumericEnforceRange(type);
+convertThrows(type, "{valueOf:function(){throw new Error('custom');}}");
+debug("");
+
+type = "testByte";
+verifyAttribute(type);
+convert(type, "0");
+convert(type, "-0", "0");
+convert(type, "-1");
+convert(type, "1");
+convert(type, "0x7F");
+convert(type, "0x80", "-0x80");
+convert(type, "-0x7F");
+convert(type, "-0x80");
+convert(type, "-0x81", "0x7F");
+convert(type, "Number.MIN_VALUE", "0");
+convert(type, "-Number.MIN_VALUE", "0");
+convert(type, "Number.MAX_VALUE", "0");
+convert(type, "-Number.MAX_VALUE", "0");
+convert(type, "1.99", "1");
+convert(type, "-1.99", "-1");
+convert(type, "Infinity", "0");
+convert(type, "-Infinity", "0");
+convert(type, "NaN", "0");
+testNonNumericToNumeric(type);
+convertThrows(type, "{valueOf:function(){throw new Error('custom');}}");
+debug("");
+
+type = "testEnforceRangeByte";
+verifyAttribute(type);
+convert(type, "0");
+convert(type, "-0", "0");
+convert(type, "-1");
+convert(type, "1");
+convert(type, "0x7F");
+convertThrows(type, "0x80");
+convert(type, "-0x7F");
+convert(type, "-0x80");
+convertThrows(type, "-0x81");
+convert(type, "Number.MIN_VALUE", "0");
+convert(type, "-Number.MIN_VALUE", "0");
+convertThrows(type, "Number.MAX_VALUE");
+convertThrows(type, "-Number.MAX_VALUE");
+convert(type, "1.99", "1");
+convert(type, "-1.99", "-1");
+convertThrows(type, "Infinity");
+convertThrows(type, "-Infinity");
+convertThrows(type, "NaN");
+testNonNumericToNumericEnforceRange(type);
+convertThrows(type, "{valueOf:function(){throw new Error('custom');}}");
+debug("");
+
+type = "testOctet";
+verifyAttribute(type);
+convert(type, "0");
+convert(type, "-0", "0");
+convert(type, "-1", "0xFF");
+convert(type, "1");
+convert(type, "0x7F");
+convert(type, "0x80");
+convert(type, "0xFF");
+convert(type, "0x100", "0");
+convert(type, "0x101", "1");
+convert(type, "-0x80", "0x80");
+convert(type, "-0x81", "0x7F");
+convert(type, "Number.MAX_VALUE", "0");
+convert(type, "Number.MIN_VALUE", "0");
+convert(type, "-Number.MAX_VALUE", "0");
+convert(type, "-Number.MIN_VALUE", "0");
+convert(type, "1.99", "1");
+convert(type, "-1.99", "0xFF");
+convert(type, "Infinity", "0");
+convert(type, "-Infinity", "0");
+convert(type, "NaN", "0");
+testNonNumericToNumeric(type);
+convertThrows(type, "{valueOf:function(){throw new Error('custom');}}");
+debug("");
+
+type = "testEnforceRangeOctet";
+verifyAttribute(type);
+convert(type, "0");
+convert(type, "-0", "0");
+convertThrows(type, "-1");
+convert(type, "1");
+convert(type, "0x7F");
+convert(type, "0x80");
+convert(type, "0xFF");
+convertThrows(type, "0x100");
+convertThrows(type, "0x101");
+convertThrows(type, "-0x80");
+convertThrows(type, "-0x81");
+convertThrows(type, "Number.MAX_VALUE");
+convert(type, "Number.MIN_VALUE", "0");
+convertThrows(type, "-Number.MAX_VALUE");
+convert(type, "-Number.MIN_VALUE", "0");
+convert(type, "1.99", "1");
+convertThrows(type, "-1.99");
+convertThrows(type, "Infinity");
+convertThrows(type, "-Infinity");
+convertThrows(type, "NaN");
+testNonNumericToNumericEnforceRange(type);
+convertThrows(type, "{valueOf:function(){throw new Error('custom');}}");
+debug("");
+
+type = "testShort";
+verifyAttribute(type);
+convert(type, "0");
+convert(type, "-0", "0");
+convert(type, "-1");
+convert(type, "1");
+convert(type, "0x7F");
+convert(type, "0x80");
+convert(type, "0xFF");
+convert(type, "-0x80");
+convert(type, "-0x81");
+convert(type, "0x7FFF");
+convert(type, "0x8000", "-0x8000");
+convert(type, "0xFFFF", "-1");
+convert(type, "-0x8000");
+convert(type, "-0x8001", "0x7FFF");
+convert(type, "0xDCBA9876543210", "0x3210");
+convert(type, "Number.MAX_VALUE", "0");
+convert(type, "Number.MIN_VALUE", "0");
+convert(type, "-Number.MAX_VALUE", "0");
+convert(type, "-Number.MIN_VALUE", "0");
+convert(type, "1.99", "1");
+convert(type, "-1.99", "-1");
+convert(type, "Infinity", "0");
+convert(type, "-Infinity", "0");
+convert(type, "NaN", "0");
+testNonNumericToNumeric(type);
+convertThrows(type, "{valueOf:function(){throw new Error('custom');}}");
+debug("");
+
+type = "testEnforceRangeShort";
+verifyAttribute(type);
+convert(type, "0");
+convert(type, "-0", "0");
+convert(type, "-1");
+convert(type, "1");
+convert(type, "0x7F");
+convert(type, "0x80");
+convert(type, "0xFF");
+convert(type, "-0x80");
+convert(type, "-0x81");
+convert(type, "0x7FFF");
+convertThrows(type, "0x8000");
+convertThrows(type, "0xFFFF");
+convert(type, "-0x8000");
+convertThrows(type, "-0x8001");
+convertThrows(type, "0xDCBA9876543210");
+convertThrows(type, "Number.MAX_VALUE");
+convert(type, "Number.MIN_VALUE", "0");
+convertThrows(type, "-Number.MAX_VALUE");
+convert(type, "-Number.MIN_VALUE", "0");
+convert(type, "1.99", "1");
+convert(type, "-1.99", "-1");
+convertThrows(type, "Infinity");
+convertThrows(type, "-Infinity");
+convertThrows(type, "NaN");
+testNonNumericToNumericEnforceRange(type);
+convertThrows(type, "{valueOf:function(){throw new Error('custom');}}");
+debug("");
+
+type = "testUnsignedShort";
+verifyAttribute(type);
+convert(type, "0");
+convert(type, "-0", "0");
+convert(type, "-1", "0xFFFF");
+convert(type, "1");
+convert(type, "0x7F");
+convert(type, "0x80");
+convert(type, "0xFF");
+convert(type, "-0x80", "0xFF80");
+convert(type, "-0x81", "0xFF7F");
+convert(type, "0x7FFF");
+convert(type, "0x8000");
+convert(type, "0xFFFF");
+convert(type, "0x10000", "0");
+convert(type, "-0x8000", "0x8000");
+convert(type, "-0x8001", "0x7FFF");
+convert(type, "0xDCBA9876543210", "0x3210");
+convert(type, "Number.MAX_VALUE", "0");
+convert(type, "Number.MIN_VALUE", "0");
+convert(type, "-Number.MAX_VALUE", "0");
+convert(type, "-Number.MIN_VALUE", "0");
+convert(type, "1.99", "1");
+convert(type, "-1.99", "0xFFFF");
+convert(type, "Infinity", "0");
+convert(type, "-Infinity", "0");
+convert(type, "NaN", "0");
+testNonNumericToNumeric(type);
+convertThrows(type, "{valueOf:function(){throw new Error('custom');}}");
+debug("");
+
+type = "testEnforceRangeUnsignedShort";
+verifyAttribute(type);
+convert(type, "0");
+convert(type, "-0", "0");
+convertThrows(type, "-1");
+convert(type, "1");
+convert(type, "0x7F");
+convert(type, "0x80");
+convert(type, "0xFF");
+convertThrows(type, "-0x80");
+convertThrows(type, "-0x81");
+convert(type, "0x7FFF");
+convert(type, "0x8000");
+convert(type, "0xFFFF");
+convertThrows(type, "0x10000");
+convertThrows(type, "-0x8000");
+convertThrows(type, "-0x8001");
+convert(type, "0x3210");
+convertThrows(type, "Number.MAX_VALUE");
+convert(type, "Number.MIN_VALUE", "0");
+convertThrows(type, "-Number.MAX_VALUE");
+convert(type, "-Number.MIN_VALUE", "0");
+convert(type, "1.99", "1");
+convertThrows(type, "-1.99");
+convertThrows(type, "Infinity");
+convertThrows(type, "-Infinity");
+convertThrows(type, "NaN");
+testNonNumericToNumericEnforceRange(type);
+convertThrows(type, "{valueOf:function(){throw new Error('custom');}}");
+debug("");
+
+evalAndLog("converter.testUSVString = '!@#123ABCabc\\x00\\x80\\xFF\\r\\n\\t'");
+evalAndLog("converter.testString = '!@#123ABCabc\\x00\\x80\\xFF\\r\\n\\t'");
+shouldBeEqualToString("converter.testUSVString", "!@#123ABCabc\x00\x80\xFF\r\n\t");
+shouldBeEqualToString("converter.testString", "!@#123ABCabc\x00\x80\xFF\r\n\t");
+evalAndLog("converter.testUSVString = '\\u0100'");
+evalAndLog("converter.testString = '\\u0100'")
+shouldBeEqualToString("converter.testUSVString", "\u0100");
+shouldBeEqualToString("converter.testString", "\u0100");
+shouldThrow("converter.testUSVString = {toString: function() { throw Error(); }}");
+shouldThrow("converter.testString = {toString: function() { throw Error(); }}");
+shouldBeEqualToString("converter.testUSVString", "\u0100");
+shouldBeEqualToString("converter.testString", "\u0100");
+[{input: "\uD800", expected: "\uFFFD"},
+ {input: "\uDC00", expected: "\uFFFD"},
+ {input: "\uD800\u0000", expected: "\uFFFD\u0000"},
+ {input: "\uDC00\u0000", expected: "\uFFFD\u0000"},
+ {input: "\uDC00\uD800", expected: "\uFFFD\uFFFD"},
+ {input: "\uD834\uDD1E", expected: "\uD834\uDD1E"},
+].forEach(function(test) {
+    evalAndLog("converter.testUSVString = " + JSON.stringify(test.input));
+    evalAndLog("converter.testString = " + JSON.stringify(test.input));
+    shouldBeEqualToString("converter.testUSVString", test.expected);
+    shouldBeEqualToString("converter.testString", test.input);
+});
+
+evalAndLog("converter.testByteString = '!@#123ABCabc\\x00\\x80\\xFF\\r\\n\\t'");
+shouldBeEqualToString("converter.testByteString", "!@#123ABCabc\x00\x80\xFF\r\n\t");
+evalAndLog("converter.testByteString = '\\u00FF'");
+shouldBeEqualToString("converter.testByteString", "\u00FF");
+shouldThrow("converter.testByteString = '\\u0100'");
+shouldBeEqualToString("converter.testByteString", "\u00FF");
+shouldThrow("converter.testByteString = {toString: function() { throw Error(); }}");
+shouldBeEqualToString("converter.testByteString", "\u00FF");
+
+["true", "123", "null", "undefined"].forEach(function(value) {
+    evalAndLog("converter.testUSVString = " + value);
+    evalAndLog("converter.testString = " + value);
+    evalAndLog("converter.testByteString = " + value);
+    shouldBeEqualToString("converter.testUSVString", value);
+    shouldBeEqualToString("converter.testString", value);
+    shouldBeEqualToString("converter.testByteString", value);
+});
+
+debug("");
+debug("Testing union conversion")
+evalAndLog("converter.testUnion = 'hello'");
+shouldBe("converter.testUnion", "'hello'");
+shouldBe("typeof converter.testUnion", "'string'");
+evalAndLog("converter.testUnion = 1");
+shouldBe("converter.testUnion", "1");
+shouldBe("typeof converter.testUnion", "'number'");
+evalAndLog("converter.testUnion = false");
+shouldBe("converter.testUnion", "false");
+shouldBe("typeof converter.testUnion", "'boolean'");
+evalAndLog("converter.testUnion = document");
+shouldBe("converter.testUnion", "document");
+shouldBe("typeof converter.testUnion", "'object'");
+shouldBeType("converter.testUnion", "Document");
+evalAndLog("converter.testUnion = [1, 2]");
+shouldBe("converter.testUnion", "[1, 2]");
+shouldBe("typeof converter.testUnion", "'object'");
+shouldBeType("converter.testUnion", "Array");
+evalAndLog("converter.testUnion = null");
+shouldBe("converter.testUnion", "'null'");
+shouldBe("typeof converter.testUnion", "'string'");
+evalAndLog("converter.testUnion = undefined");
+shouldBe("converter.testUnion", "'undefined'");
+shouldBe("typeof converter.testUnion", "'string'");
+evalAndLog("converter.testUnion = window");
+shouldBe("typeof converter.testUnion", "'string'");
+shouldBe("converter.testUnion", "'[object Window]'");
+evalAndLog("converter.testUnion = { }");
+shouldBe("typeof converter.testUnion", "'string'");
+shouldBe("converter.testUnion", "'[object Object]'");
+shouldThrow("converter.testUnion = { toString: function() { throw Error(); } }");
+
+evalAndLog("converter.testDictionary = { longValue: 1 }");
+shouldBe("converter.testDictionary.longValue", "1");
+evalAndLog("converter.testDictionary = { stringValue: 'hello' }");
+shouldBe("converter.testDictionary.stringValue", "'hello'");
+evalAndLog("converter.testDictionary = { sequenceValue: ['hi', 'there'] }");
+shouldBe("converter.testDictionary.sequenceValue", "['hi', 'there']");
+
+evalAndLog("converter.testDictionary = { unionValue: document }");
+shouldBeType("converter.testDictionary.unionValue", "Document");
+shouldBe("converter.testDictionary.unionValue", "document");
+evalAndLog("converter.testDictionary = { unionValue: ['a', 'sequence'] }");
+shouldBeType("converter.testDictionary.unionValue", "Array");
+shouldBe("converter.testDictionary.unionValue",  "['a', 'sequence']");
+evalAndLog("converter.testDictionary = { unionValue: { longValue: 1 } }");
+shouldBeType("converter.testDictionary.unionValue", "Object");
+shouldBe("converter.testDictionary.unionValue.longValue", "1");
+evalAndLog("converter.testDictionary = { unionValue: null }");
+shouldBeType("converter.testDictionary.unionValue", "Object");
+shouldBe("converter.testDictionary.unionValue.longValue", "0");
+evalAndLog("converter.testDictionary = { unionValue: undefined }");
+shouldBeType("converter.testDictionary.unionValue", "Object");
+shouldBe("converter.testDictionary.unionValue.longValue", "0");
+evalAndLog("converter.testDictionary = { }");
+shouldBeType("converter.testDictionary.unionValue", "Object");
+shouldBe("converter.testDictionary.unionValue.longValue", "0");
+
+evalAndLog("converter.testDictionary = { stringValue: null }");
+shouldBe("converter.testDictionary.stringValue", "'null'");
+evalAndLog("converter.testDictionary = { treatNullAsEmptyStringValue: null }");
+shouldBe("converter.testDictionary.treatNullAsEmptyStringValue", "''");
+
+evalAndLog("converter.testDictionary = { longValue: 0x7FFFFFFF }");
+shouldBe("converter.testDictionary.longValue", "0x7FFFFFFF");
+evalAndLog("converter.testDictionary = { longValue: 0x80000000 }");
+shouldBe("converter.testDictionary.longValue", "-0x80000000");
+
+evalAndLog("converter.testDictionary = { enforceRangeLongValue: 0x7FFFFFFF }");
+shouldBe("converter.testDictionary.enforceRangeLongValue", "0x7FFFFFFF");
+shouldThrow("converter.testDictionary = { enforceRangeLongValue: 0x80000000 }");
+
+evalAndLog("converter.testDictionary = { clampLongValue: 0x7FFFFFFF }");
+shouldBe("converter.testDictionary.clampLongValue", "0x7FFFFFFF");
+evalAndLog("converter.testDictionary = { clampLongValue: 0x80000000 }");
+shouldBe("converter.testDictionary.clampLongValue", "0x7FFFFFFF");
+
+
+debug("");
+debug("Testing record conversion")
+
+// testLongRecord is a record<DOMString, long> attribute
+// testNodeRecord is a record<USVString, Node> attribute
+// testSequenceRecord is a record<ByteString, sequence<DOMString>> attribute
+
+evalAndLog("converter.setTestLongRecord({ key: 1, key2: 2 })");
+shouldBeType("converter.testLongRecord()", "Object");
+shouldBeTrue("converter.testLongRecord().hasOwnProperty('key')");
+shouldBeTrue("'key' in converter.testLongRecord()");
+shouldBe("converter.testLongRecord()['key']", "1");
+shouldBeTrue("converter.testLongRecord().hasOwnProperty('key2')");
+shouldBeTrue("'key2' in converter.testLongRecord()");
+shouldBe("converter.testLongRecord()['key2']", "2");
+evalAndLog("converter.setTestLongRecord(undefined)");
+shouldBeType("converter.testLongRecord()", "Object");
+evalAndLog("converter.setTestLongRecord(null)");
+shouldBeType("converter.testLongRecord()", "Object");
+shouldThrow("converter.setTestLongRecord(1)");
+shouldThrow("converter.setTestLongRecord({ key: { valueOf:function() { throw new Error(); } } })");
+evalAndLog("var o = { otherKey: 2 }; Object.defineProperty(o, 'key', { enumerable: false, value: 1 }); converter.setTestLongRecord(o);");
+shouldBeFalse("converter.testLongRecord().hasOwnProperty('key')");
+shouldBeTrue("converter.testLongRecord().hasOwnProperty('otherKey')");
+shouldBe("converter.testLongRecord()['otherKey']", "2");
+evalAndLog("var o = { otherKey: 2 }; Object.defineProperty(o, 'key', { get: function() { return 1; }, enumerable: true }); converter.setTestLongRecord(o);");
+shouldBeTrue("converter.testLongRecord().hasOwnProperty('key')");
+shouldBe("converter.testLongRecord()['key']", "1");
+shouldBeTrue("converter.testLongRecord().hasOwnProperty('otherKey')");
+shouldBe("converter.testLongRecord()['otherKey']", "2");
+shouldThrow("var o = { otherKey: 2 }; Object.defineProperty(o, 'key', { get: function() { throw new Error(); }, enumerable: true }); converter.setTestLongRecord(o);");
+
+evalAndLog("converter.setTestNodeRecord({ key: document, key2: document.documentElement })");
+shouldBeTrue("converter.testNodeRecord().hasOwnProperty('key')");
+shouldBeTrue("'key' in converter.testNodeRecord()");
+shouldBe("converter.testNodeRecord()['key']", "document");
+shouldBeTrue("converter.testNodeRecord().hasOwnProperty('key2')");
+shouldBeTrue("'key2' in converter.testNodeRecord()");
+shouldBe("converter.testNodeRecord()['key2']", "document.documentElement");
+shouldThrow("converter.setTestNodeRecord({ key: 'hello' })");
+
+[{input: "\uD800", expected: "\uFFFD"},
+ {input: "\uDC00", expected: "\uFFFD"},
+ {input: "\uD800\u0000", expected: "\uFFFD\u0000"},
+ {input: "\uDC00\u0000", expected: "\uFFFD\u0000"},
+ {input: "\uDC00\uD800", expected: "\uFFFD\uFFFD"},
+ {input: "\uD834\uDD1E", expected: "\uD834\uDD1E"},
+].forEach(function(test) {
+    evalAndLog("converter.setTestLongRecord({'" + test.input + "': 1 })");
+    shouldBe("converter.testLongRecord()['" + test.input + "']", "1");
+    evalAndLog("converter.setTestNodeRecord({'" + test.input + "': document })");
+    shouldBe("converter.testNodeRecord()['" + test.expected + "']", "document");
+});
+
+evalAndLog("converter.setTestSequenceRecord({ key: ['value', 'other value'] })");
+shouldBeTrue("converter.testSequenceRecord().hasOwnProperty('key')");
+shouldBeTrue("'key' in converter.testSequenceRecord()");
+shouldBe("converter.testSequenceRecord()['key']", "['value', 'other value']");
+shouldThrow("converter.setTestSequenceRecord({ '\u0100': ['value'] })");
+evalAndLog("converter.setTestSequenceRecord({ '\u00FF': ['value'] })");
+shouldBe("converter.testSequenceRecord()['\u00FF']", "['value']");
+
+shouldBe("converter.testImpureNaNUnrestrictedDouble", "NaN");
+shouldBe("converter.testImpureNaN2UnrestrictedDouble", "NaN");
+shouldBe("converter.testQuietNaNUnrestrictedDouble", "NaN");
+shouldBe("converter.testPureNaNUnrestrictedDouble", "NaN");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>

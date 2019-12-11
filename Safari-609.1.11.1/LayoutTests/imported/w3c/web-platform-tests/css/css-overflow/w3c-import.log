@@ -1,0 +1,103 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/float-with-relpos-and-transform-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/float-with-relpos-and-transform.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/input-scrollable-region-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/input-scrollable-region-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/logical-overflow-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/orthogonal-flow-with-inline-end-margin.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/overflow-abpos-transform.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/overflow-body-propagation-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/overflow-body-propagation-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/overflow-body-propagation-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/overflow-body-propagation-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/overflow-body-propagation-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/overflow-body-propagation-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/overflow-body-propagation-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/overflow-body-propagation-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/overflow-codependent-scrollbars.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/overflow-inline-transform-relative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/overflow-padding.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/overflow-shorthand-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/overfow-outside-padding.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/shrink-to-fit-auto-overflow-relayout-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-007-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-008-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-009-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-010-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-011-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-011.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-012-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-012.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-013-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-013.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-014-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-014.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-015-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-015.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-016-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-016.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-017-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-017.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-018-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-018.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-019-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-019.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-020-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-020.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-021-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-021.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-022-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-022.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-023-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-023.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-024-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-024.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-025-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-025.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-026-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-026.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-027-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-027.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-029-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-029.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-030-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-030.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-031-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-031.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-032-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-032.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-033-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-033.html

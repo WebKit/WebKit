@@ -1,0 +1,50 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src='/js-test-resources/js-test.js'></script>
+<script src='/js-test-resources/ui-helper.js'></script>
+<script>
+description('Tests that a page with an active ApplePaySession goes into the back/forward cache.');
+window.jsTestIsAsync = true;
+
+window.addEventListener('pageshow', function(event) {
+    debug('pageshow - ' + (event.persisted ? '' : 'not ') + 'from cache');
+
+    if (event.persisted) {
+        testPassed('Page did enter and was restored from the back/forward cache');
+    }
+}, false);
+
+window.addEventListener('pagehide', function(event) {
+    debug('pagehide - ' + (event.persisted ? '' : 'not ') + 'entering cache');
+    if (!event.persisted) {
+        testFailed('Page failed to enter the back/forward cache.');
+        finishJSTest();
+    }
+}, false);
+
+window.addEventListener('load', function() {
+    UIHelper.withUserGesture(function() {
+        session = new ApplePaySession(1, {
+            countryCode: 'US',
+            currencyCode: 'USD',
+            supportedNetworks: ['visa', 'masterCard'],
+            merchantCapabilities: ['supports3DS'],
+            total: { label: 'Total', amount: '1.00' },
+        });
+        session.begin();
+    });
+
+    session.addEventListener('cancel', function() {
+        testPassed('ApplePaySession received a cancel event.');
+        finishJSTest();
+    });
+
+    setTimeout(function() {
+        window.location.href = '/navigation/resources/page-cache-helper.html';
+    }, 0);
+}, false);
+</script>
+</body>
+</html>

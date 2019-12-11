@@ -1,0 +1,36 @@
+{
+  "comments": [
+    "Tests for 64-bit iOS devices."
+  ],
+  "xcode build version": "10l232m",
+  "gn_args": [
+    "dcheck_always_on=true",
+    "goma_dir=\"$(goma_dir)\"",
+    "is_component_build=false",
+    "is_debug=false",
+    "target_cpu=\"arm64\"",
+    "target_os=\"ios\"",
+    "use_goma=true"
+  ],
+  "env": {
+    "MAC_TOOLCHAIN_REVISION": "8E2002-1"
+  },
+  "use_analyze": false,
+  "additional_compile_targets": [],
+  "configuration": "Release",
+  "bucket": "chromium-webrtc",
+  "tests": [
+    {
+      "include": "real_device_tests.json",
+      "device type": "iPhone 6s",
+      "os": "10.3.3",
+      "dimensions": [
+        {
+          "os": "Mac",
+          "pool": "Chrome"
+        }
+      ]
+    }
+  ],
+  "expiration_time": 3600
+}

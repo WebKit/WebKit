@@ -1,0 +1,18 @@
+ALERT: Going back.
+
+
+
+
+
+
+
+layer at (0,0) size 100x126 backgroundClip at (0,0) size 100x100 clip at (0,0) size 85x85 scrollY 41 scrollHeight 126
+  RenderBlock (positioned) {DIV} at (0,0) size 100x100 [bgcolor=#CCCCCC]
+    RenderBR {BR} at (0,0) size 0x17
+    RenderBR {BR} at (0,18) size 0x17
+    RenderBR {BR} at (0,36) size 0x17
+    RenderBR {BR} at (0,54) size 0x17
+    RenderBR {BR} at (0,72) size 0x17
+    RenderBR {BR} at (0,90) size 0x17
+    RenderBR {BR} at (0,108) size 0x17
+

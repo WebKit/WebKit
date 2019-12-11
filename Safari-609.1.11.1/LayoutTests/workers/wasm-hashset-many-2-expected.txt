@@ -1,0 +1,22 @@
+CONSOLE MESSAGE: line 24: Got module in main test. Posting to all workers.
+CONSOLE MESSAGE: line 36: Worker finished
+CONSOLE MESSAGE: line 36: Worker finished
+CONSOLE MESSAGE: line 36: Worker finished
+CONSOLE MESSAGE: line 36: Worker finished
+CONSOLE MESSAGE: line 36: Worker finished
+CONSOLE MESSAGE: line 36: Worker finished
+CONSOLE MESSAGE: line 36: Worker finished
+CONSOLE MESSAGE: line 36: Worker finished
+CONSOLE MESSAGE: line 36: Worker finished
+CONSOLE MESSAGE: line 36: Worker finished
+CONSOLE MESSAGE: line 36: Worker finished
+CONSOLE MESSAGE: line 36: Worker finished
+CONSOLE MESSAGE: line 36: Worker finished
+CONSOLE MESSAGE: line 36: Worker finished
+CONSOLE MESSAGE: line 36: Worker finished
+CONSOLE MESSAGE: line 36: Worker finished
+CONSOLE MESSAGE: line 8: Finished running
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

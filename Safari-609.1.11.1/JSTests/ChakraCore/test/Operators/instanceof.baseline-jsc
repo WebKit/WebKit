@@ -1,0 +1,651 @@
+new Object() instanceof Object : true
+new Object() instanceof Function : false
+new Object() instanceof Array : false
+new Object() instanceof String : false
+new Object() instanceof Number : false
+new Object() instanceof Boolean : false
+new Object() instanceof Date : false
+new Object() instanceof RegExp : false
+new Object() instanceof foo : false
+new Object() instanceof bar : false
+f instanceof Object : true
+f instanceof Function : false
+f instanceof Array : false
+f instanceof String : false
+f instanceof Number : false
+f instanceof Boolean : false
+f instanceof Date : false
+f instanceof RegExp : false
+f instanceof foo : true
+f instanceof bar : false
+b instanceof Object : true
+b instanceof Function : false
+b instanceof Array : false
+b instanceof String : false
+b instanceof Number : false
+b instanceof Boolean : false
+b instanceof Date : false
+b instanceof RegExp : false
+b instanceof foo : false
+b instanceof bar : true
+foo instanceof Object : true
+foo instanceof Function : true
+foo instanceof Array : false
+foo instanceof String : false
+foo instanceof Number : false
+foo instanceof Boolean : false
+foo instanceof Date : false
+foo instanceof RegExp : false
+foo instanceof foo : false
+foo instanceof bar : false
+String.fromCharCode instanceof Object : true
+String.fromCharCode instanceof Function : true
+String.fromCharCode instanceof Array : false
+String.fromCharCode instanceof String : false
+String.fromCharCode instanceof Number : false
+String.fromCharCode instanceof Boolean : false
+String.fromCharCode instanceof Date : false
+String.fromCharCode instanceof RegExp : false
+String.fromCharCode instanceof foo : false
+String.fromCharCode instanceof bar : false
+Array.prototype.concat instanceof Object : true
+Array.prototype.concat instanceof Function : true
+Array.prototype.concat instanceof Array : false
+Array.prototype.concat instanceof String : false
+Array.prototype.concat instanceof Number : false
+Array.prototype.concat instanceof Boolean : false
+Array.prototype.concat instanceof Date : false
+Array.prototype.concat instanceof RegExp : false
+Array.prototype.concat instanceof foo : false
+Array.prototype.concat instanceof bar : false
+[1,2,3] instanceof Object : true
+[1,2,3] instanceof Function : false
+[1,2,3] instanceof Array : true
+[1,2,3] instanceof String : false
+[1,2,3] instanceof Number : false
+[1,2,3] instanceof Boolean : false
+[1,2,3] instanceof Date : false
+[1,2,3] instanceof RegExp : false
+[1,2,3] instanceof foo : false
+[1,2,3] instanceof bar : false
+new Array() instanceof Object : true
+new Array() instanceof Function : false
+new Array() instanceof Array : true
+new Array() instanceof String : false
+new Array() instanceof Number : false
+new Array() instanceof Boolean : false
+new Array() instanceof Date : false
+new Array() instanceof RegExp : false
+new Array() instanceof foo : false
+new Array() instanceof bar : false
+fncs instanceof Object : true
+fncs instanceof Function : false
+fncs instanceof Array : true
+fncs instanceof String : false
+fncs instanceof Number : false
+fncs instanceof Boolean : false
+fncs instanceof Date : false
+fncs instanceof RegExp : false
+fncs instanceof foo : false
+fncs instanceof bar : false
+'hello' instanceof Object : false
+'hello' instanceof Function : false
+'hello' instanceof Array : false
+'hello' instanceof String : false
+'hello' instanceof Number : false
+'hello' instanceof Boolean : false
+'hello' instanceof Date : false
+'hello' instanceof RegExp : false
+'hello' instanceof foo : false
+'hello' instanceof bar : false
+new String('world') instanceof Object : true
+new String('world') instanceof Function : false
+new String('world') instanceof Array : false
+new String('world') instanceof String : true
+new String('world') instanceof Number : false
+new String('world') instanceof Boolean : false
+new String('world') instanceof Date : false
+new String('world') instanceof RegExp : false
+new String('world') instanceof foo : false
+new String('world') instanceof bar : false
+10 instanceof Object : false
+10 instanceof Function : false
+10 instanceof Array : false
+10 instanceof String : false
+10 instanceof Number : false
+10 instanceof Boolean : false
+10 instanceof Date : false
+10 instanceof RegExp : false
+10 instanceof foo : false
+10 instanceof bar : false
+10.2 instanceof Object : false
+10.2 instanceof Function : false
+10.2 instanceof Array : false
+10.2 instanceof String : false
+10.2 instanceof Number : false
+10.2 instanceof Boolean : false
+10.2 instanceof Date : false
+10.2 instanceof RegExp : false
+10.2 instanceof foo : false
+10.2 instanceof bar : false
+NaN instanceof Object : false
+NaN instanceof Function : false
+NaN instanceof Array : false
+NaN instanceof String : false
+NaN instanceof Number : false
+NaN instanceof Boolean : false
+NaN instanceof Date : false
+NaN instanceof RegExp : false
+NaN instanceof foo : false
+NaN instanceof bar : false
+new Number(3) instanceof Object : true
+new Number(3) instanceof Function : false
+new Number(3) instanceof Array : false
+new Number(3) instanceof String : false
+new Number(3) instanceof Number : true
+new Number(3) instanceof Boolean : false
+new Number(3) instanceof Date : false
+new Number(3) instanceof RegExp : false
+new Number(3) instanceof foo : false
+new Number(3) instanceof bar : false
+true instanceof Object : false
+true instanceof Function : false
+true instanceof Array : false
+true instanceof String : false
+true instanceof Number : false
+true instanceof Boolean : false
+true instanceof Date : false
+true instanceof RegExp : false
+true instanceof foo : false
+true instanceof bar : false
+false instanceof Object : false
+false instanceof Function : false
+false instanceof Array : false
+false instanceof String : false
+false instanceof Number : false
+false instanceof Boolean : false
+false instanceof Date : false
+false instanceof RegExp : false
+false instanceof foo : false
+false instanceof bar : false
+new Boolean(true) instanceof Object : true
+new Boolean(true) instanceof Function : false
+new Boolean(true) instanceof Array : false
+new Boolean(true) instanceof String : false
+new Boolean(true) instanceof Number : false
+new Boolean(true) instanceof Boolean : true
+new Boolean(true) instanceof Date : false
+new Boolean(true) instanceof RegExp : false
+new Boolean(true) instanceof foo : false
+new Boolean(true) instanceof bar : false
+new Boolean(false) instanceof Object : true
+new Boolean(false) instanceof Function : false
+new Boolean(false) instanceof Array : false
+new Boolean(false) instanceof String : false
+new Boolean(false) instanceof Number : false
+new Boolean(false) instanceof Boolean : true
+new Boolean(false) instanceof Date : false
+new Boolean(false) instanceof RegExp : false
+new Boolean(false) instanceof foo : false
+new Boolean(false) instanceof bar : false
+new Date() instanceof Object : true
+new Date() instanceof Function : false
+new Date() instanceof Array : false
+new Date() instanceof String : false
+new Date() instanceof Number : false
+new Date() instanceof Boolean : false
+new Date() instanceof Date : true
+new Date() instanceof RegExp : false
+new Date() instanceof foo : false
+new Date() instanceof bar : false
+/a+/ instanceof Object : true
+/a+/ instanceof Function : false
+/a+/ instanceof Array : false
+/a+/ instanceof String : false
+/a+/ instanceof Number : false
+/a+/ instanceof Boolean : false
+/a+/ instanceof Date : false
+/a+/ instanceof RegExp : true
+/a+/ instanceof foo : false
+/a+/ instanceof bar : false
+ Exception: new Object() instanceof new Object(). new Object() is not a function. (evaluating 'new Object() instanceof new Object()')
+ Exception: new Object() instanceof f. f is not a function. (evaluating 'new Object() instanceof f')
+ Exception: new Object() instanceof b. b is not a function. (evaluating 'new Object() instanceof b')
+new Object() instanceof foo : false
+ Exception: new Object() instanceof String.fromCharCode. instanceof called on an object with an invalid prototype property.
+ Exception: new Object() instanceof Array.prototype.concat. instanceof called on an object with an invalid prototype property.
+ Exception: new Object() instanceof [1,2,3]. [1,2,3] is not a function. (evaluating 'new Object() instanceof [1,2,3]')
+ Exception: new Object() instanceof new Array(). new Array() is not a function. (evaluating 'new Object() instanceof new Array()')
+ Exception: new Object() instanceof fncs. fncs is not a function. (evaluating 'new Object() instanceof fncs')
+ Exception: new Object() instanceof 'hello'. Right hand side of instanceof is not an object
+ Exception: new Object() instanceof new String('world'). new String('world') is not a function. (evaluating 'new Object() instanceof new String('world')')
+ Exception: new Object() instanceof 10. Right hand side of instanceof is not an object
+ Exception: new Object() instanceof 10.2. Right hand side of instanceof is not an object
+ Exception: new Object() instanceof NaN. Right hand side of instanceof is not an object
+ Exception: new Object() instanceof new Number(3). new Number(3) is not a function. (evaluating 'new Object() instanceof new Number(3)')
+ Exception: new Object() instanceof true. Right hand side of instanceof is not an object
+ Exception: new Object() instanceof false. Right hand side of instanceof is not an object
+ Exception: new Object() instanceof new Boolean(true). new Boolean(true) is not a function. (evaluating 'new Object() instanceof new Boolean(true)')
+ Exception: new Object() instanceof new Boolean(false). new Boolean(false) is not a function. (evaluating 'new Object() instanceof new Boolean(false)')
+ Exception: new Object() instanceof new Date(). new Date() is not a function. (evaluating 'new Object() instanceof new Date()')
+ Exception: new Object() instanceof /a+/. /a+/ is not a function. (evaluating 'new Object() instanceof /a+/')
+ Exception: f instanceof new Object(). new Object() is not a function. (evaluating 'f instanceof new Object()')
+ Exception: f instanceof f. f is not a function. (evaluating 'f instanceof f')
+ Exception: f instanceof b. b is not a function. (evaluating 'f instanceof b')
+f instanceof foo : true
+ Exception: f instanceof String.fromCharCode. instanceof called on an object with an invalid prototype property.
+ Exception: f instanceof Array.prototype.concat. instanceof called on an object with an invalid prototype property.
+ Exception: f instanceof [1,2,3]. [1,2,3] is not a function. (evaluating 'f instanceof [1,2,3]')
+ Exception: f instanceof new Array(). new Array() is not a function. (evaluating 'f instanceof new Array()')
+ Exception: f instanceof fncs. fncs is not a function. (evaluating 'f instanceof fncs')
+ Exception: f instanceof 'hello'. Right hand side of instanceof is not an object
+ Exception: f instanceof new String('world'). new String('world') is not a function. (evaluating 'f instanceof new String('world')')
+ Exception: f instanceof 10. Right hand side of instanceof is not an object
+ Exception: f instanceof 10.2. Right hand side of instanceof is not an object
+ Exception: f instanceof NaN. Right hand side of instanceof is not an object
+ Exception: f instanceof new Number(3). new Number(3) is not a function. (evaluating 'f instanceof new Number(3)')
+ Exception: f instanceof true. Right hand side of instanceof is not an object
+ Exception: f instanceof false. Right hand side of instanceof is not an object
+ Exception: f instanceof new Boolean(true). new Boolean(true) is not a function. (evaluating 'f instanceof new Boolean(true)')
+ Exception: f instanceof new Boolean(false). new Boolean(false) is not a function. (evaluating 'f instanceof new Boolean(false)')
+ Exception: f instanceof new Date(). new Date() is not a function. (evaluating 'f instanceof new Date()')
+ Exception: f instanceof /a+/. /a+/ is not a function. (evaluating 'f instanceof /a+/')
+ Exception: b instanceof new Object(). new Object() is not a function. (evaluating 'b instanceof new Object()')
+ Exception: b instanceof f. f is not a function. (evaluating 'b instanceof f')
+ Exception: b instanceof b. b is not a function. (evaluating 'b instanceof b')
+b instanceof foo : false
+ Exception: b instanceof String.fromCharCode. instanceof called on an object with an invalid prototype property.
+ Exception: b instanceof Array.prototype.concat. instanceof called on an object with an invalid prototype property.
+ Exception: b instanceof [1,2,3]. [1,2,3] is not a function. (evaluating 'b instanceof [1,2,3]')
+ Exception: b instanceof new Array(). new Array() is not a function. (evaluating 'b instanceof new Array()')
+ Exception: b instanceof fncs. fncs is not a function. (evaluating 'b instanceof fncs')
+ Exception: b instanceof 'hello'. Right hand side of instanceof is not an object
+ Exception: b instanceof new String('world'). new String('world') is not a function. (evaluating 'b instanceof new String('world')')
+ Exception: b instanceof 10. Right hand side of instanceof is not an object
+ Exception: b instanceof 10.2. Right hand side of instanceof is not an object
+ Exception: b instanceof NaN. Right hand side of instanceof is not an object
+ Exception: b instanceof new Number(3). new Number(3) is not a function. (evaluating 'b instanceof new Number(3)')
+ Exception: b instanceof true. Right hand side of instanceof is not an object
+ Exception: b instanceof false. Right hand side of instanceof is not an object
+ Exception: b instanceof new Boolean(true). new Boolean(true) is not a function. (evaluating 'b instanceof new Boolean(true)')
+ Exception: b instanceof new Boolean(false). new Boolean(false) is not a function. (evaluating 'b instanceof new Boolean(false)')
+ Exception: b instanceof new Date(). new Date() is not a function. (evaluating 'b instanceof new Date()')
+ Exception: b instanceof /a+/. /a+/ is not a function. (evaluating 'b instanceof /a+/')
+ Exception: foo instanceof new Object(). new Object() is not a function. (evaluating 'foo instanceof new Object()')
+ Exception: foo instanceof f. f is not a function. (evaluating 'foo instanceof f')
+ Exception: foo instanceof b. b is not a function. (evaluating 'foo instanceof b')
+foo instanceof foo : false
+ Exception: foo instanceof String.fromCharCode. instanceof called on an object with an invalid prototype property.
+ Exception: foo instanceof Array.prototype.concat. instanceof called on an object with an invalid prototype property.
+ Exception: foo instanceof [1,2,3]. [1,2,3] is not a function. (evaluating 'foo instanceof [1,2,3]')
+ Exception: foo instanceof new Array(). new Array() is not a function. (evaluating 'foo instanceof new Array()')
+ Exception: foo instanceof fncs. fncs is not a function. (evaluating 'foo instanceof fncs')
+ Exception: foo instanceof 'hello'. Right hand side of instanceof is not an object
+ Exception: foo instanceof new String('world'). new String('world') is not a function. (evaluating 'foo instanceof new String('world')')
+ Exception: foo instanceof 10. Right hand side of instanceof is not an object
+ Exception: foo instanceof 10.2. Right hand side of instanceof is not an object
+ Exception: foo instanceof NaN. Right hand side of instanceof is not an object
+ Exception: foo instanceof new Number(3). new Number(3) is not a function. (evaluating 'foo instanceof new Number(3)')
+ Exception: foo instanceof true. Right hand side of instanceof is not an object
+ Exception: foo instanceof false. Right hand side of instanceof is not an object
+ Exception: foo instanceof new Boolean(true). new Boolean(true) is not a function. (evaluating 'foo instanceof new Boolean(true)')
+ Exception: foo instanceof new Boolean(false). new Boolean(false) is not a function. (evaluating 'foo instanceof new Boolean(false)')
+ Exception: foo instanceof new Date(). new Date() is not a function. (evaluating 'foo instanceof new Date()')
+ Exception: foo instanceof /a+/. /a+/ is not a function. (evaluating 'foo instanceof /a+/')
+ Exception: String.fromCharCode instanceof new Object(). new Object() is not a function. (evaluating 'String.fromCharCode instanceof new Object()')
+ Exception: String.fromCharCode instanceof f. f is not a function. (evaluating 'String.fromCharCode instanceof f')
+ Exception: String.fromCharCode instanceof b. b is not a function. (evaluating 'String.fromCharCode instanceof b')
+String.fromCharCode instanceof foo : false
+ Exception: String.fromCharCode instanceof String.fromCharCode. instanceof called on an object with an invalid prototype property.
+ Exception: String.fromCharCode instanceof Array.prototype.concat. instanceof called on an object with an invalid prototype property.
+ Exception: String.fromCharCode instanceof [1,2,3]. [1,2,3] is not a function. (evaluating 'String.fromCharCode instanceof [1,2,3]')
+ Exception: String.fromCharCode instanceof new Array(). new Array() is not a function. (evaluating 'String.fromCharCode instanceof new Array()')
+ Exception: String.fromCharCode instanceof fncs. fncs is not a function. (evaluating 'String.fromCharCode instanceof fncs')
+ Exception: String.fromCharCode instanceof 'hello'. Right hand side of instanceof is not an object
+ Exception: String.fromCharCode instanceof new String('world'). new String('world') is not a function. (evaluating 'String.fromCharCode instanceof new String('world')')
+ Exception: String.fromCharCode instanceof 10. Right hand side of instanceof is not an object
+ Exception: String.fromCharCode instanceof 10.2. Right hand side of instanceof is not an object
+ Exception: String.fromCharCode instanceof NaN. Right hand side of instanceof is not an object
+ Exception: String.fromCharCode instanceof new Number(3). new Number(3) is not a function. (evaluating 'String.fromCharCode instanceof new Number(3)')
+ Exception: String.fromCharCode instanceof true. Right hand side of instanceof is not an object
+ Exception: String.fromCharCode instanceof false. Right hand side of instanceof is not an object
+ Exception: String.fromCharCode instanceof new Boolean(true). new Boolean(true) is not a function. (evaluating 'String.fromCharCode instanceof new Boolean(true)')
+ Exception: String.fromCharCode instanceof new Boolean(false). new Boolean(false) is not a function. (evaluating 'String.fromCharCode instanceof new Boolean(false)')
+ Exception: String.fromCharCode instanceof new Date(). new Date() is not a function. (evaluating 'String.fromCharCode instanceof new Date()')
+ Exception: String.fromCharCode instanceof /a+/. /a+/ is not a function. (evaluating 'String.fromCharCode instanceof /a+/')
+ Exception: Array.prototype.concat instanceof new Object(). new Object() is not a function. (evaluating 'Array.prototype.concat instanceof new Object()')
+ Exception: Array.prototype.concat instanceof f. f is not a function. (evaluating 'Array.prototype.concat instanceof f')
+ Exception: Array.prototype.concat instanceof b. b is not a function. (evaluating 'Array.prototype.concat instanceof b')
+Array.prototype.concat instanceof foo : false
+ Exception: Array.prototype.concat instanceof String.fromCharCode. instanceof called on an object with an invalid prototype property.
+ Exception: Array.prototype.concat instanceof Array.prototype.concat. instanceof called on an object with an invalid prototype property.
+ Exception: Array.prototype.concat instanceof [1,2,3]. [1,2,3] is not a function. (evaluating 'Array.prototype.concat instanceof [1,2,3]')
+ Exception: Array.prototype.concat instanceof new Array(). new Array() is not a function. (evaluating 'Array.prototype.concat instanceof new Array()')
+ Exception: Array.prototype.concat instanceof fncs. fncs is not a function. (evaluating 'Array.prototype.concat instanceof fncs')
+ Exception: Array.prototype.concat instanceof 'hello'. Right hand side of instanceof is not an object
+ Exception: Array.prototype.concat instanceof new String('world'). new String('world') is not a function. (evaluating 'Array.prototype.concat instanceof new String('world')')
+ Exception: Array.prototype.concat instanceof 10. Right hand side of instanceof is not an object
+ Exception: Array.prototype.concat instanceof 10.2. Right hand side of instanceof is not an object
+ Exception: Array.prototype.concat instanceof NaN. Right hand side of instanceof is not an object
+ Exception: Array.prototype.concat instanceof new Number(3). new Number(3) is not a function. (evaluating 'Array.prototype.concat instanceof new Number(3)')
+ Exception: Array.prototype.concat instanceof true. Right hand side of instanceof is not an object
+ Exception: Array.prototype.concat instanceof false. Right hand side of instanceof is not an object
+ Exception: Array.prototype.concat instanceof new Boolean(true). new Boolean(true) is not a function. (evaluating 'Array.prototype.concat instanceof new Boolean(true)')
+ Exception: Array.prototype.concat instanceof new Boolean(false). new Boolean(false) is not a function. (evaluating 'Array.prototype.concat instanceof new Boolean(false)')
+ Exception: Array.prototype.concat instanceof new Date(). new Date() is not a function. (evaluating 'Array.prototype.concat instanceof new Date()')
+ Exception: Array.prototype.concat instanceof /a+/. /a+/ is not a function. (evaluating 'Array.prototype.concat instanceof /a+/')
+ Exception: [1,2,3] instanceof new Object(). new Object() is not a function. (evaluating '[1,2,3] instanceof new Object()')
+ Exception: [1,2,3] instanceof f. f is not a function. (evaluating '[1,2,3] instanceof f')
+ Exception: [1,2,3] instanceof b. b is not a function. (evaluating '[1,2,3] instanceof b')
+[1,2,3] instanceof foo : false
+ Exception: [1,2,3] instanceof String.fromCharCode. instanceof called on an object with an invalid prototype property.
+ Exception: [1,2,3] instanceof Array.prototype.concat. instanceof called on an object with an invalid prototype property.
+ Exception: [1,2,3] instanceof [1,2,3]. [1,2,3] is not a function. (evaluating '[1,2,3] instanceof [1,2,3]')
+ Exception: [1,2,3] instanceof new Array(). new Array() is not a function. (evaluating '[1,2,3] instanceof new Array()')
+ Exception: [1,2,3] instanceof fncs. fncs is not a function. (evaluating '[1,2,3] instanceof fncs')
+ Exception: [1,2,3] instanceof 'hello'. Right hand side of instanceof is not an object
+ Exception: [1,2,3] instanceof new String('world'). new String('world') is not a function. (evaluating '[1,2,3] instanceof new String('world')')
+ Exception: [1,2,3] instanceof 10. Right hand side of instanceof is not an object
+ Exception: [1,2,3] instanceof 10.2. Right hand side of instanceof is not an object
+ Exception: [1,2,3] instanceof NaN. Right hand side of instanceof is not an object
+ Exception: [1,2,3] instanceof new Number(3). new Number(3) is not a function. (evaluating '[1,2,3] instanceof new Number(3)')
+ Exception: [1,2,3] instanceof true. Right hand side of instanceof is not an object
+ Exception: [1,2,3] instanceof false. Right hand side of instanceof is not an object
+ Exception: [1,2,3] instanceof new Boolean(true). new Boolean(true) is not a function. (evaluating '[1,2,3] instanceof new Boolean(true)')
+ Exception: [1,2,3] instanceof new Boolean(false). new Boolean(false) is not a function. (evaluating '[1,2,3] instanceof new Boolean(false)')
+ Exception: [1,2,3] instanceof new Date(). new Date() is not a function. (evaluating '[1,2,3] instanceof new Date()')
+ Exception: [1,2,3] instanceof /a+/. /a+/ is not a function. (evaluating '[1,2,3] instanceof /a+/')
+ Exception: new Array() instanceof new Object(). new Object() is not a function. (evaluating 'new Array() instanceof new Object()')
+ Exception: new Array() instanceof f. f is not a function. (evaluating 'new Array() instanceof f')
+ Exception: new Array() instanceof b. b is not a function. (evaluating 'new Array() instanceof b')
+new Array() instanceof foo : false
+ Exception: new Array() instanceof String.fromCharCode. instanceof called on an object with an invalid prototype property.
+ Exception: new Array() instanceof Array.prototype.concat. instanceof called on an object with an invalid prototype property.
+ Exception: new Array() instanceof [1,2,3]. [1,2,3] is not a function. (evaluating 'new Array() instanceof [1,2,3]')
+ Exception: new Array() instanceof new Array(). new Array() is not a function. (evaluating 'new Array() instanceof new Array()')
+ Exception: new Array() instanceof fncs. fncs is not a function. (evaluating 'new Array() instanceof fncs')
+ Exception: new Array() instanceof 'hello'. Right hand side of instanceof is not an object
+ Exception: new Array() instanceof new String('world'). new String('world') is not a function. (evaluating 'new Array() instanceof new String('world')')
+ Exception: new Array() instanceof 10. Right hand side of instanceof is not an object
+ Exception: new Array() instanceof 10.2. Right hand side of instanceof is not an object
+ Exception: new Array() instanceof NaN. Right hand side of instanceof is not an object
+ Exception: new Array() instanceof new Number(3). new Number(3) is not a function. (evaluating 'new Array() instanceof new Number(3)')
+ Exception: new Array() instanceof true. Right hand side of instanceof is not an object
+ Exception: new Array() instanceof false. Right hand side of instanceof is not an object
+ Exception: new Array() instanceof new Boolean(true). new Boolean(true) is not a function. (evaluating 'new Array() instanceof new Boolean(true)')
+ Exception: new Array() instanceof new Boolean(false). new Boolean(false) is not a function. (evaluating 'new Array() instanceof new Boolean(false)')
+ Exception: new Array() instanceof new Date(). new Date() is not a function. (evaluating 'new Array() instanceof new Date()')
+ Exception: new Array() instanceof /a+/. /a+/ is not a function. (evaluating 'new Array() instanceof /a+/')
+ Exception: fncs instanceof new Object(). new Object() is not a function. (evaluating 'fncs instanceof new Object()')
+ Exception: fncs instanceof f. f is not a function. (evaluating 'fncs instanceof f')
+ Exception: fncs instanceof b. b is not a function. (evaluating 'fncs instanceof b')
+fncs instanceof foo : false
+ Exception: fncs instanceof String.fromCharCode. instanceof called on an object with an invalid prototype property.
+ Exception: fncs instanceof Array.prototype.concat. instanceof called on an object with an invalid prototype property.
+ Exception: fncs instanceof [1,2,3]. [1,2,3] is not a function. (evaluating 'fncs instanceof [1,2,3]')
+ Exception: fncs instanceof new Array(). new Array() is not a function. (evaluating 'fncs instanceof new Array()')
+ Exception: fncs instanceof fncs. fncs is not a function. (evaluating 'fncs instanceof fncs')
+ Exception: fncs instanceof 'hello'. Right hand side of instanceof is not an object
+ Exception: fncs instanceof new String('world'). new String('world') is not a function. (evaluating 'fncs instanceof new String('world')')
+ Exception: fncs instanceof 10. Right hand side of instanceof is not an object
+ Exception: fncs instanceof 10.2. Right hand side of instanceof is not an object
+ Exception: fncs instanceof NaN. Right hand side of instanceof is not an object
+ Exception: fncs instanceof new Number(3). new Number(3) is not a function. (evaluating 'fncs instanceof new Number(3)')
+ Exception: fncs instanceof true. Right hand side of instanceof is not an object
+ Exception: fncs instanceof false. Right hand side of instanceof is not an object
+ Exception: fncs instanceof new Boolean(true). new Boolean(true) is not a function. (evaluating 'fncs instanceof new Boolean(true)')
+ Exception: fncs instanceof new Boolean(false). new Boolean(false) is not a function. (evaluating 'fncs instanceof new Boolean(false)')
+ Exception: fncs instanceof new Date(). new Date() is not a function. (evaluating 'fncs instanceof new Date()')
+ Exception: fncs instanceof /a+/. /a+/ is not a function. (evaluating 'fncs instanceof /a+/')
+ Exception: 'hello' instanceof new Object(). new Object() is not a function. (evaluating ''hello' instanceof new Object()')
+ Exception: 'hello' instanceof f. f is not a function. (evaluating ''hello' instanceof f')
+ Exception: 'hello' instanceof b. b is not a function. (evaluating ''hello' instanceof b')
+'hello' instanceof foo : false
+'hello' instanceof String.fromCharCode : false
+'hello' instanceof Array.prototype.concat : false
+ Exception: 'hello' instanceof [1,2,3]. [1,2,3] is not a function. (evaluating ''hello' instanceof [1,2,3]')
+ Exception: 'hello' instanceof new Array(). new Array() is not a function. (evaluating ''hello' instanceof new Array()')
+ Exception: 'hello' instanceof fncs. fncs is not a function. (evaluating ''hello' instanceof fncs')
+ Exception: 'hello' instanceof 'hello'. Right hand side of instanceof is not an object
+ Exception: 'hello' instanceof new String('world'). new String('world') is not a function. (evaluating ''hello' instanceof new String('world')')
+ Exception: 'hello' instanceof 10. Right hand side of instanceof is not an object
+ Exception: 'hello' instanceof 10.2. Right hand side of instanceof is not an object
+ Exception: 'hello' instanceof NaN. Right hand side of instanceof is not an object
+ Exception: 'hello' instanceof new Number(3). new Number(3) is not a function. (evaluating ''hello' instanceof new Number(3)')
+ Exception: 'hello' instanceof true. Right hand side of instanceof is not an object
+ Exception: 'hello' instanceof false. Right hand side of instanceof is not an object
+ Exception: 'hello' instanceof new Boolean(true). new Boolean(true) is not a function. (evaluating ''hello' instanceof new Boolean(true)')
+ Exception: 'hello' instanceof new Boolean(false). new Boolean(false) is not a function. (evaluating ''hello' instanceof new Boolean(false)')
+ Exception: 'hello' instanceof new Date(). new Date() is not a function. (evaluating ''hello' instanceof new Date()')
+ Exception: 'hello' instanceof /a+/. /a+/ is not a function. (evaluating ''hello' instanceof /a+/')
+ Exception: new String('world') instanceof new Object(). new Object() is not a function. (evaluating 'new String('world') instanceof new Object()')
+ Exception: new String('world') instanceof f. f is not a function. (evaluating 'new String('world') instanceof f')
+ Exception: new String('world') instanceof b. b is not a function. (evaluating 'new String('world') instanceof b')
+new String('world') instanceof foo : false
+ Exception: new String('world') instanceof String.fromCharCode. instanceof called on an object with an invalid prototype property.
+ Exception: new String('world') instanceof Array.prototype.concat. instanceof called on an object with an invalid prototype property.
+ Exception: new String('world') instanceof [1,2,3]. [1,2,3] is not a function. (evaluating 'new String('world') instanceof [1,2,3]')
+ Exception: new String('world') instanceof new Array(). new Array() is not a function. (evaluating 'new String('world') instanceof new Array()')
+ Exception: new String('world') instanceof fncs. fncs is not a function. (evaluating 'new String('world') instanceof fncs')
+ Exception: new String('world') instanceof 'hello'. Right hand side of instanceof is not an object
+ Exception: new String('world') instanceof new String('world'). new String('world') is not a function. (evaluating 'new String('world') instanceof new String('world')')
+ Exception: new String('world') instanceof 10. Right hand side of instanceof is not an object
+ Exception: new String('world') instanceof 10.2. Right hand side of instanceof is not an object
+ Exception: new String('world') instanceof NaN. Right hand side of instanceof is not an object
+ Exception: new String('world') instanceof new Number(3). new Number(3) is not a function. (evaluating 'new String('world') instanceof new Number(3)')
+ Exception: new String('world') instanceof true. Right hand side of instanceof is not an object
+ Exception: new String('world') instanceof false. Right hand side of instanceof is not an object
+ Exception: new String('world') instanceof new Boolean(true). new Boolean(true) is not a function. (evaluating 'new String('world') instanceof new Boolean(true)')
+ Exception: new String('world') instanceof new Boolean(false). new Boolean(false) is not a function. (evaluating 'new String('world') instanceof new Boolean(false)')
+ Exception: new String('world') instanceof new Date(). new Date() is not a function. (evaluating 'new String('world') instanceof new Date()')
+ Exception: new String('world') instanceof /a+/. /a+/ is not a function. (evaluating 'new String('world') instanceof /a+/')
+ Exception: 10 instanceof new Object(). new Object() is not a function. (evaluating '10 instanceof new Object()')
+ Exception: 10 instanceof f. f is not a function. (evaluating '10 instanceof f')
+ Exception: 10 instanceof b. b is not a function. (evaluating '10 instanceof b')
+10 instanceof foo : false
+10 instanceof String.fromCharCode : false
+10 instanceof Array.prototype.concat : false
+ Exception: 10 instanceof [1,2,3]. [1,2,3] is not a function. (evaluating '10 instanceof [1,2,3]')
+ Exception: 10 instanceof new Array(). new Array() is not a function. (evaluating '10 instanceof new Array()')
+ Exception: 10 instanceof fncs. fncs is not a function. (evaluating '10 instanceof fncs')
+ Exception: 10 instanceof 'hello'. Right hand side of instanceof is not an object
+ Exception: 10 instanceof new String('world'). new String('world') is not a function. (evaluating '10 instanceof new String('world')')
+ Exception: 10 instanceof 10. Right hand side of instanceof is not an object
+ Exception: 10 instanceof 10.2. Right hand side of instanceof is not an object
+ Exception: 10 instanceof NaN. Right hand side of instanceof is not an object
+ Exception: 10 instanceof new Number(3). new Number(3) is not a function. (evaluating '10 instanceof new Number(3)')
+ Exception: 10 instanceof true. Right hand side of instanceof is not an object
+ Exception: 10 instanceof false. Right hand side of instanceof is not an object
+ Exception: 10 instanceof new Boolean(true). new Boolean(true) is not a function. (evaluating '10 instanceof new Boolean(true)')
+ Exception: 10 instanceof new Boolean(false). new Boolean(false) is not a function. (evaluating '10 instanceof new Boolean(false)')
+ Exception: 10 instanceof new Date(). new Date() is not a function. (evaluating '10 instanceof new Date()')
+ Exception: 10 instanceof /a+/. /a+/ is not a function. (evaluating '10 instanceof /a+/')
+ Exception: 10.2 instanceof new Object(). new Object() is not a function. (evaluating '10.2 instanceof new Object()')
+ Exception: 10.2 instanceof f. f is not a function. (evaluating '10.2 instanceof f')
+ Exception: 10.2 instanceof b. b is not a function. (evaluating '10.2 instanceof b')
+10.2 instanceof foo : false
+10.2 instanceof String.fromCharCode : false
+10.2 instanceof Array.prototype.concat : false
+ Exception: 10.2 instanceof [1,2,3]. [1,2,3] is not a function. (evaluating '10.2 instanceof [1,2,3]')
+ Exception: 10.2 instanceof new Array(). new Array() is not a function. (evaluating '10.2 instanceof new Array()')
+ Exception: 10.2 instanceof fncs. fncs is not a function. (evaluating '10.2 instanceof fncs')
+ Exception: 10.2 instanceof 'hello'. Right hand side of instanceof is not an object
+ Exception: 10.2 instanceof new String('world'). new String('world') is not a function. (evaluating '10.2 instanceof new String('world')')
+ Exception: 10.2 instanceof 10. Right hand side of instanceof is not an object
+ Exception: 10.2 instanceof 10.2. Right hand side of instanceof is not an object
+ Exception: 10.2 instanceof NaN. Right hand side of instanceof is not an object
+ Exception: 10.2 instanceof new Number(3). new Number(3) is not a function. (evaluating '10.2 instanceof new Number(3)')
+ Exception: 10.2 instanceof true. Right hand side of instanceof is not an object
+ Exception: 10.2 instanceof false. Right hand side of instanceof is not an object
+ Exception: 10.2 instanceof new Boolean(true). new Boolean(true) is not a function. (evaluating '10.2 instanceof new Boolean(true)')
+ Exception: 10.2 instanceof new Boolean(false). new Boolean(false) is not a function. (evaluating '10.2 instanceof new Boolean(false)')
+ Exception: 10.2 instanceof new Date(). new Date() is not a function. (evaluating '10.2 instanceof new Date()')
+ Exception: 10.2 instanceof /a+/. /a+/ is not a function. (evaluating '10.2 instanceof /a+/')
+ Exception: NaN instanceof new Object(). new Object() is not a function. (evaluating 'NaN instanceof new Object()')
+ Exception: NaN instanceof f. f is not a function. (evaluating 'NaN instanceof f')
+ Exception: NaN instanceof b. b is not a function. (evaluating 'NaN instanceof b')
+NaN instanceof foo : false
+NaN instanceof String.fromCharCode : false
+NaN instanceof Array.prototype.concat : false
+ Exception: NaN instanceof [1,2,3]. [1,2,3] is not a function. (evaluating 'NaN instanceof [1,2,3]')
+ Exception: NaN instanceof new Array(). new Array() is not a function. (evaluating 'NaN instanceof new Array()')
+ Exception: NaN instanceof fncs. fncs is not a function. (evaluating 'NaN instanceof fncs')
+ Exception: NaN instanceof 'hello'. Right hand side of instanceof is not an object
+ Exception: NaN instanceof new String('world'). new String('world') is not a function. (evaluating 'NaN instanceof new String('world')')
+ Exception: NaN instanceof 10. Right hand side of instanceof is not an object
+ Exception: NaN instanceof 10.2. Right hand side of instanceof is not an object
+ Exception: NaN instanceof NaN. Right hand side of instanceof is not an object
+ Exception: NaN instanceof new Number(3). new Number(3) is not a function. (evaluating 'NaN instanceof new Number(3)')
+ Exception: NaN instanceof true. Right hand side of instanceof is not an object
+ Exception: NaN instanceof false. Right hand side of instanceof is not an object
+ Exception: NaN instanceof new Boolean(true). new Boolean(true) is not a function. (evaluating 'NaN instanceof new Boolean(true)')
+ Exception: NaN instanceof new Boolean(false). new Boolean(false) is not a function. (evaluating 'NaN instanceof new Boolean(false)')
+ Exception: NaN instanceof new Date(). new Date() is not a function. (evaluating 'NaN instanceof new Date()')
+ Exception: NaN instanceof /a+/. /a+/ is not a function. (evaluating 'NaN instanceof /a+/')
+ Exception: new Number(3) instanceof new Object(). new Object() is not a function. (evaluating 'new Number(3) instanceof new Object()')
+ Exception: new Number(3) instanceof f. f is not a function. (evaluating 'new Number(3) instanceof f')
+ Exception: new Number(3) instanceof b. b is not a function. (evaluating 'new Number(3) instanceof b')
+new Number(3) instanceof foo : false
+ Exception: new Number(3) instanceof String.fromCharCode. instanceof called on an object with an invalid prototype property.
+ Exception: new Number(3) instanceof Array.prototype.concat. instanceof called on an object with an invalid prototype property.
+ Exception: new Number(3) instanceof [1,2,3]. [1,2,3] is not a function. (evaluating 'new Number(3) instanceof [1,2,3]')
+ Exception: new Number(3) instanceof new Array(). new Array() is not a function. (evaluating 'new Number(3) instanceof new Array()')
+ Exception: new Number(3) instanceof fncs. fncs is not a function. (evaluating 'new Number(3) instanceof fncs')
+ Exception: new Number(3) instanceof 'hello'. Right hand side of instanceof is not an object
+ Exception: new Number(3) instanceof new String('world'). new String('world') is not a function. (evaluating 'new Number(3) instanceof new String('world')')
+ Exception: new Number(3) instanceof 10. Right hand side of instanceof is not an object
+ Exception: new Number(3) instanceof 10.2. Right hand side of instanceof is not an object
+ Exception: new Number(3) instanceof NaN. Right hand side of instanceof is not an object
+ Exception: new Number(3) instanceof new Number(3). new Number(3) is not a function. (evaluating 'new Number(3) instanceof new Number(3)')
+ Exception: new Number(3) instanceof true. Right hand side of instanceof is not an object
+ Exception: new Number(3) instanceof false. Right hand side of instanceof is not an object
+ Exception: new Number(3) instanceof new Boolean(true). new Boolean(true) is not a function. (evaluating 'new Number(3) instanceof new Boolean(true)')
+ Exception: new Number(3) instanceof new Boolean(false). new Boolean(false) is not a function. (evaluating 'new Number(3) instanceof new Boolean(false)')
+ Exception: new Number(3) instanceof new Date(). new Date() is not a function. (evaluating 'new Number(3) instanceof new Date()')
+ Exception: new Number(3) instanceof /a+/. /a+/ is not a function. (evaluating 'new Number(3) instanceof /a+/')
+ Exception: true instanceof new Object(). new Object() is not a function. (evaluating 'true instanceof new Object()')
+ Exception: true instanceof f. f is not a function. (evaluating 'true instanceof f')
+ Exception: true instanceof b. b is not a function. (evaluating 'true instanceof b')
+true instanceof foo : false
+true instanceof String.fromCharCode : false
+true instanceof Array.prototype.concat : false
+ Exception: true instanceof [1,2,3]. [1,2,3] is not a function. (evaluating 'true instanceof [1,2,3]')
+ Exception: true instanceof new Array(). new Array() is not a function. (evaluating 'true instanceof new Array()')
+ Exception: true instanceof fncs. fncs is not a function. (evaluating 'true instanceof fncs')
+ Exception: true instanceof 'hello'. Right hand side of instanceof is not an object
+ Exception: true instanceof new String('world'). new String('world') is not a function. (evaluating 'true instanceof new String('world')')
+ Exception: true instanceof 10. Right hand side of instanceof is not an object
+ Exception: true instanceof 10.2. Right hand side of instanceof is not an object
+ Exception: true instanceof NaN. Right hand side of instanceof is not an object
+ Exception: true instanceof new Number(3). new Number(3) is not a function. (evaluating 'true instanceof new Number(3)')
+ Exception: true instanceof true. Right hand side of instanceof is not an object
+ Exception: true instanceof false. Right hand side of instanceof is not an object
+ Exception: true instanceof new Boolean(true). new Boolean(true) is not a function. (evaluating 'true instanceof new Boolean(true)')
+ Exception: true instanceof new Boolean(false). new Boolean(false) is not a function. (evaluating 'true instanceof new Boolean(false)')
+ Exception: true instanceof new Date(). new Date() is not a function. (evaluating 'true instanceof new Date()')
+ Exception: true instanceof /a+/. /a+/ is not a function. (evaluating 'true instanceof /a+/')
+ Exception: false instanceof new Object(). new Object() is not a function. (evaluating 'false instanceof new Object()')
+ Exception: false instanceof f. f is not a function. (evaluating 'false instanceof f')
+ Exception: false instanceof b. b is not a function. (evaluating 'false instanceof b')
+false instanceof foo : false
+false instanceof String.fromCharCode : false
+false instanceof Array.prototype.concat : false
+ Exception: false instanceof [1,2,3]. [1,2,3] is not a function. (evaluating 'false instanceof [1,2,3]')
+ Exception: false instanceof new Array(). new Array() is not a function. (evaluating 'false instanceof new Array()')
+ Exception: false instanceof fncs. fncs is not a function. (evaluating 'false instanceof fncs')
+ Exception: false instanceof 'hello'. Right hand side of instanceof is not an object
+ Exception: false instanceof new String('world'). new String('world') is not a function. (evaluating 'false instanceof new String('world')')
+ Exception: false instanceof 10. Right hand side of instanceof is not an object
+ Exception: false instanceof 10.2. Right hand side of instanceof is not an object
+ Exception: false instanceof NaN. Right hand side of instanceof is not an object
+ Exception: false instanceof new Number(3). new Number(3) is not a function. (evaluating 'false instanceof new Number(3)')
+ Exception: false instanceof true. Right hand side of instanceof is not an object
+ Exception: false instanceof false. Right hand side of instanceof is not an object
+ Exception: false instanceof new Boolean(true). new Boolean(true) is not a function. (evaluating 'false instanceof new Boolean(true)')
+ Exception: false instanceof new Boolean(false). new Boolean(false) is not a function. (evaluating 'false instanceof new Boolean(false)')
+ Exception: false instanceof new Date(). new Date() is not a function. (evaluating 'false instanceof new Date()')
+ Exception: false instanceof /a+/. /a+/ is not a function. (evaluating 'false instanceof /a+/')
+ Exception: new Boolean(true) instanceof new Object(). new Object() is not a function. (evaluating 'new Boolean(true) instanceof new Object()')
+ Exception: new Boolean(true) instanceof f. f is not a function. (evaluating 'new Boolean(true) instanceof f')
+ Exception: new Boolean(true) instanceof b. b is not a function. (evaluating 'new Boolean(true) instanceof b')
+new Boolean(true) instanceof foo : false
+ Exception: new Boolean(true) instanceof String.fromCharCode. instanceof called on an object with an invalid prototype property.
+ Exception: new Boolean(true) instanceof Array.prototype.concat. instanceof called on an object with an invalid prototype property.
+ Exception: new Boolean(true) instanceof [1,2,3]. [1,2,3] is not a function. (evaluating 'new Boolean(true) instanceof [1,2,3]')
+ Exception: new Boolean(true) instanceof new Array(). new Array() is not a function. (evaluating 'new Boolean(true) instanceof new Array()')
+ Exception: new Boolean(true) instanceof fncs. fncs is not a function. (evaluating 'new Boolean(true) instanceof fncs')
+ Exception: new Boolean(true) instanceof 'hello'. Right hand side of instanceof is not an object
+ Exception: new Boolean(true) instanceof new String('world'). new String('world') is not a function. (evaluating 'new Boolean(true) instanceof new String('world')')
+ Exception: new Boolean(true) instanceof 10. Right hand side of instanceof is not an object
+ Exception: new Boolean(true) instanceof 10.2. Right hand side of instanceof is not an object
+ Exception: new Boolean(true) instanceof NaN. Right hand side of instanceof is not an object
+ Exception: new Boolean(true) instanceof new Number(3). new Number(3) is not a function. (evaluating 'new Boolean(true) instanceof new Number(3)')
+ Exception: new Boolean(true) instanceof true. Right hand side of instanceof is not an object
+ Exception: new Boolean(true) instanceof false. Right hand side of instanceof is not an object
+ Exception: new Boolean(true) instanceof new Boolean(true). new Boolean(true) is not a function. (evaluating 'new Boolean(true) instanceof new Boolean(true)')
+ Exception: new Boolean(true) instanceof new Boolean(false). new Boolean(false) is not a function. (evaluating 'new Boolean(true) instanceof new Boolean(false)')
+ Exception: new Boolean(true) instanceof new Date(). new Date() is not a function. (evaluating 'new Boolean(true) instanceof new Date()')
+ Exception: new Boolean(true) instanceof /a+/. /a+/ is not a function. (evaluating 'new Boolean(true) instanceof /a+/')
+ Exception: new Boolean(false) instanceof new Object(). new Object() is not a function. (evaluating 'new Boolean(false) instanceof new Object()')
+ Exception: new Boolean(false) instanceof f. f is not a function. (evaluating 'new Boolean(false) instanceof f')
+ Exception: new Boolean(false) instanceof b. b is not a function. (evaluating 'new Boolean(false) instanceof b')
+new Boolean(false) instanceof foo : false
+ Exception: new Boolean(false) instanceof String.fromCharCode. instanceof called on an object with an invalid prototype property.
+ Exception: new Boolean(false) instanceof Array.prototype.concat. instanceof called on an object with an invalid prototype property.
+ Exception: new Boolean(false) instanceof [1,2,3]. [1,2,3] is not a function. (evaluating 'new Boolean(false) instanceof [1,2,3]')
+ Exception: new Boolean(false) instanceof new Array(). new Array() is not a function. (evaluating 'new Boolean(false) instanceof new Array()')
+ Exception: new Boolean(false) instanceof fncs. fncs is not a function. (evaluating 'new Boolean(false) instanceof fncs')
+ Exception: new Boolean(false) instanceof 'hello'. Right hand side of instanceof is not an object
+ Exception: new Boolean(false) instanceof new String('world'). new String('world') is not a function. (evaluating 'new Boolean(false) instanceof new String('world')')
+ Exception: new Boolean(false) instanceof 10. Right hand side of instanceof is not an object
+ Exception: new Boolean(false) instanceof 10.2. Right hand side of instanceof is not an object
+ Exception: new Boolean(false) instanceof NaN. Right hand side of instanceof is not an object
+ Exception: new Boolean(false) instanceof new Number(3). new Number(3) is not a function. (evaluating 'new Boolean(false) instanceof new Number(3)')
+ Exception: new Boolean(false) instanceof true. Right hand side of instanceof is not an object
+ Exception: new Boolean(false) instanceof false. Right hand side of instanceof is not an object
+ Exception: new Boolean(false) instanceof new Boolean(true). new Boolean(true) is not a function. (evaluating 'new Boolean(false) instanceof new Boolean(true)')
+ Exception: new Boolean(false) instanceof new Boolean(false). new Boolean(false) is not a function. (evaluating 'new Boolean(false) instanceof new Boolean(false)')
+ Exception: new Boolean(false) instanceof new Date(). new Date() is not a function. (evaluating 'new Boolean(false) instanceof new Date()')
+ Exception: new Boolean(false) instanceof /a+/. /a+/ is not a function. (evaluating 'new Boolean(false) instanceof /a+/')
+ Exception: new Date() instanceof new Object(). new Object() is not a function. (evaluating 'new Date() instanceof new Object()')
+ Exception: new Date() instanceof f. f is not a function. (evaluating 'new Date() instanceof f')
+ Exception: new Date() instanceof b. b is not a function. (evaluating 'new Date() instanceof b')
+new Date() instanceof foo : false
+ Exception: new Date() instanceof String.fromCharCode. instanceof called on an object with an invalid prototype property.
+ Exception: new Date() instanceof Array.prototype.concat. instanceof called on an object with an invalid prototype property.
+ Exception: new Date() instanceof [1,2,3]. [1,2,3] is not a function. (evaluating 'new Date() instanceof [1,2,3]')
+ Exception: new Date() instanceof new Array(). new Array() is not a function. (evaluating 'new Date() instanceof new Array()')
+ Exception: new Date() instanceof fncs. fncs is not a function. (evaluating 'new Date() instanceof fncs')
+ Exception: new Date() instanceof 'hello'. Right hand side of instanceof is not an object
+ Exception: new Date() instanceof new String('world'). new String('world') is not a function. (evaluating 'new Date() instanceof new String('world')')
+ Exception: new Date() instanceof 10. Right hand side of instanceof is not an object
+ Exception: new Date() instanceof 10.2. Right hand side of instanceof is not an object
+ Exception: new Date() instanceof NaN. Right hand side of instanceof is not an object
+ Exception: new Date() instanceof new Number(3). new Number(3) is not a function. (evaluating 'new Date() instanceof new Number(3)')
+ Exception: new Date() instanceof true. Right hand side of instanceof is not an object
+ Exception: new Date() instanceof false. Right hand side of instanceof is not an object
+ Exception: new Date() instanceof new Boolean(true). new Boolean(true) is not a function. (evaluating 'new Date() instanceof new Boolean(true)')
+ Exception: new Date() instanceof new Boolean(false). new Boolean(false) is not a function. (evaluating 'new Date() instanceof new Boolean(false)')
+ Exception: new Date() instanceof new Date(). new Date() is not a function. (evaluating 'new Date() instanceof new Date()')
+ Exception: new Date() instanceof /a+/. /a+/ is not a function. (evaluating 'new Date() instanceof /a+/')
+ Exception: /a+/ instanceof new Object(). new Object() is not a function. (evaluating '/a+/ instanceof new Object()')
+ Exception: /a+/ instanceof f. f is not a function. (evaluating '/a+/ instanceof f')
+ Exception: /a+/ instanceof b. b is not a function. (evaluating '/a+/ instanceof b')
+/a+/ instanceof foo : false
+ Exception: /a+/ instanceof String.fromCharCode. instanceof called on an object with an invalid prototype property.
+ Exception: /a+/ instanceof Array.prototype.concat. instanceof called on an object with an invalid prototype property.
+ Exception: /a+/ instanceof [1,2,3]. [1,2,3] is not a function. (evaluating '/a+/ instanceof [1,2,3]')
+ Exception: /a+/ instanceof new Array(). new Array() is not a function. (evaluating '/a+/ instanceof new Array()')
+ Exception: /a+/ instanceof fncs. fncs is not a function. (evaluating '/a+/ instanceof fncs')
+ Exception: /a+/ instanceof 'hello'. Right hand side of instanceof is not an object
+ Exception: /a+/ instanceof new String('world'). new String('world') is not a function. (evaluating '/a+/ instanceof new String('world')')
+ Exception: /a+/ instanceof 10. Right hand side of instanceof is not an object
+ Exception: /a+/ instanceof 10.2. Right hand side of instanceof is not an object
+ Exception: /a+/ instanceof NaN. Right hand side of instanceof is not an object
+ Exception: /a+/ instanceof new Number(3). new Number(3) is not a function. (evaluating '/a+/ instanceof new Number(3)')
+ Exception: /a+/ instanceof true. Right hand side of instanceof is not an object
+ Exception: /a+/ instanceof false. Right hand side of instanceof is not an object
+ Exception: /a+/ instanceof new Boolean(true). new Boolean(true) is not a function. (evaluating '/a+/ instanceof new Boolean(true)')
+ Exception: /a+/ instanceof new Boolean(false). new Boolean(false) is not a function. (evaluating '/a+/ instanceof new Boolean(false)')
+ Exception: /a+/ instanceof new Date(). new Date() is not a function. (evaluating '/a+/ instanceof new Date()')
+ Exception: /a+/ instanceof /a+/. /a+/ is not a function. (evaluating '/a+/ instanceof /a+/')

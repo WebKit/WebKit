@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <script src="../../resources/js-test-pre.js"></script>
+    <body id="body" tabindex="0">
+        <div tabindex="0" id="text">
+            line 1
+            <br>line 2
+        </div>
+
+        <p id="description"></p>
+        <div id="console"></div>
+
+        <script>
+
+            description("This verifies that we are getting correct line text marker ranges on iOS.");
+
+            if (window.accessibilityController) {
+                accessibilityController.enableEnhancedAccessibility(true);
+                var webArea = accessibilityController.rootElement.childAtIndex(0);
+
+                document.getElementById("text").focus();
+                var text = accessibilityController.accessibleElementById("text").childAtIndex(0);
+
+                var startMarker = text.startTextMarkerForTextMarkerRange(text.textMarkerRangeForElement(text));
+                startMarker = text.nextTextMarker(startMarker);
+                var lineTextMarkerRange = text.lineTextMarkerRangeForTextMarker(startMarker);
+                debug(text.stringForTextMarkerRange(lineTextMarkerRange));
+            }
+
+            </script>
+
+        <script src="../../resources/js-test-post.js"></script>
+
+    </body>
+</html>
+

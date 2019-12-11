@@ -1,0 +1,92 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableIntersectionObserver=true ] -->
+<head>
+    <title>IntersectionObserver interface tests.</title>
+    <link rel="author" title="Simon Fraser" href="mailto:simon.fraser@apple.com" />
+    <link rel="help" href="https://wicg.github.io/IntersectionObserver/">
+    <script src="../resources/testharness.js"></script>
+    <script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+
+    test(function() {
+        assert_class_string(new IntersectionObserver(function() {}), 'IntersectionObserver');
+    },'Constructor0');
+    test(function() {
+        var observer = new IntersectionObserver(function() {});
+        assert_equals(observer.rootMargin, '0px 0px 0px 0px');
+    },'DefaultRootMargin');
+    test(function() {
+        var observer = new IntersectionObserver(function() {});
+        assert_equals(observer.root, null);
+    },'DefaultRoot');
+    test(function() {
+        var observer = new IntersectionObserver(function() {});
+        assert_array_equals(observer.thresholds, [0]);
+    },'DefaultThresholds');
+    test(function() {
+        var observer = new IntersectionObserver(function() {}, { rootMargin: '33%' });
+        assert_equals(observer.rootMargin, '33% 33% 33% 33%');
+    },'ExplicitOneArgumentRootMargin');
+    test(function() {
+        var observer = new IntersectionObserver(function() {}, { rootMargin: '33% 10px' });
+        assert_equals(observer.rootMargin, '33% 10px 33% 10px');
+    },'ExplicitTwoArgumentRootMargin');
+    test(function() {
+        var observer = new IntersectionObserver(function() {}, { rootMargin: '33% 10px -120px' });
+        assert_equals(observer.rootMargin, '33% 10px -120px 10px');
+    },'ExplicitThreeArgumentRootMargin');
+    test(function() {
+        var observer = new IntersectionObserver(function() {}, { rootMargin: '33% 10px -120px 3%' });
+        assert_equals(observer.rootMargin, '33% 10px -120px 3%');
+    },'ExplicitFourArgumentRootMargin');
+    test(function() {
+        var observer = new IntersectionObserver(function() {}, { root: document.body });
+        assert_equals(observer.root, document.body);
+    },'ExplicitRoot');
+    test(function() {
+        var observer = new IntersectionObserver(function() {},  { threshold: 0.45 });
+        assert_array_equals(observer.thresholds, [0.45]);
+    },'ExplicitThreshold');
+    test(function() {
+        var observer = new IntersectionObserver(function() {},  { threshold: [0, 0.33333678, 0.5, 0.76645] });
+        assert_array_equals(observer.thresholds, [0, 0.33333678, 0.5, 0.76645]);
+    },'ExplicitThresholds');
+    test(function() {
+        var observer = new IntersectionObserver(function() {},  { threshold: Number.MIN_VALUE });
+        assert_array_equals(observer.thresholds, [Number.MIN_VALUE]);
+    },'SmallPositiveThreshold');
+    test(function() {
+        assert_throws(RangeError(), function() {
+            new IntersectionObserver(function() {},  { threshold: -Number.MIN_VALUE });
+        })
+    },'SmallNegativeThreshold');
+    test(function() {
+        assert_throws(RangeError(), function() {
+            new IntersectionObserver(function() {},  { threshold: Number.MAX_VALUE });
+        })
+    },'LargePositiveThreshold');
+    test(function() {
+        assert_throws(RangeError(), function() {
+            new IntersectionObserver(function() {},  { threshold: -Number.MAX_VALUE });
+        })
+    },'LargeNegativeThreshold');
+    test(function() {
+        assert_throws(TypeError(), function() {
+            new IntersectionObserver(function() {},  { threshold: Number.POSITIVE_INFINITY });
+        })
+    },'PositiveInfinityThreshold');
+    test(function() {
+        assert_throws(TypeError(), function() {
+            new IntersectionObserver(function() {},  { threshold: Number.NEGATIVE_INFINITY });
+        })
+    },'NegativeInfinityThreshold');
+    test(function() {
+        assert_throws(TypeError(), function() {
+            new IntersectionObserver(function() {},  { threshold: Number.NaN });
+        })
+    },'NaNThreshold');
+</script>
+</body>
+</html>

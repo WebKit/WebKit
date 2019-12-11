@@ -1,0 +1,133 @@
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2F127.0.0.1 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2F127.0.0.1 due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=%20http%3A%2F%2F127.0.0.1%20%20%20%09%20 due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=%20http%3A%2F%2F127.0.0.1 due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=%09http%3A%2F%2F127.0.0.1 due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=%2F%2F127.0.0.1 due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2Flocalhost%3A8800 due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=%3A%2F%2F127.0.0.1 due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=ftp%3A%2F%2F127.0.0.1 due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F127.0.0.1 due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=http%3A%3A%2F%2F127.0.0.1 due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=http%3A127.0.0.1 due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=127.0.0.1 due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2F127.0.0.1%3F due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2F127.0.0.1%20%2F due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2F127.0.0.1%2F due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2F127.0.0.1%23 due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2F127.0.0.1%2523 due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2F127.0.0.1%3A80 due to access control checks.
+CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2F127.0.0.1%2C%20* due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2F127.0.0.1%00 due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=HTTP%3A%2F%2F127.0.0.1 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=HTTP%3A%2F%2F127.0.0.1 due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=** due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=- due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=%00* due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=*%00 due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=%27*%27 due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=%22*%22 due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=*http%3A%2F%2F* due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=*%20* due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=*http%3A%2F%2F127.0.0.1 due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=*%20http%3A%2F%2F127.0.0.1 due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=%00http%3A%2F%2F127.0.0.1 due to access control checks.
+CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=*%2C%20http%3A%2F%2F127.0.0.1 due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=null%20http%3A%2F%2F127.0.0.1 due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2Fexample.net due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=null due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin= due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2Flocalhost%3A8800%2Fcors%2Fremote-origin.htm due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2F127.0.0.1%3A8800%2Fcors%2F due to access control checks.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2Flocalhost%3A8800%2Fcors%2F due to access control checks.
+Access-Control-Allow-Origin handling
+
+
+Harness Error (FAIL), message = 1 duplicate test name: "Disallow origin: HTTP://127.0.0.1"
+
+FAIL Allow origin: * assert_equals: Request Origin: should be http://127.0.0.1 expected "http://127.0.0.1" but got "http://127.0.0.1:8800"
+FAIL Allow origin: _*__ assert_equals: Request Origin: should be http://127.0.0.1 expected "http://127.0.0.1" but got "http://127.0.0.1:8800"
+FAIL Allow origin: [tab]* assert_equals: Request Origin: should be http://127.0.0.1 expected "http://127.0.0.1" but got "http://127.0.0.1:8800"
+FAIL Allow origin: http://127.0.0.1 assert_equals: expected "load" but got "error"
+FAIL Allow origin: _http://127.0.0.1 assert_equals: expected "load" but got "error"
+FAIL Allow origin: _http://127.0.0.1___[tab]_ assert_equals: expected "load" but got "error"
+FAIL Allow origin: [tab]http://127.0.0.1 assert_equals: expected "load" but got "error"
+PASS Disallow origin: http://localhost:8800 
+PASS Disallow origin: //127.0.0.1 
+PASS Disallow origin: ://127.0.0.1 
+PASS Disallow origin: ftp://127.0.0.1 
+PASS Disallow origin: http:://127.0.0.1 
+PASS Disallow origin: http:/127.0.0.1 
+PASS Disallow origin: http:127.0.0.1 
+PASS Disallow origin: 127.0.0.1 
+PASS Disallow origin: http://127.0.0.1? 
+PASS Disallow origin: http://127.0.0.1/ 
+PASS Disallow origin: http://127.0.0.1_/ 
+PASS Disallow origin: http://127.0.0.1# 
+PASS Disallow origin: http://127.0.0.1%23 
+PASS Disallow origin: http://127.0.0.1:80 
+PASS Disallow origin: http://127.0.0.1,_* 
+PASS Disallow origin: http://127.0.0.1\0 
+PASS Disallow origin: HTTP://127.0.0.1 
+PASS Disallow origin: HTTP://127.0.0.1 
+PASS Disallow origin: http://127.0.0.1 
+PASS Disallow origin: - 
+PASS Disallow origin: ** 
+PASS Disallow origin: \0* 
+PASS Disallow origin: *\0 
+PASS Disallow origin: '*' 
+PASS Disallow origin: "*" 
+PASS Disallow origin: *_* 
+PASS Disallow origin: *http://* 
+PASS Disallow origin: *http://127.0.0.1 
+PASS Disallow origin: *_http://127.0.0.1 
+PASS Disallow origin: *,_http://127.0.0.1 
+PASS Disallow origin: \0http://127.0.0.1 
+PASS Disallow origin: null_http://127.0.0.1 
+PASS Disallow origin: http://example.net 
+PASS Disallow origin: null 
+PASS Disallow origin:  
+PASS Disallow origin: http://localhost:8800/cors/remote-origin.htm 
+PASS Disallow origin: http://localhost:8800/cors/ 
+PASS Disallow origin: http://127.0.0.1:8800/cors/ 
+

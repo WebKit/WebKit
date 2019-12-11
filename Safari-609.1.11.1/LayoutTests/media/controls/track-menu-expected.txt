@@ -1,0 +1,28 @@
+This tests the track menu.
+
+This test only runs in DRT!
+
+
+EVENT: canplaythrough
+PASS: We are using the apple idiom
+
+Test when track menu is hidden
+
+PASS: Menu name is 'Track Menu'
+PASS: Menu does not exist
+PASS: Text track not visible
+
+Test with visible menu
+
+PASS: Menu name is 'Track Menu'
+PASS: Menu exists
+PASS: id is 'audioAndTextTrackMenu'
+PASS: Menu element contains <ul>
+PASS: First menu item is selected
+PASS: First menu item contains checkmark <img>
+PASS: First menu item checkmark image is visible
+PASS: Second menu item is not selected
+PASS: Second menu item checkmark is not visible
+
+Testing finished.
+

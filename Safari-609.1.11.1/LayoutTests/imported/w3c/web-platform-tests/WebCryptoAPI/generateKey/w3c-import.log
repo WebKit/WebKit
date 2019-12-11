@@ -1,0 +1,38 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CTR.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-GCM.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-KW.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDH.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_ECDSA.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_HMAC.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-OAEP.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSASSA-PKCS1-v1_5.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CBC.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_AES-CTR.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_AES-GCM.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_AES-KW.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDH.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_ECDSA.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_HMAC.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSASSA-PKCS1-v1_5.https.any.js

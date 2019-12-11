@@ -1,0 +1,45 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x338
+  RenderBlock {HTML} at (0,0) size 800x338
+    RenderBody {BODY} at (8,16) size 784x306
+      RenderBlock {P} at (0,0) size 784x34
+        RenderMathMLMath {math} at (0,20) size 26x11
+          RenderMathMLRow {mrow} at (0,0) size 26x11
+            RenderMathMLOperator {mo} at (0,0) size 26x11
+              RenderBlock (anonymous) at (0,0) size 3x3
+                RenderText {#text} at (0,-3) size 3x0
+                  text run at (0,-3) width 3: "\x{219F}"
+        RenderText {#text} at (26,16) size 4x18
+          text run at (26,16) width 4: " "
+        RenderMathMLMath {math} at (30,10) size 26x21
+          RenderMathMLRow {mrow} at (0,0) size 26x21
+            RenderMathMLOperator {mo} at (0,0) size 26x21
+              RenderBlock (anonymous) at (0,0) size 3x3
+                RenderText {#text} at (0,-3) size 3x0
+                  text run at (0,-3) width 3: "\x{219F}"
+        RenderText {#text} at (56,16) size 4x18
+          text run at (56,16) width 4: " "
+        RenderMathMLMath {math} at (60,0) size 26x31
+          RenderMathMLRow {mrow} at (0,0) size 26x31
+            RenderMathMLOperator {mo} at (0,0) size 26x31
+              RenderBlock (anonymous) at (0,0) size 3x3
+                RenderText {#text} at (0,-3) size 3x0
+                  text run at (0,-3) width 3: "\x{219F}"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,50) size 784x154
+        RenderMathMLMath {math} at (0,0) size 47x150
+          RenderMathMLRow {mrow} at (0,0) size 47x150
+            RenderMathMLOperator {mo} at (0,0) size 47x150
+              RenderBlock (anonymous) at (0,0) size 3x3
+                RenderText {#text} at (0,-3) size 3x0
+                  text run at (0,-3) width 3: "\x{219F}"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,220) size 784x86
+        RenderMathMLMath {math} at (0,0) size 84x82
+          RenderMathMLRow {mrow} at (0,0) size 84x82
+            RenderMathMLOperator {mo} at (0,0) size 84x82
+              RenderBlock (anonymous) at (0,0) size 11x12
+                RenderText {#text} at (0,6) size 11x0
+                  text run at (0,6) width 11: "\x{2A1B}"
+        RenderText {#text} at (0,0) size 0x0

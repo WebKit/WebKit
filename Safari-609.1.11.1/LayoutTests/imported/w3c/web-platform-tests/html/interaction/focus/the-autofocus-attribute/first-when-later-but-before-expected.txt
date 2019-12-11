@@ -1,0 +1,4 @@
+
+
+PASS The temporally first autofocus in the document wins, even if an element is inserted later that is previous in the document tree. 
+

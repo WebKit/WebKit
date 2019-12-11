@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 42: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 43: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 44: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src directive of the Content Security Policy.
+This tests the effect of a valid style-hash value, with one valid style and several invalid ones. It passes if the valid style is applied and a CSP violation is generated.
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Expecting alerts: ["PASS: The 'p' element's text is green, which means the style was correctly applied.", "violated-directive=style-src-elem"] Test timed out
+

@@ -1,0 +1,8 @@
+PASS internals.userPreferredLanguages().length is 2
+PASS internals.userPreferredLanguages()[0].startsWith('ko') is true
+PASS internals.userPreferredLanguages()[1].startsWith('zh') is true
+PASS internals.userPreferredLanguages().length is 3
+PASS internals.userPreferredLanguages()[0] is "hi"
+PASS internals.userPreferredLanguages()[1] is "jp"
+PASS internals.userPreferredLanguages()[2] is "in"
+

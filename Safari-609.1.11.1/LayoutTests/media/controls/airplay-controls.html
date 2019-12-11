@@ -1,0 +1,84 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+    <head>
+        <script src="../media-file.js"></script>
+        <script src="controls-test-helpers.js"></script>
+        <script>
+            internals.setMockMediaPlaybackTargetPickerEnabled(true);
+            internals.settings.setAllowsAirPlayForMediaPlayback(true);
+
+            let eventCounter = 0;
+
+            function isVisible(state)
+            {
+                if (state === null || typeof state.className !== "string")
+                    return true;
+
+                const classes = state.className.split();
+                return !classes.includes("dropped") && !classes.includes("hidden");
+            }
+
+            function start() 
+            {
+                tester.startNewSection("Test initial state");
+
+                tester.test("We are using the apple idiom")
+                    .value(tester.currentState.idiom)
+                    .isEqualTo("apple");
+
+                tester.test("video.controls should be false")
+                    .value(tester.media.controls)
+                    .isFalse();
+
+                const controlPanel = tester.stateForControlsElement("Media Controls Panel");
+                tester.test("Controls should not be visible")
+                    .value(isVisible(controlPanel))
+                    .isFalse();
+
+                tester.startNewSection("Select an AppleTV device");
+                internals.setMediaElementRestrictions(tester.media, "norestrictions");
+                tester.media.addEventListener('webkitplaybacktargetavailabilitychanged', () => { }, false);
+                tester.media.addEventListener('webkitcurrentplaybacktargetiswirelesschanged', targetChanged, false);
+                internals.setMockMediaPlaybackTargetPickerState("Sleepy TV", "DeviceAvailable");
+            }
+
+            function targetChanged()
+            {
+                if (!tester.media.webkitCurrentPlaybackTargetIsWireless)
+                    return;
+
+                // Because this script is triggered by the same event the default controls use to
+                // show the placeholder, this may run before the controls have been reconfigured.
+                const placeholder = tester.stateForControlsElement("Inline playback placeholder", true);
+                if (!isVisible(placeholder) && ++eventCounter < 5) {
+                    setTimeout(targetChanged, 100);
+                    return;
+                }
+
+                tester.test("Placeholder is visible")
+                    .value(isVisible(placeholder))
+                    .isTrue();
+                tester.test("Placeholder has classname 'appletv'")
+                    .value(placeholder.className)
+                    .contains("appletv");
+
+                const controlPanel = tester.stateForControlsElement("Media Controls Panel");
+                tester.test("Controls should not be visible")
+                    .value(isVisible(controlPanel))
+                    .isFalse();
+
+                tester.end();
+            }
+
+            const tester = new ControlsTest()
+                .whenReady(start)
+                .start();
+
+        </script>
+    </head>
+    <body>
+        <p>This tests that showing the wireless device placeholder does not show controls.</p>
+        <p>This test only runs in DRT!</p>
+        <video ></video>
+    </body>
+</html>

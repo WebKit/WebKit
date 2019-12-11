@@ -1,0 +1,15 @@
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+<script>
+function editingTest() {
+    var selection = window.getSelection();
+    var s = document.getElementById("test");
+    selection.setPosition(s, 0);
+    execDeleteCommand();
+    execForwardDeleteCommand();
+}
+</script>
+<div contenteditable="true" id="test">
+</div>
+<script>
+runEditingTest();
+</script>

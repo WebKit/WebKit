@@ -1,0 +1,15 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<body>
+<div contenteditable="true">
+OnlyThe<span id="base" style="font-weight:bold;" contenteditable="false">Bold</span>TextShould<span id="extent">Be</span>Selected
+</div>
+<script>
+var s = window.getSelection();
+var base = document.getElementById("base");
+var extent = document.getElementById("extent");
+s.setBaseAndExtent(base, 0, extent, 0);
+</script>
+</body>

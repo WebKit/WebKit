@@ -1,0 +1,10 @@
+[
+    {
+        "trigger": {
+            "url-filter": "beacon-preflight.py"
+        },
+        "action": {
+            "type": "block"
+        }
+    }
+]

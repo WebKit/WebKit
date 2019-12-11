@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        html {
+            background-color: white;
+        }
+        body {
+            background-color: silver;
+            height: 400px;
+            margin: 0;
+        }
+        
+        .tall {
+            position: absolute;
+            top: 0;
+            background-color: gray;
+            height: 2000px;
+            width: 20px;
+        }
+        
+        #results {
+            position: fixed;
+            margin-left: 25px;
+        }
+    </style>
+    
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+        
+        function setResult(s)
+        {
+            document.getElementById('results').innerText = s;
+        }
+
+        function runTest()
+        {
+            window.addEventListener('mousewheel', function(event) {
+                setResult('PASS: received mousewheel event');
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, false)
+            window.scrollTo(0, 800);
+            
+            window.setTimeout(function() {
+                if (window.eventSender) {
+                    eventSender.mouseMoveTo(50, 100);
+                    eventSender.mouseScrollBy(-1, -2);
+                }
+                
+                // Watchdog timer in case of failure.
+                window.setTimeout(function() {
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                }, 100);
+            }, 0);
+        }
+        
+        window.addEventListener('load', runTest, false);
+    </script>
+</head>
+<body>
+<div id="results">
+    FAIL: did not receive mousewheel event.
+</div>
+<div class="tall"></div>
+</body>
+</html>

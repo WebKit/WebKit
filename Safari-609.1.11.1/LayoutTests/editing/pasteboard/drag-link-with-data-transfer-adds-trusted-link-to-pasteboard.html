@@ -1,0 +1,144 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html>
+<head>
+    <script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<input id="destination" type="text" style="height: 256px; width: 256px; border: 1px dashed black;" />
+<hr>
+
+<div id="ondragenterElement" ondragenter='event.preventDefault(); event.dataTransfer.setData("url", "http://webkit.org/setByDragenter")'>
+    <a href="https://webkit.org">This only has an ondragenter handler and is here to make sure dragging over it doesn't change the pasteboard.</a>
+</div>
+
+<div id="ondragoverElement" ondragover='event.preventDefault(); event.dataTransfer.setData("text", "Text set by dragover.")'>
+    <a href="https://webkit.org">This only has an ondragover handler and is here to make sure dragging over it doesn't change the pasteboard.</a>
+</div>
+
+<a id="firstAnchorSource" draggable="true" href="https://webkit.org">firstAnchorSource</a><br>
+<a id="secondAnchorSource" draggable="true" href="https://webkit.org">secondAnchorSource</a><br>
+
+<svg id="firstSvgSource" draggable="true" width="140" height="30" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <a xlink:href="https://webkit.org" target="_blank">
+        <rect height="30" width="120" y="0" x="0" rx="15"/>
+        <text fill="white" text-anchor="middle" y="21" x="60">https://webkit.org</text>
+    </a>
+</svg><br>
+<svg id="secondSvgSource" draggable="true" width="140" height="30" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <a xlink:href="https://webkit.org" target="_blank">
+        <rect height="30" width="120" y="0" x="0" rx="15"/>
+        <text fill="blue" text-anchor="middle" y="21" x="60">https://webkit.org</text>
+    </a>
+</svg><br>
+
+<!-- Should be uncommented when https://bugs.webkit.org/show_bug.cgi?id=164280 is fixed
+
+<div draggable="true">
+    <math id="firstMathSource" style="padding: 0">
+        <mrow href="https://webkit.org">
+            <mrow>
+                <mrow>
+                    <mspace id="space1" width="150px" height="20px" mathbackground="yellow"></mspace>
+                </mrow>
+            </mrow>
+        </mrow>
+    </math>
+</div>
+<div draggable="true">
+    <math id="secondMathSource" style="padding: 0">
+        <mrow href="https://webkit.org">
+            <mrow>
+                <mrow>
+                    <mspace id="space2" width="150px" height="20px" mathbackground="red"></mspace>
+                </mrow>
+            </mrow>
+        </mrow>
+    </math>
+</div>
+
+-->
+<div id="console"></div>
+<script>
+    var TEXT_TO_SET_IN_DATA_TRANSFER = "javascript:alert('Set by data transfer');";
+    var URL_TO_SET_IN_DATA_TRANSFER = "http://webkit.org/setByDataTransfer";
+
+    var testResults = [];
+
+    function addDragstartEventHander(elementId, dataTransferType) {
+        var intendedDataTransferContent = (dataTransferType === "text" ? TEXT_TO_SET_IN_DATA_TRANSFER : URL_TO_SET_IN_DATA_TRANSFER);
+        document.getElementById(elementId).addEventListener("dragstart", function (event) {
+            event.dataTransfer.setData(dataTransferType, intendedDataTransferContent);
+            var actualDataTransferContent = event.dataTransfer.getData(dataTransferType);
+            if (actualDataTransferContent === intendedDataTransferContent) {
+                testResults.push({
+                    passed : true,
+                    message : "'" + actualDataTransferContent + "' was set in the data transfer for " + elementId + " and not overwritten."
+                });
+            } else {
+                testResults.push({
+                    passed : false,
+                    message : (actualDataTransferContent ? "'" + actualDataTransferContent + "'" : "Nothing") + " was set in the data transfer for " + elementId + " or it was overwritten."
+                });
+            }
+        });
+    }
+
+    addDragstartEventHander("firstAnchorSource", "text");
+    addDragstartEventHander("secondAnchorSource", "url");
+    addDragstartEventHander("firstSvgSource", "text");
+    addDragstartEventHander("secondSvgSource", "url");
+    // Should be uncommented when https://bugs.webkit.org/show_bug.cgi?id=164280 is fixed
+    // addDragstartEventHander("firstMathSource", "text");
+    // addDragstartEventHander("secondMathSource", "url");
+
+    function moveMouseToCenterOfElement(elementId) {
+        var element = document.getElementById(elementId);
+        if (element.offsetLeft) {
+            var centerX = element.offsetLeft + element.offsetWidth / 2;
+            var centerY = element.offsetTop + element.offsetHeight / 2;
+            eventSender.mouseMoveTo(centerX, centerY);
+        } else {
+            var clientRect = element.getBoundingClientRect();
+            var centerX = clientRect.left + clientRect.width / 2;
+            var centerY = clientRect.top + clientRect.height / 2;
+            eventSender.mouseMoveTo(centerX, centerY);
+        }
+    }
+
+    function dragAndDropElement (elementId) {
+        moveMouseToCenterOfElement(elementId);
+        eventSender.mouseDown();
+        eventSender.leapForward(200);
+        moveMouseToCenterOfElement("ondragoverElement");
+        eventSender.leapForward(100);
+        moveMouseToCenterOfElement("ondragenterElement");
+        eventSender.leapForward(100);
+        moveMouseToCenterOfElement("destination");
+        eventSender.leapForward(200);
+        eventSender.mouseUp();
+    }
+
+    if (window.testRunner && eventSender) {
+        jsTestIsAsync = true;
+
+        dragAndDropElement("firstAnchorSource");
+        dragAndDropElement("secondAnchorSource");
+        dragAndDropElement("firstSvgSource");
+        dragAndDropElement("secondSvgSource");
+        // Should be uncommented when https://bugs.webkit.org/show_bug.cgi?id=164280 is fixed
+        // dragAndDropElement("firstMathSource");
+        // dragAndDropElement("secondMathSource");
+
+        testResults.forEach(function(result) {
+            if (result.passed) {
+                testPassed(result.message);
+            } else {
+                testFailed(result.message);
+            }
+        });
+
+        finishJSTest();
+    }
+</script>
+</body>
+</html>

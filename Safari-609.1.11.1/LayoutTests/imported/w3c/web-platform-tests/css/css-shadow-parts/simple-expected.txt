@@ -1,0 +1,4 @@
+The following text should be green: 
+
+PASS Part in selected host is styled 
+

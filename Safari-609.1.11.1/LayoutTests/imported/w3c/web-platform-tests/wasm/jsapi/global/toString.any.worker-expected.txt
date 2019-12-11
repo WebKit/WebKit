@@ -1,0 +1,3 @@
+
+FAIL Object.prototype.toString on an Global undefined is not a constructor (evaluating 'new WebAssembly.Global(argument)')
+

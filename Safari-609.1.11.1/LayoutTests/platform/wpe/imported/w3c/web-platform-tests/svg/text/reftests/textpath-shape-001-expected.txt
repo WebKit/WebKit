@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (149,249) size 502x169
+    RenderSVGContainer {g} at (0,0) size 0x0
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGRect {rect} at (150,250) size 167x167 [fill={[type=SOLID] [color=#000000]}] [x=90.00] [y=150.00] [width=100.00] [height=100.00]
+      RenderSVGEllipse {circle} at (483,250) size 167x167 [fill={[type=SOLID] [color=#000000]}] [cx=340.00] [cy=200.00] [r=50.00]
+    RenderSVGContainer {g} at (149,249) size 502x169
+      RenderSVGContainer {use} at (149,249) size 169x169
+        RenderSVGRect {rect} at (149,249) size 169x169 [stroke={[type=SOLID] [color=#ADD8E6]}] [x=90.00] [y=150.00] [width=100.00] [height=100.00]
+      RenderSVGText {text} at (0,0) size 0x0 contains 1 chunk(s)
+        RenderSVGTextPath {textPath} at (0,0) size 0x0
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+        RenderSVGInlineText {#text} at (0,0) size 0x0
+      RenderSVGContainer {use} at (482,249) size 169x169
+        RenderSVGEllipse {circle} at (482,249) size 169x169 [stroke={[type=SOLID] [color=#ADD8E6]}] [cx=340.00] [cy=200.00] [r=50.00]
+      RenderSVGText {text} at (0,0) size 0x0 contains 1 chunk(s)
+        RenderSVGTextPath {textPath} at (0,0) size 0x0
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+        RenderSVGInlineText {#text} at (0,0) size 0x0

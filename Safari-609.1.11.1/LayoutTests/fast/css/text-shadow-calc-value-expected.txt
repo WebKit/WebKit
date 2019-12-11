@@ -1,0 +1,19 @@
+Tests assigning a calculated value to 'text-shadow' CSS property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testDiv.style['text-shadow'] is ""
+testDiv.style['text-shadow'] = 'calc(1 * 3px) calc(2 * 3px) calc(3 * 3px) rgb(255, 255, 255)'
+PASS testDiv.style['text-shadow'] is "rgb(255, 255, 255) calc(3px) calc(6px) calc(9px)"
+PASS window.getComputedStyle(testDiv).getPropertyValue('text-shadow') is "rgb(255, 255, 255) 3px 6px 9px"
+testDiv.style['text-shadow'] = 'calc(-1 * 3px) calc(-2 * 3px) calc(3 * 3px) rgb(255, 255, 255)'
+PASS testDiv.style['text-shadow'] is "rgb(255, 255, 255) calc(-3px) calc(-6px) calc(9px)"
+PASS window.getComputedStyle(testDiv).getPropertyValue('text-shadow') is "rgb(255, 255, 255) -3px -6px 9px"
+testDiv.style['text-shadow'] = 'calc(1 * 3px) calc(2 * 3px) calc(-3 * 3px) rgb(255, 255, 255)'
+PASS testDiv.style['text-shadow'] is "rgb(255, 255, 255) calc(-3px) calc(-6px) calc(9px)"
+PASS window.getComputedStyle(testDiv).getPropertyValue('text-shadow') is "rgb(255, 255, 255) -3px -6px 9px"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

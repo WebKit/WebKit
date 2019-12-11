@@ -1,0 +1,79 @@
+<html>
+    <title>Test of concurrent HTML5 audio</title>
+    <body>
+
+    <p>Test that multiple audio elements can play concurrently.</p>
+
+    <script src=video-test.js></script>
+    <script src=media-file.js></script>
+    <script>
+        var maxPlayers = 2; // Number of concurrent audio elements to test. For larger values a longer media file is needed.
+        var timeupdateEventCount = 0;
+        var audioElementCount = 0;
+
+        function errorListener(event)
+        {
+             logResult(false, "Element " + audioElementCount + " caught 'error' event, audio.error.code = " + this.error.code);
+             endTest();
+        }
+
+        function canplaythroughListener(event)
+        {
+             consoleWrite("EVENT(" + audioElementCount + ", canplaythrough)");
+             testElement = this;
+             testExpected(audioElementCount + ", testElement.currentTime", 0);
+             this.play();
+        }
+
+        function playingListener(event)
+        {
+             consoleWrite("EVENT(" + audioElementCount + ", playing)");
+        }
+
+        function timeupdateListener(event)
+        {
+            ++timeupdateEventCount;
+
+            // wait 2 timeupdate events so we are sure the media engine is
+            // playing the media.
+            if (timeupdateEventCount >= 2) {
+                // make sure time is advancing
+                testElement = this;
+                testExpected(audioElementCount + ", testElement.currentTime", 0, '>');
+                this.removeEventListener('timeupdate', timeupdateListener);
+                if (++audioElementCount >= maxPlayers) {
+                    // All audio elements have been started playing. Make sure
+                    // all of them are still playing.
+                    consoleWrite("Making sure all " + maxPlayers + " audio elements are in playing state:");
+                    for (var i = 0; i < maxPlayers; i++) {
+                        testElement = document.getElementsByTagName('audio')[i];
+                        testExpected(i + ", testElement.paused", false);
+                    }
+                    endTest();
+                } else {
+                    // Start the next audio element
+                    testAudioElement(audioElementCount);
+                }
+            }
+        }
+
+        function testAudioElement(count)
+        {
+            var audioElement = document.getElementsByTagName('audio')[count];
+            audioElement.addEventListener('error', errorListener);
+            audioElement.addEventListener('canplaythrough', canplaythroughListener);
+            timeupdateEventCount = 0;
+            audioElement.addEventListener('timeupdate', timeupdateListener);
+            audioElement.addEventListener('playing', playingListener);
+            audioElement.src = findMediaFile("audio", "content/silence");
+        }
+
+        consoleWrite("Starting a total of " + maxPlayers + " concurrent audio elements.");
+        for (var i = 0; i < maxPlayers; i++)
+            document.write("<audio controls></audio>");
+
+        testAudioElement(0);
+    </script>
+
+    </body>
+</html>

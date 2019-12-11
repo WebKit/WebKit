@@ -1,0 +1,118 @@
+ALERT: pageshow - not from cache
+CONSOLE MESSAGE: line 70: Use of window.alert is not allowed while unloading a page.
+ALERT: pageshow - from cache
+This tests that layers are rebuilt properly after the page is restored from the page cache.
+
+
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 4
+        (GraphicsLayer
+          (offsetFromRenderer width=-28 height=-28)
+          (position 0.00 44.00)
+          (bounds 386.00 236.00)
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 43.00 43.00)
+              (children 1
+                (GraphicsLayer
+                  (anchor 0.00 0.00)
+                  (bounds 300.00 150.00)
+                  (children 1
+                    (GraphicsLayer
+                      (anchor 0.00 0.00)
+                      (children 1
+                        (GraphicsLayer
+                          (anchor 0.00 0.00)
+                          (bounds 352.00 352.00)
+                          (children 1
+                            (GraphicsLayer
+                              (bounds 352.00 352.00)
+                              (drawsContent 1)
+                              (children 1
+                                (GraphicsLayer
+                                  (position 8.00 8.00)
+                                  (bounds 202.00 202.00)
+                                  (contentsOpaque 1)
+                                  (drawsContent 1)
+                                  (transform [0.71 0.71 0.00 0.00] [-0.71 0.71 0.00 0.00] [0.00 0.00 1.00 0.00] [100.00 100.00 0.00 1.00])
+                                )
+                              )
+                            )
+                          )
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 13.00 57.00)
+          (bounds 50.00 50.00)
+        )
+        (GraphicsLayer
+          (position 8.00 277.00)
+          (bounds 784.00 225.00)
+          (children 1
+            (GraphicsLayer
+              (offsetFromRenderer width=-28 height=-28)
+              (position -8.00 -8.00)
+              (bounds 386.00 236.00)
+              (drawsContent 1)
+              (children 1
+                (GraphicsLayer
+                  (position 43.00 43.00)
+                  (children 1
+                    (GraphicsLayer
+                      (anchor 0.00 0.00)
+                      (bounds 300.00 150.00)
+                      (children 1
+                        (GraphicsLayer
+                          (anchor 0.00 0.00)
+                          (children 1
+                            (GraphicsLayer
+                              (anchor 0.00 0.00)
+                              (bounds 508.00 608.00)
+                              (children 1
+                                (GraphicsLayer
+                                  (bounds 508.00 608.00)
+                                  (drawsContent 1)
+                                  (children 1
+                                    (GraphicsLayer
+                                      (position 108.00 100.00)
+                                      (bounds 200.00 200.00)
+                                      (contentsOpaque 1)
+                                    )
+                                  )
+                                )
+                              )
+                            )
+                          )
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 13.00 282.00)
+          (bounds 50.00 50.00)
+        )
+      )
+    )
+  )
+)
+

@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="resources/w3-css3-list-styles-alphabetic.css" type="text/css" charset="utf-8" />
+    <style>
+        .test ol { float: left; padding-right: 20px; }
+        .test h2 { clear: left; }
+        hr { clear: left;}
+        hr + h2 { color: blue; }
+        
+        /* 
+        The following styles are ordered as they appear in section 4.2. of the 
+        Draft 7 November 2002 draft of the CSS3 Lists module <http://www.w3.org/TR/css3-lists/#algorithmic>.
+        */
+        
+        ol.armenian { list-style-type: armenian; }
+        
+        ol.cjk-ideographic { list-style-type: cjk-ideographic; }
+        
+        ol.ethiopic-numeric { list-style-type: ethiopic-numeric; }
+        
+        ol.georgian { list-style-type: georgian; }
+        
+        ol.hebrew { list-style-type: hebrew; }
+        
+        ol.japanese-formal { list-style-type: japanese-formal; }
+        
+        ol.japanese-informal { list-style-type: japanese-informal; }
+        
+        ol.lower-armenian { list-style-type: lower-armenian; }
+        
+        ol.lower-roman { list-style-type: lower-roman; }
+        
+        ol.simp-chinese-formal { list-style-type: simp-chinese-formal; }
+        
+        ol.simp-chinese-informal { list-style-type: simp-chinese-informal; }
+        
+        ol.syriac { list-style-type: syriac; }
+        
+        ol.tamil { list-style-type: tamil; }
+        
+        ol.trad-chinese-formal { list-style-type: trad-chinese-formal; }
+        
+        ol.trad-chinese-informal { list-style-type: trad-chinese-informal; }
+        
+        ol.upper-armenian { list-style-type: upper-armenian; }
+        
+        ol.upper-roman { list-style-type: upper-roman; }
+    </style>
+    <script src="resources/dump-list.js"></script>
+    <script>
+        function runTest()
+        {
+            if (!window.testRunner)
+                return;
+                
+            testRunner.dumpAsText();
+            filterListsWithReplacement(document.querySelectorAll(".test ol"), testListItemMarkerEqualsListItemText);
+            document.body.removeChild(document.getElementById("description")); // Remove description when running in DRT.
+        }
+        window.onload = runTest;
+    </script>
+</head>
+<body>
+    <h1>CSS3 Fallback to Decimal List Style</h1>
+    <div id="description">
+        <p>This tests that we fallback to the decimal list style type when the ordinal is outside the representable range for the list style type as per the <a href="http://www.w3.org/TR/css3-lists/">CSS3 Lists module</a> (Draft 7 November 2002). This test PASSED if the list item matches its marker for every list item (below).</p>
+        <p>Note, as of 12/04/2010, ethiopic-numeric; japanese-formal; japanese-informal; simp-chinese-formal; simp-chinese-informal; syriac; tamil; trad-chinese-formal; and trad-chinese-informal are unsupported and hence have expected failure results.</p>
+    </div>
+    <hr/>
+    <h2>Algorithmic</h2>
+    <div class="test">
+        <h2>armenian</h2>
+        <ol class="armenian" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x531;</li>
+        </ol>
+        <ol class="armenian" start="99999999">
+            <li>&#x554;&#x302;&#x54B;&#x302;&#x542;&#x302;&#x539;&#x302;&#x554;&#x54B;&#x542;&#x539;</li>
+            <li>100000000</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <h2>cjk-ideographic</h2>
+        <ol class="cjk-ideographic" start="-1">
+            <li>-1</li>
+            <li>&#x96F6;</li>
+            <li>&#x4E00;</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <!-- FIXME: We don't currently support this list-style-type. These are expected failure results. -->
+        <h2>ethiopic-numeric</h2>
+        <ol class="ethiopic-numeric" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>1</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <h2>georgian</h2>
+        <ol class="georgian" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x10D0;</li>
+        </ol>
+        <ol class="georgian" start="19999">
+            <li>&#x10F5;&#x10F0;&#x10E8;&#x10DF;&#x10D7;</li>
+            <li>20000</li>
+            <li>20001</li>
+        </ol>
+    </div>
+    <div class="test">
+        <h2>hebrew</h2>
+        <ol class="hebrew" start="-1">
+            <li>-1</li>
+            <li>&#x5D0;&#x5E4;&#x5E1;</li>
+            <li>&#x5D0;</li>
+        </ol>
+        <ol class="hebrew" start="999999">
+            <li>&#x5EA;&#x5EA;&#x5E7;&#x5E6;&#x5D8;&#x27;&#x5EA;&#x5EA;&#x5E7;&#x5E6;&#x5D8;</li>
+            <li>1000000</li>
+            <li>1000001</li>
+        </ol>
+    </div>
+    <div class="test">
+        <!-- FIXME: We don't currently support this list-style-type. These are expected failure results. -->
+        <h2>japanese-formal</h2>
+        <ol class="japanese-formal" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>1</li>
+        </ol>
+    </div>
+    <div class="test">
+        <!-- FIXME: We don't currently support this list-style-type. These are expected failure results. -->
+        <h2>japanese-informal</h2>
+        <ol class="japanese-informal" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>1</li>
+        </ol>
+    </div>
+    <div class="test">
+        <h2>lower-armenian</h2>
+        <ol class="lower-armenian" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x0561;</li>
+        </ol>
+    </div>
+    <div class="test">
+        <h2>lower-roman</h2>
+        <ol class="lower-roman" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>i</li>
+        </ol>
+    </div>
+    <div class="test">
+        <!-- FIXME: We don't currently support this list-style-type. These are expected failure results. -->
+        <h2>simp-chinese-formal</h2>
+        <ol class="simp-chinese-formal" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>1</li>
+        </ol>
+    </div>
+    <div class="test">
+        <!-- FIXME: We don't currently support this list-style-type. These are expected failure results. -->
+        <h2>simp-chinese-informal</h2>
+        <ol class="simp-chinese-informal" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>1</li>
+        </ol>
+    </div>
+    <div class="test">
+        <!-- FIXME: We don't currently support this list-style-type. These are expected failure results. -->
+        <h2>syriac</h2>
+        <ol class="syriac" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>1</li>
+        </ol>
+    </div>
+    <div class="test">
+        <!-- FIXME: We don't currently support this list-style-type. These are expected failure results. -->
+        <h2>tamil</h2>
+        <ol class="tamil" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>1</li>
+        </ol>
+    </div>
+    <div class="test">
+        <!-- FIXME: We don't currently support this list-style-type. These are expected failure results. -->
+        <h2>trad-chinese-formal</h2>
+        <ol class="trad-chinese-formal" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>1</li>
+        </ol>
+    </div>
+    <div class="test">
+        <!-- FIXME: We don't currently support this list-style-type. These are expected failure results. -->
+        <h2>trad-chinese-informal</h2>
+        <ol class="trad-chinese-informal" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>1</li>
+        </ol>
+    </div>
+    <div class="test">
+        <h2>upper-armenian</h2>
+        <ol class="upper-armenian" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x0531;</li>
+        </ol>
+    </div>
+    <div class="test">
+        <h2>upper-roman</h2>
+        <ol class="upper-roman" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>I</li>
+        </ol>
+    </div>
+    <hr/>
+    <h2>Alphabetic</h2>
+    <div class="test">
+        <h2>afar</h2>
+        <ol class="afar" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x1200;</li>
+        </ol>
+    </div>
+    <div class="test">
+        <h2>ethiopic-halehame-aa-et</h2>
+        <ol class="ethiopic-halehame-aa-et" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x1200;</li>
+        </ol>
+    </div>
+    <div class="test">
+        <h2>ethiopic-halehame-aa-er</h2>
+        <ol class="ethiopic-halehame-aa-er" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x1200;</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <h2>amharic</h2>
+        <ol class="amharic" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x1200;</li>
+        </ol>
+    </div>
+    <div class="test">
+        <h2>ethiopic-halehame-am-et</h2>
+        <ol class="ethiopic-halehame-am-et" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x1200;</li>
+        </ol>
+    </div>
+    <div class="test">
+        <h2>amharic-abegede</h2>
+        <ol class="amharic-abegede" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x12A0;</li>
+        </ol>
+    </div>
+    <div class="test">
+        <h2>ethiopic-abegede-am-et</h2>
+        <ol class="ethiopic-abegede-am-et" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x12A0;</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <h2>cjk-earthly-branch</h2>
+        <ol class="cjk-earthly-branch" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x5B50;</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <h2>cjk-heavenly-stem</h2>
+        <ol class="cjk-heavenly-stem" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x7532;</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <h2>ethiopic</h2>
+        <ol class="ethiopic" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x1200;</li>
+        </ol>
+    </div>
+    <div class="test">
+        <h2>ethiopic-halehame-gez</h2>
+        <ol class="ethiopic-halehame-gez" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x1200;</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <h2>ethiopic-abegede</h2>
+        <ol class="ethiopic-abegede" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x12A0;</li>
+        </ol>
+    </div>
+    <div class="test">
+        <h2>ethiopic-abegede-gez</h2>
+        <ol class="ethiopic-abegede-gez" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x12A0;</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <h2>hangul-consonant</h2>
+        <ol class="hangul-consonant" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x3131;</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <h2>hangul</h2>
+        <ol class="hangul" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#xAC00;</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <h2>hiragana-iroha</h2>
+        <ol class="hiragana-iroha" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x3044;</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <h2>hiragana</h2>
+        <ol class="hiragana" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x3042;</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <h2>katakana-iroha</h2>
+        <ol class="katakana-iroha" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x30A4;</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <h2>katakana</h2>
+        <ol class="katakana" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x30A2;</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <h2>lower-alpha</h2>
+        <ol class="lower-alpha" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x0061;</li>
+        </ol>
+    </div>
+    <div class="test">
+        <h2>lower-latin</h2>
+        <ol class="lower-latin" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x0061;</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <h2>lower-greek</h2>
+        <ol class="lower-greek" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x03B1;</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <h2>lower-norwegian</h2>
+        <ol class="lower-norwegian" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x0061;</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <h2>oromo</h2>
+        <ol class="oromo" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x1200;</li>
+        </ol>
+    </div>
+    <div class="test">
+        <h2>ethiopic-halehame-om-et</h2>
+        <ol class="ethiopic-halehame-om-et" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x1200;</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <h2>sidama</h2>
+        <ol class="sidama" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x1200;</li>
+        </ol>
+    </div>
+    <div class="test">
+        <h2>ethiopic-halehame-sid-et</h2>
+        <ol class="ethiopic-halehame-sid-et" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x1200;</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <h2>somali</h2>
+        <ol class="somali" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x1200;</li>
+        </ol>
+    </div>
+    <div class="test">
+        <h2>ethiopic-halehame-so-et</h2>
+        <ol class="ethiopic-halehame-so-et" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x1200;</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <h2>tigre</h2>
+        <ol class="tigre" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x1200;</li>
+        </ol>
+    </div>
+    <div class="test">
+        <h2>ethiopic-halehame-tig</h2>
+        <ol class="ethiopic-halehame-tig" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x1200;</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <h2>tigrinya-er</h2>
+        <ol class="tigrinya-er" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x1200;</li>
+        </ol>
+    </div>
+    <div class="test">
+        <h2>ethiopic-halehame-ti-er</h2>
+        <ol class="ethiopic-halehame-ti-er" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x1200;</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <h2>tigrinya-er-abegede</h2>
+        <ol class="tigrinya-er-abegede" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x12A0;</li>
+        </ol>
+    </div>
+    <div class="test">
+        <h2>ethiopic-abegede-ti-er</h2>
+        <ol class="ethiopic-abegede-ti-er" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x12A0;</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <h2>tigrinya-et</h2>
+        <ol class="tigrinya-et" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x1200;</li>
+        </ol>
+    </div>
+    <div class="test">
+        <h2>ethiopic-halehame-ti-et</h2>
+        <ol class="ethiopic-halehame-ti-et" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x1200;</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <h2>tigrinya-et-abegede</h2>
+        <ol class="tigrinya-et-abegede" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x12A0;</li>
+        </ol>
+    </div>
+    <div class="test">
+        <h2>ethiopic-abegede-ti-et</h2>
+        <ol class="ethiopic-abegede-ti-et" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x12A0;</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <h2>upper-alpha</h2>
+        <ol class="upper-alpha" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x0041;</li>
+        </ol>
+    </div>
+    <div class="test">
+        <h2>upper-latin</h2>
+        <ol class="upper-latin" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x0041;</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <h2>upper-greek</h2>
+        <ol class="upper-greek" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x0391;</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <h2>upper-norwegian</h2>
+        <ol class="upper-norwegian" start="-1">
+            <li>-1</li>
+            <li>0</li>
+            <li>&#x0041;</li>
+        </ol>
+    </div>
+</body>
+</html>

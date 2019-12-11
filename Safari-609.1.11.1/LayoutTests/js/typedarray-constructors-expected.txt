@@ -1,0 +1,39 @@
+This test case tests the various typed array and related constructors. In particular, makes sure that you use the "new" keyword when using the constructors.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Int8Array() threw exception TypeError: calling Int8Array constructor without new is invalid.
+PASS new Int8Array() did not throw exception.
+PASS Int8Array.length is 3
+PASS Int16Array() threw exception TypeError: calling Int16Array constructor without new is invalid.
+PASS new Int16Array() did not throw exception.
+PASS Int16Array.length is 3
+PASS Int32Array() threw exception TypeError: calling Int32Array constructor without new is invalid.
+PASS new Int32Array() did not throw exception.
+PASS Int32Array.length is 3
+PASS Uint8Array() threw exception TypeError: calling Uint8Array constructor without new is invalid.
+PASS new Uint8Array() did not throw exception.
+PASS Uint8Array.length is 3
+PASS Uint8ClampedArray() threw exception TypeError: calling Uint8ClampedArray constructor without new is invalid.
+PASS new Uint8ClampedArray() did not throw exception.
+PASS Uint8ClampedArray.length is 3
+PASS Uint16Array() threw exception TypeError: calling Uint16Array constructor without new is invalid.
+PASS new Uint16Array() did not throw exception.
+PASS Uint16Array.length is 3
+PASS Uint32Array() threw exception TypeError: calling Uint32Array constructor without new is invalid.
+PASS new Uint32Array() did not throw exception.
+PASS Uint32Array.length is 3
+PASS Float32Array() threw exception TypeError: calling Float32Array constructor without new is invalid.
+PASS new Float32Array() did not throw exception.
+PASS Float32Array.length is 3
+PASS Float64Array() threw exception TypeError: calling Float64Array constructor without new is invalid.
+PASS new Float64Array() did not throw exception.
+PASS Float64Array.length is 3
+PASS DataView(new ArrayBuffer()) threw exception TypeError: calling DataView constructor without new is invalid.
+PASS new DataView(new ArrayBuffer()) did not throw exception.
+PASS DataView.length is 3
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

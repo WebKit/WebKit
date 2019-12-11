@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="initial-scale=0.5,maximum-scale=2,minimum-scale=0.25,user-scalable=yes" />
+<style>
+#target {
+    width: 1200px;
+    height: 1200px;
+    border: 10px solid black;
+    background-color: silver;
+}
+        
+#target.tapped {
+    background-color: green;
+}
+</style>
+
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function getUIScript()
+{
+    return `
+    (function() {
+        uiController.singleTapAtPoint(500, 650, function() {
+            uiController.uiScriptComplete("Done");
+        });
+    })();`
+}
+
+function setUp()
+{
+    var output = '';
+    var target = document.getElementById('target');
+    target.addEventListener('touchstart', function(event) {
+        output += 'Received event ' + event.type + ' at ' + event.touches[0].clientX + ', ' + event.touches[0].clientY + '<br>';
+        target.classList.toggle('tapped');
+    });
+
+    if (testRunner.runUIScript) {
+        testRunner.runUIScript(getUIScript(), function(result) {
+            output += result;
+            document.getElementById('console').innerHTML = output;
+            testRunner.notifyDone();
+        });
+    }
+}
+
+window.addEventListener('load', setUp, false);
+</script>
+</head>
+
+<body>
+<div id="target">Tap me</div>
+<pre id="console">To test manually, tap the box. If it turns green, then the test passes.</pre>
+</body>
+
+</html>

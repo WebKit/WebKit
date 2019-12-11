@@ -1,0 +1,11 @@
+Debugger.setBreakpoint on line:column in <script>
+
+Found <script>
+Running testFunction
+PASS: step 0: type "object" className "Number"
+PASS: step 1: type "object" className "String"
+PASS: step 2: type "object" className "Number"
+PASS: step 3: type "object" className "String"
+PASS: step 4: type "object" className "Window"
+PASS: step 5: type "object" className "Window"
+

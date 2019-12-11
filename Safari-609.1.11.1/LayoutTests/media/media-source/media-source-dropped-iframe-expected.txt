@@ -1,0 +1,27 @@
+
+EXPECTED (source.readyState == 'closed') OK
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(sourceBuffer.appendBuffer(initSegment))
+EVENT(updateend)
+RUN(sourceBuffer.appendBuffer(samples))
+EVENT(updateend)
+RUN(sourceBuffer.timestampOffset = 3)
+RUN(sourceBuffer.appendBuffer(samples))
+EVENT(updateend)
+Buffered:
+{PTS({0/1 = 0.000000}), DTS({0/1 = 0.000000}), duration({1/1 = 1.000000}), flags(1), generation(1)}
+{PTS({1/1 = 1.000000}), DTS({1/1 = 1.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({2/1 = 2.000000}), DTS({2/1 = 2.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({3/1 = 3.000000}), DTS({2/1 = 2.000000}), duration({1/1 = 1.000000}), flags(1), generation(2)}
+{PTS({5/1 = 5.000000}), DTS({3/1 = 3.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({4/1 = 4.000000}), DTS({4/1 = 4.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+Enqueued:
+{PTS({0/1 = 0.000000}), DTS({0/1 = 0.000000}), duration({1/1 = 1.000000}), flags(1), generation(1)}
+{PTS({1/1 = 1.000000}), DTS({1/1 = 1.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({2/1 = 2.000000}), DTS({2/1 = 2.000000}), duration({1/1 = 1.000000}), flags(0), generation(1)}
+{PTS({3/1 = 3.000000}), DTS({2/1 = 2.000000}), duration({1/1 = 1.000000}), flags(1), generation(2)}
+{PTS({5/1 = 5.000000}), DTS({3/1 = 3.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+{PTS({4/1 = 4.000000}), DTS({4/1 = 4.000000}), duration({1/1 = 1.000000}), flags(0), generation(2)}
+END OF TEST
+

@@ -1,0 +1,24 @@
+<html>
+<head>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        function loadedFirstPart()
+        {
+            if (window.testRunner)
+                setTimeout("stop(); testRunner.notifyDone()", 200);
+        }
+    </script>
+</head>
+<body>
+    <p>
+        Test for <i><a href="http://bugs.webkit.org/show_bug.cgi?id=13759">http://bugs.webkit.org/show_bug.cgi?id=13759</a>
+        REGRESSION (r20182-r20184): Incorrect rendering of multipart images</i>.
+    </p>
+    <p>
+        There should be a green square below.
+    </p>
+    <iframe width="120" height="120" src="resources/multipart.php?interval=0&img1=green-100x100.png&img2=abe.png&wait=100" onload="loadedFirstPart()"></iframe>
+</body>
+</html>

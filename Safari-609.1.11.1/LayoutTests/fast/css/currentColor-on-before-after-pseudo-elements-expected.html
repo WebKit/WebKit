@@ -1,0 +1,7 @@
+<!DOCTYPE html>
+<style>
+    #first::before, #first::after { content: 'FAIL'; background: white; }
+    #second::before, #second::after { content: 'FAIL'; background: navy; }
+</style>
+<p>There should be a blue block below:
+<p><span id="first" style="color:white"></span> <span id="second" style="color:navy"></span>

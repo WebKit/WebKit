@@ -1,0 +1,5 @@
+
+FAIL object.contentWindow assert_equals: The contentWindow's name of the object element should be 'o1'. expected "o1" but got "o"
+PASS object.width 
+PASS object.height 
+ 

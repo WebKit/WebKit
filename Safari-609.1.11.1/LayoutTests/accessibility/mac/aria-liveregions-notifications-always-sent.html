@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div role="group" tabindex=0 id="liveregion1" aria-live="polite" aria-relevant="additions">
+Test
+</div>
+<div role="group" tabindex=0 id="liveregion2" aria-live="polite" aria-relevant="additions"></div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    var jsTestIsAsync = true;
+
+    description("This tests that ARIA live region notifications are sent even when an assistive technology is not accessing them directly on each update.");
+
+    if (window.accessibilityController) {
+
+        var liveRegion1 = accessibilityController.accessibleElementById("liveregion1");
+        var liveRegion2 = accessibilityController.accessibleElementById("liveregion2");
+
+        var liveRegion1Changed = false;
+        var liveRegion2Changed = false;
+        function ariaCallback1(notification) {
+           if (notification == "AXLiveRegionChanged") {
+               liveRegion1Changed = true;
+               finishTest();
+           }
+        }
+        function ariaCallback2(notification) {
+           if (notification == "AXLiveRegionChanged") {
+               liveRegion2Changed = true;
+               finishTest();
+           }
+        }
+
+        addedNotification1 = liveRegion1.addNotificationListener(ariaCallback1);
+        shouldBe("addedNotification1", "true");
+        addedNotification2 = liveRegion2.addNotificationListener(ariaCallback2);
+        shouldBe("addedNotification2", "true");
+
+        // this should trigger our live region callback for a new element.
+        for (var k = 1; k < 3; k++) {
+            var textNode = document.createTextNode("test" + k);
+            document.getElementById("liveregion" + k).appendChild(textNode);
+        }
+    }
+
+    function finishTest() {
+        // We should get a total of two live region changes.
+        if (liveRegion1Changed && liveRegion2Changed) {
+            liveRegion1.removeNotificationListener();
+            liveRegion2.removeNotificationListener();
+            finishJSTest();
+        }        
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

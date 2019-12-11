@@ -1,0 +1,17 @@
+Testing the mute button for inline media controls correctly displays in the bottom controls bar when there is enough space and switches to display in the top right controls bar when there isn't.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+width = 600
+PASS mediaControls.muteButton.parent.parent is mediaControls.bottomControlsBar
+PASS mediaControls.topRightControlsBar.parent is null
+
+width = 250
+PASS mediaControls.muteButton.parent.parent is mediaControls.topRightControlsBar
+PASS mediaControls.topRightControlsBar.parent is mediaControls
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

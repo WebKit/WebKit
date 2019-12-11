@@ -1,0 +1,7 @@
+
+FAIL Non-object: null promise_test: Unhandled rejection with value: object "Error: Could not import the module './null.json'."
+FAIL Non-object: true promise_test: Unhandled rejection with value: object "Error: Could not import the module './true.json'."
+FAIL Non-object: false promise_test: Unhandled rejection with value: object "Error: Could not import the module './false.json'."
+FAIL Non-object: string promise_test: Unhandled rejection with value: object "Error: Could not import the module './string.json'."
+FAIL Non-object: array promise_test: Unhandled rejection with value: object "Error: Could not import the module './array.json'."
+

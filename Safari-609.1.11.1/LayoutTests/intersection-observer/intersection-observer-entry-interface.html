@@ -1,0 +1,65 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableIntersectionObserver=true ] -->
+<head>
+    <title>IntersectionObserverEntry interface tests.</title>
+    <link rel="author" title="Simon Fraser" href="mailto:simon.fraser@apple.com" />
+    <link rel="help" href="https://wicg.github.io/IntersectionObserver/">
+    <script src="../resources/testharness.js"></script>
+    <script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+
+    var entryInit = {
+        time: 9999,
+        rootBounds: { x: 10, y: 12.5, width: 130, height: 140 },
+        boundingClientRect: { x: 110, y: 112.7, width: 1130, height: 1140 },
+        intersectionRect: { x: 210, y: 212, width: 2130, height: 2140 },
+        isIntersecting: true,
+        intersectionRatio: 0.35,
+        target: document.body
+    };
+
+    test(function() {
+        assert_class_string(new IntersectionObserverEntry(entryInit), 'IntersectionObserverEntry');
+    },'Constructor0');
+    test(function() {
+        var entry = new IntersectionObserverEntry(entryInit);
+        assert_equals(entry.time, 9999);
+    },'ConstructorTime');
+    test(function() {
+        var entry = new IntersectionObserverEntry(entryInit);
+        assert_equals(JSON.stringify(entry.rootBounds), '{"x":10,"y":12.5,"width":130,"height":140,"top":12.5,"right":140,"bottom":152.5,"left":10}');
+        assert_class_string(entry.rootBounds, 'DOMRectReadOnly');
+    },'ConstructorRootBounds');
+    test(function() {
+        entryInit.rootBounds = null;
+        var entry = new IntersectionObserverEntry(entryInit);
+        assert_equals(entry.rootBounds, null);
+    },'ConstructorNullRootBounds');
+    test(function() {
+        var entry = new IntersectionObserverEntry(entryInit);
+        assert_class_string(entry.boundingClientRect, 'DOMRectReadOnly');
+        assert_equals(JSON.stringify(entry.boundingClientRect), '{"x":110,"y":112.7,"width":1130,"height":1140,"top":112.7,"right":1240,"bottom":1252.7,"left":110}');
+    },'ConstructorBoundingClientRect');
+    test(function() {
+        var entry = new IntersectionObserverEntry(entryInit);
+        assert_class_string(entry.intersectionRect, 'DOMRectReadOnly');
+        assert_equals(JSON.stringify(entry.intersectionRect), '{"x":210,"y":212,"width":2130,"height":2140,"top":212,"right":2340,"bottom":2352,"left":210}');
+    },'ConstructorIntersectionRect');
+    test(function() {
+        var entry = new IntersectionObserverEntry(entryInit);
+        assert_true(entry.isIntersecting);
+    },'ConstructorIsIntersecting');
+    test(function() {
+        var entry = new IntersectionObserverEntry(entryInit);
+        assert_equals(entry.intersectionRatio, 0.35);
+    },'ConstructorIntersectionRatio');
+    test(function() {
+        var entry = new IntersectionObserverEntry(entryInit);
+        assert_equals(entry.target, document.body);
+    },'ConstructorTarget');
+
+</script>
+</body>
+</html>

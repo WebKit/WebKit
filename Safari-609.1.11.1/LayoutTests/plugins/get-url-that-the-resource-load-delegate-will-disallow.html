@@ -1,0 +1,16 @@
+<html>
+<body>
+<embed name="plg" type="application/x-webkit-test-netscape"></embed>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.addDisallowedURL('http://www.apple.com');
+    
+    plg.getURL("http://www.apple.com", "callback");
+} else {
+    document.write("Cannot run interactively");
+}
+</script>This tests that we won't crash when a plugin tries to open an URL that the resource load delegate doesn't allow.
+<div>SUCCESS - didn't crash</div>
+</body>
+</html>

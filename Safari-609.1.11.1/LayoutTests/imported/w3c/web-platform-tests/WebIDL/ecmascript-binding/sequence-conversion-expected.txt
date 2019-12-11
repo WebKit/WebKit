@@ -1,0 +1,8 @@
+
+PASS An array 
+PASS A generator 
+PASS An array with an overridden Symbol.iterator 
+PASS An array with an overridden Symbol.iterator on the prototype 
+PASS An array with an overridden %ArrayIterator%.prototype.next 
+PASS A holey array with fallback to an accessor on the prototype 
+

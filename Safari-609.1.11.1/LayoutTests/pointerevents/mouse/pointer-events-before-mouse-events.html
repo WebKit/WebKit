@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+</head>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script>
+
+'use strict';
+
+target_test({ x: "100px", y: "100px", width: "100px", height: "100px" }, (target, test) => {
+    const eventTracker = new EventTracker(target, ["pointerover", "pointerenter", "pointermove", "pointerdown", "pointerup", "pointerout", "pointerleave",
+                                                   "mouseover", "mouseenter", "mousemove", "mousedown", "mouseup", "mouseout", "mouseleave", "click"]);
+    // Start outside of the target.
+    eventSender.mouseMoveTo(50, 50);
+
+    // Move the cursor over the target.
+    eventSender.mouseMoveTo(150, 150);
+    eventTracker.assertMatchesEvents([
+        { type: "pointerover", x: 150, y: 150 },
+        { type: "mouseover", x: 150, y: 150 },
+        { type: "pointerenter", x: 150, y: 150 },
+        { type: "mouseenter", x: 150, y: 150 },
+        { type: "pointermove", x: 150, y: 150 },
+        { type: "mousemove", x: 150, y: 150 },
+    ]);
+    eventTracker.clear();
+
+    // Click.
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    eventTracker.assertMatchesEvents([
+        { type: "pointerdown", x: 150, y: 150 },
+        { type: "mousedown", x: 150, y: 150 },
+        { type: "pointerup", x: 150, y: 150 },
+        { type: "mouseup", x: 150, y: 150 },
+        { type: "click", x: 150, y: 150 },
+    ]);
+    eventTracker.clear();
+
+    // Move the cursor outside the target.
+    eventSender.mouseMoveTo(250, 250);
+    eventTracker.assertMatchesEvents([
+        { type: "pointerout", x: 250, y: 250 },
+        { type: "mouseout", x: 250, y: 250 },
+        { type: "pointerleave", x: 250, y: 250 },
+        { type: "mouseleave", x: 250, y: 250 },
+    ]);
+    eventTracker.clear();
+
+    test.done();
+}, `Testing that pointer events are dispatched prior to compatibility mouse events.`);
+
+</script>
+</body>
+</html>

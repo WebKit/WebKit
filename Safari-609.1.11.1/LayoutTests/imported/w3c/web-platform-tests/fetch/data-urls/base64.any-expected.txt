@@ -1,0 +1,116 @@
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,a.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,abcde.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,%F0%90%80%80.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,=.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,==.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,===.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,====.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,=====.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,a=.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,a==.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,a===.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,a====.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,a=====.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,abcde=.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,abcde==.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,abcde===.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,abcde====.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,abcde=====.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,=a.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,=a=.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,a=b.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,a=b=.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,ab=c.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,ab=c=.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,abc=d.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,abc=d=.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,ab%C2%A0cd.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,A.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,////A.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,/.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,AAAA/.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,%00nonsense.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,abcd%00nonsense.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,~~.
+CONSOLE MESSAGE: Fetch API cannot load data:;base64,...
+
+PASS Setup. 
+PASS data: URL base64 handling: "" 
+PASS data: URL base64 handling: "abcd" 
+PASS data: URL base64 handling: " abcd" 
+PASS data: URL base64 handling: "abcd " 
+FAIL data: URL base64 handling: " abcd===" assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL data: URL base64 handling: "abcd=== " assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL data: URL base64 handling: "abcd ===" assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS data: URL base64 handling: "a" 
+PASS data: URL base64 handling: "ab" 
+PASS data: URL base64 handling: "abc" 
+PASS data: URL base64 handling: "abcde" 
+PASS data: URL base64 handling: "𐀀" 
+PASS data: URL base64 handling: "=" 
+PASS data: URL base64 handling: "==" 
+PASS data: URL base64 handling: "===" 
+PASS data: URL base64 handling: "====" 
+PASS data: URL base64 handling: "=====" 
+PASS data: URL base64 handling: "a=" 
+PASS data: URL base64 handling: "a==" 
+PASS data: URL base64 handling: "a===" 
+PASS data: URL base64 handling: "a====" 
+PASS data: URL base64 handling: "a=====" 
+FAIL data: URL base64 handling: "ab=" assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS data: URL base64 handling: "ab==" 
+FAIL data: URL base64 handling: "ab===" assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL data: URL base64 handling: "ab====" assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL data: URL base64 handling: "ab=====" assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS data: URL base64 handling: "abc=" 
+FAIL data: URL base64 handling: "abc==" assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL data: URL base64 handling: "abc===" assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL data: URL base64 handling: "abc====" assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL data: URL base64 handling: "abc=====" assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL data: URL base64 handling: "abcd=" assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL data: URL base64 handling: "abcd==" assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL data: URL base64 handling: "abcd===" assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL data: URL base64 handling: "abcd====" assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL data: URL base64 handling: "abcd=====" assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS data: URL base64 handling: "abcde=" 
+PASS data: URL base64 handling: "abcde==" 
+PASS data: URL base64 handling: "abcde===" 
+PASS data: URL base64 handling: "abcde====" 
+PASS data: URL base64 handling: "abcde=====" 
+PASS data: URL base64 handling: "=a" 
+PASS data: URL base64 handling: "=a=" 
+PASS data: URL base64 handling: "a=b" 
+PASS data: URL base64 handling: "a=b=" 
+PASS data: URL base64 handling: "ab=c" 
+PASS data: URL base64 handling: "ab=c=" 
+PASS data: URL base64 handling: "abc=d" 
+PASS data: URL base64 handling: "abc=d=" 
+FAIL data: URL base64 handling: "ab\vcd" assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS data: URL base64 handling: "ab\tcd" 
+PASS data: URL base64 handling: "ab\ncd" 
+PASS data: URL base64 handling: "ab\fcd" 
+PASS data: URL base64 handling: "ab\rcd" 
+PASS data: URL base64 handling: "ab cd" 
+PASS data: URL base64 handling: "ab cd" 
+PASS data: URL base64 handling: "ab\t\n\f\r cd" 
+PASS data: URL base64 handling: " \t\n\f\r ab\t\n\f\r cd\t\n\f\r " 
+PASS data: URL base64 handling: "ab\t\n\f\r =\t\n\f\r =\t\n\f\r " 
+PASS data: URL base64 handling: "A" 
+PASS data: URL base64 handling: "/A" 
+PASS data: URL base64 handling: "//A" 
+PASS data: URL base64 handling: "///A" 
+PASS data: URL base64 handling: "////A" 
+PASS data: URL base64 handling: "/" 
+PASS data: URL base64 handling: "A/" 
+PASS data: URL base64 handling: "AA/" 
+PASS data: URL base64 handling: "AAAA/" 
+PASS data: URL base64 handling: "AAA/" 
+PASS data: URL base64 handling: "\0nonsense" 
+PASS data: URL base64 handling: "abcd\0nonsense" 
+PASS data: URL base64 handling: "YQ" 
+PASS data: URL base64 handling: "YR" 
+PASS data: URL base64 handling: "~~" 
+PASS data: URL base64 handling: ".." 
+FAIL data: URL base64 handling: "--" assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL data: URL base64 handling: "__" assert_unreached: Should have rejected: undefined Reached unreachable code
+

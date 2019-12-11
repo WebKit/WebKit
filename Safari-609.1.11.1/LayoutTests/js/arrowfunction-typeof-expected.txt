@@ -1,0 +1,8 @@
+PASS typeof af1 === 'function' is true
+PASS typeof af2 === 'function' is true
+PASS typeof (()=>{}) === 'function' is true
+PASS typeof ((b) => {b + 1})==='function' is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

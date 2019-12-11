@@ -1,0 +1,64 @@
+
+Test looping by:
+
+Play to end with 'loop' set to true.
+When 'seeked' event fires, verify that time has jumped back and movie is playing.
+Set 'loop' to false and play again.
+Verify that 'ended' event fires.
+++ Test setting/removing the attribute.
+EXPECTED (video.getAttribute('loop') == 'null') OK
+EXPECTED (video.loop == 'false') OK
+RUN(video.loop = true)
+EXPECTED (video.loop == 'true') OK
+EXPECTED (video.getAttribute('loop') != 'null') OK
+RUN(video.removeAttribute('loop'))
+EXPECTED (video.loop == 'false') OK
+
+++ Set 'loop' to true and begin playing.
+RUN(video.loop = true)
+
+EVENT(play)
+
+++ seek to near the end, wait for 'seeked' event to announce loop.
+EXPECTED (video.paused == 'false') OK
+RUN(video.pause())
+RUN(video.currentTime = video.duration - 0.4)
+
+EVENT(pause)
+EVENT(seeked)
+
+++ first seek completed, beginning playback.
+EXPECTED (video.paused == 'true') OK
+EXPECTED (video.ended == 'false') OK
+RUN(video.play())
+
+EVENT(play)
+EVENT(seeked)
+
+++ second seek completed because video looped, toggle 'loop' and seek to near end again.
+EXPECTED (video.paused == 'false') OK
+EXPECTED (video.ended == 'false') OK
+RUN(video.pause())
+EXPECTED (mediaElement.currentTime >= '0') OK
+EXPECTED (mediaElement.currentTime < 'mediaElement.duration') OK
+RUN(video.loop = false)
+RUN(video.currentTime = video.duration - 0.4)
+
+EVENT(pause)
+EVENT(seeked)
+
+++ third seek completed, beginning playback for the last time.
+EXPECTED (video.paused == 'true') OK
+EXPECTED (video.ended == 'false') OK
+RUN(video.play())
+
+EVENT(play)
+EVENT(pause)
+EVENT(ended)
+
+++ played to end and stopped.
+EXPECTED (video.ended == 'true') OK
+EXPECTED (mediaElement.currentTime == 'mediaElement.duration') OK
+
+END OF TEST
+

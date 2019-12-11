@@ -1,0 +1,31 @@
+# This configuration file uses the syntax from Python's ConfigParser.
+# The syntax is similar to Windows "INI" files.
+#
+# [section1]
+# key1 = value1
+# key2 = value2
+#
+# Each section entry defines a server where to upload the results.
+# The server should be running this Django app: https://github.com/Igalia/browserperfdash
+#
+# If more than a section entry is defined, the program will try to upload
+# the data to each one of them.
+#
+# The following entries are mandatory for each section
+#
+# 'bot_id'       : The identifier of this bot on the server.
+# 'bot_password' : The password of this bot on the server.
+# 'post_url'     : The POST URL (typically ${BASE_URI}/dash/bot-report)
+#
+
+## Configuration for dashboard browserperfdash.igalia.org
+#[browserperfdash.igalia.org]
+#bot_id = gtk-linux-64-perf-tests
+#bot_password = r4nd0MP4ss
+#post_url = https://browserperfdash.igalia.com/dash/bot-report
+
+## Configuration for dashboard localhost-test
+#[localhost-test]
+#bot_id = testlocalbot
+#bot_password = 123
+#post_url = http://localhost:8000/dash/bot-report

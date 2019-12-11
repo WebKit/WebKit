@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=../media-file.js></script>
+    <script src=../video-test.js></script>
+    <script>
+    window.addEventListener('load', async event => {
+        video = document.querySelector('video');
+
+        run('video.src = findMediaFile("video", "../content/test")');
+
+        run('track = video.addTextTrack("subtitles", "English", "en")');
+        run('track.mode = "showing"');
+
+        await waitFor(video, 'loadeddata');
+
+        let cueStartTime = 0;
+        let cueDuration = 0.050;
+        let cueCount = 0;
+        missedCueCount = 0;
+
+        while (cueStartTime < video.duration) {
+            let cue = new VTTCue(cueStartTime, cueStartTime + cueDuration, `Cue ${ ++cueCount }`)
+            cueStartTime += cueDuration;
+
+            cue.addEventListener('enter', event => {
+                cue.enterFireTime = performance.now();
+            });
+            cue.addEventListener('exit', event => {
+                cue.exitFireTime = performance.now();
+                let eventDuration = cue.exitFireTime - cue.enterFireTime;
+                let cueDuration = cue.endTime - cue.startTime;
+
+                if (eventDuration * 2 < cueDuration)
+                    ++missedCueCount;
+            });
+
+            track.addCue(cue);
+        }
+
+        consoleWrite(`Created ${ cueCount } cues.`);
+
+        video.play();
+        await waitFor(video, 'ended');
+
+        testExpected('missedCueCount', 50, '<');
+
+        endTest();
+    }, {once: true});
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>

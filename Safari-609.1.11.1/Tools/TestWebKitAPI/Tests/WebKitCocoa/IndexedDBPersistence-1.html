@@ -1,0 +1,35 @@
+<script>
+
+var request = window.indexedDB.deleteDatabase("IndexedDBPersistence");
+request.onsuccess = function(e)
+{
+    continueTest();
+}
+request.onerror = function(e)
+{
+    // Unexpected error
+    window.webkit.messageHandlers.testHandler.postMessage('Error');
+}
+
+function continueTest()
+{
+    var request = window.indexedDB.open("IndexedDBPersistence", 2);
+
+    request.onsuccess = function()
+    {
+        window.webkit.messageHandlers.testHandler.postMessage('Success');
+
+    }
+    request.onerror = function()
+    {
+        // Unexpected error
+        window.webkit.messageHandlers.testHandler.postMessage('Error');
+    }
+    request.onupgradeneeded = function(event)
+    {
+        window.webkit.messageHandlers.testHandler.postMessage('UpgradeNeeded');
+
+        event.target.result.createObjectStore("TestObjectStore");
+    }
+}
+</script>

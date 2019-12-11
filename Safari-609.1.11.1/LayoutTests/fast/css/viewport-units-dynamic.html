@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            height: 10000px;
+            width: 10000px;
+            margin: 0;
+        }
+        .box {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 5px solid black;
+            box-sizing: border-box;
+        }
+        
+        .width {
+            width: 100px;
+            height: 100px;
+            padding-left: 100px;
+        }
+
+        .height {
+            height: 100px;
+            width: 100px;
+            padding-top: 100px;
+        }
+        
+        body.changed .height {
+            height: 100vh;
+        }
+
+        body.changed .width {
+            width: 100vw;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        function doTest()
+        {
+            window.setTimeout(function() {
+                document.body.classList.add('changed');
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<div class="box width">
+    This should be as wide as the CSS viewport.
+</div>
+
+<div id="vertical" class="box height">
+    This should be as tall as the CSS viewport.
+</div>
+</body>
+</html>

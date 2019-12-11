@@ -1,0 +1,19 @@
+The quick brown fox jumped over the lazy dog.
+This test verifies that interacting with a menu action item on iOS that is marked with 'dontDismiss' does not cause the callout menu to dismiss, even if the action changes the selection. To test manually, select the text and tap an item in the callout menu that shouldn't automatically dismiss the menu but changes the selection rects (for instance, Bold). Verify that the callout menu remains visible after tapping this item.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS selectionRects[0].top is 101
+PASS selectionRects[0].width is 320
+PASS selectionRects[0].left is 1
+PASS selectionRects[0].height is 29
+PASS selectionRects[1].top is 130
+PASS selectionRects[1].width is 172
+PASS selectionRects[1].left is 1
+PASS selectionRects[1].height is 30
+PASS dismissingMenu is false
+PASS showingMenu is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

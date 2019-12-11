@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<canvas id="canvas" width="40" height="40"></canvas>
+
+<script>
+var success = false;
+function compileShader(gl, shaderSource, shaderType) {
+    var shader = gl.createShader(shaderType);
+
+    gl.shaderSource(shader, shaderSource);
+
+    gl.compileShader(shader);
+
+    success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+
+    shouldBe("success", "true");
+
+    return shader;
+}
+
+function createProgram(gl, vertexShader, fragmentShader) {
+    var program = gl.createProgram();
+
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+
+    gl.linkProgram(program);
+
+    success = gl.getProgramParameter(program, gl.LINK_STATUS);
+
+    shouldBe("success", "true");
+
+    return program;
+}
+
+description("Make sure that compiling GLSL ES 3 shaders works as expected.");
+
+if (window.internals)
+    internals.settings.setWebGL2Enabled(true);
+
+var vertexShaderSource = `#version 300 es
+layout(location = 0) in vec2 pos;
+
+void main()
+{
+    gl_Position = vec4(pos, 0.0, 1.0);
+}
+`;
+
+var fragmentShaderSource = `#version 300 es
+precision mediump float;
+out vec4 color;
+
+void main()
+{
+    color = vec4(1.0, 0.5, 0.0, 1.0);
+}
+`;
+    
+var canvas = document.getElementById("canvas");
+var gl = canvas.getContext("webgl2");
+
+var vertexShader = compileShader(gl, vertexShaderSource, gl.VERTEX_SHADER);
+var fragmentShader = compileShader(gl, fragmentShaderSource, gl.FRAGMENT_SHADER);
+
+var program = createProgram(gl, vertexShader, fragmentShader);
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
+

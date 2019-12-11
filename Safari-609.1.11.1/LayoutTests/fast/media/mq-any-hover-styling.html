@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<div id="target"></div>
+<style>
+    #target {
+        color: red;
+        background-color: black;
+        width: 100px;
+        height: 100px;
+        display: none;
+    }
+    @media (any-hover) {
+        #target {
+            color: green;
+        }
+    }
+    @media (any-hover: hover) {
+        #target {
+            background-color: blue;
+        }
+    }
+    @media (any-hover: on-demand) {
+        #target {
+            width: 10px;
+        }
+    }
+    @media (any-hover: none) {
+        #target {
+            height: 10px;
+        }
+    }
+</style>
+
+<script>
+    description("Test the any-hover media feature to guard style rules.")
+
+    var target = document.getElementById('target');
+
+    function displayProperty(property) {
+        var testString = 'getComputedStyle(target)["' + property + '"]';
+        debug(testString + " = " + eval(testString));
+    }
+
+    displayProperty("color");
+    displayProperty("background-color");
+    displayProperty("width");
+    displayProperty("height");
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

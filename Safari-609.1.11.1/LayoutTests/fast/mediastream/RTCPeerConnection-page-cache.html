@@ -1,0 +1,34 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Basic testing for RTCPeerConnection Page Caching.");
+jsTestIsAsync = true;
+
+window.addEventListener("pageshow", function(event) {
+  debug("pageshow - " + (event.persisted ? "" : "not ") + "from page cache");
+  if (event.persisted) {
+      testPassed("Page entered page cache");
+      finishJSTest();
+  }
+});
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering page cache");
+    if (!event.persisted) {
+        testFailed("Page failed to enter page cache");
+        finishJSTest();
+    }
+});
+
+onload = () => {
+    connection = new RTCPeerConnection();
+    setTimeout(() => {
+        window.location = "../history/resources/page-cache-helper.html";
+    }, 0);
+};
+</script>
+</body>
+</html>

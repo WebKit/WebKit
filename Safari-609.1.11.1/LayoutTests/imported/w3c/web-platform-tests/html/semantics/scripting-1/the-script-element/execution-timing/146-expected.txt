@@ -1,0 +1,3 @@
+
+FAIL scheduler: SVG script adding src attribute  assert_array_equals: lengths differ, expected 1 got 0
+

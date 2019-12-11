@@ -1,0 +1,5 @@
+
+FAIL getParameters() with audio receiver assert_true: Expect dictionary.encodings to be array expected true got false
+FAIL getParameters() with video receiver assert_true: Expect dictionary.encodings to be array expected true got false
+FAIL getParameters() with simulcast video receiver assert_true: Expect dictionary.encodings to be array expected true got false
+

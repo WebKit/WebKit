@@ -1,0 +1,55 @@
+<html>
+<head>
+<style>
+body { margin: 10; padding: 0 }
+</style>
+</head>
+<body contenteditable><div><br></div>hello<br>
+<script type="text/javascript">
+
+    var console_messages = document.createElement("ol");
+    
+    function log(message)
+    {
+        var item = document.createElement("li");
+        item.appendChild(document.createTextNode(message));
+        console_messages.appendChild(item);
+    }
+    
+    if (window.testRunner) {
+        
+        try {
+        
+            testRunner.dumpAsText();
+        
+            log("Testing text with br elements (<div><br></div>hello<br>)");
+            window.getSelection().setPosition(document.body, 5);
+
+            log("(0, 0): " + textInputController.attributedSubstringFromRange(0, 0).string());
+            log("(0, 1): " + textInputController.attributedSubstringFromRange(0, 1).string());
+            log("(0, 2): " + textInputController.attributedSubstringFromRange(0, 2).string());
+            log("(1, 1): " + textInputController.attributedSubstringFromRange(1, 1).string());
+            log("(1, 5): " + textInputController.attributedSubstringFromRange(1, 5).string());
+            log("(1, 6): " + textInputController.attributedSubstringFromRange(1, 6).string());
+            log("(1, 100): " + textInputController.attributedSubstringFromRange(1, 100).string());
+            log("(6, 1): " + textInputController.attributedSubstringFromRange(6, 1).string());
+            log("(7, 1): " + textInputController.attributedSubstringFromRange(7, 1).string()); // should be empty
+            log("(100, 0): " + textInputController.attributedSubstringFromRange(100, 0)); // should be undefined
+            log("(100, 100): " + textInputController.attributedSubstringFromRange(100, 100)); // should be undefined
+            
+            document.body.innerHTML = "";
+
+        } catch (ex) {
+            log("Exception: " + ex.description);
+        }
+        
+        var console = document.createElement("p");
+        console.appendChild(console_messages);
+        document.body.appendChild(console);
+        
+    } else {
+        document.write("This testcase is buggy: 9337.  (cannot run interactively)");
+    }
+</script>
+</body>
+</html>

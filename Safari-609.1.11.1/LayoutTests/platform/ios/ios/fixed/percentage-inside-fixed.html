@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            margin: 0;
+            height: 2500px;
+        }
+
+        .box {
+          height: 100px;
+          width: 100px;
+        }
+
+        .wrapper {
+          position: fixed;
+          width: 50%;
+          height: 50%;
+          border: 20px solid gray;
+          background-color: silver;
+          z-index: 0;
+        }
+
+        .inner {
+            position: relative;
+            margin-left:-50px;
+            margin-top:-100px;
+            top: 100%;
+            left: 50%;
+            background: green;
+        }
+    </style>
+    <script>
+      if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+      }
+
+      function doScroll()
+      {
+        window.setTimeout(function() {
+          window.scrollTo(0, 200);
+          if (window.testRunner) {
+            document.getElementById('results').innerText = window.internals.layerTreeAsText(document);
+            testRunner.notifyDone();
+          }
+        }, 10);
+      }
+      
+      window.addEventListener('load', doScroll, false);
+    </script>
+</head>
+<body>
+    <!-- The gray box should take up the top left quadrant of the web area.
+         The green box should be aligned with the inside edge of the paler gray box, in the bottom middle.
+    -->
+    <pre id="results"></pre>
+    <div class="wrapper">
+      <div class="inner box"></div>
+    </div>
+</body>
+</html>

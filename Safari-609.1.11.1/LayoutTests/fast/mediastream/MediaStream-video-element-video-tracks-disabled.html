@@ -1,0 +1,81 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+<head>
+    <style>
+        video {
+            position: absolute;
+            left: 10px;
+            top: 50px;
+        }
+        
+        .masker {
+            position: absolute;
+            left: 10px;
+            top: 50px;
+            height: 360px;
+            width: 680px;
+            border-top: 50px solid white;
+            border-right: 300px solid white;
+            border-bottom: 50px solid white;
+            border-left: 300px solid white;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+<p>Tests that the video frames of an HTMLVideoElement are black if no video MediaStreamTrack is enabled.</p>
+<video controls width="680" height="360"></video>
+<div class="masker"></div>
+
+<script>
+    let mediaStream;
+    let video;
+
+    function debug(msg)
+    {
+        let span = document.createElement('span');
+        document.body.appendChild(span);
+        span.innerHTML = `${msg} <br />`;
+    }
+
+    function canplaythrough()
+    {    
+        mediaStream.getVideoTracks()[0].enabled = false;
+        window.testRunner.notifyDone();
+    }
+
+    function canplay()
+    {
+        video.play();
+    }
+
+    function setupStream(stream)
+    {
+        mediaStream = stream;
+        video.srcObject = mediaStream;
+    }
+
+    function failedToSetupStream()
+    {
+        debug('Failed to setup stream');
+    }
+
+    function start()
+    {
+        video = document.querySelector('video');
+        video.addEventListener('canplay', canplay, false);
+        video.addEventListener('canplaythrough', canplaythrough, false);
+        navigator.mediaDevices.getUserMedia({video:true})
+            .then(setupStream)
+            .catch(failedToSetupStream);
+    }
+
+    if (window.testRunner) {
+        window.testRunner.waitUntilDone();
+        window.testRunner.setUserMediaPermission(true);
+        start();
+    }
+</script>
+</body>
+</html>

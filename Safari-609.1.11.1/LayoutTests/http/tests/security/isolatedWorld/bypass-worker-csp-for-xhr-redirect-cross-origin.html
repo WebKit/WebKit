@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<p>This tests that in an isolated world an XHR request made from a worker is allowed to load even if it redirects to a cross-origin resource that is not listed as a connect-src in the CSP of the worker.</p>
+<pre id="result"></pre>
+<script>
+window.onmessage = function (event)
+{
+    document.getElementById("result").textContent = event.data;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function runTest()
+{
+    var worker;
+    try {
+        worker = new Worker("http://127.0.0.1:8000/security/contentSecurityPolicy/resources/worker-xhr-redirect-cross-origin-allowed.php?csp=" + encodeURIComponent("connect-src http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.php"));
+        worker.onmessage = function (event) { window.postMessage(event.data, "*") };
+    } catch (exception) {
+        window.postMessage("FAIL should not have thrown an exception when creating worker. Threw exception " + exception + ".", "*");
+    }
+}
+
+if (window.testRunner)
+    testRunner.evaluateScriptInIsolatedWorld(0, runTest.toString() + ";runTest();");
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div tabindex=0 id="grid" role="grid" aria-readonly="true">
+<div  role="presentation">
+  <table role="presentation">
+          <thead>
+            <tr>
+                 <th role="columnheader" aria-sort="ascending">&nbsp;</th>
+                 <th role="columnheader">Name</th>
+                 <th role="columnheader">Time</th>
+                 <th role="columnheader">Popularity</th>
+                 <th role="columnheader"> Price</th>
+            </tr>
+          </thead>
+     
+    <tbody>
+    <tr role="row">
+        <td role="gridcell">
+          <span class="index"><span>1</span></span>
+        </td>
+        <td role="gridcell"">
+          <span><span>Test</span></span>
+        </td>
+        <td role="gridcell"">
+          <span><span>Test</span></span>
+        </td>
+        <td role="gridcell"">
+          <span><span>Test</span></span>
+        </td>
+    </tr>   
+</table></div></div>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that an ARIA grid with a hierarchy that ignores render elements in between will still expose the correct elements.");
+
+    if (window.accessibilityController) {
+
+          // this text field should be required.
+          document.getElementById("grid").focus();
+          var grid = accessibilityController.focusedElement;
+
+          shouldBe("grid.childrenCount", "6");
+          shouldBe("grid.childAtIndex(0).role", "'AXRole: AXRow'");
+          shouldBe("grid.childAtIndex(1).role", "'AXRole: AXColumn'");
+
+          shouldBe("grid.childAtIndex(0).childrenCount", "4");
+          shouldBe("grid.childAtIndex(0).childAtIndex(0).role", "'AXRole: AXCell'");
+
+          shouldBe("grid.childAtIndex(0).childAtIndex(0).role", "'AXRole: AXCell'");
+          shouldBe("grid.childAtIndex(0).childAtIndex(0).childAtIndex(0).role", "'AXRole: AXStaticText'");
+          shouldBe("grid.childAtIndex(0).childAtIndex(0).childAtIndex(0).stringValue", "'AXValue: 1'");
+
+    }
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

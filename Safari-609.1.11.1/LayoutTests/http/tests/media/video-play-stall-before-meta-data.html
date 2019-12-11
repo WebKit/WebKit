@@ -1,0 +1,26 @@
+<video></video>
+<p>Test that stalling very early, while loading meta-data, stops delaying the load event.</p>
+<script src=../../media-resources/media-file.js></script>
+<script src=../../media-resources/video-test.js></script>
+<script>
+
+    // Expected events.
+    waitForEvent("beforeload");
+    waitForEvent("loadstart");
+    waitForEvent("stalled");
+    waitForEvent("suspend");
+
+    // We want to make sure the onload event fires.
+    window.onload = function() {
+       consoleWrite("EVENT(window.onload)");
+       endTest();
+    };
+
+    // Find a supported media file.
+    var mediaFile = findMediaFile("video", "content/test");
+    var mimeType = mimeTypeForFile(mediaFile);
+
+    // Load should stall very early in the loading process.
+    video.src = "http://127.0.0.1:8000/resources/load-and-stall.cgi?name=../../../media/" + mediaFile + "&mimeType=" + mimeType + "&stallAt=1&stallFor=4";
+
+</script>

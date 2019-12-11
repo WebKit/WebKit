@@ -1,0 +1,7 @@
+2d.path.arc.negative
+
+arc() with negative radius throws INDEX_SIZE_ERR
+
+
+FAIL arc() with negative radius throws INDEX_SIZE_ERR assert_throws: function "function () { ctx.arc(0, 0, -1, 0, 0, true); }" threw object "TypeError: null is not an object (evaluating 'ctx.arc')" that is not a DOMException INDEX_SIZE_ERR: property "code" is equal to undefined, expected 1
+

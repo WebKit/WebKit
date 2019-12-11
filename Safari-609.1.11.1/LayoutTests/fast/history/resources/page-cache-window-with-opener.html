@@ -1,0 +1,43 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+window.addEventListener("pageshow", function(event) {
+    if (!window.sessionStorage.didStartPageCacheWindowWithOpenerTest) {
+        if (event.persisted)
+            window.opener.testFailed("page was restored from the page cache.");
+        else
+            window.opener.testPassed("page was not restored from the page cache.");
+        return;
+    }
+
+    delete window.sessionStorage.didStartPageCacheWindowWithOpenerTest;
+
+    if (event.persisted)
+        window.opener.testPassed("page was restored from the page cache.");
+    else
+        window.opener.testFailed("page was not restored from the page cache.");
+
+    window.opener.finishJSTest();
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    if (event.persisted)
+        window.opener.testPassed("page was saved to the page cache.");
+    else
+        window.opener.testFailed("page was not saved to the page cache.");
+}, false);
+
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        // Force a back navigation back to this page.
+        window.sessionStorage.didStartPageCacheWindowWithOpenerTest = true;
+        window.location.href = "page-cache-helper.html";
+    }, 0);
+}, false);
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

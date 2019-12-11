@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Test int bit math.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.ifStatement = async () =>
+{
+    let program = `
+        int foo(int x)
+        {
+            int y = 6;
+            if (x == 7) {
+                y = 8;
+            }
+            return y;
+        }
+    `;
+    assert_equals(await callIntFunction(program, "foo", [makeInt(3)]), 6);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(4)]), 6);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(5)]), 6);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(6)]), 6);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(7)]), 8);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(8)]), 6);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(9)]), 6);
+}
+
+whlslTests.ifElseStatement = async () =>
+{
+    let program = `
+        int foo(int x)
+        {
+            int y = 6;
+            if (x == 7) {
+                y = 8;
+            } else {
+                y = 9;
+            }
+            return y;
+        }
+    `;
+    assert_equals(await callIntFunction(program, "foo", [makeInt(3)]), 9);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(4)]), 9);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(5)]), 9);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(6)]), 9);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(7)]), 8);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(8)]), 9);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(9)]), 9);
+}
+
+whlslTests.ifElseIfStatement = async () =>
+{
+    let program = `
+        int foo(int x)
+        {
+            int y = 6;
+            if (x == 7) {
+                y = 8;
+            } else if (x == 8) {
+                y = 9;
+            }
+            return y;
+        }
+    `;
+    assert_equals(await callIntFunction(program, "foo", [makeInt(3)]), 6);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(4)]), 6);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(5)]), 6);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(6)]), 6);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(7)]), 8);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(8)]), 9);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(9)]), 6);
+}
+
+whlslTests.ifElseIfElseStatement = async () =>
+{
+    let program = `
+        int foo(int x)
+        {
+            int y = 6;
+            if (x == 7) {
+                y = 8;
+            } else if (x == 8) {
+                y = 9;
+            } else {
+                y = 10;
+            }
+            return y;
+        }
+    `;
+    assert_equals(await callIntFunction(program, "foo", [makeInt(3)]), 10);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(4)]), 10);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(5)]), 10);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(6)]), 10);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(7)]), 8);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(8)]), 9);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(9)]), 10);
+}
+
+runTests(whlslTests);
+</script>
+</html>

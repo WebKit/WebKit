@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BOCU-1 character set blacklisted</title>
+    <script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    description("Test that character set BOCU-1 is not supported and we default to ISO-8859-1. With support for BOCU-1 the iframe renders a Cyrillic string. Without it renders garbage.");
+    window.jsTestIsAsync = true;
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+    }
+    function run() {
+        var bocu1Frame = document.getElementById("bocu1Frame");
+        if (bocu1Frame.contentDocument.charset == "windows-1252") {
+            testPassed("charset is windows-1252");
+        } else {
+            testFailed("charset is " + bocu1Frame.contentDocument.charset);
+        }
+        finishJSTest();
+    }
+</script>
+<iframe id="bocu1Frame" src="resources/bocu-1-cyrillic.php" onload="run()"></iframe>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

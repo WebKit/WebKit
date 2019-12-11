@@ -1,0 +1,77 @@
+<html>
+<head>
+<title>CSS4 media query test: inverted-colors.</title>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function getUIScript()
+{
+    return `
+    (function() {
+        uiController.simulateAccessibilitySettingsChangeNotification(function() {
+            uiController.uiScriptComplete("Done");
+        });
+    })();`
+}
+
+function runTest()
+{
+    if (!window.internals)
+        return;
+
+    var frame = document.querySelector("iframe");
+    frame.contentWindow.postMessage({ type: "before" }, "*");
+}
+
+window.addEventListener("load", runTest, false);
+
+window.addEventListener("message", function (event) {
+    if (event.data.type == "beforeResponse") {
+        document.getElementById("before").textContent = event.data.color;
+        window.internals.settings.forcedColorsAreInvertedAccessibilityValue = "on";
+        if (testRunner.runUIScript) {
+            testRunner.runUIScript(getUIScript(), function(result) {
+                var frame = document.querySelector("iframe");
+                frame.contentWindow.postMessage({ type: "after" }, "*");
+            });
+        }
+    } else if (event.data.type == "afterResponse") {
+        document.getElementById("after").textContent = event.data.color;
+        testRunner.notifyDone();
+    }
+}, false);
+
+</script>
+</head>
+<body>
+  <iframe srcdoc='
+  <style type="text/css">
+  p { color: black; }
+
+  @media (inverted-colors) {
+      #a { color: green; }
+  }
+  </style>
+  <script>
+      window.addEventListener("message", function (event) {
+          var element = document.getElementById("a");
+          if (event.data.type == "before") {
+             event.source.postMessage({
+                 type: "beforeResponse",
+                 color: window.getComputedStyle(element).color
+             }, event.origin);
+          } else if (event.data.type == "after") {
+             event.source.postMessage({
+                 type: "afterResponse",
+                 color: window.getComputedStyle(element).color
+             }, event.origin);
+          }
+      }, false);
+  </script>
+  <p id="a"></p>
+  '></iframe>
+  <p>Before was: <span id="before"></span> - should be rgb(0, 0, 0)</p>
+  <p>After was: <span id="after"></span> - should be rgb(0, 128, 0)</p>
+</body>
+</html>

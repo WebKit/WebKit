@@ -1,0 +1,7 @@
+2d.imageData.create2.large
+
+createImageData(sw, sh) works for sizes much larger than the canvas
+
+
+FAIL createImageData(sw, sh) works for sizes much larger than the canvas null is not an object (evaluating 'ctx.createImageData')
+

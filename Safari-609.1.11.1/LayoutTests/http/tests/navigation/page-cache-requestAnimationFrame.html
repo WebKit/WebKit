@@ -1,0 +1,60 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/resources/js-test-pre.js"></script>
+<script>
+description('Tests that requestAnimationFrame() does not break when restoring from PageCache upon navigating back cross-origin.');
+window.jsTestIsAsync = true;
+
+var restoredFromPageCache = false;
+
+timerHandle = 0;
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+
+    if (event.persisted) {
+        testPassed("Page did enter and was restored from the page cache");
+        restoredFromPageCache = true;
+        setTimeout(() => {
+            testFailed("requestAnimationFrame did not work after restoring from PageCache.");
+            finishJSTest();
+        }, 10000);
+    }
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        testFailed("Page did not enter the page cache.");
+        finishJSTest();
+    }
+}, false);
+
+i = 0;
+function step() {
+    i++;
+    if (i % 10 == 0 && restoredFromPageCache) {
+        testPassed("requestAnimationFrame is running after restoring from PageCache.");
+        clearTimeout(timerHandle);
+        setTimeout(() => {
+            finishJSTest();
+        }, 100);
+    } else
+        requestAnimationFrame(step);
+}
+requestAnimationFrame(step);
+
+window.addEventListener('load', function() {
+    // This needs to happen in a setTimeout because a navigation inside the onload handler would
+    // not create a history entry.
+    setTimeout(function() {
+      // Force a back navigation back to this page.
+      window.location.href = "http://localhost:8000/navigation/resources/page-cache-helper.html";
+    }, 0);
+}, false);
+
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

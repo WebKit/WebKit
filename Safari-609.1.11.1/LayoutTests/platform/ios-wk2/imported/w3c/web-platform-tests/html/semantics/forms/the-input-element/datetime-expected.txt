@@ -1,0 +1,39 @@
+Date and Time Inputs
+
+
+PASS date type support on input element 
+PASS [date] The value must be a valid global date and time string 
+PASS [date] The min attribute must have a value that is a valid global date and time string 
+PASS [date] The max attribute must have a value that is a valid global date and time string 
+PASS [date] The step attribute must be expressed in seconds 
+PASS [date] stepUp method support on input 'date' element 
+PASS [date] stepDown method support on input 'date' element 
+PASS [time] time type support on input element 
+PASS [time] The value must be a valid global date and time string 
+PASS [time] The min attribute must have a value that is a valid global date and time string 
+PASS [time] The max attribute must have a value that is a valid global date and time string 
+PASS [time] The step attribute must be expressed in seconds 
+PASS [time] stepUp method support on input 'time' element 
+PASS [time] stepDown method support on input 'time' element 
+PASS datetime-local type support on input element 
+PASS [datetime-local] The must be a valid local date and time string 
+PASS [datetime-local] The min attribute must have a value that is a valid local date and time string 
+PASS [datetime-local] The max attribute must have a value that is a valid local date and time string 
+PASS [datetime-local] The step attribute must be expressed in seconds 
+PASS [datetime-local] stepUp method support on input 'datetime-local' element 
+PASS [datetime-local] stepDown method support on input 'datetime-local' element 
+PASS month type support on input element 
+PASS [month] The value must be a value that is a valid global date and time string 
+PASS [month] The min attribute must have a value that is a valid global date and time string 
+PASS [month] The max attribute must have a value that is a valid global date and time string 
+PASS [month] The step attribute must be expressed in seconds 
+PASS [month] stepUp method support on input 'month' element 
+PASS [month] stepDown method support on input 'month' element 
+PASS week type support on input element 
+PASS [week] The value must be a value that is a valid global date and time string 
+PASS [week] The min attribute must have a value that is a valid global date and time string 
+PASS [week] The max attribute must have a value that is a valid global date and time string 
+PASS [week] The step attribute must be expressed in seconds 
+PASS [week] stepUp method support on input 'week' element 
+PASS [week] stepDown method support on input 'week' element 
+

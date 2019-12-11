@@ -1,0 +1,5 @@
+Bug 21381: Incremental parsing of html causes bogus line numbers in some cases
+
+This tests that the line numbers associated with a script element are correct, even when parsing is interrupted mid way through the script element
+
+PASS: Got 4006

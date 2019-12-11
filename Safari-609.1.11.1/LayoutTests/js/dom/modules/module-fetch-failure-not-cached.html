@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Module fetch failure is not cached in module pipeline</title>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+promise_test(() => {
+    return new Promise(function (resolve, reject) {
+        var scriptWithBadValue = document.createElement('script');
+        scriptWithBadValue.type = 'module';
+        scriptWithBadValue.src = './script-tests/module-fetch-failure-not-cached.js';
+        scriptWithBadValue.integrity = 'sha256-badbeef';
+        scriptWithBadValue.onload = reject;
+        scriptWithBadValue.onerror = function () {
+            assert_equals(window.moduleIsLoaded, undefined);
+            var script = document.createElement('script');
+            script.type = 'module';
+            script.src = './script-tests/module-integrity-bad-value-success-with-cache.js';
+            script.integrity = 'sha256-7iiaipciOq3/cXnCpuOPyoC9GgCQw2F6y84mH4CJrGk=';
+            script.onload = function () {
+                assert_equals(window.moduleIsLoaded, true);
+                resolve();
+            };
+            script.onerror = reject;
+            document.body.appendChild(script);
+        };
+        document.body.appendChild(scriptWithBadValue);
+    });
+}, 'Module fetch failure is not cached in module pipeline');
+</script>
+</body>
+</html>

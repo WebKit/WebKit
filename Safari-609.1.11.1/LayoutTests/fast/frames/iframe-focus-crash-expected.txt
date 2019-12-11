@@ -1,0 +1,2 @@
+This tests that setting focus to a removed frame does not cause a crash. The test passes if it does not crash.
+

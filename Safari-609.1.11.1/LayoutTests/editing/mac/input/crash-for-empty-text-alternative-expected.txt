@@ -1,0 +1,6 @@
+Ensure that a empty text alternative does not lead to a crash
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+tisatest
+TEST COMPLETE

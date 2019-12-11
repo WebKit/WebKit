@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 46x19
+          text run at (0,0) width 46: "test for "
+        RenderInline {A} at (0,0) size 56x19 [color=#0000EE]
+          RenderText {#text} at (46,0) size 56x19
+            text run at (46,0) width 56: "4065447"
+        RenderText {#text} at (102,0) size 247x19
+          text run at (102,0) width 247: " (support outerHTML on IMG elements)"
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 476x19
+          text run at (0,0) width 476: "If the test fails, you'll see a Mozilla logo; if it succeeds, you'll see an Apple logo."
+      RenderBlock (anonymous) at (0,72) size 784x64
+        RenderImage {IMG} at (0,0) size 52x64
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

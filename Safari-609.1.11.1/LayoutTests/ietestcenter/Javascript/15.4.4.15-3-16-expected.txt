@@ -1,0 +1,11 @@
+15.4.4.15-3-16 (TestCases/chapter15/15.4/15.4.4/15.4.4.15/15.4.4.15-3-16.js) Array.prototype.lastIndexOf when value of 'length' is a string which is able to be converted into hex number
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ES5Harness.preconditionPassed is true
+PASS ES5Harness.testPassed is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

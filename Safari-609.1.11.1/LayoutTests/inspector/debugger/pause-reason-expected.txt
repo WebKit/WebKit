@@ -1,0 +1,37 @@
+CONSOLE MESSAGE: line 8: TypeError: undefined is not an object (evaluating '[].x.x')
+CONSOLE MESSAGE: line 18: Assertion message
+Test that pausing in different ways triggers different pause reasons.
+
+
+== Running test suite: Debugger.PauseReason
+-- Running test case: Debugger.PauseReason.Exception
+PAUSE #1
+  REASON: exception
+  DATA: {"description":"TypeError: undefined is not an object (evaluating '[].x.x')"}
+Uncaught exception in test page: TypeError: undefined is not an object (evaluating '[].x.x') [pause-reasons.js:8]
+RESUMED
+
+-- Running test case: Debugger.PauseReason.DebuggerStatement
+PAUSE #2
+  REASON: debugger-statement
+  NO DATA
+RESUMED
+
+-- Running test case: Debugger.PauseReason.Assertion
+PAUSE #3
+  REASON: assertion
+  DATA: {"message":"Assertion message"}
+RESUMED
+
+-- Running test case: Debugger.PauseReason.Breakpoint
+PAUSE #4
+  REASON: breakpoint
+  DATA: {"breakpointId":"pause-reasons.js:3:0"}
+RESUMED
+
+-- Running test case: Debugger.PauseReason.PauseImmediately
+PAUSE #5
+  REASON: pause-on-next-statement
+  NO DATA
+RESUMED
+

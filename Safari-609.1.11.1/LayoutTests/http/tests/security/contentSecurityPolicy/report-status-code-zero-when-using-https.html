@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<p>This tests that the status-code is 0 in the Content Security Policy violation report for a protected resource delivered over HTTPS.</p>
+<!-- window.testRunner.notifyDone() will be ultimately called by generate-csp-report.php. -->
+<iframe src="https://127.0.0.1:8443/security/contentSecurityPolicy/resources/generate-csp-report.php?test=/security/contentSecurityPolicy/report-status-code-zero-when-using-https.html"></iframe>
+</body>
+</html>

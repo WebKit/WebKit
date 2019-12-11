@@ -1,0 +1,7 @@
+2d.fillRect.nonfinite
+fillRect() with Infinity/NaN is ignored
+Spec references: 2d.nonfinite
+Actual output:
+Expected output:
+
+Passed

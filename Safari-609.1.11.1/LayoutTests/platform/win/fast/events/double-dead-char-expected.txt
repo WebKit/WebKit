@@ -1,0 +1,3 @@
+Test for rdar://problem/5535636: Have to press 4 times instead of 2 times to get the expected result of ^^ with German keyboard.
+
+^^

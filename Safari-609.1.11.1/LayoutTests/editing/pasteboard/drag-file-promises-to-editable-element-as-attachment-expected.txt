@@ -1,0 +1,13 @@
+If we drag file promises onto an editable area, then attachments should be inserted into the editable area.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS attachment.nodeName is "ATTACHMENT"
+PASS attachment.nodeName is "ATTACHMENT"
+PASS attachment.nodeName is "ATTACHMENT"
+PASS fileNames is "apple.gif mozilla.gif drop-file-svg.svg "
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

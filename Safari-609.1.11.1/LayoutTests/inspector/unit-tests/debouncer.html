@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debouncer");
+
+    suite.addTestCase({
+        name: "Debouncer.TimeDelay.Same",
+        test(resolve, reject) {
+            let callCount = 0;
+            let startTime = performance.now();
+
+            let debouncer = new Debouncer((foo, bar) => {
+                ++callCount;
+
+                InspectorTest.expectGreaterThanOrEqual(performance.now() - startTime, 9, "Call was delayed.");
+
+                InspectorTest.expectEqual(arguments.length, 2, "Arguments length is 2.");
+                InspectorTest.expectEqual(foo, 4, "First argument is 4.");
+                InspectorTest.expectEqual(bar, "abc", "Second argument is 'abc'.");
+            });
+
+            debouncer.delayForTime(10, 1, 'xyz');
+            debouncer.delayForTime(10, 2, 'fgh');
+            debouncer.delayForTime(10, 3, 'ert');
+            debouncer.delayForTime(10, 4, 'abc');
+
+            if (callCount)
+                InspectorTest.fail("Debounced function called immediately.");
+
+            setTimeout(() => {
+                InspectorTest.expectEqual(callCount, 1, "Debounced function called once.");
+                resolve();
+            }, 20);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Debouncer.TimeDelay.Different",
+        test(resolve, reject) {
+            let callCount = 0;
+            let startTime = performance.now();
+
+            let debouncer = new Debouncer((foo, bar) => {
+                ++callCount;
+
+                InspectorTest.expectGreaterThanOrEqual(performance.now() - startTime, 39, "Call was delayed.");
+
+                InspectorTest.expectEqual(arguments.length, 2, "Arguments length is 2.");
+                InspectorTest.expectEqual(foo, 4, "First argument is 4.");
+                InspectorTest.expectEqual(bar, "abc", "Second argument is 'abc'.");
+            });
+
+            debouncer.delayForTime(10, 1, 'xyz');
+            debouncer.delayForTime(20, 2, 'fgh');
+            debouncer.delayForTime(30, 3, 'ert');
+            debouncer.delayForTime(40, 4, 'abc');
+
+            if (callCount)
+                InspectorTest.fail("Debounced function called immediately.");
+
+            setTimeout(() => {
+                InspectorTest.expectEqual(callCount, 1, "Debounced function called once.");
+                resolve();
+            }, 50);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Debounce.TimeDelay.Zero",
+        test(resolve, reject) {
+            let callCount = 0;
+            let startTime = performance.now();
+
+            let debouncer = new Debouncer((foo, bar) => {
+                ++callCount;
+
+                InspectorTest.expectGreaterThanOrEqual(performance.now() - startTime, 0, "Call was delayed.");
+
+                InspectorTest.expectEqual(arguments.length, 2, "Arguments length is 2.");
+                InspectorTest.expectEqual(foo, 4, "First argument is 4.");
+                InspectorTest.expectEqual(bar, "abc", "Second argument is 'abc'.");
+            });
+
+            debouncer.delayForTime(0, 1, 'xyz');
+            debouncer.delayForTime(0, 2, 'fgh');
+            debouncer.delayForTime(0, 3, 'ert');
+            debouncer.delayForTime(0, 4, 'abc');
+
+            if (callCount)
+                InspectorTest.fail("Debounced function called immediately.");
+
+            setTimeout(() => {
+                InspectorTest.expectEqual(callCount, 1, "Debounced function called once.");
+                resolve();
+            }, 10);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Debounce.MicrotaskDelay",
+        test(resolve, reject) {
+            let callCount = 0;
+            let startTime = performance.now();
+
+            let debouncer = new Debouncer((foo, bar) => {
+                ++callCount;
+
+                InspectorTest.expectGreaterThanOrEqual(performance.now() - startTime, 0, "Call was delayed.");
+
+                InspectorTest.expectEqual(arguments.length, 2, "Arguments length is 2.");
+                InspectorTest.expectEqual(foo, 4, "First argument is 4.");
+                InspectorTest.expectEqual(bar, "abc", "Second argument is 'abc'.");
+            });
+
+            debouncer.delayForMicrotask(1, 'xyz');
+            debouncer.delayForMicrotask(2, 'fgh');
+            debouncer.delayForMicrotask(3, 'ert');
+            debouncer.delayForMicrotask(4, 'abc');
+
+            if (callCount)
+                InspectorTest.fail("Debounced function called immediately.");
+
+            setTimeout(() => {
+                InspectorTest.expectEqual(callCount, 1, "Debounced function called once.");
+                resolve();
+            }, 20);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Debounce.DifferentDelays",
+        test(resolve, reject) {
+            let callCount = 0;
+            let startTime = performance.now();
+
+            let debouncer = new Debouncer((foo, bar) => {
+                ++callCount;
+
+                InspectorTest.expectGreaterThanOrEqual(performance.now() - startTime, 19, "Call was delayed.");
+
+                InspectorTest.expectEqual(arguments.length, 2, "Arguments length is 2.");
+                InspectorTest.expectEqual(foo, 3, "First argument is 3.");
+                InspectorTest.expectEqual(bar, "ert", "Second argument is 'ert'.");
+            });
+
+            debouncer.delayForMicrotask(1, 'xyz');
+            debouncer.delayForFrame(2, 'fgh');
+            debouncer.delayForTime(20, 3, 'ert');
+
+            if (callCount)
+                InspectorTest.fail("Debounced function called immediately.");
+
+            setTimeout(() => {
+                InspectorTest.expectEqual(callCount, 1, "Debounced function called once.");
+                resolve();
+            }, 20);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Debounce.Force",
+        test(resolve, reject) {
+            let callCount = 0;
+            let startTime = performance.now();
+
+            let debouncer = new Debouncer((foo, bar) => {
+                ++callCount;
+
+                InspectorTest.expectLessThanOrEqual(performance.now() - startTime, 1, "Call was not delayed.");
+
+                InspectorTest.expectEqual(arguments.length, 2, "Arguments length is 2.");
+                InspectorTest.expectEqual(foo, 2, "First argument is 2.");
+                InspectorTest.expectEqual(bar, "fgh", "Second argument is 'fgh'.");
+            });
+
+            debouncer.delayForTime(10, 1, 'xyz');
+            debouncer.force(2, 'fgh');
+
+            InspectorTest.expectEqual(callCount, 1, "Debounced function called immediately");
+
+            setTimeout(() => {
+                InspectorTest.expectEqual(callCount, 1, "Debounced function called once.");
+                resolve();
+            }, 20);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Debounce.Cancel",
+        test(resolve, reject) {
+            let called = false;
+
+            let debouncer = new Debouncer(() => {
+                called = true;
+            });
+
+            debouncer.delayForTime(10);
+            debouncer.cancel();
+
+            setTimeout(() => {
+                InspectorTest.expectFalse(called, "Debounced function canceled.");
+                resolve();
+            }, 20);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing Debouncer functionality.</p>
+</body>
+</html>

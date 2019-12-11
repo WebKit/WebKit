@@ -1,0 +1,37 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:RequestIdleCallbackEnabled=true ] -->
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+
+description('This tests that when requestIdleCallback is enabled, requestIdleCallback is eventaully called in the order.');
+
+jsTestIsAsync = true;
+
+const iframe = document.createElement('iframe');
+const logs = [];
+
+iframe.onload = () => {
+    requestIdleCallback(() => {
+        logs.push('1.A1');
+        iframe.contentWindow.cancelIdleCallback(b1);
+    });
+
+    const b1 = iframe.contentWindow.requestIdleCallback(() => logs.push('2.B1'));
+
+    window.a2 = requestIdleCallback(() => logs.push('3.A2'));
+    cancelIdleCallback(a2 + 1);
+    window.a3 = requestIdleCallback(() => logs.push('4.A3'));
+    shouldBe('a3', 'a2 + 1');
+}
+document.body.appendChild(iframe);
+
+setTimeout(() => {
+    shouldBe('logs.length', '3');
+    shouldBeEqualToString('logs.join(", ")', '1.A1, 3.A2, 4.A3');
+    finishJSTest();
+}, 200);
+
+</script>
+</body>
+</html>

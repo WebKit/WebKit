@@ -1,0 +1,10 @@
+Tests that when a request is made on a UserMedia object and its Frame is disconnected before a callback is made, the error callback is invoked with the correct error message.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Promise rejected as expected.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

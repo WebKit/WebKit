@@ -1,0 +1,34 @@
+This test checks that access to CSS properties via JavaScript properties on DOM elements is case sensitive.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+normal cases
+
+PASS element.style.zIndex is '1'
+PASS element.style.ZIndex is undefined.
+
+"css" prefix
+
+PASS element.style.cssZIndex is '1'
+PASS element.style.CssZIndex is '1'
+PASS element.style.CsszIndex is undefined.
+PASS element.style.csszIndex is undefined.
+
+"pixel" prefix
+
+PASS element.style.pixelZIndex is 1
+PASS element.style.PixelZIndex is 1
+PASS element.style.pixelzIndex is undefined.
+PASS element.style.PixelzIndex is undefined.
+
+"pos" prefix
+
+PASS element.style.posZIndex is 1
+PASS element.style.PosZIndex is 1
+PASS element.style.poszIndex is undefined.
+PASS element.style.PoszIndex is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test-pre.js"></script>
+
+<script>
+description("Test that calling setAttributeNS() throws an error when http://www.w3.org/TR/dom/#dom-element-setattributens says it should.");
+
+window.elem = document.createElement('test');
+
+// Spec: http://www.w3.org/TR/dom/#dom-element-setattributens
+
+// Step 5.
+shouldThrowErrorName("elem.setAttributeNS(null, 'foo:bar', 'baz')", 'NamespaceError');
+
+// Step 6.
+shouldNotThrow("elem.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:abc', 'foo')");
+shouldThrowErrorName("elem.setAttributeNS('http://www.w3.org/not-XML/1998/namespace', 'xml:abc', 'foo')", 'NamespaceError');
+
+// Step 7.
+shouldNotThrow("elem.setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns', 'http://wwww.example.org')");
+shouldThrowErrorName("elem.setAttributeNS('http://www.w3.org/2000/not-xmlns/', 'xmlns', 'http://wwww.example.org')", 'NamespaceError');
+shouldNotThrow("elem.setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:abc', 'http://wwww.example.org')");
+shouldThrowErrorName("elem.setAttributeNS('http://www.w3.org/2000/not-xmlns/', 'xmlns:abc', 'http://wwww.example.org')", 'NamespaceError');
+
+// Step 8.
+shouldThrowErrorName("elem.setAttributeNS('http://www.w3.org/2000/xmlns/', 'badprefix:xmlns', 'http://wwww.example.org')", 'NamespaceError');
+shouldThrowErrorName("elem.setAttributeNS('http://www.w3.org/2000/xmlns/', 'notxmlns', 'http://wwww.example.org')", 'NamespaceError');
+</script>
+
+<script src="../../resources/js-test-post.js"></script>

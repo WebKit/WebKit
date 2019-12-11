@@ -1,0 +1,33 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+layer at (8,8) size 56x56
+  RenderBlock (relative positioned) {DIV} at (0,0) size 56x56 [border: (3px solid #008000)]
+layer at (21,13) size 10x10
+  RenderBlock (positioned) {DIV} at (13,5) size 10x10 [bgcolor=#0000FF]
+layer at (8,64) size 56x56
+  RenderBlock (relative positioned) {DIV} at (0,56) size 56x56 [border: (3px solid #008000)]
+layer at (21,105) size 10x10
+  RenderBlock (positioned) {DIV} at (13,41) size 10x10 [bgcolor=#0000FF]
+layer at (8,120) size 56x56
+  RenderBlock (relative positioned) {DIV} at (0,112) size 56x56 [border: (3px solid #008000)]
+layer at (21,125) size 10x46
+  RenderBlock (positioned) {DIV} at (13,5) size 10x46 [bgcolor=#0000FF]
+layer at (8,176) size 56x56
+  RenderBlock (relative positioned) {DIV} at (0,168) size 56x56 [border: (3px solid #008000)]
+layer at (13,189) size 10x10
+  RenderBlock (positioned) {DIV} at (5,13) size 10x10 [bgcolor=#0000FF]
+layer at (8,232) size 56x56
+  RenderBlock (relative positioned) {DIV} at (0,224) size 56x56 [border: (3px solid #008000)]
+layer at (49,245) size 10x10
+  RenderBlock (positioned) {DIV} at (41,13) size 10x10 [bgcolor=#0000FF]
+layer at (8,288) size 56x56
+  RenderBlock (relative positioned) {DIV} at (0,280) size 56x56 [border: (3px solid #008000)]
+layer at (13,301) size 46x10
+  RenderBlock (positioned) {DIV} at (5,13) size 46x10 [bgcolor=#0000FF]
+layer at (8,344) size 56x56
+  RenderBlock (relative positioned) {DIV} at (0,336) size 56x56 [border: (3px solid #008000)]
+layer at (13,349) size 46x46
+  RenderBlock (positioned) {DIV} at (5,5) size 46x46 [bgcolor=#0000FF]

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText()
+        testRunner.waitUntilDone();
+    }
+    var finishedImage = false;
+</script>
+<script src="/js-test-resources/js-test.js"></script>
+<link rel=preload href="../resources/slow-image.php" as=image onload="finishedImage = true;">
+<body>
+<script>
+    window.addEventListener("load", function() {
+        shouldBeTrue("finishedImage");
+        testRunner.notifyDone();
+    });
+    var img = new Image();
+    img.src = "../resources/slow-image.php";
+    document.body.appendChild(img);
+</script>
+</body>

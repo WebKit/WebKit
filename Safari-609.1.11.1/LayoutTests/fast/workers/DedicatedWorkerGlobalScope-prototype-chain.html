@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/worker-create-common.js"></script>
+<script>
+
+var jsTestIsAsync = true;
+
+description("Tests that DedicatedWorkerGlobalScope's prototype chain is correct.");
+
+var worker = createWorker();
+worker.postMessage("eval DedicatedWorkerGlobalScope.prototype.toString() === \"[object DedicatedWorkerGlobalScopePrototype]\"");
+worker.postMessage("eval Object.getPrototypeOf(DedicatedWorkerGlobalScope.prototype) === WorkerGlobalScope.prototype");
+worker.postMessage("eval WorkerGlobalScope.prototype.toString() === \"[object WorkerGlobalScopePrototype]\"");
+worker.postMessage("eval Object.getPrototypeOf(WorkerGlobalScope.prototype) === EventTarget.prototype");
+worker.postMessage("eval DONE");
+
+worker.onmessage = function(evt) {
+    if (!/DONE/.test(evt.data))
+        debug(evt.data.replace(new RegExp("/.*LayoutTests"), "<...>"));
+    else
+        finishJSTest();
+};
+
+</script>
+<script src="../../resources/js-test-post.js"></script>

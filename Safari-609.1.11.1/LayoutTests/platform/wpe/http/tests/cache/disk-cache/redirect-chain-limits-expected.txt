@@ -1,0 +1,33 @@
+CONSOLE MESSAGE: Load cannot follow more than 20 redirections
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/cache/disk-cache/resources/redirect-chain.php?length=20&uniqueId=807086901171&random=2016400226 due to access control checks.
+CONSOLE MESSAGE: Load cannot follow more than 20 redirections
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/cache/disk-cache/resources/redirect-chain.php?length=20&uniqueId=807086901171&random=1493541360 due to access control checks.
+Test the limits of redirect chain length.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Redirect chain length: 1
+Response status code: 200
+Response source: Disk cache
+
+Redirect chain length: 5
+Response status code: 200
+Response source: Disk cache
+
+Redirect chain length: 6
+Response status code: 200
+Response source: Network
+
+Redirect chain length: 20
+Response status code: 200
+Response source: Network
+
+Redirect chain length: 40
+Response status code: 0
+Response source: Null response
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

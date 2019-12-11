@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div { border: 1px solid black; }
+</style>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+function runTest() {
+    description('Testcase for bug <a href="https://bugs.webkit.org/show_bug.cgi?id=120006">120006</a>: &lt;br&gt; does not get deleted when inlined after some non-textual content.\nTo manually verify this issue, place the caret at the start of the second line and then do a back-delete (backspace). The two lines should then be merged and the caret should get placed after the text control.');
+    
+    if (window.internals) {
+        var selection = window.getSelection();
+        var testElement = document.getElementById('test');
+
+        selection.collapse(testElement, 2);
+        expectedCaretRect = internals.absoluteCaretBounds(document);
+
+        selection.collapse(testElement, 3);
+        document.execCommand("Delete");
+        caretRect = internals.absoluteCaretBounds(document);
+        
+        shouldBe("caretRect.left", "expectedCaretRect.left");
+        shouldBe("caretRect.top", "expectedCaretRect.top");
+        
+        testElement.style.display = 'none';
+    }
+}
+</script>
+<body onLoad="runTest()">
+<div contenteditable="true">
+<span id="test">text1<input type="text"/><br>text2</span>
+</div>
+<div id="description"></div>
+<div id="console"></div>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/char-decoding-utils.js"></script>
+</head>
+<body>
+<script>
+
+description("This tests decoding characters in various character sets.");
+
+testDecode('UTF-8', '%E2%88%9A', 'U+221A');
+
+// <http://bugs.webkit.org/show_bug.cgi?id=17014> EUC-CN code A3A0 is mapped to U+E5E5 instead of U+3000
+testDecode('gb2312', '%A3%A0', 'U+3000');
+testDecode('gb_2312-80', '%A3%A0', 'U+3000');
+testDecode('chinese', '%A3%A0', 'U+3000');
+testDecode('gbk', '%A3%A0', 'U+3000');
+testDecode('gb18030', '%A3%A0', 'U+3000');
+testDecode('EUC-CN', '%A3%A0', 'U+3000');
+
+// Test Shift_JIS aliases.
+testDecode('Shift_JIS', '%82%d0', 'U+3072');
+testDecode('shift-jis', '%82%d0', 'U+3072');
+
+// Test that all Korean encodings of EUC-KR family are treated as windows-949.
+var korean = {
+    encodings: ['korean', 'EUC-KR', 'windows-949', 'x-windows-949', 'x-uhc',
+                'iso-ir-149', 'KS_C_5601-1987', 'KS_C_5601-1989',
+                'KSC5601', 'KSC_5601'],
+    encoded: ['%A2%E6', '%A1%A4', '%A1%A9', '%A1%AA', '%A1%AD', '%A2%A6',
+              '%A2%C1', '%1A',    '%1C',    '%8F%A1', '%B4%D3', '%A2%41'],
+    unicode: ['U+20AC', 'U+00B7', 'U+00AD', 'U+2015', 'U+223C', 'U+FF5E', 
+              'U+2299', 'U+001A', 'U+001C', 'U+B8EA', 'U+B2D2', 'U+C910'] 
+};
+
+batchTestDecode(korean);
+   
+// Test that ISO-8859-9 (Turkish) is upgraded to windows-1254 with Euro symbol.
+var turkish = {
+  encodings: ['iso-8859-9', 'latin5', 'windows-1254'],
+  encoded: ['%80', '%9F', '%FD'],
+  unicode: ['U+20AC', 'U+0178', 'U+0131']
+};
+
+batchTestDecode(turkish);
+
+// FIXME: Have to add tests for Euro and a few new characters added to ISO-8859-x 
+// that are NOT subsets of the corresponding Windows codepages. For instance,
+// ISO-8859-7:2003 has Euro at 0xA4 and a couple of other new characters.
+// ICU 3.8.x or later has them. Perhaps, we need to have a separate test that
+// can be enabled only with modern ICU.
+
+// Baltic encodings fine points.
+testDecode('ISO-8859-13', '%A1', 'U+201D');
+testDecode('ISO-8859-13', '%A5', 'U+201E');
+testDecode('ISO-8859-13', '%B4', 'U+201C');
+testDecode('ISO-8859-13', '%FF', 'U+2019');
+testDecode('windows-1257', '%80', 'U+20AC');
+testDecode('windows-1257', '%B4', 'U+00B4');
+testDecode('windows-1257', '%FF', 'U+02D9');
+
+// Greek encodings fine points.
+testDecode('iso-8859-7', '%A1', 'U+2018');
+testDecode('iso-8859-7', '%B5', 'U+0385');
+testDecode('iso-8859-7', '%B6', 'U+0386');
+testDecode('windows-1253', '%80', 'U+20AC');
+testDecode('windows-1253', '%A1', 'U+0385');
+testDecode('windows-1253', '%B5', 'U+00B5');
+testDecode('windows-1253', '%B6', 'U+00B6');
+
+// KOI-8 variants
+testDecode('KOI8-R', '%A4', 'U+2553');
+testDecode('KOI8-R', '%AD', 'U+255C');
+testDecode('KOI8-U', '%A4', 'U+0454');
+testDecode('KOI8-U', '%AD', 'U+0491');
+
+// Test that TIS-620 and ISO-8859-11 (Thai) are upgraded to windows-874.
+// "0xDB => U+F8C1" is a weird PUA mapping that doesn't seem to be of
+// any use, even on Windows.
+var thai = {
+  encodings: ['TIS-620', 'ISO-8859-11', 'windows-874', 'dos-874'],
+  encoded: ['%80', '%96', '%A0', '%A1', '%DB'],
+  unicode: ['U+20AC', 'U+2013', 'U+00A0', 'U+0E01', 'U+F8C1']
+};
+
+batchTestDecode(thai);
+
+// UTF-7 is expressly forbidden, so decoding it should not work correctly.
+// This attempts to decode '<' as UTF-7 (+AD4) but it ends up being decoded
+// as a '+AD4'.
+testDecode('UTF-7', '+AD4', 'U+002B/U+0041/U+0044/U+0034');
+testDecode('utf-7', '+AD4', 'U+002B/U+0041/U+0044/U+0034');
+
+// UTF-16LE and variants.
+testDecode('UTF-16LE', '%69%D8%D6%DE', 'U+D869/U+DED6');
+testDecode('unicodeFEFF', '%69%D8%D6%DE', 'U+D869/U+DED6');
+// According to HTML5 and for IE compatibility, UTF-16 is treated as little endian. The following tests fail as of Firefox 3.6.13.
+testDecode('UTF-16', '%69%D8%D6%DE', 'U+D869/U+DED6');
+testDecode('ISO-10646-UCS-2', '%69%D8%D6%DE', 'U+D869/U+DED6');
+testDecode('UCS-2', '%69%D8%D6%DE', 'U+D869/U+DED6');
+testDecode('Unicode', '%69%D8%D6%DE', 'U+D869/U+DED6');
+testDecode('csUnicode', '%69%D8%D6%DE', 'U+D869/U+DED6');
+
+// UTF-16BE and variants.
+testDecode('UTF-16BE', '%D8%69%DE%D6', 'U+D869/U+DED6');
+testDecode('unicodeFFFE', '%D8%69%DE%D6', 'U+D869/U+DED6');
+
+// Replacement encodings should decode as replacement (U+FFFD) then EOF
+testDecode("csiso2022kr", "%41%42%43%61%62%63%31%32%33%A0", "U+FFFD");
+testDecode("hz-gb-2312", "%41%42%43%61%62%63%31%32%33%A0", "U+FFFD");
+testDecode("iso-2022-cn", "%41%42%43%61%62%63%31%32%33%A0", "U+FFFD");
+testDecode("iso-2022-cn-ext", "%41%42%43%61%62%63%31%32%33%A0", "U+FFFD");
+testDecode("iso-2022-kr", "%41%42%43%61%62%63%31%32%33%A0", "U+FFFD");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

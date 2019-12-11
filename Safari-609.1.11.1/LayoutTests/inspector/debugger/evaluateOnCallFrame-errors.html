@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function triggerPause() {
+    debugger;
+}
+
+function test()
+{
+    InspectorProtocol.sendCommand("Debugger.enable");
+    InspectorProtocol.sendCommand("Debugger.setBreakpointsActive", {active: true});
+
+    let suite = ProtocolTest.createAsyncSuite("Debugger.evaluateOnCallFrame.errors");
+
+    suite.addTestCase({
+        name: "EvaluateOnCallFrameNotPaused",
+        description: "Triggering evaluate on call frame when not paused should issue an error.",
+        test(resolve, reject) {
+            ProtocolTest.evaluateInPage("triggerPause()");
+
+            let callFrameIdentifier;
+
+            InspectorProtocol.eventHandler["Debugger.paused"] = (messageObject) => {
+                ProtocolTest.pass("Paused");
+                InspectorProtocol.sendCommand("Debugger.resume");
+                callFrameIdentifier = messageObject.params.callFrames[0].callFrameId;
+            };
+
+            InspectorProtocol.eventHandler["Debugger.resumed"] = (messageObject) => {
+                ProtocolTest.pass("Resumed");
+                InspectorProtocol.sendCommand("Debugger.evaluateOnCallFrame", {callFrameId: callFrameIdentifier, expression: "this"}, (messageObject) => {
+                    ProtocolTest.expectThat(messageObject.error, `Should be an error: ${messageObject.error ? messageObject.error.message : ""}`);
+                    resolve();
+                });
+            };
+        }
+    });
+
+    suite.addTestCase({
+        name: "EvaluateOnCallFrameBadCallFrameIdentifier",
+        description: "Triggering evaluate on call frame with a bad call frame identifier should issue an error.",
+        test(resolve, reject) {
+            ProtocolTest.evaluateInPage("triggerPause()");
+
+            InspectorProtocol.eventHandler["Debugger.paused"] = (messageObject) => {
+                ProtocolTest.pass("Paused");
+
+                InspectorProtocol.sendCommand("Debugger.evaluateOnCallFrame", {callFrameId: "BAD-CALL-FRAME-ID", expression: "this"}, (messageObject) => {
+                    ProtocolTest.expectThat(messageObject.error, `Should be an error: ${messageObject.error ? messageObject.error.message : ""}`);
+                    InspectorProtocol.sendCommand("Debugger.resume");
+                });
+            };
+
+            InspectorProtocol.eventHandler["Debugger.resumed"] = (messageObject) => {
+                ProtocolTest.pass("Resumed");
+                resolve();
+            };
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Calling Debugger.evaluateOnCallFrame protocol error cases.</p>
+</body>
+</html>

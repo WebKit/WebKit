@@ -1,0 +1,1 @@
+PASS: The HTML validation bubble is no longer visible after navigating

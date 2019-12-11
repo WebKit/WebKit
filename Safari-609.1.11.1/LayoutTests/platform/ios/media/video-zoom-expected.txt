@@ -1,0 +1,23 @@
+layer at (0,0) size 800x852
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x852
+  RenderBlock {HTML} at (0,0) size 800x852
+    RenderBody {BODY} at (8,8) size 784x836
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 289x19
+          text run at (0,0) width 289: "150% zoom, with width and height attributes"
+      RenderBlock (anonymous) at (0,36) size 784x374
+        RenderText {#text} at (0,354) size 4x19
+          text run at (0,354) width 4: " "
+        RenderBR {BR} at (493,369) size 0x0
+      RenderBlock {P} at (0,426) size 784x20
+        RenderText {#text} at (0,0) size 309x19
+          text run at (0,0) width 309: "150% zoom, without width and height attributes"
+      RenderBlock (anonymous) at (0,462) size 784x374
+        RenderText {#text} at (0,354) size 4x19
+          text run at (0,354) width 4: " "
+        RenderBR {BR} at (493,369) size 0x0
+layer at (12,44) size 489x369
+  RenderVideo {VIDEO} at (4,0) size 489x369 [border: (4.50px solid #FF0000)]
+layer at (12,470) size 489x369
+  RenderVideo {VIDEO} at (4,0) size 489x369 [border: (4.50px solid #FF0000)]

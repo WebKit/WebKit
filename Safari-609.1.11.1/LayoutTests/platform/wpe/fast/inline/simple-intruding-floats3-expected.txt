@@ -1,0 +1,33 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x18
+        RenderText {#text} at (20,0) size 142x17
+          text run at (20,0) width 142: "very top of the content"
+        RenderImage {IMG} at (0,0) size 20x100
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,18) size 300x54
+        RenderText {#text} at (40,0) size 32x17
+          text run at (40,0) width 32: "thisis"
+        RenderImage {IMG} at (20,0) size 20x74
+        RenderText {#text} at (72,0) size 212x35
+          text run at (72,0) width 180: "onerun, next to 2 floats. One"
+          text run at (40,18) width 134: "intruding, one in this "
+        RenderInline {SPAN} at (0,0) size 238x35
+          RenderText {#text} at (174,18) size 238x35
+            text run at (174,18) width 104: "inline formatting"
+            text run at (40,36) width 46: "context"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,72) size 300x36
+        RenderInline {SPAN} at (0,0) size 256x35
+          RenderImage {IMG} at (40,0) size 20x15
+          RenderText {#text} at (60,0) size 256x35
+            text run at (60,0) width 236: "this next inline formatting context has"
+            text run at (40,18) width 236: "3 floats. 2 out of those 3 are intruding"
+      RenderBlock (anonymous) at (0,108) size 784x18
+        RenderInline {SPAN} at (0,0) size 422x17
+          RenderText {#text} at (0,0) size 422x17
+            text run at (0,0) width 422: "and now we are back to the left edge. no intrudings at this position."
+        RenderText {#text} at (0,0) size 0x0

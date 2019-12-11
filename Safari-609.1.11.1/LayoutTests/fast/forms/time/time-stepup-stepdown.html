@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description('Check stepUp() and stepDown() bahevior for type=time.');
+
+var input = document.createElement('input');
+
+function setInputAttributes(min, max, step, value) {
+    input.min = min;
+    input.max = max;
+    input.step = step;
+    input.value = value;
+}
+
+function stepUp(value, step, max, optionalStepCount) {
+    setInputAttributes(null, max, step, value);
+    if (typeof optionalStepCount != "undefined")
+        input.stepUp(optionalStepCount);
+    else
+        input.stepUp();
+    return input.value;
+}
+
+function stepDown(value, step, min, optionalStepCount) {
+    setInputAttributes(min, null, step, value);
+    if (typeof optionalStepCount != "undefined")
+        input.stepDown(optionalStepCount);
+    else
+        input.stepDown();
+    return input.value;
+}
+
+input.type = 'time';
+debug('Invalid value');
+shouldThrowErrorName('stepUp("", null, null)', "InvalidStateError");
+shouldThrowErrorName('stepDown("", null, null)', "InvalidStateError");
+debug('Non-number arguments');
+shouldBe('stepUp("20:13", null, null, "0")', '"20:13"');
+shouldBe('stepDown("20:13", null, null, "0")', '"20:13"');
+shouldBe('stepUp("20:13", null, null, "foo")', '"20:13"');
+shouldBe('stepDown("20:13", null, null, "foo")', '"20:13"');
+shouldBe('stepUp("20:13", null, null, null)', '"20:13"');
+shouldBe('stepDown("20:13", null, null, null)', '"20:13"');
+debug('Normal cases');
+shouldBe('stepUp("20:13", null, null)', '"20:14"');
+shouldBe('stepDown("20:13", null, null)', '"20:12"');
+shouldBe('stepUp("20:13", null, null, 10)', '"20:23"');
+shouldBe('stepDown("20:13", null, null, 11)', '"20:02"');
+shouldBe('stepUp("20:13", "4", null, 2)', '"20:13:08"');
+shouldBe('stepDown("20:13", "4", null, 3)', '"20:12:48"');
+debug('Step=any');
+shouldThrowErrorName('stepUp("20:13", "any", null)', "InvalidStateError");
+shouldThrowErrorName('stepDown("20:13", "any", null)', "InvalidStateError");
+debug('Overflow/underflow');
+shouldThrowErrorName('stepUp("20:13", "3.40282346e+38", null)', "InvalidStateError");
+shouldThrowErrorName('stepDown("20:13", "3.40282346e+38", null)', "InvalidStateError");
+shouldThrowErrorName('stepUp("20:13", "1", "20:13")', "InvalidStateError");
+shouldThrowErrorName('stepDown("20:13", "1", "20:13")', "InvalidStateError");
+shouldThrowErrorName('stepUp("23:59", null, null)', "InvalidStateError");
+shouldThrowErrorName('stepDown("00:00", null, null)', "InvalidStateError");
+
+debug('');
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

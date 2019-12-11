@@ -1,0 +1,40 @@
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script src="resources/cache-test.js"></script>
+<body>
+<script>
+
+var testMatrix =
+[
+ [
+  {},
+  { responseHeaders: {'Cache-control': 'max-age=0' } },
+  { responseHeaders: {'Cache-control': 'max-age=100' } },
+  ],
+ [
+  {},
+  { responseHeaders: {'Expires': 'now(0)' } },
+  { responseHeaders: {'Expires': 'now(100)' } },
+  ],
+ [
+  {},
+  { responseHeaders: {'Cache-control': 'no-store' } },
+  { responseHeaders: {'Cache-control': 'no-cache' } },
+  ],
+ [
+  {},
+  { responseHeaders: {'ETag': 'match' } },
+  { responseHeaders: {'ETag': 'nomatch' } },
+  ],
+ ];
+
+description("Test permutations of various cache headers");
+
+var tests = generateTests(testMatrix);
+
+debug("running " + tests.length + " tests");
+debug("");
+
+runTests(tests);
+
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>

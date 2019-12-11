@@ -1,0 +1,5 @@
+Tests that we abort cloning overdeep arrays.
+
+FAIL: 'postMessage(reallyDeepArray)' threw RangeError: Maximum call stack size exceeded., was expecting 25
+PASS: eventData is done of type string
+

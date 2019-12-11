@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+        function beginTest()
+        {
+            if (!window.eventSender || !window.internals || !window.testRunner)
+                return;
+
+            internals.settings.setInputEventsEnabled(true);
+            testRunner.dumpAsText();
+            document.querySelector("#foo").focus();
+
+            for (var i = 0; i < 11; i++)
+                eventSender.keyDown("delete");
+        }
+
+        function checkInputEvent(event)
+        {
+            debug("Fired `oninput` handler!");
+        }
+
+        function checkBeforeInputEvent(event)
+        {
+            debug("Fired `onbeforeinput` handler!");
+        }
+    </script>
+</head>
+
+<body onload=beginTest()>
+    <div id="foo" contenteditable oninput=checkInputEvent(event) onbeforeinput=checkBeforeInputEvent(event)>
+        <b>
+            abc
+            <i>def</i>
+            <u>ghi</u>
+        </b>
+    </div>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+
+</html>

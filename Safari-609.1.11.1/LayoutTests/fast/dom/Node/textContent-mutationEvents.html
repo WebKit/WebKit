@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Original title</title>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Tests that the DOM mutation events are fired correctly when Node.textContent is set.");
+jsTestIsAsync = true;
+
+var firedDOMNodeRemoved = false;
+var firedDOMNodeInserted = false;
+var firedDOMSubtreeModified = false;
+var firedMutationObserver = false;
+
+var title = document.getElementsByTagName("title")[0];
+var observer = new MutationObserver(function(mutations) {
+    debug("");
+    debug("* Mutation observer invoked");
+
+    shouldBeFalse("firedMutationObserver");
+    firedMutationObserver = true;
+
+    testMutations = mutations;
+    shouldBe("testMutations.length", "1");
+    mutation = mutations[0];
+    shouldBeEqualToString("mutation.type", "childList");
+    shouldBe("mutation.target", "title");
+    shouldBe("mutation.removedNodes.length", "1");
+    shouldBeEqualToString("mutation.removedNodes[0].data", "Original title");
+    shouldBe("mutation.addedNodes.length", "1");
+    shouldBeEqualToString("mutation.addedNodes[0].data", "New title");
+
+    finishJSTest();
+});
+observer.observe(title, { childList: true });
+
+title.addEventListener("DOMNodeRemoved", function() {
+    debug("");
+    debug("* DOMNodeRemoved fired");
+    shouldBeFalse("firedDOMNodeRemoved");
+    shouldBeFalse("firedDOMNodeInserted");
+    shouldBeFalse("firedDOMSubtreeModified");
+    firedDOMNodeRemoved = true;
+    shouldBeEqualToString("document.title", "Original title");
+});
+title.addEventListener("DOMNodeInserted", function() {
+    debug("");
+    debug("* DOMNodeInserted fired");
+    shouldBeTrue("firedDOMNodeRemoved");
+    shouldBeFalse("firedDOMNodeInserted");
+    shouldBeFalse("firedDOMSubtreeModified");
+    firedDOMNodeInserted = true;
+    shouldBeEqualToString("document.title", "New title");
+});
+title.addEventListener("DOMSubtreeModified", function() {
+    debug("");
+    debug("* DOMSubtreeModified fired");
+    shouldBeTrue("firedDOMNodeRemoved");
+    shouldBeTrue("firedDOMNodeInserted");
+    shouldBeFalse("firedDOMSubtreeModified");
+    firedDOMSubtreeModified = true;
+    shouldBeEqualToString("document.title", "New title");
+});
+
+evalAndLog("title.textContent = 'New title';");
+
+debug("");
+shouldBeTrue("firedDOMNodeRemoved");
+shouldBeTrue("firedDOMNodeInserted");
+shouldBeTrue("firedDOMSubtreeModified");
+shouldBeEqualToString("document.title", "New title");
+shouldBeFalse("firedMutationObserver");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true experimental:AsyncClipboardAPIEnabled=true ] -->
+<html>
+    <meta charset="utf8">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../resources/js-test.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
+        <script src="./resources/async-clipboard-helpers.js"></script>
+    </head>
+    <script>
+        jsTestIsAsync = true;
+
+        async function runTest() {
+            description("This test verifies that navigator.clipboard.writeText requires a user gesture.");
+
+            if (window.testRunner)
+                testRunner.setJavaScriptCanAccessClipboard(false);
+
+            try {
+                await navigator.clipboard.writeText("This should not be written.");
+                testFailed("Wrote to the clipboard without user gesture.");
+            } catch (clipboardException) {
+                window.clipboardException = clipboardException;
+                testPassed("Did not write to the clipboard.");
+                shouldBeEqualToString("clipboardException.name", "NotAllowedError");
+            }
+
+            finishJSTest();
+        }
+
+        addEventListener("load", runTest);
+    </script>
+    <body></body>
+</html>

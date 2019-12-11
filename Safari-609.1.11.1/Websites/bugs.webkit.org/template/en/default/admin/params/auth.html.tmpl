@@ -1,0 +1,144 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+[%
+   title = "User Authentication"
+   desc = "Set up your authentication policies"
+%]
+
+[% param_descs = {
+  auth_env_id => "Environment variable used by external authentication system " _
+                 "to store a unique identifier for each user. Leave it blank " _
+                 "if there isn't one or if this method of authentication " _
+                 "is not being used.",
+
+  auth_env_email => "Environment variable used by external authentication system " _
+                    "to store each user's email address. This is a required " _
+                    "field for environmental authentication. Leave it blank " _
+                    "if you are not going to use this feature.",
+
+  auth_env_realname => "Environment variable used by external authentication system " _
+                       "to store the user's real name. Leave it blank if there " _
+                       "isn't one or if this method of authentication is not being " _
+                       "used.",
+
+  user_info_class => "Mechanism(s) to be used for gathering a user's login information.
+                      More than one may be selected. If the first one returns nothing,
+                      the second is tried, and so on.<br>
+                      The types are:
+                      <dl>
+                        <dt>CGI</dt>
+                        <dd>
+                          Asks for username and password via CGI form interface.
+                        </dd>
+                        <dt>Env</dt>
+                        <dd>
+                          Info for a pre-authenticated user is passed in system
+                          environment variables.
+                        </dd>
+                      </dl>",
+
+  user_verify_class => "Mechanism(s) to be used for verifying (authenticating) information
+                        gathered by user_info_class.
+                        More than one may be selected. If the first one cannot find the
+                        user, the second is tried, and so on.<br>
+                        The types are:
+                        <dl>
+                          <dt>DB</dt>
+                          <dd>
+                            Bugzilla's built-in authentication. This is the most common
+                            choice.
+                          </dd>
+                          <dt>RADIUS</dt>
+                          <dd>
+                            RADIUS authentication using a RADIUS server.
+                            Please see the Bugzilla documentation for
+                            more information.
+                            Using this method requires
+                            <a href=\"?section=radius\">additional
+                            parameters</a> to be set.
+                          </dd>
+                          <dt>LDAP</dt>
+                          <dd>
+                            LDAP authentication using an LDAP server.
+                            Please see the Bugzilla documentation
+                            for more information. Using this method requires
+                            <a href=\"?section=ldap\">additional
+                            parameters</a> to be set.
+                          </dd>
+                        </dl>",
+
+  rememberlogin => "Controls management of session cookies
+                    <ul>
+                      <li>
+                        on - Session cookies never expire (the user has to login only
+                        once per browser).
+                      </li>
+                      <li>
+                        off - Session cookies last until the users session ends (the user
+                        will have to login in each new browser session).
+                      </li>
+                      <li>
+                        defaulton/defaultoff - Default behavior as described
+                        above, but user can choose whether Bugzilla will
+                        remember their login or not.
+                      </li>
+                    </ul>",
+
+  requirelogin => "If this option is set, all access to the system beyond the " _
+                  "front page will require a login. No anonymous users will " _
+                  "be permitted.",
+
+  webservice_email_filter =>
+    "Filter email addresses returned by the WebService API depending on " _
+    "if the user is logged in or not. This works similarly to how the " _
+    "web UI currently filters email addresses. If <var>requirelogin</var> " _
+    "is enabled, then this parameter has no effect as users must be logged " _
+    "in to use Bugzilla.",
+
+  emailregexp =>
+    "This defines the regular expression to use for legal email addresses. " _
+    "The default tries to match fully qualified email addresses. " _
+    "Use <kbd>.*</kbd> to accept any email address following the " _
+    "<a href=\"http://tools.ietf.org/html/rfc2822#section-3.4.1\">RFC 2822</a> " _
+    "specification. Another popular value to put here is <kbd>^[^@]+$</kbd>, " _
+    "which means 'local usernames, no @ allowed.'",
+
+  emailregexpdesc => "This description explains valid addresses that " _
+                     "are allowed by the <var>emailregexp</var> param.",
+
+  emailsuffix => "This is a string to append to any email addresses when actually " _
+                 "sending mail to that address. It is useful if you have changed " _
+                 "the <var>emailregexp</var> param to only allow local usernames, " _
+                 "but you want the mail to be delivered to username@my.local.hostname.",
+
+  createemailregexp => "This defines the (case-insensitive) regexp to use for email addresses that are " _
+                       "permitted to self-register using a 'New Account' feature. The " _
+                       "default (.*) permits any account matching the emailregexp " _
+                       "to be created. If this parameter is left blank, no users " _
+                       "will be permitted to create their own accounts and all accounts " _
+                       "will have to be created by an administrator.",
+
+  password_complexity =>
+    "Set the complexity required for passwords. In all cases must the passwords " _
+    "be at least ${constants.USER_PASSWORD_MIN_LENGTH} characters long." _
+    "<ul><li>no_constraints - No complexity required.</li>" _
+    "<li>mixed_letters - Passwords must contain at least one UPPER and one lower " _
+    "case letter.</li>" _
+    "<li>letters_numbers - Passwords must contain at least one UPPER and one " _
+    "lower case letter and a number.</li>" _
+    "<li>letters_numbers_specialchars - Passwords must contain at least one " _
+    "letter, a number and a special character.</li>" _
+    "<li>zxcvbn_password_checker - Enable zxcvbn strength estimator for password strength checking.</li></ul>" # WEBKIT_CHANGES
+
+  password_check_on_login =>
+    "If set, $terms.Bugzilla will check that the password meets the current " _
+    "complexity rules and minimum length requirements  when the user logs " _
+    "into the $terms.Bugzilla web interface. If it doesn't, the user would " _
+    "not be able to log in, and recieve a message to reset their password."
+  }
+%]

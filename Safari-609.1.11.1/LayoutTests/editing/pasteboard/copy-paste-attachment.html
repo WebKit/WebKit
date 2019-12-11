@@ -1,0 +1,35 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableAttachmentElement=true ] -->
+<html>
+<body>
+<div contenteditable="true" id="test1">This is a paragraph with an attachment
+    <attachment id='attachment'></attachment> and some other text.
+</div>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+var file;
+if (window.internals) {
+    var file = window.internals.createFile("../resources/abe.png");
+    var attachment = document.getElementById('attachment');
+    attachment.file = file;
+
+    description('These tests cutting content with one attachemnt and pasting it back');
+
+    var e = document.getElementById("test1");
+    var s = window.getSelection();
+
+    debug('Checking the file name for the attachment element');
+    shouldBe("attachment.file.name", "'abe.png'");
+    s.setPosition(e, 0);
+    document.execCommand("SelectAll");
+    document.execCommand("Cut");
+    debug('Perform Cut on the entire selection followed by Paste');
+    document.execCommand("Paste");
+    debug('Checking the file name for the pasted attachment element');
+    attachment = document.getElementById('attachment')
+    shouldBe("attachment.file.name", "'abe.png'");
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

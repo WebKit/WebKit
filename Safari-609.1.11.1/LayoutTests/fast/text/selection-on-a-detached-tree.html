@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we can preform selection operations on detached trees.</title>
+</head>
+<body contentEditable='true'>
+<div><canvas style="position:fixed;"></canvas>PASS if no<table style="position:fixed;"><ul style="position:absolute;">crash</ul><button>or assert.</button></table></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.execCommand('selectall', false, null);
+window.document.execCommand('insertunorderedlist', true, null);
+</script>
+</body>
+</html>

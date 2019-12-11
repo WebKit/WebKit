@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+	font-family: "WebFont";
+	src: url("../../resources/Ahem.otf") format("woff-variations"), local("Helvetica");
+}
+@font-face {
+	font-family: "WebFont2";
+	src: url("../../resources/Ahem.otf") format("truetype-variations"), local("Helvetica");
+}
+@font-face {
+	font-family: "WebFont3";
+	src: url("../../resources/Ahem.otf") format("opentype-variations"), local("Helvetica");
+}
+
+@font-face {
+	font-family: "WebFont4";
+	font-weight: 100;
+	font-weight: 332;
+	src: url("../../resources/Ahem.otf");
+}
+@font-face {
+	font-family: "WebFont4";
+	font-weight: 200;
+	src: local("Helvetica");
+}
+@font-face {
+	font-family: "WebFont5";
+	font-weight: 700;
+	src: url("../../resources/Ahem.otf");
+}
+@font-face {
+	font-family: "WebFont5";
+	font-weight: 400;
+	src: local("Helvetica");
+}
+
+@font-face {
+	font-family: "WebFont6";
+	font-stretch: ultra-expanded;
+	font-stretch: 110%;
+	src: url("../../resources/Ahem.otf");
+}
+@font-face {
+	font-family: "WebFont6";
+	font-stretch: expanded;
+	src: local("Helvetica");
+}
+@font-face {
+	font-family: "WebFont7";
+	font-stretch: extra-expanded;
+	src: url("../../resources/Ahem.otf");
+}
+@font-face {
+	font-family: "WebFont7";
+	font-stretch: semi-expanded;
+	src: local("Helvetica");
+}
+
+@font-face {
+	font-family: "WebFont8";
+	font-style: oblique;
+	src: url("../../resources/Ahem.otf");
+}
+@font-face {
+	font-family: "WebFont8";
+	font-style: normal;
+	src: local("Helvetica");
+}
+
+#supportsTest1 {
+	font-family: "Helvetica";
+}
+@supports (font-variation-settings: 'abcd' 3) {
+	#supportsTest1 {
+		font-family: "Ahem";
+	}
+}
+#supportsTest2 {
+	font-family: "Helvetica";
+}
+@supports (font-weight: 401) {
+	#supportsTest2 {
+		font-family: "Ahem";
+	}
+}
+#supportsTest3 {
+	font-family: "Helvetica";
+}
+@supports (font-stretch: 101%) {
+	#supportsTest3 {
+		font-family: "Ahem";
+	}
+}
+#supportsTest4 {
+	font-family: "Helvetica";
+}
+@supports (font-style: oblique 21deg) {
+	#supportsTest4 {
+		font-family: "Ahem";
+	}
+}
+</style>
+</head>
+<body>
+This test makes sure that font-variations can be feature-detected on OSes which don't support it.
+<div id="container" style="font-size: 36px;">
+<span style="font-family: 'WebFont';">Hello</span>
+<span style="font-family: 'WebFont2';">Hello</span>
+<span style="font-family: 'WebFont3';">Hello</span>
+<span style="font-family: 'WebFont4';">Hello</span>
+<span style="font-family: 'WebFont5'; font-weight: 899;">Hello</span>
+<span style="font-family: 'WebFont6';">Hello</span>
+<span style="font-family: 'WebFont7'; font-stretch: 200%;">Hello</span>
+<span style="font-family: 'WebFont7'; font-style: italic 80deg;">Hello</span>
+<span id="supportsTest1">Hello</span>
+<span id="supportsTest2">Hello</span>
+<span id="supportsTest3">Hello</span>
+<span id="supportsTest4">Hello</span>
+<span id="result1"></span>
+<span id="result2"></span>
+<span id="result3"></span>
+<span id="result4"></span>
+<span id="result5"></span>
+</div>
+<script>
+var container = document.getElementById("container");
+var result1 = document.getElementById("result1");
+var result2 = document.getElementById("result2");
+var result3 = document.getElementById("result3");
+var result4 = document.getElementById("result4");
+var result5 = document.getElementById("result5");
+if (!CSS.supports("font-variation-settings", "'abcd' 3"))
+	result1.textContent = "Pass";
+else
+	result1.textContent = "Fail";
+if (!CSS.supports("font-weight", "401"))
+	result2.textContent = "Pass";
+else
+	result2.textContent = "Fail";
+if (!CSS.supports("font-stretch", "101%"))
+	result3.textContent = "Pass";
+else
+	result3.textContent = "Fail";
+if (!CSS.supports("font-style", "oblique 21deg"))
+	result4.textContent = "Pass";
+else
+	result4.textContent = "Fail";
+if (!window.getComputedStyle(container).getPropertyValue("font-variation-settings"))
+	result5.textContent = "Pass";
+else
+	result5.textContent = "Fail";
+</script>
+</body>
+</html>

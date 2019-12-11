@@ -1,0 +1,2 @@
+ALERT: PASS: If you see this and the test did not crash the test has passed. (rdar://problem/5267870)
+

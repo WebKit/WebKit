@@ -1,0 +1,17 @@
+This tests that focused/active menu items are reported as selected children of the parent container.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+First menu has 1 selected child(ren)
+	item 2 (AXRole: AXMenuItem) isSelectable: true isSelected: true
+Second menu has 1 selected child(ren)
+	item 5 (AXRole: AXMenuItem) isSelectable: true isSelected: true
+First menubar has 1 selected child(ren)
+	Edit (AXRole: AXMenuItem) isSelectable: true isSelected: true
+Second menubar has 1 selected child(ren)
+	View (AXRole: AXMenuItem) isSelectable: true isSelected: true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,139 @@
+2015-02-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove svn:keywords property.
+
+        As far as I can tell, the property had no effect on any of these files, but also,
+        when it has effect it's likely harmful.
+
+        * index.html: Removed property svn:keywords.
+
+2009-11-03  Darin Adler  <darin@apple.com>
+
+        Set the MIME type for all PNG files in this directory.
+
+        * css3-2d-transforms/compound_transform.png: Modified property svn:mime-type.
+        * css3-2d-transforms/transform1.png: Modified property svn:mime-type.
+        * css3-2d-transforms/transform2.png: Modified property svn:mime-type.
+        * css3-3d-transforms/compound_transform.png: Modified property svn:mime-type.
+        * css3-3d-transforms/transform1.png: Modified property svn:mime-type.
+        * css3-3d-transforms/transform2.png: Modified property svn:mime-type.
+        * css3-animations/animation1.png: Modified property svn:mime-type.
+        * css3-animations/sandwich.png: Modified property svn:mime-type.
+        * css3-transitions/TimingFunction.png: Modified property svn:mime-type.
+        * css3-transitions/transition1.png: Modified property svn:mime-type.
+
+2009-06-16  Chris Marrin  <cmarrin@apple.com>
+
+        Added spec directories from http://dev.w3.org/cvsweb/csswg/
+        which is where they will live. We will edit them here and
+        then push them to the W3C cvs server.
+        
+        css3-2d-transforms/:
+        css3-3d-transforms/:
+        css3-animations/:
+        css3-transitions/:
+
+2009-06-16  Chris Marrin  <cmarrin@apple.com>
+
+        Removed all the specs because they are stale
+        
+        index.html: Redirected to point at w3c site
+
+2008-12-03  Dean Jackson  <dino@apple.com>
+
+        CSSTransforms.html +
+        CSSTransforms3D.html:
+        
+        * Use SYNTAX_ERR for exceptions that are
+          parsing errors in CSSMatrix
+
+2008-11-21  Dean Jackson  <dino@apple.com>
+
+        CSSAnimation.html:
+        
+        * animation-name should accept IDENT not <string>
+        * animation-play-state marked as "about to be removed"
+        * more description of when an animation is applied, that
+          they snapshot keyframes and values as they start and
+          how they need to be removed to reset.
+        
+        CSSTransitions.html:
+        
+        * list of animatable properties and how to animate property
+          types.
+        * specify that values for bezier points outside of [0,1] are
+          invalid.
+
+        CSSTransforms.html:
+        
+        * split into 2d and 3d specifications
+        * transform-origin now matches background-position definition.
+        * describe how to animate between lists of transforms
+
+        CSSTransforms3D.html
+        
+        * new specification which is the 3d parts of transforms
+        * perspective must be > 0
+        * perspective-origin also matches background-position
+        * describe how to animate between lists of transforms, but this
+          time in 3d which is harder.
+
+2008-10-10  Dean Jackson  <dino@apple.com>
+
+        Keyframe example had "0" rather than "0%".
+        
+        * CSSAnimations.html:
+
+2008-10-08  Dean Jackson  <dino@apple.com>
+
+        Forgot to set the date on the spec documents with last commit.
+        
+        * CSSAnimations.html:
+        * CSSTransforms.html:
+        * CSSTransitions.html:
+
+2008-09-04  Dean Jackson  <dino@apple.com>
+
+        Change transform operation values in CSSTransformValue -
+        splitting 2d and 3d.
+
+        * CSSTransforms.html:
+
+2008-08-26  Dean Jackson <dino@apple.com>
+    
+    Animations
+    
+        * Keyframes must provide 0% and 100% to be valid
+          <rdar://problem/6165732> [animations] Spec should say what happens if you omit the 0% or 100% keyframe
+    
+        * Mention that keyframes can be specified in any order
+          <rdar://problem/6165728> [animations] Spec should say that keyframes can be in any order
+          (It actually already said this, but I made it more clear)
+    
+        * Keyframe names must be IDENT not STRING
+          <rdar://problem/6164640> [animations] should we allow quoted animation names
+    
+    Transforms
+    
+        * Removed definition of <angle> - now reference CSS Values and Units
+          consequence is that rotations now support "turn" units
+          (feel free to turn it up to 11)
+          <rdar://problem/6177272> [transforms] Should support "turns" as a rotation unit
+    
+        * Added exception to CSSMatrix setMatrixValue() and inverse() methods
+          <rdar://problem/6160283> [transforms] Specify error reporting for WebKitCSSMatrix
+    
+        * Added getCSSMatrix() method to CSSTransformValue
+    
+        * Added Table of Contents to Transforms
+    
+        * skewZ() transform function removed. It makes no sense.
+    
+        * Definition for skew() transform function was missing
+        * Also added a new CSSTransformValue CSS_SKEW
+          <rdar://problem/6137414> [transforms] skew() function definition is missing
+    
+        * Removed mention of transitions when discussion keyframes rule
+          <rdar://problem/6103072> [animations] CSS Animation spec mentions transition keyframes
+    
+    

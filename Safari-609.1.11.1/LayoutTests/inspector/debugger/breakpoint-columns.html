@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger/debugger-test.js"></script>
+<script src="./resources/column-breakpoints-1.js"></script>
+<script src="./resources/column-breakpoints-2.js"></script>
+<script>
+
+function test()
+{
+    var testInfoList = [
+        { scriptIndex : 0, line : 0, column : 79, startFunc : "runColumnTest1()" },
+        { scriptIndex : 0, line : 6, column : 21, startFunc : "runColumnTest2()" },
+        { scriptIndex : 0, line : 15, column : 8, startFunc : "runColumnTest3()" },
+        { scriptIndex : 1, line : 5, column : 8, startFunc : "runColumnTest4()" },
+        { scriptIndex : 1, line : 11, column : 79, startFunc : "runColumnTest5()" }
+    ]
+
+    var currentTestIndex = 0;
+    var scriptObject1, scriptObject2;
+    var currentScripts = [];
+
+    function runNextTestIfAllScriptsLoaded() {
+        if (scriptObject1 && scriptObject2) {
+            currentScripts = [scriptObject1, scriptObject2];
+            runNextTest();
+        }
+    }
+
+    function runNextTest() {
+        if (currentTestIndex >= testInfoList.length) {
+            InspectorTest.log("Tests done");
+            InspectorTest.completeTest();
+            return;
+        }
+
+        var testInfo = testInfoList[currentTestIndex];
+        
+        var location = currentScripts[testInfo.scriptIndex].createSourceCodeLocation(testInfo.line, testInfo.column);
+        var breakpoint = new WI.Breakpoint(location);
+
+        WI.debuggerManager.addBreakpoint(breakpoint);
+
+        InspectorTest.evaluateInPage(testInfo.startFunc);
+
+        currentTestIndex++;
+    }        
+
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, function(event) {
+        var activeCallFrame = WI.debuggerManager.activeCallFrame;
+
+        if (!activeCallFrame)
+            return;
+
+        var stopLocation = "line: " + activeCallFrame.sourceCodeLocation.lineNumber + ", column: " + activeCallFrame.sourceCodeLocation.columnNumber;
+
+        InspectorTest.log("Hit breakpoint at " + stopLocation);
+        InspectorTest.evaluateInPage("console.log('Paused at " + stopLocation + "')");
+
+        WI.debuggerManager.resume();
+    });
+
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Resumed, function(event) {
+       runNextTest();
+    });
+
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, function(event) {
+        var scriptObject = event.data.script;
+        
+        if (/column-breakpoints-1\.js$/.test(scriptObject.url)) {
+            scriptObject1 = scriptObject;
+            runNextTestIfAllScriptsLoaded();
+            return;
+        }
+
+        if (/column-breakpoints-2\.js$/.test(scriptObject.url)) {
+            scriptObject2 = scriptObject;
+            runNextTestIfAllScriptsLoaded();
+            return;
+        }
+    });
+
+    InspectorTest.reloadPage();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that breakpoints can be set at various line / column combinations.</p>
+</body>
+</html>

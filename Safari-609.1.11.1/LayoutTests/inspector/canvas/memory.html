@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function load() {
+    window.context = document.body.appendChild(document.createElement("canvas")).getContext("2d");
+
+    runTest();
+}
+
+function changeSize(width, height) {
+    window.context.canvas.width = width;
+    window.context.canvas.height = height;
+
+    // Force the creation of the image buffer, which is used to determine memory cost.
+    window.context.canvas.toDataURL();
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.memory");
+
+    suite.addTestCase({
+        name: "Canvas.memory.memoryCost",
+        description: "Check that memory cost is sent with the canvas when able.",
+        test(resolve, reject) {
+            // NOTE: the memory cost of a canvas will not be retrievable until an operation is
+            // performed on that canvas that requires the image buffer.  A blank canvas that was
+            // just created will not have a buffer, so its memory cost will be 0/NaN.
+
+            let canvases = WI.canvasManager.canvases.filter((canvas) => canvas.contextType === WI.Canvas.ContextType.Canvas2D);
+            if (!canvases.length) {
+                reject("Missing 2D canvas.");
+                return;
+            }
+
+            InspectorTest.assert(canvases.length === 1, "There should only be one canvas-2d.");
+
+            InspectorTest.log(`Memory cost of canvas is ${canvases[0].memoryCost}.`);
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "Canvas.memory.canvasMemoryChanged",
+        description: "Check that memory cost is updated when the backend value changes.",
+        test(resolve, reject) {
+            let canvases = WI.canvasManager.canvases.filter((canvas) => canvas.contextType === WI.Canvas.ContextType.Canvas2D);
+            if (!canvases.length) {
+                reject("Missing 2D canvas.");
+                return;
+            }
+
+            InspectorTest.assert(canvases.length === 1, "There should only be one canvas-2d.");
+
+            canvases[0].awaitEvent(WI.Canvas.Event.MemoryChanged)
+            .then((event) => {
+                InspectorTest.log(`Memory cost of canvas updated to ${event.target.memoryCost}.`);
+            })
+            .then(resolve, reject);
+
+            const width = 200;
+            const height = 200;
+            InspectorTest.log(`Change size of canvas to ${width}x${height}.`);
+            InspectorTest.evaluateInPage(`changeSize(${width}, ${height})`);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Test that CanvasManager tracks canvas memory costs and is notified of changes.</p>
+</body>
+</html>

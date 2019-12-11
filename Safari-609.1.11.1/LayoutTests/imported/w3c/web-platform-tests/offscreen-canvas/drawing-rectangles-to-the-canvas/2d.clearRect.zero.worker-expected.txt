@@ -1,0 +1,3 @@
+
+FAIL clearRect of zero pixels has no effect Can't find variable: OffscreenCanvas
+

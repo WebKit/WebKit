@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        #clipper {
+            height: 200px;
+            width: 200px;
+            overflow: hidden;
+            -webkit-transform: translateZ(0);
+        }
+        #target {
+            /* Tiled layer, shifted to show the second tile. */
+            height: 200px;
+            width: 3200px;
+            -webkit-transform: translate3d(-512px, 0, 0);
+        }
+        
+        .shadowed {
+            /* Just outside the second tile. */
+            margin-left: 412px;
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+        }
+        
+    </style>
+    <script src="resources/dump-target-replay-list.js"></script>
+</head>
+<body>
+    
+<div id="clipper">
+    <div id="target">
+        <div class="shadowed">
+        </div>
+    </div>
+</div>
+
+<pre id="output"></pre>
+</body>
+</html>

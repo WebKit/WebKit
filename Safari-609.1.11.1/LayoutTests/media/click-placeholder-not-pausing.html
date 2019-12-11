@@ -1,0 +1,98 @@
+<!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+<head>
+    <title>Click on placeholder on a MediaDocument should not pause.</title>
+    <script src="media-file.js"></script>
+    <script src="video-test.js"></script>
+    <script src="media-controls.js"></script>
+    <script>
+        var mediaElement;
+        var placeholder;
+        var maxAttemptsToTestPlaceholderVisibility = 10;
+        var attemptsToTestPlaceholderVisibility = 0;
+
+
+        if (window.internals)
+            window.internals.settings.setAllowsPictureInPictureMediaPlayback(true);
+
+        function frameLoaded()
+        {
+            consoleWrite("Video frame loaded.");
+
+            var standaloneMediaDocument = document.getElementById("videoframe").contentDocument;
+            mediaElement = standaloneMediaDocument.querySelector("video");
+            if (!mediaElement) {
+                failTest("ERROR: Video element was not found in frameLoaded().");
+                return;
+            }
+
+            runWithKeyDown(function(){ mediaElement.play(); });
+
+            if (!('webkitSupportsPresentationMode' in mediaElement && 'webkitPresentationMode' in mediaElement)) {
+                failTest("Presentation mode is not supported in this video element.")
+                return;
+            }
+
+            consoleWrite("Going into Picture-in-Picture");
+            mediaElement.addEventListener('webkitpresentationmodechanged', onpresentationmodechanged);
+            runWithKeyDown(function(){ mediaElement.webkitSetPresentationMode('picture-in-picture'); });
+        }
+
+        function onpresentationmodechanged()
+        {
+            testExpected("mediaElement.webkitPresentationMode", "picture-in-picture");
+
+            pollPIPPlaceholderVisibilityChange();
+        }
+
+        function pollPIPPlaceholderVisibilityChange()
+        {
+            placeholder = mediaControlsElement(internals.shadowRoot(mediaElement), '-webkit-media-controls-wireless-playback-status');
+
+            if (placeholder.classList.contains('hidden')) {
+                if (attemptsToTestPlaceholderVisibility > maxAttemptsToTestPlaceholderVisibility) {
+                    failTest("Inline placeholder did not become visible after video enters picture-in-picture.");
+                    endTest();
+                    return;
+                }
+
+                // Use 33 to match PlaceholderPollingDelay in mediaControlsApple.js.
+                setTimeout(pollPIPPlaceholderVisibilityChange, 33);
+                attemptsToTestPlaceholderVisibility++;
+                return;
+            }
+
+            testExpected("placeholder.classList.contains('hidden')", false);
+
+            if (!window.eventSender) {
+                failTest("ERROR: no event sender.");
+                return;
+            }
+
+            var boundingRect = placeholder.getBoundingClientRect();
+            var x = boundingRect.left + boundingRect.width / 2;
+            var y = boundingRect.top + boundingRect.height / 2;
+            eventSender.mouseMoveTo(x, y);
+            eventSender.mouseDown();
+            eventSender.mouseUp();
+
+            testExpected("mediaElement.paused", false);
+            endTest();
+        }
+
+    </script>
+</head>
+<body>
+    <p>Click on placeholder on a MediaDocument should not pause.</p>
+    <iframe id="videoframe" width=400 height=300"></iframe>
+    <script type="text/javascript">
+        onload = function() {
+            var videoframe = document.getElementById("videoframe");
+            videoframe.onload = frameLoaded;
+            videoframe.src = findMediaFile("video", "content/test");
+        }
+    </script>
+
+</body>
+</html>
+

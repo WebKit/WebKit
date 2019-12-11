@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-media-source</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+    var initSegment2;
+    var samples;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    async function runTest() {
+        findMediaElement();
+
+        source = new MediaSource();
+        testExpected('source.readyState', 'closed');
+
+        video.srcObject = source;
+        await waitFor(source, 'sourceopen');
+
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+        initSegment = makeAInit(8, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        run('sourceBuffer.changeType("video/mock; codecs=kcom")');
+
+        initSegment2 = makeAInit(8, [makeATrack(1, 'kcom', TRACK_KIND.VIDEO)]);
+        run('sourceBuffer.appendBuffer(initSegment2)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        run('sourceBuffer.appendBuffer(initSegment2)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        endTest()
+    }
+    
+    </script>
+</head>
+<body onload="runTest().catch(failTest)">
+    <video></video>
+</body>
+</html>

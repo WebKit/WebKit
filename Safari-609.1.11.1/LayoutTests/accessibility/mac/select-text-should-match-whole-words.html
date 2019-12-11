@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<title>Select Text</title>
+</head>
+<body>
+
+<p contenteditable="true" id="text">The man jumped higher.</p>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that selection matches whole words, rather than partial matches.");
+    
+    if (window.accessibilityController) {
+        var text = accessibilityController.accessibleElementById("text");
+        var windowSelection = window.getSelection();
+
+        // A matching range before the selection should be selected when searching for closest match.
+        document.getElementById("text").focus();
+
+        // First find the range before the current selection.
+        var range = document.createRange();
+        range.setStart(document.getElementById("text").firstChild, 0);
+        range.setEnd(document.getElementById("text").firstChild, 0);
+        windowSelection.removeAllRanges();
+        windowSelection.addRange(range);
+      
+        // Try to select a partial word, it should fail.
+        result = text.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestToSelection", "jump");
+        shouldBe("result", "''");
+        shouldBe("windowSelection.getRangeAt(0).startOffset", "0");
+        shouldBe("windowSelection.getRangeAt(0).endOffset", "0");
+
+        // Select the whole word, it should succeed.
+        result = text.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestToSelection", "jumped");
+        shouldBe("result", "'jumped'");
+        shouldBe("windowSelection.getRangeAt(0).startOffset", "8");
+        shouldBe("windowSelection.getRangeAt(0).endOffset", "14");
+        windowSelection.removeAllRanges();
+        windowSelection.addRange(range);
+
+        // Select multiple whole word, it should succeed.
+        result = text.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestToSelection", "jumped higher");
+        shouldBe("result", "'jumped higher'");
+        shouldBe("windowSelection.getRangeAt(0).startOffset", "8");
+        shouldBe("windowSelection.getRangeAt(0).endOffset", "21");
+        windowSelection.removeAllRanges();
+        windowSelection.addRange(range);
+
+        // Select multiple words, where one is not a whole word, it should fail.
+        result = text.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestToSelection", "jumped high");
+        shouldBe("result", "''");
+        shouldBe("windowSelection.getRangeAt(0).startOffset", "0");
+        shouldBe("windowSelection.getRangeAt(0).endOffset", "0");
+    }
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

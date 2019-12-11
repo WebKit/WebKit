@@ -1,0 +1,136 @@
+{
+  'stderr' => '',
+  'stdout' => '',
+  'ranges' => [
+    [
+      '20',
+      '21',
+      'element1'
+    ],
+    [
+      '23',
+      '23',
+      'element2'
+    ],
+    [
+      '25',
+      '27',
+      'element3'
+    ],
+    [
+      '29',
+      '30',
+      'element4.p'
+    ],
+    [
+      '32',
+      '33',
+      'element5.p.q.r.s'
+    ],
+    [
+      '35',
+      '36',
+      'element6#p'
+    ],
+    [
+      '38',
+      '39',
+      'element7 element8'
+    ],
+    [
+      '41',
+      '42',
+      'element9.p element10.q'
+    ],
+    [
+      '44',
+      '45',
+      'element11#p element12#q'
+    ],
+    [
+      '47',
+      '48',
+      'element13, element14'
+    ],
+    [
+      '50',
+      '51',
+      '.p'
+    ],
+    [
+      '53',
+      '55',
+      '#p'
+    ],
+    [
+      '57',
+      '58',
+      '.p element15 #q element16.r element17#s'
+    ],
+    [
+      '60',
+      '61',
+      'element18:target'
+    ],
+    [
+      '63',
+      '65',
+      'element19'
+    ],
+    [
+      '67',
+      '69',
+      'element20'
+    ],
+    [
+      '71',
+      '74',
+      'element21'
+    ],
+    [
+      '76',
+      '79',
+      'element22'
+    ],
+    [
+      '87',
+      '87',
+      '.media-query::before'
+    ],
+    [
+      '89',
+      '96',
+      '@media only screen and (max-width: 980px)'
+    ],
+    [
+      '90',
+      '90',
+      '.media-query a'
+    ],
+    [
+      '91',
+      '94',
+      '@media (-webkit-min-device-pixel-ratio: 2)'
+    ],
+    [
+      '92',
+      '92',
+      '.both a'
+    ],
+    [
+      '93',
+      '93',
+      '.both b'
+    ],
+    [
+      '95',
+      '95',
+      '.media-query b'
+    ],
+    [
+      '98',
+      '98',
+      '.media-query::after'
+    ]
+  ]
+}

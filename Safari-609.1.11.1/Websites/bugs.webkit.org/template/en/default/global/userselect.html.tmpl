@@ -1,0 +1,102 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # name: mandatory; field name
+  # id: optional; field id
+  # value: optional; default field value/selection
+  # classes: optional; an array of classes to be added
+  # onchange: optional; onchange attribute value
+  # disabled: optional; if true, the field is disabled
+  # accesskey: optional, input only; accesskey attribute value
+  # size: optional, input only; size attribute value
+  # emptyok: optional, select only; if true, prepend menu option for "" to start of select
+  # hyphenok: optional, select only; if true, prepend menu option for "-" to start of select
+  # multiple: optional, do multiselect box, value is size (height) of box
+  # custom_userlist: optional, specify a limited list of users to use
+  # field_title: optional, extra information to display as a tooltip
+  # mandatory: optional; if true, the field cannot be empty.
+  #%]
+
+[% IF Param("usemenuforusers") %]
+<select name="[% name FILTER html %]"
+  [% IF id %] id="[% id FILTER html %]" [% END %]
+  [% IF classes %] class="[% classes.join(' ') FILTER html %]" [% END %]
+  [% IF onchange %] onchange="[% onchange FILTER html %]" [% END %]
+  [% IF disabled %] disabled="[% disabled FILTER html %]" [% END %]
+  [% IF accesskey %] accesskey="[% accesskey FILTER html %]" [% END %]
+  [% IF multiple %] multiple="multiple" size="[% multiple FILTER html %]" [% END %]
+  [% IF field_title %] title="[% field_title FILTER html %]" [% END %]
+  [% IF mandatory %] required [% END %]
+>
+  [% IF emptyok %]
+    <option value=""></option>
+  [% END %]
+  [% IF hyphenok %]
+    <option value="-">-</option>
+  [% END %]
+
+  [% UNLESS custom_userlist %]
+    [% custom_userlist = user.get_userlist %]
+  [% END %]
+
+  [% SET selected = {} %]
+  [% IF value.defined %]
+    [% FOREACH selected_value IN value.split(', ') %]
+      [% SET selected.$selected_value = 1 %]
+    [% END %]
+  [% END %]
+
+  [% FOREACH tmpuser = custom_userlist %]
+    [% IF tmpuser.visible OR selected.${tmpuser.login} == 1 %]
+      <option value="[% tmpuser.login FILTER html %]"
+        [% IF selected.${tmpuser.login} == 1 %]
+          selected="selected"
+          [%# A user account appears only once. Remove it from the list, so that
+            # we know if there are some selected accounts which have not been listed. %]
+          [% selected.delete(tmpuser.login) %]
+        [% END %]
+      >[% tmpuser.identity FILTER html %]</option>
+    [% END %]
+  [% END %]
+
+  [%# If the list is not empty, this means some accounts have not been mentioned yet. %]
+  [% FOREACH selected_user = selected.keys %]
+    <option value="[% selected_user FILTER html %]" selected="selected">[% selected_user FILTER html %]</option>
+  [% END %]
+</select>
+[% ELSE %]
+  [% IF feature_enabled('jsonrpc') && Param('ajax_user_autocompletion') && id %]
+    <div id="[% id FILTER html %]_autocomplete" 
+         [% IF classes %] class="[% classes.join(' ') FILTER html %]" [% END %]>
+  [% END %]  
+  <input
+    name="[% name FILTER html %]"
+    value="[% value FILTER html %]"
+    [% IF classes %] class="[% classes.join(' ') FILTER html %]" [% END %]
+    [% IF onchange %] onchange="[% onchange FILTER html %]" [% END %]
+    [% IF disabled %] disabled="[% disabled FILTER html %]" [% END %]
+    [% IF accesskey %] accesskey="[% accesskey FILTER html %]" [% END %]
+    [% IF field_title %] title="[% field_title FILTER html %]" [% END %]
+    [% IF size %] size="[% size FILTER html %]" [% END %]
+    [% IF id %] id="[% id FILTER html %]" [% END %]
+    [% IF mandatory %] required [% END %]
+  >
+  [% IF feature_enabled('jsonrpc') && Param('ajax_user_autocompletion') && id %]
+    <div id="[% id FILTER html %]_autocomplete_container"></div>
+    </div>  
+    <script type="text/javascript">
+      if( typeof(YAHOO.bugzilla.userAutocomplete) !== 'undefined' 
+          && YAHOO.bugzilla.userAutocomplete != null){
+        YAHOO.bugzilla.userAutocomplete.init( "[% id FILTER js %]", 
+                    "[% id FILTER js %]_autocomplete_container"
+                    [% IF multiple %], true[% END%]);        
+      }
+    </script>
+  [% END %]
+[% END %]

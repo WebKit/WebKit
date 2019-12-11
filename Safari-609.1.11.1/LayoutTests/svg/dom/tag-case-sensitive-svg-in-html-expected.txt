@@ -1,0 +1,35 @@
+PASS content.querySelector('SPAN') is document.getElementById('upper1')
+PASS document.getElementById('upper1').webkitMatchesSelector('SPAN') is true
+PASS content.querySelector('div ul li SPAN') is document.getElementById('upper1')
+PASS document.getElementById('upper1').webkitMatchesSelector('div ul li SPAN') is true
+PASS content.querySelector('unknownTag') is document.getElementById('unknownTag1')
+PASS document.getElementById('unknownTag1').webkitMatchesSelector('unknownTag') is true
+PASS content.querySelector('unknowntag') is document.getElementById('unknownTag1')
+PASS document.getElementById('unknownTag1').webkitMatchesSelector('unknowntag') is true
+PASS content.querySelector('g') is document.getElementById('group1')
+PASS document.getElementById('group1').webkitMatchesSelector('g') is true
+PASS content.querySelector('G') is null
+PASS content.querySelector('textPath') is document.getElementById('textPath1')
+PASS document.getElementById('textPath1').webkitMatchesSelector('textPath') is true
+PASS content.querySelector('svg textPath') is document.getElementById('textPath1')
+PASS document.getElementById('textPath1').webkitMatchesSelector('svg textPath') is true
+PASS content.querySelector('textpath') is null
+PASS content.querySelector('TextPath') is null
+PASS content.querySelector('foreignObject') is document.getElementById('foreignObject1')
+PASS document.getElementById('foreignObject1').webkitMatchesSelector('foreignObject') is true
+PASS content.querySelector('svg foreignObject') is document.getElementById('foreignObject1')
+PASS document.getElementById('foreignObject1').webkitMatchesSelector('svg foreignObject') is true
+PASS content.querySelector('foreignobject') is null
+PASS content.querySelector('ForeignObject') is null
+PASS content.querySelector('textPath + foreignObject') is document.getElementById('foreignObject1')
+PASS document.getElementById('foreignObject1').webkitMatchesSelector('textPath + foreignObject') is true
+PASS content.querySelector('svg textPath + foreignObject') is document.getElementById('foreignObject1')
+PASS document.getElementById('foreignObject1').webkitMatchesSelector('svg textPath + foreignObject') is true
+PASS content.querySelector('textPath + foreignobject') is null
+PASS content.querySelector('textPath + ForeignObject') is null
+PASS content.querySelector('textpath + foreignObject') is null
+PASS content.querySelector('TextPath + foreignObject') is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

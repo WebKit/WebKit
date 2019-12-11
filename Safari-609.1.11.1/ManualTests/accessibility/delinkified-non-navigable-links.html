@@ -1,0 +1,23 @@
+<html>
+<body>
+
+
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=130600">Bug 130600: Web Inspector: AXI: linkified refs to #document and #text are not usually navigable nodes; consider delinkifying them</a>.</p>
+<ol>
+<li>Open Accessibility Inspector.</li>
+<li>In DOM tree in the Web Inspector, click on the first &lt;html&gt;.</li>
+<li>In the Accessibility Inspector, you should be able to see "#document" as parent, but it should not look like a link.</li>
+<li>In DOM tree in the Web Inspector, click on a &lt;p&gt;.</li>
+<li>In the Accessibility Inspector, you should be able to see "#document" as parent, but it should not look like a link.</li>
+<li>In the Accessibility Inspector, you should be able to see a ":role(text)" under "Children", but it should not look like a link.</li>
+<li>In DOM tree in the Web Inspector, click on the &lt;iframe&gt;.</li>
+<li>In the Accessibility Inspector, you should be able to see a "#document" under "Children", and it <b>should</b> not look like a link.</li>
+
+</ol>
+
+<p>A paragraph</p>
+
+<iframe></iframe>
+
+</body>
+</html>

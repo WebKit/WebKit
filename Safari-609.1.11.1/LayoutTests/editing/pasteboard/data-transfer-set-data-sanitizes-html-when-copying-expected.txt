@@ -1,0 +1,16 @@
+This tests getData strips away secrets and dangerous code when copying HTML in a regular origin and pasting inside a null origin document.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS JSON.stringify(typesInSameDocument) is "[\"text/html\"]"
+PASS htmlInSameDocument is "<meta content=\"secret\"><b onmouseover=\"dangerousCode()\">hello</b><!-- secret-->, world<script>dangerousCode()</script>"
+PASS JSON.stringify(itemsInSameDocument) is "[{\"kind\":\"string\",\"type\":\"text/html\"}]"
+PASS htmlInAnotherDocument.includes("secret") is false
+PASS htmlInAnotherDocument.includes("dangerousCode") is false
+PASS b = (new DOMParser).parseFromString(htmlInAnotherDocument, "text/html").querySelector("b"); b.textContent is "hello"
+PASS b.parentNode.textContent is "hello, world"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

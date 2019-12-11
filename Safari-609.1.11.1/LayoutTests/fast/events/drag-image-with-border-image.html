@@ -1,0 +1,55 @@
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+img {
+    border-image: url(./resources/abe.png);
+    border-top-width: 100px;
+    border-left-width: 100px;
+    box-sizing: border-box;
+}
+
+#container {
+    border: solid 1px red;
+}
+
+#destination {
+    border: dashed 1px green;
+}
+
+img, #destination, #container {
+    width: 100px;
+    height: 100px;
+}
+</style>
+</head>
+<body>
+<div id="container"><img src="resources/abe.png"></div>
+<div id="destination" contenteditable></div>
+<div id="description"></div>
+</body>
+<script>
+receivedDropEvent = false;
+destination.addEventListener("drop", () => receivedDropEvent = true);
+
+addEventListener("load", () => {
+    description("This test verifies that the web process does not crash when dragging an image element with a border"
+        + " image whose dimensions exceeds the dimensions of the image element itself. To manually test, try to drag the"
+        + " contents of the solid red box; the web process should not crash, and dropping into the green editable area"
+        + " should insert an image.");
+
+    if (!window.testRunner || !window.eventSender)
+        return;
+
+    testRunner.dumpAsText();
+    eventSender.mouseMoveTo(50, 50);
+    eventSender.mouseDown();
+    eventSender.leapForward(2000);
+    eventSender.mouseMoveTo(50, 150);
+    eventSender.mouseUp();
+
+    shouldBeTrue("receivedDropEvent");
+    shouldBeTrue(`!!destination.querySelector("img")`);
+});
+</script>
+</html>

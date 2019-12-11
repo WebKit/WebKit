@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 27: ReferenceError: Can't find variable: undefined_variable
+
+FAIL <body onerror> - runtime error in <script> assert_equals: first arg expected "string" but got "object"
+FAIL <body onerror> - runtime error in <script> (column) assert_equals: fourth arg expected "number" but got "undefined"
+

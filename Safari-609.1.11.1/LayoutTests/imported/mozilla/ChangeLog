@@ -1,0 +1,1963 @@
+2019-10-30  Dirk Schulze  <krit@webkit.org>
+
+        [css-masking] Unprefix -webkit-clip-path
+        https://bugs.webkit.org/show_bug.cgi?id=187888
+
+        Reviewed by Simon Fraser.
+
+        Integrated test expectations do not match the actual expected
+        behavior. The reason is that the expectation files reference
+        resources from different documents - which is not supported by
+        WebKit. Since unprefixed clip-path wasn't supported either
+        the test passed.
+
+        * svg/svg-integration/clipPath-html-01-expected.xhtml:
+        * svg/svg-integration/clipPath-html-02-expected.xhtml:
+        * svg/svg-integration/clipPath-html-02.xhtml:
+        * svg/svg-integration/clipPath-html-03-expected.xhtml:
+        * svg/svg-integration/clipPath-html-04-expected.xhtml:
+        * svg/svg-integration/clipPath-html-05-expected.xhtml:
+        * svg/svg-integration/clipPath-html-06-expected.xhtml:
+
+2019-10-25  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Update WPT tests related to Web Animations and remove imported Mozilla tests
+        https://bugs.webkit.org/show_bug.cgi?id=203291
+        <rdar://problem/56577481>
+
+        Reviewed by Youenn Fablet.
+
+        * css-animations/test_animation-cancel-expected.txt: Removed.
+        * css-animations/test_animation-cancel.html: Removed.
+        * css-animations/test_animation-currenttime-expected.txt: Removed.
+        * css-animations/test_animation-currenttime.html: Removed.
+        * css-animations/test_animation-finish-expected.txt: Removed.
+        * css-animations/test_animation-finish.html: Removed.
+        * css-animations/test_animation-finished-expected.txt: Removed.
+        * css-animations/test_animation-finished.html: Removed.
+        * css-animations/test_animation-id.html: Removed.
+        * css-animations/test_animation-pausing.html: Removed.
+        * css-animations/test_animation-playstate.html: Removed.
+        * css-animations/test_animation-ready.html: Removed.
+        * css-animations/test_animation-reverse-expected.txt: Removed.
+        * css-animations/test_animation-reverse.html: Removed.
+        * css-animations/test_animation-starttime-expected.txt: Removed.
+        * css-animations/test_animation-starttime.html: Removed.
+        * css-animations/test_animations-dynamic-changes.html: Removed.
+        * css-animations/test_event-dispatch.html: Removed.
+        * css-animations/test_event-order-expected.txt: Removed.
+        * css-animations/test_event-order.html: Removed.
+        * css-animations/test_setting-effect.html: Removed.
+        * css-transitions/test_animation-cancel.html: Removed.
+        * css-transitions/test_animation-currenttime-expected.txt: Removed.
+        * css-transitions/test_animation-currenttime.html: Removed.
+        * css-transitions/test_animation-finished-expected.txt: Removed.
+        * css-transitions/test_animation-finished.html: Removed.
+        * css-transitions/test_animation-pausing-expected.txt: Removed.
+        * css-transitions/test_animation-pausing.html: Removed.
+        * css-transitions/test_animation-ready-expected.txt: Removed.
+        * css-transitions/test_animation-ready.html: Removed.
+        * css-transitions/test_animation-starttime-expected.txt: Removed.
+        * css-transitions/test_animation-starttime.html: Removed.
+        * css-transitions/test_csstransition-transitionproperty.html: Removed.
+        * css-transitions/test_document-get-animations-expected.txt: Removed.
+        * css-transitions/test_document-get-animations.html: Removed.
+        * css-transitions/test_element-get-animations-expected.txt: Removed.
+        * css-transitions/test_element-get-animations.html: Removed.
+        * css-transitions/test_event-dispatch.html: Removed.
+        * css-transitions/test_keyframeeffect-getkeyframes-expected.txt: Removed.
+        * css-transitions/test_keyframeeffect-getkeyframes.html: Removed.
+        * css-transitions/test_setting-effect-expected.txt: Removed.
+        * css-transitions/test_setting-effect.html: Removed.
+
+2019-10-24  Russell Epstein  <repstein@apple.com>
+
+        Unreviewed, rolling out r251536.
+
+        Landed 3 Broken Tests.
+
+        Reverted changeset:
+
+        "[Web Animations] Update WPT tests related to Web Animations
+        and remove imported Mozilla tests"
+        https://bugs.webkit.org/show_bug.cgi?id=203291
+        https://trac.webkit.org/changeset/251536
+
+2019-10-24  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Update WPT tests related to Web Animations and remove imported Mozilla tests
+        https://bugs.webkit.org/show_bug.cgi?id=203291
+
+        Reviewed by Youenn Fablet.
+
+        * css-animations/test_animation-cancel-expected.txt: Removed.
+        * css-animations/test_animation-cancel.html: Removed.
+        * css-animations/test_animation-currenttime-expected.txt: Removed.
+        * css-animations/test_animation-currenttime.html: Removed.
+        * css-animations/test_animation-finish-expected.txt: Removed.
+        * css-animations/test_animation-finish.html: Removed.
+        * css-animations/test_animation-finished-expected.txt: Removed.
+        * css-animations/test_animation-finished.html: Removed.
+        * css-animations/test_animation-id.html: Removed.
+        * css-animations/test_animation-pausing.html: Removed.
+        * css-animations/test_animation-playstate.html: Removed.
+        * css-animations/test_animation-ready.html: Removed.
+        * css-animations/test_animation-reverse-expected.txt: Removed.
+        * css-animations/test_animation-reverse.html: Removed.
+        * css-animations/test_animation-starttime-expected.txt: Removed.
+        * css-animations/test_animation-starttime.html: Removed.
+        * css-animations/test_animations-dynamic-changes.html: Removed.
+        * css-animations/test_event-dispatch.html: Removed.
+        * css-animations/test_event-order-expected.txt: Removed.
+        * css-animations/test_event-order.html: Removed.
+        * css-animations/test_setting-effect.html: Removed.
+        * css-transitions/test_animation-cancel.html: Removed.
+        * css-transitions/test_animation-currenttime-expected.txt: Removed.
+        * css-transitions/test_animation-currenttime.html: Removed.
+        * css-transitions/test_animation-finished-expected.txt: Removed.
+        * css-transitions/test_animation-finished.html: Removed.
+        * css-transitions/test_animation-pausing-expected.txt: Removed.
+        * css-transitions/test_animation-pausing.html: Removed.
+        * css-transitions/test_animation-ready-expected.txt: Removed.
+        * css-transitions/test_animation-ready.html: Removed.
+        * css-transitions/test_animation-starttime-expected.txt: Removed.
+        * css-transitions/test_animation-starttime.html: Removed.
+        * css-transitions/test_csstransition-transitionproperty.html: Removed.
+        * css-transitions/test_document-get-animations-expected.txt: Removed.
+        * css-transitions/test_document-get-animations.html: Removed.
+        * css-transitions/test_element-get-animations-expected.txt: Removed.
+        * css-transitions/test_element-get-animations.html: Removed.
+        * css-transitions/test_event-dispatch.html: Removed.
+        * css-transitions/test_keyframeeffect-getkeyframes-expected.txt: Removed.
+        * css-transitions/test_keyframeeffect-getkeyframes.html: Removed.
+        * css-transitions/test_setting-effect-expected.txt: Removed.
+        * css-transitions/test_setting-effect.html: Removed.
+
+2018-11-06  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Update all tests to match the latest API changes
+        https://bugs.webkit.org/show_bug.cgi?id=191302
+        <rdar://problem/41000438>
+
+        Reviewed by Dean Jackson.
+
+        * css-animations/test_animation-computed-timing.html:
+        * css-animations/test_effect-target.html:
+        * css-animations/test_keyframeeffect-getkeyframes-expected.txt:
+        * css-animations/test_keyframeeffect-getkeyframes.html:
+        * css-animations/test_pseudoElement-get-animations.html:
+        * css-transitions/test_effect-target.html:
+        * css-transitions/test_keyframeeffect-getkeyframes-expected.txt:
+        * css-transitions/test_keyframeeffect-getkeyframes.html:
+
+2018-11-01  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make document.getAnimations() return declarative animations in the correct order
+        https://bugs.webkit.org/show_bug.cgi?id=191153
+
+        Reviewed by Dean Jackson.
+
+        Mark progressions for the document.getAnimations() tests covering CSS Animations and CSS Transitions.
+        These tests are now in WPT and will be updated as part of a general WPT update for all of Web Animations
+        shortly. We will upstream the minor changes made at that point. Those changes were necessary because we
+        don't support the PseudoElement interface and instead we check which animation names and CSS properties
+        are applied to pseudo-elements rather than the pseudo-element's type.
+
+        * css-animations/test_document-get-animations-expected.txt:
+        * css-animations/test_document-get-animations.html:
+        * css-animations/test_event-dispatch.html: Remove a comment that was added by mistake in a previous patch.
+        * css-transitions/test_document-get-animations-expected.txt:
+        * css-transitions/test_document-get-animations.html:
+
+2018-10-28  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Implement the update animations and send events procedure
+        https://bugs.webkit.org/show_bug.cgi?id=191013
+        <rdar://problem/45620495>
+
+        Reviewed by Dean Jackson.
+
+        Progression in a couple of getAnimations() tests for CSS Animations.
+
+        * css-animations/test_document-get-animations-expected.txt:
+
+2018-10-26  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Rebase some flaky tests
+        https://bugs.webkit.org/show_bug.cgi?id=190969
+
+        Reviewed by Dean Jackson.
+
+        A few Web Animations tests that are flaky have outdated expectations. Rebasing them to have the output
+        that is most likely to be produced.
+
+        * css-animations/test_document-get-animations-expected.txt:
+
+2018-09-27  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Turn Web Animations with CSS integration on
+        https://bugs.webkit.org/show_bug.cgi?id=184819
+        <rdar://problem/39597337>
+
+        Reviewed by Dean Jackson.
+
+        * css-animations/test_animation-cancel.html:
+        * css-animations/test_animation-computed-timing.html:
+        * css-animations/test_animation-currenttime.html:
+        * css-animations/test_animation-finish.html:
+        * css-animations/test_animation-finished.html:
+        * css-animations/test_animation-id.html:
+        * css-animations/test_animation-pausing.html:
+        * css-animations/test_animation-playstate.html:
+        * css-animations/test_animation-ready.html:
+        * css-animations/test_animation-reverse.html:
+        * css-animations/test_animation-starttime.html:
+        * css-animations/test_animations-dynamic-changes.html:
+        * css-animations/test_cssanimation-animationname.html:
+        * css-animations/test_document-get-animations.html:
+        * css-animations/test_effect-target.html:
+        * css-animations/test_element-get-animations.html:
+        * css-animations/test_event-dispatch.html:
+        * css-animations/test_event-order.html:
+        * css-animations/test_keyframeeffect-getkeyframes.html:
+        * css-animations/test_pseudoElement-get-animations.html:
+        * css-animations/test_setting-effect.html:
+        * css-transitions/test_animation-cancel.html:
+        * css-transitions/test_animation-computed-timing.html:
+        * css-transitions/test_animation-currenttime.html:
+        * css-transitions/test_animation-finished.html:
+        * css-transitions/test_animation-pausing.html:
+        * css-transitions/test_animation-ready.html:
+        * css-transitions/test_animation-starttime.html:
+        * css-transitions/test_csstransition-transitionproperty.html:
+        * css-transitions/test_document-get-animations.html:
+        * css-transitions/test_effect-target.html:
+        * css-transitions/test_element-get-animations.html:
+        * css-transitions/test_event-dispatch.html:
+        * css-transitions/test_keyframeeffect-getkeyframes.html:
+        * css-transitions/test_pseudoElement-get-animations.html:
+        * css-transitions/test_setting-effect.html:
+
+2018-09-11  Dean Jackson  <dino@apple.com>
+
+        Header parsing for experimental and internal debug features
+        https://bugs.webkit.org/show_bug.cgi?id=189486
+        <rdar://problem/44320618>
+
+        Reviewed by Tim Horton.
+
+        New webkit-test-runner headers.
+
+        * css-animations/test_animation-cancel.html:
+        * css-animations/test_animation-computed-timing.html:
+        * css-animations/test_animation-currenttime.html:
+        * css-animations/test_animation-finish.html:
+        * css-animations/test_animation-finished.html:
+        * css-animations/test_animation-id.html:
+        * css-animations/test_animation-pausing.html:
+        * css-animations/test_animation-playstate.html:
+        * css-animations/test_animation-ready.html:
+        * css-animations/test_animation-reverse.html:
+        * css-animations/test_animation-starttime.html:
+        * css-animations/test_animations-dynamic-changes.html:
+        * css-animations/test_cssanimation-animationname.html:
+        * css-animations/test_document-get-animations.html:
+        * css-animations/test_effect-target.html:
+        * css-animations/test_element-get-animations.html:
+        * css-animations/test_event-dispatch.html:
+        * css-animations/test_event-order.html:
+        * css-animations/test_keyframeeffect-getkeyframes.html:
+        * css-animations/test_pseudoElement-get-animations.html:
+        * css-animations/test_setting-effect.html:
+        * css-transitions/test_animation-cancel.html:
+        * css-transitions/test_animation-computed-timing.html:
+        * css-transitions/test_animation-currenttime.html:
+        * css-transitions/test_animation-finished.html:
+        * css-transitions/test_animation-pausing.html:
+        * css-transitions/test_animation-ready.html:
+        * css-transitions/test_animation-starttime.html:
+        * css-transitions/test_csstransition-transitionproperty.html:
+        * css-transitions/test_document-get-animations.html:
+        * css-transitions/test_effect-target.html:
+        * css-transitions/test_element-get-animations.html:
+        * css-transitions/test_event-dispatch.html:
+        * css-transitions/test_keyframeeffect-getkeyframes.html:
+        * css-transitions/test_pseudoElement-get-animations.html:
+        * css-transitions/test_setting-effect.html:
+
+2018-07-19  Antoine Quint  <graouts@apple.com>
+
+        Flaky crash in AnimationTimeline::cancelOrRemoveDeclarativeAnimation
+        https://bugs.webkit.org/show_bug.cgi?id=187530
+        <rdar://problem/42095186>
+
+        Reviewed by Dean Jackson.
+
+        Mark a WPT progression now that we correctly ignore animation names that have no matching @keyframes rule.
+
+        * css-animations/test_element-get-animations-expected.txt:
+
+2018-07-03  Antoine Quint  <graouts@apple.com>
+
+        Unreviewed, rebaselining somes Web Animations test expectations.
+
+        * css-animations/test_animations-dynamic-changes-expected.txt:
+        * css-animations/test_document-get-animations-expected.txt:
+        * css-animations/test_keyframeeffect-getkeyframes-expected.txt: Added.
+
+2018-06-28  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make imported/mozilla/css-animations/test_animation-starttime.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=183834
+        <rdar://problem/40997932>
+
+        Reviewed by Dean Jackson.
+
+        Mark progressions in the Mozilla CSS Animations tests.
+
+        * css-animations/test_animation-starttime-expected.txt:
+
+2018-06-25  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make imported/mozilla/css-animations/test_animation-pausing.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=183826
+        <rdar://problem/40997412>
+
+        Reviewed by Dean Jackson.
+
+        Mark progressions in the Mozilla CSS Animations tests.
+
+        * css-animations/test_animation-pausing-expected.txt:
+
+2018-06-25  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Ensure animations are updated prior to requestAnimationFrame callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=186997
+        <rdar://problem/41419414>
+
+        Reviewed by Dean Jackson.
+
+        Mark progressions in the Mozilla CSS Animations tests.
+
+        * css-animations/test_animation-pausing-expected.txt:
+
+2018-06-20  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make imported/mozilla/css-animations/test_animation-ready.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=183830
+        <rdar://problem/40997539>
+
+        Reviewed by Dean Jackson.
+
+        Mark progressions in the Mozilla CSS Animations tests.
+
+        * css-animations/test_animation-ready-expected.txt:
+
+2018-06-20  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make imported/mozilla/css-transitions/test_element-get-animations.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=183841
+        <rdar://problem/40998101>
+
+        Reviewed by Dean Jackson.
+
+        Mark progressions in the Mozilla CSS Transitions and CSS Animations tests.
+
+        * css-animations/test_element-get-animations-expected.txt:
+        * css-transitions/test_element-get-animations-expected.txt:
+
+2018-06-19  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make imported/mozilla/css-animations/test_pseudoElement-get-animations.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=183818
+        <rdar://problem/40997015>
+
+        Reviewed by Dean Jackson.
+
+        Mark progressions in the Mozilla CSS Transitions and CSS Animations tests.
+
+        * css-animations/test_pseudoElement-get-animations-expected.txt:
+        * css-transitions/test_element-get-animations-expected.txt:
+
+2018-06-19  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make imported/mozilla/css-animations/test_animation-playstate.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=183828
+        <rdar://problem/40997469>
+
+        Reviewed by Dean Jackson.
+
+        Mark a progression in the Mozilla CSS Animations tests.
+
+        * css-animations/test_animation-playstate-expected.txt:
+
+2018-06-19  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make imported/mozilla/css-transitions/test_animation-cancel.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=183821
+        <rdar://problem/40997034>
+
+        Reviewed by Dean Jackson.
+
+        Mark a progression in the Mozilla CSS Transitions tests.
+
+        * css-transitions/test_animation-cancel-expected.txt:
+
+2018-06-18  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Implement "Starting of transitions" section from CSS Transitions
+        https://bugs.webkit.org/show_bug.cgi?id=186517
+        <rdar://problem/41000798>
+
+        Reviewed by Dean Jackson.
+
+        Mark some progressions in the Mozilla CSS Animations and CSS Transitions tests.
+
+        * css-transitions/test_animation-cancel-expected.txt:
+        * css-transitions/test_animation-ready-expected.txt:
+
+2018-06-15  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] CSS Animations should take precedence over CSS Transitions
+        https://bugs.webkit.org/show_bug.cgi?id=186651
+
+        Reviewed by Dean Jackson.
+
+        Mark some progressions in the Mozilla CSS Animations and CSS Transitions tests.
+
+        * css-animations/test_element-get-animations-expected.txt:
+        * css-transitions/test_document-get-animations-expected.txt:
+
+2018-06-11  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make imported/mozilla/css-transitions/test_setting-effect.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=183850
+
+        Unreviewed.
+
+        This test is now passing.
+
+        * css-transitions/test_setting-effect-expected.txt:
+
+2018-06-11  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make imported/mozilla/css-transitions/test_animation-starttime.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=183833
+
+        Unreviewed.
+
+        This test is now passing.
+
+        * css-transitions/test_animation-starttime-expected.txt:
+
+2018-06-11  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make imported/mozilla/css-transitions/test_animation-currenttime.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=183825
+
+        Unreviewed.
+
+        This test is now passing.
+
+        * css-transitions/test_animation-currenttime-expected.txt:
+
+2018-06-11  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make imported/mozilla/css-transitions/test_animation-computed-timing.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=183823
+
+        Unreviewed.
+
+        This test is now passing.
+
+        * css-transitions/test_animation-computed-timing-expected.txt:
+
+2018-05-18  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Turn Web Animations with CSS integration on for test runners
+        https://bugs.webkit.org/show_bug.cgi?id=184819
+        <rdar://problem/39597337>
+
+        Unreviewed. Rolling out the patch for this bug, it caused some flaky timeouts for animation suspension tests.
+
+        * css-animations/test_animation-cancel.html:
+        * css-animations/test_animation-computed-timing.html:
+        * css-animations/test_animation-currenttime.html:
+        * css-animations/test_animation-finish.html:
+        * css-animations/test_animation-finished.html:
+        * css-animations/test_animation-id.html:
+        * css-animations/test_animation-pausing.html:
+        * css-animations/test_animation-playstate.html:
+        * css-animations/test_animation-ready.html:
+        * css-animations/test_animation-reverse.html:
+        * css-animations/test_animation-starttime.html:
+        * css-animations/test_animations-dynamic-changes.html:
+        * css-animations/test_cssanimation-animationname.html:
+        * css-animations/test_document-get-animations.html:
+        * css-animations/test_effect-target.html:
+        * css-animations/test_element-get-animations.html:
+        * css-animations/test_event-dispatch.html:
+        * css-animations/test_event-order.html:
+        * css-animations/test_keyframeeffect-getkeyframes.html:
+        * css-animations/test_pseudoElement-get-animations.html:
+        * css-animations/test_setting-effect.html:
+        * css-transitions/test_animation-cancel.html:
+        * css-transitions/test_animation-computed-timing.html:
+        * css-transitions/test_animation-currenttime.html:
+        * css-transitions/test_animation-finished.html:
+        * css-transitions/test_animation-pausing.html:
+        * css-transitions/test_animation-ready.html:
+        * css-transitions/test_animation-starttime.html:
+        * css-transitions/test_csstransition-transitionproperty.html:
+        * css-transitions/test_document-get-animations.html:
+        * css-transitions/test_effect-target.html:
+        * css-transitions/test_element-get-animations.html:
+        * css-transitions/test_event-dispatch.html:
+        * css-transitions/test_keyframeeffect-getkeyframes.html:
+        * css-transitions/test_pseudoElement-get-animations.html:
+        * css-transitions/test_setting-effect.html:
+
+2018-05-18  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Turn Web Animations with CSS integration on for test runners
+        https://bugs.webkit.org/show_bug.cgi?id=184819
+        <rdar://problem/39597337>
+
+        Reviewed by Jon Lee.
+
+        Since Web Animations with CSS integration is on by default on test runners, we no longer need
+        the special HTML comment to turn the flag on for select tests.
+
+        * css-animations/test_animation-cancel.html:
+        * css-animations/test_animation-computed-timing.html:
+        * css-animations/test_animation-currenttime.html:
+        * css-animations/test_animation-finish.html:
+        * css-animations/test_animation-finished.html:
+        * css-animations/test_animation-id.html:
+        * css-animations/test_animation-pausing.html:
+        * css-animations/test_animation-playstate.html:
+        * css-animations/test_animation-ready.html:
+        * css-animations/test_animation-reverse.html:
+        * css-animations/test_animation-starttime.html:
+        * css-animations/test_animations-dynamic-changes.html:
+        * css-animations/test_cssanimation-animationname.html:
+        * css-animations/test_document-get-animations.html:
+        * css-animations/test_effect-target.html:
+        * css-animations/test_element-get-animations.html:
+        * css-animations/test_event-dispatch.html:
+        * css-animations/test_event-order.html:
+        * css-animations/test_keyframeeffect-getkeyframes.html:
+        * css-animations/test_pseudoElement-get-animations.html:
+        * css-animations/test_setting-effect.html:
+        * css-transitions/test_animation-cancel.html:
+        * css-transitions/test_animation-computed-timing.html:
+        * css-transitions/test_animation-currenttime.html:
+        * css-transitions/test_animation-finished.html:
+        * css-transitions/test_animation-pausing.html:
+        * css-transitions/test_animation-ready.html:
+        * css-transitions/test_animation-starttime.html:
+        * css-transitions/test_csstransition-transitionproperty.html:
+        * css-transitions/test_document-get-animations.html:
+        * css-transitions/test_effect-target.html:
+        * css-transitions/test_element-get-animations.html:
+        * css-transitions/test_event-dispatch.html:
+        * css-transitions/test_keyframeeffect-getkeyframes.html:
+        * css-transitions/test_pseudoElement-get-animations.html:
+        * css-transitions/test_setting-effect.html:
+
+2018-05-15  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Expose Web Animations CSS integration as an experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=185647
+
+        Reviewed by Dean Jackson.
+
+        Change the name of the Web Animations CSS integration flag so that tests can opt into this feature.
+
+        * css-animations/test_animation-cancel.html:
+        * css-animations/test_animation-computed-timing.html:
+        * css-animations/test_animation-currenttime.html:
+        * css-animations/test_animation-finish.html:
+        * css-animations/test_animation-finished.html:
+        * css-animations/test_animation-id.html:
+        * css-animations/test_animation-pausing.html:
+        * css-animations/test_animation-playstate.html:
+        * css-animations/test_animation-ready.html:
+        * css-animations/test_animation-reverse.html:
+        * css-animations/test_animation-starttime.html:
+        * css-animations/test_animations-dynamic-changes.html:
+        * css-animations/test_cssanimation-animationname.html:
+        * css-animations/test_document-get-animations.html:
+        * css-animations/test_effect-target.html:
+        * css-animations/test_element-get-animations.html:
+        * css-animations/test_event-dispatch.html:
+        * css-animations/test_event-order.html:
+        * css-animations/test_keyframeeffect-getkeyframes.html:
+        * css-animations/test_pseudoElement-get-animations.html:
+        * css-animations/test_setting-effect.html:
+        * css-transitions/test_animation-cancel.html:
+        * css-transitions/test_animation-computed-timing.html:
+        * css-transitions/test_animation-currenttime.html:
+        * css-transitions/test_animation-finished.html:
+        * css-transitions/test_animation-pausing.html:
+        * css-transitions/test_animation-ready.html:
+        * css-transitions/test_animation-starttime.html:
+        * css-transitions/test_csstransition-transitionproperty.html:
+        * css-transitions/test_document-get-animations.html:
+        * css-transitions/test_effect-target.html:
+        * css-transitions/test_element-get-animations.html:
+        * css-transitions/test_event-dispatch.html:
+        * css-transitions/test_keyframeeffect-getkeyframes.html:
+        * css-transitions/test_pseudoElement-get-animations.html:
+        * css-transitions/test_setting-effect.html:
+
+2018-03-23  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make imported/mozilla/css-animations/test_animation-currenttime.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=183819
+
+        Reviewed by Dean Jackson.
+
+        Record progressions of Mozilla tests.
+
+        * css-animations/test_animation-currenttime-expected.txt:
+
+2018-03-23  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Correctly handle timing functions specified by CSS Animations and CSS Transitions
+        https://bugs.webkit.org/show_bug.cgi?id=183935
+
+        Reviewed by Dean Jackson.
+
+        Record progressions of Mozilla tests.
+
+        * css-animations/test_animation-computed-timing-expected.txt:
+        * css-transitions/test_animation-computed-timing-expected.txt:
+        * css-transitions/test_keyframeeffect-getkeyframes-expected.txt:
+
+2018-03-23  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] infinite repeat counts aren't reflected for CSS Animations
+        https://bugs.webkit.org/show_bug.cgi?id=183932
+
+        Reviewed by Dean Jackson.
+
+        Record progressions of Mozilla tests.
+
+        * css-animations/test_animation-computed-timing-expected.txt:
+        * css-animations/test_animation-finish-expected.txt:
+
+2018-03-22  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Correctly cancel animations when a parent gets a "display: none" style or when an element is removed
+        https://bugs.webkit.org/show_bug.cgi?id=183919
+
+        Reviewed by Dean Jackson.
+
+        A number of tests now pass thanks to correctly canceling animations when a parent element in the hierarchy gets a
+        "display: none" style or if an element with animations is removed.
+
+        * css-animations/test_animation-cancel-expected.txt:
+        * css-animations/test_document-get-animations-expected.txt:
+        * css-animations/test_effect-target-expected.txt:
+        * css-transitions/test_animation-cancel-expected.txt:
+        * css-transitions/test_effect-target-expected.txt:
+
+2018-03-23  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Animated transform styles are ignored when calling getComputedStyle()
+        https://bugs.webkit.org/show_bug.cgi?id=183918
+
+        Reviewed by Dean Jackson.
+
+        We obtain one more PASS by correctly serializing the transform property on getComputedStyle().
+
+        * css-animations/test_animation-cancel-expected.txt:
+
+2018-03-22  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Support "transition: all" for CSS Transitions as Web Animations
+        https://bugs.webkit.org/show_bug.cgi?id=183917
+
+        Reviewed by Dean Jackson.
+
+        Record progressions thanks to supporting "transition: all".
+
+        * css-transitions/test_animation-finished-expected.txt:
+        * css-transitions/test_csstransition-transitionproperty-expected.txt:
+        * css-transitions/test_effect-target-expected.txt:
+        * css-transitions/test_element-get-animations-expected.txt:
+        * css-transitions/test_pseudoElement-get-animations-expected.txt:
+
+2018-03-21  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Make imported/mozilla/css-animations/test_event-dispatch.html pass reliably
+        https://bugs.webkit.org/show_bug.cgi?id=183845
+
+        Reviewed by Dean Jackson.
+
+        Add test expectations for previously crashing tests, update other expectations with progressions, including
+        the two event dispatch tests which now pass all assertions.
+
+        * css-animations/test_animation-finish-expected.txt:
+        * css-animations/test_animation-pausing-expected.txt:
+        * css-animations/test_animation-playstate-expected.txt:
+        * css-animations/test_animation-ready-expected.txt:
+        * css-animations/test_animation-starttime-expected.txt:
+        * css-animations/test_event-dispatch-expected.txt:
+        * css-animations/test_event-order-expected.txt:
+        * css-animations/test_setting-effect-expected.txt: Added.
+        * css-transitions/test_animation-cancel-expected.txt:
+        * css-transitions/test_animation-computed-timing-expected.txt:
+        * css-transitions/test_animation-currenttime-expected.txt:
+        * css-transitions/test_animation-pausing-expected.txt:
+        * css-transitions/test_animation-starttime-expected.txt:
+        * css-transitions/test_event-dispatch-expected.txt:
+        * css-transitions/test_setting-effect-expected.txt: Added.
+
+2018-03-21  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Ensure animationcancel and transitioncancel events are dispatched
+        https://bugs.webkit.org/show_bug.cgi?id=183864
+
+        Reviewed by Dean Jackson.
+
+        Record progressions of Mozilla tests.
+
+        * css-animations/test_animation-cancel-expected.txt:
+        * css-animations/test_animation-currenttime-expected.txt:
+        * css-animations/test_animation-finished-expected.txt:
+        * css-animations/test_animation-reverse-expected.txt:
+        * css-transitions/test_animation-cancel-expected.txt:
+        * css-transitions/test_animation-pausing-expected.txt:
+        * css-transitions/test_animation-ready-expected.txt:
+
+2018-03-21  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Dispatch DOM events for CSS Transitions and CSS Animations implemented as Web Animations
+        https://bugs.webkit.org/show_bug.cgi?id=183781
+
+        Reviewed by Dean Jackson.
+
+        Some of the Mozilla tests no longer time out and partially pass, marking the progression.
+
+        * css-animations/test_animation-starttime-expected.txt:
+        * css-animations/test_element-get-animations-expected.txt:
+
+2018-03-21  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Import CSS Animations and CSS Transitions as Web Animations tests from Mozilla
+        https://bugs.webkit.org/show_bug.cgi?id=183851
+
+        Reviewed by Jon Lee.
+
+        Import a series of tests created by Mozilla contributors for CSS Animations and CSS Transitions as Web Animations.
+
+        * css-animations/test_animation-cancel-expected.txt: Added.
+        * css-animations/test_animation-cancel.html: Added.
+        * css-animations/test_animation-computed-timing-expected.txt: Added.
+        * css-animations/test_animation-computed-timing.html: Added.
+        * css-animations/test_animation-currenttime-expected.txt: Added.
+        * css-animations/test_animation-currenttime.html: Added.
+        * css-animations/test_animation-finish-expected.txt: Added.
+        * css-animations/test_animation-finish.html: Added.
+        * css-animations/test_animation-finished-expected.txt: Added.
+        * css-animations/test_animation-finished.html: Added.
+        * css-animations/test_animation-id-expected.txt: Added.
+        * css-animations/test_animation-id.html: Added.
+        * css-animations/test_animation-pausing-expected.txt: Added.
+        * css-animations/test_animation-pausing.html: Added.
+        * css-animations/test_animation-playstate-expected.txt: Added.
+        * css-animations/test_animation-playstate.html: Added.
+        * css-animations/test_animation-ready-expected.txt: Added.
+        * css-animations/test_animation-ready.html: Added.
+        * css-animations/test_animation-reverse-expected.txt: Added.
+        * css-animations/test_animation-reverse.html: Added.
+        * css-animations/test_animation-starttime-expected.txt: Added.
+        * css-animations/test_animation-starttime.html: Added.
+        * css-animations/test_animations-dynamic-changes-expected.txt: Added.
+        * css-animations/test_animations-dynamic-changes.html: Added.
+        * css-animations/test_cssanimation-animationname-expected.txt: Added.
+        * css-animations/test_cssanimation-animationname.html: Added.
+        * css-animations/test_document-get-animations-expected.txt: Added.
+        * css-animations/test_document-get-animations.html: Added.
+        * css-animations/test_effect-target-expected.txt: Added.
+        * css-animations/test_effect-target.html: Added.
+        * css-animations/test_element-get-animations-expected.txt: Added.
+        * css-animations/test_element-get-animations.html: Added.
+        * css-animations/test_event-dispatch-expected.txt: Added.
+        * css-animations/test_event-dispatch.html: Added.
+        * css-animations/test_event-order-expected.txt: Added.
+        * css-animations/test_event-order.html: Added.
+        * css-animations/test_keyframeeffect-getkeyframes.html: Added.
+        * css-animations/test_pseudoElement-get-animations-expected.txt: Added.
+        * css-animations/test_pseudoElement-get-animations.html: Added.
+        * css-animations/test_setting-effect.html: Added.
+        * css-transitions/test_animation-cancel-expected.txt: Added.
+        * css-transitions/test_animation-cancel.html: Added.
+        * css-transitions/test_animation-computed-timing-expected.txt: Added.
+        * css-transitions/test_animation-computed-timing.html: Added.
+        * css-transitions/test_animation-currenttime-expected.txt: Added.
+        * css-transitions/test_animation-currenttime.html: Added.
+        * css-transitions/test_animation-finished-expected.txt: Added.
+        * css-transitions/test_animation-finished.html: Added.
+        * css-transitions/test_animation-pausing-expected.txt: Added.
+        * css-transitions/test_animation-pausing.html: Added.
+        * css-transitions/test_animation-ready-expected.txt: Added.
+        * css-transitions/test_animation-ready.html: Added.
+        * css-transitions/test_animation-starttime-expected.txt: Added.
+        * css-transitions/test_animation-starttime.html: Added.
+        * css-transitions/test_csstransition-transitionproperty-expected.txt: Added.
+        * css-transitions/test_csstransition-transitionproperty.html: Added.
+        * css-transitions/test_document-get-animations-expected.txt: Added.
+        * css-transitions/test_document-get-animations.html: Added.
+        * css-transitions/test_effect-target-expected.txt: Added.
+        * css-transitions/test_effect-target.html: Added.
+        * css-transitions/test_element-get-animations-expected.txt: Added.
+        * css-transitions/test_element-get-animations.html: Added.
+        * css-transitions/test_event-dispatch-expected.txt: Added.
+        * css-transitions/test_event-dispatch.html: Added.
+        * css-transitions/test_keyframeeffect-getkeyframes-expected.txt: Added.
+        * css-transitions/test_keyframeeffect-getkeyframes.html: Added.
+        * css-transitions/test_pseudoElement-get-animations-expected.txt: Added.
+        * css-transitions/test_pseudoElement-get-animations.html: Added.
+        * css-transitions/test_setting-effect.html: Added.
+        * resources/testcommon.js: Added.
+
+2015-05-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        An SVG with no intrinsic size does not draw correct slices when used as a border-image for an HTML element.
+        https://bugs.webkit.org/show_bug.cgi?id=139405
+
+        Reviewed by Darin Adler.
+
+        * svg/as-image/border-image-simple-2.html: Add "border: 0px none;" to
+        style of the <div> although the style has "border-image: url() 0 fill;".
+        If the border width is not set to zero in the style, the <div> will have
+        a 3px border. This seems to be a bug in WebKit but should be unrelated to
+        the non-intrinsic-sized images with border-image.
+
+2014-12-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Import Mozilla test suite for SVG.
+        https://bugs.webkit.org/show_bug.cgi?id=139456.
+
+        Reviewed by Dean Jackson.
+
+        This is only a part of the test suite. The rest of the tests will be submitted
+        later as they are investigated and the failures are reduced.
+
+        * ChangeLog: Added.
+        * resources: Added.
+        * resources/fonts: Added.
+        * resources/fonts/Ahem.ttf: Added.
+        * resources/fonts/LinLibertine_Re-4.7.5.woff: Added.
+        * svg: Added.
+        * svg/altGlyph-01-expected.svg: Added.
+        * svg/altGlyph-01.svg: Added.
+        * svg/as-image: Added.
+        * svg/as-image/background-image-rect-1png-expected.html: Added.
+        * svg/as-image/background-image-rect-1png.html: Added.
+        * svg/as-image/background-image-rect-2-expected.html: Added.
+        * svg/as-image/background-image-rect-2.html: Added.
+        * svg/as-image/background-resize-1-expected.html: Added.
+        * svg/as-image/background-resize-1.html: Added.
+        * svg/as-image/background-resize-2-expected.html: Added.
+        * svg/as-image/background-resize-2.html: Added.
+        * svg/as-image/background-resize-3-expected.html: Added.
+        * svg/as-image/background-resize-3.html: Added.
+        * svg/as-image/background-resize-4-expected.html: Added.
+        * svg/as-image/background-resize-4.html: Added.
+        * svg/as-image/background-stretch-1-expected.html: Added.
+        * svg/as-image/background-stretch-1.html: Added.
+        * svg/as-image/border-image-simple-1-expected.html: Added.
+        * svg/as-image/border-image-simple-1.html: Added.
+        * svg/as-image/border-image-simple-2-expected.html: Added.
+        * svg/as-image/border-image-simple-2.html: Added.
+        * svg/as-image/canvas-drawImage-scale-1a-expected.html: Added.
+        * svg/as-image/canvas-drawImage-scale-1a.html: Added.
+        * svg/as-image/canvas-drawImage-scale-1b-expected.html: Added.
+        * svg/as-image/canvas-drawImage-scale-1b.html: Added.
+        * svg/as-image/img-content-outside-viewBox-1-expected.html: Added.
+        * svg/as-image/img-content-outside-viewBox-1.html: Added.
+        * svg/as-image/img-dyn-1-expected.html: Added.
+        * svg/as-image/img-dyn-1.html: Added.
+        * svg/as-image/img-foreignObject-1-expected.html: Added.
+        * svg/as-image/img-foreignObject-1.html: Added.
+        * svg/as-image/img-foreignObject-embed-1-expected.html: Added.
+        * svg/as-image/img-foreignObject-embed-1.html: Added.
+        * svg/as-image/img-foreignObject-iframe-1a-expected.html: Added.
+        * svg/as-image/img-foreignObject-iframe-1a.html: Added.
+        * svg/as-image/img-foreignObject-iframe-1b-expected.html: Added.
+        * svg/as-image/img-foreignObject-iframe-1b.html: Added.
+        * svg/as-image/img-height-meet-1-expected.html: Added.
+        * svg/as-image/img-height-meet-1.html: Added.
+        * svg/as-image/img-height-meet-2-expected.html: Added.
+        * svg/as-image/img-height-meet-2.html: Added.
+        * svg/as-image/img-height-slice-1-expected.html: Added.
+        * svg/as-image/img-height-slice-1.html: Added.
+        * svg/as-image/img-height-slice-2-expected.html: Added.
+        * svg/as-image/img-height-slice-2.html: Added.
+        * svg/as-image/img-simple-1-expected.html: Added.
+        * svg/as-image/img-simple-1.html: Added.
+        * svg/as-image/img-simple-2-expected.html: Added.
+        * svg/as-image/img-simple-2.html: Added.
+        * svg/as-image/img-simple-3-expected.html: Added.
+        * svg/as-image/img-simple-3.html: Added.
+        * svg/as-image/img-simple-4-expected.html: Added.
+        * svg/as-image/img-simple-4.html: Added.
+        * svg/as-image/img-simple-5-expected.html: Added.
+        * svg/as-image/img-simple-5.html: Added.
+        * svg/as-image/img-simple-6-expected.html: Added.
+        * svg/as-image/img-simple-6.html: Added.
+        * svg/as-image/img-simple-7-expected.html: Added.
+        * svg/as-image/img-simple-7.html: Added.
+        * svg/as-image/img-width-meet-1-expected.html: Added.
+        * svg/as-image/img-width-meet-1.html: Added.
+        * svg/as-image/img-width-meet-2-expected.html: Added.
+        * svg/as-image/img-width-meet-2.html: Added.
+        * svg/as-image/img-width-slice-1-expected.html: Added.
+        * svg/as-image/img-width-slice-1.html: Added.
+        * svg/as-image/img-width-slice-2-expected.html: Added.
+        * svg/as-image/img-width-slice-2.html: Added.
+        * svg/as-image/img-widthAndHeight-meet-1-expected.html: Added.
+        * svg/as-image/img-widthAndHeight-meet-1.html: Added.
+        * svg/as-image/img-widthAndHeight-meet-2-expected.html: Added.
+        * svg/as-image/img-widthAndHeight-meet-2.html: Added.
+        * svg/as-image/img-widthAndHeight-slice-1-expected.html: Added.
+        * svg/as-image/img-widthAndHeight-slice-1.html: Added.
+        * svg/as-image/img-widthAndHeight-slice-2-expected.html: Added.
+        * svg/as-image/img-widthAndHeight-slice-2.html: Added.
+        * svg/as-image/list-simple-1-expected.html: Added.
+        * svg/as-image/list-simple-1.html: Added.
+        * svg/as-image/resources: Added.
+        * svg/as-image/resources/content-outside-viewBox-1-helper.svg: Added.
+        * svg/as-image/resources/img-foreignObject-1-helper.svg: Added.
+        * svg/as-image/resources/img-foreignObject-embed-1-helper.svg: Added.
+        * svg/as-image/resources/img-foreignObject-iframe-1a-helper.svg: Added.
+        * svg/as-image/resources/img-foreignObject-iframe-1b-helper.svg: Added.
+        * svg/as-image/resources/lime100x100-noSVGDimensions.svg: Added.
+        * svg/as-image/resources/lime100x100-ref.html: Added.
+        * svg/as-image/resources/lime100x100.png: Added.
+        * svg/as-image/resources/lime100x100.svg: Added.
+        * svg/as-image/resources/lime200x100.svg: Added.
+        * svg/as-image/resources/lime200x200.svg: Added.
+        * svg/as-image/resources/lime50x25.svg: Added.
+        * svg/as-image/resources/lime50x50.svg: Added.
+        * svg/as-image/resources/limeInRed-noSVGDimensions-animViewBox.svg: Added.
+        * svg/as-image/resources/limeInRed-noSVGDimensions-viewBox.svg: Added.
+        * svg/as-image/resources/limeInRed100x100-viewBox.svg: Added.
+        * svg/as-image/resources/limeInRed100x100.png: Added.
+        * svg/as-image/resources/limeInRed100x100.svg: Added.
+        * svg/as-image/resources/script100x100.svg: Added.
+        * svg/as-image/resources/squaredCircle-100x100.svg: Added.
+        * svg/as-image/resources/squaredCircle-100x50.svg: Added.
+        * svg/as-image/resources/squaredCircle-viewBox-100x100.svg: Added.
+        * svg/as-image/resources/squaredCircle-viewBox-noSize.svg: Added.
+        * svg/as-image/resources/white-rect-no-viewbox.svg: Added.
+        * svg/as-image/resources/white-rect-with-viewbox.svg: Added.
+        * svg/as-image/zoom: Added.
+        * svg/as-image/zoom/img-fuzzy-zoomIn-1-expected.html: Added.
+        * svg/as-image/zoom/img-fuzzy-zoomIn-1.html: Added.
+        * svg/as-image/zoom/img-fuzzy-zoomOut-1-expected.html: Added.
+        * svg/as-image/zoom/img-fuzzy-zoomOut-1.html: Added.
+        * svg/blend-color-burn-expected.svg: Added.
+        * svg/blend-color-burn.svg: Added.
+        * svg/blend-color-dodge-expected.svg: Added.
+        * svg/blend-color-dodge.svg: Added.
+        * svg/blend-color-expected.svg: Added.
+        * svg/blend-color.svg: Added.
+        * svg/blend-darken-expected.svg: Added.
+        * svg/blend-darken.svg: Added.
+        * svg/blend-difference-expected.svg: Added.
+        * svg/blend-difference-stacking-expected.html: Added.
+        * svg/blend-difference-stacking.html: Added.
+        * svg/blend-difference.svg: Added.
+        * svg/blend-exclusion-expected.svg: Added.
+        * svg/blend-exclusion.svg: Added.
+        * svg/blend-hard-light-expected.svg: Added.
+        * svg/blend-hard-light.svg: Added.
+        * svg/blend-hue-expected.svg: Added.
+        * svg/blend-hue.svg: Added.
+        * svg/blend-layer-blend-expected.svg: Added.
+        * svg/blend-layer-blend.svg: Added.
+        * svg/blend-layer-filter-expected.svg: Added.
+        * svg/blend-layer-filter.svg: Added.
+        * svg/blend-layer-mask-expected.svg: Added.
+        * svg/blend-layer-mask.svg: Added.
+        * svg/blend-layer-opacity-expected.svg: Added.
+        * svg/blend-layer-opacity.svg: Added.
+        * svg/blend-lighten-expected.svg: Added.
+        * svg/blend-lighten.svg: Added.
+        * svg/blend-luminosity-expected.svg: Added.
+        * svg/blend-luminosity.svg: Added.
+        * svg/blend-multiply-expected.svg: Added.
+        * svg/blend-multiply.svg: Added.
+        * svg/blend-normal-expected.svg: Added.
+        * svg/blend-normal.svg: Added.
+        * svg/blend-overlay-expected.svg: Added.
+        * svg/blend-overlay.svg: Added.
+        * svg/blend-saturation-expected.svg: Added.
+        * svg/blend-saturation.svg: Added.
+        * svg/blend-screen-expected.svg: Added.
+        * svg/blend-screen.svg: Added.
+        * svg/clip-02a-expected.svg: Added.
+        * svg/clip-02a.svg: Added.
+        * svg/clip-02b-expected.svg: Added.
+        * svg/clip-02b.svg: Added.
+        * svg/clip-surface-clone-01-expected.svg: Added.
+        * svg/clip-surface-clone-01.svg: Added.
+        * svg/clipPath-basic-01-expected.svg: Added.
+        * svg/clipPath-basic-01.svg: Added.
+        * svg/clipPath-basic-02-expected.svg: Added.
+        * svg/clipPath-basic-02.svg: Added.
+        * svg/clipPath-basic-03-expected.svg: Added.
+        * svg/clipPath-basic-03.svg: Added.
+        * svg/clipPath-basic-04-expected.svg: Added.
+        * svg/clipPath-basic-04.svg: Added.
+        * svg/clipPath-basic-05-expected.svg: Added.
+        * svg/clipPath-basic-05.svg: Added.
+        * svg/clipPath-basic-06-expected.svg: Added.
+        * svg/clipPath-basic-06.svg: Added.
+        * svg/conditions-01-expected.svg: Added.
+        * svg/conditions-01.svg: Added.
+        * svg/conditions-02-expected.svg: Added.
+        * svg/conditions-02.svg: Added.
+        * svg/conditions-03-expected.svg: Added.
+        * svg/conditions-03.svg: Added.
+        * svg/conditions-04-expected.svg: Added.
+        * svg/conditions-04.svg: Added.
+        * svg/conditions-06-expected.svg: Added.
+        * svg/conditions-06.svg: Added.
+        * svg/conditions-07-expected.svg: Added.
+        * svg/conditions-07.svg: Added.
+        * svg/conditions-08-expected.svg: Added.
+        * svg/conditions-08.svg: Added.
+        * svg/cssComment-in-attribute-01-expected.svg: Added.
+        * svg/cssComment-in-attribute-01.svg: Added.
+        * svg/currentColor-01-expected.svg: Added.
+        * svg/currentColor-01.svg: Added.
+        * svg/currentColor-02-expected.svg: Added.
+        * svg/currentColor-02.svg: Added.
+        * svg/currentColor-03-expected.svg: Added.
+        * svg/currentColor-03.svg: Added.
+        * svg/dynamic-attr-change-1-expected.svg: Added.
+        * svg/dynamic-attr-change-1.svg: Added.
+        * svg/dynamic-attr-removal-1-expected.svg: Added.
+        * svg/dynamic-attr-removal-1.svg: Added.
+        * svg/dynamic-attr-removal-2-expected.svg: Added.
+        * svg/dynamic-attr-removal-2.svg: Added.
+        * svg/dynamic-class-01-expected.svg: Added.
+        * svg/dynamic-class-01.svg: Added.
+        * svg/dynamic-conditions-01-expected.svg: Added.
+        * svg/dynamic-conditions-01.svg: Added.
+        * svg/dynamic-conditions-03-expected.svg: Added.
+        * svg/dynamic-conditions-03.svg: Added.
+        * svg/dynamic-conditions-05-expected.svg: Added.
+        * svg/dynamic-conditions-05.svg: Added.
+        * svg/dynamic-conditions-08-expected.svg: Added.
+        * svg/dynamic-conditions-08.svg: Added.
+        * svg/dynamic-conditions-12-expected.svg: Added.
+        * svg/dynamic-conditions-12.svg: Added.
+        * svg/dynamic-filter-contents-01a-expected.svg: Added.
+        * svg/dynamic-filter-contents-01a.svg: Added.
+        * svg/dynamic-gradient-contents-01-expected.svg: Added.
+        * svg/dynamic-gradient-contents-01.svg: Added.
+        * svg/dynamic-gradient-contents-02-expected.svg: Added.
+        * svg/dynamic-gradient-contents-02.svg: Added.
+        * svg/dynamic-inner-svg-01-expected.svg: Added.
+        * svg/dynamic-inner-svg-01.svg: Added.
+        * svg/dynamic-link-style-01-expected.svg: Added.
+        * svg/dynamic-link-style-01.svg: Added.
+        * svg/dynamic-marker-01-expected.svg: Added.
+        * svg/dynamic-marker-01.svg: Added.
+        * svg/dynamic-marker-02-expected.svg: Added.
+        * svg/dynamic-marker-02.svg: Added.
+        * svg/dynamic-marker-03-expected.svg: Added.
+        * svg/dynamic-marker-03.svg: Added.
+        * svg/dynamic-mask-01-expected.svg: Added.
+        * svg/dynamic-mask-01.svg: Added.
+        * svg/dynamic-mask-contents-01-expected.svg: Added.
+        * svg/dynamic-mask-contents-01.svg: Added.
+        * svg/dynamic-mask-pre-effects-bbox-expected.html: Added.
+        * svg/dynamic-mask-pre-effects-bbox.html: Added.
+        * svg/dynamic-opacity-property-01-expected.svg: Added.
+        * svg/dynamic-opacity-property-01.svg: Added.
+        * svg/dynamic-pattern-01-expected.svg: Added.
+        * svg/dynamic-pattern-01.svg: Added.
+        * svg/dynamic-pattern-02-expected.svg: Added.
+        * svg/dynamic-pattern-02.svg: Added.
+        * svg/dynamic-pattern-contents-01-expected.svg: Added.
+        * svg/dynamic-pattern-contents-01.svg: Added.
+        * svg/dynamic-pattern-contents-02-expected.svg: Added.
+        * svg/dynamic-pattern-contents-02.svg: Added.
+        * svg/dynamic-rect-01-expected.svg: Added.
+        * svg/dynamic-rect-01.svg: Added.
+        * svg/dynamic-rect-03-expected.svg: Added.
+        * svg/dynamic-rect-03.svg: Added.
+        * svg/dynamic-reflow-01-expected.svg: Added.
+        * svg/dynamic-reflow-01.svg: Added.
+        * svg/dynamic-small-object-scaled-up-01-expected.svg: Added.
+        * svg/dynamic-small-object-scaled-up-01.svg: Added.
+        * svg/dynamic-small-object-scaled-up-02-expected.svg: Added.
+        * svg/dynamic-small-object-scaled-up-02.svg: Added.
+        * svg/dynamic-stroke-01-expected.svg: Added.
+        * svg/dynamic-stroke-01.svg: Added.
+        * svg/dynamic-stroke-opacity-01-expected.svg: Added.
+        * svg/dynamic-stroke-opacity-01.svg: Added.
+        * svg/dynamic-stroke-width-01-expected.svg: Added.
+        * svg/dynamic-stroke-width-01.svg: Added.
+        * svg/dynamic-switch-01-expected.svg: Added.
+        * svg/dynamic-switch-01.svg: Added.
+        * svg/dynamic-text-01-expected.svg: Added.
+        * svg/dynamic-text-01.svg: Added.
+        * svg/dynamic-text-02-expected.svg: Added.
+        * svg/dynamic-text-02.svg: Added.
+        * svg/dynamic-text-03-expected.svg: Added.
+        * svg/dynamic-text-03.svg: Added.
+        * svg/dynamic-text-04-expected.svg: Added.
+        * svg/dynamic-text-04.svg: Added.
+        * svg/dynamic-text-05-expected.svg: Added.
+        * svg/dynamic-text-05.svg: Added.
+        * svg/dynamic-text-06-expected.svg: Added.
+        * svg/dynamic-text-06.svg: Added.
+        * svg/dynamic-text-07-expected.svg: Added.
+        * svg/dynamic-text-07.svg: Added.
+        * svg/dynamic-text-08-expected.svg: Added.
+        * svg/dynamic-text-08.svg: Added.
+        * svg/dynamic-textPath-01-expected.svg: Added.
+        * svg/dynamic-textPath-01.svg: Added.
+        * svg/dynamic-textPath-02-expected.svg: Added.
+        * svg/dynamic-textPath-02.svg: Added.
+        * svg/dynamic-textPath-03-expected.svg: Added.
+        * svg/dynamic-textPath-03.svg: Added.
+        * svg/dynamic-use-01-expected.svg: Added.
+        * svg/dynamic-use-01.svg: Added.
+        * svg/dynamic-use-02-expected.svg: Added.
+        * svg/dynamic-use-02.svg: Added.
+        * svg/dynamic-use-03-expected.svg: Added.
+        * svg/dynamic-use-03.svg: Added.
+        * svg/dynamic-use-04-expected.svg: Added.
+        * svg/dynamic-use-04.svg: Added.
+        * svg/dynamic-use-05-expected.svg: Added.
+        * svg/dynamic-use-05.svg: Added.
+        * svg/dynamic-use-06-expected.svg: Added.
+        * svg/dynamic-use-06.svg: Added.
+        * svg/dynamic-use-07-expected.svg: Added.
+        * svg/dynamic-use-07.svg: Added.
+        * svg/dynamic-use-nested-01a-expected.svg: Added.
+        * svg/dynamic-use-nested-01a.svg: Added.
+        * svg/dynamic-use-nested-01b-expected.svg: Added.
+        * svg/dynamic-use-nested-01b.svg: Added.
+        * svg/dynamic-use-remove-width-expected.svg: Added.
+        * svg/dynamic-use-remove-width.svg: Added.
+        * svg/fallback-color-01a-expected.svg: Added.
+        * svg/fallback-color-01a.svg: Added.
+        * svg/fallback-color-01b-expected.svg: Added.
+        * svg/fallback-color-01b.svg: Added.
+        * svg/fallback-color-02a-expected.svg: Added.
+        * svg/fallback-color-02a.svg: Added.
+        * svg/fallback-color-03-expected.svg: Added.
+        * svg/fallback-color-03.svg: Added.
+        * svg/fallback-color-04-expected.svg: Added.
+        * svg/fallback-color-04.svg: Added.
+        * svg/filter-basic-01-expected.svg: Added.
+        * svg/filter-basic-01.svg: Added.
+        * svg/filter-basic-02-expected.svg: Added.
+        * svg/filter-basic-02.svg: Added.
+        * svg/filter-basic-03-expected.svg: Added.
+        * svg/filter-basic-03.svg: Added.
+        * svg/filter-bounds-01-expected.svg: Added.
+        * svg/filter-bounds-01.svg: Added.
+        * svg/filter-bounds-02-expected.svg: Added.
+        * svg/filter-bounds-02.svg: Added.
+        * svg/filter-result-01-expected.svg: Added.
+        * svg/filter-result-01.svg: Added.
+        * svg/filter-scaled-02-expected.html: Added.
+        * svg/filter-scaled-02.html: Added.
+        * svg/filter-translated-01-expected.svg: Added.
+        * svg/filter-translated-01.svg: Added.
+        * svg/filters: Added.
+        * svg/filters-and-group-opacity-01-expected.svg: Added.
+        * svg/filters-and-group-opacity-01.svg: Added.
+        * svg/filters/feBlend-1-expected.svg: Added.
+        * svg/filters/feBlend-1.svg: Added.
+        * svg/filters/feBlend-2-expected.svg: Added.
+        * svg/filters/feBlend-2.svg: Added.
+        * svg/filters/feColorMatrix-1-expected.svg: Added.
+        * svg/filters/feColorMatrix-1.svg: Added.
+        * svg/filters/feColorMatrix-2-expected.svg: Added.
+        * svg/filters/feColorMatrix-2.svg: Added.
+        * svg/filters/feComposite-1-expected.svg: Added.
+        * svg/filters/feComposite-1.svg: Added.
+        * svg/filters/feComposite-2-expected.svg: Added.
+        * svg/filters/feComposite-2.svg: Added.
+        * svg/filters/feConvolveMatrix-1-expected.svg: Added.
+        * svg/filters/feConvolveMatrix-1.svg: Added.
+        * svg/filters/feConvolveMatrix-2-expected.svg: Added.
+        * svg/filters/feConvolveMatrix-2.svg: Added.
+        * svg/filters/feConvolveMatrix-bias-01-expected.svg: Added.
+        * svg/filters/feConvolveMatrix-bias-01.svg: Added.
+        * svg/filters/feConvolveMatrix-order-01-expected.svg: Added.
+        * svg/filters/feConvolveMatrix-order-01.svg: Added.
+        * svg/filters/feFlood-1-expected.svg: Added.
+        * svg/filters/feFlood-1.svg: Added.
+        * svg/filters/feFlood-2-expected.svg: Added.
+        * svg/filters/feFlood-2.svg: Added.
+        * svg/filters/feGaussianBlur-2-expected.svg: Added.
+        * svg/filters/feGaussianBlur-2.svg: Added.
+        * svg/filters/feGaussianBlur-6-expected.svg: Added.
+        * svg/filters/feGaussianBlur-6.svg: Added.
+        * svg/filters/feGaussianBlur-alpha-01-expected.svg: Added.
+        * svg/filters/feGaussianBlur-alpha-01.svg: Added.
+        * svg/filters/feImage-1-expected.svg: Added.
+        * svg/filters/feImage-1.svg: Added.
+        * svg/filters/feMerge-1-expected.svg: Added.
+        * svg/filters/feMerge-1.svg: Added.
+        * svg/filters/feMerge-2-expected.svg: Added.
+        * svg/filters/feMerge-2.svg: Added.
+        * svg/filters/feOffset-1-expected.svg: Added.
+        * svg/filters/feOffset-1.svg: Added.
+        * svg/filters/feOffset-2-expected.svg: Added.
+        * svg/filters/feOffset-2.svg: Added.
+        * svg/filters/feSpecularLighting-1-expected.svg: Added.
+        * svg/filters/feSpecularLighting-1.svg: Added.
+        * svg/filters/feTile-1-expected.svg: Added.
+        * svg/filters/feTile-1.svg: Added.
+        * svg/filters/feTile-2-expected.svg: Added.
+        * svg/filters/feTile-2.svg: Added.
+        * svg/filters/feTile-large-02-expected.svg: Added.
+        * svg/filters/feTile-large-02.svg: Added.
+        * svg/filters/feTile-outside-01-expected.svg: Added.
+        * svg/filters/feTile-outside-01.svg: Added.
+        * svg/filters/feTurbulence-offset-expected.svg: Added.
+        * svg/filters/feTurbulence-offset.svg: Added.
+        * svg/filters/filter-kernelUnitLength-01-expected.svg: Added.
+        * svg/filters/filter-kernelUnitLength-01.svg: Added.
+        * svg/filters/filter-marked-line-02-expected.svg: Added.
+        * svg/filters/filter-marked-line-02.svg: Added.
+        * svg/filters/filter-marked-line-03-expected.svg: Added.
+        * svg/filters/filter-marked-line-03.svg: Added.
+        * svg/filters/filter-marked-line-04-expected.svg: Added.
+        * svg/filters/filter-marked-line-04.svg: Added.
+        * svg/filters/filter-marked-line-05-expected.svg: Added.
+        * svg/filters/filter-marked-line-05.svg: Added.
+        * svg/filters/filter-marked-line-06-expected.svg: Added.
+        * svg/filters/filter-marked-line-06.svg: Added.
+        * svg/filters/filter-marked-line-07-expected.svg: Added.
+        * svg/filters/filter-marked-line-07.svg: Added.
+        * svg/filters/filter-marked-line-08-expected.svg: Added.
+        * svg/filters/filter-marked-line-08.svg: Added.
+        * svg/filters/filter-marked-line-09-expected.svg: Added.
+        * svg/filters/filter-marked-line-09.svg: Added.
+        * svg/filters/svg-filter-chains: Added.
+        * svg/filters/svg-filter-chains/clip-input-expected.svg: Added.
+        * svg/filters/svg-filter-chains/clip-input.svg: Added.
+        * svg/filters/svg-filter-chains/clip-output-expected.svg: Added.
+        * svg/filters/svg-filter-chains/clip-output.svg: Added.
+        * svg/foreignObject-02-expected.svg: Added.
+        * svg/foreignObject-02.svg: Added.
+        * svg/foreignObject-ancestor-style-change-01-expected.svg: Added.
+        * svg/foreignObject-ancestor-style-change-01.svg: Added.
+        * svg/foreignObject-dynamic-abspos-01-expected.html: Added.
+        * svg/foreignObject-dynamic-abspos-01.html: Added.
+        * svg/foreignObject-img-form-theme-expected.html: Added.
+        * svg/foreignObject-img-form-theme.html: Added.
+        * svg/href-attr-change-restyles-expected.svg: Added.
+        * svg/href-attr-change-restyles.svg: Added.
+        * svg/image: Added.
+        * svg/image/image-filter-01-expected.svg: Added.
+        * svg/image/image-filter-01.svg: Added.
+        * svg/image/image-opacity-01-expected.svg: Added.
+        * svg/image/image-opacity-01.svg: Added.
+        * svg/image/image-opacity-02-expected.svg: Added.
+        * svg/image/image-opacity-02.svg: Added.
+        * svg/image/image-preserveAspectRatio-03-expected.svg: Added.
+        * svg/image/image-preserveAspectRatio-03.svg: Added.
+        * svg/image/image-preserveAspectRatio-04-expected.svg: Added.
+        * svg/image/image-preserveAspectRatio-04.svg: Added.
+        * svg/image/image-rotate-01-expected.svg: Added.
+        * svg/image/image-rotate-01.svg: Added.
+        * svg/image/image-translate-01-expected.svg: Added.
+        * svg/image/image-translate-01.svg: Added.
+        * svg/image/image-x-01-expected.svg: Added.
+        * svg/image/image-x-01.svg: Added.
+        * svg/image/image-xy-01-expected.svg: Added.
+        * svg/image/image-xy-01.svg: Added.
+        * svg/image/image-y-01-expected.svg: Added.
+        * svg/image/image-y-01.svg: Added.
+        * svg/image/resources: Added.
+        * svg/image/resources/blueRect10x10-viewBox-animPAR.svg: Added.
+        * svg/image/resources/blueRect10x10-viewBox.svg: Added.
+        * svg/image/resources/blueRect10x10.png: Added.
+        * svg/image/resources/blueRect10x10.svg: Added.
+        * svg/linearGradient-basic-03-expected.svg: Added.
+        * svg/linearGradient-basic-03.svg: Added.
+        * svg/marker-effects-01-expected.svg: Added.
+        * svg/marker-effects-01.svg: Added.
+        * svg/marker-orientation-01-expected.svg: Added.
+        * svg/marker-orientation-01.svg: Added.
+        * svg/marker-viewBox-01-expected.svg: Added.
+        * svg/marker-viewBox-01.svg: Added.
+        * svg/markers-and-group-opacity-01-expected.svg: Added.
+        * svg/markers-and-group-opacity-01.svg: Added.
+        * svg/mask-basic-01-expected.svg: Added.
+        * svg/mask-basic-01.svg: Added.
+        * svg/mask-basic-02-expected.svg: Added.
+        * svg/mask-basic-02.svg: Added.
+        * svg/mask-basic-03-expected.svg: Added.
+        * svg/mask-basic-03.svg: Added.
+        * svg/mask-basic-04-expected.svg: Added.
+        * svg/mask-basic-04.svg: Added.
+        * svg/mask-containing-masked-content-01-expected.svg: Added.
+        * svg/mask-transformed-01-expected.svg: Added.
+        * svg/mask-transformed-01.svg: Added.
+        * svg/mask-transformed-02-expected.svg: Added.
+        * svg/mask-transformed-02.svg: Added.
+        * svg/mask-type-01-expected.svg: Added.
+        * svg/mask-type-01.svg: Added.
+        * svg/nesting-invalid-01-expected.svg: Added.
+        * svg/nesting-invalid-01.js: Added.
+        * svg/nesting-invalid-01.svg: Added.
+        * svg/non-scaling-stroke-03-expected.svg: Added.
+        * svg/non-scaling-stroke-03.svg: Added.
+        * svg/objectBoundingBox-and-clipPath-expected.svg: Added.
+        * svg/objectBoundingBox-and-clipPath.svg: Added.
+        * svg/objectBoundingBox-and-mask-02-expected.svg: Added.
+        * svg/objectBoundingBox-and-mask-02.svg: Added.
+        * svg/objectBoundingBox-and-mask-expected.svg: Added.
+        * svg/objectBoundingBox-and-mask.svg: Added.
+        * svg/objectBoundingBox-and-pattern-01a-expected.svg: Added.
+        * svg/objectBoundingBox-and-pattern-01a.svg: Added.
+        * svg/objectBoundingBox-and-pattern-01b-expected.svg: Added.
+        * svg/objectBoundingBox-and-pattern-01b.svg: Added.
+        * svg/objectBoundingBox-and-pattern-01c-expected.svg: Added.
+        * svg/objectBoundingBox-and-pattern-01c.svg: Added.
+        * svg/objectBoundingBox-and-pattern-02-expected.svg: Added.
+        * svg/objectBoundingBox-and-pattern-02.svg: Added.
+        * svg/objectBoundingBox-and-pattern-03-expected.svg: Added.
+        * svg/objectBoundingBox-and-pattern-03.svg: Added.
+        * svg/opacity-and-gradient-02-expected.svg: Added.
+        * svg/opacity-and-gradient-02.svg: Added.
+        * svg/outer-svg-border-and-padding-01-expected.svg: Added.
+        * svg/outer-svg-border-and-padding-01.svg: Added.
+        * svg/overflow-on-outer-svg-01-expected.svg: Added.
+        * svg/overflow-on-outer-svg-01.svg: Added.
+        * svg/overflow-on-outer-svg-02a-expected.xhtml: Added.
+        * svg/overflow-on-outer-svg-02a.xhtml: Added.
+        * svg/overflow-on-outer-svg-02b-expected.xhtml: Added.
+        * svg/overflow-on-outer-svg-02b.xhtml: Added.
+        * svg/overflow-on-outer-svg-02c-expected.xhtml: Added.
+        * svg/overflow-on-outer-svg-02c.xhtml: Added.
+        * svg/overflow-on-outer-svg-02d-expected.xhtml: Added.
+        * svg/overflow-on-outer-svg-02d.xhtml: Added.
+        * svg/paint-order-01-expected.svg: Added.
+        * svg/paint-order-01.svg: Added.
+        * svg/paint-order-02-expected.svg: Added.
+        * svg/paint-order-02.svg: Added.
+        * svg/paint-order-03-expected.svg: Added.
+        * svg/paint-order-03.svg: Added.
+        * svg/path-02-expected.svg: Added.
+        * svg/path-02.svg: Added.
+        * svg/path-03-expected.svg: Added.
+        * svg/path-03.svg: Added.
+        * svg/path-04-expected.svg: Added.
+        * svg/path-04.svg: Added.
+        * svg/path-05-expected.svg: Added.
+        * svg/path-05.svg: Added.
+        * svg/path-06-expected.svg: Added.
+        * svg/path-06.svg: Added.
+        * svg/path-07-expected.svg: Added.
+        * svg/path-07.svg: Added.
+        * svg/path-08-expected.svg: Added.
+        * svg/path-08.svg: Added.
+        * svg/pathLength-01-expected.svg: Added.
+        * svg/pathLength-01.svg: Added.
+        * svg/pattern-basic-01-expected.svg: Added.
+        * svg/pattern-basic-01.svg: Added.
+        * svg/pattern-invalid-01-expected.svg: Added.
+        * svg/pattern-invalid-01.svg: Added.
+        * svg/pattern-live-01a-expected.svg: Added.
+        * svg/pattern-live-01a.svg: Added.
+        * svg/pattern-live-01b-expected.svg: Added.
+        * svg/pattern-live-01b.svg: Added.
+        * svg/pattern-scale-01a-expected.svg: Added.
+        * svg/pattern-scale-01a.svg: Added.
+        * svg/pattern-scale-01b-expected.svg: Added.
+        * svg/pattern-scale-01b.svg: Added.
+        * svg/pattern-scale-01c-expected.svg: Added.
+        * svg/pattern-scale-01c.svg: Added.
+        * svg/pattern-transform-presence-01-expected.svg: Added.
+        * svg/pattern-transform-presence-01.svg: Added.
+        * svg/pattern-transformed-01-expected.svg: Added.
+        * svg/pattern-transformed-01.svg: Added.
+        * svg/pseudo-classes-02-expected.svg: Added.
+        * svg/pseudo-classes-02.svg: Added.
+        * svg/radialGradient-basic-01-expected.svg: Added.
+        * svg/radialGradient-basic-01.svg: Added.
+        * svg/radialGradient-basic-02-expected.svg: Added.
+        * svg/radialGradient-basic-02.svg: Added.
+        * svg/radialGradient-basic-04-expected.svg: Added.
+        * svg/radialGradient-basic-04.svg: Added.
+        * svg/rect-01-expected.svg: Added.
+        * svg/rect-01.svg: Added.
+        * svg/rect-02-expected.svg: Added.
+        * svg/rect-02.svg: Added.
+        * svg/rect-03-expected.svg: Added.
+        * svg/rect-03.svg: Added.
+        * svg/rect-04-expected.svg: Added.
+        * svg/rect-04.svg: Added.
+        * svg/rect-with-rx-and-ry-01-expected.svg: Added.
+        * svg/rect-with-rx-and-ry-01.svg: Added.
+        * svg/sizing: Added.
+        * svg/sizing/inline--display-block--01-expected.xhtml: Added.
+        * svg/sizing/inline--display-block--01.xhtml: Added.
+        * svg/sizing/inline--display-inline--01-expected.xhtml: Added.
+        * svg/sizing/inline--display-inline--01.xhtml: Added.
+        * svg/sizing/inline--display-inline-block--01-expected.xhtml: Added.
+        * svg/sizing/inline--display-inline-block--01.xhtml: Added.
+        * svg/sizing/inline--float-left--01-expected.xhtml: Added.
+        * svg/sizing/inline--float-left--01.xhtml: Added.
+        * svg/sizing/inline--float-right--01-expected.xhtml: Added.
+        * svg/sizing/inline--float-right--01.xhtml: Added.
+        * svg/sizing/inline--position-absolute--01-expected.xhtml: Added.
+        * svg/sizing/inline--position-absolute--01.xhtml: Added.
+        * svg/sizing/inline--position-relative--01-expected.xhtml: Added.
+        * svg/sizing/inline--position-relative--01.xhtml: Added.
+        * svg/smil: Added.
+        * svg/smil/anim-class-04-expected.svg: Added.
+        * svg/smil/anim-class-04.svg: Added.
+        * svg/smil/anim-feConvolveMatrix-order-01-expected.svg: Added.
+        * svg/smil/anim-feConvolveMatrix-order-01.svg: Added.
+        * svg/smil/anim-feSpotLight-01-expected.svg: Added.
+        * svg/smil/anim-feSpotLight-01.svg: Added.
+        * svg/smil/anim-height-interp-1-expected.svg: Added.
+        * svg/smil/anim-height-interp-1.svg: Added.
+        * svg/smil/anim-height-interp-2-expected.svg: Added.
+        * svg/smil/anim-height-interp-2.svg: Added.
+        * svg/smil/anim-height-interp-3-expected.svg: Added.
+        * svg/smil/anim-height-interp-3.svg: Added.
+        * svg/smil/anim-height-interp-4-expected.svg: Added.
+        * svg/smil/anim-height-interp-4.svg: Added.
+        * svg/smil/anim-height-interp-5-expected.svg: Added.
+        * svg/smil/anim-height-interp-5.svg: Added.
+        * svg/smil/anim-height-interp-6-expected.svg: Added.
+        * svg/smil/anim-height-interp-6.svg: Added.
+        * svg/smil/anim-rect-rxry-1-expected.svg: Added.
+        * svg/smil/anim-rect-rxry-1.svg: Added.
+        * svg/smil/anim-x-interp-1-expected.svg: Added.
+        * svg/smil/anim-x-interp-1.svg: Added.
+        * svg/smil/anim-x-interp-2-expected.svg: Added.
+        * svg/smil/anim-x-interp-2.svg: Added.
+        * svg/smil/anim-x-interp-3-expected.svg: Added.
+        * svg/smil/anim-x-interp-3.svg: Added.
+        * svg/smil/anim-x-interp-4-expected.svg: Added.
+        * svg/smil/anim-x-interp-4.svg: Added.
+        * svg/smil/anim-x-interp-5-expected.svg: Added.
+        * svg/smil/anim-x-interp-5.svg: Added.
+        * svg/smil/anim-x-interp-6-expected.svg: Added.
+        * svg/smil/anim-x-interp-6.svg: Added.
+        * svg/smil/anim-x-seek-1a-expected.svg: Added.
+        * svg/smil/anim-y-interp-1-expected.svg: Added.
+        * svg/smil/anim-y-interp-1.svg: Added.
+        * svg/smil/anim-y-interp-2-expected.svg: Added.
+        * svg/smil/anim-y-interp-2.svg: Added.
+        * svg/smil/anim-y-interp-3-expected.svg: Added.
+        * svg/smil/anim-y-interp-3.svg: Added.
+        * svg/smil/anim-y-interp-4-expected.svg: Added.
+        * svg/smil/anim-y-interp-4.svg: Added.
+        * svg/smil/anim-y-interp-5-expected.svg: Added.
+        * svg/smil/anim-y-interp-5.svg: Added.
+        * svg/smil/anim-y-interp-6-expected.svg: Added.
+        * svg/smil/anim-y-interp-6.svg: Added.
+        * svg/smil/container: Added.
+        * svg/smil/container/invalid-elem-1-expected.xhtml: Added.
+        * svg/smil/container/invalid-elem-1.xhtml: Added.
+        * svg/smil/container/moved-tree-1-expected.xhtml: Added.
+        * svg/smil/container/moved-tree-1.xhtml: Added.
+        * svg/smil/motion: Added.
+        * svg/smil/motion/animateMotion-values-linear-1-expected.svg: Added.
+        * svg/smil/motion/animateMotion-values-linear-1.svg: Added.
+        * svg/smil/motion/animateMotion-values-paced-1a-expected.svg: Added.
+        * svg/smil/motion/animateMotion-values-paced-1a.svg: Added.
+        * svg/smil/motion/animateMotion-values-paced-1b-expected.svg: Added.
+        * svg/smil/motion/animateMotion-values-paced-1b.svg: Added.
+        * svg/smil/pause: Added.
+        * svg/smil/repeat: Added.
+        * svg/smil/repeat/indefinite-repeat-1-expected.svg: Added.
+        * svg/smil/repeat/indefinite-repeat-1.svg: Added.
+        * svg/smil/repeat/init-repeat-1-expected.svg: Added.
+        * svg/smil/repeat/init-repeat-1.svg: Added.
+        * svg/smil/restart: Added.
+        * svg/smil/restart/reset-2-expected.svg: Added.
+        * svg/smil/restart/reset-2.svg: Added.
+        * svg/smil/restart/reset-7-expected.svg: Added.
+        * svg/smil/restart/reset-7.svg: Added.
+        * svg/smil/smil-grid.js: Added.
+        * svg/smil/smil-util.js: Added.
+        * svg/smil/sort: Added.
+        * svg/smil/sort/sort-startAfter-1-expected.svg: Added.
+        * svg/smil/sort/sort-startAfter-1.svg: Added.
+        * svg/smil/sort/sort-startAfter-2-expected.svg: Added.
+        * svg/smil/sort/sort-startAfter-2.svg: Added.
+        * svg/smil/sort/sort-startAfter-3-expected.svg: Added.
+        * svg/smil/sort/sort-startAfter-3.svg: Added.
+        * svg/smil/sort/sort-startSame-1a-expected.svg: Added.
+        * svg/smil/sort/sort-startSame-1a.svg: Added.
+        * svg/smil/sort/sort-startSame-2a-expected.svg: Added.
+        * svg/smil/sort/sort-startSame-2a.svg: Added.
+        * svg/smil/style: Added.
+        * svg/smil/style/anim-css-color-1-by-ident-hex-expected.svg: Added.
+        * svg/smil/style/anim-css-color-1-by-ident-hex.svg: Added.
+        * svg/smil/style/anim-css-color-1-from-by-hex-hex-expected.svg: Added.
+        * svg/smil/style/anim-css-color-1-from-by-hex-hex.svg: Added.
+        * svg/smil/style/anim-css-color-1-from-by-ident-hex-expected.svg: Added.
+        * svg/smil/style/anim-css-color-1-from-by-ident-hex.svg: Added.
+        * svg/smil/style/anim-css-color-1-from-to-hex-hex-expected.svg: Added.
+        * svg/smil/style/anim-css-color-1-from-to-hex-hex.svg: Added.
+        * svg/smil/style/anim-css-color-1-from-to-ident-ident-expected.svg: Added.
+        * svg/smil/style/anim-css-color-1-from-to-ident-ident.svg: Added.
+        * svg/smil/style/anim-css-color-1-to-ident-hex-expected.svg: Added.
+        * svg/smil/style/anim-css-color-1-to-ident-hex.svg: Added.
+        * svg/smil/style/anim-css-color-1-to-ident-ident-expected.svg: Added.
+        * svg/smil/style/anim-css-color-1-to-ident-ident.svg: Added.
+        * svg/smil/style/anim-css-fill-1-by-ident-hex-expected.svg: Added.
+        * svg/smil/style/anim-css-fill-1-by-ident-hex.svg: Added.
+        * svg/smil/style/anim-css-fill-1-from-by-hex-hex-expected.svg: Added.
+        * svg/smil/style/anim-css-fill-1-from-by-hex-hex.svg: Added.
+        * svg/smil/style/anim-css-fill-1-from-by-ident-hex-expected.svg: Added.
+        * svg/smil/style/anim-css-fill-1-from-by-ident-hex.svg: Added.
+        * svg/smil/style/anim-css-fill-1-from-to-hex-hex-expected.svg: Added.
+        * svg/smil/style/anim-css-fill-1-from-to-hex-hex.svg: Added.
+        * svg/smil/style/anim-css-fill-1-from-to-ident-ident-expected.svg: Added.
+        * svg/smil/style/anim-css-fill-1-from-to-ident-ident.svg: Added.
+        * svg/smil/style/anim-css-fill-1-to-ident-hex-expected.svg: Added.
+        * svg/smil/style/anim-css-fill-1-to-ident-hex.svg: Added.
+        * svg/smil/style/anim-css-fill-1-to-ident-ident-expected.svg: Added.
+        * svg/smil/style/anim-css-fill-1-to-ident-ident.svg: Added.
+        * svg/smil/style/anim-css-fontsize-1-from-by-pct-pct-expected.svg: Added.
+        * svg/smil/style/anim-css-fontsize-1-from-by-pct-pct.svg: Added.
+        * svg/smil/style/anim-css-fontsize-1-from-by-px-px-expected.svg: Added.
+        * svg/smil/style/anim-css-fontsize-1-from-by-px-px.svg: Added.
+        * svg/smil/style/anim-css-fontsize-1-from-to-no-no-expected.svg: Added.
+        * svg/smil/style/anim-css-fontsize-1-from-to-no-no.svg: Added.
+        * svg/smil/style/anim-css-fontsize-1-from-to-no-px-expected.svg: Added.
+        * svg/smil/style/anim-css-fontsize-1-from-to-no-px.svg: Added.
+        * svg/smil/style/anim-css-fontsize-1-from-to-pct-pct-expected.svg: Added.
+        * svg/smil/style/anim-css-fontsize-1-from-to-pct-pct.svg: Added.
+        * svg/smil/style/anim-css-fontsize-1-from-to-px-no-expected.svg: Added.
+        * svg/smil/style/anim-css-fontsize-1-from-to-px-no.svg: Added.
+        * svg/smil/style/anim-css-fontsize-1-from-to-px-px-expected.svg: Added.
+        * svg/smil/style/anim-css-fontsize-1-from-to-px-px.svg: Added.
+        * svg/smil/transform: Added.
+        * svg/smil/transform/rotate-angle-1-expected.svg: Added.
+        * svg/smil/transform/rotate-angle-1.svg: Added.
+        * svg/smil/transform/rotate-angle-2-expected.svg: Added.
+        * svg/smil/transform/rotate-angle-2.svg: Added.
+        * svg/smil/transform/rotate-angle-3-expected.svg: Added.
+        * svg/smil/transform/rotate-angle-3.svg: Added.
+        * svg/smil/transform/rotate-angle-4-expected.svg: Added.
+        * svg/smil/transform/rotate-angle-4.svg: Added.
+        * svg/smil/transform/rotate-angle-5-expected.svg: Added.
+        * svg/smil/transform/rotate-angle-5.svg: Added.
+        * svg/smil/transform/set-transform-1-expected.svg: Added.
+        * svg/smil/transform/set-transform-1.svg: Added.
+        * svg/smil/transform/translate-clipPath-1-expected.svg: Added.
+        * svg/smil/transform/translate-clipPath-1.svg: Added.
+        * svg/stroke-width-percentage-01-expected.svg: Added.
+        * svg/stroke-width-percentage-01.svg: Added.
+        * svg/stroke-width-percentage-02a-expected.svg: Added.
+        * svg/stroke-width-percentage-02a.svg: Added.
+        * svg/stroke-width-percentage-02b-expected.svg: Added.
+        * svg/stroke-width-percentage-02b.svg: Added.
+        * svg/suspend-01-expected.svg: Added.
+        * svg/suspend-01.svg: Added.
+        * svg/suspend-02-expected.svg: Added.
+        * svg/suspend-02.svg: Added.
+        * svg/suspend-03-expected.svg: Added.
+        * svg/suspend-03.svg: Added.
+        * svg/suspend-04-expected.svg: Added.
+        * svg/suspend-04.svg: Added.
+        * svg/suspend-05-expected.svg: Added.
+        * svg/suspend-05.svg: Added.
+        * svg/suspend-06-expected.svg: Added.
+        * svg/suspend-06.svg: Added.
+        * svg/suspend-07-expected.svg: Added.
+        * svg/suspend-07.svg: Added.
+        * svg/suspend-08-expected.svg: Added.
+        * svg/suspend-08.svg: Added.
+        * svg/svg-effects-area-unzoomed-expected.xhtml: Added.
+        * svg/svg-effects-area-unzoomed.xhtml: Added.
+        * svg/svg-effects-area-zoomed-in-expected.xhtml: Added.
+        * svg/svg-effects-area-zoomed-in.xhtml: Added.
+        * svg/svg-effects-area-zoomed-out-expected.xhtml: Added.
+        * svg/svg-effects-area-zoomed-out.xhtml: Added.
+        * svg/svg-in-foreignObject-01-expected.xhtml: Added.
+        * svg/svg-in-foreignObject-01.xhtml: Added.
+        * svg/svg-integration: Added.
+        * svg/svg-integration/clipPath-html-01-expected.xhtml: Added.
+        * svg/svg-integration/clipPath-html-01.xhtml: Added.
+        * svg/svg-integration/clipPath-html-02-expected.xhtml: Added.
+        * svg/svg-integration/clipPath-html-02.xhtml: Added.
+        * svg/svg-integration/clipPath-html-03-expected.xhtml: Added.
+        * svg/svg-integration/clipPath-html-03.xhtml: Added.
+        * svg/svg-integration/clipPath-html-04-expected.xhtml: Added.
+        * svg/svg-integration/clipPath-html-04.xhtml: Added.
+        * svg/svg-integration/clipPath-html-05-expected.xhtml: Added.
+        * svg/svg-integration/clipPath-html-05.xhtml: Added.
+        * svg/svg-integration/clipPath-html-06-expected.xhtml: Added.
+        * svg/svg-integration/clipPath-html-06.xhtml: Added.
+        * svg/svg-integration/dynamic-conditions-outer-svg-01-expected.xhtml: Added.
+        * svg/svg-integration/dynamic-conditions-outer-svg-01.xhtml: Added.
+        * svg/svg-integration/dynamic-conditions-outer-svg-02-expected.xhtml: Added.
+        * svg/svg-integration/dynamic-conditions-outer-svg-02.xhtml: Added.
+        * svg/svg-integration/dynamic-conditions-outer-svg-03-expected.xhtml: Added.
+        * svg/svg-integration/dynamic-conditions-outer-svg-03.xhtml: Added.
+        * svg/svg-integration/dynamic-conditions-outer-svg-04-expected.xhtml: Added.
+        * svg/svg-integration/dynamic-conditions-outer-svg-04.xhtml: Added.
+        * svg/svg-transform-01-expected.svg: Added.
+        * svg/svg-transform-01.svg: Added.
+        * svg/svg-transform-02-expected.svg: Added.
+        * svg/svg-transform-02.svg: Added.
+        * svg/switch-01-expected.svg: Added.
+        * svg/switch-01.svg: Added.
+        * svg/symbol-01-expected.svg: Added.
+        * svg/symbol-01.svg: Added.
+        * svg/text: Added.
+        * svg/text-font-weight-01-expected.svg: Added.
+        * svg/text-font-weight-01.svg: Added.
+        * svg/text-gradient-01-expected.svg: Added.
+        * svg/text-gradient-01.svg: Added.
+        * svg/text-in-link-01-expected.svg: Added.
+        * svg/text-in-link-01.svg: Added.
+        * svg/text-in-link-02-expected.svg: Added.
+        * svg/text-in-link-02.svg: Added.
+        * svg/text-in-link-03-expected.svg: Added.
+        * svg/text-in-link-03.svg: Added.
+        * svg/text-language-00-expected.xhtml: Added.
+        * svg/text-language-01-expected.xhtml: Added.
+        * svg/text-layout-01-expected.svg: Added.
+        * svg/text-layout-01.svg: Added.
+        * svg/text-layout-02-expected.svg: Added.
+        * svg/text-layout-02.svg: Added.
+        * svg/text-layout-03-expected.svg: Added.
+        * svg/text-layout-03.svg: Added.
+        * svg/text-layout-04-expected.svg: Added.
+        * svg/text-layout-04.svg: Added.
+        * svg/text-layout-05-expected.svg: Added.
+        * svg/text-layout-05.svg: Added.
+        * svg/text-layout-06-expected.svg: Added.
+        * svg/text-layout-06.svg: Added.
+        * svg/text-layout-07-expected.svg: Added.
+        * svg/text-layout-07.svg: Added.
+        * svg/text-layout-08-expected.svg: Added.
+        * svg/text-layout-08.svg: Added.
+        * svg/text-scale-01-expected.svg: Added.
+        * svg/text-scale-01.svg: Added.
+        * svg/text-scale-02-expected.svg: Added.
+        * svg/text-scale-02.svg: Added.
+        * svg/text-scale-03-expected.svg: Added.
+        * svg/text-scale-03.svg: Added.
+        * svg/text-stroke-scaling-01-expected.svg: Added.
+        * svg/text-stroke-scaling-01.svg: Added.
+        * svg/text-style-01a-expected.svg: Added.
+        * svg/text-style-01a.svg: Added.
+        * svg/text-style-01b-expected.svg: Added.
+        * svg/text-style-01b.svg: Added.
+        * svg/text-style-01c-expected.svg: Added.
+        * svg/text-style-01c.svg: Added.
+        * svg/text-style-01d-expected.svg: Added.
+        * svg/text-style-01d.svg: Added.
+        * svg/text-style-01e-expected.svg: Added.
+        * svg/text-style-01e.svg: Added.
+        * svg/text-white-space-01-expected.svg: Added.
+        * svg/text-white-space-01.svg: Added.
+        * svg/text/clipPath-applied-expected.svg: Added.
+        * svg/text/clipPath-applied.svg: Added.
+        * svg/text/clipPath-content-expected.svg: Added.
+        * svg/text/clipPath-content.svg: Added.
+        * svg/text/deselectAll-expected.svg: Added.
+        * svg/text/deselectAll.svg: Added.
+        * svg/text/dynamic-dominant-baseline-expected.svg: Added.
+        * svg/text/dynamic-dominant-baseline.svg: Added.
+        * svg/text/dynamic-font-size-2-expected.svg: Added.
+        * svg/text/dynamic-font-size-2.svg: Added.
+        * svg/text/dynamic-font-size-3-expected.svg: Added.
+        * svg/text/dynamic-font-size-3.svg: Added.
+        * svg/text/dynamic-font-size-4-expected.svg: Added.
+        * svg/text/dynamic-font-size-4.svg: Added.
+        * svg/text/dynamic-font-size-expected.svg: Added.
+        * svg/text/dynamic-font-size.svg: Added.
+        * svg/text/dynamic-multiple-x-expected.svg: Added.
+        * svg/text/dynamic-multiple-x.svg: Added.
+        * svg/text/dynamic-non-scaling-stroke-expected.svg: Added.
+        * svg/text/dynamic-non-scaling-stroke.svg: Added.
+        * svg/text/filter-applied-expected.svg: Added.
+        * svg/text/filter-applied.svg: Added.
+        * svg/text/ignore-display-expected.svg: Added.
+        * svg/text/ignore-display.svg: Added.
+        * svg/text/ignore-invalid-child-2-expected.svg: Added.
+        * svg/text/ignore-invalid-child-2.svg: Added.
+        * svg/text/ignore-invalid-child-expected.svg: Added.
+        * svg/text/ignore-invalid-child.svg: Added.
+        * svg/text/ignore-position-expected.svg: Added.
+        * svg/text/ignore-position.svg: Added.
+        * svg/text/ignore-text-align-2-expected.svg: Added.
+        * svg/text/ignore-text-align-2.svg: Added.
+        * svg/text/ignore-vertical-align-expected.svg: Added.
+        * svg/text/ignore-vertical-align.svg: Added.
+        * svg/text/mask-applied-expected.svg: Added.
+        * svg/text/mask-applied.svg: Added.
+        * svg/text/mask-content-2-expected.svg: Added.
+        * svg/text/mask-content-2.svg: Added.
+        * svg/text/mask-content-expected.svg: Added.
+        * svg/text/mask-content.svg: Added.
+        * svg/text/multiple-chunks-bidi-expected.svg: Added.
+        * svg/text/multiple-chunks-bidi.svg: Added.
+        * svg/text/multiple-chunks-different-anchor-bidi-expected.svg: Added.
+        * svg/text/multiple-chunks-different-anchor-bidi.svg: Added.
+        * svg/text/multiple-chunks-different-anchor-expected.svg: Added.
+        * svg/text/multiple-chunks-different-anchor-rtl-expected.svg: Added.
+        * svg/text/multiple-chunks-different-anchor-rtl.svg: Added.
+        * svg/text/multiple-chunks-different-anchor.svg: Added.
+        * svg/text/multiple-chunks-directions-and-anchor-dx-expected.svg: Added.
+        * svg/text/multiple-chunks-directions-and-anchor-dx.svg: Added.
+        * svg/text/multiple-chunks-directions-and-anchor-expected.svg: Added.
+        * svg/text/multiple-chunks-directions-and-anchor-multiple-dx-expected.svg: Added.
+        * svg/text/multiple-chunks-directions-and-anchor-multiple-dx.svg: Added.
+        * svg/text/multiple-chunks-directions-and-anchor.svg: Added.
+        * svg/text/multiple-chunks-dx-bidi-expected.svg: Added.
+        * svg/text/multiple-chunks-dx-bidi.svg: Added.
+        * svg/text/multiple-chunks-dx-different-anchor-bidi-expected.svg: Added.
+        * svg/text/multiple-chunks-dx-different-anchor-bidi.svg: Added.
+        * svg/text/multiple-chunks-dx-different-anchor-expected.svg: Added.
+        * svg/text/multiple-chunks-dx-different-anchor-rtl-expected.svg: Added.
+        * svg/text/multiple-chunks-dx-different-anchor-rtl.svg: Added.
+        * svg/text/multiple-chunks-dx-different-anchor.svg: Added.
+        * svg/text/multiple-chunks-dx-expected.svg: Added.
+        * svg/text/multiple-chunks-dx-rtl-expected.svg: Added.
+        * svg/text/multiple-chunks-dx-rtl.svg: Added.
+        * svg/text/multiple-chunks-dx.svg: Added.
+        * svg/text/multiple-chunks-fill-color-expected.svg: Added.
+        * svg/text/multiple-chunks-fill-color.svg: Added.
+        * svg/text/multiple-chunks-multiple-dx-bidi-expected.svg: Added.
+        * svg/text/multiple-chunks-multiple-dx-bidi.svg: Added.
+        * svg/text/multiple-chunks-multiple-dx-different-anchor-bidi-expected.svg: Added.
+        * svg/text/multiple-chunks-multiple-dx-different-anchor-bidi.svg: Added.
+        * svg/text/multiple-chunks-multiple-dx-different-anchor-expected.svg: Added.
+        * svg/text/multiple-chunks-multiple-dx-different-anchor-rtl-expected.svg: Added.
+        * svg/text/multiple-chunks-multiple-dx-different-anchor-rtl.svg: Added.
+        * svg/text/multiple-chunks-multiple-dx-different-anchor.svg: Added.
+        * svg/text/multiple-chunks-multiple-dx-expected.svg: Added.
+        * svg/text/multiple-chunks-multiple-dx-rtl-expected.svg: Added.
+        * svg/text/multiple-chunks-multiple-dx-rtl.svg: Added.
+        * svg/text/multiple-chunks-rtl-expected.svg: Added.
+        * svg/text/multiple-chunks-rtl.svg: Added.
+        * svg/text/multiple-chunks-selection-expected.svg: Added.
+        * svg/text/multiple-chunks-selection.svg: Added.
+        * svg/text/multiple-x-anchor-end-bidi-expected.svg: Added.
+        * svg/text/multiple-x-anchor-end-bidi.svg: Added.
+        * svg/text/multiple-x-anchor-end-expected.svg: Added.
+        * svg/text/multiple-x-anchor-end-rtl-expected.svg: Added.
+        * svg/text/multiple-x-anchor-end-rtl.svg: Added.
+        * svg/text/multiple-x-anchor-end.svg: Added.
+        * svg/text/multiple-x-bidi-expected.svg: Added.
+        * svg/text/multiple-x-bidi.svg: Added.
+        * svg/text/multiple-x-dx-bidi-expected.svg: Added.
+        * svg/text/multiple-x-dx-bidi.svg: Added.
+        * svg/text/multiple-x-dx-expected.svg: Added.
+        * svg/text/multiple-x-dx-rtl-expected.svg: Added.
+        * svg/text/multiple-x-dx-rtl.svg: Added.
+        * svg/text/multiple-x-dx.svg: Added.
+        * svg/text/multiple-x-expected.svg: Added.
+        * svg/text/multiple-x-holes-bidi-expected.svg: Added.
+        * svg/text/multiple-x-holes-bidi.svg: Added.
+        * svg/text/multiple-x-holes-dx-bidi-expected.svg: Added.
+        * svg/text/multiple-x-holes-dx-bidi.svg: Added.
+        * svg/text/multiple-x-holes-dx-expected.svg: Added.
+        * svg/text/multiple-x-holes-dx.svg: Added.
+        * svg/text/multiple-x-holes-expected.svg: Added.
+        * svg/text/multiple-x-holes-multiple-dx-bidi-expected.svg: Added.
+        * svg/text/multiple-x-holes-multiple-dx-bidi.svg: Added.
+        * svg/text/multiple-x-holes-multiple-dx-expected.svg: Added.
+        * svg/text/multiple-x-holes-multiple-dx-rtl-expected.svg: Added.
+        * svg/text/multiple-x-holes-multiple-dx-rtl.svg: Added.
+        * svg/text/multiple-x-holes-multiple-dx.svg: Added.
+        * svg/text/multiple-x-holes-rtl-expected.svg: Added.
+        * svg/text/multiple-x-holes-rtl.svg: Added.
+        * svg/text/multiple-x-holes.svg: Added.
+        * svg/text/multiple-x-multiple-dx-anchor-end-bidi-expected.svg: Added.
+        * svg/text/multiple-x-multiple-dx-anchor-end-bidi.svg: Added.
+        * svg/text/multiple-x-multiple-dx-anchor-end-expected.svg: Added.
+        * svg/text/multiple-x-multiple-dx-anchor-end-rtl-expected.svg: Added.
+        * svg/text/multiple-x-multiple-dx-anchor-end-rtl.svg: Added.
+        * svg/text/multiple-x-multiple-dx-anchor-end.svg: Added.
+        * svg/text/multiple-x-multiple-dx-bidi-expected.svg: Added.
+        * svg/text/multiple-x-multiple-dx-bidi.svg: Added.
+        * svg/text/multiple-x-multiple-dx-expected.svg: Added.
+        * svg/text/multiple-x-multiple-dx-rtl-expected.svg: Added.
+        * svg/text/multiple-x-multiple-dx-rtl.svg: Added.
+        * svg/text/multiple-x-multiple-dx.svg: Added.
+        * svg/text/multiple-x-percentages-2-iframe-expected.svg: Added.
+        * svg/text/multiple-x-percentages-2-iframe.svg: Added.
+        * svg/text/multiple-x-percentages-expected.svg: Added.
+        * svg/text/multiple-x-percentages.svg: Added.
+        * svg/text/multiple-x-rtl-expected.svg: Added.
+        * svg/text/multiple-x-rtl.svg: Added.
+        * svg/text/multiple-x.svg: Added.
+        * svg/text/pseudo-first-letter-2-expected.svg: Added.
+        * svg/text/pseudo-first-letter-2.svg: Added.
+        * svg/text/pseudo-first-letter-expected.svg: Added.
+        * svg/text/pseudo-first-letter.svg: Added.
+        * svg/text/pseudo-first-line-2-expected.svg: Added.
+        * svg/text/pseudo-first-line-2.svg: Added.
+        * svg/text/pseudo-first-line-expected.svg: Added.
+        * svg/text/pseudo-first-line.svg: Added.
+        * svg/text/selectSubString-2-expected.svg: Added.
+        * svg/text/selectSubString-2.svg: Added.
+        * svg/text/selectSubString-3-expected.svg: Added.
+        * svg/text/selectSubString-3.svg: Added.
+        * svg/text/selectSubString-expected.svg: Added.
+        * svg/text/selectSubString.svg: Added.
+        * svg/text/simple-dx-2-expected.svg: Added.
+        * svg/text/simple-dx-2.svg: Added.
+        * svg/text/simple-dx-anchor-end-bidi-expected.svg: Added.
+        * svg/text/simple-dx-anchor-end-bidi.svg: Added.
+        * svg/text/simple-dx-anchor-end-expected.svg: Added.
+        * svg/text/simple-dx-anchor-end-rtl-expected.svg: Added.
+        * svg/text/simple-dx-anchor-end-rtl.svg: Added.
+        * svg/text/simple-dx-anchor-end.svg: Added.
+        * svg/text/simple-dx-anchor-middle-bidi-expected.svg: Added.
+        * svg/text/simple-dx-anchor-middle-bidi.svg: Added.
+        * svg/text/simple-dx-anchor-middle-expected.svg: Added.
+        * svg/text/simple-dx-anchor-middle-rtl-expected.svg: Added.
+        * svg/text/simple-dx-anchor-middle-rtl.svg: Added.
+        * svg/text/simple-dx-anchor-middle.svg: Added.
+        * svg/text/simple-dx-bidi-2-expected.svg: Added.
+        * svg/text/simple-dx-bidi-2.svg: Added.
+        * svg/text/simple-dx-bidi-expected.svg: Added.
+        * svg/text/simple-dx-bidi.svg: Added.
+        * svg/text/simple-dx-rtl-2-expected.svg: Added.
+        * svg/text/simple-dx-rtl-2.svg: Added.
+        * svg/text/simple-dx-rtl-expected.svg: Added.
+        * svg/text/simple-dx-rtl.svg: Added.
+        * svg/text/simple-fill-color-dynamic-expected.svg: Added.
+        * svg/text/simple-fill-color-dynamic.svg: Added.
+        * svg/text/simple-fill-gradient-expected.svg: Added.
+        * svg/text/simple-fill-gradient.svg: Added.
+        * svg/text/simple-multiline-anchor-end-expected.svg: Added.
+        * svg/text/simple-multiline-anchor-end.svg: Added.
+        * svg/text/simple-multiline-expected.svg: Added.
+        * svg/text/simple-multiline-number-expected.svg: Added.
+        * svg/text/simple-multiline-number.svg: Added.
+        * svg/text/simple-multiline-pc-expected.svg: Added.
+        * svg/text/simple-multiline-pc.svg: Added.
+        * svg/text/simple-multiline.svg: Added.
+        * svg/text/simple-multiple-dx-anchor-end-bidi-expected.svg: Added.
+        * svg/text/simple-multiple-dx-anchor-end-bidi.svg: Added.
+        * svg/text/simple-multiple-dx-anchor-end-expected.svg: Added.
+        * svg/text/simple-multiple-dx-anchor-end-rtl-expected.svg: Added.
+        * svg/text/simple-multiple-dx-anchor-end-rtl.svg: Added.
+        * svg/text/simple-multiple-dx-anchor-end.svg: Added.
+        * svg/text/simple-multiple-dx-anchor-middle-bidi-expected.svg: Added.
+        * svg/text/simple-multiple-dx-anchor-middle-bidi.svg: Added.
+        * svg/text/simple-multiple-dx-anchor-middle-expected.svg: Added.
+        * svg/text/simple-multiple-dx-anchor-middle-rtl-expected.svg: Added.
+        * svg/text/simple-multiple-dx-anchor-middle-rtl.svg: Added.
+        * svg/text/simple-multiple-dx-anchor-middle.svg: Added.
+        * svg/text/simple-multiple-dx-bidi-expected.svg: Added.
+        * svg/text/simple-multiple-dx-bidi.svg: Added.
+        * svg/text/simple-multiple-dx-rtl-expected.svg: Added.
+        * svg/text/simple-multiple-dx-rtl.svg: Added.
+        * svg/text/simple-transform-rotate-expected.svg: Added.
+        * svg/text/simple-transform-rotate.svg: Added.
+        * svg/text/simple-underline-scaled-expected.svg: Added.
+        * svg/text/simple-underline-scaled.svg: Added.
+        * svg/text/text-shadow-expected.svg: Added.
+        * svg/text/text-shadow.svg: Added.
+        * svg/text/textLength-5-expected.svg: Added.
+        * svg/text/textLength-5.svg: Added.
+        * svg/text/textLength-6-expected.svg: Added.
+        * svg/text/textLength-6.svg: Added.
+        * svg/text/textpath-a-expected.svg: Added.
+        * svg/text/textpath-a.svg: Added.
+        * svg/text/textpath-after-expected.svg: Added.
+        * svg/text/textpath-anchor-end-expected.svg: Added.
+        * svg/text/textpath-anchor-end.svg: Added.
+        * svg/text/textpath-anchor-middle-expected.svg: Added.
+        * svg/text/textpath-anchor-middle.svg: Added.
+        * svg/text/textpath-expected.svg: Added.
+        * svg/text/textpath-invalid-parent-expected.svg: Added.
+        * svg/text/textpath-invalid-parent.svg: Added.
+        * svg/text/textpath-multiline-2-expected.svg: Added.
+        * svg/text/textpath-multiline-2.svg: Added.
+        * svg/text/textpath-multiline-expected.svg: Added.
+        * svg/text/textpath-multiline.svg: Added.
+        * svg/text/textpath-selection-expected.svg: Added.
+        * svg/text/textpath-selection.svg: Added.
+        * svg/text/textpath.svg: Added.
+        * svg/textPath-01-expected.svg: Added.
+        * svg/textPath-01.svg: Added.
+        * svg/tspan-dxdy-01-expected.svg: Added.
+        * svg/tspan-dxdy-01.svg: Added.
+        * svg/tspan-dxdy-02-expected.svg: Added.
+        * svg/tspan-dxdy-02.svg: Added.
+        * svg/tspan-dxdy-03-expected.svg: Added.
+        * svg/tspan-dxdy-03.svg: Added.
+        * svg/tspan-dxdy-04-expected.svg: Added.
+        * svg/tspan-dxdy-04.svg: Added.
+        * svg/tspan-dxdy-05-expected.svg: Added.
+        * svg/tspan-dxdy-05.svg: Added.
+        * svg/tspan-dxdy-06-expected.svg: Added.
+        * svg/tspan-dxdy-06.svg: Added.
+        * svg/tspan-dxdy-textPath-01-expected.svg: Added.
+        * svg/tspan-dxdy-textPath-01.svg: Added.
+        * svg/tspan-rotate-01-expected.svg: Added.
+        * svg/tspan-rotate-01.svg: Added.
+        * svg/tspan-rotate-02-expected.svg: Added.
+        * svg/tspan-rotate-02.svg: Added.
+        * svg/tspan-rotate-03-expected.svg: Added.
+        * svg/tspan-rotate-03.svg: Added.
+        * svg/tspan-rotate-04-expected.svg: Added.
+        * svg/tspan-rotate-04.svg: Added.
+        * svg/tspan-rotate-05-expected.svg: Added.
+        * svg/tspan-rotate-05.svg: Added.
+        * svg/tspan-rotate-06-expected.svg: Added.
+        * svg/tspan-rotate-06.svg: Added.
+        * svg/tspan-rotate-07-expected.svg: Added.
+        * svg/tspan-rotate-07.svg: Added.
+        * svg/tspan-rotate-textPath-01-expected.svg: Added.
+        * svg/tspan-rotate-textPath-01.svg: Added.
+        * svg/tspan-xy-01-expected.svg: Added.
+        * svg/tspan-xy-01.svg: Added.
+        * svg/tspan-xy-02-expected.svg: Added.
+        * svg/tspan-xy-02.svg: Added.
+        * svg/tspan-xy-03-expected.svg: Added.
+        * svg/tspan-xy-03.svg: Added.
+        * svg/tspan-xy-04-expected.svg: Added.
+        * svg/tspan-xy-04.svg: Added.
+        * svg/tspan-xy-05-expected.svg: Added.
+        * svg/tspan-xy-05.svg: Added.
+        * svg/tspan-xy-06-expected.svg: Added.
+        * svg/tspan-xy-06.svg: Added.
+        * svg/userSpaceOnUse-and-pattern-01-expected.svg: Added.
+        * svg/userSpaceOnUse-and-pattern-01.svg: Added.
+        * svg/viewBox-and-pattern-01-expected.svg: Added.
+        * svg/viewBox-and-pattern-01.svg: Added.
+        * svg/viewBox-and-pattern-02-expected.svg: Added.
+        * svg/viewBox-and-pattern-02.svg: Added.
+        * svg/viewBox-and-pattern-03-expected.svg: Added.
+        * svg/viewBox-and-pattern-03.svg: Added.
+        * svg/viewBox-invalid-01-expected.svg: Added.
+        * svg/viewBox-invalid-01.svg: Added.
+        * svg/viewBox-valid-01-expected.svg: Added.
+        * svg/viewBox-valid-01.svg: Added.
+        * svg/viewBox-valid-02-expected.xhtml: Added.
+        * svg/viewBox-valid-02.xhtml: Added.
+        * svg/viewport-percent-graphic-user-01-expected.svg: Added.
+        * svg/viewport-percent-graphic-user-01.svg: Added.
+        * svg/winding-01-expected.svg: Added.
+        * svg/winding-01.svg: Added.
+        * svg/zero-stroke-01-expected.svg: Added.
+        * svg/zero-stroke-01.svg: Added.
+

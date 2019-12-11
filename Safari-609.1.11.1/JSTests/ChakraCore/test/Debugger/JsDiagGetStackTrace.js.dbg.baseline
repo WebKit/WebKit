@@ -1,0 +1,58 @@
+[
+  {
+    "callStack": [
+      {
+        "line": 9,
+        "column": 4,
+        "sourceText": "throw new Error('Caught Error')",
+        "function": "fromEval"
+      },
+      {
+        "line": 0,
+        "column": 0,
+        "sourceText": "fromEval()",
+        "function": "eval code"
+      },
+      {
+        "line": 14,
+        "column": 2,
+        "sourceText": "eval(\"fromEval();\")",
+        "function": "foo"
+      },
+      {
+        "line": 16,
+        "column": 0,
+        "sourceText": "foo()",
+        "function": "Global code"
+      }
+    ]
+  },
+  {
+    "callStack": [
+      {
+        "line": 21,
+        "column": 4,
+        "sourceText": "var level3Var = level2Var",
+        "function": "FuncLevel3"
+      },
+      {
+        "line": 23,
+        "column": 2,
+        "sourceText": "FuncLevel3()",
+        "function": "FuncLevel2"
+      },
+      {
+        "line": 30,
+        "column": 2,
+        "sourceText": "FuncLevel2()",
+        "function": "FuncLevel1"
+      },
+      {
+        "line": 32,
+        "column": 0,
+        "sourceText": "FuncLevel1(1)",
+        "function": "Global code"
+      }
+    ]
+  }
+]

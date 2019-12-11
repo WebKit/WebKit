@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 14: TypeError: The HTMLInputElement.capture getter can only be used on instances of HTMLInputElement
+
+FAIL Custom Elements: CEReactions on HTMLInputElement interface TypeError: The HTMLInputElement.capture getter can only be used on instances of HTMLInputElement
+

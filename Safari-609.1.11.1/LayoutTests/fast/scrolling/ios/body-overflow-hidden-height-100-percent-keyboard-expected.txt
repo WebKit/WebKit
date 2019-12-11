@@ -1,0 +1,4 @@
+This document shouldn't be scrollable normally but should be scrollable when the software keyboard is shown.
+To manually test, tap on the text field below to bring up the docked software keyboard.
+The document should become scrollable.
+PASS - the document did scroll

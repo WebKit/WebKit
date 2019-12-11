@@ -1,0 +1,6 @@
+2d.composite.solid.lighter
+Spec references: 2d.composite.lighter
+Actual output:
+Expected output:
+
+Passed

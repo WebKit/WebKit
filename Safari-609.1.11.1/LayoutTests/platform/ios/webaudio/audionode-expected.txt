@@ -1,0 +1,23 @@
+CONSOLE MESSAGE: line 98: Deprecated AudioContext constructor: use OfflineAudioContext instead
+Basic tests for AudioNode API.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS audioNode.noteOn() threw exception TypeError: Not enough arguments.
+PASS audioNode.noteGrainOn() threw exception TypeError: Not enough arguments.
+PASS audioNode.noteOff() threw exception TypeError: Not enough arguments.
+PASS Source AudioNode has no inputs.
+PASS Source AudioNode has one output.
+PASS Destination AudioNode has one input.
+PASS Destination AudioNode has no outputs.
+PASS connect() exception thrown for illegal destination AudioNode.
+PASS connect() exception thrown for illegal output index.
+PASS connect() exception thrown for illegal input index.
+PASS audioNode.connect(context.destination) succeeded.
+PASS exception thrown when connecting to other context's node.
+PASS exception thrown when creating audio context with not enough arguments.
+PASS AudioNode is an EventTarget
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

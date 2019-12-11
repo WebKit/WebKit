@@ -1,0 +1,18 @@
+<svg width='400' height='400' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' >
+    <g id='symbol-16'>
+        <g id='symbol-4'>
+            <g id='symbol-1'>
+                <rect width='50' height='50' fill='skyblue'/>
+                <rect x='5' y='5' width='40' height='40' fill='green'/>
+            </g>
+            <use xlink:href='#symbol-1' transform='translate(50, 0)'/>
+            <use xlink:href='#symbol-1' transform='translate(100, 0)'/>
+            <use xlink:href='#symbol-1' transform='translate(150, 0)'/>
+        </g>
+        <use xlink:href='#symbol-4' transform='translate(0, 50)'/>
+        <use xlink:href='#symbol-4' transform='translate(0, 100)'/>
+        <use xlink:href='#symbol-4' transform='translate(0, 150)'/>
+    </g>
+    <use xlink:href='#symbol-16' transform='translate(200, 0)'/>
+    <use xlink:href='#symbol-16' transform='translate(0, 200)'/>
+</svg>

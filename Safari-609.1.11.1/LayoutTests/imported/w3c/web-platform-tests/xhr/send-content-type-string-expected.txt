@@ -1,0 +1,5 @@
+
+PASS XMLHttpRequest: send() - Content-Type 
+PASS XMLHttpRequest: send() - Content-Type 1 
+PASS XMLHttpRequest: send() - Content-Type 2 
+  

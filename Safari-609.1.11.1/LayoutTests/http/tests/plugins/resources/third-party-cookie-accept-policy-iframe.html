@@ -1,0 +1,42 @@
+<html>
+<head>
+<script src="../../cookies/resources/resetCookies.js"></script>
+<script>
+resetCookies();
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+</script>
+<body>
+<embed id="plugin" type="application/x-webkit-test-netscape"></embed>
+<script>
+
+var plugin = document.getElementById("plugin");
+
+if (window.testRunner)
+    testRunner.setAlwaysAcceptCookies(true);
+plugin.getURLNotify("http://localhost:8000/cookies/resources/cookie-utility.php?queryfunction=deleteCookies", null, "trySetCookie");
+
+function trySetCookie()
+{
+   alert("Cookies should be clear, and are: '" + document.cookie + "'");
+   alert("About to set a cookie, but on localhost instead of 127.0.0.1, which is our main document domain - This should fail.");
+    if (window.testRunner)
+        testRunner.setAlwaysAcceptCookies(false);
+   plugin.getURLNotify("http://localhost:8000/cookies/resources/cookie-utility.php?queryfunction=setFooCookie", null, "completeTest");
+}
+
+function completeTest()
+{
+   alert("Cookies should still be clear, and are: '" + document.cookie + "'");
+   resetCookies();
+   if (window.testRunner)
+       testRunner.notifyDone();
+}
+
+</script>
+</body>
+</html>

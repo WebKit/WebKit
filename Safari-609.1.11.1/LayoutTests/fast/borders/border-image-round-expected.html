@@ -1,0 +1,43 @@
+<html>
+<head>
+    <style>
+        div {
+            border-width: 50px 0 0 0;
+            margin: 10px;
+            width: 50px;
+            height: 50px;
+            box-sizing: border-box;
+            background-color: gray;
+            border-image: url('resources/big-border-image-lines.png') 30 70 60 40;
+            border-image-repeat: stretch;
+        }
+        
+        .one {
+            width: 159px;
+        }
+
+        .two {
+            width: 239px;
+        }
+
+        .three {
+            width: 319px;
+        }
+        
+        .vertical {
+            border-width: 0 50px 0 0;
+            width: 50px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="horizontal" style="width: 159px; -webkit-clip-path: inset(2px 120px 2px 6px);"></div>
+    <div class="horizontal" style="width: 239px; -webkit-clip-path: inset(2px 122px 2px 6px);"></div>
+    <div class="horizontal" style="width: 319px; -webkit-clip-path: inset(2px 220px 2px 6px);"></div>
+
+    <div class="vertical" style="height: 159px; -webkit-clip-path: inset(4px 2px 4px 2px);"></div>
+    <div class="vertical" style="height: 239px; -webkit-clip-path: inset(122px 2px 4px 2px);"></div>
+    <div class="vertical" style="height: 319px; -webkit-clip-path: inset(220px 2px 6px 2px);"></div>
+</body>
+</html>

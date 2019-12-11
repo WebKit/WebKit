@@ -1,0 +1,44 @@
+Testing that control bars and the mute button respect the user interface layout direction.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+width = 600
+muted = false
+usesLTRUserInterfaceLayoutDirection = true
+PASS mediaControls.muteButton.iconName became Icons.Volume
+PASS mediaControls.topLeftControlsBar.children[1].children became [mediaControls.fullscreenButton, mediaControls.pipButton]
+PASS getComputedStyle(mediaControls.topLeftControlsBar.element).left became "6px"
+
+width = 600
+muted = false
+usesLTRUserInterfaceLayoutDirection = false
+PASS mediaControls.muteButton.iconName became Icons.Volume
+PASS mediaControls.topLeftControlsBar.children[1].children became [mediaControls.pipButton, mediaControls.fullscreenButton]
+PASS getComputedStyle(mediaControls.topLeftControlsBar.element).right became "6px"
+
+width = 250
+muted = false
+usesLTRUserInterfaceLayoutDirection = false
+PASS mediaControls.muteButton.iconName became Icons.VolumeRTL
+PASS mediaControls.topLeftControlsBar.children[1].children became [mediaControls.pipButton, mediaControls.fullscreenButton]
+PASS getComputedStyle(mediaControls.topLeftControlsBar.element).right became "6px"
+
+width = 250
+muted = true
+usesLTRUserInterfaceLayoutDirection = false
+PASS mediaControls.muteButton.iconName became Icons.VolumeMutedRTL
+PASS mediaControls.topLeftControlsBar.children[1].children became [mediaControls.pipButton, mediaControls.fullscreenButton]
+PASS getComputedStyle(mediaControls.topLeftControlsBar.element).right became "6px"
+
+width = 250
+muted = true
+usesLTRUserInterfaceLayoutDirection = true
+PASS mediaControls.muteButton.iconName became Icons.VolumeMuted
+PASS mediaControls.topLeftControlsBar.children[1].children became [mediaControls.fullscreenButton, mediaControls.pipButton]
+PASS getComputedStyle(mediaControls.topLeftControlsBar.element).left became "6px"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

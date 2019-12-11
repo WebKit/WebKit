@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 280x19
+          text run at (0,0) width 280: "The two boxes below should look identical."
+layer at (8,44) size 200x200
+  RenderBlock (positioned) {DIV} at (8,44) size 200x200 [bgcolor=#0000FF]
+layer at (8,44) size 100x50
+  RenderBlock (positioned) {DIV} at (0,0) size 100x50 [bgcolor=#008000]
+layer at (300,44) size 200x200
+  RenderBlock (positioned) {DIV} at (300,44) size 200x200 [bgcolor=#0000FF]
+layer at (300,44) size 100x50
+  RenderBlock (positioned) {DIV} at (0,0) size 100x50 [bgcolor=#008000]

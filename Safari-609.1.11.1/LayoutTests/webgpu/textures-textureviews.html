@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<title>Basic GPUTexture Tests.</title>
+<body>
+<canvas width="400" height="400"></canvas>
+<script src="js/webgpu-functions.js"></script>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+const canvas = document.querySelector("canvas");    
+let context;
+
+let texSize = {
+    width: canvas.width,
+    height: canvas.height,
+    depth: 1
+};
+
+let texDescriptor = {
+    size: texSize,
+    format: "depth32float-stencil8",
+    usage: GPUTextureUsage.OUTPUT_ATTACHMENT
+};
+
+promise_test(() => {
+    return getBasicDevice().then(function(device) {
+        swapChain = createBasicSwapChain(canvas, device);
+
+        const texture = swapChain.getCurrentTexture();
+        assert_true(texture instanceof GPUTexture, "Successfully acquired next texture.");
+
+        const textureView = texture.createDefaultView();
+        assert_true(textureView instanceof GPUTextureView, "Successfully created texture view from next texture.");
+    }, function() {
+    });
+}, "Create texture view from swap chain.");
+
+promise_test(() => {
+    return getBasicDevice().then(function(device) {
+        const depthTexture = device.createTexture(texDescriptor);
+        assert_true(depthTexture instanceof GPUTexture, "Successfully created depth texture.");
+    }, function() {
+    });
+}, "Create basic depth texture from device.");
+
+promise_test(() => {
+    return getBasicDevice().then(function(device) {
+        texDescriptor.sampleCount = 4;
+        texDescriptor.format = "rgba8unorm";
+        texDescriptor.usage = GPUTextureUsage.SAMPLED | GPUTextureUsage.COPY_SRC
+
+        const multisampledTexture = device.createTexture(texDescriptor);
+        assert_true(multisampledTexture instanceof GPUTexture, "Successfully created multisampled texture.");
+    }, function() {
+    });
+}, "Create basic 4x multisampled texture.");
+
+promise_test(() => {
+    return getBasicDevice().then(function(device) {
+        texDescriptor.size.depth = 3;
+        texDescriptor.sampleCount = 1;
+        texDescriptor.dimension = "3d";
+
+        const texture3d = device.createTexture(texDescriptor);
+        assert_true(texture3d instanceof GPUTexture, "Successfully created basic 3D texture.");
+    }, function() {
+    });
+}, "Create basic 3D texture from device.");
+
+// FIXME: Add tests for 1D textures, textureArrays, and GPUTextureViews.
+</script>
+</body>
+</html>

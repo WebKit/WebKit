@@ -1,0 +1,7 @@
+
+PASS Initial iceConnectionState should be new 
+PASS Closing the connection should set iceConnectionState to closed 
+PASS connection with one data channel should eventually have connected or completed connection state 
+FAIL connection with one data channel should eventually have connected connection state undefined is not an object (evaluating 'pc1.sctp.transport')
+PASS ICE can connect in a recvonly usecase 
+

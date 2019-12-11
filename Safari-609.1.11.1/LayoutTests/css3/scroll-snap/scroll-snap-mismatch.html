@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .horizontalGallery {
+                width: 300px;
+                height: 300px;
+                overflow-y: hidden;
+                overflow-x: auto;
+                margin-bottom: 2px;
+                scroll-snap-type: x mandatory;
+            }
+
+            .good {
+                scroll-snap-align: start none;
+            }
+
+            .bad {
+                scroll-snap-align: none start;
+            }
+
+            .horizontalGalleryDrawer {
+                width: 1800px;
+                height: 300px;
+            }
+            .colorBox {
+                height: 300px;
+                width: 300px;
+                float: left;
+            }
+            #itemH0, #itemV0 { background-color: red; }
+            #itemH1, #itemV1 { background-color: green; }
+            #itemH2, #itemV2 { background-color: blue; }
+            #itemH3, #itemV3 { background-color: aqua; }
+            #itemH4, #itemV4 { background-color: yellow; }
+            #itemH5, #itemV5 { background-color: fuchsia; }
+        </style>
+        <script src="../../resources/js-test.js"></script>
+        <script>
+        function runTest()
+        {
+            var badHorizontalTarget = document.getElementById('badHorizontalTarget');
+            debug("Scroll-snap offsets for 'badHorizontalTarget': " + window.internals.scrollSnapOffsets(badHorizontalTarget));
+
+            var horizontalTarget = document.getElementById('horizontalTarget');
+            debug("Scroll-snap offsets for 'horizontalTarget': " + window.internals.scrollSnapOffsets(horizontalTarget));
+
+            finishJSTest();
+        }
+
+        function onLoad()
+        {
+            jsTestIsAsync = true;
+            if (window.testRunner)
+                setTimeout(runTest, 0);
+        }
+        </script>
+    </head>
+    <body onload="onLoad();">
+        <div style="position: relative; width: 300px">
+            <div>Tests that the scroll-snap feature works properly with mixed-up snap points.</div>
+            <div class="horizontalGallery horizontal-bad" id="badHorizontalTarget">
+                <div class="horizontalGalleryDrawer">
+                    <div id="itemH0" class="bad colorBox"></div>
+                    <div id="itemH1" class="bad colorBox"></div>
+                    <div id="itemH2" class="bad colorBox"></div>
+                    <div id="itemH3" class="bad colorBox"></div>
+                    <div id="itemH4" class="bad colorBox"></div>
+                    <div id="itemH5" class="bad colorBox"></div>
+                </div>
+            </div>
+            <div class="horizontalGallery horizontal-good" id="horizontalTarget">
+                <div class="horizontalGalleryDrawer">
+                    <div id="itemH0" class="good colorBox"></div>
+                    <div id="itemH1" class="good colorBox"></div>
+                    <div id="itemH2" class="good colorBox"></div>
+                    <div id="itemH3" class="good colorBox"></div>
+                    <div id="itemH4" class="good colorBox"></div>
+                    <div id="itemH5" class="good colorBox"></div>
+                </div>
+            </div>
+            <div id="console"></div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (floating) {P} at (0,16) size 652x24 [border: (2px solid #008000)]
+        RenderText {#text} at (2,2) size 648x19
+          text run at (2,2) width 648: "There should be 30px of word spacing between each word."
+      RenderBlock {DIV} at (0,0) size 784x100
+      RenderTable {TABLE} at (0,100) size 100x144
+        RenderTableSection {TBODY} at (0,0) size 100x144
+          RenderTableRow {TR} at (0,0) size 100x144
+            RenderTableCell {TD} at (0,0) size 100x144 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {P} at (0,0) size 100x144 [border: (2px solid #008000)]
+                RenderText {#text} at (2,2) size 86x139
+                  text run at (2,2) width 38: "There"
+                  text run at (2,22) width 77: "should be"
+                  text run at (2,42) width 65: "15px of"
+                  text run at (2,62) width 33: "word"
+                  text run at (2,82) width 49: "spacing"
+                  text run at (2,102) width 54: "between"
+                  text run at (2,122) width 86: "each word."

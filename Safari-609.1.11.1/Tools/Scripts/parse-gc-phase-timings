@@ -1,0 +1,131 @@
+#!/usr/bin/env python
+
+# Copyright (C) 2015 Mark Hahnenberg. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+import fileinput
+import re
+
+TIMING_REGEX = re.compile(
+    r'^\[(?P<pid>[0-9]+)\] '
+    '(?P<name>[^ ]+) '
+    '\(Parent: (?P<parent>[^\)]+)\) '
+    '\((?P<collect_type>[^\)]+)\): '
+    '(?P<total_time>[0-9]+\.[0-9]+)ms '
+    '\(avg. (?P<avg_time>[^,]+), '
+    'min. (?P<min_time>[^,]+), '
+    'max. (?P<max_time>[^,]+), '
+    'count (?P<count>[^\)]+)\)')
+
+class Timing(object):
+    def __init__(self, pid, name, parent, collect_type, total_time, avg_time, min_time, max_time, count):
+        self.pid = int(pid)
+        self.name = str(name)
+        self.parent = str(parent)
+        self.collect_type = str(collect_type)
+        self.total_time = float(total_time)
+        self.avg_time = float(avg_time)
+        self.min_time = float(min_time)
+        self.max_time = float(max_time)
+        self.count = int(count)
+        self.children = []
+
+    def __unicode__(self):
+        return u"%s - %s total: %.2f, avg: %.2f" % (self.name, self.collect_type, self.total_time, self.avg_time)
+
+    def __str__(self):
+        return "%s - %s total: %.2f, avg: %.2f" % (self.name, self.collect_type, self.total_time, self.avg_time)
+
+    def __repr__(self):
+        return "%s - %s total: %.2f, avg: %.2f" % (self.name, self.collect_type, self.total_time, self.avg_time)
+
+
+def parse_input():
+    timings = []
+    for line in fileinput.input():
+        result = TIMING_REGEX.match(line)
+        if result is None:
+            continue
+        timings.append(Timing(
+            result.group('pid'),
+            result.group('name'),
+            result.group('parent'),
+            result.group('collect_type'),
+            result.group('total_time'),
+            result.group('avg_time'),
+            result.group('min_time'),
+            result.group('max_time'),
+            result.group('count'),
+        ))
+    return timings
+
+
+def print_timing_node(root, timings, tabs):
+    for _ in range(tabs):
+        print "    ",
+    percent_time = 1.0
+    if root.parent is not None:
+        percent_time = float(root.total_time) / float(root.parent.total_time)
+    print "%s - %.2f%%" % (str(root), percent_time * 100.0)
+    for child in reversed(sorted(root.children, key=lambda t: t.total_time)):
+        if child.parent != root:
+            continue
+        if child.collect_type != root.collect_type:
+            continue
+        print_timing_node(child, timings, tabs + 1)
+    
+
+def print_timing_tree(timings):
+    timings.sort(key=lambda t: t.total_time)
+    timings.reverse()
+    collection_types = ["All", "Eden", "Full"]
+    for collect_type in collection_types:
+        for timing in timings:
+            if timing.collect_type != collect_type:
+                continue
+            if timing.parent is not None:
+                continue
+            print_timing_node(timing, timings, 0)
+        print ""
+
+
+def link_parents(timings):
+    for timing in timings:
+        if timing.parent == "nullptr":
+            timing.parent = None
+            continue
+        for parent in timings:
+            if timing.parent != parent.name:
+                continue
+            if timing.collect_type != parent.collect_type:
+                continue
+            timing.parent = parent
+            parent.children.append(timing)
+
+def main():
+    timings = parse_input()
+    link_parents(timings)
+    print_timing_tree(timings)
+
+if __name__ == "__main__":
+    main()

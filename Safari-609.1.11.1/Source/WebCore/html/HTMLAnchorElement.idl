@@ -1,0 +1,41 @@
+/*
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+interface HTMLAnchorElement : HTMLElement {
+    [CEReactions=NotNeeded, EnabledAtRuntime=AdClickAttribution, Reflect] attribute DOMString adcampaignid;
+    [CEReactions=NotNeeded, EnabledAtRuntime=AdClickAttribution, Reflect] attribute DOMString addestination;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString charset;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString coords;
+    [CEReactions=NotNeeded, Conditional=DOWNLOAD_ATTRIBUTE, EnabledAtRuntime=DownloadAttribute, Reflect] attribute DOMString download;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString hreflang;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString name;
+    [CEReactions=NotNeeded, Reflect] attribute USVString ping;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString rel;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString rev;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString shape;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString target;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString type;
+
+    [CEReactions] attribute DOMString text;
+
+    [PutForwards=value] readonly attribute DOMTokenList relList;
+};
+
+HTMLAnchorElement implements HTMLHyperlinkElementUtils;

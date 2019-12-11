@@ -1,0 +1,3 @@
+
+PASS deleteFromDocument on Selection must enqueue a disconnected reaction 
+

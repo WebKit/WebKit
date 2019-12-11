@@ -1,0 +1,5 @@
+type.name
+HTMLCanvasElement type and toString
+Spec references: canvas.type
+Actual output:
+Passed

@@ -1,0 +1,151 @@
+#!/usr/bin/env python
+# Copyright (C) 2010 Apple Inc.  All rights reserved.
+# Copyright (C) 2011 Google Inc.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import os, sys
+
+def listAllWebKitPrograms(builddir_bin):
+    foundWebKitPrograms = []
+    for root, dirs, files in os.walk(builddir_bin):
+        for file in files:
+            if os.access(os.path.join(root, file), os.X_OK):
+                foundWebKitPrograms.append(file)
+    return foundWebKitPrograms
+
+
+def main(user=None):
+    tasksToKillWin = [
+        "cl.exe",
+        "devenv.com",
+        "devenv.exe",
+        "DumpRenderTree.exe",
+        "DumpRenderTree_debug.exe",
+        "httpd.exe",
+        "imagediff.exe",
+        "imagediff_debug.exe",
+        "jsc.exe",
+        "jsc_debug.exe",
+        "LightTPD.exe",
+        "link.exe",
+        "midl.exe",
+        "perl.exe",
+        "Safari.exe",
+        "svn.exe",
+        "testapi.exe",
+        "testapi_debug.exe",
+        "VcBuildHelper.exe",
+        "wdiff.exe",
+        "WebKitNetworkProcess.exe",
+        "WebKitNetworkProcess_debug.exe",
+        "WebKitWebProcess.exe",
+        "WebKitWebProcess_debug.exe",
+        "WebKitTestRunner.exe",
+        "WebKitTestRunner_debug.exe",
+    ]
+
+    tasksToKillMac = [
+        "apache2",
+        "cc1plus",
+        "cc1objplus",
+        "clang",
+        r"clang\\+\\+",
+        "gcc-4.2",
+        "httpd",
+        "i686-apple-darwin10-gcc-4.2.1",
+        "ImageDiff",
+        "jsc",
+        "LayoutTestHelper",
+        "make",
+        "perl5.12",
+        "perl5.16",
+        "perl5.18",        
+        "perl",
+        "Problem Reporter",
+        "ruby",
+        "Safari Web Content",
+        "Safari",
+        "svn",
+        "DumpRenderTree",
+        "TestWebKitAPI Web Content",
+        "TestWebKitAPI",
+        "PluginProcess",
+        "com.apple.WebKit.Plugin.64",
+        "com.apple.WebKit.Plugin.32",
+        "com.apple.WebKit.PluginProcess",
+        "com.apple.WebKit.PluginProcess.Development"
+        "WebKitTestRunner Web Content",
+        "WebKitTestRunner",
+        "WebProcess",
+        "xcodebuild",
+        # FIXME: Consider moving iOS-specific tasks to their own list.
+        "Simulator",
+    ]
+
+    taskToKillUnix = [
+        # System process that are executed as part of the build process
+        "cc1plus",
+        "ld.gold",
+        "ld",
+        "make",
+        "cmake",
+        "svn",
+        # System process that are executed as part of the test steps
+        "Xvfb",
+        "gdb",
+        "ruby",
+        "apache2",
+        "httpd",
+        # WebKit related process names are automatically generated for GTK+/WPE/JSCOnly
+    ]
+
+    # This allows to specify on the environment of the bot a list of process that should be killed.
+    tasksToKill = os.getenv("WEBKITBOT_TASKSTOKILL", "").split()
+    if sys.platform == 'darwin':
+        os.system("ps aux")
+        for task in tasksToKill + tasksToKillMac:
+            os.system("killall -9 -v -m " + task)
+        # Shutdown any simulators
+        if os.geteuid() == 0 and user:
+            os.system("sudo -u {} xcrun simctl shutdown booted".format(user))
+        else:
+            os.system("xcrun simctl shutdown booted")
+        # Kill all instances of python executing run-webkit-tests
+        os.system("ps aux | grep -E '.+/Python .+(run_webkit_tests|run-webkit-tests|mod_pywebsocket)' | grep -v grep | awk '{print $2}' | xargs kill")
+    elif sys.platform == 'cygwin' or sys.platform == 'win32':
+        for task in tasksToKill + tasksToKillWin:
+            os.system("taskkill /t /f /im " + task)
+    elif sys.platform.startswith('linux'):
+        os.system("ps aux")
+        builddir_bin = "WebKitBuild/Release/bin" if os.path.isdir("WebKitBuild/Release/bin") else "WebKitBuild/Debug/bin"
+        for task in tasksToKill + taskToKillUnix + listAllWebKitPrograms(builddir_bin):
+            os.system("killall -9 -v " + task)
+        os.system("ps aux | grep -P '.+/python .+(run_webkit_tests|run-webkit-tests|mod_pywebsocket)' | grep -v grep | awk '{print $2}' | xargs kill")
+    else:
+        sys.exit()
+        # FIXME: Should we return an exit code based on how the kills went?
+
+
+if __name__ == '__main__':
+    user = sys.argv[1] if len(sys.argv) > 1 else None
+    sys.exit(main(user))

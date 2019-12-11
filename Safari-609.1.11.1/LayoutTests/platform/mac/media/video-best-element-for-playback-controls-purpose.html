@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>audio-session-category-track-change</title>
+    <script src="../../../media/video-test.js"></script>
+    <script src="../../../media/media-file.js"></script>
+    <script>
+    async function go() {
+        for (test of tests) {
+            await test();
+            consoleWrite('');
+        }
+        endTest();
+    }
+
+    function createVideo(parameters) {
+        let target = document.querySelector('#target');
+        target.innerHTML = '';
+
+        let video = document.createElement('video');
+        target.appendChild(video);
+
+        if (!parameters)
+            return video;
+
+        if (parameters.autoplay)
+            video.autoplay = parameters.autoplay;
+
+        if (parameters.muted)
+            video.muted = parameters.muted;
+
+        if (parameters.size) {
+            if (parameters.size === 'large') {
+                video.width = 640;
+                video.height = 480;
+            } else if (parameters.size === 'small') {
+                video.width = 320;
+                video.height = 240;
+            }
+        }
+
+        if (parameters.type) {
+            if (parameters.type === 'audio+video')
+                video.src = findMediaFile("video", "../../../media/content/test");
+            else if (parameters.type === 'video')
+                video.src = findMediaFile("video", "../../../media/content/long-test");
+        }
+
+        return video;
+    }
+
+    function enterFullscreen(target) {
+        runWithKeyDown(`document.querySelector("${target}").webkitRequestFullscreen()`);
+        return waitFor(document, 'webkitfullscreenchange');
+    }
+
+    function exitFullscreen() {
+        runWithKeyDown('document.webkitExitFullscreen()');
+        return waitFor(document, 'webkitfullscreenchange');
+    }
+
+    let tests = [
+        function() {
+            consoleWrite('Unloaded video elements should not be considered main content.');
+            video = createVideo();
+            testExpected('internals.bestMediaElementForShowingPlaybackControlsManager("ControlsManager")', null)
+        },
+
+        async function() {
+            consoleWrite('Large, autoplay videos with video and audio should be considered main content.')
+            run('video = createVideo({autoplay: true, type: "audio+video", size: "large"})');
+            await waitFor(video, 'playing');
+            testExpected('internals.bestMediaElementForShowingPlaybackControlsManager("ControlsManager")', video)
+        },
+
+        async function() {
+            consoleWrite('Small, autoplay videos with video and audio should be considered main content.')
+            run('video = createVideo({autoplay: true, type: "audio+video", size: "small"})');
+            await waitFor(video, 'playing');
+            testExpected('internals.bestMediaElementForShowingPlaybackControlsManager("ControlsManager")', null)
+        },
+
+        async function() {
+            consoleWrite('Muted autoplay videos should not be considered main content.')
+            run('video = createVideo({autoplay: true, muted: true, type: "audio+video", size: "large"})');
+            await waitFor(video, 'playing');
+            testExpected('internals.bestMediaElementForShowingPlaybackControlsManager("ControlsManager")', null)
+        },
+
+        async function() {
+            consoleWrite('Video-only autoplay videos should not be considered main content.')
+            run('video = createVideo({autoplay: true, type: "video", size: "large"})');
+            await waitFor(video, 'playing');
+            testExpected('internals.bestMediaElementForShowingPlaybackControlsManager("ControlsManager")', null)
+        },
+
+        async function() {
+            consoleWrite('Non-playing videos should not be considered main content.')
+            run('video = createVideo({type: "audio+video", size: "large"})');
+            await waitFor(video, 'canplaythrough');
+            testExpected('internals.bestMediaElementForShowingPlaybackControlsManager("ControlsManager")', null)
+        },
+
+        async function() {
+            consoleWrite('Large, autoplay videos outside fullscreen element should not be considered main content');
+            run('video = createVideo({autoplay: true, muted: true, type: "audio+video", size: "large"})');
+            await waitFor(video, 'playing');
+            await enterFullscreen('#fullscreen');
+            testExpected('internals.bestMediaElementForShowingPlaybackControlsManager("ControlsManager")', null);
+            await exitFullscreen();
+        },
+
+        async function() {
+            consoleWrite('Large, autoplay videos inside fullscreen element should be considered main content');
+            run('video = createVideo({autoplay: true, type: "audio+video", size: "large"})');
+            await waitFor(video, 'playing');
+            await enterFullscreen('#target');
+            testExpected('internals.bestMediaElementForShowingPlaybackControlsManager("ControlsManager")', video);
+            await exitFullscreen();
+        },
+    ];
+
+    </script>
+</head>
+<body onload="go()">
+    <div id="target"></div>
+    <div id="fullscreen"></div>
+</body>
+</html>

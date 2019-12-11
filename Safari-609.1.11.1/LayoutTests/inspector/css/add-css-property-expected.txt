@@ -1,0 +1,20 @@
+Testing that CSSStyleDeclaration updates after inserting new CSS properties.
+
+
+== Running test suite: AddCSSProperty
+-- Running test case: AddCSSProperty.AppendAfterMissingSemicolon
+PASS: `color: green` property should be appended.
+
+-- Running test case: AddCSSProperty.InsertBeforeAndAfter
+PASS: `color: green` property should be inserted before the first property.
+PASS: `display: block` property should be appended at the end.
+
+-- Running test case: AddCSSProperty.InsertBetween
+PASS: `font-family: fantasy` property should be inserted after the first property.
+
+-- Running test case: AddCSSProperty.AppendAfterCommentedOutProperty
+PASS: `display: inline` property should be appended.
+
+-- Running test case: AddCSSProperty.AppendAfterCommentedOutPropertyWithoutSemicolon
+PASS: `display: inline` property should be appended.
+

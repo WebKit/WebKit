@@ -1,0 +1,11 @@
+Test to make sure the eval code cache doesn't crash or give wrong results in odd situations.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS first is 'first'
+PASS second is 'second'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

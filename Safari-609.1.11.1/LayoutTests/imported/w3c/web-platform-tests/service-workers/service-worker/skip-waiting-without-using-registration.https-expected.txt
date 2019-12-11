@@ -1,0 +1,4 @@
+
+PASS Test skipWaiting while a client is not being controlled 
+PASS skipWaiting 
+

@@ -1,0 +1,4 @@
+
+
+FAIL A 'frame-ancestors' CSP directive with a value 'none' should block rendering. assert_unreached: The IFrame should have been blocked (or cross-origin). It wasn't. Reached unreachable code
+

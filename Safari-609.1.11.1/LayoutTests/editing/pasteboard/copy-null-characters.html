@@ -1,0 +1,89 @@
+<head>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+Markup.description('If there are NULL characters in text nodes, they should not be copied to the clipboard.  This test requires DumpRenderTree.');
+Markup.noAutoDump();
+
+function runTest()
+{
+    var sel = window.getSelection();
+
+    var source = document.getElementById("source");
+    var textWithNull = "Copy\0 paste me";
+    source.textContent = textWithNull;
+
+    var results = document.getElementById("results");
+    // Make sure innerHTML still has the NULL.
+    if (source.innerHTML != textWithNull) {
+        results.innerText = "source.innerHTML has the wrong value (expected " +
+            JSON.stringify(textWithNull) + " but found " +
+            JSON.stringify(source.innerHTML) + ").";
+        Markup.dump(document.body);
+        Markup.notifyDone();
+        return;
+    }
+
+    sel.setPosition(source, 0);
+    document.execCommand("SelectAll");
+    document.execCommand("Copy");
+
+    var destinationRichText = document.getElementById("destination-rich-text");
+    sel.setPosition(destinationRichText, 0);
+    document.execCommand("Paste");
+
+    var destinationPlainText = document.getElementById("destination-plain-text");
+    destinationPlainText.focus();
+    document.execCommand("Paste");
+
+    var expectedPlainTextValue = "Copy paste me";
+    if (expectedPlainTextValue != destinationPlainText.value) {
+        results.innerText = "Plain text field has the wrong value (expected " +
+            JSON.stringify(expectedPlainTextValue) + " but found " +
+            JSON.stringify(destinationPlainText.value) + ").";
+        Markup.dump(document.body);
+        Markup.notifyDone();
+        return;
+    }
+
+    // Run the same test but include some richly formatted text.
+    var outerSource = document.getElementById("outerSource");
+    sel.setBaseAndExtent(outerSource, 0, destinationRichText, 0);
+    document.execCommand("Copy");
+
+    // Remove the source text so we don't end up with a null character in the
+    // expected output file.
+    source.parentNode.removeChild(source);
+
+    sel.setPosition(destinationRichText, 0);
+    document.execCommand("Paste");
+
+    destinationPlainText.focus();
+    document.execCommand("Paste");
+
+    var expectedPlainTextValue2 = "Copy paste mebold\n\nCopy paste me\ngreen";
+    if (expectedPlainTextValue2 != destinationPlainText.value) {
+        results.innerText = "Plain text field has the wrong value (expected " +
+            JSON.stringify(expectedPlainTextValue2) + " but found " +
+            JSON.stringify(destinationPlainText.value) + ").";
+        Markup.dump(document.body);
+        Markup.notifyDone();
+        return;
+    }
+
+    results.innerText = "PASSED";
+
+    Markup.dump(document.body);
+    Markup.notifyDone();
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<div id="outerSource"><p><b>bold</b></p>
+  <div id="source" contentEditable="true"></div>
+  <p style="color: green">green</p>
+</div>
+<div id="destination-rich-text" contentEditable="true"></div>
+<textarea id="destination-plain-text"></textarea>
+<div id="results">FAILED</div>
+</body>

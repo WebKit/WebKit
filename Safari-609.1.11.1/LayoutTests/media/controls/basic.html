@@ -1,0 +1,27 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+    <head>
+        <script src="../media-file.js"></script>
+        <script src="controls-test-helpers.js"></script>
+        <script>
+            var tester = new ControlsTest()
+                .whenReady(runTests)
+                .start();
+
+            function runTests()
+            {
+                currentState = tester.currentState;
+                tester.test("Check that status is ok")
+                    .value(currentState.status)
+                    .isEqualTo("ok");
+
+                tester.end();
+            }
+        </script>
+    </head>
+    <body>
+        <p>This is a basic test of the internal controls status API.</p>
+        <p>This test only runs in DRT!</p>
+        <video controls></video>
+    </body>
+</html>

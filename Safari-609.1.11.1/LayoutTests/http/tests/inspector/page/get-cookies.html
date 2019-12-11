@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/inspector-test.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.setAlwaysAcceptCookies(true);
+
+function loadDocumentWithURL(url) {
+    frame = document.createElement('iframe');
+    frame.src = url;
+    frame.onload = function() { TestPage.dispatchEventToFrontend("LoadComplete") };
+    document.body.appendChild(frame);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Page.getCookies");
+
+    suite.addTestCase({
+        name: "CheckNoCookies",
+        description: "Ensure there are no cookies.",
+        test(resolve, reject) {
+            PageAgent.getCookies().then((payload) => {
+                InspectorTest.expectEqual(payload.cookies.length, 0, "Should be no cookies.");
+                resolve();
+            }).catch((error) => {
+                InspectorTest.log(error);
+                reject();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "Page.getCookies.OnlyMainResource",
+        description: "Get cookies on MainResource.",
+        setup(resolve) {
+            InspectorTest.evaluateInPage(`document.cookie = "Main=foo; Max-age=3600";`);
+            setTimeout(resolve, 500);
+        },
+        test(resolve, reject) {
+            PageAgent.getCookies().then((payload) => {
+                InspectorTest.expectEqual(payload.cookies.length, 1, "length should be one.");
+                InspectorTest.expectEqual(payload.cookies[0].name, "Main", "[Main] Name is 'Main'");
+                InspectorTest.expectEqual(payload.cookies[0].value, "foo", "[Main] Value is 'foo'");
+                InspectorTest.expectEqual(payload.cookies[0].domain, "127.0.0.1", "[Main] Domain is '127.0.0.1'");
+                resolve();
+            }).catch((error) => {
+                InspectorTest.log("Could not fetch cookies: " + error);
+                reject();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "Page.getCookies.SubResource",
+        description: "Get cookies on SubResources.",
+        setup(resolve) {
+            InspectorTest.awaitEvent("LoadComplete").then((event) => { resolve() });
+            InspectorTest.evaluateInPage(`loadDocumentWithURL("http://localhost:8000/inspector/page/resources/set-cookie.php?name=Sub&value=bar")`);
+        },
+        test(resolve, reject) {
+            PageAgent.getCookies().then((payload) => {
+                InspectorTest.expectEqual(payload.cookies.length, 2, "length should be two.");
+                InspectorTest.expectEqual(payload.cookies[1].name, "Sub", "[Sub] Name is 'Sub'");
+                InspectorTest.expectEqual(payload.cookies[1].value, "bar", "[Sub] Value is 'bar'");
+                InspectorTest.expectEqual(payload.cookies[1].domain, "localhost", "[Sub] Domain is 'localhost'");
+                resolve();
+            }).catch((error) => {
+                InspectorTest.log("Could not fetch cookies: " + error);
+                reject();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Test for the Page.getCookies</p>
+</body>
+</html>

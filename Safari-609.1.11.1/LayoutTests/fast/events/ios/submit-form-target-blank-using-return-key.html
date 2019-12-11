@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<form action="resources/submit-form-target-blank-using-return-key.html" target="_blank">
+    <input type="text" id="test">
+</form>
+<div id="console"></div>
+<script>
+window.jsTestIsAsync = true;
+
+if (window.testRunner) {
+    testRunner.setCanOpenWindows(true);
+    testRunner.setCloseRemainingWindowsWhenComplete(true);
+    testRunner.setPopupBlockingEnabled(true);
+}
+
+function done()
+{
+    document.body.removeChild(document.querySelector("form"));
+    finishJSTest();
+}
+
+function checkInputEvent()
+{
+    testFailed("Should not have dispatched input event.");
+    done();
+}
+
+function checkKeypressAndDone()
+{
+    shouldBeEqualToString("event.key", "Enter");
+}
+
+function runTest()
+{
+    function handleFocus(event) {
+        event.target.addEventListener("input", checkInputEvent, { once: true });
+        event.target.addEventListener("keypress", checkKeypressAndDone, { once: true });
+        if (window.testRunner)
+            UIHelper.keyDown("return");
+    }
+    let test = document.getElementById("test");
+    test.addEventListener("focus", handleFocus, { once: true });
+    if (window.testRunner)
+        UIHelper.activateElement(test);
+}
+
+description("Tests that pressing the Return key in a text field with an associated form implicitly submits the form. To run this test by hand, focus the text field below and press the <key>Return<key> key.");
+runTest();
+</script>
+</body>
+</html>

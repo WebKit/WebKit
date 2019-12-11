@@ -1,0 +1,19 @@
+Test encrypting using AES-CTR with an imported 128bit key
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Length < 64
+PASS bytesToHexString(cipherText) is expectedCipherText
+Length = 64
+PASS bytesToHexString(cipherText) is expectedCipherText
+Length = 65
+PASS bytesToHexString(cipherText) is expectedCipherText
+Length = 2, overflow
+PASS bytesToHexString(cipherText) is expectedCipherText4
+Length = 8, overflow
+PASS bytesToHexString(cipherText) is expectedCipherText5
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

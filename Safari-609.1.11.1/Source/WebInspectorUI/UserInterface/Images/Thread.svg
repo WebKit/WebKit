@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2016 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 16 16">
+    <circle fill="rgb(148, 183, 219)" stroke="rgb(106, 136, 170)" cx="8" cy="8" r="7.5"/>
+    <line stroke="rgb(106, 136, 170)" x1="8" y1="3" x2="8" y2="13" stroke-width="3.5" stroke-linecap="round"/>
+    <line stroke="rgb(106, 136, 170)" x1="5" y1="5" x2="5" y2="11" stroke-width="3.5" stroke-linecap="round"/>
+    <line stroke="rgb(106, 136, 170)" x1="11" y1="5" x2="11" y2="11" stroke-width="3.5" stroke-linecap="round"/>
+    <line stroke="white" x1="8" y1="3" x2="8" y2="13" stroke-width="1.5" stroke-linecap="round"/>
+    <line stroke="white" x1="5" y1="5" x2="5" y2="11" stroke-width="1.5" stroke-linecap="round"/>
+    <line stroke="white" x1="11" y1="5" x2="11" y2="11" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

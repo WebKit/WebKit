@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<style>
+#test {
+    font-size: 5vh;
+    width: 50vw;
+}
+#testpseudo:after {
+    margin-left: 20vmin;
+    padding-right: 25vmax;
+    content: '';
+}
+</style>
+<body>
+    <div id="test"></div>
+    <div id="testpseudo"></div>
+</body>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/resize-test.js"></script>
+<script>
+description("Test that viewport lengths and font sizes properly resize with the viewport.");
+standardResizeTest(function () {
+    var min = Math.min(innerWidth, innerHeight);
+    var max = Math.max(innerWidth, innerHeight);
+    shouldBeEqualToString("getComputedStyle(test).fontSize", innerHeight / 20 + "px");
+    shouldBeEqualToString("getComputedStyle(test).width", innerWidth / 2 + "px");
+    shouldBeEqualToString("getComputedStyle(testpseudo, ':after').marginLeft", min / 5 + "px");
+    shouldBeEqualToString("getComputedStyle(testpseudo, ':after').paddingRight", max / 4 + "px");
+});
+</script>
+<script src="../../resources/js-test-post.js"></script>

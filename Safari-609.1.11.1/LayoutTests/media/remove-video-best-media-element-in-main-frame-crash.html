@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p id="description">This tests removing a video element inside an iframe while another video in the main frame is playing does not hit a release assertion.</p>
+<div id="result"></div>
+<video id="video" autoplay width="500"></video>
+<script src="media-file.js"></script>
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+let count = 0;
+function continueTest() {
+    count++;
+    if (count < 2)
+        return;
+    setTimeout(() => {
+        iframe.remove();
+        result.textContent = 'PASS';
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+}
+
+if (window.internals) {
+    testRunner.overridePreference("WebKitMainContentUserGestureOverrideEnabled", 1);
+    internals.setMediaElementRestrictions(video, "OverrideUserGestureRequirementForMainContent");
+} else
+    description.innerHTML += '<br>This test requries OverrideUserGestureRequirementForMainContent. Manually set this setting or use WebKitTestRunner.';
+
+const videoURL = findMediaFile("video", "content/test");
+const iframe = document.createElement('iframe');
+document.body.appendChild(iframe);
+video.src = videoURL;
+video.addEventListener('loadeddata', continueTest);
+
+const doc = iframe.contentDocument;
+doc.open();
+doc.write(`<!DOCTYPE html><html><body>`);
+doc.write(`<video autoplay src="${videoURL}"></video>`);
+doc.write(`<script>document.querySelector('video').addEventListener('loadeddata', () => top.continueTest());</` + `script>`);
+doc.close();
+
+</script>
+</body>
+</html>

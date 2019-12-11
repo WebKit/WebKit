@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .popover {
+            position: absolute;
+            z-index: 1;
+            top: 100px;
+            left: 100px;
+            width: 300px;
+            height: 200px;
+            border: 1px solid black;
+        }
+        
+        .container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+    </style>
+
+    <script src="../../../resources/js-test-pre.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+        
+        var popover;
+        function createPopover()
+        {
+            popover = document.createElement('div');
+            popover.className = 'popover';
+            var container = document.createElement('div');
+            container.className = 'container';
+            popover.appendChild(container);
+        }
+        
+        function doTest()
+        {
+            createPopover();
+            document.body.appendChild(popover);
+            popover.addEventListener("mousewheel", this, true);
+            window.setTimeout(dismiss, 0);
+        }
+
+        var count = 0;
+        function dismiss()
+        {
+            document.body.removeChild(popover);
+            gc();
+            
+            document.getElementById('count').textContent = ++count;
+            if (count > 3) {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+                return;
+            }
+            doTest();
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <p>Test that elements with wheel event handlers are removed from the document's event handler set when the element is destroyed. Test passes if it does not crash.</p>
+<p>Iterations: <span id="count"></span></p>
+</body>
+</html>

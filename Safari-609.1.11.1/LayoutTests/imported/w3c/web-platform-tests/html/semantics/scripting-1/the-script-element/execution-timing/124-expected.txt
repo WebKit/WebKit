@@ -1,0 +1,3 @@
+
+PASS scheduler: altering the type attribute and changing script data inline script  
+

@@ -1,0 +1,46 @@
+Test Path2D as argument for clip.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Simple test of Path2D as argumeny for clip().
+PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
+PASS areaColor(imageData.data, {r:0,g:0,b:0,a:0}) is true
+
+Transform context and apply clip(). Context path should be ignored.
+PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
+PASS areaColor(imageData.data, {r:0,g:0,b:0,a:0}) is true
+
+Path2D should not affect context path.
+PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
+PASS areaColor(imageData.data, {r:0,g:0,b:0,a:0}) is true
+PASS areaColor(imageData.data, {r:0,g:0,b:0,a:0}) is true
+PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
+
+Test WindingRule for Path2D.
+PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
+PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
+PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
+PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
+PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
+PASS areaColor(imageData.data, {r:0,g:0,b:0,a:0}) is true
+PASS ctx.clip(0) threw exception TypeError: Argument 1 ('fillRule') to CanvasRenderingContext2D.clip must be one of: "nonzero", "evenodd".
+PASS ctx.clip(null) threw exception TypeError: Argument 1 ('fillRule') to CanvasRenderingContext2D.clip must be one of: "nonzero", "evenodd".
+PASS ctx.clip('path2d') threw exception TypeError: Argument 1 ('fillRule') to CanvasRenderingContext2D.clip must be one of: "nonzero", "evenodd".
+PASS ctx.clip(undefined) did not throw exception.
+PASS ctx.clip(Number.MAX_VALUE) threw exception TypeError: Argument 1 ('fillRule') to CanvasRenderingContext2D.clip must be one of: "nonzero", "evenodd".
+PASS ctx.clip(function() {}) threw exception TypeError: Argument 1 ('fillRule') to CanvasRenderingContext2D.clip must be one of: "nonzero", "evenodd".
+PASS ctx.clip(false) threw exception TypeError: Argument 1 ('fillRule') to CanvasRenderingContext2D.clip must be one of: "nonzero", "evenodd".
+PASS ctx.clip(new Date()) threw exception TypeError: Argument 1 ('fillRule') to CanvasRenderingContext2D.clip must be one of: "nonzero", "evenodd".
+PASS ctx.clip(0, 'nonzero') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.clip must be an instance of Path2D.
+PASS ctx.clip(null, 'nonzero') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.clip must be an instance of Path2D.
+PASS ctx.clip('path2d', 'nonzero') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.clip must be an instance of Path2D.
+PASS ctx.clip(undefined, 'nonzero') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.clip must be an instance of Path2D.
+PASS ctx.clip(Number.MAX_VALUE, 'nonzero') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.clip must be an instance of Path2D.
+PASS ctx.clip(function() {}, 'nonzero') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.clip must be an instance of Path2D.
+PASS ctx.clip(false, 'nonzero') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.clip must be an instance of Path2D.
+PASS ctx.clip(new Date(), 'nonzero') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.clip must be an instance of Path2D.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

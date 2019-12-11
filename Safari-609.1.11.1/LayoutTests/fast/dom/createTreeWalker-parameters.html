@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests parameters of document.createTreeWalker() API.");
+
+debug("No parameters");
+shouldThrow("document.createTreeWalker()", "'TypeError: Not enough arguments'");
+
+debug("")
+debug("Null root node");
+shouldThrow("document.createTreeWalker(null)", "'TypeError: Argument 1 (\\'root\\') to Document.createTreeWalker must be an instance of Node'");
+
+debug("");
+debug("Default parameters");
+evalAndLog("walker = document.createTreeWalker(document)");
+shouldBe("walker.root", "document");
+shouldBe("walker.currentNode", "document");
+shouldBe("walker.whatToShow", "0xFFFFFFFF");
+shouldBeNull("walker.filter");
+
+debug("");
+debug("Passing null for optional parameters");
+evalAndLog("walker = document.createTreeWalker(document, null, null)");
+shouldBe("walker.root", "document");
+shouldBe("walker.currentNode", "document");
+shouldBe("walker.whatToShow", "0");
+shouldBeNull("walker.filter");
+
+debug("");
+debug("Passing undefined for optional parameters");
+evalAndLog("walker = document.createTreeWalker(document, undefined, undefined)");
+shouldBe("walker.root", "document");
+shouldBe("walker.currentNode", "document");
+shouldBe("walker.whatToShow", "0xFFFFFFFF");
+shouldBeNull("walker.filter");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

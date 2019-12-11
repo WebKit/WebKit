@@ -1,0 +1,3 @@
+
+FAIL save()/restore() affects the clipping path Can't find variable: OffscreenCanvas
+

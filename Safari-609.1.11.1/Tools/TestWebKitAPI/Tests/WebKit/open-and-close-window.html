@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (document.location.search === "?close-window")
+    window.close();
+else {
+    if (!window.open("open-and-close-window.html?close-window"))
+        window.close();
+}
+</script>
+</head>
+</html>

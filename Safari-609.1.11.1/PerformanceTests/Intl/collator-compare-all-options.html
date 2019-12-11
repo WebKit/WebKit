@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<body>
+<script src="../resources/runner.js"></script>
+<script>
+var count = 0;
+var collator = new Intl.Collator('en-US-u-co-dict-kn-false-kf-upper', {
+    localeMatcher: 'best fit',
+    usage: 'sort',
+    sensitivity: 'variant',
+    ignorePunctuation: true,
+    numeric: true,
+    caseFirst: false
+});
+var array = [];
+for (var i = 0; i < 100; i++) {
+    array[i] = i.toString(36).repeat(i)
+}
+
+PerfTestRunner.measureRunsPerSecond({run() {
+    array.slice().sort(collator.compare);
+    count++;
+}});
+</script>
+</body>

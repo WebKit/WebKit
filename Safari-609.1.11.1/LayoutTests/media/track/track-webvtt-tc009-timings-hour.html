@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>            
+
+            numberOfTrackTests = 2;
+            
+            function trackLoaded()
+            {
+                numberOfTracksLoaded++;
+                if (numberOfTracksLoaded == numberOfTrackTests) {
+                    testTrack0();
+                    testTrack1();
+                }
+            }
+            
+            function testTrack0()
+            {
+                findMediaElement();
+                var expected = 
+                {
+                    length : 3,
+                    tests:
+                    [
+                        {
+                            property : "id",
+                            values : ["1", "2", "3"],
+                        },
+                        {
+                            property : "startTime",
+                            values : [0.0, 31.0, 61.0],
+                        },
+                        {
+                            property : "endTime",
+                            values : [30.5, 60.5, 361200.5],
+                        },
+                        {
+                            property : "text",
+                            values : ["Bear is Coming!!!!!", "I said Bear is coming!!!!", "I said Bear is coming now!!!!"],
+                        },
+                    ],
+                };
+                testCues(0, expected);
+
+                allTestsEnded();
+            }
+
+            function testTrack1()
+            {
+                findMediaElement();
+                var expected = 
+                {
+                    length : 0,
+                    tests:
+                    [],
+                };
+                testCues(1, expected);
+
+                allTestsEnded();
+            }
+        </script>
+    </head>
+    <body onload="enableAllTextTracks()">
+        <p>Tests cue timings that contain hours (they are optional), and tests various syntax errors in timings with hours.</p>
+        <video>
+            <track src="captions-webvtt/tc009-timings-hour.vtt" onload="trackLoaded()">
+            <track src="captions-webvtt/tc009-timings-hour-error.vtt" onload="trackLoaded()">
+        </video>
+    </body>
+</html>

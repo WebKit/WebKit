@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing basic video exchange from offerer to receiver</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script src ="routines.js"></script>
+        <script>
+let firstConnection, secondConnection;
+let stream;
+let remoteAudioTrack, remoteVideoTrack;
+promise_test(async (test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    await new Promise((resolve, reject) => {
+        createConnections((connection) => {
+            firstConnection = connection;
+            firstConnection.addTrack(stream.getVideoTracks()[0], stream);
+            firstConnection.addTrack(stream.getAudioTracks()[0], stream);
+        }, (connection) => {
+            secondConnection = connection;
+            secondConnection.ontrack = (trackEvent) => {
+                if (!remoteVideoTrack) {
+                    remoteVideoTrack = trackEvent.track;
+                    return;
+                }
+                remoteAudioTrack = trackEvent.track;
+                resolve();
+            };
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+}, "Setup audio video exchange");
+
+async function renegotiate()
+{
+    let d = await firstConnection.createOffer();
+    await firstConnection.setLocalDescription(d);
+    await secondConnection.setRemoteDescription(d);
+    d = await secondConnection.createAnswer();
+    await secondConnection.setLocalDescription(d);
+}
+
+promise_test((test) => {
+    const promise = new Promise((resolve, reject) => {
+        remoteVideoTrack.onmute = resolve;
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    firstConnection.removeTrack(firstConnection.getSenders()[0]);
+    const promise2 = renegotiate();
+    return Promise.all([promise, promise2]);
+}, "Remove video track");
+
+promise_test((test) => {
+    const promise = new Promise((resolve, reject) => {
+        remoteAudioTrack.onmute = resolve;
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    firstConnection.removeTrack(firstConnection.getSenders()[1]);
+    const promise2 = renegotiate();
+    return Promise.all([promise, promise2]);
+}, "Remove audio track");
+
+promise_test(async t => {
+    const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+    const track = stream.getTracks()[0];
+    let pc = new RTCPeerConnection();
+    for (let i = 0; i <100; i++) {
+        let sender = pc.addTrack(track, stream);
+        pc.removeTrack(sender);
+    }
+    pc.close();
+}, 'Add/remove audio tracks');
+
+promise_test(async t => {
+    const stream = await navigator.mediaDevices.getUserMedia({video: true});
+    const track = stream.getTracks()[0];
+    let pc = new RTCPeerConnection();
+    for (let i = 0; i <100; i++) {
+        let sender = pc.addTrack(track, stream);
+        pc.removeTrack(sender);
+    }
+    pc.close();
+}, 'Add/remove video tracks');
+
+        </script>
+    </body>
+</html>

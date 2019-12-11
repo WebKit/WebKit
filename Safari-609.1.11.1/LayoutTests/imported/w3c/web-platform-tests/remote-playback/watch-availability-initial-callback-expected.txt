@@ -1,0 +1,3 @@
+
+PASS Test that the callback is called once watchAvailability() resolves. 
+

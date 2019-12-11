@@ -1,0 +1,86 @@
+<!doctype html>
+<meta charset=utf-8>
+<title></title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/test-helpers.sub.js"></script>
+<body>
+<script>
+
+async function try_fetch(fetch_func, path) {
+  let response;
+  try {
+   response = await fetch_func(path);
+  } catch (err) {
+    throw (`fetch() threw: ${err}`);
+  }
+
+  let response_text;
+  try {
+   response_text = await response.text();
+  } catch (err) {
+   throw (`text() threw: ${err}`);
+  }
+
+  return response_text;
+}
+
+promise_test(async function(t) {
+  let frame;
+  const scope = 'resources/';
+  const script = 'resources/claim-worker.js';
+  t.add_cleanup(async () => {
+    if (frame)
+      frame.remove();
+    return service_worker_unregister(t, scope);
+  });
+
+  const resource = 'simple.txt';
+
+  // Create the test frame.
+  await service_worker_unregister(t, scope);
+  frame = await with_iframe('resources/blank.html');
+
+  // Check the controller and test with fetch.
+  assert_equals(frame.contentWindow.navigator.controller, undefined,
+                'Should have no controller.');
+  let response;
+  try {
+    response = await try_fetch(frame.contentWindow.fetch, resource);
+  } catch (err) {
+    assert_unreached(`uncontrolled fetch failed: ${err}`);
+  }
+  assert_equals(response, 'a simple text file\n',
+                'fetch() should not be intercepted.');
+
+  // Register a service worker.
+  const registration = await navigator.serviceWorker.register(script, {scope});
+  const worker = registration.installing;
+  await wait_for_state(t, worker, 'activated');
+
+  // Tell the service worker to claim the iframe.
+  const saw_message = new Promise((resolve) => {
+    const channel = new MessageChannel();
+    channel.port1.onmessage = t.step_func((event) => {
+      resolve(event.data);
+    });
+    worker.postMessage({port: channel.port2}, [channel.port2]);
+  });
+  const data = await saw_message;
+  assert_equals(data, 'PASS', 'Worker call to claim() should fulfill.');
+
+  // Check the controller and test with fetch.
+  const controller = frame.contentWindow.navigator.serviceWorker.controller;
+  assert_true(controller instanceof frame.contentWindow.ServiceWorker,
+              'iframe should be controlled.');
+  try {
+    response = await try_fetch(frame.contentWindow.fetch, resource);
+  } catch (err) {
+    assert_unreached(`controlled fetch failed: ${err}`);
+  }
+  assert_equals(response, 'Intercepted!',
+                'fetch() should be intercepted.');
+}, 'fetch() should be intercepted after the client is claimed.');
+
+</script>
+</body>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/common.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
+
+<div>
+<input id="input-element" style="visibility: hidden;" onfocus="focused = true" onblur="focused = false" onclick="this.style.visibility = 'visible';">
+<label for="input-element">Click me</label>
+</div>
+
+<script>
+
+description('This tests making an input element visible while the associated label element is clicked.'
+ + 'To manually test, "click me" below. The input element that becomes visible must be focused.');
+
+if (window.eventSender) {
+    evalAndLog('focused = false; clickElement(document.querySelector("label"));');
+    shouldBeTrue('focused');
+    shouldBe('document.activeElement', 'document.querySelector("input")');
+
+    document.querySelector('input').parentNode.style.display = 'none';
+}
+
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

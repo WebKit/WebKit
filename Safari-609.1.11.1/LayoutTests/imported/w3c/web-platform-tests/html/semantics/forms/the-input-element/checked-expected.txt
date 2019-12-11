@@ -1,0 +1,3 @@
+
+PASS input@checked is immediately reflected to 'checked' IDL attribute 
+

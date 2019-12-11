@@ -1,0 +1,3 @@
+
+FAIL getImageData() throws TypeError if arguments are not finite Can't find variable: OffscreenCanvas
+

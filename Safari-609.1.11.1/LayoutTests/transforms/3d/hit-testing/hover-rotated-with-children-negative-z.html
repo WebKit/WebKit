@@ -1,0 +1,65 @@
+<html>
+	<head>
+		<title>Test - Bug #124777: Fix hover area for divs with a hierarchy of css transformed and non-transformed elements</title>
+		<style>
+			#transformed {
+				-webkit-transform: translateY(50px) rotateX(20deg) rotateZ(10deg);
+				border: solid 5px rgba(128,128,128,0.5);
+				padding: 10px;
+				margin: 15px;
+			}
+			#transformed, #parent {
+				width: 600px;
+				height: 150px;
+			}
+			#child1 {
+				-webkit-transform: rotateX(45deg) rotateZ(45deg) translateZ(-500px) translateX(-300px) translateY(-180px);
+				border: solid 5px rgba(128,128,128,0.5);
+				background-color: Lime;
+			}
+			#child2 {
+				-webkit-transform: translateZ(-500px) rotateX(-45deg) rotateZ(-45deg) translateX(50px) translateY(-130px);
+				border: solid 5px rgba(128,128,128,0.5);
+				background-color: Cyan;
+			}
+			html {
+				font-size: 16px;
+				line-height: 16px;
+				font-family: Verdana;
+			}
+			#parent:hover, #transformed:hover, #child1:hover, #child2:hover {
+				box-shadow: 0px 0px 0px 10px rgba(0,128,0,0.5);
+			}
+			#parent {
+				outline: dotted 1px #888;
+			}
+		</style>
+
+		<script src="resources/hit-test-utils.js"></script>
+		<script>
+			var hitTestData = [
+				{ 'point': [70, 70], 'target' : 'transformed' },
+				{ 'point': [630, 130], 'target' : 'transformed' },
+				{ 'point': [40, 130], 'target' : 'transformed' },
+				{ 'point': [620, 270], 'target' : 'transformed' },
+				{ 'point': [130, 100], 'target' : 'child1' },
+				{ 'point': [200, 110], 'target' : 'child2' }
+			];
+
+			window.addEventListener('load', runTest, false);
+		  </script>
+	</head>
+	<body id="body">
+		<div id="parent">
+			<div id="transformed">transformed
+				<div id="child1">child 1</div>
+				<div id="nonTransformedChild">non transformed child</div>
+				<div id="child2">child 2</div>
+			</div>
+		</div>
+
+		<p>Test passes if the hover state of a transformed div is activated even if there's a non transformed element behind it.</p>
+
+		<div id="results"></div>
+	</body>
+</html>

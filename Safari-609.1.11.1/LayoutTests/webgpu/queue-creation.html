@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<title>Get the GPUDevice and ask for the GPUQueue</title>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="js/webgpu-functions.js"></script>
+<script>
+
+'use strict';
+
+promise_test(async t => {
+    assert_not_equals(navigator.gpu, undefined, "navigator.gpu exists");
+
+    const context = document.createElement("canvas").getContext("gpu");
+    assert_true(context instanceof GPUCanvasContext, "getContext returned a GPUCanvasContext.");
+
+    return getBasicDevice().then(async function(device) {
+        const queue = device.getQueue();
+        assert_true(queue instanceof GPUQueue, "getQueue returned a GPUQueue.");
+
+        queue.label = "Example label";
+        assert_equals(queue.label, "Example label", "queue.label was set.");
+    }, function() {
+    });
+}, "getQueue() on GPUDevice.");
+
+</script>
+</body>

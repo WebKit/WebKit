@@ -1,0 +1,7 @@
+2d.drawImage.image.incomplete.empty
+Spec references: 2d.drawImage.incomplete.image.nosrc
+Actual output:
+Expected output:
+
+Passed
+

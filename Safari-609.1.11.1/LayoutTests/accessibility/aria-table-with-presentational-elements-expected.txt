@@ -1,0 +1,11 @@
+This tests that in an aria table a row will report its parent as the table.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS row.role is 'AXRole: AXRow'
+PASS row.parentElement().role is 'AXRole: AXTable'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

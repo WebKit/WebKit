@@ -1,0 +1,5 @@
+To check anti-aliasing, we draw a triangle over half of a 2x2 quad, then check the pixel colors in the corners. Note that if you're looking at the rendering results on a high-dpi display you will see some artefacts as the canvas is scaled by the page zoom. Don't mistake that for anti-aliasing (the test code doesn't).
+
+PASS: top left corner was fully black.
+PASS: top right corner did not have a completely solid red channel.
+

@@ -1,0 +1,3 @@
+
+PASS Script is not executed after script thread is shutdown 
+

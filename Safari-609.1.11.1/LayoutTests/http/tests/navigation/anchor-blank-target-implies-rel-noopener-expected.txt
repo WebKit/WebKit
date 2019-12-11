@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 6: PASS: New window should not have an opener
+Tests that a new window opened via target=_blank does not have an opener
+
+

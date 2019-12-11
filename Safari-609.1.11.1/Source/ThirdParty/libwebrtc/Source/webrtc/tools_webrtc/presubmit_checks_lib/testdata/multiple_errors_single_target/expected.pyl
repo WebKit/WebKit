@@ -1,0 +1,10 @@
+[("BUILD.gn",
+  "11",
+  "dummy_target",
+  "subpackage/dummy_subpackage_file.cc",
+  "subpackage"),
+ ("BUILD.gn",
+  "12",
+  "dummy_target",
+  "subpackage/dummy_subpackage_file.h",
+  "subpackage")]

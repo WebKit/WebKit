@@ -1,0 +1,49 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+[%
+   title = "$terms.Bug Fields"
+   desc = "Choose fields you want to display"
+%]
+
+[% param_descs = {
+  useclassification => "If this is on, Bugzilla will associate each product with a " _
+                       "specific classification. But you must have 'editclassification' " _
+                       "permissions enabled in order to edit classifications.",
+
+  usetargetmilestone => "Do you wish to use the Target Milestone field?",
+
+  useqacontact => "Do you wish to use the QA Contact field?",
+
+  usestatuswhiteboard => "Do you wish to use the Status Whiteboard field?",
+
+  use_see_also => 
+    "Do you wish to use the See Also field? It allows you refer to"
+    _ " $terms.bugs in other installations. Even if you disable this field,"
+    _ " $terms.bug relationships (URLs) already set on $terms.bugs will"
+    _ " still appear and can be removed.",
+
+  defaultpriority => "This is the priority that newly entered $terms.bugs are set to.",
+
+  defaultseverity => "This is the severity that newly entered $terms.bugs are set to.",
+
+  defaultplatform => "This is the platform that is preselected on the $terms.bug " _
+                     "entry form.<br> " _
+                     "You can leave this empty: " _
+                     "Bugzilla will then use the platform that the browser " _
+                     "reports to be running on as the default.",
+
+  defaultopsys => "This is the operating system that is preselected on the $terms.bug " _
+                  "entry form.<br> " _
+                  "You can leave this empty: " _
+                  "Bugzilla will then use the operating system that the browser " _
+                  "reports to be running on as the default.",
+
+  collapsed_comment_tags => "A comma separated list of tags which, when applied " _
+                            "to comments, will cause them to be collapsed by default",
+  }
+%]

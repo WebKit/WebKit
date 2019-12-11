@@ -1,0 +1,27 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # This template has no interface.
+  #%]
+
+[% tabs = [ { name => 'specific', label => "Simple Search",
+              link => "query.cgi?format=specific" },
+            { name => 'advanced', label => "Advanced Search",
+              link => "query.cgi?format=advanced" } ] %]
+
+[% Hook.process('search_tabs') %]
+
+[% WRAPPER global/tabs.html.tmpl
+     tabs = tabs
+     current_tab_name = query_format || format || "advanced"
+%]
+
+[% content %]
+
+[% END %]

@@ -1,0 +1,33 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    internals.settings.setStorageBlockingPolicy('BlockThirdParty');
+}
+
+var value = window.location.href.match(/\?value=([^&]*)/);
+if (value)
+    value = value[1];
+
+window.onmessage = function(event) {
+    var cachedValue = event.data;
+    if (value !== null) {
+        if (cachedValue == value)
+            console.log("The cache is not properly partitioned");
+        else
+            console.log("PASS");
+        if (window.testRunner) {
+            testRunner.notifyDone();
+            internals.settings.setStorageBlockingPolicy('AllowAll');
+        }
+    } else
+        window.location = "http://localhost:8000/cache/partitioned-cache-iframe.html?value=" + cachedValue;
+}
+</script>
+</head>
+<body>
+<iframe src="http://127.0.0.1:8000/cache/resources/random-cached-iframe.cgi"></iframe>
+</body>
+</html>

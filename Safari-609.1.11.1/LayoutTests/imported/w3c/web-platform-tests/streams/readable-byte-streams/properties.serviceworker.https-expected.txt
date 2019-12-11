@@ -1,0 +1,8 @@
+
+PASS Service worker test setup 
+FAIL Can get the ReadableStreamBYOBReader constructor indirectly ReadableByteStreamController is not implemented
+PASS ReadableStreamBYOBReader constructor should get a ReadableStream object as argument 
+FAIL ReadableStreamBYOBReader instances should have the correct list of properties ReadableByteStreamController is not implemented
+FAIL ReadableStreamBYOBRequest instances should have the correct list of properties ReadableByteStreamController is not implemented
+FAIL ReadableByteStreamController instances should have the correct list of properties ReadableByteStreamController is not implemented
+

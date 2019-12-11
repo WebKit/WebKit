@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script>
+            function runTest() {
+                description('Tests read-write pseudo-class properties are not applied to disabled input and textarea elements');
+
+                shouldNotBeEqualToString("window.getComputedStyle(document.getElementById('inputdisabled'),null).getPropertyValue('background-color')","rgb(255, 0, 0)");
+                shouldNotBeEqualToString("window.getComputedStyle(document.getElementById('textareadisabled'),null).getPropertyValue('background-color')","rgb(255, 0, 0)");
+                isSuccessfullyParsed();
+            }
+        </script>
+        <style>
+            :read-write {
+                background-color: red;
+            }
+        </style>
+    </head>
+    <body onload="runTest()">
+        <input type="text"/>
+        <input type="text" readonly />
+        <input type="text" disabled id="inputdisabled"/>
+
+        <textarea></textarea>
+        <textarea readonly></textarea>
+        <textarea disabled id="textareadisabled"></textarea>
+    </body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<div id="testArea"><div id="A"><div id="B"><div id="C"><div id="D"></div></div></div></div></div>
+<script>
+description("Tests that backward traversal of an HTMLCollection works as expected and does not crash.");
+
+var testArea = document.getElementById("testArea");
+var divs = testArea.getElementsByTagName("div");
+shouldBeEqualToString("divs.item(3).id", "D");
+shouldBeEqualToString("divs.item(2).id", "C");
+shouldBeEqualToString("divs.item(1).id", "B");
+shouldBeEqualToString("divs.item(0).id", "A");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

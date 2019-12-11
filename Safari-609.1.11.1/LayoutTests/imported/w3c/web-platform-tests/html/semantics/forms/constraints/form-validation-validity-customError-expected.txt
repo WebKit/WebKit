@@ -1,0 +1,10 @@
+
+PASS [input]  The validity.customError must be true if the custom validity error message is not empty 
+PASS [input]  The validity.customError must be false if the custom validity error message is empty 
+PASS [button]  The validity.customError must be true if the custom validity error message is not empty 
+PASS [button]  The validity.customError must be false if the custom validity error message is empty 
+PASS [select]  The validity.customError must be true if the custom validity error message is not empty 
+PASS [select]  The validity.customError must be false i the custom validity error message is empty 
+PASS [textarea]  The validity.customError must be true if the custom validity error message is not empty 
+PASS [textarea]  The validity.customError must be false if the custom validity error message is empty 
+

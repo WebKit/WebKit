@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<title>CSS Grid Layout Examples</title>
+<style>
+    .grid {
+        display: inline-grid;
+        border: 0.1em solid;
+        border-radius: 0.2em;
+        font-size: 2em;
+    }
+
+    .grid > div {
+        margin: 0.05em;
+        border-width: 0.1em;
+        border-style: solid;
+        border-radius: 0.2em;
+        padding: 0.5em;
+        font-family: monospace;
+    }
+
+    .item-1 {
+        background-color: rgba(242, 46, 138, 0.8);
+        border-color: rgb(242, 46, 138);
+    }
+
+    .item-2 {
+        background-color: rgba(98, 205, 217, 0.8);
+        border-color: rgb(98, 205, 217);
+    }
+
+    .item-3 {
+        background-color: rgba(117, 191, 6 , 0.8);
+        border-color: rgb(117, 191, 6);
+    }
+
+    .item-4 {
+        background-color: rgba(242, 226, 5, 0.8);
+        border-color: rgb(242, 226, 5);
+    }
+
+    .item-5 {
+        background-color: rgba(242, 54, 12, 0.8);
+        border-color: rgb(242, 54, 12);
+    }
+
+    .item-6 {
+        background-color: rgba(166, 0, 62, 0.8);
+        border-color: rgb(166, 0, 62);
+    }
+
+    .bold {
+        font-weight: bold;
+    }
+
+    .small {
+        font-size: 50%;
+    }
+
+    .medium {
+        font-size: 75%;
+    }
+
+    .big {
+        font-size: 150%;
+    }
+
+
+    iframe {
+        width: 800px;
+        height: 600px;
+        animation: resize 8s infinite alternate;
+    }
+
+    @keyframes resize {
+        to { width: 400px; }
+    }
+</style>
+
+<h1>CSS Grid Layout Examples</h1>
+
+<h2>Grid Definition</h2>
+
+<pre>
+    display: grid;
+    grid-template-rows: 100px 100px;
+    grid-template-columns: 400px 200px 100px;
+</pre>
+
+<div class="grid" style="grid-template-rows: 100px 100px; grid-template-columns: 400px 200px 100px;">
+    <div class="item-1 big">A</div>
+    <div class="item-2 big">B</div>
+    <div class="item-3 big">C</div>
+    <div class="item-4 big">D</div>
+    <div class="item-5 big">E</div>
+    <div class="item-6 big">F</div>
+</div>
+
+<h2>Grid Areas</h2>
+
+<pre>
+    display: grid;
+    grid-template-areas: "header  header"
+                         "sidebar main  "
+                         "sidebar footer";
+</pre>
+
+<div class="grid" style='grid-template-areas: "header  header"
+                                              "sidebar main  "
+                                              "sidebar footer";'>
+    <div class="item-1" style="grid-area: header;">header</div>
+    <div class="item-2" style="grid-area: sidebar;">sidebar</div>
+    <div class="item-3" style="grid-area: main;">main</div>
+    <div class="item-4" style="grid-area: footer;">footer</div>
+</div>
+
+<h2>Item Placement</h2>
+
+<pre>
+    display: grid;
+    grid-template-rows: repeat(4, 100px);
+    grid-template-columns: repeat(4, 150px);
+</pre>
+
+<div class="grid" style="grid-template-rows: repeat(4, 100px); grid-template-columns: repeat(4, 150px);">
+    <div class="item-1 small" style="grid-row: 3; grid-column: 2;">grid-row: 3;<br><br>grid-column: 2;</div>
+    <div class="item-2 medium" style="grid-row: 2 / 5; grid-column: 3 / span 2;">grid-row: 2 / 5;<br><br>grid-column:<br>3 / span 2;</div>
+</div>
+
+<h2>Alignment</h2>
+
+<h3>Grid Tracks Alignment</h3>
+
+<pre>
+    display: grid;
+    grid-template-rows: 100px 100px;
+    grid-template-columns: 150px 150px 150px;
+    height: 500px;
+    width: 650px;
+    align-content: center;
+    justify-content: space-evenly;
+</pre>
+
+<div class="grid" style="grid-template-rows: 100px 100px; grid-template-columns: 150px 150px 150px; height: 500px; width: 650px; align-content: center; justify-content: space-evenly;">
+    <div class="item-1 small" style="grid-row: 1; grid-column: 1  / 3;">grid-row: 1;<br><br>grid-column: 1 / 3;</div>
+    <div class="item-2 small" style="grid-row: 1 / 3; grid-column: 3;">grid-row: 1 / 3;<br><br>grid-column: 3;</div>
+    <div class="item-3 small" style="grid-row: 2; grid-column: 1;">grid-row: 2;<br><br>grid-column: 1;</div>
+    <div class="item-4 small" style="grid-row: 2; grid-column: 2;">grid-row: 2;<br><br>grid-column: 2;</div>
+</div>
+
+<h3>Grid Items Alignment</h3>
+
+<pre>
+    display: grid;
+    grid-template-rows: 200px 200px;
+    grid-template-columns: 400px 400px;
+</pre>
+
+<div class="grid" style="grid-template-rows: 200px 200px; grid-template-columns: 400px 400px;">
+    <div class="item-1 medium" style="align-self: stretch; justify-self: stretch;">align-self: stretch;<br><br>justify-self: stretch;</div>
+    <div class="item-2 medium" style="align-self: end; justify-self: start;">align-self: end;<br><br>justify-self: start;</div>
+    <div class="item-3 medium" style="grid-column: span 2; align-self: center; justify-self: center;">grid-column: span 2;<br><br>align-self: center;<br><br>justify-self: center;</div>
+</div>
+
+<h2>Responsive Design</h2>
+
+<pre>
+    display: grid;
+    grid-gap: 10px 20px;
+    grid-template-rows: 100px 1fr auto;
+    grid-template-columns: 1fr 200px;
+    grid-template-areas: "header  header"
+                         "content aside "
+                         "footer  aside ";
+
+    @media (max-width: 600px) {
+        grid-gap: 0;
+        grid-template-rows: auto 1fr auto auto;
+        grid-template-columns: 1fr;
+        grid-template-areas: "header "
+                             "content"
+                             "aside  "
+                             "footer ";
+    }
+</pre>
+
+<iframe src="responsive-grid.html"></iframe>

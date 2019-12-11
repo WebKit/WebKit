@@ -1,0 +1,75 @@
+Tests ParentNode.append((Node or DOMString)...)
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test Element.append((Node or DOMString)...).
+
+Test single node.
+PASS d1.parentNode is container
+
+Test multiple nodes.
+PASS d1.parentNode is container
+PASS d2.parentNode is container
+PASS d1.nextSibling is d2
+PASS d2.previousSibling is d1
+
+Test a single string.
+PASS container.firstChild is an instance of Text
+PASS container.firstChild.data is 'hello'
+
+Test multiple strings.
+PASS container.childNodes[0] is an instance of Text
+PASS container.childNodes[0].data is 'hello'
+PASS container.childNodes[1] is an instance of Text
+PASS container.childNodes[1].data is 'world'
+
+Test nodes and strings.
+PASS container.childNodes[0] is an instance of Text
+PASS container.childNodes[1] is an instance of Element
+PASS container.childNodes[2] is an instance of Text
+
+Test when container already has children.
+PASS container.childNodes[0] is an instance of Element
+PASS container.childNodes[0] is d1
+PASS container.childNodes[1] is an instance of Element
+PASS container.childNodes[1] is d2
+PASS container.childNodes[2] is an instance of Text
+PASS container.childNodes[2].data is 'hello'
+
+Test conversion to string
+PASS container.childNodes[0] is an instance of Text
+PASS container.childNodes[0].data is 'null'
+PASS container.childNodes[1] is an instance of Text
+PASS container.childNodes[1].data is 'undefined'
+PASS container.childNodes[2] is an instance of Text
+PASS container.childNodes[2].data is '7'
+
+Test no parameters
+PASS container.append() did not throw exception.
+PASS container.childNodes.length is 0
+
+Test error condition of self-appending.
+PASS container.append(container) threw exception HierarchyRequestError: The operation would yield an incorrect node tree..
+
+Test DocumentFragment.append((Node or DOMString)...).
+PASS d1.parentNode is fragment
+
+Test Document.append((Node or DOMString)...).
+
+Test simple case of single child append.
+PASS d1.parentNode is doc
+
+Test case appending a root element and a comment.
+PASS d1.parentNode is doc
+PASS c1.parentNode is doc
+
+Test error condition appending a second root element.
+PASS doc.append(d2) threw exception HierarchyRequestError: The operation would yield an incorrect node tree..
+
+Test error condition appending Text node as the root element.
+PASS doc.append('hello') threw exception HierarchyRequestError: The operation would yield an incorrect node tree..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

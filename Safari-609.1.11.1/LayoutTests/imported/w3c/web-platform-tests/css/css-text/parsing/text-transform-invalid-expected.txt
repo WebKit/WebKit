@@ -1,0 +1,8 @@
+
+PASS e.style['text-transform'] = "none full-width" should not set the property value 
+PASS e.style['text-transform'] = "capitalize none" should not set the property value 
+PASS e.style['text-transform'] = "capitalize full-width lowercase" should not set the property value 
+PASS e.style['text-transform'] = "uppercase full-size-kana uppercase" should not set the property value 
+PASS e.style['text-transform'] = "full-width full-size-kana full-width" should not set the property value 
+PASS e.style['text-transform'] = "full-size-kana capitalize full-size-kana" should not set the property value 
+

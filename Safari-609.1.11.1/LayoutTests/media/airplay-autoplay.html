@@ -1,0 +1,68 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+<head>
+    <title>AirPlay target should persist across src change</title>
+    <script src="media-file.js"></script>
+    <script src="video-test.js"></script>
+    <script>
+
+    var phase = 'video-1';
+
+    function start() 
+    {
+        findMediaElement();
+
+        consoleWrite('** set video.src');
+        run(`video.src = findMediaFile('video', 'content/test')`);
+        video.addEventListener('webkitcurrentplaybacktargetiswirelesschanged', currentTargetChanged, true);
+        waitForEventOnce('canplaythrough', canplaythrough);
+        waitForEventOnce('ended', ended);
+        consoleWrite('');
+    }
+
+    function canplaythrough()
+    {
+        consoleWrite('<br>** simulate choosing a device from the menu');
+        runWithKeyDown(function() {
+            run(`video.webkitShowPlaybackTargetPicker()`);
+            setTimeout(function() {
+                if (window.internals)
+                    internals.setMockMediaPlaybackTargetPickerState('Sleepy TV', 'DeviceAvailable');
+            }, 100);
+        });
+        video.currentTime = video.duration - 1;
+    }
+
+    function currentTargetChanged(ev)
+    {
+        if (!video.webkitCurrentPlaybackTargetIsWireless)
+            return;
+
+        consoleWrite(`EVENT(${ev.type})`);
+        switch (phase) {
+        case 'video-1':
+            phase = 'video-2';
+            consoleWrite('<br>** start playing');
+            run(`video.play()`);
+            consoleWrite('');
+            break;
+        case 'video-2':
+            endTest();
+            break;
+        }
+    }
+
+    function ended()
+    {
+        consoleWrite('<br>** reset video source');
+        run(`video.src = findMediaFile('video', 'content/test')`);
+        run(`video.play()`);
+        consoleWrite('');
+    }
+
+    </script>
+</head>
+<body onload="start()">
+    <video controls></video>
+</body>
+</html>

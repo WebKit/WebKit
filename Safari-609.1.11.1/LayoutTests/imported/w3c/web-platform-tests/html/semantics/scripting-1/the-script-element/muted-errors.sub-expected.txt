@@ -1,0 +1,22 @@
+Blocked access to external URL http://www2.localhost:8800/html/semantics/scripting-1/the-script-element/cacheable-script-throw.py
+Blocked access to external URL http://www2.localhost:8800/fetch/api/resources/redirect.py?location=//localhost:8800/html/semantics/scripting-1/the-script-element/cacheable-script-throw.py?cross-same
+Blocked access to external URL http://www2.localhost:8800/fetch/api/resources/redirect.py?location=//localhost:8800/html/semantics/scripting-1/the-script-element/resources/throw.js
+Blocked access to external URL http://www2.localhost:8800/fetch/api/resources/redirect.py?location=//localhost:8800/html/semantics/scripting-1/the-script-element/resources/syntax-error.js
+CONSOLE MESSAGE: line 1: fox
+Blocked access to external URL http://www2.localhost:8800/html/semantics/scripting-1/the-script-element/cacheable-script-throw.py
+Blocked access to external URL http://www2.localhost:8800/fetch/api/resources/redirect.py?location=//localhost:8800/html/semantics/scripting-1/the-script-element/cacheable-script-throw.py?same-cross-same&location=%2F%2Fwww2.localhost%3A8800%2Ffetch%2Fapi%2Fresources%2Fredirect.py%3Flocation%3D%2F%2Flocalhost%3A8800%2Fhtml%2Fsemantics%2Fscripting-1%2Fthe-script-element%2Fcacheable-script-throw.py%3Fsame-cross-same&count=1
+Blocked access to external URL http://www2.localhost:8800/fetch/api/resources/redirect.py?location=//localhost:8800/html/semantics/scripting-1/the-script-element/cacheable-script-throw.py?cross-same
+Blocked access to external URL http://www2.localhost:8800/fetch/api/resources/redirect.py?location=//localhost:8800/html/semantics/scripting-1/the-script-element/resources/throw.js
+Blocked access to external URL http://www2.localhost:8800/fetch/api/resources/redirect.py?location=//localhost:8800/html/semantics/scripting-1/the-script-element/resources/syntax-error.js
+Blocked access to external URL http://www2.localhost:8800/html/semantics/scripting-1/the-script-element/muted-errors-iframe.html
+Blocked access to external URL http://www2.localhost:8800/html/semantics/scripting-1/the-script-element/cacheable-script-throw.py?iframe
+
+
+PASS Errors for same-origin script shouldn't be muted 
+FAIL Errors for cross-origin script should be muted assert_unreached: Reached unreachable code
+FAIL Errors for cross-origin script should be muted even if the script is once loaded as same-origin assert_unreached: Reached unreachable code
+FAIL Errors for same-origin scripts redirected to a cross-origin url and redirected back to same-origin should be muted assert_unreached: Reached unreachable code
+FAIL Errors for cross-origin scripts redirected to a same-origin url should be muted assert_unreached: Reached unreachable code
+FAIL Non-synthetic errors for same-origin scripts redirected to a cross-origin URL and redirected back to same-origin should be muted assert_unreached: Reached unreachable code
+FAIL Syntax error for same-origin script redirected to a cross-origin URL and redirected back to same-origin should be muted assert_unreached: Reached unreachable code
+

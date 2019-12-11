@@ -1,0 +1,100 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script src=../media-controls.js></script>
+
+        <script>
+
+        var testTrack;
+        var cueDisplayElement;
+        var cueDisplayContainer;
+        var controlsPanelElement;
+        var seekedCount = 0;
+
+        var testCaseDescription = [
+                "Default",
+                "Center",
+                "Top left",
+                "Top right",
+                "Bottom right",
+                "Bottom left",
+                "Bottom center",
+                "Multiple cues"
+        ];
+
+        var testCaseSeekTime = [
+                0.10,
+                0.60,
+                1.10,
+                1.60,
+                2.10,
+                2.60,
+                3.10,
+                4.10
+        ];
+
+        var currentTestCase = 0;
+
+        function seeked()
+        {
+            consoleWrite("Active cues: " + testTrack.track.activeCues.length);
+
+            for (var i = 0; i < testTrack.track.activeCues.length; ++i) {
+                cueDisplayElement = textTrackDisplayElement(video, 'display', i);
+
+                consoleWrite("");
+                consoleWrite("* Cue " + i + " *");
+                testExpected("cueDisplayElement.innerText", testTrack.track.activeCues[i].text);
+                consoleWrite("Cue alignment (default or as specified): " + testTrack.track.activeCues[i].align);
+
+                consoleWrite("Cue left position (percentage): " + Math.round(cueDisplayElement.offsetLeft / cueDisplayContainer.offsetWidth * 100));
+                consoleWrite("Cue top position (percentage): " + Math.round(cueDisplayElement.offsetTop / cueDisplayContainer.offsetHeight * 100));
+            }
+
+            runNextTestCase();
+        };
+
+        function runNextTestCase()
+        {
+            if (currentTestCase == testCaseDescription.length) {
+                endTest();
+                return;
+            }
+
+            consoleWrite("");
+            consoleWrite("** " +  testCaseDescription[currentTestCase] + " **");
+
+            video.currentTime = testCaseSeekTime[currentTestCase];
+            waitForEvent('seeked', seeked, false, true);
+
+            currentTestCase++;
+        }
+
+        function loaded()
+        {
+            consoleWrite("Test that TextTrack's cues are rendered correctly when the snap to lines flag is not set.");
+
+            findMediaElement();
+            testTrack = document.querySelector('track');
+            video.src = findMediaFile('video', '../content/test');
+            controlsPanelElement = mediaControlsElement(internals.shadowRoot(video).firstChild, '-webkit-media-controls-panel');
+
+            waitForEvent('canplaythrough', function() {
+                cueDisplayContainer = textTrackDisplayElement(video);
+                runNextTestCase();
+            });
+        }
+
+        setCaptionDisplayMode('Automatic');
+        </script>
+    </head>
+    <body onload="loaded()">
+        <video controls>
+            <track src="captions-webvtt/captions-snap-to-lines-not-set.vtt" kind="captions" default>
+        </video>
+    </body>
+</html>

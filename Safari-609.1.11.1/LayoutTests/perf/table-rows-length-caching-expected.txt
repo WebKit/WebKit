@@ -1,0 +1,3 @@
+Tests that check that table.row.length is properly cached
+PASS
+

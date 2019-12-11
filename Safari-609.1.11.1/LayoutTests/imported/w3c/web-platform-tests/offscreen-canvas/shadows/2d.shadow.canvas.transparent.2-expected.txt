@@ -1,0 +1,7 @@
+2d.shadow.canvas.transparent.2
+
+Shadows are not drawn for transparent parts of canvases
+
+
+FAIL Shadows are not drawn for transparent parts of canvases null is not an object (evaluating 'ctx2.fillStyle = '#f00'')
+

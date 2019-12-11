@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+if (window.testRunner && window.internals)
+    internals.settings.setHyperlinkAuditingEnabled(true);
+
+function clickElement(element) {
+    let x = element.offsetLeft + 2;
+    let y = element.offsetTop + 2;
+    let supportsTouchEvents = "TouchEvent" in window;
+    if (supportsTouchEvents && window.testRunner && testRunner.runUIScript)
+        testRunner.runUIScript("(function() { uiController.singleTapAtPoint(" + x + ", " + y + ", function() { /* Do nothing */ }); })();", function() { /* Do nothing */ });
+    else if (window.eventSender) {
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+}
+
+function triggerPingWith204Response() {
+    clickElement(document.getElementById("a204"));
+}
+
+function triggerPingWith404Response() {
+    clickElement(document.getElementById("a404"));
+}
+
+// ----
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Resource.Type.Ping");
+
+    function addTestCase({name, description, expression, resourceHandler}) {
+        suite.addTestCase({
+            name, description,
+            test(resolve, reject) {
+                let resource = null;
+                InspectorTest.evaluateInPage(expression);
+                WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded)
+                    .then((event) => {
+                        resource = event.data.resource;
+                        alwaysTest(resource);
+                        if (resource.isLoading()) {
+                            return Promise.race([
+                                resource.awaitEvent(WI.Resource.Event.LoadingDidFinish),
+                                resource.awaitEvent(WI.Resource.Event.LoadingDidFail),
+                            ]);
+                        }
+                    })
+                    .then(() => { resourceHandler(resource); })
+                    .then(resolve, reject);
+            }
+        });
+    }
+
+    function alwaysTest(resource) {
+        InspectorTest.expectEqual(resource.type, WI.Resource.Type.Ping, "Resource should be Ping type.");
+        InspectorTest.expectEqual(resource.requestMethod, "POST", "Resource should be a POST request.");
+        InspectorTest.expectEqual(resource.requestData, "PING", "Resource data should be 'PING'.");
+        InspectorTest.log("Ping-To: " + resource.requestHeaders.valueForCaseInsensitiveKey("Ping-To"));
+    }
+
+    addTestCase({
+        name: "Resource.Type.Ping.204",
+        description: "Send a ping that gets a 204 response.",
+        expression: "triggerPingWith204Response()",
+        resourceHandler(resource) {
+            InspectorTest.expectEqual(resource.statusCode, 204, "Resource should have a 204 response.");
+        }
+    });
+
+    addTestCase({
+        name: "Resource.Type.Ping.404",
+        description: "Send a ping that gets a 404 response.",
+        expression: "triggerPingWith404Response()",
+        resourceHandler(resource) {
+            InspectorTest.expectEqual(resource.statusCode, 404, "Resource should have a 404 response.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for Resource.Type.Ping.</p>
+<a id="a204" href="#a204" ping="resources/ping.php?status=204">Ping 204</a>
+<a id="a404" href="#a404" ping="resources/ping.php?status=404">Ping 404</a>
+</body>
+</html>

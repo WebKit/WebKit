@@ -1,0 +1,30 @@
+main frame - didFinishDocumentLoadForFrame
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
+frame "<!--frame1-->" - didCommitLoadForFrame
+CONSOLE MESSAGE: Blocked mixed content http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi because 'block-all-mixed-content' appears in the Content Security Policy.
+CONSOLE MESSAGE: line 30: Not allowed to request resource
+CONSOLE MESSAGE: line 30: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi due to access control checks.
+frame "<!--frame1-->" - didFinishDocumentLoadForFrame
+frame "<!--frame1-->" - didHandleOnloadEventsForFrame
+main frame - didHandleOnloadEventsForFrame
+frame "<!--frame1-->" - didFinishLoadForFrame
+main frame - didFinishLoadForFrame
+This test loads a secure iframe that loads insecure data via asynchronous XHR. We should trigger a mixed content block because the child frame has CSP directive block-all-mixed-content.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+documentURI: https://127.0.0.1:8443/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-xhr.html?asynchronous
+referrer: http://127.0.0.1:8000/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-asynchronous-in-iframe.html
+blockedURI: http://127.0.0.1:8000
+violatedDirective: block-all-mixed-content
+effectiveDirective: block-all-mixed-content
+originalPolicy: block-all-mixed-content
+sourceFile: https://127.0.0.1:8443/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-xhr.html?asynchronous
+lineNumber: 30
+columnNumber: 9
+statusCode: 0
+
+

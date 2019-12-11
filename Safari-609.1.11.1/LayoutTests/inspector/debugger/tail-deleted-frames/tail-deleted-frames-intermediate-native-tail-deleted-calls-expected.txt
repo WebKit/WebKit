@@ -1,0 +1,20 @@
+Ensure proper tail deleted frames with different call stacks.
+
+
+== Running test suite: Debugger.TailDeletedFrames.IntermediateTailDeletedFrames
+-- Running test case: Debugger.TailDeletedFrames.IntermediateTailDeletedFrames
+FAIL: This should not have `THIS_DOES_NOT_CALL_c` in the call stack.
+PAUSED
+CALL STACK:
+0: [F] a
+1: -F- b
+2: -F- c
+3: -F- THIS_DOES_NOT_CALL_c
+4: -F- THIS_DOES_NOT_CALL_c
+5: -F- THIS_DOES_NOT_CALL_c
+6: -F- THIS_DOES_NOT_CALL_c
+7: -F- THIS_DOES_NOT_CALL_c
+8: [F] startABC
+9: [P] Global Code
+RESUMED
+

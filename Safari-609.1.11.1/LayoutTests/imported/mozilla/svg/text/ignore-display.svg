@@ -1,0 +1,35 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="400">
+  <g style="font: 16px sans-serif">
+    <text x="100" y="40">hello <tspan style="display: block">there</tspan> everyone</text>
+    <text x="100" y="60">hello <tspan style="display: list-item">there</tspan> everyone</text>
+    <text x="100" y="80">hello <tspan style="display: inline-block">there</tspan> everyone</text>
+    <text x="100" y="100">hello <tspan style="display: table">there</tspan> everyone</text>
+    <text x="100" y="120">hello <tspan style="display: inline-table">there</tspan> everyone</text>
+    <text x="100" y="140">hello <tspan style="display: table-row-group">there</tspan> everyone</text>
+    <text x="100" y="160">hello <tspan style="display: table-header-group">there</tspan> everyone</text>
+    <text x="100" y="180">hello <tspan style="display: table-footer-group">there</tspan> everyone</text>
+    <text x="100" y="200">hello <tspan style="display: table-row">there</tspan> everyone</text>
+    <text x="100" y="220">hello <tspan style="display: table-column-group">there</tspan> everyone</text>
+    <text x="100" y="240">hello <tspan style="display: table-column">there</tspan> everyone</text>
+    <text x="100" y="260">hello <tspan style="display: table-cell">there</tspan> everyone</text>
+    <text x="100" y="280">hello <tspan style="display: table-caption">there</tspan> everyone</text>
+
+    <text x="400" y="40" style="display: block">hello there everyone</text>
+    <text x="400" y="60" style="display: list-item">hello there everyone</text>
+    <text x="400" y="80" style="display: inline-block">hello there everyone</text>
+    <text x="400" y="100" style="display: table">hello there everyone</text>
+    <text x="400" y="120" style="display: inline-table">hello there everyone</text>
+    <text x="400" y="140" style="display: table-row-group">hello there everyone</text>
+    <text x="400" y="160" style="display: table-header-group">hello there everyone</text>
+    <text x="400" y="180" style="display: table-footer-group">hello there everyone</text>
+    <text x="400" y="200" style="display: table-row">hello there everyone</text>
+    <text x="400" y="220" style="display: table-column-group">hello there everyone</text>
+    <text x="400" y="240" style="display: table-column">hello there everyone</text>
+    <text x="400" y="260" style="display: table-cell">hello there everyone</text>
+    <text x="400" y="280" style="display: table-caption">hello there everyone</text>
+  </g>
+</svg>

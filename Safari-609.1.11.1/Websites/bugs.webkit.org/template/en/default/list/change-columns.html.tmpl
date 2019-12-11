@@ -1,0 +1,131 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% PROCESS global/header.html.tmpl
+  title = "Change Columns"
+  javascript_urls = [ "js/change-columns.js" ]
+  onload = "initChangeColumns()"
+%]
+
+<p>
+  Select the columns you wish to appear in your [% terms.bug %] lists. Note that
+  this feature requires cookies to work.
+</p>
+
+[% field_descs.short_short_desc     = "Summary (first 60 characters)" %]
+[% field_descs.short_desc           = "Summary (Full)" %]
+[% field_descs.assigned_to_realname = "$field_descs.assigned_to Real Name" %]
+[% field_descs.reporter_realname    = "$field_descs.reporter Real Name" %]
+[% field_descs.qa_contact_realname  = "$field_descs.qa_contact Real Name" %]
+
+[%# Create a mapping of field descriptions to field names, so that
+  # the "Available Columns" list can be sorted alphabetically by
+  # field description.
+  #%]
+[% SET available_columns = {} %]
+[% FOREACH column = columns.keys %]
+  [% NEXT IF collist.contains(column) %]
+  [%# We lowecase the keys so that the sort happens case-insensitively. %]
+  [% SET column_desc = field_descs.$column || column FILTER lower %]
+  [% available_columns.$column_desc = column %]
+[% END %]
+
+<form name="changecolumns" action="colchange.cgi" onsubmit="change_submit();">
+  <input type="hidden" name="rememberedquery" value="[% buffer FILTER html %]">
+    <table>
+      <tr>
+        <th><div id="avail_header" class="bz_default_hidden">Available Columns</div></th>
+        <th></th>
+        <th colspan="2">Selected Columns</th>
+      </tr>
+      <tr>
+        <td>
+          <select name="available_columns" id="available_columns" 
+                  size="15" multiple="multiple" onchange="updateView();"
+                  class="bz_default_hidden"> 
+          </select>
+        </td>
+        <td>
+          <button type="button" id="select_button" name="select"
+                  class="bz_default_hidden arrow_button"
+                  onclick="move_select()">&rarr;</button>
+          <br><br>
+          <button type="button" id="deselect_button" name="deselect"
+                  class="bz_default_hidden arrow_button"
+                  onclick="move_deselect()">&larr;</button>
+        </td>
+        <td>
+          <select name="selected_columns" id="selected_columns" 
+                  size="15" multiple="multiple" onchange="updateView();">
+            [% FOREACH column = collist %]
+                <option value="[% column FILTER html %]" selected="selected">
+                [% (field_descs.${column} || column) FILTER html %]
+              </option>
+            [% END %]
+            [% FOREACH key = available_columns.keys.sort %]
+              [% SET column = available_columns.$key %]
+              <option value="[% column FILTER html %]">
+                [%# Don't display the lower-cased column description,
+                  # display the correct-case one. %]
+                [% (field_descs.$column || column) FILTER html %]
+              </option>
+            [% END %]
+          </select>
+        </td>
+        <td>
+          <button type="button" id="up_button" name="up"
+                  class="bz_default_hidden arrow_button"
+                  onclick="move_up()">&uarr;</button>
+          <br><br>
+          <button type="button" id="down_button" name="down"
+                  class="bz_default_hidden arrow_button"
+                  onclick="move_down()">&darr;</button>
+        </td>
+      </tr>
+    </table>
+
+  <p>
+    <input id="nosplitheader" type="radio" name="splitheader" value="0"
+      [%+ "checked='checked'" IF NOT splitheader %]>
+    <label for="nosplitheader">
+      Normal headers (prettier)
+    </label>
+    <br>
+
+    <input id="splitheader" type="radio" name="splitheader" value="1"
+      [%+ "checked='checked'" IF splitheader %]>
+    <label for="splitheader">
+      Stagger headers (often makes list more compact)
+    </label>
+  </p>
+
+  [% IF saved_search %]
+    <p>
+      <input type="hidden" name="saved_search"
+             value="[% saved_search.id FILTER html%]" >
+      <input type="hidden" name="token"
+             value="[% issue_hash_token([saved_search.id, saved_search.name]) FILTER html %]">
+      <input type="checkbox" id="save_columns_for_search" checked="checked" 
+             name="save_columns_for_search" value="1">
+      <label for="save_columns_for_search">Save this column list only 
+        for search '[% saved_search.name FILTER html %]'</label>
+    </p>
+  [% ELSE %]
+    <input type="hidden" name="token"
+           value="[% issue_hash_token(['default-list']) FILTER html %]">
+  [% END %]
+
+  <p>
+    <input type="submit" id="change" value="Change Columns">
+  </p>
+
+  <input type="submit" id="resetit" name="resetit" 
+         value="Reset to [% terms.Bugzilla %] default">
+</form>
+
+[% PROCESS global/footer.html.tmpl %]

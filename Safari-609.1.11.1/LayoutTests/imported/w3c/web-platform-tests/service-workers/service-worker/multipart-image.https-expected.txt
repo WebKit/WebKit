@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: The operation couldn’t be completed. ( error 0.)
+CONSOLE MESSAGE: Cannot load .
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS initialize global state 
+TIMEOUT same-origin multipart image via SW should be readable Test timed out
+NOTRUN cross-origin multipart image via SW with approved CORS should be readable 
+NOTRUN cross-origin multipart image with no-cors via SW should not be readable 
+NOTRUN cross-origin multipart image via SW with rejected CORS should fail to load 
+NOTRUN restore global state 
+

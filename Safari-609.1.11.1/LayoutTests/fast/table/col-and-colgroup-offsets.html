@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+table, td, th { border: 2px solid blue; } /* To make it easier to visually inspect the test case. */
+</style>
+<script>
+window.jsTestIsAsync = true;
+
+var table;
+var tableHorizontalBorderSpacing;
+var tableVerticalBorderSpacing;
+var borderCollapseMenu;
+
+window.onload = function() {
+    description("This test checks that offset{Left, Top, Width, Height} work for table columns and column groups.");
+
+    table = document.querySelector("table");
+    borderCollapseMenu = document.getElementById("borderCollapseMenu");
+    borderCollapseMenu.onchange = didChangeBorderCollapse;
+
+    runTests();
+}
+
+function didChangeBorderCollapse()
+{
+    var newBorderCollapse = borderCollapseMenu.options[borderCollapseMenu.selectedIndex].value;
+    table.style.borderCollapse = borderCollapseMenu.options[borderCollapseMenu.selectedIndex].value;
+    tableHorizontalBorderSpacing = newBorderCollapse === "collapse" ? 0 : parseInt(table.getAttribute("cellspacing"), 10);
+    tableVerticalBorderSpacing = tableHorizontalBorderSpacing;
+}
+
+function runTests()
+{
+    var savedSelectedIndex;
+    if (!window.testRunner)
+        savedSelectedIndex = borderCollapseMenu.selectedIndex;
+
+    for (var i = 0; i < borderCollapseMenu.options.length; ++i) {
+        borderCollapseMenu.options[i].selected = true;
+        didChangeBorderCollapse();
+
+        debug('<br>When borderCollapse == "' + borderCollapseMenu.options[i].value + '"');
+
+        debug("<br>Tests for offsetLeft:");
+        testOffsetLeft();
+
+        debug("<br>Tests for offsetTop:");
+        testOffsetTop();
+
+        debug("<br>Tests for offsetWidth:");
+        testOffsetWidth();
+
+        debug("<br>Tests for offsetHeight:");
+        testOffsetHeight();
+    }
+
+    if (window.testRunner)
+        document.body.removeChild(document.getElementById("test-container"));
+    else {
+        borderCollapseMenu.options[savedSelectedIndex].selected = true;
+        didChangeBorderCollapse();
+    }
+    finishJSTest();
+}
+
+function testOffsetLeft()
+{
+    shouldEvaluateTo('document.getElementById("productNo").parentNode.offsetLeft', 'document.getElementById("row1Cell1").offsetLeft');
+    shouldBe('document.getElementById("productNo").offsetLeft', 'document.getElementById("row1Cell1").offsetLeft');
+    shouldBe('document.getElementById("productName").offsetLeft', 'document.getElementById("row1Cell2").offsetLeft');
+    shouldBe('document.getElementById("hasMAndHasNAndHasO").offsetLeft', 'document.getElementById("row1Cell3").offsetLeft');
+    shouldBe('document.getElementById("hasMAndHasN").offsetLeft', 'document.getElementById("row1Cell3").offsetLeft');
+    shouldBe('document.getElementById("hasO").offsetLeft', 'document.getElementById("row1Cell5").offsetLeft');
+    shouldBe('document.getElementById("hasP").offsetLeft', 'document.getElementById("row1Cell6").offsetLeft');
+    shouldEvaluateTo('document.getElementById("columnThatShouldNotBeRendered").offsetLeft', 0);
+}
+
+function testOffsetTop()
+{
+    var top = document.getElementById("productNoHeading").offsetTop;
+    shouldEvaluateTo('document.getElementById("productNo").parentNode.offsetTop', top);
+    shouldEvaluateTo('document.getElementById("productNo").offsetTop', top);
+    shouldEvaluateTo('document.getElementById("productName").offsetTop', top);
+    shouldEvaluateTo('document.getElementById("hasMAndHasNAndHasO").offsetTop', top);
+    shouldEvaluateTo('document.getElementById("hasMAndHasN").offsetTop', top);
+    shouldEvaluateTo('document.getElementById("hasO").offsetTop', top);
+    shouldEvaluateTo('document.getElementById("hasP").offsetTop', top);
+    shouldEvaluateTo('document.getElementById("columnThatShouldNotBeRendered").offsetTop', 0);
+}
+
+function testOffsetWidth()
+{
+    shouldEvaluateTo('document.getElementById("productNo").parentNode.offsetWidth', document.getElementById("row1Cell1").offsetWidth + tableHorizontalBorderSpacing + document.getElementById("row1Cell2").offsetWidth);
+    shouldEvaluateTo('document.getElementById("productNo").offsetWidth', document.getElementById("row1Cell1").offsetWidth);
+    shouldEvaluateTo('document.getElementById("productName").offsetWidth', document.getElementById("row1Cell2").offsetWidth);
+    shouldEvaluateTo('document.getElementById("hasMAndHasNAndHasO").offsetWidth', document.getElementById("row1Cell3").offsetWidth + tableHorizontalBorderSpacing + document.getElementById("row1Cell4").offsetWidth + tableHorizontalBorderSpacing + document.getElementById("row1Cell5").offsetWidth);
+    shouldEvaluateTo('document.getElementById("hasMAndHasN").offsetWidth', document.getElementById("row1Cell3").offsetWidth + tableHorizontalBorderSpacing + document.getElementById("row1Cell4").offsetWidth);
+    shouldEvaluateTo('document.getElementById("hasO").offsetWidth', document.getElementById("row1Cell5").offsetWidth);
+    shouldEvaluateTo('document.getElementById("hasP").offsetWidth', document.getElementById("row1Cell6").offsetWidth);
+    shouldEvaluateTo('document.getElementById("columnThatShouldNotBeRendered").offsetWidth', 0);
+}
+
+function testOffsetHeight()
+{
+    var height = tableContentHeight();
+    shouldEvaluateTo('document.getElementById("productNo").parentNode.offsetHeight', height);
+    shouldEvaluateTo('document.getElementById("productNo").offsetHeight', height);
+    shouldEvaluateTo('document.getElementById("productName").offsetHeight', height);
+    shouldEvaluateTo('document.getElementById("hasMAndHasNAndHasO").offsetHeight', height);
+    shouldEvaluateTo('document.getElementById("hasMAndHasN").offsetHeight', height);
+    shouldEvaluateTo('document.getElementById("hasO").offsetHeight', height);
+    shouldEvaluateTo('document.getElementById("hasP").offsetHeight', height);
+    shouldEvaluateTo('document.getElementById("columnThatShouldNotBeRendered").offsetHeight', 0);
+}
+
+function tableContentHeight()
+{
+    var result = 0;
+    var rows = document.getElementsByTagName("tr");
+    var numberOfRows = rows.length;
+    if (numberOfRows)
+        result += rows[0].offsetHeight;
+    for (var i = 1; i < numberOfRows; ++i)
+        result += tableVerticalBorderSpacing + rows[i].offsetHeight;
+    return result;
+}
+</script>
+</head>
+<body>
+<p id="description"></p>
+<div id="test-container">
+    <label for="borderCollapseMenu">border-collapse</label>
+    <select id="borderCollapseMenu">
+        <option value="separate">separate</option>
+        <option value="collapse">collapse</option>
+    </select>
+    <table cellspacing="4">
+        <caption>Product Table</caption>
+        <col id="productNo" style="background-color: lightblue">
+        <col id="productName" style="background-color: lightgreen">
+        <colgroup id="hasMAndHasNAndHasO" style="background-color: lightgray">
+            <col id="hasMAndHasN" span="2">
+            <col id="hasO">
+        </colgroup>
+        <colgroup id="hasP" style="background-color: gray">
+        <colgroup id="columnThatShouldNotBeRendered" style="background-color: red" span="2">
+        <thead>
+            <tr><th id="productNoHeading">Product No.</th><th>Name</th><th>Has M</th><th>Has N</th><th>Has O</th><th>Has P</th></tr>
+        </thead>
+        <tbody>
+            <tr><td id="row1Cell1">1</td><td id="row1Cell2">Gizmo A</td><td id="row1Cell3">&#x2713;</td><td id="row1Cell4"></td><td id="row1Cell5">&#x2713;</td><td id="row1Cell6">&#x2713;</td></tr>
+            <tr><td>2</td><td>Gizmo A Pro</td><td>&#x2713;</td><td>&#x2713;</td><td>&#x2713;</td><td>&#x2713;</td></tr>
+            <tr><td>3</td><td>Gizmo B</td><td><td><td colspan="2" style="text-align: center">&#x2713;</td></tr>
+        </tbody>
+    </table>
+</div>
+<div id="console"></div>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

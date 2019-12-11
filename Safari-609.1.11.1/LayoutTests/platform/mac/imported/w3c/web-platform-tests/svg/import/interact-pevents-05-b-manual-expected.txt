@@ -1,0 +1,33 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (202,35) size 396x430
+      RenderSVGContainer {g} at (202,35) size 396x430
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGText {text} at (121,21) size 238x24 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 237x23
+            chunk 1 (middle anchor) text run 1 at (121.61,40.00) startOffset 0 endOffset 27 width 236.79: "Test pointer-events on text"
+        RenderSVGContainer {g} at (279,86) size 242x379 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,-10.00)}]
+          RenderSVGRect {rect} at (280,86) size 240x176 [fill={[type=SOLID] [color=#0000FF] [opacity=0.10]}] [x=168.09] [y=61.89] [width=143.81] [height=105.02]
+          RenderSVGText {text} at (168,61) size 144x106 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 144x105
+              chunk 1 (middle anchor) text run 1 at (168.10,90.00) startOffset 0 endOffset 1 width 30.45: "@"
+              chunk 1 (middle anchor) text run 2 at (208.55,100.00) startOffset 1 endOffset 2 width 20.01: "A"
+              chunk 1 (middle anchor) text run 3 at (238.56,160.00) startOffset 2 endOffset 3 width 15.00: "y"
+              chunk 1 (middle anchor) text run 4 at (263.56,150.00) startOffset 3 endOffset 4 width 23.33: "\x{D6}"
+              chunk 1 (middle anchor) text run 5 at (296.90,160.00) startOffset 4 endOffset 5 width 15.00: "\x{E7}"
+          RenderSVGRect {rect} at (279,278) size 242x187 [fill={[type=SOLID] [color=#0000FF] [opacity=0.10]}] [x=167.59] [y=176.94] [width=144.81] [height=111.80]
+          RenderSVGText {text} at (167,176) size 146x113 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 145x112
+              chunk 1 (middle anchor) text run 1 at (167.61,210.00) startOffset 0 endOffset 1 width 27.93: "@"
+              chunk 1 (middle anchor) text run 2 at (205.54,220.00) startOffset 1 endOffset 2 width 21.93: "A"
+              chunk 1 (middle anchor) text run 3 at (237.46,280.00) startOffset 2 endOffset 3 width 15.60: "y"
+              chunk 1 (middle anchor) text run 4 at (263.07,270.00) startOffset 3 endOffset 4 width 23.94: "\x{D6}"
+              chunk 1 (middle anchor) text run 5 at (297.01,280.00) startOffset 4 endOffset 5 width 15.39: "\x{E7}"
+    RenderSVGContainer {g} at (16,517) size 381x62
+      RenderSVGText {text} at (10,310) size 229x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 229x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.7 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

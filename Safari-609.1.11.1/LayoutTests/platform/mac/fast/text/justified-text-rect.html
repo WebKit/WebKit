@@ -1,0 +1,30 @@
+<html>
+<head>
+<style>
+body { margin: 0; padding: 0 }
+</style>
+</head>
+<body>
+<p>This is a testcase for a problem where caret rects and the rects returned by firstRectForCharacterRange were incorrect for justified text.  The test sets a caret selection just before the word 'is' in the editable region below.  The pixel output should show the caret in that position.  The test also writes out the rect returned from firstRectForCharacterRange.</p> 
+<p contenteditable id='test' STYLE="width: 70px; height: 50px; background-color: green; text-align: justify;">this&nbsp;&nbsp;&nbsp;&nbsp;<span id="testspan">is</span> justified</p>
+<script type="text/javascript">
+
+    if (window.testRunner) {
+        
+        try {
+        
+            var s = window.getSelection();
+            var e = document.getElementById("testspan");
+            s.setPosition(e, 0);
+            rect = textInputController.firstRectForCharacterRange(8, 1);
+            document.write(rect);
+
+        } catch (ex) {
+            document.write("Exception: " + ex.description);
+        }
+    } else {
+        document.write("(cannot run interactively)");
+    }
+</script>
+</body>
+</html>

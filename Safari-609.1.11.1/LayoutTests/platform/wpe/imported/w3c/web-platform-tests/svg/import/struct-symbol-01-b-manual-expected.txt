@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (0,0) size 800x500
+      RenderSVGHiddenContainer {symbol} at (0,0) size 0x0
+        RenderSVGImage {image} at (0,0) size 800x600
+      RenderSVGHiddenContainer {symbol} at (0,0) size 0x0
+        RenderSVGRect {rect} at (0,0) size 800x600 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=1000.00] [height=1000.00]
+      RenderSVGHiddenContainer {symbol} at (0,0) size 0x0
+        RenderSVGRect {rect} at (0,0) size 800x600 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=0.00] [width=500.00] [height=500.00]
+        RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#0000FF]}] [x=500.00] [y=0.00] [width=500.00] [height=500.00]
+        RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=500.00] [width=500.00] [height=500.00]
+        RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FFFF00]}] [x=500.00] [y=500.00] [width=500.00] [height=500.00]
+      RenderSVGContainer {g} at (0,0) size 800x500
+        RenderSVGContainer {use} at (0,0) size 400x250
+          RenderSVGViewportContainer {svg} at (0,0) size 400x250
+            RenderSVGImage {image} at (0,0) size 400x250
+        RenderSVGContainer {use} at (400,250) size 400x250 [transform={m=((1.00,0.00)(0.00,1.00)) t=(240.00,150.00)}]
+          RenderSVGViewportContainer {svg} at (400,250) size 400x250
+            RenderSVGRect {rect} at (400,250) size 200x125 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=0.00] [width=500.00] [height=500.00]
+            RenderSVGRect {rect} at (600,250) size 200x125 [fill={[type=SOLID] [color=#0000FF]}] [x=500.00] [y=0.00] [width=500.00] [height=500.00]
+            RenderSVGRect {rect} at (400,375) size 200x125 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=500.00] [width=500.00] [height=500.00]
+            RenderSVGRect {rect} at (600,375) size 200x125 [fill={[type=SOLID] [color=#FFFF00]}] [x=500.00] [y=500.00] [width=500.00] [height=500.00]
+    RenderSVGContainer {g} at (16,518) size 380x60
+      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 228x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.7 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

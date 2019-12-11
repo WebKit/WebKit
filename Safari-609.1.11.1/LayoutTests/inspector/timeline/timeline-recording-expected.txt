@@ -1,0 +1,69 @@
+Tests for timeline recording.
+
+
+== Running test suite: TimelineRecording
+-- Running test case: TimelineRecording.Basic
+Loaded
+PASS: TimelineManager should not be capturing.
+PASS: TimelineRecording should not be capturing.
+PASS: TimelineRecording should not be readonly.
+PASS: TimelineRecording should not be imported.
+PASS: TimelineRecording should not have a startTime.
+PASS: TimelineRecording should not have a endTime.
+Start
+PASS: TimelineManager should be capturing.
+PASS: TimelineManager active recording should not have changed.
+PASS: TimelineRecording should be capturing.
+PASS: TimelineRecording should not be readonly.
+Reload
+Stop
+PASS: TimelineManager should not be capturing.
+PASS: TimelineRecording should not be capturing.
+PASS: TimelineRecording should not be readonly.
+PASS: TimelineRecording should not be imported.
+PASS: TimelineRecording should have a startTime.
+PASS: TimelineRecording should have a endTime.
+
+-- Running test case: TimelineRecording.prototype.exportData
+PASS: TimelineRecording should be able to export.
+PASS: TimelineRecording should be able to produce export data.
+PASS: TimelineRecording should have at least 10 Timeline Records.
+Export Data:
+{
+  "displayName": "<filtered>",
+  "startTime": "<filtered>",
+  "endTime": "<filtered>",
+  "discontinuities": [],
+  "instrumentTypes": [
+    "timeline-record-type-network",
+    "timeline-record-type-layout",
+    "timeline-record-type-script",
+    "timeline-record-type-cpu",
+    "timeline-record-type-rendering-frame"
+  ],
+  "records": [
+    "<filtered>"
+  ],
+  "markers": [
+    "<filtered>"
+  ],
+  "memoryPressureEvents": [],
+  "sampleStackTraces": [
+    "<filtered>"
+  ],
+  "sampleDurations": [
+    "<filtered>"
+  ]
+}
+
+-- Running test case: TimelineRecording.import
+PASS: TimelineManager active recording is not this imported recording.
+PASS: TimelineRecording should not be capturing.
+PASS: TimelineRecording should be readonly.
+PASS: TimelineRecording should be imported.
+PASS: TimelineRecording should have a startTime.
+PASS: TimelineRecording should have a endTime.
+PASS: TimelineRecording identifier should be 999.
+Display Name:
+Imported - TEST
+

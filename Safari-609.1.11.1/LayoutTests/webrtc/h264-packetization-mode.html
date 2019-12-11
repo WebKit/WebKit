@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing H264 packetization mode</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script>
+promise_test(async t => {
+    const pc = new RTCPeerConnection;
+    pc.addTransceiver("video");
+    const offer = await pc.createOffer();
+
+    assert_true(offer.sdp.indexOf("packetization-mode=1;profile-level-id=42e01f") !== -1, "baseline, packetization mode 1");
+    assert_false(offer.sdp.indexOf("packetization-mode=0") !== -1, "packetization mode 0 is not offered");
+}, "Make sure packetization mode 1 is offered");
+
+const sdpStart = `v=0
+o=- 3761869441 3761869441 IN IP4 0.0.0.0
+s=test
+c=IN IP4 0.0.0.0
+t=0 0
+a=group:BUNDLE video0
+m=video 1 RTP/SAVPF 99
+a=setup:actpass
+a=rtcp:9 IN IP4 0.0.0.0
+a=rtcp-mux
+a=recvonly
+a=mid:video0
+a=rtpmap:99 H264/90000
+a=ssrc:3599710107 cname:test-cname
+a=ice-ufrag:ZLgu
+a=ice-pwd:3/gb3GZYQ2wgxAHnFRT1bf
+a=fingerprint:sha-256 5A:08:09:0D:E9:1C:78:20:65:64:95:6E:FE:29:91:E1:CC:6E:47:F1:A4:7A:8E:F9:6F:4D:A4:7A:7A:A2:76:BF`;
+
+promise_test(async t => {
+    const sdp = sdpStart +`
+`;
+    const pc = new RTCPeerConnection();
+    await pc.setRemoteDescription(new RTCSessionDescription({sdp: sdp, type: 'offer'})).then(() => {
+        assert_unreached();
+    }, (e) => {
+        assert_equals(e.name, "InvalidAccessError");
+        assert_equals(e.message, "Failed to set remote offer sdp: Failed to set remote video description send parameters.");
+    });
+}, "Offer without explicit H264 packetization mode");
+
+promise_test(async t => {
+    const sdp = sdpStart +`
+a=fmtp:99 profile-level-id=42e01f;level-asymmetry-allowed=1;packetization-mode=0
+`;
+    const pc = new RTCPeerConnection();
+    await pc.setRemoteDescription(new RTCSessionDescription({sdp: sdp, type: 'offer'})).then(() => {
+        assert_unreached();
+    }, (e) => {
+        assert_equals(e.name, "InvalidAccessError");
+        assert_equals(e.message, "Failed to set remote offer sdp: Failed to set remote video description send parameters.");
+    });
+}, "Offer with explicit H264 packetization mode 0");
+
+promise_test(async t => {
+    const sdp = sdpStart +`
+a=fmtp:99 profile-level-id=42e01f;level-asymmetry-allowed=1;packetization-mode=1
+`;
+     const pc = new RTCPeerConnection;
+    return pc.setRemoteDescription(new RTCSessionDescription({sdp: sdp, type: 'offer'}));
+}, "Offer with explicit H264 packetization mode 1");
+</script>

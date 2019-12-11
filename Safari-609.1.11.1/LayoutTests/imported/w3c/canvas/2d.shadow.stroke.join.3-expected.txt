@@ -1,0 +1,7 @@
+2d.shadow.stroke.join.3
+Shadows are drawn for stroke joins respecting miter limit
+Spec references: 2d.shadow.render
+Actual output:
+Expected output:
+
+Passed

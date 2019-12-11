@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../resources/log-pause-location.js"></script>
+<script>
+// We may want to allow constants to eliminate branches. Use vars for existing tests and have constant specific tests.
+var value = 1;
+var truthy = true;
+var falsey = false;
+function a() { return value; }
+function b() { return value; }
+
+
+function entryIfSingleStatement() {
+    debugger;
+    if (truthy)
+        a();
+    if (falsey)
+        a();
+}
+
+function entryIfMultiStatement() {
+    debugger;
+    if (truthy) {
+        a();
+        a();
+    }
+    if (falsey) {
+        a();
+        a();
+    }
+}
+
+function entryIfElse() {
+    debugger;
+    if (truthy)
+        a();
+    else
+        a();
+    if (falsey)
+        a();
+    else
+        a();
+}
+
+function entryIfElseChain() {
+    debugger;
+    if (falsey)
+        a();
+    else if (truthy)
+        a();
+    else
+        a();
+
+    if (falsey)
+        a();
+    else if (falsey)
+        a();
+    else
+        a();
+}
+
+function entryIfWithCall() {
+    debugger;
+    if (a() && a())
+        a();
+}
+
+function entryTernary() {
+    let t = () => truthy;
+    let f = () => falsey;
+    debugger;
+    let x = t() ? a() : b();
+    let y = f() ? a() : b();
+}
+
+function entryIfConstantBranch() {
+    debugger;
+    if (true)
+        a();
+    if (false)
+        a();
+    if (0)
+        a();
+    if (null)
+        a();
+}
+
+function entryIfWithLogicalOperation() {
+    debugger;
+    if (true && a() && a())
+        b();
+}
+
+function entryIfWithBinaryOperation() {
+    let i = a();
+    debugger;
+    if (i < 2)
+        b();
+}
+
+function entryIfWithNotOperation() {
+    debugger;
+    if (!false)
+        a();
+    if (!!true)
+        a();
+}
+
+// ---------
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.stepping.control-flow");
+
+    window.initializeSteppingTestSuite(suite);
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.IfSingleStatement",
+        description: "Should be able to step through single statement body if statements.",
+        expression: "setTimeout(entryIfSingleStatement)",
+        steps: [
+            "over",
+                "over", // complete: if (true)
+                "over", // complete: a() inside if (true)
+                "over", // complete: if (false) - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.IfMultiStatement",
+        description: "Should be able to step through multiple statement body if statements.",
+        expression: "setTimeout(entryIfMultiStatement)",
+        steps: [
+            "over",
+                "over", // complete: if (true)
+                "over", // complete: 1st a()
+                "over", // complete: 2nd a()
+                "over", // complete: if (false) - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.IfElse1",
+        description: "Should be able to step through if/else.",
+        expression: "setTimeout(entryIfElse)",
+        steps: [
+            "over",
+                "over", // complete: if (true)
+                "over", // complete: a() inside if
+                "over", // complete: if (false)
+                "over", // complete: a() inside else - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.IfElse2",
+        description: "Should be able to step through if/else if/else chains.",
+        expression: "setTimeout(entryIfElseChain)",
+        steps: [
+            "over",
+                "over", // complete: if (false)
+                "over", // complete: else if (true)
+                "over", // complete: a() inside block
+                "over", // complete: if (false)
+                "over", // complete: else if (false)
+                "over", // complete: a() inside else - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.IfWithCall1",
+        description: "Should be able to step over if conditions with function calls.",
+        expression: "setTimeout(entryIfWithCall)",
+        steps: [
+            "over",
+                "over", // complete: if (a() && a())
+                "over", // complete: a() inside block - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.IfWithCall2",
+        description: "Should be able to step into calls in if conditions with function calls.",
+        expression: "setTimeout(entryIfWithCall)",
+        steps: [
+            "over",
+                "in",   // into 1st a
+                "out",  // out of a
+                "in",   // into 2nd a
+                "out",  // out of a
+                "over", // complete: a() inside block - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.TernaryStepOver",
+        description: "Should be able to step over ternary expressions.",
+        expression: "setTimeout(entryTernary)",
+        steps: [
+            "over",
+                "over", // complete: t() ? ...
+                "over", // complete: f() ? ...
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.TernaryStepIn",
+        description: "Should be able to step into ternary expressions.",
+        expression: "setTimeout(entryTernary)",
+        steps: [
+            "over",
+                "in",  // into t
+                "out", // out of t - before a()
+                "in",  // into a
+                "out", // out of a - before next ternary
+                "in",  // into f
+                "out", // out of f - before b()
+                "in",  // into b
+                "out", // out of b - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.ConstantBranch",
+        description: "Should pause for constant branches.",
+        expression: "setTimeout(entryIfConstantBranch)",
+        steps: [
+            "over",
+                "over", // (true)
+                "over", // a()
+                "over", // (false)
+                "over", // (0)
+                "over", // (null)
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.IfWithLogicalOperation",
+        description: "Should always pause for a condition with logical operations.",
+        expression: "setTimeout(entryIfWithLogicalOperation)",
+        steps: [
+            "over",
+                "in",   // into a()
+                "out",  // out of a() - before a()
+                "in",   // into a()
+                "out",  // out of a() - before b()
+                "over", // b() - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.IfWithBinaryOperation",
+        description: "Should always pause for a condition with logical operations.",
+        expression: "setTimeout(entryIfWithBinaryOperation)",
+        steps: [
+            "over",
+                "in",    // i < 2 [true]
+                "over",  // over b() - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.IfWithNotOperation",
+        description: "Should always pause for a condition that is a not operation.",
+        expression: "setTimeout(entryIfWithNotOperation)",
+        steps: [
+            "over",
+                "in",   // !false
+                "over", // a()
+                "in",   // !!truth
+                "over", // a() - leaving entry
+            "resume",
+        ]
+    });
+
+    loadMainPageContent().then(() => {
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Checking pause locations when stepping in, out, and over if/else control flow.</p>
+</body>
+</html>

@@ -1,0 +1,12 @@
+This tests that events don't continue to target a slider thumb if the media element is deleted while scrubbing. 
+ 
+
+
+clicking in controller
+clicking on thumb
+
+deleting audio element
+
+clicking button
+button click!
+

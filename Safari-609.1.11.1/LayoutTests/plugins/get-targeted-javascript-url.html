@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        addEventListener('load', startTest, false);
+        var noReturnValueFunctionCalled = false;
+        var returnValueFunctionCalled = false;
+        var noReturnValueReason = -1;
+        var returnValueReason = -1;
+
+        function startTest() {
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+
+            var plugin = document.getElementsByTagName('embed')[0];
+            plugin.getURLNotify('javascript:noReturnValueFunction()', '_self', 'noReturnValueURLNotify');
+            plugin.getURLNotify('javascript:returnValueFunction()', '_self', 'returnValueURLNotify');
+
+            // The javascript: URLs will be evaluated asynchronously. Since we don't expect a
+            // callback when the evaluation is complete, we have to use a lame timeout to give
+            // the callback time to be evaluated.
+            setTimeout(finishTest, 250);
+        }
+
+        function finishTest() {
+            if (!noReturnValueFunctionCalled)
+                log('FAIL: noReturnValueFunction was not called');
+            else if (noReturnValueReason !== -1 && noReturnValueReason !== 0)
+                log('FAIL (no return value): NPP_URLNotify called with unexpected reason ' + noReturnValueReason);
+            else
+                log('SUCCESS (no return value): NPP_URLNotify was not called, or was called with a reason of NPRES_DONE');
+
+            if (!returnValueFunctionCalled)
+                log('FAIL: returnValueFunction was not called');
+            else if (returnValueReason !== -1 && returnValueReason !== 0)
+                log('FAIL (return value): NPP_URLNotify called with unexpected reason ' + returnValueReason);
+            else
+                log('SUCCESS (return value): NPP_URLNotify was not called, or was called with a reason of NPRES_DONE');
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        function log(msg) {
+            document.getElementById('log').appendChild(document.createTextNode(msg + '\n'));
+        }
+
+        function noReturnValueFunction() {
+            noReturnValueFunctionCalled = true;
+        }
+
+        function returnValueFunction() {
+            returnValueFunctionCalled = true;
+            return 'foo';
+        }
+
+        function noReturnValueURLNotify(reason) {
+            noReturnValueReason = reason;
+        }
+
+        function returnValueURLNotify(reason) {
+            returnValueReason = reason;
+        }
+    </script>
+</head>
+<body>
+    <embed type="application/x-webkit-test-netscape"></embed>
+    <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=60568">Bug 60568: REGRESSION (WebKit2): Flash plugin doesn't appear on a hanes.com page</a>.</p>
+    <pre id="log"></pre>
+</body>
+</html>

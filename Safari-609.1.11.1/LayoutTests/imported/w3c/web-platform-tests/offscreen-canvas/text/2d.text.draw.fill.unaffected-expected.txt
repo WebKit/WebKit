@@ -1,0 +1,7 @@
+2d.text.draw.fill.unaffected
+
+fillText does not start a new path or subpath
+
+
+FAIL fillText does not start a new path or subpath null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

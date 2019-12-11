@@ -1,0 +1,45 @@
+Test to make sure -webkit-columns property returns CSSValueList properly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS computedStyle.getPropertyValue('-webkit-columns') is "10px 2"
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').toString() is "[object CSSValueList]"
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').cssText is "10px 2"
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').length is 2
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').item(0).getFloatValue(CSSPrimitiveValue.CSS_PX) is 10
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').item(1).getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 2
+PASS computedStyle.getPropertyValue('-webkit-columns') is "10px auto"
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').toString() is "[object CSSValueList]"
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').cssText is "10px auto"
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').length is 2
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').item(0).getFloatValue(CSSPrimitiveValue.CSS_PX) is 10
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').item(1).getStringValue() is "auto"
+PASS computedStyle.getPropertyValue('-webkit-columns') is "auto 2"
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').toString() is "[object CSSValueList]"
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').cssText is "auto 2"
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').length is 2
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').item(0).getStringValue() is "auto"
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').item(1).getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 2
+PASS computedStyle.getPropertyValue('-webkit-columns') is "auto 2"
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').toString() is "[object CSSValueList]"
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').cssText is "auto 2"
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').length is 2
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').item(0).getStringValue() is "auto"
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').item(1).getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 2
+PASS computedStyle.getPropertyValue('-webkit-columns') is "auto auto"
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').toString() is "[object CSSValueList]"
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').cssText is "auto auto"
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').length is 2
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').item(0).getStringValue() is "auto"
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').item(1).getStringValue() is "auto"
+PASS computedStyle.getPropertyValue('-webkit-columns') is "10px auto"
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').toString() is "[object CSSValueList]"
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').cssText is "10px auto"
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').length is 2
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').item(0).getFloatValue(CSSPrimitiveValue.CSS_PX) is 10
+PASS computedStyle.getPropertyCSSValue('-webkit-columns').item(1).getStringValue() is "auto"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

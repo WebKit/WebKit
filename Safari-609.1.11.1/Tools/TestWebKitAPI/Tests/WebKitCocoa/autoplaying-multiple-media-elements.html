@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+
+    function pageLoaded() {
+        try {
+            window.webkit.messageHandlers.testHandler.postMessage('loaded');
+        } catch(e) { }
+    }
+
+    function playVideo(identifier) {
+        document.getElementById(identifier).play().catch(function() {
+            try {
+                window.webkit.messageHandlers.testHandler.postMessage("did-not-play-" + identifier);
+            } catch(e) { }
+        });
+    }
+
+    function didPlayVideo(identifier) {
+        try {
+            window.webkit.messageHandlers.testHandler.postMessage("did-play-" + identifier);
+        } catch(e) { }
+    }
+
+   </script>
+</head>
+<body onload="pageLoaded()">
+    <button onclick="playVideo('video1')">Play Video 1</button>
+    <br />
+    <video id="video1" onplaying="didPlayVideo('video1')" src="video-with-audio.mp4"></video>
+    <video id="video2" onplaying="didPlayVideo('video2')" src="video-with-audio.mp4"></video>
+</body>
+</html>

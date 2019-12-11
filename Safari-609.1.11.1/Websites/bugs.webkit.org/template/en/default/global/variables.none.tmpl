@@ -1,0 +1,35 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# This is a list of terms that may be changed to "brand" the Bugzilla 
+  # instance (for example, referring to "bugs" as "issues".) When used, these
+  # strings are used in several different types of content, and are not  
+  # protected with Template-Toolkit FILTERs. Consequently, no special 
+  # characters are allowed.
+  #
+  # Remember to PROCESS rather than INCLUDE this template. 
+  #%]
+
+[% terms = {
+  "bug" => "bug",
+  "Bug" => "Bug",
+  "abug" => "a bug",
+  "Abug" => "A bug",
+  "aBug" => "a Bug",
+  "ABug" => "A Bug",
+  "bugs" => "bugs",
+  "Bugs" => "Bugs",
+  "comment" => "comment",
+  "comments" => "comments",
+  "zeroSearchResults" => "Zarro Boogs found",
+  "Bugzilla" => "Bugzilla"
+  }
+%]
+
+[% USE Hook %]
+[% Hook.process("end") %]

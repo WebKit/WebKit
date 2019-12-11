@@ -1,0 +1,26 @@
+<meta charset="utf-8">
+<script src="../../resources/js-test-pre.js"></script>
+<body>
+<div id="test">
+    <p id="English">This paragraph is marked as being in English.</p>
+    <p id="Swedish">This paragraph is marked as being in Swedish.</p>
+    <p><span id="anything">The span element containing the text in this paragraph has an ID specified on it.</span></p>
+</div>
+</body>
+<script>
+    description("Test XPath element tag and language matching to make sure only ASCII case is folded, and other non-ASCII case folding is not performed.");
+
+    document.getElementById("English").setAttributeNS("http://www.w3.org/XML/1998/namespace", "lang", "en");
+    document.getElementById("Swedish").setAttributeNS("http://www.w3.org/XML/1998/namespace", "lang", "sv");
+
+    shouldBe("document.evaluate('count(.//span[attribute::id])', document.body, null, XPathResult.NUMBER_TYPE, null).numberValue", "1");
+    shouldBe("document.evaluate('count(.//ſpan[attribute::id])', document.body, null, XPathResult.NUMBER_TYPE, null).numberValue", "0");
+
+    shouldBe("document.evaluate('count(.//p[lang(\"en\")])', document.body, null, XPathResult.NUMBER_TYPE, null).numberValue", "1");
+    shouldBe("document.evaluate('count(.//p[lang(\"sv\")])', document.body, null, XPathResult.NUMBER_TYPE, null).numberValue", "1");
+    shouldBe("document.evaluate('count(.//p[lang(\"SV\")])', document.body, null, XPathResult.NUMBER_TYPE, null).numberValue", "1");
+    shouldBe("document.evaluate('count(.//p[lang(\"ſv\")])', document.body, null, XPathResult.NUMBER_TYPE, null).numberValue", "0");
+
+    document.body.removeChild(document.getElementById("test"));
+</script>
+<script src="../../resources/js-test-post.js"></script>

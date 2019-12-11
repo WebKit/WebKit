@@ -1,0 +1,32 @@
+CONSOLE MESSAGE: TypeError: Cannot load script http://127.0.0.1:8000/subresource-integrity/resources/non-matching-digest-module.js. Failed integrity metadata check. Content length: 33, Expected content length: 33, Expected metadata: sha256-cWh9nPfm7/mRbKhzarnRYlsJWz5XTNcsqPFzKEx+zSU=
+CONSOLE MESSAGE: TypeError: Cannot load script http://127.0.0.1:8000/subresource-integrity/resources/matching-digest-module.js. Failed integrity metadata check. Content length: 29, Expected content length: 29, Expected metadata: sha512-deadbeefspbnUnwooKGNNCb39nvg+EW0O9hDScTXeo/9pVZztLSUYU3LNV6H0lZapo8bCJUpyPPLAzE9fDzpxg== sha256-cWh9nPfm7/mRbKhzarnRYlsJWz5XTNcsqPFzKEx+zSU=
+CONSOLE MESSAGE: TypeError: Cannot load script http://localhost:8000/subresource-integrity/resources/crossorigin-anon-script-module.js. Failed integrity metadata check. Content length: 37, Expected content length: 37, Expected metadata: sha256-deadbeefcSLlbFZCj1OACLxTxVck2TOrBTEdUbwz1yU=
+CONSOLE MESSAGE: TypeError: Cannot load script http://localhost:8000/subresource-integrity/resources/crossorigin-creds-script-module.js. Failed integrity metadata check. Content length: 38, Expected content length: 38, Expected metadata: sha256-deadbeef2S+pTRZgiw3DWrhC6JLDlt2zRyGpwH7unU8=
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: TypeError: Cross-origin script load denied by Cross-Origin Resource Sharing policy.
+CONSOLE MESSAGE: TypeError: Cannot load script http://127.0.0.1:8000/subresource-integrity/resources/matching-digest-module.js. Failed integrity metadata check. Content length: 29, Expected content length: 29, Expected metadata: sha256-cWh9nPfm7_mRbKhzarnRYlsJWz5XTNcsqPFzKEx+zSU=
+CONSOLE MESSAGE: TypeError: Cannot load script http://127.0.0.1:8000/subresource-integrity/resources/matching-digest-module.js. Failed integrity metadata check. Content length: 29, Expected content length: 29, Expected metadata: sha256-U9WYDtBWkcHx13+9UKk/3Q5eoqDc4YGxYb07EPWzb9e=?foo=bar?spam=eggs
+
+PASS Module: Same-origin with correct sha256 hash. 
+PASS Module: Same-origin with correct sha384 hash. 
+PASS Module: Same-origin with correct sha512 hash. 
+PASS Module: Same-origin with empty integrity. 
+PASS Module: Same-origin with incorrect hash. 
+PASS Module: Same-origin with multiple sha256 hashes, including correct. 
+PASS Module: Same-origin with multiple sha256 hashes, including unknown algorithm. 
+PASS Module: Same-origin with sha256 mismatch, sha512 match 
+PASS Module: Same-origin with sha256 match, sha512 mismatch 
+PASS Module: <crossorigin='anonymous'> with correct hash, ACAO: * 
+PASS Module: <crossorigin='anonymous'> with incorrect hash, ACAO: * 
+PASS Module: <crossorigin='use-credentials'> with correct hash, CORS-eligible 
+PASS Module: <crossorigin='use-credentials'> with incorrect hash CORS-eligible 
+PASS Module: <crossorigin='anonymous'> with CORS-ineligible resource 
+PASS Module: Cross-origin, empty integrity 
+PASS Module: Same-origin with correct hash, options. 
+PASS Module: Same-origin with unknown algorithm only. 
+PASS Module: Same-origin with correct sha256 hash, using base64URL encoding. 
+PASS Module: Same-origin with correct sha256 hash, using intermixed base64 and base64URL encoding, should fail. 
+PASS Module: Same-origin with invalid syntax only. 
+PASS Module: Same-origin with multiple valid sha256 hashes, including correct. 
+PASS Module: Same-origin with incorrect hash, options. 
+

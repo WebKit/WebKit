@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+description("This test passes if it does not crash");
+</script>
+<table id='table1'>
+    <form id='form1'>
+    <script>
+        document.getElementById('form1').remove();
+        gc();
+    </script>
+    <tr><td><input id='input1'></td></tr>
+    <tr><td><input id='input2' form="form1"></td></tr>
+</table>
+<script>
+shouldBeNull("document.getElementById('input1').form");
+shouldBeNull("document.getElementById('input2').form");
+</script>
+</body>
+</html>

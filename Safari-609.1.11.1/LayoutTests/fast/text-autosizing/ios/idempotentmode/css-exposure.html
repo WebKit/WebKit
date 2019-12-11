@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test-pre.js"></script>
+<style id="style">
+#dummy {
+    -internal-text-autosizing-status: auto;
+}
+</style>
+</head>
+<body>
+<div id="target" style="-internal-text-autosizing-status: auto;">Hello</div>
+<script>
+const target = document.getElementById("target");
+const style = document.getElementById("style");
+shouldBeEqualToString("window.getComputedStyle(target).getPropertyValue('-internal-text-autosizing-status')", "");
+shouldBe("target.style.internalTextAutosizingStatus", "undefined");
+shouldBe("style.sheet.cssRules[0].style.internalTextAutosizingStatus", "undefined");
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+This tests that a plugin should be snapshotted if it is partially covered by an image but not enough to be considered blocking.
+
+It additionally tests that we take transforms into account.
+
+PASS
+ 
+ 

@@ -1,0 +1,14 @@
+Check that only HttpOnly cookies remain if all script-accessible cookies are deleted.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Before script-accessible deletion: Client-side cookie exists.
+PASS Before script-accessible deletion: HttpOnly cookie exists.
+PASS Before script-accessible deletion: Regular server-side cookie exists.
+PASS After script-accessible deletion:  HttpOnly cookie exists.
+PASS After full deletion:               All cookies are gone.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

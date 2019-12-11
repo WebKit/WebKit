@@ -1,0 +1,88 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="resources/sw-test-pre.js"></script>
+<script>
+log("* Tests that a client is re-added to the list of service worker clients when it is restored from the page cache");
+log("");
+
+if (window.testRunner)
+  testRunner.setCanOpenWindows();
+
+let tries = 0;
+
+let expectedClientIdentifiers = [];
+
+function containsExpectedClients(clientIdentifiers)
+{
+    for (let expectedIdentifier of expectedClientIdentifiers) {
+        if (!clientIdentifiers.includes(expectedIdentifier))
+            return false;
+    }
+    return true;
+}
+
+navigator.serviceWorker.addEventListener("message", function(event) {
+  if (step == "BothClientsInitiallyActive") {
+    if (!containsExpectedClients(event.data)) {
+      if (++tries > 20) {
+          log("FAIL: Wrong initial number of clients");
+          finishSWTest();
+          return;
+      }
+      worker.postMessage("getClientIds");
+      return;
+    }
+    log("PASS: service worker has initially 2 clients");
+
+    otherWindow.addEventListener("pagehide", function(event) {
+       if (!event.persisted) {
+         log("FAIL: page failed to enter page cache");
+         finishSWTest();
+         return;
+       }
+       log("PASS: page is about to enter page cache");
+    });
+
+    otherWindow.addEventListener("pageshow", function(event) {
+      if (!event.persisted) {
+         log("FAIL: page was not restored from page cache");
+         finishSWTest();
+         return;
+       }
+       setTimeout(function() {
+         step = "SecondClientRestoredFromPageCache";
+         worker.postMessage("getClientIds");
+       }, 0);
+    });
+
+    otherWindow.location.href = "/navigation/resources/page-cache-helper.html";
+    return;
+  }
+
+  if (step == "SecondClientRestoredFromPageCache") {
+    if (!containsExpectedClients(event.data)) {
+      log("FAIL: Wrong number of clients after one client was restored from page cache");
+      finishSWTest();
+    }
+
+    log("PASS: service worker now has 2 clients again after restoring the second one from page cache");
+    finishSWTest();
+  }
+});
+
+navigator.serviceWorker.register("resources/getClientIds-worker.js", { }).then(function(registration) {
+    expectedClientIdentifiers.push(internals.serviceWorkerClientIdentifier(document));
+
+    worker = registration.installing;
+    otherWindow = open("other_resources/test.html");
+    otherWindow.onload = function() {
+      expectedClientIdentifiers.push(internals.serviceWorkerClientIdentifier(otherWindow.document));
+      step = "BothClientsInitiallyActive"
+      worker.postMessage("getClientIds");
+    };
+});
+</script>
+</body>
+</html>

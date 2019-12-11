@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+description("Test to make sure we can toggle underline and strike through separately.")
+
+if (window.internals)
+    internals.settings.setEditingBehavior('mac');
+
+var testContainer = document.createElement("div");
+testContainer.contentEditable = true;
+document.body.appendChild(testContainer);
+
+function testSingleToggle(toggleCommand, initialContents, expectedContents)
+{
+    testContainer.innerHTML = initialContents;
+    getSelection().collapse(testContainer, 0);
+    getSelection().modify('')
+    window.getSelection().selectAllChildren(testContainer);
+    document.execCommand("styleWithCSS", false, false);
+    document.execCommand(toggleCommand, false, null);
+    if (testContainer.innerHTML === expectedContents) {
+        testPassed("one " + toggleCommand + " command converted " + initialContents + " to " + expectedContents);
+    } else {
+        testFailed("one " + toggleCommand + " command converted " + initialContents + " to " + testContainer.innerHTML + ", expected " + expectedContents);
+    }
+}
+
+function content(markup) {
+    testContainer.innerHTML = markup;
+}
+
+function select(offset, extent) {
+    getSelection().collapse(testContainer, 0);
+    for (var i = 0; i < offset; i++)
+        getSelection().modify('move', 'forward', 'character');
+    for (var i = offset; i < extent; i++)
+        getSelection().modify('extend', 'forward', 'character');
+}
+
+function toggle(command) {
+    document.execCommand(command, false, null);
+    return testContainer.innerHTML;
+}
+
+evalAndLog('document.execCommand("styleWithCSS", false, false);');
+
+debug('');
+debug('Toggling strikeThrough');
+shouldBe('content("<s><u>a</u>b</s>"); select(0, 2); toggle("strikeThrough")', '"<u>a</u>b"');
+shouldBe('content("<s><u>a</u>b<u>c</u></s>"); select(0, 3); toggle("strikeThrough")', '"<u>a</u>b<u>c</u>"');
+shouldBe('content("<s>a<u>b</u>c</s>"); select(0, 3); toggle("strikeThrough")', '"a<u>b</u>c"');
+shouldBe('content("<s>a<u>b</u>c</s>"); select(1, 3); toggle("strikeThrough")', '"<strike>a</strike><u>b</u>c"');
+shouldBe('content("<s>a<u>b</u>c</s>"); select(0, 2); toggle("strikeThrough")', '"a<u>b</u><strike>c</strike>"');
+shouldBe('content("<s><u>ab</u></s>c"); select(1, 3); toggle("strikeThrough")', '"<u><strike>a</strike>b</u>c"');
+shouldBe('content("<s>a<u>b</u></s>c"); select(1, 3); toggle("strikeThrough")', '"<strike>a</strike><u>b</u>c"');
+shouldBe('content("a<s><u>b</u>c</s>"); select(0, 2); toggle("strikeThrough")', '"<strike>a</strike><s><u>b</u>c</s>"');
+shouldBe('content("a<strike><u>b</u>c</strike>"); select(0, 2); toggle("strikeThrough")', '"<strike>a<u>b</u>c</strike>"');
+shouldBe('content("a<u><s>bc</s></u>"); select(0, 2); toggle("strikeThrough")', '"<strike>a</strike><u><s>bc</s></u>"');
+shouldBe('content("a<s><b><u>bc</u></b></s>"); select(0, 2); toggle("strikeThrough")', '"<strike>a</strike><s><b><u>bc</u></b></s>"');
+shouldBe('content("a<strike><b><u>bc</u></b></strike>"); select(0, 2); toggle("strikeThrough")', '"<strike>a<b><u>bc</u></b></strike>"');
+
+debug('');
+debug('Toggling underline');
+shouldBe('content("<u><s>a</s>b</u>"); select(0, 2); toggle("underline")', '"<s>a</s>b"');
+shouldBe('content("<u><s>a</s>b<s>c</s></u>"); select(0, 3); toggle("underline")', '"<s>a</s>b<s>c</s>"');
+shouldBe('content("<u>a<s>b</s>c</u>"); select(0, 3); toggle("underline")', '"a<s>b</s>c"');
+shouldBe('content("<u>a<s>b</s>c</u>"); select(1, 3); toggle("underline")', '"<u>a</u><s>b</s>c"');
+shouldBe('content("<u>a<s>b</s>c</u>"); select(0, 2); toggle("underline")', '"a<s>b</s><u>c</u>"');
+shouldBe('content("<u><s>ab</s></u>c"); select(1, 3); toggle("underline")', '"<s><u>a</u>b</s>c"');
+shouldBe('content("<u>a<s>b</s></u>c"); select(1, 3); toggle("underline")', '"<u>a</u><s>b</s>c"');
+shouldBe('content("a<u><s>b</s>c</u>"); select(0, 2); toggle("underline")', '"<u>a<s>b</s>c</u>"');
+shouldBe('content("a<s><u>bc</u></s>"); select(0, 2); toggle("underline")', '"<u>a</u><s><u>bc</u></s>"');
+shouldBe('content("a<u><b><s>bc</s></b></u>"); select(0, 2); toggle("underline")', '"<u>a<b><s>bc</s></b></u>"');
+
+evalAndLog('document.execCommand("styleWithCSS", false, true);');
+
+debug('');
+debug('Toggling strikeThrough');
+shouldBe('content(\'<span style="text-decoration: line-through;"><span style="text-decoration: underline">a</span>b</span>\');\n'
+    + 'select(0, 2); toggle("strikeThrough")',
+    '\'<span style="text-decoration: underline;">a</span>b\'');
+shouldBe('content(\'<span style="text-decoration: line-through;"><span style="text-decoration: underline;">a</span>b<span style="text-decoration: underline">c</span></span>\');\n'
+    + 'select(0, 3); toggle("strikeThrough")',
+    '\'<span style="text-decoration: underline;">a</span>b<span style="text-decoration: underline;">c</span>\'');
+shouldBe('content(\'<span style="text-decoration: line-through;">a<span style="text-decoration: underline;">b</span>c</span>\');\n'
+    + 'select(0, 3); toggle("strikeThrough")',
+    '\'a<span style="text-decoration: underline;">b</span>c\'');
+shouldBe('content(\'<span style="text-decoration: line-through;">a<span style="text-decoration: underline;">b</span>c</span>\');\n'
+    + 'select(1, 3); toggle("strikeThrough")',
+    '\'<span style="text-decoration: line-through;">a</span><span style="text-decoration: underline;">b</span>c\'');
+shouldBe('content(\'<span style="text-decoration: line-through;">a<span style="text-decoration: underline;">b</span>c</span>\');\n'
+    + 'select(0, 2); toggle("strikeThrough")',
+    '\'a<span style="text-decoration: underline;">b</span><span style="text-decoration: line-through;">c</span>\'');
+shouldBe('content(\'<span style="text-decoration: line-through;"><span style="text-decoration: underline;">ab</span></span>c\');\n'
+    + 'select(1, 3); toggle("strikeThrough")',
+    '\'<span style="text-decoration: underline;"><span style="text-decoration: line-through;">a</span>b</span>c\'');
+shouldBe('content(\'a<span style="text-decoration: line-through;"><span style="text-decoration: underline;">b</span>c</span>\');\n'
+    + 'select(0, 2); toggle("strikeThrough")',
+    '\'<span style="text-decoration: line-through;">a<span style="text-decoration: underline line-through;">b</span>c</span>\'');
+shouldBe('content(\'a<span style="text-decoration: underline;"><span style="text-decoration: line-through;">bc</span></span>\');\n'
+    + 'select(0, 2); toggle("strikeThrough")',
+    '\'<span style="text-decoration: line-through;">a</span><span style="text-decoration: underline;"><span style="text-decoration: line-through;">bc</span></span>\'');
+shouldBe('content(\'a<span style="text-decoration: line-through;"><b><span style="text-decoration: underline;">bc</span></b></span>\');\n'
+    + 'select(0, 2); toggle("strikeThrough")',
+    '\'<span style="text-decoration: line-through;">a<b><span style="text-decoration: underline;"><span style="text-decoration: underline line-through;">b</span>c</span></b></span>\'');
+
+debug('');
+debug('Toggling underline');
+shouldBe('content(\'<span style="text-decoration: underline;"><span style="text-decoration: line-through;">a</span>b</span>\');\n'
+    + 'select(0, 2); toggle("underline")',
+    '\'<span style="text-decoration: line-through;">a</span>b\'');
+shouldBe('content(\'<span style="text-decoration: underline;"><span style="text-decoration: line-through;">a</span>b<span style="text-decoration: line-through;">c</span></span>\');\n'
+    + 'select(0, 3); toggle("underline")',
+    '\'<span style="text-decoration: line-through;">a</span>b<span style="text-decoration: line-through;">c</span>\'');
+shouldBe('content(\'<span style="text-decoration: underline;">a<span style="text-decoration: line-through;">b</span>c</span>\');\n'
+    + 'select(0, 3); toggle("underline")',
+    '\'a<span style="text-decoration: line-through;">b</span>c\'');
+shouldBe('content(\'<span style="text-decoration: underline;">a<span style="text-decoration: line-through;">b</span>c</span>\');\n'
+    + 'select(1, 3); toggle("underline")',
+    '\'<span style="text-decoration: underline;">a</span><span style="text-decoration: line-through;">b</span>c\'');
+shouldBe('content(\'<span style="text-decoration: underline;">a<span style="text-decoration: line-through;">b</span>c</span>\');\n'
+    + 'select(0, 2); toggle("underline")',
+    '\'a<span style="text-decoration: line-through;">b</span><span style="text-decoration: underline;">c</span>\'');
+shouldBe('content(\'<span style="text-decoration: underline;"><span style="text-decoration: line-through;">ab</span></span>c\');\n'
+    + 'select(1, 3); toggle("underline")',
+    '\'<span style="text-decoration: line-through;"><span style="text-decoration: underline;">a</span>b</span>c\'');
+shouldBe('content(\'<span style="text-decoration: underline;">a<span style="text-decoration: line-through;">b</span></span>c\');\n'
+    + 'select(1, 3); toggle("underline")',
+    '\'<span style="text-decoration: underline;">a</span><span style="text-decoration: line-through;">b</span>c\'');
+shouldBe('content(\'a<span style="text-decoration: underline;"><span style="text-decoration: line-through;">b</span>c</span>\');\n'
+    + 'select(0, 2); toggle("underline")',
+    '\'<span style="text-decoration: underline;">a<span style="text-decoration: line-through underline;">b</span>c</span>\'');
+shouldBe('content(\'a<span style="text-decoration: line-through;"><span style="text-decoration: underline;">bc</span></span>\');\n'
+    + 'select(0, 2); toggle("underline")',
+    '\'<span style="text-decoration: underline;">a</span><span style="text-decoration: line-through;"><span style="text-decoration: underline;">bc</span></span>\'');
+shouldBe('content(\'a<span style="text-decoration: underline;"><b><span style="text-decoration: line-through;">bc</span></b></span>\');\n'
+    + 'select(0, 2); toggle("underline")',
+    '\'<span style="text-decoration: underline;">a<b><span style="text-decoration: line-through;"><span style="text-decoration: underline line-through;">b</span>c</span></b></span>\'');
+
+document.body.removeChild(testContainer);
+
+var successfullyParsed = true;
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+
+PASS Testing that setting 'touch-action: pan-x pan-y' on an element allows page scrolling in both axes. 
+

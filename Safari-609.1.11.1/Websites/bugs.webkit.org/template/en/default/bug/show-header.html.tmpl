@@ -1,0 +1,77 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# This template should be called with PROCESS before processing
+  # "global/header.html.tmpl" in any template that is going to load the
+  # bug form. It expects only a "bug" object, and can even manage to get
+  # along without that. Some of these variables are just defaults that will
+  # be overridden by the calling templates.
+  #%]
+
+[% filtered_alias = bug.alias.join(', ') FILTER html %]
+[% filtered_desc = bug.short_desc FILTER html %]
+[% filtered_timestamp = bug.delta_ts FILTER time %]
+
+[% subheader = filtered_desc %]
+[% title = "$bug.bug_id &ndash; " %]
+[% IF bug.alias.size %]
+  [% title = title _ "($filtered_alias) " %]
+[% END %]
+[% title = title _ filtered_desc %]
+[% generate_api_token = 1 %]
+[% yui = ['autocomplete', 'calendar'] %]
+[% yui.push('container') IF user.can_tag_comments %]
+[% javascript_urls = [ "js/util.js", "js/field.js" ] %]
+[% javascript_urls.push("js/bug.js") IF user.id  %]
+[% javascript_urls.push('js/comment-tagging.js')
+     IF user.id && Param('comment_taggers_group') %]
+[% IF bug.defined %]
+  [% header = "$terms.Bug&nbsp;$bug.bug_id" %]
+  [% header_addl_info = "Last modified: $filtered_timestamp" %]
+  [% unfiltered_title = "$bug.bug_id – " %]
+  [% IF bug.alias.size %]
+    [% unfiltered_title = unfiltered_title _ "(" _ bug.alias.join(', ') _ ") " %]
+  [% END %]
+  [% unfiltered_title = unfiltered_title _ bug.short_desc %]
+  [% javascript =  BLOCK %]
+    if (history && history.replaceState) {
+      if(!document.location.href.match(/show_bug\.cgi/)) {
+        history.replaceState( null,
+                             "[% unfiltered_title FILTER js %]",
+                             "show_bug.cgi?id=[% bug.bug_id FILTER js %]" );
+        document.title = "[% unfiltered_title FILTER js %]";
+      }
+      if (document.location.href.match(/show_bug\.cgi\?.*list_id=/)) {
+        var href = document.location.href;
+        href = href.replace(/[\?&]+list_id=(\d+|cookie)/, '');
+        history.replaceState(null, "[% unfiltered_title FILTER js %]", href);
+      }
+    }
+    YAHOO.util.Event.onDOMReady(function() {
+      initDirtyFieldTracking();
+
+      [% IF user.id AND user.is_involved_in_bug(bug) %]
+        YAHOO.bugzilla.bugUserLastVisit.update([% bug.bug_id FILTER none %]);
+      [% END %]
+    });
+    [% javascript FILTER none %]
+  [% END %]
+[% END %]
+[% style_urls = ['skins/standard/bug.css'] %]
+[% doc_section = "using/understanding.html" %]
+[% bodyclasses = ['bz_bug',
+                  "bz_status_$bug.bug_status",
+                  "bz_product_$bug.product",
+                  "bz_component_$bug.component",
+                  "bz_bug_$bug.bug_id",
+                  ] %]
+[% FOREACH group = bug.groups_in %]
+  [% bodyclasses.push("bz_group_$group.name") %]
+[% END %]
+
+[% Hook.process('end') %]

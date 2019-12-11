@@ -1,0 +1,4 @@
+Not tested
+
+FAIL  scheduler: javascript URL in iframe, src set via DOM assert_array_equals: property 2, expected "inline script #3" but got "iframe onload"
+

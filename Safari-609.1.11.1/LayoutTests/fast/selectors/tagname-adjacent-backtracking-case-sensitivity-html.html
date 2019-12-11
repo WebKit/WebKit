@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <div style="display:none">
+        <sibling class="target"></sibling>
+        <sibling></sibling>
+        <sibling></sibling>
+        <sibling></sibling>
+        <padding></padding>
+        <target></target>
+    </div>
+</body>
+<script>
+description("Test the correctness of the backtracking optimizations with mixed case tag names in the selector.");
+
+shouldBe('document.querySelectorAll("SIBLING.target + SIBLING + sibling ~ target").length', '1');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

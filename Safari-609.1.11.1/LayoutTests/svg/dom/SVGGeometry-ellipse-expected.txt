@@ -1,0 +1,46 @@
+Test SVGGeometryElement APIs for ellipse.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Test isPointInFill()
+PASS e1.isPointInFill({}) is false
+PASS e1.isPointInFill({x: 159, y: 60}) is true
+PASS e1.isPointInFill({x: 161, y: 60}) is false
+PASS e1.isPointInFill({x: 85, y: 109}) is true
+PASS e1.isPointInFill({x: 85, y: 111}) is false
+PASS e1.isPointInFill({x: 11, y: 60}) is true
+PASS e1.isPointInFill({x: 9, y: 60}) is false
+PASS e1.isPointInFill({x: 85, y: 11}) is true
+PASS e1.isPointInFill({x: 85, y: 9}) is false
+
+Test isPointInStroke()
+PASS e1.isPointInStroke({}) is false
+PASS e1.isPointInStroke({x: 151, y: 60}) is true
+PASS e1.isPointInStroke({x: 149, y: 60}) is false
+PASS e1.isPointInStroke({x: 85, y: 101}) is true
+PASS e1.isPointInStroke({x: 85, y: 99}) is false
+PASS e1.isPointInStroke({x: 19, y: 60}) is true
+PASS e1.isPointInStroke({x: 21, y: 60}) is false
+PASS e1.isPointInStroke({x: 85, y: 19}) is true
+PASS e1.isPointInStroke({x: 85, y: 21}) is false
+
+Test getTotalLength()
+PASS e1.getTotalLength() is within 5 of 392.6990816987241
+
+Test getPointAtLength()
+PASS e1.getPointAtLength(0).x is within 0.1 of 160
+PASS e1.getPointAtLength(0).y is within 0.1 of 60
+PASS e1.getPointAtLength(Math.PI * (75 + 50) / 4).x is within 3 of 85
+PASS e1.getPointAtLength(Math.PI * (75 + 50) / 4).y is within 3 of 110
+PASS e1.getPointAtLength(Math.PI * (75 + 50) / 2).x is within 3 of 10
+PASS e1.getPointAtLength(Math.PI * (75 + 50) / 2).y is within 3 of 60
+PASS e1.getPointAtLength(Math.PI * (75 + 50) / 8).x is within 3 of 133
+PASS e1.getPointAtLength(Math.PI * (75 + 50) / 8).y is within 3 of 98
+PASS e1.getPointAtLength(Math.PI * (75 + 50) * 2).x is within 3 of 160
+PASS e1.getPointAtLength(Math.PI * (75 + 50) * 2).y is within 3 of 60
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

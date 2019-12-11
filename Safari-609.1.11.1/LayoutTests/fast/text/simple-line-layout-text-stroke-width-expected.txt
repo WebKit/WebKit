@@ -1,0 +1,5 @@
+PASS internals.repaintRectsAsText().indexOf('90 8 62 18') is not -1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+foobar

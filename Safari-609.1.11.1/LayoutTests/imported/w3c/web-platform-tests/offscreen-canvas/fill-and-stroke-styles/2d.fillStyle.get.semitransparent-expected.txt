@@ -1,0 +1,5 @@
+2d.fillStyle.get.semitransparent
+
+
+FAIL OffscreenCanvas test: 2d.fillStyle.get.semitransparent null is not an object (evaluating 'ctx.fillStyle = 'rgba(255,255,255,0.45)'')
+

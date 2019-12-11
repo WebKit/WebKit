@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="gradient1">
+            <stop offset="0%" stop-color="green" />
+            <stop offset="100%" stop-color="green" />
+        </linearGradient>
+        <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%" href="#gradient1"/>
+        <pattern id="pattern1">
+            <rect width="100%" height="100%" fill="green"/>
+        </pattern>
+        <pattern id="pattern2" x="0" y="0" width="100" height="100"  href="#pattern1"/>
+        <rect id="rect" width="100" height="100"/>
+    </defs>
+    <rect x="10" y="10" width="100" height="100" fill="url(#gradient2)" />
+    <rect x="120" y="10" width="100" height="100" fill="url(#pattern2)" />
+    <image x="230" y="10" width="100" height="100"
+        href="data:image/svg+xml;base64,
+            PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgI
+            DxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDBweCIgaGVpZ2h0PSIxMDBweCIgZmlsbD0iZ3JlZW4iLz4KPC9zdmc+"
+    />
+    <use x="340" y="10" width="100" height="100" href="#rect" fill="green"/>
+</svg>

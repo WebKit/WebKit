@@ -1,0 +1,16 @@
+test1
+test2
+test3
+test1
+test2
+test3
+This makes sure that if an ARIA table is used, the table's children does NOT include the column headers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS grid.childrenCount is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

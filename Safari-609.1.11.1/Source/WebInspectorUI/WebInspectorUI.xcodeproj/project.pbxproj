@@ -1,0 +1,245 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1C60FF1614E6E3F7006CD77D /* localizedStrings.js in Resources */ = {isa = PBXBuildFile; fileRef = 1C60FF1314E6E35D006CD77D /* localizedStrings.js */; };
+		1C78EE1717611340002F6AA5 /* WebInspectorUI.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C78EE1617611340002F6AA5 /* WebInspectorUI.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1C60FE2F14E5F3CD006CD77D /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		1C60FE3114E5F3CD006CD77D /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
+		1C60FE3214E5F3CD006CD77D /* Version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
+		1C60FE3314E5F3CD006CD77D /* WebInspectorUIFramework.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebInspectorUIFramework.xcconfig; sourceTree = "<group>"; };
+		1C60FF1014E6D992006CD77D /* UserInterface */ = {isa = PBXFileReference; lastKnownFileType = folder; path = UserInterface; sourceTree = "<group>"; };
+		1C60FF1414E6E35D006CD77D /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = en; path = Localizations/en.lproj/localizedStrings.js; sourceTree = "<group>"; };
+		1C60FF1914E73C64006CD77D /* combine-resources.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = "combine-resources.pl"; sourceTree = "<group>"; };
+		1C60FF1A14E73DCA006CD77D /* remove-console-asserts.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = "remove-console-asserts.pl"; sourceTree = "<group>"; };
+		1C60FFE114E79B0F006CD77D /* copy-user-interface-resources.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = "copy-user-interface-resources.pl"; sourceTree = "<group>"; };
+		1C78EE131760E115002F6AA5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1C78EE1617611340002F6AA5 /* WebInspectorUI.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = WebInspectorUI.c; sourceTree = "<group>"; };
+		A1B89B8F221E021000EB4CEA /* SDKVariant.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = SDKVariant.xcconfig; sourceTree = "<group>"; };
+		A54C2257148B23DF00373FA3 /* WebInspectorUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebInspectorUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		1C60FE2E14E5F3CD006CD77D /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				1C60FE2F14E5F3CD006CD77D /* Base.xcconfig */,
+				1C60FE3114E5F3CD006CD77D /* DebugRelease.xcconfig */,
+				A1B89B8F221E021000EB4CEA /* SDKVariant.xcconfig */,
+				1C60FE3214E5F3CD006CD77D /* Version.xcconfig */,
+				1C60FE3314E5F3CD006CD77D /* WebInspectorUIFramework.xcconfig */,
+			);
+			path = Configurations;
+			sourceTree = "<group>";
+		};
+		1C60FF1514E6E39B006CD77D /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				1C78EE131760E115002F6AA5 /* Info.plist */,
+				1C60FF1314E6E35D006CD77D /* localizedStrings.js */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		1C60FFE014E79B0F006CD77D /* Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				1C60FF1914E73C64006CD77D /* combine-resources.pl */,
+				1C60FFE114E79B0F006CD77D /* copy-user-interface-resources.pl */,
+				1C60FF1A14E73DCA006CD77D /* remove-console-asserts.pl */,
+			);
+			path = Scripts;
+			sourceTree = "<group>";
+		};
+		A54C224B148B23DE00373FA3 = {
+			isa = PBXGroup;
+			children = (
+				1C60FE2E14E5F3CD006CD77D /* Configurations */,
+				A54C2258148B23DF00373FA3 /* Products */,
+				1C60FF1514E6E39B006CD77D /* Resources */,
+				1C60FFE014E79B0F006CD77D /* Scripts */,
+				1C60FF1014E6D992006CD77D /* UserInterface */,
+				1C78EE1617611340002F6AA5 /* WebInspectorUI.c */,
+			);
+			sourceTree = "<group>";
+		};
+		A54C2258148B23DF00373FA3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A54C2257148B23DF00373FA3 /* WebInspectorUI.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A54C2256148B23DF00373FA3 /* WebInspectorUI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A54C226C148B23DF00373FA3 /* Build configuration list for PBXNativeTarget "WebInspectorUI" */;
+			buildPhases = (
+				A54C2255148B23DF00373FA3 /* Resources */,
+				1C60FF1214E6D9AF006CD77D /* Copy User Interface Resources */,
+				1C78EE1417611302002F6AA5 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WebInspectorUI;
+			productName = WebInspector;
+			productReference = A54C2257148B23DF00373FA3 /* WebInspectorUI.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A54C224D148B23DE00373FA3 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0700;
+				LastUpgradeCheck = 1000;
+				ORGANIZATIONNAME = Apple;
+			};
+			buildConfigurationList = A54C2250148B23DE00373FA3 /* Build configuration list for PBXProject "WebInspectorUI" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = A54C224B148B23DE00373FA3;
+			productRefGroup = A54C2258148B23DF00373FA3 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A54C2256148B23DF00373FA3 /* WebInspectorUI */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A54C2255148B23DF00373FA3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1C60FF1614E6E3F7006CD77D /* localizedStrings.js in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		1C60FF1214E6D9AF006CD77D /* Copy User Interface Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			name = "Copy User Interface Resources";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/bin/perl \"${SRCROOT}/Scripts/copy-user-interface-resources.pl\"";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1C78EE1417611302002F6AA5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1C78EE1717611340002F6AA5 /* WebInspectorUI.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		1C60FF1314E6E35D006CD77D /* localizedStrings.js */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1C60FF1414E6E35D006CD77D /* en */,
+			);
+			name = localizedStrings.js;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		1C60FE3514E5F47E006CD77D /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C60FE2F14E5F3CD006CD77D /* Base.xcconfig */;
+			buildSettings = {
+				DEBUG_DEFINES = NDEBUG;
+			};
+			name = Production;
+		};
+		1C60FE3614E5F47E006CD77D /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C60FE3314E5F3CD006CD77D /* WebInspectorUIFramework.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
+		A54C226A148B23DF00373FA3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C60FE3114E5F3CD006CD77D /* DebugRelease.xcconfig */;
+			buildSettings = {
+				DEBUG_DEFINES = "";
+			};
+			name = Debug;
+		};
+		A54C226B148B23DF00373FA3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C60FE3114E5F3CD006CD77D /* DebugRelease.xcconfig */;
+			buildSettings = {
+				DEBUG_DEFINES = NDEBUG;
+			};
+			name = Release;
+		};
+		A54C226D148B23DF00373FA3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C60FE3314E5F3CD006CD77D /* WebInspectorUIFramework.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		A54C226E148B23DF00373FA3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C60FE3314E5F3CD006CD77D /* WebInspectorUIFramework.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A54C2250148B23DE00373FA3 /* Build configuration list for PBXProject "WebInspectorUI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A54C226A148B23DF00373FA3 /* Debug */,
+				A54C226B148B23DF00373FA3 /* Release */,
+				1C60FE3514E5F47E006CD77D /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		A54C226C148B23DF00373FA3 /* Build configuration list for PBXNativeTarget "WebInspectorUI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A54C226D148B23DF00373FA3 /* Debug */,
+				A54C226E148B23DF00373FA3 /* Release */,
+				1C60FE3614E5F47E006CD77D /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A54C224D148B23DE00373FA3 /* Project object */;
+}

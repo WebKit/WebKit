@@ -1,0 +1,26 @@
+<body onload="runTest()">
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<p>This tests find and replace inside an editable iframe.  You should see 'A B A B' below. With bug 4462420, you would see 'A B B A'.</p>
+<iframe src="../resources/contenteditable-iframe-src.html"></iframe>
+
+<script>
+function runTest() {
+    document.body.offsetTop;
+
+    var frame = frames[0];
+    var sel = frame.getSelection();
+    var doc = frame.document;
+
+    sel.setPosition(doc.body, 0);
+    doc.execCommand("InsertText", false, "A B A");
+    sel.setPosition(doc.body, 0);
+    doc.execCommand("FindString", false, "A B");
+    doc.execCommand("Copy");
+    doc.execCommand("FindString", false, "A");
+    doc.execCommand("Paste");
+}
+</script>
+</body>

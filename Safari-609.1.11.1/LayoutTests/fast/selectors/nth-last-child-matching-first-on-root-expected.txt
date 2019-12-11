@@ -1,0 +1,21 @@
+Verify the nth-last-child() pseudo class matcher always test for the parent element. Some :nth-last-child pseudo selectors can skip counting the siblings, but they should never skip the parent check.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.querySelectorAll("html:nth-last-child(1)").length is 0
+PASS document.querySelectorAll("html:nth-last-child(-n+1)").length is 0
+PASS document.querySelectorAll("html:nth-last-child(+1)").length is 0
+PASS document.querySelectorAll(":root:nth-last-child(1)").length is 0
+PASS document.querySelectorAll(":root:nth-last-child(-n+1)").length is 0
+PASS document.querySelectorAll(":root:nth-last-child(+1)").length is 0
+PASS getComputedStyle(document.documentElement).backgroundColor is "rgb(255, 255, 255)"
+PASS document.querySelectorAll("svg:root").length is 0
+PASS document.querySelectorAll("svg:nth-last-child(1)").length is 1
+PASS document.querySelectorAll("svg:nth-last-child(-n+1)").length is 1
+PASS document.querySelectorAll("svg:nth-last-child(+1)").length is 1
+PASS getComputedStyle(document.querySelector("svg")).backgroundColor is "rgb(1, 2, 3)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

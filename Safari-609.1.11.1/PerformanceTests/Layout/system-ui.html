@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/runner.js"></script>
+</head>
+<body>
+<div id="target" style="width: 300px; display: none; font: 42px 'system-ui', '-apple-system';" lang="zh-CN"></div>
+<script>
+var target = document.getElementById("target");
+var style = target.style;
+
+var s = "";
+var length = 10000;
+var startCode = 0x4E00;
+for (var i = 0; i < length; ++i) {
+    s = s + String.fromCharCode(i + startCode);
+}
+
+
+function test() {
+    if (window.internals)
+        window.internals.invalidateFontCache();
+
+    style.display = "block";
+    target.offsetLeft;
+    target.textContent = s;
+    target.offsetLeft;
+    target.textContent = "";
+    style.display = "none";
+}
+
+PerfTestRunner.measureRunsPerSecond({ run: test });
+</script>
+</body>
+</html>

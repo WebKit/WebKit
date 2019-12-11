@@ -1,0 +1,123 @@
+DirectoryIndex index.php index.html
+AddType application/x-httpd-php html
+AddType text/cache-manifest manifest
+
+RewriteRule .*\.svn.* - [F]
+
+RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK)
+RewriteRule .* - [F]
+
+RewriteCond %{HTTP_HOST} ^queues.webkit.org$
+RewriteRule (.*) https://webkit-queues.webkit.org/$1 [L,R=301]
+
+RewriteCond %{HTTP_HOST} ^blog.webkit.org$
+RewriteRule (.*) https://webkit.org/blog/$1 [L,R=301]
+
+RewriteCond %{HTTP_HOST} ^(www\.)(.*)$
+RewriteRule (.*) https://%2/$1 [L,R=301]
+
+RewriteCond %{HTTPS} off
+RewriteRule (.*) https://%{HTTP_HOST}/$1 [L,R=301]
+
+# Old Sunspider versions
+Redirect 301 /perf/sunspider-0.9/sunspider.html /perf/sunspider/sunspider.html
+Redirect 301 /perf/sunspider-0.9.1/sunspider.html /perf/sunspider/sunspider.html
+Redirect 301 /perf/sunspider-0.9.1/versions.html /perf/sunspider/sunspider.html
+Redirect 301 /perf/sunspider/sunspider.html/ /perf/sunspider/sunspider.html
+
+# Legacy webkit.org URLs
+Redirect 301 /asking_questions.html /asking-questions/
+Redirect 301 /building/build.html /building-webkit/
+Redirect 301 /building/checkout.html /getting-the-code/
+Redirect 301 /building/debug-mac-uiprocess.html /debugging-webkit/#debugging-uiprocess
+Redirect 301 /building/debug.html /debugging-webkit/
+Redirect 301 /building/run.html /running-webkit/
+Redirect 301 /building/tools.html /build-tools/
+Redirect 301 /coding/RefPtr.html /blog/5381/refptr-basics/
+Redirect 301 /coding/adding-features.html /getting-started/
+Redirect 301 /coding/assertion-guidelines.html /blog/5397/a-guide-to-assertion-macros-in-webkit/
+Redirect 301 /coding/bsd-license.html /licensing-webkit/
+Redirect 301 /coding/coding-style.html /code-style-guidelines/
+Redirect 301 /coding/commit-review-policy.html /commit-and-review-policy/
+Redirect 301 /coding/contributing.html /getting-started/
+Redirect 301 /coding/dom-element-attach.html /
+Redirect 301 /coding/lgpl-license.html /licensing-webkit/
+Redirect 301 /coding/major-objects.html /
+Redirect 301 /coding/scripts.html /script-tools/
+Redirect 301 /coding/technical-articles.html /blog/
+Redirect 301 /conference /meeting/
+Redirect 301 /contact.html /getting-started/#staying-in-touch
+Redirect 301 /demos/index.html /demo-content/
+RedirectMatch 301 ^/demos/$ /demo-content/
+RedirectMatch 301 ^/projects/ /project/
+Redirect 301 /projects /project/
+Redirect 301 /quality/bugpriorities.html /bug-prioritization/
+Redirect 301 /quality/bugwriting.html /bug-report-guidelines/
+Redirect 301 /quality/bugzilla.html /bugzilla-bits/
+Redirect 301 /quality/crashlogs.html /getting-a-crash-log/
+Redirect 301 /quality/leakhunting.html /leak-hunting/
+Redirect 301 /quality/lifecycle.html /bug-life-cycle/
+Redirect 301 /quality/reduction.html /test-case-reduction/
+Redirect 301 /quality/reporting.html /reporting-bugs/
+Redirect 301 /quality/testing.html /testing-contributions/
+Redirect 301 /quality/testwriting.html /writing-new-tests/
+Redirect 301 /security/index.html /security-policy/
+Redirect 301 /security/security-group-members.html /security-team/
+Redirect 301 /security/ /security-policy/
+Redirect 301 /security /security-policy/
+Redirect 301 /status.html /status/
+Redirect 301 /team.html /team/
+Redirect 301 /nightly /downloads/
+Redirect 301 /features /status/
+Redirect 301 /css-features /css-features/
+
+# Old B3 Documentation
+Redirect 301 /documentation/b3/air/ /docs/b3/assembly-intermediate-representation.html
+Redirect 301 /documentation/b3/air /docs/b3/assembly-intermediate-representation.html
+Redirect 301 /documentation/b3/intermediate-representation/ /docs/b3/intermediate-representation.html
+Redirect 301 /documentation/b3/intermediate-representation /docs/b3/intermediate-representation.html
+Redirect 301 /documentation/b3 /docs/b3
+
+# Bugzilla
+
+RewriteRule ^b/(.*)$ https://bugs.webkit.org/show_bug.cgi?id=$1 [R=301,L,NE]
+RewriteRule ^reported-by/(.*)$ https://bugs.webkit.org/buglist.cgi?emailreporter1=1&emailtype1=substring&email1=$1&emailassigned_to2=1 [R=301,L,NE]
+RewriteRule ^recently-resolved/(\d+(w|d))$ https://bugs.webkit.org/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=&long_desc_type=substring&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_type=allwords&keywords=&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&emailassigned_to1=1&emailtype1=substring&email1=&emailassigned_to2=1&emailreporter2=1&emailcc2=1&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=$1&chfieldto=Now&chfield=bug_status&chfieldvalue=resolved&cmdtype=doit&order=Reuse+same+sort+as+last+time&field0-0-0=noop&type0-0-0=noop&value0-0-0= [R=301,L,NE]
+RewriteRule ^new-bugs/(\d+(w|d))$ https://bugs.webkit.org/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=&long_desc_type=substring&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_type=allwords&keywords=&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&emailassigned_to1=1&emailtype1=substring&email1=&emailassigned_to2=1&emailreporter2=1&emailcc2=1&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=$1&chfieldto=Now&chfield=\%5BBug+creation\%5D&chfieldvalue=&cmdtype=doit&order=Reuse+same+sort+as+last+time&field0-0-0=noop&type0-0-0=noop&value0-0-0= [R=301,L]
+
+Redirect 301 /new-bug https://bugs.webkit.org/enter_bug.cgi?product=WebKit&version=528%2B%20(Nightly%20build)&component=New%20Bugs&bug_severity=Normal&cc=&bug_file_loc=http%3A%2F%2F&short_desc=&comment=&commentprivacy=0&dependson=&blocked=&maketemplate=Remember%20values%20as%20bookmarkable%20template&form_name=enter_bug
+Redirect 301 /new-ax-bug https://bugs.webkit.org/enter_bug.cgi?product=WebKit&component=Accessibility&op_sys=All&rep_platform=All&short_desc=AX%3A%20
+Redirect 301 /new-inspector-bug https://bugs.webkit.org/enter_bug.cgi?product=WebKit&component=Web%20Inspector&op_sys=All&rep_platform=All&short_desc=Web%20Inspector%3A%20
+Redirect 301 /regressions https://bugs.webkit.org/buglist.cgi?keywords=Regression&bug_status=NEW&bug_status=UNCONFIRMED&bug_status=ASSIGNED&bug_status=REOPENED
+Redirect 301 /needs-reduction https://bugs.webkit.org/buglist.cgi?query_format=advanced&keywords=NeedsReduction&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED
+Redirect 301 /pending-review https://bugs.webkit.org/request.cgi?action=queue&requester=&product=&type=review&requestee=&component=&group=requestee
+Redirect 301 /review-denied https://bugs.webkit.org/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=&long_desc_type=substring&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_type=allwords&keywords=&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&emailassigned_to1=1&emailtype1=substring&email1=&emailassigned_to2=1&emailreporter2=1&emailcc2=1&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=&chfieldto=Now&chfieldvalue=&cmdtype=doit&order=Reuse+same+sort+as+last+time&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=review-
+Redirect 301 /pending-commit https://bugs.webkit.org/buglist.cgi?query_format=advanced&short_desc_type=notregexp&short_desc=%5C%5BS60%5C%5D&long_desc_type=substring&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_type=allwords&keywords=&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&emailassigned_to1=1&emailtype1=substring&email1=&emailassigned_to2=1&emailreporter2=1&emailcc2=1&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=&chfieldto=Now&chfieldvalue=&cmdtype=doit&order=Reuse+same+sort+as+last+time&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=review%2B&field0-1-0=noop&type0-1-0=equals&value0-1-0=
+Redirect 301 /unconfirmed-bugs https://bugs.webkit.org/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=&long_desc_type=substring&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&bug_status=UNCONFIRMED&emailassigned_to1=1&emailtype1=substring&email1=&emailassigned_to2=1&emailreporter2=1&emailcc2=1&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=&chfieldto=Now&chfieldvalue=&cmdtype=doit&order=Reuse+same+sort+as+last+time&field0-0-0=noop&type0-0-0=noop&value0-0-0=
+Redirect 301 /crashing-bugs https://bugs.webkit.org/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=crash&long_desc_type=substring&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&emailassigned_to1=1&emailtype1=substring&email1=&emailassigned_to2=1&emailreporter2=1&emailcc2=1&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=&chfieldto=Now&chfieldvalue=&cmdtype=doit&order=Reuse+same+sort+as+last+time&field0-0-0=noop&type0-0-0=noop&value0-0-0=
+Redirect 301 /confirmed-bugs https://bugs.webkit.org/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=&long_desc_type=substring&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&emailassigned_to1=1&emailtype1=substring&email1=&emailassigned_to2=1&emailreporter2=1&emailcc2=1&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=&chfieldto=Now&chfieldvalue=&cmdtype=doit&order=Reuse+same+sort+as+last+time&field0-0-0=noop&type0-0-0=noop&value0-0-0=
+Redirect 301 /unassigned-bugs https://bugs.webkit.org/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=&long_desc_type=substring&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&bug_status=NEW&bug_status=REOPENED&emailassigned_to1=1&emailtype1=substring&email1=&emailassigned_to2=1&emailreporter2=1&emailcc2=1&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=&chfieldto=Now&chfieldvalue=&cmdtype=doit&order=Reuse+same+sort+as+last+time&field0-0-0=noop&type0-0-0=noop&value0-0-0=
+Redirect 301 /no-keywords https://bugs.webkit.org/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=&long_desc_type=substring&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_type=nowords&keywords=HasReduction+NeedsReduction&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&emailassigned_to1=1&emailtype1=substring&email1=&emailassigned_to2=1&emailreporter2=1&emailcc2=1&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=&chfieldto=Now&chfieldvalue=&cmdtype=doit&order=Reuse+same+sort+as+last+time&field0-0-0=noop&type0-0-0=noop&value0-0-0=
+Redirect 301 /recently-resolved https://bugs.webkit.org/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=&long_desc_type=substring&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_type=allwords&keywords=&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&emailassigned_to1=1&emailtype1=substring&email1=&emailassigned_to2=1&emailreporter2=1&emailcc2=1&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=1d&chfieldto=Now&chfield=bug_status&chfieldvalue=resolved&cmdtype=doit&order=Reuse+same+sort+as+last+time&field0-0-0=noop&type0-0-0=noop&value0-0-0=
+Redirect 301 /new-bugs https://bugs.webkit.org/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=&long_desc_type=substring&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_type=allwords&keywords=&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&emailassigned_to1=1&emailtype1=substring&email1=&emailassigned_to2=1&emailreporter2=1&emailcc2=1&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=1d&chfieldto=Now&chfield=%5BBug+creation%5D&chfieldvalue=&cmdtype=doit&order=Reuse+same+sort+as+last+time&field0-0-0=noop&type0-0-0=noop&value0-0-0=
+Redirect 301 /svg-bugs https://bugs.webkit.org/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=&component=SVG&long_desc_type=substring&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&emailassigned_to1=1&emailtype1=substring&email1=&emailassigned_to2=1&emailreporter2=1&emailcc2=1&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=&chfieldto=Now&chfieldvalue=&cmdtype=doit&order=Reuse+same+sort+as+last+time&field0-0-0=noop&type0-0-0=noop&value0-0-0=
+Redirect 301 /priority-bugs https://bugs.webkit.org/buglist.cgi?product=WebKit&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&priority=P1
+
+# Archived webkit.org
+
+RewriteRule ^css/(.*)$ /old/css/$1 [NC,L]
+RewriteRule ^images/(.*)$ /old/images/$1 [NC,L]
+
+# Pixar USD support. Change to model/vnd.usdz+zip once WebKit support is in the wild.
+AddType model/vnd.pixar.usd usdz
+
+# BEGIN WordPress
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+</IfModule>
+# END WordPress

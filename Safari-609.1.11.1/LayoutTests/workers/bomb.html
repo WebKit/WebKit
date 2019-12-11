@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Starts a lot of workers that do crazy things.");
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+var count = 100;
+var verbose = false;
+
+var numWorkers = 0;
+function startWorker(file)
+{
+    debug("Starting worker: " + file);
+    numWorkers++;
+    var worker = new Worker(file);
+    worker.onmessage = function(event) {
+        if (event.data == "done") {
+            if (verbose)
+                debug("Finished worker: " + file);
+            if (--numWorkers)
+                return;
+            debug("All workers done!");
+            done();
+            return;
+        }
+        
+        debug("Event from " + file + ": " + event.data);
+    };
+}
+
+function start()
+{
+    startWorker("tests/3d-cube.js");
+    startWorker("tests/3d-morph.js");
+    startWorker("tests/3d-raytrace.js");
+    startWorker("tests/access-binary-trees.js");
+    startWorker("tests/access-fannkuch.js");
+    startWorker("tests/access-nbody.js");
+    startWorker("tests/access-nsieve.js");
+    startWorker("tests/bitops-3bit-bits-in-byte.js");
+    startWorker("tests/bitops-bits-in-byte.js");
+    startWorker("tests/bitops-bitwise-and.js");
+    startWorker("tests/bitops-nsieve-bits.js");
+    startWorker("tests/controlflow-recursive.js");
+    startWorker("tests/crypto-aes.js");
+    startWorker("tests/crypto-md5.js");
+    startWorker("tests/crypto-sha1.js");
+    startWorker("tests/date-format-tofte.js");
+    startWorker("tests/date-format-xparb.js");
+    startWorker("tests/math-cordic.js");
+    startWorker("tests/math-partial-sums.js");
+    startWorker("tests/math-spectral-norm.js");
+    startWorker("tests/regexp-dna.js");
+    startWorker("tests/string-base64.js");
+    startWorker("tests/string-fasta.js");
+    startWorker("tests/string-tagcloud.js");
+    startWorker("tests/string-unpack-code.js");
+    startWorker("tests/string-validate-input.js");
+}
+
+function done()
+{
+    if (!--count) {
+        debug("Done with test!");
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+    
+    start();
+}
+
+start();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

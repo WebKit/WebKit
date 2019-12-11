@@ -1,0 +1,7 @@
+2d.drawImage.3arg
+Spec references: 2d.drawImage.defaultsource 2d.drawImage.defaultdest
+Actual output:
+Expected output:
+
+Passed
+ 

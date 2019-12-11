@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<textarea id="testArea" designMode="on"></textarea>
+<script>
+description("Tests that execCommand('insertHTML') on a textarea without renderer returns false and does not crash.");
+jsTestIsAsync = true;
+
+onload = () => {
+    testArea = document.getElementById("testArea");
+
+    testArea.focus();
+    testArea.style = "display:none";
+    testArea.maxLength = 1;
+
+    evalAndLog('document.execCommand("insertHTML", false, "foo")');
+    shouldBeEqualToString("testArea.innerText", "");
+    shouldBeEqualToString("testArea.value", "");
+    finishJSTest();
+}
+</script>
+</body>
+</html>

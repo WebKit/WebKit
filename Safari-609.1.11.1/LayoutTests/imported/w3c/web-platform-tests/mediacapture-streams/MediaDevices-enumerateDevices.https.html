@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+<title>enumerateDevices: test that enumerateDevices is present</title>
+<link rel="author" title="Dr Alex Gouaillard" href="mailto:agouaillard@gmail.com"/>
+<link rel="help" href="https://w3c.github.io/mediacapture-main/#enumerating-devices">
+<meta name='assert' content='Check that the enumerateDevices() method is present.'/>
+</head>
+<body>
+<h1 class="instructions">Description</h1>
+<p class="instructions">This test checks for the presence of the
+<code>navigator.mediaDevices.enumerateDevices()</code> method.</p>
+<div id='log'></div>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script>
+"use strict";
+//NOTE ALEX: for completion, a test for ondevicechange event is missing.
+promise_test(async () => {
+  assert_not_equals(navigator.mediaDevices.enumerateDevices, undefined, "navigator.mediaDevices.enumerateDevices exists");
+  const deviceList =  await navigator.mediaDevices.enumerateDevices();
+  for (const mediaInfo of deviceList) {
+    assert_not_equals(mediaInfo.deviceId, undefined, "mediaInfo's deviceId should exist.");
+    assert_not_equals(mediaInfo.kind, undefined,     "mediaInfo's kind     should exist.");
+    assert_not_equals(mediaInfo.label, undefined,    "mediaInfo's label    should exist.");
+    assert_not_equals(mediaInfo.groupId, undefined,  "mediaInfo's groupId  should exist.");
+    assert_in_array(mediaInfo.kind, ["videoinput", "audioinput", "audiooutput"]);
+  }
+}, "mediaDevices.enumerateDevices() is present and working");
+
+promise_test(async () => {
+  const deviceList =  await navigator.mediaDevices.enumerateDevices();
+  for (const mediaInfo of deviceList) {
+    if (mediaInfo.kind == "audioinput" || mediaInfo.kind == "videoinput") {
+      assert_true(mediaInfo instanceof InputDeviceInfo);
+    } else if ( mediaInfo.kind == "audiooutput" ) {
+      assert_true(mediaInfo instanceof MediaDeviceInfo);
+    } else {
+      assert_unreached("mediaInfo.kind should be one of 'audioinput', 'videoinput', or 'audiooutput'.")
+    }
+  }
+}, "InputDeviceInfo is supported");
+</script>
+</body>
+</html>

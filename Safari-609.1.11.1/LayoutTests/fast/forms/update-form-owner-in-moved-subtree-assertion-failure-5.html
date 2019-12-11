@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<body>
+<a>
+    <p>
+        <b>
+            <u id="test"/>
+            <keygen form="test"/>
+        </b>
+</a>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+document.body.innerText = `This tests removing a subtree containing a form associated element with two non-form elements with matching ID.
+The test passses if WebKit doesn't hit a debug assertion.
+
+PASS.`;
+</script>

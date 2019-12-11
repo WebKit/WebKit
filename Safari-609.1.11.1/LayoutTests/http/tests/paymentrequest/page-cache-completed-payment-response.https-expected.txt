@@ -1,0 +1,17 @@
+Tests that a page with a PaymentResponse in the Completed state goes into the back/forward cache.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Creating a PaymentResponse in the Completed state.
+pageshow - not from cache
+pagehide - entering cache
+pageshow - from cache
+PASS Page did enter and was restored from the back/forward cache
+Testing that PaymentResponse remains in the Completed state.
+PASS response.complete() rejected promise  with InvalidStateError: The object is in an invalid state..
+PASS response.retry() rejected promise  with InvalidStateError: The object is in an invalid state..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

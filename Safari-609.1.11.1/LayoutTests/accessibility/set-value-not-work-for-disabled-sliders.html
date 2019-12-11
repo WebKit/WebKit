@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div id="content">
+
+<input id="test0" type='range' should-change="false" disabled>
+<input id="test1" type='range' should-change="false" disabled aria-disabled="true">
+<input id="test2" type='range' should-change="false" disabled aria-disabled="false">
+<input id="test3" type='range' should-change="true" >
+<input id="test4" type='range' should-change="true" aria-disabled="true">
+<input id="test5" type='range' should-change="true" aria-disabled="false">
+
+<p id="description"></p>
+<div id="console"></div>
+
+</div>
+<script>
+    description("This tests that disabled sliders can't be incremented or decremented.");
+
+    if (window.accessibilityController) {
+        var numOfTests = 6;
+        for (var testId = 0; testId < numOfTests; testId++) {
+            var slider = accessibilityController.accessibleElementById("test" + testId);
+            var shouldChange = document.getElementById("test" + testId).getAttribute("should-change") == "true" ? true : false;
+            shouldBe("slider.intValue", "50");
+
+            slider.increment();
+            shouldBe("slider.intValue", shouldChange ? "55" : "50");
+
+            slider.decrement();
+            slider.decrement();
+            shouldBe("slider.intValue", shouldChange ? "45" : "50");
+        }
+    }
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+Input Time
+
+
+PASS time element of default time value 
+PASS step attribute on default value check 
+PASS max  attribute on default value check 
+PASS min  attribute on default value check 
+FAIL type attribute support on input element assert_equals: expected "time" but got "text"
+PASS max attribute support on input element 
+PASS min attribute support on input element 
+PASS step attribute support on input element 
+PASS stepUp function support on input Element 
+PASS stepDown function support on input Element 
+FAIL stepUp step value empty on default step value  The object is in an invalid state.
+FAIL stepDown step value empty default step value The object is in an invalid state.
+FAIL stepUp on step value minus The object is in an invalid state.
+FAIL stepDown on step value minus The object is in an invalid state.
+FAIL stepUp on step value zero  The object is in an invalid state.
+FAIL stepDown on step value zero  The object is in an invalid state.
+FAIL stepUp on step value 24 hour The object is in an invalid state.
+FAIL stepDown on step value 24 hour  The object is in an invalid state.
+FAIL stepUp on step value hour   The object is in an invalid state.
+FAIL stepDown on step value hour  The object is in an invalid state.
+FAIL stepUp on step value second  The object is in an invalid state.
+FAIL stepDown on step value second  The object is in an invalid state.
+FAIL stepUp on step value with fractional seconds The object is in an invalid state.
+FAIL stepDown on step value with fractional seconds The object is in an invalid state.
+FAIL stepUp argument 2 times The object is in an invalid state.
+FAIL stepDown argument 2 times The object is in an invalid state.
+FAIL stepUp stop because it exceeds the maximum value The object is in an invalid state.
+FAIL stepDown stop so lower than the minimum value The object is in an invalid state.
+FAIL stop at border on stepUp The object is in an invalid state.
+FAIL stop at border on stepDown The object is in an invalid state.
+FAIL  empty value of stepUp The object is in an invalid state.
+FAIL set value on not time format value assert_equals: expected "" but got "hh:mi:ss.sss"
+

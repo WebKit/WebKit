@@ -1,0 +1,36 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (184,220) size 432x171
+      RenderSVGContainer {g} at (184,220) size 432x171
+        RenderSVGText {text} at (115,132) size 250x23 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 19x23
+            chunk 1 (middle anchor) text run 1 at (115.50,150.00) startOffset 0 endOffset 2 width 18.60: "A "
+          RenderSVGTSpan {tspan} at (0,0) size 231x23 [color=#008000]
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+            RenderSVGInline {a} at (0,0) size 146x23
+              RenderSVGInlineText {#text} at (18,0) size 145x23
+                chunk 1 (middle anchor) text run 1 at (134.10,150.00) startOffset 0 endOffset 5 width 34.80: "link "
+                chunk 1 (middle anchor) text run 1 at (168.90,150.00) startOffset 0 endOffset 13 width 109.80: "inside tspan "
+            RenderSVGInlineText {#text} at (163,0) size 86x23
+              chunk 1 (middle anchor) text run 1 at (278.70,150.00) startOffset 0 endOffset 11 width 85.80: "for testing"
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+        RenderSVGText {text} at (110,212) size 260x23 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 19x23
+            chunk 1 (middle anchor) text run 1 at (110.70,230.00) startOffset 0 endOffset 2 width 18.60: "A "
+          RenderSVGInline {a} at (0,0) size 155x23
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+            RenderSVGTSpan {tspan} at (0,0) size 155x23 [color=#008000]
+              RenderSVGInlineText {#text} at (18,0) size 155x23
+                chunk 1 (middle anchor) text run 1 at (129.30,230.00) startOffset 0 endOffset 5 width 34.80: "link "
+                chunk 1 (middle anchor) text run 1 at (164.10,230.00) startOffset 0 endOffset 13 width 119.40: "around tspan "
+            RenderSVGInlineText {#text} at (0,0) size 0x0
+          RenderSVGInlineText {#text} at (172,0) size 86x23
+            chunk 1 (middle anchor) text run 1 at (283.50,230.00) startOffset 0 endOffset 11 width 85.80: "for testing"
+    RenderSVGContainer {g} at (16,518) size 380x60
+      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 228x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.5 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

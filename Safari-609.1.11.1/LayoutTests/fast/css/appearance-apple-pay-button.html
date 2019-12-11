@@ -1,0 +1,48 @@
+
+<style>
+    .container {
+        position: relative;
+        background-color: silver;
+        padding: 25px;
+        width: 500px;
+    }
+    .apple-pay-button-div {
+        display :block;
+        margin: 25px;
+        -webkit-appearance: -apple-pay-button;
+        height: 100px;
+        width: 400px;
+    }
+    
+    .masker {
+        position: absolute;
+        width: 200px;
+        height: 80px;
+        background-color: blue;
+    }
+
+    .corner-mask {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        background-color: blue;
+    }
+</style>
+
+<div class="container">
+    <button style="-apple-pay-button-style: black;" class="apple-pay-button-div"></button>
+    <button style="-apple-pay-button-style: white;" class="apple-pay-button-div"></button>
+    
+    <div class="masker" style="top: 60px; left: 150px"></div>
+    <div class="masker" style="top: 185px; left: 150px"></div>
+
+    <div class="corner-mask" style="top: 45px; left: 45px"></div>
+    <div class="corner-mask" style="top: 135px; left: 45px"></div>
+    <div class="corner-mask" style="top: 45px; left: 435px"></div>
+    <div class="corner-mask" style="top: 135px; left: 435px"></div>
+
+    <div class="corner-mask" style="top: 170px; left: 45px"></div>
+    <div class="corner-mask" style="top: 260px; left: 45px"></div>
+    <div class="corner-mask" style="top: 170px; left: 435px"></div>
+    <div class="corner-mask" style="top: 260px; left: 435px"></div>
+</div>

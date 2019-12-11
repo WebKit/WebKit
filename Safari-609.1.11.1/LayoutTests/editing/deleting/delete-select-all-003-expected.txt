@@ -1,0 +1,11 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of LI > UL > DIV > BODY > HTML > #document to 0 of LI > UL > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > LI > UL > DIV > BODY > HTML > #document to 5 of #text > LI > UL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of #text > LI > UL > DIV > BODY > HTML > #document to 5 of #text > LI > UL > DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of LI > UL > DIV > BODY > HTML > #document to 1 of UL > DIV > BODY > HTML > #document toDOMRange:range from 0 of LI > UL > DIV > BODY > HTML > #document to 0 of LI > UL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+
+execDeleteCommand: <ul id="test"><li><br></li></ul>

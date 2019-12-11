@@ -1,0 +1,4 @@
+Tests that validity of node insertion is retained after removing nodes from a parent. The test passes if we do not crash and we encounter a HierarchyRequestError.
+
+PASS: Encountered: HierarchyRequestError
+

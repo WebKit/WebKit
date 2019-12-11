@@ -1,0 +1,5 @@
+2d.imageData.create2.negative
+createImageData(sw, sh) takes the absolute magnitude of the size arguments
+Spec references: 2d.imageData.create2.size
+Actual output:
+Passed

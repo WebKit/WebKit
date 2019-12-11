@@ -1,0 +1,18 @@
+framework module JavaScriptCore {
+  umbrella header "JavaScriptCore.h"
+
+  export *
+  module * {
+    export *
+  }
+
+  explicit module JSVirtualMachine {
+    // FIXME: 32-bit x86 is a poor way to say "fragile Objective-C ABI"
+    requires x86_32
+    exclude header "JSValue.h"
+    exclude header "JSContext.h"
+    exclude header "JSExport.h"
+    exclude header "JSManagedValue.h"
+    exclude header "JSVirtualMachine.h"
+  }
+}

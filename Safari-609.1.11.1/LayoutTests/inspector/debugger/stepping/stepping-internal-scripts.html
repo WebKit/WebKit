@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../resources/log-pause-location.js"></script>
+<script>
+function entryConsoleLog() {
+    debugger;
+    console.log(window);
+    console.log(console);
+    console.log("string");
+}
+
+// ---------
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.stepping.internal");
+
+    window.initializeSteppingTestSuite(suite);
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.internal.ConsoleLog.StepOver",
+        description: "Should be able to step over console.log statements which use the Internal InjectedScript.",
+        expression: "setTimeout(entryConsoleLog)",
+        steps: [
+            "over",
+                "over", // console.log(window)
+                "over", // console.log(console)
+                "over", // console.log("string")
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.internal.ConsoleLog.StepIn",
+        description: "Should not be able to step into console.log statements which use the Internal InjectedScript.",
+        expression: "setTimeout(entryConsoleLog)",
+        steps: [
+            "over",
+                "in", // console.log(window)
+                "in", // console.log(console)
+                "in", // console.log("string")
+            "resume",
+        ]
+    });
+
+    loadMainPageContent().then(() => {
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Checking pause locations when stepping in and over statements that make use of Internal scripts.</p>
+</body>
+</html>

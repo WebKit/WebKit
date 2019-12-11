@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: line 1: Paused at line: 4, column: 8
+Testing that we can access scope in various functions.
+
+Starting Test
+Hit breakpoint at line: 4, column: 8
+scope-chain-type-closure properties:
+    resolve
+    reject
+scope-chain-type-closure properties:
+    p
+scope-chain-type-global-lexical-environment properties:
+    lexicalVariable
+scope-chain-type-global (properties not listed)
+Tests done
+

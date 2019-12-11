@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 4: The XSS Auditor blocked access to 'http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?test=%2Fsecurity%2FxssAuditor%2Ffull-block-get-from-iframe.html&enable-full-block=1&q=%3Cscript%3Ealert%28String.fromCharCode%280x58%2C0x53%2C0x53%29%29%3C%2Fscript%3E' because the source code of a script was found within the request. The server sent an 'X-XSS-Protection' header requesting this behavior.
+
+
+--------
+Frame: 'frame'
+--------
+

@@ -1,0 +1,34 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of BODY > HTML > #document to 0 of BODY > HTML > #document toDOMRange:range from 5 of #text > BODY > HTML > #document to 5 of #text > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 4 of #text > BODY > HTML > #document to 5 of #text > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > BODY > HTML > #document to 3 of #text > BODY > HTML > #document toDOMRange:range from 7 of #text > BODY > HTML > #document to 7 of #text > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 769x36
+          text run at (0,0) width 337: "This tests find and replace inside an editable iframe. "
+          text run at (336,0) width 433: "You should see 'A B A B' below. With bug 4462420, you would see"
+          text run at (0,18) width 66: "'A B B A'."
+      RenderBlock (anonymous) at (0,52) size 784x154
+        RenderIFrame {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
+          layer at (0,0) size 300x150
+            RenderView at (0,0) size 300x150
+          layer at (0,0) size 300x150
+            RenderBlock {HTML} at (0,0) size 300x150
+              RenderBody {BODY} at (8,8) size 284x134 [bgcolor=#FFFFE0]
+                RenderText {#text} at (0,0) size 55x18
+                  text run at (0,0) width 55: "A B A B"
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

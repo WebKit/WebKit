@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<style>
+html, body {
+    margin: 0;
+    font-family: -apple-system;
+}
+
+#plain, #rich, #destination {
+    width: 100%;
+    height: 150px;
+    margin: 0;
+}
+
+img {
+    width: 150px;
+    height: 150px;
+}
+
+#destination {
+    border: 4px dashed lightgray;
+    caret-color: transparent;
+}
+
+#destination:focus {
+    outline: none;
+    border: 4px dashed lightgreen;
+}
+
+#plain, #rich {
+    font-size: 125px;
+    white-space: nowrap;
+    border: 1px solid black;
+}
+
+#output {
+    width: 100%;
+    height: 150px;
+}
+</style>
+<body>
+    <textarea id="plain">Plain text</textarea>
+    <div id="rich"><strong style="color: purple">Rich text</strong></div>
+    <div id="destination" contenteditable></div>
+    <textarea id="output"></textarea>
+    <label>Write custom data? </label><input id="checkbox" type="checkbox"></input>
+</body>
+<script>
+
+// The contents of this `result` dictionary will contain a map of {event type => {MIME type => data}}.
+result = {};
+
+// Setting this flag to `true` allows the page to write custom MIME types via the DataTransfer when dragging or copying.
+writeCustomData = false;
+
+// Setting this flag to `true` strips out inline styles in markup generated when getting "text/html" from a DataTransfer.
+ignoreInlineStyles = false;
+
+// Entries in this dictionary will be supplied as custom data using DataTransfer.setData when dragging or copying.
+// This is prepopulated with sample data by default, but tests may override this as needed.
+customData = {
+    "text/plain" : "ben bitdiddle",
+    "foo/plain" : "eva lu ator",
+    "text/html" : "<b>bold text</b>",
+    "bar/html" : `<i>italic text</i>`,
+    "text/uri-list" : "https://www.apple.com",
+    "baz/uri-list" : "https://www.webkit.org"
+};
+
+function stripInlineStylesFromPasteboardData(data)
+{
+    const parsedDocument = new DOMParser().parseFromString(data, "text/html");
+    const treeWalker = parsedDocument.createTreeWalker(parsedDocument.body, NodeFilter.SHOW_ELEMENT);
+    while (treeWalker.nextNode())
+        treeWalker.currentNode.removeAttribute("style");
+    return parsedDocument.body.innerHTML;
+}
+
+function updateResultWithEvent(event) {
+    let pasteboard = event.dataTransfer || event.clipboardData;
+    const eventData = {};
+    for (const type of pasteboard.types) {
+        let pasteboardData = pasteboard.getData(type);
+        if (ignoreInlineStyles && type === "text/html")
+            pasteboardData = stripInlineStylesFromPasteboardData(pasteboardData);
+        eventData[type] = pasteboardData;
+    }
+    result[event.type] = eventData;
+    if (event.type === "paste" || event.type === "drop") {
+        output.value = JSON.stringify(result, null, "    ");
+        result = {};
+    }
+    event.preventDefault();
+}
+
+function setCustomData(event) {
+    if (!writeCustomData)
+        return true;
+
+    const pasteboard = event.dataTransfer || event.clipboardData;
+    for (const type in customData)
+        pasteboard.setData(type, customData[type]);
+
+    if (event.type === "copy")
+        event.preventDefault();
+}
+
+destination.addEventListener("dragover", updateResultWithEvent);
+destination.addEventListener("paste", updateResultWithEvent);
+destination.addEventListener("drop", updateResultWithEvent);
+[plain, rich].forEach(source => {
+    source.addEventListener("dragstart", setCustomData);
+    source.addEventListener("copy", setCustomData);
+});
+
+function select(element) {
+    if (element.setSelectionRange && element.value)
+        element.setSelectionRange(0, element.value.length);
+    else
+        getSelection().setBaseAndExtent(element, 0, element, 1);
+}
+
+checkbox.addEventListener("change", () => window.writeCustomData = checkbox.checked);
+
+</script>
+</html>

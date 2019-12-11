@@ -1,0 +1,38 @@
+Test that backward delete behavior matches AppKit.
+
+Test:	
+
+Expected	
+Test:	
+
+Expected	
+Test:	
+ว
+Expected	ว
+Test:	
+
+Expected	
+Test:	
+
+Expected	
+Test:	
+
+Expected	
+Test:	
+ش
+Expected	ش
+Test:	
+א
+Expected	א
+Test:	
+
+Expected	
+Test:	
+
+Expected	
+Test:	
+
+Expected	
+Test:	
+
+Expected	

@@ -1,0 +1,91 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+<head>
+    <script src="../resources/js-test-pre.js"></script>
+    <script src="media-file.js"></script>
+    <script src="video-test.js"></script>
+    <script src="media-controls.js"></script>
+</head>
+<body>
+    <p> Bug <a href="https://bugs.webkit.org/show_bug.cgi?id=127065">127065</a>: AX: Shadow DOM video player controls menus need aria-owns on the trigger buttons</p>
+    <p id="console"></p>
+    <video id="video" controls width="500">
+        <source src="../media/content/counting.mp4" type="video/mp4">
+        <track src="track/captions-webvtt/captions.vtt" label="English captions" kind="captions" srclang="en-us" default>
+    </video>
+
+    <script>
+        var captionsButtonHTMLElement;
+        var captionsButtonARIAOwnsValue;
+        var captionsTrackMenuHTMLElement;
+        var closedCaptionsTrackMenuIdValue;
+        var video;
+
+        if(!window.testRunner || !window.internals) {
+           failTest();
+        }
+
+        testRunner.dumpAsText();
+
+        start();
+
+        function start() 
+        {
+
+            video = document.getElementById('video');
+            
+            captionsButtonHTMLElement = mediaControlsElement(internals.shadowRoot(video).firstChild, '-webkit-media-controls-toggle-closed-captions-button');
+
+            checkForCCButtonARIAOwns();
+
+            captionsButtonHTMLElement.click();
+
+            ensureMenuExist();
+
+            checkForCCTrackMenuId();
+
+            confirmAriaOwnsRelationship();
+            
+            testRunner.notifyDone();
+        }
+
+        function log(message)
+        {
+            document.getElementById("console").appendChild(document.createTextNode(message + '\n\n'));
+        }
+
+        function checkForCCButtonARIAOwns() 
+        {
+            captionsButtonARIAOwnsValue = captionsButtonHTMLElement.getAttribute('aria-owns');
+            log('Does the `aria-owns` on the CC button exist?');
+            shouldNotBe('captionsButtonARIAOwnsValue', 'null');
+            log('\n');
+        }
+
+        function ensureMenuExist()
+        {
+            captionsTrackMenuHTMLElement = mediaControlsElement(internals.shadowRoot(video).firstChild, '-webkit-media-controls-closed-captions-container');
+            log('Did the Audio Track menu show up after the CC button is clicked?');
+            shouldNotBe('captionsTrackMenuHTMLElement','null');
+            log('\n');
+        }
+
+        function checkForCCTrackMenuId() 
+        {
+            closedCaptionsTrackMenuIdValue = captionsTrackMenuHTMLElement.getAttribute('id');
+            log('Does the `id` of the menu exist?');
+            shouldNotBe('closedCaptionsTrackMenuIdValue', 'null');
+            log('\n');
+        }
+
+        function confirmAriaOwnsRelationship()
+        {
+            log('Is the `aria-own` on the CC button equal to the `id` on the menu?');
+            shouldBe('captionsButtonARIAOwnsValue', 'closedCaptionsTrackMenuIdValue');
+        }
+
+    </script>
+
+    <script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+This tests focusing an element of zero width or height. WebKit should allow focusing such an element
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS input = insertElement("input"); input.focus(); document.activeElement is input
+PASS div = insertElement("div", {tabindex: 0}); div.focus(); document.activeElement is div
+PASS zeroWidthInput = insertElement("input", {style: "width: 0px"}); zeroWidthInput.focus(); document.activeElement is zeroWidthInput
+div.innerHTML = "<svg><a tabindex=0 x=10 y=20><text x=10 y=20></text></a></svg>".replace(/</g, "<"); svgA = div.querySelector("a");
+PASS svgA.focus(); document.activeElement is svgA
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

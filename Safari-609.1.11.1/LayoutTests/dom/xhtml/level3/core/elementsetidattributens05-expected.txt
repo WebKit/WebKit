@@ -1,0 +1,3 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/elementsetidattributens05
+Status	error
+Message	Line 111: TypeError

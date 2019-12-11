@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Enums.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.failTrickyDoubleZero = async () => {
+    const program = `
+        enum E {
+            F,
+            G = -2,
+            H,
+            I // should get zero, and that's a dupe.
+        }
+        int foo()
+        {
+            E e = E.Foo;
+            return 42;
+        }
+    `;
+    await checkFail(program);
+};
+
+whlslTests.simpleDeclaration = async () => {
+    const program = `
+        enum E {
+            Foo,
+            Bar
+        }
+        int foo()
+        {
+            E e = E.Foo;
+            return 42;
+        }
+    `;
+    assert_equals(await callIntFunction(program, "foo", []), 42);
+};
+
+whlslTests.enumWithUintBase = async () => {
+    let program = `
+        enum Foo : uint {
+            War,
+            Famine,
+            Pestilence,
+            Death
+        }
+
+        Foo _war()
+        {
+            return Foo.War;
+        }
+
+        bool war()
+        {
+            return _war() == Foo.War;
+        }
+
+        Foo _famine()
+        {
+            return Foo.Famine;
+        }
+
+        bool famine()
+        {
+            return _famine() == Foo.Famine;
+        }
+
+        Foo _pestilence()
+        {
+            return Foo.Pestilence;
+        }
+
+        bool pestilence()
+        {
+            return _pestilence() == Foo.Pestilence;
+        }
+
+        Foo _death()
+        {
+            return Foo.Death;
+        }
+
+        bool death()
+        {
+            return _death() == Foo.Death;
+        }
+
+        bool _equals(Foo a, Foo b)
+        {
+            return a == b;
+        }
+
+        bool _notEquals(Foo a, Foo b)
+        {
+            return a != b;
+        }
+
+        bool testSimpleEqual()
+        {
+            return _equals(Foo.War, Foo.War);
+        }
+
+        bool testAnotherEqual()
+        {
+            return _equals(Foo.Pestilence, Foo.Pestilence);
+        }
+
+        bool testNotEqual()
+        {
+            return _equals(Foo.Famine, Foo.Death);
+        }
+
+        bool testSimpleNotEqual()
+        {
+            return _notEquals(Foo.War, Foo.War);
+        }
+
+        bool testAnotherNotEqual()
+        {
+            return _notEquals(Foo.Pestilence, Foo.Pestilence);
+        }
+
+        bool testNotNotEqual()
+        {
+            return _notEquals(Foo.Famine, Foo.Death);
+        }
+
+        uint _uintWar()
+        {
+            return uint(_war());
+        }
+
+        uint uintWar()
+        {
+            return _uintWar();
+        }
+
+        uint _uintFamine()
+        {
+            return uint(_famine());
+        }
+
+        uint uintFamine()
+        {
+            return _uintFamine();
+        }
+
+        uint _uintPestilence()
+        {
+            return uint(_pestilence());
+        }
+
+        uint uintPestilence()
+        {
+            return _uintPestilence();
+        }
+
+        uint _uintDeath()
+        {
+            return uint(_death());
+        }
+
+        uint uintDeath()
+        {
+            return _uintDeath();
+        }
+
+        bool uintWarBackwards()
+        {
+            return Foo(_uintWar()) == Foo.War;
+        }
+
+        bool uintFamineBackwards()
+        {
+            return Foo(_uintFamine()) == Foo.Famine;
+        }
+
+        bool uintPestilenceBackwards()
+        {
+            return Foo(_uintPestilence()) == Foo.Pestilence;
+        }
+
+        bool uintDeathBackwards()
+        {
+            return Foo(_uintDeath()) == Foo.Death;
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program, "war", []), true);
+    assert_equals(await callBoolFunction(program, "famine", []), true);
+    assert_equals(await callBoolFunction(program, "pestilence", []), true);
+    assert_equals(await callBoolFunction(program, "death", []), true);
+
+    assert_equals(await callBoolFunction(program, "testSimpleEqual", []), true);
+    assert_equals(await callBoolFunction(program, "testAnotherEqual", []), true);
+    assert_equals(await callBoolFunction(program, "testNotEqual", []), false);
+    assert_equals(await callBoolFunction(program, "testSimpleNotEqual", []), false);
+    assert_equals(await callBoolFunction(program, "testAnotherNotEqual", []), false);
+    assert_equals(await callBoolFunction(program, "testNotNotEqual", []), true);
+    assert_equals(await callUintFunction(program, "uintWar", []), 0);
+    assert_equals(await callUintFunction(program, "uintFamine", []), 1);
+    assert_equals(await callUintFunction(program, "uintPestilence", []), 2);
+    assert_equals(await callUintFunction(program, "uintDeath", []), 3);
+
+    assert_equals(await callBoolFunction(program, "uintWarBackwards", []), true);
+    assert_equals(await callBoolFunction(program, "uintFamineBackwards", []), true);
+    assert_equals(await callBoolFunction(program, "uintPestilenceBackwards", []), true);
+    assert_equals(await callBoolFunction(program, "uintDeathBackwards", []), true);
+};
+
+
+whlslTests.enumWithoutZero = async () => {
+    await checkFail(
+        `
+            enum Foo {
+                War = 72,
+                Famine = 64,
+                Pestilence = 23,
+                Death = -42
+            }
+        `);
+};
+
+whlslTests.enumNegativeUint = async () => {
+    await checkFail(
+        `
+            enum Foo : uint {
+                War,
+                Famine,
+                Pestilence,
+                Death = -42
+            }
+        `);
+};
+
+whlslTests.pastIntMax = async () => {
+    await checkFail(
+        `
+            enum Foo : int {
+                War = 2147483647,
+                Famine,
+                Pestilence = 0,
+                Death
+            }
+        `);
+};
+
+whlslTests.enumWithSomeManualValues = async () => {
+    let program = `
+        enum Foo {
+            War = 72,
+            Famine,
+            Pestilence = 0,
+            Death
+        }
+        int war()
+        {
+            return int(Foo.War);
+        }
+        int famine()
+        {
+            return int(Foo.Famine);
+        }
+        int pestilence()
+        {
+            return int(Foo.Pestilence);
+        }
+        int death()
+        {
+            return int(Foo.Death);
+        }
+    `;
+    assert_equals(await callIntFunction(program, "war", []), 72);
+    assert_equals(await callIntFunction(program, "famine", []), 73);
+    assert_equals(await callIntFunction(program, "pestilence", []), 0);
+    assert_equals(await callIntFunction(program, "death", []), 1);
+};
+
+
+whlslTests.enumSwitchBreakExhaustive = async () => {
+    let program = `
+        enum Foo {
+            A, B, C
+        }
+        int foo(int x)
+        {
+            int result = 0;
+            switch (Foo(x)) {
+            case Foo.A:
+                result += 27;
+                break;
+            case Foo.B:
+                result += 7624;
+                break;
+            case Foo.C:
+                result += 49;
+                break;
+            }
+            return result;
+        }
+    `;
+    assert_equals(await callIntFunction(program, "foo", [makeInt(0)]), 27);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(1)]), 7624);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(2)]), 49);
+}
+
+
+whlslTests.enumSwitchBreakNotQuiteExhaustiveWithDefault = async () => {
+    let program = `
+        enum Foo {
+            A, B, C
+        }
+        int foo(int x)
+        {
+            int result = 0;
+            switch (Foo(x)) {
+            case Foo.A:
+                result += 27;
+                break;
+            case Foo.B:
+                result += 7624;
+                break;
+            default:
+                result += 49;
+                break;
+            }
+            return result;
+        }
+    `;
+    assert_equals(await callIntFunction(program, "foo", [makeInt(0)]), 27);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(1)]), 7624);
+    assert_equals(await callIntFunction(program, "foo", [makeInt(2)]), 49);
+}
+
+whlslTests.enumWithManualValues = async () => {
+    let program = `
+        enum Foo {
+            War = 72,
+            Famine = 0,
+            Pestilence = 23,
+            Death = -42
+        }
+        int war()
+        {
+            return int(Foo.War);
+        }
+        int famine()
+        {
+            return int(Foo.Famine);
+        }
+        int pestilence()
+        {
+            return int(Foo.Pestilence);
+        }
+        int death()
+        {
+            return int(Foo.Death);
+        }
+    `;
+    assert_equals(await callIntFunction(program, "war", []), 72);
+    assert_equals(await callIntFunction(program, "famine", []), 0);
+    assert_equals(await callIntFunction(program, "pestilence", []), 23);
+    assert_equals(await callIntFunction(program, "death", []), -42);
+};
+
+whlslTests.enumSwitchBreakNotQuiteExhaustive = async () => {
+    await checkFail(
+        `
+            enum Foo {
+                A, B, C, D
+            }
+            int foo(Foo x)
+            {
+                int result = 0;
+                switch (x) {
+                case Foo.A:
+                    result += 27;
+                    break;
+                case Foo.B:
+                    result += 7624;
+                    break;
+                case Foo.C:
+                    result += 49;
+                    break;
+                }
+                return result;
+            }
+        `);
+};
+
+whlslTests.copyConstructors = async () => {
+    const program = `
+        enum Weekday {
+            Monday,
+            Tuesday,
+            Wednesday,
+            Thursday,
+            Pizzaday
+        }
+        int foo()
+        {
+            Weekday x = Weekday.Monday;
+            Weekday y = Weekday(x);
+            float4 z = float4(1, 2, 3, 4);
+            float4 w = float4(z);
+            float2x2 p;
+            float2x2 q = float2x2(p);
+            return 42;
+        }
+    `;
+    assert_equals(await callIntFunction(program, "foo", []), 42);
+};
+
+runTests(whlslTests);
+</script>
+</html>

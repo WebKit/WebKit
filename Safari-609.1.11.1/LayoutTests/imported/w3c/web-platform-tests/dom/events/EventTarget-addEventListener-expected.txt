@@ -1,0 +1,3 @@
+
+PASS Adding a null event listener should succeed 
+

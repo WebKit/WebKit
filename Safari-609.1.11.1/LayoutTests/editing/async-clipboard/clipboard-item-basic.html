@@ -1,0 +1,213 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ experimental:AsyncClipboardAPIEnabled=true ] -->
+<html>
+    <meta charset="utf8">
+    <head>
+        <script src="../../resources/js-test.js"></script>
+        <script src="./resources/async-clipboard-helpers.js"></script>
+    </head>
+    <script>
+        jsTestIsAsync = true;
+
+        function commaSeparated(types) {
+            return types.join(", ");
+        }
+
+        function tryToCreateClipboardItem(data) {
+            try {
+                debug("");
+                const item = new ClipboardItem(data);
+                testPassed(`Created new ClipboardItem with ${Object.keys(data).length} type(s)`);
+                return item;
+            } catch (exception) {
+                testFailed(`Caught exception while creating ClipboardItem: ${exception}`);
+                return null;
+            }
+        }
+
+        async function doWithoutExpectingException(callback) {
+            try {
+                await callback();
+            } catch (exception) {
+                testFailed(`Caught unexpected exception: ${exception}`);
+            }
+        }
+
+        async function doExpectingException(callback, message) {
+            try {
+                await callback();
+                testFailed(`Expected exception (${message})`);
+            } catch (exception) {
+                testPassed(`Caught expected exception. (${message})`);
+            }
+        }
+
+        async function runTest()
+        {
+            description("Tests the ability to create and extract data from ClipboardItems.");
+
+            await (async function() {
+                item = tryToCreateClipboardItem({
+                    "text/plain" : Promise.resolve("foo")
+                });
+
+                await doWithoutExpectingException(async () => {
+                    shouldBeEqualToString("commaSeparated(item.types)", "text/plain");
+                    blob = await item.getType("text/plain");
+                    shouldBe("blob.size", "3");
+                    shouldBeEqualToString("blob.type", "text/plain");
+                    text = await loadText(blob);
+                    shouldBeEqualToString("text", "foo");
+                });
+
+                await doExpectingException(async () => {
+                    await item.getType("text/html");
+                }, "calling getType('text/html')");
+
+                await doExpectingException(async () => {
+                    await item.getType("foo bar");
+                }, "calling getType('foo bar')");
+            })();
+
+            await (async function() {
+                item = tryToCreateClipboardItem({
+                    "text/html" : Promise.resolve(textBlob("<strong>bar</strong>", "text/html"))
+                });
+
+                await doWithoutExpectingException(async () => {
+                    shouldBeEqualToString("commaSeparated(item.types)", "text/html");
+                    blob = await item.getType("text/html");
+                    shouldBe("blob.size", "20");
+                    shouldBeEqualToString("blob.type", "text/html");
+                    text = await loadText(blob);
+                    shouldBeEqualToString("text", "<strong>bar</strong>");
+                });
+            })();
+
+            await (async function() {
+                item = tryToCreateClipboardItem({
+                    "text/uri-list" : new Promise(resolve => {
+                        setTimeout(() => resolve("https://www.w3.org/TR/clipboard-apis/"), 50);
+                    })
+                });
+
+                await doWithoutExpectingException(async () => {
+                    shouldBeEqualToString("commaSeparated(item.types)", "text/uri-list");
+                    blob = await item.getType("text/uri-list");
+                    shouldBe("blob.size", "37");
+                    shouldBeEqualToString("blob.type", "text/uri-list");
+                    text = await loadText(blob);
+                    shouldBeEqualToString("text", "https://www.w3.org/TR/clipboard-apis/");
+                });
+            })();
+
+            await (async function() {
+                item = tryToCreateClipboardItem({
+                    "image/png" : new Promise(resolve => {
+                        setTimeout(() => resolve(imageBlob()), 50);
+                    })
+                });
+
+                await doWithoutExpectingException(async () => {
+                    shouldBeEqualToString("commaSeparated(item.types)", "image/png");
+                    blob = await item.getType("image/png");
+                    shouldBe("blob.size", "979");
+                    shouldBeEqualToString("blob.type", "image/png");
+                    image = await loadImage(blob);
+                    shouldBe("image.width", "60");
+                    shouldBe("image.height", "60");
+                });
+            })();
+
+            await (async function() {
+                item = tryToCreateClipboardItem({
+                    "image/png" : Promise.resolve(imageBlob()),
+                    "text/html" : Promise.resolve(textBlob(`<strong>Hello</strong><script>console.log("world")</${"script"}>`, "text/html")),
+                    "text/uri-list" : Promise.resolve(textBlob("https://www.w3.org/TR/clipboard-apis/", "text/uri-list")),
+                    "text/plain" : Promise.resolve("Async 📋 API")
+                });
+
+                await doWithoutExpectingException(async () => {
+                    shouldBeEqualToString("commaSeparated(item.types)", "image/png, text/html, text/uri-list, text/plain");
+                    image = await loadImage(await item.getType("image/png"));
+                    shouldBe("image.width", "60");
+                    shouldBe("image.height", "60");
+                    html = await loadText(await item.getType("text/html"));
+                    shouldBeEqualToString("html", `<strong>Hello</strong><script>console.log("world")</${"script"}>`)
+                    url = await loadText(await item.getType("text/uri-list"));
+                    shouldBeEqualToString("url", "https://www.w3.org/TR/clipboard-apis/");
+                    text = await loadText(await item.getType("text/plain"));
+                    shouldBeEqualToString("text", "Async 📋 API");
+                });
+            })();
+
+            await (async function() {
+                item = tryToCreateClipboardItem({
+                    "text/plain" : Promise.resolve("謝謝"),
+                    "text/html" : new Promise((_, reject) => {
+                        setTimeout(reject, 50);
+                    }).catch(() => { }),
+                    "image/png" : Promise.reject(imageBlob()).catch(() => { }),
+                    "🤔🤔🤔" : Promise.resolve("מקור השם עברית"),
+                    "מקור השם עברית" : Promise.resolve("🤔🤔🤔")
+                });
+
+                await doWithoutExpectingException(async () => {
+                    shouldBeEqualToString("commaSeparated(item.types)", "text/plain, text/html, image/png, 🤔🤔🤔, מקור השם עברית");
+                    text = await loadText(await item.getType("text/plain"));
+                    shouldBeEqualToString("text", "謝謝");
+                    customText1 = await loadText(await item.getType("🤔🤔🤔"));
+                    shouldBeEqualToString("customText1", "מקור השם עברית");
+                    customText2 = await loadText(await item.getType("מקור השם עברית"));
+                    shouldBeEqualToString("customText2", "🤔🤔🤔");
+                });
+
+                await doExpectingException(async () => {
+                    await item.getType("text/html");
+                }, "calling getType('text/html')");
+
+                await doExpectingException(async () => {
+                    await item.getType("image/png");
+                }, "calling getType('image/png')");
+            })();
+
+            await (async function() {
+                item = tryToCreateClipboardItem({
+                    "!@#$%" : Promise.resolve(-2),
+                    "image/png" : Promise.resolve(new Image),
+                    "text/html" : Promise.resolve(null),
+                    "text/uri-list" : Promise.resolve(undefined),
+                    "text/plain" : Promise.resolve([])
+                });
+
+                await doWithoutExpectingException(async () => {
+                    shouldBeEqualToString("commaSeparated(item.types)", "!@#$%, image/png, text/html, text/uri-list, text/plain");
+                });
+
+                await doExpectingException(async () => {
+                    await item.getType("!@#$%");
+                }, "calling getType('!@#$%')");
+
+                await doExpectingException(async () => {
+                    await item.getType("image/png");
+                }, "calling getType('image/png')");
+
+                await doExpectingException(async () => {
+                    await item.getType("text/html");
+                }, "calling getType('text/html')");
+
+                await doExpectingException(async () => {
+                    await item.getType("text/uri-list");
+                }, "calling getType('text/uri-list')");
+
+                await doExpectingException(async () => {
+                    await item.getType("text/plain");
+                }, "calling getType('text/plain')");
+            })();
+
+            finishJSTest();
+        }
+
+        addEventListener("load", runTest);
+    </script>
+    <body></body>
+</html>

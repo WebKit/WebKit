@@ -1,0 +1,42 @@
+/*
+ * Copyright (C) 2006, 2007, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+interface HTMLTableCellElement : HTMLElement {
+    readonly attribute long cellIndex;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString align;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString axis;
+    [CEReactions=NotNeeded, Reflect] attribute [TreatNullAs=EmptyString] DOMString bgColor;
+    [CEReactions=NotNeeded, Reflect=char] attribute DOMString ch;
+    [CEReactions=NotNeeded, Reflect=charoff] attribute DOMString chOff;
+
+    [CEReactions=NotNeeded] attribute unsigned long colSpan;
+    [CEReactions=NotNeeded, ImplementedAs=rowSpanForBindings] attribute unsigned long rowSpan;
+
+    [CEReactions=NotNeeded, Reflect] attribute DOMString headers;
+
+    [CEReactions=NotNeeded, Reflect] attribute DOMString height;
+    [CEReactions=NotNeeded, Reflect] attribute boolean noWrap;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString vAlign;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString width;
+
+    [CEReactions=NotNeeded, Reflect] attribute DOMString abbr;
+    [CEReactions=NotNeeded] attribute DOMString scope;
+};
+

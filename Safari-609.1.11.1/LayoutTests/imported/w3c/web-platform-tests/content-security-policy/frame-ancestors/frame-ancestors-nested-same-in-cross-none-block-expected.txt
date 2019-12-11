@@ -1,0 +1,7 @@
+Blocked access to external URL http://www1.localhost:8801/content-security-policy/frame-ancestors/support/frame-in-frame.sub.html?policy=%27none%27&parent=cross&child=same&expectation=blocked
+
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN A 'frame-ancestors' CSP directive with a value 'none' should block rendering in nested frames. 
+

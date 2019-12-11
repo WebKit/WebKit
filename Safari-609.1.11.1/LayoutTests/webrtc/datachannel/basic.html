@@ -1,0 +1,165 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Testing basic data channel from offerer to receiver</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script src ="../routines.js"></script>
+    <script>
+var localChannel;
+var remoteChannel;
+
+function closeDataChannels() {
+    localChannel.close();
+    remoteChannel.close();
+    closeConnections();
+}
+
+function receiveMessages(event) {
+try {
+    if (++counter === 1)
+        assert_equals(event.data, "one");
+    else if (counter === 2)
+        assert_equals(event.data, "two");
+    else if (counter === 3)
+        assert_equals(event.data, "three");
+    else if (counter === 4) {
+        assert_equals(event.data, "four");
+        closeDataChannels();
+        finishTest();
+    } else
+        assert_unreached();
+} catch(e) {
+    console.log(e);
+}
+}
+
+function sendMessages(channel)
+{
+    channel.send("one");
+    channel.send("two");
+    channel.send("three");
+    channel.send("four");
+}
+
+var finishTest;
+promise_test((test) => {
+    counter = 0;
+    return new Promise((resolve, reject) => {
+        finishTest = resolve;
+        createConnections((localConnection) => {
+            localChannel = localConnection.createDataChannel('sendDataChannel');
+            localChannel.onopen = () => { sendMessages(localChannel) };
+        }, (remoteConnection) => {
+            remoteConnection.ondatachannel = (event) => {
+                remoteChannel = event.channel;
+                remoteChannel.onmessage = receiveMessages;
+            };
+        });
+        setTimeout(() => { reject("Test timed out"); }, 5000);
+    });
+}, "Basic data channel exchange from offerer to receiver");
+
+promise_test((test) => {
+    counter = 0;
+    return new Promise((resolve, reject) => {
+        finishTest = resolve;
+        createConnections((localConnection) => {
+            localChannel = localConnection.createDataChannel('sendDataChannel');
+            localChannel.onmessage = receiveMessages;
+        }, (remoteConnection) => {
+            remoteConnection.ondatachannel = (event) => {
+                remoteChannel = event.channel;
+                remoteChannel.onopen = () => { sendMessages(remoteChannel) };
+            };
+        });
+        setTimeout(() => { reject("Test timed out"); }, 5000);
+    });
+}, "Basic data channel exchange from receiver to offerer");
+
+
+promise_test((test) => {
+    counter = 0;
+    return new Promise((resolve, reject) => {
+        finishTest = resolve;
+        createConnections((localConnection) => {
+            localChannel = localConnection.createDataChannel('sendDataChannel');
+            localChannel.onopen = () => { sendMessages(localChannel) };
+        }, (remoteConnection) => {
+            remoteConnection.ondatachannel = (event) => {
+                remoteChannel = event.channel;
+                remoteChannel.onmessage = receiveMessages;
+            };
+        }, { filterOutICECandidate: (candidate) => { return candidate && candidate.candidate.toLowerCase().indexOf("udp") == -1; } });
+        setTimeout(() => { reject("Test timed out"); }, 5000);
+    });
+}, "Basic data channel exchange from offerer to receiver using UDP only");
+
+promise_test((test) => {
+    counter = 0;
+    return new Promise((resolve, reject) => {
+        var checkDataChannelOptions = (channel, init) => {
+            assert_equals(channel.ordered, init.ordered, "ordered");
+            assert_equals(channel.maxPacketLifeTime, init.maxPacketLifeTime, "maxPacketLifeTime");
+            assert_equals(channel.maxRetransmitTime, init.maxRetransmitTime, "maxRetransmitTime");
+            assert_equals(channel.maxRetransmits, init.maxRetransmits, "maxRetransmits");
+            assert_equals(channel.protocol, init.protocol, "protocol");
+            assert_equals(channel.negotiated, init.negotiated, "negotiated");
+            assert_equals(channel.id, init.id, "id");
+        };
+
+        finishTest = resolve;
+        createConnections((localConnection) => {
+            var init = { ordered: true, maxPacketLifeTime: 10, maxRetransmitTime: 11, protocol: "whatever", negotiated: false, id: 1 };
+            localChannel = localConnection.createDataChannel('sendDataChannel', init);
+            localChannel.onopen = () => { sendMessages(localChannel) };
+        }, (remoteConnection) => {
+            remoteConnection.ondatachannel = (event) => {
+                remoteChannel = event.channel;
+                remoteChannel.onmessage = receiveMessages;
+            };
+        });
+        setTimeout(() => { reject("Test timed out"); }, 5000);
+    });
+}, "Basic data channel exchange from offerer to receiver 2");
+
+promise_test(async (test) => {
+    await new Promise((resolve, reject) => {
+        finishTest = resolve;
+        createConnections((localConnection) => {
+            localChannel = localConnection.createDataChannel('sendDataChannel');
+        }, (remoteConnection) => {
+            remoteConnection.ondatachannel = resolve;
+        });
+        setTimeout(() => { reject("Test step 1 timed out"); }, 5000);
+    });
+    await waitFor(50);
+    let waitForLocalChannelOpening = new Promise((resolve) => {
+        localChannel = localConnection.createDataChannel('sendDataChannel2');
+        localChannel.onopen = resolve;
+    });
+
+    let waitForRemoteChannel = new Promise((resolve) => {
+        remoteConnection.ondatachannel = (event) => {
+            remoteChannel = event.channel;
+            resolve();
+        };
+    });
+
+    await Promise.all([waitForLocalChannelOpening, waitForRemoteChannel]);
+
+    counter = 0;
+    await new Promise((resolve, reject) => {
+        finishTest = resolve;
+        remoteChannel.onmessage = receiveMessages;
+        sendMessages(localChannel);
+        setTimeout(() => { reject("Test step 2 timed out"); }, 5000);
+    });
+}, "Create a second channel asynchronously and send messages");
+
+    </script>
+  </body>
+</html>

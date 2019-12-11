@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Selections in hidden elements</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<link rel='stylesheet' href='../../resources/testharness.css'>
+</head>
+<body>
+<style>
+container, my-text {
+    display: block;
+}
+
+.hide {
+    position:relative;
+    overflow:hidden;
+    height:0px;
+    width:10px;
+}
+.select {
+    height:11px;
+    width:1px;
+    padding:0px;
+    border:1px solid blue;
+    box-sizing:content-box;
+    overflow:hidden;
+}
+.abs {
+    position: absolute;
+}
+.borderBox {
+    box-sizing:border-box;
+}
+</style>
+<container>
+<textarea class=select>test text</textarea>
+<my-text class=select>test text</my-text>
+</container>
+<script>
+function checkSelectable(element, expected)
+{
+    var selection = document.getSelection();
+    if (element.select)
+        element.select();
+    else
+        selection.selectAllChildren(element);
+
+    var selectionText = selection.toString();
+    if (expected)
+        assert_equals(selectionText, "test text");
+    else
+        assert_equals(selectionText, "");
+}
+
+var textarea = document.querySelector("textarea");
+var myText = document.querySelector("my-text");
+
+test(function () {
+    checkSelectable(textarea, true);
+}, "Selecting in barely visible textarea");
+
+test(function () {
+    checkSelectable(myText, true);
+}, "Selecting in barely visible div");
+
+document.querySelector("container").classList.add("hide");
+
+test(function () {
+    checkSelectable(textarea, false);
+}, "Selecting in textarea hidden by container");
+
+test(function () {
+    checkSelectable(myText, false);
+}, "Selecting in div hidden by container");
+
+textarea.classList.add("abs");
+myText.classList.add("abs");
+
+test(function () {
+    checkSelectable(textarea, true);
+}, "Selecting in absolute positioned textarea hidden by container");
+
+test(function () {
+    checkSelectable(myText, true);
+}, "Selecting in absolute positioned div hidden by container");
+
+textarea.classList.add("borderBox");
+myText.classList.add("borderBox");
+
+test(function () {
+    checkSelectable(textarea, true);
+}, "Selecting in absolute positioned zero content width textarea hidden by container (quirk behavior)");
+
+test(function () {
+    checkSelectable(myText, false);
+}, "Selecting in absolute positioned zero content width div hidden by container");
+
+</script>
+</body>
+</html>

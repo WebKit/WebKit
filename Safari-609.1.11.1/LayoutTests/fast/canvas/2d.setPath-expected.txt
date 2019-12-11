@@ -1,0 +1,15 @@
+The test to ensure that calling setPath with a Path2D works as expected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS originalPath.currentX is 0
+PASS originalPath.currentY is 0
+PASS newPathFromPath2D.currentX is 1
+PASS newPathFromPath2D.currentY is 2
+PASS newPathFromEmptyPath2D.currentX is 0
+PASS newPathFromEmptyPath2D.currentY is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,11 @@
+This tests if media controls timeline is properly updated when a cursor hovers the controls during playback.
+
+
+EVENT(canplaythrough)
+EXPECTED (timeLineValue() == '0') OK
+RUN(video.play())
+EVENT(play)
+EVENT(timeupdate)
+TEST(timeLineValue() >= 1) OK
+END OF TEST
+

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        #slider {
+            position: fixed;
+            top: 100px;
+            left: -100px;
+            width: 200px;
+            height: 100px;
+            background-color: blue;
+            border: 10px solid gray;
+        }
+        #slider.out {
+            -webkit-transform: translateX(100px);
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+            if (window.internals)
+                internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
+        }
+        window.addEventListener('load', function() {
+            window.setTimeout(function() {
+                document.getElementById('slider').classList.add('out');
+                if (window.testRunner) {
+                    document.getElementById('layertree').innerText = window.internals.layerTreeAsText(document);
+                    testRunner.notifyDone();
+                }
+            }, 0);
+        }, false);
+        
+    </script>
+</head>
+<body>
+<div id="slider"></div>
+<pre id="layertree"></pre>
+</body>
+</html>

@@ -1,0 +1,18 @@
+Test importing a SPKI RSAES-PKCS1-v1_5 key
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Importing a key...
+PASS publicKey.toString() is '[object CryptoKey]'
+PASS publicKey.type is 'public'
+PASS publicKey.extractable is true
+PASS publicKey.algorithm.name is 'RSAES-PKCS1-v1_5'
+PASS publicKey.algorithm.modulusLength is 2048
+PASS bytesToHexString(publicKey.algorithm.publicExponent) is '010001'
+PASS publicKey.algorithm.hash is undefined.
+PASS publicKey.usages is ['encrypt']
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

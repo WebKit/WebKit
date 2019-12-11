@@ -1,0 +1,149 @@
+
+---
+flags:
+  BigInt: useBigInt
+  WeakRef: useWeakRefs
+skip:
+  features:
+    - SharedArrayBuffer
+    - Atomics
+    # https://bugs.webkit.org/show_bug.cgi?id=174931
+    - regexp-lookbehind
+
+    - class-fields-public
+    - class-fields-private
+    - class-methods-private
+    - class-static-fields-public
+    - class-static-fields-private
+    - class-static-methods-private
+    - host-gc-required
+    - regexp-match-indices
+    - top-level-await
+    - FinalizationGroup
+    - Intl.DateTimeFormat-datetimestyle
+    - Intl.DateTimeFormat-formatRange
+    - Intl.ListFormat
+    - Intl.Locale
+    - Intl.NumberFormat-unified
+    - Intl.RelativeTimeFormat
+    - Intl.Segmenter
+  paths:
+    # https://bugs.webkit.org/show_bug.cgi?id=192920
+    - test/intl402/NumberFormat/prototype/formatToParts
+
+    - test/built-ins/DataView/prototype/getBigInt64
+    - test/built-ins/DataView/prototype/getBigUint64
+    - test/built-ins/DataView/prototype/setBigInt64
+
+    # https://bugs.webkit.org/show_bug.cgi?id=190800
+    - test/built-ins/TypedArray/prototype/Symbol.toStringTag/BigInt
+    - test/built-ins/TypedArray/prototype/buffer/BigInt
+    - test/built-ins/TypedArray/prototype/byteLength/BigInt
+    - test/built-ins/TypedArray/prototype/byteOffset/BigInt
+    - test/built-ins/TypedArray/prototype/copyWithin/BigInt
+    - test/built-ins/TypedArray/prototype/entries/BigInt
+    - test/built-ins/TypedArray/prototype/every/BigInt
+    - test/built-ins/TypedArray/prototype/fill/BigInt
+    - test/built-ins/TypedArray/prototype/filter/BigInt
+    - test/built-ins/TypedArray/prototype/find/BigInt
+    - test/built-ins/TypedArray/prototype/findIndex/BigInt
+    - test/built-ins/TypedArray/prototype/forEach/BigInt
+    - test/built-ins/TypedArray/prototype/includes/BigInt
+    - test/built-ins/TypedArray/prototype/indexOf/BigInt
+    - test/built-ins/TypedArray/prototype/join/BigInt
+    - test/built-ins/TypedArray/prototype/keys/BigInt
+    - test/built-ins/TypedArray/prototype/lastIndexOf/BigInt
+    - test/built-ins/TypedArray/prototype/length/BigInt
+    - test/built-ins/TypedArray/prototype/map/BigInt
+    - test/built-ins/TypedArray/prototype/reduce/BigInt
+    - test/built-ins/TypedArray/prototype/reduceRight/BigInt
+    - test/built-ins/TypedArray/prototype/reverse/BigInt
+    - test/built-ins/TypedArray/prototype/set/BigInt
+    - test/built-ins/TypedArray/prototype/slice/BigInt
+    - test/built-ins/TypedArray/prototype/some/BigInt
+    - test/built-ins/TypedArray/prototype/sort/BigInt
+    - test/built-ins/TypedArray/prototype/subarray/BigInt
+    - test/built-ins/TypedArray/prototype/toLocaleString/BigInt
+    - test/built-ins/TypedArray/prototype/toString/BigInt
+    - test/built-ins/TypedArray/prototype/values/BigInt
+    - test/built-ins/TypedArrayConstructors/BigInt64Array
+    - test/built-ins/TypedArrayConstructors/BigUint64Array
+    - test/built-ins/TypedArrayConstructors/ctors-bigint
+    - test/built-ins/TypedArrayConstructors/from/BigInt
+    - test/built-ins/TypedArrayConstructors/internals/DefineOwnProperty/BigInt
+    - test/built-ins/TypedArrayConstructors/internals/Get/BigInt
+    - test/built-ins/TypedArrayConstructors/internals/GetOwnProperty/BigInt
+    - test/built-ins/TypedArrayConstructors/internals/HasProperty/BigInt
+    - test/built-ins/TypedArrayConstructors/internals/OwnPropertyKeys/BigInt
+    - test/built-ins/TypedArrayConstructors/internals/Set/BigInt
+    - test/built-ins/TypedArrayConstructors/of/BigInt
+  files:
+    - test/built-ins/Array/prototype/reverse/length-exceeding-integer-limit-with-object.js
+    - test/built-ins/Array/prototype/unshift/length-near-integer-limit.js
+
+    # https://bugs.webkit.org/show_bug.cgi?id=186749
+    - test/built-ins/RegExp/property-escapes/character-class.js
+    
+    # https://bugs.webkit.org/show_bug.cgi?id=185495
+    - test/built-ins/Array/prototype/slice/S15.4.4.10_A3_T1.js
+    - test/built-ins/Array/prototype/slice/S15.4.4.10_A3_T2.js
+    - test/built-ins/Array/prototype/slice/create-non-array-invalid-len.js
+    - test/built-ins/Array/prototype/slice/create-proxied-array-invalid-len.js
+    - test/built-ins/Array/prototype/splice/create-species-undef-invalid-len.js
+    - test/built-ins/Array/prototype/splice/create-non-array-invalid-len.js
+    - test/built-ins/Array/prototype/splice/create-species-undef-invalid-len.js
+    - test/built-ins/Array/prototype/splice/length-near-integer-limit-grow-array.js
+
+    # https://bugs.webkit.org/show_bug.cgi?id=185625
+    - test/built-ins/Array/prototype/indexOf/15.4.4.14-3-28.js
+    - test/built-ins/Array/prototype/indexOf/15.4.4.14-3-29.js
+
+    # https://bugs.webkit.org/show_bug.cgi?id=164456
+    - test/built-ins/Array/prototype/lastIndexOf/15.4.4.15-3-28.js
+    - test/built-ins/Array/prototype/pop/S15.4.4.6_A3_T2.js
+    - test/built-ins/Array/prototype/push/S15.4.4.7_A4_T1.js
+    - test/built-ins/Array/prototype/push/length-near-integer-limit.js
+
+    # [[OwnPropertyKeys]] order with large integer index keys up to 2 ** 53 - 1
+    # https://bugs.webkit.org/show_bug.cgi?id=186691
+    - test/built-ins/Reflect/ownKeys/return-on-corresponding-order-large-index.js
+
+    # https://bugs.webkit.org/show_bug.cgi?id=192920
+    - test/intl402/PluralRules/prototype/resolvedOptions/order.js
+    - test/intl402/PluralRules/prototype/resolvedOptions/pluralCategories.js
+    - test/intl402/NumberFormat/prototype/format/format-fraction-digits.js
+    - test/intl402/NumberFormat/prototype/format/format-significant-digits.js
+
+    # https://bugs.webkit.org/show_bug.cgi?id=190800
+    - test/built-ins/TypedArray/prototype/set/src-typedarray-big-throws.js
+    - test/built-ins/TypedArrayConstructors/ctors/typedarray-arg/src-typedarray-big-throws.js
+    - test/built-ins/TypedArrayConstructors/prototype/Symbol.toStringTag/bigint-inherited.js
+    - test/built-ins/TypedArrayConstructors/prototype/bigint-Symbol.iterator.js
+    - test/built-ins/TypedArrayConstructors/prototype/buffer/bigint-inherited.js
+    - test/built-ins/TypedArrayConstructors/prototype/byteLength/bigint-inherited.js
+    - test/built-ins/TypedArrayConstructors/prototype/byteOffset/bigint-inherited.js
+    - test/built-ins/TypedArrayConstructors/prototype/copyWithin/bigint-inherited.js
+    - test/built-ins/TypedArrayConstructors/prototype/entries/bigint-inherited.js
+    - test/built-ins/TypedArrayConstructors/prototype/every/bigint-inherited.js
+    - test/built-ins/TypedArrayConstructors/prototype/fill/bigint-inherited.js
+    - test/built-ins/TypedArrayConstructors/prototype/filter/bigint-inherited.js
+    - test/built-ins/TypedArrayConstructors/prototype/find/bigint-inherited.js
+    - test/built-ins/TypedArrayConstructors/prototype/findIndex/bigint-inherited.js
+    - test/built-ins/TypedArrayConstructors/prototype/forEach/bigint-inherited.js
+    - test/built-ins/TypedArrayConstructors/prototype/indexOf/bigint-inherited.js
+    - test/built-ins/TypedArrayConstructors/prototype/join/bigint-inherited.js
+    - test/built-ins/TypedArrayConstructors/prototype/keys/bigint-inherited.js
+    - test/built-ins/TypedArrayConstructors/prototype/lastIndexOf/bigint-inherited.js
+    - test/built-ins/TypedArrayConstructors/prototype/length/bigint-inherited.js
+    - test/built-ins/TypedArrayConstructors/prototype/map/bigint-inherited.js
+    - test/built-ins/TypedArrayConstructors/prototype/reduce/bigint-inherited.js
+    - test/built-ins/TypedArrayConstructors/prototype/reduceRight/bigint-inherited.js
+    - test/built-ins/TypedArrayConstructors/prototype/reverse/bigint-inherited.js
+    - test/built-ins/TypedArrayConstructors/prototype/set/bigint-inherited.js
+    - test/built-ins/TypedArrayConstructors/prototype/slice/bigint-inherited.js
+    - test/built-ins/TypedArrayConstructors/prototype/some/bigint-inherited.js
+    - test/built-ins/TypedArrayConstructors/prototype/sort/bigint-inherited.js
+    - test/built-ins/TypedArrayConstructors/prototype/subarray/bigint-inherited.js
+    - test/built-ins/TypedArrayConstructors/prototype/toLocaleString/bigint-inherited.js
+    - test/built-ins/TypedArrayConstructors/prototype/toString/bigint-inherited.js
+    - test/built-ins/TypedArrayConstructors/prototype/values/bigint-inherited.js

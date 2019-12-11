@@ -1,0 +1,47 @@
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("Tests the behavior of document.scrollingElement in quirks mode.");
+
+debug("In quirks mode the scrolling element is `BODY`");
+shouldBe("document.scrollingElement", "document.body");
+
+document.documentElement.setAttribute('style', 'overflow: scroll');
+document.body.setAttribute('style', 'overflow: visible');
+shouldBe("document.scrollingElement", "document.body");
+
+document.documentElement.setAttribute('style', 'overflow: visible');
+document.body.setAttribute('style', 'overflow: scroll');
+shouldBe("document.scrollingElement", "document.body");
+
+debug("In quirks mode, if the `BODY` is scrollable, the scrolling element is `null`");
+document.documentElement.setAttribute('style', 'overflow: scroll');
+document.body.setAttribute('style', 'overflow: scroll');
+shouldBeNull("document.scrollingElement");
+
+debug("In quirks mode, if the `BODY` is `display: none`, the scrolling element is `BODY`");
+document.documentElement.setAttribute('style', 'overflow: scroll');
+document.body.setAttribute('style', 'overflow: scroll; display: none');
+shouldBe("document.scrollingElement", "document.body");
+
+document.body.setAttribute('style', '');
+
+debug("In quirks mode, the document.scrollingElement is null if there is no `HTML` root.");
+// We save and restore the root before testing so that the result can be printed.
+var oldRoot = document.removeChild(document.documentElement);
+document.appendChild(document.createElementNS("foobarNS", "html"));
+document.documentElement.appendChild(document.createElement("body"));
+var scrollingElement = document.scrollingElement;
+document.removeChild(document.documentElement);
+document.appendChild(oldRoot);
+shouldBeNull("scrollingElement");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

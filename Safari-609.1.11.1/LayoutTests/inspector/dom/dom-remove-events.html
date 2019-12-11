@@ -1,0 +1,88 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function moveNode()
+{
+    var tergetElement = document.getElementById("target_element");
+    tergetElement.addEventListener("DOMNodeRemoved", function() {
+        tergetElement.removeEventListener("DOMNodeRemoved", arguments.callee);
+        document.getElementById("final_container").appendChild(this);
+    });
+    tergetElement.remove();
+}
+
+function test()
+{
+    var nodesById = {};
+
+    InspectorProtocol.eventHandler["DOM.setChildNodes"] = onSetChildNodes;
+    InspectorProtocol.eventHandler["DOM.childNodeRemoved"] = onChildNodeRemoved;
+    InspectorProtocol.eventHandler["DOM.childNodeInserted"] = onChildNodeInserted;
+
+    function createNodeAttributesMap(node)
+    {
+        var attributes = {};
+        for (var i = 0; i < node.attributes.length; i += 2)
+            attributes[node.attributes[i]] = node.attributes[i + 1];
+        return attributes;
+    }
+
+    function collectNode(node)
+    {
+        nodesById[node.nodeId] = createNodeAttributesMap(node);
+    }
+
+    function getNodeIdentifier(nodeId)
+    {
+        var node = nodesById[nodeId];
+        return node ? node.id : "<unknown node>";
+    }
+
+    function onSetChildNodes(response)
+    {
+        response.params.nodes.forEach(collectNode);
+    }
+
+    function onChildNodeRemoved(response)
+    {
+        var nodeId = response.params.nodeId;
+        ProtocolTest.expectThat(getNodeIdentifier(nodeId) === "target_element", "onChildNodeRemoved called for #target_element");
+        delete nodesById[nodeId];
+    }
+
+    function onChildNodeInserted(response)
+    {
+        collectNode(response.params.node);
+        ProtocolTest.expectThat(getNodeIdentifier(response.params.parentNodeId) === "final_container", "onChildNodeInserted called for parent node #final_container");
+        ProtocolTest.expectThat(getNodeIdentifier(response.params.node.nodeId) === "target_element", "onChildNodeInserted called for child node #target_element");
+    }
+
+    InspectorProtocol.sendCommand("DOM.getDocument", {}, onGotDocument);
+
+    function onGotDocument(msg)
+    {
+        InspectorProtocol.checkForError(msg);
+        InspectorProtocol.sendCommand("DOM.querySelector", {"nodeId": msg.result.root.nodeId, "selector": "#final_container"}, onQuerySelector);
+    }
+
+    function onQuerySelector(response)
+    {
+        // Make sure we receive the children of the "#final_container" as they are added.
+        InspectorProtocol.sendCommand("DOM.requestChildNodes", {nodeId: response.result.nodeId});
+        InspectorProtocol.sendCommand("Runtime.evaluate", {"expression": "moveNode()"}, function() {
+            ProtocolTest.completeTest();
+        });
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+
+<p>Testing that DOM.childNodeRemoved is correctly triggered only when the element is actually going to be removed from the DOM.</p>
+
+<div id="target_element"></div>
+<div id="final_container"></div>
+
+</body>
+</html>

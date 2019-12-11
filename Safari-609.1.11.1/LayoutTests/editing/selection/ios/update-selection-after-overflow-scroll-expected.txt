@@ -1,0 +1,24 @@
+This test verifies that a selection in a fast scrollable area is kept up to date after scrolling. To test manually, tap the button and scroll the editable area down; the selection move to account for the new scroll position.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS selectionRectsBefore[0].top is 108
+PASS selectionRectsBefore[0].width is 320
+PASS selectionRectsBefore[0].left is 0
+PASS selectionRectsBefore[0].height is 29
+PASS selectionRectsBefore[1].top is 137
+PASS selectionRectsBefore[1].width is 172
+PASS selectionRectsBefore[1].left is 0
+PASS selectionRectsBefore[1].height is 30
+PASS selectionRectsAfter[0].top is 58
+PASS selectionRectsAfter[0].width is 320
+PASS selectionRectsAfter[0].left is 0
+PASS selectionRectsAfter[0].height is 29
+PASS selectionRectsAfter[1].top is 87
+PASS selectionRectsAfter[1].width is 172
+PASS selectionRectsAfter[1].left is 0
+PASS selectionRectsAfter[1].height is 30
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

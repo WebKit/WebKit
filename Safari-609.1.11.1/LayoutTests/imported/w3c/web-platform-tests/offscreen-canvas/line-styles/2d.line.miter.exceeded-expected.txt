@@ -1,0 +1,7 @@
+2d.line.miter.exceeded
+
+Miter joins are not drawn when the miter limit is exceeded
+
+
+FAIL Miter joins are not drawn when the miter limit is exceeded null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

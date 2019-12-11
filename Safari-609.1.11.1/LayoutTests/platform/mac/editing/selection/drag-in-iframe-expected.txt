@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 771x36
+          text run at (0,0) width 551: "This is an automatic pixel test. To test interactively, drag selected text onto the iframe "
+          text run at (551,0) width 216: "below and verify that a drag caret"
+          text run at (766,0) width 5: " "
+          text run at (0,18) width 160: "appears inside the frame."
+      RenderBlock (anonymous) at (0,52) size 784x152
+        RenderIFrame {IFRAME} at (0,0) size 302x152 [border: (1px solid #000000)]
+          layer at (0,0) size 300x150
+            RenderView at (0,0) size 300x150
+          layer at (0,0) size 300x150
+            RenderBlock {HTML} at (0,0) size 300x150
+              RenderBody {BODY} at (8,8) size 284x134
+                RenderInline {SPAN} at (0,0) size 38x18
+                  RenderText {#text} at (0,0) size 38x18
+                    text run at (0,0) width 38: "There"
+                RenderText {#text} at (37,0) size 172x18
+                  text run at (37,0) width 172: " should be a caret here --> "
+                RenderBR {BR} at (208,14) size 1x0
+                RenderText {#text} at (0,18) size 44x18
+                  text run at (0,18) width 44: "See it?"
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

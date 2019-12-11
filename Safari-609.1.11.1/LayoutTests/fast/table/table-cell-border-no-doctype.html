@@ -1,0 +1,34 @@
+<html>
+    <head>
+        <style>
+            table {
+                border: 1px solid blue;
+                width: 200px;
+                height: 100px;
+            }
+        </style>
+        <script>
+            function runTest()
+            {
+                var  tableCell = document.getElementById('noChild');
+                var text = document.createTextNode("    ");
+                tableCell.appendChild(text);
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <table>
+            <tr>
+                <td width="50%" style=" border: 1px solid red;background-color: yellow;"><p></p></td>
+                <td width="50%" style=" border: 1px solid red; "></td>
+            </tr>
+        </table>
+        </br>
+        <table>
+            <tr>
+                <td width="50%" style=" border: 1px solid red;background-color: yellow;"><p></p></td>
+                <td id="noChild" width="50%" style=" border: 1px solid red; "></td>
+            </tr>
+        </table>
+    </body>
+</html>

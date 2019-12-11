@@ -1,0 +1,3 @@
+
+PASS <template> tag should be ignored in "in frameset" insertion mode 
+

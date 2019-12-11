@@ -1,0 +1,121 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+input {
+    background-color: white;
+    color: black;
+}
+input:read-only {
+    background-color: rgb(1, 2, 3);
+}
+input:read-write {
+    color: rgb(4, 5, 6);
+}
+</style>
+</head>
+<body>
+    <div style="display:none">
+        <input id="testcase">
+    </div>
+</body>
+<script>
+description('Test the basic features of ":read-only", ":read-write" on the &ltinput&gt; element. The definion is that ":read-write" is matches for "input elements to which the readonly attribute applies, and that are mutable (i.e. that do not have the readonly attribute specified and that are not disabled)"');
+
+// List of [input type, supports readonly attribute].
+var inputTypes = [
+    // Input types defined in the HTML Living Standard. http://www.whatwg.org/html/
+    ["hidden", false],
+    ["text", true],
+    ["search", true],
+    ["tel", true],
+    ["url", true],
+    ["email", true],
+    ["password", true],
+    ["datetime", true],
+    ["date", true],
+    ["month", true],
+    ["week", true],
+    ["time", true],
+    ["datetime-local", true],
+    ["number", true],
+    ["range", false],
+    ["color", false],
+    ["checkbox", false],
+    ["radio", false],
+    ["file", false],
+    ["submit", false],
+    ["image", false],
+    ["reset", false],
+    ["button", false],
+
+    // Made up ones.
+    ["", true],
+    ["webkit", true],
+    ["foobar", true],
+];
+
+function testProperties(isReadOnly) {
+    shouldBe('document.querySelectorAll("input:read-write").length', isReadOnly ? "0" : "1");
+    shouldBe('document.querySelector("input:read-write")', isReadOnly ? "null" : "document.getElementById(\"testcase\")");
+    shouldBe('document.querySelectorAll("input:read-only").length', isReadOnly ? "1" : "0");
+    shouldBe('document.querySelector("input:read-only")', isReadOnly ? "document.getElementById(\"testcase\")" : "null");
+    shouldBeEqualToString("getComputedStyle(document.getElementById(\"testcase\")).color", isReadOnly ? "rgb(0, 0, 0)" : "rgb(4, 5, 6)");
+    shouldBeEqualToString("getComputedStyle(document.getElementById(\"testcase\")).backgroundColor", isReadOnly ? "rgb(1, 2, 3)" : "rgb(255, 255, 255)");
+}
+
+function testInputType(inputType, supportsReadonly) {
+    var testCase = document.getElementById("testcase");
+    testCase.type = inputType;
+
+    // Initial state.
+    testProperties(!supportsReadonly);
+
+    // Setting readonly through API.
+    testCase.readOnly = true;
+    testProperties(true);
+
+    testCase.readOnly = false;
+    testProperties(!supportsReadonly);
+
+    // Setting readonly through attributes.
+    testCase.setAttribute("readonly", "");
+    testProperties(true);
+
+    testCase.removeAttribute("readonly");
+    testProperties(!supportsReadonly);
+
+    // Setting disabled through API.
+    testCase.disabled = true;
+    testProperties(true);
+
+    testCase.disabled = false;
+    testProperties(!supportsReadonly);
+
+    // Setting disabled through attributes.
+    testCase.setAttribute("disabled", "");
+    testProperties(true);
+
+    testCase.removeAttribute("disabled");
+    testProperties(!supportsReadonly);
+
+    // Setting both.
+    testCase.readOnly = true;
+    testCase.disabled = true;
+    testProperties(true);
+
+    // Remove them one by one.
+    testCase.removeAttribute("disabled");
+    testProperties(true);
+    testCase.removeAttribute("readonly");
+    testProperties(!supportsReadonly);
+}
+
+for (var i = 0; i < inputTypes.length; ++i) {
+    debug("Testing " + inputTypes[i][0]);
+    testInputType(inputTypes[i][0], inputTypes[i][1]);
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

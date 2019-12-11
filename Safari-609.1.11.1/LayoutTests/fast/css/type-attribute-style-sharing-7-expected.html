@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+<head>
+    <style>
+        /* Pack them to fit everything in 800*600 */
+        div > * {
+            padding: 5px;
+            width: 100px;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+    <p>Verify style sharing does not ignore the "type" attribute.</p>
+    <div>
+        <div>
+            Padding
+            <span>No type<span>
+            <span>No type<span>
+            <span>No type<span>
+            Padding
+        </div>
+        <div type>
+            Padding
+            <span style="background-color: red;">Type defined<span>
+            <span style="background-color: red;">Type defined<span>
+            <span style="background-color: red;">Type defined<span>
+            Padding
+        </div>
+        <div type="">
+            Padding
+            <span style="background-color: red;">Type defined empty<span>
+            <span style="background-color: red;">Type defined empty<span>
+            <span style="background-color: red;">Type defined empty<span>
+            Padding
+        </div>
+        <div type="foobar">
+            Padding
+            <span style="background-color: blue;">Type is foobar<span>
+            <span style="background-color: blue;">Type is foobar<span>
+            <span style="background-color: blue;">Type is foobar<span>
+            Padding
+        </div>
+    </div>
+    <div>
+        <span>
+            Padding
+            <span>No type<span>
+            <span>No type<span>
+            <span>No type<span>
+            Padding
+        </span>
+        <span type>
+            Padding
+            <span style="background-color: red;">Type defined<span>
+            <span style="background-color: red;">Type defined<span>
+            <span style="background-color: red;">Type defined<span>
+            Padding
+        </span>
+        <span type="">
+            Padding
+            <span style="background-color: red;">Type defined empty<span>
+            <span style="background-color: red;">Type defined empty<span>
+            <span style="background-color: red;">Type defined empty<span>
+            Padding
+        </span>
+        <span type="foobar">
+            Padding
+            <span style="background-color: blue;">Type is foobar<span>
+            <span style="background-color: blue;">Type is foobar<span>
+            <span style="background-color: blue;">Type is foobar<span>
+            Padding
+        </span>
+    </div>
+    <div>
+        <input value="No type">
+        <input type value="Type defined">
+        <input type="" value="Type defined empty">
+        <input type="foobar" value="Type is foobar">
+    </div>
+</body>
+</html>

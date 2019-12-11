@@ -1,0 +1,15 @@
+This test has to run in iOS WebKitTestRunner.
+
+ 
+This tests that accessibility speak selection content is correct.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Content: Text outside iframe
+Content: Text inside iframe
+Content: text3
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,44 @@
+<html>
+<head>
+    
+<style type="text/css">
+
+#title h1 {
+    margin: 0px 24px 0px 0px;
+    padding: 23px 0px 0px 175px;
+}
+
+body {
+    position: absolute; 
+    max-width: 600px;
+    padding: 5px;
+    border: 1px solid black;
+}
+
+</style>
+
+</head>
+<body>
+<h1 id="title">Word selection on right click test</h1>
+This tests to make sure that right clicking non-editable content only creates a word selection for clicks over text. <span id="word">To</span> run manually, right click on text, and a word should be selected.  Right click on the empty space outside and to the right of the black border, the selection should be removed.
+</body>
+
+<script>
+if (window.testRunner) {
+    // Make sure that right click is not a no-op (selects a word).
+    word = document.getElementById("word");
+    x = word.offsetParent.offsetLeft + word.offsetLeft + word.offsetWidth / 2;
+    y = word.offsetParent.offsetTop + word.offsetTop + word.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.contextClick();
+
+    // This should not.
+    body = document.body;
+    x = body.offsetLeft + body.offsetWidth + 10;
+    y = body.offsetTop + body.offsetHeight - 10;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.contextClick();
+}
+</script>
+
+</html>

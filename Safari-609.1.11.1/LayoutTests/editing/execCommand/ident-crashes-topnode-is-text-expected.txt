@@ -1,0 +1,4 @@
+execCommand("Indent") was crashing if the top element to be formatted is actually not an element.
+The test has passed if it does not crash.
+
+PASS

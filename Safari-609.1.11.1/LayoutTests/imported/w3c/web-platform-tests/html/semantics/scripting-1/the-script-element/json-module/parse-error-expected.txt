@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 1: TypeError: 'application/json' is not a valid JavaScript MIME type.
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT JSON modules: parse error Test timed out
+

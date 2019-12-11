@@ -1,0 +1,29 @@
+<html>
+<head>
+<script src="../../resources/dump-as-markup.js"></script>
+<style>
+div { text-align: center; }
+</style>
+</head>
+
+<body contentEditable="true">
+These demonstrate 11475: the '\n's at the end of the fragment should be unrendered.<br><br>
+
+<script id="script">
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
+
+var s = window.getSelection();
+var e = document.body;
+
+s.setPosition(e, 0);
+document.execCommand("SelectAll");
+s.modify("move", "forward", "character");
+document.execCommand("InsertHTML", false, "<div>This test checks that pasing in a combination of nested blocks where one starts with a text field doesn't crash or fail assertions.</div>\n<div>\n<div>\n<textarea> </textarea> \n<span>x</span>\n</div>\n</div>");
+
+e.removeChild(document.getElementById('script'));
+Markup.dump(e);
+
+</script>
+</body>
+</html>

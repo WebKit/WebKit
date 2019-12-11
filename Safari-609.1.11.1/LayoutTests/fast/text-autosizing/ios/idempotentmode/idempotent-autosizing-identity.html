@@ -1,0 +1,31 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+if (window.internals) {
+    window.internals.settings.setTextAutosizingEnabled(true);
+    window.internals.settings.setTextAutosizingUsesIdempotentMode(true);
+}
+</script>
+<script src="../../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div style="background: green;"><span id="target" style="font-size: 12px;">Test</span></div>
+<div style="background: green;"><span style="font-size: 12px;">Test</span></div>
+<div style="background: green;"><span id="target2" style="font-size: 6px;">Test</span></div>
+<div style="background: green;"><span style="font-size: 6px;">Test</span></div>
+<script>
+let target = document.getElementById("target");
+target.offsetWidth;
+let result = Number.parseInt(window.getComputedStyle(target).getPropertyValue("font-size"));
+shouldBe("result", "12");
+
+target = document.getElementById("target2");
+target.offsetWidth;
+result = Number.parseInt(window.getComputedStyle(target).getPropertyValue("font-size"));
+shouldBe("result", "6");
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

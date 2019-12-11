@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger/debugger-test.js"></script>
+<script src="./resources/scope.js"></script>
+<script>
+
+function test()
+{
+    var testInfoList = [
+        { line : 4, column : 8, startFunc : "testNativeScope()" }
+    ];
+
+    var currentTestIndex = 0;
+    var scriptObject;
+
+    function startTest() {
+        InspectorTest.log("Starting Test");
+        runNextTest();
+    }
+
+    function runNextTest() {
+        if (currentTestIndex >= testInfoList.length) {
+            InspectorTest.log("Tests done");
+            InspectorTest.completeTest();
+            return;
+        }
+
+        var testInfo = testInfoList[currentTestIndex];
+        var location = scriptObject.createSourceCodeLocation(testInfo.line, testInfo.column);
+        var breakpoint = new WI.Breakpoint(location);
+
+        WI.debuggerManager.addBreakpoint(breakpoint);
+        InspectorTest.evaluateInPage(testInfo.startFunc);
+
+        currentTestIndex++;
+    }
+
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, function(event) {
+        var activeCallFrame = WI.debuggerManager.activeCallFrame;
+
+        if (!activeCallFrame)
+            return;
+
+        var stopLocation = "line: " + activeCallFrame.sourceCodeLocation.lineNumber + ", column: " + activeCallFrame.sourceCodeLocation.columnNumber;
+
+        InspectorTest.log("Hit breakpoint at " + stopLocation);
+        InspectorTest.evaluateInPage("console.log('Paused at " + stopLocation + "')");
+
+        var activeCallFrame = WI.debuggerManager.activeCallFrame;
+        var scopeChain = activeCallFrame.scopeChain;
+        var scopeTypes = [];
+        var scopeTypeIndex = 0;
+        var globalScopeCount = 0;
+
+        for (var scope of scopeChain) {
+            scopeTypes.push(scope.type);
+            if (scope.type !== WI.ScopeChainNode.Type.Global) {
+                scope.objects[0].getPropertyDescriptors(function(properties) {
+                    InspectorTest.log(scopeTypes[scopeTypeIndex++] + " properties:");
+                    for (var propertyDescriptor of properties)
+                        InspectorTest.log("    " + propertyDescriptor.name);
+
+                    if (scopeTypeIndex == scopeTypes.length - 1)
+                        InspectorTest.log(scopeTypes[scopeTypeIndex] + " (properties not listed)");
+                });
+            } else
+                globalScopeCount++;
+        }
+
+        if (globalScopeCount != 1)
+            InspectorTest.log("Error: too many " + WI.ScopeChainNode.Type.Global + " scopes");
+
+        WI.debuggerManager.resume();
+    });
+
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Resumed, function(event) {
+       runNextTest();
+    });
+
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, function(event) {
+        eventScriptObject = event.data.script;
+        
+        if (/scope\.js$/.test(eventScriptObject.url)) {
+            scriptObject = eventScriptObject;
+            startTest();
+            return;
+        }
+
+    });
+
+    InspectorTest.reloadPage();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that we can access scope in various functions.</p>
+</body>
+</html>

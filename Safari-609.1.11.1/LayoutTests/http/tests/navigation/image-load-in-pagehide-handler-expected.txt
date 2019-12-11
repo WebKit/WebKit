@@ -1,0 +1,5 @@
+Ping sent successfully
+HTTP_HOST: 127.0.0.1:8000
+HTTP_REFERER: http://127.0.0.1:8000/navigation/image-load-in-pagehide-handler.html
+REQUEST_METHOD: GET
+REQUEST_URI: /navigation/resources/save-Ping.php

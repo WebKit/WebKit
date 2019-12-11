@@ -1,0 +1,956 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+import("//build/config/arm.gni")
+import("//build/config/features.gni")
+import("//build/config/mips.gni")
+import("//build/config/sanitizers/sanitizers.gni")
+import("//build/config/sysroot.gni")
+import("//build/config/ui.gni")
+import("//build_overrides/build.gni")
+
+if (!build_with_chromium && is_component_build) {
+  print("The Gn argument `is_component_build` is currently " +
+        "ignored for WebRTC builds.")
+  print("Component builds are supported by Chromium and the argument " +
+        "`is_component_build` makes it possible to create shared libraries " +
+        "instead of static libraries.")
+  print("If an app depends on WebRTC it makes sense to just depend on the " +
+        "WebRTC static library, so there is no difference between " +
+        "`is_component_build=true` and `is_component_build=false`.")
+  print(
+      "More info about component builds at: " + "https://chromium.googlesource.com/chromium/src/+/master/docs/component_build.md")
+  assert(!is_component_build, "Component builds are not supported in WebRTC.")
+}
+
+if (is_ios) {
+  import("//build/config/ios/rules.gni")
+}
+
+if (is_mac) {
+  import("//build/config/mac/rules.gni")
+}
+
+declare_args() {
+  # Setting this to true will make RTC_EXPORT (see rtc_base/system/rtc_export.h)
+  # expand to code that will manage symbols visibility.
+  rtc_enable_symbol_export = false
+
+  # Setting this to true will define WEBRTC_EXCLUDE_FIELD_TRIAL_DEFAULT which
+  # will tell the pre-processor to remove the default definition of symbols
+  # needed to use field_trial. In that case a new implementation needs to be
+  # provided.
+  if (build_with_chromium) {
+    # When WebRTC is built as part of Chromium it should exclude the default
+    # implementation of field_trial unless it is building for NACL or
+    # Chromecast.
+    rtc_exclude_field_trial_default = !is_nacl && !is_chromecast
+  } else {
+    rtc_exclude_field_trial_default = false
+  }
+
+  # Setting this to true will define WEBRTC_EXCLUDE_METRICS_DEFAULT which
+  # will tell the pre-processor to remove the default definition of symbols
+  # needed to use metrics. In that case a new implementation needs to be
+  # provided.
+  rtc_exclude_metrics_default = build_with_chromium
+
+  # Setting this to false will require the API user to pass in their own
+  # SSLCertificateVerifier to verify the certificates presented from a
+  # TLS-TURN server. In return disabling this saves around 100kb in the binary.
+  rtc_builtin_ssl_root_certificates = true
+
+  # Include the iLBC audio codec?
+  rtc_include_ilbc = true
+
+  # Disable this to avoid building the Opus audio codec.
+  rtc_include_opus = true
+
+  # Enable this if the Opus version upon which WebRTC is built supports direct
+  # encoding of 120 ms packets.
+  rtc_opus_support_120ms_ptime = true
+
+  # Enable this to let the Opus audio codec change complexity on the fly.
+  rtc_opus_variable_complexity = false
+
+  # Used to specify an external Jsoncpp include path when not compiling the
+  # library that comes with WebRTC (i.e. rtc_build_json == 0).
+  rtc_jsoncpp_root = "//third_party/jsoncpp/source/include"
+
+  # Used to specify an external OpenSSL include path when not compiling the
+  # library that comes with WebRTC (i.e. rtc_build_ssl == 0).
+  rtc_ssl_root = ""
+
+  # Selects fixed-point code where possible.
+  rtc_prefer_fixed_point = false
+
+  # Enable when an external authentication mechanism is used for performing
+  # packet authentication for RTP packets instead of libsrtp.
+  rtc_enable_external_auth = build_with_chromium
+
+  # Selects whether debug dumps for the audio processing module
+  # should be generated.
+  apm_debug_dump = false
+
+  # Set this to true to enable BWE test logging.
+  rtc_enable_bwe_test_logging = false
+
+  # Set this to false to skip building examples.
+  rtc_build_examples = true
+
+  # Set this to false to skip building tools.
+  rtc_build_tools = true
+
+  # Set this to false to skip building code that requires X11.
+  rtc_use_x11 = use_x11
+
+  # Set this to use PipeWire on the Wayland display server.
+  # By default it's only enabled on desktop Linux (excludes ChromeOS) and
+  # only when using the sysroot as PipeWire is not available in older and
+  # supported Ubuntu and Debian distributions.
+  rtc_use_pipewire = is_desktop_linux && use_sysroot
+
+  # Set this to link PipeWire directly instead of using the dlopen.
+  rtc_link_pipewire = false
+
+  # Enable to use the Mozilla internal settings.
+  build_with_mozilla = false
+
+  # Enable use of Android AAudio which requires Android SDK 26 or above and
+  # NDK r16 or above.
+  rtc_enable_android_aaudio = false
+
+  # Set to "func", "block", "edge" for coverage generation.
+  # At unit test runtime set UBSAN_OPTIONS="coverage=1".
+  # It is recommend to set include_examples=0.
+  # Use llvm's sancov -html-report for human readable reports.
+  # See http://clang.llvm.org/docs/SanitizerCoverage.html .
+  rtc_sanitize_coverage = ""
+
+  if (current_cpu == "arm" || current_cpu == "arm64") {
+    rtc_prefer_fixed_point = true
+  }
+
+  # Determines whether NEON code will be built.
+  rtc_build_with_neon =
+      (current_cpu == "arm" && arm_use_neon) || current_cpu == "arm64"
+
+  # Enable this to build OpenH264 encoder/FFmpeg decoder. This is supported on
+  # all platforms except Android and iOS. Because FFmpeg can be built
+  # with/without H.264 support, |ffmpeg_branding| has to separately be set to a
+  # value that includes H.264, for example "Chrome". If FFmpeg is built without
+  # H.264, compilation succeeds but |H264DecoderImpl| fails to initialize.
+  # CHECK THE OPENH264, FFMPEG AND H.264 LICENSES/PATENTS BEFORE BUILDING.
+  # http://www.openh264.org, https://www.ffmpeg.org/
+  #
+  # Enabling H264 when building with MSVC is currently not supported, see
+  # bugs.webrtc.org/9213#c13 for more info.
+  rtc_use_h264 =
+      proprietary_codecs && !is_android && !is_ios && !(is_win && !is_clang)
+
+  # By default, use normal platform audio support or dummy audio, but don't
+  # use file-based audio playout and record.
+  rtc_use_dummy_audio_file_devices = false
+
+  # When set to true, replace the audio output with a sinus tone at 440Hz.
+  # The ADM will ask for audio data from WebRTC but instead of reading real
+  # audio samples from NetEQ, a sinus tone will be generated and replace the
+  # real audio samples.
+  rtc_audio_device_plays_sinus_tone = false
+
+  if (is_ios) {
+    # Build broadcast extension in AppRTCMobile for iOS. This results in the
+    # binary only running on iOS 11+, which is why it is disabled by default.
+    rtc_apprtcmobile_broadcast_extension = false
+  }
+
+  # Determines whether Metal is available on iOS/macOS.
+  rtc_use_metal_rendering = is_mac || (is_ios && current_cpu == "arm64")
+
+  # When set to false, builtin audio encoder/decoder factories and all the
+  # audio codecs they depend on will not be included in libwebrtc.{a|lib}
+  # (they will still be included in libjingle_peerconnection_so.so and
+  # WebRTC.framework)
+  rtc_include_builtin_audio_codecs = true
+
+  # When set to false, builtin video encoder/decoder factories and all the
+  # video codecs they depends on will not be included in libwebrtc.{a|lib}
+  # (they will still be included in libjingle_peerconnection_so.so and
+  # WebRTC.framework)
+  rtc_include_builtin_video_codecs = true
+
+  # When set to true and in a standalone build, it will undefine UNICODE and
+  # _UNICODE (which are always defined globally by the Chromium Windows
+  # toolchain).
+  # This is only needed for testing purposes, WebRTC wants to be sure it
+  # doesn't assume /DUNICODE and /D_UNICODE but that it explicitly uses
+  # wide character functions.
+  rtc_win_undef_unicode = false
+}
+
+if (!build_with_mozilla) {
+  import("//testing/test.gni")
+}
+
+# A second declare_args block, so that declarations within it can
+# depend on the possibly overridden variables in the first
+# declare_args block.
+declare_args() {
+  # Enables the use of protocol buffers for debug recordings.
+  rtc_enable_protobuf = !build_with_mozilla
+
+  # Set this to disable building with support for SCTP data channels.
+  rtc_enable_sctp = !build_with_mozilla
+
+  # Disable these to not build components which can be externally provided.
+  rtc_build_json = !build_with_mozilla
+  rtc_build_libsrtp = !build_with_mozilla
+  rtc_build_libvpx = !build_with_mozilla
+  rtc_libvpx_build_vp9 = !build_with_mozilla
+  rtc_build_opus = !build_with_mozilla
+  rtc_build_ssl = !build_with_mozilla
+  rtc_build_usrsctp = !build_with_mozilla
+
+  # Enable libevent task queues on platforms that support it.
+  if (is_win || is_mac || is_ios || is_nacl || is_fuchsia ||
+      target_cpu == "wasm") {
+    rtc_enable_libevent = false
+    rtc_build_libevent = false
+  } else {
+    rtc_enable_libevent = true
+    rtc_build_libevent = !build_with_mozilla
+  }
+
+  # Build sources requiring GTK. NOTICE: This is not present in Chrome OS
+  # build environments, even if available for Chromium builds.
+  rtc_use_gtk = !build_with_chromium && !build_with_mozilla
+
+  # Excluded in Chromium since its prerequisites don't require Pulse Audio.
+  rtc_include_pulse_audio = !build_with_chromium
+
+  # Chromium uses its own IO handling, so the internal ADM is only built for
+  # standalone WebRTC.
+  rtc_include_internal_audio_device = !build_with_chromium
+
+  # Include tests in standalone checkout.
+  rtc_include_tests = !build_with_chromium && !build_with_mozilla
+
+  # Set this to false to skip building code that also requires X11 extensions
+  # such as Xdamage, Xfixes.
+  rtc_use_x11_extensions = rtc_use_x11
+}
+
+# Make it possible to provide custom locations for some libraries (move these
+# up into declare_args should we need to actually use them for the GN build).
+rtc_libvpx_dir = "//third_party/libvpx"
+rtc_opus_dir = "//third_party/opus"
+
+# Desktop capturer is supported only on Windows, OSX and Linux.
+rtc_desktop_capture_supported =
+    (is_win && current_os != "winuwp") || is_mac ||
+    (is_linux && (rtc_use_x11_extensions || rtc_use_pipewire))
+
+###############################################################################
+# Templates
+#
+
+# Points to // in webrtc stand-alone or to //third_party/webrtc/ in
+# chromium.
+# We need absolute paths for all configs in templates as they are shared in
+# different subdirectories.
+webrtc_root = get_path_info(".", "abspath")
+
+# Global configuration that should be applied to all WebRTC targets.
+# You normally shouldn't need to include this in your target as it's
+# automatically included when using the rtc_* templates.
+# It sets defines, include paths and compilation warnings accordingly,
+# both for WebRTC stand-alone builds and for the scenario when WebRTC
+# native code is built as part of Chromium.
+rtc_common_configs = [
+  webrtc_root + ":common_config",
+  "//build/config/compiler:no_size_t_to_int_warning",
+]
+
+if (is_mac || is_ios) {
+  rtc_common_configs += [ "//build/config/compiler:enable_arc" ]
+}
+
+# Global public configuration that should be applied to all WebRTC targets. You
+# normally shouldn't need to include this in your target as it's automatically
+# included when using the rtc_* templates. It set the defines, include paths and
+# compilation warnings that should be propagated to dependents of the targets
+# depending on the target having this config.
+rtc_common_inherited_config = webrtc_root + ":common_inherited_config"
+
+# Common configs to remove or add in all rtc targets.
+rtc_remove_configs = []
+if (!build_with_chromium && is_clang) {
+  rtc_remove_configs += [ "//build/config/clang:find_bad_constructs" ]
+}
+rtc_add_configs = rtc_common_configs
+rtc_prod_configs = [ webrtc_root + ":rtc_prod_config" ]
+rtc_library_impl_config = [ webrtc_root + ":library_impl_config" ]
+
+set_defaults("rtc_test") {
+  configs = rtc_add_configs
+  suppressed_configs = []
+}
+
+set_defaults("rtc_source_set") {
+  configs = rtc_add_configs
+  suppressed_configs = []
+}
+
+set_defaults("rtc_executable") {
+  configs = rtc_add_configs
+  suppressed_configs = []
+}
+
+set_defaults("rtc_static_library") {
+  configs = rtc_add_configs
+  suppressed_configs = []
+}
+
+set_defaults("rtc_shared_library") {
+  configs = rtc_add_configs
+  suppressed_configs = []
+}
+
+webrtc_default_visibility = [ webrtc_root + "/*" ]
+if (build_with_chromium) {
+  # Allow Chromium's WebRTC overrides targets to bypass the regular
+  # visibility restrictions.
+  webrtc_default_visibility += [ webrtc_root + "/../webrtc_overrides/*" ]
+}
+
+# ---- Poisons ----
+#
+# The general idea is that some targets declare that they contain some
+# kind of poison, which makes it impossible for other targets to
+# depend on them (even transitively) unless they declare themselves
+# immune to that particular type of poison.
+#
+# Targets that *contain* poison of type foo should contain the line
+#
+#   poisonous = [ "foo" ]
+#
+# and targets that *are immune but arent't themselves poisonous*
+# should contain
+#
+#   allow_poison = [ "foo" ]
+#
+# This useful in cases where we have some large target or set of
+# targets and want to ensure that most other targets do not
+# transitively depend on them. For example, almost no high-level
+# target should depend on the audio codecs, since we want WebRTC users
+# to be able to inject any subset of them and actually end up with a
+# binary that doesn't include the codecs they didn't inject.
+#
+# Test-only targets (`testonly` set to true) and non-public targets
+# (`visibility` not containing "*") are automatically immune to all
+# types of poison.
+#
+# Here's the complete list of all types of poison. It must be kept in
+# 1:1 correspondence with the set of //:poison_* targets.
+#
+all_poison_types = [
+  # Encoders and decoders for specific audio codecs such as Opus and iSAC.
+  "audio_codecs",
+
+  # Software video codecs (VP8 and VP9 through libvpx).
+  "software_video_codecs",
+
+  # Default task queue implementation.
+  "default_task_queue",
+]
+
+absl_include_config = "//third_party/abseil-cpp:absl_include_config"
+absl_define_config = "//third_party/abseil-cpp:absl_define_config"
+
+# Abseil Flags are testonly, so this config will only be applied to WebRTC targets
+# that are testonly.
+absl_flags_config = webrtc_root + ":absl_flags_configs"
+
+template("rtc_test") {
+  test(target_name) {
+    forward_variables_from(invoker,
+                           "*",
+                           [
+                             "configs",
+                             "public_configs",
+                             "suppressed_configs",
+                             "visibility",
+                           ])
+
+    # Always override to public because when target_os is Android the `test`
+    # template can override it to [ "*" ] and we want to avoid conditional
+    # visibility.
+    visibility = [ "*" ]
+    configs += invoker.configs
+    configs -= rtc_remove_configs
+    configs -= invoker.suppressed_configs
+    public_configs = [
+      rtc_common_inherited_config,
+      absl_include_config,
+      absl_define_config,
+      absl_flags_config,
+    ]
+    if (defined(invoker.public_configs)) {
+      public_configs += invoker.public_configs
+    }
+    if (!build_with_chromium && is_android) {
+      android_manifest = webrtc_root + "test/android/AndroidManifest.xml"
+      min_sdk_version = 16
+      deps += [ webrtc_root + "test:native_test_java" ]
+    }
+  }
+}
+
+template("rtc_source_set") {
+  source_set(target_name) {
+    forward_variables_from(invoker,
+                           "*",
+                           [
+                             "configs",
+                             "public_configs",
+                             "suppressed_configs",
+                             "visibility",
+                           ])
+    forward_variables_from(invoker, [ "visibility" ])
+    if (!defined(visibility)) {
+      visibility = webrtc_default_visibility
+    }
+
+    # What's your poison?
+    if (defined(testonly) && testonly) {
+      assert(!defined(poisonous))
+      assert(!defined(allow_poison))
+    } else {
+      if (!defined(poisonous)) {
+        poisonous = []
+      }
+      if (!defined(allow_poison)) {
+        allow_poison = []
+      }
+      if (!defined(assert_no_deps)) {
+        assert_no_deps = []
+      }
+      if (!defined(deps)) {
+        deps = []
+      }
+      foreach(p, poisonous) {
+        deps += [ webrtc_root + ":poison_" + p ]
+      }
+      foreach(poison_type, all_poison_types) {
+        allow_dep = true
+        foreach(v, visibility) {
+          if (v == "*") {
+            allow_dep = false
+          }
+        }
+        foreach(p, allow_poison + poisonous) {
+          if (p == poison_type) {
+            allow_dep = true
+          }
+        }
+        if (!allow_dep) {
+          assert_no_deps += [ webrtc_root + ":poison_" + poison_type ]
+        }
+      }
+    }
+
+    if (!defined(testonly) || !testonly) {
+      configs += rtc_prod_configs
+    }
+
+    configs += invoker.configs
+    configs += rtc_library_impl_config
+    configs -= rtc_remove_configs
+    configs -= invoker.suppressed_configs
+    public_configs = [
+      rtc_common_inherited_config,
+      absl_include_config,
+      absl_define_config,
+    ]
+    if (defined(testonly) && testonly) {
+      public_configs += [ absl_flags_config ]
+    }
+    if (defined(invoker.public_configs)) {
+      public_configs += invoker.public_configs
+    }
+  }
+}
+
+template("rtc_executable") {
+  executable(target_name) {
+    forward_variables_from(invoker,
+                           "*",
+                           [
+                             "deps",
+                             "configs",
+                             "public_configs",
+                             "suppressed_configs",
+                             "visibility",
+                           ])
+    forward_variables_from(invoker, [ "visibility" ])
+    if (!defined(visibility)) {
+      visibility = webrtc_default_visibility
+    }
+    configs += invoker.configs
+    configs -= rtc_remove_configs
+    configs -= invoker.suppressed_configs
+    deps = invoker.deps
+
+    public_configs = [
+      rtc_common_inherited_config,
+      absl_include_config,
+      absl_define_config,
+    ]
+    if (defined(testonly) && testonly) {
+      public_configs += [ absl_flags_config ]
+    }
+    if (defined(invoker.public_configs)) {
+      public_configs += invoker.public_configs
+    }
+    if (is_win) {
+      deps += [
+        # Give executables the default manifest on Windows (a no-op elsewhere).
+        "//build/win:default_exe_manifest",
+      ]
+    }
+  }
+}
+
+template("rtc_static_library") {
+  static_library(target_name) {
+    forward_variables_from(invoker,
+                           "*",
+                           [
+                             "configs",
+                             "public_configs",
+                             "suppressed_configs",
+                             "visibility",
+                           ])
+    forward_variables_from(invoker, [ "visibility" ])
+    if (!defined(visibility)) {
+      visibility = webrtc_default_visibility
+    }
+
+    # What's your poison?
+    if (defined(testonly) && testonly) {
+      assert(!defined(poisonous))
+      assert(!defined(allow_poison))
+    } else {
+      if (!defined(poisonous)) {
+        poisonous = []
+      }
+      if (!defined(allow_poison)) {
+        allow_poison = []
+      }
+      if (!defined(assert_no_deps)) {
+        assert_no_deps = []
+      }
+      if (!defined(deps)) {
+        deps = []
+      }
+      foreach(p, poisonous) {
+        deps += [ webrtc_root + ":poison_" + p ]
+      }
+      foreach(poison_type, all_poison_types) {
+        allow_dep = true
+        foreach(v, visibility) {
+          if (v == "*") {
+            allow_dep = false
+          }
+        }
+        foreach(p, allow_poison + poisonous) {
+          if (p == poison_type) {
+            allow_dep = true
+          }
+        }
+        if (!allow_dep) {
+          assert_no_deps += [ webrtc_root + ":poison_" + poison_type ]
+        }
+      }
+    }
+
+    if (!defined(testonly) || !testonly) {
+      configs += rtc_prod_configs
+    }
+
+    configs += invoker.configs
+    configs += rtc_library_impl_config
+    configs -= rtc_remove_configs
+    configs -= invoker.suppressed_configs
+    public_configs = [
+      rtc_common_inherited_config,
+      absl_include_config,
+      absl_define_config,
+    ]
+    if (defined(testonly) && testonly) {
+      public_configs += [ absl_flags_config ]
+    }
+    if (defined(invoker.public_configs)) {
+      public_configs += invoker.public_configs
+    }
+  }
+}
+
+template("rtc_shared_library") {
+  shared_library(target_name) {
+    forward_variables_from(invoker,
+                           "*",
+                           [
+                             "configs",
+                             "public_configs",
+                             "suppressed_configs",
+                             "visibility",
+                           ])
+    forward_variables_from(invoker, [ "visibility" ])
+    if (!defined(visibility)) {
+      visibility = webrtc_default_visibility
+    }
+
+    # What's your poison?
+    if (defined(testonly) && testonly) {
+      assert(!defined(poisonous))
+      assert(!defined(allow_poison))
+    } else {
+      if (!defined(poisonous)) {
+        poisonous = []
+      }
+      if (!defined(allow_poison)) {
+        allow_poison = []
+      }
+      if (!defined(assert_no_deps)) {
+        assert_no_deps = []
+      }
+      if (!defined(deps)) {
+        deps = []
+      }
+      foreach(p, poisonous) {
+        deps += [ webrtc_root + ":poison_" + p ]
+      }
+      foreach(poison_type, all_poison_types) {
+        allow_dep = true
+        foreach(v, visibility) {
+          if (v == "*") {
+            allow_dep = false
+          }
+        }
+        foreach(p, allow_poison + poisonous) {
+          if (p == poison_type) {
+            allow_dep = true
+          }
+        }
+        if (!allow_dep) {
+          assert_no_deps += [ webrtc_root + ":poison_" + poison_type ]
+        }
+      }
+    }
+
+    configs += invoker.configs
+    configs -= rtc_remove_configs
+    configs -= invoker.suppressed_configs
+    public_configs = [
+      rtc_common_inherited_config,
+      absl_include_config,
+      absl_define_config,
+    ]
+    if (defined(testonly) && testonly) {
+      public_configs += [ absl_flags_config ]
+    }
+    if (defined(invoker.public_configs)) {
+      public_configs += invoker.public_configs
+    }
+  }
+}
+
+if (is_ios) {
+  set_defaults("rtc_ios_xctest_test") {
+    configs = rtc_add_configs
+    suppressed_configs = []
+  }
+
+  template("rtc_ios_xctest_test") {
+    ios_xctest_test(target_name) {
+      forward_variables_from(invoker,
+                             "*",
+                             [
+                               "configs",
+                               "public_configs",
+                               "suppressed_configs",
+                               "visibility",
+                             ])
+      forward_variables_from(invoker, [ "visibility" ])
+      if (!defined(visibility)) {
+        visibility = webrtc_default_visibility
+      }
+      configs += invoker.configs
+      configs -= rtc_remove_configs
+      configs -= invoker.suppressed_configs
+      public_configs = [ rtc_common_inherited_config ]
+      if (defined(invoker.public_configs)) {
+        public_configs += invoker.public_configs
+      }
+    }
+  }
+
+  # TODO: Generate module.modulemap file to enable use in Swift
+  # projects. See "mac_framework_bundle_with_umbrella_header".
+  template("ios_framework_bundle_with_umbrella_header") {
+    forward_variables_from(invoker, [ "output_name" ])
+    umbrella_header_path =
+        "$target_gen_dir/$output_name.framework/Headers/$output_name.h"
+
+    ios_framework_bundle(target_name) {
+      forward_variables_from(invoker, "*", [])
+
+      deps += [ ":copy_umbrella_header_$target_name" ]
+    }
+
+    action("umbrella_header_$target_name") {
+      forward_variables_from(invoker, [ "public_headers" ])
+
+      script = "//tools_webrtc/ios/generate_umbrella_header.py"
+
+      outputs = [
+        umbrella_header_path,
+      ]
+      args = [
+               "--out",
+               rebase_path(umbrella_header_path, root_build_dir),
+               "--sources",
+             ] + public_headers
+    }
+
+    copy("copy_umbrella_header_$target_name") {
+      sources = [
+        umbrella_header_path,
+      ]
+      outputs = [
+        "$root_out_dir/$output_name.framework/Headers/$output_name.h",
+      ]
+
+      deps = [
+        ":umbrella_header_$target_name",
+      ]
+    }
+  }
+
+  set_defaults("ios_framework_bundle_with_umbrella_header") {
+    configs = default_shared_library_configs
+  }
+}
+
+if (is_mac) {
+  template("mac_framework_bundle_with_umbrella_header") {
+    forward_variables_from(invoker, [ "output_name" ])
+    this_target_name = target_name
+    umbrella_header_path = "$target_gen_dir/umbrella_header/$output_name.h"
+    modulemap_path = "$target_gen_dir/Modules/module.modulemap"
+
+    mac_framework_bundle(target_name) {
+      forward_variables_from(invoker, "*", [ "configs" ])
+      if (defined(invoker.configs)) {
+        configs += invoker.configs
+      }
+
+      framework_version = "A"
+      framework_contents = [
+        "Headers",
+        "Modules",
+        "Resources",
+      ]
+
+      ldflags = [
+        "-all_load",
+        "-install_name",
+        "@rpath/$output_name.framework/$output_name",
+      ]
+
+      deps += [
+        ":copy_framework_headers_$this_target_name",
+        ":copy_modulemap_$this_target_name",
+        ":copy_umbrella_header_$this_target_name",
+        ":modulemap_$this_target_name",
+        ":umbrella_header_$this_target_name",
+      ]
+    }
+
+    bundle_data("copy_framework_headers_$this_target_name") {
+      forward_variables_from(invoker, [ "sources" ])
+
+      outputs = [
+        "{{bundle_contents_dir}}/Headers/{{source_file_part}}",
+      ]
+    }
+
+    action("modulemap_$this_target_name") {
+      script = "//tools_webrtc/ios/generate_modulemap.py"
+      args = [
+        "--out",
+        rebase_path(modulemap_path, root_build_dir),
+        "--name",
+        output_name,
+      ]
+      outputs = [
+        modulemap_path,
+      ]
+    }
+
+    bundle_data("copy_modulemap_$this_target_name") {
+      sources = [
+        modulemap_path,
+      ]
+      outputs = [
+        "{{bundle_contents_dir}}/Modules/module.modulemap",
+      ]
+      deps = [
+        ":modulemap_$this_target_name",
+      ]
+    }
+
+    action("umbrella_header_$this_target_name") {
+      forward_variables_from(invoker, [ "sources" ])
+
+      script = "//tools_webrtc/ios/generate_umbrella_header.py"
+
+      outputs = [
+        umbrella_header_path,
+      ]
+      args = [
+               "--out",
+               rebase_path(umbrella_header_path, root_build_dir),
+               "--sources",
+             ] + sources
+    }
+
+    bundle_data("copy_umbrella_header_$this_target_name") {
+      sources = [
+        umbrella_header_path,
+      ]
+      outputs = [
+        "{{bundle_contents_dir}}/Headers/$output_name.h",
+      ]
+
+      deps = [
+        ":umbrella_header_$this_target_name",
+      ]
+    }
+  }
+}
+
+if (is_android) {
+  template("rtc_android_library") {
+    android_library(target_name) {
+      forward_variables_from(invoker,
+                             "*",
+                             [
+                               "configs",
+                               "public_configs",
+                               "suppressed_configs",
+                               "visibility",
+                             ])
+
+      errorprone_args = []
+
+      # Treat warnings as errors.
+      errorprone_args += [ "-Werror" ]
+
+      # WebRTC supports API level 16 while Chromium only supports 19.
+      # (the manifest defines minimum supported SDK version)
+      if (defined(invoker.min_sdk_version)) {
+        min_sdk_version = invoker.min_sdk_version
+      } else {
+        min_sdk_version = 16
+      }
+
+      # TODO(crbug.com/824679): Find out why this fails in Chromium
+      if (!build_with_chromium) {
+        errorprone_args += [
+          "-Xep:ParameterNotNullable:ERROR",
+          "-Xep:FieldMissingNullable:ERROR",
+          "-Xep:ReturnMissingNullable:ERROR",
+        ]
+      }
+
+      # Add any arguments defined by the invoker.
+      if (defined(invoker.errorprone_args)) {
+        errorprone_args += invoker.errorprone_args
+      }
+
+      if (!defined(deps)) {
+        deps = []
+      }
+
+      no_build_hooks = true
+    }
+  }
+
+  template("rtc_android_apk") {
+    android_apk(target_name) {
+      forward_variables_from(invoker,
+                             "*",
+                             [
+                               "configs",
+                               "public_configs",
+                               "suppressed_configs",
+                               "visibility",
+                             ])
+
+      # Treat warnings as errors.
+      errorprone_args = [ "-Werror" ]
+
+      # TODO(crbug.com/824679): Find out why this fails in Chromium
+      if (!build_with_chromium) {
+        errorprone_args += [
+          "-Xep:ParameterNotNullable:ERROR",
+          "-Xep:FieldMissingNullable:ERROR",
+          "-Xep:ReturnMissingNullable:ERROR",
+        ]
+      }
+
+      if (!defined(deps)) {
+        deps = []
+      }
+
+      no_build_hooks = true
+    }
+  }
+
+  template("rtc_instrumentation_test_apk") {
+    instrumentation_test_apk(target_name) {
+      forward_variables_from(invoker,
+                             "*",
+                             [
+                               "configs",
+                               "public_configs",
+                               "suppressed_configs",
+                               "visibility",
+                             ])
+
+      # Treat warnings as errors.
+      errorprone_args = [ "-Werror" ]
+
+      # TODO(crbug.com/824679): Find out why this fails in Chromium
+      if (!build_with_chromium) {
+        errorprone_args += [
+          "-Xep:ParameterNotNullable:ERROR",
+          "-Xep:FieldMissingNullable:ERROR",
+          "-Xep:ReturnMissingNullable:ERROR",
+        ]
+      }
+
+      if (!defined(deps)) {
+        deps = []
+      }
+
+      no_build_hooks = true
+    }
+  }
+}

@@ -1,0 +1,5 @@
+2d.fillStyle.default
+
+
+FAIL OffscreenCanvas test: 2d.fillStyle.default null is not an object (evaluating 'ctx.fillStyle')
+

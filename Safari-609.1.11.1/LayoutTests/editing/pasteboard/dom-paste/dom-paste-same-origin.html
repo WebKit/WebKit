@@ -1,0 +1,71 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ domPasteAllowed=false useFlexibleViewport=true ignoreSynchronousMessagingTimeouts=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body {
+    margin: 0;
+}
+
+#copy, #editor {
+    width: 100%;
+    text-align: center;
+}
+
+#copy {
+    height: 50px;
+    border: 1px dashed black;
+    font-size: 40px;
+}
+
+#editor {
+    height: 100px;
+    border: 1px dashed silver;
+}
+</style>
+</head>
+<body>
+<div id="editor" contenteditable></div>
+<div id='copy' style=''>Click here to copy</div>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+jsTestIsAsync = true;
+
+const copy = document.getElementById("copy");
+const editor = document.getElementById("editor");
+
+description("Verifies that programmatic paste is allowed when copied data is from the same origin. To manually test, click or tap the text on the bottom to programmatically copy, and then click or tap the editable area and check that the text is pasted <em>twice</em>.");
+
+copy.addEventListener('click', () => {
+    getSelection().selectAllChildren(copy);
+    document.execCommand('Copy');
+    getSelection().removeAllRanges();
+});
+
+editor.addEventListener("paste", event => shouldBeEqualToString("event.clipboardData.getData('text/plain')", "Click here to copy"));
+editor.addEventListener("click", event => {
+    getSelection().setPosition(editor);
+    shouldBe("document.queryCommandSupported('Paste')", "true");
+    shouldBe("document.queryCommandEnabled('Paste')", "true");
+    shouldBe("document.execCommand('Paste')", "true");
+    document.execCommand('InsertParagraph');
+    shouldBe("document.execCommand('Paste')", "true");
+    shouldBeEqualToString("editor.textContent", "Click here to copyClick here to copy");
+    event.preventDefault();
+    editor.blur();
+    finishJSTest();
+});
+
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.activateAt(160, 125);
+    await UIHelper.activateAt(160, 50);
+});
+</script>
+</body>
+</html>

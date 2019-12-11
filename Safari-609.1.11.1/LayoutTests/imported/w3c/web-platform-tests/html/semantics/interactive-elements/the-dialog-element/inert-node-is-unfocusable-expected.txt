@@ -1,0 +1,8 @@
+I get focus I don't get focus.
+      
+I'm editable
+I'm tabindexed.
+ Link
+
+FAIL Test that inert nodes are not focusable. assert_equals: body expected false but got true
+

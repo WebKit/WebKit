@@ -1,0 +1,16 @@
+<div style="display: contents"><a href="#"></a></div>
+Shouldn't crash.
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.overridePreference("WebKitTabToLinksPreferenceKey", 1);
+    testRunner.setSpatialNavigationEnabled(true);
+}
+function runTest() {
+    if (window.eventSender) {
+        eventSender.keyDown("rightArrow");
+    }
+}
+
+window.onload = runTest;
+</script>

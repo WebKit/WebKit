@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+layer at (8,8) size 202x202 clip at (9,9) size 200x200
+  RenderBlock {DIV} at (0,0) size 202x202 [border: (1px solid #008000)]
+    RenderInline {SPAN} at (0,0) size 24x17
+      RenderText {#text} at (1,1) size 24x17
+        text run at (1,1) width 24: "first"
+    RenderInline {SPAN} at (0,0) size 30x17
+      RenderText {#text} at (98,1) size 30x17
+        text run at (98,1) width 30: "forth"
+layer at (108,8) size 73x17 backgroundClip at (9,9) size 200x200 clip at (9,9) size 200x200
+  RenderInline (relative positioned) {SPAN} at (0,0) size 73x17
+    RenderInline {SPAN} at (0,0) size 44x17
+      RenderText {#text} at (25,1) size 44x17
+        text run at (25,1) width 44: "second"
+    RenderInline {SPAN} at (0,0) size 29x17
+      RenderText {#text} at (69,1) size 29x17
+        text run at (69,1) width 29: "third"

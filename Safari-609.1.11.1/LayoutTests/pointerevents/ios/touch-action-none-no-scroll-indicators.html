@@ -1,0 +1,36 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+
+    #container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 200px;
+        height: 200px;
+        overflow: scroll;
+    }
+
+    #content {
+        position: absolute;
+        width: 200%;
+        height: 200%;
+        touch-action: none;
+    }
+
+</style>
+</head>
+<body>
+<div id="container"><div id="content"></div></div>
+<script src="../utils.js"></script>
+<script>
+
+if (window.testRunner)
+    ui.swipe({ x: 150, y: 150 }, { x: 50, y: 50 }).then(() => testRunner.notifyDone());
+
+</script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style id="style" media="screen">
+.non-existent-class {
+    -webkit-transform: translate(10px)
+                       translateX(10px)
+                       translateY(10px)
+                       rotate(10deg)
+                       rotate(11rad)
+                       rotate(12grad)
+                       rotate(13turn)
+                       scale(2)
+                       scaleX(1.2)    /* test uppercase */
+                       scaley(1.2)
+                       skew(10deg,      10rad)
+                       skewX(10deg)
+                       skewy(11grad)
+                       matrix(1, 0, 0,     1, 0, 0);
+}
+</style>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script type="text/javascript" charset="utf-8">
+
+  var stylesheet = document.getElementById("style").sheet;
+  var root = document.documentElement;
+
+  function jsWrapperClass(node)
+  {
+      if (!node)
+          return "[null]";
+      var string = Object.prototype.toString.apply(node);
+      return string.substr(8, string.length - 9);
+  }
+
+  function test(expression, className, prototypeName, constructorName)
+  {
+      if (!prototypeName)
+          prototypeName = className + "Prototype";
+      if (!constructorName)
+          constructorName = className + "Constructor";
+      shouldBe("jsWrapperClass(" + expression + ")", "'" + className + "'");
+      shouldBe("jsWrapperClass(" + expression + ".__proto__)", "'" + prototypeName + "'");
+      shouldBe("jsWrapperClass(" + expression + ".constructor)", "'Function'");
+  }
+
+  var transformRule = stylesheet.cssRules.item(0).style.getPropertyCSSValue('-webkit-transform');
+  test("transformRule", "CSSValueList");
+  
+  test("transformRule[0]", "CSSValue");
+
+  shouldBe("transformRule[0].cssText", "'translate(10px)'");
+
+  shouldBe("transformRule[1].cssText", "'translateX(10px)'");
+
+  shouldBe("transformRule[2].cssText", "'translateY(10px)'");
+
+  shouldBe("transformRule[3].cssText", "'rotate(10deg)'");
+
+  shouldBe("transformRule[4].cssText", "'rotate(11rad)'");
+
+  shouldBe("transformRule[5].cssText", "'rotate(12grad)'");
+
+  shouldBe("transformRule[6].cssText", "'rotate(13turn)'");
+
+  shouldBe("transformRule[7].cssText", "'scale(2)'");
+
+  shouldBe("transformRule[8].cssText", "'scaleX(1.2)'");
+
+  shouldBe("transformRule[9].cssText", "'scaleY(1.2)'");
+
+  shouldBe("transformRule[10].cssText", "'skew(10deg, 10rad)'");
+
+  shouldBe("transformRule[11].cssText", "'skewX(10deg)'");
+
+  shouldBe("transformRule[12].cssText", "'skewY(11grad)'");
+
+  shouldBe("transformRule[13].cssText", "'matrix(1, 0, 0, 1, 0, 0)'");
+  
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

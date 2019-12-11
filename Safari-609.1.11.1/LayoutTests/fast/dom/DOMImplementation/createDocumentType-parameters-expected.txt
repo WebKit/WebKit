@@ -1,0 +1,17 @@
+Test that the parameters to DOMImplementation.createDocumentType() are mandatory and non-nullable
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.implementation.createDocumentType() threw exception TypeError: Not enough arguments.
+PASS document.implementation.createDocumentType('a') threw exception TypeError: Not enough arguments.
+PASS document.implementation.createDocumentType('a', '') threw exception TypeError: Not enough arguments.
+PASS docType = document.implementation.createDocumentType(null, null, null) did not throw exception.
+PASS docType.name is "null"
+PASS docType.nodeName is "null"
+PASS docType.publicId is "null"
+PASS docType.systemId is "null"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

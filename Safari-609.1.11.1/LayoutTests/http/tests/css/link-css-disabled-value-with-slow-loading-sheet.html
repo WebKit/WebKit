@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="resources/empty.css?link-css-disabled-value-with-slow-loading-sheet&default" media="all" title="Default Style Sheet" type="text/css">
+<link rel="alternate stylesheet" href="resources/empty.css?link-css-disabled-value-with-slow-loading-sheet&alternate" media="all" title="green" type="text/css">
+<script src="/js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Test that HTMLLinkElement's disabled attribute is properly cached while set when loading a stylesheet.");
+
+window.jsTestIsAsync = true;
+
+mainSheetLink = document.getElementsByTagName("link")[0];
+alternateSheetLink = document.getElementsByTagName("link")[1];
+
+mainSheetLink.disabled = true;
+alternateSheetLink.disabled = false;
+
+debug("Testing value of 'disabled' prior to load just after setting them");
+shouldBeNonNull("mainSheetLink.sheet");
+shouldBeNull("alternateSheetLink.sheet");
+shouldBeTrue("mainSheetLink.disabled");
+shouldBeFalse("alternateSheetLink.disabled");
+
+debug("Testing the values when the alternate sheet is loaded (as this is the only one that has sheet() === null)");
+
+var testTimer = setInterval(function() {
+    if (!alternateSheetLink.sheet)
+        return;
+    shouldBeNonNull("mainSheetLink.sheet");
+    shouldBeNonNull("alternateSheetLink.sheet");
+    shouldBeTrue("mainSheetLink.disabled");
+    shouldBeFalse("alternateSheetLink.disabled");
+
+    clearInterval(testTimer);
+    finishJSTest();
+}, 25);
+
+var successfullyParsed = true;
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>

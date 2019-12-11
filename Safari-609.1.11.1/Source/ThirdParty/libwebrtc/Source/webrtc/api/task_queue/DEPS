@@ -1,0 +1,10 @@
+specific_include_rules = {
+  "task_queue_base\.h": [
+    # Make TaskQueueBase RTC_LOCKABALE to allow annotate variables are only
+    # accessed on specific task queue.
+    "+rtc_base/thread_annotations.h",
+  ],
+  "task_queue_test\.h": [
+    "+test/gtest.h",
+  ],
+}

@@ -1,0 +1,10 @@
+
+PASS Test that getContext with un-supported string throws a TypeError. 
+FAIL Test that getContext with supported string returns correct results assert_true: expected true got false
+FAIL Test that getContext twice with different context type returns null the second time assert_equals: expected null but got object "[object WebGLRenderingContext]"
+FAIL Test that 2dcontext.canvas should return the original OffscreenCanvas null is not an object (evaluating 'ctx.canvas')
+PASS Test that webglcontext.canvas should return the original OffscreenCanvas 
+FAIL Test that OffscreenCanvasRenderingContext2D with alpha disabled makes the OffscreenCanvas opaque null is not an object (evaluating 'ctx.fillStyle = 'rgba(0, 255, 0, 0.5)'')
+FAIL Test that OffscreenCanvasRenderingContext2D with alpha enabled preserves the alpha null is not an object (evaluating 'ctx.fillStyle = 'rgba(0, 255, 0, 0.5)'')
+FAIL Test that 'alpha' context creation attribute is true by default null is not an object (evaluating 'ctx.fillStyle = 'rgba(0, 255, 0, 0.5)'')
+

@@ -1,0 +1,91 @@
+<html>
+<head>
+  <script src="../resources/js-test.js"></script>
+  <script>
+    var tableAXObject;
+    var indentLevel = 0;
+
+    function indent(count) {
+      var spaces = "                                                      ";
+      return spaces.substr(0, count);
+    }
+
+    function dumpObject(axObject) {
+      debug(indent(indentLevel) + "role: " + axObject.role);
+      if (axObject.subrole && axObject.subrole != 'AXSubrole: ') debug(indent(indentLevel) + "subrole: " + axObject.subrole);
+    }
+
+    function dumpChildren(axObject) {
+      var count = axObject.childrenCount
+      if (!count)
+        return;
+
+      indentLevel += 4;
+      for (var ndx = 0; ndx < count; ndx++) {
+        var childAXObject = axObject.childAtIndex(ndx);
+        dumpObject(childAXObject);
+        if (childAXObject.childrenCount) {
+          // don't bother dumping static text children
+          if (childAXObject.role != "AXRole: AXStaticText")
+            dumpChildren(childAXObject);
+        }
+      }
+      indentLevel -= 4;
+    }
+    function dumpTableAX()
+    {
+      if (!window.accessibilityController)
+        return;
+      var table = accessibilityController.accessibleElementById("table1");
+
+      dumpObject(table);
+      dumpChildren(table);
+    }
+  </script>
+</head>
+<body onload="dumpTableAX()">
+
+<table id="table1">
+  <thead>
+  <tr>
+    <th>No</th>
+    <th>Country</th>
+    <th>Capital</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <th>1.</th>
+    <td>Poland</td>
+    <td>Warsaw</td>
+  </tr>
+  <tr>
+    <th>2.</th>
+    <td>Russia</td>
+    <td>Moscow</td>
+  </tr>
+   <tr>
+    <th>3.</th>
+    <td>Ukraine</td>
+    <td>Kiev</td>
+  </tr>
+  </tbody>
+  <tfoot>
+  <tr>
+    <th>All</th>
+    <td>3 countries</td>
+    <td>3 capitals</td>
+  </tr>
+  </tfoot>
+</table>
+
+<br>
+<br>
+<br>
+
+<p>This shows the hierarchy of table roles.</p>
+
+<div id=console></div>
+
+</body>
+</html>

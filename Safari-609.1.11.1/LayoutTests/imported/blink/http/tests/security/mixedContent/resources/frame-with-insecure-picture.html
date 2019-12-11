@@ -1,0 +1,9 @@
+<picture>
+    <img src="http://127.0.0.1:8080/security/resources/compass.jpg">
+</picture>
+<script>
+window.onload = function() {
+    if (window.opener)
+        window.opener.postMessage('done', '*');
+};
+</script>

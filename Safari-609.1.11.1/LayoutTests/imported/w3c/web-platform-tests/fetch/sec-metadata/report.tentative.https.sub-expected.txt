@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: Refused to load https://foo.bar/ because it does not appear in the style-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load https://foo.bar/ because it does not appear in the style-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load https://foo.bar/ because it does not appear in the style-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load https://foo.bar/ because it does not appear in the style-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load https://foo.bar/ because it does not appear in the style-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load https://foo.bar/ because it does not appear in the style-src directive of the Content Security Policy.
+
+PASS Initialization. 
+

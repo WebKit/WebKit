@@ -1,0 +1,5 @@
+
+PASS IntersectionObserver should not deliver pending notifications after disconnect(). 
+PASS First rAF. 
+PASS observer.disconnect() 
+

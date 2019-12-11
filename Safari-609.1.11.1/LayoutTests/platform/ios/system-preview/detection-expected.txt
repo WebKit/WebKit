@@ -1,0 +1,39 @@
+This test only works in WKTR or DRT.
+
+Valid system preview
+
+ 
+Result: Link element present. Identified as system preview. Child 0 is an image inside a system preview.
+
+Valid system preview (multiple rel values)
+
+ 
+Result: Link element present. Identified as system preview. Child 0 is an image inside a system preview.
+
+Valid system preview (picture child)
+
+Result: Link element present. Identified as system preview. Child 0 is an image inside a system preview.
+
+Invalid system preview (wrong rel value)
+
+ 
+Result: Link element present. Not identified as system preview. Child 0 is not an image inside a system preview.
+
+Invalid system preview (wrong children)
+
+hello
+Result: Link element present. Not identified as system preview. Child 0 is not an image inside a system preview.
+
+Invalid system preview (too many children)
+
+hello  
+Result: Link element present. Not identified as system preview. Child 0 is not an image inside a system preview. Child 1 is not an image inside a system preview.
+
+Invalid system preview (no children)
+
+Result: Link element present. Not identified as system preview.
+
+Invalid system preview (just an image)
+
+
+Result: No link. Child is not an image inside a system preview.

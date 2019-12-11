@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Test assigning null to SVGAngle.valueAsString / SVGLength.valueAsString");
+
+var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+var angle = svg.createSVGAngle();
+shouldBeEqualToString("angle.valueAsString", "0");
+shouldThrow("angle.valueAsString = null");
+shouldBeEqualToString("angle.valueAsString", "0");
+shouldNotThrow("angle.valueAsString = '10'");
+shouldBeEqualToString("angle.valueAsString", "10");
+shouldThrow("angle.valueAsString = ''");
+shouldBeEqualToString("angle.valueAsString", "10");
+
+debug("");
+var length = svg.createSVGLength();
+shouldBeEqualToString("length.valueAsString", "0");
+shouldThrow("length.valueAsString = null");
+shouldBeEqualToString("length.valueAsString", "0");
+shouldNotThrow("length.valueAsString = '10'");
+shouldBeEqualToString("length.valueAsString", "10");
+shouldThrow("length.valueAsString = ''"); 
+shouldBeEqualToString("length.valueAsString", "10");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

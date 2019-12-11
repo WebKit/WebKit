@@ -1,0 +1,7 @@
+2d.strokeRect.path
+
+strokeRect does not affect the current path
+
+
+FAIL strokeRect does not affect the current path null is not an object (evaluating 'ctx.beginPath')
+

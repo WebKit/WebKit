@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<body onload="runTest()">
+<script src="../resources/js-test-pre.js"></script>
+<script>
+description("Tests that calling an instance property getter on another instance works as expected");
+jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.setCanOpenWindows();
+
+function runTest()
+{
+    otherWindow = window.open("about:blank");
+        locationGetter = Object.getOwnPropertyDescriptor(otherWindow.document, "location").get;
+        shouldBeType("locationGetter", Function);
+        shouldBeEqualToString("locationGetter.call(otherWindow.document).toString()", "about:blank");
+        // Should return the current document's location.
+        shouldBeTrue("locationGetter.call(window.document) === window.document.location");
+        finishJSTest();
+}
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>

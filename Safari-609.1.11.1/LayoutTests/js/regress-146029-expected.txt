@@ -1,0 +1,10 @@
+Verify that we don't trash m_currentInstruction with an inlined function.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Correctly inlined callee and used m_currentInstruction in caller
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

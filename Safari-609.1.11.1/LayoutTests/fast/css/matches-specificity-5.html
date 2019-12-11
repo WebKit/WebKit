@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+<style>
+    .target::before {
+        content: "Target";
+    }
+
+    /* This rule has two .target, making it higher specificity than the rules below. */
+    .target:matches(::before, target::before, .target::before, ::before, target::before) {
+        background-color: green;
+    }
+
+    /* This rule has a tagname and a class name, making it higher specificity than ".target:matches(::before)". */
+    target:matches(::before, target::before, .target::before, ::before, target::before) {
+        color: white;
+    }
+
+    .target:matches(::before) {
+        background-color: red;
+        color: blue;
+        border: none;
+    }
+
+    /* This rule only has (0, 0, 3) and it superseded by the rule above. */
+    target:matches(::before, target::before, ::before) {
+        border: 25px solid purple;
+    }
+
+    /* This rule has lower specificity than all the rules above and its property never applies. */
+    :matches(#target::before, target::before) {
+        content: "Not Target";
+    }
+</style>
+</head>
+<body>
+    <p>This test checks the specificity of the rules inside :matches() applying to the pseudo element ::before. The test succeed if the text "Target" is displayed in white on a green background.</p>
+    <target class="target"></target>
+</body>
+</html>

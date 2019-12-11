@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        html, body {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .relative {
+            position: relative;
+        }
+
+        .absolute {
+            position: absolute;
+        }
+
+        #multicol {
+            position: absolute;
+            left: 0;
+            top: 0px;
+            width: 600px;
+            -webkit-column-count: 3;
+            font-size: 30px;
+            font-family: Ahem;
+            -webkit-column-gap: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div id="multicol" dir="rtl">
+        <span class="overlay-target">first</span> <span class="overlay-target relative">second</span> <span class="overlay-target">third</span><br>
+        <span class="overlay-target">fourth</span> <span class="overlay-target">fifth</span> <span class="overlay-target absolute">sixth</span>
+    </div>
+    <script type="text/javascript">
+        if (window.testRunner)
+            window.testRunner.dumpAsText();
+
+        var boxes = document.getElementsByClassName("overlay-target");
+        var expectedResults = [{"top":0,"left":450,"width":150,"height":30},
+                            {"top":30,"left":420,"width":180,"height":30},
+                            {"top":0,"left":233.34375,"width":150,"height":30},
+                            {"top":30,"left":203.34375,"width":180,"height":30},
+                            {"top":0,"left":16.6875,"width":150,"height":30},
+                            {"top":150,"left":450,"width":150,"height":30}];
+
+        var errorString = null;
+        for (var i = 0; i < boxes.length; i++) {
+            var bbox = boxes[i].getBoundingClientRect();
+            bboxObject = {
+                top: bbox.top,
+                left: bbox.left,
+                width: bbox.width,
+                height: bbox.height
+            }
+            var expected = expectedResults[i];
+            if ((bboxObject.left === expected.left) && (bboxObject.top === expected.top)
+                && (bboxObject.width === expected.width) && (bboxObject.height === expected.height))
+                continue;
+
+            errorString = (errorString || "") + "Expected: " + JSON.stringify(expected) + " Got: " + JSON.stringify(bboxObject) + "<br>";
+        }
+
+        var prefix = "Test for https://bugs.webkit.org/show_bug.cgi?id=135452<br>";
+        if (errorString)
+            document.body.innerHTML = prefix + "FAIL<br>" + errorString;
+        else
+            document.body.innerHTML = prefix + "PASS";
+    </script>
+</body>
+</html>

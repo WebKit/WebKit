@@ -1,0 +1,38 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+    <head>
+        <script src="../media-file.js"></script>
+        <script src="controls-test-helpers.js"></script>
+        <script>
+            var tester = new ControlsTest()
+                .whenReady(runTests)
+                .start("Test for Show Controls button");
+
+            function runTests()
+            {
+                currentState = tester.currentState;
+                tester.test("We are using the apple idiom")
+                    .value(currentState.idiom)
+                    .isEqualTo("apple");
+
+                tester.startNewSection("Get the button that shows controls while in Voice Over");
+                var controlsButtonState = tester.stateForControlsElement("Show Controls");
+
+                tester.test("Name is 'Show Controls'")
+                    .value(controlsButtonState.name)
+                    .isEqualTo("Show Controls");
+
+                tester.test("Is hidden")
+                    .value(controlsButtonState.hidden)
+                    .isTrue();
+
+                tester.end();
+            }
+        </script>
+    </head>
+    <body>
+        <p>This tests for the existence of a hidden Show Controls button.</p>
+        <p>This test only runs in DRT!</p>
+        <video controls></video>
+    </body>
+</html>

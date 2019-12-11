@@ -1,0 +1,60 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width">
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+doneCount = 0;
+lastInputEvent = null;
+jsTestIsAsync = true;
+
+function enterTextAndWaitForKeyboardToHide(text) {
+    return new Promise(async resolve => {
+        await UIHelper.activateAndWaitForInputSessionAt(100, 100);
+        UIHelper.waitForKeyboardToHide().then(resolve);
+        UIHelper.enterText(text);
+    });
+}
+
+async function runTest() {
+    if (!window.testRunner) {
+        description(`This test requires WebKitTestRunner.`);
+        return;
+    }
+
+    await enterTextAndWaitForKeyboardToHide("testing");
+    inputEventAfterInsertingText = lastInputEvent;
+    valueAfterInsertingText = field.value;
+
+    await enterTextAndWaitForKeyboardToHide("");
+    inputEventAfterDeletingText = lastInputEvent;
+    valueAfterDeletingText = field.value;
+
+    shouldBe("inputEventAfterInsertingText.type", "'input'");
+    shouldBe("inputEventAfterInsertingText.inputType", "'insertText'");
+    shouldBe("inputEventAfterInsertingText.data", "'testing'");
+    shouldBe("valueAfterInsertingText", "'testing'");
+
+    shouldBe("inputEventAfterDeletingText.type", "'input'");
+    shouldBe("inputEventAfterDeletingText.inputType", "'deleteContent'");
+    shouldBe("inputEventAfterDeletingText.data", "null");
+    shouldBe("valueAfterDeletingText", "''");
+
+    checkDone();
+}
+
+function handleInput(event) {
+    lastInputEvent = event;
+}
+
+function checkDone() {
+    if (++doneCount === 3)
+        finishJSTest();
+}
+</script>
+</head>
+<body onload="runTest()">
+<input id="field" style="width: 320px; height: 568px;" oninput="handleInput(event)" onblur="checkDone()"></input>
+</body>
+</html>

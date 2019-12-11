@@ -1,0 +1,336 @@
+<html>
+<body>
+<p>Should not be able to read the secret text from another site.</p>
+<script>
+    // Based on tests originally provided by Daniel Divricean (http://divricean.ro). 
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    let errorTypes = [ Error, EvalError, RangeError, ReferenceError, SyntaxError, TypeError, URIError ];
+    let errorTypeNames = errorTypes.map(function (errorType) {
+        return errorType.name;
+    });
+
+    let nameGettersInstalled = false;
+    let toStringGettersInstalled = false;
+    let timesInErrorGetter = 0;
+    let caseIndex = 0;
+    let caseStr;
+    let testedErrorTypeCount = 0;
+    let errorTypeIndexToTest = 0;
+    let inMainScript = true;
+
+    function assert(expr) {
+        if (!eval(expr))
+            console.log("FAILED assertion: " + expr);
+    }
+    function assertLessThan(a, b) {
+        if (!(a < b))
+            console.log("FAILED assertion");
+    }
+    function shouldContainNoSecrets(actual, calledFromMainScript) {
+        if (calledFromMainScript && String(actual).indexOf("Secret") != -1)
+            console.log("FAILED: Found other domain Secret in '" + actual + "'");
+        else
+            console.log("PASSED: Did not see any Secret from another domain");
+    }
+
+    function logTitle(title) {
+        console.log("");
+        console.log(title);
+    }
+
+    window.onerror = function(error) {
+        console.log("   " + caseStr + " in window.onerror: err = " + error);
+        console.log("   " + caseStr + " in window.onerror: err.name = " + error.name);
+        console.log("   " + caseStr + " in window.onerror: err.message = " + error.message);
+        console.log("   " + caseStr + " in window.onerror: err.toString() = " + error.toString());
+
+        shouldContainNoSecrets(error, true);
+        shouldContainNoSecrets(error.name, true);
+        shouldContainNoSecrets(error.message, true);
+        shouldContainNoSecrets(error.toString(), true);
+    }
+
+    let savedNameDescriptors = [];
+    function installNameGettersToCheckErrorMessageForSecrets() {
+        assert("nameGettersInstalled == false");
+        for (var i in errorTypes) {
+            let errorType = errorTypes[i];
+            savedNameDescriptors[i] = Object.getOwnPropertyDescriptor(errorType.prototype, 'name');
+            errorType.prototype.__defineGetter__('name', function() {
+                var getterEntry = timesInErrorGetter++;
+                var error = this;
+                console.log("   " + caseStr + " in 'name' getter[" + getterEntry + "]: error.message = '" + error.message + "'");
+
+                shouldContainNoSecrets(error.message, inMainScript);
+
+                return "GetterErrorName: getter[" + getterEntry + "] " + error.message;
+            });
+        }
+        nameGettersInstalled = true;
+    }
+
+    function resetNameGetters() {
+        assert("nameGettersInstalled == true");
+        for (var i in errorTypes) {
+            let errorType = errorTypes[i];
+            Object.defineProperty(errorType.prototype, 'name', savedNameDescriptors[i]);
+        }
+        nameGettersInstalled = false;
+    }
+
+    let savedToStringDescriptors = [];
+    function installToStringGettersToCheckErrorMessageForSecrets() {
+        assert("toStringGettersInstalled == false");
+        for (var i in errorTypes) {
+            let errorType = errorTypes[i];
+            savedToStringDescriptors[i] = Object.getOwnPropertyDescriptor(errorType.prototype, 'toString');
+            errorType.prototype.__defineGetter__('toString', function() {
+                var getterEntry = timesInErrorGetter++;
+                var error = this;
+                console.log("   " + caseStr + " in 'toString' getter[" + getterEntry + "]: error.message = '" + error.message + "'");
+
+                shouldContainNoSecrets(error.message, inMainScript);
+
+                return function() {
+                    return "GetterErrorToString: getter[" + getterEntry + "] " + error.message;
+                }
+            });
+        }
+        toStringGettersInstalled = true;
+    }
+
+    function resetToStringGetters() {
+        assert("toStringGettersInstalled == true");
+        for (var i in errorTypes) {
+            let errorType = errorTypes[i];
+            Object.defineProperty(errorType.prototype, 'toString', savedToStringDescriptors[i]);
+        }
+        toStringGettersInstalled = false;
+    }
+
+    function incCaseIndex() {
+        caseIndex++;
+        caseStr = "[case " + caseIndex + "]";
+    }
+
+    function doTest(index, newErrorName) {
+        assertLessThan(index, errorTypes.length);
+
+        let errorType = errorTypes[index];
+        let errorTypeName = errorTypeNames[index];
+
+        incCaseIndex();
+        testedErrorTypeCount++;
+
+        timesInErrorGetter = 0;
+
+        logTitle("Test " + caseStr);
+        console.log("   " + caseStr + " let e = new " + errorTypeName + "('Error thrown from main script body');");
+        let e = new errorType("Error thrown from main script body");
+        if (newErrorName) {
+            console.log("   " + caseStr + " e.name = '" + newErrorName + "';");
+            e.name = newErrorName;
+        }
+
+        console.log("      [" + errorTypeName + "] e = '" + e + "'");
+        console.log("      [" + errorTypeName + "] e.name = '" + e.name + "'");
+        console.log("      [" + errorTypeName + "] e.message = '" + e.message + "'");
+        console.log("      [" + errorTypeName + "] e.toString() = '" + e.toString() + "'");
+        console.log("");
+
+        if (nameGettersInstalled)
+            assert("timesInErrorGetter == 3");
+        else if (toStringGettersInstalled)
+            assert("timesInErrorGetter == 2");
+        else
+            assert("timesInErrorGetter == 0");
+
+        console.log("   " + caseStr + " let caughtE; try { throw e } catch(err) { caughtE = err }");
+        let caughtE; try { throw e } catch(err) { caughtE = err }
+
+        console.log("      [" + errorTypeName + "] caughtE = '" + caughtE + "'");
+        console.log("      [" + errorTypeName + "] caughtE.name = '" + caughtE.name + "'");
+        console.log("      [" + errorTypeName + "] caughtE.message = '" + caughtE.message + "'");
+        console.log("      [" + errorTypeName + "] caughtE.toString() = '" + caughtE.toString() + "'");
+        console.log("");
+
+        if (nameGettersInstalled)
+            assert("timesInErrorGetter == 6");
+        else if (toStringGettersInstalled)
+            assert("timesInErrorGetter == 4");
+        else
+            assert("timesInErrorGetter == 0");
+
+        console.log('   throw e;');
+        throw e;
+    }
+</script>
+
+<script>
+    // Test throwing uncaught errors with no getters.
+    testedErrorTypeCount = 0;
+</script>
+<script> doTest(0) </script>
+<script> doTest(1) </script>
+<script> doTest(2) </script>
+<script> doTest(3) </script>
+<script> doTest(4) </script>
+<script> doTest(5) </script>
+<script> doTest(6) </script>
+<script>
+    assert("testedErrorTypeCount == errorTypes.length");
+</script>
+
+<script>
+    // Test throwing uncaught errors with explicitly set names.
+    testedErrorTypeCount = 0;
+</script>
+<script> doTest(0, "My" + errorTypeNames[0]) </script>
+<script> doTest(1, "My" + errorTypeNames[1]) </script>
+<script> doTest(2, "My" + errorTypeNames[2]) </script>
+<script> doTest(3, "My" + errorTypeNames[3]) </script>
+<script> doTest(4, "My" + errorTypeNames[4]) </script>
+<script> doTest(5, "My" + errorTypeNames[5]) </script>
+<script> doTest(6, "My" + errorTypeNames[6]) </script>
+<script>
+    assert("testedErrorTypeCount == errorTypes.length");
+</script>
+
+<script>
+    // Test throwing uncaught errors with 'name' getters set.
+    testedErrorTypeCount = 0;
+    installNameGettersToCheckErrorMessageForSecrets();
+</script>
+<script> doTest(0) </script>
+<script> doTest(1) </script>
+<script> doTest(2) </script>
+<script> doTest(3) </script>
+<script> doTest(4) </script>
+<script> doTest(5) </script>
+<script> doTest(6) </script>
+<script>
+    assert("testedErrorTypeCount == errorTypes.length");
+    resetNameGetters();
+</script>
+
+<script>
+    // Test throwing uncaught errors with 'toString' getters set.
+    testedErrorTypeCount = 0;
+    installToStringGettersToCheckErrorMessageForSecrets();
+</script>
+<script> doTest(0) </script>
+<script> doTest(1) </script>
+<script> doTest(2) </script>
+<script> doTest(3) </script>
+<script> doTest(4) </script>
+<script> doTest(5) </script>
+<script> doTest(6) </script>
+<script>
+    assert("testedErrorTypeCount == errorTypes.length");
+    resetToStringGetters();
+</script>
+
+
+<script>
+    // Test loading a document from another domain that has a SyntaxError with no getters.
+    logTitle("Test uncaught error from a script from another domain");
+    incCaseIndex();
+</script>
+<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-syntax-error.js"></script/>
+
+<script>
+    // Test loading a document from another domain that has a SyntaxError with 'name' getters installed.
+    logTitle("Test uncaught error from a script from another domain with 'name' getters installed");
+    incCaseIndex();
+    installNameGettersToCheckErrorMessageForSecrets();
+</script>
+<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-syntax-error.js"></script/>
+<script>
+    resetNameGetters();
+</script>
+
+<script>
+    // Test loading a document from another domain that has a SyntaxError with 'toString' getters installed.
+    logTitle("Test uncaught error from a script from another domain with 'toString' getters installed");
+    incCaseIndex();
+    installToStringGettersToCheckErrorMessageForSecrets();
+</script>
+<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-syntax-error.js"></script/>
+<script>
+    resetToStringGetters();
+</script>
+
+<script>
+    // Test throwing from other domain script with no getters installed.
+</script>
+<script> errorTypeIndexToTest = 0; </script>
+<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script> errorTypeIndexToTest = 1; </script>
+<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script> errorTypeIndexToTest = 2; </script>
+<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script> errorTypeIndexToTest = 3; </script>
+<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script> errorTypeIndexToTest = 4; </script>
+<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script> errorTypeIndexToTest = 5; </script>
+<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script> errorTypeIndexToTest = 6; </script>
+<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+
+<script>
+    // Test throwing from other domain script when Error.prototype has a 'name' getter.
+    installNameGettersToCheckErrorMessageForSecrets();
+</script>
+<script> errorTypeIndexToTest = 0; </script>
+<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script> errorTypeIndexToTest = 1; </script>
+<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script> errorTypeIndexToTest = 2; </script>
+<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script> errorTypeIndexToTest = 3; </script>
+<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script> errorTypeIndexToTest = 4; </script>
+<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script> errorTypeIndexToTest = 5; </script>
+<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script> errorTypeIndexToTest = 6; </script>
+<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script> resetNameGetters(); </script>
+
+<script>
+    // Test throwing from other domain script when Error.prototype has a 'toString' getter.
+    installToStringGettersToCheckErrorMessageForSecrets();
+</script>
+<script> errorTypeIndexToTest = 0; </script>
+<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script> errorTypeIndexToTest = 1; </script>
+<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script> errorTypeIndexToTest = 2; </script>
+<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script> errorTypeIndexToTest = 3; </script>
+<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script> errorTypeIndexToTest = 4; </script>
+<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script> errorTypeIndexToTest = 5; </script>
+<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script> errorTypeIndexToTest = 6; </script>
+<script src="../../resources/redirect.php?url=http://localhost:8000/security/resources/regress-52192-throw-error.js"></script/>
+<script> resetToStringGetters(); </script>
+
+<script>
+    if (window.testRunner) {
+        // Allow the console message to be dumped out.
+        setTimeout(function() {
+            testRunner.notifyDone();
+        }, 0);
+    }
+</script>
+
+</body>
+</html>

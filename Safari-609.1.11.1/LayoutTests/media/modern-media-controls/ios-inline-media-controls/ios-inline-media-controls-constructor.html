@@ -1,0 +1,29 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing the <code>IOSInlineMediaControls</code> constructor.");
+
+const mediaControls = new IOSInlineMediaControls;
+
+shouldBeEqualToString("mediaControls.element.localName", "div");
+shouldBeTrue("mediaControls.element.classList.contains('media-controls')");
+shouldBeTrue("mediaControls.element.classList.contains('inline')");
+shouldBeTrue("mediaControls.element.classList.contains('ios')");
+shouldBe("mediaControls.layoutTraits", "LayoutTraits.iOS");
+
+mediaControls.bottomControlsBar.element.id = "groupping-label";
+document.body.appendChild(mediaControls.bottomControlsBar.element);
+
+mediaControls.shouldUseAudioLayout = false;
+shouldBeEqualToString("accessibilityController.accessibleElementById('groupping-label').description","AXLabel: Video Controls");
+
+mediaControls.shouldUseAudioLayout = true;
+shouldBeEqualToString("accessibilityController.accessibleElementById('groupping-label').description","AXLabel: Audio Controls");
+
+debug("");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

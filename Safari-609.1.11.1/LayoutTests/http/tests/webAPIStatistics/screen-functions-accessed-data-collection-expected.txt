@@ -1,0 +1,26 @@
+Tests for screen functions accessed data collection in ResourceLoadStatistics plist by querying for all the screen properties and dumping the entire resource load statistics map.
+Resource load statistics:
+
+High level domain: 127.0.0.1
+    lastSeen: 0
+    hadUserInteraction: No
+    mostRecentUserInteraction: -1
+    grandfathered: No
+    isPrevalentResource: No
+    isVeryPrevalentResource: No
+    dataRecordsRemoved: 0
+    fontsSuccessfullyLoaded:
+        Times
+    topFrameRegistrableDomainsWhichAccessedWebAPIs:
+        127.0.0.1: 9
+    screenFunctionsAccessed:
+        height
+        width
+        colorDepth
+        pixelDepth
+        availLeft
+        availTop
+        availHeight
+        availWidth
+    canvasReadData: No
+

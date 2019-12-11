@@ -1,0 +1,4 @@
+This tests for a bug where text pasted into a textarea would appear one character before the position where it was pasted.
+
+
+Hooray, test succeeded.

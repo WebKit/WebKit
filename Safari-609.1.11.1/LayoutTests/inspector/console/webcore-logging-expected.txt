@@ -1,0 +1,42 @@
+Test WebKit logging configuration and console display.
+
+
+
+== Running test suite: Console.Logging
+-- Running test case: Console.Logging.BasicProperties
+PASS: Log channels should be supported.
+PASS: Has WI.consoleManager.customLoggingChannels.
+PASS: WI.consoleManager.customLoggingChannels is not empty.
+PASS: Has WI.consoleManager.logChannelSources.
+PASS: WI.consoleManager.logChannelSources is not empty.
+PASS: Log channel has known source.
+PASS: Log channel disabled by default.
+PASS: Log channel has known source.
+PASS: Log channel disabled by default.
+PASS: Log channel has known source.
+PASS: Log channel disabled by default.
+
+-- Running test case: Console.Logging.InvalidLevel
+PASS: Unknown channelLevel: DOES_NOT_EXIST
+
+-- Running test case: Console.Logging.NoLogging
+PASS: Media logging disabled.
+Started Playing
+Stopped Playing
+
+-- Running test case: Console.Logging.MediaLogging
+PASS: Media logging disabled.
+PASS: Media logging has been enabled.
+PASS: Media log message should have source 'media'.
+
+-- Running test case: Console.Logging.LogAsJSONWithoutRepeat
+PASS: Media logging disabled.
+PASS: Verbose media logging has been enabled.
+PASS: Message logged as JSON.
+PASS: ConsoleMessage repeatCount is 1.
+PASS: Message logged as JSON.
+PASS: ConsoleMessage repeatCount is 1.
+PASS: Message logged as JSON.
+PASS: ConsoleMessage repeatCount is 1.
+Received three JSON messages.
+

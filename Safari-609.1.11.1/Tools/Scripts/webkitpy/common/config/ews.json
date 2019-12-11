@@ -1,0 +1,103 @@
+{
+    "GTK WK2 EWS": {
+        "port": "gtk-wk2",
+        "watchers": [
+            "bugs-noreply@webkitgtk.org"
+        ]
+    },
+    "Win EWS": {
+        "port": "win",
+        "watchers": [
+            "bfulgham@apple.com"
+        ],
+        "runTests": true
+    },
+    "iOS EWS": {
+        "port": "ios-device",
+        "name": "ios-ews",
+        "architecture": "arm64"
+    },
+    "iOS Simulator EWS": {
+        "port": "ios-simulator-wk2",
+        "name": "ios-sim-ews",
+        "runTests": true
+    },
+    "Mac EWS": {
+        "port": "mac",
+        "watchers": [
+            "rniwa@webkit.org"
+        ],
+        "runTests": true
+    },
+    "Mac WK2 EWS": {
+        "port": "mac-wk2",
+        "watchers": [
+            "rniwa@webkit.org"
+        ],
+        "runTests": true
+    },
+    "Mac Debug EWS": {
+        "port": "mac",
+        "name": "mac-debug-ews",
+        "style": "debug",
+        "runTests": true
+    },
+    "JSC EWS": {
+        "port": "mac",
+        "name": "jsc-ews",
+        "group": "jsc",
+        "runTests": true
+    },
+	"JSC i386 EWS": {
+        "port": "jsc-only",
+        "name": "jsc-i386-ews",
+        "group": "jsc",
+        "runTests": false
+    },
+    "JSC MIPS32el EWS": {
+        "port": "jsc-only",
+        "name": "jsc-mips-ews",
+        "group": "jsc",
+        "runTests": true,
+        "watchers": [
+            "guijemont@igalia.com"
+        ]
+    },
+    "JSC Armv7 EWS": {
+        "port": "jsc-only",
+        "name": "jsc-armv7-ews",
+        "group": "jsc",
+        "runTests": true,
+        "watchers": [
+            "guijemont@igalia.com"
+        ]
+    },
+    "Bindings EWS": {
+        "port": "mac",
+        "name": "bindings-ews",
+        "group": "bindings",
+        "runTests": true,
+        "shouldBuild": false
+    },
+    "webkitpy EWS": {
+        "port": "mac",
+        "name": "webkitpy-ews",
+        "group": "webkitpy",
+        "runTests": true,
+        "shouldBuild": false
+    },
+    "WinCairo EWS": {
+        "port": "wincairo",
+        "name": "wincairo-ews",
+        "runTests": false,
+        "watchers": [
+            "SIE-WebKit-EWS@am.sony.com"
+        ]
+    },
+    "WPE EWS": {
+        "port": "wpe",
+        "watchers": [
+            "bugs-noreply@webkitgtk.org"
+        ]
+    }
+}

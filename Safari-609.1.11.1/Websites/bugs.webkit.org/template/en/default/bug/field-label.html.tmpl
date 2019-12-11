@@ -1,0 +1,42 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  #   field: a Bugzilla::Field object
+  #   editable: if true, a label pointing to the editable field will be added.
+  #   desc_url: An alternate link to help for the field.
+  #   hidden: True if the field label should start hidden.
+  #   rowspan: a "rowspan" value for the label's <th>.
+  #   tag_name: the tag to use to surround the label
+  #   accesskey: access key for the label
+  #%]
+
+[% DEFAULT tag_name = "th" %]
+<[% tag_name FILTER html %] class="field_label [% ' bz_hidden_field' IF hidden %]
+           [%- ' required' IF field.is_mandatory && NOT bug.id %]"
+    id="field_label_[% field.name FILTER html %]"
+    [% IF rowspan %] rowspan="[% rowspan FILTER html %]"[% END %]>
+
+  [% IF editable %]
+    <label for="[% field.name FILTER html %]"[% IF accesskey %] accesskey="[% accesskey FILTER html %]"[% END %]>
+  [% END %]
+
+  <a 
+    [% IF help_html.${field.name}.defined %]
+      title="[% help_html.${field.name} FILTER txt FILTER collapse FILTER html %]"
+      class="field_help_link"
+    [% END %]
+    [% IF desc_url %]
+      href="[% desc_url FILTER html %]"
+    [% ELSE %]
+      href="page.cgi?id=fields.html#[% field.name FILTER uri %]"
+    [% END %]
+  >[%- field_descs.${field.name} FILTER html %]:</a>
+
+  [% '</label>' IF editable %]
+</[% tag_name FILTER html %]>

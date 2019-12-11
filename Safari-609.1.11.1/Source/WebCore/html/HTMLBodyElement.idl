@@ -1,0 +1,47 @@
+/*
+ * Copyright (C) 2006, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+interface HTMLBodyElement : HTMLElement {
+    [CEReactions=NotNeeded, Reflect] attribute [TreatNullAs=EmptyString] DOMString aLink;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString background;
+    [CEReactions=NotNeeded, Reflect] attribute [TreatNullAs=EmptyString] DOMString bgColor;
+    [CEReactions=NotNeeded, Reflect] attribute [TreatNullAs=EmptyString] DOMString link;
+    [CEReactions=NotNeeded, Reflect] attribute [TreatNullAs=EmptyString] DOMString text;
+    [CEReactions=NotNeeded, Reflect] attribute [TreatNullAs=EmptyString] DOMString vLink;
+
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onblur;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onerror;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onfocus;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onfocusin;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onfocusout;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onload;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onresize;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onscroll;
+
+    [NotEnumerable, WindowEventHandler, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcechanged;
+    [NotEnumerable, WindowEventHandler, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcedown;
+    [NotEnumerable, WindowEventHandler, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcewillbegin;
+    [NotEnumerable, WindowEventHandler, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceup;
+
+    // Unique to Document and HTMLBodyElement
+    [NotEnumerable, DocumentEventHandler] attribute EventHandler onselectionchange;
+};
+
+HTMLBodyElement implements WindowEventHandlers;

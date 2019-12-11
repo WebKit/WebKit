@@ -1,0 +1,5 @@
+main frame - has 1 onunload handler(s)
+Ping received.
+HTTP_HOST: 127.0.0.1:8000
+REQUEST_URI: /contentextensions/resources/save-ping.php?test=contentextensions-block-cookies-in-image-load-in-onunload
+No cookies in ping.

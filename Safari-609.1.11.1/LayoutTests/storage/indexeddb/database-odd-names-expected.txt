@@ -1,0 +1,23 @@
+Test IndexedDB odd value datatypes
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+opening a database named null
+indexedDB.open(testData[nextToOpen].name)
+opening a database named faihu
+indexedDB.open(testData[nextToOpen].name)
+opening a database named unpaired surrogate
+indexedDB.open(testData[nextToOpen].name)
+opening a database named fffe
+indexedDB.open(testData[nextToOpen].name)
+opening a database named ffff
+indexedDB.open(testData[nextToOpen].name)
+opening a database named line separator
+indexedDB.open(testData[nextToOpen].name)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

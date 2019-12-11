@@ -1,0 +1,49 @@
+--- !tapi-tbd-v2
+archs:
+  - armv7
+  - armv7s
+  - arm64
+  - i386
+  - x86_64
+exports:
+  -
+    archs:
+      - armv7
+      - armv7s
+      - arm64
+      - i386
+      - x86_64
+    symbols:
+      - _IOSurfaceAlignProperty
+      - _IOSurfaceCreate
+      - _IOSurfaceCreateMachPort
+      - _IOSurfaceGetAllocSize
+      - _IOSurfaceGetBaseAddress
+      - _IOSurfaceGetBytesPerRow
+      - _IOSurfaceGetHeight
+      - _IOSurfaceGetPixelFormat
+      - _IOSurfaceGetPropertyMaximum
+      - _IOSurfaceGetWidth
+      - _IOSurfaceIsInUse
+      - _IOSurfaceLock
+      - _IOSurfaceLookupFromMachPort
+      - _IOSurfaceSetPurgeable
+      - _IOSurfaceUnlock
+      - _kIOSurfaceAllocSize
+      - _kIOSurfaceBytesPerElement
+      - _kIOSurfaceBytesPerRow
+      - _kIOSurfaceCacheMode
+      - _kIOSurfaceElementHeight
+      - _kIOSurfaceHeight
+      - _kIOSurfacePixelFormat
+      - _kIOSurfacePlaneBytesPerRow
+      - _kIOSurfacePlaneHeight
+      - _kIOSurfacePlaneInfo
+      - _kIOSurfacePlaneOffset
+      - _kIOSurfacePlaneSize
+      - _kIOSurfacePlaneWidth
+      - _kIOSurfaceWidth
+install-name: /System/Library/PrivateFrameworks/IOSurface.framework/IOSurface
+objc-constraint: none
+platform: ios
+...

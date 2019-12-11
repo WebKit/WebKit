@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 272x18
+          text run at (0,0) width 272: "All the text below should be part of a link."
+      RenderBlock (anonymous) at (0,34) size 784x36
+        RenderInline {NOBR} at (0,0) size 27x18
+          RenderInline {A} at (0,0) size 27x18 [color=#0000EE]
+            RenderText {#text} at (0,0) size 27x18
+              text run at (0,0) width 27: "Test"
+        RenderInline {A} at (0,0) size 64x18 [color=#0000EE]
+          RenderText {#text} at (26,0) size 64x18
+            text run at (26,0) width 64: " more test"
+        RenderBR {BR} at (89,14) size 1x0
+        RenderWordBreak {WBR} at (0,0) size 0x0
+        RenderInline {A} at (0,0) size 90x18 [color=#0000EE]
+          RenderText {#text} at (0,18) size 90x18
+            text run at (0,18) width 90: "Test more test"
+        RenderBR {BR} at (89,32) size 1x0

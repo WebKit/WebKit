@@ -1,0 +1,135 @@
+/*
+ * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+:host {
+    /* We always want to prevent iOS dialogs and the magnifier UI to be shown. */
+    -webkit-user-select: none !important;
+    -webkit-touch-callout: none !important;
+}
+
+:host(audio) {
+    width: 250px;
+    height: var(--inline-controls-bar-height);
+    min-width: 44px !important;
+    min-height: var(--inline-controls-bar-height) !important;
+}
+
+* {
+    /* This constant needs to stay in sync with the InsideMargin JS constant. */
+    --inline-controls-inside-margin: 6px;
+    --fullscreen-controls-bar-height: 75px;
+    --primary-glyph-color: rgba(255, 255, 255, 0.75);
+    --secondary-glyph-color: rgba(255, 255, 255, 0.55);
+}
+
+:host(audio), :host(video.media-document.audio), * {
+    /* This constant needs to stay in sync with the BottomControlsBarHeight JS constant. */
+    --inline-controls-bar-height: 31px;
+}
+
+/* We need to use relative positioning due to webkit.org/b/163603 */
+.media-controls-container {
+    all: initial;
+    display: block;
+    visibility: inherit;
+    pointer-events: inherit;
+    -webkit-cursor-visibility: inherit;
+    position: relative;
+    will-change: z-index;
+}
+
+.media-controls-container,
+.media-controls-container > * {
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.media-controls-container,
+.media-controls-container * {
+    -webkit-text-zoom: reset;
+    -webkit-text-size-adjust: auto;
+    -webkit-font-smoothing: subpixel-antialiased;
+}
+
+.media-controls-container > * {
+    position: absolute;
+}
+
+.media-controls {
+    height: 100%;
+    font-family: -apple-system;
+    -webkit-user-select: none;
+    white-space: nowrap;
+    text-align: initial;
+    cursor: default;
+    transform-origin: 0 0;
+}
+
+:host(:-webkit-animating-full-screen-transition) .media-controls {
+    display: none;
+}
+
+.media-controls > * {
+    transition: opacity 0.1s linear;
+}
+
+.media-controls.shows-tracks-panel > .controls-bar > *,
+.media-controls.shows-tracks-panel > button {
+    pointer-events: none;
+}
+
+.media-controls.faded > *:not(.placard) {
+    opacity: 0;
+    pointer-events: none;
+    transition-duration: 0.25s;
+}
+
+.media-controls > .controls-bar {
+    position: absolute;
+}
+
+.media-controls.fade-in {
+    animation-name: fade-in;
+    animation-duration: 350ms;
+}
+
+.media-controls .time-label,
+.media-controls .status-label {
+    color: var(--secondary-glyph-color);
+    mix-blend-mode: plus-lighter;
+}
+
+@keyframes fade-in {
+    from { opacity: 0 }
+    to   { opacity: 1 }
+}
+
+/* Default support for "Smart Invert" where all content color except media is inverted. */ 
+@media (inverted-colors) {
+    :host { filter: invert(100%); } /* WebKit native audio and video. */
+    picture { filter: none; } /* Don't invert the control buttons. */
+}

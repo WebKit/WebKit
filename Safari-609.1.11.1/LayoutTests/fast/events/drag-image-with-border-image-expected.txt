@@ -1,0 +1,10 @@
+PASS receivedDropEvent is true
+PASS !!destination.querySelector("img") is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+This test verifies that the web process does not crash when dragging an image element with a border image whose dimensions exceeds the dimensions of the image element itself. To manually test, try to drag the contents of the solid red box; the web process should not crash, and dropping into the green editable area should insert an image.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

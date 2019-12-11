@@ -1,0 +1,143 @@
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-storage-2d.html
+[ 1: PASS ] WebGL context exists
+[ 2: PASS ] getError was expected value: INVALID_VALUE : texStorage2D should fail for zero width
+[ 3: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : texStorage2D should fail for zero height
+[ 4: PASS ] getError was expected value: INVALID_VALUE : texStorage2D should fail for negative height
+[ 5: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : texStorage2D should fail for zero levels
+[ 6: PASS ] getError was expected value: INVALID_OPERATION : texStorage2D should fail for too many levels
+[ 7: PASS ] getError was expected value: INVALID_ENUM : texStorage2D should fail for bad target TEXTURE_CUBE_MAP_NEGATIVE_X
+[ 8: PASS ] getError was expected value: INVALID_OPERATION : texStorage2D should fail when no texture is bound
+[ 9: PASS ] getError was expected value: INVALID_ENUM : texStorage2D should fail for bad internalformat RGBA
+[ 10: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texStorage2D should succeed with a good sized internalformat
+[ 11: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : getTexParameter should succeed with TEXTURE_IMMUTABLE_FORMAT
+[ 12: PASS ] getTexParameter with TEXTURE_IMMUTABLE_FORMAT should not return 0
+[ 13: PASS ] getError was expected value: INVALID_OPERATION : texImage2D should fail on immutable texture
+[ 14: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : copyTexImage2D should fail on immutable texture
+[ 15: PASS ] texture should sample as uninitialized texture after texStorage2D
+[ 16: PASS ] getError was expected value: NO_ERROR : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 17: PASS ] texture should sample as red after uploading red pixels with texSubImage2D
+[ 18: PASS ] getError was expected value: INVALID_VALUE : texStorage2D should fail for zero width
+[ 19: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : texStorage2D should fail for zero height
+[ 20: PASS ] getError was expected value: INVALID_VALUE : texStorage2D should fail for negative height
+[ 21: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : texStorage2D should fail for zero levels
+[ 22: PASS ] getError was expected value: INVALID_OPERATION : texStorage2D should fail for too many levels
+[ 23: PASS ] getError was expected value: INVALID_ENUM : texStorage2D should fail for bad target TEXTURE_CUBE_MAP_NEGATIVE_X
+[ 24: PASS ] getError was expected value: INVALID_OPERATION : texStorage2D should fail when no texture is bound
+[ 25: PASS ] getError was expected value: INVALID_ENUM : texStorage2D should fail for bad internalformat RGB
+[ 26: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texStorage2D should succeed with a good sized internalformat
+[ 27: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : getTexParameter should succeed with TEXTURE_IMMUTABLE_FORMAT
+[ 28: PASS ] getTexParameter with TEXTURE_IMMUTABLE_FORMAT should not return 0
+[ 29: PASS ] getError was expected value: INVALID_OPERATION : texImage2D should fail on immutable texture
+[ 30: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : copyTexImage2D should fail on immutable texture
+[ 31: PASS ] texture should sample as uninitialized texture after texStorage2D
+[ 32: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 33: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 34: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 35: FAIL ] texture should sample as red after uploading red pixels with texSubImage2D at (0, 0) expected: 255,0,0,255 was 0,0,0,255
+[ 36: PASS ] getError was expected value: INVALID_VALUE : texStorage2D should fail for zero width
+[ 37: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : texStorage2D should fail for zero height
+[ 38: PASS ] getError was expected value: INVALID_VALUE : texStorage2D should fail for negative height
+[ 39: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : texStorage2D should fail for zero levels
+[ 40: PASS ] getError was expected value: INVALID_OPERATION : texStorage2D should fail for too many levels
+[ 41: PASS ] getError was expected value: INVALID_ENUM : texStorage2D should fail for bad target TEXTURE_CUBE_MAP_NEGATIVE_X
+[ 42: PASS ] getError was expected value: INVALID_OPERATION : texStorage2D should fail when no texture is bound
+[ 43: PASS ] getError was expected value: INVALID_ENUM : texStorage2D should fail for bad internalformat RGBA
+[ 44: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texStorage2D should succeed with a good sized internalformat
+[ 45: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : getTexParameter should succeed with TEXTURE_IMMUTABLE_FORMAT
+[ 46: PASS ] getTexParameter with TEXTURE_IMMUTABLE_FORMAT should not return 0
+[ 47: PASS ] getError was expected value: INVALID_OPERATION : texImage2D should fail on immutable texture
+[ 48: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : copyTexImage2D should fail on immutable texture
+[ 49: FAIL ] texture should sample as uninitialized texture after texStorage2D at (0, 0) expected: 0,0,0,0 was 0,0,0,255
+[ 50: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 51: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 52: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 53: FAIL ] texture should sample as red after uploading red pixels with texSubImage2D at (0, 0) expected: 255,0,0,0 was 0,0,0,255
+[ 54: PASS ] getError was expected value: INVALID_VALUE : texStorage2D should fail for zero width
+[ 55: PASS ] getError was expected value: INVALID_VALUE : texStorage2D should fail for zero height
+[ 56: PASS ] getError was expected value: INVALID_VALUE : texStorage2D should fail for negative height
+[ 57: PASS ] getError was expected value: INVALID_VALUE : texStorage2D should fail for zero levels
+[ 58: PASS ] getError was expected value: INVALID_OPERATION : texStorage2D should fail for too many levels
+[ 59: PASS ] getError was expected value: INVALID_ENUM : texStorage2D should fail for bad target TEXTURE_CUBE_MAP_NEGATIVE_X
+[ 60: PASS ] getError was expected value: INVALID_OPERATION : texStorage2D should fail when no texture is bound
+[ 61: PASS ] getError was expected value: INVALID_ENUM : texStorage2D should fail for bad internalformat RGBA
+[ 62: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texStorage2D should succeed with a good sized internalformat
+[ 63: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : getTexParameter should succeed with TEXTURE_IMMUTABLE_FORMAT
+[ 64: PASS ] getTexParameter with TEXTURE_IMMUTABLE_FORMAT should not return 0
+[ 65: PASS ] getError was expected value: INVALID_OPERATION : texImage2D should fail on immutable texture
+[ 66: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : copyTexImage2D should fail on immutable texture
+[ 67: FAIL ] texture should sample as uninitialized texture after texStorage2D at (0, 0) expected: 0,0,0,0 was 0,0,0,255
+[ 68: PASS ] getError was expected value: NO_ERROR : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 69: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 70: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 71: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 72: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 73: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 74: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 75: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 76: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 77: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 78: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 79: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 80: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 81: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 82: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 83: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 84: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 85: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 86: FAIL ] texture should sample as red after uploading red pixels with texSubImage2D at (0, 0) expected: 255,0,0,0 was 0,0,0,255
+[ 87: PASS ] getError was expected value: INVALID_VALUE : texStorage2D should fail for zero width
+[ 88: PASS ] getError was expected value: INVALID_VALUE : texStorage2D should fail for zero height
+[ 89: PASS ] getError was expected value: INVALID_VALUE : texStorage2D should fail for negative height
+[ 90: PASS ] getError was expected value: INVALID_VALUE : texStorage2D should fail for zero levels
+[ 91: PASS ] getError was expected value: INVALID_OPERATION : texStorage2D should fail for too many levels
+[ 92: PASS ] getError was expected value: INVALID_ENUM : texStorage2D should fail for bad target TEXTURE_CUBE_MAP_NEGATIVE_X
+[ 93: PASS ] getError was expected value: INVALID_OPERATION : texStorage2D should fail when no texture is bound
+[ 94: PASS ] getError was expected value: INVALID_ENUM : texStorage2D should fail for bad internalformat RGB
+[ 95: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texStorage2D should succeed with a good sized internalformat
+[ 96: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : getTexParameter should succeed with TEXTURE_IMMUTABLE_FORMAT
+[ 97: PASS ] getTexParameter with TEXTURE_IMMUTABLE_FORMAT should not return 0
+[ 98: PASS ] getError was expected value: INVALID_OPERATION : texImage2D should fail on immutable texture
+[ 99: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : copyTexImage2D should fail on immutable texture
+[ 100: PASS ] texture should sample as uninitialized texture after texStorage2D
+[ 101: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 102: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 103: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 104: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 105: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 106: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE : texSubImage2D should succeed on immutable texture as long as the format is compatible
+[ 107: FAIL ] texture should sample as red after uploading red pixels with texSubImage2D at (0, 0) expected: 255,0,0,255 was 0,0,0,255
+[ 108: PASS ] getError was expected value: INVALID_VALUE : texStorage2D should fail for zero width
+[ 109: PASS ] getError was expected value: INVALID_VALUE : texStorage2D should fail for zero height
+[ 110: PASS ] getError was expected value: INVALID_VALUE : texStorage2D should fail for negative height
+[ 111: PASS ] getError was expected value: INVALID_VALUE : texStorage2D should fail for zero levels
+[ 112: PASS ] getError was expected value: INVALID_OPERATION : texStorage2D should fail for too many levels
+[ 113: PASS ] getError was expected value: INVALID_ENUM : texStorage2D should fail for bad target TEXTURE_CUBE_MAP_NEGATIVE_X
+[ 114: PASS ] getError was expected value: INVALID_OPERATION : texStorage2D should fail when no texture is bound
+[ 115: PASS ] getError was expected value: INVALID_ENUM : texStorage2D should fail for bad internalformat UNSIGNED_INT_2_10_10_10_REV
+[ 116: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texStorage2D should succeed with a good sized internalformat
+[ 117: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : getTexParameter should succeed with TEXTURE_IMMUTABLE_FORMAT
+[ 118: PASS ] getTexParameter with TEXTURE_IMMUTABLE_FORMAT should not return 0
+[ 119: PASS ] getError was expected value: INVALID_OPERATION : texImage2D should fail on immutable texture
+[ 120: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : copyTexImage2D should fail on immutable texture
+[ 121: PASS ] getError was expected value: INVALID_VALUE : texStorage2D should fail for zero width
+[ 122: PASS ] getError was expected value: INVALID_VALUE : texStorage2D should fail for zero height
+[ 123: PASS ] getError was expected value: INVALID_VALUE : texStorage2D should fail for negative height
+[ 124: PASS ] getError was expected value: INVALID_VALUE : texStorage2D should fail for zero levels
+[ 125: PASS ] getError was expected value: INVALID_OPERATION : texStorage2D should fail for too many levels
+[ 126: PASS ] getError was expected value: INVALID_ENUM : texStorage2D should fail for bad target TEXTURE_CUBE_MAP_NEGATIVE_X
+[ 127: PASS ] getError was expected value: INVALID_OPERATION : texStorage2D should fail when no texture is bound
+[ 128: PASS ] getError was expected value: INVALID_ENUM : texStorage2D should fail for bad internalformat RGB
+[ 129: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : texStorage2D should succeed with a good sized internalformat
+[ 130: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : getTexParameter should succeed with TEXTURE_IMMUTABLE_FORMAT
+[ 131: PASS ] getTexParameter with TEXTURE_IMMUTABLE_FORMAT should not return 0
+[ 132: PASS ] getError was expected value: INVALID_OPERATION : texImage2D should fail on immutable texture
+[ 133: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : copyTexImage2D should fail on immutable texture
+[ 134: PASS ] getError was expected value: NO_ERROR : texStorage2D should succeed with size [8, 8].
+[ 135: PASS ] getError was expected value: NO_ERROR : texStorage2D should succeed with size [8, 1].
+[ 136: PASS ] getError was expected value: NO_ERROR : texStorage2D should succeed with size [1, 8].
+[ 137: PASS ] getError was expected value: NO_ERROR : there should be no errors
+[ 138: PASS ] successfullyParsed is true
+[ FAIL ] 62 failures reported
+

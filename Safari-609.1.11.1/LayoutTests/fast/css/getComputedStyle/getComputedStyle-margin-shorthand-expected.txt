@@ -1,0 +1,33 @@
+Test to make sure margin shorthand property returns CSSValueList properly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS computedStyle.getPropertyValue('margin') is '10px 5px 4px 3px'
+PASS computedStyle.getPropertyCSSValue('margin').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('margin').length is 4
+PASS computedStyle.getPropertyCSSValue('margin').cssText is '10px 5px 4px 3px'
+PASS computedStyle.getPropertyCSSValue('margin').item(0).getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 10
+PASS computedStyle.getPropertyCSSValue('margin').item(1).getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 5
+PASS computedStyle.getPropertyCSSValue('margin').item(2).getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 4
+PASS computedStyle.getPropertyCSSValue('margin').item(3).getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 3
+PASS computedStyle.getPropertyValue('margin') is '64px 80px 96px 112px'
+PASS computedStyle.getPropertyCSSValue('margin').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('margin').length is 4
+PASS computedStyle.getPropertyCSSValue('margin').cssText is '64px 80px 96px 112px'
+PASS computedStyle.getPropertyCSSValue('margin').item(0).getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 64
+PASS computedStyle.getPropertyCSSValue('margin').item(1).getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 80
+PASS computedStyle.getPropertyCSSValue('margin').item(2).getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 96
+PASS computedStyle.getPropertyCSSValue('margin').item(3).getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 112
+PASS computedStyle.getPropertyValue('margin') is '5px 6px 7px 8px'
+PASS computedStyle.getPropertyCSSValue('margin').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('margin').length is 4
+PASS computedStyle.getPropertyCSSValue('margin').cssText is '5px 6px 7px 8px'
+PASS computedStyle.getPropertyCSSValue('margin').item(0).getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 5
+PASS computedStyle.getPropertyCSSValue('margin').item(1).getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 6
+PASS computedStyle.getPropertyCSSValue('margin').item(2).getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 7
+PASS computedStyle.getPropertyCSSValue('margin').item(3).getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 8
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,89 @@
+#!/usr/bin/env python
+
+# Copyright (C) 2011-2015 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+import re
+import sys
+import getopt
+import argparse
+import os
+import subprocess
+from sets import Set
+
+up = os.path.dirname
+tools_directory = up(up(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(tools_directory, "lldb"))
+
+from lldb_dump_class_layout import LLDBDebuggerInstance, ClassLayout
+
+framework = "WebCore"
+build_directory = ""
+target_path = ""
+config = "Release"
+arch = None
+
+def webkit_build_dir():
+    scriptpath = os.path.dirname(os.path.realpath(__file__))
+    return subprocess.check_output([os.path.join(scriptpath, "webkit-build-directory"), "--top-level"]).strip()
+
+def main():
+    parser = argparse.ArgumentParser(description='Dumps the in-memory layout of the given class or classes, showing padding holes.')
+    parser.add_argument('framework', metavar='framework',
+        help='name of the framework containing the class (e.g. "WebCore")')
+    parser.add_argument('classname', metavar='classname',
+        help='name of the class or struct to dump')
+
+    parser.add_argument('-b', '--build-directory', dest='build_directory', action='store',
+        help='Path to the directory under which build files are kept (should not include configuration)')
+
+    parser.add_argument('-c', '--configuration', dest='config', action='store',
+        help='Configuration (Debug or Release)')
+
+    parser.add_argument('-a', '--architecture', dest='arch', action='store',
+        help='Architecture (i386, x86_64, armv7, armv7s, arm64). Uses the first architecture listed by \'file\' by default')
+
+    parser.add_argument('-t', '--target-path', dest='target_path', action='store',
+        help='Path to the target')
+
+    args = parser.parse_args()
+    build_dir = webkit_build_dir()
+
+    if args.config is None:
+        args.config = "Release"
+
+    if args.build_directory is not None:
+        build_dir = args.build_directory
+
+    if args.target_path is not None:
+        target_path = args.target_path
+    else:
+        target_path = os.path.join(build_dir, args.config, args.framework + ".framework", args.framework);
+    
+    lldb_instance = LLDBDebuggerInstance(target_path, args.arch)
+    class_layout = lldb_instance.layout_for_classname(args.classname)
+    class_layout.dump()
+
+
+if __name__ == "__main__":
+    main()

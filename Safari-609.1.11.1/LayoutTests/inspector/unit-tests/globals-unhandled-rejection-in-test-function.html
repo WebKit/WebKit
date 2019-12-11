@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    InspectorTest.suppressStackTraces = true;
+
+    reportUnhandledRejection(new Error("This is an exception thrown in the inspector page."));
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that the unhandled hook will immediately terminate the test and print the associated exception and stack trace.</p>
+</body>
+</html>

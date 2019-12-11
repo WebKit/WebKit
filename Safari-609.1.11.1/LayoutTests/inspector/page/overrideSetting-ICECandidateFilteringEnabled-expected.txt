@@ -1,0 +1,11 @@
+Tests for the Page.overrideSetting command.
+
+
+== Running test suite: Page.overrideSetting
+-- Running test case: Page.overrideSetting.ICECandidateFilteringEnabled
+Overriding ICECandidateFilteringEnabled to false...
+Creating data channel...
+PASS: created offer
+PASS: received ICE candidate.
+PASS: Should be able to establish a connection when filtering ice candidates.
+

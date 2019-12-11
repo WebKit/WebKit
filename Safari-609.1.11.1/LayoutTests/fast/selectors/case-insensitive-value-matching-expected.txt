@@ -1,0 +1,34 @@
+Some HTML attribute require case insensitive comparison when matching their value. Test those cases with and without backtracking.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+No backtracking, simple matches per level.
+PASS document.querySelectorAll("[checked=false]").length is 1
+PASS document.querySelectorAll("[checked=false]")[0].id is "target1"
+PASS getComputedStyle(document.querySelectorAll("[checked=false]")[0]).backgroundColor is "rgb(255, 0, 0)"
+PASS document.querySelectorAll("[lang=en]>[checked=false]").length is 1
+PASS document.querySelectorAll("[lang=en]>[checked=false]")[0].id is "target1"
+PASS getComputedStyle(document.querySelectorAll("[lang=en]>[checked=false]")[0]).textIndent is "21px"
+PASS document.querySelectorAll("[clear=yes]>[lang=en]>[checked=false]").length is 1
+PASS document.querySelectorAll("[clear=yes]>[lang=en]>[checked=false]")[0].id is "target1"
+PASS getComputedStyle(document.querySelectorAll("[clear=yes]>[lang=en]>[checked=false]")[0]).fontFamily is "uncomon"
+No backtracking, multiple matches per level.
+PASS document.querySelectorAll("[dir=webkit][disabled=no]>[type=awesome][charset=latin1]>[lang=fr][checked=false]").length is 1
+PASS document.querySelectorAll("[dir=webkit][disabled=no]>[type=awesome][charset=latin1]>[lang=fr][checked=false]")[0].id is "target1"
+PASS getComputedStyle(document.querySelectorAll("[dir=webkit][disabled=no]>[type=awesome][charset=latin1]>[lang=fr][checked=false]")[0]).opacity is "0"
+PASS document.querySelectorAll("[dir=webkit][disabled=no][clear=yes]>[type=awesome][charset=latin1][lang=en]>[lang=fr][checked=false]").length is 1
+PASS document.querySelectorAll("[dir=webkit][disabled=no][clear=yes]>[type=awesome][charset=latin1][lang=en]>[lang=fr][checked=false]")[0].id is "target1"
+PASS getComputedStyle(document.querySelectorAll("[dir=webkit][disabled=no][clear=yes]>[type=awesome][charset=latin1][lang=en]>[lang=fr][checked=false]")[0]).color is "rgb(0, 128, 0)"
+Backtracking, single matches per level.
+PASS document.querySelectorAll("[dir=webkit]>[charset=latin1]>[scrolling=fast] ul>li").length is 1
+PASS document.querySelectorAll("[dir=webkit]>[charset=latin1]>[scrolling=fast] ul>li")[0].id is "target2"
+PASS getComputedStyle(document.querySelectorAll("[dir=webkit]>[charset=latin1]>[scrolling=fast] ul>li")[0]).backgroundColor is "rgb(0, 0, 255)"
+Backtracking, multiple matches per level.
+PASS document.querySelectorAll("[dir=webkit][disabled=yes][clear=no]>[type=awesome][charset=latin1][lang=en]>[lang=fr][checked=maybe][scrolling=fast] ul>li").length is 1
+PASS document.querySelectorAll("[dir=webkit][disabled=yes][clear=no]>[type=awesome][charset=latin1][lang=en]>[lang=fr][checked=maybe][scrolling=fast] ul>li")[0].id is "target2"
+PASS getComputedStyle(document.querySelectorAll("[dir=webkit][disabled=yes][clear=no]>[type=awesome][charset=latin1][lang=en]>[lang=fr][checked=maybe][scrolling=fast] ul>li")[0]).fontFamily is "hipster"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

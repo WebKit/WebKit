@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>%lu photo(s) and %lu video(s)</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%1$#@photos@</string>
+		<key>photos</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lu</string>
+			<key>zero</key>
+			<string>%2$#@zeroPhotosVideos@</string>
+			<key>one</key>
+			<string>%2$#@onePhotoVideos@</string>
+			<key>other</key>
+			<string>%2$#@otherPhotosVideos@</string>
+		</dict>
+		<key>zeroPhotosVideos</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lu</string>
+			<key>one</key>
+			<string>1 video</string>
+			<key>other</key>
+			<string>%2$lu videos</string>
+		</dict>
+		<key>onePhotoVideos</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lu</string>
+			<key>zero</key>
+			<string>1 photo</string>
+			<key>one</key>
+			<string>1 photo and 1 video</string>
+			<key>other</key>
+			<string>1 photo and %2$lu videos</string>
+		</dict>
+		<key>otherPhotosVideos</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>lu</string>
+			<key>zero</key>
+			<string>%1$lu photos</string>
+			<key>one</key>
+			<string>%1$lu photos and 1 video</string>
+			<key>other</key>
+			<string>%1$lu photos and %2$lu videos</string>
+		</dict>
+	</dict>
+	<key>Use no more than %d character(s)</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>Use no more than %#@characters@</string>
+		<key>characters</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>one character</string>
+			<key>other</key>
+			<string>%d characters</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

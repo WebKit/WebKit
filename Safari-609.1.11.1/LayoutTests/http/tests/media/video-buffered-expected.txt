@@ -1,0 +1,9 @@
+Start playing a video with preloading enabled, do a seek near the end and check multiple buffered timeranges have been created.
+
+EVENT(playing)
+EXPECTED (video.buffered.length == '1') OK
+RUN(video.currentTime = video.duration - 0.5)
+EVENT(ended)
+EXPECTED (video.buffered.length == '2') OK
+END OF TEST
+

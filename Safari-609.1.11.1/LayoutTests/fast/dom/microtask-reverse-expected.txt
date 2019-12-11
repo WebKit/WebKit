@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: line 23: Finished queueing tests.
+CONSOLE MESSAGE: MicroTask #0 has run.
+CONSOLE MESSAGE: MicroTask #1 has run.
+CONSOLE MESSAGE: MicroTask #2 has run.
+ 
+
+--------
+Frame: 'frame1'
+--------
+
+
+--------
+Frame: 'frame2'
+--------
+

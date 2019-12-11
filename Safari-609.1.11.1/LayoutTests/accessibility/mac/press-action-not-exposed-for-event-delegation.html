@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html id="html">
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="group1" role="group">
+text1
+</div>
+
+<br>
+
+<div id="group2" role="group">
+<div role="text" id="text2">text2</div>
+</div>
+
+<div id="group3" role="group">
+a<br>
+<button>b</button>
+</div>
+
+<div id="group4" role="group">
+  <div role="group">
+     <button>a</button>
+     <button>b</button>
+     c
+  </div>
+</div>
+
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests whether static text has the press action supported. If the handler is on an element that has more than one child, then we assume that event delegation is being used. In that case we do not expose press supported.");
+
+    if (window.accessibilityController) {
+
+          function listener() { }
+
+          var group = accessibilityController.accessibleElementById("group1");
+          var text1 = group.childAtIndex(0);
+          var text2 = accessibilityController.accessibleElementById("text2");
+
+          shouldBe("text1.role", "'AXRole: AXStaticText'");
+          shouldBe("text2.role", "'AXRole: AXStaticText'");
+
+          document.getElementById("html").addEventListener('click', listener, false);
+
+          debug("When a click handler is on the HTML tag, AXPress should not be supported on static text children elements automatically.");
+          shouldBeFalse("text1.isPressActionSupported()");
+          shouldBeFalse("text2.isPressActionSupported()");
+
+          document.getElementById("html").removeEventListener('click', listener, false);
+          document.getElementById("body").addEventListener('click', listener, false);
+
+          debug("\nWhen a click handler is on the BODY tag, AXPress should not be supported on static text children elements automatically.\n");
+          shouldBeFalse("text1.isPressActionSupported()");
+          shouldBeFalse("text2.isPressActionSupported()");
+
+          document.getElementById("body").removeEventListener('click', listener, false);
+          document.getElementById("group1").addEventListener('click', listener, false);
+
+          debug("\nWhen a click handler is on a parent tag, AXPress should be supported on static text children elements automatically.\n");
+          shouldBeTrue("text1.isPressActionSupported()");
+          shouldBeFalse("text2.isPressActionSupported()");
+
+          debug("\nWhen a click handler is on the parent, using role=text should expose AXPress.\n");
+          document.getElementById("group2").addEventListener('click', listener, false);
+          shouldBeTrue("text2.isPressActionSupported()");
+
+          debug("\nWhen a click handler is on a parent that has more than one descendant, do not expose press.\n");
+          var text3 = accessibilityController.accessibleElementById('group3').childAtIndex(0);
+          shouldBeFalse("text3.isPressActionSupported()");
+
+          document.getElementById("group3").addEventListener('click', listener, false);
+          shouldBeFalse("text3.isPressActionSupported()");
+
+          debug("\nWhen a click handler is on a parent that has one direct descendant, but then sub-descendants below that, do not expose press.\n");
+          var text4 = accessibilityController.accessibleElementById('group4').childAtIndex(0).childAtIndex(2);
+          shouldBeFalse("text4.isPressActionSupported()");
+
+          document.getElementById("group4").addEventListener('click', listener, false);
+          shouldBeFalse("text4.isPressActionSupported()");
+
+          for (var k = 1; k <= 4; k++)
+              document.getElementById("group" + k).style.visibility = "hidden";
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 2: ReferenceError: Can't find variable: y
+
+PASS onerror, "not handled" with an error in the onerror function 
+

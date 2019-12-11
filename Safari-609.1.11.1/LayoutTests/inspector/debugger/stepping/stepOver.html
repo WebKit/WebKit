@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../resources/log-pause-location.js"></script>
+<script>
+function testAlert(str) {
+    alert(str);
+}
+
+function entry1() {
+    debugger;
+    let x = 1;
+    let y = 2;
+}
+
+function entry2() {
+    debugger;
+    let before = 1;
+    testAlert("log 1");
+    let after = 2;
+}
+
+function entry3() {
+    debugger;
+    let before = 1;
+    eval("1 + 1");
+    let after = 2;
+}
+
+function entry4() {
+    (function() {
+        debugger;
+        let inner = 1;
+    })();
+    let outer = 2;
+}
+
+// ---------
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.stepOver");
+
+    // Always step-over when call frames change.
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
+        if (!WI.debuggerManager.activeCallFrame)
+            return;
+        logPauseLocation();
+        WI.debuggerManager.stepOver();
+    });
+
+    function addTestCase({name, description, expression}) {
+        suite.addTestCase({
+            name, description,
+            test(resolve, reject) {
+                InspectorTest.evaluateInPage(expression);
+                WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                    InspectorTest.log(`PAUSED (${WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target).pauseReason})`);
+                });
+                WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Resumed, (event) => {
+                    InspectorTest.log("RESUMED");
+                    resolve();
+                });
+            }
+        });
+    }
+
+    addTestCase({
+        name: "Debugger.stepOver.statements",
+        description: "step-over should step over statements.",
+        expression: "setTimeout(entry1)",
+    });
+
+    addTestCase({
+        name: "Debugger.stepOver.function",
+        description: "step-over should step over function calls.",
+        expression: "setTimeout(entry2)",
+    });
+
+    addTestCase({
+        name: "Debugger.stepOver.eval",
+        description: "step-over should step over an eval program.",
+        expression: "setTimeout(entry3)",
+    });
+
+    addTestCase({
+        name: "Debugger.stepOver.innerFunction",
+        description: "step-over should step out of a function to its caller.",
+        expression: "setTimeout(entry4)",
+    });
+
+    loadMainPageContent().then(() => {
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Checking pause locations when stepping with "stepOver".</p>
+</body>
+</html>

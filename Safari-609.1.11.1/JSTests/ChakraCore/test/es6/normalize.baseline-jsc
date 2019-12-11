@@ -1,0 +1,23 @@
+RangeError: argument does not match any normalization form
+TypeError: Type error
+TypeError: Type error
+TypeError: Type error
+TypeError: function is not a constructor (evaluating 'new String.prototype.normalize()')
+Passed! Empty string noramlized to empty string.
+Passed! NFD normalization test.
+Passed! NFD normalization test.
+Passed! NFD normalization test.
+Passed! NFD normalization test.
+Passed! NFC normalization test.
+Passed! NFC normalization test.
+Passed! NFC normalization test.
+Passed! NFC normalization test.
+Passed! NFKD normalization test.
+Passed! NFKD normalization test.
+Passed! NFKD normalization test.
+Passed! NFKD normalization test.
+Passed! NFKC normalization test.
+Passed! NFKC normalization test.
+Passed! NFKC normalization test.
+Passed! NFKC normalization test.
+Passed! Calling on a number object instead of string object.

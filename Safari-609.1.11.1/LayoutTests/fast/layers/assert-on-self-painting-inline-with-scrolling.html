@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that inline does not assert when its composite state changes.</title>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+
+<style>
+ html, body {
+    overflow-x: scroll;
+    will-change: transform;
+}
+
+span {
+    mix-blend-mode: exclusion;
+}
+</style>
+</head>
+<body>
+PASS if no assert in debug.
+<span class="class_0"></span>
+</body>
+</html>

@@ -1,0 +1,10 @@
+[Worker] This test checks whether String.prototype methods correctly handle |this| if |this| becomes worker global scope.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Starting worker: ./script-tests/string-prototype-scopes-in-workers.js
+PASS [Worker] String(error) is "TypeError: Type error"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

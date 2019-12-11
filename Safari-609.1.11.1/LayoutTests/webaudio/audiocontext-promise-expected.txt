@@ -1,0 +1,10 @@
+Tests that AudioContext suspend method resolve promises immediately when already suspended.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS context resolve callback called
+PASS JS promise callback called after context callback
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

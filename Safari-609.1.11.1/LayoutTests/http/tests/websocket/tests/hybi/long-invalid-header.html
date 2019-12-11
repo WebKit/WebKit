@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script type="text/javascript">
+description("Make sure WebSocket gives errors on long invalid upgrade header.");
+
+window.jsTestIsAsync = true;
+
+function finish() {
+    clearTimeout(timeoutID);
+    finishJSTest();
+}
+
+var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/long-invalid-header");
+ws.onopen = function () {
+    debug("WebSocket is open");
+};
+ws.onclose = function () {
+    debug("WebSocket is closed");
+    finish();
+};
+var timeoutID = setTimeout("finish()", 2000);
+
+</script>
+<script src="../../../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

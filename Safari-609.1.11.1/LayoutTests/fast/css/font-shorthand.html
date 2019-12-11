@@ -1,0 +1,49 @@
+<html>
+<head>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<div id="foo">Test</div>
+<script>
+function testFontValue(value)
+{
+    document.write("Font for '" + value + "':<br>");
+    var element = document.getElementById("foo");
+    var decl = element.style;
+    decl.font = "";
+    decl.font = value;
+    for (var i = 0; i < decl.length; i++) {
+        var shorthand = decl.getPropertyShorthand(decl[i]);
+        document.write(decl[i] + ": " + decl.getPropertyValue(decl[i]));
+        if (shorthand) {
+            document.write(" (original property was " + shorthand
+                + (decl.isPropertyImplicit(decl[i]) ? " and property was implicitly set.)" : ")"));
+        }
+        document.write("<br>");
+    }
+    document.write("<br>");
+}
+
+testFontValue("12px monospace");
+testFontValue("12px/24px serif");
+testFontValue("normal 12px serif");
+testFontValue("normal normal 12px serif");
+testFontValue("normal normal normal 12px serif");
+testFontValue("italic small-caps 12px/24px serif");
+testFontValue("italic bold 12px/24px serif");
+testFontValue("small-caps bold 14px/28px Arial, sans-serif");
+testFontValue("italic small-caps bold 14px/28px Arial, sans-serif");
+
+// Invalid values should yield no longhands.
+testFontValue("italic small-caps bold 12px/24px");
+testFontValue("italic small-caps bold 12px");
+testFontValue("italic small-caps bold /12px serif");
+testFontValue("italic small-caps small-caps 12px serif");
+testFontValue("italic italic small-caps bold 12px serif");
+testFontValue("12px/italic serif");
+</script>
+</body>
+</html>

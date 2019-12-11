@@ -1,0 +1,84 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../resources/overflow-scroll-overlap.js"></script>
+<style>
+.case {
+    width: 200px;
+    height: 200px;
+    display: inline-block;
+    position: relative;
+}
+.scrollcontent {
+    width: 500px;
+    height: 500px;
+    background: green;
+}
+
+.overflowscroll {
+    overflow: scroll;
+    height: 100px;
+    width: 100px;
+    border: 2px solid black;
+}
+.overlapping {
+    position:absolute;
+    left: 25px;
+    top: 25px;
+    width: 100px;
+    height: 100px;
+    background: red;
+}
+.clip {
+    position:absolute;
+    width: 100px;
+    height: 100px;
+    overflow:hidden;
+}
+.large {
+    width: 3000px;
+    height: 150px;
+}
+#log {
+    position:relative;
+    white-space: pre;
+}
+</style>
+</head>
+<body onload="runTest()">
+<p>
+Test that absolute positioned layer inside stacking-context overflow:scroll is correctly hit tested.
+</p>
+
+<div class="case">
+    <div class="overflowscroll target" style="opacity: 0.8;">
+        <div class="overlapping"></div>
+        <div class="scrollcontent"></div>
+    </div>
+</div>
+
+<div class="case">
+    <div class="overflowscroll target" style="opacity: 0.8;">
+        <div class="overlapping">
+            <div class="overlapping" style="left:10px;top:10px"></div>
+        </div>
+        <div class="scrollcontent"></div>
+    </div>
+</div>
+
+<div class="case">
+    <div class="overflowscroll target" style="position:relative;">
+        <div class="overflowscroll target" style="opacity: 0.8; margin:10px">
+            <div class="overlapping"></div>
+            <div class="scrollcontent"></div>
+        </div>
+        <div class="scrollcontent"></div>
+    </div>
+</div>
+
+<div id=log></div>
+
+</body>
+</html>

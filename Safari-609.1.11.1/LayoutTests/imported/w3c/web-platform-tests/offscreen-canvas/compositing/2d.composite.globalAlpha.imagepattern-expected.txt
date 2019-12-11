@@ -1,0 +1,5 @@
+2d.composite.globalAlpha.imagepattern
+
+
+FAIL OffscreenCanvas test: 2d.composite.globalAlpha.imagepattern null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

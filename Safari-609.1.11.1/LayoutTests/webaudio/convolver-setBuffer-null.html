@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/audio-testing.js"></script>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Tests that ConvolverNode impulse response buffer can be set to null.");
+
+var context = new webkitAudioContext();
+var conv = context.createConvolver();
+
+shouldNotThrow("conv.buffer = null");
+shouldBe("conv.buffer", "null");
+
+shouldThrow("conv.buffer = document");
+shouldBe("conv.buffer", "null");
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

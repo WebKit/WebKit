@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+h3 { 
+  max-height: 0; 
+  -webkit-text-combine: horizontal; 
+  -webkit-writing-mode: vertical-rl; 
+}
+</style>
+</head>
+<body><listing>Pass if no crash.<dd contenteditable="true"><h3 id="h">foobar</h3></body>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    window.getSelection().setPosition(h, 1);
+    document.execCommand("delete", false);
+    document.execCommand("delete", false);
+</script>
+</html>

@@ -1,0 +1,5 @@
+2d.composite.globalAlpha.default
+
+
+FAIL OffscreenCanvas test: 2d.composite.globalAlpha.default null is not an object (evaluating 'ctx.globalAlpha')
+

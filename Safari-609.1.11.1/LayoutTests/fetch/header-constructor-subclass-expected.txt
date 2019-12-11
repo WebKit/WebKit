@@ -1,0 +1,10 @@
+This test should create a Headers from an object which is a subclass of Headers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS otherHeaders.get('a') is "1"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

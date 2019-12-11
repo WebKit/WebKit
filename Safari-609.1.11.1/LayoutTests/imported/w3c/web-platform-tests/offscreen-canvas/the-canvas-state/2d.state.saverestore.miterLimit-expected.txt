@@ -1,0 +1,7 @@
+2d.state.saverestore.miterLimit
+
+save()/restore() works for miterLimit
+
+
+FAIL save()/restore() works for miterLimit null is not an object (evaluating 'ctx.miterLimit')
+

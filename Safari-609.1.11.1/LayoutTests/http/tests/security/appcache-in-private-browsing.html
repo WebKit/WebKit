@@ -1,0 +1,21 @@
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
+<html>
+<head>
+<script>
+if (window.testRunner) {
+	testRunner.dumpAsText();
+	testRunner.dumpChildFramesAsText();
+	testRunner.waitUntilDone();
+}
+
+function finishTest() {
+	if (window.testRunner)
+		testRunner.notifyDone();
+}
+</script>
+</head>
+<body>
+<p>This test passes if the application cache does not load while in private browsing</p>
+<iframe src="resources/frame-for-appcache-in-private-browsing.html" onload="finishTest()"></iframe>
+</body>
+</html>

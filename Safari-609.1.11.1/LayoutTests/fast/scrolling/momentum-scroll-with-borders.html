@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        #scrolling {
+            height: 300px;
+            width: 300px;
+            border: 100px solid gray;
+            border-left-width: 0px;
+            border-right-width: 0px;
+            overflow-y: scroll;
+        }
+        
+        .content {
+            height: 1000px;
+            width: 100%;
+            background-image: repeating-linear-gradient(silver, white 200px);
+        }
+    </style>
+    <script>
+        function checkForScroll()
+        {
+            var scroller = document.getElementById("scrolling");
+            var expectedScrollTop = 700;
+            
+            if (scroller.scrollTop == expectedScrollTop)
+                document.getElementById('result').textContent = "PASS: scrollTop was " + expectedScrollTop;
+            else
+                document.getElementById('result').textContent = "FAIL: scrollTop was " + scroller.scrollTop;
+
+            testRunner.notifyDone();
+        }
+        
+        function scrollTest()
+        {
+            eventSender.mouseMoveTo(100, 120);
+
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -3, 'none', 'begin');
+            
+            let remainingScrolls = 15;
+            let sendMomentumScroll = function() {
+                eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -5, 'none', 'continue');
+                if (!--remainingScrolls) {
+                    eventSender.callAfterScrollingCompletes(checkForScroll);
+                    return;
+                }
+                requestAnimationFrame(sendMomentumScroll);
+            }
+            requestAnimationFrame(sendMomentumScroll);
+        }
+
+        function startTest()
+        {
+            if (window.eventSender) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+
+                eventSender.monitorWheelEvents();
+                setTimeout(scrollTest, 0);
+            }
+        }
+        
+        window.addEventListener('load', startTest, false);
+    </script>
+</head>
+<body>
+<div id="scrolling">
+    <div class="content"></div>
+</div>
+<div id="result"></div>
+</body>
+</html>

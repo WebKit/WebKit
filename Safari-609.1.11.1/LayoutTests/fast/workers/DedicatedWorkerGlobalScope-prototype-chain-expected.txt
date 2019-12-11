@@ -1,0 +1,13 @@
+Tests that DedicatedWorkerGlobalScope's prototype chain is correct.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+DedicatedWorkerGlobalScope.prototype.toString() === "[object DedicatedWorkerGlobalScopePrototype]": true
+Object.getPrototypeOf(DedicatedWorkerGlobalScope.prototype) === WorkerGlobalScope.prototype: true
+WorkerGlobalScope.prototype.toString() === "[object WorkerGlobalScopePrototype]": true
+Object.getPrototypeOf(WorkerGlobalScope.prototype) === EventTarget.prototype: true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

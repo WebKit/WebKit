@@ -1,0 +1,7 @@
+2d.path.stroke.scale1
+
+Stroke line widths are scaled by the current transformation matrix
+
+
+FAIL Stroke line widths are scaled by the current transformation matrix null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

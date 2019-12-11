@@ -1,0 +1,16 @@
+<video></video>
+<p>Test that removing a media element from the tree while loading does not crash.</p>
+<script src=../../media-resources/media-file.js></script>
+<script src=../../media-resources/video-test.js></script>
+<script>
+waitForEvent('loadedmetadata', function () {
+    run("document.body.removeChild(video)");
+    endTestLater();
+} );
+
+// Find a supported media file.
+var mediaFile = findMediaFile("video", "content/test");
+var mimeType = mimeTypeForFile(mediaFile);
+
+video.src = "http://127.0.0.1:8000/resources/load-and-stall.cgi?name=../../../media/" + mediaFile + "&mimeType=" + mimeType + "&stallAt=100000";
+</script>

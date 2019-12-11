@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body id="body">
+
+<div>
+<a href="" id="one">one</a>
+<a href="" id="two">two</a>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+<div id="notifications"></div>
+
+<script>
+
+    description("This tests that tabbing between links includes a relevant accessibilityObject in the userInfo when on the boundary between an ignored accessibilityObject and an unignored accessibilityObject.");
+
+    var axTextChangeElement = 0;
+    var webArea = 0;
+    var changeElementOne = 0;
+    var changeElementTwo = 0;
+    var linkTwo = 0;
+    var linkOne = 0;
+    var count = 0;
+
+    function ancestorWithRole(axElement, role) {
+        var ancestor = axElement;
+        while (ancestor) {
+            if (ancestor.role == role)
+                break;
+            ancestor = ancestor.parentElement();
+        }
+        return ancestor;
+    }
+
+    function notificationCallback(notification, userInfo) {
+        if (notification == "AXSelectedTextChanged") {
+            count++;
+            if (count == 1) {
+                changeElementOne = userInfo["AXTextChangeElement"];
+                linkTwo = accessibilityController.accessibleElementById("two");
+                shouldBe("ancestorWithRole(changeElementOne, \"AXRole: AXLink\").isEqual(linkTwo)", "true");
+            } else if (count == 2) {
+                changeElementTwo = userInfo["AXTextChangeElement"];
+                linkOne = accessibilityController.accessibleElementById("one");
+                shouldBe("ancestorWithRole(changeElementTwo, \"AXRole: AXLink\").isEqual(linkOne)", "true");
+                webArea.removeNotificationListener();
+                finishJSTest();
+            }
+        }
+    }
+
+    if (window.accessibilityController) {
+        jsTestIsAsync = true;
+        testRunner.overridePreference("WebKitTabToLinksPreferenceKey", 1);
+
+        accessibilityController.enableEnhancedAccessibility(true);
+        webArea = accessibilityController.rootElement.childAtIndex(0);
+        webArea.setBoolAttributeValue("AXCaretBrowsingEnabled", true)
+
+        link = document.getElementById("one");
+        link.focus();
+
+        var addedNotification = webArea.addNotificationListener(notificationCallback);
+        shouldBe("addedNotification", "true");
+
+        eventSender.keyDown("\t");
+        eventSender.keyDown("\t", ["shiftKey"]);
+    }
+
+</script>
+</body>
+</html>

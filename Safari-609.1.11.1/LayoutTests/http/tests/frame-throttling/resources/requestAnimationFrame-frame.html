@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        var i = 0;
+        function step()
+        {
+            i++;
+            requestAnimationFrame(step);
+        }
+        step();
+
+        window.onmessage = function(message)
+        {
+            var re = /report-throttle-(cross|same)/;
+            var match = re.exec(message.data);
+
+            if (match) {
+                var frameId = match[1];
+                if (window.internals)
+                    parent.window.postMessage("throttled[" + frameId + "]: " + internals.isRequestAnimationFrameThrottled(), "*");
+            }
+        }
+
+        window.addEventListener("load", function() {
+            parent.window.postMessage("frameload", "*");
+        }, false);
+    </script>
+</head>
+<body>
+    <div style="height: 100px; width: 100px; background: silver" onclick=""></div>
+    Child frame.
+</body>
+</html>

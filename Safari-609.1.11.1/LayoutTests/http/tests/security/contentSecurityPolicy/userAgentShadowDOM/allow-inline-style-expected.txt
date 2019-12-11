@@ -1,0 +1,4 @@
+Tests that the CSS style of an element, in a user agent shadow tree, can be modified via the HTML style attribute when the page has CSP policy: style-src 'none'.
+
+PASS modified CSS style of element.
+

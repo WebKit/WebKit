@@ -1,0 +1,32 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/cancel.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/commitStyles.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/constructor.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/effect.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/finished.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/id.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/idlharness.window.js
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/oncancel.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/onfinish.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/pause.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/pending.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/persist.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/play.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/ready.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/startTime.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/style-change-events.html

@@ -1,0 +1,8 @@
+Description
+
+This test checks for the presence of the navigator.mediaDevices.enumerateDevices() method.
+
+
+PASS mediaDevices.enumerateDevices() is present and working 
+FAIL InputDeviceInfo is supported promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: InputDeviceInfo"
+

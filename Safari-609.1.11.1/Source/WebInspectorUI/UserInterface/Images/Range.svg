@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2018 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 16 16">
+    <style>
+    .text {
+        color: hsl(0, 0%, 30%);
+    }
+    </style>
+    <linearGradient id="border-gradient-side" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="hsl(0, 0%, 43%)"/>
+        <stop offset="100%" stop-color="hsl(0, 0%, 16%)"/>
+    </linearGradient>
+    <linearGradient id="border-gradient-bottom" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0%" stop-color="hsl(0, 0%, 39%)"/>
+        <stop offset="33%" stop-color="black"/>
+        <stop offset="66%" stop-color="black"/>
+        <stop offset="100%" stop-color="hsl(0, 0%, 39%)"/>
+    </linearGradient>
+    <linearGradient id="background-gradient" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="hsl(0, 0%, 93%)"/>
+        <stop offset="100%" stop-color="white"/>
+    </linearGradient>
+    <linearGradient id="background-gradient-inner" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="hsl(0, 0%, 87%)"/>
+        <stop offset="100%" stop-color="white"/>
+    </linearGradient>
+    <g opacity="0.40">
+        <rect fill="hsl(0, 0%, 43%)" x="2" y="0" width="12" height="1"/>
+        <rect fill="url(#border-gradient-bottom)" x="2" y="15" width="12" height="1"/>
+        <rect fill="url(#border-gradient-side)" x="2" y="0" width="1" height="15" />
+        <rect fill="url(#border-gradient-side)" x="13" y="0" width="1" height="15" />
+        <line stroke="hsl(0, 0%, 51%)" x1="2" y1="0.5" x2="3" y2="0.5"/>
+        <line stroke="hsl(0, 0%, 51%)" x1="13" y1="0.5" x2="14" y2="0.5"/>
+    </g>
+    <rect fill="url(#background-gradient)" x="3" y="1" width="10" height="14"/>
+    <rect fill="url(#background-gradient-inner)" x="4" y="2" width="8" height="13"/>
+    <g class="text">
+        <path fill="currentColor" d="M 5 3 L 7 3 L 7 7 L 6 7 L 6 4 L 5 4"/>
+        <rect fill="none" stroke="currentColor" x="8.5" y="3.5" width="2" height="3"/>
+        <rect fill="none" stroke="currentColor" x="5.5" y="9.5" width="2" height="3"/>
+        <path fill="currentColor" d="M 9 9 L 11 9 L 11 13 L 10 13 L 10 10 L 9 10"/>
+    </g>
+</svg>

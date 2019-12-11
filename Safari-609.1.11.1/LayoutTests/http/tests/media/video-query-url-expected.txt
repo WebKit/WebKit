@@ -1,0 +1,5 @@
+ 
+Tests that WebKit is able to open a media file specified with a query url.  
+EVENT(canplay)
+END OF TEST
+

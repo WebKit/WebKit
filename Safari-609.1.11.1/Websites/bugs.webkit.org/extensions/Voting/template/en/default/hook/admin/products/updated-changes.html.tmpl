@@ -1,0 +1,90 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% SET checkvotes = 0 %]
+
+[% IF changes.votesperuser.defined %]
+  <p>
+  Updated votes per user from
+  [%+ changes.votesperuser.0 FILTER html %] to
+  [%+ product.votesperuser FILTER html %].
+  </p>
+  [% checkvotes = 1 %]
+[% END %]
+
+[% IF changes.maxvotesperbug.defined %]
+  <p>
+  Updated maximum votes per [% terms.bug %] from
+  [%+ changes.maxvotesperbug.0 FILTER html %] to
+  [%+ product.maxvotesperbug FILTER html %].
+  </p>
+  [% checkvotes = 1 %]
+[% END %]
+
+[% IF changes.votestoconfirm.defined %]
+  <p>
+  Updated number of votes needed to confirm a [% terms.bug %] from
+  [%+ changes.votestoconfirm.0 FILTER html %] to
+  [%+ product.votestoconfirm FILTER html %].
+  </p>
+  [% checkvotes = 1 %]
+[% END %]
+
+[%# Note that this display of changed votes and/or confirmed bugs is
+    not very scalable. We could have a _lot_, and we just list them all.
+    One day we should limit this perhaps, or have a more scalable display %]
+
+[% IF checkvotes %]
+  <hr>
+
+  <p>Checking existing votes in this product for anybody who now
+  has too many votes for [% terms.abug %]...<br>
+  [% IF changes._too_many_votes.size %]
+    [% FOREACH detail = changes._too_many_votes %]
+      &rarr;removed votes for [% terms.bug %] <a href="show_bug.cgi?id=
+     [%- detail.id FILTER uri %]">
+     [%- detail.id FILTER html %]</a> from [% detail.name FILTER html %]<br>
+    [% END %]
+  [% ELSE %]
+    &rarr;there were none.
+  [% END %]
+  </p>
+
+  <p>Checking existing votes in this product for anybody
+  who now has too many total votes...<br>
+  [% IF changes._too_many_total_votes.size %]
+    [% FOREACH detail = changes._too_many_total_votes %]
+      &rarr;removed votes for [% terms.bug %] <a href="show_bug.cgi?id=
+     [%- detail.id FILTER uri %]">
+     [%- detail.id FILTER html %]</a> from [% detail.name FILTER html %]<br>
+    [% END %]
+  [% ELSE %]
+    &rarr;there were none.
+  [% END %]
+  </p>
+
+  <p>Checking unconfirmed [% terms.bugs %] in this product for any which now have
+  sufficient votes...<br>
+  [% IF changes._confirmed_bugs.size %]
+    [% FOREACH id = changes._confirmed_bugs %]
+
+      [%# This is INCLUDED instead of PROCESSED to avoid variables getting
+          overwritten, which happens otherwise %]
+      [% INCLUDE bug/process/results.html.tmpl
+        type = 'votes'
+        header_done = 1
+        sent_bugmail = changes._confirmed_bugs_sent_bugmail.$id
+        id = id
+      %]
+    [% END %]
+  [% ELSE %]
+    &rarr;there were none.
+  [% END %]
+  </p>
+
+[% END %]

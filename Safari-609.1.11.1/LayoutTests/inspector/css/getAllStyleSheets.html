@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<link rel="stylesheet" href="resources/external.css">
+<style>body { color: blue; }</style>
+<style>
+html {
+    /* Semicolon after value intentionally omitted. Test for https://webkit.org/b/170279. */
+    -webkit-text-size-adjust: none
+}
+</style>
+<script>
+var style = document.createElement("style");
+style.textContent = "body { color: gray; }";
+document.head.appendChild(style);
+</script>
+</script>
+<script>
+function test()
+{
+    WI.cssManager.fetchStyleSheetsIfNeeded();
+    InspectorBackend.runAfterPendingDispatches(function() {
+        let styleSheets = WI.cssManager.styleSheets;
+        InspectorTest.expectThat(styleSheets.length === 4, "There should be four stylesheets.");
+
+        for (let styleSheet of styleSheets) {
+            InspectorTest.log("");
+            InspectorTest.log(`URL: ${styleSheet.isInlineStyleTag() ? "<style> on " : ""}${sanitizeURL(styleSheet.url)}`);
+            InspectorTest.log(`OFFSET: (${styleSheet.startLineNumber}, ${styleSheet.startColumnNumber})`);
+            InspectorTest.expectThat(styleSheet.parentFrame, "Stylesheet should have a frame.");
+        }
+
+        InspectorTest.completeTest();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test CSS.getAllStyleSheets returns expected information for different style sheet sources.</p>
+</body>
+</html>

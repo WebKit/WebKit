@@ -1,0 +1,78 @@
+Test the basic behaviors of String.codePointAt
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS String.codePointAt is undefined
+PASS typeof String.prototype.codePointAt is "function"
+PASS String.prototype.codePointAt.length is 1
+PASS String.prototype.codePointAt.name is "codePointAt"
+PASS Object.getOwnPropertyDescriptor(String.prototype, "codePointAt").configurable is true
+PASS Object.getOwnPropertyDescriptor(String.prototype, "codePointAt").enumerable is false
+PASS Object.getOwnPropertyDescriptor(String.prototype, "codePointAt").writable is true
+PASS "foo".hasOwnProperty("codePointAt") is false
+PASS (new String("bar")).hasOwnProperty("codePointAt") is false
+PASS "".codePointAt(0) is undefined
+PASS "".codePointAt(1) is undefined
+PASS "Été".codePointAt(0) is 201
+PASS "Été".codePointAt(1) is 116
+PASS "Été".codePointAt(2) is 233
+PASS "Été".codePointAt(3) is undefined
+PASS "ウェブキット".codePointAt(0) is 12454
+PASS "ウェブキット".codePointAt(1) is 12455
+PASS "ウェブキット".codePointAt(2) is 12502
+PASS "ウェブキット".codePointAt(3) is 12461
+PASS "ウェブキット".codePointAt(4) is 12483
+PASS "ウェブキット".codePointAt(5) is 12488
+PASS "ウェブキット".codePointAt(6) is undefined
+PASS "".codePointAt.call(null, 0) threw exception TypeError: Type error.
+PASS "".codePointAt.call(undefined, 0) threw exception TypeError: Type error.
+PASS "".codePointAt.call(0, 0) is 48
+PASS "".codePointAt.call(Math.PI, 0) is 51
+PASS "".codePointAt.call(Math.PI, 1) is 46
+PASS "".codePointAt.call(Math.PI, 3) is 52
+PASS "".codePointAt.call(true, 3) is 101
+PASS "".codePointAt.call(false, 3) is 115
+PASS "".codePointAt.call(new Object, 3) is 106
+PASS "".codePointAt.call(Symbol("WebKit"), 3) threw exception TypeError: Cannot convert a symbol to a string.
+PASS "".codePointAt.call(objectWithCustomToString, 0) is 248
+PASS "".codePointAt.call(objectThrowingOnToString, 0) threw exception Hehe.
+PASS "".codePointAt.call(objectCountingToString, 0) is 49
+PASS objectCountingToString.counter is 1
+PASS "abcde".codePointAt(objectWithCustomValueOf) is 98
+PASS "".codePointAt.call(null, objectRecordsValueOf) threw exception TypeError: Type error.
+PASS "".codePointAt.call(undefined, objectRecordsValueOf) threw exception TypeError: Type error.
+PASS "".codePointAt.call(Symbol("WebKit"), objectRecordsValueOf) threw exception TypeError: Cannot convert a symbol to a string.
+PASS "".codePointAt.call(objectThrowingOnToString, objectRecordsValueOf) threw exception Hehe.
+PASS objectRecordsValueOf.valueOfEvaluated is false
+PASS "".codePointAt.call(evaluationOrderRecorder, evaluationOrderRecorder) is 114
+PASS evaluationOrderRecorder.methodsCalled.toString() is "toString,valueOf"
+PASS "abc".codePointAt(NaN) is 97
+PASS "abc".codePointAt(-0) is 97
+PASS "abc".codePointAt(-0.0) is 97
+PASS "abc".codePointAt(-0.05) is 97
+PASS "abc".codePointAt(-0.999) is 97
+PASS "abc".codePointAt(0.4) is 97
+PASS "abc".codePointAt(0.9) is 97
+PASS "abc".codePointAt(2.9999) is 99
+PASS "abc".codePointAt(-1) is undefined
+PASS "abc".codePointAt(4) is undefined
+PASS var str = "abc"; str.codePointAt(str.length) is undefined
+PASS "abc".codePointAt(4.1) is undefined
+PASS "abc".codePointAt(Number.POSITIVE_INFINITY) is undefined
+PASS "abc".codePointAt(Number.NEGATIVE_INFINITY) is undefined
+PASS "abc".codePointAt(null) is 97
+PASS "abc".codePointAt(undefined) is 97
+PASS "abc".codePointAt("") is 97
+PASS "abc".codePointAt("WebKit!") is 97
+PASS "abc".codePointAt(new Object) is 97
+PASS "abc".codePointAt(Symbol("WebKit")) threw exception TypeError: Cannot convert a symbol to a number.
+PASS testLeadSurrogateOutOfBounds() is true
+PASS testLeadSurrogateAsLastCharacter() is true
+PASS testTrailSurrogateOutOfbounds() is true
+PASS testAccessNullInString() is true
+PASS testNormalCombinationOfSurrogates() is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

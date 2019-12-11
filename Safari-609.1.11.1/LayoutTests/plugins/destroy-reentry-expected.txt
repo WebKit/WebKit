@@ -1,0 +1,5 @@
+Test for rdar://problem/6937089 Crashes at RenderWidget::destroy().
+
+This test should not crash or cause an assertion failure.
+
+

@@ -1,0 +1,3 @@
+
+FAIL save()/restore() does not affect the current bitmap Can't find variable: OffscreenCanvas
+

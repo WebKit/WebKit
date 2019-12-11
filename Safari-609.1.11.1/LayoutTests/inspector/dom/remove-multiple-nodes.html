@@ -1,0 +1,114 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function moveNode()
+{
+    var targetElement = document.getElementById("target_element");
+    targetElement.addEventListener("DOMNodeRemoved", function() {
+        targetElement.removeEventListener("DOMNodeRemoved", arguments.callee);
+        document.getElementById("final_container").appendChild(this);
+    });
+    // Remove all the children inside parent container, including "#target_element".
+    var parentContainer = document.getElementById("parent_container");
+    parentContainer.textContent = "Parent container is now empty";
+}
+
+function test()
+{
+    var nodesById = {};
+
+    InspectorProtocol.eventHandler["DOM.setChildNodes"] = onSetChildNodes;
+    InspectorProtocol.eventHandler["DOM.childNodeRemoved"] = onChildNodeRemoved;
+    InspectorProtocol.eventHandler["DOM.childNodeInserted"] = onChildNodeInserted;
+
+    function createNodeAttributesMap(attributes)
+    {
+        var attributesMap = {};
+        for (var i = 0; i < attributes.length; i += 2)
+            attributesMap[attributes[i]] = attributes[i + 1];
+        return attributesMap;
+    }
+
+    function collectNode(node)
+    {
+        if (node.nodeType === 1)
+            node.attributes = createNodeAttributesMap(node.attributes);
+        if (node.children)
+            node.children.forEach(collectNode);
+        nodesById[node.nodeId] = node;
+    }
+
+    function nodeToString(node)
+    {
+        switch (node.nodeType) {
+        case 1:
+            return node.localName + "#" + node.attributes.id;
+        case 3:
+            return "<text node " + JSON.stringify(node.nodeValue) + ">";
+        default:
+            return "<nodeType " + node.nodeType + ">";
+        }
+    }
+
+    function getNodeIdentifier(nodeId)
+    {
+        if (!nodeId)
+            return "<invalid node id>";
+        var node = nodesById[nodeId];
+        return node ? nodeToString(node) : "<unknown node>";
+    }
+
+    function onSetChildNodes(response)
+    {
+        response.params.nodes.forEach(collectNode);
+    }
+
+    function onChildNodeRemoved(response)
+    {
+        var nodeId = response.params.nodeId;
+        ProtocolTest.log("Removing node " + getNodeIdentifier(nodeId));
+        delete nodesById[nodeId];
+    }
+
+    function onChildNodeInserted(response)
+    {
+        collectNode(response.params.node);
+        ProtocolTest.log("Inserting node " + getNodeIdentifier(response.params.node.nodeId) + " into " + getNodeIdentifier(response.params.parentNodeId));
+    }
+
+    InspectorProtocol.sendCommand("DOM.getDocument", {}, onGotDocument);
+
+    function onGotDocument(msg)
+    {
+        InspectorProtocol.checkForError(msg);
+        InspectorProtocol.sendCommand("DOM.querySelectorAll", {"nodeId": msg.result.root.nodeId, "selector": "#parent_container,#final_container"}, onQuerySelectorAll);
+    }
+
+    function onQuerySelectorAll(response)
+    {
+        // Make sure we receive the children of the "#final_container" as they are added.
+        for (var i = 0; i < response.result.nodeIds.length; ++i)
+            InspectorProtocol.sendCommand("DOM.requestChildNodes", {nodeId: response.result.nodeIds[i]});
+        
+        InspectorProtocol.sendCommand("Runtime.evaluate", {"expression": "moveNode()"}, function() {
+            ProtocolTest.completeTest();
+        });
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+
+<p>Testing that DOM.childNodeRemoved is correctly triggered when all the parent children of a node are removed at once.</p>
+
+<div id="parent_container">
+    <div id="before">FAIL: Element "#before" should be removed</div>
+    <div id="target_element">Target element</div>
+    <div id="after">FAIL: Element "#after" should be removed</div>
+</div>
+
+<p id="final_container">Target element should have been moved after this line:</p>
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+To manually test this, copy the word 'testing' and paste into both the textarea and contenteditable. Verify that two PASS messages are printed out per paste (one for the beforeinput, the other for input).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+pasting 'testing' in the plain textarea. data should be nonnull
+PASS event.data is 'testing'
+PASS event.data is 'testing'
+pasting 'testing' in the rich contenteditable. data should be null
+PASS event.data is null
+PASS event.data is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+testing

@@ -1,0 +1,32 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+CONSOLE MESSAGE: line 27: TypeError: undefined is not a function (evaluating 'eventSender.clearKillRing()')
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x174 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x52
+          RenderText {#text} at (0,0) size 67x26
+            text run at (0,0) width 67: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,26) size 544x26
+            text run at (0,26) width 544: "Cntl-y at caret selection when nothing is in the kill ring."
+        RenderBlock {DIV} at (14,82) size 756x78
+          RenderText {#text} at (0,0) size 189x26
+            text run at (0,0) width 189: "Expected Results: "
+          RenderBR {BR} at (189,21) size 0x0
+          RenderText {#text} at (0,26) size 291x26
+            text run at (0,26) width 291: "Deletes a character, yielding: "
+          RenderBR {BR} at (291,47) size 0x0
+          RenderText {#text} at (0,52) size 166x26
+            text run at (0,52) width 166: "one tw three four"
+      RenderBlock {DIV} at (0,198) size 784x30
+        RenderBlock {DIV} at (0,0) size 784x30 [border: (2px solid #FF0000)]
+          RenderText {#text} at (2,2) size 178x26
+            text run at (2,2) width 178: "one two three four"
+caret: position 7 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

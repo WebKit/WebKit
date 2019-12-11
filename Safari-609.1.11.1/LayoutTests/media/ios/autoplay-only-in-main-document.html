@@ -1,0 +1,40 @@
+<meta name="viewport" content="width=device-width">
+<style>
+iframe {
+    width: 300px;
+    height: 200px;
+}
+</style>
+<script>
+if (window.testRunner) {
+    internals.settings.setVideoPlaybackRequiresUserGesture(true);
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+var iframe;
+
+function testVideo() {
+    var doc = iframe.contentDocument;
+    var video = doc.querySelector("video");
+
+    var result = document.createElement("p");
+    if (video.paused && !video.ended)
+        result.textContent = "PASS: Video did not autoplay";
+    else
+        result.textContent = "FAIL: Video was autoplaying";
+    
+    document.body.appendChild(result);
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+window.addEventListener("load", function () {
+    iframe = document.querySelector("iframe");
+    iframe.addEventListener("load", testVideo, false);
+    iframe.src = "../content/test.mp4";
+}, false);
+
+</script>
+<iframe></iframe>

@@ -1,0 +1,10 @@
+a
+
+e
+PASS gFocusedDocument.activeElement.getAttribute("id") is "1"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "2"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "end"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "2"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "1"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "start"
+

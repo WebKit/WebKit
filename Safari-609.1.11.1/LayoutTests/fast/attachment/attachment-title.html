@@ -1,0 +1,13 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableAttachmentElement=true ] -->
+<html>
+<body>
+<attachment id="attachment" title="overridden title" subtitle="1024 bytes"></attachment>
+<script>
+var file;
+if (window.internals)
+    file = window.internals.createFile("resources/test-file.txt");
+
+document.getElementById("attachment").file = file;
+</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        window.addEventListener('load', event => {
+            let context = new webkitAudioContext();
+            let node = context.createBufferSource();
+            node.connect(context.destination);
+
+            let video = document.querySelector('video');
+            
+            Promise.all([context.resume(), video.play()]).then(() => {
+                window.webkit.messageHandlers.testHandler.postMessage('playing');
+            }, () => {
+                window.webkit.messageHandlers.testHandler.postMessage('not playing');
+            });
+        });
+    </script>
+</head>
+    <video src="video-with-audio.mp4"></video>
+</html>

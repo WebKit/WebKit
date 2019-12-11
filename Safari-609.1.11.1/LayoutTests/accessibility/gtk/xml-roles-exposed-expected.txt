@@ -1,0 +1,1839 @@
+Verify exposure of ARIA role values via the 'xml-roles' object attribute.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+AXRole: AXAlert
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: atomic:true, relevant:additions text, live:assertive, container-live-role:alert, container-atomic:true, container-relevant:additions text, container-live:assertive, computed-role:alert, xml-roles:alert, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXDialog
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: relevant:additions text, live:assertive, container-live-role:alertdialog, container-relevant:additions text, container-live:assertive, computed-role:alertdialog, xml-roles:alertdialog, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXEmbedded
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:application, xml-roles:application, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXArticle
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:article, xml-roles:article, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLandmarkBanner
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:banner, xml-roles:banner, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXBlockquote
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:blockquote, xml-roles:blockquote, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXButton
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:button, xml-roles:button, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXCaption
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:caption, xml-roles:caption, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXCheckBox
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:checkbox, xml-roles:checkbox, readonly:false, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXComboBox
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:combobox, xml-roles:combobox, readonly:false, haspopup:listbox, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLandmarkComplementary
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:complementary, xml-roles:complementary, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLandmarkContentInfo
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:contentinfo, xml-roles:contentinfo, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXDefinition
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:definition, xml-roles:definition, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXDeletion
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:deletion, xml-roles:deletion, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXDialog
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:dialog, xml-roles:dialog, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXList
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:list, xml-roles:directory, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXDocument
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:document, xml-roles:document, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXGroup
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:feed, xml-roles:feed, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXGroup
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:figure, xml-roles:figure, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLandmarkForm
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:form, xml-roles:form, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXGroup
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:group, xml-roles:group, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXHeading
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:heading, xml-roles:heading, level:2, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXImage
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:img, xml-roles:img, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXInsertion
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:insertion, xml-roles:insertion, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLink
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXURL: (null)
+AXPlatformAttributes: computed-role:link, xml-roles:link, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLog
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: relevant:additions text, live:polite, container-live-role:log, container-relevant:additions text, container-live:polite, computed-role:log, xml-roles:log, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLandmarkMain
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:main, xml-roles:main, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXMarquee
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: relevant:additions text, live:off, container-live-role:marquee, container-relevant:additions text, container-live:off, computed-role:marquee, xml-roles:marquee, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXMath
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:math, xml-roles:math, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLevelIndicator
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:meter, xml-roles:meter, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLandmarkNavigation
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:navigation, xml-roles:navigation, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXComment
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:note, xml-roles:note, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXParagraph
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 1
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:paragraph, xml-roles:paragraph, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXProgressIndicator
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:progressbar, xml-roles:progressbar, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXRadioButton
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:radio, xml-roles:radio, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLandmarkRegion
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: X
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:region, xml-roles:region, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXSection
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 8.00000, 8.00000 }
+AXSize: { 784.000, 18.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: X
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: xml-roles:region, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXScrollBar
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:scrollbar, xml-roles:scrollbar, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLandmarkSearch
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:search, xml-roles:search, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXTextField
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:searchbox, xml-roles:searchbox, readonly:false, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXSeparator
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:separator, xml-roles:separator, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXSlider
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:slider, xml-roles:slider, readonly:false, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXSpinButton
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:spinbutton, xml-roles:spinbutton, readonly:false, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXStatusBar
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: atomic:true, relevant:additions text, live:polite, container-live-role:status, container-atomic:true, container-relevant:additions text, container-live:polite, computed-role:status, xml-roles:status, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXSubscript
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:subscript, xml-roles:subscript, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXSuperscript
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:superscript, xml-roles:superscript, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXToggleButton
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:switch, xml-roles:switch, readonly:false, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXDescriptionTerm
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:term, xml-roles:term, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXTextField
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: xml-roles:textbox, readonly:false, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXStatic
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:time, xml-roles:time, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXTimer
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: relevant:additions text, live:off, container-live-role:timer, container-relevant:additions text, container-live:off, computed-role:timer, xml-roles:timer, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXToolbar
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:toolbar, xml-roles:toolbar, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXUserInterfaceTooltip
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:tooltip, xml-roles:tooltip, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXSection
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:group, xml-roles:doc-abstract, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLandmarkRegion
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:region, xml-roles:doc-acknowledgments, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLandmarkRegion
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:region, xml-roles:doc-afterword, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLandmarkRegion
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:region, xml-roles:doc-appendix, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLink
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXURL: (null)
+AXPlatformAttributes: computed-role:link, xml-roles:doc-backlink, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXListItem
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:listitem, xml-roles:doc-biblioentry, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLandmarkRegion
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:region, xml-roles:doc-bibliography, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLink
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXURL: (null)
+AXPlatformAttributes: computed-role:link, xml-roles:doc-biblioref, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLandmarkRegion
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:region, xml-roles:doc-chapter, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXSection
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:group, xml-roles:doc-colophon, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLandmarkRegion
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:region, xml-roles:doc-conclusion, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXImage
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:img, xml-roles:doc-cover, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXSection
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:group, xml-roles:doc-credit, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLandmarkRegion
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:region, xml-roles:doc-credits, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXSection
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:group, xml-roles:doc-dedication, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXListItem
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:listitem, xml-roles:doc-endnote, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLandmarkRegion
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:region, xml-roles:doc-endnotes, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXSection
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:group, xml-roles:doc-epigraph, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLandmarkRegion
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:region, xml-roles:doc-epilogue, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLandmarkRegion
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:region, xml-roles:doc-errata, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXSection
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:group, xml-roles:doc-example, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXFootnote
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:group, xml-roles:doc-footnote, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLandmarkRegion
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:region, xml-roles:doc-foreword, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLandmarkRegion
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:region, xml-roles:doc-glossary, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLink
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXURL: (null)
+AXPlatformAttributes: computed-role:link, xml-roles:doc-glossref, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLandmarkRegion
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:navigation, xml-roles:doc-index, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLandmarkRegion
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:region, xml-roles:doc-introduction, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLink
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXURL: (null)
+AXPlatformAttributes: computed-role:link, xml-roles:doc-noteref, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXComment
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:note, xml-roles:doc-notice, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXSeparator
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:separator, xml-roles:doc-pagebreak, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLandmarkRegion
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:navigation, xml-roles:doc-pagelist, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLandmarkRegion
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:region, xml-roles:doc-part, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLandmarkRegion
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:region, xml-roles:doc-preface, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLandmarkRegion
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:region, xml-roles:doc-prologue, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXSection
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:group, xml-roles:doc-pullquote, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXSection
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:group, xml-roles:doc-qna, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXHeading
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:heading, xml-roles:doc-subtitle, level:2, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXComment
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:note, xml-roles:doc-tip, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXLandmarkRegion
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:navigation, xml-roles:doc-toc, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXDocument
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:document, xml-roles:graphics-document, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXGroup
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:group, xml-roles:graphics-object, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXImage
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:img, xml-roles:graphics-symbol, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXParagraph
+AXParent: AXWebArea
+AXChildren: 2
+AXPosition:  { 8.00000, 42.0000 }
+AXSize: { 784.000, 52.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: Verify exposure of ARIA role values via the 'xml-roles' object attribute.<\n><\n>On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".<\n><\n><\n>
+AXFocusable: 1
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:paragraph, html-id:description, tag:p, toolkit:WebKitGtk
+------------
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

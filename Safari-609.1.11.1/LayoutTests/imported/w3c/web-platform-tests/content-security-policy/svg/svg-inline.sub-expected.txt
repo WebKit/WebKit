@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: Refused to load http://www1.localhost:8800/content-security-policy/support/.js because it does not appear in the script-src directive of the Content Security Policy.
+Tests that an SVG loaded in an iframe with a policy enforces it, not the policy enforced by this parent frame. The SVG should render and not redirect to a different resource.
+
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN Should fire violation event 
+PASS
+

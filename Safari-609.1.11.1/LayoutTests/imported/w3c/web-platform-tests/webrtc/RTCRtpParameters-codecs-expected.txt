@@ -1,0 +1,8 @@
+
+FAIL setParameters() with codec.payloadType modified should reject with InvalidModificationError assert_equals: Expect dictionary.rtcp to be plain object expected "object" but got "undefined"
+FAIL setParameters() with codec.mimeType modified should reject with InvalidModificationError assert_equals: Expect dictionary.rtcp to be plain object expected "object" but got "undefined"
+FAIL setParameters() with codec.clockRate modified should reject with InvalidModificationError assert_equals: Expect dictionary.rtcp to be plain object expected "object" but got "undefined"
+FAIL setParameters() with codec.channels modified should reject with InvalidModificationError assert_equals: Expect dictionary.rtcp to be plain object expected "object" but got "undefined"
+FAIL setParameters() with codec.sdpFmtpLine modified should reject with InvalidModificationError assert_equals: Expect dictionary.rtcp to be plain object expected "object" but got "undefined"
+FAIL setParameters() with new codecs inserted should reject with InvalidModificationError assert_equals: Expect dictionary.rtcp to be plain object expected "object" but got "undefined"
+

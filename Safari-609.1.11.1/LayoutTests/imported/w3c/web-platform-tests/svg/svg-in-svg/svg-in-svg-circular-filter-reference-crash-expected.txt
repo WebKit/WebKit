@@ -1,0 +1,3 @@
+
+PASS Should not crash on circular filter reference containing an svg under svg. 
+

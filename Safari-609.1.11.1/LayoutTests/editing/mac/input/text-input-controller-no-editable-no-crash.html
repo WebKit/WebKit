@@ -1,0 +1,16 @@
+<html>
+<body onload="runTest();">
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function runTest()
+    {
+        document.open();
+        if (window.textInputController)
+            textInputController.firstRectForCharacterRange(0, 0);
+        document.write("PASS, WebKit didn't crash.");
+    }
+</script>
+</body>
+</html>

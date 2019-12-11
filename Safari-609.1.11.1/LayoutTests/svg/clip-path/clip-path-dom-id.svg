@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<clipPath id="oldclip" clipPathUnits="userSpaceOnUse">
+  <rect width="200" height="200"/>
+</clipPath>
+<g clip-path="url(#newclip)">
+  <rect width="400" height="400" fill="red"/>
+  <rect width="200" height="200" fill="green"/>
+</g>
+<script>
+document.getElementsByTagName("clipPath")[0].setAttribute("id", "newclip");
+</script>
+</svg>

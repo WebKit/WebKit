@@ -1,0 +1,69 @@
+Basic Interface test for resource-timing APIs.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PerformanceResourceTiming
+PASS PerformanceResourceTiming is defined.
+PASS "initiatorType" in PerformanceResourceTiming.prototype is true
+PASS "nextHopProtocol" in PerformanceResourceTiming.prototype is true
+PASS "workerStart" in PerformanceResourceTiming.prototype is true
+PASS "redirectStart" in PerformanceResourceTiming.prototype is true
+PASS "redirectEnd" in PerformanceResourceTiming.prototype is true
+PASS "fetchStart" in PerformanceResourceTiming.prototype is true
+PASS "domainLookupStart" in PerformanceResourceTiming.prototype is true
+PASS "domainLookupEnd" in PerformanceResourceTiming.prototype is true
+PASS "connectStart" in PerformanceResourceTiming.prototype is true
+PASS "connectEnd" in PerformanceResourceTiming.prototype is true
+PASS "secureConnectionStart" in PerformanceResourceTiming.prototype is true
+PASS "requestStart" in PerformanceResourceTiming.prototype is true
+PASS "responseStart" in PerformanceResourceTiming.prototype is true
+PASS "responseEnd" in PerformanceResourceTiming.prototype is true
+FAIL "transferSize" in PerformanceResourceTiming.prototype should be true. Was false.
+FAIL "encodedBodySize" in PerformanceResourceTiming.prototype should be true. Was false.
+FAIL "decodedBodySize" in PerformanceResourceTiming.prototype should be true. Was false.
+PASS PerformanceResourceTiming.prototype.toJSON is defined.
+PASS new PerformanceResourceTiming() threw exception TypeError: function is not a constructor (evaluating 'new PerformanceResourceTiming()').
+
+Performance extensions
+PASS Performance.prototype.clearResourceTimings is defined.
+PASS Performance.prototype.setResourceTimingBufferSize is defined.
+PASS performance.onresourcetimingbufferfull is defined.
+PASS performance.clearResourceTimings() did not throw exception.
+PASS performance.setResourceTimingBufferSize() threw exception TypeError: Not enough arguments.
+PASS performance.setResourceTimingBufferSize(100) did not throw exception.
+
+Starting worker: resources/resource-timing-api.js
+[Worker] PerformanceResourceTiming
+PASS [Worker] PerformanceResourceTiming is defined.
+PASS [Worker] "initiatorType" in PerformanceResourceTiming.prototype is true
+PASS [Worker] "nextHopProtocol" in PerformanceResourceTiming.prototype is true
+PASS [Worker] "workerStart" in PerformanceResourceTiming.prototype is true
+PASS [Worker] "redirectStart" in PerformanceResourceTiming.prototype is true
+PASS [Worker] "redirectEnd" in PerformanceResourceTiming.prototype is true
+PASS [Worker] "fetchStart" in PerformanceResourceTiming.prototype is true
+PASS [Worker] "domainLookupStart" in PerformanceResourceTiming.prototype is true
+PASS [Worker] "domainLookupEnd" in PerformanceResourceTiming.prototype is true
+PASS [Worker] "connectStart" in PerformanceResourceTiming.prototype is true
+PASS [Worker] "connectEnd" in PerformanceResourceTiming.prototype is true
+PASS [Worker] "secureConnectionStart" in PerformanceResourceTiming.prototype is true
+PASS [Worker] "requestStart" in PerformanceResourceTiming.prototype is true
+PASS [Worker] "responseStart" in PerformanceResourceTiming.prototype is true
+PASS [Worker] "responseEnd" in PerformanceResourceTiming.prototype is true
+FAIL [Worker] "transferSize" in PerformanceResourceTiming.prototype should be true. Was false.
+FAIL [Worker] "encodedBodySize" in PerformanceResourceTiming.prototype should be true. Was false.
+FAIL [Worker] "decodedBodySize" in PerformanceResourceTiming.prototype should be true. Was false.
+PASS [Worker] PerformanceResourceTiming.prototype.toJSON is defined.
+PASS [Worker] new PerformanceResourceTiming() threw exception TypeError: function is not a constructor (evaluating 'new PerformanceResourceTiming()').
+[Worker] 
+[Worker] Performance extensions
+PASS [Worker] Performance.prototype.clearResourceTimings is defined.
+PASS [Worker] Performance.prototype.setResourceTimingBufferSize is defined.
+PASS [Worker] performance.onresourcetimingbufferfull is defined.
+PASS [Worker] performance.clearResourceTimings() did not throw exception.
+PASS [Worker] performance.setResourceTimingBufferSize() threw exception TypeError: Not enough arguments.
+PASS [Worker] performance.setResourceTimingBufferSize(100) did not throw exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

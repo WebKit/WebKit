@@ -1,0 +1,19 @@
+
+RUN(internals.settings.setShouldManageAudioSessionCategory(true))
+RUN(video.src = findMediaFile("video", "../../../media/content/test"))
+EVENT(canplay)
+EXPECTED (internals.audioSessionCategory() == 'None') OK
+RUN(video.audioTracks[0].enabled = false)
+EVENT(change)
+EXPECTED (internals.audioSessionCategory() == 'None') OK
+RUN(video.muted = false)
+EVENT(volumechange)
+EXPECTED (internals.audioSessionCategory() == 'None') OK
+RUN(video.play())
+EVENT(playing)
+EXPECTED (internals.audioSessionCategory() == 'None') OK
+RUN(video.audioTracks[0].enabled = true)
+EVENT(change)
+EXPECTED (internals.audioSessionCategory() == 'MediaPlayback') OK
+END OF TEST
+

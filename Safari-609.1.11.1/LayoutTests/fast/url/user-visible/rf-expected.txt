@@ -1,0 +1,17 @@
+Test IDN behavior for .рф top level domain.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS test('http://президент.рф/') is 'http://президент.рф/'
+PASS test('http://президент.рф./') is 'http://президент.рф./'
+PASS test('http://www.президент.рф/') is 'http://www.президент.рф/'
+PASS test('http://почта.президент.рф/') is 'http://почта.президент.рф/'
+PASS test('http://0ж9.рф/') is 'http://0ж9.рф/'
+PASS test('http://туда-сюда.рф/') is 'http://туда-сюда.рф/'
+PASS test('http://прeзидент.рф/') /* spoof: Roman 'e' */ is 'http://xn--e-htbdgf6aiiy.xn--p1ai/'
+PASS test('http://caxap.рф/') /* spoof: all characters in 'caxap' are Roman */ is 'http://caxap.xn--p1ai/'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

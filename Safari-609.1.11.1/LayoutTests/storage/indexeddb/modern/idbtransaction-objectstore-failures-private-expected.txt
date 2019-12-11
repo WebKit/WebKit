@@ -1,0 +1,22 @@
+This tests some obvious failures that can happen while calling transaction.objectStore()
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+Upgrade needed: Old version - 0 New version - 1
+[object IDBTransaction] - versionchange
+[object IDBDatabase]
+Caught attempt to access empty-named object store on the transaction
+Caught attempt to access null-named object store on the transaction
+Caught attempt to access non-existant object store on the transaction
+Caught attempt to access valid object store on a transaction that is already finishing
+put failed (because transaction was aborted)
+First version change transaction unexpected error - [object Event]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

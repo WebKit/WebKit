@@ -1,0 +1,189 @@
+Tests ChildNode.after((Node or DOMString)...)
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test Element.after((Node or DOMString)...).
+Test with no arguments.
+PASS parent.childNodes.length is 1
+
+Test with a single element.
+PASS parent.childNodes.length is 2
+PASS child.nextSibling is d1
+
+Test with a single string.
+PASS parent.childNodes.length is 2
+PASS child.nextSibling.data is 'hello'
+
+Test with a both strings and elements.
+PASS parent.childNodes.length is 3
+PASS child.nextSibling.data is 'hello'
+PASS parent.childNodes[1] is an instance of Text
+PASS parent.childNodes[1].data is 'hello'
+PASS parent.childNodes[2] is an instance of Element
+PASS parent.childNodes[2] is d1
+
+Test conversion to string
+PASS parent.childNodes.length is 4
+PASS parent.childNodes[0] is an instance of Element
+PASS parent.childNodes[0] is child
+PASS parent.childNodes[1] is an instance of Text
+PASS parent.childNodes[1].data is 'null'
+PASS parent.childNodes[2] is an instance of Text
+PASS parent.childNodes[2].data is 'undefined'
+PASS parent.childNodes[3] is an instance of Text
+PASS parent.childNodes[3].data is '7'
+
+Test a child without a parent.
+PASS child.nextSibling is null
+
+Test when there the next sibling is not a viable next sibling.
+PASS parent.childNodes.length is 5
+PASS parent.childNodes[0] is an instance of Element
+PASS parent.childNodes[0] is child
+PASS parent.childNodes[1] is an instance of Text
+PASS parent.childNodes[1].data is 'hello'
+PASS parent.childNodes[2] is an instance of Element
+PASS parent.childNodes[2] is d1
+PASS parent.childNodes[3] is an instance of Text
+PASS parent.childNodes[3].data is 'world'
+PASS parent.childNodes[4] is an instance of Element
+PASS parent.childNodes[4] is d2
+
+Test when there is no viable next sibling.
+PASS parent.childNodes.length is 5
+PASS parent.childNodes[0] is an instance of Element
+PASS parent.childNodes[0] is child
+PASS parent.childNodes[1] is an instance of Text
+PASS parent.childNodes[1].data is 'hello'
+PASS parent.childNodes[2] is an instance of Element
+PASS parent.childNodes[2] is d1
+PASS parent.childNodes[3] is an instance of Text
+PASS parent.childNodes[3].data is 'world'
+PASS parent.childNodes[4] is an instance of Element
+PASS parent.childNodes[4] is d2
+
+Test Text.after((Node or DOMString)...).
+Test with no arguments.
+PASS parent.childNodes.length is 1
+
+Test with a single element.
+PASS parent.childNodes.length is 2
+PASS child.nextSibling is d1
+
+Test with a single string.
+PASS parent.childNodes.length is 2
+PASS child.nextSibling.data is 'hello'
+
+Test with a both strings and elements.
+PASS parent.childNodes.length is 3
+PASS child.nextSibling.data is 'hello'
+PASS parent.childNodes[1] is an instance of Text
+PASS parent.childNodes[1].data is 'hello'
+PASS parent.childNodes[2] is an instance of Element
+PASS parent.childNodes[2] is d1
+
+Test conversion to string
+PASS parent.childNodes.length is 4
+PASS parent.childNodes[0] is an instance of Text
+PASS parent.childNodes[0] is child
+PASS parent.childNodes[1] is an instance of Text
+PASS parent.childNodes[1].data is 'null'
+PASS parent.childNodes[2] is an instance of Text
+PASS parent.childNodes[2].data is 'undefined'
+PASS parent.childNodes[3] is an instance of Text
+PASS parent.childNodes[3].data is '7'
+
+Test a child without a parent.
+PASS child.nextSibling is null
+
+Test when there the next sibling is not a viable next sibling.
+PASS parent.childNodes.length is 5
+PASS parent.childNodes[0] is an instance of Text
+PASS parent.childNodes[0] is child
+PASS parent.childNodes[1] is an instance of Text
+PASS parent.childNodes[1].data is 'hello'
+PASS parent.childNodes[2] is an instance of Element
+PASS parent.childNodes[2] is d1
+PASS parent.childNodes[3] is an instance of Text
+PASS parent.childNodes[3].data is 'world'
+PASS parent.childNodes[4] is an instance of Element
+PASS parent.childNodes[4] is d2
+
+Test when there is no viable next sibling.
+PASS parent.childNodes.length is 5
+PASS parent.childNodes[0] is an instance of Text
+PASS parent.childNodes[0] is child
+PASS parent.childNodes[1] is an instance of Text
+PASS parent.childNodes[1].data is 'hello'
+PASS parent.childNodes[2] is an instance of Element
+PASS parent.childNodes[2] is d1
+PASS parent.childNodes[3] is an instance of Text
+PASS parent.childNodes[3].data is 'world'
+PASS parent.childNodes[4] is an instance of Element
+PASS parent.childNodes[4] is d2
+
+Test Comment.after((Node or DOMString)...).
+Test with no arguments.
+PASS parent.childNodes.length is 1
+
+Test with a single element.
+PASS parent.childNodes.length is 2
+PASS child.nextSibling is d1
+
+Test with a single string.
+PASS parent.childNodes.length is 2
+PASS child.nextSibling.data is 'hello'
+
+Test with a both strings and elements.
+PASS parent.childNodes.length is 3
+PASS child.nextSibling.data is 'hello'
+PASS parent.childNodes[1] is an instance of Text
+PASS parent.childNodes[1].data is 'hello'
+PASS parent.childNodes[2] is an instance of Element
+PASS parent.childNodes[2] is d1
+
+Test conversion to string
+PASS parent.childNodes.length is 4
+PASS parent.childNodes[0] is an instance of Comment
+PASS parent.childNodes[0] is child
+PASS parent.childNodes[1] is an instance of Text
+PASS parent.childNodes[1].data is 'null'
+PASS parent.childNodes[2] is an instance of Text
+PASS parent.childNodes[2].data is 'undefined'
+PASS parent.childNodes[3] is an instance of Text
+PASS parent.childNodes[3].data is '7'
+
+Test a child without a parent.
+PASS child.nextSibling is null
+
+Test when there the next sibling is not a viable next sibling.
+PASS parent.childNodes.length is 5
+PASS parent.childNodes[0] is an instance of Comment
+PASS parent.childNodes[0] is child
+PASS parent.childNodes[1] is an instance of Text
+PASS parent.childNodes[1].data is 'hello'
+PASS parent.childNodes[2] is an instance of Element
+PASS parent.childNodes[2] is d1
+PASS parent.childNodes[3] is an instance of Text
+PASS parent.childNodes[3].data is 'world'
+PASS parent.childNodes[4] is an instance of Element
+PASS parent.childNodes[4] is d2
+
+Test when there is no viable next sibling.
+PASS parent.childNodes.length is 5
+PASS parent.childNodes[0] is an instance of Comment
+PASS parent.childNodes[0] is child
+PASS parent.childNodes[1] is an instance of Text
+PASS parent.childNodes[1].data is 'hello'
+PASS parent.childNodes[2] is an instance of Element
+PASS parent.childNodes[2] is d1
+PASS parent.childNodes[3] is an instance of Text
+PASS parent.childNodes[3].data is 'world'
+PASS parent.childNodes[4] is an instance of Element
+PASS parent.childNodes[4] is d2
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

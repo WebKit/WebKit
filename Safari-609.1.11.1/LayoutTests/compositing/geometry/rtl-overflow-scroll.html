@@ -1,0 +1,38 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .scroller {
+            direction: rtl;
+            width: 300px;
+            height: 300px;
+            border: 5px solid black;
+            padding: 2px;
+            box-sizing: border-box;
+            overflow-y: scroll;
+            overflow-x: hidden;
+        }
+        
+        .contents {
+            width: 200%;
+            height: 200%;
+            background-color: green;
+        }
+        
+        .scrollbar-hider {
+            position: absolute;
+            top: 8px;
+            left: 13px;
+            width: 16px;
+            height: 300px;
+            background-color: gray;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroller">
+        <div class="contents"></div>
+    </div>
+    <div class="scrollbar-hider"></div>
+</body>
+</html>

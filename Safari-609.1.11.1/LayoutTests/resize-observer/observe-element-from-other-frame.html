@@ -1,0 +1,30 @@
+<!doctype html><!-- webkit-test-runner [ experimental:ResizeObserverEnabled=true ] -->
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+
+
+<iframe src="./resources/frameset2.html"></iframe>
+
+<script>
+
+function test0() {
+    let test = async_test('test0: Observe element from other frame');
+    window.addEventListener('message', event => {
+        switch(event.data) {
+        case 'success':
+        case 'fail':
+            test.step( () => {
+                assert_equals(event.data, 'success');
+                test.done();
+            });
+        break;
+        }
+    }, false);
+}
+
+test(_ => {
+    assert_own_property(window, "ResizeObserver");
+}, "ResizeObserver implemented");
+
+test0();
+</script>

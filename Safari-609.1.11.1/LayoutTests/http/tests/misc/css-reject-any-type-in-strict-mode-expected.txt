@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Did not parse stylesheet at 'http://127.0.0.1:8000/misc/resources/stylesheet-bad-mime-type.php' because non CSS MIME types are not allowed in strict mode.
+Related test to http://bugs.webkit.org/show_bug.cgi?id=11451 REGRESSION: Dell.com does not render correctly in ToT (stylesheet not loaded). Making sure that in strict mode we would not load such a stylesheet.
+
+SUCCESS

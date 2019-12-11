@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            description("Tests the RTCPeerConnection Ice functionality.");
+
+            var pc = null;
+            var iceCandidate = null;
+
+            function onIceChange2()
+            {
+                if (pc.iceConnectionState === "closed") {
+                    testPassed("iceConnectionState is closed.");
+                    finishJSTest();
+                }
+            }
+
+            function addIceCandidateSuccess()
+            {
+                testPassed("addIceCandidateSuccess was called.");
+                pc.oniceconnectionstatechange = onIceChange2;
+                pc.close();
+            }
+
+            function addIceCandidateFailure()
+            {
+                testFailed("addIceCandidateFailue was called.");
+                finishJSTest();
+            }
+
+            function onIceChange1()
+            {
+                if (pc.iceConnectionState === "completed") {
+                    testPassed("iceConnectionState is completed");
+                    iceCandidate = new RTCIceCandidate({candidate:"nano nano"});
+                    shouldThrow('pc.addIceCandidate(null, null, null);');
+                    shouldThrow('pc.addIceCandidate(iceCandidate, null, null);');
+                    shouldThrow('pc.addIceCandidate(iceCandidate, addIceCandidateSuccess, null);');
+                    shouldNotThrow('pc.addIceCandidate(iceCandidate, addIceCandidateSuccess, addIceCandidateFailure);');
+                }
+            }
+
+            shouldNotThrow("pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});");
+            pc.oniceconnectionstatechange = onIceChange1;
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

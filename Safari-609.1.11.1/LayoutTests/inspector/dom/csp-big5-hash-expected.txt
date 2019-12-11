@@ -1,0 +1,9 @@
+Test for Content Security Policy hash support on DOM.DOMNode in a document with character set Big5.
+
+
+PASS: Got DOMNode for #stylesheet-1
+PASS: DOMNode has hash sha256-duNBvCmzrFc3RVVqS8ufweBf2QOq1THuEh3UZWP7ZpU=
+
+PASS: Got DOMNode for #script-1
+PASS: DOMNode has hash sha256-0eDk4my9q3qcCQTZ02clVW0RxDNPW9n9lXTCdyGY4Js=
+

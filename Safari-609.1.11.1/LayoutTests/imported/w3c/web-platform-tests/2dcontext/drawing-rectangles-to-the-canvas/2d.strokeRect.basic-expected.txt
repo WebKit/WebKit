@@ -1,0 +1,8 @@
+2d.strokeRect.basic
+strokeRect works
+Actual output:
+Expected output:
+
+
+PASS strokeRect works 
+

@@ -1,0 +1,95 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (63,18) size 668x482
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGResourceLinearGradient {linearGradient} [id="grad1"] [gradientUnits=userSpaceOnUse] [start=(140.50,57.75)] [end=(140.50,139.50)]
+          RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
+          RenderSVGGradientStop {stop} [offset=0.33] [color=#FFFFFF]
+          RenderSVGGradientStop {stop} [offset=0.67] [color=#FF0000]
+          RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFF00]
+        RenderSVGResourceLinearGradient {linearGradient} [id="grad2"] [gradientUnits=userSpaceOnUse] [start=(140.50,192.75)] [end=(140.50,274.50)]
+          RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
+          RenderSVGGradientStop {stop} [offset=0.33] [color=#FFFFFF]
+          RenderSVGGradientStop {stop} [offset=0.67] [color=#FF0000]
+          RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFF00]
+        RenderSVGResourceFilter {filter} [id="GaussianBlur1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feGaussianBlur stdDeviation="2.00, 2.00"]
+            [SourceAlpha]
+        RenderSVGResourceFilter {filter} [id="GaussianBlur2"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feGaussianBlur stdDeviation="2.00, 2.00"]
+            [SourceGraphic]
+        RenderSVGResourceFilter {filter} [id="GaussianBlur3"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        RenderSVGResourceFilter {filter} [id="GaussianBlur4"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        RenderSVGResourceFilter {filter} [id="GaussianBlur5"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        RenderSVGResourceFilter {filter} [id="GaussianBlur6"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+      RenderSVGContainer {g} at (63,62) size 668x438
+        RenderSVGRect {rect} at (147,80) size 33x165 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00] [dash array={25.00, 5.00}]}] [fill={[type=SOLID] [color=#008000]}] [x=90.00] [y=50.00] [width=16.00] [height=95.00]
+        RenderSVGContainer {g} at (63,75) size 201x175
+          [filter="GaussianBlur1"] RenderSVGResourceFilter {filter} at (37.80,45) size 120.40x105
+          RenderSVGEllipse {circle} at (119,97) size 89x89 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00] [dash array={25.00, 5.00}]}] [fill={[type=SOLID] [color=#FF0000] [opacity=0.60]}] [cx=98.00] [cy=85.00] [r=25.00]
+          RenderSVGEllipse {circle} at (89,139) size 89x89 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00] [dash array={25.00, 5.00}]}] [fill={[type=SOLID] [color=#0000FF] [opacity=0.60]}] [cx=80.00] [cy=110.00] [r=25.00]
+          RenderSVGEllipse {circle} at (149,139) size 89x89 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00] [dash array={25.00, 5.00}]}] [fill={[type=SOLID] [color=#008000] [opacity=0.60]}] [cx=116.00] [cy=110.00] [r=25.00]
+        RenderSVGText {text} at (57,146) size 82x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 81x17
+            chunk 1 (middle anchor) text run 1 at (57.63,160.00) startOffset 0 endOffset 11 width 80.74: "SourceAlpha"
+        RenderSVGRect {rect} at (147,305) size 33x165 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00] [dash array={25.00, 5.00}]}] [fill={[type=SOLID] [color=#008000]}] [x=90.00] [y=185.00] [width=16.00] [height=95.00]
+        RenderSVGContainer {g} at (63,300) size 201x175
+          [filter="GaussianBlur2"] RenderSVGResourceFilter {filter} at (37.80,180) size 120.40x105
+          RenderSVGEllipse {circle} at (119,322) size 89x89 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00] [dash array={25.00, 5.00}]}] [fill={[type=SOLID] [color=#FF0000] [opacity=0.60]}] [cx=98.00] [cy=220.00] [r=25.00]
+          RenderSVGEllipse {circle} at (89,364) size 89x89 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00] [dash array={25.00, 5.00}]}] [fill={[type=SOLID] [color=#0000FF] [opacity=0.60]}] [cx=80.00] [cy=245.00] [r=25.00]
+          RenderSVGEllipse {circle} at (149,364) size 89x89 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00] [dash array={25.00, 5.00}]}] [fill={[type=SOLID] [color=#008000] [opacity=0.60]}] [cx=116.00] [cy=245.00] [r=25.00]
+        RenderSVGText {text} at (50,281) size 96x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 95x17
+            chunk 1 (middle anchor) text run 1 at (50.98,295.00) startOffset 0 endOffset 13 width 94.05: "SourceGraphic"
+        RenderSVGRect {rect} at (380,80) size 33x165 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00] [dash array={25.00, 5.00}]}] [fill={[type=SOLID] [color=#008000]}] [x=230.00] [y=50.00] [width=16.00] [height=95.00]
+        RenderSVGContainer {g} at (282,62) size 230x201
+          [filter="GaussianBlur3"] RenderSVGResourceFilter {filter} at (169.20,37.50) size 137.60x120
+          RenderSVGEllipse {circle} at (352,97) size 89x89 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00] [dash array={25.00, 5.00}]}] [fill={[type=SOLID] [color=#FF0000] [opacity=0.60]}] [cx=238.00] [cy=85.00] [r=25.00]
+          RenderSVGEllipse {circle} at (322,139) size 89x89 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00] [dash array={25.00, 5.00}]}] [fill={[type=SOLID] [color=#0000FF] [opacity=0.60]}] [cx=220.00] [cy=110.00] [r=25.00]
+          RenderSVGEllipse {circle} at (382,139) size 89x89 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00] [dash array={25.00, 5.00}]}] [fill={[type=SOLID] [color=#008000] [opacity=0.60]}] [cx=256.00] [cy=110.00] [r=25.00]
+        RenderSVGText {text} at (182,146) size 112x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 112x17
+            chunk 1 (middle anchor) text run 1 at (182.34,160.00) startOffset 0 endOffset 15 width 111.31: "BackgroundAlpha"
+        RenderSVGRect {rect} at (380,305) size 33x165 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00] [dash array={25.00, 5.00}]}] [fill={[type=SOLID] [color=#008000]}] [x=230.00] [y=185.00] [width=16.00] [height=95.00]
+        RenderSVGContainer {g} at (267,275) size 259x225
+          [filter="GaussianBlur4"] RenderSVGResourceFilter {filter} at (160.60,165) size 154.80x135
+          RenderSVGEllipse {circle} at (352,322) size 89x89 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00] [dash array={25.00, 5.00}]}] [fill={[type=SOLID] [color=#FF0000] [opacity=0.60]}] [cx=238.00] [cy=220.00] [r=25.00]
+          RenderSVGEllipse {circle} at (322,364) size 89x89 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00] [dash array={25.00, 5.00}]}] [fill={[type=SOLID] [color=#0000FF] [opacity=0.60]}] [cx=220.00] [cy=245.00] [r=25.00]
+          RenderSVGEllipse {circle} at (382,364) size 89x89 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00] [dash array={25.00, 5.00}]}] [fill={[type=SOLID] [color=#008000] [opacity=0.60]}] [cx=256.00] [cy=245.00] [r=25.00]
+        RenderSVGText {text} at (180,281) size 116x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 115x17
+            chunk 1 (middle anchor) text run 1 at (180.78,295.00) startOffset 0 endOffset 15 width 114.44: "BackgroundImage"
+        RenderSVGRect {rect} at (614,80) size 32x165 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00] [dash array={25.00, 5.00}]}] [fill={[type=SOLID] [color=#008000]}] [x=370.00] [y=50.00] [width=16.00] [height=95.00]
+        RenderSVGContainer {g} at (529,75) size 202x175
+          [filter="GaussianBlur5"] RenderSVGResourceFilter {filter} at (317.80,45) size 120.40x105
+          RenderSVGEllipse {circle} at (585,97) size 90x89 [stroke={[type=LINEAR-GRADIENT] [id="grad1"] [opacity=0.60] [stroke width=3.00] [dash array={25.00, 5.00}]}] [fill={[type=SOLID] [color=#FF0000]}] [cx=378.00] [cy=85.00] [r=25.00]
+          RenderSVGEllipse {circle} at (555,139) size 90x89 [stroke={[type=LINEAR-GRADIENT] [id="grad1"] [opacity=0.60] [stroke width=3.00] [dash array={25.00, 5.00}]}] [fill={[type=SOLID] [color=#0000FF]}] [cx=360.00] [cy=110.00] [r=25.00]
+          RenderSVGEllipse {circle} at (615,139) size 90x89 [stroke={[type=LINEAR-GRADIENT] [id="grad1"] [opacity=0.60] [stroke width=3.00] [dash array={25.00, 5.00}]}] [fill={[type=SOLID] [color=#008000]}] [cx=396.00] [cy=110.00] [r=25.00]
+        RenderSVGText {text} at (352,146) size 52x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 51x17
+            chunk 1 (middle anchor) text run 1 at (352.93,160.00) startOffset 0 endOffset 9 width 50.15: "FillPaint"
+        RenderSVGRect {rect} at (614,305) size 32x165 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00] [dash array={25.00, 5.00}]}] [fill={[type=SOLID] [color=#008000]}] [x=370.00] [y=185.00] [width=16.00] [height=95.00]
+        RenderSVGContainer {g} at (529,300) size 202x175
+          [filter="GaussianBlur6"] RenderSVGResourceFilter {filter} at (317.80,180) size 120.40x105
+          RenderSVGEllipse {circle} at (585,322) size 90x89 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00] [dash array={25.00, 5.00}]}] [fill={[type=LINEAR-GRADIENT] [id="grad2"] [opacity=0.60]}] [cx=378.00] [cy=220.00] [r=25.00]
+          RenderSVGEllipse {circle} at (555,364) size 90x89 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00] [dash array={25.00, 5.00}]}] [fill={[type=LINEAR-GRADIENT] [id="grad2"] [opacity=0.60]}] [cx=360.00] [cy=245.00] [r=25.00]
+          RenderSVGEllipse {circle} at (615,364) size 90x89 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00] [dash array={25.00, 5.00}]}] [fill={[type=LINEAR-GRADIENT] [id="grad2"] [opacity=0.60]}] [cx=396.00] [cy=245.00] [r=25.00]
+        RenderSVGText {text} at (341,281) size 74x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 73x17
+            chunk 1 (middle anchor) text run 1 at (341.56,295.00) startOffset 0 endOffset 11 width 72.89: "StrokePaint"
+      RenderSVGText {text} at (174,11) size 132x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 132x24
+          chunk 1 (middle anchor) text run 1 at (174.09,30.00) startOffset 0 endOffset 17 width 131.82: "Filter input test"
+    RenderSVGContainer {g} at (16,516) size 385x64
+      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 231x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.1 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGContainer {g} at (0,0) size 800x39
+      RenderSVGRect {rect} at (0,0) size 800x36 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
+      RenderSVGText {text} at (205,-1) size 70x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 69x24
+          chunk 1 (middle anchor) text run 1 at (205.95,18.00) startOffset 0 endOffset 5 width 68.10: "DRAFT"

@@ -1,0 +1,17 @@
+<body>
+<script>
+var rnd = Math.floor(Math.random() * 1000000000000000);
+var iframeSrc = "resources/permanent-redirect.php?location=redirect-referer-iframe.html&rnd=" + rnd;
+
+var iframe = document.createElement("iframe");
+iframe.src = iframeSrc;
+iframe.onload = function () {
+    if (window.internals)
+        internals.clearMemoryCache();
+    var iframe = document.createElement("iframe");
+    iframe.src = iframeSrc;
+    document.body.appendChild(iframe);
+}
+document.body.appendChild(iframe);
+
+</script>

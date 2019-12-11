@@ -1,0 +1,109 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # bugs: list of hashes. May be empty. Each hash has three members:
+  #   bug: A Bugzilla::Bug object
+  #   count: integer. The number of dupes
+  #   delta: integer. The change in count in the last $changedsince days
+  #
+  # bug_ids: list of integers. May be empty. The IDs of the bugs in $bugs.
+  #
+  # sortby: string. the column on which we are sorting the buglist.
+  # reverse: boolean. True if we are reversing the current sort.
+  # maxrows: integer. Max number of rows to display.
+  # changedsince: integer. The number of days ago for the changedsince column.
+  # openonly: boolean. True if we are only showing open bugs.
+  # product: array of strings. Restrict to these products only.
+  #%]
+
+[%# *** Column Headers *** %]
+
+[% SET columns = [
+    { name => "id", description => "$terms.Bug #" },
+    { name => "count", description => "Dupe<br>Count" },
+    { name => "delta",
+      description => "Change in last<br>$changedsince day(s)" },
+    { name => "component", description => field_descs.component },
+    { name => "bug_severity", description => field_descs.bug_severity },
+    { name => "priority", description => field_descs.priority },
+    { name => "target_milestone", description => field_descs.target_milestone },
+    { name => "short_desc", description => field_descs.short_desc },
+] %]
+
+[% SET base_args = [] %]
+[% FOREACH param = ['maxrows', 'openonly', 'format', 'sortvisible',
+                    'changedsince', 'product'] 
+%]
+  [% NEXT IF NOT ${param}.defined %]
+  [% FOREACH value = ${param} %]
+    [% filtered_value = value FILTER uri %]
+    [% base_args.push("$param=$filtered_value") %]
+  [% END %]
+[% END %]
+[% IF sortvisible %]
+  [% bug_ids_string = bug_ids.nsort.join(',') FILTER uri %]
+  [% base_args.push("bug_id=$bug_ids_string") %]
+[% END %]
+[% base_args_string = base_args.join('&amp;') %]
+
+[% IF bugs.size %]
+  <table id="duplicates_table">
+    <thead>
+      <tr>
+        [% FOREACH column = columns %]
+          [% IF column.name == sortby %]
+            [%# We add this to the column object so it doesn't affect future 
+              # iterations of the loop.
+              #%]
+            [% column.reverse_sort = reverse ? 0 : 1 %]
+          [% END %]
+          <th class="[% column.name FILTER html %]">
+            <a href="duplicates.cgi?sortby=[% column.name FILTER uri %]
+                     [% IF column.reverse_sort.defined %]
+                      [%- %]&amp;reverse=[% column.reverse_sort FILTER uri %]
+                     [% END %]
+                     [% IF base_args_string %]
+                       [% "&amp;$base_args_string" FILTER none %]
+                     [% END %]"
+            >[% column.description FILTER none %]</a>
+          </th>
+        [% END %]
+      </tr>
+    </thead>
+
+    [%# *** Buglist *** %]
+
+    <tbody>
+      [% FOREACH item = bugs %]
+        [% SET bug = item.bug %]
+        <tr [% " class='resolved'" IF NOT bug.isopened %]>
+          <td class="id">
+            [% bug.id FILTER bug_link(bug) FILTER none %]
+          </td>
+          <td class="count">[% item.count FILTER html %]</td>
+          <td class="delta">[% item.delta FILTER html %]</td>
+          <td class="component">[% bug.component FILTER html %]</td>
+          <td class="bug_severity">
+            [%- display_value('bug_severity', bug.bug_severity) FILTER html %]
+          </td>
+          <td class="priority">
+            [%- display_value('priority', bug.priority) FILTER html %]
+          </td>
+          <td class="target_milestone">
+            [% display_value('target_milestone', 
+                             bug.target_milestone) FILTER html %]
+          </td>
+          <td class="short_desc">[% bug.short_desc FILTER html %]</td>
+        </tr>
+      [% END %]
+    </tbody>
+  </table>
+[% ELSE %]
+  <h3>No duplicate [% terms.bugs %] found.</h3>
+[% END %]

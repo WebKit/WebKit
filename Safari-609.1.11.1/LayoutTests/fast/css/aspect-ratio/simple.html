@@ -1,0 +1,49 @@
+<style>
+div {
+    margin-bottom: 5px;
+}
+img {
+    width: 300px;
+    height: 10px;
+}
+
+#b, #c, #e, #g {
+    -webkit-aspect-ratio: from-intrinsic;
+}
+
+#d, #e {
+    min-width: 20px;
+    max-width: 20px;
+    min-height: 20px;
+    max-height: 20px;
+}
+
+#f, #g {
+    width: auto;
+    height: auto;
+    max-width: 30px;
+    max-height: 30px;
+}
+
+</style>
+
+<!-- specified sizing -->
+<div><img id="a" src="badchess-wide.png"></div>
+
+<!-- intrinsic aspect ratio wide -->
+<div><img id="b" src="badchess-wide.png"></div>
+
+<!-- intrinsic aspect ratio tall -->
+<div><img id="c" src="badchess-tall.png"></div>
+
+<!-- specified sizing with min/max constraints -->
+<div><img id="d" src="badchess-wide.png"></div>
+
+<!-- specified sizing with min/max constraints and aspect ratio -->
+<div><img id="e" src="badchess-wide.png"></div>
+
+<!-- auto sizing with max constraints -->
+<div><img id="f" src="badchess-wide.png"></div>
+
+<!-- auto sizing with max constraints and aspect ratio -->
+<div><img id="g" src="badchess-wide.png"></div>

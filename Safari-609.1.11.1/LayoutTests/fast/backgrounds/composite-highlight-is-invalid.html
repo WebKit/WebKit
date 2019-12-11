@@ -1,0 +1,15 @@
+<style>
+#test1 { -webkit-background-composite: highlight; }
+#test2 { -webkit-background-composite: invalid; }
+</style>
+Tests that highlight is treated the same as an invalid value for a composite operation:<br>
+<div id="result"></div>
+<span id="test1"></span>
+<span id="test2"></span>
+<script>
+value1 = window.getComputedStyle(document.getElementById('test1')).webkitBackgroundComposite;
+value2 = window.getComputedStyle(document.getElementById('test2')).webkitBackgroundComposite;
+result.innerText = value1 === value2 ? "PASS" : "FAIL";
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>

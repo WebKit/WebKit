@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#test-container {
+    height: 50px;
+    width: 50px;
+    overflow: hidden;
+    outline: none;
+}
+
+a {
+    display: block;
+    height: inherit;
+    width: inherit;
+    transform-origin: left top;
+    transform: scale(50, 50);
+    font-size: 10px; /* Needed for the caret to render in Firefox. */
+}
+
+a:link {
+    caret-color: red;
+}
+
+a:visited {
+    caret-color: green;
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.keepWebHistory();
+}
+
+function waitForStyleChange(failureTime)
+{
+    var aElement = document.querySelector("a");
+    if (internals.computedStyleIncludingVisitedInfo(aElement).caretColor === "rgb(255, 255, 255)")
+        testRunner.notifyDone();
+    else if (Date.now() > failureTime)
+        testRunner.notifyDone();
+    else
+        setTimeout(waitForStyleChange, 5, failureTime);
+}
+
+function doTest()
+{
+    document.querySelector("#test-container").focus();
+    window.getSelection().modify("move", "left", "character"); // Place the caret at the start of the <a>.
+
+    if (window.internals)
+        internals.toggleOverwriteModeEnabled(); // Disables caret blinking
+    if (window.testRunner)
+        waitForStyleChange(Date.now() + 500);
+}
+</script>
+</head>
+<body onload="doTest()">
+<p>This tests that we apply caret-color for a visited link.</p>
+<iframe src="resources/dummy.html" style="display:none"></iframe>
+<div id="test-container" contenteditable="true">
+    <a href="resources/dummy.html">&nbsp;<!-- Needed for the caret to render in Firefox. --></a>
+</div>
+</body>
+</html>

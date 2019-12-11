@@ -1,0 +1,7 @@
+2d.imageData.put.dirty.zero
+
+putImageData() with zero-sized dirty rectangle puts nothing
+
+
+FAIL putImageData() with zero-sized dirty rectangle puts nothing null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

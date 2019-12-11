@@ -1,0 +1,291 @@
+# Copyright (c) 2017 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+group("agc2") {
+  deps = [
+    ":adaptive_digital",
+    ":fixed_digital",
+  ]
+}
+
+rtc_source_set("level_estimation_agc") {
+  sources = [
+    "adaptive_mode_level_estimator_agc.cc",
+    "adaptive_mode_level_estimator_agc.h",
+  ]
+  configs += [ "..:apm_debug_dump" ]
+  deps = [
+    ":adaptive_digital",
+    ":common",
+    ":gain_applier",
+    ":noise_level_estimator",
+    ":rnn_vad_with_level",
+    "..:api",
+    "..:apm_logging",
+    "..:audio_frame_view",
+    "../../../api:array_view",
+    "../../../common_audio",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:safe_minmax",
+    "../agc:level_estimation",
+    "../vad",
+  ]
+}
+
+rtc_source_set("adaptive_digital") {
+  sources = [
+    "adaptive_agc.cc",
+    "adaptive_agc.h",
+    "adaptive_digital_gain_applier.cc",
+    "adaptive_digital_gain_applier.h",
+    "adaptive_mode_level_estimator.cc",
+    "adaptive_mode_level_estimator.h",
+    "saturation_protector.cc",
+    "saturation_protector.h",
+  ]
+
+  configs += [ "..:apm_debug_dump" ]
+
+  deps = [
+    ":common",
+    ":gain_applier",
+    ":noise_level_estimator",
+    ":rnn_vad_with_level",
+    "..:api",
+    "..:apm_logging",
+    "..:audio_frame_view",
+    "../../../api:array_view",
+    "../../../common_audio",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:safe_minmax",
+    "../../../system_wrappers:metrics",
+  ]
+}
+
+rtc_source_set("biquad_filter") {
+  visibility = [ "./*" ]
+  sources = [
+    "biquad_filter.cc",
+    "biquad_filter.h",
+  ]
+  deps = [
+    "../../../api:array_view",
+    "../../../rtc_base:rtc_base_approved",
+  ]
+}
+
+rtc_source_set("common") {
+  sources = [
+    "agc2_common.cc",
+    "agc2_common.h",
+  ]
+  deps = [
+    "../../../rtc_base:rtc_base_approved",
+    "../../../system_wrappers:field_trial",
+  ]
+}
+
+rtc_source_set("fixed_digital") {
+  sources = [
+    "fixed_digital_level_estimator.cc",
+    "fixed_digital_level_estimator.h",
+    "interpolated_gain_curve.cc",
+    "interpolated_gain_curve.h",
+    "limiter.cc",
+    "limiter.h",
+  ]
+
+  configs += [ "..:apm_debug_dump" ]
+
+  deps = [
+    ":common",
+    "..:apm_logging",
+    "..:audio_frame_view",
+    "../../../api:array_view",
+    "../../../common_audio",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:gtest_prod",
+    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:safe_minmax",
+    "../../../system_wrappers:metrics",
+  ]
+}
+
+rtc_source_set("gain_applier") {
+  sources = [
+    "gain_applier.cc",
+    "gain_applier.h",
+  ]
+  deps = [
+    ":common",
+    "..:audio_frame_view",
+    "../../../api:array_view",
+    "../../../rtc_base:safe_minmax",
+  ]
+}
+
+rtc_source_set("noise_level_estimator") {
+  sources = [
+    "down_sampler.cc",
+    "down_sampler.h",
+    "noise_level_estimator.cc",
+    "noise_level_estimator.h",
+    "noise_spectrum_estimator.cc",
+    "noise_spectrum_estimator.h",
+    "signal_classifier.cc",
+    "signal_classifier.h",
+  ]
+  deps = [
+    ":biquad_filter",
+    "..:apm_logging",
+    "..:audio_frame_view",
+    "../../../api:array_view",
+    "../../../common_audio",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:macromagic",
+    "../utility:ooura_fft",
+  ]
+
+  configs += [ "..:apm_debug_dump" ]
+}
+
+rtc_source_set("rnn_vad_with_level") {
+  sources = [
+    "vad_with_level.cc",
+    "vad_with_level.h",
+  ]
+  deps = [
+    "..:audio_frame_view",
+    "../../../api:array_view",
+    "../../../common_audio",
+    "../../../rtc_base:checks",
+    "rnn_vad",
+  ]
+}
+
+rtc_source_set("adaptive_digital_unittests") {
+  testonly = true
+  configs += [ "..:apm_debug_dump" ]
+
+  sources = [
+    "adaptive_digital_gain_applier_unittest.cc",
+    "adaptive_mode_level_estimator_unittest.cc",
+    "gain_applier_unittest.cc",
+    "saturation_protector_unittest.cc",
+  ]
+  deps = [
+    ":adaptive_digital",
+    ":common",
+    ":gain_applier",
+    ":test_utils",
+    "..:apm_logging",
+    "..:audio_frame_view",
+    "../../../api:array_view",
+    "../../../common_audio",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:gunit_helpers",
+    "../../../rtc_base:rtc_base_approved",
+  ]
+}
+
+rtc_source_set("biquad_filter_unittests") {
+  testonly = true
+  sources = [
+    "biquad_filter_unittest.cc",
+  ]
+  deps = [
+    ":biquad_filter",
+    "../../../rtc_base:gunit_helpers",
+  ]
+}
+
+rtc_source_set("fixed_digital_unittests") {
+  testonly = true
+  configs += [ "..:apm_debug_dump" ]
+
+  sources = [
+    "agc2_testing_common_unittest.cc",
+    "compute_interpolated_gain_curve.cc",
+    "compute_interpolated_gain_curve.h",
+    "fixed_digital_level_estimator_unittest.cc",
+    "interpolated_gain_curve_unittest.cc",
+    "limiter_db_gain_curve.cc",
+    "limiter_db_gain_curve.h",
+    "limiter_db_gain_curve_unittest.cc",
+    "limiter_unittest.cc",
+  ]
+  deps = [
+    ":common",
+    ":fixed_digital",
+    ":test_utils",
+    "..:apm_logging",
+    "..:audio_frame_view",
+    "../../../api:array_view",
+    "../../../common_audio",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:gunit_helpers",
+    "../../../rtc_base:rtc_base_approved",
+    "../../../system_wrappers:metrics",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
+rtc_source_set("noise_estimator_unittests") {
+  testonly = true
+  configs += [ "..:apm_debug_dump" ]
+
+  sources = [
+    "noise_level_estimator_unittest.cc",
+    "signal_classifier_unittest.cc",
+  ]
+  deps = [
+    ":noise_level_estimator",
+    ":test_utils",
+    "..:apm_logging",
+    "..:audio_frame_view",
+    "../../../api:array_view",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:gunit_helpers",
+    "../../../rtc_base:rtc_base_approved",
+  ]
+}
+
+rtc_source_set("rnn_vad_with_level_unittests") {
+  testonly = true
+  sources = [
+    "vad_with_level_unittest.cc",
+  ]
+  deps = [
+    ":rnn_vad_with_level",
+    "..:audio_frame_view",
+    "../../../rtc_base:gunit_helpers",
+  ]
+}
+
+rtc_source_set("test_utils") {
+  testonly = true
+  visibility = [
+    ":*",
+    "..:audio_processing_unittests",
+  ]
+  sources = [
+    "agc2_testing_common.cc",
+    "agc2_testing_common.h",
+    "vector_float_frame.cc",
+    "vector_float_frame.h",
+  ]
+  deps = [
+    "..:audio_frame_view",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+  ]
+}

@@ -1,0 +1,553 @@
+Tests for ES6 class method and constructor properties
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+a.constructor
+PASS 'length,name,prototype':::'length,name,prototype'
+(new A()).constructor
+PASS 'length,name,prototype':::'length,name,prototype'
+PASS a.constructor.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS a.constructor.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS a.constructor["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS a.constructor["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS a.constructor.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS a.constructor.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS a.constructor["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS a.constructor["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS a.constructor.hasOwnProperty("caller"):::false
+PASS a.constructor.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor(a.constructor, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor(a.constructor, "arguments"):::undefined
+PASS delete a.constructor.caller:::true
+PASS delete a.constructor["caller"]:::true
+PASS delete a.constructor.arguments:::true
+PASS delete a.constructor["arguments"]:::true
+PASS a.constructor.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS a.constructor.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS a.constructor["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS a.constructor["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS a.constructor.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS a.constructor.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS a.constructor["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS a.constructor["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS a.constructor.hasOwnProperty("caller"):::false
+PASS a.constructor.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor(a.constructor, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor(a.constructor, "arguments"):::undefined
+PASS delete a.constructor.caller:::true
+PASS delete a.constructor["caller"]:::true
+PASS delete a.constructor.arguments:::true
+PASS delete a.constructor["arguments"]:::true
+PASS (new A()).constructor.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new A()).constructor.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new A()).constructor["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new A()).constructor["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new A()).constructor.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new A()).constructor.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new A()).constructor["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new A()).constructor["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new A()).constructor.hasOwnProperty("caller"):::false
+PASS (new A()).constructor.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor((new A()).constructor, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor((new A()).constructor, "arguments"):::undefined
+PASS delete (new A()).constructor.caller:::true
+PASS delete (new A()).constructor["caller"]:::true
+PASS delete (new A()).constructor.arguments:::true
+PASS delete (new A()).constructor["arguments"]:::true
+b.constructor
+PASS 'length,name,prototype':::'length,name,prototype'
+(new B()).constructor
+PASS 'length,name,prototype':::'length,name,prototype'
+PASS b.constructor.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS b.constructor.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS b.constructor["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS b.constructor["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS b.constructor.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS b.constructor.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS b.constructor["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS b.constructor["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS b.constructor.hasOwnProperty("caller"):::false
+PASS b.constructor.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor(b.constructor, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor(b.constructor, "arguments"):::undefined
+PASS delete b.constructor.caller:::true
+PASS delete b.constructor["caller"]:::true
+PASS delete b.constructor.arguments:::true
+PASS delete b.constructor["arguments"]:::true
+PASS (new B()).constructor.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new B()).constructor.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new B()).constructor["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new B()).constructor["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new B()).constructor.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new B()).constructor.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new B()).constructor["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new B()).constructor["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new B()).constructor.hasOwnProperty("caller"):::false
+PASS (new B()).constructor.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor((new B()).constructor, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor((new B()).constructor, "arguments"):::undefined
+PASS delete (new B()).constructor.caller:::true
+PASS delete (new B()).constructor["caller"]:::true
+PASS delete (new B()).constructor.arguments:::true
+PASS delete (new B()).constructor["arguments"]:::true
+c.constructor
+PASS 'length,name,prototype':::'length,name,prototype'
+(new C()).constructor
+PASS 'length,name,prototype':::'length,name,prototype'
+PASS c.constructor.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS c.constructor.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS c.constructor["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS c.constructor["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS c.constructor.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS c.constructor.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS c.constructor["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS c.constructor["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS c.constructor.hasOwnProperty("caller"):::false
+PASS c.constructor.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor(c.constructor, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor(c.constructor, "arguments"):::undefined
+PASS delete c.constructor.caller:::true
+PASS delete c.constructor["caller"]:::true
+PASS delete c.constructor.arguments:::true
+PASS delete c.constructor["arguments"]:::true
+PASS (new C()).constructor.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new C()).constructor.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new C()).constructor["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new C()).constructor["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new C()).constructor.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new C()).constructor.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new C()).constructor["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new C()).constructor["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new C()).constructor.hasOwnProperty("caller"):::false
+PASS (new C()).constructor.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor((new C()).constructor, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor((new C()).constructor, "arguments"):::undefined
+PASS delete (new C()).constructor.caller:::true
+PASS delete (new C()).constructor["caller"]:::true
+PASS delete (new C()).constructor.arguments:::true
+PASS delete (new C()).constructor["arguments"]:::true
+c.constructor
+PASS 'length,name,prototype':::'length,name,prototype'
+(new D()).constructor
+PASS 'length,name,prototype':::'length,name,prototype'
+PASS d.constructor.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS d.constructor.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS d.constructor["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS d.constructor["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS d.constructor.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS d.constructor.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS d.constructor["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS d.constructor["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS d.constructor.hasOwnProperty("caller"):::false
+PASS d.constructor.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor(d.constructor, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor(d.constructor, "arguments"):::undefined
+PASS delete d.constructor.caller:::true
+PASS delete d.constructor["caller"]:::true
+PASS delete d.constructor.arguments:::true
+PASS delete d.constructor["arguments"]:::true
+PASS (new D()).constructor.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new D()).constructor.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new D()).constructor["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new D()).constructor["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new D()).constructor.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new D()).constructor.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new D()).constructor["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new D()).constructor["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new D()).constructor.hasOwnProperty("caller"):::false
+PASS (new D()).constructor.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor((new D()).constructor, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor((new D()).constructor, "arguments"):::undefined
+PASS delete (new D()).constructor.caller:::true
+PASS delete (new D()).constructor["caller"]:::true
+PASS delete (new D()).constructor.arguments:::true
+PASS delete (new D()).constructor["arguments"]:::true
+e.constructor
+PASS 'length,name,prototype':::'length,name,prototype'
+(new E()).getItem
+PASS 'length,name':::'length,name'
+PASS e.constructor.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS e.constructor.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS e.constructor["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS e.constructor["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS e.constructor.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS e.constructor.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS e.constructor["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS e.constructor["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS e.constructor.hasOwnProperty("caller"):::false
+PASS e.constructor.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor(e.constructor, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor(e.constructor, "arguments"):::undefined
+PASS delete e.constructor.caller:::true
+PASS delete e.constructor["caller"]:::true
+PASS delete e.constructor.arguments:::true
+PASS delete e.constructor["arguments"]:::true
+PASS (new E()).getItem.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new E()).getItem.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new E()).getItem["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new E()).getItem["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new E()).getItem.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new E()).getItem.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new E()).getItem["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new E()).getItem["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new E()).getItem.hasOwnProperty("caller"):::false
+PASS (new E()).getItem.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor((new E()).getItem, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor((new E()).getItem, "arguments"):::undefined
+PASS delete (new E()).getItem.caller:::true
+PASS delete (new E()).getItem["caller"]:::true
+PASS delete (new E()).getItem.arguments:::true
+PASS delete (new E()).getItem["arguments"]:::true
+f.getItem
+PASS 'length,name':::'length,name'
+f.getElement
+PASS 'length,name':::'length,name'
+PASS f.getItem.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS f.getItem.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS f.getItem["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS f.getItem["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS f.getItem.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS f.getItem.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS f.getItem["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS f.getItem["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS f.getItem.hasOwnProperty("caller"):::false
+PASS f.getItem.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor(f.getItem, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor(f.getItem, "arguments"):::undefined
+PASS delete f.getItem.caller:::true
+PASS delete f.getItem["caller"]:::true
+PASS delete f.getItem.arguments:::true
+PASS delete f.getItem["arguments"]:::true
+PASS f.getElement.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS f.getElement.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS f.getElement["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS f.getElement["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS f.getElement.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS f.getElement.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS f.getElement["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS f.getElement["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS f.getElement.hasOwnProperty("caller"):::false
+PASS f.getElement.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor(f.getElement, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor(f.getElement, "arguments"):::undefined
+PASS delete f.getElement.caller:::true
+PASS delete f.getElement["caller"]:::true
+PASS delete f.getElement.arguments:::true
+PASS delete f.getElement["arguments"]:::true
+(new F()).getItem
+PASS 'length,name':::'length,name'
+(new F()).getElement
+PASS 'length,name':::'length,name'
+PASS (new F()).getItem.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new F()).getItem.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new F()).getItem["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new F()).getItem["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new F()).getItem.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new F()).getItem.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new F()).getItem["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new F()).getItem["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new F()).getItem.hasOwnProperty("caller"):::false
+PASS (new F()).getItem.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor((new F()).getItem, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor((new F()).getItem, "arguments"):::undefined
+PASS delete (new F()).getItem.caller:::true
+PASS delete (new F()).getItem["caller"]:::true
+PASS delete (new F()).getItem.arguments:::true
+PASS delete (new F()).getItem["arguments"]:::true
+PASS (new F()).getElement.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new F()).getElement.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new F()).getElement["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new F()).getElement["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new F()).getElement.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new F()).getElement.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new F()).getElement["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new F()).getElement["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new F()).getElement.hasOwnProperty("caller"):::false
+PASS (new F()).getElement.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor((new F()).getElement, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor((new F()).getElement, "arguments"):::undefined
+PASS delete (new F()).getElement.caller:::true
+PASS delete (new F()).getElement["caller"]:::true
+PASS delete (new F()).getElement.arguments:::true
+PASS delete (new F()).getElement["arguments"]:::true
+arr
+PASS 'length,name':::'length,name'
+()=>{}
+PASS 'length,name':::'length,name'
+PASS arr.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS arr.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS arr["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS arr["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS arr.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS arr.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS arr["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS arr["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS arr.hasOwnProperty("caller"):::false
+PASS arr.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor(arr, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor(arr, "arguments"):::undefined
+PASS delete arr.caller:::true
+PASS delete arr["caller"]:::true
+PASS delete arr.arguments:::true
+PASS delete arr["arguments"]:::true
+PASS (()=>{}).caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (()=>{}).arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (()=>{})["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (()=>{})["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (()=>{}).caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (()=>{}).arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (()=>{})["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (()=>{})["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (()=>{}).hasOwnProperty("caller"):::false
+PASS (()=>{}).hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor((()=>{}), "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor((()=>{}), "arguments"):::undefined
+PASS delete (()=>{}).caller:::true
+PASS delete (()=>{})["caller"]:::true
+PASS delete (()=>{}).arguments:::true
+PASS delete (()=>{})["arguments"]:::true
+PASS g.item.caller:::undefined
+PASS g.item.arguments:::undefined
+PASS (new G()).item.caller:::undefined
+PASS (new G()).item.arguments:::undefined
+PASS H.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS H.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS H["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS H["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS H.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS H.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS H["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS H["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS H.hasOwnProperty("caller"):::false
+PASS H.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor(H, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor(H, "arguments"):::undefined
+PASS delete H.caller:::true
+PASS delete H["caller"]:::true
+PASS delete H.arguments:::true
+PASS delete H["arguments"]:::true
+PASS h.caller():::"value"
+PASS h.arguments():::"value"
+h.caller
+PASS 'length,name':::'length,name'
+h.arguments
+PASS 'length,name':::'length,name'
+PASS h.caller.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS h.caller.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS h.caller["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS h.caller["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS h.caller.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS h.caller.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS h.caller["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS h.caller["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS h.caller.hasOwnProperty("caller"):::false
+PASS h.caller.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor(h.caller, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor(h.caller, "arguments"):::undefined
+PASS delete h.caller.caller:::true
+PASS delete h.caller["caller"]:::true
+PASS delete h.caller.arguments:::true
+PASS delete h.caller["arguments"]:::true
+PASS (new H()).caller():::"value"
+PASS (new H()).arguments():::"value"
+PASS (new H()).caller.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new H()).caller.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new H()).caller["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new H()).caller["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new H()).caller.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new H()).caller.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new H()).caller["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new H()).caller["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new H()).caller.hasOwnProperty("caller"):::false
+PASS (new H()).caller.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor((new H()).caller, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor((new H()).caller, "arguments"):::undefined
+PASS delete (new H()).caller.caller:::true
+PASS delete (new H()).caller["caller"]:::true
+PASS delete (new H()).caller.arguments:::true
+PASS delete (new H()).caller["arguments"]:::true
+J.gen
+PASS 'length,name,prototype':::'length,name,prototype'
+J.get
+PASS 'length,name,prototype':::'length,name,prototype'
+PASS J.gen.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS J.gen.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS J.gen["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS J.gen["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS J.gen.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS J.gen.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS J.gen["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS J.gen["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS J.gen.hasOwnProperty("caller"):::false
+PASS J.gen.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor(J.gen, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor(J.gen, "arguments"):::undefined
+PASS delete J.gen.caller:::true
+PASS delete J.gen["caller"]:::true
+PASS delete J.gen.arguments:::true
+PASS delete J.gen["arguments"]:::true
+PASS J.get.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS J.get.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS J.get["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS J.get["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS J.get.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS J.get.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS J.get["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS J.get["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS J.get.hasOwnProperty("caller"):::false
+PASS J.get.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor(J.get, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor(J.get, "arguments"):::undefined
+PASS delete J.get.caller:::true
+PASS delete J.get["caller"]:::true
+PASS delete J.get.arguments:::true
+PASS delete J.get["arguments"]:::true
+j.gen
+PASS 'length,name,prototype':::'length,name,prototype'
+j.get
+PASS 'length,name,prototype':::'length,name,prototype'
+PASS j.gen.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS j.gen.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS j.gen["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS j.gen["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS j.gen.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS j.gen.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS j.gen["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS j.gen["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS j.gen.hasOwnProperty("caller"):::false
+PASS j.gen.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor(j.gen, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor(j.gen, "arguments"):::undefined
+PASS delete j.gen.caller:::true
+PASS delete j.gen["caller"]:::true
+PASS delete j.gen.arguments:::true
+PASS delete j.gen["arguments"]:::true
+PASS j.get.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS j.get.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS j.get["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS j.get["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS j.get.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS j.get.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS j.get["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS j.get["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS j.get.hasOwnProperty("caller"):::false
+PASS j.get.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor(j.get, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor(j.get, "arguments"):::undefined
+PASS delete j.get.caller:::true
+PASS delete j.get["caller"]:::true
+PASS delete j.get.arguments:::true
+PASS delete j.get["arguments"]:::true
+(new J).gen
+PASS 'length,name,prototype':::'length,name,prototype'
+(new J).get
+PASS 'length,name,prototype':::'length,name,prototype'
+PASS (new J).gen.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new J).gen.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new J).gen["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new J).gen["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new J).gen.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new J).gen.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new J).gen["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new J).gen["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new J).gen.hasOwnProperty("caller"):::false
+PASS (new J).gen.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor((new J).gen, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor((new J).gen, "arguments"):::undefined
+PASS delete (new J).gen.caller:::true
+PASS delete (new J).gen["caller"]:::true
+PASS delete (new J).gen.arguments:::true
+PASS delete (new J).gen["arguments"]:::true
+PASS (new J).get.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new J).get.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new J).get["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new J).get["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new J).get.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new J).get.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new J).get["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new J).get["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS (new J).get.hasOwnProperty("caller"):::false
+PASS (new J).get.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor((new J).get, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor((new J).get, "arguments"):::undefined
+PASS delete (new J).get.caller:::true
+PASS delete (new J).get["caller"]:::true
+PASS delete (new J).get.arguments:::true
+PASS delete (new J).get["arguments"]:::true
+k.method
+PASS 'length,name':::'length,name'
+PASS k.method.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS k.method.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS k.method["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS k.method["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS k.method.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS k.method.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS k.method["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS k.method["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS k.method.hasOwnProperty("caller"):::false
+PASS k.method.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor(k.method, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor(k.method, "arguments"):::undefined
+PASS delete k.method.caller:::true
+PASS delete k.method["caller"]:::true
+PASS delete k.method.arguments:::true
+PASS delete k.method["arguments"]:::true
+k.gen
+PASS 'length,name,prototype':::'length,name,prototype'
+PASS k.gen.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS k.gen.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS k.gen["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS k.gen["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS k.gen.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS k.gen.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS k.gen["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS k.gen["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS k.gen.hasOwnProperty("caller"):::false
+PASS k.gen.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor(k.gen, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor(k.gen, "arguments"):::undefined
+PASS delete k.gen.caller:::true
+PASS delete k.gen["caller"]:::true
+PASS delete k.gen.arguments:::true
+PASS delete k.gen["arguments"]:::true
+k.getter
+PASS 'length,name':::'length,name'
+PASS Object.getOwnPropertyDescriptor(k, 'getter').get.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS Object.getOwnPropertyDescriptor(k, 'getter').get.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS Object.getOwnPropertyDescriptor(k, 'getter').get["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS Object.getOwnPropertyDescriptor(k, 'getter').get["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS Object.getOwnPropertyDescriptor(k, 'getter').get.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS Object.getOwnPropertyDescriptor(k, 'getter').get.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS Object.getOwnPropertyDescriptor(k, 'getter').get["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS Object.getOwnPropertyDescriptor(k, 'getter').get["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS Object.getOwnPropertyDescriptor(k, 'getter').get.hasOwnProperty("caller"):::false
+PASS Object.getOwnPropertyDescriptor(k, 'getter').get.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor(Object.getOwnPropertyDescriptor(k, 'getter').get, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor(Object.getOwnPropertyDescriptor(k, 'getter').get, "arguments"):::undefined
+PASS delete Object.getOwnPropertyDescriptor(k, 'getter').get.caller:::true
+PASS delete Object.getOwnPropertyDescriptor(k, 'getter').get["caller"]:::true
+PASS delete Object.getOwnPropertyDescriptor(k, 'getter').get.arguments:::true
+PASS delete Object.getOwnPropertyDescriptor(k, 'getter').get["arguments"]:::true
+k.setter
+PASS 'length,name':::'length,name'
+PASS Object.getOwnPropertyDescriptor(k, 'setter').set.caller:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS Object.getOwnPropertyDescriptor(k, 'setter').set.arguments:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS Object.getOwnPropertyDescriptor(k, 'setter').set["caller"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS Object.getOwnPropertyDescriptor(k, 'setter').set["arguments"]:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS Object.getOwnPropertyDescriptor(k, 'setter').set.caller = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS Object.getOwnPropertyDescriptor(k, 'setter').set.arguments = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS Object.getOwnPropertyDescriptor(k, 'setter').set["caller"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS Object.getOwnPropertyDescriptor(k, 'setter').set["arguments"] = function () {}:::TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+PASS Object.getOwnPropertyDescriptor(k, 'setter').set.hasOwnProperty("caller"):::false
+PASS Object.getOwnPropertyDescriptor(k, 'setter').set.hasOwnProperty("arguments"):::false
+PASS Object.getOwnPropertyDescriptor(Object.getOwnPropertyDescriptor(k, 'setter').set, "caller"):::undefined
+PASS Object.getOwnPropertyDescriptor(Object.getOwnPropertyDescriptor(k, 'setter').set, "arguments"):::undefined
+PASS delete Object.getOwnPropertyDescriptor(k, 'setter').set.caller:::true
+PASS delete Object.getOwnPropertyDescriptor(k, 'setter').set["caller"]:::true
+PASS delete Object.getOwnPropertyDescriptor(k, 'setter').set.arguments:::true
+PASS delete Object.getOwnPropertyDescriptor(k, 'setter').set["arguments"]:::true
+PASS successfullyParsed:::true
+
+TEST COMPLETE
+

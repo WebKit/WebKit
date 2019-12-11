@@ -1,0 +1,24 @@
+Test the behavior of Object.preventExtensions() for Window / Location.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* Cross origin
+PASS Object.isExtensible(frames[0]) is true
+PASS Object.preventExtensions(frames[0]) threw exception TypeError: Cannot prevent extensions on this object.
+PASS Object.isExtensible(frames[0]) is true
+PASS Object.isExtensible(frames[0].location) is true
+PASS Object.preventExtensions(frames[0].location) threw exception TypeError: Cannot prevent extensions on this object.
+PASS Object.isExtensible(frames[0].location) is true
+
+* Same origin
+PASS Object.isExtensible(window) is true
+PASS Object.preventExtensions(window) threw exception TypeError: Cannot prevent extensions on this object.
+PASS Object.isExtensible(window) is true
+PASS Object.isExtensible(window.location) is true
+PASS Object.preventExtensions(window.location) threw exception TypeError: Cannot prevent extensions on this object.
+PASS Object.isExtensible(window.location) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

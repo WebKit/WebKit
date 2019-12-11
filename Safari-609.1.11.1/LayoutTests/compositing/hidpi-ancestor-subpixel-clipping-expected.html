@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests ancestor clipping with subpixel positioning.</title>
+<style>
+.container {
+  position: absolute;
+  background-color: green; 
+  width: 15px; 
+  height: 15px;
+}
+
+.clippingAncestor { 
+  width: 10px;
+  height: 10px;
+  overflow: hidden;
+  border-style: solid;
+  border-color: red;
+  } 
+
+.jiggle {
+  height: 5px;
+  width: 5px; 
+  position: relative;
+  background-color: blue;
+}
+</style>
+</head>
+<body>
+<script>
+var subpixelForContainer = 0;
+for (var i = 0; i < 20; ++i) {
+  var borderWidth = 2;
+  var subpixelForJiggle = -2;
+  for (var j = 0; j < 20; ++j) {
+    var container = document.createElement("div");
+    container.className = "container";
+    container.style.left = i * 20 + subpixelForContainer + "px";
+    container.style.top = j * 20 + subpixelForContainer + "px";
+    document.body.appendChild(container);
+    subpixelForContainer += 0.05;
+
+    var clippingAncestor = document.createElement("div");
+    clippingAncestor.className = "clippingAncestor";
+    clippingAncestor.style.borderWidth = borderWidth + "px";
+    container.appendChild(clippingAncestor);
+    borderWidth += 0.1;
+
+    var jiggle = document.createElement("div");
+    jiggle.className = "jiggle";
+    jiggle.style.top = subpixelForJiggle + "px";
+    jiggle.style.left = subpixelForJiggle + "px";
+    subpixelForJiggle += 0.1;
+    clippingAncestor.appendChild(jiggle);
+  }
+}
+</script>
+</body>
+</html>

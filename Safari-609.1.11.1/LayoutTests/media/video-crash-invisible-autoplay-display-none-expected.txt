@@ -1,0 +1,8 @@
+Tests that clearing the InvisibleAutoplayNotPermitted restriction then destroying the RenderVideo after a style recalc does not cause a crash.
+RUN(internals.setMediaElementRestrictions(video, "InvisibleAutoplayNotPermitted"))
+EVENT(canplaythrough)
+RUN(runWithKeyDown(function() { video.play() }))
+RUN(video.style.display = "none")
+RUN(video.clientHeight)
+END OF TEST
+

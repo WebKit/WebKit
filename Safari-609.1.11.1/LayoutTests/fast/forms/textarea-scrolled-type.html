@@ -1,0 +1,67 @@
+<html>
+<head>
+<script src=../../editing/editing.js language="JavaScript" type="text/JavaScript" ></script>
+<script>
+function wait(seconds)
+{
+    return new Promise((resolve) => setTimeout(resolve, 0), seconds);
+}
+
+async function test()
+{
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    var res = document.getElementById('res');
+    var ta = document.getElementById('ta');
+
+    // Send caret to bottom of textarea
+    ta.focus();
+    await wait(0);
+    ta.setSelectionRange(ta.value.length, ta.value.length);
+    await wait(0);
+    ta.blur();
+    await wait(0);
+
+    ta.focus();
+    await wait(0);
+    ta.setSelectionRange(44, 44);
+    typeCharacterCommand(' ');
+    typeCharacterCommand('P');
+    typeCharacterCommand('a');
+    typeCharacterCommand('s');
+    typeCharacterCommand('s');
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</head>
+<body onload="test()">
+This tests that typing in a scrolled textarea does not cause unnecessary scrolling.<br>
+<textarea id="ta" rows=7>
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+</textarea>
+<br>
+<div id="res"></div>
+</body>
+</html>

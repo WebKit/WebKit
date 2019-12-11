@@ -1,0 +1,4 @@
+This test ensures drag-n-drop does start when extending an existing selecting with shift + mouse drag, starting over an image.
+
+ Drag count: 1
+

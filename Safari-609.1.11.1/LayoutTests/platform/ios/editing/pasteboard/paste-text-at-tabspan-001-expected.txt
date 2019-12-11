@@ -1,0 +1,24 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 1 of #text > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > SPAN > DIV > BODY > HTML > #document to 3 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > SPAN > DIV > BODY > HTML > #document to 3 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 4 of #text > SPAN > DIV > BODY > HTML > #document to 4 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+
+You should see aax\tz below:
+| "
+"
+| <span>
+|   id="test"
+|   "a ax<#selection-caret>"
+|   <span>
+|     class="Apple-tab-span"
+|     style="white-space:pre"
+|     "			"
+|   "z"
+| "
+"

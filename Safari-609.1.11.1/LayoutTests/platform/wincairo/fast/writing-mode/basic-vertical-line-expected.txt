@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 319x304 [border: (2px solid #800000)]
+        RenderInline {SPAN} at (0,0) size 19x220 [border: (5px solid #000000) none (5px solid #000000) none]
+          RenderImage {IMG} at (6,12) size 100x200 [bgcolor=#008000]
+        RenderText {#text} at (2,222) size 19x4
+          text run at (2,222) width 4: " "
+        RenderBR {BR} at (6,226) size 0x0
+        RenderInline {SPAN} at (0,0) size 19x220 [border: (5px solid #000000) none (5px solid #000000) none]
+          RenderImage {IMG} at (111,12) size 100x200 [bgcolor=#008000]
+        RenderText {#text} at (107,222) size 19x4
+          text run at (107,222) width 4: " "
+        RenderBR {BR} at (111,226) size 0x0
+        RenderInline {SPAN} at (0,0) size 19x220 [border: (5px solid #000000) none (5px solid #000000) none]
+          RenderImage {IMG} at (216,12) size 100x200 [bgcolor=#008000]
+        RenderText {#text} at (0,0) size 0x0

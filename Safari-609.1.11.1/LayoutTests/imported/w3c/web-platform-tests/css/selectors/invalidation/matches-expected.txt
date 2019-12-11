@@ -1,0 +1,17 @@
+Red
+Red
+Green
+Green
+Blue
+Blue
+Red
+Black
+Red
+
+PASS Preconditions. 
+PASS Invalidate :matches() for simple selector arguments. 
+PASS Invalidate :matches() for compound selector arguments. 
+PASS Invalidate :matches() for complex selector arguments. 
+PASS Invalidate nested :matches(). 
+PASS Test specificity of :matches(). 
+

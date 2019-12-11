@@ -1,0 +1,135 @@
+/*
+ * Copyright (C) 2015 Apple Inc. All Rights Reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
+// https://html.spec.whatwg.org/multipage/webappapis.html#globaleventhandlers
+[
+    NoInterfaceObject,
+] interface GlobalEventHandlers {
+    // Commented out event handlers are defined by the HTML5 specification but
+    // are not yet implemented.
+
+    attribute EventHandler onabort;
+    attribute EventHandler onblur;
+    // attribute EventHandler oncancel;
+    attribute EventHandler oncanplay;
+    attribute EventHandler oncanplaythrough;
+    attribute EventHandler onchange;
+    attribute EventHandler onclick;
+    // attribute EventHandler onclose;
+    attribute EventHandler oncontextmenu;
+    attribute EventHandler oncuechange;
+    attribute EventHandler ondblclick;
+    attribute EventHandler ondrag;
+    attribute EventHandler ondragend;
+    attribute EventHandler ondragenter;
+    // attribute EventHandler ondragexit;
+    attribute EventHandler ondragleave;
+    attribute EventHandler ondragover;
+    attribute EventHandler ondragstart;
+    attribute EventHandler ondrop;
+    attribute EventHandler ondurationchange;
+    attribute EventHandler onemptied;
+    attribute EventHandler onended;
+    attribute EventHandler onerror;
+    attribute EventHandler onfocus;
+    attribute EventHandler oninput;
+    attribute EventHandler oninvalid;
+    attribute EventHandler onkeydown;
+    attribute EventHandler onkeypress;
+    attribute EventHandler onkeyup;
+    attribute EventHandler onload;
+    attribute EventHandler onloadeddata;
+    attribute EventHandler onloadedmetadata;
+    attribute EventHandler onloadstart;
+    attribute EventHandler onmousedown;
+    [LenientThis] attribute EventHandler onmouseenter;
+    [LenientThis] attribute EventHandler onmouseleave;
+    attribute EventHandler onmousemove;
+    attribute EventHandler onmouseout;
+    attribute EventHandler onmouseover;
+    attribute EventHandler onmouseup;
+    attribute EventHandler onmousewheel;
+    attribute EventHandler onpause;
+    attribute EventHandler onplay;
+    attribute EventHandler onplaying;
+    attribute EventHandler onprogress;
+    attribute EventHandler onratechange;
+    attribute EventHandler onrejectionhandled;
+    attribute EventHandler onreset;
+    attribute EventHandler onresize;
+    attribute EventHandler onscroll;
+    attribute EventHandler onseeked;
+    attribute EventHandler onseeking;
+    attribute EventHandler onselect;
+    // attribute EventHandler onshow;
+    // attribute EventHandler onsort;
+    attribute EventHandler onstalled;
+    attribute EventHandler onsubmit;
+    attribute EventHandler onsuspend;
+    attribute EventHandler ontimeupdate;
+    attribute EventHandler ontoggle;
+    attribute EventHandler onunhandledrejection;
+    attribute EventHandler onvolumechange;
+    attribute EventHandler onwaiting;
+
+    // Extensions from CSS Transitions API (https://drafts.csswg.org/css-transitions/#interface-globaleventhandlers-idl).
+    attribute EventHandler ontransitionend;
+    attribute EventHandler ontransitionrun;
+    attribute EventHandler ontransitionstart;
+    attribute EventHandler ontransitioncancel;
+
+    // Event handlers from CSS Animations API (https://drafts.csswg.org/css-animations/#interface-globaleventhandlers-idl).
+    attribute EventHandler onanimationend;
+    attribute EventHandler onanimationiteration;
+    attribute EventHandler onanimationstart;
+    attribute EventHandler onanimationcancel;
+
+    // Event handlers from Pointer Events API (https://w3c.github.io/pointerevents/#extensions-to-the-globaleventhandlers-mixin)
+    attribute EventHandler ongotpointercapture;
+    attribute EventHandler onlostpointercapture;
+    attribute EventHandler onpointerdown;
+    attribute EventHandler onpointermove;
+    attribute EventHandler onpointerup;
+    attribute EventHandler onpointercancel;
+    attribute EventHandler onpointerover;
+    attribute EventHandler onpointerout;
+    attribute EventHandler onpointerenter;
+    attribute EventHandler onpointerleave;
+
+    // Additions that are not yet part of the standard.
+
+    [NotEnumerable] attribute EventHandler onsearch;
+    [NotEnumerable] attribute EventHandler onwheel;
+    [NotEnumerable, Conditional=TOUCH_EVENTS, EnabledAtRuntime=TouchEvents] attribute EventHandler ontouchcancel;
+    [NotEnumerable, Conditional=TOUCH_EVENTS, EnabledAtRuntime=TouchEvents] attribute EventHandler ontouchend;
+    [NotEnumerable, Conditional=TOUCH_EVENTS, EnabledAtRuntime=TouchEvents] attribute EventHandler ontouchmove;
+    [NotEnumerable, Conditional=TOUCH_EVENTS, EnabledAtRuntime=TouchEvents] attribute EventHandler ontouchstart;
+    [NotEnumerable, Conditional=TOUCH_EVENTS, EnabledAtRuntime=TouchEvents] attribute EventHandler ontouchforcechange;
+    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcechanged;
+    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcedown;
+    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcewillbegin;
+    [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceup;
+};

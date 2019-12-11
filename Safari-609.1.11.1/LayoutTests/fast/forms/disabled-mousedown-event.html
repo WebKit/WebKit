@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test ensures WebKit fires mousedown event on a disabled input element.</p>
+<span><input id="test" type="text" disabled></span>
+<div id="log">FAIL</div>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function clickOn(element)
+{
+    var x = element.offsetLeft + element.offsetWidth / 2;
+    var y = element.offsetTop + element.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+var test = document.getElementById('test');
+test.parentNode.addEventListener('mousedown', function () { document.getElementById('log').textContent = 'PASS'; }, false);
+
+if (window.eventSender)
+    clickOn(test);
+
+</script>
+</body>
+</html>

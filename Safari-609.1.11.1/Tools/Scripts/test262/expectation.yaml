@@ -1,0 +1,21 @@
+---
+test/language/module-code/instn-resolve-order-depth.js:
+  module: "SyntaxError: 'break' is only valid inside a switch or loop statement."
+test/language/module-code/instn-resolve-order-src.js:
+  module: "SyntaxError: 'break' is only valid inside a switch or loop statement."
+test/language/module-code/namespace/internals/define-own-property.js:
+  module: 'Test262Error: Reflect.defineProperty: local1 Expected SameValue(Â«falseÂ», Â«trueÂ») to be true'
+test/language/module-code/namespace/internals/object-keys-binding-uninit.js:
+  module: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
+test/language/module-code/namespace/internals/set.js:
+  module: 'Test262Error: Reflect.defineProperty: local1 Expected SameValue(Â«falseÂ», Â«trueÂ») to be true'
+test/language/module-code/parse-err-reference.js:
+  module: thewrongerror
+test/language/module-code/privatename-valid-no-earlyerr.js:
+  module: thewrongerror
+test/language/module-code/comment-single-line-html-open.js:
+  module:
+    error: blablabla
+test/language/module-code/comment-single-line-html-close.js:
+  module:
+    error: blablabla

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<iframe id="xmlframe" onload="frameLoaded()" style="height:0px" src="data:application/xhtml+xml,<?xml version='1.0' encoding='UTF-8'?><body/>"></iframe>
+<script>
+description('Test DOMJIT nodeType accessor works.');
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+var target = null;
+var result = null;
+function runTest()
+{
+    var xmlDocument = document.getElementById('xmlframe').contentDocument;
+    var targets = [
+        [document.body, Node.ELEMENT_NODE],
+        [document.createAttribute('Cocoa'), Node.ATTRIBUTE_NODE],
+        [document.createTextNode('Cocoa'), Node.TEXT_NODE],
+        [xmlDocument.createCDATASection('test'), Node.CDATA_SECTION_NODE],
+        [xmlDocument.createProcessingInstruction('target', 'test'), Node.PROCESSING_INSTRUCTION_NODE],
+        [document.createComment('Cocoa'), Node.COMMENT_NODE],
+        [document, Node.DOCUMENT_NODE],
+        [document.doctype, Node.DOCUMENT_TYPE_NODE],
+        [document.createDocumentFragment(), Node.DOCUMENT_FRAGMENT_NODE],
+    ];
+
+    for ([target, result] of targets) {
+        var text = `
+            function test${result}(element, result)
+            {
+                for (var i = 0; i < 1e4; ++i) {
+                    if (element.nodeType !== result)
+                        return false;
+                }
+                return true;
+            }
+        `;
+        shouldBeTrue(`(${text})(target, ${result})`);
+    }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+function frameLoaded()
+{
+    runTest();
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

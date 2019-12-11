@@ -1,0 +1,123 @@
+- name: mesa
+  sources:
+    - type: archive
+      url: https://mesa.freedesktop.org/archive/mesa-18.0.3.tar.xz
+      sha256: 099d9667327a76a61741a533f95067d76ea71a656e66b91507b3c0caf1d49e30
+  config-opts:
+    - --prefix=/app/softGL
+    - --disable-dri3
+    - --enable-dri
+    - --enable-glx
+    - --enable-egl
+    - --with-egl-platforms=x11,wayland
+    - --with-dri-drivers=swrast
+    - --with-gallium-drivers=swrast
+
+- name: webkitgtk-test-fonts
+  no-autogen: true
+  sources:
+    - type: git
+      url: https://github.com/WebKitGTK/webkitgtk-test-fonts.git
+  buildsystem: simple
+  build-commands:
+    # FIXME: Make ActivateFontWPE smarter.
+    - make install DESTDIR=/app/WebKitBuild/DependenciesGTK/Root
+
+- name: xorg-util-macros
+  sources:
+    - type: git
+      url: https://anongit.freedesktop.org/git/xorg/util/macros.git
+      branch: util-macros-1.19.2
+
+- name: xorg-font-util
+  sources:
+    - type: git
+      url: https://anongit.freedesktop.org/git/xorg/font/util.git
+      branch: font-util-1.3.1
+
+- name: xkbfile
+  sources:
+    - type: git
+      branch: libxkbfile-1.0.9
+      url: https://anongit.freedesktop.org/git/xorg/lib/libxkbfile.git
+
+- name: fontenc
+  sources:
+    - type: git
+      branch: libfontenc-1.1.3
+      url: https://anongit.freedesktop.org/git/xorg/lib/libfontenc.git
+
+- name: xfont
+  sources:
+    - type: git
+      branch: libXfont2-2.0.3
+      url: https://anongit.freedesktop.org/git/xorg/lib/libXfont.git
+
+- name: xvfb
+  sources:
+    - type: git
+      url: https://anongit.freedesktop.org/git/xorg/xserver.git
+      branch: xorg-server-1.19.6
+    - type: patch
+      path: patches/xvfb-0001-HACK-Avoid-compiling-a-kbm-file.patch
+    - type: patch
+      path: ../gtk/patches/xserver-remove-bogus-dependencies.patch
+    - type: patch
+      path: ../gtk/patches/xserver-search-for-DRI-drivers-at-LIBGL_DRIVERS_PATH-environ.patch
+  config-opts:
+    - --enable-xvfb
+    - --disable-xwayland
+    - --enable-xvfb
+    - --disable-xwayland
+    - --disable-xinerama
+    - --enable-glx
+    - --enable-composite
+    - --disable-xorg
+    - --disable-dmx
+    - --disable-xnest
+    - --disable-xquartz
+    - --disable-xwin
+    - --disable-xephyr
+    - --disable-xfake
+    - --disable-xfbdev
+    - --disable-install-setuid
+    - --disable-unit-tests
+    - --disable-present
+    - --enable-unix-transport
+    - --enable-tcp-transport
+    - --disable-local-transport
+    - --without-dtrace
+
+# Required for run-gtk-tests
+- name: pycairo
+  buildsystem: simple
+  build-commands:
+  - python2 setup.py install --prefix=/app
+  sources:
+  - type: archive
+    url: https://pypi.python.org/packages/ef/97/b33dc533ea6076d4ea9cbd2fe049a2b4a3df5c5b6fba9a182616f6f8d310/pycairo-1.15.4.tar.gz
+    sha256: ee4c3068c048230e5ce74bb8994a024711129bde1af1d76e3276c7acd81c4357
+  cleanup:
+  - "/include"
+  - "/lib/pkgconfig"
+
+- name: pygobject-python2
+  build-options:
+    env:
+      PYTHON: "/usr/bin/python2"
+  sources:
+  - type: archive
+    url: https://download.gnome.org/sources/pygobject/3.28/pygobject-3.28.1.tar.xz
+    sha256: 42312b4a5015571fa0a4f2d201005da46b71c251ea2625bc95702d071c4ff895
+  cleanup:
+  - "/include"
+  - "/lib/pkgconfig"
+  - "/lib/python2.7/site-packages/gi/*.la"
+
+- org.webkit.WPEModules.yaml
+
+- name: org.webkit.GTK
+  buildsystem: simple
+  build-commands:
+    - /app/webkit/Tools/Scripts/build-webkit --gtk --prefix=/app
+

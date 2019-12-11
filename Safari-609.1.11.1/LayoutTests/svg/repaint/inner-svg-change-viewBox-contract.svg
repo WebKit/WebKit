@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+ width="300" height="300" onload="runRepaintTest()">
+<script xlink:href="../../fast/repaint/resources/repaint.js" />
+<script><![CDATA[
+function repaintTest() { 
+    document.getElementById("inner").setAttribute("viewBox", "0 0 200 200");
+}
+]]></script>
+<!-- blue rect's lower right edges should be visible after viewbox resizing -->
+<rect width="200" height="200" fill="blue"/>
+<svg id="inner" width="200" height="200" viewBox="0 0 100 100" preserveAspectRatio="none">
+  <rect width="100" height="100" fill="green"/>
+</svg>
+</svg>

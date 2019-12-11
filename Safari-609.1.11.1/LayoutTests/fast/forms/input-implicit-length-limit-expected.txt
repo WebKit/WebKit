@@ -1,0 +1,18 @@
+This page tests that the length of an <input> element's string is implicitly limited to 524288 characters. http://bugs.webkit.org/show_bug.cgi?id=14388
+
+
+Attempting to insert 0 characters.
+PASS
+Attempting to insert 5 characters.
+PASS
+Attempting to insert 1025 characters.
+PASS
+Attempting to insert 524287 characters.
+PASS
+Attempting to insert 524288 characters.
+PASS
+Attempting to insert 524289 characters.
+PASS
+Attempting to insert 530000 characters.
+PASS
+

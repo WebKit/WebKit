@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function triggerNetworkLoad() {
+    let url = "resources/data.json?" + Math.random();
+    fetch(url, {credentials: "same-origin"}).then(() => {
+        TestPage.dispatchEventToFrontend("LoadComplete");
+    });
+}
+
+function triggerNetworkLoadWithBasicAuthentication(username, password) {
+    let xhr = new XMLHttpRequest();
+    xhr.open("GET", "resources/basic-auth.php?" + Math.random(), true, username, password);
+    xhr.onload = xhr.onerror = () => { TestPage.dispatchEventToFrontend("LoadComplete"); };
+    xhr.send();
+}
+
+function triggerNetworkLoadWithoutCookie() {
+    document.cookie = "InspectorTestCookie=;expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+    triggerNetworkLoad();
+}
+
+function triggerNetworkLoadWithCookie() {
+    document.cookie = "InspectorTestCookie=1234";
+    triggerNetworkLoad();
+}
+
+function triggerNetworkLoadWithoutBasicAuthentication() {
+    triggerNetworkLoadWithBasicAuthentication(undefined, undefined);
+}
+
+function triggerNetworkLoadWithBasicAuthenticationFailure() {
+    triggerNetworkLoadWithBasicAuthentication("badUsername", "badPassword");
+}
+
+function triggerNetworkLoadWithBasicAuthenticationSuccess() {
+    triggerNetworkLoadWithBasicAuthentication("goodUsername", "goodPassword");
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Resource.Metrics.RequestHeaders");
+
+    function addTestCase({name, description, expression, status, loadHandler}) {
+        suite.addTestCase({
+            name, description,
+            test(resolve, reject) {
+                InspectorTest.evaluateInPage(expression);
+                Promise.all([
+                    WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+                    WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived),
+                    WI.Resource.awaitEvent(WI.Resource.Event.LoadingDidFinish),
+                    InspectorTest.awaitEvent("LoadComplete"),
+                ]).then(([resourceWasAddedEvent, responseReceivedEvent, loadingDidFinish, loadCompleteEvent]) => {
+                    let resource = resourceWasAddedEvent.data.resource;
+                    InspectorTest.expectThat(resource instanceof WI.Resource, "Resource should be created.");
+                    InspectorTest.expectEqual(resource, responseReceivedEvent.target, "Resource should receive a Response.");
+                    return loadHandler(resource);
+                }).then(resolve, reject);
+            }
+        });
+    }
+
+    addTestCase({
+        name: "Resource.Metrics.RequestHeaders.WithoutCookie",
+        description: "Load a resource from the network without Cookies, we should not see any Cookie headers.",
+        expression: `triggerNetworkLoadWithoutCookie()`,
+        loadHandler(resource) {
+            InspectorTest.expectThat(!resource.requestHeaders.valueForCaseInsensitiveKey("Cookie"), "Request should not have a 'Cookie' header.");
+        }
+    });
+
+    addTestCase({
+        name: "Resource.Metrics.RequestHeaders.WithCookie",
+        description: "Load a resource from the network with Cookies, we should be able to see Cookie headers.",
+        expression: `triggerNetworkLoadWithCookie()`,
+        loadHandler(resource) {
+            InspectorTest.expectEqual(resource.requestHeaders.valueForCaseInsensitiveKey("Cookie"), "InspectorTestCookie=1234", "'Cookie' header value should be `InspectorTestCookie=1234`.");
+        }
+    });
+
+    addTestCase({
+        name: "Resource.Metrics.RequestHeaders.BasicAuth.None",
+        description: "Load a resource from the network without authentication, we should not be able to see Basic Authorization headers.",
+        expression: `triggerNetworkLoadWithoutBasicAuthentication()`,
+        loadHandler(resource) {
+            InspectorTest.expectEqual(resource.statusCode, 401, "Resource should have a 401 status code.");
+            InspectorTest.expectThat(resource.responseHeaders.valueForCaseInsensitiveKey("WWW-Authenticate"), "Response should have a 'WWW-Authenticate' response header for the failure.");
+            InspectorTest.expectThat(!resource.requestHeaders.valueForCaseInsensitiveKey("Authorization"), "Request should not have a 'Authorization' header.");
+        }
+    });
+
+    addTestCase({
+        name: "Resource.Metrics.RequestHeaders.BasicAuth.Failure",
+        description: "Load a resource from the network with authentication, we should be able to see Basic Authorization headers.",
+        expression: `triggerNetworkLoadWithBasicAuthenticationFailure()`,
+        loadHandler(resource) {
+            InspectorTest.expectEqual(resource.statusCode, 401, "Resource should have a 401 status code.");
+            InspectorTest.expectThat(resource.responseHeaders.valueForCaseInsensitiveKey("WWW-Authenticate"), "Response should have a 'WWW-Authenticate' response header for the failure.");
+            // FIXME: <https://webkit.org/b/170489> Web Inspector: Include NetworkLoadMetrics with failed loads
+            InspectorTest.expectEqual(resource.requestHeaders.valueForCaseInsensitiveKey("Authorization"), "Basic YmFkVXNlcm5hbWU6YmFkUGFzc3dvcmQ=", "'Authorization' header value should be for badUsername:badPassword.");
+        }
+    });
+
+    addTestCase({
+        name: "Resource.Metrics.RequestHeaders.BasicAuth.Success",
+        description: "Load a resource from the network with authentication, we should be able to see Basic Authorization headers.",
+        expression: `triggerNetworkLoadWithBasicAuthenticationSuccess()`,
+        loadHandler(resource) {
+            InspectorTest.expectEqual(resource.statusCode, 200, "Resource should have a 200 status code.");
+            InspectorTest.expectEqual(resource.requestHeaders.valueForCaseInsensitiveKey("Authorization"), "Basic Z29vZFVzZXJuYW1lOmdvb2RQYXNzd29yZA==", "'Authorization' header value should be for goodUsername:goodPassword.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for Resource request headers which may not have been immediately available but eventually are (Cookie, Authorization).</p>
+</body>
+</html>

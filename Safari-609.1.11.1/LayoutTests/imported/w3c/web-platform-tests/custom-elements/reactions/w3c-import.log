@@ -1,0 +1,42 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/Attr.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/CSSStyleDeclaration.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/ChildNode.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/DOMStringMap.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/DOMTokenList.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/Document.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/Element.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/ElementContentEditable.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/HTMLAnchorElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/HTMLElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/HTMLInputElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/HTMLOptionElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/HTMLOptionsCollection.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/HTMLOutputElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/HTMLSelectElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/HTMLTableElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/HTMLTableRowElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/HTMLTableSectionElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/HTMLTitleElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/NamedNodeMap.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/Node.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/ParentNode.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/Range.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/Selection.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/ShadowRoot.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/with-exceptions.html

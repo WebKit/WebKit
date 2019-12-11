@@ -1,0 +1,13 @@
+This tests that StyleSheetList of a shadow root does not get collected as long as the shadow root is alive.
+
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+

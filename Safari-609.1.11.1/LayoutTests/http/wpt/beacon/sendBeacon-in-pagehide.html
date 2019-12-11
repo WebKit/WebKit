@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>SendBeacon keepalive flag</title>
+    <script src=/resources/testharness.js></script>
+    <script src=/resources/testharnessreport.js></script>
+  </head>
+  <body>
+    <script src="/common/utils.js"></script>
+    <script src="/common/get-host-info.sub.js"></script>
+    <script>
+const RESOURCES_DIR = "/beacon/resources/";
+
+function pollResult(test, id) {
+  var checkUrl = RESOURCES_DIR + "content-type.py?cmd=get&id=" + id;
+
+  return new Promise(resolve => {
+    step_timeout(test.step_func(() => {
+      fetch(checkUrl).then(response => {
+        response.text().then(body => {
+          resolve(body);
+        });
+      });
+    }), 1000);
+  });
+}
+
+onload = function() {
+  w = open("support/sendBeacon-onpagehide-window.html");
+  w.onload = function() {
+    promise_test(function(test) {
+      let id = w.id;
+      setTimeout(function() {
+        w.location = "about:blank";
+      }, 0);
+
+      return pollResult(test, id).then(result => {
+        assert_equals(result, "text/plain;charset=UTF-8", "Correct content-type header result");
+      });
+    }, "Test that beacon sent from pagehide event handler is properly received");
+  }
+}
+    </script>
+  </body>
+</html>

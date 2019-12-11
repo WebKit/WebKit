@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 30: Content blocker prevented frame displaying https://127.0.0.1:8443/contentextensions/service-worker.https.html from loading a resource from https://127.0.0.1:8443/resources/dummy.js
+CONSOLE MESSAGE: line 30: Resource blocked by content blocker
+CONSOLE MESSAGE: line 30: Fetch API cannot load https://127.0.0.1:8443/resources/dummy.js due to access control checks.
+ALERT: PASS - blocked request to dummy.js
+ALERT: Message from worker: PASS - blocked dummy.js, allowed dummy.css
+

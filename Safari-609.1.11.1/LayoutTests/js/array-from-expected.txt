@@ -1,0 +1,98 @@
+Tests for Array.from
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Length of Array.from
+-------
+PASS Array.from.length is 1
+
+Simple construction
+-------
+PASS Array.from instanceof Function is true
+PASS Array.from([1]) is [1]
+PASS Array.from([1, 2, 3]) is [1, 2, 3]
+PASS Array.from([1, 2, 3]).length is 3
+PASS Array.from('abc') is ['a', 'b', 'c']
+PASS Array.from('abc').length is 3
+PASS Array.from(Array.from([4, 5, 6])) is [4, 5, 6]
+PASS Array.from([null, null]) is [null, null]
+PASS Array.from([]).length is 0
+PASS Array.from(new Uint8Array([1, 2, 3])) is [1, 2, 3]
+
+Incorrect construction
+-------
+PASS Array.from() threw exception TypeError: Array.from requires an array-like object - not null or undefined.
+PASS Array.from(null) threw exception TypeError: Array.from requires an array-like object - not null or undefined.
+PASS Array.from(undefined) threw exception TypeError: Array.from requires an array-like object - not null or undefined.
+Declare wayTooSmall = { length: -1 }
+PASS Array.from(wayTooSmall) is []
+Declare wayTooBig = { length: Infinity }
+PASS Array.from(wayTooBig) threw exception RangeError: Array size is not a small enough positive integer..
+
+Mapped construction
+-------
+PASS Array.from([1, 2, 3], function (x) { return x * 10; }) is [10, 20, 30]
+PASS Array.from([1, 2, 3], function (x) { return null; }) is [null, null, null]
+PASS Array.from([1, 2, 3], function (x) { }).length is 3
+PASS Array.from({length: 5}, function(v, k) { return k; }) is [0, 1, 2, 3, 4]
+Declare var bacon = { eggs: 5 }
+PASS Array.from([1, 2, 3], function (x) { return x * this.eggs; }, bacon) is [5, 10, 15]
+
+Incorrect mapped construction
+-------
+PASS Array.from([1, 2, 3], null) threw exception TypeError: Array.from requires that the second argument, when provided, be a function.
+PASS Array.from([1, 2, 3], []) threw exception TypeError: Array.from requires that the second argument, when provided, be a function.
+PASS Array.from([1, 2, 3], [1]) threw exception TypeError: Array.from requires that the second argument, when provided, be a function.
+
+Weird construction
+-------
+PASS Array.from(Math).length is 0
+Declare wayTooWrong = { length: NaN }
+PASS Array.from(wayTooWrong) is []
+
+Array with holes
+-------
+PASS Array.from(arrayWithHoles) is [,,, true,,,, , , 'hi']
+
+Modify length during construction
+-------
+PASS Array.from(crazyPants) is ['one', 'two', 'three', 'four']
+
+Modify length during mapping
+-------
+PASS Array.from(crazyPants, function (x) { crazyPants.length = x; return x; }) is ['one', 'two', 'three', 'four']
+
+Construction using Set object
+-------
+PASS Array.from(set) is ['zero', 'one', 'two']
+
+"this" is a constructor
+-------
+PASS Array.from.call(CustomConstructor, ['WebKit']).constructor is CustomConstructor
+PASS Object.getPrototypeOf(Array.from.call(CustomConstructor, ['WebKit'])) is CustomConstructor.prototype
+PASS Array.from.call(nonConstructor, ['WebKit']).length is 1
+PASS Array.from.call(nonConstructor, ['WebKit'])[0] is "WebKit"
+PASS Array.from.call(CustomConstructor, nonIterable).constructor is CustomConstructor
+PASS Object.getPrototypeOf(Array.from.call(CustomConstructor, nonIterable)) is CustomConstructor.prototype
+PASS Array.from.call(nonConstructor, nonIterable).length is 2
+PASS Array.from.call(nonConstructor, nonIterable)[0] is "one"
+PASS Array.from.call(nonConstructor, nonIterable)[1] is 2
+
+"this" is not a constructor
+-------
+PASS Array.from.call(nonConstructor, ['WebKit']).constructor is Array
+PASS Object.getPrototypeOf(Array.from.call(nonConstructor, ['WebKit'])) is Array.prototype
+PASS Array.from.call(nonConstructor, ['WebKit']).length is 1
+PASS Array.from.call(nonConstructor, ['WebKit'])[0] is "WebKit"
+PASS nonConstructorWasCalled is false
+PASS Array.from.call(nonConstructor, nonIterable).constructor is Array
+PASS Object.getPrototypeOf(Array.from.call(nonConstructor, nonIterable)) is Array.prototype
+PASS Array.from.call(nonConstructor, nonIterable).length is 2
+PASS Array.from.call(nonConstructor, nonIterable)[0] is "one"
+PASS Array.from.call(nonConstructor, nonIterable)[1] is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

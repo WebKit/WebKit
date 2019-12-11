@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src=../../media-resources/video-test.js></script>
+    <script>
+        var isFirstLoad = true;
+        var testURL = "http://localhost:8000/security/resources/reference-movie-cross-origin-allow.php";
+
+        waitForEvent('playing', function() {
+          if (!isFirstLoad) {
+              endTest();
+              return;
+          }
+          isFirstLoad = false;
+
+          video.src = "";
+          setTimeout(function() {
+              video.src = testURL;
+              video.play();
+          }, 0);
+        });
+
+        function start() {
+            findMediaElement();
+            video.src = testURL;
+            video.play();
+        }
+    </script>
+  </head>
+  <body onload="start()">
+    <video crossorigin></video>
+    <p>This test passes if you do not see a CORS error.</p>
+  </body>
+</html>

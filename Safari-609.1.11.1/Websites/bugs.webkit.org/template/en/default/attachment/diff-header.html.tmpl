@@ -1,0 +1,124 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# Define strings that will serve as the title and header of this page %]
+
+[% title = BLOCK %]
+  [% IF attachid %]
+Attachment #[% attachid %] for [% terms.bug %] #[% bugid %]
+  [% ELSE %]
+Interdiff of #[% oldid %] and #[% newid %] for [% terms.bug %] #[% bugid %]
+  [% END %]
+[% END %]
+
+[% onload = 'restore_all(); document.checkboxform.restore_indicator.checked = true' %]
+
+[% BLOCK viewurl %]attachment.cgi?id=[% id %][% END %]
+[% BLOCK editurl %][% PROCESS viewurl %]&amp;action=edit[% END %]
+[% BLOCK diffurl %][% PROCESS viewurl %]&amp;action=diff[% END %]
+
+[% IF headers %]
+  [% header = BLOCK %]
+    [% IF attachid %]
+      Attachment #[% attachid %]: [% description FILTER html %]
+    [% ELSE %]
+      Diff Between 
+       #[% oldid %]: <a href="[% PROCESS diffurl id=oldid %]">[% old_desc FILTER html %]</a>
+      and 
+       #[% newid %]: <a href="[% PROCESS diffurl id=newid %]">[% new_desc FILTER html %]</a>
+    [% END %]
+    for <a href="show_bug.cgi?id=[% bugid %]">[% terms.bug %] #[% bugid %]</a>
+  [% END %]
+  [% subheader = BLOCK %]
+    [% bugsummary FILTER html %]
+  [% END %]
+  [% PROCESS global/header.html.tmpl javascript_urls = [ "js/attachment.js" ]
+                                     style_urls = ['skins/standard/bug.css'] %]
+[% ELSE %]
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <link href="[% 'skins/standard/global.css' FILTER mtime %]"
+            rel="stylesheet" type="text/css">
+      <link href="[% 'skins/standard/bug.css' FILTER mtime %]"
+            rel="stylesheet" type="text/css">
+      <script src="[% 'js/attachment.js' FILTER mtime %]"
+              type="text/javascript"></script>
+    </head>
+    <body onload="[% onload FILTER html %]">
+[% END %]
+
+[%# If we have attachid, we are in diff, otherwise we're in interdiff %]
+[% IF attachid %]
+  [%# HEADER %]
+  [% IF headers %]
+    <a href="[% PROCESS viewurl id=attachid %]">View</a>
+    | <a href="[% PROCESS editurl id=attachid %]">Details</a>
+    | <a href="[% PROCESS diffurl id=attachid %]&amp;collapsed=[% collapsed FILTER uri %]&amp;headers=[%
+               headers FILTER uri %]&amp;format=raw">Raw&nbsp;Unified</a>
+    | Return to [% "$terms.bug $bugid" FILTER bug_link(bugid) FILTER none %]
+  [% END %]
+  [% IF other_patches.size > 0 %]
+    [% IF headers %] |[%END%]
+    Differences between
+    <form class="inline" action="attachment.cgi">
+      <select name="oldid">
+      [% FOREACH patch = other_patches %]
+        <option value="[% patch.id %]"
+        [% IF patch.selected %] selected[% END %]
+        >[% patch.desc FILTER html %]</option>
+      [% END %]
+      </select>
+      and this patch
+      <input type="submit" id="diff" value="Diff">
+      <input type="hidden" name="action" value="interdiff">
+      <input type="hidden" name="newid" value="[% attachid %]">
+      <input type="hidden" name="headers" value="[% headers FILTER html %]">
+    </form>
+  [% END %]
+  <br>
+[% ELSE %]
+  [% IF headers %]
+    <a href="attachment.cgi?oldid=[% oldid %]&amp;newid=[% newid %]&amp;action=interdiff&amp;format=raw">Raw Unified</a>
+    | Return to [% "$terms.bug $bugid" FILTER bug_link(bugid) FILTER none %]
+    |
+  [% END %]
+[% END %]
+  
+[%# Collapse / Expand %]
+<a href="#"
+   onmouseover="lastStatus = window.status; window.status='Collapse All'; return true"
+   onmouseout="window.status = lastStatus; return true"
+   onclick="return collapse_all()">Collapse All</a> | 
+<a href="#"
+   onmouseover="lastStatus = window.status; window.status='Expand All'; return true"
+   onmouseout="window.status = lastStatus; return true"
+   onclick="return expand_all()">Expand All</a>
+
+[% IF warning %]
+<h2 class="warning">
+  Warning:
+  [% IF warning == "interdiff1" %]
+    this difference between two patches may show things in the wrong places due
+    to a limitation in Bugzilla when comparing patches with
+    different sets of files.
+  [% ELSIF warning == "interdiff2" %]
+    this difference between two patches may be inaccurate due to a limitation
+    in Bugzilla when comparing patches made against different
+    revisions.
+  [% ELSIF warning == "interdiff3" %]
+    interdiff encountered errors while comparing these patches.
+  [% END %]
+</h2>
+[% ELSE %]
+    <br><br>
+[% END %]
+ 
+[%# Restore Stuff %]
+<form name="checkboxform" action="attachment.cgi">
+<input type="checkbox" name="restore_indicator" class="bz_default_hidden">

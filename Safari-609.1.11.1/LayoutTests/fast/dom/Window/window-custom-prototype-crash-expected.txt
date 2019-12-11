@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 7: TypeError: Cannot set prototype of immutable prototype object
+If this did not crash the test has succeeded.

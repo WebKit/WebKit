@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>DOM getters should perform type checks</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+    var div = document.createElement("div");
+    var getter = Object.getOwnPropertyDescriptor(Element.prototype, "scrollTop").get;
+
+    test(() => {
+        assert_equals(typeof getter, "function");
+    }, "DOM getter should be a function");
+
+    test(() => {
+        assert_throws(new TypeError(), () => { getter(); }, "DOM getter throws an error with undefined");
+        assert_throws(new TypeError(), () => { getter.call(null); }, "DOM getter throws an error with null");
+        assert_throws(new TypeError(), () => { getter.call({}); }, "DOM getter throws an error with unrelated object");
+        assert_throws(new TypeError(), () => { getter.call(document.createText("Hello")); }, "DOM getter throws an error with unrelated DOM object");
+    }, "DOM getter throws an error with unrelated values");
+
+    test(() => {
+        assert_equals(typeof getter.call(div), "number");
+    }, "DOM getter works with element object");
+
+    test(() => {
+        var object = {
+        };
+        Object.defineProperty(object, "scrollTop", {
+            get: getter
+        });
+        assert_throws(new TypeError(), () => { object.scrollTop; });
+    }, "DOM getter access throws an error with unrelated object");
+
+    test(() => {
+        var object = {
+            __proto__: Element.prototype
+        };
+        assert_throws(new TypeError(), () => { object.scrollTop; });
+    }, "DOM getter access through Element.prototype throws an error with unrelated object");
+</script>
+</body>

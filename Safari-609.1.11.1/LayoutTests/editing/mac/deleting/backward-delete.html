@@ -1,0 +1,46 @@
+﻿<body>
+<p>Test that backward delete behavior matches AppKit.</p>
+<p id=status></p>
+<table>
+<tr><td>Test:</td><td><div contenteditable>é</div></td><td>Expected</td><td></td></tr>
+<tr><td>Test:</td><td><div contenteditable>а́</div></td><td>Expected</td><td></td></tr>
+<tr><td>Test:</td><td><div contenteditable>วั</div></td><td>Expected</td><td>ว</td></tr>
+<tr><td>Test:</td><td><div contenteditable>ế</div></td><td>Expected</td><td></td></tr>
+<tr><td>Test:</td><td><div contenteditable>q̣̇</div></td><td>Expected</td><td></td></tr>
+<tr><td>Test:</td><td><div contenteditable>q̣</div></td><td>Expected</td><td></td></tr>
+<tr><td>Test:</td><td><div contenteditable>شْ</div></td><td>Expected</td><td>ش</td></tr>
+<tr><td>Test:</td><td><div contenteditable>אֱ</div></td><td>Expected</td><td>א</td></tr>
+<tr><td>Test:</td><td><div contenteditable>각</div></td><td>Expected</td><td></td></tr>
+<tr><td>Test:</td><td><div contenteditable>ダ</div></td><td>Expected</td><td></td></tr>
+<tr><td>Test:</td><td><div contenteditable>ﾀﾞ</div></td><td>Expected</td><td></td></tr>
+<tr><td>Test:</td><td><div contenteditable>𐐀</div></td><td>Expected</td><td></td></tr>
+</table>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function test()
+    {
+        var node = document.evaluate("//*[@contenteditable]", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        if (!node) {
+            if (window.testRunner)
+                testRunner.notifyDone();
+            else
+                document.getElementById("status").innerHTML = "DONE"
+            return;
+        }
+        node.focus();
+        window.getSelection().modify("move", "forward", "word");
+        node.onkeydown = function() { 
+            setTimeout(function() { node.removeAttribute('contenteditable'); test(); }, 0);
+        }
+        if (window.eventSender)
+            eventSender.keyDown(String.fromCharCode(0x0008), null);
+    }
+    test();
+    if (!window.eventSender)
+        document.getElementById("status").innerHTML = "Please press Backspace once for each editable field."
+</script>
+</body>

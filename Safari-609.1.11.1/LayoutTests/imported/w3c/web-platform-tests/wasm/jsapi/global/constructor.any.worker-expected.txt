@@ -1,0 +1,37 @@
+
+FAIL name undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(fn, "name")')
+FAIL length undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(fn, "length")')
+PASS No arguments 
+PASS Calling 
+FAIL Order of evaluation undefined is not a constructor (evaluating 'new WebAssembly.Global')
+PASS Invalid descriptor argument 
+PASS Invalid type argument 
+FAIL i64 with default undefined is not a constructor (evaluating 'new WebAssembly.Global(argument)')
+FAIL Default value for type i32 undefined is not a constructor (evaluating 'new WebAssembly.Global(argument)')
+FAIL Explicit value undefined for type i32 undefined is not a constructor (evaluating 'new WebAssembly.Global(argument, value)')
+FAIL Explicit value null for type i32 undefined is not a constructor (evaluating 'new WebAssembly.Global(argument, value)')
+FAIL Explicit value true for type i32 undefined is not a constructor (evaluating 'new WebAssembly.Global(argument, value)')
+FAIL Explicit value false for type i32 undefined is not a constructor (evaluating 'new WebAssembly.Global(argument, value)')
+FAIL Explicit value 2 for type i32 undefined is not a constructor (evaluating 'new WebAssembly.Global(argument, value)')
+FAIL Explicit value "3" for type i32 undefined is not a constructor (evaluating 'new WebAssembly.Global(argument, value)')
+FAIL Explicit value object with toString for type i32 undefined is not a constructor (evaluating 'new WebAssembly.Global(argument, value)')
+FAIL Explicit value object with valueOf for type i32 undefined is not a constructor (evaluating 'new WebAssembly.Global(argument, value)')
+FAIL Default value for type f32 undefined is not a constructor (evaluating 'new WebAssembly.Global(argument)')
+FAIL Explicit value undefined for type f32 undefined is not a constructor (evaluating 'new WebAssembly.Global(argument, value)')
+FAIL Explicit value null for type f32 undefined is not a constructor (evaluating 'new WebAssembly.Global(argument, value)')
+FAIL Explicit value true for type f32 undefined is not a constructor (evaluating 'new WebAssembly.Global(argument, value)')
+FAIL Explicit value false for type f32 undefined is not a constructor (evaluating 'new WebAssembly.Global(argument, value)')
+FAIL Explicit value 2 for type f32 undefined is not a constructor (evaluating 'new WebAssembly.Global(argument, value)')
+FAIL Explicit value "3" for type f32 undefined is not a constructor (evaluating 'new WebAssembly.Global(argument, value)')
+FAIL Explicit value object with toString for type f32 undefined is not a constructor (evaluating 'new WebAssembly.Global(argument, value)')
+FAIL Explicit value object with valueOf for type f32 undefined is not a constructor (evaluating 'new WebAssembly.Global(argument, value)')
+FAIL Default value for type f64 undefined is not a constructor (evaluating 'new WebAssembly.Global(argument)')
+FAIL Explicit value undefined for type f64 undefined is not a constructor (evaluating 'new WebAssembly.Global(argument, value)')
+FAIL Explicit value null for type f64 undefined is not a constructor (evaluating 'new WebAssembly.Global(argument, value)')
+FAIL Explicit value true for type f64 undefined is not a constructor (evaluating 'new WebAssembly.Global(argument, value)')
+FAIL Explicit value false for type f64 undefined is not a constructor (evaluating 'new WebAssembly.Global(argument, value)')
+FAIL Explicit value 2 for type f64 undefined is not a constructor (evaluating 'new WebAssembly.Global(argument, value)')
+FAIL Explicit value "3" for type f64 undefined is not a constructor (evaluating 'new WebAssembly.Global(argument, value)')
+FAIL Explicit value object with toString for type f64 undefined is not a constructor (evaluating 'new WebAssembly.Global(argument, value)')
+FAIL Explicit value object with valueOf for type f64 undefined is not a constructor (evaluating 'new WebAssembly.Global(argument, value)')
+

@@ -1,0 +1,33 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    font-size: 24px; 
+    width: 600px; 
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    extendSelectionForwardByLineCommand();    
+    extendSelectionForwardByLineCommand();
+    extendSelectionBackwardByCharacterCommand();
+    deleteCommand(); 
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body contenteditable id="root">
+<div id="test" class="editing">There is a tide<br>in the affairs of men</div>
+<div class="editing">Which taken at the flood</div>
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

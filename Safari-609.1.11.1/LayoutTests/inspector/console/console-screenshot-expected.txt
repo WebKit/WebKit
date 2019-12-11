@@ -1,0 +1,117 @@
+CONSOLE MESSAGE: [object HTMLDivElement]
+CONSOLE MESSAGE: [object HTMLDivElement]
+CONSOLE MESSAGE: [object HTMLImageElement]
+CONSOLE MESSAGE: [object HTMLPictureElement]
+CONSOLE MESSAGE: [object HTMLCanvasElement]
+CONSOLE MESSAGE: [object HTMLDivElement]
+CONSOLE MESSAGE: [object ImageData]
+CONSOLE MESSAGE: [object ImageBitmap]
+CONSOLE MESSAGE: [object CanvasRenderingContext2D]
+CONSOLE MESSAGE: Viewport
+CONSOLE MESSAGE: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII=
+CONSOLE MESSAGE: data:fake/mime
+CONSOLE MESSAGE: data:image/png;base64,<INVALID>
+CONSOLE MESSAGE: data:image/png;a1=b2;base64,
+CONSOLE MESSAGE: Viewport
+CONSOLE MESSAGE: Viewport
+CONSOLE MESSAGE: Viewport
+Tests for the console.screenshot API.
+
+
+== Running test suite: console.screenshot
+-- Running test case: console.screenshot.Node.SingleArgument
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image width should be 2px.
+PASS: The image height should be 2px.
+
+-- Running test case: console.screenshot.Node.MultipleArguments
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image width should be 2px.
+PASS: The image height should be 2px.
+
+-- Running test case: console.screenshot.Node.DetachedScreenshotable.Image
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image width should be 2px.
+PASS: The image height should be 2px.
+
+-- Running test case: console.screenshot.Node.DetachedScreenshotable.Picture
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image width should be 2px.
+PASS: The image height should be 2px.
+
+-- Running test case: console.screenshot.Node.DetachedScreenshotable.Canvas
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image width should be 2px.
+PASS: The image height should be 2px.
+
+-- Running test case: console.screenshot.Node.DetachedNonScreenshotable
+PASS: Error: Could not capture screenshot
+
+-- Running test case: console.screenshot.ImageData
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image width should be 2px.
+PASS: The image height should be 2px.
+
+-- Running test case: console.screenshot.ImageBitmap
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image width should be 2px.
+PASS: The image height should be 2px.
+
+-- Running test case: console.screenshot.CanvasRenderingContext2D
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image width should be 2px.
+PASS: The image height should be 2px.
+
+-- Running test case: console.screenshot.String.Valid
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image width should be greater than 2px.
+PASS: The image height should be greater than 2px.
+
+-- Running test case: console.screenshot.String.dataURL.Valid
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image width should be 2px.
+PASS: The image height should be 2px.
+
+-- Running test case: console.screenshot.String.dataURL.InvalidMIME
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image should not load.
+
+-- Running test case: console.screenshot.String.dataURL.InvalidContent
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image should not load.
+
+-- Running test case: console.screenshot.String.dataURL.InvalidNoContent
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image should not load.
+
+-- Running test case: console.screenshot.String.dataURL.ValidNoContent
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image width should be greater than 2px.
+PASS: The image height should be greater than 2px.
+
+-- Running test case: console.screenshot.NonScreenshotableTarget
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image width should be greater than 2px.
+PASS: The image height should be greater than 2px.
+
+-- Running test case: console.screenshot.NoArguments
+PASS: The added message should be an image.
+PASS: The image should not be empty.
+PASS: The image width should be greater than 2px.
+PASS: The image height should be greater than 2px.
+

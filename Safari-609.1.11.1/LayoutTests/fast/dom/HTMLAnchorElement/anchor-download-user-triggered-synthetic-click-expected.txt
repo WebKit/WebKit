@@ -1,0 +1,8 @@
+Download started.
+Downloading URL with suggested filename "unknown.html"
+Download completed.
+Test that user triggered synthetic clicks on an anchor with a download attribute are not ignored.
+
+This test passes if you see a 'Download started' message above.
+
+

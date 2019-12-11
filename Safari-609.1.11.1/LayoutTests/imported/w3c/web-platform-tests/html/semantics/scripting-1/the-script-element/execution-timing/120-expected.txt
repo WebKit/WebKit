@@ -1,0 +1,3 @@
+
+PASS scheduler: script created without a window  
+

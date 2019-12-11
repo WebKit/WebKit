@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<script>
+function expect(test, msg) {
+    if (test)
+        return true;
+
+    log.innerText = 'FAIL: expected ' + msg;
+    testRunner.notifyDone();
+    return false;
+}
+
+function testBackspaceNavigatesBack() {
+    eventSender.keyDown('\u0008');
+
+    // We expected to navigate; set a timeout that causes the test
+    // to fail quickly if we didn't navigate.
+    setTimeout(function() {
+        expect(false, 'navigation back');
+    }, 500);
+}
+
+function doStep(step, location) {
+    // This function is called on each page load.
+    // 'step' increases with each page load, while 'location' is the query param for the page load.
+    // Since we go back and forwards, we assert that 'location' is what we expect upon the entry to each step.
+
+    switch (step) {
+    case 0:
+        document.location = '?test-start';
+        break;
+    case 1:
+        if (!expect(location == 'test-start', 'navigation to test-start'))
+            return;
+        document.location = '?test-mac';
+        break;
+    case 2:
+        if (!expect(location == 'test-mac', 'navigation to test-mac'))
+            return;
+
+        internals.settings.setEditingBehavior('mac');
+        testBackspaceNavigatesBack();
+
+        break;
+    case 3:
+        if (!expect(location == 'test-start', 'navigation back to test-start'))
+            return;
+        document.location = '?test-win';
+        break;
+    case 4:
+        if (!expect(location == 'test-win', 'navigation to test-win'))
+            return;
+
+        internals.settings.setEditingBehavior('win');
+        testBackspaceNavigatesBack();
+
+        break;
+    case 5:
+        if (!expect(location == 'test-start', 'navigation back to test-start'))
+            return;
+        document.location = '?test-unix';
+        break;
+    case 6:
+        if (!expect(location == 'test-unix', 'navigation to test-unix'))
+            return;
+
+        // Test unix behavior: that backspace does not go back.
+        internals.settings.setEditingBehavior('unix');
+
+        // We expect backspace to *not* navigate.
+        // Start a navigation to the success page; if backspace causes us to go back,
+        // it will cancel that navigation and navigate us elsewhere, causing the test
+        // to fail.
+        document.location = '?test-complete';
+        eventSender.keyDown('\u0008');
+
+        break;
+    case 7:
+        if (!expect(location == 'test-complete', 'navigation to test-complete'))
+            return;
+        log.innerText += 'PASS: test complete';
+        sessionStorage.removeItem('step');
+        testRunner.notifyDone();
+    }
+}
+
+window.onpageshow = function() {
+    if (!window.testRunner || !window.eventSender || !window.internals) {
+        log.innerText =
+            'This test requires eventSender, testRunner and window.internals. ' +
+            'It cannot be run manually.';
+        return;
+    }
+    if (!location.search) {
+        sessionStorage.step = 0;
+        testRunner.dumpAsText();
+        testRunner.clearBackForwardList();
+        testRunner.waitUntilDone();
+    }
+
+    setTimeout(function() {
+        doStep(sessionStorage.step++, location.search.substring(1));
+    }, 0)
+}
+</script>
+<body>This test passes if it says PASS below.
+<div id=log></div>
+</body>

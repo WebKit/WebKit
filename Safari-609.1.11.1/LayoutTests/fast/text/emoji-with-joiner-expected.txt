@@ -1,0 +1,10 @@
+PASS element.offsetWidth is 48
+PASS element.offsetWidth is 48
+PASS element.offsetWidth is 48
+PASS element.offsetWidth is 48
+PASS element.offsetWidth is 48
+PASS element.offsetWidth is 48
+PASS successfullyParsed is true
+
+TEST COMPLETE
+👱‍♂️ 👱🏻‍♂️ 👱🏼‍♂️ 👱🏽‍♂️ 👱🏾‍♂️ 👱🏿‍♂️

@@ -1,0 +1,4 @@
+
+tap location	{ x: 40.000, y: 130.000 }
+scale	1.455
+visibleRect	{ left: 0.000, top: 44.683, width: 219.979, height: 376.713 }

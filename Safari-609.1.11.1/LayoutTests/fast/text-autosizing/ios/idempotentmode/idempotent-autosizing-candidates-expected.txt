@@ -1,0 +1,61 @@
+Checking target1:
+PASS result is >= 13
+Checking target2:
+PASS result is >= 13
+Checking target3:
+PASS result is 12
+Checking target4:
+PASS result is >= 13
+Checking target5:
+PASS result is >= 13
+Checking target6:
+PASS result is 12
+Checking target7:
+PASS result is >= result2
+Checking target8:
+PASS result is 12
+Checking target9:
+PASS result is >= 13
+Checking target10:
+PASS result is >= 13
+Checking target11:
+PASS result is >= 13
+Checking target12:
+PASS result is >= 13
+Checking target13:
+PASS result is 12
+Checking target14:
+PASS result is 12
+Checking target15:
+PASS result is >= 13
+Checking target16:
+PASS result is >= 13
+Checking target17:
+PASS result is 12
+Checking target18:
+PASS result is 12
+Checking target19:
+PASS result is >= 13
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Test
+Test
+Test
+Test
+Test
+TestTestTestTest
+Test
+Test
+Test
+Test
+Test
+Test
+Test
+Test
+Test
+Test
+Test 
+Test 
+Test
+Test

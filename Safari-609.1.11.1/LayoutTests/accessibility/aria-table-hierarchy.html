@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script>
+    function dumpAccessibilityChildren(element, level) {
+        if (element.stringValue.indexOf('End of test') >= 0)
+            return false;
+
+        var indent = "";
+        for (var k = 0; k < level; k++) { indent += "  "; }
+        debug(indent + element.role + " " + element.stringValue);
+        var childrenCount = element.childrenCount;
+        for (var k = 0; k < childrenCount; k++) {
+            if (!dumpAccessibilityChildren(element.childAtIndex(k), level+1))
+                return false;
+        }
+        return true;
+    }
+</script>
+</head>
+<body id="body">
+<div role="grid">
+<div role="row"><div role="gridcell">foo</div><div role="gridcell">bar</div></div>
+</div>
+<div role="grid">
+<div role="row"><div role="columnheader">Odd</div><div role="columnheader">Even</div></div>
+<div role="row"><div role="gridcell">1</div><div role="gridcell">2</div></div>
+<div role="row"><div role="gridcell">3</div><div role="gridcell">4</div></div>
+</div>
+<div role="grid">
+<div role="row"><div role="gridcell">hello</div><div role="gridcell">world</div></div>
+</div>
+<div role="grid">
+<div role="row"><div role="columnheader">Odd</div><div role="columnheader">Even</div></div>
+<div role="row"><div role="gridcell"><p>1</p></div><div role="gridcell"><p>2</p></div></div>
+<div role="row"><div role="gridcell"><p>3</p></div><div role="gridcell"><p>4</p></div></div>
+</div>
+<div>End of test</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+  description("This tests the accessible hierarchy for an ARIA table.");
+  if (window.accessibilityController) {
+      document.getElementById("body").focus();
+      dumpAccessibilityChildren(accessibilityController.focusedElement, 0);
+  }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+main frame - didFinishDocumentLoadForFrame
+main frame - didStartProvisionalLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+This test opens a window that has a form with an action that is a javascript: url. We should *not* trigger a mixed content callback because the javascript: URL cannot be corrupted by active network attackers.

@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 84: TypeError: buffer.copyToChannel is not a function. (In 'buffer.copyToChannel(bufferData, 0)', 'buffer.copyToChannel' is undefined)
+
+Harness Error (FAIL), message = TypeError: buffer.copyToChannel is not a function. (In 'buffer.copyToChannel(bufferData, 0)', 'buffer.copyToChannel' is undefined)
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS > [test] WaveShaperNode including values outside the range of [-1,1] 
+

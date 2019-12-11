@@ -1,0 +1,30 @@
+This tests for caller property in functions. Only functions that are called from inside of other functions and have a parent should have this property set. Tests return true when caller is found and false when the caller is null.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS childHasCallerWhenExecutingGlobalCode is false
+PASS childHasCallerWhenCalledWithoutParent is false
+PASS childHasCallerWhenCalledFromWithinParent is true
+PASS nonStrictCaller(nonStrictCallee) is nonStrictCaller
+PASS nonStrictCaller(strictCallee) threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context..
+PASS strictCaller(nonStrictCallee) threw exception TypeError: Function.caller used to retrieve strict caller.
+PASS strictCaller(strictCallee) threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context..
+PASS strictTailCaller(nonStrictCallee) is null
+PASS strictTailCaller(strictCallee) threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context..
+PASS nonStrictCaller(boundNonStrictCallee) is nonStrictCaller
+PASS nonStrictCaller(boundStrictCallee) threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context..
+PASS strictCaller(boundNonStrictCallee) threw exception TypeError: Function.caller used to retrieve strict caller.
+PASS strictCaller(boundStrictCallee) threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context..
+PASS strictTailCaller(boundNonStrictCallee) is null
+PASS strictTailCaller(boundStrictCallee) threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context..
+PASS nonStrictGetter(nonStrictAccessor) threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context..
+PASS nonStrictGetter(strictAccessor) threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context..
+PASS strictGetter(nonStrictAccessor) threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context..
+PASS strictSetter(nonStrictAccessor) threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context..
+PASS strictGetter(strictAccessor) threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context..
+PASS strictSetter(strictAccessor) threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

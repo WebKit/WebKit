@@ -1,0 +1,20 @@
+CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8801/fetch/api/resources/preflight.py?origin=%22%22%2C%20http%3A%2F%2Fexample.com%2C%20http%3A%2F%2Flocalhost%3A8800 due to access control checks.
+CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8801/fetch/api/resources/preflight.py?origin=%22%22%2C%20http%3A%2F%2Fexample.com%2C%20* due to access control checks.
+CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8801/fetch/api/resources/preflight.py?origin=%22%22%2C%20http%3A%2F%2Flocalhost%3A8800%2C%20http%3A%2F%2Flocalhost%3A8800 due to access control checks.
+CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8801/fetch/api/resources/preflight.py?origin=*%2C%20http%3A%2F%2Fexample.com%2C%20* due to access control checks.
+CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8801/fetch/api/resources/preflight.py?origin=*%2C%20http%3A%2F%2Fexample.com%2C%20http%3A%2F%2Flocalhost%3A8800 due to access control checks.
+CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8801/fetch/api/resources/preflight.py?origin=%2C%20http%3A%2F%2Fexample.com%2C%20https%3A%2F%2Fexample2.com due to access control checks.
+
+PASS Listing multiple origins is illegal: "",http://example.com,http://localhost:8800 
+PASS Listing multiple origins is illegal: "",http://example.com,* 
+PASS Listing multiple origins is illegal: "",http://localhost:8800,http://localhost:8800 
+PASS Listing multiple origins is illegal: *,http://example.com,* 
+PASS Listing multiple origins is illegal: *,http://example.com,http://localhost:8800 
+PASS Listing multiple origins is illegal: ,http://example.com,https://example2.com 
+

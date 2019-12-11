@@ -1,0 +1,43 @@
+<!DOCTYPE html><!-- webkit-test-runner [ internal:WebAPIStatisticsEnabled=true ] -->
+<head>
+    <meta charset="UTF-8">
+    <title>Test for canvas read and write data collection in resource load statistics</title>
+</head>
+<script>
+    internals.setResourceLoadStatisticsEnabled(false);
+</script>
+<body>
+<p> Tests for canvas read and write data collection in ResourceLoadStatistics plist by rendering and reading text on the canvas and dumping the entire resource load statistics map. </p>
+<script>
+    const hostUnderTest = "127.0.0.1:8000";
+    const statisticsUrl = "http://" + hostUnderTest + "/temp";
+
+    function completeTest() {  
+        testRunner.statisticsResetToConsistentState(function() {
+            testRunner.notifyDone();
+        });
+    }
+
+    function runTestRunnerTest() {
+        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
+
+        testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
+    
+        var canvas = document.createElement('canvas');
+        var context = canvas.getContext('2d');
+        context.fillText('suspicious invisible text', 2, 15);
+        canvas.toDataURL();
+        testRunner.statisticsNotifyObserver();
+    }
+
+    if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
+        testRunner.dumpAsText();
+        testRunner.dumpResourceLoadStatistics();
+        testRunner.waitUntilDone();
+        internals.setResourceLoadStatisticsEnabled(true);
+        testRunner.setWebAPIStatisticsEnabled(true);
+        runTestRunnerTest();
+    }
+</script>
+</body>
+</html>

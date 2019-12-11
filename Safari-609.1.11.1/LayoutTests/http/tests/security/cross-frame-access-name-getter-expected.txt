@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 57: SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
+
+
+----- tests for getting properties by name -----
+
+PASS: canGet('targetWindow.testiframe') should be 'true' and is.
+PASS: canGet('targetWindow.testimage') should be 'false' and is.
+

@@ -1,0 +1,16 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.addUserScript("console.log('injected: ' + document.location.href); var div = document.createElement('div'); div.innerHTML = '<p>hi</p>';", true, true);
+}
+</script>
+</head>
+<body>
+This test should not infinitely inject user scripts.
+<iframe src="resources/blank.xhtml"></iframe>
+</body>
+</html>

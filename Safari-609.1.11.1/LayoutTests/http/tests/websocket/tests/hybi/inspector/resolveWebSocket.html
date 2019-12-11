@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../../../inspector/resources/inspector-test.js"></script>
+<script>
+function load()
+{
+    testRunner.waitUntilDone();
+
+    const url = "ws://127.0.0.1:8880/websocket/tests/hybi/inspector/echo";
+    let webSocket = new WebSocket(url);
+    webSocket.addEventListener("open", (event) => {
+        // Only run the tests once the websocket has connected.
+        runTest();
+    });
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.resolveWebSocket");
+
+    suite.addTestCase({
+        name: "Network.resolveWebSocket.validRequestIdentifier",
+        description: "Should return a valid response for the given request identifier.",
+        test(resolve, reject) {
+            const url = "ws://127.0.0.1:8880/websocket/tests/hybi/inspector/echo";
+            let webSocketResource = WI.networkManager.resourceForURL(url);
+            if (!webSocketResource) {
+                reject("Missing WebSocket resource.");
+                return;
+            }
+
+            const objectGroup = "test";
+            NetworkAgent.resolveWebSocket(webSocketResource.requestIdentifier, objectGroup, (error, object) => {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+
+                InspectorTest.expectEqual(object.type, "object", "Payload should have type \"object\".");
+                InspectorTest.expectEqual(object.className, "WebSocket", "Payload should have className \"WebSocket\".");
+                InspectorTest.expectEqual(object.description, "WebSocket", "Payload should have description \"WebSocket\".");
+                resolve();
+            });
+        }
+    });
+
+    // ------
+
+    suite.addTestCase({
+        name: "Network.resolveWebSocket.invalidRequestIdentifier",
+        description: "Invalid request identifiers should cause an error.",
+        test(resolve, reject) {
+            const requestIdentifier = "DOES_NOT_EXIST";
+            const objectGroup = "test";
+            NetworkAgent.resolveWebSocket(requestIdentifier, objectGroup, (error) => {
+                InspectorTest.expectThat(error, "Should produce an error.");
+                InspectorTest.log("Error: " + error);
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+<p>Tests for the Network.resolveWebSocket command.</p>
+</body>
+</html>

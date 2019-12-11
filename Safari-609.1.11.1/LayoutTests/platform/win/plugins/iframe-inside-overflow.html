@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        function loaded() {
+            if (window.testRunner)
+                testRunner.dumpAsText();
+            var container = document.getElementsByTagName('div')[0];
+            container.scrollLeft = 300;
+            container.scrollTop = 300;
+            frames[0].document.getElementsByTagName('embed')[0].startTest();
+        }
+        addEventListener('load', loaded, false);
+    </script>
+    <style>
+        div {
+            float: left;
+            overflow: auto;
+            width: 100px;
+            height: 100px;
+        }
+        iframe {
+            width: 320px;
+            height: 320px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <p>This tests that windowed plugins inside iframes inside overflow areas obey the overflow area's scroll offset.</p>
+
+    <div>
+        <iframe src="resources/dump-window-rect-iframe.html"></iframe>
+    </div>
+</body>
+</html>
+

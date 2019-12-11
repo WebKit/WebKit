@@ -1,0 +1,54 @@
+<html>
+<head>
+	<title>Test - Bug #124777: Fix hover area for divs with a hierarchy of css transformed and non-transformed elements</title>
+	<style type="text/css">
+		#container
+		{
+			position: absolute;
+			height: 200px;
+			width:200px;
+			top: 0;
+			left: 0;
+			background-color: gray;
+		}
+
+		/* target contain points with negative z-offsets */
+		#target
+		{
+			position: relative;
+			height: 160px;
+			width: 160px;
+			margin: 20px;
+			background-color: #DDD;
+			-webkit-transform: rotate3d(0, 1, 0, -45deg);
+			-webkit-transform-origin: right;
+		}
+		#results {
+				margin-top: 210px;
+		}
+	</style>
+	<script src="resources/hit-test-utils.js"></script>
+	<script>
+			var hitTestData = [
+				{ 'point': [50, 50], 'target' : 'container' },
+				{ 'point': [60, 60], 'target' : 'container' },
+				{ 'point': [70, 70], 'target' : 'target' },
+				{ 'point': [80, 80], 'target' : 'target' },
+				{ 'point': [90, 90], 'target' : 'target' },
+				{ 'point': [100, 100], 'target' : 'target' },
+				{ 'point': [150, 150], 'target' : 'target' },
+				{ 'point': [180, 180], 'target' : 'container' },
+			];
+			window.addEventListener('load', runTest, false);
+	</script>
+</head>
+<body>
+
+	<div id="container" class="container">
+		<div id="target">
+		</div>
+	</div>
+	<div id="results"></div>
+
+</body>
+</html>

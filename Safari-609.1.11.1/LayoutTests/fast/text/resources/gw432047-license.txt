@@ -1,0 +1,11 @@
+<http://en.glyphwiki.org/wiki/GlyphWiki:License>
+'''This document is a direct translation of the October 8th, 2008 revision of the Japanese original at ([[GlyphWiki:データ・記事のライセンス]]). This translation is provided as a service, and should not be taken to be a definitive statement. Please be aware that in case the Japanese original and the English version differ, the Japanese original takes precedence.'''
+
+*Data and article usage licence
+
+The glyphs registered at the GlyphWiki, as well as the articles, can be freely used by anyone. Reuse of this data, such as reproduction or modification of the glyps, is permitted. The are no specific restrictions with regards to displaying the author's name. Reuse of GlyphWiki data as the basis for a new font, or direct usage of fonts and glyphs copied from GlyphWiki in published work is allowed. GlyphWiki does not hold copyright on any citations used throughout GlyphWiki articles. Please consult their respective licences when reusing such content.
+
+<http://glyphwiki.org/wiki/GlyphWiki:%E3%83%87%E3%83%BC%E3%82%BF%E3%83%BB%E8%A8%98%E4%BA%8B%E3%81%AE%E3%83%A9%E3%82%A4%E3%82%BB%E3%83%B3%E3%82%B9>
+*データ及び記事のライセンス
+
+グリフウィキに登録されているグリフデータおよび記事は、誰もが自由に利用できることとします。複製、改変などの二次利用を認めるものとします。著作者表示も特に制限を設けません。新しいフォントのベースデータとして用いることや、そのままコピーしたものをフォントとして著作物とすることを妨げません。記事中に引用されている部分については、グリフウィキには著作権はありませんので引用元のライセンスを確認してください。

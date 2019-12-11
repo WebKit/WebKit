@@ -1,0 +1,3 @@
+
+FAIL bufferedAmount should not be updated during a sync XHR assert_equals: expected 5 but got 0
+

@@ -1,0 +1,13 @@
+item 1
+item 2
+This test makes sure the right suffix is returned when fetching text marker strings for list items.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS list1.stringForTextMarkerRange(textRange) is bulletString + ' item 1'
+PASS list2.stringForTextMarkerRange(textRange) is '1. item 2'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

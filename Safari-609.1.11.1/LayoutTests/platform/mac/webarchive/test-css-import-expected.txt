@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>WebMainResource</key>
+	<dict>
+		<key>WebResourceData</key>
+		<string>&lt;html&gt;&lt;head&gt;
+&lt;script&gt;
+    if (window.testRunner)
+        testRunner.dumpDOMAsWebArchive();
+&lt;/script&gt;
+&lt;link rel="stylesheet" href="resources/test-css-link.css" type="text/css"&gt;
+&lt;style type="text/css"&gt;
+    @import url('resources/test-css-import.css');
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div class="blue"&gt;This text should be blue.&lt;/div&gt;
+&lt;div class="red"&gt;This text should be red.&lt;/div&gt;
+&lt;div class="green"&gt;This text should be green.&lt;/div&gt;
+&lt;div class="purple"&gt;This text should be purple.&lt;/div&gt;
+
+
+&lt;/body&gt;&lt;/html&gt;</string>
+		<key>WebResourceFrameName</key>
+		<string></string>
+		<key>WebResourceMIMEType</key>
+		<string>text/html</string>
+		<key>WebResourceTextEncodingName</key>
+		<string>UTF-8</string>
+		<key>WebResourceURL</key>
+		<string>file:///LayoutTests/webarchive/test-css-import.html</string>
+	</dict>
+	<key>WebSubresources</key>
+	<array>
+		<dict>
+			<key>WebResourceData</key>
+			<string>@import url('test-css-import.css');
+.green { color: green; }
+</string>
+			<key>WebResourceMIMEType</key>
+			<string>text/css</string>
+			<key>WebResourceResponse</key>
+			<dict>
+				<key>MIMEType</key>
+				<string>text/css</string>
+				<key>URL</key>
+				<string>file:///LayoutTests/webarchive/resources/test-css-import-recurse.css</string>
+				<key>expectedContentLength</key>
+				<integer>61</integer>
+			</dict>
+			<key>WebResourceURL</key>
+			<string>file:///LayoutTests/webarchive/resources/test-css-import-recurse.css</string>
+		</dict>
+		<dict>
+			<key>WebResourceData</key>
+			<string>@import url('test-css-import-recurse.css');
+.blue { color: blue; }
+</string>
+			<key>WebResourceMIMEType</key>
+			<string>text/css</string>
+			<key>WebResourceResponse</key>
+			<dict>
+				<key>MIMEType</key>
+				<string>text/css</string>
+				<key>URL</key>
+				<string>file:///LayoutTests/webarchive/resources/test-css-import.css</string>
+				<key>expectedContentLength</key>
+				<integer>67</integer>
+			</dict>
+			<key>WebResourceURL</key>
+			<string>file:///LayoutTests/webarchive/resources/test-css-import.css</string>
+		</dict>
+		<dict>
+			<key>WebResourceData</key>
+			<string>@import url('test-css-link-recurse.css');
+.purple { color: purple; }
+</string>
+			<key>WebResourceMIMEType</key>
+			<string>text/css</string>
+			<key>WebResourceResponse</key>
+			<dict>
+				<key>MIMEType</key>
+				<string>text/css</string>
+				<key>URL</key>
+				<string>file:///LayoutTests/webarchive/resources/test-css-link-recurse.css</string>
+				<key>expectedContentLength</key>
+				<integer>69</integer>
+			</dict>
+			<key>WebResourceURL</key>
+			<string>file:///LayoutTests/webarchive/resources/test-css-link-recurse.css</string>
+		</dict>
+		<dict>
+			<key>WebResourceData</key>
+			<string>@import url('test-css-link-recurse.css');
+.red { color: red; }
+</string>
+			<key>WebResourceMIMEType</key>
+			<string>text/css</string>
+			<key>WebResourceResponse</key>
+			<dict>
+				<key>MIMEType</key>
+				<string>text/css</string>
+				<key>URL</key>
+				<string>file:///LayoutTests/webarchive/resources/test-css-link.css</string>
+				<key>expectedContentLength</key>
+				<integer>63</integer>
+			</dict>
+			<key>WebResourceURL</key>
+			<string>file:///LayoutTests/webarchive/resources/test-css-link.css</string>
+		</dict>
+	</array>
+</dict>
+</plist>

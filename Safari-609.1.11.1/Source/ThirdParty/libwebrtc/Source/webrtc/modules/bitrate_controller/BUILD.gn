@@ -1,0 +1,60 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_static_library("bitrate_controller") {
+  visibility = [ "*" ]
+  sources = [
+    "loss_based_bandwidth_estimation.cc",
+    "loss_based_bandwidth_estimation.h",
+    "send_side_bandwidth_estimation.cc",
+    "send_side_bandwidth_estimation.h",
+  ]
+
+  if (rtc_enable_bwe_test_logging) {
+    defines = [ "BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=1" ]
+  } else {
+    defines = [ "BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=0" ]
+  }
+
+  deps = [
+    "../../api/rtc_event_log",
+    "../../api/transport:network_control",
+    "../../api/units:data_rate",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../logging:rtc_event_bwe",
+    "../../logging:rtc_event_log_api",
+    "../../rtc_base:checks",
+    "../../rtc_base:logging",
+    "../../rtc_base/experiments:field_trial_parser",
+    "../../system_wrappers:field_trial",
+    "../../system_wrappers:metrics",
+    "../remote_bitrate_estimator",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("bitrate_controller_unittests") {
+    testonly = true
+
+    sources = [
+      "send_side_bandwidth_estimation_unittest.cc",
+    ]
+    deps = [
+      ":bitrate_controller",
+      "../../logging:mocks",
+      "../../logging:rtc_event_bwe",
+      "../../logging:rtc_event_log_api",
+      "../../test:test_support",
+    ]
+  }
+}

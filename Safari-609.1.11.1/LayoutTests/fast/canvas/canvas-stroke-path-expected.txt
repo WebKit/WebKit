@@ -1,0 +1,31 @@
+Test Path2D as argument for stroke.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Simple test of Path2D as argumeny for stroke().
+PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
+PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
+
+Transform context and apply stroke(). Context path should be ignored.
+PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
+PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
+
+Path2D should not affect context path.
+PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
+PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
+PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
+PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
+
+PASS ctx.stroke(0) threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.stroke must be an instance of Path2D.
+PASS ctx.stroke(null) threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.stroke must be an instance of Path2D.
+PASS ctx.stroke('path2d') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.stroke must be an instance of Path2D.
+PASS ctx.stroke(undefined) threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.stroke must be an instance of Path2D.
+PASS ctx.stroke(Number.MAX_VALUE) threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.stroke must be an instance of Path2D.
+PASS ctx.stroke(function() {}) threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.stroke must be an instance of Path2D.
+PASS ctx.stroke(false) threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.stroke must be an instance of Path2D.
+PASS ctx.stroke(new Date()) threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.stroke must be an instance of Path2D.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we don't create multicolumn content for textareas</title>
+<style>
+textarea  {
+    columns: 2;
+}
+</style>
+</head>
+<body>
+PASS if no assert in debug.
+<textarea placeholder="foobar"></textarea>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+</script>
+</body>
+</html>

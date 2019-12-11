@@ -1,0 +1,3 @@
+
+PASS Verify 'navigator.sendbeacon()' successfully sends for variant: LargeFormData 
+

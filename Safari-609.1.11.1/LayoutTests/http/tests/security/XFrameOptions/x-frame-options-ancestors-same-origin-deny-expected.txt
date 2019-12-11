@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: Refused to display 'http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-frame-ancestors-same-origin-deny.cgi' in a frame because it set 'X-Frame-Options' to 'sameorigin'.
+CONSOLE MESSAGE: line 14: SecurityError: Sandbox access violation: Blocked a frame at "http://localhost:8000" from accessing a cross-origin frame.  The frame being accessed is sandboxed and lacks the "allow-same-origin" flag.
+CONSOLE MESSAGE: line 15: PASS: Could not read contentWindow.location.href
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+
+
+--------
+Frame: '<!--frame2-->'
+--------
+

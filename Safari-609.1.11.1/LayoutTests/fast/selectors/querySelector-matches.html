@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="area1">
+    <div></div>
+    <div class="cappuccino"></div>
+    <div class="cocoa"></div>
+    <a></a>
+    <div></div>
+    <span class="cappuccino"></span>
+    <div class="cocoa"></div>
+    <p></p>
+</div>
+
+<div id="area2">
+    <p>
+        <span class="cappuccino"><span></span></span>
+        <span class="cocoa"></span>
+    </p>
+</div>
+
+<div id="area3">
+    <span class="cocoa">
+        <p>
+            <span class="cappuccino"></span>
+            <span class="cappuccino"></span>
+        </p>
+    </span>
+    <span class="tea"></span>
+</div>
+
+<div id="area4">
+    <span class="cocoa"></span>
+    <span class="cocoa"></span>
+    <span class="cappuccino"></span>
+    <span class="cappuccino"></span>
+</div>
+
+<div id="area5">
+    <span class="cocoa"></span>
+</div>
+
+<pre id='console'></pre>
+</body>
+<script>
+description('Test queries with the :matches selectors.');
+shouldBe("document.body.querySelectorAll('#area1 > :matches(div, p)').length", "6");
+shouldBe("document.body.querySelectorAll('#area1 > :matches(p, span)').length", "2");
+shouldBe("document.body.querySelectorAll('#area1 > :matches(div, p, span)').length", "7");
+shouldBe("document.body.querySelectorAll('#area1 > :matches(:not(div), :not(p))').length", "8");
+shouldBe("document.body.querySelectorAll('#area1 > :matches(.cocoa, .cappuccino)').length", "4");
+
+shouldBe("document.body.querySelectorAll('#area2 :matches(p > .cocoa, p > .cappuccino)').length", "2");
+shouldBe("document.body.querySelectorAll('#area2 :matches(.cocoa, p > .cappuccino)').length", "2");
+shouldBe("document.body.querySelectorAll('#area2 :matches(div > .cocoa, p > .cappuccino)').length", "1");
+shouldBe("document.body.querySelectorAll('#area2 :matches(.cappuccino, p) > span').length", "3");
+
+shouldBe("document.body.querySelectorAll('#area3 :matches(.cocoa .cappuccino, .tea)').length", "3");
+shouldBe("document.body.querySelectorAll('#area3 :matches(.cocoa > .cappuccino, .tea)').length", "1");
+
+shouldBe("document.body.querySelectorAll('#area4 :matches(.cocoa + .cappuccino)').length", "1");
+shouldBe("document.body.querySelectorAll('#area4 :matches(.cocoa ~ .cappuccino)').length", "2");
+shouldBe("document.body.querySelectorAll('#area4 :matches(.cocoa ~ :matches(.cocoa, .cappuccino))').length", "3");
+
+// When using querySelector, the selectors containing the pseudo elements cannot match.
+shouldBe("document.body.querySelectorAll('#area5 :matches(.cocoa::first-letter)').length", "0");
+shouldBe("document.body.querySelectorAll('#area5 :matches(.cocoa::first-letter, .cocoa)').length", "1");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

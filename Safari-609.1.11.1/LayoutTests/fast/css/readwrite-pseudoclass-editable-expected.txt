@@ -1,0 +1,28 @@
+Tests read-write pseudo-class properties are applied to editable elements and not to non-editable elements
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS backgroundColor('editable1') is "rgb(255, 0, 0)"
+PASS backgroundColor('editable2') is "rgb(255, 0, 0)"
+PASS backgroundColor('editable3') is "rgb(255, 0, 0)"
+PASS backgroundColor('editable4') is "rgb(255, 0, 0)"
+PASS backgroundColor('div_in_editable') is "rgb(255, 0, 0)"
+PASS backgroundColor('readonly_in_editable') is not "rgb(255, 0, 0)"
+PASS backgroundColor('disabled_in_editable') is not "rgb(255, 0, 0)"
+PASS backgroundColor('non_editable') is not "rgb(255, 0, 0)"
+PASS backgroundColor('svg') is not "rgb(255, 0, 0)"
+PASS backgroundColor('svg_path') is not "rgb(255, 0, 0)"
+PASS backgroundColor('svg_contenteditable') is not "rgb(255, 0, 0)"
+PASS backgroundColor('mathml') is not "rgb(255, 0, 0)"
+PASS backgroundColor('mathml_msup') is not "rgb(255, 0, 0)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+  
+  
+x
+2
+=
+0
+

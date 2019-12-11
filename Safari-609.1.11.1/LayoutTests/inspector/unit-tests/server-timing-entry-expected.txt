@@ -1,0 +1,555 @@
+
+== Running test suite: ServerTimingEntry
+-- Running test case: ServerTimingEntry.parseHeaders
+Testing response header: --><--
+PASS: Parsed ServerTimingEntry count has expected results count of 0.
+
+Testing response header: -->metric<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is undefined
+
+Testing response header: -->metric;dur=123.4<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is 123.4
+PASS: description is undefined
+
+Testing response header: -->metric;dur="123.4"<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is 123.4
+PASS: description is undefined
+
+Testing response header: -->metric;desc=description<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is "description"
+
+Testing response header: -->metric;desc="description"<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is "description"
+
+Testing response header: -->metric;dur=123.4;desc=description<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is 123.4
+PASS: description is "description"
+
+Testing response header: -->metric;desc=description;dur=123.4<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is 123.4
+PASS: description is "description"
+
+Testing response header: -->aB3!#$%&'*+-.^_`|~<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "aB3!#$%&'*+-.^_`|~"
+PASS: duration is undefined
+PASS: description is undefined
+
+Testing response header: -->metric;desc="descr;,=iption";dur=123.4<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is 123.4
+PASS: description is "descr;,=iption"
+
+Testing response header: -->metric ; <--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is undefined
+
+Testing response header: -->metric , <--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is undefined
+
+Testing response header: -->metric ; dur = 123.4 ; desc = description<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is 123.4
+PASS: description is "description"
+
+Testing response header: -->metric ; desc = description ; dur = 123.4<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is 123.4
+PASS: description is "description"
+
+Testing response header: -->metric;desc = "description"<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is "description"
+
+Testing response header: -->metric	;	<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is undefined
+
+Testing response header: -->metric	,	<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is undefined
+
+Testing response header: -->metric	;	dur	=	123.4	;	desc	=	description<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is 123.4
+PASS: description is "description"
+
+Testing response header: -->metric	;	desc	=	description	;	dur	=	123.4<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is 123.4
+PASS: description is "description"
+
+Testing response header: -->metric;desc	=	"description"<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is "description"
+
+Testing response header: -->metric1;dur=12.3;desc=description1,metric2;dur=45.6;desc=description2,metric3;dur=78.9;desc=description3<--
+PASS: Parsed ServerTimingEntry count has expected results count of 3.
+PASS: name is "metric1"
+PASS: duration is 12.3
+PASS: description is "description1"
+PASS: name is "metric2"
+PASS: duration is 45.6
+PASS: description is "description2"
+PASS: name is "metric3"
+PASS: duration is 78.9
+PASS: description is "description3"
+
+Testing response header: -->metric1,metric2 ,metric3, metric4 , metric5<--
+PASS: Parsed ServerTimingEntry count has expected results count of 5.
+PASS: name is "metric1"
+PASS: duration is undefined
+PASS: description is undefined
+PASS: name is "metric2"
+PASS: duration is undefined
+PASS: description is undefined
+PASS: name is "metric3"
+PASS: duration is undefined
+PASS: description is undefined
+PASS: name is "metric4"
+PASS: duration is undefined
+PASS: description is undefined
+PASS: name is "metric5"
+PASS: duration is undefined
+PASS: description is undefined
+
+Testing response header: -->metric;desc="description"<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is "description"
+
+Testing response header: -->metric;desc="	 description 	"<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is "\t description \t"
+
+Testing response header: -->metric;desc="descr\"iption"<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is "descr\"iption"
+
+Testing response header: -->metric;desc=\<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is ""
+
+Testing response header: -->metric;desc="<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is ""
+
+Testing response header: -->metric;desc=\\<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is ""
+
+Testing response header: -->metric;desc=\"<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is ""
+
+Testing response header: -->metric;desc="\<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is ""
+
+Testing response header: -->metric;desc=""<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is ""
+
+Testing response header: -->metric;desc=\\\<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is ""
+
+Testing response header: -->metric;desc=\\"<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is ""
+
+Testing response header: -->metric;desc=\"\<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is ""
+
+Testing response header: -->metric;desc=\""<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is ""
+
+Testing response header: -->metric;desc="\\<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is ""
+
+Testing response header: -->metric;desc="\"<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is ""
+
+Testing response header: -->metric;desc=""\<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is ""
+
+Testing response header: -->metric;desc="""<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is ""
+
+Testing response header: -->metric;desc=\\\\<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is ""
+
+Testing response header: -->metric;desc=\\\"<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is ""
+
+Testing response header: -->metric;desc=\\"\<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is ""
+
+Testing response header: -->metric;desc=\\""<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is ""
+
+Testing response header: -->metric;desc=\"\\<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is ""
+
+Testing response header: -->metric;desc=\"\"<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is ""
+
+Testing response header: -->metric;desc=\""\<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is ""
+
+Testing response header: -->metric;desc=\"""<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is ""
+
+Testing response header: -->metric;desc="\\\<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is ""
+
+Testing response header: -->metric;desc="\\"<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is "\\"
+
+Testing response header: -->metric;desc="\"\<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is ""
+
+Testing response header: -->metric;desc="\""<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is "\""
+
+Testing response header: -->metric;desc=""\\<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is ""
+
+Testing response header: -->metric;desc=""\"<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is ""
+
+Testing response header: -->metric;desc="""\<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is ""
+
+Testing response header: -->metric;desc=""""<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is ""
+
+Testing response header: -->metric;dur=12.3;desc=description1,metric;dur=45.6;desc=description2<--
+PASS: Parsed ServerTimingEntry count has expected results count of 2.
+PASS: name is "metric"
+PASS: duration is 12.3
+PASS: description is "description1"
+PASS: name is "metric"
+PASS: duration is 45.6
+PASS: description is "description2"
+
+Testing response header: -->metric;DuR=123.4;DeSc=description<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is 123.4
+PASS: description is "description"
+
+Testing response header: -->MeTrIc;desc=DeScRiPtIoN<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "MeTrIc"
+PASS: duration is undefined
+PASS: description is "DeScRiPtIoN"
+
+Testing response header: -->metric;dur=foo<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is 0
+PASS: description is undefined
+
+Testing response header: -->metric;dur="foo"<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is 0
+PASS: description is undefined
+
+WARN: Unknown Server-Timing parameter: foo bar
+WARN: Unknown Server-Timing parameter: foo bar
+WARN: Unknown Server-Timing parameter: foo bar
+Testing response header: -->metric1;foo=bar;desc=description;foo=bar;dur=123.4;foo=bar,metric2<--
+PASS: Parsed ServerTimingEntry count has expected results count of 2.
+PASS: name is "metric1"
+PASS: duration is 123.4
+PASS: description is "description"
+PASS: name is "metric2"
+PASS: duration is undefined
+PASS: description is undefined
+
+WARN: Ignoring redundant duration.
+Testing response header: -->metric;dur=123.4;dur=567.8<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is 123.4
+PASS: description is undefined
+
+WARN: Ignoring redundant duration.
+Testing response header: -->metric;dur=foo;dur=567.8<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is 0
+PASS: description is undefined
+
+WARN: Ignoring redundant description.
+Testing response header: -->metric;desc=description1;desc=description2<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is "description1"
+
+WARN: Ignoring redundant duration.
+Testing response header: -->metric;dur;dur=123.4;desc=description<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is 0
+PASS: description is "description"
+
+WARN: Ignoring redundant duration.
+Testing response header: -->metric;dur=;dur=123.4;desc=description<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is 0
+PASS: description is "description"
+
+WARN: Ignoring redundant description.
+Testing response header: -->metric;desc;desc=description;dur=123.4<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is 123.4
+PASS: description is ""
+
+WARN: Ignoring redundant description.
+Testing response header: -->metric;desc=;desc=description;dur=123.4<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is 123.4
+PASS: description is ""
+
+Testing response header: -->metric;desc=d1 d2;dur=123.4<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is 123.4
+PASS: description is "d1"
+
+Testing response header: -->metric1;desc=d1 d2,metric2<--
+PASS: Parsed ServerTimingEntry count has expected results count of 2.
+PASS: name is "metric1"
+PASS: duration is undefined
+PASS: description is "d1"
+PASS: name is "metric2"
+PASS: duration is undefined
+PASS: description is undefined
+
+Testing response header: -->metric;desc="d1" d2;dur=123.4<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is 123.4
+PASS: description is "d1"
+
+Testing response header: -->metric1;desc="d1" d2,metric2<--
+PASS: Parsed ServerTimingEntry count has expected results count of 2.
+PASS: name is "metric1"
+PASS: duration is undefined
+PASS: description is "d1"
+PASS: name is "metric2"
+PASS: duration is undefined
+PASS: description is undefined
+
+Testing response header: -->metric==   ""foo;dur=123.4<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is undefined
+
+Testing response header: -->metric1==   ""foo,metric2<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric1"
+PASS: duration is undefined
+PASS: description is undefined
+
+Testing response header: -->metric;dur foo=12<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is 0
+PASS: description is undefined
+
+WARN: Unknown Server-Timing parameter: foo 
+Testing response header: -->metric;foo dur=12<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is undefined
+PASS: description is undefined
+
+Testing response header: --> <--
+PASS: Parsed ServerTimingEntry count has expected results count of 0.
+
+Testing response header: -->=<--
+PASS: Parsed ServerTimingEntry count has expected results count of 0.
+
+Testing response header: -->[<--
+PASS: Parsed ServerTimingEntry count has expected results count of 0.
+
+Testing response header: -->]<--
+PASS: Parsed ServerTimingEntry count has expected results count of 0.
+
+Testing response header: -->;<--
+PASS: Parsed ServerTimingEntry count has expected results count of 0.
+
+Testing response header: -->,<--
+PASS: Parsed ServerTimingEntry count has expected results count of 0.
+
+Testing response header: -->=;<--
+PASS: Parsed ServerTimingEntry count has expected results count of 0.
+
+Testing response header: -->;=<--
+PASS: Parsed ServerTimingEntry count has expected results count of 0.
+
+Testing response header: -->=,<--
+PASS: Parsed ServerTimingEntry count has expected results count of 0.
+
+Testing response header: -->,=<--
+PASS: Parsed ServerTimingEntry count has expected results count of 0.
+
+Testing response header: -->;,<--
+PASS: Parsed ServerTimingEntry count has expected results count of 0.
+
+Testing response header: -->,;<--
+PASS: Parsed ServerTimingEntry count has expected results count of 0.
+
+Testing response header: -->=;,<--
+PASS: Parsed ServerTimingEntry count has expected results count of 0.
+
+Testing response header: -->metric;	desc=	tabs-should-get-trimmed	;dur=	42	<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is 42
+PASS: description is "tabs-should-get-trimmed"
+
+Testing response header: -->     metric;dur=123.4;desc=description<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is 123.4
+PASS: description is "description"
+
+Testing response header: -->	metric;dur=123.4;desc=description<--
+PASS: Parsed ServerTimingEntry count has expected results count of 1.
+PASS: name is "metric"
+PASS: duration is 123.4
+PASS: description is "description"
+
+

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we can select flex content when they share the same line.</title>
+<style>
+.line {
+  display: flex;
+  color: transparent;
+  font-size: 10px;
+}
+
+div::selection {
+  background-color: green;
+}
+</style>
+</head>
+<body>
+<div class="line"><div>&nbsp</div><div>&nbsp</div></div>
+<script>
+  document.execCommand('selectAll', false, null);
+</script>
+</body>
+</html>

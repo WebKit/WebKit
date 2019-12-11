@@ -1,0 +1,7 @@
+2d.state.saverestore.shadowOffsetY
+
+save()/restore() works for shadowOffsetY
+
+
+FAIL save()/restore() works for shadowOffsetY null is not an object (evaluating 'ctx.shadowOffsetY')
+

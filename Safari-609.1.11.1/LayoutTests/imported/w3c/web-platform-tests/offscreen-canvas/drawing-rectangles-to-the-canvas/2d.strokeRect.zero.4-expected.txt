@@ -1,0 +1,7 @@
+2d.strokeRect.zero.4
+
+strokeRect of Nx0 pixels draws a closed line with no caps
+
+
+FAIL strokeRect of Nx0 pixels draws a closed line with no caps null is not an object (evaluating 'ctx.strokeStyle = '#f00'')
+

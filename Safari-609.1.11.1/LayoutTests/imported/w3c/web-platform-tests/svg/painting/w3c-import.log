@@ -1,0 +1,42 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/currentColor-override-pserver-fallback-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/currentColor-override-pserver-fallback.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/currentColor-override-pserver-fill-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/currentColor-override-pserver-fill.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/currentColor-override-pserver-stroke-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/currentColor-override-pserver-stroke.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/foreignObject-overflow-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/foreignObject-overflow.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/inheritance.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/marker-001-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/marker-001.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/marker-002-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/marker-002.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/marker-003-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/marker-003.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/marker-004-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/marker-004.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/marker-005-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/marker-005.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/marker-006-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/marker-006.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/marker-007-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/marker-007.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/marker-008-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/marker-008.svg

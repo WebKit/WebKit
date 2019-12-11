@@ -1,0 +1,7 @@
+2d.state.saverestore.stackdepth
+
+save()/restore() stack depth is not unreasonably limited
+
+
+FAIL save()/restore() stack depth is not unreasonably limited null is not an object (evaluating 'ctx.save')
+

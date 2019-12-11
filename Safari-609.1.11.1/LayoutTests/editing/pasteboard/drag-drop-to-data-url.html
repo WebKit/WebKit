@@ -1,0 +1,60 @@
+<html> 
+<head>
+<script src=../editing.js type="text/javascript"></script>
+<script>
+
+var framex;
+var framey;
+
+function editingTest() {
+  
+    if (!window.testRunner) {
+        alert('This test requires testRunner to run!');
+        return;
+    }
+
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+
+    var t = document.getElementById("targetframe");
+    framex = t.offsetLeft + 10;
+    framey = t.offsetTop + t.offsetHeight / 2;
+
+    // Drag 'hello'
+    dragDropIt();
+}
+
+
+function dragDropIt() {
+    var e = document.getElementById("dragme");
+    window.getSelection().setBaseAndExtent(e, 0, e, 4); 
+    x = e.offsetLeft + 10;
+    y = e.offsetTop + e.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    
+    eventSender.leapForward(500);
+    eventSender.mouseMoveTo(framex, framey);
+    setTimeout(dropIt, 100);
+}
+
+function dropIt() {
+
+    // Drop it off to the frame
+    eventSender.mouseUp();
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+
+</script>
+<title>Check you can't drag into a data URL</title> 
+</head>
+<body>
+
+<p>Check you can't drag into a data URL</p>
+<div><span id="dragme">hello</span></div>
+<iframe id=targetframe src="data:text/html;charset=utf-8,%3Cbody%20contentEditable%3Dtrue%3E%0D%0A"></iframe>
+<script>runEditingTest();</script>
+</body>
+</html>

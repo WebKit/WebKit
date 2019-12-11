@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we don't assert on tables with min/max-content values.</title>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+PASS if no assert in debug.
+<table style="-webkit-writing-mode: vertical-rl;">
+<tbody>
+	<tr style="width: min-content;"></tr> 
+	<tr style="width: max-content;"></tr> 
+	<tr style="width: calc(50px - 10%);"></tr> 
+</tbody>
+</table>
+</body>
+</html>

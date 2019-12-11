@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Testing local audio capture playback causes "playing" event to fire</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+    <script>
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    var heardHum = false;
+    var heardBop = false;
+    var heardBip = false;
+
+    var test = async_test(() => {
+        navigator.mediaDevices.getUserMedia({audio: true}).then((stream) => {
+            var context = new webkitAudioContext();
+            var sourceNode = context.createMediaStreamSource(stream);
+            var analyser = context.createAnalyser();
+            var gain = context.createGain();
+
+            analyser.fftSize = 2048;
+            analyser.smoothingTimeConstant = 0;
+            analyser.minDecibels = -100;
+            analyser.maxDecibels = 0;
+            gain.gain.value = 0;
+
+            sourceNode.connect(analyser);
+            analyser.connect(gain);
+            gain.connect(context.destination);
+
+            function analyse() {
+                var freqDomain = new Uint8Array(analyser.frequencyBinCount);
+                analyser.getByteFrequencyData(freqDomain);
+
+                var hasFrequency = expectedFrequency => {
+                    var bin = Math.floor(expectedFrequency * analyser.fftSize / context.sampleRate);
+                    return bin < freqDomain.length && freqDomain[bin] >= 150;
+                };
+
+                if (!heardHum)
+                    heardHum = hasFrequency(150);
+
+                if (!heardBip)
+                    heardBip = hasFrequency(1500);
+
+                if (!heardBop)
+                    heardBop = hasFrequency(500);
+
+                if (heardHum && heardBip && heardBop)
+                    done();
+            };
+
+            var done = () => {
+                clearTimeout(timeout);
+                clearInterval(interval);
+
+                assert_true(heardHum);
+                assert_true(heardBip);
+                assert_true(heardBop);
+                test.done();
+            };
+
+            var timeout = setTimeout(() => { done(); }, 3000);
+            var interval = setInterval(() => { analyse(); }, 1000 / 30);
+            analyse();
+        });
+    }, "Basic getUserMedia to Web Audio test");
+    </script>
+</body>
+</html>

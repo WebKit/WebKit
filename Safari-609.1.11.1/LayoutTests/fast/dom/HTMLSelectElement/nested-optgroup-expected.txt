@@ -1,0 +1,10 @@
+Test that options in nested optgroup elements cannot be selected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS select.value is "PASS"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

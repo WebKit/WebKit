@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 26: Not allowed to drag local resource: foobar
+ALERT: PASS
+Dragme 

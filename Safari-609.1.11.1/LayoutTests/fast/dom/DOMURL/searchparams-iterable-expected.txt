@@ -1,0 +1,19 @@
+Tests that URLSearchParams is iterable.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pair.length is 2
+PASS pair[0] is "key1"
+PASS pair[1] is "value1"
+PASS pair.length is 2
+PASS pair[0] is "key2"
+PASS pair[1] is "value2"
+PASS pair.length is 2
+PASS pair[0] is "key3"
+PASS pair[1] is "value3"
+PASS iteration_count is 3
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

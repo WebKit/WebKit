@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 28: 1. Updating the layout with an embed object inside an iframe
+CONSOLE MESSAGE: line 22: 2. beforeload for the object fires and dirties the style tree
+CONSOLE MESSAGE: line 29: Tried to use an unsupported plug-in.
+CONSOLE MESSAGE: line 30: 3. Updated layout. The test passed.
+This tests entering HTMLPlugInElement::isReplacementObscured() while the top document's style tree is dirty.
+WebKit should update the layout of all documents and should not hit any debug assertions.
+
+PASS

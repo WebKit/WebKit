@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Media Queries - viewport units support</title>
+  <script src="../../resources/testharness.js"></script>
+  <script src="../../resources/testharnessreport.js"></script>
+  <script>
+    test(function(){
+      assert_true(matchMedia('(max-width: 100vw)').matches);
+    }, "vw unit sanity check");
+    test(function(){
+      assert_true(matchMedia('(max-height: 100vh)').matches);
+    }, "vh unit sanity check");
+    test(function(){
+      assert_true(matchMedia('(max-width: 100vmax)').matches);
+    }, "vmax unit sanity check");
+    test(function(){
+      assert_true(matchMedia('(max-height: 100vmin)').matches);
+    }, "vmin unit sanity check");
+  </script>
+</head>
+<body>
+  <h1>Description</h1>
+  <p>This tests validates that the viewport units work in media queries.</p>
+</body>
+</html>

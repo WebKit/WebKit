@@ -1,0 +1,15 @@
+Check whether or not sanitization is performed on user input in text-input elements.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS focusAndType("email", "   foobar@example.com   ").value is "foobar@example.com"
+PASS focusAndType("password", "   foobar   ").value is "   foobar   "
+PASS focusAndType("search", "   foobar   ").value is "   foobar   "
+PASS focusAndType("telephone", "   123-456-7890   ").value is "   123-456-7890   "
+PASS focusAndType("text", "   foobar   ").value is "   foobar   "
+PASS focusAndType("url", "   https://foobar.example.com   ").value is "   https://foobar.example.com   "
+PASS successfullyParsed is true
+
+TEST COMPLETE
+         

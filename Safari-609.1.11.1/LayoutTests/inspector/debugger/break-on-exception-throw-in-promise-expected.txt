@@ -1,0 +1,51 @@
+CONSOLE MESSAGE: line 36: testThrowingInPromise
+CONSOLE MESSAGE: line 38: in promise
+CONSOLE MESSAGE: line 7: throwing TestError
+CONSOLE MESSAGE: line 8: Unhandled Promise Rejection: TestError
+CONSOLE MESSAGE: line 55: testThrowingInPromiseThen
+CONSOLE MESSAGE: line 57: in promise
+CONSOLE MESSAGE: line 60: in promise.then
+CONSOLE MESSAGE: line 7: throwing TestError
+CONSOLE MESSAGE: line 8: Unhandled Promise Rejection: TestError
+CONSOLE MESSAGE: line 66: testThrowingInPromiseThenWithCatch
+CONSOLE MESSAGE: line 68: in promise
+CONSOLE MESSAGE: line 71: in promise.then
+CONSOLE MESSAGE: line 7: throwing TestError
+CONSOLE MESSAGE: line 74: in promise.catch
+CONSOLE MESSAGE: line 75: DONE
+CONSOLE MESSAGE: line 44: testThrowingInPromiseWithCatch
+CONSOLE MESSAGE: line 46: in promise
+CONSOLE MESSAGE: line 7: throwing TestError
+CONSOLE MESSAGE: line 49: in promise.catch
+CONSOLE MESSAGE: line 50: DONE
+CONSOLE MESSAGE: line 80: testThrowingInPromiseWithRethrowInCatch
+CONSOLE MESSAGE: line 82: in promise
+CONSOLE MESSAGE: line 7: throwing TestError
+CONSOLE MESSAGE: line 85: in promise.catch
+CONSOLE MESSAGE: line 86: Unhandled Promise Rejection: TestError
+Checking pause locations within Promises when pausing on all exceptions.
+
+
+== Running test suite: BreakOnAnyException.Promise
+-- Running test case: BreakOnAnyException.Promise.ExceptionInPromiseConstructor
+PASS: Should pause for exception.
+PAUSE AT doThrow:8:22
+
+-- Running test case: BreakOnAnyException.Promise.ExceptionInPromiseThenWithoutCatch
+PASS: Should pause for exception.
+PAUSE AT doThrow:8:22
+
+-- Running test case: BreakOnAnyException.Promise.ExceptionInPromiseThenWithCatch
+PASS: Should pause for exception.
+PAUSE AT doThrow:8:22
+
+-- Running test case: BreakOnAnyException.Promise.ExceptionInPromiseCatch
+PASS: Should pause for exception.
+PAUSE AT doThrow:8:22
+
+-- Running test case: BreakOnAnyException.Promise.ExceptionInPromiseThenAndRethrownInCatch
+PASS: Should pause for exception.
+PAUSE AT doThrow:8:22
+PASS: Should pause for exception.
+PAUSE AT promiseCatch:86:16
+

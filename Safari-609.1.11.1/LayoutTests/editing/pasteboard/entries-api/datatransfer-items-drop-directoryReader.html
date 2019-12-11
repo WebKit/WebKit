@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../editing.js"></script>
+</head>
+<body>
+<div id="dropzone" style="width: 200px; height: 200px; background-color: grey;"></div>
+<script>
+description("Basic test coverage for fileSystemDirectoryReader.readEntries()");
+jsTestIsAsync = true;
+
+function getEntriesAsPromise(dirEntry) {
+    return new Promise((resolve, reject) => {
+        let result = [];
+        let reader = dirEntry.createReader();
+        let doBatch = () => {
+            reader.readEntries(entries => {
+            if (entries.length > 0) {
+                entries.forEach(e => result.push(e));
+                doBatch();
+            } else {
+                resolve(result.sort(function (a, b) {
+                    if (a.name > b.name)
+                        return 1;
+                    else if (a.name < b.name)
+                        return -1;
+                    return 0;
+                }));
+            }
+        }, reject);
+    };
+    doBatch();
+  });
+}
+
+var dropzone = document.getElementById('dropzone');
+dropzone.ondrop = function(e) {
+    e.preventDefault();
+    dataTransfer = e.dataTransfer;
+
+    shouldBe("dataTransfer.items.length", "1");
+
+    entry = dataTransfer.items[0].webkitGetAsEntry();
+    shouldBeTrue("entry.isDirectory");
+    shouldBeEqualToString("entry.name", "testFiles");
+    shouldBeEqualToString("entry.fullPath", "/testFiles");
+
+    getEntriesAsPromise(entry).then(function(entries) {
+        childEntries = entries;
+        shouldBe("childEntries.length", "4");
+        shouldBeEqualToString("childEntries[0].name", "file1.txt");
+        shouldBeEqualToString("childEntries[0].fullPath", "/testFiles/file1.txt");
+        shouldBeTrue("childEntries[0].isFile");
+
+        shouldBeEqualToString("childEntries[1].name", "file2.txt");
+        shouldBeEqualToString("childEntries[1].fullPath", "/testFiles/file2.txt");
+        shouldBeTrue("childEntries[1].isFile");
+
+        shouldBeEqualToString("childEntries[2].name", "subfolder1");
+        shouldBeEqualToString("childEntries[2].fullPath", "/testFiles/subfolder1");
+        shouldBeTrue("childEntries[2].isDirectory");
+
+        shouldBeEqualToString("childEntries[3].name", "subfolder2");
+        shouldBeEqualToString("childEntries[3].fullPath", "/testFiles/subfolder2");
+        shouldBeTrue("childEntries[3].isDirectory");
+
+        getEntriesAsPromise(childEntries[2]).then(function(entries) {
+            grandChildEntries = entries;
+            shouldBe("grandChildEntries.length", "1");
+            shouldBeEqualToString("grandChildEntries[0].name", "file3.txt");
+            shouldBeEqualToString("grandChildEntries[0].fullPath", "/testFiles/subfolder1/file3.txt");
+            shouldBeTrue("grandChildEntries[0].isFile");
+
+            getEntriesAsPromise(childEntries[3]).then(function(entries) {
+                grandChildEntries = entries;
+                shouldBe("grandChildEntries.length", "2");
+                shouldBeEqualToString("grandChildEntries[0].name", "file4.txt");
+                shouldBeEqualToString("grandChildEntries[0].fullPath", "/testFiles/subfolder2/file4.txt");
+                shouldBeTrue("grandChildEntries[0].isFile");
+
+                shouldBeEqualToString("grandChildEntries[1].name", "subfolder2a");
+                shouldBeEqualToString("grandChildEntries[1].fullPath", "/testFiles/subfolder2/subfolder2a");
+                shouldBeTrue("grandChildEntries[1].isDirectory");
+
+                getEntriesAsPromise(grandChildEntries[1]).then(function(entries) {
+                    greatGrandChildEntries = entries;
+                    shouldBe("greatGrandChildEntries.length", "1");
+                    shouldBeEqualToString("greatGrandChildEntries[0].name", "file5.txt");
+                    shouldBeEqualToString("greatGrandChildEntries[0].fullPath", "/testFiles/subfolder2/subfolder2a/file5.txt");
+                    shouldBeTrue("greatGrandChildEntries[0].isFile");
+
+                    finishJSTest();
+                }, function(e) {
+                    testFailed("readEntries failed: " + e);
+                    finishJSTest();
+                });
+            }, function(e) {
+                testFailed("readEntries failed: " + e);
+                finishJSTest();
+            });
+        }, function(e) {
+            testFailed("readEntries failed: " + e);
+            finishJSTest();
+        });
+    }, function(e) {
+        testFailed("readEntries failed: " + e);
+        finishJSTest();
+    });
+};
+
+dropzone.ondragover = function(ev) {
+    ev.preventDefault();
+}
+
+onload = function() {
+    dragFilesOntoElement(dropzone, ['../../../fast/forms/file/entries-api/resources/testFiles']);
+}
+</script>
+</body>
+</html>

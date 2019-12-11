@@ -1,0 +1,40 @@
+<style>
+@font-face {
+    font-family: 'SVGraffiti';
+    src: url("../../svg/custom/resources/graffiti.svg") format(svg)
+}
+</style>
+<div>
+This test makes sure that input elements get rendered with
+a sane width. You should see five time input elements, followed by five "PASS"es.
+</div>
+<div style="font-family: SVGraffiti;">
+<input id="i" type="time">
+<input id="d" type="date">
+<input id="dt" type="datetime">
+<input id="dtl" type="datetime-local">
+<input id="m" type="month">
+</div>
+<div id="console"></div>
+<script>
+function test(inputId) {
+    if (document.getElementById("i").offsetWidth > 50)
+        return "Pass"
+    else
+        return "Fail"
+}
+
+window.setTimeout((function() {
+    document.getElementById("console").textContent += test("i") + " ";
+    document.getElementById("console").textContent += test("d") + " ";
+    document.getElementById("console").textContent += test("dt") + " ";
+    document.getElementById("console").textContent += test("dtl") + " ";
+    document.getElementById("console").textContent += test("m");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}), 0);
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+</script>

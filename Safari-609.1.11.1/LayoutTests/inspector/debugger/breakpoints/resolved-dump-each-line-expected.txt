@@ -1,0 +1,4490 @@
+Checking resolved breakpoint locations for each line in a script.
+
+
+== Running test suite: Debugger.resolvedBreakpoint.dumpEachLine
+-- Running test case: Debugger.resolvedBreakpoint.dumpEachLine.General
+
+INSERTING AT: 0:0
+PAUSES AT: 0:0
+-=>   0    |let a=function(){return 0}
+      1    let b=function(){return 0}
+      2    let c=function(){return 0}
+      3    let arr=[];
+
+
+INSERTING AT: 1:0
+PAUSES AT: 1:0
+      0    let a=function(){return 0}
+-=>   1    |let b=function(){return 0}
+      2    let c=function(){return 0}
+      3    let arr=[];
+      4    let obj={};
+
+
+INSERTING AT: 2:0
+PAUSES AT: 2:0
+      0    let a=function(){return 0}
+      1    let b=function(){return 0}
+-=>   2    |let c=function(){return 0}
+      3    let arr=[];
+      4    let obj={};
+      5    
+
+
+INSERTING AT: 3:0
+PAUSES AT: 3:0
+      0    let a=function(){return 0}
+      1    let b=function(){return 0}
+      2    let c=function(){return 0}
+-=>   3    |let arr=[];
+      4    let obj={};
+      5    
+      6    // Control flow
+
+
+INSERTING AT: 4:0
+PAUSES AT: 4:0
+      1    let b=function(){return 0}
+      2    let c=function(){return 0}
+      3    let arr=[];
+-=>   4    |let obj={};
+      5    
+      6    // Control flow
+      7    
+
+
+INSERTING AT: 5:0
+PAUSES AT: 8:4
+      2    let c=function(){return 0}
+      3    let arr=[];
+      4    let obj={};
+ ->   5    #
+      6    // Control flow
+      7    
+ =>   8    if (|0)
+      9        a();
+     10    
+     11    if (0) {
+
+
+INSERTING AT: 6:0
+PAUSES AT: 8:4
+      3    let arr=[];
+      4    let obj={};
+      5    
+ ->   6    #// Control flow
+      7    
+ =>   8    if (|0)
+      9        a();
+     10    
+     11    if (0) {
+
+
+INSERTING AT: 7:0
+PAUSES AT: 8:4
+      4    let obj={};
+      5    
+      6    // Control flow
+ ->   7    #
+ =>   8    if (|0)
+      9        a();
+     10    
+     11    if (0) {
+
+
+INSERTING AT: 8:0
+PAUSES AT: 8:4
+      5    
+      6    // Control flow
+      7    
+-=>   8    #if (|0)
+      9        a();
+     10    
+     11    if (0) {
+
+
+INSERTING AT: 9:0
+PAUSES AT: 9:4
+      6    // Control flow
+      7    
+      8    if (0)
+-=>   9    #    |a();
+     10    
+     11    if (0) {
+     12        a();
+
+
+INSERTING AT: 10:0
+PAUSES AT: 11:4
+      7    
+      8    if (0)
+      9        a();
+ ->  10    #
+ =>  11    if (|0) {
+     12        a();
+     13    }
+     14    
+
+
+INSERTING AT: 11:0
+PAUSES AT: 11:4
+      8    if (0)
+      9        a();
+     10    
+-=>  11    #if (|0) {
+     12        a();
+     13    }
+     14    
+
+
+INSERTING AT: 12:0
+PAUSES AT: 12:4
+      9        a();
+     10    
+     11    if (0) {
+-=>  12    #    |a();
+     13    }
+     14    
+     15    if (0)
+
+
+INSERTING AT: 13:0
+PAUSES AT: 15:4
+     10    
+     11    if (0) {
+     12        a();
+ ->  13    #}
+     14    
+ =>  15    if (|0)
+     16        a();
+     17    else if (0)
+     18        a();
+
+
+INSERTING AT: 14:0
+PAUSES AT: 15:4
+     11    if (0) {
+     12        a();
+     13    }
+ ->  14    #
+ =>  15    if (|0)
+     16        a();
+     17    else if (0)
+     18        a();
+
+
+INSERTING AT: 15:0
+PAUSES AT: 15:4
+     12        a();
+     13    }
+     14    
+-=>  15    #if (|0)
+     16        a();
+     17    else if (0)
+     18        a();
+
+
+INSERTING AT: 16:0
+PAUSES AT: 16:4
+     13    }
+     14    
+     15    if (0)
+-=>  16    #    |a();
+     17    else if (0)
+     18        a();
+     19    else
+
+
+INSERTING AT: 17:0
+PAUSES AT: 17:9
+     14    
+     15    if (0)
+     16        a();
+-=>  17    #else if (|0)
+     18        a();
+     19    else
+     20        a();
+
+
+INSERTING AT: 18:0
+PAUSES AT: 18:4
+     15    if (0)
+     16        a();
+     17    else if (0)
+-=>  18    #    |a();
+     19    else
+     20        a();
+     21    
+
+
+INSERTING AT: 19:0
+PAUSES AT: 20:4
+     16        a();
+     17    else if (0)
+     18        a();
+ ->  19    #else
+ =>  20        |a();
+     21    
+     22    a() ? b() : c()
+     23    
+
+
+INSERTING AT: 20:0
+PAUSES AT: 20:4
+     17    else if (0)
+     18        a();
+     19    else
+-=>  20    #    |a();
+     21    
+     22    a() ? b() : c()
+     23    
+
+
+INSERTING AT: 21:0
+PAUSES AT: 22:0
+     18        a();
+     19    else
+     20        a();
+ ->  21    #
+ =>  22    |a() ? b() : c()
+     23    
+     24    // Loops
+     25    
+
+
+INSERTING AT: 22:0
+PAUSES AT: 22:0
+     19    else
+     20        a();
+     21    
+-=>  22    |a() ? b() : c()
+     23    
+     24    // Loops
+     25    
+
+
+INSERTING AT: 23:0
+PAUSES AT: 26:7
+     20        a();
+     21    
+     22    a() ? b() : c()
+ ->  23    #
+     24    // Loops
+     25    
+ =>  26    while (|0)
+     27        a();
+     28    
+     29    while (0) {
+
+
+INSERTING AT: 24:0
+PAUSES AT: 26:7
+     21    
+     22    a() ? b() : c()
+     23    
+ ->  24    #// Loops
+     25    
+ =>  26    while (|0)
+     27        a();
+     28    
+     29    while (0) {
+
+
+INSERTING AT: 25:0
+PAUSES AT: 26:7
+     22    a() ? b() : c()
+     23    
+     24    // Loops
+ ->  25    #
+ =>  26    while (|0)
+     27        a();
+     28    
+     29    while (0) {
+
+
+INSERTING AT: 26:0
+PAUSES AT: 26:7
+     23    
+     24    // Loops
+     25    
+-=>  26    #while (|0)
+     27        a();
+     28    
+     29    while (0) {
+
+
+INSERTING AT: 27:0
+PAUSES AT: 27:4
+     24    // Loops
+     25    
+     26    while (0)
+-=>  27    #    |a();
+     28    
+     29    while (0) {
+     30        a();
+
+
+INSERTING AT: 28:0
+PAUSES AT: 29:7
+     25    
+     26    while (0)
+     27        a();
+ ->  28    #
+ =>  29    while (|0) {
+     30        a();
+     31    }
+     32    
+
+
+INSERTING AT: 29:0
+PAUSES AT: 29:7
+     26    while (0)
+     27        a();
+     28    
+-=>  29    #while (|0) {
+     30        a();
+     31    }
+     32    
+
+
+INSERTING AT: 30:0
+PAUSES AT: 30:4
+     27        a();
+     28    
+     29    while (0) {
+-=>  30    #    |a();
+     31    }
+     32    
+     33    do {
+
+
+INSERTING AT: 31:0
+PAUSES AT: 34:4
+     28    
+     29    while (0) {
+     30        a();
+ ->  31    #}
+     32    
+     33    do {
+ =>  34        |a();
+     35    } while (0);
+     36    
+     37    for (a(); b(); c())
+
+
+INSERTING AT: 32:0
+PAUSES AT: 34:4
+     29    while (0) {
+     30        a();
+     31    }
+ ->  32    #
+     33    do {
+ =>  34        |a();
+     35    } while (0);
+     36    
+     37    for (a(); b(); c())
+
+
+INSERTING AT: 33:0
+PAUSES AT: 34:4
+     30        a();
+     31    }
+     32    
+ ->  33    #do {
+ =>  34        |a();
+     35    } while (0);
+     36    
+     37    for (a(); b(); c())
+
+
+INSERTING AT: 34:0
+PAUSES AT: 34:4
+     31    }
+     32    
+     33    do {
+-=>  34    #    |a();
+     35    } while (0);
+     36    
+     37    for (a(); b(); c())
+
+
+INSERTING AT: 35:0
+PAUSES AT: 35:9
+     32    
+     33    do {
+     34        a();
+-=>  35    #} while (|0);
+     36    
+     37    for (a(); b(); c())
+     38        break;
+
+
+INSERTING AT: 36:0
+PAUSES AT: 37:5
+     33    do {
+     34        a();
+     35    } while (0);
+ ->  36    #
+ =>  37    for (|a(); b(); c())
+     38        break;
+     39    
+     40    for (; b(); c())
+
+
+INSERTING AT: 37:0
+PAUSES AT: 37:5
+     34        a();
+     35    } while (0);
+     36    
+-=>  37    #for (|a(); b(); c())
+     38        break;
+     39    
+     40    for (; b(); c())
+
+
+INSERTING AT: 38:0
+PAUSES AT: 38:4
+     35    } while (0);
+     36    
+     37    for (a(); b(); c())
+-=>  38    #    |break;
+     39    
+     40    for (; b(); c())
+     41        break;
+
+
+INSERTING AT: 39:0
+PAUSES AT: 40:7
+     36    
+     37    for (a(); b(); c())
+     38        break;
+ ->  39    #
+ =>  40    for (; |b(); c())
+     41        break;
+     42    
+     43    for (a(); b();)
+
+
+INSERTING AT: 40:0
+PAUSES AT: 40:7
+     37    for (a(); b(); c())
+     38        break;
+     39    
+-=>  40    #for (; |b(); c())
+     41        break;
+     42    
+     43    for (a(); b();)
+
+
+INSERTING AT: 41:0
+PAUSES AT: 41:4
+     38        break;
+     39    
+     40    for (; b(); c())
+-=>  41    #    |break;
+     42    
+     43    for (a(); b();)
+     44        break;
+
+
+INSERTING AT: 42:0
+PAUSES AT: 43:5
+     39    
+     40    for (; b(); c())
+     41        break;
+ ->  42    #
+ =>  43    for (|a(); b();)
+     44        break;
+     45    
+     46    for (a();; c())
+
+
+INSERTING AT: 43:0
+PAUSES AT: 43:5
+     40    for (; b(); c())
+     41        break;
+     42    
+-=>  43    #for (|a(); b();)
+     44        break;
+     45    
+     46    for (a();; c())
+
+
+INSERTING AT: 44:0
+PAUSES AT: 44:4
+     41        break;
+     42    
+     43    for (a(); b();)
+-=>  44    #    |break;
+     45    
+     46    for (a();; c())
+     47        break;
+
+
+INSERTING AT: 45:0
+PAUSES AT: 46:5
+     42    
+     43    for (a(); b();)
+     44        break;
+ ->  45    #
+ =>  46    for (|a();; c())
+     47        break;
+     48    
+     49    for (a();;)
+
+
+INSERTING AT: 46:0
+PAUSES AT: 46:5
+     43    for (a(); b();)
+     44        break;
+     45    
+-=>  46    #for (|a();; c())
+     47        break;
+     48    
+     49    for (a();;)
+
+
+INSERTING AT: 47:0
+PAUSES AT: 47:4
+     44        break;
+     45    
+     46    for (a();; c())
+-=>  47    #    |break;
+     48    
+     49    for (a();;)
+     50        break;
+
+
+INSERTING AT: 48:0
+PAUSES AT: 49:5
+     45    
+     46    for (a();; c())
+     47        break;
+ ->  48    #
+ =>  49    for (|a();;)
+     50        break;
+     51    
+     52    for (; b();)
+
+
+INSERTING AT: 49:0
+PAUSES AT: 49:5
+     46    for (a();; c())
+     47        break;
+     48    
+-=>  49    #for (|a();;)
+     50        break;
+     51    
+     52    for (; b();)
+
+
+INSERTING AT: 50:0
+PAUSES AT: 50:4
+     47        break;
+     48    
+     49    for (a();;)
+-=>  50    #    |break;
+     51    
+     52    for (; b();)
+     53        break;
+
+
+INSERTING AT: 51:0
+PAUSES AT: 52:7
+     48    
+     49    for (a();;)
+     50        break;
+ ->  51    #
+ =>  52    for (; |b();)
+     53        break;
+     54    
+     55    for (;; c())
+
+
+INSERTING AT: 52:0
+PAUSES AT: 52:7
+     49    for (a();;)
+     50        break;
+     51    
+-=>  52    #for (; |b();)
+     53        break;
+     54    
+     55    for (;; c())
+
+
+INSERTING AT: 53:0
+PAUSES AT: 53:4
+     50        break;
+     51    
+     52    for (; b();)
+-=>  53    #    |break;
+     54    
+     55    for (;; c())
+     56        break;
+
+
+INSERTING AT: 54:0
+PAUSES AT: 55:8
+     51    
+     52    for (; b();)
+     53        break;
+ ->  54    #
+ =>  55    for (;; |c())
+     56        break;
+     57    
+     58    for (;;)
+
+
+INSERTING AT: 55:0
+PAUSES AT: 55:8
+     52    for (; b();)
+     53        break;
+     54    
+-=>  55    #for (;; |c())
+     56        break;
+     57    
+     58    for (;;)
+
+
+INSERTING AT: 56:0
+PAUSES AT: 56:4
+     53        break;
+     54    
+     55    for (;; c())
+-=>  56    #    |break;
+     57    
+     58    for (;;)
+     59        break;
+
+
+INSERTING AT: 57:0
+PAUSES AT: 59:4
+     54    
+     55    for (;; c())
+     56        break;
+ ->  57    #
+     58    for (;;)
+ =>  59        |break;
+     60    
+     61    for (a(); b(); c()) {
+     62        break;
+
+
+INSERTING AT: 58:0
+PAUSES AT: 59:4
+     55    for (;; c())
+     56        break;
+     57    
+ ->  58    #for (;;)
+ =>  59        |break;
+     60    
+     61    for (a(); b(); c()) {
+     62        break;
+
+
+INSERTING AT: 59:0
+PAUSES AT: 59:4
+     56        break;
+     57    
+     58    for (;;)
+-=>  59    #    |break;
+     60    
+     61    for (a(); b(); c()) {
+     62        break;
+
+
+INSERTING AT: 60:0
+PAUSES AT: 61:5
+     57    
+     58    for (;;)
+     59        break;
+ ->  60    #
+ =>  61    for (|a(); b(); c()) {
+     62        break;
+     63    }
+     64    
+
+
+INSERTING AT: 61:0
+PAUSES AT: 61:5
+     58    for (;;)
+     59        break;
+     60    
+-=>  61    #for (|a(); b(); c()) {
+     62        break;
+     63    }
+     64    
+
+
+INSERTING AT: 62:0
+PAUSES AT: 62:4
+     59        break;
+     60    
+     61    for (a(); b(); c()) {
+-=>  62    #    |break;
+     63    }
+     64    
+     65    for (let x of arr)
+
+
+INSERTING AT: 63:0
+PAUSES AT: 65:14
+     60    
+     61    for (a(); b(); c()) {
+     62        break;
+ ->  63    #}
+     64    
+ =>  65    for (let x of |arr)
+     66        break;
+     67    
+     68    for (let x in obj)
+
+
+INSERTING AT: 64:0
+PAUSES AT: 65:14
+     61    for (a(); b(); c()) {
+     62        break;
+     63    }
+ ->  64    #
+ =>  65    for (let x of |arr)
+     66        break;
+     67    
+     68    for (let x in obj)
+
+
+INSERTING AT: 65:0
+PAUSES AT: 65:14
+     62        break;
+     63    }
+     64    
+-=>  65    #for (let x of |arr)
+     66        break;
+     67    
+     68    for (let x in obj)
+
+
+INSERTING AT: 66:0
+PAUSES AT: 66:4
+     63    }
+     64    
+     65    for (let x of arr)
+-=>  66    #    |break;
+     67    
+     68    for (let x in obj)
+     69        break;
+
+
+INSERTING AT: 67:0
+PAUSES AT: 68:14
+     64    
+     65    for (let x of arr)
+     66        break;
+ ->  67    #
+ =>  68    for (let x in |obj)
+     69        break;
+     70    
+     71    // Switch
+
+
+INSERTING AT: 68:0
+PAUSES AT: 68:14
+     65    for (let x of arr)
+     66        break;
+     67    
+-=>  68    #for (let x in |obj)
+     69        break;
+     70    
+     71    // Switch
+
+
+INSERTING AT: 69:0
+PAUSES AT: 69:4
+     66        break;
+     67    
+     68    for (let x in obj)
+-=>  69    #    |break;
+     70    
+     71    // Switch
+     72    
+
+
+INSERTING AT: 70:0
+PAUSES AT: 73:8
+     67    
+     68    for (let x in obj)
+     69        break;
+ ->  70    #
+     71    // Switch
+     72    
+ =>  73    switch (|0) {
+     74    case 1:
+     75        a();
+     76        break;
+
+
+INSERTING AT: 71:0
+PAUSES AT: 73:8
+     68    for (let x in obj)
+     69        break;
+     70    
+ ->  71    #// Switch
+     72    
+ =>  73    switch (|0) {
+     74    case 1:
+     75        a();
+     76        break;
+
+
+INSERTING AT: 72:0
+PAUSES AT: 73:8
+     69        break;
+     70    
+     71    // Switch
+ ->  72    #
+ =>  73    switch (|0) {
+     74    case 1:
+     75        a();
+     76        break;
+
+
+INSERTING AT: 73:0
+PAUSES AT: 73:8
+     70    
+     71    // Switch
+     72    
+-=>  73    #switch (|0) {
+     74    case 1:
+     75        a();
+     76        break;
+
+
+INSERTING AT: 74:0
+PAUSES AT: 75:4
+     71    // Switch
+     72    
+     73    switch (0) {
+ ->  74    #case 1:
+ =>  75        |a();
+     76        break;
+     77    case 2:
+     78        a();
+
+
+INSERTING AT: 75:0
+PAUSES AT: 75:4
+     72    
+     73    switch (0) {
+     74    case 1:
+-=>  75    #    |a();
+     76        break;
+     77    case 2:
+     78        a();
+
+
+INSERTING AT: 76:0
+PAUSES AT: 76:4
+     73    switch (0) {
+     74    case 1:
+     75        a();
+-=>  76    #    |break;
+     77    case 2:
+     78        a();
+     79        // fallthrough
+
+
+INSERTING AT: 77:0
+PAUSES AT: 78:4
+     74    case 1:
+     75        a();
+     76        break;
+ ->  77    #case 2:
+ =>  78        |a();
+     79        // fallthrough
+     80    case 3:
+     81        a();
+
+
+INSERTING AT: 78:0
+PAUSES AT: 78:4
+     75        a();
+     76        break;
+     77    case 2:
+-=>  78    #    |a();
+     79        // fallthrough
+     80    case 3:
+     81        a();
+
+
+INSERTING AT: 79:0
+PAUSES AT: 81:4
+     76        break;
+     77    case 2:
+     78        a();
+ ->  79    #    // fallthrough
+     80    case 3:
+ =>  81        |a();
+     82        break;
+     83    default:
+     84        a();
+
+
+INSERTING AT: 80:0
+PAUSES AT: 81:4
+     77    case 2:
+     78        a();
+     79        // fallthrough
+ ->  80    #case 3:
+ =>  81        |a();
+     82        break;
+     83    default:
+     84        a();
+
+
+INSERTING AT: 81:0
+PAUSES AT: 81:4
+     78        a();
+     79        // fallthrough
+     80    case 3:
+-=>  81    #    |a();
+     82        break;
+     83    default:
+     84        a();
+
+
+INSERTING AT: 82:0
+PAUSES AT: 82:4
+     79        // fallthrough
+     80    case 3:
+     81        a();
+-=>  82    #    |break;
+     83    default:
+     84        a();
+     85        break;
+
+
+INSERTING AT: 83:0
+PAUSES AT: 84:4
+     80    case 3:
+     81        a();
+     82        break;
+ ->  83    #default:
+ =>  84        |a();
+     85        break;
+     86    }
+     87    
+
+
+INSERTING AT: 84:0
+PAUSES AT: 84:4
+     81        a();
+     82        break;
+     83    default:
+-=>  84    #    |a();
+     85        break;
+     86    }
+     87    
+
+
+INSERTING AT: 85:0
+PAUSES AT: 85:4
+     82        break;
+     83    default:
+     84        a();
+-=>  85    #    |break;
+     86    }
+     87    
+     88    // Try/Catch
+
+
+INSERTING AT: 86:0
+PAUSES AT: 91:4
+     83    default:
+     84        a();
+     85        break;
+ ->  86    #}
+     87    
+     88    // Try/Catch
+     89    
+     90    try {
+ =>  91        |a();
+     92    } catch (e) {
+     93        shouldNotBeReached();
+     94    } finally {
+
+
+INSERTING AT: 87:0
+PAUSES AT: 91:4
+     84        a();
+     85        break;
+     86    }
+ ->  87    #
+     88    // Try/Catch
+     89    
+     90    try {
+ =>  91        |a();
+     92    } catch (e) {
+     93        shouldNotBeReached();
+     94    } finally {
+
+
+INSERTING AT: 88:0
+PAUSES AT: 91:4
+     85        break;
+     86    }
+     87    
+ ->  88    #// Try/Catch
+     89    
+     90    try {
+ =>  91        |a();
+     92    } catch (e) {
+     93        shouldNotBeReached();
+     94    } finally {
+
+
+INSERTING AT: 89:0
+PAUSES AT: 91:4
+     86    }
+     87    
+     88    // Try/Catch
+ ->  89    #
+     90    try {
+ =>  91        |a();
+     92    } catch (e) {
+     93        shouldNotBeReached();
+     94    } finally {
+
+
+INSERTING AT: 90:0
+PAUSES AT: 91:4
+     87    
+     88    // Try/Catch
+     89    
+ ->  90    #try {
+ =>  91        |a();
+     92    } catch (e) {
+     93        shouldNotBeReached();
+     94    } finally {
+
+
+INSERTING AT: 91:0
+PAUSES AT: 91:4
+     88    // Try/Catch
+     89    
+     90    try {
+-=>  91    #    |a();
+     92    } catch (e) {
+     93        shouldNotBeReached();
+     94    } finally {
+
+
+INSERTING AT: 92:0
+PAUSES AT: 93:4
+     89    
+     90    try {
+     91        a();
+ ->  92    #} catch (e) {
+ =>  93        |shouldNotBeReached();
+     94    } finally {
+     95        b();
+     96    }
+
+
+INSERTING AT: 93:0
+PAUSES AT: 93:4
+     90    try {
+     91        a();
+     92    } catch (e) {
+-=>  93    #    |shouldNotBeReached();
+     94    } finally {
+     95        b();
+     96    }
+
+
+INSERTING AT: 94:0
+PAUSES AT: 95:4
+     91        a();
+     92    } catch (e) {
+     93        shouldNotBeReached();
+ ->  94    #} finally {
+ =>  95        |b();
+     96    }
+     97    
+     98    // Class
+
+
+INSERTING AT: 95:0
+PAUSES AT: 95:4
+     92    } catch (e) {
+     93        shouldNotBeReached();
+     94    } finally {
+-=>  95    #    |b();
+     96    }
+     97    
+     98    // Class
+
+
+INSERTING AT: 96:0
+PAUSES AT: 151:8
+     93        shouldNotBeReached();
+     94    } finally {
+     95        b();
+ ->  96    #}
+     97    
+     98    // Class
+     99    
+    100    class Base {
+    101        constructor()
+    102        {
+    103            this._base = true;
+    104        }
+    105    
+    106        baseMethod()
+    107        {
+    108            a();
+    109        }
+    110    
+    111        method()
+    112        {
+    113            a();
+    114        }
+    115    }
+    116    
+    117    class Child extends Base {
+    118        constructor()
+    119        {
+    120            super();
+    121            this._child = true;
+    122        }
+    123    
+    124        childMethod()
+    125        {
+    126            b();
+    127        }
+    128    
+    129        method()
+    130        {
+    131            super.method();
+    132            b();
+    133        }
+    134    
+    135        get name()
+    136        {
+    137            return this._name;
+    138        }
+    139        
+    140        set name(x)
+    141        {
+    142            this._name = x;
+    143        }
+    144    }
+    145    
+    146    // ---------
+    147    /* Misc */
+    148    // ---------
+    149    
+    150        {
+ => 151            |a();
+    152        }
+    153    
+    154    label:
+
+
+INSERTING AT: 97:0
+PAUSES AT: 151:8
+     94    } finally {
+     95        b();
+     96    }
+ ->  97    #
+     98    // Class
+     99    
+    100    class Base {
+    101        constructor()
+    102        {
+    103            this._base = true;
+    104        }
+    105    
+    106        baseMethod()
+    107        {
+    108            a();
+    109        }
+    110    
+    111        method()
+    112        {
+    113            a();
+    114        }
+    115    }
+    116    
+    117    class Child extends Base {
+    118        constructor()
+    119        {
+    120            super();
+    121            this._child = true;
+    122        }
+    123    
+    124        childMethod()
+    125        {
+    126            b();
+    127        }
+    128    
+    129        method()
+    130        {
+    131            super.method();
+    132            b();
+    133        }
+    134    
+    135        get name()
+    136        {
+    137            return this._name;
+    138        }
+    139        
+    140        set name(x)
+    141        {
+    142            this._name = x;
+    143        }
+    144    }
+    145    
+    146    // ---------
+    147    /* Misc */
+    148    // ---------
+    149    
+    150        {
+ => 151            |a();
+    152        }
+    153    
+    154    label:
+
+
+INSERTING AT: 98:0
+PAUSES AT: 151:8
+     95        b();
+     96    }
+     97    
+ ->  98    #// Class
+     99    
+    100    class Base {
+    101        constructor()
+    102        {
+    103            this._base = true;
+    104        }
+    105    
+    106        baseMethod()
+    107        {
+    108            a();
+    109        }
+    110    
+    111        method()
+    112        {
+    113            a();
+    114        }
+    115    }
+    116    
+    117    class Child extends Base {
+    118        constructor()
+    119        {
+    120            super();
+    121            this._child = true;
+    122        }
+    123    
+    124        childMethod()
+    125        {
+    126            b();
+    127        }
+    128    
+    129        method()
+    130        {
+    131            super.method();
+    132            b();
+    133        }
+    134    
+    135        get name()
+    136        {
+    137            return this._name;
+    138        }
+    139        
+    140        set name(x)
+    141        {
+    142            this._name = x;
+    143        }
+    144    }
+    145    
+    146    // ---------
+    147    /* Misc */
+    148    // ---------
+    149    
+    150        {
+ => 151            |a();
+    152        }
+    153    
+    154    label:
+
+
+INSERTING AT: 99:0
+PAUSES AT: 151:8
+     96    }
+     97    
+     98    // Class
+ ->  99    #
+    100    class Base {
+    101        constructor()
+    102        {
+    103            this._base = true;
+    104        }
+    105    
+    106        baseMethod()
+    107        {
+    108            a();
+    109        }
+    110    
+    111        method()
+    112        {
+    113            a();
+    114        }
+    115    }
+    116    
+    117    class Child extends Base {
+    118        constructor()
+    119        {
+    120            super();
+    121            this._child = true;
+    122        }
+    123    
+    124        childMethod()
+    125        {
+    126            b();
+    127        }
+    128    
+    129        method()
+    130        {
+    131            super.method();
+    132            b();
+    133        }
+    134    
+    135        get name()
+    136        {
+    137            return this._name;
+    138        }
+    139        
+    140        set name(x)
+    141        {
+    142            this._name = x;
+    143        }
+    144    }
+    145    
+    146    // ---------
+    147    /* Misc */
+    148    // ---------
+    149    
+    150        {
+ => 151            |a();
+    152        }
+    153    
+    154    label:
+
+
+INSERTING AT: 100:0
+PAUSES AT: 151:8
+     97    
+     98    // Class
+     99    
+ -> 100    #class Base {
+    101        constructor()
+    102        {
+    103            this._base = true;
+    104        }
+    105    
+    106        baseMethod()
+    107        {
+    108            a();
+    109        }
+    110    
+    111        method()
+    112        {
+    113            a();
+    114        }
+    115    }
+    116    
+    117    class Child extends Base {
+    118        constructor()
+    119        {
+    120            super();
+    121            this._child = true;
+    122        }
+    123    
+    124        childMethod()
+    125        {
+    126            b();
+    127        }
+    128    
+    129        method()
+    130        {
+    131            super.method();
+    132            b();
+    133        }
+    134    
+    135        get name()
+    136        {
+    137            return this._name;
+    138        }
+    139        
+    140        set name(x)
+    141        {
+    142            this._name = x;
+    143        }
+    144    }
+    145    
+    146    // ---------
+    147    /* Misc */
+    148    // ---------
+    149    
+    150        {
+ => 151            |a();
+    152        }
+    153    
+    154    label:
+
+
+INSERTING AT: 101:0
+PAUSES AT: 103:8
+     98    // Class
+     99    
+    100    class Base {
+ -> 101    #    constructor()
+    102        {
+ => 103            |this._base = true;
+    104        }
+    105    
+    106        baseMethod()
+
+
+INSERTING AT: 102:0
+PAUSES AT: 103:8
+     99    
+    100    class Base {
+    101        constructor()
+ -> 102    #    {
+ => 103            |this._base = true;
+    104        }
+    105    
+    106        baseMethod()
+
+
+INSERTING AT: 103:0
+PAUSES AT: 103:8
+    100    class Base {
+    101        constructor()
+    102        {
+-=> 103    #        |this._base = true;
+    104        }
+    105    
+    106        baseMethod()
+
+
+INSERTING AT: 104:0
+PAUSES AT: 104:4
+    101        constructor()
+    102        {
+    103            this._base = true;
+-=> 104    #    |}
+    105    
+    106        baseMethod()
+    107        {
+
+
+INSERTING AT: 105:0
+PAUSES AT: 151:8
+    102        {
+    103            this._base = true;
+    104        }
+ -> 105    #
+    106        baseMethod()
+    107        {
+    108            a();
+    109        }
+    110    
+    111        method()
+    112        {
+    113            a();
+    114        }
+    115    }
+    116    
+    117    class Child extends Base {
+    118        constructor()
+    119        {
+    120            super();
+    121            this._child = true;
+    122        }
+    123    
+    124        childMethod()
+    125        {
+    126            b();
+    127        }
+    128    
+    129        method()
+    130        {
+    131            super.method();
+    132            b();
+    133        }
+    134    
+    135        get name()
+    136        {
+    137            return this._name;
+    138        }
+    139        
+    140        set name(x)
+    141        {
+    142            this._name = x;
+    143        }
+    144    }
+    145    
+    146    // ---------
+    147    /* Misc */
+    148    // ---------
+    149    
+    150        {
+ => 151            |a();
+    152        }
+    153    
+    154    label:
+
+
+INSERTING AT: 106:0
+PAUSES AT: 108:8
+    103            this._base = true;
+    104        }
+    105    
+ -> 106    #    baseMethod()
+    107        {
+ => 108            |a();
+    109        }
+    110    
+    111        method()
+
+
+INSERTING AT: 107:0
+PAUSES AT: 108:8
+    104        }
+    105    
+    106        baseMethod()
+ -> 107    #    {
+ => 108            |a();
+    109        }
+    110    
+    111        method()
+
+
+INSERTING AT: 108:0
+PAUSES AT: 108:8
+    105    
+    106        baseMethod()
+    107        {
+-=> 108    #        |a();
+    109        }
+    110    
+    111        method()
+
+
+INSERTING AT: 109:0
+PAUSES AT: 109:4
+    106        baseMethod()
+    107        {
+    108            a();
+-=> 109    #    |}
+    110    
+    111        method()
+    112        {
+
+
+INSERTING AT: 110:0
+PAUSES AT: 151:8
+    107        {
+    108            a();
+    109        }
+ -> 110    #
+    111        method()
+    112        {
+    113            a();
+    114        }
+    115    }
+    116    
+    117    class Child extends Base {
+    118        constructor()
+    119        {
+    120            super();
+    121            this._child = true;
+    122        }
+    123    
+    124        childMethod()
+    125        {
+    126            b();
+    127        }
+    128    
+    129        method()
+    130        {
+    131            super.method();
+    132            b();
+    133        }
+    134    
+    135        get name()
+    136        {
+    137            return this._name;
+    138        }
+    139        
+    140        set name(x)
+    141        {
+    142            this._name = x;
+    143        }
+    144    }
+    145    
+    146    // ---------
+    147    /* Misc */
+    148    // ---------
+    149    
+    150        {
+ => 151            |a();
+    152        }
+    153    
+    154    label:
+
+
+INSERTING AT: 111:0
+PAUSES AT: 113:8
+    108            a();
+    109        }
+    110    
+ -> 111    #    method()
+    112        {
+ => 113            |a();
+    114        }
+    115    }
+    116    
+
+
+INSERTING AT: 112:0
+PAUSES AT: 113:8
+    109        }
+    110    
+    111        method()
+ -> 112    #    {
+ => 113            |a();
+    114        }
+    115    }
+    116    
+
+
+INSERTING AT: 113:0
+PAUSES AT: 113:8
+    110    
+    111        method()
+    112        {
+-=> 113    #        |a();
+    114        }
+    115    }
+    116    
+
+
+INSERTING AT: 114:0
+PAUSES AT: 114:4
+    111        method()
+    112        {
+    113            a();
+-=> 114    #    |}
+    115    }
+    116    
+    117    class Child extends Base {
+
+
+INSERTING AT: 115:0
+PAUSES AT: 151:8
+    112        {
+    113            a();
+    114        }
+ -> 115    #}
+    116    
+    117    class Child extends Base {
+    118        constructor()
+    119        {
+    120            super();
+    121            this._child = true;
+    122        }
+    123    
+    124        childMethod()
+    125        {
+    126            b();
+    127        }
+    128    
+    129        method()
+    130        {
+    131            super.method();
+    132            b();
+    133        }
+    134    
+    135        get name()
+    136        {
+    137            return this._name;
+    138        }
+    139        
+    140        set name(x)
+    141        {
+    142            this._name = x;
+    143        }
+    144    }
+    145    
+    146    // ---------
+    147    /* Misc */
+    148    // ---------
+    149    
+    150        {
+ => 151            |a();
+    152        }
+    153    
+    154    label:
+
+
+INSERTING AT: 116:0
+PAUSES AT: 151:8
+    113            a();
+    114        }
+    115    }
+ -> 116    #
+    117    class Child extends Base {
+    118        constructor()
+    119        {
+    120            super();
+    121            this._child = true;
+    122        }
+    123    
+    124        childMethod()
+    125        {
+    126            b();
+    127        }
+    128    
+    129        method()
+    130        {
+    131            super.method();
+    132            b();
+    133        }
+    134    
+    135        get name()
+    136        {
+    137            return this._name;
+    138        }
+    139        
+    140        set name(x)
+    141        {
+    142            this._name = x;
+    143        }
+    144    }
+    145    
+    146    // ---------
+    147    /* Misc */
+    148    // ---------
+    149    
+    150        {
+ => 151            |a();
+    152        }
+    153    
+    154    label:
+
+
+INSERTING AT: 117:0
+PAUSES AT: 151:8
+    114        }
+    115    }
+    116    
+ -> 117    #class Child extends Base {
+    118        constructor()
+    119        {
+    120            super();
+    121            this._child = true;
+    122        }
+    123    
+    124        childMethod()
+    125        {
+    126            b();
+    127        }
+    128    
+    129        method()
+    130        {
+    131            super.method();
+    132            b();
+    133        }
+    134    
+    135        get name()
+    136        {
+    137            return this._name;
+    138        }
+    139        
+    140        set name(x)
+    141        {
+    142            this._name = x;
+    143        }
+    144    }
+    145    
+    146    // ---------
+    147    /* Misc */
+    148    // ---------
+    149    
+    150        {
+ => 151            |a();
+    152        }
+    153    
+    154    label:
+
+
+INSERTING AT: 118:0
+PAUSES AT: 120:8
+    115    }
+    116    
+    117    class Child extends Base {
+ -> 118    #    constructor()
+    119        {
+ => 120            |super();
+    121            this._child = true;
+    122        }
+    123    
+
+
+INSERTING AT: 119:0
+PAUSES AT: 120:8
+    116    
+    117    class Child extends Base {
+    118        constructor()
+ -> 119    #    {
+ => 120            |super();
+    121            this._child = true;
+    122        }
+    123    
+
+
+INSERTING AT: 120:0
+PAUSES AT: 120:8
+    117    class Child extends Base {
+    118        constructor()
+    119        {
+-=> 120    #        |super();
+    121            this._child = true;
+    122        }
+    123    
+
+
+INSERTING AT: 121:0
+PAUSES AT: 121:8
+    118        constructor()
+    119        {
+    120            super();
+-=> 121    #        |this._child = true;
+    122        }
+    123    
+    124        childMethod()
+
+
+INSERTING AT: 122:0
+PAUSES AT: 122:4
+    119        {
+    120            super();
+    121            this._child = true;
+-=> 122    #    |}
+    123    
+    124        childMethod()
+    125        {
+
+
+INSERTING AT: 123:0
+PAUSES AT: 151:8
+    120            super();
+    121            this._child = true;
+    122        }
+ -> 123    #
+    124        childMethod()
+    125        {
+    126            b();
+    127        }
+    128    
+    129        method()
+    130        {
+    131            super.method();
+    132            b();
+    133        }
+    134    
+    135        get name()
+    136        {
+    137            return this._name;
+    138        }
+    139        
+    140        set name(x)
+    141        {
+    142            this._name = x;
+    143        }
+    144    }
+    145    
+    146    // ---------
+    147    /* Misc */
+    148    // ---------
+    149    
+    150        {
+ => 151            |a();
+    152        }
+    153    
+    154    label:
+
+
+INSERTING AT: 124:0
+PAUSES AT: 126:8
+    121            this._child = true;
+    122        }
+    123    
+ -> 124    #    childMethod()
+    125        {
+ => 126            |b();
+    127        }
+    128    
+    129        method()
+
+
+INSERTING AT: 125:0
+PAUSES AT: 126:8
+    122        }
+    123    
+    124        childMethod()
+ -> 125    #    {
+ => 126            |b();
+    127        }
+    128    
+    129        method()
+
+
+INSERTING AT: 126:0
+PAUSES AT: 126:8
+    123    
+    124        childMethod()
+    125        {
+-=> 126    #        |b();
+    127        }
+    128    
+    129        method()
+
+
+INSERTING AT: 127:0
+PAUSES AT: 127:4
+    124        childMethod()
+    125        {
+    126            b();
+-=> 127    #    |}
+    128    
+    129        method()
+    130        {
+
+
+INSERTING AT: 128:0
+PAUSES AT: 151:8
+    125        {
+    126            b();
+    127        }
+ -> 128    #
+    129        method()
+    130        {
+    131            super.method();
+    132            b();
+    133        }
+    134    
+    135        get name()
+    136        {
+    137            return this._name;
+    138        }
+    139        
+    140        set name(x)
+    141        {
+    142            this._name = x;
+    143        }
+    144    }
+    145    
+    146    // ---------
+    147    /* Misc */
+    148    // ---------
+    149    
+    150        {
+ => 151            |a();
+    152        }
+    153    
+    154    label:
+
+
+INSERTING AT: 129:0
+PAUSES AT: 131:8
+    126            b();
+    127        }
+    128    
+ -> 129    #    method()
+    130        {
+ => 131            |super.method();
+    132            b();
+    133        }
+    134    
+
+
+INSERTING AT: 130:0
+PAUSES AT: 131:8
+    127        }
+    128    
+    129        method()
+ -> 130    #    {
+ => 131            |super.method();
+    132            b();
+    133        }
+    134    
+
+
+INSERTING AT: 131:0
+PAUSES AT: 131:8
+    128    
+    129        method()
+    130        {
+-=> 131    #        |super.method();
+    132            b();
+    133        }
+    134    
+
+
+INSERTING AT: 132:0
+PAUSES AT: 132:8
+    129        method()
+    130        {
+    131            super.method();
+-=> 132    #        |b();
+    133        }
+    134    
+    135        get name()
+
+
+INSERTING AT: 133:0
+PAUSES AT: 133:4
+    130        {
+    131            super.method();
+    132            b();
+-=> 133    #    |}
+    134    
+    135        get name()
+    136        {
+
+
+INSERTING AT: 134:0
+PAUSES AT: 151:8
+    131            super.method();
+    132            b();
+    133        }
+ -> 134    #
+    135        get name()
+    136        {
+    137            return this._name;
+    138        }
+    139        
+    140        set name(x)
+    141        {
+    142            this._name = x;
+    143        }
+    144    }
+    145    
+    146    // ---------
+    147    /* Misc */
+    148    // ---------
+    149    
+    150        {
+ => 151            |a();
+    152        }
+    153    
+    154    label:
+
+
+INSERTING AT: 135:0
+PAUSES AT: 137:8
+    132            b();
+    133        }
+    134    
+ -> 135    #    get name()
+    136        {
+ => 137            |return this._name;
+    138        }
+    139        
+    140        set name(x)
+
+
+INSERTING AT: 136:0
+PAUSES AT: 137:8
+    133        }
+    134    
+    135        get name()
+ -> 136    #    {
+ => 137            |return this._name;
+    138        }
+    139        
+    140        set name(x)
+
+
+INSERTING AT: 137:0
+PAUSES AT: 137:8
+    134    
+    135        get name()
+    136        {
+-=> 137    #        |return this._name;
+    138        }
+    139        
+    140        set name(x)
+
+
+INSERTING AT: 138:0
+PAUSES AT: 138:4
+    135        get name()
+    136        {
+    137            return this._name;
+-=> 138    #    |}
+    139        
+    140        set name(x)
+    141        {
+
+
+INSERTING AT: 139:0
+PAUSES AT: 151:8
+    136        {
+    137            return this._name;
+    138        }
+ -> 139    #    
+    140        set name(x)
+    141        {
+    142            this._name = x;
+    143        }
+    144    }
+    145    
+    146    // ---------
+    147    /* Misc */
+    148    // ---------
+    149    
+    150        {
+ => 151            |a();
+    152        }
+    153    
+    154    label:
+
+
+INSERTING AT: 140:0
+PAUSES AT: 142:8
+    137            return this._name;
+    138        }
+    139        
+ -> 140    #    set name(x)
+    141        {
+ => 142            |this._name = x;
+    143        }
+    144    }
+    145    
+
+
+INSERTING AT: 141:0
+PAUSES AT: 142:8
+    138        }
+    139        
+    140        set name(x)
+ -> 141    #    {
+ => 142            |this._name = x;
+    143        }
+    144    }
+    145    
+
+
+INSERTING AT: 142:0
+PAUSES AT: 142:8
+    139        
+    140        set name(x)
+    141        {
+-=> 142    #        |this._name = x;
+    143        }
+    144    }
+    145    
+
+
+INSERTING AT: 143:0
+PAUSES AT: 143:4
+    140        set name(x)
+    141        {
+    142            this._name = x;
+-=> 143    #    |}
+    144    }
+    145    
+    146    // ---------
+
+
+INSERTING AT: 144:0
+PAUSES AT: 151:8
+    141        {
+    142            this._name = x;
+    143        }
+ -> 144    #}
+    145    
+    146    // ---------
+    147    /* Misc */
+    148    // ---------
+    149    
+    150        {
+ => 151            |a();
+    152        }
+    153    
+    154    label:
+
+
+INSERTING AT: 145:0
+PAUSES AT: 151:8
+    142            this._name = x;
+    143        }
+    144    }
+ -> 145    #
+    146    // ---------
+    147    /* Misc */
+    148    // ---------
+    149    
+    150        {
+ => 151            |a();
+    152        }
+    153    
+    154    label:
+
+
+INSERTING AT: 146:0
+PAUSES AT: 151:8
+    143        }
+    144    }
+    145    
+ -> 146    #// ---------
+    147    /* Misc */
+    148    // ---------
+    149    
+    150        {
+ => 151            |a();
+    152        }
+    153    
+    154    label:
+
+
+INSERTING AT: 147:0
+PAUSES AT: 151:8
+    144    }
+    145    
+    146    // ---------
+ -> 147    #/* Misc */
+    148    // ---------
+    149    
+    150        {
+ => 151            |a();
+    152        }
+    153    
+    154    label:
+
+
+INSERTING AT: 148:0
+PAUSES AT: 151:8
+    145    
+    146    // ---------
+    147    /* Misc */
+ -> 148    #// ---------
+    149    
+    150        {
+ => 151            |a();
+    152        }
+    153    
+    154    label:
+
+
+INSERTING AT: 149:0
+PAUSES AT: 151:8
+    146    // ---------
+    147    /* Misc */
+    148    // ---------
+ -> 149    #
+    150        {
+ => 151            |a();
+    152        }
+    153    
+    154    label:
+
+
+INSERTING AT: 150:0
+PAUSES AT: 151:8
+    147    /* Misc */
+    148    // ---------
+    149    
+ -> 150    #    {
+ => 151            |a();
+    152        }
+    153    
+    154    label:
+
+
+INSERTING AT: 151:0
+PAUSES AT: 151:8
+    148    // ---------
+    149    
+    150        {
+-=> 151    #        |a();
+    152        }
+    153    
+    154    label:
+
+
+INSERTING AT: 152:0
+PAUSES AT: 156:8
+    149    
+    150        {
+    151            a();
+ -> 152    #    }
+    153    
+    154    label:
+    155        {
+ => 156            |a();
+    157        }
+    158    
+    159    var w1 = {x:1, y:2};
+
+
+INSERTING AT: 153:0
+PAUSES AT: 156:8
+    150        {
+    151            a();
+    152        }
+ -> 153    #
+    154    label:
+    155        {
+ => 156            |a();
+    157        }
+    158    
+    159    var w1 = {x:1, y:2};
+
+
+INSERTING AT: 154:0
+PAUSES AT: 156:8
+    151            a();
+    152        }
+    153    
+ -> 154    #label:
+    155        {
+ => 156            |a();
+    157        }
+    158    
+    159    var w1 = {x:1, y:2};
+
+
+INSERTING AT: 155:0
+PAUSES AT: 156:8
+    152        }
+    153    
+    154    label:
+ -> 155    #    {
+ => 156            |a();
+    157        }
+    158    
+    159    var w1 = {x:1, y:2};
+
+
+INSERTING AT: 156:0
+PAUSES AT: 156:8
+    153    
+    154    label:
+    155        {
+-=> 156    #        |a();
+    157        }
+    158    
+    159    var w1 = {x:1, y:2};
+
+
+INSERTING AT: 157:0
+PAUSES AT: 159:0
+    154    label:
+    155        {
+    156            a();
+ -> 157    #    }
+    158    
+ => 159    |var w1 = {x:1, y:2};
+    160    with (w1) {
+    161        a();
+    162    }
+
+
+INSERTING AT: 158:0
+PAUSES AT: 159:0
+    155        {
+    156            a();
+    157        }
+ -> 158    #
+ => 159    |var w1 = {x:1, y:2};
+    160    with (w1) {
+    161        a();
+    162    }
+
+
+INSERTING AT: 159:0
+PAUSES AT: 159:0
+    156            a();
+    157        }
+    158    
+-=> 159    |var w1 = {x:1, y:2};
+    160    with (w1) {
+    161        a();
+    162    }
+
+
+INSERTING AT: 160:0
+PAUSES AT: 160:6
+    157        }
+    158    
+    159    var w1 = {x:1, y:2};
+-=> 160    #with (|w1) {
+    161        a();
+    162    }
+    163    
+
+
+INSERTING AT: 161:0
+PAUSES AT: 161:4
+    158    
+    159    var w1 = {x:1, y:2};
+    160    with (w1) {
+-=> 161    #    |a();
+    162    }
+    163    
+    164    var v1 = 1,
+
+
+INSERTING AT: 162:0
+PAUSES AT: 164:0
+    159    var w1 = {x:1, y:2};
+    160    with (w1) {
+    161        a();
+ -> 162    #}
+    163    
+ => 164    |var v1 = 1,
+    165        v2 = 1;
+    166    let l1 = 2,
+    167        l2 = 2;
+
+
+INSERTING AT: 163:0
+PAUSES AT: 164:0
+    160    with (w1) {
+    161        a();
+    162    }
+ -> 163    #
+ => 164    |var v1 = 1,
+    165        v2 = 1;
+    166    let l1 = 2,
+    167        l2 = 2;
+
+
+INSERTING AT: 164:0
+PAUSES AT: 164:0
+    161        a();
+    162    }
+    163    
+-=> 164    |var v1 = 1,
+    165        v2 = 1;
+    166    let l1 = 2,
+    167        l2 = 2;
+
+
+INSERTING AT: 165:0
+PAUSES AT: 166:0
+    162    }
+    163    
+    164    var v1 = 1,
+ -> 165    #    v2 = 1;
+ => 166    |let l1 = 2,
+    167        l2 = 2;
+    168    const c1 = 3,
+    169        c2 = 3;
+
+
+INSERTING AT: 166:0
+PAUSES AT: 166:0
+    163    
+    164    var v1 = 1,
+    165        v2 = 1;
+-=> 166    |let l1 = 2,
+    167        l2 = 2;
+    168    const c1 = 3,
+    169        c2 = 3;
+
+
+INSERTING AT: 167:0
+PAUSES AT: 168:0
+    164    var v1 = 1,
+    165        v2 = 1;
+    166    let l1 = 2,
+ -> 167    #    l2 = 2;
+ => 168    |const c1 = 3,
+    169        c2 = 3;
+    170    
+    171    v1 = v2 = v1;
+
+
+INSERTING AT: 168:0
+PAUSES AT: 168:0
+    165        v2 = 1;
+    166    let l1 = 2,
+    167        l2 = 2;
+-=> 168    |const c1 = 3,
+    169        c2 = 3;
+    170    
+    171    v1 = v2 = v1;
+
+
+INSERTING AT: 169:0
+PAUSES AT: 171:0
+    166    let l1 = 2,
+    167        l2 = 2;
+    168    const c1 = 3,
+ -> 169    #    c2 = 3;
+    170    
+ => 171    |v1 = v2 = v1;
+    172    
+    173    var {x, y} = obj;
+    174    var [w, z] = arr;
+
+
+INSERTING AT: 170:0
+PAUSES AT: 171:0
+    167        l2 = 2;
+    168    const c1 = 3,
+    169        c2 = 3;
+ -> 170    #
+ => 171    |v1 = v2 = v1;
+    172    
+    173    var {x, y} = obj;
+    174    var [w, z] = arr;
+
+
+INSERTING AT: 171:0
+PAUSES AT: 171:0
+    168    const c1 = 3,
+    169        c2 = 3;
+    170    
+-=> 171    |v1 = v2 = v1;
+    172    
+    173    var {x, y} = obj;
+    174    var [w, z] = arr;
+
+
+INSERTING AT: 172:0
+PAUSES AT: 173:0
+    169        c2 = 3;
+    170    
+    171    v1 = v2 = v1;
+ -> 172    #
+ => 173    |var {x, y} = obj;
+    174    var [w, z] = arr;
+    175    
+    176    var o1 = {
+
+
+INSERTING AT: 173:0
+PAUSES AT: 173:0
+    170    
+    171    v1 = v2 = v1;
+    172    
+-=> 173    |var {x, y} = obj;
+    174    var [w, z] = arr;
+    175    
+    176    var o1 = {
+
+
+INSERTING AT: 174:0
+PAUSES AT: 174:0
+    171    v1 = v2 = v1;
+    172    
+    173    var {x, y} = obj;
+-=> 174    |var [w, z] = arr;
+    175    
+    176    var o1 = {
+    177        p1: 1,
+
+
+INSERTING AT: 175:0
+PAUSES AT: 176:0
+    172    
+    173    var {x, y} = obj;
+    174    var [w, z] = arr;
+ -> 175    #
+ => 176    |var o1 = {
+    177        p1: 1,
+    178        p2: a(),
+    179        p3: 1,
+
+
+INSERTING AT: 176:0
+PAUSES AT: 176:0
+    173    var {x, y} = obj;
+    174    var [w, z] = arr;
+    175    
+-=> 176    |var o1 = {
+    177        p1: 1,
+    178        p2: a(),
+    179        p3: 1,
+
+
+INSERTING AT: 177:0
+PAUSES AT: 184:0
+    174    var [w, z] = arr;
+    175    
+    176    var o1 = {
+ -> 177    #    p1: 1,
+    178        p2: a(),
+    179        p3: 1,
+    180        ["p4"]: 1,
+    181        [b()]: 1,
+    182    };
+    183    
+ => 184    |var a1 = [
+    185        1,
+    186        a(),
+    187        1,
+
+
+INSERTING AT: 178:0
+PAUSES AT: 184:0
+    175    
+    176    var o1 = {
+    177        p1: 1,
+ -> 178    #    p2: a(),
+    179        p3: 1,
+    180        ["p4"]: 1,
+    181        [b()]: 1,
+    182    };
+    183    
+ => 184    |var a1 = [
+    185        1,
+    186        a(),
+    187        1,
+
+
+INSERTING AT: 179:0
+PAUSES AT: 184:0
+    176    var o1 = {
+    177        p1: 1,
+    178        p2: a(),
+ -> 179    #    p3: 1,
+    180        ["p4"]: 1,
+    181        [b()]: 1,
+    182    };
+    183    
+ => 184    |var a1 = [
+    185        1,
+    186        a(),
+    187        1,
+
+
+INSERTING AT: 180:0
+PAUSES AT: 184:0
+    177        p1: 1,
+    178        p2: a(),
+    179        p3: 1,
+ -> 180    #    ["p4"]: 1,
+    181        [b()]: 1,
+    182    };
+    183    
+ => 184    |var a1 = [
+    185        1,
+    186        a(),
+    187        1,
+
+
+INSERTING AT: 181:0
+PAUSES AT: 184:0
+    178        p2: a(),
+    179        p3: 1,
+    180        ["p4"]: 1,
+ -> 181    #    [b()]: 1,
+    182    };
+    183    
+ => 184    |var a1 = [
+    185        1,
+    186        a(),
+    187        1,
+
+
+INSERTING AT: 182:0
+PAUSES AT: 184:0
+    179        p3: 1,
+    180        ["p4"]: 1,
+    181        [b()]: 1,
+ -> 182    #};
+    183    
+ => 184    |var a1 = [
+    185        1,
+    186        a(),
+    187        1,
+
+
+INSERTING AT: 183:0
+PAUSES AT: 184:0
+    180        ["p4"]: 1,
+    181        [b()]: 1,
+    182    };
+ -> 183    #
+ => 184    |var a1 = [
+    185        1,
+    186        a(),
+    187        1,
+
+
+INSERTING AT: 184:0
+PAUSES AT: 184:0
+    181        [b()]: 1,
+    182    };
+    183    
+-=> 184    |var a1 = [
+    185        1,
+    186        a(),
+    187        1,
+
+
+INSERTING AT: 185:0
+PAUSES AT: 191:0
+    182    };
+    183    
+    184    var a1 = [
+ -> 185    #    1,
+    186        a(),
+    187        1,
+    188        b(),
+    189    ];
+    190    
+ => 191    |var i1 = new Base;
+    192    var i2 = new Child;
+    193    i2.name;
+    194    i2.name = 1;
+
+
+INSERTING AT: 186:0
+PAUSES AT: 191:0
+    183    
+    184    var a1 = [
+    185        1,
+ -> 186    #    a(),
+    187        1,
+    188        b(),
+    189    ];
+    190    
+ => 191    |var i1 = new Base;
+    192    var i2 = new Child;
+    193    i2.name;
+    194    i2.name = 1;
+
+
+INSERTING AT: 187:0
+PAUSES AT: 191:0
+    184    var a1 = [
+    185        1,
+    186        a(),
+ -> 187    #    1,
+    188        b(),
+    189    ];
+    190    
+ => 191    |var i1 = new Base;
+    192    var i2 = new Child;
+    193    i2.name;
+    194    i2.name = 1;
+
+
+INSERTING AT: 188:0
+PAUSES AT: 191:0
+    185        1,
+    186        a(),
+    187        1,
+ -> 188    #    b(),
+    189    ];
+    190    
+ => 191    |var i1 = new Base;
+    192    var i2 = new Child;
+    193    i2.name;
+    194    i2.name = 1;
+
+
+INSERTING AT: 189:0
+PAUSES AT: 191:0
+    186        a(),
+    187        1,
+    188        b(),
+ -> 189    #];
+    190    
+ => 191    |var i1 = new Base;
+    192    var i2 = new Child;
+    193    i2.name;
+    194    i2.name = 1;
+
+
+INSERTING AT: 190:0
+PAUSES AT: 191:0
+    187        1,
+    188        b(),
+    189    ];
+ -> 190    #
+ => 191    |var i1 = new Base;
+    192    var i2 = new Child;
+    193    i2.name;
+    194    i2.name = 1;
+
+
+INSERTING AT: 191:0
+PAUSES AT: 191:0
+    188        b(),
+    189    ];
+    190    
+-=> 191    |var i1 = new Base;
+    192    var i2 = new Child;
+    193    i2.name;
+    194    i2.name = 1;
+
+
+INSERTING AT: 192:0
+PAUSES AT: 192:0
+    189    ];
+    190    
+    191    var i1 = new Base;
+-=> 192    |var i2 = new Child;
+    193    i2.name;
+    194    i2.name = 1;
+    195    i2.method();
+
+
+INSERTING AT: 193:0
+PAUSES AT: 193:0
+    190    
+    191    var i1 = new Base;
+    192    var i2 = new Child;
+-=> 193    |i2.name;
+    194    i2.name = 1;
+    195    i2.method();
+    196    
+
+
+INSERTING AT: 194:0
+PAUSES AT: 194:0
+    191    var i1 = new Base;
+    192    var i2 = new Child;
+    193    i2.name;
+-=> 194    |i2.name = 1;
+    195    i2.method();
+    196    
+    197    var t1 = `${1} ${x=1} ${a()}`;
+
+
+INSERTING AT: 195:0
+PAUSES AT: 195:0
+    192    var i2 = new Child;
+    193    i2.name;
+    194    i2.name = 1;
+-=> 195    |i2.method();
+    196    
+    197    var t1 = `${1} ${x=1} ${a()}`;
+    198    var t2 = a`${1} ${x=1} ${a()}`;
+
+
+INSERTING AT: 196:0
+PAUSES AT: 197:0
+    193    i2.name;
+    194    i2.name = 1;
+    195    i2.method();
+ -> 196    #
+ => 197    |var t1 = `${1} ${x=1} ${a()}`;
+    198    var t2 = a`${1} ${x=1} ${a()}`;
+    199    
+    200    a(a(), b());
+
+
+INSERTING AT: 197:0
+PAUSES AT: 197:0
+    194    i2.name = 1;
+    195    i2.method();
+    196    
+-=> 197    |var t1 = `${1} ${x=1} ${a()}`;
+    198    var t2 = a`${1} ${x=1} ${a()}`;
+    199    
+    200    a(a(), b());
+
+
+INSERTING AT: 198:0
+PAUSES AT: 198:0
+    195    i2.method();
+    196    
+    197    var t1 = `${1} ${x=1} ${a()}`;
+-=> 198    |var t2 = a`${1} ${x=1} ${a()}`;
+    199    
+    200    a(a(), b());
+    201    
+
+
+INSERTING AT: 199:0
+PAUSES AT: 200:0
+    196    
+    197    var t1 = `${1} ${x=1} ${a()}`;
+    198    var t2 = a`${1} ${x=1} ${a()}`;
+ -> 199    #
+ => 200    |a(a(), b());
+    201    
+    202    if (o1.p1)
+    203        a();
+
+
+INSERTING AT: 200:0
+PAUSES AT: 200:0
+    197    var t1 = `${1} ${x=1} ${a()}`;
+    198    var t2 = a`${1} ${x=1} ${a()}`;
+    199    
+-=> 200    |a(a(), b());
+    201    
+    202    if (o1.p1)
+    203        a();
+
+
+INSERTING AT: 201:0
+PAUSES AT: 202:4
+    198    var t2 = a`${1} ${x=1} ${a()}`;
+    199    
+    200    a(a(), b());
+ -> 201    #
+ => 202    if (|o1.p1)
+    203        a();
+    204    
+    205    if (o1["p1"])
+
+
+INSERTING AT: 202:0
+PAUSES AT: 202:4
+    199    
+    200    a(a(), b());
+    201    
+-=> 202    #if (|o1.p1)
+    203        a();
+    204    
+    205    if (o1["p1"])
+
+
+INSERTING AT: 203:0
+PAUSES AT: 203:4
+    200    a(a(), b());
+    201    
+    202    if (o1.p1)
+-=> 203    #    |a();
+    204    
+    205    if (o1["p1"])
+    206        a();
+
+
+INSERTING AT: 204:0
+PAUSES AT: 205:4
+    201    
+    202    if (o1.p1)
+    203        a();
+ -> 204    #
+ => 205    if (|o1["p1"])
+    206        a();
+    207    
+    208    if (String.raw`test`)
+
+
+INSERTING AT: 205:0
+PAUSES AT: 205:4
+    202    if (o1.p1)
+    203        a();
+    204    
+-=> 205    #if (|o1["p1"])
+    206        a();
+    207    
+    208    if (String.raw`test`)
+
+
+INSERTING AT: 206:0
+PAUSES AT: 206:4
+    203        a();
+    204    
+    205    if (o1["p1"])
+-=> 206    #    |a();
+    207    
+    208    if (String.raw`test`)
+    209        a();
+
+
+INSERTING AT: 207:0
+PAUSES AT: 208:4
+    204    
+    205    if (o1["p1"])
+    206        a();
+ -> 207    #
+ => 208    if (|String.raw`test`)
+    209        a();
+    210    
+
+
+INSERTING AT: 208:0
+PAUSES AT: 208:4
+    205    if (o1["p1"])
+    206        a();
+    207    
+-=> 208    #if (|String.raw`test`)
+    209        a();
+    210    
+
+
+INSERTING AT: 209:0
+PAUSES AT: 209:4
+    206        a();
+    207    
+    208    if (String.raw`test`)
+-=> 209    #    |a();
+    210    
+
+
+INSERTING AT: 210:0
+PRODUCES: Could not resolve breakpoint
+
+-- Running test case: Debugger.resolvedBreakpoint.dumpEachLine.Functions
+
+INSERTING AT: 0:0
+PAUSES AT: 0:19
+-=>   0    #function inline() {|}
+      1    function named() {
+      2        var x;
+      3    }
+
+
+INSERTING AT: 1:0
+PAUSES AT: 2:4
+      0    function inline() {}
+ ->   1    #function named() {
+ =>   2        |var x;
+      3    }
+      4    function outer1() {
+      5        function inner() {
+
+
+INSERTING AT: 2:0
+PAUSES AT: 2:4
+      0    function inline() {}
+      1    function named() {
+-=>   2    #    |var x;
+      3    }
+      4    function outer1() {
+      5        function inner() {
+
+
+INSERTING AT: 3:0
+PAUSES AT: 3:0
+      0    function inline() {}
+      1    function named() {
+      2        var x;
+-=>   3    |}
+      4    function outer1() {
+      5        function inner() {
+      6            var y;
+
+
+INSERTING AT: 4:0
+PAUSES AT: 8:0
+      1    function named() {
+      2        var x;
+      3    }
+ ->   4    #function outer1() {
+      5        function inner() {
+      6            var y;
+      7        }
+ =>   8    |}
+      9    function outer2()
+     10    {
+     11        function inner()
+
+
+INSERTING AT: 5:0
+PAUSES AT: 6:8
+      2        var x;
+      3    }
+      4    function outer1() {
+ ->   5    #    function inner() {
+ =>   6            |var y;
+      7        }
+      8    }
+      9    function outer2()
+
+
+INSERTING AT: 6:0
+PAUSES AT: 6:8
+      3    }
+      4    function outer1() {
+      5        function inner() {
+-=>   6    #        |var y;
+      7        }
+      8    }
+      9    function outer2()
+
+
+INSERTING AT: 7:0
+PAUSES AT: 7:4
+      4    function outer1() {
+      5        function inner() {
+      6            var y;
+-=>   7    #    |}
+      8    }
+      9    function outer2()
+     10    {
+
+
+INSERTING AT: 8:0
+PAUSES AT: 8:0
+      5        function inner() {
+      6            var y;
+      7        }
+-=>   8    |}
+      9    function outer2()
+     10    {
+     11        function inner()
+
+
+INSERTING AT: 9:0
+PAUSES AT: 15:0
+      6            var y;
+      7        }
+      8    }
+ ->   9    #function outer2()
+     10    {
+     11        function inner()
+     12        {
+     13            var y;
+     14        }
+ =>  15    |}
+     16    function outer3() {
+     17        var x;
+     18        function inner() { var y; }
+
+
+INSERTING AT: 10:0
+PAUSES AT: 15:0
+      7        }
+      8    }
+      9    function outer2()
+ ->  10    #{
+     11        function inner()
+     12        {
+     13            var y;
+     14        }
+ =>  15    |}
+     16    function outer3() {
+     17        var x;
+     18        function inner() { var y; }
+
+
+INSERTING AT: 11:0
+PAUSES AT: 13:8
+      8    }
+      9    function outer2()
+     10    {
+ ->  11    #    function inner()
+     12        {
+ =>  13            |var y;
+     14        }
+     15    }
+     16    function outer3() {
+
+
+INSERTING AT: 12:0
+PAUSES AT: 13:8
+      9    function outer2()
+     10    {
+     11        function inner()
+ ->  12    #    {
+ =>  13            |var y;
+     14        }
+     15    }
+     16    function outer3() {
+
+
+INSERTING AT: 13:0
+PAUSES AT: 13:8
+     10    {
+     11        function inner()
+     12        {
+-=>  13    #        |var y;
+     14        }
+     15    }
+     16    function outer3() {
+
+
+INSERTING AT: 14:0
+PAUSES AT: 14:4
+     11        function inner()
+     12        {
+     13            var y;
+-=>  14    #    |}
+     15    }
+     16    function outer3() {
+     17        var x;
+
+
+INSERTING AT: 15:0
+PAUSES AT: 15:0
+     12        {
+     13            var y;
+     14        }
+-=>  15    |}
+     16    function outer3() {
+     17        var x;
+     18        function inner() { var y; }
+
+
+INSERTING AT: 16:0
+PAUSES AT: 17:4
+     13            var y;
+     14        }
+     15    }
+ ->  16    #function outer3() {
+ =>  17        |var x;
+     18        function inner() { var y; }
+     19    }
+     20    function outer4() {
+
+
+INSERTING AT: 17:0
+PAUSES AT: 17:4
+     14        }
+     15    }
+     16    function outer3() {
+-=>  17    #    |var x;
+     18        function inner() { var y; }
+     19    }
+     20    function outer4() {
+
+
+INSERTING AT: 18:0
+PAUSES AT: 18:23
+     15    }
+     16    function outer3() {
+     17        var x;
+-=>  18    #    function inner() { |var y; }
+     19    }
+     20    function outer4() {
+     21        function inner() { var y; }
+
+
+INSERTING AT: 19:0
+PAUSES AT: 19:0
+     16    function outer3() {
+     17        var x;
+     18        function inner() { var y; }
+-=>  19    |}
+     20    function outer4() {
+     21        function inner() { var y; }
+     22        var x;
+
+
+INSERTING AT: 20:0
+PAUSES AT: 22:4
+     17        var x;
+     18        function inner() { var y; }
+     19    }
+ ->  20    #function outer4() {
+     21        function inner() { var y; }
+ =>  22        |var x;
+     23    }
+     24    function outer5() {
+     25        var x;
+
+
+INSERTING AT: 21:0
+PAUSES AT: 21:23
+     18        function inner() { var y; }
+     19    }
+     20    function outer4() {
+-=>  21    #    function inner() { |var y; }
+     22        var x;
+     23    }
+     24    function outer5() {
+
+
+INSERTING AT: 22:0
+PAUSES AT: 22:4
+     19    }
+     20    function outer4() {
+     21        function inner() { var y; }
+-=>  22    #    |var x;
+     23    }
+     24    function outer5() {
+     25        var x;
+
+
+INSERTING AT: 23:0
+PAUSES AT: 23:0
+     20    function outer4() {
+     21        function inner() { var y; }
+     22        var x;
+-=>  23    |}
+     24    function outer5() {
+     25        var x;
+     26        function inner() { var y; }
+
+
+INSERTING AT: 24:0
+PAUSES AT: 25:4
+     21        function inner() { var y; }
+     22        var x;
+     23    }
+ ->  24    #function outer5() {
+ =>  25        |var x;
+     26        function inner() { var y; }
+     27        var x;
+     28    }
+
+
+INSERTING AT: 25:0
+PAUSES AT: 25:4
+     22        var x;
+     23    }
+     24    function outer5() {
+-=>  25    #    |var x;
+     26        function inner() { var y; }
+     27        var x;
+     28    }
+
+
+INSERTING AT: 26:0
+PAUSES AT: 26:23
+     23    }
+     24    function outer5() {
+     25        var x;
+-=>  26    #    function inner() { |var y; }
+     27        var x;
+     28    }
+     29    function outer6() {
+
+
+INSERTING AT: 27:0
+PAUSES AT: 27:4
+     24    function outer5() {
+     25        var x;
+     26        function inner() { var y; }
+-=>  27    #    |var x;
+     28    }
+     29    function outer6() {
+     30        function inner1() { var y; }
+
+
+INSERTING AT: 28:0
+PAUSES AT: 28:0
+     25        var x;
+     26        function inner() { var y; }
+     27        var x;
+-=>  28    |}
+     29    function outer6() {
+     30        function inner1() { var y; }
+     31        var x;
+
+
+INSERTING AT: 29:0
+PAUSES AT: 31:4
+     26        function inner() { var y; }
+     27        var x;
+     28    }
+ ->  29    #function outer6() {
+     30        function inner1() { var y; }
+ =>  31        |var x;
+     32        function inner2() { var z; }
+     33    }
+     34    function outer7() {
+
+
+INSERTING AT: 30:0
+PAUSES AT: 30:24
+     27        var x;
+     28    }
+     29    function outer6() {
+-=>  30    #    function inner1() { |var y; }
+     31        var x;
+     32        function inner2() { var z; }
+     33    }
+
+
+INSERTING AT: 31:0
+PAUSES AT: 31:4
+     28    }
+     29    function outer6() {
+     30        function inner1() { var y; }
+-=>  31    #    |var x;
+     32        function inner2() { var z; }
+     33    }
+     34    function outer7() {
+
+
+INSERTING AT: 32:0
+PAUSES AT: 32:24
+     29    function outer6() {
+     30        function inner1() { var y; }
+     31        var x;
+-=>  32    #    function inner2() { |var z; }
+     33    }
+     34    function outer7() {
+     35        function inner1() { var y; }
+
+
+INSERTING AT: 33:0
+PAUSES AT: 33:0
+     30        function inner1() { var y; }
+     31        var x;
+     32        function inner2() { var z; }
+-=>  33    |}
+     34    function outer7() {
+     35        function inner1() { var y; }
+     36        function inner2() { var z; }
+
+
+INSERTING AT: 34:0
+PAUSES AT: 37:4
+     31        var x;
+     32        function inner2() { var z; }
+     33    }
+ ->  34    #function outer7() {
+     35        function inner1() { var y; }
+     36        function inner2() { var z; }
+ =>  37        |var x;
+     38    }
+     39    function outer7() {
+     40        function inner1() { var y; }
+
+
+INSERTING AT: 35:0
+PAUSES AT: 35:24
+     32        function inner2() { var z; }
+     33    }
+     34    function outer7() {
+-=>  35    #    function inner1() { |var y; }
+     36        function inner2() { var z; }
+     37        var x;
+     38    }
+
+
+INSERTING AT: 36:0
+PAUSES AT: 36:24
+     33    }
+     34    function outer7() {
+     35        function inner1() { var y; }
+-=>  36    #    function inner2() { |var z; }
+     37        var x;
+     38    }
+     39    function outer7() {
+
+
+INSERTING AT: 37:0
+PAUSES AT: 37:4
+     34    function outer7() {
+     35        function inner1() { var y; }
+     36        function inner2() { var z; }
+-=>  37    #    |var x;
+     38    }
+     39    function outer7() {
+     40        function inner1() { var y; }
+
+
+INSERTING AT: 38:0
+PAUSES AT: 38:0
+     35        function inner1() { var y; }
+     36        function inner2() { var z; }
+     37        var x;
+-=>  38    |}
+     39    function outer7() {
+     40        function inner1() { var y; }
+     41        function inner2() { var z; }
+
+
+INSERTING AT: 39:0
+PAUSES AT: 42:0
+     36        function inner2() { var z; }
+     37        var x;
+     38    }
+ ->  39    #function outer7() {
+     40        function inner1() { var y; }
+     41        function inner2() { var z; }
+ =>  42    |}
+     43    
+     44    (function() {
+     45        var x;
+
+
+INSERTING AT: 40:0
+PAUSES AT: 40:24
+     37        var x;
+     38    }
+     39    function outer7() {
+-=>  40    #    function inner1() { |var y; }
+     41        function inner2() { var z; }
+     42    }
+     43    
+
+
+INSERTING AT: 41:0
+PAUSES AT: 41:24
+     38    }
+     39    function outer7() {
+     40        function inner1() { var y; }
+-=>  41    #    function inner2() { |var z; }
+     42    }
+     43    
+     44    (function() {
+
+
+INSERTING AT: 42:0
+PAUSES AT: 42:0
+     39    function outer7() {
+     40        function inner1() { var y; }
+     41        function inner2() { var z; }
+-=>  42    |}
+     43    
+     44    (function() {
+     45        var x;
+
+
+INSERTING AT: 43:0
+PAUSES AT: 44:0
+     40        function inner1() { var y; }
+     41        function inner2() { var z; }
+     42    }
+ ->  43    #
+ =>  44    |(function() {
+     45        var x;
+     46    })();
+     47    
+
+
+INSERTING AT: 44:0
+PAUSES AT: 44:0
+     41        function inner2() { var z; }
+     42    }
+     43    
+-=>  44    |(function() {
+     45        var x;
+     46    })();
+     47    
+
+
+INSERTING AT: 45:0
+PAUSES AT: 45:4
+     42    }
+     43    
+     44    (function() {
+-=>  45    #    |var x;
+     46    })();
+     47    
+     48    (() => {
+
+
+INSERTING AT: 46:0
+PAUSES AT: 46:0
+     43    
+     44    (function() {
+     45        var x;
+-=>  46    |})();
+     47    
+     48    (() => {
+     49        var x;
+
+
+INSERTING AT: 47:0
+PAUSES AT: 48:0
+     44    (function() {
+     45        var x;
+     46    })();
+ ->  47    #
+ =>  48    |(() => {
+     49        var x;
+     50    });
+     51    
+
+
+INSERTING AT: 48:0
+PAUSES AT: 48:0
+     45        var x;
+     46    })();
+     47    
+-=>  48    |(() => {
+     49        var x;
+     50    });
+     51    
+
+
+INSERTING AT: 49:0
+PAUSES AT: 49:4
+     46    })();
+     47    
+     48    (() => {
+-=>  49    #    |var x;
+     50    });
+     51    
+     52    function* generator() {
+
+
+INSERTING AT: 50:0
+PAUSES AT: 50:0
+     47    
+     48    (() => {
+     49        var x;
+-=>  50    |});
+     51    
+     52    function* generator() {
+     53        var x;
+
+
+INSERTING AT: 51:0
+PAUSES AT: 87:0
+     48    (() => {
+     49        var x;
+     50    });
+ ->  51    #
+     52    function* generator() {
+     53        var x;
+     54    }
+     55    
+     56    class Class {
+     57        static staticMethod1() {
+     58            var x;
+     59        }
+     60        static staticMethod2()
+     61        {
+     62            var x;
+     63        }
+     64        method1() {
+     65            var x;
+     66        }
+     67        method2()
+     68        {
+     69            var x;
+     70        }
+     71        get getter1() {
+     72            var x;
+     73        }
+     74        get getter2()
+     75        {
+     76            var x;
+     77        }
+     78        set setter1(x) {
+     79            var s;
+     80        }
+     81        set setter2(x)
+     82        {
+     83            var s;
+     84        }
+     85    }
+     86    
+ =>  87    |x => x;
+     88    () => 1;
+     89    (x) => x;
+     90    (x) => { x };
+
+
+INSERTING AT: 52:0
+PAUSES AT: 53:4
+     49        var x;
+     50    });
+     51    
+ ->  52    #function* generator() {
+ =>  53        |var x;
+     54    }
+     55    
+     56    class Class {
+
+
+INSERTING AT: 53:0
+PAUSES AT: 53:4
+     50    });
+     51    
+     52    function* generator() {
+-=>  53    #    |var x;
+     54    }
+     55    
+     56    class Class {
+
+
+INSERTING AT: 54:0
+PAUSES AT: 54:0
+     51    
+     52    function* generator() {
+     53        var x;
+-=>  54    |}
+     55    
+     56    class Class {
+     57        static staticMethod1() {
+
+
+INSERTING AT: 55:0
+PAUSES AT: 87:0
+     52    function* generator() {
+     53        var x;
+     54    }
+ ->  55    #
+     56    class Class {
+     57        static staticMethod1() {
+     58            var x;
+     59        }
+     60        static staticMethod2()
+     61        {
+     62            var x;
+     63        }
+     64        method1() {
+     65            var x;
+     66        }
+     67        method2()
+     68        {
+     69            var x;
+     70        }
+     71        get getter1() {
+     72            var x;
+     73        }
+     74        get getter2()
+     75        {
+     76            var x;
+     77        }
+     78        set setter1(x) {
+     79            var s;
+     80        }
+     81        set setter2(x)
+     82        {
+     83            var s;
+     84        }
+     85    }
+     86    
+ =>  87    |x => x;
+     88    () => 1;
+     89    (x) => x;
+     90    (x) => { x };
+
+
+INSERTING AT: 56:0
+PAUSES AT: 87:0
+     53        var x;
+     54    }
+     55    
+ ->  56    #class Class {
+     57        static staticMethod1() {
+     58            var x;
+     59        }
+     60        static staticMethod2()
+     61        {
+     62            var x;
+     63        }
+     64        method1() {
+     65            var x;
+     66        }
+     67        method2()
+     68        {
+     69            var x;
+     70        }
+     71        get getter1() {
+     72            var x;
+     73        }
+     74        get getter2()
+     75        {
+     76            var x;
+     77        }
+     78        set setter1(x) {
+     79            var s;
+     80        }
+     81        set setter2(x)
+     82        {
+     83            var s;
+     84        }
+     85    }
+     86    
+ =>  87    |x => x;
+     88    () => 1;
+     89    (x) => x;
+     90    (x) => { x };
+
+
+INSERTING AT: 57:0
+PAUSES AT: 58:8
+     54    }
+     55    
+     56    class Class {
+ ->  57    #    static staticMethod1() {
+ =>  58            |var x;
+     59        }
+     60        static staticMethod2()
+     61        {
+
+
+INSERTING AT: 58:0
+PAUSES AT: 58:8
+     55    
+     56    class Class {
+     57        static staticMethod1() {
+-=>  58    #        |var x;
+     59        }
+     60        static staticMethod2()
+     61        {
+
+
+INSERTING AT: 59:0
+PAUSES AT: 59:4
+     56    class Class {
+     57        static staticMethod1() {
+     58            var x;
+-=>  59    #    |}
+     60        static staticMethod2()
+     61        {
+     62            var x;
+
+
+INSERTING AT: 60:0
+PAUSES AT: 62:8
+     57        static staticMethod1() {
+     58            var x;
+     59        }
+ ->  60    #    static staticMethod2()
+     61        {
+ =>  62            |var x;
+     63        }
+     64        method1() {
+     65            var x;
+
+
+INSERTING AT: 61:0
+PAUSES AT: 62:8
+     58            var x;
+     59        }
+     60        static staticMethod2()
+ ->  61    #    {
+ =>  62            |var x;
+     63        }
+     64        method1() {
+     65            var x;
+
+
+INSERTING AT: 62:0
+PAUSES AT: 62:8
+     59        }
+     60        static staticMethod2()
+     61        {
+-=>  62    #        |var x;
+     63        }
+     64        method1() {
+     65            var x;
+
+
+INSERTING AT: 63:0
+PAUSES AT: 63:4
+     60        static staticMethod2()
+     61        {
+     62            var x;
+-=>  63    #    |}
+     64        method1() {
+     65            var x;
+     66        }
+
+
+INSERTING AT: 64:0
+PAUSES AT: 65:8
+     61        {
+     62            var x;
+     63        }
+ ->  64    #    method1() {
+ =>  65            |var x;
+     66        }
+     67        method2()
+     68        {
+
+
+INSERTING AT: 65:0
+PAUSES AT: 65:8
+     62            var x;
+     63        }
+     64        method1() {
+-=>  65    #        |var x;
+     66        }
+     67        method2()
+     68        {
+
+
+INSERTING AT: 66:0
+PAUSES AT: 66:4
+     63        }
+     64        method1() {
+     65            var x;
+-=>  66    #    |}
+     67        method2()
+     68        {
+     69            var x;
+
+
+INSERTING AT: 67:0
+PAUSES AT: 69:8
+     64        method1() {
+     65            var x;
+     66        }
+ ->  67    #    method2()
+     68        {
+ =>  69            |var x;
+     70        }
+     71        get getter1() {
+     72            var x;
+
+
+INSERTING AT: 68:0
+PAUSES AT: 69:8
+     65            var x;
+     66        }
+     67        method2()
+ ->  68    #    {
+ =>  69            |var x;
+     70        }
+     71        get getter1() {
+     72            var x;
+
+
+INSERTING AT: 69:0
+PAUSES AT: 69:8
+     66        }
+     67        method2()
+     68        {
+-=>  69    #        |var x;
+     70        }
+     71        get getter1() {
+     72            var x;
+
+
+INSERTING AT: 70:0
+PAUSES AT: 70:4
+     67        method2()
+     68        {
+     69            var x;
+-=>  70    #    |}
+     71        get getter1() {
+     72            var x;
+     73        }
+
+
+INSERTING AT: 71:0
+PAUSES AT: 72:8
+     68        {
+     69            var x;
+     70        }
+ ->  71    #    get getter1() {
+ =>  72            |var x;
+     73        }
+     74        get getter2()
+     75        {
+
+
+INSERTING AT: 72:0
+PAUSES AT: 72:8
+     69            var x;
+     70        }
+     71        get getter1() {
+-=>  72    #        |var x;
+     73        }
+     74        get getter2()
+     75        {
+
+
+INSERTING AT: 73:0
+PAUSES AT: 73:4
+     70        }
+     71        get getter1() {
+     72            var x;
+-=>  73    #    |}
+     74        get getter2()
+     75        {
+     76            var x;
+
+
+INSERTING AT: 74:0
+PAUSES AT: 76:8
+     71        get getter1() {
+     72            var x;
+     73        }
+ ->  74    #    get getter2()
+     75        {
+ =>  76            |var x;
+     77        }
+     78        set setter1(x) {
+     79            var s;
+
+
+INSERTING AT: 75:0
+PAUSES AT: 76:8
+     72            var x;
+     73        }
+     74        get getter2()
+ ->  75    #    {
+ =>  76            |var x;
+     77        }
+     78        set setter1(x) {
+     79            var s;
+
+
+INSERTING AT: 76:0
+PAUSES AT: 76:8
+     73        }
+     74        get getter2()
+     75        {
+-=>  76    #        |var x;
+     77        }
+     78        set setter1(x) {
+     79            var s;
+
+
+INSERTING AT: 77:0
+PAUSES AT: 77:4
+     74        get getter2()
+     75        {
+     76            var x;
+-=>  77    #    |}
+     78        set setter1(x) {
+     79            var s;
+     80        }
+
+
+INSERTING AT: 78:0
+PAUSES AT: 79:8
+     75        {
+     76            var x;
+     77        }
+ ->  78    #    set setter1(x) {
+ =>  79            |var s;
+     80        }
+     81        set setter2(x)
+     82        {
+
+
+INSERTING AT: 79:0
+PAUSES AT: 79:8
+     76            var x;
+     77        }
+     78        set setter1(x) {
+-=>  79    #        |var s;
+     80        }
+     81        set setter2(x)
+     82        {
+
+
+INSERTING AT: 80:0
+PAUSES AT: 80:4
+     77        }
+     78        set setter1(x) {
+     79            var s;
+-=>  80    #    |}
+     81        set setter2(x)
+     82        {
+     83            var s;
+
+
+INSERTING AT: 81:0
+PAUSES AT: 83:8
+     78        set setter1(x) {
+     79            var s;
+     80        }
+ ->  81    #    set setter2(x)
+     82        {
+ =>  83            |var s;
+     84        }
+     85    }
+     86    
+
+
+INSERTING AT: 82:0
+PAUSES AT: 83:8
+     79            var s;
+     80        }
+     81        set setter2(x)
+ ->  82    #    {
+ =>  83            |var s;
+     84        }
+     85    }
+     86    
+
+
+INSERTING AT: 83:0
+PAUSES AT: 83:8
+     80        }
+     81        set setter2(x)
+     82        {
+-=>  83    #        |var s;
+     84        }
+     85    }
+     86    
+
+
+INSERTING AT: 84:0
+PAUSES AT: 84:4
+     81        set setter2(x)
+     82        {
+     83            var s;
+-=>  84    #    |}
+     85    }
+     86    
+     87    x => x;
+
+
+INSERTING AT: 85:0
+PAUSES AT: 87:0
+     82        {
+     83            var s;
+     84        }
+ ->  85    #}
+     86    
+ =>  87    |x => x;
+     88    () => 1;
+     89    (x) => x;
+     90    (x) => { x };
+
+
+INSERTING AT: 86:0
+PAUSES AT: 87:0
+     83            var s;
+     84        }
+     85    }
+ ->  86    #
+ =>  87    |x => x;
+     88    () => 1;
+     89    (x) => x;
+     90    (x) => { x };
+
+
+INSERTING AT: 87:0
+PAUSES AT: 87:0
+     84        }
+     85    }
+     86    
+-=>  87    |x => x;
+     88    () => 1;
+     89    (x) => x;
+     90    (x) => { x };
+
+
+INSERTING AT: 88:0
+PAUSES AT: 88:0
+     85    }
+     86    
+     87    x => x;
+-=>  88    |() => 1;
+     89    (x) => x;
+     90    (x) => { x };
+     91    (x) => {
+
+
+INSERTING AT: 89:0
+PAUSES AT: 89:0
+     86    
+     87    x => x;
+     88    () => 1;
+-=>  89    |(x) => x;
+     90    (x) => { x };
+     91    (x) => {
+     92        x
+
+
+INSERTING AT: 90:0
+PAUSES AT: 90:0
+     87    x => x;
+     88    () => 1;
+     89    (x) => x;
+-=>  90    |(x) => { x };
+     91    (x) => {
+     92        x
+     93    };
+
+
+INSERTING AT: 91:0
+PAUSES AT: 91:0
+     88    () => 1;
+     89    (x) => x;
+     90    (x) => { x };
+-=>  91    |(x) => {
+     92        x
+     93    };
+     94    () => {
+
+
+INSERTING AT: 92:0
+PAUSES AT: 92:4
+     89    (x) => x;
+     90    (x) => { x };
+     91    (x) => {
+-=>  92    #    |x
+     93    };
+     94    () => {
+     95        var x;
+
+
+INSERTING AT: 93:0
+PAUSES AT: 93:0
+     90    (x) => { x };
+     91    (x) => {
+     92        x
+-=>  93    |};
+     94    () => {
+     95        var x;
+     96    };
+
+
+INSERTING AT: 94:0
+PAUSES AT: 94:0
+     91    (x) => {
+     92        x
+     93    };
+-=>  94    |() => {
+     95        var x;
+     96    };
+     97    
+
+
+INSERTING AT: 95:0
+PAUSES AT: 95:4
+     92        x
+     93    };
+     94    () => {
+-=>  95    #    |var x;
+     96    };
+     97    
+     98    var fObj = {
+
+
+INSERTING AT: 96:0
+PAUSES AT: 96:0
+     93    };
+     94    () => {
+     95        var x;
+-=>  96    |};
+     97    
+     98    var fObj = {
+     99        f1: function() {
+
+
+INSERTING AT: 97:0
+PAUSES AT: 98:0
+     94    () => {
+     95        var x;
+     96    };
+ ->  97    #
+ =>  98    |var fObj = {
+     99        f1: function() {
+    100            var x;
+    101        },
+
+
+INSERTING AT: 98:0
+PAUSES AT: 98:0
+     95        var x;
+     96    };
+     97    
+-=>  98    |var fObj = {
+     99        f1: function() {
+    100            var x;
+    101        },
+
+
+INSERTING AT: 99:0
+PAUSES AT: 100:8
+     96    };
+     97    
+     98    var fObj = {
+ ->  99    #    f1: function() {
+ => 100            |var x;
+    101        },
+    102        f2: function()
+    103        {
+
+
+INSERTING AT: 100:0
+PAUSES AT: 100:8
+     97    
+     98    var fObj = {
+     99        f1: function() {
+-=> 100    #        |var x;
+    101        },
+    102        f2: function()
+    103        {
+
+
+INSERTING AT: 101:0
+PAUSES AT: 101:4
+     98    var fObj = {
+     99        f1: function() {
+    100            var x;
+-=> 101    #    |},
+    102        f2: function()
+    103        {
+    104            var x;
+
+
+INSERTING AT: 102:0
+PAUSES AT: 104:8
+     99        f1: function() {
+    100            var x;
+    101        },
+ -> 102    #    f2: function()
+    103        {
+ => 104            |var x;
+    105        },
+    106        f3: () => {
+    107            var x;
+
+
+INSERTING AT: 103:0
+PAUSES AT: 104:8
+    100            var x;
+    101        },
+    102        f2: function()
+ -> 103    #    {
+ => 104            |var x;
+    105        },
+    106        f3: () => {
+    107            var x;
+
+
+INSERTING AT: 104:0
+PAUSES AT: 104:8
+    101        },
+    102        f2: function()
+    103        {
+-=> 104    #        |var x;
+    105        },
+    106        f3: () => {
+    107            var x;
+
+
+INSERTING AT: 105:0
+PAUSES AT: 105:4
+    102        f2: function()
+    103        {
+    104            var x;
+-=> 105    #    |},
+    106        f3: () => {
+    107            var x;
+    108        },
+
+
+INSERTING AT: 106:0
+PAUSES AT: 107:8
+    103        {
+    104            var x;
+    105        },
+ -> 106    #    f3: () => {
+ => 107            |var x;
+    108        },
+    109        f4: () =>
+    110        {
+
+
+INSERTING AT: 107:0
+PAUSES AT: 107:8
+    104            var x;
+    105        },
+    106        f3: () => {
+-=> 107    #        |var x;
+    108        },
+    109        f4: () =>
+    110        {
+
+
+INSERTING AT: 108:0
+PAUSES AT: 108:4
+    105        },
+    106        f3: () => {
+    107            var x;
+-=> 108    #    |},
+    109        f4: () =>
+    110        {
+    111            var x;
+
+
+INSERTING AT: 109:0
+PAUSES AT: 111:8
+    106        f3: () => {
+    107            var x;
+    108        },
+ -> 109    #    f4: () =>
+    110        {
+ => 111            |var x;
+    112        }   
+    113    };
+    114    
+
+
+INSERTING AT: 110:0
+PAUSES AT: 111:8
+    107            var x;
+    108        },
+    109        f4: () =>
+ -> 110    #    {
+ => 111            |var x;
+    112        }   
+    113    };
+    114    
+
+
+INSERTING AT: 111:0
+PAUSES AT: 111:8
+    108        },
+    109        f4: () =>
+    110        {
+-=> 111    #        |var x;
+    112        }   
+    113    };
+    114    
+
+
+INSERTING AT: 112:0
+PAUSES AT: 112:4
+    109        f4: () =>
+    110        {
+    111            var x;
+-=> 112    #    |}   
+    113    };
+    114    
+
+
+INSERTING AT: 113:0
+PRODUCES: Could not resolve breakpoint
+
+INSERTING AT: 114:0
+PRODUCES: Could not resolve breakpoint
+
+-- Running test case: Debugger.resolvedBreakpoint.dumpEachLine.Unicode
+
+INSERTING AT: 0:0
+PAUSES AT: 0:0
+-=>   0    |var unicodeVariable1 = function(){};
+      1    var unicodeVariableStr = "Non-8-bit '∙' character.";
+      2    var unicodeSurrogatePairStr = "Emoji '😍' character.";
+      3    var unicodeVariable2 = 2;
+
+
+INSERTING AT: 1:0
+PAUSES AT: 1:0
+      0    var unicodeVariable1 = function(){};
+-=>   1    |var unicodeVariableStr = "Non-8-bit '∙' character.";
+      2    var unicodeSurrogatePairStr = "Emoji '😍' character.";
+      3    var unicodeVariable2 = 2;
+      4    
+
+
+INSERTING AT: 2:0
+PAUSES AT: 2:0
+      0    var unicodeVariable1 = function(){};
+      1    var unicodeVariableStr = "Non-8-bit '∙' character.";
+-=>   2    |var unicodeSurrogatePairStr = "Emoji '😍' character.";
+      3    var unicodeVariable2 = 2;
+      4    
+
+
+INSERTING AT: 3:0
+PAUSES AT: 3:0
+      0    var unicodeVariable1 = function(){};
+      1    var unicodeVariableStr = "Non-8-bit '∙' character.";
+      2    var unicodeSurrogatePairStr = "Emoji '😍' character.";
+-=>   3    |var unicodeVariable2 = 2;
+      4    
+
+
+INSERTING AT: 4:0
+PRODUCES: Could not resolve breakpoint
+

@@ -1,0 +1,5 @@
+2d.composite.operation.default
+
+
+FAIL OffscreenCanvas test: 2d.composite.operation.default null is not an object (evaluating 'ctx.globalCompositeOperation')
+

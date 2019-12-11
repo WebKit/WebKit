@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="../../resources/frame-ancestors-test.js"></script>
+</head>
+<body>
+<script>
+description("A 'frame-ancestors' CSP directive with a URL value should compare against each frame's origin rather than URL, " +
+            "so a nested frame with a sandboxed parent frame with allow-same-origin should be allowed due to the parent opting " +
+            "out of the unique origin.");
+
+testNestedIFrame(SAMEORIGIN_ORIGIN + " " + CROSSORIGIN_ORIGIN, CROSS_ORIGIN, CROSS_ORIGIN, EXPECT_BLOCK, "allow-scripts allow-same-origin");
+</script>
+</body>
+</html>

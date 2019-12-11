@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Tests window.open() call with an activeDOMWindow that has a null frame.");
+debug("This test passes if it doesn't crash.");
+
+window.jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.setCanOpenWindows(true);
+
+function openWindow()
+{
+    testFrameWindowOpen.call(window);
+    finishJSTest();
+}
+
+function removeSubFrame()
+{
+    var testFrame = document.getElementById("testFrame");
+    testFrameWindow = testFrame.contentWindow;
+    testFrameWindowOpen = testFrameWindow.open;
+    testFrame.remove();
+    gc();
+
+    setTimeout(openWindow, 0);
+}
+</script>
+</head>
+<body>
+<iframe id="testFrame" src="resources/test-frame.html" onload="removeSubFrame()"></iframe>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

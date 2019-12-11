@@ -1,0 +1,12 @@
+{
+  "tests": [
+    {
+      "app": "webrtc_perf_tests",
+      "test args": [
+        "--save_chartjson_result"
+      ],
+      "bot id": "build16-a7",
+      "pool": "WebRTC"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>WebKitMediaKeys</title>
+        <script src=../video-test.js></script>
+		<script src=../../resources/gc.js></script>
+        <script>
+            function stringToUint8Array(str)
+            {
+                var arr=[];
+                for(var i=0,j=str.length;i<j;++i)
+                  arr[i]=str.charCodeAt(i);
+                return new Uint8Array(arr);
+            }
+
+            var mediaKeys;
+            var mediaKeySession;
+            var initData = stringToUint8Array('mock');
+
+            function runTest() 
+            {
+                // Initialize the MockCDM. It supports the key system 'com.apple.mock', the 
+                // mime type 'video/mock'. It requires init data to begin with 'mock', and
+                // keys to begin with 'key'.
+                if (internals)
+                    internals.initializeMockCDM();
+
+                run('mediaKeys = new WebKitMediaKeys("com.webcore.mock")');
+                run('mediaKeySession = mediaKeys.createSession("video/mock", initData)');
+                run('delete mediaKeySession');
+                run('gc()');
+                waitForEvent('webkitkeymessage', null, true, false, mediaKeySession);
+            }
+
+        </script>
+    </head>
+    <body onload="runTest()">
+        <p>This tests that the MediaKeySession object is not garbage collected when associated with an open mediaKeys object.</p>
+    </body>
+</html>

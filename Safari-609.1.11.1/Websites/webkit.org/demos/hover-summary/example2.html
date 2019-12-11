@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<head>
+<title>Summary Example 1</title>
+<link rel=stylesheet href="details.css">
+<script src="details.js"></script>
+<style>
+table#expenses {
+    border: 1px solid gray;
+    width: 50%;
+    border-collapse: collapse;
+    caption-side: bottom;
+    position: relative; /* To make this a containing block. */
+}
+
+table#expenses td, table#expenses th {
+    border: 1px solid gray;    
+}
+
+table#expenses > caption > details {
+    display: none;
+    position: absolute;
+    background: lightyellow;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    top: 100%;
+    width: 100%;
+}
+
+table#expenses:hover > caption > details {
+    display: block;
+}
+
+table#expenses > caption > details:focus {
+    display: block;
+}
+
+</style>
+</head>
+
+<body>
+
+<table id=expenses>
+<tr><th>Month</th><th>Revenues</th><th>Expenses</th></tr>
+<tr><th>January</th><td>$5,000</td><td>$10,000</td></tr>
+<tr><th>Februuary</th><td>$4,000</td><td>$20,000</td></tr>
+<tr><th>March</th><td>$3,000</td><td>$30,000</td></tr>
+<tr><th>April</th><td>$2,000</td><td>$40,000</td></tr>
+<tr><th>May</th><td>$1,000</td><td>$50,000</td></tr>
+<caption>
+<details>
+<summary>Monthly Revenues and Expenses</summary>This table shows monthly revenues
+and expenses. Each row represents a month. The columns are the month
+name, the revenues for that month, and the expenses for that
+month.</detail>
+</caption>
+</table>
+
+
+</body>

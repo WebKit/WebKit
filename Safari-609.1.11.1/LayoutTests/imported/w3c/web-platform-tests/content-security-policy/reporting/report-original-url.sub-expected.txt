@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: Refused to load http://localhost:8800/content-security-policy/support/fail.png?t=1 because it does not appear in the img-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://www2.localhost:8800/content-security-policy/support/fail.png?t=2 because it does not appear in the img-src directive of the Content Security Policy.
+Blocked access to external URL http://www1.localhost:8800/common/redirect.py?location=http%3A%2F%2Flocalhost%3A8800%2Fcontent-security-policy%2Fsupport%2Ffail.png%3Ft%3D3
+Blocked access to external URL http://www1.localhost:8800/common/redirect.py?location=http%3A%2F%2Fwww2.localhost%3A8800%2Fcontent-security-policy%2Fsupport%2Ffail.png%3Ft%3D4
+
+Harness Error (TIMEOUT), message = null
+
+PASS Direct block, same-origin = full URL in report 
+TIMEOUT Direct block, cross-origin = full URL in report Test timed out
+TIMEOUT Block after redirect, same-origin = original URL in report Test timed out
+PASS Block after redirect, cross-origin = original URL in report 
+PASS Violation report status OK. 
+

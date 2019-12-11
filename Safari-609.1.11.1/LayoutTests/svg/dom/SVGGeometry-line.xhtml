@@ -1,0 +1,63 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body onload="run()">
+<svg id="svg" xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+    <line id="l1" x1="0" y1="10" x2="100" y2="10" fill="none" stroke="black" stroke-width="20"/>
+</svg>
+<p id="description"></p>
+<div id="console"></div>
+<script type="text/javascript">
+<![CDATA[
+window.enablePixelTesting = false;
+window.jsTestIsAsync = true;
+var l1 = document.getElementById("l1");
+
+function run() {
+    description("Test SVGGeometryElement APIs for line.");
+
+    debug("");
+    debug("Test isPointInFill()");
+    shouldBe("l1.isPointInFill({})", "false");
+    shouldBeTrue("l1.isPointInFill({x: 0, y: 10})");
+    shouldBeFalse("l1.isPointInFill({x: 0, y: 11})");
+    shouldBeTrue("l1.isPointInFill({x: 100, y: 10})");
+    shouldBeFalse("l1.isPointInFill({x: 100, y: 11})");
+    shouldBeFalse("l1.isPointInFill({x: 101, y: 10})");
+    shouldBeFalse("l1.isPointInFill({x: 101, y: 11})");
+
+    debug("");
+    debug("Test isPointInStroke()");
+    shouldBeTrue("l1.isPointInStroke({ })");
+    shouldBeTrue("l1.isPointInStroke({x: 0, y: 0})");
+    shouldBeFalse("l1.isPointInStroke({x: 0, y: 21})");
+    shouldBeTrue("l1.isPointInStroke({x: 50, y: 0})");
+    shouldBeFalse("l1.isPointInStroke({x: 50, y: 21})");
+    shouldBeTrue("l1.isPointInStroke({x: 100, y: 0})");
+    shouldBeFalse("l1.isPointInStroke({x: 100, y: 21})");
+    shouldBeFalse("l1.isPointInStroke({x: 101, y: 0})");
+    shouldBeFalse("l1.isPointInStroke({x: 101, y: 21})");
+
+    debug("");
+    debug("Test getTotalLength()");
+    shouldBeCloseTo("l1.getTotalLength()", 100, 0.1);
+
+    debug("");
+    debug("Test getPointAtLength()");
+    shouldBeCloseTo("l1.getPointAtLength(0).x", 0, 0.1);
+    shouldBeCloseTo("l1.getPointAtLength(0).y", 10, 0.1);
+    shouldBeCloseTo("l1.getPointAtLength(50).x", 50, 0.1);
+    shouldBeCloseTo("l1.getPointAtLength(50).y", 10, 0.1);
+    shouldBeCloseTo("l1.getPointAtLength(100).x", 100, 0.1);
+    shouldBeCloseTo("l1.getPointAtLength(100).y", 10, 0.1);
+    shouldBeCloseTo("l1.getPointAtLength(150).x", 100, 0.1);
+    shouldBeCloseTo("l1.getPointAtLength(150).y", 10, 0.1);
+
+    finishJSTest();
+}
+]]>
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

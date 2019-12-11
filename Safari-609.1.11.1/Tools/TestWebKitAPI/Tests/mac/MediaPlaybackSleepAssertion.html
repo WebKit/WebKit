@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        if (window.internals)
+            internals.setMockMediaPlaybackTargetPickerEnabled(true);
+
+        document.addEventListener('keydown', nextstep);
+
+        function startTest() {
+            var video = document.querySelector('video');
+            video.addEventListener('playing', onplaying);
+            video.addEventListener('pause', onpause);
+            video.addEventListener('webkitcurrentplaybacktargetiswirelesschanged', oncurrentplaybacktargetiswirelesschanged);
+            window.location = 'callback:loaded';
+        }
+
+        function onplaying(event) {
+            var video = event.target;
+            window.location = 'callback:playing';
+        }
+
+        function onpause(event) {
+            var video = event.target;
+            window.location = 'callback:paused';
+        }
+
+        function oncurrentplaybacktargetiswirelesschanged(event) {
+            var video = event.target;
+            window.location = video.webkitCurrentPlaybackTargetIsWireless ? 'callback:remote-start' : 'callback:remote-end';
+        }
+
+        function nextstep() {
+            var video = document.querySelector('video');
+            if (!video.webkitCurrentPlaybackTargetIsWireless) {
+                if (video.paused)
+                    video.play();
+                else {
+                    video.webkitShowPlaybackTargetPicker();
+                    if (window.internals)
+                        internals.setMockMediaPlaybackTargetPickerState('Sleepy TV', 'DeviceAvailable');
+                }
+            } else {
+                if (!video.paused)
+                    video.pause();
+                else {
+                    video.webkitShowPlaybackTargetPicker();
+                    if (window.internals)
+                        internals.setMockMediaPlaybackTargetPickerState('Sleepy TV', 'DeviceUnavailable');
+                }
+            }
+        }
+
+        window.addEventListener('load', startTest);
+    </script>
+</head>
+<body>
+    <video src="video-with-audio.mp4"></video>
+</body>
+</html>

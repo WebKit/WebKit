@@ -1,0 +1,49 @@
+Test the basic behaviors of Math.clz32()
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Math.hasOwnProperty("clz32") is true
+PASS typeof Math.clz32 is "function"
+PASS Object.getPrototypeOf(Math).clz32 is undefined
+PASS Math.clz32.length is 1
+PASS Math.clz32.name is "clz32"
+PASS Object.getOwnPropertyDescriptor(Math, "clz32").configurable is true
+PASS Object.getOwnPropertyDescriptor(Math, "clz32").enumerable is false
+PASS Object.getOwnPropertyDescriptor(Math, "clz32").writable is true
+PASS Math.clz32(0) is 32
+PASS Math.clz32(-0) is 32
+PASS Math.clz32(1) is 31
+PASS Math.clz32(-1) is 0
+PASS Math.clz32(42) is 26
+PASS Math.clz32(-2147483648) is 0
+PASS Math.clz32(2147483647) is 1
+PASS Math.clz32(Number.MAX_VALUE) is 32
+PASS Math.clz32(Number.MIN_VALUE) is 32
+PASS Math.clz32(Number.MAX_SAFE_INTEGER) is 0
+PASS Math.clz32(Number.MIN_SAFE_INTEGER) is 31
+PASS Math.clz32(Math.PI) is 30
+PASS Math.clz32(Math.E) is 30
+PASS Math.clz32(NaN) is 32
+PASS Math.clz32(Number.POSITIVE_INFINITY) is 32
+PASS Math.clz32(Number.NEGATIVE_INFINITY) is 32
+PASS Math.clz32() is 32
+PASS Math.clz32(undefined) is 32
+PASS Math.clz32(null) is 32
+PASS Math.clz32("WebKit") is 32
+PASS Math.clz32(Symbol("WebKit")) threw exception TypeError: Cannot convert a symbol to a number.
+PASS Math.clz32({ webkit: "awesome" }) is 32
+PASS Math.clz32(objectConvertToString) is 25
+PASS Math.clz32(objectRecordToStringCall) is 28
+PASS objectRecordToStringCall.toStringCallCount is 1
+PASS Math.clz32(objectThrowOnToString) threw exception No!.
+PASS Math.clz32(objectWithValueOf) is 15
+PASS Math.clz32(objectThrowOnValueOf) threw exception Nope!.
+PASS Math.clz32(objectRecordValueOfCall) is 23
+PASS objectRecordValueOfCall.valueOfCallCount is 1
+PASS Math.clz32(objectRecordConversionCalls) is 15
+PASS objectRecordConversionCalls.callList.toString() is "valueOf"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

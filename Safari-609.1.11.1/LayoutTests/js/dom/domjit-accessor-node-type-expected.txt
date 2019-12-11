@@ -1,0 +1,99 @@
+Test DOMJIT nodeType accessor works.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS (
+            function test1(element, result)
+            {
+                for (var i = 0; i < 1e4; ++i) {
+                    if (element.nodeType !== result)
+                        return false;
+                }
+                return true;
+            }
+        )(target, 1) is true
+PASS (
+            function test2(element, result)
+            {
+                for (var i = 0; i < 1e4; ++i) {
+                    if (element.nodeType !== result)
+                        return false;
+                }
+                return true;
+            }
+        )(target, 2) is true
+PASS (
+            function test3(element, result)
+            {
+                for (var i = 0; i < 1e4; ++i) {
+                    if (element.nodeType !== result)
+                        return false;
+                }
+                return true;
+            }
+        )(target, 3) is true
+PASS (
+            function test4(element, result)
+            {
+                for (var i = 0; i < 1e4; ++i) {
+                    if (element.nodeType !== result)
+                        return false;
+                }
+                return true;
+            }
+        )(target, 4) is true
+PASS (
+            function test7(element, result)
+            {
+                for (var i = 0; i < 1e4; ++i) {
+                    if (element.nodeType !== result)
+                        return false;
+                }
+                return true;
+            }
+        )(target, 7) is true
+PASS (
+            function test8(element, result)
+            {
+                for (var i = 0; i < 1e4; ++i) {
+                    if (element.nodeType !== result)
+                        return false;
+                }
+                return true;
+            }
+        )(target, 8) is true
+PASS (
+            function test9(element, result)
+            {
+                for (var i = 0; i < 1e4; ++i) {
+                    if (element.nodeType !== result)
+                        return false;
+                }
+                return true;
+            }
+        )(target, 9) is true
+PASS (
+            function test10(element, result)
+            {
+                for (var i = 0; i < 1e4; ++i) {
+                    if (element.nodeType !== result)
+                        return false;
+                }
+                return true;
+            }
+        )(target, 10) is true
+PASS (
+            function test11(element, result)
+            {
+                for (var i = 0; i < 1e4; ++i) {
+                    if (element.nodeType !== result)
+                        return false;
+                }
+                return true;
+            }
+        )(target, 11) is true
+

@@ -1,0 +1,33 @@
+<html>
+<style>
+    #scrollme {
+        width: 100px;
+        height: 100px;
+        overflow: auto;
+    }
+    #scrollme p {
+        height: 1000px;
+        width: 1000px;
+    }
+    ::-webkit-scrollbar {
+        width: 15px;
+        height: 15px;
+        background-color: #C0C0C0;
+    }
+    ::-webkit-scrollbar-thumb {
+        background-color: #808080;
+    }
+    ::-webkit-scrollbar-corner {
+        background-color: #C0C0C0;
+    }
+</style>
+<script>
+  if (window.internals) {
+      window.internals.setUsesOverlayScrollbars(false);
+  }
+</script>
+<body>
+  <p>This is a test for <a href="https://bugs.webkit.org/show_bug.cgi?id=153352">https://bugs.webkit.org/show_bug.cgi?id=153352</a></p>
+  <div id="scrollme"><p>This is a scrollable div.</p></div>
+</body>
+</html>

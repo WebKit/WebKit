@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #grid-container {
+                width: 400px;
+                height: 400px;
+                overflow: scroll;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+                scroll-snap-type: both mandatory;
+                line-height: 0px;
+            }
+
+            .cell {
+                width: 400px;
+                height: 400px;
+                display: inline-block;
+                scroll-snap-align: start;
+                background-color: red;
+                margin: 0;
+                padding: 0;
+                position: relative;
+            }
+
+            #green {
+                background-color: green;
+            }
+
+            #snap-from > p {
+                position: absolute;
+                top: 0px;
+                left: 10px;
+                margin-top: 0px;
+            }
+        </style>
+        <script src="../../../resources/js-test.js"></script>
+        <script>
+        window.jsTestIsAsync = true;
+
+        var divTarget;
+        var divScrollPositionBeforeGlide;
+        var divScrollPositionBeforeSnap;
+        var divScrollPositionBeforeSingleAxisGlide;
+
+        function checkForSingleAxisGlide() {
+            if (divTarget.scrollTop == divScrollPositionBeforeSingleAxisGlide.y + 400 && divTarget.scrollLeft == divScrollPositionBeforeSingleAxisGlide.x)
+                testPassed("div successfully snapped after dragging along one axis and then scrolling in the other.");
+            else
+                testFailed("div did not honor 2D snap points. (single axis scroll followed by flick on other axis)");
+            finishJSTest();
+        }
+
+        function scrollAndGlideInSingleAxisTest() {
+            divScrollPositionBeforeSingleAxisGlide = {
+                x: divTarget.scrollLeft,
+                y: divTarget.scrollTop
+            };
+            eventSender.mouseMoveTo(100, 100);
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, "began", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "none", "begin");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "none", "continue");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
+            eventSender.callAfterScrollingCompletes(checkForSingleAxisGlide);
+        }
+
+        function checkForScrollSnap() {
+            if (divTarget.scrollTop == divScrollPositionBeforeSnap.y && divTarget.scrollLeft == divScrollPositionBeforeSnap.x)
+                testPassed("div successfully snapped diagonally.");
+            else
+                testFailed("div did not honor 2D snap points. (diagonal snap)");
+            setTimeout(scrollAndGlideInSingleAxisTest, 0);
+        }
+
+        function scrollSnapTest() {
+            divScrollPositionBeforeSnap = {
+                x: divTarget.scrollLeft,
+                y: divTarget.scrollTop
+            };
+
+            eventSender.mouseMoveTo(100, 100);
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(1, 1, "began", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(1, 1, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(1, 1, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+            eventSender.callAfterScrollingCompletes(checkForScrollSnap);
+        }
+
+        function checkForScrollGlide() {
+            // The div should have scrolled (glided) to the next snap point.
+            if (divTarget.scrollTop == divScrollPositionBeforeGlide.y + 400 && divTarget.scrollLeft == divScrollPositionBeforeGlide.x + 400)
+                testPassed("div successfully scrolled diagonally.");
+            else
+                testFailed("div did not honor 2D snap points. (diagonal glide)");
+            setTimeout(scrollSnapTest, 0);
+        }
+
+        function scrollGlideTest() {
+            divTarget = document.getElementById("grid-container");
+            divScrollPositionBeforeGlide = {
+                x: divTarget.scrollLeft,
+                y: divTarget.scrollTop
+            };
+
+            eventSender.mouseMoveTo(100, 100);
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, -1, "began", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, -1, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, -1, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, -1, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, -1, "none", "begin");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, -1, "none", "continue");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
+            eventSender.callAfterScrollingCompletes(checkForScrollGlide);
+        }
+
+        function onLoad() {
+            if (window.eventSender) {
+                eventSender.monitorWheelEvents();
+                internals.setPlatformMomentumScrollingPredictionEnabled(false);
+                setTimeout(scrollGlideTest, 0);
+            } else {
+                var messageLocation = document.getElementById("snap-from");
+                var message = document.createElement("p");
+                message.innerHTML = "<p>This test is better run under DumpRenderTree." +
+                "</p><p>To manually test it, place the mouse pointer inside the" +
+                "</p><p>red box and perform a small swipe to the lower right" +
+                "</p><p>with some momentum. The grid should scroll to show a" +
+                "</p><p>green cell. Then scroll a bit to the upper left and" +
+                "</p><p>release without momentum. It should snap back to show" +
+                "</p><p>the green cell. Finally, drag slightly to the right and" +
+                "</p><p>then directly down. It should snap to reveal another" +
+                "</p><p>green cell directly below the previous one.</p>"
+                messageLocation.appendChild(message);
+            }
+        }
+        </script>
+    </head>
+    <body onload="onLoad();">
+        <div id="grid-container">
+            <div class="cell" id="snap-from"></div><div class="cell"></div><div class="cell"></div><br/>
+            <div class="cell"></div><div class="cell" id="green"></div><div class="cell"></div><br/>
+            <div class="cell"></div><div class="cell" id="green"></div><div class="cell"></div>
+        </div>
+    </body>
+</html>

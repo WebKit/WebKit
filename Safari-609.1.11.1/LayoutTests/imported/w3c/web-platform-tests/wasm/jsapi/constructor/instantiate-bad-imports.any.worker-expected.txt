@@ -1,0 +1,33 @@
+
+Harness Error (FAIL), message = Error in remote http://localhost:8800/wasm/jsapi/bad-imports.js: TypeError: undefined is not an object (evaluating 'WebAssembly.Global.prototype')
+
+PASS WebAssembly.instantiate(module): Non-object imports argument: null 
+PASS WebAssembly.instantiate(module): Non-object imports argument: true 
+PASS WebAssembly.instantiate(module): Non-object imports argument: "" 
+PASS WebAssembly.instantiate(module): Non-object imports argument: symbol "Symbol()" 
+PASS WebAssembly.instantiate(module): Non-object imports argument: 1 
+PASS WebAssembly.instantiate(module): Non-object imports argument: 0.1 
+PASS WebAssembly.instantiate(module): Non-object imports argument: NaN 
+PASS WebAssembly.instantiate(module): Non-object module: undefined 
+PASS WebAssembly.instantiate(module): Non-object module: null 
+PASS WebAssembly.instantiate(module): Non-object module: true 
+PASS WebAssembly.instantiate(module): Non-object module: "" 
+PASS WebAssembly.instantiate(module): Non-object module: symbol "Symbol()" 
+PASS WebAssembly.instantiate(module): Non-object module: 1 
+PASS WebAssembly.instantiate(module): Non-object module: 0.1 
+PASS WebAssembly.instantiate(module): Non-object module: NaN 
+PASS WebAssembly.instantiate(module): Missing imports argument 
+PASS WebAssembly.instantiate(module): Imports argument with missing property: undefined 
+PASS WebAssembly.instantiate(module): Imports argument with missing property: empty object 
+PASS WebAssembly.instantiate(module): Imports argument with missing property: wrong property 
+PASS WebAssembly.instantiate(module): Importing an i64 global 
+PASS WebAssembly.instantiate(module): Importing a function with an incorrectly-typed value: undefined 
+PASS WebAssembly.instantiate(module): Importing a function with an incorrectly-typed value: null 
+PASS WebAssembly.instantiate(module): Importing a function with an incorrectly-typed value: true 
+PASS WebAssembly.instantiate(module): Importing a function with an incorrectly-typed value: "" 
+PASS WebAssembly.instantiate(module): Importing a function with an incorrectly-typed value: symbol "Symbol()" 
+PASS WebAssembly.instantiate(module): Importing a function with an incorrectly-typed value: 1 
+PASS WebAssembly.instantiate(module): Importing a function with an incorrectly-typed value: 0.1 
+PASS WebAssembly.instantiate(module): Importing a function with an incorrectly-typed value: NaN 
+PASS WebAssembly.instantiate(module): Importing a function with an incorrectly-typed value: object "[object Object]" 
+

@@ -1,0 +1,24 @@
+--- !tapi-tbd-v2
+archs:
+  - armv7
+  - armv7s
+  - arm64
+  - i386
+  - x86_64
+exports:
+  -
+    archs:
+      - armv7
+      - armv7s
+      - arm64
+      - i386
+      - x86_64
+    objc-classes:
+      - _UIPDFDocument
+      - _UIPDFLinkAnnotation
+      - _UIPDFPageView
+      - _UIPDFSelection
+install-name: /System/Library/PrivateFrameworks/CorePDF.framework/CorePDF
+objc-constraint: none
+platform: ios
+...

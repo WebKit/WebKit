@@ -1,0 +1,17 @@
+
+Test 'ended' event by:
+
+Playing to the end.
+When 'ended' event fires, seek to 0.
+Verify that 'ended' event is not fired again.
+
+EVENT(canplaythrough)
+RUN(audio.currentTime = 1.0)
+RUN(audio.play())
+
+EVENT(ended)
+EXPECTED (audio.ended == 'true') OK
+RUN(audio.currentTime = 0)
+
+END OF TEST
+

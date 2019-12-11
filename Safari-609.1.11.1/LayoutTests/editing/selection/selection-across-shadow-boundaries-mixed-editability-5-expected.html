@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests selecting content starting in a shadow tree inside a non-editable region in an editable region to outside the editable region.<br>
+To manually test, select "hello world WebKit" below by a mouse drag from the bottom right to the top left.<br>
+WebKit should not extend the selection to outside the shadow tree.</p>
+<div id="container" contenteditable>hello<br>world<div>WebKit</div></div>
+<script>
+container.focus();
+getSelection().selectAllChildren(container.lastChild);
+</script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div {
+    left: 0;
+    top: 0;
+    position: absolute;
+    height: 100px;
+}
+
+.mask {
+    /* We add an extra pixel to account for rounding errors */
+    width: 51px;
+    background-color: red;
+}
+
+#target {
+    width: 100px;
+    background-color: black;
+    transform: translateX(50px);
+}
+
+#right {
+    left: 149px;
+}
+</style>
+</head>
+<body>
+<div id="target"></div>
+<div id="left" class="mask"></div>
+<div id="right" class="mask"></div>
+</body>
+</html>

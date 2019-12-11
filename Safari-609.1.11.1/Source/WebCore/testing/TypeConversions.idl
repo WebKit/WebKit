@@ -1,0 +1,104 @@
+/*
+ * Copyright (C) 2013 Google Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+[
+    NoInterfaceObject,
+    ImplementationLacksVTable,
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+] interface TypeConversions {
+    attribute byte testByte;
+    attribute [EnforceRange] byte testEnforceRangeByte;
+    attribute [Clamp] byte testClampByte;
+    attribute octet testOctet;
+    attribute [EnforceRange] octet testEnforceRangeOctet;
+    attribute [Clamp] octet testClampOctet;
+
+    attribute short testShort;
+    attribute [EnforceRange] short testEnforceRangeShort;
+    attribute [Clamp] short testClampShort;
+    attribute unsigned short testUnsignedShort;
+    attribute [EnforceRange] unsigned short testEnforceRangeUnsignedShort;
+    attribute [Clamp] unsigned short testClampUnsignedShort;
+
+    attribute long testLong;
+    attribute [EnforceRange] long testEnforceRangeLong;
+    attribute [Clamp] long testClampLong;
+    attribute unsigned long testUnsignedLong;
+    attribute [EnforceRange] unsigned long testEnforceRangeUnsignedLong;
+    attribute [Clamp] unsigned long testClampUnsignedLong;
+
+    attribute long long testLongLong;
+    attribute [EnforceRange] long long testEnforceRangeLongLong;
+    attribute [Clamp] long long testClampLongLong;
+    attribute unsigned long long testUnsignedLongLong;
+    attribute [EnforceRange] unsigned long long testEnforceRangeUnsignedLongLong;
+    attribute [Clamp] unsigned long long testClampUnsignedLongLong;
+
+    readonly attribute unrestricted double testImpureNaNUnrestrictedDouble;
+    readonly attribute unrestricted double testImpureNaN2UnrestrictedDouble;
+    readonly attribute unrestricted double testQuietNaNUnrestrictedDouble;
+    readonly attribute unrestricted double testPureNaNUnrestrictedDouble;
+
+    attribute DOMString testString;
+    attribute ByteString testByteString;
+    attribute USVString testUSVString;
+    attribute [TreatNullAs=EmptyString] DOMString testTreatNullAsEmptyString;
+
+    void setTestLongRecord(record<DOMString, long> record);
+    record<DOMString, long> testLongRecord();
+
+    void setTestNodeRecord(record<USVString, Node> record);
+    record<USVString, Node> testNodeRecord();
+
+    void setTestSequenceRecord(record<ByteString, sequence<DOMString>> record);
+    record<ByteString, sequence<DOMString>> testSequenceRecord();
+
+    attribute (DOMString or long or boolean or Node or sequence<long>) testUnion;
+
+    attribute TypeConversionsDictionary testDictionary;
+
+    attribute (DOMString or [Clamp] long or sequence<[Clamp] long>) testClampUnion;
+    attribute (DOMString or [EnforceRange] long or sequence<[EnforceRange] long>) testEnforceRangeUnion;
+    attribute ([TreatNullAs=EmptyString] DOMString or long or sequence<[TreatNullAs=EmptyString] DOMString>) testTreatNullAsEmptyStringUnion;
+};
+
+[
+    JSGenerateToJSObject
+] dictionary TypeConversionsOtherDictionary {
+    long longValue = 0;
+    DOMString stringValue = "";
+};
+
+[
+    JSGenerateToJSObject
+] dictionary TypeConversionsDictionary {
+    long longValue = 0;
+    DOMString stringValue = "";
+    [TreatNullAs=EmptyString] DOMString treatNullAsEmptyStringValue = "";
+    sequence<DOMString> sequenceValue = [];
+    (Node or sequence<DOMString> or TypeConversionsOtherDictionary) unionValue = null;
+    [Clamp] long clampLongValue = 0;
+    [EnforceRange] long enforceRangeLongValue = 0;
+};

@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 429x17
+          text run at (0,0) width 429: "Slider drawing with no source. The controls should render correctly."
+      RenderBlock (anonymous) at (0,34) size 784x152
+        RenderText {#text} at (0,0) size 0x0
+layer at (8,42) size 302x152
+  RenderVideo {VIDEO} at (0,0) size 302x152 [border: (1px solid #000000)]
+layer at (9,43) size 300x150
+  RenderFlexibleBox {DIV} at (1,1) size 300x150
+    RenderBlock {DIV} at (0,110) size 300x40
+layer at (14,158) size 290x30
+  RenderFlexibleBox {DIV} at (5,5) size 290x30 [bgcolor=#141414CC]
+    RenderSlider {INPUT} at (49,11) size 179x8 [color=#E6E6E659]
+      RenderFlexibleBox {DIV} at (0,0) size 179x8 [border: (1px solid #E6E6E659)]
+        RenderBlock {DIV} at (1,-2) size 191x12
+          RenderBlock {DIV} at (-7,0) size 12x12 [color=#FFFFFF]
+    RenderBlock {DIV} at (243,0) size 32x30 [color=#FFFFFF]
+      RenderText {#text} at (0,7) size 32x15
+        text run at (0,7) width 32: "00:00"
+layer at (23,158) size 30x30
+  RenderButton {BUTTON} at (9,0) size 30x30

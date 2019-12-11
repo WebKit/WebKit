@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <p>You should see a solid green square below</p>
+        <svg width="800px" height="800px" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <filter id="light" filterUnits="userSpaceOnUse" x="100" y="100" width="200" height="200">
+                    <feTurbulence  seed="1" type="turbulence" baseFrequency="0.01" numOctaves="1" stitchTiles="stitch" />
+                    <feComponentTransfer>
+                      <feFuncR type="discrete" tableValues="0 0.5 0.5 0.5 1" />
+                      <feFuncG type="discrete" tableValues="0 0.5 0.5 0.5 1" />
+                      <feFuncB type="discrete" tableValues="0 0.5 0.5 0.5 1" />
+                      <feFuncA type="discrete" tableValues="0 1 1 1 1" />
+                    </feComponentTransfer>
+                </filter>
+                <clipPath id="clip-out-middle">
+                  <rect x="160" y="160" width="80" height="80" />
+                </clipPath>
+            </defs>
+            <rect x="160" y="160" width="80" height="80" fill="green" />
+            <rect x="0" y="0" width="400" height="400" filter="url(#light)" clip-path="url(#clip-out-middle)"/>
+        </svg>
+        </div>
+    </body>
+</html>

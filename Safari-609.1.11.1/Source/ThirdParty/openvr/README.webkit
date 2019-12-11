@@ -1,0 +1,23 @@
+This is the OpenVR library from
+https://github.com/ValveSoftware/openvr
+
+Upstream code can be viewed at
+ https://github.com/ValveSoftware/openvr/tree/master/
+
+and cloned by
+ git clone https://github.com/ValveSoftware/openvr.git
+
+Current version: [commit ebdea152f8aac77e9a6db29682b81d762159df7e]
+
+which corresponds to 1.0.10 release.
+
+WebKit changes:
+* patches/cmake-build.patch: script used to allow openvr CMake build to be
+integrated into WebKit build
+* patches/Path_WriteBinaryFile-fix-return-condition.patch: suppresses a
+compiler warning, but otherwise already applied upstream in 1.0.12
+* Removed bin/ directory. Not needed as it includes precompiled libraries
+* Removed lib/ directory. Not needed as it includes precompiled libraries
+* Removed controller_callouts/ directory. Unneeded docs
+* Removed samples/ directory.
+* Replaced tabs by whitespaces to make check-webkit-style happy.

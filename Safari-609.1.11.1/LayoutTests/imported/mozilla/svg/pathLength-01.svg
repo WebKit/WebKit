@@ -1,0 +1,12 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg viewBox="0 0 100 2" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100%" height="100%" fill="red"/>
+  <!-- This path is really 400 units long (and its halfway point is at the
+       right edge of our viewBox). We use pathLength to normalize its length
+       to 20, though, so the first 10-unit-long dash in stroke-dasharray ends
+       up covering 10/20 = 1/2 of the path. This covers the whole viewBox. -->
+	<path d="M-100,1 h400" pathLength="20" stroke-dasharray="10" fill="none" stroke="lime" stroke-width="2"/>
+</svg>

@@ -1,0 +1,18 @@
+This tests that selection changes as a result of advancing focus.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS webArea.addNotificationListener(notificationCallback) is true
+eventSender.keyDown(tabCharacter);
+
+PASS accessibilityController.accessibleElementById("1").isFocusable is true
+accessibilityController.accessibleElementById("1").takeFocus()
+
+eventSender.keyDown(tabCharacter)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+ 1
+ 2

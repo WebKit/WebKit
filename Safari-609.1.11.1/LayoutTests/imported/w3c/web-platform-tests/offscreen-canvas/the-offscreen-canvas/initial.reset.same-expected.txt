@@ -1,0 +1,7 @@
+initial.reset.same
+
+Setting size (not changing the value) resets canvas to transparent black
+
+
+FAIL Setting size (not changing the value) resets canvas to transparent black null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

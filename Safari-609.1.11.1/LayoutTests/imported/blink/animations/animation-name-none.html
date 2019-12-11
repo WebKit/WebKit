@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Test setting animation name to none</title>
+  <style>
+    @-webkit-keyframes test {}
+    #test {
+      -webkit-animation-name: test;
+    }
+  </style>
+  <script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+  </script>
+</head>
+<body>
+<div id="test">This tests setting -webkit-animation-name to none, it passes if it does not crash.</div>
+<script>
+  document.querySelector('#test').style.webkitAnimationName = 'none'
+</script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+trigger This should be visible This should be visible
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 2630.00)
+  (backingStoreAttached 1)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 2630.00)
+      (contentsOpaque 1)
+      (backingStoreAttached 1)
+      (children 1
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (anchor 0.50 0.06)
+          (bounds 200.00 2622.00)
+          (usingTiledLayer 1)
+          (drawsContent 1)
+          (backingStoreAttached 1)
+          (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [200.00 0.00 0.00 1.00])
+          (children 1
+            (GraphicsLayer
+              (position 2.00 2.00)
+              (bounds 200.00 296.00)
+              (contentsOpaque 1)
+              (drawsContent 1)
+              (backingStoreAttached 1)
+              (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [-204.00 0.00 0.00 1.00])
+              (children 1
+                (GraphicsLayer
+                  (bounds 200.00 296.00)
+                  (contentsOpaque 1)
+                  (drawsContent 1)
+                  (backingStoreAttached 1)
+                  (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [404.00 0.00 0.00 1.00])
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style id="style-container"></style>
+</head>
+<body>
+</body>
+<script>
+description('Test the parsing of attribute selector with the case-insensitive value flag (e.g. [foo=bar i]). This test covers the most basic cases.');
+
+function testValidSelectorCSSOMSerialization(selectorString, expectedSerializedSelector) {
+    var styleContainer = document.getElementById('style-container');
+    styleContainer.innerHTML = selectorString + ' { }';
+    shouldBe("document.getElementById('style-container').sheet.cssRules.length", "1");
+    if (!expectedSerializedSelector)
+        expectedSerializedSelector = selectorString;
+    shouldBeEqualToString("document.getElementById('style-container').sheet.cssRules[0].selectorText", expectedSerializedSelector);
+    styleContainer.innerHTML = '';
+}
+
+function testValidSelector(selectorString, expectedSerializedSelector) {
+    shouldNotThrow('document.querySelector("' + selectorString.replace(/"/g, '\\"') + '")');
+    shouldNotThrow('document.querySelector("' + selectorString.replace(/"/g, '\\"').replace('[', '[*|') + '")');
+    shouldNotThrow('document.querySelector("' + selectorString.replace(/"/g, '\\"').replace('[', '[|') + '")');
+
+    testValidSelectorCSSOMSerialization(selectorString, expectedSerializedSelector);
+    testValidSelectorCSSOMSerialization(selectorString.replace('[', '[|'), expectedSerializedSelector);
+    testValidSelectorCSSOMSerialization(selectorString.replace('[', '[*|'), expectedSerializedSelector.replace('[', '[*|'));
+}
+
+var simpleValidSelectors = [
+    ['[foo=bar i]', '[foo="bar" i]'],
+    ['[foo="bar" i]', '[foo="bar" i]'],
+    ['[foo~=bar i]', '[foo~="bar" i]'],
+    ['[foo~="bar" i]', '[foo~="bar" i]'],
+    ['[foo|=bar i]', '[foo|="bar" i]'],
+    ['[foo|="bar" i]', '[foo|="bar" i]'],
+    ['[foo^=bar i]', '[foo^="bar" i]'],
+    ['[foo^="bar" i]', '[foo^="bar" i]'],
+    ['[foo$=bar i]', '[foo$="bar" i]'],
+    ['[foo$="bar" i]', '[foo$="bar" i]'],
+    ['[foo*=bar i]', '[foo*="bar" i]'],
+    ['[foo*="bar" i]', '[foo*="bar" i]']
+];
+
+debug("Basic cases of valid selectors.");
+for (var testCase of simpleValidSelectors) {
+    // The basics: every combinator.
+    testValidSelector(testCase[0], testCase[1]);
+
+    // Used in function pseudo classes.
+    testValidSelector("foo bar " + testCase[0], "foo bar " + testCase[1]);
+    testValidSelector(":nth-child(2n+1 of " + testCase[0] + ")", ":nth-child(2n+1 of " + testCase[1] + ")");
+    testValidSelector(":nth-last-child(2n+1 of " + testCase[0] + ")", ":nth-last-child(2n+1 of " + testCase[1] + ")");
+    testValidSelector(":matches(foo, " + testCase[0] + ", bar)", ":matches(foo, " + testCase[1] + ", bar)");
+    testValidSelector(":not(" + testCase[0] + ")", ":not(" + testCase[1] + ")");
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+        
+        function getUIScript()
+        {
+            return `
+            (function() {
+                uiController.singleTapAtPoint(50, 50, function() {
+                    uiController.uiScriptComplete("Done");
+                });
+            })();`
+        }
+
+        function runTest()
+        {
+            var output = '';
+            var target = document.getElementById('target');
+            target.addEventListener('touchstart', function(event) {
+                output += 'Received event ' + event.type + ' at ' + event.touches[0].clientX + ', ' + event.touches[0].clientY + '<br>';
+            });
+
+            target.addEventListener('touchend', function(event) {
+                output += 'Received event ' + event.type + '<br>';
+            });
+
+            if (testRunner.runUIScript) {
+                testRunner.runUIScript(getUIScript(), function(result) {
+                    output += result;
+                    document.getElementById('target').innerHTML = output;
+                    testRunner.notifyDone();
+                });
+            }
+        }
+        
+        window.addEventListener('load', runTest, false);
+    </script>
+    <style>
+        #target {
+            height: 100px;
+            width: 200px;
+            background-color: silver;
+        }
+    </style>
+</head>
+<body>
+<div id="target">
+    This test requires UIScriptController to run.
+</div>
+</body>
+</html>

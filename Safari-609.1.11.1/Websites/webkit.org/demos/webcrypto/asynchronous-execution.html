@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebCrypto API Demo: Asynchronous Execution</title>
+    <style>
+    .inner
+    {
+        display: inline-block;
+    }
+    .hidden
+    {
+        display: none;
+    }
+    .loader {
+        border: 4px solid #f3f3f3; /* Light grey */
+        border-top: 4px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 8px;
+        height: 8px;
+        animation: spin 2s linear infinite;
+        display: inline-block;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    </style>
+    <script type="text/javascript" src="common.js"></script>
+    <script type="text/javascript">
+    var plainText = new Uint8Array(104857600); // 100MB
+    var keyData = hexStringToUint8Array("2b7e151628aed2a6abf7158809cf4f3c2b7e151628aed2a6abf7158809cf4f3c");
+    var iv = hexStringToUint8Array("000102030405060708090a0b0c0d0e0f");
+    var times = 10;
+    function webkitAES_CBC()
+    {
+        document.getElementById("webkitAES_CBC").classList.add("hidden");
+        document.getElementById("webkitAES_CBC_loader").classList.remove("hidden");
+        document.getElementById("webkitAES_CBC_loader").classList.add("loader");
+        crypto.webkitSubtle.importKey("raw", keyData, "aes-cbc", false, ["encrypt"]).then(function(key) {
+            var array = [ ];
+            for (var i = 0; i < times; i++)
+                array.push(crypto.webkitSubtle.encrypt({name: "aes-cbc", iv: iv}, key, plainText));
+            Promise.all(array).then(function() {
+                document.getElementById("webkitAES_CBC").classList.remove("hidden");
+                document.getElementById("webkitAES_CBC_loader").classList.remove("loader");
+                document.getElementById("webkitAES_CBC_loader").classList.add("hidden");
+            }, failAndLog);
+        }, failAndLog);
+    }
+    function AES_CBC()
+    {
+        document.getElementById("AES_CBC").classList.add("hidden");
+        document.getElementById("AES_CBC_loader").classList.remove("hidden");
+        document.getElementById("AES_CBC_loader").classList.add("loader");
+        crypto.subtle.importKey("raw", keyData, "aes-cbc", false, ["encrypt"]).then(function(key) {
+            var array = [ ];
+            for (var i = 0; i < times; i++)
+                array.push(crypto.subtle.encrypt({name: "aes-cbc", iv: iv}, key, plainText));
+            Promise.all(array).then(function() {
+                document.getElementById("AES_CBC").classList.remove("hidden");
+                document.getElementById("AES_CBC_loader").classList.remove("loader");
+                document.getElementById("AES_CBC_loader").classList.add("hidden");
+            }, failAndLog);
+        }, failAndLog);
+    }
+    function worker()
+    {
+        document.getElementById("worker").classList.add("hidden");
+        document.getElementById("worker_loader").classList.remove("hidden");
+        document.getElementById("worker_loader").classList.add("loader");
+        crypto.subtle.importKey("raw", keyData, "aes-cbc", false, ["encrypt"]).then(function(key) {
+            var worker = new Worker("asynchronous-execution-worker.js");
+            worker.onmessage = function(result) {
+                document.getElementById("worker").classList.remove("hidden");
+                document.getElementById("worker_loader").classList.remove("loader");
+                document.getElementById("worker_loader").classList.add("hidden");
+            }
+            worker.postMessage(key);
+        }, failAndLog);
+    }
+    </script>
+</head>
+<body>
+    <div>
+        <h1>Asynchronous executions</h1>
+        <p>
+            Click the following buttons to see how asynchronous executions could help to improve responsiveness of a website.
+            To magnify the effect, a very large file <b>~100MB</b> will be encrypted <b>TEN</b> times. Be aware of your hardware limits.
+        </p>
+        <div>
+            <p>WebKitSubtleCrypto:</p>
+            <button type="button" onclick="webkitAES_CBC()" class="inner">AES-CBC Encryption</button>
+            <div id="webkitAES_CBC_loader" class="hidden"></div>
+            <div id="webkitAES_CBC" class="inner hidden">Done!</div>
+        </div>
+        <div>
+            <p>SubtleCrypto:</p>
+            <button type="button" onclick="AES_CBC()" class="inner">AES-CBC Encryption</button>
+            <div id="AES_CBC_loader" class="hidden"></div>
+            <div id="AES_CBC" class="inner hidden">Done!</div>
+        </div>
+        <div>
+            <p>WebWorkers:</p>
+            <button type="button" onclick="worker()" class="inner">AES-CBC Encryption</button>
+            <div id="worker_loader" class="hidden"></div>
+            <div id="worker" class="inner hidden">Done!</div>
+        </div>
+    </div>
+</body>
+</html>

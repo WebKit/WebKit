@@ -1,0 +1,9 @@
+{
+    "timeout": 600,
+    "count": 3,
+    "svn_source": "https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/ARES-6/@r233406",
+    "webserver_benchmark_patch": "data/patches/webserver/ARES-6.patch",
+    "webdriver_benchmark_patch": "data/patches/webdriver/ARES-6.patch",
+    "entry_point": "index.html",
+    "output_file": "ares6.result"
+}

@@ -1,0 +1,8 @@
+Test that "invisible autoplay not allowed restriction" plays media when scrolled into view.
+
+RUN(internals.setMediaElementRestrictions(video, "InvisibleAutoplayNotPermitted"))
+** setting video.src
+RUN(document.body.appendChild(video))
+EVENT(play)
+END OF TEST
+

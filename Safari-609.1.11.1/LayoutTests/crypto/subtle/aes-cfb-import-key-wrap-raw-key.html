@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test wrapping a raw key with AES-CFB using an imported key");
+
+jsTestIsAsync = true;
+
+var extractable = true;
+var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
+var aesCfbParams = {
+    name: "aes-cfb-8",
+    iv: asciiToUint8Array("jnOw99oOZFLIEPMr"),
+}
+var expectWrappedKey = "8707ee311f6e8ed157885a7fc25f0ee7";
+
+crypto.subtle.importKey("raw", rawKey, "aes-cfb-8", extractable, ["wrapKey"]).then(function(result) {
+    wrappingKey = result;
+    return crypto.subtle.importKey("raw", rawKey, "aes-cbc", extractable, ["encrypt"]);
+}).then(function(result) {
+    key = result;
+    return crypto.subtle.wrapKey("raw", key, wrappingKey, aesCfbParams);
+}).then(function(result) {
+    wrappedKey = result;
+
+    shouldBe("bytesToHexString(wrappedKey)", "expectWrappedKey");
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

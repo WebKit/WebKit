@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10" style="width: 400px; height: 400px;">
+  <script>
+    internals.settings.setMinimumFontSize(30.0);
+  </script>
+  <!-- scaling factor = 40, so the scaled font-size = 40.0 -->
+  <rect x="1" y="1" width="8" height="8" stroke="green" fill="none" stroke-width="0.05"/>
+  <text x="5" y="5" font-size="1.0" fill="black">1</text>
+</svg>

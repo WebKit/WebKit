@@ -1,0 +1,36 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/brand-checks.dedicatedworker.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/brand-checks.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/brand-checks.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/brand-checks.serviceworker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/brand-checks.sharedworker.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/detached-buffers.dedicatedworker.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/detached-buffers.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/detached-buffers.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/detached-buffers.serviceworker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/detached-buffers.sharedworker.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/general.dedicatedworker.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/general.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/general.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/general.serviceworker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/general.sharedworker.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/properties.dedicatedworker.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/properties.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/properties.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/properties.serviceworker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/properties.sharedworker.html

@@ -1,0 +1,41 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x582
+      RenderBlock {P} at (0,0) size 784x20
+        RenderInline {EM} at (0,0) size 640x19
+          RenderText {#text} at (0,0) size 640x19
+            text run at (0,0) width 640: "When an :after rule has multiple pieces of content, older versions of Safari display them backwards."
+      RenderBlock {DIV} at (10,36) size 764x52 [border: (1px solid #000000)]
+        RenderText {#text} at (11,21) size 39x19
+          text run at (11,21) width 39: "Inline: "
+        RenderInline (generated) at (0,0) size 461x19
+          RenderText at (50,21) size 224x19
+            text run at (50,21) width 224: "This should be before the green box. "
+          RenderImage at (274,11) size 25x25
+          RenderText at (299,21) size 212x19
+            text run at (299,21) width 212: " This should be after the green box."
+      RenderBlock {DIV} at (10,98) size 764x92 [border: (1px solid #000000)]
+        RenderText {#text} at (11,61) size 79x19
+          text run at (11,61) width 79: "Inline-block: "
+        RenderBlock (generated) at (90,11) size 200x70
+          RenderText at (0,0) size 189x49
+            text run at (0,0) width 189: "This should be before the green"
+            text run at (0,30) width 31: "box. "
+          RenderImage at (31,20) size 25x25
+          RenderText at (56,30) size 200x39
+            text run at (56,30) width 144: " This should be after the"
+            text run at (0,50) width 64: "green box."
+      RenderBlock {DIV} at (10,200) size 764x112 [border: (1px solid #000000)]
+        RenderBlock (anonymous) at (11,11) size 742x20
+          RenderText {#text} at (0,0) size 39x19
+            text run at (0,0) width 39: "Block:"
+        RenderBlock (generated) at (11,31) size 200x70
+          RenderText at (0,0) size 189x49
+            text run at (0,0) width 189: "This should be before the green"
+            text run at (0,30) width 31: "box. "
+          RenderImage at (31,20) size 25x25
+          RenderText at (56,30) size 200x39
+            text run at (56,30) width 144: " This should be after the"
+            text run at (0,50) width 64: "green box."

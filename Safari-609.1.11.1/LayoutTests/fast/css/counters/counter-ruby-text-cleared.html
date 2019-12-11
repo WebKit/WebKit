@@ -1,0 +1,12 @@
+<style>* {counter-increment: x;}</style>
+<script>
+    window.onload = function() {
+        if (window.testRunner)
+            testRunner.dumpAsText();
+        document.body.innerHTML = "PASS: Clearing ruby text with counters does not crash.";
+    }
+</script>
+<ruby>
+    <rt></rt>
+    <div></div>
+</ruby>

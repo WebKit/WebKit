@@ -1,0 +1,33 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # id: The id of the input field the calendar widget is to be assigned to.
+  #%]
+
+[%# This template exists because createCalendar accepts additional parameters
+  # which allow for localization. Please see the YUI documentation at
+  # http://developer.yahoo.com/yui/calendar/#internationalization for details.
+  # As an example, here's what you'd specify as additional parameters to
+  # localize for German calendars; replace the ellipsis ("...") by the original
+  # parameter (we cannot put it into the example because it'd break this
+  # template comment):
+  #
+  #   createCalendar(...
+  #                  /* The weekday the week begins on; 0 is Sunday,
+  #                   * 1 is Monday and so on: */
+  #                  1,
+  #                  /* Months, full names; first must be January: */
+  #                  ['Januar',    'Februar',   'März',      'April',
+  #                   'Mai',       'Juni',      'Juli',      'August',
+  #                   'September', 'Oktober',   'November',  'Dezember'],
+  #                  /* Weekdays, two-letter abbreviations; first must be
+  #                   * Sunday: */
+  #                  ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa']);
+  #%]
+createCalendar('[% id FILTER js %]');

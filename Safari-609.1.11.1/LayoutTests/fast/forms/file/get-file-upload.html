@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<body>
+<form method="GET" action="get-file-upload.html" enctype="application/x-www-form-urlencoded">
+  <input type="file" name="file" id="file">
+  <input type="hidden" name="submitted" value="true">
+</form>
+<pre id='console'></pre>
+
+<script>
+function log(message)
+{
+    document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
+}
+
+function startOrVerify()
+{
+    var query = window.location.search;
+    if (query.indexOf('submitted=true') != -1) {
+        // Verify the result
+        if (query.indexOf('file=') != -1)
+            log('PASS: ' + query);
+        else
+            log('FAIL: ' + query);
+        testRunner.notifyDone();
+    } else {
+        // Start the test
+        eventSender.beginDragWithFiles(['get-file-upload.html']);
+        eventSender.mouseMoveTo(10, 10);
+        eventSender.mouseUp();
+        document.forms[0].submit();
+    }
+}
+
+if (window.eventSender) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    window.onload = startOrVerify;
+}
+</script>
+</body>
+</html>

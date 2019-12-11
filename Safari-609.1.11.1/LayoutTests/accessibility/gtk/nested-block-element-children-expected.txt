@@ -1,0 +1,47 @@
+AXRole: AXWebArea 
+    AXRole: AXSection AXValue: Test 1
+    AXRole: AXHeading AXValue: Test 1
+        AXRole: AXLink AXValue: Test 1
+    AXRole: AXHeading AXValue: Test 1
+    AXRole: AXParagraph AXValue: Test 1
+    AXRole: AXHeading AXValue: Test 2
+        AXRole: AXLink AXValue: Test 2
+    AXRole: AXHeading AXValue: Test 2
+    AXRole: AXParagraph AXValue: Test 2
+    AXRole: AXSection AXValue: Test 3
+    AXRole: AXHeading AXValue: Test 3
+        AXRole: AXLink AXValue: Test 3
+    AXRole: AXHeading AXValue: Test 3
+    AXRole: AXHeading AXValue: Test 3
+    AXRole: AXParagraph AXValue: Test 3
+    AXRole: AXHeading AXValue: Test 4
+        AXRole: AXLink AXValue: Test 4
+    AXRole: AXHeading AXValue: Test 4
+    AXRole: AXParagraph AXValue: Test 4
+    AXRole: AXSection AXValue: Test 5
+    AXRole: AXSection AXValue: Test 5
+    AXRole: AXSection AXValue: Test 5<\n>
+    AXRole: AXParagraph AXValue: Test 6
+    AXRole: AXParagraph AXValue: Test 7
+    AXRole: AXParagraph AXValue: Test 8<\n>
+    AXRole: AXParagraph AXValue: Test 9 Test 9
+    AXRole: AXParagraph AXValue: Test 10<\n>Test 10<\n>
+    AXRole: AXParagraph AXValue: Test 11 Test 11<\n>Test 11<\n>
+    AXRole: AXParagraph AXValue: <obj>
+        AXRole: AXButton 
+    AXRole: AXParagraph AXValue: Test 13  <obj>
+        AXRole: AXButton 
+    AXRole: AXParagraph AXValue: Test 14  <obj>
+        AXRole: AXButton 
+    AXRole: AXParagraph AXValue: <obj><\n>Test 15<\n>
+        AXRole: AXButton 
+    AXRole: AXSection AXValue: End of test
+This verifies the accessibility tree when there are nested block element children.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

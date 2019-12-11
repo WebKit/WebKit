@@ -1,0 +1,46 @@
+<html>
+<head>
+    <title>throttled loading metadata</title>
+    <script src=../../../media-resources/media-file.js></script>
+    <script src=../../../media-resources/video-test.js></script>
+    <script>
+        function loadedmetadata(e)
+        {
+            logResult(true, "loaded metadata of media file");
+            endTest();
+        }
+
+        function error(e)
+        {
+            logResult(false, "failed to load media file");
+            endTest();
+        }
+
+        function start()
+        {
+            findMediaElement();
+
+            waitForEvent('loadedmetadata', loadedmetadata);
+            waitForEvent("error", error);
+            testExpected("video.error", null);
+
+            var worker = new Worker("video-throttled-load-metadata-worker.js");
+            worker.onmessage = function (event) {
+                logResult(true, event.data);
+            }
+            var movie = findMediaFile("video", "resources/test");
+            var type = mimeTypeForExtension(movie.split('.').pop());
+            video.src = "http://127.0.0.1:8000/media/video-throttled-load.cgi?name=" + movie + "&throttle=400&type=" + type;
+            video.load();
+        }
+    </script>
+</head>
+<body onload="start()">
+<video id="video"></video>
+<p>
+This test case simulates a slow network, and starts a web worker thread to write a log message
+when retrieving media metadata to see if the webkit thread is blocked by media retrieving thread.<br>
+This test case is for <a href="https://bugs.webkit.org/show_bug.cgi?id=80978">https://bugs.webkit.org/show_bug.cgi?id=80978</a>
+</p>
+</body>
+</html>

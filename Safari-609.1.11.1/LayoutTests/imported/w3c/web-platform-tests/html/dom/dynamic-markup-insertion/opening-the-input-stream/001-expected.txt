@@ -1,0 +1,3 @@
+
+FAIL Replacement of window object after document.open assert_false: Variables are not preserved after document.open expected false got true
+

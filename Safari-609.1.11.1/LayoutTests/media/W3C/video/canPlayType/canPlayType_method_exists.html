@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+ <head>
+  <title>video.canPlayType() - existence of method</title>
+  <script src="../../w3cwrapper.js"></script>
+ </head>
+ <body>
+  <p><a href="http://dev.w3.org/html5/spec/Overview.html#dom-navigator-canplaytype">spec reference</a></p>
+  <video id="v">
+  </video>
+  <div id="log"></div>
+  <script>
+test(function() {
+ assert_true(
+  "canPlayType" in document.getElementById("v"),
+  "videoElement.canPlayType method exists");
+});
+  </script>
+ </body>
+</html>

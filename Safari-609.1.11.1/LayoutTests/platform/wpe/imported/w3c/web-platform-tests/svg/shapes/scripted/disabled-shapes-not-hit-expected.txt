@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 14: Error: Invalid negative value for <rect> attribute width="-10"
+CONSOLE MESSAGE: line 16: Error: Invalid negative value for <rect> attribute height="-10"
+CONSOLE MESSAGE: line 31: Error: Invalid negative value for <circle> attribute r="-10"
+
+FAIL Disabled shapes are not rendered and cannot be hit: <rect> assert_equals: does not hit one of the shapes expected Element node <svg xmlns="http://www.w3.org/2000/svg" xmlns:h="http://w... but got Element node <rect style="width: calc(-10px); height: calc(-10px)"></r...
+FAIL Disabled shapes are not rendered and cannot be hit: <circle> assert_equals: does not hit one of the shapes expected Element node <svg xmlns="http://www.w3.org/2000/svg" xmlns:h="http://w... but got Element node <circle style="r: calc(-10px)"></circle>
+FAIL Disabled shapes are not rendered and cannot be hit: <ellipse> assert_equals: does not hit one of the shapes expected Element node <svg xmlns="http://www.w3.org/2000/svg" xmlns:h="http://w... but got Element node <ellipse style="rx: calc(-10px); ry: calc(-10px)"></ellipse>
+

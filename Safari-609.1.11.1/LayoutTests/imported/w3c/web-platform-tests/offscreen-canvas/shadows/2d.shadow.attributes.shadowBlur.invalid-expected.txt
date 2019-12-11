@@ -1,0 +1,5 @@
+2d.shadow.attributes.shadowBlur.invalid
+
+
+FAIL OffscreenCanvas test: 2d.shadow.attributes.shadowBlur.invalid null is not an object (evaluating 'ctx.shadowBlur = 1')
+

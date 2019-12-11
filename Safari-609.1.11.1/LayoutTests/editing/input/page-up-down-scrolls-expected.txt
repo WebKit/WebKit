@@ -1,0 +1,4 @@
+xx
+This test simulates hitting page up and page down once each. Both keypresses should generate exactly one scroll event. If running manually, press the keys now.
+PASS
+(just here to force scrollbars)

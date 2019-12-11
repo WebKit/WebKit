@@ -1,0 +1,6 @@
+fouter(): 5
+gouter(): 6
+fctr.inc(): 4
+gctr.inc(): 5
+post decrement -- fctr.inc(): 3
+post decrement -- gctr.inc(): 6

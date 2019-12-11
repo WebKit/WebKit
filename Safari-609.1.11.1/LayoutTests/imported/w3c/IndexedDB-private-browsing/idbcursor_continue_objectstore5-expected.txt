@@ -1,0 +1,3 @@
+
+PASS IDBCursor.continue() - object store - throw TransactionInactiveError 
+

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+(function() {
+    var font = new FontFace("WebFont", "url('notarealfont')", {});
+    font.load();
+})();
+if (window.GCController)
+    GCController.collect();
+</script>
+<div style="font-family: WebFont;">This test makes sure that our failure load callback doesn't cause a crash if all the references to the FontFace have died. The test passes if there is no crash.</div>
+</body>
+</html>

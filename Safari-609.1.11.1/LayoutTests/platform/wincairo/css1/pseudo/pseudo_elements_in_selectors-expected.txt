@@ -1,0 +1,74 @@
+layer at (0,0) size 785x605
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x605
+  RenderBlock {HTML} at (0,0) size 785x605
+    RenderBody {BODY} at (8,8) size 769x589 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 769x20
+        RenderText {#text} at (0,0) size 373x19
+          text run at (0,0) width 373: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,36) size 769x64
+        RenderText {#text} at (0,0) size 264x64
+          text run at (0,0) width 264: "P:first-line {font-weight: bold;}"
+          text run at (0,16) width 256: "P.two:first-line {color: green;}"
+          text run at (0,32) width 256: "P:first-line.three {color: red;}"
+          text run at (0,48) width 0: " "
+      RenderBlock {HR} at (0,113) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,131) size 769x40
+        RenderText {#text} at (0,0) size 714x39
+          text run at (0,0) width 336: "The first line of this sentence should be boldfaced. "
+          text run at (336,0) width 378: "This test is included simply to establish a baseline for the"
+          text run at (0,20) width 604: "following tests, since if this test fails, then the rest of the tests on this page are expected to fail as well."
+      RenderBlock {P} at (0,187) size 769x40
+        RenderText {#text} at (0,0) size 753x39
+          text run at (0,0) width 553: "The first line of this sentence should be boldfaced and green, thanks to its selector. "
+          text run at (553,0) width 200: "If this is not the case, then the"
+          text run at (0,20) width 541: "user agent may have failed to properly parse the selector, or it may simply not support the "
+        RenderInline {TT} at (0,0) size 88x16
+          RenderText {#text} at (541,23) size 88x16
+            text run at (541,23) width 88: ":first-line"
+        RenderText {#text} at (629,20) size 104x19
+          text run at (629,20) width 104: " pseudo-element."
+      RenderBlock {P} at (0,243) size 769x80
+        RenderText {#text} at (0,0) size 757x79
+          text run at (0,0) width 336: "The first line of this sentence should be boldfaced. "
+          text run at (336,0) width 413: "If it is red, then the user agent has violated the specification in"
+          text run at (0,20) width 413: "allowing pseudo-elements at a point other than the end of a selector. "
+          text run at (413,20) width 320: "If neither is the case, then the user agent has correctly"
+          text run at (0,40) width 757: "ignored the incorrect selector, but has suppressed other styles which are valid, and therefore must be considered to have failed"
+          text run at (0,60) width 47: "the test."
+      RenderTable {TABLE} at (0,339) size 769x250 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 767x248
+          RenderTableRow {TR} at (0,0) size 767x28
+            RenderTableCell {TD} at (0,0) size 767x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 159x19
+                RenderText {#text} at (4,4) size 159x19
+                  text run at (4,4) width 159: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,28) size 767x220
+            RenderTableCell {TD} at (0,124) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x19
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,28) size 755x220 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 747x40
+                RenderText {#text} at (0,0) size 714x39
+                  text run at (0,0) width 336: "The first line of this sentence should be boldfaced. "
+                  text run at (336,0) width 378: "This test is included simply to establish a baseline for the"
+                  text run at (0,20) width 604: "following tests, since if this test fails, then the rest of the tests on this page are expected to fail as well."
+              RenderBlock {P} at (4,60) size 747x60
+                RenderText {#text} at (0,0) size 728x39
+                  text run at (0,0) width 553: "The first line of this sentence should be boldfaced and green, thanks to its selector. "
+                  text run at (553,0) width 175: "If this is not the case, then"
+                  text run at (0,20) width 563: "the user agent may have failed to properly parse the selector, or it may simply not support the "
+                RenderInline {TT} at (0,0) size 88x16
+                  RenderText {#text} at (563,23) size 88x16
+                    text run at (563,23) width 88: ":first-line"
+                RenderText {#text} at (651,20) size 705x39
+                  text run at (651,20) width 54: " pseudo-"
+                  text run at (0,40) width 50: "element."
+              RenderBlock {P} at (4,136) size 747x80
+                RenderText {#text} at (0,0) size 747x79
+                  text run at (0,0) width 336: "The first line of this sentence should be boldfaced. "
+                  text run at (336,0) width 397: "If it is red, then the user agent has violated the specification"
+                  text run at (0,20) width 427: "in allowing pseudo-elements at a point other than the end of a selector. "
+                  text run at (427,20) width 320: "If neither is the case, then the user agent has correctly"
+                  text run at (0,40) width 721: "ignored the incorrect selector, but has suppressed other styles which are valid, and therefore must be considered to have"
+                  text run at (0,60) width 83: "failed the test."

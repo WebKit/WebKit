@@ -1,0 +1,14 @@
+<p>This tests creating a selection based inside a nested editable region that extends out to editable content that is inside the same highest editable root.  'One' through 'Three' should be selected.</p>
+<div contenteditable="true">
+<div id="extent">One</div>
+<div contenteditable="false"><span>Two</span> <span id="base" contenteditable="true">Three</span></div>
+<div>Four</div>
+</div>
+
+<script>
+var base = document.getElementById("base");
+var extent = document.getElementById("extent");
+
+var sel = window.getSelection();
+sel.setBaseAndExtent(base, 1, extent, 0);
+</script>

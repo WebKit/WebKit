@@ -1,0 +1,7 @@
+2d.text.draw.space.collapse.start
+
+Space characters at the start of a line are collapsed (per CSS)
+
+
+FAIL Space characters at the start of a line are collapsed (per CSS) null is not an object (evaluating 'ctx.font = '50px CanvasTest'')
+

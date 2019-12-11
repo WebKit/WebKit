@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="test" tabindex="-1">
+<header><div>header</div></header>
+<aside><div>aside</div></aside>
+<address><div>address</div></address>
+<main><div>main</div></main>
+<nav><div>nav</div></nav>
+<article><div>article</div></article>
+<section><div>section</div></section>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that HTML5 elements which have implicit landmark and related semantics are not ignored if their render objects have block render objects children.");
+
+    if (window.accessibilityController) {
+        var test = accessibilityController.accessibleElementById("test");
+        shouldBe("test.childrenCount", "7");
+
+        var subroles = [
+            "AXLandmarkBanner",
+            "AXLandmarkComplementary",
+            "AXLandmarkContentInfo",
+            "AXLandmarkMain",
+            "AXLandmarkNavigation",
+            "AXDocumentArticle",
+            ""
+        ];
+        for (var i = 0; i < test.childrenCount; i++) {
+            var el = test.childAtIndex(i);
+            shouldBeEqualToString("el.role", "AXRole: AXGroup");
+            shouldBeEqualToString("el.subrole", "AXSubrole: " + subroles[i]);
+        }
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

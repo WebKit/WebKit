@@ -1,0 +1,22 @@
+PASS: navigationStart has a value.
+PASS: unloadEventStart has a value.
+PASS: unloadEventEnd has a value.
+PASS: redirectStart has a value.
+PASS: redirectEnd has a value.
+PASS: fetchStart has a value.
+PASS: domainLookupStart has a value.
+PASS: domainLookupEnd has a value.
+PASS: connectStart has a value.
+PASS: connectEnd has a value.
+PASS: secureConnectionStart has a value.
+PASS: requestStart has a value.
+PASS: responseStart has a value.
+PASS: responseEnd has a value.
+PASS: domLoading has a value.
+PASS: domInteractive has a value.
+PASS: domContentLoadedEventStart has a value.
+PASS: domContentLoadedEventEnd has a value.
+PASS: domComplete has a value.
+PASS: loadEventStart has a value.
+PASS: loadEventEnd has a value.
+

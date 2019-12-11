@@ -1,0 +1,80 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:ResizeObserverEnabled=true ] -->
+<html>
+<meta name="timeout" content="long">
+<head>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/gc.js"></script>
+</head>
+<body>
+<script>
+
+let iframeCount = 20;
+function prepareFrame() {
+    return new Promise(function(resolve, reject) {
+        let container = document.createElement("div");
+        for (let i = 0; i < iframeCount; ++i) {
+            let iframe = document.createElement("iframe");
+            iframe.style.height = "1px";
+            iframe.src = "resources/element-leak-frame.html";
+            container.appendChild(iframe);
+        }
+        document.body.appendChild(container);
+
+        let notifyCount = 0;
+        window.addEventListener('message', event => {
+            switch(event.data) {
+            case 'Notified':
+                notifyCount++;
+                if (notifyCount == iframeCount) {
+                    resolve("All iframes notified");
+                }
+            break;
+            }
+        }, false);
+    });
+}
+
+function testElementLeak(resolve, reject) {
+    return new Promise(function(resolve, reject) {
+        let documentIdentifierArray = new Array(iframeCount);
+        let count = 0;
+        document.querySelectorAll('iframe').forEach(iframe => {
+            documentIdentifierArray[count++] = internals.documentIdentifier(iframe.contentDocument);
+            iframe.remove();
+        });
+
+        let handle = setInterval(function() {
+            gc();
+            documentIdentifierArray.forEach(function(frameDocumentIdentifier) {
+                if (internals && !internals.isDocumentAlive(frameDocumentIdentifier)) {
+                    clearInterval(handle);
+                    documentIdentifierArray = [];
+                    resolve("Detected document release.");
+                }
+            });
+        }, 10);
+    });
+}
+
+function startTest() {
+    return prepareFrame().then(function(){
+        return testElementLeak().catch(function(result){
+            assert_unreached(result);
+        });
+    }).catch(function(result){
+        assert_unreached(result);
+    });
+}
+
+test(_ => {
+    assert_own_property(window, "ResizeObserver");
+}, "ResizeObserver implemented");
+
+promise_test(async () => {
+    return startTest();
+}, 'Test elements leak in 20 iframes');
+
+</script>
+</body>
+</html>

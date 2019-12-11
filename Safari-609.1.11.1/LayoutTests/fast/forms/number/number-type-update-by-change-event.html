@@ -1,0 +1,28 @@
+<!DOCTYPE>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<input type="number" onchange="handleChange(this);">
+<script>
+function sendKey(keyName) {
+    var event = document.createEvent('KeyboardEvent');
+    event.initKeyboardEvent('keydown', true, true, document.defaultView, keyName);
+    document.activeElement.dispatchEvent(event);
+}
+
+function handleChange(element) {
+    element.type = '';
+    ++changeEventCounter;
+}
+
+var changeEventCounter = 0;
+var numberInput = document.getElementsByTagName('input')[0];
+numberInput.focus();
+sendKey('Up');
+
+testPassed('if not crashed in ASAN build.');
+shouldBe('changeEventCounter', '1');
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

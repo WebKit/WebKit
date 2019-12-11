@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<script>
+    function handleLoaded() {
+        // The media controls should be updated on the next runloop.
+        setTimeout(function() {
+            try {
+                window.webkit.messageHandlers.onloadHandler.postMessage("loaded");
+            } catch(e) { }
+        }, 0);
+    }
+</script>
+<body onload=handleLoaded()>
+    <video id="foo" style="width: 480px; height: 320px;"><source src="large-video-with-audio.mp4"></video>
+    <video id="bar" style="width: 480px; height: 320px;"><source src="large-video-with-audio.mp4"></video>
+    <video id="baz" style="width: 480px; height: 320px;"><source src="large-video-with-audio.mp4"></video>
+</body>
+<html>

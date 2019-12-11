@@ -1,0 +1,7 @@
+
+PASS e.style['text-align-last'] = "none" should not set the property value 
+PASS e.style['text-align-last'] = "auto start" should not set the property value 
+PASS e.style['text-align-last'] = "end left" should not set the property value 
+PASS e.style['text-align-last'] = "right center" should not set the property value 
+PASS e.style['text-align-last'] = "justify match-parent" should not set the property value 
+

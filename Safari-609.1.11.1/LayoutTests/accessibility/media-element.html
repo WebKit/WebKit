@@ -1,0 +1,80 @@
+<!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+    <head>
+        <script src="../resources/js-test-pre.js"></script>
+        <script>
+            var vidAXObject;
+            var indentLevel = 0;
+
+            jsTestIsAsync = true;
+
+            function indent(count)
+            {
+                var spaces = "                                                      ";
+                return spaces.substr(0, count);
+            }
+
+            function dumpObject(axObject)
+            {
+            if (accessibilityController.platformName == "atk")
+                debug(indent(indentLevel) + "title: " + axObject.title);
+            else
+                debug(indent(indentLevel) + "description: " + axObject.description);
+                debug(indent(indentLevel) + "role: " + axObject.role); 
+                if (axObject.subrole && axObject.subrole != 'AXSubrole: ') debug(indent(indentLevel) + "subrole: " + axObject.subrole);
+                debug("<br>");
+            }
+
+            function dumpChildren(axObject)
+            {
+                var count = axObject.childrenCount
+                if (!count)
+                    return;
+
+                indentLevel += 4;
+                for (var ndx = 0; ndx < count; ndx++) {
+                    var childAXObject = axObject.childAtIndex(ndx);
+                    dumpObject(childAXObject);
+                    if (childAXObject.childrenCount) {
+                        // don't bother dumping static text children
+                        if ( childAXObject.role != "AXRole: AXStaticText")
+                           dumpChildren(childAXObject);
+                    }
+                }
+                indentLevel -= 4;
+            }
+
+            function dumpVideoAX()
+            {
+                debug("<br>+++++++++++++++++++++++++++++++++++<br>");
+                debug("State at '" + event.type + "' event:<br>");
+
+                if (!window.accessibilityController)
+                    return;
+
+                var body = document.getElementsByTagName("body")[0];
+                body.focus();
+
+                var vidAXObject = accessibilityController.focusedElement.childAtIndex(0);
+                
+                dumpChildren(vidAXObject);
+
+                if (event.type == 'canplaythrough')
+                    finishJSTest();
+            }
+        </script>
+    </head>
+
+<body>
+
+    <video id=vid src="../media/content/test.mp4" controls oncanplaythrough="dumpVideoAX()">
+    </video>
+
+    <div>Dump &lt;video&gt; element controller accessibility object tree at 'canplaythrough' event.</div>
+    
+    <div id=console></div>
+
+    <script src="../resources/js-test-post.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,265 @@
+<html>
+<head>
+<style>
+  @keyframes test1 {
+    from { left: 10px; }
+    to { left: 20px; }
+  }
+  @keyframes test2 {
+    0% { left: 10px; }
+    50% { left: 30px; }
+    100% { left: 20px; }
+  }
+  @keyframes test-from-to {
+    from { left: 10px; }
+    50% { left: 30px; }
+    to { left: 20px; }
+  }
+  @keyframes test-find-last {
+    from { left: -1px;  }
+    0% { left: 0px; }
+    10% { left: -1px; }
+    10% { left: 10px;}
+    10%, 20% { left: -1px;   }
+    10%,20% { left: 1020px; }
+    100% { left: -1px; }
+    to { left: 100px; }
+  }
+  @keyframes test-delete-last {
+    from { left: 0px;  }
+    0% { left: -1px; }
+    10% { left: 10px; }
+    10% { left: -1px;}
+    10%, 20% { left: 1020px;   }
+    10%,20% { left: -1px; }
+    100% { left: 100px; }
+    to { left: -1px; }
+  }
+
+</style>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("This tests unprefixed @keyframes parsing and the CSSKeyframeRule and CSSKeyframesRule interfaces.");
+
+if (window.CSSKeyframeRule)
+    testPassed("CSSKeyframeRule exists on Window object");
+else
+    testFailed("CSSKeyframeRule does not exist on Window object");
+
+if (window.CSSKeyframesRule)
+    testPassed("CSSKeyframesRule exists on Window object");
+else
+    testFailed("CSSKeyframesRule does not exist on Window object");
+
+if (window.CSSRule.KEYFRAME_RULE)
+    testPassed("KEYFRAME_RULE exists on Window.CSSRule object");
+else
+    testFailed("KEYFRAME_RULE does not exist on Window.CSSRule object");
+
+if (window.CSSRule.KEYFRAMES_RULE)
+    testPassed("KEYFRAMES_RULE exists on Window.CSSRule object");
+else
+    testFailed("KEYFRAMES_RULE does not exist on Window.CSSRule object");
+
+debug("");
+
+debug("Check that the old values still work.");
+shouldBe("window.CSSRule.KEYFRAME_RULE", "window.CSSRule.WEBKIT_KEYFRAME_RULE");
+shouldBe("window.CSSRule.KEYFRAMES_RULE", "window.CSSRule.WEBKIT_KEYFRAMES_RULE");
+
+debug("")
+
+var keyframes1 = document.styleSheets.item(0).cssRules.item(0);
+
+shouldBe("keyframes1.type", "window.CSSRule.KEYFRAMES_RULE");
+shouldBe("keyframes1.name", "'test1'");
+
+debug("");
+
+var rules1 = keyframes1.cssRules;
+shouldBe("rules1.length", "2");
+
+shouldBe("rules1.item(0).type", "window.CSSRule.KEYFRAME_RULE");
+shouldBe("rules1.item(0).cssText", "'0% { left: 10px; }'");
+shouldBe("rules1.item(1).cssText", "'100% { left: 20px; }'");
+
+debug("");
+debug("Insert three new rules");
+keyframes1.appendRule("30% { left: 30px; }");
+keyframes1.appendRule("60% { left: 60px; }");
+keyframes1.appendRule("20% { left: 50px; }");
+shouldBe("rules1.length", "5");
+
+shouldBe("rules1.item(0).cssText", "'0% { left: 10px; }'");
+shouldBe("rules1.item(1).cssText", "'100% { left: 20px; }'");
+shouldBe("rules1.item(2).cssText", "'30% { left: 30px; }'");
+shouldBe("rules1.item(3).cssText", "'60% { left: 60px; }'");
+shouldBe("rules1.item(4).cssText", "'20% { left: 50px; }'");
+
+debug("");
+
+var keyframes2 = document.styleSheets.item(0).cssRules.item(1);
+
+shouldBe("keyframes2.type", "window.CSSRule.KEYFRAMES_RULE");
+shouldBe("keyframes2.name", "'test2'");
+
+var rules2 = keyframes2.cssRules;
+
+debug("");
+
+shouldBe("rules2.length", "3");
+
+shouldBe("rules2.item(0).type", "window.CSSRule.KEYFRAME_RULE");
+shouldBe("rules2.item(0).keyText", "'0%'");
+shouldBe("rules2.item(1).keyText", "'50%'");
+shouldBe("rules2.item(2).keyText", "'100%'");
+
+shouldBe("rules2.item(0).cssText", "'0% { left: 10px; }'");
+shouldBe("rules2.item(1).cssText", "'50% { left: 30px; }'");
+shouldBe("rules2.item(2).cssText", "'100% { left: 20px; }'");
+
+debug("");
+
+shouldBeType("rules2.item(0).style", "CSSStyleDeclaration");
+shouldBe("rules2.item(0).style.length", "1");
+
+debug("");
+debug("Find a rule");
+
+var rule = keyframes2.findRule("50%");
+
+if (!rule)
+  testFailed("Could not extract '50%' keyframe rule");
+
+shouldBe("rule.type", "window.CSSRule.KEYFRAME_RULE");
+shouldBe("rule.cssText", "'50% { left: 30px; }'");
+
+debug("");
+debug("Find a rule using from and to");
+
+var keyframesFromTo = document.styleSheets.item(0).cssRules.item(2);
+shouldBe("keyframesFromTo.type", "window.CSSRule.KEYFRAMES_RULE");
+rule = keyframesFromTo.findRule("From");
+shouldBe("rule.type", "window.CSSRule.KEYFRAME_RULE");
+shouldBe("rule.cssText", "'0% { left: 10px; }'");
+
+rule = keyframesFromTo.findRule("TO");
+shouldBe("rule.type", "window.CSSRule.KEYFRAME_RULE");
+shouldBe("rule.cssText", "'100% { left: 20px; }'");
+
+debug("");
+debug("Try to find a rule that doesn't exist");
+
+rule = keyframes2.findRule("70%");
+
+if (rule)
+  testFailed("Was able to find the non-existent '70%' keyframe rule");
+else
+  testPassed("Non-existent rule was not found");
+
+debug("");
+debug("Try to find a rule using a malformed key");
+
+rule = keyframes2.findRule("1");
+
+shouldBe("rule", "null");
+
+debug("");
+debug("Delete a rule");
+
+keyframes2.deleteRule("50%");
+shouldBe("rules2.length", "2");
+shouldBe("rules2.item(0).type", "window.CSSRule.KEYFRAME_RULE");
+shouldBe("rules2.item(0).keyText", "'0%'");
+shouldBe("rules2.item(1).keyText", "'100%'");
+
+debug("");
+debug("Delete a from rule");
+keyframesFromTo.deleteRule("0%");
+var rulesFromTo = keyframesFromTo.cssRules;
+shouldBe("rulesFromTo.length", "2");
+shouldBe("rulesFromTo.item(0).type", "window.CSSRule.KEYFRAME_RULE");
+shouldBe("rulesFromTo.item(0).keyText", "'50%'");
+shouldBe("rulesFromTo.item(1).keyText", "'100%'");
+
+
+debug("");
+debug("Delete a rule that doesn't exist");
+
+keyframes2.deleteRule("70%");
+shouldBe("rules2.length", "2");
+shouldBe("rules2.item(0).type", "window.CSSRule.KEYFRAME_RULE");
+shouldBe("rules2.item(0).keyText", "'0%'");
+shouldBe("rules2.item(1).keyText", "'100%'");
+
+debug("");
+debug("findRule matching order: from last to first specified");
+
+var keyframesFindLast = document.styleSheets.item(0).cssRules.item(3);
+shouldBe("keyframesFindLast.type", "window.CSSRule.KEYFRAMES_RULE");
+shouldBe("keyframesFindLast.name", "'test-find-last'");
+
+
+rule = keyframesFindLast.findRule("10%");
+shouldBe("rule.type", "window.CSSRule.KEYFRAME_RULE");
+shouldBe("rule.cssText", "'10% { left: 10px; }'");
+rule = keyframesFindLast.findRule("10.0%");
+shouldBe("rule.type", "window.CSSRule.KEYFRAME_RULE");
+shouldBe("rule.cssText", "'10% { left: 10px; }'");
+rule = keyframesFindLast.findRule("10%,20%");
+shouldBe("rule.type", "window.CSSRule.KEYFRAME_RULE");
+shouldBe("rule.cssText", "'10%,20%  { left: 10px; }'");
+rule = keyframesFindLast.findRule("   10%, 20% ");
+shouldBe("rule.type", "window.CSSRule.KEYFRAME_RULE");
+shouldBe("rule.cssText", "'10%,20%  { left: 10px; }'");
+rule = keyframesFindLast.findRule("20%, 10% ");
+shouldBe("rule", "null");
+rule = keyframesFindLast.findRule("from");
+shouldBe("rule.type", "window.CSSRule.KEYFRAME_RULE");
+shouldBe("rule.cssText", "'0% { left: 0px; }'");
+rule = keyframesFindLast.findRule("100%");
+shouldBe("rule.type", "window.CSSRule.KEYFRAME_RULE");
+shouldBe("rule.cssText", "'100% { left: 100px; }'");
+
+debug("");
+debug("deleteRule matching order: from last to first specified");
+
+var keyframesDeleteLast = document.styleSheets.item(0).cssRules.item(4);
+shouldBe("keyframesDeleteLast.type", "window.CSSRule.KEYFRAMES_RULE");
+shouldBe("keyframesDeleteLast.name", "'test-delete-last'");
+
+var rulesDeleteLast = keyframesDeleteLast.cssRules;
+shouldBe("rulesDeleteLast.length", "8");
+
+keyframesDeleteLast.deleteRule("10%");
+shouldBe("rulesDeleteLast.length", "7");
+rule = keyframesDeleteLast.findRule("10%");
+shouldBe("rule.type", "window.CSSRule.KEYFRAME_RULE");
+shouldBe("rule.cssText", "'10% { left: 10px; }'");
+keyframesDeleteLast.deleteRule("10%,20%");
+shouldBe("rulesDeleteLast.length", "6");
+rule = keyframesDeleteLast.findRule("10%,20%");
+shouldBe("rule.type", "window.CSSRule.KEYFRAME_RULE");
+shouldBe("rule.cssText", "'10%,20% { left: 1020px; }'");
+keyframesDeleteLast.deleteRule("20%, 10% ");
+shouldBe("rulesDeleteLast.length", "6");
+keyframesDeleteLast.deleteRule("from");
+shouldBe("rulesDeleteLast.length", "5");
+rule = keyframesDeleteLast.findRule("from");
+shouldBe("rule.type", "window.CSSRule.KEYFRAME_RULE");
+shouldBe("rule.cssText", "'0% { left: 0px; }'");
+keyframesDeleteLast.deleteRule("100%");
+shouldBe("rulesDeleteLast.length", "4");
+rule = keyframesDeleteLast.findRule("100%");
+shouldBe("rule.type", "window.CSSRule.KEYFRAME_RULE");
+shouldBe("rule.cssText", "'100% { left: 100px; }'");
+
+debug("");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: line 31: TypeError: undefined is not an object (evaluating 'newNavTiming.type')
+Description
+
+This test validates the value of window.performance.getEntriesByType("navigation")[0].(type/unloadEventEnd/unloadEventStart) with a reloaded navigation.
+
+This page should be loaded with a green background frame below. The frame will be automatically reloaded and then verified that
+
+The window.performance.getEntriesByType("navigation").type = "reload" after reload
+The window.performance.getEntriesByType("navigation").unloadEventStart > 0 after reload
+The window.performance.getEntriesByType("navigation").unloadEventEnd > 0 after reload
+
+
+FAIL Navigation Timing 2 WPT TypeError: undefined is not an object (evaluating 'newNavTiming.type')
+

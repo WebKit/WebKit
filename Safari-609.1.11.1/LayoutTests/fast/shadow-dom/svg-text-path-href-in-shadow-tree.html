@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Test passes if you see a single 100px by 100px green box below.</p>
+<div id="host" style="width: 100px; height: 100px;"></div>
+<svg>
+    <defs>
+        <path id="path" fill="red" stroke="red" d="M0,50 L100,50 Z">
+    </defs>
+</svg>
+<template>
+    <svg viewbox="0 0 100 100" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <defs>
+            <path id="path" fill="green" d="M0,-5 L100,-5 Z">
+        </defs>
+        <rect x="0" y="0" width="100" height="100" fill="green"></rect>
+        <text>
+            <textPath xlink:href="#path">FAIL</textPath>
+        </text>
+    </svg>
+</template>
+<script>
+
+const shadowRoot = host.attachShadow({mode: 'closed'});
+shadowRoot.appendChild(document.querySelector('template').content.cloneNode(true));
+
+</script>
+</body>
+</html>

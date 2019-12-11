@@ -1,0 +1,32 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<div id="description">
+This test uses the execCommand to indent the text below.
+</div>
+<br>
+<div contenteditable="true">
+<span id="item1">Lorem</span><br>
+more Lorem!
+<blockquote class="webkit-indent-blockquote" style="margin: 0 0 0 40px;">
+ipsum<br>
+
+<ul>
+<li>Foo</li>
+<li>Bar</li>
+<li>Baz</li>
+</ul>
+Dolor
+</blockquote>
+Sum!<br>
+<span id="item2">Thing</span>
+</div>
+<script>
+var s = window.getSelection();
+var p1 = document.getElementById("item1");
+var p2 = document.getElementById("item2");
+s.setPosition(p1, 0);
+s.setBaseAndExtent(p1, 0, p2, 2);
+document.execCommand("Indent", false, "");
+</script>

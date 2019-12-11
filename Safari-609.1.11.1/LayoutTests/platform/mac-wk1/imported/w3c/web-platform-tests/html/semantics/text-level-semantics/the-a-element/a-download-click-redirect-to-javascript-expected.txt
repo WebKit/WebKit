@@ -1,0 +1,4 @@
+
+
+FAIL Do not navigate or execute JS when redirecting a download to 'javascript:..' assert_unreached: Page should not navigate. Reached unreachable code
+

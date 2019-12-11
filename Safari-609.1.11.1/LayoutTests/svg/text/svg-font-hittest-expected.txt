@@ -1,0 +1,3 @@
+This code triggers the glyph hit-testing code, which should not crash when a glyph is drawn with SVG fonts.
+Pass
+|

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+</head>
+
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description('Basic tests for AudioNode API.');
+
+var context = null;
+var node = null;
+
+function runTest() {
+    window.jsTestIsAsync = true;
+
+    context = new webkitAudioContext();
+
+    shouldBe('context.state', '"suspended"');
+
+    node = context.createBufferSource();
+    evalAndLog('node.connect(context.destination)');
+
+    shouldBe('context.state', '"running"');
+
+    debug('Calling context.suspend()');
+    context.suspend().then(suspendSucceeded, suspendFailed);
+}
+
+function suspendFailed() {
+    testFailed('context.suspend() promise rejected');
+    finishJSTest();
+}
+
+function suspendSucceeded(value) {
+    if (typeof value != 'undefined') {
+        testFailed('context.suspend() promise should not resolve with a value.');
+        finishJSTest();
+        return;
+    }
+    testPassed('context.suspend() promise resolved');
+    shouldBe('context.state', '"suspended"');
+
+    debug('Calling context.resume()');
+    context.resume().then(resumeSucceeded, resumeFailed);
+}
+
+function resumeFailed() {
+    testFailed('context.resume() promise rejected');
+    finishJSTest();
+}
+
+function resumeSucceeded(value) {
+    if (typeof value != 'undefined') {
+        testFailed('context.resume() promise should not resolve with a value.');
+        finishJSTest();
+        return;
+    }
+    testPassed('context.resume() promise resolved');
+    shouldBe('context.state', '"running"');
+
+    debug('Calling context.close()');
+    context.close().then(closeSucceeded, closeFailed);
+}
+
+function closeFailed() { 
+    testFailed('context.close() promise rejected');
+    finishJSTest();
+}
+
+function closeSucceeded(value) {
+    if (typeof value != 'undefined') {
+        testFailed('context.closed() promise should not resolve with a value.');
+        finishJSTest();
+        return;
+    }
+    testPassed('context.close() promise resolved');
+    shouldBe('context.state', '"closed"');
+
+    debug('Calling context.resume() (should fail)');
+    context.resume().then(resumeSucceededIncorrectly, resumeFailedCorrectly);
+}
+
+function resumeSucceededIncorrectly() {
+    testFailed('context.resume() promise resolved (should have rejected)');
+    finishJSTest();
+}
+
+function resumeFailedCorrectly(value) {
+    testPassed('context.resume() promise rejected (correctly)');
+    if (typeof value != 'undefined')
+        testFailed('No value should be passed to the context.resume() promise rejected callback');
+    shouldBe('context.state', '"closed"');
+
+    debug('Calling context.suspend() (should fail)');
+    context.suspend().then(suspendSucceededIncorrectly, suspendFailedCorrectly);
+}
+
+function suspendSucceededIncorrectly() {
+    testFailed('context.suspend() promise resolved (should have rejected)');
+    finishJSTest();
+}
+
+function suspendFailedCorrectly() {
+    testPassed('context.suspend() promise rejected (correctly)');
+    if (typeof value != 'undefined')
+        testFailed('No value should be passed to the context.suspend() promise rejected callback');
+    shouldBe('context.state', '"closed"');
+    finishJSTest();
+}
+
+runTest();
+
+</script>
+</body>
+</html>

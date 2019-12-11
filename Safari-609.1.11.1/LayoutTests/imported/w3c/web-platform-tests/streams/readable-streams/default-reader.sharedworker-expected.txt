@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 10: ReferenceError: Can't find variable: SharedWorker
+
+FAIL default-reader.js shared worker wrapper file ReferenceError: Can't find variable: SharedWorker
+

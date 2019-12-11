@@ -1,0 +1,187 @@
+// Copyright (C) 2019 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+// BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
+
+mac/DOM/DOM.mm
+mac/DOM/DOMAbstractView.mm
+mac/DOM/DOMAttr.mm
+mac/DOM/DOMBlob.mm
+mac/DOM/DOMCDATASection.mm
+mac/DOM/DOMCSS.mm
+mac/DOM/DOMCSSCharsetRule.mm
+mac/DOM/DOMCSSFontFaceRule.mm
+mac/DOM/DOMCSSImportRule.mm
+mac/DOM/DOMCSSMediaRule.mm
+mac/DOM/DOMCSSPageRule.mm
+mac/DOM/DOMCSSPrimitiveValue.mm
+mac/DOM/DOMCSSRule.mm
+mac/DOM/DOMCSSRuleList.mm
+mac/DOM/DOMCSSStyleDeclaration.mm
+mac/DOM/DOMCSSStyleRule.mm
+mac/DOM/DOMCSSStyleSheet.mm
+mac/DOM/DOMCSSUnknownRule.mm
+mac/DOM/DOMCSSValue.mm
+mac/DOM/DOMCSSValueList.mm
+mac/DOM/DOMCharacterData.mm
+mac/DOM/DOMComment.h
+mac/DOM/DOMComment.mm
+mac/DOM/DOMCommentInternal.h
+mac/DOM/DOMCounter.mm
+mac/DOM/DOMCustomXPathNSResolver.mm
+mac/DOM/DOMDocument.mm
+mac/DOM/DOMDocumentFragment.mm
+mac/DOM/DOMDocumentType.mm
+mac/DOM/DOMElement.mm
+mac/DOM/DOMEntity.mm
+mac/DOM/DOMEntityReference.mm
+mac/DOM/DOMEvent.mm
+mac/DOM/DOMEvents.mm
+mac/DOM/DOMFile.mm
+mac/DOM/DOMFileList.mm
+mac/DOM/DOMHTML.mm
+mac/DOM/DOMHTMLAnchorElement.mm
+mac/DOM/DOMHTMLAppletElement.mm
+mac/DOM/DOMHTMLAreaElement.mm
+mac/DOM/DOMHTMLBRElement.mm
+mac/DOM/DOMHTMLBaseElement.mm
+mac/DOM/DOMHTMLBaseFontElement.mm
+mac/DOM/DOMHTMLBodyElement.mm
+mac/DOM/DOMHTMLButtonElement.mm
+mac/DOM/DOMHTMLCanvasElement.mm
+mac/DOM/DOMHTMLCollection.mm
+mac/DOM/DOMHTMLDListElement.mm
+mac/DOM/DOMHTMLDirectoryElement.mm
+mac/DOM/DOMHTMLDivElement.mm
+mac/DOM/DOMHTMLDocument.mm
+mac/DOM/DOMHTMLElement.mm
+mac/DOM/DOMHTMLEmbedElement.mm
+mac/DOM/DOMHTMLFieldSetElement.mm
+mac/DOM/DOMHTMLFontElement.mm
+mac/DOM/DOMHTMLFormElement.mm
+mac/DOM/DOMHTMLFrameElement.mm
+mac/DOM/DOMHTMLFrameSetElement.mm
+mac/DOM/DOMHTMLHRElement.mm
+mac/DOM/DOMHTMLHeadElement.mm
+mac/DOM/DOMHTMLHeadingElement.mm
+mac/DOM/DOMHTMLHtmlElement.mm
+mac/DOM/DOMHTMLIFrameElement.mm
+mac/DOM/DOMHTMLImageElement.mm
+mac/DOM/DOMHTMLInputElement.mm
+mac/DOM/DOMHTMLLIElement.mm
+mac/DOM/DOMHTMLLabelElement.mm
+mac/DOM/DOMHTMLLegendElement.mm
+mac/DOM/DOMHTMLLinkElement.mm
+mac/DOM/DOMHTMLMapElement.mm
+mac/DOM/DOMHTMLMarqueeElement.mm
+mac/DOM/DOMHTMLMediaElement.mm
+mac/DOM/DOMHTMLMenuElement.mm
+mac/DOM/DOMHTMLMetaElement.mm
+mac/DOM/DOMHTMLModElement.mm
+mac/DOM/DOMHTMLOListElement.mm
+mac/DOM/DOMHTMLObjectElement.mm
+mac/DOM/DOMHTMLOptGroupElement.mm
+mac/DOM/DOMHTMLOptionElement.mm
+mac/DOM/DOMHTMLOptionsCollection.mm
+mac/DOM/DOMHTMLParagraphElement.mm
+mac/DOM/DOMHTMLParamElement.mm
+mac/DOM/DOMHTMLPreElement.mm
+mac/DOM/DOMHTMLQuoteElement.mm
+mac/DOM/DOMHTMLScriptElement.mm
+mac/DOM/DOMHTMLSelectElement.mm
+mac/DOM/DOMHTMLStyleElement.mm
+mac/DOM/DOMHTMLTableCaptionElement.mm
+mac/DOM/DOMHTMLTableCellElement.mm
+mac/DOM/DOMHTMLTableColElement.mm
+mac/DOM/DOMHTMLTableElement.mm
+mac/DOM/DOMHTMLTableRowElement.mm
+mac/DOM/DOMHTMLTableSectionElement.mm
+mac/DOM/DOMHTMLTextAreaElement.mm
+mac/DOM/DOMHTMLTitleElement.mm
+mac/DOM/DOMHTMLUListElement.mm
+mac/DOM/DOMHTMLVideoElement.mm
+mac/DOM/DOMImplementation.mm
+mac/DOM/DOMInternal.mm
+mac/DOM/DOMKeyboardEvent.mm
+mac/DOM/DOMMediaError.mm
+mac/DOM/DOMMediaList.mm
+mac/DOM/DOMMouseEvent.mm
+mac/DOM/DOMMutationEvent.mm
+mac/DOM/DOMNamedNodeMap.mm
+mac/DOM/DOMNode.mm
+mac/DOM/DOMNodeIterator.mm
+mac/DOM/DOMNodeList.mm
+mac/DOM/DOMObject.mm
+mac/DOM/DOMOverflowEvent.mm
+mac/DOM/DOMProcessingInstruction.mm
+mac/DOM/DOMProgressEvent.mm
+mac/DOM/DOMRGBColor.mm
+mac/DOM/DOMRange.mm
+mac/DOM/DOMRect.mm
+mac/DOM/DOMStyleSheet.mm
+mac/DOM/DOMStyleSheetList.mm
+mac/DOM/DOMText.mm
+mac/DOM/DOMTextEvent.mm
+mac/DOM/DOMTimeRanges.mm
+mac/DOM/DOMTokenList.mm
+mac/DOM/DOMTreeWalker.mm
+mac/DOM/DOMUIEvent.mm
+mac/DOM/DOMUIKitExtensions.mm
+mac/DOM/DOMUtility.mm
+mac/DOM/DOMWheelEvent.mm
+mac/DOM/DOMXPath.mm
+mac/DOM/DOMXPathExpression.mm
+mac/DOM/DOMXPathResult.mm
+mac/DOM/ExceptionHandlers.mm
+mac/DOM/ObjCEventListener.mm
+mac/DOM/ObjCNodeFilterCondition.mm
+mac/DOM/WebDOMOperations.mm
+
+mac/DefaultDelegates/WebDefaultContextMenuDelegate.mm
+
+mac/Misc/WebSharingServicePickerController.mm
+
+mac/Plugins/WebBasePluginPackage.mm
+mac/Plugins/WebPluginContainerCheck.mm
+mac/Plugins/WebPluginController.mm
+mac/Plugins/WebPluginDatabase.mm
+
+mac/History/WebBackForwardList.mm
+
+mac/WebCoreSupport/WebApplicationCache.mm
+mac/WebCoreSupport/WebApplicationCacheQuotaManager.mm
+mac/WebCoreSupport/WebFrameLoaderClient.mm
+
+mac/WebInspector/WebInspector.mm
+
+mac/WebView/WebClipView.mm
+mac/WebView/WebDataSource.mm
+mac/WebView/WebFrame.mm
+mac/WebView/WebFrameView.mm
+mac/WebView/WebFullScreenController.mm
+mac/WebView/WebHTMLView.mm
+mac/WebView/WebImmediateActionController.mm
+mac/WebView/WebPDFRepresentation.mm
+mac/WebView/WebPDFView.mm
+mac/WebView/WebScriptDebugger.mm
+mac/WebView/WebScriptDebugDelegate.mm
+mac/WebView/WebScriptWorld.mm
+mac/WebView/WebView.mm

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.drawImage.9arg.destsize</title>
+<meta name="author" content="Philip Taylor">
+<script src="../common/canvas-tests.js"></script>
+<link rel="stylesheet" href="../common/canvas-tests.css">
+<body class="show_output">
+
+<h1><a href="index.2d.html">2d</a>.<a href="index.2d.drawImage.html">drawImage</a>.<a href="index.2d.drawImage.9arg.html">9arg</a>.destsize</h1>
+<p class="desc"></p>
+
+<div class="refs">Spec references:
+<ul>
+<li><a href="../annotated-spec/canvas.html#testrefs.2d.drawImage.paint">2d.drawImage.paint</a>
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+<p class="output expectedtext">Expected output:<p><img src="../resources/green-100x50.png" class="output expected" id="expected" alt="">
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+ctx.fillStyle = '#f00';
+ctx.fillRect(0, 0, 100, 50);
+ctx.drawImage(document.getElementById('green.png'), 1, 1, 1, 1, 0, 0, 100, 50);
+ctx.drawImage(document.getElementById('red.png'), 0, 0, 100, 50, -50, 0, 50, 50);
+ctx.drawImage(document.getElementById('red.png'), 0, 0, 100, 50, 100, 0, 50, 50);
+ctx.drawImage(document.getElementById('red.png'), 0, 0, 100, 50, 0, -25, 100, 25);
+ctx.drawImage(document.getElementById('red.png'), 0, 0, 100, 50, 0, 50, 100, 25);
+_assertPixelApprox(canvas, 0,0, 0,255,0,255, "0,0", "0,255,0,255", 2);
+_assertPixelApprox(canvas, 99,0, 0,255,0,255, "99,0", "0,255,0,255", 2);
+_assertPixelApprox(canvas, 0,49, 0,255,0,255, "0,49", "0,255,0,255", 2);
+_assertPixelApprox(canvas, 99,49, 0,255,0,255, "99,49", "0,255,0,255", 2);
+
+
+});
+</script>
+<img src="../resources/red.png" id="red.png" class="resource">
+<img src="../resources/green.png" id="green.png" class="resource">
+

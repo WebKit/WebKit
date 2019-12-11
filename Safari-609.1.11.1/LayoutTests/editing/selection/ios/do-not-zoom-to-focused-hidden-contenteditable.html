@@ -1,0 +1,94 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+input {
+    width: 320px;
+    height: 160px;
+    display: block;
+}
+
+.container {
+    width: 30px;
+    height: 30px;
+    border: solid 2px silver;
+    box-sizing: border-box;
+    font-size: 6px;
+}
+
+#editor, iframe {
+    opacity: 0.001;
+    width: inherit;
+    height: inherit;
+    overflow-y: scroll;
+}
+</style>
+</head>
+<body>
+<input type="button" onclick="focusEditor()" value="Click to focus the div">
+<input type="button" onclick="focusSubframe()" value="Click to focus the frame">
+<div>The initial page scale is: <span id="initial-scale"></span></div>
+<div>The page scale after focusing the div is: <span id="div-scale"></span></div>
+<div>The page scale after focusing the iframe is: <span id="iframe-scale"></span></div>
+<div class="container">
+    <div id="editor" contenteditable>Testing</div>
+</div>
+<div class="container">
+    <iframe srcdoc="
+        <head>
+            <style>body, html { width: 100%; height: 100%; font-size: 6px; }</style>
+            <script>
+                function beginEditing() {
+                    document.body.focus();
+                }
+            </script>
+        </head>
+        <body contenteditable>Testing</body>" onload="runTest()"></iframe>
+</div>
+<p>Verifies that we don't zoom to the focused element, if the focused element is in a hidden contenteditable area. To manually test, click the button and check that the page scale is still 1.</p>
+<script>
+loadCount = 0;
+
+addEventListener("load", runTest);
+
+function focusEditor() {
+    document.querySelector('#editor').focus();
+}
+
+function focusSubframe() {
+    document.querySelector("iframe").contentWindow.beginEditing();
+}
+
+async function runTest() {
+    if (!window.testRunner)
+        return;
+
+    if (++loadCount < 2)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    document.querySelector("#initial-scale").textContent = internals.pageScaleFactor().toFixed(3);
+
+    await UIHelper.activateAndWaitForInputSessionAt(160, 80);
+    document.querySelector("#div-scale").textContent = internals.pageScaleFactor().toFixed(3);
+    UIHelper.resignFirstResponder();
+    await UIHelper.waitForKeyboardToHide();
+
+    await UIHelper.activateAndWaitForInputSessionAt(160, 240);
+    document.querySelector("#iframe-scale").textContent = internals.pageScaleFactor().toFixed(3);
+
+    testRunner.notifyDone();
+}
+</script>
+</body>
+</html>

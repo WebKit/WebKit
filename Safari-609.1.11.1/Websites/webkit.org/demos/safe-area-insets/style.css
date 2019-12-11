@@ -1,0 +1,14 @@
+body {
+    margin: 0;
+
+    font-family: Helvetica;
+    font-size: 16pt;
+
+    -webkit-text-size-adjust: 100%;
+
+    background-color: #eef;
+}
+
+* {
+    box-sizing: border-box;
+}

@@ -1,0 +1,17 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<p>This tests visible position creation in unrendered space after rendered text, just before a new block.  The caret should be at the end of the line containing 'foo' because we choose to treat all positions in the unrendered space after 'foo' as being visually equivalent to the position just after 'foo', and not visually equivalent to the position on the next line, before 'bar'.</p>  
+
+<div id="div" contenteditable="true">foo
+<div>bar</div></div>
+
+<script>
+var s = window.getSelection();
+var div = document.getElementById("div");
+var text = div.firstChild;
+
+s.setPosition(text, text.length);
+</script>
+

@@ -1,0 +1,3 @@
+
+PASS IntersectionObserver doesn't keep unreachable target alive 
+

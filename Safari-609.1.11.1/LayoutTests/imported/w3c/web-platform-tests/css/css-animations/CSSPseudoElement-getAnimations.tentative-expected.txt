@@ -1,0 +1,4 @@
+
+PASS getAnimations returns CSSAnimation objects 
+PASS getAnimations returns CSS transitions/animations, and script-generated animations in the expected order 
+

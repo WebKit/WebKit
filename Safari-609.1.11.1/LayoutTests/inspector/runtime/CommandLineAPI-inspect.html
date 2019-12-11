@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function test()
+{
+    function payloadJSONFilter(key, value) {
+        if (key === "objectId")
+            return "<filtered>";
+        if (key === "databaseId")
+            return "<filtered>";
+        return value;
+    }
+
+    function evaluateWithCommandLineAPI(expression) {
+        const objectGroup = "test";
+        const includeCommandLineAPI = true;
+        return InspectorProtocol.awaitCommand({
+            method: "Runtime.evaluate",
+            params: {expression, objectGroup, includeCommandLineAPI}
+        });
+    }
+
+    let suite = ProtocolTest.createAsyncSuite("CommandLineAPI.prototype.inspect");
+
+    InspectorProtocol.awaitCommand({method: "Inspector.enable", params: {}})
+    InspectorProtocol.awaitCommand({method: "Database.enable", params: {}})
+
+    function addTestCase({name, description, expression}) {
+        suite.addTestCase({
+            name, description,
+            test(resolve, reject) {
+                evaluateWithCommandLineAPI(expression);
+                ProtocolTest.log("EXPRESSION: " + expression);
+                InspectorProtocol.awaitEvent({event: "Inspector.inspect"}).then((messageObject) => {
+                    ProtocolTest.log(JSON.stringify(messageObject, payloadJSONFilter, 2));
+                    resolve();
+                });
+            }
+        });
+    }
+
+    addTestCase({
+        name: "CommandLineAPI.prototype.inspect.RemoteObject.Undefined",
+        description: "inspect() should produce a remote object for undefined",
+        expression: `inspect()`,
+    });
+
+    addTestCase({
+        name: "CommandLineAPI.prototype.inspect.RemoteObject.Number",
+        description: "inspect(value) should produce a remote object for that value",
+        expression: `inspect(123.456)`,
+    });
+
+    addTestCase({
+        name: "CommandLineAPI.prototype.inspect.RemoteObject.Object",
+        description: "inspect(value) should produce a remote object for that value",
+        expression: `inspect({a:1, b:2})`,
+    });
+
+    addTestCase({
+        name: "CommandLineAPI.prototype.inspect.RemoteObject.Function",
+        description: "inspect(value) should produce a remote object for that value",
+        expression: `inspect(function f() {})`,
+    });
+
+    addTestCase({
+        name: "CommandLineAPI.prototype.inspect.Database",
+        description: "inspect(database) should include a hint",
+        expression: `inspect(openDatabase("CommandLineAPITestDB", "", "", 1))`,
+    });
+
+    addTestCase({
+        name: "CommandLineAPI.prototype.inspect.Storage",
+        description: "inspect(sessionStorage) should include a hint",
+        expression: `inspect(sessionStorage)`,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for CommandLineAPI.prototype.inspect with different object types.</p>
+</body>
+</html>

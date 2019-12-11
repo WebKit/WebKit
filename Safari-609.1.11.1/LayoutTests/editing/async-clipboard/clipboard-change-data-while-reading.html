@@ -1,0 +1,64 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ domPasteAllowed=false useFlexibleViewport=true experimental:AsyncClipboardAPIEnabled=true ] -->
+<html>
+    <meta charset="utf8">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../resources/js-test.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
+        <script src="./resources/async-clipboard-helpers.js"></script>
+        <style>
+            button {
+                width: 100%;
+                height: 100px;
+            }
+
+            iframe {
+                width: 100%;
+                height: 100px;
+            }
+        </style>
+    </head>
+    <script>
+        jsTestIsAsync = true;
+        finishedReading = false;
+
+        async function runTest() {
+            description("This test verifies that if platform pasteboard contents are changed immediately after granting programmatic clipboard access during Clipboard.read(), the promise should be rejected. This test needs to be run in WebKitTestRunner or DumpRenderTree.");
+
+            const copyElement = document.getElementById("copy");
+            const pasteElement = document.getElementById("paste");
+            pasteElement.addEventListener("click", async event => {
+                try {
+                    testFailed(`Did not expect to read ${(await navigator.clipboard.read()).length} item(s).`);
+                } catch (exception) {
+                    testPassed(`Failed to read clipboard items with ${exception.name}.`);
+                } finally {
+                    finishedReading = true;
+                }
+            });
+
+            await UIHelper.activateElement(copyElement);
+            await triggerProgrammaticPaste(pasteElement, ["ChangePasteboardWhenGrantingAccess"]);
+            await new Promise(resolve => shouldBecomeEqual("finishedReading", "true", resolve));
+
+            [pasteElement, copyElement].map(element => element.remove());
+            finishJSTest();
+        }
+
+        addEventListener("load", runTest);
+    </script>
+    <body>
+        <iframe id="copy" src="data:text/html,<button id='copy' style='text-align: center; font-size: 24px; width: 100%; height: 100%; line-height: 80px;'>Click here to copy</button>
+        <p id='text' style='text-align: center; font-size: 24px; width: 100%; height: 100%; line-height: 80px;'>This is some text to copy.</p>
+        <script>
+        copy.addEventListener('click', () => {
+            getSelection().selectAllChildren(text);
+            document.execCommand('Copy');
+            getSelection().removeAllRanges();
+        });
+        </script>"></iframe>
+        <div><button id="paste">Paste</button></div>
+        <div id="description"></div>
+        <div id="console"></div>
+    </body>
+</html>

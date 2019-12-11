@@ -1,0 +1,10 @@
+Tests the value of location.valueOf after Object.prototype.valueOf has been replaced.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS location.valueOf is objectProtoValueOf
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

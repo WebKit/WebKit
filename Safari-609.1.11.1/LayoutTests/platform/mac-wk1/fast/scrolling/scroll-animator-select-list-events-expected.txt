@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: RenderListBox: didAddVerticalScrollbar
+CONSOLE MESSAGE: line 15: RenderListBox: mouseMovedInContentArea
+CONSOLE MESSAGE: line 16: RenderListBox: mouseEnteredVerticalScrollbar
+CONSOLE MESSAGE: line 16: RenderListBox: mouseMovedInContentArea
+CONSOLE MESSAGE: line 17: RenderListBox: mouseIsDownInVerticalScrollbar
+CONSOLE MESSAGE: line 18: RenderListBox: mouseIsUpInVerticalScrollbar
+CONSOLE MESSAGE: line 18: RenderListBox: mouseMovedInContentArea
+CONSOLE MESSAGE: line 19: RenderListBox: mouseExitedVerticalScrollbar
+CONSOLE MESSAGE: line 19: RenderListBox: mouseExitedContentArea
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Test for https://bugs.webkit.org/show_bug.cgi?id=153398.
+
+
+

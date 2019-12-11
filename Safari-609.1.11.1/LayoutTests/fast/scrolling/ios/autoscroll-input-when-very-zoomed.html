@@ -1,0 +1,94 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<script src="../../../resources/basic-gestures.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    const pageScale = 7.5;
+
+    async function runTest()
+    {
+        if (!testRunner.runUIScript)
+            return;
+    
+        var output = '';
+
+        await UIHelper.setHardwareKeyboardAttached(false);
+        await UIHelper.activateElementAndWaitForInputSession(document.getElementById('editable'));
+
+        await UIHelper.immediateZoomToScale(3.284);
+        await UIHelper.immediateScrollTo(390, 500);
+
+        await Promise.all([UIHelper.ensureVisibleContentRectUpdate(), UIHelper.ensureStablePresentationUpdate()]);
+
+        var originalXOffset = window.pageXOffset;
+        var originalYOffset = window.pageYOffset;
+
+        await UIHelper.enterText(" ");
+
+        var secondXOffset = window.pageXOffset;
+        var secondYOffset = window.pageYOffset;
+
+        // Scrolling is not immedate, wait until the viewport has time to adjust
+        await Promise.all([UIHelper.ensureVisibleContentRectUpdate(), UIHelper.ensurePresentationUpdate()]);
+        await UIHelper.enterText("a");
+
+        var finalXOffset = window.pageXOffset;
+        var finalYOffset = window.pageYOffset;
+
+        if ((originalXOffset != secondXOffset) || (originalYOffset != secondYOffset))
+            output += 'Page has scrolled on the first input';
+        if ((originalXOffset == secondXOffset) && (originalYOffset == secondYOffset))
+            output += 'Page has not scrolled on the first input';
+        output +='<br>';
+
+        if ((secondXOffset != finalXOffset) || (secondYOffset != finalYOffset))
+             output += 'Page has scrolled on the second input.';
+        if ((secondXOffset == finalXOffset) && (secondYOffset == finalYOffset))
+            output += 'Page has not scrolled on the second input';
+        output += '<br>';
+
+        document.getElementById('testArea').innerHTML = output;
+        await UIHelper.immediateZoomToScale(1.0);
+        await UIHelper.immediateScrollTo(0, 0);
+        testRunner.notifyDone();
+    }
+
+    window.addEventListener('load', runTest, false);
+</script>
+<style>
+    #testArea {
+        height: 2000px;
+        width: 300px;
+        background-color: silver;
+        font-family: monospace;
+        font-size: 18px;
+    }
+    #editable {
+        font-family: monospace;
+        font-size: 18px;
+        margin-top: 100px;
+        margin-left: 100px;
+    }
+</style>
+</head>
+<body>
+This test focuses a form, them zooms and scrolls the page.
+Then text is entered in the form, and we check to make sure the page has scrolled
+when needed to make the input visible again. On iPhone, the page should scroll on 
+the first text input so that the input element in is visible again, but should not
+scroll more than once, as it should be visible after the first scroll. On iPad, the
+input should not scroll at all, as the iPad is larger and should not need to scroll
+for the input element to be visible. The test results should refelct these expectaitions.
+<div id="testArea"><input id="editable" type="text" value="Test text"></input></div>
+</body>
+</html>
+
+
+
+

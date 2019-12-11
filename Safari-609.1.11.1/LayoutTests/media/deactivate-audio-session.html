@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>'play' event</title>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script src=../resources/gc.js></script>
+
+        <script>
+            async function waitForTestToFinish()
+            {
+                gc();
+
+                if (window.internals)
+                    await testExpectedEventually('internals.audioSessionActive()', false);
+
+                endTest();
+            }
+
+            function playing()
+            {
+                consoleWrite("EVENT(playing)");
+
+                if (window.internals)
+                    testExpected('internals.audioSessionActive()', true);
+
+                let frame = document.getElementById("frame");
+                frame.parentNode.innerHTML = '';
+                
+                setTimeout(waitForTestToFinish, 100);
+            }
+
+            function frameLoaded()
+            {
+                consoleWrite("** iframe loaded.");
+
+                var standaloneMediaDocument = document.getElementById("frame").contentDocument;
+                let video = standaloneMediaDocument.querySelector("video");
+                if (!video) {
+                    failTest("ERROR: Video element was not found in frameLoaded().");
+                    return;
+                }
+
+                video.pause();
+                video.addEventListener('playing', playing);
+                video.play();
+            }
+
+            function start()
+            {
+                let frame = document.getElementById("frame");
+                frame.onload = frameLoaded;
+                frame.src = findMediaFile('audio', 'content/test');
+            }    
+        </script>
+    </head>
+
+    <body onload="start()">
+        <p>Test that audio session is deactivated when the last media element with audio is deleted.</p>
+        <div>
+        <iframe id="frame" width=400 height=300"></iframe>
+        </div>
+    </body>
+</html>

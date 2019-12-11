@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing a SPKI RSA 64 bit key");
+
+jsTestIsAsync = true;
+
+// Generated from OpenSSL
+var spkiKey = Base64URL.parse("MCQwDQYJKoZIhvcNAQEBBQADEwAwEAIJAKNxac33yAq/AgMBAAE=");
+var extractable = true;
+
+debug("Importing a key...");
+crypto.subtle.importKey("spki", spkiKey, {name: "RSA-OAEP", hash: "sha-1"}, extractable, ["encrypt", "wrapKey"]).then(function(result) {
+    publicKey = result;
+
+    shouldBe("publicKey.toString()", "'[object CryptoKey]'");
+    shouldBe("publicKey.type", "'public'");
+    shouldBe("publicKey.extractable", "true");
+    shouldBe("publicKey.algorithm.name", "'RSA-OAEP'");
+    shouldBe("publicKey.algorithm.modulusLength", "64");
+    shouldBe("bytesToHexString(publicKey.algorithm.publicExponent)", "'010001'");
+    shouldBe("publicKey.algorithm.hash.name", "'SHA-1'");
+    shouldBe("publicKey.usages", "['encrypt', 'wrapKey']");
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

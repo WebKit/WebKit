@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<!-- Test passes if doesn't crash. -->
+<style>
+.first {
+    -webkit-filter: hue-rotate(90deg);
+}
+.second {
+    -webkit-filter: blur(3px);
+}
+</style>
+<img class='first' src="resources/reference.png">
+<script>
+    if (window.testRunner)
+        window.testRunner.dumpAsText(true);
+    // force a layout
+    document.body.offsetTop;
+    var img = document.getElementsByTagName('img')[0];
+    img.className = 'second';
+</script>

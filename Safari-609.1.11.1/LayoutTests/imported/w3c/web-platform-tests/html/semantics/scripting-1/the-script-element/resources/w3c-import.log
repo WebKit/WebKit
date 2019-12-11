@@ -1,0 +1,28 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/resources/bom-utf-16be.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/resources/bom-utf-16le.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/resources/bom-utf-8.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/resources/cocoa-module.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/resources/cross-origin.py
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/resources/exports-cocoa.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/resources/load-error-events-helpers.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/resources/load-error-events.py
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/resources/script-text-modifications.py
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/resources/set-script-executed.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/resources/syntax-error.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/resources/throw.js

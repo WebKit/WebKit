@@ -1,0 +1,30 @@
+<html> 
+<head>
+<script src=../editing.js type="text/javascript"></script>
+<script>
+function editingTest() {
+  
+    if (!window.eventSender)
+        return;
+    doubleClickAtSelectionStart();
+
+    // Drag 'hello'
+    var e = document.getElementById("dragme");
+    x = e.offsetLeft;
+    y = e.offsetTop + e.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    // and drop it off to the right somewhere.
+    eventSender.leapForward(500);
+    eventSender.mouseMoveTo(x + 300, y);
+    eventSender.mouseUp();
+}
+</script>
+<title>Drag and drop within a text input field modifies page</title> 
+</head> 
+<body>
+<p>Tests that drag/drop after double-click does a smart drag. Specifically the end result should have a space: "world hello". To test manually double click on the "hello" and drag it to after "world".</p>
+<div contenteditable="true" id="test"><span id="dragme">hello</span> world</div>
+<script>runEditingTest();</script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<html> 
+    <body>
+        <form action="resources/popup-allowed-from-gesture-initiated-form-submit-target.html" method="post" target="_blank">
+            <input id="button" type="submit" value="Click Here" />
+        </form>
+        <div id="console">FAIL</div>
+        <script> 
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.setCanOpenWindows();
+                testRunner.setPopupBlockingEnabled(true);
+                testRunner.setCloseRemainingWindowsWhenComplete(true);
+                testRunner.waitUntilDone();
+
+                var button = document.getElementById("button");
+
+                if (window.eventSender) {
+                    eventSender.mouseMoveTo(button.offsetLeft + button.offsetWidth / 2, button.offsetTop + button.offsetHeight / 2);
+                    eventSender.mouseDown();
+                    eventSender.mouseUp();
+                }
+            }
+        </script> 
+    </body> 
+</html>

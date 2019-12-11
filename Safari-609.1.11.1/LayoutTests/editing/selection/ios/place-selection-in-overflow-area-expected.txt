@@ -1,0 +1,28 @@
+line
+line
+line
+line
+line
+line
+line
+line
+line
+line
+line
+line
+line
+line
+line
+line
+line
+line
+line
+line
+line
+line
+line
+line
+line
+line
+Selection before tap: (node at 2#11, [object Text]#11)
+Selection after tap: (node at 40#13, [object Text]#13)

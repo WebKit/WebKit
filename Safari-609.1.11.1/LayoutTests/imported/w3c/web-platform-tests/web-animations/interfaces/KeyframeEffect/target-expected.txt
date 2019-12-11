@@ -1,0 +1,7 @@
+
+PASS Test setting target before constructing the associated animation 
+PASS Test setting target from null to a valid target 
+PASS Test setting target from a valid target to null 
+PASS Test setting target from a valid target to another target 
+PASS Target element can be set to a foreign element 
+

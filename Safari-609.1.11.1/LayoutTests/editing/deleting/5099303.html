@@ -1,0 +1,8 @@
+<p>This tests for a bug where deleting from the start of a paragraph after a table would leave the caret in the wrong position.</p>
+<div contenteditable="true"><table border="1"><tr><td>The caret should be between these two parenthesis: (</td><td contenteditable="false"></td></tr></table><div id="div">).</div></div>
+
+<script>
+var sel = window.getSelection();
+var div = document.getElementById("div");
+sel.setPosition(div, 0);
+</script>

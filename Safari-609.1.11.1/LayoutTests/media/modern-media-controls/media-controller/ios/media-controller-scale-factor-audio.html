@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<script src="../../../../resources/js-test-pre.js"></script>
+<meta name="viewport" content="width=400">
+<body>
+<audio src="../../../content/test.mp3" style="position: absolute; top: 100px; left: 0; width: 400px;" controls></audio>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing that we apply a CSS zoom to ensure controls are always 50 device points tall on iOS for audio and also center the controls vertically.");
+
+const media = document.querySelector("audio");
+const shadowRoot = window.internals.shadowRoot(media);
+
+window.requestAnimationFrame(() => {
+    shouldBeEqualToString("shadowRoot.querySelector('.media-controls').style.width", "800px");
+    shouldBeEqualToString("shadowRoot.querySelector('.media-controls').style.height", "62px");
+    shouldBeEqualToString("shadowRoot.querySelector('.media-controls').style.transform", "scale(0.5)");
+    shouldBeEqualToString("shadowRoot.querySelector('.media-controls').style.top", "-15.5px");
+
+    debug("");
+    media.remove();
+    finishJSTest();
+});
+
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>

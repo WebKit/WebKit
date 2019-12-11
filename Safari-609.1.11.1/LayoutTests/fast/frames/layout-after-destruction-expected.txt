@@ -1,0 +1,6 @@
+frame "<!--frame1-->" - has 1 onunload handler(s)
+frame "<!--frame1-->" - has 1 onunload handler(s)
+This test should not assert on reload in a debug build.
+
+Element in top frame
+ 

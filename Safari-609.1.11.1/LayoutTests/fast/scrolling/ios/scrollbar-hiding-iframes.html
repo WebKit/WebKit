@@ -1,0 +1,139 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncFrameScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        ::-webkit-scrollbar {
+            width: 16px;
+            height: 16px;
+            background-color: silver;
+        }
+
+        ::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+        }
+
+        .container {
+            display: inline-block;
+        }
+
+        .overflowing {
+            margin: 20px;
+            height: 100px;
+            width: 200px;
+            border: 1px solid black;
+            overflow: scroll;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .contents {
+            width: 200%;
+            height: 200%;
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        .vertical::-webkit-scrollbar:vertical {
+            display: block;
+        }
+
+        .horizontal::-webkit-scrollbar:horizontal {
+            display: block;
+        }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+
+        function getScrollingTreeUIScript(x, y)
+        {
+            return `(function() {
+                return uiController.scrollingTreeAsText;
+            })();`;
+        }
+
+        async function doTest()
+        {
+            if (!testRunner.runUIScript)
+                return
+            
+            document.getElementById('scrolling-tree').textContent = await UIHelper.getScrollingTree();
+            testRunner.notifyDone();
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Both Visible</h2>
+        <iframe srcdoc="
+        <style>
+        ::-webkit-scrollbar {
+        display: block;
+        background-color: gray;
+        }
+        </style>
+        <body>
+        <div style='width: 1000px; height: 1000px'>Content</div>
+        <body>"></iframe>
+    </div>
+    <div class="container">
+        <h2>Horizontal visible</h2>
+        <iframe srcdoc="
+        <style>
+        ::-webkit-scrollbar {
+        display: block;
+        background-color: gray;
+        }
+
+        ::-webkit-scrollbar:vertical {
+        display: none;
+        }
+        </style>
+        <body>
+        <div style='width: 1000px; height: 1000px'>Content</div>
+        <body>"></iframe>
+    </div>
+    <div class="container">
+        <h2>Vertical visible</h2>
+        <iframe srcdoc="
+        <style>
+        ::-webkit-scrollbar {
+        display: block;
+        background-color: gray;
+        }
+
+        ::-webkit-scrollbar:horizontal {
+        display: none;
+        }
+        </style>
+        <body>
+        <div style='width: 1000px; height: 1000px'>Content</div>
+        <body>"></iframe>
+    </div>
+    <div class="container">
+        <h2>None visible</h2>
+        <iframe srcdoc="
+        <style>
+        ::-webkit-scrollbar {
+        display: none
+        }
+        </style>
+        <body>
+        <div style='width: 1000px; height: 1000px'>Content</div>
+        <body>"></iframe>
+    </div>
+<pre id="scrolling-tree"></pre>
+</body>
+</html>

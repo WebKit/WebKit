@@ -1,0 +1,11 @@
+This tests that search predicate results are accurate when no start element is specified.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS backwardResult.description is 'AXDescription: last'
+PASS forwardResult.description is 'AXDescription: first'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

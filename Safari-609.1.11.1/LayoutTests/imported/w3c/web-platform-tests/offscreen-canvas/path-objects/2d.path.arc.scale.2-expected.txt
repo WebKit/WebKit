@@ -1,0 +1,7 @@
+2d.path.arc.scale.2
+
+Highly scaled arcs are the right shape
+
+
+FAIL Highly scaled arcs are the right shape null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

@@ -1,0 +1,47 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<meta name="viewport" content="initial-scale=5, width=device-width">
+<head>
+
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+    
+        let write = (message) => output.innerHTML += (message + "<br>");
+
+        function runTest()
+        {
+            document.getElementById("target").addEventListener("click", () => {
+                navigator.share({ title: "Example Page", url: "url", text: "text" }).then((result) => {
+                    write("PASS: Share sheet invoked.");
+                    testRunner.notifyDone();
+                });    
+            });
+            
+            UIHelper.setShareSheetCompletesImmediatelyWithResolution(true).then(() => {
+                UIHelper.activateAt(50, 50);
+            });
+        }
+
+    </script>
+    <style>
+        #target {
+            height: 100px;
+            width: 100px;
+            background-color: silver;
+        }
+    </style>
+</head>
+<body onload="runTest()">
+<pre id="output"></pre>
+<button id="target">
+</button>
+
+</body>
+</html>
+

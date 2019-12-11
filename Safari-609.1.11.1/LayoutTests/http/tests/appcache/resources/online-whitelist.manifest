@@ -1,0 +1,14 @@
+CACHE MANIFEST
+online-whitelist.php?cached
+
+NETWORK:
+# These are prefixes for requests we test, but they are not same origin, so they will be skipped.
+http://
+http://127
+http://127.0.0.1:8
+
+# This should be ignored, because explicit entries are checked before online whitelist
+online-whitelist.php?cached
+
+# This should work normally.
+online-whitelist.php?uncached

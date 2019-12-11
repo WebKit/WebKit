@@ -1,0 +1,16 @@
+<!doctype html>
+<title>close() and incoming message</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<div id="log"></div>
+<script>
+var worker = new Worker('incoming-message.js');
+worker.onmessage = function(e) {
+  assert_unreached("Got message");
+};
+worker.onerror = function(e) {
+  assert_unreached("Got error");
+};
+worker.postMessage(1);
+setTimeout(done, 2000);
+</script>

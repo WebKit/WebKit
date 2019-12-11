@@ -1,0 +1,8 @@
+2d.path.arcTo.shape.curve2
+arcTo() curves in the right kind of shape
+Actual output:
+Expected output:
+
+
+PASS arcTo() curves in the right kind of shape 
+

@@ -1,0 +1,12 @@
+2 thingers should appear on this page. Otherwise the test has failed.  
+
+--------
+Frame: '<!--frame1-->'
+--------
+thinger
+
+
+--------
+Frame: '<!--frame2-->'
+--------
+thinger

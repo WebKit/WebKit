@@ -1,0 +1,110 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=0.75, user-scalable=no">
+    <style>
+        input[type="text"] {
+            display: block;
+            margin: 400px 20px;
+        }
+        button {
+            display: block;
+        }
+    </style>
+    
+    <script src="resources/zooming-test-utils.js"></script>
+    <script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function getMoveUIScript(nextOrPrevious)
+    {
+        return `
+            (function() {
+                uiController.didEndZoomingCallback = function() {
+                    var result = {
+                        'scale' : uiController.zoomScale,
+                        'visibleRect' : uiController.contentVisibleRect
+                    };
+
+                    var result = JSON.stringify(result, function(key, value) {
+                          if (typeof value === "number")
+                              return value.toFixed(3);
+                        return value;
+                    });
+
+                    uiController.uiScriptComplete(result);
+                };
+                uiController.keyboardAccessoryBar${nextOrPrevious}();
+            })();`
+    }
+    
+    function moveToNextField()
+    {
+        var uiScript = getMoveUIScript('Next');
+        testRunner.runUIScript(uiScript, function(result) {
+            var header = document.createElement('h1');
+            header.textContent = 'After move to second field';
+            document.body.appendChild(header);
+
+            var results = tableFromJSON(result);
+            document.body.appendChild(results);
+            
+            moveToPreviousField();
+        });
+    }
+
+    function moveToPreviousField()
+    {
+        var uiScript = getMoveUIScript('Previous');
+        testRunner.runUIScript(uiScript, function(result) {
+            var header = document.createElement('h1');
+            header.textContent = 'After move to first field';
+            document.body.appendChild(header);
+
+            var results = tableFromJSON(result);
+            document.body.appendChild(results);
+            testRunner.notifyDone();
+        });
+    }
+    
+    function tapOnElement(targetElement, xOffset, yOffset)
+    {
+        var point = getPointInsideElement(targetElement, xOffset, yOffset);
+
+        var uiScript = zoomAfterSingleTapUIScript(point.x, point.y);
+        testRunner.runUIScript(uiScript, function(result) {
+            var header = document.createElement('h1');
+            header.textContent = 'After focus first field';
+            document.body.appendChild(header);
+
+            var results = tableFromJSON(result);
+            document.body.appendChild(results);
+            
+            moveToNextField();
+        });
+    }
+    
+    function doTest()
+    {
+        if (!window.testRunner || !testRunner.runUIScript)
+            return;
+
+        tapOnElement(document.getElementById('input'), 10, 10);
+    }
+
+    window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+<p>Tests zooming into a text input on tap.</p>
+
+<input id="input" type="text">
+<input id="input2" type="text">
+
+</body>
+</html>

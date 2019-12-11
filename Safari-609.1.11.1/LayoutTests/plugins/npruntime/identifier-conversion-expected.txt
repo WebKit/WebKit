@@ -1,0 +1,21 @@
+Test converting strings and integers to identifiers and back
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS embed.testIdentifierToString('foo') is "foo"
+PASS embed.testIdentifierToString('123') is "123"
+PASS embed.testIdentifierToString('null') is "null"
+PASS embed.testIdentifierToString(1) is undefined
+PASS embed.testIdentifierToString(-1) is undefined
+PASS embed.testIdentifierToString(1.40) is undefined
+PASS embed.testIdentifierToInt(1) is 1
+PASS embed.testIdentifierToInt(-1) is -1
+PASS embed.testIdentifierToInt(10) is 10
+PASS embed.testIdentifierToInt(10.234234) is 10
+PASS embed.testIdentifierToInt('foo') is 0
+PASS embed.testIdentifierToInt('10') is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

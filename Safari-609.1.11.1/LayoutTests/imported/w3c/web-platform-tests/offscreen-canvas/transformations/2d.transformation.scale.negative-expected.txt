@@ -1,0 +1,7 @@
+2d.transformation.scale.negative
+
+scale() with negative scale factors works
+
+
+FAIL scale() with negative scale factors works null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

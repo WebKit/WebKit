@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p tabindex="1">This tests moving the focus from a select element while its popup menu is open. WebKit should dismiss the popup.</p>
+<select onmousedown="moveFocus()">
+  <option>Click here</option>
+  <option>You should see this</option>
+</select>
+<div id="result">PASS</div>
+<script> document.querySelector('p').focus(); </script>
+</body>
+</html>

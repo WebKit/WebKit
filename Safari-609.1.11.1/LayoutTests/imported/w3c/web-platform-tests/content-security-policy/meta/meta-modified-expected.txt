@@ -1,0 +1,6 @@
+Test passes if the image is blocked both before and after policy modification.
+
+
+
+PASS Expecting logs: ["PASS", "PASS","TEST COMPLETE"] 
+

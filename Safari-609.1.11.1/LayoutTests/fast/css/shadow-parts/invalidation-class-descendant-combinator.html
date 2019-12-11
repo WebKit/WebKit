@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CSS Shadow Parts - Invalidation with class in descendant combinator</title>
+    <link href="http://www.apple.com/" rel="author" title="Apple">
+    <link href="https://drafts.csswg.org/css-shadow-parts/" rel="help">
+    <script src="../../../resources/testharness.js"></script>
+    <script src="../../../resources/testharnessreport.js"></script>
+    <script src="../../../imported/w3c/web-platform-tests/css/css-shadow-parts/support/shadow-helper.js"></script>
+  </head>
+  <body>
+    <style>.ancestor #c-e::part(partp) { color: green; }</style>
+    <script>installCustomElement("custom-element", "custom-element-template");</script>
+    <template id="custom-element-template">
+      <style>span { color: red; }</style>
+      <span id="part" part="partp">This text</span>
+    </template>
+    The following text should be green:
+    <div id="target">
+      <div><custom-element id="c-e"></custom-element></div>
+    </div>
+    <script>
+      "use strict";
+      test(function() {
+        const part = getElementByShadowIds(document, ["c-e", "part"]);
+        const before = window.getComputedStyle(part).color;
+        document.querySelector("#target").classList.add("ancestor");
+        const after = window.getComputedStyle(part).color;
+        assert_not_equals(before, after);
+      }, "Part in selected host changed color");
+    </script>
+  </body>
+</html>

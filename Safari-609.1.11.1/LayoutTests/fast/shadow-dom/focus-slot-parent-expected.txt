@@ -1,0 +1,11 @@
+This tests clicking on a slotted content would focus the ancestor of the slot element it belongs.
+To manaully test, click on "Click here" below.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS focusEventTarget is focusableSlotParent
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

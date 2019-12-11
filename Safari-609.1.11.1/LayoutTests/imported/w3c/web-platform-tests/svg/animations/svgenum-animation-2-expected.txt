@@ -1,0 +1,3 @@
+
+PASS Test EdgeModeType enumeration animations 
+

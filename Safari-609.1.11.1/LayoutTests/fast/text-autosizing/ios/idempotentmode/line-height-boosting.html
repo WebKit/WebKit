@@ -1,0 +1,52 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="initial-scale=0.6666">
+<script>
+if (window.internals) {
+    window.internals.settings.setTextAutosizingEnabled(true);
+    window.internals.settings.setTextAutosizingUsesIdempotentMode(true);
+}
+</script>
+<script src="../../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div><span id=target1 style="font-size: 12px; line-height: 10px">yes line-height boost</span></div>
+<div><span id=target2 style="font-size: 8px; line-height: 2px">yes line-height boost</span></div>
+<div><span id=target3 style="font-size: 6px; line-height: 10px">yes line-height boost</span></div>
+<div><span id=target4 style="font-size: 6px; line-height: 12px">no line-height boost</span></div>
+<div><span id=target5 style="font-size: 18px;">no line-height boost</span></div>
+<div style="height: 54px; overflow: hidden;">
+    <div id=target6 style="font-size: 12px; line-height: 18px;">no line-height boost</div>
+    <div id=target7 style="font-size: 12px; line-height: 18px;">no line-height boost</div>
+    <div id=target8 style="font-size: 12px; line-height: 18px;">no line-height boost</div>
+</div>
+<script>
+document.body.offsetHeight;
+let result = Number.parseInt(window.getComputedStyle(target1).getPropertyValue("line-height"));
+shouldBeGreaterThanOrEqual("result", "18");
+
+result = Number.parseInt(window.getComputedStyle(target2).getPropertyValue("line-height"));
+shouldBeGreaterThanOrEqual("result", "13");
+
+result = Number.parseInt(window.getComputedStyle(target3).getPropertyValue("line-height"));
+shouldBeGreaterThanOrEqual("result", "11");
+
+result = Number.parseInt(window.getComputedStyle(target4).getPropertyValue("line-height"));
+shouldBe("result", "12");
+
+result = Number.parseInt(window.getComputedStyle(target5).getPropertyValue("line-height"));
+shouldBe("result", "NaN");
+
+result = Number.parseInt(window.getComputedStyle(target6).getPropertyValue("line-height"));
+shouldBe("result", "18");
+
+result = Number.parseInt(window.getComputedStyle(target7).getPropertyValue("line-height"));
+shouldBe("result", "18");
+
+result = Number.parseInt(window.getComputedStyle(target8).getPropertyValue("line-height"));
+shouldBe("result", "18");
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

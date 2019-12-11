@@ -1,0 +1,61 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ domPasteAllowed=false useFlexibleViewport=true experimental:AsyncClipboardAPIEnabled=true ] -->
+<html>
+    <meta charset="utf8">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../resources/js-test.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
+        <script src="./resources/async-clipboard-helpers.js"></script>
+        <style>
+            button {
+                width: 100%;
+                height: 100px;
+            }
+
+            iframe {
+                width: 100%;
+                height: 100px;
+            }
+        </style>
+    </head>
+    <script>
+        jsTestIsAsync = true;
+        finishedWriting = false;
+
+        async function runTest() {
+            description("This test verifies that if platform pasteboard contents are changed immediately after calling Clipboard.write(), the promise should be rejected. This test needs to be run in WebKitTestRunner or DumpRenderTree.");
+
+            const copyButton = document.getElementById("copy");
+            copyButton.addEventListener("click", async event => {
+                const item = new ClipboardItem({
+                    "text/plain" : new Promise(async function(resolve) {
+                        await UIHelper.delayFor(0);
+                        await UIHelper.copyText("foo");
+                        resolve("bar");
+                    })
+                });
+                try {
+                    await navigator.clipboard.write([item]);
+                    testFailed(`Did not expect to write the item.`);
+                } catch (exception) {
+                    testPassed(`Failed to write clipboard item with ${exception.name}.`);
+                } finally {
+                    finishedWriting = true;
+                }
+            });
+
+            await UIHelper.activateElement(copyButton);
+            await new Promise(resolve => shouldBecomeEqual("finishedWriting", "true", resolve));
+
+            copyButton.remove();
+            finishJSTest();
+        }
+
+        addEventListener("load", runTest);
+    </script>
+    <body>
+        <div><button id="copy">Copy</button></div>
+        <div id="description"></div>
+        <div id="console"></div>
+    </body>
+</html>

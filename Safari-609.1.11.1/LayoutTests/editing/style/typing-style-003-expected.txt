@@ -1,0 +1,72 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > DIV > BODY > HTML > #document to 2 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > DIV > BODY > HTML > #document to 2 of #text > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > DIV > BODY > HTML > #document to 3 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > B > DIV > BODY > HTML > #document to 1 of #text > B > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > B > DIV > BODY > HTML > #document to 1 of #text > B > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > B > DIV > BODY > HTML > #document to 1 of #text > B > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > B > DIV > BODY > HTML > #document to 2 of #text > B > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > B > DIV > BODY > HTML > #document to 2 of #text > B > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > B > DIV > BODY > HTML > #document to 3 of #text > B > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > I > B > DIV > BODY > HTML > #document to 1 of #text > I > B > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > I > B > DIV > BODY > HTML > #document to 1 of #text > I > B > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > I > B > DIV > BODY > HTML > #document to 1 of #text > I > B > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > I > B > DIV > BODY > HTML > #document to 2 of #text > I > B > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > I > B > DIV > BODY > HTML > #document to 2 of #text > I > B > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > I > B > DIV > BODY > HTML > #document to 3 of #text > I > B > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > I > DIV > BODY > HTML > #document to 1 of #text > I > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > I > DIV > BODY > HTML > #document to 1 of #text > I > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > I > DIV > BODY > HTML > #document to 1 of #text > I > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > I > DIV > BODY > HTML > #document to 2 of #text > I > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > I > DIV > BODY > HTML > #document to 2 of #text > I > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > I > DIV > BODY > HTML > #document to 3 of #text > I > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > DIV > BODY > HTML > #document to 2 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > DIV > BODY > HTML > #document to 2 of #text > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > DIV > BODY > HTML > #document to 3 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+xxxxxxxxxxxxxxx
+execTypeCharacterCommand: x <span id="test"></span>
+execTypeCharacterCommand: xx<span id="test"></span>
+execTypeCharacterCommand: xxx<span id="test"></span>
+execBoldCommand: xxx<span id="test"></span>
+execTypeCharacterCommand: xxx<b>x</b><span id="test"></span>
+execTypeCharacterCommand: xxx<b>xx</b><span id="test"></span>
+execTypeCharacterCommand: xxx<b>xxx</b><span id="test"></span>
+execItalicCommand: xxx<b>xxx</b><span id="test"></span>
+execTypeCharacterCommand: xxx<b>xxx<i>x</i></b><span id="test"></span>
+execTypeCharacterCommand: xxx<b>xxx<i>xx</i></b><span id="test"></span>
+execTypeCharacterCommand: xxx<b>xxx<i>xxx</i></b><span id="test"></span>
+execBoldCommand: xxx<b>xxx<i>xxx</i></b><span id="test"></span>
+execTypeCharacterCommand: xxx<b>xxx</b><i><b>xxx</b>x</i><span id="test"></span>
+execTypeCharacterCommand: xxx<b>xxx</b><i><b>xxx</b>xx</i><span id="test"></span>
+execTypeCharacterCommand: xxx<b>xxx</b><i><b>xxx</b>xxx</i><span id="test"></span>
+execItalicCommand: xxx<b>xxx</b><i><b>xxx</b>xxx</i><span id="test"></span>
+execTypeCharacterCommand: xxx<b>xxx</b><i><b>xxx</b>xxx</i>x<span id="test"></span>
+execTypeCharacterCommand: xxx<b>xxx</b><i><b>xxx</b>xxx</i>xx<span id="test"></span>
+execTypeCharacterCommand: xxx<b>xxx</b><i><b>xxx</b>xxx</i>xxx<span id="test"></span>

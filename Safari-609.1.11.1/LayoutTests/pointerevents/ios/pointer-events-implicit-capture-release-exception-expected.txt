@@ -1,0 +1,3 @@
+
+PASS Calling releasePointerCapture() in the 'pointerdown' event handler with a bogus pointer id raises an exception and does not alter pointer capture. 
+

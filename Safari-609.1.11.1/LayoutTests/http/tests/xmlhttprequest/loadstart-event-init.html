@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>XMLHttpRequest: ensure loadstart event progress members are correctly initialized</title>
+    <script src="/js-test-resources/testharness.js"></script>
+    <script src="/js-test-resources/testharnessreport.js"></script>
+</head>
+
+<body>
+    <div id="log"></div>
+
+    <script type="text/javascript">
+        var test = async_test()
+        test.step(function() {
+            var count = 0;
+            var xhr = new XMLHttpRequest();
+
+            xhr.onloadstart = test.step_func(function(e)
+            {
+                assert_equals(e.loaded, 0, "loaded member of xhr.loadstart event should be 0")
+                if (count == 1) {
+                    test.done();
+                }
+            })
+
+            xhr.upload.onloadstart = test.step_func(function(e)
+            {
+                assert_equals(e.loaded, 0, "loaded member of xhr.upload.loadstart event should be 0");
+            })
+
+            xhr.onloadend = function(e)
+            {
+                if (count++ < 1) {
+                    xhr.open("POST", "./resources/content.php", true);
+                    xhr.send("test");
+                }                    
+            }
+
+            xhr.open("POST", "./resources/content.php", true);
+            xhr.send("test");
+        });
+    </script>
+</body>
+</html>

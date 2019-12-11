@@ -1,0 +1,7 @@
+2d.state.saverestore.shadowColor
+
+save()/restore() works for shadowColor
+
+
+FAIL save()/restore() works for shadowColor null is not an object (evaluating 'ctx.shadowColor')
+

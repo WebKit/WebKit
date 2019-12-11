@@ -1,0 +1,103 @@
+
+======== Move By Word ====
+Test 1, LTR:
+Move right by one word
+"AAA "[0, 3], "BB"[2]
+Move left by one word
+"BB"[2], "AAA "[3, 0]
+Test 2, RTL:
+Move left by one word
+"AAA "[0, 4], "BB"[2]
+Move right by one word
+"BB"[2], "AAA "[4, 0]
+Test 3, LTR:
+Move right by one word
+"abc def "[0, 4, 8], "hij opq"[4], " rst uvw"[1, 5, 8]
+Move left by one word
+" rst uvw"[8, 5, 1], "hij opq"[4], "abc def "[8, 4, 0]
+Test 4, RTL:
+Move left by one word
+"abc def "[0], " rst uvw"[4], "hij opq"[7, 3], "abc def "[7, 3], " rst uvw"[8]
+Move right by one word
+" rst uvw"[8], "abc def "[3, 7], "hij opq"[3, 7], " rst uvw"[4], "abc def "[0]
+Test 5, RTL:
+Move left by one word
+"abc def "[0], " rst uvw"[4], "hij opq"[7, 3], "abc def "[7, 3], " rst uvw"[8]
+Move right by one word
+" rst uvw"[8], "abc def "[3, 7], "hij opq"[3, 7], " rst uvw"[4], "abc def "[0]
+Test 6, LTR:
+Move right by one word
+"abc def "[0, 4, 8], "hij opq"[4], " rst uvw"[1, 5, 8]
+Move left by one word
+" rst uvw"[8, 5, 1], "hij opq"[4], "abc def "[8, 4, 0]
+Test 7, RTL:
+Move left by one word
+"ABD DSU "[0, 4, 8], "EJH FUX"[4], "FFZ LIG"[4, 7]
+Move right by one word
+"FFZ LIG"[7, 4], "EJH FUX"[4], "ABD DSU "[8, 4, 0]
+Test 8, LTR:
+Move right by one word
+"ABD DSU "[0], "FFZ LIG"[3], "EJH FUX"[3], "ABD DSU "[7, 3], "FFZ LIG"[7]
+Move left by one word
+"FFZ LIG"[7], "ABD DSU "[3, 7], "EJH FUX"[3], "FFZ LIG"[3], "ABD DSU "[0]
+Test 9, RTL:
+Move left by one word
+"ABD DSU "[0, 4, 8], "EJH FUX"[4], "FFZ LIG"[4, 7]
+Move right by one word
+"FFZ LIG"[7, 4], "EJH FUX"[4], "ABD DSU "[8, 4, 0]
+Test 10, LTR:
+Move right by one word
+"ABD DSU "[0], "FFZ LIG"[3], "EJH FUX"[3], "ABD DSU "[7, 3], "FFZ LIG"[7]
+Move left by one word
+"FFZ LIG"[7], "ABD DSU "[3, 7], "EJH FUX"[3], "FFZ LIG"[3], "ABD DSU "[0]
+Test 11, RTL:
+Move left by one word
+"ABD DSU "[0, 4, 8], "abc def"[3], "FFZ LIG"[4, 7]
+Move right by one word
+"FFZ LIG"[7, 4], "abc def"[3], "ABD DSU "[8, 4, 0]
+Test 12, LTR:
+Move right by one word
+"ABD DSU "[0], "FFZ LIG"[3], "ABD DSU "[8], "abc def"[4], "ABD DSU "[7, 3], "FFZ LIG"[7]
+Move left by one word
+"FFZ LIG"[7], "ABD DSU "[3, 7], "abc def"[4], "ABD DSU "[8], "FFZ LIG"[3], "ABD DSU "[0]
+Test 13, RTL:
+Move left by one word
+"ABD DSU "[0, 4, 8], "abc def"[3], "FFZ LIG"[4, 7]
+Move right by one word
+"FFZ LIG"[7, 4], "abc def"[3], "ABD DSU "[8, 4, 0]
+Test 14, LTR:
+Move right by one word
+"ABD DSU "[0, 3, 8], "abc def"[4], "FFZ LIG"[3, 7]
+Move left by one word
+"FFZ LIG"[7, 3], "abc def"[4], "ABD DSU "[8, 3, 0]
+Test 15, RTL:
+Move left by one word
+"ABD opq DSU "[0, 4, 8, 12], "abc AAA def"[4, 3], "FFZ rst LIG"[4, 8, 11]
+Move right by one word
+"FFZ rst LIG"[11, 8, 4], "abc AAA def"[3, 4], "ABD opq DSU "[12, 8, 4, 0]
+Test 16, LTR:
+Move right by one word
+"ABD opq DSU "[0, 4, 8], "abc AAA def"[8, 7], "ABD opq DSU "[12, 11], "FFZ rst LIG"[4, 8, 11]
+Move left by one word
+"FFZ rst LIG"[11, 8, 4], "ABD opq DSU "[11, 12], "abc AAA def"[7, 8], "ABD opq DSU "[8, 4, 0]
+Test 17, RTL:
+Move left by one word
+"ABD opq DSU "[0, 4, 8, 12], "abc AAA def"[4, 8], "FFZ rst LIG"[4, 8, 11]
+Move right by one word
+"FFZ rst LIG"[11, 8, 4], "abc AAA def"[8, 4], "ABD opq DSU "[12, 8, 4, 0]
+Test 18, LTR:
+Move right by one word
+"ABD opq DSU "[0, 4, 8, 12], "abc AAA def"[4, 8], "FFZ rst LIG"[4, 8, 11]
+Move left by one word
+"FFZ rst LIG"[11, 8, 4], "abc AAA def"[8, 4], "ABD opq DSU "[12, 8, 4, 0]
+Test 19, LTR:
+Move right by one word
+"aaa "[0, 4], "bbb AAA "[4, 7], "FFZ"[3]
+Move left by one word
+"FFZ"[3], "bbb AAA "[7, 4], "aaa "[4, 0]
+Test 20, RTL:
+Move left by one word
+"ABD opq rst DSU "[0, 4, 7, 12, 16], "abc uvw AAA def lmn"[15, 8, 7, 3], "ABW hij xyz FXX"[4, 7, 12, 15]
+Move right by one word
+"ABW hij xyz FXX"[15, 12, 7, 4], "abc uvw AAA def lmn"[3, 7, 8, 15], "ABD opq rst DSU "[16, 12, 7, 4, 0]
+

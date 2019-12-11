@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+  <head>
+    <title>table rowspan colspan</title>
+    <meta charset="utf-8"/>
+  </head>
+  <style>
+    mtd {
+    padding: 0;
+    }
+  </style>
+  <body>
+
+    <!-- This test verifies support for the rowspan and colspan MathML
+         attributes (corresponding to the rowspan and columnspan attributes
+         in HTML tables). -->
+    <math>
+      <mtable style="position: absolute; left: 0; top: 0;">
+        <mtr>
+          <mtd rowspan="2"><mspace width="2em" height="2em" depth="2em" mathbackground="red"/></mtd>
+          <mtd><mspace width="2em" height="2em" mathbackground="green"/></mtd>
+          <mtd><mspace width="2em" height="2em" mathbackground="blue"/></mtd>
+        </mtr>
+        <mtr>
+          <mtd><mspace width="2em" height="2em" mathbackground="magenta"/></mtd>
+          <mtd><mspace width="2em" height="2em" mathbackground="cyan"/></mtd>
+        </mtr>
+        <mtr>
+          <mtd columnspan="3"><mspace width="6em" height="2em" mathbackground="#eee"/></mtd> 
+        </mtr>
+      </mtable>
+    </math>
+
+  </body>
+</html>

@@ -1,0 +1,8 @@
+2d.imageData.put.modified
+putImageData() puts modified image data correctly
+Actual output:
+Expected output:
+
+
+PASS putImageData() puts modified image data correctly 
+

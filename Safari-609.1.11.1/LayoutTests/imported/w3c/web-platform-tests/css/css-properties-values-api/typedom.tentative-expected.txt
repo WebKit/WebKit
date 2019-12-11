@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 38: TypeError: target.attributeStyleMap.clear is not a function. (In 'target.attributeStyleMap.clear()', 'target.attributeStyleMap.clear' is undefined)
+
+Harness Error (FAIL), message = TypeError: target.attributeStyleMap.clear is not a function. (In 'target.attributeStyleMap.clear()', 'target.attributeStyleMap.clear' is undefined)
+
+FAIL Computed * is reified as CSSUnparsedValue target.computedStyleMap is not a function. (In 'target.computedStyleMap()', 'target.computedStyleMap' is undefined)
+

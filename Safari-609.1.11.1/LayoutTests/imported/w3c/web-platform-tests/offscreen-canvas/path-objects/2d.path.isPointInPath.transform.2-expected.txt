@@ -1,0 +1,7 @@
+2d.path.isPointInPath.transform.2
+
+isPointInPath() handles transformations correctly
+
+
+FAIL isPointInPath() handles transformations correctly null is not an object (evaluating 'ctx.rect')
+

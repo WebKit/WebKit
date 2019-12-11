@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+
+<p id="description"></p>
+<div style="width:100px; height:80px; background-color:green; color:white" id="target">Scroll over me</div>
+<div id="console"></div>
+
+<script src="../../resources/js-test-pre.js"></script>
+
+<script>
+description("This test checks for the existence of the webkitDirectionInvertedFromDevice property in the WheelEvent.");
+var t = document.getElementById("target");
+var c = document.getElementById('console');
+var result = undefined;
+function scrollHandler(event) {
+    result = event.webkitDirectionInvertedFromDevice;
+    event.preventDefault();
+};
+t.addEventListener('mousewheel', scrollHandler, false);
+
+if (window.testRunner && window.eventSender) {
+    debug("sending scroll event to green target");
+    eventSender.mouseMoveTo(t.offsetLeft + 10, t.offsetTop + 10);
+    eventSender.continuousMouseScrollBy(0,10);
+    shouldBeTrue('result != undefined');
+}
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+
+</body>
+</html>

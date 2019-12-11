@@ -1,0 +1,150 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+// Put this here instead of on <body onload> to prevent an extra Debugger.scriptParsed event.
+window.onload = runTest;
+
+function test()
+{
+    // This test sets a breakpoint on line:column in the <script> below.
+    // We set a breakpoint before evaluating 'sum += ...', and verify that
+    // call frame this values are what we expect.
+
+    InspectorProtocol.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.setBreakpointsActive", {active: true});
+
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    {
+        if (/call-frame-this-strict\.html$/.test(messageObject.params.url) && messageObject.params.startLine > 10) {
+            ProtocolTest.log("Found <script>");
+            var scriptIdentifier = messageObject.params.scriptId;
+            var lineNumber = messageObject.params.startLine + 3;
+            var columnNumber = 4;
+            var location = {scriptId: scriptIdentifier, lineNumber: lineNumber, columnNumber: columnNumber};
+            InspectorProtocol.sendCommand("Debugger.setBreakpoint", {location: location}, function() {
+                ProtocolTest.log("Running testFunction");
+                InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "testFunction()"});
+            });
+        }
+    }
+
+    var step = 0;
+
+    InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject)
+    {
+        function assertThisValue(step, actual, expected) {
+            var success = true;
+            if (actual.type != expected.type) {
+                ProtocolTest.log('FAIL: step ' + step + ': expect type "' + expected.type + '", actual "' + actual.type + '"');
+                success = false;
+            }
+
+            if (actual.type != "undefined") {
+                if (typeof actual.value != typeof expected.value) {
+                    ProtocolTest.log('FAIL: step ' + step + ': expect value type "' + typeof expected.value + '", actual "' + typeof actual.value + '"');
+                    success = false;
+                }
+
+                if (actual.value != expected.value) {
+                    var actualResult
+                    ProtocolTest.log('FAIL: step ' + step + ': expect value "' + expected.value + '", actual "' + actual.value + '"');
+                    success = false;
+                }
+            }
+
+            if (success)
+                ProtocolTest.log('PASS: step ' + step + ': type "' + actual.type + '" value "' + actual.value + '"');
+        }
+
+        switch (step) {
+        case 0:
+            assertThisValue(0, messageObject.params.callFrames[1].this, {
+                "type": "number",
+                "value": 2
+            });
+            break;
+
+        case 1:
+            assertThisValue(1, messageObject.params.callFrames[1].this, {
+                "type": "string",
+                "value": "Hello"
+            });
+            break;
+
+        case 2:
+            assertThisValue(2, messageObject.params.callFrames[1].this, {
+                "type": "number",
+                "value": 2
+            });
+            break;
+
+        case 3:
+            assertThisValue(3, messageObject.params.callFrames[1].this, {
+                "type": "string",
+                "value": "Hello"
+            });
+            break;
+
+        case 4:
+            assertThisValue(4, messageObject.params.callFrames[1].this, {
+                "type": "undefined"
+            });
+            break;
+
+        case 5:
+            assertThisValue(5, messageObject.params.callFrames[1].this, {
+                "type": "undefined"
+            });
+            break;
+        }
+        InspectorProtocol.sendCommand("Debugger.resume", {});
+        if (step == 5)
+            ProtocolTest.completeTest();
+        step++;
+    }
+}
+</script>
+</head>
+<body>
+<p>Debugger.setBreakpoint on line:column in &lt;script&gt;</p>
+<script>// Line 0
+"use strict"; // Line 1
+function breakWithMessage(message) { // Line 2
+    message; // Line 3
+}
+function accessThis() {
+    breakWithMessage("this is " + this);
+}
+function dontAccessThis() {
+    breakWithMessage("not accessing this");
+}
+function testFunction() {
+    var thisValue = 2;
+    accessThis.bind(thisValue)();
+
+    thisValue = "Hello";
+    accessThis.bind(thisValue)();
+
+    thisValue = 2;
+    dontAccessThis.bind(thisValue)();
+
+    thisValue = "Hello";
+    dontAccessThis.bind(thisValue)();
+
+    function foo() {
+        var fooStuff = 1;
+        function goo() {
+            accessThis();
+
+            dontAccessThis();
+
+            return fooStuff;
+        }
+        goo();
+    }
+    foo();
+}
+</script>
+</body>
+</html>

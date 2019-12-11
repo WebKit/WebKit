@@ -1,0 +1,71 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .scroller {
+            overflow-y: scroll;
+			margin: 15px;
+            height: 350px;
+            width: 400px;
+            border: 1px solid black;
+        }
+        
+        .inner {
+            width: 300px;
+            height: 200px;
+            margin: 20px;
+			background-color: white;
+        }
+        
+        .box {
+            position: relative;
+            width: 100px;
+            height: 80px;
+            margin: 10px;
+            background-color: green;
+        }
+        
+        .trigger {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 60px;
+            height: 550px;
+            transform: translateZ(0);
+            background-color: rgba(128, 128, 200, 0.7);
+        }
+        
+        .outside {
+            background-color: gray;
+        }
+        
+        .spacer {
+            height: 500px;
+        }
+    </style>
+	<script>
+		if (window.testRunner)
+			testRunner.dumpAsText();
+
+		window.addEventListener('load', () => {
+			if (window.testRunner)
+				document.getElementById('layers').innerText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_CLIPPING);
+		}, false);
+	</script>
+</head>
+<body>
+    <div class="outside box"></div>
+    <div class="scroller">
+        <div class="inner box"></div>
+        <div class="inner scroller">
+            <div class="trigger"></div>
+            <div class="inside box"></div>
+            <div class="inside box"></div>
+            <div class="inside box"></div>
+        </div>
+        <div class="spacer"></div>
+    </div>
+    <div class="outside box"></div>
+<pre id="layers">Layer tree goes here</pre>
+</body>
+</html>

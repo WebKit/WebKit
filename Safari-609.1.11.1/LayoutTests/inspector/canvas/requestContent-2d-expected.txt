@@ -1,0 +1,11 @@
+Test that CanvasAgent.requestContent can retrieve a dataURL with the current content of the 2D canvas.
+
+
+== Running test suite: Canvas.requestContent2D
+-- Running test case: Canvas.requestContent2D.validCanvasId
+PASS: Content should not be empty.
+
+-- Running test case: Canvas.requestContent.invalidCanvasId
+PASS: Should produce an error.
+Error: Missing canvas for given canvasId
+

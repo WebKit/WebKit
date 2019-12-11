@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<body onload="runTest();">
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../forms/resources/common.js"></script>
+<div id="log"></div>
+<div id="container"></div>
+<script>
+if (!window.eventSender)
+    document.body.textContent = 'This test requires window.eventSender.';
+
+function focusSpan() { 
+    hoverOverElement(container.querySelector('span')); 
+    eventSender.mouseDown();
+}
+
+function focusDiv() { 
+    hoverOverElement(container.querySelector('div')); 
+    eventSender.mouseDown();
+}
+
+function moveFocus(direction) { 
+    eventSender.keyDown('\t', direction == 'forward' ? [] : ['shiftKey']); 
+}
+
+function clickLink() {
+    container.querySelector('a').click();
+}
+
+function focusStart() {
+    container.querySelector('#start').focus();
+}
+
+function removeStart() {
+    container.querySelector('#start').remove();
+}
+
+function removeDiv() {
+    container.querySelector('div').remove();
+}
+
+function runTest() {
+    
+    debug("Mouse press should update sequential focus navigation starting point.");
+    var container = document.querySelector('#container');
+    
+    shouldBe("container.innerHTML = '<input id=prev><div style=\"height:200px;\"><span>text</span></div><input id=next>'; focusSpan(); moveFocus('forward'); document.activeElement.id", "'next'");
+    eventSender.mouseUp();
+    shouldBe("container.innerHTML = '<input id=prev><div style=\"height:200px;\"><span>text</span></div><input id=next>'; focusSpan(); moveFocus('backward'); document.activeElement.id", "'prev'");
+    eventSender.mouseUp();
+    shouldBe("container.innerHTML = '<span style=\"font-size:60px;\"><input id=prev>Text Text<input id=next></span>'; focusSpan(); moveFocus('forward'); document.activeElement.id", "'next'");
+    eventSender.mouseUp();
+    shouldBe("container.innerHTML = '<span style=\"font-size:60px;\"><input id=prev>Text Text<input id=next></span>'; focusSpan(); moveFocus('backward'); document.activeElement.id", "'prev'");
+    eventSender.mouseUp();
+    
+    debug("\nFragment navigation should update sequential focus navigation starting point.");
+    shouldBe("container.innerHTML = '<a href=\"#fragment\"></a><input id=prev><a name=\"fragment\"></a><input id=next>'; clickLink(); moveFocus('forward'); document.activeElement.id", "'next'");
+    
+    debug("\nFocusing an element should update sequential focus navigation starting point.");
+    shouldBe("container.innerHTML = '<input id=prev><input id=start><input id=next>'; focusStart(); moveFocus('forward'); document.activeElement.id", "'next'");
+    
+    debug("\nAfter removing a focused element from the document tree, sequential focus navigation should start at a place where the focused element was.");
+    shouldBe("container.innerHTML = '<input id=prev><input id=start><input id=next>'; focusStart(); removeStart(); moveFocus('forward'); document.activeElement.id", "'next'");
+    shouldBe("container.innerHTML = '<input id=prev><input id=start><input id=next>'; focusStart(); removeStart(); moveFocus('backward'); document.activeElement.id", "'prev'");
+    shouldBe("container.innerHTML = '<input id=prev><div><input id=start></div><input id=next>'; focusStart(); removeDiv(); moveFocus('forward'); document.activeElement.id", "'next'");
+    shouldBe("container.innerHTML = '<div><input id=start><input id=prev></div><input id=next>'; focusStart(); removeStart(); moveFocus('forward'); document.activeElement.id", "'prev'");
+}
+
+</script>
+</body>

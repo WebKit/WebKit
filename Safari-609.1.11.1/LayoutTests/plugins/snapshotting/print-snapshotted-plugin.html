@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner) {
+    internals.settings.setPlugInSnapshottingEnabled(true);
+    internals.settings.setMaximumPlugInSnapshotAttempts(0);
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}     
+</script>
+
+This test checks that printing a snapshotted plugin with text children
+does not crash or cause assertion failures.
+
+<object  id="foo" type="application/x-shockwave-flash" data="../resources/lines.swf">
+ </object>
+
+<script>
+function boom()
+{
+    if (window.testRunner) {
+        testRunner.setPrinting();
+        testRunner.notifyDone();
+    } else {
+        window.print();
+    }
+}
+setTimeout(boom, 3000);
+</script>
+

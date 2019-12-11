@@ -1,0 +1,7 @@
+This tests deleting when the caret is at the start of a paragraph just after a table.  The content in that paragraph should be moved into the last table cell unless that content is another table.
+| <table>
+|   border="1"
+|   <tbody>
+|     <tr>
+|       <td>
+|         "All the content in this editable region <#selection-caret>should be in one table cell."

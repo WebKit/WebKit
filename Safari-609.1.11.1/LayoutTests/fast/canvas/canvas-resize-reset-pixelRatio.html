@@ -1,0 +1,56 @@
+<pre id="console"></pre>
+<script>
+    function log(message)
+    {
+        document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
+    }
+
+    if (!window.testRunner)
+        log("This test requires WebKitTestRunner or DumpRenderTree.");
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    var canvas = document.createElement("canvas");
+    canvas.width = 8;
+    canvas.height = 8;
+
+    var context = canvas.getContext("2d");
+    var cssContext = document.getCSSCanvasContext("2d", "test", 8, 8);
+
+    if (context.webkitBackingStorePixelRatio !== 1)
+        log("FAIL: expected webkitBackingStorePixelRatio of 1, was " + context.webkitBackingStorePixelRatio + ".");
+
+    testRunner.setBackingScaleFactor(2, function() {
+        var testCanvas = document.createElement("canvas");
+        var testContext = testCanvas.getContext("2d");
+
+        if (testContext.webkitBackingStorePixelRatio === 2) {
+            log("Testing webkitBackingStorePixelRatio after resize");
+
+            function assertPixelRatio(context, expected)
+            {
+                if (context.webkitBackingStorePixelRatio === expected)
+                    log("PASS: webkitBackingStorePixelRatio is " + expected + ".");
+                else
+                    log("FAIL: webkitBackingStorePixelRatio is " + context.webkitBackingStorePixelRatio + ", expected " + expected + ".");
+            }
+
+            assertPixelRatio(context, 1);
+
+            canvas.width = 8;
+            canvas.height = 8;
+
+            assertPixelRatio(context, 2);
+
+            assertPixelRatio(cssContext, 1);
+
+            cssContext = document.getCSSCanvasContext("2d", "test", 8, 8);
+
+            assertPixelRatio(cssContext, 2);
+        } else
+            log("High-DPI canvas is not enabled.");
+
+        testRunner.notifyDone();
+    });
+</script>

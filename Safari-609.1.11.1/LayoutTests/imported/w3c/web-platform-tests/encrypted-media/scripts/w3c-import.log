@@ -1,0 +1,61 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/check-initdata-type.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/clearkey-update-non-ascii-input.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/events-session-closed-event.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/events.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/expiration.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/generate-request-disallowed-input.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/invalid-license.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/keystatuses-multiple-sessions.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/keystatuses.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/not-callable-after-createsession.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/onencrypted.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/playback-destroy-persistent-license.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/playback-persistent-license-events.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/playback-persistent-license.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/playback-persistent-usage-record-events.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/playback-persistent-usage-record.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/playback-retrieve-persistent-license.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/playback-retrieve-persistent-usage-record.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/playback-temporary-encrypted-clear-sources.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/playback-temporary-events.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/playback-temporary-expired.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/playback-temporary-multikey-sequential.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/playback-temporary-multisession.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/playback-temporary-playduration-keystatus.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/playback-temporary-playduration.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/playback-temporary-setMediaKeys.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/playback-temporary-two-videos.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/playback-temporary-waitingforkey.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/playback-temporary.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/requestmediakeysystemaccess.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/reset-src-after-setmediakeys.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/setmediakeys-again-after-playback.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/setmediakeys-again-after-resetting-src.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/setmediakeys-at-same-time.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/setmediakeys-multiple-times-with-different-mediakeys.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/setmediakeys-multiple-times-with-the-same-mediakeys.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/setmediakeys-to-multiple-video-elements.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/setmediakeys.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/syntax-mediakeys.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/syntax-mediakeysession.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/syntax-mediakeysystemaccess.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/temporary-license-type.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/unique-origin.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/update-disallowed-input.js
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/scripts/waiting-for-a-key.js

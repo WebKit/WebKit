@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 1: TypeError: 'application/json' is not a valid JavaScript MIME type.
+
+FAIL JSON modules assert_unreached: [object Event] Reached unreachable code
+

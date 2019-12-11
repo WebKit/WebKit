@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: SharedWorker
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Test frame detach in shared worker's error handler Test timed out
+

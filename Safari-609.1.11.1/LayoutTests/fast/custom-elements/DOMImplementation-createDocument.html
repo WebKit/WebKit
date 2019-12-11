@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Custom Elements: document.implementation.createElement must not instantiate a custom element</title>
+<meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
+<meta name="assert" content="document.implementation.createElement must not instantiate a custom element">
+<link rel="help" content="https://dom.spec.whatwg.org/#dom-domimplementation-createdocument">
+<link rel="help" content="https://html.spec.whatwg.org/#look-up-a-custom-element-definition">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/custom-elements/resources/custom-elements-helpers.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+
+const xhtmlNamespaceURI = 'http://www.w3.org/1999/xhtml';
+
+test_with_window((contentWindow, contentDocument) => {
+    let constructorCount = 0;
+    class MyCustomElement extends contentWindow.HTMLElement {
+        constructor() {
+            super();
+            constructorCount++;
+        }
+    }
+    contentWindow.customElements.define('my-custom-element', MyCustomElement);
+    const instance = contentDocument.createElement('my-custom-element');
+    assert_true(instance instanceof MyCustomElement);
+    assert_equals(constructorCount, 1);
+
+    const newDocument = contentDocument.implementation.createDocument(xhtmlNamespaceURI, 'my-custom-element', null);
+    assert_equals(constructorCount, 1);
+    assert_true(newDocument.documentElement instanceof contentWindow.HTMLElement);
+    assert_equals(newDocument.documentElement.localName, 'my-custom-element');
+    assert_false(newDocument.documentElement instanceof MyCustomElement);
+}, 'document.createElement invoke a custom element constructor with no arguments');
+
+</script>
+</body>
+</html>

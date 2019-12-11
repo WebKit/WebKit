@@ -1,0 +1,17 @@
+This tests the SourceBuffer.buffered() API. This test will add 8 samples with a small gap (0.01s .. 0.083s) between each sample. The SourceBuffer should coalesce such small gaps to make a single contiguous range. The video element should also play continuously from the beginning to the end.
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(sourceBuffer.appendBuffer(initSegment))
+EVENT(updateend)
+RUN(sourceBuffer.appendBuffer(samples))
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '0') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '8') OK
+RUN(video.play())
+EVENT(ended)
+EXPECTED (video.currentTime == '8') OK
+END OF TEST
+

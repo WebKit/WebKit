@@ -1,0 +1,371 @@
+event type:      mouseover
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  button:        0
+  clientX:       100
+  clientY:       100
+  screenX:       -9900
+  screenY:       -9900
+  modifier keys: c:0 s:0 a:0 m:0
+event type:      mousedown
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        1
+  view:          OK (document: OK)
+  button:        0
+  clientX:       100
+  clientY:       100
+  screenX:       -9900
+  screenY:       -9900
+  modifier keys: c:0 s:0 a:0 m:0
+event type:      selectstart
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+event type:      mouseup
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        1
+  view:          OK (document: OK)
+  button:        0
+  clientX:       100
+  clientY:       100
+  screenX:       -9900
+  screenY:       -9900
+  modifier keys: c:0 s:0 a:0 m:0
+event type:      click
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        1
+  view:          OK (document: OK)
+  button:        0
+  clientX:       100
+  clientY:       100
+  screenX:       -9900
+  screenY:       -9900
+  modifier keys: c:0 s:0 a:0 m:0
+event type:      mousemove
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    0
+  detail:        0
+  view:          OK (document: OK)
+  button:        0
+  clientX:       100
+  clientY:       100
+  screenX:       -9900
+  screenY:       -9900
+  modifier keys: c:0 s:0 a:0 m:0
+event type:      keydown
+  target:        <body>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  keyIdentifier: U+0041
+  keyLocation:   0
+  modifier keys: c:0 s:0 a:0 m:0
+  keyCode:       65
+  charCode:      0
+event type:      keypress
+  target:        <body>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  keyIdentifier: 
+  keyLocation:   0
+  modifier keys: c:0 s:0 a:0 m:0
+  keyCode:       97
+  charCode:      97
+event type:      keyup
+  target:        <body>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  keyIdentifier: U+0041
+  keyLocation:   0
+  modifier keys: c:0 s:0 a:0 m:0
+  keyCode:       65
+  charCode:      0
+event type:      keydown
+  target:        <body>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  keyIdentifier: U+0042
+  keyLocation:   0
+  modifier keys: c:1 s:0 a:0 m:0
+  keyCode:       66
+  charCode:      0
+event type:      keypress
+  target:        <body>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  keyIdentifier: 
+  keyLocation:   0
+  modifier keys: c:1 s:0 a:0 m:0
+  keyCode:       98
+  charCode:      98
+event type:      keyup
+  target:        <body>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  keyIdentifier: U+0042
+  keyLocation:   0
+  modifier keys: c:1 s:0 a:0 m:0
+  keyCode:       66
+  charCode:      0
+event type:      keydown
+  target:        <body>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  keyIdentifier: U+0044
+  keyLocation:   0
+  modifier keys: c:0 s:1 a:0 m:0
+  keyCode:       68
+  charCode:      0
+event type:      keypress
+  target:        <body>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  keyIdentifier: 
+  keyLocation:   0
+  modifier keys: c:0 s:1 a:0 m:0
+  keyCode:       100
+  charCode:      100
+event type:      keyup
+  target:        <body>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  keyIdentifier: U+0044
+  keyLocation:   0
+  modifier keys: c:0 s:1 a:0 m:0
+  keyCode:       68
+  charCode:      0
+event type:      keydown
+  target:        <body>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  keyIdentifier: U+0045
+  keyLocation:   0
+  modifier keys: c:0 s:0 a:1 m:1
+  keyCode:       69
+  charCode:      0
+event type:      keypress
+  target:        <body>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  keyIdentifier: 
+  keyLocation:   0
+  modifier keys: c:0 s:0 a:1 m:1
+  keyCode:       101
+  charCode:      101
+event type:      keyup
+  target:        <body>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  keyIdentifier: U+0045
+  keyLocation:   0
+  modifier keys: c:0 s:0 a:1 m:1
+  keyCode:       69
+  charCode:      0
+event type:      mousemove
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    0
+  detail:        0
+  view:          OK (document: OK)
+  button:        0
+  clientX:       400
+  clientY:       150
+  screenX:       -9600
+  screenY:       -9850
+  modifier keys: c:0 s:0 a:0 m:0
+event type:      mousedown
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        1
+  view:          OK (document: OK)
+  button:        0
+  clientX:       400
+  clientY:       150
+  screenX:       -9600
+  screenY:       -9850
+  modifier keys: c:0 s:0 a:0 m:0
+event type:      selectstart
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+event type:      mouseup
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        1
+  view:          OK (document: OK)
+  button:        0
+  clientX:       400
+  clientY:       150
+  screenX:       -9600
+  screenY:       -9850
+  modifier keys: c:0 s:0 a:0 m:0
+event type:      click
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        1
+  view:          OK (document: OK)
+  button:        0
+  clientX:       400
+  clientY:       150
+  screenX:       -9600
+  screenY:       -9850
+  modifier keys: c:0 s:0 a:0 m:0
+event type:      mousemove
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    0
+  detail:        0
+  view:          OK (document: OK)
+  button:        0
+  clientX:       400
+  clientY:       150
+  screenX:       -9600
+  screenY:       -9850
+  modifier keys: c:0 s:0 a:0 m:0
+event type:      mousedown
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        2
+  view:          OK (document: OK)
+  button:        0
+  clientX:       400
+  clientY:       150
+  screenX:       -9600
+  screenY:       -9850
+  modifier keys: c:0 s:0 a:0 m:0
+event type:      selectstart
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+event type:      mouseout
+  target:        <div>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  button:        0
+  clientX:       1
+  clientY:       1
+  screenX:       -9999
+  screenY:       -9999
+  modifier keys: c:0 s:0 a:0 m:0
+  relatedTarget: DOMHTMLHtmlElement (nodeName: HTML)
+event type:      mouseover
+  target:        <html>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        0
+  view:          OK (document: OK)
+  button:        0
+  clientX:       1
+  clientY:       1
+  screenX:       -9999
+  screenY:       -9999
+  modifier keys: c:0 s:0 a:0 m:0
+  relatedTarget: DOMHTMLDivElement (nodeName: DIV)
+event type:      mousemove
+  target:        <html>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    0
+  detail:        0
+  view:          OK (document: OK)
+  button:        0
+  clientX:       1
+  clientY:       1
+  screenX:       -9999
+  screenY:       -9999
+  modifier keys: c:0 s:0 a:0 m:0
+event type:      mouseup
+  target:        <html>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    1
+  detail:        2
+  view:          OK (document: OK)
+  button:        0
+  clientX:       1
+  clientY:       1
+  screenX:       -9999
+  screenY:       -9999
+  modifier keys: c:0 s:0 a:0 m:0
+event type:      mousemove
+  target:        <html>
+  eventPhase:    3
+  bubbles:       1
+  cancelable:    0
+  detail:        0
+  view:          OK (document: OK)
+  button:        0
+  clientX:       1
+  clientY:       1
+  screenX:       -9999
+  screenY:       -9999
+  modifier keys: c:0 s:0 a:0 m:0
+Test
+This tests that DOMEvents are correctly handed to the ObjC API. See bug 9181.

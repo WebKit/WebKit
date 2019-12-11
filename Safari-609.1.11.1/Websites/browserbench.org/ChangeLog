@@ -1,0 +1,970 @@
+2019-09-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Update demos to work on STP 92
+        https://bugs.webkit.org/show_bug.cgi?id=201872
+
+        Reviewed by Dean Jackson.
+
+        GPUShaderStageBit => GPUShaderStage
+
+        * MotionMark1.1/tests/3d/resources/webgpu.js:
+        (Stage.call.initialize):
+
+2019-09-09  Jon Lee  <jonlee@apple.com>
+
+        Upload triangles tests for 3D suite in MotionMark
+        https://bugs.webkit.org/show_bug.cgi?id=201606
+
+        Reviewed by Simon Fraser.
+
+        * MotionMark1.1/resources/debug-runner/tests.js:
+        * MotionMark1.1/tests/3d/resources/webgl.js:
+        * MotionMark1.1/tests/3d/resources/webgpu.js: Added.
+        * MotionMark1.1/tests/3d/triangles-webgl.html: Copied from PerformanceTests/MotionMark/tests/3d/webgl.html.
+        * MotionMark1.1/tests/3d/triangles-webgpu.html: Renamed from PerformanceTests/MotionMark/tests/3d/webgl.html.
+
+2019-04-16  Jon Lee  <jonlee@apple.com>
+
+        [MotionMark] The text "kkkj" is causing Firefox console warning: `unreachable code after return statement`
+        https://bugs.webkit.org/show_bug.cgi?id=196814
+
+        Reviewed by Wenson Hsieh.
+
+        * MotionMark/resources/extensions.js:
+        (subtract.subtract.sampleY):
+        * MotionMark1.1/resources/extensions.js:
+        (subtract.subtract.sampleY):
+
+2019-03-27  Saam Barati  <sbarati@apple.com>
+
+        JetStream 2 should not report time values as scores
+        https://bugs.webkit.org/show_bug.cgi?id=196334
+
+        Reviewed by Yusuke Suzuki.
+
+        * JetStream2.0/JetStreamDriver.js:
+        (toTimeValue):
+        (Driver.prototype.async.reportScoreToRunBenchmarkRunner):
+
+2019-03-27  Saam barati  <sbarati@apple.com>
+
+        Unreviewed. Fix individual benchmark description urls to go to in-depth.html instead of about.html
+
+        * JetStream2.0/JetStreamDriver.js:
+        (Driver.prototype.prepareToRun.text.div.id.string_appeared_here.h3):
+
+2019-03-26  Jon Davis  <jond@apple.com>
+
+        Update BrowserBench for JetStream2.
+        https://bugs.webkit.org/show_bug.cgi?id=196273
+
+        Reviewed by Saam Barati.
+
+        * index.html:
+        * resources/JetStream2-Logo.png: Added.
+        * resources/JetStream2-Logo@2x.png: Added.
+        * resources/main.css:
+        (.benchmark:hover img): Improved hover effect for the JetStream2 logo.
+
+2019-03-25  Saam barati  <sbarati@apple.com>
+
+        Update browserbench.org/JetStream2.0 to the latest version.
+
+        Rubber-stamped by Filip Pizlo.
+
+        * JetStream2.0: Replaced with ../../PerformanceTests/JetStream2.
+
+2019-03-18  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Rename JetStream directory to JetStream1.1
+
+        * JetStream: Removed.
+        * JetStream1.1: Copied from Websites/browserbench.org/JetStream.
+
+2019-01-09  Saam Barati  <sbarati@apple.com>
+
+        Merge the latest version of JetStream2.0 to browserbench.org.
+
+        Rubber-stamped by Ryosuke Niwa.
+
+        * JetStream2.0: Copied from PerformanceTests/JetStream2.
+
+2018-10-11  Jon Lee  <jonlee@apple.com>
+
+        Update default hyperlink for MotionMark to MotionMark 1.1
+        https://bugs.webkit.org/show_bug.cgi?id=190491
+
+        Reviewed by Ryosuke Niwa.
+
+        * index.html:
+
+2018-08-14  Jon Lee  <jonlee@apple.com>
+
+        Add MotionMark 1.1 to browserbench
+        https://bugs.webkit.org/show_bug.cgi?id=188585
+        <rdar://problem/43308076>
+
+        Rubber-stamped by Ryosuke Niwa.
+
+        * MotionMark1.1/: Added.
+
+2018-01-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ΩUpdate the default hyperlink for Speedometer to Speedometer 2.0.
+
+        Rubber-stamped by Saam Barati.
+
+        * index.html:
+
+2018-01-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Merge the latest version of Speedometer 2.0 to browserbench.org against at r226694.
+
+        Rubber-stamped by Keith Miller.
+
+        * Speedometer2.0: Replaced with PerformanceTests/Speedometer.
+
+2017-09-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Merge the latest version of Speedometer 2.0 to browserbench.org against at r222534.
+
+        Rubber-stamped by Saam Barati (a while ago).
+
+        * Speedometer2.0: Replaced with PerformanceTests/Speedometer.
+
+2017-09-10  Jon Davis  <jond@apple.com>
+
+        Minor design changes for browserbench.org landing page
+        https://bugs.webkit.org/show_bug.cgi?id=176612
+
+        Reviewed by Darin Adler.
+
+        * index.html:
+        * resources/main.css: Shrink the logos and arrange them into a grid.
+        (main):
+        (.benchmarks):
+        (.benchmarks a):
+        (.benchmark):
+        (.benchmark:hover):
+        (.benchmark img):
+        (#ares-6-logo): Deleted.
+        (#motionmark-logo): Deleted.
+        (#speedometer-logo): Deleted.
+        (#jetstream-logo): Deleted.
+
+2017-08-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix. Copy the missing statistics.js for Speedometer 2.0.
+
+        * resources/statistics.js: Copied from PerformanceTests/resources/statistics.js.
+
+2017-08-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Merge the latest version of Speedometer 2.0 to browserbench.org against at r221126.
+
+        Rubber-stamped by Yusuke Suzuki.
+
+        * Speedometer2.0: Replaced with PerformanceTests/Speedometer.
+        * Speedometer2.0/resources/todomvc/architecture-examples/preact/dist/app.js:
+        * Speedometer2.0/resources/todomvc/architecture-examples/preact/dist/todomvc.css:
+        * Speedometer2.0/resources/todomvc/architecture-examples/preact/src/app/footer.js:
+        * Speedometer2.0/resources/todomvc/architecture-examples/preact/src/app/index.js:
+        * Speedometer2.0/resources/todomvc/architecture-examples/preact/src/app/item.js:
+        * Speedometer2.0/resources/todomvc/architecture-examples/preact/src/app/util.js:
+        (export.uuid):
+
+2017-08-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Merge the latest version of Speedometer 2.0 to browserbench.org against at r221119.
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * Speedometer2.0: Replaced with PerformanceTests/Speedometer.
+
+2017-08-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Merge the latest version of Speedometer 2.0 to browserbench.org against at r221056.
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * Speedometer2.0: Replaced with PerformanceTests/Speedometer.
+        * Speedometer2.0/resources/main.js:
+        (window.benchmarkClient.didFinishLastIteration):
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.app.9debb1b0a94f14d0ebe9.js: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.app.9debb1b0a94f14d0ebe9.js.map: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.manifest.a55034b424c795b1a9a8.js: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.manifest.a55034b424c795b1a9a8.js.map: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.vendor.bade2cb8992d8a68d0d7.js: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.vendor.bade2cb8992d8a68d0d7.js.map: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/styles.app.9debb1b0a94f14d0ebe9.css: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/styles.app.9debb1b0a94f14d0ebe9.css.map: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/styles.vendor.bade2cb8992d8a68d0d7.css: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/styles.vendor.bade2cb8992d8a68d0d7.css.map: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/src/store.js:
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015/src/store.js:
+
+2017-08-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Merge the latest version of Speedometer 2.0 to browserbench.org
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * Speedometer2.0: Replaced with PerformanceTests/Speedometer.
+        * Speedometer2.0/resources/benchmark-runner.js:
+        * Speedometer2.0/resources/todomvc/architecture-examples/angular/dist/inline.b342d102ba4a53bf2002.bundle.js: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/angular/dist/main.779eb2f1ddbe23ac61c7.bundle.js: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/angular/dist/polyfills.2d45a4c73c85e24fe474.bundle.js: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/angular/dist/vendor.b4be818cb6d8028f9192.bundle.js: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/angular/e2e: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/angular/e2e/app.e2e-spec.ts: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/angular/e2e/app.po.ts: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/angular/e2e/tsconfig.e2e.json: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/angularjs/node_modules/angular-resource/angular-resource.js:
+        * Speedometer2.0/resources/todomvc/architecture-examples/angularjs/node_modules/angular-route/angular-route.js:
+        * Speedometer2.0/resources/todomvc/architecture-examples/angularjs/node_modules/angular/angular.js:
+        * Speedometer2.0/resources/todomvc/architecture-examples/backbone/node_modules/jquery/dist/jquery.js:
+        * Speedometer2.0/resources/todomvc/architecture-examples/backbone/node_modules/todomvc-app-css/index.css:
+        * Speedometer2.0/resources/todomvc/architecture-examples/emberjs/source/app/instance-initializers: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/emberjs/source/app/instance-initializers/global.js: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/emberjs/source/config/environment.js:
+        * Speedometer2.0/resources/todomvc/architecture-examples/emberjs/source/tests/.jshintrc: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/emberjs/source/tests/helpers/module-for-acceptance.js:
+        * Speedometer2.0/resources/todomvc/architecture-examples/emberjs/source/tests/helpers/start-app.js:
+        * Speedometer2.0/resources/todomvc/architecture-examples/react-redux/dist/static/css/main.d43d2909.css: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/react-redux/dist/static/js/main.946269ff.js: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/vuejs-cli/dist/static/css/app.677b45842d9f8b96e5b23c18969233b7.css: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/vuejs-cli/dist/static/js/app.b0e835874bc8949670d1.js: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/vuejs-cli/dist/static/js/manifest.84b2b4fceb74ab1f91f3.js: Removed.
+        * Speedometer2.0/resources/todomvc/architecture-examples/vuejs-cli/dist/static/js/vendor.a52517c5aa98e7fbea2e.js: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.app.73bcc5d3c1d07180f0e3.js: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.app.73bcc5d3c1d07180f0e3.js.map: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.manifest.112bf70a7f3deebf1f93.js: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.manifest.112bf70a7f3deebf1f93.js.map: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.vendor.efaa3e0e20077c8e7471.js: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/bundle.vendor.efaa3e0e20077c8e7471.js.map: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/styles.app.73bcc5d3c1d07180f0e3.css: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/styles.app.73bcc5d3c1d07180f0e3.css.map: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/styles.vendor.efaa3e0e20077c8e7471.css: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/styles.vendor.efaa3e0e20077c8e7471.css.map: Removed.
+        * Speedometer2.0/resources/todomvc/vanilla-examples/vanillajs/js/store.js:
+
+2017-08-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r219640): Speedometer no longer runs on Safari 7
+        https://bugs.webkit.org/show_bug.cgi?id=175749
+
+        Reviewed by Joseph Pecoraro.
+
+        Fix the bug on browserbench.org.
+
+        * Speedometer/resources/benchmark-runner.js:
+        (BenchmarkRunner.prototype._runTest):
+
+2017-07-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Merge r219640 into Speedometer 1.0.
+
+        * Speedometer/resources/benchmark-runner.js:
+        (BenchmarkRunner.prototype._writeMark):
+        (BenchmarkRunner.prototype._runTest):
+        (BenchmarkRunner.prototype._runTestAndRecordResults):
+
+2017-07-14  Saam Barati  <sbarati@apple.com>
+
+        Fix ambiguous description text in ARES-6 about the data the benchmark measures
+        https://bugs.webkit.org/show_bug.cgi?id=174510
+
+        Rubber stamped by Filip Pizlo.
+
+        * ARES-6/about.html:
+
+2017-06-07  Saam Barati  <sbarati@apple.com>
+
+        ARES-6 incorrectly measures Worst 4 Iterations
+        https://bugs.webkit.org/show_bug.cgi?id=172960
+
+        Reviewed by Mark Lam.
+
+        Version 1.0 of ARES-6 was accidentally measuring the first
+        4 iterations, instead of the worst 4. This patch fixes the
+        bug and bumps the version to 1.0.1.
+
+        * ARES-6/glue.js:
+        (driver.reportResult):
+        * ARES-6/results.js:
+        (Results.prototype.reportResult):
+
+2017-06-06  Saam Barati  <sbarati@apple.com>
+
+        Add a version number to ARES-6
+        https://bugs.webkit.org/show_bug.cgi?id=172962
+
+        Reviewed by Yusuke Suzuki.
+
+        * ARES-6/glue.js:
+        (driver.reportResult):
+
+2017-06-05  Saam Barati  <sbarati@apple.com>
+
+        Update index.html to include ARES-6.
+
+        Rubber stamped by Ryosuke Niwa.
+
+        * index.html:
+
+2017-06-01  Saam Barati  <sbarati@apple.com>
+
+        Ensure a good experience for ARES-6 error reporting
+        https://bugs.webkit.org/show_bug.cgi?id=171699
+
+        Reviewed by Filip Pizlo and Jon Davis.
+
+        This patch fixes a bug where we would silently fail running ARES-6. The bug
+        was that we were calling reportError with the wrong |this| value.
+        I also cleaned up a bit of the code around error reporting. We
+        now indicate which test failed, and update the status to reflect
+        that a failure happened.
+        
+        This patch also modifies the CSS a bit to work better on smaller
+        screened devices. The CSS prevents the status from having a line
+        break both when an error is reported and when we're running the 
+        benchmark.
+
+        * ARES-6/driver.js:
+        (Driver):
+        (Driver.prototype.reportError):
+        * ARES-6/results.js:
+        (Results.prototype.reportError):
+        (Results):
+        * ARES-6/styles.css:
+        (.start):
+        (#status):
+        (.failed):
+        (#status.failed):
+        (.test .failed:before):
+        (#magic):
+        (@media only screen and (max-width: 784px)):
+        (.test):
+        (p):
+        (@media only screen and (max-width: 320px)):
+
+2017-05-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r217118): Speedometer 2.0: Flight.js test is broken
+        https://bugs.webkit.org/show_bug.cgi?id=172394
+
+        Reviewed by Chris Dumez.
+
+        Merge the fix.
+
+        * Speedometer2.0/resources/todomvc/dependency-examples/flight/flight/node_modules/requirejs/require.js:
+        (newContext.checkLoaded):
+
+2017-05-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Merge Speedometer 2.0 fixes up to r217121 to browserbench.org
+        https://bugs.webkit.org/show_bug.cgi?id=172389
+
+        Rubber-stamped by Chris Dumez.
+
+        Merged the various fixes for Speedometer 2.0 starting from r217107 through r217121.
+
+        * Speedometer2.0/InteractiveRunner.html:
+        * Speedometer2.0/resources/benchmark-runner.js:
+        * Speedometer2.0/resources/tests.js:
+        * Speedometer2.0/resources/todomvc/dependency-examples/flight/flight/app/js/main.js:
+        * Speedometer2.0/resources/todomvc/dependency-examples/flight/flight/node_modules/requirejs/require.js:
+        * Speedometer2.0/resources/todomvc/functional-prog-examples/elm/dist/elm.js:
+        * Speedometer2.0/resources/todomvc/vanilla-examples/vanillajs/js/store.js:
+
+2017-05-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add Speedometer 2.0 to browserbench.org for final testing
+        https://bugs.webkit.org/show_bug.cgi?id=172335
+
+        Rubber-stamped by Chris Dumez.
+
+        Stage Speedometer 2.0 here for the final testing before we call it official.
+
+        * Speedometer2.0: Copied from PerformanceTests/Speedometer.
+        * Speedometer2.0/Full.html: Removed.
+        * Speedometer2.0/index.html: Copied from PerformanceTests/Speedometer/index.html.
+
+2017-05-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        browserbench.org/Speedometer/ should show the benchmark not an index of files
+        https://bugs.webkit.org/show_bug.cgi?id=172141
+
+        Reviewed by Alexey Proskuryakov.
+
+        Renamed Speedometer/Full.html to Speedometer/index.html.
+        We used to have a .htaccess but it's better to use the same file name convention as other benchmarks.
+
+        * Speedometer/index.html: Renamed from Websites/browserbench.org/Speedometer/Full.html.
+
+2017-05-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add Websites/browserbench.org
+        https://bugs.webkit.org/show_bug.cgi?id=172049
+
+        Rubber-stamped by Geoffrey Garen.
+
+        Added the current contents of browserbench.org.
+
+        * ARES-6/ARES-6.svg: Added.
+        * ARES-6/Air/README.md: Added.
+        * ARES-6/Air/airjs-tests.yaml: Added.
+        * ARES-6/Air/all.js: Added.
+        * ARES-6/Air/allocate_stack.js: Added.
+        * ARES-6/Air/arg.js: Added.
+        * ARES-6/Air/basic_block.js: Added.
+        * ARES-6/Air/benchmark.js: Added.
+        * ARES-6/Air/code.js: Added.
+        * ARES-6/Air/custom.js: Added.
+        * ARES-6/Air/frequented_block.js: Added.
+        * ARES-6/Air/insertion_set.js: Added.
+        * ARES-6/Air/inst.js: Added.
+        * ARES-6/Air/liveness.js: Added.
+        * ARES-6/Air/make_dist.sh: Added.
+        * ARES-6/Air/opcode.js: Added.
+        * ARES-6/Air/payload-airjs-ACLj8C.js: Added.
+        * ARES-6/Air/payload-gbemu-executeIteration.js: Added.
+        * ARES-6/Air/payload-imaging-gaussian-blur-gaussianBlur.js: Added.
+        * ARES-6/Air/payload-typescript-scanIdentifier.js: Added.
+        * ARES-6/Air/reg.js: Added.
+        * ARES-6/Air/stack_slot.js: Added.
+        * ARES-6/Air/stress-test.js: Added.
+        * ARES-6/Air/strip-hash.rb: Added.
+        * ARES-6/Air/symbols.js: Added.
+        * ARES-6/Air/test.html: Added.
+        * ARES-6/Air/test.js: Added.
+        * ARES-6/Air/tmp.js: Added.
+        * ARES-6/Air/tmp_base.js: Added.
+        * ARES-6/Air/util.js: Added.
+        * ARES-6/Babylon/AUTHORS: Added.
+        * ARES-6/Babylon/air-blob.js: Added.
+        * ARES-6/Babylon/babylon-blob.js: Added.
+        * ARES-6/Babylon/basic-blob.js: Added.
+        * ARES-6/Babylon/benchmark.js: Added.
+        * ARES-6/Babylon/index.js: Added.
+        * ARES-6/Babylon/inspector-blob.js: Added.
+        * ARES-6/Basic/ast.js: Added.
+        * ARES-6/Basic/basic-tests.yaml: Added.
+        * ARES-6/Basic/basic.js: Added.
+        * ARES-6/Basic/benchmark.js: Added.
+        * ARES-6/Basic/caseless_map.js: Added.
+        * ARES-6/Basic/lexer.js: Added.
+        * ARES-6/Basic/number.js: Added.
+        * ARES-6/Basic/parser.js: Added.
+        * ARES-6/Basic/random.js: Added.
+        * ARES-6/Basic/state.js: Added.
+        * ARES-6/Basic/stress-test.js: Added.
+        * ARES-6/Basic/test.html: Added.
+        * ARES-6/Basic/test.js: Added.
+        * ARES-6/Basic/util.js: Added.
+        * ARES-6/about.html: Added.
+        * ARES-6/air_benchmark.js: Added.
+        * ARES-6/babylon_benchmark.js: Added.
+        * ARES-6/basic_benchmark.js: Added.
+        * ARES-6/cli.js: Added.
+        * ARES-6/driver.js: Added.
+        * ARES-6/glue.js: Added.
+        * ARES-6/index.html: Added.
+        * ARES-6/ml/benchmark.js: Added.
+        * ARES-6/ml/index.js: Added.
+        * ARES-6/ml_benchmark.js: Added.
+        * ARES-6/results.js: Added.
+        * ARES-6/stats.js: Added.
+        * ARES-6/styles.css: Added.
+        * ARES-6/swoop.svg: Added.
+        * JetStream/CDjsSetup.js: Added.
+        * JetStream/JetStream-Logo.png: Added.
+        * JetStream/JetStream-Logo@2x.png: Added.
+        * JetStream/JetStream.css: Added.
+        * JetStream/JetStreamDriver.js: Added.
+        * JetStream/LLVM-test-suite-LICENSE.txt: Added.
+        * JetStream/Octane/base.js: Added.
+        * JetStream/Octane/code-load.js: Added.
+        * JetStream/Octane2/base.js: Added.
+        * JetStream/Octane2/box2d.js: Added.
+        * JetStream/Octane2/code-load.js: Added.
+        * JetStream/Octane2/crypto.js: Added.
+        * JetStream/Octane2/deltablue.js: Added.
+        * JetStream/Octane2/earley-boyer.js: Added.
+        * JetStream/Octane2/gbemu-part1.js: Added.
+        * JetStream/Octane2/gbemu-part2.js: Added.
+        * JetStream/Octane2/mandreel.js: Added.
+        * JetStream/Octane2/navier-stokes.js: Added.
+        * JetStream/Octane2/pdfjs.js: Added.
+        * JetStream/Octane2/raytrace.js: Added.
+        * JetStream/Octane2/regexp.js: Added.
+        * JetStream/Octane2/richards.js: Added.
+        * JetStream/Octane2/run.js: Added.
+        * JetStream/Octane2/splay.js: Added.
+        * JetStream/Octane2/typescript-compiler.js: Added.
+        * JetStream/Octane2/typescript-input.js: Added.
+        * JetStream/Octane2/typescript.js: Added.
+        * JetStream/Octane2/zlib-data.js: Added.
+        * JetStream/Octane2/zlib.js: Added.
+        * JetStream/Octane2Setup.js: Added.
+        * JetStream/OctaneSetup.js: Added.
+        * JetStream/Reference.js: Added.
+        * JetStream/SimplePayload.js: Added.
+        * JetStream/SimpleSetup.js: Added.
+        * JetStream/SunSpiderPayload.js: Added.
+        * JetStream/SunSpiderSetup.js: Added.
+        * JetStream/Swoosh.png: Added.
+        * JetStream/Swoosh@2x.png: Added.
+        * JetStream/TestingSetup.js: Added.
+        * JetStream/cdjs/benchmark.js: Added.
+        * JetStream/cdjs/call_sign.js: Added.
+        * JetStream/cdjs/collision.js: Added.
+        * JetStream/cdjs/collision_detector.js: Added.
+        * JetStream/cdjs/constants.js: Added.
+        * JetStream/cdjs/motion.js: Added.
+        * JetStream/cdjs/red_black_tree.js: Added.
+        * JetStream/cdjs/reduce_collision_set.js: Added.
+        * JetStream/cdjs/simulator.js: Added.
+        * JetStream/cdjs/util.js: Added.
+        * JetStream/cdjs/vector_2d.js: Added.
+        * JetStream/cdjs/vector_3d.js: Added.
+        * JetStream/in-depth.html: Added.
+        * JetStream/index.html: Added.
+        * JetStream/simple/bigfib.cpp: Added.
+        * JetStream/simple/bigfib.cpp.js: Added.
+        * JetStream/simple/container.cpp: Added.
+        * JetStream/simple/container.cpp.js: Added.
+        * JetStream/simple/dry.c: Added.
+        * JetStream/simple/dry.c.js: Added.
+        * JetStream/simple/float-mm.c: Added.
+        * JetStream/simple/float-mm.c.js: Added.
+        * JetStream/simple/gcc-loops.cpp: Added.
+        * JetStream/simple/gcc-loops.cpp.js: Added.
+        * JetStream/simple/hash-map.js: Added.
+        * JetStream/simple/n-body.c: Added.
+        * JetStream/simple/n-body.c.js: Added.
+        * JetStream/simple/quicksort.c: Added.
+        * JetStream/simple/quicksort.c.js: Added.
+        * JetStream/simple/towers.c: Added.
+        * JetStream/simple/towers.c.js: Added.
+        * JetStream/sources/3d-cube.js: Added.
+        * JetStream/sources/3d-raytrace.js: Added.
+        * JetStream/sources/base64.js: Added.
+        * JetStream/sources/bigfib.cpp: Added.
+        * JetStream/sources/bigfib.cpp.js: Added.
+        * JetStream/sources/box2d.js: Added.
+        * JetStream/sources/cdjs-benchmark.js: Added.
+        * JetStream/sources/cdjs-call_sign.js: Added.
+        * JetStream/sources/cdjs-collision.js: Added.
+        * JetStream/sources/cdjs-collision_detector.js: Added.
+        * JetStream/sources/cdjs-constants.js: Added.
+        * JetStream/sources/cdjs-motion.js: Added.
+        * JetStream/sources/cdjs-red_black_tree.js: Added.
+        * JetStream/sources/cdjs-reduce_collision_set.js: Added.
+        * JetStream/sources/cdjs-simulator.js: Added.
+        * JetStream/sources/cdjs-util.js: Added.
+        * JetStream/sources/cdjs-vector_2d.js: Added.
+        * JetStream/sources/cdjs-vector_3d.js: Added.
+        * JetStream/sources/code-first-load-code-load.js: Added.
+        * JetStream/sources/code-multi-load-code-load.js: Added.
+        * JetStream/sources/container.cpp: Added.
+        * JetStream/sources/container.cpp.js: Added.
+        * JetStream/sources/crypto-aes.js: Added.
+        * JetStream/sources/crypto-md5.js: Added.
+        * JetStream/sources/crypto-sha1.js: Added.
+        * JetStream/sources/crypto.js: Added.
+        * JetStream/sources/date-format-tofte.js: Added.
+        * JetStream/sources/date-format-xparb.js: Added.
+        * JetStream/sources/deltablue.js: Added.
+        * JetStream/sources/dry.c: Added.
+        * JetStream/sources/dry.c.js: Added.
+        * JetStream/sources/earley-boyer.js: Added.
+        * JetStream/sources/float-mm.c: Added.
+        * JetStream/sources/float-mm.c.js: Added.
+        * JetStream/sources/gbemu-part1.js: Added.
+        * JetStream/sources/gbemu-part2.js: Added.
+        * JetStream/sources/gcc-loops.cpp: Added.
+        * JetStream/sources/gcc-loops.cpp.js: Added.
+        * JetStream/sources/hash-map.js: Added.
+        * JetStream/sources/mandreel.js: Added.
+        * JetStream/sources/n-body.c: Added.
+        * JetStream/sources/n-body.c.js: Added.
+        * JetStream/sources/n-body.js: Added.
+        * JetStream/sources/navier-stokes.js: Added.
+        * JetStream/sources/pdfjs.js: Added.
+        * JetStream/sources/quicksort.c: Added.
+        * JetStream/sources/quicksort.c.js: Added.
+        * JetStream/sources/raytrace.js: Added.
+        * JetStream/sources/regex-dna.js: Added.
+        * JetStream/sources/regexp.js: Added.
+        * JetStream/sources/richards.js: Added.
+        * JetStream/sources/splay.js: Added.
+        * JetStream/sources/tagcloud.js: Added.
+        * JetStream/sources/towers.c: Added.
+        * JetStream/sources/towers.c.js: Added.
+        * JetStream/sources/typescript-compiler.js: Added.
+        * JetStream/sources/typescript-input.js: Added.
+        * JetStream/sources/typescript.js: Added.
+        * JetStream/sources/zlib-data.js: Added.
+        * JetStream/sources/zlib.js: Added.
+        * JetStream/sunspider/3d-cube.js: Added.
+        * JetStream/sunspider/3d-raytrace.js: Added.
+        * JetStream/sunspider/base64.js: Added.
+        * JetStream/sunspider/crypto-aes.js: Added.
+        * JetStream/sunspider/crypto-md5.js: Added.
+        * JetStream/sunspider/crypto-sha1.js: Added.
+        * JetStream/sunspider/date-format-tofte.js: Added.
+        * JetStream/sunspider/date-format-xparb.js: Added.
+        * JetStream/sunspider/n-body.js: Added.
+        * JetStream/sunspider/regex-dna.js: Added.
+        * JetStream/sunspider/tagcloud.js: Added.
+        * MotionMark/about.html: Added.
+        * MotionMark/developer.html: Added.
+        * MotionMark/index.html: Added.
+        * MotionMark/resources/debug-runner/animometer.css: Added.
+        * MotionMark/resources/debug-runner/animometer.js: Added.
+        * MotionMark/resources/debug-runner/d3.min.js: Added.
+        * MotionMark/resources/debug-runner/graph.js: Added.
+        * MotionMark/resources/debug-runner/tests.js: Added.
+        * MotionMark/resources/extensions.js: Added.
+        * MotionMark/resources/runner/animometer.css: Added.
+        * MotionMark/resources/runner/animometer.js: Added.
+        * MotionMark/resources/runner/benchmark-runner.js: Added.
+        * MotionMark/resources/runner/crystal.svg: Added.
+        * MotionMark/resources/runner/lines.svg: Added.
+        * MotionMark/resources/runner/logo.svg: Added.
+        * MotionMark/resources/runner/tests.js: Added.
+        * MotionMark/resources/statistics.js: Added.
+        * MotionMark/resources/strings.js: Added.
+        * MotionMark/tests/3d/resources/webgl.js: Added.
+        * MotionMark/tests/3d/webgl.html: Added.
+        * MotionMark/tests/bouncing-particles/bouncing-canvas-images.html: Added.
+        * MotionMark/tests/bouncing-particles/bouncing-canvas-shapes.html: Added.
+        * MotionMark/tests/bouncing-particles/bouncing-css-images.html: Added.
+        * MotionMark/tests/bouncing-particles/bouncing-css-shapes.html: Added.
+        * MotionMark/tests/bouncing-particles/bouncing-svg-images.html: Added.
+        * MotionMark/tests/bouncing-particles/bouncing-svg-shapes.html: Added.
+        * MotionMark/tests/bouncing-particles/bouncing-tagged-images.html: Added.
+        * MotionMark/tests/bouncing-particles/resources/bouncing-canvas-images.js: Added.
+        * MotionMark/tests/bouncing-particles/resources/bouncing-canvas-particles.js: Added.
+        * MotionMark/tests/bouncing-particles/resources/bouncing-canvas-shapes.js: Added.
+        * MotionMark/tests/bouncing-particles/resources/bouncing-css-images.js: Added.
+        * MotionMark/tests/bouncing-particles/resources/bouncing-css-shapes.js: Added.
+        * MotionMark/tests/bouncing-particles/resources/bouncing-particles.js: Added.
+        * MotionMark/tests/bouncing-particles/resources/bouncing-svg-images.js: Added.
+        * MotionMark/tests/bouncing-particles/resources/bouncing-svg-particles.js: Added.
+        * MotionMark/tests/bouncing-particles/resources/bouncing-svg-shapes.js: Added.
+        * MotionMark/tests/bouncing-particles/resources/bouncing-tagged-images.js: Added.
+        * MotionMark/tests/bouncing-particles/resources/image1.jpg: Added.
+        * MotionMark/tests/bouncing-particles/resources/image2.jpg: Added.
+        * MotionMark/tests/bouncing-particles/resources/image3.jpg: Added.
+        * MotionMark/tests/bouncing-particles/resources/image4.jpg: Added.
+        * MotionMark/tests/bouncing-particles/resources/image5.jpg: Added.
+        * MotionMark/tests/dom/compositing-transforms.html: Added.
+        * MotionMark/tests/dom/focus.html: Added.
+        * MotionMark/tests/dom/leaves.html: Added.
+        * MotionMark/tests/dom/particles.html: Added.
+        * MotionMark/tests/dom/resources/compositing-transforms.js: Added.
+        * MotionMark/tests/dom/resources/dom-particles.js: Added.
+        * MotionMark/tests/dom/resources/focus.js: Added.
+        * MotionMark/tests/dom/resources/leaves.js: Added.
+        * MotionMark/tests/master/canvas-stage.html: Added.
+        * MotionMark/tests/master/focus.html: Added.
+        * MotionMark/tests/master/image-data.html: Added.
+        * MotionMark/tests/master/leaves.html: Added.
+        * MotionMark/tests/master/multiply.html: Added.
+        * MotionMark/tests/master/resources/canvas-stage.js: Added.
+        * MotionMark/tests/master/resources/canvas-tests.js: Added.
+        * MotionMark/tests/master/resources/compass.svg: Added.
+        * MotionMark/tests/master/resources/compass100.png: Added.
+        * MotionMark/tests/master/resources/console.svg: Added.
+        * MotionMark/tests/master/resources/console100.png: Added.
+        * MotionMark/tests/master/resources/contribute.svg: Added.
+        * MotionMark/tests/master/resources/contribute100.png: Added.
+        * MotionMark/tests/master/resources/debugger.svg: Added.
+        * MotionMark/tests/master/resources/debugger100.png: Added.
+        * MotionMark/tests/master/resources/focus.js: Added.
+        * MotionMark/tests/master/resources/image-data.js: Added.
+        * MotionMark/tests/master/resources/inspector.svg: Added.
+        * MotionMark/tests/master/resources/inspector100.png: Added.
+        * MotionMark/tests/master/resources/layout.svg: Added.
+        * MotionMark/tests/master/resources/layout100.png: Added.
+        * MotionMark/tests/master/resources/leaves.js: Added.
+        * MotionMark/tests/master/resources/multiply.js: Added.
+        * MotionMark/tests/master/resources/particles.js: Added.
+        * MotionMark/tests/master/resources/performance.svg: Added.
+        * MotionMark/tests/master/resources/performance100.png: Added.
+        * MotionMark/tests/master/resources/script.svg: Added.
+        * MotionMark/tests/master/resources/script100.png: Added.
+        * MotionMark/tests/master/resources/shortcuts.svg: Added.
+        * MotionMark/tests/master/resources/shortcuts100.png: Added.
+        * MotionMark/tests/master/resources/standards.svg: Added.
+        * MotionMark/tests/master/resources/standards100.png: Added.
+        * MotionMark/tests/master/resources/storage.svg: Added.
+        * MotionMark/tests/master/resources/storage100.png: Added.
+        * MotionMark/tests/master/resources/styles.svg: Added.
+        * MotionMark/tests/master/resources/styles100.png: Added.
+        * MotionMark/tests/master/resources/svg-particles.js: Added.
+        * MotionMark/tests/master/resources/text.js: Added.
+        * MotionMark/tests/master/resources/timeline.svg: Added.
+        * MotionMark/tests/master/resources/timeline100.png: Added.
+        * MotionMark/tests/master/svg-particles.html: Added.
+        * MotionMark/tests/master/text.html: Added.
+        * MotionMark/tests/resources/main.js: Added.
+        * MotionMark/tests/resources/math.js: Added.
+        * MotionMark/tests/resources/stage.css: Added.
+        * MotionMark/tests/resources/star.svg: Added.
+        * MotionMark/tests/resources/yin-yang.png: Added.
+        * MotionMark/tests/resources/yin-yang.svg: Added.
+        * MotionMark/tests/simple/resources/simple-canvas-paths.js: Added.
+        * MotionMark/tests/simple/resources/simple-canvas.js: Added.
+        * MotionMark/tests/simple/resources/tiled-canvas-image.js: Added.
+        * MotionMark/tests/simple/simple-canvas-paths.html: Added.
+        * MotionMark/tests/simple/tiled-canvas-image.html: Added.
+        * MotionMark/tests/template/resources/template-canvas.js: Added.
+        * MotionMark/tests/template/resources/template-css.js: Added.
+        * MotionMark/tests/template/resources/template-svg.js: Added.
+        * MotionMark/tests/template/template-canvas.html: Added.
+        * MotionMark/tests/template/template-css.html: Added.
+        * MotionMark/tests/template/template-svg.html: Added.
+        * MotionMark/version: Added.
+        * Speedometer/Full.html: Added.
+        * Speedometer/InteractiveRunner.html: Added.
+        * Speedometer/resources/benchmark-report.js: Added.
+        * Speedometer/resources/benchmark-runner.js: Added.
+        * Speedometer/resources/flightjs-example-app/LICENSE.md: Added.
+        * Speedometer/resources/flightjs-example-app/README.md: Added.
+        * Speedometer/resources/flightjs-example-app/app/boot/page.js: Added.
+        * Speedometer/resources/flightjs-example-app/app/component_data/compose_box.js: Added.
+        * Speedometer/resources/flightjs-example-app/app/component_data/mail_items.js: Added.
+        * Speedometer/resources/flightjs-example-app/app/component_data/move_to.js: Added.
+        * Speedometer/resources/flightjs-example-app/app/component_ui/compose_box.js: Added.
+        * Speedometer/resources/flightjs-example-app/app/component_ui/folders.js: Added.
+        * Speedometer/resources/flightjs-example-app/app/component_ui/mail_controls.js: Added.
+        * Speedometer/resources/flightjs-example-app/app/component_ui/mail_items.js: Added.
+        * Speedometer/resources/flightjs-example-app/app/component_ui/move_to_selector.js: Added.
+        * Speedometer/resources/flightjs-example-app/app/component_ui/with_select.js: Added.
+        * Speedometer/resources/flightjs-example-app/app/css/custom.css: Added.
+        * Speedometer/resources/flightjs-example-app/app/data.js: Added.
+        * Speedometer/resources/flightjs-example-app/app/templates.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/bootstrap/css/bootstrap-responsive.css: Added.
+        * Speedometer/resources/flightjs-example-app/components/bootstrap/css/bootstrap-responsive.min.css: Added.
+        * Speedometer/resources/flightjs-example-app/components/bootstrap/css/bootstrap.css: Added.
+        * Speedometer/resources/flightjs-example-app/components/bootstrap/css/bootstrap.min.css: Added.
+        * Speedometer/resources/flightjs-example-app/components/bootstrap/img/glyphicons-halflings-white.png: Added.
+        * Speedometer/resources/flightjs-example-app/components/bootstrap/img/glyphicons-halflings.png: Added.
+        * Speedometer/resources/flightjs-example-app/components/bootstrap/js/bootstrap.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/bootstrap/js/bootstrap.min.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/es5-shim/.gitignore: Added.
+        * Speedometer/resources/flightjs-example-app/components/es5-shim/CHANGES: Added.
+        * Speedometer/resources/flightjs-example-app/components/es5-shim/CONTRIBUTORS.md: Added.
+        * Speedometer/resources/flightjs-example-app/components/es5-shim/LICENSE: Added.
+        * Speedometer/resources/flightjs-example-app/components/es5-shim/README.md: Added.
+        * Speedometer/resources/flightjs-example-app/components/es5-shim/component.json: Added.
+        * Speedometer/resources/flightjs-example-app/components/es5-shim/es5-sham.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/es5-shim/es5-sham.min.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/es5-shim/es5-shim.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/es5-shim/es5-shim.min.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/es5-shim/package.json: Added.
+        * Speedometer/resources/flightjs-example-app/components/es5-shim/tests/helpers/h-kill.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/es5-shim/tests/helpers/h-matchers.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/es5-shim/tests/helpers/h.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/es5-shim/tests/index.html: Added.
+        * Speedometer/resources/flightjs-example-app/components/es5-shim/tests/lib/jasmine-html.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/es5-shim/tests/lib/jasmine.css: Added.
+        * Speedometer/resources/flightjs-example-app/components/es5-shim/tests/lib/jasmine.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/es5-shim/tests/lib/jasmine_favicon.png: Added.
+        * Speedometer/resources/flightjs-example-app/components/es5-shim/tests/lib/json2.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/es5-shim/tests/spec/s-array.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/es5-shim/tests/spec/s-date.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/es5-shim/tests/spec/s-function.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/es5-shim/tests/spec/s-object.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/es5-shim/tests/spec/s-string.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/flight/.travis.yml: Added.
+        * Speedometer/resources/flightjs-example-app/components/flight/lib/advice.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/flight/lib/component.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/flight/lib/compose.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/flight/lib/index.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/flight/lib/logger.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/flight/lib/registry.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/flight/lib/utils.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/flight/tools/debug/debug.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/jasmine-flight/LICENSE.md: Added.
+        * Speedometer/resources/flightjs-example-app/components/jasmine-flight/README.md: Added.
+        * Speedometer/resources/flightjs-example-app/components/jasmine-flight/bower.json: Added.
+        * Speedometer/resources/flightjs-example-app/components/jasmine-flight/lib/jasmine-flight.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/jasmine-jquery/lib/jasmine-jquery.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/jquery/component.json: Added.
+        * Speedometer/resources/flightjs-example-app/components/jquery/composer.json: Added.
+        * Speedometer/resources/flightjs-example-app/components/jquery/jquery.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/jquery/jquery.min.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/mustache/mustache.js: Added.
+        * Speedometer/resources/flightjs-example-app/components/requirejs/require.js: Added.
+        * Speedometer/resources/flightjs-example-app/index.html: Added.
+        * Speedometer/resources/flightjs-example-app/karma.conf.js: Added.
+        * Speedometer/resources/flightjs-example-app/package.json: Added.
+        * Speedometer/resources/flightjs-example-app/requireMain.js: Added.
+        * Speedometer/resources/gauge.png: Added.
+        * Speedometer/resources/gauge@2x.png: Added.
+        * Speedometer/resources/logo.png: Added.
+        * Speedometer/resources/logo@2x.png: Added.
+        * Speedometer/resources/main.css: Added.
+        * Speedometer/resources/main.js: Added.
+        * Speedometer/resources/statistics.js: Added.
+        * Speedometer/resources/tests.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/bower.json: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/bower_components/angular-mocks/angular-mocks.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/bower_components/angular/angular.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/bower_components/todomvc-common/base.css: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/bower_components/todomvc-common/base.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/bower_components/todomvc-common/bg.png: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/index.html: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/js/app.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/js/controllers/todoCtrl.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/js/directives/todoBlur.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/js/directives/todoEscape.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/js/directives/todoFocus.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/js/services/todoStorage.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/readme.md: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/test/config/testacular.conf.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/test/package.json: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/test/readme.md: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/test/unit/directivesSpec.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/test/unit/todoCtrlSpec.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/bower.json: Added.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/bower_components/backbone.localStorage/backbone.localStorage.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/bower_components/backbone/backbone.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/bower_components/jquery/jquery.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/bower_components/todomvc-common/base.css: Added.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/bower_components/todomvc-common/base.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/bower_components/todomvc-common/bg.png: Added.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/bower_components/underscore/underscore.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/index.html: Added.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/js/app.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/js/collections/todos.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/js/models/todo.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/js/routers/router.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/js/views/app-view.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/js/views/todo-view.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/backbone/readme.md: Added.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/bower.json: Added.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/bower_components/ember-data/ember-data.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/bower_components/ember-localstorage-adapter/localstorage_adapter.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/bower_components/ember/ember.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/bower_components/handlebars/handlebars.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/bower_components/jquery/jquery.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/bower_components/todomvc-common/base.css: Added.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/bower_components/todomvc-common/base.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/bower_components/todomvc-common/bg.png: Added.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/index.html: Added.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/js/app.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/js/controllers/todo_controller.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/js/controllers/todos_controller.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/js/helpers/pluralize.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/js/models/todo.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/js/router.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/js/views/edit_todo_view.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/js/views/todos_view.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/readme.md: Added.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/test.html: Added.
+        * Speedometer/resources/todomvc/architecture-examples/jquery/bower.json: Added.
+        * Speedometer/resources/todomvc/architecture-examples/jquery/bower_components/handlebars/handlebars.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/jquery/bower_components/jquery/jquery.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/jquery/bower_components/todomvc-common/base.css: Added.
+        * Speedometer/resources/todomvc/architecture-examples/jquery/bower_components/todomvc-common/base.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/jquery/bower_components/todomvc-common/bg.png: Added.
+        * Speedometer/resources/todomvc/architecture-examples/jquery/css/app.css: Added.
+        * Speedometer/resources/todomvc/architecture-examples/jquery/index.html: Added.
+        * Speedometer/resources/todomvc/architecture-examples/jquery/js/app.js: Added.
+        * Speedometer/resources/todomvc/architecture-examples/jquery/readme.md: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/.gitignore: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/.jshintrc: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/app/js/app.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/app/js/data/stats.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/app/js/data/todos.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/app/js/main.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/app/js/store.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/app/js/ui/main_selector.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/app/js/ui/new_item.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/app/js/ui/stats.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/app/js/ui/todo_list.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/app/js/ui/toggle_all.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/app/js/ui/with_filters.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/app/js/utils.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/app/templates/stats.html: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/app/templates/todo.html: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/bower.json: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/bower_components/depot/depot.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/bower_components/es5-shim/es5-sham.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/bower_components/es5-shim/es5-shim.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/bower_components/flight/lib/advice.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/bower_components/flight/lib/base.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/bower_components/flight/lib/component.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/bower_components/flight/lib/compose.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/bower_components/flight/lib/debug.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/bower_components/flight/lib/index.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/bower_components/flight/lib/logger.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/bower_components/flight/lib/registry.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/bower_components/flight/lib/utils.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/bower_components/jquery/jquery.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/bower_components/requirejs-text/text.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/bower_components/requirejs/require.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/bower_components/todomvc-common/base.css: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/bower_components/todomvc-common/base.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/bower_components/todomvc-common/bg.png: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/index.html: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/karma.conf.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/package.json: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/readme.md: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/test/.jshintrc: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/test/fixture/footer.html: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/test/fixture/new_todo.html: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/test/fixture/toggle_all.html: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/test/mock/datastore.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/test/spec/data/stats_spec.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/test/spec/data/todos_spec.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/test/spec/ui/new_item_spec.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/test/spec/ui/stats_spec.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/test/spec/ui/toggle_all_spec.js: Added.
+        * Speedometer/resources/todomvc/dependency-examples/flight/test/test-main.js: Added.
+        * Speedometer/resources/todomvc/labs/architecture-examples/react/bower.json: Added.
+        * Speedometer/resources/todomvc/labs/architecture-examples/react/bower_components/director/LICENSE: Added.
+        * Speedometer/resources/todomvc/labs/architecture-examples/react/bower_components/director/README.md: Added.
+        * Speedometer/resources/todomvc/labs/architecture-examples/react/bower_components/react/JSXTransformer.js: Added.
+        * Speedometer/resources/todomvc/labs/architecture-examples/react/bower_components/react/bower.json: Added.
+        * Speedometer/resources/todomvc/labs/architecture-examples/react/bower_components/react/react.js: Added.
+        * Speedometer/resources/todomvc/labs/architecture-examples/react/bower_components/react/react.min.js: Added.
+        * Speedometer/resources/todomvc/labs/architecture-examples/react/bower_components/todomvc-common/base.css: Added.
+        * Speedometer/resources/todomvc/labs/architecture-examples/react/bower_components/todomvc-common/base.js: Added.
+        * Speedometer/resources/todomvc/labs/architecture-examples/react/bower_components/todomvc-common/bg.png: Added.
+        * Speedometer/resources/todomvc/labs/architecture-examples/react/index.html: Added.
+        * Speedometer/resources/todomvc/labs/architecture-examples/react/js/app.jsx: Added.
+        * Speedometer/resources/todomvc/labs/architecture-examples/react/js/footer.jsx: Added.
+        * Speedometer/resources/todomvc/labs/architecture-examples/react/js/todoItem.jsx: Added.
+        * Speedometer/resources/todomvc/labs/architecture-examples/react/js/utils.jsx: Added.
+        * Speedometer/resources/todomvc/labs/architecture-examples/react/readme.md: Added.
+        * Speedometer/resources/todomvc/learn.json: Added.
+        * Speedometer/resources/todomvc/license.md: Added.
+        * Speedometer/resources/todomvc/readme.md: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/bower.json: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/bower_components/todomvc-common/base.css: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/bower_components/todomvc-common/base.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/bower_components/todomvc-common/bg.png: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/index.html: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/js/app.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/js/controller.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/js/helpers.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/js/model.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/js/store.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/js/view.js: Added.
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/readme.md: Added.
+        * index.html: Added.
+        * resources/ARES-6-Logo.png: Added.
+        * resources/ARES-6-Logo@2x.png: Added.
+        * resources/JetStream-Logo.png: Added.
+        * resources/JetStream-Logo@2x.png: Added.
+        * resources/MotionMark-Logo.png: Added.
+        * resources/MotionMark-Logo@2x.png: Added.
+        * resources/Speedometer-Logo.png: Added.
+        * resources/Speedometer-Logo@2x.png: Added.
+        * resources/main.css: Added.

@@ -1,0 +1,331 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% title = "Time Summary " %]
+[% IF do_depends %]
+    [% title = title _ "for " %]
+    [% header = "$terms.Bug $ids.0" FILTER bug_link(ids.0) FILTER none %]
+    [% header = title _ header _ " (and $terms.bugs blocking it)" %]
+    [% title = title _ "$terms.Bug $ids.0" %]
+[% ELSE %]
+    [% title = title _ "($ids.size $terms.bugs selected)" %]
+    [% header = title %]
+[% END %]
+
+[% PROCESS global/header.html.tmpl 
+    title = title
+    header = header
+    style_urls = ['skins/standard/buglist.css']
+    doc_section = "using/editing.html#time-tracking"
+    yui = ['calendar']
+    javascript_urls = [ "js/util.js", "js/field.js" ]
+    %]
+
+[% INCLUDE query_form %]
+
+[% IF do_report %]
+
+  [% global.grand_total = 0 global.estimated = 0 global.remaining = 0 %]
+
+  [% FOREACH workdata = part_list %]
+    [%# parts contains date ranges (from, to). %]
+    [% part = parts.shift %]
+    <h4>
+      [% IF part.0 or part.1 %]
+        [% part.0 OR "Up" FILTER html %] to [% part.1 OR "now" FILTER html %]
+      [% ELSE %]
+        Full summary (no period specified)
+      [% END %]
+    </h4>
+    [% IF group_by == "number" %]
+      [% INCLUDE number_report %]
+    [% ELSE %]
+      [% INCLUDE owner_report %]
+    [% END %]
+  [% END %]
+
+  [% IF detailed %]
+    <h4>
+      Total of [% global.remaining FILTER format("%.2f") %]h remains from
+      original estimate of [% global.estimated FILTER format("%.2f") %]h
+      [% IF global.deadline %]
+        (deadline [% global.deadline FILTER html %])
+      [% END %]
+    </h4>
+  [% END %]
+
+  [% IF monthly %]
+    <h4>Total of [% global.grand_total FILTER format("%.2f") %] hours worked</h4>
+    <hr>
+  [% END %]
+
+  [% IF null.size > 0 %]
+    [% INCLUDE inactive_report %]
+    <h4>Total of [% null.size %] inactive [% terms.bugs %]</h4>
+  [% END %]
+
+[% END %]
+
+[% PROCESS global/footer.html.tmpl %]
+
+[%#
+  #
+  # Developer reporting
+  #
+  #%]
+
+[% BLOCK owner_report %]
+    [% global.total = 0 global.bug_count = {} global.owner_count = {} %]
+    <table class="realitems owner">
+        [% FOREACH owner = workdata.keys.sort %]
+            [% INCLUDE do_one_owner owner=owner ownerdata=workdata.$owner
+                                    detailed=detailed %]
+        [% END %]
+
+    [% additional = "$global.owner_count.size developers @
+                     $global.bug_count.size $terms.bugs" %] 
+    [% INCLUDE section_total colspan=3 additional=additional %]
+    </table>
+[% END %]
+
+[% BLOCK do_one_owner %]
+    [% global.owner_count.$owner = 1 %]
+    <tr><td colspan="5" class="owner_header">
+        <b>[% owner FILTER html %]</b>
+    </td></tr>
+    [% col = 0 subtotal = 0%]
+    [% FOREACH bugdata=ownerdata.nsort("bug_id") %]
+        [% bug_id = bugdata.bug_id %]
+        [% INCLUDE calc_bug_total id=bug_id %]
+        [% global.bug_count.$bug_id = 1 %]
+        [% IF detailed %]
+            [% INCLUDE bug_header cid=col id=bug_id bugdata=bugdata extra=1 %]
+            [% col = col + 1 %]
+        [% END %]
+        [% subtotal = subtotal + bugdata.total_time %]
+    [% END %]
+    <tr>
+      <th colspan="4" class="right">Total:</th>
+      <td class="subtotal">[% subtotal FILTER format("%.2f") %]</td>
+    </tr>
+    [% global.total = global.total + subtotal %]
+[% END %]
+
+[%#
+  #
+  # Bug Number reporting
+  #
+  #%]
+
+[% BLOCK number_report %]
+    [% global.total = 0 global.owner_count = {} global.bug_count = {} %]
+
+    <table class="realitems number">
+    [% FOREACH bug = workdata.keys.nsort %]
+        [% INCLUDE do_one_bug id=bug bugdata=workdata.$bug
+                              detailed=detailed %]
+    [% END %]
+
+    [% additional = "$global.bug_count.size $terms.bugs &
+                     $global.owner_count.size developers" %]
+    [% INCLUDE section_total additional=additional colspan=2 %]
+    </table>
+[% END %]
+
+[% BLOCK do_one_bug %]
+    [% subtotal = 0.00 cid = 0 %]
+    [% INCLUDE calc_bug_total id=id %]
+    [% global.bug_count.$id = 1 %]
+    [% INCLUDE bug_header id=id %]
+
+    [% FOREACH owner = bugdata.sort("login_name") %]
+        [% work_time = owner.total_time %]
+        [% subtotal = subtotal + work_time %]
+        [% login_name = owner.login_name %]
+        [% global.owner_count.$login_name = 1 %]
+        [% IF detailed %] 
+            [% cid = cid + 1 %]
+            <tr class="owner_header[% 2 FILTER none IF cid % 2 %]">
+                <td>&nbsp;</td>
+                <td colspan="2"><b>[% login_name FILTER html %]</b></td>
+                <td class="right">
+                [% work_time FILTER format("%.2f") %]</td>
+            </tr>
+        [% END %]
+    [% END %]
+    <tr>
+      <th colspan="3" class="right">Total:</th>
+      <td class="subtotal">[% subtotal FILTER format("%.2f") %]</td>
+    </tr>
+    [% global.total = global.total + subtotal %]
+[% END %]
+
+[% BLOCK bug_header %]
+    <tr class="bug_header[% '2' IF cid % 2 %]">
+        <th class="bug_id">[% "$terms.Bug $id" FILTER bug_link(id) FILTER none %]</th>
+        <th class="bug_status">
+          [% display_value("bug_status", bugs.$id.bug_status) FILTER html %]
+        </th>
+        <td colspan="2">[% bugs.$id.short_desc FILTER html %]</td>
+        [% IF extra %]
+          <td class="right">[% bugdata.total_time FILTER html %]</td>
+        [% END %]
+    </tr>
+    [% IF detailed %]
+      <tr class="bug_header[% '2' IF cid % 2 %]">
+        <td>&nbsp;</td>
+        <td colspan="3">
+          <span class="time_info">
+            Estimated: [% bugs.$id.estimated_time FILTER format("%.2f") %]h
+          </span>
+          <span class="time_info">
+            Remaining: [% bugs.$id.remaining_time FILTER format("%.2f") %]h
+          </span>
+          <span class="time_info">
+            Deadline: [% bugs.$id.deadline || "<b>Not set</b>" %]
+          </span>
+        </td>
+        [% IF extra %]
+          <td>&nbsp;</td>
+        [% END %]
+      </tr>
+   [% END %]
+[% END %]
+
+[% BLOCK calc_bug_total %]
+  [% IF !global.bug_count.$id %]
+    [% global.estimated = global.estimated + bugs.$id.estimated_time %]
+    [% global.remaining = global.remaining + bugs.$id.remaining_time %]
+    [% IF !global.deadline || bugs.$id.deadline &&
+          global.deadline.replace("-", "") < bugs.$id.deadline.replace("-", "") %]
+      [% SET global.deadline = bugs.$id.deadline %]
+    [% END %]
+  [% END %]
+[% END %]
+
+[% BLOCK inactive_report %]
+    <h3>Inactive [% terms.bugs %]</h3>
+    <table class="zeroitems">
+    [% cid = 0 %]
+    [% FOREACH bug_id = null.nsort %]
+        [% INCLUDE bug_header id=bug_id cid=cid %]
+        [% cid = cid + 1 %]
+    [% END %]
+    </table>
+[% END %]
+
+
+[% BLOCK section_total %]
+  [% IF global.total > 0 %]
+    <tr class="section_total">
+      <td><b>Totals</b></td>
+      <th colspan="[% colspan FILTER html %]" class="right">[% additional FILTER html %]</th>
+      <th class="right">[% global.total FILTER format("%.2f") %]</th>
+    </tr>
+  [% ELSE %]
+    <tr>
+      <td>No time allocated during the specified period.</td>
+    </tr>
+  [% END %]
+  [% global.grand_total = global.grand_total + global.total %]
+[% END %]
+
+[%#
+  #
+  # The query form
+  #
+  #%]
+
+[% BLOCK query_form %]
+<hr>
+<form method="post" name="summary" action="summarize_time.cgi">
+<input type="hidden" name="do_depends" value="[% do_depends FILTER html %]">
+<input type="hidden" name="id" value="[% ids.join(",") FILTER html %]">
+<input type="hidden" name="do_report" value="1">
+
+[% IF warn_swap_dates %]
+  <p class="warning_swapped_data">
+    The end date specified occurs before the start date, which doesn't
+    make sense; the dates below have therefore been swapped.
+  </p>
+[% END %]
+
+<table>
+  <tr>
+    <th>
+      <label accesskey="s" for="start_date">Period <u>s</u>tarting</label>:
+    </th>
+    <td>
+      <input id="start_date" name="start_date" size="10" autofocus
+             value="[% start_date FILTER html %]" maxlength="10"
+             onchange="updateCalendarFromField(this)">
+      <button type="button" class="calendar_button" id="button_calendar_start_date"
+              onclick="showCalendar('start_date')"><span>Calendar</span>
+      </button>
+      <div id="con_calendar_start_date"></div>
+      <span class="label">
+        and <label accesskey="e" for="end_date"><u>e</u>nding</label>:
+      </span>
+      <input type="text" name="end_date" size="10" id="end_date"
+             value ="[% end_date FILTER html %]" maxlength="10"
+             onchange="updateCalendarFromField(this)">
+      <button type="button" class="calendar_button" id="button_calendar_end_date"
+              onclick="showCalendar('end_date')"><span>Calendar</span>
+      </button>
+      <div id="con_calendar_end_date"></div>
+      <br>
+      <span class="bz_info">(Dates are optional, and in YYYY-MM-DD format)</span>
+    </td>
+    <th><input type="submit" id="summarize" value="Summarize"></th>
+  </tr>
+
+  <tr>
+    <th>Group by:</th>
+    <td>
+      <input type="radio" name="group_by" id="number" value="number"
+             [% 'checked="checked"' IF group_by == "number" %]>
+      <label for="number" accesskey="n">[% terms.Bug %] <u>N</u>umber</label>
+      <input type="radio" name="group_by" id="owner" value="owner"
+             [% 'checked="checked"' IF group_by == "owner" %]>
+      <label for="owner" accesskey="d"><u>D</u>eveloper</label>
+    </td>
+    <th>
+      <label for="ctype">Format</label>:
+      <select name="ctype" id="ctype">
+        <option value="html">HTML Report</option>
+      </select>
+    </th>
+  </tr>
+
+  <tr>
+    <th>&nbsp;</th>
+    <td colspan="2">
+      <input type="checkbox" name="monthly" id="monthly"
+             [% 'checked="checked"' IF monthly %]>
+      <label for="monthly" accesskey="m">Split by <u>m</u>onth</label>
+      [%# XXX: allow splitting by other intervals %]
+      <input type="checkbox" name="detailed" id="detailed"
+             [% 'checked="checked"' IF detailed %]>
+      <label for="detailed" accesskey="t">De<u>t</u>ailed summaries</label>
+      <input type="checkbox" name="inactive" id="inactive"
+             [% 'checked="checked"' IF inactive %]>
+      <label for="inactive" accesskey="i">Also show <u>i</u>nactive
+        [%+ terms.bugs %]</label>
+    </td>
+  </tr>
+</table>
+
+</form>
+<script type="text/javascript">
+  <!--
+    [%+ PROCESS "global/calendar.js.tmpl" id = 'start_date' %]
+    [% PROCESS "global/calendar.js.tmpl" id = 'end_date' %]
+  //-->
+</script>
+<hr>
+[% END %]

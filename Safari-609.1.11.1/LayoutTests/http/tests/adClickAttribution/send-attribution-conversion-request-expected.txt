@@ -1,0 +1,24 @@
+Tests sending of ad click attribution requests after a conversion. Also tests that cookies are not sent in those requests and cookies are not accepted in the responses.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+Cookies are: cookieSetAsFirstParty = 1
+
+--------
+Frame: '<!--frame2-->'
+--------
+Conversion received.
+HTTP_HOST: 127.0.0.1:8000
+REQUEST_URI: /adClickAttribution/resources/conversionReport.php?conversion=12&campaign=3
+No cookies in conversion request.
+
+
+--------
+Frame: '<!--frame3-->'
+--------
+Cookies are: cookieSetAsFirstParty = 1
+
+No stored Ad Click Attribution data.

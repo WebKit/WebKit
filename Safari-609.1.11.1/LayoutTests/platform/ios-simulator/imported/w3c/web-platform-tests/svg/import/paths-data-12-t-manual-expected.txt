@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (164,30) size 343x477
+      RenderSVGPath {path} at (164,30) size 339x274 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [data="M 100 100 C 100 20 200 20 200 100 C 200 180 300 180 300 100"]
+      RenderSVGRect {rect} at (166,166) size 8x8 [fill={[type=SOLID] [color=#0000FF]}] [x=100.00] [y=100.00] [width=4.00] [height=4.00]
+      RenderSVGRect {rect} at (333,166) size 7x8 [fill={[type=SOLID] [color=#0000FF]}] [x=200.00] [y=100.00] [width=4.00] [height=4.00]
+      RenderSVGRect {rect} at (500,166) size 7x8 [fill={[type=SOLID] [color=#0000FF]}] [x=300.00] [y=100.00] [width=4.00] [height=4.00]
+      RenderSVGPath {path} at (165,375) size 338x129 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [data="M 100 250 C 100 250 200 200 200 250 C 200 300 300 300 300 250"]
+      RenderSVGRect {rect} at (166,416) size 8x8 [fill={[type=SOLID] [color=#0000FF]}] [x=100.00] [y=250.00] [width=4.00] [height=4.00]
+      RenderSVGRect {rect} at (333,333) size 7x7 [fill={[type=SOLID] [color=#0000FF]}] [x=200.00] [y=200.00] [width=4.00] [height=4.00]
+      RenderSVGRect {rect} at (333,416) size 7x8 [fill={[type=SOLID] [color=#0000FF]}] [x=200.00] [y=250.00] [width=4.00] [height=4.00]
+      RenderSVGRect {rect} at (333,500) size 7x7 [fill={[type=SOLID] [color=#0000FF]}] [x=200.00] [y=300.00] [width=4.00] [height=4.00]
+      RenderSVGRect {rect} at (500,500) size 7x7 [fill={[type=SOLID] [color=#0000FF]}] [x=300.00] [y=300.00] [width=4.00] [height=4.00]
+      RenderSVGRect {rect} at (500,416) size 7x8 [fill={[type=SOLID] [color=#0000FF]}] [x=300.00] [y=250.00] [width=4.00] [height=4.00]
+    RenderSVGContainer {g} at (16,516) size 385x64
+      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 231x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.5 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

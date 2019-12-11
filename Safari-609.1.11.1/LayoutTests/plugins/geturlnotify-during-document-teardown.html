@@ -1,0 +1,21 @@
+<html>
+    <head>
+        <script>
+        if (!window.testRunner) {
+            alert('this test can only be run by DumpRenderTree')
+        } else {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+            testRunner.setCallCloseOnWebViews(false);
+            testRunner.setCanOpenWindows();
+            testRunner.setCloseRemainingWindowsWhenComplete(false);
+            window.open("resources/geturlnotify-on-destroy.html");
+        }
+        </script>
+    </head>
+    <body>
+        This tests that performing a load during document teardown does not
+        cause a crash.
+        <a href="https://bugs.webkit.org/show_bug.cgi?id=38797">Bug #38797</a>
+    </body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true experimental:AsyncClipboardAPIEnabled=true ] -->
+<html>
+    <meta charset="utf8">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../resources/js-test.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
+        <script src="./resources/async-clipboard-helpers.js"></script>
+        <style>
+            button {
+                width: 100%;
+                height: 150px;
+                display: block;
+            }
+        </style>
+    </head>
+    <script>
+        jsTestIsAsync = true;
+        finishedCopying = false;
+
+        async function runTest() {
+            description("This test verifies that navigator.clipboard.readText can be used to read plain text from the system clipboard. To verify manually, click the 'Copy' button to copy text to the clipboard, and then click the 'Paste' button to read back the text.");
+
+            copy = document.getElementById("copy");
+            paste = document.getElementById("paste");
+
+            copy.addEventListener("click", () => {
+                writeToClipboardUsingDataTransfer({ "text/plain" : "garply" });
+                testPassed("Copied text to clipboard using DataTransfer.");
+                finishedCopying = true;
+            });
+
+            paste.addEventListener("click", async () => {
+                try {
+                    clipboardText = await navigator.clipboard.readText();
+                    testPassed("Read text from clipboard using navigator.clipboard.readText.");
+                } catch (exception) {
+                    testFailed("Could not read text from clipboard.");
+                } finally {
+                    shouldBeEqualToString("clipboardText", "garply");
+                    copy.remove();
+                    paste.remove();
+                    finishJSTest();
+                }
+            });
+
+            if (!window.testRunner)
+                return;
+
+            await UIHelper.activateElement(copy);
+            await new Promise(r => shouldBecomeEqual("finishedCopying", "true", r));
+            await UIHelper.activateElement(paste);
+        }
+
+        addEventListener("load", runTest);
+    </script>
+    <body>
+        <button id="copy">Copy</button>
+        <button id="paste">Paste</button>
+        <p id="description"></p>
+        <p id="console"></p>
+    </body>
+</html>

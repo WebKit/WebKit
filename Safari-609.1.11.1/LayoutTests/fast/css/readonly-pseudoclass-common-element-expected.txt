@@ -1,0 +1,29 @@
+Tests read-only pseudo-class properties are applied to not user-alterable elements
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS backgroundColor('readwrite1') is not "rgb(255, 0, 0)"
+PASS backgroundColor('readwrite2') is not "rgb(255, 0, 0)"
+PASS backgroundColor('readwrite3') is not "rgb(255, 0, 0)"
+PASS backgroundColor('body') is "rgb(255, 0, 0)"
+PASS backgroundColor('inside-readwrite1') is not "rgb(255, 0, 0)"
+PASS backgroundColor('readonly2') is "rgb(255, 0, 0)"
+PASS backgroundColor('readonly3') is "rgb(255, 0, 0)"
+PASS backgroundColor('readonly4') is "rgb(255, 0, 0)"
+PASS backgroundColor('readonly5') is "rgb(255, 0, 0)"
+PASS backgroundColor('svg') is "rgb(255, 0, 0)"
+PASS backgroundColor('svg_path') is "rgb(255, 0, 0)"
+PASS backgroundColor('svg_contenteditable') is "rgb(255, 0, 0)"
+PASS backgroundColor('mathml') is "rgb(255, 0, 0)"
+PASS backgroundColor('mathml_msup') is "rgb(255, 0, 0)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+       
+x
+2
+=
+0
+

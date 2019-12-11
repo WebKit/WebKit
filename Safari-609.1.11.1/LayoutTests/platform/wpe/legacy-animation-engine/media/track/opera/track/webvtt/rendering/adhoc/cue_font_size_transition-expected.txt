@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: line 22: TypeError: null is not an object (evaluating 'panel.parentElement.querySelector')
+layer at (0,0) size 1280x724
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x724
+  RenderBlock {HTML} at (0,0) size 800x724
+    RenderBody {BODY} at (0,0) size 800x724
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+layer at (0,0) size 1280x720
+  RenderVideo {VIDEO} at (0,0) size 1280x720
+layer at (0,0) size 1280x720
+  RenderFlexibleBox {DIV} at (0,0) size 1280x720

@@ -1,0 +1,4 @@
+
+
+FAIL CORS-exposed header names for a response from sw assert_equals: expected (string) "bar" but got (object) null
+

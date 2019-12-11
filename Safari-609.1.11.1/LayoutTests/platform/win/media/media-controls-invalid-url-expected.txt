@@ -1,0 +1,12 @@
+This tests that media element controls are reset to their default state when the src is changed to an invalid url.
+
+This test only runs in DRT!
+
+EVENT(canplaythrough)
+EXPECTED (getTimeLineValue() == '0') OK
+EVENT(seeked)
+EXPECTED (getTimeLineValue() == '1') OK
+EVENT(error)
+EXPECTED (getTimeLineValue() == '0'), OBSERVED '1' FAIL
+END OF TEST
+

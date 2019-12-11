@@ -1,0 +1,7 @@
+2d.shadow.alpha.4
+Shadows with alpha components are correctly affected by globalAlpha
+Spec references: 2d.shadow.render
+Actual output:
+Expected output:
+
+Passed

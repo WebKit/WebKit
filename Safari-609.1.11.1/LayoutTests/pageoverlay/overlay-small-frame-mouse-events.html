@@ -1,0 +1,28 @@
+<html>
+<style>
+body {
+    height: 5000px;
+    width: 5000px;
+}
+</style>
+<script>
+window.onload = function () {
+    if (window.testRunner && window.internals) {
+        testRunner.dumpAsText(true);
+        var overlay = internals.installMockPageOverlay("document");
+
+        overlay.setFrame(100, 100, 10, 10);
+
+        eventSender.mouseMoveTo(105, 105);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+
+        var layersResult = document.getElementById('layers');
+        layersResult.innerText = window.internals.pageOverlayLayerTreeAsText();
+    }
+}
+</script>
+<body>
+    <pre id="layers" style="position: absolute; height: 1px; width: 1px; overflow: hidden;"></pre>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<html>
+<head>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(a)
+{
+    document.getElementById("logger").innerHTML += a + "<br>";
+}
+
+function loadNextPage()
+{
+    location.href = "../resources/storage-close-data-on-idle-switch.html";
+}
+
+function runTest()
+{
+    if (window.testRunner) {
+        testRunner.setStorageDatabaseIdleInterval(0);
+        testRunner.setCacheModel(0); // WebCacheModelDocumentViewer.
+    }
+
+    // Test to make sure the storage values don't change after the database is closed.
+    if ("localStorage" in window) {
+        var loadCount = window.sessionStorage['loadCount'];
+        if (loadCount !== undefined)
+            loadCount++;
+        else
+            loadCount = 1;
+
+        window.sessionStorage['loadCount'] = loadCount;
+
+        if (loadCount == 1 ) {
+            window.localStorage.clear();
+            window.localStorage['foo'] = 'FOO';
+            window.localStorage['bar'] = 'BAR';
+
+            setTimeout("loadNextPage()", 0);
+        } else {
+            // Test if we still have the right values.
+            log(window.localStorage['foo'] === 'FOO' ? 'PASS' : 'FAIL');
+            log(window.localStorage['bar'] === 'BAR' ? 'PASS' : 'FAIL');
+
+            if (window.testRunner) {
+                testRunner.setStorageDatabaseIdleInterval(300);
+                window.testRunner.notifyDone();
+            }
+        }
+    }
+}
+
+</script>
+</head>
+<body onload="runTest();">
+<div id="logger"></div>
+</body>
+</html>
+

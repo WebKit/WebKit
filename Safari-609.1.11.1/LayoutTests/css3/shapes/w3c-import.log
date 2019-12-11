@@ -1,0 +1,35 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in Webkit.
+Instead, push changes to the W3C CSS repo:
+	http://hg.csswg.org/test
+Or create a pull request on the W3C CSS github:
+	https://github.com/w3c/csswg-test
+
+Then run the Tools/Scripts/import-w3c-tests in Webkit to reimport
+
+Do NOT modify or remove this file
+
+------------------------------------------------------------------------
+Last Import: 2014-10-27 11:23
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+shape-outside
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/css3/shapes/./shape-outside-invalid-001.html
+/LayoutTests/css3/shapes/./shape-outside-invalid-circle-000.html
+/LayoutTests/css3/shapes/./shape-outside-invalid-circle-001.html
+/LayoutTests/css3/shapes/./shape-outside-invalid-circle-002.html
+/LayoutTests/css3/shapes/./shape-outside-invalid-circle-003.html
+/LayoutTests/css3/shapes/./shape-outside-invalid-ellipse-001.html
+/LayoutTests/css3/shapes/./shape-outside-invalid-ellipse-002.html
+/LayoutTests/css3/shapes/./shape-outside-invalid-ellipse-003.html
+/LayoutTests/css3/shapes/./shape-outside-invalid-ellipse-004.html
+/LayoutTests/css3/shapes/./shape-outside-invalid-ellipse-005.html
+/LayoutTests/css3/shapes/./shape-outside-invalid-ellipse-006.html
+/LayoutTests/css3/shapes/./shape-outside-invalid-inset-001.html
+/LayoutTests/css3/shapes/./shape-outside-invalid-inset-002.html
+/LayoutTests/css3/shapes/./shape-outside-invalid-inset-003.html
+/LayoutTests/css3/shapes/./shape-outside-invalid-inset-004.html

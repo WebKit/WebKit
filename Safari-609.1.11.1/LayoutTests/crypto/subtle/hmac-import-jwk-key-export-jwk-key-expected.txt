@@ -1,0 +1,16 @@
+Test importing a JWK HMAC key with SHA-1 and then export it in JWK format
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Importing a key...
+Exporting a key...
+PASS exportedJwkKey.kty is jwkKey.kty
+PASS exportedJwkKey.k is jwkKey.k
+PASS exportedJwkKey.alg is jwkKey.alg
+PASS exportedJwkKey.key_ops is jwkKey.key_ops
+PASS exportedJwkKey.ext is jwkKey.ext
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,2479 @@
+# Japanese translation for webkit.
+# Copyright (C) 2013 webkit's COPYRIGHT HOLDER
+# This file is distributed under the same license as the webkit package.
+# Noriko Mizumoto <noriko@fedoraproject.org>, 2013.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: webkit HEAD\n"
+"Report-Msgid-Bugs-To: http://bugs.webkit.org\n"
+"POT-Creation-Date: 2013-12-10 15:26+0000\n"
+"PO-Revision-Date: 2013-12-11 10:04+0000\n"
+"Last-Translator: Noriko Mizumoto <noriko@fedoraproject.org>\n"
+"Language-Team: Japanese <gnome-translation@gnome.gr.jp>\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: ../ErrorsGtk.cpp:37
+msgid "Load request cancelled"
+msgstr "読み込み要求が取り消されました"
+
+#: ../ErrorsGtk.cpp:43
+msgid "Not allowed to use restricted network port"
+msgstr "制限付きネットワークポートの使用は許可されていません"
+
+#: ../ErrorsGtk.cpp:49
+msgid "URL cannot be shown"
+msgstr "URL を表示できません"
+
+#: ../ErrorsGtk.cpp:55
+msgid "Frame load was interrupted"
+msgstr "フレームの読み込みが中断されました"
+
+#: ../ErrorsGtk.cpp:61
+msgid "Content with the specified MIME type cannot be shown"
+msgstr "指定された MIME タイプのコンテンツは表示できません"
+
+#: ../ErrorsGtk.cpp:67
+msgid "File does not exist"
+msgstr "ファイルは存在しません"
+
+#: ../ErrorsGtk.cpp:73
+msgid "Plugin will handle load"
+msgstr "プラグインが読み込みを処理します"
+
+#: ../ErrorsGtk.cpp:85
+msgid "User cancelled the download"
+msgstr "このダウンロードはユーザーにより取り消されました"
+
+#: ../ErrorsGtk.cpp:105
+msgid "Printer not found"
+msgstr "プリンターが見つかりません"
+
+#: ../ErrorsGtk.cpp:112
+msgid "Invalid page range"
+msgstr "無効なページ範囲です"
+
+#: ../LocalizedStringsGtk.cpp:56 ../LocalizedStringsGtk.cpp:61
+msgid "Submit"
+msgstr "送信"
+
+#: ../LocalizedStringsGtk.cpp:66
+msgid "Reset"
+msgstr "リセット"
+
+#: ../LocalizedStringsGtk.cpp:71
+msgid "Details"
+msgstr "詳細"
+
+#: ../LocalizedStringsGtk.cpp:76
+msgid "This is a searchable index. Enter search keywords: "
+msgstr "検索可能なインデックスです。検索するキーワードを入力してください:"
+
+#: ../LocalizedStringsGtk.cpp:81
+msgid "Choose File"
+msgstr "ファイルの選択"
+
+#: ../LocalizedStringsGtk.cpp:86
+msgid "Choose Files"
+msgstr "ファイルの選択"
+
+#: ../LocalizedStringsGtk.cpp:91 ../LocalizedStringsGtk.cpp:96
+msgid "(None)"
+msgstr "(なし)"
+
+#: ../LocalizedStringsGtk.cpp:101
+msgid "Open Link in New _Window"
+msgstr "リンクを新しいウィンドウで開く(_W)"
+
+#: ../LocalizedStringsGtk.cpp:106
+msgid "_Download Linked File"
+msgstr "リンク先ファイルをダウンロード(_D)"
+
+#: ../LocalizedStringsGtk.cpp:111
+msgid "Copy Link Loc_ation"
+msgstr "リンク先のコピー(_A)"
+
+#: ../LocalizedStringsGtk.cpp:116
+msgid "Open _Image in New Window"
+msgstr "画像を新しいウィンドウで開く(_I)"
+
+#: ../LocalizedStringsGtk.cpp:121
+msgid "Sa_ve Image As"
+msgstr "名前を付けて画像を保存(_V)"
+
+#: ../LocalizedStringsGtk.cpp:126
+msgid "Cop_y Image"
+msgstr "画像のコピー(_Y)"
+
+#: ../LocalizedStringsGtk.cpp:131
+msgid "Copy Image _Address"
+msgstr "画像のアドレスをコピー(_A)"
+
+#: ../LocalizedStringsGtk.cpp:136
+msgid "Open _Video in New Window"
+msgstr "ビデオを新しいウィンドウで開く(_V)"
+
+#: ../LocalizedStringsGtk.cpp:141
+msgid "Open _Audio in New Window"
+msgstr "オーディオを新しいウィンドウで開く(_A)"
+
+#: ../LocalizedStringsGtk.cpp:146
+msgid "Download _Video"
+msgstr "ビデオのダウンロード(_V)"
+
+#: ../LocalizedStringsGtk.cpp:151
+msgid "Download _Audio"
+msgstr "オーディオのダウンロード(_A)"
+
+#: ../LocalizedStringsGtk.cpp:156
+msgid "Cop_y Video Link Location"
+msgstr "ビデオのリンク先アドレスをコピー(_Y)"
+
+#: ../LocalizedStringsGtk.cpp:161
+msgid "Cop_y Audio Link Location"
+msgstr "オーディオのリンク先アドレスをコピー(_Y)"
+
+#: ../LocalizedStringsGtk.cpp:166
+msgid "_Toggle Media Controls"
+msgstr "再生コントローラーの切り替え(_T)"
+
+#: ../LocalizedStringsGtk.cpp:171
+msgid "_Show Media Controls"
+msgstr "再生コントローラーを表示する(_S)"
+
+#: ../LocalizedStringsGtk.cpp:176
+msgid "_Hide Media Controls"
+msgstr "再生コントローラーを表示しない(_H)"
+
+#: ../LocalizedStringsGtk.cpp:181
+msgid "Toggle Media _Loop Playback"
+msgstr "メディアループ再生の切り替え(_L)"
+
+#: ../LocalizedStringsGtk.cpp:186
+msgid "Switch Video to _Fullscreen"
+msgstr "ビデオをフルスクリーン表示に切り替え(_F)"
+
+#: ../LocalizedStringsGtk.cpp:191
+msgid "_Play"
+msgstr "再生(_P)"
+
+#: ../LocalizedStringsGtk.cpp:196
+msgid "_Pause"
+msgstr "一時停止(_P)"
+
+#: ../LocalizedStringsGtk.cpp:201
+msgid "_Mute"
+msgstr "ミュート(_M)"
+
+#: ../LocalizedStringsGtk.cpp:206
+msgid "Open _Frame in New Window"
+msgstr "フレームを新しいウィンドウで開く(_F)"
+
+#: ../LocalizedStringsGtk.cpp:229
+msgid "_Insert Unicode Control Character"
+msgstr "Unicode 制御文字の挿入(_I)"
+
+#: ../LocalizedStringsGtk.cpp:234
+msgid "Input _Methods"
+msgstr "入力メソッド(_M)"
+
+#: ../LocalizedStringsGtk.cpp:257
+msgid "_Reload"
+msgstr "再読み込み(_R)"
+
+#: ../LocalizedStringsGtk.cpp:274
+msgid "No Guesses Found"
+msgstr "推測は見つかりませんでした"
+
+#: ../LocalizedStringsGtk.cpp:279
+msgid "_Ignore Spelling"
+msgstr "スペルを無視する(_I)"
+
+#: ../LocalizedStringsGtk.cpp:284
+msgid "_Learn Spelling"
+msgstr "スペルを学習する(_L)"
+
+#: ../LocalizedStringsGtk.cpp:289
+msgid "_Search the Web"
+msgstr "Web の検索(_S)"
+
+#: ../LocalizedStringsGtk.cpp:294
+msgid "_Look Up in Dictionary"
+msgstr "辞書で検索(_L)"
+
+#: ../LocalizedStringsGtk.cpp:299
+msgid "_Open Link"
+msgstr "リンクを開く(_O)"
+
+#: ../LocalizedStringsGtk.cpp:304
+msgid "Ignore _Grammar"
+msgstr "文法を無視(_G)"
+
+#: ../LocalizedStringsGtk.cpp:309
+msgid "Spelling and _Grammar"
+msgstr "スペルと文法(_G)"
+
+#: ../LocalizedStringsGtk.cpp:314
+msgid "_Show Spelling and Grammar"
+msgstr "スペルと文法を表示する(_S)"
+
+#: ../LocalizedStringsGtk.cpp:314
+msgid "_Hide Spelling and Grammar"
+msgstr "スペルと文法を表示しない(_H)"
+
+#: ../LocalizedStringsGtk.cpp:319
+msgid "_Check Document Now"
+msgstr "今すぐドキュメントをチェック(_C)"
+
+#: ../LocalizedStringsGtk.cpp:324
+msgid "Check Spelling While _Typing"
+msgstr "入力中にスペルをチェックする(_T)"
+
+#: ../LocalizedStringsGtk.cpp:329
+msgid "Check _Grammar With Spelling"
+msgstr "文法とスペルをチェックする(_G)"
+
+#: ../LocalizedStringsGtk.cpp:334
+msgid "_Font"
+msgstr "フォント(_F)"
+
+#: ../LocalizedStringsGtk.cpp:357
+msgid "_Outline"
+msgstr "アウトライン(_O)"
+
+#: ../LocalizedStringsGtk.cpp:362
+msgid "Inspect _Element"
+msgstr "要素の点検(_E)"
+
+#: ../LocalizedStringsGtk.cpp:367
+msgid "LRM _Left-to-right mark"
+msgstr "LRM (Left-to-right mark)(_L)"
+
+#: ../LocalizedStringsGtk.cpp:372
+msgid "RLM _Right-to-left mark"
+msgstr "RLM (Right-to-left mark)(_R)"
+
+#: ../LocalizedStringsGtk.cpp:377
+msgid "LRE Left-to-right _embedding"
+msgstr "LRE (Left-to-right embedding)(_E)"
+
+#: ../LocalizedStringsGtk.cpp:382
+msgid "RLE Right-to-left e_mbedding"
+msgstr "RLE (Right-to-left embedding)(_M)"
+
+#: ../LocalizedStringsGtk.cpp:387
+msgid "LRO Left-to-right _override"
+msgstr "LRO (Left-to-right override)(_O)"
+
+#: ../LocalizedStringsGtk.cpp:392
+msgid "RLO Right-to-left o_verride"
+msgstr "RLO (Right-to-left override)(_V)"
+
+#: ../LocalizedStringsGtk.cpp:397
+msgid "PDF _Pop directional formatting"
+msgstr "PDF (Pop directional formatting)(_P)"
+
+#: ../LocalizedStringsGtk.cpp:402
+msgid "ZWS _Zero width space"
+msgstr "ZWS (Zero width space)(_Z)"
+
+#: ../LocalizedStringsGtk.cpp:407
+msgid "ZWJ Zero width _joiner"
+msgstr "ZWJ (Zero width joiner)(_J)"
+
+#: ../LocalizedStringsGtk.cpp:412
+msgid "ZWNJ Zero width _non-joiner"
+msgstr "ZWNJ (Zero width non-joiner)(_N)"
+
+#: ../LocalizedStringsGtk.cpp:417
+msgid "No recent searches"
+msgstr "最近の検索はありません"
+
+#: ../LocalizedStringsGtk.cpp:422
+msgid "Recent searches"
+msgstr "最近の検索"
+
+#: ../LocalizedStringsGtk.cpp:427
+msgid "_Clear recent searches"
+msgstr "検索履歴の消去(_C)"
+
+#: ../LocalizedStringsGtk.cpp:432
+msgid "definition"
+msgstr "定義"
+
+#: ../LocalizedStringsGtk.cpp:437
+msgid "description list"
+msgstr "詳細リスト"
+
+#: ../LocalizedStringsGtk.cpp:442
+msgid "term"
+msgstr "用語"
+
+#: ../LocalizedStringsGtk.cpp:447
+msgid "description"
+msgstr "詳細"
+
+#: ../LocalizedStringsGtk.cpp:452
+msgid "footer"
+msgstr "フッター"
+
+#: ../LocalizedStringsGtk.cpp:457
+msgid "cancel"
+msgstr "取り消し"
+
+#: ../LocalizedStringsGtk.cpp:462
+msgid "press"
+msgstr "押す"
+
+#: ../LocalizedStringsGtk.cpp:467
+msgid "select"
+msgstr "選択"
+
+#: ../LocalizedStringsGtk.cpp:472
+msgid "activate"
+msgstr "アクティベート"
+
+#: ../LocalizedStringsGtk.cpp:477
+msgid "uncheck"
+msgstr "チェックを外す"
+
+#: ../LocalizedStringsGtk.cpp:482
+msgid "check"
+msgstr "チェックする"
+
+#: ../LocalizedStringsGtk.cpp:487
+msgid "jump"
+msgstr "ジャンプ"
+
+#: ../LocalizedStringsGtk.cpp:507
+msgid "Missing Plug-in"
+msgstr "足りないプラグイン"
+
+#: ../LocalizedStringsGtk.cpp:513
+msgid "Plug-in Failure"
+msgstr "プラグイン障害"
+
+#. FIXME: If this file gets localized, this should really be localized as one string with a wildcard for the number.
+#: ../LocalizedStringsGtk.cpp:537
+msgid " files"
+msgstr " ファイル"
+
+#: ../LocalizedStringsGtk.cpp:542
+msgid "Unknown"
+msgstr "不明"
+
+#: ../LocalizedStringsGtk.cpp:547
+#, c-format
+msgctxt "Title string for images"
+msgid "%s  (%dx%d pixels)"
+msgstr "%s  (%dx%d ピクセル)"
+
+#: ../LocalizedStringsGtk.cpp:559
+msgid "Loading..."
+msgstr "読み込み中..."
+
+#: ../LocalizedStringsGtk.cpp:564
+msgid "Live Broadcast"
+msgstr "ライブブロードキャスト"
+
+#: ../LocalizedStringsGtk.cpp:570
+msgid "audio playback"
+msgstr "オーディオ再生"
+
+#: ../LocalizedStringsGtk.cpp:572
+msgid "video playback"
+msgstr "ビデオ再生"
+
+#: ../LocalizedStringsGtk.cpp:574
+msgid "mute"
+msgstr "ミュート"
+
+#: ../LocalizedStringsGtk.cpp:576
+msgid "unmute"
+msgstr "ミュートを外す"
+
+#: ../LocalizedStringsGtk.cpp:578
+msgid "play"
+msgstr "再生"
+
+#: ../LocalizedStringsGtk.cpp:580
+msgid "pause"
+msgstr "一時停止"
+
+#: ../LocalizedStringsGtk.cpp:582
+msgid "movie time"
+msgstr "動画時間"
+
+#: ../LocalizedStringsGtk.cpp:584
+msgid "timeline slider thumb"
+msgstr "タイムラインスライダーサム"
+
+#: ../LocalizedStringsGtk.cpp:586
+msgid "back 30 seconds"
+msgstr "30 秒戻る"
+
+#: ../LocalizedStringsGtk.cpp:588
+msgid "return to realtime"
+msgstr "リアルタイムに戻る"
+
+#: ../LocalizedStringsGtk.cpp:590
+msgid "elapsed time"
+msgstr "経過時間"
+
+#: ../LocalizedStringsGtk.cpp:592
+msgid "remaining time"
+msgstr "残り時間"
+
+#: ../LocalizedStringsGtk.cpp:594
+msgid "status"
+msgstr "状態"
+
+#: ../LocalizedStringsGtk.cpp:596
+msgid "enter fullscreen"
+msgstr "フルスクリーンにする"
+
+#: ../LocalizedStringsGtk.cpp:598
+msgid "exit fullscreen"
+msgstr "フルスクリーンを終了する"
+
+#: ../LocalizedStringsGtk.cpp:600
+msgid "fast forward"
+msgstr "早送り"
+
+#: ../LocalizedStringsGtk.cpp:602
+msgid "fast reverse"
+msgstr "巻き戻し"
+
+#: ../LocalizedStringsGtk.cpp:604
+msgid "show closed captions"
+msgstr "字幕を表示する"
+
+#: ../LocalizedStringsGtk.cpp:606
+msgid "hide closed captions"
+msgstr "字幕を隠す"
+
+#: ../LocalizedStringsGtk.cpp:608
+msgid "media controls"
+msgstr "再生コントローラー"
+
+#: ../LocalizedStringsGtk.cpp:617
+msgid "audio element playback controls and status display"
+msgstr "オーディオ要素の再生コントロールと状態の表示"
+
+#: ../LocalizedStringsGtk.cpp:619
+msgid "video element playback controls and status display"
+msgstr "ビデオ要素の再生コントロールと状態の表示"
+
+#: ../LocalizedStringsGtk.cpp:621
+msgid "mute audio tracks"
+msgstr "オーディオトラックのミュート"
+
+#: ../LocalizedStringsGtk.cpp:623
+msgid "unmute audio tracks"
+msgstr "オーディオトラックのミュートを解除"
+
+#: ../LocalizedStringsGtk.cpp:625
+msgid "begin playback"
+msgstr "再生開始"
+
+#: ../LocalizedStringsGtk.cpp:627
+msgid "pause playback"
+msgstr "一時停止"
+
+#: ../LocalizedStringsGtk.cpp:629
+msgid "movie time scrubber"
+msgstr "動画タイムスクラバー"
+
+#: ../LocalizedStringsGtk.cpp:631
+msgid "movie time scrubber thumb"
+msgstr "動画タイムスクラバーサム"
+
+#: ../LocalizedStringsGtk.cpp:633
+msgid "seek movie back 30 seconds"
+msgstr "30 秒戻って動画をシークする"
+
+#: ../LocalizedStringsGtk.cpp:635
+msgid "return streaming movie to real time"
+msgstr "ストリーミング動画をリアルタイムに戻す"
+
+#: ../LocalizedStringsGtk.cpp:637
+msgid "current movie time in seconds"
+msgstr "現在の動画時間 (秒単位)"
+
+#: ../LocalizedStringsGtk.cpp:639
+msgid "number of seconds of movie remaining"
+msgstr "動画の残り秒数"
+
+#: ../LocalizedStringsGtk.cpp:641
+msgid "current movie status"
+msgstr "現在の動画の状態"
+
+#: ../LocalizedStringsGtk.cpp:643
+msgid "seek quickly back"
+msgstr "シーク巻き戻し"
+
+#: ../LocalizedStringsGtk.cpp:645
+msgid "seek quickly forward"
+msgstr "シーク早送り"
+
+#: ../LocalizedStringsGtk.cpp:647
+msgid "Play movie in fullscreen mode"
+msgstr "フルスクリーンモードで動画を再生する"
+
+#: ../LocalizedStringsGtk.cpp:649
+msgid "Exit fullscreen mode"
+msgstr "フルスクリーンモードの終了"
+
+#: ../LocalizedStringsGtk.cpp:651
+msgid "start displaying closed captions"
+msgstr "字幕の表示を開始"
+
+#: ../LocalizedStringsGtk.cpp:653
+msgid "stop displaying closed captions"
+msgstr "字幕の表示を停止"
+
+#: ../LocalizedStringsGtk.cpp:662
+msgid "indefinite time"
+msgstr "無期限"
+
+#: ../LocalizedStringsGtk.cpp:692
+msgid "value missing"
+msgstr "値がありません"
+
+#: ../LocalizedStringsGtk.cpp:728
+msgid "type mismatch"
+msgstr "タイプの不一致"
+
+#: ../LocalizedStringsGtk.cpp:751
+msgid "pattern mismatch"
+msgstr "パターンの不一致"
+
+#: ../LocalizedStringsGtk.cpp:756
+msgid "too long"
+msgstr "長すぎます"
+
+#: ../LocalizedStringsGtk.cpp:761
+msgid "range underflow"
+msgstr "範囲アンダーフロー"
+
+#: ../LocalizedStringsGtk.cpp:766
+msgid "range overflow"
+msgstr "範囲オーバーフロー"
+
+#: ../LocalizedStringsGtk.cpp:771
+msgid "step mismatch"
+msgstr "ステップの不一致"
+
+#: ../LocalizedStringsGtk.cpp:776
+msgid "Unacceptable TLS certificate"
+msgstr "受諾できない TLS 証明書"
+
+#: ../LocalizedStringsGtk.cpp:793
+msgctxt "Closed Captions"
+msgid "Menu section heading for closed captions"
+msgstr "字幕用メニューセクション見出し"
+
+#: ../LocalizedStringsGtk.cpp:798
+msgctxt "Menu section heading for subtitles"
+msgid "Subtitles"
+msgstr "字幕"
+
+#: ../LocalizedStringsGtk.cpp:803
+msgctxt "Menu item label for the track that represents disabling closed captions"
+msgid "Off"
+msgstr "オフ"
+
+#: ../LocalizedStringsGtk.cpp:808
+msgctxt "Menu item label for the automatically chosen track"
+msgid "Auto"
+msgstr "自動"
+
+#: ../LocalizedStringsGtk.cpp:813
+msgctxt "Menu item label for a closed captions track that has no other name"
+msgid "No label"
+msgstr "ラベルなし"
+
+#: ../LocalizedStringsGtk.cpp:819
+msgctxt "Snapshotted Plug-In"
+msgid "Title of the label to show on a snapshotted plug-in"
+msgstr "スナップショット撮影したプラグインで表示させるラベルのタイトル"
+
+#: ../LocalizedStringsGtk.cpp:824
+msgctxt "Click to restart"
+msgid "Subtitle of the label to show on a snapshotted plug-in"
+msgstr "スナップショット撮影したプラグインで表示させるラベルの字幕"
+
+#: ../WebKitAuthenticationWidget.cpp:155
+#, c-format
+msgid "The site %s:%i requests a username and password"
+msgstr "サイト %s:%i によりユーザー名とパスワードの入力が求められています"
+
+#: ../WebKitAuthenticationWidget.cpp:159
+msgid "_Remember password"
+msgstr "パスワードを記憶する(_R)"
+
+#: ../WebKitAuthenticationWidget.cpp:167
+msgid "Server message:"
+msgstr "サーバーメッセージ:"
+
+#: ../WebKitAuthenticationWidget.cpp:168 ../WebKitAuthenticationWidget.cpp:177
+msgid "Username:"
+msgstr "ユーザー名:"
+
+#: ../WebKitAuthenticationWidget.cpp:169 ../WebKitAuthenticationWidget.cpp:178
+msgid "Password:"
+msgstr "パスワード:"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:279
+msgid "Network Request"
+msgstr "ネットワーク要求"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:280
+msgid "The network request for the URI that should be downloaded"
+msgstr "ダウンロードすべき URI のネットワーク要求です"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:294
+msgid "Network Response"
+msgstr "ネットワーク応答"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:295
+msgid "The network response for the URI that should be downloaded"
+msgstr "ダウンロードすべき URI のネットワーク応答です"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:309
+msgid "Destination URI"
+msgstr "保存先 URI"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:310
+msgid "The destination URI where to save the file"
+msgstr "ファイルの保存先となる URI です"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:324
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:150
+msgid "Suggested Filename"
+msgstr "提案ファイル名"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:325
+msgid "The filename suggested as default when saving"
+msgstr "保存時のデフォルトとして提案されるファイル名です"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:342
+msgid "Progress"
+msgstr "進捗状況"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:343
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:176
+msgid "Determines the current progress of the download"
+msgstr "現在のダウンロード進捗状況を判定します"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:356
+msgid "Status"
+msgstr "状態"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:357
+msgid "Determines the current status of the download"
+msgstr "現在のダウンロード状態を判定します"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:372
+msgid "Current Size"
+msgstr "現在のサイズ"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:373
+msgid "The length of the data already downloaded"
+msgstr "すでにダウンロードが完了したデータのサイズ"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:387
+msgid "Total Size"
+msgstr "合計サイズ"
+
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:388
+msgid "The total size of the file"
+msgstr "ファイルの合計サイズ"
+
+#: ../../../../WebKit/gtk/webkit/webkitfavicondatabase.cpp:144
+#: ../../../../WebKit/gtk/webkit/webkitfavicondatabase.cpp:579
+msgid "Operation was cancelled"
+msgstr "操作は取り消されました"
+
+#: ../../../../WebKit/gtk/webkit/webkitfavicondatabase.cpp:253
+#: ../../../../WebKit/gtk/webkit/webkiticondatabase.cpp:148
+msgid "Path"
+msgstr "パス"
+
+#: ../../../../WebKit/gtk/webkit/webkitfavicondatabase.cpp:254
+#: ../../../../WebKit/gtk/webkit/webkiticondatabase.cpp:149
+msgid "The absolute path of the icon database folder"
+msgstr "アイコンデータベースフォルダーの絶対パス"
+
+#: ../../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:129
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:128
+msgid "MIME types filter"
+msgstr "MIME タイプフィルター"
+
+#: ../../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:130
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:129
+msgid "The filter currently associated with the request"
+msgstr "現在、この要求に関連しているフィルター"
+
+#: ../../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:145
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:142
+msgid "MIME types"
+msgstr "MIME タイプ"
+
+#: ../../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:146
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:143
+msgid "The list of MIME types associated with the request"
+msgstr "この要求に関連している MIME タイプの一覧"
+
+#: ../../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:161
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:157
+msgid "Select multiple files"
+msgstr "複数のファイルを選択"
+
+#: ../../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:162
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:158
+msgid "Whether the file chooser should allow selecting multiple files"
+msgstr "ファイル選択機能に複数ファイルの選択を許可するかどうかです"
+
+#: ../../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:177
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:171
+msgid "Selected files"
+msgstr "選択ファイル"
+
+#: ../../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:178
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:172
+msgid "The list of selected files associated with the request"
+msgstr "この要求に関連している選択ファイルの一覧"
+
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:174
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:152
+msgid "Context"
+msgstr "コンテキスト"
+
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:175
+msgid "Flags indicating the kind of target that received the event."
+msgstr "イベントを受信したターゲットの種類を示すフラグです。"
+
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:189
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:166
+msgid "Link URI"
+msgstr "リンク URI"
+
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:190
+msgid "The URI to which the target that received the event points, if any."
+msgstr "イベントを受信したターゲットのポイント先となる URI です (ある場合のみ)。"
+
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:203
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:205
+msgid "Image URI"
+msgstr "画像の URI"
+
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:204
+msgid "The URI of the image that is part of the target that received the event, if any."
+msgstr "イベントを受信したターゲットの一部となる画像の URI です (ある場合のみ)。"
+
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:217
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:218
+msgid "Media URI"
+msgstr "メディア URI"
+
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:218
+msgid "The URI of the media that is part of the target that received the event, if any."
+msgstr "イベントを受信したターゲットの一部となるメディアの URI です (ある場合のみ)。"
+
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:239
+msgid "Inner node"
+msgstr "内部ノード"
+
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:240
+msgid "The inner DOM node associated with the hit test result."
+msgstr "ヒットテストの結果に関連する内部 DOM ノードです。"
+
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:253
+msgid "X coordinate"
+msgstr "X 座標"
+
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:254
+msgid "The x coordinate of the event relative to the view's window."
+msgstr "ビューウィンドウに対するイベントの X 座標です。"
+
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:267
+msgid "Y coordinate"
+msgstr "Y 座標"
+
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:268
+msgid "The y coordinate of the event relative to the view's window."
+msgstr "ビューウィンドウに対するイベントの Y 座標です。"
+
+#: ../../../../WebKit/gtk/webkit/webkitnetworkrequest.cpp:134
+#: ../../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:143
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:468
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:176
+#: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:209
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3253
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:95
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:99
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:109
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:707
+msgid "URI"
+msgstr "URI"
+
+#: ../../../../WebKit/gtk/webkit/webkitnetworkrequest.cpp:135
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:96
+msgid "The URI to which the request will be made."
+msgstr "要求先の URI です。"
+
+#: ../../../../WebKit/gtk/webkit/webkitnetworkrequest.cpp:148
+#: ../../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:157
+msgid "Message"
+msgstr "メッセージ"
+
+#: ../../../../WebKit/gtk/webkit/webkitnetworkrequest.cpp:149
+msgid "The SoupMessage that backs the request."
+msgstr ""
+
+#: ../../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:144
+msgid "The URI to which the response will be made."
+msgstr "応答先の URI です。"
+
+#: ../../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:158
+msgid "The SoupMessage that backs the response."
+msgstr ""
+
+#: ../../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:171
+msgid "Suggested filename"
+msgstr "提案ファイル名"
+
+#: ../../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:172
+msgid "The suggested filename for the response."
+msgstr "応答に提案されるファイル名です。"
+
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:150
+msgid "Protocol"
+msgstr "プロトコル"
+
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:151
+msgid "The protocol of the security origin"
+msgstr "セキュリティオリジンのプロトコルです"
+
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:164
+msgid "Host"
+msgstr "ホスト"
+
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:165
+msgid "The host of the security origin"
+msgstr "セキュリティオリジンのホストです"
+
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:178
+msgid "Port"
+msgstr "ポート"
+
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:179
+msgid "The port of the security origin"
+msgstr "セキュリティオリジンのポートです"
+
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:192
+msgid "Web Database Usage"
+msgstr "Web Database 使用量"
+
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:193
+msgid "The cumulative size of all web databases in the security origin"
+msgstr "セキュリティオリジン内の全 Web データベースの合算サイズです"
+
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:205
+msgid "Web Database Quota"
+msgstr "Web Database クォータ"
+
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:206
+msgid "The web database quota of the security origin in bytes"
+msgstr "セキュリティオリジンの Web データベースクォータです (バイト単位)"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:139
+msgid "Device Width"
+msgstr "デバイスの幅"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:140
+msgid "The width of the screen."
+msgstr "画面の幅です。"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:161
+msgid "Device Height"
+msgstr "デバイスの高さ"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:162
+msgid "The height of the screen."
+msgstr "画面の高さです。"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:185
+msgid "Available Width"
+msgstr "設定可能な幅"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:186
+msgid "The width of the visible area."
+msgstr "可視領域の幅です。"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:209
+msgid "Available Height"
+msgstr "設定可能な高さ"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:210
+msgid "The height of the visible area."
+msgstr "可視領域の高さです。"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:231
+msgid "Desktop Width"
+msgstr "デスクトップ幅"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:232
+msgid "The width of viewport that works well for most web pages designed for desktop."
+msgstr "デスクトップ向けに設計されている Web ページのほとんどで適切に表示される表示域の幅です。"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:254
+msgid "Device DPI"
+msgstr "デバイス DPI"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:255
+msgid "The number of dots per inch of the screen."
+msgstr "画面 1 インチあたりのドット数です。"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:273
+msgid "Width"
+msgstr "幅"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:274
+msgid "The width of the viewport."
+msgstr "表示域の幅です。"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:292
+msgid "Height"
+msgstr "高さ"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:293
+msgid "The height of the viewport."
+msgstr "表示域の高さです。"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:311
+msgid "Initial Scale Factor"
+msgstr "初期倍率"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:312
+msgid "The initial scale of the viewport."
+msgstr "表示域の初期スケールです。"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:330
+msgid "Minimum Scale Factor"
+msgstr "最小倍率"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:331
+msgid "The minimum scale of the viewport."
+msgstr "表示域の最小スケールです。"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:349
+msgid "Maximum Scale Factor"
+msgstr "最大倍率"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:350
+msgid "The maximum scale of the viewport."
+msgstr "表示域の最大スケールです。"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:368
+msgid "Device Pixel Ratio"
+msgstr "デバイスピクセル率"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:369
+msgid "The device pixel ratio of the viewport."
+msgstr "表示域のデバイスピクセル率です。"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:388
+msgid "User Scalable"
+msgstr "ユーザーによる拡大縮小"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:389
+msgid "Determines whether or not the user can zoom in and out."
+msgstr "ユーザーによるズームインおよびズームアウトが可能かどうかを指定します。"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:407
+msgid "Valid"
+msgstr "有効性"
+
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:408
+msgid "Determines whether or not the attributes are valid, and can be used."
+msgstr "属性が有効かどうか、また使用できるかどうかを指定します。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:176
+msgid "Security Origin"
+msgstr "セキュリティオリジン"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:177
+msgid "The security origin of the database"
+msgstr "データベースのセキュリティオリジンです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:190
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:454
+msgid "Name"
+msgstr "名前"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:191
+msgid "The name of the Web Database database"
+msgstr "Web Database データベースの名前 "
+
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:204
+msgid "Display Name"
+msgstr "表示名"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:205
+msgid "The display name of the Web Storage database"
+msgstr "Web Storage データベースの表示名"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:218
+msgid "Expected Size"
+msgstr "期待サイズ"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:219
+msgid "The expected size of the Web Database database"
+msgstr "Web Database データベースの期待サイズ"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:231
+msgid "Size"
+msgstr "サイズ"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:232
+msgid "The current size of the Web Database database"
+msgstr "Web Database データベースの現在のサイズ"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:244
+msgid "Filename"
+msgstr "ファイル名"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:245
+msgid "The absolute filename of the Web Storage database"
+msgstr "Web Storage データベースの絶対ファイル名"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:455
+msgid "The name of the frame"
+msgstr "フレーム名"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:461
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:144
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3239
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:663
+msgid "Title"
+msgstr "タイトル"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:462
+msgid "The document title of the frame"
+msgstr "フレームのドキュメントタイトル"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:469
+msgid "The current URI of the contents displayed by the frame"
+msgstr "フレームで表示されるコンテンツの現在の URI"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:500
+msgid "Horizontal Scrollbar Policy"
+msgstr "水平スクロールバーポリシー"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:501
+msgid "Determines the current policy for the horizontal scrollbar of the frame."
+msgstr "フレームの水平スクロールバーの現在のポリシーを指定します。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:518
+msgid "Vertical Scrollbar Policy"
+msgstr "垂直スクロールバーポリシー"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:519
+msgid "Determines the current policy for the vertical scrollbar of the frame."
+msgstr "フレームの垂直スクロールバーの現在のポリシーを指定します。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:145
+msgid "The title of the history item"
+msgstr "履歴アイテムのタイトル"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:160
+msgid "Alternate Title"
+msgstr "代替タイトル"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:161
+msgid "The alternate title of the history item"
+msgstr "履歴アイテムの代替タイトル"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:177
+msgid "The URI of the history item"
+msgstr "履歴アイテムの URI"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:192
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:163
+msgid "Original URI"
+msgstr "オリジナル URI"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:193
+msgid "The original URI of the history item"
+msgstr "履歴アイテムのオリジナルの URI"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:208
+msgid "Last visited Time"
+msgstr "最後に閲覧した時間"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:209
+msgid "The time at which the history item was last visited"
+msgstr "履歴アイテムが最後に閲覧された時間です"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebinspector.cpp:273
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:154
+msgid "Web View"
+msgstr "Web View"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebinspector.cpp:274
+msgid "The Web View that renders the Web Inspector itself"
+msgstr "Web Inspector 自体を表示させる Web View です"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebinspector.cpp:287
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:122
+msgid "Inspected URI"
+msgstr "インスペクトしている URI"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebinspector.cpp:288
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:123
+msgid "The URI that is currently being inspected"
+msgstr "現在インスペクト中の URI です"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebinspector.cpp:304
+msgid "Enable JavaScript profiling"
+msgstr "JavaScript プロファイリングを有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebinspector.cpp:305
+msgid "Profile the executed JavaScript."
+msgstr "実行された JavaScript のプロファイリングを行ないます。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebinspector.cpp:320
+msgid "Enable Timeline profiling"
+msgstr "Timeline プロファイリングを有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebinspector.cpp:321
+msgid "Profile the WebCore instrumentation."
+msgstr "WebCore 計装のプロファイル"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:148
+msgid "Reason"
+msgstr "原因"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:149
+msgid "The reason why this navigation is occurring"
+msgstr "このナビゲーションが発生する原因です"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:164
+msgid "The URI that was requested as the target for the navigation"
+msgstr "ナビゲーションのターゲットとして要求された URI です"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:178
+msgid "Button"
+msgstr "ボタン"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:179
+msgid "The button used to click"
+msgstr "クリックに使用するボタン"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:194
+msgid "Modifier state"
+msgstr "修飾子の状態"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:195
+msgid "A bitmask representing the state of the modifier keys"
+msgstr "修飾子の状態を示すビットマスク"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:210
+msgid "Target frame"
+msgstr "ターゲットフレーム"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:211
+msgid "The target frame for the navigation"
+msgstr "ナビゲーション用ターゲットフレーム"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebplugin.cpp:113
+msgid "Enabled"
+msgstr "有効"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebplugin.cpp:114
+msgid "Whether the plugin is enabled"
+msgstr "プラグインを有効にするかどうかです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:210
+msgid "The URI of the resource"
+msgstr "リソースの URI"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:224
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:137
+msgid "MIME Type"
+msgstr "MIME タイプ"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:225
+msgid "The MIME type of the resource"
+msgstr "リソースの MIME タイプ"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:239
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3388
+msgid "Encoding"
+msgstr "エンコーディング"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:240
+msgid "The text encoding name of the resource"
+msgstr "リソースのテキストエンコーディング名"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:255
+msgid "Frame Name"
+msgstr "フレーム名"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:256
+msgid "The frame name of the resource"
+msgstr "リソースのフレーム名"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:150
+msgid "Default Encoding"
+msgstr "デフォルトエンコーディング"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:151
+msgid "The default encoding used to display text."
+msgstr "テキストの表示に使用するデフォルトのエンコーディングです。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:159
+msgid "Cursive Font Family"
+msgstr "Cursive フォントファミリー"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:160
+msgid "The default Cursive font family used to display text."
+msgstr "テキストの表示に使用するデフォルトの Cursive フォントファミリーです。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:168
+msgid "Default Font Family"
+msgstr "デフォルトのフォントファミリー"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:169
+msgid "The default font family used to display text."
+msgstr "テキストの表示に使用するデフォルトのフォントファミリーです。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:177
+msgid "Fantasy Font Family"
+msgstr "Fantasy フォントファミリー"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:178
+msgid "The default Fantasy font family used to display text."
+msgstr "テキストの表示に使用するデフォルトの Fantasy フォントファミリーです。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:186
+msgid "Monospace Font Family"
+msgstr "Monospace フォントファミリー"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:187
+msgid "The default font family used to display monospace text."
+msgstr "monospace テキストの表示に使用するデフォルトのフォントファミリーです。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:195
+msgid "Sans Serif Font Family"
+msgstr "Sans Serif フォントファミリー"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:196
+msgid "The default Sans Serif font family used to display text."
+msgstr "テキストの表示に使用するデフォルトの Sans Serif フォントファミリーです。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:204
+msgid "Serif Font Family"
+msgstr "Serif フォントファミリー"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:205
+msgid "The default Serif font family used to display text."
+msgstr "テキストの表示に使用するデフォルトの Serif フォントファミリーです。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:213
+msgid "Default Font Size"
+msgstr "デフォルトのフォントサイズ"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:214
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:759
+msgid "The default font size used to display text."
+msgstr "テキストの表示に使用するデフォルトのフォントサイズです。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:222
+msgid "Default Monospace Font Size"
+msgstr "デフォルトの Monospace フォントサイズ"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:223
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:773
+msgid "The default font size used to display monospace text."
+msgstr "monospace テキストの表示に使用するデフォルトのフォントサイズです。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:231
+msgid "Minimum Font Size"
+msgstr "最小フォントサイズ"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:232
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:788
+msgid "The minimum font size used to display text."
+msgstr "テキストの表示に使用するフォントの最小サイズです。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:240
+msgid "Minimum Logical Font Size"
+msgstr "最小論理フォントサイズ"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:241
+msgid "The minimum logical font size used to display text."
+msgstr "テキストの表示に使用する論理フォントの最小サイズです。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:260
+msgid "Enforce 96 DPI"
+msgstr "96 DPI を強制する"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:261
+msgid "Enforce a resolution of 96 DPI"
+msgstr "解像度 96 DPI を強制します"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:269
+msgid "Auto Load Images"
+msgstr "画像の自動読み込み"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:270
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:500
+msgid "Load images automatically."
+msgstr "画像を自動的に読み込みます。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:278
+msgid "Auto Shrink Images"
+msgstr "画像の自動縮小"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:279
+msgid "Automatically shrink standalone images to fit."
+msgstr "スタンドアローンの画像を自動的に適切なサイズに縮小します。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:287
+msgid "Respect Image Orientation"
+msgstr "画像の向きに合わせる"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:288
+msgid "Whether WebKit should respect image orientation."
+msgstr "WebKit に画像の向きを合わさせるかどうかです。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:296
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:912
+msgid "Print Backgrounds"
+msgstr "背景の出力"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:297
+msgid "Whether background images should be printed."
+msgstr "背景の画像を出力させるかどうかです。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:305
+msgid "Enable Scripts"
+msgstr "スクリプトを有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:306
+msgid "Enable embedded scripting languages."
+msgstr "組み込みのスクリプト言語を有効にします。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:314
+msgid "Enable Plugins"
+msgstr "プラグインを有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:315
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:610
+msgid "Enable embedded plugin objects."
+msgstr "埋め込みのプラグインオブジェクトを有効します。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:323
+msgid "Resizable Text Areas"
+msgstr "サイズ変更可能なテキスト領域"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:324
+msgid "Whether text areas are resizable."
+msgstr "テキスト領域のサイズを変更可能にするかどうかです。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:331
+msgid "User Stylesheet URI"
+msgstr "ユーザースタイルシート URI"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:332
+msgid "The URI of a stylesheet that is applied to every page."
+msgstr "各ページに適用されるスタイルシートの URI です。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:347
+msgid "Zoom Stepping Value"
+msgstr "ズームステップ値"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:348
+msgid "The value by which the zoom level is changed when zooming in or out."
+msgstr "ズームインやズームアウト時のズームレベル変更の値です。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:366
+msgid "Enable Developer Extras"
+msgstr "Developer Extras を有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:367
+msgid "Enables special extensions that help developers"
+msgstr "開発者向けの特殊な拡張機能を有効にします"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:387
+msgid "Enable Private Browsing"
+msgstr "プライベートブラウズを有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:388
+msgid "Enables private browsing mode"
+msgstr "プライベートブラウズモードを有効にします"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:403
+msgid "Enable Spell Checking"
+msgstr "スペルチェックを有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:404
+msgid "Enables spell checking while typing"
+msgstr "入力中のスペルチェックを有効にします"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:427
+msgid "Languages to use for spell checking"
+msgstr "スペルチェックに使用する言語"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:428
+msgid "Comma separated list of languages to use for spell checking"
+msgstr "スペルチェックに使用する言語の一覧 (コンマ区切り)"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:442
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:883
+msgid "Enable Caret Browsing"
+msgstr "キャレットブラウズを有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:443
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:884
+msgid "Whether to enable accessibility enhanced keyboard navigation"
+msgstr "アクセシビリティを強化したキーボード操作を有効にするかどうかです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:458
+msgid "Enable HTML5 Database"
+msgstr "HTML5 データベースを有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:459
+msgid "Whether to enable HTML5 database support"
+msgstr "HTML5 データベースサポートを有効にするかどうかです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:474
+msgid "Enable HTML5 Local Storage"
+msgstr "HTML5 ローカルストレージを有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:475
+msgid "Whether to enable HTML5 Local Storage support"
+msgstr "HTML5 ローカルストレージのサポートを有効にするかどうかです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:490
+msgid "Local Storage Database Path"
+msgstr "ローカルストレージデータベースのパス"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:491
+msgid "The path to where HTML5 Local Storage databases are stored."
+msgstr "HTML5 ローカルストレージデータベースの格納先のパスです。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:505
+msgid "Enable XSS Auditor"
+msgstr "XSS Auditor を有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:506
+msgid "Whether to enable the XSS auditor"
+msgstr "XSS Auditor を有効にするかどうかです。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:524
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1187
+msgid "Enable Spatial Navigation"
+msgstr "空間ナビゲーションを有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:525
+msgid "Whether to enable Spatial Navigation"
+msgstr "空間ナビゲーションを有効にするかどうかです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:543
+msgid "Enable Frame Flattening"
+msgstr "フレーム平坦化を有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:544
+msgid "Whether to enable Frame Flattening"
+msgstr "フレーム平坦化を有効にするかどうかです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:561
+msgid "User Agent"
+msgstr "ユーザーエージェント"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:562
+msgid "The User-Agent string used by WebKitGtk"
+msgstr "WebKitGtk で使用されるユーザーエージェント文字列です"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:577
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:636
+msgid "JavaScript can open windows automatically"
+msgstr "JavaScript にウィンドウの自動オープンを許可する"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:578
+msgid "Whether JavaScript can open windows automatically"
+msgstr "JavaScript によるウィンドウの自動オープンを許可するかどうかです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:592
+msgid "JavaScript can access Clipboard"
+msgstr "JavaScript にクリップボードへのアクセスを許可する"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:593
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:996
+msgid "Whether JavaScript can access Clipboard"
+msgstr "JavaScript にクリップボードへのアクセスを許可するかどうかです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:609
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:531
+msgid "Enable offline web application cache"
+msgstr "オフライン Web アプリケーションキャッシュを有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:610
+msgid "Whether to enable offline web application cache"
+msgstr "オフライン Web アプリケーションキャッシュを有効にするかどうかです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:635
+msgid "Editing behavior"
+msgstr "編集動作"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:636
+msgid "The behavior mode to use in editing mode"
+msgstr "編集モードで使用する動作モードです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:652
+msgid "Enable universal access from file URIs"
+msgstr "ファイル URI からの普遍的なアクセスを有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:653
+msgid "Whether to allow universal access from file URIs"
+msgstr "ファイル URI からの普遍的なアクセスを許可するかどうかです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:668
+msgid "Enable DOM paste"
+msgstr "DOM 貼り付けを有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:669
+msgid "Whether to enable DOM paste"
+msgstr "DOM 貼り付けを有効にするかどうかです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:687
+msgid "Tab key cycles through elements"
+msgstr "Tab キーによる要素間の移動"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:688
+msgid "Whether the tab key cycles through elements on the page."
+msgstr "Tab キーによるページ上の要素間の移動を有効にするかどうかです。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:710
+msgid "Enable Default Context Menu"
+msgstr "デフォルトのコンテキストメニューを有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:711
+msgid "Enables the handling of right-clicks for the creation of the default context menu"
+msgstr "右クリックでデフォルトのコンテキストメニューを表示します"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:731
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1060
+msgid "Enable Site Specific Quirks"
+msgstr "サイト固有の Quirks を有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:732
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1061
+msgid "Enables the site-specific compatibility workarounds"
+msgstr "サイト固有の互換性のある回避方法を有効にします"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:754
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1081
+msgid "Enable page cache"
+msgstr "ページキャッシュを有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:755
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1082
+msgid "Whether the page cache should be used"
+msgstr "ページキャッシュを使用させるかどうかです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:775
+msgid "Auto Resize Window"
+msgstr "ウィンドウのサイズを自動調整する"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:776
+msgid "Automatically resize the toplevel window when a page requests it"
+msgstr "ページにより要求された場合にトップレベルのウィンドウサイズを自動的に調整します"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:808
+msgid "Enable Java Applet"
+msgstr "Java アプレットを有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:809
+msgid "Whether Java Applet support through <applet> should be enabled"
+msgstr "<applet> を使った Java アプレットのサポートを有効にするかどうかです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:823
+msgid "Enable Hyperlink Auditing"
+msgstr "ハイパーリンク監査を有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:824
+msgid "Whether <a ping> should be able to send pings"
+msgstr "<a ping> による ping の送信を許可するかどうかです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:832
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:899
+msgid "Enable Fullscreen"
+msgstr "フルスクリーンを有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:833
+msgid "Whether the Mozilla style API should be enabled."
+msgstr "Mozilla スタイルの API を有効にするかどうかです。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:848
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:946
+msgid "Enable WebGL"
+msgstr "WebGL を有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:849
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:947
+msgid "Whether WebGL content should be rendered"
+msgstr "WebGL コンテンツを表示させるかどうかです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:865
+msgid "Enable accelerated compositing"
+msgstr "アクセラレート合成を有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:866
+msgid "Whether accelerated compositing should be enabled"
+msgstr "アクセラレート合成を有効にするかどうかです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:884
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:931
+msgid "Enable WebAudio"
+msgstr "WebAudio を有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:885
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:932
+msgid "Whether WebAudio content should be handled"
+msgstr "WebAudio のコンテンツを処理するかどうかです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:901
+msgid "WebKit prefetches domain names"
+msgstr "WebKit にドメイン名をプレフェッチさせる"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:902
+msgid "Whether WebKit prefetches domain names"
+msgstr "WebKit にドメイン名をプレフェッチさせるかどうかです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:920
+msgid "Enable Media Stream"
+msgstr "メディアストリームを有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:921
+msgid "Whether Media Stream should be enabled"
+msgstr "メディアストリームを有効にするかどうかです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:936
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1114
+msgid "Enable smooth scrolling"
+msgstr "スムーズスクロールを有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:937
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1115
+msgid "Whether to enable smooth scrolling"
+msgstr "スムーズスクロールを有効にするかどうかです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:955
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1012
+msgid "Media playback requires user gesture"
+msgstr "メディアの再生にユーザーのジェスチャを必要とする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:956
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1013
+msgid "Whether media playback requires user gesture"
+msgstr "メディアの再生にユーザーのジェスチャを必要とするかどうかです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:972
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1027
+msgid "Media playback allows inline"
+msgstr "メディア再生でインラインを許可する"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:973
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1028
+msgid "Whether media playback allows inline"
+msgstr "メディア再生でインラインを許可するかどうかです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:991
+msgid "Enable CSS shaders"
+msgstr "CSS シェーダーを有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:992
+msgid "Whether to enable css shaders"
+msgstr "CSS シェーダーを有効にするかどうかです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1007
+msgid "Enable display of insecure content"
+msgstr "安全性が不確かなコンテンツの表示を有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1008
+msgid "Whether non-HTTPS resources can display on HTTPS pages."
+msgstr "HTTPS ページで非 HTTPS のリソースの表示を許可するかどうかです。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1023
+msgid "Enable running of insecure content"
+msgstr "安全性が不確かなコンテンツの実行を有効にする"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1024
+msgid "Whether non-HTTPS resources can run on HTTPS pages."
+msgstr "HTTPS ページで非 HTTPS のリソースの実行を許可するかどうかです。"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:1323
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:472
+msgid "Select Files"
+msgstr "ファイルの選択"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:1323
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:472
+msgid "Select File"
+msgstr "ファイルの選択"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3240
+msgid "Returns the @web_view's document title"
+msgstr "@web_view のドキュメントタイトルを返す"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3254
+msgid "Returns the current URI of the contents displayed by the @web_view"
+msgstr "@web_view で表示されるコンテンツの現在の URI を返します"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3267
+msgid "Copy target list"
+msgstr "ターゲット一覧のコピー"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3268
+msgid "The list of targets this web view supports for clipboard copying"
+msgstr "クリップボードをコピーする際、この Web ビューで対応しているターゲットの一覧です"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3281
+msgid "Paste target list"
+msgstr "ターゲット一覧の貼り付け"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3282
+msgid "The list of targets this web view supports for clipboard pasting"
+msgstr "クリップボードの貼り付けを行なう際、この Web ビューで対応しているターゲットの一覧です"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3288
+msgid "Settings"
+msgstr "設定"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3289
+msgid "An associated WebKitWebSettings instance"
+msgstr "関連する WebKitWebSettings インスタンス"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3302
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:81
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:146
+msgid "Web Inspector"
+msgstr "Web Inspector"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3303
+msgid "The associated WebKitWebInspector instance"
+msgstr "関連する WebKitWebInspector インスタンス"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3316
+msgid "Viewport Attributes"
+msgstr "表示域の属性"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3317
+msgid "The associated WebKitViewportAttributes instance"
+msgstr "関連する WebKitViewportAttributes インスタンス"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3337
+msgid "Editable"
+msgstr "編集可能"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3338
+msgid "Whether content can be modified by the user"
+msgstr "ユーザーによるコンテンツの変更を許可するかどうかです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3344
+msgid "Transparent"
+msgstr "透過的"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3345
+msgid "Whether content has a transparent background"
+msgstr "コンテンツに透過的な背景を持たせるかどうかです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3358
+msgid "Zoom level"
+msgstr "ズームレベル"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3359
+msgid "The level of zoom of the content"
+msgstr "コンテンツのズームレベルです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3374
+msgid "Full content zoom"
+msgstr "フルコンテンツズーム"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3375
+msgid "Whether the full content is scaled when zooming"
+msgstr "ズームを行なう際、全コンテンツを縮小拡大するかどうかです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3389
+msgid "The default encoding of the web view"
+msgstr "web ビューのデフォルトエンコーディング"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3402
+msgid "Custom Encoding"
+msgstr "カスタムエンコーディング"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3403
+msgid "The custom encoding of the web view"
+msgstr "web ビューのカスタムのエンコーディングです"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3455
+msgid "Icon URI"
+msgstr "アイコン URI"
+
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3456
+msgid "The URI for the favicon for the #WebKitWebView."
+msgstr "#WebKitWebView 用ファビコンの URI です。"
+
+#: ../../../../WebKit2/Shared/Downloads/soup/DownloadSoup.cpp:89
+#, c-format
+msgid "Cannot determine destination URI for download with suggested filename %s"
+msgstr "提案ファイル名が %s のダウンロード保存先 URI を確定できません"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:144
+msgid "Destination"
+msgstr "保存先"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:145
+msgid "The local URI to where the download will be saved"
+msgstr "ダウンロードの保存先となるローカルの URI です"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:157
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:122
+msgid "Response"
+msgstr "応答"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:158
+msgid "The response of the download"
+msgstr "ダウンロードの応答"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:175
+msgid "Estimated Progress"
+msgstr "推定進捗状況"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:142
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:322
+#, c-format
+msgid "Unknown favicon for page %s"
+msgstr "ページ %s の不明なファビコンです"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:148
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:278
+#, c-format
+msgid "Page %s does not have a favicon"
+msgstr "ページ %s にはファビコンはありません"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:272
+msgid "Favicons database not initialized yet"
+msgstr "ファビコンデータベースがまだ初期化されていません"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:177
+msgid "Search text"
+msgstr "検索テキスト"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:178
+msgid "Text to search for in the view"
+msgstr "ビューで検索するテキストです"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:190
+msgid "Search Options"
+msgstr "検索オプション"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:191
+msgid "Search options to be used in the search operation"
+msgstr "検索で使用する検索オプションです"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:204
+msgid "Maximum matches count"
+msgstr "最大一致件数"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:205
+msgid "The maximum number of matches in a given text to report"
+msgstr "指定報告テキスト内の最大一致件数です"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:217
+msgid "WebView"
+msgstr "WebView"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:218
+msgid "The WebView associated with this find controller"
+msgstr "この検索コントローラーに関連する WebView です"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:153
+msgid "Flags with the context of the WebKitHitTestResult"
+msgstr "WebKitHitTestResult のコンテキストを持つフラグです"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:167
+msgid "The link URI"
+msgstr "リンク URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:179
+msgid "Link Title"
+msgstr "リンクタイトル"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:180
+msgid "The link title"
+msgstr "リンクタイトル"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:192
+msgid "Link Label"
+msgstr "リンクラベル"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:193
+msgid "The link label"
+msgstr "リンクラベル"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:206
+msgid "The image URI"
+msgstr "画像の URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:219
+msgid "The media URI"
+msgstr "メディア URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:105
+msgid "Navigation type"
+msgstr "ナビゲーションタイプ"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:106
+msgid "The type of navigation triggering this decision"
+msgstr "この決定をもたらすナビゲーションタイプです"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:123
+msgid "Mouse button"
+msgstr "マウスボタン"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:124
+msgid "The mouse button used if this decision was triggered by a mouse event"
+msgstr "マウスイベントでこの決定がもたらされた場合に使用するマウスボタンです"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:140
+msgid "Mouse event modifiers"
+msgstr "マウスイベントの修飾子"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:141
+msgid "The modifiers active if this decision was triggered by a mouse event"
+msgstr "この決定がマウスイベントにより発生した場合にアクティブになる修飾子"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:154
+msgid "Navigation URI request"
+msgstr "ナビゲーション URI 要求"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:155
+msgid "The URI request that is associated with this navigation"
+msgstr "このナビゲーションに関連する URI 要求です"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:170
+msgid "Frame name"
+msgstr "フレーム名"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:171
+msgid "The name of the new frame this navigation action targets"
+msgstr "このナビゲーション動作の対象となる新しいフレームの名前です"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:155
+msgid "The web view that will be printed"
+msgstr "印刷される Web ビューです"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:167
+msgid "Print Settings"
+msgstr "印刷設定"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:168
+msgid "The initial print settings for the print operation"
+msgstr "印刷動作用の初期印刷設定です"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:179
+msgid "Page Setup"
+msgstr "ページ設定"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:180
+msgid "The initial page setup for the print operation"
+msgstr "印刷動作用の初期ページ設定です"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:91
+msgid "Response URI request"
+msgstr "応答の URI 要求"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:92
+msgid "The URI request that is associated with this policy decision"
+msgstr "このポリシー決定に関連する URI 要求です"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:105
+msgid "URI response"
+msgstr "URI 応答"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:106
+msgid "The URI response that is associated with this policy decision"
+msgstr "このポリシー決定に関連する URI 応答です"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:484
+msgid "Enable JavaScript"
+msgstr "JavaScript を有効にする"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:485
+msgid "Enable JavaScript."
+msgstr "JavaScript を有効にします。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:499
+msgid "Auto load images"
+msgstr "画像の自動読み込み"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:513
+msgid "Load icons ignoring image load setting"
+msgstr "画像の読み込み設定を無視してアイコンを読み込む"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:514
+msgid "Whether to load site icons ignoring image load setting."
+msgstr "画像の読み込み設定を無視してサイトアイコンを読み込むかどうかです。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:532
+msgid "Whether to enable offline web application cache."
+msgstr "オフライン Web アプリケーションキャッシュを有効にするかどうかです。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:548
+msgid "Enable HTML5 local storage"
+msgstr "HTML5 ローカルストレージを有効にする"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:549
+msgid "Whether to enable HTML5 Local Storage support."
+msgstr "HTML5 ローカルストレージのサポートを有効にするかどうかです。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:566
+msgid "Enable HTML5 database"
+msgstr "HTML5 データベースを有効にする"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:567
+msgid "Whether to enable HTML5 database support."
+msgstr "HTML5 データベースのサポートを有効にするかどうかです。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:580
+msgid "Enable XSS auditor"
+msgstr "XSS Auditor を有効にする"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:581
+msgid "Whether to enable the XSS auditor."
+msgstr "XSS Auditor を有効にするかどうかです。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:596
+msgid "Enable frame flattening"
+msgstr "フレーム平坦化を有効にする"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:597
+msgid "Whether to enable frame flattening."
+msgstr "フレーム平坦化を有効にするかどうかです。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:609
+msgid "Enable plugins"
+msgstr "プラグインを有効にする"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:622
+msgid "Enable Java"
+msgstr "Java を有効にする"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:623
+msgid "Whether Java support should be enabled."
+msgstr "Java サポートを有効にするかどうかです。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:637
+msgid "Whether JavaScript can open windows automatically."
+msgstr "JavaScript によるウィンドウの自動オープンを許可するかどうかです"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:652
+msgid "Enable hyperlink auditing"
+msgstr "ハイパーリンクの監査を有効にする"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:653
+msgid "Whether <a ping> should be able to send pings."
+msgstr "<a ping> による ping の送信を許可するかどうかです。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:665
+msgid "Default font family"
+msgstr "デフォルトのフォントファミリー"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:666
+msgid "The font family to use as the default for content that does not specify a font."
+msgstr "フォントの指定をしていないコンテンツのデフォルトとして使用するフォントファミリーです。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:679
+msgid "Monospace font family"
+msgstr "Monospace フォントファミリー"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:680
+msgid "The font family used as the default for content using monospace font."
+msgstr "monospace フォントを使用するコンテンツのデフォルトとして使用するフォントファミリーです。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:692
+msgid "Serif font family"
+msgstr "Serif フォントファミリー"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:693
+msgid "The font family used as the default for content using serif font."
+msgstr "serif フォント使用するコンテンツのデフォルトとして使用するフォントファミリーです。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:705
+msgid "Sans-serif font family"
+msgstr "Sans-serif フォントファミリー"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:706
+msgid "The font family used as the default for content using sans-serif font."
+msgstr "sans-serif フォントを使用するコンテンツのデフォルトとして使用するフォントファミリーです。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:718
+msgid "Cursive font family"
+msgstr "Cursive フォントファミリー"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:719
+msgid "The font family used as the default for content using cursive font."
+msgstr "cursive フォントを使用するコンテンツのデフォルトして使用するフォントファミリーです。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:731
+msgid "Fantasy font family"
+msgstr "Fantasy フォントファミリー"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:732
+msgid "The font family used as the default for content using fantasy font."
+msgstr "fantasy フォントを使用するコンテンツのデフォルトとして使用するフォントファミリーです。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:744
+msgid "Pictograph font family"
+msgstr "Pictograph フォントファミリー"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:745
+msgid "The font family used as the default for content using pictograph font."
+msgstr "pictograph フォントを使用するコンテンツのデフォルトとして使用するフォントファミリーです。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:758
+msgid "Default font size"
+msgstr "デフォルトのフォントサイズ"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:772
+msgid "Default monospace font size"
+msgstr "デフォルトの monospace フォントサイズ"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:787
+msgid "Minimum font size"
+msgstr "最小フォントサイズ"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:800
+msgid "Default charset"
+msgstr "デフォルトの文字セット"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:801
+msgid "The default text charset used when interpreting content with unspecified charset."
+msgstr "文字セットが指定されていないコンテンツの解釈に利用するデフォルトのテキスト文字セットです。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:814
+msgid "Enable private browsing"
+msgstr "プライベートブラウズを有効にする"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:815
+msgid "Whether to enable private browsing"
+msgstr "プライベートブラウズを有効にするかどうかです"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:827
+msgid "Enable developer extras"
+msgstr "Developer Extras を有効にする"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:828
+msgid "Whether to enable developer extras"
+msgstr "Developer Extras を有効にするかどうかです"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:840
+msgid "Enable resizable text areas"
+msgstr "サイズ変更可能なテキスト領域を有効にする"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:841
+msgid "Whether to enable resizable text areas"
+msgstr "サイズ変更可能なテキスト領域を有効にするかどうかです"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:856
+msgid "Enable tabs to links"
+msgstr "リンクへのタブを有効にする"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:857
+msgid "Whether to enable tabs to links"
+msgstr "リンクへのタブを有効にするかどうかです"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:870
+msgid "Enable DNS prefetching"
+msgstr "DNS のプレフェッチを有効にする"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:871
+msgid "Whether to enable DNS prefetching"
+msgstr "DNS プレフェッチを有効にするかどうかです"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:900
+msgid "Whether to enable the Javascriipt Fullscreen API"
+msgstr "Javascriipt Fullscreen API を有効にするかどうかです"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:913
+msgid "Whether background images should be drawn during printing"
+msgstr "印刷時に背景の画像を描画するかどうかです"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:964
+msgid "Allow modal dialogs"
+msgstr "モードダイアログを許可する"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:965
+msgid "Whether it is possible to create modal dialogs"
+msgstr "モードダイアログの作成を可能にするかどうかです"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:980
+msgid "Zoom Text Only"
+msgstr "テキストのみズーム"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:981
+msgid "Whether zoom level of web view changes only the text size"
+msgstr "web ビューのズームレベルによる変更をテキストサイズに限るかどうかです"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:995
+msgid "JavaScript can access clipboard"
+msgstr "JavaScript によるクリップボードへのアクセスを許可する"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1042
+msgid "Draw compositing indicators"
+msgstr "合成インジケーターの描画"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1043
+msgid "Whether to draw compositing borders and repaint counters"
+msgstr "合成境界線を引いてカウンターを描画し直すかどうかです"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1101
+msgid "User agent string"
+msgstr "ユーザーエージェント文字列"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1102
+msgid "The user agent string"
+msgstr "ユーザーエージェント文字列"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1132
+msgid "Enable accelerated 2D canvas"
+msgstr "アクセラレート 2D キャンバスを有効にする"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1133
+msgid "Whether to enable accelerated 2D canvas"
+msgstr "アクセラレート 2D キャンバスを有効にするかどうかです"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1148
+msgid "Write console messages on stdout"
+msgstr "コンソールメッセージを標準出力に書き出す"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1149
+msgid "Whether to write console messages on stdout"
+msgstr "コンソールメッセージを標準出力に書き出すかどうかです"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1167
+#, fuzzy
+#| msgid "Enable Media Stream"
+msgid "Enable MediaStream"
+msgstr "メディアストリームを有効にする"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1168
+#, fuzzy
+#| msgid "Whether WebAudio content should be handled"
+msgid "Whether MediaStream content should be handled"
+msgstr "WebAudio のコンテンツを処理するかどうかです"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1188
+#, fuzzy
+#| msgid "Whether to enable Spatial Navigation"
+msgid "Whether to enable Spatial Navigation support."
+msgstr "空間ナビゲーションを有効にするかどうかです"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:100
+msgid "The URI for which the response was made."
+msgstr "応答が行なわれた URI です。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:111
+msgid "Status Code"
+msgstr "ステータスコード"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:112
+msgid "The status code of the response as returned by the server."
+msgstr "サーバーから返される応答のステータスコードです。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:124
+msgid "Content Length"
+msgstr "コンテンツの長さ"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:125
+msgid "The expected content length of the response."
+msgstr "期待される応答コンテンツの長さです。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:138
+msgid "The MIME type of the response"
+msgstr "応答の MIME タイプ"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:151
+msgid "The suggested filename for the URI response"
+msgstr "URI 応答の提案ファイル名です"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:134
+msgid "Attached Height"
+msgstr "接続時の高さ"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:135
+msgid "The height that the inspector view should have when it is attached"
+msgstr "インスペクターを接続する場合、そのインスペクタービューに設定する高さです"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:110
+msgid "The current active URI of the resource"
+msgstr "リソースの現在アクティブな URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:123
+msgid "The response of the resource"
+msgstr "リソースの応答"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:635
+msgid "Web Context"
+msgstr "web コンテキスト"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:636
+msgid "The web context for the view"
+msgstr "ビューの Web コンテキストです"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:649
+msgid "WebView Group"
+msgstr "WebView グループ"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:650
+msgid "The WebKitWebViewGroup of the view"
+msgstr "ビューの WebKitWebViewGroup です"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:664
+msgid "Main frame document title"
+msgstr "メインフレームのドキュメントタイトル"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:682
+msgid "Estimated Load Progress"
+msgstr "推定読み込み進捗状況"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:683
+msgid "An estimate of the percent completion for a document load"
+msgstr "ドキュメントの推定読み込み完了率です"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:695
+msgid "Favicon"
+msgstr "ファビコン"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:696
+msgid "The favicon associated to the view, if any"
+msgstr "ビューに関連するファビコン (ある場合のみ)"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:708
+msgid "The current active URI of the view"
+msgstr "ビューの現在アクティブな URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:722
+msgid "The zoom level of the view content"
+msgstr "ビューコンテンツのズームレベル"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:740
+msgid "Whether the view is loading a page"
+msgstr "ビューがページを読み込んでいるかどうかです"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:754
+msgid "The view mode to display the web view contents"
+msgstr "web ビューコンテンツを表示するビューモードです"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2570
+msgid "An exception was raised in JavaScript"
+msgstr "JavaScript で例外が発生しました"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3048
+msgid "There was an error creating the snapshot"
+msgstr "スナップショットの作成中にエラーが発生しました"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:209
+msgid "Geometry"
+msgstr "配置"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:210
+msgid "The size and position of the window on the screen."
+msgstr "画面上のウィンドウのサイズと位置"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:222
+msgid "Toolbar Visible"
+msgstr "ツールバーを表示させる"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:223
+msgid "Whether the toolbar should be visible for the window."
+msgstr "ウィンドウのツールバーを見えるようにするかどうかです。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:235
+msgid "Statusbar Visible"
+msgstr "状態バーを表示させる"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:236
+msgid "Whether the statusbar should be visible for the window."
+msgstr "ウィンドウの状態バーを見えるようにするかどうかです。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:248
+msgid "Scrollbars Visible"
+msgstr "スクロールバーを表示させる"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:249
+msgid "Whether the scrollbars should be visible for the window."
+msgstr "ウィンドウのスクロールバーを見えるようにするかどうかです。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:261
+msgid "Menubar Visible"
+msgstr "メニューバーを表示させる"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:262
+msgid "Whether the menubar should be visible for the window."
+msgstr "ウィンドウのメニューバーを見えるようにするかどうかです。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:274
+msgid "Locationbar Visible"
+msgstr "ロケーションバーを表示させる"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:275
+msgid "Whether the locationbar should be visible for the window."
+msgstr "ウィンドウのロケーションバーを見えるようにするかどうかです。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:286
+msgid "Resizable"
+msgstr "サイズ変更可能"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:287
+msgid "Whether the window can be resized."
+msgstr "ウィンドウのサイズを調整できるかどうかです。"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:299
+msgid "Fullscreen"
+msgstr "フルスクリーン"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:300
+msgid "Whether window will be displayed fullscreen."
+msgstr "ウィンドウをフルスクリーンで表示するかどうかです。"
+
+#~ msgid "Play"
+#~ msgstr "再生"
+
+#~ msgid "Pause"
+#~ msgstr "一時停止"
+
+#~ msgid "Play / Pause"
+#~ msgstr "再生 / 一時停止"
+
+#~ msgid "Play or pause the media"
+#~ msgstr "メディアを再生または一時停止します"
+
+#~ msgid "Time:"
+#~ msgstr "時間:"
+
+#~ msgid "Exit Fullscreen"
+#~ msgstr "全画面の終了"
+
+#~ msgid "Exit from fullscreen mode"
+#~ msgstr "全画面モードを終了する"

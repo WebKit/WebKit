@@ -1,0 +1,73 @@
+Test for of RegExp named capture groups
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS re1.toString() is "\/(?<month>\\d{2})\\/(?<day>\\d{2})\\/(?<year>\\d{4})\/"
+PASS execResult1[0] is "01/02/2001"
+PASS execResult1.groups.month is "01"
+PASS execResult1.groups.day is "02"
+PASS execResult1.groups.year is "2001"
+PASS Object.getOwnPropertyNames(execResult1).sort() is ["0","1","2","3","groups","index","input","length"]
+PASS Object.getOwnPropertyNames(execResult1.groups).sort() is ["day","month","year"]
+PASS matchResult1[0] is "01/02/2001"
+PASS matchResult1.groups.month is "01"
+PASS matchResult1.groups.day is "02"
+PASS matchResult1.groups.year is "2001"
+PASS Object.getOwnPropertyNames(matchResult1).sort() is ["0","1","2","3","groups","index","input","length"]
+PASS Object.getOwnPropertyNames(matchResult1.groups).sort() is ["day","month","year"]
+PASS matchResult2a[0] is "John W. Smith"
+PASS matchResult2a[1] is "John"
+PASS matchResult2a[2] is "W."
+PASS matchResult2a[3] is "Smith"
+PASS matchResult2a[1] is matchResult2a.groups.first_name
+PASS matchResult2a[2] is matchResult2a.groups.middle_initial
+PASS matchResult2a[3] is matchResult2a.groups.last_name
+PASS Object.getOwnPropertyNames(matchResult1).sort() is ["0","1","2","3","groups","index","input","length"]
+PASS matchResult2b[0] is "Sally Brown"
+PASS matchResult2b[1] is "Sally"
+PASS matchResult2b[2] is undefined.
+PASS matchResult2b[3] is "Brown"
+PASS matchResult2b[1] is matchResult2b.groups.first_name
+PASS matchResult2b[2] is matchResult2b.groups.middle_initial
+PASS matchResult2b[3] is matchResult2b.groups.last_name
+PASS Object.getOwnPropertyNames(matchResult1).sort() is ["0","1","2","3","groups","index","input","length"]
+PASS re3.toString() is "\/^(?<part1>.*):(?<part2>.*):\\k<part2>:\\k<part1>$\/"
+PASS re3.test("a:b:b:a") is true
+PASS re3.test("a:a:a:a") is true
+PASS re3.test("a:b:c:a") is false
+PASS first is "1"
+PASS second is "2"
+PASS result4 is "14.02.2010"
+PASS "third edition".match(/(?<auf\u200clage>\w+) edition/).groups.auf\u200clage is "third"
+PASS "fourth edition".match(/(?<auf\u200dlage>\w+) edition/).groups.auf\u200dlage is "fourth"
+PASS "10/20/1930".replace(/(?<month>\d{2})\/(?<day>\d{2})\/(?<year>\d{4})/, "$<day>-$<month>-$<year>") is "20-10-1930"
+PASS "10/20/1930".replace(/(?<month>\d{2})\/(?<day>\d{2})\/(?<year>\d{4})/, "$2-$<month>-$<year>") is "20-10-1930"
+PASS "10/20/1930".replace(/(?<month>\d{2})\/(?<day>\d{2})\/(?<year>\d{4})/, "$<day>-$1-$<year>") is "20-10-1930"
+PASS "10/20/1930".replace(/(?<month>\d{2})\/(?<day>\d{2})\/(?<year>\d{4})/, "$<day>-$<month>-$3") is "20-10-1930"
+PASS "Replace just THIS in this string".replace(/THIS/, "$<THAT>") is "Replace just $<THAT> in this string"
+PASS "Give me a \'k\'!".match(/Give me a \'\k\'/)[0] is "Give me a \'k\'"
+PASS "Give me \'k2\'!".match(/Give me \'\k2\'/)[0] is "Give me \'k2\'"
+PASS "Give me a \'kat\'!".match(/Give me a \'\kat\'/)[0] is "Give me a \'kat\'"
+PASS "Give me a \'k\'!".match(/Give me a \'\k\'/u)[0] threw exception SyntaxError: Invalid regular expression: invalid escaped character for unicode pattern.
+PASS "Give me \'k2\'!".match(/Give me \'\k2\'/u)[0] threw exception SyntaxError: Invalid regular expression: invalid escaped character for unicode pattern.
+PASS "Give me a \'kat\'!".match(/Give me a \'\kat\'/u)[0] threw exception SyntaxError: Invalid regular expression: invalid escaped character for unicode pattern.
+PASS "10/20/1930".replace(/(?<month>\d{2})\/(?<day>\d{2})\/(?<year>\d{4})/, "$<day>-$<mouth>-$<year>") is "20--1930"
+PASS "10/20/1930".replace(/(?<month>\d{2})\/(?<day>\d{2})\/(?<year>\d{4})/, "$<day>-$<month>-$<year") is "20-10-$<year"
+PASS let r = new RegExp("/(?<groupName1>abc)|(?<groupName1>def)/") threw exception SyntaxError: Invalid regular expression: duplicate group specifier name.
+PASS let r = new RegExp("/(?< groupName1>abc)/") threw exception SyntaxError: Invalid regular expression: invalid group specifier name.
+PASS let r = new RegExp("/(?<g=oupName1>abc)/") threw exception SyntaxError: Invalid regular expression: invalid group specifier name.
+PASS let r = new RegExp("/(?<𐆐groupName1>abc)/u") threw exception SyntaxError: Invalid regular expression: invalid group specifier name.
+PASS let r = new RegExp("/(?<g𐆛oupName1>abc)/u") threw exception SyntaxError: Invalid regular expression: invalid group specifier name.
+PASS let r = new RegExp("/(?<‌groupName1>abc)/u") threw exception SyntaxError: Invalid regular expression: invalid group specifier name.
+PASS let r = new RegExp("/(?<‍groupName1>abc)/u") threw exception SyntaxError: Invalid regular expression: invalid group specifier name.
+PASS "XzzXzz".match(/\k<z>X(?<z>z*)X\k<z>/) is ["XzzXzz", "zz"]
+PASS "XzzXzz".match(/\k<z>X(?<z>z*)X\k<z>/u) is ["XzzXzz", "zz"]
+PASS "1122332211".match(/\k<ones>\k<twos>\k<threes>(?<ones>1*)(?<twos>2*)(?<threes>3*)\k<threes>\k<twos>\k<ones>/) is ["1122332211", "11", "22", "3"]
+PASS "1122332211".match(/\k<ones>\k<twos>\k<threes>(?<ones>1*)(?<twos>2*)(?<threes>3*)\k<threes>\k<twos>\k<ones>/u) is ["1122332211", "11", "22", "3"]
+PASS "\k<z>XzzX".match(/\k<z>X(z*)X/) is ["k<z>XzzX", "zz"]
+PASS "\k<z>XzzX".match(/\k<z>X(z*)X/u) threw exception SyntaxError: Invalid regular expression: invalid backreference for unicode pattern.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

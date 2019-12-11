@@ -1,0 +1,29 @@
+From 564821c917f4a9d5a0de2ee77b90b0cd85e3d3a6 Mon Sep 17 00:00:00 2001
+From: Aaron Watry <awatry@gmail.com>
+Date: Fri, 20 Jun 2014 19:13:30 -0500
+Subject: [PATCH] gallivm: Fix build after LLVM commit 211259
+
+Signed-off-by: Aaron Watry <awatry@gmail.com>
+Reviewed-by: Tom Stellard <thomas.stellard@amd.com>
+---
+ src/gallium/auxiliary/gallivm/lp_bld_debug.cpp | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/src/gallium/auxiliary/gallivm/lp_bld_debug.cpp b/src/gallium/auxiliary/gallivm/lp_bld_debug.cpp
+index df26883..413a0c2 100644
+--- a/src/gallium/auxiliary/gallivm/lp_bld_debug.cpp
++++ b/src/gallium/auxiliary/gallivm/lp_bld_debug.cpp
+@@ -51,7 +51,9 @@
+ #include <llvm/MC/MCInstPrinter.h>
+ #include <llvm/MC/MCRegisterInfo.h>
+ 
+-#if HAVE_LLVM >= 0x0303
++#if HAVE_LLVM >= 0x0305
++#define OwningPtr std::unique_ptr
++#elif HAVE_LLVM >= 0x0303
+ #include <llvm/ADT/OwningPtr.h>
+ #endif
+ 
+-- 
+2.1.0
+

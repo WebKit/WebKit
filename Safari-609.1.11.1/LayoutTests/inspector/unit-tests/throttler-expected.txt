@@ -1,0 +1,26 @@
+Test Throttler functionality.
+
+
+== Running test suite: Throttler
+-- Running test case: Throttler.Fire.Basic
+Call throttled function every 1 ms for 110 ms.
+PASS: All calls delayed.
+
+-- Running test case: Throttler.Fire.LastArguments
+PASS: Trailing call invoked with most recent arguments.
+
+-- Running test case: Throttler.Force
+PASS: Arguments length is 2.
+PASS: First argument is 1.
+PASS: Second argument is 'xyz'.
+PASS: Arguments length is 2.
+PASS: First argument is 4.
+PASS: Second argument is 'abc'.
+PASS: Throttled function should be called twice.
+PASS: Throttled function should not be called again after calling force.
+
+-- Running test case: Throttler.Cancel
+Throttled function called.
+Canceled throttled function.
+PASS: Throttled function should not be called again after calling cancel.
+

@@ -1,0 +1,62 @@
+{
+    "domain": "CPUProfiler",
+    "description": "CPUProfiler domain exposes cpu usage tracking.",
+    "featureGuard": "ENABLE(RESOURCE_USAGE)",
+    "debuggableTypes": ["page", "web-page"],
+    "targetTypes": ["page"],
+    "types": [
+        {
+            "id": "ThreadInfo",
+            "description": "CPU usage for an individual thread.",
+            "type": "object",
+            "properties": [
+                { "name": "name", "type": "string", "description": "Some thread identification information." },
+                { "name": "usage", "type": "number", "description": "CPU usage for this thread. This should not exceed 100% for an individual thread." },
+                { "name": "type", "type": "string", "enum": ["main", "webkit"], "optional": true, "description": "Type of thread. There should be a single main thread." },
+                { "name": "targetId", "type": "string", "optional": true, "description": "A thread may be associated with a target, such as a Worker, in the process." }
+            ]
+        },
+        {
+            "id": "Event",
+            "type": "object",
+            "properties": [
+                { "name": "timestamp", "type": "number" },
+                { "name": "usage", "type": "number", "description": "Percent of total cpu usage. If there are multiple cores the usage may be greater than 100%." },
+                { "name": "threads", "type": "array", "items": { "$ref": "ThreadInfo" }, "optional": true, "description": "Per-thread CPU usage information. Does not include the main thread." }
+            ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "startTracking",
+            "description": "Start tracking cpu usage."
+        },
+        {
+            "name": "stopTracking",
+            "description": "Stop tracking cpu usage. This will produce a `trackingComplete` event."
+        }
+    ],
+    "events": [
+        {
+            "name": "trackingStart",
+            "description": "Tracking started.",
+            "parameters": [
+                { "name": "timestamp", "type": "number" }
+            ]
+        },
+        {
+            "name": "trackingUpdate",
+            "description": "Periodic tracking updates with event data.",
+            "parameters": [
+                { "name": "event", "$ref": "Event" }
+            ]
+        },
+        {
+            "name": "trackingComplete",
+            "description": "Tracking stopped.",
+            "parameters": [
+                { "name": "timestamp", "type": "number" }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>'stalled' event test</title>
+        <script src=../../media-resources/media-file.js></script>
+        <script src=../../media-resources/video-test.js></script>
+        <script>
+
+            var playCount = 0;
+
+            function start() 
+            {
+                findMediaElement();
+                waitForEvent('durationchange');
+                waitForEvent('loadedmetadata');
+                waitForEvent('loadeddata');
+
+                mediaElement.addEventListener('canplay', function () {
+                    // 'stalled' takes three seconds to fire, so 'canplay' may fire more than once
+                    // depending on how the engine parses incoming media data.
+                    if (++playCount > 1)
+                        return;
+                    consoleWrite("EVENT(canplay)");
+                    run("video.play()");
+                } );
+
+                waitForEvent('stalled', function () {
+                    testExpected("video.currentTime", 0, "!=");
+                    testExpected("video.playbackRate", 1, "===");
+                    testExpected("video.paused", false, "===");
+                    endTest();
+                } );
+
+                var mediaFile = findMediaFile("video", "../../../../media/content/long-test");
+                var mimeType = mimeTypeForFile(mediaFile);
+                video.src = "http://127.0.0.1:8000/media/resources/serve-video.php?name=" + mediaFile + "&type=" + mimeType + "&stallOffset=100000&stallDuration=60&chunkSize=1024";
+            }
+
+        </script>
+    </head>
+    <body onload="setTimeout(start, 0)">
+        <video controls></video>
+        <p>Test that a stalled event is sent when media loading stalls.</p>
+    </body>
+</html>

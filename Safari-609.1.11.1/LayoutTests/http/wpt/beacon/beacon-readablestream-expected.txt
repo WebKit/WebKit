@@ -1,0 +1,3 @@
+
+PASS Beacon with a ReadableStream body should fail. 
+

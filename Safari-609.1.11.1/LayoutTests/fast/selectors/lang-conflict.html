@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+* {
+    color: rgb(0, 0, 0);
+}
+:lang(fr):lang(en) {
+    color: rgb(1, 2, 3);
+}
+
+:lang(en):lang(fr) {
+    color: rgb(4, 5, 6);
+}
+</style>
+</head>
+<body>
+    <div style="display:none">
+        <a>
+            <b>
+                <c id="target"></c>
+            </b>
+        </a>
+    </div>
+</body>
+<script>
+description('Verify selectors with conflicting :lang().');
+
+shouldBe('document.querySelectorAll(":lang(fr):lang(en)").length', '0');
+shouldBe('document.querySelectorAll(":lang(en):lang(fr)").length', '0');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target")).color', 'rgb(0, 0, 0)');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

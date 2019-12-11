@@ -1,0 +1,38 @@
+#!/usr/bin/env python
+
+import re
+import subprocess
+import sys
+
+def bss_symbols(lib, sfilter=None):
+    symbols = []
+    p = subprocess.Popen(['objdump', '-t', '-j', '.bss', '-C', lib], stdout=subprocess.PIPE)
+    data = p.communicate()[0]
+    pattern = re.compile('^[0-9a-f]+ ([a-zA-Z ])[a-zA-Z ][a-zA-Z ][a-zA-Z ][a-zA-Z ][a-zA-Z ][a-zA-Z ] \.bss\t[0-9a-f]+ +(.*)$')
+    for line in data.splitlines():
+        m = pattern.match(line)
+        if not m:
+            continue
+        if sfilter is None or sfilter(m.group(1)):
+            symbols.append(m.group(2))
+
+    return symbols
+
+if len(sys.argv) < 3:
+    print "Usage: %s lib1 lib2" % sys.argv[0]
+    sys.exit(1)
+
+s1 = bss_symbols(sys.argv[1], lambda x: x == 'u')
+s2 = bss_symbols(sys.argv[2], lambda x: x != 'u')
+
+symbols = []
+for symbol in s1:
+    if symbol in s2:
+        symbols.append(symbol)
+
+if symbols:
+    print 'The following symbols are global in %s and not in %s' % (sys.argv[1], sys.argv[2])
+    print '\n'.join(sorted(symbols))
+    sys.exit(1)
+
+sys.exit(0)

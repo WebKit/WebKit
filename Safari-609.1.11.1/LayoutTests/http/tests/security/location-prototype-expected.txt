@@ -1,0 +1,2 @@
+ALERT: Yay! Calling a function that shouldn't exist threw an exception.
+This test passes if it doesn't alert the string "fail". 

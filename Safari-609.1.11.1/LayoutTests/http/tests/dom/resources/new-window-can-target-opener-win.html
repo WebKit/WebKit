@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.setCanOpenWindows();
+
+onload = function() {
+    if (window.opener)
+        console.log("PASS: New window should have an opener");
+    else
+        console.log("FAIL: New window should have an opener");
+
+    openerByName = open("", "opener"); // Should return the opener.
+    if (openerByName === opener)
+        console.log("PASS: New window should be able to look up opener by name");
+    else
+        console.log("FAIL: New window should be able to look up opener by name");
+
+    const expectedOpenerURL = "http://127.0.0.1:8000/dom/new-window-can-target-opener.html";
+    if (openerByName.location.href == expectedOpenerURL)
+        console.log("PASS: New window should have URL '" + expectedOpenerURL + "'");
+    else
+        console.log("FAIL: New window should have URL '" + expectedOpenerURL + "' but got '" + openerByName.location.href + "'");
+
+    finishJSTest();
+};
+</script>
+</body>
+</html>

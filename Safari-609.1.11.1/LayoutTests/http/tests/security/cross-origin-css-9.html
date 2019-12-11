@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cross-origin CSS: Origin header should be set when fetching stylesheet in cors mode</title>
+
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<link id="link-id0" rel="stylesheet" type="text/css" href="/security/resources/get-css-if-origin-header.php?id=id0"></link>
+<link id="link-id1" rel="stylesheet" type="text/css" href="http://localhost:8000/security/resources/get-css-if-origin-header.php?id=id1"></link>
+<link id="link-id2" rel="stylesheet" type="text/css" href="/security/resources/get-css-if-origin-header.php?id=id2" crossorigin=""></link>
+<link id="link-id3" rel="stylesheet" type="text/css" href="http://localhost:8000/security/resources/get-css-if-origin-header.php?id=id3" crossorigin=""></link>
+<link id="link-id4" rel="stylesheet" type="text/css" href="http://localhost:8000/security/resources/get-css-if-origin-header.php?id=id4" crossorigin="anonymous"></link>
+<link id="link-id5" rel="stylesheet" type="text/css" href="http://localhost:8000/security/resources/get-css-if-origin-header.php?id=id5" crossorigin="credentials"></link>
+<script>
+function getBackgroundColorForId(id) {
+    return window.getComputedStyle(document.getElementById(id), null).getPropertyValue('background-color')
+}
+
+function checkCSSLoading(id, expectToIncludeOrigin, expectVisibility)
+{
+    expectedColor = expectToIncludeOrigin ? "rgb(255, 255, 0)" : "rgb(0, 0, 255)";
+    assert_equals(getBackgroundColorForId(id), expectedColor);
+    assert_equals(document.getElementById("link-" + id).sheet.cssRules !== null, expectVisibility);
+}
+
+var onloadTest = async_test(" Testing that link element to load stylesheets correctly handle crossorigin mode.");
+
+window.onload = function () {
+    test(function () {
+        checkCSSLoading('id0', false, true);
+    }, 'Same-origin URL link without crossorigin attribute should be loaded without an Origin header');
+    test(function () {
+        checkCSSLoading('id1', false, false);
+    }, 'Cross-origin URL link without crossorigin attribute should be loaded without an Origin header');
+    test(function () {
+        checkCSSLoading('id2', true, true);
+    }, 'Same-origin URL link with crossorigin="" attribute should be loaded with an Origin header');
+    test(function () {
+        checkCSSLoading('id3', true, true);
+    }, 'Cross-origin URL link with crossorigin="" should be loaded with an Origin header');
+    test(function () {
+        checkCSSLoading('id4', true, true);
+    }, 'Cross-origin URL link with crossorigin="anonymous" should be loaded with an Origin header');
+    test(function () {
+        checkCSSLoading('id5', true, true);
+    }, 'Cross-origin URL link with crossorigin="credentials" should be loaded with an Origin header');
+
+    onloadTest.done();
+};
+</script>
+</head>
+<body>
+    <div id="id0" class="id0"></div>
+    <div id="id1" class="id1"></div>
+    <div id="id2" class="id2"></div>
+    <div id="id3" class="id3"></div>
+    <div id="id4" class="id4"></div>
+    <div id="id5" class="id5"></div>
+</body>
+</html>

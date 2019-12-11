@@ -1,0 +1,19 @@
+CONSOLE MESSAGE: line 19: Created Database 'CompleteDatabase'
+CONSOLE MESSAGE: line 9: Created Database 'EmptyDatabase'
+
+== Running test suite: IndexedDB.clearObjectStore
+-- Running test case: ClearDatabases
+-- Running test case: CreateDatabaseAndClearObjectStore
+PASS: 'Empty' object store should always be empty.
+PASS: 'Reviewers' object store should start with 4 entries.
+PASS: 'Stats' object store should start with 4 entries.
+PASS: 'Empty' object store should always be empty.
+PASS: 'Reviewers' object store should have been cleared.
+PASS: 'Stats' object store remain unchanged with 4 entries.
+PASS: 'Empty' object store should always be empty.
+PASS: 'Reviewers' object store should have been cleared.
+PASS: 'Stats' object store should have been cleared.
+
+-- Running test case: NoSuchObjectStore
+PASS: Should be an error attempting to clear an object store that does not exist.
+

@@ -1,0 +1,598 @@
+<!--
+ Copyright (C) 2019 Apple Inc. All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions
+ are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+
+ THIS SOFTWARE IS PROVIDED BY APPLE INC. "AS IS" AND ANY
+ EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+-->
+{% extends "base.html" %}
+{% block head %}
+
+<script type="module">
+
+import {DOM, REF} from '/library/js/Ref.js';
+import {Expectations} from '/assets/js/timeline.js';
+
+function jumpIdUnderHeader(id) {
+    return `<div style="position:relative">
+            <div style="position:absolute; top:-60px; width:0px;" id="${id.replace(/\s/g, '-')}"></div>
+        </div>`;
+}
+function codeBlock(string) {return `<pre><code>${string.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</code></pre>`;}
+function localLink(linkParts, value) {return `<a href="#${linkParts.join('-').replace(/\s/g, '-')}">${value}</a>`;}
+function externalLink(link, value) {return `<a href="${link}" target="_blank">${value}</a>`;}
+function documentEndpoint(endpoint, actions, queries, documentation) {
+    return `<div class="section">
+            ${jumpIdUnderHeader(`API-${endpoint}`)}
+            <div class="header">
+                <div class="title">${endpoint}</div>
+                <div class="actions">
+                    <div class="list">
+                        ${actions.map((action) => {return `<div class="item">${action}</div>`;}).join('')}
+                    </div>
+                </div>
+            </div>
+            ${documentation.map((item) => {return `<div class="content">${item}</div>`;}).join('')}
+            <div class="content">
+                Supported Parameters
+                <div class="actions">
+                    ${queries.map((query) => {
+                        return `<div class="badge">
+                                <div class="text block">
+                                    <a class="text tiny" href="#Query-Parameters-${query}">${query}</a>
+                                </div>
+                            </div>`;
+                        //return `<button class="button" onclick="window.location.href = '/documentation#Query-Parameters-${query}';">${query}</button>`
+                    }).join('')}
+                </div>
+            </div>
+        </div>`;
+}
+
+const documentation = {
+    'API': {
+        'Commits': [
+            `Commit endpoints allow commits, from multiple repositories, to be queried. These commits are sorted by ${localLink(['Query Parameters', 'UUID'], 'UUID')}, which is a combination of the commit timestamp and the commit order. Commit order is defined as a commit's ording within a specific timestamp. Most commits have an order of '0', unless they are part of a patch series which was landed at exactly the same timestamp. ${localLink(['Query Parameters', 'UUID'], 'UUID')}'s allow commits to be transparently sorted even if they are in different repositories. Commits are represented as objects within the results database, and all endpoints which return commits will represent commits like this:`,
+            codeBlock('{\n' + 
+                '    "repository_id": <string representing repository identifier>,\n' +
+                '    "branch": <branch commit is registered on>,\n' +
+                '    "id": <git hash or svn revision>,\n' +
+                '    "timestamp": <integer UTC timestamp when commit was committed>,\n' +
+                '    "order": <order of commit within patch series>,\n' +
+                '    "committer": <person who committed the change>,\n' +
+                '    "message": <commit message or changelog associated with commit>\n' +
+                '}'),
+            documentEndpoint(
+                '/api/commits',
+                ['GET', 'POST'],
+                ['Branch', 'Limit', 'Repository', 'UUID'],
+                [`Endpoint for finding and registering commits. The GET behavior is identical to ${localLink(['API', '/api/commits/find'], '/api/commits/find')}. The POST behavior is identical to ${localLink(['API', '/commits/register'], '/commits/register')}.`],
+            ),
+            documentEndpoint(
+                '/api/commits/find',
+                ['GET'],
+                ['Branch', 'Limit', 'Repository', 'UUID'],
+                [`Return a list of ${localLink(['API', 'Commits'], 'commit objects')} satisfying the query. This list will be ordered, with the oldest commit first and the newest last.`],
+            ),
+            documentEndpoint(
+                '/api/commits/repositories',
+                ['GET'],
+                [],
+                [
+                    `Return a list of repositories tracked by this instance to the results database. The output is of the form:`,
+                    codeBlock('[\n' +
+                    '    <repository-id (a)>,\n' +
+                    '    <repository-id (b)>\n' +
+                    ']'),
+                ],
+            ),
+            documentEndpoint(
+                '/api/commits/branches',
+                ['GET'],
+                ['Limit', 'Repository'],
+                [
+                    `Returns a dictionary of lists of branches associated with each repository. The output is of the form:`,
+                    codeBlock('{\n' +
+                    '    <repository-id (a)>: ["master", "branch-a", "branch-b"],\n' +
+                    '    <repository-id (b)>: ["trunk", "branch-a", "branch-c"]\n' +
+                    '}'),
+                ],
+            ),
+            documentEndpoint(
+                '/api/commits/siblings',
+                ['GET'],
+                ['Branch', 'Repository', 'UUID'],
+                [
+                    `With multiple repositories, every commit has a least 1 other commit which was the tip of the tree on the other repository (or repositories) while the primary commit was the tip of it's repository. We refer to these commits as the 'sibling' commits. Given a query which refers to a single commit, this endpoint will return all sibling commits associated with that commit. The result will be a dictionary of lists formated like this:`,
+                    codeBlock('{\n' + 
+                    '    <repository-id (a)>: [<commit-a2>, <commit-a1>],\n' +
+                    '    <repository-id (b)>: [<commit-b2>, <commit-b1>]\n' +
+                    '}'),
+                    `Where &ltcommit-*&gt are ${localLink(['API', 'Commits'], 'commit objects')}. These lists are sorted, with the first commit in the list being the latest and the last commit in the list being the oldest. Note that while the sibling endpoint accepts the standard ${localLink(['Query Parameters', 'UUID'], 'UUID')} query parameters, this endpoint will return an error if the query parameters refer to multiple commits`,
+                ],
+            ),
+            documentEndpoint(
+                '/api/commits/next',
+                ['GET'],
+                ['Branch', 'Repository', 'UUID'],
+                [`Return a list containing a single ${localLink(['API', 'Commits'], 'commit objects')} which occurred imiediately after the commit specified by the provided query. Note that while the next endpoint accepts the standard ${localLink(['Query Parameters', 'UUID'], 'UUID')} query parameters, this endpoint will return an error if the query parameters refer to multiple commits`],
+            ),
+            documentEndpoint(
+                '/api/commits/previous',
+                ['GET'],
+                ['Branch', 'Repository', 'UUID'],
+                [`Return a list containing a single ${localLink(['API', 'Commits'], 'commit objects')} which occurred imiediately before the commit specified by the provided query. Note that while the previous endpoint accepts the standard ${localLink(['Query Parameters', 'UUID'], 'UUID')} query parameters, this endpoint will return an error if the query parameters refer to multiple commits`],
+            ),
+            documentEndpoint(
+                '/api/commits/register',
+                ['POST'],
+                ['Branch', 'Repository'],
+                [
+                    `Register a single commit in the results database. This commit must be associated with a repository already known by the results database. While a ${localLink(['API', 'Commits'], 'commit objects')} can be uploaded to this endpoint, it is recommended that the registration of commits outside of automation allow the results database to leverage your source control's API. Such a request looks like this`,
+                    codeBlock('/api/commits/register?repository_id=webkit&branch=trunk&id=247355'),
+                    `More generally, any definition of a commit which defines the repository_id, id and branch provides enough information for the results database to query your source control's API and retreive commit information.`,
+                ],
+            ),
+            documentEndpoint(
+                '/commits/info',
+                ['GET'],
+                ['Branch', 'Repository', 'UUID'],
+                [`Redirect to the source-control URL with more information about the specified commit. Note that while the info endpoint accepts the standard ${localLink(['Query Parameters', 'UUID'], 'UUID')} query parameters, this endpoint will return an error if the query parameters refer to multiple commits`],
+            ),
+        ], 'Uploads': [
+            `Uploads are the input to the results database. Uploads are sorted by ${localLink(['Query Parameters', 'Configuration'], 'configuration')} and ${localLink(['Query Parameters', 'UUID'], 'UUID')}. Uploads are json dictionaries organized in a ${externalLink('https://en.wikipedia.org/wiki/Trie', 'trie')}, which looks like this:`,
+            codeBlock('{\n' +
+                    '    "commits": [<commit-a>, <commit-b>],\n' +
+                    '    "configuration": <configuration-object>,\n' +
+                    '    "suite": <suite>,\n' +
+                    '    "timestamp": <UTC timestamp of test run>,\n' +
+                    '    "test_results": {\n' +
+                    '        "details": {\n' +
+                    '            "build-number": "5285",\n' +
+                    '            "buildbot-master": "build.webkit.org",\n' +
+                    '            "buildbot-worker": "bot198",\n' +
+                    '            "builder-name": "Apple-Mojave-Release-WK2"\n' +
+                    '        },\n' +
+                    '        "run_stats": {\n' +
+                    '            "start_time": <UTC timestamp test run started>,\n' +
+                    '            "end_time": <UTC timestamp test run ended>,\n' +
+                    '            "tests_skipped": <Number of tests not run>\n' +
+                    '        },\n' +
+                    '        "results": {\n' +
+                    '            "dir-a": {\n' +
+                    '                "dir-b": {\n' +
+                    '                    "test-1": {"actual": "FAIL"},\n' +
+                    '                    "test-2": {}\n' +
+                    '                },\n' +
+                    '                "test-3": {"actual": "TIMEOUT", "expected": "TIMEOUT"}\n' +
+                    '            },\n' +
+                    '            "dir-c": {\n' +
+                    '                "test-4": {"actual": "CRASH", "expected": "FAIL"}\n' +
+                    '            }\n' +
+                    '        }\n' +
+                    '    }\n' +
+                    '}'),
+            `where &ltcommit-a&gt and &ltcommit-b&gt are both ${localLink(['API', 'Commit'], 'commit objects')} and &ltconfiguration-object&gt is a ${localLink(['Query Parameters', 'Configuration'], 'configuration object')}. The 'details' dictionary contains information needed to link a specific upload to a run inside a ${localLink(['API', 'CI Links'], 'continuous integration')} system. All test result information is derived directly from uploads.`,
+            documentEndpoint(
+                '/api/upload',
+                ['GET', 'POST'],
+                ['Branch', 'Configuration', 'Limit', 'Repository', 'Suite', 'UUID'],
+                [
+                    `GET requests against the upload endpoint will return a list of ${localLink(['API', 'Uploads'], 'upload objects')}. This endpoint can be used to transfer results from one results database to another, which is especially useful for testing`,
+                    `POST requests against the upload endpoint will take the uploaded file, and parse it as json, expecting an ${localLink(['API', 'Uploads'], 'upload object')}. Uploading results will register the commits associated with those results and ${localLink(['API', '/api/upload/process'], 'process the result')}. Note that the POST endpoint does not accept any query paramters.`,
+                ],
+            ),
+            documentEndpoint(
+                '/api/upload/process',
+                ['POST'],
+                ['Branch', 'Configuration', 'Limit', 'Repository', 'Suite', 'UUID'],
+                [
+                    `Every upload must be processed, to create individual database entries for each test result. The results database conceptually seperates this processing so that uploads can be reprocessed by a POST request to this endpoint. The parameters to this endpoint should be the same parameters you would send to the ${localLink(['API', '/api/upload'], '/api/upload')} endpoint.`,
+                    `This endpoint will queue the processing and return before the processing has been completed and will return a list of dictionaries looking like this:`,
+                    codeBlock('{\n' +
+                    '    "commits": [<commit-a>, <commit-b>],\n' +
+                    '    "configuration": <configuration-object>,\n' +
+                    '    "suite": <suite>,\n' +
+                    '    "timestamp": <UTC timestamp of test run>,\n' +
+                    '    "processing": {\n' +
+                    '        "ci-urls": {"status": "Queued"},\n' +
+                    '        "suite-results": {"status": "Queued"},\n' +
+                    '        "test-result": {"status": "Queued"}\n' +
+                    '    }\n' +
+                    '}'),
+                    `where &ltcommit-a&gt and &ltcommit-b&gt are both ${localLink(['API', 'Commit'], 'commit objects')} and &ltconfiguration-object&gt is a ${localLink(['Query Parameters', 'Configuration'], 'configuration object')}. The data inside the 'processing' dictionary indicates any failures which occurred when attempting to process the upload.`
+                ],
+            ),
+        ], 'Test Lists': [
+            `Most enpoints on the results database require information about the suite, test or configuration results are associated with. Because these configurations, suites or tests may change over time, the results database exposes some endpoints allowing this data to be retreived in an automated way.`,
+            documentEndpoint(
+                '/api/suites',
+                ['GET'],
+                ['Branch', 'Configuration', 'Repository', 'Suite', 'UUID'],
+                [
+                    `This enpoint returns a list of configuration/suite pairs matching the provided parameters. The /api/suites endpoint is also used to generate a list of valid configurations, and will return a list which is of the form:`,
+                    codeBlock('[\n' +
+                    '    [\n' +
+                    '        <configuration-object-a>,\n' +
+                    '        ["test-suite-a", "test-suite-b"]\n' +
+                    '    ], [\n' +
+                    '        <configuration-object-b>,\n' +
+                    '        ["test-suite-a"]\n' +
+                    '    ]\n' +
+                    ']'),
+                    `where &ltconfiguration-object-a&gt and &ltconfiguration-object-b&gt are both ${localLink(['Query Parameters', 'Configuration'], 'configuration objects')}.`,
+                ],
+            ),
+            documentEndpoint(
+                '/api/&ltsuite&gt/tests',
+                ['GET'],
+                ['Limit', 'Test'],
+                [`Returns a list of tests associated with a specific suite. This list is useful for mapping a partial string to a test name.`],
+            ),
+        ], 'Test Results': [
+            `The results-database preforms post-processing on every upload to sort test results. Each test has it's results saved independently and high-level results for a test suite are also stored. The results database classifies every test failure with the following mapping:`,
+            codeBlock('{\n' + ['CRASH', 'TIMEOUT', 'IMAGE', 'AUDIO', 'TEXT', 'FAIL', 'ERROR', 'WARNING', 'PASS'].map((key) => {
+                return `    "${key}": ${Expectations.stringToStateId(key)}`;
+            }).join(',\n') + '\n}'),
+            `Results which have lower numbers will take precedence over those with smaller ones. For example, if a test has a result which is simultaniously a TIMEOUT and a FAILURE, the results database would treat that test as a TIMEOUT.`,
+            `Tests may also define an 'expected' result. By default, all tests are expected to pass. If a test defines a result that is not PASS, most facilities within the results database will treat that test as passing so long as it's result matches the expected result. This leads to an idea of expected results verse actual results. Endpoints which colapse results from multiple tests handle this idea like so:`,
+            codeBlock('{\n' +
+                '    "tests_crashed": <number of tests which crashed or worse>,\n' +
+                '    "tests_timedout": <number of tests which timed-out or worse>,\n' +
+                '    "tests_failed": <number of tests which failed or worse>,\n' +
+                '    "tests_unexpected_crashed": <number of tests which unexpectadly crashed or worse>,\n' +
+                '    "tests_unexpected_timedout": <number of tests which unexpectadly timed-out or worse>,\n' +
+                '    "tests_unexpected_failed": <number of tests which unexpectadly failed or worse>,\n' +
+                '    "tests_skipped": <number of tests which were skipped>,\n' +
+                '    "tests_run": <number of tests run>\n' +
+                '}'),
+            `It's important to note that when aggregating test results, the aggregation of timeouts will also include results worse than timeouts (namely, crashes) and the aggregation of failures will also include results worse than failures (so crashes and timeouts).`,
+            documentEndpoint(
+                '/api/results/&ltsuite&gt',
+                ['GET'],
+                ['Branch', 'Configuration', 'Limit', 'Repository', 'Time', 'UUID'],
+                [
+                    `Endpoint which returns results for a specific test run. On this endpoint, results are aggregated results in a dictionary formated like this:`,
+                    codeBlock('{\n' +
+                        '    "start_time": <UTC time test run started>,\n' +
+                        '    "uuid": <UUID for test run>,\n' +
+                        '    "details": {\n' +
+                        '        "build-number": "5285",\n' +
+                        '        "buildbot-master": "build.webkit.org",\n' +
+                        '        "buildbot-worker": "bot198",\n' +
+                        '        "builder-name": "Apple-Mojave-Release-WK2"\n' +
+                        '    },\n' +
+                        '    stats: {\n' +
+                        '        "start_time": <UTC time build started>,\n' +
+                        '        "end_time": <UTC time build ended>,\n' +
+                        '        "tests_crashed": <number of tests which crashed or worse>,\n' +
+                        '        "tests_timedout": <number of tests which timed-out or worse>,\n' +
+                        '        "tests_failed": <number of tests which failed or worse>,\n' +
+                        '        "tests_unexpected_crashed": <number of tests which unexpectadly crashed or worse>,\n' +
+                        '        "tests_unexpected_timedout": <number of tests which unexpectadly timed-out or worse>,\n' +
+                        '        "tests_unexpected_failed": <number of tests which unexpectadly failed or worse>,\n' +
+                        '        "tests_skipped": <number of tests which were skipped>,\n' +
+                        '        "tests_run": <number of tests run>\n' +
+                        '    }\n' +
+                        '}'),
+                    `These results are organized in a list of dictionaries organized like so:`,
+                    codeBlock('[\n' +
+                    '    {\n' +
+                    '        "configuration": <configuration-object-a>,\n' +
+                    '        "results": [\n' +
+                    '            <run-a1>,\n' +
+                    '            <run-a2>\n' +
+                    '        ]\n' +
+                    '    }, {\n' +
+                    '        "configuration": <configuration-object-b>,\n' +
+                    '        "results": [\n' +
+                    '            <run-b1>,\n' +
+                    '            <run-b2>\n' +
+                    '        ]\n' +
+                    '    }\n' +
+                    ']'),
+                    `where &ltconfiguration-object-a&gt and &ltconfiguration-object-b&gt are both ${localLink(['Query Parameters', 'Configuration'], 'configuration objects')}' and &ltrun-a1&gt, &ltrun-a2&gt, &ltrun-b1&gt and &ltrun-b2&gt are all the afformentioned aggregated result dictionaries.`,
+                ],
+            ),
+            documentEndpoint(
+                '/api/results/&ltsuite&gt/&lttest&gt',
+                ['GET'],
+                ['Branch', 'Configuration', 'Limit', 'Repository', 'Time', 'UUID'],
+                [
+                    `Access results for a specific test on a specific commit with a specific configuration. This endpoint only returns results for a single test. Each result is stored in dictionary formatted like this:`,
+                    codeBlock('{\n' +
+                    '    "start_time": <UTC time test run started>,\n' +
+                    '    "uuid": <UUID for test run>,\n' +
+                    '    "actual": <result of run>,\n' +
+                    '    "expected": <expected result of run>,\n' +
+                    '    "time": <miliseconds it took test to run>\n' +
+                    '}'),
+                    `The 'time' element optional. If 'actual' or 'expected' are undefined, they are assumed to be PASS. These results are organized in a list of dictionaries organized like so:`,
+                    codeBlock('[\n' +
+                    '    {\n' +
+                    '        "configuration": <configuration-object-a>,\n' +
+                    '        "results": [\n' +
+                    '            <run-a1>,\n' +
+                    '            <run-a2>\n' +
+                    '        ],\n' +
+                    '    }, {\n' +
+                    '        "configuration": <configuration-object-b>,\n' +
+                    '        "results": [\n' +
+                    '            <run-b1>,\n' +
+                    '            <run-b2>\n' +
+                    '        ]\n' +
+                    '    }\n' +
+                    ']'),
+                    `where &ltconfiguration-object-a&gt and &ltconfiguration-object-b&gt are both ${localLink(['Query Parameters', 'Configuration'], 'configuration objects')}' and &ltrun-a1&gt, &ltrun-a2&gt, &ltrun-b1&gt and &ltrun-b2&gt are all the afformentioned single test result dictionary.`,
+                ],
+            ),
+        ], 'Failure Analysis': [
+            `Results databases provide a few APIs to assist in the investigation of test failures. These analysis endpoints aggregate data from multiple test runs for consumption by both humans and automated systems.`,
+            documentEndpoint(
+                '/api/failures/&ltsuite&gt',
+                ['GET'],
+                ['Aggregation', 'Branch', 'Configuration', 'Limit', 'Repository', 'Time', 'UUID'],
+                [
+                    `Returns a list of tests which failed during test runs matching the specified criteria. When collapsed, these results will be a sorted list looking like this:`,
+                    codeBlock('[\n' +
+                    '    "suite.sub-1.test-1",\n' +
+                    '    "suite.sub-1.test-2",\n' +
+                    '    "suite.sub-2.test-1"\n' +
+                    ']'),
+                    `When uncollapsed, these results will be separated by the upload that generated them. These results are laid out much like the ${localLink(['API', '/api/results/&ltsuite&gt'], '/api/results/&ltsuite&gt')} and ${localLink(['API', '/api/results/&ltsuite&gt/&lttest&gt'], '/api/results/&ltsuite&gt/&lttest&gt')} endpoints.`,
+                    codeBlock('[\n' +
+                    '    {\n' +
+                    '        "configuration": <configuration-object-a>,\n' +
+                    '        "results": {\n' +
+                    '            "start_time": <UTC time test run started>,\n' +
+                    '            "uuid": <UUID for test run>,\n' +
+                    '            "suite.sub-1.test-1": "FAIL",\n' +
+                    '            "suite.sub-1.test-2": "FAIL",\n' +
+                    '        }\n' +
+                    '    }, {\n' +
+                    '        "configuration": <configuration-object-b>,\n' +
+                    '        "results": {\n' +
+                    '            "start_time": <UTC time test run started>,\n' +
+                    '            "uuid": <UUID for test run>,\n' +
+                    '            "suite.sub-1.test-1": "FAIL",\n' +
+                    '            "suite.sub-2.test-1": "CRASH",\n' +
+                    '        }\n' +
+                    '    }\n' +
+                    ']'),
+                    `where &ltconfiguration-object-a&gt and &ltconfiguration-object-b&gt are both ${localLink(['Query Parameters', 'Configuration'], 'configuration objects')}.`,
+                ],
+            ),
+        ],'CI Links': [
+            `Results database instances are usually storing test results from some sort of continuous integration system. While the results database doesn't assume any particular continuous integration system, it does make some basic assumptions. The results database assumes that every upload has a URL associated with it and that every upload was run on a specific machine. Additionally, the results database assumes that for a given configuration, there is a corresponding 'queue' that all continuous integration runs with that specific configuration are associated with`,
+            `If these assumptions aren't true for a particular instance of the results database, or if URLs are not included in upload data, the continuous integration endpoints may be dead links. That should not effect the operation or usage of the results database.`,
+            documentEndpoint(
+                '/api/url/queue',
+                ['GET'],
+                ['Configuration', 'Limit'],
+                [
+                    `Returns a list of dictionaries which associate ${localLink(['Query Parameters', 'Configuration'], 'configuration objects')} to links to queues. This list is organized like so:`,
+                    codeBlock('[\n' +
+                    '    {\n' +
+                    '        "configuration": <configuration-object-a>,\n' +
+                    '        "url: <url to queue a>\n' +
+                    '    }, {\n' +
+                    '        "configuration": <configuration-object-b>,\n' +
+                    '        "url": <url to queue a>\n' +
+                    '    }\n' +
+                    ']'),
+                    `where &ltconfiguration-object-a&gt and &ltconfiguration-object-b&gt are both ${localLink(['Query Parameters', 'Configuration'], 'configuration objects')}.`,
+                ],
+            ),
+            documentEndpoint(
+                '/api/urls',
+                ['GET'],
+                ['Branch', 'Configuration', 'Limit', 'Repository', 'Time', 'UUID'],
+                [
+                    `Returns a list of dictionaries which associate ${localLink(['Query Parameters', 'Configuration'], 'configuration objects')} and ${localLink(['Query Parameters', 'UUID'], 'UUIDs')} with specific queue, worker and build links. The list is organized like this:`,
+                    codeBlock('[\n' +
+                    '    {\n' +
+                    '        "configuration": <configuration-object-a>,\n' +
+                    '        "urls": [\n' +
+                    '            {\n' +
+                    '                "start_time": <UTC time build started>,\n' +
+                    '                "end_time": <UTC time build ended>,\n' +
+                    '                "queue": <url to queue a>,\n' +
+                    '                "worker": <url to worker a>,\n' +
+                    '                "build": <url to build a>\n' +
+                    '            }\n' +
+                    '        ]\n' +
+                    '    }, {\n' +
+                    '        "configuration": <configuration-object-b>,\n' +
+                    '        "urls": [\n' +
+                    '            {\n' +
+                    '                "start_time": <UTC time build started>,\n' +
+                    '                "end_time": <UTC time build ended>,\n' +
+                    '                "queue": <url to queue a>,\n' +
+                    '                "worker": <url to worker a>,\n' +
+                    '                "build": <url to build a>\n' +
+                    '            }\n' +
+                    '        ]\n' +
+                    '    }\n' +
+                    ']'),
+                    `where &ltconfiguration-object-a&gt and &ltconfiguration-object-b&gt are both ${localLink(['Query Parameters', 'Configuration'], 'configuration objects')}.`,
+                ],
+            ),
+            documentEndpoint(
+                '/urls/queue',
+                ['GET'],
+                ['Configuration', 'Limit'],
+                [`Redirect to the continuous integration URL for a specific queue associated with the provided parameters. Note that while this endpoint accepts the standard ${localLink(['Query Parameters', 'Configuration'], 'configuration')} query parameters, this endpoint will return an error if the query parameters refer to multiple queues.`],
+            ),
+            documentEndpoint(
+                '/urls/worker',
+                ['GET'],
+                ['Branch', 'Configuration', 'Limit', 'Repository', 'Time', 'UUID'],
+                [`Redirect to the continuous integration URL for a specific worker associated with the provided parameters. Note that while this endpoint accepts the standard ${localLink(['Query Parameters', 'Configuration'], 'configuration')} and ${localLink(['Query Parameters', 'UUID'], 'UUID')} query parameters, this endpoint will return an error if the query parameters refer to multiple workers.`],
+            ),
+            documentEndpoint(
+                '/urls/build',
+                ['GET'],
+                ['Branch', 'Configuration', 'Limit', 'Repository', 'Time', 'UUID'],
+                [`Redirect to the continuous integration URL for a specific build associated with the provided parameters. Note that while this endpoint accepts the standard ${localLink(['Query Parameters', 'Configuration'], 'configuration')} and ${localLink(['Query Parameters', 'UUID'], 'UUID')} query parameters, this endpoint will return an error if the query parameters refer to multiple builds.`],
+            ),
+        ],
+    }, 'Query Parameters': {
+        'Aggregation': [
+            `Some endpoints in the results database aggregate data from multiple test runs. Such endpoints accept query parameters that control how this aggregation is preformed. The first of these is the collapsed parameter, which is set to True by default in aggregation endpoints:`,
+            codeBlock('collapsed=False'),
+            `The collapsed parameter indicates that a single result will be returned for all uploads which match the specified criteria. If false, aggregation endpoints will return the results which would have otherwise been aggregated.`,
+            `Because the results database distinguishes between expected and unexpected failures, endpoints performing aggregation will often filter out expected failures, and flag unexpected passes. To modify the behavior of these algorithms, these endpoints will support the unexpected flag:`,
+            codeBlock('unexpected=False'),
+            `By default, this flag is 'True' and endpoints will ignore tests which matched their expected behavior. If set to 'False', endpoints will return results for all failing tests, regardless of what their expectation is.`,
+        ],
+        'Branch': [
+            `Most data in the results database is partitioned by branch, and it is generally expected that results on seperate branches are independent of one another. By default, endpoints that support the branch query will assume that the branch is master for git repositories and trunk for SVN repositories if no value is specified. If multiple values for branch are specified, only the first will be respected. A request which intended to search for results on only results on the safari-607 branch would use a query like this:`,
+            codeBlock('branch=safari-607'),
+        ],
+        'Configuration': [
+            `Configurations are the key which defines a specific row within the results database. Uploads which share a configuration, but not a UUID, will appear in the same row on a timeline. Configurations are represented within the results database as an object:`,
+            codeBlock('{\n' +
+                '    "platform": <string representing platform family, e.g. mac, ios>,\n' +
+                '    "is_simulator": <boolean which is true if the configuration was simulating an embedded device>,\n' +
+                '    "version": <string of the form x.x.x representing the OS version>,\n' +
+                '    "flavor": <wild-card string allowing for custom configurations>,\n' +
+                '    "style": <debug, release, guard-malloc, ect.>,\n' +
+                '    "model": <iPhone 7, Macmini6,2, ect.>,\n' +
+                '    "version_name": <Mojave, Catalina, iOS 13, ect.>,\n' +
+                '    "sdk": <18A391, 15A432, ect.>\n' +
+                '}'),
+            `Any of the variables which make up a configuration are valid query parameters to an endpoint which supports configuration queries. For example, a query containing:`,
+            codeBlock('platform=mac&flavor=release'),
+            `will only return data associated with Mac's running release binaries. If the same variable is provided multiple times in a single query, like this:`,
+            codeBlock('model=iPhone%20SE&model=iPhone%207'),
+            `the resulting query will return data associated with iPhone SE or iPhone 7.`,
+            `Endpoints which support querying by configurations are optimized to only search the last 2 weeks of configurations. This means that if a configuration has not reported results in more than 2 weeks, it's data will not be accessable by default. To search all historic configurations, add this:`,
+            codeBlock('recent=False'),
+            `to your query. The downside of searching all configurations is that the default behavior of searching all recent configurations if no query parameters are provided is disabled because the results database cannot search by an unbounded number of configurations.`,
+        ],
+        'Limit': [
+            `The underlying architecture of the results database does not allow unlimited query sizes. Most endpoints accept a limit query which looks like this:`,
+            codeBlock('limit=150'),
+            `By default, the limit of most queries is 100. Because of the architecture of the results database's backend, the limit will actually operate on each partitioning key seperately. For the ${localLink(['API', '/api/commits/find'], '/api/commits/find')} endpoint, for example, the limit will operate on each repository seperately. So a request like this:`,
+            codeBlock('/api/commits/find?limit=150'),
+            `on a results database instance tracking 2 repositories could potentially return 300 commits, instead of the 150 that you might expect.`,
+        ],
+        'Repository': [
+            `The 'repository_id' query arguement allows a request to be limited to a specific repository. By default, endpoints which support the repository_id query argument will search all repositories if no repository_id is provided. A request which only searches for commits in the WebKit repository would have a query argument like this:`,
+            codeBlock('repository_id=webkit'),
+        ],
+        'Suite': [
+            `In most cases, the suite is defined by the path of an endpoint, not the parameters. In some cases, however, suite is defined by the parameters. In these cases, the query parameters will look like this:`,
+            codeBlock('suite=layout-tests'),
+            `It is also valid to define multiple suites in a single query on endpoints that support suite queries, like this:`,
+            codeBlock('suite=layout-tests&suite=webkitpy-tests'),
+            `A query like this will return data associated with the layout-tests suite and the webkitpy-tests suite. If not suite is provided, data for all available suites will be returned.`,
+        ],
+        'Time' : [
+            `The time query is seperate from the ${localLink(['Query Parameters', 'UUID'], 'UUID')} query. The time query allows data to be sorted and retreived by the UTC timestamp of the specific run that data is associated with. For example, a request provided with this query:`,
+            codeBlock('after_time=1562952473&before_time=1562961006'),
+            `will only return data associated with runs that occurred after ${new Date(1562952473 * 1000).toLocaleString()} but before ${new Date(1562961006 * 1000).toLocaleString()}.`,
+        ],
+        'Test': [
+            `In most cases, the test is defined by the path of an endpoint, not the parameters. In some cases, however, test is defined by the parameters. In these cases, the query parameters will look like this:`,
+            codeBlock('test=test.name'),
+            `It is also valid to define multiple tests in a single query on endpoints test support test queries, like this:`,
+            codeBlock('test=test.name&test=other.name'),
+            `A query like this will return test names that start with either 'test.name' or 'other.name'.`,
+        ],
+        'UUID': [
+            `Ultimately, most data in the results database is sorted by UUID. As mentioned in the ${localLink(['API', 'Commits'], 'commits section')}, UUIDs are defined by the timestamp of a commit and the commit order, where the commit order is the order a commit appears in it's patch series. Since most commits are not in a patch series, most commits have an order of 0. Commit UUIDs are calculated with the following equation:`,
+            codeBlock('commit.UUID = commit.timestamp * 100 + commit.order'),
+            `All endpoints which accept time queries allow data to be retrieved by a UUID with a query like this:`,
+            codeBlock('UUID=156295247300'),
+            `Since UUIDs are integers, endpoints which accept time queries also accept UUID ranges. A query looking for data between UUIDs 156295149100 and 156295247300 would be formated like this:`,
+            codeBlock('after_UUID=156295149100&before_UUID=156295247300'),
+            `We also know that timestamps can be easily converted to UUIDs. Endpoints which support querying by UUID also support querying by UTC timestamp. Our previous query could be instead written like this:`,
+            codeBlock('after_timestamp=1562951491&before_timestamp=1562952473'),
+            `Commits can also be translated to timestamp, although with a bit more work required from the back-end. Endpoints which support querying by UUID also support querying by commit information. In the first example in this section, we queried by UUID 156295247300. This corresponds to ${externalLink('https://trac.webkit.org/changeset/247391/webkit', 'r247391')}. We could instead query by the commit information:`,
+            codeBlock('id=247391&repository_id=webkit&branch=trunk'),
+            `But, as outlined in the overviews about ${localLink(['Query Parameters', 'Branch'], 'branches')} and ${localLink(['Query Parameters', 'Repository'], 'repositories')}, endpoints which support those queries have defaults which cover many cases, so the previous query could be simplified to:`,
+            codeBlock('id=247391'),
+            `Because endpoints supporting time are convert everything to UUID on the backend, the queries to these endpoints are quite flexible. The following are all examples of valid time queries:`,
+            codeBlock('after_id=247391&repository_id=webkit'),
+            codeBlock('after_id=247390&before_timestamp=1562952473'),
+            codeBlock('before_id=247391&after_UUID=156295149100&before_branch=trunk'),
+        ],
+    }
+}
+
+const sidebarControl = document.getElementsByClassName('mobile-sidebar-control')[0];
+sidebarControl.classList.add('display');
+
+const sidebarRef = REF.createRef({
+    onElementMount: (element) => {
+        sidebarControl.onclick = () => {
+            if (element.style.display)
+                element.style.display = null;
+            else
+                element.style.display = 'block';
+        }
+    }
+});
+
+DOM.inject(
+    document.getElementById('app'),
+    `<div class="sidebar under-topbar-with-actions" ref="${sidebarRef}">
+        <div class="list">
+        ${Object.keys(documentation).map((primary) => {
+            return `<div class="item">
+                    <h3><a href="#${primary.replace(/\s/g, '-')}">${primary}</a></h3>
+                </div>
+                <div class="item">
+                    <div class="list">
+                        ${Object.keys(documentation[primary]).map((secondary) => {
+                            return `<div class="item sub"><a href="#${(primary + '-' + secondary).replace(/\s/g, '-')}">${secondary}</a></div>`
+                        }).join('')}
+                    </div>
+                </div>`;
+        }).join('')}
+        </div>
+    </div>
+    <div class="main under-topbar-with-actions">
+        ${Object.keys(documentation).map((primary) => {
+            return `<div class="article content section">
+                    ${jumpIdUnderHeader(primary)}
+                    <div class="header"><h1>${primary}</h1></div>
+                    ${Object.keys(documentation[primary]).map((secondary) => {
+                        return `<div class="header">
+                                ${jumpIdUnderHeader(`${primary}-${secondary}`)}
+                                <div class="title"><h2>${secondary}</h2></div>
+                            </div>
+                            ${documentation[primary][secondary].map((data) => {
+                                return `<div class="content">${data}</div>`;
+                            }).join('')}`;
+                    }).join('')}
+                </div>`;
+        }).join('')}
+    </div>`,
+)
+
+</script>
+
+{% endblock %}
+
+{% block content %}
+<div id="app"></div>
+{% endblock %}

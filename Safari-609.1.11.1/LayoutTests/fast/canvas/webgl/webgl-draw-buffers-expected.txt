@@ -1,0 +1,327 @@
+CONSOLE MESSAGE: WebGL: INVALID_ENUM: getParameter: invalid parameter name, WEBGL_draw_buffers not enabled
+CONSOLE MESSAGE: WebGL: INVALID_ENUM: getParameter: invalid parameter name, WEBGL_draw_buffers not enabled
+CONSOLE MESSAGE: line 43: *** Error compiling FRAGMENT_SHADER '[object WebGLShader]':ERROR: 0:2: 'GL_EXT_draw_buffers' : extension is not supported
+
+CONSOLE MESSAGE: line 43: Error in compiling shader
+CONSOLE MESSAGE: WebGL: INVALID_ENUM: framebufferTexture2D: invalid attachment
+CONSOLE MESSAGE: WebGL: INVALID_VALUE: drawBuffersWEBGL: more than one buffer
+CONSOLE MESSAGE: WebGL: INVALID_VALUE: drawBuffersWEBGL: more than one buffer
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: drawBuffersWEBGL: BACK or NONE
+CONSOLE MESSAGE: WebGL: INVALID_ENUM: framebufferTexture2D: invalid attachment
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: drawBuffersWEBGL: COLOR_ATTACHMENTi_EXT or NONE
+CONSOLE MESSAGE: WebGL: checkFramebufferStatus: attachments do not have the same dimensions
+CONSOLE MESSAGE: WebGL: checkFramebufferStatus: attachments do not have the same dimensions
+This test verifies the functionality of the WEBGL_draw_buffers extension, if it is available.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS WebGL context exists
+
+Testing binding enum with extension disabled
+PASS getError was expected value: INVALID_ENUM : MAX_COLOR_ATTACHMENTS_WEBGL should not be queryable if extension is disabled
+PASS getError was expected value: INVALID_ENUM : MAX_DRAW_BUFFERS_WEBGL should not be queryable if extension is disabled
+PASS getError was expected value: NO_ERROR : there should be no errors
+
+test shaders disabled
+vertex shader
+fragement shaderPASS GL_EXT_draw_buffers should not be defined in GLSL
+vertex shader
+fragement shaderPASS #extension GL_EXT_draw_buffers should not be allowed in GLSL
+PASS getError was expected value: NO_ERROR : there should be no errors
+
+test attachment disabled
+PASS getError was expected value: INVALID_ENUM : should not be able to attach to gl.COLOR_ATTACHMENT1
+PASS getError was expected value: NO_ERROR : there should be no errors
+
+PASS Successfully enabled WEBGL_draw_buffers extension
+PASS WEBGL_draw_buffers listed as supported and getExtension succeeded
+
+Testing enums with extension enabled
+PASS ext.MAX_COLOR_ATTACHMENTS_WEBGL is 0x8cdf
+PASS getError was expected value: NO_ERROR : foo
+MAX_COLOR_ATTACHMENTS_WEBGL:8cdf
+PASS gl.getParemter(ext.MAX_COLOR_ATTACHMENTS_WEBGL) should be > 0
+PASS getError was expected value: NO_ERROR : MAX_COLOR_ATTACHMENTS_WEBGL query should succeed if extension is enabled
+PASS ext.MAX_DRAW_BUFFERS_WEBGL is 0x8824
+PASS getError was expected value: NO_ERROR : foo
+MAX_DRAW_BUFFERS_WEBGL:8824
+PASS gl.getParemter(ext.MAX_DRAW_BUFFERS_WEBGL) should be > 0
+PASS getError was expected value: NO_ERROR : MAX_DRAW_BUFFERS_WEBGL query should succeed if extension is enabled
+PASS ext.COLOR_ATTACHMENT0_WEBGL is 0x8ce0
+PASS ext.COLOR_ATTACHMENT1_WEBGL is 0x8ce1
+PASS ext.COLOR_ATTACHMENT2_WEBGL is 0x8ce2
+PASS ext.COLOR_ATTACHMENT3_WEBGL is 0x8ce3
+PASS ext.COLOR_ATTACHMENT4_WEBGL is 0x8ce4
+PASS ext.COLOR_ATTACHMENT5_WEBGL is 0x8ce5
+PASS ext.COLOR_ATTACHMENT6_WEBGL is 0x8ce6
+PASS ext.COLOR_ATTACHMENT7_WEBGL is 0x8ce7
+PASS ext.COLOR_ATTACHMENT8_WEBGL is 0x8ce8
+PASS ext.COLOR_ATTACHMENT9_WEBGL is 0x8ce9
+PASS ext.COLOR_ATTACHMENT10_WEBGL is 0x8cea
+PASS ext.COLOR_ATTACHMENT11_WEBGL is 0x8ceb
+PASS ext.COLOR_ATTACHMENT12_WEBGL is 0x8cec
+PASS ext.COLOR_ATTACHMENT13_WEBGL is 0x8ced
+PASS ext.COLOR_ATTACHMENT14_WEBGL is 0x8cee
+PASS ext.COLOR_ATTACHMENT15_WEBGL is 0x8cef
+PASS ext.DRAW_BUFFER0_WEBGL is 0x8825
+PASS ext.DRAW_BUFFER1_WEBGL is 0x8826
+PASS ext.DRAW_BUFFER2_WEBGL is 0x8827
+PASS ext.DRAW_BUFFER3_WEBGL is 0x8828
+PASS ext.DRAW_BUFFER4_WEBGL is 0x8829
+PASS ext.DRAW_BUFFER5_WEBGL is 0x882a
+PASS ext.DRAW_BUFFER6_WEBGL is 0x882b
+PASS ext.DRAW_BUFFER7_WEBGL is 0x882c
+PASS ext.DRAW_BUFFER8_WEBGL is 0x882d
+PASS ext.DRAW_BUFFER9_WEBGL is 0x882e
+PASS ext.DRAW_BUFFER10_WEBGL is 0x882f
+PASS ext.DRAW_BUFFER11_WEBGL is 0x8830
+PASS ext.DRAW_BUFFER12_WEBGL is 0x8831
+PASS ext.DRAW_BUFFER13_WEBGL is 0x8832
+PASS ext.DRAW_BUFFER14_WEBGL is 0x8833
+PASS ext.DRAW_BUFFER15_WEBGL is 0x8834
+Testing drawBuffersWEBGL with default drawing buffer
+PASS gl.getParameter(ext.DRAW_BUFFER0_WEBGL) is gl.BACK
+PASS getError was expected value: INVALID_VALUE : after evaluating: ext.drawBuffersWEBGL([])
+PASS getError was expected value: INVALID_VALUE : after evaluating: ext.drawBuffersWEBGL([gl.NONE, gl.NONE])
+PASS getError was expected value: INVALID_OPERATION : after evaluating: ext.drawBuffersWEBGL([ext.COLOR_ATTACHMENT0_WEBGL])
+PASS gl.getParameter(ext.DRAW_BUFFER0_WEBGL) is gl.BACK
+PASS getError was expected value: NO_ERROR : after evaluating: ext.drawBuffersWEBGL([gl.NONE])
+PASS gl.getParameter(ext.DRAW_BUFFER0_WEBGL) is gl.NONE
+PASS getError was expected value: NO_ERROR : after evaluating: ext.drawBuffersWEBGL([gl.BACK])
+PASS gl.getParameter(ext.DRAW_BUFFER0_WEBGL) is gl.BACK
+PASS getError was expected value: NO_ERROR : there should be no errors
+
+test shaders enabled
+vertex shader
+fragement shaderPASS GL_EXT_draw_buffers should be defined as 1 in GLSL
+fragement shaderPASS should be green
+PASS getError was expected value: NO_ERROR : there should be no errors
+
+test attachment enabled
+PASS getError was expected value: INVALID_ENUM : should not be able to attach pass the max attachment point: gl.COLOR_ATTACHMENT0 + 8
+PASS getError was expected value: NO_ERROR : should be able to attach to the max attachment point: gl.COLOR_ATTACHMENT0 + 7
+PASS getError was expected value: NO_ERROR : should be able to call drawBuffersWEBGL with array NONE of size 8
+PASS getError was expected value: NO_ERROR : should be able to call drawBuffersWEBGL with array attachments of size 8
+PASS getError was expected value: NO_ERROR : should be able to call drawBuffersWEBGL with mixed array attachments of size 8
+PASS getError was expected value: INVALID_OPERATION : should not be able to call drawBuffersWEBGL with out of order attachments of size 8
+PASS getError was expected value: NO_ERROR : should not be able to call drawBuffersWEBGL with short array of attachments of size 8
+PASS getError was expected value: NO_ERROR : there should be no errors
+
+--------- draw tests -----------
+fragement shaderPASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+test that each texture got the correct color.
+PASS attachment 0 should be 255,0,0,0
+PASS attachment 1 should be 0,255,0,0
+PASS attachment 2 should be 255,255,0,0
+PASS attachment 3 should be 0,0,255,0
+PASS attachment 4 should be 255,0,255,0
+PASS attachment 5 should be 0,255,255,0
+PASS attachment 6 should be 255,255,255,0
+PASS attachment 7 should be 0,0,0,255
+
+test clearing clears all the textures
+PASS attachment 0 should be 0,255,0,255
+PASS attachment 1 should be 0,255,0,255
+PASS attachment 2 should be 0,255,0,255
+PASS attachment 3 should be 0,255,0,255
+PASS attachment 4 should be 0,255,0,255
+PASS attachment 5 should be 0,255,0,255
+PASS attachment 6 should be 0,255,0,255
+PASS attachment 7 should be 0,255,0,255
+
+test that NONE draws nothing
+PASS attachment 0 should be 0,255,0,255
+PASS attachment 1 should be 0,255,0,255
+PASS attachment 2 should be 0,255,0,255
+PASS attachment 3 should be 0,255,0,255
+PASS attachment 4 should be 0,255,0,255
+PASS attachment 5 should be 0,255,0,255
+PASS attachment 6 should be 0,255,0,255
+PASS attachment 7 should be 0,255,0,255
+
+test that gl_FragColor broadcasts
+PASS attachment 0 should be 255,0,0,255
+PASS attachment 1 should be 255,0,0,255
+PASS attachment 2 should be 255,0,0,255
+PASS attachment 3 should be 255,0,0,255
+PASS attachment 4 should be 255,0,0,255
+PASS attachment 5 should be 255,0,0,255
+PASS attachment 6 should be 255,0,0,255
+PASS attachment 7 should be 255,0,0,255
+
+test setting first half to NONE and clearing
+PASS attachment 0 should be 255,0,0,255
+PASS attachment 1 should be 255,0,0,255
+PASS attachment 2 should be 255,0,0,255
+PASS attachment 3 should be 255,0,0,255
+PASS attachment 4 should be 0,255,0,255
+PASS attachment 5 should be 0,255,0,255
+PASS attachment 6 should be 0,255,0,255
+PASS attachment 7 should be 0,255,0,255
+
+test setting first half to NONE and drawing
+PASS attachment 0 should be 255,0,0,255
+PASS attachment 1 should be 255,0,0,255
+PASS attachment 2 should be 255,0,0,255
+PASS attachment 3 should be 255,0,0,255
+PASS attachment 4 should be 255,0,255,0
+PASS attachment 5 should be 0,255,255,0
+PASS attachment 6 should be 255,255,255,0
+PASS attachment 7 should be 0,0,0,255
+
+test setting second half to NONE and clearing
+PASS attachment 0 should be 0,0,255,255
+PASS attachment 1 should be 0,0,255,255
+PASS attachment 2 should be 0,0,255,255
+PASS attachment 3 should be 0,0,255,255
+PASS attachment 4 should be 255,0,0,255
+PASS attachment 5 should be 255,0,0,255
+PASS attachment 6 should be 255,0,0,255
+PASS attachment 7 should be 255,0,0,255
+
+test setting second half to NONE and drawing
+PASS attachment 0 should be 255,0,0,0
+PASS attachment 1 should be 0,255,0,0
+PASS attachment 2 should be 255,255,0,0
+PASS attachment 3 should be 0,0,255,0
+PASS attachment 4 should be 255,0,0,255
+PASS attachment 5 should be 255,0,0,255
+PASS attachment 6 should be 255,0,0,255
+PASS attachment 7 should be 255,0,0,255
+
+test clearing framebuffer that only has first half of attachments
+attachment: 0 = COLOR_ATTACHMENT0, TEXTURE
+attachment: 1 = 0x8ce1, TEXTURE
+attachment: 2 = 0x8ce2, TEXTURE
+attachment: 3 = 0x8ce3, TEXTURE
+attachment: 4 = 0x8ce4, NO_ERROR
+attachment: 5 = 0x8ce5, NO_ERROR
+attachment: 6 = 0x8ce6, NO_ERROR
+attachment: 7 = 0x8ce7, NO_ERROR
+PASS attachment 0 should be 0,255,0,255
+PASS attachment 1 should be 0,255,0,255
+PASS attachment 2 should be 0,255,0,255
+PASS attachment 3 should be 0,255,0,255
+PASS attachment 4 should be 0,0,0,0
+PASS attachment 5 should be 0,0,0,0
+PASS attachment 6 should be 0,0,0,0
+PASS attachment 7 should be 0,0,0,0
+
+test drawing to framebuffer that only has first half of attachments
+PASS attachment 0 should be 255,0,0,0
+PASS attachment 1 should be 0,255,0,0
+PASS attachment 2 should be 255,255,0,0
+PASS attachment 3 should be 0,0,255,0
+PASS attachment 4 should be 0,0,0,0
+PASS attachment 5 should be 0,0,0,0
+PASS attachment 6 should be 0,0,0,0
+PASS attachment 7 should be 0,0,0,0
+
+test clearing framebuffer that only has second half of attachments
+attachment: 0 = COLOR_ATTACHMENT0, NO_ERROR
+attachment: 1 = 0x8ce1, NO_ERROR
+attachment: 2 = 0x8ce2, NO_ERROR
+attachment: 3 = 0x8ce3, NO_ERROR
+attachment: 4 = 0x8ce4, TEXTURE
+attachment: 5 = 0x8ce5, TEXTURE
+attachment: 6 = 0x8ce6, TEXTURE
+attachment: 7 = 0x8ce7, TEXTURE
+framebuffer not complete
+
+test clearing framebuffer that only has first and last attachments
+attachment: 0 = COLOR_ATTACHMENT0, TEXTURE
+attachment: 1 = 0x8ce1, NO_ERROR
+attachment: 2 = 0x8ce2, NO_ERROR
+attachment: 3 = 0x8ce3, NO_ERROR
+attachment: 4 = 0x8ce4, NO_ERROR
+attachment: 5 = 0x8ce5, NO_ERROR
+attachment: 6 = 0x8ce6, NO_ERROR
+attachment: 7 = 0x8ce7, TEXTURE
+PASS attachment 0 should be 0,255,0,255
+PASS attachment 1 should be 0,0,0,0
+PASS attachment 2 should be 0,0,0,0
+PASS attachment 3 should be 0,0,0,0
+PASS attachment 4 should be 0,0,0,0
+PASS attachment 5 should be 0,0,0,0
+PASS attachment 6 should be 0,0,0,0
+PASS attachment 7 should be 0,255,0,255
+
+test drawing to framebuffer that only has first and last attachments
+PASS attachment 0 should be 255,0,0,0
+PASS attachment 1 should be 0,0,0,0
+PASS attachment 2 should be 0,0,0,0
+PASS attachment 3 should be 0,0,0,0
+PASS attachment 4 should be 0,0,0,0
+PASS attachment 5 should be 0,0,0,0
+PASS attachment 6 should be 0,0,0,0
+PASS attachment 7 should be 0,0,0,255
+
+test clearing framebuffer that has all but the first and last attachments
+attachment: 0 = COLOR_ATTACHMENT0, NO_ERROR
+attachment: 1 = 0x8ce1, TEXTURE
+attachment: 2 = 0x8ce2, TEXTURE
+attachment: 3 = 0x8ce3, TEXTURE
+attachment: 4 = 0x8ce4, TEXTURE
+attachment: 5 = 0x8ce5, TEXTURE
+attachment: 6 = 0x8ce6, TEXTURE
+attachment: 7 = 0x8ce7, NO_ERROR
+framebuffer not complete
+
+test switching between fbos keeps drawbuffer state
+PASS attachment 0 should be 255,0,0,255
+PASS attachment 1 should be 255,0,0,255
+PASS attachment 2 should be 255,0,0,255
+PASS attachment 3 should be 255,0,0,255
+PASS attachment 4 should be 255,0,0,255
+PASS attachment 5 should be 255,0,0,255
+PASS attachment 6 should be 255,0,0,255
+PASS attachment 7 should be 255,0,0,255
+
+PASS attachment 0 should be 255,0,0,255
+PASS attachment 1 should be 255,0,0,255
+PASS attachment 2 should be 255,0,0,255
+PASS attachment 3 should be 255,0,0,255
+PASS attachment 4 should be 255,0,0,255
+PASS attachment 5 should be 255,0,0,255
+PASS attachment 6 should be 255,0,0,255
+PASS attachment 7 should be 255,0,0,255
+
+PASS attachment 0 should be 255,0,0,0
+PASS attachment 1 should be 0,255,0,0
+PASS attachment 2 should be 255,255,0,0
+PASS attachment 3 should be 0,0,255,0
+PASS attachment 4 should be 255,0,255,0
+PASS attachment 5 should be 0,255,255,0
+PASS attachment 6 should be 255,255,255,0
+PASS attachment 7 should be 0,0,0,255
+
+test queries
+check framebuffer with all attachments on
+PASS gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 0) is gl.COLOR_ATTACHMENT0 + 0
+PASS gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 1) is gl.COLOR_ATTACHMENT0 + 1
+PASS gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 2) is gl.COLOR_ATTACHMENT0 + 2
+PASS gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 3) is gl.COLOR_ATTACHMENT0 + 3
+PASS gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 4) is gl.COLOR_ATTACHMENT0 + 4
+PASS gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 5) is gl.COLOR_ATTACHMENT0 + 5
+PASS gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 6) is gl.COLOR_ATTACHMENT0 + 6
+PASS gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 7) is gl.COLOR_ATTACHMENT0 + 7
+check framebuffer with all attachments off
+PASS gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 0) is gl.NONE
+PASS gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 1) is gl.NONE
+PASS gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 2) is gl.NONE
+PASS gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 3) is gl.NONE
+PASS gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 4) is gl.NONE
+PASS gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 5) is gl.NONE
+PASS gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 6) is gl.NONE
+PASS gl.getParameter(ext.DRAW_BUFFER0_WEBGL + 7) is gl.NONE
+test attachment size mis-match
+PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE is true
+PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE is true
+PASS getError was expected value: NO_ERROR : there should be no errors
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,7 @@
+2d.imageData.get.source.negative
+
+getImageData() works with negative width and height, and returns top-to-bottom left-to-right
+
+
+FAIL getImageData() works with negative width and height, and returns top-to-bottom left-to-right null is not an object (evaluating 'ctx.fillStyle = '#000'')
+

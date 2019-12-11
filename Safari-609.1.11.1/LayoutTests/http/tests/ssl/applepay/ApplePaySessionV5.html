@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("Test basic creation of an ApplePaySession object.");
+
+window.jsTestIsAsync = true;
+
+function validRequest() {
+    return {
+          countryCode: 'US',
+          currencyCode: 'USD',
+          supportedNetworks: ['visa', 'masterCard', 'carteBancaire'],
+          merchantCapabilities: ['supports3DS'],
+          total: { label: 'Your Label', amount: '10.00' },
+    }
+}
+
+function logAndShouldThrow(setup, test) {
+    debug("SETUP: " + setup)
+    eval(setup);
+    shouldThrow(test);
+    debug("")
+}
+
+function logAndShouldNotThrow(setup, test) {
+    debug("SETUP: " + setup)
+    eval(setup);
+    shouldNotThrow(test);
+    debug("")
+}
+
+function go() {
+    debug("Testing supportsVersion");
+    debug("");
+    shouldThrow("ApplePaySession.supportsVersion(0)");
+    shouldBeTrue("ApplePaySession.supportsVersion(1)");
+    shouldBeTrue("ApplePaySession.supportsVersion(2)");
+    shouldBeTrue("ApplePaySession.supportsVersion(3)");
+    shouldBeTrue("ApplePaySession.supportsVersion(4)");
+    shouldBeTrue("ApplePaySession.supportsVersion(5)");
+    debug("");
+
+    debug("Testing PaymentRequest (v5)")
+    debug("");
+    shouldThrow("new ApplePaySession(5, { })");
+    shouldNotThrow("new ApplePaySession(5, validRequest())");
+    debug("");
+
+    document.querySelector("button").remove();
+
+    finishJSTest();
+}
+
+function clickElement(element) {
+    let x = element.offsetLeft + 2;
+    let y = element.offsetTop + 2;
+
+    var supportsTouchEvents = "TouchEvent" in window;
+    if (supportsTouchEvents && window.testRunner && testRunner.runUIScript) {
+        testRunner.runUIScript(`(function() { uiController.singleTapAtPoint(${x}, ${y}, function() { }); })();`, function () { });
+    } else if (window.eventSender) {
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+}
+
+window.onload = function() {
+    clickElement(document.querySelector("button"));
+}
+
+</script>
+<button onclick='go()'>Go</button>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

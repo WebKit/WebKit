@@ -1,0 +1,5 @@
+
+PASS ServiceWorkerRegistration.update() from client succeeds while installing service worker. 
+FAIL ServiceWorkerRegistration.update() from installing service worker throws. assert_equals: update() should have thrown InvalidStateError. expected "TypeError" but got "InvalidStateError"
+PASS ServiceWorkerRegistration.update() from active service worker succeeds while installing service worker. 
+

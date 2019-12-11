@@ -1,0 +1,13 @@
+This tests to make sure that after a deletion, merging can merge into an editable region that's embedded in non-editable content that is collapsed by the deletion.
+| "
+"
+| <table>
+|   border="1"
+|   contenteditable="false"
+|   <tbody>
+|     <tr>
+|       <td>
+|         <span>
+|           contenteditable="true"
+|           id="start"
+|           "<#selection-caret>This sentence should be inside the editable cell."

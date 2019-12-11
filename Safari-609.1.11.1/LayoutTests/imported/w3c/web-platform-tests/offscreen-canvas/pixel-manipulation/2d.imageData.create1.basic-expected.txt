@@ -1,0 +1,7 @@
+2d.imageData.create1.basic
+
+createImageData(imgdata) exists and returns something
+
+
+FAIL createImageData(imgdata) exists and returns something null is not an object (evaluating 'ctx.createImageData')
+

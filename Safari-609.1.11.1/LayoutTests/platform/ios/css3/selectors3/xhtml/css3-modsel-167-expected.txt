@@ -1,0 +1,8 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x52
+  RenderBlock {html} at (0,0) size 800x52
+    RenderBody {body} at (8,16) size 784x20
+      RenderBlock {p} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 411x19
+          text run at (0,0) width 411: "The first line of this paragraph should have a green background."

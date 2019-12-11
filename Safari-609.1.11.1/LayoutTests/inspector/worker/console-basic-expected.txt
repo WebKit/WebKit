@@ -1,0 +1,161 @@
+Test for ConsoleAgent in a Worker.
+
+
+== Running test suite: Worker.Console.basic
+-- Running test case: Worker.Console.log
+PASS: ConsoleMessage parameter RemoteObjects should be from the Worker target.
+{
+  "_source": "console-api",
+  "_level": "log",
+  "_messageText": "log!",
+  "_type": "log",
+  "_url": "inspector/worker/resources/worker-console.js",
+  "_line": 4,
+  "_column": 20,
+  "_sourceCodeLocation": "<filtered>",
+  "_repeatCount": 1,
+  "_parameters": [
+    {
+      "_type": "string",
+      "_description": "log!",
+      "_value": "log!"
+    },
+    {
+      "_type": "object",
+      "_subtype": "array",
+      "_objectId": "<filtered>",
+      "_description": "Array",
+      "_size": 4,
+      "_preview": {
+        "_type": "object",
+        "_subtype": "array",
+        "_description": "Array",
+        "_lossless": false,
+        "_overflow": false,
+        "_size": 4,
+        "_properties": [
+          {
+            "_name": "0",
+            "_type": "object",
+            "_value": "DedicatedWorkerGlobalScope"
+          },
+          {
+            "_name": "1",
+            "_type": "object",
+            "_value": "WorkerLocation"
+          },
+          {
+            "_name": "2",
+            "_type": "number",
+            "_value": "123"
+          },
+          {
+            "_name": "3",
+            "_type": "symbol",
+            "_value": "Symbol()"
+          }
+        ],
+        "_entries": null
+      }
+    }
+  ],
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+-- Running test case: Worker.Console.warn
+{
+  "_source": "console-api",
+  "_level": "warning",
+  "_messageText": "warning!",
+  "_type": "log",
+  "_url": "inspector/worker/resources/worker-console.js",
+  "_line": 7,
+  "_column": 21,
+  "_sourceCodeLocation": "<filtered>",
+  "_repeatCount": 1,
+  "_parameters": [
+    {
+      "_type": "string",
+      "_description": "warning!",
+      "_value": "warning!"
+    }
+  ],
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+-- Running test case: Worker.Console.error
+{
+  "_source": "console-api",
+  "_level": "error",
+  "_messageText": "error!",
+  "_type": "log",
+  "_url": "inspector/worker/resources/worker-console.js",
+  "_line": 10,
+  "_column": 22,
+  "_sourceCodeLocation": "<filtered>",
+  "_repeatCount": 1,
+  "_parameters": [
+    {
+      "_type": "string",
+      "_description": "error!",
+      "_value": "error!"
+    }
+  ],
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+-- Running test case: Worker.Console.assert
+{
+  "_source": "console-api",
+  "_level": "error",
+  "_messageText": "Assertion Failure",
+  "_type": "assert",
+  "_url": "inspector/worker/resources/worker-console.js",
+  "_line": 14,
+  "_column": 23,
+  "_sourceCodeLocation": "<filtered>",
+  "_repeatCount": 1,
+  "_parameters": [
+    {
+      "_type": "string",
+      "_description": "Assertion Failure",
+      "_value": "Assertion Failure"
+    }
+  ],
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+-- Running test case: Worker.Console.time
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "name: <filtered>ms",
+  "_type": "timing",
+  "_url": "inspector/worker/resources/worker-console.js",
+  "_line": 18,
+  "_column": 24,
+  "_sourceCodeLocation": "<filtered>",
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+
+-- Running test case: Worker.Console.count
+{
+  "_source": "console-api",
+  "_level": "debug",
+  "_messageText": "default: 1",
+  "_type": "log",
+  "_url": "inspector/worker/resources/worker-console.js",
+  "_line": 21,
+  "_column": 22,
+  "_sourceCodeLocation": "<filtered>",
+  "_repeatCount": 1,
+  "_stackTrace": "<filtered>",
+  "_request": null
+}
+

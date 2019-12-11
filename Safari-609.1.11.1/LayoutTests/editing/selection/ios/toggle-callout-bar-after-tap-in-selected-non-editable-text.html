@@ -1,0 +1,66 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta charset="utf8">
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+#text {
+    font-size: 120px;
+    margin: 0;
+}
+
+#target {
+    margin-top: 100px;
+}
+text
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that tapping selected non-editable text toggles callout bar visibility. To manually test, select the text above, and wait for the callout bar to show; tap inside the selection to dismiss the callout bar, tap to show the callout bar again, and finally tap outside of the selected text to clear the selection.");
+
+    const text = document.getElementById("text");
+    const target = document.getElementById("target");
+
+    await UIHelper.longPressElement(text);
+    await UIHelper.waitForSelectionToAppear();
+    testPassed("Observed selection.");
+
+    await UIHelper.waitForMenuToShow();
+    testPassed("Showed callout bar after selecting text.");
+
+    await UIHelper.activateElement(text);
+    await UIHelper.waitForMenuToHide();
+    testPassed("Dismissed callout bar after tap in selected text.");
+
+    await UIHelper.waitForDoubleTapDelay();
+    await UIHelper.activateElement(text);
+    await UIHelper.waitForMenuToShow();
+    testPassed("Showed callout bar after second tap in selected text.");
+
+    await UIHelper.activateElement(target);
+    await UIHelper.waitForSelectionToDisappear();
+    testPassed("Dismissed selection after tap outside of selection.");
+
+    text.remove();
+    target.remove();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<p id="text">Select</p>
+<div id="target">Then click here</div>
+<p id="description"></p>
+<p id="console"></p>
+</body>
+</html>

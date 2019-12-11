@@ -1,0 +1,21 @@
+SVG 1.1 dynamic animation tests
+
+Tests that an animateTransform with attributeType "auto" acts as "XML". Should result in a translated 100x100 rect and only PASS messages.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS rootSVGElement.getTransformToElement(rect).e is 0
+PASS rootSVGElement.getTransformToElement(rect).f is 0
+PASS rootSVGElement.getTransformToElement(rect).e is 0
+PASS rootSVGElement.getTransformToElement(rect).f is 0
+PASS rootSVGElement.getTransformToElement(rect).e is -100
+PASS rootSVGElement.getTransformToElement(rect).f is -100
+PASS rootSVGElement.getTransformToElement(rect).e is -200
+PASS rootSVGElement.getTransformToElement(rect).f is -200
+PASS rootSVGElement.getTransformToElement(rect).e is -200
+PASS rootSVGElement.getTransformToElement(rect).f is -200
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: line 2: Unsafe JavaScript attempt to initiate navigation for frame with URL 'navigate-top-by-name-to-fail.html'. The frame attempting navigation of the top-level window is sandboxed, but the 'allow-top-navigation' flag is not set.
+
+CONSOLE MESSAGE: line 2: Blocked opening 'fail-and-notify-done.html' in a new window because the request was made in a sandboxed frame whose 'allow-popups' permission is not set.
+CONSOLE MESSAGE: line 4: Unsafe JavaScript attempt to initiate navigation for frame with URL 'navigate-top-by-name-to-fail.html'. The frame attempting navigation of the top-level window is sandboxed, but the 'allow-top-navigation' flag is not set.
+
+CONSOLE MESSAGE: line 6: Unsafe JavaScript attempt to initiate navigation for frame with URL 'navigate-top-by-name-to-fail.html'. The frame attempting navigation of the top-level window is sandboxed, but the 'allow-top-navigation' flag is not set.
+
+CONSOLE MESSAGE: line 8: Blocked opening 'fail-and-notify-done.html' in a new window because the request was made in a sandboxed frame whose 'allow-popups' permission is not set.
+ALERT: PASS
+This test verifies that a sandboxed IFrame cannot navigate the top-level frame without allow-top-navigation. This test passes if the navigation does not occur.
+
+

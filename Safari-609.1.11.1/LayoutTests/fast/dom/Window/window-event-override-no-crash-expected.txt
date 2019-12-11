@@ -1,0 +1,1 @@
+ This test ensures that window.event can be set to a meaningless object (and immediately be used internally) without causing a crash.

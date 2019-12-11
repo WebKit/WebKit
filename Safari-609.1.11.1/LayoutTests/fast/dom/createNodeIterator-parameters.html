@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests parameters of document.createNodeIterator() API.");
+
+debug("No parameters");
+shouldThrow("document.createNodeIterator()", "'TypeError: Not enough arguments'");
+
+debug("")
+debug("Null root node");
+shouldThrow("document.createNodeIterator(null)", "'TypeError: Argument 1 (\\'root\\') to Document.createNodeIterator must be an instance of Node'");
+
+debug("");
+debug("Default parameters");
+evalAndLog("iterator = document.createNodeIterator(document)");
+shouldBe("iterator.root", "document");
+shouldBe("iterator.referenceNode", "document");
+shouldBe("iterator.whatToShow", "0xFFFFFFFF");
+shouldBeNull("iterator.filter");
+shouldBeTrue("iterator.pointerBeforeReferenceNode");
+
+debug("");
+debug("Passing null for optional parameters");
+evalAndLog("iterator = document.createNodeIterator(document, null, null)");
+shouldBe("iterator.root", "document");
+shouldBe("iterator.referenceNode", "document");
+shouldBe("iterator.whatToShow", "0");
+shouldBeNull("iterator.filter");
+shouldBeTrue("iterator.pointerBeforeReferenceNode");
+
+debug("");
+debug("Passing undefined for optional parameters");
+evalAndLog("iterator = document.createNodeIterator(document, undefined, undefined)");
+shouldBe("iterator.root", "document");
+shouldBe("iterator.referenceNode", "document");
+shouldBe("iterator.whatToShow", "0xFFFFFFFF");
+shouldBeNull("iterator.filter");
+shouldBeTrue("iterator.pointerBeforeReferenceNode");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

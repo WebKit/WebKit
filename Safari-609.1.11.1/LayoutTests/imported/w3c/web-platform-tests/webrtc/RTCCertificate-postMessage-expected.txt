@@ -1,0 +1,5 @@
+
+PASS Check same-origin RTCCertificate serialization 
+PASS Check cross-origin RTCCertificate serialization 
+PASS Check cross-origin created RTCCertificate 
+

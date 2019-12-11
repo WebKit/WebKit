@@ -1,0 +1,3 @@
+
+PASS EventSource: constructor (invalid URL) 
+

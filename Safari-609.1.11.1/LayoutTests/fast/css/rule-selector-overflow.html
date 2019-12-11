@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test-pre.js"></script>
+<style id="stylebro" type="text/css">
+.peb {
+    color: red;
+}
+</style>
+</head>
+<body>
+<script>
+
+styleElement = document.getElementById("stylebro");
+
+function repeatAndJoin(s, count)
+{
+    var a = new Array();
+    for (i = 0; i < count; ++i)
+        a.push(s);
+    return a.join(", ");
+}
+
+function selectorListWithLength(length)
+{
+    return repeatAndJoin(".x", length);
+}
+
+function fatSelectorListWithLength(length)
+{
+    return repeatAndJoin(".x .y .z .q", length);
+}
+
+function styleSheetWithSelectorLength(length)
+{
+    return selectorListWithLength(length) + " { color: red; }";
+}
+
+function fatStyleSheetWithSelectorLength(length)
+{
+    return fatSelectorListWithLength(length) + " { color: red; }";
+}
+
+function sheet()
+{
+    return styleElement.sheet;
+}
+
+function rule()
+{
+    return sheet().cssRules[0];
+}
+
+description("This test tests and documents the behavior of CSS style rules with a massive number of selectors. Rules with >8192 selector components get split into multiple rules at the parsing stage. Setting a rule's selectorText via CSSOM will do nothing if there are more than 8192 components.");
+
+shouldBe("rule().selectorText = selectorListWithLength(1); rule().selectorText", "selectorListWithLength(1)");
+shouldBe("rule().selectorText = selectorListWithLength(8192); rule().selectorText", "selectorListWithLength(8192)");
+shouldBe("rule().selectorText = '.reset'; rule().selectorText", "'.reset'");
+shouldBe("rule().selectorText = selectorListWithLength(8193); rule().selectorText", "'.reset'");
+shouldBe("rule().selectorText = '.reset'; rule().selectorText", "'.reset'");
+shouldBe("rule().selectorText = selectorListWithLength(8193); sheet().rules.length", "1");
+shouldBe("rule().selectorText = selectorListWithLength(8192); rule().selectorText", "selectorListWithLength(8192)");
+shouldBe("rule().selectorText = selectorListWithLength(8192); sheet().rules.length", "1");
+shouldBe("rule().selectorText = '.reset'; rule().selectorText", "'.reset'");
+shouldBe("rule().selectorText = selectorListWithLength(8193); rule().selectorText", "'.reset'");
+shouldBe("rule().selectorText = selectorListWithLength(8193); sheet().rules.length", "1");
+
+shouldBe("rule().selectorText = fatSelectorListWithLength(1); sheet().rules.length", "1");
+shouldBe("rule().selectorText = fatSelectorListWithLength(1); rule().selectorText", "fatSelectorListWithLength(1)");
+shouldBe("rule().selectorText = fatSelectorListWithLength(2048); rule().selectorText", "fatSelectorListWithLength(2048)");
+shouldBe("rule().selectorText = '.reset'; rule().selectorText", "'.reset'");
+shouldBe("rule().selectorText = fatSelectorListWithLength(2049); rule().selectorText", "'.reset'");
+
+shouldBe("styleElement.innerText = styleSheetWithSelectorLength(1); rule().selectorText", "selectorListWithLength(1)");
+shouldBe("styleElement.innerText = styleSheetWithSelectorLength(8192); rule().selectorText", "selectorListWithLength(8192)");
+shouldBe("styleElement.innerText = styleSheetWithSelectorLength(8192); sheet().rules.length", "1");
+shouldBe("styleElement.innerText = styleSheetWithSelectorLength(8193); rule().selectorText", "selectorListWithLength(8192)");
+shouldBe("styleElement.innerText = styleSheetWithSelectorLength(8193); sheet().rules.length", "2");
+shouldBe("styleElement.innerText = styleSheetWithSelectorLength(16384); sheet().rules.length", "2");
+shouldBe("styleElement.innerText = styleSheetWithSelectorLength(16385); sheet().rules.length", "3");
+
+shouldBe("styleElement.innerText = fatStyleSheetWithSelectorLength(1); sheet().rules.length", "1");
+shouldBe("styleElement.innerText = fatStyleSheetWithSelectorLength(2048); sheet().rules.length", "1");
+shouldBe("styleElement.innerText = fatStyleSheetWithSelectorLength(2049); sheet().rules.length", "2");
+shouldBe("styleElement.innerText = fatStyleSheetWithSelectorLength(4096); sheet().rules.length", "2");
+shouldBe("styleElement.innerText = fatStyleSheetWithSelectorLength(4097); sheet().rules.length", "3");
+shouldBe("styleElement.innerText = fatStyleSheetWithSelectorLength(16385); sheet().rules.length", "9");
+shouldBe("styleElement.innerText = fatStyleSheetWithSelectorLength(16384); sheet().rules.length", "8");
+shouldBe("styleElement.innerText = fatStyleSheetWithSelectorLength(16385); sheet().rules.length", "9");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

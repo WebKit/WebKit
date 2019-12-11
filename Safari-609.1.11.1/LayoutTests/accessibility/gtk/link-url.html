@@ -1,0 +1,26 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div id="test">
+ <a id="test1" href="https://webkit.org">X</a>
+ <a id="test2" href="">X</a>
+ <div id="test3" role="link">X</div>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Verify exposure of the URL of links.");
+if (window.accessibilityController) {
+    for (var i = 1; i <= 3; i++) {
+        var axElement = accessibilityController.accessibleElementById("test" + i);
+        debug("test" + i + " : " + axElement.url);
+    }
+    document.getElementById("test").style.visibility = "hidden";
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

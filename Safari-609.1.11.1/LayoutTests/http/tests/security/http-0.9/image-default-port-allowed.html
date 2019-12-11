@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    if (window.internals)
+        internals.registerDefaultPortForProtocol(8000, "http");
+}
+</script>
+</head>
+<body>
+<img src="resources/nph-image.pl" onload="alert('PASS')" onerror="alert('FAIL')">
+</body>
+</html>

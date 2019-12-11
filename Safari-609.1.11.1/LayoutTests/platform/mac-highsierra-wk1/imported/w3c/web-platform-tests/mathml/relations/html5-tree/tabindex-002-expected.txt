@@ -1,0 +1,14 @@
+
+FAIL Elements with different tabindex must be focused sequentially when pressing 'Tab' keys assert_array_equals: property 6, expected "text6" but got "text11"
+tabindex(omitted)
+tabindex(empty)
+tabindex(a)
+tabindex(-1)
+tabindex(0)
+tabindex(href)
+tabindex(3)
+tabindex(2)
+tabindex(2)
+tabindex(2)
+tabindex(1)
+

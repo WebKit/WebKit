@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests calling initCustomEvent() on an custom event while it is being dispatched and after.");
+
+function eventHandler(ev) {
+    event = ev;
+    debug("");
+    debug("* In event handler");
+    shouldBeEqualToString("event.type", "foo");
+    shouldBeTrue("event.bubbles");
+    shouldBeFalse("event.cancelable");
+    shouldBe("event.target", "document.body");
+    shouldBe("event.currentTarget", "document.body");
+    shouldBe("event.eventPhase", "Event.AT_TARGET");
+    shouldBeEqualToString("event.detail", "detail");
+
+    debug("");
+    // It should not be possible to re-initialize an event being dispatched.
+    shouldNotThrow('event.initCustomEvent("bar", false, true, "detail2")');
+    shouldBeEqualToString("event.type", "foo");
+    shouldBeTrue("event.bubbles");
+    shouldBeFalse("event.cancelable");
+    shouldBe("event.target", "document.body");
+    shouldBe("event.currentTarget", "document.body");
+    shouldBe("event.eventPhase", "Event.AT_TARGET");
+    shouldBeEqualToString("event.detail", "detail");
+}
+
+var testEvent = document.createEvent("customevent");
+shouldBe("testEvent.__proto__", "CustomEvent.prototype");
+shouldNotThrow('testEvent.initCustomEvent("foo", true, false, "detail")');
+shouldBeEqualToString("testEvent.type", "foo");
+shouldBeTrue("testEvent.bubbles");
+shouldBeFalse("testEvent.cancelable");
+shouldBeNull("testEvent.target");
+shouldBeNull("testEvent.currentTarget");
+shouldBe("testEvent.eventPhase", "Event.NONE");
+shouldBeEqualToString("testEvent.detail", "detail");
+
+document.body.addEventListener("foo", eventHandler);
+shouldNotThrow('document.body.dispatchEvent(testEvent)');
+
+debug("");
+debug("* After event has been dispatched");
+shouldBeEqualToString("testEvent.type", "foo");
+shouldBeTrue("testEvent.bubbles");
+shouldBeFalse("testEvent.cancelable");
+shouldBe("testEvent.target", "document.body");
+shouldBeNull("testEvent.currentTarget");
+shouldBe("testEvent.eventPhase", "Event.NONE");
+shouldBeEqualToString("testEvent.detail", "detail");
+
+// It should now be possible to re-initialize the event.
+debug("");
+shouldNotThrow('testEvent.initCustomEvent("bar", false, true, "detail2")');
+shouldBeEqualToString("testEvent.type", "bar");
+shouldBeFalse("testEvent.bubbles");
+shouldBeTrue("testEvent.cancelable");
+shouldBeNull("testEvent.target");
+shouldBeNull("testEvent.currentTarget");
+shouldBe("testEvent.eventPhase", "Event.NONE");
+shouldBeEqualToString("testEvent.detail", "detail2");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

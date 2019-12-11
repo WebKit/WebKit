@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=../media-file.js></script>
+        <script src=../media-controls.js></script>
+        <script>
+            var requirePixelDump = true;
+
+            function loaded()
+            {
+                if (window.testRunner)
+                {
+                    testRunner.waitUntilDone();
+                    findMediaElement();
+                    internals.setCaptionsStyleSheetOverride('video::cue { font-size:27px; } video::-webkit-media-text-track-display { width: 10%; }');
+                    internals.setCaptionDisplayMode('AlwaysOn');
+                    setTimeout(function() { 
+                        video.currentTime = 9.5;
+                    }, 1000);
+                    waitForEvent('seeked', endTest);
+                }
+            }
+        </script>
+
+        <script src=../video-test.js></script>
+    </head>
+    <body onload="loaded()">
+        <p>Tests that in-band caption container expands when subtitles don't fit.</p>
+        <video width="320" height="180" src='../content/CC+Subtitles.mov' controls>
+        </video>
+    </body>
+</html>

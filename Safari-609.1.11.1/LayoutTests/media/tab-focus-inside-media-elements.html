@@ -1,0 +1,61 @@
+<!DOCTYPE html!><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+<body>
+<audio controls></audio><video controls></video><br>
+<audio tabindex="0"></audio><video tabindex="0"></video>
+<div tabindex="0"></div>
+<div id="console"></div>
+<script src="../resources/js-test-pre.js"></script>
+<script>
+
+description('Tests for moving the focus onto controls inside an audio element and a video element.');
+
+var mediaElements = document.querySelectorAll("audio,video");
+
+if (window.testRunner)
+    runTests();
+else
+    log('This test requires eventSender');
+
+function runTests()
+{
+    testRunner.overridePreference("WebKitTabToLinksPreferenceKey", 1);
+
+    shouldBe('document.body.focus(); eventSender.keyDown("\\t"); document.activeElement', 'mediaElements[0]');
+    shouldBeTrue('mediaElements[0] instanceof HTMLAudioElement');
+    shouldBeTrue('mediaElements[0].controls');
+    shouldBe('eventSender.keyDown("\\t"); document.activeElement', 'mediaElements[0]');
+    shouldBeTrue('!!internals.shadowRoot(mediaElements[0]).activeElement /* play button */');
+    shouldBe('eventSender.keyDown("\\t"); document.activeElement', 'mediaElements[0]');
+    shouldBeTrue('!!internals.shadowRoot(mediaElements[0]).activeElement /* rewind button */');
+    shouldBe('eventSender.keyDown("\\t"); document.activeElement', 'mediaElements[0]');
+    shouldBeTrue('!!internals.shadowRoot(mediaElements[0]).activeElement /* volume slider */');
+    shouldBe('eventSender.keyDown("\\t"); document.activeElement', 'mediaElements[0]');
+    shouldBeTrue('!!internals.shadowRoot(mediaElements[0]).activeElement /* mute button */');
+
+    shouldBe('eventSender.keyDown("\\t"); document.activeElement', 'mediaElements[1]');
+    shouldBeTrue('mediaElements[1] instanceof HTMLVideoElement');
+    shouldBeTrue('mediaElements[1].controls');
+    shouldBeTrue('!!internals.shadowRoot(mediaElements[1]).activeElement /* play button */');
+    shouldBe('eventSender.keyDown("\\t"); document.activeElement', 'mediaElements[1]');
+    shouldBeTrue('!!internals.shadowRoot(mediaElements[1]).activeElement /* rewind button */');
+    shouldBe('eventSender.keyDown("\\t"); document.activeElement', 'mediaElements[1]');
+    shouldBeTrue('!!internals.shadowRoot(mediaElements[1]).activeElement /* volume slider */');
+    shouldBe('eventSender.keyDown("\\t"); document.activeElement', 'mediaElements[1]');
+    shouldBeTrue('!!internals.shadowRoot(mediaElements[1]).activeElement /* mute button */');
+
+    shouldBe('eventSender.keyDown("\\t"); document.activeElement', 'mediaElements[2]');
+    shouldBeTrue('mediaElements[2] instanceof HTMLAudioElement');
+    shouldBeFalse('mediaElements[2].controls');
+
+    shouldBe('eventSender.keyDown("\\t"); document.activeElement', 'mediaElements[3]');
+    shouldBeTrue('mediaElements[3] instanceof HTMLVideoElement');
+    shouldBeFalse('mediaElements[3].controls');
+
+    shouldBe('eventSender.keyDown("\\t"); document.activeElement', 'document.querySelector("div")');
+}
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+2d.shadow.alpha.2
+
+Shadow colour alpha components are used
+
+
+FAIL Shadow colour alpha components are used null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

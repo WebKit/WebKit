@@ -1,0 +1,12 @@
+Test importing a raw HMAC key with SHA-1 and then export it in JWK format
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Importing a key...
+Exporting a key...
+PASS Base64URL.parse(exportedJwkKey.k) is rawKey
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

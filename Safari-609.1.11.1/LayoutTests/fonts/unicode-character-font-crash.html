@@ -1,0 +1,19 @@
+﻿<html>
+
+<head>
+<style>
+.texhtml{font-feature-settings:"lnum","tnum"}
+</style>
+</head>
+
+<body>
+<p>Test case for <a href="http://bugs.webkit.org/show_bug.cgi?id=139969">bug 139969</a>: [WinCairo] Crash when font data pointer is null.</p>
+<p>This test passes if it does not crash.</p>
+<span class="texhtml">⟩</span>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+</script>
+</body>
+
+</html>

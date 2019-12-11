@@ -1,0 +1,979 @@
+Checking Web Inspector protocol for the Accessibility Node Inspector.
+
+#document
+    exists: true
+    label: 
+    role: 
+    childNodeIds.length: 93
+
+
+Total elements to be tested: 122.
+
+<div onclick="void(0);">click</div>
+    exists: true
+    label: 
+    role: 
+    childNodeIds.length: 1
+    mouseEventNodeId: exists
+    parentNodeId: exists
+
+<li role="treeitem">Tree Item Level 2</li>
+    exists: true
+    label: Tree Item Level 2
+    role: treeitem
+    childNodeIds.length: 1
+    parentNodeId: exists
+    hierarchyLevel: 1
+
+<ul>
+            <li role="treeitem">Tree Item Level 2</li>
+        </ul>
+    exists: true
+    label: 
+    role: 
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<li role="treeitem">
+        <span>Tree Item Level 1</span>
+        <ul>
+            <li role="treeitem">Tree Item Level 2</li>
+        </ul>
+    </li>
+    exists: true
+    label: Tree Item Level 1
+    role: treeitem
+    childNodeIds.length: 2
+    parentNodeId: exists
+    hierarchyLevel: 1
+
+<ul role="tree">
+    <li role="treeitem">
+        <span>Tree Item Level 1</span>
+        <ul>
+            <li role="treeitem">Tree Item Level 2</li>
+        </ul>
+    </li>
+</ul>
+    exists: true
+    label: 
+    role: tree
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<li aria-level="1">List Item Level 1</li>
+    exists: true
+    label: 
+    role: listitem
+    childNodeIds.length: 1
+    parentNodeId: exists
+    hierarchyLevel: 1
+
+<li aria-level="2">List Item Level 2</li>
+    exists: true
+    label: 
+    role: listitem
+    childNodeIds.length: 1
+    parentNodeId: exists
+    hierarchyLevel: 2
+
+<ol>
+            <li aria-level="2">List Item Level 2</li>
+        </ol>
+    exists: true
+    label: 
+    role: list
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<li aria-level="1">
+        <span>List Item Level 1</span>
+        <ol>
+            <li aria-level="2">List Item Level 2</li>
+        </ol>
+    </li>
+    exists: true
+    label: 
+    role: listitem
+    childNodeIds.length: 2
+    parentNodeId: exists
+    hierarchyLevel: 1
+
+<ul>
+    <li aria-level="1">
+        <span>List Item Level 1</span>
+        <ol>
+            <li aria-level="2">List Item Level 2</li>
+        </ol>
+    </li>
+    <li aria-level="1">List Item Level 1</li>
+</ul>
+    exists: true
+    label: 
+    role: list
+    childNodeIds.length: 2
+    parentNodeId: exists
+
+<h1 style="color: red;" aria-level="8">H1</h1>
+    exists: true
+    label: H1
+    role: heading
+    childNodeIds.length: 1
+    parentNodeId: exists
+    headingLevel: 8
+
+<h6>H6</h6>
+    exists: true
+    label: H6
+    role: heading
+    childNodeIds.length: 1
+    parentNodeId: exists
+    headingLevel: 6
+
+<h5>H5</h5>
+    exists: true
+    label: H5
+    role: heading
+    childNodeIds.length: 1
+    parentNodeId: exists
+    headingLevel: 5
+
+<h4>H4</h4>
+    exists: true
+    label: H4
+    role: heading
+    childNodeIds.length: 1
+    parentNodeId: exists
+    headingLevel: 4
+
+<h3>H3</h3>
+    exists: true
+    label: H3
+    role: heading
+    childNodeIds.length: 1
+    parentNodeId: exists
+    headingLevel: 3
+
+<h2>H2</h2>
+    exists: true
+    label: H2
+    role: heading
+    childNodeIds.length: 1
+    parentNodeId: exists
+    headingLevel: 2
+
+<h1>H1</h1>
+    exists: true
+    label: H1
+    role: heading
+    childNodeIds.length: 1
+    parentNodeId: exists
+    headingLevel: 1
+
+<li role="treeitem" aria-expanded="undefined">expanded</li>
+    exists: true
+    label: expanded
+    role: treeitem
+    childNodeIds.length: 1
+    parentNodeId: exists
+    hierarchyLevel: 1
+
+<li role="treeitem" aria-expanded="false" id="activedescendant" aria-selected="true">collapsed</li>
+    exists: true
+    label: collapsed
+    role: treeitem
+    childNodeIds.length: 1
+    expanded: false
+    parentNodeId: exists
+    selected: true
+    hierarchyLevel: 1
+
+<li role="treeitem" aria-expanded="true">expanded</li>
+    exists: true
+    label: expanded
+    role: treeitem
+    childNodeIds.length: 1
+    expanded: true
+    parentNodeId: exists
+    hierarchyLevel: 1
+
+<ul role="tree" id="flowedTo1" aria-activedescendant="activedescendant">
+    <li role="treeitem" aria-expanded="true">expanded</li>
+    <li role="treeitem" aria-expanded="false" id="activedescendant" aria-selected="true">collapsed</li>
+    <li role="treeitem" aria-expanded="undefined">expanded</li>
+</ul>
+    exists: true
+    label: 
+    role: tree
+    activeDescendantNodeId: exists
+    childNodeIds.length: 3
+    parentNodeId: exists
+    selectedChildNodeIds.length: 1
+
+<div role="option" aria-busy="true">busy (self)</div>
+    exists: true
+    label: busy (self)
+    role: option
+    busy: true
+    parentNodeId: exists
+
+<div role="option">busy (parent)</div>
+    exists: true
+    label: busy (parent)
+    role: option
+    busy: true
+    parentNodeId: exists
+
+<div role="listbox" aria-multiselectable="true">
+    <div role="option" aria-selected="true">selected</div>
+    <div role="option" aria-selected="false">not selected</div>
+    <div role="option" aria-selected="true">selected</div>
+</div>
+    exists: true
+    label: 
+    role: listbox
+    childNodeIds.length: 3
+    parentNodeId: exists
+    required: false
+    selectedChildNodeIds.length: 2
+
+<div role="tab" aria-selected="false">not selected</div>
+    exists: true
+    label: not selected
+    role: tab
+    parentNodeId: exists
+
+<div role="tab" aria-selected="true">selected</div>
+    exists: true
+    label: selected
+    role: tab
+    parentNodeId: exists
+    selected: true
+
+<div role="tablist" aria-flowto="flowedTo1 invalidIdRef flowedTo2">
+    <div role="tab" aria-selected="true">selected</div>
+    <div role="tab" aria-selected="false">not selected</div>
+</div>
+    exists: true
+    label: 
+    role: tablist
+    childNodeIds.length: 2
+    flowedNodeIds.length: 2
+    parentNodeId: exists
+    selectedChildNodeIds.length: 1
+
+<div role="option" aria-selected="false">not selected</div>
+    exists: true
+    label: not selected
+    role: option
+    parentNodeId: exists
+
+<div role="option" aria-selected="true">selected</div>
+    exists: true
+    label: selected
+    role: option
+    parentNodeId: exists
+    selected: true
+
+<div role="listbox" id="ownedlistbox">
+    <div role="option" aria-selected="true">selected</div>
+    <div role="option" aria-selected="false">not selected</div>
+</div>
+    exists: true
+    label: 
+    role: listbox
+    childNodeIds.length: 2
+    parentNodeId: exists
+    required: false
+    selectedChildNodeIds.length: 1
+
+<input role="combobox" aria-owns="ownedlistbox invalidIdRef" aria-controls="ownedlistbox invalidIdRef">
+    exists: true
+    label: 
+    role: combobox
+    controlledNodeIds.length: 1
+    expanded: false
+    focused: false
+    ownedNodeIds.length: 1
+    required: false
+    isPopUpButton: true
+
+<select>
+    <option>FOO</option>
+</select>
+    exists: true
+    label: 
+    role: button
+    focused: false
+    required: false
+    isPopUpButton: true
+
+<option>not selected</option>
+    exists: false
+    label: 
+    role: 
+
+<option selected="">FIXME: Selected is false. Expected true. http://webkit.org/b/129835</option>
+    exists: false
+    label: 
+    role: 
+
+<img src="data:image/gif..." alt="x" style="display:none;">
+    exists: false
+    label: 
+    role: 
+
+<img src="data:image/gif..." alt="x" aria-hidden="true">
+    exists: true
+    label: x
+    role: presentation
+    ignored: true
+    ignoredByDefault: true
+    hidden: true
+
+<img src="data:image/gif..." alt="x">
+    exists: true
+    label: x
+    role: img
+
+<img src="data:image/gif..." alt="">
+    exists: true
+    label: 
+    role: presentation
+    ignored: true
+
+<img src="data:image/gif...">
+    exists: true
+    label: 
+    role: img
+
+<img src="./404.gif">
+    exists: true
+    label: 
+    role: presentation
+    ignored: true
+
+<input style="display:none;">
+    exists: false
+    label: 
+    role: 
+
+<input aria-hidden="true">
+    exists: true
+    label: 
+    role: 
+    focused: false
+    ignored: true
+    ignoredByDefault: true
+    hidden: true
+    required: false
+
+<div role="radio" aria-checked="false">unchecked</div>
+    exists: true
+    label: unchecked
+    role: radio
+    checked: false
+    parentNodeId: exists
+    required: false
+
+<div role="radio" aria-checked="mixed">unchecked [sic] mixed state will not be exposed on radios per ARIA spec.</div>
+    exists: true
+    label: unchecked [sic] mixed state will not be exposed on radios per ARIA spec.
+    role: radio
+    checked: false
+    parentNodeId: exists
+    required: false
+
+<div role="radio" aria-checked="true">checked</div>
+    exists: true
+    label: checked
+    role: radio
+    checked: true
+    parentNodeId: exists
+    required: false
+
+<div role="radio">unchecked (checked undefined evals to false on radio)</div>
+    exists: true
+    label: unchecked (checked undefined evals to false on radio)
+    role: radio
+    checked: false
+    parentNodeId: exists
+    required: false
+
+<input type="radio" checked="">
+    exists: true
+    label: 
+    role: radio
+    checked: true
+    focused: false
+    required: false
+
+<input type="radio">
+    exists: true
+    label: 
+    role: radio
+    checked: false
+    focused: false
+    required: false
+
+<div role="doc-toc">doc-toc</div>
+    exists: true
+    label: 
+    role: navigation
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-tip">doc-tip</div>
+    exists: true
+    label: 
+    role: note
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-subtitle">doc-subtitle</div>
+    exists: true
+    label: doc-subtitle
+    role: heading
+    childNodeIds.length: 1
+    parentNodeId: exists
+    headingLevel: 2
+
+<div role="doc-qna">doc-qna</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-pullquote">doc-pullquote</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-prologue">doc-prologue</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-preface">doc-preface</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-part">doc-part</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-pagelist">doc-pagelist</div>
+    exists: true
+    label: 
+    role: navigation
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-pagebreak">doc-pagebreak</div>
+    exists: true
+    label: 
+    role: separator
+    parentNodeId: exists
+
+<div role="doc-notice">doc-notice</div>
+    exists: true
+    label: 
+    role: note
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-noteref">doc-noteref</div>
+    exists: true
+    label: doc-noteref
+    role: link
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-introduction">doc-introduction</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-index">doc-index</div>
+    exists: true
+    label: 
+    role: navigation
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-glossref">doc-glossref</div>
+    exists: true
+    label: doc-glossref
+    role: link
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-glossary">doc-glossary</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-foreword">doc-foreword</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-footnote">doc-footnote</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-example">doc-example</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-errata">doc-errata</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-epilogue">doc-epilogue</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-epigraph">doc-epigraph</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-endnotes">doc-endnotes</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-endnote">doc-endnote</div>
+    exists: true
+    label: 
+    role: listitem
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-dedication">doc-dedication</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-credits">doc-credits</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-credit">doc-credit</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-cover">doc-cover</div>
+    exists: true
+    label: 
+    role: img
+    parentNodeId: exists
+
+<div role="doc-conclusion">doc-conclusion</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-colophon">doc-colophon</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-chapter">doc-chapter</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-biblioref">doc-biblioref</div>
+    exists: true
+    label: doc-biblioref
+    role: link
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-bibliography">doc-bibliography</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-biblioentry">doc-biblioentry</div>
+    exists: true
+    label: 
+    role: listitem
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-backlink">doc-backlink</div>
+    exists: true
+    label: doc-backlink
+    role: link
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-appendix">doc-appendix</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-afterword">doc-afterword</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-acknowledgments">doc-acknowledgments</div>
+    exists: true
+    label: 
+    role: region
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="doc-abstract">doc-abstract</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="checkbox" aria-checked="false">unchecked</div>
+    exists: true
+    label: unchecked
+    role: checkbox
+    checked: false
+    parentNodeId: exists
+    required: false
+
+<div role="checkbox" aria-checked="mixed">mixed</div>
+    exists: true
+    label: mixed
+    role: checkbox
+    checked: mixed
+    parentNodeId: exists
+    required: false
+
+<div role="checkbox" aria-checked="true">checked</div>
+    exists: true
+    label: checked
+    role: checkbox
+    checked: true
+    parentNodeId: exists
+    required: false
+
+<div role="checkbox">unchecked (checked undefined evals to false on checkbox)</div>
+    exists: true
+    label: unchecked (checked undefined evals to false on checkbox)
+    role: checkbox
+    checked: false
+    parentNodeId: exists
+    required: false
+
+<input type="checkbox" checked="">
+    exists: true
+    label: 
+    role: checkbox
+    checked: true
+    focused: false
+    required: false
+
+<input type="checkbox">
+    exists: true
+    label: 
+    role: checkbox
+    checked: false
+    focused: false
+    required: false
+
+<div role="textbox" tabindex="0" aria-disabled="true">disabled</div>
+    exists: true
+    label: 
+    role: 
+    disabled: true
+    focused: false
+    parentNodeId: exists
+    required: false
+
+<input disabled="" value="disabled">
+    exists: true
+    label: 
+    role: 
+    childNodeIds.length: 1
+    disabled: true
+    required: false
+
+<div role="textbox" tabindex="0" aria-readonly="true">readonly</div>
+    exists: true
+    label: 
+    role: 
+    focused: false
+    parentNodeId: exists
+    readonly: true
+    required: false
+
+<input readonly="" value="readonly">
+    exists: true
+    label: 
+    role: 
+    childNodeIds.length: 1
+    focused: false
+    readonly: true
+    required: false
+
+<input aria-invalid="foo" value="fake value will eval to true">
+    exists: true
+    label: 
+    role: 
+    childNodeIds.length: 1
+    focused: false
+    invalid: true
+    required: false
+
+<input aria-invalid="spelling" value="invalid spelling">
+    exists: true
+    label: 
+    role: 
+    childNodeIds.length: 1
+    focused: false
+    invalid: spelling
+    required: false
+
+<input aria-required="true" value="required">
+    exists: true
+    label: 
+    role: 
+    childNodeIds.length: 1
+    focused: false
+    required: true
+
+<input required="">
+    exists: true
+    label: 
+    role: 
+    focused: false
+    required: true
+
+<input>
+    exists: true
+    label: 
+    role: 
+    focused: false
+    required: false
+
+<div role="button" tabindex="0" aria-haspopup="true">Popup Button.</div>
+    exists: true
+    label: Popup Button.
+    role: button
+    focused: false
+    parentNodeId: exists
+    required: false
+    isPopUpButton: true
+
+<input type="button">
+    exists: true
+    label: 
+    role: button
+    focused: false
+
+<button></button>
+    exists: true
+    label: 
+    role: button
+    focused: false
+
+<div role="button" tabindex="0" aria-pressed="false">Not Pressed.</div>
+    exists: true
+    label: Not Pressed.
+    role: button
+    focused: false
+    parentNodeId: exists
+    pressed: false
+    required: false
+
+<div role="button" tabindex="0" aria-pressed="true">Pressed.</div>
+    exists: true
+    label: Pressed.
+    role: button
+    focused: false
+    parentNodeId: exists
+    pressed: true
+    required: false
+
+<div role="button" tabindex="0" aria-disabled="true">disabled</div>
+    exists: true
+    label: disabled
+    role: button
+    disabled: true
+    focused: false
+    parentNodeId: exists
+
+<div role="button" tabindex="0"></div>
+    exists: true
+    label: 
+    role: button
+    focused: false
+    parentNodeId: exists
+
+<div role="group" aria-live="assertive" aria-atomic="true">assertive (and atomic)</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    liveRegionAtomic: true
+    liveRegionRelevant: additions,text
+    liveRegionStatus: assertive
+    parentNodeId: exists
+
+<div role="group" aria-live="polite">polite</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    liveRegionAtomic: false
+    liveRegionRelevant: additions,text
+    liveRegionStatus: polite
+    parentNodeId: exists
+
+<div role="group" aria-live="off">off</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<div role="listbox" aria-busy="true">
+    <!-- Despite having no required option children, this is valid because it is marked as busy. -->
+    <!-- For example, waiting for a script to load its contents. -->
+</div>
+    exists: true
+    label: 
+    role: listbox
+    busy: true
+    parentNodeId: exists
+    required: false
+
+<span aria-hidden="true"></span>
+    exists: true
+    label: 
+    role: 
+    ignored: true
+    ignoredByDefault: true
+    hidden: true
+    parentNodeId: exists
+
+<span></span>
+    exists: true
+    label: 
+    role: 
+    ignored: true
+    ignoredByDefault: true
+    parentNodeId: exists
+
+<div aria-hidden="true"></div>
+    exists: true
+    label: 
+    role: 
+    ignored: true
+    ignoredByDefault: true
+    hidden: true
+    parentNodeId: exists
+
+<div></div>
+    exists: true
+    label: 
+    role: 
+    ignored: true
+    parentNodeId: exists
+
+<div role="presentation"><div></div></div>
+    exists: true
+    label: 
+    role: presentation
+    ignored: true
+    parentNodeId: exists
+
+<div role="group">
+    <div>foo</div>
+    <span>
+        bar
+        <span role="button">baz</span>
+    </span>
+    <div></div>
+    <div></div>
+</div>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 3
+    parentNodeId: exists
+
+<div><div></div></div>
+    exists: true
+    label: 
+    role: 
+    ignored: true
+    parentNodeId: exists
+
+<script style="display:block;"></script>
+    exists: true
+    label: 
+    role: 
+    ignored: true
+    parentNodeId: exists
+
+<script></script>
+    exists: false
+    label: 
+    role: 
+

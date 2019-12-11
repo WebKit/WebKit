@@ -1,0 +1,25 @@
+<html>
+<head>
+<title>required and valueMissing on file control</title>
+<script language="JavaScript" type="text/javascript">
+    function log(message) {
+        document.getElementById("console").innerHTML += "<li>"+message+"</li>";
+    }
+
+    function test() {
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        v = document.getElementsByName("victim");
+
+        log(v[0].validity.valueMissing ? "SUCCESS" : "FAILURE");
+    }
+</script>
+</head>
+<body onload="test()">
+<p>There's a upload control below, with no file selected: missing value.</p>
+<input name="victim" type="file" required/>
+<hr>
+<ol id="console"></ol>
+</body>
+</html>

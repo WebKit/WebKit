@@ -1,0 +1,3 @@
+
+PASS If event's isTrusted attribute is false, then then throw an InvalidStateError DOMException. 
+

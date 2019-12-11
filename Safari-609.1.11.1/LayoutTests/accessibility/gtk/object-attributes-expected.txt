@@ -1,0 +1,301 @@
+Heading Level 1
+
+Heading Level 2
+
+Heading Level 3
+
+Heading Level 4
+
+Heading Level 5
+
+Heading Level 6
+
+Link
+foo	bar
+Odd	Even
+1
+
+2
+
+3
+
+4
+
+foo
+bar
+baz
+This tests the exposure of Atk object attributes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+AXRole: AXHeading
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 8.00000, 8.00000 }
+AXSize: { 784.000, 37.0000 }
+AXTitle: Heading Level 1
+AXDescription: 
+AXValue: Heading Level 1
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:heading, level:1, tag:h1, toolkit:WebKitGtk
+------------
+AXRole: AXHeading
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 8.00000, 66.0000 }
+AXSize: { 784.000, 28.0000 }
+AXTitle: Heading Level 2
+AXDescription: 
+AXValue: Heading Level 2
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:heading, level:2, tag:h2, toolkit:WebKitGtk
+------------
+AXRole: AXHeading
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 8.00000, 113.000 }
+AXSize: { 784.000, 23.0000 }
+AXTitle: Heading Level 3
+AXDescription: 
+AXValue: Heading Level 3
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:heading, level:3, tag:h3, toolkit:WebKitGtk
+------------
+AXRole: AXHeading
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 8.00000, 156.000 }
+AXSize: { 784.000, 19.0000 }
+AXTitle: Heading Level 4
+AXDescription: 
+AXValue: Heading Level 4
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:heading, level:4, tag:h4, toolkit:WebKitGtk
+------------
+AXRole: AXHeading
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 8.00000, 196.000 }
+AXSize: { 784.000, 17.0000 }
+AXTitle: Heading Level 5
+AXDescription: 
+AXValue: Heading Level 5
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:heading, level:5, tag:h5, toolkit:WebKitGtk
+------------
+AXRole: AXHeading
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 8.00000, 237.000 }
+AXSize: { 784.000, 13.0000 }
+AXTitle: Heading Level 6
+AXDescription: 
+AXValue: Heading Level 6
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:heading, level:6, tag:h6, toolkit:WebKitGtk
+------------
+AXRole: AXSection
+AXParent: AXWebArea
+AXChildren: 1
+AXPosition:  { 8.00000, 274.000 }
+AXSize: { 784.000, 19.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: Link
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: toolkit:WebKitGtk
+------------
+AXRole: AXSection
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 10.0000, 294.000 }
+AXSize: { 23.0000, 21.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: foo
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: tag:td, toolkit:WebKitGtk
+------------
+AXRole: AXSection
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 35.0000, 294.000 }
+AXSize: { 22.0000, 21.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: bar
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: tag:td, toolkit:WebKitGtk
+------------
+AXRole: AXTable
+AXParent: AXWebArea
+AXChildren: 3
+AXPosition:  { 8.00000, 316.000 }
+AXSize: { 81.0000, 77.0000 }
+AXTitle: 
+AXDescription: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:table, tag:table, toolkit:WebKitGtk
+------------
+AXRole: AXDeletion
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 8.00000, 392.000 }
+AXSize: { 784.000, 19.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: foo
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: xml-roles:deletion, computed-role:deletion, tag:del, toolkit:WebKitGtk
+------------
+AXRole: AXInsertion
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 8.00000, 410.000 }
+AXSize: { 784.000, 19.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: bar
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: xml-roles:insertion, computed-role:insertion, tag:ins, toolkit:WebKitGtk
+------------
+AXRole: AXStatic
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 8.00000, 428.000 }
+AXSize: { 784.000, 19.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: baz
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:time, tag:time, toolkit:WebKitGtk
+------------
+AXRole: AXParagraph
+AXParent: AXWebArea
+AXChildren: 2
+AXPosition:  { 8.00000, 462.000 }
+AXSize: { 784.000, 53.0000 }
+AXTitle: 
+AXDescription: 
+AXValue: This tests the exposure of Atk object attributes.<\n><\n>On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".<\n><\n><\n>
+AXFocusable: 1
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:paragraph, html-id:description, tag:p, toolkit:WebKitGtk
+------------
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

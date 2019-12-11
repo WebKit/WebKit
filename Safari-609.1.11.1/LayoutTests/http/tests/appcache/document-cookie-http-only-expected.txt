@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+This tests that HttpOnly cookies set on the main document are used when accessing resources in the manifest.
+This also tests that cookies used by appcache resource loading are scoped properly.
+PASSED: Some cookies should not be visible from JavaScript.
+PASSED: Script Cookie is set to 'script'
+PASSED: Cookie is set to 'bar'

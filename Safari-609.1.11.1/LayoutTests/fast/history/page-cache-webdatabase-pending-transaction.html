@@ -1,0 +1,76 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description('Tests that a page with an open WebDatabase that has pending transactions is able to go into the back/forward cache.');
+jsTestIsAsync = true;
+let restoredFromCache = false;
+let pendingTransactionCount = 0;
+
+if (window.testRunner)
+    testRunner.clearAllDatabases();
+
+function checkTestComplete()
+{
+    if (!pendingTransactionCount && restoredFromCache) {
+        testPassed("All done");
+        finishJSTest();
+    }
+}
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+
+    if (event.persisted) {
+        testPassed("Page did enter and was restored from the back/forward cache");
+        restoredFromCache = true;
+        checkTestComplete();
+    }
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        testFailed("Page failed to enter the back/forward cache.");
+        finishJSTest();
+    }
+}, false);
+
+function handleTransactionComplete()
+{
+    if (!pendingTransactionCount) {
+        testFailed("Too many completion handlers");
+        finishJSTest();
+    }
+
+    pendingTransactionCount--;
+    checkTestComplete();
+}
+
+window.addEventListener('load', function() {
+    setTimeout(() => {
+        db = openDatabase("PageCacheTest", "", "Back Forward Cache Test", 32768);
+
+        pendingTransactionCount++;
+        db.transaction(function(tx) {
+            window.location.href = "resources/page-cache-helper.html";
+
+            tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS (id unique, log)');
+        }, handleTransactionComplete, handleTransactionComplete);
+
+        pendingTransactionCount++;
+        db.transaction(function(tx) {
+            tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS2 (id unique, log)');
+        }, handleTransactionComplete, handleTransactionComplete);
+
+        pendingTransactionCount++;
+        db.transaction(function(tx) {
+            tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS3 (id unique, log)');
+        }, handleTransactionComplete, handleTransactionComplete);
+    }, 0);
+}, false);
+</script>
+</body>
+</html>

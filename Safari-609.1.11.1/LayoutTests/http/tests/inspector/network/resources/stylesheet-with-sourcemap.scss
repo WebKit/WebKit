@@ -1,0 +1,10 @@
+@mixin rounded($vert, $horz, $radius: 10px) {
+  border-#{$vert}-#{$horz}-radius: $radius;
+  -moz-border-radius-#{$vert}#{$horz}: $radius;
+  -webkit-border-#{$vert}-#{$horz}-radius: $radius;
+}
+
+div { background-color: #ABC; width: 200px; height: 100px; margin: 20px; }
+.div1 { @include rounded(top, left); }
+.div2 { @include rounded(top, left, 20px); }
+.div3 { @include rounded(top, left, 30px); }

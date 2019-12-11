@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Test passes if you see a single 100px by 100px green box below.</p>
+<div id="host" style="width: 100px; height: 100px;"></div>
+<svg>
+    <defs>
+        <rect id="rect" width="50" height="100" fill="red" />
+    </defs>
+</svg>
+<template>
+    <svg viewbox="0 0 100 100" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <rect width="50" height="100" fill="green" />
+        <rect id="rect" width="50" height="100" fill="green" />
+        <animate attributeName="x" from="0" to="50" dur="0.01s" fill="freeze" xlink:href="#rect" />
+    </svg>
+</template>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+const shadowRoot = host.attachShadow({mode: 'closed'});
+shadowRoot.appendChild(document.querySelector('template').content.cloneNode(true));
+
+window.onload = () => {
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            if (window.testRunner)
+                requestAnimationFrame(() => testRunner.notifyDone());
+        }, 20); // 0.01s is 10ms. Wait for twice that time to be safe.
+    });
+}
+
+</script>
+</body>
+</html>

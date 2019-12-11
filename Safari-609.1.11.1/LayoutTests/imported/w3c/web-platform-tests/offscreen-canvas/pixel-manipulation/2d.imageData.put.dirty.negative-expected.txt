@@ -1,0 +1,7 @@
+2d.imageData.put.dirty.negative
+
+putImageData() handles negative-sized dirty rectangles correctly
+
+
+FAIL putImageData() handles negative-sized dirty rectangles correctly null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

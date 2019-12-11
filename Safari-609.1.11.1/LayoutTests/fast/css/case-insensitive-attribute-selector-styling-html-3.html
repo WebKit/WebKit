@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            p { /* Ref-test must fix into 800*600, keep the margins small. */
+                margin: 2px;
+            }
+
+            [data-webkit] {
+                background-color: lightgrey;
+                color: blue;
+                border: none;
+            }
+
+            [data-webkit~="is" i] {
+                color: white;
+            }
+            [data-webkit~="is"] {
+                color: red;
+            }
+
+            [data-webkit|="is" i] {
+                border: 5px dashed orange;
+                background-color: lime;
+            }
+            [data-webkit|="is"] {
+                border: 2px solid purple;
+            }
+
+            /* This rule is invalid. */
+            [data-webkit i] {
+                background-color: red;
+            }
+        </style>
+    </head>
+    <body>
+        <p>This test verify basic styling of element using case-insensitive attribute value matching (e.g. [foo=bar i]). If the test succeed, each paragraph should be styled according to its description.</p>
+        <p data-webkit>Light grey background, blue text, no border.</p>
+        <p data-webkit="is fast">Light grey background, red text, no border.</p>
+        <p data-webkit="IS fast">Light grey background, white text, no border.</p>
+        <p data-webkit="IS fast is FAST">Light grey background, red text, no border.</p>
+        <p data-webkit="is FAST">Light grey background, red text, no border.</p>
+        <p data-webkit="is">Green background, red text, solid purple border.</p>
+        <p data-webkit="IS">Green background, white text, dashed orange border.</p>
+        <p data-webkit="Is">Green background, white text, dashed orange border.</p>
+        <p data-webkit="Fast">Light grey background, blue text, no border.</p>
+        <p data-webkit="fast">Light grey background, blue text, no border.</p>
+        <p data-webkit="FAST">Light grey background, blue text, no border.</p>
+        <p data-webkit="is-Fast">Green background, blue text, solid purple border.</p>
+        <p data-webkit="Is-Fast">Green background, blue text, dashed orange border.</p>
+        <p data-webkit="Is-fast">Green background, blue text, dashed orange border.</p>
+        <p data-webkit="is-Fast Is-Fast">Green background, blue text, solid purple border.</p>
+        <p data-webkit="Is-fast Is-Fast">Green background, blue text, dashed orange border.</p>
+    </body>
+</html>

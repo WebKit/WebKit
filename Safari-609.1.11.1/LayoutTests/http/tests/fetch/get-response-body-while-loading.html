@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Fetch: retrieve response's body progressively</title>
+    <meta name="help" href="https://fetch.spec.whatwg.org/#main-fetch">
+    <meta name="help" href="https://fetch.spec.whatwg.org/#http-fetch">
+    <meta name="author" title="Canon Research France" href="https://www.crf.canon.fr">
+    <script src="/js-test-resources/testharness.js"></script>
+    <script src="/js-test-resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script>
+
+promise_test(function() {
+    var url = "/resources/download-json-with-delay.php?iteration=5&delay=200";
+    var loadingFlag = false;
+    return fetch(url).then(function(response) {
+        assert_equals(response.status, 200);
+
+        setTimeout(function() { loadingFlag = true; }, 100);
+        return response.text().then(function(text) {
+            assert_true(loadingFlag, "ensuring that text() was called while loading is happening");
+            assert_true(text.indexOf("foobar") != -1, "text must contain foobar");
+        });
+    });
+}, "Testing calling Response.text() when still fetching data");
+
+promise_test(function() {
+    var url = "/resources/download-json-with-delay.php?iteration=5&delay=200";
+    var loadingFlag = false;
+    return fetch(url).then(function(response) {
+        assert_equals(response.status, 200);
+
+        setTimeout(function() { loadingFlag = true; }, 100);
+        return response.arrayBuffer().then(function(arrayBuffer) {
+            assert_true(arrayBuffer instanceof ArrayBuffer, "object must be an array buffer");
+            assert_true(loadingFlag, "ensuring that arrayBuffer() was called while loading is happening");
+        });
+    });
+}, "Testing calling Response.arrayBuffer() when still fetching data");
+
+promise_test(function() {
+    var url = "/resources/download-json-with-delay.php?iteration=5&delay=200";
+    var loadingFlag = false;
+    return fetch(url).then(function(response) {
+        assert_equals(response.status, 200);
+
+        setTimeout(function() { loadingFlag = true; }, 100);
+        return response.blob().then(function(blob) {
+            assert_true(blob instanceof Blob, "object must be a blob");
+            assert_true(loadingFlag, "ensuring that blob() was called while loading is happening");
+        });
+    });
+}, "Testing calling Response.blob() when still fetching data");
+
+promise_test(function() {
+    var url = "/resources/download-json-with-delay.php?iteration=5&delay=200";
+    var loadingFlag = false;
+    return fetch(url).then(function(response) {
+        assert_equals(response.status, 200);
+        
+        setTimeout(function() { loadingFlag = true; }, 100);
+        return response.json().then(function(object) {
+            assert_equals(object.constructor, Array);
+            assert_true(loadingFlag, "ensuring that json() was called while loading is happening");
+        });
+    });
+}, "Testing calling Response.json() when still fetching data");
+
+    </script>
+  </body>
+</html>

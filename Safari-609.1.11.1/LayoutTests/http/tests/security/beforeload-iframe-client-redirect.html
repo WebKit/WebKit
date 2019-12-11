@@ -1,0 +1,16 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.addEventListener('message', function(evt) {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, false);
+</script>
+This test produces output in the console.  Only the initial URL should be logged.
+<iframe
+  src="http://127.0.0.1:8000/security/resources/client-redir.html?url=http://localhost:8000/security/resources/post-done.html"
+  onbeforeload="console.log(event.url)">
+</iframe>

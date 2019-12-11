@@ -1,0 +1,11 @@
+15.2.3.2-2-12 (TestCases/chapter15/15.2/15.2.3/15.2.3.2/15.2.3.2-2-12.js) Object.getPrototypeOf returns the [[Prototype]] of its parameter (EvalError)
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ES5Harness.preconditionPassed is true
+FAIL ES5Harness.testPassed should be true (of type boolean). Was undefined (of type undefined).
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

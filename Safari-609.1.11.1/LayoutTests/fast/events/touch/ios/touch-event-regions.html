@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <style>
+        .box {
+            position: absolute;
+            height: 100px;
+            width: 120px;
+            border: 1px solid black;
+            padding: 10px;
+        }
+        
+        input {
+            display: block;
+            margin: 50px;
+            width: 400px;
+        }
+        
+        .overflow div {
+            height: 500px;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+        }
+
+        function rectsAsString(rects)
+        {
+            var result = "";
+            for (var i = 0; i < rects.length; ++i) {
+                var rect = rects[i];
+                if (i)
+                    result += '\n';
+                result += rect.left + ', ' + rect.top + ' - ' + rect.right + ', ' + rect.bottom;
+            }
+            return result;
+        }
+
+        function doTest()
+        {
+            document.getElementById('passive').addEventListener('touchstart', function(e) { }, { 'passive': true })
+            
+            if (!window.internals)
+                return;
+                
+            var resultString = 'touchstart\n';
+            var rectList = internals.touchEventRectsForEvent('touchstart');
+            resultString += rectsAsString(rectList);
+
+            rectList = internals.touchEventRectsForEvent('touchmove');
+            resultString += '\ntouchstart\n' + rectsAsString(rectList);
+
+            rectList = internals.touchEventRectsForEvent('touchend');
+            resultString += '\ntouchend\n' + rectsAsString(rectList);
+
+            rectList = internals.touchEventRectsForEvent('touchforcechange');
+            resultString += '\ntouchforcechange\n' + rectsAsString(rectList);
+
+            rectList = internals.passiveTouchEventListenerRects();
+            resultString += '\npassive\n' + rectsAsString(rectList);
+
+            document.getElementById('results').textContent = resultString;
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+<input type="range">
+
+<div class="box" style="left: 50px; top: 100px;" ontouchstart="(void)0">
+    touch start
+</div>
+
+<div class="box" style="left: 250px; top: 100px;" ontouchmove="(void)0">
+    touch move
+</div>
+
+<div class="box" style="left: 50px; top: 250px;" ontouchend="(void)0">
+    touch end
+</div>
+
+<div class="box" style="left: 250px; top: 250px;" ontouchforcechange="(void)0">
+    touch force change
+</div>
+
+<div id="passive" class="box" style="left: 50px; top: 400px;">
+    passive
+</div>
+
+<div id="passive" class="overflow box" style="left: 250px; top: 400px; overflow: scroll">
+    <div>
+        Overflowing
+    </div>
+</div>
+
+<pre id="results"></pre>
+
+</body>
+</html>

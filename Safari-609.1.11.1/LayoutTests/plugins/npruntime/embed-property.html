@@ -1,0 +1,22 @@
+<body onload="test()">
+<p>Test accessing a plugin object property via HTMLEmbedElement.</p>
+<div id=div>
+<embed id="testCPlugin" type="application/x-webkit-test-netscape">
+</div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function test()
+{
+    var cPlugin = document.getElementById("testCPlugin");
+    try {
+        var prop = cPlugin.property; // try once to give it a chance to crash
+        prop = cPlugin.property;
+        div.innerHTML = (prop == "property") ? "SUCCESS" : ("FAILURE: " + prop);
+    } catch (ex) {
+        div.innerHTML = "FAILURE: " + ex;
+    }
+}
+</script>
+</body>

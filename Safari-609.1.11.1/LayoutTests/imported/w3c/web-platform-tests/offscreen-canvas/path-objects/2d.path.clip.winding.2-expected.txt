@@ -1,0 +1,5 @@
+2d.path.clip.winding.2
+
+
+FAIL OffscreenCanvas test: 2d.path.clip.winding.2 null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

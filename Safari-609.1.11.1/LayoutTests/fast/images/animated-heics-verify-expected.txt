@@ -1,0 +1,21 @@
+Verify HEICS image properties can be retrieved.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+The image resources/sticker.heics was loaded successfully.
+The image resources/sea_animation.heics was loaded successfully.
+
+PASS internals.imageFrameCount(image1) is 96
+PASS Math.round(internals.imageFrameDurationAtIndex(image1, 0) * 1000) is 100
+PASS Math.round(internals.imageFrameDurationAtIndex(image1, 48) * 1000) is 100
+PASS Math.round(internals.imageFrameDurationAtIndex(image1, 95) * 1000) is 100
+
+PASS internals.imageFrameCount(image2) is 120
+PASS Math.round(internals.imageFrameDurationAtIndex(image2, 0) * 1000) is 40
+PASS Math.round(internals.imageFrameDurationAtIndex(image2, 60) * 1000) is 40
+PASS Math.round(internals.imageFrameDurationAtIndex(image2, 119) * 1000) is 40
+PASS successfullyParsed is true
+
+TEST COMPLETE
+  

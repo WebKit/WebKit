@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 27: ReferenceError: Can't find variable: ConstantSourceNode
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: ConstantSourceNode
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS > [createConstantSource()]  
+FAIL X Factory method: node = context.createConstantSource() incorrectly threw TypeError: "context.createConstantSource is not a function. (In 'context.createConstantSource()', 'context.createConstantSource' is undefined)". assert_true: expected true got false
+

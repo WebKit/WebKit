@@ -1,0 +1,9 @@
+<!-- This tests that setting defaultValue via script is reflected in the UI. See https://bugs.webkit.org/show_bug.cgi?id=185982 -->
+<html>
+<body>
+<input type="date">
+<script>
+document.querySelector('input').defaultValue = '2005-06-07'
+</script>
+</body>
+</html>

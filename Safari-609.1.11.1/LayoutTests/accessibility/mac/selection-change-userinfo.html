@@ -1,0 +1,215 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body id="body">
+
+<div role="textbox" tabindex=0 id="textbox" contenteditable=true>
+<p>one two three. four five six.</p>
+<p>seven eight nine.</p>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+<div id="notifications"></div>
+
+<script>
+
+    description("This tests selection change notifications user info data.");
+
+    var AXTextStateChangeTypeSelectionMove = 2;
+    var AXTextStateChangeTypeSelectionExtend = AXTextStateChangeTypeSelectionMove + 1;
+
+    var AXTextSelectionDirectionBeginning = 1;
+    var AXTextSelectionDirectionEnd = AXTextSelectionDirectionBeginning + 1;
+    var AXTextSelectionDirectionPrevious = AXTextSelectionDirectionEnd + 1;
+    var AXTextSelectionDirectionNext = AXTextSelectionDirectionPrevious + 1;
+
+    var AXTextSelectionGranularityCharacter = 1;
+    var AXTextSelectionGranularityWord = AXTextSelectionGranularityCharacter + 1;
+    var AXTextSelectionGranularityLine = AXTextSelectionGranularityWord + 1;
+    var AXTextSelectionGranularitySentence = AXTextSelectionGranularityLine + 1;
+    var AXTextSelectionGranularityParagraph = AXTextSelectionGranularitySentence + 1;
+    var AXTextSelectionGranularityDocument = AXTextSelectionGranularityParagraph + 2;
+
+    var gran = ["character", "word", "sentence", "line", "paragraph", "lineboundary", "sentenceboundary", "paragraphboundary", "documentboundary"];
+    var webArea = 0;
+    var count = 0;
+    var results = [];
+    var resultIndex = 0;
+    function notificationCallback(notification, userInfo) {
+        if (notification == "AXSelectedTextChanged") {
+            count++;
+            if (userInfo)
+                results.push(userInfo);
+            if (count == gran.length * 4) {
+                resultIndex++;
+                shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionMove");
+                shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularityCharacter");
+                shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionNext");
+
+                resultIndex++;
+                shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionMove");
+                shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularityCharacter");
+                shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionPrevious");
+
+                resultIndex++;
+                shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionMove");
+                shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularityWord");
+                shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionNext");
+
+                resultIndex++;
+                shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionMove");
+                shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularityWord");
+                shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionPrevious");
+
+                resultIndex++;
+                shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionMove");
+                shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularitySentence");
+                shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionNext");
+
+                resultIndex++;
+                shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionMove");
+                shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularitySentence");
+                shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionPrevious");
+
+                resultIndex++;
+                shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionMove");
+                shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularityLine");
+                shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionNext");
+
+                resultIndex++;
+                shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionMove");
+                shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularityLine");
+                shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionPrevious");
+
+                resultIndex++;
+                shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionMove");
+                shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularityParagraph");
+                shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionNext");
+
+                resultIndex++;
+                shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionMove");
+                shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularityParagraph");
+                shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionPrevious");
+
+                resultIndex++;
+                shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionMove");
+                shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularityLine");
+                shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionEnd");
+
+                resultIndex++;
+                shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionMove");
+                shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularityLine");
+                shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionBeginning");
+
+                resultIndex++;
+                shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionMove");
+                shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularitySentence");
+                shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionEnd");
+
+                resultIndex++;
+                shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionMove");
+                shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularitySentence");
+                shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionBeginning");
+
+                resultIndex++;
+                shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionMove");
+                shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularityParagraph");
+                shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionEnd");
+
+                resultIndex++;
+                shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionMove");
+                shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularityParagraph");
+                shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionBeginning");
+
+                resultIndex++;
+                shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionMove");
+                shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularityDocument");
+                shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionEnd");
+
+                resultIndex++;
+                shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionMove");
+                shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularityDocument");
+                shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionBeginning");
+
+                resultIndex++;
+                shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionExtend");
+                shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularityCharacter");
+                shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionNext");
+
+                resultIndex += 2;
+                shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionExtend");
+                shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularityWord");
+                shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionNext");
+
+                resultIndex += 2;
+                shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionExtend");
+                shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularitySentence");
+                shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionNext");
+
+                resultIndex += 2;
+                shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionExtend");
+                shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularityLine");
+                shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionNext");
+
+                resultIndex += 2;
+                shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionExtend");
+                shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularityParagraph");
+                shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionNext");
+
+                resultIndex += 2;
+                shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionExtend");
+                shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularityLine");
+                shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionEnd");
+
+                resultIndex += 2;
+                shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionExtend");
+                shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularitySentence");
+                shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionEnd");
+
+                resultIndex += 2;
+                shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionExtend");
+                shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularityParagraph");
+                shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionEnd");
+
+                resultIndex += 2;
+                shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionExtend");
+                shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularityDocument");
+                shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionEnd");
+
+                webArea.removeNotificationListener();
+                finishJSTest();
+            }
+        }
+    }
+
+    if (window.accessibilityController) {
+        jsTestIsAsync = true;
+
+        accessibilityController.enableEnhancedAccessibility(true);
+
+        webArea = accessibilityController.rootElement.childAtIndex(0);
+        var addedNotification = webArea.addNotificationListener(notificationCallback);
+        shouldBe("addedNotification", "true");
+
+        textbox = document.getElementById("textbox");
+        textbox.focus();
+
+        // Trigger selection changes.
+        var s = window.getSelection();
+        s.setPosition(textbox, 0);
+        for (var i in gran) {
+            s.modify("move", "forward", gran[i]);
+            s.modify("move", "backward", gran[i]);
+        }
+        for (var i in gran) {
+            s.setPosition(textbox, 0);
+            s.modify("extend", "forward", gran[i]);
+        }
+    }
+
+</script>
+</body>
+</html>

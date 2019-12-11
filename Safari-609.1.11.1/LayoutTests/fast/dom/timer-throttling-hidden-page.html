@@ -1,0 +1,51 @@
+<html>
+<body>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+        description('Tests that DOM timers gets throttled on hidden pages once they reach the max nesting level');
+        jsTestIsAsync = true;
+
+        let timerCount = 0;
+        let isPageVisible = true;
+        const timeoutInterval = 10;
+        const maxNestingLevel = 5;
+        let timerHandle = 0;
+
+        function testTimer()
+        {
+            ++timerCount;
+
+            timerHandle = setTimeout(testTimer, timeoutInterval);
+            if (!isPageVisible && timerCount >= maxNestingLevel) {
+                shouldBeTrue("internals.isTimerThrottled(timerHandle)");
+                testRunner.resetPageVisibility();
+                clearTimeout(timerHandle);
+                finishJSTest();
+                return;
+            } else
+                shouldBeFalse("internals.isTimerThrottled(timerHandle)");
+
+            if (timerCount == 1) {
+                testRunner.setPageVisibility("hidden");
+                isPageVisible = false;
+            }
+        }
+
+        function runTest()
+        {
+            if (!window.testRunner) {
+                debug('This test requires testRunner');
+                return;
+            }
+            testRunner.overridePreference("WebKitHiddenPageDOMTimerThrottlingEnabled", 1);
+
+            timerHandle = setTimeout(testTimer, timeoutInterval);
+            shouldBeFalse("internals.isTimerThrottled(timerHandle)");
+        }
+        onload = function() {
+            runTest();
+        };
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

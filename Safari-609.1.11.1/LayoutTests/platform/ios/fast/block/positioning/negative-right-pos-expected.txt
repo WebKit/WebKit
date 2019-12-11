@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 278x19
+          text run at (0,0) width 278: "If you see any red below the test has failed."
+layer at (8,28) size 300x400
+  RenderBlock (relative positioned) {DIV} at (0,20) size 300x400 [bgcolor=#FF0000]
+    RenderTable {TABLE} at (0,0) size 250x400 [bgcolor=#008000]
+      RenderTableSection {TBODY} at (0,0) size 250x400
+        RenderTableRow {TR} at (0,0) size 250x400
+          RenderTableCell {TD} at (0,200) size 0x0 [r=0 c=0 rs=1 cs=1]
+layer at (258,28) size 200x400
+  RenderBlock (positioned) {DIV} at (250,0) size 200x400 [bgcolor=#008000]

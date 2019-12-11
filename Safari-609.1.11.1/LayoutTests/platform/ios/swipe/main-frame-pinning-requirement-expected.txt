@@ -1,0 +1,7 @@
+startSwipeGesture
+Failure. Should never begin a swipe, because we were in the middle of a scrolling gesture that started when the main frame was not pinned to the left.
+didEndSwipe
+completeSwipeGesture
+startSwipeGesture
+didRemoveSwipeSnapshot
+

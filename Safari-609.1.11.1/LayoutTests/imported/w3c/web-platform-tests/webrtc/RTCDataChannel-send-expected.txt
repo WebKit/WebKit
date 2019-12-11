@@ -1,0 +1,12 @@
+
+PASS Calling send() when data channel is in connecting state should throw InvalidStateError 
+PASS Data channel should be able to send simple string and receive as string 
+PASS Data channel should be able to send unicode string and receive as unicode string 
+PASS Data channel should ignore binaryType and always receive string message as string 
+PASS Data channel should be able to send Uint8Array message and receive as ArrayBuffer 
+PASS Data channel should be able to send ArrayBuffer message and receive as ArrayBuffer 
+PASS Data channel should be able to send Blob message and receive as ArrayBuffer 
+PASS Data channel should be able to send ArrayBuffer message and receive as Blob 
+FAIL Data channel binaryType should receive message as Blob by default assert_equals: Expect initial binaryType value to be blob expected "blob" but got "arraybuffer"
+PASS Sending multiple messages with different types should succeed and be received 
+

@@ -1,0 +1,68 @@
+/*
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+[
+    EnabledAtRuntime=AriaReflection,
+    NoInterfaceObject,
+] interface AriaAttributes {
+    [Reflect=aria_atomic]           attribute DOMString? ariaAtomic;
+    [Reflect=aria_autocomplete]     attribute DOMString? ariaAutoComplete;
+    [Reflect=aria_busy]             attribute DOMString? ariaBusy;
+    [Reflect=aria_checked]          attribute DOMString? ariaChecked;
+    [Reflect=aria_colcount]         attribute DOMString? ariaColCount;
+    [Reflect=aria_colindex]         attribute DOMString? ariaColIndex;
+    [Reflect=aria_colspan]          attribute DOMString? ariaColSpan;
+    [Reflect=aria_current]          attribute DOMString? ariaCurrent;
+    [Reflect=aria_disabled]         attribute DOMString? ariaDisabled;
+    [Reflect=aria_expanded]         attribute DOMString? ariaExpanded;
+    [Reflect=aria_haspopup]         attribute DOMString? ariaHasPopup;
+    [Reflect=aria_hidden]           attribute DOMString? ariaHidden;
+    [Reflect=aria_invalid]          attribute DOMString? ariaInvalid;
+    [Reflect=aria_keyshortcuts]     attribute DOMString? ariaKeyShortcuts;
+    [Reflect=aria_label]            attribute DOMString? ariaLabel;
+    [Reflect=aria_level]            attribute DOMString? ariaLevel;
+    [Reflect=aria_live]             attribute DOMString? ariaLive;
+    [Reflect=aria_modal]            attribute DOMString? ariaModal;
+    [Reflect=aria_multiline]        attribute DOMString? ariaMultiLine;
+    [Reflect=aria_multiselectable]  attribute DOMString? ariaMultiSelectable;
+    [Reflect=aria_orientation]      attribute DOMString? ariaOrientation;
+    [Reflect=aria_placeholder]      attribute DOMString? ariaPlaceholder;
+    [Reflect=aria_posinset]         attribute DOMString? ariaPosInSet;
+    [Reflect=aria_pressed]          attribute DOMString? ariaPressed;
+    [Reflect=aria_readonly]         attribute DOMString? ariaReadOnly;
+    [Reflect=aria_relevant]         attribute DOMString? ariaRelevant;
+    [Reflect=aria_required]         attribute DOMString? ariaRequired;
+    [Reflect=aria_roledescription]  attribute DOMString? ariaRoleDescription;
+    [Reflect=aria_rowcount]         attribute DOMString? ariaRowCount;
+    [Reflect=aria_rowindex]         attribute DOMString? ariaRowIndex;
+    [Reflect=aria_rowspan]          attribute DOMString? ariaRowSpan;
+    [Reflect=aria_selected]         attribute DOMString? ariaSelected;
+    [Reflect=aria_setsize]          attribute DOMString? ariaSetSize;
+    [Reflect=aria_sort]             attribute DOMString? ariaSort;
+    [Reflect=aria_valuemax]         attribute DOMString? ariaValueMax;
+    [Reflect=aria_valuemin]         attribute DOMString? ariaValueMin;
+    [Reflect=aria_valuenow]         attribute DOMString? ariaValueNow;
+    [Reflect=aria_valuetext]        attribute DOMString? ariaValueText;
+};

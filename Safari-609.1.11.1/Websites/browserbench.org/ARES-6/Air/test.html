@@ -1,0 +1,45 @@
+<html>
+<head>
+<title>Air.js</title>
+<script src="symbols.js"></script>
+<script src="tmp_base.js"></script>
+<script src="arg.js"></script>
+<script src="basic_block.js"></script>
+<script src="code.js"></script>
+<script src="frequented_block.js"></script>
+<script src="inst.js"></script>
+<script src="opcode.js"></script>
+<script src="reg.js"></script>
+<script src="stack_slot.js"></script>
+<script src="tmp.js"></script>
+<script src="util.js"></script>
+<script src="custom.js"></script>
+<script src="liveness.js"></script>
+<script src="insertion_set.js"></script>
+<script src="allocate_stack.js"></script>
+<script src="payload-gbemu-executeIteration.js"></script>
+<script src="payload-imaging-gaussian-blur-gaussianBlur.js"></script>
+<script src="payload-airjs-ACLj8C.js"></script>
+<script src="payload-typescript-scanIdentifier.js"></script>
+<script src="benchmark.js"></script>
+<script>
+    function runTest() {
+        try {
+            var result = runBenchmark();
+            document.getElementById("result-summary").innerHTML = "That took " + result + " ms.";
+        } catch (e) {
+            document.getElementById("result-summary").innerHTML = "Failed: " + e;
+        }
+    }
+</script>
+</head>
+<body>
+<h1>Air.js</h1>
+<p>
+  <div id="result-summary"></div>
+  <div><a href="javascript:runTest()">Start Test</a></div>
+</p>
+</body>
+</html>
+
+

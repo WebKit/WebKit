@@ -1,0 +1,218 @@
+
+======== Move By Word ====
+Test 1, LTR:
+Move right by one word
+"abc def    hij opq"[0, 4, 8, 15, 18]
+Move left by one word
+"abc def    hij opq"[18, 15, 8, 4, 0]
+Test 2, LTR:
+Move right by one word
+"    abc    def    hij    opq    "[4, 8, 15, 22, 28]
+Move left by one word
+"    abc    def    hij    opq    "[28, 22, 15, 8, 4]
+Test 3, LTR:
+Move right by one word
+"    abc    ABW    def    "[4, 8, 15, 21]
+Move left by one word
+"    abc    ABW    def    "[21, 15, 8, 4]
+Test 4, LTR:
+Move right by one word
+"    abc    def    ABW    DDU    hij    opq    "[4, 8, 15, 21, 29, 36, 42]
+Move left by one word
+"    abc    def    ABW    DDU    hij    opq    "[42, 36, 29, 21, 15, 8, 4]
+Test 5, LTR:
+Move right by one word
+"    abc    def    hij    ABW    DSU    EJH    opq    rst    uvw    "[4, 8, 15, 22, 35, 28, 43, 50, 57, 63]
+Move left by one word
+"    abc    def    hij    ABW    DSU    EJH    opq    rst    uvw    "[63, 57, 50, 43, 28, 35, 22, 15, 8, 4]
+Test 6, LTR:
+Move right by one word
+"    ABW    DSU    HJH    FUX    "[4, 21, 14, 7, 28]
+Move left by one word
+"    ABW    DSU    HJH    FUX    "[28, 7, 14, 21, 4]
+Test 7, LTR:
+Move right by one word
+"    ABW    abc    DSU     "[4, 8, 15, 21]
+Move left by one word
+"    ABW    abc    DSU     "[21, 15, 8, 4]
+Test 8, LTR:
+Move right by one word
+"    ABW    DSU    abc   def   HJH    FUX    "[4, 7, 15, 22, 28, 33, 40]
+Move left by one word
+"    ABW    DSU    abc   def   HJH    FUX    "[40, 33, 28, 22, 15, 7, 4]
+Test 9, LTR:
+Move right by one word
+"    ABW    DSU    HJH    abc   def   jih   FUX  FUX    YR[     "[4, 14, 7, 22, 29, 35, 41, 51, 46, 58]
+Move left by one word
+"    ABW    DSU    HJH    abc   def   jih   FUX  FUX    YR[     "[58, 46, 51, 41, 35, 29, 22, 7, 14, 4]
+Test 10, LTR:
+Move right by one word
+"ABW DSU    EJH FUX"[0, 14, 7, 3, 18]
+Move left by one word
+"ABW DSU    EJH FUX"[18, 3, 7, 14, 0]
+Test 11, LTR:
+Move right by one word
+"ABW DSU EJH    abc def hij"[0, 7, 3, 12, 19, 23, 26]
+Move left by one word
+"ABW DSU EJH    abc def hij"[26, 23, 19, 12, 3, 7, 0]
+Test 12, LTR:
+Move right by one word
+"abc def hij    ABW DSU EJH    opq rst uvw"[0, 4, 8, 12, 22, 18, 27, 34, 38, 41]
+Move left by one word
+"abc def hij    ABW DSU EJH    opq rst uvw"[41, 38, 34, 27, 18, 22, 12, 8, 4, 0]
+Test 13, RTL:
+Move left by one word
+"abc def    hij opq"[0, 14, 7, 3, 18]
+Move right by one word
+"abc def    hij opq"[18, 3, 7, 14, 0]
+Test 14, RTL:
+Move left by one word
+"    abc    def    hij    opq    "[4, 21, 14, 7, 28]
+Move right by one word
+"    abc    def    hij    opq    "[28, 7, 14, 21, 4]
+Test 15, RTL:
+Move left by one word
+"    abc    ABW    def    "[4, 8, 15, 21]
+Move right by one word
+"    abc    ABW    def    "[21, 15, 8, 4]
+Test 16, RTL:
+Move left by one word
+"    abc    def    ABW    DDU    hij    opq    "[4, 7, 15, 22, 29, 35, 42]
+Move right by one word
+"    abc    def    ABW    DDU    hij    opq    "[42, 35, 29, 22, 15, 7, 4]
+Test 17, RTL:
+Move left by one word
+"    abc    def    hij    ABW    DSU    EJH    opq    rst    uvw    "[4, 14, 7, 22, 29, 36, 43, 56, 49, 63]
+Move right by one word
+"    abc    def    hij    ABW    DSU    EJH    opq    rst    uvw    "[63, 49, 56, 43, 36, 29, 22, 7, 14, 4]
+Test 18, RTL:
+Move left by one word
+"    ABW    DSU    HJH    FUX    "[4, 8, 15, 22, 28]
+Move right by one word
+"    ABW    DSU    HJH    FUX    "[28, 22, 15, 8, 4]
+Test 19, RTL:
+Move left by one word
+"    ABW    abc    DSU     "[4, 8, 15, 21]
+Move right by one word
+"    ABW    abc    DSU     "[21, 15, 8, 4]
+Test 20, RTL:
+Move left by one word
+"    ABW    DSU    abc   def   HJH    FUX    "[4, 8, 15, 21, 28, 34, 40]
+Move right by one word
+"    ABW    DSU    abc   def   HJH    FUX    "[40, 34, 28, 21, 15, 8, 4]
+Test 21, RTL:
+Move left by one word
+"    ABW    DSU    HJH    abc   def   jih   FUX  FUX    YR[     "[4, 8, 15, 22, 34, 28, 41, 47, 52, 58]
+Move right by one word
+"    ABW    DSU    HJH    abc   def   jih   FUX  FUX    YR[     "[58, 52, 47, 41, 28, 34, 22, 15, 8, 4]
+Test 22, LTR:
+Move right by one word
+"abc def    hij opq"[0, 4, 11, 15, 18]
+Move left by one word
+"abc def    hij opq"[18, 15, 11, 4, 0]
+Test 23, LTR:
+Move right by one word
+"    abc    def    hij    opq    "[0, 4, 11, 18, 25, 32]
+Move left by one word
+"    abc    def    hij    opq    "[32, 25, 18, 11, 4, 0]
+Test 24, LTR:
+Move right by one word
+"    abc    ABW    def    "[0, 4, 11, 18, 25]
+Move left by one word
+"    abc    ABW    def    "[25, 18, 11, 4, 0]
+Test 25, LTR:
+Move right by one word
+"    abc    def    ABW    DDU    hij    opq    "[0, 4, 11, 18, 21, 32, 39, 46]
+Move left by one word
+"    abc    def    ABW    DDU    hij    opq    "[46, 39, 32, 21, 18, 11, 4, 0]
+Test 26, LTR:
+Move right by one word
+"    abc    def    hij    ABW    DSU    EJH    opq    rst    uvw    "[0, 4, 11, 18, 25, 35, 28, 46, 53, 60, 67]
+Move left by one word
+"    abc    def    hij    ABW    DSU    EJH    opq    rst    uvw    "[67, 60, 53, 46, 28, 35, 25, 18, 11, 4, 0]
+Test 27, LTR:
+Move right by one word
+"    ABW    DSU    HJH    FUX    "[0, 4, 21, 14, 7, 32]
+Move left by one word
+"    ABW    DSU    HJH    FUX    "[32, 7, 14, 21, 4, 0]
+Test 28, LTR:
+Move right by one word
+"    ABW    abc    DSU     "[0, 4, 11, 18, 26]
+Move left by one word
+"    ABW    abc    DSU     "[26, 18, 11, 4, 0]
+Test 29, LTR:
+Move right by one word
+"    ABW    DSU    abc   def   HJH    FUX    "[0, 4, 7, 18, 24, 30, 33, 44]
+Move left by one word
+"    ABW    DSU    abc   def   HJH    FUX    "[44, 33, 30, 24, 18, 7, 4, 0]
+Test 30, LTR:
+Move right by one word
+"    ABW    DSU    HJH    abc   def   jih   FUX  FUX    YR[     "[0, 4, 14, 7, 25, 31, 37, 43, 51, 46, 63]
+Move left by one word
+"    ABW    DSU    HJH    abc   def   jih   FUX  FUX    YR[     "[63, 46, 51, 43, 37, 31, 25, 7, 14, 4, 0]
+Test 31, LTR:
+Move right by one word
+"ABW DSU    EJH FUX"[0, 14, 7, 3, 18]
+Move left by one word
+"ABW DSU    EJH FUX"[18, 3, 7, 14, 0]
+Test 32, LTR:
+Move right by one word
+"ABW DSU EJH    abc def hij"[0, 7, 3, 15, 19, 23, 26]
+Move left by one word
+"ABW DSU EJH    abc def hij"[26, 23, 19, 15, 3, 7, 0]
+Test 33, LTR:
+Move right by one word
+"abc def hij    ABW DSU EJH    opq rst uvw"[0, 4, 8, 15, 22, 18, 30, 34, 38, 41]
+Move left by one word
+"abc def hij    ABW DSU EJH    opq rst uvw"[41, 38, 34, 30, 18, 22, 15, 8, 4, 0]
+Test 34, RTL:
+Move left by one word
+"abc def    hij opq"[0, 14, 7, 3, 18]
+Move right by one word
+"abc def    hij opq"[18, 3, 7, 14, 0]
+Test 35, RTL:
+Move left by one word
+"    abc    def    hij    opq    "[0, 4, 21, 14, 7, 32]
+Move right by one word
+"    abc    def    hij    opq    "[32, 7, 14, 21, 4, 0]
+Test 36, RTL:
+Move left by one word
+"    abc    ABW    def    "[0, 4, 11, 18, 25]
+Move right by one word
+"    abc    ABW    def    "[25, 18, 11, 4, 0]
+Test 37, RTL:
+Move left by one word
+"    abc    def    ABW    DDU    hij    opq    "[0, 4, 7, 18, 25, 32, 35, 46]
+Move right by one word
+"    abc    def    ABW    DDU    hij    opq    "[46, 35, 32, 25, 18, 7, 4, 0]
+Test 38, RTL:
+Move left by one word
+"    abc    def    hij    ABW    DSU    EJH    opq    rst    uvw    "[0, 4, 14, 7, 25, 32, 39, 46, 56, 49, 67]
+Move right by one word
+"    abc    def    hij    ABW    DSU    EJH    opq    rst    uvw    "[67, 49, 56, 46, 39, 32, 25, 7, 14, 4, 0]
+Test 39, RTL:
+Move left by one word
+"    ABW    DSU    HJH    FUX    "[0, 4, 11, 18, 25, 32]
+Move right by one word
+"    ABW    DSU    HJH    FUX    "[32, 25, 18, 11, 4, 0]
+Test 40, RTL:
+Move left by one word
+"    ABW    abc    DSU     "[0, 4, 11, 18, 26]
+Move right by one word
+"    ABW    abc    DSU     "[26, 18, 11, 4, 0]
+Test 41, RTL:
+Move left by one word
+"    ABW    DSU    abc   def   HJH    FUX    "[0, 4, 11, 18, 21, 30, 37, 44]
+Move right by one word
+"    ABW    DSU    abc   def   HJH    FUX    "[44, 37, 30, 21, 18, 11, 4, 0]
+Test 42, RTL:
+Move left by one word
+"    ABW    DSU    HJH    abc   def   jih   FUX  FUX    YR[     "[0, 4, 11, 18, 25, 34, 28, 43, 48, 55, 63]
+Move right by one word
+"    ABW    DSU    HJH    abc   def   jih   FUX  FUX    YR[     "[63, 55, 48, 43, 28, 34, 25, 18, 11, 4, 0]
+Test 43, LTR:
+Move right by one word
+"䤫䡱暘倎厘    疂崝烵     abc def"[0, 1, 2, 3, 4, 9, 10, 11, 17, 21, 24]
+Move left by one word
+"䤫䡱暘倎厘    疂崝烵     abc def"[24, 21, 17, 11, 10, 9, 4, 3, 2, 1, 0]
+

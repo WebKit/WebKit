@@ -1,0 +1,45 @@
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript">
+        function resize(id)
+        {
+            var target = document.getElementById(id);
+            var x = document.body.offsetLeft + target.offsetLeft + target.offsetWidth;
+            var y = document.body.offsetTop + target.offsetTop + target.offsetHeight;
+            eventSender.mouseMoveTo(x - 6, y - 7);
+            eventSender.mouseDown();
+            eventSender.mouseMoveTo(x + 13, y + 14);
+            eventSender.mouseUp();
+        }
+        function test()
+        {
+            if (!window.testRunner)
+                return;
+            resize("div");
+            resize("textarea1");
+            resize("textarea2");
+            resize("iframe1");
+        }
+    </script>
+<style>
+textarea { 
+        resize: both; 
+}
+</style>
+</head>
+<body onload="test()">
+    <hr>
+    <p>
+        Test for
+        <i><a href="https://bugs.webkit.org/show_bug.cgi?id=9547">http://bugzilla.opendarwin.org/show_bug.cgi?id=9547</a>
+        Resize corner does not track the mouse accurately</i>.
+    </p>
+    <hr>
+    <div id="div" style="overflow: auto; resize: both; width: 150px; height: 100px; border: blue 2px solid;"></div>
+    <textarea id="textarea1" style="width: 150px; height: 100px; border: blue 2px solid;"></textarea>
+    <br>
+    <textarea id="textarea2"></textarea>
+    <br>
+    <iframe id="iframe1" style="resize:both;"></iframe>
+</body>

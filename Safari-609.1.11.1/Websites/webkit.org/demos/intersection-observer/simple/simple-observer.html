@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Simple Intersection Obsever</title>
+    <meta name="viewport" content="width=600">
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js"></script>
+    <style>
+        body {
+            font-family: Helvetica;
+            height: 6000px;
+        }
+        
+        #target {
+            position: absolute;
+            left: 60px;
+            width: 200px;
+            height: 200px;
+            top: 2800px;
+            padding: 40px;
+            box-sizing: border-box;
+            font-size: 24pt;
+            background-color: rgba(119, 104, 113, 1);
+            color: white;
+            text-align: center;
+            border-radius: 10px;
+        }
+        
+    </style>
+    <script>
+        var observer;
+        function doSetup()
+        {
+            observer = new IntersectionObserver(intersectedCallback, {
+                threshold: [ 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1 ]
+            });
+            
+            let target = document.getElementById('target');
+            observer.observe(target);
+        }
+        window.addEventListener('load', doSetup, false);
+    </script>
+</head>
+<body>
+
+<p>Scroll down to see the target</p>
+<div class="results">
+<h2>Logging</h2>
+<button onclick="clearLog()" class="clear">🗑</button>
+<pre id="logging"></pre>
+</div>
+
+<div id="target">Target</div>
+
+</body>
+</html>

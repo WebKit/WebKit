@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("Tests that an exception is thrown if we try to get a pathSeg for a length out of the bounds of the path itself.");
+    path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    shouldThrow("path.pathSegList.initialize();");
+    shouldBe("path.getPathSegAtLength(0)", '0');
+    shouldThrow("path.insertItemBefore(null, 0)");
+    shouldThrow("path.replaceItem(null, 0)");
+    shouldThrow("path.appendItem(null)");
+    path.pathSegList.initialize(path.createSVGPathSegClosePath());
+    debug("List correctly initialised.");
+    shouldBe("path.getPathSegAtLength(0)", '0');
+    shouldThrow("path.insertItemBefore(null, 0)");
+    shouldThrow("path.replaceItem(null, 0)");
+    shouldThrow("path.appendItem(null)");
+    
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

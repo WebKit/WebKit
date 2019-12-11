@@ -1,0 +1,45 @@
+<html><head>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        var types = [
+                      XPathResult.ORDERED_NODE_ITERATOR_TYPE,
+                      XPathResult.UNORDERED_NODE_ITERATOR_TYPE
+                    ];
+
+        function gc()
+        {
+            if (window.GCController)
+                return GCController.collect();
+
+            for (var i = 0; i < 10000; i++) { // > force garbage collection (FF requires about 9K allocations before a collect)
+                var s = new String("abc");
+            }
+        }
+
+        function test(type)
+        {
+            var doc = (new DOMParser).parseFromString("<html><body><span></span></body></html>", "text/xml");
+            doc.getElementsByTagName("span")[0].foo = "PASS";
+            var result = doc.evaluate("//span", doc.documentElement, null, type, null);
+            doc = 0;
+            gc();
+            var console = document.getElementById("console");
+            console.appendChild(document.createTextNode(result.iterateNext().foo));
+            console.appendChild(document.createElement("br"));
+        }
+
+        function tests()
+        {
+            while (types.length) {
+                test(types.pop());
+            }
+        }
+    </script>
+</head>
+<body onload="tests()">
+<div> Test for bug <a href="https://bugs.webkit.org/show_bug.cgi?id=34231">34231</a>: Nodes in XPathResult should keep JS wrappers alive.</div>
+<div> For this test to PASS you should see 2 PASS below.</div><br>
+<div id="console"></div>
+</body></html>

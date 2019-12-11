@@ -1,0 +1,32 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/block-ellipsis-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/block-ellipsis-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/continue-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/continue-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/line-clamp-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/line-clamp-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/max-lines-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/max-lines-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/overflow-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/overflow-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/overflow-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/text-overflow-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/text-overflow-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/text-overflow-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/webkit-line-clamp-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/webkit-line-clamp-valid.html

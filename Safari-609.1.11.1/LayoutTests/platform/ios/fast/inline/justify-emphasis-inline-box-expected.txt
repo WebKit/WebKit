@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x68
+  RenderBlock {HTML} at (0,0) size 800x68
+    RenderBody {BODY} at (8,8) size 784x52
+      RenderBlock {DIV} at (0,0) size 200x52
+        RenderBlock {SPAN} at (0,22) size 0x0
+        RenderText {#text} at (0,9) size 512x43
+          text run at (0,9) width 200: "\x{3042}"
+          text run at (0,35) width 512: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"

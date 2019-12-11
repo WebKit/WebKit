@@ -1,0 +1,8 @@
+fbarchard@chromium.org
+magjed@chromium.org
+
+per-file *.gn=phoglund@chromium.org
+per-file .gitignore=*
+per-file AUTHORS=*
+per-file DEPS=*
+per-file PRESUBMIT.py=phoglund@chromium.org

@@ -1,0 +1,26 @@
+Verifies that GL framebuffer bindings do not change when canvas is resized
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS fboSize < canvas.width is true
+PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+test before resizing canvas
+PASS should be blue
+PASS area outside fbo should be transparent black
+PASS should be green
+PASS area outside fbo should be transparent black
+test after resizing canvas
+PASS should be blue
+PASS area outside fbo should be transparent black
+PASS should be green
+PASS area outside fbo should be transparent black
+test after resizing canvas and waiting for compositing
+PASS should be blue
+PASS area outside fbo should be transparent black
+PASS should be green
+PASS area outside fbo should be transparent black
+PASS getError was expected value: NO_ERROR : Should be no errors.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

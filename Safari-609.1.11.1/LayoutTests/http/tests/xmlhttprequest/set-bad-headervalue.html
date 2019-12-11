@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>XMLHttpRequest: setRequestHeader() value argument checks</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+    <!-- Test based on http://w3c-test.org/web-platform-tests/master/XMLHttpRequest/setrequestheader-bogus-value.htm This test should be removed once wpt XMLHttpRequest is imported if both tests are in sync -->
+  </head>
+  <body>
+    <div id="log"></div>
+    <script>
+      function try_value(value, expectError) {
+        test(function() {
+          var client = new XMLHttpRequest()
+          client.open("GET", "...")
+          if (expectError)
+              assert_throws(expectError, function() { client.setRequestHeader("x-test", value) }, ' given value ' + value+', ')
+          else
+              client.setRequestHeader("x-test", value)  
+          })
+      }
+
+      try_value("t\rt", {name:'SyntaxError'})
+      try_value("t\nt", {name:'SyntaxError'})
+      try_value("ﾃｽﾄ", {name:'TypeError'})
+      try_value("t\bt")
+      try_value("t\vt")
+      try_value("t\tt")
+      try_value("t t")
+      try_value("\xd0\xa1")
+      try_value("\x7f")
+      test(function() {
+        var client = new XMLHttpRequest()
+        client.open("GET", "...")
+        assert_throws({name:'TypeError'}, function() { client.setRequestHeader("x-test") })
+      })
+    </script>
+  </body>
+</html>

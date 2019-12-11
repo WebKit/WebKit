@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
+</head>
+<body>
+    
+    <div class="swoop">&nbsp;</div>
+    
+    <header>
+        <h1 class="logo"><img src="ARES-6.svg" title="ARES-6" alt="ARES-6"></h1>
+    </header>
+
+    <main class="about">
+    
+        <h2>About the Tests</h2>
+        
+        <p>ARES-6 measures the execution time of JavaScript&#8217;s newest features, including symbols, for-of, arrow functions, Map/Set/WeakMap, let/const, classes, proxies, string interpolation, destructuring, default arguments, spread, tail calls, and generators. ARES-6 is comprised of four sub-tests: Air, Basic, Babylon, and ML.</p>
+
+        <p>Air is an ES2015 port of the <a href="https://webkit.org/blog/5852/introducing-the-b3-jit-compiler/">WebKit B3 JIT</a>&#8217;s <a href="https://trac.webkit.org/changeset/201783"><code>Air::allocateStack</code> phase</a>. This code is a heavy user of Map, Set, classes, spread, and for-of. The benchmark runs <code>allocateStack</code> on hot function bodies from other popular JavaScript benchmarks: <code>executeIteration</code> from <a href="https://developers.google.com/octane/">Octane</a>/Gameboy, <code>gaussianBlur</code> from <a href="http://krakenbenchmark.mozilla.org">Kraken</a>, and <code>scanIdentifier</code> from Octane/Typescript. Air also runs <code>allocateStack</code> on a hot function from Air itself. <a href="https://trac.webkit.org/browser/trunk/PerformanceTests/ARES-6/Air?rev=211697">Browse the source.</a></p>
+
+        <p>Basic is an <a href="https://trac.webkit.org/changeset/202446">ES2015 implementation</a> of the <a href="http://www.ecma-international.org/publications/files/ECMA-ST-WITHDRAWN/ECMA-55,%201st%20Edition,%20January%201978.pdf">ECMA-55 BASIC standard</a>. BASIC was an interactive language from the start, so our implementation uses generator functions for the entire interpreter. When the BASIC program says <code>INPUT</code>, our interpreter says <code>yield</code>. This allows users of the interpreter to easily integrate it into a runloop. Basic also uses classes, Map, and WeakMap. The benchmark runs a handful of simple programs, the most complex of which finds prime numbers. <a href="https://trac.webkit.org/browser/trunk/PerformanceTests/ARES-6/Basic?rev=211697&order=name">Browse the source.</a></p>
+
+        <p>
+           <a href="https://github.com/babel/babylon">Babylon</a> is an implementation of a parser for the JavaScript language.
+           Babylon is the parser used in the <a href="https://babeljs.io">Babel</a> JavaScript transpiler.
+           The benchmark runs the Babylon parser on four different JavaScript sources. Babylon makes heavy use of classes,
+           does non trivial string processing, and creates non-trivial object graphs.
+        </p>
+
+        <p>
+            <a href="https://github.com/mljs/feedforward-neural-networks">ML</a> is an implementation of a <a href="https://en.wikipedia.org/wiki/Feedforward_neural_network"> feedforward neural network</a>.
+            The benchmark trains several networks using different <a href="https://en.wikipedia.org/wiki/Activation_function">activation functions</a>
+            and several sample data sets. ML makes heavy use of classes. It relies on the <a href="https://github.com/mljs/matrix">ml-matrix</a> library
+            and does non-trivial matrix math.
+        </p>
+
+        <p>ARES-6 rewards browsers that start up quickly and run smoothly. It's not enough to just measure the total running time of a workload. Browsers may perform differently for the same workload depending on how many times it has run. Garbage collection runs periodically, making some iterations take longer than others. Code that runs repeatedly gets optimized by the browser, so the first iteration of any workload is more expensive than the rest. ARES-6 runs Air, Basic, and Babylon for 200 iterations, and ML for 60 iterations. For each benchmark, ARES-6 reports the time of the first iteration, the average of the 4 worst iterations, and the average of all but the first iteration. ARES-6 also reports an overall score which is the geometric mean of all twelve of these numbers. ARES-6 equally rewards fast start-up, low jank, and sophisticated adaptive optimizations for long-running code.</p>
+        
+        <p>Each ARES-6 sample has 200 iterations of Air, Basic, and Babylon, and 60 iterations of ML. ARES-6 runs 6 samples, and reports the average with 95% confidence intervals. Each sample runs in a fresh <code>iframe</code> to simulate some of the effects of page navigation.</p>
+
+        <p><a href="index.html" class="button return">Return to Testing</a></p>
+
+    </main>
+            
+</body>
+</html>

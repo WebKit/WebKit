@@ -1,0 +1,4 @@
+This test succeeds if RAF is resumed in a page from where another page with RAF was opened and then closed.
+Window closed.
+PASS
+

@@ -1,0 +1,38 @@
+Tests parameters of document.createNodeIterator() API.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+No parameters
+PASS document.createNodeIterator() threw exception TypeError: Not enough arguments.
+
+Null root node
+PASS document.createNodeIterator(null) threw exception TypeError: Argument 1 ('root') to Document.createNodeIterator must be an instance of Node.
+
+Default parameters
+iterator = document.createNodeIterator(document)
+PASS iterator.root is document
+PASS iterator.referenceNode is document
+PASS iterator.whatToShow is 0xFFFFFFFF
+PASS iterator.filter is null
+PASS iterator.pointerBeforeReferenceNode is true
+
+Passing null for optional parameters
+iterator = document.createNodeIterator(document, null, null)
+PASS iterator.root is document
+PASS iterator.referenceNode is document
+PASS iterator.whatToShow is 0
+PASS iterator.filter is null
+PASS iterator.pointerBeforeReferenceNode is true
+
+Passing undefined for optional parameters
+iterator = document.createNodeIterator(document, undefined, undefined)
+PASS iterator.root is document
+PASS iterator.referenceNode is document
+PASS iterator.whatToShow is 0xFFFFFFFF
+PASS iterator.filter is null
+PASS iterator.pointerBeforeReferenceNode is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

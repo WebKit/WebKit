@@ -1,0 +1,81 @@
+<svg id="svg" xmlns="http://www.w3.org/2000/svg" onload="load()">
+<g id="g"/>
+<text x="50" y="50" id="log"/>
+<script id="script">
+<![CDATA[
+
+var g = document.getElementById("g");
+
+function log(message) {
+    var logDiv = document.getElementById('log');
+    logDiv.appendChild(document.createTextNode(message));
+}
+
+function createAnimatedRect() {
+    var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    rect.setAttribute("width", 10);
+    rect.setAttribute("height", 10);
+
+    var anim = document.createElementNS("http://www.w3.org/2000/svg", "animate");
+    anim.setAttribute("attributeType", "XML");
+    anim.setAttribute("attributeName", "x");
+    anim.setAttribute("from", "100");
+    anim.setAttribute("to", "0");
+    anim.setAttribute("begin", "0s");
+    anim.setAttribute("dur", "10.0s");
+    anim.setAttribute("repeatCount", 1);
+
+    rect.appendChild(anim);
+
+    return rect;
+}
+
+function startTest() {
+    // Collect garbage before recording starting live node count, in case there are live elements from previous tests.
+    GCController.collect();
+    originalLiveElements = window.internals.numberOfLiveNodes();
+
+    for (var i = 0; i < 100; i++)
+        g.appendChild(createAnimatedRect());
+
+    setTimeout(continueTest, 0);
+}
+
+function continueTest() {
+    while (g.hasChildNodes())
+        g.removeChild(g.lastChild);
+
+    setTimeout(finishTest, 0);
+}
+
+var attemptsToFinish = 5;
+
+function finishTest() {
+    GCController.collect();
+
+    var liveDelta = window.internals.numberOfLiveNodes() - originalLiveElements;
+    if (liveDelta == 0)
+        log("PASS");
+    else if (--attemptsToFinish) {
+        setTimeout(finishTest, 100);
+        return;
+    } else
+        log("FAIL: " + liveDelta + " extra live node(s)");
+
+    testRunner.notifyDone();
+}
+
+function load() {
+    if (window.testRunner && window.GCController && window.internals) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    } else {
+        log("This test only works when run with the testRunner, GCController, and internals available.");
+        return;
+    }
+
+    setTimeout(startTest, 0);
+}
+]]>
+</script>
+</svg>

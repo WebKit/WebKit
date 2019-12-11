@@ -1,0 +1,12 @@
+
+FAIL compileStreaming using resolved response promise_test: Unhandled rejection with value: object "TypeError: WebAssembly.compileStreaming is not a function. (In 'WebAssembly.compileStreaming(response)', 'WebAssembly.compileStreaming' is undefined)"
+FAIL compileStreaming using resolved response and check instantiate promise_test: Unhandled rejection with value: object "TypeError: WebAssembly.compileStreaming is not a function. (In 'WebAssembly.compileStreaming(response)', 'WebAssembly.compileStreaming' is undefined)"
+FAIL compileStreaming using promise response from fetch and check instantiate promise_test: Unhandled rejection with value: object "TypeError: WebAssembly.compileStreaming is not a function. (In 'WebAssembly.compileStreaming(result)', 'WebAssembly.compileStreaming' is undefined)"
+FAIL compileStreaming raise error if wrong mime type assert_true: expected true got false
+FAIL compileStreaming raise error if no mime type assert_true: expected true got false
+FAIL compileStreaming raise error if 404 status assert_equals: expected "Response has not returned OK status" but got "WebAssembly.compileStreaming is not a function. (In 'WebAssembly.compileStreaming(result)', 'WebAssembly.compileStreaming' is undefined)"
+FAIL compileStreaming check CORS promise_test: Unhandled rejection with value: object "TypeError: WebAssembly.compileStreaming is not a function. (In 'WebAssembly.compileStreaming(result)', 'WebAssembly.compileStreaming' is undefined)"
+FAIL compileStreaming raise error if no-cors assert_equals: expected "Response is not CORS-same-origin" but got "WebAssembly.compileStreaming is not a function. (In 'WebAssembly.compileStreaming(result)', 'WebAssembly.compileStreaming' is undefined)"
+FAIL compileStreaming receive promise with response created from ArrayBuffer promise_test: Unhandled rejection with value: object "TypeError: WebAssembly.compileStreaming is not a function. (In 'WebAssembly.compileStreaming(new Response(v, { headers: { "Content-Type" : "application/wasm" }}))', 'WebAssembly.compileStreaming' is undefined)"
+FAIL compileStreaming receive response that deliver data by chunks as bufferArray promise_test: Unhandled rejection with value: object "TypeError: WebAssembly.compileStreaming is not a function. (In 'WebAssembly.compileStreaming(new Response(stream, { headers: { "Content-Type" : "application/wasm" }}))', 'WebAssembly.compileStreaming' is undefined)"
+

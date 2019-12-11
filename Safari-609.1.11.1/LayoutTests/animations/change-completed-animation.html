@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container {
+            height: 100px;
+            width: 500px;
+            margin: 4px;
+            border: 1px solid black;
+        }
+        .box {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            background-color: green;
+        }
+        
+        .mover {
+            animation: move 0.25s linear;
+        }
+        
+        .mover.changed {
+            animation-duration: 0.2s;
+        }
+        
+        @keyframes move {
+            from { left: 100px; }
+            to   { left: 400px; }
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+
+        function doTest()
+        {
+            var box = document.getElementById('box');
+            box.addEventListener('animationend', function() {
+                window.setTimeout(function() {
+                    box.addEventListener('animationstart', function() {
+                        document.getElementById('results').textContent = "FAIL: animation restarted after changing animation-duration"
+                        if (window.testRunner)
+                            testRunner.notifyDone();
+                    }, false);
+
+                    // In the success case, wait a bit to make sure no animationstart event comes in.
+                    window.setTimeout(function() {
+                        if (window.testRunner)
+                            testRunner.notifyDone();
+                    }, 50);
+
+                    box.classList.add('changed');
+                }, 0);
+            }, false);
+            
+            box.classList.add('mover');
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div id="box" class="box"></div>
+    </div>
+    <div id="results">
+        PASS: animation did not restart after changing animation-duration.
+    </div>
+</body>
+</html>

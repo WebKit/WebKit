@@ -1,0 +1,11 @@
+<script>
+var frameDidLoad = false;
+document.cookie = "secureCookie=yes;secure";
+console.log(document.cookie);
+onload = function()
+{
+    if (window.opener)
+        window.opener.postMessage(frameDidLoad ? 'done' : 'blocked', '*');
+}
+</script>
+<img onload="window.frameDidLoad = true" src="https://127.0.0.1:8443/resources/redirect.php?url=http://127.0.0.1:8080/security/resources/compass.jpg">

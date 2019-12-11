@@ -1,0 +1,40 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:CSSPaintingAPIEnabled=true ] -->
+<meta name="author" title="Justin Michaud" href="mailto:justin_michaud@webkit.org">
+<meta name="assert" content="Test that paint worklets do not crash if the constructor throws">
+<link rel="help" content="https://drafts.css-houdini.org/css-paint-api-1/">
+<script src="resources/testharness.js"></script>
+
+<script id="code" type="text/worklet">
+  class MyPaint {
+    static get inputProperties() { return ['border-image-source']; }
+    paint(ctx, geom, properties) {
+      ctx.drawImage(properties.get('border-image-source'), 0, 0, geom.width, geom.height);
+    }
+  }
+  registerPaint('my-paint', MyPaint);
+</script>
+
+<script type="text/javascript">
+  importWorklet(CSS.paintWorklet, document.getElementById('code').textContent);
+</script>
+
+<style>
+  #paint {
+    width: 150px;
+    height: 150px;
+    border: 0px solid black;
+    border-image-source: url('resources/test-image.png');
+    background: paint(my-paint);
+  }
+</style>
+
+<body>
+  <div id="paint"></div>
+  <div style="width: 10px; height: 200px; position: absolute; top: 0; left: 2px; background: black"></div>
+  <div style="width: 10px; height: 200px; position: absolute; top: 0; left: 155px; background: black"></div>
+  <div style="width: 10px; height: 200px; position: absolute; top: 0; left: 80px; background: black"></div>
+  <div style="width: 200px; height: 10px; position: absolute; top: 2px; left: 0; background: black"></div>
+  <div style="width: 200px; height: 10px; position: absolute; top: 155px; left: 0; background: black"></div>
+  <div style="width: 200px; height: 10px; position: absolute; top: 30px; left: 0; background: black"></div>
+  <div style="width: 200px; height: 10px; position: absolute; top: 120px; left: 0; background: black"></div>
+</body>

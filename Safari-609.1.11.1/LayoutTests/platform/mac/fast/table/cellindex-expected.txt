@@ -1,0 +1,27 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 154x24
+        RenderTableSection {TBODY} at (0,0) size 154x24
+          RenderTableRow {TR} at (0,2) size 154x20
+            RenderTableCell {TH} at (2,2) size 65x20 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 63x18
+                text run at (1,1) width 63: "Header 1"
+            RenderTableCell {TD} at (68,2) size 42x20 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 39x18
+                text run at (1,1) width 39: "Cell 1"
+            RenderTableCell {TD} at (111,2) size 41x20 [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 39x18
+                text run at (1,1) width 39: "Cell 2"
+      RenderBlock (anonymous) at (0,24) size 784x54
+        RenderText {#text} at (0,0) size 93x18
+          text run at (0,0) width 93: "h1 has index 0"
+        RenderBR {BR} at (92,14) size 1x0
+        RenderText {#text} at (0,18) size 92x18
+          text run at (0,18) width 92: "c1 has index 1"
+        RenderBR {BR} at (91,32) size 1x0
+        RenderText {#text} at (0,36) size 92x18
+          text run at (0,36) width 92: "c2 has index 2"
+        RenderBR {BR} at (91,50) size 1x0

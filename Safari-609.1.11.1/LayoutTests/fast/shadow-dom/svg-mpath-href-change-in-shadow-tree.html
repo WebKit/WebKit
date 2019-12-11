@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Test passes if you see a single 100px by 100px green box below.</p>
+<div id="host" style="width: 100px; height: 100px;"></div>
+<template>
+    <svg viewbox="0 0 100 100">
+        <rect id="rect" x="50" y="0" width="50" height="100" fill="red"></rect>
+        <path id="path1" d="M0,0 L25,0" />
+        <path id="path2" d="M0,0 L50,0" />
+        <rect id="rect" width="50" height="100" fill="green" />
+        <g>
+            <rect id="rect" x="0" width="50" height="100" fill="green" />
+            <animateMotion dur="0.01s" calcMode="linear" fill="freeze">
+                <mpath href="#path1" />
+            </animateMotion>
+        </g>
+    </svg>
+</template>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+const shadowRoot = host.attachShadow({mode: 'closed'});
+shadowRoot.appendChild(document.querySelector('template').content.cloneNode(true));
+
+function waitForAnimation() {
+    return new Promise((resolve) => {
+         // 0.01s is 10ms. Wait for twice that time to be safe.
+        requestAnimationFrame(() => setTimeout(resolve, 20));
+    })
+}
+
+window.onload = async () => {
+    await waitForAnimation();
+    shadowRoot.querySelector('mpath').setAttribute('href', '#path2');
+    shadowRoot.querySelector('animateMotion').beginElement();
+    await waitForAnimation();
+    if (window.testRunner)
+        requestAnimationFrame(() => testRunner.notifyDone());
+}
+
+</script>
+</body>
+</html>

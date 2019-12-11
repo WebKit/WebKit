@@ -1,0 +1,54 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (10,0) size 790x600
+      RenderSVGContainer {g} at (10,0) size 790x600
+        RenderSVGContainer {g} at (0,0) size 0x0 [transform={m=((0.00,0.00)(0.00,0.00)) t=(0.00,0.00)}]
+          RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=150.00] [height=5.00]
+          RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=5.00] [height=50.00]
+        RenderSVGText {text} at (6,2) size 159x23 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 159x23
+            chunk 1 text run 1 at (6.00,20.00) startOffset 0 endOffset 19 width 158.40: "matrix(0 0 0 0 0 0)"
+        RenderSVGContainer {g} at (166,166) size 251x84 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,100.00)}]
+          RenderSVGRect {rect} at (166,166) size 251x9 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=150.00] [height=5.00]
+          RenderSVGRect {rect} at (166,166) size 9x84 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=5.00] [height=50.00]
+        RenderSVGText {text} at (100,82) size 202x23 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 202x23
+            chunk 1 text run 1 at (100.00,100.00) startOffset 0 endOffset 23 width 201.60: "matrix(1 0 0 1 100 100)"
+        RenderSVGContainer {g} at (116,100) size 376x125 [transform={m=((1.50,0.00)(0.00,1.50)) t=(70.00,60.00)}]
+          RenderSVGRect {rect} at (116,100) size 376x13 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=150.00] [height=5.00]
+          RenderSVGRect {rect} at (116,100) size 14x125 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=5.00] [height=50.00]
+        RenderSVGText {text} at (70,42) size 213x23 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 213x23
+            chunk 1 text run 1 at (70.00,60.00) startOffset 0 endOffset 25 width 212.40: "matrix(1.5 0 0 1.5 70 60)"
+        RenderSVGContainer {g} at (50,283) size 292x84 [transform={m=((1.00,0.00)(0.50,1.00)) t=(30.00,170.00)}]
+          RenderSVGRect {rect} at (50,283) size 255x9 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=150.00] [height=5.00]
+          RenderSVGRect {rect} at (50,283) size 50x84 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=5.00] [height=50.00]
+        RenderSVGText {text} at (30,152) size 207x23 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 207x23
+            chunk 1 text run 1 at (30.00,170.00) startOffset 0 endOffset 24 width 207.00: "matrix(1 0 0.5 1 30 170)"
+        RenderSVGContainer {g} at (166,333) size 251x209 [transform={m=((1.00,0.50)(0.00,1.00)) t=(100.00,200.00)}]
+          RenderSVGRect {rect} at (166,333) size 251x134 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=150.00] [height=5.00]
+          RenderSVGRect {rect} at (166,333) size 9x88 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=5.00] [height=50.00]
+        RenderSVGText {text} at (100,182) size 218x23 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 218x23
+            chunk 1 text run 1 at (100.00,200.00) startOffset 0 endOffset 25 width 217.80: "matrix(1 0.5 0 1 100 200)"
+        RenderSVGContainer {g} at (666,0) size 84x250 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(450.00,0.00)}]
+          RenderSVGRect {rect} at (741,0) size 9x250 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=150.00] [height=5.00]
+          RenderSVGRect {rect} at (666,0) size 84x9 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=5.00] [height=50.00]
+        RenderSVGText {text} at (275,12) size 187x23 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 187x23
+            chunk 1 text run 1 at (275.00,30.00) startOffset 0 endOffset 22 width 186.60: "matrix(0 1 -1 0 450 0)"
+        RenderSVGContainer {g} at (500,366) size 300x234 [transform={m=((1.00,0.80)(0.80,1.00)) t=(300.00,220.00)}]
+          RenderSVGRect {rect} at (500,366) size 257x209 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=150.00] [height=5.00]
+          RenderSVGRect {rect} at (500,366) size 75x91 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=5.00] [height=50.00]
+        RenderSVGText {text} at (230,202) size 234x23 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 234x23
+            chunk 1 text run 1 at (230.00,220.00) startOffset 0 endOffset 27 width 234.00: "matrix(1 0.8 0.8 1 300 220)"
+    RenderSVGContainer {g} at (16,518) size 380x60
+      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 228x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.6 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

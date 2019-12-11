@@ -1,0 +1,2 @@
+Test that WebKitDisplayImagesKey unset does not block image in cache.
+PASS

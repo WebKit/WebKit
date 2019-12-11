@@ -1,0 +1,138 @@
+This test exercises IDBObjectStore.get() with an IDBKeyRange as the parameter.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+Initial upgrade needed: Old version - 0 New version - 1
+Initial upgrade versionchange transaction complete
+Success getting keyRange [-1 (Closed), undefined (Open)]
+Result is "0"
+Success getting keyRange [-1 (Open), undefined (Open)]
+Result is "0"
+Success getting keyRange [0 (Closed), undefined (Open)]
+Result is "0"
+Success getting keyRange [0 (Open), undefined (Open)]
+Result is "1"
+Success getting keyRange [0.1 (Closed), undefined (Open)]
+Result is "1"
+Success getting keyRange [0.1 (Open), undefined (Open)]
+Result is "1"
+Success getting keyRange [99 (Closed), undefined (Open)]
+Result is "99"
+Success getting keyRange [99 (Open), undefined (Open)]
+Result is PosInf
+Success getting keyRange [99.1 (Closed), undefined (Open)]
+Result is PosInf
+Success getting keyRange [99.1 (Open), undefined (Open)]
+Result is PosInf
+Success getting keyRange [undefined (Open), 100 (Closed)]
+Result is NegInf
+Success getting keyRange [undefined (Open), 100 (Open)]
+Result is NegInf
+Success getting keyRange [undefined (Open), 99 (Closed)]
+Result is NegInf
+Success getting keyRange [undefined (Open), 99 (Open)]
+Result is NegInf
+Success getting keyRange [undefined (Open), 98.99999 (Closed)]
+Result is NegInf
+Success getting keyRange [undefined (Open), 98.99999 (Open)]
+Result is NegInf
+Success getting keyRange [undefined (Open), 98 (Closed)]
+Result is NegInf
+Success getting keyRange [undefined (Open), 98 (Open)]
+Result is NegInf
+Success getting keyRange [undefined (Open), 0 (Closed)]
+Result is NegInf
+Success getting keyRange [undefined (Open), 0 (Open)]
+Result is NegInf
+Success getting keyRange [undefined (Open), -0.1 (Closed)]
+Result is NegInf
+Success getting keyRange [undefined (Open), -0.1 (Open)]
+Result is NegInf
+Success getting keyRange [2.5 (Closed), 3.5 (Closed)]
+Result is "3"
+Success getting keyRange [-0.5 (Closed), 0.5 (Closed)]
+Result is "0"
+Success getting keyRange [98.5 (Closed), 99.5 (Closed)]
+Result is "99"
+Success getting keyRange [-1 (Closed), 0 (Closed)]
+Result is "0"
+Success getting keyRange [-1 (Open), 0 (Closed)]
+Result is "0"
+Success getting keyRange [-1 (Closed), 0 (Open)]
+Result is undefined
+Success getting keyRange [-1 (Open), 0 (Open)]
+Result is undefined
+Success getting keyRange [3 (Closed), 4 (Closed)]
+Result is "3"
+Success getting keyRange [3 (Open), 4 (Closed)]
+Result is "4"
+Success getting keyRange [3 (Closed), 4 (Open)]
+Result is "3"
+Success getting keyRange [3 (Open), 4 (Open)]
+Result is undefined
+Success getting keyRange [99 (Closed), 100 (Closed)]
+Result is "99"
+Success getting keyRange [99 (Open), 100 (Closed)]
+Result is undefined
+Success getting keyRange [99 (Closed), 100 (Open)]
+Result is "99"
+Success getting keyRange [99 (Open), 100 (Open)]
+Result is undefined
+Success getting keyRange [Infinity (Closed), a (Closed)]
+Result is PosInf
+Success getting keyRange [Infinity (Open), a (Closed)]
+Result is Flux capacitor
+Success getting keyRange [Infinity (Closed), a (Open)]
+Result is PosInf
+Success getting keyRange [Infinity (Open), a (Open)]
+Result is Flux capacitor
+Success getting keyRange [AS (Closed), a (Closed)]
+Result is AS
+Success getting keyRange [AS (Open), a (Closed)]
+Result is As
+Success getting keyRange [AS (Closed), a (Open)]
+Result is AS
+Success getting keyRange [AS (Open), a (Open)]
+Result is As
+Success getting keyRange [Infinity (Closed),  (Closed)]
+Result is PosInf
+Success getting keyRange [Infinity (Open),  (Closed)]
+Result is Flux capacitor
+Success getting keyRange [Infinity (Closed),  (Open)]
+Result is PosInf
+Success getting keyRange [Infinity (Open),  (Open)]
+Result is Flux capacitor
+Success getting keyRange [Infinity (Closed), a (Closed)]
+Result is PosInf
+Success getting keyRange [Infinity (Open), a (Closed)]
+Result is Flux capacitor
+Success getting keyRange [Infinity (Closed), a (Open)]
+Result is PosInf
+Success getting keyRange [Infinity (Open), a (Open)]
+Result is Flux capacitor
+Success getting keyRange [Infinity (Closed), a (Closed)]
+Result is PosInf
+Success getting keyRange [Infinity (Open), a (Closed)]
+Result is Flux capacitor
+Success getting keyRange [Infinity (Closed), a (Open)]
+Result is PosInf
+Success getting keyRange [Infinity (Open), a (Open)]
+Result is Flux capacitor
+Success getting keyRange [Fri Nov 04 1955 17:00:00 GMT-0700 (PDT) (Closed), Wed Oct 21 2015 09:00:00 GMT-0700 (PDT) (Closed)]
+Result is Flux capacitor
+Success getting keyRange [Fri Nov 04 1955 17:00:00 GMT-0700 (PDT) (Open), Wed Oct 21 2015 09:00:00 GMT-0700 (PDT) (Closed)]
+Result is Fish under the sea
+Success getting keyRange [Fri Nov 04 1955 17:00:00 GMT-0700 (PDT) (Closed), Wed Oct 21 2015 09:00:00 GMT-0700 (PDT) (Open)]
+Result is Flux capacitor
+Success getting keyRange [Fri Nov 04 1955 17:00:00 GMT-0700 (PDT) (Open), Wed Oct 21 2015 09:00:00 GMT-0700 (PDT) (Open)]
+Result is Fish under the sea
+readonly transaction complete
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

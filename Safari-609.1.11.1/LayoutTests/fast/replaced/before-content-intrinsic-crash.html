@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we don't crash when replaced element's (with no intrinsic width/height) parent has min-width/max-width.</title>
+<style>
+.minWidth { 
+    width: 0px; 
+	min-width: min-content;
+}
+
+.minWidth::before { 
+    content: url(data:text/plain,broken); 
+}
+
+.maxWidth { 
+    width: 0px; 
+	max-width: max-content;
+}
+
+.maxWidth::before { 
+    content: url(data:text/plain,broken); 
+}
+</style>
+</head>
+<body>
+PASS if no crash or ASSERT.
+<div class=minWidth></div>
+<div class=maxWidth></div>
+<div id=foo></div>
+<div id=bar></div>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+setTimeout(function() {
+    document.getElementById("foo").className = "minWidth";
+    document.getElementById("bar").className = "maxWidth";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 5);
+</script>
+</body>
+</html>

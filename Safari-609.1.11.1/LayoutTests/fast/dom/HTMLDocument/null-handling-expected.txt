@@ -1,0 +1,29 @@
+Tests null handling of several HTMLDocument attributes
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS htmlDocument.documentElement.getAttribute('dir') is null
+PASS htmlDocument.body.getAttribute('bgColor') is null
+PASS htmlDocument.body.getAttribute('text') is null
+PASS htmlDocument.body.getAttribute('alink') is null
+PASS htmlDocument.body.getAttribute('link') is null
+PASS htmlDocument.body.getAttribute('vlink') is null
+htmlDocument.dir = null
+PASS htmlDocument.documentElement.getAttribute('dir') is "null"
+htmlDocument.bgColor = null
+PASS htmlDocument.body.getAttribute('bgColor') is ""
+htmlDocument.bgColor = null
+PASS htmlDocument.body.getAttribute('bgColor') is ""
+htmlDocument.fgColor = null
+PASS htmlDocument.body.getAttribute('text') is ""
+htmlDocument.alinkColor = null
+PASS htmlDocument.body.getAttribute('alink') is ""
+htmlDocument.linkColor = null
+PASS htmlDocument.body.getAttribute('link') is ""
+htmlDocument.vlinkColor = null
+PASS htmlDocument.body.getAttribute('vlink') is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

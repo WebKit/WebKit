@@ -1,0 +1,16 @@
+
+PASS Element.prepend() without any argument, on a parent having no child. 
+PASS Element.prepend() with null as an argument, on a parent having no child. 
+PASS Element.prepend() with undefined as an argument, on a parent having no child. 
+PASS Element.prepend() with only text as an argument, on a parent having no child. 
+PASS Element.prepend() with only one element as an argument, on a parent having no child. 
+PASS Element.prepend() with null as an argument, on a parent having a child. 
+PASS Element.prepend() with one element and text as argument, on a parent having a child. 
+PASS DocumentFrgment.prepend() without any argument, on a parent having no child. 
+PASS DocumentFrgment.prepend() with null as an argument, on a parent having no child. 
+PASS DocumentFrgment.prepend() with undefined as an argument, on a parent having no child. 
+PASS DocumentFrgment.prepend() with only text as an argument, on a parent having no child. 
+PASS DocumentFrgment.prepend() with only one element as an argument, on a parent having no child. 
+PASS DocumentFrgment.prepend() with null as an argument, on a parent having a child. 
+PASS DocumentFrgment.prepend() with one element and text as argument, on a parent having a child. 
+

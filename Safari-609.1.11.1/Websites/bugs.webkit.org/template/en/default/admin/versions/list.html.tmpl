@@ -1,0 +1,80 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # product: object; Bugzilla::Product object representing the product to
+  #               which the versions belongs.
+  #%]
+
+[% title = BLOCK %]Select version of product
+                   '[% product.name FILTER html %]'[% END %]
+[% PROCESS global/header.html.tmpl
+  title = title
+  style_urls = ['skins/standard/admin.css']
+%]
+
+[% edit_contentlink = BLOCK %]editversions.cgi?action=edit&amp;product=
+  [%- product.name FILTER uri %]&amp;version=%%name%%[% END %]
+[% delete_contentlink = BLOCK %]editversions.cgi?action=del&amp;product=
+  [%- product.name FILTER uri %]&amp;version=%%name%%[% END %]
+[% bug_count_contentlink = BLOCK %]buglist.cgi?version=%%name%%&amp;product=
+  [%- product.name FILTER uri %][% END %]
+
+
+[% columns = [
+     { 
+       name => "name"
+       heading => "Edit version..."
+       contentlink => edit_contentlink
+     },
+     {
+       name => "isactive"
+       heading => "Active"
+       yesno_field => 1
+     }
+   ]
+%]
+
+[% IF showbugcounts %]
+
+  [% columns.push({
+       name => "bug_count"
+       heading => "$terms.Bugs"
+       class => "right"
+       contentlink => bug_count_contentlink
+     })
+  %]
+
+[% END %]
+
+[% columns.push({
+       heading => "Action"
+       content => "Delete"
+       contentlink => delete_contentlink
+     })
+%]
+
+[% Hook.process('before_table') %]
+
+[% PROCESS admin/table.html.tmpl
+     columns = columns
+     data = product.versions
+%]
+
+[% IF ! showbugcounts %]
+
+  <p><a href="editversions.cgi?product=[% product.name FILTER uri %]&amp;showbugcounts=1">
+      Redisplay table with [% terms.bug %] counts (slower)</a></p>
+
+[% END %]
+
+[% PROCESS admin/versions/footer.html.tmpl
+  no_edit_other_versions_link = 1
+ %]
+
+[% PROCESS global/footer.html.tmpl %]

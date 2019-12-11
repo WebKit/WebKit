@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 14: TypeError: Type error
+PASS: Invalid blend modes do not trigger a crash. 

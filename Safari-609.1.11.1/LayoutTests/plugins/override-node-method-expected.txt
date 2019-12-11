@@ -1,0 +1,5 @@
+ALERT: PASS
+
+Test that a plug-in can override Node methods of its element. This also means that the plug-in is instantiated when accessing properties and methods of its owner element.
+
+Should alert PASS.

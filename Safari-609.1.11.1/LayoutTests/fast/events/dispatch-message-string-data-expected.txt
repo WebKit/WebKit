@@ -1,0 +1,4 @@
+This is a test for https://bugs.webkit.org/show_bug.cgi?id=71229 (V8MessageEvent::dataAccessorGetter does not return a reference to its caller). If it succeeds, DONE will appear below. If it fails, you should see messages containing unexpected strings that were received and/or a renderer crash.
+
+DONE
+

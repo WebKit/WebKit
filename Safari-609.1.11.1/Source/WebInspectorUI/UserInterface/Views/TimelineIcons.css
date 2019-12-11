@@ -1,0 +1,144 @@
+/*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.network-icon .icon {
+    content: url(../Images/NetworkInstrument.svg);
+}
+
+.script-icon .icon {
+    content: url(../Images/ScriptsInstrument.svg);
+}
+
+.cpu-icon .icon {
+    content: url(../Images/CPUInstrument.svg);
+}
+
+.memory-icon .icon {
+    content: url(../Images/MemoryInstrument.svg);
+}
+
+.heap-allocations-icon .icon {
+    content: url(../Images/HeapAllocationsInstrument.svg);
+}
+
+.layout-icon .icon {
+    content: url(../Images/LayoutInstrument.svg);
+}
+
+.rendering-frame-icon .icon {
+    content: url(../Images/RenderingFramesInstrument.svg);
+}
+
+.media-icon .icon {
+    content: url(../Images/MediaInstrument.svg);
+}
+
+.stopwatch-icon .icon {
+    content: url(../Images/Stopwatch.svg);
+}
+
+.time-icon .icon {
+    content: url(../Images/Timeline.svg);
+    width: 13px;
+    opacity: 0.6;
+}
+
+.style-record .icon {
+    content: url(../Images/TimelineRecordStyle.svg);
+}
+
+.layout-record .icon {
+    content: url(../Images/TimelineRecordLayout.svg);
+}
+
+.paint-record .icon {
+    content: url(../Images/TimelineRecordPaint.svg);
+}
+
+.composite-record .icon {
+    content: url(../Images/TimelineRecordComposite.svg);
+}
+
+.rendering-frame-record .icon {
+    content: url(../Images/RenderingFrame.svg);
+}
+
+.api-record .icon {
+    content: url(../Images/TimelineRecordAPI.svg);
+}
+
+.evaluated-record .icon {
+    content: url(../Images/TimelineRecordScriptEvaluated.svg);
+}
+
+.event-record .icon {
+    content: url(../Images/TimelineRecordEvent.svg);
+}
+
+.probe-record .icon {
+    content: url(../Images/TimelineRecordProbeSampled.svg);
+}
+
+.runloop-record .icon {
+    width: 0 !important;
+}
+
+.console-profile-record .icon {
+    content: url(../Images/TimelineRecordConsoleProfile.svg);
+}
+
+.garbage-collection-profile-record .icon {
+    content: url(../Images/TimelineRecordGarbageCollection.svg);
+}
+
+.timer-record .icon {
+    content: url(../Images/TimelineRecordTimer.svg);
+}
+
+.animation-frame-record .icon {
+    content: url(../Images/TimelineRecordAnimationFrame.svg);
+}
+
+.css-animation-record .icon {
+    content: url(../Images/TimelineRecordCSSAnimation.svg);
+}
+
+.css-transition-record .icon {
+    content: url(../Images/TimelineRecordCSSTransition.svg);
+}
+
+.media-element-record .icon {
+    content: url(../Images/TimelineRecordMediaElement.svg);
+}
+
+.heap-snapshot-record .icon {
+    content: url(../Images/HeapSnapshot.svg);
+}
+
+@media (prefers-color-scheme: dark) {
+    .time-icon .icon {
+        filter: invert();
+    }
+}

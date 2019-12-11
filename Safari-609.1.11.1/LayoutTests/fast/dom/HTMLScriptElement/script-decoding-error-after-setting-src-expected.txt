@@ -1,0 +1,2 @@
+This case is for testing script decoding after setting its src attribute. See bug: http://bugs.webkit.org/show_bug.cgi?id=17732
+SUCCESS

@@ -1,0 +1,3 @@
+
+PASS Sticky elements work with the root (document) scroller 
+

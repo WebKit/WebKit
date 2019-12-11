@@ -1,0 +1,25 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableAttachmentElement=true ] -->
+<html>
+<body onload="runTest()">
+<div>text before <attachment id="attachment"></attachment> text after</div>
+<div id="result"></div>
+<script>
+var file;
+if (window.internals)
+    file = window.internals.createFile("resources/test-file.txt");
+
+var attachment = document.getElementById('attachment');
+attachment.file = file;
+
+window.onload = function () {
+    if (!window.eventSender)
+        return;
+    eventSender.mouseMoveTo(attachment.offsetLeft + 10, attachment.offsetTop + 10);
+    eventSender.mouseDown(0);
+    eventSender.mouseUp(0);
+    var range = window.getSelection().getRangeAt(0);
+    document.getElementById("result").innerText = 'Start offset ' + range.startOffset + ' End offset ' + range.endOffset;
+}
+</script>
+</body>
+</html>

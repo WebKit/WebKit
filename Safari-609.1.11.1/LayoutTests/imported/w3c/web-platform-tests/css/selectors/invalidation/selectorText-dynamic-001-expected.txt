@@ -1,0 +1,4 @@
+Should have a green background.
+
+PASS Style should be recomputed correctly when the selector it depends on changes 
+

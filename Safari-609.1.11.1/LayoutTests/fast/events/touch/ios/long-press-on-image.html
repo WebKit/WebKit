@@ -1,0 +1,60 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true runSingly=true ] -->
+<meta charset="utf-8">
+
+<html>
+<head>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function getUIScript()
+        {
+            return `
+            (function() {
+                uiController.longPressAtPoint(30, 20, function() {
+                    uiController.uiScriptComplete(JSON.stringify(uiController.contentsOfUserInterfaceItem('contextMenu')));
+                });
+             })();`
+        }
+
+        function runTest()
+        {
+            if (!testRunner.runUIScript)
+                return;
+
+            var target = document.getElementById('target');
+            if (testRunner.runUIScript) {
+                testRunner.runUIScript(getUIScript(), function(result) {
+                    var results = JSON.parse(result).contextMenu;
+                    var output = '';
+                    if (results.imageURL.includes("dice.png") && results.isImage && !results.isLink)
+                        output += 'PASS: context menu triggered on image';
+                    else
+                        output += 'FAIL: context menu was not triggered on image';
+
+                    document.getElementById('target').innerHTML = output;
+                    testRunner.notifyDone();
+                });
+            }
+        }
+
+        window.addEventListener('load', runTest, false);
+    </script>
+    <style>
+        #target {
+            height: 100px;
+            width: 200px;
+            background-color: silver;
+        }
+    </style>
+    <meta name="viewport" content="initial-scale=1">
+</head>
+<body>
+<div id="target">
+    <img src="../../../images/resources/dice.png" width="320" height="240" alt="Dice">
+    This test requires UIScriptController to run.
+</div>
+</body>
+</html>

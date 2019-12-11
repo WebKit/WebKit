@@ -1,0 +1,34 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 198x220
+        RenderBlock {DIV} at (2,2) size 194x80 [border: (1px solid #000000)]
+          RenderText {#text} at (10,3) size 18x64
+            text run at (10,3) width 64: "Line One."
+          RenderBR {BR} at (24,67) size 0x0
+          RenderText {#text} at (42,3) size 18x67
+            text run at (42,3) width 67: "Line Two."
+          RenderBR {BR} at (56,70) size 0x0
+          RenderRuby (inline) {RUBY} at (0,0) size 18x74
+            RenderRubyRun (anonymous) at (81,3) size 32x74
+              RenderRubyText {RT} at (-21,0) size 28x74
+                RenderText {#text} at (0,31) size 28x12
+                  text run at (0,31) width 12: "3"
+              RenderRubyBase (anonymous) at (0,0) size 32x74
+                RenderText {#text} at (7,0) size 18x74
+                  text run at (7,0) width 74: "Line Three."
+          RenderBR {BR} at (102,77) size 0x0
+          RenderRuby (inline) {RUBY} at (0,0) size 18x67
+            RenderRubyRun (anonymous) at (127,3) size 32x67
+              RenderRubyText {RT} at (-21,0) size 28x67
+                RenderText {#text} at (0,27) size 28x12
+                  text run at (0,27) width 12: "4"
+              RenderRubyBase (anonymous) at (0,0) size 32x67
+                RenderText {#text} at (7,0) size 18x67
+                  text run at (7,0) width 67: "Line Four."
+          RenderBR {BR} at (148,70) size 0x0
+          RenderText {#text} at (166,3) size 18x65
+            text run at (166,3) width 65: "Line Five."
+        RenderText {#text} at (0,0) size 0x0

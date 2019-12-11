@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>iOS specific constraints of one active capture source at a time</title>
+        <script src="../../../resources/testharness.js"></script>
+        <script src="../../../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script>
+promise_test((test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    var firstStream;
+    var audioTrack;
+    var videoTrack;
+    return navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then((stream) => {
+        firstStream = stream;
+        audioTrack = firstStream.getAudioTracks()[0];
+        videoTrack = firstStream.getVideoTracks()[0];
+
+        assert_false(audioTrack.muted, "audio track is active");
+        assert_false(videoTrack.muted, "video track is active");
+
+        return navigator.mediaDevices.getUserMedia({ audio: true});
+    }).then((stream) => {
+        assert_true(audioTrack.muted, "audio track is muted");
+        assert_false(videoTrack.muted, "video track is active");
+
+        return navigator.mediaDevices.getUserMedia({ video: true});
+    }).then((stream) => {
+        assert_true(audioTrack.muted, "audio track is muted");
+        assert_true(videoTrack.muted, "video track is muted");
+    });
+}, "Testing successive getUserMedia calls");
+        </script>
+    </body>
+</html>

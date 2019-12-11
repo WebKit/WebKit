@@ -1,0 +1,8 @@
+2d.fillStyle.parse.rgb-percent
+CSS3 Color says "The integer value 255 corresponds to 100%". (In particular, it is not 254...)
+Actual output:
+Expected output:
+
+
+PASS Canvas test: 2d.fillStyle.parse.rgb-percent 
+

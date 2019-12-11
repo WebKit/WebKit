@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<link rel="help" href="https://w3c.github.io/payment-request/#retry-method">
+<title>PaymentResponse retry() rejects if doc is not fully active</title>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<link rel="help" href="https://w3c.github.io/payment-request/#dom-paymentresponse-retry">
+<body>
+<script>
+setup({ explicit_done: true, explicit_timeout: true });
+const validMethods = Object.freeze([validPaymentMethod()]);
+const validAmount = Object.freeze({
+  currency: "USD",
+  value: "5.00",
+});
+const validTotal = Object.freeze({
+  label: "Total due",
+  amount: validAmount,
+});
+const validDetails = Object.freeze({
+  total: validTotal,
+});
+
+function getLoadedPaymentResponse(iframe, url) {
+  return new Promise(resolve => {
+    iframe.addEventListener(
+      "load",
+      () => {
+        const { PaymentRequest } = iframe.contentWindow;
+        activateThen(async () => {
+          const request = new PaymentRequest(validMethods, validDetails);
+          const acceptPromise = request.show();
+          internals.mockPaymentCoordinator.acceptPayment();
+          const response = await acceptPromise;
+          resolve(response);
+        });
+      },
+      { once: true }
+    );
+    iframe.src = url;
+  });
+}
+
+function methodNotFullyActive(text, methodName, ...args) {
+  promise_test(async t => {
+    const iframe = document.createElement("iframe");
+    iframe.allowPaymentRequest = true;
+    document.body.appendChild(iframe);
+
+    // We first got to page1.html, grab a PaymentResponse instance.
+    const response = await getLoadedPaymentResponse(
+      iframe,
+      "/payment-request/resources/page1.html"
+    );
+    // We navigate the iframe again, putting response's document into an inactive state.
+    await new Promise(resolve => {
+      iframe.addEventListener("load", resolve);
+      iframe.src = "/payment-request/resources/page2.html";
+    });
+    // Now, response's relevant global object's document is no longer active.
+    // So, promise needs to reject appropriately.
+    const promise = response[methodName](...args);
+    await promise_rejects(
+      t,
+      "AbortError",
+      promise,
+      "Inactive document, so must throw AbortError"
+    );
+    // We are done, so clean up.
+    iframe.remove();
+  }, text);
+}
+
+function methodBecomesNotFullyActive(text, methodName, ...args) {
+  promise_test(async t => {
+    const iframe = document.createElement("iframe");
+    iframe.allowPaymentRequest = true;
+    document.body.appendChild(iframe);
+
+    // We first got to page1.html, grab a PaymentResponse instance.
+    const response = await getLoadedPaymentResponse(
+      iframe,
+      "/payment-request/resources/page1.html"
+    );
+
+    // we get the promise from page1.html, while it's active!
+    const promise = response[methodName](...args);
+
+    // We navigate the iframe again, putting response's document into an inactive state.
+    await new Promise(resolve => {
+      iframe.addEventListener("load", resolve);
+      iframe.src = "/payment-request/resources/page2.html";
+    });
+
+    // Now, response's relevant global object's document is no longer active.
+    // So, promise needs to reject appropriately.
+    await promise_rejects(
+      t,
+      "AbortError",
+      promise,
+      "Inactive document, so must throw AbortError"
+    );
+    // We are done, so clean up.
+    iframe.remove();
+  }, text);
+}
+
+window.addEventListener("load", async () => {
+  await methodNotFullyActive("retry()'s retryPromise rejects if document is not fully active.", 'retry', {});
+  await methodBecomesNotFullyActive("retry()'s retryPromise rejects if the document becomes not fully active.", 'retry', {});
+  await methodNotFullyActive("complete()'s completePromise rejects if document is not fully active.", 'complete', 'success');
+  done();
+});
+</script>

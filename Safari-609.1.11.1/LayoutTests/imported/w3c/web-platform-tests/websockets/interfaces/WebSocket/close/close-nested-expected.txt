@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 25: WebSocket connection to 'ws://localhost:49001/' failed: WebSocket is closed before the connection is established.
+
+FAIL WebSockets: close() in close event handler assert_equals: expected 2 but got 3
+

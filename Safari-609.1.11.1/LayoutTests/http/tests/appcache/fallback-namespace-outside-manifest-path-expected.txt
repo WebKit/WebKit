@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 3: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+Tests that we do not load the fallback entry when the manifest does not have Content-Type text/cached-manifest and the fallback namespace is outside the manifest path.
+
+Fallback namespace under the manifest path:
+PASS did load fallback entry with fallback namespace under manifest path.
+Fallback namespace outside of manifest path:
+PASS did not load fallback entry with fallback namespace outside manifest path.
+

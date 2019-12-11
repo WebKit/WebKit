@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that hidpi content with compositing layers matches non-compositing drawing in DumpRenderTree/WebKitTestRunner context</title>
+<style>
+  div {
+    border: green solid 0.5px;
+    width: 10px;
+    height: 10px;
+    position: absolute;
+  }
+</style>
+</head>
+<body>
+<p id="container"></p>
+<script>
+  var container = document.getElementById("container");
+  adjustment = 0;
+  for (i = 0; i < 15; ++i) {
+    adjustment+=0.5;
+    for (j = 0; j < 15; ++j) {
+      var e = document.createElement("div");
+      e.style.top = (22 * i + j * adjustment) + "px";
+      e.style.left = (22 * j + i * adjustment) + "px";
+      container.appendChild(e);
+    }
+  }
+</script>
+</body>
+</html>

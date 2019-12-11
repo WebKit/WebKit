@@ -1,0 +1,4 @@
+This test is best run using WKTR. To test manually, click anywhere near the bottom of the page and verify that the input is not focused.
+
+The currently focused element is of type BODY
+

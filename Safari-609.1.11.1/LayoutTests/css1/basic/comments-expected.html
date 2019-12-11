@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<body background="../resources/basebg.gif">
+<p>The style declarations which apply to the text below are:</p>
+<pre>/* This is a CSS1 comment. */
+.one {color: green;} /* Another comment */
+/* The following should not be used:
+.two {color: red;} */
+.three {color: green; /* color: red; */}
+/**
+.four {color: red;} */
+.five {color: green;}
+/**/
+.six {color: green;}
+/*********/
+.seven {color: green;}
+/* a comment **/
+.eight {color: green;}
+
+</pre>
+<hr>
+<p style="color:green">This sentence should be green.</p>
+<p>This sentence should be black.</p>
+<p style="color:green">This sentence should be green.</p>
+<p>This sentence should be black.</p>
+<p style="color:green">This sentence should be green.</p>
+<p style="color:green">This sentence should be green.</p>
+<p style="color:green">This sentence should be green.</p>
+<p style="color:green">This sentence should be green.</p>
+
+<table border cellspacing="0" cellpadding="3" class="tabletest">
+    <tr>
+        <td colspan="2" bgcolor="silver"><strong>TABLE Testing Section</strong></td>
+    </tr>
+    <tr>
+        <td bgcolor="silver">&nbsp;</td>
+        <td><p style="color:green">This sentence should be green.</p>
+            <p>This sentence should be black.</p>
+            <p style="color:green">This sentence should be green.</p>
+            <p>This sentence should be black.</p>
+            <p>This sentence should be green.</p>
+            <p>This sentence should be green.</p>
+            <p style="color:green">This sentence should be green.</p>
+            <p style="color:green">This sentence should be green.</p>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

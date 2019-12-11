@@ -1,0 +1,22 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:CSSPaintingAPIEnabled=true ] -->
+<meta name="author" title="Justin Michaud" href="mailto:justin_michaud@webkit.org">
+<meta name="assert" content="registerPaint can be called with the correct arguments">
+<link rel="help" content="https://drafts.css-houdini.org/css-paint-api-1/">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+
+<style>
+  #paint {
+    background-image: paint(my-paint);
+    width: 150px;
+    height: 150px;
+  }
+</style>
+
+<div id="paint"></div>
+
+<script>
+test(function() {
+  assert_equals(getComputedStyle(paint).getPropertyValue("background-image"), "paint(my-paint)");
+}, 'test that test div has paint() value');
+</script>

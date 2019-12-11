@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("This test should create a Headers from an object which is a subclass of Headers.");
+
+let SpecialHeaders = class SpecialHeaders extends Headers {
+    constructor() {
+        super(...arguments);
+    }
+};
+
+let specialHeaders = new SpecialHeaders({"a": "1"});
+let otherHeaders = new Headers(specialHeaders);
+shouldBeEqualToString("otherHeaders.get('a')", "1");
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

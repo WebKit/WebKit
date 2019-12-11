@@ -1,0 +1,15 @@
+Basic test for the memory pressure simulation mechanism.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Verify that we're not running under memory pressure from the beginning.
+PASS internals.isUnderMemoryPressure is false
+Begin simulated memory pressure.
+PASS internals.isUnderMemoryPressure is true
+End simulated memory pressure.
+PASS internals.isUnderMemoryPressure is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

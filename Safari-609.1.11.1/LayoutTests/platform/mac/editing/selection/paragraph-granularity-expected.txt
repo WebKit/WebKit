@@ -1,0 +1,55 @@
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 15 of #text > DIV > BODY > HTML > #document to 15 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 15 of #text > DIV > BODY > HTML > #document to 15 of #text > DIV > BODY > HTML > #document toDOMRange:range from 11 of #text > DIV > BODY > HTML > #document to 4 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 11 of #text > DIV > BODY > HTML > #document to 4 of #text > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 4 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 4 of DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 5 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 712x18
+          text run at (0,0) width 379: "This tests modifying a selection created with a triple click. "
+          text run at (378,0) width 334: "The new selection should use paragraph granularity."
+      RenderBlock {P} at (0,34) size 784x54 [color=#008000]
+        RenderText {#text} at (0,0) size 767x54
+          text run at (0,0) width 229: "This test does not run interactively. "
+          text run at (228,0) width 360: "It uses the testRunners eventSender to do mouse clicks. "
+          text run at (587,0) width 170: "To run it manually, double"
+          text run at (0,18) width 322: "click on the blue 'g', then drag down to the red 'g'. "
+          text run at (321,18) width 446: "As you drag, watch the selection that is created, it should always start"
+          text run at (0,36) width 217: "and end on paragraph boundaries."
+      RenderBlock {DIV} at (0,104) size 784x108
+        RenderText {#text} at (0,0) size 86x18
+          text run at (0,0) width 86: "This is a para"
+        RenderInline {SPAN} at (0,0) size 9x18 [color=#0000FF]
+          RenderText {#text} at (85,0) size 9x18
+            text run at (85,0) width 9: "g"
+        RenderText {#text} at (93,0) size 34x18
+          text run at (93,0) width 34: "raph."
+        RenderBR {BR} at (126,14) size 1x0
+        RenderText {#text} at (0,18) size 65x18
+          text run at (0,18) width 65: "Some text"
+        RenderBR {BR} at (64,32) size 1x0
+        RenderText {#text} at (0,36) size 65x18
+          text run at (0,36) width 65: "Some text"
+        RenderBR {BR} at (64,50) size 1x0
+        RenderText {#text} at (0,54) size 65x18
+          text run at (0,54) width 65: "Some text"
+        RenderBR {BR} at (64,68) size 1x0
+        RenderText {#text} at (0,72) size 65x18
+          text run at (0,72) width 65: "Some text"
+        RenderBR {BR} at (64,86) size 1x0
+        RenderText {#text} at (0,90) size 86x18
+          text run at (0,90) width 86: "This is a para"
+        RenderInline {SPAN} at (0,0) size 9x18 [color=#FF0000]
+          RenderText {#text} at (85,90) size 9x18
+            text run at (85,90) width 9: "g"
+        RenderText {#text} at (93,90) size 34x18
+          text run at (93,90) width 34: "raph."
+selection start: position 1 of child 0 {#text} of child 5 {DIV} of body
+selection end:   position 5 of child 14 {#text} of child 5 {DIV} of body

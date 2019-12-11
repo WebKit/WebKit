@@ -1,0 +1,103 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<meta name=viewport content="width=device-width, initial-scale=1, user-scalable=no">
+<style>
+body, html {
+    width: 100%;
+    height: 1000px;
+    margin: 0;
+}
+
+#editor {
+    width: 100%;
+    height: 50px;
+    border: 2px red solid;
+    font-size: 40px;
+    text-align: center;
+}
+
+#container {
+    width: 100%;
+    height: 54px;
+    border: 2px black solid;
+    position: absolute;
+    top: 50px;
+}
+</style>
+</head>
+<body>
+<div id="editor" contenteditable></div>
+<div id="container"></div>
+<pre id="description"></pre>
+<pre id="console"></pre>
+</body>
+<script>
+jsTestIsAsync = true;
+
+description("Verifies that input view state doesn't thrash when script blurs and immediately refocuses an editable element. To manually run the test, tap the red editable box to focus it, and then tap the box again; check that the keyboard and input accessory view do not flicker, and that the scroll position remains the same.");
+
+container = document.getElementById("container");
+editor = document.getElementById("editor");
+editor.addEventListener("mousedown", event => {
+    if (document.activeElement !== editor)
+        return;
+
+    editor.remove();
+    container.appendChild(editor);
+    editor.focus();
+    event.preventDefault();
+});
+
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.activateAndWaitForInputSessionAt(160, 40);
+    testRunner.runUIScript(`
+        let startedFormControlInteraction = false;
+        let endedFormControlInteraction = false;
+
+        function scheduleUIScriptCompletion() {
+            if (startedFormControlInteraction || endedFormControlInteraction)
+                return;
+
+            uiController.doAsyncTask(() => {
+                uiController.didStartFormControlInteractionCallback = null;
+                uiController.didEndFormControlInteractionCallback = null;
+
+                let result = null;
+                if (startedFormControlInteraction && endedFormControlInteraction)
+                    result = "Started, Ended";
+                else if (startedFormControlInteraction)
+                    result = "Started";
+                else if (endedFormControlInteraction)
+                    result = "Ended";
+
+                uiController.uiScriptComplete(result);
+            });
+        }
+
+        uiController.didStartFormControlInteractionCallback = () => {
+            scheduleUIScriptCompletion();
+            startedFormControlInteraction = true;
+        };
+
+        uiController.didEndFormControlInteractionCallback = () => {
+            scheduleUIScriptCompletion();
+            endedFormControlInteraction = true;
+        };
+
+        uiController.singleTapAtPoint(160, 40, () => uiController.resignFirstResponder());
+    `, checkResultAndFinishTest);
+});
+
+function checkResultAndFinishTest(result) {
+    window.result = result;
+    shouldBeEqualToString("result", "Ended");
+    finishJSTest();
+}
+</script>
+</html>

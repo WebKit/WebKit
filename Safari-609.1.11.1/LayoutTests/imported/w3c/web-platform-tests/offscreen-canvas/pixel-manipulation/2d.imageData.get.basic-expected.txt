@@ -1,0 +1,7 @@
+2d.imageData.get.basic
+
+getImageData() exists and returns something
+
+
+FAIL getImageData() exists and returns something null is not an object (evaluating 'ctx.getImageData')
+

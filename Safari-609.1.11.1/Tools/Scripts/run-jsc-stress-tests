@@ -1,0 +1,2217 @@
+#!/usr/bin/env ruby
+
+# Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+require 'fileutils'
+require 'getoptlong'
+require 'pathname'
+require 'rbconfig'
+require 'uri'
+require 'yaml'
+
+module URI
+    class SSH < Generic
+        DEFAULT_PORT = 22
+    end
+    @@schemes['SSH'] = SSH
+end
+
+class String
+    def scrub
+        encode("UTF-16be", :invalid=>:replace, :replace=>"?").encode('UTF-8')
+    end
+end
+
+RemoteHost = Struct.new(:name, :user, :host, :port, :remoteDirectory)
+
+THIS_SCRIPT_PATH = Pathname.new(__FILE__).realpath
+SCRIPTS_PATH = THIS_SCRIPT_PATH.dirname
+WEBKIT_PATH = SCRIPTS_PATH.dirname.dirname
+LAYOUTTESTS_PATH = WEBKIT_PATH + "LayoutTests"
+WASMTESTS_PATH = WEBKIT_PATH + "JSTests/wasm"
+CHAKRATESTS_PATH = WEBKIT_PATH + "JSTests/ChakraCore/test"
+raise unless SCRIPTS_PATH.basename.to_s == "Scripts"
+raise unless SCRIPTS_PATH.dirname.basename.to_s == "Tools"
+
+HELPERS_PATH = SCRIPTS_PATH + "jsc-stress-test-helpers"
+
+begin
+    require 'shellwords'
+rescue Exception => e
+    $stderr.puts "Warning: did not find shellwords, not running any tests."
+    exit 0
+end
+
+$canRunDisplayProfilerOutput = false
+
+begin
+    require 'rubygems'
+    require 'json'
+    require 'highline'
+    $canRunDisplayProfilerOutput = true
+rescue Exception => e
+    $stderr.puts "Warning: did not find json or highline; some features will be disabled."
+    $stderr.puts "Run \"sudo gem install json highline\" to fix the issue."
+    $stderr.puts "Error: #{e.inspect}"
+end
+
+def printCommandArray(*cmd)
+    begin
+        commandArray = cmd.each{|value| Shellwords.shellescape(value.to_s)}.join(' ')
+    rescue
+        commandArray = cmd.join(' ')
+    end
+    $stderr.puts ">> #{commandArray}"
+end
+
+def mysys(*cmd)
+    printCommandArray(*cmd) if $verbosity >= 1
+    raise "Command failed: #{$?.inspect}" unless system(*cmd)
+end
+
+def escapeAll(array)
+    array.map {
+        | v |
+        raise "Detected a non-string in #{inspect}" unless v.is_a? String
+        Shellwords.shellescape(v)
+    }.join(' ')
+end
+
+
+$jscPath = nil
+$doNotMessWithVMPath = false
+$jitTests = true
+$memoryLimited = false
+$outputDir = Pathname.new("results")
+$verbosity = 0
+$bundle = nil
+$tarball = false
+$tarFileName = "payload.tar.gz"
+$copyVM = false
+$testRunnerType = nil
+$testWriter = "default"
+$remoteHosts = []
+$architecture = nil
+$hostOS = nil
+$model = nil
+$filter = nil
+$envVars = []
+$mode = "full"
+$buildType = "release"
+$forceCollectContinuously = false
+
+def usage
+    puts "run-jsc-stress-tests -j <shell path> <collections path> [<collections path> ...]"
+    puts
+    puts "--jsc                (-j)   Path to JavaScriptCore build product. This option is required."
+    puts "--no-copy                   Do not copy the JavaScriptCore build product before testing."
+    puts "                            --jsc specifies an already present JavaScriptCore to test."
+    puts "--memory-limited            Indicate that we are targeting the test for a memory limited device."
+    puts "                            Skip tests tagged with //@skip if $memoryLimited"
+    puts "--no-jit                    Do not run JIT specific tests."
+    puts "--force-collectContinuously Enable the collectContinuously mode even if disabled on this"
+    puts "                            platform."
+    puts "--output-dir         (-o)   Path where to put results. Default is #{$outputDir}."
+    puts "--verbose            (-v)   Print more things while running."
+    puts "--run-bundle                Runs a bundle previously created by run-jsc-stress-tests."
+    puts "--tarball [fileName]        Creates a tarball of the final bundle.  Use name if supplied for tar file."
+    puts "--arch                      Specify architecture instead of determining from JavaScriptCore build."
+    puts "                            e.g. x86, x86_64, arm."
+    puts "--os                        Specify os instead of determining from JavaScriptCore build."
+    puts "                            e.g. darwin, linux & windows."
+    puts "--shell-runner              Uses the shell-based test runner instead of the default make-based runner."
+    puts "                            In general the shell runner is slower than the make runner."
+    puts "--make-runner               Uses the faster make-based runner."
+    puts "--ruby-runner               Uses the ruby runner for machines without unix shell or make."
+    puts "--test-writer [writer]      Specifies the test script format."
+    puts "                            default is to use shell scripts to run the tests"
+    puts "                            \"ruby\" to use ruby scripts for systems without a unix shell."
+    puts "--remote                    Specify a remote host on which to run tests from command line argument."
+    puts "--remote-config-file        Specify a remote host on which to run tests from JSON file."
+    puts "--child-processes    (-c)   Specify the number of child processes."
+    puts "--filter                    Only run tests whose name matches the given regular expression."
+    puts "--help               (-h)   Print this message."
+    puts "--env-vars                  Add a list of environment variables to set before running jsc."
+    puts "                            Each environment variable should be separated by a space."
+    puts "                            e.g. \"foo=bar x=y\" (no quotes). Note, if you pass DYLD_FRAMEWORK_PATH"
+    puts "                            it will override the default value."
+    puts "--quick              (-q)   Only run with the default and no-cjit-validate modes."
+    puts "--basic                     Run with default and these additional modes: no-llint,"
+    puts "                            no-cjit-validate-phases, no-cjit-collect-continuously, dfg-eager"
+    puts "                            and for FTL platforms: no-ftl, ftl-eager-no-cjit and"
+    puts "                            ftl-no-cjit-small-pool."
+    exit 1
+end
+
+jscArg = nil
+
+GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
+               ['--jsc', '-j', GetoptLong::REQUIRED_ARGUMENT],
+               ['--no-copy', GetoptLong::NO_ARGUMENT],
+               ['--memory-limited', GetoptLong::NO_ARGUMENT],
+               ['--no-jit', GetoptLong::NO_ARGUMENT],
+               ['--force-collectContinuously', GetoptLong::NO_ARGUMENT],
+               ['--output-dir', '-o', GetoptLong::REQUIRED_ARGUMENT],
+               ['--run-bundle', GetoptLong::REQUIRED_ARGUMENT],
+               ['--tarball', GetoptLong::OPTIONAL_ARGUMENT],
+               ['--force-vm-copy', GetoptLong::NO_ARGUMENT],
+               ['--arch', GetoptLong::REQUIRED_ARGUMENT],
+               ['--os', GetoptLong::REQUIRED_ARGUMENT],
+               ['--shell-runner', GetoptLong::NO_ARGUMENT],
+               ['--make-runner', GetoptLong::NO_ARGUMENT],
+               ['--ruby-runner', GetoptLong::NO_ARGUMENT],
+               ['--test-writer', GetoptLong::REQUIRED_ARGUMENT],
+               ['--remote', GetoptLong::REQUIRED_ARGUMENT],
+               ['--remote-config-file', GetoptLong::REQUIRED_ARGUMENT],
+               ['--model', GetoptLong::REQUIRED_ARGUMENT],
+               ['--child-processes', '-c', GetoptLong::REQUIRED_ARGUMENT],
+               ['--filter', GetoptLong::REQUIRED_ARGUMENT],
+               ['--verbose', '-v', GetoptLong::NO_ARGUMENT],
+               ['--env-vars', GetoptLong::REQUIRED_ARGUMENT],
+               ['--debug', GetoptLong::NO_ARGUMENT],
+               ['--release', GetoptLong::NO_ARGUMENT],
+               ['--quick', '-q', GetoptLong::NO_ARGUMENT],
+               ['--basic', GetoptLong::NO_ARGUMENT]).each {
+    | opt, arg |
+    case opt
+    when '--help'
+        usage
+    when '--jsc'
+        jscArg = arg
+    when '--no-copy'
+        $doNotMessWithVMPath = true
+    when '--output-dir'
+        $outputDir = Pathname.new(arg)
+    when '--memory-limited'
+        $memoryLimited = true
+    when '--no-jit'
+        $jitTests = false
+    when '--force-collectContinuously'
+        $forceCollectContinuously = true;
+    when '--verbose'
+        $verbosity += 1
+    when '--run-bundle'
+        $bundle = Pathname.new(arg)
+    when '--tarball'
+        $tarball = true
+        $copyVM = true
+        $tarFileName = arg unless arg == ''
+    when '--force-vm-copy'
+        $copyVM = true
+    when '--shell-runner'
+        $testRunnerType = :shell
+    when '--make-runner'
+        $testRunnerType = :make
+    when '--ruby-runner'
+        $testRunnerType = :ruby
+    when '--test-writer'
+        $testWriter = arg
+    when '--remote'
+        $copyVM = true
+        $tarball = true
+        $remote = true
+        uri = URI("ssh://" + arg)
+        $remoteHosts << RemoteHost.new("default-#{$remoteHosts.length}", uri.user, uri.host, uri.port)
+    when '--remote-config-file'
+        $remoteConfigFile = arg
+    when '--child-processes'
+        $numChildProcesses = arg.to_i
+    when '--filter'
+        $filter = Regexp.new(arg)
+    when '--arch'
+        $architecture = arg
+    when '--os'
+        $hostOS = arg
+    when '--model'
+        $model = arg
+    when '--env-vars'
+        $envVars = arg.gsub(/\s+/, ' ').split(' ')
+    when '--quick'
+        $mode = "quick"
+    when '--basic'
+        $mode = "basic"
+    when '--debug'
+        $buildType = "debug"
+    when '--release'
+        $buildType = "release"
+    end
+}
+
+if $remoteConfigFile
+    file = File.read($remoteConfigFile)
+    config = JSON.parse(file)
+
+    # old style config allowing for only one remote
+    if !$remote and config['remote']
+        $copyVM = true
+        $tarball = true
+        $remote = true
+        uri = URI("ssh://" + config['remote'])
+        $remoteHosts = [ RemoteHost.new("default", uri.user, uri.host, uri.port) ]
+        if config['remoteDirectory']
+            $remoteHosts[0].remoteDirectory = config['remoteDirectory']
+        end
+    end
+
+    # we can combine --remote and a new style config
+    if config['remotes']
+        $copyVM = true
+        $tarball = true
+        $remote = true
+        $remoteHosts += config['remotes'].map {
+            | remote |
+            uri = URI("ssh://" + remote['address'])
+
+            host = RemoteHost.new(remote['name'], uri.user, uri.host, uri.port)
+            if remote['remoteDirectory']
+                host.remoteDirectory = remote['remoteDirectory']
+            end
+            host
+        }
+    end
+end
+
+unless jscArg
+    # If we're not provided a JSC path, try to come up with a sensible JSC path automagically.
+    command = SCRIPTS_PATH.join("webkit-build-directory").to_s
+    command += ($buildType == "release") ? " --release" : " --debug"
+    command += " --executablePath"
+
+    output = `#{command}`.split("\n")
+    if !output.length
+        $stderr.puts "Error: must specify --jsc <path>"
+        exit 1
+    end
+
+    output = output[0]
+    jscArg = Pathname.new(output).join("jsc")
+    jscArg = Pathname.new(output).join("JavaScriptCore.framework", "Helpers", "jsc") if !File.file?(jscArg)
+    jscArg = Pathname.new(output).join("bin", "jsc") if !File.file?(jscArg) # Support CMake build.
+    if !File.file?(jscArg)
+        $stderr.puts "Error: must specify --jsc <path>"
+        exit 1
+    end
+
+    puts "Using the following jsc path: #{jscArg}"
+end
+
+if $doNotMessWithVMPath
+    $jscPath = Pathname.new(jscArg)
+else
+    $jscPath = Pathname.new(jscArg).realpath
+end
+
+$progressMeter = ($verbosity == 0 and $stdout.tty? and $remoteHosts.length <= 1)
+
+if $bundle
+    $jscPath = $bundle + ".vm" + "JavaScriptCore.framework" + "Helpers" + "jsc"
+    $outputDir = $bundle
+end
+
+# Try to determine architecture. Return nil on failure.
+def machOArchitectureCode
+    begin 
+        otoolLines = `otool -afh #{Shellwords.shellescape($jscPath.to_s)}`.split("\n")
+        otoolLines.each_with_index {
+            | value, index |
+            if value =~ /magic/ and value =~ /cputype/
+                return otoolLines[index + 1].split[1].to_i
+            end
+        }
+    rescue
+        $stderr.puts "Warning: unable to execute otool."
+    end
+    $stderr.puts "Warning: unable to determine architecture."
+    nil
+end
+
+def determineArchitectureFromMachOBinary
+    code = machOArchitectureCode
+    return nil unless code
+    is64BitFlag = 0x01000000
+    case code
+    when 7
+        "x86"
+    when 7 | is64BitFlag
+        "x86-64"
+    when 12
+        "arm"
+    when 12 | is64BitFlag
+        "arm64"
+    else
+        $stderr.puts "Warning: unable to determine architecture from code: #{code}"
+        nil
+    end
+end
+
+def determineArchitectureFromELFBinary
+    f = File.open($jscPath.to_s)
+    data = f.read(19)
+
+    if !(data[0,4] == "\x7F\x45\x4C\x46")
+        $stderr.puts "Warning: Missing ELF magic in file #{Shellwords.shellescape($jscPath.to_s)}"
+        return nil
+    end
+
+    code = data[18].ord
+    case code
+    when 3
+        "x86"
+    when 8
+        "mips"
+    when 62
+        "x86-64"
+    when 40
+        "arm"
+    when 183
+        "arm64"
+    else
+        $stderr.puts "Warning: unable to determine architecture from code: #{code}"
+        nil
+    end
+end
+
+def determineArchitectureFromPEBinary
+    f = File.open($jscPath.to_s)
+    data = f.read(1024)
+
+    if !(data[0, 2] == "MZ")
+        $stderr.puts "Warning: Missing PE magic in file #{Shellwords.shellescape($jscPath.to_s)}"
+        return nil
+    end
+
+    peHeaderAddr = data[0x3c, 4].unpack('V').first # 32-bit unsigned int little endian
+
+    if !(data[peHeaderAddr, 4] == "PE\0\0")
+        $stderr.puts "Warning: Incorrect PE header in file #{Shellwords.shellescape($jscPath.to_s)}"
+        return nil
+    end
+
+    machine = data[peHeaderAddr + 4, 2].unpack('v').first # 16-bit unsigned short, little endian
+
+    case machine
+    when 0x014c
+        "x86"
+    when 0x8664
+        "x86-64"
+    else
+        $stderr.puts "Warning: unsupported machine type: #{machine}"
+        nil
+    end
+end
+
+def determineArchitecture
+    case $hostOS
+    when "darwin"
+        determineArchitectureFromMachOBinary
+    when "linux"
+        determineArchitectureFromELFBinary
+    when "windows"
+        determineArchitectureFromPEBinary
+    when "playstation"
+        "x86-64"
+    else
+        $stderr.puts "Warning: unable to determine architecture on this platform."
+        nil
+    end
+end
+
+def determineOS
+    case RbConfig::CONFIG["host_os"]
+    when /darwin/i
+        "darwin"
+    when /linux/i
+        "linux"
+    when /mswin|mingw|cygwin/
+        "windows"
+    else
+        $stderr.puts "Warning: unable to determine host operating system"
+        nil
+    end
+end
+
+$hostOS = determineOS unless $hostOS
+$architecture = determineArchitecture unless $architecture
+$isFTLPlatform = !($architecture == "x86" || $architecture == "arm" || $architecture == "mips" || $hostOS == "windows" || $hostOS == "playstation")
+
+if $architecture == "x86"
+    # The JIT is temporarily disabled on this platform since
+    # https://trac.webkit.org/changeset/237547
+    $jitTests = false
+end
+
+def isFTLEnabled
+    $jitTests && $isFTLPlatform
+end
+
+if !$testRunnerType
+    if $remote and $hostOS == "darwin"
+        $testRunnerType = :shell
+    else
+        $testRunnerType = :make
+    end
+end
+
+if $remoteHosts.length > 1 and $testRunnerType != :make
+    raise "Multiple remote hosts only supported with make runner"
+end
+
+if $hostOS == "playstation" && $testWriter == "default"
+    $testWriter = "playstation"
+end
+
+if $testWriter
+    if /[^-a-zA-Z0-9_]/.match($testWriter)
+        raise "Invalid test writer #{$testWriter} given"
+    end
+end
+
+$numFailures = 0
+$numPasses = 0
+
+# We force all tests to use a smaller (1.5M) stack so that stack overflow tests can run faster.
+BASE_OPTIONS = ["--useFTLJIT=false", "--useFunctionDotArguments=true", "--validateExceptionChecks=true", "--useDollarVM=true", "--maxPerThreadStackUsage=1572864"]
+EAGER_OPTIONS = ["--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", "--thresholdForOptimizeAfterWarmUp=20", "--thresholdForOptimizeAfterLongWarmUp=20", "--thresholdForOptimizeSoon=20", "--thresholdForFTLOptimizeAfterWarmUp=20", "--thresholdForFTLOptimizeSoon=20", "--thresholdForOMGOptimizeAfterWarmUp=20", "--thresholdForOMGOptimizeSoon=20", "--maximumEvalCacheableSourceLength=150000", "--useEagerCodeBlockJettisonTiming=true", "--repatchBufferingCountdown=0"]
+# NOTE: Tests rely on this using scribbleFreeCells.
+NO_CJIT_OPTIONS = ["--useConcurrentJIT=false", "--thresholdForJITAfterWarmUp=100", "--scribbleFreeCells=true"]
+B3O1_OPTIONS = ["--defaultB3OptLevel=1"]
+B3O0_OPTIONS = ["--maxDFGNodesInBasicBlockForPreciseAnalysis=100", "--defaultB3OptLevel=0"]
+FTL_OPTIONS = ["--useFTLJIT=true"]
+PROBE_OSR_EXIT_OPTION = ["--useProbeOSRExit=true"]
+FORCE_LLINT_EXIT_OPTIONS = ["--forceOSRExitToLLInt=true"]
+
+require_relative "webkitruby/jsc-stress-test-writer-#{$testWriter}"
+
+def shouldCollectContinuously?
+    $buildType == "release" or $forceCollectContinuously
+end
+
+COLLECT_CONTINUOUSLY_OPTIONS = shouldCollectContinuously? ? ["--collectContinuously=true", "--useGenerationalGC=false"] : []
+
+$runlist = []
+
+def frameworkFromJSCPath(jscPath)
+    parentDirectory = jscPath.dirname
+    if parentDirectory.basename.to_s == "Resources" and parentDirectory.dirname.basename.to_s == "JavaScriptCore.framework"
+        parentDirectory.dirname
+    elsif $hostOS == "playstation"
+        jscPath.dirname
+    elsif parentDirectory.basename.to_s =~ /^Debug/ or parentDirectory.basename.to_s =~ /^Release/
+        jscPath.dirname + "JavaScriptCore.framework"
+    else
+        $stderr.puts "Warning: cannot identify JSC framework, doing generic VM copy."
+        nil
+    end
+end
+
+def pathToBundleResourceFromBenchmarkDirectory(resourcePath)
+    dir = Pathname.new(".")
+    $benchmarkDirectory.each_filename {
+        | pathComponent |
+        dir += ".."
+    }
+    dir + resourcePath
+end
+
+def pathToVM
+    pathToBundleResourceFromBenchmarkDirectory($jscPath)
+end
+
+def pathToHelpers
+    pathToBundleResourceFromBenchmarkDirectory(".helpers")
+end
+
+$runCommandOptions = {}
+$testSpecificRequiredOptions = []
+
+$uniqueFilenameCounter = 0
+def uniqueFilename(extension)
+    payloadDir = $outputDir + "_payload"
+    Dir.mkdir payloadDir unless payloadDir.directory?
+    result = payloadDir.realpath + "temp-#{$uniqueFilenameCounter}#{extension}"
+    $uniqueFilenameCounter += 1
+    result
+end
+
+def baseOutputName(kind)
+    "#{$collectionName}/#{$benchmark}.#{kind}"
+end
+
+def addRunCommand(kind, command, outputHandler, errorHandler, *additionalEnv)
+    $didAddRunCommand = true
+    name = baseOutputName(kind)
+    if $filter and name !~ $filter
+        return
+    end
+    plan = Plan.new(
+        $benchmarkDirectory, command, "#{$collectionName}/#{$benchmark}", name, outputHandler,
+        errorHandler)
+    plan.additionalEnv.push(*additionalEnv)
+    if $numChildProcesses > 1 and $runCommandOptions[:isSlow]
+        $runlist.unshift plan
+    else
+        $runlist << plan
+    end
+end
+
+# Returns true if there were run commands found in the file ($benchmarkDirectory +
+# $benchmark), in which case those run commands have already been executed. Otherwise
+# returns false, in which case you're supposed to add your own run commands.
+def parseRunCommands
+    oldDidAddRunCommand = $didAddRunCommand
+    $didAddRunCommand = false
+    $skipped = false
+
+    Dir.chdir($outputDir) {
+        File.open($benchmarkDirectory + $benchmark) {
+            | inp |
+            inp.each_line {
+                | line |
+                begin
+                    doesMatch = line =~ /^\/\/@/
+                rescue Exception => e
+                    # Apparently this happens in the case of some UTF8 stuff in some files, where
+                    # Ruby tries to be strict and throw exceptions.
+                    next
+                end
+                next unless doesMatch
+                eval $~.post_match
+                if $skipped
+                    break
+                end
+            }
+        }
+    }
+
+    result = $didAddRunCommand
+    $didAddRunCommand = result or oldDidAddRunCommand
+    result
+end
+
+def slow!
+    $runCommandOptions[:isSlow] = true
+end
+
+def requireOptions(*options)
+    $testSpecificRequiredOptions += options
+end
+
+def runWithOutputHandler(kind, outputHandler, *options)
+    addRunCommand(kind, [pathToVM.to_s] + BASE_OPTIONS + $testSpecificRequiredOptions + options + [$benchmark.to_s], outputHandler, simpleErrorHandler)
+end
+
+def runWithOutputHandlerWithoutBaseOption(kind, outputHandler, *options)
+    addRunCommand(kind, [pathToVM.to_s] + $testSpecificRequiredOptions + options + [$benchmark.to_s], outputHandler, simpleErrorHandler)
+end
+
+def run(kind, *options)
+    runWithOutputHandler(kind, silentOutputHandler, *options)
+end
+
+def runWithoutBaseOption(kind, *options)
+    runWithOutputHandlerWithoutBaseOption(kind, silentOutputHandler, *options)
+end
+
+def runNoFTL(*optionalTestSpecificOptions)
+    run("no-ftl", *optionalTestSpecificOptions)
+end
+
+def runWithRAMSize(size, *optionalTestSpecificOptions)
+    run("ram-size-#{size}", "--forceRAMSize=#{size}", *optionalTestSpecificOptions)
+end
+
+def runOneLargeHeap(*optionalTestSpecificOptions)
+    if $memoryLimited
+        $didAddRunCommand = true
+        puts "Skipping #{$collectionName}/#{$benchmark}"
+    else
+        run("default", *optionalTestSpecificOptions)
+    end
+end
+
+def runNoJIT(*optionalTestSpecificOptions)
+    run("no-jit", "--useJIT=false", *optionalTestSpecificOptions)
+end
+
+def runNoLLInt(*optionalTestSpecificOptions)
+    if $jitTests
+        run("no-llint", "--useLLInt=false", *optionalTestSpecificOptions)
+    end
+end
+
+# NOTE: Tests rely on this using scribbleFreeCells.
+def runNoCJITValidate(*optionalTestSpecificOptions)
+    run("no-cjit", "--validateBytecode=true", "--validateGraph=true", *(NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+end
+
+def runNoCJITValidatePhases(*optionalTestSpecificOptions)
+    run("no-cjit-validate-phases", "--validateBytecode=true", "--validateGraphAtEachPhase=true", "--useSourceProviderCache=false", *(NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+end
+
+def runNoCJITCollectContinuously(*optionalTestSpecificOptions)
+    run("no-cjit-collect-continuously", *(NO_CJIT_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
+end
+
+def runDefault(*optionalTestSpecificOptions)
+    run("default", *(FTL_OPTIONS + optionalTestSpecificOptions))
+end
+
+def runBytecodeCacheImpl(optionalTestSpecificOptions, *additionalEnv)
+    unless $hostOS == "darwin"
+        skip
+        return
+    end
+    options = BASE_OPTIONS + $testSpecificRequiredOptions + FTL_OPTIONS + optionalTestSpecificOptions
+    addRunCommand("bytecode-cache", ["sh", (pathToHelpers + "bytecode-cache-test-helper.sh").to_s, pathToVM.to_s, $benchmark.to_s] + options, silentOutputHandler, simpleErrorHandler, *additionalEnv)
+end
+
+def runBytecodeCache(*optionalTestSpecificOptions)
+    runBytecodeCacheImpl(optionalTestSpecificOptions)
+end
+
+def runBytecodeCacheNoAssertion(*optionalTestSpecificOptions)
+    runBytecodeCacheImpl(optionalTestSpecificOptions, "JSC_forceDiskCache=false")
+end
+
+def runBigIntEnabled(*optionalTestSpecificOptions)
+    # FIXME: <rdar://problem/40331121>
+    if $remote or ($architecture !~ /x86/i and $hostOS == "darwin")
+        skip
+        return
+    end
+
+    run("big-int-enabled", "--useBigInt=true" , *(FTL_OPTIONS + optionalTestSpecificOptions))
+end
+
+def runFTLNoCJIT(*optionalTestSpecificOptions)
+    run("misc-ftl-no-cjit", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+end
+
+def runFTLNoCJITB3O0(*optionalTestSpecificOptions)
+    run("ftl-no-cjit-b3o0", "--useArrayAllocationProfiling=false", "--forcePolyProto=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + B3O0_OPTIONS + FORCE_LLINT_EXIT_OPTIONS + optionalTestSpecificOptions))
+end
+
+def runFTLNoCJITValidate(*optionalTestSpecificOptions)
+    run("ftl-no-cjit-validate-sampling-profiler", "--validateGraph=true", "--useSamplingProfiler=true", "--airForceIRCAllocator=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + PROBE_OSR_EXIT_OPTION + optionalTestSpecificOptions))
+end
+
+def runFTLNoCJITNoPutStackValidate(*optionalTestSpecificOptions)
+    run("ftl-no-cjit-no-put-stack-validate", "--validateGraph=true", "--usePutStackSinking=false", "--airForceIRCAllocator=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+end
+
+def runFTLNoCJITNoInlineValidate(*optionalTestSpecificOptions)
+    run("ftl-no-cjit-no-inline-validate", "--validateGraph=true", "--maximumInliningDepth=1", "--airForceBriggsAllocator=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+end
+
+def runFTLNoCJITOSRValidation(*optionalTestSpecificOptions)
+    run("ftl-no-cjit-osr-validation", "--validateFTLOSRExitLiveness=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+end
+
+def runDFGEager(*optionalTestSpecificOptions)
+    run("dfg-eager", *(EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + PROBE_OSR_EXIT_OPTION + FORCE_LLINT_EXIT_OPTIONS + optionalTestSpecificOptions))
+end
+
+def runDFGEagerNoCJITValidate(*optionalTestSpecificOptions)
+    run("dfg-eager-no-cjit-validate", "--validateGraph=true", *(NO_CJIT_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
+end
+
+def runFTLEager(*optionalTestSpecificOptions)
+    run("ftl-eager", "--airForceBriggsAllocator=true", "--forcePolyProto=true", *(FTL_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
+end
+
+def runFTLEagerWatchdog(*optionalTestSpecificOptions)
+    timeout = rand(100)
+    run("ftl-eager-watchdog-#{timeout}", "--watchdog=#{timeout}", "--watchdog-exception-ok", *(FTL_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
+end
+
+def runFTLEagerNoCJITValidate(*optionalTestSpecificOptions)
+    run("ftl-eager-no-cjit", "--validateGraph=true", "--airForceIRCAllocator=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + FORCE_LLINT_EXIT_OPTIONS + optionalTestSpecificOptions))
+end
+
+def runFTLEagerNoCJITB3O1(*optionalTestSpecificOptions)
+    run("ftl-eager-no-cjit-b3o1", "--validateGraph=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + B3O1_OPTIONS + optionalTestSpecificOptions))
+end
+
+def runFTLEagerNoCJITOSRValidation(*optionalTestSpecificOptions)
+    run("ftl-eager-no-cjit-osr-validation", "--validateFTLOSRExitLiveness=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
+end
+
+def runNoCJITNoASO(*optionalTestSpecificOptions)
+    run("no-cjit-no-aso", "--useArchitectureSpecificOptimizations=false", *(NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+end
+
+def runNoCJITNoAccessInlining(*optionalTestSpecificOptions)
+    run("no-cjit-no-access-inlining", "--useAccessInlining=false", *(NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+end
+
+def runFTLNoCJITNoAccessInlining(*optionalTestSpecificOptions)
+    run("ftl-no-cjit-no-access-inlining", "--useAccessInlining=false", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+end
+
+def runFTLNoCJITSmallPool(*optionalTestSpecificOptions)
+    run("ftl-no-cjit-small-pool", "--jitMemoryReservationSize=50000", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+end
+
+def runNoCJIT(*optionalTestSpecificOptions)
+    run("no-cjit", *(NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+end
+
+def runEagerJettisonNoCJIT(*optionalTestSpecificOptions)
+    run("eager-jettison-no-cjit", "--forceCodeBlockToJettisonDueToOldAge=true", *(NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+end
+
+def runShadowChicken(*optionalTestSpecificOptions)
+    run("shadow-chicken", "--useDFGJIT=false", "--alwaysUseShadowChicken=true", *optionalTestSpecificOptions)
+end
+
+def runMiniMode(*optionalTestSpecificOptions)
+    run("mini-mode", "--forceMiniVMMode=true", *optionalTestSpecificOptions)
+end
+
+def defaultRun
+    if $mode == "quick"
+        defaultQuickRun
+    else
+        runDefault
+        runBytecodeCache
+        runMiniMode
+        if $jitTests
+            runNoLLInt
+            runNoCJITValidatePhases
+            runNoCJITCollectContinuously if shouldCollectContinuously?
+            runDFGEager
+            if $mode != "basic"
+                runDFGEagerNoCJITValidate
+                runEagerJettisonNoCJIT
+            end
+
+            return if !$isFTLPlatform
+
+            runNoFTL
+            runFTLEager
+            runFTLEagerNoCJITValidate
+            runFTLNoCJITSmallPool
+
+            return if $mode == "basic"
+
+            runFTLNoCJITValidate
+            runFTLNoCJITB3O0
+            runFTLNoCJITNoPutStackValidate
+            runFTLNoCJITNoInlineValidate
+            runFTLEagerNoCJITB3O1
+        end
+    end
+end
+
+def defaultNoNoLLIntRun
+    if $mode == "quick"
+        defaultQuickRun
+    else
+        runDefault
+        if $jitTests
+            runNoCJITValidatePhases
+            runNoCJITCollectContinuously if shouldCollectContinuously?
+            runDFGEager
+            if $mode != "basic"
+                runDFGEagerNoCJITValidate
+                runEagerJettisonNoCJIT
+            end
+
+            return if !$isFTLPlatform
+
+            runNoFTL
+            runFTLNoCJITValidate
+            runFTLNoCJITSmallPool
+
+            return if $mode == "basic"
+
+            runFTLNoCJITB3O0
+            runFTLNoCJITNoPutStackValidate
+            runFTLNoCJITNoInlineValidate
+            runFTLEager
+            runFTLEagerNoCJITValidate
+        end
+    end
+end
+
+def defaultQuickRun
+    runDefault
+    if $jitTests
+        runNoCJITValidate
+
+        return if !$isFTLPlatform
+
+        runNoFTL
+        runFTLNoCJITValidate
+    end
+end
+
+def defaultSpotCheckNoMaximalFlush
+    defaultQuickRun
+    runNoCJITNoAccessInlining
+
+    return if !$isFTLPlatform
+
+    runFTLNoCJITOSRValidation
+    runFTLNoCJITNoAccessInlining
+    runFTLNoCJITB3O0
+end
+
+def defaultSpotCheck
+    defaultSpotCheckNoMaximalFlush
+    runEagerJettisonNoCJIT
+end
+
+# This is expected to not do eager runs because eager runs can have a lot of recompilations
+# for reasons that don't arise in the real world. It's used for tests that assert convergence
+# by counting recompilations.
+def defaultNoEagerRun(*optionalTestSpecificOptions)
+    runDefault(*optionalTestSpecificOptions)
+    if $jitTests
+        runNoLLInt(*optionalTestSpecificOptions)
+        runNoCJITValidatePhases(*optionalTestSpecificOptions)
+        runNoCJITCollectContinuously(*optionalTestSpecificOptions) if shouldCollectContinuously?
+
+        return if !$isFTLPlatform
+
+        runNoFTL(*optionalTestSpecificOptions)
+        runFTLNoCJITValidate(*optionalTestSpecificOptions)
+
+        return if $mode == "basic"
+
+        runFTLNoCJITNoInlineValidate(*optionalTestSpecificOptions)
+        runFTLNoCJITB3O0(*optionalTestSpecificOptions)
+    end
+end
+
+def defaultNoSamplingProfilerRun
+    runDefault
+    if $jitTests
+        runNoLLInt
+        runNoCJITValidatePhases
+        runNoCJITCollectContinuously if shouldCollectContinuously?
+        runDFGEager
+        runDFGEagerNoCJITValidate
+        runEagerJettisonNoCJIT
+
+        return if !$isFTLPlatform
+
+        runNoFTL
+        runFTLNoCJITNoPutStackValidate
+        runFTLNoCJITNoInlineValidate
+        runFTLEager
+        runFTLEagerNoCJITValidate
+        runFTLNoCJITSmallPool
+    end
+end
+
+def runProfiler
+    if $remote or ($architecture !~ /x86/i and $hostOS == "darwin") or ($hostOS == "windows") or ($hostOS == "playstation")
+        skip
+        return
+    end
+
+    profilerOutput = uniqueFilename(".json")
+    if $canRunDisplayProfilerOutput
+        addRunCommand("profiler", ["ruby", (pathToHelpers + "profiler-test-helper").to_s, (SCRIPTS_PATH + "display-profiler-output").to_s, profilerOutput.to_s, pathToVM.to_s, "--useConcurrentJIT=false", "-p", profilerOutput.to_s, $benchmark.to_s], silentOutputHandler, simpleErrorHandler)
+    else
+        puts "Running simple version of #{$collectionName}/#{$benchmark} because some required Ruby features are unavailable."
+        run("profiler-simple", "--useConcurrentJIT=false", "-p", profilerOutput.to_s)
+    end
+end
+
+def runExceptionFuzz
+    subCommand = escapeAll([pathToVM.to_s, "--useDollarVM=true", $benchmark.to_s])
+    addRunCommand("exception-fuzz", ["perl", (pathToHelpers + "js-exception-fuzz").to_s, subCommand], silentOutputHandler, simpleErrorHandler)
+end
+
+def runExecutableAllocationFuzz(name, *options)
+    subCommand = escapeAll([pathToVM.to_s, "--useDollarVM=true", $benchmark.to_s] + options)
+    addRunCommand("executable-allocation-fuzz-" + name, ["perl", (pathToHelpers + "js-executable-allocation-fuzz").to_s, subCommand], silentOutputHandler, simpleErrorHandler)
+end
+
+def runTypeProfiler
+    if !$jitTests
+        return
+    end
+
+    run("ftl-type-profiler", "--useTypeProfiler=true", *(FTL_OPTIONS))
+    run("ftl-no-cjit-type-profiler-force-poly-proto", "--useTypeProfiler=true", "--forcePolyProto=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+
+    return if !$isFTLPlatform
+
+    run("ftl-type-profiler-ftl-eager", "--useTypeProfiler=true", *(FTL_OPTIONS + EAGER_OPTIONS))
+end
+
+def runControlFlowProfiler
+    if !$jitTests
+        return
+    end
+
+    return if !$isFTLPlatform
+
+    run("ftl-no-cjit-type-profiler", "--useControlFlowProfiler=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+end
+
+def runTest262(mode, exception, includeFiles, flags)
+    failsWithException = exception != "NoException"
+    isStrict = false
+    isModule = false
+    isAsync = false
+
+    flags.each {
+        | flag |
+        case flag
+        when :strict
+            isStrict = true
+        when :module
+            isModule = true
+        when :async
+            isAsync = true
+        else
+            raise "Invalid flag for runTest262, #{flag}"
+        end
+    }
+
+    prepareExtraRelativeFiles(includeFiles.map { |f| "../" + f }, $collection)
+
+    args = [pathToVM.to_s] + BASE_OPTIONS + $testSpecificRequiredOptions
+    args << "--exception=" + exception if failsWithException
+    args << "--test262-async" if isAsync
+    args += includeFiles
+
+    case mode
+    when :normal
+        errorHandler = simpleErrorHandler
+        outputHandler = silentOutputHandler
+    when :fail
+        errorHandler = expectedFailErrorHandler
+        outputHandler = noisyOutputHandler
+    when :failDueToOutdatedOrBadTest
+        errorHandler = expectedFailErrorHandler
+        outputHandler = noisyOutputHandler
+    when :skip
+        return
+    else
+        raise "Invalid mode: #{mode}"
+    end
+
+    if isStrict
+        kind = "default-strict"
+        args << "--strict-file=#{$benchmark}"
+    else
+        kind = "default"
+        if isModule
+            args << "--module-file=#{$benchmark}"
+        else
+            args << $benchmark.to_s
+        end
+    end
+
+    addRunCommand(kind, args, outputHandler, errorHandler)
+end
+
+def prepareTest262Fixture
+    # This function is used to add the files used by Test262 modules tests.
+    prepareExtraRelativeFiles([""], $collection)
+end
+
+def runES6(mode)
+    args = [pathToVM.to_s] + BASE_OPTIONS + $testSpecificRequiredOptions + [$benchmark.to_s]
+    case mode
+    when :normal
+        errorHandler = simpleErrorHandler
+    when :fail
+        errorHandler = expectedFailErrorHandler
+    when :failDueToOutdatedOrBadTest
+        errorHandler = expectedFailErrorHandler
+    when :skip
+        return
+    else
+        raise "Invalid mode: #{mode}"
+    end
+    addRunCommand("default", args, noisyOutputHandler, errorHandler)
+end
+
+def defaultRunModules(noLLInt: true)
+    run("default-modules", "-m")
+
+    if !$jitTests
+        return
+    end
+
+    run("no-llint-modules", "-m", "--useLLInt=false") if noLLInt
+    run("no-cjit-validate-phases-modules", "-m", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *NO_CJIT_OPTIONS)
+    run("dfg-eager-modules", "-m", *EAGER_OPTIONS)
+    run("dfg-eager-no-cjit-validate-modules", "-m", "--validateGraph=true", *(NO_CJIT_OPTIONS + EAGER_OPTIONS))
+
+    return if !$isFTLPlatform
+
+    run("default-ftl-modules", "-m", *FTL_OPTIONS)
+    run("ftl-no-cjit-validate-modules", "-m", "--validateGraph=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+    run("ftl-no-cjit-no-inline-validate-modules", "-m", "--validateGraph=true", "--maximumInliningDepth=1", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+    run("ftl-eager-modules", "-m", *(FTL_OPTIONS + EAGER_OPTIONS))
+    run("ftl-eager-no-cjit-modules", "-m", "--validateGraph=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS))
+    run("ftl-no-cjit-small-pool-modules", "-m", "--jitMemoryReservationSize=50000", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+end
+
+def noNoLLIntRunModules
+    defaultRunModules(noLLInt: false)
+end
+
+def runWebAssembly
+    return if !$jitTests
+    return if !$isFTLPlatform
+    run("default-wasm", "-m", *FTL_OPTIONS)
+    if $mode != "quick"
+        run("wasm-no-cjit-yes-tls-context", "-m", "--useFastTLSForWasmContext=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+        run("wasm-eager", "-m", *(FTL_OPTIONS + EAGER_OPTIONS))
+        run("wasm-eager-jettison", "-m", "--forceCodeBlockToJettisonDueToOldAge=true", *FTL_OPTIONS)
+        run("wasm-no-tls-context", "-m", "--useFastTLSForWasmContext=false", *FTL_OPTIONS)
+        run("wasm-slow-memory", "-m", "--useWebAssemblyFastMemory=false", *FTL_OPTIONS)
+        run("wasm-b3", "-m", "--useWasmLLInt=false", "--wasmBBQUsesAir=false", *FTL_OPTIONS)
+        run("wasm-air", "-m", "--useWasmLLInt=false", *FTL_OPTIONS)
+        run("wasm-collect-continuously", "-m", "--collectContinuously=true", *FTL_OPTIONS) if shouldCollectContinuously?
+    end
+end
+
+def runWebAssemblySuite(*optionalTestSpecificOptions)
+    return if !$jitTests
+    return if !$isFTLPlatform
+    modules = Dir[WASMTESTS_PATH + "*.js"].map { |f| File.basename(f) }
+    prepareExtraAbsoluteFiles(WASMTESTS_PATH, ["wasm.json"])
+    prepareExtraRelativeFiles(modules.map { |f| "../" + f }, $collection)
+    run("default-wasm", "-m", *(FTL_OPTIONS + optionalTestSpecificOptions))
+    if $mode != "quick"
+        run("wasm-no-cjit-yes-tls-context", "-m", "--useFastTLSForWasmContext=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+        run("wasm-eager", "-m", *(FTL_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions))
+        run("wasm-eager-jettison", "-m", "--forceCodeBlockToJettisonDueToOldAge=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        run("wasm-no-tls-context", "-m", "--useFastTLSForWasmContext=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        run("wasm-slow-memory", "-m", "--useWebAssemblyFastMemory=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        run("wasm-b3", "-m", "--useWasmLLInt=false", "--wasmBBQUsesAir=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        run("wasm-air", "-m", "--useWasmLLInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        run("wasm-collect-continuously", "-m", "--collectContinuously=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
+    end
+end
+
+def runHarnessTest(kind, *options)
+    wasmFiles = allWasmFiles($collection)
+    wasmFiles.each {
+        | file |
+        basename = file.basename.to_s
+        addRunCommand("(" + basename + ")-" + kind, [pathToVM.to_s] + $testSpecificRequiredOptions + options + [$benchmark.to_s, "--", basename], silentOutputHandler, simpleErrorHandler)
+    }
+end
+
+def runWebAssemblyWithHarness(*optionalTestSpecificOptions)
+    raise unless $benchmark.to_s =~ /harness\.m?js/
+    return if !$jitTests
+    return if !$isFTLPlatform
+
+    wasmFiles = allWasmFiles($collection)
+    prepareExtraRelativeFiles(wasmFiles.map { |f| f.basename }, $collection)
+
+    runHarnessTest("default-wasm", *(FTL_OPTIONS + optionalTestSpecificOptions))
+    if $mode != "quick"
+        runHarnessTest("wasm-no-cjit-yes-tls-context", "--useFastTLSForWasmContext=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+        runHarnessTest("wasm-eager", *(FTL_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions))
+        runHarnessTest("wasm-eager-jettison", "--forceCodeBlockToJettisonDueToOldAge=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        runHarnessTest("wasm-no-tls-context", "--useFastTLSForWasmContext=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        runHarnessTest("wasm-slow-memory", "--useWebAssemblyFastMemory=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        runHarnessTest("wasm-b3", "--useWasmLLInt=false", "--wasmBBQUsesAir=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        runHarnessTest("wasm-no-air", "--useWasmLLInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        runHarnessTest("wasm-collect-continuously", "--collectContinuously=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
+    end
+end
+
+def runWebAssemblyEmscripten(mode)
+    case mode
+    when :skip
+        return
+    end
+    return if !$jitTests
+    return if !$isFTLPlatform
+    wasm = $benchmark.to_s.sub! '.js', '.wasm'
+    prepareExtraRelativeFiles([Pathname('..') + wasm], $collection)
+    run("default-wasm", *FTL_OPTIONS)
+    if $mode != "quick"
+        run("wasm-no-cjit-yes-tls-context", "--useFastTLSForWasmContext=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+        run("wasm-eager-jettison", "--forceCodeBlockToJettisonDueToOldAge=true", *FTL_OPTIONS)
+        run("wasm-no-tls-context", "--useFastTLSForWasmContext=false", *FTL_OPTIONS)
+        run("wasm-b3", "--useWasmLLInt=false", "--wasmBBQUsesAir=false", *FTL_OPTIONS)
+        run("wasm-air", "--useWasmLLInt=false", *FTL_OPTIONS)
+        run("wasm-collect-continuously", "--collectContinuously=true", *FTL_OPTIONS) if shouldCollectContinuously?
+    end
+end
+
+def runWebAssemblySpecTest(mode)
+    case mode
+    when :skip
+        return
+    end
+    return if !$jitTests
+    return if !$isFTLPlatform
+    prepareExtraAbsoluteFiles(WASMTESTS_PATH, ["wasm.json"])
+
+    modules = Dir[WASMTESTS_PATH + "*.js"].map { |f| File.basename(f) }
+    prepareExtraRelativeFiles(modules.map { |f| "../../" + f }, $collection)
+
+    harness = Dir[WASMTESTS_PATH + "spec-harness/" + "*.js"].map { |f| File.basename(f) }
+    prepareExtraRelativeFiles(harness.map { |f| "../../spec-harness/" + f }, $collection)
+
+    runWithOutputHandler("default-wasm", noisyOutputHandler, "../spec-harness.js", *FTL_OPTIONS)
+    if $mode != "quick"
+      runWithOutputHandler("wasm-no-cjit-yes-tls-context", noisyOutputHandler, "../spec-harness.js",  "--useFastTLSForWasmContext=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+      runWithOutputHandler("wasm-eager-jettison", noisyOutputHandler, "../spec-harness.js", "--forceCodeBlockToJettisonDueToOldAge=true", *FTL_OPTIONS)
+      runWithOutputHandler("wasm-no-tls-context", noisyOutputHandler, "../spec-harness.js", "--useFastTLSForWasmContext=false", *FTL_OPTIONS)
+      runWithOutputHandler("wasm-b3", noisyOutputHandler, "../spec-harness.js", "--useWasmLLInt=false", "--wasmBBQUsesAir=false", *FTL_OPTIONS)
+      runWithOutputHandler("wasm-air", noisyOutputHandler, "../spec-harness.js", "--useWasmLLInt=false", *FTL_OPTIONS)
+      runWithOutputHandler("wasm-collect-continuously", noisyOutputHandler, "../spec-harness.js", "--collectContinuously=true", *FTL_OPTIONS) if shouldCollectContinuously?
+    end
+end
+
+def runWebAssemblyLowExecutableMemory(*optionalTestSpecificOptions)
+    return if !$jitTests
+    return if !$isFTLPlatform
+    modules = Dir[WASMTESTS_PATH + "*.js"].map { |f| File.basename(f) }
+    prepareExtraAbsoluteFiles(WASMTESTS_PATH, ["wasm.json"])
+    prepareExtraRelativeFiles(modules.map { |f| "../" + f }, $collection)
+    # Only let WebAssembly get executable memory.
+    run("default-wasm", "--useConcurrentGC=0" , "--useConcurrentJIT=0", "--jitMemoryReservationSize=15000", "--useBaselineJIT=0", "--useDFGJIT=0", "--useFTLJIT=0", "-m")
+end
+
+def runChakra(mode, exception, baselineFile, extraFiles)
+    raise unless $benchmark.to_s =~ /\.js$/
+    failsWithException = exception != "NoException"
+    testName = $~.pre_match
+
+    prepareExtraAbsoluteFiles(CHAKRATESTS_PATH, ["jsc-lib.js"])
+    prepareExtraRelativeFiles(extraFiles.map { |f| "../" + f }, $collection)
+
+    args = [pathToVM.to_s] + BASE_OPTIONS + $testSpecificRequiredOptions
+    args += FTL_OPTIONS if $isFTLPlatform
+    args += EAGER_OPTIONS
+    args << "--exception=" + exception if failsWithException
+    args << "--dumpException" if failsWithException
+    args += ["jsc-lib.js"]
+
+    case mode
+    when :baseline
+        prepareExtraRelativeFiles([(Pathname("..") + baselineFile).to_s], $collection)
+        errorHandler = diffErrorHandler(($benchmarkDirectory + baselineFile).to_s)
+        outputHandler = noisyOutputHandler
+    when :pass
+        errorHandler = chakraPassFailErrorHandler
+        outputHandler = noisyOutputHandler
+    when :skipDueToOutdatedOrBadTest
+        return
+    when :skip
+        return
+    else
+        raise "Invalid mode: #{mode}"
+    end
+
+    kind = "default"
+    args << $benchmark.to_s
+
+    addRunCommand(kind, args, outputHandler, errorHandler)
+end
+
+def runLayoutTest(kind, *options)
+    raise unless $benchmark.to_s =~ /\.js$/
+    testName = $~.pre_match
+    if kind
+        kind = "layout-" + kind
+    else
+        kind = "layout"
+    end
+
+    prepareExtraRelativeFiles(["../#{testName}-expected.txt"], $benchmarkDirectory)
+    prepareExtraAbsoluteFiles(LAYOUTTESTS_PATH, ["resources/standalone-pre.js", "resources/standalone-post.js"])
+
+    args = [pathToVM.to_s] + BASE_OPTIONS + $testSpecificRequiredOptions + options +
+        [(Pathname.new("resources") + "standalone-pre.js").to_s,
+         $benchmark.to_s,
+         (Pathname.new("resources") + "standalone-post.js").to_s]
+    addRunCommand(kind, args, noisyOutputHandler, diffErrorHandler(($benchmarkDirectory + "../#{testName}-expected.txt").to_s))
+end
+
+def runLayoutTestNoFTL
+    runLayoutTest("no-ftl")
+end
+
+def runLayoutTestNoLLInt
+    runLayoutTest("no-llint", "--useLLInt=false")
+end
+
+def runLayoutTestNoCJIT
+    runLayoutTest("no-cjit", *NO_CJIT_OPTIONS)
+end
+
+def runLayoutTestDFGEagerNoCJIT
+    runLayoutTest("dfg-eager-no-cjit", *(NO_CJIT_OPTIONS + EAGER_OPTIONS))
+end
+
+def runLayoutTestDefault
+    runLayoutTest(nil, "--testTheFTL=true", *FTL_OPTIONS)
+end
+
+def runLayoutTestFTLNoCJIT
+    runLayoutTest("ftl-no-cjit", "--testTheFTL=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+end
+
+def runLayoutTestFTLEagerNoCJIT
+    runLayoutTest("ftl-eager-no-cjit", "--testTheFTL=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS))
+end
+
+def runLayoutTestFTLEagerNoCJITB3O1
+    runLayoutTest("ftl-eager-no-cjit-b3o1", "--testTheFTL=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + B3O1_OPTIONS))
+end
+
+def noFTLRunLayoutTest
+    if !$jitTests
+        return
+    end
+
+    runLayoutTestNoLLInt
+    runLayoutTestNoCJIT
+    runLayoutTestDFGEagerNoCJIT
+end
+
+def defaultQuickRunLayoutTest
+    runLayoutTestDefault
+    if $jitTests
+        if $isFTLPlatform
+            runLayoutTestNoFTL
+            runLayoutTestFTLNoCJIT
+            runLayoutTestFTLEagerNoCJIT
+        else
+            noFTLRunLayoutTest
+        end
+    end
+end
+
+def defaultRunLayoutTest
+    if $mode == "quick"
+        defaultQuickRunLayoutTest
+    else
+        runLayoutTestDefault
+        if $jitTests
+            noFTLRunLayoutTest
+
+            return if !$isFTLPlatform
+
+            runLayoutTestNoFTL
+            runLayoutTestFTLNoCJIT
+            runLayoutTestFTLEagerNoCJIT
+        end
+    end
+end
+
+def noEagerNoNoLLIntTestsRunLayoutTest
+    runLayoutTestDefault
+    if $jitTests
+        runLayoutTestNoCJIT
+
+        return if !$isFTLPlatform
+
+        runLayoutTestNoFTL
+        runLayoutTestFTLNoCJIT
+    end
+end
+
+def noNoLLIntRunLayoutTest
+    runLayoutTestDefault
+    if $jitTests
+        runLayoutTestNoCJIT
+        runLayoutTestDFGEagerNoCJIT
+
+        return if !$isFTLPlatform
+
+        runLayoutTestNoFTL
+        runLayoutTestFTLNoCJIT
+        runLayoutTestFTLEagerNoCJIT
+    end
+end
+
+def prepareExtraRelativeFiles(extraFiles, destination)
+    Dir.chdir($outputDir) {
+        extraFiles.each {
+            | file |
+            dest = destination + file
+            FileUtils.mkdir_p(dest.dirname)
+            FileUtils.cp $extraFilesBaseDir + file, dest
+        }
+    }
+end
+
+def baseDirForCollection(collectionName)
+    Pathname(".tests") + collectionName
+end
+
+def prepareExtraAbsoluteFiles(absoluteBase, extraFiles)
+    raise unless absoluteBase.absolute?
+    Dir.chdir($outputDir) {
+        collectionBaseDir = baseDirForCollection($collectionName)
+        extraFiles.each {
+            | file |
+            destination = collectionBaseDir + file
+            FileUtils.mkdir_p destination.dirname unless destination.directory?
+            FileUtils.cp absoluteBase + file, destination
+        }
+    }
+end
+
+def runComplexTest(before, after, additionalEnv, *options)
+    prepareExtraRelativeFiles(before.map{|v| (Pathname("..") + v).to_s}, $collection)
+    prepareExtraRelativeFiles(after.map{|v| (Pathname("..") + v).to_s}, $collection)
+    args = [pathToVM.to_s] + BASE_OPTIONS + $testSpecificRequiredOptions + options + before.map{|v| v.to_s} + [$benchmark.to_s] + after.map{|v| v.to_s}
+    addRunCommand("complex", args, silentOutputHandler, simpleErrorHandler, *additionalEnv)
+end
+
+def runMozillaTest(kind, mode, extraFiles, *options)
+    if kind
+        kind = "mozilla-" + kind
+    else
+        kind = "mozilla"
+    end
+    prepareExtraRelativeFiles(extraFiles.map{|v| (Pathname("..") + v).to_s}, $collection)
+    args = [pathToVM.to_s] + BASE_OPTIONS + $testSpecificRequiredOptions + options + extraFiles.map{|v| v.to_s} + [$benchmark.to_s]
+    case mode
+    when :normal
+        errorHandler = mozillaErrorHandler
+    when :negative
+        errorHandler = mozillaExit3ErrorHandler
+    when :fail
+        errorHandler = mozillaFailErrorHandler
+    when :failDueToOutdatedOrBadTest
+        errorHandler = mozillaFailErrorHandler
+    when :skip
+        return
+    else
+        raise "Invalid mode: #{mode}"
+    end
+    addRunCommand(kind, args, noisyOutputHandler, errorHandler)
+end
+
+def runMozillaTestDefault(mode, *extraFiles)
+    runMozillaTest(nil, mode, extraFiles, *FTL_OPTIONS)
+end
+
+def runMozillaTestNoFTL(mode, *extraFiles)
+    runMozillaTest("no-ftl", mode, extraFiles)
+end
+
+def runMozillaTestLLInt(mode, *extraFiles)
+    runMozillaTest("llint", mode, extraFiles, "--useJIT=false")
+end
+
+def runMozillaTestBaselineJIT(mode, *extraFiles)
+    runMozillaTest("baseline", mode, extraFiles, "--useLLInt=false", "--useDFGJIT=false")
+end
+
+def runMozillaTestDFGEagerNoCJITValidatePhases(mode, *extraFiles)
+    runMozillaTest("dfg-eager-no-cjit-validate-phases", mode, extraFiles, "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(NO_CJIT_OPTIONS + EAGER_OPTIONS))
+end
+
+def runMozillaTestFTLEagerNoCJITValidatePhases(mode, *extraFiles)
+    runMozillaTest("ftl-eager-no-cjit-validate-phases", mode, extraFiles, "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS))
+end
+
+def defaultQuickRunMozillaTest(mode, *extraFiles)
+    if $jitTests
+        runMozillaTestDefault(mode, *extraFiles)
+        runMozillaTestFTLEagerNoCJITValidatePhases(mode, *extraFiles)
+    else
+        runMozillaTestNoFTL(mode, *extraFiles)
+        if $jitTests
+            runMozillaTestDFGEagerNoCJITValidatePhases(mode, *extraFiles)
+        end
+    end
+end
+
+def defaultRunMozillaTest(mode, *extraFiles)
+    if $mode == "quick"
+        defaultQuickRunMozillaTest(mode, *extraFiles)
+    else
+        runMozillaTestNoFTL(mode, *extraFiles)
+        if $jitTests
+            runMozillaTestLLInt(mode, *extraFiles)
+            runMozillaTestBaselineJIT(mode, *extraFiles)
+            runMozillaTestDFGEagerNoCJITValidatePhases(mode, *extraFiles)
+            runMozillaTestDefault(mode, *extraFiles)
+            runMozillaTestFTLEagerNoCJITValidatePhases(mode, *extraFiles) if $isFTLPlatform
+        end
+    end
+end
+
+def runNoisyTestImpl(kind, options, additionalEnv)
+    addRunCommand(kind, [pathToVM.to_s] + BASE_OPTIONS + $testSpecificRequiredOptions + options + [$benchmark.to_s], noisyOutputHandler, noisyErrorHandler, *additionalEnv)
+end
+
+def runNoisyTest(kind, *options)
+    runNoisyTestImpl(kind, options, [])
+end
+
+def runNoisyTestWithEnv(kind, *additionalEnv)
+    runNoisyTestImpl(kind, [], additionalEnv)
+end
+
+def runNoisyTestDefault
+    runNoisyTest("default", *FTL_OPTIONS)
+end
+
+def runNoisyTestNoFTL
+    runNoisyTest("no-ftl")
+end
+
+def runNoisyTestNoCJIT
+    runNoisyTest("ftl-no-cjit", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS))
+end
+
+def runNoisyTestNoCJITB3O1
+    runNoisyTest("ftl-no-cjit", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + B3O1_OPTIONS))
+end
+
+def runNoisyTestEagerNoCJIT
+    runNoisyTest("ftl-eager-no-cjit", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS))
+end
+
+def defaultRunNoisyTest
+    runNoisyTestDefault
+    if $jitTests and $isFTLPlatform
+        runNoisyTestNoFTL
+        runNoisyTestNoCJIT
+        runNoisyTestNoCJITB3O1
+        runNoisyTestEagerNoCJIT
+    end
+end
+
+def skip
+    $didAddRunCommand = true
+    $skipped = true
+    puts "Skipping #{$collectionName}/#{$benchmark}"
+end
+
+def allWasmFiles(path)
+    if path.file?
+        [path]
+    else
+        result = []
+        Dir.foreach(path) {
+            | filename |
+            next unless filename =~ /\.m?wasm$/
+            next unless (path + filename).file?
+            result << path + filename
+        }
+        result
+    end
+end
+
+def allJSFiles(path)
+    if path.file?
+        [path]
+    else
+        result = []
+        Dir.foreach(path) {
+            | filename |
+            next unless filename =~ /\.m?js$/
+            next unless (path + filename).file?
+            result << path + filename
+        }
+        result
+    end
+end
+
+def uniqueifyName(names, name)
+    result = name.to_s
+    toAdd = 1
+    while names[result]
+        result = "#{name}-#{toAdd}"
+        toAdd += 1
+    end
+    names[result] = true
+    result
+end
+
+def simplifyCollectionName(collectionPath)
+    outerDir = collectionPath.dirname
+    name = collectionPath.basename
+    lastName = name
+    if collectionPath.directory?
+        while lastName.to_s =~ /test/
+            lastName = outerDir.basename
+            name = lastName + name
+            outerDir = outerDir.dirname
+        end
+    end
+    uniqueifyName($collectionNames, name)
+end
+
+def prepareCollection(name)
+    FileUtils.mkdir_p $outputDir + name
+
+    absoluteCollection = $collection.realpath
+
+    Dir.chdir($outputDir) {
+        bundleDir = baseDirForCollection(name)
+
+        # Create the proper directory structures.
+        FileUtils.mkdir_p bundleDir
+        if bundleDir.basename == $collection.basename
+            FileUtils.cp_r absoluteCollection, bundleDir.dirname
+            $collection = bundleDir
+        else
+            FileUtils.cp_r absoluteCollection, bundleDir
+            $collection = bundleDir + $collection.basename
+        end
+
+        $extraFilesBaseDir = absoluteCollection
+    }
+end
+
+$collectionNames = {}
+
+def handleCollectionFile(collection)
+    collectionName = simplifyCollectionName(collection)
+   
+    paths = {}
+    subCollections = []
+    YAML::load(IO::read(collection)).each {
+        | entry |
+        if entry["collection"]
+            subCollections << entry["collection"]
+            next
+        end
+        
+        if Pathname.new(entry["path"]).absolute?
+            raise "Absolute path: " + entry["path"] + " in #{collection}"
+        end
+        
+        if paths[entry["path"]]
+            raise "Duplicate path: " + entry["path"] + " in #{collection}"
+        end
+        
+        subCollection = collection.dirname + entry["path"]
+        
+        if subCollection.file?
+            subCollectionName = Pathname.new(entry["path"]).dirname
+        else
+            subCollectionName = entry["path"]
+        end
+        
+        $collection = subCollection
+        $collectionName = Pathname.new(collectionName)
+        Pathname.new(subCollectionName).each_filename {
+            | filename |
+            next if filename =~ /^\./
+            $collectionName += filename
+        }
+        $collectionName = $collectionName.to_s
+        
+        prepareCollection($collectionName)
+      
+        Dir.chdir($outputDir) {
+            pathsToSearch = [$collection]
+            if entry["tests"]
+                if entry["tests"].is_a? Array
+                    pathsToSearch = entry["tests"].map {
+                        | testName |
+                        pathsToSearch[0] + testName
+                    }
+                else
+                    pathsToSearch[0] += entry["tests"]
+                end
+            end
+            pathsToSearch.each {
+                | pathToSearch |
+                allJSFiles(pathToSearch).each {
+                    | path |
+                    
+                    $benchmark = path.basename
+                    $benchmarkDirectory = path.dirname
+                    
+                    $runCommandOptions = {}
+                    eval entry["cmd"]
+                }
+            }
+        }
+    }
+    
+    subCollections.each {
+        | subCollection |
+        handleCollection(collection.dirname + subCollection)
+    }
+end
+
+def handleCollectionDirectory(collection)
+    collectionName = simplifyCollectionName(collection)
+    
+    $collection = collection
+    $collectionName = collectionName
+    prepareCollection(collectionName)
+   
+    Dir.chdir($outputDir) {
+        $benchmarkDirectory = $collection
+        allJSFiles($collection).each {
+            | path |
+            
+            $benchmark = path.basename
+            
+            $runCommandOptions = {}
+            $testSpecificRequiredOptions = []
+            defaultRun unless parseRunCommands
+        }
+    }
+end
+
+def handleCollection(collection)
+    collection = Pathname.new(collection)
+    
+    if collection.file?
+        handleCollectionFile(collection)
+    else
+        handleCollectionDirectory(collection)
+    end
+end
+
+def appendFailure(plan)
+    File.open($outputDir + "failed", "a") {
+        | outp |
+        outp.puts plan.name
+    }
+    $numFailures += 1
+end
+
+def appendPass(plan)
+    File.open($outputDir + "passed", "a") {
+        | outp |
+        outp.puts plan.name
+    }
+    $numPasses += 1
+end
+
+def appendResult(plan, didPass)
+    File.open($outputDir + "results", "a") {
+        | outp |
+        outp.puts "#{plan.name}: #{didPass ? 'PASS' : 'FAIL'}"
+    }
+end
+
+def prepareBundle
+    raise if $bundle
+
+    if $doNotMessWithVMPath
+        if !$remote and !$tarball
+            $testingFrameworkPath = (frameworkFromJSCPath($jscPath) || $jscPath.dirname).realpath
+            $jscPath = Pathname.new($jscPath).realpath
+        else
+            $testingFrameworkPath = frameworkFromJSCPath($jscPath)
+        end
+    else
+        originalJSCPath = $jscPath
+        vmDir = $outputDir + ".vm"
+        FileUtils.mkdir_p vmDir
+        
+        frameworkPath = frameworkFromJSCPath($jscPath)
+        destinationFrameworkPath = Pathname.new(".vm") + "JavaScriptCore.framework"
+        $jscPath = destinationFrameworkPath + "Helpers" + "jsc"
+        $testingFrameworkPath = Pathname.new("..") + destinationFrameworkPath
+
+        if frameworkPath
+            source = frameworkPath
+            destination = Pathname.new(".vm")
+        elsif $hostOS == "windows"
+            # Make sure to copy dll along with jsc on Windows
+            originalJSCDir = File.dirname(originalJSCPath)
+            source = [originalJSCPath] + [originalJSCDir + "/jscLib.dll"]
+
+            # Check for and copy JavaScriptCore.dll and WTF.dll for dynamic builds
+            javaScriptCoreDLLPath = File.join(originalJSCDir, "JavaScriptCore.dll")
+            wtfDLLPath = File.join(originalJSCDir, "WTF.dll")
+            if (File.exists?(javaScriptCoreDLLPath))
+                source = source + [javaScriptCoreDLLPath]
+            end
+            if (File.exists?(wtfDLLPath))
+                source = source + [wtfDLLPath]
+            end
+
+            destination = $jscPath.dirname
+
+            Dir.chdir($outputDir) {
+                FileUtils.mkdir_p destination
+            }
+        else
+            source = originalJSCPath
+            destination = $jscPath
+
+            Dir.chdir($outputDir) {
+                FileUtils.mkdir_p $jscPath.dirname
+            }
+        end
+
+        Dir.chdir($outputDir) {
+            if $copyVM
+                FileUtils.cp_r source, destination
+            else
+                begin 
+                    FileUtils.ln_s source, destination
+                rescue Exception
+                    $stderr.puts "Warning: unable to create soft link, trying to copy."
+                    FileUtils.cp_r source, destination
+                end
+            end
+
+            if $remote and $hostOS == "linux"
+                begin
+                    dependencies = `ldd #{source}`
+                    dependencies.split(/\n/).each {
+                        | dependency |
+                        FileUtils.cp_r $&, $jscPath.dirname if dependency =~ /#{WEBKIT_PATH}[^ ]*/
+                    }
+                rescue
+                    $stderr.puts "Warning: unable to determine or copy library dependnecies of JSC."
+                end
+            end
+        }
+    end
+    
+    Dir.chdir($outputDir) {
+        FileUtils.cp_r HELPERS_PATH, ".helpers"
+    }
+
+    ARGV.each {
+        | collection |
+        handleCollection(collection)
+    }
+
+    puts
+end
+
+def cleanOldResults
+    raise unless $bundle
+
+    eachResultFile($outputDir) {
+        | path |
+        FileUtils.rm_f path
+    }
+end
+
+def cleanEmptyResultFiles
+    eachResultFile($outputDir) {
+        | path |
+        next unless path.basename.to_s =~ /\.out$/
+        next unless FileTest.size(path) == 0
+        FileUtils.rm_f path
+    }
+end
+
+def eachResultFile(startingDir, &block)
+    dirsToClean = [startingDir]
+    until dirsToClean.empty?
+        nextDir = dirsToClean.pop
+        Dir.foreach(nextDir) {
+            | entry |
+            next if entry =~ /^\./
+            path = nextDir + entry
+            if path.directory?
+                dirsToClean.push(path)
+            else
+                block.call(path)
+            end
+        }
+    end
+end
+
+def prepareTestRunner(remoteIndex=0)
+    raise if $bundle
+
+    $runlist.each_with_index {
+        | plan, index |
+        plan.index = index
+    }
+
+    Dir.mkdir($runnerDir) unless $runnerDir.directory?
+    toDelete = []
+    Dir.foreach($runnerDir) {
+        | filename |
+        if filename =~ /^test_/
+            toDelete << filename
+        end
+    }
+    
+    toDelete.each {
+        | filename |
+        File.unlink($runnerDir + filename)
+    }
+
+    $runlist.each {
+        | plan |
+        plan.writeRunScript($runnerDir + "test_script_#{plan.index}")
+    }
+
+    case $testRunnerType
+    when :make
+        prepareMakeTestRunner(remoteIndex)
+    when :shell
+        prepareShellTestRunner
+    when :ruby
+        prepareRubyTestRunner
+    else
+        raise "Unknown test runner type: #{$testRunnerType.to_s}"
+    end
+end
+
+def cleanRunnerDirectory
+    raise unless $bundle
+    Dir.foreach($runnerDir) {
+        | filename |
+        next unless filename =~ /^test_fail/
+        FileUtils.rm_f $runnerDir + filename
+    }
+end
+
+def sshRead(cmd, remoteIndex=0)
+    raise unless $remote
+
+    remoteHost = $remoteHosts[remoteIndex]
+
+    result = ""
+    IO.popen("ssh -o NoHostAuthenticationForLocalhost=yes -p #{remoteHost.port} #{remoteHost.user}@#{remoteHost.host} '#{cmd}'", "r") {
+      | inp |
+      inp.each_line {
+        | line |
+        result += line
+      }
+    }
+    raise "#{$?}" unless $?.success?
+    result
+end
+
+def runCommandOnTester(cmd)
+    if $remote
+        result = sshRead(cmd)
+    else
+        result = `#{cmd}`
+    end
+end
+
+def numberOfProcessors
+    if $hostOS == "windows"
+        numProcessors = runCommandOnTester("cmd /c echo %NUMBER_OF_PROCESSORS%").to_i
+    else
+        begin
+            numProcessors = runCommandOnTester("sysctl -n hw.activecpu 2>/dev/null").to_i
+        rescue
+            numProcessors = 0
+        end
+
+        if numProcessors == 0
+            begin
+                numProcessors = runCommandOnTester("nproc --all 2>/dev/null").to_i
+            rescue
+                numProcessors == 0
+            end
+        end
+    end
+
+    if numProcessors == 0
+        numProcessors = 1
+    end
+    return numProcessors
+end
+
+def runAndMonitorTestRunnerCommand(*cmd)
+    numberOfTests = 0
+    Dir.chdir($runnerDir) {
+        # -1 for the runscript, and -2 for '..' and '.'
+        numberOfTests = Dir.entries(".").count - 3
+    }
+    unless $progressMeter
+        mysys(cmd.join(' '))
+    else
+       running = {}
+       didRun = {}
+       didFail = {}
+       blankLine = true
+       prevStringLength = 0
+       IO.popen(cmd.join(' '), mode="r") {
+           | inp |
+           inp.each_line {
+               | line |
+               line = line.scrub.chomp
+               if line =~ /^Running /
+                   running[$~.post_match] = true
+               elsif line =~ /^PASS: /
+                   didRun[$~.post_match] = true
+               elsif line =~ /^FAIL: /
+                   didRun[$~.post_match] = true
+                   didFail[$~.post_match] = true
+               else
+                   unless blankLine
+                       print("\r" + " " * prevStringLength + "\r")
+                   end
+                   puts line
+                   blankLine = true
+               end
+
+               def lpad(str, chars)
+                   str = str.to_s
+                   if str.length > chars
+                       str
+                   else
+                      "%#{chars}s"%(str)
+                   end
+               end
+
+               string  = ""
+               string += "\r#{lpad(didRun.size, numberOfTests.to_s.size)}/#{numberOfTests}"
+               unless didFail.empty?
+                   string += " (failed #{didFail.size})"
+               end
+               string += " "
+               (running.size - didRun.size).times {
+                   string += "."
+               }
+               if string.length < prevStringLength
+                   print string
+                   print(" " * (prevStringLength - string.length))
+               end
+               print string
+               prevStringLength = string.length
+               blankLine = false
+               $stdout.flush
+           }
+       }
+       puts
+       raise "Failed to run #{cmd}: #{$?.inspect}" unless $?.success?
+    end
+end
+
+def runTestRunner(remoteIndex=0)
+    if $remote
+        remoteHost = $remoteHosts[remoteIndex]
+        if !remoteHost.remoteDirectory
+            remoteHost.remoteDirectory = JSON::parse(sshRead("cat ~/.bencher", remoteIndex))["tempPath"]
+        end
+        mysys("ssh", "-o", "NoHostAuthenticationForLocalhost=yes", "-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", "mkdir -p #{remoteHost.remoteDirectory}")
+        mysys("scp", "-o", "NoHostAuthenticationForLocalhost=yes", "-P", remoteHost.port.to_s, ($outputDir.dirname + $tarFileName).to_s, "#{remoteHost.user}@#{remoteHost.host}:#{remoteHost.remoteDirectory}")
+        remoteScript = "\""
+        remoteScript += "cd #{remoteHost.remoteDirectory} && "
+        remoteScript += "rm -rf #{$outputDir.basename} && "
+        remoteScript += "tar xzf #{$tarFileName} && "
+        remoteScript += "cd #{$outputDir.basename}/.runner && "
+        remoteScript += "export DYLD_FRAMEWORK_PATH=\\\"\\$(cd #{$testingFrameworkPath.dirname}; pwd)\\\" && "
+        remoteScript += "export LD_LIBRARY_PATH=#{remoteHost.remoteDirectory}/#{$outputDir.basename}/#{$jscPath.dirname} && "
+        remoteScript += "export JSCTEST_timeout=#{Shellwords.shellescape(ENV['JSCTEST_timeout'])} && "
+        $envVars.each { |var| remoteScript += "export " << var << "\n" }
+        remoteScript += "#{testRunnerCommand(remoteIndex)}\""
+        runAndMonitorTestRunnerCommand("ssh", "-o", "NoHostAuthenticationForLocalhost=yes", "-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", remoteScript)
+    else
+        Dir.chdir($runnerDir) {
+            runAndMonitorTestRunnerCommand(testRunnerCommand)
+        }
+    end
+end
+
+def detectFailures
+    raise if $bundle
+
+    failures = []
+    
+    if $remote
+        $remoteHosts.each_with_index {
+            | host, remoteIndex |
+            output = sshRead("cd #{host.remoteDirectory}/#{$outputDir.basename}/.runner && find . -maxdepth 1 -name \"test_fail_*\"", remoteIndex)
+            output.split(/\n/).each {
+                | line |
+                next unless line =~ /test_fail_/
+                failures << $~.post_match.to_i
+            }
+        }
+    else
+        Dir.foreach($runnerDir) {
+            | filename |
+            next unless filename =~ /test_fail_/
+            failures << $~.post_match.to_i
+        }
+    end
+
+    failureSet = {}
+
+    failures.each {
+        | failure | 
+        appendFailure($runlist[failure])
+        failureSet[failure] = true
+    }
+
+    familyMap = {}
+    $runlist.each_with_index {
+        | plan, index |
+        unless familyMap[plan.family]
+            familyMap[plan.family] = []
+        end
+        if failureSet[index]
+            appendResult(plan, false)
+            familyMap[plan.family] << {:result => "FAIL", :plan => plan};
+            next
+        else
+            appendResult(plan, true)
+            familyMap[plan.family] << {:result => "PASS", :plan => plan};
+        end
+        appendPass(plan)
+    }
+
+    File.open($outputDir + "resultsByFamily", "w") {
+        | outp |
+        first = true
+        familyMap.keys.sort.each {
+            | familyName |
+            if first
+                first = false
+            else
+                outp.puts
+            end
+            
+            outp.print "#{familyName}:"
+
+            numPassed = 0
+            familyMap[familyName].each {
+                | entry |
+                if entry[:result] == "PASS"
+                    numPassed += 1
+                end
+            }
+
+            if numPassed == familyMap[familyName].size
+                outp.puts " PASSED"
+            elsif numPassed == 0
+                outp.puts " FAILED"
+            else
+                outp.puts
+                familyMap[familyName].each {
+                    | entry |
+                    outp.puts "    #{entry[:plan].name}: #{entry[:result]}"
+                }
+            end
+        }
+    }
+end
+
+def compressBundle
+    cmd = "cd #{$outputDir}/.. && tar -czf #{$tarFileName} #{$outputDir.basename}"
+    $stderr.puts ">> #{cmd}" if $verbosity >= 2
+    raise unless system(cmd)
+end
+
+def clean(file)
+    FileUtils.rm_rf file unless $bundle
+end
+
+clean($outputDir + "failed")
+clean($outputDir + "passed")
+clean($outputDir + "results")
+clean($outputDir + "resultsByFamily")
+clean($outputDir + ".vm")
+clean($outputDir + ".helpers")
+clean($outputDir + ".runner")
+clean($outputDir + ".tests")
+clean($outputDir + "_payload")
+
+Dir.mkdir($outputDir) unless $outputDir.directory?
+
+$outputDir = $outputDir.realpath
+$runnerDir = $outputDir + ".runner"
+
+if !$numChildProcesses
+    if ENV["WEBKIT_TEST_CHILD_PROCESSES"]
+        $numChildProcesses = ENV["WEBKIT_TEST_CHILD_PROCESSES"].to_i
+    else
+        $numChildProcesses = numberOfProcessors
+    end
+end
+
+if ENV["JSCTEST_timeout"]
+    # In the worst case, the processors just interfere with each other.
+    # Increase the timeout proportionally to the number of processors.
+    ENV["JSCTEST_timeout"] = (ENV["JSCTEST_timeout"].to_i.to_f * Math.sqrt($numChildProcesses)).to_i.to_s
+end
+
+def runBundle
+    raise unless $bundle
+
+    cleanRunnerDirectory
+    cleanOldResults
+    runTestRunner
+    cleanEmptyResultFiles
+end
+
+def runNormal
+    raise if $bundle or $tarball
+
+    prepareBundle
+    prepareTestRunner
+    runTestRunner
+    cleanEmptyResultFiles
+    detectFailures
+end
+
+def runTarball
+    raise unless $tarball
+
+    prepareBundle 
+    prepareTestRunner
+    compressBundle
+end
+
+def runRemote
+    raise unless $remote
+
+    prepareBundle
+    $remoteHosts.each_index {
+        | index |
+        prepareTestRunner(index)
+    }
+    compressBundle
+    threads = []
+    $remoteHosts.each_index {
+        | index |
+        threads << Thread.new {
+            runTestRunner(index)
+        }
+    }
+    threads.each { |thr| thr.join }
+    detectFailures
+end
+
+puts
+if $bundle
+    runBundle
+elsif $remote
+    runRemote
+elsif $tarball
+    runTarball
+else
+    runNormal
+end

@@ -1,0 +1,35 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableColorFilter=true ] -->
+<html>
+    <head>
+        <title>CSS Test: opacity -apple-color-filter</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+        <link rel="match" href="-apple-color-filter-opacity-expected.html">
+
+        <meta name="assert" content="opacity -apple-color-filter">
+        <style type="text/css">
+            .test
+            {
+                width: 200px;
+                height: 200px;
+                background-color: green;
+                margin: 10px;
+                float: left;
+            }
+            
+            .test > div {
+                width: 100px;
+                height: 100px;
+                margin: 50px;
+                background-color: blue;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="test" style="-apple-color-filter: opacity()"><div></div></div>
+        <div class="test" style="-apple-color-filter: opacity(2)"><div></div></div>
+        <div class="test" style="-apple-color-filter: opacity(1)"><div></div></div>
+        <div class="test" style="-apple-color-filter: opacity(0.5)"><div></div></div>
+        <div class="test" style="-apple-color-filter: opacity(0)"><div></div></div>
+        <div class="test" style="-apple-color-filter: opacity(-0.5)"><div></div></div>
+    </body>
+</html>

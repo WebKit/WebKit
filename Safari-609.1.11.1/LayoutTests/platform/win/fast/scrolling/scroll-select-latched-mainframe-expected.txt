@@ -1,0 +1,17 @@
+Put mouse here and flick downwards
+Scrollable Select
+
+
+Tests that a select doesn't consume wheel events when scroll is latched to main frame.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Mouse moved to (30, 127)
+Page before: 0, select before: 0
+Page after:  70, select after: 0
+PASS Select did not receive wheel events.
+

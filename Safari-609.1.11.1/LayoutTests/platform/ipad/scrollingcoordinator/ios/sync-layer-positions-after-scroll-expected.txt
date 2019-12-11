@@ -1,0 +1,20 @@
+visibleRectAfterScroll: {"left":0,"top":190,"width":768,"height":1004}
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 1308.00 2021.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 1308.00 2021.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (position 12.00 10.00)
+          (approximate position 12.00 200.00)
+          (bounds 100.00 100.00)
+          (contentsOpaque 1)
+        )
+      )
+    )
+  )
+)
+

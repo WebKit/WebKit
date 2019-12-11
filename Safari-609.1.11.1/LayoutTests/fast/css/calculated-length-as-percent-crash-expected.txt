@@ -1,0 +1,3 @@
+Test for bug #116715: ASSERTION FAILED: type() == Percent in WebCore::Length::percent
+This test passes if there's no crash.
+

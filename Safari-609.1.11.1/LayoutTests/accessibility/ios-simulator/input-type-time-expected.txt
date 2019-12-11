@@ -1,0 +1,15 @@
+ 
+This tests that input type: time is accessible on iOS.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS timeinput.description is 'AXLabel: (Between: 07:00 AM-09:00 AM)'
+PASS timeinput.isIgnored is false
+PASS timeinput.stringValue is 'AXValue: 8:00 AM'
+PASS timeinput2.description is 'AXLabel: '
+PASS timeinput2.stringValue is 'AXValue: 8:00 AM'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

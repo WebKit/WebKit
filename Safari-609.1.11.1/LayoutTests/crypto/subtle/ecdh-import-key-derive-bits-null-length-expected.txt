@@ -1,0 +1,10 @@
+Test ECDH deriveBits operation with imported base key and null length
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS bytesToHexString(derivedKey) is expectedDerivedKey
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

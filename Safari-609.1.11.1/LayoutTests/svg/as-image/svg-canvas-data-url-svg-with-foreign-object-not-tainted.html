@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <canvas></canvas>
+    <script type="text/javascript">
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        jsTestIsAsync = true;
+        description("Canvas should not be tainted if a data url image with a &lt;foreignObject&gt; is drawn into the canvas.");
+
+        var data = "data:image/svg+xml;charset=utf-8,"
+                + '<svg xmlns="http://www.w3.org/2000/svg">'
+                + '    <foreignObject width="100%" height="100%">'
+                + '        <div xmlns="http://www.w3.org/1999/xhtml" style="width:100px; height: 100px; background-color: green;"></div>'
+                + '    </foreignObject>'
+                + '</svg>';
+
+        var svg = new Image();
+        svg.onload = function() {
+            var canvas = document.querySelector('canvas');
+            window.ctx = canvas.getContext('2d');
+            ctx.drawImage(svg, 0, 0);
+            shouldNotThrow("window.ctx.getImageData(0, 0, 1, 1)");
+            finishJSTest();
+        }
+        svg.src = data;
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

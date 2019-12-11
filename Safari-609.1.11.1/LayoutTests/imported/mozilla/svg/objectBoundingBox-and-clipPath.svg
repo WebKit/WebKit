@@ -1,0 +1,25 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=489151 -->
+
+<svg xmlns="http://www.w3.org/2000/svg">
+  <title>Test objectBoundingBox clip-path on element with ancestor transform</title>
+  <desc>
+    This test checks that the bbox calculation for an objectBoundingBox
+    clip-path is correctly getting the bbox in the userspace of the
+    clipped element, and not it's bbox in an ancestor userspace or rootspace.
+  </desc>
+  <clipPath id="clip" clipPathUnits="objectBoundingBox">
+    <rect x="0.5" width="0.5" height="1"/>
+  </clipPath>
+  <rect width="100%" height="100%" fill="lime"/>
+  <rect x="100" width="100" height="100" fill="red"/>
+  <g transform="translate(-100,0)">
+    <g clip-path="url(#clip)">
+      <rect x="100" width="100" height="100" fill="red"/>
+      <rect x="200" width="100" height="100" fill="lime"/>
+    </g>
+  </g>
+</svg>

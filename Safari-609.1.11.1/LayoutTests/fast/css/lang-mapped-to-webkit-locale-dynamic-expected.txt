@@ -1,0 +1,17 @@
+This is tests mapping of lang/xml:lang to -webkit-locale with dynamic attribute changes. bug 76364.
+
+PASS localeOfNode('x1') is "ko"
+PASS localeOfNode('x2') is "ko"
+PASS localeOfNode('x3') is "ar"
+PASS localeOfNode('x1') is "ja"
+PASS localeOfNode('x2') is "ja"
+PASS localeOfNode('x3') is "ar"
+PASS localeOfNode('x3') is "auto"
+PASS localeOfNode('x3') is "ja"
+PASS localeOfNode('x2') is "zh"
+PASS localeOfNode('x2') is "ja"
+PASS localeOfNode('x2') is "ja"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

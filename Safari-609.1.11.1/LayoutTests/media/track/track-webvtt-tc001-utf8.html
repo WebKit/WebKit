@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+        
+            numberOfTrackTests = 2;
+            
+            function trackLoaded()
+            {
+                numberOfTracksLoaded++;
+                if (numberOfTracksLoaded == numberOfTrackTests) {
+                    testTrack0();
+                    testTrack1();
+                }
+            }
+            
+            function testTrack0()
+            {
+                findMediaElement();
+                var expected = 
+                {
+                    length : 2,
+                    tests:
+                    [
+                        {
+                            property : "id",
+                            values : [1, 2],
+                        },
+                        {
+                            property : "startTime",
+                            values : [0.0, 31.0],
+                        },
+                        {
+                            property : "endTime",
+                            values : [30.5, 1200.5],
+                        },
+                        {
+                            property : "text",
+                            values : ["景気判断", "電力不足"],
+                        },
+                    ],
+                };
+                testCues(0, expected);
+
+                allTestsEnded();
+            }
+            
+            function testTrack1()
+            {
+                findMediaElement();
+                var expected = 
+                {
+                    length : 2,
+                    tests:
+                    [],
+                };
+                testCues(1, expected);
+                
+                allTestsEnded();
+            }
+
+        </script>
+    </head>
+    <body onload="enableAllTextTracks()">
+        <p>Tests that UTF-8 encoded characters are recognized properly and that different encodings (iconv) are not recognized as a WebVTT file (we do allow it, it just looks ugly).</p>
+        <video>
+            <track src="captions-webvtt/tc001-utf8.vtt" onload="trackLoaded()">
+            <track src="captions-webvtt/tc001-iso2022jp3.vtt" onload="trackLoaded()">
+        </video>
+    </body>
+</html>

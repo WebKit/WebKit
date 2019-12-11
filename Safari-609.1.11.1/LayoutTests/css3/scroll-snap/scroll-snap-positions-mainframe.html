@@ -1,0 +1,41 @@
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            scroll-snap-type: y mandatory;
+        }
+
+        .vertical {
+            width: 100%;
+            height: 600px;
+            scroll-snap-align: start;
+        }
+    </style>
+
+    <script src="../../resources/js-test.js"></script>
+    <script>
+    function runTest()
+    {
+        debug("Scroll-snap offsets: " + window.internals.scrollSnapOffsets(document.body));
+        finishJSTest();
+    }
+
+    function setup()
+    {
+        jsTestIsAsync = true;
+        if (window.testRunner)
+            setTimeout(runTest, 0);
+    }
+    </script>
+</head>
+
+<body onload="setup()">
+    <div id="child00" class="vertical"><div id="console"></div></div>
+    <div id="child01" class="vertical"></div>
+    <div id="child02" class="vertical"></div>
+    <div id="child03" class="vertical"></div>
+    <div id="child04" class="vertical"></div>
+    <div id="child05" class="vertical"></div>
+</body>
+</html>

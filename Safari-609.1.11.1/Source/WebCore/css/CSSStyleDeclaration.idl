@@ -1,0 +1,57 @@
+/*
+ * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+[
+    ExportMacro=WEBCORE_EXPORT,
+    DefaultDefineOwnProperty,
+    GenerateIsReachable,
+    JSCustomHeader,
+    JSCustomMarkFunction,
+    SkipVTableValidation,
+] interface CSSStyleDeclaration {
+    [CEReactions] attribute DOMString cssText;
+
+    DOMString getPropertyValue(DOMString propertyName);
+
+    [CEReactions, MayThrowException] DOMString removeProperty(DOMString propertyName);
+    DOMString? getPropertyPriority(DOMString propertyName);
+
+    [CEReactions, MayThrowException] void setProperty(DOMString propertyName, [TreatNullAs=EmptyString] DOMString value, optional [TreatNullAs=EmptyString] DOMString priority = "");
+
+    readonly attribute unsigned long length;
+    getter DOMString item(unsigned long index);
+    readonly attribute CSSRule? parentRule;
+
+    [CEReactions] attribute [TreatNullAs=EmptyString] DOMString cssFloat;
+
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    DOMString? getPropertyShorthand(optional DOMString propertyName = "undefined");
+    boolean isPropertyImplicit(optional DOMString propertyName = "undefined");
+
+    // Use named getters/setters for all support CSS property names. The spec says
+    // these should be normal attributes, but there are too many combinations with
+    // prefixes for this to be practical. If we remove legacy aliases, we should
+    // reconsider this decision.
+    getter (DOMString or double) (DOMString name);
+    [CEReactions, MayThrowException, CallNamedSetterOnlyForSupportedProperties] setter void (DOMString name, [TreatNullAs=EmptyString] DOMString value);
+
+    // This method is deprecated, and we would like to drop support for it someday
+    DeprecatedCSSOMValue? getPropertyCSSValue(DOMString propertyName);
+};

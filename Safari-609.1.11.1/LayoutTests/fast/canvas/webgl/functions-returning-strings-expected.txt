@@ -1,0 +1,25 @@
+Test that functions returning strings really do return strings (and not e.g. null)
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS gl.getShaderSource(vs) returns a string
+PASS gl.getShaderInfoLog(vs) returns a string
+PASS gl.getShaderSource(vs) returns a string
+PASS gl.getShaderInfoLog(vs) returns a string
+PASS gl.getShaderSource(fs) returns a string
+PASS gl.getShaderInfoLog(fs) returns a string
+PASS gl.getShaderSource(fs) returns a string
+PASS gl.getShaderInfoLog(fs) returns a string
+PASS gl.getProgramInfoLog(prog) returns a string
+PASS gl.getProgramInfoLog(prog) returns a string
+PASS getSupportedExtensions() returns an array of strings
+PASS gl.getParameter(gl.VENDOR) returns a string
+PASS gl.getParameter(gl.RENDERER) returns a string
+PASS gl.getParameter(gl.VERSION) returns a string
+PASS gl.getParameter(gl.SHADING_LANGUAGE_VERSION) returns a string
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

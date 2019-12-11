@@ -1,0 +1,30 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableAttachmentElement=true ] -->
+<html>
+<body id="body">
+
+<attachment id="attachment" title="title" subtitle="subtitle" action="action" progress="0.5"></attachment>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script src="../resources/js-test-pre.js"></script>
+<script>
+
+    description("This tests that attachment elements are accessible.");
+
+    if (window.accessibilityController) {
+        var content = accessibilityController.accessibleElementById("attachment");
+        debug("Attachment description: " + content.description);
+
+        debug("Attachment value: " + content.stringValue);
+
+        if (accessibilityController.platformName == "mac") {
+            debug("Attachment role: " + content.roleDescription);
+        }
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

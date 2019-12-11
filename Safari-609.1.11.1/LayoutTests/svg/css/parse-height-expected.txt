@@ -1,0 +1,29 @@
+CONSOLE MESSAGE: line 17: Error: Invalid value for <rect> attribute height="auto"
+CONSOLE MESSAGE: line 17: Error: Invalid value for <rect> attribute height="  100"
+CONSOLE MESSAGE: line 17: Error: Invalid value for <rect> attribute height="100   "
+CONSOLE MESSAGE: line 17: Error: Invalid value for <rect> attribute height="100   px"
+CONSOLE MESSAGE: line 17: Error: Invalid value for <rect> attribute height="100px;"
+CONSOLE MESSAGE: line 17: Error: Invalid value for <rect> attribute height="100px !important"
+CONSOLE MESSAGE: line 17: Error: Invalid value for <rect> attribute height="{ 100px }"
+CONSOLE MESSAGE: line 17: Error: Invalid negative value for <rect> attribute height="-100px"
+Test that 'with' presentation attribute is parsed with CSS presentation rules.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS computedStyle("height", "auto") is "auto"
+PASS computedStyle("height", "  100") is "100px"
+PASS computedStyle("height", "100   ") is "100px"
+PASS computedStyle("height", "100px") is "100px"
+PASS computedStyle("height", "1em") is "16px"
+PASS computedStyle("height", "1ex") is "12.800000190734863px"
+PASS computedStyle("height", "20%") is "20%"
+PASS computedStyle("height", "100   px") is "auto"
+PASS computedStyle("height", "100px;") is "auto"
+PASS computedStyle("height", "100px !important") is "auto"
+PASS computedStyle("height", "{ 100px }") is "auto"
+PASS computedStyle("height", "-100px") is "auto"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

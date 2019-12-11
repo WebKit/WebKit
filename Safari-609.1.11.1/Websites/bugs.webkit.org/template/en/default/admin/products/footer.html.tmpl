@@ -1,0 +1,79 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # product: Bugzilla::Product Object; the product
+  #
+  # classification: Bugzilla::Classification object ; If classifications
+  #                         are enabled, then this is the currently 
+  #                         selected classification
+  #
+  # no_XXX_link: boolean; if defined, then don't show the corresponding
+  #                       link. Supported parameters are:
+  #
+  # no_edit_product_link
+  # no_edit_other_products_link
+  # no_add_product_link
+  #%]
+
+[% IF Param('useclassification') && classification %]
+  [% classification_url_part = BLOCK %]&amp;classification=
+     [%- classification.name FILTER uri %]
+  [% END %]
+  [% classification_url_part_start = BLOCK %]classification=
+     [%- classification.name FILTER uri %]
+  [% END %]
+  [% classification_text = BLOCK %] 
+    of classification '[% classification.name FILTER html %]'
+  [% END %]
+[% END %]
+
+<hr>
+
+<p>
+[% UNLESS no_add_product_link || !user.in_group("editcomponents") %]
+  <a title="Add a product"
+     href="editproducts.cgi?action=add">Add</a> a product[% -%]
+[%# Strictly speaking, we should not have to check for a
+    classification if they are enabled, but I'm just being paranoid %]
+  [% IF Param('useclassification') && classification %]
+    (<a title="Add a product to classification '
+               [%- classification.name FILTER html %]'"
+         href="editproducts.cgi?action=add
+               [%- classification_url_part %]">to
+     classification '[% classification.name FILTER html %]'</a>)
+  [% END %].
+[% END %]
+
+[% IF product && !no_edit_product_link %]
+  Edit product <a 
+  title="Edit Product '[% product.name FILTER html %]' 
+         [%- classification_text %]"
+  href="editproducts.cgi?action=edit&amp;product=[% product.name FILTER uri %]">
+        '[% product.name FILTER html %]'</a>.
+[% END %]
+
+
+[%# Edit other products (in a classification if specified): %]
+[% UNLESS no_edit_other_products_link %]
+  Edit <a 
+  href="editproducts.cgi?
+        [%- classification_url_part_start FILTER none %]">other products
+          [% classification_text %]</a>.
+
+[% END %]
+
+[% IF Param('useclassification') && classification
+      && user.in_group('editclassifications') %]
+  Edit classification <a href="editclassifications.cgi?action=edit
+    [%- classification_url_part %]">'
+    [%- classification.name FILTER html %]'</a>.
+
+[% END %]
+
+</p>

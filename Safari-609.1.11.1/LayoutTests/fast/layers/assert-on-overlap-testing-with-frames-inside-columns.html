@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we can manage overlap testing on frame views inside columns.</title>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+function runTest() {
+    alert("Pass if no assert in debug");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+<style> 
+html, frame {
+    -webkit-column-count: 2;
+}
+</style>
+</head>
+<frameset onload='runTest()'><frame></frame></frameset>

@@ -1,0 +1,19 @@
+Test Promise with Promise A+ tests 2.2.3.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS 2.2.3: If `onRejected` is a function, 2.2.3.1: it must be called after `promise` is rejected, with `promise`â€™s rejection reason as its first argument. already-rejected
+PASS 2.2.3: If `onRejected` is a function, 2.2.3.1: it must be called after `promise` is rejected, with `promise`â€™s rejection reason as its first argument. immediately-rejected
+PASS 2.2.3: If `onRejected` is a function, 2.2.3.1: it must be called after `promise` is rejected, with `promise`â€™s rejection reason as its first argument. eventually-rejected
+PASS 2.2.3: If `onRejected` is a function, 2.2.3.2: it must not be called before `promise` is rejected rejected after a delay
+PASS 2.2.3: If `onRejected` is a function, 2.2.3.2: it must not be called before `promise` is rejected never rejected
+PASS 2.2.3: If `onRejected` is a function, 2.2.3.3: it must not be called more than once. already-rejected
+PASS 2.2.3: If `onRejected` is a function, 2.2.3.3: it must not be called more than once. trying to reject a pending promise more than once, immediately
+PASS 2.2.3: If `onRejected` is a function, 2.2.3.3: it must not be called more than once. trying to reject a pending promise more than once, delayed
+PASS 2.2.3: If `onRejected` is a function, 2.2.3.3: it must not be called more than once. trying to reject a pending promise more than once, immediately then delayed
+PASS 2.2.3: If `onRejected` is a function, 2.2.3.3: it must not be called more than once. when multiple `then` calls are made, spaced apart in time
+PASS 2.2.3: If `onRejected` is a function, 2.2.3.3: it must not be called more than once. when `then` is interleaved with rejection
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

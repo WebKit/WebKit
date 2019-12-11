@@ -1,0 +1,40 @@
+<body>
+    <p>This test ensures if the decoding attribute of an image is set dynamically to "async", the image will be decoded asynchronously regardless of its size.</p>
+    <img decoding="sync">
+    <script>
+        function loadImage(image, src) {
+            return new Promise((resolve) => {
+                image.onload = (() => {
+                    if (window.internals && window.testRunner) {
+                        // Force layout and display so the image gets drawn.
+                        document.body.offsetHeight;
+                        testRunner.display();
+
+                        // Listen for the webkitImageFrameReady event after requesting
+                        // the image decoding.
+                        image.addEventListener("webkitImageFrameReady", function() {
+                            resolve();
+                        }, false);
+                    } else
+                        resolve();
+                });
+                image.src = src;
+            });
+        }
+
+        (function() {
+            if (window.internals && window.testRunner) {
+                internals.clearMemoryCache();
+                internals.settings.setWebkitImageReadyEventEnabled(true);
+                testRunner.waitUntilDone();
+            }
+ 
+            var image = document.querySelector("img");
+            image.decoding="async";
+            loadImage(image, "resources/green-24x24.jpg", true).then(() => {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        })();
+    </script>
+</body>

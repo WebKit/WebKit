@@ -1,0 +1,7 @@
+This tests that IME keypresses modify textarea and input values before and after they are confirmed. To test, switch to an IME. Type some text and see that the underlined text shows up in the textarea's and input's values.
+
+
+SUCCEEDED
+SUCCEEDED
+SUCCEEDED
+SUCCEEDED

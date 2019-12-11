@@ -1,0 +1,47 @@
+<script>
+function forceGC() {
+    try {
+        for (var ndx = 0; ndx < 99000; ndx++)
+            var numbers = new Float64Array(50 * 1024);
+    } catch (e) { }
+}
+
+function addContext() {
+    contexts.push(document.createElement("canvas").getContext("webgl"));
+}
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+var maxNumberOfActiveContexts = 16;
+var contextsToKeep = 8;
+var contexts = [];
+
+// Create the max number of active WebGL contexts.
+while (contexts.length < maxNumberOfActiveContexts)
+    addContext();
+
+// Now remove some of those contexts from this array so they may be garbage collected.
+while (contexts.length > contextsToKeep)
+    contexts.shift();
+
+setTimeout(function() {
+    if (window.GCController)
+        GCController.collect();
+    else
+        forceGC();
+
+    // Add contexts until we get to the limit then add one more. This should only
+    // produce a single warning that an older context will be lost.
+    setTimeout(function() {
+        while (contexts.length < maxNumberOfActiveContexts + 1)
+            addContext();
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+});
+
+</script>

@@ -1,0 +1,18 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+  <title>Testing that spreadMethod="reflect" works</title>
+  <linearGradient id="g1" gradientUnits="objectBoundingBox" x1="0" x2="1">
+    <stop stop-color="blue" offset="0"/>
+    <stop stop-color="yellow" offset="1"/>
+  </linearGradient>
+  <linearGradient id="g2" gradientUnits="objectBoundingBox" x1="0" x2="1">
+    <stop stop-color="yellow" offset="0"/>
+    <stop stop-color="blue" offset="1"/>
+  </linearGradient>
+  <rect width="100" height="100" fill="url(#g1)"/>
+  <rect x="100" width="100" height="100" fill="url(#g2)"/>
+</svg>

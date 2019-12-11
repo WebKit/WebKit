@@ -1,0 +1,3 @@
+
+PASS Attempt to create new transactions inside a versionchange transaction 
+

@@ -1,0 +1,12 @@
+Use iOS Find UI to search for the text "match". The following iframe node should scroll to show the fourth result at its center.
+
+match 2
+
+match 3
+
+
+
+PASS Initial position of iframe node 
+PASS Position of iframe node after the three first results 
+PASS Position of iframe node after the fourth result 
+

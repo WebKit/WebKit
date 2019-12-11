@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner) {
+   testRunner.dumpAsText();
+   testRunner.waitUntilDone();
+}
+function errorPreload(e)
+{
+    console.log("unexpected loading result for preload " + e);
+}
+
+</script>
+<link rel=preload onerror="errorPreload(1)" as=style href="http://localhost:8000/security/resources/allow-if-origin.php?delay=1000&allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss1.css&contentType=text/css&allowCredentials">
+<link rel=preload onerror="errorPreload(2)" as=style href="http://localhost:8080/security/resources/allow-if-origin.php?delay=1000&allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=xorigincss1.css&contentType=text/css&allowCredentials">
+<link rel=preload onerror="errorPreload(3)" as=style crossorigin="with-credentials" href="http://localhost:8000/security/resources/allow-if-origin.php?delay=1000&allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=xorigincss2.css&contentType=text/css&allowCredentials">
+<link rel=preload onload="errorPreload(4)"  as=style crossorigin="with-credentials" href="http://localhost:8080/security/resources/allow-if-origin.php?delay=1000&allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss2.css&contentType=text/css&allowCredentials">
+<div id="log"></div>
+<script>
+var maxResults = 5;
+var results = [];
+
+function checkDone()
+{
+    if (results.length !== maxResults)
+        return;
+    var log = "";
+    results.sort();
+    for (value of results)
+        log += "<br>" + value;
+    document.getElementById('log').innerHTML = log + "<br>DONE";
+    if (window.testRunner)
+        setTimeout(() => { testRunner.notifyDone(); }, 1000);
+}
+
+function logOnLoad(url, isCORS, expectSuccess)
+{
+    results.push((expectSuccess ? "PASS: " : "FAIL: ") + "loaded successfuly " + url + (isCORS ? " (cors mode)" : " (no-cors mode)"));
+    checkDone();
+}
+
+function logOnError(url, isCORS, expectSuccess)
+{
+    results.push((!expectSuccess ? "PASS: " : "FAIL: ") + "did not load " + url + (isCORS ? " (cors mode)" : " (no-cors mode)"));
+    checkDone();
+}
+
+function createLinkElement(url, isCORS, expectSuccess)
+{
+    link = document.createElement('link');
+    link.href = url;
+    link.rel = "stylesheet";
+    link.type = "text/css";
+    if (isCORS)
+        link.crossOrigin = "with-credentials";
+    link.onload = () => { logOnLoad(url, isCORS, expectSuccess); };
+    link.onerror = () => { logOnError(url, isCORS, expectSuccess); };
+    return link;
+}
+
+// Preload 1 (no-cors) with link element (cors): should fail
+document.body.appendChild(createLinkElement("http://localhost:8000/security/resources/allow-if-origin.php?delay=1000&allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss1.css&contentType=text/css&allowCredentials", true, false));
+// Preload 1 (no-cors) with link element (no-cors): should succeed
+document.body.appendChild(createLinkElement("http://localhost:8000/security/resources/allow-if-origin.php?delay=1000&allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss1.css&contentType=text/css&allowCredentials", false, true));
+// Preload 2 (no-cors) with link element (cors): should succeed since 127.0.0.1:8000 allowed
+document.body.appendChild(createLinkElement("http://localhost:8080/security/resources/allow-if-origin.php?delay=1000&allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=xorigincss1.css&contentType=text/css&allowCredentials", true, true));
+// Preload 3 (cors) with link element (cors): should succeed
+document.body.appendChild(createLinkElement("http://localhost:8000/security/resources/allow-if-origin.php?delay=1000&allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=xorigincss2.css&contentType=text/css&allowCredentials", true, true));
+// Preload 4 (cors, preload should fail) with link element (no-cors): should succeed
+document.body.appendChild(createLinkElement("http://localhost:8080/security/resources/allow-if-origin.php?delay=1000&allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss2.css&contentType=text/css&allowCredentials", false, true));
+</script>
+</body>
+</html>

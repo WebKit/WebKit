@@ -1,0 +1,63 @@
+<!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+<head>
+    <title>Tests that the scrubber is dropped when a video is too narrow and restored when made wider</title>
+    <script src="media-file.js"></script>
+    <script src="media-controls.js"></script>
+</head>
+<body>
+    <video controls style="width: 200px"></video>
+    <p>Tests that the scrubber is dropped when a video is too narrow and restored when made wider.</p>
+    <script src="video-test.js"></script>
+    <script>
+
+        var timelineContainer;
+
+        function timelineChildrenAreDropped() {
+            return Array.prototype.every.call(timelineContainer.children, function(child) {
+                return child.classList.contains("dropped");
+            });
+        }
+
+        function timelineChildrenAreNotDisplayed() {
+            return Array.prototype.every.call(timelineContainer.children, function(child) {
+                return child.ownerDocument.defaultView.getComputedStyle(child).display === "none";
+            });
+        }
+
+        testExpected("video.controls", null, "!=");
+
+        waitForEvent("canplaythrough", function() {
+            if (!window.internals) {
+                logResult(false, "window.internals == undefined");
+                endTest();
+                return;
+            }
+
+            testExpected("shadowRoot = internals.shadowRoot(video)", null, "!=");
+            testExpected(`timelineContainer = mediaControlsElement(shadowRoot.firstChild, "-webkit-media-controls-timeline-container")`, null, "!=");
+
+            consoleWrite("Initital test at width = 200px");
+            testExpected("video.offsetWidth", 200, "==");
+            testExpected("timelineChildrenAreDropped()", true, "==");
+            testExpected("timelineChildrenAreNotDisplayed()", true, "==");
+
+            consoleWrite("Second test at width = 500px");
+            video.style.width = "500px";
+            testExpected("video.offsetWidth", 500, "==");
+
+            // Using a timeout here since the resize event that will be dispatched
+            // to the video controls to allow them to update their size needs to have
+            // time to propagate asynchronously.
+            setTimeout(function() {
+                testExpected("timelineChildrenAreDropped()", false, "==");
+                testExpected("timelineChildrenAreNotDisplayed()", false, "==");
+                endTest();
+            });
+        });
+
+        video.src = findMediaFile("video", "content/test");
+
+    </script>
+</body>
+</html>

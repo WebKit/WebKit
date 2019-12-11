@@ -1,0 +1,21 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableInspectorAdditions=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("The test to ensure that each call to getPath returns a new object.");
+
+var ctx = document.createElement("canvas").getContext("2d");
+var path1 = ctx.getPath();
+var path2 = ctx.getPath();
+
+shouldNotBe("path1", "path2");
+shouldBe("path1.currentX", "path2.currentX");
+shouldBe("path1.currentY", "path2.currentY");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

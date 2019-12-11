@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 761x36
+          text run at (0,0) width 761: "This test passes if the div below is a blue 100px square when the deviceScaleFactor is 1, and if it is a 100px green square"
+          text run at (0,18) width 207: "when the deviceScaleFactor is 2."
+      RenderBlock {DIV} at (0,36) size 120x120 [border: (10px none #000000)]

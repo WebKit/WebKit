@@ -1,0 +1,553 @@
+
+== Running test suite: URLUtilities
+-- Running test case: parseURL
+
+Test Invalid: a
+PASS: Should not be a complete URL
+PASS: URL constructor thinks this is invalid
+
+Test Invalid: __WebInspectorInternal__
+PASS: Should not be a complete URL
+PASS: URL constructor thinks this is invalid
+
+Test Invalid: __WebTest__
+PASS: Should not be a complete URL
+PASS: URL constructor thinks this is invalid
+
+Test Invalid: /http://example.com
+PASS: Should not be a complete URL
+PASS: URL constructor thinks this is invalid
+
+Test Valid: http://example.com
+PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
+PASS: host should be: 'example.com'
+PASS: port should be: 'null'
+PASS: origin should be: 'http://example.com'
+PASS: path should be: '/'
+PASS: queryString should be: 'null'
+PASS: fragment should be: 'null'
+PASS: lastPathComponent should be: 'null'
+
+Test Valid: http://example.com/
+PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
+PASS: host should be: 'example.com'
+PASS: port should be: 'null'
+PASS: origin should be: 'http://example.com'
+PASS: path should be: '/'
+PASS: queryString should be: 'null'
+PASS: fragment should be: 'null'
+PASS: lastPathComponent should be: 'null'
+
+Test Valid: http://example.com:80/
+PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
+PASS: host should be: 'example.com'
+PASS: port should be: 'null'
+PASS: origin should be: 'http://example.com'
+PASS: path should be: '/'
+PASS: queryString should be: 'null'
+PASS: fragment should be: 'null'
+PASS: lastPathComponent should be: 'null'
+
+Test Valid: http://example.com:42/
+PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
+PASS: host should be: 'example.com'
+PASS: port should be: '42'
+PASS: origin should be: 'http://example.com:42'
+PASS: path should be: '/'
+PASS: queryString should be: 'null'
+PASS: fragment should be: 'null'
+PASS: lastPathComponent should be: 'null'
+
+Test Valid: http://example.com/path/to/page.html
+PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
+PASS: host should be: 'example.com'
+PASS: port should be: 'null'
+PASS: origin should be: 'http://example.com'
+PASS: path should be: '/path/to/page.html'
+PASS: queryString should be: 'null'
+PASS: fragment should be: 'null'
+PASS: lastPathComponent should be: 'page.html'
+
+Test Valid: http://example.com/path/to/page.html?
+PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
+PASS: host should be: 'example.com'
+PASS: port should be: 'null'
+PASS: origin should be: 'http://example.com'
+PASS: path should be: '/path/to/page.html'
+PASS: queryString should be: 'null'
+PASS: fragment should be: 'null'
+PASS: lastPathComponent should be: 'page.html'
+
+Test Valid: http://example.com/path/to/page.html?a=1
+PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
+PASS: host should be: 'example.com'
+PASS: port should be: 'null'
+PASS: origin should be: 'http://example.com'
+PASS: path should be: '/path/to/page.html'
+PASS: queryString should be: 'a=1'
+PASS: fragment should be: 'null'
+PASS: lastPathComponent should be: 'page.html'
+
+Test Valid: http://example.com/path/to/page.html?a=1&b=2
+PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
+PASS: host should be: 'example.com'
+PASS: port should be: 'null'
+PASS: origin should be: 'http://example.com'
+PASS: path should be: '/path/to/page.html'
+PASS: queryString should be: 'a=1&b=2'
+PASS: fragment should be: 'null'
+PASS: lastPathComponent should be: 'page.html'
+
+Test Valid: http://example.com/path/to/page.html?a=1&b=2#test
+PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
+PASS: host should be: 'example.com'
+PASS: port should be: 'null'
+PASS: origin should be: 'http://example.com'
+PASS: path should be: '/path/to/page.html'
+PASS: queryString should be: 'a=1&b=2'
+PASS: fragment should be: 'test'
+PASS: lastPathComponent should be: 'page.html'
+
+Test Valid: http://example.com:123/path/to/page.html?a=1&b=2#test
+PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
+PASS: host should be: 'example.com'
+PASS: port should be: '123'
+PASS: origin should be: 'http://example.com:123'
+PASS: path should be: '/path/to/page.html'
+PASS: queryString should be: 'a=1&b=2'
+PASS: fragment should be: 'test'
+PASS: lastPathComponent should be: 'page.html'
+
+Test Valid: http://example.com/path/to/page.html#test
+PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
+PASS: host should be: 'example.com'
+PASS: port should be: 'null'
+PASS: origin should be: 'http://example.com'
+PASS: path should be: '/path/to/page.html'
+PASS: queryString should be: 'null'
+PASS: fragment should be: 'test'
+PASS: lastPathComponent should be: 'page.html'
+
+Test Valid: http://example.com#alpha/beta
+PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
+PASS: host should be: 'example.com'
+PASS: port should be: 'null'
+PASS: origin should be: 'http://example.com'
+PASS: path should be: '/'
+PASS: queryString should be: 'null'
+PASS: fragment should be: 'alpha/beta'
+PASS: lastPathComponent should be: 'null'
+
+Test Valid: app-specific://example.com
+PASS: scheme should be: 'app-specific'
+PASS: userinfo should be: 'null'
+PASS: host should be: 'example.com'
+PASS: port should be: 'null'
+PASS: origin should be: 'app-specific://example.com'
+PASS: path should be: 'null'
+PASS: queryString should be: 'null'
+PASS: fragment should be: 'null'
+PASS: lastPathComponent should be: 'null'
+
+Test Valid: http://example
+PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
+PASS: host should be: 'example'
+PASS: port should be: 'null'
+PASS: origin should be: 'http://example'
+PASS: path should be: '/'
+PASS: queryString should be: 'null'
+PASS: fragment should be: 'null'
+PASS: lastPathComponent should be: 'null'
+
+Test Valid: http://my.example.com
+PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
+PASS: host should be: 'my.example.com'
+PASS: port should be: 'null'
+PASS: origin should be: 'http://my.example.com'
+PASS: path should be: '/'
+PASS: queryString should be: 'null'
+PASS: fragment should be: 'null'
+PASS: lastPathComponent should be: 'null'
+
+Test Valid: data:text/plain,test
+PASS: scheme should be: 'data'
+PASS: userinfo should be: 'null'
+PASS: host should be: 'null'
+PASS: port should be: 'null'
+PASS: origin should be: 'null'
+PASS: path should be: 'null'
+PASS: queryString should be: 'null'
+PASS: fragment should be: 'null'
+PASS: lastPathComponent should be: 'null'
+
+Test Invalid: http://
+PASS: Should not be a complete URL
+PASS: URL constructor thinks this is invalid
+
+Test Invalid: http://example.com:65537
+PASS: Should not be a complete URL
+PASS: URL constructor thinks this is invalid
+
+Test Valid: http:example.com/
+PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
+PASS: host should be: 'example.com'
+PASS: port should be: 'null'
+PASS: origin should be: 'http://example.com'
+PASS: path should be: '/'
+PASS: queryString should be: 'null'
+PASS: fragment should be: 'null'
+PASS: lastPathComponent should be: 'null'
+
+Test Valid: http:/example.com/
+PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
+PASS: host should be: 'example.com'
+PASS: port should be: 'null'
+PASS: origin should be: 'http://example.com'
+PASS: path should be: '/'
+PASS: queryString should be: 'null'
+PASS: fragment should be: 'null'
+PASS: lastPathComponent should be: 'null'
+
+Test Valid: http://user:pass@example.com/
+PASS: scheme should be: 'http'
+PASS: userinfo should be: 'user:pass'
+PASS: host should be: 'example.com'
+PASS: port should be: 'null'
+PASS: origin should be: 'http://example.com'
+PASS: path should be: '/'
+PASS: queryString should be: 'null'
+PASS: fragment should be: 'null'
+PASS: lastPathComponent should be: 'null'
+
+Test Valid: http://:pass@example.com/
+PASS: scheme should be: 'http'
+PASS: userinfo should be: ':pass'
+PASS: host should be: 'example.com'
+PASS: port should be: 'null'
+PASS: origin should be: 'http://example.com'
+PASS: path should be: '/'
+PASS: queryString should be: 'null'
+PASS: fragment should be: 'null'
+PASS: lastPathComponent should be: 'null'
+
+Test Invalid: http://user@pass:example.com/
+PASS: Should not be a complete URL
+PASS: URL constructor thinks this is invalid
+
+Test Valid: http://example.com?key=alpha/beta
+PASS: scheme should be: 'http'
+PASS: userinfo should be: 'null'
+PASS: host should be: 'example.com'
+PASS: port should be: 'null'
+PASS: origin should be: 'http://example.com'
+PASS: path should be: '/'
+PASS: queryString should be: 'key=alpha/beta'
+PASS: fragment should be: 'null'
+PASS: lastPathComponent should be: 'null'
+
+-- Running test case: parseDataURL
+
+Test Invalid: https://webkit.org
+PASS: Should not be a data URL
+
+Test Invalid: data:
+PASS: Should not be a data URL
+
+Test Invalid: data:text/plain;test
+PASS: Should not be a data URL
+
+Test Invalid: data:text/plain;base64;test
+PASS: Should not be a data URL
+
+Test Valid: data:,
+PASS: scheme should always be 'data'
+PASS: mimeType should be: 'text/plain'
+PASS: charset should be: 'US-ASCII'
+PASS: base64 should be: 'false'
+PASS: data should be: ''
+PASS: Resolved content should be: ''
+
+Test Valid: data:,test
+PASS: scheme should always be 'data'
+PASS: mimeType should be: 'text/plain'
+PASS: charset should be: 'US-ASCII'
+PASS: base64 should be: 'false'
+PASS: data should be: 'test'
+PASS: Resolved content should be: 'test'
+
+Test Valid: data:text/plain,test
+PASS: scheme should always be 'data'
+PASS: mimeType should be: 'text/plain'
+PASS: charset should be: 'US-ASCII'
+PASS: base64 should be: 'false'
+PASS: data should be: 'test'
+PASS: Resolved content should be: 'test'
+
+Test Valid: data:text/plain;charset=TEST,test
+PASS: scheme should always be 'data'
+PASS: mimeType should be: 'text/plain'
+PASS: charset should be: 'TEST'
+PASS: base64 should be: 'false'
+PASS: data should be: 'test'
+PASS: Resolved content should be: 'test'
+
+Test Valid: data:application/json,{"name":"test","list":[1,2,3]}
+PASS: scheme should always be 'data'
+PASS: mimeType should be: 'application/json'
+PASS: charset should be: 'US-ASCII'
+PASS: base64 should be: 'false'
+PASS: data should be: '{"name":"test","list":[1,2,3]}'
+PASS: Resolved content should be: '{"name":"test","list":[1,2,3]}'
+
+Test Valid: data:application/json,%7B%22name%22%3A%22test%22%2C%22list%22%3A%5B1%2C2%2C3%5D%7D
+PASS: scheme should always be 'data'
+PASS: mimeType should be: 'application/json'
+PASS: charset should be: 'US-ASCII'
+PASS: base64 should be: 'false'
+PASS: data should be: '{"name":"test","list":[1,2,3]}'
+PASS: Resolved content should be: '{"name":"test","list":[1,2,3]}'
+
+Test Valid: data:application/json;base64,eyJuYW1lIjoidGVzdCIsImxpc3QiOlsxLDIsM119
+PASS: scheme should always be 'data'
+PASS: mimeType should be: 'application/json'
+PASS: charset should be: 'US-ASCII'
+PASS: base64 should be: 'true'
+PASS: data should be: 'eyJuYW1lIjoidGVzdCIsImxpc3QiOlsxLDIsM119'
+PASS: Resolved content should be: '{"name":"test","list":[1,2,3]}'
+
+Test Valid: data:application/json;charset=utf-8;base64,eyJuYW1lIjoidGVzdCIsImxpc3QiOlsxLDIsM119
+PASS: scheme should always be 'data'
+PASS: mimeType should be: 'application/json'
+PASS: charset should be: 'utf-8'
+PASS: base64 should be: 'true'
+PASS: data should be: 'eyJuYW1lIjoidGVzdCIsImxpc3QiOlsxLDIsM119'
+PASS: Resolved content should be: '{"name":"test","list":[1,2,3]}'
+
+Test Valid: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==
+PASS: scheme should always be 'data'
+PASS: mimeType should be: 'image/png'
+PASS: charset should be: 'US-ASCII'
+PASS: base64 should be: 'true'
+PASS: data should be: 'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=='
+
+-- Running test case: parseQueryString
+PASS: The query 'a' was parsed successfully.
+PASS: The query 'a&b' was parsed successfully.
+PASS: The query 'a=' was parsed successfully.
+PASS: The query 'a=&b=' was parsed successfully.
+PASS: The query 'a=1' was parsed successfully.
+PASS: The query 'a=1&b=2' was parsed successfully.
+PASS: The query 'a==1' was parsed successfully.
+PASS: The query 'a==1&b==2' was parsed successfully.
+PASS: The query 'a=1=' was parsed successfully.
+PASS: The query 'a=1=&b=2=' was parsed successfully.
+PASS: The query 'a==1=' was parsed successfully.
+PASS: The query 'a==1=&b==2=' was parsed successfully.
+PASS: The query 'a&b=1&c==2=&d&e=3&f==4=' was parsed successfully.
+PASS: The query 'a=foo%20bar&b=123%3A456' was parsed successfully.
+
+-- Running test case: WI.displayNameForURL
+PASS: Display name of 'http://example' should be 'example'.
+PASS: Display name of 'http://example.com' should be 'example.com'.
+PASS: Display name of 'http://example.com/' should be 'example.com'.
+PASS: Display name of 'http://example.com:80/' should be 'example.com'.
+PASS: Display name of 'http://example.com:42/' should be 'example.com'.
+PASS: Display name of 'http://example.com/path' should be 'path'.
+PASS: Display name of 'http://example.com/path/' should be 'path'.
+PASS: Display name of 'http://example.com/path/to' should be 'to'.
+PASS: Display name of 'http://example.com/path/to/' should be 'to'.
+PASS: Display name of 'http://example.com/path/to/page.html' should be 'page.html'.
+PASS: Display name of 'http://example.com/path/to/page.html#test' should be 'page.html'.
+PASS: Display name of 'http://example.com/path/to/page.html?' should be 'page.html'.
+PASS: Display name of 'http://example.com/path/to/page.html?a=1' should be 'page.html'.
+PASS: Display name of 'http://example.com/path/to/page.html?a=1&b=foo%2Fbar' should be 'page.html'.
+PASS: Display name of 'http://example.com/path/to/page.html?a=1&b=foo%2Fbar#test' should be 'page.html'.
+PASS: Display name of 'http://example.com:123/path/to/page.html?a=1&b=foo%2Fbar#test' should be 'page.html'.
+PASS: Display name of 'http://example.com#foo%20bar' should be 'example.com'.
+PASS: Display name of 'http://example.com/#foo%20bar' should be 'example.com'.
+PASS: Display name of 'http://example.com/foo%20bar' should be 'foo bar'.
+PASS: Display name of 'http://example.com?key=foo%20bar' should be 'example.com'.
+PASS: Display name of 'http://example.com/?key=foo%20bar' should be 'example.com'.
+PASS: Display name of 'http://example.com?key=foo bar' should be 'example.com'.
+PASS: Display name of 'http://example.com/?key=foo bar' should be 'example.com'.
+PASS: Display name of 'http://example.com/foo%20bar' should be 'foo bar'.
+PASS: Display name of 'http://example.com/foo bar' should be 'foo bar'.
+PASS: Display name of 'http://example.com#foo/bar' should be 'example.com'.
+PASS: Display name of 'http://example.com/#foo/bar' should be 'example.com'.
+PASS: Display name of 'http://example.com#foo%2Fbar' should be 'example.com'.
+PASS: Display name of 'http://example.com/#foo%2Fbar' should be 'example.com'.
+PASS: Display name of 'http://example.com?key=foo%2Fbar' should be 'example.com'.
+PASS: Display name of 'http://example.com/?key=foo%2Fbar' should be 'example.com'.
+PASS: Display name of 'http://example.com?key=foo/bar' should be 'example.com'.
+PASS: Display name of 'http://example.com/?key=foo/bar' should be 'example.com'.
+PASS: Display name of 'http://example.com/foo%2Fbar' should be 'foo/bar'.
+PASS: Display name of 'http://user:pass@example.com/' should be 'example.com'.
+PASS: Display name of 'http://:pass@example.com/' should be 'example.com'.
+PASS: Display name of 'http://my.example.com' should be 'my.example.com'.
+PASS: Display name of 'http://my.example.com/' should be 'my.example.com'.
+PASS: Display name of 'file:///foo' should be 'foo'.
+PASS: Display name of 'file:///foo/' should be 'foo'.
+PASS: Display name of 'file:///foo/bar' should be 'bar'.
+PASS: Display name of 'data:text/plain,test' should be 'data:text/plain,test'.
+PASS: Display name of 'about:blank' should be 'about:blank'.
+PASS: Display name of 'about:srcdoc' should be 'about:srcdoc'.
+PASS: Display name of 'app-specific://example.com' should be 'example.com'.
+PASS: Display name of 'app-specific://example.com/' should be 'example.com'.
+PASS: Display name of 'app-specific://example.com/path' should be 'path'.
+PASS: Display name of 'a' should be 'a'.
+PASS: Display name of 'http://' should be 'http://'.
+PASS: Display name of 'http://example.com:65537' should be 'http://example.com:65537'.
+PASS: Display name of 'http://user@pass:example.com/' should be 'http://user@pass:example.com/'.
+
+Allowing directory as name...
+PASS: Display name of 'http://example' should be '/'.
+PASS: Display name of 'http://example.com' should be '/'.
+PASS: Display name of 'http://example.com/' should be '/'.
+PASS: Display name of 'http://example.com:80/' should be '/'.
+PASS: Display name of 'http://example.com:42/' should be '/'.
+PASS: Display name of 'http://example.com/path' should be 'path'.
+PASS: Display name of 'http://example.com/path/' should be '/'.
+PASS: Display name of 'http://example.com/path/to' should be 'to'.
+PASS: Display name of 'http://example.com/path/to/' should be '/'.
+PASS: Display name of 'http://example.com/path/to/page.html' should be 'page.html'.
+PASS: Display name of 'http://example.com/path/to/page.html#test' should be 'page.html'.
+PASS: Display name of 'http://example.com/path/to/page.html?' should be 'page.html'.
+PASS: Display name of 'http://example.com/path/to/page.html?a=1' should be 'page.html'.
+PASS: Display name of 'http://example.com/path/to/page.html?a=1&b=foo%2Fbar' should be 'page.html'.
+PASS: Display name of 'http://example.com/path/to/page.html?a=1&b=foo%2Fbar#test' should be 'page.html'.
+PASS: Display name of 'http://example.com:123/path/to/page.html?a=1&b=foo%2Fbar#test' should be 'page.html'.
+PASS: Display name of 'http://example.com#foo%20bar' should be '/'.
+PASS: Display name of 'http://example.com/#foo%20bar' should be '/'.
+PASS: Display name of 'http://example.com/foo%20bar' should be 'foo bar'.
+PASS: Display name of 'http://example.com?key=foo%20bar' should be '/'.
+PASS: Display name of 'http://example.com/?key=foo%20bar' should be '/'.
+PASS: Display name of 'http://example.com?key=foo bar' should be '/'.
+PASS: Display name of 'http://example.com/?key=foo bar' should be '/'.
+PASS: Display name of 'http://example.com/foo%20bar' should be 'foo bar'.
+PASS: Display name of 'http://example.com/foo bar' should be 'foo bar'.
+PASS: Display name of 'http://example.com#foo/bar' should be '/'.
+PASS: Display name of 'http://example.com/#foo/bar' should be '/'.
+PASS: Display name of 'http://example.com#foo%2Fbar' should be '/'.
+PASS: Display name of 'http://example.com/#foo%2Fbar' should be '/'.
+PASS: Display name of 'http://example.com?key=foo%2Fbar' should be '/'.
+PASS: Display name of 'http://example.com/?key=foo%2Fbar' should be '/'.
+PASS: Display name of 'http://example.com?key=foo/bar' should be '/'.
+PASS: Display name of 'http://example.com/?key=foo/bar' should be '/'.
+PASS: Display name of 'http://example.com/foo%2Fbar' should be 'foo/bar'.
+PASS: Display name of 'http://user:pass@example.com/' should be '/'.
+PASS: Display name of 'http://:pass@example.com/' should be '/'.
+PASS: Display name of 'http://my.example.com' should be '/'.
+PASS: Display name of 'http://my.example.com/' should be '/'.
+PASS: Display name of 'file:///foo' should be 'foo'.
+PASS: Display name of 'file:///foo/' should be '/'.
+PASS: Display name of 'file:///foo/bar' should be 'bar'.
+PASS: Display name of 'data:text/plain,test' should be 'data:text/plain,test'.
+PASS: Display name of 'about:blank' should be 'about:blank'.
+PASS: Display name of 'about:srcdoc' should be 'about:srcdoc'.
+PASS: Display name of 'app-specific://example.com' should be 'example.com'.
+PASS: Display name of 'app-specific://example.com/' should be '/'.
+PASS: Display name of 'app-specific://example.com/path' should be 'path'.
+PASS: Display name of 'a' should be 'a'.
+PASS: Display name of 'http://' should be 'http://'.
+PASS: Display name of 'http://example.com:65537' should be 'http://example.com:65537'.
+PASS: Display name of 'http://user@pass:example.com/' should be 'http://user@pass:example.com/'.
+
+-- Running test case: WI.urlWithoutFragment
+PASS: Removing fragment of 'http://example.com' should be 'http://example.com/'.
+PASS: Removing fragment of 'http://example.com#frag' should be 'http://example.com/'.
+PASS: Removing fragment of 'https://example.com' should be 'https://example.com/'.
+PASS: Removing fragment of 'https://example.com#frag' should be 'https://example.com/'.
+PASS: Removing fragment of 'ftp://example.com' should be 'ftp://example.com/'.
+PASS: Removing fragment of 'ftp://example.com#frag' should be 'ftp://example.com/'.
+PASS: Removing fragment of 'http://example.com/' should be 'http://example.com/'.
+PASS: Removing fragment of 'http://example.com/#frag' should be 'http://example.com/'.
+PASS: Removing fragment of 'http://example.com/path' should be 'http://example.com/path'.
+PASS: Removing fragment of 'http://example.com/path#frag' should be 'http://example.com/path'.
+PASS: Removing fragment of 'http://example.com/path/a/b/' should be 'http://example.com/path/a/b/'.
+PASS: Removing fragment of 'http://example.com/path/a/b/#frag' should be 'http://example.com/path/a/b/'.
+PASS: Removing fragment of 'http://example.com/path/a/b/?' should be 'http://example.com/path/a/b/?'.
+PASS: Removing fragment of 'http://example.com/path/a/b/?#frag' should be 'http://example.com/path/a/b/?'.
+PASS: Removing fragment of 'http://example.com/path/a/b/?s=1' should be 'http://example.com/path/a/b/?s=1'.
+PASS: Removing fragment of 'http://example.com/path/a/b/?s=1#frag' should be 'http://example.com/path/a/b/?s=1'.
+PASS: Removing fragment of 'http://example.com/path/a/b/?s=1&t=2' should be 'http://example.com/path/a/b/?s=1&t=2'.
+PASS: Removing fragment of 'http://example.com/path/a/b/?s=1&t=2#frag' should be 'http://example.com/path/a/b/?s=1&t=2'.
+PASS: Removing fragment of 'http://example.com?' should be 'http://example.com/?'.
+PASS: Removing fragment of 'http://example.com?#frag' should be 'http://example.com/?'.
+PASS: Removing fragment of 'http://example.com?s=1' should be 'http://example.com/?s=1'.
+PASS: Removing fragment of 'http://example.com?s=1#frag' should be 'http://example.com/?s=1'.
+PASS: Removing fragment of 'http://example.com?s=1&t=2' should be 'http://example.com/?s=1&t=2'.
+PASS: Removing fragment of 'http://example.com?s=1&t=2#frag' should be 'http://example.com/?s=1&t=2'.
+PASS: Removing fragment of 'http://example.com#' should be 'http://example.com/'.
+PASS: Removing fragment of 'http://example.com/#' should be 'http://example.com/'.
+PASS: Removing fragment of 'http://example.com/path#' should be 'http://example.com/path'.
+PASS: Removing fragment of 'http://example.com/path/#' should be 'http://example.com/path/'.
+PASS: Removing fragment of 'http://example.com/path?#' should be 'http://example.com/path?'.
+PASS: Removing fragment of 'http://example.com/path/?#' should be 'http://example.com/path/?'.
+PASS: Removing fragment of '#hash' should be 'about:blank'.
+PASS: Removing fragment of 'invalid' should be 'invalid'.
+
+-- Running test case: WI.h2Authority
+PASS: HTTP/2 :authority of 'http://example.com' should be 'example.com'.
+PASS: HTTP/2 :authority of 'https://example.com' should be 'example.com'.
+PASS: HTTP/2 :authority of 'ftp://example.com' should be 'example.com'.
+PASS: HTTP/2 :authority of 'http://example.com/foo' should be 'example.com'.
+PASS: HTTP/2 :authority of 'https://example.com/foo' should be 'example.com'.
+PASS: HTTP/2 :authority of 'ftp://example.com/foo' should be 'example.com'.
+PASS: HTTP/2 :authority of 'http://example.com:123' should be 'example.com:123'.
+PASS: HTTP/2 :authority of 'https://example.com:123' should be 'example.com:123'.
+PASS: HTTP/2 :authority of 'ftp://example.com:123' should be 'example.com:123'.
+PASS: HTTP/2 :authority of 'ftp://user:pass@example.com/foo' should be 'user:pass@example.com'.
+PASS: HTTP/2 :authority of 'http://user:pass@example.com/foo' should be 'example.com'.
+PASS: HTTP/2 :authority of 'https://user:pass@example.com/foo' should be 'example.com'.
+PASS: HTTP/2 :authority of 'ftp://user:pass@example.com:123/foo' should be 'user:pass@example.com:123'.
+PASS: HTTP/2 :authority of 'http://user:pass@example.com:123/foo' should be 'example.com:123'.
+PASS: HTTP/2 :authority of 'https://user:pass@example.com:123/foo' should be 'example.com:123'.
+PASS: HTTP/2 :authority of 'ftp://:pass@example.com/foo' should be ':pass@example.com'.
+PASS: HTTP/2 :authority of 'http://:pass@example.com/foo' should be 'example.com'.
+PASS: HTTP/2 :authority of 'https://:pass@example.com/foo' should be 'example.com'.
+PASS: HTTP/2 :authority of 'ftp://:pass@example.com:123/foo' should be ':pass@example.com:123'.
+PASS: HTTP/2 :authority of 'http://:pass@example.com:123/foo' should be 'example.com:123'.
+PASS: HTTP/2 :authority of 'https://:pass@example.com:123/foo' should be 'example.com:123'.
+
+-- Running test case: WI.h2Path
+PASS: HTTP/2 :path of 'http://example.com' should be '/'.
+PASS: HTTP/2 :path of 'https://example.com' should be '/'.
+PASS: HTTP/2 :path of 'ftp://example.com' should be '/'.
+PASS: HTTP/2 :path of 'http://example.com/foo' should be '/foo'.
+PASS: HTTP/2 :path of 'https://example.com/foo' should be '/foo'.
+PASS: HTTP/2 :path of 'ftp://example.com/foo' should be '/foo'.
+PASS: HTTP/2 :path of 'http://example.com/foo#hash' should be '/foo'.
+PASS: HTTP/2 :path of 'https://example.com/foo#hash' should be '/foo'.
+PASS: HTTP/2 :path of 'ftp://example.com/foo#hash' should be '/foo'.
+PASS: HTTP/2 :path of 'http://example.com/foo/bar.js' should be '/foo/bar.js'.
+PASS: HTTP/2 :path of 'https://example.com/foo/bar.js' should be '/foo/bar.js'.
+PASS: HTTP/2 :path of 'ftp://example.com/foo/bar.js' should be '/foo/bar.js'.
+PASS: HTTP/2 :path of 'http://example.com/foo/bar.js#hash' should be '/foo/bar.js'.
+PASS: HTTP/2 :path of 'https://example.com/foo/bar.js#hash' should be '/foo/bar.js'.
+PASS: HTTP/2 :path of 'ftp://example.com/foo/bar.js#hash' should be '/foo/bar.js'.
+PASS: HTTP/2 :path of 'http://example.com/?t=1' should be '/?t=1'.
+PASS: HTTP/2 :path of 'https://example.com/?t=1' should be '/?t=1'.
+PASS: HTTP/2 :path of 'ftp://example.com/?t=1' should be '/?t=1'.
+PASS: HTTP/2 :path of 'http://example.com/foo/bar.js?t=1' should be '/foo/bar.js?t=1'.
+PASS: HTTP/2 :path of 'https://example.com/foo/bar.js?t=1' should be '/foo/bar.js?t=1'.
+PASS: HTTP/2 :path of 'ftp://example.com/foo/bar.js?t=1' should be '/foo/bar.js?t=1'.
+PASS: HTTP/2 :path of 'http://example.com/foo/bar.js?t=1#hash' should be '/foo/bar.js?t=1'.
+PASS: HTTP/2 :path of 'https://example.com/foo/bar.js?t=1#hash' should be '/foo/bar.js?t=1'.
+PASS: HTTP/2 :path of 'ftp://example.com/foo/bar.js?t=1#hash' should be '/foo/bar.js?t=1'.
+

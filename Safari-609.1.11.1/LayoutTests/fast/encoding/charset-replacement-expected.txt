@@ -1,0 +1,4 @@
+ALERT: windows-1252
+Test PASSED if the encoding of this document is the default encoding.
+Test FAILED if you see a U+FFFD character in a dumped render tree.
+

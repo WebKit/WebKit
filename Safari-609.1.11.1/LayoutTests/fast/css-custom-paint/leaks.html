@@ -1,0 +1,37 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:CSSPaintingAPIEnabled=true ] -->
+<meta name="author" title="Justin Michaud" href="mailto:justin_michaud@webkit.org">
+<meta name="assert" content="Test that paint worklets don't leak">
+<link rel="help" content="https://drafts.css-houdini.org/css-paint-api-1/">
+<script src="../../resources/js-test-pre.js"></script>
+
+<iframe id="testFrame" src="resources/leaks-frame.html"></iframe>
+
+<script>
+description("Tests that using custom paint does not cause the paint worklet global scope to get leaked.");
+window.jsTestIsAsync = true;
+
+function paintShouldDie()
+{
+    return new Promise(function(resolve, reject) {
+        handle = setInterval(function() {
+            gc();
+            if (!internals.isAnyWorkletGlobalScopeAlive()) {
+                clearInterval(handle);
+                resolve();
+            }
+        }, 10);
+    });
+}
+
+var testFrame = document.getElementById("testFrame");
+testFrame.onload = function() {
+    setTimeout(function() {
+        testFrame.remove();
+        paintShouldDie().then(function() {
+            testPassed("Worklet global scope did not leak");
+            finishJSTest();
+        });
+    }, 10);
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>

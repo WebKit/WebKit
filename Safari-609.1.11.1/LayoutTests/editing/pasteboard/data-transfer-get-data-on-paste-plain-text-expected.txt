@@ -1,0 +1,6 @@
+
+{
+    "paste": {
+        "text/plain": "Plain text"
+    }
+}

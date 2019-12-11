@@ -1,0 +1,5 @@
+2d.composite.globalAlpha.range
+
+
+FAIL OffscreenCanvas test: 2d.composite.globalAlpha.range null is not an object (evaluating 'ctx.globalAlpha = 0.5')
+

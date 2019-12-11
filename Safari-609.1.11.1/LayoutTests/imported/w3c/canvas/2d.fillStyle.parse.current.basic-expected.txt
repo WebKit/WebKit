@@ -1,0 +1,7 @@
+2d.fillStyle.parse.current.basic
+currentColor is computed from the canvas element
+Spec references: 2d.colours.parse 2d.currentColor.onset
+Actual output:
+Expected output:
+
+Passed

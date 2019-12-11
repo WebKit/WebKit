@@ -1,0 +1,72 @@
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<pre id="console"></pre>
+<script>
+description('Verifies that we can go back and forward from the top level of a frame set where a window changes its name after the initial load.');
+
+var testWindow;
+
+onload = function()
+{
+    if (window.testRunner) {
+        testRunner.setCanOpenWindows();
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    
+    testWindow = window.open('resources/history-subframe-with-name-container.html');
+    if (!testWindow)
+        testFailed('Could not open test window');    
+}
+
+var State = {
+  0: 'INITIAL',
+  1: 'FRAME_LOADED_INITIAL',
+  2: 'FRAME_LOADED_NAV',
+  3: 'FRAME_LOADED_BACK',
+  4: 'FRAME_LOADED_FORWARD'
+};
+
+var currentState = 0;
+var currentPageId;
+
+function onFrameLoaded(pageId)
+{
+    // The page ID is put in a global so that the eval() inside of shouldBe can
+    // see it
+    currentPageId = pageId;    
+    currentState++;
+    
+    switch (currentState) {
+      case 1:
+          shouldBe('2', 'currentPageId');
+          // Make sure we generate a history entry.
+          setTimeout(function() { testWindow.frames[0].location.href = 'resources/history-subframe-with-name-3.html' }, 0);
+          break;
+      case 2:
+          shouldBe('3', 'currentPageId');
+          testWindow.history.back();
+          break;
+      case 3:
+          shouldBe('2', 'currentPageId');
+          testWindow.history.forward();
+          break;
+      case 4:
+          shouldBe('3', 'currentPageId');
+          break;
+      default:
+          testFailed('Should not be in state ' + currentState + ". currentPageId is " + currentPageId);
+          break;
+    }
+    
+    if (currentState == 4) {
+        testPassed('Complete: navigated through all the states');
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+}
+</script>
+</body>

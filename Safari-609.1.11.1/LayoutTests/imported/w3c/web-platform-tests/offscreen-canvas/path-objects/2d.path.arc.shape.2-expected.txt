@@ -1,0 +1,7 @@
+2d.path.arc.shape.2
+
+arc() from 0 to pi draws stuff in the right half
+
+
+FAIL arc() from 0 to pi draws stuff in the right half null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

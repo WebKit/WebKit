@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div style="display:none">
+  <ul>
+    <li></li>
+    <li>
+      <ol>
+        <li></li>
+        <li><p id="target1">Target 1</p></li>
+        <li></li>
+      </ol>
+    </li>
+    <li></li>
+  </ul>
+  <ul>
+    <li>
+      <li>
+        <li><p  id="target2">Target 2</p></li>
+      </li>
+    </li>
+  </ul>
+</div>
+</body>
+<script>
+description('Test backtracking with a single child selector relation.');
+
+shouldBe('document.querySelectorAll("ul>li p").length', '2');
+shouldBeEqualToString('document.querySelectorAll("ul>li p")[0].id', 'target1');
+shouldBeEqualToString('document.querySelectorAll("ul>li p")[1].id', 'target2');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

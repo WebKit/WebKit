@@ -1,0 +1,14 @@
+WEBVTT
+Cues that are temporally out of order are ignored (3rd cue here is ignored).
+
+1
+00:00:00.000 --> 00:00:30.500
+Bear is Coming!!!!!
+
+2
+00:00:20.000 --> 00:01:00.500
+I said Bear is coming!!!!
+
+3
+00:00:01.000 --> 100:20:00.500
+I said Bear is coming now!!!!

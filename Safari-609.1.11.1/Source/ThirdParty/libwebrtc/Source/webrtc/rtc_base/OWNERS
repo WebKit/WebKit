@@ -1,0 +1,16 @@
+hta@webrtc.org
+juberti@webrtc.org
+kwiberg@webrtc.org
+mflodman@webrtc.org
+qingsi@webrtc.org
+sergeyu@chromium.org
+steveanton@webrtc.org
+tommi@webrtc.org
+
+# These are for the common case of adding or renaming files. If you're doing
+# structural changes, please get a review from a reviewer in this file.
+per-file *.gn=*
+per-file *.gni=*
+
+per-file rate_statistics*=sprang@webrtc.org
+per-file rate_statistics*=stefan@webrtc.org

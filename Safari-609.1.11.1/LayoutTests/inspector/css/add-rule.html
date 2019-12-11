@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<link rel="stylesheet" href="resources/external.css">
+<script>
+function test() {
+    let nodeStyles = null;
+
+    let suite = InspectorTest.createAsyncSuite("CSS.addRule");
+
+    let mainFrame = WI.networkManager.mainFrame;
+
+    function stringify(range) {
+        return `${range.startLine}:${range.startColumn},${range.endLine}:${range.endColumn}`;
+    }
+
+    suite.addTestCase({
+        name: "CSS.addRule.InNonExistingInspectorStyleSheet",
+        description: "Ensure that an inspector style sheet is created and the rule is added.",
+        test(resolve, reject) {
+            function ruleAdded(error, rulePayload) {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+
+                InspectorTest.expectEqual(rulePayload.selectorList.text, "body", `Rule selector should be "body"`);
+                InspectorTest.expectEqual(stringify(rulePayload.selectorList.range), "0:0,0:4", `Rule range should be [0:0,0:4]`);
+                InspectorTest.expectEqual(rulePayload.origin, "inspector", `Rule origin should be "inspector"`);
+
+                resolve();
+            }
+
+            function inspectorStyleSheetAvailable(styleSheet) {
+                if (!styleSheet) {
+                    reject("Missing inspector style sheet");
+                    return;
+                }
+
+                CSSAgent.addRule(styleSheet.id, "body", ruleAdded);
+            }
+
+            InspectorTest.expectEqual(WI.cssManager.inspectorStyleSheetsForFrame(mainFrame).length, 0, "Should not have any inspector style sheets for the main frame.");
+
+            WI.cssManager.preferredInspectorStyleSheetForFrame(mainFrame, inspectorStyleSheetAvailable);
+        }
+    });
+
+    suite.addTestCase({
+        name: "CSS.addRule.InExistingInspectorStyleSheet",
+        description: "Ensure that a rule is added to the existing inspector style sheet.",
+        test(resolve, reject) {
+            function ruleAdded(error, rulePayload) {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+
+                InspectorTest.expectEqual(rulePayload.selectorList.text, "div", `Rule selector should be "div"`);
+                InspectorTest.expectEqual(stringify(rulePayload.selectorList.range), "1:0,1:3", `Rule range should be [1:0,1:3]`);
+                InspectorTest.expectEqual(rulePayload.origin, "inspector", `Rule origin should be "inspector"`);
+
+                resolve();
+            }
+
+            let inspectorStyleSheet = null;
+            for (let styleSheet of WI.cssManager.styleSheets) {
+                if (styleSheet.isInspectorStyleSheet()) {
+                    if (inspectorStyleSheet) {
+                        reject("There should only be one inspector style sheet");
+                        return;
+                    }
+
+                    inspectorStyleSheet = styleSheet;
+                }
+            }
+
+            if (inspectorStyleSheet)
+                CSSAgent.addRule(inspectorStyleSheet.id, "div", ruleAdded);
+            else
+                reject("Missing inspector style sheet");
+        }
+    });
+
+    suite.addTestCase({
+        name: "CSS.addRule.ExternalStyleSheet",
+        description: "Ensure that a rule is added to the external style sheet.",
+        test(resolve, reject) {
+            function ruleAdded(error, rulePayload) {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+
+                InspectorTest.expectEqual(rulePayload.selectorList.text, "div", `Rule selector should be "div"`);
+                InspectorTest.expectEqual(stringify(rulePayload.selectorList.range), "2:0,2:3", `Rule range should be [2:0,2:3]`);
+                InspectorTest.expectEqual(rulePayload.origin, "regular", `Rule origin should be "regular"`);
+
+                resolve();
+            }
+
+            let externalStyleSheet = null;
+            for (let styleSheet of WI.cssManager.styleSheets) {
+                if (styleSheet.displayName === "external.css") {
+                    if (externalStyleSheet) {
+                        reject("There should only be one external style sheet");
+                        return;
+                    }
+
+                    externalStyleSheet = styleSheet;
+                }
+            }
+
+            if (externalStyleSheet)
+                CSSAgent.addRule(externalStyleSheet.id, "div", ruleAdded);
+            else
+                reject("Missing external style sheet");
+        }
+    });
+
+    // ------
+
+    suite.addTestCase({
+        name: "CSS.addRule.BadStyleSheetId",
+        description: "Ensure that adding a rule to a style sheet with an invalid id is handled properly.",
+        test(resolve, reject) {
+            function ruleAdded(error, rulePayload) {
+                if (error) {
+                    InspectorTest.pass(error);
+                    resolve();
+                    return;
+                }
+
+                reject(JSON.stringify(rulePayload));
+            }
+            CSSAgent.addRule("DOES_NOT_EXIST", "div", ruleAdded);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that CSS.addRule works for all types of stylesheets.</p>
+</body>
+</html>

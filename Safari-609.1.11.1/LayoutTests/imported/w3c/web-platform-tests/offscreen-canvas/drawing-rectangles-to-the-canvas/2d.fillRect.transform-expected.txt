@@ -1,0 +1,7 @@
+2d.fillRect.transform
+
+fillRect is affected by transforms
+
+
+FAIL fillRect is affected by transforms null is not an object (evaluating 'ctx.scale')
+

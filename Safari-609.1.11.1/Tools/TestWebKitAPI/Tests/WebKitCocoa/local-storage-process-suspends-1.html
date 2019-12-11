@@ -1,0 +1,7 @@
+<!DOCTYPE html>
+<script>
+
+localStorage.setItem('key', 'value');
+window.webkit.messageHandlers.testHandler.postMessage(localStorage.getItem('key'));
+
+</script>

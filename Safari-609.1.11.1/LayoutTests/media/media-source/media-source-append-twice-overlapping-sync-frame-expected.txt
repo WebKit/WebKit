@@ -1,0 +1,16 @@
+
+EXPECTED (source.readyState == 'closed') OK
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(sourceBuffer.appendBuffer(initSegment))
+EVENT(updateend)
+RUN(sourceBuffer.appendBuffer(sampleRun(1)))
+EVENT(updateend)
+RUN(sourceBuffer.appendBuffer(sampleRun(2)))
+EVENT(updateend)
+{PTS({0/1000000 = 0.000000}), DTS({0/1000000 = 0.000000}), duration({166667/1000000 = 0.166667}), flags(1), generation(2)}
+{PTS({167000/1000000 = 0.167000}), DTS({167000/1000000 = 0.167000}), duration({166667/1000000 = 0.166667}), flags(0), generation(2)}
+{PTS({333000/1000000 = 0.333000}), DTS({333000/1000000 = 0.333000}), duration({166667/1000000 = 0.166667}), flags(1), generation(2)}
+{PTS({500000/1000000 = 0.500000}), DTS({500000/1000000 = 0.500000}), duration({166667/1000000 = 0.166667}), flags(0), generation(2)}
+END OF TEST
+

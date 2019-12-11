@@ -1,0 +1,25 @@
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+Tests that Same-Site cookies for 127.0.0.1 are sent with a request initiated from an iframe- and processed by a service worker- with the same origin.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Cookies sent with HTTP request:
+PASS Has cookie "strict" with value 11.
+PASS Has cookie "implicit-strict" with value 11.
+PASS Has cookie "strict-because-invalid-SameSite-value" with value 11.
+PASS Has cookie "lax" with value 11.
+
+Cookies visible in DOM:
+PASS Has DOM cookie "strict" with value 11.
+PASS Has DOM cookie "implicit-strict" with value 11.
+PASS Has DOM cookie "strict-because-invalid-SameSite-value" with value 11.
+PASS Has DOM cookie "lax" with value 11.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

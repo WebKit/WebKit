@@ -1,0 +1,5 @@
+2d.fillStyle.parse.rgba-clamp-1
+
+
+FAIL OffscreenCanvas test: 2d.fillStyle.parse.rgba-clamp-1 null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

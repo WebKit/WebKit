@@ -1,0 +1,44 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+    <head>
+        <script src="../media-file.js"></script>
+        <script src="controls-test-helpers.js"></script>
+        <script>
+            var tester = new ControlsTest()
+                .whenReady(runTests)
+                .start();
+
+            function runTests()
+            {
+                currentState = tester.currentState;
+                tester.test("We are using the apple idiom")
+                    .value(currentState.idiom)
+                    .isEqualTo("apple");
+
+                var elementNames = ["Play Button", "Rewind Button", "Timeline Box", "Mute Box", "Fullscreen Button"];
+                var previousElementName = "";
+                var previousLeftValue = 0;
+
+                elementNames.forEach(function (name) {
+                    var elementState = tester.stateForControlsElement(name);
+                    var leftValue = elementState.bounds.left;
+                    if (previousElementName && previousLeftValue) {
+                        tester.test(`${name} is to the right of ${previousElementName}`)
+                            .value(elementState.bounds.left)
+                        .isGreaterThan(previousLeftValue);
+                    }
+                    previousElementName = name;
+                    previousLeftValue = leftValue;
+                });
+
+                tester.end();
+            }
+
+        </script>
+    </head>
+    <body>
+        <p>This tests for the content in the status display.</p>
+        <p>This test only runs in DRT!</p>
+        <video controls></video>
+    </body>
+</html>

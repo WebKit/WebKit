@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style id="style-container">
+</style>
+</head>
+<body>
+</body>
+<script>
+description('Test the parsing of :matches(selectorList) for querySelector and style.');
+
+function testValidSelector(selectorString, expectedSerializedSelector) {
+    shouldNotThrow('document.querySelector(":matches(' + selectorString.replace(/\\/g, '\\\\') + ')")');
+
+    var styleContainer = document.getElementById('style-container');
+    styleContainer.innerHTML = ':matches(' + selectorString + ') { }';
+    shouldBe("document.getElementById('style-container').sheet.cssRules.length", "1");
+    if (!expectedSerializedSelector)
+        expectedSerializedSelector = selectorString;
+    shouldBeEqualToString("document.getElementById('style-container').sheet.cssRules[0].selectorText", ':matches(' + expectedSerializedSelector + ')');
+    styleContainer.innerHTML = '';
+}
+
+var validSelectors = [
+    // Basic types.
+    "*",
+    "foobar",
+    "#id",
+    ".class",
+    ":first-child",
+    ":last-child",
+    ":visited",
+
+    // Pseudo elements.
+    "::first-letter",
+    "::first-line",
+    "::before",
+    "::after",
+
+    // Compound selectors.
+    "foobar#id.class",
+    ".class:not(.notclass)",
+    "#id:empty",
+
+    // Complex selectors.
+    "a > b",
+    "a b",
+    "a + b",
+    "a ~ b",
+    "a + b > c ~ d e + g",
+
+    // Functional pseudo classes.
+    ":-webkit-any(.selector, #tama, #hanayo, #midoriko)",
+    ":not(:link)",
+    ":nth-child(2n of a, b, c)",
+];
+
+debug("1 valid selectors");
+for (var i = 0; i < validSelectors.length; ++i) {
+    var selectorString = validSelectors[i];
+    testValidSelector(selectorString);
+    testValidSelector(selectorString + "    ", selectorString);
+}
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

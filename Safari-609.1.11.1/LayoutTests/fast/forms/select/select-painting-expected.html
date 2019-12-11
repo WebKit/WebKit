@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+
+.select  {
+    width: 100px;
+    height:100px;
+    font-family: sans-serif;
+    font-size: 12px;
+    border: 1px solid black;
+    box-sizing: border-box;
+}
+
+.option {
+    margin-left: 2px;
+    margin-bottom: 1px;
+}
+.optgroup {
+    margin-left: 2px;
+    margin-bottom: 1px;
+    font-weight: bold
+}
+
+#cover {
+    position: absolute;
+    width: 100px;
+    height:300px;
+    background-color: black;
+    left: 80px;
+    top: 0px;
+}
+.red { color: red; }
+</style>
+</head>
+<body>
+<div class=select>
+    <div class=option>One</div>
+    <div class="option red">Two</div>
+</div>
+<div class=select>
+    <div class=optgroup>Optgroup1</div>
+    <div class="optgroup red">Optgroup2</div>
+</div>
+<div id=cover></div>
+</body>
+</html>

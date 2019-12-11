@@ -1,0 +1,2 @@
+Test for 68133: Crash in RenderBox::paintMaskImages when GraphicsContext's painting is disabled
+This test has PASSED (no crash).

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description('Test Promise.resolve looks up "then" synchronously.');
+
+window.jsTestIsAsync = true;
+
+var count = 0;
+
+var thenable = {
+    get then() {
+        count++;
+        throw new Error("then lookup");
+    }
+};
+
+var p = Promise.resolve(thenable);
+shouldBe("count", "1");
+var error = null;
+p.catch(function (err) {
+    error = err;
+    shouldBeEqualToString("error.message", "then lookup");
+    debug("promise rejected.");
+    finishJSTest();
+});
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

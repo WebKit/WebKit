@@ -1,0 +1,14 @@
+<script>
+function runTest()
+{
+    if (window.eventSender) {
+        var a = document.getElementById("a");
+        eventSender.mouseMoveTo(a.offsetLeft + 2, a.offsetTop + 2);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+}
+</script>
+<body onload="runTest();">
+<a id="a" href="notify-done.html" target="_top">Click for notify done in main frame</a>
+</body>

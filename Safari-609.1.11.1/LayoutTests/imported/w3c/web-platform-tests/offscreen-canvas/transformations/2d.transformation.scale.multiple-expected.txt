@@ -1,0 +1,7 @@
+2d.transformation.scale.multiple
+
+Multiple scale()s combine
+
+
+FAIL Multiple scale()s combine null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

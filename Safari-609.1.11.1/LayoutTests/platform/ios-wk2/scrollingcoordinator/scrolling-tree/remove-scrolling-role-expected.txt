@@ -1,0 +1,29 @@
+
+(Frame scrolling node
+  (scrollable area size 800 600)
+  (contents size 800 2513)
+  (parent relative scrollable rect at (0,0) size 800x600)
+  (scrollable area parameters 
+    (horizontal scroll elasticity 1)
+    (vertical scroll elasticity 1)
+    (horizontal scrollbar mode 0)
+    (vertical scrollbar mode 0))
+  (layout viewport at (0,0) size 800x600)
+  (min layout viewport origin (0,0))
+  (max layout viewport origin (0,1913))
+  (behavior for fixed 0)
+  (children 1
+    (Overflow scrolling node
+      (scrollable area size 300 400)
+      (contents size 300 2000)
+      (parent relative scrollable rect at (14,14) size 300x400)
+      (scrollable area parameters 
+        (horizontal scroll elasticity 1)
+        (vertical scroll elasticity 1)
+        (horizontal scrollbar mode 0)
+        (vertical scrollbar mode 0)
+        (has enabled vertical scrollbar 1))
+    )
+  )
+)
+

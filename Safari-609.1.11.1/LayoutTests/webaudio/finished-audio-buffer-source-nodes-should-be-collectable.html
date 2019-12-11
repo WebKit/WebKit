@@ -1,0 +1,66 @@
+<!DOCTYPE html><!-- webkit-test-runner [ jscOptions=--useWeakRefs=true ] -->
+<head>
+    <script src="../resources/js-test.js"></script>
+    <script src="resources/audio-testing.js"></script>
+    <script src="resources/audiobuffersource-testing.js"></script>
+    <script>
+        var context;
+        var source;
+        var promises = [];
+        var refs = [];
+        const sampleRate = 44100.0;
+        const numberOfFrames = 32;
+
+        function create(mergerNode, index)
+        {
+            jsTestIsAsync = true;
+
+            source = context.createBufferSource();
+            source.buffer = createTestBuffer(context, numberOfFrames);
+            source.connect(mergerNode, 0, index);
+
+            let resolve;
+            let promise = new Promise((r) => resolve = r);
+            promises.push(promise);
+            refs.push(new WeakRef(source));
+            
+            source.onended = function() 
+            {
+                testPassed("source.onended called.");
+                gc();
+                resolve();
+            }
+            source.start(0);
+        }
+      
+        function runTest() 
+        {
+            context = new webkitOfflineAudioContext(1, numberOfFrames, sampleRate);
+            // FIXME: Passing more than 6 seems to fail. 6 is the default value so I'm guessing there's a bug there...
+            const count = 6;
+            let merger = context.createChannelMerger(count);
+            for (let i = 0; i < count; ++i)
+                create(merger, i);
+            merger.connect(context.destination);
+            context.startRendering();
+            
+            Promise.all(promises).then(() => {
+                for (ref of refs) {
+                    if (!ref.deref()) {
+                        testPassed("AudioBufferSourceNode was collected after calling onended.");
+                        finishJSTest();
+                        return;
+                    }
+                }
+
+                testFailed("No AudioBufferSourceNode was collected.");
+                finishJSTest();
+            });
+        }
+    </script>
+
+</head>
+<body onload="runTest()">
+    <div>Tests that AudioBufferSourceNodes are collectable after they trigger their onended event.</div>
+    <div id="console"></div>
+</body>

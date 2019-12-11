@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 3: TypeError: parent.do_test is not a function. (In 'parent.do_test()', 'parent.do_test' is undefined)
+
+PASS pagehide event properties 
+

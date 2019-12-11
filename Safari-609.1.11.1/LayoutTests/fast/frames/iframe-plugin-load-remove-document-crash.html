@@ -1,0 +1,21 @@
+<html>
+<body onload="runTest()">
+<script>
+    if (window.testRunner)
+    {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    
+    function runTest()
+    {
+        document.body.innerHTML = 'PASS';
+        
+        if (testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+<iframe src="data:application/x-webkit-test-netscape,foo"></iframe>
+</body>
+</html>
+

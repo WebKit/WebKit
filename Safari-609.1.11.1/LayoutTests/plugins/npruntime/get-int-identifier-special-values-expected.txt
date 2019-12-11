@@ -1,0 +1,2 @@
+PASS: getIntIdentifier(n) returned consistent identifiers for n = 1, 0 and -1.
+

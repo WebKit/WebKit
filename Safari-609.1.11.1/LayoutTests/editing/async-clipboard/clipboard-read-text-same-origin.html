@@ -1,0 +1,68 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true experimental:AsyncClipboardAPIEnabled=true domPasteAllowed=false ] -->
+<html>
+    <meta charset="utf8">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../resources/js-test.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
+        <script src="./resources/async-clipboard-helpers.js"></script>
+        <style>
+            button, iframe {
+                width: 100%;
+                height: 150px;
+                display: block;
+            }
+        </style>
+    </head>
+    <script>
+        jsTestIsAsync = true;
+        finishedCopying = false;
+
+        if (window.testRunner)
+            testRunner.setJavaScriptCanAccessClipboard(false);
+
+        async function runTest() {
+            description("This test verifies that navigator.clipboard.readText can be used to read text from the clipboard without showing DOM paste UI for same-origin data. To run the test manually, click 'Copy' and then click 'Paste'. DOM paste UI should not appear.");
+
+            addEventListener("message", event => finishedCopying = event.data === "finished-copying");
+
+            subframe = document.querySelector("iframe");
+            paste = document.getElementById("paste");
+            paste.addEventListener("click", async () => {
+                clipboardText = await navigator.clipboard.readText();
+                testPassed("Read text from clipboard using navigator.clipboard.readText.");
+                shouldBeEqualToString("clipboardText", "This text was copied.");
+                paste.remove();
+                subframe.remove();
+                finishJSTest();
+            });
+
+            if (!window.testRunner)
+                return;
+
+            await UIHelper.activateElement(subframe);
+            await new Promise(r => shouldBecomeEqual("finishedCopying", "true", r));
+            await UIHelper.activateElement(paste);
+        }
+
+        addEventListener("load", runTest);
+    </script>
+    <body>
+        <iframe srcdoc="
+            <body>
+                <button style='width: 100%; height: 134px;'>Copy</button>
+                <script>
+                    const button = document.querySelector('button');
+                    const textToCopy = document.getElementById('textToCopy');
+                    button.addEventListener('click', async () => {
+                        await navigator.clipboard.writeText('This text was copied.');
+                        parent.postMessage('finished-copying', '*');
+                    });
+                </script>
+            </body>
+        "></iframe>
+        <button id="paste">Paste</button>
+        <p id="description"></p>
+        <p id="console"></p>
+    </body>
+</html>

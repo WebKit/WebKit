@@ -1,0 +1,16 @@
+
+PASS e.style['text-indent'] = "10px" should set the property value 
+PASS e.style['text-indent'] = "20%" should set the property value 
+PASS e.style['text-indent'] = "calc(2em + 3ex)" should set the property value 
+PASS e.style['text-indent'] = "calc(50% + 60px)" should set the property value 
+PASS e.style['text-indent'] = "-30px" should set the property value 
+PASS e.style['text-indent'] = "-40%" should set the property value 
+PASS e.style['text-indent'] = "10px hanging" should set the property value 
+FAIL e.style['text-indent'] = "20% each-line" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['text-indent'] = "calc(2em + 3ex) hanging each-line" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['text-indent'] = "hanging calc(50% + 60px)" should set the property value assert_equals: serialization should be canonical expected "calc(50% + 60px) hanging" but got "hanging calc(50% + 60px)"
+FAIL e.style['text-indent'] = "each-line 10px" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['text-indent'] = "hanging 20% each-line" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['text-indent'] = "each-line hanging calc(2em + 3ex)" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['text-indent'] = "calc(50% + 60px) each-line hanging" should set the property value assert_not_equals: property should be set got disallowed value ""
+

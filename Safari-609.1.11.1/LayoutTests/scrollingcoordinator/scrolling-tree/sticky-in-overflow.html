@@ -1,0 +1,51 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <title>
+        Check that overflow is nested inside fixed
+    </title>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function doTest() {
+            if (window.internals)
+                document.getElementById('scrollingTree').innerText = window.internals.scrollingStateTreeAsText() + "\n";
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+    <style>
+        .sticky {
+            position: -webkit-sticky;
+            background-color: silver;
+            top: 10px;
+        }
+
+        .scrolling {
+            width: 400px;
+            height: 300px;
+            overflow: scroll;
+        }
+
+        .scrolling-content {
+            margin: 50px;
+            height: 1000px;
+        }
+    </style>
+</head>
+<body>
+    <div class="scrolling">
+        <div class="scrolling-content">
+            <div class="sticky">
+                Sticky content
+            </div>
+        </div>
+    </div>
+    <pre id="scrollingTree"></pre>
+</body>
+</html>
+

@@ -1,0 +1,3 @@
+
+PASS Combine pushState and replaceSate methods 
+

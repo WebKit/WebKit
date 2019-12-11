@@ -1,0 +1,11 @@
+[
+    {
+        "action": {
+            "selector": ".test",
+            "type": "css-display-none"
+        },
+        "trigger": {
+            "url-filter": ".*woff"
+        }
+    }
+]

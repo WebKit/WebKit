@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body id="body">
+<div id="content">
+  <div role="tablist" id="tablist" tabindex="0">
+    <div role="tab" aria-label="first">1</div>
+    <div role="tab" aria-label="second" aria-selected="true">2</div>
+    <div role="tab" aria-label="third">3</div>
+  </div>
+  <div role="tree" id="tree" aria-multiselectable="true" tabindex="0">
+    <div role="treeitem" aria-label="first" aria-selected="true">1</div>
+    <div role="treeitem" aria-label="second">2</div>
+    <div role="treeitem" aria-label="third" aria-selected="true">3</div>
+  </div>
+  <div role="grid" id="grid" tabindex="0">
+    <div role="row" aria-label="first"><span role="gridcell">1</span></div>
+    <div role="row" aria-label="second" aria-selected="true"><span role="gridcell">2</span></div>
+    <div role="row" aria-label="third"><span role="gridcell">3</span></div>
+  </div>
+  <div tabindex="0" role="treegrid" id="treegrid" aria-activedescendant="row1">
+    <div role="row" aria-level="1" aria-label="first - level 1" aria-expanded="true">
+      <div role="gridcell" tabindex="0">- Expanded</div>
+    </div>
+    <div role="row" aria-label="first - level 2" aria-level="2" aria-selected="true">
+      <div role="gridcell">Data 1</div><div role="gridcell">Data 2</div>
+    </div>
+    <div role="row" aria-label="second - level 2" aria-level="2">
+      <div role="gridcell">Data 3</div><div role="gridcell">Data 4</div>
+    </div>
+    <div role="row" aria-label="third - level 2" aria-level="2" aria-selected="true">
+      <div role="gridcell">Data 4</div><div role="gridcell">Data 5</div>
+    </div>
+    <div role="row" aria-level="1" aria-label="second - level 1" aria-expanded="false">
+      <div role="gridcell" tabindex="0">+ Expand me</div>
+    </div>
+  </div>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    function selectedChildInfo(axElement) {
+        if (!axElement)
+            debug("Element not exposed");
+
+        var count = axElement.selectedChildrenCount;
+        debug(axElement.role + " has " + count + " selected child(ren)");
+        for (var i = 0; i < count; i++) {
+            var child = axElement.selectedChildAtIndex(i);
+            result = ("\t" + platformValueForW3CName(child) + " (" + child.role + ")")
+            result += " isSelectable: " + child.isSelectable + " isSelected: " + child.isSelected;
+            debug(result);
+	}
+   }
+
+    description("This tests that items with aria-selected are reported as selected children of the parent container.");
+    if (window.accessibilityController) {
+        selectedChildInfo(window.accessibilityController.accessibleElementById("tablist"));
+        selectedChildInfo(window.accessibilityController.accessibleElementById("tree"));
+        selectedChildInfo(window.accessibilityController.accessibleElementById("grid"));
+        selectedChildInfo(window.accessibilityController.accessibleElementById("treegrid"));
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,1031 @@
+Test that CanvasManager is able to record actions made to 2D canvas contexts.
+
+
+== Running test suite: Canvas.recording2D
+-- Running test case: Canvas.recording2D.multipleFrames
+initialState:
+  attributes:
+    width: 2
+    height: 2
+  current state:
+    setTransform: [[1,0,0,1,0,0]]
+    globalAlpha: 1
+    globalCompositeOperation: "source-over"
+    lineWidth: 1
+    lineCap: "butt"
+    lineJoin: "miter"
+    miterLimit: 10
+    shadowOffsetX: 0
+    shadowOffsetY: 0
+    shadowBlur: 0
+    shadowColor: "rgba(0, 0, 0, 0)"
+    setLineDash: [[]]
+    lineDashOffset: 0
+    font: "10px sans-serif"
+    textAlign: "start"
+    textBaseline: "alphabetic"
+    direction: "ltr"
+    strokeStyle: "#000000"
+    fillStyle: "#000000"
+    imageSmoothingEnabled: true
+    imageSmoothingQuality: "low"
+    setPath: [""]
+  parameters:
+  content: <filtered>
+frames:
+  0: (duration)
+    0: arc(1, 2, 3, 4, 5, false)
+      swizzleTypes: [Number, Number, Number, Number, Number, Boolean]
+      trace:
+        0: arc
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+        5: performActions
+        6: Global Code
+        7: evaluateWithScopeExtension
+        8: (anonymous function)
+        9: _wrapCall
+    1: arc(6, 7, 8, 9, 10, true)
+      swizzleTypes: [Number, Number, Number, Number, Number, Boolean]
+      trace:
+        0: arc
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+        5: performActions
+        6: Global Code
+        7: evaluateWithScopeExtension
+        8: (anonymous function)
+        9: _wrapCall
+  1: (duration)
+    0: arcTo(1, 2, 3, 4, 5)
+      swizzleTypes: [Number, Number, Number, Number, Number]
+      trace:
+        0: arcTo
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+  2: (duration)
+    0: beginPath()
+      trace:
+        0: beginPath
+        1: (anonymous function)
+        2: executeFrameFunction
+  3: (duration)
+    0: bezierCurveTo(1, 2, 3, 4, 5, 6)
+      swizzleTypes: [Number, Number, Number, Number, Number, Number]
+      trace:
+        0: bezierCurveTo
+        1: (anonymous function)
+        2: executeFrameFunction
+  4: (duration)
+    0: clearRect(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: clearRect
+        1: (anonymous function)
+        2: executeFrameFunction
+  5: (duration)
+    0: clearShadow()
+      trace:
+        0: clearShadow
+        1: (anonymous function)
+        2: executeFrameFunction
+  6: (duration)
+    0: clip("nonzero")
+      swizzleTypes: [String]
+      trace:
+        0: clip
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: clip("evenodd")
+      swizzleTypes: [String]
+      trace:
+        0: clip
+        1: (anonymous function)
+        2: executeFrameFunction
+    2: clip([object Path2D], "nonzero")
+      swizzleTypes: [Path2D, String]
+      trace:
+        0: clip
+        1: (anonymous function)
+        2: executeFrameFunction
+    3: clip([object Path2D], "evenodd")
+      swizzleTypes: [Path2D, String]
+      trace:
+        0: clip
+        1: (anonymous function)
+        2: executeFrameFunction
+  7: (duration)
+    0: closePath()
+      trace:
+        0: closePath
+        1: (anonymous function)
+        2: executeFrameFunction
+  8: (duration)
+    0: createImageData([object ImageData])
+      swizzleTypes: [ImageData]
+      trace:
+        0: createImageData
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+    1: createImageData(2, 3)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: createImageData
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+  9: (duration)
+    0: createLinearGradient(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: createLinearGradient
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+  10: (duration)
+    0: createPattern([object HTMLImageElement], "testA")
+      swizzleTypes: [Image, String]
+      trace:
+        0: createPattern
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+    1: createPattern([object HTMLImageElement], "testB")
+      swizzleTypes: [Image, String]
+      trace:
+        0: createPattern
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+    2: createPattern([object HTMLImageElement], "testC")
+      swizzleTypes: [Image, String]
+      trace:
+        0: createPattern
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+    3: createPattern([object ImageBitmap], "testD")
+      swizzleTypes: [ImageBitmap, String]
+      trace:
+        0: createPattern
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+  11: (duration)
+    0: createRadialGradient(1, 2, 3, 4, 5, 6)
+      swizzleTypes: [Number, Number, Number, Number, Number, Number]
+      trace:
+        0: createRadialGradient
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+  12: (duration)
+    0: direction
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  13: (duration)
+    0: drawFocusIfNeeded("Element")
+      swizzleTypes: [None]
+      trace:
+        0: drawFocusIfNeeded
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: drawFocusIfNeeded([object Path2D], "Element")
+      swizzleTypes: [Path2D, None]
+      trace:
+        0: drawFocusIfNeeded
+        1: (anonymous function)
+        2: executeFrameFunction
+  14: (duration)
+    0: drawImage([object HTMLImageElement], 11, 12)
+      swizzleTypes: [Image, Number, Number]
+      trace:
+        0: drawImage
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+    1: drawImage([object HTMLImageElement], 13, 14, 15, 16)
+      swizzleTypes: [Image, Number, Number, Number, Number]
+      trace:
+        0: drawImage
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+    2: drawImage([object HTMLImageElement], 17, 18, 19, 110, 111, 112, 113, 114)
+      swizzleTypes: [Image, Number, Number, Number, Number, Number, Number, Number, Number]
+      trace:
+        0: drawImage
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+    3: drawImage([object HTMLImageElement], 21, 22)
+      swizzleTypes: [Image, Number, Number]
+      trace:
+        0: drawImage
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+    4: drawImage([object HTMLImageElement], 23, 24, 25, 26)
+      swizzleTypes: [Image, Number, Number, Number, Number]
+      trace:
+        0: drawImage
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+    5: drawImage([object HTMLImageElement], 27, 28, 29, 210, 211, 212, 213, 214)
+      swizzleTypes: [Image, Number, Number, Number, Number, Number, Number, Number, Number]
+      trace:
+        0: drawImage
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+    6: drawImage([object HTMLImageElement], 31, 32)
+      swizzleTypes: [Image, Number, Number]
+      trace:
+        0: drawImage
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+    7: drawImage([object HTMLImageElement], 33, 34, 35, 36)
+      swizzleTypes: [Image, Number, Number, Number, Number]
+      trace:
+        0: drawImage
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+    8: drawImage([object HTMLImageElement], 37, 38, 39, 310, 311, 312, 313, 314)
+      swizzleTypes: [Image, Number, Number, Number, Number, Number, Number, Number, Number]
+      trace:
+        0: drawImage
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+    9: drawImage([object ImageBitmap], 41, 42)
+      swizzleTypes: [ImageBitmap, Number, Number]
+      trace:
+        0: drawImage
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+    10: drawImage([object ImageBitmap], 43, 44, 45, 46)
+      swizzleTypes: [ImageBitmap, Number, Number, Number, Number]
+      trace:
+        0: drawImage
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+    11: drawImage([object ImageBitmap], 47, 48, 49, 410, 411, 412, 413, 414)
+      swizzleTypes: [ImageBitmap, Number, Number, Number, Number, Number, Number, Number, Number]
+      trace:
+        0: drawImage
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+  15: (duration)
+    0: drawImageFromRect([object HTMLImageElement], 1, 2, 3, 4, 5, 6, 7, 8, "")
+      swizzleTypes: [Image, Number, Number, Number, Number, Number, Number, Number, Number, String]
+      trace:
+        0: drawImageFromRect
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: drawImageFromRect([object HTMLImageElement], 9, 10, 11, 12, 13, 14, 15, 16, "test")
+      swizzleTypes: [Image, Number, Number, Number, Number, Number, Number, Number, Number, String]
+      trace:
+        0: drawImageFromRect
+        1: (anonymous function)
+        2: executeFrameFunction
+  16: (duration)
+    0: ellipse(1, 2, 3, 4, 5, 6, 7, false)
+      swizzleTypes: [Number, Number, Number, Number, Number, Number, Number, Boolean]
+      trace:
+        0: ellipse
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+    1: ellipse(8, 9, 10, 11, 12, 13, 14, true)
+      swizzleTypes: [Number, Number, Number, Number, Number, Number, Number, Boolean]
+      trace:
+        0: ellipse
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+  17: (duration)
+    0: fill("nonzero")
+      swizzleTypes: [String]
+      trace:
+        0: fill
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: fill("evenodd")
+      swizzleTypes: [String]
+      trace:
+        0: fill
+        1: (anonymous function)
+        2: executeFrameFunction
+    2: fill([object Path2D], "nonzero")
+      swizzleTypes: [Path2D, String]
+      trace:
+        0: fill
+        1: (anonymous function)
+        2: executeFrameFunction
+    3: fill([object Path2D], "evenodd")
+      swizzleTypes: [Path2D, String]
+      trace:
+        0: fill
+        1: (anonymous function)
+        2: executeFrameFunction
+  18: (duration)
+    0: fillRect(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: fillRect
+        1: (anonymous function)
+        2: executeFrameFunction
+  19: (duration)
+    0: fillStyle
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: fillStyle = "test"
+      swizzleTypes: [String]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    2: fillStyle = [object CanvasGradient]
+      swizzleTypes: [CanvasGradient]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    3: fillStyle = [object CanvasGradient]
+      swizzleTypes: [CanvasGradient]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    4: fillStyle = [object CanvasPattern]
+      swizzleTypes: [CanvasPattern]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  20: (duration)
+    0: fillText("testA", 1, 2)
+      swizzleTypes: [String, Number, Number]
+      trace:
+        0: fillText
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: fillText("testB", 3, 4, 5)
+      swizzleTypes: [String, Number, Number, Number]
+      trace:
+        0: fillText
+        1: (anonymous function)
+        2: executeFrameFunction
+  21: (duration)
+    0: font
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: font = "test"
+      swizzleTypes: [String]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  22: (duration)
+    0: getImageData(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: getImageData
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+  23: (duration)
+    0: getLineDash()
+      trace:
+        0: getLineDash
+        1: (anonymous function)
+        2: executeFrameFunction
+  24: (duration)
+    0: getTransform()
+      trace:
+        0: getTransform
+        1: (anonymous function)
+        2: executeFrameFunction
+  25: (duration)
+    0: globalAlpha
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: globalAlpha = 0
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  26: (duration)
+    0: globalCompositeOperation
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: globalCompositeOperation = "test"
+      swizzleTypes: [String]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  27: (duration)
+    0: imageSmoothingEnabled
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: imageSmoothingEnabled = true
+      swizzleTypes: [Boolean]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  28: (duration)
+    0: imageSmoothingQuality
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: imageSmoothingQuality = "low"
+      swizzleTypes: [String]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  29: (duration)
+    0: isPointInPath([object Path2D], 5, 6, "nonzero")
+      swizzleTypes: [Path2D, Number, Number, String]
+      trace:
+        0: isPointInPath
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: isPointInPath([object Path2D], 7, 8, "evenodd")
+      swizzleTypes: [Path2D, Number, Number, String]
+      trace:
+        0: isPointInPath
+        1: (anonymous function)
+        2: executeFrameFunction
+    2: isPointInPath(9, 10, "nonzero")
+      swizzleTypes: [Number, Number, String]
+      trace:
+        0: isPointInPath
+        1: (anonymous function)
+        2: executeFrameFunction
+    3: isPointInPath(11, 12, "evenodd")
+      swizzleTypes: [Number, Number, String]
+      trace:
+        0: isPointInPath
+        1: (anonymous function)
+        2: executeFrameFunction
+  30: (duration)
+    0: isPointInStroke([object Path2D], 3, 4)
+      swizzleTypes: [Path2D, Number, Number]
+      trace:
+        0: isPointInStroke
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: isPointInStroke(5, 6)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: isPointInStroke
+        1: (anonymous function)
+        2: executeFrameFunction
+  31: (duration)
+    0: lineCap
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  32: (duration)
+    0: lineDashOffset
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: lineDashOffset = 1
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  33: (duration)
+    0: lineJoin
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  34: (duration)
+    0: lineTo(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: lineTo
+        1: (anonymous function)
+        2: executeFrameFunction
+  35: (duration)
+    0: lineWidth
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: lineWidth = 1
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  36: (duration)
+    0: measureText("test")
+      swizzleTypes: [String]
+      trace:
+        0: measureText
+        1: (anonymous function)
+        2: executeFrameFunction
+  37: (duration)
+    0: miterLimit
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: miterLimit = 1
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  38: (duration)
+    0: moveTo(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: moveTo
+        1: (anonymous function)
+        2: executeFrameFunction
+  39: (duration)
+    0: putImageData([object ImageData], 5, 6)
+      swizzleTypes: [ImageData, Number, Number]
+      trace:
+        0: putImageData
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: putImageData([object ImageData], 7, 8, 9, 10, 11, 12)
+      swizzleTypes: [ImageData, Number, Number, Number, Number, Number, Number]
+      trace:
+        0: putImageData
+        1: (anonymous function)
+        2: executeFrameFunction
+  40: (duration)
+    0: quadraticCurveTo(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: quadraticCurveTo
+        1: (anonymous function)
+        2: executeFrameFunction
+  41: (duration)
+    0: rect(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: rect
+        1: (anonymous function)
+        2: executeFrameFunction
+  42: (duration)
+    0: resetTransform()
+      trace:
+        0: resetTransform
+        1: (anonymous function)
+        2: executeFrameFunction
+  43: (duration)
+    0: restore()
+      trace:
+        0: restore
+        1: (anonymous function)
+        2: executeFrameFunction
+  44: (duration)
+    0: rotate(1)
+      swizzleTypes: [Number]
+      trace:
+        0: rotate
+        1: (anonymous function)
+        2: executeFrameFunction
+  45: (duration)
+    0: save()
+      trace:
+        0: save
+        1: (anonymous function)
+        2: executeFrameFunction
+  46: (duration)
+    0: scale(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: scale
+        1: (anonymous function)
+        2: executeFrameFunction
+  47: (duration)
+    0: setAlpha(null)
+      swizzleTypes: [Number]
+      trace:
+        0: setAlpha
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: setAlpha(1)
+      swizzleTypes: [Number]
+      trace:
+        0: setAlpha
+        1: (anonymous function)
+        2: executeFrameFunction
+  48: (duration)
+    0: setCompositeOperation("undefined")
+      swizzleTypes: [String]
+      trace:
+        0: setCompositeOperation
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: setCompositeOperation("test")
+      swizzleTypes: [String]
+      trace:
+        0: setCompositeOperation
+        1: (anonymous function)
+        2: executeFrameFunction
+  49: (duration)
+    0: setFillColor("testA")
+      swizzleTypes: [String]
+      trace:
+        0: setFillColor
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: setFillColor("testB", 1)
+      swizzleTypes: [String, Number]
+      trace:
+        0: setFillColor
+        1: (anonymous function)
+        2: executeFrameFunction
+    2: setFillColor(2, 1)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: setFillColor
+        1: (anonymous function)
+        2: executeFrameFunction
+    3: setFillColor(3, 4)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: setFillColor
+        1: (anonymous function)
+        2: executeFrameFunction
+    4: setFillColor(5, 6, 7, 8)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: setFillColor
+        1: (anonymous function)
+        2: executeFrameFunction
+    5: setFillColor(9, 10, 11, 12, 13)
+      swizzleTypes: [Number, Number, Number, Number, Number]
+      trace:
+        0: setFillColor
+        1: (anonymous function)
+        2: executeFrameFunction
+  50: (duration)
+    0: setLineCap("undefined")
+      swizzleTypes: [String]
+      trace:
+        0: setLineCap
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: setLineCap("test")
+      swizzleTypes: [String]
+      trace:
+        0: setLineCap
+        1: (anonymous function)
+        2: executeFrameFunction
+  51: (duration)
+    0: setLineDash([1,2])
+      swizzleTypes: [Array]
+      trace:
+        0: setLineDash
+        1: (anonymous function)
+        2: executeFrameFunction
+  52: (duration)
+    0: setLineJoin("undefined")
+      swizzleTypes: [String]
+      trace:
+        0: setLineJoin
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: setLineJoin("test")
+      swizzleTypes: [String]
+      trace:
+        0: setLineJoin
+        1: (anonymous function)
+        2: executeFrameFunction
+  53: (duration)
+    0: setLineWidth(null)
+      swizzleTypes: [Number]
+      trace:
+        0: setLineWidth
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: setLineWidth(1)
+      swizzleTypes: [Number]
+      trace:
+        0: setLineWidth
+        1: (anonymous function)
+        2: executeFrameFunction
+  54: (duration)
+    0: setMiterLimit(null)
+      swizzleTypes: [Number]
+      trace:
+        0: setMiterLimit
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: setMiterLimit(1)
+      swizzleTypes: [Number]
+      trace:
+        0: setMiterLimit
+        1: (anonymous function)
+        2: executeFrameFunction
+  55: (duration)
+    0: setShadow(1, 2, 3, "")
+      swizzleTypes: [Number, Number, Number, String]
+      trace:
+        0: setShadow
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: setShadow(4, 5, 6, "test", 7)
+      swizzleTypes: [Number, Number, Number, String, Number]
+      trace:
+        0: setShadow
+        1: (anonymous function)
+        2: executeFrameFunction
+    2: setShadow(8, 9, 10, 11, 1)
+      swizzleTypes: [Number, Number, Number, Number, Number]
+      trace:
+        0: setShadow
+        1: (anonymous function)
+        2: executeFrameFunction
+    3: setShadow(12, 13, 14, 15, 16)
+      swizzleTypes: [Number, Number, Number, Number, Number]
+      trace:
+        0: setShadow
+        1: (anonymous function)
+        2: executeFrameFunction
+    4: setShadow(17, 18, 19, 20, 21, 22, 23)
+      swizzleTypes: [Number, Number, Number, Number, Number, Number, Number]
+      trace:
+        0: setShadow
+        1: (anonymous function)
+        2: executeFrameFunction
+    5: setShadow(24, 25, 26, 27, 28, 29, 30, 31)
+      swizzleTypes: [Number, Number, Number, Number, Number, Number, Number, Number]
+      trace:
+        0: setShadow
+        1: (anonymous function)
+        2: executeFrameFunction
+  56: (duration)
+    0: setStrokeColor("testA")
+      swizzleTypes: [String]
+      trace:
+        0: setStrokeColor
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: setStrokeColor("testB", 1)
+      swizzleTypes: [String, Number]
+      trace:
+        0: setStrokeColor
+        1: (anonymous function)
+        2: executeFrameFunction
+    2: setStrokeColor(2, 1)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: setStrokeColor
+        1: (anonymous function)
+        2: executeFrameFunction
+    3: setStrokeColor(3, 4)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: setStrokeColor
+        1: (anonymous function)
+        2: executeFrameFunction
+    4: setStrokeColor(5, 6, 7, 8)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: setStrokeColor
+        1: (anonymous function)
+        2: executeFrameFunction
+    5: setStrokeColor(9, 10, 11, 12, 13)
+      swizzleTypes: [Number, Number, Number, Number, Number]
+      trace:
+        0: setStrokeColor
+        1: (anonymous function)
+        2: executeFrameFunction
+  57: (duration)
+    0: setTransform(1, 2, 3, 4, 5, 6)
+      swizzleTypes: [Number, Number, Number, Number, Number, Number]
+      trace:
+        0: setTransform
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: setTransform(matrix(1, 0, 0, 1, 0, 0))
+      swizzleTypes: [DOMMatrix]
+      trace:
+        0: setTransform
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+    2: setTransform(matrix(7, 8, 9, 10, 11, 12))
+      swizzleTypes: [DOMMatrix]
+      trace:
+        0: setTransform
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+  58: (duration)
+    0: shadowBlur
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: shadowBlur = 1
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  59: (duration)
+    0: shadowColor
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: shadowColor = "test"
+      swizzleTypes: [String]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  60: (duration)
+    0: shadowOffsetX
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: shadowOffsetX = 1
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  61: (duration)
+    0: shadowOffsetY
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: shadowOffsetY = 1
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  62: (duration)
+    0: stroke()
+      trace:
+        0: stroke
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: stroke([object Path2D])
+      swizzleTypes: [Path2D]
+      trace:
+        0: stroke
+        1: (anonymous function)
+        2: executeFrameFunction
+  63: (duration)
+    0: strokeRect(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: strokeRect
+        1: (anonymous function)
+        2: executeFrameFunction
+  64: (duration)
+    0: strokeStyle
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: strokeStyle = "test"
+      swizzleTypes: [String]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    2: strokeStyle = [object CanvasGradient]
+      swizzleTypes: [CanvasGradient]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    3: strokeStyle = [object CanvasGradient]
+      swizzleTypes: [CanvasGradient]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    4: strokeStyle = [object CanvasPattern]
+      swizzleTypes: [CanvasPattern]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  65: (duration)
+    0: strokeText("testA", 1, 2)
+      swizzleTypes: [String, Number, Number]
+      trace:
+        0: strokeText
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: strokeText("testB", 3, 4, 5)
+      swizzleTypes: [String, Number, Number, Number]
+      trace:
+        0: strokeText
+        1: (anonymous function)
+        2: executeFrameFunction
+  66: (duration)
+    0: textAlign
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  67: (duration)
+    0: textBaseline
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  68: (duration)
+    0: transform(1, 2, 3, 4, 5, 6)
+      swizzleTypes: [Number, Number, Number, Number, Number, Number]
+      trace:
+        0: transform
+        1: (anonymous function)
+        2: executeFrameFunction
+  69: (duration)
+    0: translate(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: translate
+        1: (anonymous function)
+        2: executeFrameFunction
+  70: (duration)
+    0: webkitImageSmoothingEnabled
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: webkitImageSmoothingEnabled = true
+      swizzleTypes: [Boolean]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  71: (duration)
+    0: webkitLineDash
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: webkitLineDash = [1,2]
+      swizzleTypes: [Array]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  72: (duration)
+    0: webkitLineDashOffset
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: webkitLineDashOffset = 1
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  73: (duration)
+    0: width
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: width = 2
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  74: (duration)
+    0: height
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: height = 2
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+

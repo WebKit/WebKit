@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<video src="../../content/test.mp4" style="position: absolute; left: 0; top: 0; width: 800px;" controls autoplay></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing that time labels inside media controls have 'white-space: nowrap'.");
+
+let timeLabel, media;
+
+document.querySelector("video").addEventListener("play", (event) => {
+    media = event.target;
+    media.pause();
+
+    shouldBecomeEqual("window.internals.shadowRoot(media).querySelector('.time-label') instanceof HTMLDivElement", "true", () => {
+        timeLabel = window.internals.shadowRoot(media).querySelector(".time-label");
+        shouldBeEqualToString("timeLabel.ownerDocument.defaultView.getComputedStyle(timeLabel).whiteSpace", "nowrap");
+
+        debug("");
+        media.remove();
+        finishJSTest();
+    });
+});
+
+setTimeout(finishJSTest, 3000);
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

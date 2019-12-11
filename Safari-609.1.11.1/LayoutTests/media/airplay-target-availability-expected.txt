@@ -1,0 +1,16 @@
+ 
+
+Test that 'webkitplaybacktargetavailabilitychanged' event is sent when at least one video element has playable media.
+
+EVENT( webkitplaybacktargetavailabilitychanged )
+EXPECTED (event.availability == 'not-available') OK
+
+** simulate device becoming available
+EVENT( webkitplaybacktargetavailabilitychanged )
+
+** set src on video that does not have event listener
+EVENT( webkitplaybacktargetavailabilitychanged )
+EXPECTED (event.availability == 'available') OK
+
+END OF TEST
+

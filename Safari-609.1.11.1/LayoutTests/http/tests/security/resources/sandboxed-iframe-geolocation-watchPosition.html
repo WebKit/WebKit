@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="http://127.0.0.1:8000/security/resources/checkThatPositionErrorCallbackIsCalledWithPositionUnavailableForGeolocationMethod.js"></script>
+<script>
+var PositionUnavailableMockMessage = "Origin does not have permission to use Geolocation service";
+if (window.testRunner) {
+    testRunner.setGeolocationPermission(true);
+    testRunner.setMockGeolocationPositionUnavailableError(PositionUnavailableMockMessage);
+    testRunner.setMockGeolocationPosition(37.3317115, -122.0323722, 100.0);
+}
+
+function done()
+{
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+checkThatPositionErrorCallbackIsCalledWithPositionUnavailableForGeolocationMethod("watchPosition", PositionUnavailableMockMessage, done);
+</script>
+</head>
+<body>
+<pre id="console"></pre>
+</body>
+</html>

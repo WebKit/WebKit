@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" 
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<pattern patternUnits="userSpaceOnUse" id="pat1" width="20" height="20">
+	<rect x="10" y="10" width="10" height="10" fill="green" id="green" />
+</pattern>
+
+<rect x="25" y="25" width="430" height="60" stroke="black" fill="url(#pat1)" />
+		
+</svg>

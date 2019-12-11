@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+testnode {
+    background-color: white;
+}
+:nth-last-child(n+5).target {
+    background-color: rgb(1, 2, 3);
+}
+</style>
+</head>
+<body>
+    <div id="with-renderer">
+        <testnode class="element_1 target"></testnode>
+        <testnode class="element_2 target"></testnode>
+        <testnode class="element_3 target"></testnode>
+        <testnode class="element_4 target"></testnode>
+        <testnode class="element_5 target"></testnode>
+    </div>
+    <div id="without-renderer" style="display:none;">
+        <testnode class="element_1 target"></testnode>
+        <testnode class="element_2 target"></testnode>
+        <testnode class="element_3 target"></testnode>
+        <testnode class="element_4 target"></testnode>
+        <testnode class="element_5 target"></testnode>
+    </div>
+</body>
+<script>
+description('Test style update of :nth-last-child() when the tree structure is modified. In this case, :nth-last-child() is not the last component of the compound selector, which is a bit less common.');
+
+function testColor(classesThatShouldMatch) {
+    var alltestnodes = document.querySelectorAll("testnode");
+    for (var i = 0; i < alltestnodes.length; ++i) {
+        var expectMath = classesThatShouldMatch.indexOf(alltestnodes[i].classList[0]) != -1;
+        shouldBeEqualToString('getComputedStyle(document.querySelectorAll("testnode")[' + i + ']).backgroundColor', expectMath ? 'rgb(1, 2, 3)' : 'rgb(255, 255, 255)');
+    }
+}
+
+function addElementAsFirstChild(tagName, className)
+{
+    var newElement = document.createElement(tagName);
+    newElement.className = className;
+
+    var withRenderer = document.getElementById("with-renderer");
+    withRenderer.insertBefore(newElement, withRenderer.firstChild);
+
+    var withoutRenderer = document.getElementById("without-renderer");
+    withoutRenderer.insertBefore(newElement.cloneNode(), withoutRenderer.firstChild);
+}
+
+function removeElementsOfClass(className)
+{
+    var allElementsToRemove = document.querySelectorAll('.' + className);
+    for (var i = 0; i < allElementsToRemove.length; ++i)
+        allElementsToRemove[i].parentElement.removeChild(allElementsToRemove[i]);
+}
+
+debug("Initialy, only the first element should match.");
+testColor(["element_1"]);
+
+debug("Adding an element &lt;testnode&gt; on top, we should now match 0 and 1.");
+addElementAsFirstChild("testnode", "element_0 target")
+testColor(["element_0", "element_1"]);
+
+// Using nottestnode is interesting because the ':nth-last-child()' part is not matched for those elements.
+debug("Adding an element &lt;nottestnode&gt; on top, we should now match -1, 0 and 1.");
+addElementAsFirstChild("testnode", "element_-1 target")
+testColor(["element_-1", "element_0", "element_1"]);
+
+debug("Adding an element &lt;nottestnode&gt; on top, we should now match -2, -1, 0 and 1.");
+addElementAsFirstChild("testnode", "element_-2 target")
+testColor(["element_-2", "element_-1", "element_0", "element_1"]);
+
+debug("Adding an element &lt;testnode&gt; on top, we should now match -3, -2, -1, 0 and 1.");
+addElementAsFirstChild("testnode", "element_-3 target")
+testColor(["element_-3", "element_-2", "element_-1", "element_0", "element_1"]);
+
+debug("Adding an element &lt;nottestnode&gt; on top, we should now match -4, -3, -2, -1, 0 and 1.");
+addElementAsFirstChild("testnode", "element_-4 target")
+testColor(["element_-4", "element_-3", "element_-2", "element_-1", "element_0", "element_1"]);
+
+debug("Removing one of the &lt;nottestnode&gt;, -2 should no longer match.");
+removeElementsOfClass("element_-2");
+testColor(["element_-4", "element_-3", "element_-1", "element_0", "element_1"]);
+
+debug("Removing one of the &lt;testnode&gt;, -4 should no longer match.");
+removeElementsOfClass("element_-4");
+testColor(["element_-3", "element_-1", "element_0", "element_1"]);
+
+debug("Removing one of the &lt;notestnode&gt;, -1 should no longer match.");
+removeElementsOfClass("element_-1");
+testColor(["element_-3", "element_0", "element_1"]);
+
+debug("Removing one of the &lt;testnode&gt;, -3 should no longer match.");
+removeElementsOfClass("element_-3");
+testColor(["element_0", "element_1"]);
+
+debug("Removing one of the &lt;testnode&gt;, 0 should no longer match.");
+removeElementsOfClass("element_0");
+testColor(["element_1"]);
+
+debug("Removing one of the &lt;testnode&gt;, there are only 4 siblings left, nothing can match.");
+removeElementsOfClass("element_1");
+testColor([]);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

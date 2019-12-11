@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function log(message)
+{
+    document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
+}
+
+function runTest()
+{
+    log("Test calling asm functions across workers with the same heap.");
+    var string = [
+        "worker = this;",
+        "onmessage = function(e) {",
+        "    function Module(stdlib, foreign, heap) {",
+        "        'use asm';",
+        "        var MEM32 = new stdlib.Int32Array(heap);",
+        "        function load() { var res = MEM32[255]; MEM32[255] = 123457; return res; }",
+        "        return { load: load };",
+        "    }",
+        "    var buffer = e.data;",
+        "    var result = Module(worker, {}, buffer).load();",
+        "    var message = result == 123456 ? 'SUCCESS' : 'FAILURE ' + result;",
+        "    postMessage(message);",
+        "};"
+    ].join('\n');
+    var blobURL = URL.createObjectURL(new Blob([string]));
+    var worker = new Worker(blobURL);
+    function Module(stdlib, foreign, heap) {
+        'use asm';
+        var MEM32 = new stdlib.Int32Array(heap);
+        function store() { MEM32[255] = 123456; }
+        return { store: store };
+    }
+    var buffer = new ArrayBuffer(4 * 256);
+    Module(this, {}, buffer).store();
+    worker.onmessage = function(event) {
+        try {
+            // This buffer may or may not have been neutered, ensure we don't write across threads.
+            for (var i = 0; i < 4 * 256; i++) {
+                buffer[i] = 0;
+            }
+        } catch(e) {}
+        log(event.data);
+        log("DONE");
+        if (testRunner.notifyDone)
+            testRunner.notifyDone();
+    };
+    worker.postMessage(buffer);
+}
+
+if (window.testRunner) {
+    testRunner.setAllowUniversalAccessFromFileURLs(false);
+    testRunner.setAllowFileAccessFromFileURLs(true);
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body onload="runTest()">
+<pre id='console'></pre>
+</body>
+</html>

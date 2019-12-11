@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200">
+ <rect x="0" y="0" width="300" height="200" fill="green"/>
+ <!-- This next line should be hidden since it has an unsupported
+      value for the "width" attribute (it has a leading space, which
+      isn't allowed by any prose in the spec as far as I can tell. -->
+ <rect x="0" y="0" width=" 300" height="200" fill="red"/>
+</svg>

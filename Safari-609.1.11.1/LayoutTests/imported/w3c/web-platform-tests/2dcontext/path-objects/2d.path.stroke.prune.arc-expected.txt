@@ -1,0 +1,8 @@
+2d.path.stroke.prune.arc
+Zero-length line segments from arcTo and arc are removed before stroking
+Actual output:
+Expected output:
+
+
+PASS Zero-length line segments from arcTo and arc are removed before stroking 
+

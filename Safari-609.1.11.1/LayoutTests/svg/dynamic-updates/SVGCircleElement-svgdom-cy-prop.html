@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="resources/SVGTestCase.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../fast/repaint/resources/repaint.js"></script>
+</head>
+<body onload="runRepaintTest()">
+<h1>SVG 1.1 dynamic update tests</h1>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+// [Name] SVGCircleElement-svgdom-cy-prop.js
+// [Expected rendering result] unclipped green circle - and a series of PASS messages
+
+description("Tests dynamic updates of the 'cy' property of the SVGCircleElement object")
+createSVGTestCase();
+
+var circleElement = createSVGElement("circle");
+circleElement.setAttribute("cx", "150");
+circleElement.setAttribute("cy", "-50");
+circleElement.setAttribute("r", "150");
+circleElement.setAttribute("fill", "green");
+
+rootSVGElement.appendChild(circleElement);
+shouldBe("circleElement.cy.baseVal.value", "-50");
+
+function repaintTest() {
+    circleElement.cy.baseVal.value = 150;
+    shouldBe("circleElement.cy.baseVal.value", "150");
+
+    completeTest();
+}
+
+var successfullyParsed = true;
+</script>
+</body>
+</html>

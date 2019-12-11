@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script>
+            var successfullyParsed = false;
+        </script>
+        <script src="../../../resources/js-test-pre.js"></script>
+    </head>
+    <body id="body">
+
+        <div id="content" contenteditable>
+            word mispelled word
+        </div>
+
+        <p id="description"></p>
+        <div id="console"></div>
+
+        <script>
+
+            description("This test ensures that attributed string for text marker range works and does include misspelled attribute.");
+            
+            var text = 0;
+            var expected = "AXFont - {\n    AXFontFamily = Times;\n    AXFontName = \"Times-Roman\";\n    AXFontSize = 16;\n    AXVisibleName = \"Times Roman\";\n}, Misspelled, AXFont - {\n    AXFontFamily = Times;\n    AXFontName = \"Times-Roman\";\n    AXFontSize = 16;\n    AXVisibleName = \"Times Roman\";\n}, AXFont - {\n    AXFontFamily = Times;\n    AXFontName = \"Times-Roman\";\n    AXFontSize = 16;\n    AXVisibleName = \"Times Roman\";\n}, word mispelled word";
+
+            if (window.accessibilityController) {
+
+                var obj = accessibilityController.accessibleElementById("content");
+                var range = obj.textMarkerRangeForElement(obj)
+                text = obj.attributedStringForTextMarkerRange(range);
+                shouldBe("text", "expected");
+            }
+
+            successfullyParsed = true;
+        </script>
+        <script src="../../../resources/js-test-post.js"></script>
+    </body>
+</html>
+

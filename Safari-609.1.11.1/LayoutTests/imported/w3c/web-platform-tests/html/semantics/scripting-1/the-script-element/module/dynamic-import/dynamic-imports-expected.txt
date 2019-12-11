@@ -1,0 +1,3 @@
+
+PASS Dynamic imports should resolve module. 
+

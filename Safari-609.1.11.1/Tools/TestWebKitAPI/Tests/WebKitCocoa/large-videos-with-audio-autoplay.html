@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<script>
+    function beganAutoplaying() {
+        setTimeout(function() {
+            try {
+                window.webkit.messageHandlers.testHandler.postMessage("autoplayed");
+            } catch(e) {
+            }
+        }, 0)
+    }
+</script>
+<body>
+    <video id="foo" style="width: 480px; height: 320px;"><source src="large-video-with-audio.mp4"></video>
+    <video autoplay onplaying=beganAutoplaying() id="bar" style="width: 480px; height: 320px;"><source src="large-video-with-audio.mp4"></video>
+    <video id="baz" style="width: 480px; height: 320px;"><source src="large-video-with-audio.mp4"></video>
+</body>
+<html>

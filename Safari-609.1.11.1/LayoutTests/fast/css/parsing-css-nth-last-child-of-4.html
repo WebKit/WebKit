@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style id="style-container">
+</style>
+</head>
+<body>
+</body>
+<script>
+description('Test the parsing of :nth-last-child(of) for querySelector and style on deeply nested pseudo elements.');
+
+function testInvalidSelector(selectorString) {
+    shouldThrowErrorName('document.querySelector(":nth-last-child(' + selectorString + ')")', 'SyntaxError');
+
+    var styleContainer = document.getElementById('style-container');
+    styleContainer.innerHTML = ':nth-last-child(' + selectorString + ') { }';
+    shouldBe("document.getElementById('style-container').sheet.cssRules.length", "0");
+    styleContainer.innerHTML = '';
+}
+
+// There are multiple ways of parsing :nth-last-child() based on the An+B part, we should test everything.
+var validNthAnPlusB = [
+    "even",
+    "odd",
+    "n",
+    "-n",
+    "3",
+    "-3",
+    "n+0",
+    "n-0",
+    "0n",
+    "3n+5",
+    "-3n+5",
+    "3n-5",
+    "-3n-5",
+];
+
+debug("Test invalid selectors:");
+for (var i = 0; i < validNthAnPlusB.length; ++i) {
+    testInvalidSelector(validNthAnPlusB[i] + " of :matches(a, b, c::after)");
+    testInvalidSelector(validNthAnPlusB[i] + " of :matches(a, b, c:after)");
+    testInvalidSelector(validNthAnPlusB[i] + " of :nth-last-child(2n+1 of d, e, :matches(f, g, ::before))");
+    testInvalidSelector(validNthAnPlusB[i] + " of :nth-last-child(2n+1 of d, e, :matches(f, g, :before))");
+    testInvalidSelector(validNthAnPlusB[i] + " of :not(:matches(a, b, c::after))");
+    testInvalidSelector(validNthAnPlusB[i] + " of :not(:matches(a, b, c:after))");
+    testInvalidSelector(validNthAnPlusB[i] + " of :matches(a, b, :matches(c, d, :matches(e, f, :matches(g, h, i::after))))");
+    testInvalidSelector(validNthAnPlusB[i] + " of :nth-last-child(odd of :nth-last-child(even of j::before))");
+    testInvalidSelector(validNthAnPlusB[i] + " of :nth-last-child(odd of :nth-last-child(even of j:before))");
+
+}
+
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

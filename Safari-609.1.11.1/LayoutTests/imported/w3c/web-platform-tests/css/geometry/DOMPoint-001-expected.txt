@@ -1,0 +1,26 @@
+Test DOMPoint and DOMPointReadOnly interfaces
+
+
+PASS testConstructor0 
+FAIL testConstructor1 assert_throws: function "function () { new DOMPoint(1);}" did not throw
+PASS testConstructor2 
+PASS testConstructor3 
+PASS testConstructor4 
+PASS testConstructor5 
+PASS testConstructorDictionary0 
+PASS testConstructorDictionary1 
+PASS testConstructorDictionary2 
+PASS testConstructorDictionary3 
+PASS testConstructorDictionary4 
+PASS testConstructorDictionary5 
+PASS testConstructorDictionary2irregular 
+PASS testConstructorDictionary2undefined 
+PASS testConstructorDOMPoint 
+PASS testConstructor2undefined 
+PASS testConstructorUndefined1 
+PASS testConstructorUndefined2 
+FAIL testConstructorIllegal1 assert_throws: function "function () { new DOMPointReadOnly();}" did not throw
+FAIL testConstructorIllegal2 assert_throws: function "function () { new DOMPointReadOnly(1, 2, 3, 4);}" did not throw
+PASS testAttributesUndefined 
+PASS testAttributesNaNInfinity 
+

@@ -1,0 +1,58 @@
+ABC
+This is a test of the 'length' attribute and the indexed property access of the SVGLengthList interface.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test list length/numberOfItems
+PASS text1.x.baseVal.length is 2
+PASS text1.x.baseVal.numberOfItems is 2
+PASS text1.rotate.baseVal.length is 3
+PASS text1.rotate.baseVal.numberOfItems is 3
+
+Test item getter
+PASS text1.x.baseVal.getItem(0).value is 50
+PASS text1.x.baseVal[0].value is 50
+PASS text1.x.baseVal.getItem(1).value is 100
+PASS text1.x.baseVal[1].value is 100
+PASS text1.x.baseVal.getItem(2) threw exception IndexSizeError: The index is not in the allowed range..
+PASS text1.x.baseVal[2] is undefined.
+
+PASS text1.rotate.baseVal.getItem(0).value is 90
+PASS text1.rotate.baseVal[0].value is 90
+PASS text1.rotate.baseVal.getItem(1).value is 180
+PASS text1.rotate.baseVal[1].value is 180
+PASS text1.rotate.baseVal.getItem(2).value is 270
+PASS text1.rotate.baseVal[2].value is 270
+PASS text1.rotate.baseVal.getItem(3) threw exception IndexSizeError: The index is not in the allowed range..
+PASS text1.rotate.baseVal[3] is undefined.
+
+Test item setter
+PASS text1.x.baseVal[0] = length1 is length1
+PASS text1.x.baseVal[1] = length2 is length2
+PASS text1.x.baseVal.getItem(0).value is 40
+PASS text1.x.baseVal[0].value is 40
+PASS text1.x.baseVal.getItem(1).value is 80
+PASS text1.x.baseVal[1].value is 80
+PASS text1.x.baseVal[1] = 0 threw exception TypeError: Type error.
+PASS text1.x.baseVal[1] = 'aString' threw exception TypeError: Type error.
+PASS text1.x.baseVal[1] = null threw exception TypeError: Type error.
+PASS text1.x.baseVal[2] = length2 threw exception IndexSizeError: The index is not in the allowed range..
+
+PASS text1.rotate.baseVal[0] = number1 is number1
+PASS text1.rotate.baseVal[1] = number2 is number2
+PASS text1.rotate.baseVal[2] = number3 is number3
+PASS text1.rotate.baseVal.getItem(0).value is 45
+PASS text1.rotate.baseVal[0].value is 45
+PASS text1.rotate.baseVal.getItem(1).value is 90
+PASS text1.rotate.baseVal[1].value is 90
+PASS text1.rotate.baseVal.getItem(2).value is 135
+PASS text1.rotate.baseVal[2].value is 135
+PASS text1.rotate.baseVal[2] = 0 threw exception TypeError: Type error.
+PASS text1.rotate.baseVal[2] = 'aString' threw exception TypeError: Type error.
+PASS text1.rotate.baseVal[2] = null threw exception TypeError: Type error.
+PASS text1.rotate.baseVal[3] = number3 threw exception IndexSizeError: The index is not in the allowed range..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

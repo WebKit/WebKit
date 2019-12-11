@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div style="width: 400px; border: 3px solid black;">
+                <div id="target1" style="
+                    margin-left: 10px; width: 500px; border: 3px solid gray; 
+                    margin-right: auto;">
+                </div>
+            </div>
+            <div style="width: 400px; border: 3px solid black; direction: rtl;">
+                <div id="target2" style="
+                    margin-right: 10px; width: 500px; border: 3px solid gray; 
+                    margin-left: auto; ">
+                </div>
+            </div>
+        </div>
+        <script>
+            shouldBe("getComputedStyle(target1).marginRight", "'-116px'");
+            shouldBe("getComputedStyle(target2).marginLeft", "'-116px'");
+        </script>
+        <div id="console"></div>
+    </body>
+</html>

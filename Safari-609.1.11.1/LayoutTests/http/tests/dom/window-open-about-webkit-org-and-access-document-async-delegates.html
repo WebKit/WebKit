@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script>
+        description("Tests opening a new about://webkit.org window and accessing its document");
+        jsTestIsAsync = true;
+
+        var newWindow;
+
+        if (window.testRunner) {
+            testRunner.setCanOpenWindows();
+            testRunner.setPopupBlockingEnabled(false);
+            if (testRunner.setShouldDecideNavigationPolicyAfterDelay)
+                testRunner.setShouldDecideNavigationPolicyAfterDelay(true);
+        }
+
+        function finish()
+        {
+            clearInterval(handle);
+            finishJSTest();
+        }
+
+        function checkCannotAccessDocument()
+        {
+            try {
+                newWindow.document;
+                if (newWindow.document.URL != "about:blank") {
+                    testFailed("Managed to access the document at URL " + newWindow.document.URL);
+                    finish();
+                }
+            } catch (_e) {
+                e = _e;
+                shouldBeEqualToString("e.name", "SecurityError");
+                finish();
+            }
+        }
+
+        onload = function () {
+            newWindow = window.open("about://webkit.org");
+            handle = setInterval(checkCannotAccessDocument, 5);
+
+        }
+    </script>
+</body>
+</html>

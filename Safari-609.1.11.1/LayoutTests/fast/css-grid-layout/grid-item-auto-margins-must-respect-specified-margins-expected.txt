@@ -1,0 +1,23 @@
+This test checks auto-margins alignment respects the specified margins.
+
+margin: 5px 7px 11px 13px | margin-left: auto
+
+PASS
+margin: 5px 7px 11px 13px | margin-right: auto
+
+PASS
+margin: 5px 7px 11px 13px | margin-left: auto and margin-right: auto
+
+PASS
+margin: 5px 7px 11px 13px | margin-top: auto
+
+PASS
+margin: 5px 7px 11px 13px | margin-bottom: auto
+
+PASS
+margin: 5px 7px 11px 13px | margin-bottom: auto and margin-top: auto
+
+PASS
+margin: 5px 7px 11px 13px | margin: auto
+
+PASS

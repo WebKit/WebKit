@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Test Changing Keyframes Using CSSOM</title>
+  <style type="text/css" media="screen">
+    #box {
+        position: relative;
+        left: 0;
+        top: 0;
+        height: 100px;
+        width: 100px;
+        background-color: blue;
+        -webkit-animation-duration: 1s;
+        -webkit-animation-timing-function: linear;
+        -webkit-animation-name: "anim";
+    }
+    @-webkit-keyframes "anim" {
+        from { left: 100px; }
+        10%  { left: 200px; }
+        90%  { left: 200px; }
+        to   { left: 300px; }
+    }
+    </style>
+    <script src="resources/animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+    
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      [null, 0.5, "box", "left", 200, 10],
+      [null, 1, "box", "top", 100, 10],
+    ];
+
+    function findKeyframesRule(rule)
+    {
+        var ss = document.styleSheets;
+        for (var i = 0; i < ss.length; ++i) {
+            for (var j = 0; j < ss[i].cssRules.length; ++j) {
+                if (ss[i].cssRules[j].type == window.CSSRule.WEBKIT_KEYFRAMES_RULE && ss[i].cssRules[j].name == rule)
+                    return ss[i].cssRules[j];
+            }
+        }
+        
+        return null;
+    }
+        
+    function change()
+    {
+        // change keyframes
+        var keyframes = findKeyframesRule("anim");
+        keyframes.deleteRule("0%");
+        keyframes.deleteRule("40%");
+        keyframes.deleteRule("60%");
+        keyframes.deleteRule("100%");
+        keyframes.insertRule("0% { top: 50px; }");
+        keyframes.appendRule("10% { top: 100px; }");
+        keyframes.insertRule("90% { top: 100px; }");
+        keyframes.appendRule("100% { top: 150px; }");
+        document.getElementById('box').style.webkitAnimationName = "anim";
+    }
+    
+    function startChange()
+    {
+        document.getElementById('box').style.webkitAnimationName = "none";
+        setTimeout("change()", 0);
+    }
+    
+    function setup()
+    {
+        setTimeout("startChange()", 600);
+    }
+    
+    runAnimationTest(expectedValues, setup);
+    
+  </script>
+</head>
+<body>
+This test performs an animation of the left property and makes sure it is animating. Then it stops
+the animation, changes the keyframes to an animation of the top property, restarts the animation
+and makes sure top is animating.
+<div id="box">
+</div>
+<div id="result">
+</div>
+</body>
+</html>

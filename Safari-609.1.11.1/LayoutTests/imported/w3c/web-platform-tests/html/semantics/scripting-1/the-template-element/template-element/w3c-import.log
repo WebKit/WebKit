@@ -1,0 +1,25 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/content-attribute.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/node-document-changes.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-as-a-descendant.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-content-hierarcy.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-content-node-document.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-content.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-descendant-body.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-descendant-frameset.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-descendant-head.html

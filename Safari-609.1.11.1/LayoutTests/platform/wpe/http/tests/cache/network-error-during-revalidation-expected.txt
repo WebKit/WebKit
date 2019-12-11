@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: Load cannot follow more than 20 redirections
+CONSOLE MESSAGE: Cannot load image http://127.0.0.1:8000/resources/network-simulator.php?test=cache-network-error-during-revalidation&path=/misc/resources/compass.jpg&allow-caching=1 due to access control checks.
+Test that failing revalidation with a network error does not cause a crash.
+
+Enabling network
+Loading an image once to cache it
+Disabling network
+Reloading to revalidate the image
+Enabling network
+Done
+

@@ -1,0 +1,230 @@
+//
+// Copyright 2019 The ANGLE Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+//
+// OverlayDraw.comp: Draw overlay widgets.  A maximum of 32 text widgets and 32 graph widgets is
+// supported simultaneously.
+
+#version 450 core
+
+#extension GL_EXT_samplerless_texture_functions : require
+
+#if Is8x4
+#define BLOCK_WIDTH 8
+#define BLOCK_HEIGHT 4
+#elif Is8x8
+#define BLOCK_WIDTH 8
+#define BLOCK_HEIGHT 8
+#else
+#error "Not all subgroup sizes are accounted for"
+#endif
+
+// Limits:
+// Note that max length and size is defined such that each buffer length is below 16KB, the minimum
+// guaranteed supported size for uniform buffers.
+#define MAX_TEXT_WIDGETS 32
+#define MAX_GRAPH_WIDGETS 32
+#define MAX_TEXT_LENGTH 256
+#define MAX_GRAPH_SIZE 64
+
+// Font information:
+#define FONT_GLYPHS_PER_ROW 32
+#define FONT_GLYPHS_ROWS 3
+#define FONT_CHARACTERS (FONT_GLYPHS_PER_ROW * FONT_GLYPHS_ROWS)
+
+layout (local_size_x = BLOCK_WIDTH, local_size_y = BLOCK_HEIGHT, local_size_z = 1) in;
+
+struct TextWidgetData
+{
+    uvec4 coordinates;
+    vec4 color;
+    uvec4 fontSize;     // w unused.  xy has the font glyph width/height.  z has the layer.
+    uvec4 text[MAX_TEXT_LENGTH / 16];
+};
+
+struct GraphWidgetData
+{
+    uvec4 coordinates;
+    vec4 color;
+    uvec4 valueWidth;   // yzw unused.  x should necessarily divide coordinate's z-x
+    uvec4 values[MAX_GRAPH_SIZE / 4];
+};
+
+layout(set = 0, binding = 0, rgba32f) uniform image2D blendOutput;
+
+layout (set = 0, binding = 1) uniform TextWidgets
+{
+    TextWidgetData textWidgetsData[MAX_TEXT_WIDGETS];
+};
+
+layout (set = 0, binding = 2) uniform GraphWidgets
+{
+    GraphWidgetData graphWidgetsData[MAX_GRAPH_WIDGETS];
+};
+
+layout(set = 0, binding = 3) uniform utexture2D culledWidgets;
+layout(set = 0, binding = 4) uniform texture2DArray font;
+
+layout (push_constant) uniform PushConstants
+{
+    uvec2 outputSize;
+} params;
+
+bool intersects(const uvec2 imageCoords, const uvec4 widgetCoords)
+{
+    return all(greaterThanEqual(imageCoords, widgetCoords.xy)) &&
+           all(lessThan(imageCoords, widgetCoords.zw));
+}
+
+uint getChar(const uint textWidget, const uvec2 coordInWidget, const uint fontGlyphWidth)
+{
+    const uint charIndex = coordInWidget.x / fontGlyphWidth;
+    const uint packIndex = charIndex / 4;
+    const uint packedChars = textWidgetsData[textWidget].text[packIndex / 4][packIndex % 4];
+    const uint shift = (charIndex % 4) * 8;
+
+#if IsBigEndian
+    return (packedChars >> (24 - shift)) & 0xFF;
+#else
+    return (packedChars >> shift) & 0xFF;
+#endif
+}
+
+float sampleFont(const uint textChar,
+                 const uvec2 coordInWidget,
+                 const uvec2 fontGlyphSize,
+                 const uint fontLayer)
+{
+    const uvec2 coordInGlyph = coordInWidget % fontGlyphSize;
+    const uvec2 glyphOffset = fontGlyphSize *
+        uvec2(textChar % FONT_GLYPHS_PER_ROW, textChar / FONT_GLYPHS_PER_ROW);
+
+    return texelFetch(font, ivec3(glyphOffset + coordInGlyph, fontLayer), 0).x;
+}
+
+uint getValue(const uint graphWidget, const uvec2 coordInWidget, const uint valueWidth)
+{
+    const uint valueIndex = coordInWidget.x / valueWidth.x;
+    return graphWidgetsData[graphWidget].values[valueIndex / 4][valueIndex % 4];
+}
+
+vec4 blend(const vec4 blendedSoFar, const vec4 color)
+{
+    // Assuming colors (C1, a1), (C2, a2) ... (Cn, an) have been so far blended, blendedSoFar will
+    // contain:
+    //
+    //     .rgb = Cn*an + ... + C2*a2*(1-a3)*...*(1-an) + C1*a1*(1-a2)*...*(1-an)
+    //     .a = (1-a1)*(1-a2)*...*(1-an)
+    //
+    // Blending with (Cn+1, an+1) is simply:
+    //
+    //     .rgb = Cn+1*an+1 + .rgb*(1-an+1)
+    //     .a = .a*(1-an+1)
+    //
+    // Note that finally, the background color will be multipled by .a and added with .rgb.
+
+    return vec4(blendedSoFar.rgb * (1 - color.a) + color.rgb * color.a,
+                blendedSoFar.a * (1 - color.a));
+}
+
+void main()
+{
+    const uvec2 imageCoords = gl_GlobalInvocationID.xy;
+    if (any(greaterThanEqual(imageCoords, params.outputSize)))
+    {
+        return;
+    }
+
+    vec4 blendedWidgets = vec4(0, 0, 0, 1);
+
+    const uvec2 subgroupWidgets = texelFetch(culledWidgets, ivec2(gl_WorkGroupID.xy), 0).xy;
+    uint textWidgets = subgroupWidgets.x;
+    uint graphWidgets = subgroupWidgets.y;
+
+    // Loop through possible graph widgets that can intersect with this block.
+    while (graphWidgets != 0)
+    {
+        const uint graphWidget = findLSB(graphWidgets);
+        graphWidgets ^= 1 << graphWidget;
+
+        const uvec4 widgetCoords = graphWidgetsData[graphWidget].coordinates;
+        if (!intersects(imageCoords, widgetCoords))
+        {
+            continue;
+        }
+
+        if (imageCoords.x == widgetCoords.x || imageCoords.y == widgetCoords.y ||
+            imageCoords.x + 1 == widgetCoords.z || imageCoords.y + 1 == widgetCoords.w)
+        {
+            // Use a black border around the graph to mark the area.
+            blendedWidgets = vec4(0);
+            continue;
+        }
+
+        const uvec2 coordInWidget = imageCoords - widgetCoords.xy;
+        const uint valueWidth = graphWidgetsData[graphWidget].valueWidth.x;
+
+        // Find the value corresponding to this pixel.
+        const uint value = getValue(graphWidget, coordInWidget, valueWidth);
+
+        vec4 color = vec4(0);
+        const uint widgetHeight = widgetCoords.w - widgetCoords.y;
+
+        // If the graph value overflows the designated area, have the last four rows show a
+        // checkerboard pattern to signify that there is an overflow.
+        bool indicateOverflow = value > widgetHeight && coordInWidget.y + 4 >= widgetHeight
+                && ((coordInWidget.x ^ coordInWidget.y) & 1) == 0;
+
+        if ((widgetHeight - coordInWidget.y) < value && !indicateOverflow)
+        {
+            color = graphWidgetsData[graphWidget].color;
+            blendedWidgets = blend(blendedWidgets, color);
+        }
+    }
+
+    // Loop through possible text widgets that can intersect with this block.
+    while (textWidgets != 0)
+    {
+        const uint textWidget = findLSB(textWidgets);
+        textWidgets ^= 1 << textWidget;
+
+        const uvec4 widgetCoords = textWidgetsData[textWidget].coordinates;
+        if (!intersects(imageCoords, widgetCoords))
+        {
+            continue;
+        }
+
+        const uvec2 coordInWidget = imageCoords - widgetCoords.xy;
+        const uvec4 fontSizePacked = textWidgetsData[textWidget].fontSize;
+        const uvec2 fontGlyphSize = fontSizePacked.xy;
+        const uint fontLayer = fontSizePacked.z;
+
+        // Find the character corresponding to this pixel.
+        const uint textChar = getChar(textWidget, coordInWidget, fontGlyphSize.x);
+
+        // The FONT_CHARACTERS value is a value filled where there is no character, so we don't add
+        // a background to it.
+        if (textChar < FONT_CHARACTERS)
+        {
+            // Sample the font based on this character.
+            const float sampleValue = sampleFont(textChar, coordInWidget, fontGlyphSize, fontLayer);
+
+            vec4 color = vec4(0, 0, 0, 0.4);
+            color = mix(color, textWidgetsData[textWidget].color, sampleValue);
+
+            blendedWidgets = blend(blendedWidgets, color);
+        }
+    }
+
+    if (blendedWidgets.a < 1)
+    {
+        vec3 blendedColor = blendedWidgets.rgb;
+        if (blendedWidgets.a > 0)
+        {
+            const vec4 color = imageLoad(blendOutput, ivec2(imageCoords));
+            blendedColor += color.rgb * color.a * blendedWidgets.a;
+        }
+        imageStore(blendOutput, ivec2(imageCoords), vec4(blendedColor, 1));
+    }
+}

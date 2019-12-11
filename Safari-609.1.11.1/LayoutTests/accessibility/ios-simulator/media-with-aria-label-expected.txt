@@ -1,0 +1,13 @@
+ 
+
+This tests ensures that aria-label is conveyed for video and audio elements.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS video1.description is 'AXLabel: Video One, indefinite time'
+PASS audio1.description is 'AXLabel: Audio One, 0 seconds, indefinite time'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

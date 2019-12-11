@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+    <head>
+        <title>delay document 'load' event test</title>
+        <style> video { border: 3px solid red; } </style>
+        <script src=video-test.js></script>
+        <script src=media-file.js></script>
+        <script>
+            var video;
+
+            function testMovieWithNoSource(elem)
+            {
+                video = elem;   // Need it in a global for testExpected() to see it.
+                consoleWrite("<em>no 'src'.</em>");
+                testExpected("video.networkState", HTMLMediaElement.prototype.NETWORK_EMPTY, "==");
+                testExpected("video.readyState", HTMLMediaElement.prototype.HAVE_NOTHING, "==");
+            }
+
+            function testMovieWithSource(elem, hasLoaded, msg)
+            {
+                video = elem;   // Need it in a global for testExpected() to see it.
+                consoleWrite(msg);
+                if (hasLoaded) {
+                    // The movie should have loaded at least to HAVE_CURRENT_DATA
+                    testExpected("video.networkState", HTMLMediaElement.prototype.NETWORK_NO_SOURCE, "!=");
+                    testExpected("video.networkState", HTMLMediaElement.prototype.NETWORK_IDLE, ">=");
+                    testExpected("video.readyState", HTMLMediaElement.prototype.HAVE_CURRENT_DATA, ">=");
+                } else {
+                    testExpected("video.networkState", HTMLMediaElement.prototype.NETWORK_NO_SOURCE, "==");
+                    testExpected("video.readyState", HTMLMediaElement.prototype.HAVE_NOTHING, "==");
+                }
+            }
+
+            function loaded()
+            {
+                consoleWrite("<br><b>document <em>'load'<" + "/em> event handler</b>");
+
+                testMovieWithNoSource(document.getElementById('video-1'));
+                testMovieWithSource(document.getElementById('video-2'), true, "<br><em>with 'src' attribute.</em>");
+                testMovieWithSource(document.getElementById('video-3'), true, "<br><em>with &lt;source&gt; element.</em>");
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
+        </script>
+    </head>
+    <body onload="loaded()">
+        <video id="video-1"></video>
+        <video id="video-2"></video>
+        <video id="video-3"><source id="source-1"></video>
+
+        <p>Test the document's load event is delayed until a movie's meta data is available.</p>
+
+        <script>
+            consoleWrite("<br><b>inline script</b>");
+
+            testMovieWithNoSource(document.getElementById('video-1'));
+
+            video = document.getElementById('video-2');
+            video.src = findMediaFile("video", "content/test");
+            testMovieWithSource(video, false, "<br><em>with 'src' attribute.</em>");
+
+            source = document.getElementById('source-1');
+            source.src = findMediaFile("video", "content/test");
+            testMovieWithSource(document.getElementById('video-3'), false, "<br><em>with &lt;source&gt; element.</em>");
+            document.getElementById('video-3').load();
+        </script>
+
+    </body>
+</html>

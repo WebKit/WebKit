@@ -1,0 +1,23 @@
+CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/xhr/resources/access-control-basic-denied.py due to access control checks.
+CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/xhr/resources/access-control-basic-denied.py due to access control checks.
+CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/xhr/resources/access-control-basic-denied.py due to access control checks.
+CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/xhr/resources/access-control-basic-denied.py due to access control checks.
+CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/xhr/resources/access-control-basic-denied.py due to access control checks.
+CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/xhr/resources/access-control-basic-denied.py due to access control checks.
+CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/xhr/resources/access-control-basic-denied.py due to access control checks.
+CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/xhr/resources/access-control-basic-denied.py due to access control checks.
+CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/xhr/resources/access-control-basic-denied.py due to access control checks.
+CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/xhr/resources/access-control-basic-denied.py due to access control checks.
+
+PASS Recursively repeated CORS requests with failed preflights should never result in unexpected behavior 
+

@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 784x66 [border: (2px outset #808080)]
+        RenderTableSection {TBODY} at (2,2) size 780x62
+          RenderTableRow {TR} at (0,2) size 780x58
+            RenderTableCell {TD} at (2,2) size 776x58 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (550,2) size 224x54 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 222x52
+                  RenderTableRow {TR} at (0,0) size 222x42
+                    RenderTableCell {TD} at (0,0) size 222x42 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 210x39
+                        text run at (1,1) width 210: "this doesn't show until a window"
+                        text run at (1,21) width 38: "resize"
+                  RenderTableRow {TR} at (0,42) size 222x10
+                    RenderTableCell {TD} at (0,42) size 222x10 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                      RenderImage {IMG} at (1,1) size 1x8

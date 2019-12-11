@@ -1,0 +1,60 @@
+<script>
+
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+
+window.addEventListener("load", function () {
+    let width = 5000;
+    let height = 5000;
+    let canvas = document.querySelector("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+    let gl = canvas.getContext("webgl");
+    let program = gl.createProgram();
+    let buffer = gl.createBuffer();
+    let vertices = new Float32Array([-1, -1, 1, -1, -1, 1, 1, -1, 1, 1, -1, 1]);
+    let draw = function() {
+        gl.viewport(0, 0, width, height);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+    };
+    let compileShader = function(kind, source) {
+        let shader = gl.createShader(kind);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        gl.attachShader(program, shader);
+    };
+    compileShader(gl.VERTEX_SHADER, "attribute vec4 v; void main() { gl_Position = v; }");
+    compileShader(gl.FRAGMENT_SHADER, `precision mediump float;
+      void main() {
+        vec2 v = gl_FragCoord.xy;
+        v = fract(v*0.5);
+        gl_FragColor = vec4(v,0,1);
+      }`);
+    gl.linkProgram(program);
+    gl.useProgram(program);
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(0);
+    draw();
+
+    let original = document.getElementById("original");
+    original.textContent = `${gl.drawingBufferWidth} x ${gl.drawingBufferHeight}`;
+
+    width = 5001;
+    height = 5001;
+    canvas.width = width;
+    canvas.height = height;
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+    draw();
+
+    let resized = document.getElementById("resized");
+    resized.textContent = `${gl.drawingBufferWidth} x ${gl.drawingBufferHeight}`;
+}, false);
+</script>
+<p>Original drawing buffer: <span id="original"></span></p>
+<p>Resized drawing buffer: <span id="resized"></span></p>
+<canvas></canvas>

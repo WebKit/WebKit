@@ -1,0 +1,9 @@
+Tests for Runtime.callFunctionOn emulateUserGesture option.
+
+
+== Running test suite: Runtime.callFunctionOnUserGestureEmulation.userIsInteracting
+-- Running test case: CallFunctionOnWithoutEmulatingUserGesture.userIsInteracting
+User is NOT Interacting
+-- Running test case: CallFunctionOnWithEmulatingUserGesture.userIsInteracting
+User is Interacting
+

@@ -1,0 +1,29 @@
+<html>
+<head>
+<script>
+    var timeout;
+
+    function go() {
+        var video = document.getElementsByTagName('video')[0];
+        video.play().then(playing).catch(notPlaying);
+    }
+
+    function playing() {
+        try {
+            window.webkit.messageHandlers.testHandler.postMessage('playing');
+        } catch(e) {
+            window.location = 'callback:playing';
+        }
+    }
+
+    function notPlaying() {
+        try {
+            window.webkit.messageHandlers.testHandler.postMessage('not playing');
+        } catch(e) { }
+    }
+</script>
+</head>
+<body onload="go()">
+    <video id="test-video" src="video-without-audio.mp4" controls width=640 height=480></video>
+</body>
+</html>

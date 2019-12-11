@@ -1,0 +1,102 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (38,37) size 416x247
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGResourceMarker {marker} [id="marker1"] [markerUnits=strokeWidth] [ref at (7.50,7.50)] [angle=0.00]
+          RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#800080]}] [x=0.00] [y=0.00] [width=15.00] [height=15.00]
+        RenderSVGResourceMarker {marker} [id="marker2"] [markerUnits=strokeWidth] [ref at (10,10)] [angle=auto]
+          RenderSVGPath {path} at (0,0) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M 10 0 L 20 20 L 0 20 Z"]
+        RenderSVGResourceMarker {marker} [id="markerStart"] [markerUnits=strokeWidth] [ref at (7.50,7.50)] [angle=0.00]
+          RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#800080]}] [x=0.00] [y=0.00] [width=15.00] [height=15.00]
+        RenderSVGResourceMarker {marker} [id="markerMiddle"] [markerUnits=strokeWidth] [ref at (5,5)] [angle=0.00]
+          RenderSVGEllipse {circle} at (0,0) size 3x3 [fill={[type=SOLID] [color=#008000]}] [cx=5.00] [cy=5.00] [r=7.00]
+        RenderSVGResourceMarker {marker} [id="markerEnd"] [markerUnits=strokeWidth] [ref at (10,10)] [angle=0.00]
+          RenderSVGPath {path} at (0,0) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M 10 0 L 20 20 L 0 20 Z"]
+        RenderSVGResourceMarker {marker} [id="vmarker1"] [markerUnits=strokeWidth] [ref at (7.50,7.50)] [angle=0.00]
+          RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#800080]}] [x=0.00] [y=0.00] [width=15.00] [height=15.00]
+        RenderSVGResourceMarker {marker} [id="vmarker2"] [markerUnits=strokeWidth] [ref at (10,10)] [angle=auto]
+          RenderSVGPath {path} at (0,0) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M 10 0 L 20 20 L 0 20 Z"]
+        RenderSVGResourceMarker {marker} [id="vmarkerStart"] [markerUnits=strokeWidth] [ref at (7.50,7.50)] [angle=0.00]
+          RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#800080]}] [x=0.00] [y=0.00] [width=15.00] [height=15.00]
+        RenderSVGResourceMarker {marker} [id="vmarkerMiddle"] [markerUnits=strokeWidth] [ref at (5,5)] [angle=0.00]
+          RenderSVGEllipse {circle} at (0,0) size 3x3 [fill={[type=SOLID] [color=#008000]}] [cx=5.00] [cy=5.00] [r=7.00]
+        RenderSVGResourceMarker {marker} [id="vmarkerEnd"] [markerUnits=strokeWidth] [ref at (10,10)] [angle=0.00]
+          RenderSVGPath {path} at (0,0) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M 10 0 L 20 20 L 0 20 Z"]
+        RenderSVGResourceMarker {marker} [id="amarker1"] [markerUnits=strokeWidth] [ref at (7.50,7.50)] [angle=0.00]
+          RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#800080]}] [x=0.00] [y=0.00] [width=15.00] [height=15.00]
+        RenderSVGResourceMarker {marker} [id="amarker2"] [markerUnits=strokeWidth] [ref at (10,10)] [angle=auto]
+          RenderSVGPath {path} at (0,0) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M 10 0 L 20 20 L 0 20 Z"]
+        RenderSVGResourceMarker {marker} [id="amarkerStart"] [markerUnits=strokeWidth] [ref at (7.50,7.50)] [angle=0.00]
+          RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#800080]}] [x=0.00] [y=0.00] [width=15.00] [height=15.00]
+        RenderSVGResourceMarker {marker} [id="amarkerMiddle"] [markerUnits=strokeWidth] [ref at (5,5)] [angle=0.00]
+          RenderSVGEllipse {circle} at (0,0) size 3x3 [fill={[type=SOLID] [color=#008000]}] [cx=5.00] [cy=5.00] [r=7.00]
+        RenderSVGResourceMarker {marker} [id="amarkerEnd"] [markerUnits=strokeWidth] [ref at (10,10)] [angle=0.00]
+          RenderSVGPath {path} at (0,0) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M 10 0 L 20 20 L 0 20 Z"]
+        RenderSVGResourceMarker {marker} [id="smarker1"] [markerUnits=strokeWidth] [ref at (7.50,7.50)] [angle=0.00]
+          RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#800080]}] [x=0.00] [y=0.00] [width=15.00] [height=15.00]
+        RenderSVGResourceMarker {marker} [id="smarker2"] [markerUnits=strokeWidth] [ref at (10,10)] [angle=auto]
+          RenderSVGPath {path} at (0,0) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M 10 0 L 20 20 L 0 20 Z"]
+        RenderSVGResourceMarker {marker} [id="smarkerStart"] [markerUnits=strokeWidth] [ref at (7.50,7.50)] [angle=0.00]
+          RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#800080]}] [x=0.00] [y=0.00] [width=15.00] [height=15.00]
+        RenderSVGResourceMarker {marker} [id="smarkerMiddle"] [markerUnits=strokeWidth] [ref at (5,5)] [angle=0.00]
+          RenderSVGEllipse {circle} at (0,0) size 3x3 [fill={[type=SOLID] [color=#008000]}] [cx=5.00] [cy=5.00] [r=7.00]
+        RenderSVGResourceMarker {marker} [id="smarkerEnd"] [markerUnits=strokeWidth] [ref at (10,10)] [angle=0.00]
+          RenderSVGPath {path} at (0,0) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M 10 0 L 20 20 L 0 20 Z"]
+        RenderSVGResourceMarker {marker} [id="hmarker1"] [markerUnits=strokeWidth] [ref at (7.50,7.50)] [angle=0.00]
+          RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#800080]}] [x=0.00] [y=0.00] [width=15.00] [height=15.00]
+        RenderSVGResourceMarker {marker} [id="hmarker2"] [markerUnits=strokeWidth] [ref at (10,10)] [angle=auto]
+          RenderSVGPath {path} at (0,0) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M 10 0 L 20 20 L 0 20 Z"]
+        RenderSVGResourceMarker {marker} [id="hmarkerStart"] [markerUnits=strokeWidth] [ref at (7.50,7.50)] [angle=0.00]
+          RenderSVGRect {rect} at (0,0) size 3x3 [fill={[type=SOLID] [color=#800080]}] [x=0.00] [y=0.00] [width=15.00] [height=15.00]
+        RenderSVGResourceMarker {marker} [id="hmarkerMiddle"] [markerUnits=strokeWidth] [ref at (5,5)] [angle=0.00]
+          RenderSVGEllipse {circle} at (0,0) size 3x3 [fill={[type=SOLID] [color=#008000]}] [cx=5.00] [cy=5.00] [r=7.00]
+        RenderSVGResourceMarker {marker} [id="hmarkerEnd"] [markerUnits=strokeWidth] [ref at (10,10)] [angle=0.00]
+          RenderSVGPath {path} at (0,0) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M 10 0 L 20 20 L 0 20 Z"]
+      RenderSVGText {text} at (155,37) size 170x22 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 169x21
+          chunk 1 (middle anchor) text run 1 at (155.98,54.00) startOffset 0 endOffset 20 width 168.04: "Test marker overflow"
+      RenderSVGContainer {g} at (38,267) size 416x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,280.00)}]
+        RenderSVGText {text} at (38,-13) size 44x17 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 43x16
+            chunk 1 (middle anchor) text run 1 at (38.98,0.00) startOffset 0 endOffset 7 width 42.03: "default"
+        RenderSVGText {text} at (132,-13) size 46x17 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 45x16
+            chunk 1 (middle anchor) text run 1 at (132.88,0.00) startOffset 0 endOffset 9 width 44.25: "'visible'"
+        RenderSVGText {text} at (228,-13) size 34x17 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 33x16
+            chunk 1 (middle anchor) text run 1 at (228.70,0.00) startOffset 0 endOffset 6 width 32.59: "'auto'"
+        RenderSVGText {text} at (320,-13) size 39x17 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 39x16
+            chunk 1 (middle anchor) text run 1 at (320.99,0.00) startOffset 0 endOffset 8 width 38.01: "'scroll'"
+        RenderSVGText {text} at (406,-13) size 48x17 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 48x16
+            chunk 1 (middle anchor) text run 1 at (406.31,0.00) startOffset 0 endOffset 8 width 47.39: "'hidden'"
+      RenderSVGContainer {g} at (38,91) size 414x162 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-30.00,75.00)}]
+        RenderSVGContainer {g} at (38,91) size 54x162 [transform={m=((0.60,0.00)(0.00,0.60)) t=(0.00,0.00)}]
+          RenderSVGPath {path} at (40,91) size 46x46 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [start marker=marker1] [middle marker=marker1] [end marker=marker1] [data="M 130 40 L 180 40 L 180 90"]
+          RenderSVGPath {path} at (40,148) size 48x48 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [start marker=markerStart] [middle marker=markerMiddle] [end marker=markerEnd] [data="M 130 135 L 180 135 L 180 185"]
+          RenderSVGPath {path} at (38,199) size 54x54 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [start marker=marker2] [middle marker=marker2] [end marker=marker2] [data="M 130 230 L 180 230 L 180 280"]
+        RenderSVGContainer {g} at (128,91) size 54x162 [transform={m=((0.60,0.00)(0.00,0.60)) t=(90.00,0.00)}]
+          RenderSVGPath {path} at (130,91) size 46x46 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [start marker=vmarker1] [middle marker=vmarker1] [end marker=vmarker1] [data="M 130 40 L 180 40 L 180 90"]
+          RenderSVGPath {path} at (130,148) size 48x48 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [start marker=vmarkerStart] [middle marker=vmarkerMiddle] [end marker=vmarkerEnd] [data="M 130 135 L 180 135 L 180 185"]
+          RenderSVGPath {path} at (128,199) size 54x54 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [start marker=vmarker2] [middle marker=vmarker2] [end marker=vmarker2] [data="M 130 230 L 180 230 L 180 280"]
+        RenderSVGContainer {g} at (218,91) size 54x162 [transform={m=((0.60,0.00)(0.00,0.60)) t=(180.00,0.00)}]
+          RenderSVGPath {path} at (220,91) size 46x46 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [start marker=amarker1] [middle marker=amarker1] [end marker=amarker1] [data="M 130 40 L 180 40 L 180 90"]
+          RenderSVGPath {path} at (220,148) size 48x48 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [start marker=amarkerStart] [middle marker=amarkerMiddle] [end marker=amarkerEnd] [data="M 130 135 L 180 135 L 180 185"]
+          RenderSVGPath {path} at (218,199) size 54x54 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [start marker=amarker2] [middle marker=amarker2] [end marker=amarker2] [data="M 130 230 L 180 230 L 180 280"]
+        RenderSVGContainer {g} at (308,91) size 54x162 [transform={m=((0.60,0.00)(0.00,0.60)) t=(270.00,0.00)}]
+          RenderSVGPath {path} at (310,91) size 46x46 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [start marker=smarker1] [middle marker=smarker1] [end marker=smarker1] [data="M 130 40 L 180 40 L 180 90"]
+          RenderSVGPath {path} at (310,148) size 48x48 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [start marker=smarkerStart] [middle marker=smarkerMiddle] [end marker=smarkerEnd] [data="M 130 135 L 180 135 L 180 185"]
+          RenderSVGPath {path} at (308,199) size 54x54 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [start marker=smarker2] [middle marker=smarker2] [end marker=smarker2] [data="M 130 230 L 180 230 L 180 280"]
+        RenderSVGContainer {g} at (398,91) size 54x162 [transform={m=((0.60,0.00)(0.00,0.60)) t=(360.00,0.00)}]
+          RenderSVGPath {path} at (400,91) size 46x46 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [start marker=hmarker1] [middle marker=hmarker1] [end marker=hmarker1] [data="M 130 40 L 180 40 L 180 90"]
+          RenderSVGPath {path} at (400,148) size 48x48 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [start marker=hmarkerStart] [middle marker=hmarkerMiddle] [end marker=hmarkerEnd] [data="M 130 135 L 180 135 L 180 185"]
+          RenderSVGPath {path} at (398,199) size 54x54 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [start marker=hmarker2] [middle marker=hmarker2] [end marker=hmarker2] [data="M 130 230 L 180 230 L 180 280"]
+    RenderSVGContainer {g} at (10,310) size 230x38
+      RenderSVGText {text} at (10,310) size 230x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 230x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.7 $"
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

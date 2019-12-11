@@ -1,0 +1,57 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:WebAnimationsCSSIntegrationEnabled=true ] -->
+<html>
+<head>
+<style>
+
+#target {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+</style>
+</head>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<div id="target"></div>
+
+<script>
+
+function waitNFrames(numberOfFrames, continuation)
+{
+    let elapsedFrames = 0;
+    (function rAFCallback() {
+        if (elapsedFrames++ >= numberOfFrames)
+            continuation();
+        else
+            requestAnimationFrame(rAFCallback);
+    })();
+}
+
+async_test(t => {
+    const target = document.getElementById("target");
+    target.animate({ transform: ["translateX(100px)", "none"] }, 1000 * 1000);
+
+    waitNFrames(3, () => {
+        const initialAnimations = internals.acceleratedAnimationsForElement(target);
+        assert_equals(initialAnimations.length, 1, "There should be a single accelerated animation before suspension.");
+        assert_object_equals(initialAnimations[0], { property: "transform", speed: 1 },
+                             'The single accelerated animation before suspension should be running and targeting the "transform" property.');
+
+        internals.suspendAnimations();
+
+        waitNFrames(2, () => {
+            const suspendedAnimations = internals.acceleratedAnimationsForElement(target);
+            assert_equals(suspendedAnimations.length, 1, "There should be a single accelerated animation after suspension.");
+            assert_object_equals(suspendedAnimations[0], { property: "transform", speed: 0 },
+                                 'The single accelerated animation after suspension should be paused and targeting the "transform" property.');
+            internals.resumeAnimations();
+            setTimeout(() => t.done());
+        });
+    });
+}, "Suspending animations should pause running accelerated animations.");
+
+</script>
+</body>
+</html>

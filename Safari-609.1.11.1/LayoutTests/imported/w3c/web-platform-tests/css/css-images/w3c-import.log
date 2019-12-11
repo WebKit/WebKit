@@ -1,0 +1,63 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/css-image-fallbacks-and-annotations-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/css-image-fallbacks-and-annotations.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/css-image-fallbacks-and-annotations002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/css-image-fallbacks-and-annotations002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/css-image-fallbacks-and-annotations003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/css-image-fallbacks-and-annotations003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/css-image-fallbacks-and-annotations004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/css-image-fallbacks-and-annotations004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/css-image-fallbacks-and-annotations005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/css-image-fallbacks-and-annotations005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/gradient-border-box-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/gradient-border-box.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/gradient-button-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/gradient-button.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/gradient-content-box-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/gradient-content-box.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/gradient-crash-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/gradient-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/gradient-move-stops-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/gradient-move-stops.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/gradients-with-border-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/gradients-with-border.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/gradients-with-transparent-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/gradients-with-transparent.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/idlharness.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-fit-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-fit-006.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/linear-gradient-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/linear-gradient-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/linear-gradient-2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/linear-gradient-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-conic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-conic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-linear-2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-linear-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-linear-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-linear.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-radial-2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-radial-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-radial-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-radial.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/tiled-gradients-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/tiled-gradients.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/tiled-radial-gradients-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/tiled-radial-gradients.html

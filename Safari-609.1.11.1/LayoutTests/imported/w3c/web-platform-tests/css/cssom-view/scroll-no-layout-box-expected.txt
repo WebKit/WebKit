@@ -1,0 +1,3 @@
+
+PASS scrolling an element with no CSS layout box should have no effect 
+

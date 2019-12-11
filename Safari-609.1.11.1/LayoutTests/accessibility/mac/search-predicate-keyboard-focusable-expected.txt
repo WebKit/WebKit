@@ -1,0 +1,33 @@
+first blockquote level 1
+
+ checkbox
+ 
+
+first heading level 1
+
+link
+list item
+radio button
+first table heading level 1
+tree item
+test button 1
+test button 2
+This tests AXKeyboardFocusableSearchKey gives the default focusable elements.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS resultElement.role is 'AXRole: AXTextField'
+PASS resultElement.role is 'AXRole: AXCheckBox'
+PASS resultElement.role is 'AXRole: AXButton'
+PASS resultElement.title is 'AXTitle: Submit'
+PASS resultElement.role is 'AXRole: AXComboBox'
+PASS resultElement.role is 'AXRole: AXLink'
+PASS resultElement.role is 'AXRole: AXButton'
+PASS resultElement.title is 'AXTitle: test button 1'
+PASS resultElement.role is 'AXRole: AXButton'
+PASS resultElement.title is 'AXTitle: test button 2'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

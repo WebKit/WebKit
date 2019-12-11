@@ -1,0 +1,4 @@
+
+PASS Template content should throw when its ancestor is being appended. 
+PASS Template content should throw exception when its ancestor in a different document but connected via host is being append. 
+

@@ -1,0 +1,55 @@
+<html>
+<head>
+  <title>Cancel loading a video file and access its properties afterwards.</title>
+</head>
+<body>
+  Access a video element with resource loading canceled.
+  If this test is successful it will terminate with a blank page.
+  This test should finish without crashing.
+
+  <script src=../../media-resources/media-file.js></script>
+  <script src=../../media-resources/video-test.js></script>
+  <video controls id="video"></video>
+
+  <textarea id="child_content" style="display: none;">
+  <!-- Begin child content -->
+  <!-- The following section contains the content in the document of child window. -->
+    <script>
+    var video = window.opener.video;
+    window.setTimeout(function () {
+        var d = video.duration;
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 50);
+    window.opener.blank();
+    </script>
+  <!-- End child content -->
+  </textarea>
+
+  <script>
+  if (window.testRunner) {
+      testRunner.setCanOpenWindows();
+  }
+
+  var video = document.getElementById("video");
+  var file = findMediaFile("video", "../resources/test");
+
+  // Opens a window and writes the child content into the document.
+  video.addEventListener("loadedmetadata", function main()
+  {
+      var win = window.open("", "child");
+      var doc = win.document;
+      doc.open();
+      doc.write(document.getElementById("child_content").value);
+      doc.close();
+  });
+  video.src = "http://127.0.0.1:8000/media/video-throttled-load.cgi?throttle=40&name=" + file;
+
+  // Change URL of the current page to a blank page.
+  function blank()
+  {
+      location.href = "about:blank";
+  }
+  </script>
+</body>
+</html>

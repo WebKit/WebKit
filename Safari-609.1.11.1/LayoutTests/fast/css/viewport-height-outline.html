@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script>
+            function runTest() {
+                description('Tests that vh unit works for outline-width property');
+
+                shouldNotBeEqualToString("window.getComputedStyle(document.getElementById('borderDiv'),null).getPropertyValue('outline-width')", "0px");
+                isSuccessfullyParsed();
+            }
+        </script>
+        <style>
+            #borderDiv{
+                width: 100px;
+                height: 100px;
+                background: green;
+                outline: 2vh solid red;
+            }
+        </style>
+    </head>
+    <body onload="runTest()">
+        <div id="borderDiv"></div>
+    </body>
+</html>

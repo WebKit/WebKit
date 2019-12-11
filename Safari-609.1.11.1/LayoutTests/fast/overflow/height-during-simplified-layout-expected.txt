@@ -1,0 +1,5 @@
+PASS document.getElementById('scrollable').scrollTop is 400
+PASS document.getElementById('scrollable').scrollHeight is 600
+This test passes if you see a green box below.
+
+

@@ -1,0 +1,73 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests that pageshow event is fired before the focus elements are reset when a document in the page cache is restored.</p>
+<div id="result"></div>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows();
+}
+
+let newWindow;
+function start() {
+    result.textContent = 'Running...';
+    newWindow = window.open(URL.createObjectURL(newPage));
+}
+
+const newPage = new Blob([`<!DOCTYPE html>
+<html>
+<body>
+<p>hello, this is a test.</p>
+<form autocomplete="off"><output id="output"></output></form>
+<script>
+output.value = 'foo';
+onload = () => opener.postMessage({step: 'opened'}, '*');
+onmessage = () => {
+    let pageShowed = false;
+    document.addEventListener('DOMSubtreeModified', () => opener.postMessage({step: 'check', pageShowed}, '*'), {once: true});
+    window.addEventListener('pageshow', () => pageShowed = true);
+    opener.postMessage({step: 'ready'}, '*');
+}
+</scr` + `ipt>
+</body>
+</html>`], {'type': 'text/html'});
+
+const secondPage = new Blob([`<!DOCTYPE html>
+<html>
+<body onload="opener.postMessage({step: 'navigated'}, '*')">
+<p>second page.</p>
+</body>
+</html>`], {'type': 'text/html'});
+
+onmessage = (event) => {
+    switch (event.data.step) {
+    case 'opened':
+        newWindow.postMessage('getready', '*');
+        break;
+    case 'ready':
+        newWindow.location = URL.createObjectURL(secondPage);
+        break;
+    case 'navigated':
+        newWindow.history.back();
+        break;
+    case 'check':
+        result.textContent = event.data.pageShowed ? 'PASS' : 'FAIL';
+        newWindow.close();
+        if (window.testRunner)
+            testRunner.notifyDone();
+        break;
+    }
+}
+
+if (window.testRunner)
+    start();
+else
+    document.write('<button onclick="start()">Start</button>');
+
+</script>
+</body>
+</html>

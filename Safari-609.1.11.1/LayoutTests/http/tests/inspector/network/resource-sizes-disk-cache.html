@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="resources/cached-script.js"></script>
+<script src="../resources/inspector-test.js"></script>
+<script src="resources/resource-size-test.js"></script>
+<script>
+function loadAndTriggerInspector(url) {
+    fetch(url).then((response) => response.blob()).then(() => {
+        TestPage.dispatchEventToFrontend("LoadComplete");
+    });
+}
+
+function triggerNetworkLoad() {
+    loadAndTriggerInspector("/resources/square100.png");
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Resource.Size.DiskCache");
+
+    suite.addTestCase({
+        name: "PossibleNetworkLoad",
+        description: "Load a resource from the network, it might be in an earlier disk cache",
+        setup(resolve) { InspectorTest.evaluateInPage(`internals.clearMemoryCache()`, resolve); },
+        test(resolve, reject) {
+            InspectorTest.evaluateInPage(`triggerNetworkLoad()`);
+            InspectorTest.awaitEvent("LoadComplete").then(resolve, reject);
+        }
+    })
+
+    addResourceSizeTest(suite, {
+        name: "Resource.Size.DiskCache.Basic",
+        description: "Sizes of a disk cached image resource with no validation",
+        url: "/resources/square100.png",
+        statusCode: 200,
+        compressed: false,
+        responseSource: WI.Resource.ResponseSource.DiskCache,
+        headers: false,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for Resource size values (transfer size, decoded size, header size, request and response) for resources served from the disk cache.</p>
+</body>
+</html>

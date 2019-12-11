@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 8: Promise Microtask Fired
+Tests for generating a ScriptProfiler.Event with ScriptProfiler.EventType.Microtask type.
+
+
+== Running test suite: ScriptProfiler.EventType.Microtask
+-- Running test case: TrackingSession
+ScriptProfiler.trackingStart
+ScriptProfiler.trackingUpdate
+PASS: Event type should be Microtask.
+ScriptProfiler.trackingComplete
+

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+let worker = new Worker("resources/worker-console.js");
+
+function triggerConsoleMethodInWorker(msg) {
+    worker.postMessage(msg);
+}
+
+function test()
+{
+    function consoleMessageJSONFilter(key, value) {
+        if (key === "_target" || key === "_hasChildren" || key === "_listeners")
+            return undefined;
+        if (key === "_objectId" || key === "_stackTrace" || key === "_sourceCodeLocation")
+            return "<filtered>";
+        if (key === "_url")
+            return sanitizeURL(value);
+        return value;
+    }
+
+    let triggerNextConsoleMessage;
+
+    function nextConsoleMessage() {
+        return new Promise((resolve, reject) => {
+            triggerNextConsoleMessage = resolve;
+        });
+    }
+
+    WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, function(event) {
+        let message = event.data.message;
+        InspectorTest.assert(message instanceof WI.ConsoleMessage);
+        if (triggerNextConsoleMessage)
+            triggerNextConsoleMessage(message);
+    });
+
+    let mainTarget = WI.mainTarget;
+    let workerTarget = Array.from(WI.targets).find((target) => target.type === WI.TargetType.Worker);
+    if (!workerTarget) {
+        InspectorTest.fail("Missing Worker Target");
+        InspectorTest.completeTest();
+        return;
+    }
+
+
+    let suite = InspectorTest.createAsyncSuite("Worker.Console.basic");
+
+    function addConsoleTestCase({name, message, description, validate, preprocess}) {
+        suite.addTestCase({
+            name, description,
+            test(resolve, reject) {
+                InspectorTest.evaluateInPage(`triggerConsoleMethodInWorker("${message}")`);
+                nextConsoleMessage()
+                    .then((message) => {
+                        if (validate)
+                            validate(message);
+                        if (preprocess)
+                            preprocess(message);
+                        InspectorTest.log(JSON.stringify(message, consoleMessageJSONFilter, "  "));
+                        resolve();
+                    }).catch(reject);
+            }
+        })
+    }
+
+    addConsoleTestCase({
+        name: "Worker.Console.log",
+        description: "console.log with multiple values should work.",
+        message: "log",
+        validate(message) {
+            InspectorTest.expectEqual(message.parameters[1].target, workerTarget, "ConsoleMessage parameter RemoteObjects should be from the Worker target.");
+        }
+    });
+
+    addConsoleTestCase({
+        name: "Worker.Console.warn",
+        description: "console.warn should produce a warning message.",
+        message: "warn",
+    });
+
+    addConsoleTestCase({
+        name: "Worker.Console.error",
+        description: "console.error should produce an error message.",
+        message: "error",
+    });
+
+    addConsoleTestCase({
+        name: "Worker.Console.assert",
+        description: "console.assert should produce an assertion message.",
+        message: "assert",
+    });
+
+    addConsoleTestCase({
+        name: "Worker.Console.time",
+        description: "console.time/timeEnd should produce a timing message.",
+        message: "time",
+        preprocess(message) {
+            message._messageText = message._messageText.replace(/[0-9.]+/, "<filtered>");
+        }
+    });
+
+    addConsoleTestCase({
+        name: "Worker.Console.count",
+        description: "console.count should produce a count message.",
+        message: "count",
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for ConsoleAgent in a Worker.</p>
+</body>
+</html>

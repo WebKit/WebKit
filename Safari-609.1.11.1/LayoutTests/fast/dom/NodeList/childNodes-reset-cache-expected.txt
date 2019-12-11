@@ -1,0 +1,3 @@
+Test for bug 13514: REGRESSION (r20997-21003): Crash in WebCore::Node::Document.
+
+SUCCESS

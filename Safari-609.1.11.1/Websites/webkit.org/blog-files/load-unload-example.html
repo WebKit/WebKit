@@ -1,0 +1,22 @@
+<html>
+<head>
+<script>
+
+function pageLoaded()
+{
+    alert("load event handler called.");
+}
+
+function pageUnloaded()
+{
+    alert("unload event handler called.");
+}
+
+window.addEventListener("load", pageLoaded, false);
+window.addEventListener("unload", pageUnloaded, false);
+
+</script>
+<body>
+<a href="http://www.webkit.org/">Click for WebKit</a>
+</body>
+</html>

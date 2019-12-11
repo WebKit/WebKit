@@ -1,0 +1,4 @@
+His socks are black.
+
+PASS text-attrs-dxdy-have-length 
+

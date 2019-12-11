@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        #container {
+            width: 400px;
+            height: 500px;
+            overflow: scroll;
+            will-change: transform;
+        }
+        
+        #container > div {
+            background-color: green;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        function appendContent()
+        {
+            var container = document.getElementById('container');
+            container.appendChild(document.createElement('div'));
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        function doTest()
+        {
+            window.setTimeout(appendContent, 0);
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div id="container"></div>
+</body>
+</html>

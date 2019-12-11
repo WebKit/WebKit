@@ -1,0 +1,25 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # login: string. The user's Bugzilla login email address.
+  #%]
+
+[% title = BLOCK %]
+  Request for new user account '[% login FILTER html %]' submitted
+[% END %]
+
+[% PROCESS global/header.html.tmpl title = title %]
+
+<p>
+  A confirmation email has been sent containing a link to continue
+  creating an account. The link will expire if an account is not
+  created within [% constants.MAX_TOKEN_AGE FILTER html %] days.
+</p>
+
+[% PROCESS global/footer.html.tmpl %] 

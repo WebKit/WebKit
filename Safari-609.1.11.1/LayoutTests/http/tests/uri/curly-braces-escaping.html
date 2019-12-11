@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("Test that curly braces are not escaped in request queries (bug 116887)");
+
+jsTestIsAsync = true;
+
+var req = new XMLHttpRequest;
+req.open("GET",  "resources/echo-uri.php?q={}", true);
+req.onload = function() {
+    shouldBe("req.responseText", "'/uri/resources/echo-uri.php?q={}'");
+    finishJSTest();
+}
+req.send();
+
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>

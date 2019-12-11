@@ -1,0 +1,8 @@
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+click here This tests focusing an element inside an iframe at the bottom of the page.
+To manually test, tap on "click here" below with docked software keyboard.
+PASS

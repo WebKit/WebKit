@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: e
+CONSOLE MESSAGE: line 26: Error: e2
+
+PASS Throwing inside an unhandledrejection handler invokes the error handler. 
+

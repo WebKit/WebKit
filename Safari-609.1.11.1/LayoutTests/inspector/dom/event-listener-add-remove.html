@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+let callback1 = (event) => { };
+let callback2 = (event) => { };
+
+function addListener(name, options) {
+    document.addEventListener(name, callback1, options);
+}
+
+function removeListener(name) {
+    document.removeEventListener(name, callback1);
+}
+
+function addAttribute(name, callbackNumber) {
+    if (callbackNumber === 1)
+        document[name] = callback1;
+    else if (callbackNumber === 2)
+        document[name] = callback2;
+}
+
+function removeAttribute(name) {
+    document[name] = null;
+}
+
+function click() {
+    document.body.click();
+}
+
+function test() {
+    let node = null;
+
+    function addListener(name, options = {}) {
+        InspectorTest.log(`Adding listener "${name}".`);
+        InspectorTest.evaluateInPage(`addListener("${name}", ${JSON.stringify(options)})`);
+    }
+
+    function removeListener(name) {
+        InspectorTest.log(`Removing listener "${name}".`);
+        InspectorTest.evaluateInPage(`removeListener("${name}")`);
+    }
+
+    function addAttribute(name, callbackNumber) {
+        InspectorTest.log(`Adding attribute "${name}" with callback ${callbackNumber}.`);
+        InspectorTest.evaluateInPage(`addAttribute("${name}", ${callbackNumber})`);
+    }
+
+    function removeAttribute(name) {
+        InspectorTest.log(`Removing attribute "${name}".`);
+        InspectorTest.evaluateInPage(`removeAttribute("${name}")`);
+    }
+
+    function logListeners(expectedCount) {
+        return DOMAgent.getEventListenersForNode(node.id).then(({listeners}) => {
+            listeners = listeners.filter((listener) => listener.nodeId === node.id);
+
+            InspectorTest.expectEqual(listeners.length, expectedCount, `There should be ${expectedCount} event listeners.`);
+
+            for (let eventListener of listeners)
+                InspectorTest.log(`  - "${eventListener.type}"`);
+        });
+    }
+
+    let suite = InspectorTest.createAsyncSuite("DOM.eventListeners");
+
+    suite.addTestCase({
+        name: "DOM.eventListeners.Initial",
+        description: "Test that the document has no event listeners.",
+        test(resolve, reject) {
+            DOMAgent.getEventListenersForNode(node.id).then(({listeners}) => {
+                listeners = listeners.filter((listener) => listener.nodeId === node.id);
+
+                InspectorTest.expectEqual(listeners.length, 0, "There should be no event listeners.");
+
+                for (let eventListener of listeners)
+                    InspectorTest.log(eventListener.type);
+            }).then(resolve, reject);
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.eventListeners.Add",
+        description: "Test that adding an event listener is tracked.",
+        test(resolve, reject) {
+            WI.DOMNode.awaitEvent(WI.DOMNode.Event.EventListenersChanged).then((event) => {
+                InspectorTest.assert(event.target === node, "Target should be document node.");
+
+                return logListeners(1);
+            }).then(resolve, reject);
+
+            addListener("test");
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.eventListeners.Remove",
+        description: "Test that adding an event listener is removed.",
+        test(resolve, reject) {
+            let eventCount = 0;
+
+            WI.DOMNode.addEventListener(WI.DOMNode.Event.EventListenersChanged, (event) => {
+                InspectorTest.assert(event.target === node, "Target should be document node.");
+
+                eventCount++;
+                if (eventCount === 1)
+                    logListeners(0).then(resolve, reject);
+                else
+                    reject("Event listeners changed too many times.");
+            });
+
+            removeListener("test");
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.eventListeners.AddAndRemove",
+        description: "Test that a full add-remove cycle is tracked.",
+        test(resolve, reject) {
+            let eventCount = 0;
+
+            WI.DOMNode.addEventListener(WI.DOMNode.Event.EventListenersChanged, (event) => {
+                InspectorTest.assert(event.target === node, "Target should be document node.");
+
+                eventCount++;
+                if (eventCount === 1) {
+                    logListeners(1).then(() => {
+                        InspectorTest.log("");
+
+                        removeListener("test");
+                    });
+                } else if (eventCount === 2)
+                    logListeners(0).then(resolve, reject);
+                else
+                    reject("Event listeners changed too many times.");
+            });
+
+            addListener("test");
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.eventListeners.Once",
+        description: "Test that an event listener that removes itself after firing is tracked.",
+        test(resolve, reject) {
+            let eventCount = 0;
+
+            WI.DOMNode.addEventListener(WI.DOMNode.Event.EventListenersChanged, (event) => {
+                InspectorTest.assert(event.target === node, "Target should be document node.");
+
+                eventCount++;
+                if (eventCount === 1) {
+                    logListeners(1).then(() => {
+                        InspectorTest.log("");
+                        InspectorTest.log("Trigger \"click\" event.");
+
+                        InspectorTest.evaluateInPage(`click()`);
+                    });
+                } else if (eventCount === 2)
+                    logListeners(0).then(resolve, reject);
+                else
+                    reject("Event listeners changed too many times.");
+            });
+
+            addListener("click", {once: true});
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.eventListeners.AttributeAddAndRemove",
+        description: "Test that adding/removing an event listener via an attribute is tracked.",
+        test(resolve, reject) {
+            let eventCount = 0;
+
+            WI.DOMNode.addEventListener(WI.DOMNode.Event.EventListenersChanged, (event) => {
+                InspectorTest.assert(event.target === node, "Target should be document node.");
+
+                eventCount++;
+                if (eventCount === 1) {
+                    logListeners(1).then(() => {
+                        InspectorTest.log("");
+
+                        removeAttribute("onload");
+                    });
+                } else if (eventCount === 2)
+                    logListeners(0).then(resolve, reject);
+                else
+                    reject("Event listeners changed too many times.");
+            });
+
+            addAttribute("onload", 1);
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.eventListeners.AttributeReplace",
+        description: "Test that replacing an attribute event listener without removing it is tracked.",
+        test(resolve, reject) {
+            let eventCount = 0;
+
+            WI.DOMNode.addEventListener(WI.DOMNode.Event.EventListenersChanged, (event) => {
+                InspectorTest.assert(event.target === node, "Target should be document node.");
+
+                eventCount++;
+                if (eventCount === 1) {
+                    logListeners(1).then(() => {
+                        InspectorTest.log("");
+
+                        addAttribute("onload", 2);
+                    });
+                } else if (eventCount === 2) {
+                    InspectorTest.log("Attribute event listener replaced.");
+
+                    logListeners(1).then(() => {
+                        InspectorTest.log("");
+
+                        removeAttribute("onload");
+                    });
+                } else if (eventCount === 3)
+                    logListeners(0).then(resolve, reject);
+                else
+                    reject("Event listeners changed too many times.");
+            });
+
+            addAttribute("onload", 1);
+        }
+    });
+
+    WI.domManager.requestDocument(async (documentNode) => {
+        node = documentNode;
+
+        InspectorTest.assert(node !== WI.domManager.inspectedNode);
+        InspectorTest.log("Changing inspected node to #document...");
+        await Promise.all([
+            WI.domManager.awaitEvent(WI.DOMManager.Event.InspectedNodeChanged),
+            WI.domManager.setInspectedNode(node),
+        ]);
+        InspectorTest.assert(node === WI.domManager.inspectedNode);
+
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing events for adding and removing event listeners.</p>
+</body>
+</html>

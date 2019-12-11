@@ -1,0 +1,36 @@
+<html>
+<head>
+<title>"autofocus" and the blur() method</title>
+<style>
+ input { background:lime }
+ input:focus { background:red }
+</style>
+<script language="JavaScript" type="text/javascript">
+    var gotBlur = false;
+
+    function log(message) {
+        document.getElementById("console").innerHTML += "<li>"+message+"</li>";
+    }
+
+    function switchBlur() {
+        gotBlur = true;
+    }
+    
+    function test() {
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        if (gotBlur)
+            log("SUCCESS");
+        else
+            log("FAILURE");
+    }
+</script>
+</head>
+<body onload="test()">
+<p>The form control below should have a green background:
+<p><input autofocus onfocus="this.blur()" onblur="switchBlur()">
+<hr/>
+<ol id="console"></ol>
+</body>
+</html>

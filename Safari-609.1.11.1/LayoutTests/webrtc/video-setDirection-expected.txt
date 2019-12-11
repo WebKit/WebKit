@@ -1,0 +1,5 @@
+
+
+PASS Going from sendrecv to inactive and back to sendrecv 
+FAIL The MediaStream should remain the same assert_equals: expected object "[object MediaStream]" but got object "[object MediaStream]"
+

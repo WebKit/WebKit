@@ -1,0 +1,8 @@
+toDataURL.png.complexcolours
+toDataURL with PNG handles non-primary and non-solid colours correctly
+Actual output:
+Expected output:
+
+
+PASS toDataURL with PNG handles non-primary and non-solid colours correctly 
+

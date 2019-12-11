@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (33,213) size 626x163
+      RenderSVGContainer {g} at (33,213) size 626x163
+        RenderSVGContainer {switch} at (33,213) size 626x163
+          RenderSVGContainer {g} at (33,213) size 626x163
+            RenderSVGText {text} at (20,198) size 375x28 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 375x27
+                chunk 1 text run 1 at (20.00,220.00) startOffset 0 endOffset 35 width 375.00: "Why can't they just speak English ?"
+            RenderSVGText {text} at (230,128) size 135x28 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 135x27
+                chunk 1 text run 1 at (230.00,150.00) startOffset 0 endOffset 12 width 134.40: "English (US)"
+    RenderSVGContainer {g} at (16,518) size 380x60
+      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 228x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.6 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

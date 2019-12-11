@@ -1,0 +1,6 @@
+
+PASS The playback rate affects the rate of progress of the current time 
+PASS Setting the playback rate while play-pending preserves the current time 
+PASS Setting the playback rate while playing preserves the current time 
+PASS Setting the playback rate should clear any pending playback rate 
+

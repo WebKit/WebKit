@@ -1,0 +1,117 @@
+<html>
+<head>
+    <script src='/resources/js-test-pre.js'></script>
+    <script src="resources/cross-frame-access.js"></script>
+    <script>
+        description("Tests enumeration of Window / Location properties cross origin.");
+        jsTestIsAsync = true;
+
+        window.onload = function()
+        {
+            if (window.testRunner) {
+                setTimeout(pollForTest, 1);
+            } else {
+                log("To run the test, click the button below when the frame finishes loading.");
+                var button = document.createElement("button");
+                button.appendChild(document.createTextNode("Run Test"));
+                button.onclick = runTest;
+                document.body.appendChild(button);
+            }
+        }
+    
+        pollForTest = function()
+        {
+            if (!testRunner.globalFlag) {
+                setTimeout(pollForTest, 1);
+                return;
+            }
+            runTest();
+            finishJSTest();
+        }
+
+        runTest = function()
+        {
+            // Test enumerating the Window object
+            b_win = document.getElementsByTagName("iframe")[0].contentWindow;
+            try {
+                for (var k in b_win) {
+                    if (k == "customWindowProperty") {
+                        log("FAIL: Cross frame access by enumerating the window object was allowed.");
+                        return;
+                    }
+                }
+            } catch (e) {
+            }
+            log("PASS: Cross frame access by enumerating the window object was denied.");
+
+            var b_winKeys = Object.keys(b_win);
+            if (b_winKeys.indexOf("customWindowProperty") != -1) { 
+                log("FAIL: Cross frame access by getting the keys of the window object was allowed.");
+                return;
+            }
+            log("PASS: Cross frame access by getting the keys of the window object was denied.");
+
+            var b_winPropertyNames = Object.getOwnPropertyNames(b_win);
+            if (b_winPropertyNames.indexOf("customWindowProperty") != -1) {
+                log("FAIL: Cross frame access by getting the property names of the window object was allowed.");
+                return;
+            }
+            log("PASS: Cross frame access by getting the property names of the window object was denied.");
+
+            // Test enumerating the Location object
+            var b_win_location = b_win.location;
+            try {
+                for (var k in b_win_location) {
+                    if (k == "customLocationProperty") {
+                        log("FAIL: Cross frame access by enumerating the Location object was allowed.");
+                        return;
+                    }
+                }
+            } catch (e) {
+            }
+            log("PASS: Cross frame access by enumerating the Location object was denied.");
+
+            var b_winLocationKeys = Object.keys(b_win_location);
+            if (b_winLocationKeys.indexOf("customLocationProperty") != -1) { 
+                log("FAIL: Cross frame access by getting the keys of the Location object was allowed.");
+                return;
+            }
+            log("PASS: Cross frame access by getting the keys of the Location object was denied.");
+
+            var b_winLocationPropertyNames = Object.getOwnPropertyNames(b_win_location);
+            if (b_winLocationPropertyNames.indexOf("customLocationProperty") != -1) {
+                log("FAIL: Cross frame access by getting the property names of the Location object was allowed.");
+                return;
+            }
+            log("PASS: Cross frame access by getting the property names of the Location object was denied.");
+
+            // Window.
+            whitelistedWindowIndices = ['0', '1', '2'];
+            whitelistedWindowPropNames = ['blur', 'close', 'closed', 'focus', 'frames', 'length', 'location', 'opener', 'parent', 'postMessage', 'self', 'then', 'top', 'window'];
+            whitelistedSymbols = [Symbol.toStringTag, Symbol.hasInstance, Symbol.isConcatSpreadable];
+            shouldBeTrue("areArraysEqual(Object.getOwnPropertyNames(b_win).sort(), whitelistedWindowIndices.concat(whitelistedWindowPropNames).sort())");
+            allWindowProps = Reflect.ownKeys(b_win);
+            indexedWindowProps = allWindowProps.slice(0, whitelistedWindowIndices.length);
+            stringWindowProps = allWindowProps.slice(whitelistedWindowIndices.length, -1 * whitelistedSymbols.length);
+            symbolWindowProps = allWindowProps.slice(-1 * whitelistedSymbols.length);
+            shouldBeTrue("areArraysEqual(indexedWindowProps, whitelistedWindowIndices)"); // Reflect.ownKeys should start with the indices exposed on the cross-origin window.
+            shouldBeTrue("areArraysEqual(stringWindowProps.sort(), whitelistedWindowPropNames)"); // Reflect.ownKeys should continue with the cross-origin window properties for a cross-origin Window.
+            shouldBeTrue("areArraysEqual(symbolWindowProps, whitelistedSymbols)"); // Reflect.ownKeys should end with the cross-origin symbols for a cross-origin Window.
+
+            // Location.
+            whitelistedLocationPropNames = ['href', 'replace', 'then'];
+            allLocationProps = Reflect.ownKeys(b_win.location);
+            stringLocationProps = allLocationProps.slice(0, -1 * whitelistedSymbols.length);
+            symbolLocationProps = allLocationProps.slice(-1 * whitelistedSymbols.length);
+
+            shouldBeTrue("areArraysEqual(Object.getOwnPropertyNames(b_win.location).sort(), whitelistedLocationPropNames.sort())");
+            shouldBeTrue("areArraysEqual(stringLocationProps.sort(), whitelistedLocationPropNames)"); // Reflect.ownKeys should start with the cross-origin window properties for a cross-origin Location.
+            shouldBeTrue("areArraysEqual(symbolLocationProps, whitelistedSymbols)"); // Reflect.ownKeys should end with the cross-origin symbols for a cross-origin Location.
+        }
+    </script>
+</head>
+<body>
+    <iframe src="http://localhost:8000/security/resources/cross-frame-iframe-for-enumeration-test.html"></iframe>
+    <script src='/resources/js-test-post.js'></script>
+</body>
+</html>

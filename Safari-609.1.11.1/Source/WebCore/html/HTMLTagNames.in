@@ -1,0 +1,146 @@
+namespace="HTML"
+namespacePrefix="xhtml"
+namespaceURI="http://www.w3.org/1999/xhtml"
+fallbackInterfaceName="HTMLUnknownElement"
+customElementInterfaceName="HTMLElement"
+
+a interfaceName=HTMLAnchorElement
+abbr interfaceName=HTMLElement
+acronym interfaceName=HTMLElement
+address interfaceName=HTMLElement
+applet
+area
+article interfaceName=HTMLElement
+aside interfaceName=HTMLElement
+attachment conditional=ATTACHMENT_ELEMENT, runtimeEnabled=attachmentElement
+audio wrapperOnlyIfMediaIsAvailable, conditional=VIDEO, constructorNeedsCreatedByParser, customTypeHelper
+b interfaceName=HTMLElement
+base
+basefont interfaceName=HTMLElement
+bdi interfaceName=HTMLBDIElement, JSInterfaceName=HTMLElement
+bdo interfaceName=HTMLElement
+bgsound interfaceName=HTMLUnknownElement
+big interfaceName=HTMLElement
+blockquote interfaceName=HTMLQuoteElement
+body
+br interfaceName=HTMLBRElement
+button constructorNeedsFormElement
+canvas customTypeHelper
+caption interfaceName=HTMLTableCaptionElement
+center interfaceName=HTMLElement
+cite interfaceName=HTMLElement
+code interfaceName=HTMLElement
+col interfaceName=HTMLTableColElement
+colgroup interfaceName=HTMLTableColElement
+command interfaceName=HTMLUnknownElement
+data
+datalist interfaceName=HTMLDataListElement, conditional=DATALIST_ELEMENT, runtimeEnabled=dataListElement
+dd interfaceName=HTMLElement
+del interfaceName=HTMLModElement
+details
+dfn interfaceName=HTMLElement
+dialog interfaceName=HTMLDialogElement, runtimeEnabled=dialogElement
+dir interfaceName=HTMLDirectoryElement
+div
+dl interfaceName=HTMLDListElement
+dt interfaceName=HTMLElement
+em interfaceName=HTMLElement
+embed
+fieldset interfaceName=HTMLFieldSetElement, constructorNeedsFormElement
+figcaption interfaceName=HTMLElement
+figure interfaceName=HTMLElement
+font
+footer interfaceName=HTMLElement
+form
+frame
+frameset interfaceName=HTMLFrameSetElement
+h1 interfaceName=HTMLHeadingElement
+h2 interfaceName=HTMLHeadingElement
+h3 interfaceName=HTMLHeadingElement
+h4 interfaceName=HTMLHeadingElement
+h5 interfaceName=HTMLHeadingElement
+h6 interfaceName=HTMLHeadingElement
+head
+header interfaceName=HTMLElement
+hgroup interfaceName=HTMLElement
+hr interfaceName=HTMLHRElement
+html
+i interfaceName=HTMLElement
+iframe interfaceName=HTMLIFrameElement
+image interfaceName=HTMLUnknownElement
+img interfaceName=HTMLImageElement, constructorNeedsFormElement, constructorNeedsCreatedByParser
+input constructorNeedsFormElement, constructorNeedsCreatedByParser
+ins interfaceName=HTMLModElement
+kbd interfaceName=HTMLElement
+keygen constructorNeedsFormElement, runtimeEnabled=keygenElement
+label
+layer interfaceName=HTMLElement
+legend
+li interfaceName=HTMLLIElement
+link constructorNeedsCreatedByParser
+listing interfaceName=HTMLPreElement
+main interfaceName=HTMLElement
+map
+mark interfaceName=HTMLElement
+marquee
+menu
+menuitem interfaceName=HTMLMenuItemElement, runtimeEnabled=menuItemElement
+meta
+meter interfaceName=HTMLMeterElement, conditional=METER_ELEMENT
+nav interfaceName=HTMLElement
+nobr interfaceName=HTMLElement
+noembed interfaceName=HTMLElement
+noframes interfaceName=HTMLElement
+nolayer interfaceName=HTMLElement
+object constructorNeedsFormElement
+ol interfaceName=HTMLOListElement
+optgroup interfaceName=HTMLOptGroupElement
+option
+output constructorNeedsFormElement
+p interfaceName=HTMLParagraphElement
+param
+picture interfaceName=HTMLPictureElement
+plaintext interfaceName=HTMLElement
+pre
+progress interfaceName=HTMLProgressElement
+q interfaceName=HTMLQuoteElement
+rb interfaceName=HTMLElement
+rp interfaceName=HTMLElement
+rt interfaceName=RubyTextElement, JSInterfaceName=HTMLElement
+rtc interfaceName=HTMLElement
+ruby interfaceName=RubyElement, JSInterfaceName=HTMLElement
+s interfaceName=HTMLElement
+samp interfaceName=HTMLElement
+script constructorNeedsCreatedByParser
+section interfaceName=HTMLElement
+select constructorNeedsFormElement
+slot 
+small interfaceName=HTMLElement
+source
+span
+strike interfaceName=HTMLElement
+strong interfaceName=HTMLElement
+style constructorNeedsCreatedByParser
+sub interfaceName=HTMLElement
+summary interfaceName=HTMLSummaryElement, JSInterfaceName=HTMLElement
+sup interfaceName=HTMLElement
+table
+tbody interfaceName=HTMLTableSectionElement
+td interfaceName=HTMLTableCellElement
+template
+textarea interfaceName=HTMLTextAreaElement, constructorNeedsFormElement
+tfoot interfaceName=HTMLTableSectionElement
+th interfaceName=HTMLTableCellElement
+thead interfaceName=HTMLTableSectionElement
+time
+title
+tr interfaceName=HTMLTableRowElement
+track wrapperOnlyIfMediaIsAvailable, conditional=VIDEO_TRACK
+tt interfaceName=HTMLElement
+u interfaceName=HTMLElement
+ul interfaceName=HTMLUListElement
+var interfaceName=HTMLElement
+video wrapperOnlyIfMediaIsAvailable, conditional=VIDEO, constructorNeedsCreatedByParser, customTypeHelper
+wbr interfaceName=HTMLWBRElement, JSInterfaceName=HTMLElement
+xmp interfaceName=HTMLPreElement
+noscript interfaceName=HTMLElement

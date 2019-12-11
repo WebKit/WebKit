@@ -1,0 +1,51 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="combobox1" role="combobox" aria-expanded="false" tabindex="0"></div>
+<div id="combobox2" role="combobox" aria-expanded="true" tabindex="0"></div>
+<div id="menu1" role="menu" aria-expanded="false" tabindex="0"></div>
+<div id="menu2" role="menu" aria-expanded="true" tabindex="0"></div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+window.jsTestIsAsync = true;
+description("This tests that changing the aria-expanded value results in a state-changed notification.");
+
+if (window.testRunner && window.accessibilityController) {
+    accessibilityController.addNotificationListener(function(element, notification, state) {
+        if (notification != "AXExpandedChanged")
+            return;
+        debug(notification + " " + (state == "1") + " on " + element.stringAttributeValue("html-id"));
+    });
+
+    var element = document.getElementById("combobox1");
+    element.focus();
+    debug("Setting aria-expanded to true on combobox1.");
+    element.setAttribute("aria-expanded", "true");
+
+    element = document.getElementById("combobox2");
+    element.focus();
+    debug("Setting aria-expanded to false on combobox2.");
+    element.setAttribute("aria-expanded", "false");
+
+    var element = document.getElementById("menu1");
+    element.focus();
+    debug("Setting aria-expanded to true on menu1.");
+    element.setAttribute("aria-expanded", "true");
+
+    element = document.getElementById("menu2");
+    element.focus();
+    debug("Setting aria-expanded to false on menu2.");
+    element.setAttribute("aria-expanded", "false");
+
+    window.setTimeout(function() {
+        accessibilityController.removeNotificationListener();
+        finishJSTest();
+    }, 0);
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

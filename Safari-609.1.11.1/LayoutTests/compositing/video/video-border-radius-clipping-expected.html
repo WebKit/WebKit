@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        video {
+            box-shadow: -50px -50px 0px black;
+            background-color: red;   
+            margin: 50px;
+            width: 500.25px;
+        }
+
+        .obscurer {
+            position: absolute;
+            width: 14px;
+            height: 10px;
+            background-color: gray;
+        }
+    </style>
+    <script src="../../media/media-file.js"></script>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        function setupTest()
+        {
+            var totalCount = document.getElementsByTagName('video').length;
+            var count = totalCount;
+            document.addEventListener("canplaythrough", function () {
+                if (!--count && window.testRunner) {
+                    setTimeout(function() {
+                        testRunner.notifyDone();
+                    }, totalCount * 150);
+                }
+            }, true);
+
+            document.addEventListener("error", function (event) {
+                console.log("Video " + event.target.getAttribute("name") + " failed to load, error " + event.target.error.code);
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, true);
+
+            setSrcByTagName("video", findMediaFile("video", "../../media/content/counting"));
+        }
+        
+        window.addEventListener('load', setupTest, false);
+    </script>
+</head>
+<body>
+    <video></video>
+
+    <div class="obscurer" style="left: 5px; top: 5px;"></div>
+    <div class="obscurer" style="left: 5px; top: 410px;"></div>
+    <div class="obscurer" style="left: 500px; top: 5px;"></div>
+
+    <div class="obscurer" style="left: 55px; top: 55px;"></div>
+    <div class="obscurer" style="left: 55px; top: 460px;"></div>
+    <div class="obscurer" style="left: 550px; top: 55px;"></div>
+    <div class="obscurer" style="left: 550px; top: 460px;"></div>
+</body>
+</html>

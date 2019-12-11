@@ -1,0 +1,83 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script src="resources/breakpoint.js"></script>
+<script>
+function test()
+{
+    InspectorProtocol.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.setBreakpointsActive", {active: true});
+
+    var inBreakpoint = false;
+    var breakpointTriggered = 0;
+
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    {
+        if (/resources\/breakpoint\.js$/.test(messageObject.params.url)) {
+            ProtocolTest.log("Found breakpoint.js");
+            var scriptIdentifier = messageObject.params.scriptId;
+            var location = {scriptId: scriptIdentifier, lineNumber: 8, columnNumber: 0};
+            var options = {condition: "(a + b) > 10"};
+            InspectorProtocol.sendCommand("Debugger.setBreakpoint", {location: location, options: options}, function(responseObject) {
+                InspectorProtocol.checkForError(responseObject);
+                ProtocolTest.log("Running breakpointWithCondition multiple times");
+                InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointWithCondition(1, 2)"});
+                InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointWithCondition(5, 5)"});
+                InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointWithCondition(7, 4)"});
+            });
+        }
+    }
+
+    InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject)
+    {
+        ProtocolTest.log("Hit Breakpoint!");
+        inBreakpoint = true;
+        ++breakpointTriggered;
+
+        var callFrameIdentifier = messageObject.params.callFrames[0].callFrameId;
+        if (breakpointTriggered === 1) {
+            InspectorProtocol.sendCommand("Debugger.evaluateOnCallFrame", {callFrameId: callFrameIdentifier, expression: "a"}, function(messageObject) {
+                ProtocolTest.log("Evaluted value of `a` (expecting number 7) was: " + JSON.stringify(messageObject.result.result));
+                InspectorProtocol.sendCommand("Debugger.evaluateOnCallFrame", {callFrameId: callFrameIdentifier, expression: "b"}, function(messageObject) {
+                    ProtocolTest.log("Evaluted value of `b` (expecting number 4) was: " + JSON.stringify(messageObject.result.result));
+                    InspectorProtocol.sendCommand("Debugger.resume", {});
+                });
+            });
+        } else if (breakpointTriggered === 2) {
+            InspectorProtocol.sendCommand("Debugger.evaluateOnCallFrame", {callFrameId: callFrameIdentifier, expression: "a"}, function(messageObject) {
+                ProtocolTest.log("Evaluted value of `a` (expecting number 4) was: " + JSON.stringify(messageObject.result.result));
+                InspectorProtocol.sendCommand("Debugger.evaluateOnCallFrame", {callFrameId: callFrameIdentifier, expression: "b"}, function(messageObject) {
+                    ProtocolTest.log("Evaluted value of `b` (expecting number 7) was: " + JSON.stringify(messageObject.result.result));
+                    ProtocolTest.log("PASS: hit breakpoints with expected values");
+                    ProtocolTest.completeTest();
+                });
+            });
+        } else {
+            ProtocolTest.log("FAIL: hit too many breakpoints.");
+            ProtocolTest.completeTest();
+        }
+    }
+
+    InspectorProtocol.eventHandler["Debugger.resumed"] = function(messageObject)
+    {
+        ProtocolTest.log("Resumed, running breakpointWithCondition multiple times again");
+        inBreakpoint = false;
+
+        InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointWithCondition(9, 0)"});
+        InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointWithCondition(12, -4)"});
+        InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointWithCondition(4, 7)"}, function() {
+            setTimeout(function() {
+                if (!inBreakpoint) {
+                    ProtocolTest.log("FAIL: Did not hit conditional breakpoint the second time");
+                    ProtocolTest.completeTest();
+                }
+            }, 100);
+        });
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Debugger.setBreakpoint options.condition</p>
+</body>
+</html>

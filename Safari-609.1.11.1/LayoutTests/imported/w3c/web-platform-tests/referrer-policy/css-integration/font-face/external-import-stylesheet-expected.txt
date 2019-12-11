@@ -1,0 +1,5 @@
+Check that resources from imported stylesheets (loaded from external stylesheets) are loaded with the referrer and referrer policy from the external stylesheet.
+
+
+FAIL Font from imported stylesheet (external). promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'server_data.headers')"
+

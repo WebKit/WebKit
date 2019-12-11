@@ -1,0 +1,15 @@
+<html>
+<body>
+https://bugs.webkit.org/show_bug.cgi?id=49693<br>
+Ensure loads that go through our scheduler and are cancelled by willSendRequest() don't cause us to crash.
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.setWillSendRequestReturnsNull(true);
+    }
+    var img = new Image(1, 1);
+    document.getElementsByTagName("body")[0].appendChild(img);
+    img.src = "does-not-exist.html";
+</script>
+</body>
+</html>

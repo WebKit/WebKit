@@ -1,0 +1,13 @@
+MutationRecord should be exposed on window but not constructible
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.MutationRecord is non-null.
+PASS typeof MutationRecord is "function"
+PASS new MutationRecord threw exception TypeError: function is not a constructor (evaluating 'new MutationRecord').
+PASS record instanceof MutationRecord is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

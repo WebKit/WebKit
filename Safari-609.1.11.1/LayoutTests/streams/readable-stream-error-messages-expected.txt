@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: line 11: TypeError: Can only call ReadableStream.getReader on instances of ReadableStream
+CONSOLE MESSAGE: line 11: TypeError: Can only call ReadableStream.tee on instances of ReadableStream
+CONSOLE MESSAGE: line 11: TypeError: The ReadableStream.locked getter can only be used on instances of ReadableStream
+CONSOLE MESSAGE: line 11: TypeError: Can only call ReadableStreamDefaultController.enqueue on instances of ReadableStreamDefaultController
+CONSOLE MESSAGE: line 11: TypeError: Can only call ReadableStreamDefaultController.error on instances of ReadableStreamDefaultController
+CONSOLE MESSAGE: line 11: TypeError: Can only call ReadableStreamDefaultController.close on instances of ReadableStreamDefaultController
+CONSOLE MESSAGE: line 11: TypeError: The ReadableStreamDefaultController.desiredSize getter can only be used on instances of ReadableStreamDefaultController
+CONSOLE MESSAGE: line 11: TypeError: Can only call ReadableStreamDefaultReader.releaseLock on instances of ReadableStreamDefaultReader
+CONSOLE MESSAGE: line 18: TypeError: Can only call ReadableStream.cancel on instances of ReadableStream
+CONSOLE MESSAGE: line 18: TypeError: Can only call ReadableStreamDefaultReader.cancel on instances of ReadableStreamDefaultReader
+CONSOLE MESSAGE: line 18: TypeError: Can only call ReadableStreamDefaultReader.read on instances of ReadableStreamDefaultReader
+CONSOLE MESSAGE: line 18: TypeError: The ReadableStreamDefaultReader.closed getter can only be used on instances of ReadableStreamDefaultReader
+
+PASS Exercising TypeError messages in ReadableStream, ReadableStreamDefaultController and ReadableStreamDefaultReader 
+

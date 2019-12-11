@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<p>
+    Test that no more message events are fired after EventSource.close() is called, even if it
+    means discarding events that were already processed.
+    Passes if only one message is received.
+</p>
+<pre id=log></pre>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    var log = document.getElementById("log");
+    var es = new EventSource("resources/event-stream.php");
+    var counter = 0;
+    es.addEventListener('message', function (e) {
+        log.innerHTML += "Got message #" + ++counter + "\n";
+
+        if (counter > 1)
+            log.innerHTML += "FAIL. Handler called after the source was closed explicitely.\n";
+
+        es.close();
+
+        setTimeout(function () {
+            // Need to wait to see if we're called again.
+            // event-stream.php sends a bunch of events before flushing, so if close() didn't take
+            // effect we'd get a second message practically instantaneously, waiting 100ms should be ok.
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 100);
+    }, false);
+
+</script>

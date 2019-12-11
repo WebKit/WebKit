@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x34
+        RenderText {#text} at (0,8) size 122x17
+          text run at (0,8) width 122: "Left to right select: "
+        RenderMenuList {SELECT} at (124,2) size 151x30 [color=#2E3436] [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 149x28
+            RenderText at (9,5) size 64x17
+              text run at (9,5) width 64: "Alabama"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,34) size 784x34
+        RenderText {#text} at (662,8) size 122x17
+          text run at (662,8) width 8 RTL: ": "
+          text run at (670,8) width 114: "Right to left select"
+        RenderMenuList {SELECT} at (509,2) size 151x30 [color=#2E3436] [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 149x28
+            RenderText at (76,5) size 64x17
+              text run at (76,5) width 64: "Alabama"
+        RenderText {#text} at (0,0) size 0x0

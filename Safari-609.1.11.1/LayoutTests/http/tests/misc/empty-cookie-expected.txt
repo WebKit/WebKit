@@ -1,0 +1,3 @@
+Test that setting a document.cookie to an empty value has no effect
+
+SUCCESS

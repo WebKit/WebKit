@@ -1,0 +1,80 @@
+Tests RTCIceCandidate.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS candidate = new RTCIceCandidate(initializer); did not throw exception.
+PASS candidate.candidate is "foo"
+PASS candidate.sdpMid is "bar"
+PASS candidate.sdpMLineIndex is 6
+PASS RTCIceCandidate.prototype.toJSON is defined.
+PASS Object.getOwnPropertyDescriptor(RTCIceCandidate.prototype, "toJSON").enumerable is true
+PASS Object.getOwnPropertyDescriptor(RTCIceCandidate.prototype, "toJSON").writable is true
+PASS Object.getOwnPropertyDescriptor(RTCIceCandidate.prototype, "toJSON").configurable is true
+PASS RTCIceCandidate.prototype.toJSON.length is 0
+PASS RTCIceCandidate.prototype.toJSON.name is "toJSON"
+PASS Object.getOwnPropertyDescriptor(jsonMap, "candidate").enumerable is true
+PASS Object.getOwnPropertyDescriptor(jsonMap, "candidate").writable is true
+PASS Object.getOwnPropertyDescriptor(jsonMap, "candidate").configurable is true
+PASS childCandidate.toJSON(); threw exception TypeError: Can only call RTCIceCandidate.toJSON on instances of RTCIceCandidate.
+PASS JSON.stringify(candidate.toJSON()) is "{\"candidate\":\"foo\",\"sdpMid\":\"bar\",\"sdpMLineIndex\":6}"
+PASS JSON.stringify(candidate.toJSON()) is "{\"candidate\":\"foo\",\"sdpMid\":\"bar\",\"sdpMLineIndex\":6}"
+PASS JSON.stringify(candidate.toJSON()) is "{\"candidate\":\"foo\",\"sdpMid\":\"bar\",\"sdpMLineIndex\":6}"
+PASS JSON.stringify(candidate.toJSON()) is "{\"candidate\":\"foo\",\"sdpMid\":\"bar\",\"sdpMLineIndex\":6}"
+PASS JSON.stringify(candidate.toJSON()) is "{\"candidate\":\"foo\",\"sdpMid\":\"bar\",\"sdpMLineIndex\":6}"
+
+Attributes are readonly
+candidate.candidate = "foo-updated"
+PASS candidate.candidate is "foo"
+candidate.sdpMid = "bar-updated"
+PASS candidate.sdpMid is "bar"
+candidate.sdpMLineIndex = 7
+PASS candidate.sdpMLineIndex is 6
+
+Dictionary argument is mandatory.
+PASS new RTCIceCandidate(); threw exception TypeError: Not enough arguments.
+One of the 'sdpMid' or 'sdpMLineIndex' members must be present (and not null or undefined).
+PASS new RTCIceCandidate({candidate:"foo"}); threw exception TypeError: Type error.
+PASS new RTCIceCandidate({candidate:"foo", sdpMid: null}); threw exception TypeError: Type error.
+PASS new RTCIceCandidate({candidate:"foo", sdpMid: undefined}); threw exception TypeError: Type error.
+PASS new RTCIceCandidate({candidate:"foo", sdpMLineIndex: null}); threw exception TypeError: Type error.
+PASS new RTCIceCandidate({candidate:"foo", sdpMLineIndex: undefined}); threw exception TypeError: Type error.
+PASS new RTCIceCandidate({candidate:"foo", sdpMid: null, sdpMLineIndex: null}); threw exception TypeError: Type error.
+PASS new RTCIceCandidate({candidate:"foo", sdpMid: undefined, sdpMLineIndex: undefined}); threw exception TypeError: Type error.
+
+Test that sdpMid or sdpMLineIndex explicitly set to null or undefined, results in a null value.
+PASS candidate = new RTCIceCandidate({candidate:"foo", sdpMid: null, sdpMLineIndex: 1}); did not throw exception.
+PASS candidate.sdpMid is null
+PASS candidate.sdpMLineIndex is 1
+PASS candidate = new RTCIceCandidate({candidate:"foo", sdpMid: undefined, sdpMLineIndex: 1}); did not throw exception.
+PASS candidate.sdpMid is null
+PASS candidate.sdpMLineIndex is 1
+PASS candidate = new RTCIceCandidate({candidate:"foo", sdpMid: "foo", sdpMLineIndex: null}); did not throw exception.
+PASS candidate.sdpMid is 'foo'
+PASS candidate.sdpMLineIndex is null
+PASS candidate = new RTCIceCandidate({candidate:"foo", sdpMid: "foo", sdpMLineIndex: undefined}); did not throw exception.
+PASS candidate.sdpMid is 'foo'
+PASS candidate.sdpMLineIndex is null
+
+When one of the 'sdpMid' or 'sdpMLineIndex' members is set, the other must be null.
+PASS candidate = new RTCIceCandidate({candidate:"foo", sdpMid:"bar"}); did not throw exception.
+PASS candidate.sdpMid is "bar"
+PASS candidate.sdpMLineIndex is null
+PASS candidate = new RTCIceCandidate({candidate:"foo", sdpMLineIndex:6}); did not throw exception.
+PASS candidate.sdpMid is null
+PASS candidate.sdpMLineIndex is 6
+
+Conversion of sdpMLineIndex to unsigned short, following WebIDL rules without [Clamp] or [EnforceRange]
+PASS (new RTCIceCandidate({candidate:"foo", sdpMLineIndex:"a"})).sdpMLineIndex is 0
+PASS (new RTCIceCandidate({candidate:"foo", sdpMLineIndex:-1})).sdpMLineIndex is 65535
+PASS (new RTCIceCandidate({candidate:"foo", sdpMLineIndex:65536})).sdpMLineIndex is 0
+PASS (new RTCIceCandidate({candidate:"foo", sdpMLineIndex:65537})).sdpMLineIndex is 1
+
+Some bad input
+PASS new RTCIceCandidate(5); threw exception TypeError: Type error.
+PASS new RTCIceCandidate("foobar"); threw exception TypeError: Type error.
+PASS new RTCIceCandidate(candidate:""); threw exception SyntaxError: Unexpected token ':'. Expected ')' to end an argument list..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

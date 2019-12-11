@@ -1,0 +1,6 @@
+ALERT: Page was loaded
+ALERT: Page was loaded
+
+Test for NPN_RelaodPlugin in which reloadOpenPages is true. You should see two alerts, indicating that the page was loaded twice.
+
+SUCCESS

@@ -1,0 +1,17 @@
+
+RUN(internals.settings.setAllowsInlineMediaPlayback(false))
+RUN(internals.settings.setAllowsInlineMediaPlaybackAfterFullscreen(false))
+RUN(video.src = findMediaFile("video", "content/test"))
+EVENT(canplaythrough)
+RUN(video.play())
+EVENT(webkitfullscreenchange)
+RUN(video.webkitExitFullscreen())
+EVENT(pause)
+RUN(internals.settings.setAllowsInlineMediaPlaybackAfterFullscreen(true))
+RUN(video.play())
+EVENT(webkitfullscreenchange)
+RUN(video.webkitExitFullscreen())
+EVENT(webkitfullscreenchange)
+EXPECTED (video.paused == 'false') OK
+END OF TEST
+

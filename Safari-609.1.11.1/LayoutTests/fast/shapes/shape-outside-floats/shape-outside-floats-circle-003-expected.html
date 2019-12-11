@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<style>
+.container {
+    font: 40px/1 Ahem, sans-serif;
+    line-height: 40px;
+    width: 100px;
+    height: 40px;
+    overflow: hidden;
+    white-space: nowrap;
+    color: green;
+}
+
+.circle {
+    width: 138px;
+    height: 40px;
+    background-color: green;
+}
+</style>
+
+<body>
+    <p>You should see a green rectangle. You shouldn't see any red.</p>
+<div class="container">
+    <div style="float: left" class="circle"></div>
+X
+</div>
+
+<div class="container" style="text-align: right">
+<div style="float: right" class="circle"></div>
+X
+</div>
+</body>

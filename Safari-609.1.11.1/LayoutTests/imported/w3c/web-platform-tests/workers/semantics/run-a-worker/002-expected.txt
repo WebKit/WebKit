@@ -1,0 +1,3 @@
+
+FAIL worker global scope, shared worker Can't find variable: SharedWorker
+

@@ -1,0 +1,4 @@
+The following text should be green: 
+
+PASS Style from document overrides style from outer CE 
+

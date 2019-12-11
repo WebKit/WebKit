@@ -1,0 +1,5 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Tests that the ICE gathering state ends up as "completed" after applying a local offer. Test timed out
+

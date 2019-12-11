@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../../../resources/js-test-pre.js"></script>
+    <style>
+        body {
+            width: 100%;
+            height: 5000vh;
+            font-family: -apple-system;
+            color: white;
+            margin: 0;
+            background-color: red;
+            padding: 1em;
+            box-sizing: border-box;
+        }
+
+        .description {
+            position: fixed;
+        }
+    </style>
+</head>
+<body>
+<div class="description">
+    <p>To manually test, swipe down to scroll in the document. The touch count should update to 1. Tap anywhere to stop scrolling while decelerating. The touch count should remain at 1. Then tap again in the document. The touch count should be 2.</p>
+    <p>The touch count is: <span id="touches">0</span></p>
+</div>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+touchstartEventCount = 0;
+
+document.scrollingElement.scrollTop = 0;
+document.body.addEventListener("touchstart", () => {
+    document.body.style.backgroundColor = (++touchstartEventCount == 2) ? "green" : "red";
+    touches.textContent = `${touchstartEventCount}`;
+});
+
+function getSwipeUIScript(fromX, fromY, toX, toY, duration)
+{
+    return `(() => {
+        uiController.dragFromPointToPoint(${fromX}, ${fromY}, ${toX}, ${toY}, ${duration}, () => {
+            uiController.uiScriptComplete("");
+        });
+    })();`;
+}
+
+function expectTouchCountToBe(count)
+{
+    shouldBeEqualToString("document.getElementById('touches').textContent", `${count}`);
+}
+
+if (window.testRunner && testRunner.runUIScript) {
+    testRunner.dumpAsText();
+    jsTestIsAsync = true;
+    testRunner.runUIScript(getSwipeUIScript(100, 0.75 * innerHeight, 100, 0.25 * innerHeight, 0.1), () => {
+        shouldBecomeDifferent("document.scrollingElement.scrollTop", "0", () => {
+            expectTouchCountToBe(1);
+            UIHelper.tapAt(100, document.scrollingElement.scrollTop + 0.75 * innerHeight).then(() => {
+                expectTouchCountToBe(1);
+                UIHelper.tapAt(100, document.scrollingElement.scrollTop + 0.25 * innerHeight).then(() => {
+                    expectTouchCountToBe(2);
+                    finishJSTest();
+                });
+            });
+        });
+    });
+}
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

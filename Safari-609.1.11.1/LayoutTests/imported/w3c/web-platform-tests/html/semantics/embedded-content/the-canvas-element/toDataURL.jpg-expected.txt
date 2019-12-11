@@ -1,0 +1,6 @@
+toDataURL.jpg
+toDataURL with image/jpg is invalid type hence returns a PNG
+Actual output:
+
+PASS toDataURL with image/jpg is invalid type hence returns a PNG 
+

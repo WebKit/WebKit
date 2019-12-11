@@ -1,0 +1,5 @@
+
+PASS XMLHttpRequest: send("") - empty entity body (POST) 
+PASS XMLHttpRequest: send("") - empty entity body (PUT) 
+FAIL XMLHttpRequest: send("") - empty entity body (HEAD) assert_equals: expected "NO" but got "0"
+

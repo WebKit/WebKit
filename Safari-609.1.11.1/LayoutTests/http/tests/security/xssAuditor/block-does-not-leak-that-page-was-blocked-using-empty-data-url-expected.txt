@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 4: The XSS Auditor blocked access to 'http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?enable-full-block=1&q=%3Cscript%3Ealert(/XSS/)%3C/script%3E' because the source code of a script was found within the request. The server sent an 'X-XSS-Protection' header requesting this behavior.
+This tests that the URL of an iframe whose page triggered a full page block is not "data:,".
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS received load event for iframe after initial iframe load led to a full page block.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

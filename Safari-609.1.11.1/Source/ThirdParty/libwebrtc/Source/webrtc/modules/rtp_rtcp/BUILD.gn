@@ -1,0 +1,507 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_source_set("rtp_rtcp_format") {
+  visibility = [ "*" ]
+  public = [
+    "include/report_block_data.h",
+    "include/rtcp_statistics.h",
+    "include/rtp_cvo.h",
+    "include/rtp_header_extension_map.h",
+    "include/rtp_packet_sender.h",
+    "include/rtp_rtcp_defines.h",
+    "source/byte_io.h",
+    "source/rtcp_packet.h",
+    "source/rtcp_packet/app.h",
+    "source/rtcp_packet/bye.h",
+    "source/rtcp_packet/common_header.h",
+    "source/rtcp_packet/compound_packet.h",
+    "source/rtcp_packet/dlrr.h",
+    "source/rtcp_packet/extended_jitter_report.h",
+    "source/rtcp_packet/extended_reports.h",
+    "source/rtcp_packet/fir.h",
+    "source/rtcp_packet/loss_notification.h",
+    "source/rtcp_packet/nack.h",
+    "source/rtcp_packet/pli.h",
+    "source/rtcp_packet/psfb.h",
+    "source/rtcp_packet/rapid_resync_request.h",
+    "source/rtcp_packet/receiver_report.h",
+    "source/rtcp_packet/remb.h",
+    "source/rtcp_packet/remote_estimate.h",
+    "source/rtcp_packet/report_block.h",
+    "source/rtcp_packet/rrtr.h",
+    "source/rtcp_packet/rtpfb.h",
+    "source/rtcp_packet/sdes.h",
+    "source/rtcp_packet/sender_report.h",
+    "source/rtcp_packet/target_bitrate.h",
+    "source/rtcp_packet/tmmb_item.h",
+    "source/rtcp_packet/tmmbn.h",
+    "source/rtcp_packet/tmmbr.h",
+    "source/rtcp_packet/transport_feedback.h",
+    "source/rtp_dependency_descriptor_extension.h",
+    "source/rtp_dependency_descriptor_reader.h",
+    "source/rtp_dependency_descriptor_writer.h",
+    "source/rtp_generic_frame_descriptor.h",
+    "source/rtp_generic_frame_descriptor_extension.h",
+    "source/rtp_header_extensions.h",
+    "source/rtp_packet.h",
+    "source/rtp_packet_received.h",
+    "source/rtp_packet_to_send.h",
+  ]
+  sources = [
+    "include/report_block_data.cc",
+    "include/rtp_rtcp_defines.cc",
+    "source/rtcp_packet.cc",
+    "source/rtcp_packet/app.cc",
+    "source/rtcp_packet/bye.cc",
+    "source/rtcp_packet/common_header.cc",
+    "source/rtcp_packet/compound_packet.cc",
+    "source/rtcp_packet/dlrr.cc",
+    "source/rtcp_packet/extended_jitter_report.cc",
+    "source/rtcp_packet/extended_reports.cc",
+    "source/rtcp_packet/fir.cc",
+    "source/rtcp_packet/loss_notification.cc",
+    "source/rtcp_packet/nack.cc",
+    "source/rtcp_packet/pli.cc",
+    "source/rtcp_packet/psfb.cc",
+    "source/rtcp_packet/rapid_resync_request.cc",
+    "source/rtcp_packet/receiver_report.cc",
+    "source/rtcp_packet/remb.cc",
+    "source/rtcp_packet/remote_estimate.cc",
+    "source/rtcp_packet/report_block.cc",
+    "source/rtcp_packet/rrtr.cc",
+    "source/rtcp_packet/rtpfb.cc",
+    "source/rtcp_packet/sdes.cc",
+    "source/rtcp_packet/sender_report.cc",
+    "source/rtcp_packet/target_bitrate.cc",
+    "source/rtcp_packet/tmmb_item.cc",
+    "source/rtcp_packet/tmmbn.cc",
+    "source/rtcp_packet/tmmbr.cc",
+    "source/rtcp_packet/transport_feedback.cc",
+    "source/rtp_dependency_descriptor_extension.cc",
+    "source/rtp_generic_frame_descriptor.cc",
+    "source/rtp_generic_frame_descriptor_extension.cc",
+    "source/rtp_header_extension_map.cc",
+    "source/rtp_header_extensions.cc",
+    "source/rtp_packet.cc",
+    "source/rtp_packet_received.cc",
+    "source/rtp_packet_to_send.cc",
+  ]
+
+  deps = [
+    "..:module_api",
+    "..:module_api_public",
+    "../../api:array_view",
+    "../../api:function_view",
+    "../../api:libjingle_peerconnection_api",
+    "../../api:rtp_headers",
+    "../../api:rtp_parameters",
+    "../../api/audio_codecs:audio_codecs_api",
+    "../../api/transport:network_control",
+    "../../api/video:video_frame",
+    "../../api/video:video_rtp_headers",
+    "../../common_video",
+    "../../common_video/generic_frame_descriptor",
+    "../../rtc_base:checks",
+    "../../rtc_base:deprecation",
+    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base/system:unused",
+    "../../system_wrappers",
+    "../video_coding:codec_globals_headers",
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+    "//third_party/abseil-cpp/absl/types:variant",
+  ]
+}
+
+rtc_static_library("rtp_rtcp") {
+  visibility = [ "*" ]
+  sources = [
+    "include/flexfec_receiver.h",
+    "include/flexfec_sender.h",
+    "include/receive_statistics.h",
+    "include/remote_ntp_time_estimator.h",
+    "include/rtp_rtcp.h",
+    "include/ulpfec_receiver.h",
+    "source/absolute_capture_time_receiver.cc",
+    "source/absolute_capture_time_receiver.h",
+    "source/absolute_capture_time_sender.cc",
+    "source/absolute_capture_time_sender.h",
+    "source/dtmf_queue.cc",
+    "source/dtmf_queue.h",
+    "source/fec_private_tables_bursty.cc",
+    "source/fec_private_tables_bursty.h",
+    "source/fec_private_tables_random.cc",
+    "source/fec_private_tables_random.h",
+    "source/flexfec_header_reader_writer.cc",
+    "source/flexfec_header_reader_writer.h",
+    "source/flexfec_receiver.cc",
+    "source/flexfec_sender.cc",
+    "source/forward_error_correction.cc",
+    "source/forward_error_correction.h",
+    "source/forward_error_correction_internal.cc",
+    "source/forward_error_correction_internal.h",
+    "source/packet_loss_stats.cc",
+    "source/packet_loss_stats.h",
+    "source/playout_delay_oracle.cc",
+    "source/playout_delay_oracle.h",
+    "source/receive_statistics_impl.cc",
+    "source/receive_statistics_impl.h",
+    "source/remote_ntp_time_estimator.cc",
+    "source/rtcp_nack_stats.cc",
+    "source/rtcp_nack_stats.h",
+    "source/rtcp_receiver.cc",
+    "source/rtcp_receiver.h",
+    "source/rtcp_sender.cc",
+    "source/rtcp_sender.h",
+    "source/rtp_format.cc",
+    "source/rtp_format.h",
+    "source/rtp_format_h264.cc",
+    "source/rtp_format_h264.h",
+    "source/rtp_format_video_generic.cc",
+    "source/rtp_format_video_generic.h",
+    "source/rtp_format_vp8.cc",
+    "source/rtp_format_vp8.h",
+    "source/rtp_format_vp9.cc",
+    "source/rtp_format_vp9.h",
+    "source/rtp_header_extension_size.cc",
+    "source/rtp_header_extension_size.h",
+    "source/rtp_packet_history.cc",
+    "source/rtp_packet_history.h",
+    "source/rtp_rtcp_config.h",
+    "source/rtp_rtcp_impl.cc",
+    "source/rtp_rtcp_impl.h",
+    "source/rtp_sender.cc",
+    "source/rtp_sender.h",
+    "source/rtp_sender_audio.cc",
+    "source/rtp_sender_audio.h",
+    "source/rtp_sender_video.cc",
+    "source/rtp_sender_video.h",
+    "source/rtp_sequence_number_map.cc",
+    "source/rtp_sequence_number_map.h",
+    "source/rtp_utility.cc",
+    "source/rtp_utility.h",
+    "source/source_tracker.cc",
+    "source/source_tracker.h",
+    "source/time_util.cc",
+    "source/time_util.h",
+    "source/tmmbr_help.cc",
+    "source/tmmbr_help.h",
+    "source/ulpfec_generator.cc",
+    "source/ulpfec_generator.h",
+    "source/ulpfec_header_reader_writer.cc",
+    "source/ulpfec_header_reader_writer.h",
+    "source/ulpfec_receiver_impl.cc",
+    "source/ulpfec_receiver_impl.h",
+  ]
+
+  if (rtc_enable_bwe_test_logging) {
+    defines = [ "BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=1" ]
+  } else {
+    defines = [ "BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=0" ]
+  }
+
+  deps = [
+    ":rtp_rtcp_format",
+    ":rtp_video_header",
+    "..:module_api",
+    "..:module_api_public",
+    "..:module_fec_api",
+    "../..:webrtc_common",
+    "../../api:array_view",
+    "../../api:function_view",
+    "../../api:libjingle_peerconnection_api",
+    "../../api:rtp_headers",
+    "../../api:rtp_packet_info",
+    "../../api:rtp_parameters",
+    "../../api:scoped_refptr",
+    "../../api:transport_api",
+    "../../api/audio_codecs:audio_codecs_api",
+    "../../api/rtc_event_log",
+    "../../api/transport:field_trial_based_config",
+    "../../api/transport:webrtc_key_value_config",
+    "../../api/transport/rtp:rtp_source",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../api/video:video_bitrate_allocation",
+    "../../api/video:video_bitrate_allocator",
+    "../../api/video:video_frame",
+    "../../api/video:video_rtp_headers",
+    "../../api/video_codecs:video_codecs_api",
+    "../../call:rtp_interfaces",
+    "../../common_video",
+    "../../logging:rtc_event_audio",
+    "../../logging:rtc_event_rtp_rtcp",
+    "../../modules/audio_coding:audio_coding_module_typedefs",
+    "../../rtc_base:checks",
+    "../../rtc_base:deprecation",
+    "../../rtc_base:gtest_prod",
+    "../../rtc_base:rate_limiter",
+    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:rtc_numerics",
+    "../../rtc_base:safe_minmax",
+    "../../rtc_base/synchronization:sequence_checker",
+    "../../rtc_base/system:fallthrough",
+    "../../rtc_base/time:timestamp_extrapolator",
+    "../../system_wrappers",
+    "../../system_wrappers:metrics",
+    "../remote_bitrate_estimator",
+    "../video_coding:codec_globals_headers",
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/container:inlined_vector",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+    "//third_party/abseil-cpp/absl/types:variant",
+  ]
+}
+
+rtc_source_set("rtcp_transceiver") {
+  visibility = [ "*" ]
+  public = [
+    "source/rtcp_transceiver.h",
+    "source/rtcp_transceiver_config.h",
+    "source/rtcp_transceiver_impl.h",
+  ]
+  sources = [
+    "source/rtcp_transceiver.cc",
+    "source/rtcp_transceiver_config.cc",
+    "source/rtcp_transceiver_impl.cc",
+  ]
+  deps = [
+    ":rtp_rtcp",
+    ":rtp_rtcp_format",
+    "../../:webrtc_common",
+    "../../api:array_view",
+    "../../api:rtp_headers",
+    "../../api:transport_api",
+    "../../api/video:video_bitrate_allocation",
+    "../../rtc_base:checks",
+    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:rtc_task_queue",
+    "../../rtc_base/task_utils:repeating_task",
+    "../../rtc_base/task_utils:to_queued_task",
+    "../../system_wrappers",
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_source_set("rtp_video_header") {
+  visibility = [ "*" ]
+  sources = [
+    "source/rtp_video_header.cc",
+    "source/rtp_video_header.h",
+  ]
+  deps = [
+    "../../:webrtc_common",
+    "../../api/video:video_frame",
+    "../../api/video:video_frame_type",
+    "../../api/video:video_rtp_headers",
+    "../../modules/video_coding:codec_globals_headers",
+    "//third_party/abseil-cpp/absl/container:inlined_vector",
+    "//third_party/abseil-cpp/absl/types:optional",
+    "//third_party/abseil-cpp/absl/types:variant",
+  ]
+}
+
+rtc_source_set("fec_test_helper") {
+  testonly = true
+  sources = [
+    "source/fec_test_helper.cc",
+    "source/fec_test_helper.h",
+  ]
+  deps = [
+    ":rtp_rtcp",
+    ":rtp_rtcp_format",
+    "..:module_api",
+    "../../rtc_base:checks",
+    "../../rtc_base:rtc_base_approved",
+  ]
+}
+
+rtc_source_set("mock_rtp_rtcp") {
+  testonly = true
+  sources = [
+    "mocks/mock_recovered_packet_receiver.cc",
+    "mocks/mock_rtcp_bandwidth_observer.cc",
+    "mocks/mock_rtcp_rtt_stats.cc",
+    "mocks/mock_rtp_rtcp.cc",
+  ]
+  public = [
+    "mocks/mock_recovered_packet_receiver.h",
+    "mocks/mock_rtcp_bandwidth_observer.h",
+    "mocks/mock_rtcp_rtt_stats.h",
+    "mocks/mock_rtp_rtcp.h",
+  ]
+  deps = [
+    ":rtp_rtcp",
+    ":rtp_rtcp_format",
+    "..:module_api",
+    "../../api/video:video_bitrate_allocation",
+    "../../rtc_base:checks",
+    "../../rtc_base:rtc_base_approved",
+    "../../test:test_support",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_executable("test_packet_masks_metrics") {
+    testonly = true
+
+    sources = [
+      "test/testFec/average_residual_loss_xor_codes.h",
+      "test/testFec/test_packet_masks_metrics.cc",
+    ]
+
+    deps = [
+      ":rtp_rtcp",
+      "../../test:fileutils",
+      "../../test:test_main",
+      "../../test:test_support",
+      "//testing/gtest",
+    ]
+  }  # test_packet_masks_metrics
+
+  rtc_source_set("rtp_rtcp_modules_tests") {
+    testonly = true
+
+    sources = [
+      "test/testFec/test_fec.cc",
+    ]
+    deps = [
+      ":rtp_rtcp",
+      ":rtp_rtcp_format",
+      "../../rtc_base:rtc_base_approved",
+      "../../test:fileutils",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_source_set("rtp_rtcp_unittests") {
+    testonly = true
+
+    sources = [
+      "source/absolute_capture_time_receiver_unittest.cc",
+      "source/absolute_capture_time_sender_unittest.cc",
+      "source/byte_io_unittest.cc",
+      "source/fec_private_tables_bursty_unittest.cc",
+      "source/flexfec_header_reader_writer_unittest.cc",
+      "source/flexfec_receiver_unittest.cc",
+      "source/flexfec_sender_unittest.cc",
+      "source/nack_rtx_unittest.cc",
+      "source/packet_loss_stats_unittest.cc",
+      "source/playout_delay_oracle_unittest.cc",
+      "source/receive_statistics_unittest.cc",
+      "source/remote_ntp_time_estimator_unittest.cc",
+      "source/rtcp_nack_stats_unittest.cc",
+      "source/rtcp_packet/app_unittest.cc",
+      "source/rtcp_packet/bye_unittest.cc",
+      "source/rtcp_packet/common_header_unittest.cc",
+      "source/rtcp_packet/compound_packet_unittest.cc",
+      "source/rtcp_packet/dlrr_unittest.cc",
+      "source/rtcp_packet/extended_jitter_report_unittest.cc",
+      "source/rtcp_packet/extended_reports_unittest.cc",
+      "source/rtcp_packet/fir_unittest.cc",
+      "source/rtcp_packet/loss_notification_unittest.cc",
+      "source/rtcp_packet/nack_unittest.cc",
+      "source/rtcp_packet/pli_unittest.cc",
+      "source/rtcp_packet/rapid_resync_request_unittest.cc",
+      "source/rtcp_packet/receiver_report_unittest.cc",
+      "source/rtcp_packet/remb_unittest.cc",
+      "source/rtcp_packet/remote_estimate_unittest.cc",
+      "source/rtcp_packet/report_block_unittest.cc",
+      "source/rtcp_packet/rrtr_unittest.cc",
+      "source/rtcp_packet/sdes_unittest.cc",
+      "source/rtcp_packet/sender_report_unittest.cc",
+      "source/rtcp_packet/target_bitrate_unittest.cc",
+      "source/rtcp_packet/tmmbn_unittest.cc",
+      "source/rtcp_packet/tmmbr_unittest.cc",
+      "source/rtcp_packet/transport_feedback_unittest.cc",
+      "source/rtcp_packet_unittest.cc",
+      "source/rtcp_receiver_unittest.cc",
+      "source/rtcp_sender_unittest.cc",
+      "source/rtcp_transceiver_impl_unittest.cc",
+      "source/rtcp_transceiver_unittest.cc",
+      "source/rtp_fec_unittest.cc",
+      "source/rtp_format_h264_unittest.cc",
+      "source/rtp_format_unittest.cc",
+      "source/rtp_format_video_generic_unittest.cc",
+      "source/rtp_format_vp8_test_helper.cc",
+      "source/rtp_format_vp8_test_helper.h",
+      "source/rtp_format_vp8_unittest.cc",
+      "source/rtp_format_vp9_unittest.cc",
+      "source/rtp_generic_frame_descriptor_extension_unittest.cc",
+      "source/rtp_header_extension_map_unittest.cc",
+      "source/rtp_header_extension_size_unittest.cc",
+      "source/rtp_packet_history_unittest.cc",
+      "source/rtp_packet_unittest.cc",
+      "source/rtp_rtcp_impl_unittest.cc",
+      "source/rtp_sender_audio_unittest.cc",
+      "source/rtp_sender_unittest.cc",
+      "source/rtp_sender_video_unittest.cc",
+      "source/rtp_sequence_number_map_unittest.cc",
+      "source/rtp_utility_unittest.cc",
+      "source/source_tracker_unittest.cc",
+      "source/time_util_unittest.cc",
+      "source/ulpfec_generator_unittest.cc",
+      "source/ulpfec_header_reader_writer_unittest.cc",
+      "source/ulpfec_receiver_unittest.cc",
+    ]
+    deps = [
+      ":fec_test_helper",
+      ":mock_rtp_rtcp",
+      ":rtcp_transceiver",
+      ":rtp_rtcp",
+      ":rtp_rtcp_format",
+      "..:module_api",
+      "../..:webrtc_common",
+      "../../api:array_view",
+      "../../api:libjingle_peerconnection_api",
+      "../../api:rtp_headers",
+      "../../api:rtp_packet_info",
+      "../../api:rtp_parameters",
+      "../../api:scoped_refptr",
+      "../../api:transport_api",
+      "../../api/transport:field_trial_based_config",
+      "../../api/units:timestamp",
+      "../../api/video:video_bitrate_allocation",
+      "../../api/video:video_bitrate_allocator",
+      "../../api/video:video_codec_constants",
+      "../../api/video:video_frame",
+      "../../api/video:video_rtp_headers",
+      "../../api/video_codecs:video_codecs_api",
+      "../../call:rtp_receiver",
+      "../../common_video",
+      "../../common_video/test:utilities",
+      "../../logging:mocks",
+      "../../logging:rtc_event_log_api",
+      "../../rtc_base:checks",
+      "../../rtc_base:rate_limiter",
+      "../../rtc_base:rtc_base_approved",
+      "../../rtc_base:rtc_base_tests_utils",
+      "../../rtc_base:rtc_numerics",
+      "../../rtc_base:task_queue_for_test",
+      "../../system_wrappers",
+      "../../test:field_trial",
+      "../../test:rtp_test_utils",
+      "../../test:test_common",
+      "../../test:test_support",
+      "../video_coding:codec_globals_headers",
+      "//third_party/abseil-cpp/absl/algorithm:container",
+      "//third_party/abseil-cpp/absl/base:core_headers",
+      "//third_party/abseil-cpp/absl/memory",
+      "//third_party/abseil-cpp/absl/types:optional",
+    ]
+  }
+}

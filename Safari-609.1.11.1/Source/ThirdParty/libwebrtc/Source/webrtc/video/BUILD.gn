@@ -1,0 +1,653 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../webrtc.gni")
+
+rtc_static_library("video") {
+  sources = [
+    "buffered_frame_decryptor.cc",
+    "buffered_frame_decryptor.h",
+    "call_stats.cc",
+    "call_stats.h",
+    "encoder_rtcp_feedback.cc",
+    "encoder_rtcp_feedback.h",
+    "quality_limitation_reason_tracker.cc",
+    "quality_limitation_reason_tracker.h",
+    "quality_threshold.cc",
+    "quality_threshold.h",
+    "receive_statistics_proxy.cc",
+    "receive_statistics_proxy.h",
+    "report_block_stats.cc",
+    "report_block_stats.h",
+    "rtp_streams_synchronizer.cc",
+    "rtp_streams_synchronizer.h",
+    "rtp_video_stream_receiver.cc",
+    "rtp_video_stream_receiver.h",
+    "send_delay_stats.cc",
+    "send_delay_stats.h",
+    "send_statistics_proxy.cc",
+    "send_statistics_proxy.h",
+    "stats_counter.cc",
+    "stats_counter.h",
+    "stream_synchronization.cc",
+    "stream_synchronization.h",
+    "transport_adapter.cc",
+    "transport_adapter.h",
+    "video_quality_observer.cc",
+    "video_quality_observer.h",
+    "video_receive_stream.cc",
+    "video_receive_stream.h",
+    "video_send_stream.cc",
+    "video_send_stream.h",
+    "video_send_stream_impl.cc",
+    "video_send_stream_impl.h",
+    "video_stream_decoder.cc",
+    "video_stream_decoder.h",
+  ]
+
+  deps = [
+    ":frame_dumping_decoder",
+    "../api:array_view",
+    "../api:fec_controller_api",
+    "../api:libjingle_peerconnection_api",
+    "../api:rtp_parameters",
+    "../api:scoped_refptr",
+    "../api:transport_api",
+    "../api/rtc_event_log",
+    "../api/task_queue",
+    "../api/video:encoded_image",
+    "../api/video:video_bitrate_allocation",
+    "../api/video:video_bitrate_allocator",
+    "../api/video:video_frame",
+    "../api/video:video_frame_i420",
+    "../api/video:video_rtp_headers",
+    "../api/video:video_stream_encoder",
+    "../api/video:video_stream_encoder_create",
+    "../api/video_codecs:video_codecs_api",
+    "../call:bitrate_allocator",
+    "../call:call_interfaces",
+    "../call:rtp_interfaces",
+    "../call:rtp_receiver",  # For RtxReceiveStream.
+    "../call:rtp_sender",
+    "../call:video_stream_api",
+    "../common_video",
+    "../media:rtc_h264_profile_id",
+    "../modules:module_api",
+    "../modules:module_api_public",
+    "../modules/bitrate_controller",
+    "../modules/pacing",
+    "../modules/remote_bitrate_estimator",
+    "../modules/rtp_rtcp",
+    "../modules/rtp_rtcp:rtp_rtcp_format",
+    "../modules/rtp_rtcp:rtp_video_header",
+    "../modules/utility",
+    "../modules/video_coding",
+    "../modules/video_coding:codec_globals_headers",
+    "../modules/video_coding:nack_module",
+    "../modules/video_coding:packet",
+    "../modules/video_coding:video_codec_interface",
+    "../modules/video_coding:video_coding_utility",
+    "../modules/video_processing",
+    "../rtc_base:checks",
+    "../rtc_base:rate_limiter",
+    "../rtc_base:rtc_base_approved",
+    "../rtc_base:rtc_numerics",
+    "../rtc_base:rtc_task_queue",
+    "../rtc_base:stringutils",
+    "../rtc_base:weak_ptr",
+    "../rtc_base/experiments:alr_experiment",
+    "../rtc_base/experiments:field_trial_parser",
+    "../rtc_base/experiments:keyframe_interval_settings_experiment",
+    "../rtc_base/experiments:quality_scaling_experiment",
+    "../rtc_base/experiments:rate_control_settings",
+    "../rtc_base/synchronization:sequence_checker",
+    "../rtc_base/system:fallthrough",
+    "../rtc_base/system:thread_registry",
+    "../rtc_base/task_utils:repeating_task",
+    "../rtc_base/task_utils:to_queued_task",
+    "../rtc_base/time:timestamp_extrapolator",
+    "../system_wrappers",
+    "../system_wrappers:field_trial",
+    "../system_wrappers:metrics",
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+
+  if (!build_with_mozilla) {
+    deps += [ "../media:rtc_media_base" ]
+  }
+}
+
+rtc_source_set("video_stream_decoder_impl") {
+  visibility = [ "*" ]
+
+  sources = [
+    "video_stream_decoder_impl.cc",
+    "video_stream_decoder_impl.h",
+  ]
+
+  deps = [
+    "../api/task_queue",
+    "../api/video:encoded_frame",
+    "../api/video:video_frame",
+    "../api/video:video_rtp_headers",
+    "../api/video:video_stream_decoder",
+    "../api/video_codecs:video_codecs_api",
+    "../modules/video_coding",
+    "../rtc_base:rtc_base_approved",
+    "../rtc_base:rtc_task_queue",
+    "../system_wrappers",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_source_set("frame_dumping_decoder") {
+  visibility = [ "*" ]
+
+  sources = [
+    "frame_dumping_decoder.cc",
+    "frame_dumping_decoder.h",
+  ]
+
+  deps = [
+    "../api/video:encoded_frame",
+    "../api/video:encoded_image",
+    "../api/video_codecs:video_codecs_api",
+    "../modules/video_coding",
+    "../modules/video_coding:video_codec_interface",
+    "../modules/video_coding:video_coding_utility",
+    "../rtc_base:rtc_base_approved",
+    "../rtc_base/system:file_wrapper",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
+rtc_source_set("video_stream_encoder_impl") {
+  visibility = [ "*" ]
+
+  # visibility = [ "../api/video:video_stream_encoder_create" ]
+  sources = [
+    "encoder_bitrate_adjuster.cc",
+    "encoder_bitrate_adjuster.h",
+    "encoder_overshoot_detector.cc",
+    "encoder_overshoot_detector.h",
+    "frame_encode_metadata_writer.cc",
+    "frame_encode_metadata_writer.h",
+    "overuse_frame_detector.cc",
+    "overuse_frame_detector.h",
+    "video_stream_encoder.cc",
+    "video_stream_encoder.h",
+  ]
+
+  deps = [
+    "../api/units:data_rate",
+    "../api/video:encoded_image",
+    "../api/video:video_bitrate_allocation",
+    "../api/video:video_bitrate_allocator",
+    "../api/video:video_bitrate_allocator_factory",
+    "../api/video:video_frame",
+    "../api/video:video_frame_i420",
+    "../api/video:video_rtp_headers",
+    "../api/video:video_stream_encoder",
+    "../api/video_codecs:video_codecs_api",
+    "../common_video",
+    "../modules:module_api_public",
+    "../modules/video_coding",
+    "../modules/video_coding:video_codec_interface",
+    "../modules/video_coding:video_coding_utility",
+    "../modules/video_coding:webrtc_vp9_helpers",
+    "../rtc_base:checks",
+    "../rtc_base:criticalsection",
+    "../rtc_base:logging",
+    "../rtc_base:macromagic",
+    "../rtc_base:rtc_base_approved",
+    "../rtc_base:rtc_event",
+    "../rtc_base:rtc_numerics",
+    "../rtc_base:rtc_task_queue",
+    "../rtc_base:timeutils",
+    "../rtc_base/experiments:alr_experiment",
+    "../rtc_base/experiments:balanced_degradation_settings",
+    "../rtc_base/experiments:field_trial_parser",
+    "../rtc_base/experiments:quality_scaler_settings",
+    "../rtc_base/experiments:quality_scaling_experiment",
+    "../rtc_base/experiments:rate_control_settings",
+    "../rtc_base/synchronization:sequence_checker",
+    "../rtc_base/system:fallthrough",
+    "../rtc_base/task_utils:repeating_task",
+    "../system_wrappers:field_trial",
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("video_mocks") {
+    testonly = true
+    sources = [
+      "test/mock_video_stream_encoder.h",
+    ]
+    deps = [
+      "../api/video:video_stream_encoder",
+      "../test:test_support",
+    ]
+  }
+  rtc_source_set("video_quality_test") {
+    testonly = true
+
+    # Only targets in this file and api/ can depend on this.
+    visibility = [
+      ":*",
+      "../api:create_video_quality_test_fixture_api",
+    ]
+    sources = [
+      "video_analyzer.cc",
+      "video_analyzer.h",
+      "video_quality_test.cc",
+      "video_quality_test.h",
+    ]
+    deps = [
+      ":frame_dumping_decoder",
+      "../api:fec_controller_api",
+      "../api:libjingle_peerconnection_api",
+      "../api:rtc_event_log_output_file",
+      "../api:test_dependency_factory",
+      "../api:video_quality_test_fixture_api",
+      "../api/rtc_event_log:rtc_event_log_factory",
+      "../api/task_queue",
+      "../api/task_queue:default_task_queue_factory",
+      "../api/video:builtin_video_bitrate_allocator_factory",
+      "../api/video:video_bitrate_allocator_factory",
+      "../api/video:video_frame",
+      "../api/video:video_rtp_headers",
+      "../api/video_codecs:video_codecs_api",
+      "../call:fake_network",
+      "../call:simulated_network",
+      "../common_video",
+      "../media:rtc_audio_video",
+      "../media:rtc_encoder_simulcast_proxy",
+      "../media:rtc_internal_video_codecs",
+      "../modules/audio_device:audio_device_api",
+      "../modules/audio_device:audio_device_module_from_input_and_output",
+      "../modules/audio_device:windows_core_audio_utility",
+      "../modules/audio_mixer:audio_mixer_impl",
+      "../modules/rtp_rtcp",
+      "../modules/video_coding",
+      "../modules/video_coding:video_coding_utility",
+      "../modules/video_coding:webrtc_h264",
+      "../modules/video_coding:webrtc_multiplex",
+      "../modules/video_coding:webrtc_vp8",
+      "../modules/video_coding:webrtc_vp9",
+      "../rtc_base:rtc_base_approved",
+      "../rtc_base:rtc_base_tests_utils",
+      "../rtc_base:rtc_numerics",
+      "../system_wrappers",
+      "../test:fake_video_codecs",
+      "../test:fileutils",
+      "../test:perf_test",
+      "../test:platform_video_capturer",
+      "../test:rtp_test_utils",
+      "../test:test_common",
+      "../test:test_renderer",
+      "../test:test_support",
+      "../test:test_support_test_artifacts",
+      "../test:video_test_common",
+      "../test:video_test_support",
+      "//third_party/abseil-cpp/absl/algorithm:container",
+      "//third_party/abseil-cpp/absl/flags:flag",
+      "//third_party/abseil-cpp/absl/flags:parse",
+      "//third_party/abseil-cpp/absl/memory",
+    ]
+
+    if (is_mac || is_ios) {
+      deps += [ "../test:video_test_mac" ]
+    }
+  }
+
+  rtc_source_set("video_full_stack_tests") {
+    testonly = true
+
+    sources = [
+      "full_stack_tests.cc",
+    ]
+    deps = [
+      ":video_quality_test",
+      "../api:simulated_network_api",
+      "../api:test_dependency_factory",
+      "../api:video_quality_test_fixture_api",
+      "../api/video_codecs:video_codecs_api",
+      "../media:rtc_vp9_profile",
+      "../modules/pacing",
+      "../modules/video_coding:webrtc_vp9",
+      "../rtc_base/experiments:alr_experiment",
+      "../system_wrappers:field_trial",
+      "../test:field_trial",
+      "../test:fileutils",
+      "../test:test_common",
+      "../test:test_support",
+      "//testing/gtest",
+      "//third_party/abseil-cpp/absl/flags:flag",
+      "//third_party/abseil-cpp/absl/flags:parse",
+      "//third_party/abseil-cpp/absl/memory",
+    ]
+  }
+
+  rtc_source_set("video_pc_full_stack_tests") {
+    testonly = true
+
+    sources = [
+      "pc_full_stack_tests.cc",
+    ]
+    deps = [
+      "../api:create_network_emulation_manager",
+      "../api:create_peerconnection_quality_test_fixture",
+      "../api:network_emulation_manager_api",
+      "../api:peer_connection_quality_test_fixture_api",
+      "../api:simulated_network_api",
+      "../call:simulated_network",
+      "../media:rtc_vp9_profile",
+      "../modules/video_coding:webrtc_vp9",
+      "../system_wrappers:field_trial",
+      "../test:field_trial",
+      "../test:fileutils",
+      "../test:test_support",
+      "../test/pc/e2e:network_quality_metrics_reporter",
+      "//third_party/abseil-cpp/absl/memory",
+    ]
+  }
+
+  rtc_static_library("video_loopback_lib") {
+    testonly = true
+    sources = [
+      "video_loopback.cc",
+      "video_loopback.h",
+    ]
+    deps = [
+      ":video_quality_test",
+      "../api:libjingle_peerconnection_api",
+      "../api:simulated_network_api",
+      "../api:video_quality_test_fixture_api",
+      "../api/video_codecs:video_codecs_api",
+      "../rtc_base:checks",
+      "../rtc_base:logging",
+      "../system_wrappers:field_trial",
+      "../test:field_trial",
+      "../test:run_test",
+      "../test:run_test_interface",
+      "../test:test_common",
+      "../test:test_renderer",
+      "../test:test_support",
+      "//testing/gtest",
+      "//third_party/abseil-cpp/absl/flags:flag",
+      "//third_party/abseil-cpp/absl/flags:parse",
+      "//third_party/abseil-cpp/absl/memory",
+    ]
+  }
+
+  if (is_mac) {
+    mac_app_bundle("video_loopback") {
+      testonly = true
+      sources = [
+        "video_loopback_main.mm",
+      ]
+      info_plist = "../test/mac/Info.plist"
+      deps = [
+        ":video_loopback_lib",
+      ]
+    }
+  } else {
+    rtc_executable("video_loopback") {
+      testonly = true
+      sources = [
+        "video_loopback_main.cc",
+      ]
+      deps = [
+        ":video_loopback_lib",
+      ]
+    }
+  }
+
+  rtc_executable("screenshare_loopback") {
+    testonly = true
+    sources = [
+      "screenshare_loopback.cc",
+    ]
+
+    deps = [
+      ":video_quality_test",
+      "../api:libjingle_peerconnection_api",
+      "../api:simulated_network_api",
+      "../api:video_quality_test_fixture_api",
+      "../api/video_codecs:video_codecs_api",
+      "../rtc_base:checks",
+      "../rtc_base:logging",
+      "../rtc_base:stringutils",
+      "../system_wrappers:field_trial",
+      "../test:field_trial",
+      "../test:run_test",
+      "../test:run_test_interface",
+      "../test:test_common",
+      "../test:test_renderer",
+      "../test:test_support",
+      "//third_party/abseil-cpp/absl/flags:flag",
+      "//third_party/abseil-cpp/absl/flags:parse",
+      "//third_party/abseil-cpp/absl/memory",
+      "//third_party/abseil-cpp/absl/types:optional",
+    ]
+  }
+
+  rtc_executable("sv_loopback") {
+    testonly = true
+    sources = [
+      "sv_loopback.cc",
+    ]
+    deps = [
+      ":video_quality_test",
+      "../api:libjingle_peerconnection_api",
+      "../api:simulated_network_api",
+      "../api:video_quality_test_fixture_api",
+      "../api/video_codecs:video_codecs_api",
+      "../rtc_base:checks",
+      "../rtc_base:logging",
+      "../rtc_base:stringutils",
+      "../system_wrappers:field_trial",
+      "../test:field_trial",
+      "../test:run_test",
+      "../test:run_test_interface",
+      "../test:test_common",
+      "../test:test_renderer",
+      "../test:test_support",
+      "//testing/gtest",
+      "//third_party/abseil-cpp/absl/flags:flag",
+      "//third_party/abseil-cpp/absl/flags:parse",
+      "//third_party/abseil-cpp/absl/memory",
+    ]
+  }
+
+  rtc_executable("video_replay") {
+    testonly = true
+    sources = [
+      "video_replay.cc",
+    ]
+    deps = [
+      "../api/rtc_event_log",
+      "../api/test/video:function_video_factory",
+      "../api/video_codecs:video_codecs_api",
+      "../call:call_interfaces",
+      "../common_video",
+      "../media:rtc_internal_video_codecs",
+      "../modules/rtp_rtcp",
+      "../rtc_base:checks",
+      "../rtc_base:rtc_json",
+      "../rtc_base:stringutils",
+      "../rtc_base:timeutils",
+      "../system_wrappers",
+      "../test:call_config_utils",
+      "../test:encoder_settings",
+      "../test:fake_video_codecs",
+      "../test:null_transport",
+      "../test:rtp_test_utils",
+      "../test:run_test",
+      "../test:run_test_interface",
+      "../test:test_common",
+      "../test:test_renderer",
+      "../test:test_support",
+      "../test:video_test_common",
+      "../test:video_test_support",
+      "//third_party/abseil-cpp/absl/flags:flag",
+      "//third_party/abseil-cpp/absl/flags:parse",
+      "//third_party/abseil-cpp/absl/memory",
+    ]
+  }
+
+  # TODO(pbos): Rename test suite.
+  rtc_source_set("video_tests") {
+    testonly = true
+
+    defines = []
+    sources = [
+      "buffered_frame_decryptor_unittest.cc",
+      "call_stats_unittest.cc",
+      "cpu_scaling_tests.cc",
+      "encoder_bitrate_adjuster_unittest.cc",
+      "encoder_overshoot_detector_unittest.cc",
+      "encoder_rtcp_feedback_unittest.cc",
+      "end_to_end_tests/bandwidth_tests.cc",
+      "end_to_end_tests/call_operation_tests.cc",
+      "end_to_end_tests/codec_tests.cc",
+      "end_to_end_tests/config_tests.cc",
+      "end_to_end_tests/extended_reports_tests.cc",
+      "end_to_end_tests/fec_tests.cc",
+      "end_to_end_tests/frame_encryption_tests.cc",
+      "end_to_end_tests/histogram_tests.cc",
+      "end_to_end_tests/multi_codec_receive_tests.cc",
+      "end_to_end_tests/multi_stream_tester.cc",
+      "end_to_end_tests/multi_stream_tester.h",
+      "end_to_end_tests/multi_stream_tests.cc",
+      "end_to_end_tests/network_state_tests.cc",
+      "end_to_end_tests/probing_tests.cc",
+      "end_to_end_tests/retransmission_tests.cc",
+      "end_to_end_tests/rtp_rtcp_tests.cc",
+      "end_to_end_tests/ssrc_tests.cc",
+      "end_to_end_tests/stats_tests.cc",
+      "end_to_end_tests/transport_feedback_tests.cc",
+      "frame_encode_metadata_writer_unittest.cc",
+      "overuse_frame_detector_unittest.cc",
+      "picture_id_tests.cc",
+      "quality_limitation_reason_tracker_unittest.cc",
+      "quality_scaling_tests.cc",
+      "quality_threshold_unittest.cc",
+      "receive_statistics_proxy_unittest.cc",
+      "report_block_stats_unittest.cc",
+      "rtp_video_stream_receiver_unittest.cc",
+      "send_delay_stats_unittest.cc",
+      "send_statistics_proxy_unittest.cc",
+      "stats_counter_unittest.cc",
+      "stream_synchronization_unittest.cc",
+      "video_receive_stream_unittest.cc",
+      "video_send_stream_impl_unittest.cc",
+      "video_send_stream_tests.cc",
+      "video_stream_encoder_unittest.cc",
+    ]
+    deps = [
+      ":video",
+      ":video_mocks",
+      ":video_stream_encoder_impl",
+      "../api:fake_frame_decryptor",
+      "../api:fake_frame_encryptor",
+      "../api:libjingle_peerconnection_api",
+      "../api:mock_fec_controller_override",
+      "../api:mock_frame_decryptor",
+      "../api:rtp_headers",
+      "../api:rtp_parameters",
+      "../api:scoped_refptr",
+      "../api:simulated_network_api",
+      "../api/rtc_event_log",
+      "../api/task_queue:default_task_queue_factory",
+      "../api/test/video:function_video_factory",
+      "../api/units:data_rate",
+      "../api/units:timestamp",
+      "../api/video:builtin_video_bitrate_allocator_factory",
+      "../api/video:encoded_image",
+      "../api/video:video_bitrate_allocation",
+      "../api/video:video_frame",
+      "../api/video:video_frame_i420",
+      "../api/video:video_frame_type",
+      "../api/video:video_rtp_headers",
+      "../api/video_codecs:video_codecs_api",
+      "../api/video_codecs:vp8_temporal_layers_factory",
+      "../call:call_interfaces",
+      "../call:fake_network",
+      "../call:mock_bitrate_allocator",
+      "../call:mock_rtp_interfaces",
+      "../call:rtp_interfaces",
+      "../call:rtp_receiver",
+      "../call:rtp_sender",
+      "../call:simulated_network",
+      "../call:simulated_packet_receiver",
+      "../call:video_stream_api",
+      "../common_video",
+      "../common_video/test:utilities",
+      "../media:rtc_audio_video",
+      "../media:rtc_internal_video_codecs",
+      "../media:rtc_media",
+      "../media:rtc_media_base",
+      "../media:rtc_media_tests_utils",
+      "../media:rtc_simulcast_encoder_adapter",
+      "../modules:module_api",
+      "../modules/pacing",
+      "../modules/rtp_rtcp",
+      "../modules/rtp_rtcp:mock_rtp_rtcp",
+      "../modules/rtp_rtcp:rtp_rtcp_format",
+      "../modules/utility",
+      "../modules/video_coding",
+      "../modules/video_coding:codec_globals_headers",
+      "../modules/video_coding:packet",
+      "../modules/video_coding:video_codec_interface",
+      "../modules/video_coding:video_coding_utility",
+      "../modules/video_coding:webrtc_h264",
+      "../modules/video_coding:webrtc_multiplex",
+      "../modules/video_coding:webrtc_vp8",
+      "../modules/video_coding:webrtc_vp9",
+      "../rtc_base",
+      "../rtc_base:checks",
+      "../rtc_base:rate_limiter",
+      "../rtc_base:rtc_base_approved",
+      "../rtc_base:rtc_base_tests_utils",
+      "../rtc_base:rtc_numerics",
+      "../rtc_base:rtc_task_queue",
+      "../rtc_base:task_queue_for_test",
+      "../rtc_base/experiments:alr_experiment",
+      "../rtc_base/synchronization:sequence_checker",
+      "../rtc_base/task_utils:to_queued_task",
+      "../system_wrappers",
+      "../system_wrappers:field_trial",
+      "../system_wrappers:metrics",
+      "../test:direct_transport",
+      "../test:encoder_settings",
+      "../test:fake_video_codecs",
+      "../test:field_trial",
+      "../test:fileutils",
+      "../test:null_transport",
+      "../test:perf_test",
+      "../test:rtp_test_utils",
+      "../test:test_common",
+      "../test:test_support",
+      "../test:video_test_common",
+      "//testing/gtest",
+      "//third_party/abseil-cpp/absl/algorithm:container",
+      "//third_party/abseil-cpp/absl/memory",
+      "//third_party/abseil-cpp/absl/types:optional",
+    ]
+    if (!build_with_mozilla) {
+      deps += [ "../media:rtc_media_base" ]
+    }
+  }
+}

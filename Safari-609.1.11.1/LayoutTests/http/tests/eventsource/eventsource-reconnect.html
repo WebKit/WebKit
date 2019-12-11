@@ -1,0 +1,79 @@
+<html>
+<body>
+<p>Test EventSource reconnect after end of event stream. Should print a series of PASS messages followed by DONE.</p>
+<div id="result"></div>
+<script>
+function log(msg) {
+    document.getElementById("result").innerHTML += msg + "<br>";
+}
+
+var stateNames = ["CONNECTING", "OPEN", "CLOSED"];
+for (var i in stateNames)
+    eval("var " + stateNames[i] + " = " + i);
+var retryTimeout;
+
+function checkReadyState(es, desiredState) {
+    var currState = es.readyState;
+    if (currState == desiredState)
+        log("PASS: state is " + stateNames[desiredState]);
+    else
+        log("FAIL: bad state (" + stateNames[currState] + ", should be " + stateNames[desiredState] + ")");
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var errCount = 0;
+var es = new EventSource("resources/reconnect.php");
+
+checkReadyState(es, CONNECTING);
+
+es.onopen = function (evt) {
+    checkReadyState(es, OPEN);
+};
+
+es.onmessage = function (evt) {
+    if (!errCount) {
+        if (evt.lastEventId == "77")
+            log("PASS: got lastEventId \"77\"");
+        else
+            log("FAIL: unexpected lastEventId \"" + evt.lastEventId + "\"");
+    } else {
+        if (evt.data != "77")
+            log("FAIL: Last-Event-ID header was incorrect/missing");
+        else if (evt.lastEventId != "77")
+            log("FAIL: the lastEventId property was incorrect");
+        else
+            log("PASS: Last-Event-ID header and the lastEventId property were correct");
+    }
+};
+
+es.onerror = function () {
+    errCount++;
+    if (errCount < 2) {
+        checkReadyState(es, CONNECTING);
+        retryTimeout = setTimeout(end, 1000);
+        return;
+    }
+    clearTimeout(retryTimeout);
+    retryTimeout = null;
+    end();
+};
+
+function end() {
+    es.close();
+    if (retryTimeout)
+        log("FAIL: did not reconnect in time");
+    else {
+        checkReadyState(es, CLOSED);
+        log("DONE");
+    }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</body>
+</html>

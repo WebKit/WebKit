@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="block-all-mixed-content">
+</head>
+<body>
+<script>
+function frameLoaded() {
+    if (window.opener)
+        window.opener.postMessage("PASS did load data URL iframe.", "*");
+}
+</script>
+<iframe onload="frameLoaded()" src="data:text/html,This is a boring HTML document."></iframe>
+</body>
+</html>

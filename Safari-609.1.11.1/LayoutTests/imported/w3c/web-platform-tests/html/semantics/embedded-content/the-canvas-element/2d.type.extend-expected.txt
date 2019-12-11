@@ -1,0 +1,9 @@
+2d.type.extend
+Interface methods can be added
+Defined in "Web IDL" (draft)
+Actual output:
+Expected output:
+
+
+PASS Interface methods can be added 
+

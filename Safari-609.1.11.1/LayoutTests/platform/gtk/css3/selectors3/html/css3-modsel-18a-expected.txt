@@ -1,0 +1,55 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x136
+  RenderBlock {HTML} at (0,0) size 800x136
+    RenderBody {BODY} at (8,16) size 784x104
+      RenderBlock {P} at (0,0) size 784x18 [color=#000080]
+        RenderText {#text} at (0,0) size 161x17
+          text run at (0,0) width 161: "The background color of "
+        RenderInline {A} at (0,0) size 113x17 [color=#0000EE]
+          RenderText {#text} at (161,0) size 78x17
+            text run at (161,0) width 78: "this anchor ("
+          RenderInline {STRONG} at (0,0) size 30x17
+            RenderText {#text} at (239,0) size 30x17
+              text run at (239,0) width 30: "here"
+          RenderText {#text} at (268,0) size 6x17
+            text run at (268,0) width 6: ")"
+        RenderText {#text} at (273,0) size 388x17
+          text run at (273,0) width 388: " should turn to green when the pointing device hovers over it."
+      RenderBlock {P} at (0,34) size 784x18 [color=#000080]
+        RenderText {#text} at (0,0) size 161x17
+          text run at (0,0) width 161: "The background color of "
+        RenderInline {A} at (0,0) size 113x17 [color=#FFFFFF] [bgcolor=#008000]
+          RenderText {#text} at (161,0) size 78x17
+            text run at (161,0) width 78: "this anchor ("
+          RenderInline {STRONG} at (0,0) size 30x17
+            RenderText {#text} at (239,0) size 30x17
+              text run at (239,0) width 30: "here"
+          RenderText {#text} at (268,0) size 6x17
+            text run at (268,0) width 6: ")"
+        RenderText {#text} at (273,0) size 51x17
+          text run at (273,0) width 51: " should "
+        RenderInline {STRONG} at (0,0) size 216x17
+          RenderText {#text} at (323,0) size 216x17
+            text run at (323,0) width 216: "remain green when you hover it"
+        RenderText {#text} at (538,0) size 5x17
+          text run at (538,0) width 5: "."
+      RenderBlock {P} at (0,68) size 784x36 [color=#000080]
+        RenderText {#text} at (0,0) size 161x17
+          text run at (0,0) width 161: "The background color of "
+        RenderInline {A} at (0,0) size 113x17 [color=#FFFFFF] [bgcolor=#008000]
+          RenderText {#text} at (161,0) size 78x17
+            text run at (161,0) width 78: "this anchor ("
+          RenderInline {STRONG} at (0,0) size 30x17
+            RenderText {#text} at (239,0) size 30x17
+              text run at (239,0) width 30: "here"
+          RenderText {#text} at (268,0) size 6x17
+            text run at (268,0) width 6: ")"
+        RenderText {#text} at (273,0) size 51x17
+          text run at (273,0) width 51: " should "
+        RenderInline {STRONG} at (0,0) size 358x17
+          RenderText {#text} at (323,0) size 358x17
+            text run at (323,0) width 358: "remain green when the pointing device hovers over it"
+        RenderText {#text} at (680,0) size 775x35
+          text run at (680,0) width 95: " (do not follow"
+          text run at (0,18) width 60: "that link)."

@@ -1,0 +1,7 @@
+2d.pattern.paint.repeatx.outside
+Spec references: 2d.pattern.painting
+Actual output:
+Expected output:
+
+Passed
+

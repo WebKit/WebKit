@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<div id="parentNode">
+<div id="previousSibling"></div><div id="target"><div id="firstChild"></div><div id="lastChild"></div></div><div id="nextSibling"></div>
+</div>
+
+<script>
+description('Test DOMJIT accessors will represent their heap accesses.');
+var tests = [
+    "firstChild",
+    "lastChild",
+    "nextSibling",
+    "previousSibling",
+    "parentNode",
+].map(function (name) {
+    var func = `
+        return function ${name}(name, element, result) {
+            for (var i = 0; i < 1e4; ++i) {
+                if (element.${name} !== result)
+                    return false;
+                if (element.${name} !== result)
+                    return false;
+                if (element.${name} !== result)
+                    return false;
+                if (element.${name} !== result)
+                    return false;
+                if (element.${name} !== result)
+                    return false;
+            }
+            return true;
+        };
+    `;
+    return [ name, Function(func)() ];
+});
+
+for (var [name, func] of tests) {
+    shouldBeTrue(`func("${name}", document.getElementById("target"), document.getElementById("${name}"))`);
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

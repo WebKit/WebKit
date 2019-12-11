@@ -1,0 +1,104 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+    <head>
+        <style>
+            audio { width: 400px; }
+        </style>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script src=media-controls.js></script>
+        <script>
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+
+            function log(msg)
+            {
+                var console = document.getElementById('console');
+                console.innerHTML = console.innerHTML + msg + "<br>";
+            }
+            
+            function buttonClick()
+            {
+                if (document.getElementById('audio'))
+                    log("<br>FAIL: audio element not deleted!!");
+
+                log("<br>clicking button");
+
+                // click the button
+                var button = document.getElementById('button');
+
+                if (window.eventSender) {
+                    eventSender.mouseMoveTo(button.offsetLeft + 20, button.offsetTop + 7);
+                    eventSender.mouseDown();
+                    eventSender.mouseUp();
+                }
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
+            
+            function deleteAudio()
+            {
+                var audio = document.getElementById('audio');
+                if (!audio)
+                    return;
+
+                log("<br>deleting audio element");
+                audio.parentNode.removeChild(audio);
+
+                setTimeout(buttonClick, 10);
+            }
+            
+            function drag()
+            {
+                if (!window.testRunner)
+                    return;
+
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+
+                var audio = document.getElementById('audio');
+                var seekCoords;
+                try {
+                    seekCoords = mediaControlsButtonCoordinates(audio, "timeline");
+                } catch (exception) {
+                    failTest(exception.description);
+                    return;
+                }
+                var x = seekCoords[0];
+                var y = seekCoords[1];
+
+                // Click in the slider to get the thumb under the mouse.
+                log("clicking in controller");
+                eventSender.mouseMoveTo(x, y);
+                eventSender.mouseDown();
+                eventSender.mouseUp();
+
+                // Click slider to scrub, leave the mouse down.
+                log("clicking on thumb");
+                eventSender.mouseDown();
+                eventSender.mouseMoveTo(x, y + 20);
+            }
+
+
+            function start()
+            {
+                setSrcByTagName("audio", findMediaFile("audio", "content/test"));
+
+                audio.addEventListener("canplaythrough", drag);
+                audio.addEventListener("seeking", deleteAudio);
+            }
+
+        </script>
+    </head>
+    <body onload="start()">
+        This tests that events don't continue to target a slider thumb if the media element is deleted while scrubbing.
+        <br>
+        <input type="button" id="button" value="Click Me!" onmouseup="log('button click!')"> 
+        <br>
+        <audio id="audio" controls></audio><br><br>
+        <div id="console"></div>
+    </body>
+</html>

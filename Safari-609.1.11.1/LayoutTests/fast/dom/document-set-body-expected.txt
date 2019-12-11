@@ -1,0 +1,14 @@
+Tests setting document.body to another frame's body
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document1.body is not null
+PASS document2.body is null
+PASS document2.body = document1.body did not throw exception.
+PASS document2.body is not null
+PASS document1.body is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

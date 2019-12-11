@@ -1,0 +1,30 @@
+To manually test this, type in both the rich contenteditable and plain textarea and/or insert candidates/autocorrections. Both elements should have data when typing normally, but only the plain textarea should have data when inserting a replacement.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Plain textarea received 'beforeinput' with inputType: 'insertText' and data: 'h'
+Plain textarea received 'input' with inputType: 'insertText' and data: 'h'
+Plain textarea received 'beforeinput' with inputType: 'insertText' and data: 'e'
+Plain textarea received 'input' with inputType: 'insertText' and data: 'e'
+Plain textarea received 'beforeinput' with inputType: 'insertText' and data: 'l'
+Plain textarea received 'input' with inputType: 'insertText' and data: 'l'
+Plain textarea received 'beforeinput' with inputType: 'insertText' and data: 'o'
+Plain textarea received 'input' with inputType: 'insertText' and data: 'o'
+Plain textarea received 'beforeinput' with inputType: 'insertReplacementText' and data: 'hello'
+Plain textarea received 'input' with inputType: 'insertReplacementText' and data: 'hello'
+Rich contenteditable received 'beforeinput' with inputType: 'insertText' and data: 'h'
+Rich contenteditable received 'input' with inputType: 'insertText' and data: 'h'
+Rich contenteditable received 'beforeinput' with inputType: 'insertText' and data: 'e'
+Rich contenteditable received 'input' with inputType: 'insertText' and data: 'e'
+Rich contenteditable received 'beforeinput' with inputType: 'insertText' and data: 'l'
+Rich contenteditable received 'input' with inputType: 'insertText' and data: 'l'
+Rich contenteditable received 'beforeinput' with inputType: 'insertText' and data: 'o'
+Rich contenteditable received 'input' with inputType: 'insertText' and data: 'o'
+Rich contenteditable received 'beforeinput' with inputType: 'insertReplacementText' and data: 'null'
+Rich contenteditable received 'input' with inputType: 'insertReplacementText' and data: 'null'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+hello

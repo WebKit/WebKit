@@ -1,0 +1,3 @@
+The test passes if both boxes below have the same color.
+
+

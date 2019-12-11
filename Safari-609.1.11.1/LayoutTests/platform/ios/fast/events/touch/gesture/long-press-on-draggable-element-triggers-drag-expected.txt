@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 18: TypeError: internals.settings.setTouchDragDropEnabled is not a function. (In 'internals.settings.setTouchDragDropEnabled(true)', 'internals.settings.setTouchDragDropEnabled' is undefined)
+This test checks that a long press gesture on a draggable element starts a drag/drop session.
+
+Testing
+FAIL
+Drag me

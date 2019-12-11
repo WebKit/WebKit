@@ -1,0 +1,26 @@
+<head>
+  <style type="text/css" media="screen">
+    :focus {
+      outline: 0;
+    }
+  </style>
+  <script type="text/javascript">
+      if (window.testRunner)
+          testRunner.waitUntilDone();
+      if (window.internals)
+	internals.setUsesOverlayScrollbars(true);
+      function runTest()
+      {
+        document.getElementById('sl').focus();
+        testRunner.notifyDone();
+      }
+  </script>
+</head>
+<body onload="setTimeout(runTest, 0)">
+  <p>This test makes sure that the contents of list box items do not intrude upon their padding when in 'selected' state. The test passes if you see a tall green box below (and not a single black pixel anywhere inside it)<p>
+  <select id="sl" multiple="multiple" style="border: 0px; height: 220px; width: 250px; font: 30px Zapfino; padding-right: 50px; padding-left: 50px;">
+    <option selected>faQ'</option>
+    <option>a</option>
+  </select>
+  <div style="display: inline-block; width: 250px; height: 230px; background: green; position: absolute; top:50px; left:50px;"></div>
+</body>

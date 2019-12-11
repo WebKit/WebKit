@@ -1,0 +1,4 @@
+
+PASS 'unusual behaviors' of document.all 
+PASS 'unusual behaviors' of document.all with assignment 
+

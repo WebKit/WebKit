@@ -1,0 +1,13 @@
+
+PASS [INPUT in EMAIL status] The value is empty 
+PASS [INPUT in EMAIL status] The value is a valid email address 
+PASS [INPUT in EMAIL status] The value is a valid email address with some white spaces. 
+PASS [INPUT in EMAIL status] The value is not an email address 
+PASS [INPUT in EMAIL status] The value contains multiple email addresses 
+PASS [INPUT in EMAIL status] The value is valid email addresses 
+PASS [INPUT in EMAIL status] The value contains invalid separator 
+PASS [INPUT in URL status] The value is empty 
+PASS [INPUT in URL status] The value is a valid url 
+PASS [INPUT in URL status] The value is a valid url with some white spaces. 
+PASS [INPUT in URL status] The value is not an url 
+

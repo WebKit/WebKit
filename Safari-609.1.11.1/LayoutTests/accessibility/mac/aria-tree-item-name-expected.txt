@@ -1,0 +1,17 @@
+Release Notes
+Power Search
+Power Search
+item 2
+
+This tests that name calculation is correct for treeitems.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS item0.description is 'AXDescription: Release Notes'
+PASS item1.description is 'AXDescription: item 1'
+PASS item2.description is 'AXDescription: item 2'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

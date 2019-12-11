@@ -1,0 +1,11 @@
+The backtracking register was not taken into account when in an adjacent chain inside a backtracking descendant chain.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Adjacent relations (tree modifiers), no descendant backtracking, multi-attribute match.
+PASS getComputedStyle(document.getElementById("target1")).backgroundColor is "rgb(1, 2, 3)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

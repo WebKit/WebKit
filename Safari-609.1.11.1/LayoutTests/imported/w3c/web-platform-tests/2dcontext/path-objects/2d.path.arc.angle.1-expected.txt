@@ -1,0 +1,8 @@
+2d.path.arc.angle.1
+arc() draws pi/2 .. -pi anticlockwise correctly
+Actual output:
+Expected output:
+
+
+PASS arc() draws pi/2 .. -pi anticlockwise correctly 
+

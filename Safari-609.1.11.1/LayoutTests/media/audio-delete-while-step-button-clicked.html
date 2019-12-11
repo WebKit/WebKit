@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script src=media-controls.js></script>
+
+        <script>
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+
+            function log(msg)
+            {
+                var console = document.getElementById('console');
+                console.innerHTML = console.innerHTML + msg + "<br>";
+            }
+            
+            function buttonClick()
+            {
+                if (document.getElementById('audio'))
+                    log("<br>FAIL: audio element not deleted!!");
+
+                log("<br>clicking button");
+
+                // click the button
+                var button = document.getElementById('button');
+                eventSender.mouseMoveTo(button.offsetLeft + 20, button.offsetTop + 7);
+                eventSender.mouseDown();
+                eventSender.mouseUp();
+
+                testRunner.notifyDone();
+            }
+            
+            function deleteAudio()
+            {
+                // delete the search
+                log("<br>deleting audio element");
+                var audio = document.getElementById('audio');
+                audio.parentNode.removeChild(audio);
+
+                setTimeout(buttonClick, 10);
+            }
+            
+            function step()
+            {
+                if (!window.testRunner)
+                    return;
+
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+
+                var audio = document.getElementById('audio');
+
+                var seekCoords;
+                try {
+                    seekCoords = mediaControlsButtonCoordinates(audio, "seek-forward-button");
+                } catch (exception) {
+                    failTest(exception.description);
+                    return;
+                }
+                var x = seekCoords[0];
+                var y = seekCoords[1];
+
+                // step forward, should generate a timeupdate event
+                log("clicking step forward");
+                eventSender.mouseMoveTo(x, y);
+                eventSender.mouseDown();
+                eventSender.mouseUp();
+
+                // click step forward button but don't release
+                log("clicking step forward");
+                eventSender.mouseDown();
+
+                setTimeout(deleteAudio, 10);
+            }
+
+            function start()
+            {
+                setSrcByTagName("audio", findMediaFile("audio", "content/test"));
+            }
+
+        </script>
+    </head>
+    <body onload="start()">
+        This tests that events don't continue to target a step button if the media element is deleted while mouse down on button.
+        <br>
+        <input type="button" id="button" value="Click Me!" onmouseup="log('button click!')"> 
+        <br>
+        <audio id="audio" ontimeupdate="log('timeupdate')" oncanplaythrough="step()" controls></audio><br><br>
+        <div id="console"></div>
+    </body>
+</html>

@@ -1,0 +1,76 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x380
+  RenderBlock {HTML} at (0,0) size 800x380
+    RenderBody {BODY} at (8,8) size 784x364
+      RenderBlock {DIV} at (0,0) size 784x182
+        RenderBlock {P} at (4,0) size 776x27
+          RenderInline {SPAN} at (0,0) size 236x28 [border: (1px solid #FF0000)]
+            RenderText {#text} at (1,0) size 234x26
+              text run at (1,0) width 234: "mmm mmm mmm mmm"
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {P} at (4,31) size 776x27
+          RenderInline {SPAN} at (0,0) size 236x28 [border: (1px solid #FF0000)]
+            RenderText {#text} at (1,0) size 234x26
+              text run at (1,0) width 234: "mmm mmm\x{300} mmm mmm"
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {P} at (4,62) size 776x27
+          RenderInline {SPAN} at (0,0) size 234x26
+            RenderText {#text} at (0,0) size 234x26
+              text run at (0,0) width 234: "mmm mmm\x{300} mmm mmm"
+          RenderText {#text} at (234,0) size 240x26
+            text run at (234,0) width 240: " mmm mmm mmm mmm"
+        RenderBlock {P} at (4,93) size 776x27
+          RenderInline {SPAN} at (0,0) size 354x26
+            RenderText {#text} at (0,0) size 354x26
+              text run at (0,0) width 354: "mmm mmm\x{300} mmm mmm mmm mmm"
+          RenderText {#text} at (354,0) size 120x26
+            text run at (354,0) width 120: " mmm mmm"
+        RenderBlock {P} at (4,124) size 776x27
+          RenderInline {SPAN} at (0,0) size 234x26
+            RenderText {#text} at (0,0) size 234x26
+              text run at (0,0) width 234: "mmm mmm mmm mmm"
+          RenderText {#text} at (234,0) size 240x26
+            text run at (234,0) width 240: " mmm mmm mmm mmm"
+        RenderBlock {P} at (4,155) size 776x27
+          RenderInline {SPAN} at (0,0) size 354x26
+            RenderText {#text} at (0,0) size 354x26
+              text run at (0,0) width 354: "mmm mmm mmm mmm mmm mmm"
+          RenderText {#text} at (354,0) size 120x26
+            text run at (354,0) width 120: " mmm mmm"
+      RenderBlock {HR} at (0,190) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,200) size 784x164
+        RenderBlock {P} at (4,0) size 776x24
+          RenderInline {SPAN} at (0,0) size 212x25 [border: (1px solid #008000)]
+            RenderText {#text} at (1,0) size 210x23
+              text run at (1,0) width 210: "mmm mmm mmm mmm"
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {P} at (4,28) size 776x24
+          RenderInline {SPAN} at (0,0) size 215x25 [border: (1px solid #008000)]
+            RenderText {#text} at (1,0) size 213x23
+              text run at (1,0) width 213: "mmm mmm\x{300} mmm mmm"
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {P} at (4,56) size 776x24
+          RenderInline {SPAN} at (0,0) size 213x23
+            RenderText {#text} at (0,0) size 213x23
+              text run at (0,0) width 213: "mmm mmm\x{300} mmm mmm"
+          RenderText {#text} at (213,0) size 216x23
+            text run at (213,0) width 216: " mmm mmm mmm mmm"
+        RenderBlock {P} at (4,84) size 776x24
+          RenderInline {SPAN} at (0,0) size 321x23
+            RenderText {#text} at (0,0) size 321x23
+              text run at (0,0) width 321: "mmm mmm\x{300} mmm mmm mmm mmm"
+          RenderText {#text} at (321,0) size 108x23
+            text run at (321,0) width 108: " mmm mmm"
+        RenderBlock {P} at (4,112) size 776x24
+          RenderInline {SPAN} at (0,0) size 210x23
+            RenderText {#text} at (0,0) size 210x23
+              text run at (0,0) width 210: "mmm mmm mmm mmm"
+          RenderText {#text} at (210,0) size 216x23
+            text run at (210,0) width 216: " mmm mmm mmm mmm"
+        RenderBlock {P} at (4,140) size 776x24
+          RenderInline {SPAN} at (0,0) size 318x23
+            RenderText {#text} at (0,0) size 318x23
+              text run at (0,0) width 318: "mmm mmm mmm mmm mmm mmm"
+          RenderText {#text} at (318,0) size 108x23
+            text run at (318,0) width 108: " mmm mmm"

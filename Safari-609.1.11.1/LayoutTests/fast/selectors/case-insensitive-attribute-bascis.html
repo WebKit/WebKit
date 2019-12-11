@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+#test-root * {
+    background-color: red;
+}
+</style>
+<style id="style">
+</style>
+</head>
+<body>
+    <div style="display:none" id="test-root">
+        <div data-attribute="WebKit" id="target1"></div>
+        <div data-attribute="webkit" id="target2"></div>
+        <div data-attribute="WEBKIT" id="target3"></div>
+        <div data-attribute="WebKit rocks" id="target4"></div>
+        <div data-attribute="webkit Rocks" id="target5"></div>
+        <div data-attribute="WEBKIT ROCKS" id="target6"></div>
+        <div data-attribute="WebKit-rocks" id="target7"></div>
+        <div data-attribute="webkit-Rocks" id="target8"></div>
+        <div data-attribute="WEBKIT-ROCKS" id="target9"></div>
+        <div data-attribute="WEBKIT webkit" id="target10"></div>
+        <div data-attribute="WEBKIT WebKit" id="target11"></div>
+        <div data-attribute="webkit WebKit" id="target12"></div>
+    </div>
+</body>
+<script>
+description('Check the basic features of attribute matching with the case insensitive flag (e.g. [foo=bar i]).');
+
+function testQuerySelector(selector, expectedIds) {
+    shouldBe("document.querySelectorAll('" + selector + "').length", '' + expectedIds.length);
+    for (var i = 0; i < expectedIds.length; ++i)
+        shouldBeEqualToString("document.querySelectorAll('" + selector + "')[" + i + "].id", 'target' + expectedIds[i]);
+}
+
+function testStyling(selector, expectedIds) {
+    var stylingElement = document.getElementById("style");
+    stylingElement.innerHTML = '' + selector + ' { background-color: rgb(10, 100, 200); }';
+
+    var allTestCases = document.querySelectorAll("#test-root *");
+    for (var i = 0; i < allTestCases.length; ++i) {
+        var expectMatch = expectedIds.indexOf(parseInt(allTestCases[i].id.replace('target', ''))) >= 0;
+        shouldBeEqualToString('getComputedStyle(document.querySelectorAll("#test-root *")[' + i + ']).backgroundColor', expectMatch ? 'rgb(10, 100, 200)' : 'rgb(255, 0, 0)');
+    }
+
+    stylingElement.innerHTML = '';
+}
+
+function testSelector(selector, expectedIds) {
+    debug("Testing \"" + selector + "\"");
+    testQuerySelector("#test-root " + selector, expectedIds);
+    testStyling("#test-root " + selector, expectedIds);
+    debug("");
+}
+
+var testCases = [
+    ['[data-attribute=WebKit]', [1]],
+
+    ['[data-attribute=WebKit i]', [1, 2, 3]],
+    ['[data-attribute=WebKit I]', [1, 2, 3]],
+    ['[data-attribute="WebKit" i]', [1, 2, 3]],
+    ['[data-attribute="WebKit" I]', [1, 2, 3]],
+    ['[data-attribute=WebKit i  ]', [1, 2, 3]],
+    ['[data-attribute=WebKit I  ]', [1, 2, 3]],
+
+    ['[data-attribute~=WebKit]', [1, 4, 11, 12]],
+
+    ['[data-attribute~=WebKit i]', [1, 2, 3, 4, 5, 6, 10, 11, 12]],
+    ['[data-attribute~=WebKit I]', [1, 2, 3, 4, 5, 6, 10, 11, 12]],
+    ['[data-attribute~="WebKit" i]', [1, 2, 3, 4, 5, 6, 10, 11, 12]],
+    ['[data-attribute~="WebKit" I]', [1, 2, 3, 4, 5, 6, 10, 11, 12]],
+    ['[data-attribute~=WebKit i  ]', [1, 2, 3, 4, 5, 6, 10, 11, 12]],
+    ['[data-attribute~=WebKit I  ]', [1, 2, 3, 4, 5, 6, 10, 11, 12]],
+
+    ['[data-attribute|=WebKit]', [1, 7]],
+
+    ['[data-attribute|=WebKit i]', [1, 2, 3, 7, 8, 9]],
+    ['[data-attribute|=WebKit I]', [1, 2, 3, 7, 8, 9]],
+    ['[data-attribute|="WebKit" i]', [1, 2, 3, 7, 8, 9]],
+    ['[data-attribute|="WebKit" I]', [1, 2, 3, 7, 8, 9]],
+    ['[data-attribute|=WebKit i  ]', [1, 2, 3, 7, 8, 9]],
+    ['[data-attribute|=WebKit I  ]', [1, 2, 3, 7, 8, 9]],
+
+    ['[data-attribute^=WebKit]', [1, 4, 7]],
+
+    ['[data-attribute^=WebKit i]', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
+    ['[data-attribute^=WebKit I]', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
+    ['[data-attribute^="WebKit" i]', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
+    ['[data-attribute^="WebKit" I]', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
+    ['[data-attribute^=WebKit i  ]', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
+    ['[data-attribute^=WebKit I  ]', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
+
+    ['[data-attribute^=WebKi i]', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
+    ['[data-attribute^=WebKi I]', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
+    ['[data-attribute^="WebKi" i]', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
+    ['[data-attribute^="WebKi" I]', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
+    ['[data-attribute^=WebKi i  ]', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
+    ['[data-attribute^=WebKi I  ]', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
+
+    ['[data-attribute$=WebKit]', [1, 11, 12]],
+
+    ['[data-attribute$=WebKit i]', [1, 2, 3, 10, 11, 12]],
+    ['[data-attribute$=WebKit I]', [1, 2, 3, 10, 11, 12]],
+    ['[data-attribute$="WebKit" i]', [1, 2, 3, 10, 11, 12]],
+    ['[data-attribute$="WebKit" I]', [1, 2, 3, 10, 11, 12]],
+    ['[data-attribute$=WebKit i  ]', [1, 2, 3, 10, 11, 12]],
+    ['[data-attribute$=WebKit I  ]', [1, 2, 3, 10, 11, 12]],
+
+    ['[data-attribute$=ebKit i]', [1, 2, 3, 10, 11, 12]],
+    ['[data-attribute$=ebKit I]', [1, 2, 3, 10, 11, 12]],
+    ['[data-attribute$="ebKit" i]', [1, 2, 3, 10, 11, 12]],
+    ['[data-attribute$="ebKit" I]', [1, 2, 3, 10, 11, 12]],
+    ['[data-attribute$=ebKit i  ]', [1, 2, 3, 10, 11, 12]],
+    ['[data-attribute$=ebKit I  ]', [1, 2, 3, 10, 11, 12]],
+
+    ['[data-attribute*=WebKit]', [1, 4, 7, 11, 12]],
+
+    ['[data-attribute*=WebKit i]', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
+    ['[data-attribute*=WebKit I]', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
+    ['[data-attribute*="WebKit" i]', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
+    ['[data-attribute*="WebKit" I]', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
+    ['[data-attribute*=WebKit i  ]', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
+    ['[data-attribute*=WebKit I  ]', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
+];
+
+for (var testCase of testCases) {
+    testSelector(testCase[0], testCase[1]);
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

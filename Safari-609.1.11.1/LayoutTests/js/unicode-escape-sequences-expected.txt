@@ -1,0 +1,96 @@
+Test of Unicode escape sequences in string literals and identifiers, especially code point escape sequences.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS codeUnits("\u") is "0075"
+PASS codeUnits("\u{0}") is "0000"
+PASS codeUnits("\u{41}") is "0041"
+PASS codeUnits("\u{D800}") is "D800"
+PASS codeUnits("\u{d800}") is "D800"
+PASS codeUnits("\u{DC00}") is "DC00"
+PASS codeUnits("\u{dc00}") is "DC00"
+PASS codeUnits("\u{FFFF}") is "FFFF"
+PASS codeUnits("\u{ffff}") is "FFFF"
+PASS codeUnits("\u{10000}") is "D800,DC00"
+PASS codeUnits("\u{10001}") is "D800,DC01"
+PASS codeUnits("\u{102C0}") is "D800,DEC0"
+PASS codeUnits("\u{102c0}") is "D800,DEC0"
+PASS codeUnits("\u{1D306}") is "D834,DF06"
+PASS codeUnits("\u{1d306}") is "D834,DF06"
+PASS codeUnits("\u{10FFFE}") is "DBFF,DFFE"
+PASS codeUnits("\u{10fffe}") is "DBFF,DFFE"
+PASS codeUnits("\u{10FFFF}") is "DBFF,DFFF"
+PASS codeUnits("\u{10ffff}") is "DBFF,DFFF"
+PASS codeUnits("\u{00000000000000000000000010FFFF}") is "DBFF,DFFF"
+PASS codeUnits("\u{00000000000000000000000010ffff}") is "DBFF,DFFF"
+PASS codeUnits("\ux") threw exception SyntaxError: \u can only be followed by a Unicode character sequence.
+PASS codeUnits("\u{") threw exception SyntaxError: \u can only be followed by a Unicode character sequence.
+PASS codeUnits("\u{}") threw exception SyntaxError: \u can only be followed by a Unicode character sequence.
+PASS codeUnits("\u{G}") threw exception SyntaxError: \u can only be followed by a Unicode character sequence.
+PASS codeUnits("\u{1G}") threw exception SyntaxError: \u can only be followed by a Unicode character sequence.
+PASS codeUnits("\u{110000}") threw exception SyntaxError: \u can only be followed by a Unicode character sequence.
+PASS codeUnits("\u{1000000}") threw exception SyntaxError: \u can only be followed by a Unicode character sequence.
+PASS codeUnits("\u{100000000000000000000000}") threw exception SyntaxError: \u can only be followed by a Unicode character sequence.
+PASS codeUnits(function \u{41}(){}.name) is "0041"
+PASS codeUnits(function \u{102C0}(){}.name) is "D800,DEC0"
+PASS codeUnits(function \u{102c0}(){}.name) is "D800,DEC0"
+PASS codeUnits(function \u{1D306}(){}.name) is "D834,DF06"
+PASS codeUnits(function \u{1d306}(){}.name) is "D834,DF06"
+PASS codeUnits(function \u(){}.name) threw exception SyntaxError: Invalid unicode escape in identifier: '\u'.
+PASS codeUnits(function \u{0}(){}.name) threw exception SyntaxError: Invalid unicode escape in identifier: '\u{0}'.
+PASS codeUnits(function \u{D800}(){}.name) threw exception SyntaxError: Invalid unicode escape in identifier: '\u{D800}'.
+PASS codeUnits(function \u{d800}(){}.name) threw exception SyntaxError: Invalid unicode escape in identifier: '\u{d800}'.
+PASS codeUnits(function \u{DC00}(){}.name) threw exception SyntaxError: Invalid unicode escape in identifier: '\u{DC00}'.
+PASS codeUnits(function \u{dc00}(){}.name) threw exception SyntaxError: Invalid unicode escape in identifier: '\u{dc00}'.
+PASS codeUnits(function \u{FFFF}(){}.name) threw exception SyntaxError: Invalid unicode escape in identifier: '\u{FFFF}'.
+PASS codeUnits(function \u{ffff}(){}.name) threw exception SyntaxError: Invalid unicode escape in identifier: '\u{ffff}'.
+PASS codeUnits(function \u{10000}(){}.name) threw exception SyntaxError: Invalid unicode escape in identifier: '\u{10000}'.
+PASS codeUnits(function \u{10001}(){}.name) threw exception SyntaxError: Invalid unicode escape in identifier: '\u{10001}'.
+PASS codeUnits(function \u{10FFFE}(){}.name) threw exception SyntaxError: Invalid unicode escape in identifier: '\u{10FFFE}'.
+PASS codeUnits(function \u{10fffe}(){}.name) threw exception SyntaxError: Invalid unicode escape in identifier: '\u{10fffe}'.
+PASS codeUnits(function \u{10FFFF}(){}.name) threw exception SyntaxError: Invalid unicode escape in identifier: '\u{10FFFF}'.
+PASS codeUnits(function \u{10ffff}(){}.name) threw exception SyntaxError: Invalid unicode escape in identifier: '\u{10ffff}'.
+PASS codeUnits(function \u{00000000000000000000000010FFFF}(){}.name) threw exception SyntaxError: Invalid unicode escape in identifier: '\u{00000000000000000000000010FFFF}'.
+PASS codeUnits(function \u{00000000000000000000000010ffff}(){}.name) threw exception SyntaxError: Invalid unicode escape in identifier: '\u{00000000000000000000000010ffff}'.
+PASS codeUnits(function \ux(){}.name) threw exception SyntaxError: Invalid unicode escape in identifier: '\u'.
+PASS codeUnits(function \u{(){}.name) threw exception SyntaxError: Invalid unicode escape in identifier: '\u{'.
+PASS codeUnits(function \u{}(){}.name) threw exception SyntaxError: Invalid unicode escape in identifier: '\u{'.
+PASS codeUnits(function \u{G}(){}.name) threw exception SyntaxError: Invalid unicode escape in identifier: '\u{'.
+PASS codeUnits(function \u{1G}(){}.name) threw exception SyntaxError: Invalid unicode escape in identifier: '\u{1'.
+PASS codeUnits(function \u{110000}(){}.name) threw exception SyntaxError: Invalid unicode escape in identifier: '\u{110000'.
+PASS codeUnits(function \u{1000000}(){}.name) threw exception SyntaxError: Invalid unicode escape in identifier: '\u{1000000'.
+PASS codeUnits(function \u{100000000000000000000000}(){}.name) threw exception SyntaxError: Invalid unicode escape in identifier: '\u{100000000000000000000000'.
+PASS codeUnits(function x\u{41}(){}.name.substring(1)) is "0041"
+PASS codeUnits(function x\u{10000}(){}.name.substring(1)) is "D800,DC00"
+PASS codeUnits(function x\u{10001}(){}.name.substring(1)) is "D800,DC01"
+PASS codeUnits(function x\u{102C0}(){}.name.substring(1)) is "D800,DEC0"
+PASS codeUnits(function x\u{102c0}(){}.name.substring(1)) is "D800,DEC0"
+PASS codeUnits(function x\u(){}.name.substring(1)) threw exception SyntaxError: Invalid unicode escape in identifier: 'x\u'.
+PASS codeUnits(function x\u{0}(){}.name.substring(1)) threw exception SyntaxError: Invalid unicode escape in identifier: 'x\u{0}'.
+PASS codeUnits(function x\u{D800}(){}.name.substring(1)) threw exception SyntaxError: Invalid unicode escape in identifier: 'x\u{D800}'.
+PASS codeUnits(function x\u{d800}(){}.name.substring(1)) threw exception SyntaxError: Invalid unicode escape in identifier: 'x\u{d800}'.
+PASS codeUnits(function x\u{DC00}(){}.name.substring(1)) threw exception SyntaxError: Invalid unicode escape in identifier: 'x\u{DC00}'.
+PASS codeUnits(function x\u{dc00}(){}.name.substring(1)) threw exception SyntaxError: Invalid unicode escape in identifier: 'x\u{dc00}'.
+PASS codeUnits(function x\u{FFFF}(){}.name.substring(1)) threw exception SyntaxError: Invalid unicode escape in identifier: 'x\u{FFFF}'.
+PASS codeUnits(function x\u{ffff}(){}.name.substring(1)) threw exception SyntaxError: Invalid unicode escape in identifier: 'x\u{ffff}'.
+PASS codeUnits(function x\u{1D306}(){}.name.substring(1)) threw exception SyntaxError: Invalid unicode escape in identifier: 'x\u{1D306}'.
+PASS codeUnits(function x\u{1d306}(){}.name.substring(1)) threw exception SyntaxError: Invalid unicode escape in identifier: 'x\u{1d306}'.
+PASS codeUnits(function x\u{10FFFE}(){}.name.substring(1)) threw exception SyntaxError: Invalid unicode escape in identifier: 'x\u{10FFFE}'.
+PASS codeUnits(function x\u{10fffe}(){}.name.substring(1)) threw exception SyntaxError: Invalid unicode escape in identifier: 'x\u{10fffe}'.
+PASS codeUnits(function x\u{10FFFF}(){}.name.substring(1)) threw exception SyntaxError: Invalid unicode escape in identifier: 'x\u{10FFFF}'.
+PASS codeUnits(function x\u{10ffff}(){}.name.substring(1)) threw exception SyntaxError: Invalid unicode escape in identifier: 'x\u{10ffff}'.
+PASS codeUnits(function x\u{00000000000000000000000010FFFF}(){}.name.substring(1)) threw exception SyntaxError: Invalid unicode escape in identifier: 'x\u{00000000000000000000000010FFFF}'.
+PASS codeUnits(function x\u{00000000000000000000000010ffff}(){}.name.substring(1)) threw exception SyntaxError: Invalid unicode escape in identifier: 'x\u{00000000000000000000000010ffff}'.
+PASS codeUnits(function x\ux(){}.name.substring(1)) threw exception SyntaxError: Invalid unicode escape in identifier: 'x\u'.
+PASS codeUnits(function x\u{(){}.name.substring(1)) threw exception SyntaxError: Invalid unicode escape in identifier: 'x\u{'.
+PASS codeUnits(function x\u{}(){}.name.substring(1)) threw exception SyntaxError: Invalid unicode escape in identifier: 'x\u{'.
+PASS codeUnits(function x\u{G}(){}.name.substring(1)) threw exception SyntaxError: Invalid unicode escape in identifier: 'x\u{'.
+PASS codeUnits(function x\u{1G}(){}.name.substring(1)) threw exception SyntaxError: Invalid unicode escape in identifier: 'x\u{1'.
+PASS codeUnits(function x\u{110000}(){}.name.substring(1)) threw exception SyntaxError: Invalid unicode escape in identifier: 'x\u{110000'.
+PASS codeUnits(function x\u{1000000}(){}.name.substring(1)) threw exception SyntaxError: Invalid unicode escape in identifier: 'x\u{1000000'.
+PASS codeUnits(function x\u{100000000000000000000000}(){}.name.substring(1)) threw exception SyntaxError: Invalid unicode escape in identifier: 'x\u{100000000000000000000000'.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,56 @@
+<body onload="load()">
+<p>This test checks that triggering the context menu selects/doesn't select using surround text as context (as platform-appropriate).</p>
+<div id="text">New York</div>
+<div id="resultmac">RUNNING</div>
+<div id="resultwin">RUNNING</div>
+<div id="resultunix">RUNNING</div>
+</body>
+<script>
+function test(platform, selectionExpected, expectedText, result)
+{
+    // clear selection
+    window.getSelection().removeAllRanges();
+
+    internals.settings.setEditingBehavior(platform);
+
+    var text = document.getElementById("text");
+
+    var x = text.offsetParent.offsetLeft + text.offsetLeft + 4;
+    var y = text.offsetParent.offsetTop + text.offsetTop + text.offsetHeight / 2;
+
+    eventSender.mouseMoveTo(x, y);
+    eventSender.contextClick();
+    // esc key to kill the context menu
+    eventSender.keyDown(String.fromCharCode(0x001B), null);
+
+    var resultElement = document.getElementById(result);
+    var selectionType = window.getSelection().type;
+    if (selectionExpected) {
+        if (selectionType == "Range") {
+            var selectionText = window.getSelection().toString();
+            if (selectionText == expectedText)
+                resultElement.innerHTML = "SUCCESS";
+            else
+                resultElement.innerHTML = "FAILURE: We expected " + expectedText + ", but we got " + selectionText + ".";
+        } else
+            resultElement.innerHTML = "FAILURE: There should be a selection.";
+    } else {
+        if (selectionType == "Range")
+            resultElement.innerHTML = "FAILURE: There shouldn't be a selection.";
+        else
+            resultElement.innerHTML = "SUCCESS";
+    }
+}
+
+function load()
+{
+    if (!window.eventSender || !window.testRunner || !window.internals)
+        return;
+
+    testRunner.dumpAsText();
+
+    test('mac', true, 'New York', 'resultmac');
+    test('win', false, '', 'resultwin');
+    test('unix', false, '', 'resultunix');
+}
+</script>

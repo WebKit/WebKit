@@ -1,0 +1,36 @@
+CONSOLE MESSAGE: line 7: throwing TestError
+CONSOLE MESSAGE: line 8: TestError
+CONSOLE MESSAGE: line 22: testFinally
+CONSOLE MESSAGE: line 7: throwing TestError
+CONSOLE MESSAGE: line 26: finally
+CONSOLE MESSAGE: line 8: TestError
+CONSOLE MESSAGE: line 31: testThrowingThruNativeCode
+CONSOLE MESSAGE: line 7: throwing TestError
+CONSOLE MESSAGE: line 8: TestError
+CONSOLE MESSAGE: line 12: testCatch
+CONSOLE MESSAGE: line 7: throwing TestError
+CONSOLE MESSAGE: line 16: catch TestError
+CONSOLE MESSAGE: line 18: DONE
+Checking pause locations when pausing on all exceptions.
+
+
+== Running test suite: BreakOnAnyException
+-- Running test case: BreakOnAnyException.UncaughtExceptionBasic
+PASS: Should pause for exception.
+PAUSE AT doThrow:8:22
+Uncaught exception in test page: TestError [break-on-exception-tests.js:8]
+
+-- Running test case: BreakOnAnyException.UncaughtExceptionInFinally
+PASS: Should pause for exception.
+PAUSE AT doThrow:8:22
+Uncaught exception in test page: TestError [break-on-exception-tests.js:8]
+
+-- Running test case: BreakOnAnyException.UncaughtExceptionThruNativeCode
+PASS: Should pause for exception.
+PAUSE AT doThrow:8:22
+Uncaught exception in test page: TestError [break-on-exception-tests.js:8]
+
+-- Running test case: BreakOnAnyException.CaughtException
+PASS: Should pause for exception.
+PAUSE AT doThrow:8:22
+

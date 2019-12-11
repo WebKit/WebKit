@@ -1,0 +1,4 @@
+
+PASS XMLHttpRequest: send() - non-empty data argument and GET/HEAD - async, no upload events should fire (GET) 
+PASS XMLHttpRequest: send() - non-empty data argument and GET/HEAD - async, no upload events should fire (HEAD) 
+

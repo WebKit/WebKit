@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Test the behavior when assigning null to context.globalCompositeOperation");
+
+var canvas = document.createElement("canvas");
+canvas.width = 200;
+canvas.height = 200;
+var context = canvas.getContext("2d");
+// Initial operation should be "source-over".
+shouldBeEqualToString("context.globalCompositeOperation", "source-over");
+
+// Setting to 'copy' should work as this is a valid operation.
+shouldNotThrow("context.globalCompositeOperation = 'copy'");
+shouldBeEqualToString("context.globalCompositeOperation", "copy");
+
+// Assignment to null should be ignored because "null" is not a valid operation.
+shouldNotThrow("context.globalCompositeOperation = null");
+shouldBeEqualToString("context.globalCompositeOperation", "copy");
+
+// Assignment to "" should be ignored because "" is not a valid operation.
+shouldNotThrow("context.globalCompositeOperation = ''");
+shouldBeEqualToString("context.globalCompositeOperation", "copy");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

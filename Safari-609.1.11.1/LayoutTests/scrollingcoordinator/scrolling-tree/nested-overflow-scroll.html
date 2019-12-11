@@ -1,0 +1,57 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <title>Tests that we create a scrolling tree node for a nested overflow-scroll</title>
+    <style>
+        .scroller {
+            overflow: scroll;
+            margin: 20px;
+            height: 300px;
+            width: 300px;
+            border: 2px solid black;
+        }
+        
+        .scroller > .scroller {
+            height: 200px;
+            width: 200px;
+        }
+        
+        .composited {
+            transform: translateZ(0);
+        }
+    
+        .box {
+            margin: 10px;
+            width: 100px;
+            height: 100px;
+            background-color: green;
+        }
+        
+        .spacer {
+            margin: 10px;
+            height: 500px;
+            width: 10px;
+            background-color: silver;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        window.addEventListener('load', () => {
+            if (window.internals)
+                document.getElementById('tree').innerText = internals.scrollingStateTreeAsText();
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="box"></div>
+        <div class="composited scroller">
+            <div class="spacer"></div>
+        </div>
+        <div class="box"></div>
+    </div>
+<pre id="tree"></pre>
+</body>
+</html>

@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: loaded
+CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: loaded
+CONSOLE MESSAGE: line 3: ReferenceError: Can't find variable: loaded
+CONSOLE MESSAGE: line 3: ReferenceError: Can't find variable: loaded
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: loaded
+
+FAIL Inline async module script execution order assert_array_equals: lengths differ, expected 6 got 0
+

@@ -1,0 +1,182 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script>
+            var mediaStream;
+            var videoTrack;
+            var videoTrack2;
+            var audioTrack;
+            
+            function error()
+            {
+                testFailed('Stream generation failed.');
+                finishJSTest();
+            }
+
+            function getUserMedia(constraints, callback)
+            {
+                try {
+                    navigator.webkitGetUserMedia(constraints, callback, error);
+                } catch (e) {
+                    testFailed('webkitGetUserMedia threw exception :' + e);
+                    finishJSTest();
+                }
+            }
+
+            function onTrackEnded()
+            {
+                testPassed('Track onended callback succeeded.');
+                shouldBe('videoTrack', 'event.target');
+                shouldBeEqualToString('videoTrack.readyState', 'ended');
+                shouldBeEqualToString('videoTrack2.readyState', 'ended');
+                debug("");
+                finishJSTest();
+            }
+
+            function onTrackStarted()
+            {
+                testPassed('Track onstarted callback succeeded.');
+                shouldBeEqualToString('videoTrack.readyState', 'live');
+            }
+
+            function onTrackOverConstrained()
+            {
+                testPassed('Track onoverconstrained callback succeeded.');
+                finishJSTest();
+            }
+
+            function onTrackUnmute()
+            {
+                testPassed('Track onunmute callback succeeded.');
+                shouldBeEqualToString('videoTrack.readyState', 'live');
+                videoTrack.stop();
+            }
+
+            function onTrackMute()
+            {
+                testPassed('Track onmute callback succeeded.');
+                shouldBeEqual('videoTrack.muted', true);
+            }
+            
+            function limitPrecision(value, precision)
+            {
+                if (typeof value === "number" && value % 1 != 0)
+                    return value.toFixed(precision);
+                return value;
+            }
+
+            function logCapabilityRange(name, range)
+            {
+                debug("  " + name);
+                debug("   min : " + limitPrecision(range.min, 2));
+                debug("   max : " + limitPrecision(range.max, 2));
+                debug("   supported : " + range.supported);
+            }
+
+            function logCapabilityList(name, list)
+            {
+                debug("  " + name);
+                for (i = 0; i < list.length; i++)
+                    debug("    " + i + " : " + list[i]);
+            }
+
+            function checkCapabilities(track)
+            {
+                debug("checking track.getCapabilities()");
+                capabilities = track.getCapabilities();
+                logCapabilityList("sourceId", capabilities.sourceId);
+                if (track.kind == "video") {
+                    logCapabilityList("sourceType", capabilities.sourceType);
+                    logCapabilityRange("width", capabilities.width);
+                    logCapabilityRange("height", capabilities.height);
+                    logCapabilityRange("frameRate", capabilities.frameRate);
+                    logCapabilityRange("aspectRatio", capabilities.aspectRatio);
+                    logCapabilityList("facingMode", capabilities.facingMode);
+                } else
+                    logCapabilityRange("volume", capabilities.volume);
+            }
+
+            function checkStates(track)
+            {
+                debug("checking track.states()");
+                capabilities = track.getCapabilities();
+                states = track.states();
+                shouldBe('states.sourceId', 'capabilities.sourceId[0]');
+                if (track.kind == "video")
+                    shouldBeEqualToString('states.sourceType', 'camera');
+                else
+                    shouldBeEqualToString('states.sourceType', 'microphone');
+                for (var property in states) {
+                    // When https://webkit.org/b/129375 is fixed, we have to remove
+                    // states.hasOwnProperty(property), because all the attributes
+                    // will be in the prototype chain.
+                    if (states.hasOwnProperty(property) || states.__proto__.hasOwnProperty(property))
+                        debug("  states." + property + " = " + limitPrecision(states[property], 2));
+                }
+            }
+            
+            function checkTrack(t)
+            {
+                track = t;
+                shouldBeEqualToString('track.readyState', 'live');
+                checkCapabilities(track);
+                checkStates(track);
+                shouldNotThrow('track.getConstraints();');
+            }
+
+            function gotStream(stream)
+            {
+                mediaStream = stream;
+                testPassed('getUserMedia succeeded.');
+            
+                debug("");
+                evalAndLog("videoTrack = mediaStream.getVideoTracks()[0]");
+                checkTrack(videoTrack);
+
+                debug("");
+                evalAndLog("audioTrack = mediaStream.getAudioTracks()[0]");
+                checkTrack(audioTrack);
+
+                videoTrack.onmute = onTrackMute;
+                videoTrack.onunmute = onTrackUnmute;
+                videoTrack.onended = onTrackEnded;
+                videoTrack.onstarted = onTrackStarted;
+                videoTrack.onoverconstrained = onTrackOverConstrained;
+            
+                debug("");
+                evalAndLog("videoTrack2 = videoTrack.clone()");
+                videoTrack2.onended = onTrackEnded;
+                checkTrack(videoTrack2);
+                shouldNotBe('videoTrack.id', 'videoTrack2.id');
+                shouldBe('videoTrack.kind', 'videoTrack2.kind');
+                shouldBe('videoTrack.label', 'videoTrack2.label');
+                shouldBe('videoTrack.muted', 'videoTrack2.muted');
+                shouldBe('videoTrack.enabled', 'videoTrack2.enabled');
+                shouldBe('videoTrack.readyState', 'videoTrack2.readyState');
+
+                debug("");
+                debug("track.stop() should not fire 'ended' on the track it is called on, but it should end all tracks using the same source");
+                evalAndLog("videoTrack2.stop()");
+            }
+
+            function start()
+            {
+                description("Tests MediaStreamTrack callbacks.");
+                
+                // Note that the below behaviour doesn't reflect how it works outside of LayoutTests.
+                // The underlying mock is modified to trigger the events when certain functions are called.
+                // This modified behaviour allows us to test the MediaStreamTrack class properly.
+                getUserMedia({audio:true, video:true}, gotStream);
+            }
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+    </head>
+    <body onload="start()">
+        <p id="description"></p>
+        <div id="console"></div>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

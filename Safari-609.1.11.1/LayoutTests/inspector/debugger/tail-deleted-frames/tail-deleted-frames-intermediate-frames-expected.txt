@@ -1,0 +1,14 @@
+Ensure proper tail deleted frames with different call stacks.
+
+
+== Running test suite: Debugger.TailDeletedFrames.IntermediateFrames
+-- Running test case: Debugger.TailDeletedFrames.IntermediateFrames
+PAUSED
+CALL STACK:
+0: [F] a
+1: -F- b
+2: -F- c
+3: [F] startABC
+4: [P] Global Code
+RESUMED
+

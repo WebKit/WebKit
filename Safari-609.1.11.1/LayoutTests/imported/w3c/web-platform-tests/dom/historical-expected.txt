@@ -1,0 +1,77 @@
+
+PASS Historical DOM features must be removed: DOMConfiguration 
+PASS Historical DOM features must be removed: DOMCursor 
+PASS Historical DOM features must be removed: DOMError 
+PASS Historical DOM features must be removed: DOMErrorHandler 
+PASS Historical DOM features must be removed: DOMImplementationList 
+PASS Historical DOM features must be removed: DOMImplementationSource 
+PASS Historical DOM features must be removed: DOMLocator 
+PASS Historical DOM features must be removed: DOMObject 
+PASS Historical DOM features must be removed: DOMRequest 
+PASS Historical DOM features must be removed: DOMSettableTokenList 
+PASS Historical DOM features must be removed: DOMUserData 
+PASS Historical DOM features must be removed: Entity 
+PASS Historical DOM features must be removed: EntityReference 
+PASS Historical DOM features must be removed: EventException 
+PASS Historical DOM features must be removed: NameList 
+PASS Historical DOM features must be removed: Notation 
+PASS Historical DOM features must be removed: TypeInfo 
+PASS Historical DOM features must be removed: UserDataHandler 
+PASS Historical DOM features must be removed: RangeException 
+PASS Historical DOM features must be removed: createEntityReference 
+FAIL Historical DOM features must be removed: xmlEncoding assert_equals: expected (undefined) undefined but got (object) null
+FAIL Historical DOM features must be removed: xmlStandalone assert_equals: expected (undefined) undefined but got (boolean) false
+FAIL Historical DOM features must be removed: xmlVersion assert_equals: expected (undefined) undefined but got (object) null
+PASS Historical DOM features must be removed: strictErrorChecking 
+PASS Historical DOM features must be removed: domConfig 
+PASS Historical DOM features must be removed: normalizeDocument 
+PASS Historical DOM features must be removed: renameNode 
+PASS Historical DOM features must be removed: defaultCharset 
+PASS Historical DOM features must be removed: height 
+PASS Historical DOM features must be removed: width 
+PASS Historical DOM features must be removed: commands 
+PASS Historical DOM features must be removed: cssElementMap 
+PASS Historical DOM features must be removed: async 
+PASS document.load 
+PASS XMLDocument.load 
+PASS DOMImplementation.getFeature() must be nuked. 
+PASS Historical DOM features must be removed: schemaTypeInfo 
+PASS Historical DOM features must be removed: setIdAttribute 
+PASS Historical DOM features must be removed: setIdAttributeNS 
+PASS Historical DOM features must be removed: setIdAttributeNode 
+PASS Attr member must be nuked: schemaTypeInfo 
+PASS Attr member must be nuked: isId 
+PASS DocumentType member must be nuked: entities 
+PASS DocumentType member must be nuked: notations 
+PASS DocumentType member must be nuked: internalSubset 
+PASS Text member must be nuked: isElementContentWhitespace 
+PASS Text member must be nuked: replaceWholeText 
+PASS Node member must be nuked: hasAttributes 
+PASS Node member must be nuked: attributes 
+PASS Node member must be nuked: namespaceURI 
+PASS Node member must be nuked: prefix 
+PASS Node member must be nuked: localName 
+PASS Node member must be nuked: isSupported 
+PASS Node member must be nuked: getFeature 
+PASS Node member must be nuked: getUserData 
+PASS Node member must be nuked: setUserData 
+PASS Node member must be nuked: rootNode 
+PASS Window member must be nuked: attachEvent 
+PASS Event should not have this constant: MOUSEDOWN 
+PASS Event should not have this constant: MOUSEUP 
+PASS Event should not have this constant: MOUSEOVER 
+PASS Event should not have this constant: MOUSEOUT 
+PASS Event should not have this constant: MOUSEMOVE 
+PASS Event should not have this constant: MOUSEDRAG 
+PASS Event should not have this constant: CLICK 
+PASS Event should not have this constant: DBLCLICK 
+PASS Event should not have this constant: KEYDOWN 
+PASS Event should not have this constant: KEYUP 
+PASS Event should not have this constant: KEYPRESS 
+PASS Event should not have this constant: DRAGDROP 
+PASS Event should not have this constant: FOCUS 
+PASS Event should not have this constant: BLUR 
+PASS Event should not have this constant: SELECT 
+PASS Event should not have this constant: CHANGE 
+PASS Event.prototype should not have this property: getPreventDefault 
+

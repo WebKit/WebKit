@@ -1,0 +1,7 @@
+2d.clearRect.basic
+clearRect clears to transparent black
+Spec references: 2d.clearRect
+Actual output:
+Expected output:
+
+Passed

@@ -1,0 +1,14 @@
+# Normal code changes.
+kthelgason@webrtc.org
+andersc@webrtc.org
+peterhanspers@webrtc.org
+denicija@webrtc.org
+
+# Rubberstamps of e.g. reverts and critical bug fixes.
+magjed@webrtc.org
+tkchin@webrtc.org
+
+# These are for the common case of adding or renaming files. If you're doing
+# structural changes, please get a review from a reviewer in this file.
+per-file *.gn=*
+per-file *.gni=*

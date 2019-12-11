@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 109: SyntaxError: The string did not match the expected pattern.
+
+Harness Error (FAIL), message = SyntaxError: The string did not match the expected pattern.
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS > [initialize] Convolver response with one channel 
+FAIL X new AudioBuffer({numberOfChannels: 2, length: 4, sampleRate: 8192}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new AudioBuffer(
+                      {numberOfChannels: 2, length: 4, sampleRate: sampleRate})')". assert_true: expected true got false
+FAIL < [initialize] 1 out of 1 assertions were failed. assert_true: expected true got false
+PASS > [1-channel input] produces 2-channel output 
+

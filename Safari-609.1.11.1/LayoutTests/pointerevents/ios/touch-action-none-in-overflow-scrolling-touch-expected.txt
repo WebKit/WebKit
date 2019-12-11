@@ -1,0 +1,3 @@
+
+PASS Testing that setting touch-action: none in content hosted in a scrollable container using '-webkit-overflow-scrolling: touch' prevents scrolling of that container. 
+

@@ -1,0 +1,37 @@
+<div id="container">
+<p id="description"></p>
+<div id="sample"><span contenteditable="true">foobar<iframe id="target"></iframe></span></div>
+</div>
+<div id="console"></div>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description('Range objects should be updated after set innerHTML.');
+
+var ranges = {};
+var sample = document.getElementById('sample');
+function eventHandler(event) {
+    if (ranges[event.type])
+        return;
+    ranges[event.type] = document.createRange();
+    ranges[event.type].selectNodeContents(sample.firstChild.firstChild);
+}
+
+document.querySelector('iframe').contentWindow.addEventListener('unload', eventHandler, true);
+document.addEventListener('DOMNodeRemovedFromDocument', eventHandler, true);
+
+sample.firstChild.focus();
+sample.innerHTML = '';
+
+shouldBe('ranges["unload"].startContainer', 'sample');
+shouldBe('ranges["unload"].endContainer', 'sample');
+shouldBe('ranges["unload"].startOffset', '0');
+shouldBe('ranges["unload"].endOffset', '0');
+shouldBe('ranges["DOMNodeRemovedFromDocument"].startContainer', 'sample');
+shouldBe('ranges["DOMNodeRemovedFromDocument"].endContainer', 'sample');
+shouldBe('ranges["DOMNodeRemovedFromDocument"].startOffset', '0');
+shouldBe('ranges["DOMNodeRemovedFromDocument"].endOffset', '0');
+
+if (window.testRunner)
+    document.getElementById('container').outerHTML = '';
+</script>
+<script src="../../../resources/js-test-post.js"></script>

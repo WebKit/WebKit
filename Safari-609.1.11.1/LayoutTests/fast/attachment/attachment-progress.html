@@ -1,0 +1,22 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableAttachmentElement=true ] -->
+<html>
+<body>
+<attachment progress="-1.5"></attachment>
+<attachment progress="0"></attachment>
+<attachment progress="0.2"></attachment>
+<attachment progress="0.4"></attachment>
+<attachment progress="0.6"></attachment>
+<attachment progress="0.8"></attachment>
+<attachment progress="1"></attachment>
+<attachment progress="1.5"></attachment>
+<script>
+var file;
+if (window.internals)
+    file = window.internals.createFile("resources/test-file.txt");
+
+var attachments = document.getElementsByTagName("attachment");
+for (var i = 0; i < attachments.length; i++)
+    attachments[i].file = file;
+</script>
+</body>
+</html>

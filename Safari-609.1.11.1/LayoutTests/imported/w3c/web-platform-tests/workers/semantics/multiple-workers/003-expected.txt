@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 3: ReferenceError: Can't find variable: Worker
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: Worker
+
+TIMEOUT creating 3 nested dedicated workers Test timed out
+

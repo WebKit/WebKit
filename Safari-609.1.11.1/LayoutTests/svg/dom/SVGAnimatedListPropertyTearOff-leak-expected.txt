@@ -1,0 +1,16 @@
+This test checks that custom data attributes are not lost due GC while still referenced.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS 0.5000000000000001 is within 1e-9 of 0.5
+PASS 0 is 0
+PASS 0 is 0
+PASS 0.5000000000000001 is within 1e-9 of 0.5
+PASS 0 is 0
+PASS 0 is 0
+0.5000000000000001,0,0,0.5000000000000001,0,0
+

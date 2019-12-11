@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+ <head>
+  <title>CSS Test: Auto Intrinsic Sizes: Intrinsic Height Only and Specified Width</title>
+  <link rel="author" title="Elika J. Etemad" href="http://fantasai.inkedblade.net/contact">
+  <link rel="help" href="http://www.w3.org/TR/CSS21/visudet.html#inline-replaced-height">
+  <meta name="flags" content="svg">
+  <meta name="assert" content="A replaced element with an intrinsic height only     and a specified width is drawn at the specified width and intrinsic height.">
+  <style type="text/css">
+    object {
+      border: solid 20px red;
+      background: green;
+      width: 60px;
+    }
+    .control {
+      position: absolute;
+      border: solid 20px green;
+      height: 60px;
+      width: 60px;
+    }
+  </style>
+ </head>
+ <body>
+  <p>There must be a green box below and no red.</p>
+
+    <div class="control"></div>
+    <div class="container">
+      <object data="resources/replaced-intrinsic-004.svg" type="image/svg+xml">FAIL: SVG support required</object>
+    </div>
+
+ </body>
+</html>

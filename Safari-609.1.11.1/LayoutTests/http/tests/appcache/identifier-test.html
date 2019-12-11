@@ -1,0 +1,28 @@
+<script>
+if (window.testRunner) {
+   testRunner.dumpAsText();
+   testRunner.waitUntilDone();
+   testRunner.setCanOpenWindows(true);
+}
+
+var numberDone = 0;
+
+function receiveMessage(event)
+{
+    if (++numberDone == 2) {
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+
+    window.open("http://localhost:8000/appcache/resources/identifier-test.php", "_blank");
+}
+
+window.addEventListener("message", receiveMessage, false);
+
+window.open("http://localhost:8000/appcache/resources/identifier-test-real.php", "_blank");
+
+</script>
+This page opens a test page in a new window, and that page should get app cached.<br>
+This page then opens a different test page, that redirects to the first, which should then load from the app cache.<br>
+If it doesn't crash, then that's success.<br>

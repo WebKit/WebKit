@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            function removeSpan() {
+                document.getElementById("colGroup").removeAttribute("span");
+            }
+        </script>
+    </head>
+    <body onload="removeSpan()">
+        <p>This test passes if it does not crash.</p>
+        <table>
+            <colgroup id="colGroup" span="10000000000">
+                <th></th>
+            </colgroup>
+        </table>
+        <table>
+            <colgroup span="0">
+                <th></th>
+            </colgroup>
+        </table>
+        <table>
+            <colgroup span="10000000000">
+                <th></th>
+            </colgroup>
+        </table>
+        <table>
+            <colgroup span="-10000000000">
+                <th></th>
+            </colgroup>
+        </table>
+    </body>
+</html>

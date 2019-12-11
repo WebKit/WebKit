@@ -1,0 +1,17 @@
+Basic test coverage for fileSystemEntry.getParent()
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS directoryEntry.name is "testFiles"
+PASS directoryEntry.fullPath is "/testFiles"
+PASS directoryEntry.isDirectory is true
+PASS directoryEntry.isFile is false
+PASS entryParent.name is "testFiles"
+PASS entryParent.fullPath is "/testFiles"
+PASS entryParent.isDirectory is true
+PASS entryParent.isFile is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

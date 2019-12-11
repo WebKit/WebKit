@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 33: http-equiv 'refresh' is disabled by the embedder.
+This test makes sure the preference to disable meta refreshes works as expected.
+You should see this text when the test is done.
+If you do not see this text, and instead you see a blank page, then the redirect happened, which it should not have.
+

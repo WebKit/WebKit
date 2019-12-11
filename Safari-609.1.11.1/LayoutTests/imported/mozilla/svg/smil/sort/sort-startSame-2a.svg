@@ -1,0 +1,17 @@
+<!-- If two conflicting animations start at same time, the one appearing
+     later in the document should win (including its freeze effects). -->
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     onload="setTimeAndSnapshot(1.5, true)">
+  <script xlink:href="../smil-util.js" type="text/javascript"/>
+  <rect x="0" y="0" width="100" height="100" fill="blue">
+    <animate attributeName="x" from="100" to="200" begin="0s" dur="2s"/>
+    <animate attributeName="x" from="300" to="400" begin="0s" dur="1s" 
+             fill="freeze"/>
+  </rect>
+  <rect x="0" y="200" width="100" height="100" fill="blue">
+    <animate attributeName="x" from="300" to="400" begin="0s" dur="1s" 
+             fill="freeze"/>
+    <animate attributeName="x" from="100" to="200" begin="0s" dur="2s"/>
+  </rect>
+</svg>

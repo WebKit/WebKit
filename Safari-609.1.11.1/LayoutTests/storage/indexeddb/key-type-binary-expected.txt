@@ -1,0 +1,114 @@
+Test IndexedDB binary keys
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+db.createObjectStore('store');
+db.createObjectStore('storeWithKeyPath', {keyPath: 'binary'});
+
+
+testBinaryKeys1():
+trans = db.transaction('store', 'readwrite')
+store = trans.objectStore('store')
+
+store.put(0, new Uint8Array([]));
+
+store.put(1, new Uint8Array([0]));
+
+store.put(2, new Uint8Array([0, 0]));
+
+store.put(3, new Uint8Array([0, 1]));
+
+store.put(4, new Uint8Array([1]));
+
+store.put(5, new Uint8Array([1, 0]));
+
+store.put(6, new Uint8Array([1, 1]));
+
+store.put(7, new Uint8Array([255]));
+
+testBinaryKeys2():
+trans = db.transaction('store', 'readwrite')
+store = trans.objectStore('store')
+
+store.put('value', new Uint8ClampedArray([1,2,3]))
+
+store.put('value', new Uint16Array([1,2,3]))
+
+store.put('value', new Uint32Array([1,2,3]))
+
+store.put('value', new Int8Array([1,2,3]))
+
+store.put('value', new Int16Array([1,2,3]))
+
+store.put('value', new Int32Array([1,2,3]))
+
+store.put('value', new Float32Array([1,2,3]))
+
+store.put('value', new Float64Array([1,2,3]))
+
+store.put('value', new Uint8Array([1,2,3]).buffer)
+
+store.put('value', new DataView(new Uint8Array([1,2,3]).buffer))
+
+testBinaryKeys3():
+trans = db.transaction('storeWithKeyPath', 'readwrite')
+store = trans.objectStore('storeWithKeyPath')
+
+binary = new Uint8ClampedArray([1,2,3])
+store.put({ binary })
+request = store.get(binary)
+PASS binary.constructor === request.result.binary.constructor is true
+
+binary = new Uint16Array([1,2,3])
+store.put({ binary })
+request = store.get(binary)
+PASS binary.constructor === request.result.binary.constructor is true
+
+binary = new Uint32Array([1,2,3])
+store.put({ binary })
+request = store.get(binary)
+PASS binary.constructor === request.result.binary.constructor is true
+
+binary = new Int8Array([1,2,3])
+store.put({ binary })
+request = store.get(binary)
+PASS binary.constructor === request.result.binary.constructor is true
+
+binary = new Int16Array([1,2,3])
+store.put({ binary })
+request = store.get(binary)
+PASS binary.constructor === request.result.binary.constructor is true
+
+binary = new Int32Array([1,2,3])
+store.put({ binary })
+request = store.get(binary)
+PASS binary.constructor === request.result.binary.constructor is true
+
+binary = new Float32Array([1,2,3])
+store.put({ binary })
+request = store.get(binary)
+PASS binary.constructor === request.result.binary.constructor is true
+
+binary = new Float64Array([1,2,3])
+store.put({ binary })
+request = store.get(binary)
+PASS binary.constructor === request.result.binary.constructor is true
+
+binary = new Uint8Array([1,2,3]).buffer
+store.put({ binary })
+request = store.get(binary)
+PASS binary.constructor === request.result.binary.constructor is true
+
+binary = new DataView(new Uint8Array([1,2,3]).buffer)
+store.put({ binary })
+request = store.get(binary)
+PASS binary.constructor === request.result.binary.constructor is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

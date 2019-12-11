@@ -1,0 +1,474 @@
+Tests for the Runtime.parse command.
+
+
+== Running test suite: Runtime.parse
+-- Running test case: SyntaxErrorType.None
+PASS: Should be SyntaxErrorType None.
+Source: 
+
+PASS: Should be SyntaxErrorType None.
+Source: ;
+
+PASS: Should be SyntaxErrorType None.
+Source: myVariable
+
+PASS: Should be SyntaxErrorType None.
+Source: var x = 1; x
+
+PASS: Should be SyntaxErrorType None.
+Source: [1,2,3]
+
+PASS: Should be SyntaxErrorType None.
+Source: ({})
+
+PASS: Should be SyntaxErrorType None.
+Source: ({prop:true}).x.x.x
+
+PASS: Should be SyntaxErrorType None.
+Source: if(1)1
+
+
+-- Running test case: SyntaxErrorType.UnterminatedLiteral
+PASS: Should be SyntaxErrorType UnterminatedLiteral.
+Source: 0b
+        ^
+Error Message: No binary digits after '0b'
+Range: {"startOffset":0,"endOffset":1}
+
+PASS: Should be SyntaxErrorType UnterminatedLiteral.
+Source: 0o
+        ^
+Error Message: No octal digits after '0o'
+Range: {"startOffset":0,"endOffset":1}
+
+PASS: Should be SyntaxErrorType UnterminatedLiteral.
+Source: 0x
+        ^
+Error Message: No hexadecimal digits after '0x'
+Range: {"startOffset":0,"endOffset":1}
+
+PASS: Should be SyntaxErrorType UnterminatedLiteral.
+Source: 1e
+        ^~
+Error Message: Non-number found after exponent indicator
+Range: {"startOffset":0,"endOffset":2}
+
+PASS: Should be SyntaxErrorType UnterminatedLiteral.
+Source: '
+        ^
+Error Message: Unexpected EOF
+Range: {"startOffset":0,"endOffset":1}
+
+PASS: Should be SyntaxErrorType UnterminatedLiteral.
+Source: "
+        ^
+Error Message: Unexpected EOF
+Range: {"startOffset":0,"endOffset":1}
+
+PASS: Should be SyntaxErrorType UnterminatedLiteral.
+Source: var \u007
+            ^~~~~
+Error Message: Incomplete unicode escape in identifier: '\u007'
+Range: {"startOffset":4,"endOffset":9}
+
+
+-- Running test case: SyntaxErrorType.Recoverable
+PASS: Should be SyntaxErrorType Recoverable.
+Source: (
+         ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":1,"endOffset":1}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: {
+         ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":1,"endOffset":1}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: !
+         ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":1,"endOffset":1}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: -
+         ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":1,"endOffset":1}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: +
+         ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":1,"endOffset":1}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: ~
+         ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":1,"endOffset":1}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: 1,
+          ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":2,"endOffset":2}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: var
+           ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":3,"endOffset":3}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: 'use strict'; let
+                         ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":17,"endOffset":17}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: const
+             ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":5,"endOffset":5}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: var {x
+              ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":6,"endOffset":6}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: var [x
+              ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":6,"endOffset":6}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: var x,
+              ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":6,"endOffset":6}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: if(1)
+             ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":5,"endOffset":5}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: if(1){
+              ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":6,"endOffset":6}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: if(1){}else
+                   ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":11,"endOffset":11}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: if(1){}else{
+                    ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":12,"endOffset":12}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: while(1)
+                ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":8,"endOffset":8}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: while(1){
+                 ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":9,"endOffset":9}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: for(;;)
+               ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":7,"endOffset":7}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: for(;;){
+                ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":8,"endOffset":8}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: ()=>
+            ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":4,"endOffset":4}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: ()=>{
+             ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":5,"endOffset":5}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: /*
+        ^~
+Error Message: Multiline comment was not closed properly
+Error Range: {"startOffset":0,"endOffset":2}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: `
+        ^
+Error Message: Unexpected EOF
+Error Range: {"startOffset":0,"endOffset":1}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: `${1}
+            ^
+Error Message: Unexpected EOF
+Error Range: {"startOffset":4,"endOffset":5}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: `${
+           ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":3,"endOffset":3}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: function
+                ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":8,"endOffset":8}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: function foo
+                    ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":12,"endOffset":12}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: function foo(
+                     ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":13,"endOffset":13}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: function foo(){
+                       ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":15,"endOffset":15}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: (function() {
+                     ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":13,"endOffset":13}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: (function() {}
+                      ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":14,"endOffset":14}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: (function() {})(
+                        ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":16,"endOffset":16}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: switch(x)
+                 ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":9,"endOffset":9}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: switch(x){
+                  ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":10,"endOffset":10}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: switch(x){case
+                      ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":14,"endOffset":14}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: switch(x){case 1
+                        ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":16,"endOffset":16}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: switch(x){case 1:
+                         ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":17,"endOffset":17}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: class
+             ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":5,"endOffset":5}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: class Klass
+                   ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":11,"endOffset":11}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: class Klass {
+                     ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":13,"endOffset":13}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: var x = {
+                 ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":9,"endOffset":9}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: var x = {prop
+                     ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":13,"endOffset":13}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: var x = {prop:
+                      ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":14,"endOffset":14}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: var x = {prop:123
+                         ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":17,"endOffset":17}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: var x = {prop:123 
+                          ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":18,"endOffset":18}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: var x = {prop:123,
+                          ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":18,"endOffset":18}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: var x = {prop:123, 
+                           ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":19,"endOffset":19}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: var x = {prop:123, 'prop2'
+                                  ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":26,"endOffset":26}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: var x = {prop:123, [12
+                              ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":22,"endOffset":22}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: var x = {prop:123, [12]
+                               ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":23,"endOffset":23}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: var x = {prop:123, [12]:
+                                ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":24,"endOffset":24}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: var x = {prop:123, [12]:567
+                                   ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":27,"endOffset":27}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: var x = [
+                 ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":9,"endOffset":9}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: var x = [1
+                  ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":10,"endOffset":10}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: var x = [1,
+                   ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":11,"endOffset":11}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: var x = [1,[]
+                     ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":13,"endOffset":13}
+
+PASS: Should be SyntaxErrorType Recoverable.
+Source: var x = [1,{}
+                     ^
+Error Message: Unexpected end of script
+Error Range: {"startOffset":13,"endOffset":13}
+
+
+-- Running test case: SyntaxErrorType.Irrecoverable
+PASS: Should be SyntaxErrorType Irrecoverable.
+Source: 1$
+        ^
+Error Message: No identifiers allowed directly after numeric literal
+Error Range: {"startOffset":0,"endOffset":1}
+
+PASS: Should be SyntaxErrorType Irrecoverable.
+Source: var x = {}}
+                  ^
+Error Message: Parser error
+Error Range: {"startOffset":10,"endOffset":11}
+
+PASS: Should be SyntaxErrorType Irrecoverable.
+Source: ({}))
+            ^
+Error Message: Unexpected token ')'. Parse error.
+Error Range: {"startOffset":4,"endOffset":5}
+
+PASS: Should be SyntaxErrorType Irrecoverable.
+Source: var x = =
+                ^
+Error Message: Unexpected token '='
+Error Range: {"startOffset":8,"endOffset":9}
+
+PASS: Should be SyntaxErrorType Irrecoverable.
+Source: const x;
+               ^
+Error Message: Unexpected token ';'. const declared variable 'x' must have an initializer.
+Error Range: {"startOffset":7,"endOffset":8}
+
+PASS: Should be SyntaxErrorType Irrecoverable.
+Source: let x = 1; let x = 2;
+                         ^
+Error Message: Cannot declare a let variable twice: 'x'.
+Error Range: {"startOffset":17,"endOffset":18}
+
+PASS: Should be SyntaxErrorType Irrecoverable.
+Source: if x(1)
+           ^
+Error Message: Unexpected identifier 'x'. Expected '(' to start an 'if' condition.
+Error Range: {"startOffset":3,"endOffset":4}
+
+

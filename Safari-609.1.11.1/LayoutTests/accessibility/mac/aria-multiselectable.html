@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<ul id="tree" role="tree" aria-multiselectable="true" tabindex="0">
+    <li id="treeitem1" role="treeitem"><span>Siamese</span></li>
+    <li id="treeitem2" role="treeitem"><span>Tabby</span></li>
+</ul>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that aria trees that are multi selectable will return the right selected rows.");
+
+    if (window.accessibilityController) {
+
+          var tree = document.getElementById("tree");
+          tree.focus();
+
+          // Test tree attributes.
+          tree = accessibilityController.focusedElement;
+
+          var treeitem1 = tree.childAtIndex(0);
+          shouldBe("treeitem1.role", "'AXRole: AXRow'");
+          shouldBe("treeitem1.subrole", "'AXSubrole: AXOutlineRow'");
+          document.getElementById("treeitem1").setAttribute("aria-selected", true);
+
+          var treeitem2 = tree.childAtIndex(1);
+          shouldBe("treeitem2.role", "'AXRole: AXRow'");
+          shouldBe("treeitem2.subrole", "'AXSubrole: AXOutlineRow'");
+          document.getElementById("treeitem2").setAttribute("aria-selected", true);
+
+          // Test that the tree will give us both rows as selected (since its multi-selectable)
+          var selectedRow1 = tree.selectedRowAtIndex(0);
+          var selectedRow2 = tree.selectedRowAtIndex(1);
+
+          shouldBe("selectedRow1.isEqual(treeitem1)", "true");          
+          shouldBe("selectedRow2.isEqual(treeitem2)", "true");
+
+          // Test that if one of the items becomes de-selected, we still get the right selected row.
+          document.getElementById("treeitem1").setAttribute("aria-selected", false);
+          selectedRow1 = tree.selectedRowAtIndex(0);
+          shouldBe("selectedRow1.isEqual(treeitem2)", "true");          
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

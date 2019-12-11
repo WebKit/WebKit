@@ -1,0 +1,201 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		7C4AB3AC1AF02798003FC8D1 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C4AB3AB1AF02798003FC8D1 /* WebKit.framework */; };
+		7CB6844B1AFA7978002B305C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7CB6844A1AFA7978002B305C /* main.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		7C4AB39F1AF0276C003FC8D1 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		7C2227511AFC4D9C008C3338 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		7C2227521AFC4D9C008C3338 /* ContentExtensionTester.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ContentExtensionTester.xcconfig; sourceTree = "<group>"; };
+		7C2227531AFC4D9C008C3338 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
+		7C4AB3A11AF0276C003FC8D1 /* ContentExtensionTester */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ContentExtensionTester; sourceTree = BUILT_PRODUCTS_DIR; };
+		7C4AB3AB1AF02798003FC8D1 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		7CB6844A1AFA7978002B305C /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		7C4AB39E1AF0276C003FC8D1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7C4AB3AC1AF02798003FC8D1 /* WebKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		7C2227501AFC4D0A008C3338 /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				7C2227511AFC4D9C008C3338 /* Base.xcconfig */,
+				7C2227521AFC4D9C008C3338 /* ContentExtensionTester.xcconfig */,
+				7C2227531AFC4D9C008C3338 /* DebugRelease.xcconfig */,
+			);
+			path = Configurations;
+			sourceTree = "<group>";
+		};
+		7C4AB3981AF0276C003FC8D1 = {
+			isa = PBXGroup;
+			children = (
+				7C4AB3AB1AF02798003FC8D1 /* WebKit.framework */,
+				7C4AB3A31AF0276C003FC8D1 /* ContentExtensionTester */,
+				7C2227501AFC4D0A008C3338 /* Configurations */,
+				7C4AB3A21AF0276C003FC8D1 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		7C4AB3A21AF0276C003FC8D1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7C4AB3A11AF0276C003FC8D1 /* ContentExtensionTester */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		7C4AB3A31AF0276C003FC8D1 /* ContentExtensionTester */ = {
+			isa = PBXGroup;
+			children = (
+				7CB6844A1AFA7978002B305C /* main.m */,
+			);
+			name = ContentExtensionTester;
+			path = .;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		7C4AB3A01AF0276C003FC8D1 /* ContentExtensionTester */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7C4AB3A81AF0276C003FC8D1 /* Build configuration list for PBXNativeTarget "ContentExtensionTester" */;
+			buildPhases = (
+				7C4AB39D1AF0276C003FC8D1 /* Sources */,
+				7C4AB39E1AF0276C003FC8D1 /* Frameworks */,
+				7C4AB39F1AF0276C003FC8D1 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ContentExtensionTester;
+			productName = ContentExtensionTester;
+			productReference = 7C4AB3A11AF0276C003FC8D1 /* ContentExtensionTester */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		7C4AB3991AF0276C003FC8D1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0700;
+				ORGANIZATIONNAME = "Sam Weinig";
+				TargetAttributes = {
+					7C4AB3A01AF0276C003FC8D1 = {
+						CreatedOnToolsVersion = 7.0;
+					};
+				};
+			};
+			buildConfigurationList = 7C4AB39C1AF0276C003FC8D1 /* Build configuration list for PBXProject "ContentExtensionTester" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 7C4AB3981AF0276C003FC8D1;
+			productRefGroup = 7C4AB3A21AF0276C003FC8D1 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				7C4AB3A01AF0276C003FC8D1 /* ContentExtensionTester */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		7C4AB39D1AF0276C003FC8D1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7CB6844B1AFA7978002B305C /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		7C4AB3A61AF0276C003FC8D1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7C2227531AFC4D9C008C3338 /* DebugRelease.xcconfig */;
+			buildSettings = {
+				DEBUG_DEFINES = "$(DEBUG_DEFINES_debug)";
+				GCC_OPTIMIZATION_LEVEL = "$(GCC_OPTIMIZATION_LEVEL_debug)";
+			};
+			name = Debug;
+		};
+		7C4AB3A71AF0276C003FC8D1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7C2227531AFC4D9C008C3338 /* DebugRelease.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		7C4AB3A91AF0276C003FC8D1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7C2227521AFC4D9C008C3338 /* ContentExtensionTester.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		7C4AB3AA1AF0276C003FC8D1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7C2227521AFC4D9C008C3338 /* ContentExtensionTester.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7C4AB39C1AF0276C003FC8D1 /* Build configuration list for PBXProject "ContentExtensionTester" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7C4AB3A61AF0276C003FC8D1 /* Debug */,
+				7C4AB3A71AF0276C003FC8D1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7C4AB3A81AF0276C003FC8D1 /* Build configuration list for PBXNativeTarget "ContentExtensionTester" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7C4AB3A91AF0276C003FC8D1 /* Debug */,
+				7C4AB3AA1AF0276C003FC8D1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 7C4AB3991AF0276C003FC8D1 /* Project object */;
+}

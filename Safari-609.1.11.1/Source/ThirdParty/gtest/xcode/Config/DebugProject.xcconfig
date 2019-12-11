@@ -1,0 +1,42 @@
+//
+//  DebugProject.xcconfig
+//
+//  These are Debug Configuration project settings for the gtest framework and
+//  examples. It is set in the "Based On:" dropdown in the "Project" info
+//  dialog.
+//  This file is based on the Xcode Configuration files in:
+//  https://github.com/google/google-toolbox-for-mac
+// 
+
+#include "General.xcconfig"
+
+// No optimization
+GCC_OPTIMIZATION_LEVEL = 0
+
+// Deployment postprocessing is what triggers Xcode to strip, turn it off
+DEPLOYMENT_POSTPROCESSING = NO
+
+MACOSX_DEPLOYMENT_TARGET = $(MACOSX_DEPLOYMENT_TARGET_$(TARGET_MAC_OS_X_VERSION_MAJOR));
+MACOSX_DEPLOYMENT_TARGET_101300 = 10.13;
+MACOSX_DEPLOYMENT_TARGET_101400 = 10.14;
+MACOSX_DEPLOYMENT_TARGET_101500 = 10.15;
+MACOSX_DEPLOYMENT_TARGET_101600 = 10.16;
+
+// Dead code stripping off
+DEAD_CODE_STRIPPING = NO
+
+// Debug symbols should be on obviously
+GCC_GENERATE_DEBUGGING_SYMBOLS = YES
+
+// Define the DEBUG macro in all debug builds
+OTHER_CFLAGS = $(OTHER_CFLAGS) -DDEBUG=1
+
+// These are turned off to avoid STL incompatibilities with client code
+// // Turns on special C++ STL checks to "encourage" good STL use
+// GCC_PREPROCESSOR_DEFINITIONS = $(GCC_PREPROCESSOR_DEFINITIONS) _GLIBCXX_DEBUG_PEDANTIC _GLIBCXX_DEBUG _GLIBCPP_CONCEPT_CHECKS
+
+ONLY_ACTIVE_ARCH = YES
+
+SDKROOT = $(SDKROOT_$(USE_INTERNAL_SDK));
+SDKROOT_ = macosx;
+SDKROOT_YES = macosx.internal;

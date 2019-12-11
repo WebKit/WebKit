@@ -1,0 +1,8 @@
+
+Test that a plug-in initializing asynchronous that calls out to NPP_Evaluate within NPP_New doesn't deadlock against a WebProcess that is trying to call in to the plug-in element, waiting for it to complete initialization.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Waiting on synchronous initialization of the plug-in instance did not deadlock the Web and Plugin processes.
+

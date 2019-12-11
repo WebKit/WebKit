@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.setCanOpenWindows();
+    testRunner.setCloseRemainingWindowsWhenComplete(true);
+}
+
+var blob = new Blob([
+  "fetch('http://127.0.0.1:8443/', { mode: 'no-cors' }).then(() => {"
++ "    postMessage('PASS: load was not blocked');"
++ "}, (e) => {"
++ "    postMessage('FAIL: load is not successful: ' + e);"
++ "});"
+], { type: "text/javascript" });
+
+var testIsFinished = false;
+var worker = new Worker(window.URL.createObjectURL(blob));
+worker.onmessage = function(e) {
+    testIsFinished = true;
+    alert(e.data);
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+// When running in normal environment, let's notify user if something went wrong
+if (!window.testRunner) {
+    setTimeout(() => {
+        if (testIsFinished)
+            return;
+        alert("Test timed out");
+    }, 2000);
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,14 @@
+<html>
+<body>
+<embed name="plg" type="application/x-webkit-test-netscape"></embed>
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=7808">bug 7808<a/>. Should not fail with an assertion.</p>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        plg.getURL("");
+    } else {
+        document.write("Cannot run interactively");
+    }
+</script>
+</body>
+</html>

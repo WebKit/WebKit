@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .box {
+            width: 100px;
+            height: 100px;
+            border: 4px solid black;
+            position: relative;
+        }
+        
+        .overflowing-transformed {
+            position: absolute;
+            top: 100px;
+            left: 300px;
+            width: 200px;
+            height: 100px;
+            border: 1px solid green;
+            -webkit-transform: rotate(30deg);
+        }
+        
+        .container {
+            position: absolute;
+            top: 350px;
+            height: 100px;
+            border: 1px solid green;
+        }
+        
+        .inner {
+            position: relative;
+            top: 20px;
+            left: 200px;
+            background-color: orange;
+        }
+        
+        #output {
+            margin-top: 520px;
+        }
+    </style>
+    <script src="resources/wheel-handler-region-helper.js"></script>
+    <script>
+        window.addEventListener('load', dumpRegion, false);
+    </script>
+</head>
+<body>
+
+<span id="target" onmousewheel="(void)0">Some text
+    <div class="box">
+        <div class="overflowing-transformed">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        </div>
+    </div>
+here</span>
+
+<!-- Handler on skipped containing block -->
+<div class="container" onmousewheel="(void)0" style="top: 500px;">
+    Container
+    <div class="intermediate">
+        Intermediate
+        <div class="inner">
+            Child
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    Container
+    <!-- Handler on skipped containing block -->
+    <div class="intermediate" onmousewheel="(void)0">
+        Intermediate
+        <div class="inner">
+            Child
+        </div>
+    </div>
+</div>
+
+<pre id="output"></pre>
+
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="initial-scale=0.6666">
+<script>
+if (window.internals) {
+    internals.settings.setTextAutosizingEnabled(true);
+    internals.settings.setTextAutosizingUsesIdempotentMode(true);
+}
+</script>
+<style>
+body {
+    font-size: 10px;
+}
+
+.fixed-height {
+    height: 44px;
+}
+</style>
+<script src="../../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div style="float: left; width: 100px;" class="fixed-width fixed-height">
+    <p style="line-height: 16px;" class="medium-fixed-line-height fixed-height" id="text1">Hello world</p>
+    <p style="line-height: 12px; height: 12px;" id="text2">Hello world</p>
+</div>
+<p style="width: 100px; word-break: break-word;" id="text3">Hello world</p>
+<p style="" id="text4">Hello world</p>
+<p style="-webkit-textsize-adjust: 100%; line-height: 44px;" id="text5">Hello world</p>
+<p style="background-repeat: no-repeat; background-image: url(data:image/gif;base64,R0lGODlhEAARAJECAOHh4UpKSgAAAAAAACH5BAEAAAIALAAAAAAQABEAAAIllB8Zx63b4otSUWcvyuz5D4biSD7AiZroWSXa5r7CJNOvra1RAQA7);" id="text6">Hello world</p>
+<script>
+function elementWasAutosized(elementID)
+{
+    return parseInt(getComputedStyle(document.getElementById(elementID)).fontSize) > 10;
+}
+
+shouldBe("elementWasAutosized('text1')", "true");
+shouldBe("elementWasAutosized('text2')", "false");
+shouldBe("elementWasAutosized('text3')", "true");
+shouldBe("elementWasAutosized('text4')", "true");
+shouldBe("elementWasAutosized('text5')", "true");
+shouldBe("elementWasAutosized('text6')", "false");
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

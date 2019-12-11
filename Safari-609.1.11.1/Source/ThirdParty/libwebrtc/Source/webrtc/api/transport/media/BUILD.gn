@@ -1,0 +1,31 @@
+# Copyright (c) 2019 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_source_set("audio_interfaces") {
+  visibility = [ "*" ]
+  sources = [
+    "audio_transport.cc",
+    "audio_transport.h",
+  ]
+  deps = [
+    "../..:array_view",
+  ]
+}
+
+rtc_source_set("video_interfaces") {
+  visibility = [ "*" ]
+  sources = [
+    "video_transport.cc",
+    "video_transport.h",
+  ]
+  deps = [
+    "../../video:encoded_image",
+  ]
+}

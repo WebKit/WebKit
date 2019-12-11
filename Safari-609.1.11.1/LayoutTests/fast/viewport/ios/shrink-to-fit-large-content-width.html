@@ -1,0 +1,49 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ shouldIgnoreMetaViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=1000">
+<style>
+body, html {
+    margin: 0;
+}
+
+#top-bar {
+    width: 1000px;
+    height: 100px;
+    background: linear-gradient(to right, red 0%, green 50%, blue 100%);
+}
+
+#bottom-bar {
+    width: 8000px;
+    height: 100px;
+    background: linear-gradient(to right, red 0%, green 50%, blue 100%);
+}
+
+#description {
+    width: 300px;
+    overflow: scroll;
+}
+</style>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<script>
+jsTestIsAsync = true;
+
+description("This test verifies that a page with a constant width viewport and a very large content width, the page is scaled such that the constant viewport width spans the width of the viewport. To test manually, load the page and verify that only the top bar spans the full width of the page.");
+
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.ensurePresentationUpdate();
+    shouldBe("innerWidth", "1000");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<div id="top-bar"></div>
+<div id="bottom-bar"></div>
+<div id="description"></div>
+</body>
+</html>

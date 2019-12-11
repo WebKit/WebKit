@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="default-src https:; script-src 'unsafe-inline'">
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    var testIndex = 1;
+    var testCount = 12;
+    function produceOutput(promise) {
+        var suffix = ' (' + testIndex++ + '/' + testCount + ')';
+        return promise.then(function() { console.log('PASS' + suffix); },
+                            function() { console.log('FAIL' + suffix); });
+    }
+
+
+    function expectImageLoad(shouldLoad) {
+        return produceOutput(new Promise(function(resolve, reject) {
+            var img = document.createElement('img');
+            var pass = function() { resolve(); };
+            var fail = function() { reject(new Error()); };
+            img.onload = shouldLoad ? pass : fail;
+            img.onerror = shouldLoad ? fail : pass;
+            img.src = '../resources/abe.png';
+        }));
+    }
+
+    function expectStyleLoad(shouldLoad) {
+        // onerror doesn't seem to work on <link>.
+        // Fortunately, srcdoc iframes are bound by containing CSP.
+        return produceOutput(new Promise(function(resolve, reject) {
+            var iframe = document.createElement('iframe');
+            iframe.onload = function() {
+                var didLoad = iframe.contentDocument.styleSheets.length > 0;
+                (shouldLoad == didLoad) ? resolve() : reject(new Error());
+                setTimeout(function() { iframe.remove(); }, 0);
+            };
+            iframe.srcdoc = '<link rel="stylesheet" href="../resources/cssStyle.css">';
+            document.body.appendChild(iframe);
+        }));
+    }
+
+    window.onload = function() {
+        Promise.resolve()
+            .then(function() {
+                return expectImageLoad(false).then(function() { return expectStyleLoad(false); });
+            })
+            .then(function() {
+                internals.registerURLSchemeAsBypassingContentSecurityPolicy('http');
+                return expectImageLoad(true).then(function() { return expectStyleLoad(true); });
+            })
+            .then(function() {
+                internals.removeURLSchemeRegisteredAsBypassingContentSecurityPolicy('http');
+                internals.registerURLSchemeAsBypassingContentSecurityPolicy('http', []);
+                return expectImageLoad(false).then(function() { return expectStyleLoad(false); });
+            })
+            .then(function() {
+                internals.removeURLSchemeRegisteredAsBypassingContentSecurityPolicy('http');
+                internals.registerURLSchemeAsBypassingContentSecurityPolicy('http', ['img']);
+                return expectImageLoad(true).then(function() { return expectStyleLoad(false); });
+            })
+            .then(function() {
+                internals.removeURLSchemeRegisteredAsBypassingContentSecurityPolicy('http');
+                internals.registerURLSchemeAsBypassingContentSecurityPolicy('http', ['style']);
+                return expectImageLoad(false).then(function() { return expectStyleLoad(true); });
+            })
+            .then(function() {
+                internals.removeURLSchemeRegisteredAsBypassingContentSecurityPolicy('http');
+                return expectImageLoad(false).then(function() { return expectStyleLoad(false); });
+            })
+            .then(function() { if (window.testRunner) testRunner.notifyDone(); });
+    };
+</script>
+</head>
+<body>
+    <p>
+        This test ensures that registering a scheme as bypassing CSP actually bypasses CSP.
+        This test passes if only PASSes are generated.
+    </p>
+</body>
+</html>

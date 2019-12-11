@@ -1,0 +1,78 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+    <head>
+        <script src="../media-file.js"></script>
+        <script src="controls-test-helpers.js"></script>
+        <script>
+            var maxAttemptsToTestPlaceholderVisibility = 10;
+            var attemptsToTestPlaceholderVisibility = 0;
+
+            if (window.internals)
+                window.internals.settings.setAllowsPictureInPictureMediaPlayback(true);
+
+            const tester = new ControlsTest("../content/test", "canplaythrough")
+                .whenReady(runTestsWithVideo)
+                .start();
+
+            function runTestsWithVideo()
+            {
+                tester.startNewSection("Test the picture-in-picture button with valid video");
+
+                internals.setMediaElementRestrictions(tester.media, "NoRestrictions");
+                tester.resetEventTrigger("webkitpresentationmodechanged")
+                    .whenReady(presentationModeDidChange)
+                    .media.webkitSetPresentationMode("picture-in-picture");
+            }
+
+            function presentationModeDidChange()
+            {
+                tester.test("Should be in pip mode")
+                    .value(tester.media.webkitPresentationMode)
+                    .isEqualTo("picture-in-picture");
+
+                tester.media.removeEventListener("webkitpresentationmodechanged", tester, false);
+
+                pollPIPPlaceholderVisibilityChange();
+            }
+
+            function pollPIPPlaceholderVisibilityChange()
+            {
+                // Intentionally using internals.shadowRoot instead of tester.stateForControlsElement()
+                // since the latter has the side effect of ensuring the shadow root and hence injecting
+                // the media controls script. The bug we are testing here is caused by the media controls
+                // script not being injected early enough.
+                var shadowRoot = internals.shadowRoot(tester.media);
+                var placeholder = shadowRoot ? shadowRoot.querySelector("div[pseudo='-webkit-media-controls-wireless-playback-status']") : null;
+                if (!placeholder || placeholder.className.indexOf("hidden") >= 0) {
+                    if (attemptsToTestPlaceholderVisibility > maxAttemptsToTestPlaceholderVisibility) {
+                        tester.logFailure("Inline placeholder did not become visible after video enters picture-in-picture.");
+                        tester.end();
+                        return;
+                    }
+
+                    // Use 33 to match PlaceholderPollingDelay in mediaControlsApple.js.
+                    setTimeout(pollPIPPlaceholderVisibilityChange, 33);
+                    attemptsToTestPlaceholderVisibility++;
+                    return;
+                }
+
+                tester.test("Inline placeholder should be visible at this point")
+                    .value(placeholder.className)
+                    .doesNotContain("hidden");
+
+                tester.test("Inline placeholder should have the 'picture-in-picture' class")
+                    .value(placeholder.className)
+                    .contains("picture-in-picture");
+
+                tester.media.webkitSetPresentationMode("inline");
+
+                tester.end();
+            }
+        </script>
+    </head>
+    <body>
+        <p>This tests the picture-in-picture placeholder when the video has no controls.</p>
+        <p>This test only runs in DRT!</p>
+        <video></video>
+    </body>
+</html>

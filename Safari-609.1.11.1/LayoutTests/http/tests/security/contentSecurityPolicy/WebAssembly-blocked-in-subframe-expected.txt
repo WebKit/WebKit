@@ -1,0 +1,20 @@
+CONSOLE MESSAGE: line 19: EvalError: Refused to create a WebAssembly object because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'unsafe-inline'".
+
+CONSOLE MESSAGE: line 20: EvalError: Refused to create a WebAssembly object because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'unsafe-inline'".
+
+CONSOLE MESSAGE: line 21: EvalError: Refused to create a WebAssembly object because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'unsafe-inline'".
+
+CONSOLE MESSAGE: line 22: EvalError: Refused to create a WebAssembly object because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'unsafe-inline'".
+
+CONSOLE MESSAGE: line 23: EvalError: Refused to create a WebAssembly object because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'unsafe-inline'".
+
+CONSOLE MESSAGE: line 24: EvalError: Refused to create a WebAssembly object because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'unsafe-inline'".
+
+Tests that WebAssembly is blocked in a subframe that disallows WebAssembly when the parent frame allows WebAssembly.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+

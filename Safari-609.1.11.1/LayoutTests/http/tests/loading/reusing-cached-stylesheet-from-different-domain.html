@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+   <body>
+       <script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+const timeToLoadFrame = 200;
+function loadSecondFrame()
+{
+    // We only load the second frame after the first one is fully loaded so that frame 1 CSS stylesheet is loaded and will be cloned for frame2
+    setTimeout(() => {
+        let frame2 = document.getElementById('frame2');
+        frame2.src = 'http://localhost:8000/loading/resources/cached-stylesheet-from-different-domain-frame.html';
+        frame2.onload = () => {
+            if (window.testRunner)
+                setTimeout(() => { testRunner.notifyDone(); }, timeToLoadFrame);
+        };
+    }, timeToLoadFrame);
+}
+       </script>
+
+        <p>
+           <iframe src="resources/cached-stylesheet-from-different-domain-frame.html" onload="loadSecondFrame()"></iframe>
+       </p>
+       <p>
+           <iframe id="frame2"></iframe>
+       </p>
+  </body>
+</html>

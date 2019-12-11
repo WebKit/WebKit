@@ -1,0 +1,536 @@
+
+-----------------------------------------------------
+EXPRESSION: window.simpleObject
+type: object
+description: Object
+
+OWN PROPERTIES:
+    a
+    b
+    __proto__
+
+DISPLAYABLE PROPERTIES:
+    a
+    b
+    __proto__
+
+ALL PROPERTIES:
+    a
+    b
+    toString
+    toLocaleString
+    valueOf
+    hasOwnProperty
+    propertyIsEnumerable
+    isPrototypeOf
+    __defineGetter__
+    __defineSetter__
+    __lookupGetter__
+    __lookupSetter__
+    constructor
+    __proto__
+-----------------------------------------------------
+
+-----------------------------------------------------
+EXPRESSION: window.simpleArray
+type: object
+subtype: array
+description: Array
+
+OWN PROPERTIES:
+    0
+    1
+    2
+    __proto__
+
+DISPLAYABLE PROPERTIES:
+    0
+    1
+    2
+    __proto__
+
+ALL PROPERTIES:
+    0
+    1
+    2
+    length
+    toString
+    values
+    toLocaleString
+    concat
+    fill
+    join
+    pop
+    push
+    reverse
+    shift
+    slice
+    sort
+    splice
+    unshift
+    every
+    forEach
+    some
+    indexOf
+    lastIndexOf
+    filter
+    flat
+    flatMap
+    reduce
+    reduceRight
+    map
+    entries
+    keys
+    find
+    findIndex
+    includes
+    copyWithin
+    constructor
+    Symbol(Symbol.iterator)
+    Symbol(Symbol.unscopables)
+    valueOf
+    hasOwnProperty
+    propertyIsEnumerable
+    isPrototypeOf
+    __defineGetter__
+    __defineSetter__
+    __lookupGetter__
+    __lookupSetter__
+    __proto__
+-----------------------------------------------------
+
+-----------------------------------------------------
+EXPRESSION: window.arrayProto
+type: object
+subtype: array
+description: Array
+
+OWN PROPERTIES:
+    length
+    toString
+    values
+    toLocaleString
+    concat
+    fill
+    join
+    pop
+    push
+    reverse
+    shift
+    slice
+    sort
+    splice
+    unshift
+    every
+    forEach
+    some
+    indexOf
+    lastIndexOf
+    filter
+    flat
+    flatMap
+    reduce
+    reduceRight
+    map
+    entries
+    keys
+    find
+    findIndex
+    includes
+    copyWithin
+    constructor
+    Symbol(Symbol.iterator)
+    Symbol(Symbol.unscopables)
+    __proto__
+
+DISPLAYABLE PROPERTIES:
+    length
+    toString
+    values
+    toLocaleString
+    concat
+    fill
+    join
+    pop
+    push
+    reverse
+    shift
+    slice
+    sort
+    splice
+    unshift
+    every
+    forEach
+    some
+    indexOf
+    lastIndexOf
+    filter
+    flat
+    flatMap
+    reduce
+    reduceRight
+    map
+    entries
+    keys
+    find
+    findIndex
+    includes
+    copyWithin
+    constructor
+    Symbol(Symbol.iterator)
+    Symbol(Symbol.unscopables)
+    __proto__
+
+ALL PROPERTIES:
+    length
+    toString
+    values
+    toLocaleString
+    concat
+    fill
+    join
+    pop
+    push
+    reverse
+    shift
+    slice
+    sort
+    splice
+    unshift
+    every
+    forEach
+    some
+    indexOf
+    lastIndexOf
+    filter
+    flat
+    flatMap
+    reduce
+    reduceRight
+    map
+    entries
+    keys
+    find
+    findIndex
+    includes
+    copyWithin
+    constructor
+    Symbol(Symbol.iterator)
+    Symbol(Symbol.unscopables)
+    valueOf
+    hasOwnProperty
+    propertyIsEnumerable
+    isPrototypeOf
+    __defineGetter__
+    __defineSetter__
+    __lookupGetter__
+    __lookupSetter__
+    __proto__
+-----------------------------------------------------
+
+-----------------------------------------------------
+EXPRESSION: window.loadEvent
+type: object
+description: Event
+
+OWN PROPERTIES:
+    isTrusted
+    __proto__
+
+DISPLAYABLE PROPERTIES:
+    isTrusted
+    type
+    target
+    currentTarget
+    eventPhase
+    cancelBubble
+    bubbles
+    cancelable
+    defaultPrevented
+    composed
+    timeStamp
+    srcElement
+    returnValue
+    __proto__
+
+ALL PROPERTIES:
+    isTrusted
+    constructor
+    type
+    target
+    currentTarget
+    eventPhase
+    cancelBubble
+    bubbles
+    cancelable
+    defaultPrevented
+    composed
+    timeStamp
+    srcElement
+    returnValue
+    composedPath
+    stopPropagation
+    stopImmediatePropagation
+    preventDefault
+    initEvent
+    NONE
+    CAPTURING_PHASE
+    AT_TARGET
+    BUBBLING_PHASE
+    toString
+    toLocaleString
+    valueOf
+    hasOwnProperty
+    propertyIsEnumerable
+    isPrototypeOf
+    __defineGetter__
+    __defineSetter__
+    __lookupGetter__
+    __lookupSetter__
+    __proto__
+-----------------------------------------------------
+
+-----------------------------------------------------
+EXPRESSION: window.complexObject
+type: object
+description: SuperFoo
+
+OWN PROPERTIES:
+    _bar
+    _foo
+    __proto__
+
+DISPLAYABLE PROPERTIES:
+    _bar
+    _foo
+    __proto__
+
+ALL PROPERTIES:
+    _bar
+    _foo
+    constructor
+    getterProperty
+    foo
+    BAR_CONSTANT
+    bar
+    setterOnly
+    toString
+    toLocaleString
+    valueOf
+    hasOwnProperty
+    propertyIsEnumerable
+    isPrototypeOf
+    __defineGetter__
+    __defineSetter__
+    __lookupGetter__
+    __lookupSetter__
+    __proto__
+-----------------------------------------------------
+
+-----------------------------------------------------
+EXPRESSION: window.badGetterObject
+type: object
+description: ClassWithBadGetter
+
+OWN PROPERTIES:
+    __proto__
+
+DISPLAYABLE PROPERTIES:
+    __proto__
+
+ALL PROPERTIES:
+    constructor
+    badGetter
+    toString
+    toLocaleString
+    valueOf
+    hasOwnProperty
+    propertyIsEnumerable
+    isPrototypeOf
+    __defineGetter__
+    __defineSetter__
+    __lookupGetter__
+    __lookupSetter__
+    __proto__
+-----------------------------------------------------
+
+-----------------------------------------------------
+EXPRESSION: window.unboundFunction
+type: function
+description: function () { console.log(arguments); }
+
+OWN PROPERTIES:
+    arguments
+    caller
+    length
+    name
+    prototype
+    __proto__
+
+DISPLAYABLE PROPERTIES:
+    arguments
+    caller
+    length
+    name
+    prototype
+    __proto__
+
+ALL PROPERTIES:
+    arguments
+    caller
+    length
+    name
+    prototype
+    toString
+    apply
+    call
+    bind
+    constructor
+    Symbol(Symbol.hasInstance)
+    toLocaleString
+    valueOf
+    hasOwnProperty
+    propertyIsEnumerable
+    isPrototypeOf
+    __defineGetter__
+    __defineSetter__
+    __lookupGetter__
+    __lookupSetter__
+    __proto__
+-----------------------------------------------------
+
+-----------------------------------------------------
+EXPRESSION: window.boundFunction
+type: function
+description: function unboundFunction() {
+    [native code]
+}
+
+OWN PROPERTIES:
+    name
+    length
+    __proto__
+    targetFunction
+    boundThis
+    boundArgs
+
+DISPLAYABLE PROPERTIES:
+    length
+    name
+    caller
+    arguments
+    __proto__
+    targetFunction
+    boundThis
+    boundArgs
+
+ALL PROPERTIES:
+    length
+    name
+    toString
+    apply
+    call
+    bind
+    caller
+    arguments
+    constructor
+    Symbol(Symbol.hasInstance)
+    toLocaleString
+    valueOf
+    hasOwnProperty
+    propertyIsEnumerable
+    isPrototypeOf
+    __defineGetter__
+    __defineSetter__
+    __lookupGetter__
+    __lookupSetter__
+    __proto__
+    targetFunction
+    boundThis
+    boundArgs
+-----------------------------------------------------
+
+-----------------------------------------------------
+EXPRESSION: window.objectWithSymbolProperties
+type: object
+description: Object
+
+OWN PROPERTIES:
+    prop
+    prop2
+    Symbol()
+    Symbol(sym)
+    Symbol(sym)
+    Symbol()
+    __proto__
+
+DISPLAYABLE PROPERTIES:
+    prop
+    prop2
+    Symbol()
+    Symbol(sym)
+    Symbol(sym)
+    Symbol()
+    __proto__
+
+ALL PROPERTIES:
+    prop
+    prop2
+    Symbol()
+    Symbol(sym)
+    Symbol(sym)
+    Symbol()
+    toString
+    toLocaleString
+    valueOf
+    hasOwnProperty
+    propertyIsEnumerable
+    isPrototypeOf
+    __defineGetter__
+    __defineSetter__
+    __lookupGetter__
+    __lookupSetter__
+    constructor
+    __proto__
+-----------------------------------------------------
+
+-----------------------------------------------------
+EXPRESSION: document.getElementById('my-select').options
+type: object
+subtype: array
+description: HTMLOptionsCollection
+
+OWN PROPERTIES:
+    0
+    __proto__
+
+DISPLAYABLE PROPERTIES:
+    0
+    length
+    selectedIndex
+    __proto__
+
+ALL PROPERTIES:
+    0
+    constructor
+    length
+    selectedIndex
+    add
+    remove
+    item
+    namedItem
+    Symbol(Symbol.iterator)
+    toString
+    toLocaleString
+    valueOf
+    hasOwnProperty
+    propertyIsEnumerable
+    isPrototypeOf
+    __defineGetter__
+    __defineSetter__
+    __lookupGetter__
+    __lookupSetter__
+    __proto__
+-----------------------------------------------------
+DONE
+

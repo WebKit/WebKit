@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function triggerOverrideLoad() {
+    let url = "http://127.0.0.1:8000/inspector/network/resources/override.txt";
+    fetch(url).then(() => {
+        TestPage.dispatchEventToFrontend("LoadComplete");
+    });
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Resource.ResponseSource.InspectorOverride");
+
+    function addTestCase({name, description, expression, statusCode, responseSource, setup}) {
+        suite.addTestCase({
+            name, description, setup,
+            test(resolve, reject) {
+                InspectorTest.evaluateInPage(expression);
+                Promise.all([
+                    WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+                    WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived),
+                    InspectorTest.awaitEvent("LoadComplete"),
+                ]).then(([resourceWasAddedEvent, responseReceivedEvent, loadCompleteEvent]) => {
+                    let resource = resourceWasAddedEvent.data.resource;
+                    InspectorTest.expectThat(resource instanceof WI.Resource, "Resource should be created.");
+                    InspectorTest.expectEqual(resource, responseReceivedEvent.target, "Resource should receive a Response.");
+                    InspectorTest.expectEqual(resource.statusCode, statusCode, `statusCode should be ${statusCode}`);
+                    InspectorTest.expectEqual(resource.responseSource, responseSource, `responseSource should be ${String(responseSource)}`);
+                }).then(resolve, reject);
+            }
+        });
+    }
+
+    addTestCase({
+        name: "Resource.ResponseSource.InspectorOverride",
+        description: "Load a an override resource.",
+        expression: `triggerOverrideLoad()`,
+        responseSource: WI.Resource.ResponseSource.InspectorOverride,
+        statusCode: 987,
+        async setup() {
+            WI.networkManager.addLocalResourceOverride(WI.LocalResourceOverride.create({
+                url: "http://127.0.0.1:8000/inspector/network/resources/override.txt",
+                mimeType: "text/plain",
+                content: "Overridden Text",
+                base64Encoded: false,
+                statusCode: 987,
+                statusText: "Status Text",
+                headers: {},
+            }));
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for `Resource.ResponseSource.InspectorOverride`.</p>
+</body>
+</html>

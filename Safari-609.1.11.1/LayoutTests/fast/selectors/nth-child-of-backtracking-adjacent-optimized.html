@@ -1,0 +1,172 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+span.target {
+    background-color:rgb(0,0,0);
+    color: rgb(255, 255, 255);
+}
+
+b:nth-child(n+2 of a.ok+a~*) span.target {
+    background-color:rgb(1,2,3);
+}
+
+a.ok+a~b:nth-child(n+2 of a.ok+a~*) span.target {
+    color:rgb(7,8,9);
+}
+
+d:nth-child(n+2 of e.ok+c.ok+c.ok+c~*) span.target {
+    background-color:rgb(4,5,6);
+}
+
+e.ok+c.ok+c.ok+c~d:nth-child(n+2 of e.ok+c.ok+c.ok+c~*) span.target {
+    color:rgb(10, 11, 12);
+}
+</style>
+</head>
+<body>
+<div style="display:none">
+    <!-- a.ok+a~b span.target -->
+    <target1>
+        <a class="ok"></a>  <!-- Matched. -->
+        <a class="ng"></a>  <!-- Failed. And backtrack from here. -->
+        <a class="ng"></a>  <!-- Failed. And backtrack from here. -->
+        <a class="ng"></a>  <!-- Failed. And backtrack from here. -->
+        <a class="ng"></a>  <!-- Failed. And backtrack from here. -->
+        <a class="ng"></a>  <!-- Failed. And backtrack from here. -->
+        <a class="ng"></a>  <!-- Failed. And backtrack from here. -->
+        <a class="ng"></a>  <!-- Failed. And backtrack from here. -->
+        <a class="ng"></a>  <!-- Failed. And backtrack from here. -->
+        <a class="ng"></a>  <!-- Failed. And backtrack from here. -->
+        <a class="ng"></a>  <!-- Failed. And backtrack from here. -->
+        <a class="ng"></a>  <!-- Failed. And backtrack from here. -->
+        <a class="ng"></a>  <!-- Failed. And backtrack from here. -->
+        <a class="ng"></a>  <!-- Failed. And backtrack from here. -->
+        <a></a>
+        <b>
+            <span class="target" id="target1"></span>
+        </b>
+    </target1>
+
+    <!-- a.ok+a~b span.target -->
+    <target2>
+        <a class="ng"></a>  <!-- Failed.-->
+        <a class="ng"></a>  <!-- Failed. And backtrack from here. -->
+        <a></a>
+        <b>
+            <span class="target" id="target2"></span>
+        </b>
+    </target2>
+
+    <!-- a.ok+a~b span.target -->
+    <target3>
+        <a class="ok"></a>  <!-- Matched. -->
+        <a></a>
+        <b></b>  <!-- Failed. And backtrack from here + 1. -->
+        <a></a>
+        <b>
+            <span class="target" id="target3"></span>
+        </b>
+    </target3>
+
+    <!-- a.ok+a~b span.target -->
+    <target4>
+        <a class="ng"></a>  <!-- Failed. -->
+        <a></a>
+        <b></b>  <!-- Failed. And backtrack from here + 1. -->
+        <a></a>
+        <b>
+            <span class="target" id="target4"></span>
+        </b>
+    </target4>
+
+    <!-- e.ok+c.ok+c.ok+c~d span.target -->
+    <target5>
+        <e class="ok"></e>  <!-- Matched. -->
+        <c class="ok"></c>  <!-- Failed. And backtrack with tail. -->
+        <c class="ok"></c>
+        <c class="ok"></c>
+        <c class="ok"></c>
+        <d>
+            <span class="target" id="target5"></span>
+        </d>
+    </target5>
+
+    <!-- e.ok+c.ok+c.ok+c~d span.target -->
+    <target6>
+        <e class="ng"></e>  <!-- Failed. -->
+        <c class="ok"></c>  <!-- Failed. And backtrack with tail. -->
+        <c class="ok"></c>
+        <c class="ok"></c>
+        <c class="ok"></c>
+        <d>
+            <span class="target" id="target6"></span>
+        </d>
+    </target6>
+
+    <!-- e.ok+c.ok+c.ok+c~d span.target -->
+    <target7>
+        <e class="ok"></e>  <!-- Matched. -->
+        <c class="ok"></c>
+        <c class="ok"></c>
+        <c class="ok"></c>
+        <c class="ng"></c>  <!-- Failed. And backtrack with tail. -->
+        <c></c>
+        <d>
+            <span class="target" id="target7"></span>
+        </d>
+    </target7>
+
+    <!-- e.ok+c.ok+c.ok+c~d span.target -->
+    <target8>
+        <e class="ok"></e>  <!-- Matched. -->
+        <c class="ok"></c>
+        <c class="ok"></c>
+        <c class="ng"></c>  <!-- Failed. And backtrack with tail. -->
+        <c class="ok"></c>
+        <c></c>
+        <d>
+            <span class="target" id="target8"></span>
+        </d>
+    </target8>
+</div>
+</body>
+<script>
+description('The backtracking from direct adjacent combinators inside :nth-child(An+B of selector)');
+
+debug("Backtracking as JumpToIndirectAdjacentEntryPoint");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target1")).backgroundColor', 'rgb(1, 2, 3)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target1")).color', 'rgb(7, 8, 9)');
+
+debug("Backtracking as JumpToIndirectAdjacentEntryPoint and failed");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target2")).backgroundColor', 'rgb(0, 0, 0)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target2")).color', 'rgb(255, 255, 255)');
+
+debug("Backtracking as JumpToIndirectAdjacentTreeWalkerEntryPoint");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target3")).backgroundColor', 'rgb(1, 2, 3)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target3")).color', 'rgb(7, 8, 9)');
+
+debug("Backtracking as JumpToIndirectAdjacentTreeWalkerEntryPoint and failed");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target4")).backgroundColor', 'rgb(0, 0, 0)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target4")).color', 'rgb(255, 255, 255)');
+
+debug("Backtracking with tail");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target5")).backgroundColor', 'rgb(4, 5, 6)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target5")).color', 'rgb(10, 11, 12)');
+
+debug("Backtracking with tail and failed");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target6")).backgroundColor', 'rgb(0, 0, 0)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target6")).color', 'rgb(255, 255, 255)');
+
+debug("Backtracking with tail");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target7")).backgroundColor', 'rgb(4, 5, 6)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target7")).color', 'rgb(10, 11, 12)');
+
+debug("Backtracking with tail");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target8")).backgroundColor', 'rgb(4, 5, 6)');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target8")).color', 'rgb(10, 11, 12)');
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

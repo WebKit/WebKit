@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 354x19
+          text run at (0,0) width 354: "Here is an html paragraph. And below is a svg drawing"
+      RenderBlock {DIV} at (0,36) size 784x400
+        RenderSVGRoot {svg} at (49,64) size 339x302
+          RenderSVGPath {path} at (49,64) size 339x302 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M 14.8649 27.5434 C 10.9361 23.4486 5.53039 20.9307 2.16163 16.2739 C 0.1954 13.4713 -0.27051 9.80295 0.40252 6.50142 C 1.50231 3.03806 4.88027 0.20151 8.61522 0.38648 C 11.4904 0.13255 14.1594 2.02987 15.543 4.44105 C 15.919 4.6728 15.9025 6.65371 16.2617 5.51432 C 17.3118 2.6047 20.1552 0.48976 23.2581 0.39544 C 27.3718 0.07861 31.5625 3.22656 31.9769 7.4138 C 32.4419 10.5606 31.9362 13.9546 29.9366 16.5144 C 27.0142 20.4478 22.515 22.6972 19.032 26.0537 C 17.9438 26.8473 16.7477 28.519 15.904 28.9961 C 15.6231 28.4687 15.2627 27.9879 14.8649 27.5434 Z"]

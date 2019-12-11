@@ -1,0 +1,34 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-001-ref.png
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-001.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-002-ref.png
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-002.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-003-ref.png
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-003.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-004-ref.png
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-004.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-005-ref.png
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-basic-005.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-bicubic-001-ref.png
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-bicubic-001.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-complex-001-ref.png
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/meshgradient-complex-001.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/radialgradient-basic-002-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/radialgradient-basic-002.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/radialgradient-fully-overlapping.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/stop-color-currentcolor-dynamic-001.svg

@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: Refused to load data:text/javascript;charset=utf-8;base64,ZGF0YVNjcmlwdFJhbiA9IHRydWU7 because it appears in neither the script-src directive nor the default-src directive of the Content Security Policy.
+data: as script src should not run with a policy that doesn't specify data: as an allowed source
+
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN Test that securitypolicyviolation event is fired 
+PASS Verify that data: as script src doesn't run with this policy 
+

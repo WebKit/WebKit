@@ -1,0 +1,83 @@
+This test checks String.prototype.toLocaleLowerCase().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS String.prototype.toLocaleLowerCase.length is 0
+PASS ''.toLocaleLowerCase() is ''
+PASS String.prototype.toLocaleLowerCase.call({ toString() { return 'A' } }) is 'a'
+PASS String.prototype.toLocaleLowerCase.call({ toString() { throw Error('1') } }) threw exception Error: 1.
+PASS String.prototype.toLocaleLowerCase.call(null) threw exception TypeError: Type error.
+PASS String.prototype.toLocaleLowerCase.call(undefined) threw exception TypeError: Type error.
+PASS 'A'.toLocaleLowerCase(9) is 'a'
+PASS '\u0130'.toLocaleLowerCase({ length: 4, 1: 'az', 3: 'en' }) is 'i'
+PASS 'A'.toLocaleLowerCase('x-some-thing') is 'a'
+PASS 'A'.toLocaleLowerCase(Object.create(null, { length: { get() { throw Error('a') } } })) threw exception Error: a.
+PASS 'A'.toLocaleLowerCase(Object.create(null, { length: { value: 1 }, 0: { get() { throw Error('b') } } })) threw exception Error: b.
+PASS 'A'.toLocaleLowerCase([ { toString() { throw Error('c') } } ]) threw exception Error: c.
+PASS 'A'.toLocaleLowerCase([ 5 ]) threw exception TypeError: locale value must be a string or object.
+PASS 'A'.toLocaleLowerCase('') threw exception RangeError: invalid language tag: .
+PASS 'A'.toLocaleLowerCase('a') threw exception RangeError: invalid language tag: a.
+PASS 'A'.toLocaleLowerCase('abcdefghij') threw exception RangeError: invalid language tag: abcdefghij.
+PASS 'A'.toLocaleLowerCase('#$') threw exception RangeError: invalid language tag: #$.
+PASS 'A'.toLocaleLowerCase('en-@-abc') threw exception RangeError: invalid language tag: en-@-abc.
+PASS 'A'.toLocaleLowerCase('en-u') threw exception RangeError: invalid language tag: en-u.
+PASS 'A'.toLocaleLowerCase('en-u-kn-true-u-ko-true') threw exception RangeError: invalid language tag: en-u-kn-true-u-ko-true.
+PASS 'A'.toLocaleLowerCase('en-x') threw exception RangeError: invalid language tag: en-x.
+PASS 'A'.toLocaleLowerCase('en-*') threw exception RangeError: invalid language tag: en-*.
+PASS 'A'.toLocaleLowerCase('en-') threw exception RangeError: invalid language tag: en-.
+PASS 'A'.toLocaleLowerCase('en--US') threw exception RangeError: invalid language tag: en--US.
+PASS 'AbCdEfGhIjKlMnOpQRStuvWXyZ0123456789'.toLocaleLowerCase() is 'abcdefghijklmnopqrstuvwxyz0123456789'
+PASS 'ÀÉÎÖŒØŪÑ'.toLocaleLowerCase() is 'àéîöœøūñ'
+PASS '\u0130'.toLocaleLowerCase('und') is '\u0069\u0307'
+PASS '\u0130'.toLocaleLowerCase('az') is 'i'
+PASS 'I\u0307'.toLocaleLowerCase('az') is 'i'
+PASS 'I\u0323\u0307'.toLocaleLowerCase('az') is 'i\u0323'
+PASS 'I\uD800\uDDFD\u0307'.toLocaleLowerCase('az') is 'i\uD800\uDDFD'
+PASS 'IA\u0307'.toLocaleLowerCase('az') is '\u0131a\u0307'
+PASS 'I\u0300\u0307'.toLocaleLowerCase('az') is '\u0131\u0300\u0307'
+PASS 'I\uD834\uDD85\u0307'.toLocaleLowerCase('az') is '\u0131\uD834\uDD85\u0307'
+PASS 'I'.toLocaleLowerCase('az') is '\u0131'
+PASS 'i'.toLocaleLowerCase('az') is 'i'
+PASS '\u0131'.toLocaleLowerCase('az') is '\u0131'
+PASS 'I\u0300'.toLocaleLowerCase('lt') is 'i\u0307\u0300'
+PASS 'J\u0300'.toLocaleLowerCase('lt') is 'j\u0307\u0300'
+PASS '\u012E\u0300'.toLocaleLowerCase('lt') is '\u012F\u0307\u0300'
+PASS 'I\uD834\uDD85'.toLocaleLowerCase('lt') is 'i\u0307\uD834\uDD85'
+PASS 'J\uD834\uDD85'.toLocaleLowerCase('lt') is 'j\u0307\uD834\uDD85'
+PASS '\u012E\uD834\uDD85'.toLocaleLowerCase('lt') is '\u012F\u0307\uD834\uDD85'
+PASS 'I\u0325\u0300'.toLocaleLowerCase('lt') is 'i\u0307\u0325\u0300'
+PASS 'J\u0325\u0300'.toLocaleLowerCase('lt') is 'j\u0307\u0325\u0300'
+PASS '\u012E\u0325\u0300'.toLocaleLowerCase('lt') is '\u012F\u0307\u0325\u0300'
+PASS 'I\uD800\uDDFD\u0300'.toLocaleLowerCase('lt') is 'i\u0307\uD800\uDDFD\u0300'
+PASS 'J\uD800\uDDFD\u0300'.toLocaleLowerCase('lt') is 'j\u0307\uD800\uDDFD\u0300'
+PASS '\u012E\uD800\uDDFD\u0300'.toLocaleLowerCase('lt') is '\u012F\u0307\uD800\uDDFD\u0300'
+PASS 'I\u0325\uD834\uDD85'.toLocaleLowerCase('lt') is 'i\u0307\u0325\uD834\uDD85'
+PASS 'J\u0325\uD834\uDD85'.toLocaleLowerCase('lt') is 'j\u0307\u0325\uD834\uDD85'
+PASS '\u012E\u0325\uD834\uDD85'.toLocaleLowerCase('lt') is '\u012F\u0307\u0325\uD834\uDD85'
+PASS 'I\uD800\uDDFD\uD834\uDD85'.toLocaleLowerCase('lt') is 'i\u0307\uD800\uDDFD\uD834\uDD85'
+PASS 'J\uD800\uDDFD\uD834\uDD85'.toLocaleLowerCase('lt') is 'j\u0307\uD800\uDDFD\uD834\uDD85'
+PASS '\u012E\uD800\uDDFD\uD834\uDD85'.toLocaleLowerCase('lt') is '\u012F\u0307\uD800\uDDFD\uD834\uDD85'
+PASS 'IA\u0300'.toLocaleLowerCase('lt') is 'ia\u0300'
+PASS 'JA\u0300'.toLocaleLowerCase('lt') is 'ja\u0300'
+PASS '\u012EA\u0300'.toLocaleLowerCase('lt') is '\u012Fa\u0300'
+PASS 'IA\uD834\uDD85'.toLocaleLowerCase('lt') is 'ia\uD834\uDD85'
+PASS 'JA\uD834\uDD85'.toLocaleLowerCase('lt') is 'ja\uD834\uDD85'
+PASS '\u012EA\uD834\uDD85'.toLocaleLowerCase('lt') is '\u012Fa\uD834\uDD85'
+PASS '\u00CC'.toLocaleLowerCase('lt') is '\u0069\u0307\u0300'
+PASS '\u00CD'.toLocaleLowerCase('lt') is '\u0069\u0307\u0301'
+PASS '\u0128'.toLocaleLowerCase('lt') is '\u0069\u0307\u0303'
+PASS '\u0130'.toLocaleLowerCase('tr') is 'i'
+PASS 'I\u0307'.toLocaleLowerCase('tr') is 'i'
+PASS 'I\u0323\u0307'.toLocaleLowerCase('tr') is 'i\u0323'
+PASS 'I\uD800\uDDFD\u0307'.toLocaleLowerCase('tr') is 'i\uD800\uDDFD'
+PASS 'IA\u0307'.toLocaleLowerCase('tr') is '\u0131a\u0307'
+PASS 'I\u0300\u0307'.toLocaleLowerCase('tr') is '\u0131\u0300\u0307'
+PASS 'I\uD834\uDD85\u0307'.toLocaleLowerCase('tr') is '\u0131\uD834\uDD85\u0307'
+PASS 'I'.toLocaleLowerCase('tr') is '\u0131'
+PASS 'i'.toLocaleLowerCase('tr') is 'i'
+PASS '\u0131'.toLocaleLowerCase('tr') is '\u0131'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

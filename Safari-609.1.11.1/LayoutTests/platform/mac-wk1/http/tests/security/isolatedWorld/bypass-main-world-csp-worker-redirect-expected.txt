@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Unsafe attempt to load URL http://localhost:8000/security/contentSecurityPolicy/resources/alert-fail.js from origin http://127.0.0.1:8000. Domains, protocols and ports must match.
+
+This tests that in an isolated world that the Content Security Policy of the parent origin (this page) is bypassed and a CSP violation is not triggered when a Web Worker's script URL loads a different origin through a redirect. This test PASSED if there is no CSP violation console message and the redirect fails (since Web Workers can only load a script from the same origin).
+
+PASS worker failed to load script URL.

@@ -1,0 +1,8 @@
+2d.shadow.offset.positiveY
+Shadows can be offset with positive y
+Actual output:
+Expected output:
+
+
+PASS Shadows can be offset with positive y 
+

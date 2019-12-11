@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <style>
+        * { font-size: 16px; }
+        div { font-size: 8px; }
+    </style>
+    <body>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script>
+            function setProperty(value) {
+                var div = document.createElement('div');
+                document.body.appendChild(div);
+                div.style.setProperty("-webkit-mask-image", "none, none, none, none");
+                div.style.setProperty("-webkit-mask-source-type", value);
+
+                var computedValue = getComputedStyle(div).getPropertyValue("-webkit-mask-source-type");
+                document.body.removeChild(div);
+
+                return computedValue;
+            }
+
+            function test(value, expected) {
+                shouldBeEqualToString('setProperty("' + value + '")', expected);
+            }
+
+            test("alpha, alpha, alpha, alpha", "alpha, alpha, alpha, alpha");
+            test("luminance, alpha", "luminance, alpha, alpha, alpha");
+            test("luminance, luminance, luminance, luminance", "luminance, luminance, luminance, luminance");
+            test("auto, alpha, luminance, luminance", "alpha, alpha, luminance, luminance");
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

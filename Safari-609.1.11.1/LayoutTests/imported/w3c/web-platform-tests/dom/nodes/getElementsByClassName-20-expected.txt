@@ -1,0 +1,12 @@
+
+PASS get elements in document then add element to collection 
+test link #foo
+text
+text caption
+TEXT head
+td text1
+text newDiv
+td text
+td te xt
+TEXT foot
+xt te

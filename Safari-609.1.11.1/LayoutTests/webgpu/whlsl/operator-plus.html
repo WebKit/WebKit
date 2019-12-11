@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Plus.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+const epsilon = 0.0001;
+
+whlslTests.vectorPlus = async () => {
+    const program = `
+        float foo() {
+            float2 x = float2(10, 25);
+            float2 y = float2(20, 30);
+            float2 r = y + x;
+            return r.x / r.y;
+        }
+    `;
+    assert_approx_equals(await callFloatFunction(program, "foo", []), 30/55, epsilon);
+};
+
+whlslTests.vectorPlusScalar = async () => {
+    const program = `
+        float foo() {
+            float2 x = float2(10, 20);
+            float2 r = x + 10.0;
+            return r.y / r.x;
+        }
+    `;
+    assert_approx_equals(await callFloatFunction(program, "foo", []), 30/20, epsilon);
+};
+
+whlslTests.vectorPlusScalar2 = async () => {
+    const program = `
+        float foo() {
+            float2 x = float2(10, 20);
+            float2 r = 10.0 + x;
+            return r.y / r.x;
+        }
+    `;
+    assert_approx_equals(await callFloatFunction(program, "foo", []), 30/20, epsilon);
+};
+
+whlslTests.matrixPlus = async () => {
+    const program = `
+        bool foo() {
+            float2x2 m;
+            m[0] = float2(20, 30);
+            m[1] = float2(40, 50);
+            float2x2 m2;
+            m2[0] = float2(-20, -30);
+            m2[1] = float2(-40, -50);
+            m = m + m2;
+            if (m[0][0] == 0 && m[0][1] == 0 && m[1][0] == 0 && m[1][1] == 0)
+                return true;
+            return false;
+        }
+    `;
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.matrixTimesScalar = async () => {
+    const program = `
+        bool foo() {
+            float2x2 m;
+            m[0] = float2(20, 30);
+            m[1] = float2(40, 50);
+
+            m = m + 10.0;
+
+            if (m[0][0] == 30.0 && m[0][1] == 40.0 && m[1][0] == 50.0 && m[1][1] == 60.0)
+                return true;
+            return false;
+        }
+    `;
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.matrixTimesScalar2 = async () => {
+    const program = `
+        bool foo() {
+            float2x2 m;
+            m[0] = float2(20, 30);
+            m[1] = float2(40, 50);
+
+            m = 10.0 + m;
+
+            if (m[0][0] == 30.0 && m[0][1] == 40.0 && m[1][0] == 50.0 && m[1][1] == 60.0)
+                return true;
+            return false;
+        }
+    `;
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+runTests(whlslTests);
+</script>
+</html>

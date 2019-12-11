@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<math><mi id="0">x</mi></math>
+<math><mn id="1">1</mn></math>
+<math><mo id="2">+</mo></math>
+<math><ms id="3">static</ms></math>
+<math><mtext id="4">text</mtext></math>
+<div id="console"></div>
+<script>
+description("This tests that the text inside MathML token elements is exposed.");
+
+function printRoleAndValue(id)
+{
+    var elem = accessibilityController.accessibleElementById(id);
+    if (accessibilityController.platformName == "mac" && elem.childrenCount == 1)
+        elem = elem.childAtIndex(0);
+    debug(elem.role + ": " + elem.stringValue);
+}
+
+if (window.testRunner && window.accessibilityController) {
+    var testCount = 5;
+    for (i = 1; i < testCount; i++) {
+        printRoleAndValue(i.toString());
+    }
+}
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

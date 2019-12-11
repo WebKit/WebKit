@@ -1,0 +1,132 @@
+CONSOLE MESSAGE: line 19: Created Database 'Database1'
+CONSOLE MESSAGE: line 19: Created Database 'Database2'
+CONSOLE MESSAGE: line 19: Created Database 'Database3'
+
+== Running test suite: IndexedDB.requestData
+-- Running test case: ClearDatabases
+-- Running test case: RequestDataBasic
+-- No Index
+PASS: Should be 4 entries.
+PASS: Should not have more entries.
+PASS: Primary key should be ordered by primary key: 1
+PASS: Value should be a remote object for: 'Thirsty Hamster'
+PASS: Primary key should be ordered by primary key: 2
+PASS: Value should be a remote object for: 'Jamming Peacock'
+PASS: Primary key should be ordered by primary key: 3
+PASS: Value should be a remote object for: 'Bustling Badger'
+PASS: Primary key should be ordered by primary key: 4
+PASS: Value should be a remote object for: 'Monstrous Beaver'
+-- Name Index
+PASS: Should be 4 entries.
+PASS: Should not have more entries.
+PASS: Primary key should be ordered by name: 3
+PASS: Key should be ordered by name: 'Bustling Badger'
+PASS: Value should be a remote object for: 'Bustling Badger'
+PASS: Primary key should be ordered by name: 2
+PASS: Key should be ordered by name: 'Jamming Peacock'
+PASS: Value should be a remote object for: 'Jamming Peacock'
+PASS: Primary key should be ordered by name: 4
+PASS: Key should be ordered by name: 'Monstrous Beaver'
+PASS: Value should be a remote object for: 'Monstrous Beaver'
+PASS: Primary key should be ordered by name: 1
+PASS: Key should be ordered by name: 'Thirsty Hamster'
+PASS: Value should be a remote object for: 'Thirsty Hamster'
+-- Email Index
+PASS: Should be 4 entries.
+PASS: Should not have more entries.
+PASS: Primary key should be ordered by email: 3
+PASS: Key should be ordered by email: 'badger@webkit.org'
+PASS: Value should be a remote object for: 'Bustling Badger'
+PASS: Primary key should be ordered by email: 4
+PASS: Key should be ordered by email: 'beaver@webkit.org'
+PASS: Value should be a remote object for: 'Monstrous Beaver'
+FAIL: Primary key should be ordered by email: 2
+    Expected: truthy
+    Actual: false
+PASS: Key should be ordered by email: 'hamster@webkit.org'
+PASS: Value should be a remote object for: 'Thirsty Hamster'
+FAIL: Primary key should be ordered by email: 1
+    Expected: truthy
+    Actual: false
+PASS: Key should be ordered by email: 'peacock@webkit.org'
+PASS: Value should be a remote object for: 'Jamming Peacock'
+
+-- Running test case: RequestDataPagination
+-- Page 1
+PASS: Entries length should match page size.
+PASS: Should have more entries.
+PASS: Primary key should be ordered by primary key: 1
+PASS: Value should be a remote object for: 'Thirsty Hamster'
+PASS: Primary key should be ordered by primary key: 2
+PASS: Value should be a remote object for: 'Jamming Peacock'
+-- Page 2
+PASS: Entries length should match page size.
+PASS: Should not have more entries.
+PASS: Primary key should be ordered by primary key: 3
+PASS: Value should be a remote object for: 'Bustling Badger'
+PASS: Primary key should be ordered by primary key: 4
+PASS: Value should be a remote object for: 'Monstrous Beaver'
+
+-- Running test case: RequestDataKeyRangeBounds
+-- Keys >= 'M'
+-- Lower Bound: 'M' (closed)
+-- Upper Bound: -
+PASS: Should be 2 entries.
+PASS: Should not have more entries.
+PASS: Primary key should be ordered by primary key: 4
+PASS: Value should be a remote object for: 'Monstrous Beaver'
+PASS: Primary key should be ordered by primary key: 1
+PASS: Value should be a remote object for: 'Thirsty Hamster'
+-- Keys > 'M'
+-- Lower Bound: 'M' (open)
+-- Upper Bound: -
+PASS: Should be 2 entries.
+PASS: Should not have more entries.
+PASS: Primary key should be ordered by primary key: 4
+PASS: Value should be a remote object for: 'Monstrous Beaver'
+PASS: Primary key should be ordered by primary key: 1
+PASS: Value should be a remote object for: 'Thirsty Hamster'
+-- Keys > 'Monstrous Beaver'
+-- Lower Bound: 'Monstrous Beaver' (open)
+-- Upper Bound: -
+PASS: Should be 1 entry.
+PASS: Should not have more entries.
+PASS: Primary key should be ordered by primary key: 1
+PASS: Value should be a remote object for: 'Thirsty Hamster'
+-- Keys <= 'M'
+-- Lower Bound: -
+-- Upper Bound: 'M' (closed)
+PASS: Should be 2 entries.
+PASS: Should not have more entries.
+PASS: Primary key should be ordered by primary key: 3
+PASS: Value should be a remote object for: 'Bustling Badger'
+PASS: Primary key should be ordered by primary key: 2
+PASS: Value should be a remote object for: 'Jamming Peacock'
+-- Keys <= 'Monstrous Beaver'
+-- Lower Bound: -
+-- Upper Bound: 'Monstrous Beaver' (closed)
+PASS: Should be 3 entries.
+PASS: Should not have more entries.
+PASS: Primary key should be ordered by primary key: 3
+PASS: Value should be a remote object for: 'Bustling Badger'
+PASS: Primary key should be ordered by primary key: 2
+PASS: Value should be a remote object for: 'Jamming Peacock'
+PASS: Primary key should be ordered by primary key: 4
+PASS: Value should be a remote object for: 'Monstrous Beaver'
+-- Keys < 'M'
+-- Lower Bound: -
+-- Upper Bound: 'M' (open)
+PASS: Should be 2 entries.
+PASS: Should not have more entries.
+PASS: Primary key should be ordered by primary key: 3
+PASS: Value should be a remote object for: 'Bustling Badger'
+PASS: Primary key should be ordered by primary key: 2
+PASS: Value should be a remote object for: 'Jamming Peacock'
+-- 'Monstrous Beaver' <= Key <= 'Monstrous Beaver'
+-- Lower Bound: 'Monstrous Beaver' (closed)
+-- Upper Bound: 'Monstrous Beaver' (closed)
+PASS: Should be 1 entry.
+PASS: Should not have more entries.
+PASS: Primary key should be ordered by primary key: 4
+PASS: Value should be a remote object for: 'Monstrous Beaver'
+

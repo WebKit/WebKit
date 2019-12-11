@@ -1,0 +1,4 @@
+This tests that onSearch fires correctly.
+
+Test Passed
+

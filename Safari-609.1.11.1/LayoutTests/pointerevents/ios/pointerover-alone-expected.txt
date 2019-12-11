@@ -1,0 +1,3 @@
+
+PASS Listening to a pointerover event alone dispatches the event. 
+

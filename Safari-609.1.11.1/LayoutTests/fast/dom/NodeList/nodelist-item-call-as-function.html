@@ -1,0 +1,16 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('This tests that items in a NodeList cannot be called indexed using [[Call]].');
+
+var nodeList = document.childNodes;
+shouldThrow("nodeList(0)");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

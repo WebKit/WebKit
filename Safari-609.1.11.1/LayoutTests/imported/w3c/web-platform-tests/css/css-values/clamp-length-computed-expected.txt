@@ -1,0 +1,6 @@
+
+FAIL Property letter-spacing value 'clamp(10px, 20px, 30px)' computes to '20px' assert_true: 'clamp(10px, 20px, 30px)' is a supported value for letter-spacing. expected true got false
+FAIL Property letter-spacing value 'clamp(10px, 5px, 30px)' computes to '10px' assert_true: 'clamp(10px, 5px, 30px)' is a supported value for letter-spacing. expected true got false
+FAIL Property letter-spacing value 'clamp(10px, 35px, 30px)' computes to '30px' assert_true: 'clamp(10px, 35px, 30px)' is a supported value for letter-spacing. expected true got false
+FAIL Property letter-spacing value 'clamp(30px, 100px, 20px)' computes to '30px' assert_true: 'clamp(30px, 100px, 20px)' is a supported value for letter-spacing. expected true got false
+

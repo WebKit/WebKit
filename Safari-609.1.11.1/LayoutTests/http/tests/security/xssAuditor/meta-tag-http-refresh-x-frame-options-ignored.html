@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.setXSSAuditorEnabled(true);
+  testRunner.waitUntilDone();
+}
+
+function done()
+{
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</head>
+<body>
+<iframe onload="done()" src="http://localhost:8000/security/xssAuditor/resources/echo-head.pl?q=%3Cmeta+http-equiv%3D%22x-frame-options%22+content%3D%22deny%22%3E">
+</iframe>
+</body>
+</html>

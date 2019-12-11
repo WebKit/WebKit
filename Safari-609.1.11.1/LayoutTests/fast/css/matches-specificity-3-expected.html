@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+<style>
+    body > * {
+        display: block;
+    }
+    html, body, p {
+        background-color: white;
+        color: black;
+    }
+</style>
+</head>
+<body>
+    <p>This test checks the dynamic specificity of matches changing the order in which rules are applied depending on the element. Each element should have the colors described in the text and no border.</p>
+    <nottarget style="color: purple; background-color: red;">Purple text on red background.</nottarget>
+    <target style="color: white; background-color: green;">White text on green background.</target>
+    <nottarget style="color: purple; background-color: red;">Purple text on red background.</nottarget>
+    <target style="color: purple; background-color: red;">Purple text on red background.</target>
+    <nottarget style="color: purple; background-color: blue;">Purple text on blue background.</nottarget>
+    <target style="color: purple; background-color: blue;">Purple text on blue background.</target>
+    <nottarget style="color: purple; background-color: red;">Purple text on red background.</nottarget>
+    <target style="color: purple; background-color: red;">Purple text on red background.</target>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<svg id="svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="load()">
+<defs>
+    <polyline id="polyline" points="20,20 80,20 80,80 20,80" />
+</defs>
+<g id="g"/>
+<text x="50" y="50" id="log"/>
+<script id="script">
+<![CDATA[
+
+var g = document.getElementById("g");
+
+function log(message) {
+    var logDiv = document.getElementById('log');
+    logDiv.appendChild(document.createTextNode(message));
+}
+
+function createAnimatedPolylineInstance() {
+    var use = document.createElementNS("http://www.w3.org/2000/svg", "use");
+    use.setAttributeNS("http://www.w3.org/1999/xlink", "href", "#polyline");
+
+    var anim = document.createElementNS("http://www.w3.org/2000/svg", "animate");
+    anim.setAttribute("attributeType", "XML");
+    anim.setAttribute("attributeName", "points");
+    anim.setAttribute("from", "20,20 80,20 80,80 20,80");
+    anim.setAttribute("to", "10,10 90,10 90,90 10,90");
+    anim.setAttribute("begin", "0s");
+    anim.setAttribute("dur", "10.0s");
+    anim.setAttribute("repeatCount", 1);
+
+    use.appendChild(anim);
+
+    return use;
+}
+
+function startTest() {
+    // Collect garbage before recording starting live node count, in case there are live elements from previous tests.
+    GCController.collect();
+    originalLiveElements = window.internals.numberOfLiveNodes();
+
+    // Hold references to points and animatedPoints on the root instance.
+    points = document.getElementById("polyline").points;
+    animatedPoints = document.getElementById("polyline").animatedPoints;
+
+    for (var i = 0; i < 100; i++)
+        g.appendChild(createAnimatedPolylineInstance());
+
+    setTimeout(continueTest, 0);
+}
+
+function continueTest() {
+    while (g.hasChildNodes())
+        g.removeChild(g.lastChild);
+
+    setTimeout(finishTest, 0);
+}
+
+var attemptsToFinish = 5;
+
+function finishTest() {
+    GCController.collect();
+
+    var liveDelta = window.internals.numberOfLiveNodes() - originalLiveElements;
+    if (liveDelta == 0)
+        log("PASS");
+    else if (--attemptsToFinish) {
+        setTimeout(finishTest, 100);
+        return;
+    } else
+        log("FAIL: " + liveDelta + " extra live node(s)");
+
+    testRunner.notifyDone();
+}
+
+function load() {
+    if (window.testRunner && window.GCController && window.internals) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    } else {
+        log("This test only works when run with the testRunner, GCController, and internals available.");
+        return;
+    }
+
+    setTimeout(startTest, 0);
+}
+]]>
+</script>
+</svg>

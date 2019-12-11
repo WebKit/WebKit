@@ -1,0 +1,46 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that an IDBRequest & IDBIndex does not prevent page caching.");
+jsTestIsAsync = true;
+
+window.addEventListener("pageshow", function(event) {
+   debug("pageshow - " + (event.persisted ? "" : "not ") + "from page cache");
+   if (event.persisted) {
+       testPassed("Page entered page cache");
+       finishJSTest();
+   }
+ });
+ 
+ window.addEventListener("pagehide", function(event) {
+     debug("pagehide - " + (event.persisted ? "" : "not ") + "entering page cache");
+     if (!event.persisted) {
+         testFailed("Page failed to enter page cache");
+         finishJSTest();
+     }
+ });
+ 
+ onload = () => {
+     setTimeout(() => {
+         request = indexedDB.open("MyTestDatabase");
+         request.onerror = function(event) {
+             testFailed("Failed to open the database");
+             finishJSTest();
+         }
+         request.onupgradeneeded = function(event) {
+             var db = event.target.result;
+             objectStore = db.createObjectStore("customers", { keyPath: "ssn" });
+             transaction = objectStore.transaction;
+
+             myIndex = objectStore.createIndex('index', 'x', {unique: true});
+             shouldBeTrue("!!myIndex");
+
+             window.location = "../../fast/history/resources/page-cache-helper.html";
+         };
+    }, 0);
+ };
+</script>
+</html>

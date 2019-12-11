@@ -1,0 +1,108 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+loadedFirstURL = false;
+
+var res1, res2;
+
+function test()
+{
+    try {
+        res1 = document.getElementById("result1");
+        res2 = document.getElementById("result2");
+    } catch (ex) {
+        showErr("Exception: " + ex.description);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+}
+
+function streamLoaded()
+{
+    if (loadedFirstURL)
+        return;
+        
+    loadedFirstURL = true;
+    plg.getURLNotify("/plugins/resources/load-me-2.txt", null, "callback");
+}
+
+function callback(errCode, streamDump)
+{
+    var parse = parseStreamDump(streamDump);
+    if (parse.err)
+        showErr(parse.err);
+    else {
+        res1.innerHTML = newlinesToHTML(parse.res1);
+        res2.innerHTML = newlinesToHTML(parse.res2);
+    }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+// Format passed by plugin: four fields separated by \n\n:
+// First URL; first header block; last URL; last header block.
+function parseStreamDump(streamDump)
+{
+    var rtn = {};
+
+    if (typeof streamDump == "string" || ((typeof streamDump == "object") && (streamDump.constructor == String))) {
+        var parts = streamDump.split("\n\n");
+        if (parts.length >= 4) {
+            rtn.res1 = genericURL(parts[0]) + "\n" + parseHeaders(parts[1]);
+            rtn.res2 = genericURL(parts[2]) + "\n" + parseHeaders(parts[3]);
+        } else
+            rtn.err = "streamDump from plugin does not have expected format";
+    } else
+        rtn.err = "streamDump from plugin is not a string: " + streamDump;
+
+    return rtn;
+}
+
+function showErr(err)
+{
+    res1.innerHTML = "FAILED - " + err;
+    res2.innerHTML = "";
+}
+
+function newlinesToHTML(str)
+{
+    return str.replace(/\n/g, "<br>");
+}
+
+function genericURL(url)
+{
+    return url.replace(/^(http:\/\/)[^\/]+/, "$1[varies, not being tested]");
+}
+
+function parseHeaders(hdrs)
+{
+    var parts = hdrs.split("\n");
+    var rtn = parts[0] + "\n";
+
+    for (var i = 0; i < parts.length; i++)
+        if (parts[i].match(/^Content-Type:/))
+            rtn += parts[i];
+
+    return rtn;
+}
+</script>
+</head>
+<body onload="test()">
+<embed name="plg" type="application/x-webkit-test-netscape" src="/plugins/resources/load-me-1.txt" onstreamload="streamLoaded()"></embed>
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=13029">bug 13029<a/>:
+Permit NPAPI plug-ins to see HTTP response headers.</p>
+<p>Expected result below is two HTTP response extracts, one for the initial stream specified in the "src"
+attribute, the other for an NPN_GetURLNotify request. Each block should contain the URL; the status line,
+which should say "HTTP 200 OK"; and the MIME-type, which should say "Content-Type: text/plain".</p>
+<p>----------</p>
+<p id="result1">Running test, result should appear here in a very short time...</p>
+<p>----------</p>
+<p id="result2">Running test, result should appear here in a very short time...</p>
+</body>
+</html>

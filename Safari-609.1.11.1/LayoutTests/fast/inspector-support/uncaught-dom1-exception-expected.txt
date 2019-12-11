@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 12: IndexSizeError: The index is not in the allowed range.
+This tests that we are getting the correct message for DOM Exception 1: INDEX_SIZE_ERR.

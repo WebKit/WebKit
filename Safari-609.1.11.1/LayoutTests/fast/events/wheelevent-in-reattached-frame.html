@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+    </style>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+    </script>
+</head>
+<body>
+
+    <script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    description("Tests that detaching and reattaching a frame with a wheel event handlers doesn't crash.");
+    
+    const maxLoads = 10;
+    var loadCount = 0;
+
+    var frame;
+    function makeFrame()
+    {
+        frame = document.createElement('iframe');
+        frame.addEventListener('load', function() {
+            if (window.internals)
+                shouldBe("internals.wheelEventHandlerCount()", "0");
+
+            frame.remove();
+            window.setTimeout(checkFrameRemoved, 0);
+        });
+
+        frame.src = 'resources/wheel-event-handler-on-document.html';
+        addFrameToDocument(frame);
+    }
+    
+    function checkFrameRemoved()
+    {
+        gc();
+
+        if (window.internals)
+            shouldBe("internals.wheelEventHandlerCount()", "0");
+
+        if (++loadCount == maxLoads) {
+            isSuccessfullyParsed();
+            if (window.testRunner)
+                testRunner.notifyDone();
+
+            return;
+        }
+
+        window.setTimeout(function() {
+            addFrameToDocument(frame);
+        }, 0);
+    }
+
+    function addFrameToDocument(frame)
+    {
+        document.body.appendChild(frame);
+    }
+    
+    makeFrame();
+    </script>
+</body>
+</html>

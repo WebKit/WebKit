@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .box {
+            width: 200px;
+            height: 100px;
+            background-color: blue;
+            margin: 52px 30px;
+            position: relative;
+            box-shadow: 0 0 10px black;
+        }
+        
+        .dot {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 4px;
+            width: 4px;
+            background-color: silver;
+        }
+        
+        body.changed .box {
+            animation: move 10s linear;
+        }
+        
+        @keyframes move {
+            from {
+                -webkit-transform: translatex(10px);
+            }
+            to {
+                -webkit-transform: translatex(100px);
+            }
+        }
+    </style>
+    <script src="../resources/compositing-test-utils.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function runTest()
+        {
+            makeDots(40, 20);
+            
+            window.setTimeout(function() {
+                document.getElementById('target').addEventListener('animationstart', dumpLayersWithoutTransforms, false);
+                document.body.classList.add('changed');
+            }, 0);
+        }
+        
+        window.addEventListener('load', runTest, false);
+    </script>
+</head>
+<body>
+
+    <div id="target" class="box">
+    </div>
+<pre id="layers"></pre>
+</body>
+</html>

@@ -1,0 +1,9 @@
+This test checks that changing the min|max-content contributions of grid items properly recomputes both track sizes and grid positions in grids with auto repeat tracks.
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS

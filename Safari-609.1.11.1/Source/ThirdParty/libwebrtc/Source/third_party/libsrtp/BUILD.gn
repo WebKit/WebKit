@@ -1,0 +1,245 @@
+# Copyright 2014 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//testing/test.gni")
+
+declare_args() {
+  # Tests may not be appropriate for some build environments, e.g. Windows.
+  # Rather than enumerate valid options, we just let clients ask for them.
+  build_libsrtp_tests = false
+}
+
+config("libsrtp_config") {
+  defines = [
+    # Package identity
+    "PACKAGE_STRING=\"libsrtp2 2.1.0-pre\"",
+    "PACKAGE_VERSION=\"2.1.0-pre\"",
+
+    # Config
+    "HAVE_CONFIG_H",
+    "OPENSSL",
+
+    # Platform properties
+    "HAVE_STDLIB_H",
+    "HAVE_STRING_H",
+    "HAVE_STDINT_H",
+    "HAVE_INTTYPES_H",
+    "HAVE_INT16_T",
+    "HAVE_INT32_T",
+    "HAVE_INT8_T",
+    "HAVE_UINT16_T",
+    "HAVE_UINT32_T",
+    "HAVE_UINT64_T",
+    "HAVE_UINT8_T",
+  ]
+  if (is_posix || is_fuchsia) {
+    defines += [
+      "HAVE_ARPA_INET_H",
+      "HAVE_NETINET_IN_H",
+      "HAVE_SYS_TYPES_H",
+      "HAVE_UNISTD_H",
+    ]
+  }
+  if (is_win) {
+    defines += [ "HAVE_WINSOCK2_H" ]
+  }
+
+  # Supports clients depending on SRTP_RELATIVE_PATH.
+  # TODO(mattdr): Remove SRTP_RELATIVE_PATH and this config.
+  include_dirs = [
+    ".",
+    "config",
+    "include",
+    "crypto/include",
+  ]
+}
+
+config("libsrtp_warnings") {
+  cflags = []
+  if (is_win) {
+    cflags += [ "/wd4018" ]  # Signed/unsigned mismatch in comparison
+  }
+}
+
+static_library("libsrtp") {
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [ "//build/config/compiler:no_chromium_code" ]
+  configs += [ ":libsrtp_warnings" ]
+  public_configs = [ ":libsrtp_config" ]
+  sources = [
+    # includes
+    "include/ekt.h",
+    "include/srtp.h",
+
+    # headers
+    "crypto/include/aes.h",
+    "crypto/include/aes_gcm_ossl.h",
+    "crypto/include/aes_icm.h",
+    "crypto/include/aes_icm_ossl.h",
+    "crypto/include/alloc.h",
+    "crypto/include/auth.h",
+    "crypto/include/cipher.h",
+    "crypto/include/cipher_types.h",
+    "crypto/include/crypto_kernel.h",
+    "crypto/include/crypto_types.h",
+    "crypto/include/datatypes.h",
+    "crypto/include/err.h",
+    "crypto/include/integers.h",
+    "crypto/include/key.h",
+    "crypto/include/null_auth.h",
+    "crypto/include/null_cipher.h",
+    "crypto/include/rdb.h",
+    "crypto/include/rdbx.h",
+    "crypto/include/stat.h",
+    "include/srtp_priv.h",
+    "include/ut_sim.h",
+
+    # sources
+    "crypto/cipher/aes_gcm_ossl.c",
+    "crypto/cipher/aes_icm_ossl.c",
+    "crypto/cipher/cipher.c",
+    "crypto/cipher/null_cipher.c",
+    "crypto/hash/auth.c",
+    "crypto/hash/hmac_ossl.c",
+    "crypto/hash/null_auth.c",
+    "crypto/kernel/alloc.c",
+    "crypto/kernel/crypto_kernel.c",
+    "crypto/kernel/err.c",
+    "crypto/kernel/key.c",
+    "crypto/math/datatypes.c",
+    "crypto/math/stat.c",
+    "crypto/replay/rdb.c",
+    "crypto/replay/rdbx.c",
+    "srtp/ekt.c",
+    "srtp/srtp.c",
+  ]
+  public_deps = [
+    "//third_party/boringssl:boringssl",
+  ]
+}
+
+if (build_libsrtp_tests) {
+  config("srtp_test_config") {
+    include_dirs = [ "test" ]
+    configs = [ ":libsrtp_warnings" ]
+  }
+
+  template("srtp_test") {
+    test("${target_name}") {
+      output_name = invoker.target_name
+      output_dir = "${root_out_dir}/srtp_tests"
+      configs -= [ "//build/config/compiler:chromium_code" ]
+      configs += [ "//build/config/compiler:no_chromium_code" ]
+      configs += [ ":srtp_test_config" ]
+      deps = [
+        ":libsrtp",
+      ]
+      sources = [
+        "crypto/replay/ut_sim.c",
+        "include/getopt_s.h",
+        "include/ut_sim.h",
+        "test/getopt_s.c",
+        "test/util.c",
+        "test/util.h",
+      ] + invoker.sources
+      testonly = true
+    }
+  }
+
+  srtp_test("dtls_srtp_driver") {
+    sources = [ "test/dtls_srtp_driver.c" ]
+  }
+  srtp_test("rdbx_driver") {
+    sources = [ "test/rdbx_driver.c" ]
+  }
+  srtp_test("replay_driver") {
+    sources = [ "test/replay_driver.c" ]
+  }
+  srtp_test("roc_driver") {
+    sources = [ "test/roc_driver.c" ]
+  }
+  srtp_test("srtp_driver") {
+    sources = [ "test/srtp_driver.c" ]
+  }
+  srtp_test("test_srtp") {
+    sources = [
+      "test/cutest.h",
+      "test/test_srtp.c",
+    ]
+  }
+  srtp_test("cipher_driver") {
+    sources = [ "crypto/test/cipher_driver.c" ]
+  }
+  srtp_test("datatypes_driver") {
+    sources = [ "crypto/test/datatypes_driver.c" ]
+  }
+  srtp_test("kernel_driver") {
+    sources = [ "crypto/test/kernel_driver.c" ]
+  }
+
+  executable("rtpw") {
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs += [ "//build/config/compiler:no_chromium_code" ]
+    configs += [ ":srtp_test_config" ]
+    output_dir = "${root_out_dir}/srtp_tests"
+    deps = [
+      ":libsrtp",
+    ]
+    sources = [
+      "include/getopt_s.h",
+      "test/getopt_s.c",
+      "test/rtp.c",
+      "test/rtp.h",
+      "test/rtpw.c",
+      "test/util.c",
+      "test/util.h",
+
+      # The original Makefile includes this file, but all the functions rtpw
+      # uses have been moved to util.c.
+      "crypto/math/datatypes.c",
+    ]
+    defines = [ "HAVE_SYS_SOCKET_H" ]
+    testonly = true
+  }
+
+  copy("test_scripts") {
+    sources = [
+      "run_all_tests.sh",
+      "test/rtpw_test.sh",
+      "test/rtpw_test_gcm.sh",
+    ]
+    outputs = [
+      "${root_out_dir}/srtp_tests/{{source_file_part}}",
+    ]
+    testonly = true
+  }
+
+  copy("test_data") {
+    sources = [
+      "test/words.txt",
+    ]
+    outputs = [
+      "${root_out_dir}/srtp_tests/{{source_file_part}}",
+    ]
+    testonly = true
+  }
+
+  group("srtp_tests") {
+    deps = [
+      ":cipher_driver",
+      ":datatypes_driver",
+      ":dtls_srtp_driver",
+      ":kernel_driver",
+      ":rdbx_driver",
+      ":replay_driver",
+      ":roc_driver",
+      ":rtpw",
+      ":srtp_driver",
+      ":test_srtp",
+      ":test_scripts",
+      ":test_data",
+    ]
+    testonly = true
+  }
+}

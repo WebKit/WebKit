@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <style type="text/css">
+            .list_option {
+                position: relative;
+                font-size: 1.3em;
+                width: 1280px;
+                height: 1.5em;
+                background-color: #333;
+                color: white;
+            }
+            .list_option.selected {
+                background-color: #F60;
+            }
+    </style>
+    <script src="../../fast/repaint/resources/repaint.js"></script>
+    <script>
+        function repaintTest() {
+            document.getElementById("opt1").className = "list_option";
+            document.getElementById("opt2").className = "list_option";
+            document.getElementById("opt3").className = "list_option";
+            document.getElementById("opt4").className = "list_option";
+            document.getElementById("opt5").className = "list_option";
+            document.getElementById("opt6").className = "list_option";
+        }
+    </script>
+</head>
+<body onload="runRepaintTest()">
+<div id="forceAcceleratedCompositing" style="position:absolute;left:0;right:0;top:0;bottom:0;-webkit-transform: translate3d(0, 0, 0);"></div>
+
+    <div class="list_option selected" id="opt1">.</div>
+    <div class="list_option selected" id="opt2">.</div>
+    <div class="list_option selected" id="opt3">.</div>
+    <div class="list_option selected" id="opt4">.</div>
+    <div class="list_option selected" id="opt5">.</div>
+    <div class="list_option selected" id="opt6">.</div>
+</body>
+</html>

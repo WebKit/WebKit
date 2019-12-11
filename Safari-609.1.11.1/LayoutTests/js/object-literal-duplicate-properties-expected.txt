@@ -1,0 +1,243 @@
+basic tests for object literal duplicate properties
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS x is 1
+PASS o.foo is 'getter'
+PASS x is 1
+PASS o.foo is 0
+PASS x is 1
+PASS o.foo is 'getter'
+PASS x is 1
+PASS o.foo is 0
+PASS x is 4
+PASS o.foo is 3
+PASS o.bar is undefined
+FAIL Object.keys(o).join() should be foo,test1,bar,test2,test3,nest. Was test1,test2,test3,foo,bar,nest.
+
+Basic
+PASS o = {foo:1}; descriptionString(o, 'foo'); is 'value:1 keys:1 [ECW][Extensible]'
+PASS 'use strict';o = {foo:1}; descriptionString(o, 'foo'); is 'value:1 keys:1 [ECW][Extensible]'
+PASS (function(){o = {foo:1}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {foo:1}; o.foo = 2; descriptionString(o, 'foo'); is 'value:2 keys:1 [ECW][Extensible]'
+PASS 'use strict';o = {foo:1}; o.foo = 2; descriptionString(o, 'foo'); is 'value:2 keys:1 [ECW][Extensible]'
+PASS (function(){o = {foo:1}; o.foo = 2; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {foo:1, foo:3}; descriptionString(o, 'foo'); is 'value:3 keys:1 [ECW][Extensible]'
+PASS 'use strict';o = {foo:1, foo:3}; descriptionString(o, 'foo'); is 'value:3 keys:1 [ECW][Extensible]'
+PASS (function(){o = {foo:1, foo:3}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {foo:1, fooo:2, foo:3}; descriptionString(o, 'foo'); is 'value:3 keys:2 [ECW][Extensible]'
+PASS 'use strict';o = {foo:1, fooo:2, foo:3}; descriptionString(o, 'foo'); is 'value:3 keys:2 [ECW][Extensible]'
+PASS (function(){o = {foo:1, fooo:2, foo:3}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {foo:1, fooo:2, foo:3}; o.foo = 4; descriptionString(o, 'foo'); is 'value:4 keys:2 [ECW][Extensible]'
+PASS 'use strict';o = {foo:1, fooo:2, foo:3}; o.foo = 4; descriptionString(o, 'foo'); is 'value:4 keys:2 [ECW][Extensible]'
+PASS (function(){o = {foo:1, fooo:2, foo:3}; o.foo = 4; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {foo:1, fooo:2, foo:3, bar: 9}; descriptionString(o, 'foo'); is 'value:3 keys:3 [ECW][Extensible]'
+PASS 'use strict';o = {foo:1, fooo:2, foo:3, bar: 9}; descriptionString(o, 'foo'); is 'value:3 keys:3 [ECW][Extensible]'
+PASS (function(){o = {foo:1, fooo:2, foo:3, bar: 9}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {foo:1, foo:3}; Object.defineProperty(o, 'foo', {value:5}); descriptionString(o, 'foo'); is 'value:5 keys:1 [ECW][Extensible]'
+PASS 'use strict';o = {foo:1, foo:3}; Object.defineProperty(o, 'foo', {value:5}); descriptionString(o, 'foo'); is 'value:5 keys:1 [ECW][Extensible]'
+PASS (function(){o = {foo:1, foo:3}; Object.defineProperty(o, 'foo', {value:5}); descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {foo:1, foo:3}; Object.defineProperty(o, 'foo', {get(){return 5}}); descriptionString(o, 'foo'); is 'getter:function value:(5) keys:1 [EC][Extensible]'
+PASS 'use strict';o = {foo:1, foo:3}; Object.defineProperty(o, 'foo', {get(){return 5}}); descriptionString(o, 'foo'); is 'getter:function value:(5) keys:1 [EC][Extensible]'
+PASS (function(){o = {foo:1, foo:3}; Object.defineProperty(o, 'foo', {get(){return 5}}); descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {foo:1, foo:3}; o.__defineGetter__('foo', function(){return 5}); descriptionString(o, 'foo'); is 'getter:function value:(5) keys:1 [EC][Extensible]'
+PASS 'use strict';o = {foo:1, foo:3}; o.__defineGetter__('foo', function(){return 5}); descriptionString(o, 'foo'); is 'getter:function value:(5) keys:1 [EC][Extensible]'
+PASS (function(){o = {foo:1, foo:3}; o.__defineGetter__('foo', function(){return 5}); descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {foo:1, foo:3}; Object.seal(o);; descriptionString(o, 'foo'); is 'value:3 keys:1 [EW][Sealed]'
+PASS 'use strict';o = {foo:1, foo:3}; Object.seal(o);; descriptionString(o, 'foo'); is 'value:3 keys:1 [EW][Sealed]'
+PASS (function(){o = {foo:1, foo:3}; Object.seal(o);; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {foo:1, foo:3}; Object.seal(o); o.foo = 5; descriptionString(o, 'foo'); is 'value:5 keys:1 [EW][Sealed]'
+PASS 'use strict';o = {foo:1, foo:3}; Object.seal(o); o.foo = 5; descriptionString(o, 'foo'); is 'value:5 keys:1 [EW][Sealed]'
+PASS (function(){o = {foo:1, foo:3}; Object.seal(o); o.foo = 5; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {foo:1, foo:3}; Object.seal(o); Object.defineProperty(o, 'foo', {value:5}); descriptionString(o, 'foo'); is 'value:5 keys:1 [EW][Sealed]'
+PASS 'use strict';o = {foo:1, foo:3}; Object.seal(o); Object.defineProperty(o, 'foo', {value:5}); descriptionString(o, 'foo'); is 'value:5 keys:1 [EW][Sealed]'
+PASS (function(){o = {foo:1, foo:3}; Object.seal(o); Object.defineProperty(o, 'foo', {value:5}); descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {foo:1, foo:3}; Object.seal(o); Object.defineProperty(o, 'foo', {get(){return 5}}); descriptionString(o, 'foo'); threw exception TypeError: Attempting to change access mechanism for an unconfigurable property..
+PASS 'use strict';o = {foo:1, foo:3}; Object.seal(o); Object.defineProperty(o, 'foo', {get(){return 5}}); descriptionString(o, 'foo'); threw exception TypeError: Attempting to change access mechanism for an unconfigurable property..
+PASS (function(){o = {foo:1, foo:3}; Object.seal(o); Object.defineProperty(o, 'foo', {get(){return 5}}); descriptionString(o, 'foo');})() threw exception TypeError: Attempting to change access mechanism for an unconfigurable property..
+PASS o = {foo:1, foo:3}; Object.seal(o); o.__defineGetter__('foo', function(){return 5}); descriptionString(o, 'foo'); threw exception TypeError: Attempting to change configurable attribute of unconfigurable property..
+PASS 'use strict';o = {foo:1, foo:3}; Object.seal(o); o.__defineGetter__('foo', function(){return 5}); descriptionString(o, 'foo'); threw exception TypeError: Attempting to change configurable attribute of unconfigurable property..
+PASS (function(){o = {foo:1, foo:3}; Object.seal(o); o.__defineGetter__('foo', function(){return 5}); descriptionString(o, 'foo');})() threw exception TypeError: Attempting to change configurable attribute of unconfigurable property..
+
+Basic + Computed
+PASS o = {['foo']:1}; descriptionString(o, 'foo'); is 'value:1 keys:1 [ECW][Extensible]'
+PASS 'use strict';o = {['foo']:1}; descriptionString(o, 'foo'); is 'value:1 keys:1 [ECW][Extensible]'
+PASS (function(){o = {['foo']:1}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {foo:1, ['foo']:2}; descriptionString(o, 'foo'); is 'value:2 keys:1 [ECW][Extensible]'
+PASS 'use strict';o = {foo:1, ['foo']:2}; descriptionString(o, 'foo'); is 'value:2 keys:1 [ECW][Extensible]'
+PASS (function(){o = {foo:1, ['foo']:2}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {['foo']:1, foo:2}; descriptionString(o, 'foo'); is 'value:2 keys:1 [ECW][Extensible]'
+PASS 'use strict';o = {['foo']:1, foo:2}; descriptionString(o, 'foo'); is 'value:2 keys:1 [ECW][Extensible]'
+PASS (function(){o = {['foo']:1, foo:2}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {foo:1, ['foo']:2, foo:3}; descriptionString(o, 'foo'); is 'value:3 keys:1 [ECW][Extensible]'
+PASS 'use strict';o = {foo:1, ['foo']:2, foo:3}; descriptionString(o, 'foo'); is 'value:3 keys:1 [ECW][Extensible]'
+PASS (function(){o = {foo:1, ['foo']:2, foo:3}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {['foo']:1, foo:2, ['foo']:3}; descriptionString(o, 'foo'); is 'value:3 keys:1 [ECW][Extensible]'
+PASS 'use strict';o = {['foo']:1, foo:2, ['foo']:3}; descriptionString(o, 'foo'); is 'value:3 keys:1 [ECW][Extensible]'
+PASS (function(){o = {['foo']:1, foo:2, ['foo']:3}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {['foo']:1, ['foo']:2}; descriptionString(o, 'foo'); is 'value:2 keys:1 [ECW][Extensible]'
+PASS 'use strict';o = {['foo']:1, ['foo']:2}; descriptionString(o, 'foo'); is 'value:2 keys:1 [ECW][Extensible]'
+PASS (function(){o = {['foo']:1, ['foo']:2}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {foo:1, ['foo']:2}; o.foo = 3; descriptionString(o, 'foo'); is 'value:3 keys:1 [ECW][Extensible]'
+PASS 'use strict';o = {foo:1, ['foo']:2}; o.foo = 3; descriptionString(o, 'foo'); is 'value:3 keys:1 [ECW][Extensible]'
+PASS (function(){o = {foo:1, ['foo']:2}; o.foo = 3; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {['foo']:1, ['bar']:2}; descriptionString(o, 'foo'); is 'value:1 keys:2 [ECW][Extensible]'
+PASS 'use strict';o = {['foo']:1, ['bar']:2}; descriptionString(o, 'foo'); is 'value:1 keys:2 [ECW][Extensible]'
+PASS (function(){o = {['foo']:1, ['bar']:2}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {['foo']:1, ['bar']:2, foo:3}; descriptionString(o, 'foo'); is 'value:3 keys:2 [ECW][Extensible]'
+PASS 'use strict';o = {['foo']:1, ['bar']:2, foo:3}; descriptionString(o, 'foo'); is 'value:3 keys:2 [ECW][Extensible]'
+PASS (function(){o = {['foo']:1, ['bar']:2, foo:3}; descriptionString(o, 'foo');})() did not throw exception.
+
+Basic + Accessor
+PASS o = {get foo(){return 2}}; descriptionString(o, 'foo'); is 'getter:function value:(2) keys:1 [EC][Extensible]'
+PASS 'use strict';o = {get foo(){return 2}}; descriptionString(o, 'foo'); is 'getter:function value:(2) keys:1 [EC][Extensible]'
+PASS (function(){o = {get foo(){return 2}}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {set foo(x){}}; descriptionString(o, 'foo'); is 'setter:function keys:1 [EC][Extensible]'
+PASS 'use strict';o = {set foo(x){}}; descriptionString(o, 'foo'); is 'setter:function keys:1 [EC][Extensible]'
+PASS (function(){o = {set foo(x){}}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {get foo(){return 1}, get foo(){return 2}}; descriptionString(o, 'foo'); is 'getter:function value:(2) keys:1 [EC][Extensible]'
+PASS 'use strict';o = {get foo(){return 1}, get foo(){return 2}}; descriptionString(o, 'foo'); is 'getter:function value:(2) keys:1 [EC][Extensible]'
+PASS (function(){o = {get foo(){return 1}, get foo(){return 2}}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {get foo(){return 2}, set foo(x){}}; descriptionString(o, 'foo'); is 'getter:function value:(2) setter:function keys:1 [EC][Extensible]'
+PASS 'use strict';o = {get foo(){return 2}, set foo(x){}}; descriptionString(o, 'foo'); is 'getter:function value:(2) setter:function keys:1 [EC][Extensible]'
+PASS (function(){o = {get foo(){return 2}, set foo(x){}}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {get foo(){return 2}, set foo(x){}, get foo(){return 3}}; descriptionString(o, 'foo'); is 'getter:function value:(3) setter:function keys:1 [EC][Extensible]'
+PASS 'use strict';o = {get foo(){return 2}, set foo(x){}, get foo(){return 3}}; descriptionString(o, 'foo'); is 'getter:function value:(3) setter:function keys:1 [EC][Extensible]'
+PASS (function(){o = {get foo(){return 2}, set foo(x){}, get foo(){return 3}}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {bar:1, get foo(){return 2}, set foo(x){}, baz:1}; descriptionString(o, 'foo'); is 'getter:function value:(2) setter:function keys:3 [EC][Extensible]'
+PASS 'use strict';o = {bar:1, get foo(){return 2}, set foo(x){}, baz:1}; descriptionString(o, 'foo'); is 'getter:function value:(2) setter:function keys:3 [EC][Extensible]'
+PASS (function(){o = {bar:1, get foo(){return 2}, set foo(x){}, baz:1}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {foo:1, get foo(){return 2}}; descriptionString(o, 'foo'); is 'getter:function value:(2) keys:1 [EC][Extensible]'
+PASS 'use strict';o = {foo:1, get foo(){return 2}}; descriptionString(o, 'foo'); is 'getter:function value:(2) keys:1 [EC][Extensible]'
+PASS (function(){o = {foo:1, get foo(){return 2}}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {foo:1, get foo(){return 2}, set foo(x){}}; descriptionString(o, 'foo'); is 'getter:function value:(2) setter:function keys:1 [EC][Extensible]'
+PASS 'use strict';o = {foo:1, get foo(){return 2}, set foo(x){}}; descriptionString(o, 'foo'); is 'getter:function value:(2) setter:function keys:1 [EC][Extensible]'
+PASS (function(){o = {foo:1, get foo(){return 2}, set foo(x){}}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {get foo(){return 2}, foo:1}; descriptionString(o, 'foo'); is 'value:1 keys:1 [ECW][Extensible]'
+PASS 'use strict';o = {get foo(){return 2}, foo:1}; descriptionString(o, 'foo'); is 'value:1 keys:1 [ECW][Extensible]'
+PASS (function(){o = {get foo(){return 2}, foo:1}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {get foo(){return 2}, set foo(x){}, foo:1}; descriptionString(o, 'foo'); is 'value:1 keys:1 [ECW][Extensible]'
+PASS 'use strict';o = {get foo(){return 2}, set foo(x){}, foo:1}; descriptionString(o, 'foo'); is 'value:1 keys:1 [ECW][Extensible]'
+PASS (function(){o = {get foo(){return 2}, set foo(x){}, foo:1}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {foo:1, get foo(){return -1}, foo:2}; descriptionString(o, 'foo'); is 'value:2 keys:1 [ECW][Extensible]'
+PASS 'use strict';o = {foo:1, get foo(){return -1}, foo:2}; descriptionString(o, 'foo'); is 'value:2 keys:1 [ECW][Extensible]'
+PASS (function(){o = {foo:1, get foo(){return -1}, foo:2}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {foo:1, get foo(){return 2}, bar:3}; descriptionString(o, 'foo'); is 'getter:function value:(2) keys:2 [EC][Extensible]'
+PASS 'use strict';o = {foo:1, get foo(){return 2}, bar:3}; descriptionString(o, 'foo'); is 'getter:function value:(2) keys:2 [EC][Extensible]'
+PASS (function(){o = {foo:1, get foo(){return 2}, bar:3}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {foo:1, get foo(){return -1}, foo:-1, get foo() {return 2}}; descriptionString(o, 'foo'); is 'getter:function value:(2) keys:1 [EC][Extensible]'
+PASS 'use strict';o = {foo:1, get foo(){return -1}, foo:-1, get foo() {return 2}}; descriptionString(o, 'foo'); is 'getter:function value:(2) keys:1 [EC][Extensible]'
+PASS (function(){o = {foo:1, get foo(){return -1}, foo:-1, get foo() {return 2}}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {foo:1, get foo(){return 3}}; Object.defineProperty(o, 'foo', {value:5}); descriptionString(o, 'foo'); is 'value:5 keys:1 [EC][Extensible]'
+PASS 'use strict';o = {foo:1, get foo(){return 3}}; Object.defineProperty(o, 'foo', {value:5}); descriptionString(o, 'foo'); is 'value:5 keys:1 [EC][Extensible]'
+PASS (function(){o = {foo:1, get foo(){return 3}}; Object.defineProperty(o, 'foo', {value:5}); descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {foo:1, get foo(){return 3}}; Object.defineProperty(o, 'foo', {get(){return 5}}); descriptionString(o, 'foo'); is 'getter:function value:(5) keys:1 [EC][Extensible]'
+PASS 'use strict';o = {foo:1, get foo(){return 3}}; Object.defineProperty(o, 'foo', {get(){return 5}}); descriptionString(o, 'foo'); is 'getter:function value:(5) keys:1 [EC][Extensible]'
+PASS (function(){o = {foo:1, get foo(){return 3}}; Object.defineProperty(o, 'foo', {get(){return 5}}); descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {foo:1, get foo(){return 3}}; o.__defineGetter__('foo', function(){return 5}); descriptionString(o, 'foo'); is 'getter:function value:(5) keys:1 [EC][Extensible]'
+PASS 'use strict';o = {foo:1, get foo(){return 3}}; o.__defineGetter__('foo', function(){return 5}); descriptionString(o, 'foo'); is 'getter:function value:(5) keys:1 [EC][Extensible]'
+PASS (function(){o = {foo:1, get foo(){return 3}}; o.__defineGetter__('foo', function(){return 5}); descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {foo:1, get foo(){return 3}, set foo(x){}}; Object.seal(o); o.foo = 5; descriptionString(o, 'foo'); is 'getter:function value:(3) setter:function keys:1 [E][Sealed][Frozen]'
+PASS 'use strict';o = {foo:1, get foo(){return 3}, set foo(x){}}; Object.seal(o); o.foo = 5; descriptionString(o, 'foo'); is 'getter:function value:(3) setter:function keys:1 [E][Sealed][Frozen]'
+PASS (function(){o = {foo:1, get foo(){return 3}, set foo(x){}}; Object.seal(o); o.foo = 5; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {foo:1, get foo(){return 3}}; Object.seal(o);; descriptionString(o, 'foo'); is 'getter:function value:(3) keys:1 [E][Sealed][Frozen]'
+PASS 'use strict';o = {foo:1, get foo(){return 3}}; Object.seal(o);; descriptionString(o, 'foo'); is 'getter:function value:(3) keys:1 [E][Sealed][Frozen]'
+PASS (function(){o = {foo:1, get foo(){return 3}}; Object.seal(o);; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {foo:1, get foo(){return 3}}; Object.seal(o); Object.defineProperty(o, 'foo', {get(){return 5}}); descriptionString(o, 'foo'); threw exception TypeError: Attempting to change the getter of an unconfigurable property..
+PASS 'use strict';o = {foo:1, get foo(){return 3}}; Object.seal(o); Object.defineProperty(o, 'foo', {get(){return 5}}); descriptionString(o, 'foo'); threw exception TypeError: Attempting to change the getter of an unconfigurable property..
+PASS (function(){o = {foo:1, get foo(){return 3}}; Object.seal(o); Object.defineProperty(o, 'foo', {get(){return 5}}); descriptionString(o, 'foo');})() threw exception TypeError: Attempting to change the getter of an unconfigurable property..
+PASS o = {foo:1, get foo(){return 3}}; Object.seal(o); Object.defineProperty(o, 'foo', {value:5}); descriptionString(o, 'foo'); threw exception TypeError: Attempting to change access mechanism for an unconfigurable property..
+PASS 'use strict';o = {foo:1, get foo(){return 3}}; Object.seal(o); Object.defineProperty(o, 'foo', {value:5}); descriptionString(o, 'foo'); threw exception TypeError: Attempting to change access mechanism for an unconfigurable property..
+PASS (function(){o = {foo:1, get foo(){return 3}}; Object.seal(o); Object.defineProperty(o, 'foo', {value:5}); descriptionString(o, 'foo');})() threw exception TypeError: Attempting to change access mechanism for an unconfigurable property..
+PASS o = {foo:1, get foo(){return 3}}; Object.seal(o); o.__defineGetter__('foo', function(){return 5}); descriptionString(o, 'foo'); threw exception TypeError: Attempting to change configurable attribute of unconfigurable property..
+PASS 'use strict';o = {foo:1, get foo(){return 3}}; Object.seal(o); o.__defineGetter__('foo', function(){return 5}); descriptionString(o, 'foo'); threw exception TypeError: Attempting to change configurable attribute of unconfigurable property..
+PASS (function(){o = {foo:1, get foo(){return 3}}; Object.seal(o); o.__defineGetter__('foo', function(){return 5}); descriptionString(o, 'foo');})() threw exception TypeError: Attempting to change configurable attribute of unconfigurable property..
+
+Computed + Accessor
+PASS o = {['foo']:1, get foo(){return 2}}; descriptionString(o, 'foo'); is 'getter:function value:(2) keys:1 [EC][Extensible]'
+PASS 'use strict';o = {['foo']:1, get foo(){return 2}}; descriptionString(o, 'foo'); is 'getter:function value:(2) keys:1 [EC][Extensible]'
+PASS (function(){o = {['foo']:1, get foo(){return 2}}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {['foo']:1, get foo(){return 2}, set foo(x){}}; descriptionString(o, 'foo'); is 'getter:function value:(2) setter:function keys:1 [EC][Extensible]'
+PASS 'use strict';o = {['foo']:1, get foo(){return 2}, set foo(x){}}; descriptionString(o, 'foo'); is 'getter:function value:(2) setter:function keys:1 [EC][Extensible]'
+PASS (function(){o = {['foo']:1, get foo(){return 2}, set foo(x){}}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {get foo(){return 2}, ['foo']:1}; descriptionString(o, 'foo'); is 'value:1 keys:1 [ECW][Extensible]'
+PASS 'use strict';o = {get foo(){return 2}, ['foo']:1}; descriptionString(o, 'foo'); is 'value:1 keys:1 [ECW][Extensible]'
+PASS (function(){o = {get foo(){return 2}, ['foo']:1}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {get foo(){return 2}, set foo(x){}, ['foo']:1}; descriptionString(o, 'foo'); is 'value:1 keys:1 [ECW][Extensible]'
+PASS 'use strict';o = {get foo(){return 2}, set foo(x){}, ['foo']:1}; descriptionString(o, 'foo'); is 'value:1 keys:1 [ECW][Extensible]'
+PASS (function(){o = {get foo(){return 2}, set foo(x){}, ['foo']:1}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {['foo']:1, get foo(){return -1}, ['foo']:2}; descriptionString(o, 'foo'); is 'value:2 keys:1 [ECW][Extensible]'
+PASS 'use strict';o = {['foo']:1, get foo(){return -1}, ['foo']:2}; descriptionString(o, 'foo'); is 'value:2 keys:1 [ECW][Extensible]'
+PASS (function(){o = {['foo']:1, get foo(){return -1}, ['foo']:2}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {['foo']:1, get foo(){return 2}, ['bar']:3}; descriptionString(o, 'foo'); is 'getter:function value:(2) keys:2 [EC][Extensible]'
+PASS 'use strict';o = {['foo']:1, get foo(){return 2}, ['bar']:3}; descriptionString(o, 'foo'); is 'getter:function value:(2) keys:2 [EC][Extensible]'
+PASS (function(){o = {['foo']:1, get foo(){return 2}, ['bar']:3}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {['foo']:1, get foo(){return -1}, ['foo']:-1, get foo() {return 2}}; descriptionString(o, 'foo'); is 'getter:function value:(2) keys:1 [EC][Extensible]'
+PASS 'use strict';o = {['foo']:1, get foo(){return -1}, ['foo']:-1, get foo() {return 2}}; descriptionString(o, 'foo'); is 'getter:function value:(2) keys:1 [EC][Extensible]'
+PASS (function(){o = {['foo']:1, get foo(){return -1}, ['foo']:-1, get foo() {return 2}}; descriptionString(o, 'foo');})() did not throw exception.
+
+Basic + Computed + Accessor
+PASS o = {foo:1, get foo(){return 2}, ['foo']:3}; descriptionString(o, 'foo'); is 'value:3 keys:1 [ECW][Extensible]'
+PASS 'use strict';o = {foo:1, get foo(){return 2}, ['foo']:3}; descriptionString(o, 'foo'); is 'value:3 keys:1 [ECW][Extensible]'
+PASS (function(){o = {foo:1, get foo(){return 2}, ['foo']:3}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {foo:1, ['foo']:3, get foo(){return 2}}; descriptionString(o, 'foo'); is 'getter:function value:(2) keys:1 [EC][Extensible]'
+PASS 'use strict';o = {foo:1, ['foo']:3, get foo(){return 2}}; descriptionString(o, 'foo'); is 'getter:function value:(2) keys:1 [EC][Extensible]'
+PASS (function(){o = {foo:1, ['foo']:3, get foo(){return 2}}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {foo:1, ['foo']:3, get foo(){return 2}, set foo(x){}}; descriptionString(o, 'foo'); is 'getter:function value:(2) setter:function keys:1 [EC][Extensible]'
+PASS 'use strict';o = {foo:1, ['foo']:3, get foo(){return 2}, set foo(x){}}; descriptionString(o, 'foo'); is 'getter:function value:(2) setter:function keys:1 [EC][Extensible]'
+PASS (function(){o = {foo:1, ['foo']:3, get foo(){return 2}, set foo(x){}}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {['foo']:3, get foo(){return 2}, foo:1}; descriptionString(o, 'foo'); is 'value:1 keys:1 [ECW][Extensible]'
+PASS 'use strict';o = {['foo']:3, get foo(){return 2}, foo:1}; descriptionString(o, 'foo'); is 'value:1 keys:1 [ECW][Extensible]'
+PASS (function(){o = {['foo']:3, get foo(){return 2}, foo:1}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {get foo(){return 2}, ['foo']:3, foo:1}; descriptionString(o, 'foo'); is 'value:1 keys:1 [ECW][Extensible]'
+PASS 'use strict';o = {get foo(){return 2}, ['foo']:3, foo:1}; descriptionString(o, 'foo'); is 'value:1 keys:1 [ECW][Extensible]'
+PASS (function(){o = {get foo(){return 2}, ['foo']:3, foo:1}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {get foo(){return 2}, ['foo']:3, get foo(){return 2}, foo:1}; descriptionString(o, 'foo'); is 'value:1 keys:1 [ECW][Extensible]'
+PASS 'use strict';o = {get foo(){return 2}, ['foo']:3, get foo(){return 2}, foo:1}; descriptionString(o, 'foo'); is 'value:1 keys:1 [ECW][Extensible]'
+PASS (function(){o = {get foo(){return 2}, ['foo']:3, get foo(){return 2}, foo:1}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {set foo(x){}, ['foo']:3, set foo(x){}, foo:1}; descriptionString(o, 'foo'); is 'value:1 keys:1 [ECW][Extensible]'
+PASS 'use strict';o = {set foo(x){}, ['foo']:3, set foo(x){}, foo:1}; descriptionString(o, 'foo'); is 'value:1 keys:1 [ECW][Extensible]'
+PASS (function(){o = {set foo(x){}, ['foo']:3, set foo(x){}, foo:1}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {set foo(x){}, foo:1, get foo(){return 2}, ['foo']:3}; descriptionString(o, 'foo'); is 'value:3 keys:1 [ECW][Extensible]'
+PASS 'use strict';o = {set foo(x){}, foo:1, get foo(){return 2}, ['foo']:3}; descriptionString(o, 'foo'); is 'value:3 keys:1 [ECW][Extensible]'
+PASS (function(){o = {set foo(x){}, foo:1, get foo(){return 2}, ['foo']:3}; descriptionString(o, 'foo');})() did not throw exception.
+PASS o = {get foo(){return 2}, get foo(){return 2}, ['foo']:3, foo:1}; descriptionString(o, 'foo'); is 'value:1 keys:1 [ECW][Extensible]'
+PASS 'use strict';o = {get foo(){return 2}, get foo(){return 2}, ['foo']:3, foo:1}; descriptionString(o, 'foo'); is 'value:1 keys:1 [ECW][Extensible]'
+PASS (function(){o = {get foo(){return 2}, get foo(){return 2}, ['foo']:3, foo:1}; descriptionString(o, 'foo');})() did not throw exception.
+
+Duplicate simple __proto__ attributes are not allowed
+PASS o = {__proto__:null} did not throw exception.
+PASS 'use strict';o = {__proto__:null} did not throw exception.
+PASS (function(){o = {__proto__:null}})() did not throw exception.
+PASS ({__proto__:null, ['__proto__']:{}}) did not throw exception.
+PASS 'use strict';({__proto__:null, ['__proto__']:{}}) did not throw exception.
+PASS (function(){({__proto__:null, ['__proto__']:{}})})() did not throw exception.
+PASS o = {__proto__:null, ['__proto__']:{}} did not throw exception.
+PASS 'use strict';o = {__proto__:null, ['__proto__']:{}} did not throw exception.
+PASS (function(){o = {__proto__:null, ['__proto__']:{}}})() did not throw exception.
+PASS o = {__proto__:null, get __proto__(){}} did not throw exception.
+PASS 'use strict';o = {__proto__:null, get __proto__(){}} did not throw exception.
+PASS (function(){o = {__proto__:null, get __proto__(){}}})() did not throw exception.
+PASS var __proto__ = null; o = {__proto__:null, __proto__} did not throw exception.
+PASS 'use strict';var __proto__ = null; o = {__proto__:null, __proto__} did not throw exception.
+PASS (function(){var __proto__ = null; o = {__proto__:null, __proto__}})() did not throw exception.
+PASS ({__proto__:[], __proto__:{}}) threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS 'use strict';({__proto__:[], __proto__:{}}) threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS (function(){({__proto__:[], __proto__:{}})})() threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS o = {__proto__:null, '__proto__':{}} threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS 'use strict';o = {__proto__:null, '__proto__':{}} threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS (function(){o = {__proto__:null, '__proto__':{}}})() threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS o = {__proto__:[], __proto__:{}} threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS 'use strict';o = {__proto__:[], __proto__:{}} threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS (function(){o = {__proto__:[], __proto__:{}}})() threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS o = {'__proto__':{}, '__proto__':{}} threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS 'use strict';o = {'__proto__':{}, '__proto__':{}} threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS (function(){o = {'__proto__':{}, '__proto__':{}}})() threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS o = {a:1, __proto__:{}, b:2, ['c']:3, __proto__:{}, d:3} threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS 'use strict';o = {a:1, __proto__:{}, b:2, ['c']:3, __proto__:{}, d:3} threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS (function(){o = {a:1, __proto__:{}, b:2, ['c']:3, __proto__:{}, d:3}})() threw exception SyntaxError: Attempted to redefine __proto__ property..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

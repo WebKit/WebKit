@@ -1,0 +1,9 @@
+Tests to make sure we correctly handle map compaction when growing a Map with holes
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

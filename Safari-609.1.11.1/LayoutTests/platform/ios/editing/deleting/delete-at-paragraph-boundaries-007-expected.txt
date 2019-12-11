@@ -1,0 +1,47 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of #text > P > DIV > DIV > BODY > HTML > #document to 2 of #text > P > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > P > DIV > DIV > BODY > HTML > #document to 4 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of P > DIV > DIV > BODY > HTML > #document to 0 of P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x254 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x90
+          RenderText {#text} at (0,1) size 66x28
+            text run at (0,1) width 66: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,31) size 734x58
+            text run at (0,31) width 734: "Deleting when a selection starts at the beginning of a paragraph preceded by"
+            text run at (0,61) width 653: "another block and extends into the middle of a following paragraph."
+        RenderBlock {DIV} at (14,120) size 756x120
+          RenderText {#text} at (0,1) size 190x28
+            text run at (0,1) width 190: "Expected Results: "
+          RenderBR {BR} at (189,23) size 1x0
+          RenderText {#text} at (0,31) size 741x88
+            text run at (0,31) width 741: "Should see the three lines in the red box. First line should be \"one\". Next one"
+            text run at (0,61) width 167: "should be \"two\". "
+            text run at (166,61) width 570: "Next one should be \"ur\". Insertion point should be blinking"
+            text run at (0,91) width 261: "at the start of the third line."
+      RenderBlock {DIV} at (0,278) size 784x94
+        RenderBlock {DIV} at (0,0) size 784x94 [border: (2px solid #FF0000)]
+          RenderBlock (anonymous) at (2,2) size 780x30
+            RenderText {#text} at (0,1) size 35x28
+              text run at (0,1) width 35: "one"
+          RenderBlock {P} at (2,32) size 780x30
+            RenderText {#text} at (0,1) size 36x28
+              text run at (0,1) width 36: "two"
+          RenderBlock {P} at (2,62) size 780x30
+            RenderText {#text} at (0,1) size 20x28
+              text run at (0,1) width 20: "ur"
+caret: position 0 of child 0 {#text} of child 3 {P} of child 1 {DIV} of child 3 {DIV} of body

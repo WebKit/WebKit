@@ -1,0 +1,21 @@
+This test checks the implementation of the element traversal APIs on Document as part of the ParentNode interface.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test with no children
+PASS noChildren.firstElementChild is null
+PASS noChildren.lastElementChild is null
+PASS noChildren.childElementCount is 0
+Test with no element children
+PASS noElementChildren.firstElementChild is null
+PASS noElementChildren.lastElementChild is null
+PASS noElementChildren.childElementCount is 0
+Test with elements
+PASS children.firstElementChild is child
+PASS children.lastElementChild is child
+PASS children.childElementCount is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

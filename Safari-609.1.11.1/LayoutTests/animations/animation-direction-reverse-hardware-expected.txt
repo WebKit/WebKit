@@ -1,0 +1,25 @@
+2 keyframes: normal
+2 keyframes: alternate
+2 keyframes: reverse
+2 keyframes: alternate-reverse
+4 keyframes: normal
+4 keyframes: alternate
+4 keyframes: reverse
+4 keyframes: alternate-reverse
+PASS - "webkitTransform" property for "box1" element at 0.2s saw something close to: 1,0,0,1,20,0
+PASS - "webkitTransform" property for "box2" element at 0.2s saw something close to: 1,0,0,1,20,0
+PASS - "webkitTransform" property for "box3" element at 0.2s saw something close to: 1,0,0,1,180,0
+PASS - "webkitTransform" property for "box4" element at 0.2s saw something close to: 1,0,0,1,180,0
+PASS - "webkitTransform" property for "box1" element at 2.2s saw something close to: 1,0,0,1,20,0
+PASS - "webkitTransform" property for "box2" element at 2.2s saw something close to: 1,0,0,1,180,0
+PASS - "webkitTransform" property for "box3" element at 2.2s saw something close to: 1,0,0,1,180,0
+PASS - "webkitTransform" property for "box4" element at 2.2s saw something close to: 1,0,0,1,20,0
+PASS - "webkitTransform" property for "box5" element at 0.2s saw something close to: 1,0,0,1,40,0
+PASS - "webkitTransform" property for "box6" element at 0.2s saw something close to: 1,0,0,1,40,0
+PASS - "webkitTransform" property for "box7" element at 0.2s saw something close to: 1,0,0,1,180,0
+PASS - "webkitTransform" property for "box8" element at 0.2s saw something close to: 1,0,0,1,180,0
+PASS - "webkitTransform" property for "box5" element at 2.2s saw something close to: 1,0,0,1,40,0
+PASS - "webkitTransform" property for "box6" element at 2.2s saw something close to: 1,0,0,1,180,0
+PASS - "webkitTransform" property for "box7" element at 2.2s saw something close to: 1,0,0,1,180,0
+PASS - "webkitTransform" property for "box8" element at 2.2s saw something close to: 1,0,0,1,40,0
+

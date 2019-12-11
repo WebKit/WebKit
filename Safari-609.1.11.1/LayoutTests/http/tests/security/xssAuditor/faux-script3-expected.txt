@@ -1,0 +1,6 @@
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+"<[whatever]script>alert('innocent code')

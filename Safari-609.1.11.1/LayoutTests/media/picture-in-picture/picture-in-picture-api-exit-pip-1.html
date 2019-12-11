@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../video-test.js"></script>
+    <script src="../media-file.js"></script>
+    <script>
+        window.addEventListener('load', async event => {
+            findMediaElement();
+
+            run('internals.settings.setAllowsPictureInPictureMediaPlayback(true)');
+            run('internals.setPictureInPictureAPITestEnabled(video, true)');
+
+            run('video.src = findMediaFile("video", "../content/test")');
+            await waitFor(video, 'canplaythrough');
+
+            runWithKeyDown(function() { video.requestPictureInPicture() });
+            await waitFor(video, 'enterpictureinpicture');
+            document.exitPictureInPicture().then(endTest).catch(() => {
+                failTest('Failed to exit the Picture-in-Picture mode.');
+            });
+        });
+    </script>
+</head>
+<body>
+    <div>This tests that exit Picture-in-Picture resolves when there is a Picture-in-Picture video.</div>
+    <video controls></video>
+</body>
+</html>

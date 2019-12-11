@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that recursive calls to MessagePort.postMessage() do not preempt timers.");
+jsTestIsAsync = true;
+
+function simulateSetImmediate()
+{
+    var channel = new MessageChannel();
+    // Use a fifo linked list to call callbacks in the right order.
+    var head = {};
+    var tail = head;
+    channel['port1'].onmessage = function() {
+        if (head.next != null) {
+            head = head.next;
+            var cb = head.cb;
+            head.cb = null;
+            cb();
+        }
+    };
+    return function(cb) {
+        tail.next = {cb: cb};
+        tail = tail.next;
+        channel['port2'].postMessage(0);
+    };
+}
+
+window.setImmediate = simulateSetImmediate();
+
+var shouldExit = false;
+
+function iterate() {
+    if (shouldExit) {
+        testPassed("Timer has fired.");
+        finishJSTest();
+        return;
+    }
+    setImmediate(iterate);
+}
+
+setImmediate(iterate);
+setTimeout(function() {
+    shouldExit = true;
+}, 10);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

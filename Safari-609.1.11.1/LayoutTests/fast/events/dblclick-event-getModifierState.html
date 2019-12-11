@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<div id="target" style="margin: 1rem; width: 100px; height: 100px; border: solid 5px red;"></div>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description(`This tests mouse events sets the correct modifier key states.<br>
+To manually test, turn on CapsLock and press Alt key and move the mosue cursor to the red box below, and then double click it.`);
+
+jsTestIsAsync = true;
+
+const events = [];
+function addEvent(event) { events.push(event) };
+let firstMousemoveEvent = null;
+
+const target = document.getElementById('target');
+target.addEventListener('mousedown', addEvent);
+target.addEventListener('mouseup', addEvent);
+target.addEventListener('click', addEvent);
+target.addEventListener('dblclick', (event) => {
+    addEvent(event);
+    verify();
+});
+
+var currentEvent;
+function verify() {
+    const eventTypes = ['mousedown', 'mouseup', 'click', 'mousedown', 'mouseup', 'click', 'dblclick'];
+    for (let i = 0; i < events.length; i++) {
+        currentEvent = events[i];
+        shouldBeEqualToString('currentEvent.type', eventTypes[i]);
+        shouldBeFalse('currentEvent.getModifierState("Control")');
+        shouldBeTrue('currentEvent.getModifierState("Alt")');
+        shouldBeFalse('currentEvent.getModifierState("Shift")');
+        shouldBeFalse('currentEvent.getModifierState("Meta")');
+        shouldBeFalse('currentEvent.getModifierState("AltGraph")');
+        shouldBeTrue('currentEvent.getModifierState("CapsLock")');
+    }
+    finishJSTest();
+}
+
+if (window.eventSender) {
+    eventSender.leapForward(1000); // drain dblclick timer
+
+    eventSender.mouseMoveTo(1, 1);
+    eventSender.mouseMoveTo(target.offsetLeft + target.offsetWidth / 2, target.offsetTop + target.offsetHeight / 2);
+
+    eventSender.mouseDown(0, ['altKey', 'capsLockKey']);
+    eventSender.mouseUp(0, ['altKey', 'capsLockKey']);
+    eventSender.mouseDown(0, ['altKey', 'capsLockKey']);
+    eventSender.mouseUp(0, ['altKey', 'capsLockKey']);
+} else if (window.testRunner) {
+    testFailed('This test requires eventSender');
+    finishJSTest();
+}
+
+</script>
+</body>
+</html>

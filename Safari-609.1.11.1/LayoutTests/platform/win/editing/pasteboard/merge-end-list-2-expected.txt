@@ -1,0 +1,15 @@
+This tests pasting text ('foo\nbar') into a list item. The last bit of content in the incoming fragment should be merged with the paragraph after the position being pasted into.
+
+Before insertion:
+| <ul>
+|   <li>
+|     <div>
+|       "Item 1"
+
+After insertion:
+| <ul>
+|   <li>
+|     <div>
+|       "Item foo"
+|     <div>
+|       "bar<#selection-caret>1"

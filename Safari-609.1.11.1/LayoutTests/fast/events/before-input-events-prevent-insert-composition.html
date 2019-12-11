@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <input id="editable" contenteditable onbeforeinput=preventInsertFromComposition(event)></input>
+    <script src="../../resources/dump-as-markup.js"></script>
+    <script type="text/javascript">
+        Markup.description("To manually test this, try to insert text using IME. No text should be committed to the input.");
+        if (window.internals)
+            internals.settings.setInputEventsEnabled(true);
+
+        editable.focus();
+
+        if (window.textInputController) {
+            textInputController.setMarkedText("a", 1, 0);
+            textInputController.setMarkedText("ab", 2, 0);
+            textInputController.setMarkedText("abc", 3, 0);
+            textInputController.insertText("abc");
+            Markup.dump("editable", "after trying to commit a typed composition");
+            textInputController.setMarkedText("a", 1, 0);
+            textInputController.setMarkedText("ab", 2, 0);
+            textInputController.setMarkedText("cde", 0, 3);
+            textInputController.setMarkedText("fg", 0, 2);
+            textInputController.insertText("fg");
+            Markup.dump("editable", "after trying to commit a selected composition");
+        }
+
+        function preventInsertFromComposition(event)
+        {
+            if (event.inputType == "insertFromComposition")
+                event.preventDefault();
+        }
+    </script>
+</body>
+</html>

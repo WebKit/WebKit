@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x288
+  RenderBlock {html} at (0,0) size 800x288
+    RenderBody {body} at (8,21) size 784x251
+      RenderBlock {h1} at (0,0) size 784x37
+        RenderText {#text} at (0,0) size 116x36
+          text run at (0,0) width 116: "Test for "
+        RenderInline {a} at (0,0) size 144x36 [color=#0000EE]
+          RenderText {#text} at (116,0) size 144x36
+            text run at (116,0) width 144: "Bug 42352"
+      RenderBlock {p} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 474x19
+          text run at (0,0) width 474: "Following text should be rendered as usual. Only \"A\" has a glyph in SVG Font."
+      RenderBlock {p} at (0,94) size 784x20
+        RenderText {#text} at (0,2) size 35x16
+          text run at (0,2) width 35: "XXA"
+      RenderBlock {p} at (0,129) size 784x20
+        RenderText {#text} at (0,2) size 35x16
+          text run at (0,2) width 35: "XAX"
+      RenderBlock {p} at (0,164) size 784x20
+        RenderText {#text} at (0,2) size 35x16
+          text run at (0,2) width 35: "AXX"
+      RenderBlock {p} at (0,199) size 784x20
+        RenderText {#text} at (0,2) size 33x16
+          text run at (0,2) width 33: "XXX"
+      RenderBlock {p} at (0,234) size 784x17
+        RenderText {#text} at (0,0) size 39x16
+          text run at (0,0) width 39: "AAA"

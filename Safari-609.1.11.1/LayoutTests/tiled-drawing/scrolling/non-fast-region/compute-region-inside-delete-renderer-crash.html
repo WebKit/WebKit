@@ -1,0 +1,41 @@
+<html>
+<head>
+    <style>
+        .scroller {
+            height: 10px;
+            width: 10px;
+            overflow: scroll;
+            border: 1px solid black;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function doTest()
+        {
+            setTimeout(function() {
+                var scroller = document.getElementById('scoller');
+                var newNode = document.createElement('div');
+                var container = document.getElementById('container');
+                container.insertBefore(newNode, scroller);
+                scroller.parentNode.removeChild(scroller);
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<p>Test passes if it does not crash.</p>
+<div><div id="container"><div id="scoller" class="scroller">foo</div></div></div>
+<script>
+    document.getElementById("scoller").addEventListener("mousewheel", function() { }, false);
+</script>
+</body>
+</html>

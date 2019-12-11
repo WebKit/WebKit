@@ -1,0 +1,20 @@
+Test for Resource size values (transfer size, decoded size, header size, request and response) for resources served from the disk cache.
+
+
+== Running test suite: Resource.Size.DiskCache
+-- Running test setup.
+-- Running test case: PossibleNetworkLoad
+-- Running test case: Resource.Size.DiskCache.Basic
+PASS: statusCode should be 200.
+PASS: compressed should be false.
+PASS: responseSource should be Symbol(disk-cache).
+size: 12940
+requestBodyTransferSize: 0
+responseBodyTransferSize: 0
+estimatedNetworkEncodedSize: 0
+networkEncodedSize: 0
+PASS: estimatedTotalTransferSize should be >= (encoded body size + headers).
+PASS: networkTotalTransferSize should be >= (encoded body size + headers).
+PASS: requestHeadersTransferSize should be empty.
+PASS: responseHeadersTransferSize should be empty.
+

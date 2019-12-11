@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<!-- Place the test container above the console output to avoid the need to compensate for page scroll. -->
+<div id="test-container">
+    <p><input type="color" class="test" data-test-name="color"></p>
+    <p><input type="date" class="test" data-test-name="date" value="2019-03-26"></p>
+    <p><input type="datetime-local" class="test" data-test-name="datetime-local" value="2019-03-26T14:28:05.455"></p>
+    <p><input type="month" class="test" data-test-name="month" value="2019-03"></p>
+    <p><select class="test" data-test-name="select">
+        <option>First</option>
+        <option>Second</option>
+    </select></p>
+    <p><input type="time" class="test" data-test-name="time" value="14:28"></p>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+window.jsTestIsAsync = true;
+
+let elementToTest;
+
+const modifierDisplayNameMap = {
+    "altKey": "Option",
+    "ctrlKey": "Control",
+    "metaKey": "Command",
+    "shiftKey": "Shift",
+    "capsLockKey": "Caps Lock",
+}
+
+class KeyCommand {
+    constructor(key, modifiers = [])
+    {
+        this.key = key;
+        this.modifiers = modifiers;
+    }
+
+    toString()
+    {
+        let readableCommand = this.modifiers.map((modifier) => modifierDisplayNameMap[modifier]);
+        readableCommand.push(this.key);
+        return readableCommand.join(" + ");
+    }
+}
+
+function done()
+{
+    let testContainer = document.getElementById("test-container");
+    document.body.removeChild(testContainer);
+    finishJSTest()
+}
+
+async function runTest()
+{
+    if (!window.testRunner) {
+        testFailed("Must be run in WebKitTestRunner.");
+        done();
+        return;
+    }
+
+    let elementsToTest = document.getElementsByClassName("test");
+    for (let keyCommand of [new KeyCommand("escape"), new KeyCommand(".", ["metaKey"])]) {
+        debug(`<br>Dismiss by pressing ${keyCommand}:`);
+        for (elementToTest of elementsToTest) {
+            debug(`<br>For ${elementToTest.dataset.testName}:`);
+            let expectedValue = elementToTest.value;
+            await UIHelper.activateElementAndWaitForInputSession(elementToTest);
+            UIHelper.keyDown(keyCommand.key, keyCommand.modifiers);
+            await UIHelper.waitForInputSessionToDismiss();
+            shouldBeEqualToString("elementToTest.value", expectedValue);
+        }
+    }
+    elementToTest = null;
+    done();
+}
+
+description("Tests that pressing the Escape key or Command + . dismisses a picker without causing a value change.");
+
+runTest();
+</script>
+</body>
+</html>

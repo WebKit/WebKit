@@ -1,0 +1,3471 @@
+2019-11-06  James Savage  <james.savage@apple.com>
+
+        Support CSS Dark Mode for PrettyDiff.rb.
+        https://bugs.webkit.org/show_bug.cgi?id=203874.
+
+        Reviewed by Tim Horton.
+
+        * PrettyPatch/PrettyPatch.rb: Modify CSS to support dark mode. I used
+        CSS variables in places where colors were shared, but otherwise provided
+        alternate style rules individually. Some colors looked fine in both
+        appearances, and those I left with only their light definition.
+
+2019-09-04  Aakash Jain  <aakash_jain@apple.com>
+
+        EWS bubbles should indicate builder vs tester
+        https://bugs.webkit.org/show_bug.cgi?id=201253
+
+        Reviewed by Jonathan Bedard.
+
+        * code-review.js: Do not display the icons in status-bubbles on this page.
+        * template/en/default/attachment/edit.html.tmpl: Ditto.
+        * template/en/default/attachment/reviewform.html.tmpl: Ditto.
+
+2019-08-29  Aakash Jain  <aakash_jain@apple.com>
+
+        [EWS] Increase status-bubble iframe width on bugzilla comment review page
+        https://bugs.webkit.org/show_bug.cgi?id=201304
+
+        Reviewed by Jonathan Bedard.
+
+        * template/en/default/attachment/reviewform.html.tmpl: Increased the width from 400 to 700 pixels.
+
+2019-07-19  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] EWS status-bubbles are sometimes multi-row with scroll-bar
+        https://bugs.webkit.org/show_bug.cgi?id=199939
+
+        Reviewed by Jonathan Bedard.
+
+        * code-review.js: Disable scrolling.
+
+2019-06-05  Ling Ho  <lingcherd_ho@apple.com>
+
+        Add support of zxcvbn password strength checker to bugs.webkit.org website.
+        https://bugs.webkit.org/show_bug.cgi?id=198391
+        rdar://problem/51278166
+
+        Reviewed by David Kilzer.
+
+        * Bugzilla/Config/Auth.pm:
+        (get_param_list):
+        * Bugzilla/Install/Requirements.pm:
+        (REQUIRED_MODULES):
+        * Bugzilla/User.pm:
+        (validate_password_check):
+        * template/en/default/admin/params/auth.html.tmpl:
+        * template/en/default/global/user-error.html.tmpl:
+
+2019-05-13  Jer Noble  <jer.noble@apple.com>
+
+        Bugzilla should convert "r12345" to a trac.webkit.org link
+        https://bugs.webkit.org/show_bug.cgi?id=197790
+
+        Reviewed by Alexey Proskuryakov.
+
+        * extensions/Trac/Config.pm: Added.
+        * extensions/Trac/Extension.pm: Added.
+        (bug_format_comment):
+        (_replace_revision):
+
+2019-04-04  Aakash Jain  <aakash_jain@apple.com>
+
+        Add another status-bubble iframe to display results from new EWS
+        https://bugs.webkit.org/show_bug.cgi?id=196308
+
+        Reviewed by Lucas Forschler.
+
+        * js/status-bubble.js:
+        (handleStatusBubbleMessage): Added URL for new EWS.
+        (handleStatusBubbleLoadNewEWS): Method to post message to new EWS.
+        * code-review.js: Added another iframe to display results from new EWS.
+        * template/en/default/attachment/edit.html.tmpl: Ditto.
+        * template/en/default/attachment/list.html.tmpl: Ditto.
+        * template/en/default/attachment/reviewform.html.tmpl: Ditto.
+
+2019-01-18  Ling Ho  <lingho@apple.com>
+
+        Update Bugzilla running on bugs.webkit.org and bugs.webkit-uat.org to version 5.0.4
+        https://bugs.webkit.org/show_bug.cgi?id=193477
+        <rdar://problem/37618737>
+
+        Reviewed by Lucas Forschler.
+
+        * Bugzilla/Config.pm:
+        (write_params):
+        (read_param_file):
+        * Bugzilla/Constants.pm:
+        * Bugzilla/DB/Sqlite.pm:
+        (sql_date_format):
+        * Bugzilla/Install/Filesystem.pm:
+        (update_filesystem):
+        (_update_old_mining_filenames):
+        * Bugzilla/Install/Requirements.pm:
+        (REQUIRED_MODULES):
+        * Bugzilla/JobQueue.pm:
+        (subprocess_worker):
+        (kill_worker):
+        * Bugzilla/Migrate.pm:
+        (parse_date):
+        * Bugzilla/Template.pm:
+        (_concatenate_css):
+        (_concatenate_js):
+        * Bugzilla/Util.pm:
+        (read_text):
+        (write_text):
+        (datetime_from):
+        * contrib/jb2bz.py:
+        (process_reply_file):
+        (maybe_add_attachment):
+        (process_text_plain):
+        (process_multi_part):
+        (process_jitterbug):
+        (process_mime_body): Deleted.
+        * docs/en/rst/conf.py:
+        * docs/en/rst/installing/linux.rst:
+        * docs/en/rst/installing/mac-os-x.rst:
+        * docs/en/rst/installing/migrating-from-2.inc.rst:
+        * docs/en/rst/installing/migrating.rst:
+        * docs/en/rst/installing/quick-start.rst:
+        * docs/en/rst/installing/upgrading-with-git.rst:
+        * docs/en/rst/installing/windows.rst:
+        * docs/en/rst/integrating/extensions.rst:
+        * docs/en/rst/integrating/skins.rst:
+        * editflagtypes.cgi:
+        (get_products_and_components):
+        * taskgraph.json:
+        * template/en/default/pages/release-notes.html.tmpl:
+
+2018-10-05  Jer Noble  <jer.noble@apple.com>
+
+        Radar links should be clickable on bugs.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=190293
+        <rdar://problem/45020184>
+
+        Reviewed by Lucas Forschler.
+
+        Add a new Extension which formats bug comments and makes radar:// links clickable.
+
+        * extensions/Radar/Config.pm: Added.
+        * extensions/Radar/Extension.pm: Added.
+        (bug_format_comment):
+        (_replace_radar):
+
+2018-08-23  Ross Kirsling  <ross.kirsling@sony.com>
+
+        EWS bubbles are being hidden due to lack of space.
+        https://bugs.webkit.org/show_bug.cgi?id=188607
+
+        Reviewed by Daniel Bates.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+        * js/status-bubble.js: Added.
+        Refactor Review Patch page so that the postMessage to resize EWS iframes may be used on other pages too.
+        
+        * template/en/default/attachment/edit.html.tmpl:
+        * template/en/default/attachment/list.html.tmpl:
+        Resize EWS iframes via postMessage on bug page and attachment details page. 
+
+2018-06-22  Daniel Bates  <dabates@apple.com>
+
+        EWS for security bugs
+        https://bugs.webkit.org/show_bug.cgi?id=186291
+        <rdar://problem/40829658>
+
+        Rubber-stamped by Lucas Forschler.
+
+        Substitute "review" for "r" as the name of the Bugzilla flag to look at to determine
+        if we should CC the feeder EWS on the associated bug.
+
+        * extensions/EWS/Extension.pm:
+        (isReviewFlag):
+
+2018-06-19  Daniel Bates  <dabates@apple.com>
+
+        EWS for security bugs
+        https://bugs.webkit.org/show_bug.cgi?id=186291
+        <rdar://problem/40829658>
+
+        Reviewed by Lucas Forschler
+
+        Part 2 of 2.
+
+        Adds a new Bugzilla extension that will automatically CC the EWS feeder queue
+        on each bug that has a patch up for review, including security bugs. This allows
+        the WebKit OpenSource Project to use an unprivileged Bugzilla account for the
+        EWS feeder queue.
+
+        * extensions/EWS/Config.pm: Added.
+        * extensions/EWS/Extension.pm: Added.
+        (new): Initialize some bookkeeping variables we use to track whether we have seen
+        a value change event for the review flag and whether we need to CC the feeder. The latter
+        we need to track because we can only make changes to the CC list in the callback
+        bug_start_of_update().
+        (object_before_set): This callback is called each time a setter is called on a Bugzilla
+        object. Check if the review flag was set to ? and do some bookkeeping. Although tempting
+        to do such work in the callback flag_end_of_update() instead of object_before_set() doing
+        such work would come AFTER we get callback bug_start_of_update() and hence after we have
+        committed the CC list of the bug to the database. Moreover, the "interface to [flag_end_of_update()]
+        is UNSTABLE and it may change in the future" according to <https://github.com/bugzilla/bugzilla/blob/d7cf1c91949248222806f5a32f485b12eab8806f/Bugzilla/Hook.pm#L797>.
+        (bug_start_of_update): Add the EWS feeder queue to the list of CC members of the bug, if needed.
+        (config_add_panels): Adds a new panel to the Administration Parameters screen.
+        (isReviewFlag): Helper function that returns whether the specified Bugzilla::Object represents
+        the review flag.
+        * extensions/EWS/docs/en/rst/index-admin.rst: Added.
+        * extensions/EWS/lib/ParamsPanelUI.pm: Added.
+        (checkUser): Helper function to determine if there exists a Bugzilla user corresponding to
+        the specified login name.
+        (get_param_list): Add configurable field to the Administration Parameters screen to specify
+        the login name of the EWS feeder queue.
+        * extensions/EWS/template/en/default/admin/params/ews.html.tmpl: Added.
+
+2018-05-22  Roy Reapor  <rreapor@apple.com>
+
+        Host jquery on webkit.org instead of 3rd party
+        https://bugs.webkit.org/show_bug.cgi?id=185691
+
+        Reviewed by Alexey Proskuryakov.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review-test.html:
+
+2018-02-16  Ling Ho  <lingho@apple.com>
+
+        Apply Bugzilla patches for CVE-2018-5123
+        https://bugs.webkit.org/show_bug.cgi?id=182884
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Bugzilla/CGI.pm:
+        (_prevent_unsafe_response):
+        (header):
+        * attachment.cgi:
+
+2017-06-22  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        pretty patch doesn't show image diffs with newer versions of git
+        https://bugs.webkit.org/show_bug.cgi?id=173691
+
+        A new security check added in git >= 2.3.3 causes it to abort
+        when the tool runs "git apply" to generate the images.
+        Detect if git supports the flag --unsafe-paths and pass it.
+
+        Reviewed by Darin Adler.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2017-05-26  Devin Rousso  <drousso@apple.com>
+
+        Provide bug information when https://webkit.org/b/# URLs are added in comments
+        https://bugs.webkit.org/show_bug.cgi?id=169707
+
+        Reviewed by David Kilzer.
+
+        * Bugzilla/Template.pm:
+        (quoteUrls):
+
+2017-03-25  David Kilzer  <ddkilzer@apple.com>
+
+        [Bugzilla] Add a checkbox to add self to the CC list when creating or editing an attachment
+        <https://webkit.org/b/124047>
+
+        Original patch by Csaba Osztrogonác.
+
+        Reviewed by Daniel Bates.
+
+        * template/en/default/attachment/reviewform.html.tmpl:
+        Add template for "Add me to CC list" by default.  This
+        adds the reviewer to the CC list whether the "Preview"
+        or "Publish" button is used.  Only the "Preview" button
+        allows the checkbox to be unchecked, though.
+
+2017-03-23  David Kilzer  <ddkilzer@apple.com>
+
+        Fix Apache::SizeLimit unshared size limit in mod_perl.pl for bugs.webkit.org
+        <https://webkit.org/b/169926>
+
+        Reviewed by Brent Fulgham.
+
+        * mod_perl.pl: Update syntax for setting unshared size
+        limit, and bump it up another 100 Mb so children don't
+        respawn as quickly.
+
+2017-03-21  David Kilzer  <ddkilzer@apple.com>
+
+        Commit local changes for Bugzilla 5.0.3
+
+        * images/favicon.ico: Update favicon from Dec 11, 2015.
+        * data/params.json: Deleted.
+
+2017-03-21  David Kilzer  <ddkilzer@apple.com>
+
+        Upgrade to Bugzilla 5.0.3.
+
+2017-02-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Patch Details: EWS Bubbles wrap on Patch Details page
+        https://bugs.webkit.org/show_bug.cgi?id=167709
+
+        Reviewed by Ryosuke Niwa.
+
+        * template/en/default/attachment/edit.html.tmpl:
+        Match the iframe size in list.html.tmpl.
+
+2017-01-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Patch Review: EWS Bubbles wrap to multiple lines but can fit on one line
+        https://bugs.webkit.org/show_bug.cgi?id=167519
+
+        Reviewed by Ryosuke Niwa.
+
+        While we do post message to determine the size, the fact that we have
+        constrained the iframe to a size of 450px meant its body is 450px and
+        the div containing the bubbles wraps at 450px. Its full size (~458px)
+        is not returned. Although we solve this artifical constraint problem
+        inside of the bubble containerMetrics measuring, up this default value
+        from 450 to 460 to reduce UI jitter (the current measurement on my
+        machine is 458px).
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2017-01-19  Timothy Hatcher  <timothy@hatcher.name>
+
+        Bugzilla email autocomplete does not work on third email field of advanced search page
+        https://bugs.webkit.org/show_bug.cgi?id=167204
+
+        Reviewed by Alexey Proskuryakov.
+
+        * committers-autocomplete.js: Added email3 to SINGLE_EMAIL_INPUTS list.
+
+2016-10-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Convert contributors.json to a flat list
+        https://bugs.webkit.org/show_bug.cgi?id=163183
+
+        Reviewed by Darin Adler.
+        
+        Make contributors.json easier to maintain by eliminating the big groupings ("Committers", "Reviewers" etc)
+        and moving that data to a "status" property on each contributor.
+        
+        Fix script that does bugzilla autocomplete.
+
+        * committers-autocomplete.js:
+        (statusToType):
+        (parseCommittersPy):
+        (parseType): Deleted.
+
+2016-07-16  David Kilzer  <ddkilzer@apple.com>
+
+        Use secure (https) links on enter_bug.cgi
+        <https://webkit.org/b/159853>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * template/en/default/global/choose-product.html.tmpl:
+        Use https instead of http for links to webkit.org.
+
+2016-05-18  David Kilzer  <ddkilzer@apple.com>
+
+        CVE-2016-2803: [SECURITY] XSS vulnerability in dependency graphs via bug summary
+        <https://bugzilla.mozilla.org/show_bug.cgi?id=1253263>
+
+        Merge Bugzilla upstream master dd61903154fd363fb4e763d60aa155a507c2c3fc.
+
+        * showdependencygraph.cgi:
+        (CreateImagemap): Fix XSS vulnerability.
+
+2016-05-05  David Kilzer  <ddkilzer@apple.com>
+
+        bugs.webkit.org: "See Also" field should support Chromium bugs
+
+        Merge Bugzilla upstream master 3af55bfe0bd10a85b7cd69e26a19034a6d2e78f5.
+        <https://bugzilla.mozilla.org/show_bug.cgi?id=1252782>
+
+        * Bugzilla/BugUrl.pm: Add Bugzilla::BugUrl::Chromium class to
+        list of classes that parse supported URLs.
+        * Bugzilla/BugUrl/Chromium.pm: Added.
+        (should_handle):
+        (_check_value):
+        * template/en/default/global/user-error.html.tmpl: Update error
+        message.
+
+2015-12-09  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION: code-review-tests.html fails with error "Received an error at line 214"
+        https://bugs.webkit.org/show_bug.cgi?id=152103
+
+        Reviewed by Darin Adler.
+
+        Fixes an issue where opening the file code-review-test.html in Safari shows the error message
+        "FAIL: Received an error at line 214" and in the console there is a JavaScript TypeError:
+            undefined is not an object (evaluating '$('.overallComments textarea').val().trim')
+
+        Notice that test testReaddDiscardedCommentWithPreviousComment() is the only test that appends
+        the toolbar, which inserts the overall comments textarea. The test testSaveCommentsWithMissingLineIds()
+        assumes that the own properties of the window object are enumerated in the same order as they
+        were defined in the file code-review-test.html such that the test testReaddDiscardedCommentWithPreviousComment()
+        is executed before test testSaveCommentsWithMissingLineIds(). The behavior of JavaScriptCore with
+        respect to the enumeration order of properties on the window object have changed since the
+        test testSaveCommentsWithMissingLineIds() was written such that the order of the own properties
+        on the window object do not reflect the order in which they were defined in the file. We should
+        append the toolbar before running the tests and explicitly execute the tests in chosen order so
+        as to be able to reason of the test results regardless of the enumeration ordering of the
+        properties in the DOM window object.
+
+        Also, removed duplicate 'd' in the name of function "testReaddDiscardedCommentWithPreviousComment"
+        such that it reads "testReadDiscardedCommentWithPreviousComment".
+
+        * code-review-test.html:
+
+2015-11-17  Lucas Forschler  <lforschler@apple.com>
+
+        bugs.webkit.org is running with changes that are not checked in.
+        Check them in.
+
+        Reviewed by Matt Hanson.
+ 
+2015-07-30  Aakash Jain  <aakash_jain@apple.com>
+
+        Replace Google App Engine with AppScale
+        https://bugs.webkit.org/show_bug.cgi?id=147178
+
+        Reviewed by Daniel Bates.
+
+        * code-review.js:
+        * template/en/default/attachment/edit.html.tmpl:
+        * template/en/default/attachment/list.html.tmpl:
+        * template/en/default/attachment/reviewform.html.tmpl:
+
+2014-09-03  David Kilzer  <ddkilzer@apple.com>
+
+        Make images work with patches created using svn 1.7
+        <http://webkit.org/b/136507>
+
+        Reviewed by Darin Adler.
+
+        * PrettyPatch/PrettyPatch.rb:
+        (PrettyPatch.prettify): Delete redundant patches that claim
+        newly added images are actually removed.
+        (PrettyPatch.SVN_BINARY_FILE_MARKER_FORMAT): Rename from
+        BINARY_FILE_MARKER_FORMAT.
+        (PrettyPatch.SVN_IMAGE_FILE_MARKER_FORMAT): Rename from
+        IMAGE_FILE_MARKER_FORMAT.
+        (PrettyPatch.SVN_PROPERTY_CHANGES_FORMAT): Add. Used to find
+        and ignore property changes in svn 1.7 patches.
+        (PrettyPatch.SVN_START_OF_BINARY_DATA_FORMAT): Rename from
+        START_OF_BINARY_DATA_FORMAT.
+        (FileDiff.filename): Add read-only accessor.
+        (FileDiff.image): Add read-only accessor.
+        (FileDiff.image_url): Add read-only accessor.
+        (FileDiff.initialize): Add special case for svn-1.7 image
+        patches that add a file.  Update various regex constants per
+        above.
+
+2014-02-25  Jozsef Berta  <jberta.u-szeged@partner.samsung.com>
+
+        PrettyPatch.rb should be more descriptive for "git diff -M" styled patches
+        https://bugs.webkit.org/show_bug.cgi?id=125514
+
+        Reviewed by Csaba Osztrogonác.
+
+        * PrettyPatch/PrettyPatch.rb: PrettyPatch.rb is modified to show which file was renamed or moved.
+
+2013-12-16  Dániel Bátyai  <Batyai.Daniel@stud.u-szeged.hu>
+
+        PrettyPatch.rb doesn't handle diffs where lines matching /^--/ are missing properly
+        https://bugs.webkit.org/show_bug.cgi?id=54928
+
+        Reviewed by Adam Roben.
+
+        PrettyPatch will now check if the next line after /^--- / matches /^+++ /, and if not,
+        then it's just a normal line
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2013-08-16  David Farler  <dfarler@apple.com>
+
+        PrettyPatch: Wrap pre blocks
+        https://bugs.webkit.org/show_bug.cgi?id=119906
+
+        Reviewed by Darin Adler.
+
+        * PrettyPatch/PrettyPatch.rb:
+        <pre> will use the same wrap settings as the text class:
+        white-space: pre-wrap and word-wrap: break-word.
+
+2013-07-16  James Craig  <james@cookiecrook.com>
+
+        AX: Add a 'choose product' link for the new-ax-bug alias.
+        https://bugs.webkit.org/show_bug.cgi?id=118697
+
+        Reviewed by Chris Fleizach.
+
+        * template/en/custom/global/choose-product.html.tmpl: Added new link for accessibility bugs.
+
+2013-07-09  Martin Robinson  <mrobinson@igalia.com>
+
+        PrettyPatch doesn't handle UTF-8 characters correctly
+        https://bugs.webkit.org/show_bug.cgi?id=45760
+
+        Reviewed by Adam Roben.
+
+        * PrettyPatch/PrettyPatch.rb: Since the diff lines are typically in UTF-8 and the results
+        of PrettyPatch may be served by a web server or not (for instance when accessed via
+        webkit-patch pretty-diff), we should use a meta tag to force the page encoding to UTF-8.
+
+2013-05-23  Patrick Gansterer  <paroga@webkit.org>
+
+        EWS bubbles need more space
+        https://bugs.webkit.org/show_bug.cgi?id=116675
+
+        Reviewed by Andreas Kling.
+
+        * template/en/custom/attachment/list.html.tmpl:
+
+2013-04-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r148527.
+
+        * committers-autocomplete.js:
+        (WebKitCommitters):
+
+2013-04-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        The list of contributors in committers.py should be a separate JSON
+        https://bugs.webkit.org/show_bug.cgi?id=114673
+
+        Reviewed by Anders Carlsson.
+
+        Updated the Bugzilla autocompletion code to use contributors.json.
+        Basically, this removes a large chunk of this JavaScript file.
+
+        * committers-autocomplete.js:
+        (WebKitCommitters):
+
+2013-04-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Delete bubbles from webkit-commit-queue.appspot.com now that we've completed the transition
+        https://bugs.webkit.org/show_bug.cgi?id=114476
+
+        Reviewed by Gyuyoung Kim.
+
+        * code-review.js:
+        * template/en/custom/attachment/edit.html.tmpl:
+        * template/en/custom/attachment/list.html.tmpl:
+        * template/en/custom/attachment/reviewform.html.tmpl:
+
+2013-04-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make old EWS bubbles less opaque to disambiguate two set of bubbles.
+
+        Rubber-stamped by Benjamin Poulain.
+
+        * code-review.js:
+        * template/en/custom/attachment/edit.html.tmpl:
+        * template/en/custom/attachment/list.html.tmpl:
+        * template/en/custom/attachment/reviewform.html.tmpl:
+
+2013-04-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Bugzilla should show bubbles from webkit-queues.appspot.com
+        https://bugs.webkit.org/show_bug.cgi?id=114391
+
+        Reviewed by Benjamin Poulain.
+
+        Include iframe from webkit-queues.appspot.com as well as one for webkit-commit-queue.appspot.com.
+
+        * code-review.js:
+        * template/en/custom/attachment/edit.html.tmpl:
+        * template/en/custom/attachment/list.html.tmpl:
+        * template/en/custom/attachment/reviewform.html.tmpl:
+
+2013-03-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        EWS bubbles need more space
+        https://bugs.webkit.org/show_bug.cgi?id=112964
+
+        Reviewed by Philip Rogers.
+
+        Increased the width from 500px to 600px so that all bubbles fit.
+
+        * template/en/custom/attachment/list.html.tmpl:
+
+2013-03-08  David Kilzer  <ddkilzer@apple.com>
+
+        (CVE-2013-0786) [SECURITY] build_subselect() leaks the existence of products and components you cannot access
+        <https://bugzilla.mozilla.org/show_bug.cgi?id=824399>
+        <exp2://Ticket/14465628>
+
+        Applied "v5 patch, 3.6" to bugs.webkit.org.
+
+        * Bugzilla/Config/GroupSecurity.pm:
+        (get_param_list):
+        * buglist.cgi:
+        * report.cgi:
+        * template/en/default/admin/params/groupsecurity.html.tmpl:
+
+2013-03-08  David Kilzer  <ddkilzer@apple.com>
+
+        (CVE-2013-0785) [SECURITY] XSS in show_bug.cgi when using an invalid page format
+        <https://bugzilla.mozilla.org/show_bug.cgi?id=842038>
+        <exp2://Ticket/14465628>
+
+        Applied "patch for 3.6 and 4.0, v1" to bugs.webkit.org.
+
+        * Bugzilla/Template.pm:
+        (get_format):
+        * show_bug.cgi:
+
+2013-02-01  Nathan de Vries  <ndevries@apple.com>
+
+        Allow prettify.rb to be run from any directory, and don't hard-code the system ruby path
+        https://bugs.webkit.org/show_bug.cgi?id=108569
+
+        Reviewed by Joseph Pecoraro.
+
+        * PrettyPatch/prettify.rb:
+
+2013-01-03  James Robinson  <jamesr@chromium.org>
+
+        Avoid mixed content when expanding context in code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=106060
+
+        Reviewed by Tony Chang.
+
+        Example failure: "The page at https://bugs.webkit.org/attachment.cgi?id=181222&action=review displayed insecure
+        content from http://svn.webkit.org/repository/webkit/trunk/Source/WebCore/page/EventHandler.cpp?p=138617." This
+        loads from "//svn.webkit.org/..." so the protocol matches.
+
+        * code-review.js:
+
+2013-01-02  Ojan Vafai  <ojan@chromium.org>
+
+        REGRESSION: Review tool sometimes doesn't include some comments in preview & posts
+        https://bugs.webkit.org/show_bug.cgi?id=105252
+
+        Reviewed by Tony Chang.
+
+        When adding context, the LineContainer for the context line can get removed.
+        In that case, forEachLine needs to know to keep looping past that line number.
+
+        Also, make it so that you can't leave comments on context lines.
+
+        * code-review-test.html:
+        * code-review.js:
+
+2012-12-30  Martin Robinson  <mrobinson@igalia.com>
+
+        PrettyDiff.rb fails to render image diffs with Ruby 1.9.3p194
+        https://bugs.webkit.org/show_bug.cgi?id=104932
+
+        Reviewed by Eric Seidel.
+
+        Ruby 1.9 added the concept of string encodings, so the use of `match' with binary data
+        treats it as UTF-8. Forcing the png_bytes string to have the "binary" encoding avoids
+        this error.
+
+        * PrettyPatch/PrettyPatch.rb: Use force_encoding.
+
+2012-12-06  Ojan Vafai  <ojan@chromium.org>
+
+        Review page is super flakey now
+        https://bugs.webkit.org/show_bug.cgi?id=104331
+
+        Committing without review since this is breaking the code review tool.
+
+        remove is only shipping in Chromium. Use jQuery's remove instead.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2012-12-05  Ojan Vafai  <ojan@chromium.org>
+
+        Make the strip line numbers link into a checkbox
+        https://bugs.webkit.org/show_bug.cgi?id=104187
+
+        Reviewed by Tony Chang.
+
+        The link text was confusing.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2012-12-05  Ojan Vafai  <ojan@chromium.org>
+
+        Sanitize content on copy in the code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=104155
+
+        Reviewed by Tony Chang.
+
+        Always remove expand/header/annotate links. Provide an option
+        to remove line numbers as well. Store the option in localStorage so
+        people can always get whichever behavior they want.
+
+        A better solution would be to restructure the DOM, but that would require gutting
+        the whole code review tool and would make it difficult to include line numbers if
+        you wanted them.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review-test.html:
+        * code-review.js:
+
+2012-12-04  Ojan Vafai  <ojan@chromium.org>
+
+        Use sticky positioning for the code review toolbar
+        https://bugs.webkit.org/show_bug.cgi?id=104056
+
+        Reviewed by Adam Barth.
+
+        This simplifies the code and gives a nicer user-experience.
+        Also, while here, I fixed up the CSS to not have toolbar items
+        overlap when you make the window too small.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review-test.html:
+        * code-review.js:
+
+2012-12-04  Ojan Vafai  <ojan@chromium.org>
+
+        Properly create the header links in the code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=104037
+
+        Reviewed by Adam Barth.
+
+        Right now, we just prepend "header" to the two existing links and change
+        the first link to point to the header. The problem is that jQuery's prepend
+        method just prepends to each item in the jQuery object instead of adding
+        the item to the beginning of the list as this code assumed.
+
+        * code-review-test.html:
+        * code-review.js:
+
+2012-12-04  Ojan Vafai  <ojan@chromium.org>
+
+        Can't add followup comment to a previous comment
+        https://bugs.webkit.org/show_bug.cgi?id=104025
+
+        Reviewed by Adam Barth.
+
+        If we side-by-sidify a shared diff line, and then apply
+        a previous comment, we would incorrectly put the comment
+        on the Line instead of the LineContainer.
+
+        Also, get rid of global next_line_id to simplify testing.
+
+        * code-review-test.html:
+        * code-review.js:
+
+2012-11-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        committers-autocomplete.js works only with WebKit based browsers
+        https://bugs.webkit.org/show_bug.cgi?id=66752
+
+        Reviewed by Csaba Osztrogonác.
+
+        Based on the patch posted by Peter Gal. Attach event listeners
+        to all input elements we want to enable auto-completions on.
+
+        * committers-autocomplete.js:
+
+2012-10-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Make the status bubble iframe big enough to show all the bubbles
+        https://bugs.webkit.org/show_bug.cgi?id=98329
+
+        Reviewed by Eric Seidel.
+
+        Make the status bubble iframe big enough.
+
+        * template/en/custom/attachment/edit.html.tmpl:
+        * template/en/custom/attachment/list.html.tmpl:
+
+2012-10-03  Simon Pena  <spena@igalia.com>
+
+        ruby1.9 fails in PrettyPatch.rb with invalid byte sequence in UTF-8
+        https://bugs.webkit.org/show_bug.cgi?id=91212
+
+        Reviewed by Hajime Morita.
+
+        ruby1.9 changed the way it handles encoding, so the gsub method used
+        when normalizing line ending complains of invalid byte sequence in UTF-8.
+        This patch uses the "encode" string method for versions of Ruby >= 1.9
+        to provide the encoding conversion (keeping the current implementation in
+        Ruby 1.8).
+
+        * PrettyPatch/PrettyPatch.rb: Use the "encode" string method for encoding
+        conversion when the Ruby version is >= 1.9.
+
+2012-09-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r129521.
+        http://trac.webkit.org/changeset/129521
+        https://bugs.webkit.org/show_bug.cgi?id=97710
+
+        Broke autocomplete on enter_bug.cgi (Requested by abarth on
+        #webkit).
+
+        * committers-autocomplete.js:
+
+2012-09-25  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        committers-autocomplete.js works only with WebKit based browsers
+        https://bugs.webkit.org/show_bug.cgi?id=66752
+
+        Reviewed by Darin Adler.
+
+        Modified the code do only add event listeners to the given inputs,
+        and not to the full document.
+
+        * committers-autocomplete.js:
+
+2012-09-24  Peter Beverloo  <peter@chromium.org>
+
+        Allow robots to index bugs on Bugzilla
+        https://bugs.webkit.org/show_bug.cgi?id=95688
+
+        Reviewed by Eric Seidel.
+
+        This allows robots to access show_bug.cgi, thus granting them access to
+        index contents and discussion on WebKit bugs. All other pages, except
+        for the site index itself, still have indexing disabled.
+
+        * robots.txt:
+
+2012-07-13  Ojan Vafai  <ojan@chromium.org>
+
+        PrettyPatch.rb complains about missing checksum for new pixel results
+        https://bugs.webkit.org/show_bug.cgi?id=88368
+
+        Reviewed by Tony Chang.
+
+        When adding or removing a file, we incorrectly iterpreted not having an image
+        as not having a checksum.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * PrettyPatch/PrettyPatch_test.rb:
+        I tried to fix the TempFile issue in these tests, but after a couple hours
+        of banging my head against this, I have no idea what's breaking.
+
+2012-07-11  Alice Cheng  <alice_cheng@apple.com>
+
+        Deleting content at the top of prettypatch emails destroys HTML formatting
+        https://bugs.webkit.org/show_bug.cgi?id=90700
+        <rdar://problem/7488232>
+
+        Reviewed by David Kilzer.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2012-07-10  Adam Barth  <abarth@webkit.org>
+
+        bugs.webkit.org has mixed content
+        https://bugs.webkit.org/show_bug.cgi?id=90907
+
+        Reviewed by Eric Seidel.
+
+        Now that we detect http XMLHttpRequests as mixed content, I've noticed
+        that we're loading committers.py over http instead of https.  For
+        better security, we should use https.
+
+        * committers-autocomplete.js:
+
+2012-05-30  Ojan Vafai  <ojan@chromium.org>
+
+        Only include the image checksum error in pretty-diffs for -expected.png files.
+        https://bugs.webkit.org/show_bug.cgi?id=87881
+
+        Reviewed by Tony Chang.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * PrettyPatch/PrettyPatch_test.rb:
+
+2012-05-29  Ojan Vafai  <ojan@chromium.org>
+
+        Show an error in the pretty diff when an image lacks a checksum
+        https://bugs.webkit.org/show_bug.cgi?id=87791
+
+        Reviewed by Dirk Pranke.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * PrettyPatch/PrettyPatch_test.rb:
+
+2012-04-01  Adam Barth  <abarth@webkit.org>
+
+        Code review tool no longer needs to work around position:fixed handling on iPad
+        https://bugs.webkit.org/show_bug.cgi?id=82850
+
+        Reviewed by Eric Seidel.
+
+        We no longer need to avoid position:fixed on iPad because Mobile Safari
+        now does something reasonable with position:fixed elements.
+
+        * code-review.js:
+
+2012-03-09  Ashod Nakashian  <ashodnakashian@yahoo.com>
+
+        Bash scripts should support LF endings only
+        https://bugs.webkit.org/show_bug.cgi?id=79509
+
+        Reviewed by David Kilzer.
+
+        * contrib/yp_nomail.sh: Added property svn:executable.
+
+2012-03-05  Alexander Færøy  <alexander.faeroy@nokia.com>
+
+        The Bugzilla autocompleter doesn't support multiple Unicode characters per name
+        https://bugs.webkit.org/show_bug.cgi?id=80319
+
+        Reviewed by Adam Barth.
+
+        The current regular expression for matching Unicode characters uses
+        the global modifier, which means that it will never enter its second
+        iteration of the match-loop. This patch fixes this by removing the
+        global modifier from the regex.
+
+        * committers-autocomplete.js:
+        (WebKitCommitters):
+
+2012-01-03  Ojan Vafai  <ojan@chromium.org>
+
+        Increment the code-review.js version number to bust browser
+        caches.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2011-12-13  Ojan Vafai  <ojan@chromium.org>
+
+        Give a resize handle for sidebyside diffs.
+        https://bugs.webkit.org/show_bug.cgi?id=74465
+
+        Reviewed by Ryosuke Niwa.
+
+        This gives a drag handle so you can make the side-by-side
+        diff not be 50/50 on a per-file-diff basis. This is useful
+        for cases like new files where there's no value on the
+        left side.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2011-12-13  Ojan Vafai  <ojan@chromium.org>
+
+        Expanding context is broken for prepare-ChangeLog in the code review tool.
+        https://bugs.webkit.org/show_bug.cgi?id=74458
+
+        Reviewed by Adam Barth.
+
+        * code-review-test.html:
+        -Moved all the tests into test* functions.
+        -Automated calling all test* functions.
+        -Added testIsChangeLog.
+        * code-review.js:
+        Made the check for whether it's a ChangeLog file more robust.
+
+2011-12-13  Ojan Vafai  <ojan@chromium.org>
+
+        Fix bug in the code review tool when readding a discarded comment
+        https://bugs.webkit.org/show_bug.cgi?id=74450
+
+        Reviewed by Adam Barth.
+
+        If you discard a comment that has a corresponding previousComment,
+        then we would incorrectly remove the comment baseline. So, the next
+        time you added a comment by clicking on the previousComment, we
+        would get undefined as the start line for the new comment.
+
+        All of this works fine until you try to restore the comment from
+        localStorage, at which point we throw an error because the start
+        line is undefined.
+
+        Also added some failsafes to better handle the case of corrupted comments.
+
+        * code-review-test.html:
+        * code-review.js:
+
+2011-11-15  Tony Chang  <tony@chromium.org>
+
+        set a max-width on the codereview overall comments textarea
+        https://bugs.webkit.org/show_bug.cgi?id=72415
+
+        Reviewed by Ojan Vafai.
+
+        Otherwise, when resizing the textarea you can end up making wider, but
+        are no longer able to click the resize gripper to make it smaller
+        (it's under another div).
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2011-10-13  Adam Barth  <abarth@webkit.org>
+
+        Would be nice if the review-tool offered to show the corresponding header
+        https://bugs.webkit.org/show_bug.cgi?id=63963
+
+        Reviewed by Ojan Vafai.
+
+        This is a first cut at adding links to the header file in the review
+        tool.  If folks like this feature, we can cover more cases in the
+        future.
+
+        * code-review.js:
+
+2011-09-14  Ben Wells  <benwells@chromium.org>
+
+        PrettyPatch should handle "delta" patch mechanism in git binary patches
+        https://bugs.webkit.org/show_bug.cgi?id=67628
+
+        Git patches are encoded using two mechanisms - "literal" and "delta".
+        For details of these mechanisms, see the function emit_binary_diff_body
+        in the git source file diff.c (https://github.com/git/git/blob/master/diff.c).
+
+        When determining if a binary file patch is an image or not we should accept
+        both literal and delta patch encodings.
+
+        When reconstructing the images from the patches, if we have a delta patch
+        we may download the previous revision from svn.webkit.org to get the image data.
+
+        Reviewed by Adam Roben.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * PrettyPatch/PrettyPatch_test.rb:
+
+2011-09-06  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r94554.
+        http://trac.webkit.org/changeset/94554
+        https://bugs.webkit.org/show_bug.cgi?id=67631
+
+        This patch did not quite fix the problem (Requested by
+        benwells on #webkit).
+
+        * PrettyPatch/PrettyPatch.rb:
+        * PrettyPatch/PrettyPatch_test.rb:
+
+2011-09-06  Ben Wells  <benwells@chromium.org>
+
+        PrettyPatch should handle "delta" patch mechanism in git binary patches
+        https://bugs.webkit.org/show_bug.cgi?id=67628
+
+        Git patches are encoded using two mechanisms - "literal" and "delta".
+        See this email from the git mailing list archive for info
+        http://marc.info/?l=git&m=114682417113315&w=2
+
+        When determining if a binary file patch is an image or not we should accept
+        both literal and delta patch encodings.
+
+        Reviewed by Shinichiro Hamaji.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * PrettyPatch/PrettyPatch_test.rb:
+
+2011-06-30  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [reviewtool] Expanding lines "below" does not remove purple context line
+        https://bugs.webkit.org/show_bug.cgi?id=63695
+
+        Honestly, this is the last bug in the review tool that bothers me.
+
+        * PrettyPatch/PrettyPatch.rb:
+            - Jump straight to version 42, because, well, you know.
+        * code-review.js:
+            - In addition to removing the context bar when we expand all, we
+              now remove it when we expand below (but not when we expand
+              above).
+
+2011-06-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        bugs.webkit.org should use Strict-Transport-Security
+        https://bugs.webkit.org/show_bug.cgi?id=63097
+
+        Strict-Transport-Security forces all connections to bugs.webkit.org to
+        use HTTPS, preventing sslstrip and other attacks.
+
+        * .htaccess:
+
+2011-05-04  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Adam Roben.
+
+        REGRESSION (r85657): webkitpy.common.prettypatch_unittest.PrettyPatchTest.test_pretty_diff_encodings failing on Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=60164
+
+        Use Array#length to get the number of elements in an array. Array#count
+        was added in Ruby 1.8.7, but Leopard have Ruby 1.8.6.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2011-05-03  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Adam Roben.
+
+        Add tests to PrettyPatch
+        https://bugs.webkit.org/show_bug.cgi?id=57298
+
+        Verify that 'prettify' parse the right number of files and parts
+        (add/remove/shared) by checking a set of patches available in
+        bugs.webkit.org.
+
+        * PrettyPatch/PrettyPatch.rb: exported a couple a globals with
+        statistics information for our test script.
+        * PrettyPatch/PrettyPatch_test.rb: Added.
+
+2011-04-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Code changes by Adam Barth. Reviewed by Ojan Vafai.
+
+        Bugzilla autocomplete should support frequent contributors who are not committers
+        https://bugs.webkit.org/show_bug.cgi?id=59209
+
+        * committers-autocomplete.js: Support Contributor role in committers.py.
+
+2011-04-19  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Adam Roben.
+
+        PrettyPatch tries to show images for deleted files
+        https://bugs.webkit.org/show_bug.cgi?id=28457
+
+        When the image data is empty, instead of generating an <img> tag, generate
+        a text to indicate the image was deleted.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2011-04-14  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        make PrettyPatch.rb aware of checksums in png files
+        https://bugs.webkit.org/show_bug.cgi?id=58387
+
+        Patch v2 with nil checks in the case of file adds and deletes.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2011-04-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Revert http://trac.webkit.org/changeset/83750 because it broke PrettyPatch.
+        https://bugs.webkit.org/show_bug.cgi?id=58510        
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2011-04-12  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        make PrettyPatch.rb aware of checksums in png files
+        https://bugs.webkit.org/show_bug.cgi?id=58387
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2011-04-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Review tool should work well on iPad
+        https://bugs.webkit.org/show_bug.cgi?id=58351
+
+        On the iPad, the toolbar ends up at some random position in the middle
+        of the page because of how position:fixed interacts with scrolling on
+        the iPad.  I feel a bit dirty using a user agent detect, but I'm not
+        sure if there's a better way to detect whether the user agent has this
+        behavior.
+
+        * code-review.js:
+
+2011-03-15  David Levin  <levin@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Links from code reviews to trac are incorrect for files in Source/WebKit.
+        https://bugs.webkit.org/show_bug.cgi?id=56404
+
+        * PrettyPatch/PrettyPatch.rb: Remove WebKit from the list of top level
+          directories since it is now under Source.
+
+2011-03-10  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Adam Roben.
+
+        Formatted Diff for attachment 23920 is mangled
+        https://bugs.webkit.org/show_bug.cgi?id=21222
+
+        The mangled diff files mentioned in the bug were using Mac line
+        ending and this was causing problems for String#each_line. Now we
+        normalize the line endings in patch data before processing it.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2011-03-10  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Adam Roben.
+
+        PrettyPatch displays last two lines of a git-format-patch diff strangely
+        https://bugs.webkit.org/show_bug.cgi?id=29317
+
+        If the diff section has full range information, we parse only enough to cover the
+        range. This avoids incorrectly showing trailing lines (like git signature) as part
+        of the patch.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2011-03-10  Adam Roben  <aroben@apple.com>
+
+        Don't search for intra-line diffs in really long lines
+
+        Doing so can lead to hangs (or at least really slow execution).
+
+        Fixes <http://webkit.org/b/56109> run-webkit-tests sometimes times out on Windows XP Debug
+        (Tests) after fast/text/large-text-composed-char-dos.html fails (due to PrettyPatch
+        hanging?)
+
+        Reviewed by David Kilzer.
+
+        * PrettyPatch/PrettyPatch.rb:
+        (PrettyPatch.MAXIMUM_INTRALINE_DIFF_LINE_LENGTH): Added this new constant.
+        (PrettyPatch.DiffSection.initialize): Don't bother looking for intra-line diffs in lines
+        longer than the maximum length.
+
+2011-02-25  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [codereviewtool] fix expand links on git diffs
+        https://bugs.webkit.org/show_bug.cgi?id=55208
+
+        In git diffs, we don't have a "revision" span at the end
+        of each FileDiff.
+        * code-review.js:
+
+2011-02-23  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        autocomplete=off prevents refilling form fields on back/forward navigation
+        https://bugs.webkit.org/show_bug.cgi?id=47463
+
+        I haven't actually run this patch due to the difficulty of getting
+        a bugzilla instance running. It's simple enough code that I'm not too worried
+        about it.
+
+        * committers-autocomplete.js:
+
+2011-02-21  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [codereviewtool] focus first visible node if no node is focused
+        https://bugs.webkit.org/show_bug.cgi?id=54935
+
+        Now hitting j/k/n/p will focus the first/last visible node
+        if no other node is focused. Also tweaked the scroll into view
+        logic a bit to avoid scrolling in this case.
+
+        * code-review.js:
+
+2011-02-21  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [codereviewtool] remove patch fuzzing
+        https://bugs.webkit.org/show_bug.cgi?id=54940
+
+        This code is buggy and not as necessary now that we
+        include svn revision numbers in uploaded patches.
+
+        * code-review.js:
+
+2011-02-21  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [codereviewtool] focus comment on accept
+        https://bugs.webkit.org/show_bug.cgi?id=54930
+
+        * code-review.js:
+
+2011-02-20  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [codereviewtool] avoid overriding ctrl/cmd + r
+        https://bugs.webkit.org/show_bug.cgi?id=54852
+
+        * code-review.js:
+
+2011-02-16  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        keyboard support for extending/shrinking comment context
+        https://bugs.webkit.org/show_bug.cgi?id=54612
+
+        ctrl+shift+up/down will extend/shrink the comment context when
+        a comment is focused or when one is being edited.
+
+        Also, switch over to using keydown instead of keypress events.
+        This lets us share code for handling escape and other key events.
+        Also, keypress is evil and should die.
+
+        * code-review.js:
+
+2011-02-20  Ojan Vafai  <ojan@chromium.org>
+
+        Recommit accidental revert.
+        r79180 accidentally revereted r79178.
+        * code-review.js:
+
+2011-02-20  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [codereviewtool] add more help information
+        https://bugs.webkit.org/show_bug.cgi?id=54847
+
+        * code-review.js:
+
+2011-02-20  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [codereviewtool] use 'r' to focus the review select element
+        https://bugs.webkit.org/show_bug.cgi?id=54845
+
+        This allows for quick keyboard access to the toolbar items.
+        Hit r to get to the review select element. Then you can
+        tab to the cq/preview/publish elements.
+
+        * code-review.js:
+
+2011-02-20  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [codereviewtool] don't let lines/diffblocks be mouse focusable
+        https://bugs.webkit.org/show_bug.cgi?id=54851
+
+        Unfortunately, this will only work once https://bugs.webkit.org/show_bug.cgi?id=54727
+        is committed. In the interim, it won't break anything.
+
+        * code-review.js:
+
+2011-02-20  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [codereviewtool] use keydown instead of keypress
+        https://bugs.webkit.org/show_bug.cgi?id=54849
+
+        There is no functional change. This is just a cleanup
+        to make future patches (e.g. https://bugs.webkit.org/show_bug.cgi?id=54612)
+        cleaner.
+
+        * code-review.js:
+
+2011-02-20  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [codereviewtool] fix layout nit
+        https://bugs.webkit.org/show_bug.cgi?id=54848
+
+        There is occasionally an off-by-one in the 50% width
+        calculation. This ensures that the add lines always
+        line up with the shared context lines.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2011-02-20  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [codereviewtool] make escape hide the preview form
+        https://bugs.webkit.org/show_bug.cgi?id=54844
+
+        * code-review.js:
+
+2011-02-20  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [codereviewtool] make enter work when an individual line is focused
+        https://bugs.webkit.org/show_bug.cgi?id=54843
+
+        * code-review.js:
+
+2011-02-17  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        use shift+j/k to focus next/previous line
+        https://bugs.webkit.org/show_bug.cgi?id=54723
+
+        Tested on a large Hyatt change to confirm it performed fine.
+        (https://bugs.webkit.org/attachment.cgi?id=82533&action=review)
+
+        * code-review.js:
+
+2011-02-17  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        fix escape handling in code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=54722
+
+        This broke with http://trac.webkit.org/changeset/78948.
+        Apparently jquery events get a wrapped object that
+        does not expose keyIdentifier.
+
+        * code-review.js:
+
+2011-02-17  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        create comments when hitting enter with a focused diff
+        https://bugs.webkit.org/show_bug.cgi?id=54719
+
+        * code-review.js:
+
+2011-02-17  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        use actual browser focus in the code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=54726
+
+        This makes keyboard handling play better with focusable element
+        (i.e. links/textareas/buttons). Also, in theory, this makes
+        the review tool more amenable to screen readers (I think).
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2011-02-17  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Antonio Gomes.
+
+        make event handling work in Gecko
+        https://bugs.webkit.org/show_bug.cgi?id=54702
+
+        Gecko doesn't support the global event property. It's an IE-ism.
+
+        * code-review.js:
+
+2011-02-14  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        allow for modifying comments without the mouse
+        https://bugs.webkit.org/show_bug.cgi?id=54433
+
+        Use n/p to navigate the comments.
+        Enter to begin editing a comment.
+        Escape to finish editing a comment.
+
+        * code-review.js:
+
+2011-02-14  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        improve line selection in the code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=54430
+
+        -shift+click now extends the comment context
+        -selecting outside of a diff section no longer clears the selected lines.
+         Instead it just restricts the selected lines to that diff section.
+
+        * code-review.js:
+
+2011-02-10  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        remove extra space from expansion lines
+        https://bugs.webkit.org/show_bug.cgi?id=54266
+
+        * code-review.js:
+
+2011-02-09  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        only erase draft comments after publish is successful
+        https://bugs.webkit.org/show_bug.cgi?id=54163
+
+        If there is a conflict or 500, then draft comments will survive.
+        One drawback here is that the form post is now to the iframe,
+        so to break out of the iframe we redirect to the bug page, which
+        loses the information of who the email was sent to.
+
+        Once WebKit supports seamless iframes we should be able to avoid
+        the redirect.
+
+        * code-review.js:
+
+2011-02-09  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        save overall comments when saving drafts in the review tool
+        https://bugs.webkit.org/show_bug.cgi?id=54165
+
+        -save overall comments in localstorage as well
+        -save all draft comments as you type
+        -give a *subtle* indicator of saved state
+
+        The latter should also make it super easy if someone wanted to do
+        the work to store draft comments in appengine/s3/bugzilla/etc.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review-test.html:
+        * code-review.js:
+
+2011-02-08  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        fix toolbar anchoring in the code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=54058
+
+        Avoid the anchoring cycle of doom when on the cusp
+        of whether the toolbar needs to be anchored and
+        speculatively avoid the Firefox crash when resizing.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2011-02-07  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        bring back diff context lines into the review tool
+        https://bugs.webkit.org/show_bug.cgi?id=53974
+
+        * code-review.js:
+
+2011-02-01  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        include svn revisions in git diffs for the code review tool to use
+        https://bugs.webkit.org/show_bug.cgi?id=53569
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2011-02-01  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        make draft comments focusable
+        https://bugs.webkit.org/show_bug.cgi?id=53554
+
+        Makes frozen draft comments focusable. The ones that are currently being edited are not.
+        I'm on the fence whether they should be, but this seems good enough for now.
+
+        * code-review.js:
+
+2011-02-01  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        avoid jitter when loading the comments to a patch
+        https://bugs.webkit.org/show_bug.cgi?id=53570
+
+        * code-review.js:
+
+2011-02-01  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        [codereviewtool] extra space at the beginning of lines in side-by-side view
+        https://bugs.webkit.org/show_bug.cgi?id=53550
+
+        The newline between the spans turns into user-visible space in side-by-side mode.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2011-02-01  Ojan Vafai  <ojan@chromium.org>
+
+        Increment version number to cache-bust code-review.js.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2011-01-31  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Store draft comments in localStorage
+        https://bugs.webkit.org/show_bug.cgi?id=52866
+
+        * code-review.js:
+        * code-review-test.html
+
+2011-01-20  Ojan Vafai  <ojan@chromium.org>
+
+        Fix the review tool for image diffs. We would get a javascript error
+        because image diffs don't have line numbers.
+
+        * code-review.js:
+
+2011-01-20  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        Could review tool include style failure info?
+        https://bugs.webkit.org/show_bug.cgi?id=49049
+
+        This does not handle patches that have old paths (e.g. without the Source prefix).
+        Although that would be fairly straightforward to workaround.
+
+        * code-review.js:
+
+2011-01-20  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        handle cases where PrettyPatch.rb doesn't linkify filenames
+        https://bugs.webkit.org/show_bug.cgi?id=52834
+
+        * code-review.js:
+
+2011-01-20  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        fix goofup in http://trac.webkit.org/changeset/76082
+        https://bugs.webkit.org/show_bug.cgi?id=52830
+
+        We were showing the revision number of the patch at the bottom
+        of the diff and expanding from the bottom of the diff would fail.
+
+        Also, removed an unused variable and scoped queries appropriatly
+        to the file_diff they should have been operating on.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2011-01-19  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [reviewtool] Add a link for annotated trac page on review page
+        https://bugs.webkit.org/show_bug.cgi?id=52747
+
+        -add line numbers to all trac links to the first line in the file diff
+        -add annotate/review log links
+        -make file-diff links other than the file name only show when you mouseover the filediff
+        -fix white-space to only wrap the .text element and it's childen, any of it's siblings/parents
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2011-01-14  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        make line selection have a extend only from where you start the selection in the code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=52485
+
+        * code-review.js:
+
+2011-01-18  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        make file expansion use the file at the svn revision the diff was created at
+        https://bugs.webkit.org/show_bug.cgi?id=52650
+
+        This only works for patches created with SVN for now since the git
+        diff does not include SVN revision numbers in it.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2011-01-15  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Move WebKit2 into Source
+        https://bugs.webkit.org/show_bug.cgi?id=52438
+
+        Remove WebKit2 from the list of top-level source directories.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2011-01-14  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        fix expanded lines in the code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=52498
+
+        Fixes them to work now that we have wrapper divs.
+        Also fixes the long-standing bug that the line numbers
+        were incorrect sometimes.
+
+        * code-review.js:
+
+2011-01-14  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        put remove lines to the left of add lines in sidebyside view
+        https://bugs.webkit.org/show_bug.cgi?id=52458
+
+        Also, sneaking in a fix to make long lines with no whitespace wrap.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2011-01-14  Ojan Vafai  <ojan@chromium.org>
+
+        Fix bad merge in r75816.
+
+        * code-review.js:
+
+2011-01-14  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        improve line selection with fast drags
+        https://bugs.webkit.org/show_bug.cgi?id=52477
+
+        * code-review.js:
+
+2011-01-14  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        tweak line selection in code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=52462
+
+        -Improve handling of data-comment-base-line code to deal with
+        lines that have multiple values.
+        -Make it so that if you click on the line immediately above
+        a line that has a comment it will add a new comment instead of
+        adding lines to the following comment. If the last selected line
+        overlaps existing comment lines though they will still get
+        added to the existing comment.
+
+        * code-review.js:
+
+2011-01-14  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        fix bugs going back and forth between unified and sidebyside
+        https://bugs.webkit.org/show_bug.cgi?id=52470
+
+        Now that we're appending DOM nodes directly, we only want to
+        get the first ".text" element in the subtree. In the cases
+        where there are multiple, their contents are the same.
+
+        Also, when making side-by-side expansion lines, we need to
+        clone the contents so we have a second copy to append to the DOM.
+
+        * code-review.js:
+
+2011-01-13  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        simplify keyboard handling in code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=52407
+
+        Now that we have DiffBlock containers, the only things that are
+        focusable are previousComment nodes and DiffBlock containers
+        that contain add/remove lines.
+
+        Also, this means we show the focus border around the entire diff
+        instead of just the first line.
+
+        * code-review.js:
+
+2011-01-13  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        add container divs for diff blocks
+        https://bugs.webkit.org/show_bug.cgi?id=52400
+
+        This will help simplify a lot of code in code-review.js
+        and make side-by-side diffs better (i.e. put removed lines
+        to the left of corresponding added lines).
+
+        Also, allow for running the JS from a local file. Now you can modify code-review.js
+        to point to a local file and then run:
+        ruby prettify.rb < foo.diff > foo.html
+
+        foo.html will load a dummy code review matching foo.diff.
+
+        Before structure:
+        Line
+        Line remove
+        Line add
+        Line add
+        Line
+
+        After structure:
+        DiffBlock
+          DiffBlockPart shared
+            Line shared
+        DiffBlock
+          DiffBlockPart remove
+            Line remove
+          DiffBlockPart add
+            Line add
+            Line add
+        DiffBlock
+          DiffBlockPart shared
+            Line shared
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2011-01-12  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        fix assorted bugs with expansion lines
+        https://bugs.webkit.org/show_bug.cgi?id=52326
+
+        -Clicking "all" would collapse whitespace in the expanded lines.
+        -Converted the remaining line creation code to using the DOM.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2011-01-12  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        review tool formatted diff doesn't match the uploaded diff
+        https://bugs.webkit.org/show_bug.cgi?id=51960
+
+        PrettyPatch works just fine if there is no newline at the end of the file.
+
+        * attachment.cgi:
+
+2011-01-12  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Bugzilla: Add keyboard shortcuts to jump to next change
+        https://bugs.webkit.org/show_bug.cgi?id=52305
+
+        Comments and diff blocks go in the same queue. If you have a 
+        comment focused, then j/k will focus the next/prev diff block
+        with respect to that comment.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2011-01-12  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        show shared lines on both sides in code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=52308
+
+        We were appending the same DOM node twice. Instead, make
+        the from column a clone of the original node.
+
+        * code-review.js:
+
+2011-01-12  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        fix wrapping bug in expansion lines in the code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=52270
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2011-01-11  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        fix difflink centering to be vertical, not horizontal
+        https://bugs.webkit.org/show_bug.cgi?id=52263
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2011-01-11  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        remember diffstate for review tool
+        https://bugs.webkit.org/show_bug.cgi?id=52253
+
+        If you use the global sidebyside/unified links, store the diff type
+        in localstorage. Then, onload, use that diff type. That way, people
+        who prefer one diff type or the other can always get that by default.
+
+        * code-review.js:
+
+2011-01-11  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        allow sidebysideifying individual files in the code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=52226
+
+        * code-review.js:
+
+2011-01-11  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        fix exception when adding a comment to a side-by-side diff
+        https://bugs.webkit.org/show_bug.cgi?id=52240
+
+        prev() and next() won't get the previous and next lines in
+        side-by-side mode. Instead do a query to find them.
+
+        * code-review.js:
+
+2011-01-11  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        maintain word diffs when converting to side-by-side and back
+        https://bugs.webkit.org/show_bug.cgi?id=52244
+
+        Using textContent would lose the spans use to make the word-diff highlighting.
+        Just move the span element itself.
+
+        * code-review.js:
+
+2011-01-11  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        fix layout error with comments in code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=52230
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2011-01-10  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        convert back to unified from sidebyside diff
+        https://bugs.webkit.org/show_bug.cgi?id=52180
+
+        Remove url fragment stuff. Having it be per-filediff is too complicated.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2011-01-07  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Move WebCore to Source
+        https://bugs.webkit.org/show_bug.cgi?id=52050
+
+        Remove reference to old directory.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2011-01-06  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        side-by-side diffs in the code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=52019
+
+        Support for conversion from the formatted diff to a side-by-side diff.
+        Maintains comments and new comments can be added.
+
+        The main architectural change is that Line elements are no longer necessarily
+        siblings. Each physical line is now in a LineContainer and LineContainers are
+        siblings. Each Line corresponds to a Line in the unified diff and has an id (e.g. line12).
+        A Line can be a LineContainer or a child of a LineContainer.
+
+        In this way, converting to side-by-side and, in the future, back to unified is non-lossy.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2011-01-06  Ojan Vafai  <ojan@chromium.org>
+
+        Fix line context when replying to comments.
+
+        * code-review.js:
+
+2011-01-05  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        change the way we do comment highlighting in the code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=51971
+
+        Store a space-separated list of base line IDs on each line that has
+        comments associated with that line. This allows for overlapping comments,
+        but more importantly, makes adding side-by-side diff support easier.
+
+        * code-review.js:
+
+2011-01-05  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        minor code cleanup for code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=51962
+
+        Consolidates some queries to using shared functions.
+
+        * code-review.js:
+
+2011-01-05  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        assorted cleanups to prepare for side-by-side diffing
+        https://bugs.webkit.org/show_bug.cgi?id=51961
+
+        Mostly, use selector queries instead of assuming comments are next siblings.
+
+        * code-review.js:
+
+2011-01-05  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        fix message container selector for code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=51959
+
+        * code-review.js:
+
+2011-01-04  Ojan Vafai  <ojan@chromium.org>
+
+        Increment version number to avoid getting the cached JS file.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2010-12-15  Ojan Vafai  <ojan@chromium.org>
+ 
+        Reviewed by Adam Barth.
+
+        anchor the toolbar to the bottom of the diff if the diff doesn't take a full screen of height
+        https://bugs.webkit.org/show_bug.cgi?id=51162
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2011-01-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move JavaScriptCore to Source
+        https://bugs.webkit.org/show_bug.cgi?id=51604
+
+        * PrettyPatch/PrettyPatch.rb:
+          - Remove reference to JavaScriptCore as a source directory.
+
+2011-01-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move Sources to Source
+        https://bugs.webkit.org/show_bug.cgi?id=51794
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2010-12-31  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Move PageLoadTests to PerformanceTests/PageLoad
+        https://bugs.webkit.org/show_bug.cgi?id=51771
+
+        Update list of top-level open-source directories.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2010-12-31  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Move SunSpider into PerformanceTests
+        https://bugs.webkit.org/show_bug.cgi?id=51769
+
+        Update list of top-level open-source directories.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2010-12-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move autotools into Sources
+        https://bugs.webkit.org/show_bug.cgi?id=51630
+
+        * PrettyPatch/PrettyPatch.rb:
+          - Remove reference to non-existant autotools directory.
+
+2010-12-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move cmake into Sources
+        https://bugs.webkit.org/show_bug.cgi?id=51631
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2010-12-23  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Move JavaScriptGlue into Sources
+        https://bugs.webkit.org/show_bug.cgi?id=51583
+
+        PrettyPatch keeps a list of the top-level directories that exist in
+        trac.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2010-12-20  Adam Barth  <abarth@webkit.org>
+
+        One more tweak caused by moving the web sites around.  I had this
+        change in my patch originally, but I missed it because I had to use
+        server-side svn move commands to move the bulk of the web site files.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2010-12-18  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Move WebKitExamplePlugins to Examples
+        https://bugs.webkit.org/show_bug.cgi?id=51291
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2010-12-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Rename WebKitTools to Tools
+        https://bugs.webkit.org/show_bug.cgi?id=49861
+
+        * PrettyPatch/PrettyPatch.rb:
+        * committers-autocomplete.js:
+
+2010-12-17  Ojan Vafai  <ojan@chromium.org>
+
+        Increment psuedo-version number to avoid pulling cached version.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2010-12-17  Ojan Vafai  <ojan@chromium.org>
+
+        Speculative fix for the code review tool in Firefox.
+        Fixes a JS error and makes the status bubble mostly work
+        if postMessage is not supported.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2010-12-15  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        size status bubble to it's contents on the code review page
+        https://bugs.webkit.org/show_bug.cgi?id=51142
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2010-12-15  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        fix goofups from r74142 and r74130
+        https://bugs.webkit.org/show_bug.cgi?id=51146
+
+        Accidentally shrank the inline comment boxes and made
+        the toolbar not show up when there were image diffs.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2010-12-14  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        add ability to view for file context to the review tool
+        https://bugs.webkit.org/show_bug.cgi?id=51057
+
+        At the beginning/end of each file diff and between each
+        hunk add links to expand the context. For now it grabs the
+        tip of tree version of the file and tries to apply the diff 
+        to that file. If it can't apply, then it gives up as we
+        wouldn't want to show the wrong lines of context.
+
+        In the future, we can consider adding the upload svn revision
+        to the diff itself, then we could fallback to the file at that
+        revision if tip of tree doesn't apply.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2010-12-08  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [reviewtool] should always show overall comments text box
+        https://bugs.webkit.org/show_bug.cgi?id=45870
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2010-12-04  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Increase size of status bubbles
+        https://bugs.webkit.org/show_bug.cgi?id=50496
+
+        The current available space isn't enough to display all
+        pending results including position in the queue.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2010-12-04  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Increase size of status bubbles
+        https://bugs.webkit.org/show_bug.cgi?id=50496
+
+        The current available space isn't enough to display all
+        pending results including position in the queue.
+
+        * template/en/custom/attachment/edit.html.tmpl:
+        * template/en/custom/attachment/list.html.tmpl:
+        * template/en/custom/attachment/reviewform.html.tmpl:
+
+2010-11-08  Adam Barth  <abarth@webkit.org>
+
+        Update help text to match behavior change.
+
+        * code-review.js:
+
+2010-11-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Restore normal meaning of double-click on patch review page?
+        https://bugs.webkit.org/show_bug.cgi?id=47641
+
+        After this patch, you need to click on the line numbers to add a
+        comment.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2010-10-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Exception in committers-autocomplete in Firefox
+        https://bugs.webkit.org/show_bug.cgi?id=47456
+
+        Remove dependency on a WebKit-only quirk.  IMHO, this quirk is bad for
+        the long-term health of the web, but that's a discussion for another
+        patch.
+
+        * committers-autocomplete.js:
+
+2010-10-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Bugmail for new attachments should link to the reviewtool
+        https://bugs.webkit.org/show_bug.cgi?id=47440
+
+        As requested by olliej himself.  This patch was constructed by pure
+        reason.  I have no way to actually run this code.
+
+        * Bugzilla/BugMail.pm:
+
+2010-09-28  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Convert verbatim unicode values in comitter names to characters
+
+        * committers-autocomplete.js:
+
+2010-09-24  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Support Unicode-strings in committers-autocomplete script
+
+        * committers-autocomplete.js:
+
+2010-09-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by John Sullivan.
+
+        New review-page design doesn't include name of reviewer
+        https://bugs.webkit.org/show_bug.cgi?id=46271
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2010-09-22  Adam Barth  <abarth@webkit.org>
+
+        Fix typo in CSS.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2010-09-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add link to bug to review page
+        https://bugs.webkit.org/show_bug.cgi?id=46192
+
+        To make room for the link, I moved the help text to the top of the page
+        and tweaked the language to help folks discover that you can select
+        context using the line numbers.
+
+        Also, move more text to sans-serif since that fits in better with the
+        pretty-patch fonts.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2010-09-21  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        [reviewtool] Publish button doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=46168
+
+        Darin's recent patch had a runtime error.  Sadly, we don't have any
+        testing for this code.
+
+        * code-review.js:
+
+2010-09-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Add Preview button and link to bug to patch review bar
+        https://bugs.webkit.org/show_bug.cgi?id=46153
+
+        * PrettyPatch/PrettyPatch.rb: Bump version number to make caches happy.
+        * code-review.js: Added Preview button and link to bug.
+
+2010-09-19  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [reviewtool] Publish button should actually publish the review comments
+        https://bugs.webkit.org/show_bug.cgi?id=46074
+
+        Instead of showing the confirmation lightbox, the Publish button now
+        publishes the comments directly.  If there's demand for a "Preview"
+        button, we can find a way to add that feature.
+
+        * code-review.js:
+
+2010-09-19  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move reviewtool to action=review
+        https://bugs.webkit.org/show_bug.cgi?id=46071
+
+        This patch removes the old Review Patch screen and moves the new
+        reviewtool from Pretty Diff to Review Patch.
+
+        * attachment.cgi:
+        * code-review.js:
+
+2010-09-19  Adam Barth  <abarth@webkit.org>
+
+        Review tool UI tweak.  This patch lengthens the status bubbles so all
+        the bubble fit (even when they have numbers inside).
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2010-09-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Fixed a typo.
+
+        * code-review.js: Changed the label of the OK button from Ok to OK.
+
+2010-09-15  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Only show the review-in-context link if there are contextual comments.
+
+        * code-review.js:
+
+2010-09-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [reviewtool] Show the status bubbles on the toolbar
+        https://bugs.webkit.org/show_bug.cgi?id=45861
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2010-09-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [reviewtool] Allow setting review and commit-queue flags from main review screen
+        https://bugs.webkit.org/show_bug.cgi?id=45860
+
+        This patch adds drop down menus for adjusting the review and
+        commit-queue flags from the main review screen.  These controls don't
+        appear immediately because we need to read the state of the flags off
+        the details page.
+
+        It's a slight sadness that bugzilla doesn't have a clean way of
+        identifying which select control is associated with a given flag.  The
+        flags seem to have some sort of id, but it's unclear to me how to map
+        that id back to a notion of "review" or "commit-queue".  Instead, we
+        look for some magic strings in the title.  I'm sure this will come back
+        to bit us at some point, but I'm not sure what to do that's better.
+        (The webkitpy solution to this problem is to assume that the flags are
+        in a given order, but this seems better.)
+
+        * PrettyPatch/PrettyPatch.rb:
+            - Bump version number to bust throuh caches.
+        * code-review.js:
+
+2010-09-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [reviewtool] Comments should quote previous comments on the same line
+        https://bugs.webkit.org/show_bug.cgi?id=45847
+
+        Now when you reply to a previous comment, the tool will quote the
+        previous comment in the bugs.webkit.org post.  This makes it eaiser for
+        folks following along in email to understand the discussion.
+
+        While I was editing this code, I also cleaned up some of the whitespace
+        handling in comments.
+
+        * code-review.js:
+
+2010-09-15  Adam Barth  <abarth@webkit.org>
+
+        Minor UI tweak to the review tool.  We want to display newlines in
+        previous and frozen comments instead of collapsing them.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2010-09-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        bugs.webkit.org should autocomplete WebKit Committers and Reviewers
+        https://bugs.webkit.org/show_bug.cgi?id=45799
+
+        This patch implements an autocomplete dropdown that helps users type
+        the names of WebKit committers and reviewers.  The script grabs the
+        data from SVN now that wms set up CORS for http://svn.webkit.org.
+        Security technology for the win.
+
+        This script is based on (well, essentially copied from) the popular
+        autocomplete extension:
+
+        https://chrome.google.com/extensions/detail/olaabhcgdogcbcoiolomlcodkngnemfb
+
+        I asked Ojan, and said he was fine licensing the code under the BSD
+        license.  I'm not sure how the patch interacts with the extension, but
+        we can retire the extension if they interact poorly.
+
+        * committers-autocomplete.js: Added.
+        * template/en/default/global/footer.html.tmpl:
+            - Add the script to every page on bugs.webkit.org
+
+2010-09-14  Adam Barth  <abarth@webkit.org>
+
+        Add a license block to the reviewtool.  I should have added this from
+        the start.  According to the SVN log, I'm the only one to have ever
+        touched this file.
+
+        * code-review.js:
+
+2010-09-07  Adam Barth  <abarth@webkit.org>
+
+        Minor tweaks to the reviewtool UI.
+
+        Rename Cancel to Discard to make it more clear what the button does.
+        Also, move the style declaration for the focus ring later in the sheet
+        so it works.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2010-09-06  Adam Barth  <abarth@webkit.org>
+
+        Small UI tweak to the reviewtool.  Make the Ok/Cancel buttons a bit
+        bigger.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2010-09-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [reviewtool] Add a quick animation for opening/closing comment boxes
+        https://bugs.webkit.org/show_bug.cgi?id=45278
+
+        The 200ms animation slides in and out the line-by-line comment box.
+
+        * code-review.js:
+
+2010-09-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [reviewtool] Add a field for overall comments
+        https://bugs.webkit.org/show_bug.cgi?id=45273
+
+        This patch does a couple logically separate things that could be
+        separated into smaller patches:
+
+        1) This patch adds an "overall comments" field where you can enter
+           overall comments about the patch.  These comments appear at the top
+           of the bugzilla posting.  Currently, these aren't redisplayed when
+           viewing the patch, but I plan to add that in a future patch.
+
+        2) This patch renames some of the CSS classes to more consistently
+           follow the camelCase style that PrettyPatch uses.
+
+        3) This patch moves the "prepare comments" button to the left of the
+           toolbar and renames is to "publish comments".  This makes more sense
+           when you scroll to the bottom of the page and enter in some overall
+           comments.
+
+        4) When you attempt to add a comment to a line that already has a
+           "frozen" comment, we now unfreeze the comment instead of doing
+           nothing.  The old behavior was kind of frustrating if you didn't
+           know that you could unfreeze a comment by clicking on it.
+
+        * PrettyPatch/PrettyPatch.rb:
+            - Update CSS.
+        * code-review.js:
+
+2010-09-06  Adam Barth  <abarth@webkit.org>
+
+        [reviewtool] Tweak the ok button to cancel the comment if the comment
+        is empty.  Previously we would get into a bad state where a line had a
+        comment but there was no longer any way to access it.
+
+        * code-review.js:
+
+2010-09-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [reviewtool] Add an "ok" button that collapses review comments
+        https://bugs.webkit.org/show_bug.cgi?id=45255
+
+        Many folks (including myself) are too trigger-happy with the "delete"
+        button that we end up deleting perfectly good review comments.  This
+        patch adds an "ok" button to absorb these clicks (and renames "delete"
+        to "cancel").  When you click the ok button, the comment becomes
+        non-editable and the box shrinks to fit the text.  You can click the
+        text to get back to the editable version.
+
+        * code-review.js:
+
+2010-08-31  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [reviewtool] Make it easy to scroll through review comments
+        https://bugs.webkit.org/show_bug.cgi?id=45002
+
+        This patch lets you scroll through review comments using "n" (for next)
+        and "p" (for previous).  It also attributes comments to their authors.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2010-08-31  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [reviewtool] Show previous comments inline in diff
+        https://bugs.webkit.org/show_bug.cgi?id=44977
+
+        This patch adds basic support for showing previous comments inline in
+        the diff.  We crawl the bugs.webkit.org comments about this attachment
+        and extract comments related to specific lines.  We then show the
+        comments inline in the diff.
+
+        This part of the tool needs a bunch of polish, but this at least is a
+        starting point for further work.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2010-08-31  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [reviewtool] Allow reviewer to select lines of context by dragging over the line numbers
+        https://bugs.webkit.org/show_bug.cgi?id=44936
+
+        * PrettyPatch/PrettyPatch.rb:
+            - Add a version number to bust through bugs.webkit.org's aggressive
+              cacheing.
+        * code-review.js:
+
+2010-08-30  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [review tool] Let reviewer select how much context to show in snippet
+        https://bugs.webkit.org/show_bug.cgi?id=44905
+
+        We now highlight the context for a comment in yellow on the left (where
+        the line numbers are).  Clicking a line number expands or contracts the
+        amount of context, as appropriate.  Informal user testing indicates
+        that we might want to support drag as well.
+
+        This patch also changes the "open a comment box here" action to
+        double-click to avoid issues with mis-clicks.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2010-08-29  Adam Barth  <abarth@webkit.org>
+
+        Attempt to make Sam's life easier by not opening a comment text field
+        if there's a selection.  This should make it easier to copy/paste text
+        out of the diff without accidentally opening comment boxes.
+
+        * code-review.js:
+
+2010-08-29  Adam Barth  <abarth@webkit.org>
+
+        Turns out we're supposed to use find instead of children here.
+
+        * code-review.js:
+
+2010-08-29  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Awesomify pretty-diff based review tool
+        https://bugs.webkit.org/show_bug.cgi?id=44835
+
+        This patch replaces the existing inline comment feature with a new
+        implementation.  Hopefully the new implementation is more awesome.
+        It's not 100% done yet, but I'd like to get this version out there to
+        see how it works.
+
+        Unlike the previous version this version works with the "Formatted
+        Diff" link instead of the "Review Patch" link.  Hopefully that will
+        avoid interfering with folks who like the old style review.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js: Added.
+        * prototype.js: Removed.
+
+2010-08-19  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        webkit-patch barfed on upload with a new image test result
+        https://bugs.webkit.org/show_bug.cgi?id=39097
+
+        * PrettyPatch/PrettyPatch.rb: don't use full path to git
+
+2010-08-19  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, setting svn:eol-style native on ChangeLog.
+
+2010-08-19  Tony Chang  <tony@chromium.org>
+
+        Unreviewed.  Just removing \r's from ChangeLog.
+
+2010-08-02  Adam Roben  <aroben@apple.com>
+
+        Tell the patch prettifier about some (not so) new directories
+
+        * PrettyPatch/PrettyPatch.rb: Added WebKit2, autotools, and cmake
+        directories.
+
+2010-07-27  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Provide a Helpful Link for Web Inspector Bugs in Bugzilla
+        https://bugs.webkit.org/show_bug.cgi?id=43065
+
+        * template/en/custom/global/choose-product.html.tmpl: Added. Explicitly added a link for the Web Inspector.
+
+2010-06-09  Julie Parent  <jparent@chromium.org>
+
+        Reviewed by David Kilzer.
+
+        Bugzilla: Don't send mail for cancel/deny/granted for in-rietveld.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40345
+
+        * Bugzilla/Flag.pm:
+
+2010-05-17  Julie Parent  <jparent@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Rietveld review page should dedicate more space to Rietveld, less to high level comments form.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39244
+
+        * template/en/custom/attachment/reviewform.html.tmpl:
+        Delete a random BR amongst the hidden elements that was causing extra whitespace.
+        * template/en/custom/attachment/rietveldreview.html.tmpl:
+        Increase size of Rietveld frame to 80%, from 60%.
+
+2010-05-14  Julie Parent  <jparent@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Bugzilla: Only show "Rietveld Review" link when in-rietveld is set to +.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=39141
+
+        * template/en/custom/attachment/list.html.tmpl:
+
+2010-05-13  Julie Parent  <jparent@chromium.org>
+
+        Reviewed by David Kilzer.
+
+        Bugzilla: Don't send mail if the only change is to the in-rietveld flag.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=39090
+
+        * Bugzilla/BugMail.pm:
+
+2010-05-12  Julie Parent  <jparent@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Hide the in-rietveld flag in the UI.  It is only used only by tooling and shouldn't clutter the UI.
+        https://bugs.webkit.org/show_bug.cgi?id=39024
+
+        * template/en/custom/attachment/list.html.tmpl:
+          Removes this flag entirely from the UI, not needed on this page.
+        * template/en/custom/flag/list.html.tmpl: Added.
+          Copied from template/en/default/flag/list.html.tmpl with only changes inside the if WEBKIT_CHANGES section.
+          Hides the flag rather than removing it completely, so tools can still interact with it.  
+
+2010-05-12  Julie Parent  <jparent@chromium.org>
+
+        Reviewed by David Kilzer.
+
+        Adds support for Rietveld reviews.  When there is an associated
+        Rietveld id for a patch, adds a link to do a Rietveld review instead.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38143
+
+        * attachment.cgi:
+            Added support for handling action=rietveldreview.
+        * template/en/custom/attachment/list.html.tmpl:
+            Adds a link to use rietveld review iff the in_rietveld flag is set.
+        * template/en/custom/attachment/reviewform.html.tmpl:
+            Detects if we are in rietveld review mode due to query string paramter,
+            and customizes the review form slightly:
+                - Changes text describing comment field.
+                - Comment field does not include quoted patch.
+                - Submit button fetches from Rietveld instead of just submitting.
+        * template/en/custom/attachment/rietveldreview.html.tmpl: Added.
+            New template for rietveldreview mode.  Hosts the rietveld frame in the
+            top and the regular comments form in the bottom.
+            Uses postMessage to communicate with Rietveld frame.
+
+2010-05-08  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Allow long comment lines to wrap to the window width instead
+        of to 80 characters.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37792
+
+        * Bugzilla/Constants.pm:
+          - Introduced a new constant COMMENT_COLS_WRAP to replace COMMENT_COLS
+            inside the wrap_comment() subroutine.  The new constant effectively
+            disables text wrapping by increasing the value used in wrap_comment()
+            from 80 characters to a very large value (8000).
+        * Bugzilla/Util.pm:
+          - Replaced COMMENT_COLS with COMMENT_COLS_WRAP inside wrap_comment().
+        * skins/custom/global.css:
+        (.bz_comment_text):
+          - Eliminate the width styling on comments to allow long lines
+            to wrap at the window width.
+        (.bz_comment_text > span.quote):
+          - Inherit the "white-space" property.  This prevents long quoted
+            lines in comments from causing non-quoted lines to extend beyond
+            the window width.
+
+2010-04-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        The new review tools shouldn't clear the comment box automatically
+        https://bugs.webkit.org/show_bug.cgi?id=38004
+
+        Instead, we now have a button for doing that explicitly.  If people
+        like this tool, we can look at fancier solutions.
+
+        Also, tried to make the tool work on the edit page as well as the review page.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2010-04-22  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Turns out we need to do more escaping because Ruby was
+        explanding our newlines, creating a syntax error.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2010-04-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Hack up PrettyDiff to allow line-by-line comments
+        https://bugs.webkit.org/show_bug.cgi?id=37886
+
+        Admittedly a bit of a hack, this is a basic line-by-line editor we can
+        play with thanks to Andrew Scherkus.  It's meant to integrate with the
+        "review" page at bugs.webkit.org.
+
+        I changed a few things from Andrew's original version:
+        1) Trigger text boxes on single click to make iPhone/iPad reviewing
+        easier.
+        2) Clear the main text box on load.
+        3) Reference a version of prototype.js on bugs.webkit.org.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * prototype.js: Added.
+
+2010-02-22  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Don't reset the assignee back to default on component change
+
+        https://bugs.webkit.org/show_bug.cgi?id=35236
+
+        There's a risk of reseting a valid assignee for example when
+        triaging a bug. All components in WebKit have the default 
+        assignee set to webkit-unassigned@webkit.org so this should
+        not cause problems for people relying on this functionality.
+
+        * template/en/custom/bug/edit.html.tmpl:
+
+2010-01-22  Janusz Lewandowski  <lew21@xtreeme.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        run-webkit-tests fails on Ruby 1.9
+        https://bugs.webkit.org/show_bug.cgi?id=33554
+        inject does not work with strings any more, so BugsSite/PrettyPatch/PrettyPatch.rb prints lots of errors.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2010-01-20  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Adam Barth.
+
+        Adjust height of status-bubbles to prevent them being cut.
+
+        * template/en/custom/attachment/edit.html.tmpl:
+        * template/en/custom/attachment/list.html.tmpl:
+        * template/en/custom/attachment/reviewform.html.tmpl:
+
+2010-01-08  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/33410> Fix "View Plain Diff"/"View Formatted Diff" button
+
+        Reviewed by Adam Barth.
+
+        This button was broken during a previous Bugzilla upgrade after
+        changes were made to the names of objects exposed on templates.
+
+        * template/en/custom/attachment/reviewform.html.tmpl: Changed
+        attachid to attachment.id and ispatch to attachment.ispatch.
+        Also tweaked the format to use 4 table columns instead of 5.
+
+2010-01-08  David Kilzer  <ddkilzer@apple.com>
+
+        Included UNCONFIRMED bugs by default in advanced search query
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * data/params: Prepended 'bug_status=UNCONFIRMED&' to
+        'defaultquery' parameter.
+
+2010-01-08  David Kilzer  <ddkilzer@apple.com>
+
+        FIX: Make patch status appear on reviewform.html.tmpl
+
+        * template/en/custom/attachment/reviewform.html.tmpl: Check
+        attachment.ispatch (not just ispatch) when deciding whether
+        to display patch status.  Also update layout a bit.
+
+2010-01-08  David Kilzer  <ddkilzer@apple.com>
+
+        Update data/params parameters
+
+        * data/params: Updated 'timezone' to turn off DST.  Updated
+        'usebugaliases' and 'usevotes' to turn them off.
+
+2010-01-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Show patch status in bugs.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=33368
+
+        This patch adds an iframe to the show_bug page and the edit attachment
+        page that displays whether the attachment passed the various bots.
+
+        * template/en/custom/attachment/edit.html.tmpl:
+        * template/en/custom/attachment/list.html.tmpl:
+        * template/en/custom/attachment/reviewform.html.tmpl:
+
+2009-12-07  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by David Kilzer.
+
+        Bugzilla should show images in git patches
+        https://bugs.webkit.org/show_bug.cgi?id=31395
+
+        Attempt to go r51748 again using --directory option of git-apply.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2009-12-06  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Unreviewed. Revert r51748.
+
+        Bugzilla should show images in git patches
+        https://bugs.webkit.org/show_bug.cgi?id=31395
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2009-12-06  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by David Kilzer.
+
+        Bugzilla should show images in git patches
+        https://bugs.webkit.org/show_bug.cgi?id=31395
+
+        Show images in git patches using git-apply.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2009-10-23  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        PrettyPatch should show images even when they have the wrong mime type
+        https://bugs.webkit.org/show_bug.cgi?id=29506
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2009-10-17  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30470
+        Make marking a bug as duplicate easier
+
+        * js/field.js: (setResolutionToDuplicate): Focus the edit field, too.
+
+2009-10-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30470
+        Make marking a bug as duplicate easier
+
+        * js/field.js: (setResolutionToDuplicate): Show edit field right away, don't make the user
+        click again.
+
+2009-09-09  David Kilzer  <ddkilzer@apple.com>
+
+        Update data/params parameters
+
+        * data/params: Updated 'attachment_base' parameter for secure
+        attachments.  Updated 'mybugstemplate' parameter to search for
+        bugs in UNCONFIRMED, ASSIGNED and REOPENED status in addition to
+        NEW status.
+
+2009-08-11  David Kilzer  <ddkilzer@apple.com>
+
+        Updated data/params parameter
+
+        * data/params: Updated 'loginnetmask' parameter to allow users
+        to choose whether their cookies are restricted to a single IP
+        address or not.
+
+2009-07-07  David Kilzer  <ddkilzer@apple.com>
+
+        Updated BugsSite with local changes on server
+
+        The new files were created by checksetup.pl during the upgrade
+        to Bugzilla 3.2.3.  The rest are self-explanatory.
+
+        * data: Added "bugzilla-update.xml" to svn:ignore.
+        * data/attachments: Added "groups.*" to svn:ignore.
+        * data/params: Updated for a few changed parameters.
+
+        * lib/.htaccess: Added.
+        * skins/contrib/Dusk/IE-fixes.css: Added.
+        * skins/contrib/Dusk/admin.css: Added.
+        * skins/contrib/Dusk/create_attachment.css: Added.
+        * skins/contrib/Dusk/dependency-tree.css: Added.
+        * skins/contrib/Dusk/duplicates.css: Added.
+        * skins/contrib/Dusk/editusers.css: Added.
+        * skins/contrib/Dusk/help.css: Added.
+        * skins/contrib/Dusk/index.css: Added.
+        * skins/contrib/Dusk/panel.css: Added.
+        * skins/contrib/Dusk/params.css: Added.
+        * skins/contrib/Dusk/release-notes.css: Added.
+        * skins/contrib/Dusk/show_bug.css: Added.
+        * skins/contrib/Dusk/show_multiple.css: Added.
+        * skins/contrib/Dusk/summarize-time.css: Added.
+        * skins/contrib/Dusk/voting.css: Added.
+        * skins/contrib/Dusk/yui: Added.
+        * skins/contrib/Dusk/yui/calendar.css: Added.
+        * skins/custom/IE-fixes.css: Added.
+        * skins/custom/admin.css: Added.
+        * skins/custom/buglist.css: Added.
+        * skins/custom/create_attachment.css: Added.
+        * skins/custom/dependency-tree.css: Added.
+        * skins/custom/duplicates.css: Added.
+        * skins/custom/editusers.css: Added.
+        * skins/custom/help.css: Added.
+        * skins/custom/panel.css: Added.
+        * skins/custom/params.css: Added.
+        * skins/custom/release-notes.css: Added.
+        * skins/custom/show_bug.css: Added.
+        * skins/custom/show_multiple.css: Added.
+        * skins/custom/summarize-time.css: Added.
+        * skins/custom/voting.css: Added.
+        * skins/custom/yui: Added.
+        * skins/custom/yui/calendar.css: Added.
+
+2009-07-03  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 26958: Change edit link to review link in request messages
+
+        <https://bugs.webkit.org/show_bug.cgi?id=26958>
+
+        Reviewed by Dan Bernstein.
+
+        * template/en/custom/request/email.txt.tmpl: Copied from BugsSite/template/en/default/request/email.txt.tmpl.
+        Changed link from "action=edit" to "action=review".
+
+2009-07-03  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 26950: Make the summary and alias fields support click-to-edit
+        <https://bugs.webkit.org/show_bug.cgi?id=26950>
+
+        Reviewed by Maciej Stachowiak.
+
+        Original patch by Maciej Stachowiak.
+
+        * js/field.js:
+        (hideEditableField): Updated to add click event listeners to the
+        alias and short description elements to make them easier to
+        edit.  Renamed field_id parameter to field2_id (short
+        description id) and added a field1_id parameter (alias id).
+        (showEditableField): If a third parameter is passed in the
+        ContainerInputArray parameter, use it to find the element to
+        focus.  Otherwise, fall back to the original behavior of
+        focusing the first input field.
+        (hideAliasAndSummary): Changed to pass the id for the alias
+        element to hideEditableField().
+
+2009-07-02  David D. Kilzer  <ddkilzer@apple.com>
+
+        Config file for contrib/recode.pl when upgrading bugs.webkit.org
+
+        Current as of midday on Wednesday, July 1, 2009.
+
+        * contrib/recode-overrides.txt: Added.
+
+2009-07-02  David D. Kilzer  <ddkilzer@apple.com>
+
+        Workaround for WebKit Bug 9630 when running contrib/recode.pl
+
+        A number of WebKit nightly builds included Bug 9630 which caused
+        non-breaking space characters (0xA0) to be submitted within the
+        content of textarea elements.
+
+        * contrib/recode.pl: To work around these 0xA0 characters, try
+        an encoding of cp1252 and use it if it works.
+
+2009-07-02  David D. Kilzer  <ddkilzer@apple.com>
+
+        Don't print "Failed to guess" warning if an override is available
+
+        * contrib/recode.pl: Check that %overrides does NOT contain a
+        key matching the current digest before printing out the warning
+        about a failed charset guess.
+
+2009-07-02  David D. Kilzer  <ddkilzer@apple.com>
+
+        Added --[no-]truncate switch to contrib/recode.pl
+
+        * contrib/recode.pl: Added --[no-]truncate switch to make
+        debugging of failed charset guessing easier.  Often times the
+        illegal character was truncated in the output.
+
+2009-07-02  David D. Kilzer  <ddkilzer@apple.com>
+
+        Changed Perl scripts to use #!/usr/bin/env perl
+
+        perl -pi -e 's@#\!/usr/bin/perl@#\!/usr/bin/env perl@' *.cgi *.pl */*.pl
+
+2009-07-02  David D. Kilzer  <ddkilzer@apple.com>
+
+        Replace Bugzilla favicon with webkit.org favicon
+
+        * favicon.ico: Removed.
+        * images/favicon.ico: Replaced.  Copied from favicon.ico.
+
+2009-07-02  David Kilzer  <ddkilzer@webkit.org>
+
+        Merged BugsSite to Bugzilla-3.2.3
+
+        Updated to the latest-and-greatest stable version.
+
+2009-07-02  David Kilzer  <ddkilzer@webkit.org>
+
+        Merged BugsSite to Bugzilla-3.0.3
+
+        Nothing to see here.  Move along.
+
+2009-06-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Add support for displaying added png files in PrettyPatch diffs
+        https://bugs.webkit.org/show_bug.cgi?id=26210
+
+        Currently this is SVN only (git-send-bugzilla patches exclude binary data)
+        and only works for PNG files but could easily be made to work for other images as needed.
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2009-05-19  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Make PrettyPatch understand quoted filenames in git diffs.
+        https://bugs.webkit.org/show_bug.cgi?id=25881
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2009-05-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Carrying forwards Darin Adler's rubber stamp
+        
+        Make the comment field wider too.
+
+        * skins/custom/global.css:
+
+2009-05-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler
+        
+        Make the URL, Summary and Keyword fields wider to mitigate the
+        effects of https://bugs.webkit.org/show_bug.cgi?id=25566 and make
+        things generally better.
+
+        * skins/custom/global.css:
+        * template/en/custom/bug/edit.html.tmpl:
+
+2008-11-10  Darin Adler  <darin@apple.com>
+
+        - fix more of https://bugs.webkit.org/show_bug.cgi?id=21400
+          "Edit" links for patches in comments, review queue, review emails
+          should be replaced by "Review Patch" links
+
+        * globals.pl: Fix cases that are automatically generated, such as links
+        in comments in bugs.
+
+        * template/en/custom/attachment/created.html.tmpl: Fix the link on the
+        "I just created an attachment" page.
+
+        * template/en/custom/request/queue.html.tmpl: Fix the link in the queue
+        page.
+
+2008-11-10  Darin Adler  <darin@apple.com>
+
+        * template/en/default/request/queue.html.tmpl: Use review links instead
+        of edit links in the review queue.
+
+2008-11-10  Darin Adler  <darin@apple.com>
+
+        * template/en/custom/request/email.txt.tmpl: Send review links instead
+        of edit links when flags are set on a bug.
+
+2008-10-27  Darin Adler  <darin@apple.com>
+
+        * template/en/custom/attachment/reviewform.html.tmpl: Leave out the
+        comment if it's untouched.
+
+2008-10-23  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 21401: Comments field on "Review Patch" page should be
+        initially filled with quoted patch
+
+        <https://bugs.webkit.org/show_bug.cgi?id=21401>
+
+        Reviewed by Dave Hyatt.
+
+        * attachment.cgi:
+        (edit): Retrieve the attachment data from the database instead of just
+        its length. When the attachment is a patch, create a quotedpatch
+        template variable that contains the patch data with each line
+        prepended with "> ".
+        * template/en/custom/attachment/reviewform.html.tmpl:
+          - Changed the comments field to have a monospace font
+          - Added an "Enter comments below:" caption above the comments field
+            to make it clearer that this is where comments should go, now that
+            the comments field is not initially empty
+          - Fill the comments field with the quoted patch
+
+2008-10-14  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 21602: Bugzilla times out trying to display formatted diff for
+        attachment 24345
+        
+        https://bugs.webkit.org/show_bug.cgi?id=21602
+
+        Reviewed by Dave Kilzer.
+
+        * PrettyPatch/PrettyPatch.rb:
+        (PrettyPatch.BINARY_FILE_MARKER_FORMAT): Added.
+        (PrettyPatch.FileDiff.initialize): If any of the lines in the diff
+        are a binary file marker, mark this FileDiff as binary and stop trying
+        to process the lines.
+        (PrettyDiff.FileDiff.to_html): If we're binary, just print a string
+        saying so.
+
+2008-10-02  Adam Roben  <aroben@apple.com>
+
+        * template/en/custom/attachment/reviewform.html.tmpl: Fix typo.
+
+2008-10-02  Adam Roben  <aroben@apple.com>
+
+        * template/en/custom/attachment/review.html.tmpl: Fix URLs
+
+2008-10-02  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 21315: bugs.webkit.org should have a nicer patch review
+        interface
+
+        https://bugs.webkit.org/show_bug.cgi?id=21315
+
+        Reviewed by Tim Hatcher.
+
+        * attachment.cgi:
+        (top level): Added support for the "review" and "reviewform" actions.
+        (sub edit): Accept the template name as a parameter. If no name is
+        give, use "edit" as before.
+        * template/en/custom/attachment/list.html.tmpl: Added a "Review Patch"
+        link for all patch attachments.
+        * template/en/custom/attachment/review.html.tmpl: Added. Simple
+        <frameset> page to show the patch on the top and a comment form on the
+        bottom.
+        * template/en/custom/attachment/reviewform.html.tmpl: Added. Simple
+        comment form for reviewing patches.
+
+2008-10-02  Adam Roben  <aroben@apple.com>
+
+        Remove references to some backup files I created when implementing
+        PrettyPatch in Bugzilla
+
+        Reviewed by Tim Hatcher.
+
+        * attachment-aroben.cgi: Removed.
+        * template/en/default/attachment/edit-aroben.html.tmpl: Removed.
+
+        * template/en/custom/attachment/edit.html.tmpl: Removed an erroneous
+        reference to attachment-aroben.cgi. attachment.cgi will work just
+        fine.
+
+2008-06-25  David Kilzer  <ddkilzer@apple.com>
+
+        Make PrettyPatch handle diffs with no Index or diff headers
+
+        Part of Bug 19290: More patches not handled by PrettyPatch.rb
+        <https://bugs.webkit.org/show_bug.cgi?id=19290>
+
+        Reviewed by Adam.
+
+        * PrettyPatch/PrettyPatch.rb:
+        (PrettyPatch.DIFF_HEADER_FORMATS): Added regular expression to
+        match on "+++ " lines for patches with no "Index" or "diff" header.
+        (PrettyPatch.FileDiff.initialize): Look for filename on "+++ " line
+        when the first line of a patch has no "Index" or "diff" header.
+        (PrettyPatch.FileDiff.parse): Added haveSeenDiffHeader state
+        variable to determine when no "Index" or "diff" header has been
+        found, but a new patch has started with a "--- " line.
+
+2008-06-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - update trac URL in PrettyPatch
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2008-05-29  Adam Roben  <aroben@apple.com>
+
+        Update PrettyPatch directory list
+
+        * PrettyPatch/PrettyPatch.rb:
+
+2008-05-28  Adam Roben  <aroben@apple.com>
+
+        Make PrettyPatch able to handle diffs taken from outside the WebKit
+        source tree
+
+        Part of Bug 19290: More patches not handled by PrettyPatch.rb
+        <https://bugs.webkit.org/show_bug.cgi?id=19290>
+
+        Reviewed by David Kilzer.
+
+        * PrettyPatch/PrettyPatch.rb:
+        (PrettyPatch.find_url_and_path): Added. Searches the file path from
+        the bottom up looking for a directory that exists in the source tree.
+        (PrettyPatch.linkifyFilename): Changed to call find_url_and_path.
+
+2008-05-28  Adam Roben  <aroben@apple.com>
+
+        Print exceptions from PrettyPatch to stdout
+
+        This will make it much easier to debug problems with PrettyPatch,
+        since we'll be able to see the exceptions in the browser.
+
+        Reviewed by Sam Weinig.
+
+        * PrettyPatch/prettify.rb: Added a --html-exceptions option, which
+        will print exceptions to stdout as HTML.
+        * attachment.cgi: Changed to pass --html-exceptions to prettify.rb.
+
+2008-04-26  David Kilzer  <ddkilzer@apple.com>
+
+        Removed temp files and added appropriate svn:ignore properties.
+
+        Rubber-stamped by Mark Rowe.
+
+        * data: Added svn:ignore property for "versioncache" and "versioncache.*" files.
+
+        * data/template: Added svn:ignore property for "template" subdirectory.
+        * data/template/template: Removed precompiled template subdirectory.
+
+        * data/versioncache: Removed.
+        * data/versioncache.*: Removed backup versioncache files.
+
+        * data/webdot: Added svn:ignore property for "*.dot" files.
+        * data/webdot/*.dot: Removed cached webdot files.
+
+2008-04-08  Adam Roben  <aroben@apple.com>
+
+        Combine :equal operations with the following operation if they are
+        fewer than 3 characters long
+
+        This keeps us from showing lots of small changes on long lines, just
+        because some letters happened to be the same.
+
+        Inspired by
+        http://code.google.com/p/reviewboard/source/browse/trunk/reviewboard/diffviewer/diffutils.py?r=1264#147
+
+        * PrettyPatch/PrettyPatch.rb:
+        (PrettyPatch::DiffSection.initialize): Remove :equal operations fewer
+        than 3 characters long. The characters from the removed operations
+        become part of the subsequent operation.
+        (PrettyPatch::CodeLine.text_as_html): Don't wrap 0-length strings in
+        <ins>/<del> tags. Also removed the @fromLineNumber.nil? and
+        @toLineNumber.nil? checks as they are no longer reliable now that
+        we're removing operations.
+
+2008-04-08  Adam Roben  <aroben@apple.com>
+
+        Change PrettyPatch to use DiffBuilder for intra-line diffs
+
+        This gives us much prettier intra-line diffs, largely because it can
+        distinguish multiple changes on the same line. e.g., if a line changes
+        from:
+
+        const int myConstant = 0;
+
+        to
+
+        static const unsigned myConstant;
+
+        You will see that "static " was inserted, "int" changed to "unsigned",
+        and " = 0" was deleted.
+
+        This seems to have also gotten rid of some spurious instances of
+        "<ins></ins>" and "<del></del>" at the end of a line.
+
+        * PrettyPatch/PrettyPatch.rb:
+        (PrettyPatch::DiffSection.initialize): Use DiffBuilder instead of
+        setChangeExtentFromLine (which had been copied from Trac's diffing
+        code).
+        (PrettyPatch::CodeLine):
+         - Removed the changeExtent attribute
+         - Added the operations attribute
+         - Removed the setChangeExtentFromLine method
+        (PrettyPatch::CodeLine.text_as_html): Uses @operations to determine
+        what text to wrap in <ins> and <del> tags.
+        * PrettyPatch/diff.rb: Deleted a bunch of code we don't use.
+        (HTMLDiff::DiffBuilder.initialize): Moved code here from the old build
+        method, but left out the calls to perform_operation, since we build
+        the diff HTML outside of this class.
+        (HTMLDiff::DiffBuilder.split_inputs_to_words): Removed calls to
+        convert_html_to_list_of_words, since we're not diffing HTML.
+
+2008-04-08  Adam Roben  <aroben@apple.com>
+
+        Check in diff.rb
+
+        This came from
+        http://instiki.rubyforge.org/svn/instiki/trunk/lib/diff.rb
+        revision 28521
+
+        * PrettyPatch/diff.rb: Added.
+
+2008-03-04  Adam Roben  <aroben@apple.com>
+
+        * PrettyPatch/PrettyPatch.rb: Allow the extent of the previous file to
+        be omitted from the hunk header.
+

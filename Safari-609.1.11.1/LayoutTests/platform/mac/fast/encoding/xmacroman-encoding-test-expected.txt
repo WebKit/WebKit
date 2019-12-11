@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 775x18
+          text run at (0,0) width 315: "This tests the use of xmacroman as content type. "
+          text run at (314,0) width 461: "You should not see any \"garbage\" characters if xmacroman is supported"
+      RenderBlock (anonymous) at (0,34) size 784x54
+        RenderText {#text} at (0,0) size 84x18
+          text run at (0,0) width 84: "apostrophe: \x{2019}"
+        RenderBR {BR} at (83,14) size 1x0
+        RenderText {#text} at (0,18) size 70x18
+          text run at (0,18) width 70: "ellipsis: \x{2026}"
+        RenderBR {BR} at (69,32) size 1x0
+        RenderText {#text} at (0,36) size 79x18
+          text run at (0,36) width 79: "em-dash: \x{2014}"

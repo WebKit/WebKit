@@ -1,0 +1,321 @@
+/*
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "Element.h"
+#include "ElementIteratorAssertions.h"
+#include "Text.h"
+#include <wtf/Vector.h>
+
+namespace WebCore {
+
+class ElementAndTextDescendantIterator {
+public:
+    ElementAndTextDescendantIterator();
+    enum FirstChildTag { FirstChild };
+    ElementAndTextDescendantIterator(ContainerNode& root, FirstChildTag);
+    ElementAndTextDescendantIterator(ContainerNode& root, Node* current);
+
+    ElementAndTextDescendantIterator& operator++() { return traverseNext(); }
+
+    Node& operator*();
+    Node* operator->();
+    const Node& operator*() const;
+    const Node* operator->() const;
+
+    bool operator==(const ElementAndTextDescendantIterator& other) const;
+    bool operator!=(const ElementAndTextDescendantIterator& other) const;
+
+    bool operator!() const { return !m_depth; }
+    explicit operator bool() const { return m_depth; }
+
+    void dropAssertions();
+
+    ElementAndTextDescendantIterator& traverseNext();
+    ElementAndTextDescendantIterator& traverseNextSkippingChildren();
+    ElementAndTextDescendantIterator& traverseNextSibling();
+    ElementAndTextDescendantIterator& traversePreviousSibling();
+
+    unsigned depth() const { return m_depth; }
+
+private:
+    static bool isElementOrText(const Node& node) { return is<Element>(node) || is<Text>(node); }
+    static Node* firstChild(Node&);
+    static Node* nextSibling(Node&);
+    static Node* previousSibling(Node&);
+
+    void popAncestorSiblingStack();
+
+    Node* m_current;
+    struct AncestorSibling {
+        Node* node;
+        unsigned depth;
+    };
+    Vector<AncestorSibling, 16> m_ancestorSiblingStack;
+    unsigned m_depth { 0 };
+
+#if !ASSERT_DISABLED
+    ElementIteratorAssertions m_assertions;
+#endif
+};
+
+class ElementAndTextDescendantIteratorAdapter {
+public:
+    explicit ElementAndTextDescendantIteratorAdapter(ContainerNode& root);
+    ElementAndTextDescendantIterator begin();
+    ElementAndTextDescendantIterator end();
+
+private:
+    ContainerNode& m_root;
+};
+
+ElementAndTextDescendantIteratorAdapter elementAndTextDescendants(ContainerNode&);
+
+// ElementAndTextDescendantIterator
+
+inline ElementAndTextDescendantIterator::ElementAndTextDescendantIterator()
+    : m_current(nullptr)
+{
+}
+
+inline ElementAndTextDescendantIterator::ElementAndTextDescendantIterator(ContainerNode& root, FirstChildTag)
+    : m_current(firstChild(root))
+#if !ASSERT_DISABLED
+    , m_assertions(m_current)
+#endif
+{
+    if (!m_current)
+        return;
+    m_ancestorSiblingStack.uncheckedAppend({ nullptr, 0 });
+    m_depth = 1;
+}
+
+inline ElementAndTextDescendantIterator::ElementAndTextDescendantIterator(ContainerNode& root, Node* current)
+    : m_current(current)
+#if !ASSERT_DISABLED
+    , m_assertions(m_current)
+#endif
+{
+    if (!m_current)
+        return;
+    ASSERT(isElementOrText(*m_current));
+    if (m_current == &root)
+        return;
+
+    Vector<Node*, 20> ancestorStack;
+    auto* ancestor = m_current->parentNode();
+    while (ancestor != &root) {
+        ancestorStack.append(ancestor);
+        ancestor = ancestor->parentNode();
+    }
+
+    m_ancestorSiblingStack.uncheckedAppend({ nullptr, 0 });
+    for (unsigned i = ancestorStack.size(); i; --i) {
+        if (auto* sibling = nextSibling(*ancestorStack[i - 1]))
+            m_ancestorSiblingStack.append({ sibling, i });
+    }
+
+    m_depth = ancestorStack.size() + 1;
+}
+
+inline void ElementAndTextDescendantIterator::dropAssertions()
+{
+#if !ASSERT_DISABLED
+    m_assertions.clear();
+#endif
+}
+
+inline Node* ElementAndTextDescendantIterator::firstChild(Node& current)
+{
+    auto* node = current.firstChild();
+    while (node && !isElementOrText(*node))
+        node = node->nextSibling();
+    return node;
+}
+
+inline Node* ElementAndTextDescendantIterator::nextSibling(Node& current)
+{
+    auto* node = current.nextSibling();
+    while (node && !isElementOrText(*node))
+        node = node->nextSibling();
+    return node;
+}
+
+inline Node* ElementAndTextDescendantIterator::previousSibling(Node& current)
+{
+    auto* node = current.previousSibling();
+    while (node && !isElementOrText(*node))
+        node = node->previousSibling();
+    return node;
+}
+
+inline void ElementAndTextDescendantIterator::popAncestorSiblingStack()
+{
+    m_current = m_ancestorSiblingStack.last().node;
+    m_depth = m_ancestorSiblingStack.last().depth;
+    m_ancestorSiblingStack.removeLast();
+
+#if !ASSERT_DISABLED
+    // Drop the assertion when the iterator reaches the end.
+    if (!m_current)
+        m_assertions.dropEventDispatchAssertion();
+#endif
+}
+
+inline ElementAndTextDescendantIterator& ElementAndTextDescendantIterator::traverseNext()
+{
+    ASSERT(m_current);
+    ASSERT(!m_assertions.domTreeHasMutated());
+
+    auto* firstChild = ElementAndTextDescendantIterator::firstChild(*m_current);
+    auto* nextSibling = ElementAndTextDescendantIterator::nextSibling(*m_current);
+    if (firstChild) {
+        if (nextSibling)
+            m_ancestorSiblingStack.append({ nextSibling, m_depth });
+        ++m_depth;
+        m_current = firstChild;
+        return *this;
+    }
+    if (!nextSibling) {
+        popAncestorSiblingStack();
+        return *this;
+    }
+
+    m_current = nextSibling;
+    return *this;
+}
+
+inline ElementAndTextDescendantIterator& ElementAndTextDescendantIterator::traverseNextSkippingChildren()
+{
+    ASSERT(m_current);
+    ASSERT(!m_assertions.domTreeHasMutated());
+
+    auto* nextSibling = ElementAndTextDescendantIterator::nextSibling(*m_current);
+    if (!nextSibling) {
+        popAncestorSiblingStack();
+        return *this;
+    }
+
+    m_current = nextSibling;
+    return *this;
+}
+
+inline ElementAndTextDescendantIterator& ElementAndTextDescendantIterator::traverseNextSibling()
+{
+    ASSERT(m_current);
+    ASSERT(!m_assertions.domTreeHasMutated());
+
+    m_current = nextSibling(*m_current);
+
+#if !ASSERT_DISABLED
+    if (!m_current)
+        m_assertions.dropEventDispatchAssertion();
+#endif
+    return *this;
+}
+
+inline ElementAndTextDescendantIterator& ElementAndTextDescendantIterator::traversePreviousSibling()
+{
+    ASSERT(m_current);
+    ASSERT(!m_assertions.domTreeHasMutated());
+
+    m_current = previousSibling(*m_current);
+
+#if !ASSERT_DISABLED
+    if (!m_current)
+        m_assertions.dropEventDispatchAssertion();
+#endif
+    return *this;
+}
+
+inline Node& ElementAndTextDescendantIterator::operator*()
+{
+    ASSERT(m_current);
+    ASSERT(isElementOrText(*m_current));
+    ASSERT(!m_assertions.domTreeHasMutated());
+    return *m_current;
+}
+
+inline Node* ElementAndTextDescendantIterator::operator->()
+{
+    ASSERT(m_current);
+    ASSERT(isElementOrText(*m_current));
+    ASSERT(!m_assertions.domTreeHasMutated());
+    return m_current;
+}
+
+inline const Node& ElementAndTextDescendantIterator::operator*() const
+{
+    ASSERT(m_current);
+    ASSERT(isElementOrText(*m_current));
+    ASSERT(!m_assertions.domTreeHasMutated());
+    return *m_current;
+}
+
+inline const Node* ElementAndTextDescendantIterator::operator->() const
+{
+    ASSERT(m_current);
+    ASSERT(isElementOrText(*m_current));
+    ASSERT(!m_assertions.domTreeHasMutated());
+    return m_current;
+}
+
+inline bool ElementAndTextDescendantIterator::operator==(const ElementAndTextDescendantIterator& other) const
+{
+    ASSERT(!m_assertions.domTreeHasMutated());
+    return m_current == other.m_current || (!m_depth && !other.m_depth);
+}
+
+inline bool ElementAndTextDescendantIterator::operator!=(const ElementAndTextDescendantIterator& other) const
+{
+    return !(*this == other);
+}
+
+// ElementAndTextDescendantIteratorAdapter
+
+inline ElementAndTextDescendantIteratorAdapter::ElementAndTextDescendantIteratorAdapter(ContainerNode& root)
+    : m_root(root)
+{
+}
+
+inline ElementAndTextDescendantIterator ElementAndTextDescendantIteratorAdapter::begin()
+{
+    return ElementAndTextDescendantIterator(m_root, ElementAndTextDescendantIterator::FirstChild);
+}
+
+inline ElementAndTextDescendantIterator ElementAndTextDescendantIteratorAdapter::end()
+{
+    return { };
+}
+
+// Standalone functions
+
+inline ElementAndTextDescendantIteratorAdapter elementAndTextDescendants(ContainerNode& root)
+{
+    return ElementAndTextDescendantIteratorAdapter(root);
+}
+
+} // namespace WebCore

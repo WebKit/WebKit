@@ -1,0 +1,4 @@
+
+FAIL Property scroll-behavior has initial value auto assert_true: scroll-behavior doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-behavior does not inherit assert_true: expected true got false
+

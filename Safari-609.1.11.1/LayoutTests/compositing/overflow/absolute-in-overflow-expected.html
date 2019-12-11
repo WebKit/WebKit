@@ -1,0 +1,58 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+        }
+        #scroller {
+            margin: 10px;
+            background-color: silver;
+            width: 400px;
+            height: 300px;
+            overflow: scroll;
+            opacity: 0.8;
+        }
+        
+        .scrolling-content {
+            height: 1000px;
+        }
+        
+        .absolute {
+            top: 20px;
+            left: 20px;
+            width: 200px;
+            height: 200px;
+            background-color: blue;
+        }
+        
+        .changed {
+            position: absolute;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        function doTest()
+        {
+            setTimeout(() => {
+                scroller.scrollTop = 200;
+                target.classList.add('changed');
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div id="scroller">
+        <div class="scrolling-content">
+            <div id="target" class="absolute"></div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,7 @@
+2d.imageData.object.properties
+
+ImageData objects have the right properties
+
+
+FAIL ImageData objects have the right properties null is not an object (evaluating 'ctx.getImageData')
+

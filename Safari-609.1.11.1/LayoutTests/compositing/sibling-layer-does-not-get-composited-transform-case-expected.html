@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that that sibling container gets composited when composition of the inner content is forced by its child container.</title>
+<style>
+  .container {
+    transform: translateZ(0);
+  	height: 200px;
+  	width: 200px;
+  }
+
+  .inner {
+    transform: translateZ(0);
+  	position: absolute;
+  	width: 200px;
+  	height: 200px;
+  	background-color: silver;
+  }
+  
+  .inner-most {
+    transform: translateZ(0);
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+  	border: 1px solid green;
+  	margin-top: 60px;  
+  }
+
+  .sibling {
+    transform: translateZ(0);
+  	position: relative;
+  	width: 200px;
+  	height: 40px;
+	background-color: green;
+  }
+</style>
+<body>
+<div class=container>
+  <div class=inner>
+	<div class=inner-most>composited</div>
+  </div>
+  <div class=sibling></div>
+</div>
+</body>
+</html>

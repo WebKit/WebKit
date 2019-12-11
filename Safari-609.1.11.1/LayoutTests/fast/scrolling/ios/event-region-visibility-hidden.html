@@ -1,0 +1,53 @@
+<html>
+<style>
+.testdiv {
+    display: inline-block;
+    border: 2px solid blue;
+    position: relative;
+    height: 200px;
+    width: 200px;
+    background-color: blue;
+    will-change: transform;
+}
+.inner {
+    height: 50px;
+    width: 50px;
+    background-color: green;
+}
+.positioned {
+    position: absolute;
+    left: 150px;
+    top: 150px;
+}
+</style>
+<script>
+window.onload = function () {
+    if (!window.internals)
+        return;
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    document.body.offsetLeft;
+
+    test2.style.visibility = 'visible';
+    test4.style.visibility = 'visible';
+
+    results.innerText += internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION);
+}
+</script>
+<body>
+<div class="testdiv" style="visibility:hidden">
+    <div class="inner" style="visibility:visible"></div>
+</div>
+<div class="testdiv" style="visibility:hidden">
+    <div class="inner" id="test2"></div>
+</div>
+<div class="testdiv" style="visibility:hidden">
+    <div class="inner positioned" style="visibility:visible"></div>
+</div>
+<div class="testdiv" style="visibility:hidden">
+    <div class="inner positioned" id="test4"></div>
+</div>
+<pre id="results"></pre>
+</body>
+</html>

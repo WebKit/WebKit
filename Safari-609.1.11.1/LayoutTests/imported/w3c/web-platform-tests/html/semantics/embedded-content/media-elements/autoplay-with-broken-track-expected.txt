@@ -1,0 +1,5 @@
+
+PASS <video autoplay> with <track src="invalid://url" default=""> child 
+PASS <video autoplay> with <track src="404" default=""> child 
+PASS <video autoplay> with <track src="" default=""> child 
+

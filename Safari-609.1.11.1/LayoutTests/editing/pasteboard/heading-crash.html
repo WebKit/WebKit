@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+<h2 id="source" contenteditable="true">Copy This Text</h2>
+<h2 id="destination" contenteditable="true">Paste Here</h2>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var source = document.getElementById("source");
+    var destination = document.getElementById("destination");
+
+    source.focus();
+    selectAllCommand();
+    copyCommand();
+    destination.focus();
+    selectAllCommand();
+    pasteCommand();
+
+    Markup.description("The following test does a copy and a paste from one heading to another heading. The test is successful if there is no crash.");
+    Markup.dump(destination, 'Destination should say Copy This Text');
+</script>
+</html>

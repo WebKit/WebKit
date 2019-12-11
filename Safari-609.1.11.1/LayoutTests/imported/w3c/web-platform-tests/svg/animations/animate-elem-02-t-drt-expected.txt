@@ -1,0 +1,8 @@
+anim.5
+anim.6
+anim.7
+anim.8
+$Revision: 1.8 $
+
+PASS A copy of the corresponding W3C-SVG-1.1 test, which dumps the animation at certain times 
+

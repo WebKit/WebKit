@@ -1,0 +1,7 @@
+2d.imageData.object.string
+
+ImageData.data converts strings to numbers with ToNumber
+
+
+FAIL ImageData.data converts strings to numbers with ToNumber null is not an object (evaluating 'ctx.getImageData')
+

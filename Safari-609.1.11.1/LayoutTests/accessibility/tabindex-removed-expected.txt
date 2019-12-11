@@ -1,0 +1,16 @@
+ test
+This tests that when tabindex is updated on an element, the children are re-computed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS group.childAtIndex(0).parentElement().isEqual(group) is true
+PASS button.parentElement().isEqual(group) is true
+PASS group.parentElement().isEqual(main) is true
+PASS main.childAtIndex(0).isEqual(group) is true
+PASS main.childAtIndex(0).isEqual(button) is true
+PASS button.parentElement().isEqual(main) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

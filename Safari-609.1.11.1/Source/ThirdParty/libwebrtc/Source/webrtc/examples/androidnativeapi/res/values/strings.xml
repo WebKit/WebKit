@@ -1,0 +1,5 @@
+<resources>
+  <string name="app_name">androidnativeapi</string>
+  <string name="call_button">Call</string>
+  <string name="hangup_button">Hangup</string>
+</resources>

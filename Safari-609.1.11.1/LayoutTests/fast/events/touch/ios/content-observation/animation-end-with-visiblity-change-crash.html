@@ -1,0 +1,59 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<title>This tests the case when visible content change happens through transition and the click removes the animated element.</title>
+<script src="../../../../../resources/basic-gestures.js"></script>
+<style>
+#tapthis {
+    width: 400px;
+    height: 400px;
+    border: 1px solid green;
+}
+
+#becomesVisible {
+    opacity: 0;
+    width: 100px;
+    height: 100px;
+    background-color: green;
+    transition: opacity 80ms ease-out 0ms;
+}
+</style>
+<script>
+async function test() {
+    if (!window.testRunner || !testRunner.runUIScript)
+        return;
+    if (window.internals)
+        internals.settings.setContentChangeObserverEnabled(true);
+
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+
+    let rect = tapthis.getBoundingClientRect();
+    let x = rect.left + rect.width / 2;
+    let y = rect.top + rect.height / 2;
+
+    await tapAtPoint(x, y);
+}
+</script>
+</head>
+<body onload="test()">
+<div id=tapthis>PASS if no crash or assert.</div>
+<div id=becomesVisible></div>
+<pre id=result></pre>
+<script>
+tapthis.addEventListener("mouseover", function( event ) {
+    becomesVisible.style.opacity = "1";
+    setTimeout(function() {
+        document.body.offsetHeight;
+    }, 50);
+}, false);
+
+tapthis.addEventListener("click", function( event ) {
+    becomesVisible.remove();
+    document.body.offsetHeight;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, false);
+</script>
+</body>
+</html>

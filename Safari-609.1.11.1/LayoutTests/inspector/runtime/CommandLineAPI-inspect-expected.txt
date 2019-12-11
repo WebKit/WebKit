@@ -1,0 +1,98 @@
+CONSOLE MESSAGE: line 1: Web SQL is deprecated. Please use IndexedDB instead.
+Tests for CommandLineAPI.prototype.inspect with different object types.
+
+
+== Running test suite: CommandLineAPI.prototype.inspect
+-- Running test case: CommandLineAPI.prototype.inspect.RemoteObject.Undefined
+EXPRESSION: inspect()
+{
+  "method": "Inspector.inspect",
+  "params": {
+    "object": {
+      "type": "undefined"
+    },
+    "hints": {}
+  }
+}
+
+-- Running test case: CommandLineAPI.prototype.inspect.RemoteObject.Number
+EXPRESSION: inspect(123.456)
+{
+  "method": "Inspector.inspect",
+  "params": {
+    "object": {
+      "type": "number",
+      "value": 123.456,
+      "description": "123.456"
+    },
+    "hints": {}
+  }
+}
+
+-- Running test case: CommandLineAPI.prototype.inspect.RemoteObject.Object
+EXPRESSION: inspect({a:1, b:2})
+{
+  "method": "Inspector.inspect",
+  "params": {
+    "object": {
+      "type": "object",
+      "objectId": "<filtered>",
+      "className": "Object",
+      "description": "Object"
+    },
+    "hints": {}
+  }
+}
+
+-- Running test case: CommandLineAPI.prototype.inspect.RemoteObject.Function
+EXPRESSION: inspect(function f() {})
+{
+  "method": "Inspector.inspect",
+  "params": {
+    "object": {
+      "type": "function",
+      "objectId": "<filtered>",
+      "className": "Function",
+      "description": "function f() {}"
+    },
+    "hints": {}
+  }
+}
+
+-- Running test case: CommandLineAPI.prototype.inspect.Database
+EXPRESSION: inspect(openDatabase("CommandLineAPITestDB", "", "", 1))
+{
+  "method": "Inspector.inspect",
+  "params": {
+    "object": {
+      "type": "object",
+      "objectId": "<filtered>",
+      "className": "Database",
+      "description": "Database"
+    },
+    "hints": {
+      "databaseId": "<filtered>"
+    }
+  }
+}
+
+-- Running test case: CommandLineAPI.prototype.inspect.Storage
+EXPRESSION: inspect(sessionStorage)
+{
+  "method": "Inspector.inspect",
+  "params": {
+    "object": {
+      "type": "object",
+      "objectId": "<filtered>",
+      "className": "Storage",
+      "description": "Storage"
+    },
+    "hints": {
+      "domStorageId": {
+        "securityOrigin": "file://",
+        "isLocalStorage": false
+      }
+    }
+  }
+}
+

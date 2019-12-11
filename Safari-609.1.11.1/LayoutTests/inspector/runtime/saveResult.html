@@ -1,0 +1,181 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    function createCallArgumentWithValue(value) {
+        return {value};
+    }
+
+    function createCallArgumentWithRemoteObject(remoteObject) {
+        return {objectId: remoteObject.objectId};
+    }
+
+    function remoteObjectForSimpleObject(simpleObject, callback) {
+        InspectorTest.evaluateInPage("(" + JSON.stringify(simpleObject) + ")", callback);
+    }
+
+    let contextId = WI.networkManager.mainFrame.pageExecutionContext.id;
+    let remoteObject1;
+
+    let suite = InspectorTest.createAsyncSuite("Runtime.saveResult");
+
+    suite.addTestCase({
+        name: "SavePrimitiveValue1",
+        description: "Saving a new value should produce a new $n value.",
+        test(resolve, reject) {
+            let value = 123;
+            RuntimeAgent.saveResult(createCallArgumentWithValue(value), contextId, (error, savedResultIndex) => {
+                InspectorTest.assert(!error, "Should not be a protocol error.");
+                InspectorTest.expectThat(savedResultIndex === 1, `Value ${value} should become $1.`);
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "SavePrimitiveValue2",
+        description: "Saving a new value should produce a new $n value.",
+        test(resolve, reject) {
+            let value = true;
+            RuntimeAgent.saveResult(createCallArgumentWithValue(value), contextId, (error, savedResultIndex) => {
+                InspectorTest.assert(!error, "Should not be a protocol error.");
+                InspectorTest.expectThat(savedResultIndex === 2, `Value ${value} should become $2.`);
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "RepeatPrimitiveValue1",
+        description: "Saving a previously saved value should produce the original $n value.",
+        test(resolve, reject) {
+            let value = 123;
+            RuntimeAgent.saveResult(createCallArgumentWithValue(value), contextId, (error, savedResultIndex) => {
+                InspectorTest.assert(!error, "Should not be a protocol error.");
+                InspectorTest.expectThat(savedResultIndex === 1, `Value ${value} should have existed as $1.`);
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "$1MatchesValue1",
+        description: "Evaluating $1 should get us the value we saved previously.",
+        test(resolve, reject) {
+            RuntimeAgent.evaluate.invoke({expression: "$1", objectGroup: "test", includeCommandLineAPI: true}, (error, remoteObjectPayload, wasThrown, savedResultIndex) => {
+                InspectorTest.assert(!error, "Should not be a protocol error.");
+                let remoteObject = WI.RemoteObject.fromPayload(remoteObjectPayload);
+                InspectorTest.assert(remoteObject.hasValue(), "RemoteObject for $1 should be a value, not an object.");
+                InspectorTest.expectThat(remoteObject.value === 123, "$1 value should be 123.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "SaveObject1",
+        description: "Saving a new object should produce a new $n value.",
+        test(resolve, reject) {
+            let object = {x:100, y:200};
+            remoteObjectForSimpleObject(object, (error, remoteObject) => {
+                remoteObject1 = remoteObject;
+                RuntimeAgent.saveResult(createCallArgumentWithRemoteObject(remoteObject), (error, savedResultIndex) => {
+                    InspectorTest.assert(!error, "Should not be a protocol error.");
+                    InspectorTest.expectThat(savedResultIndex === 3, `New Object ${JSON.stringify(object)} should become $3.`);
+                    resolve();
+                });
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "SaveObject2",
+        description: "Saving a new object should produce a new $n value.",
+        test(resolve, reject) {
+            let object = {x:100, y:200};
+            remoteObjectForSimpleObject(object, (error, remoteObject) => {
+                RuntimeAgent.saveResult(createCallArgumentWithRemoteObject(remoteObject), (error, savedResultIndex) => {
+                    InspectorTest.assert(!error, "Should not be a protocol error.");
+                    InspectorTest.expectThat(savedResultIndex === 4, `New Object ${JSON.stringify(object)} should become $4.`);
+                    resolve();
+                });
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "RepeatSaveObject1",
+        description: "Saving a previously saved value should produce the original $n value.",
+        test(resolve, reject) {
+            RuntimeAgent.saveResult(createCallArgumentWithRemoteObject(remoteObject1), (error, savedResultIndex) => {
+                InspectorTest.assert(!error, "Should not be a protocol error.");
+                InspectorTest.expectThat(savedResultIndex === 3, `Repeat Object should have existed as $3.`);
+                resolve();
+            });
+        }
+    });
+
+    // ------
+
+    suite.addTestCase({
+        name: "NoContextWithPrimitiveShouldUseMainContext",
+        description: "Saving a primitive should specify the context.",
+        test(resolve, reject) {
+            let value = 999;
+            RuntimeAgent.saveResult(createCallArgumentWithValue(value), (error, savedResultIndex) => {
+                InspectorTest.assert(!error, "Should not be a protocol error.");
+                InspectorTest.expectThat(savedResultIndex === 5, `Value ${value} should become $5.`);
+            });
+            RuntimeAgent.saveResult(createCallArgumentWithValue(value), contextId, (error, savedResultIndex) => {
+                InspectorTest.assert(!error, "Should not be a protocol error.");
+                InspectorTest.expectThat(savedResultIndex === 5, `Value ${value} should have existed as $5.`);
+                resolve();
+            });
+        }
+    });
+
+    // ------
+
+    suite.addTestCase({
+        name: "ClearConsoleShouldResetValues",
+        description: "Clearing the console should reset the $n values.",
+        test(resolve, reject) {
+            let value = 999;
+            ConsoleAgent.clearMessages();
+            RuntimeAgent.saveResult(createCallArgumentWithValue(value), (error, savedResultIndex) => {
+                InspectorTest.assert(!error, "Should not be a protocol error.");
+                InspectorTest.expectThat(savedResultIndex === 1, `Value ${value} should become $1.`);
+                resolve();
+            });
+        }
+    });
+
+    // ------
+
+    suite.addTestCase({
+        name: "EvaluateWithSaveIndex",
+        description: "Evalute with the saveIndex option should affect $n.",
+        test(resolve, reject) {
+            RuntimeAgent.evaluate.invoke({expression: "900 + 90", objectGroup: "test", includeCommandLineAPI: true, saveResult: true}, (error, remoteObjectPayload, wasThrown, savedResultIndex) => {
+                InspectorTest.assert(!error, "Should not be a protocol error.");
+                InspectorTest.expectThat(savedResultIndex === 2, "Evaluated result 990 should become $2.");
+            });
+            RuntimeAgent.evaluate.invoke({expression: "$2 + 9", objectGroup: "test", includeCommandLineAPI: true, saveResult: true}, (error, remoteObjectPayload, wasThrown, savedResultIndex) => {
+                InspectorTest.assert(!error, "Should not be a protocol error.");
+                InspectorTest.expectThat(savedResultIndex === 1, "Evaluated result 999 should match previous value $1.");
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for the Runtime.saveResult command ($n values).</p>
+</body>
+</html>

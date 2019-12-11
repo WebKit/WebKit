@@ -1,0 +1,3 @@
+Creating a video element in a frameless document should not crash WebKit.
+
+This test passes if it does not crash.

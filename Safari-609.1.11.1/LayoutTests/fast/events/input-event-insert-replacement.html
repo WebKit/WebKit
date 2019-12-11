@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+
+<div>To manually test, press and hold down 'a' and select one of the accented characters."</div>
+<div>You should observe a pair of beforeinput/input events for both 'a' and the replacement accented character."</div>
+<div>Importantly, the inputType of these four events should be 'insertReplacementText'."</div>
+<div>Then insert a single emoji character. You should observe beforeinput/input events for the inserted emoji."</div>
+<div>Importantly, the inputType of these two events should be 'insertText'."</div>
+
+<input id="editable" onbeforeinput=logInputEvent(event) oninput=logInputEvent(event)></input>
+<div id="output"></div>
+<script type="text/javascript">
+    let write = s => output.innerHTML += s + "<br>";
+    editable.focus();
+    if (window.testRunner && window.eventSender && testRunner.runUIScript) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        runTest();
+    }
+
+    function logInputEvent(event)
+    {
+        write(`(${event.target.id}): type=${event.type}, inputType=${event.inputType}, data=${event.data}, dataTransfer=${event.dataTransfer}`);
+    }
+
+    async function runTest() {
+        write("(1) Typing 'a'...");
+        eventSender.keyDown("a");
+        write(`The value of the input is now: ${editable.value}`);
+        write("(2) Replacing 'a' with 'b'...");
+        await UIHelper.replaceTextAtRange("b", 0, 1);
+        write(`The value of the input is now: ${editable.value}`);
+        write("(3) Inserting 'c' after 'b'...");
+        await UIHelper.replaceTextAtRange("c", 1, 0);
+        write(`The value of the input is now: ${editable.value}`);
+        write("(4) Selecting all and replacing with 'd'...");
+        document.execCommand("SelectAll")
+        await UIHelper.replaceTextAtRange("d", 0, 2);
+        write(`The value of the input is now: ${editable.value}`);
+
+        testRunner.notifyDone();
+    }
+</script>
+</html>

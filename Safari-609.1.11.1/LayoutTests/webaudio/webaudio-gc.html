@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+<title>Web audio events while gcing</title>
+</head>
+<body>
+<script src=../resources/testharness.js></script>
+<script src=../resources/testharnessreport.js></script>
+<script src=../resources/gc.js></script>
+<script>
+let count = 100;
+
+function checkEvent() {
+    if (!--count)
+        done();
+}
+
+function init() {
+    let ctx = new webkitAudioContext();
+
+    let source = ctx.createOscillator();
+    source.frequency.value = 300;
+    source.type = 0;
+    source.connect(ctx.destination);
+    source.start(0);
+
+    let detector = ctx.createScriptProcessor(1024);
+    detector.onaudioprocess = checkEvent;
+    detector.connect(ctx.destination);
+}
+
+init();
+
+gc();
+
+</script>
+</body>
+</html>

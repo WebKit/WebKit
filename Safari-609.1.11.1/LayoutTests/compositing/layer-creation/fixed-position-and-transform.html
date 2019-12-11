@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body {
+        height: 5000px;
+    }
+
+    #indicator {
+        width: 256px;
+        height: 256px;
+        background-color: red;
+        position: fixed;
+        left: 100px;
+        top: 100px;
+        -webkit-transform:translateZ(0);
+    }
+
+    #overlap {
+        width: 500px;
+        height: 500px;
+        background-color: green;
+        position: fixed;
+        left: 0px;
+        top: 0px;
+    }
+</style>
+<script>
+    function doTest() {
+        window.scrollTo(0, 1000);
+        if (window.testRunner) {
+            document.getElementById('layertree').innerText = window.internals.layerTreeAsText(document);
+            testRunner.dumpAsText(true);
+        }
+    }
+    window.addEventListener("load", doTest, false);
+</script>
+</head>
+<body>
+    <!-- the red indicator should be covered by the green overlap element -->
+    <div id="indicator"></div>
+    <div id="overlap"></div>
+
+    <pre id="layertree"></pre>
+</body>
+</html>

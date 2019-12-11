@@ -1,0 +1,6 @@
+
+FAIL The template contents owner document type is HTML document (case when document has browsing context and the template is created by HTML parser) assert_equals: Template content owner should be a document expected "[object Document]" but got "[object HTMLDocument]"
+FAIL The template contents owner document type is HTML document (case when document has browsing context and the template is created by createElement()) assert_equals: Template content owner should be a document expected "[object Document]" but got "[object HTMLDocument]"
+FAIL The template contents owner document type is HTML document (case when document has no browsing context and the template is created by createElement()) assert_equals: Template content owner should be a document expected "[object Document]" but got "[object HTMLDocument]"
+FAIL The template contents owner document type is HTML document (case when document has no browsing context and the template is created via innerHTML) assert_equals: Template content owner should be a document expected "[object Document]" but got "[object HTMLDocument]"
+

@@ -1,0 +1,5 @@
+
+FAIL MediaRecorder will fire a dataavailable event with a blob data for a video-only stream when stop() is called assert_true: the blob should contain some buffers expected true got false
+FAIL MediaRecorder will fire a dataavailable event with a blob data for a audio-only stream when stop() is called assert_true: the blob should contain some buffers expected true got false
+FAIL MediaRecorder will fire a dataavailable event with a blob data for a video-audio stream when stop() is called assert_true: the blob should contain some buffers expected true got false
+

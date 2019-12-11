@@ -1,0 +1,3 @@
+
+PASS IDBFactory.open() - database 'name' and 'version' are correctly set 
+

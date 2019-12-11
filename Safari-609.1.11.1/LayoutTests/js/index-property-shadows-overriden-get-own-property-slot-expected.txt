@@ -1,0 +1,10 @@
+If an object has an indexed property shadowing a property of the same name on the prototype, the correct shadowing property should be returned - even if teh property from the prototype comes from an overriden implementation of getOwPropertySlot.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS test("0") is "success"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

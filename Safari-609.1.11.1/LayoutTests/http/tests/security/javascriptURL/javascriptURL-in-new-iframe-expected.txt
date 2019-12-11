@@ -1,0 +1,3 @@
+Test that a freshly created iframe's src can be set to any javascript URL.
+
+SUCCESS

@@ -1,0 +1,38 @@
+
+
+Using Hebrew keyboard: 
+    <div><br></div>
+    <div style="direction: rtl;"><br></div>
+
+
+
+Using English keyboard: 
+    <div><br></div>
+    <div style="direction: ltr;"><br></div>
+
+
+
+Observed 'beforeinput' events: [
+    {
+        "inputType": "formatSetBlockTextDirection",
+        "data": "rtl",
+        "order": 1
+    },
+    {
+        "inputType": "formatSetBlockTextDirection",
+        "data": "ltr",
+        "order": 3
+    }
+]
+Observed 'input' events: [
+    {
+        "inputType": "formatSetBlockTextDirection",
+        "data": "rtl",
+        "order": 2
+    },
+    {
+        "inputType": "formatSetBlockTextDirection",
+        "data": "ltr",
+        "order": 4
+    }
+]

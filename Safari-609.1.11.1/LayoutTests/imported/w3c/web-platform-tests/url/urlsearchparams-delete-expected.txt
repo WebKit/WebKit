@@ -1,0 +1,6 @@
+
+PASS Delete basics 
+PASS Deleting appended multiple 
+PASS Deleting all params removes ? from URL 
+FAIL Removing non-existent param removes ? from URL assert_equals: url.href does not have ? expected "http://example.com/" but got "http://example.com/?"
+

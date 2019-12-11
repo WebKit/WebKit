@@ -1,0 +1,10 @@
+<p>This tests to make sure that plaintext-only regions aren't styled if they aren't fully selected.  Only <b>foo</b> should be bold below.</p>
+<div id="div" contenteditable="true"><div id="start">foo</div><table border="1" contenteditable="false"><tr><td>non-editable</td><td contenteditable="plaintext-only"><span id="end">plaintext</span>-only</td></tr></table></div>
+
+<script>
+var start = document.getElementById("start");
+var end = document.getElementById("end");
+var selection = window.getSelection();
+selection.setBaseAndExtent(start, 0, end, end.childNodes.length);
+document.execCommand("Bold");
+</script>

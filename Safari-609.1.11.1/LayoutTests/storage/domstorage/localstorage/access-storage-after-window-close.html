@@ -1,0 +1,14 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setCanOpenWindows();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body onload="window.open('resources/close-window-and-access-storage.html');">
+Test that WebKit does not crash when accessing localStorage after calling window.close().<br>
+</body>
+</html>

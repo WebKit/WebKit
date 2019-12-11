@@ -1,0 +1,52 @@
+Testing the inspector backend's error handling when sending messages with wrong parameters.
+
+
+== Running test suite: Protocol.ArgumentModeErrors
+-- Running test case: ParametersNotAnObject
+Sending message: {"id":123,"method":"Runtime.evaluate","params":"junk"}
+PASS: the backend should send a protocol error when receiving an invalid message.
+PASS: the reported error should be "InvalidParams" (-32602)
+Actual error code: -32602
+Actual error message: Some arguments of method 'Runtime.evaluate' can't be processed
+Actual error data: [{"code":-32602,"message":"'params' object must contain required parameter 'expression' with type 'String'."},{"code":-32602,"message":"Some arguments of method 'Runtime.evaluate' can't be processed"}]
+
+-- Running test case: MissingRequiredParameter
+Sending message: {"id":123,"method":"Runtime.evaluate","params":{"stuff":123}}
+PASS: the backend should send a protocol error when receiving an invalid message.
+PASS: the reported error should be "InvalidParams" (-32602)
+Actual error code: -32602
+Actual error message: Some arguments of method 'Runtime.evaluate' can't be processed
+Actual error data: [{"code":-32602,"message":"Parameter 'expression' with type 'String' was not found."},{"code":-32602,"message":"Some arguments of method 'Runtime.evaluate' can't be processed"}]
+
+-- Running test case: RequiredParameterWrongType
+Sending message: {"id":123,"method":"Runtime.evaluate","params":{"expression":[]}}
+PASS: the backend should send a protocol error when receiving an invalid message.
+PASS: the reported error should be "InvalidParams" (-32602)
+Actual error code: -32602
+Actual error message: Some arguments of method 'Runtime.evaluate' can't be processed
+Actual error data: [{"code":-32602,"message":"Parameter 'expression' has wrong type. It must be 'String'."},{"code":-32602,"message":"Some arguments of method 'Runtime.evaluate' can't be processed"}]
+
+-- Running test case: OptionalParameterWrongType
+Sending message: {"id":123,"method":"Runtime.evaluate","params":{"expression":"42","includeCommandLineAPI":123}}
+PASS: the backend should send a protocol error when receiving an invalid message.
+PASS: the reported error should be "InvalidParams" (-32602)
+Actual error code: -32602
+Actual error message: Some arguments of method 'Runtime.evaluate' can't be processed
+Actual error data: [{"code":-32602,"message":"Parameter 'includeCommandLineAPI' has wrong type. It must be 'Boolean'."},{"code":-32602,"message":"Some arguments of method 'Runtime.evaluate' can't be processed"}]
+
+-- Running test case: TestErrorCodeForSyncServerError
+Sending message: {"id":123,"method":"Runtime.getProperties","params":{"objectId":"thisisNotAnId"}}
+PASS: the backend should send a protocol error when receiving an invalid message.
+PASS: the reported error should be "ServerError" (-32000)
+Actual error code: -32000
+Actual error message: Missing injected script for given objectId
+Actual error data: [{"code":-32000,"message":"Missing injected script for given objectId"}]
+
+-- Running test case: TestErrorCodeForAsyncServerError
+Sending message: {"id":123,"method":"Runtime.awaitPromise","params":{"promiseObjectId":"thisisNotAnId"}}
+PASS: the backend should send a protocol error when receiving an invalid message.
+PASS: the reported error should be "ServerError" (-32000)
+Actual error code: -32000
+Actual error message: Missing injected script for given promiseObjectId
+Actual error data: [{"code":-32000,"message":"Missing injected script for given promiseObjectId"}]
+

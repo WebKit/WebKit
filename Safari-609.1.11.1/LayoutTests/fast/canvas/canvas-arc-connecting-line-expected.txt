@@ -1,0 +1,18 @@
+Test that canvas arc()s are connected by a straight line. There should be two C-shapes with a line from the bottom of the left one to the top of the right one.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS imgdata[0] is 0
+PASS imgdata[1] is 255
+PASS imgdata[2] is 0
+PASS imgdata[0] is 0
+PASS imgdata[1] is 255
+PASS imgdata[2] is 0
+PASS imgdata[0] is 0
+PASS imgdata[1] is 0
+PASS imgdata[2] is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

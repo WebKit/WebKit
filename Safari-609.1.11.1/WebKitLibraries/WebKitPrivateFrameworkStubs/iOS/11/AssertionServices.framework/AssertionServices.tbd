@@ -1,0 +1,25 @@
+--- !tapi-tbd-v2
+archs:
+  - armv7
+  - armv7s
+  - arm64
+  - i386
+  - x86_64
+exports:
+  -
+    archs:
+      - armv7
+      - armv7s
+      - arm64
+      - i386
+      - x86_64
+    objc-classes:
+      - _BKSApplicationStateMonitor
+      - _BKSProcessAssertion
+    symbols:
+      - _BKSApplicationStateMostElevatedStateForProcessIDKey
+      - _BKSApplicationStateProcessIDKey
+install-name: /System/Library/PrivateFrameworks/AssertionServices.framework/AssertionServices
+objc-constraint: none
+platform: ios
+...

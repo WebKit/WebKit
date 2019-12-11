@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableColorFilter=true ] -->
+<html>
+    <head>
+        <title>CSS Test: -apple-color-filter affects backgrounds and borders</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+        <link rel="match" href="-apple-color-filter-backgrounds-borders-expected.html">
+
+        <meta name="assert" content="-apple-color-filter affects backgrounds and borders">
+        <style type="text/css">
+            .test
+            {
+                width: 200px;
+                height: 200px;
+                background-color: rgb(255, 128, 255);
+                border: 20px solid yellow;
+                -apple-color-filter: invert();
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test passes if there is a green square with a blue border.</p>
+        <div class="test"></div>
+    </body>
+</html>

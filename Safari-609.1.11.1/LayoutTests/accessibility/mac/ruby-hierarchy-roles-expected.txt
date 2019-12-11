@@ -1,0 +1,34 @@
+This tests that the ruby containers are exposed with the appropriate hierarchy and roles.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS rubyElem != null is true
+PASS axRuby != null is true
+PASS role is expectedRubyRole
+PASS subrole is expectedRubyInlineSubrole
+PASS axRubyRun != null is true
+PASS role is expectedRubyRole
+PASS subrole is expectedRubyRunSubrole
+PASS axRubyText != null is true
+PASS role is expectedRubyRole
+PASS subrole is expectedRubyTextSubrole
+PASS axRubyBase != null is true
+PASS role is expectedRubyRole
+PASS subrole is expectedRubyBaseSubrole
+PASS axRuby != null is true
+PASS role is expectedRubyRole
+PASS subrole is expectedRubyBlockSubrole
+PASS axRubyRun != null is true
+PASS role is expectedRubyRole
+PASS subrole is expectedRubyRunSubrole
+PASS axRubyText != null is true
+PASS role is expectedRubyRole
+PASS subrole is expectedRubyTextSubrole
+PASS axRubyBase != null is true
+PASS role is expectedRubyRole
+PASS subrole is expectedRubyBaseSubrole
+PASS successfullyParsed is true
+
+TEST COMPLETE
+basetext rubytext

@@ -1,0 +1,5 @@
+2d.getcontext.extraargs
+The 2D context ignores extra getContext arguments
+Spec references: context.2d.extraargs
+Actual output:
+Passed

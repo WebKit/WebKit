@@ -1,0 +1,82 @@
+/*
+ * Copyright (C) 2006 Apple Inc.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+[
+    Constructor,
+    ConstructorCallWith=Document,
+    ImplementationLacksVTable,
+    ExportMacro=WEBCORE_EXPORT,
+] interface Range {
+    readonly attribute Node startContainer;
+    readonly attribute long startOffset; // FIXME: Should be unsigned long.
+    readonly attribute Node endContainer;
+    readonly attribute long endOffset; // FIXME: Should be unsigned long.
+    readonly attribute boolean collapsed;
+    readonly attribute Node commonAncestorContainer;
+
+    [MayThrowException] void setStart(Node node, unsigned long offset);
+    [MayThrowException] void setEnd(Node node, unsigned long offset);
+    [MayThrowException] void setStartBefore(Node node);
+    [MayThrowException] void setStartAfter(Node node);
+    [MayThrowException] void setEndBefore(Node node);
+    [MayThrowException] void setEndAfter(Node node);
+    void collapse(optional boolean toStart = false);
+    [MayThrowException] void selectNode(Node node);
+    [MayThrowException] void selectNodeContents(Node node);
+
+    const unsigned short START_TO_START = 0;
+    const unsigned short START_TO_END = 1;
+    const unsigned short END_TO_END = 2;
+    const unsigned short END_TO_START = 3;
+    [MayThrowException, ImplementedAs=compareBoundaryPointsForBindings] short compareBoundaryPoints(unsigned short how, Range sourceRange);
+
+    [CEReactions, MayThrowException] void deleteContents();
+    [CEReactions, MayThrowException, NewObject] DocumentFragment extractContents();
+    [CEReactions, MayThrowException, NewObject] DocumentFragment cloneContents();
+    [CEReactions, MayThrowException] void insertNode(Node node);
+    [CEReactions, MayThrowException] void surroundContents(Node newParent);
+
+    [NewObject] Range cloneRange();
+    void detach();
+
+    [MayThrowException] boolean isPointInRange(Node node, unsigned long offset);
+    [MayThrowException] short comparePoint(Node node, unsigned long offset);
+
+    [MayThrowException] boolean intersectsNode(Node node);
+
+    stringifier;
+
+    // Extensions from CSSOM-view (https://drafts.csswg.org/cssom-view/#extensions-to-the-range-interface).
+    DOMRectList getClientRects();
+    [NewObject] DOMRect getBoundingClientRect();
+
+    // Extensions from DOMParsing and Serialization specification (https://w3c.github.io/DOM-Parsing/#extensions-to-the-range-interface).
+    [CEReactions, MayThrowException, NewObject] DocumentFragment createContextualFragment(DOMString fragment);
+
+    // Non standard.
+    [MayThrowException] void expand(optional DOMString unit = "");
+
+    // FIXME: We should likely drop this since no other browser supports it.
+    [MayThrowException] short compareNode(Node node);
+    const unsigned short NODE_BEFORE = 0;
+    const unsigned short NODE_AFTER = 1;
+    const unsigned short NODE_BEFORE_AND_AFTER = 2;
+    const unsigned short NODE_INSIDE = 3;
+};

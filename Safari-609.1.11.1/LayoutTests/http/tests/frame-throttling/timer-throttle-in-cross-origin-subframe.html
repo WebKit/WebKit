@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        iframe {
+            height: 200px;
+            width: 400px;
+        }
+    </style>
+    <script src="/js-test-resources/js-test-pre.js"></script>
+    <script src="/js-test-resources/ui-helper.js"></script>
+    
+    <script>
+    description("Tests that DOM Timers are throttled in subframes that are cross-origin, and not in same-origin frames");
+    window.jsTestIsAsync = true;
+    
+    var crossOriginFrame;
+    var sameOriginFrame
+
+    var throttledState = {
+        'cross' : undefined,
+        'same' : undefined,
+    }
+
+    var messageHandler;
+    var messagesReceived = 0;
+
+    function interactWithSubframes()
+    {
+        UIHelper.activateAt(crossOriginFrame.offsetLeft + 20, crossOriginFrame.offsetTop + 20).then(function() {
+            debug("Interacted with cross-origin frame");
+            UIHelper.activateAt(sameOriginFrame.offsetLeft + 20, sameOriginFrame.offsetTop + 20).then(function() {
+                debug("Interacted with same-origin frame");
+                messageHandler = checkUnthrottledAfterInteraction;
+                messagesReceived = 0;
+                crossOriginFrame.contentWindow.postMessage("report-throttle-cross", "*");
+                sameOriginFrame.contentWindow.postMessage("report-throttle-same", "*");
+            });
+        });
+    }
+
+    function runTest()
+    {
+        crossOriginFrame = document.getElementById("cross-origin-frame");
+        sameOriginFrame = document.getElementById("same-origin-frame");
+
+        debug("Checking that DOM Timers are throttled in cross origin frame");
+        
+        messageHandler = checkInitiallyThrottled;
+        messagesReceived = 0;
+        crossOriginFrame.contentWindow.postMessage("report-throttle-cross", "*");
+        sameOriginFrame.contentWindow.postMessage("report-throttle-same", "*");
+    }
+
+    function checkInitiallyThrottled()
+    {
+        shouldBeEqualToString("throttledState['cross']", "true");
+        shouldBeEqualToString("throttledState['same']", "false");
+        interactWithSubframes();
+    }
+
+    function checkUnthrottledAfterInteraction()
+    {
+        shouldBeEqualToString("throttledState['cross']", "false");
+        shouldBeEqualToString("throttledState['same']", "false");
+        finishJSTest();
+    }
+
+    window.onmessage = function(message)
+    {
+        debug("Received message: " + message.data);
+        if (message.data === "timerReachedMaxNestingLevel") {
+            if (++messagesReceived == 2)
+                runTest();
+            return;
+        }
+
+        var re = /throttled\[(\w+)\]: (true|false)/;
+        var match = re.exec(message.data);
+        if (match) {
+            frameID = match[1];
+            throttledState[frameID] = match[2];
+            if (++messagesReceived == 2)
+                messageHandler();
+            return;
+        }
+        
+        debug("Failed to handle message " + message.data);
+    }
+    </script>
+</head>
+<body>
+    <iframe id="cross-origin-frame" src="http://localhost:8000/frame-throttling/resources/timer-throttling-frame.html?dontcacheme"></iframe>
+    <iframe id="same-origin-frame" src="resources/timer-throttling-frame.html?dontcacheme"></iframe>
+
+    <script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+Pointer Event: DOMException NotFoundError
+
+Test Description: When the setPointerCapture method is invoked, if the provided pointerId value does not match any of the active pointers, a DOMException with the name NotFoundError must be thrown.
+
+
+Use the mouse, touch or pen to contact this box.
+Test complete: Scroll to Summary to view Pass/Fail Results.
+
+The following pointer types were detected: mouse.
+
+Refresh the page to run the tests again with a different pointer type.
+
+
+PASS setPointerCapture: DOMException NotFoundError 
+

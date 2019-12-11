@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tests opening a new about:blank window and accessing its document</title>
+    <script src="../resources/js-test-pre.js"></script>
+    <script>
+        var newWindow;
+
+        if (window.testRunner) {
+            testRunner.setCanOpenWindows();
+            testRunner.waitUntilDone();
+            testRunner.setPopupBlockingEnabled(false);
+        }
+
+        function checkNewWindowDocumentIsDefined () {
+            shouldBeDefined("newWindow.document");
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        function run() {
+            newWindow = window.open("about:BLANK");
+            try {
+                newWindow.document.write("<scri" + "pt>console.log('Injected script running.')</sc" + "ript>");
+                setTimeout(checkNewWindowDocumentIsDefined, 500);
+            } catch (e) {
+                testFailed("Was not able to write to the new window's document.");
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
+        }
+    </script>
+</head>
+<body onload="run()">
+<div id="console"></div>
+</body>
+</html>

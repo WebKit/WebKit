@@ -1,0 +1,13 @@
+<html>
+<body>
+<script>
+function runTest()
+{
+    w = window.open("foo.html");
+    w.document.open();
+    w.document.write("<html><body><script>setTimeout(() => { alert('foo'); }, 0);<" + "/script></body></html>");
+}
+</script>
+<body onload="runTest()">
+</body>
+</html>

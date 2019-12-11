@@ -1,0 +1,18 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+   testRunner.dumpAsText();
+   testRunner.waitUntilDone();
+   testRunner.dumpResourceLoadCallbacks();
+}
+</script>
+</head>
+<body onload="document.getElementById('testform').submit();">
+<form id="testform" name="testform" action="resources/post-to-303-target.php" method="post">
+Test value input:
+<input type="text" name="testvalue" value="foobar"></input>
+<input type="submit" value="Submit"></input>
+</form>
+</body>
+</html>

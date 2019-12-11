@@ -1,0 +1,12 @@
+Testing that DOM.childNodeRemoved is correctly triggered when all the parent children of a node are removed at once.
+
+Parent container is now empty
+Target element should have been moved after this line:
+Target element
+
+Removing node div#target_element
+Inserting node div#target_element into p#final_container
+Removing node div#before
+Removing node div#after
+Inserting node <text node "Parent container is now empty"> into div#parent_container
+

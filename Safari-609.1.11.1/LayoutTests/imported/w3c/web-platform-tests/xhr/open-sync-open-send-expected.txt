@@ -1,0 +1,3 @@
+
+PASS XMLHttpRequest: open() (sync) - send() - open() 
+

@@ -1,0 +1,45 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script src="resources/breakpoint.js"></script>
+<script>
+// sourceURL-test.js:
+eval("function sourceURLFunction() {\n    var a = 1;\n    var b = 2;\n    var c = a+b;\n}\n//# sourceURL=sourceURL-test.js")
+
+function test()
+{
+    InspectorProtocol.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.setBreakpointsActive", {active: true});
+
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    {
+        if (/sourceURL-test\.js$/.test(messageObject.params.sourceURL)) {
+            ProtocolTest.log("Found sourceURL-test.js");
+            var params = {url: messageObject.params.sourceURL, lineNumber: 3, columnNumber: 0};
+            InspectorProtocol.sendCommand("Debugger.setBreakpointByUrl", params, function(responseObject) {
+                InspectorProtocol.checkForError(responseObject);
+                ProtocolTest.log("Running sourceURLFunction");
+                InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "sourceURLFunction()"});
+            });
+        }
+    }
+
+    InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject)
+    {
+        ProtocolTest.log("Hit Breakpoint!");
+        var callFrameIdentifier = messageObject.params.callFrames[0].callFrameId;
+        InspectorProtocol.sendCommand("Debugger.evaluateOnCallFrame", {callFrameId: callFrameIdentifier, expression: "a"}, function(messageObject) {
+            ProtocolTest.log("Evaluted value of `a` (expecting number 1) was: " + JSON.stringify(messageObject.result.result));
+            InspectorProtocol.sendCommand("Debugger.evaluateOnCallFrame", {callFrameId: callFrameIdentifier, expression: "c"}, function(messageObject) {
+                ProtocolTest.log("Evaluted value of `c` (expecting undefined) was: " + JSON.stringify(messageObject.result.result));
+                ProtocolTest.completeTest();
+            });
+        });
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Debugger.setBreakpointByUrl in Script named via sourceURL</p>
+</body>
+</html>

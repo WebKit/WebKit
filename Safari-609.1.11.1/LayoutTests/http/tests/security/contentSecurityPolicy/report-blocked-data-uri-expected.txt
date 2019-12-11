@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: Refused to load data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw== because it does not appear in the img-src directive of the Content Security Policy.
+CSP report received:
+CONTENT_TYPE: application/csp-report
+HTTP_HOST: 127.0.0.1:8000
+HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/report-blocked-data-uri.php
+REQUEST_METHOD: POST
+REQUEST_URI: /security/contentSecurityPolicy/resources/save-report.php
+=== POST DATA ===
+{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-blocked-data-uri.php","referrer":"","violated-directive":"img-src 'none'","effective-directive":"img-src","original-policy":"img-src 'none'; report-uri resources/save-report.php","blocked-uri":"data","status-code":200}}

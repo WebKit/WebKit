@@ -1,0 +1,13 @@
+Testing that WI.incrementElementValue works for numeric values.
+
+
+== Running test suite: WI.incrementElementValue
+-- Running test case: incrementElementValue.numeric
+PASS: Should increment by 0.1.
+PASS: Should decrement by 1.
+PASS: Should increment by 10.
+PASS: Should decrement by 100.
+
+-- Running test case: incrementElementValue.nonNumeric
+PASS: Text should not change.
+

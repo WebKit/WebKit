@@ -1,0 +1,252 @@
+{
+    "domain": "Canvas",
+    "description": "Canvas domain allows tracking of canvases that have an associated graphics context. Tracks canvases in the DOM and CSS canvases created with -webkit-canvas.",
+    "debuggableTypes": ["page", "web-page"],
+    "targetTypes": ["page"],
+    "types": [
+        {
+            "id": "CanvasId",
+            "type": "string",
+            "description": "Unique canvas identifier."
+        },
+        {
+            "id": "ProgramId",
+            "type": "string",
+            "description": "Unique shader program identifier."
+        },
+        {
+            "id": "ContextType",
+            "type": "string",
+            "enum": ["canvas-2d", "bitmaprenderer", "webgl", "webgl2", "webgpu"],
+            "description": "The type of rendering context backing the canvas element."
+        },
+        {
+            "id": "ProgramType",
+            "type": "string",
+            "enum": ["compute", "render"]
+        },
+        {
+            "id": "ShaderType",
+            "type": "string",
+            "enum": ["compute", "fragment", "vertex"]
+        },
+        {
+            "id": "ContextAttributes",
+            "type": "object",
+            "description": "Drawing surface attributes.",
+            "properties": [
+                { "name": "alpha", "type": "boolean", "optional": true, "description": "WebGL, WebGL2, ImageBitmapRenderingContext" },
+                { "name": "depth", "type": "boolean", "optional": true, "description": "WebGL, WebGL2" },
+                { "name": "stencil", "type": "boolean", "optional": true, "description": "WebGL, WebGL2" },
+                { "name": "antialias", "type": "boolean", "optional": true, "description": "WebGL, WebGL2" },
+                { "name": "premultipliedAlpha", "type": "boolean", "optional": true, "description": "WebGL, WebGL2" },
+                { "name": "preserveDrawingBuffer", "type": "boolean", "optional": true, "description": "WebGL, WebGL2" },
+                { "name": "failIfMajorPerformanceCaveat", "type": "boolean", "optional": true, "description": "WebGL, WebGL2" },
+                { "name": "powerPreference", "type": "string", "optional": true, "description": "WebGL, WebGL2, WebGPU" }
+            ]
+        },
+        {
+            "id": "Canvas",
+            "type": "object",
+            "description": "Information about a canvas for which a rendering context has been created.",
+            "properties": [
+                { "name": "canvasId", "$ref": "CanvasId", "description": "Canvas identifier." },
+                { "name": "contextType", "$ref": "ContextType", "description": "The type of rendering context backing the canvas." },
+                { "name": "nodeId", "$ref": "DOM.NodeId", "optional": true, "description": "The corresponding DOM node id." },
+                { "name": "cssCanvasName", "type": "string", "optional": true, "description": "The CSS canvas identifier, for canvases created with <code>document.getCSSCanvasContext</code>." },
+                { "name": "contextAttributes", "$ref": "ContextAttributes", "optional": true, "description": "Context attributes for rendering contexts." },
+                { "name": "memoryCost", "type": "number", "optional": true, "description": "Memory usage of the canvas in bytes." },
+                { "name": "backtrace", "type": "array", "items": { "$ref": "Console.CallFrame" }, "optional": true, "description": "Backtrace that was captured when this canvas context was created." }
+            ]
+        },
+        {
+            "id": "ShaderProgram",
+            "type": "object",
+            "description": "Information about a WebGL/WebGL2 shader program or WebGPU shader pipeline.",
+            "properties": [
+                { "name": "programId", "$ref": "ProgramId" },
+                { "name": "programType", "$ref": "ProgramType" },
+                { "name": "canvasId", "$ref": "CanvasId"} ,
+                { "name": "sharesVertexFragmentShader", "type": "boolean", "optional": true, "description": "Indicates whether the vertex and fragment shader modules are the same object for a render shader pipleine for a WebGPU device." }
+            ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "enable",
+            "description": "Enables Canvas domain events."
+        },
+        {
+            "name": "disable",
+            "description": "Disables Canvas domain events."
+        },
+        {
+            "name": "requestNode",
+            "description": "Gets the NodeId for the canvas node with the given CanvasId.",
+            "parameters": [
+                { "name": "canvasId", "$ref": "CanvasId", "description": "Canvas identifier." }
+            ],
+            "returns": [
+                { "name": "nodeId", "$ref": "DOM.NodeId", "description": "Node identifier for given canvas." }
+            ]
+        },
+        {
+            "name": "requestContent",
+            "description": "Gets the data for the canvas node with the given CanvasId.",
+            "parameters": [
+                { "name": "canvasId", "$ref": "CanvasId", "description": "Canvas identifier." }
+            ],
+            "returns": [
+                { "name": "content", "type": "string", "description": "Base64-encoded data of the canvas' contents." }
+            ]
+        },
+        {
+            "name": "requestClientNodes",
+            "description": "Gets all <code>-webkit-canvas</code> nodes or active <code>HTMLCanvasElement</code> for a <code>WebGPUDevice</code>.",
+            "parameters": [
+                { "name": "canvasId", "$ref": "CanvasId" }
+            ],
+            "returns": [
+                { "name": "clientNodeIds", "type": "array", "items": { "$ref": "DOM.NodeId" } }
+            ]
+        },
+        {
+            "name": "resolveContext",
+            "description": "Resolves JavaScript canvas/device context object for given canvasId.",
+            "parameters": [
+                { "name": "canvasId", "$ref": "CanvasId", "description": "Canvas identifier." },
+                { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." }
+            ],
+            "returns": [
+                { "name": "object", "$ref": "Runtime.RemoteObject", "description": "JavaScript object wrapper for given canvas context." }
+            ]
+        },
+        {
+            "name": "setRecordingAutoCaptureFrameCount",
+            "description": "Tells the backend to record `count` frames whenever a new context is created.",
+            "parameters": [
+                { "name": "count", "type": "integer", "description": "Number of frames to record (0 means don't record anything)." }
+            ]
+        },
+        {
+            "name": "startRecording",
+            "description": "Record the next frame, or up to the given number of bytes of data, for the given canvas.",
+            "parameters": [
+                { "name": "canvasId", "$ref": "CanvasId" },
+                { "name": "frameCount", "type": "integer", "optional": true, "description": "Number of frames to record (unlimited when not specified)." },
+                { "name": "memoryLimit", "type": "integer", "optional": true, "description": "Memory limit of recorded data (100MB when not specified)." }
+            ]
+        },
+        {
+            "name": "stopRecording",
+            "description": "Stop recording the given canvas.",
+            "parameters": [
+                { "name": "canvasId", "$ref": "CanvasId" }
+            ]
+        },
+        {
+            "name": "requestShaderSource",
+            "description": "Requests the source of the shader of the given type from the program with the given id.",
+            "parameters": [
+                { "name": "programId", "$ref": "ProgramId" },
+                { "name": "shaderType", "$ref": "ShaderType" }
+            ],
+            "returns": [
+                { "name": "source", "type": "string" }
+            ]
+        },
+        {
+            "name": "updateShader",
+            "description": "Compiles and links the shader with identifier and type with the given source code.",
+            "parameters": [
+                { "name": "programId", "$ref": "ProgramId" },
+                { "name": "shaderType", "$ref": "ShaderType" },
+                { "name": "source", "type": "string" }
+            ]
+        },
+        {
+            "name": "setShaderProgramDisabled",
+            "description": "Enable/disable the visibility of the given shader program.",
+            "parameters": [
+                { "name": "programId", "$ref": "ProgramId" },
+                { "name": "disabled", "type": "boolean" }
+            ]
+        },
+        {
+            "name": "setShaderProgramHighlighted",
+            "description": "Enable/disable highlighting of the given shader program.",
+            "parameters": [
+                { "name": "programId", "$ref": "ProgramId" },
+                { "name": "highlighted", "type": "boolean" }
+            ]
+        }
+    ],
+    "events": [
+        {
+            "name": "canvasAdded",
+            "parameters": [
+                { "name": "canvas", "$ref": "Canvas", "description": "Canvas object." }
+            ]
+        },
+        {
+            "name": "canvasRemoved",
+            "parameters": [
+                { "name": "canvasId", "$ref": "CanvasId", "description": "Removed canvas identifier." }
+            ]
+        },
+        {
+            "name": "canvasMemoryChanged",
+            "parameters": [
+                { "name": "canvasId", "$ref": "CanvasId", "description": "Identifier of canvas that changed." },
+                { "name": "memoryCost", "type": "number", "description": "New memory cost value for the canvas in bytes." }
+            ]
+        },
+        {
+            "name": "extensionEnabled",
+            "parameters": [
+                { "name": "canvasId", "$ref": "CanvasId" },
+                { "name": "extension", "type": "string", "description": "Name of the extension that was enabled." }
+            ]
+        },
+        {
+            "name": "clientNodesChanged",
+            "parameters": [
+                { "name": "canvasId", "$ref": "CanvasId", "description": "Identifier of canvas that changed." }
+            ]
+        },
+        {
+            "name": "recordingStarted",
+            "parameters": [
+                { "name": "canvasId", "$ref": "CanvasId" },
+                { "name": "initiator", "$ref": "Recording.Initiator" }
+            ]
+        },
+        {
+            "name": "recordingProgress",
+            "parameters": [
+                { "name": "canvasId", "$ref": "CanvasId" },
+                { "name": "frames", "type": "array", "items": { "$ref": "Recording.Frame" }},
+                { "name": "bufferUsed", "type": "integer", "description": "Total memory size in bytes of all data recorded since the recording began." }
+            ]
+        },
+        {
+            "name": "recordingFinished",
+            "parameters": [
+                { "name": "canvasId", "$ref": "CanvasId" },
+                { "name": "recording", "$ref": "Recording.Recording", "optional": true }
+            ]
+        },
+        {
+            "name": "programCreated",
+            "parameters": [
+                { "name": "shaderProgram", "$ref": "ShaderProgram" }
+            ]
+        },
+        {
+            "name": "programDeleted",
+            "parameters": [
+                { "name": "programId", "$ref": "ProgramId" }
+            ]
+        }
+    ]
+}

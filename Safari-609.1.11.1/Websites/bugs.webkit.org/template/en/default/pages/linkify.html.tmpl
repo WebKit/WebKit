@@ -1,0 +1,28 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% INCLUDE global/header.html.tmpl title = "Linkify Text" %]
+
+<p>
+  If you enter some text, this form will return it marked up like a
+  standard Bugzilla comment. That is, valid [% terms.bug %] numbers,
+  URLs, email addresses and so on will be replaced with appropriate HTML links.
+</p>
+
+<form action="page.cgi" method="post">
+  [% INCLUDE global/textarea.html.tmpl
+    name    = 'text'
+    minrows = 20
+    cols    = constants.COMMENT_COLS
+  %]
+  <br>
+  <input type="hidden" name="id" value="linked.html">
+  <input type="submit" id="linkify" value="Linkify">
+</form>
+
+[% INCLUDE global/footer.html.tmpl %]

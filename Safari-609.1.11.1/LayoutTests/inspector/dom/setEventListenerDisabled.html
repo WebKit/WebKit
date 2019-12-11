@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function clickBody() {
+    document.body.click();
+
+    TestPage.dispatchEventToFrontend("TestPageAfterClick");
+}
+
+function test() {
+    let clickEventListener = null;
+
+    let suite = InspectorTest.createAsyncSuite("DOM.setEventListenerDisabled");
+
+    function logListener() {
+        return DOMAgent.getEventListenersForNode(clickEventListener.nodeId).then(({listeners}) => {
+            listeners = listeners.filter((listener) => listener.nodeId === clickEventListener.nodeId);
+            InspectorTest.assert(listeners.length === 1, "There should only be one event listener.");
+            InspectorTest.assert(listeners[0].type === "click", `There event listener should be for "click".`);
+            InspectorTest.log("Click event listener is " + (listeners[0].disabled ? "disabled" : "enabled") + ".");
+        });
+    }
+
+    suite.addTestCase({
+        name: "DOM.setEventListenerDisabled.DisabledClickEvent",
+        test(resolve, reject) {
+            let listener = InspectorTest.singleFireEventListener("TestPageDocumentClicked", () => {
+                reject("Click event listener should not be called");
+            });
+
+            InspectorTest.singleFireEventListener("TestPageAfterClick", () => {
+                InspectorTest.pass("Click event listener did not fire.");
+
+                InspectorTest.removeEventListener(listener);
+
+                logListener().then(resolve, reject);
+            });
+
+            logListener().then(() => {
+                InspectorTest.log("Disabling event listener...");
+
+                const disabled = true;
+                DOMAgent.setEventListenerDisabled(clickEventListener.eventListenerId, disabled, (error) => {
+                    if (error) {
+                        reject(error);
+                        return;
+                    }
+
+                    InspectorTest.evaluateInPage(`clickBody()`, () => {
+                        InspectorTest.log("<body> clicked.");
+                    });
+                });
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.setEventListenerDisabled.ReenabledClickEvent",
+        test(resolve, reject) {
+            InspectorTest.singleFireEventListener("TestPageDocumentClicked", () => {
+                InspectorTest.pass("Click event listener fired.");
+
+                logListener().then(resolve, reject);
+            });
+
+            logListener().then(() => {
+                InspectorTest.log("Enabling event listener...");
+
+                const disabled = false;
+                DOMAgent.setEventListenerDisabled(clickEventListener.eventListenerId, disabled, (error) => {
+                    if (error) {
+                        reject(error);
+                        return;
+                    }
+
+                    InspectorTest.evaluateInPage(`clickBody()`, () => {
+                        InspectorTest.log("<body> clicked.");
+                    });
+                });
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.setEventListenerDisabled.Invalid",
+        description: "Invalid event listener identifiers should cause an error.",
+        test(resolve, reject) {
+            const invalidEventListenerId = 9999999;
+            const disabled = false;
+            DOMAgent.setEventListenerDisabled(invalidEventListenerId, disabled, (error) => {
+                InspectorTest.expectThat(error, "Should produce an error.");
+                InspectorTest.log("Error: " + error);
+                resolve();
+            });
+        }
+    });
+
+    WI.domManager.requestDocument((documentNode) => {
+        DOMAgent.getEventListenersForNode(documentNode.id, (error, eventListeners) => {
+            if (error) {
+                InspectorTest.fail("Unable to retrieve event listeners.");
+                InspectorTest.completeTest();
+                return;
+            }
+
+            clickEventListener = eventListeners[0];
+            if (!clickEventListener || clickEventListener.type !== "click") {
+                InspectorTest.fail("Missing click event listener.");
+                InspectorTest.completeTest();
+                return;
+            }
+
+            suite.runTestCasesAndFinish();
+        });
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing DOMAgent.setEventListenerDisabled.</p>
+
+    <script>
+        document.addEventListener("click", (event) => {
+            TestPage.dispatchEventToFrontend("TestPageDocumentClicked");
+        });
+    </script>
+</body>
+</html>

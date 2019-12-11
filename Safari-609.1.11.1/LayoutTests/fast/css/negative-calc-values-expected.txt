@@ -1,0 +1,29 @@
+Tests that negative calc() values are properly clamped when needed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testDiv.style['width'] is ""
+testDiv.style['width'] = '100px'
+testDiv.style['width'] = 'calc(5px - 10px)'
+PASS testDiv.style['width'] is "calc(-5px)"
+PASS window.getComputedStyle(testDiv).getPropertyValue('width') is "0px"
+testDiv.style['width'] = '100px'
+testDiv.style['width'] = 'calc(10% - 100px)'
+PASS testDiv.style['width'] is "calc(10% - 100px)"
+PASS window.getComputedStyle(testDiv).getPropertyValue('width') is "0px"
+testDiv.style['line-height'] = '10%'
+testDiv.style['line-height'] = 'calc(10% - 20%)'
+PASS testDiv.style['line-height'] is "calc(-10%)"
+PASS window.getComputedStyle(testDiv).getPropertyValue('line-height') is "0px"
+testPre.style['tab-size'] = '8'
+testPre.style['tab-size'] = 'calc(2 - 4)'
+PASS testPre.style['tab-size'] is "8"
+PASS window.getComputedStyle(testPre).getPropertyValue('tab-size') is "8"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+
+

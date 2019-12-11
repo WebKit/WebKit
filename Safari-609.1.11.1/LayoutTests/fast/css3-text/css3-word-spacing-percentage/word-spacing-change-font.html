@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<div id="cont">
+<div style="word-spacing: -100%;">word1 word2</div>
+<div style="word-spacing: 0px;">word1 word2</div>
+<div style="word-spacing: 100%;">word1 word2</div>
+</div>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+window.setTimeout(function() {
+    var cont = document.getElementById("cont");
+    cont.setAttribute("style", "font-family: Courier New;");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 0);
+</script>
+</body>
+</html>
+

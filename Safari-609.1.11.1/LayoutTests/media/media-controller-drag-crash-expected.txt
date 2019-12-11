@@ -1,0 +1,9 @@
+Test that dragging through the timebar causes a crash.
+
+
+EVENT(canplaythrough)
+RUN(video.play())
+Mouse dragging.
+No crash. PASS.
+END OF TEST
+

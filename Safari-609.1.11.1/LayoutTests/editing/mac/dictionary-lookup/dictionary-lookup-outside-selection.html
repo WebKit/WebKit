@@ -1,0 +1,19 @@
+<html>
+<head>
+    <script type="text/javascript" src="resources/lookup-test.js"></script>
+    <script>
+window.onload = function () {
+    var selection = window.getSelection();
+    var range = document.createRange();
+    range.selectNode(document.getElementById("select"));
+    selection.addRange(range);
+
+    runTest();
+}
+    </script>
+</head>
+<body>
+<!-- The hit word is outside the selection, so the selection should be ignored. -->
+<div>Some <span class="lookupInCenter" data-name="outside selected text">text</span> to look up. <span id="select">This part is all selected, but the hit word is elsewhere so that doesn't matter.</span></div>
+</body>
+</html>

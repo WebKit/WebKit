@@ -1,0 +1,7 @@
+2d.canvas.readonly
+
+canvas is readonly
+
+
+FAIL canvas is readonly null is not an object (evaluating 'ctx.canvas')
+

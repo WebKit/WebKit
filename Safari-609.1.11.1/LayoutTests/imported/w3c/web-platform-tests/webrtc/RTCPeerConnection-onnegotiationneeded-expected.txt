@@ -1,0 +1,11 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS Creating first data channel should fire negotiationneeded event 
+PASS calling createDataChannel twice should fire negotiationneeded event once 
+PASS addTransceiver() should fire negotiationneeded event 
+FAIL Calling addTransceiver() twice should fire negotiationneeded event once assert_unreached: Pending promise should never be resolved. Instead it is fulfilled with: [object Object] Reached unreachable code
+FAIL Calling both addTransceiver() and createDataChannel() should fire negotiationneeded event once assert_unreached: Pending promise should never be resolved. Instead it is fulfilled with: [object Object] Reached unreachable code
+FAIL negotiationneeded event should not fire if signaling state is not stable assert_unreached: Pending promise should never be resolved. Instead it is rejected with: Error: assert_equals: expected "have-local-offer" but got "stable" Reached unreachable code
+TIMEOUT negotiationneeded event should fire only after signaling state go back to stable Test timed out
+

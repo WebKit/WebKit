@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 27: Worker finished
+CONSOLE MESSAGE: line 27: Worker finished
+CONSOLE MESSAGE: line 27: Worker finished
+CONSOLE MESSAGE: line 27: Worker finished
+CONSOLE MESSAGE: line 27: Worker finished
+CONSOLE MESSAGE: line 27: Worker finished
+CONSOLE MESSAGE: line 27: Worker finished
+CONSOLE MESSAGE: line 27: Worker finished
+CONSOLE MESSAGE: line 8: Finished running
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

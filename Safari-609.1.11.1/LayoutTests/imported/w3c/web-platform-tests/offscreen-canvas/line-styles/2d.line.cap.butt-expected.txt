@@ -1,0 +1,7 @@
+2d.line.cap.butt
+
+lineCap 'butt' is rendered correctly
+
+
+FAIL lineCap 'butt' is rendered correctly null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

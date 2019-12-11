@@ -1,0 +1,456 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		5DE79BC30F1C62450067BE08 /* Extract Sparkle */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 5DE79BD80F1C629B0067BE08 /* Build configuration list for PBXAggregateTarget "Extract Sparkle" */;
+			buildPhases = (
+				5DE79BC20F1C62450067BE08 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "Extract Sparkle";
+			productName = "Extract Sparkle";
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		5D1067640FE63758002A2868 /* WebKitLauncherURLProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D1067620FE63758002A2868 /* WebKitLauncherURLProtocol.h */; };
+		5D1067650FE63758002A2868 /* WebKitLauncherURLProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D1067630FE63758002A2868 /* WebKitLauncherURLProtocol.m */; };
+		5D18A1FF103FE255006CA7C7 /* nightly.webkit.org.public.pem in Resources */ = {isa = PBXBuildFile; fileRef = 5D18A1FE103FE255006CA7C7 /* nightly.webkit.org.public.pem */; };
+		5D41141C0A50A9DE00C84CF0 /* VERSION in Resources */ = {isa = PBXBuildFile; fileRef = 5D41141B0A50A9DE00C84CF0 /* VERSION */; };
+		5D4DF982097F89FB0083D5E5 /* start.html in Resources */ = {isa = PBXBuildFile; fileRef = 5D4DF981097F89FB0083D5E5 /* start.html */; };
+		5D650F3609DB8B370075E9A8 /* WebKitNightlyEnabler.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D650F3509DB8B370075E9A8 /* WebKitNightlyEnabler.m */; };
+		5D650F3A09DB8B410075E9A8 /* WebKitNightlyEnabler.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 5D650F3409DB8B280075E9A8 /* WebKitNightlyEnabler.dylib */; };
+		5D877FCD0A5795F200D0C67B /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		5DA88F6D0FC8136000AB2F62 /* WebKitNightlyEnablerSparkle.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA88F6B0FC8136000AB2F62 /* WebKitNightlyEnablerSparkle.h */; };
+		5DA88F6E0FC8136000AB2F62 /* WebKitNightlyEnablerSparkle.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA88F6C0FC8136000AB2F62 /* WebKitNightlyEnablerSparkle.m */; };
+		5DA88F7A0FC813EB00AB2F62 /* WebKitNightlyEnabler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA88F790FC813EB00AB2F62 /* WebKitNightlyEnabler.h */; };
+		5DB70525097B94CD009875EC /* webkit.icns in Resources */ = {isa = PBXBuildFile; fileRef = 5DB70524097B94CD009875EC /* webkit.icns */; };
+		5DE0853815AE0AA0000A27B4 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DE0853715AE0AA0000A27B4 /* Security.framework */; };
+		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
+		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5D650F4409DB8B830075E9A8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5D650F3309DB8B280075E9A8;
+			remoteInfo = WebKitNightlyEnabler;
+		};
+		5DE79BC90F1C62850067BE08 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5DE79BC30F1C62450067BE08;
+			remoteInfo = "Extract Sparkle";
+		};
+		5DE79BCB0F1C62890067BE08 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5DE79BC30F1C62450067BE08;
+			remoteInfo = "Extract Sparkle";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		1C48994E1BBC547D00213C1C /* WebKitLauncher.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = WebKitLauncher.entitlements; sourceTree = "<group>"; };
+		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5D1067620FE63758002A2868 /* WebKitLauncherURLProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitLauncherURLProtocol.h; sourceTree = "<group>"; };
+		5D1067630FE63758002A2868 /* WebKitLauncherURLProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebKitLauncherURLProtocol.m; sourceTree = "<group>"; };
+		5D18A1FE103FE255006CA7C7 /* nightly.webkit.org.public.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = nightly.webkit.org.public.pem; sourceTree = "<group>"; };
+		5D41141B0A50A9DE00C84CF0 /* VERSION */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VERSION; sourceTree = "<group>"; };
+		5D4DF981097F89FB0083D5E5 /* start.html */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.html; path = start.html; sourceTree = "<group>"; };
+		5D650F3409DB8B280075E9A8 /* WebKitNightlyEnabler.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = WebKitNightlyEnabler.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D650F3509DB8B370075E9A8 /* WebKitNightlyEnabler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebKitNightlyEnabler.m; sourceTree = "<group>"; };
+		5DA88F6B0FC8136000AB2F62 /* WebKitNightlyEnablerSparkle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitNightlyEnablerSparkle.h; sourceTree = "<group>"; };
+		5DA88F6C0FC8136000AB2F62 /* WebKitNightlyEnablerSparkle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebKitNightlyEnablerSparkle.m; sourceTree = "<group>"; };
+		5DA88F790FC813EB00AB2F62 /* WebKitNightlyEnabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitNightlyEnabler.h; sourceTree = "<group>"; };
+		5DA88F7E0FC8176100AB2F62 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		5DA88F7F0FC8176100AB2F62 /* WebKitLauncher.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebKitLauncher.xcconfig; sourceTree = "<group>"; };
+		5DA88F800FC8176100AB2F62 /* WebKitNightlyEnabler.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebKitNightlyEnabler.xcconfig; sourceTree = "<group>"; };
+		5DB70524097B94CD009875EC /* webkit.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = webkit.icns; sourceTree = "<group>"; };
+		5DE0853715AE0AA0000A27B4 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		5DE79BEB0F1C63CC0067BE08 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		8D1107320486CEB800E47090 /* WebKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WebKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5D650F3209DB8B280075E9A8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5D877FCD0A5795F200D0C67B /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8D11072E0486CEB800E47090 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
+				5DE0853815AE0AA0000A27B4 /* Security.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
+			);
+			name = "Linked Frameworks";
+			sourceTree = "<group>";
+		};
+		19C28FACFE9D520D11CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5DE79BEB0F1C63CC0067BE08 /* Sparkle.framework */,
+				8D1107320486CEB800E47090 /* WebKit.app */,
+				5D650F3409DB8B280075E9A8 /* WebKitNightlyEnabler.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		29B97314FDCFA39411CA2CEA /* WebKit */ = {
+			isa = PBXGroup;
+			children = (
+				5DE0853715AE0AA0000A27B4 /* Security.framework */,
+				29B97315FDCFA39411CA2CEA /* Source */,
+				5DA88F7D0FC8174E00AB2F62 /* Configurations */,
+				29B97317FDCFA39411CA2CEA /* Resources */,
+				29B97323FDCFA39411CA2CEA /* Frameworks */,
+				19C28FACFE9D520D11CA2CBB /* Products */,
+			);
+			name = WebKit;
+			sourceTree = "<group>";
+		};
+		29B97315FDCFA39411CA2CEA /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				29B97316FDCFA39411CA2CEA /* main.m */,
+				5D1067620FE63758002A2868 /* WebKitLauncherURLProtocol.h */,
+				5D1067630FE63758002A2868 /* WebKitLauncherURLProtocol.m */,
+				5DA88F790FC813EB00AB2F62 /* WebKitNightlyEnabler.h */,
+				5D650F3509DB8B370075E9A8 /* WebKitNightlyEnabler.m */,
+				5DA88F6B0FC8136000AB2F62 /* WebKitNightlyEnablerSparkle.h */,
+				5DA88F6C0FC8136000AB2F62 /* WebKitNightlyEnablerSparkle.m */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		29B97317FDCFA39411CA2CEA /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				5D41141B0A50A9DE00C84CF0 /* VERSION */,
+				8D1107310486CEB800E47090 /* Info.plist */,
+				5D18A1FE103FE255006CA7C7 /* nightly.webkit.org.public.pem */,
+				5D4DF981097F89FB0083D5E5 /* start.html */,
+				5DB70524097B94CD009875EC /* webkit.icns */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		5DA88F7D0FC8174E00AB2F62 /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				5DA88F7E0FC8176100AB2F62 /* Base.xcconfig */,
+				1C48994E1BBC547D00213C1C /* WebKitLauncher.entitlements */,
+				5DA88F7F0FC8176100AB2F62 /* WebKitLauncher.xcconfig */,
+				5DA88F800FC8176100AB2F62 /* WebKitNightlyEnabler.xcconfig */,
+			);
+			path = Configurations;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		5D650F3009DB8B280075E9A8 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5D1067640FE63758002A2868 /* WebKitLauncherURLProtocol.h in Headers */,
+				5DA88F7A0FC813EB00AB2F62 /* WebKitNightlyEnabler.h in Headers */,
+				5DA88F6D0FC8136000AB2F62 /* WebKitNightlyEnablerSparkle.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		5D650F3309DB8B280075E9A8 /* WebKitNightlyEnabler */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5D650F3709DB8B370075E9A8 /* Build configuration list for PBXNativeTarget "WebKitNightlyEnabler" */;
+			buildPhases = (
+				5D650F3009DB8B280075E9A8 /* Headers */,
+				5D650F3109DB8B280075E9A8 /* Sources */,
+				5D650F3209DB8B280075E9A8 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5DE79BCC0F1C62890067BE08 /* PBXTargetDependency */,
+			);
+			name = WebKitNightlyEnabler;
+			productName = WebKitNightlyEnabler;
+			productReference = 5D650F3409DB8B280075E9A8 /* WebKitNightlyEnabler.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		8D1107260486CEB800E47090 /* WebKit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "WebKit" */;
+			buildPhases = (
+				8D1107290486CEB800E47090 /* Resources */,
+				8D11072C0486CEB800E47090 /* Sources */,
+				8D11072E0486CEB800E47090 /* Frameworks */,
+				5DA892AC0FC8E3A100AB2F62 /* Copy Sparkle in to Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5D650F4509DB8B830075E9A8 /* PBXTargetDependency */,
+				5DE79BCA0F1C62850067BE08 /* PBXTargetDependency */,
+			);
+			name = WebKit;
+			productInstallPath = "$(HOME)/Applications";
+			productName = WebKit;
+			productReference = 8D1107320486CEB800E47090 /* WebKit.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		29B97313FDCFA39411CA2CEA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
+			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "WebKitLauncher" */;
+			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = en;
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 29B97314FDCFA39411CA2CEA /* WebKit */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8D1107260486CEB800E47090 /* WebKit */,
+				5D650F3309DB8B280075E9A8 /* WebKitNightlyEnabler */,
+				5DE79BC30F1C62450067BE08 /* Extract Sparkle */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8D1107290486CEB800E47090 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5D18A1FF103FE255006CA7C7 /* nightly.webkit.org.public.pem in Resources */,
+				5D4DF982097F89FB0083D5E5 /* start.html in Resources */,
+				5D41141C0A50A9DE00C84CF0 /* VERSION in Resources */,
+				5DB70525097B94CD009875EC /* webkit.icns in Resources */,
+				5D650F3A09DB8B410075E9A8 /* WebKitNightlyEnabler.dylib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5DA892AC0FC8E3A100AB2F62 /* Copy Sparkle in to Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Sparkle in to Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ \"${ENABLE_SPARKLE}\" == \"1\" ]]\nthen\n    ditto \"${CONFIGURATION_BUILD_DIR}/Sparkle.framework\" \"${CONFIGURATION_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Sparkle.framework\"\n    cd \"${CONFIGURATION_BUILD_DIR}/Sparkle.framework/Resources\"\n    find . -name '*lproj' -not -name 'en.lproj' -print0 | xargs -0 rm -rf\nelse\n    rm -rf \"${CONFIGURATION_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Sparkle.framework\"\nfi\n";
+		};
+		5DE79BC20F1C62450067BE08 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Sparkle.framework.tar.gz",
+			);
+			outputPaths = (
+				"$(CONFIGURATION_BUILD_DIR)/Sparkle.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ \"${ENABLE_SPARKLE}\" == \"1\" ]]\nthen\n    tar -C \"${CONFIGURATION_BUILD_DIR}\" -xvzf \"${SRCROOT}/Sparkle.framework.tar.gz\"\n    cd \"${CONFIGURATION_BUILD_DIR}/Sparkle.framework/Resources\"\n    find . -name '*lproj' -not -name 'en.lproj' -print0 | xargs -0 rm -rf\nelse\n    rm -rf \"${CONFIGURATION_BUILD_DIR}/Sparkle.framework\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5D650F3109DB8B280075E9A8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5D1067650FE63758002A2868 /* WebKitLauncherURLProtocol.m in Sources */,
+				5D650F3609DB8B370075E9A8 /* WebKitNightlyEnabler.m in Sources */,
+				5DA88F6E0FC8136000AB2F62 /* WebKitNightlyEnablerSparkle.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8D11072C0486CEB800E47090 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D11072D0486CEB800E47090 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5D650F4509DB8B830075E9A8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5D650F3309DB8B280075E9A8 /* WebKitNightlyEnabler */;
+			targetProxy = 5D650F4409DB8B830075E9A8 /* PBXContainerItemProxy */;
+		};
+		5DE79BCA0F1C62850067BE08 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5DE79BC30F1C62450067BE08 /* Extract Sparkle */;
+			targetProxy = 5DE79BC90F1C62850067BE08 /* PBXContainerItemProxy */;
+		};
+		5DE79BCC0F1C62890067BE08 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5DE79BC30F1C62450067BE08 /* Extract Sparkle */;
+			targetProxy = 5DE79BCB0F1C62890067BE08 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		5D650F3809DB8B370075E9A8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5DA88F800FC8176100AB2F62 /* WebKitNightlyEnabler.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		5D650F3909DB8B370075E9A8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5DA88F800FC8176100AB2F62 /* WebKitNightlyEnabler.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		5DE79BC40F1C62450067BE08 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Extract Sparkle";
+			};
+			name = Debug;
+		};
+		5DE79BC50F1C62450067BE08 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Extract Sparkle";
+			};
+			name = Release;
+		};
+		C01FCF4B08A954540054247B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5DA88F7F0FC8176100AB2F62 /* WebKitLauncher.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = WebKitLauncher.entitlements;
+			};
+			name = Debug;
+		};
+		C01FCF4C08A954540054247B /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5DA88F7F0FC8176100AB2F62 /* WebKitLauncher.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = WebKitLauncher.entitlements;
+			};
+			name = Release;
+		};
+		C01FCF4F08A954540054247B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5DA88F7E0FC8176100AB2F62 /* Base.xcconfig */;
+			buildSettings = {
+				GCC_OPTIMIZATION_LEVEL = 0;
+				ONLY_ACTIVE_ARCH = YES;
+			};
+			name = Debug;
+		};
+		C01FCF5008A954540054247B /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5DA88F7E0FC8176100AB2F62 /* Base.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5D650F3709DB8B370075E9A8 /* Build configuration list for PBXNativeTarget "WebKitNightlyEnabler" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5D650F3809DB8B370075E9A8 /* Debug */,
+				5D650F3909DB8B370075E9A8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5DE79BD80F1C629B0067BE08 /* Build configuration list for PBXAggregateTarget "Extract Sparkle" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5DE79BC40F1C62450067BE08 /* Debug */,
+				5DE79BC50F1C62450067BE08 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "WebKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C01FCF4B08A954540054247B /* Debug */,
+				C01FCF4C08A954540054247B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "WebKitLauncher" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C01FCF4F08A954540054247B /* Debug */,
+				C01FCF5008A954540054247B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 29B97313FDCFA39411CA2CEA /* Project object */;
+}

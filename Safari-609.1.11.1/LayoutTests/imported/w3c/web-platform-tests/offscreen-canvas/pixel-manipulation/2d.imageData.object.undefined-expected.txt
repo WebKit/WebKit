@@ -1,0 +1,7 @@
+2d.imageData.object.undefined
+
+ImageData.data converts undefined to 0
+
+
+FAIL ImageData.data converts undefined to 0 null is not an object (evaluating 'ctx.getImageData')
+

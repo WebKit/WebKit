@@ -1,0 +1,24 @@
+<script>
+if (testRunner)
+    testRunner.dumpAsText();
+
+function go() {
+ div.style.setProperty("-webkit-flow-into", "foo");
+ div.offsetWidth;
+ h1.attachShadow({mode: "open"});
+ h1.replaceWith("This test passes if it doesn't crash or assert");
+ cb();
+}
+
+function cb() {
+ var a;
+ //trigger garbage collector
+ for(var i=0;i<100;i++) {
+   a = new Uint8Array(1024*1024);
+ }
+}
+
+</script>
+<body onload=go()>
+<h1 id="h1">
+<div id="div" style="perspective: 1px;">

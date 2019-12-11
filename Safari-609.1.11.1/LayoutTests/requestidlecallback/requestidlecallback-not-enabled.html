@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:RequestIdleCallbackEnabled=false ] -->
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+
+description('This tests that when requestIdleCallback is not enabled, requestIdleCallback and IdleDeadline are not defined.');
+
+shouldBeUndefined('window.requestIdleCallback');
+shouldBeUndefined('window.cancelIdleCallback');
+shouldBeUndefined('window.IdleDeadline');
+
+</script>
+</body>
+</html>

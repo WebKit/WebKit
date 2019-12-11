@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+onload = function() {
+    setTimeout(function() { document.links[0].click() }, 0);
+};
+onbeforeunload = function(event) {
+    document.open();
+    document.write('<script>parent.document.body.appendChild(document.createTextNode("FAIL: document.write() was not blocked in pagehide handler"))<' + '/script>');
+    document.close();
+};
+</script>
+</head>
+<body>
+<p><a href="finish-test.html">Run Test</a>
+</body>
+</html>

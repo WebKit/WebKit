@@ -1,0 +1,3 @@
+
+FAIL isPointInPath() works on paths outside the canvas Can't find variable: OffscreenCanvas
+

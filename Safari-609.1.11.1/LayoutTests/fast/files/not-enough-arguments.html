@@ -1,0 +1,24 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/fs-test-util.js"></script>
+</head>
+<body>
+<input type="file">
+<script>
+description('This test tries calling various FileAPI functions with too few arguments.');
+
+var reader = new FileReader();
+
+shouldThrow('reader.readAsArrayBuffer()');
+shouldThrow('reader.readAsBinaryString()');
+shouldThrow('reader.readAsText()');
+shouldThrow('reader.readAsDataURL()');
+
+var fileInput = document.getElementsByTagName('input')[0];
+
+shouldThrow('fileInput.files.item()');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

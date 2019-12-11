@@ -1,0 +1,9 @@
+Received unknown event for object ''.
+Received unknown event for object ''.
+Received unknown event for object ''.
+This tests that elements return their correct parent element.
+
+
+
+PASS optionElement.parentElement().role is "AXRole: AXList"
+

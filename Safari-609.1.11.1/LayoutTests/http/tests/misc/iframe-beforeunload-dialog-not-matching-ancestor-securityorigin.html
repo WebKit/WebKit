@@ -1,0 +1,27 @@
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+
+if (window.testRunner) {
+	testRunner.dumpAsText();
+	testRunner.waitUntilDone();
+}
+
+function navigateFrame()
+{
+	window.location.href = 'resources/notify-done.html';
+}
+
+window.onload = function()
+{
+	// Simulate a user interaction with the page so that the beforeunload alert shows.
+	const testButton = document.getElementById("testButton");
+	UIHelper.activateAt(testButton.offsetLeft + 5, testButton.offsetTop + 5);
+}
+
+</script>
+<body>
+When viewed using the host 127.0.0.1, this page has an iframe whose security origin is different from the main frame.<br>
+The iframe has a beforeunload handler, and that handler should not result in the display of the page dismissal dialog since the security origins differ.<br>
+<input id="testButton" type="button" value="Click to navigate" onclick="navigateFrame()"><br>
+<iframe src="http://localhost:8000/misc/resources/iframe-with-beforeunload.html"></iframe><br>
+</body>

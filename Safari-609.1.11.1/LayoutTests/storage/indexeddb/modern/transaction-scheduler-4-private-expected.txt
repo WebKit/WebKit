@@ -1,0 +1,33 @@
+Makes sure that a read-only transaction scheduled after a read-write transaction with overlapping scope does not start until the read-write transaction completes
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+connection = event.target.result;
+objectStore = connection.createObjectStore('store');
+transaction1 = connection.transaction('store', 'readwrite');
+transaction2 = connection.transaction('store', 'readonly');
+getRequest = transaction2.objectStore('store').get('foo');
+Starting a series of 20 puts in the readwrite transaction to make sure the readonly transaction is deferred for some time
+putCount = 0;
+readWriteTransactionDone = false;
+getRequestDone = false;
+20th put complete
+Transaction 1 (readwrite) completed with 20 puts completed.
+PASS getRequestDone is false
+PASS putCount is 20
+Getting the value of 'foo' completed - This means the readonly transaction started. At this point 20 puts completed in the readwrite transaction.
+PASS readWriteTransactionDone is true
+PASS putCount is 20
+Transaction 1 (readonly) completed
+PASS readWriteTransactionDone is true
+PASS getRequestDone is true
+PASS putCount is 20
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

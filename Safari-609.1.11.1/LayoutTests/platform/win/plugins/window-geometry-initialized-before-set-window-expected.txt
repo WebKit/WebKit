@@ -1,0 +1,2 @@
+
+This tests that a plugin's HWND is already sized and positioned before NPP_SetWindow is called.

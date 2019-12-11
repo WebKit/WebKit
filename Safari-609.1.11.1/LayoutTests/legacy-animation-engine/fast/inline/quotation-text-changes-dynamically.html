@@ -1,0 +1,23 @@
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+
+<style>
+q:before { 
+  position: fixed;
+  -webkit-animation-name: name1;
+  -webkit-animation-duration: 1s;
+} 
+
+@-webkit-keyframes name1 {
+  from {
+    column-width: 10px;
+  }
+  to {
+    column-width: 20px;
+  }
+}
+</style>
+
+<q>PASS if no crash or assert in debug</q>

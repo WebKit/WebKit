@@ -1,0 +1,63 @@
+Test for Resources in a Worker.
+
+
+== Running test suite: Worker.Resources
+-- Running test case: Worker.Resource.Start
+PASS: Added Target should have Worker type.
+
+-- Running test case: Worker.Resource.XHR
+PASS: Worker Target should have 1 resource.
+PASS: Worker Target should dispatch ResourceAdded event.
+PASS: Resource should be XHR.
+PASS: Resource should be tied to the Worker Target.
+PASS: Resource has no parent frame.
+PASS: Worker Target should have 2 resources.
+RESOURCES:
+inspector/worker/resources/resource-utilities.js
+inspector/worker/resources/dataXHR.json
+
+-- Running test case: Main.Resource.XHR
+PASS: Worker Target should still have 2 resources.
+PASS: Frame should dispatch ResourceWasAdded event.
+PASS: Resource should be XHR.
+PASS: Resource should be tied to the Main Target.
+PASS: Resource parentFrame is the main frame.
+PASS: Worker Target should still have 2 resources.
+RESOURCES:
+inspector/worker/resources/resource-utilities.js
+inspector/worker/resources/dataXHR.json
+
+-- Running test case: Worker.Resource.Fetch
+PASS: Worker Target should have 2 resources.
+PASS: Worker Target should dispatch ResourceAdded event.
+PASS: Resource should be tied to the Worker Target.
+PASS: Resource has no parent frame.
+PASS: Worker Target should have 3 resources.
+RESOURCES:
+inspector/worker/resources/resource-utilities.js
+inspector/worker/resources/dataXHR.json
+inspector/worker/resources/dataFetch.json
+
+-- Running test case: Main.Resource.Fetch
+PASS: Worker Target should still have 3 resources.
+PASS: Frame should dispatch ResourceWasAdded event.
+PASS: Resource should be tied to the Main Target.
+PASS: Resource parentFrame is the main frame.
+PASS: Worker Target should still have 3 resources.
+RESOURCES:
+inspector/worker/resources/resource-utilities.js
+inspector/worker/resources/dataXHR.json
+inspector/worker/resources/dataFetch.json
+
+-- Running test case: Worker.Resource.ImportScript
+PASS: Worker Target should still have 3 resources.
+PASS: Worker Target should dispatch ResourceAdded event.
+PASS: Resource should be tied to the Worker Target.
+PASS: Resource has no parent frame.
+PASS: Worker Target should have 4 resources.
+RESOURCES:
+inspector/worker/resources/resource-utilities.js
+inspector/worker/resources/dataXHR.json
+inspector/worker/resources/dataFetch.json
+inspector/worker/resources/worker-import-1.js
+

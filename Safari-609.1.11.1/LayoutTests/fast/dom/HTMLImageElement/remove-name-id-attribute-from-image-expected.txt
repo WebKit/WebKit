@@ -1,0 +1,14 @@
+This test checks that there's no crash when removing the name or id attribute from a HTMLImageElement.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS doc.body.firstChild.getAttribute('name') is 'bar'
+PASS doc.body.firstChild.getAttribute('id') is 'foo'
+Removing name and id attributes...
+PASS doc.body.firstChild.getAttribute('name') is null
+PASS doc.body.firstChild.getAttribute('id') is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,41 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpStatusCallbacks();
+}
+
+function log(s)
+{
+    document.getElementById("console").innerHTML += "<li>" + s + "</li>";
+}
+
+function shouldBe(a, b)
+{
+    var evalA, evalB;
+    try {
+        evalA = eval(a);
+        evalB = eval(b);
+    } catch(e) {
+        evalA = e;
+    }
+
+    var message = (evalA === evalB)
+                    ? "PASS: " + a + " should be '" + evalB + "' and is."
+                    : "*** FAIL: " + a + " should be '" + evalB + "' but instead is " + evalA + ". ***";
+    log(message);
+}
+
+function test()
+{
+    shouldBe("window.status = 'set window.status'; window.status", "'set window.status'");
+    shouldBe("status = 'set status'", "'set status'");
+    shouldBe("window.status = 1; window.status", "'1'");
+    shouldBe("status = 2; status", "'2'");
+    shouldBe("window.status={toString:function(){ return 'object.toString'; }}; window.status", "'object.toString'");
+}
+</script>
+This tests that we can assign strings to the status property.
+<ul id="console"></ul>
+<script>
+test();
+</script>

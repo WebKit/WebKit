@@ -1,0 +1,1 @@
+Text should remain legible when window is resized. No background artifacts should appear.

@@ -1,0 +1,19 @@
+Debugger.setBreakpoint options.condition
+
+Found breakpoint.js
+Running breakpointWithCondition multiple times
+inside breakpointWithCondition a:(1) b:(2) a+b:(3)
+inside breakpointWithCondition a:(5) b:(5) a+b:(10)
+inside breakpointWithCondition a:(7) b:(4) a+b:(11)
+Hit Breakpoint!
+Evaluted value of `a` (expecting number 7) was: {"type":"number","value":7,"description":"7"}
+Evaluted value of `b` (expecting number 4) was: {"type":"number","value":4,"description":"4"}
+Resumed, running breakpointWithCondition multiple times again
+inside breakpointWithCondition a:(9) b:(0) a+b:(9)
+inside breakpointWithCondition a:(12) b:(-4) a+b:(8)
+inside breakpointWithCondition a:(4) b:(7) a+b:(11)
+Hit Breakpoint!
+Evaluted value of `a` (expecting number 4) was: {"type":"number","value":4,"description":"4"}
+Evaluted value of `b` (expecting number 7) was: {"type":"number","value":7,"description":"7"}
+PASS: hit breakpoints with expected values
+

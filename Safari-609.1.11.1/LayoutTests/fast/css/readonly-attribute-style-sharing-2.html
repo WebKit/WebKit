@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+    <style>
+        /* Pack them to fit everything in 800*600 */
+        div > * {
+            padding: 5px;
+            width: 100px;
+            float: left;
+        }
+        div > :not([readonly]) {
+            background-color: red;
+        }
+        div > :not([readonly=foobar]) {
+            background-color: blue;
+        }
+    </style>
+</head>
+<body>
+    <p>Verify style sharing does not ignore the "readonly" attribute.</p>
+    <div>
+        <div>No readonly</div>
+        <div readonly>Readonly defined</div>
+        <div readonly="">Readonly defined empty</div>
+        <div readonly="foobar">Readonly is foobar</div>
+    </div>
+    <div>
+        <span>No readonly</span>
+        <span readonly>Readonly defined</span>
+        <span readonly="">Readonly defined empty</span>
+        <span readonly="foobar">Readonly is foobar</span>
+    </div>
+    <div>
+        <input value="No readonly">
+        <input readonly value="Readonly defined">
+        <input readonly="" value="Readonly defined empty">
+        <input readonly="foobar" value="Readonly is foobar">
+    </div>
+</body>
+</html>

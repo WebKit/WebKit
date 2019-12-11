@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="content">
+<table border=1 id="table1">
+<tr><th>header 1</th><th>header 2</th><th>header 3</th></tr>
+<tr><td>cell 1</th><th>cell 2</th><th>cell 2</th></tr>
+</table>
+
+<table border=1 id="table2">
+<tr><th>header 1</th><td>header 2</th><td>header 3</th></tr>
+<tr><td>cell 1</th><th>cell 2</th><th>cell 2</th></tr>
+</table>
+
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test makes sure cells are not marked as row headers when they're in a row of headers.");
+
+    if (window.accessibilityController) {
+         var table1 = accessibilityController.accessibleElementById("table1");
+         shouldBe("table1.rowHeaders().length", "0");
+
+         var table2 = accessibilityController.accessibleElementById("table2");
+         shouldBe("table2.rowHeaders().length", "1");
+
+         document.getElementById("content").style.visibility = "hidden";
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

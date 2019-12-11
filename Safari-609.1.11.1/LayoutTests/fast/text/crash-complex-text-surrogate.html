@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html id="webtest0">
+<head id="webtest1">
+<script id="webtest2" type="text/javascript">
+
+function boom()
+{
+  var y = document.createTextNode('Y');
+  document.body.insertBefore(y, document.getElementById("v").nextSibling);
+}
+
+</script>
+</head>
+
+<body class="wf_class0" id="webtest3" onload="boom();" style="-moz-column-count: 2; width: 10ch; letter-spacing: 1px; font-family: monospace;">
+This test passes if you can open the file without a crash.
+<div class="wf_class0" style="background: lightblue; float: right; height: 14em; width: 1ch;" id="v"></div>a bcd<span id="webtest4">&#x202B;X</span>
+</body>
+<script>
+function webtest_fn_1() {
+try {
+delete document.scripts[3].toString();
+} catch(e) {
+  document.write("Errlog webtest_fn_1: " + e.name + ": " + e.message + "<br><acronym></acronym>");
+}
+}
+webtest_fn_1();
+</script>
+<script>
+function webtest_fn_2() {
+var s = "{,}\ua888{0}\P{P}\\7H\\8";
+var f = "gi";
+document.write("s is: " +s + "<br> f is: " + f + "<br>");
+var r = new RegExp(s, f);
+document.forms[0].outerHTML.search(r);
+r.compile(s, f);
+document.getElementById("webtest1").outerHTML.match(r);
+document.styleSheets[3].outerHTML.replace(r, "replacement");
+r.test(s);
+r.exec(s);
+}
+webtest_fn_2();
+</script>
+<script>
+function webtest_fn_3() {
+try {
+var head = document.getElementsByTagName("head")[0];
+var style = document.createElement("style");
+style.innerHTML="#wf_class0 { \n\
+-webkit-animation-name: name1; \n\
+-webkit-animation-duration: 1s; \n\
+-webkit-animation: none; \n\
+-webkit-animation-delay: now; \n\
+} \n\
+@-webkit-keyframes name1 { \n\
+  from { \n\
+    -webkit-mask-size: -4096%; \n\
+    background-image: -webkit-cross-fade(url(&#x0056;&#x00e8;&#x0055;&#x1e52;&#x02e3;&#x000f;&#xbe6d;&#x02c7;&#x006c;&#x22c4;&#x00b9;&#x02a1;&#x01f3;&#x00c1;&#x01dc;&#x0293;&#x001f;&#x0092;&#x0298;&#x07bb;&#xbfae;&#x0171;&#x0034;&#x024d;&#x010c;&#x016e;&#x0132;&#x01d6;&#x02d9;&#x00f1;&#x01ff;&#x02f5;&#x02b1;&#x39a6;&#x022e;&#x01c7;&#x024f;&#x0093;&#x002e;&#x00f5;&#x0221;&#xfac5;&#x0164;&#x2a35;&#x00ad;&#x02cd;&#x02dc;&#x00af;&#x0161;&#x0195;&#x018e;), url(text), 99%); \n\
+  } \n\
+  to { \n\
+    -webkit-mask-size: 32767in; \n\
+    background-image: none; \n\
+  } \n\
+} \n\
+";
+head.appendChild(style);
+} catch(e) {
+  document.write("Errlog webtest_fn_3: " + e.name + ": " + e.message + "<br><sub/>");
+}
+}
+webtest_fn_3();
+</script>
+<script>
+function webtest_fn_4() {
+try {
+var scroll_81 = document.createElement("bdo");
+scroll_81.setAttribute("id", "webtest8");
+document.querySelector("plaintext:first-of-type ~ *|*:out-of-range").insertBefore(scroll_81, document.querySelector("plaintext:first-of-type ~ *|*:out-of-range").childNodes[9]);
+scroll_81.setAttribute("style", "overflow: scroll");
+scroll_81.scrollLeft = 0;
+scroll_81.scrolltop = 0xffffffff;
+} catch(e) {
+  document.write("Errlog webtest_fn_4: " + e.name + ": " + e.message + "<br>");
+}
+}
+webtest_fn_4();
+</script>
+</html>

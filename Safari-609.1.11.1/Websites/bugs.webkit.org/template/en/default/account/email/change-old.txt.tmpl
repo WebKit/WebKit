@@ -1,0 +1,27 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+From: [% Param('mailfrom') %]
+To: [% user.email %]
+Subject: [% terms.Bugzilla %] Change Email Address Request
+Importance: High
+X-MSMail-Priority: High
+X-Priority: 1
+X-Bugzilla-Type: admin
+
+[%+ terms.Bugzilla %] has received a request to change the email address
+for your account to [%+ newemailaddress %].
+
+If you are not the person who made this request, or you wish to cancel
+this request, visit the following link:
+
+[%+ urlbase %]token.cgi?t=[% token FILTER uri %]&a=cxlem
+
+If you do nothing, and [%+ newemailaddress %] confirms this request,
+the change will be made permanent after [% constants.MAX_TOKEN_AGE %] days
+(on [% expiration_ts FILTER time("%B %e, %Y at %H:%M %Z") %]).

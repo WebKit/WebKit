@@ -1,0 +1,85 @@
+
+== Running test suite: Set
+-- Running test case: Set.prototype.pushAll
+Array:
+[1,2] => [1,2,"a1","a2"]
+
+Set:
+[1,2] => [1,2,"s1","s2"]
+[1,2] => [1,2,["s1","s1"],["s2","s2"]]
+[1,2] => [1,2,"s1","s2"]
+[1,2] => [1,2,"s1","s2"]
+
+Map:
+[1,2] => [1,2,["m1k","m1v"],["m2k","m2v"]]
+[1,2] => [1,2,["m1k","m1v"],["m2k","m2v"]]
+[1,2] => [1,2,"m1k","m2k"]
+[1,2] => [1,2,"m1v","m2v"]
+
+Object:
+[1,2] => [1,2,["o1k","o1v"],["o2k","o2v"]]
+[1,2] => [1,2,"o1k","o2k"]
+[1,2] => [1,2,"o1v","o2v"]
+
+Generator:
+[1,2] => [1,2,"g1","g2"]
+
+Node:
+[1,2] => [1,2,<n1>,<n2>]
+[1,2] => [1,2,<n1>,<n2>]
+
+Object (doesn't have [Symbol.iterator]):
+PASS: Should produce an exception.
+TypeError: undefined is not a function (near '...item of iterable...')
+
+-- Running test case: Set.prototype.take
+PASS: Set can take `key`.
+PASS: Set no longer has `key`.
+PASS: Set can NOT take `key`.
+PASS: Set can NOT take `DNE`, as it does NOT exist.
+
+-- Running test case: Set.prototype.intersects
+PASS: an empty set should not intersect another empty set.
+PASS: a non-empty set should not intersect an empty set.
+PASS: a set should intersect another set with the same values.
+PASS: a set should not intersect another set with different values.
+PASS: a set should intersect another set with same and additional values.
+PASS: a set should intersect another set with same and different values.
+
+-- Running test case: Set.prototype.isSubsetOf
+PASS: an empty set should be a subset of another empty set.
+PASS: an empty set should be a subset of a non-empty set.
+PASS: a set should be a subset of another set with the same values.
+PASS: a set should not be a subset of another set with different values.
+PASS: a set should be a subset of another set with same and additional values.
+PASS: a set should not be a subset of another set with same and different values.
+
+-- Running test case: Set.prototype.equals
+PASS: an empty set should be equal to another empty set.
+PASS: a set should be equal to another set with the same values.
+PASS: a set should be equal to another set with the same values in a different order.
+PASS: a set should not be a equal to another set with different values.
+PASS: a set should not be equal to another set with same and different values.
+
+-- Running test case: Set.prototype.difference
+Given a Set with values [], and another Set with values []:
+PASS: Set difference should be [].
+
+Given a Set with values [1,2,3], and another Set with values []:
+PASS: Set difference should be [1,2,3].
+
+Given a Set with values [], and another Set with values [1,2,3]:
+PASS: Set difference should be [].
+
+Given a Set with values [1,2,3], and another Set with values [2,3,4]:
+PASS: Set difference should be [1].
+
+
+-- Running test case: Set.prototype.firstValue
+PASS: Set with values [] should have firstValue equal to undefined.
+PASS: Set with values [1,2,3] should have firstValue equal to 1.
+
+-- Running test case: Set.prototype.lastValue
+PASS: Set with values [] should have lastValue equal to undefined.
+PASS: Set with values [1,2,3] should have lastValue equal to 3.
+

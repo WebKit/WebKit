@@ -1,0 +1,51 @@
+<!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+<head>
+    <title>Test rendering of volume slider of video tag</title>
+    <script src=media-file.js></script>
+    <script src=media-controls.js></script>
+    <script src=video-test.js></script>
+    <script>
+        var video;
+        var volumeSliderTrackDimensions;
+
+        function init()
+        {
+            if (window.testRunner)
+                testRunner.waitUntilDone();
+
+            video = document.getElementsByTagName("video")[0];
+            video.src = findMediaFile("video", "content/test");
+        }
+
+        function test()
+        {
+            if (!window.eventSender) {
+                consoleWrite("ERROR: no event sender.");
+                failTest();
+            }
+
+            var muteButtonCoordinates;
+
+            muteButtonCoordinates = mediaControlsButtonCoordinates(video, "mute-button");
+            eventSender.mouseMoveTo(muteButtonCoordinates[0], muteButtonCoordinates[1]);
+
+            // Forcing relayout calculations to say that you are
+            // triggering the volume slider to show up for
+            // controls that work that way.
+            document.body.offsetTop;
+
+            volumeSlider = mediaControlsElement(internals.shadowRoot(video).firstChild, "-webkit-media-controls-volume-slider");
+            testExpected("video.volume", 1);
+            testExpected("video.muted", true);
+            testExpected("volumeSlider.value", 0);
+            endTest();
+        }
+    </script>
+</head>
+<body onload="init()">
+    <p>Tests if the volume slider thumb is rendered properly when the
+    volume is uninitialized but media is muted.</p>
+    <video oncanplaythrough="test()" controls muted></video>
+</body>
+</html>

@@ -1,0 +1,6410 @@
+Test HTML SourceMap.
+
+
+== Running test suite: SourceMaps.HTML
+-- Running test case: SourceMaps.HTML.1
+Original Content Length
+Formatted Content Length
+---- Original to Formatted ----
+Original: 0 (0, 1)
+  0| <#!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+Formatted: 0 (0, 1)
+  0| <#!DOCTYPE html>
+  1| <head>
+  2|     <title>Test Page</title>
+
+Original: 1 (0, 2)
+  0| <!#DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+Formatted: 1 (0, 2)
+  0| <!#DOCTYPE html>
+  1| <head>
+  2|     <title>Test Page</title>
+
+Original: 2 (0, 3)
+  0| <!D#OCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+Formatted: 2 (0, 3)
+  0| <!D#OCTYPE html>
+  1| <head>
+  2|     <title>Test Page</title>
+
+Original: 3 (0, 4)
+  0| <!DO#CTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+Formatted: 3 (0, 4)
+  0| <!DO#CTYPE html>
+  1| <head>
+  2|     <title>Test Page</title>
+
+Original: 4 (0, 5)
+  0| <!DOC#TYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+Formatted: 4 (0, 5)
+  0| <!DOC#TYPE html>
+  1| <head>
+  2|     <title>Test Page</title>
+
+Original: 5 (0, 6)
+  0| <!DOCT#YPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+Formatted: 5 (0, 6)
+  0| <!DOCT#YPE html>
+  1| <head>
+  2|     <title>Test Page</title>
+
+Original: 6 (0, 7)
+  0| <!DOCTY#PE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+Formatted: 6 (0, 7)
+  0| <!DOCTY#PE html>
+  1| <head>
+  2|     <title>Test Page</title>
+
+Original: 7 (0, 8)
+  0| <!DOCTYP#E html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+Formatted: 7 (0, 8)
+  0| <!DOCTYP#E html>
+  1| <head>
+  2|     <title>Test Page</title>
+
+Original: 8 (0, 9)
+  0| <!DOCTYPE# html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+Formatted: 8 (0, 9)
+  0| <!DOCTYPE# html>
+  1| <head>
+  2|     <title>Test Page</title>
+
+Original: 9 (0, 10)
+  0| <!DOCTYPE #html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+Formatted: 9 (0, 10)
+  0| <!DOCTYPE #html>
+  1| <head>
+  2|     <title>Test Page</title>
+
+Original: 10 (0, 11)
+  0| <!DOCTYPE h#tml>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+Formatted: 10 (0, 11)
+  0| <!DOCTYPE h#tml>
+  1| <head>
+  2|     <title>Test Page</title>
+
+Original: 11 (0, 12)
+  0| <!DOCTYPE ht#ml>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+Formatted: 11 (0, 12)
+  0| <!DOCTYPE ht#ml>
+  1| <head>
+  2|     <title>Test Page</title>
+
+Original: 12 (0, 13)
+  0| <!DOCTYPE htm#l>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+Formatted: 12 (0, 13)
+  0| <!DOCTYPE htm#l>
+  1| <head>
+  2|     <title>Test Page</title>
+
+Original: 13 (0, 14)
+  0| <!DOCTYPE html#>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+Formatted: 13 (0, 14)
+  0| <!DOCTYPE html#>
+  1| <head>
+  2|     <title>Test Page</title>
+
+Original: 14 (0, 15)
+  0| <!DOCTYPE html>#
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+Formatted: 14 (0, 15)
+  0| <!DOCTYPE html>#
+  1| <head>
+  2|     <title>Test Page</title>
+
+Original: 15 (1, 0)
+  0| <!DOCTYPE html>
+  1| #<head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 15 (1, 0)
+  0| <!DOCTYPE html>
+  1| #<head>
+  2|     <title>Test Page</title>
+  3| </head>
+
+Original: 16 (1, 1)
+  0| <!DOCTYPE html>
+  1| <#head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 16 (1, 1)
+  0| <!DOCTYPE html>
+  1| <#head>
+  2|     <title>Test Page</title>
+  3| </head>
+
+Original: 17 (1, 2)
+  0| <!DOCTYPE html>
+  1| <h#ead><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 17 (1, 2)
+  0| <!DOCTYPE html>
+  1| <h#ead>
+  2|     <title>Test Page</title>
+  3| </head>
+
+Original: 18 (1, 3)
+  0| <!DOCTYPE html>
+  1| <he#ad><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 18 (1, 3)
+  0| <!DOCTYPE html>
+  1| <he#ad>
+  2|     <title>Test Page</title>
+  3| </head>
+
+Original: 19 (1, 4)
+  0| <!DOCTYPE html>
+  1| <hea#d><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 19 (1, 4)
+  0| <!DOCTYPE html>
+  1| <hea#d>
+  2|     <title>Test Page</title>
+  3| </head>
+
+Original: 20 (1, 5)
+  0| <!DOCTYPE html>
+  1| <head#><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 20 (1, 5)
+  0| <!DOCTYPE html>
+  1| <head#>
+  2|     <title>Test Page</title>
+  3| </head>
+
+Original: 21 (1, 6)
+  0| <!DOCTYPE html>
+  1| <head>#<title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 21 (2, 4)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     #<title>Test Page</title>
+  3| </head>
+  4| <body>
+
+Original: 22 (1, 7)
+  0| <!DOCTYPE html>
+  1| <head><#title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 27 (2, 5)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <#title>Test Page</title>
+  3| </head>
+  4| <body>
+
+Original: 23 (1, 8)
+  0| <!DOCTYPE html>
+  1| <head><t#itle>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 28 (2, 6)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <t#itle>Test Page</title>
+  3| </head>
+  4| <body>
+
+Original: 24 (1, 9)
+  0| <!DOCTYPE html>
+  1| <head><ti#tle>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 29 (2, 7)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <ti#tle>Test Page</title>
+  3| </head>
+  4| <body>
+
+Original: 25 (1, 10)
+  0| <!DOCTYPE html>
+  1| <head><tit#le>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 30 (2, 8)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <tit#le>Test Page</title>
+  3| </head>
+  4| <body>
+
+Original: 26 (1, 11)
+  0| <!DOCTYPE html>
+  1| <head><titl#e>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 31 (2, 9)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <titl#e>Test Page</title>
+  3| </head>
+  4| <body>
+
+Original: 27 (1, 12)
+  0| <!DOCTYPE html>
+  1| <head><title#>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 32 (2, 10)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title#>Test Page</title>
+  3| </head>
+  4| <body>
+
+Original: 28 (1, 13)
+  0| <!DOCTYPE html>
+  1| <head><title>#Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 33 (2, 11)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>#Test Page</title>
+  3| </head>
+  4| <body>
+
+Original: 29 (1, 14)
+  0| <!DOCTYPE html>
+  1| <head><title>T#est Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 34 (2, 12)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>T#est Page</title>
+  3| </head>
+  4| <body>
+
+Original: 30 (1, 15)
+  0| <!DOCTYPE html>
+  1| <head><title>Te#st Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 35 (2, 13)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Te#st Page</title>
+  3| </head>
+  4| <body>
+
+Original: 31 (1, 16)
+  0| <!DOCTYPE html>
+  1| <head><title>Tes#t Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 36 (2, 14)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Tes#t Page</title>
+  3| </head>
+  4| <body>
+
+Original: 32 (1, 17)
+  0| <!DOCTYPE html>
+  1| <head><title>Test# Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 37 (2, 15)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Test# Page</title>
+  3| </head>
+  4| <body>
+
+Original: 33 (1, 18)
+  0| <!DOCTYPE html>
+  1| <head><title>Test #Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 38 (2, 16)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Test #Page</title>
+  3| </head>
+  4| <body>
+
+Original: 34 (1, 19)
+  0| <!DOCTYPE html>
+  1| <head><title>Test P#age</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 39 (2, 17)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Test P#age</title>
+  3| </head>
+  4| <body>
+
+Original: 35 (1, 20)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Pa#ge</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 40 (2, 18)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Test Pa#ge</title>
+  3| </head>
+  4| <body>
+
+Original: 36 (1, 21)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Pag#e</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 41 (2, 19)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Test Pag#e</title>
+  3| </head>
+  4| <body>
+
+Original: 37 (1, 22)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page#</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 42 (2, 20)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Test Page#</title>
+  3| </head>
+  4| <body>
+
+Original: 38 (1, 23)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page<#/title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 43 (2, 21)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Test Page<#/title>
+  3| </head>
+  4| <body>
+
+Original: 39 (1, 24)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</#title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 44 (2, 22)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Test Page</#title>
+  3| </head>
+  4| <body>
+
+Original: 40 (1, 25)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</t#itle></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 45 (2, 23)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Test Page</t#itle>
+  3| </head>
+  4| <body>
+
+Original: 41 (1, 26)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</ti#tle></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 46 (2, 24)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Test Page</ti#tle>
+  3| </head>
+  4| <body>
+
+Original: 42 (1, 27)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</tit#le></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 47 (2, 25)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Test Page</tit#le>
+  3| </head>
+  4| <body>
+
+Original: 43 (1, 28)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</titl#e></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 48 (2, 26)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Test Page</titl#e>
+  3| </head>
+  4| <body>
+
+Original: 44 (1, 29)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title#></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 49 (2, 27)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Test Page</title#>
+  3| </head>
+  4| <body>
+
+Original: 45 (1, 30)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title>#</head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 50 (3, 0)
+  1| <head>
+  2|     <title>Test Page</title>
+  3| #</head>
+  4| <body>
+  5|     <style>
+
+Original: 46 (1, 31)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title><#/head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 52 (3, 1)
+  1| <head>
+  2|     <title>Test Page</title>
+  3| <#/head>
+  4| <body>
+  5|     <style>
+
+Original: 47 (1, 32)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></#head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 53 (3, 2)
+  1| <head>
+  2|     <title>Test Page</title>
+  3| </#head>
+  4| <body>
+  5|     <style>
+
+Original: 48 (1, 33)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></h#ead>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 54 (3, 3)
+  1| <head>
+  2|     <title>Test Page</title>
+  3| </h#ead>
+  4| <body>
+  5|     <style>
+
+Original: 49 (1, 34)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></he#ad>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 55 (3, 4)
+  1| <head>
+  2|     <title>Test Page</title>
+  3| </he#ad>
+  4| <body>
+  5|     <style>
+
+Original: 50 (1, 35)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></hea#d>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 56 (3, 5)
+  1| <head>
+  2|     <title>Test Page</title>
+  3| </hea#d>
+  4| <body>
+  5|     <style>
+
+Original: 51 (1, 36)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head#>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 57 (3, 6)
+  1| <head>
+  2|     <title>Test Page</title>
+  3| </head#>
+  4| <body>
+  5|     <style>
+
+Original: 52 (1, 37)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>#
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+Formatted: 58 (3, 7)
+  1| <head>
+  2|     <title>Test Page</title>
+  3| </head>#
+  4| <body>
+  5|     <style>
+
+Original: 53 (2, 0)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| #<body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 59 (4, 0)
+  2|     <title>Test Page</title>
+  3| </head>
+  4| #<body>
+  5|     <style>
+  6|     a {
+
+Original: 54 (2, 1)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <#body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 60 (4, 1)
+  2|     <title>Test Page</title>
+  3| </head>
+  4| <#body>
+  5|     <style>
+  6|     a {
+
+Original: 55 (2, 2)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <b#ody><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 61 (4, 2)
+  2|     <title>Test Page</title>
+  3| </head>
+  4| <b#ody>
+  5|     <style>
+  6|     a {
+
+Original: 56 (2, 3)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <bo#dy><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 62 (4, 3)
+  2|     <title>Test Page</title>
+  3| </head>
+  4| <bo#dy>
+  5|     <style>
+  6|     a {
+
+Original: 57 (2, 4)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <bod#y><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 63 (4, 4)
+  2|     <title>Test Page</title>
+  3| </head>
+  4| <bod#y>
+  5|     <style>
+  6|     a {
+
+Original: 58 (2, 5)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body#><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 64 (4, 5)
+  2|     <title>Test Page</title>
+  3| </head>
+  4| <body#>
+  5|     <style>
+  6|     a {
+
+Original: 59 (2, 6)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body>#<style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 65 (5, 4)
+  3| </head>
+  4| <body>
+  5|     #<style>
+  6|     a {
+  7|         color:red
+
+Original: 60 (2, 7)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><#style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 71 (5, 5)
+  3| </head>
+  4| <body>
+  5|     <#style>
+  6|     a {
+  7|         color:red
+
+Original: 61 (2, 8)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><s#tyle>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 72 (5, 6)
+  3| </head>
+  4| <body>
+  5|     <s#tyle>
+  6|     a {
+  7|         color:red
+
+Original: 62 (2, 9)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><st#yle>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 73 (5, 7)
+  3| </head>
+  4| <body>
+  5|     <st#yle>
+  6|     a {
+  7|         color:red
+
+Original: 63 (2, 10)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><sty#le>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 74 (5, 8)
+  3| </head>
+  4| <body>
+  5|     <sty#le>
+  6|     a {
+  7|         color:red
+
+Original: 64 (2, 11)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><styl#e>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 75 (5, 9)
+  3| </head>
+  4| <body>
+  5|     <styl#e>
+  6|     a {
+  7|         color:red
+
+Original: 65 (2, 12)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style#>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 76 (5, 10)
+  3| </head>
+  4| <body>
+  5|     <style#>
+  6|     a {
+  7|         color:red
+
+Original: 66 (2, 13)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>#a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 77 (6, 4)
+  4| <body>
+  5|     <style>
+  6|     #a {
+  7|         color:red
+  8|     }
+
+Original: 67 (2, 14)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a#{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 83 (6, 6)
+  4| <body>
+  5|     <style>
+  6|     a #{
+  7|         color:red
+  8|     }
+
+Original: 68 (2, 15)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{#color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 85 (7, 8)
+  5|     <style>
+  6|     a {
+  7|         #color:red
+  8|     }
+  9| 
+
+Original: 69 (2, 16)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{c#olor:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 95 (7, 9)
+  5|     <style>
+  6|     a {
+  7|         c#olor:red
+  8|     }
+  9| 
+
+Original: 70 (2, 17)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{co#lor:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 96 (7, 10)
+  5|     <style>
+  6|     a {
+  7|         co#lor:red
+  8|     }
+  9| 
+
+Original: 71 (2, 18)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{col#or:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 97 (7, 11)
+  5|     <style>
+  6|     a {
+  7|         col#or:red
+  8|     }
+  9| 
+
+Original: 72 (2, 19)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{colo#r:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 98 (7, 12)
+  5|     <style>
+  6|     a {
+  7|         colo#r:red
+  8|     }
+  9| 
+
+Original: 73 (2, 20)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color#:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 99 (7, 13)
+  5|     <style>
+  6|     a {
+  7|         color#:red
+  8|     }
+  9| 
+
+Original: 74 (2, 21)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:#red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 100 (7, 14)
+  5|     <style>
+  6|     a {
+  7|         color:#red
+  8|     }
+  9| 
+
+Original: 75 (2, 22)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:r#ed}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 101 (7, 15)
+  5|     <style>
+  6|     a {
+  7|         color:r#ed
+  8|     }
+  9| 
+
+Original: 76 (2, 23)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:re#d}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 102 (7, 16)
+  5|     <style>
+  6|     a {
+  7|         color:re#d
+  8|     }
+  9| 
+
+Original: 77 (2, 24)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red#}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 103 (8, 4)
+  6|     a {
+  7|         color:red
+  8|     #}
+  9| 
+ 10|     body, * {
+
+Original: 78 (2, 25)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}#body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 109 (10, 4)
+  8|     }
+  9| 
+ 10|     #body, * {
+ 11|         color: blue
+ 12|     }
+
+Original: 79 (2, 26)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}b#ody,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 116 (10, 5)
+  8|     }
+  9| 
+ 10|     b#ody, * {
+ 11|         color: blue
+ 12|     }
+
+Original: 80 (2, 27)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}bo#dy,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 117 (10, 6)
+  8|     }
+  9| 
+ 10|     bo#dy, * {
+ 11|         color: blue
+ 12|     }
+
+Original: 81 (2, 28)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}bod#y,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 118 (10, 7)
+  8|     }
+  9| 
+ 10|     bod#y, * {
+ 11|         color: blue
+ 12|     }
+
+Original: 82 (2, 29)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body#,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 119 (10, 8)
+  8|     }
+  9| 
+ 10|     body#, * {
+ 11|         color: blue
+ 12|     }
+
+Original: 83 (2, 30)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,#*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 120 (10, 10)
+  8|     }
+  9| 
+ 10|     body, #* {
+ 11|         color: blue
+ 12|     }
+
+Original: 84 (2, 31)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*#{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 122 (10, 12)
+  8|     }
+  9| 
+ 10|     body, * #{
+ 11|         color: blue
+ 12|     }
+
+Original: 85 (2, 32)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{#color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 124 (11, 8)
+  9| 
+ 10|     body, * {
+ 11|         #color: blue
+ 12|     }
+ 13|     </style>
+
+Original: 86 (2, 33)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{c#olor:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 134 (11, 9)
+  9| 
+ 10|     body, * {
+ 11|         c#olor: blue
+ 12|     }
+ 13|     </style>
+
+Original: 87 (2, 34)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{co#lor:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 135 (11, 10)
+  9| 
+ 10|     body, * {
+ 11|         co#lor: blue
+ 12|     }
+ 13|     </style>
+
+Original: 88 (2, 35)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{col#or:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 136 (11, 11)
+  9| 
+ 10|     body, * {
+ 11|         col#or: blue
+ 12|     }
+ 13|     </style>
+
+Original: 89 (2, 36)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{colo#r:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 137 (11, 12)
+  9| 
+ 10|     body, * {
+ 11|         colo#r: blue
+ 12|     }
+ 13|     </style>
+
+Original: 90 (2, 37)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color#:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 138 (11, 13)
+  9| 
+ 10|     body, * {
+ 11|         color#: blue
+ 12|     }
+ 13|     </style>
+
+Original: 91 (2, 38)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:#blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 139 (11, 15)
+  9| 
+ 10|     body, * {
+ 11|         color: #blue
+ 12|     }
+ 13|     </style>
+
+Original: 92 (2, 39)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:b#lue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 141 (11, 16)
+  9| 
+ 10|     body, * {
+ 11|         color: b#lue
+ 12|     }
+ 13|     </style>
+
+Original: 93 (2, 40)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:bl#ue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 142 (11, 17)
+  9| 
+ 10|     body, * {
+ 11|         color: bl#ue
+ 12|     }
+ 13|     </style>
+
+Original: 94 (2, 41)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blu#e}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 143 (11, 18)
+  9| 
+ 10|     body, * {
+ 11|         color: blu#e
+ 12|     }
+ 13|     </style>
+
+Original: 95 (2, 42)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue#}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 144 (12, 4)
+ 10|     body, * {
+ 11|         color: blue
+ 12|     #}
+ 13|     </style>
+ 14|     <div>
+
+Original: 96 (2, 43)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}#</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 150 (13, 4)
+ 11|         color: blue
+ 12|     }
+ 13|     #</style>
+ 14|     <div>
+ 15|         <script>
+
+Original: 97 (2, 44)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}<#/style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 156 (13, 5)
+ 11|         color: blue
+ 12|     }
+ 13|     <#/style>
+ 14|     <div>
+ 15|         <script>
+
+Original: 98 (2, 45)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</#style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 157 (13, 6)
+ 11|         color: blue
+ 12|     }
+ 13|     </#style>
+ 14|     <div>
+ 15|         <script>
+
+Original: 99 (2, 46)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</s#tyle>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 158 (13, 7)
+ 11|         color: blue
+ 12|     }
+ 13|     </s#tyle>
+ 14|     <div>
+ 15|         <script>
+
+Original: 100 (2, 47)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</st#yle>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 159 (13, 8)
+ 11|         color: blue
+ 12|     }
+ 13|     </st#yle>
+ 14|     <div>
+ 15|         <script>
+
+Original: 101 (2, 48)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</sty#le>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 160 (13, 9)
+ 11|         color: blue
+ 12|     }
+ 13|     </sty#le>
+ 14|     <div>
+ 15|         <script>
+
+Original: 102 (2, 49)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</styl#e>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 161 (13, 10)
+ 11|         color: blue
+ 12|     }
+ 13|     </styl#e>
+ 14|     <div>
+ 15|         <script>
+
+Original: 103 (2, 50)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style#>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 162 (13, 11)
+ 11|         color: blue
+ 12|     }
+ 13|     </style#>
+ 14|     <div>
+ 15|         <script>
+
+Original: 104 (2, 51)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>#
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+Formatted: 163 (13, 12)
+ 11|         color: blue
+ 12|     }
+ 13|     </style>#
+ 14|     <div>
+ 15|         <script>
+
+Original: 105 (3, 0)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| #<div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 164 (14, 4)
+ 12|     }
+ 13|     </style>
+ 14|     #<div>
+ 15|         <script>
+ 16|         (() => {
+
+Original: 106 (3, 1)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <#div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 169 (14, 5)
+ 12|     }
+ 13|     </style>
+ 14|     <#div>
+ 15|         <script>
+ 16|         (() => {
+
+Original: 107 (3, 2)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <d#iv><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 170 (14, 6)
+ 12|     }
+ 13|     </style>
+ 14|     <d#iv>
+ 15|         <script>
+ 16|         (() => {
+
+Original: 108 (3, 3)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <di#v><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 171 (14, 7)
+ 12|     }
+ 13|     </style>
+ 14|     <di#v>
+ 15|         <script>
+ 16|         (() => {
+
+Original: 109 (3, 4)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div#><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 172 (14, 8)
+ 12|     }
+ 13|     </style>
+ 14|     <div#>
+ 15|         <script>
+ 16|         (() => {
+
+Original: 110 (3, 5)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div>#<script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 173 (15, 8)
+ 13|     </style>
+ 14|     <div>
+ 15|         #<script>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+
+Original: 111 (3, 6)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><#script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 183 (15, 9)
+ 13|     </style>
+ 14|     <div>
+ 15|         <#script>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+
+Original: 112 (3, 7)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><s#cript>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 184 (15, 10)
+ 13|     </style>
+ 14|     <div>
+ 15|         <s#cript>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+
+Original: 113 (3, 8)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><sc#ript>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 185 (15, 11)
+ 13|     </style>
+ 14|     <div>
+ 15|         <sc#ript>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+
+Original: 114 (3, 9)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><scr#ipt>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 186 (15, 12)
+ 13|     </style>
+ 14|     <div>
+ 15|         <scr#ipt>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+
+Original: 115 (3, 10)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><scri#pt>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 187 (15, 13)
+ 13|     </style>
+ 14|     <div>
+ 15|         <scri#pt>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+
+Original: 116 (3, 11)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><scrip#t>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 188 (15, 14)
+ 13|     </style>
+ 14|     <div>
+ 15|         <scrip#t>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+
+Original: 117 (3, 12)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script#>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 189 (15, 15)
+ 13|     </style>
+ 14|     <div>
+ 15|         <script#>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+
+Original: 118 (3, 13)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>#(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 190 (16, 8)
+ 14|     <div>
+ 15|         <script>
+ 16|         #(() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+
+Original: 119 (3, 14)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(#()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 200 (16, 9)
+ 14|     <div>
+ 15|         <script>
+ 16|         (#() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+
+Original: 120 (3, 15)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>((#)=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 201 (16, 10)
+ 14|     <div>
+ 15|         <script>
+ 16|         ((#) => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+
+Original: 121 (3, 16)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()#=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 202 (16, 12)
+ 14|     <div>
+ 15|         <script>
+ 16|         (() #=> {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+
+Original: 122 (3, 17)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=#>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 204 (16, 13)
+ 14|     <div>
+ 15|         <script>
+ 16|         (() =#> {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+
+Original: 123 (3, 18)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>#{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 205 (16, 15)
+ 14|     <div>
+ 15|         <script>
+ 16|         (() => #{
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+
+Original: 124 (3, 19)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{#for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 207 (17, 12)
+ 15|         <script>
+ 16|         (() => {
+ 17|             #for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+
+Original: 125 (3, 20)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{f#or(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 221 (17, 13)
+ 15|         <script>
+ 16|         (() => {
+ 17|             f#or (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+
+Original: 126 (3, 21)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{fo#r(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 222 (17, 14)
+ 15|         <script>
+ 16|         (() => {
+ 17|             fo#r (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+
+Original: 127 (3, 22)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for#(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 223 (17, 16)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for #(let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+
+Original: 128 (3, 23)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(#let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 225 (17, 17)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (#let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+
+Original: 129 (3, 24)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(l#et x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 226 (17, 18)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (l#et x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+
+Original: 130 (3, 25)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(le#t x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 227 (17, 19)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (le#t x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+
+Original: 131 (3, 26)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let# x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 228 (17, 20)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let# x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+
+Original: 132 (3, 27)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let #x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 229 (17, 21)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let #x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+
+Original: 133 (3, 28)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x# of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 230 (17, 22)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let x# of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+
+Original: 134 (3, 29)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x #of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 231 (17, 23)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let x #of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+
+Original: 135 (3, 30)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x o#f[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 232 (17, 24)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let x o#f [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+
+Original: 136 (3, 31)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of#[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 233 (17, 26)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let x of #[1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+
+Original: 137 (3, 32)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[#1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 235 (17, 27)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let x of [#1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+
+Original: 138 (3, 33)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1#,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 236 (17, 28)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let x of [1#, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+
+Original: 139 (3, 34)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,#2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 237 (17, 30)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let x of [1, #2, 3])
+ 18|                 log(x)
+ 19|         })()
+
+Original: 140 (3, 35)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2#,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 239 (17, 31)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let x of [1, 2#, 3])
+ 18|                 log(x)
+ 19|         })()
+
+Original: 141 (3, 36)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,#3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 240 (17, 33)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, #3])
+ 18|                 log(x)
+ 19|         })()
+
+Original: 142 (3, 37)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3#])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 242 (17, 34)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3#])
+ 18|                 log(x)
+ 19|         })()
+
+Original: 143 (3, 38)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3]#)log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 243 (17, 35)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3]#)
+ 18|                 log(x)
+ 19|         })()
+
+Original: 144 (3, 39)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])#log(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 244 (18, 16)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 #log(x)
+ 19|         })()
+ 20|         </script>
+
+Original: 145 (3, 40)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])l#og(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 262 (18, 17)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 l#og(x)
+ 19|         })()
+ 20|         </script>
+
+Original: 146 (3, 41)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])lo#g(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 263 (18, 18)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 lo#g(x)
+ 19|         })()
+ 20|         </script>
+
+Original: 147 (3, 42)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log#(x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 264 (18, 19)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log#(x)
+ 19|         })()
+ 20|         </script>
+
+Original: 148 (3, 43)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(#x)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 265 (18, 20)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(#x)
+ 19|         })()
+ 20|         </script>
+
+Original: 149 (3, 44)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x#)})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 266 (18, 21)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x#)
+ 19|         })()
+ 20|         </script>
+
+Original: 150 (3, 45)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)#})()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 267 (19, 8)
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         #})()
+ 20|         </script>
+ 21|     </div>
+
+Original: 151 (3, 46)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)}#)()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 277 (19, 9)
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         }#)()
+ 20|         </script>
+ 21|     </div>
+
+Original: 152 (3, 47)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})#()</script></div>
+  4| </body></html>
+  5| 
+Formatted: 278 (19, 10)
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })#()
+ 20|         </script>
+ 21|     </div>
+
+Original: 153 (3, 48)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})(#)</script></div>
+  4| </body></html>
+  5| 
+Formatted: 279 (19, 11)
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })(#)
+ 20|         </script>
+ 21|     </div>
+
+Original: 154 (3, 49)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()#</script></div>
+  4| </body></html>
+  5| 
+Formatted: 280 (20, 8)
+ 18|                 log(x)
+ 19|         })()
+ 20|         #</script>
+ 21|     </div>
+ 22| </body>
+
+Original: 155 (3, 50)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()<#/script></div>
+  4| </body></html>
+  5| 
+Formatted: 290 (20, 9)
+ 18|                 log(x)
+ 19|         })()
+ 20|         <#/script>
+ 21|     </div>
+ 22| </body>
+
+Original: 156 (3, 51)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</#script></div>
+  4| </body></html>
+  5| 
+Formatted: 291 (20, 10)
+ 18|                 log(x)
+ 19|         })()
+ 20|         </#script>
+ 21|     </div>
+ 22| </body>
+
+Original: 157 (3, 52)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</s#cript></div>
+  4| </body></html>
+  5| 
+Formatted: 292 (20, 11)
+ 18|                 log(x)
+ 19|         })()
+ 20|         </s#cript>
+ 21|     </div>
+ 22| </body>
+
+Original: 158 (3, 53)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</sc#ript></div>
+  4| </body></html>
+  5| 
+Formatted: 293 (20, 12)
+ 18|                 log(x)
+ 19|         })()
+ 20|         </sc#ript>
+ 21|     </div>
+ 22| </body>
+
+Original: 159 (3, 54)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</scr#ipt></div>
+  4| </body></html>
+  5| 
+Formatted: 294 (20, 13)
+ 18|                 log(x)
+ 19|         })()
+ 20|         </scr#ipt>
+ 21|     </div>
+ 22| </body>
+
+Original: 160 (3, 55)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</scri#pt></div>
+  4| </body></html>
+  5| 
+Formatted: 295 (20, 14)
+ 18|                 log(x)
+ 19|         })()
+ 20|         </scri#pt>
+ 21|     </div>
+ 22| </body>
+
+Original: 161 (3, 56)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</scrip#t></div>
+  4| </body></html>
+  5| 
+Formatted: 296 (20, 15)
+ 18|                 log(x)
+ 19|         })()
+ 20|         </scrip#t>
+ 21|     </div>
+ 22| </body>
+
+Original: 162 (3, 57)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script#></div>
+  4| </body></html>
+  5| 
+Formatted: 297 (20, 16)
+ 18|                 log(x)
+ 19|         })()
+ 20|         </script#>
+ 21|     </div>
+ 22| </body>
+
+Original: 163 (3, 58)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script>#</div>
+  4| </body></html>
+  5| 
+Formatted: 298 (21, 4)
+ 19|         })()
+ 20|         </script>
+ 21|     #</div>
+ 22| </body>
+ 23| </html>
+
+Original: 164 (3, 59)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script><#/div>
+  4| </body></html>
+  5| 
+Formatted: 304 (21, 5)
+ 19|         })()
+ 20|         </script>
+ 21|     <#/div>
+ 22| </body>
+ 23| </html>
+
+Original: 165 (3, 60)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></#div>
+  4| </body></html>
+  5| 
+Formatted: 305 (21, 6)
+ 19|         })()
+ 20|         </script>
+ 21|     </#div>
+ 22| </body>
+ 23| </html>
+
+Original: 166 (3, 61)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></d#iv>
+  4| </body></html>
+  5| 
+Formatted: 306 (21, 7)
+ 19|         })()
+ 20|         </script>
+ 21|     </d#iv>
+ 22| </body>
+ 23| </html>
+
+Original: 167 (3, 62)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></di#v>
+  4| </body></html>
+  5| 
+Formatted: 307 (21, 8)
+ 19|         })()
+ 20|         </script>
+ 21|     </di#v>
+ 22| </body>
+ 23| </html>
+
+Original: 168 (3, 63)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div#>
+  4| </body></html>
+  5| 
+Formatted: 308 (21, 9)
+ 19|         })()
+ 20|         </script>
+ 21|     </div#>
+ 22| </body>
+ 23| </html>
+
+Original: 169 (3, 64)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>#
+  4| </body></html>
+  5| 
+Formatted: 309 (21, 10)
+ 19|         })()
+ 20|         </script>
+ 21|     </div>#
+ 22| </body>
+ 23| </html>
+
+Original: 170 (4, 0)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| #</body></html>
+  5| 
+Formatted: 310 (22, 0)
+ 20|         </script>
+ 21|     </div>
+ 22| #</body>
+ 23| </html>
+ 24| 
+
+Original: 171 (4, 1)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| <#/body></html>
+  5| 
+Formatted: 311 (22, 1)
+ 20|         </script>
+ 21|     </div>
+ 22| <#/body>
+ 23| </html>
+ 24| 
+
+Original: 172 (4, 2)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </#body></html>
+  5| 
+Formatted: 312 (22, 2)
+ 20|         </script>
+ 21|     </div>
+ 22| </#body>
+ 23| </html>
+ 24| 
+
+Original: 173 (4, 3)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </b#ody></html>
+  5| 
+Formatted: 313 (22, 3)
+ 20|         </script>
+ 21|     </div>
+ 22| </b#ody>
+ 23| </html>
+ 24| 
+
+Original: 174 (4, 4)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </bo#dy></html>
+  5| 
+Formatted: 314 (22, 4)
+ 20|         </script>
+ 21|     </div>
+ 22| </bo#dy>
+ 23| </html>
+ 24| 
+
+Original: 175 (4, 5)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </bod#y></html>
+  5| 
+Formatted: 315 (22, 5)
+ 20|         </script>
+ 21|     </div>
+ 22| </bod#y>
+ 23| </html>
+ 24| 
+
+Original: 176 (4, 6)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body#></html>
+  5| 
+Formatted: 316 (22, 6)
+ 20|         </script>
+ 21|     </div>
+ 22| </body#>
+ 23| </html>
+ 24| 
+
+Original: 177 (4, 7)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body>#</html>
+  5| 
+Formatted: 317 (23, 0)
+ 21|     </div>
+ 22| </body>
+ 23| #</html>
+ 24| 
+
+Original: 178 (4, 8)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body><#/html>
+  5| 
+Formatted: 319 (23, 1)
+ 21|     </div>
+ 22| </body>
+ 23| <#/html>
+ 24| 
+
+Original: 179 (4, 9)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></#html>
+  5| 
+Formatted: 320 (23, 2)
+ 21|     </div>
+ 22| </body>
+ 23| </#html>
+ 24| 
+
+Original: 180 (4, 10)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></h#tml>
+  5| 
+Formatted: 321 (23, 3)
+ 21|     </div>
+ 22| </body>
+ 23| </h#tml>
+ 24| 
+
+Original: 181 (4, 11)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></ht#ml>
+  5| 
+Formatted: 322 (23, 4)
+ 21|     </div>
+ 22| </body>
+ 23| </ht#ml>
+ 24| 
+
+Original: 182 (4, 12)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></htm#l>
+  5| 
+Formatted: 323 (23, 5)
+ 21|     </div>
+ 22| </body>
+ 23| </htm#l>
+ 24| 
+
+Original: 183 (4, 13)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html#>
+  5| 
+Formatted: 324 (23, 6)
+ 21|     </div>
+ 22| </body>
+ 23| </html#>
+ 24| 
+
+Original: 184 (4, 14)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>#
+  5| 
+Formatted: 325 (23, 7)
+ 21|     </div>
+ 22| </body>
+ 23| </html>#
+ 24| 
+
+Original: 185 (5, 0)
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| #
+Formatted: 326 (24, 0)
+ 22| </body>
+ 23| </html>
+ 24| #
+
+
+---- Formatted to Original ----
+Formatted: 0 (0, 1)
+  0| <#!DOCTYPE html>
+  1| <head>
+  2|     <title>Test Page</title>
+Original: 0 (0, 1)
+  0| <#!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+
+Formatted: 1 (0, 2)
+  0| <!#DOCTYPE html>
+  1| <head>
+  2|     <title>Test Page</title>
+Original: 1 (0, 2)
+  0| <!#DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+
+Formatted: 2 (0, 3)
+  0| <!D#OCTYPE html>
+  1| <head>
+  2|     <title>Test Page</title>
+Original: 2 (0, 3)
+  0| <!D#OCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+
+Formatted: 3 (0, 4)
+  0| <!DO#CTYPE html>
+  1| <head>
+  2|     <title>Test Page</title>
+Original: 3 (0, 4)
+  0| <!DO#CTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+
+Formatted: 4 (0, 5)
+  0| <!DOC#TYPE html>
+  1| <head>
+  2|     <title>Test Page</title>
+Original: 4 (0, 5)
+  0| <!DOC#TYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+
+Formatted: 5 (0, 6)
+  0| <!DOCT#YPE html>
+  1| <head>
+  2|     <title>Test Page</title>
+Original: 5 (0, 6)
+  0| <!DOCT#YPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+
+Formatted: 6 (0, 7)
+  0| <!DOCTY#PE html>
+  1| <head>
+  2|     <title>Test Page</title>
+Original: 6 (0, 7)
+  0| <!DOCTY#PE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+
+Formatted: 7 (0, 8)
+  0| <!DOCTYP#E html>
+  1| <head>
+  2|     <title>Test Page</title>
+Original: 7 (0, 8)
+  0| <!DOCTYP#E html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+
+Formatted: 8 (0, 9)
+  0| <!DOCTYPE# html>
+  1| <head>
+  2|     <title>Test Page</title>
+Original: 8 (0, 9)
+  0| <!DOCTYPE# html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+
+Formatted: 9 (0, 10)
+  0| <!DOCTYPE #html>
+  1| <head>
+  2|     <title>Test Page</title>
+Original: 9 (0, 10)
+  0| <!DOCTYPE #html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+
+Formatted: 10 (0, 11)
+  0| <!DOCTYPE h#tml>
+  1| <head>
+  2|     <title>Test Page</title>
+Original: 10 (0, 11)
+  0| <!DOCTYPE h#tml>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+
+Formatted: 11 (0, 12)
+  0| <!DOCTYPE ht#ml>
+  1| <head>
+  2|     <title>Test Page</title>
+Original: 11 (0, 12)
+  0| <!DOCTYPE ht#ml>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+
+Formatted: 12 (0, 13)
+  0| <!DOCTYPE htm#l>
+  1| <head>
+  2|     <title>Test Page</title>
+Original: 12 (0, 13)
+  0| <!DOCTYPE htm#l>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+
+Formatted: 13 (0, 14)
+  0| <!DOCTYPE html#>
+  1| <head>
+  2|     <title>Test Page</title>
+Original: 13 (0, 14)
+  0| <!DOCTYPE html#>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+
+Formatted: 14 (0, 15)
+  0| <!DOCTYPE html>#
+  1| <head>
+  2|     <title>Test Page</title>
+Original: 14 (0, 15)
+  0| <!DOCTYPE html>#
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+
+Formatted: 15 (1, 0)
+  0| <!DOCTYPE html>
+  1| #<head>
+  2|     <title>Test Page</title>
+  3| </head>
+Original: 15 (1, 0)
+  0| <!DOCTYPE html>
+  1| #<head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 16 (1, 1)
+  0| <!DOCTYPE html>
+  1| <#head>
+  2|     <title>Test Page</title>
+  3| </head>
+Original: 16 (1, 1)
+  0| <!DOCTYPE html>
+  1| <#head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 17 (1, 2)
+  0| <!DOCTYPE html>
+  1| <h#ead>
+  2|     <title>Test Page</title>
+  3| </head>
+Original: 17 (1, 2)
+  0| <!DOCTYPE html>
+  1| <h#ead><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 18 (1, 3)
+  0| <!DOCTYPE html>
+  1| <he#ad>
+  2|     <title>Test Page</title>
+  3| </head>
+Original: 18 (1, 3)
+  0| <!DOCTYPE html>
+  1| <he#ad><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 19 (1, 4)
+  0| <!DOCTYPE html>
+  1| <hea#d>
+  2|     <title>Test Page</title>
+  3| </head>
+Original: 19 (1, 4)
+  0| <!DOCTYPE html>
+  1| <hea#d><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 20 (1, 5)
+  0| <!DOCTYPE html>
+  1| <head#>
+  2|     <title>Test Page</title>
+  3| </head>
+Original: 20 (1, 5)
+  0| <!DOCTYPE html>
+  1| <head#><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 21 (1, 6)
+  0| <!DOCTYPE html>
+  1| <head>#
+  2|     <title>Test Page</title>
+  3| </head>
+Original: 21 (1, 6)
+  0| <!DOCTYPE html>
+  1| <head>#<title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 22 (2, 0)
+  0| <!DOCTYPE html>
+  1| <head>
+  2| #    <title>Test Page</title>
+  3| </head>
+  4| <body>
+Original: 22 (1, 6)
+  0| <!DOCTYPE html>
+  1| <head>#<title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 23 (2, 1)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|  #   <title>Test Page</title>
+  3| </head>
+  4| <body>
+Original: 22 (1, 6)
+  0| <!DOCTYPE html>
+  1| <head>#<title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 24 (2, 2)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|   #  <title>Test Page</title>
+  3| </head>
+  4| <body>
+Original: 22 (1, 6)
+  0| <!DOCTYPE html>
+  1| <head>#<title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 25 (2, 3)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|    # <title>Test Page</title>
+  3| </head>
+  4| <body>
+Original: 22 (1, 6)
+  0| <!DOCTYPE html>
+  1| <head>#<title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 26 (2, 4)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     #<title>Test Page</title>
+  3| </head>
+  4| <body>
+Original: 22 (1, 6)
+  0| <!DOCTYPE html>
+  1| <head>#<title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 27 (2, 5)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <#title>Test Page</title>
+  3| </head>
+  4| <body>
+Original: 22 (1, 7)
+  0| <!DOCTYPE html>
+  1| <head><#title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 28 (2, 6)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <t#itle>Test Page</title>
+  3| </head>
+  4| <body>
+Original: 23 (1, 8)
+  0| <!DOCTYPE html>
+  1| <head><t#itle>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 29 (2, 7)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <ti#tle>Test Page</title>
+  3| </head>
+  4| <body>
+Original: 24 (1, 9)
+  0| <!DOCTYPE html>
+  1| <head><ti#tle>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 30 (2, 8)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <tit#le>Test Page</title>
+  3| </head>
+  4| <body>
+Original: 25 (1, 10)
+  0| <!DOCTYPE html>
+  1| <head><tit#le>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 31 (2, 9)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <titl#e>Test Page</title>
+  3| </head>
+  4| <body>
+Original: 26 (1, 11)
+  0| <!DOCTYPE html>
+  1| <head><titl#e>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 32 (2, 10)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title#>Test Page</title>
+  3| </head>
+  4| <body>
+Original: 27 (1, 12)
+  0| <!DOCTYPE html>
+  1| <head><title#>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 33 (2, 11)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>#Test Page</title>
+  3| </head>
+  4| <body>
+Original: 28 (1, 13)
+  0| <!DOCTYPE html>
+  1| <head><title>#Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 34 (2, 12)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>T#est Page</title>
+  3| </head>
+  4| <body>
+Original: 29 (1, 14)
+  0| <!DOCTYPE html>
+  1| <head><title>T#est Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 35 (2, 13)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Te#st Page</title>
+  3| </head>
+  4| <body>
+Original: 30 (1, 15)
+  0| <!DOCTYPE html>
+  1| <head><title>Te#st Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 36 (2, 14)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Tes#t Page</title>
+  3| </head>
+  4| <body>
+Original: 31 (1, 16)
+  0| <!DOCTYPE html>
+  1| <head><title>Tes#t Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 37 (2, 15)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Test# Page</title>
+  3| </head>
+  4| <body>
+Original: 32 (1, 17)
+  0| <!DOCTYPE html>
+  1| <head><title>Test# Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 38 (2, 16)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Test #Page</title>
+  3| </head>
+  4| <body>
+Original: 33 (1, 18)
+  0| <!DOCTYPE html>
+  1| <head><title>Test #Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 39 (2, 17)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Test P#age</title>
+  3| </head>
+  4| <body>
+Original: 34 (1, 19)
+  0| <!DOCTYPE html>
+  1| <head><title>Test P#age</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 40 (2, 18)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Test Pa#ge</title>
+  3| </head>
+  4| <body>
+Original: 35 (1, 20)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Pa#ge</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 41 (2, 19)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Test Pag#e</title>
+  3| </head>
+  4| <body>
+Original: 36 (1, 21)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Pag#e</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 42 (2, 20)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Test Page#</title>
+  3| </head>
+  4| <body>
+Original: 37 (1, 22)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page#</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 43 (2, 21)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Test Page<#/title>
+  3| </head>
+  4| <body>
+Original: 38 (1, 23)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page<#/title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 44 (2, 22)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Test Page</#title>
+  3| </head>
+  4| <body>
+Original: 39 (1, 24)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</#title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 45 (2, 23)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Test Page</t#itle>
+  3| </head>
+  4| <body>
+Original: 40 (1, 25)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</t#itle></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 46 (2, 24)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Test Page</ti#tle>
+  3| </head>
+  4| <body>
+Original: 41 (1, 26)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</ti#tle></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 47 (2, 25)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Test Page</tit#le>
+  3| </head>
+  4| <body>
+Original: 42 (1, 27)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</tit#le></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 48 (2, 26)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Test Page</titl#e>
+  3| </head>
+  4| <body>
+Original: 43 (1, 28)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</titl#e></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 49 (2, 27)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Test Page</title#>
+  3| </head>
+  4| <body>
+Original: 44 (1, 29)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title#></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 50 (2, 28)
+  0| <!DOCTYPE html>
+  1| <head>
+  2|     <title>Test Page</title>#
+  3| </head>
+  4| <body>
+Original: 45 (1, 30)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title>#</head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 51 (3, 0)
+  1| <head>
+  2|     <title>Test Page</title>
+  3| #</head>
+  4| <body>
+  5|     <style>
+Original: 46 (1, 30)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title>#</head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 52 (3, 1)
+  1| <head>
+  2|     <title>Test Page</title>
+  3| <#/head>
+  4| <body>
+  5|     <style>
+Original: 46 (1, 31)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title><#/head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 53 (3, 2)
+  1| <head>
+  2|     <title>Test Page</title>
+  3| </#head>
+  4| <body>
+  5|     <style>
+Original: 47 (1, 32)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></#head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 54 (3, 3)
+  1| <head>
+  2|     <title>Test Page</title>
+  3| </h#ead>
+  4| <body>
+  5|     <style>
+Original: 48 (1, 33)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></h#ead>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 55 (3, 4)
+  1| <head>
+  2|     <title>Test Page</title>
+  3| </he#ad>
+  4| <body>
+  5|     <style>
+Original: 49 (1, 34)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></he#ad>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 56 (3, 5)
+  1| <head>
+  2|     <title>Test Page</title>
+  3| </hea#d>
+  4| <body>
+  5|     <style>
+Original: 50 (1, 35)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></hea#d>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 57 (3, 6)
+  1| <head>
+  2|     <title>Test Page</title>
+  3| </head#>
+  4| <body>
+  5|     <style>
+Original: 51 (1, 36)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head#>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 58 (3, 7)
+  1| <head>
+  2|     <title>Test Page</title>
+  3| </head>#
+  4| <body>
+  5|     <style>
+Original: 52 (1, 37)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>#
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+
+Formatted: 59 (4, 0)
+  2|     <title>Test Page</title>
+  3| </head>
+  4| #<body>
+  5|     <style>
+  6|     a {
+Original: 53 (2, 0)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| #<body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 60 (4, 1)
+  2|     <title>Test Page</title>
+  3| </head>
+  4| <#body>
+  5|     <style>
+  6|     a {
+Original: 54 (2, 1)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <#body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 61 (4, 2)
+  2|     <title>Test Page</title>
+  3| </head>
+  4| <b#ody>
+  5|     <style>
+  6|     a {
+Original: 55 (2, 2)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <b#ody><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 62 (4, 3)
+  2|     <title>Test Page</title>
+  3| </head>
+  4| <bo#dy>
+  5|     <style>
+  6|     a {
+Original: 56 (2, 3)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <bo#dy><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 63 (4, 4)
+  2|     <title>Test Page</title>
+  3| </head>
+  4| <bod#y>
+  5|     <style>
+  6|     a {
+Original: 57 (2, 4)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <bod#y><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 64 (4, 5)
+  2|     <title>Test Page</title>
+  3| </head>
+  4| <body#>
+  5|     <style>
+  6|     a {
+Original: 58 (2, 5)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body#><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 65 (4, 6)
+  2|     <title>Test Page</title>
+  3| </head>
+  4| <body>#
+  5|     <style>
+  6|     a {
+Original: 59 (2, 6)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body>#<style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 66 (5, 0)
+  3| </head>
+  4| <body>
+  5| #    <style>
+  6|     a {
+  7|         color:red
+Original: 60 (2, 6)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body>#<style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 67 (5, 1)
+  3| </head>
+  4| <body>
+  5|  #   <style>
+  6|     a {
+  7|         color:red
+Original: 60 (2, 6)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body>#<style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 68 (5, 2)
+  3| </head>
+  4| <body>
+  5|   #  <style>
+  6|     a {
+  7|         color:red
+Original: 60 (2, 6)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body>#<style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 69 (5, 3)
+  3| </head>
+  4| <body>
+  5|    # <style>
+  6|     a {
+  7|         color:red
+Original: 60 (2, 6)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body>#<style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 70 (5, 4)
+  3| </head>
+  4| <body>
+  5|     #<style>
+  6|     a {
+  7|         color:red
+Original: 60 (2, 6)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body>#<style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 71 (5, 5)
+  3| </head>
+  4| <body>
+  5|     <#style>
+  6|     a {
+  7|         color:red
+Original: 60 (2, 7)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><#style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 72 (5, 6)
+  3| </head>
+  4| <body>
+  5|     <s#tyle>
+  6|     a {
+  7|         color:red
+Original: 61 (2, 8)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><s#tyle>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 73 (5, 7)
+  3| </head>
+  4| <body>
+  5|     <st#yle>
+  6|     a {
+  7|         color:red
+Original: 62 (2, 9)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><st#yle>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 74 (5, 8)
+  3| </head>
+  4| <body>
+  5|     <sty#le>
+  6|     a {
+  7|         color:red
+Original: 63 (2, 10)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><sty#le>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 75 (5, 9)
+  3| </head>
+  4| <body>
+  5|     <styl#e>
+  6|     a {
+  7|         color:red
+Original: 64 (2, 11)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><styl#e>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 76 (5, 10)
+  3| </head>
+  4| <body>
+  5|     <style#>
+  6|     a {
+  7|         color:red
+Original: 65 (2, 12)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style#>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 77 (5, 11)
+  3| </head>
+  4| <body>
+  5|     <style>#
+  6|     a {
+  7|         color:red
+Original: 66 (2, 13)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>#a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 78 (6, 0)
+  4| <body>
+  5|     <style>
+  6| #    a {
+  7|         color:red
+  8|     }
+Original: 67 (2, 13)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>#a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 79 (6, 1)
+  4| <body>
+  5|     <style>
+  6|  #   a {
+  7|         color:red
+  8|     }
+Original: 67 (2, 13)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>#a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 80 (6, 2)
+  4| <body>
+  5|     <style>
+  6|   #  a {
+  7|         color:red
+  8|     }
+Original: 67 (2, 13)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>#a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 81 (6, 3)
+  4| <body>
+  5|     <style>
+  6|    # a {
+  7|         color:red
+  8|     }
+Original: 67 (2, 13)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>#a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 82 (6, 4)
+  4| <body>
+  5|     <style>
+  6|     #a {
+  7|         color:red
+  8|     }
+Original: 67 (2, 13)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>#a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 83 (6, 5)
+  4| <body>
+  5|     <style>
+  6|     a# {
+  7|         color:red
+  8|     }
+Original: 67 (2, 14)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a#{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 84 (6, 6)
+  4| <body>
+  5|     <style>
+  6|     a #{
+  7|         color:red
+  8|     }
+Original: 68 (2, 14)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a#{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 85 (6, 7)
+  4| <body>
+  5|     <style>
+  6|     a {#
+  7|         color:red
+  8|     }
+Original: 68 (2, 15)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{#color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 86 (7, 0)
+  5|     <style>
+  6|     a {
+  7| #        color:red
+  8|     }
+  9| 
+Original: 69 (2, 15)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{#color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 87 (7, 1)
+  5|     <style>
+  6|     a {
+  7|  #       color:red
+  8|     }
+  9| 
+Original: 69 (2, 15)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{#color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 88 (7, 2)
+  5|     <style>
+  6|     a {
+  7|   #      color:red
+  8|     }
+  9| 
+Original: 69 (2, 15)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{#color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 89 (7, 3)
+  5|     <style>
+  6|     a {
+  7|    #     color:red
+  8|     }
+  9| 
+Original: 69 (2, 15)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{#color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 90 (7, 4)
+  5|     <style>
+  6|     a {
+  7|     #    color:red
+  8|     }
+  9| 
+Original: 69 (2, 15)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{#color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 91 (7, 5)
+  5|     <style>
+  6|     a {
+  7|      #   color:red
+  8|     }
+  9| 
+Original: 69 (2, 15)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{#color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 92 (7, 6)
+  5|     <style>
+  6|     a {
+  7|       #  color:red
+  8|     }
+  9| 
+Original: 69 (2, 15)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{#color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 93 (7, 7)
+  5|     <style>
+  6|     a {
+  7|        # color:red
+  8|     }
+  9| 
+Original: 69 (2, 15)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{#color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 94 (7, 8)
+  5|     <style>
+  6|     a {
+  7|         #color:red
+  8|     }
+  9| 
+Original: 69 (2, 15)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{#color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 95 (7, 9)
+  5|     <style>
+  6|     a {
+  7|         c#olor:red
+  8|     }
+  9| 
+Original: 69 (2, 16)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{c#olor:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 96 (7, 10)
+  5|     <style>
+  6|     a {
+  7|         co#lor:red
+  8|     }
+  9| 
+Original: 70 (2, 17)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{co#lor:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 97 (7, 11)
+  5|     <style>
+  6|     a {
+  7|         col#or:red
+  8|     }
+  9| 
+Original: 71 (2, 18)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{col#or:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 98 (7, 12)
+  5|     <style>
+  6|     a {
+  7|         colo#r:red
+  8|     }
+  9| 
+Original: 72 (2, 19)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{colo#r:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 99 (7, 13)
+  5|     <style>
+  6|     a {
+  7|         color#:red
+  8|     }
+  9| 
+Original: 73 (2, 20)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color#:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 100 (7, 14)
+  5|     <style>
+  6|     a {
+  7|         color:#red
+  8|     }
+  9| 
+Original: 74 (2, 21)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:#red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 101 (7, 15)
+  5|     <style>
+  6|     a {
+  7|         color:r#ed
+  8|     }
+  9| 
+Original: 75 (2, 22)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:r#ed}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 102 (7, 16)
+  5|     <style>
+  6|     a {
+  7|         color:re#d
+  8|     }
+  9| 
+Original: 76 (2, 23)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:re#d}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 103 (7, 17)
+  5|     <style>
+  6|     a {
+  7|         color:red#
+  8|     }
+  9| 
+Original: 77 (2, 24)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red#}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 104 (8, 0)
+  6|     a {
+  7|         color:red
+  8| #    }
+  9| 
+ 10|     body, * {
+Original: 78 (2, 24)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red#}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 105 (8, 1)
+  6|     a {
+  7|         color:red
+  8|  #   }
+  9| 
+ 10|     body, * {
+Original: 78 (2, 24)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red#}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 106 (8, 2)
+  6|     a {
+  7|         color:red
+  8|   #  }
+  9| 
+ 10|     body, * {
+Original: 78 (2, 24)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red#}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 107 (8, 3)
+  6|     a {
+  7|         color:red
+  8|    # }
+  9| 
+ 10|     body, * {
+Original: 78 (2, 24)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red#}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 108 (8, 4)
+  6|     a {
+  7|         color:red
+  8|     #}
+  9| 
+ 10|     body, * {
+Original: 78 (2, 24)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red#}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 109 (8, 5)
+  6|     a {
+  7|         color:red
+  8|     }#
+  9| 
+ 10|     body, * {
+Original: 78 (2, 25)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}#body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 110 (9, 0)
+  7|         color:red
+  8|     }
+  9| #
+ 10|     body, * {
+ 11|         color: blue
+Original: 79 (2, 25)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}#body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 111 (10, 0)
+  8|     }
+  9| 
+ 10| #    body, * {
+ 11|         color: blue
+ 12|     }
+Original: 79 (2, 25)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}#body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 112 (10, 1)
+  8|     }
+  9| 
+ 10|  #   body, * {
+ 11|         color: blue
+ 12|     }
+Original: 79 (2, 25)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}#body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 113 (10, 2)
+  8|     }
+  9| 
+ 10|   #  body, * {
+ 11|         color: blue
+ 12|     }
+Original: 79 (2, 25)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}#body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 114 (10, 3)
+  8|     }
+  9| 
+ 10|    # body, * {
+ 11|         color: blue
+ 12|     }
+Original: 79 (2, 25)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}#body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 115 (10, 4)
+  8|     }
+  9| 
+ 10|     #body, * {
+ 11|         color: blue
+ 12|     }
+Original: 79 (2, 25)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}#body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 116 (10, 5)
+  8|     }
+  9| 
+ 10|     b#ody, * {
+ 11|         color: blue
+ 12|     }
+Original: 79 (2, 26)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}b#ody,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 117 (10, 6)
+  8|     }
+  9| 
+ 10|     bo#dy, * {
+ 11|         color: blue
+ 12|     }
+Original: 80 (2, 27)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}bo#dy,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 118 (10, 7)
+  8|     }
+  9| 
+ 10|     bod#y, * {
+ 11|         color: blue
+ 12|     }
+Original: 81 (2, 28)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}bod#y,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 119 (10, 8)
+  8|     }
+  9| 
+ 10|     body#, * {
+ 11|         color: blue
+ 12|     }
+Original: 82 (2, 29)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body#,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 120 (10, 9)
+  8|     }
+  9| 
+ 10|     body,# * {
+ 11|         color: blue
+ 12|     }
+Original: 83 (2, 30)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,#*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 121 (10, 10)
+  8|     }
+  9| 
+ 10|     body, #* {
+ 11|         color: blue
+ 12|     }
+Original: 84 (2, 30)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,#*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 122 (10, 11)
+  8|     }
+  9| 
+ 10|     body, *# {
+ 11|         color: blue
+ 12|     }
+Original: 84 (2, 31)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*#{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 123 (10, 12)
+  8|     }
+  9| 
+ 10|     body, * #{
+ 11|         color: blue
+ 12|     }
+Original: 85 (2, 31)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*#{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 124 (10, 13)
+  8|     }
+  9| 
+ 10|     body, * {#
+ 11|         color: blue
+ 12|     }
+Original: 85 (2, 32)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{#color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 125 (11, 0)
+  9| 
+ 10|     body, * {
+ 11| #        color: blue
+ 12|     }
+ 13|     </style>
+Original: 86 (2, 32)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{#color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 126 (11, 1)
+  9| 
+ 10|     body, * {
+ 11|  #       color: blue
+ 12|     }
+ 13|     </style>
+Original: 86 (2, 32)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{#color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 127 (11, 2)
+  9| 
+ 10|     body, * {
+ 11|   #      color: blue
+ 12|     }
+ 13|     </style>
+Original: 86 (2, 32)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{#color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 128 (11, 3)
+  9| 
+ 10|     body, * {
+ 11|    #     color: blue
+ 12|     }
+ 13|     </style>
+Original: 86 (2, 32)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{#color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 129 (11, 4)
+  9| 
+ 10|     body, * {
+ 11|     #    color: blue
+ 12|     }
+ 13|     </style>
+Original: 86 (2, 32)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{#color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 130 (11, 5)
+  9| 
+ 10|     body, * {
+ 11|      #   color: blue
+ 12|     }
+ 13|     </style>
+Original: 86 (2, 32)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{#color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 131 (11, 6)
+  9| 
+ 10|     body, * {
+ 11|       #  color: blue
+ 12|     }
+ 13|     </style>
+Original: 86 (2, 32)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{#color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 132 (11, 7)
+  9| 
+ 10|     body, * {
+ 11|        # color: blue
+ 12|     }
+ 13|     </style>
+Original: 86 (2, 32)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{#color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 133 (11, 8)
+  9| 
+ 10|     body, * {
+ 11|         #color: blue
+ 12|     }
+ 13|     </style>
+Original: 86 (2, 32)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{#color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 134 (11, 9)
+  9| 
+ 10|     body, * {
+ 11|         c#olor: blue
+ 12|     }
+ 13|     </style>
+Original: 86 (2, 33)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{c#olor:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 135 (11, 10)
+  9| 
+ 10|     body, * {
+ 11|         co#lor: blue
+ 12|     }
+ 13|     </style>
+Original: 87 (2, 34)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{co#lor:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 136 (11, 11)
+  9| 
+ 10|     body, * {
+ 11|         col#or: blue
+ 12|     }
+ 13|     </style>
+Original: 88 (2, 35)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{col#or:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 137 (11, 12)
+  9| 
+ 10|     body, * {
+ 11|         colo#r: blue
+ 12|     }
+ 13|     </style>
+Original: 89 (2, 36)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{colo#r:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 138 (11, 13)
+  9| 
+ 10|     body, * {
+ 11|         color#: blue
+ 12|     }
+ 13|     </style>
+Original: 90 (2, 37)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color#:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 139 (11, 14)
+  9| 
+ 10|     body, * {
+ 11|         color:# blue
+ 12|     }
+ 13|     </style>
+Original: 91 (2, 38)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:#blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 140 (11, 15)
+  9| 
+ 10|     body, * {
+ 11|         color: #blue
+ 12|     }
+ 13|     </style>
+Original: 92 (2, 38)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:#blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 141 (11, 16)
+  9| 
+ 10|     body, * {
+ 11|         color: b#lue
+ 12|     }
+ 13|     </style>
+Original: 92 (2, 39)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:b#lue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 142 (11, 17)
+  9| 
+ 10|     body, * {
+ 11|         color: bl#ue
+ 12|     }
+ 13|     </style>
+Original: 93 (2, 40)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:bl#ue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 143 (11, 18)
+  9| 
+ 10|     body, * {
+ 11|         color: blu#e
+ 12|     }
+ 13|     </style>
+Original: 94 (2, 41)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blu#e}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 144 (11, 19)
+  9| 
+ 10|     body, * {
+ 11|         color: blue#
+ 12|     }
+ 13|     </style>
+Original: 95 (2, 42)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue#}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 145 (12, 0)
+ 10|     body, * {
+ 11|         color: blue
+ 12| #    }
+ 13|     </style>
+ 14|     <div>
+Original: 96 (2, 42)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue#}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 146 (12, 1)
+ 10|     body, * {
+ 11|         color: blue
+ 12|  #   }
+ 13|     </style>
+ 14|     <div>
+Original: 96 (2, 42)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue#}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 147 (12, 2)
+ 10|     body, * {
+ 11|         color: blue
+ 12|   #  }
+ 13|     </style>
+ 14|     <div>
+Original: 96 (2, 42)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue#}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 148 (12, 3)
+ 10|     body, * {
+ 11|         color: blue
+ 12|    # }
+ 13|     </style>
+ 14|     <div>
+Original: 96 (2, 42)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue#}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 149 (12, 4)
+ 10|     body, * {
+ 11|         color: blue
+ 12|     #}
+ 13|     </style>
+ 14|     <div>
+Original: 96 (2, 42)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue#}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 150 (12, 5)
+ 10|     body, * {
+ 11|         color: blue
+ 12|     }#
+ 13|     </style>
+ 14|     <div>
+Original: 96 (2, 43)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}#</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 151 (13, 0)
+ 11|         color: blue
+ 12|     }
+ 13| #    </style>
+ 14|     <div>
+ 15|         <script>
+Original: 97 (2, 43)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}#</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 152 (13, 1)
+ 11|         color: blue
+ 12|     }
+ 13|  #   </style>
+ 14|     <div>
+ 15|         <script>
+Original: 97 (2, 43)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}#</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 153 (13, 2)
+ 11|         color: blue
+ 12|     }
+ 13|   #  </style>
+ 14|     <div>
+ 15|         <script>
+Original: 97 (2, 43)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}#</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 154 (13, 3)
+ 11|         color: blue
+ 12|     }
+ 13|    # </style>
+ 14|     <div>
+ 15|         <script>
+Original: 97 (2, 43)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}#</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 155 (13, 4)
+ 11|         color: blue
+ 12|     }
+ 13|     #</style>
+ 14|     <div>
+ 15|         <script>
+Original: 97 (2, 43)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}#</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 156 (13, 5)
+ 11|         color: blue
+ 12|     }
+ 13|     <#/style>
+ 14|     <div>
+ 15|         <script>
+Original: 97 (2, 44)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}<#/style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 157 (13, 6)
+ 11|         color: blue
+ 12|     }
+ 13|     </#style>
+ 14|     <div>
+ 15|         <script>
+Original: 98 (2, 45)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</#style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 158 (13, 7)
+ 11|         color: blue
+ 12|     }
+ 13|     </s#tyle>
+ 14|     <div>
+ 15|         <script>
+Original: 99 (2, 46)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</s#tyle>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 159 (13, 8)
+ 11|         color: blue
+ 12|     }
+ 13|     </st#yle>
+ 14|     <div>
+ 15|         <script>
+Original: 100 (2, 47)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</st#yle>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 160 (13, 9)
+ 11|         color: blue
+ 12|     }
+ 13|     </sty#le>
+ 14|     <div>
+ 15|         <script>
+Original: 101 (2, 48)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</sty#le>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 161 (13, 10)
+ 11|         color: blue
+ 12|     }
+ 13|     </styl#e>
+ 14|     <div>
+ 15|         <script>
+Original: 102 (2, 49)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</styl#e>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 162 (13, 11)
+ 11|         color: blue
+ 12|     }
+ 13|     </style#>
+ 14|     <div>
+ 15|         <script>
+Original: 103 (2, 50)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style#>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 163 (13, 12)
+ 11|         color: blue
+ 12|     }
+ 13|     </style>#
+ 14|     <div>
+ 15|         <script>
+Original: 104 (2, 51)
+  0| <!DOCTYPE html>
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>#
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+
+Formatted: 164 (14, 0)
+ 12|     }
+ 13|     </style>
+ 14| #    <div>
+ 15|         <script>
+ 16|         (() => {
+Original: 105 (3, 0)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| #<div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 165 (14, 1)
+ 12|     }
+ 13|     </style>
+ 14|  #   <div>
+ 15|         <script>
+ 16|         (() => {
+Original: 106 (3, 0)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| #<div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 166 (14, 2)
+ 12|     }
+ 13|     </style>
+ 14|   #  <div>
+ 15|         <script>
+ 16|         (() => {
+Original: 106 (3, 0)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| #<div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 167 (14, 3)
+ 12|     }
+ 13|     </style>
+ 14|    # <div>
+ 15|         <script>
+ 16|         (() => {
+Original: 106 (3, 0)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| #<div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 168 (14, 4)
+ 12|     }
+ 13|     </style>
+ 14|     #<div>
+ 15|         <script>
+ 16|         (() => {
+Original: 106 (3, 0)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| #<div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 169 (14, 5)
+ 12|     }
+ 13|     </style>
+ 14|     <#div>
+ 15|         <script>
+ 16|         (() => {
+Original: 106 (3, 1)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <#div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 170 (14, 6)
+ 12|     }
+ 13|     </style>
+ 14|     <d#iv>
+ 15|         <script>
+ 16|         (() => {
+Original: 107 (3, 2)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <d#iv><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 171 (14, 7)
+ 12|     }
+ 13|     </style>
+ 14|     <di#v>
+ 15|         <script>
+ 16|         (() => {
+Original: 108 (3, 3)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <di#v><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 172 (14, 8)
+ 12|     }
+ 13|     </style>
+ 14|     <div#>
+ 15|         <script>
+ 16|         (() => {
+Original: 109 (3, 4)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div#><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 173 (14, 9)
+ 12|     }
+ 13|     </style>
+ 14|     <div>#
+ 15|         <script>
+ 16|         (() => {
+Original: 110 (3, 5)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div>#<script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 174 (15, 0)
+ 13|     </style>
+ 14|     <div>
+ 15| #        <script>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+Original: 111 (3, 5)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div>#<script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 175 (15, 1)
+ 13|     </style>
+ 14|     <div>
+ 15|  #       <script>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+Original: 111 (3, 5)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div>#<script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 176 (15, 2)
+ 13|     </style>
+ 14|     <div>
+ 15|   #      <script>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+Original: 111 (3, 5)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div>#<script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 177 (15, 3)
+ 13|     </style>
+ 14|     <div>
+ 15|    #     <script>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+Original: 111 (3, 5)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div>#<script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 178 (15, 4)
+ 13|     </style>
+ 14|     <div>
+ 15|     #    <script>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+Original: 111 (3, 5)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div>#<script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 179 (15, 5)
+ 13|     </style>
+ 14|     <div>
+ 15|      #   <script>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+Original: 111 (3, 5)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div>#<script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 180 (15, 6)
+ 13|     </style>
+ 14|     <div>
+ 15|       #  <script>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+Original: 111 (3, 5)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div>#<script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 181 (15, 7)
+ 13|     </style>
+ 14|     <div>
+ 15|        # <script>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+Original: 111 (3, 5)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div>#<script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 182 (15, 8)
+ 13|     </style>
+ 14|     <div>
+ 15|         #<script>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+Original: 111 (3, 5)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div>#<script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 183 (15, 9)
+ 13|     </style>
+ 14|     <div>
+ 15|         <#script>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+Original: 111 (3, 6)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><#script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 184 (15, 10)
+ 13|     </style>
+ 14|     <div>
+ 15|         <s#cript>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+Original: 112 (3, 7)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><s#cript>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 185 (15, 11)
+ 13|     </style>
+ 14|     <div>
+ 15|         <sc#ript>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+Original: 113 (3, 8)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><sc#ript>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 186 (15, 12)
+ 13|     </style>
+ 14|     <div>
+ 15|         <scr#ipt>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+Original: 114 (3, 9)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><scr#ipt>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 187 (15, 13)
+ 13|     </style>
+ 14|     <div>
+ 15|         <scri#pt>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+Original: 115 (3, 10)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><scri#pt>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 188 (15, 14)
+ 13|     </style>
+ 14|     <div>
+ 15|         <scrip#t>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+Original: 116 (3, 11)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><scrip#t>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 189 (15, 15)
+ 13|     </style>
+ 14|     <div>
+ 15|         <script#>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+Original: 117 (3, 12)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script#>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 190 (15, 16)
+ 13|     </style>
+ 14|     <div>
+ 15|         <script>#
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+Original: 118 (3, 13)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>#(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 191 (16, 0)
+ 14|     <div>
+ 15|         <script>
+ 16| #        (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+Original: 119 (3, 13)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>#(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 192 (16, 1)
+ 14|     <div>
+ 15|         <script>
+ 16|  #       (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+Original: 119 (3, 13)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>#(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 193 (16, 2)
+ 14|     <div>
+ 15|         <script>
+ 16|   #      (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+Original: 119 (3, 13)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>#(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 194 (16, 3)
+ 14|     <div>
+ 15|         <script>
+ 16|    #     (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+Original: 119 (3, 13)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>#(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 195 (16, 4)
+ 14|     <div>
+ 15|         <script>
+ 16|     #    (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+Original: 119 (3, 13)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>#(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 196 (16, 5)
+ 14|     <div>
+ 15|         <script>
+ 16|      #   (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+Original: 119 (3, 13)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>#(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 197 (16, 6)
+ 14|     <div>
+ 15|         <script>
+ 16|       #  (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+Original: 119 (3, 13)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>#(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 198 (16, 7)
+ 14|     <div>
+ 15|         <script>
+ 16|        # (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+Original: 119 (3, 13)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>#(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 199 (16, 8)
+ 14|     <div>
+ 15|         <script>
+ 16|         #(() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+Original: 119 (3, 13)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>#(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 200 (16, 9)
+ 14|     <div>
+ 15|         <script>
+ 16|         (#() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+Original: 119 (3, 14)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(#()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 201 (16, 10)
+ 14|     <div>
+ 15|         <script>
+ 16|         ((#) => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+Original: 120 (3, 15)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>((#)=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 202 (16, 11)
+ 14|     <div>
+ 15|         <script>
+ 16|         (()# => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+Original: 121 (3, 16)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()#=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 203 (16, 12)
+ 14|     <div>
+ 15|         <script>
+ 16|         (() #=> {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+Original: 122 (3, 16)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()#=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 204 (16, 13)
+ 14|     <div>
+ 15|         <script>
+ 16|         (() =#> {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+Original: 122 (3, 17)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=#>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 205 (16, 14)
+ 14|     <div>
+ 15|         <script>
+ 16|         (() =># {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+Original: 123 (3, 18)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>#{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 206 (16, 15)
+ 14|     <div>
+ 15|         <script>
+ 16|         (() => #{
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+Original: 124 (3, 18)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>#{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 207 (16, 16)
+ 14|     <div>
+ 15|         <script>
+ 16|         (() => {#
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+Original: 124 (3, 19)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{#for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 208 (17, 0)
+ 15|         <script>
+ 16|         (() => {
+ 17| #            for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 125 (3, 19)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{#for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 209 (17, 1)
+ 15|         <script>
+ 16|         (() => {
+ 17|  #           for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 125 (3, 19)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{#for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 210 (17, 2)
+ 15|         <script>
+ 16|         (() => {
+ 17|   #          for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 125 (3, 19)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{#for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 211 (17, 3)
+ 15|         <script>
+ 16|         (() => {
+ 17|    #         for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 125 (3, 19)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{#for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 212 (17, 4)
+ 15|         <script>
+ 16|         (() => {
+ 17|     #        for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 125 (3, 19)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{#for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 213 (17, 5)
+ 15|         <script>
+ 16|         (() => {
+ 17|      #       for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 125 (3, 19)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{#for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 214 (17, 6)
+ 15|         <script>
+ 16|         (() => {
+ 17|       #      for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 125 (3, 19)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{#for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 215 (17, 7)
+ 15|         <script>
+ 16|         (() => {
+ 17|        #     for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 125 (3, 19)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{#for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 216 (17, 8)
+ 15|         <script>
+ 16|         (() => {
+ 17|         #    for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 125 (3, 19)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{#for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 217 (17, 9)
+ 15|         <script>
+ 16|         (() => {
+ 17|          #   for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 125 (3, 19)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{#for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 218 (17, 10)
+ 15|         <script>
+ 16|         (() => {
+ 17|           #  for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 125 (3, 19)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{#for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 219 (17, 11)
+ 15|         <script>
+ 16|         (() => {
+ 17|            # for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 125 (3, 19)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{#for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 220 (17, 12)
+ 15|         <script>
+ 16|         (() => {
+ 17|             #for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 125 (3, 19)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{#for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 221 (17, 13)
+ 15|         <script>
+ 16|         (() => {
+ 17|             f#or (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 125 (3, 20)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{f#or(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 222 (17, 14)
+ 15|         <script>
+ 16|         (() => {
+ 17|             fo#r (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 126 (3, 21)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{fo#r(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 223 (17, 15)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for# (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 127 (3, 22)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for#(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 224 (17, 16)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for #(let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 128 (3, 22)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for#(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 225 (17, 17)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (#let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 128 (3, 23)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(#let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 226 (17, 18)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (l#et x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 129 (3, 24)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(l#et x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 227 (17, 19)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (le#t x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 130 (3, 25)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(le#t x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 228 (17, 20)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let# x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 131 (3, 26)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let# x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 229 (17, 21)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let #x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 132 (3, 27)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let #x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 230 (17, 22)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let x# of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 133 (3, 28)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x# of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 231 (17, 23)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let x #of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 134 (3, 29)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x #of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 232 (17, 24)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let x o#f [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 135 (3, 30)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x o#f[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 233 (17, 25)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let x of# [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 136 (3, 31)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of#[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 234 (17, 26)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let x of #[1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 137 (3, 31)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of#[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 235 (17, 27)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let x of [#1, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 137 (3, 32)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[#1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 236 (17, 28)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let x of [1#, 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 138 (3, 33)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1#,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 237 (17, 29)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let x of [1,# 2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 139 (3, 34)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,#2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 238 (17, 30)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let x of [1, #2, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 140 (3, 34)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,#2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 239 (17, 31)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let x of [1, 2#, 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 140 (3, 35)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2#,3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 240 (17, 32)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let x of [1, 2,# 3])
+ 18|                 log(x)
+ 19|         })()
+Original: 141 (3, 36)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,#3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 241 (17, 33)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, #3])
+ 18|                 log(x)
+ 19|         })()
+Original: 142 (3, 36)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,#3])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 242 (17, 34)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3#])
+ 18|                 log(x)
+ 19|         })()
+Original: 142 (3, 37)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3#])log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 243 (17, 35)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3]#)
+ 18|                 log(x)
+ 19|         })()
+Original: 143 (3, 38)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3]#)log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 244 (17, 36)
+ 15|         <script>
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])#
+ 18|                 log(x)
+ 19|         })()
+Original: 144 (3, 39)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])#log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 245 (18, 0)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18| #                log(x)
+ 19|         })()
+ 20|         </script>
+Original: 145 (3, 39)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])#log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 246 (18, 1)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|  #               log(x)
+ 19|         })()
+ 20|         </script>
+Original: 145 (3, 39)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])#log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 247 (18, 2)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|   #              log(x)
+ 19|         })()
+ 20|         </script>
+Original: 145 (3, 39)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])#log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 248 (18, 3)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|    #             log(x)
+ 19|         })()
+ 20|         </script>
+Original: 145 (3, 39)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])#log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 249 (18, 4)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|     #            log(x)
+ 19|         })()
+ 20|         </script>
+Original: 145 (3, 39)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])#log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 250 (18, 5)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|      #           log(x)
+ 19|         })()
+ 20|         </script>
+Original: 145 (3, 39)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])#log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 251 (18, 6)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|       #          log(x)
+ 19|         })()
+ 20|         </script>
+Original: 145 (3, 39)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])#log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 252 (18, 7)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|        #         log(x)
+ 19|         })()
+ 20|         </script>
+Original: 145 (3, 39)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])#log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 253 (18, 8)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|         #        log(x)
+ 19|         })()
+ 20|         </script>
+Original: 145 (3, 39)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])#log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 254 (18, 9)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|          #       log(x)
+ 19|         })()
+ 20|         </script>
+Original: 145 (3, 39)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])#log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 255 (18, 10)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|           #      log(x)
+ 19|         })()
+ 20|         </script>
+Original: 145 (3, 39)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])#log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 256 (18, 11)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|            #     log(x)
+ 19|         })()
+ 20|         </script>
+Original: 145 (3, 39)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])#log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 257 (18, 12)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|             #    log(x)
+ 19|         })()
+ 20|         </script>
+Original: 145 (3, 39)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])#log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 258 (18, 13)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|              #   log(x)
+ 19|         })()
+ 20|         </script>
+Original: 145 (3, 39)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])#log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 259 (18, 14)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|               #  log(x)
+ 19|         })()
+ 20|         </script>
+Original: 145 (3, 39)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])#log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 260 (18, 15)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                # log(x)
+ 19|         })()
+ 20|         </script>
+Original: 145 (3, 39)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])#log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 261 (18, 16)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 #log(x)
+ 19|         })()
+ 20|         </script>
+Original: 145 (3, 39)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])#log(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 262 (18, 17)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 l#og(x)
+ 19|         })()
+ 20|         </script>
+Original: 145 (3, 40)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])l#og(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 263 (18, 18)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 lo#g(x)
+ 19|         })()
+ 20|         </script>
+Original: 146 (3, 41)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])lo#g(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 264 (18, 19)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log#(x)
+ 19|         })()
+ 20|         </script>
+Original: 147 (3, 42)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log#(x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 265 (18, 20)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(#x)
+ 19|         })()
+ 20|         </script>
+Original: 148 (3, 43)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(#x)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 266 (18, 21)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x#)
+ 19|         })()
+ 20|         </script>
+Original: 149 (3, 44)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x#)})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 267 (18, 22)
+ 16|         (() => {
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)#
+ 19|         })()
+ 20|         </script>
+Original: 150 (3, 45)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)#})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 268 (19, 0)
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19| #        })()
+ 20|         </script>
+ 21|     </div>
+Original: 151 (3, 45)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)#})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 269 (19, 1)
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|  #       })()
+ 20|         </script>
+ 21|     </div>
+Original: 151 (3, 45)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)#})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 270 (19, 2)
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|   #      })()
+ 20|         </script>
+ 21|     </div>
+Original: 151 (3, 45)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)#})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 271 (19, 3)
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|    #     })()
+ 20|         </script>
+ 21|     </div>
+Original: 151 (3, 45)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)#})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 272 (19, 4)
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|     #    })()
+ 20|         </script>
+ 21|     </div>
+Original: 151 (3, 45)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)#})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 273 (19, 5)
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|      #   })()
+ 20|         </script>
+ 21|     </div>
+Original: 151 (3, 45)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)#})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 274 (19, 6)
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|       #  })()
+ 20|         </script>
+ 21|     </div>
+Original: 151 (3, 45)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)#})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 275 (19, 7)
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|        # })()
+ 20|         </script>
+ 21|     </div>
+Original: 151 (3, 45)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)#})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 276 (19, 8)
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         #})()
+ 20|         </script>
+ 21|     </div>
+Original: 151 (3, 45)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)#})()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 277 (19, 9)
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         }#)()
+ 20|         </script>
+ 21|     </div>
+Original: 151 (3, 46)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)}#)()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 278 (19, 10)
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })#()
+ 20|         </script>
+ 21|     </div>
+Original: 152 (3, 47)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})#()</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 279 (19, 11)
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })(#)
+ 20|         </script>
+ 21|     </div>
+Original: 153 (3, 48)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})(#)</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 280 (19, 12)
+ 17|             for (let x of [1, 2, 3])
+ 18|                 log(x)
+ 19|         })()#
+ 20|         </script>
+ 21|     </div>
+Original: 154 (3, 49)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()#</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 281 (20, 0)
+ 18|                 log(x)
+ 19|         })()
+ 20| #        </script>
+ 21|     </div>
+ 22| </body>
+Original: 155 (3, 49)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()#</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 282 (20, 1)
+ 18|                 log(x)
+ 19|         })()
+ 20|  #       </script>
+ 21|     </div>
+ 22| </body>
+Original: 155 (3, 49)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()#</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 283 (20, 2)
+ 18|                 log(x)
+ 19|         })()
+ 20|   #      </script>
+ 21|     </div>
+ 22| </body>
+Original: 155 (3, 49)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()#</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 284 (20, 3)
+ 18|                 log(x)
+ 19|         })()
+ 20|    #     </script>
+ 21|     </div>
+ 22| </body>
+Original: 155 (3, 49)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()#</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 285 (20, 4)
+ 18|                 log(x)
+ 19|         })()
+ 20|     #    </script>
+ 21|     </div>
+ 22| </body>
+Original: 155 (3, 49)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()#</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 286 (20, 5)
+ 18|                 log(x)
+ 19|         })()
+ 20|      #   </script>
+ 21|     </div>
+ 22| </body>
+Original: 155 (3, 49)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()#</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 287 (20, 6)
+ 18|                 log(x)
+ 19|         })()
+ 20|       #  </script>
+ 21|     </div>
+ 22| </body>
+Original: 155 (3, 49)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()#</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 288 (20, 7)
+ 18|                 log(x)
+ 19|         })()
+ 20|        # </script>
+ 21|     </div>
+ 22| </body>
+Original: 155 (3, 49)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()#</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 289 (20, 8)
+ 18|                 log(x)
+ 19|         })()
+ 20|         #</script>
+ 21|     </div>
+ 22| </body>
+Original: 155 (3, 49)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()#</script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 290 (20, 9)
+ 18|                 log(x)
+ 19|         })()
+ 20|         <#/script>
+ 21|     </div>
+ 22| </body>
+Original: 155 (3, 50)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()<#/script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 291 (20, 10)
+ 18|                 log(x)
+ 19|         })()
+ 20|         </#script>
+ 21|     </div>
+ 22| </body>
+Original: 156 (3, 51)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</#script></div>
+  4| </body></html>
+  5| 
+
+Formatted: 292 (20, 11)
+ 18|                 log(x)
+ 19|         })()
+ 20|         </s#cript>
+ 21|     </div>
+ 22| </body>
+Original: 157 (3, 52)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</s#cript></div>
+  4| </body></html>
+  5| 
+
+Formatted: 293 (20, 12)
+ 18|                 log(x)
+ 19|         })()
+ 20|         </sc#ript>
+ 21|     </div>
+ 22| </body>
+Original: 158 (3, 53)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</sc#ript></div>
+  4| </body></html>
+  5| 
+
+Formatted: 294 (20, 13)
+ 18|                 log(x)
+ 19|         })()
+ 20|         </scr#ipt>
+ 21|     </div>
+ 22| </body>
+Original: 159 (3, 54)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</scr#ipt></div>
+  4| </body></html>
+  5| 
+
+Formatted: 295 (20, 14)
+ 18|                 log(x)
+ 19|         })()
+ 20|         </scri#pt>
+ 21|     </div>
+ 22| </body>
+Original: 160 (3, 55)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</scri#pt></div>
+  4| </body></html>
+  5| 
+
+Formatted: 296 (20, 15)
+ 18|                 log(x)
+ 19|         })()
+ 20|         </scrip#t>
+ 21|     </div>
+ 22| </body>
+Original: 161 (3, 56)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</scrip#t></div>
+  4| </body></html>
+  5| 
+
+Formatted: 297 (20, 16)
+ 18|                 log(x)
+ 19|         })()
+ 20|         </script#>
+ 21|     </div>
+ 22| </body>
+Original: 162 (3, 57)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script#></div>
+  4| </body></html>
+  5| 
+
+Formatted: 298 (20, 17)
+ 18|                 log(x)
+ 19|         })()
+ 20|         </script>#
+ 21|     </div>
+ 22| </body>
+Original: 163 (3, 58)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script>#</div>
+  4| </body></html>
+  5| 
+
+Formatted: 299 (21, 0)
+ 19|         })()
+ 20|         </script>
+ 21| #    </div>
+ 22| </body>
+ 23| </html>
+Original: 164 (3, 58)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script>#</div>
+  4| </body></html>
+  5| 
+
+Formatted: 300 (21, 1)
+ 19|         })()
+ 20|         </script>
+ 21|  #   </div>
+ 22| </body>
+ 23| </html>
+Original: 164 (3, 58)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script>#</div>
+  4| </body></html>
+  5| 
+
+Formatted: 301 (21, 2)
+ 19|         })()
+ 20|         </script>
+ 21|   #  </div>
+ 22| </body>
+ 23| </html>
+Original: 164 (3, 58)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script>#</div>
+  4| </body></html>
+  5| 
+
+Formatted: 302 (21, 3)
+ 19|         })()
+ 20|         </script>
+ 21|    # </div>
+ 22| </body>
+ 23| </html>
+Original: 164 (3, 58)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script>#</div>
+  4| </body></html>
+  5| 
+
+Formatted: 303 (21, 4)
+ 19|         })()
+ 20|         </script>
+ 21|     #</div>
+ 22| </body>
+ 23| </html>
+Original: 164 (3, 58)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script>#</div>
+  4| </body></html>
+  5| 
+
+Formatted: 304 (21, 5)
+ 19|         })()
+ 20|         </script>
+ 21|     <#/div>
+ 22| </body>
+ 23| </html>
+Original: 164 (3, 59)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script><#/div>
+  4| </body></html>
+  5| 
+
+Formatted: 305 (21, 6)
+ 19|         })()
+ 20|         </script>
+ 21|     </#div>
+ 22| </body>
+ 23| </html>
+Original: 165 (3, 60)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></#div>
+  4| </body></html>
+  5| 
+
+Formatted: 306 (21, 7)
+ 19|         })()
+ 20|         </script>
+ 21|     </d#iv>
+ 22| </body>
+ 23| </html>
+Original: 166 (3, 61)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></d#iv>
+  4| </body></html>
+  5| 
+
+Formatted: 307 (21, 8)
+ 19|         })()
+ 20|         </script>
+ 21|     </di#v>
+ 22| </body>
+ 23| </html>
+Original: 167 (3, 62)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></di#v>
+  4| </body></html>
+  5| 
+
+Formatted: 308 (21, 9)
+ 19|         })()
+ 20|         </script>
+ 21|     </div#>
+ 22| </body>
+ 23| </html>
+Original: 168 (3, 63)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div#>
+  4| </body></html>
+  5| 
+
+Formatted: 309 (21, 10)
+ 19|         })()
+ 20|         </script>
+ 21|     </div>#
+ 22| </body>
+ 23| </html>
+Original: 169 (3, 64)
+  1| <head><title>Test Page</title></head>
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>#
+  4| </body></html>
+  5| 
+
+Formatted: 310 (22, 0)
+ 20|         </script>
+ 21|     </div>
+ 22| #</body>
+ 23| </html>
+ 24| 
+Original: 170 (4, 0)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| #</body></html>
+  5| 
+
+Formatted: 311 (22, 1)
+ 20|         </script>
+ 21|     </div>
+ 22| <#/body>
+ 23| </html>
+ 24| 
+Original: 171 (4, 1)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| <#/body></html>
+  5| 
+
+Formatted: 312 (22, 2)
+ 20|         </script>
+ 21|     </div>
+ 22| </#body>
+ 23| </html>
+ 24| 
+Original: 172 (4, 2)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </#body></html>
+  5| 
+
+Formatted: 313 (22, 3)
+ 20|         </script>
+ 21|     </div>
+ 22| </b#ody>
+ 23| </html>
+ 24| 
+Original: 173 (4, 3)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </b#ody></html>
+  5| 
+
+Formatted: 314 (22, 4)
+ 20|         </script>
+ 21|     </div>
+ 22| </bo#dy>
+ 23| </html>
+ 24| 
+Original: 174 (4, 4)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </bo#dy></html>
+  5| 
+
+Formatted: 315 (22, 5)
+ 20|         </script>
+ 21|     </div>
+ 22| </bod#y>
+ 23| </html>
+ 24| 
+Original: 175 (4, 5)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </bod#y></html>
+  5| 
+
+Formatted: 316 (22, 6)
+ 20|         </script>
+ 21|     </div>
+ 22| </body#>
+ 23| </html>
+ 24| 
+Original: 176 (4, 6)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body#></html>
+  5| 
+
+Formatted: 317 (22, 7)
+ 20|         </script>
+ 21|     </div>
+ 22| </body>#
+ 23| </html>
+ 24| 
+Original: 177 (4, 7)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body>#</html>
+  5| 
+
+Formatted: 318 (23, 0)
+ 21|     </div>
+ 22| </body>
+ 23| #</html>
+ 24| 
+Original: 178 (4, 7)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body>#</html>
+  5| 
+
+Formatted: 319 (23, 1)
+ 21|     </div>
+ 22| </body>
+ 23| <#/html>
+ 24| 
+Original: 178 (4, 8)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body><#/html>
+  5| 
+
+Formatted: 320 (23, 2)
+ 21|     </div>
+ 22| </body>
+ 23| </#html>
+ 24| 
+Original: 179 (4, 9)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></#html>
+  5| 
+
+Formatted: 321 (23, 3)
+ 21|     </div>
+ 22| </body>
+ 23| </h#tml>
+ 24| 
+Original: 180 (4, 10)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></h#tml>
+  5| 
+
+Formatted: 322 (23, 4)
+ 21|     </div>
+ 22| </body>
+ 23| </ht#ml>
+ 24| 
+Original: 181 (4, 11)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></ht#ml>
+  5| 
+
+Formatted: 323 (23, 5)
+ 21|     </div>
+ 22| </body>
+ 23| </htm#l>
+ 24| 
+Original: 182 (4, 12)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></htm#l>
+  5| 
+
+Formatted: 324 (23, 6)
+ 21|     </div>
+ 22| </body>
+ 23| </html#>
+ 24| 
+Original: 183 (4, 13)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html#>
+  5| 
+
+Formatted: 325 (23, 7)
+ 21|     </div>
+ 22| </body>
+ 23| </html>#
+ 24| 
+Original: 184 (4, 14)
+  2| <body><style>a{color:red}body,*{color:blue}</style>
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>#
+  5| 
+
+Formatted: 326 (24, 0)
+ 22| </body>
+ 23| </html>
+ 24| #
+Original: 185 (5, 0)
+  3| <div><script>(()=>{for(let x of[1,2,3])log(x)})()</script></div>
+  4| </body></html>
+  5| #
+
+

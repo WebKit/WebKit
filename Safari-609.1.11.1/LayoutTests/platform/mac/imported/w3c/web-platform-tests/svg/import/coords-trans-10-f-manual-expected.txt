@@ -1,0 +1,44 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (98,64) size 556x256
+      RenderSVGContainer {g} at (100,66) size 550x84 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,20.00)}]
+        RenderSVGPath {path} at (100,66) size 84x68 [fill={[type=SOLID] [color=#FF0000]}] [data="M 20 20 L 70 20 L 45 60 Z"]
+        RenderSVGEllipse {ellipse} at (216,75) size 101x34 [fill={[type=SOLID] [color=#FF0000]}] [cx=120.00] [cy=35.00] [rx=30.00] [ry=10.00]
+        RenderSVGText {text} at (160,23) size 80x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 80x21
+            chunk 1 text run 1 at (160.00,40.00) startOffset 0 endOffset 11 width 79.00: "Filler Text"
+        RenderSVGRect {rect} at (483,66) size 51x84 [fill={[type=SOLID] [color=#FF0000]}] [x=250.00] [y=20.00] [width=30.00] [height=50.00]
+        RenderSVGPath {line} at (583,66) size 67x84 [fill={[type=SOLID] [color=#FF0000]}] [x1=310.00] [y1=20.00] [x2=350.00] [y2=70.00]
+      RenderSVGContainer {g} at (98,64) size 556x89 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,20.00)}]
+        RenderSVGPath {path} at (98,65) size 87x70 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M 20 20 L 70 20 L 45 60 Z"]
+        RenderSVGEllipse {ellipse} at (215,74) size 103x36 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [cx=120.00] [cy=35.00] [rx=30.00] [ry=10.00]
+        RenderSVGText {text} at (160,23) size 80x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 80x21
+            chunk 1 text run 1 at (160.00,40.00) startOffset 0 endOffset 11 width 79.00: "Filler Text"
+        RenderSVGRect {rect} at (482,65) size 53x86 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=250.00] [y=20.00] [width=30.00] [height=50.00]
+        RenderSVGPath {line} at (580,64) size 74x89 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=310.00] [y1=20.00] [x2=350.00] [y2=70.00]
+      RenderSVGContainer {g} at (98,230) size 556x90 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,100.00)}]
+        RenderSVGContainer {g} at (100,233) size 550x84 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,20.00)}]
+          RenderSVGPath {path} at (100,233) size 84x67 [fill={[type=SOLID] [color=#FF0000]}] [data="M 20 20 L 70 20 L 45 60 Z"]
+          RenderSVGEllipse {ellipse} at (216,241) size 101x34 [fill={[type=SOLID] [color=#FF0000]}] [cx=120.00] [cy=35.00] [rx=30.00] [ry=10.00]
+          RenderSVGText {text} at (160,23) size 80x22 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 80x21
+              chunk 1 text run 1 at (160.00,40.00) startOffset 0 endOffset 11 width 79.00: "Filler Text"
+          RenderSVGRect {rect} at (483,233) size 51x84 [fill={[type=SOLID] [color=#FF0000]}] [x=250.00] [y=20.00] [width=30.00] [height=50.00]
+          RenderSVGPath {line} at (583,233) size 67x84 [fill={[type=SOLID] [color=#FF0000]}] [x1=310.00] [y1=20.00] [x2=350.00] [y2=70.00]
+        RenderSVGContainer {g} at (98,230) size 556x90 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,20.00)}]
+          RenderSVGPath {path} at (98,232) size 87x70 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M 20 20 L 70 20 L 45 60 Z"]
+          RenderSVGEllipse {ellipse} at (215,240) size 103x36 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [cx=120.00] [cy=35.00] [rx=30.00] [ry=10.00]
+          RenderSVGText {text} at (160,23) size 80x22 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 80x21
+              chunk 1 text run 1 at (160.00,40.00) startOffset 0 endOffset 11 width 79.00: "Filler Text"
+          RenderSVGRect {rect} at (482,232) size 53x86 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=250.00] [y=20.00] [width=30.00] [height=50.00]
+          RenderSVGPath {line} at (580,230) size 74x90 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=310.00] [y1=20.00] [x2=350.00] [y2=70.00]
+    RenderSVGContainer {g} at (16,517) size 381x62
+      RenderSVGText {text} at (10,310) size 229x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 229x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.9 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

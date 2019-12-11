@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<table summary="table">
+    <thead>
+    </thead>
+<tr><td>1</td><td>2</td></tr>
+</table>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("Construct accessibility objects for a table with an empty thread tag. This can cause a crash.");
+
+    if (window.accessibilityController) {
+        document.body.focus();
+        touchAccessibilityTree(accessibilityController.focusedElement);
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

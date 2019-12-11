@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cache Storage: testing several open in parallel</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+promise_test(test => {
+    return Promise.all([
+        self.caches.open("test1"),
+        self.caches.open("test2"),
+        self.caches.open("test3"),
+        self.caches.open("test4"),
+        self.caches.open("test5"),
+        self.caches.open("test6"),
+        self.caches.open("test7"),
+        self.caches.open("test8"),
+        self.caches.open("test9"),
+        self.caches.open("test10")
+    ]);
+}, "Testing opening several caches in parallel");
+</script>
+</body>
+</html>

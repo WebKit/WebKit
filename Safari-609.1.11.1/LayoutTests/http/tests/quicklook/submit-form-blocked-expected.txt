@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 1: Viewport argument value "612;" for key "width" was truncated to its numeric prefix. Note that ';' is not a separator in viewport values. The list should be comma-separated.
+CONSOLE MESSAGE: line 2: Blocked form submission to 'http://127.0.0.1:8000/quicklook/resources/fail.html' because the form's frame is sandboxed and the 'allow-forms' permission is not set.
+This test verifies that form submission is blocked using QuickLook to preview a Microsoft Word document. This test PASSED only if a security error is logged to the console.
+
+

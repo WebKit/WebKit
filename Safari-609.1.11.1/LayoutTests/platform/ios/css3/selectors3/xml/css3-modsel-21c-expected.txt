@@ -1,0 +1,7 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x52
+  RenderBlock {test} at (0,0) size 800x52 [bgcolor=#008000]
+    RenderBlock {p} at (0,16) size 800x20
+      RenderText {#text} at (0,0) size 172x19
+        text run at (0,0) width 172: "This page should be green."

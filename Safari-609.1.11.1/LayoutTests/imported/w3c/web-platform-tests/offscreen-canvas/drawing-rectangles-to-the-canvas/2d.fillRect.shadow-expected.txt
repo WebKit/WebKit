@@ -1,0 +1,7 @@
+2d.fillRect.shadow
+
+fillRect draws shadows
+
+
+FAIL fillRect draws shadows null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<body>
+<script src="apple-pay.js"></script>
+<script>
+    window.addEventListener('load', async () => {
+        internals.mockPaymentCoordinator.supportsUnrestrictedApplePay = window.location.search === "?unrestricted" ? true : false;
+
+        const applePaySessionAvailable = !!window.ApplePaySession;
+        const paymentRequestAvailable = !!window.PaymentRequest;
+        if (!applePaySessionAvailable || !paymentRequestAvailable) {
+            window.webkit.messageHandlers.testApplePay.postMessage({ applePaySessionAvailable, paymentRequestAvailable });
+            return;
+        }
+
+        const supportsVersion = ApplePaySession.supportsVersion(1);
+        const canMakePayments = ApplePaySession.canMakePayments();
+        const canMakePaymentsWithActiveCard = await ApplePaySession.canMakePaymentsWithActiveCard('');
+
+        const paymentRequest = new PaymentRequest([applePayMethod()], applePayDetails);
+        const canMakePayment = await paymentRequest.canMakePayment();
+
+        window.webkit.messageHandlers.testApplePay.postMessage({
+            applePaySessionAvailable,
+            paymentRequestAvailable,
+            supportsVersion,
+            canMakePayments,
+            canMakePaymentsWithActiveCard,
+            canMakePayment,
+        });
+    });
+</script>

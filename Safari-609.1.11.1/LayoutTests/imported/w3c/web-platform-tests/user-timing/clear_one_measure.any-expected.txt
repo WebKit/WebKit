@@ -1,0 +1,3 @@
+
+PASS Clearing an existent measure doesn't affect other existing measures 
+

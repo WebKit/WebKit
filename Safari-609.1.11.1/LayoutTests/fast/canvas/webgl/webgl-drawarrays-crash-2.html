@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="resources/webgl-test-utils.js"> </script>
+    <script>
+    function runTest()
+    {
+        var canvas = document.getElementById("webgl-canvas");
+        var gl = WebGLTestUtils.create3DContext(canvas);
+        var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+        var program = gl.createProgram();
+        var vertexShader = gl.createShader(gl.VERTEX_SHADER);
+        gl.shaderSource(vertexShader, 'attribute mediump mat4 attribute_mat4_0; mediump mat4 my_mat4_0; void main() { my_mat4_0 = attribute_mat4_0; }');
+        gl.compileShader(vertexShader);
+        gl.attachShader(program, vertexShader);
+        gl.shaderSource(fragmentShader, 'void main() { gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0); }');
+        gl.compileShader(fragmentShader);
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program);
+        gl.useProgram(program);
+
+        gl.enableVertexAttribArray(0);
+        gl.drawArrays(gl.LINE_LOOP, 0, 1);
+
+        if (window.testRunner)
+          testRunner.notifyDone();
+    }
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    window.onpageshow = runTest;
+    </script>    
+</head>  
+<body>
+    <div>PASS. You didn't crash.</div>
+    <canvas id="webgl-canvas" width="100px" height="100px"></canvas>
+</body>
+</html>

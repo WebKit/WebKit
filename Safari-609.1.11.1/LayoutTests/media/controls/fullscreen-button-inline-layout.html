@@ -1,0 +1,32 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+    <head>
+        <script src="../media-file.js"></script>
+        <script src="controls-test-helpers.js"></script>
+        <script>
+            var tester = new ControlsTest()
+                .whenReady(runTests)
+                .start();
+
+            function runTests()
+            {
+                tester.test("We are using the apple idiom")
+                    .value(tester.currentState.idiom)
+                    .isEqualTo("apple");
+
+                var fullscreenButtonState = tester.stateForControlsElement("Fullscreen Button");
+                var videoBox = tester.media.getBoundingClientRect();
+                tester.test("Fullscreen button is placed within bounds of inline controls")
+                    .value(fullscreenButtonState.bounds.right)
+                    .isLessThan(videoBox.right);
+
+                tester.end();
+            }
+        </script>
+    </head>
+    <body>
+        <p>This tests for proper flexbox layout by checking the location of the fullscreen button. It should be within the bounds of the inline bar instead of being pushed past the right edge.</p>
+        <p>This test only runs in DRT!</p>
+        <video controls width="340" height="80"></video>
+    </body>
+</html>

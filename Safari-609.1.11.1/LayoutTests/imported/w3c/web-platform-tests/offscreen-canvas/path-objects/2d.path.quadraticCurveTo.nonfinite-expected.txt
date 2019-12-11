@@ -1,0 +1,7 @@
+2d.path.quadraticCurveTo.nonfinite
+
+quadraticCurveTo() with Infinity/NaN is ignored
+
+
+FAIL quadraticCurveTo() with Infinity/NaN is ignored null is not an object (evaluating 'ctx.moveTo')
+

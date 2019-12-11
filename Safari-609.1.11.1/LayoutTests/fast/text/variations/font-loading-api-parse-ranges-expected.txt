@@ -1,0 +1,47 @@
+PASS (new FontFace('asdf', 'url(notreal)', { weight: '100 200' })).weight is "100 200"
+PASS (new FontFace('asdf', 'url(notreal)', { weight: 'a100 200' })).weight threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { weight: '100a 200' })).weight threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { weight: '100   200' })).weight is "100 200"
+PASS (new FontFace('asdf', 'url(notreal)', { weight: '100 a 200' })).weight threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { weight: '100 a200' })).weight threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { weight: '100 200a' })).weight threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { weight: '50 150' })).weight is "50 150"
+PASS (new FontFace('asdf', 'url(notreal)', { weight: '2 3' })).weight is "2 3"
+PASS (new FontFace('asdf', 'url(notreal)', { weight: '-3 -2' })).weight threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { weight: '5 4' })).weight threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { weight: '100 200 3' })).weight threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { weight: '100 200 a' })).weight threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { weight: '-3' })).weight threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { stretch: 'semi-expanded expanded' })).stretch threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { stretch: '100% 200%' })).stretch is "100% 200%"
+PASS (new FontFace('asdf', 'url(notreal)', { stretch: 'a100% 200%' })).stretch threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { stretch: '100%a 200%' })).stretch threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { stretch: '100%   200%' })).stretch is "100% 200%"
+PASS (new FontFace('asdf', 'url(notreal)', { stretch: '100% a 200%' })).stretch threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { stretch: '100% a200%' })).stretch threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { stretch: '100% 200%a' })).stretch threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { stretch: '50% 60%' })).stretch is "50% 60%"
+PASS (new FontFace('asdf', 'url(notreal)', { stretch: '2% 3%' })).stretch is "2% 3%"
+PASS (new FontFace('asdf', 'url(notreal)', { stretch: '-3% -2%' })).stretch threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { stretch: '5% 4%' })).stretch threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { stretch: '100% 200% 3%' })).stretch threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { stretch: '100% 200% a' })).stretch threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { stretch: '-3%' })).stretch threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { style: 'oblique 10deg 20deg' })).style is "oblique 10deg 20deg"
+PASS (new FontFace('asdf', 'url(notreal)', { style: 'oblique a10deg 20deg' })).style threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { style: 'oblique 10dega 20deg' })).style threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { style: 'oblique 10deg  20deg' })).style is "oblique 10deg 20deg"
+PASS (new FontFace('asdf', 'url(notreal)', { style: 'oblique 10deg a 20deg' })).style threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { style: 'oblique 10deg a20deg' })).style threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { style: 'oblique 10deg 20dega' })).style threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { style: 'oblique 50deg 60deg' })).style is "oblique 50deg 60deg"
+PASS (new FontFace('asdf', 'url(notreal)', { style: 'oblique 2deg 3deg' })).style is "oblique 2deg 3deg"
+PASS (new FontFace('asdf', 'url(notreal)', { style: 'oblique -3deg -2deg' })).style is "oblique -3deg -2deg"
+PASS (new FontFace('asdf', 'url(notreal)', { style: 'oblique 5deg 4deg' })).style threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { style: 'oblique 10deg 20deg 3deg' })).style threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { style: 'oblique 10deg 20deg a' })).style threw exception SyntaxError: The string did not match the expected pattern..
+PASS (new FontFace('asdf', 'url(notreal)', { style: 'oblique -3deg' })).style is "oblique -3deg"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

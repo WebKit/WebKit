@@ -1,0 +1,30 @@
+Test to make sure we push down inline styles properly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS bold on first word of <b><div>hello</div> world</b> yields <div>hello</div><b> world</b>
+PASS bold on first word of <b><div>hello</div>world</b> yields <div>hello</div><b>world</b>
+PASS bold on first word of <b><div>hello</div><em>world</em></b> yields <div>hello</div><em style="font-weight: bold;">world</em>
+PASS bold on second word of <b>hello <div>world</div></b> yields <b>hello </b><div>world</div>
+PASS bold on second word of <b><em>hello</em> <div>world</div></b> yields <em style="font-weight: bold;">hello</em> <div>world</div>
+PASS bold on all of <b> <div>text</div> </b> yields  <div>text</div> 
+PASS bold on all of <b><strike><div>text</div></strike></b> yields <strike><div>text</div></strike>
+PASS bold on first word of <b><div>hello</div><div>world</div></b> yields <div>hello</div><div style="font-weight: bold;">world</div>
+PASS bold on first word of <b><div>hello</div><div style="font-weight: normal;">world</div>webkit</b> yields <div>hello</div><div style="font-weight: normal;">world</div><b>webkit</b>
+PASS bold on second word of <b style="font-style: italic;">hello world</b> yields <b style="font-style: italic;">hello</b><span style="font-style: italic;"> world</span>
+PASS underline on second word of <u>hello <b>world</b> webkit</u> yields <u>hello</u> <b>world</b><u> webkit</u>
+PASS underline on last two words of <u>hello <b>world</b> webkit</u> yields <u>hello </u><b>world</b> webkit
+PASS underline on last two words of <u>hello <b>world webkit</b></u> yields <u>hello </u><b>world webkit</b>
+PASS underline on second word of <u>hello <b>world webkit</b></u> yields <u>hello</u> <b>world<u> webkit</u></b>
+PASS underline on second word of <u><b>hello world</b> webkit</u> yields <b><u>hello</u> world</b><u> webkit</u>
+PASS underline on second word of <u><strike>hello world</strike></u> yields <strike><u>hello</u> world</strike>
+PASS underline on second word of <u><strike>hello world webkit</strike></u> yields <strike><u>hello</u> world<u> webkit</u></strike>
+PASS underline on second word of <u><strike>hello world</strike> webkit</u> yields <strike><u>hello</u> world</strike><u> webkit</u>
+PASS underline on second word of <u>hello <em><code>world webkit</code></em> rocks</u> yields <u>hello</u> <em><code>world<u> webkit</u></code></em><u> rocks</u>
+PASS strikeThrough on all of <s style="color: blue;">hello world</strike> yields <span style="color: blue;">hello world</span>
+PASS strikeThrough on first word of <s style="color: blue;"><div>hello</div> <b>world</b> webkit</strike> yields <span style="color: blue;"><div>hello</div> <b style="text-decoration: line-through;">world</b><strike> webkit</strike></span>
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

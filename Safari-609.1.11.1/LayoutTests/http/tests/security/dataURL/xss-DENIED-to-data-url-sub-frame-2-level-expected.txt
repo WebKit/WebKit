@@ -1,0 +1,20 @@
+CONSOLE MESSAGE: line 62: SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
+This tests that the main frame doesn't have access to a data: URL loaded in an iframe inside another data: URL loaded iframe.
+
+Test  
+PASS: Cross frame access to a data: URL 2 levels deep was denied.
+
+
+--------
+Frame: 'aFrame'
+--------
+Inner iframe.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+PASS: Cross frame access to a data: URL 2 levels deep was denied.
+
+Inner-inner iframe.

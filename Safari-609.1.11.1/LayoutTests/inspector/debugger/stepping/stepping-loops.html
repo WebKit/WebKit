@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../resources/log-pause-location.js"></script>
+<script>
+var truthy = true;
+function a() { return 1; }
+
+
+function entryWhile() {
+    let i = 2;
+    debugger;
+    while (i > 0)
+        --i;
+}
+
+function entryDoWhile() {
+    let i = 2;
+    debugger;
+    do {
+        --i;
+    } while (i > 0);
+}
+
+function entryTraditionalFor() {
+    debugger;
+    for (let i = 0; i < 2; ++i)
+        a();
+}
+
+function entryTraditionalForNoInit() {
+    let i = 0;
+    debugger;
+    for (; i < 2; ++i)
+        a();
+}
+
+function entryForIn() {
+    let o = {key1: 1, key2: 2};
+    debugger;
+    for (let property in o)
+        a();
+}
+
+function entryForOf() {
+    let arr = [1, 2];
+    debugger;
+    for (let value of arr)
+        a();
+}
+
+function entryWhileBreakContinue() {
+    let i = 0;
+    debugger;
+    while (truthy) {
+        ++i;
+        if (i === 1)
+            continue;
+        if (i === 2)
+            break;
+    }
+}
+
+function entryForBreakContinue() {
+    let i = 0;
+    debugger;
+    for (;;) {
+        ++i;
+        if (i === 1)
+            continue;
+        if (i === 2)
+            break;
+    }
+}
+
+// ---------
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.stepping.loops");
+
+    window.initializeSteppingTestSuite(suite);
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.While",
+        description: "Should be able to step through while loops.",
+        expression: "setTimeout(entryWhile)",
+        steps: [
+            "over",
+                "over", // complete: while (i > 0) [i=2]
+                "over", // complete: --i
+                "over", // complete: while (i > 0) [i=1]
+                "over", // complete: --i
+                "over", // complete: while (i > 0) [i=0] - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.DoWhile",
+        description: "Should be able to step through do/while loops.",
+        expression: "setTimeout(entryDoWhile)",
+        steps: [
+            "over",
+                "over", // complete: --i
+                "over", // complete: while (i > 0) [i=1]
+                "over", // complete: --i
+                "over", // complete: while (i > 0) [i=0] - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.TraditionalForStepOver",
+        description: "Should be able to step over init and condition in traditional for loops.",
+        expression: "setTimeout(entryTraditionalFor)",
+        steps: [
+            "over",
+                "over", // complete: let i = 0
+                "over", // complete: i < 2
+                "over", // complete: a()
+                "over", // complete: ++i
+                "over", // complete: i < 2 [i=1]
+                "over", // complete: a()
+                "over", // complete: ++i
+                "over", // complete: i < 2 [i=2] - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.TraditionalForStepIn",
+        description: "Should be able to step into init and condition of traditional for loops.",
+        expression: "setTimeout(entryTraditionalFor)",
+        steps: [
+            "over",
+                "in",   // complete: let i = 0
+                "in",   // complete: i < 2 [i=0]
+                "over", // complete: a()
+                "in",   // complete: ++i
+                "in",   // complete: i < 2 [i=1]
+                "over", // complete: a()
+                "in",   // complete: ++i
+                "in",   // complete: i < 2 [i=2] - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.TraditionalForNoInit",
+        description: "Should stop at condition if traditional for does not have initialization expression.",
+        expression: "setTimeout(entryTraditionalForNoInit)",
+        steps: [
+            "over",
+                "in",   // complete: i < 2 [i=0]
+                "over", // complete: a()
+                "in",   // complete: ++i
+                "in",   // complete: i < 2 [i=1]
+                "over", // complete: a()
+                "in",   // complete: ++i
+                "in",   // complete: i < 2 [i=2] - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.ForIn",
+        description: "Should be able to step through for..in loops.",
+        expression: "setTimeout(entryForIn)",
+        steps: [
+            "over",
+                "over", // complete: (o)
+                "over", // complete: let property in o [key1]
+                "over", // complete: a()
+                "over", // complete: let property in o [key2]
+                "over", // complete: a()
+                "over", // complete: let property in o [done] - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.ForIn",
+        description: "Should be able to step through for..of loops.",
+        expression: "setTimeout(entryForOf)",
+        steps: [
+            "over",
+                "over", // complete (arr)
+                "over", // complete: let value of arr [1]
+                "over", // complete: a()
+                "over", // complete: let value of arr [2]
+                "over", // complete: a()
+                "over", // complete: let value of arr [done] - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.WhileBreakContinue",
+        description: "Should be able to step through while with break/continue statements.",
+        expression: "setTimeout(entryWhileBreakContinue)",
+        steps: [
+            "over",
+                "over", // complete: (true)
+                "over", // complete: ++i
+                "over", // complete: (i === 1) [i=1]
+                "over", // complete: continue
+                "over", // complete: (true)
+                "over", // complete: ++i
+                "over", // complete: (i === 1) [i=2]
+                "over", // complete: (i === 2) [i=2]
+                "over", // complete: break - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.ForBreakContinue",
+        description: "Should be able to step through while with break/continue statements.",
+        expression: "setTimeout(entryForBreakContinue)",
+        steps: [
+            "over",
+                        // Step directly into the loop body for `for(;;)`
+                "over", // complete: ++i
+                "over", // complete: (i === 1) [i=1]
+                "over", // complete: continue
+                        // Step loops directly back into the loop body for `for(;;)`
+                "over", // complete: ++i
+                "over", // complete: (i === 1) [i=2]
+                "over", // complete: (i === 2) [i=2]
+                "over", // complete: break - leaving entry
+            "resume",
+        ]
+    });
+
+    loadMainPageContent().then(() => {
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Checking pause locations when stepping in, out, and over in loops.</p>
+</body>
+</html>

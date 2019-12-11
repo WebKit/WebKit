@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body" onload="loadFunction()">
+
+<p id="text"><b>Text</b></p>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that getting the end text marker of the page won't hang.");
+    
+    if (window.accessibilityController) {
+        function loadFunction() {
+            var text = accessibilityController.accessibleElementById("text");
+            var endMarker = text.endTextMarker;
+        }
+    }
+
+</script>
+
+<div class="Apple-web-attachment-container" contenteditable="false" title="attachment.pdf" role="img">
+  <img class="Apple-web-attachment-icon" src="Attachment.tiff" style="display:none">
+  <canvas class="Apple-web-attachment-canvas" style="width: 126px; height: 79px;" width="100" height="100"></canvas>
+  <div class="Apple-web-attachment-printable-version"><div class="iconContainer">
+    <img src="Attachment.tiff" height="38.400000" width="38.400000"></div>
+    <div class="filenameContainer">request10005.pdf</div>
+  </div>
+</div>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

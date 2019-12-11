@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="container" role="group" contenteditablt="true">text<iframe id="frame" marginwidth="0" marginheight="0" frameborder="0" scrolling="no" height="100%" width="100%" style="padding: 0px; margin: 0px; border: 0px; height: 100%; width: 100%;"></iframe></div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that creating a text marker range with a text marker that associated to a doctype node won't lead to crash.");
+    
+    function selectElementContents(el) {
+        var range = document.createRange();
+        range.selectNodeContents(el);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+    }
+
+    if (window.accessibilityController) {
+
+       accessibilityController.enableEnhancedAccessibility(true);
+       var webArea = accessibilityController.rootElement.childAtIndex(0);
+       webArea.setBoolAttributeValue("AXCaretBrowsingEnabled", true);
+       
+       // Make sure the iframe has a doctype node
+       var iframe = document.getElementById("frame");
+       var idocument = iframe.contentDocument;
+       idocument.open();
+       idocument.write("<!DOCTYPE html>");
+       idocument.write("<html>");
+       idocument.write("<head></head>");
+       idocument.write("<body></body>");
+       idocument.write("</html>");
+       idocument.close();
+       
+       // Select all the contents in the container, and get the selection range.
+       var container = accessibilityController.accessibleElementById("container");
+       var containerElement = document.getElementById("container");
+       selectElementContents(containerElement); 
+       var selectionRange = container.selectedTextMarkerRange();
+       
+       var startMarker = container.startTextMarkerForTextMarkerRange(selectionRange);
+       var endMarker = container.endTextMarkerForTextMarkerRange(selectionRange);
+       
+       // endMarker is now associated with a doctype node, make sure it won't lead to a crash.
+       var markerRange = container.textMarkerRangeForMarkers(endMarker, startMarker);
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

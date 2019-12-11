@@ -1,0 +1,3 @@
+
+PASS Document.links should be a live collection 
+

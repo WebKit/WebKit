@@ -1,0 +1,13 @@
+Websites 
+
+This tests that an input field with a datalist is conveyed as listbox popup.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS axInput.popupValue is 'listbox'
+PASS axInput.popupValue is 'listbox'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

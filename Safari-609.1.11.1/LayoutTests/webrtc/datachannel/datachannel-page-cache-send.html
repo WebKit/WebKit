@@ -1,0 +1,43 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+t = async_test();
+
+const pc1 = new RTCPeerConnection();
+const pc2 = new RTCPeerConnection();
+
+pc1.onicecandidate = (e) => pc2.addIceCandidate(e.candidate);
+pc2.onicecandidate = (e) => pc1.addIceCandidate(e.candidate);
+pc2.ondatachannel = (e) =>  { e.channel.onmessage = t.done(); };
+
+window.addEventListener("pageshow", async function(event) {
+    if (!event.persisted)
+        return;
+
+    const answer = await pc2.createAnswer();
+    await pc2.setLocalDescription(answer);
+    await pc1.setRemoteDescription(answer);
+});
+
+window.addEventListener("pagehide", t.step_func((event) => {
+    if (!event.persisted)
+        assert_uneached("Page failed to enter page cache");
+}));
+
+onload = () => {
+    setTimeout(async () => {
+        localChannel = pc1.createDataChannel("test");
+        localChannel.onopen = () => localChannel.send("ok");
+
+        const offer = await pc1.createOffer();
+        await pc1.setLocalDescription(offer);
+        await pc2.setRemoteDescription(offer);
+        window.location = "../../fast/history/resources/page-cache-helper.html";
+    }, 0);
+};
+</script>
+</html>

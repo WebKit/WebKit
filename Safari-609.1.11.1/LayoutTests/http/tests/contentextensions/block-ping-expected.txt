@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: line 34: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/block-ping.html from loading a resource from http://127.0.0.1:8000/contentextensions/resources/save-ping.php?test=contentextensions-block-ping
+This test follows a link with a ping attribute where the ping URL matches a 'block' rule.  
+
+--------
+Frame: 'link_frame'
+--------
+Link with ping was clicked.
+
+--------
+Frame: 'result_frame'
+--------
+Ping not received - timed out.

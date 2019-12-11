@@ -1,0 +1,7 @@
+2d.path.arc.shape.4
+arc() from 0 to -pi/2 draws stuff in the right quadrant
+Spec references: 2d.path.arc.draw
+Actual output:
+Expected output:
+
+Passed

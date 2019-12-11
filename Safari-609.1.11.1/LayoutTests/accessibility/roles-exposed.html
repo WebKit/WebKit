@@ -1,0 +1,453 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<script src="../resources/js-test-pre.js"></script>
+
+<!-- ==================================================================================================== -->
+<!-- HTML elements in alphabetical order, excepting the need for nesting (e.g. <li> is with its <ol> and <ul> parents) -->
+<!-- ==================================================================================================== -->
+<a data-platform="atk,mac" href="#" data-note="[href]" class="ex">X</a>
+<a data-platform="atk,mac" data-note=":not([href])" class="ex">X</a>
+<abbr data-platform="atk,mac" data-note=":not([title])" class="ex">X</abbr>
+<abbr data-platform="atk,mac" title="Times" data-note="[title]" class="ex">X</abbr>
+<!-- http://webkit.org/b/83989 --><address data-platform="atk,mac" class="ex">X</address>
+<!-- skipped <area> -->
+<article data-platform="atk,mac" class="ex">X</article>
+<aside data-platform="atk,mac" class="ex">X</aside>
+<audio data-platform="atk,mac" class="ex">X</audio>
+<b data-platform="atk,mac" class="ex">X</b>
+<bdo data-platform="atk,mac" class="ex">X</bdo>
+<blockquote data-platform="atk,mac" class="ex">X</blockquote>
+<button data-platform="atk,mac" class="ex">X</button>
+<canvas data-platform="atk,mac" class="ex">X</canvas>
+<cite data-platform="atk,mac" class="ex">X</cite>
+<code data-platform="atk,mac" class="ex">X</code>
+<!-- skipped <command> -->
+<!-- skipped <datalist> -->
+<del data-platform="atk,mac" data-note=":not([datetime])" class="ex">X</del>
+<del data-platform="atk,mac" datetime="2014-10-31 00:00" data-note="[datetime]" class="ex">X</del>
+<!-- skipped <details/summary> http://webkit.org/b/108979 -->
+<dfn data-platform="atk,mac" class="ex">X</dfn>
+<dl data-platform="atk,mac" class="ex">
+    <dt data-platform="atk,mac" class="ex">X</dt>
+    <dd data-platform="atk,mac" class="ex">X</dd>
+</dl>
+<div data-platform="atk,mac" class="ex">X</div>
+<em data-platform="atk,mac" class="ex">X</em>
+<!-- skipped <embed> -->
+<fieldset data-platform="atk,mac" class="ex">
+    <legend data-platform="atk,mac" class="ex">X</legend>
+</fieldset>
+<figure data-platform="atk,mac" class="ex">X</figure>
+<footer data-platform="atk,mac" class="ex">X</footer>
+<form data-platform="atk,mac" class="ex">X</form>
+<!-- skipped <frame> -->
+<!-- skipped <frameset> -->
+<!-- skipped <head> -->
+<!-- http://webkit.org/b/109013 --><header data-platform="atk,mac" class="ex">X</header>
+<hgroup data-platform="atk,mac" class="ex">X</hgroup>
+<h1 data-platform="atk,mac" class="ex">X</h1>
+<h2 data-platform="atk,mac" class="ex">X</h2>
+<h3 data-platform="atk,mac" class="ex">X</h3>
+<h4 data-platform="atk,mac" class="ex">X</h4>
+<h5 data-platform="atk,mac" class="ex">X</h5>
+<h6 data-platform="atk,mac" class="ex">X</h6>
+<hr data-platform="atk,mac" class="ex">
+<!-- skipped <html> -->
+<i data-platform="atk,mac" class="ex">X</i>
+<!-- skipped <iframe> -->
+<img data-platform="atk,mac" class="ex" data-note=":not([src]):not([alt])">
+<img data-platform="atk,mac" class="ex" alt="" data-note="[alt='']">
+<img data-platform="atk,mac" class="ex" src="foo.png" data-note="[src]:not([alt])">
+<img data-platform="atk,mac" class="ex" alt="X" data-note="[alt='X']">
+<img data-platform="atk,mac" class="ex" alt="X" usemap="imagemap" data-note="[usemap][alt='X']">
+<img data-platform="atk,mac" class="ex" usemap="imagemap" data-note="[usemap]:not([alt])">
+<input data-platform="atk,mac" type="button" value="X" class="ex" data-note="[type='button']">
+<!-- skipped <menu><input type="button"></menu> -->
+<!-- http://webkit.org/b/109017 --><input data-platform="atk,mac" type="color" value="X" class="ex" data-note="[type='color']">
+<input data-platform="atk,mac" type="checkbox" class="ex" data-note="[type='checkbox']">
+<!-- skipped <menu><input type="checkbox"></menu> -->
+<!-- http://webkit.org/b/109017 --><input data-platform="atk,mac" type="date" value="X" class="ex" data-note="[type='date']">
+<!-- http://webkit.org/b/109017 --><input data-platform="atk,mac" type="datetime" value="X" class="ex" data-note="[type='datetime']">
+<!-- http://webkit.org/b/109017 --><input data-platform="atk,mac" type="datetime-local" value="X" class="ex" data-note="[type='datetime-local']">
+<!-- http://webkit.org/b/109017 --><input data-platform="atk,mac" type="email" value="X" class="ex" data-note="[type='email']">
+<input data-platform="atk,mac" type="file" class="ex" data-note="[type='file']">
+<input data-platform="atk,mac" type="hidden" class="ex" data-note="[type='hidden']">
+<input data-platform="atk,mac" type="image" class="ex" data-note="[type='image']">
+<!-- http://webkit.org/b/109017 --><input data-platform="atk,mac" type="month" value="X" class="ex" data-note="[type='month']">
+<!-- http://webkit.org/b/109017 --><input data-platform="atk,mac" type="number" value="X" class="ex" data-note="[type='number']">
+<input data-platform="atk,mac" type="password" value="X" class="ex" data-note="[type='password']">
+<input data-platform="atk,mac" type="radio" class="ex" data-note="[type='radio']">
+<!-- skipped <menu><input type="radio"></menu> -->
+<input data-platform="atk,mac" type="range" class="ex" data-note="[type='range']">
+<input data-platform="atk,mac" type="reset" class="ex" data-note="[type='reset']">
+<input data-platform="atk,mac" type="search" value="X" class="ex" data-note="[type='search']">
+<input data-platform="atk,mac" type="submit" class="ex" data-note="[type='submit']">
+<!-- http://webkit.org/b/109017 --><input data-platform="atk,mac" type="tel" value="X" class="ex" data-note="[type='tel']">
+<input data-platform="atk,mac" type="text" value="X" class="ex" data-note="[type='text']">
+<!-- skipped <input type="text"> with suggestions source element: http://www.w3.org/html/wg/drafts/html/master/forms.html#concept-input-list -->
+<!-- http://webkit.org/b/109017 --><input data-platform="atk,mac" type="time" value="X" class="ex" data-note="[type='time']">
+<!-- http://webkit.org/b/109017 --><input data-platform="atk,mac" type="url" value="X" class="ex" data-note="[type='url']">
+<!-- http://webkit.org/b/109017 --><input data-platform="atk,mac" type="week" value="X" class="ex" data-note="[type='week']">
+<ins data-platform="atk,mac" data-note=":not([datetime])" class="ex">X</ins>
+<ins data-platform="atk,mac" datetime="2014-10-31 00:00" data-note="[datetime]" class="ex">X</ins>
+<!-- skipped <link> -->
+<map data-platform="atk,mac" class="ex" name="imagemap">
+  <area data-platform="atk,mac" class="ex" shape="rect" coords="0,0,10,10" href="#" title="x" />
+</map>
+<!-- http://webkit.org/b/109018 --><mark data-platform="atk,mac" class="ex">X</mark>
+<!-- Some MathML elements do not become hidden by display: none, so hide them after the test via a parent element. http://webkit.org/b/139403 --><div class="ex">
+<math data-platform="atk,mac" class="ex">X</math>
+<math><merror data-platform="atk,mac" class="ex">X</merror></math>
+<math><mfenced data-platform="atk,mac" class="ex"><mi class="ex">X</mi></mfenced></math>
+<math><mfrac data-platform="atk,mac" class="ex"><mi class="ex">X</mi><mn class="ex">Y</mn></mfrac></math>
+<math><mi data-platform="atk,mac" class="ex">X</mi></math>
+<math><mn data-platform="atk,mac" class="ex">X</mn></math>
+<math><mo data-platform="atk,mac" class="ex">X</mo></math>
+<math><mroot data-platform="atk,mac" class="ex">X</mroot></math>
+<math><msqrt data-platform="atk,mac" class="ex">X</msqrt></math>
+<math><mrow data-platform="atk,mac" class="ex"><mi class="ex">X</mi></mrow></math>
+<math><ms data-platform="atk,mac" class="ex">X</ms></math>
+<math>
+  <msub data-platform="atk,mac" class="ex">
+    <mi data-platform="atk,mac" class="ex">X</mi>
+    <mi data-platform="atk,mac" class="ex">X</mi>
+  </msub>
+  <msup data-platform="atk,mac" class="ex">
+    <mi data-platform="atk,mac" class="ex">X</mi>
+    <mi data-platform="atk,mac" class="ex">X</mi>
+  </msup>
+  <msubsup data-platform="atk,mac" class="ex">
+    <mi data-platform="atk,mac" class="ex">X</mi>
+    <mi data-platform="atk,mac" class="ex">X</mi>
+    <mi data-platform="atk,mac" class="ex">x</mi>
+  </msubsup>
+  <mmultiscripts data-platform="atk,mac" class="ex">
+    <mi data-platform="atk,mac" class="ex">X</mi>
+    <mi data-platform="atk,mac" class="ex">X</mi>
+    <mi data-platform="atk,mac" class="ex">x</mi>
+    <mprescripts data-platform="atk,mac" class="ex" />
+    <mi data-platform="atk,mac" class="ex">X</mi>
+    <mi data-platform="atk,mac" class="ex">x</mi>
+  </mmultiscripts>
+</math>
+</math>
+<math><mtext data-platform="atk,mac" class="ex">X</mtext></math>
+<math>
+  <mtable data-platform="atk,mac" class="ex">
+    <mlabeledtr data-platform="atk,mac" class="ex"><mtd data-platform="atk,mac" class="ex">X</mtd></mlabeledtr>
+    <mtr data-platform="atk,mac" class="ex"><mtd data-platform="atk,mac" class="ex">X</mtd></mtr>
+  </mtable>
+</math>
+</div>
+<!-- skipped <menu> -->
+<!-- skipped <meta> -->
+<!-- reenable for atk after http://webkit.org/b/163383 fixed --><meter data-platform="mac" class="ex" value="0.75">X</meter>
+<nav data-platform="atk,mac" class="ex">X</nav>
+<!-- skipped <noscript> -->
+<!-- skipped <object> -->
+<ol data-platform="atk,mac" class="ex">
+    <li data-platform="atk,mac" class="ex">X</li>
+</ol>
+<!-- skipped <optgroup> -->
+<!-- skipped <option> -->
+<!-- skipped <output> -->
+<p data-platform="atk,mac" class="ex">X</p>
+<!-- skipped <param> -->
+<pre data-platform="atk,mac" class="ex">X</pre>
+<progress data-platform="atk,mac" class="ex" value="0.75">X</progress>
+<q data-platform="atk,mac" class="ex">X</q>
+<!-- skipped <ruby/rp/rt> -->
+<s data-platform="atk,mac" class="ex">X</s>
+<samp data-platform="atk,mac" class="ex">X</samp>
+<!-- skipped <script> -->
+<!-- http://webkit.org/b/109024 --><section data-platform="atk,mac" data-note=":not([aria-label]:not([aria-labelledby])" class="ex">X</section>
+<section data-platform="atk,mac" class="ex" aria-label="x" data-note="[aria-label]">X</section>
+<section data-platform="atk,mac" class="ex" aria-labelledby="section-label" data-note="[aria-labelledby]">
+    <h2 id="section-label">X</h2>
+</section>
+<select data-platform="atk,mac" class="ex" data-note=":not([multiple])">
+    <option data-platform="atk,mac" class="ex">X</option>
+    <optgroup data-platform="atk,mac" class="ex" label="more">
+        <option data-platform="atk,mac">X</option>
+    </optgroup>
+</select>
+<select data-platform="atk,mac" class="ex" multiple data-note="[multiple]">
+    <option data-platform="atk,mac" class="ex">X</option>
+    <optgroup data-platform="atk,mac" class="ex" label="more">
+        <option>Y</option>
+        <option>Z</option>
+    </optgroup>
+</select>
+<small data-platform="atk,mac" class="ex">X</small>
+<!-- skipped <source> -->
+<span data-platform="atk,mac" data-note=":not([onclick])" class="ex">X</span>
+<span data-platform="atk,mac" onclick="return;" data-note="[onclick]" class="ex">X</span>
+<strong data-platform="atk,mac" class="ex">X</strong>
+<!-- skipped <style> -->
+<sub data-platform="atk,mac" class="ex">X</sub>
+<sup data-platform="atk,mac" class="ex">X</sup>
+<svg data-platform="atk,mac" class="ex">X</svg>
+
+<table data-platform="atk,mac" class="ex">
+    <caption data-platform="atk,mac" class="ex">X</caption>
+    <thead data-platform="atk,mac" class="ex">
+        <!-- [ATK] Object not exposed (webkit.org/b/139005) --><tr data-platform="atk,mac" class="ex">
+            <!-- Need separate test to verify colheader/rowheader -->
+            <th data-platform="atk,mac" class="ex">X</th>
+        </tr>
+    </thead>
+    <tbody data-platform="atk,mac" class="ex">
+        <!-- [ATK] Object not exposed (webkit.org/b/139005) --><tr data-platform="atk,mac" class="ex">
+            <td data-platform="atk,mac" class="ex">X</td>
+        </tr>
+    </tbody>
+    <tfoot data-platform="atk,mac" class="ex">
+        <!-- [ATK] Object not exposed (webkit.org/b/139005) --><tr data-platform="atk,mac" class="ex">
+            <!-- Need separate test to verify colheader/rowheader -->
+            <th data-platform="atk,mac" class="ex">X</th>
+        </tr>
+    </tfoot>
+</table>
+<textarea data-platform="atk,mac" class="ex">X</textarea>
+<time data-platform="atk,mac" data-note=":not([datetime])" class="ex">X</time>
+<time data-platform="atk,mac" datetime="2014-10-31 00:00" data-note="[datetime]" class="ex">X</time>
+<!-- skipped <title> -->
+<ul data-platform="atk,mac" class="ex">
+    <li data-platform="atk,mac" class="ex">X</li>
+</ul>
+<var data-platform="atk,mac" class="ex">X</var>
+<!-- skipped <video> -->
+<wbr data-platform="atk,mac" class="ex">X</wbr>
+<!-- Todo: I left off adding HTML5 elements here at previous element: https://dvcs.w3.org/hg/html-api-map/raw-file/default/Overview.html -->
+
+
+
+<!-- ==================================================================================================== -->
+<!-- Abstract ARIA roles in alphabetical order; only generic AXGroup role should be exposed on abstract roles -->
+<!-- ==================================================================================================== -->
+<div role="command"     data-platform="atk,mac" class="ex">X</div>
+<div role="composite"   data-platform="atk,mac" class="ex">X</div>
+<div role="input"       data-platform="atk,mac" class="ex">X</div>
+<div role="landmark"    data-platform="atk,mac" class="ex">X</div>
+<div role="range"       data-platform="atk,mac" class="ex">X</div>
+<div role="roletype"    data-platform="atk,mac" class="ex">X</div>
+<div role="section"     data-platform="atk,mac" class="ex">X</div>
+<div role="sectionhead" data-platform="atk,mac" class="ex">X</div>
+<div role="select"      data-platform="atk,mac" class="ex">X</div>
+<div role="structure"   data-platform="atk,mac" class="ex">X</div>
+<div role="widget"      data-platform="atk,mac" class="ex">X</div>
+<div role="window"      data-platform="atk,mac" class="ex">X</div>
+
+
+<!-- ==================================================================================================== -->
+<!-- Non-abstract ARIA roles in alphabetical order, excepting the need for nesting (e.g. row is with its grid parent) -->
+<!-- ==================================================================================================== -->
+<div role="alert"                    data-platform="atk,mac" class="ex">X</div>
+<div role="alertdialog"              data-platform="atk,mac" class="ex">X</div>
+<div role="application"              data-platform="atk,mac" class="ex">X</div>
+<div role="article"                  data-platform="atk,mac" class="ex">X</div>
+<div role="banner"                   data-platform="atk,mac" class="ex">X</div>
+<div role="blockquote"               data-platform="atk,mac" class="ex">X</div>
+<div role="button"                   data-platform="atk,mac" class="ex">X</div>
+<div role="caption"                  data-platform="atk,mac" class="ex">X</div>
+<div role="checkbox"                 data-platform="atk,mac" class="ex">X</div>
+<div role="combobox"                 data-platform="atk,mac" class="ex">X</div>
+<div role="complementary"            data-platform="atk,mac" class="ex">X</div>
+<div role="contentinfo"              data-platform="atk,mac" class="ex">X</div>
+<div role="definition"               data-platform="atk,mac" class="ex">X</div>
+<div role="deletion"                 data-platform="atk,mac" class="ex">X</div>
+<div role="dialog"                   data-platform="atk,mac" class="ex">X</div>
+<div role="directory"                data-platform="atk,mac" class="ex">X</div>
+<!-- The 'doc-*' roles are defined the ARIA DPUB mobile: https://www.w3.org/TR/dpub-aam-1.0/ -->
+<!-- Editor's draft is currently at https://rawgit.com/w3c/aria/master/dpub-aam/dpub-aam.html -->
+<div role="doc-abstract"             data-platform="atk,mac" class="ex">X</div>
+<div role="doc-acknowledgments"      data-platform="atk,mac" class="ex">X</div>
+<div role="doc-afterword"            data-platform="atk,mac" class="ex">X</div>
+<div role="doc-appendix"             data-platform="atk,mac" class="ex">X</div>
+<div role="doc-backlink"             data-platform="atk,mac" class="ex">X</div>
+<div role="doc-biblioentry"          data-platform="atk,mac" class="ex">X</div>
+<div role="doc-bibliography"         data-platform="atk,mac" class="ex">X</div>
+<div role="doc-biblioref"            data-platform="atk,mac" class="ex">X</div>
+<div role="doc-chapter"              data-platform="atk,mac" class="ex">X</div>
+<div role="doc-colophon"             data-platform="atk,mac" class="ex">X</div>
+<div role="doc-conclusion"           data-platform="atk,mac" class="ex">X</div>
+<div role="doc-cover"                data-platform="atk,mac" class="ex">X</div>
+<div role="doc-credit"               data-platform="atk,mac" class="ex">X</div>
+<div role="doc-credits"              data-platform="atk,mac" class="ex">X</div>
+<div role="doc-dedication"           data-platform="atk,mac" class="ex">X</div>
+<div role="doc-endnote"              data-platform="atk,mac" class="ex">X</div>
+<div role="doc-endnotes"             data-platform="atk,mac" class="ex">X</div>
+<div role="doc-epigraph"             data-platform="atk,mac" class="ex">X</div>
+<div role="doc-epilogue"             data-platform="atk,mac" class="ex">X</div>
+<div role="doc-errata"               data-platform="atk,mac" class="ex">X</div>
+<div role="doc-example"              data-platform="atk,mac" class="ex">X</div>
+<div role="doc-footnote"             data-platform="atk,mac" class="ex">X</div>
+<div role="doc-foreword"             data-platform="atk,mac" class="ex">X</div>
+<div role="doc-glossary"             data-platform="atk,mac" class="ex">X</div>
+<div role="doc-glossref"             data-platform="atk,mac" class="ex">X</div>
+<div role="doc-index"                data-platform="atk,mac" class="ex">X</div>
+<div role="doc-introduction"         data-platform="atk,mac" class="ex">X</div>
+<div role="doc-noteref"              data-platform="atk,mac" class="ex">X</div>
+<div role="doc-notice"               data-platform="atk,mac" class="ex">X</div>
+<div role="doc-pagebreak"            data-platform="atk,mac" class="ex">X</div>
+<div role="doc-pagelist"             data-platform="atk,mac" class="ex">X</div>
+<div role="doc-part"                 data-platform="atk,mac" class="ex">X</div>
+<div role="doc-preface"              data-platform="atk,mac" class="ex">X</div>
+<div role="doc-prologue"             data-platform="atk,mac" class="ex">X</div>
+<div role="doc-pullquote"            data-platform="atk,mac" class="ex">X</div>
+<div role="doc-qna"                  data-platform="atk,mac" class="ex">X</div>
+<div role="doc-subtitle"             data-platform="atk,mac" class="ex">X</div>
+<div role="doc-tip"                  data-platform="atk,mac" class="ex">X</div>
+<div role="doc-toc"                  data-platform="atk,mac" class="ex">X</div>
+<div role="document"                 data-platform="atk,mac" class="ex">X</div>
+<div role="figure"                   data-platform="atk,mac" class="ex">X</div>
+<div role="form"                     data-platform="atk,mac" class="ex">X</div>
+<div role="graphics-document"        data-platform="atk,mac" class="ex">X</div>
+<div role="graphics-object"          data-platform="atk,mac" class="ex">X</div>
+<div role="graphics-symbol"          data-platform="atk,mac" class="ex">X</div>
+<div role="grid"                     data-platform="atk,mac" class="ex">
+    <div role="rowgroup"             data-platform="atk,mac" class="ex">
+        <div role="row"              data-platform="atk,mac" class="ex">
+            <!-- Note: diff between rowheader, columnheader, and gridcell is in cross-reference from grid; need additional non-role verification in another test. -->
+            <div role="rowheader"    data-platform="atk,mac" class="ex">X</div>
+            <div role="columnheader" data-platform="atk,mac" class="ex">X</div>
+            <div role="gridcell"     data-platform="atk,mac" class="ex">X</div>
+        </div>
+    </div>
+</div>
+<div role="feed"                     data-platform="atk,mac" class="ex">X</div>
+<div role="group"                    data-platform="atk,mac" class="ex">X</div>
+<div role="heading"                  data-platform="atk,mac" class="ex">X</div>
+<div role="img"                      data-platform="atk,mac" class="ex">X</div>
+<div role="insertion"                data-platform="atk,mac" class="ex">X</div>
+<div role="link"                     data-platform="atk,mac" class="ex">X</div>
+<div role="list"                     data-platform="atk,mac" class="ex">
+    <div role="listitem"             data-platform="atk,mac" class="ex">X</div>
+</div>
+<div role="listbox"                  data-platform="atk,mac" class="ex">
+    <div role="option"               data-platform="atk,mac" class="ex">X</div>
+</div>
+<div role="log"                      data-platform="atk,mac" class="ex">X</div>
+<div role="main"                     data-platform="atk,mac" class="ex">X</div>
+<div role="marquee"                  data-platform="atk,mac" class="ex">X</div>
+<div role="math"                     data-platform="atk,mac" class="ex">X</div>
+<div role="menu"                     data-platform="atk,mac" class="ex">
+    <!-- Note: diff between menuitem types is an attribute; need additional non-role verification in another test. -->
+    <div role="menuitem"             data-platform="atk,mac" class="ex">X</div>
+    <div role="menuitemcheckbox"     data-platform="atk,mac" class="ex">X</div>
+    <div role="menuitemradio"        data-platform="atk,mac" class="ex">X</div>
+</div>
+<div role="menubar"                  data-platform="atk,mac" class="ex">
+    <!-- Note: diff between menuitem types is an attribute; need additional non-role verification in another test. -->
+    <div role="menuitem"             data-platform="atk,mac" class="ex">X</div>
+    <div role="menuitemcheckbox"     data-platform="atk,mac" class="ex">X</div>
+    <div role="menuitemradio"        data-platform="atk,mac" class="ex">X</div>
+</div>
+<div role="meter"                    data-platform="atk,mac" class="ex">X</div>
+<div role="navigation"               data-platform="atk,mac" class="ex">X</div>
+<div role="note"                     data-platform="atk,mac" class="ex">X</div>
+<div role="paragraph"                data-platform="atk,mac" class="ex">X</div>
+<div role="presentation"             data-platform="atk,mac" class="ex">X</div>
+<div role="progressbar"              data-platform="atk,mac" class="ex">X</div>
+<div role="radiogroup"               data-platform="atk,mac" class="ex">
+    <div role="radio"                data-platform="atk,mac" class="ex">X</div>
+</div>
+<div role="region"                   data-platform="atk,mac" class="ex" data-note=":not([aria-label]:not([aria-labelledby])">X</div>
+<div role="region"                   data-platform="atk,mac" class="ex" aria-label="x" data-note="[aria-label]">X</div>
+<div role="region"                   data-platform="atk,mac" class="ex" aria-labelledby="region-label" data-note="[aria-labelledby]">
+    <h2 id="region-label">X</h2>
+</div>
+<div role="scrollbar"                data-platform="atk,mac" class="ex">X</div>
+<div role="search"                   data-platform="atk,mac" class="ex">X</div>
+<div role="searchbox"                data-platform="atk,mac" class="ex">X</div>
+<div role="separator"                data-platform="atk,mac" class="ex">X</div>
+<div role="slider"                   data-platform="atk,mac" class="ex">X</div>
+<div role="spinbutton"               data-platform="atk,mac" class="ex">X</div>
+<div role="status"                   data-platform="atk,mac" class="ex">X</div>
+<div role="subscript"                data-platform="atk,mac" class="ex">X</div>
+<div role="superscript"              data-platform="atk,mac" class="ex">X</div>
+<div role="switch"                   data-platform="atk,mac" class="ex">X</div>
+<div role="tablist"                  data-platform="atk,mac" class="ex">
+    <div role="tab"                  data-platform="atk,mac" class="ex">X</div>
+</div>
+<div role="tabpanel"                 data-platform="atk,mac" class="ex">X</div>
+<div role="term"                     data-platform="atk,mac" class="ex">X</div>
+<div role="textbox"                  data-platform="atk,mac" class="ex">X</div>
+<div role="time"                     data-platform="atk,mac" class="ex">X</div>
+<div role="timer"                    data-platform="atk,mac" class="ex">X</div>
+<div role="toolbar"                  data-platform="atk,mac" class="ex">X</div>
+<div role="tooltip"                  data-platform="atk,mac" class="ex">X</div>
+<div role="tree"                     data-platform="atk,mac" class="ex">
+    <div role="treeitem"             data-platform="atk,mac" class="ex">X</div>
+    <div role="group"                data-platform="atk,mac" class="ex">
+        <div role="treeitem"         data-platform="atk,mac" class="ex">X</div>
+    </div>
+</div>
+<div role="treegrid"                 data-platform="atk,mac" class="ex">
+    <div role="rowgroup"             data-platform="atk,mac" class="ex">
+        <div role="row"              data-platform="atk,mac" class="ex">
+            <!-- Note: diff between rowheader, columnheader, and gridcell is in cross-reference from grid; need additional non-role verification in another test. -->
+            <div role="rowheader"    data-platform="atk,mac" class="ex">X</div>
+            <div role="columnheader" data-platform="atk,mac" class="ex">X</div>
+            <div role="gridcell"     data-platform="atk,mac" class="ex">X</div>
+        </div>
+    </div>
+</div>
+
+<div id="console"></div>
+<script>
+if (window.testRunner && window.accessibilityController) {
+    description("This tests that native elements and ARIA overrides result in the expected role, subrole and role description.")
+    var currentPlatform = accessibilityController.platformName;
+    var examples = document.querySelectorAll('.ex');
+    var indent = "\n      "; // newline and six spaces
+    var el, supportedPlatforms, ariaRole, axElement, role, subrole, roleDescription, output, result;
+    for (var i = 0, c = examples.length; i < c; i++) {
+        el = examples[i];
+
+        supportedPlatforms = el.getAttribute('data-platform');
+        if (!supportedPlatforms || supportedPlatforms.indexOf(currentPlatform) == -1)
+            continue;
+
+        el.id = 'ex' + i;
+        ariaRole = el.getAttribute('role');
+        axElement = accessibilityController.accessibleElementById(el.id);
+        if (axElement) {
+            role = axElement.role;
+            subrole = axElement.subrole;
+            roleDescription = axElement.roleDescription;
+        } else {
+            role = 'AXRole: ';
+            subrole = 'AXSubrole: ';
+            roleDescription = 'AXRoleDescription: ';
+        }
+
+        output = el.tagName.toLowerCase() + (ariaRole?("[role="+ariaRole+"]"):'');
+        if (el.getAttribute('data-note')) {
+            output += el.getAttribute('data-note');
+        }
+        output += indent;
+        output += role + indent;
+
+        // In the Mac platform more things than just the role
+        // are tested so we need to expand a bit the output.
+        if (currentPlatform == "mac")
+            output += subrole + indent + roleDescription + indent;
+
+        result = document.getElementById('console');
+        result.innerText += output + "\n";
+    }
+
+    // Once tests are complete, hide all the example markup.
+    examples = document.querySelectorAll('.ex');
+    for (var i = 0, c = examples.length; i < c; i++) {
+        el = examples[i];
+        if (el.style)
+            el.style.display = 'none';
+    }
+}
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

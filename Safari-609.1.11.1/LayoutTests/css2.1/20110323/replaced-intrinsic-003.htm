@@ -1,0 +1,21 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+ <head>
+  <title>CSS Test: Replaced block elements (using &lt;object&gt;) and SVG intrinsic widths</title>
+  <link rel="author" title="Ian Hickson" href="mailto:ian@hixie.ch">
+  <link rel="alternate" href="http://www.hixie.ch/tests/adhoc/css/box/replaced/intrinsic/svg/003.html" type="text/html">
+  <link rel="help" href="http://www.w3.org/TR/CSS21/visudet.html#inline-replaced-width">
+  <meta name="flags" content="image svg">
+  <style type="text/css">
+   html { background: white; color: navy; }
+   body { background: 100px 0 url(resources/test-tr.png) no-repeat; }
+   div { width: 100px; background: url(resources/test-bl.png) bottom left no-repeat; }
+   div p { background: url(resources/test-tl.png) top left no-repeat; }
+   object { display: block; margin: auto; padding-right: 100px; background: url(resources/test-br.png) bottom right no-repeat; }
+  </style>
+ </head>
+ <body>
+  <div><p><object data="resources/replaced-intrinsic-003.svg" type="image/svg+xml"> FAIL (SVG not supported) </object></p></div>
+  <p>There should be a complete unbroken yin-yang symbol (☯) above.</p>
+ </body>
+</html>

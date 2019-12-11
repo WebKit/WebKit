@@ -1,0 +1,21 @@
+<div id="result">PASS if the first context was lost due to creating too many WebGL contexts even though <code>preventDefault()</code> was called when a <code>webglcontextlost</code> event was dispatched.</div>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+var maxNumberOfActiveContexts = 16;
+var contexts = [];
+for (var i = 0; i <= maxNumberOfActiveContexts; i++) {
+    var canvas = document.createElement("canvas");
+    canvas.addEventListener("webglcontextlost", function(event) {
+        event.preventDefault();
+        if (!contexts[0].isContextLost())
+            document.getElementById("result").textContent = "FAIL";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+    contexts[i] = canvas.getContext("webgl");
+}
+</script>

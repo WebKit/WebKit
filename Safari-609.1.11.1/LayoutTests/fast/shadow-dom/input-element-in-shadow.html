@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+Test that input elements in shadow trees update when text is entered.
+<div id="parentDiv">
+<input placeholder="distributed"><br>
+<textarea></textarea>
+</div>
+</body>
+<script>
+parentDiv.attachShadow({mode: 'open'});
+var innerDiv = document.createElement('div');
+innerDiv.appendChild(document.createElement('slot'))
+parentDiv.shadowRoot.appendChild(innerDiv);
+
+function enterText(selector, characters)
+{
+    if (window.eventSender) {
+        var input = document.querySelector(selector);
+        input.focus();
+        for (c of characters)
+            window.eventSender.keyDown(c);
+        input.blur();
+    }
+}
+
+enterText("input", "one");
+enterText("textarea", "two");
+
+</script>
+</html>

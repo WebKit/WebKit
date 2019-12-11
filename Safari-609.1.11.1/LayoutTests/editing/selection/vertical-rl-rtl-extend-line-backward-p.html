@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<style> .selected { color: blue; } </style>
+</head>
+<body>
+<p>This tests horizontal caret movement in vertical writing mode.</p>
+<div id="test" style="font-family: monospace; font-size: 20px; height: 15ex; -webkit-writing-mode: vertical-rl; outline: none;" contenteditable>
+<p dir="rtl">אני חתול.</p><p dir="rtl">אין לי שם.</p>
+</div>
+<pre id="log"></pre>
+<script>
+
+var test = document.getElementById('test');
+window.getSelection().setPosition(test.getElementsByTagName('p')[1].lastChild, 5);
+window.getSelection().modify('Extend', 'Backward', 'Line');
+
+</script>
+</body>
+</html>

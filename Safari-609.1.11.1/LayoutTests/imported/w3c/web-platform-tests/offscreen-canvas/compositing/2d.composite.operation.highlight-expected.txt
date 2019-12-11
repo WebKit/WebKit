@@ -1,0 +1,5 @@
+2d.composite.operation.highlight
+
+
+FAIL OffscreenCanvas test: 2d.composite.operation.highlight null is not an object (evaluating 'ctx.globalCompositeOperation = 'xor'')
+

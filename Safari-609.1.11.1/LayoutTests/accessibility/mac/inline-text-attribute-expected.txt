@@ -1,0 +1,14 @@
+a b c 
+d
+e f
+This tests that objects return whether they are inline or not.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Span is inline: 1
+Div is inline: 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

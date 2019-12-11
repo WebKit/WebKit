@@ -1,0 +1,56 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+  <title>Links with fragment identifiers inside SVG fragments</title>
+  <style type="text/css">
+   div { padding-top: 500em; }
+  </style>
+ </head>
+ <body>
+  <p>The circle below is a link. When you activate the circle, nothing
+  should happen. If the document scrolls or the image pans when you
+  activate the link, the test has failed.</p>
+  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+       height="20000" width="200" onload="runTest();">
+   <script type="text/ecmascript"><![CDATA[
+if (window.testRunner) {
+  testRunner.waitUntilDone();
+  testRunner.dumpAsText();
+}
+ 
+function checkNoNavigation()
+{
+  var result = location.hash == '' ? 'PASS' : 'FAIL';
+  document.documentElement.appendChild(document.createTextNode(result));
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+
+function runTest() {
+  if (window.eventSender) {
+    var evt = document.createEvent("MouseEvents"); 
+    evt.initMouseEvent("click", true, true, window,
+        0, 0, 0, 0, 0, false, false, false, false, 0, null); 
+    document.getElementById('link').dispatchEvent(evt);
+    window.setTimeout("checkNoNavigation()", 0 );
+  } else {
+    // in manual mode
+    alert("Please use run-webkit-tests.");
+  }
+}
+]]>
+</script>
+   <!-- Spec says that <a> can only link to animation elements,
+        otherwise it is invalid; that known attributes with
+        unsupported values are treated as if they hadn't been
+        specified when rendering; that if the attribute is not
+        specified, the effect is as if an empty value ("") was
+        specified; and that an empty attribute value (xlink:href="")
+        means that no link traversal occurs upon activation of the 'a'
+        element. So. Nothing should happen if you click it: -->
+   <a xlink:href="#test" id="link">
+    <circle cx="50" cy="50" r="50" fill="blue"/>
+   </a>
+   <circle cx="50" cy="19950" r="50" fill="red" id="test"/>
+  </svg>
+ </body>
+</html>

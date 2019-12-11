@@ -1,0 +1,4 @@
+TypeError: Assignment to const
+	at g() (defer2.js:9:9)
+	at f() (defer2.js:11:5)
+	at Global code (defer2.js:13:1)

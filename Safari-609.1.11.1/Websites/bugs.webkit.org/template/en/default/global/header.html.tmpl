@@ -1,0 +1,287 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # (All the below interface elements are optional.)
+  # title: string. Page title.
+  # header: string. Main page header.
+  # subheader: string. Page subheader.
+  # header_addl_info: string. Additional header information.
+  # bodyclasses: array of extra CSS classes for the <body>
+  # onload: string. JavaScript code to run when the page finishes loading.
+  # javascript: string. Javascript to go in the header.
+  # javascript_urls: list. List of URLs to Javascript.
+  # style: string. CSS style.
+  # style_urls: list. List of URLs to CSS style sheets.
+  # message: string. A message to display to the user. May contain HTML.
+  # rsslink: RSS link URL, May contain HTML (WEBKIT_CHANGES)
+  # hide_content: boolean. Turns off content if not being used. (WEBKIT_CHANGES)
+  # generate_api_token: generate a token which can be used to make authenticated webservice calls
+  #%]
+
+[% IF message %]
+  [% PROCESS global/messages.html.tmpl %]
+[% END %]
+
+[% DEFAULT
+  subheader = ""
+  header_addl_info = ""
+  onload = ""
+  style_urls = []
+  javascript_urls = []
+  yui = []
+  generate_api_token = 0
+  favicon_url = "images/favicon.ico"
+%]
+
+[% SET yui_css = {
+  autocomplete => 1,
+  calendar     => 1,
+  datatable    => 1,
+  button       => 1,
+} %]
+
+[%# Note: This is simple dependency resolution--you can't have dependencies
+  # that depend on each other. You have to specify all of a module's deps,
+  # if that module is going to be specified in "yui".
+  #%]
+[% SET yui_deps = {
+  autocomplete => ['json', 'connection', 'datasource'],
+  datatable    => ['json', 'connection', 'datasource', 'element'],
+} %]
+
+[%# When using certain YUI modules, we need to process certain
+  # extra JS templates.
+  #%]
+[% SET yui_templates = {
+  datatable => ['global/value-descs.js.tmpl'],
+} %]
+
+[%# These are JS URLs that are *always* on the page and come before
+  # every other JS URL.
+  #%]
+[% SET starting_js_urls = [
+    "js/yui/yahoo-dom-event/yahoo-dom-event.js",
+    "js/yui/cookie/cookie-min.js",
+] %]
+
+
+[%# We should be able to set the default value of the header variable
+  # to the value of the title variable using the DEFAULT directive,
+  # but that doesn't work if a caller sets header to the empty string
+  # to avoid header inheriting the value of title, since DEFAULT
+  # mistakenly treats empty strings as undefined and gives header the
+  # value of title anyway.  To get around that problem we explicitly
+  # set header's default value here only if it is undefined. %]
+[% IF !header.defined %][% header = title %][% END %]
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    [% Hook.process("start") %]
+    <title>[% title %]</title>
+
+    [% IF Param('utf8') %]
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    [% END %]
+
+    [% SET yui = yui_resolve_deps(yui, yui_deps) %]
+
+    [% SET css_sets = css_files(style_urls, yui, yui_css) %]
+    [% IF constants.CONCATENATE_ASSETS %]
+      [% PROCESS format_css_link asset_url = css_sets.unified_standard_skin %]
+    [% ELSE %]
+      [% FOREACH asset_url = css_sets.standard %]
+        [% PROCESS format_css_link %]
+      [% END %]
+      [% FOREACH asset_url = css_sets.skin %]
+        [% PROCESS format_css_link %]
+      [% END %]
+    [% END %]
+
+    [% IF style %]
+      <style type="text/css">
+        [% style %]
+      </style>
+    [% END %]
+
+    [% IF css_sets.unified_custom %]
+      [% IF constants.CONCATENATE_ASSETS %]
+        [% PROCESS format_css_link asset_url = css_sets.unified_custom %]
+      [% ELSE %]
+        [% FOREACH asset_url = css_sets.custom %]
+          [% PROCESS format_css_link %]
+        [% END %]
+      [% END %]
+    [% END %]
+
+    [%# YUI Scripts %]
+    [% FOREACH yui_name = yui %]
+      [% starting_js_urls.push("js/yui/$yui_name/${yui_name}-min.js") %]
+    [% END %]
+    [% starting_js_urls.push('js/global.js') %]
+
+    [% FOREACH asset_url = concatenate_js(starting_js_urls) %]
+      [% PROCESS format_js_link %]
+    [% END %]
+
+    <script type="text/javascript">
+    <!--
+        YAHOO.namespace('bugzilla');
+        YAHOO.util.Event.addListener = function (el, sType, fn, obj, overrideContext) {
+               if ( ("onpagehide" in window || YAHOO.env.ua.gecko) && sType === "unload") { sType = "pagehide"; };
+               var capture = ((sType == "focusin" || sType == "focusout") && !YAHOO.env.ua.ie) ? true : false;
+               return this._addListener(el, this._getType(sType), fn, obj, overrideContext, capture);
+         };
+        if ( "onpagehide" in window || YAHOO.env.ua.gecko) {
+            YAHOO.util.Event._simpleRemove(window, "unload", 
+                                           YAHOO.util.Event._unload);
+        }
+        [%# The language selector needs javascript to set its cookie,
+          # so it is hidden in HTML/CSS by the "bz_default_hidden" class.
+          # If the browser can run javascript, it will then "unhide"
+          # the language selector using the following code.
+          #%]
+        function unhide_language_selector() { 
+            YAHOO.util.Dom.removeClass(
+                'lang_links_container', 'bz_default_hidden'
+            ); 
+        } 
+        YAHOO.util.Event.onDOMReady(unhide_language_selector);
+
+        [%# Make some Bugzilla information available to all scripts. 
+          # We don't import every parameter and constant because we
+          # don't want to add a lot of uncached JS to every page. 
+          #%]
+        var BUGZILLA = {
+            param: {
+                cookiepath: '[% Param('cookiepath') FILTER js %]',
+                maxusermatches: [% Param('maxusermatches') FILTER js %]
+            },
+            constant: {
+                COMMENT_COLS: [% constants.COMMENT_COLS FILTER js %]
+            },
+            string: {
+                [%# Please keep these in alphabetical order. %]
+
+                attach_desc_required:
+                    "You must enter a Description for this attachment.",
+                component_required:
+                    "You must select a Component for this [% terms.bug %].",
+                description_required:
+                    "You must enter a Description for this [% terms.bug %].",
+                short_desc_required:
+                    "You must enter a Summary for this [% terms.bug %].",
+                version_required:
+                    "You must select a Version for this [% terms.bug %]."
+            }
+            [% IF generate_api_token %]
+              , api_token: '[% get_api_token FILTER js FILTER html %]'
+            [% END %]
+        };
+
+        [% FOREACH yui_name = yui %]
+          [% FOREACH yui_template = yui_templates.$yui_name %]
+            [% INCLUDE $yui_template %]
+          [% END %]
+        [% END %]
+        [% IF javascript %]
+          [% javascript %]
+        [% END %]
+    // -->
+    </script>
+
+    [% FOREACH asset_url = concatenate_js(javascript_urls) %]
+      [% PROCESS format_js_link %]
+    [% END %]
+
+[%# if WEBKIT_CHANGES #%]
+    [%# this puts the live bookmark up on firefox for the RSS feed %]
+    [% IF rsslink %]
+       <link rel="alternate" 
+             type="application/rss+xml" title="RSS 1.0"
+             href="[% rsslink FILTER html %]">
+    [% END %]
+[%# endif // WEBKIT_CHANGES #%]
+
+    [%# Required for the 'Autodiscovery' feature in Firefox 2 and IE 7. %]
+    <link rel="search" type="application/opensearchdescription+xml"
+                       title="[% terms.Bugzilla %]" href="./search_plugin.cgi">
+    <link rel="shortcut icon" href="[% favicon_url FILTER html %]">
+    [% Hook.process("additional_header") %]
+  </head>
+
+  <body [% IF onload %] onload="[% onload %]"[% END %]
+        class="[% urlbase.replace('^https?://','').replace('/$','').replace('[-~@:/.]+','-') FILTER css_class_quote %]
+               [% FOREACH class = bodyclasses %]
+                 [%+ class FILTER css_class_quote %]
+               [% END %] yui-skin-sam">
+
+[% IF !hide_content %][%# WEBKIT_CHANGES #%]
+
+  <div id="header">
+[%# if WEBKIT_CHANGES #%]
+    [%# INCLUDE global/banner.html.tmpl #%]
+[%# endif // WEBKIT_CHANGES #%]
+
+    <div id="titles">
+[%# if WEBKIT_CHANGES #%]
+      <span id="title"> WebKit [% terms.Bugzilla %][%# " &ndash; $header" IF header #%]</span>
+[%# endif // WEBKIT_CHANGES #%]
+
+[%# WEBKIT_CHANGES: Removed subheader and header_addl_info output #%]
+    </div>
+
+    [% USE Bugzilla %]
+    [% IF Bugzilla.languages.size > 1 %]
+      <div id="lang_links_container" class="bz_default_hidden">
+        <ul class="links">
+          [% FOREACH lang = Bugzilla.languages.sort %]
+            <li>
+              [% IF NOT loop.first %]<span class="separator"> | </span>[% END %]
+              [% IF lang == current_language %]
+                <span class="lang_current">[% lang FILTER html FILTER upper %]</span>
+              [% ELSE %]
+                <a href="#" onclick="set_language('[% lang FILTER none %]');">
+                  [%- lang FILTER html FILTER upper %]</a>
+              [% END %]
+            </li>
+          [% END %]
+        </ul>
+      </div>
+    [% END %]
+
+[%# if WEBKIT_CHANGES #%]
+    [% IF header || subheader %]
+        <div id="bug_title">[% header %][% ": $subheader" IF subheader %]</div>
+    [% END %]
+[%# endif // WEBKIT_CHANGES #%]
+
+    <div id="common_links">
+      [% PROCESS "global/common-links.html.tmpl" qs_suffix = "_top" %]
+    </div>
+  </div>
+
+[% END %][%# !hide_content #%][%# WEBKIT_CHANGES #%]
+
+  <div id="bugzilla-body">
+    [% IF Param('announcehtml') %]
+      [% Param('announcehtml') FILTER none %]
+    [% END %]
+
+    [% IF message %]
+      <div id="message">[% message %]</div>
+    [% END %]
+
+[% BLOCK format_css_link %]
+  <link href="[% asset_url FILTER html %]" rel="stylesheet" type="text/css">
+[% END %]
+
+[% BLOCK format_js_link %]
+  <script type="text/javascript" src="[% asset_url FILTER mtime FILTER html %]"></script>
+[% END %]

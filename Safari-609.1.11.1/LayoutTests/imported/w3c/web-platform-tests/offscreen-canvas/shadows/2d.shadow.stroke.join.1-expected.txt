@@ -1,0 +1,7 @@
+2d.shadow.stroke.join.1
+
+Shadows are not drawn for areas outside stroke joins
+
+
+FAIL Shadows are not drawn for areas outside stroke joins null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

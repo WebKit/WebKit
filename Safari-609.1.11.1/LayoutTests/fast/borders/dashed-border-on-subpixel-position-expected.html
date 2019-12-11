@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that dashed border is painted properly when on subpixel position.</title>
+<style>
+	div { 
+  		position: absolute;
+  		width: 10px;
+  		height: 10px;
+  	}
+  
+	.border1 {
+		border-top: 1px dashed blue;
+	}
+
+	.border2 {
+		border-bottom: 1px dashed blue;
+	}
+
+	.border3 {
+		border-left: 1px dashed blue;
+	}
+
+	.border4 {
+		border-right: 1px dashed blue;
+	}
+</style>
+</head>    
+<body>
+<script>
+    function createDashedBox(x, y, side) {
+		var box = document.createElement("div");
+		box.style.left = x + "px";
+		box.style.top = y + "px";
+		box.className = "border" + side;
+		document.body.appendChild(box);
+    }
+    
+	for (side = 1; side <= 4; ++side) {
+	    var x = 0;
+    	var y  = 0;
+		for (i = 0; i < 10; ++i) {
+			createDashedBox(x, 0, side);
+			x += 14;
+		}
+
+		for (i = 0; i < 40; ++i) {
+			if (!(i % 20))
+				y += 1;
+			createDashedBox(x, y, side);
+			x += 14;
+		}
+	}
+</script>
+</body>
+</html>

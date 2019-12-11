@@ -1,0 +1,63 @@
+<html>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+<body id="body">
+    
+    <table id="testTable" align="center" border="1" cellpadding="5" cellspacing="0" 
+        summary="This is the summary text that should appear as a description">
+        <caption> Example #1: Nested Stubs </caption>
+        <tr>
+            <th class="center" colspan="2" rowspan="2">Ruritanian<br> Population
+                <br> Survey</th>
+            <th class="center" rowspan="2">All<br> Genders</th>
+            
+            <th class="center" colspan="2">By Gender</th>
+            </tr>
+        <tr>
+            <th class="center">Males</th>
+            <th class="center">Females</th>
+            </tr>
+        <tr>
+            
+            <th align="left" rowspan="2">All Regions</th>
+            <th>North</th>
+            <td align="right">3333</td>
+            <td align="right">1111</td>
+            <td align="right">2222</td>
+            </tr>
+        
+        <tr>
+            <th>South</th>
+            <td align="right">3333</td>
+            <td align="right">1111</td>
+            <td align="right">2222</td>
+            </tr>
+    </table>
+    
+    <div id="result"></div>
+    
+    <script>
+        if (window.accessibilityController) {
+            var body = document.getElementById("body");
+            body.focus();
+            var table = accessibilityController.focusedElement.childAtIndex(0);
+            
+            result.innerText += "--------------------------\n\n"; 
+            result.innerText += table.attributesOfColumnHeaders() + "\n\n"; 
+            result.innerText += "--------------------------\n\n"; 
+            result.innerText += table.attributesOfRowHeaders() + "\n\n"; 
+            result.innerText += "--------------------------\n\n"; 
+            result.innerText += table.attributesOfColumns() + "\n\n"; 
+            result.innerText += "--------------------------\n\n"; 
+            result.innerText += table.attributesOfRows() + "\n\n"; 
+            result.innerText += "--------------------------\n\n"; 
+            result.innerText += table.attributesOfVisibleCells() + "\n\n"; 
+            result.innerText += "--------------------------\n\n"; 
+            result.innerText += table.attributesOfHeader() + "\n\n"; 
+            result.innerText += "--------------------------\n\n"; 
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+Test for bug 21060: Range#surroundContents incorrectly throws BAD_BOUNDARYPOINTS_ERR.
+
+
+PASS

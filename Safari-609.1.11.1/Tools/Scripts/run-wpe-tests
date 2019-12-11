@@ -1,0 +1,70 @@
+#!/usr/bin/env python
+#
+# Copyright (C) 2017 Igalia S.L.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with this library; see the file COPYING.LIB.  If not, write to
+# the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+# Boston, MA 02110-1301, USA.
+
+import logging
+import os
+import sys
+import optparse
+
+top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
+sys.path.insert(0, os.path.join(top_level_directory, "Tools", "jhbuild"))
+sys.path.insert(0, os.path.join(top_level_directory, "Tools", "flatpak"))
+sys.path.insert(0, os.path.join(top_level_directory, "Tools", "glib"))
+import common
+import jhbuildutils
+import flatpakutils
+from api_test_runner import TestRunner, add_options
+
+class WPETestRunner(TestRunner):
+    TestRunner.TEST_TARGETS = [ "WPE", "WPEQt", "TestWebKit", "TestJSC", "TestWTF", "TestWebCore" ]
+
+    def __init__(self, options, tests=[]):
+        super(WPETestRunner, self).__init__("wpe", options, tests)
+
+    def is_glib_test(self, test_program):
+        return os.path.basename(os.path.dirname(test_program)) in ["WPE"] or os.path.basename(test_program) in ["TestJSC"]
+
+    def is_google_test(self, test_program):
+        return os.path.basename(test_program) in ["TestWebKit", "TestWTF", "TestWebCore"]
+
+    def is_qt_test(self, test_program):
+        return os.path.basename(os.path.dirname(test_program)) == "WPEQt"
+
+if __name__ == "__main__":
+    flatpakutils.run_in_sandbox_if_available([sys.argv[0], "--wpe"] + sys.argv[1:])
+    if not flatpakutils.is_sandboxed() and not jhbuildutils.enter_jhbuild_environment_if_available("wpe"):
+        print '***'
+        print '*** Warning: jhbuild environment not present and not running in flatpak.'
+        print '*** Run update-webkitgtk-libs or update-webkitgtk-flatpak before build-webkit to ensure proper testing..'
+        print '***'
+
+    option_parser = optparse.OptionParser(usage='usage: %prog [options] [test...]')
+    add_options(option_parser);
+    option_parser.add_option('--display-server', choices=['headless', 'wayland'], default='headless',
+                             help='"headless": Use headless view backend. "wayland": Use the current wayland session.'),
+
+    args = sys.argv[1:]
+    if flatpakutils.is_sandboxed():
+        args = [ arg for arg in args if arg != "--wpe" ]
+    options, args = option_parser.parse_args(args)
+
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
+
+    runner = WPETestRunner(options, args)
+    sys.exit(runner.run_tests())

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:DisplayTree">
+   </FileRef>
+   <FileRef
+      location = "group:FormattingContext">
+   </FileRef>
+   <FileRef
+      location = "group:FormattingState">
+   </FileRef>
+   <FileRef
+      location = "group:LayoutTree">
+   </FileRef>
+   <FileRef
+      location = "group:README.md">
+   </FileRef>
+   <FileRef
+      location = "group:Layout.js">
+   </FileRef>
+   <FileRef
+      location = "group:LayoutState.js">
+   </FileRef>
+   <FileRef
+      location = "group:Utils.js">
+   </FileRef>
+   <FileRef
+      location = "group:TreeBuilder.js">
+   </FileRef>
+   <FileRef
+      location = "group:test">
+   </FileRef>
+   <FileRef
+      location = "group:misc">
+   </FileRef>
+</Workspace>

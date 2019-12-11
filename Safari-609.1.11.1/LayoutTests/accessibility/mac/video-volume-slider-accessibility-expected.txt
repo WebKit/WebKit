@@ -1,0 +1,12 @@
+
+This tests that video tag's volume slider has percentage value description and 0.05 step.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS slider.valueDescription is 'AXValueDescription: 100%'
+PASS slider.valueDescription is 'AXValueDescription: 95%'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

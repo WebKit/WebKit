@@ -1,0 +1,83 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/basic-gestures.js"></script>
+<meta name=viewport content="width=device-width">
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+#output {
+    width: 320px;
+    height: 160px;
+    overflow: scroll;
+    color: green;
+    border: 1px green solid;
+}
+
+#target {
+    width: 320px;
+    height: 160px;
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function appendOutput(s) {
+    const paragraph = document.createElement("div");
+    paragraph.textContent = s;
+    output.appendChild(paragraph);
+}
+
+function checkForCompletion() {
+    doneCount = window.doneCount ? doneCount : 0;
+    if (++doneCount == 4 && window.testRunner)
+        testRunner.notifyDone();
+}
+
+addEventListener("message", event => {
+    appendOutput(event.data);
+    checkForCompletion();
+});
+
+async function runTest() {
+    // Wait for both the main frame and the subframe to finish loading.
+    loadCount = window.loadCount ? loadCount : 0;
+    if (++loadCount != 2)
+        return;
+
+    await longPressAtPoint(30, 240);
+    let grabberEndRect = null;
+    while (!grabberEndRect || !grabberEndRect.width || !grabberEndRect.height)
+        grabberEndRect = await UIHelper.getSelectionEndGrabberViewRect();
+
+    const [midX, midY] = [grabberEndRect.left + (grabberEndRect.width / 2), grabberEndRect.top + (grabberEndRect.height / 2)];
+    await touchAndDragFromPointToPoint(midX, midY, midX + 150, midY);
+    await liftUpAtPoint(midX + 150, midY);
+    checkForCompletion();
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<pre id="output"></pre>
+<iframe onload="runTest()" src="data:text/html,
+    <span id='text' style='font-size: 140px;'>M M</span>
+    <script>
+    document.addEventListener('selectionchange', () => {
+        const eventData = 'selectionchange: \'' + getSelection().toString() + '\'';
+        parent.postMessage(eventData, '*');
+    });
+    </script>" id="target"></iframe>
+<p>Verifies that the user can select text in an iframe by dragging selection handles. This test is best run under WebKitTestRunner.</p>
+<p>To manually run the test, select "M" in the iframe above and drag the selection handles.</p>
+<p>The output above should log selection changes in the subframe.</p>
+</body>
+</html>

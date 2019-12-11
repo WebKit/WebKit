@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>This tests that anon table content works well with continuation. It generates divs with display: table-cell inside a span and moves those cells out of the generated tables by setting display:block on them. This test checks that no matter how they form the continuation their order should always be 1 2 3 4 etc.</title>
+<style>
+    .cell {
+        display: table-cell;
+    }
+</style>
+</head>
+<body>
+</body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var permArr = [];
+var usedChars = [];
+
+function permutateDivMoveOrder(input) {
+    var ch;
+    for (var i = 0; i < input.length; i++) {
+        ch = input.splice(i, 1)[0];
+        usedChars.push(ch);
+        if (input.length == 0)
+            permArr.push(usedChars.slice());
+        permutateDivMoveOrder(input);
+        input.splice(i, 0, ch);
+        usedChars.pop();
+    }
+    return permArr;
+}
+
+function generateContent() {
+    var content = "<span>[";
+    for (var i = 0; i < numberOfDivs; ++i)
+        content += "<div id=" + i + " class='cell'>" + i + "</div>";
+    content += "]</span>";
+    return content;
+}
+
+function validateDivsPosition()
+{
+    var firstDiv = document.getElementById("0");
+    var prevOffsetLeft = firstDiv.offsetLeft;
+    var prevOffsetTop = firstDiv.offsetTop;
+    for (var i = 1; i < numberOfDivs; ++i) {
+        var currentDiv = document.getElementById(i);
+        var pass = (prevOffsetLeft < currentDiv.offsetLeft && prevOffsetTop == currentDiv.offsetTop) 
+            || (prevOffsetLeft == currentDiv.offsetLeft && prevOffsetTop < currentDiv.offsetTop)
+            || (prevOffsetLeft > currentDiv.offsetLeft && prevOffsetTop < currentDiv.offsetTop);
+        if (!pass)
+            return false;
+        prevOffsetLeft = currentDiv.offsetLeft;
+        prevOffsetTop = currentDiv.offsetTop;
+    }
+    return true;
+}
+
+function runTest(tests) {
+    var failed = "";
+    for (var i = 0; i < tests.length; ++i) {
+        document.body.innerHTML = generateContent();
+        for (var j = 0; j < numberOfDivs; ++j) {
+            document.getElementById(tests[i][j]).classList.toggle("cell");
+            if (!validateDivsPosition()) {
+                failed += " " + i;
+                break;
+            }
+        }
+    }
+    var result = "Test run: " + tests.length;
+    if (failed.length)
+        result +=  "<br>Failed cases: " + failed;
+    else
+        result += "<br>All passed.";
+    document.body.innerHTML = result;
+}
+
+var numberOfDivs = 6; // 6! = 720 tests.
+runTest(permutateDivMoveOrder([0, 1, 2, 3, 4, 5]));
+</script>
+</html>

@@ -1,0 +1,11 @@
+Tests type enforcement on DOM setters.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.body = nodelist; threw exception TypeError: The Document.body attribute must be an instance of HTMLElement.
+PASS table.tHead = nodelist; threw exception TypeError: The HTMLTableElement.tHead attribute must be an instance of HTMLTableSectionElement.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

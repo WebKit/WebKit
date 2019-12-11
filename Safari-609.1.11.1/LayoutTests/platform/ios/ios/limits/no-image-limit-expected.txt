@@ -1,0 +1,10 @@
+Testing that we do not hit a 10MB per-document resource limit. We attempt to load 200 71KB images (~14MB) and we check that each triggers an onload event.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS numberLoadedSuccessfully is numberOfImages
+

@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description(
+    "This test checks that the globalThis property is the same as the window object"
+);
+
+// testRunner.waitUntilDone();
+
+shouldBe("globalThis", "window");
+if (globalThis !== window)
+    testFailed("globalThis !== window in the global scope");
+
+if (eval("globalThis !== window"))
+    testFailed("globalThis !== window in an eval scope");
+
+</script>
+
+<script type="module">
+shouldBe("globalThis", "window");
+if (globalThis !== window)
+    testFailed("globalThis !== window in the global module scope");
+
+if (eval("globalThis !== window"))
+    testFailed("globalThis !== window in an eval module scope");
+</script>
+
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

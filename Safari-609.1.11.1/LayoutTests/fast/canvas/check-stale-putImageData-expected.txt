@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 28: a == b? false
+CONSOLE MESSAGE: line 35: a == c? false
+1, 3, and 4 should all show the same red square. 2 should show nothing.
+
+
+

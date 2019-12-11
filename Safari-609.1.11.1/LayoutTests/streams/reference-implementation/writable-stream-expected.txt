@@ -1,0 +1,18 @@
+CONSOLE MESSAGE: line 3374: TypeError: undefined is not an object (evaluating 'e.error')
+CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
+
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'e.error')
+
+PASS error argument is given to start method 
+PASS Underlying sink's write won't be called until start finishes 
+PASS Underlying sink's close won't be called until start finishes 
+PASS Fulfillment value of ws.close() call must be undefined even if the underlying sink returns a non-undefined value 
+PASS Underlying sink's write or close are never invoked if start throws 
+PASS Underlying sink's write or close are never invoked if the promise returned by start is rejected 
+PASS WritableStream can be constructed with no arguments 
+PASS WritableStream instances have the correct methods and properties 
+PASS WritableStream with simple input, processed asynchronously 
+PASS WritableStream with simple input, processed synchronously 
+PASS WritableStream is writable and ready fulfills immediately if the strategy does not apply backpressure 
+PASS Fulfillment value of ws.write() call must be undefined even if the underlying sink returns a non-undefined value 
+

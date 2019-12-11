@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
+
+function runTest() {
+    Markup.description("This tests for a bug where pasted content starting with an interchange newline would end up\n"
+    + "outside of the editable region where it was pasted. You should see 'foo\\nbar' below.");
+
+    var sel = window.getSelection();
+    var e = document.getElementById("test");
+
+    sel.setPosition(e, 0);
+    sel.modify("move", "forward", "word");
+    document.execCommand("InsertHTML", false, "<br class='Apple-interchange-newline'>bar");
+
+    Markup.dump(document.body);
+}
+
+</script>
+</head>
+<body>
+<div id="test" contenteditable="true">foo</div>
+non-editable
+<script>
+runTest();
+</script>
+</body>
+</html>

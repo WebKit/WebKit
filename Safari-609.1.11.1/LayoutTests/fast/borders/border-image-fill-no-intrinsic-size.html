@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<head>
+  <style>
+    .box {
+      height: 100px;
+      width: 100px;
+      display: inline-block;
+      background-color: red;
+    }
+    .border-20 {
+      border: 20px solid;
+    }
+    .no-border {
+      border: 0px none;
+    }
+    .border-image-100-intrinsic {
+       border-image: url('resources/svg-border-100x100-intrinsic.svg') 0 fill;
+    }
+    .border-image-100-intrinsic-slice {
+       border-image: url('resources/svg-border-100x100-intrinsic.svg') 20 fill;
+    }
+    .border-image-100-viewbox {
+       border-image: url('resources/svg-border-100x100-viewbox.svg') 0 fill;
+    }
+    .border-image-100-viewbox-slice {
+       border-image: url('resources/svg-border-100x100-viewbox.svg') 20 fill;
+    }
+    .border-image-100-relative {
+       border-image: url('resources/svg-border-100x100-relative.svg') 0 fill;
+    }
+    .border-image-100-relative-slice {
+       border-image: url('resources/svg-border-100x100-relative.svg') 20 fill;
+    }
+    .border-image-no-intrinsic {
+       border-image: url('resources/svg-border-no-intrinsic.svg') 0 fill;
+    }
+    .border-image-no-intrinsic-slice {
+       border-image: url('resources/svg-border-no-intrinsic.svg') 20 fill;
+    }
+  </style>
+</head>
+<body>
+  <div class="box no-border border-image-100-intrinsic"></div>
+  <div class="box border-20 border-image-100-intrinsic"></div>
+  <div class="box no-border border-image-100-intrinsic-slice"></div>
+  <div class="box border-20 border-image-100-intrinsic-slice"></div>
+  <br>
+  <div class="box no-border border-image-100-viewbox"></div>
+  <div class="box border-20 border-image-100-viewbox"></div>
+  <div class="box no-border border-image-100-viewbox-slice"></div>
+  <div class="box border-20 border-image-100-viewbox-slice"></div>
+  <br>
+  <div class="box no-border border-image-100-relative"></div>
+  <div class="box border-20 border-image-100-relative"></div>
+  <div class="box no-border border-image-100-relative-slice"></div>
+  <div class="box border-20 border-image-100-relative-slice"></div>
+  <br>
+  <div class="box no-border border-image-no-intrinsic"></div>
+  <div class="box border-20"></div>
+  <div class="box no-border border-image-no-intrinsic-slice"></div>
+  <div class="box border-20 border-image-no-intrinsic-slice"></div>
+</body>

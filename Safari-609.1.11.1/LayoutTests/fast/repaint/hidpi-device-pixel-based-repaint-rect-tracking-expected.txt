@@ -1,0 +1,5 @@
+(repaint rects
+  (rect 0 0 22 22)
+  (rect 1.50 0 22 22)
+)
+

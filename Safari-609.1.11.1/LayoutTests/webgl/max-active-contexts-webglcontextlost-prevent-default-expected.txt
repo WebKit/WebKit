@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 19: There are too many active WebGL contexts on this page, the oldest context will be lost.
+PASS if the first context was lost due to creating too many WebGL contexts even though preventDefault() was called when a webglcontextlost event was dispatched.

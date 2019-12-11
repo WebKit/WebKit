@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 3082: Error: assert_equals: expected "rgb(0, 255, 0)" but got "rgb(255, 0, 0)"
+
+Harness Error (FAIL), message = Error: assert_equals: expected "rgb(0, 255, 0)" but got "rgb(255, 0, 0)"
+
+TIMEOUT Check if onhover events reset correctly when triggred multiple times Test timed out
+
+Harness Error (FAIL), message = Error: assert_equals: expected "rgb(0, 255, 0)" but got "rgb(255, 0, 0)"
+
+TIMEOUT Check if onhover events reset correctly when triggred multiple times Test timed out
+

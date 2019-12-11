@@ -1,0 +1,28 @@
+CONSOLE MESSAGE: Unsafe attempt to load URL http://127.0.0.1:8800/fetch/api/request/resources/cache.py?token=d01dbadc-e50c-4ac9-af14-d4e81b602fdb&content=0.804209027234067&tag=0.036638426229378296&expires=Sat,%2004%20Jan%202020%2008:00:00%20GMT from origin http://localhost:8800. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/fetch/api/request/resources/cache.py?token=d01dbadc-e50c-4ac9-af14-d4e81b602fdb&content=0.804209027234067&tag=0.036638426229378296&expires=Sat,%2004%20Jan%202020%2008:00:00%20GMT due to access control checks.
+CONSOLE MESSAGE: Unsafe attempt to load URL http://127.0.0.1:8800/fetch/api/request/resources/cache.py?token=83aa557c-5c51-4440-921b-4ca337c302ff&content=0.24542566599674265&date=Thu,%2003%20Jan%202019%2020:33:31%20GMT&expires=Sat,%2004%20Jan%202020%2008:00:00%20GMT from origin http://localhost:8800. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/fetch/api/request/resources/cache.py?token=83aa557c-5c51-4440-921b-4ca337c302ff&content=0.24542566599674265&date=Thu,%2003%20Jan%202019%2020:33:31%20GMT&expires=Sat,%2004%20Jan%202020%2008:00:00%20GMT due to access control checks.
+CONSOLE MESSAGE: Unsafe attempt to load URL http://127.0.0.1:8800/fetch/api/request/resources/cache.py?token=43898b6b-9c40-4a61-895e-30b5d5e7ebcf&content=0.9709631928702825&tag=0.04895515532690764&expires=Thu,%2004%20Jan%202018%2008:00:00%20GMT from origin http://localhost:8800. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/fetch/api/request/resources/cache.py?token=43898b6b-9c40-4a61-895e-30b5d5e7ebcf&content=0.9709631928702825&tag=0.04895515532690764&expires=Thu,%2004%20Jan%202018%2008:00:00%20GMT due to access control checks.
+CONSOLE MESSAGE: Unsafe attempt to load URL http://127.0.0.1:8800/fetch/api/request/resources/cache.py?token=42997c41-bbe2-42d2-aba8-1b1b7b661f8c&content=0.15570209656970524&date=Thu,%2003%20Jan%202019%2020:33:31%20GMT&expires=Thu,%2004%20Jan%202018%2008:00:00%20GMT from origin http://localhost:8800. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/fetch/api/request/resources/cache.py?token=42997c41-bbe2-42d2-aba8-1b1b7b661f8c&content=0.15570209656970524&date=Thu,%2003%20Jan%202019%2020:33:31%20GMT&expires=Thu,%2004%20Jan%202018%2008:00:00%20GMT due to access control checks.
+
+PASS RequestCache "only-if-cached" mode checks the cache for previously cached content and avoids revalidation for stale responses with Etag and stale response 
+PASS RequestCache "only-if-cached" mode checks the cache for previously cached content and avoids revalidation for stale responses with Last-Modified and stale response 
+PASS RequestCache "only-if-cached" mode checks the cache for previously cached content and avoids revalidation for fresh responses with Etag and fresh response 
+PASS RequestCache "only-if-cached" mode checks the cache for previously cached content and avoids revalidation for fresh responses with Last-Modified and fresh response 
+PASS RequestCache "only-if-cached" mode checks the cache for previously cached content and does not go to the network if a cached response is not found with Etag and fresh response 
+PASS RequestCache "only-if-cached" mode checks the cache for previously cached content and does not go to the network if a cached response is not found with Last-Modified and fresh response 
+PASS RequestCache "only-if-cached" (with "same-origin") uses cached same-origin redirects to same-origin content with Etag and fresh response 
+PASS RequestCache "only-if-cached" (with "same-origin") uses cached same-origin redirects to same-origin content with Last-Modified and fresh response 
+PASS RequestCache "only-if-cached" (with "same-origin") uses cached same-origin redirects to same-origin content with Etag and stale response 
+PASS RequestCache "only-if-cached" (with "same-origin") uses cached same-origin redirects to same-origin content with Last-Modified and stale response 
+PASS RequestCache "only-if-cached" (with "same-origin") does not follow redirects across origins and rejects with Etag and fresh response 
+PASS RequestCache "only-if-cached" (with "same-origin") does not follow redirects across origins and rejects with Last-Modified and fresh response 
+PASS RequestCache "only-if-cached" (with "same-origin") does not follow redirects across origins and rejects with Etag and stale response 
+PASS RequestCache "only-if-cached" (with "same-origin") does not follow redirects across origins and rejects with Last-Modified and stale response 
+

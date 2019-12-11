@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing a JWK ECDH private key with P-521");
+
+jsTestIsAsync = true;
+
+var jwkKey = {
+    kty: "EC",
+    use: "enc",
+    ext: false,
+    key_ops: ["deriveKey", "deriveBits"],
+    crv: "P-521",
+    x: "ATyYJNg6KbLelgL09FGKksW7qfIEPf4OPCHB7PuoUq4AyiJQaMqWD7TagGc4gwY5lJ7rDRLKGdxGmf19inAT_X1a",
+    y: "AAF1xys7jFj4QkHBC3uF_Kodak7rOkbmpAPKrqzR_akXaCwNfdsjX12_uVkDhyUqF-C5oUYsKLqET8RMm8kg8cX9",
+    d: "APLcP3zg0beau_cHUhnqmoeduWOKTh3Ki7shV0NxvrXTIp4pCUv3RX6do19RD7c4Goh3EGO3UJ9FdhzbeNLzYmmH",
+};
+var nonExtractable = false;
+
+debug("Importing a key...");
+crypto.subtle.importKey("jwk", jwkKey, { name: "ECDH", namedCurve: "P-521" }, nonExtractable, ["deriveKey", "deriveBits"]).then(function(result) {
+    privateKey = result;
+
+    shouldBe("privateKey.toString()", "'[object CryptoKey]'");
+    shouldBe("privateKey.type", "'private'");
+    shouldBe("privateKey.extractable", "false");
+    shouldBe("privateKey.algorithm.name", "'ECDH'");
+    shouldBe("privateKey.algorithm.namedCurve", "'P-521'");
+    shouldBe("privateKey.usages", "['deriveBits', 'deriveKey']");
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

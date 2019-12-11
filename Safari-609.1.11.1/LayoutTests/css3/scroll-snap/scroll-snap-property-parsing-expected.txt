@@ -1,0 +1,114 @@
+Test the parsing of the scroll-snap-* properties.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+initial value : initial
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('scroll-snap-type') is 'initial'
+
+only strictness : mandatory
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('scroll-snap-type') is 'mandatory'
+
+only axis : both
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('scroll-snap-type') is 'both'
+
+none : none
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('scroll-snap-type') is 'none'
+
+strictness following axis : inline mandatory
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('scroll-snap-type') is 'inline mandatory'
+
+initial value : initial
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('scroll-snap-align') is 'initial'
+
+single value : start
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('scroll-snap-align') is 'start'
+
+two values : start end
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('scroll-snap-align') is 'start end'
+
+single length : 10px
+PASS cssRule.type is 1
+PASS declaration.length is 4
+PASS declaration.getPropertyValue('scroll-padding') is '10px'
+
+two percentages : 10% 20%
+PASS cssRule.type is 1
+PASS declaration.length is 4
+PASS declaration.getPropertyValue('scroll-padding') is '10% 20%'
+
+three lengths : 1px 2px 3px
+PASS cssRule.type is 1
+PASS declaration.length is 4
+PASS declaration.getPropertyValue('scroll-padding') is '1px 2px 3px'
+
+four values : 50px 10% 20% 50px
+PASS cssRule.type is 1
+PASS declaration.length is 4
+PASS declaration.getPropertyValue('scroll-padding') is '50px 10% 20% 50px'
+
+calc expression : calc(50px + 10%) 20px
+PASS cssRule.type is 1
+PASS declaration.length is 4
+PASS declaration.getPropertyValue('scroll-padding') is 'calc(50px + 10%) 20px'
+
+various units : 1em 5mm 2in 4cm
+PASS cssRule.type is 1
+PASS declaration.length is 4
+PASS declaration.getPropertyValue('scroll-padding') is '1em 5mm 2in 4cm'
+
+subpixel values : 10.4375px 6.5px
+PASS cssRule.type is 1
+PASS declaration.length is 4
+PASS declaration.getPropertyValue('scroll-padding') is '10.4375px 6.5px'
+
+single length : 10px
+PASS cssRule.type is 1
+PASS declaration.length is 4
+PASS declaration.getPropertyValue('scroll-snap-margin') is '10px'
+
+two lengths : 10px 20px
+PASS cssRule.type is 1
+PASS declaration.length is 4
+PASS declaration.getPropertyValue('scroll-snap-margin') is '10px 20px'
+
+three lengths : 1px 2px 3px
+PASS cssRule.type is 1
+PASS declaration.length is 4
+PASS declaration.getPropertyValue('scroll-snap-margin') is '1px 2px 3px'
+
+four lengths : 50px 10px 20px 50px
+PASS cssRule.type is 1
+PASS declaration.length is 4
+PASS declaration.getPropertyValue('scroll-snap-margin') is '50px 10px 20px 50px'
+
+various units : 1em 5mm 2in 4cm
+PASS cssRule.type is 1
+PASS declaration.length is 4
+PASS declaration.getPropertyValue('scroll-snap-margin') is '1em 5mm 2in 4cm'
+
+subpixel values : 10.4375px 6.5px
+PASS cssRule.type is 1
+PASS declaration.length is 4
+PASS declaration.getPropertyValue('scroll-snap-margin') is '10.4375px 6.5px'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

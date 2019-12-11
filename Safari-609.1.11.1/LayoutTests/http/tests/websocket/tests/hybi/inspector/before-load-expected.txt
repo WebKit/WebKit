@@ -1,0 +1,12 @@
+Tests that WebSockets created before the inspector loads are also tracked.
+
+
+== Running test suite: WebSocket.BeforeLoad
+-- Running test case: WebSocket.BeforeLoad
+PASS: Should have 1 WebSocketResource
+PASS: Resource should be a WebSocket.
+PASS: Resource URL should be "ws://127.0.0.1:8880/websocket/tests/hybi/inspector/echo".
+PASS: Resource should have request headers.
+PASS: Resource should have response headers.
+Resource readyState should be Symbol(open).
+

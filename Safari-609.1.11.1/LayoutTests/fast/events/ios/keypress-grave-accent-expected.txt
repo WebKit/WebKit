@@ -1,0 +1,7 @@
+Tests that we dispatch DOM key events with the correct details when the grave accent key (`) is pressed on the keyboard.
+
+
+type: keydown, key: `, code: Backquote, keyIdentifier: U+0060, keyCode: 192, charCode: 0, keyCode: 192, which: 192
+type: keypress, key: `, code: Backquote, keyIdentifier: , keyCode: 96, charCode: 96, keyCode: 96, which: 96
+type: keyup, key: `, code: Unidentified, keyIdentifier: Unidentified, keyCode: 0, charCode: 0, keyCode: 0, which: 0
+

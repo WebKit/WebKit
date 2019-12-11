@@ -1,0 +1,14 @@
+http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-ignore-deny-meta-tag-parent-same-origin-deny.html - didFinishLoading
+http://localhost:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe-parent-same-origin-deny.html - willSendRequest <NSURLRequest URL http://localhost:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe-parent-same-origin-deny.html, main document URL http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-ignore-deny-meta-tag-parent-same-origin-deny.html, http method GET> redirectResponse (null)
+http://localhost:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe-parent-same-origin-deny.html - didReceiveResponse <NSURLResponse http://localhost:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe-parent-same-origin-deny.html, http status code 200>
+CONSOLE MESSAGE: line 3: The X-Frame-Option 'sameorigin' supplied in a <meta> element was ignored. X-Frame-Options may only be provided by an HTTP header sent with the document.
+CONSOLE MESSAGE: line 18: SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 19: FAIL: Could not read contentWindow.location.href
+There should be content in the iframe below
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+PASS: This should show up even though the parent is not in the same origin because we should be ignoring the meta tag.

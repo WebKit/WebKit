@@ -1,0 +1,3 @@
+
+PASS Terminating a worker with a XHR in progress doesn't crash 
+

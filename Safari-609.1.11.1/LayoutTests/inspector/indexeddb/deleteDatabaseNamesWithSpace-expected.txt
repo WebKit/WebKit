@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: line 9: Created Database 'Database With Space'
+
+== Running test suite: IndexedDB.requestDatabaseNames.spaces
+-- Running test case: ClearDatabases
+-- Running test case: EnsureNoDatabases
+PASS: No IndexedDB databases should exist initially.
+
+-- Running test case: CreateDatabaseWithSpacesInName
+PASS: A single IndexedDB database should exist.
+["Database With Space"]
+
+-- Running test case: DeleteDatabaseWithSpacesInName
+PASS: No IndexedDB databases should exist because we just deleted them.
+[]
+

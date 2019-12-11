@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container {
+            position: relative;
+            margin: 20px;
+        }
+        .box {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200px;
+            height: 200px;
+            background-color: silver;
+        }
+        .composited {
+            transform: translateZ(1px);
+        }
+        .sibling {
+            top: 300px;
+            background-color: gray;
+        }
+        .negative {
+            z-index: -1;
+            background-color: red;
+        }
+        .positive {
+            z-index: 1;
+            background-color: green;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('target').classList.add('composited');
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 1000);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="composited child box">
+            <div class="negative box"></div>
+            <div class="composited positive box"></div>
+        </div>
+        <div id="target" class="sibling box"></div>
+    </div>
+</body>
+</html>

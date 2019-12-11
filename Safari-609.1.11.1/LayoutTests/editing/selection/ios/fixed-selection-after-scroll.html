@@ -1,0 +1,76 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<head>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test.js"></script>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        #fixed {
+            width: 100vw;
+            height: 50px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            font-size: 100px;
+        }
+
+        #content {
+            background-image: linear-gradient(blue, red);
+            height: 10000px;
+        }
+    </style>
+    <script>
+    jsTestIsAsync = true;
+
+    function selectTextAt(tapX, tapY)
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                (function() {
+                    uiController.longPressAtPoint(${tapX}, ${tapY}, function() {
+                        uiController.uiScriptComplete("Done");
+                    });
+                })();`, resolve);
+        });
+    }
+
+    function run()
+    {
+        if (!window.testRunner || !testRunner.runUIScript) {
+            description("To manually test, long press this text and scroll up. The selection rect should be in the expected place (in the fixed div) after scrolling.");
+            return;
+        }
+
+        selectTextAt(50, 50)
+        .then(() => UIHelper.getUISelectionRects())
+        .then((rects) => {
+            initialSelectionRects = rects;
+            shouldBe("initialSelectionRects.length", "1");
+            shouldBe("initialSelectionRects[0].left", "0");
+            shouldBe("initialSelectionRects[0].top", "0");
+            shouldBe("initialSelectionRects[0].width", "309");
+            shouldBe("initialSelectionRects[0].height", "114");
+            document.scrollingElement.scrollTop += 5000;
+            return UIHelper.getUISelectionRects();
+        })
+        .then((rects) => {
+            finalSelectionRects = rects;
+            shouldBe("finalSelectionRects.length", "1");
+            shouldBe("finalSelectionRects[0].left", "0");
+            shouldBe("finalSelectionRects[0].top", "5000");
+            shouldBe("finalSelectionRects[0].width", "309");
+            shouldBe("finalSelectionRects[0].height", "114");
+            finishJSTest();
+        });
+    }
+    </script>
+</head>
+<body onload=run()>
+    <div id="fixed">WebKit</div>
+    <div id="content"></div>
+</body>
+</html>

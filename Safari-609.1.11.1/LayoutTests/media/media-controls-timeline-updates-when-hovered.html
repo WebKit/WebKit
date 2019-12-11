@@ -1,0 +1,53 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<p>This tests if media controls timeline is properly updated when a cursor hovers the controls during playback.</p>
+<video controls></video>
+<script src=media-file.js></script>
+<script src=video-test.js></script>
+<script src=media-controls.js></script>
+<script>
+function timeLineValue()
+{
+    var timeline = mediaControlsElement(internals.shadowRoot(video).firstChild.firstChild, '-webkit-media-controls-timeline');
+    if (!timeline)
+        throw "Failed to find -webkit-media-controls-timeline";
+
+    return timeline.value;
+}
+
+function canplaythrough()
+{
+    if (!window.testRunner) {
+        endTest();
+        return;
+    }
+
+    testExpected("timeLineValue()", 0);
+
+    var playButtonCoords;
+    try {
+        playButtonCoords = mediaControlsButtonCoordinates(video, "play-button");
+    } catch (exception) {
+        endTest();
+        return;
+    }
+    eventSender.mouseMoveTo(playButtonCoords[0], playButtonCoords[1]);
+
+    video.addEventListener("timeupdate", function() {
+         if (video.currentTime >= 1) {
+            consoleWrite("EVENT(timeupdate)");
+            test("timeLineValue() >= 1");
+            endTest();
+         }
+    });
+
+    run("video.play()");
+}
+
+var video;
+findMediaElement();
+video.src = findMediaFile("video", "content/test");
+
+waitForEvent("canplaythrough", canplaythrough);
+waitForEvent("play");
+waitForEventAndFail("error");
+</script>

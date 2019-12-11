@@ -1,0 +1,5 @@
+PASS - "flex" property for "row1" element at 0.5s saw something close to: 2,0,0
+PASS - "flex" property for "column1" element at 0.5s saw something close to: 0.5,0,10
+PASS - "flex" property for "negative1" element at 0.5s saw something close to: 1,0.5,75
+PASS - "flex" property for "no-flex1" element at 0.5s saw something close to: 0.5,0,0
+

@@ -1,0 +1,13 @@
+Tests that iframes with a pending provisional or scheduled load do not prevent page caching.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+pageshow - not from cache
+pagehide - entering cache
+pageshow - from cache
+PASS Page restored from Page Cache.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+    

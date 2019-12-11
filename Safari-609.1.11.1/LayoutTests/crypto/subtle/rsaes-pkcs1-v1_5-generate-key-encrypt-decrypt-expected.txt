@@ -1,0 +1,14 @@
+Test encrypting&decrypting using RSAES-PKCS1-v1_5 algorithm with a generated key
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Generating a key...
+Encrypting...
+PASS bytesToASCIIString(cipherText) is not "Hello, World!"
+Decrypting...
+PASS bytesToASCIIString(decryptedText) is plainText
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

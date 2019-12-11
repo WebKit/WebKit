@@ -1,0 +1,27 @@
+<html>
+<body id='console'>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var xhr = new XMLHttpRequest;
+function secondRequest()
+{
+    xhr.onreadystatechange = function()
+    {
+        if (xhr.readyState == xhr.DONE) {
+            document.getElementById('console').appendChild(document.createTextNode("PASS"));
+            testRunner.notifyDone();
+        }
+    }
+    xhr.open("GET", "", true);
+    xhr.send();
+}
+window.addEventListener("DOMSubtreeModified", secondRequest, true);
+
+document.head.appendChild(document.createTextNode('X'));
+</script>
+</body>
+</html>

@@ -1,0 +1,316 @@
+/*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.details-section {
+    font-size: 10px;
+    background-color: var(--panel-background-color);
+    border-bottom: var(--details-section-border-bottom);
+
+    --details-section-border-bottom: 1px solid var(--border-color);
+    --details-section-header-top: -1px;
+}
+
+.details-section .details-section {
+    background-color: hsl(0, 0%, 100%);
+    border-color: var(--text-color-quaternary);
+}
+
+.details-section .details-section:last-child {
+    border-bottom: none;
+}
+
+.details-section .details-section:first-child {
+    border-top: 1px solid var(--border-color);
+}
+
+.details-section > .header {
+    position: sticky;
+    top: var(--details-section-header-top);
+    height: 23px;
+    padding: 4px 0;
+    -webkit-padding-end: 5px;
+    font-size: 11px;
+    font-weight: bold;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: hsl(0, 0%, 22%);
+    background-color: var(--panel-background-color);
+    overflow: hidden;
+
+    /* Ensure the headers are displayed above scrollbars. */
+    z-index: var(--z-index-header);
+}
+
+.details-section > .header > .options > .navigation-bar {
+    margin-top: 1px;
+    height: 100%;
+    border: none;
+}
+
+body[dir=ltr] .details-section > .header > .options,
+body[dir=rtl] .details-section > .header::before {
+    float: right;
+}
+
+body[dir=ltr] .details-section > .header::before,
+body[dir=rtl] .details-section > .header > .options {
+    float: left;
+}
+
+.details-section > .header > .options > .navigation-bar > .item {
+    width: 20px;
+    height: 100%;
+}
+
+.details-section .details-section > .header {
+    top: 21px;
+    background-color: hsl(0, 0%, 100%);
+    font-weight: 500;
+
+    /* Ensure these headers are displayed below the parent header but above scrollbars. */
+    z-index: calc(var(--z-index-header) - 1);
+}
+
+.details-section .details-section:not(.collapsed) > .header {
+    border-bottom: 1px solid hsl(0, 0%, 87%);
+}
+
+.details-section > .header::before {
+    display: block;
+    width: 21px;
+    height: 100%;
+    content: "";
+    background-image: url(../Images/DisclosureTriangles.svg#open-normal);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 13px 13px;
+}
+
+body[dir=rtl] .details-section > .header::before {
+    transform: scaleX(-1);
+}
+
+.details-section > .header:not(.mouse-over-options-element):active::before {
+    background-image: url(../Images/DisclosureTriangles.svg#open-active);
+}
+
+.details-section.collapsed > .header::before {
+    background-image: url(../Images/DisclosureTriangles.svg#closed-normal);
+}
+
+.details-section.collapsed > .header:not(.mouse-over-options-element):active::before {
+    background-image: url(../Images/DisclosureTriangles.svg#closed-active);
+}
+
+.details-section > .header > label {
+    font-size: 10px;
+    color: hsla(0, 0%, 0%, 0.6);
+    text-align: end;
+}
+
+.details-section.collapsed  > .header > .options {
+    display: none;
+}
+
+.details-section > .header > label > input[type="checkbox"] {
+    margin: 0;
+    -webkit-margin-start: 5px;
+    vertical-align: 1px;
+    font-size: 10px;
+}
+
+.details-section > .header .go-to-arrow {
+    width: 10px;
+    height: 15px;
+    -webkit-margin-start: 3px;
+}
+
+.details-section > .content {
+    display: table;
+    width: 100%;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+.details-section.collapsed > .content {
+    display: none;
+}
+
+.details-section > .content > .group {
+    display: table-row-group;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.details-section > .content > .group:last-child {
+    border-bottom: none;
+}
+
+.details-section > .content > .group:nth-child(even) {
+    background-color: hsl(0, 0%, 97%);
+}
+
+.details-section > .content > .group:nth-child(even) > .row:matches(.simple:first-child > *, :not(.simple):first-child) {
+    border-top: 1px solid var(--border-color);
+}
+
+.details-section > .content > .group > .row.simple {
+    display: table-row;
+}
+
+.details-section > .content > .group > .row.simple:last-child > * {
+    padding-bottom: 5px !important;
+}
+
+.details-section > .content > .group > .row.simple.empty {
+    display: none;
+}
+
+.details-section > .content > .group > .row.empty.syntax-highlighted {
+    font-size: 10px;
+}
+
+.details-section > .content > .group > .row.simple.empty:last-child {
+    display: table-row;
+}
+
+.details-section > .content > .group > .row.simple.empty:last-child > * {
+    display: table-cell;
+    height: 1px;
+    font-size: 0;
+    color: transparent;
+    padding-top: 0;
+    padding-bottom: 3px !important;
+}
+
+.details-section > .content > .group > .row.simple.empty:last-child > * > * {
+    display: none;
+}
+
+.details-section > .content > .group > .row.simple > * {
+    display: table-cell;
+    vertical-align: top;
+    padding: 5px 4px 2px;
+}
+
+.details-section > .content > .group > .row.simple > .label {
+    width: 85px;
+    -webkit-padding-start: 6px;
+    color: hsl(0, 0%, 20%);
+    text-align: end;
+}
+
+.details-section > .content > .group > .row.simple > .value {
+    -webkit-padding-start: 6px;
+    word-break: break-all;
+    word-wrap: break-word;
+    cursor: text;
+    -webkit-user-select: text;
+}
+
+.details-section > .content > .group > .row.simple > .value .go-to-arrow {
+    width: 10px;
+    height: 12px;
+    -webkit-margin-start: 5px;
+}
+
+.details-section > .content > .group > .row.simple.data > .value {
+    word-break: break-all;
+}
+
+.details-section > .content > .group > .row:matches(.empty, .text) {
+    padding: 0 6px 7px 6px;
+    text-align: center;
+    color: gray;
+}
+
+.details-section > .content > .group > .row.text {
+    -webkit-user-select: text;
+}
+
+.details-section > .content > .group > .row.properties:not(.empty) {
+    padding: 4px 6px;
+}
+
+.details-section > .content > .group > .row > .message-text-view {
+    position: static;
+}
+
+.details-section > .content .data-grid {
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+}
+
+.details-section > .content .data-grid tr:not(.editable) td.value-column {
+    height: auto;
+    line-height: initial;
+    white-space: normal;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.details-section > .content .data-grid tr:not(.editable) td.value-column > div {
+    white-space: normal;
+    word-break: break-all;
+}
+
+@media (-webkit-min-device-pixel-ratio: 2) {
+    .details-section,
+    .details-section .details-section:not(.collapsed) > .header,
+    .details-section > .content > .group {
+        border-width: 0.5px !important;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .details-section > .header {
+        color: var(--text-color);
+    }
+
+    .details-section > .header > label {
+        color: var(--text-color-secondary);
+    }
+
+    .details-section .details-section,
+    .details-section .details-section > .header {
+        background-color: var(--background-color-content);
+    }
+
+    .details-section .details-section:not(.collapsed) > .header {
+        border-bottom-color: var(--border-color-secondary);
+    }
+
+    .details-section > .content > .group > .row.simple > .label {
+        color: var(--text-color-secondary);
+    }
+
+    .details-section > .content > .group:nth-child(even) {
+        background-color: unset;
+    }
+
+    .details-section > .content > .group > .row:matches(.empty, .text) {
+        color: var(--text-color-secondary);
+    }
+}

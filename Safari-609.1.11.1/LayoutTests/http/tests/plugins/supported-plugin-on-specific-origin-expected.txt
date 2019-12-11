@@ -1,0 +1,6 @@
+On WebKitTestRunner, no console log message should appear stating the plugin is unsupported.
+
+
+
+PASS Testing unsupported plug-in 
+

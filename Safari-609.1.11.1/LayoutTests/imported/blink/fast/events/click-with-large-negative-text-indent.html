@@ -1,0 +1,25 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+}
+</script>
+</head>
+<body>
+<button id="testButton" style="text-indent: -99999999px;" onclick="btnClicked()">Move</button>
+<p id="output"></p>
+<script>
+function btnClicked()
+{
+    document.getElementById('output').innerHTML = "Button is clicked.";
+}
+if (window.eventSender) {
+    var testEle = document.getElementById('testButton');
+    eventSender.mouseMoveTo(testEle.offsetLeft + testEle.offsetWidth / 2, testEle.offsetTop + testEle.offsetHeight / 2);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+</script>
+</body>
+</html>

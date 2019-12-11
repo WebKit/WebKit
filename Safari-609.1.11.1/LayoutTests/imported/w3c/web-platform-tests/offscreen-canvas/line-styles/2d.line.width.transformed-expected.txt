@@ -1,0 +1,7 @@
+2d.line.width.transformed
+
+Line stroke widths are affected by scale transformations
+
+
+FAIL Line stroke widths are affected by scale transformations null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

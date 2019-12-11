@@ -1,0 +1,16 @@
+<video controls></video>
+<script src=media-file.js></script>
+<script src=video-test.js></script>
+<script>
+    testExpected("video.currentSrc", "");
+    var mediaFile = findMediaFile("video", "content/test");
+    video.src = mediaFile;
+    testExpected("video.currentSrc", "");
+
+    waitForEvent('canplaythrough', function () { 
+        testExpected("stripExtension(relativeURL(video.currentSrc))", stripExtension(mediaFile));
+        endTest();
+    } );
+    
+    video.load();
+</script>

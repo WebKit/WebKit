@@ -1,0 +1,3 @@
+
+PASS XMLHttpRequest: members during network errors (sync) 
+

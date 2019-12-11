@@ -1,0 +1,37 @@
+<script src="resources/ensure-hidpi.js"></script>
+<style>
+img {
+    width: 200px;
+    height: 200px;
+}
+
+p {
+    width: 200px;
+    height: 100px;
+    display: inline-block;
+    font: 20px/1 Ahem;
+}
+
+.filtered {
+    -webkit-filter: url(#hueRotate);
+}
+</style>
+<div style="display: none">
+  <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0">
+    <defs>
+      <filter id="hueRotate">
+        <feColorMatrix type="hueRotate" values="0"/>
+        <feMerge>
+          <feMergeNode/>
+        </feMerge>
+      </filter>
+    </defs>
+  </svg>
+</div>
+<div>This is testing HiDPI output from filters. The actual effects are no-ops.</div>
+<img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><rect fill='green' width='100%' height='100%'/></svg>">
+<img class="filtered" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><rect fill='green' width='100%' height='100%'/></svg>">
+<div>
+    <p>Text</p>
+    <p class="filtered">Text</p>
+</div>

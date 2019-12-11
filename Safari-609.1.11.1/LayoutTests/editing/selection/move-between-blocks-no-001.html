@@ -1,0 +1,43 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    for (i = 0; i < 50; i++) {
+        moveSelectionForwardByCharacterCommand();
+    }
+    for (i = 0; i < 15; i++) {
+        deleteCommand();
+    }
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+<!-- body not contenteditable. treat these two divs like separate widgets.
+     arrowing from one to the other is prevented. -->
+<div contenteditable id="root" class="editing">
+<span id="test">We hold these truths to be self-evident,</span>
+</div>
+<div contenteditable class="editing">
+that all men are created equal, ...
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

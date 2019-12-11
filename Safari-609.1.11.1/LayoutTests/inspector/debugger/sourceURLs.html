@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("Debugger.scriptParsed.sourceURL-directives");
+
+    // Because InspectorTest output causes scripts to be parsed
+    // we cannot check sourceURL per evaluation easily. Instead
+    // just run a bunch of tests for valid and invalid directives
+    // and check that the output only includes the valid results.
+
+    let expressions = [];
+    let sourceURLExpectations = [];
+    let sourceMappingURLExpectations = [];
+
+    function addInvalidTestCase(args) {
+        let {expression} = args;
+        expressions.push(expression);
+    }
+
+    function addValidTestCase(args) {
+        let {expression, expected} = args;
+        expressions.push(expression);
+        sourceURLExpectations.push(expected);
+        sourceMappingURLExpectations.push(expected);
+    }
+
+    suite.addTestCase({
+        name: "TestExpressionsForSourceURL",
+        test(resolve, reject) {
+            for (let expression of expressions)
+                ProtocolTest.evaluateInPage(expression);
+
+            InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject) {
+                // Ignore named inspector internal scripts.
+                if (messageObject.params.sourceURL && messageObject.params.sourceURL.startsWith("__InjectedScript_"))
+                    return;
+
+                // Has a sourceURL, must be one of the valid ones.
+                if (messageObject.params.sourceURL) {
+                    let sourceURL = messageObject.params.sourceURL;
+                    ProtocolTest.log(`Found Script with sourceURL '${sourceURL}'`);
+                    ProtocolTest.assert(sourceURLExpectations[0] === sourceURL, "Did not expect to see sourceURL: " + sourceURL);
+                    sourceURLExpectations.shift();
+                    if (!sourceURLExpectations.length)
+                        resolve();
+                }
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "TestExpressionsForSourceMappingURL",
+        test(resolve, reject) {
+            // Rewrite the "sourceURL" to "sourceMappingURL" in the original expressions.
+            for (let expression of expressions)
+                ProtocolTest.evaluateInPage(expression.replace(/sourceURL/g, "sourceMappingURL"));
+
+            InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject) {
+                // Has a sourceMapURL, must be one of the valid ones.
+                if (messageObject.params.sourceMapURL) {
+                    let sourceMappingURL = messageObject.params.sourceMapURL;
+                    ProtocolTest.log(`Found Script with sourceMappingURL '${sourceMappingURL}'`);
+                    ProtocolTest.assert(sourceMappingURLExpectations[0] === sourceMappingURL, "Did not expect to see sourceMappingURL: " + sourceMappingURL);
+                    sourceMappingURLExpectations.shift();
+                    if (!sourceMappingURLExpectations.length)
+                        resolve();
+                }
+            }
+        }
+    });
+
+    // ------
+
+    addInvalidTestCase({
+        description: "Evaluation without a SourceURL.",
+        expression: "eval('1')",
+    });
+
+    addInvalidTestCase({
+        description: "SourceURL missing '#'.",
+        expression: "eval('// sourceURL=invalid.js')",
+    });
+
+    addInvalidTestCase({
+        description: "SourceURL missing space after '#'.",
+        expression: "eval('//#sourceURL=invalid.js')",
+    });
+
+    addInvalidTestCase({
+        description: "SourceURL with space before '#'.",
+        expression: "eval('// #sourceURL=invalid.js')",
+    });
+
+    addInvalidTestCase({
+        description: "SourceURL with multiple spaces after '#'.",
+        expression: "eval('//#  sourceURL=invalid.js')",
+    });
+
+    addInvalidTestCase({
+        description: "SourceURL with space between name and '='.",
+        expression: "eval('//# sourceURL =invalid.js')",
+    });
+
+    addInvalidTestCase({
+        description: "SourceURL with quotes in value.",
+        expression: "eval('//# sourceURL=\\\'invalid.js\\\'')",
+    });
+
+    addInvalidTestCase({
+        description: "SourceURL value must be a single non-whitespace enclosed value.",
+        expression: "eval('//# sourceURL=invalid.js a')",
+    });
+
+    addInvalidTestCase({
+        description: "Unknown directive.",
+        expression: "eval('//# unknown=invalid.js')",
+    });
+
+    addInvalidTestCase({
+        description: "Missing parts.",
+        expression: "eval('//#')",
+    });
+
+    addInvalidTestCase({
+        description: "Missing parts.",
+        expression: "eval('//# ')",
+    });
+
+    addInvalidTestCase({
+        description: "Missing parts.",
+        expression: "eval('//# source')",
+    });
+
+    addInvalidTestCase({
+        description: "Missing parts.",
+        expression: "eval('//# sourceURL=')",
+    });
+
+    // ------
+
+    addValidTestCase({
+        description: "SourceURL basic form.",
+        expression: "eval('//# sourceURL=test1.js')",
+        expected: "test1.js",
+    });
+
+    addValidTestCase({
+        description: "SourceURL extra leading whitespace.",
+        expression: "eval('//# sourceURL=   test2.js')",
+        expected: "test2.js",
+    });
+
+    addValidTestCase({
+        description: "SourceURL extra trailing whitespace.",
+        expression: "eval('//# sourceURL=test3.js    ')",
+        expected: "test3.js",
+    });
+
+    addValidTestCase({
+        description: "SourceURL extra leading and trailing whitespace.",
+        expression: "eval('//# sourceURL=   test4.js   ')",
+        expected: "test4.js",
+    });
+
+    addValidTestCase({
+        description: "SourceURL with tabs.",
+        expression: "eval('//#\\tsourceURL=test5.js')",
+        expected: "test5.js",
+    });
+
+    addValidTestCase({
+        description: "SourceURLs not at the start of a line.",
+        expression: "eval('1 //# sourceURL=test6.js')",
+        expected: "test6.js",
+    });
+
+    addValidTestCase({
+        description: "SourceURL with deprecated '@' instead of '#'.",
+        expression: "eval('//@ sourceURL=test7.js   ')",
+        expected: "test7.js",
+    });
+
+    addValidTestCase({
+        description: "SourceURLs not on the first line.",
+        expression: "eval('\\n\\n//# sourceURL=test8.js')",
+        expected: "test8.js",
+    });
+
+    addValidTestCase({
+        description: "Multiple SourceURLs will return the second.",
+        expression: "eval('//# sourceURL=first.js\\n//# sourceURL=second.js')",
+        expected: "second.js",
+    });
+
+    InspectorProtocol.sendCommand("Debugger.enable", {});
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for the Debugger.scriptParsed sourceURL and sourceMappingURL comment directive parsing.</p>
+</body>
+</html>

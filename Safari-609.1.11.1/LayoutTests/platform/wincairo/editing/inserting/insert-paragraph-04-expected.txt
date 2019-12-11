@@ -1,0 +1,40 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > B > BODY > HTML > #document to 3 of DIV > B > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of DIV > B > BODY > HTML > #document to 2 of DIV > B > BODY > HTML > #document toDOMRange:range from 2 of DIV > B > BODY > HTML > #document to 2 of DIV > B > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x60
+        RenderText {#text} at (0,0) size 773x39
+          text run at (0,0) width 384: "This tests inserting a paragraph separator after a horizontal rule. "
+          text run at (384,0) width 389: "You should see 'foo', empty paragraph, horizontal rule, 'bar', and"
+          text run at (0,20) width 288: "the caret should be just after the horizontal rule. "
+        RenderInline {B} at (0,0) size 766x39
+          RenderText {#text} at (288,20) size 766x39
+            text run at (288,20) width 167: "This demonstrates 8345. "
+            text run at (455,20) width 311: "The caret after a horizontal rule is drawn in the"
+            text run at (0,40) width 335: "same location as the caret before a horizontal rule."
+      RenderBlock (anonymous) at (0,76) size 784x0
+        RenderInline {B} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,76) size 784x78
+        RenderBlock {DIV} at (0,0) size 784x78
+          RenderBlock (anonymous) at (0,0) size 784x20
+            RenderText {#text} at (0,0) size 21x19
+              text run at (0,0) width 21: "foo"
+          RenderBlock {HR} at (0,28) size 784x2 [border: (1px inset #000000)]
+          RenderBlock (anonymous) at (0,38) size 784x40
+            RenderBR {BR} at (0,0) size 0x19
+            RenderText {#text} at (0,20) size 22x19
+              text run at (0,20) width 22: "bar"
+      RenderBlock (anonymous) at (0,154) size 784x0
+        RenderInline {B} at (0,0) size 0x0
+caret: position 0 of child 2 {BR} of child 1 {DIV} of child 1 {B} of body

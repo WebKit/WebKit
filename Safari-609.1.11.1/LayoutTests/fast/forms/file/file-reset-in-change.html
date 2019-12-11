@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<body>
+<p>Resetting a file upload control by script should clear the icon.</p>
+<p>Manual test: Select a file for the file upload control, and confirm it has no icon.</p>
+<input id=file1 type=file>
+</form>
+<script>
+function dragFilesOntoElement(element, files) {
+    eventSender.beginDragWithFiles(files);
+    var centerX = element.offsetLeft + element.offsetWidth / 2;
+    var centerY = element.offsetTop + element.offsetHeight / 2;
+    eventSender.mouseMoveTo(centerX, centerY);
+    eventSender.mouseUp();
+}
+
+function handleChange() {
+    file1.value = '';
+}
+
+var file1 = document.getElementById('file1');
+file1.addEventListener('change', handleChange);
+dragFilesOntoElement(file1, ['foo.txt']);
+</script>
+</body>

@@ -1,0 +1,20 @@
+Tests null handling of several HTMLFormElement attributes
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS form.getAttribute('method') is null
+PASS form.getAttribute('enctype') is null
+PASS form.getAttribute('encoding') is null
+form.method = null
+PASS form.getAttribute('method') is "null"
+form.enctype = null
+PASS form.getAttribute('enctype') is "null"
+form.encoding = 'test'
+PASS form.getAttribute('enctype') is "test"
+form.encoding = null
+PASS form.getAttribute('enctype') is "null"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

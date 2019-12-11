@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div id="content">
+  <div role="dialog" aria-modal="true" id="test">
+    <input type="button" value="ok"/>
+  </div>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests that a dialog with aria-modal='true' exposes ATK_STATE_MODAL");
+    if (window.accessibilityController) {
+        var axElement = accessibilityController.accessibleElementById("test");
+        shouldBeTrue("axElement.boolAttributeValue('AXModal')");
+
+        var element = document.getElementById("test");
+        element.setAttribute("aria-modal", "false");
+        shouldBeFalse("axElement.boolAttributeValue('AXModal')");
+
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

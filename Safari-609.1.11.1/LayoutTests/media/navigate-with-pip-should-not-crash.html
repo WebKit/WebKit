@@ -1,0 +1,65 @@
+<html>
+<head>
+    <title>Navigate to another page while video is playing in pip should not crash</title>
+    <script src="media-file.js"></script>
+    <script src="video-test.js"></script>
+    <script>
+        var mediaElement;
+        var videoframe;
+
+        if (window.internals)
+            window.internals.settings.setAllowsPictureInPictureMediaPlayback(true);
+
+        function init()
+        {
+            videoframe = document.getElementById("videoframe");
+            videoframe.onload = frameLoaded;
+            videoframe.src = findMediaFile("video", "content/test");
+        }
+
+        function frameLoaded()
+        {
+            consoleWrite("Video frame loaded.");
+
+            var standaloneMediaDocument = document.getElementById("videoframe").contentDocument;
+            mediaElement = standaloneMediaDocument.querySelector("video");
+            if (!mediaElement) {
+                failTest("ERROR: Video element was not found in frameLoaded().");
+                return;
+            }
+
+            runWithKeyDown(function(){ mediaElement.play(); });
+
+            if (!('webkitSupportsPresentationMode' in mediaElement && 'webkitPresentationMode' in mediaElement)) {
+                failTest("Presentation mode is not supported in this video element.")
+                return;
+            }
+
+            consoleWrite("Going into Picture-in-Picture");
+            mediaElement.addEventListener('webkitpresentationmodechanged', onpresentationmodechanged);
+            runWithKeyDown(function(){ mediaElement.webkitSetPresentationMode('picture-in-picture'); });
+        }
+
+        function onpresentationmodechanged()
+        {
+            testExpected("mediaElement.webkitPresentationMode", "picture-in-picture");
+            testExpected("mediaElement.paused", false);
+
+            videoframe.onload = checkCompletedNavigation;
+            videoframe.src = "about:blank";
+        }
+
+        function checkCompletedNavigation()
+        {
+            testExpected("videoframe.contentDocument.location", "about:blank");
+            endTest();
+        }
+
+    </script>
+</head>
+<body onload="init()">
+    <p>Navigate to another page while video is playing in pip should not crash</p>
+    <iframe id="videoframe" width=400 height=300></iframe>
+</body>
+</html>
+

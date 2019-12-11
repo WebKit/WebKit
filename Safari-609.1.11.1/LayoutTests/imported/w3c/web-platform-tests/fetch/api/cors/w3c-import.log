@@ -1,0 +1,35 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-basic.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-redirect.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-expose-star.sub.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-filtering.sub.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-multiple-origins.sub.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-no-preflight.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-origin.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-cache.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-not-cors-safelisted.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-redirect.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-referrer.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-star.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-status.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-redirect-credentials.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-redirect-preflight.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-redirect.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/sandboxed-iframe.html

@@ -1,0 +1,45 @@
+/*
+ * Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+[
+    LegacyUnenumerableNamedProperties,
+    OverrideBuiltins,
+    JSGenerateToNativeObject,
+] interface HTMLFormElement : HTMLElement {
+    [CEReactions=NotNeeded, Reflect=accept_charset] attribute DOMString acceptCharset;
+    [CEReactions=NotNeeded, Reflect, URL] attribute USVString action;
+    [CEReactions=NotNeeded] attribute DOMString autocomplete;
+    [CEReactions=NotNeeded] attribute DOMString enctype;
+    [CEReactions=NotNeeded, ImplementedAs=enctype] attribute DOMString encoding;
+    [CEReactions=NotNeeded] attribute DOMString method;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString name;
+    [CEReactions=NotNeeded, Reflect] attribute boolean noValidate;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString target;
+
+    readonly attribute HTMLFormControlsCollection elements;
+    readonly attribute unsigned long length;
+    getter Element? (unsigned long index);
+    getter (RadioNodeList or Element)? (DOMString name);
+
+    [ImplementedAs=submitFromJavaScript] void submit();
+    [CEReactions=NotNeeded] void reset();
+    boolean checkValidity();
+    [EnabledAtRuntime=InteractiveFormValidation] boolean reportValidity();
+};

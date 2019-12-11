@@ -1,0 +1,17 @@
+<html>
+<head>
+
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setStopProvisionalFrameLoads();
+}
+</script>
+
+</head>
+<body>
+This tests to see if a WebKit app that calls [WebFrame stopLoading] inside of a -webView:didStartProvisionalLoadForFrame: frame load delegate method call crashes.<br>
+This test will only work in DRT
+<iframe src="data:text/html,<html></html>"></iframe>
+</body>
+</html>

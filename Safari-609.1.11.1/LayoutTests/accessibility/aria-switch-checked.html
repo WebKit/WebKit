@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div role="switch" id="switch1">X</div>
+<div role="switch" id="switch2" aria-checked="true">X</div>
+<div role="switch" id="switch3" aria-checked="false">X</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+    description("This tests that ARIA switches correctly handle the aria-checked attribute.");
+
+    if (window.accessibilityController) {
+        // If aria-checked is absent, it should be not checked.
+        var widget = accessibilityController.accessibleElementById("switch1");
+        shouldBeFalse("widget.isChecked");
+
+        // If aria-checked is present and true, it's clearly checked.
+        widget = accessibilityController.accessibleElementById("switch2");
+        shouldBeTrue("widget.isChecked");
+
+        // If aria-checked is present and false, it's clearly not checked.
+        widget = accessibilityController.accessibleElementById("switch3");
+        shouldBeFalse("widget.isChecked");
+
+        // Change the value on the element and be sure we see the change
+        var element = document.getElementById("switch3");
+        element.setAttribute("aria-checked", "true");
+        shouldBeTrue("widget.isChecked");
+
+        // Remove the attribute from the element and be sure we see the change
+        element.removeAttribute("aria-checked");
+        shouldBeFalse("widget.isChecked");
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            height: 1000px;
+        }
+
+        .box {
+            height: 200px;
+            width: 2200px;
+            background: repeating-linear-gradient(to right, white, blue 400px);
+        }
+        
+        .composited {
+            transform: translateZ(0);
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+        
+        function getUIScript()
+        {
+            return `
+            (function() {
+                uiController.removeViewFromWindow(function() {
+                    uiController.uiScriptComplete('');
+                });
+            })();`
+        }
+
+        function dumpTiles(outputId)
+        {
+            if (window.internals) {
+                document.getElementById(outputId).innerText = internals.layerTreeAsText(document,
+                    internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+            }
+        }
+        function doTest()
+        {
+            if (!testRunner.runUIScript)
+                return;
+
+            dumpTiles('before-layers');
+
+            testRunner.runUIScript(getUIScript(), function(result) {
+                dumpTiles('after-layers');
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div class="composited box">Tiled box</div>
+
+<pre id="before-layers">Layer tree goes here</pre>
+<pre id="after-layers">Layer tree goes here</pre>
+</body>
+</html>

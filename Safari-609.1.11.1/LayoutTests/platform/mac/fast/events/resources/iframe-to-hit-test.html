@@ -1,0 +1,31 @@
+<html>
+<head>
+<style>
+    #target {
+        background-color:purple;
+        width:25px;
+        height:25px;
+    }
+</style>
+<script>
+    function clicked(e) {
+        var result = parent.document.getElementById("result");
+        result.innerHTML = "Pass!";
+        e.stopPropagation();
+    }
+
+    function bodyClicked() {
+        var result = parent.document.getElementById("result");
+        result.innerHTML = "Failed! Hit the body.";
+    }
+
+    window.onload = function () {
+        document.getElementById("target").addEventListener("click", clicked);
+        document.body.addEventListener("click", bodyClicked);
+    }
+</script>
+</head>
+<body>
+    <div id="target"></div>
+</body>
+</html>

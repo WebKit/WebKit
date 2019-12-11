@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 7: Error while parsing the 'sandbox' attribute: 'allow-popups-to-escape-sandbox' is an invalid sandbox flag.
+
+
+FAIL Check that popups from a sandboxed iframe escape the sandbox if
+       allow-popups-to-escape-sandbox is used assert_equals: Should have escaped the sandbox expected "http://localhost:8800" but got "null"
+

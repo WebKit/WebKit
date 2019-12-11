@@ -1,0 +1,107 @@
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="resources/webgl-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Test of getActiveAttrib and getActiveUniform");
+
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
+var context = create3DContext();
+var context2 = create3DContext();
+var program = loadStandardProgram(context);
+var program2 = loadProgram(context2,
+                           "resources/intArrayUniformShader.vert",
+                           "resources/noopUniformShader.frag");
+
+glErrorShouldBe(context, context.NO_ERROR);
+shouldBe("context.getActiveUniform(program, 0).name", "'u_modelViewProjMatrix'");
+shouldBe("context.getActiveUniform(program, 0).type", "context.FLOAT_MAT4");
+shouldBe("context.getActiveUniform(program, 0).size", "1");
+shouldBeNull("context.getActiveUniform(program, 1)");
+glErrorShouldBe(context, context.INVALID_VALUE);
+shouldBeNull("context.getActiveUniform(program, -1)");
+glErrorShouldBe(context, context.INVALID_VALUE);
+shouldBeNull("context.getActiveUniform(null, 0)");
+glErrorShouldBe(context, context.INVALID_VALUE);
+
+// we don't know the order the attribs will appear.
+var info = [
+  context.getActiveAttrib(program, 0),
+  context.getActiveAttrib(program, 1)
+];
+for (var ii = 0; ii < info.length; ++ii)
+    shouldBeNonNull("info[ii]");
+
+var expected = [
+  { name: 'a_normal', type: context.FLOAT_VEC3, size: 1 },
+  { name: 'a_vertex', type: context.FLOAT_VEC4, size: 1 }
+];
+
+if (info[0].name != expected[0].name) {
+  t = info[0];
+  info[0] = info[1];
+  info[1] = t;
+}
+
+for (var ii = 0; ii < info.length; ++ii) {
+  shouldBe("info[ii].name", "expected[ii].name");
+  shouldBe("info[ii].type", "expected[ii].type");
+  shouldBe("info[ii].size", "expected[ii].size");
+}
+
+// we don't know the order the uniforms will appear.
+var info2 = [
+    context2.getActiveUniform(program2, 0),
+    context2.getActiveUniform(program2, 1)
+];
+for (var ii = 0; ii < info2.length; ++ii)
+    shouldBeNonNull("info2[ii]");
+
+var expected2 = [
+    { name: 'ival', type: context2.INT, size: 1 },
+    { name: 'ival2[0]', type: context2.INT, size: 2 }
+];
+
+if (info2[0].name != expected2[0].name) {
+    t = info2[0];
+    info2[0] = info2[1];
+    info2[1] = t;
+}
+
+for (var ii = 0; ii < info2.length; ++ii) {
+    shouldBe("info2[ii].name", "expected2[ii].name");
+    shouldBe("info2[ii].type", "expected2[ii].type");
+    shouldBe("info2[ii].size", "expected2[ii].size");
+}
+
+shouldBeNull("context.getActiveAttrib(program, 2)");
+glErrorShouldBe(context, context.INVALID_VALUE);
+shouldBeNull("context.getActiveAttrib(program, -1)");
+glErrorShouldBe(context, context.INVALID_VALUE);
+shouldBeNull("context.getActiveAttrib(null, 0)");
+glErrorShouldBe(context, context.INVALID_VALUE);
+
+glErrorShouldBe(context2, context.NO_ERROR);
+
+debug("Check trying to get attribs from different context");
+shouldBeNull("context2.getActiveAttrib(program, 0)");
+glErrorShouldBe(context2, context2.INVALID_OPERATION);
+shouldBeNull("context2.getActiveUniform(program, 0)");
+glErrorShouldBe(context2, context2.INVALID_OPERATION);
+
+debug("Check trying to get attribs from deleted program");
+context.deleteProgram(program);
+shouldBeNull("context.getActiveUniform(program, 0)");
+glErrorShouldBe(context, context.INVALID_VALUE);
+shouldBeNull("context.getActiveAttrib(program, 0)");
+glErrorShouldBe(context, context.INVALID_VALUE);
+</script>
+</body>
+</html>

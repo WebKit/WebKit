@@ -1,0 +1,3 @@
+
+FAIL importScripts assert_equals: expected "gamma/script.js" but got "beta/script.js"
+

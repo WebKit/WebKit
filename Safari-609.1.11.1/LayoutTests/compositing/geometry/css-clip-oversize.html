@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .parent {
+            position: absolute;
+            height: 100px;
+            width: 500px;
+            margin: 50px;
+            background: silver;
+            clip: rect(0px, 520px, 600px, -20px); /* top, right, bottom, left */
+        }        
+
+        .child {
+            position: absolute;
+            top: 50px;
+            height: 100px;
+            width: 400px;
+            background: #ffea61;
+            box-shadow: 0 0 50px black;
+        }
+    </style>
+</head>
+<body>
+    <div class="shared parent">
+      <div class="shared child"></div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,8 @@
+
+<html>
+  <head><title>404 - No Such Resource</title></head>
+  <body>
+    <h1>No Such Resource</h1>
+    <p>File not found.</p>
+  </body>
+</html>

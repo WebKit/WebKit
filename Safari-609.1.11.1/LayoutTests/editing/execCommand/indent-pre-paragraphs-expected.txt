@@ -1,0 +1,154 @@
+
+Indenting:
+| "
+"
+| <pre>
+|   "<#selection-anchor>hello<#selection-focus>"
+| "
+"
+
+yields:
+| "
+"
+| <blockquote>
+|   style="margin: 0 0 0 40px; border: none; padding: 0px;"
+|   <pre>
+|     "<#selection-anchor>hello<#selection-focus>"
+| "
+"
+
+Indenting:
+| "
+"
+| <pre>
+|   "<#selection-anchor>hello
+
+world
+
+webkit<#selection-focus>
+"
+| "
+"
+
+yields:
+| "
+"
+| <blockquote>
+|   style="margin: 0 0 0 40px; border: none; padding: 0px;"
+|   <pre>
+|     "<#selection-anchor>hello"
+|   <pre>
+|     "
+"
+|   <pre>
+|     "world"
+|   <pre>
+|     "
+"
+|   <pre>
+|     "webkit<#selection-focus>"
+| "
+"
+
+Indenting:
+| "
+"
+| <pre>
+|   "<#selection-anchor>hello
+world
+webkit<#selection-focus>
+"
+| "
+"
+
+yields:
+| "
+"
+| <blockquote>
+|   style="margin: 0 0 0 40px; border: none; padding: 0px;"
+|   <pre>
+|     "<#selection-anchor>hello"
+|   <pre>
+|     "world"
+|   <pre>
+|     "webkit<#selection-focus>"
+| "
+"
+
+Indenting:
+| "
+"
+| <pre>
+|   "<#selection-anchor>hello<#selection-focus>
+
+world
+"
+| "
+"
+
+yields:
+| "
+"
+| <blockquote>
+|   style="margin: 0 0 0 40px; border: none; padding: 0px;"
+|   <pre>
+|     "<#selection-anchor>hello<#selection-focus>"
+| <pre>
+|   "
+world
+"
+| "
+"
+
+Indenting:
+| "
+"
+| <pre>
+|   "hello
+<#selection-caret>
+world
+"
+| "
+"
+
+yields:
+| "
+"
+| <pre>
+|   "hello<#selection-caret>
+"
+| <blockquote>
+|   style="margin: 0 0 0 40px; border: none; padding: 0px;"
+|   <pre>
+|     "
+"
+| <pre>
+|   "world
+"
+| "
+"
+
+Indenting:
+| "
+"
+| <pre>
+|   "hello
+
+<#selection-anchor>worl<#selection-focus>d
+"
+| "
+"
+
+yields:
+| "
+"
+| <pre>
+|   "hello
+<#selection-anchor>
+"
+| <blockquote>
+|   style="margin: 0 0 0 40px; border: none; padding: 0px;"
+|   <pre>
+|     "worl<#selection-focus>d"
+| "
+"

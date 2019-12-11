@@ -1,0 +1,706 @@
+layer at (0,0) size 785x4424
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x4424
+  RenderBlock {HTML} at (0,0) size 785x4424
+    RenderBody {BODY} at (8,8) size 769x4408 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 769x18
+        RenderText {#text} at (0,0) size 363x18
+          text run at (0,0) width 363: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,34) size 769x270
+        RenderText {#text} at (0,0) size 500x270
+          text run at (0,0) width 157: "P {font-size: 12pt;}"
+          text run at (0,15) width 211: ".one {vertical-align: sub;}"
+          text run at (0,30) width 227: ".two {vertical-align: super;}"
+          text run at (0,45) width 359: ".three {vertical-align: top; font-size: 12pt;}"
+          text run at (0,60) width 391: ".four {vertical-align: text-top; font-size: 12pt;}"
+          text run at (0,75) width 375: ".five {vertical-align: middle; font-size: 12pt;}"
+          text run at (0,90) width 367: ".six {vertical-align: bottom; font-size: 12pt;}"
+          text run at (0,105) width 422: ".seven {vertical-align: text-bottom; font-size: 12pt;}"
+          text run at (0,120) width 398: ".eight {vertical-align: baseline; font-size: 12pt;}"
+          text run at (0,135) width 500: ".nine {vertical-align: 50%; font-size: 12px; line-height: 16px;}"
+          text run at (0,150) width 0: " "
+          text run at (0,165) width 219: "P.example {font-size: 14pt;}"
+          text run at (0,180) width 172: "BIG {font-size: 16pt;}"
+          text run at (0,195) width 188: "SMALL {font-size: 12pt;}"
+          text run at (0,210) width 297: ".ttopalign {vertical-align: text-top;}"
+          text run at (0,225) width 250: ".topalign {vertical-align: top;}"
+          text run at (0,240) width 274: ".midalign {vertical-align: middle;}"
+          text run at (0,255) width 0: " "
+      RenderBlock {HR} at (0,317) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,335) size 769x76
+        RenderImage {IMG} at (0,0) size 15x50
+        RenderInline {SPAN} at (0,0) size 128x18
+          RenderText {#text} at (15,40) size 128x18
+            text run at (15,40) width 128: "The first four words"
+        RenderText {#text} at (142,36) size 766x40
+          text run at (142,36) width 292: " in this sentence should be subscript-aligned. "
+          text run at (433,36) width 333: "The font size of the superscripted text should not be"
+          text run at (0,58) width 262: "different from that of the parent element."
+      RenderBlock {P} at (0,427) size 769x72
+        RenderImage {IMG} at (0,0) size 15x50
+        RenderInline {SPAN} at (0,0) size 128x18
+          RenderText {#text} at (15,30) size 128x18
+            text run at (15,30) width 128: "The first four words"
+        RenderText {#text} at (142,36) size 766x36
+          text run at (142,36) width 304: " in this sentence should be superscript-aligned. "
+          text run at (445,36) width 321: "The font size of the subscripted text should not be"
+          text run at (0,54) width 262: "different from that of the parent element."
+      RenderBlock {P} at (0,515) size 769x72
+        RenderImage {IMG} at (0,0) size 15x50
+        RenderInline {SPAN} at (0,0) size 128x18
+          RenderText {#text} at (15,0) size 128x18
+            text run at (15,0) width 128: "The first four words"
+        RenderText {#text} at (142,36) size 728x36
+          text run at (142,36) width 586: " in this sentence should be top-aligned, which will align their tops with the top of the tallest"
+          text run at (0,54) width 328: "element in the line (probably the orange rectangle)."
+      RenderBlock {P} at (0,603) size 769x132
+        RenderImage {IMG} at (0,0) size 15x50
+        RenderText {#text} at (15,36) size 4x18
+          text run at (15,36) width 4: " "
+        RenderInline {SPAN} at (0,0) size 755x111
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {SPAN} at (0,0) size 128x18
+            RenderText {#text} at (19,21) size 128x18
+              text run at (19,21) width 128: "The first four words"
+          RenderText {#text} at (146,21) size 755x111
+            text run at (146,21) width 558: " in this sentence should be text-top-aligned,"
+            text run at (0,58) width 755: "which should align their tops with the top of the tallest text"
+            text run at (0,95) width 136: "in the line."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,751) size 769x68
+        RenderImage {IMG} at (0,0) size 15x50
+        RenderText {#text} at (15,15) size 755x53
+          text run at (15,15) width 740: " The image at the beginning of this sentence should be middle-aligned, which should align its middle with the point"
+          text run at (0,50) width 317: "defined as the text baseline plus half the x-height."
+      RenderBlock {P} at (0,835) size 769x124
+        RenderImage {IMG} at (0,0) size 15x50
+        RenderText {#text} at (15,15) size 4x18
+          text run at (15,15) width 4: " "
+        RenderInline {SPAN} at (0,0) size 733x124
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {SPAN} at (0,0) size 128x18
+            RenderText {#text} at (19,32) size 128x18
+              text run at (19,32) width 128: "The first four words"
+          RenderText {#text} at (146,0) size 733x124
+            text run at (146,0) width 548: " in this sentence should be 12pt in size and"
+            text run at (0,50) width 733: "bottom-aligned, which should align their bottom with the"
+            text run at (0,87) width 518: "bottom of the lowest element in the line."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,975) size 769x161
+        RenderImage {IMG} at (0,0) size 15x50
+        RenderText {#text} at (15,15) size 4x18
+          text run at (15,15) width 4: " "
+        RenderInline {SPAN} at (0,0) size 751x161
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {SPAN} at (0,0) size 297x18
+            RenderText {#text} at (19,19) size 297x18
+              text run at (19,19) width 297: "The first eight words (\"eight\" has a descender)"
+          RenderText {#text} at (315,0) size 751x161
+            text run at (315,0) width 436: " in this sentence should be 12pt in"
+            text run at (0,50) width 693: "size and text-bottom-aligned, which should align their"
+            text run at (0,87) width 671: "bottom with the bottom of the lowest text (including"
+            text run at (0,124) width 295: "descenders) in the line."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,1152) size 769x132
+        RenderImage {IMG} at (0,0) size 15x50
+        RenderText {#text} at (15,36) size 4x18
+          text run at (15,36) width 4: " "
+        RenderInline {SPAN} at (0,0) size 761x111
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {SPAN} at (0,0) size 128x18
+            RenderText {#text} at (19,36) size 128x18
+              text run at (19,36) width 128: "The first four words"
+          RenderText {#text} at (146,21) size 761x111
+            text run at (146,21) width 548: " in this sentence should be 12pt in size and"
+            text run at (0,58) width 761: "baseline-aligned, which should align their baseline with the"
+            text run at (0,95) width 523: "baseline of the rest of the text in the line."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,1300) size 769x72
+        RenderImage {IMG} at (0,0) size 15x50
+        RenderInline {SPAN} at (0,0) size 96x14
+          RenderText {#text} at (15,31) size 96x14
+            text run at (15,31) width 96: "The first four words"
+        RenderText {#text} at (110,36) size 763x36
+          text run at (110,36) width 653: " in this sentence should have a font-size of 12px and a line-height of 16px; they are also 50%-aligned,"
+          text run at (0,54) width 385: "which should raise them 8px relative to the natural baseline."
+      RenderBlock {P} at (0,1388) size 769x36
+        RenderText {#text} at (0,0) size 759x36
+          text run at (0,0) width 759: "In the following paragraph, all images should be aligned with the top of the 14-point text, which is identical to the first"
+          text run at (0,18) width 676: "section of text, whereas any size text should be aligned with the text baseline (which is the default value)."
+      RenderBlock {P} at (0,1442) size 769x325
+        RenderText {#text} at (0,25) size 120x22
+          text run at (0,25) width 120: "This paragraph "
+        RenderImage {IMG} at (119,25) size 10x30
+        RenderText {#text} at (128,25) size 5x22
+          text run at (128,25) width 5: " "
+        RenderInline {SPAN} at (0,0) size 419x54
+          RenderText {#text} at (132,0) size 419x54
+            text run at (132,0) width 419: "contains many images"
+        RenderText {#text} at (550,25) size 6x22
+          text run at (550,25) width 6: " "
+        RenderImage {IMG} at (555,25) size 16x50
+        RenderText {#text} at (570,25) size 6x22
+          text run at (570,25) width 6: " "
+        RenderInline {BIG} at (0,0) size 153x24
+          RenderText {#text} at (575,23) size 153x24
+            text run at (575,23) width 153: "of varying heights"
+        RenderText {#text} at (727,25) size 6x22
+          text run at (727,25) width 6: " "
+        RenderImage {IMG} at (732,25) size 4x10
+        RenderText {#text} at (735,25) size 6x22
+          text run at (735,25) width 6: " "
+        RenderInline {SMALL} at (0,0) size 764x115
+          RenderText {#text} at (740,28) size 764x115
+            text run at (740,28) width 24: "and"
+            text run at (0,125) width 43: "widths"
+        RenderText {#text} at (42,122) size 6x22
+          text run at (42,122) width 6: " "
+        RenderImage {IMG} at (47,122) size 7x20
+        RenderText {#text} at (53,122) size 101x22
+          text run at (53,122) width 101: " all of which "
+        RenderImage {IMG} at (153,122) size 21x65
+        RenderText {#text} at (173,122) size 6x22
+          text run at (173,122) width 6: " "
+        RenderInline {SPAN} at (0,0) size 262x43
+          RenderText {#text} at (178,105) size 262x43
+            text run at (178,105) width 262: "should be aligned"
+        RenderText {#text} at (439,122) size 6x22
+          text run at (439,122) width 6: " "
+        RenderImage {IMG} at (444,122) size 12x35
+        RenderText {#text} at (455,122) size 122x22
+          text run at (455,122) width 122: " with the top of "
+        RenderImage {IMG} at (576,122) size 10x30
+        RenderText {#text} at (585,122) size 5x22
+          text run at (585,122) width 5: " "
+        RenderInline {SPAN} at (0,0) size 703x144
+          RenderText {#text} at (589,114) size 21x32
+            text run at (589,114) width 21: "a "
+          RenderInline {SPAN} at (0,0) size 703x194
+            RenderText {#text} at (609,75) size 703x194
+              text run at (609,75) width 94: "14-"
+              text run at (0,187) width 144: "point"
+          RenderText {#text} at (143,226) size 146x32
+            text run at (143,226) width 146: " text element"
+        RenderText {#text} at (288,234) size 6x22
+          text run at (288,234) width 6: " "
+        RenderImage {IMG} at (293,234) size 16x50
+        RenderText {#text} at (308,234) size 6x22
+          text run at (308,234) width 6: " "
+        RenderInline {SMALL} at (0,0) size 194x18
+          RenderText {#text} at (313,237) size 194x18
+            text run at (313,237) width 194: "regardless of the line in which"
+        RenderText {#text} at (506,234) size 6x22
+          text run at (506,234) width 6: " "
+        RenderImage {IMG} at (511,234) size 6x15
+        RenderText {#text} at (516,234) size 5x22
+          text run at (516,234) width 5: " "
+        RenderInline {BIG} at (0,0) size 157x24
+          RenderText {#text} at (520,232) size 157x24
+            text run at (520,232) width 157: "the images appear."
+        RenderText {#text} at (676,234) size 6x22
+          text run at (676,234) width 6: " "
+        RenderImage {IMG} at (681,234) size 28x90
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,1785) size 769x37
+        RenderText {#text} at (0,0) size 765x36
+          text run at (0,0) width 765: "In the following paragraph, all images should be aligned with the middle of the default text, whereas any text should be"
+          text run at (0,18) width 371: "aligned with the text baseline (which is the default value)."
+      RenderBlock {P} at (0,1837) size 769x231
+        RenderText {#text} at (0,22) size 101x18
+          text run at (0,22) width 101: "This paragraph "
+        RenderImage {IMG} at (100,17) size 10x30
+        RenderText {#text} at (109,22) size 5x18
+          text run at (109,22) width 5: " "
+        RenderInline {SPAN} at (0,0) size 356x46
+          RenderText {#text} at (113,0) size 356x46
+            text run at (113,0) width 356: "contains many images"
+        RenderText {#text} at (468,22) size 5x18
+          text run at (468,22) width 5: " "
+        RenderImage {IMG} at (472,7) size 16x50
+        RenderText {#text} at (487,22) size 126x18
+          text run at (487,22) width 126: " of varying heights "
+        RenderImage {IMG} at (612,27) size 4x10
+        RenderText {#text} at (615,22) size 5x18
+          text run at (615,22) width 5: " "
+        RenderInline {SMALL} at (0,0) size 71x18
+          RenderText {#text} at (619,22) size 71x18
+            text run at (619,22) width 71: "and widths"
+        RenderText {#text} at (689,22) size 5x18
+          text run at (689,22) width 5: " "
+        RenderImage {IMG} at (693,22) size 7x20
+        RenderText {#text} at (699,22) size 737x93
+          text run at (699,22) width 38: " all of"
+          text run at (0,97) width 44: "which "
+        RenderImage {IMG} at (43,75) size 21x65
+        RenderText {#text} at (63,97) size 121x18
+          text run at (63,97) width 121: " should be aligned "
+        RenderImage {IMG} at (183,90) size 12x35
+        RenderText {#text} at (194,97) size 5x18
+          text run at (194,97) width 5: " "
+        RenderInline {SPAN} at (0,0) size 237x37
+          RenderText {#text} at (198,82) size 237x37
+            text run at (198,82) width 237: "with the middle of"
+        RenderText {#text} at (434,97) size 5x18
+          text run at (434,97) width 5: " "
+        RenderImage {IMG} at (438,82) size 16x50
+        RenderText {#text} at (453,97) size 5x18
+          text run at (453,97) width 5: " "
+        RenderInline {SPAN} at (0,0) size 720x106
+          RenderText {#text} at (457,89) size 18x28
+            text run at (457,89) width 18: "a "
+          RenderInline {SPAN} at (0,0) size 204x69
+            RenderText {#text} at (474,57) size 204x69
+              text run at (474,57) width 204: "14-point"
+          RenderText {#text} at (677,89) size 720x106
+            text run at (677,89) width 43: " text"
+            text run at (0,167) width 76: "element"
+        RenderText {#text} at (75,175) size 5x18
+          text run at (75,175) width 5: " "
+        RenderImage {IMG} at (79,160) size 16x50
+        RenderText {#text} at (94,175) size 5x18
+          text run at (94,175) width 5: " "
+        RenderInline {SMALL} at (0,0) size 195x18
+          RenderText {#text} at (98,175) size 195x18
+            text run at (98,175) width 195: "regardless of the line in which"
+        RenderText {#text} at (292,175) size 5x18
+          text run at (292,175) width 5: " "
+        RenderImage {IMG} at (296,178) size 6x15
+        RenderText {#text} at (301,175) size 5x18
+          text run at (301,175) width 5: " "
+        RenderInline {BIG} at (0,0) size 156x24
+          RenderText {#text} at (305,170) size 156x24
+            text run at (305,170) width 156: "the images appear."
+        RenderText {#text} at (460,175) size 5x18
+          text run at (460,175) width 5: " "
+        RenderImage {IMG} at (464,140) size 28x90
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,2083) size 769x37
+        RenderText {#text} at (0,0) size 751x36
+          text run at (0,0) width 751: "In the following paragraph, all elements should be aligned with the top of the tallest element on the line, whether that"
+          text run at (0,18) width 178: "element is an image or not. "
+          text run at (177,18) width 563: "Each fragment of text has been SPANned appropriately in order to cause this to happen."
+      RenderBlock {P} at (0,2135) size 769x202
+        RenderInline {SPAN} at (0,0) size 97x18
+          RenderText {#text} at (0,0) size 97x18
+            text run at (0,0) width 97: "This paragraph"
+        RenderText {#text} at (96,0) size 5x18
+          text run at (96,0) width 5: " "
+        RenderImage {IMG} at (100,0) size 4x10
+        RenderText {#text} at (103,0) size 5x18
+          text run at (103,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 356x46
+          RenderText {#text} at (107,0) size 356x46
+            text run at (107,0) width 356: "contains many images"
+        RenderText {#text} at (462,0) size 5x18
+          text run at (462,0) width 5: " "
+        RenderImage {IMG} at (466,0) size 4x10
+        RenderText {#text} at (469,0) size 5x18
+          text run at (469,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 90x18
+          RenderText {#text} at (473,0) size 90x18
+            text run at (473,0) width 90: "and some text"
+        RenderText {#text} at (562,0) size 5x18
+          text run at (562,0) width 5: " "
+        RenderImage {IMG} at (566,0) size 4x10
+        RenderText {#text} at (569,0) size 5x18
+          text run at (569,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 118x18
+          RenderText {#text} at (573,0) size 118x18
+            text run at (573,0) width 118: "of varying heights"
+        RenderText {#text} at (690,0) size 5x18
+          text run at (690,0) width 5: " "
+        RenderImage {IMG} at (694,0) size 4x10
+        RenderText {#text} at (697,0) size 5x18
+          text run at (697,0) width 5: " "
+        RenderInline {BIG} at (0,0) size 732x70
+          RenderText {#text} at (701,0) size 732x70
+            text run at (701,0) width 31: "and"
+            text run at (0,46) width 57: "widths"
+        RenderText {#text} at (56,46) size 5x18
+          text run at (56,46) width 5: " "
+        RenderImage {IMG} at (60,46) size 6x20
+        RenderText {#text} at (66,46) size 5x18
+          text run at (66,46) width 5: " "
+        RenderInline {SPAN} at (0,0) size 77x18
+          RenderText {#text} at (70,46) size 77x18
+            text run at (70,46) width 77: "all of which"
+        RenderText {#text} at (146,46) size 5x18
+          text run at (146,46) width 5: " "
+        RenderImage {IMG} at (150,46) size 21x65
+        RenderText {#text} at (170,46) size 5x18
+          text run at (170,46) width 5: " "
+        RenderInline {SPAN} at (0,0) size 114x18
+          RenderText {#text} at (174,46) size 114x18
+            text run at (174,46) width 114: "should be aligned"
+        RenderText {#text} at (287,46) size 5x18
+          text run at (287,46) width 5: " "
+        RenderImage {IMG} at (291,46) size 12x35
+        RenderText {#text} at (302,46) size 5x18
+          text run at (302,46) width 5: " "
+        RenderInline {SPAN} at (0,0) size 188x37
+          RenderText {#text} at (306,46) size 188x37
+            text run at (306,46) width 188: "with the top of"
+        RenderText {#text} at (493,46) size 5x18
+          text run at (493,46) width 5: " "
+        RenderImage {IMG} at (497,46) size 16x50
+        RenderText {#text} at (512,46) size 5x18
+          text run at (512,46) width 5: " "
+        RenderInline {SPAN} at (0,0) size 134x18
+          RenderText {#text} at (516,46) size 134x18
+            text run at (516,46) width 134: "the tallest element in"
+        RenderText {#text} at (649,46) size 5x18
+          text run at (649,46) width 5: " "
+        RenderImage {IMG} at (653,46) size 6x15
+        RenderText {#text} at (658,46) size 5x18
+          text run at (658,46) width 5: " "
+        RenderInline {BIG} at (0,0) size 751x89
+          RenderText {#text} at (662,46) size 751x89
+            text run at (662,46) width 89: "whichever"
+            text run at (0,111) width 208: "line the elements appear."
+        RenderText {#text} at (207,111) size 5x18
+          text run at (207,111) width 5: " "
+        RenderImage {IMG} at (211,111) size 28x90
+        RenderText {#text} at (0,0) size 0x0
+      RenderTable {TABLE} at (0,2352) size 769x2056 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 767x2054
+          RenderTableRow {TR} at (0,0) size 767x26
+            RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 161x18
+                RenderText {#text} at (4,4) size 161x18
+                  text run at (4,4) width 161: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,26) size 767x2028
+            RenderTableCell {TD} at (0,1026) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x19
+                text run at (4,5) width 4: " "
+            RenderTableCell {TD} at (12,26) size 755x2028 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 747x76
+                RenderImage {IMG} at (0,0) size 15x50
+                RenderInline {SPAN} at (0,0) size 128x18
+                  RenderText {#text} at (15,40) size 128x18
+                    text run at (15,40) width 128: "The first four words"
+                RenderText {#text} at (142,36) size 746x40
+                  text run at (142,36) width 292: " in this sentence should be subscript-aligned. "
+                  text run at (433,36) width 313: "The font size of the superscripted text should not"
+                  text run at (0,58) width 281: "be different from that of the parent element."
+              RenderBlock {P} at (4,96) size 747x72
+                RenderImage {IMG} at (0,0) size 15x50
+                RenderInline {SPAN} at (0,0) size 128x18
+                  RenderText {#text} at (15,30) size 128x18
+                    text run at (15,30) width 128: "The first four words"
+                RenderText {#text} at (142,36) size 746x36
+                  text run at (142,36) width 304: " in this sentence should be superscript-aligned. "
+                  text run at (445,36) width 301: "The font size of the subscripted text should not"
+                  text run at (0,54) width 281: "be different from that of the parent element."
+              RenderBlock {P} at (4,184) size 747x72
+                RenderImage {IMG} at (0,0) size 15x50
+                RenderInline {SPAN} at (0,0) size 128x18
+                  RenderText {#text} at (15,0) size 128x18
+                    text run at (15,0) width 128: "The first four words"
+                RenderText {#text} at (142,36) size 728x36
+                  text run at (142,36) width 586: " in this sentence should be top-aligned, which will align their tops with the top of the tallest"
+                  text run at (0,54) width 328: "element in the line (probably the orange rectangle)."
+              RenderBlock {P} at (4,272) size 747x132
+                RenderImage {IMG} at (0,0) size 15x50
+                RenderText {#text} at (15,36) size 4x18
+                  text run at (15,36) width 4: " "
+                RenderInline {SPAN} at (0,0) size 704x111
+                  RenderText {#text} at (0,0) size 0x0
+                  RenderInline {SPAN} at (0,0) size 128x18
+                    RenderText {#text} at (19,21) size 128x18
+                      text run at (19,21) width 128: "The first four words"
+                  RenderText {#text} at (146,21) size 704x111
+                    text run at (146,21) width 558: " in this sentence should be text-top-aligned,"
+                    text run at (0,58) width 699: "which should align their tops with the top of the tallest"
+                    text run at (0,95) width 192: "text in the line."
+                RenderText {#text} at (0,0) size 0x0
+              RenderBlock {P} at (4,420) size 747x68
+                RenderImage {IMG} at (0,0) size 15x50
+                RenderText {#text} at (15,15) size 718x53
+                  text run at (15,15) width 703: " The image at the beginning of this sentence should be middle-aligned, which should align its middle with the"
+                  text run at (0,50) width 354: "point defined as the text baseline plus half the x-height."
+              RenderBlock {P} at (4,504) size 747x124
+                RenderImage {IMG} at (0,0) size 15x50
+                RenderText {#text} at (15,15) size 4x18
+                  text run at (15,15) width 4: " "
+                RenderInline {SPAN} at (0,0) size 733x124
+                  RenderText {#text} at (0,0) size 0x0
+                  RenderInline {SPAN} at (0,0) size 128x18
+                    RenderText {#text} at (19,32) size 128x18
+                      text run at (19,32) width 128: "The first four words"
+                  RenderText {#text} at (146,0) size 733x124
+                    text run at (146,0) width 548: " in this sentence should be 12pt in size and"
+                    text run at (0,50) width 733: "bottom-aligned, which should align their bottom with the"
+                    text run at (0,87) width 518: "bottom of the lowest element in the line."
+                RenderText {#text} at (0,0) size 0x0
+              RenderBlock {P} at (4,644) size 747x161
+                RenderImage {IMG} at (0,0) size 15x50
+                RenderText {#text} at (15,15) size 4x18
+                  text run at (15,15) width 4: " "
+                RenderInline {SPAN} at (0,0) size 726x161
+                  RenderText {#text} at (0,0) size 0x0
+                  RenderInline {SPAN} at (0,0) size 297x18
+                    RenderText {#text} at (19,19) size 297x18
+                      text run at (19,19) width 297: "The first eight words (\"eight\" has a descender)"
+                  RenderText {#text} at (315,0) size 726x161
+                    text run at (315,0) width 403: " in this sentence should be 12pt"
+                    text run at (0,50) width 726: "in size and text-bottom-aligned, which should align their"
+                    text run at (0,87) width 671: "bottom with the bottom of the lowest text (including"
+                    text run at (0,124) width 295: "descenders) in the line."
+                RenderText {#text} at (0,0) size 0x0
+              RenderBlock {P} at (4,821) size 747x132
+                RenderImage {IMG} at (0,0) size 15x50
+                RenderText {#text} at (15,36) size 4x18
+                  text run at (15,36) width 4: " "
+                RenderInline {SPAN} at (0,0) size 714x111
+                  RenderText {#text} at (0,0) size 0x0
+                  RenderInline {SPAN} at (0,0) size 128x18
+                    RenderText {#text} at (19,36) size 128x18
+                      text run at (19,36) width 128: "The first four words"
+                  RenderText {#text} at (146,21) size 714x111
+                    text run at (146,21) width 548: " in this sentence should be 12pt in size and"
+                    text run at (0,58) width 714: "baseline-aligned, which should align their baseline with"
+                    text run at (0,95) width 570: "the baseline of the rest of the text in the line."
+                RenderText {#text} at (0,0) size 0x0
+              RenderBlock {P} at (4,969) size 747x72
+                RenderImage {IMG} at (0,0) size 15x50
+                RenderInline {SPAN} at (0,0) size 96x14
+                  RenderText {#text} at (15,31) size 96x14
+                    text run at (15,31) width 96: "The first four words"
+                RenderText {#text} at (110,36) size 712x36
+                  text run at (110,36) width 602: " in this sentence should have a font-size of 12px and a line-height of 16px; they are also 50%-"
+                  text run at (0,54) width 440: "aligned, which should raise them 8px relative to the natural baseline."
+              RenderBlock {P} at (4,1057) size 747x36
+                RenderText {#text} at (0,0) size 730x36
+                  text run at (0,0) width 730: "In the following paragraph, all images should be aligned with the top of the 14-point text, which is identical to the"
+                  text run at (0,18) width 705: "first section of text, whereas any size text should be aligned with the text baseline (which is the default value)."
+              RenderBlock {P} at (4,1111) size 747x325
+                RenderText {#text} at (0,25) size 120x22
+                  text run at (0,25) width 120: "This paragraph "
+                RenderImage {IMG} at (119,25) size 10x30
+                RenderText {#text} at (128,25) size 5x22
+                  text run at (128,25) width 5: " "
+                RenderInline {SPAN} at (0,0) size 419x54
+                  RenderText {#text} at (132,0) size 419x54
+                    text run at (132,0) width 419: "contains many images"
+                RenderText {#text} at (550,25) size 6x22
+                  text run at (550,25) width 6: " "
+                RenderImage {IMG} at (555,25) size 16x50
+                RenderText {#text} at (570,25) size 6x22
+                  text run at (570,25) width 6: " "
+                RenderInline {BIG} at (0,0) size 153x24
+                  RenderText {#text} at (575,23) size 153x24
+                    text run at (575,23) width 153: "of varying heights"
+                RenderText {#text} at (727,25) size 6x22
+                  text run at (727,25) width 6: " "
+                RenderImage {IMG} at (732,25) size 4x10
+                RenderText {#text} at (0,0) size 0x0
+                RenderInline {SMALL} at (0,0) size 70x18
+                  RenderText {#text} at (0,125) size 70x18
+                    text run at (0,125) width 70: "and widths"
+                RenderText {#text} at (69,122) size 6x22
+                  text run at (69,122) width 6: " "
+                RenderImage {IMG} at (74,122) size 7x20
+                RenderText {#text} at (80,122) size 101x22
+                  text run at (80,122) width 101: " all of which "
+                RenderImage {IMG} at (180,122) size 21x65
+                RenderText {#text} at (200,122) size 6x22
+                  text run at (200,122) width 6: " "
+                RenderInline {SPAN} at (0,0) size 262x43
+                  RenderText {#text} at (205,105) size 262x43
+                    text run at (205,105) width 262: "should be aligned"
+                RenderText {#text} at (466,122) size 6x22
+                  text run at (466,122) width 6: " "
+                RenderImage {IMG} at (471,122) size 12x35
+                RenderText {#text} at (482,122) size 122x22
+                  text run at (482,122) width 122: " with the top of "
+                RenderImage {IMG} at (603,122) size 10x30
+                RenderText {#text} at (612,122) size 5x22
+                  text run at (612,122) width 5: " "
+                RenderInline {SPAN} at (0,0) size 730x144
+                  RenderText {#text} at (616,114) size 21x32
+                    text run at (616,114) width 21: "a "
+                  RenderInline {SPAN} at (0,0) size 730x194
+                    RenderText {#text} at (636,75) size 730x194
+                      text run at (636,75) width 94: "14-"
+                      text run at (0,187) width 144: "point"
+                  RenderText {#text} at (143,226) size 146x32
+                    text run at (143,226) width 146: " text element"
+                RenderText {#text} at (288,234) size 6x22
+                  text run at (288,234) width 6: " "
+                RenderImage {IMG} at (293,234) size 16x50
+                RenderText {#text} at (308,234) size 6x22
+                  text run at (308,234) width 6: " "
+                RenderInline {SMALL} at (0,0) size 194x18
+                  RenderText {#text} at (313,237) size 194x18
+                    text run at (313,237) width 194: "regardless of the line in which"
+                RenderText {#text} at (506,234) size 6x22
+                  text run at (506,234) width 6: " "
+                RenderImage {IMG} at (511,234) size 6x15
+                RenderText {#text} at (516,234) size 5x22
+                  text run at (516,234) width 5: " "
+                RenderInline {BIG} at (0,0) size 157x24
+                  RenderText {#text} at (520,232) size 157x24
+                    text run at (520,232) width 157: "the images appear."
+                RenderText {#text} at (676,234) size 6x22
+                  text run at (676,234) width 6: " "
+                RenderImage {IMG} at (681,234) size 28x90
+                RenderText {#text} at (0,0) size 0x0
+              RenderBlock {P} at (4,1454) size 747x37
+                RenderText {#text} at (0,0) size 746x36
+                  text run at (0,0) width 746: "In the following paragraph, all images should be aligned with the middle of the default text, whereas any text should"
+                  text run at (0,18) width 390: "be aligned with the text baseline (which is the default value)."
+              RenderBlock {P} at (4,1506) size 747x231
+                RenderText {#text} at (0,22) size 101x18
+                  text run at (0,22) width 101: "This paragraph "
+                RenderImage {IMG} at (100,17) size 10x30
+                RenderText {#text} at (109,22) size 5x18
+                  text run at (109,22) width 5: " "
+                RenderInline {SPAN} at (0,0) size 356x46
+                  RenderText {#text} at (113,0) size 356x46
+                    text run at (113,0) width 356: "contains many images"
+                RenderText {#text} at (468,22) size 5x18
+                  text run at (468,22) width 5: " "
+                RenderImage {IMG} at (472,7) size 16x50
+                RenderText {#text} at (487,22) size 126x18
+                  text run at (487,22) width 126: " of varying heights "
+                RenderImage {IMG} at (612,27) size 4x10
+                RenderText {#text} at (615,22) size 5x18
+                  text run at (615,22) width 5: " "
+                RenderInline {SMALL} at (0,0) size 71x18
+                  RenderText {#text} at (619,22) size 71x18
+                    text run at (619,22) width 71: "and widths"
+                RenderText {#text} at (689,22) size 5x18
+                  text run at (689,22) width 5: " "
+                RenderImage {IMG} at (693,22) size 7x20
+                RenderText {#text} at (699,22) size 737x93
+                  text run at (699,22) width 38: " all of"
+                  text run at (0,97) width 44: "which "
+                RenderImage {IMG} at (43,75) size 21x65
+                RenderText {#text} at (63,97) size 121x18
+                  text run at (63,97) width 121: " should be aligned "
+                RenderImage {IMG} at (183,90) size 12x35
+                RenderText {#text} at (194,97) size 5x18
+                  text run at (194,97) width 5: " "
+                RenderInline {SPAN} at (0,0) size 237x37
+                  RenderText {#text} at (198,82) size 237x37
+                    text run at (198,82) width 237: "with the middle of"
+                RenderText {#text} at (434,97) size 5x18
+                  text run at (434,97) width 5: " "
+                RenderImage {IMG} at (438,82) size 16x50
+                RenderText {#text} at (453,97) size 5x18
+                  text run at (453,97) width 5: " "
+                RenderInline {SPAN} at (0,0) size 720x106
+                  RenderText {#text} at (457,89) size 18x28
+                    text run at (457,89) width 18: "a "
+                  RenderInline {SPAN} at (0,0) size 204x69
+                    RenderText {#text} at (474,57) size 204x69
+                      text run at (474,57) width 204: "14-point"
+                  RenderText {#text} at (677,89) size 720x106
+                    text run at (677,89) width 43: " text"
+                    text run at (0,167) width 76: "element"
+                RenderText {#text} at (75,175) size 5x18
+                  text run at (75,175) width 5: " "
+                RenderImage {IMG} at (79,160) size 16x50
+                RenderText {#text} at (94,175) size 5x18
+                  text run at (94,175) width 5: " "
+                RenderInline {SMALL} at (0,0) size 195x18
+                  RenderText {#text} at (98,175) size 195x18
+                    text run at (98,175) width 195: "regardless of the line in which"
+                RenderText {#text} at (292,175) size 5x18
+                  text run at (292,175) width 5: " "
+                RenderImage {IMG} at (296,178) size 6x15
+                RenderText {#text} at (301,175) size 5x18
+                  text run at (301,175) width 5: " "
+                RenderInline {BIG} at (0,0) size 156x24
+                  RenderText {#text} at (305,170) size 156x24
+                    text run at (305,170) width 156: "the images appear."
+                RenderText {#text} at (460,175) size 5x18
+                  text run at (460,175) width 5: " "
+                RenderImage {IMG} at (464,140) size 28x90
+                RenderText {#text} at (0,0) size 0x0
+              RenderBlock {P} at (4,1752) size 747x55
+                RenderText {#text} at (0,0) size 723x54
+                  text run at (0,0) width 723: "In the following paragraph, all elements should be aligned with the top of the tallest element on the line, whether"
+                  text run at (0,18) width 206: "that element is an image or not. "
+                  text run at (205,18) width 509: "Each fragment of text has been SPANned appropriately in order to cause this to"
+                  text run at (0,36) width 51: "happen."
+              RenderBlock {P} at (4,1822) size 747x202
+                RenderInline {SPAN} at (0,0) size 97x18
+                  RenderText {#text} at (0,0) size 97x18
+                    text run at (0,0) width 97: "This paragraph"
+                RenderText {#text} at (96,0) size 5x18
+                  text run at (96,0) width 5: " "
+                RenderImage {IMG} at (100,0) size 4x10
+                RenderText {#text} at (103,0) size 5x18
+                  text run at (103,0) width 5: " "
+                RenderInline {SPAN} at (0,0) size 356x46
+                  RenderText {#text} at (107,0) size 356x46
+                    text run at (107,0) width 356: "contains many images"
+                RenderText {#text} at (462,0) size 5x18
+                  text run at (462,0) width 5: " "
+                RenderImage {IMG} at (466,0) size 4x10
+                RenderText {#text} at (469,0) size 5x18
+                  text run at (469,0) width 5: " "
+                RenderInline {SPAN} at (0,0) size 90x18
+                  RenderText {#text} at (473,0) size 90x18
+                    text run at (473,0) width 90: "and some text"
+                RenderText {#text} at (562,0) size 5x18
+                  text run at (562,0) width 5: " "
+                RenderImage {IMG} at (566,0) size 4x10
+                RenderText {#text} at (569,0) size 5x18
+                  text run at (569,0) width 5: " "
+                RenderInline {SPAN} at (0,0) size 118x18
+                  RenderText {#text} at (573,0) size 118x18
+                    text run at (573,0) width 118: "of varying heights"
+                RenderText {#text} at (690,0) size 5x18
+                  text run at (690,0) width 5: " "
+                RenderImage {IMG} at (694,0) size 4x10
+                RenderText {#text} at (697,0) size 5x18
+                  text run at (697,0) width 5: " "
+                RenderInline {BIG} at (0,0) size 732x70
+                  RenderText {#text} at (701,0) size 732x70
+                    text run at (701,0) width 31: "and"
+                    text run at (0,46) width 57: "widths"
+                RenderText {#text} at (56,46) size 5x18
+                  text run at (56,46) width 5: " "
+                RenderImage {IMG} at (60,46) size 6x20
+                RenderText {#text} at (66,46) size 5x18
+                  text run at (66,46) width 5: " "
+                RenderInline {SPAN} at (0,0) size 77x18
+                  RenderText {#text} at (70,46) size 77x18
+                    text run at (70,46) width 77: "all of which"
+                RenderText {#text} at (146,46) size 5x18
+                  text run at (146,46) width 5: " "
+                RenderImage {IMG} at (150,46) size 21x65
+                RenderText {#text} at (170,46) size 5x18
+                  text run at (170,46) width 5: " "
+                RenderInline {SPAN} at (0,0) size 114x18
+                  RenderText {#text} at (174,46) size 114x18
+                    text run at (174,46) width 114: "should be aligned"
+                RenderText {#text} at (287,46) size 5x18
+                  text run at (287,46) width 5: " "
+                RenderImage {IMG} at (291,46) size 12x35
+                RenderText {#text} at (302,46) size 5x18
+                  text run at (302,46) width 5: " "
+                RenderInline {SPAN} at (0,0) size 188x37
+                  RenderText {#text} at (306,46) size 188x37
+                    text run at (306,46) width 188: "with the top of"
+                RenderText {#text} at (493,46) size 5x18
+                  text run at (493,46) width 5: " "
+                RenderImage {IMG} at (497,46) size 16x50
+                RenderText {#text} at (512,46) size 5x18
+                  text run at (512,46) width 5: " "
+                RenderInline {SPAN} at (0,0) size 134x18
+                  RenderText {#text} at (516,46) size 134x18
+                    text run at (516,46) width 134: "the tallest element in"
+                RenderText {#text} at (649,46) size 5x18
+                  text run at (649,46) width 5: " "
+                RenderImage {IMG} at (653,46) size 6x15
+                RenderText {#text} at (0,0) size 0x0
+                RenderInline {BIG} at (0,0) size 301x24
+                  RenderText {#text} at (0,111) size 301x24
+                    text run at (0,111) width 301: "whichever line the elements appear."
+                RenderText {#text} at (300,111) size 5x18
+                  text run at (300,111) width 5: " "
+                RenderImage {IMG} at (304,111) size 28x90
+                RenderText {#text} at (0,0) size 0x0

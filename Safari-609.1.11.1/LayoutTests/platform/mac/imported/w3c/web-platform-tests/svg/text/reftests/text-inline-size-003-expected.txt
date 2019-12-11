@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (83,166) size 634x232
+    RenderSVGContainer {g} at (0,0) size 0x0
+    RenderSVGContainer {g} at (83,166) size 634x232
+      RenderSVGContainer {g} at (83,166) size 584x32
+        RenderSVGText {text} at (50,99) size 350x20 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 350x19
+            chunk 1 text run 1 at (50.24,114.80) startOffset 0 endOffset 59 width 349.76 RTL: "\x{644}\x{643}\x{646} \x{644}\x{627} \x{628}\x{62F} \x{623}\x{646} \x{623}\x{648}\x{636}\x{62D} \x{644}\x{643} \x{623}\x{646} \x{643}\x{644} \x{647}\x{630}\x{647} \x{627}\x{644}\x{623}\x{641}\x{643}\x{627}\x{631} \x{627}\x{644}\x{645}\x{63A}\x{644}\x{648}\x{637}\x{629} \x{62D}\x{648}\x{644} \x{627}\x{633}\x{62A}\x{646}\x{643}\x{627}\x{631}"
+      RenderSVGContainer {g} at (108,266) size 584x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,60.00)}]
+        RenderSVGText {text} at (65,99) size 350x20 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 350x19
+            chunk 1 (middle anchor) text run 1 at (65.12,114.80) startOffset 0 endOffset 59 width 349.76 RTL: "\x{644}\x{643}\x{646} \x{644}\x{627} \x{628}\x{62F} \x{623}\x{646} \x{623}\x{648}\x{636}\x{62D} \x{644}\x{643} \x{623}\x{646} \x{643}\x{644} \x{647}\x{630}\x{647} \x{627}\x{644}\x{623}\x{641}\x{643}\x{627}\x{631} \x{627}\x{644}\x{645}\x{63A}\x{644}\x{648}\x{637}\x{629} \x{62D}\x{648}\x{644} \x{627}\x{633}\x{62A}\x{646}\x{643}\x{627}\x{631}"
+      RenderSVGContainer {g} at (133,366) size 584x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
+        RenderSVGText {text} at (80,99) size 350x20 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 350x19
+            chunk 1 (end anchor) text run 1 at (80.00,114.80) startOffset 0 endOffset 59 width 349.76 RTL: "\x{644}\x{643}\x{646} \x{644}\x{627} \x{628}\x{62F} \x{623}\x{646} \x{623}\x{648}\x{636}\x{62D} \x{644}\x{643} \x{623}\x{646} \x{643}\x{644} \x{647}\x{630}\x{647} \x{627}\x{644}\x{623}\x{641}\x{643}\x{627}\x{631} \x{627}\x{644}\x{645}\x{63A}\x{644}\x{648}\x{637}\x{629} \x{62D}\x{648}\x{644} \x{627}\x{633}\x{62A}\x{646}\x{643}\x{627}\x{631}"

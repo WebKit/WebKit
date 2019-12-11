@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+            testRunner.setCanOpenWindows(true);
+        }
+
+        console.log("window.name should equal \"test\" after a cross-origin auxiliary frame navigation.");
+        window.open("resources/window-name-test.html?localhost");
+    </script>
+</html>

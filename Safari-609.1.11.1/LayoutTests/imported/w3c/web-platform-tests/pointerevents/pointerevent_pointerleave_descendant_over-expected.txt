@@ -1,0 +1,17 @@
+pointerleave
+
+Test Description: This test checks if pointerleave event works properly.
+Put your mouse over the black rectangle
+Then move it into the purple rectangle
+Click on the purple rectangle to complete the test
+Note: when you entered the black rectangle once don't leave it before the end of the test to get proper results.
+
+Pointer Events pointerleave tests
+
+The following pointer types were detected: mouse.
+
+Refresh the page to run the tests again with a different pointer type.
+
+
+PASS pointerleave shouldn't be received on descendant's pointerover 
+

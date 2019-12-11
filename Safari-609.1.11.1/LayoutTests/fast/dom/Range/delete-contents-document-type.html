@@ -1,0 +1,27 @@
+<!DOCTYPE>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Checks that Range.deleteContents() is able to delete a docType");
+jsTestIsAsync = true;
+
+function runTest() {
+    testDocument = document.getElementById("testFrame").contentDocument;
+    shouldNotBe("testDocument.doctype", "null");
+
+    range = testDocument.createRange();
+    range.setStart(testDocument, 0);
+    range.setEnd(testDocument, 2);
+
+    shouldNotThrow("range.deleteContents()");
+    shouldBe("testDocument.doctype", "null");
+    finishJSTest();
+}
+</script>
+</head>
+<body>
+<iframe id="testFrame" src="resources/frame-with-doctype.html" onload="runTest()"></iframe>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

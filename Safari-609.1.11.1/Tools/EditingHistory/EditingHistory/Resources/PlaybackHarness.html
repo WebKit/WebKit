@@ -1,0 +1,422 @@
+<html>
+<head>
+<style>
+body {
+    margin: 8px;
+}
+
+#overlay {
+    width: 300px;
+    height: calc(100% - 32px);
+    position: fixed;
+    right: 16px;
+    top: 16px;
+    background-color: rgba(255, 255, 255, 0.75);
+    transition: 0.25s ease-in-out;
+}
+
+#updateInfoPanel {
+    height: calc(90% - 30px);
+    overflow: scroll;
+    white-space: nowrap;
+    padding: 10px;
+}
+
+#controls {
+    height: 10%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+#controls-wrapper {
+    margin: 0 auto;
+}
+
+summary:focus {
+    outline: none;
+}
+
+details {
+    padding: 4px 0;
+}
+
+#updateMarker {
+    width: 80%;
+    margin: 20px 0;
+    border-top: 1px red dashed;
+}
+
+.eh-node {
+    margin: 0 2px;
+    padding: 0 4px;
+    background-color: rgba(59, 131, 238, 0.25);
+    border-radius: 4px;
+    cursor: default;
+}
+
+.eh-node:hover {
+    background-color: rgba(59, 131, 238, 0.5);
+}
+
+.node-highlight {
+    position: absolute;
+    background-color: rgba(59, 131, 238, 0.05);
+    border: 1px solid rgb(59, 131, 238);
+    border-radius: 2px;
+    z-index: -1;
+}
+
+li {
+    line-height: 1.5;
+}
+
+summary {
+    margin-top: 0;
+}
+
+#dropzone {
+    margin: 100px;
+    padding: 50px;
+    width: calc(100% - 300px);
+    height: calc(100% - 300px);
+    border: 15px #E8E8E8 dashed;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+}
+
+a:visited, a:link {
+    text-decoration: none;
+    color: red;
+}
+
+#toggleOverlayButton {
+    margin-top: 10px;
+}
+
+#upload {
+    opacity: 0;
+}
+
+#dropMessage {
+    font-size: 50px;
+    color: #E8E8E8;
+    margin: 0 auto;
+    pointer-events: none;
+    font-family: -apple-system;
+}
+</style>
+<script src="DOMTestingUtil.js"></script>
+<script src="EditingHistoryUtil.js"></script>
+<script>
+class DOMUpdateHistoryContext {
+    constructor(nodeMap, updates) {
+        this._nodeMap = nodeMap;
+        this._updates = updates;
+        this._currentUpdateIndex = updates.length;
+    }
+
+    currentIndex() {
+        return this._currentUpdateIndex;
+    }
+
+    updates() {
+        return this._updates;
+    }
+
+    updateAt(index) {
+        if (index < 0 || index >= this._updates.length)
+            return null;
+
+        return this._updates[index];
+    }
+
+    selectionStateAt(index) {
+        let beforeUpdate = this.updateAt(index - 1);
+        let afterUpdate = this.updateAt(index);
+        if (beforeUpdate instanceof EditingHistory.SelectionUpdate)
+            return beforeUpdate.state;
+        if (afterUpdate instanceof EditingHistory.SelectionUpdate)
+            return afterUpdate.state;
+        return null;
+    }
+
+    applyCurrentSelectionState(selection) {
+        let selectionState = this.selectionStateAt(this._currentUpdateIndex);
+        if (selectionState && selection)
+            selectionState.applyToSelection(selection);
+        else
+            selection.removeAllRanges();
+    }
+
+    next() {
+        if (this._currentUpdateIndex >= this._updates.length)
+            return;
+
+        this._updates[this._currentUpdateIndex].apply();
+        this._currentUpdateIndex++;
+    }
+
+    previous() {
+        if (this._currentUpdateIndex <= 0)
+            return;
+
+        this._updates[this._currentUpdateIndex - 1].unapply();
+        this._currentUpdateIndex--;
+    }
+
+    jumpTo(index) {
+        index = Math.max(Math.min(index, this._updates.length), 0);
+        while(this._currentUpdateIndex != index) {
+            if (this._currentUpdateIndex < index)
+                this.next();
+            else
+                this.previous();
+        }
+    }
+}
+
+window.onload = () => {
+    function setupEditingHistory(jsonData, withControls=true) {
+        let parsedResult = JSON.parse(jsonData);
+        let globalNodeMap = EditingHistory.GlobalNodeMap.fromObject(parsedResult.globalNodeMap);
+        let updates = parsedResult.updates.map(updateInfo => EditingHistory.DOMUpdate.ofType(updateInfo.type).fromObject(updateInfo, globalNodeMap));
+        EditingHistory.context = new DOMUpdateHistoryContext(globalNodeMap, updates);
+
+        function detailsElementAtIndex(index) {
+            return document.querySelector(`#updateInfo-${index}`);
+        }
+
+        function updateOverlay() {
+            let currentIndex = EditingHistory.context.currentIndex();
+            let numberOfUpdates = EditingHistory.context.updates().length;
+            progressLabel.textContent = `${currentIndex}/${numberOfUpdates}`;
+            previousButton.disabled = currentIndex <= 0;
+            nextButton.disabled = currentIndex >= numberOfUpdates;
+            updateMarker.remove();
+            if (0 <= currentIndex && currentIndex <= numberOfUpdates) {
+                let currentUpdateDetails = detailsElementAtIndex(currentIndex);
+                updateInfoPanel.insertBefore(updateMarker, currentUpdateDetails);
+                if (updateMarker.offsetTop < updateInfoPanel.scrollTop || updateInfoPanel.scrollTop + updateInfoPanel.clientHeight < updateMarker.offsetTop)
+                updateMarker.scrollIntoView();
+            }
+        }
+
+        function openAllDetailsUnderElement(element) {
+            for (let child of Array.from(element.children)) {
+                if (child.tagName === "DETAILS")
+                    child.open = true;
+
+                openAllDetailsUnderElement(child);
+            }
+        }
+
+        upload.remove();
+        dropzone.remove();
+        for (let node of globalNodeMap.nodes()) {
+            if (node.tagName === "BODY") {
+                document.body = node;
+                break;
+            }
+        }
+
+        if (!withControls)
+            return;
+
+        let overlay = document.createElement("div");
+        overlay.id = "overlay";
+        overlay.innerHTML =
+        `<code>
+            <div id="information">
+                <div id="updateInfoPanel"></div>
+            </div>
+            <div id="controls">
+                <div>
+                    <button id="expandButton"><code>Show all</code></button><button id="collapseButton"><code>Hide all</code></button>
+                </div>
+                <div>
+                    <button disabled id="previousButton">&lt;</button><button disabled id="nextButton">&gt;</button>
+                </div>
+                <div id="progressLabel">-/-</div>
+                <div>
+                    <button id="toggleOverlayButton">Toggle overlay</button>
+                </div>
+            </div>
+        </code>`;
+        document.body.appendChild(overlay);
+        updates.forEach((update, index) => {
+            let detailsElement = update.detailsElement();
+            let summary = detailsElement.children[0];
+            let indexElement = document.createElement("span");
+            indexElement.innerHTML = `[<a href=#>${index}</a>] `;
+            indexElement.children[0].addEventListener("click", () => {
+                EditingHistory.context.jumpTo(index + 1);
+                EditingHistory.context.applyCurrentSelectionState(getSelection());
+                detailsElement.open = true;
+                updateOverlay();
+            });
+            summary.insertBefore(indexElement, summary.childNodes[0]);
+            detailsElement.id = `updateInfo-${index}`;
+            detailsElement.classList.add("updateInfo");
+            detailsElement.addEventListener("click", (event) => {
+                if (event.altKey && !detailsElement.open)
+                    openAllDetailsUnderElement(detailsElement);
+
+                EditingHistory.context.applyCurrentSelectionState(getSelection());
+            });
+            updateInfoPanel.append(detailsElement);
+        });
+        let updateMarker = document.createElement("div");
+        updateMarker.id = "updateMarker";
+        updateInfoPanel.append(updateMarker);
+
+        nextButton.addEventListener("click", () => {
+            EditingHistory.context.next();
+            EditingHistory.context.applyCurrentSelectionState(getSelection());
+            updateOverlay();
+        });
+
+        previousButton.addEventListener("click", () => {
+            EditingHistory.context.previous();
+            EditingHistory.context.applyCurrentSelectionState(getSelection());
+            updateOverlay();
+        });
+
+        let isOverlayExpanded = false;
+        toggleOverlayButton.addEventListener("click", () => {
+            if (isOverlayExpanded) {
+                overlay.style.width = "300px";
+                toggleOverlayButton.value = "Expand overlay";
+            } else {
+                overlay.style.width = "50%";
+                toggleOverlayButton.value = "Collapse overlay";
+            }
+            isOverlayExpanded = !isOverlayExpanded;
+        });
+
+        document.addEventListener("keydown", event => {
+            if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+                removeAllHighlights();
+                EditingHistory.context.next();
+                EditingHistory.context.applyCurrentSelectionState(getSelection());
+                event.preventDefault();
+                updateOverlay();
+            } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+                removeAllHighlights();
+                EditingHistory.context.previous();
+                EditingHistory.context.applyCurrentSelectionState(getSelection());
+                event.preventDefault();
+                updateOverlay();
+            }
+        });
+
+        expandButton.addEventListener("click", () => {
+            document.querySelectorAll(".updateInfo").forEach(details => details.open = true);
+            updateOverlay();
+        });
+
+        collapseButton.addEventListener("click", () => {
+            document.querySelectorAll(".updateInfo").forEach(details => details.open = false);
+            updateOverlay();
+        });
+
+        ["selectstart", "dragenter", "dragover", "drop", "beforeinput"].forEach((type) => {
+            document.addEventListener(type, event => event.preventDefault());
+        });
+
+        document.querySelectorAll(".eh-node").forEach((node) => {
+            let guid = parseInt(node.getAttribute("eh-guid"));
+            if (isNaN(guid))
+                return;
+
+            let targetNode = globalNodeMap.nodeForGUID(guid);
+            node.addEventListener("click", () => console.log(targetNode));
+            node.addEventListener("mouseenter", () => showHighlightOverNode(targetNode));
+            node.addEventListener("mouseleave", removeAllHighlights);
+        });
+
+        updateOverlay();
+        EditingHistory.context.applyCurrentSelectionState(getSelection());
+    }
+
+    function showHighlightOverNode(node) {
+        if (!document.body.contains(node))
+            return;
+
+        if (node.nodeType === Node.ELEMENT_NODE) {
+            showHighlightOverBoundingRect(node.getBoundingClientRect());
+            return;
+        }
+
+        if (node.nodeType === Node.TEXT_NODE) {
+            let range = document.createRange();
+            range.selectNodeContents(node);
+            showHighlightOverBoundingRect(range.getBoundingClientRect());
+        }
+    }
+
+    function showHighlightOverBoundingRect(bounds) {
+        let highlight = document.createElement("div");
+        highlight.classList.add("node-highlight");
+        highlight.style.left = bounds.left - 2;
+        highlight.style.top = bounds.top - 2;
+        highlight.style.width = bounds.width + 3;
+        highlight.style.height = bounds.height + 3;
+        document.body.appendChild(highlight);
+    }
+
+    function removeAllHighlights() {
+        document.querySelectorAll(".node-highlight").forEach(highlight => highlight.remove());
+    }
+
+    dropzone.addEventListener("mouseenter", emphasizeDrop);
+    dropzone.addEventListener("mouseleave", unemphasizeDrop);
+    dropzone.addEventListener("dragenter", emphasizeDrop);
+    dropzone.addEventListener("dragleave", unemphasizeDrop);
+    dropzone.addEventListener("dragover", event => event.preventDefault());
+    dropzone.addEventListener("click", () => upload.click());
+    dropzone.addEventListener("drop", dropEvent => {
+        dropEvent.preventDefault();
+        fileSelected(dropEvent.dataTransfer.files);
+    });
+
+    upload.files = null;
+    EditingHistory.setupEditingHistory = setupEditingHistory;
+};
+
+function emphasizeDrop(event) {
+    dropzone.style.border = "15px #D8D8D8 dashed";
+    dropMessage.style.color = "#D8D8D8";
+    event.preventDefault();
+}
+
+function unemphasizeDrop(event) {
+    dropzone.style.border = "15px #E8E8E8 dashed";
+    dropMessage.style.color = "#E8E8E8";
+    event.preventDefault();
+}
+
+function fileSelected(files) {
+    dropzone.removeEventListener("mouseenter", emphasizeDrop);
+    dropzone.removeEventListener("mouseleave", unemphasizeDrop);
+    dropzone.removeEventListener("dragenter", emphasizeDrop);
+    dropzone.removeEventListener("dragleave", unemphasizeDrop);
+
+    console.log(`Selected ${files.length} file(s).`);
+
+    let reader = new FileReader();
+    reader.onload = event => EditingHistory.setupEditingHistory(event.target.result);
+    reader.readAsText(files[0]);
+}
+</script>
+</head>
+<body>
+    <div id="dropzone">
+        <div id="dropMessage">Drop an editing record here</div>
+    </div>
+    <input id="upload" onchange=fileSelected(files) type="file"></input>
+</body>
+</html>

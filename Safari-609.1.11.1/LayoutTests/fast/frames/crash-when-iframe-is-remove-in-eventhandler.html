@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+PASS if no crash.
+<span id=span></span>
+<span id=wrapper></span>
+<textarea id=textarea onfocus="eventhandler()"></textarea>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.offsetHeight;
+textarea.autofocus = true;
+var iframe = document.createElement("iframe");
+span.appendChild(iframe);
+wrapper.appendChild(textarea);
+iframe.contentDocument.caretRangeFromPoint();
+
+function eventhandler() {
+    textarea.insertAdjacentElement("beforeBegin", span);
+}
+</script>
+</body>
+</html>

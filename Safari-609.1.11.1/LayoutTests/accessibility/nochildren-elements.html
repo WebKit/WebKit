@@ -1,0 +1,45 @@
+<html>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+<body id='body'>
+    
+    
+    <!-- This test makes sure that these types of elements DO NOT have children. 
+         The test will pass if attributesOfChildren() returns nil -->
+
+    <input type="file">
+    <div role="button"><b><i>inside</i></b></div>
+
+    <div id="result"></div>
+
+     
+    <script>
+        if (window.accessibilityController) {
+            var result = document.getElementById("result");
+
+            // radio button 1
+            var body = document.getElementById("body");
+            body.focus();
+            var focusedElement = accessibilityController.focusedElement;
+
+            // this input=file is inside of a group, so we need to go two levels
+            var element1 = focusedElement.childAtIndex(0);
+            element1 = element1.childAtIndex(0);
+
+            var element2 = focusedElement.childAtIndex(1);
+
+            var element1Children = element1.attributesOfChildren();
+            var element2Children = element2.attributesOfChildren();
+
+            if (element1Children != "" || element2Children != "") {
+               result.innerText += "FAIL\n" + element1Children + "\n" + element2Children;
+            }
+            else {
+               result.innerText += "PASS";
+           }           
+        }
+    </script>
+</body>
+</html>

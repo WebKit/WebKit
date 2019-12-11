@@ -1,0 +1,3 @@
+This tests that XMLSerializer.serializeToString() correctly writes out an empty default namespace declaration if the element is not in any namespace.
+<div xmlns="http://www.w3.org/1999/xhtml" id="target"> <div id="output"> </div><a xmlns="" href="#"/></div>
+

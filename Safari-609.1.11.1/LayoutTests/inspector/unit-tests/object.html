@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Object");
+
+    suite.addTestCase({
+        name: "WI.Object.prototype.dispatchEventToListeners",
+        description: "WI.Object shouldn't dispatch constructor-level events multiple times",
+        test(resolve, reject) {
+            class Parent extends WI.Object {}
+            class Child extends Parent {}
+
+            const eventName = "clicked";
+            let dispatchCount = 0;
+
+            Parent.addEventListener(eventName, () => dispatchCount++);
+
+            let child = new Child;
+            child.dispatchEventToListeners(eventName);
+
+            InspectorTest.log("Dispatch count: " + dispatchCount);
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.Object.prototype.awaitEvent",
+        description: "awaitEvent should only trigger once",
+        test(resolve, reject) {
+            const eventName = "test";
+            let dispatchCount = 0;
+
+            let object = new WI.Object;
+
+            object.awaitEvent(eventName).then(() => {
+                dispatchCount++;
+
+                InspectorTest.expectThat(dispatchCount === 1, "Await event handler should be dispatched just once.");
+                InspectorTest.log("Dispatch count: " + dispatchCount);
+
+                // Resolve test on second event dispatch.
+                object.awaitEvent(eventName).then(() => {
+                    resolve();
+                });
+
+                object.dispatchEventToListeners(eventName);
+            });
+
+            object.dispatchEventToListeners(eventName);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing WI.Object.</p>
+</body>
+</html>

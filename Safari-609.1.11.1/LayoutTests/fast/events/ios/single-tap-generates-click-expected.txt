@@ -1,0 +1,1 @@
+PASS: received click event at 50 50

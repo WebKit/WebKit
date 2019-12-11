@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+    // Convenience function so that script-tests/script-start-end-locations.js
+    // can be less verbose for cases where we have a function whose bounds we
+    // want to dump.
+    function dump(func) {
+        debug(window.internals.parserMetaData(func));
+    }
+
+    debug(window.internals.parserMetaData());
+
+    var dummy = 5;
+</script>
+
+<script>debug(window.internals.parserMetaData());</script> <script>debug(window.internals.parserMetaData());</script> 
+
+<script>debug(window.internals.parserMetaData());</script> <script>debug(window.internals.parserMetaData());</script>
+
+<script>debug(window.internals.parserMetaData());
+</script>
+    <script>debug(window.internals.parserMetaData());
+</script>
+
+<script>function hf1() { dummy += 5; } hf1(); dump(hf1);</script>
+    <script>function hf2() { dummy += 5; } hf2(); dump(hf2); </script>
+        <script>function hf3() { dummy += 5; } hf3(); dump(hf3); </script>
+
+<script>function hf4() {
+            dummy += 5; 
+        } hf4(); dump(hf4);</script>
+    <script>function hf5() {
+            dummy += 5; 
+        } hf5(); dump(hf5);</script>
+        <script>function hf6() {
+            dummy += 5; 
+        } hf6(); dump(hf6);</script>
+
+<script>
+function hf7() {
+        dummy += 5; 
+    } hf7(); dump(hf7);</script>
+
+<script>var v = 1; function hf8() { v += 5; } hf8(); dump(hf8);</script> <script>function hf9() { v += 5; } hf9(); dump(hf9); debug("");</script>
+
+<script src="script-tests/script-start-end-locations.js"></script> 
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

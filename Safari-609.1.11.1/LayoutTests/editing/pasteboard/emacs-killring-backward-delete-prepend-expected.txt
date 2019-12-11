@@ -1,0 +1,6 @@
+Test for bug 151300: Backwards delete by word incorrectly appends deleted text to kill ring, should be prepend.
+
+This test checks that backwards delete-by-word prepends to the kill ring.
+
+one two three
+Expected result: one two three

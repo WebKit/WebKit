@@ -1,0 +1,6 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS location assign 
+FAIL URL that fails to parse assert_throws: function "function () { location.assign("http://:"); }" did not throw
+

@@ -1,0 +1,68 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ experimental:AsyncClipboardAPIEnabled=true ] -->
+<html>
+    <head>
+        <script src="../../resources/js-test.js"></script>
+    </head>
+    <script>
+        jsTestIsAsync = true;
+
+        async function shouldReject(scriptToEvaluate)
+        {
+            try {
+                testFailed(`${scriptToEvaluate} resolved to ${await eval(scriptToEvaluate)}`);
+            } catch (exception) {
+                testPassed(`${scriptToEvaluate} rejected with ${exception}`);
+            }
+        }
+
+        async function runTest()
+        {
+            description("Tests the interfaces of the async clipboard API, which include Clipboard, ClipboardItem, and extensions to Navigator.");
+
+            debug("\nTesting Clipboard:");
+            shouldBeTrue("Clipboard instanceof Function");
+            shouldBeEqualToString("typeof Clipboard", "function");
+            shouldBeTrue("navigator.clipboard instanceof Clipboard");
+            shouldBeTrue("Object.getPrototypeOf(navigator.clipboard) === Clipboard.prototype");
+            shouldBeTrue("Clipboard.prototype.readText instanceof Function");
+            shouldBeTrue("Clipboard.prototype.writeText instanceof Function");
+            shouldBeTrue("Clipboard.prototype.read instanceof Function");
+            shouldBeTrue("Clipboard.prototype.write instanceof Function");
+            shouldThrow("Clipboard()");
+            shouldThrow("new Clipboard()");
+            shouldBeEqualToString("Clipboard.toString()", "function Clipboard() {\n    [native code]\n}");
+            shouldBeEqualToString("navigator.clipboard.toString()", "[object Clipboard]");
+            shouldBeTrue("navigator.clipboard.writeText('foo') instanceof Promise");
+            shouldBeTrue("navigator.clipboard.write([ ]) instanceof Promise");
+            shouldBeTrue("navigator.clipboard.read() instanceof Promise");
+            shouldBeTrue("navigator.clipboard.readText() instanceof Promise");
+            await shouldReject("navigator.clipboard.write()");
+            await shouldReject("navigator.clipboard.writeText()");
+            await shouldReject("navigator.clipboard.write('foo')");
+            await shouldReject("navigator.clipboard.write([1, 2, 3])");
+            await shouldReject("navigator.clipboard.write(new ClipboardItem({ }))");
+
+            debug("\nTesting ClipboardItem:");
+            shouldBeTrue("ClipboardItem instanceof Function");
+            shouldBeEqualToString("typeof ClipboardItem", "function");
+            shouldBeTrue("ClipboardItem.prototype.getType instanceof Function");
+            shouldThrow("ClipboardItem()");
+            shouldThrow("new ClipboardItem()");
+            shouldThrow("new ClipboardItem('foo')");
+            shouldBeTrue("new ClipboardItem({ }) instanceof ClipboardItem");
+            shouldBeTrue("Object.getPrototypeOf(new ClipboardItem({ })) === ClipboardItem.prototype");
+            shouldBeTrue("new ClipboardItem({ }).types instanceof Array");
+            shouldBeEqualToString("ClipboardItem.toString()", "function ClipboardItem() {\n    [native code]\n}");
+            shouldBeEqualToString("new ClipboardItem({ }).toString()", "[object ClipboardItem]");
+            shouldBeEqualToString("new ClipboardItem({ }, { foo: 'attachment' }).presentationStyle", "unspecified");
+            shouldThrow("new ClipboardItem({ }, { presentationStyle: 'AttaCHmenT' }).presentationStyle");
+            shouldBeEqualToString("new ClipboardItem({ }, { presentationStyle: 'unspecified' }).presentationStyle", "unspecified");
+            shouldBeEqualToString("new ClipboardItem({ }, { presentationStyle: 'attachment' }).presentationStyle", "attachment");
+            shouldBeEqualToString("new ClipboardItem({ }, { presentationStyle: 'inline' }).presentationStyle", "inline");
+            shouldThrow("new ClipboardItem({ }, 'inline')");
+
+            finishJSTest();
+        }
+    </script>
+    <body onload=runTest()></body>
+</html>

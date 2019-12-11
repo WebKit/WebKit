@@ -1,0 +1,48 @@
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+
+TEST
+<div id="content">
+
+<select id="menulist">
+  <option selected>One</option>
+  <option>Two</option>
+  <option>Three</option>
+</select>
+
+</div>
+TEST
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+function runTest() {
+    description("This tests that there's no crash if we hide menu list and then try to access accessibility information.");
+
+    if (window.accessibilityController) {
+        var menulist = document.getElementById("menulist");
+        menulist.focus();
+        menulist.selectedIndex = 1;
+
+        var accessibleMenulist = accessibilityController.focusedElement;
+        debug("Role before removal: " + accessibleMenulist.role);
+
+        menulist.style.display = "none";
+        gc();
+
+        // Don't crash!
+        debug("Role after removal: " + accessibleMenulist.role);
+    }
+}
+
+runTest();
+</script>
+
+</body>
+<script src="../resources/js-test-post.js"></script>
+</html>

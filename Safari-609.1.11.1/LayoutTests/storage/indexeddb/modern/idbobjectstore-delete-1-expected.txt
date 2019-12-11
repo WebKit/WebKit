@@ -1,0 +1,35 @@
+This test exercises various uses of IDBObjectStore.delete()
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+Initial upgrade needed: Old version - 0 New version - 1
+Count is 113
+Initial upgrade versionchange transaction complete
+Deleted "Mon Jan 03 2000 16:00:00 GMT-0800 (PST)", and there should now be 1 less things total.
+Count is 112
+Deleted "Mon Jan 03 2000 16:00:00 GMT-0800 (PST)", and there should now be 0 less things total.
+Count is 112
+Deleted "balyhoo", and there should now be 0 less things total.
+Count is 112
+Deleted "[object IDBKeyRange]", and there should now be 0 less things total.
+Count is 112
+Deleted "[object IDBKeyRange]", and there should now be 1 less things total.
+Count is 111
+Deleted "[object IDBKeyRange]", and there should now be 1 less things total.
+Count is 110
+Deleted "[object IDBKeyRange]", and there should now be 5 less things total.
+Count is 105
+Deleted "[object IDBKeyRange]", and there should now be 98 less things total.
+Count is 7
+Deleted "[object IDBKeyRange]", and there should now be 3 less things total.
+Count is 4
+readwrite transaction complete
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

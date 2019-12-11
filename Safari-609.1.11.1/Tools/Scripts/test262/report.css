@@ -1,0 +1,47 @@
+html {
+    line-height: 1.3em;
+}
+
+.visit {
+    margin: 1em 0;
+}
+
+.expander, .expand {
+    display: none;
+}
+
+.expander:checked + .expand {
+    display: block;
+}
+
+.expander-control {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.list-item {
+    line-height: 1.5em;
+}
+
+.summary-table {
+    border-collapse: collapse;
+}
+
+.summary-table th, .summary-table td{
+    text-align: left;
+    padding: 0 .4em;
+    line-height: 2em;
+    border: 1px solid #333;
+}
+
+.summary-table tr:nth-child(even) td {
+    box-shadow: inset 100em 1em rgba(0,0,0,.04);
+}
+
+.per-100 {
+    background-color: #e8ffde;
+}
+
+.per-0 {
+    background-color: #fac8c8;
+}

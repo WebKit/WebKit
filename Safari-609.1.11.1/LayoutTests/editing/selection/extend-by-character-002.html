@@ -1,0 +1,40 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    for (i = 0; i < 33; i++) {
+        extendSelectionForwardByCharacterCommand();
+    }
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+<div contenteditable id="root" class="editing">
+<span id="test">a<img src="../resources/abe.png">new      
+<br>nation    <i>  </i> <img src="../resources/abe.png">     
+
+
+conceived
+<br>nation<img src="../resources/abe.png"></span>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

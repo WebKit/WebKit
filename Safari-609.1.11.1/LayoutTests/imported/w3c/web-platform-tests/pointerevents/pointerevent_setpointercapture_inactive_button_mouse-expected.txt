@@ -1,0 +1,13 @@
+setPointerCapture
+
+Test Description: This test checks if setPointerCapture works properly.
+Put your mouse over the black rectangle
+Move you mouse out to complete the test
+
+Pointer Events setPointerCapture Tests
+
+The following pointer types were detected: mouse.
+
+
+PASS pointer capture is not set while button state is inactive 
+

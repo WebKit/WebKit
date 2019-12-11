@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("FileUtilities");
+
+    suite.addTestCase({
+        name: "FileUtilities.sanitizeFilename",
+        test() {
+            function t(str, expected) {
+                expected = expected || str;
+                InspectorTest.expectEqual(WI.FileUtilities.sanitizeFilename(str), expected, `FileUtilities.sanitizeFilename: ${JSON.stringify(str)} => ${JSON.stringify(expected)}`);
+            }
+
+            t("");
+            t("webkit.org-recording.json");
+            t("abcABC012-_ test.tXt");
+            t("about:blank.json", "about-blank.json");
+            t("a::::b", "a-b");
+        }
+    });
+
+    suite.addTestCase({
+        name: "FileUtilities.inspectorURLForFilename",
+        test() {
+            function t(str, expected) {
+                expected = expected || ("web-inspector:///" + str);
+                InspectorTest.expectEqual(WI.FileUtilities.inspectorURLForFilename(str), expected, `FileUtilities.inspectorURLForFilename: ${JSON.stringify(str)} => ${JSON.stringify(expected)}`);
+            }
+
+            t("");
+            t("webkit.org-recording.json");
+            t("abcABC012-_test.tXt");
+            t("a:b.json", "web-inspector:///a-b.json");
+            t("a b.txt", "web-inspector:///a%20b.txt");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onLoad="runTest()">
+</body>
+</html>

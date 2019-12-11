@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Basic test for URL.toJSON()");
+
+shouldBeEqualToString("new URL('https://example.com/').toJSON()", "https://example.com/");
+shouldBeEqualToString("new URL('https://example.com/').toString()", "https://example.com/");
+shouldBeEqualToString("new URL('https://example.com/').href", "https://example.com/");
+shouldBeEqualToString("JSON.stringify(new URL('https://example.com/#\"'))", "\"https://example.com/#\\\"\"");
+shouldBeEqualToString("JSON.parse(JSON.stringify(new URL('https://example.com/#\"')))", "https://example.com/#\"");
+
+</script>
+</body>

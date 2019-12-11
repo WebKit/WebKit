@@ -1,0 +1,269 @@
+This test checks the behavior of Intl.NumberFormat as described in the ECMAScript Internationalization API Specification (ECMA-402 2.0).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Intl.NumberFormat is an instance of Function
+PASS Intl.NumberFormat() is an instance of Intl.NumberFormat
+PASS Intl.NumberFormat.call({}) is an instance of Intl.NumberFormat
+PASS new Intl.NumberFormat() is an instance of Intl.NumberFormat
+PASS class DerivedNumberFormat extends Intl.NumberFormat {};(new DerivedNumberFormat) instanceof DerivedNumberFormat is true
+PASS class DerivedNumberFormat extends Intl.NumberFormat {};(new DerivedNumberFormat) instanceof Intl.NumberFormat is true
+PASS class DerivedNumberFormat extends Intl.NumberFormat {};new DerivedNumberFormat('en').format(1) === '1' is true
+PASS class DerivedNumberFormat extends Intl.NumberFormat {};Object.getPrototypeOf(new DerivedNumberFormat) === DerivedNumberFormat.prototype is true
+PASS class DerivedNumberFormat extends Intl.NumberFormat {};Object.getPrototypeOf(Object.getPrototypeOf(new DerivedNumberFormat)) === Intl.NumberFormat.prototype is true
+PASS testNumberFormat(Intl.NumberFormat('en'), [{locale: 'en'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('eN-uS'), [{locale: 'en-US'}]) is true
+PASS testNumberFormat(Intl.NumberFormat(['en', 'de']), [{locale: 'en'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('de'), [{locale: 'de'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('zh-Hans-CN-u-nu-hanidec'), [{locale: 'zh-Hans-CN-u-nu-hanidec', numberingSystem: 'hanidec'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('ZH-hans-cn-U-Nu-Hanidec'), [{locale: 'zh-Hans-CN-u-nu-hanidec', numberingSystem: 'hanidec'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-abcd'), [{locale: 'en'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-arab'), [{locale: 'en-u-nu-arab', numberingSystem: 'arab'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-arabext'), [{locale: 'en-u-nu-arabext', numberingSystem: 'arabext'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-bali'), [{locale: 'en-u-nu-bali', numberingSystem: 'bali'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-beng'), [{locale: 'en-u-nu-beng', numberingSystem: 'beng'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-deva'), [{locale: 'en-u-nu-deva', numberingSystem: 'deva'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-fullwide'), [{locale: 'en-u-nu-fullwide', numberingSystem: 'fullwide'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-gujr'), [{locale: 'en-u-nu-gujr', numberingSystem: 'gujr'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-guru'), [{locale: 'en-u-nu-guru', numberingSystem: 'guru'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-hanidec'), [{locale: 'en-u-nu-hanidec', numberingSystem: 'hanidec'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-khmr'), [{locale: 'en-u-nu-khmr', numberingSystem: 'khmr'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-knda'), [{locale: 'en-u-nu-knda', numberingSystem: 'knda'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-laoo'), [{locale: 'en-u-nu-laoo', numberingSystem: 'laoo'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-latn'), [{locale: 'en-u-nu-latn', numberingSystem: 'latn'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-limb'), [{locale: 'en-u-nu-limb', numberingSystem: 'limb'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-mlym'), [{locale: 'en-u-nu-mlym', numberingSystem: 'mlym'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-mong'), [{locale: 'en-u-nu-mong', numberingSystem: 'mong'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-mymr'), [{locale: 'en-u-nu-mymr', numberingSystem: 'mymr'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-orya'), [{locale: 'en-u-nu-orya', numberingSystem: 'orya'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-tamldec'), [{locale: 'en-u-nu-tamldec', numberingSystem: 'tamldec'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-telu'), [{locale: 'en-u-nu-telu', numberingSystem: 'telu'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-thai'), [{locale: 'en-u-nu-thai', numberingSystem: 'thai'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en-u-nu-tibt'), [{locale: 'en-u-nu-tibt', numberingSystem: 'tibt'}]) is true
+PASS Intl.NumberFormat('en-u-nu-arab').format(1234567890) is '١٬٢٣٤٬٥٦٧٬٨٩٠'
+PASS Intl.NumberFormat('en-u-nu-arabext').format(1234567890) is '۱٬۲۳۴٬۵۶۷٬۸۹۰'
+PASS Intl.NumberFormat('en-u-nu-bali').format(1234567890) is '᭑,᭒᭓᭔,᭕᭖᭗,᭘᭙᭐'
+PASS Intl.NumberFormat('en-u-nu-beng').format(1234567890) is '১,২৩৪,৫৬৭,৮৯০'
+PASS Intl.NumberFormat('en-u-nu-deva').format(1234567890) is '१,२३४,५६७,८९०'
+PASS Intl.NumberFormat('en-u-nu-fullwide').format(1234567890) is '１,２３４,５６７,８９０'
+PASS Intl.NumberFormat('en-u-nu-gujr').format(1234567890) is '૧,૨૩૪,૫૬૭,૮૯૦'
+PASS Intl.NumberFormat('en-u-nu-guru').format(1234567890) is '੧,੨੩੪,੫੬੭,੮੯੦'
+PASS Intl.NumberFormat('en-u-nu-hanidec').format(1234567890) is '一,二三四,五六七,八九〇'
+PASS Intl.NumberFormat('en-u-nu-khmr').format(1234567890) is '១,២៣៤,៥៦៧,៨៩០'
+PASS Intl.NumberFormat('en-u-nu-knda').format(1234567890) is '೧,೨೩೪,೫೬೭,೮೯೦'
+PASS Intl.NumberFormat('en-u-nu-laoo').format(1234567890) is '໑,໒໓໔,໕໖໗,໘໙໐'
+PASS Intl.NumberFormat('en-u-nu-latn').format(1234567890) is '1,234,567,890'
+PASS Intl.NumberFormat('en-u-nu-limb').format(1234567890) is '᥇,᥈᥉᥊,᥋᥌᥍,᥎᥏᥆'
+PASS Intl.NumberFormat('en-u-nu-mlym').format(1234567890) is '൧,൨൩൪,൫൬൭,൮൯൦'
+PASS Intl.NumberFormat('en-u-nu-mong').format(1234567890) is '᠑,᠒᠓᠔,᠕᠖᠗,᠘᠙᠐'
+PASS Intl.NumberFormat('en-u-nu-mymr').format(1234567890) is '၁,၂၃၄,၅၆၇,၈၉၀'
+PASS Intl.NumberFormat('en-u-nu-orya').format(1234567890) is '୧,୨୩୪,୫୬୭,୮୯୦'
+PASS Intl.NumberFormat('en-u-nu-tamldec').format(1234567890) is '௧,௨௩௪,௫௬௭,௮௯௦'
+PASS Intl.NumberFormat('en-u-nu-telu').format(1234567890) is '౧,౨౩౪,౫౬౭,౮౯౦'
+PASS Intl.NumberFormat('en-u-nu-thai').format(1234567890) is '๑,๒๓๔,๕๖๗,๘๙๐'
+PASS Intl.NumberFormat('en-u-nu-tibt').format(1234567890) is '༡,༢༣༤,༥༦༧,༨༩༠'
+PASS testNumberFormat(Intl.NumberFormat('zh-Hans-CN-u-aa-aaaa-co-pinyin-nu-hanidec-bb-bbbb'), [{locale: 'zh-Hans-CN-u-nu-hanidec', numberingSystem: 'hanidec'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {localeMatcher: 'lookup'}), [{locale: 'en'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {localeMatcher: 'best fit'}), [{locale: 'en'}]) is true
+PASS Intl.NumberFormat('en', {localeMatcher: 'LookUp'}) threw exception RangeError: localeMatcher must be either "lookup" or "best fit".
+PASS Intl.NumberFormat('en', { get localeMatcher() { throw 42; } }) threw exception 42.
+PASS Intl.NumberFormat('en', {localeMatcher: {toString() { throw 42; }}}) threw exception 42.
+PASS testNumberFormat(Intl.NumberFormat('en', {style: 'decimal'}), [{locale: 'en', style: 'decimal'}]) is true
+PASS Intl.NumberFormat('en', {style: 'currency'}) threw exception TypeError: currency must be a string.
+PASS testNumberFormat(Intl.NumberFormat('en', {style: 'percent'}), [{locale: 'en', style: 'percent', maximumFractionDigits: 0}]) is true
+PASS Intl.NumberFormat('en', {style: 'Decimal'}) threw exception RangeError: style must be either "decimal", "percent", or "currency".
+PASS Intl.NumberFormat('en', { get style() { throw 42; } }) threw exception 42.
+PASS testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}), [{locale: 'en', style: 'currency', currency: 'USD', currencyDisplay: 'symbol', minimumFractionDigits: 2, maximumFractionDigits: 2}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'UsD'}), [{locale: 'en', style: 'currency', currency: 'USD', currencyDisplay: 'symbol', minimumFractionDigits: 2, maximumFractionDigits: 2}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'CLF'}), [{locale: 'en', style: 'currency', currency: 'CLF', currencyDisplay: 'symbol', minimumFractionDigits: 4, maximumFractionDigits: 4}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'cLf'}), [{locale: 'en', style: 'currency', currency: 'CLF', currencyDisplay: 'symbol', minimumFractionDigits: 4, maximumFractionDigits: 4}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'XXX'}), [{locale: 'en', style: 'currency', currency: 'XXX', currencyDisplay: 'symbol', minimumFractionDigits: 2, maximumFractionDigits: 2}]) is true
+PASS Intl.NumberFormat('en', {style: 'currency', currency: 'US$'}) threw exception RangeError: currency is not a well-formed currency code.
+PASS Intl.NumberFormat('en', {style: 'currency', currency: 'US'}) threw exception RangeError: currency is not a well-formed currency code.
+PASS Intl.NumberFormat('en', {style: 'currency', currency: 'US Dollar'}) threw exception RangeError: currency is not a well-formed currency code.
+PASS Intl.NumberFormat('en', {style: 'currency', get currency() { throw 42; }}) threw exception 42.
+PASS testNumberFormat(Intl.NumberFormat('en', {style: 'decimal', currency: 'USD'}), [{locale: 'en', style: 'decimal'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'code'}), [{locale: 'en', style: 'currency', currency: 'USD', currencyDisplay: 'code', minimumFractionDigits: 2, maximumFractionDigits: 2}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'symbol'}), [{locale: 'en', style: 'currency', currency: 'USD', currencyDisplay: 'symbol', minimumFractionDigits: 2, maximumFractionDigits: 2}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'name'}), [{locale: 'en', style: 'currency', currency: 'USD', currencyDisplay: 'name', minimumFractionDigits: 2, maximumFractionDigits: 2}]) is true
+PASS Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'Code'}) threw exception RangeError: currencyDisplay must be either "code", "symbol", or "name".
+PASS Intl.NumberFormat('en', {style: 'currency', currency: 'USD', get currencyDisplay() { throw 42; }}) threw exception 42.
+PASS testNumberFormat(Intl.NumberFormat('en', {style: 'decimal', currencyDisplay: 'code'}), [{locale: 'en', style: 'decimal'}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {minimumIntegerDigits: 1}), [{locale: 'en', minimumIntegerDigits: 1}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {minimumIntegerDigits: '2'}), [{locale: 'en', minimumIntegerDigits: 2}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {minimumIntegerDigits: {valueOf() { return 3; }}}), [{locale: 'en', minimumIntegerDigits: 3}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {minimumIntegerDigits: 4.9}), [{locale: 'en', minimumIntegerDigits: 4}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {minimumIntegerDigits: 21}), [{locale: 'en', minimumIntegerDigits: 21}]) is true
+PASS Intl.NumberFormat('en', {minimumIntegerDigits: 0}) threw exception RangeError: minimumIntegerDigits is out of range.
+PASS Intl.NumberFormat('en', {minimumIntegerDigits: 22}) threw exception RangeError: minimumIntegerDigits is out of range.
+PASS Intl.NumberFormat('en', {minimumIntegerDigits: 0.9}) threw exception RangeError: minimumIntegerDigits is out of range.
+PASS Intl.NumberFormat('en', {minimumIntegerDigits: 21.1}) threw exception RangeError: minimumIntegerDigits is out of range.
+PASS Intl.NumberFormat('en', {minimumIntegerDigits: NaN}) threw exception RangeError: minimumIntegerDigits is out of range.
+PASS Intl.NumberFormat('en', {minimumIntegerDigits: Infinity}) threw exception RangeError: minimumIntegerDigits is out of range.
+PASS Intl.NumberFormat('en', { get minimumIntegerDigits() { throw 42; } }) threw exception 42.
+PASS Intl.NumberFormat('en', {minimumIntegerDigits: {valueOf() { throw 42; }}}) threw exception 42.
+PASS testNumberFormat(Intl.NumberFormat('en', {minimumFractionDigits: 0}), [{locale: 'en', minimumFractionDigits: 0, maximumFractionDigits: 3}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {style: 'percent', minimumFractionDigits: 0}), [{locale: 'en', style: 'percent', minimumFractionDigits: 0, maximumFractionDigits: 0}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {minimumFractionDigits: 6}), [{locale: 'en', minimumFractionDigits: 6, maximumFractionDigits: 6}]) is true
+PASS Intl.NumberFormat('en', {minimumFractionDigits: -1}) threw exception RangeError: minimumFractionDigits is out of range.
+PASS Intl.NumberFormat('en', {minimumFractionDigits: 21}) threw exception RangeError: minimumFractionDigits is out of range.
+PASS testNumberFormat(Intl.NumberFormat('en', {maximumFractionDigits: 6}), [{locale: 'en', maximumFractionDigits: 6}]) is true
+PASS Intl.NumberFormat('en', {minimumFractionDigits: 7, maximumFractionDigits: 6}) threw exception RangeError: maximumFractionDigits is out of range.
+PASS Intl.NumberFormat('en', {maximumFractionDigits: -1}) threw exception RangeError: maximumFractionDigits is out of range.
+PASS Intl.NumberFormat('en', {maximumFractionDigits: 21}) threw exception RangeError: maximumFractionDigits is out of range.
+PASS testNumberFormat(Intl.NumberFormat('en', {minimumSignificantDigits: 6}), [{locale: 'en', minimumSignificantDigits: 6, maximumSignificantDigits: 21}]) is true
+PASS Intl.NumberFormat('en', {minimumSignificantDigits: 0}) threw exception RangeError: minimumSignificantDigits is out of range.
+PASS Intl.NumberFormat('en', {minimumSignificantDigits: 22}) threw exception RangeError: minimumSignificantDigits is out of range.
+PASS testNumberFormat(Intl.NumberFormat('en', {maximumSignificantDigits: 6}), [{locale: 'en', minimumSignificantDigits: 1, maximumSignificantDigits: 6}]) is true
+PASS Intl.NumberFormat('en', {minimumSignificantDigits: 7, maximumSignificantDigits: 6}) threw exception RangeError: maximumSignificantDigits is out of range.
+PASS Intl.NumberFormat('en', {maximumSignificantDigits: 0}) threw exception RangeError: maximumSignificantDigits is out of range.
+PASS Intl.NumberFormat('en', {maximumSignificantDigits: 22}) threw exception RangeError: maximumSignificantDigits is out of range.
+PASS testNumberFormat(Intl.NumberFormat('en', {useGrouping: true}), [{locale: 'en', useGrouping: true}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {useGrouping: false}), [{locale: 'en', useGrouping: false}]) is true
+PASS testNumberFormat(Intl.NumberFormat('en', {useGrouping: 'false'}), [{locale: 'en', useGrouping: true}]) is true
+PASS Intl.NumberFormat('en', { get useGrouping() { throw 42; } }) threw exception 42.
+PASS Intl.NumberFormat.length is 0
+PASS Object.getOwnPropertyDescriptor(Intl.NumberFormat, 'prototype').writable is false
+PASS Object.getOwnPropertyDescriptor(Intl.NumberFormat, 'prototype').enumerable is false
+PASS Object.getOwnPropertyDescriptor(Intl.NumberFormat, 'prototype').configurable is false
+PASS Intl.NumberFormat.supportedLocalesOf.length is 1
+PASS Intl.NumberFormat.supportedLocalesOf() is an instance of Array
+PASS Intl.NumberFormat.supportedLocalesOf.call(null, 'en') is [ 'en' ]
+PASS Intl.NumberFormat.supportedLocalesOf.call({}, 'en') is [ 'en' ]
+PASS Intl.NumberFormat.supportedLocalesOf.call(1, 'en') is [ 'en' ]
+PASS Intl.NumberFormat.supportedLocalesOf(9) is []
+PASS Intl.NumberFormat.supportedLocalesOf('en') is [ 'en' ]
+PASS Intl.NumberFormat.supportedLocalesOf({ length: 4, 1: 'en', 0: 'es', 3: 'de' }) is [ 'es', 'en', 'de' ]
+PASS Intl.NumberFormat.supportedLocalesOf([ 'en', 'pt', 'en', 'es' ]) is [ 'en', 'pt', 'es' ]
+PASS Intl.NumberFormat.supportedLocalesOf('En-laTn-us-variant2-variant1-1abc-U-ko-tRue-A-aa-aaa-x-RESERVED') is [ 'en-Latn-US-variant2-variant1-1abc-a-aa-aaa-u-ko-true-x-reserved' ]
+PASS Intl.NumberFormat.supportedLocalesOf('no-bok') is [ 'nb' ]
+PASS Intl.NumberFormat.supportedLocalesOf('x-some-thing') is []
+PASS Intl.NumberFormat.supportedLocalesOf(Object.create(null, { length: { get() { throw Error('a') } } })) threw exception Error: a.
+PASS Intl.NumberFormat.supportedLocalesOf(Object.create(null, { length: { value: 1 }, 0: { get() { throw Error('b') } } })) threw exception Error: b.
+PASS Intl.NumberFormat.supportedLocalesOf([ { toString() { throw Error('c') } } ]) threw exception Error: c.
+PASS Intl.NumberFormat.supportedLocalesOf([ 5 ]) threw exception TypeError: locale value must be a string or object.
+PASS Intl.NumberFormat.supportedLocalesOf('') threw exception RangeError: invalid language tag: .
+PASS Intl.NumberFormat.supportedLocalesOf('a') threw exception RangeError: invalid language tag: a.
+PASS Intl.NumberFormat.supportedLocalesOf('abcdefghij') threw exception RangeError: invalid language tag: abcdefghij.
+PASS Intl.NumberFormat.supportedLocalesOf('#$') threw exception RangeError: invalid language tag: #$.
+PASS Intl.NumberFormat.supportedLocalesOf('en-@-abc') threw exception RangeError: invalid language tag: en-@-abc.
+PASS Intl.NumberFormat.supportedLocalesOf('en-u') threw exception RangeError: invalid language tag: en-u.
+PASS Intl.NumberFormat.supportedLocalesOf('en-u-kn-true-u-ko-true') threw exception RangeError: invalid language tag: en-u-kn-true-u-ko-true.
+PASS Intl.NumberFormat.supportedLocalesOf('en-x') threw exception RangeError: invalid language tag: en-x.
+PASS Intl.NumberFormat.supportedLocalesOf('en-*') threw exception RangeError: invalid language tag: en-*.
+PASS Intl.NumberFormat.supportedLocalesOf('en-') threw exception RangeError: invalid language tag: en-.
+PASS Intl.NumberFormat.supportedLocalesOf('en--US') threw exception RangeError: invalid language tag: en--US.
+PASS Intl.NumberFormat.supportedLocalesOf('de') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('de-DE') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('DE-de') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('cmn') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('cmn-Hans') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('CMN-hANS') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('cmn-hans-cn') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('es-419') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('es-419-u-nu-latn-cu-bob') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('i-klingon') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('cmn-hans-cn-t-ca-u-ca-x-t-u') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('enochian-enochian') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('de-gregory-u-ca-gregory') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('aa-a-foo-x-a-foo-bar') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('x-en-US-12345') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('x-12345-12345-en-US') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('x-en-US-12345-12345') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('x-en-u-foo') did not throw exception.
+PASS Intl.NumberFormat.supportedLocalesOf('x-en-u-foo-u-bar') did not throw exception.
+PASS Object.getPrototypeOf(Intl.NumberFormat.prototype) is Object.prototype
+PASS Intl.NumberFormat.prototype.constructor is Intl.NumberFormat
+PASS Intl.NumberFormat.prototype[Symbol.toStringTag] is 'Object'
+PASS Object.prototype.toString.call(Intl.NumberFormat.prototype) is '[object Object]'
+PASS Object.getOwnPropertyDescriptor(Intl.NumberFormat.prototype, Symbol.toStringTag).writable is false
+PASS Object.getOwnPropertyDescriptor(Intl.NumberFormat.prototype, Symbol.toStringTag).enumerable is false
+PASS Object.getOwnPropertyDescriptor(Intl.NumberFormat.prototype, Symbol.toStringTag).configurable is true
+PASS defaultNFormat.format is an instance of Function
+PASS Object.getOwnPropertyDescriptor(Intl.NumberFormat.prototype, 'format').get is an instance of Function
+PASS Object.getOwnPropertyDescriptor(Intl.NumberFormat.prototype, 'format').set is undefined
+PASS Object.getOwnPropertyDescriptor(Intl.NumberFormat.prototype, 'format').enumerable is false
+PASS Object.getOwnPropertyDescriptor(Intl.NumberFormat.prototype, 'format').configurable is true
+PASS defaultNFormat.format.length is 1
+PASS Intl.NumberFormat.prototype.format threw exception TypeError: Intl.NumberFormat.prototype.format called on value that's not an object initialized as a NumberFormat.
+PASS Object.defineProperty({}, 'format', Object.getOwnPropertyDescriptor(Intl.NumberFormat.prototype, 'format')).format threw exception TypeError: Intl.NumberFormat.prototype.format called on value that's not an object initialized as a NumberFormat.
+PASS new Intl.NumberFormat().format !== new Intl.NumberFormat().format is true
+PASS defaultNFormat.format({ valueOf() { throw Error('5') } }) threw exception Error: 5.
+PASS defaultNFormat.format.call(null, 1.2) is Intl.NumberFormat().format(1.2)
+PASS defaultNFormat.format.call(Intl.DateTimeFormat('ar'), 1.2) is Intl.NumberFormat().format(1.2)
+PASS defaultNFormat.format.call(5, 1.2) is Intl.NumberFormat().format(1.2)
+PASS Intl.NumberFormat('en').format(42) is '42'
+PASS Intl.NumberFormat('en').format('42') is '42'
+PASS Intl.NumberFormat('en').format({ valueOf() { return 42; } }) is '42'
+PASS Intl.NumberFormat('en').format('one') is 'NaN'
+PASS Intl.NumberFormat('en').format(NaN) is 'NaN'
+PASS Intl.NumberFormat('en').format(Infinity) is '∞'
+PASS Intl.NumberFormat('en').format(-Infinity) is '-∞'
+PASS Intl.NumberFormat('en').format(0) is '0'
+PASS Intl.NumberFormat('en').format(-0) is '0'
+PASS Intl.NumberFormat('en').format(Number.MIN_VALUE) is '0'
+PASS Intl.NumberFormat('en', { maximumSignificantDigits: 15 }).format(Number.MAX_VALUE) is '179,769,313,486,232,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000'
+PASS Intl.NumberFormat('en').format(1234.567) is '1,234.567'
+PASS Intl.NumberFormat('es').format(1234.567) is '1.234,567'
+PASS Intl.NumberFormat('de').format(1234.567) is '1.234,567'
+PASS Intl.NumberFormat('en-u-nu-latn').format(1234.567) is '1,234.567'
+PASS Intl.NumberFormat('en-u-nu-fullwide').format(1234.567) is '１,２３４.５６７'
+PASS Intl.NumberFormat('th-u-nu-thai').format(1234.567) is '๑,๒๓๔.๕๖๗'
+PASS Intl.NumberFormat('zh-Hans-CN-u-nu-hanidec').format(1234.567) is '一,二三四.五六七'
+PASS Intl.NumberFormat('en', {style: 'decimal'}).format(4.2) is '4.2'
+PASS Intl.NumberFormat('en', {style: 'percent'}).format(4.2) is '420%'
+PASS Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}).format(4.2) is '$4.20'
+PASS Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}).format(4) is '$4.00'
+PASS Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}).format(4.2) is '$4.20'
+PASS Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}).format(-4.2) is '-$4.20'
+PASS Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}).format(NaN).includes('NaN') is true
+PASS Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}).format(Infinity) is '$∞'
+PASS Intl.NumberFormat('en', {style: 'currency', currency: 'JPY'}).format(4.2) is '¥4'
+PASS Intl.NumberFormat('en', {style: 'currency', currency: 'xXx', currencyDisplay: 'code'}).format(4.2).includes('XXX') is true
+PASS Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'code'}).format(4).includes('USD') is true
+PASS Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'symbol'}).format(4) is '$4.00'
+PASS Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'name'}).format(4) is '4.00 US dollars'
+PASS Intl.NumberFormat('en', {style: 'currency', currency: 'JPY', currencyDisplay: 'code'}).format(-4.2).includes('JPY') is true
+PASS Intl.NumberFormat('en', {style: 'currency', currency: 'JPY', currencyDisplay: 'symbol'}).format(-4.2) is '-¥4'
+PASS Intl.NumberFormat('en', {style: 'currency', currency: 'JPY', currencyDisplay: 'name'}).format(-4.2) is '-4 Japanese yen'
+PASS Intl.NumberFormat('fr', {style: 'currency', currency: 'USD', currencyDisplay: 'name'}).format(4) is '4,00 dollars des États-Unis'
+PASS Intl.NumberFormat('fr', {style: 'currency', currency: 'JPY', currencyDisplay: 'name'}).format(4) is '4 yens japonais'
+PASS Intl.NumberFormat('en', {minimumIntegerDigits: 4}).format(12) is '0,012'
+PASS Intl.NumberFormat('en', {minimumIntegerDigits: 4}).format(12345) is '12,345'
+PASS Intl.NumberFormat('en', {minimumFractionDigits: 3}).format(1) is '1.000'
+PASS Intl.NumberFormat('en', {minimumFractionDigits: 3}).format(1.2) is '1.200'
+PASS Intl.NumberFormat('en', {minimumFractionDigits: 3}).format(1.2345) is '1.235'
+PASS Intl.NumberFormat('en', {minimumFractionDigits: 3, maximumFractionDigits: 4}).format(1.2345) is '1.2345'
+PASS Intl.NumberFormat('en', {minimumFractionDigits: 3, maximumFractionDigits: 4}).format(1.23454) is '1.2345'
+PASS Intl.NumberFormat('en', {minimumFractionDigits: 3, maximumFractionDigits: 4}).format(1.23455) is '1.2346'
+PASS Intl.NumberFormat('en', {maximumFractionDigits: 0}).format(0.5) is '1'
+PASS Intl.NumberFormat('en', {maximumFractionDigits: 0}).format(0.4) is '0'
+PASS Intl.NumberFormat('en', {maximumFractionDigits: 0}).format(-0.4) is '-0'
+PASS Intl.NumberFormat('en', {maximumFractionDigits: 0}).format(-0.5) is '-1'
+PASS Intl.NumberFormat('en', {minimumSignificantDigits: 4}).format(0.12) is '0.1200'
+PASS Intl.NumberFormat('en', {minimumSignificantDigits: 4}).format(1.2) is '1.200'
+PASS Intl.NumberFormat('en', {minimumSignificantDigits: 4}).format(12) is '12.00'
+PASS Intl.NumberFormat('en', {minimumSignificantDigits: 4}).format(123456) is '123,456'
+PASS Intl.NumberFormat('en', {maximumSignificantDigits: 4}).format(0.1) is '0.1'
+PASS Intl.NumberFormat('en', {maximumSignificantDigits: 4}).format(0.1234567) is '0.1235'
+PASS Intl.NumberFormat('en', {maximumSignificantDigits: 4}).format(1234567) is '1,235,000'
+PASS Intl.NumberFormat('en', {useGrouping: true}).format(1234567.123) is '1,234,567.123'
+PASS Intl.NumberFormat('es', {useGrouping: true}).format(1234567.123) is '1.234.567,123'
+PASS Intl.NumberFormat('de', {useGrouping: true}).format(1234567.123) is '1.234.567,123'
+PASS Intl.NumberFormat('en', {useGrouping: false}).format(1234567.123) is '1234567.123'
+PASS Intl.NumberFormat('es', {useGrouping: false}).format(1234567.123) is '1234567,123'
+PASS Intl.NumberFormat('de', {useGrouping: false}).format(1234567.123) is '1234567,123'
+PASS Intl.NumberFormat.prototype.resolvedOptions.length is 0
+PASS defaultNFormat.resolvedOptions() is an instance of Object
+PASS defaultNFormat.resolvedOptions() === defaultNFormat.resolvedOptions() is false
+PASS Intl.NumberFormat.prototype.resolvedOptions() threw exception TypeError: Intl.NumberFormat.prototype.resolvedOptions called on value that's not an object initialized as a NumberFormat.
+PASS Intl.NumberFormat.prototype.resolvedOptions.call(5) threw exception TypeError: Intl.NumberFormat.prototype.resolvedOptions called on value that's not an object initialized as a NumberFormat.
+PASS var options = defaultNFormat.resolvedOptions(); delete options['locale']; JSON.stringify(options) is '{"numberingSystem":"latn","style":"decimal","minimumIntegerDigits":1,"minimumFractionDigits":0,"maximumFractionDigits":3,"useGrouping":true}'
+PASS var legacy = Object.create(Intl.NumberFormat.prototype);Intl.NumberFormat.apply(legacy) is legacy
+PASS var legacy = Object.create(Intl.NumberFormat.prototype);Intl.NumberFormat.call(legacy, 'en-u-nu-arab').format(1.2345) is '١٫٢٣٥'
+PASS var incompat = {};Intl.NumberFormat.apply(incompat) is not incompat
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

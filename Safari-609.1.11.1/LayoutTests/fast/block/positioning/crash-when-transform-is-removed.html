@@ -1,0 +1,12 @@
+<body style="transform: translateX(0);">
+<img style="position: absolute;">
+PASS if no crash or assert.
+</body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.body.offsetHeight;
+document.body.setAttribute("style","");
+document.body.offsetHeight;
+document.getElementsByTagName("img")[0].setAttribute("style","");
+</script>

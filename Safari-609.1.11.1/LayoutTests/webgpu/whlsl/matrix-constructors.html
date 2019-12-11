@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>matrix ctor.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.matrixConstructor = async () => {
+    const program = `
+        bool foo() {
+            float3x2 v = float3x2(float2(1.0, 2.0), float2(3.0, 4.0), float2(5.0, 6.0));
+            return v[0][0] == 1.0 && v[0][1] == 2.0 
+                && v[1][0] == 3.0 && v[1][1] == 4.0 
+                && v[2][0] == 5.0 && v[2][1] == 6.0;
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.matrixConstructor2 = async () => {
+    const program = `
+        bool foo() {
+            float3x2 v = float3x2(1.0, 2.0, 3.0, 4.0, 5.0, 6.0);
+            return v[0][0] == 1.0 && v[0][1] == 2.0 
+                && v[1][0] == 3.0 && v[1][1] == 4.0 
+                && v[2][0] == 5.0 && v[2][1] == 6.0;
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+runTests(whlslTests);
+</script>
+</html>

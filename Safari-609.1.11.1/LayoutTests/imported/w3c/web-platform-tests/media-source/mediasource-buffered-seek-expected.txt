@@ -1,0 +1,3 @@
+
+PASS Test seeking to a buffered location. 
+

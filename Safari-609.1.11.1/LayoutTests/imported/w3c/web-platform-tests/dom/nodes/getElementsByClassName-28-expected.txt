@@ -1,0 +1,6 @@
+
+PASS generic element listed 
+te xt
+te; xt test link #foo te xt namespace
+text
+xt te

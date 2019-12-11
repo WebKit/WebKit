@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../video-test.js"></script>
+    <script src="../media-file.js"></script>
+    <script>
+        window.addEventListener('load', async event => {
+            findMediaElement();
+
+            run('internals.settings.setAllowsPictureInPictureMediaPlayback(true)');
+            run('internals.setPictureInPictureAPITestEnabled(video, true)');
+
+            run('video.src = findMediaFile("video", "../content/test")');
+            await waitFor(video, 'canplaythrough');
+
+            runWithKeyDown(function() { video.requestPictureInPicture(); });
+            waitForEventOnce('enterpictureinpicture', event => {
+                window.pipWindow = event.pictureInPictureWindow;
+                testExpected('pipWindow.width', 0, '>');
+                testExpected('pipWindow.height', 0, '>');
+
+                document.exitPictureInPicture();
+                waitForEventAndEnd('leavepictureinpicture');
+            });
+        });
+    </script>
+</head>
+<body>
+    <div>This tests that events are fired correctly when a video element enters and exits the Picture-in-Picture mode.</div>
+    <video controls></video>
+</body>
+</html>

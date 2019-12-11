@@ -1,0 +1,341 @@
+// !$*UTF8*$!
+{
+   archiveVersion = 1;
+   classes = {
+   };
+   objectVersion = 46;
+   objects = {
+
+/* Begin PBXBuildFile section */
+       C246590518902ACE0029092E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C246590418902ACE0029092E /* Foundation.framework */; };
+       C246590818902ACE0029092E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C246590718902ACE0029092E /* main.m */; };
+       C246591418902B910029092E /* CLIInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = C246591318902B910029092E /* CLIInstance.m */; };
+       C246591718902C420029092E /* JSModule.m in Sources */ = {isa = PBXBuildFile; fileRef = C246591618902C420029092E /* JSModule.m */; };
+       C246591A18902CCC0029092E /* JSRunLoopThread.m in Sources */ = {isa = PBXBuildFile; fileRef = C246591918902CCC0029092E /* JSRunLoopThread.m */; };
+       C246591D18902D100029092E /* RunLoopThread.m in Sources */ = {isa = PBXBuildFile; fileRef = C246591C18902D100029092E /* RunLoopThread.m */; };
+       C246592018902E150029092E /* ReadEvalPrintLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = C246591F18902E150029092E /* ReadEvalPrintLoop.m */; };
+       C246592318902EA40029092E /* ScriptInputSource.m in Sources */ = {isa = PBXBuildFile; fileRef = C246592218902EA40029092E /* ScriptInputSource.m */; };
+       C296621118ADF56000752922 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C296621018ADF56000752922 /* JavaScriptCore.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+       C246105418AC4472009F75B5 /* Copy Tests */ = {
+           isa = PBXCopyFilesBuildPhase;
+           buildActionMask = 2147483647;
+           dstPath = tests;
+           dstSubfolderSpec = 16;
+           files = (
+           );
+           name = "Copy Tests";
+           runOnlyForDeploymentPostprocessing = 0;
+       };
+       C24658FF18902ACE0029092E /* Copy Lib */ = {
+           isa = PBXCopyFilesBuildPhase;
+           buildActionMask = 12;
+           dstPath = lib;
+           dstSubfolderSpec = 16;
+           files = (
+           );
+           name = "Copy Lib";
+           runOnlyForDeploymentPostprocessing = 0;
+       };
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+       C246590118902ACE0029092E /* jsc-cli */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "jsc-cli"; sourceTree = BUILT_PRODUCTS_DIR; };
+       C246590418902ACE0029092E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+       C246590718902ACE0029092E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+       C246591218902B910029092E /* CLIInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CLIInstance.h; sourceTree = "<group>"; };
+       C246591318902B910029092E /* CLIInstance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CLIInstance.m; sourceTree = "<group>"; };
+       C246591518902C420029092E /* JSModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSModule.h; sourceTree = "<group>"; };
+       C246591618902C420029092E /* JSModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSModule.m; sourceTree = "<group>"; };
+       C246591818902CCC0029092E /* JSRunLoopThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRunLoopThread.h; sourceTree = "<group>"; };
+       C246591918902CCC0029092E /* JSRunLoopThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSRunLoopThread.m; sourceTree = "<group>"; };
+       C246591B18902D100029092E /* RunLoopThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunLoopThread.h; sourceTree = "<group>"; };
+       C246591C18902D100029092E /* RunLoopThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RunLoopThread.m; sourceTree = "<group>"; };
+       C246591E18902E150029092E /* ReadEvalPrintLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReadEvalPrintLoop.h; sourceTree = "<group>"; };
+       C246591F18902E150029092E /* ReadEvalPrintLoop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReadEvalPrintLoop.m; sourceTree = "<group>"; };
+       C246592118902EA40029092E /* ScriptInputSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptInputSource.h; sourceTree = "<group>"; };
+       C246592218902EA40029092E /* ScriptInputSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScriptInputSource.m; sourceTree = "<group>"; };
+       C296621018ADF56000752922 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+       C24658FE18902ACE0029092E /* Frameworks */ = {
+           isa = PBXFrameworksBuildPhase;
+           buildActionMask = 2147483647;
+           files = (
+               C296621118ADF56000752922 /* JavaScriptCore.framework in Frameworks */,
+               C246590518902ACE0029092E /* Foundation.framework in Frameworks */,
+           );
+           runOnlyForDeploymentPostprocessing = 0;
+       };
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+       C246104C18AC3B45009F75B5 /* tests */ = {
+           isa = PBXGroup;
+           children = (
+           );
+           name = tests;
+           sourceTree = "<group>";
+       };
+       C246105018AC40F1009F75B5 /* lib */ = {
+           isa = PBXGroup;
+           children = (
+           );
+           name = lib;
+           sourceTree = "<group>";
+       };
+       C24658F818902ACE0029092E = {
+           isa = PBXGroup;
+           children = (
+               C246105018AC40F1009F75B5 /* lib */,
+               C246104C18AC3B45009F75B5 /* tests */,
+               C246590618902ACE0029092E /* jsc-cli */,
+               C246590318902ACE0029092E /* Frameworks */,
+               C246590218902ACE0029092E /* Products */,
+           );
+           sourceTree = "<group>";
+       };
+       C246590218902ACE0029092E /* Products */ = {
+           isa = PBXGroup;
+           children = (
+               C246590118902ACE0029092E /* jsc-cli */,
+           );
+           name = Products;
+           sourceTree = "<group>";
+       };
+       C246590318902ACE0029092E /* Frameworks */ = {
+           isa = PBXGroup;
+           children = (
+               C296621018ADF56000752922 /* JavaScriptCore.framework */,
+               C246590418902ACE0029092E /* Foundation.framework */,
+           );
+           name = Frameworks;
+           sourceTree = "<group>";
+       };
+       C246590618902ACE0029092E /* jsc-cli */ = {
+           isa = PBXGroup;
+           children = (
+               C246590718902ACE0029092E /* main.m */,
+               C246591218902B910029092E /* CLIInstance.h */,
+               C246591318902B910029092E /* CLIInstance.m */,
+               C246591518902C420029092E /* JSModule.h */,
+               C246591618902C420029092E /* JSModule.m */,
+               C246591818902CCC0029092E /* JSRunLoopThread.h */,
+               C246591918902CCC0029092E /* JSRunLoopThread.m */,
+               C246591B18902D100029092E /* RunLoopThread.h */,
+               C246591C18902D100029092E /* RunLoopThread.m */,
+               C246591E18902E150029092E /* ReadEvalPrintLoop.h */,
+               C246591F18902E150029092E /* ReadEvalPrintLoop.m */,
+               C246592118902EA40029092E /* ScriptInputSource.h */,
+               C246592218902EA40029092E /* ScriptInputSource.m */,
+           );
+           path = "jsc-cli";
+           sourceTree = "<group>";
+       };
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+       C246590018902ACE0029092E /* jsc-cli */ = {
+           isa = PBXNativeTarget;
+           buildConfigurationList = C246590F18902ACE0029092E /* Build configuration list for PBXNativeTarget "jsc-cli" */;
+           buildPhases = (
+               C24658FD18902ACE0029092E /* Sources */,
+               C24658FE18902ACE0029092E /* Frameworks */,
+               C24658FF18902ACE0029092E /* Copy Lib */,
+               C246105418AC4472009F75B5 /* Copy Tests */,
+           );
+           buildRules = (
+           );
+           dependencies = (
+           );
+           name = "jsc-cli";
+           productName = "jsc-cli";
+           productReference = C246590118902ACE0029092E /* jsc-cli */;
+           productType = "com.apple.product-type.tool";
+       };
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+       C24658F918902ACE0029092E /* Project object */ = {
+           isa = PBXProject;
+           attributes = {
+               LastUpgradeCheck = 0500;
+               ORGANIZATIONNAME = "Mark Hahnenberg";
+           };
+           buildConfigurationList = C24658FC18902ACE0029092E /* Build configuration list for PBXProject "jsc-cli" */;
+           compatibilityVersion = "Xcode 3.2";
+           developmentRegion = English;
+           hasScannedForEncodings = 0;
+           knownRegions = (
+               en,
+           );
+           mainGroup = C24658F818902ACE0029092E;
+           productRefGroup = C246590218902ACE0029092E /* Products */;
+           projectDirPath = "";
+           projectRoot = "";
+           targets = (
+               C246590018902ACE0029092E /* jsc-cli */,
+           );
+       };
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+       C24658FD18902ACE0029092E /* Sources */ = {
+           isa = PBXSourcesBuildPhase;
+           buildActionMask = 2147483647;
+           files = (
+               C246591A18902CCC0029092E /* JSRunLoopThread.m in Sources */,
+               C246592018902E150029092E /* ReadEvalPrintLoop.m in Sources */,
+               C246592318902EA40029092E /* ScriptInputSource.m in Sources */,
+               C246590818902ACE0029092E /* main.m in Sources */,
+               C246591418902B910029092E /* CLIInstance.m in Sources */,
+               C246591D18902D100029092E /* RunLoopThread.m in Sources */,
+               C246591718902C420029092E /* JSModule.m in Sources */,
+           );
+           runOnlyForDeploymentPostprocessing = 0;
+       };
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+       C246590D18902ACE0029092E /* Debug */ = {
+           isa = XCBuildConfiguration;
+           buildSettings = {
+               ALWAYS_SEARCH_USER_PATHS = NO;
+               CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+               CLANG_CXX_LIBRARY = "libc++";
+               CLANG_ENABLE_OBJC_ARC = YES;
+               CLANG_WARN_BOOL_CONVERSION = YES;
+               CLANG_WARN_CONSTANT_CONVERSION = YES;
+               CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+               CLANG_WARN_EMPTY_BODY = YES;
+               CLANG_WARN_ENUM_CONVERSION = YES;
+               CLANG_WARN_INT_CONVERSION = YES;
+               CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+               CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+               COPY_PHASE_STRIP = NO;
+               GCC_C_LANGUAGE_STANDARD = gnu99;
+               GCC_DYNAMIC_NO_PIC = NO;
+               GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+               GCC_OPTIMIZATION_LEVEL = 0;
+               GCC_PREPROCESSOR_DEFINITIONS = (
+                   "DEBUG=1",
+                   "$(inherited)",
+               );
+               GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+               GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+               GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+               GCC_WARN_UNDECLARED_SELECTOR = YES;
+               GCC_WARN_UNINITIALIZED_AUTOS = YES;
+               GCC_WARN_UNUSED_FUNCTION = YES;
+               GCC_WARN_UNUSED_VARIABLE = YES;
+               MACOSX_DEPLOYMENT_TARGET = 10.9;
+               ONLY_ACTIVE_ARCH = YES;
+               SDKROOT = macosx;
+           };
+           name = Debug;
+       };
+       C246590E18902ACE0029092E /* Release */ = {
+           isa = XCBuildConfiguration;
+           buildSettings = {
+               ALWAYS_SEARCH_USER_PATHS = NO;
+               CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+               CLANG_CXX_LIBRARY = "libc++";
+               CLANG_ENABLE_OBJC_ARC = YES;
+               CLANG_WARN_BOOL_CONVERSION = YES;
+               CLANG_WARN_CONSTANT_CONVERSION = YES;
+               CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+               CLANG_WARN_EMPTY_BODY = YES;
+               CLANG_WARN_ENUM_CONVERSION = YES;
+               CLANG_WARN_INT_CONVERSION = YES;
+               CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+               CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+               COPY_PHASE_STRIP = YES;
+               DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+               ENABLE_NS_ASSERTIONS = NO;
+               GCC_C_LANGUAGE_STANDARD = gnu99;
+               GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+               GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+               GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+               GCC_WARN_UNDECLARED_SELECTOR = YES;
+               GCC_WARN_UNINITIALIZED_AUTOS = YES;
+               GCC_WARN_UNUSED_FUNCTION = YES;
+               GCC_WARN_UNUSED_VARIABLE = YES;
+               MACOSX_DEPLOYMENT_TARGET = 10.9;
+               SDKROOT = macosx;
+           };
+           name = Release;
+       };
+       C246591018902ACE0029092E /* Debug */ = {
+           isa = XCBuildConfiguration;
+           buildSettings = {
+               ALWAYS_SEARCH_USER_PATHS = YES;
+               DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+               FRAMEWORK_SEARCH_PATHS = (
+                   "$(inherited)",
+                   "/Volumes/Data/WebKit-svn-01/OpenSource/WebKitBuild/Debug",
+               );
+               GCC_PRECOMPILE_PREFIX_HEADER = YES;
+               GCC_PREFIX_HEADER = "";
+               LD_RUNPATH_SEARCH_PATHS = "\"@loader_path/.\"";
+               LINKER_DISPLAYS_MANGLED_NAMES = YES;
+               OTHER_CFLAGS = (
+                   "-iframework",
+                   "$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/",
+               );
+               OTHER_LDFLAGS = "-ledit";
+               PRODUCT_NAME = "$(TARGET_NAME)";
+               SDKROOT = macosx.internal;
+           };
+           name = Debug;
+       };
+       C246591118902ACE0029092E /* Release */ = {
+           isa = XCBuildConfiguration;
+           buildSettings = {
+               ALWAYS_SEARCH_USER_PATHS = YES;
+               DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+               FRAMEWORK_SEARCH_PATHS = (
+                   "$(inherited)",
+                   "/Volumes/Data/WebKit-svn-01/OpenSource/WebKitBuild/Debug",
+               );
+               GCC_PRECOMPILE_PREFIX_HEADER = YES;
+               GCC_PREFIX_HEADER = "";
+               LD_RUNPATH_SEARCH_PATHS = "\"@loader_path/.\"";
+               LINKER_DISPLAYS_MANGLED_NAMES = YES;
+               OTHER_CFLAGS = (
+                   "-iframework",
+                   "$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/",
+               );
+               OTHER_LDFLAGS = "-ledit";
+               PRODUCT_NAME = "$(TARGET_NAME)";
+               SDKROOT = macosx.internal;
+           };
+           name = Release;
+       };
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+       C24658FC18902ACE0029092E /* Build configuration list for PBXProject "jsc-cli" */ = {
+           isa = XCConfigurationList;
+           buildConfigurations = (
+               C246590D18902ACE0029092E /* Debug */,
+               C246590E18902ACE0029092E /* Release */,
+           );
+           defaultConfigurationIsVisible = 0;
+           defaultConfigurationName = Release;
+       };
+       C246590F18902ACE0029092E /* Build configuration list for PBXNativeTarget "jsc-cli" */ = {
+           isa = XCConfigurationList;
+           buildConfigurations = (
+               C246591018902ACE0029092E /* Debug */,
+               C246591118902ACE0029092E /* Release */,
+           );
+           defaultConfigurationIsVisible = 0;
+           defaultConfigurationName = Release;
+       };
+/* End XCConfigurationList section */
+   };
+   rootObject = C24658F918902ACE0029092E /* Project object */;
+}

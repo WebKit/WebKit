@@ -1,0 +1,16 @@
+Tests that disabling the imageSmoothingEnabled attribute still works after multiple repaints
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test that the image is not filtered
+PASS left_of_center_pixel.data[0] is 255
+PASS left_of_center_pixel.data[1] is 0
+PASS left_of_center_pixel.data[2] is 0
+PASS right_of_center_pixel.data[0] is 0
+PASS right_of_center_pixel.data[1] is 255
+PASS right_of_center_pixel.data[2] is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

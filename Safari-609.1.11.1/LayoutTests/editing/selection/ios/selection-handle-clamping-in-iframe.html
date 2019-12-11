@@ -1,0 +1,76 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/basic-gestures.js"></script>
+<meta name=viewport content="width=device-width">
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+pre {
+    width: 300px;
+    height: 160px;
+    overflow: scroll;
+    border: 1px green solid;
+}
+
+pre > #result {
+    color: green;
+}
+
+#target {
+    width: 300px;
+    height: 160px;
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function midPointOfRect(rect) {
+    return [rect.left + (rect.width / 2), rect.top + (rect.height / 2)];
+}
+
+async function runTest() {
+    // Wait for both the main frame and the subframe to finish loading.
+    loadCount = window.loadCount ? loadCount : 0;
+    if (++loadCount != 2)
+        return;
+
+    await longPressAtPoint(160, 240);
+    let startRect = { };
+    let endRect = { };
+    while (!startRect.width || !startRect.height || !endRect.width || !endRect.height) {
+        startRect = await UIHelper.getSelectionStartGrabberViewRect();
+        endRect = await UIHelper.getSelectionEndGrabberViewRect();
+    }
+
+    const [startX, startY] = midPointOfRect(startRect);
+    await touchAndDragFromPointToPoint(startX, startY, startX, startY + 100);
+    await liftUpAtPoint(startX, startY + 100);
+
+    const [endX, endY] = midPointOfRect(endRect);
+    await touchAndDragFromPointToPoint(endX, endY, endX, endY - 100);
+    await liftUpAtPoint(endX, endY - 100);
+
+    result.textContent = target.contentWindow.getSelection().toString();
+    testRunner.notifyDone();
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<pre>The final selection is: "<span id="result"></span>"</pre>
+<iframe onload="runTest()" src="data:text/html,
+    <span id='text' style='font-size: 140px;'>iOS</span>" id="target"></iframe>
+<p>Verifies that the selection remains the same when dragging the start selection handles below the end selection handle and vice versa.</p>
+<p>To manually run the test, select "iOS" in the iframe above, drag the start selection handle down, and then drag the end selection handle up.</p>
+<p>The text "iOS" should remain selected.</p>
+</body>
+</html>

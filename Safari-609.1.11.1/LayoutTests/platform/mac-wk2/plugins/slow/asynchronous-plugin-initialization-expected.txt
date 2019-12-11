@@ -1,0 +1,7 @@
+Test that loading a slow loading plug-in (550ms second sleep in NPP_new) doesn't block the WebProcess
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Appending plug-in element took under 500ms, plug-in initializing asynchronously.
+

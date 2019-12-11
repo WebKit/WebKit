@@ -1,0 +1,33 @@
+<html>
+  <head>
+    <script>
+      var output = '';
+   
+      function selectNodes(a, b) {
+        window.getSelection().setBaseAndExtent(a, 1, b, 1);
+        output += window.getSelection().anchorNode.parentNode.id + ' ';   
+      }
+
+      if (window.testRunner)
+        testRunner.dumpAsText();
+
+      function doIt() {
+        try {
+          var x = document.getElementById('x');
+          var y = document.getElementById('y');
+          selectNodes(x, y);
+          selectNodes(y, x);
+          document.getElementById('result').innerHTML = (output == "x y " ? "PASS" : ("FAIL: " + output));
+        } catch (e) { alert(e); }
+      }
+    </script>
+  </head>
+  <body onload="doIt()">
+    <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=20117">bug 20117</a>:
+    setBaseAndExtent fails to reverse the current selection.</p>
+    <div id='x'>Div X</div>
+    <div id='y'>Div Y</div>
+    <div id='z'>Div Z</div>
+    <div id='result'>FAIL (script didn't run)</div>
+  </body>
+</html>

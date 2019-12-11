@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+    window.onload = function() {
+        window.setTimeout(function() {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 4000);
+    };
+</script>
+<link rel="preload" as="image" href="../resources/square100.png">
+<link rel="preload" as="image" href="../resources/square100.png?name=value">
+<img src="../resources/square100.png">
+This test verifies that unused preload resources (and only unused ones) issue a warning.

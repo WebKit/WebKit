@@ -1,0 +1,53 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # product: object; Bugzilla::Product object representing the product to
+  #               which the milestone belongs.
+  # milestone: object; Bugzilla::Milestone object representing the
+  #                    milestone the user wants to edit.
+  #%]
+
+[% title = BLOCK %]Edit Milestone '[% milestone.name FILTER html %]' of product '
+                   [%- product.name FILTER html %]'[% END %]
+[% PROCESS global/header.html.tmpl
+  title = title
+  style_urls = ['skins/standard/admin.css']
+  onload = "document.forms['f'].milestone.select()"
+%]
+
+<form name="f" method="post" action="editmilestones.cgi">
+  <table id="admin_table_edit">
+    <tr>
+      <th><label for="milestone">Milestone:</label></th>
+      <td><input id="milestone" size="64" maxlength="64" name="milestone" value="
+      [%- milestone.name FILTER html %]" required></td>
+    </tr>
+    <tr>
+      <th><label for="sortkey">Sortkey:</label></th>
+      <td><input id="sortkey" size="20" maxlength="20" name="sortkey" value="
+      [%- milestone.sortkey FILTER html %]"></td>
+    </tr>
+    <tr>
+      <th><label for="isactive">Enabled For [% terms.Bugs %]:</label></th>
+      <td><input id="isactive" name="isactive" type="checkbox" value="1"
+                 [% 'checked="checked"' IF milestone.isactive %]></td>
+    </tr>
+  </table>
+
+  <input type="hidden" name="milestoneold" value="[% milestone.name FILTER html %]">
+  <input type="hidden" name="action" value="update">
+  <input type="hidden" name="product" value="[% product.name FILTER html %]">
+  <input type="submit" id="update" value="Save Changes">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
+</form>
+
+[% PROCESS admin/milestones/footer.html.tmpl
+  no_edit_milestone_link = 1 %]
+
+[% PROCESS global/footer.html.tmpl %]

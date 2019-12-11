@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p id="description">This tests for a bug where deleting a paragraph in preserveNewline text would introduce an extra line.  You should see '\nbar' below.</p>
+<div id="test" contenteditable="true"><pre>foo
+bar</pre></div>
+
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+function runTestsOn(platform) {
+    var sel = window.getSelection();
+    var e = document.getElementById("test");
+    
+    if (window.internals)
+        internals.settings.setEditingBehavior(platform);
+
+    sel.setPosition(e, 0);
+    sel.modify("extend", "forward", "character");
+    sel.modify("extend", "forward", "character");
+    sel.modify("extend", "forward", "character");
+    document.execCommand("Delete");
+    Markup.dump("test", "on " + platform);
+    document.execCommand("undo");
+    Markup.dump("test", "after undo on " + platform);
+}
+
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+Markup.description(description.textContent);
+Markup.dump("test", "initial state");
+runTestsOn("mac");
+runTestsOn("win");
+runTestsOn("unix");
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+FAIL Tests that scrollend is fired after scroll snap animation completion. promise_test: Unhandled rejection with value: "Reaches the maximum frames."
+FAIL Tests that scrollend is fired after fling snap animation completion. promise_test: Unhandled rejection with value: "Reaches the maximum frames."
+

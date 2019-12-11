@@ -1,0 +1,13 @@
+Test how setCustomValidity reacts to too few arguments.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS b.setCustomValidity() threw exception TypeError: Not enough arguments.
+PASS fs.setCustomValidity() threw exception TypeError: Not enough arguments.
+PASS i.setCustomValidity() threw exception TypeError: Not enough arguments.
+PASS k.setCustomValidity() threw exception TypeError: Not enough arguments.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

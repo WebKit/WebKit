@@ -1,0 +1,56 @@
+<html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<head>
+  <title>Document::nodesFromRect shadow content access - bug 80847 </title>
+  <style type="text/css" media="screen">
+    video {
+      margin: 50px;
+    }
+  </style>
+  <script src=media-file.js></script>
+  <script src=media-controls.js></script>
+  <script src="../resources/js-test-pre.js"></script>
+  <script src="../fast/dom/nodesFromRect/resources/nodesFromRect.js"></script>
+  <script type="text/javascript" charset="utf-8">
+    function runTest()
+    {
+      var e = {};
+
+      // Set up shortcut access to elements
+      e['html'] = document.getElementsByTagName("html")[0];
+      ['v1', 'body'].forEach(function(a) {
+        e[a] = document.getElementById(a);
+      });
+
+      window.scrollTo(0, 0);
+
+      var playCoords;
+      try {
+          playCoords = mediaControlsButtonCoordinates(video, "play-button");
+      } catch (exception) {
+          failTest(exception.description);
+          return;
+      }
+      var clickX = playCoords[0];
+      var clickY = playCoords[1];
+
+      check(clickX, clickY, 100, 100, 20, 20, [e.v1, e.body]);
+
+      var shadow =['-webkit-media-controls-panel-background', '-webkit-media-controls-play-button', '-webkit-media-controls-panel', '-webkit-media-controls'];
+      checkShadowContent(clickX, clickY, 10, 10, 20, 20, shadow);
+    }
+  </script>
+</head>
+<body id="body">
+    <video id="v1" controls></video>
+    <p>This test only runs in DRT!</p>
+    <script src=video-test.js></script>
+    <script>
+        testExpected("video.controls", null, '!=');
+        waitForEvent('canplaythrough', function () {
+            runTest();
+            endTest();
+        } );
+        video.src = findMediaFile("video", "content/test");
+    </script>
+</body>
+</html>

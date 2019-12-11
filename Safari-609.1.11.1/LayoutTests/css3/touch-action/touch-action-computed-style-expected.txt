@@ -1,0 +1,22 @@
+Testing touch-action: manipulation;
+PASS window.getComputedStyle(document.body).getPropertyValue('touch-action') is 'manipulation'
+Testing touch-action: auto;
+PASS window.getComputedStyle(document.body).getPropertyValue('touch-action') is 'auto'
+Testing a bogus value
+PASS window.getComputedStyle(document.body).getPropertyValue('touch-action') is 'auto'
+Testing all caps
+PASS window.getComputedStyle(document.body).getPropertyValue('touch-action') is 'manipulation'
+Testing weird casing
+PASS window.getComputedStyle(document.body).getPropertyValue('touch-action') is 'auto'
+Testing !important (auto)
+PASS window.getComputedStyle(document.body).getPropertyValue('touch-action') is 'auto'
+Testing !important (manipulation)
+PASS window.getComputedStyle(document.body).getPropertyValue('touch-action') is 'manipulation'
+Testing non-inheritance
+PASS window.getComputedStyle(document.getElementById('child')).getPropertyValue('touch-action') is 'auto'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Testing the computed style of touch-action:
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

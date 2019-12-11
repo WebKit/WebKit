@@ -1,0 +1,3 @@
+
+PASS: Setting properties on the DOMImplementation did not leak cross-frame.
+

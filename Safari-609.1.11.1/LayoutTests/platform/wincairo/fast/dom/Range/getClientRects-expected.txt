@@ -1,0 +1,266 @@
+Test 1
+PASS rects.length is 5
+PASS rects[0].left.toFixed(2) is "8.00"
+PASS rects[0].top.toFixed(2) is "8.00"
+PASS rects[0].width.toFixed(2) is "400.00"
+PASS rects[0].height.toFixed(2) is "160.00"
+PASS rects[1].left.toFixed(2) is "8.00"
+FAIL rects[1].top.toFixed(2) should be 19.00. Was 18.00.
+FAIL rects[1].width.toFixed(2) should be 386.58. Was 378.00.
+FAIL rects[1].height.toFixed(2) should be 18.00. Was 19.00.
+PASS rects[2].left.toFixed(2) is "8.00"
+FAIL rects[2].top.toFixed(2) should be 59.00. Was 58.00.
+FAIL rects[2].width.toFixed(2) should be 359.91. Was 378.00.
+FAIL rects[2].height.toFixed(2) should be 18.00. Was 19.00.
+PASS rects[3].left.toFixed(2) is "8.00"
+FAIL rects[3].top.toFixed(2) should be 99.00. Was 98.00.
+FAIL rects[3].width.toFixed(2) should be 381.25. Was 380.00.
+FAIL rects[3].height.toFixed(2) should be 18.00. Was 19.00.
+PASS rects[4].left.toFixed(2) is "8.00"
+FAIL rects[4].top.toFixed(2) should be 139.00. Was 138.00.
+FAIL rects[4].width.toFixed(2) should be 368.36. Was 247.00.
+FAIL rects[4].height.toFixed(2) should be 18.00. Was 19.00.
+Test 2
+PASS rects.length is 4
+PASS rects[0].left.toFixed(2) is "8.00"
+FAIL rects[0].top.toFixed(2) should be 215.00. Was 218.00.
+FAIL rects[0].width.toFixed(2) should be 386.58. Was 378.00.
+FAIL rects[0].height.toFixed(2) should be 18.00. Was 19.00.
+PASS rects[1].left.toFixed(2) is "8.00"
+FAIL rects[1].top.toFixed(2) should be 255.00. Was 258.00.
+FAIL rects[1].width.toFixed(2) should be 359.91. Was 378.00.
+FAIL rects[1].height.toFixed(2) should be 18.00. Was 19.00.
+PASS rects[2].left.toFixed(2) is "8.00"
+FAIL rects[2].top.toFixed(2) should be 295.00. Was 298.00.
+FAIL rects[2].width.toFixed(2) should be 381.25. Was 380.00.
+FAIL rects[2].height.toFixed(2) should be 18.00. Was 19.00.
+PASS rects[3].left.toFixed(2) is "8.00"
+FAIL rects[3].top.toFixed(2) should be 335.00. Was 338.00.
+FAIL rects[3].width.toFixed(2) should be 368.36. Was 247.00.
+FAIL rects[3].height.toFixed(2) should be 18.00. Was 19.00.
+Test 3
+PASS rects.length is 4
+FAIL rects[0].left.toFixed(2) should be 81.31. Was 76.00.
+FAIL rects[0].top.toFixed(2) should be 411.00. Was 418.00.
+FAIL rects[0].width.toFixed(2) should be 313.27. Was 310.00.
+FAIL rects[0].height.toFixed(2) should be 18.00. Was 19.00.
+PASS rects[1].left.toFixed(2) is "8.00"
+FAIL rects[1].top.toFixed(2) should be 451.00. Was 458.00.
+FAIL rects[1].width.toFixed(2) should be 359.91. Was 378.00.
+FAIL rects[1].height.toFixed(2) should be 18.00. Was 19.00.
+PASS rects[2].left.toFixed(2) is "8.00"
+FAIL rects[2].top.toFixed(2) should be 491.00. Was 498.00.
+FAIL rects[2].width.toFixed(2) should be 381.25. Was 380.00.
+FAIL rects[2].height.toFixed(2) should be 18.00. Was 19.00.
+PASS rects[3].left.toFixed(2) is "8.00"
+FAIL rects[3].top.toFixed(2) should be 531.00. Was 538.00.
+FAIL rects[3].width.toFixed(2) should be 146.66. Was 38.00.
+FAIL rects[3].height.toFixed(2) should be 18.00. Was 19.00.
+Test 4
+FAIL rects.length should be 7. Was 6.
+PASS rects[0].left.toFixed(2) is "8.00"
+FAIL rects[0].top.toFixed(2) should be 596.00. Was 608.00.
+PASS rects[0].width.toFixed(2) is "400.00"
+FAIL rects[0].height.toFixed(2) should be 278.00. Was 238.00.
+PASS rects[1].left.toFixed(2) is "8.00"
+FAIL rects[1].top.toFixed(2) should be 607.00. Was 618.00.
+FAIL rects[1].width.toFixed(2) should be 386.58. Was 378.00.
+FAIL rects[1].height.toFixed(2) should be 18.00. Was 19.00.
+PASS rects[2].left.toFixed(2) is "8.00"
+FAIL rects[2].top.toFixed(2) should be 725.00. Was 736.00.
+FAIL rects[2].width.toFixed(2) should be 268.39. Was 230.00.
+FAIL rects[2].height.toFixed(2) should be 18.00. Was 19.00.
+FAIL rects[3].left.toFixed(2) should be 352.39. Was 314.00.
+FAIL rects[3].top.toFixed(2) should be 725.00. Was 736.00.
+FAIL rects[3].width.toFixed(2) should be 44.88. Was 86.00.
+FAIL rects[3].height.toFixed(2) should be 18.00. Was 19.00.
+PASS rects[4].left.toFixed(2) is "8.00"
+FAIL rects[4].top.toFixed(2) should be 765.00. Was 776.00.
+FAIL rects[4].width.toFixed(2) should be 348.38. Was 398.00.
+FAIL rects[4].height.toFixed(2) should be 18.00. Was 19.00.
+PASS rects[5].left.toFixed(2) is "8.00"
+FAIL rects[5].top.toFixed(2) should be 805.00. Was 816.00.
+FAIL rects[5].width.toFixed(2) should be 375.90. Was 291.00.
+FAIL rects[5].height.toFixed(2) should be 18.00. Was 19.00.
+FAIL rects[6].left.toFixed(2) should be 8.00. Threw exception TypeError: undefined is not an object (evaluating 'rects[6].left')
+FAIL rects[6].top.toFixed(2) should be 845.00. Threw exception TypeError: undefined is not an object (evaluating 'rects[6].top')
+FAIL rects[6].width.toFixed(2) should be 67.98. Threw exception TypeError: undefined is not an object (evaluating 'rects[6].width')
+FAIL rects[6].height.toFixed(2) should be 18.00. Threw exception TypeError: undefined is not an object (evaluating 'rects[6].height')
+Test 5
+PASS rects.length is 5
+FAIL rects[0].left.toFixed(2) should be 81.00. Was 76.00.
+FAIL rects[0].top.toFixed(2) should be 921.00. Was 896.00.
+FAIL rects[0].width.toFixed(2) should be 313.58. Was 310.00.
+FAIL rects[0].height.toFixed(2) should be 18.00. Was 19.00.
+PASS rects[1].left.toFixed(2) is "8.00"
+FAIL rects[1].top.toFixed(2) should be 1039.00. Was 1014.00.
+FAIL rects[1].width.toFixed(2) should be 268.39. Was 230.00.
+FAIL rects[1].height.toFixed(2) should be 18.00. Was 19.00.
+FAIL rects[2].left.toFixed(2) should be 276.39. Was 238.00.
+FAIL rects[2].top.toFixed(2) should be 950.00. Was 926.00.
+PASS rects[2].width.toFixed(2) is "76.00"
+PASS rects[2].height.toFixed(2) is "103.00"
+FAIL rects[3].left.toFixed(2) should be 352.39. Was 314.00.
+FAIL rects[3].top.toFixed(2) should be 1039.00. Was 1014.00.
+FAIL rects[3].width.toFixed(2) should be 44.88. Was 86.00.
+FAIL rects[3].height.toFixed(2) should be 18.00. Was 19.00.
+PASS rects[4].left.toFixed(2) is "8.00"
+FAIL rects[4].top.toFixed(2) should be 1079.00. Was 1054.00.
+FAIL rects[4].width.toFixed(2) should be 291.00. Was 220.00.
+FAIL rects[4].height.toFixed(2) should be 18.00. Was 19.00.
+Test 6
+FAIL rects.length should be 8. Was 7.
+PASS rects[0].left.toFixed(2) is "8.00"
+FAIL rects[0].top.toFixed(2) should be 1224.00. Was 1164.00.
+PASS rects[0].width.toFixed(2) is "400.00"
+FAIL rects[0].height.toFixed(2) should be 240.00. Was 200.00.
+PASS rects[1].left.toFixed(2) is "8.00"
+FAIL rects[1].top.toFixed(2) should be 1235.00. Was 1174.00.
+FAIL rects[1].width.toFixed(2) should be 386.58. Was 378.00.
+FAIL rects[1].height.toFixed(2) should be 18.00. Was 19.00.
+PASS rects[2].left.toFixed(2) is "8.00"
+FAIL rects[2].top.toFixed(2) should be 1275.00. Was 1214.00.
+FAIL rects[2].width.toFixed(2) should be 16.00. Was 54.00.
+FAIL rects[2].height.toFixed(2) should be 18.00. Was 19.00.
+FAIL rects[3].left.toFixed(2) should be 8.00. Was 102.00.
+FAIL rects[3].top.toFixed(2) should be 1315.00. Was 1214.00.
+FAIL rects[3].width.toFixed(2) should be 58.22. Was 43.00.
+FAIL rects[3].height.toFixed(2) should be 18.00. Was 19.00.
+FAIL rects[4].left.toFixed(2) should be 106.22. Was 8.00.
+FAIL rects[4].top.toFixed(2) should be 1315.00. Was 1254.00.
+FAIL rects[4].width.toFixed(2) should be 45.32. Was 363.00.
+FAIL rects[4].height.toFixed(2) should be 18.00. Was 19.00.
+PASS rects[5].left.toFixed(2) is "8.00"
+FAIL rects[5].top.toFixed(2) should be 1355.00. Was 1294.00.
+FAIL rects[5].width.toFixed(2) should be 396.34. Was 389.00.
+FAIL rects[5].height.toFixed(2) should be 18.00. Was 19.00.
+PASS rects[6].left.toFixed(2) is "8.00"
+FAIL rects[6].top.toFixed(2) should be 1395.00. Was 1334.00.
+FAIL rects[6].width.toFixed(2) should be 359.93. Was 148.00.
+FAIL rects[6].height.toFixed(2) should be 18.00. Was 19.00.
+FAIL rects[7].left.toFixed(2) should be 8.00. Threw exception TypeError: undefined is not an object (evaluating 'rects[7].left')
+FAIL rects[7].top.toFixed(2) should be 1435.00. Threw exception TypeError: undefined is not an object (evaluating 'rects[7].top')
+FAIL rects[7].width.toFixed(2) should be 221.71. Threw exception TypeError: undefined is not an object (evaluating 'rects[7].width')
+FAIL rects[7].height.toFixed(2) should be 18.00. Threw exception TypeError: undefined is not an object (evaluating 'rects[7].height')
+Test 7
+FAIL rects.length should be 8. Was 7.
+PASS rects[0].left.toFixed(2) is "8.00"
+FAIL rects[0].top.toFixed(2) should be 1511.00. Was 1414.00.
+FAIL rects[0].width.toFixed(2) should be 386.58. Was 378.00.
+FAIL rects[0].height.toFixed(2) should be 18.00. Was 19.00.
+PASS rects[1].left.toFixed(2) is "8.00"
+FAIL rects[1].top.toFixed(2) should be 1551.00. Was 1444.00.
+FAIL rects[1].width.toFixed(2) should be 16.00. Was 400.00.
+FAIL rects[1].height.toFixed(2) should be 18.00. Was 40.00.
+PASS rects[2].left.toFixed(2) is "8.00"
+FAIL rects[2].top.toFixed(2) should be 1580.00. Was 1454.00.
+FAIL rects[2].width.toFixed(2) should be 400.00. Was 54.00.
+FAIL rects[2].height.toFixed(2) should be 40.00. Was 19.00.
+FAIL rects[3].left.toFixed(2) should be 8.00. Was 102.00.
+FAIL rects[3].top.toFixed(2) should be 1591.00. Was 1454.00.
+FAIL rects[3].width.toFixed(2) should be 58.22. Was 43.00.
+FAIL rects[3].height.toFixed(2) should be 18.00. Was 19.00.
+FAIL rects[4].left.toFixed(2) should be 106.22. Was 8.00.
+FAIL rects[4].top.toFixed(2) should be 1591.00. Was 1494.00.
+FAIL rects[4].width.toFixed(2) should be 45.32. Was 363.00.
+FAIL rects[4].height.toFixed(2) should be 18.00. Was 19.00.
+PASS rects[5].left.toFixed(2) is "8.00"
+FAIL rects[5].top.toFixed(2) should be 1631.00. Was 1534.00.
+FAIL rects[5].width.toFixed(2) should be 396.34. Was 389.00.
+FAIL rects[5].height.toFixed(2) should be 18.00. Was 19.00.
+PASS rects[6].left.toFixed(2) is "8.00"
+FAIL rects[6].top.toFixed(2) should be 1671.00. Was 1574.00.
+FAIL rects[6].width.toFixed(2) should be 359.93. Was 148.00.
+FAIL rects[6].height.toFixed(2) should be 18.00. Was 19.00.
+FAIL rects[7].left.toFixed(2) should be 8.00. Threw exception TypeError: undefined is not an object (evaluating 'rects[7].left')
+FAIL rects[7].top.toFixed(2) should be 1711.00. Threw exception TypeError: undefined is not an object (evaluating 'rects[7].top')
+FAIL rects[7].width.toFixed(2) should be 221.71. Threw exception TypeError: undefined is not an object (evaluating 'rects[7].width')
+FAIL rects[7].height.toFixed(2) should be 18.00. Threw exception TypeError: undefined is not an object (evaluating 'rects[7].height')
+Test 8
+PASS rects.length is 4
+PASS rects[0].left.toFixed(2) is "168.51"
+FAIL rects[0].top.toFixed(2) should be 1758.44. Was 1625.80.
+FAIL rects[0].width.toFixed(2) should be 262.28. Was 257.53.
+FAIL rects[0].height.toFixed(2) should be 307.71. Was 301.78.
+PASS rects[1].left.toFixed(2) is "137.87"
+FAIL rects[1].top.toFixed(2) should be 1784.15. Was 1651.51.
+FAIL rects[1].width.toFixed(2) should be 245.14. Was 257.53.
+FAIL rects[1].height.toFixed(2) should be 287.28. Was 301.78.
+PASS rects[2].left.toFixed(2) is "107.23"
+FAIL rects[2].top.toFixed(2) should be 1809.86. Was 1677.22.
+FAIL rects[2].width.toFixed(2) should be 258.85. Was 258.81.
+FAIL rects[2].height.toFixed(2) should be 303.62. Was 303.31.
+PASS rects[3].left.toFixed(2) is "76.59"
+FAIL rects[3].top.toFixed(2) should be 1835.57. Was 1702.93.
+FAIL rects[3].width.toFixed(2) should be 250.57. Was 173.32.
+FAIL rects[3].height.toFixed(2) should be 293.75. Was 201.43.
+Test 9
+PASS rects.length is 0
+Test 9b
+PASS rects.length is 1
+PASS rects[0].left.toFixed(2) is "8.00"
+FAIL rects[0].top.toFixed(2) should be 1983.00. Was 1854.00.
+PASS rects[0].width.toFixed(2) is "0.00"
+FAIL rects[0].height.toFixed(2) should be 18.00. Was 19.00.
+Test 10
+FAIL rects.length should be 5. Was 4.
+FAIL rects[0].left.toFixed(2) should be 19.00. Was 18.00.
+FAIL rects[0].top.toFixed(2) should be 2168.00. Was 2044.00.
+FAIL rects[0].width.toFixed(2) should be 18.00. Was 19.00.
+FAIL rects[0].height.toFixed(2) should be 375.00. Was 399.00.
+FAIL rects[1].left.toFixed(2) should be 59.00. Was 58.00.
+FAIL rects[1].top.toFixed(2) should be 2168.00. Was 2044.00.
+FAIL rects[1].width.toFixed(2) should be 18.00. Was 19.00.
+FAIL rects[1].height.toFixed(2) should be 367.03. Was 398.00.
+FAIL rects[2].left.toFixed(2) should be 99.00. Was 98.00.
+FAIL rects[2].top.toFixed(2) should be 2168.00. Was 2044.00.
+FAIL rects[2].width.toFixed(2) should be 18.00. Was 19.00.
+FAIL rects[2].height.toFixed(2) should be 348.38. Was 380.00.
+FAIL rects[3].left.toFixed(2) should be 139.00. Was 138.00.
+FAIL rects[3].top.toFixed(2) should be 2168.00. Was 2044.00.
+FAIL rects[3].width.toFixed(2) should be 18.00. Was 19.00.
+FAIL rects[3].height.toFixed(2) should be 375.90. Was 247.00.
+FAIL rects[4].left.toFixed(2) should be 179.00. Threw exception TypeError: undefined is not an object (evaluating 'rects[4].left')
+FAIL rects[4].top.toFixed(2) should be 2168.00. Threw exception TypeError: undefined is not an object (evaluating 'rects[4].top')
+FAIL rects[4].width.toFixed(2) should be 18.00. Threw exception TypeError: undefined is not an object (evaluating 'rects[4].width')
+FAIL rects[4].height.toFixed(2) should be 67.98. Threw exception TypeError: undefined is not an object (evaluating 'rects[4].height')
+Test 11
+PASS rects.length is 2
+PASS rects[0].left.toFixed(2) is "8.00"
+FAIL rects[0].top.toFixed(2) should be 2604.00. Was 2484.00.
+PASS rects[0].width.toFixed(2) is "400.00"
+PASS rects[0].height.toFixed(2) is "40.00"
+PASS rects[1].left.toFixed(2) is "8.00"
+FAIL rects[1].top.toFixed(2) should be 2615.00. Was 2494.00.
+FAIL rects[1].width.toFixed(2) should be 181.75. Was 169.00.
+FAIL rects[1].height.toFixed(2) should be 18.00. Was 19.00.
+Test 12
+PASS rects.length is 1
+PASS rects[0].left.toFixed(2) is "8.00"
+FAIL rects[0].top.toFixed(2) should be 2840.00. Was 2724.00.
+PASS rects[0].width.toFixed(2) is "400.00"
+PASS rects[0].height.toFixed(2) is "160.00"
+Test 13
+PASS rects.length is 4
+PASS rects[0].left.toFixed(2) is "8.00"
+FAIL rects[0].top.toFixed(2) should be 3047.00. Was 2934.00.
+FAIL rects[0].width.toFixed(2) should be 386.58. Was 378.00.
+FAIL rects[0].height.toFixed(2) should be 18.00. Was 19.00.
+PASS rects[1].left.toFixed(2) is "8.00"
+FAIL rects[1].top.toFixed(2) should be 3087.00. Was 2974.00.
+FAIL rects[1].width.toFixed(2) should be 359.91. Was 378.00.
+FAIL rects[1].height.toFixed(2) should be 18.00. Was 19.00.
+PASS rects[2].left.toFixed(2) is "8.00"
+FAIL rects[2].top.toFixed(2) should be 3127.00. Was 3014.00.
+FAIL rects[2].width.toFixed(2) should be 381.25. Was 380.00.
+FAIL rects[2].height.toFixed(2) should be 18.00. Was 19.00.
+PASS rects[3].left.toFixed(2) is "8.00"
+FAIL rects[3].top.toFixed(2) should be 3167.00. Was 3054.00.
+FAIL rects[3].width.toFixed(2) should be 368.36. Was 247.00.
+FAIL rects[3].height.toFixed(2) should be 18.00. Was 19.00.
+Test 14
+PASS rects.length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

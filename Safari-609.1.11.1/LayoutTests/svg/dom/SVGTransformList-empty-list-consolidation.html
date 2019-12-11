@@ -1,0 +1,17 @@
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function go() {
+    var oSvgPatternElement = document.createElementNS("http://www.w3.org/2000/svg","pattern");
+    var oSvgTransformList = oSvgPatternElement.patternTransform.baseVal;
+    oSvgTransformList.consolidate();
+}
+</script>
+</head>
+<body onload="go()">
+This test passes if it doesn't fire an assertion.
+</body>
+</html>

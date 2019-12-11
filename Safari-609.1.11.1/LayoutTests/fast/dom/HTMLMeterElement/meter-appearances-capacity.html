@@ -1,0 +1,47 @@
+<html>
+<head>
+<style>
+  h1, h2, p { font-size: medium; }
+  meter{ float: right; }
+  .tall { height: 50px; }
+  .short { height: 5px; }
+  .wide { width: 300px; }
+  .narrow { width: 30px; }
+  li:nth-child(even) { background: #ccc; }
+  li:nth-child(odd) { background: #eee; }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.notifyDone();
+</script>
+</head>
+<body>
+  <h1>Meters with various appearance</h1>
+  <h2>discrete-capacity-level-indicator<h2>
+  <ul>
+    <li>value=10/10: <meter min="0" max="10" low="3" high="6" optimum="5" value="10" style="-webkit-appearance: discrete-capacity-level-indicator;"></meter></li>
+    <li>value=8/10: <meter min="0" max="10" low="3" high="6" optimum="5" value="8" style="-webkit-appearance: discrete-capacity-level-indicator;"></meter></li>
+    <li>value=5/10: <meter min="0" max="10" low="3" high="6" optimum="5" value="5" style="-webkit-appearance: discrete-capacity-level-indicator;"></meter></li>
+    <li>value=2/10: <meter min="0" max="10" low="3" high="6" optimum="5" value="2" style="-webkit-appearance: discrete-capacity-level-indicator;"></meter></li>
+    <li>value=0/10: <meter min="0" max="10" low="3" high="6" optimum="5" value="0" style="-webkit-appearance: discrete-capacity-level-indicator;"></meter></li>
+    <li>RTL: <meter min="0" max="10" low="3" high="6" optimum="5" value="5" style="-webkit-appearance: discrete-capacity-level-indicator; direction: rtl;"></meter></li>
+    <li class="tall">Tall: <meter class="tall" min="0" max="10" low="3" high="6" optimum="5" value="5" style="-webkit-appearance: discrete-capacity-level-indicator;"></meter></li>
+    <li>Short: <meter class="short" min="0" max="10" low="3" high="6" optimum="5" value="3" style="-webkit-appearance: discrete-capacity-level-indicator;"></meter></li>
+    <li>Wide: <meter class="wide" min="0" max="10" low="3" high="6" optimum="5" value="5" style="-webkit-appearance: discrete-capacity-level-indicator;"></meter></li>
+    <li>Narrow: <meter class="narrow" min="0" max="10" low="3" high="6" optimum="5" value="5" style="-webkit-appearance: discrete-capacity-level-indicator;"></meter></li>
+  </ul>
+  <h2>continuous-capacity-level-indicator<h2>
+  <ul>
+    <li>value=10/10: <meter min="0" max="10" low="3" high="6" optimum="5" value="10" style="-webkit-appearance: continuous-capacity-level-indicator;"></meter></li>
+    <li>value=8/10: <meter min="0" max="10" low="3" high="6" optimum="5" value="8" style="-webkit-appearance: continuous-capacity-level-indicator;"></meter></li>
+    <li>value=5/10: <meter min="0" max="10" low="3" high="6" optimum="5" value="5" style="-webkit-appearance: continuous-capacity-level-indicator;"></meter></li>
+    <li>value=2/10: <meter min="0" max="10" low="3" high="6" optimum="5" value="2" style="-webkit-appearance: continuous-capacity-level-indicator;"></meter></li>
+    <li>value=0/10: <meter min="0" max="10" low="3" high="6" optimum="5" value="0" style="-webkit-appearance: continuous-capacity-level-indicator;"></meter></li>
+    <li>RTL: <meter min="0" max="10" low="3" high="6" optimum="5" value="5" style="-webkit-appearance: continuous-capacity-level-indicator; direction: rtl;"></meter></li>
+    <li class="tall">Tall: <meter class="tall" min="0" max="10" low="3" high="6" optimum="5" value="5" style="-webkit-appearance: continuous-capacity-level-indicator;"></meter></li>
+    <li>Short: <meter class="short" min="0" max="10" low="3" high="6" optimum="5" value="3" style="-webkit-appearance: continuous-capacity-level-indicator;"></meter></li>
+    <li>Wide: <meter class="wide" min="0" max="10" low="3" high="6" optimum="5" value="5" style="-webkit-appearance: continuous-capacity-level-indicator;"></meter></li>
+    <li>Narrow: <meter class="narrow" min="0" max="10" low="3" high="6" optimum="5" value="5" style="-webkit-appearance: continuous-capacity-level-indicator;"></meter></li>
+  </ul>
+</body>
+</html>

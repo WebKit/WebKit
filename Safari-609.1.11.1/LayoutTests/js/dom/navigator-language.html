@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description(
+    "<pre>Check return value of navigator.language."
+);
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setPOSIXLocale("en_US.iso88591");
+}
+
+var language = navigator.language;
+if (language.length == 2)
+    shouldBe("language", "'en'");
+else
+    shouldBe("language", "'en-US'");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

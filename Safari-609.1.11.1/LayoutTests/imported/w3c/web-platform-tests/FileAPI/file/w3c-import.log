@@ -1,0 +1,24 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/file/File-constructor-endings.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/file/File-constructor.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/file/Worker-read-file-constructor.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/file/send-file-form-iso-2022-jp.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/file/send-file-form-utf-8.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/file/send-file-form-windows-1252.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/file/send-file-form-x-user-defined.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/FileAPI/file/send-file-form.html

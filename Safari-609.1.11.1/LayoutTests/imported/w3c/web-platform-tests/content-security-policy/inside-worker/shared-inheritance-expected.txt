@@ -1,0 +1,3 @@
+
+FAIL shared-inheritance ReferenceError: Can't find variable: SharedWorker
+

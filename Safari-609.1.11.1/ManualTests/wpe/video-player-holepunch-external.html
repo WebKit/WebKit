@@ -1,0 +1,56 @@
+<html>
+  <head>
+    <title>WPE external holepunch test</title>
+    <style>
+      video {
+          width: 400px;
+          height: 400px;
+      }
+    </style>
+  </head>
+  <body>
+    <p>
+      <strong>WPE external holepunch test</strong>
+    </p>
+    <p>
+      This test checks whether the external holepunch feature is working on WPE.
+    </p>
+    <p>
+      There is a video player of 400x400 below this text. It will  play a valid video for 5 seconds, then a holepunch one
+      for another 5 seconds and then the first one again.
+    </p>
+    <p>
+      If everything is working fine, there should be the valid video for 5 seconds, then a transparent rectangle of 400x400
+      for 5 seconds, and then again the valid video.
+    </p>
+    <p>
+      If GStreamer holepunch is enabled when running this test, the first and third video will show a transparent
+      rectangle instead of the video content.
+    </p>
+    <video id="video">
+      <source id="source" src="../../LayoutTests/media/content/long-test.mp4" type="video/mp4">
+    </video>
+    <div id="log"></div>
+    <script type="text/javascript">
+      var v = document.getElementById("video");
+      var s = document.getElementById("source");
+      var l = document.getElementById("log");
+      log.innerHTML = "Playing first video. The video (or a transparent rectangle if GStreamer holepunch is enabled) should be visible";
+      v.play();
+
+      setTimeout(function() {
+        s.type = "video/holepunch";
+        v.load();
+        v.play();
+        log.innerHTML = "Playing second video. A transparent rectangle should be visible";
+      }, 5000);
+
+      setTimeout(function() {
+        s.type = "video/mp4";
+        v.load();
+        v.play();
+        log.innerHTML = "Playing third video. The video (or a transparent rectangle if GStreamer holepunch is enabled) should be visible";
+      }, 10000);
+    </script>
+  </body>
+</html>

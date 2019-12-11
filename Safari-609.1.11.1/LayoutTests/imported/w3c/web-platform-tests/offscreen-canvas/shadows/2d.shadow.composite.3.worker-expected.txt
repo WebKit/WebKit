@@ -1,0 +1,3 @@
+
+FAIL Areas outside shadows are drawn correctly with destination-out Can't find variable: OffscreenCanvas
+

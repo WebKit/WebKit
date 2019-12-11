@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/dump-as-markup.js"></script>
+<div style="display:inline" contenteditable="true" id="item1">
+Format Me
+</div>
+
+<script>
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
+
+Markup.description("This test uses FormatBlock with html brackets in the tag string passed to execCommand.");
+
+Markup.dump("item1", "Before FormatBlock with <h1>");
+
+var s = window.getSelection();
+var r = document.createRange();
+var p1 = document.getElementById("item1");
+s.setPosition(p1, 0);
+document.execCommand("FormatBlock", false, "<h1>");
+
+Markup.dump("item1", "After FormatBlock with <h1>");
+
+</script>
+</body>
+</html>

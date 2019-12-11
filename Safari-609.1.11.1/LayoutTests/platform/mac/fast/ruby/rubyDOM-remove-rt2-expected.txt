@@ -1,0 +1,51 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 778x36
+          text run at (0,0) width 778: "The following is a test for DOM manipulation within <ruby>: Removing a <rt>, forcing a merge with the right neighbour"
+          text run at (0,18) width 22: "run"
+      RenderBlock {P} at (0,52) size 784x18
+        RenderText {#text} at (0,0) size 448x18
+          text run at (0,0) width 448: "Both lines should look identical (the first line is the one manipulated)."
+      RenderBlock (anonymous) at (0,86) size 784x36
+        RenderBR {BR} at (0,0) size 0x18
+        RenderBR {BR} at (0,18) size 0x18
+      RenderBlock {P} at (0,138) size 784x28
+        RenderText {#text} at (0,10) size 158x18
+          text run at (0,10) width 158: "<ruby> is defined in the "
+        RenderRuby (inline) {RUBY} at (0,0) size 111x18
+          RenderRubyRun (anonymous) at (152,10) size 108x18
+            RenderRubyText {RT} at (0,-10) size 108x10
+              RenderText {#text} at (0,0) size 108x10
+                text run at (0,0) width 108: "Hyper-text Markup Language"
+            RenderRubyBase (anonymous) at (0,0) size 108x18
+              RenderText {#text} at (30,0) size 23x18
+                text run at (30,0) width 23: "HT"
+              RenderText {#text} at (52,0) size 25x18
+                text run at (52,0) width 25: "ML"
+          RenderRubyRun (anonymous) at (259,10) size 9x18
+            RenderRubyBase (anonymous) at (0,0) size 8x18
+              RenderText {#text} at (0,0) size 8x18
+                text run at (0,0) width 8: "5"
+        RenderText {#text} at (267,10) size 38x18
+          text run at (267,10) width 38: " spec."
+      RenderBlock {P} at (0,182) size 784x28
+        RenderText {#text} at (0,10) size 158x18
+          text run at (0,10) width 158: "<ruby> is defined in the "
+        RenderRuby (inline) {RUBY} at (0,0) size 111x18
+          RenderRubyRun (anonymous) at (152,10) size 108x18
+            RenderRubyText {RT} at (0,-10) size 108x10
+              RenderText {#text} at (0,0) size 108x10
+                text run at (0,0) width 108: "Hyper-text Markup Language"
+            RenderRubyBase (anonymous) at (0,0) size 108x18
+              RenderText {#text} at (30,0) size 47x18
+                text run at (30,0) width 47: "HTML"
+          RenderRubyRun (anonymous) at (259,10) size 9x18
+            RenderRubyBase (anonymous) at (0,0) size 8x18
+              RenderText {#text} at (0,0) size 8x18
+                text run at (0,0) width 8: "5"
+        RenderText {#text} at (267,10) size 38x18
+          text run at (267,10) width 38: " spec."

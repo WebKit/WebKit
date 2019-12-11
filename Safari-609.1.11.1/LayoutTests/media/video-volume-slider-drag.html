@@ -1,0 +1,60 @@
+<!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+<head>
+    <title>Test that dragging the volume slider results in multiple volume change events.</title>
+    <script src="media-file.js"></script>
+    <script src="media-controls.js"></script>
+    <script src="video-test.js"></script>
+    <script>
+        var video;
+        var expectedVolumeChangeCount = 4;
+        var volumeChangeCount = 0;
+
+        function init()
+        {
+            if (window.internals)
+                internals.suspendAnimations();
+
+            findMediaElement();
+
+            waitForEvent('canplaythrough', startTest);
+            waitForEvent('volumechange', volumeChange);
+            video.src = findMediaFile('video', 'content/test');
+        }
+
+        function startTest()
+        {
+            if (!window.eventSender)
+                return;
+
+            muteCoords = mediaControlsButtonCoordinates(video, 'mute-button');
+            eventSender.mouseMoveTo(muteCoords[0], muteCoords[1]);
+            setTimeout(move, 100);
+        }
+
+        function move()
+        {
+            if (!window.eventSender)
+                return;
+
+            volumeCoords = mediaControlsButtonCoordinates(video, 'volume-slider');
+            eventSender.mouseMoveTo(volumeCoords[0], volumeCoords[1]);
+            eventSender.mouseDown();
+            for (var i = 10; i < 80; i += 5)
+            eventSender.mouseMoveTo(volumeCoords[0], volumeCoords[1] - i);
+            eventSender.mouseUp();
+
+            failTestIn(1000);
+        }
+
+        function volumeChange()
+        {
+            if (++volumeChangeCount === expectedVolumeChangeCount)
+                endTest();
+        }
+    </script>
+</head>
+<body onload="init()">
+    <video controls></video>
+</body>
+</html>

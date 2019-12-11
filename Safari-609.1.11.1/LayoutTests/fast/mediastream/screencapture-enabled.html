@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test-pre.js"></script>
+
+<script>
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
+
+    if (window.internals)
+        window.internals.settings.setScreenCaptureEnabled(true);
+
+    function runTest() {
+        if (!window.testRunner)
+            return;
+
+        shouldBeDefined(navigator.mediaDevices.getDisplayMedia);
+    }
+
+    window.addEventListener("load", runTest, false);
+</script>

@@ -1,0 +1,22 @@
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.5;
+    max-width: 64em;
+    margin: 2em auto;
+    padding: 0 1em;
+}
+
+h1 {
+    letter-spacing: -3px;
+    font-size: 3.23em;
+    font-weight: bold;
+    margin: 0;
+}
+
+.CodeMirror {
+    height: auto;
+}
+
+.CodeMirror .CodeMirror-lines {
+    padding: 4px 0;
+}

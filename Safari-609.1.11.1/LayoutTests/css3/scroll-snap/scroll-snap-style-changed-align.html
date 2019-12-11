@@ -1,0 +1,67 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+    <head>
+        <style>
+            #gallery {
+                width: 315px;
+                height: 600px;
+                scroll-snap-type: y mandatory;
+                -webkit-overflow-scrolling: touch;
+                overflow-y: scroll;
+                position: absolute;
+            }
+
+            .vertical {
+                width: 300px;
+                height: 300px;
+                scroll-snap-align: start;
+                position: absolute;
+            }
+
+            #child00 { background-color: #DD0000; left: 0; top: 0px; }
+            #child01 { background-color: #FF6666; left: 0; top: 300px; }
+            #child02 { background-color: #00DD00; left: 0; top: 600px; }
+            #child03 { background-color: #66FF66; left: 0; top: 900px; }
+            #child04 { background-color: #0000DD; left: 0; top: 1200px; }
+            #child05 { background-color: #6666FF; left: 0; top: 1500px; }
+        </style>
+        <script src="../../resources/js-test.js"></script>
+        <script>
+        function setup() {
+            window.jsTestIsAsync = true;
+            var gallery = document.getElementById("gallery");
+            var coordinateChildElements = document.getElementsByClassName("vertical");
+
+            function snapOffsets() {
+                return window.internals.scrollSnapOffsets(gallery);
+            }
+
+            function dumpGalleryAndUpdateCoordinates() {
+                debug("Original snap offsets with `start` alignment: " + snapOffsets());
+                for (var index = 0; index < coordinateChildElements.length; ++index)
+                    coordinateChildElements[index].style.scrollSnapAlign = "center";
+
+                setTimeout(dumpGalleryAndFinishTest, 0);
+            }
+
+            function dumpGalleryAndFinishTest() {
+                debug("Updated alignment to `center`: " + snapOffsets());
+                finishJSTest();
+            }
+
+            if (window.testRunner)
+                setTimeout(dumpGalleryAndUpdateCoordinates, 0);
+        }
+        </script>
+    </head>
+    <body onload="setup()">
+        <div id="gallery">
+            <div class="vertical" id="child00"></div>
+            <div class="vertical" id="child01"></div>
+            <div class="vertical" id="child02"></div>
+            <div class="vertical" id="child03"></div>
+            <div class="vertical" id="child04"></div>
+            <div class="vertical" id="child05"></div>
+        </div>
+    </body>
+</html>

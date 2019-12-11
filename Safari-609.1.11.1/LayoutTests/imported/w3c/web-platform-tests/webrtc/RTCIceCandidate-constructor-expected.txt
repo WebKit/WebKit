@@ -1,0 +1,20 @@
+
+PASS new RTCIceCandidate() 
+PASS new RTCIceCandidate({}) 
+PASS new RTCIceCandidate({ ... }) with manually filled default values 
+PASS new RTCIceCandidate({ sdpMid: null, sdpMLineIndex: null }) 
+PASS new RTCIceCandidate({ candidate: '' }) 
+PASS new RTCIceCandidate({ candidate: null }) 
+PASS new RTCIceCandidate({ ... }) with valid candidate string only 
+FAIL new RTCIceCandidate({ sdpMid: 'audio' }) assert_equals: usernameFragment expected (object) null but got (undefined) undefined
+FAIL new RTCIceCandidate({ sdpMLineIndex: 0 }) assert_equals: usernameFragment expected (object) null but got (undefined) undefined
+FAIL new RTCIceCandidate({ sdpMid: 'audio', sdpMLineIndex: 0 }) assert_equals: usernameFragment expected (object) null but got (undefined) undefined
+FAIL new RTCIceCandidate({ candidate: '', sdpMid: 'audio' } assert_equals: usernameFragment expected (object) null but got (undefined) undefined
+FAIL new RTCIceCandidate({ candidate: '', sdpMLineIndex: 0 } assert_equals: usernameFragment expected (object) null but got (undefined) undefined
+FAIL new RTCIceCandidate({ ... }) with valid candidate string and sdpMid assert_equals: usernameFragment expected (object) null but got (undefined) undefined
+FAIL new RTCIceCandidate({ ... }) with invalid candidate string and sdpMid assert_equals: usernameFragment expected (object) null but got (undefined) undefined
+FAIL new RTCIceCandidate({ ... }) with nondefault values for all fields assert_equals: usernameFragment expected (string) "test" but got (undefined) undefined
+FAIL new RTCIceCandidate({ ... }) with nondefault values for all fields, tcp candidate assert_equals: usernameFragment expected (string) "user1" but got (undefined) undefined
+FAIL new RTCIceCandidate({ ... }) with invalid sdpMid assert_equals: usernameFragment expected (object) null but got (undefined) undefined
+FAIL new RTCIceCandidate({ ... }) with invalid sdpMLineIndex assert_equals: usernameFragment expected (object) null but got (undefined) undefined
+

@@ -1,0 +1,35 @@
+Tests for the DOM.highlightQuad command.
+
+
+== Running test suite: DOM.highlightQuad
+-- Running test case: CheckEmptyHighlight
+PASS: Should not be a highlight yet.
+
+-- Running test case: HighlightSmallRectWithQuad
+PASS: Should be one highlight rect.
+Highlight Rect: {"x":0,"y":0,"width":100,"height":100,"top":0,"right":100,"bottom":100,"left":0}
+
+-- Running test case: HighlightSmallQuadViewportCoordinates
+PASS: Should be one highlight rect.
+Highlight Rect: {"x":50,"y":100,"width":100,"height":100,"top":100,"right":150,"bottom":200,"left":50}
+
+-- Running test case: HighlightSmallQuadPageCoordinates
+PASS: Should be one highlight rect.
+Highlight Rect: {"x":40,"y":90,"width":100,"height":100,"top":90,"right":140,"bottom":190,"left":40}
+
+-- Running test case: HighlightSmallUnspecifiedCoordinatesUsesViewportCoordinates
+PASS: Should be one highlight rect.
+Highlight Rect: {"x":50,"y":100,"width":100,"height":100,"top":100,"right":150,"bottom":200,"left":50}
+
+-- Running test case: HighlightLargeQuadViewportCoordinates
+PASS: Should be one highlight rect.
+Highlight Rect: {"x":0,"y":0,"width":1000,"height":2000,"top":0,"right":1000,"bottom":2000,"left":0}
+
+-- Running test case: HighlightLargeQuadPageCoordinates
+PASS: Should be one highlight rect.
+Highlight Rect: {"x":-10,"y":-10,"width":1000,"height":2000,"top":-10,"right":990,"bottom":1990,"left":-10}
+
+-- Running test case: BadQuadShouldError
+PASS: Should produce an error.
+Error: Unexpected invalid quadArray
+

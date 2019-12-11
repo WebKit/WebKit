@@ -1,0 +1,95 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+if (is_android) {
+  import("//build/config/android/config.gni")
+  import("//build/config/android/rules.gni")
+}
+
+rtc_source_set("rw_lock_wrapper") {
+  public = [
+    "rw_lock_wrapper.h",
+  ]
+  sources = [
+    "rw_lock_wrapper.cc",
+  ]
+  deps = [
+    "..:macromagic",
+  ]
+  if (is_win) {
+    sources += [
+      "rw_lock_win.cc",
+      "rw_lock_win.h",
+    ]
+    deps += [ "..:logging" ]
+  } else {
+    sources += [
+      "rw_lock_posix.cc",
+      "rw_lock_posix.h",
+    ]
+  }
+}
+
+rtc_source_set("sequence_checker") {
+  sources = [
+    "sequence_checker.cc",
+    "sequence_checker.h",
+  ]
+  deps = [
+    "..:checks",
+    "..:criticalsection",
+    "..:macromagic",
+    "..:platform_thread_types",
+    "../../api/task_queue",
+  ]
+}
+
+rtc_source_set("yield_policy") {
+  sources = [
+    "yield_policy.cc",
+    "yield_policy.h",
+  ]
+  deps = [
+    "..:checks",
+    "//third_party/abseil-cpp/absl/base:config",
+    "//third_party/abseil-cpp/absl/base:core_headers",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("synchronization_unittests") {
+    testonly = true
+    sources = [
+      "yield_policy_unittest.cc",
+    ]
+    deps = [
+      ":yield_policy",
+      "..:rtc_event",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_source_set("sequence_checker_unittests") {
+    testonly = true
+
+    sources = [
+      "sequence_checker_unittest.cc",
+    ]
+    deps = [
+      ":sequence_checker",
+      "..:checks",
+      "..:rtc_base_approved",
+      "..:task_queue_for_test",
+      "../../api:function_view",
+      "../../test:test_main",
+      "../../test:test_support",
+      "//third_party/abseil-cpp/absl/memory",
+    ]
+  }
+}

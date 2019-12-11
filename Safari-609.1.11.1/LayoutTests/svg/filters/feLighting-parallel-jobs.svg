@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+
+<defs>
+<filter id="light" primitiveUnits="userSpaceOnUse">
+<feSpecularLighting lighting-color="blue" surfaceScale="5" specularConstant="10" specularExponent="6">
+    <feDistantLight azimuth="0" elevation="30"/>
+</feSpecularLighting>
+</filter>
+</defs>
+
+<text y="20">Test passes if it does not assert in debug builds.</text>
+<rect x="0" y="30"  height="10"  width="10000" filter="url(#light)" fill="black" />
+
+<script>
+  <![CDATA[
+    if (window.testRunner)
+        testRunner.dumpAsText();
+]]>
+</script>
+
+</svg>

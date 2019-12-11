@@ -1,0 +1,7 @@
+XX X
+XX X
+XX X
+XX X
+
+PASS .grid 1 
+

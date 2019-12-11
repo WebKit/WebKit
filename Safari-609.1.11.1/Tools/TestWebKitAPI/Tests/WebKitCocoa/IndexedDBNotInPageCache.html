@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<script>
+
+var request = window.indexedDB.deleteDatabase("TestIndexedDB");
+request.onsuccess = function(event) {
+    window.webkit.messageHandlers.testHandler.postMessage("Database Deleted");
+}
+request.onblocked = function(event) {
+    window.webkit.messageHandlers.testHandler.postMessage("Database Deletion Blocked");
+}
+
+</script>

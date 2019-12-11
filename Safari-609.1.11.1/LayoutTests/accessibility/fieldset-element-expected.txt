@@ -1,0 +1,17 @@
+This tests that fieldset and legend elements are exposed correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+element id 'f0': High Score:
+element id 'f1': High Score:
+element id 'f2': New High Score:
+element id 'f3': New High Score:
+element id 'f4': 
+element id 'f5': High Score:
+element id 'f6': 
+element id 'l0': AXValue: Other:
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

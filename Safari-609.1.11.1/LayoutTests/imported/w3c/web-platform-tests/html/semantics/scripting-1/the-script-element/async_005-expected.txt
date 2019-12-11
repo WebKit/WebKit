@@ -1,0 +1,3 @@
+
+PASS A script element with both async and defer set should execute asynchronously 
+2134

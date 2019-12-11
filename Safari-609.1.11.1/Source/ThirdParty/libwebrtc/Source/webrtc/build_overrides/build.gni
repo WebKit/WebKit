@@ -1,0 +1,48 @@
+# Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+# Some non-Chromium builds don't support building java targets.
+enable_java_templates = true
+
+# Some non-Chromium builds don't use Chromium's third_party/binutils.
+linux_use_bundled_binutils_override = true
+
+# Don't set this variable to true when building stadalone WebRTC, it is
+# only needed to support both WebRTC standalone and Chromium builds.
+build_with_chromium = false
+
+# Use our own suppressions files.
+asan_suppressions_file = "//build/sanitizers/asan_suppressions.cc"
+lsan_suppressions_file = "//tools_webrtc/sanitizers/lsan_suppressions_webrtc.cc"
+tsan_suppressions_file = "//tools_webrtc/sanitizers/tsan_suppressions_webrtc.cc"
+msan_blacklist_path =
+    rebase_path("//tools_webrtc/msan/blacklist.txt", root_build_dir)
+ubsan_blacklist_path =
+    rebase_path("//tools_webrtc/ubsan/blacklist.txt", root_build_dir)
+ubsan_vptr_blacklist_path =
+    rebase_path("//tools_webrtc/ubsan/vptr_blacklist.txt", root_build_dir)
+
+# Android lint suppressions file
+lint_suppressions_file = "//tools_webrtc/android/suppressions.xml"
+
+# For Chromium, Android 32-bit non-component, non-clang builds hit a 4GiB size
+# limit, making them requiring symbol_level=2. WebRTC doesn't hit that problem
+# so we just ignore that assert. See https://crbug.com/648948 for more info.
+ignore_elf32_limitations = true
+
+# Use bundled hermetic Xcode installation maintainted by Chromium,
+# except for local iOS builds where it's unsupported.
+if (host_os == "mac") {
+  _result = exec_script("//build/mac/should_use_hermetic_xcode.py",
+                        [ target_os ],
+                        "value")
+  assert(_result != 2,
+         "Do not allow building targets with the default " +
+             "hermetic toolchain if the minimum OS version is not met.")
+  use_system_xcode = _result == 0
+}

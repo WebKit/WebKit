@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+let worker1 = new Worker("resources/worker-1.js");
+let worker2 = new Worker("resources/worker-2.js");
+let worker3 = null;
+
+function createWorker3() {
+    worker3 = new Worker("resources/worker-3.js");
+}
+
+function terminateWorker2FromPage() {
+    worker2.terminate();
+}
+
+function terminateWorker3FromWorker() {
+    worker3.postMessage("close");
+}
+
+function terminateWorker1ViaCollection() {
+    worker1 = null;
+}
+
+function test()
+{
+    let workers = [];
+
+    function addWorker(workerId, url) {
+        workers.push({workerId, url});
+        workers.sort((a, b) => a.url.localeCompare(b.url));
+    }
+
+    function removeWorker(workerId) {
+        workers = workers.filter((x) => x.workerId !== workerId);
+    }
+
+    function dumpWorkers() {
+        for (let {workerId, url} of workers)
+            ProtocolTest.log("Worker - " + sanitizeURL(url));
+        if (!workers.length)
+            ProtocolTest.log("No Workers");
+    }
+
+
+    let triggerNextCreate;
+    let triggerNextTerminate;
+
+    function waitForWorkerCreatedEvent(callback) {
+        return new Promise((resolve, reject) => {
+            triggerNextCreate = resolve;
+        });
+    }
+
+    function waitForWorkerTerminatedEvent(callback) {
+        return new Promise((resolve, reject) => {
+            triggerNextTerminate = resolve;
+        });
+    }
+
+    InspectorProtocol.eventHandler["Worker.workerCreated"] = (messageObject) => {
+        addWorker(messageObject.params.workerId, messageObject.params.url);
+        InspectorProtocol.sendCommand("Worker.initialized", {workerId: messageObject.params.workerId});
+        if (triggerNextCreate)
+            triggerNextCreate();
+    };
+
+    InspectorProtocol.eventHandler["Worker.workerTerminated"] = (messageObject) => {
+        removeWorker(messageObject.params.workerId);
+        if (triggerNextTerminate)
+            triggerNextTerminate();
+    };
+
+
+    let suite = ProtocolTest.createAsyncSuite("Worker.CreateAndTerminate");
+
+    suite.addTestCase({
+        name: "Worker.enable",
+        description: "Worker.enable informs the frontend of the two existing Workers",
+        test(resolve, reject) {
+            InspectorProtocol.awaitCommand({method: "Worker.enable", params: {}})
+                .then(() => {
+                    ProtocolTest.expectEqual(workers.length, 2, "Should be informed of two existing Workers.");
+                    dumpWorkers();
+                    resolve();
+                }).catch(reject);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Worker.workerCreated",
+        description: "Should receive a Worker.workerCreated event when creating a Worker.",
+        test(resolve, reject) {
+            ProtocolTest.evaluateInPage("createWorker3()");
+            waitForWorkerCreatedEvent()
+                .then(() => {
+                    ProtocolTest.pass("Worker.workerCreated");
+                    dumpWorkers();
+                    resolve();
+                }).catch(reject);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Worker.workerTerminated.Page",
+        description: "Should receive a Worker.workerTerminated event when terminating a Worker from the Page.",
+        test(resolve, reject) {
+            ProtocolTest.evaluateInPage("terminateWorker2FromPage()");
+            waitForWorkerTerminatedEvent()
+                .then(() => {
+                    ProtocolTest.pass("Worker.workerTerminated");
+                    dumpWorkers();
+                    resolve();
+                }).catch(reject);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Worker.workerTerminated.Worker",
+        description: "Should receive a Worker.workerTerminated event when terminating a Worker from the Worker.",
+        test(resolve, reject) {
+            ProtocolTest.evaluateInPage("terminateWorker3FromWorker()");
+            waitForWorkerTerminatedEvent()
+                .then(() => {
+                    ProtocolTest.pass("Worker.workerTerminated");
+                    dumpWorkers();
+                    resolve();
+                }).catch(reject);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Worker.workerTerminated.GC",
+        description: "Should receive a Worker.workerTerminated event when terminating a Worker via Garbage Collection.",
+        test(resolve, reject) {
+            ProtocolTest.evaluateInPage("terminateWorker1ViaCollection()");
+            InspectorProtocol.sendCommand("Heap.gc", {});
+            waitForWorkerTerminatedEvent()
+                .then(() => {
+                    ProtocolTest.pass("Worker.workerTerminated");
+                    dumpWorkers();
+                    resolve();
+                }).catch(reject);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for Worker.workerCreated and Worker.workerTerminated events.</p>
+</body>
+</html>

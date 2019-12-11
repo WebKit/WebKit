@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 19: Wrong url scheme for WebSocket http://localhost:8800/websockets/localhost
+
+PASS Create WebSocket - Pass a non absolute URL - SYNTAX_ERR is thrown 
+

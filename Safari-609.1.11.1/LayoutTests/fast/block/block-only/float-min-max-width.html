@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div {
+    border: 1px solid green;
+}
+
+div > div {
+    border: 1px solid red;
+}
+</style>
+</head>
+<body>
+<div style="float: left; height: 100px;">
+    <div style="height: 50px; width: 200px;"></div>
+</div>
+
+<div style="float: left; margin-left: 100px; margin-right: 200px; height: 100px; max-width: 100px;">
+    <div style="height: 50px; width: 200px;"></div>
+</div>
+
+<div style="float: left; height: 100px; min-width: 300px">
+    <div style="height: 50px; width: 200px;"></div>
+</div>
+</body>
+</html>

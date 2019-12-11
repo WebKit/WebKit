@@ -1,0 +1,36 @@
+Test the parsing of :matches(selectorList) for querySelector and style.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+1 invalid selectors
+PASS document.querySelector(":matches()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":matches(    )") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":matches(,)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":matches(.123class)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":matches(#123id)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":matches([])") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":matches(())") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":matches())") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":matches({})") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":matches(})") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":matches(:not()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":matches(:matches()") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector(":matches(:nth-child(2n+1 of)") threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

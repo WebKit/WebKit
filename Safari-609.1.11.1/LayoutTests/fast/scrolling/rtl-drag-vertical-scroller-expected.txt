@@ -1,0 +1,11 @@
+This test makes sure that dragging the vertical scrollbar of an RTL scrollable div doesn't cause a horizontal scroll.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS scrollMe.scrollLeft is 0
+PASS scrollMe.scrollTop is not 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello

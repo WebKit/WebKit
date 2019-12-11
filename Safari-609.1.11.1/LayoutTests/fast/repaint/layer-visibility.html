@@ -1,0 +1,22 @@
+<html>
+<head>
+<script type="text/javascript">
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+    function runTest()
+    {
+        document.body.offsetTop;
+        var target = document.getElementById("target");
+        target.style.visibility = "visible";
+        document.body.offsetTop;
+        target.style.left = "0";
+        target.style.backgroundColor = "green";
+        if (window.testRunner)
+            testRunner.notifyDone();
+        }
+</script>
+</head>
+<body onload="setTimeout(runTest, 0);">
+    <div id="target" style="position: absolute; top: 0; left: 100px; width: 100px; height: 100px; background-color: red; visibility: hidden;"></div>
+</body>
+</html>

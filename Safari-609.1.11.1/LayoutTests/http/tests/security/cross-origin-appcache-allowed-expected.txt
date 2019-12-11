@@ -1,0 +1,18 @@
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+This iframe should have a cache:
+
+
+This iframe should have a cache:
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+Cache found
+
+--------
+Frame: '<!--frame2-->'
+--------
+Cache found

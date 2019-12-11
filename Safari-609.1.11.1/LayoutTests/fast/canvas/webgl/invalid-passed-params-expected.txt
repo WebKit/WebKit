@@ -1,0 +1,106 @@
+Test for invalid passed parameters
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test createShader()
+PASS context.createShader(context.FRAGMENT_SHADER) generated expected GL error: NO_ERROR.
+PASS context.createShader(context.VERTEX_SHADER) generated expected GL error: NO_ERROR.
+PASS context.createShader(0) generated expected GL error: INVALID_ENUM.
+PASS context.createShader(context.TRIANGLES) generated expected GL error: INVALID_ENUM.
+
+Test clear()
+PASS context.clear(desktopGL['ACCUM_BUFFER_BIT']) generated expected GL error: INVALID_VALUE.
+PASS context.clear(desktopGL['ACCUM_BUFFER_BIT'] | context.COLOR_BUFFER_BIT) generated expected GL error: INVALID_VALUE.
+PASS context.clear(desktopGL['ACCUM_BUFFER_BIT'] | context.COLOR_BUFFER_BIT | context.DEPTH_BUFFER_BIT | context.STENCIL_BUFFER_BIT) generated expected GL error: INVALID_VALUE.
+PASS context.clear(context.COLOR_BUFFER_BIT | context.DEPTH_BUFFER_BIT | context.STENCIL_BUFFER_BIT) generated expected GL error: NO_ERROR.
+
+Test bufferData()
+PASS context.bindBuffer(context.ARRAY_BUFFER, buffer) generated expected GL error: NO_ERROR.
+PASS context.bufferData(context.ARRAY_BUFFER, 16, context.STREAM_DRAW) generated expected GL error: NO_ERROR.
+PASS context.bufferData(context.ARRAY_BUFFER, 16, context.STATIC_DRAW) generated expected GL error: NO_ERROR.
+PASS context.bufferData(context.ARRAY_BUFFER, 16, context.DYNAMIC_DRAW) generated expected GL error: NO_ERROR.
+PASS context.bufferData(context.ARRAY_BUFFER, 16, desktopGL['STREAM_READ']) generated expected GL error: INVALID_ENUM.
+PASS context.bufferData(context.ARRAY_BUFFER, 16, desktopGL['STREAM_COPY']) generated expected GL error: INVALID_ENUM.
+PASS context.bufferData(context.ARRAY_BUFFER, 16, desktopGL['STATIC_READ']) generated expected GL error: INVALID_ENUM.
+PASS context.bufferData(context.ARRAY_BUFFER, 16, desktopGL['STATIC_COPY']) generated expected GL error: INVALID_ENUM.
+PASS context.bufferData(context.ARRAY_BUFFER, 16, desktopGL['DYNAMIC_READ']) generated expected GL error: INVALID_ENUM.
+PASS context.bufferData(context.ARRAY_BUFFER, 16, desktopGL['DYNAMIC_COPY']) generated expected GL error: INVALID_ENUM.
+
+Test {copy}Tex{Sub}Image2D with negative offset/width/height
+PASS context.bindTexture(context.TEXTURE_2D, tex) generated expected GL error: NO_ERROR.
+PASS context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, -16, -16, 0, context.RGBA, context.UNSIGNED_BYTE, null) generated expected GL error: INVALID_VALUE.
+PASS context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, 16, 16, 0, context.RGBA, context.UNSIGNED_BYTE, null) generated expected GL error: NO_ERROR.
+PASS context.texSubImage2D(context.TEXTURE_2D, 0, -1, -1, 2, 2, context.RGBA, context.UNSIGNED_BYTE, pixels) generated expected GL error: INVALID_VALUE.
+PASS context.texSubImage2D(context.TEXTURE_2D, 0, 0, 0, -1, -1, context.RGBA, context.UNSIGNED_BYTE, pixels) generated expected GL error: INVALID_VALUE.
+PASS context.texSubImage2D(context.TEXTURE_2D, 0, 0, 0, 2, 2, context.RGBA, context.UNSIGNED_BYTE, pixels) generated expected GL error: NO_ERROR.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, -1, -1, 0) generated expected GL error: INVALID_VALUE.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, 16, 16, 0) generated expected GL error: NO_ERROR.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, -1, -1, 0, 0, 2, 2) generated expected GL error: INVALID_VALUE.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, -1, -1) generated expected GL error: INVALID_VALUE.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, 2, 2) generated expected GL error: NO_ERROR.
+
+Test renderbufferStorage() with negative width/height
+PASS context.bindRenderbuffer(context.RENDERBUFFER, renderbuffer) generated expected GL error: NO_ERROR.
+PASS context.renderbufferStorage(context.RENDERBUFFER, context.RGBA4, -2, -2) generated expected GL error: INVALID_VALUE.
+PASS context.renderbufferStorage(context.RENDERBUFFER, context.RGBA4, 16, 16) generated expected GL error: NO_ERROR.
+
+Test scissor() with negative width/height
+PASS context.scissor(0, 0, -2, -2) generated expected GL error: INVALID_VALUE.
+PASS context.scissor(0, 0, 16, 16) generated expected GL error: NO_ERROR.
+
+Test viewport() with negative width/height
+PASS context.viewport(0, 0, -2, -2) generated expected GL error: INVALID_VALUE.
+PASS context.viewport(0, 0, 16, 16) generated expected GL error: NO_ERROR.
+
+Set up a program to test invalid characters
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getProgramParameter(program, context.LINK_STATUS) is true
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+
+Test shaderSource() with invalid characters
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.INVALID_VALUE
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.INVALID_VALUE
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.INVALID_VALUE
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.INVALID_VALUE
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.INVALID_VALUE
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.INVALID_VALUE
+
+Test bindAttribLocation() with invalid characters
+PASS context.getError() is context.INVALID_VALUE
+PASS context.getError() is context.INVALID_VALUE
+PASS context.getError() is context.INVALID_VALUE
+PASS context.getError() is context.INVALID_VALUE
+PASS context.getError() is context.INVALID_VALUE
+PASS context.getError() is context.INVALID_VALUE
+
+Test getAttribLocation() with invalid characters
+PASS context.getError() is context.INVALID_VALUE
+PASS context.getError() is context.INVALID_VALUE
+PASS context.getError() is context.INVALID_VALUE
+PASS context.getError() is context.INVALID_VALUE
+PASS context.getError() is context.INVALID_VALUE
+PASS context.getError() is context.INVALID_VALUE
+
+Test getUniformLocation() with invalid characters
+PASS context.getError() is context.INVALID_VALUE
+PASS context.getError() is context.INVALID_VALUE
+PASS context.getError() is context.INVALID_VALUE
+PASS context.getError() is context.INVALID_VALUE
+PASS context.getError() is context.INVALID_VALUE
+PASS context.getError() is context.INVALID_VALUE
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

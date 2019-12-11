@@ -1,0 +1,2 @@
+ALERT: CSS1Compat
+Even through the srcdoc below doesn't have a DocType, it should still be in standards mode. 

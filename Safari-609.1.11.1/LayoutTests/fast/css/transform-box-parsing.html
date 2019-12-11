@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <svg id="svgRoot" xmlns="http://www.w3.org/2000/svg">
+        <foreignObject id="foreignObject">
+            <html>
+                <div id="inside-foreign-object"></div>
+            </html>
+        </foreignObject>
+        <foreignObject>
+            <svg id="nested-svg" xmlns="http://www.w3.org/2000/svg" />
+        </foreignObject>
+    </svg>
+    <script>
+        description("This tests checks parsing of the 'transform-box' property");
+
+        function testPropertyValue(declaration, property)
+        {
+            var div = document.createElement("div");
+            div.setAttribute("style", declaration);
+            document.body.appendChild(div);
+
+            var result = div.style.getPropertyValue(property);
+            document.body.removeChild(div);
+            return result;
+        }
+
+        function testComputedStyle(declaration, property)
+        {
+            var div = document.createElement("div");
+            div.setAttribute("style", declaration);
+            document.body.appendChild(div);
+
+            var result = window.getComputedStyle(div).getPropertyValue(property);
+            document.body.removeChild(div);
+            return result;
+        }
+
+        const svgNS = "http://www.w3.org/2000/svg";
+
+        function testSVGComputedStyle(declaration, property)
+        {
+            var svgRoot = document.getElementById('svgRoot');
+
+            var rect = document.createElementNS(svgNS, "rect");
+            rect.setAttribute("style", declaration);
+            svgRoot.appendChild(rect);
+
+            var result = window.getComputedStyle(rect).getPropertyValue(property);
+            svgRoot.removeChild(rect);
+            return result;
+        }
+        
+        function testComputedStyleOnElementWithId(elementId)
+        {
+            return window.getComputedStyle(document.getElementById(elementId)).getPropertyValue("transform-box");
+        }
+
+        shouldBeEqualToString('testPropertyValue("transform-box: border-box", "transform-box")', 'border-box');
+        shouldBeEqualToString('testPropertyValue("transform-box: fill-box", "transform-box")', 'fill-box');
+        shouldBeEqualToString('testPropertyValue("transform-box: view-box", "transform-box")', 'view-box');
+        shouldBeEqualToString('testPropertyValue("transform-box: content-box", "transform-box")', 'content-box');
+        shouldBeEqualToString('testPropertyValue("transform-box: stroke-box", "transform-box")', 'stroke-box');
+
+        debug('');
+        shouldBeEqualToString('testComputedStyle("", "transform-box")', 'border-box');
+        shouldBeEqualToString('testComputedStyle("transform-box: fill-box", "transform-box")', 'fill-box');
+        shouldBeEqualToString('testComputedStyle("transform-box: view-box", "transform-box")', 'view-box');
+        shouldBeEqualToString('testComputedStyle("transform-box: content-box", "transform-box")', 'content-box');
+        shouldBeEqualToString('testComputedStyle("transform-box: stroke-box", "transform-box")', 'stroke-box');
+
+        debug('');
+        shouldBeEqualToString('testSVGComputedStyle("", "transform-box")', 'view-box');
+        shouldBeEqualToString('testSVGComputedStyle("transform-box: fill-box", "transform-box")', 'fill-box');
+        shouldBeEqualToString('testSVGComputedStyle("transform-box: border-box", "transform-box")', 'border-box');
+        shouldBeEqualToString('testSVGComputedStyle("transform-box: content-box", "transform-box")', 'content-box');
+        shouldBeEqualToString('testSVGComputedStyle("transform-box: stroke-box", "transform-box")', 'stroke-box');
+
+        debug('');
+        shouldBeEqualToString('testComputedStyleOnElementWithId("foreignObject")', 'view-box');
+
+        debug('');
+        debug('Test default value on elements with CSS layout boxes');
+        shouldBeEqualToString('testComputedStyleOnElementWithId("svgRoot")', 'border-box');
+        shouldBeEqualToString('testComputedStyleOnElementWithId("nested-svg")', 'border-box');
+        shouldBeEqualToString('testComputedStyleOnElementWithId("inside-foreign-object")', 'border-box');
+
+        debug('');
+    </script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

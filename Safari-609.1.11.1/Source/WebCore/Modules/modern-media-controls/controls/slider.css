@@ -1,0 +1,138 @@
+/*
+ * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.slider {
+    position: relative;
+}
+
+.slider > .custom-slider,
+.slider > input {
+    position: absolute;
+    left: 0;
+    width: 100%;
+}
+
+.slider > .custom-slider {
+    pointer-events: none;
+    top: 5.5px;
+    height: 5px;
+}
+
+.slider > .custom-slider > * {
+    position: absolute;
+}
+
+.slider > .custom-slider > .fill {
+    top: 0;
+    height: 100%;
+    border-radius: 4.5px;
+    mix-blend-mode: plus-lighter;
+}
+
+.slider > .custom-slider > .track {
+    left: 0;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.slider > .custom-slider > .primary {
+    left: 0;
+    background-color: rgba(255, 255, 255, 0.35);
+}
+
+.slider > .custom-slider > .secondary {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.slider > .custom-slider > .knob {
+    top: -2px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background-color: white;
+    transform: translateX(-50%);
+}
+
+.slider > input {
+    top: 0;
+    margin: 0;
+    height: 100%;
+    background-color: transparent;
+    -webkit-appearance: none !important;
+    /* Disabling this for now because the outline is visualy inconsistent with the button 
+       focus state. Tracking at https://bugs.webkit.org/show_bug.cgi?id=174906 */
+    outline: none;
+}
+
+
+.ios .slider > input {
+    /* On iOS only, we want to only capture events on the thumb and not the track. */
+    pointer-events: none;
+
+    /* Make sure we don't show any UI as we drag the scrubber on iOS. */
+    -webkit-user-select: none !important;
+    -webkit-touch-callout: none !important;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.slider > input::-webkit-slider-thumb {
+    width: 9px;
+    height: 100%;
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
+    -webkit-appearance: none !important;
+    pointer-events: all;
+}
+
+/* When disabled, we only want to show the track and turn off interaction. */
+
+.slider.disabled > input,
+.slider.disabled > .custom-slider > .primary,
+.slider.disabled > .custom-slider > .secondary,
+.slider.disabled > .custom-slider > .knob {
+    display: none;
+}
+
+/* Increase the touch region for the thumb on iOS */
+
+.ios .slider > input {
+    /* We need to extend the slider to ensure the padded thumb is
+       tracking along the same width as the custom slider rendering. */
+    width: calc(100% + 16px);
+    height: calc(100% + 10px);
+    transform: translate(-8px, -5px);
+}
+
+.ios .slider > input::-webkit-slider-runnable-track {
+    /* We need to force the height to be 100% as on some pages the height would
+       be 0 otherwise, see <rdar://problem/31769830>. */
+    height: 100%;
+}
+
+.ios .slider > input::-webkit-slider-thumb {
+    padding: 0 8px;
+    box-sizing: content-box;
+}

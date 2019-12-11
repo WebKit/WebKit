@@ -1,0 +1,464 @@
+CONSOLE MESSAGE: WebSocket network error: The operation couldn’t be completed. (kCFErrorDomainCFNetwork error 2.)
+CONSOLE MESSAGE: WebSocket network error: The operation couldn’t be completed. (kCFErrorDomainCFNetwork error 2.)
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Test driver Test timed out
+PASS EventListener interface: existence and properties of interface object 
+PASS NodeList interface: existence and properties of interface object 
+PASS HTMLCollection interface: existence and properties of interface object 
+PASS MutationObserver interface: existence and properties of interface object 
+PASS MutationRecord interface: existence and properties of interface object 
+PASS Node interface: existence and properties of interface object 
+PASS Document interface: existence and properties of interface object 
+PASS XMLDocument interface: existence and properties of interface object 
+PASS DOMImplementation interface: existence and properties of interface object 
+PASS DocumentType interface: existence and properties of interface object 
+PASS DocumentFragment interface: existence and properties of interface object 
+PASS ShadowRoot interface: existence and properties of interface object 
+PASS Element interface: existence and properties of interface object 
+PASS NamedNodeMap interface: existence and properties of interface object 
+PASS Attr interface: existence and properties of interface object 
+PASS CharacterData interface: existence and properties of interface object 
+PASS Text interface: existence and properties of interface object 
+PASS CDATASection interface: existence and properties of interface object 
+PASS ProcessingInstruction interface: existence and properties of interface object 
+PASS Comment interface: existence and properties of interface object 
+PASS Range interface: existence and properties of interface object 
+PASS NodeIterator interface: existence and properties of interface object 
+PASS TreeWalker interface: existence and properties of interface object 
+PASS NodeFilter interface: existence and properties of interface object 
+PASS DOMTokenList interface: existence and properties of interface object 
+PASS MediaList interface: existence and properties of interface object 
+PASS StyleSheet interface: existence and properties of interface object 
+PASS CSSStyleSheet interface: existence and properties of interface object 
+PASS CSSRule interface: existence and properties of interface object 
+PASS CSSStyleRule interface: existence and properties of interface object 
+PASS CSSImportRule interface: existence and properties of interface object 
+PASS CSSMediaRule interface: existence and properties of interface object 
+PASS CSSFontFaceRule interface: existence and properties of interface object 
+PASS CSSPageRule interface: existence and properties of interface object 
+PASS CSSNamespaceRule interface: existence and properties of interface object 
+PASS CSSStyleDeclaration interface: existence and properties of interface object 
+PASS CSSStyleDeclarationValue interface: existence and properties of interface object 
+PASS CSSPropertyValue interface: existence and properties of interface object 
+PASS Touch interface: existence and properties of interface object 
+PASS UIEvent interface: existence and properties of interface object 
+PASS MouseEvent interface: existence and properties of interface object 
+PASS HTMLAllCollection interface: existence and properties of interface object 
+PASS HTMLFormControlsCollection interface: existence and properties of interface object 
+PASS RadioNodeList interface: existence and properties of interface object 
+PASS HTMLOptionsCollection interface: existence and properties of interface object 
+FAIL DOMStringList interface: existence and properties of interface object assert_own_property: self does not have own property "DOMStringList" expected property "DOMStringList" missing
+FAIL DOMStringList interface object length assert_own_property: self does not have own property "DOMStringList" expected property "DOMStringList" missing
+FAIL DOMStringList interface object name assert_own_property: self does not have own property "DOMStringList" expected property "DOMStringList" missing
+FAIL DOMStringList interface: existence and properties of interface prototype object assert_own_property: self does not have own property "DOMStringList" expected property "DOMStringList" missing
+FAIL DOMStringList interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "DOMStringList" expected property "DOMStringList" missing
+FAIL DOMStringList interface: attribute length assert_own_property: self does not have own property "DOMStringList" expected property "DOMStringList" missing
+FAIL DOMStringList interface: operation item(unsigned long) assert_own_property: self does not have own property "DOMStringList" expected property "DOMStringList" missing
+FAIL DOMStringList interface: operation contains(DOMString) assert_own_property: self does not have own property "DOMStringList" expected property "DOMStringList" missing
+PASS HTMLElement interface: existence and properties of interface object 
+PASS HTMLUnknownElement interface: existence and properties of interface object 
+PASS DOMStringMap interface: existence and properties of interface object 
+PASS HTMLHtmlElement interface: existence and properties of interface object 
+PASS HTMLHeadElement interface: existence and properties of interface object 
+PASS HTMLTitleElement interface: existence and properties of interface object 
+PASS HTMLBaseElement interface: existence and properties of interface object 
+PASS HTMLLinkElement interface: existence and properties of interface object 
+PASS HTMLMetaElement interface: existence and properties of interface object 
+PASS HTMLStyleElement interface: existence and properties of interface object 
+PASS HTMLBodyElement interface: existence and properties of interface object 
+PASS HTMLHeadingElement interface: existence and properties of interface object 
+PASS HTMLParagraphElement interface: existence and properties of interface object 
+PASS HTMLHRElement interface: existence and properties of interface object 
+PASS HTMLPreElement interface: existence and properties of interface object 
+PASS HTMLQuoteElement interface: existence and properties of interface object 
+PASS HTMLOListElement interface: existence and properties of interface object 
+PASS HTMLUListElement interface: existence and properties of interface object 
+PASS HTMLMenuElement interface: existence and properties of interface object 
+PASS HTMLLIElement interface: existence and properties of interface object 
+PASS HTMLDListElement interface: existence and properties of interface object 
+PASS HTMLDivElement interface: existence and properties of interface object 
+PASS HTMLAnchorElement interface: existence and properties of interface object 
+PASS HTMLDataElement interface: existence and properties of interface object 
+PASS HTMLTimeElement interface: existence and properties of interface object 
+PASS HTMLSpanElement interface: existence and properties of interface object 
+PASS HTMLBRElement interface: existence and properties of interface object 
+PASS HTMLModElement interface: existence and properties of interface object 
+PASS HTMLPictureElement interface: existence and properties of interface object 
+PASS HTMLSourceElement interface: existence and properties of interface object 
+PASS HTMLImageElement interface: existence and properties of interface object 
+PASS HTMLIFrameElement interface: existence and properties of interface object 
+PASS HTMLEmbedElement interface: existence and properties of interface object 
+PASS HTMLObjectElement interface: existence and properties of interface object 
+PASS HTMLParamElement interface: existence and properties of interface object 
+PASS HTMLVideoElement interface: existence and properties of interface object 
+PASS HTMLAudioElement interface: existence and properties of interface object 
+PASS HTMLTrackElement interface: existence and properties of interface object 
+PASS HTMLMediaElement interface: existence and properties of interface object 
+PASS MediaError interface: existence and properties of interface object 
+PASS AudioTrackList interface: existence and properties of interface object 
+PASS AudioTrack interface: existence and properties of interface object 
+PASS VideoTrackList interface: existence and properties of interface object 
+PASS VideoTrack interface: existence and properties of interface object 
+PASS TextTrackList interface: existence and properties of interface object 
+PASS TextTrack interface: existence and properties of interface object 
+PASS TextTrackCueList interface: existence and properties of interface object 
+PASS TextTrackCue interface: existence and properties of interface object 
+PASS TimeRanges interface: existence and properties of interface object 
+PASS TrackEvent interface: existence and properties of interface object 
+PASS HTMLMapElement interface: existence and properties of interface object 
+PASS HTMLAreaElement interface: existence and properties of interface object 
+PASS HTMLTableElement interface: existence and properties of interface object 
+PASS HTMLTableCaptionElement interface: existence and properties of interface object 
+PASS HTMLTableColElement interface: existence and properties of interface object 
+PASS HTMLTableSectionElement interface: existence and properties of interface object 
+PASS HTMLTableRowElement interface: existence and properties of interface object 
+PASS HTMLTableCellElement interface: existence and properties of interface object 
+PASS HTMLFormElement interface: existence and properties of interface object 
+PASS HTMLLabelElement interface: existence and properties of interface object 
+PASS HTMLInputElement interface: existence and properties of interface object 
+PASS HTMLButtonElement interface: existence and properties of interface object 
+PASS HTMLSelectElement interface: existence and properties of interface object 
+PASS HTMLDataListElement interface: existence and properties of interface object 
+PASS HTMLOptGroupElement interface: existence and properties of interface object 
+PASS HTMLOptionElement interface: existence and properties of interface object 
+PASS HTMLTextAreaElement interface: existence and properties of interface object 
+PASS HTMLOutputElement interface: existence and properties of interface object 
+PASS HTMLProgressElement interface: existence and properties of interface object 
+PASS HTMLMeterElement interface: existence and properties of interface object 
+PASS HTMLFieldSetElement interface: existence and properties of interface object 
+PASS HTMLLegendElement interface: existence and properties of interface object 
+PASS ValidityState interface: existence and properties of interface object 
+PASS HTMLDetailsElement interface: existence and properties of interface object 
+PASS HTMLDialogElement interface: existence and properties of interface object 
+PASS HTMLScriptElement interface: existence and properties of interface object 
+PASS HTMLTemplateElement interface: existence and properties of interface object 
+PASS HTMLSlotElement interface: existence and properties of interface object 
+PASS HTMLCanvasElement interface: existence and properties of interface object 
+PASS CanvasRenderingContext2D interface: existence and properties of interface object 
+PASS CanvasGradient interface: existence and properties of interface object 
+PASS CanvasGradient interface object length 
+PASS CanvasGradient interface object name 
+PASS CanvasGradient interface: existence and properties of interface prototype object 
+PASS CanvasGradient interface: existence and properties of interface prototype object's "constructor" property 
+PASS CanvasGradient interface: operation addColorStop(double, DOMString) 
+PASS CanvasPattern interface: existence and properties of interface object 
+PASS CanvasPattern interface object length 
+PASS CanvasPattern interface object name 
+PASS CanvasPattern interface: existence and properties of interface prototype object 
+PASS CanvasPattern interface: existence and properties of interface prototype object's "constructor" property 
+FAIL CanvasPattern interface: operation setTransform(DOMMatrixInit) assert_own_property: interface prototype object missing non-static operation expected property "setTransform" missing
+PASS TextMetrics interface: existence and properties of interface object 
+PASS ImageData interface: existence and properties of interface object 
+PASS ImageData interface object length 
+PASS ImageData interface object name 
+PASS ImageData interface: existence and properties of interface prototype object 
+PASS ImageData interface: existence and properties of interface prototype object's "constructor" property 
+TIMEOUT ImageData interface: attribute width Test timed out
+TIMEOUT ImageData interface: attribute height Test timed out
+TIMEOUT ImageData interface: attribute data Test timed out
+PASS Path2D interface: existence and properties of interface object 
+PASS Path2D interface object length 
+PASS Path2D interface object name 
+PASS Path2D interface: existence and properties of interface prototype object 
+PASS Path2D interface: existence and properties of interface prototype object's "constructor" property 
+PASS Path2D interface: operation addPath(Path2D, DOMMatrixInit) 
+PASS Path2D interface: operation closePath() 
+PASS Path2D interface: operation moveTo(unrestricted double, unrestricted double) 
+PASS Path2D interface: operation lineTo(unrestricted double, unrestricted double) 
+PASS Path2D interface: operation quadraticCurveTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double) 
+PASS Path2D interface: operation bezierCurveTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) 
+PASS Path2D interface: operation arcTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) 
+PASS Path2D interface: operation arcTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) 
+PASS Path2D interface: operation rect(unrestricted double, unrestricted double, unrestricted double, unrestricted double) 
+PASS Path2D interface: operation arc(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, boolean) 
+PASS Path2D interface: operation ellipse(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, boolean) 
+PASS ImageBitmapRenderingContext interface: existence and properties of interface object 
+FAIL OffscreenCanvas interface: existence and properties of interface object assert_own_property: self does not have own property "OffscreenCanvas" expected property "OffscreenCanvas" missing
+FAIL OffscreenCanvas interface object length assert_own_property: self does not have own property "OffscreenCanvas" expected property "OffscreenCanvas" missing
+FAIL OffscreenCanvas interface object name assert_own_property: self does not have own property "OffscreenCanvas" expected property "OffscreenCanvas" missing
+FAIL OffscreenCanvas interface: existence and properties of interface prototype object assert_own_property: self does not have own property "OffscreenCanvas" expected property "OffscreenCanvas" missing
+FAIL OffscreenCanvas interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "OffscreenCanvas" expected property "OffscreenCanvas" missing
+FAIL OffscreenCanvas interface: attribute width assert_own_property: self does not have own property "OffscreenCanvas" expected property "OffscreenCanvas" missing
+FAIL OffscreenCanvas interface: attribute height assert_own_property: self does not have own property "OffscreenCanvas" expected property "OffscreenCanvas" missing
+FAIL OffscreenCanvas interface: operation getContext(OffscreenRenderingContextType, any) assert_own_property: self does not have own property "OffscreenCanvas" expected property "OffscreenCanvas" missing
+FAIL OffscreenCanvas interface: operation transferToImageBitmap() assert_own_property: self does not have own property "OffscreenCanvas" expected property "OffscreenCanvas" missing
+FAIL OffscreenCanvas interface: operation convertToBlob(ImageEncodeOptions) assert_own_property: self does not have own property "OffscreenCanvas" expected property "OffscreenCanvas" missing
+FAIL OffscreenCanvasRenderingContext2D interface: existence and properties of interface object assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface object length assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface object name assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: existence and properties of interface prototype object assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation commit() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: attribute canvas assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation save() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation restore() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation scale(unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation rotate(unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation translate(unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation transform(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation getTransform() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation setTransform(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation setTransform(DOMMatrixInit) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation resetTransform() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: attribute globalAlpha assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: attribute globalCompositeOperation assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: attribute imageSmoothingEnabled assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: attribute imageSmoothingQuality assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: attribute strokeStyle assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: attribute fillStyle assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation createLinearGradient(double, double, double, double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation createRadialGradient(double, double, double, double, double, double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation createPattern(CanvasImageSource, DOMString) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: attribute shadowOffsetX assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: attribute shadowOffsetY assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: attribute shadowBlur assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: attribute shadowColor assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: attribute filter assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation clearRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation fillRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation strokeRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation beginPath() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation fill(CanvasFillRule) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation fill(Path2D, CanvasFillRule) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation stroke() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation stroke(Path2D) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation clip(CanvasFillRule) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation clip(Path2D, CanvasFillRule) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation resetClip() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation isPointInPath(unrestricted double, unrestricted double, CanvasFillRule) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation isPointInPath(Path2D, unrestricted double, unrestricted double, CanvasFillRule) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation isPointInStroke(unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation isPointInStroke(Path2D, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation drawImage(CanvasImageSource, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation drawImage(CanvasImageSource, unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation drawImage(CanvasImageSource, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation createImageData(long, long) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation createImageData(ImageData) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation getImageData(long, long, long, long) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation putImageData(ImageData, long, long) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation putImageData(ImageData, long, long, long, long, long, long) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: attribute lineWidth assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: attribute lineCap assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: attribute lineJoin assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: attribute miterLimit assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation setLineDash([object Object]) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation getLineDash() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: attribute lineDashOffset assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation closePath() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation moveTo(unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation lineTo(unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation quadraticCurveTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation bezierCurveTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation arcTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation arcTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation rect(unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation arc(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, boolean) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation ellipse(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, boolean) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+PASS CustomElementRegistry interface: existence and properties of interface object 
+PASS DataTransfer interface: existence and properties of interface object 
+PASS DataTransferItemList interface: existence and properties of interface object 
+PASS DataTransferItem interface: existence and properties of interface object 
+PASS DragEvent interface: existence and properties of interface object 
+PASS Window interface: existence and properties of interface object 
+PASS BarProp interface: existence and properties of interface object 
+PASS History interface: existence and properties of interface object 
+PASS Location interface: existence and properties of interface object 
+PASS PopStateEvent interface: existence and properties of interface object 
+PASS HashChangeEvent interface: existence and properties of interface object 
+PASS PageTransitionEvent interface: existence and properties of interface object 
+PASS BeforeUnloadEvent interface: existence and properties of interface object 
+PASS ApplicationCache interface: existence and properties of interface object 
+PASS ErrorEvent interface: existence and properties of interface object 
+PASS ErrorEvent interface object length 
+PASS ErrorEvent interface object name 
+PASS ErrorEvent interface: existence and properties of interface prototype object 
+PASS ErrorEvent interface: existence and properties of interface prototype object's "constructor" property 
+TIMEOUT ErrorEvent interface: attribute message Test timed out
+TIMEOUT ErrorEvent interface: attribute filename Test timed out
+TIMEOUT ErrorEvent interface: attribute lineno Test timed out
+TIMEOUT ErrorEvent interface: attribute colno Test timed out
+TIMEOUT ErrorEvent interface: attribute error Test timed out
+FAIL PromiseRejectionEvent interface: existence and properties of interface object assert_own_property: self does not have own property "PromiseRejectionEvent" expected property "PromiseRejectionEvent" missing
+FAIL PromiseRejectionEvent interface object length assert_own_property: self does not have own property "PromiseRejectionEvent" expected property "PromiseRejectionEvent" missing
+FAIL PromiseRejectionEvent interface object name assert_own_property: self does not have own property "PromiseRejectionEvent" expected property "PromiseRejectionEvent" missing
+FAIL PromiseRejectionEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "PromiseRejectionEvent" expected property "PromiseRejectionEvent" missing
+FAIL PromiseRejectionEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "PromiseRejectionEvent" expected property "PromiseRejectionEvent" missing
+FAIL PromiseRejectionEvent interface: attribute promise assert_own_property: self does not have own property "PromiseRejectionEvent" expected property "PromiseRejectionEvent" missing
+FAIL PromiseRejectionEvent interface: attribute reason assert_own_property: self does not have own property "PromiseRejectionEvent" expected property "PromiseRejectionEvent" missing
+PASS Navigator interface: existence and properties of interface object 
+PASS PluginArray interface: existence and properties of interface object 
+PASS MimeTypeArray interface: existence and properties of interface object 
+PASS Plugin interface: existence and properties of interface object 
+PASS MimeType interface: existence and properties of interface object 
+FAIL ImageBitmap interface: existence and properties of interface object assert_own_property: self does not have own property "ImageBitmap" expected property "ImageBitmap" missing
+FAIL ImageBitmap interface object length assert_own_property: self does not have own property "ImageBitmap" expected property "ImageBitmap" missing
+FAIL ImageBitmap interface object name assert_own_property: self does not have own property "ImageBitmap" expected property "ImageBitmap" missing
+FAIL ImageBitmap interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ImageBitmap" expected property "ImageBitmap" missing
+FAIL ImageBitmap interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ImageBitmap" expected property "ImageBitmap" missing
+FAIL ImageBitmap interface: attribute width assert_own_property: self does not have own property "ImageBitmap" expected property "ImageBitmap" missing
+FAIL ImageBitmap interface: attribute height assert_own_property: self does not have own property "ImageBitmap" expected property "ImageBitmap" missing
+FAIL ImageBitmap interface: operation close() assert_own_property: self does not have own property "ImageBitmap" expected property "ImageBitmap" missing
+PASS MessageEvent interface: existence and properties of interface object 
+PASS MessageEvent interface object length 
+PASS MessageEvent interface object name 
+PASS MessageEvent interface: existence and properties of interface prototype object 
+PASS MessageEvent interface: existence and properties of interface prototype object's "constructor" property 
+TIMEOUT MessageEvent interface: attribute data Test timed out
+TIMEOUT MessageEvent interface: attribute origin Test timed out
+TIMEOUT MessageEvent interface: attribute lastEventId Test timed out
+TIMEOUT MessageEvent interface: attribute source Test timed out
+TIMEOUT MessageEvent interface: attribute ports Test timed out
+PASS MessageEvent interface: operation initMessageEvent(DOMString, boolean, boolean, any, USVString, DOMString, MessageEventSource, [object Object]) 
+PASS MessageEvent must be primary interface of new MessageEvent("message", { data: 5 }) 
+PASS Stringification of new MessageEvent("message", { data: 5 }) 
+PASS MessageEvent interface: new MessageEvent("message", { data: 5 }) must inherit property "data" with the proper type 
+PASS MessageEvent interface: new MessageEvent("message", { data: 5 }) must inherit property "origin" with the proper type 
+PASS MessageEvent interface: new MessageEvent("message", { data: 5 }) must inherit property "lastEventId" with the proper type 
+FAIL MessageEvent interface: new MessageEvent("message", { data: 5 }) must inherit property "source" with the proper type Unrecognized type WindowProxy
+PASS MessageEvent interface: new MessageEvent("message", { data: 5 }) must inherit property "ports" with the proper type 
+PASS MessageEvent interface: new MessageEvent("message", { data: 5 }) must inherit property "initMessageEvent(DOMString, boolean, boolean, any, USVString, DOMString, MessageEventSource, [object Object])" with the proper type 
+PASS MessageEvent interface: calling initMessageEvent(DOMString, boolean, boolean, any, USVString, DOMString, MessageEventSource, [object Object]) on new MessageEvent("message", { data: 5 }) with too few arguments must throw TypeError 
+PASS EventSource interface: existence and properties of interface object 
+PASS EventSource interface object length 
+PASS EventSource interface object name 
+PASS EventSource interface: existence and properties of interface prototype object 
+PASS EventSource interface: existence and properties of interface prototype object's "constructor" property 
+TIMEOUT EventSource interface: attribute url Test timed out
+TIMEOUT EventSource interface: attribute withCredentials Test timed out
+PASS EventSource interface: constant CONNECTING on interface object 
+PASS EventSource interface: constant CONNECTING on interface prototype object 
+PASS EventSource interface: constant OPEN on interface object 
+PASS EventSource interface: constant OPEN on interface prototype object 
+PASS EventSource interface: constant CLOSED on interface object 
+PASS EventSource interface: constant CLOSED on interface prototype object 
+TIMEOUT EventSource interface: attribute readyState Test timed out
+TIMEOUT EventSource interface: attribute onopen Test timed out
+TIMEOUT EventSource interface: attribute onmessage Test timed out
+TIMEOUT EventSource interface: attribute onerror Test timed out
+PASS EventSource interface: operation close() 
+PASS WebSocket interface: existence and properties of interface object 
+PASS WebSocket interface object length 
+PASS WebSocket interface object name 
+PASS WebSocket interface: existence and properties of interface prototype object 
+PASS WebSocket interface: existence and properties of interface prototype object's "constructor" property 
+TIMEOUT WebSocket interface: attribute url Test timed out
+PASS WebSocket interface: constant CONNECTING on interface object 
+PASS WebSocket interface: constant CONNECTING on interface prototype object 
+PASS WebSocket interface: constant OPEN on interface object 
+PASS WebSocket interface: constant OPEN on interface prototype object 
+PASS WebSocket interface: constant CLOSING on interface object 
+PASS WebSocket interface: constant CLOSING on interface prototype object 
+PASS WebSocket interface: constant CLOSED on interface object 
+PASS WebSocket interface: constant CLOSED on interface prototype object 
+TIMEOUT WebSocket interface: attribute readyState Test timed out
+TIMEOUT WebSocket interface: attribute bufferedAmount Test timed out
+TIMEOUT WebSocket interface: attribute onopen Test timed out
+TIMEOUT WebSocket interface: attribute onerror Test timed out
+TIMEOUT WebSocket interface: attribute onclose Test timed out
+TIMEOUT WebSocket interface: attribute extensions Test timed out
+TIMEOUT WebSocket interface: attribute protocol Test timed out
+PASS WebSocket interface: operation close(unsigned short, USVString) 
+TIMEOUT WebSocket interface: attribute onmessage Test timed out
+TIMEOUT WebSocket interface: attribute binaryType Test timed out
+PASS WebSocket interface: operation send(USVString) 
+PASS WebSocket interface: operation send(Blob) 
+PASS WebSocket interface: operation send(ArrayBuffer) 
+PASS WebSocket interface: operation send(ArrayBufferView) 
+PASS WebSocket must be primary interface of new WebSocket("ws://foo") 
+PASS Stringification of new WebSocket("ws://foo") 
+PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "url" with the proper type 
+PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "CONNECTING" with the proper type 
+PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "OPEN" with the proper type 
+PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "CLOSING" with the proper type 
+PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "CLOSED" with the proper type 
+PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "readyState" with the proper type 
+PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "bufferedAmount" with the proper type 
+PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "onopen" with the proper type 
+PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "onerror" with the proper type 
+PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "onclose" with the proper type 
+PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "extensions" with the proper type 
+PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "protocol" with the proper type 
+PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "close(unsigned short, USVString)" with the proper type 
+PASS WebSocket interface: calling close(unsigned short, USVString) on new WebSocket("ws://foo") with too few arguments must throw TypeError 
+PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "onmessage" with the proper type 
+PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "binaryType" with the proper type 
+PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "send(USVString)" with the proper type 
+PASS WebSocket interface: calling send(USVString) on new WebSocket("ws://foo") with too few arguments must throw TypeError 
+PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "send(Blob)" with the proper type 
+PASS WebSocket interface: calling send(Blob) on new WebSocket("ws://foo") with too few arguments must throw TypeError 
+PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "send(ArrayBuffer)" with the proper type 
+PASS WebSocket interface: calling send(ArrayBuffer) on new WebSocket("ws://foo") with too few arguments must throw TypeError 
+PASS WebSocket interface: new WebSocket("ws://foo") must inherit property "send(ArrayBufferView)" with the proper type 
+PASS WebSocket interface: calling send(ArrayBufferView) on new WebSocket("ws://foo") with too few arguments must throw TypeError 
+FAIL CloseEvent interface: existence and properties of interface object assert_own_property: self does not have own property "CloseEvent" expected property "CloseEvent" missing
+FAIL CloseEvent interface object length assert_own_property: self does not have own property "CloseEvent" expected property "CloseEvent" missing
+FAIL CloseEvent interface object name assert_own_property: self does not have own property "CloseEvent" expected property "CloseEvent" missing
+FAIL CloseEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CloseEvent" expected property "CloseEvent" missing
+FAIL CloseEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CloseEvent" expected property "CloseEvent" missing
+FAIL CloseEvent interface: attribute wasClean assert_own_property: self does not have own property "CloseEvent" expected property "CloseEvent" missing
+FAIL CloseEvent interface: attribute code assert_own_property: self does not have own property "CloseEvent" expected property "CloseEvent" missing
+FAIL CloseEvent interface: attribute reason assert_own_property: self does not have own property "CloseEvent" expected property "CloseEvent" missing
+FAIL CloseEvent must be primary interface of new CloseEvent("close") assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: CloseEvent"
+FAIL Stringification of new CloseEvent("close") assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: CloseEvent"
+FAIL CloseEvent interface: new CloseEvent("close") must inherit property "wasClean" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: CloseEvent"
+FAIL CloseEvent interface: new CloseEvent("close") must inherit property "code" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: CloseEvent"
+FAIL CloseEvent interface: new CloseEvent("close") must inherit property "reason" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: CloseEvent"
+PASS MessageChannel interface: existence and properties of interface object 
+PASS MessageChannel interface object length 
+PASS MessageChannel interface object name 
+PASS MessageChannel interface: existence and properties of interface prototype object 
+PASS MessageChannel interface: existence and properties of interface prototype object's "constructor" property 
+TIMEOUT MessageChannel interface: attribute port1 Test timed out
+TIMEOUT MessageChannel interface: attribute port2 Test timed out
+PASS MessagePort interface: existence and properties of interface object 
+PASS MessagePort interface object length 
+PASS MessagePort interface object name 
+PASS MessagePort interface: existence and properties of interface prototype object 
+PASS MessagePort interface: existence and properties of interface prototype object's "constructor" property 
+PASS MessagePort interface: operation postMessage(any, [object Object]) 
+PASS MessagePort interface: operation start() 
+PASS MessagePort interface: operation close() 
+TIMEOUT MessagePort interface: attribute onmessage Test timed out
+FAIL MessagePort interface: attribute onmessageerror assert_true: The prototype object must have a property "onmessageerror" expected true got false
+FAIL BroadcastChannel interface: existence and properties of interface object assert_own_property: self does not have own property "BroadcastChannel" expected property "BroadcastChannel" missing
+FAIL BroadcastChannel interface object length assert_own_property: self does not have own property "BroadcastChannel" expected property "BroadcastChannel" missing
+FAIL BroadcastChannel interface object name assert_own_property: self does not have own property "BroadcastChannel" expected property "BroadcastChannel" missing
+FAIL BroadcastChannel interface: existence and properties of interface prototype object assert_own_property: self does not have own property "BroadcastChannel" expected property "BroadcastChannel" missing
+FAIL BroadcastChannel interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "BroadcastChannel" expected property "BroadcastChannel" missing
+FAIL BroadcastChannel interface: attribute name assert_own_property: self does not have own property "BroadcastChannel" expected property "BroadcastChannel" missing
+FAIL BroadcastChannel interface: operation postMessage(any) assert_own_property: self does not have own property "BroadcastChannel" expected property "BroadcastChannel" missing
+FAIL BroadcastChannel interface: operation close() assert_own_property: self does not have own property "BroadcastChannel" expected property "BroadcastChannel" missing
+FAIL BroadcastChannel interface: attribute onmessage assert_own_property: self does not have own property "BroadcastChannel" expected property "BroadcastChannel" missing
+FAIL BroadcastChannel interface: attribute onmessageerror assert_own_property: self does not have own property "BroadcastChannel" expected property "BroadcastChannel" missing
+PASS WorkerGlobalScope interface: existence and properties of interface object 
+PASS WorkerGlobalScope interface object length 
+PASS WorkerGlobalScope interface object name 
+PASS WorkerGlobalScope interface: existence and properties of interface prototype object 
+PASS WorkerGlobalScope interface: existence and properties of interface prototype object's "constructor" property 
+TIMEOUT WorkerGlobalScope interface: attribute self Test timed out
+TIMEOUT WorkerGlobalScope interface: attribute location Test timed out
+TIMEOUT WorkerGlobalScope interface: attribute navigator Test timed out
+PASS WorkerGlobalScope interface: operation importScripts(USVString) 
+TIMEOUT WorkerGlobalScope interface: attribute onerror Test timed out
+FAIL WorkerGlobalScope interface: attribute onlanguagechange assert_true: The prototype object must have a property "onlanguagechange" expected true got false
+TIMEOUT WorkerGlobalScope interface: attribute onoffline Test timed out
+TIMEOUT WorkerGlobalScope interface: attribute ononline Test timed out
+FAIL WorkerGlobalScope interface: attribute onrejectionhandled assert_true: The prototype object must have a property "onrejectionhandled" expected true got false
+FAIL WorkerGlobalScope interface: attribute onunhandledrejection assert_true: The prototype object must have a property "onunhandledrejection" expected true got false
+TIMEOUT WorkerGlobalScope interface: attribute origin Test timed out
+PASS WorkerGlobalScope interface: operation btoa(DOMString) 
+PASS WorkerGlobalScope interface: operation atob(DOMString) 
+PASS WorkerGlobalScope interface: operation setTimeout(TimerHandler, long, any) 
+PASS WorkerGlobalScope interface: operation clearTimeout(long) 
+PASS WorkerGlobalScope interface: operation setInterval(TimerHandler, long, any) 
+PASS WorkerGlobalScope interface: operation clearInterval(long) 
+FAIL WorkerGlobalScope interface: operation createImageBitmap(ImageBitmapSource, ImageBitmapOptions) assert_own_property: interface prototype object missing non-static operation expected property "createImageBitmap" missing
+FAIL WorkerGlobalScope interface: operation createImageBitmap(ImageBitmapSource, long, long, long, long, ImageBitmapOptions) assert_own_property: interface prototype object missing non-static operation expected property "createImageBitmap" missing
+PASS DedicatedWorkerGlobalScope interface: existence and properties of interface object 
+PASS DedicatedWorkerGlobalScope interface object length 
+PASS DedicatedWorkerGlobalScope interface object name 
+PASS DedicatedWorkerGlobalScope interface: existence and properties of interface prototype object 
+TIMEOUT DedicatedWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of interface prototype object - setting to a new value via Object.setPrototypeOf should throw a TypeError Test timed out
+

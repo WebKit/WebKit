@@ -1,0 +1,25 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-contentType/resources/blob.htm
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-contentType/resources/blob.txt
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-contentType/resources/blob.xml
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-contentType/resources/lib.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-contentType/resources/style.css
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-contentType/resources/t.bmp
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-contentType/resources/t.gif
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-contentType/resources/t.jpg
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-contentType/resources/t.png

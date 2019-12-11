@@ -1,0 +1,7 @@
+PASS: registration1 should not have an installing worker
+PASS: registration1 should not have a waiting worker
+PASS: registration1 should have an active worker
+PASS: registration2 should have an installing worker
+PASS: registration2 should not have a waiting worker
+PASS: registration2 should not have an active worker
+

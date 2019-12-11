@@ -1,0 +1,44 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x100
+        RenderText {#text} at (0,0) size 782x99
+          text run at (0,0) width 782: "P1: This represents the header and should be flush-left. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam"
+          text run at (0,20) width 754: "nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis"
+          text run at (0,40) width 759: "nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure"
+          text run at (0,60) width 743: "dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et"
+          text run at (0,80) width 753: "accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi."
+      RenderBlock {DIV} at (0,116) size 784x292
+        RenderBlock (floating) {H2} at (0,0) size 112x40
+          RenderText {#text} at (2,0) size 110x39
+            text run at (2,0) width 110: "H2: This should"
+            text run at (54,20) width 58: "float left"
+        RenderBlock {DIV} at (0,0) size 784x292
+          RenderBlock {H3} at (128,0) size 656x20
+            RenderText {#text} at (0,0) size 265x19
+              text run at (0,0) width 265: "H3: This should be indented and inline"
+          RenderBlock {P} at (128,36) size 656x120
+            RenderText {#text} at (0,0) size 644x119
+              text run at (0,0) width 644: "P2: This should be indented and inline. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed"
+              text run at (0,20) width 639: "diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim"
+              text run at (0,40) width 599: "ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea"
+              text run at (0,60) width 625: "commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie"
+              text run at (0,80) width 643: "consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim"
+              text run at (0,100) width 537: "qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi."
+          RenderBlock {P} at (128,172) size 656x120
+            RenderText {#text} at (0,0) size 651x119
+              text run at (0,0) width 624: "P3: This should be indented and inline. Ut wisi enim ad minim veniam, quis nostrud exerci tation"
+              text run at (0,20) width 624: "ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure"
+              text run at (0,40) width 649: "dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis"
+              text run at (0,60) width 651: "at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis"
+              text run at (0,80) width 622: "dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam"
+              text run at (0,100) width 516: "nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat."
+      RenderBlock {P} at (0,424) size 784x100
+        RenderText {#text} at (0,0) size 782x99
+          text run at (0,0) width 779: "P4: This represents the footer and should be flush-left. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse"
+          text run at (0,20) width 774: "molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit"
+          text run at (0,40) width 734: "praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer"
+          text run at (0,60) width 782: "adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad"
+          text run at (0,80) width 720: "minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat."

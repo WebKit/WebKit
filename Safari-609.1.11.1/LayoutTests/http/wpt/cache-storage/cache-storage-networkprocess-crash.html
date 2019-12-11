@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cache Storage: network process crash</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+promise_test(async test => {
+    const cache = await self.caches.open("test1");
+    const response1Mo = new Response(new ArrayBuffer(1024 * 1024));
+    if (!window.testRunner)
+        return Promise.reject("Requires internals API");
+    testRunner.terminateNetworkProcess();
+    return promise_rejects(test, new TypeError, Promise.all([
+        cache.put("1Mo1", response1Mo.clone()),
+        cache.put("1Mo2", response1Mo.clone()),
+        cache.put("1Mo3", response1Mo.clone()),
+        cache.put("1Mo4", response1Mo.clone()),
+        cache.put("1Mo5", response1Mo.clone()),
+    ]));
+}, "Pending cache operation on network process crash");
+</script>
+</body>
+</html>
+

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            function testElementStyle(propertyJS, propertyCSS, value)
+            {
+                shouldBe("e.style.getPropertyCSSValue('" + propertyCSS + "').cssText", "'" + value + "'");
+            }
+
+            function testComputedStyle(propertyJS, propertyCSS, value)
+            {
+                computedStyle = window.getComputedStyle(e, null);
+                shouldBe("computedStyle.getPropertyCSSValue('" + propertyCSS + "').cssText", "'" + value + "'");
+            }
+
+            function checkComputedStyleValue() {
+                var before = window.getComputedStyle(e, null).getPropertyValue('-webkit-text-decoration');
+                e.style.webkitTextDecoration = 'none';
+                e.style.webkitTextDecoration = before;
+                return (window.getComputedStyle(e, null).getPropertyValue('-webkit-text-decoration') == before);
+            }
+
+            description("Test to make sure -webkit-text-decoration property is backwards compatible with CSS 2.1 and CSS 3 shorthand.")
+
+            var testContainer = document.createElement("div");
+            testContainer.contentEditable = true;
+            document.body.appendChild(testContainer);
+
+            testContainer.innerHTML = '<div id="test">hello world</div>';
+
+            var e = document.getElementById('test');
+
+            debug('Initial values:');
+            shouldBeNull("e.style.getPropertyCSSValue('-webkit-text-decoration')");
+            testComputedStyle("webkitTextDecoration", "-webkit-text-decoration", "none solid rgb(0, 0, 0)");
+            shouldBe("checkComputedStyleValue()", "true");
+            debug('');
+
+            debug('CSS2.1 backwards compatibility ("-webkit-text-decoration: underline overline line-through blink;"):');
+            e.style.webkitTextDecoration = "underline overline line-through blink";
+            testElementStyle("webkitTextDecorationLine", "-webkit-text-decoration-line", "underline overline line-through blink");
+            testComputedStyle("webkitTextDecorationLine", "-webkit-text-decoration-line", "underline overline line-through");
+            testComputedStyle("webkitTextDecoration", "-webkit-text-decoration", "underline overline line-through solid rgb(0, 0, 0)");
+            shouldBe("checkComputedStyleValue()", "true");
+            debug('');
+
+            debug('CSS3 Shorthand ("-webkit-text-decoration: underline overline line-through blink dashed red;"):');
+            e.style.webkitTextDecoration = "underline overline line-through blink dashed red";
+            testComputedStyle("webkitTextDecoration", "-webkit-text-decoration", "underline overline line-through dashed rgb(255, 0, 0)");
+            testComputedStyle("webkitTextDecorationLine", "-webkit-text-decoration-line", "underline overline line-through");
+            testComputedStyle("webkitTextDecorationStyle", "-webkit-text-decoration-style", "dashed");
+            testComputedStyle("webkitTextDecorationColor", "-webkit-text-decoration-color", "rgb(255, 0, 0)");
+            shouldBe("checkComputedStyleValue()", "true");
+            debug('');
+
+            debug('Omitting text decoration line resets to its initial value "none" ("-webkit-text-decoration: navy dotted;"):');
+            e.style.webkitTextDecoration = "navy dotted";
+            testComputedStyle("webkitTextDecoration", "-webkit-text-decoration", "none dotted rgb(0, 0, 128)");
+            testComputedStyle("webkitTextDecorationLine", "-webkit-text-decoration-line", "none");
+            testComputedStyle("webkitTextDecorationStyle", "-webkit-text-decoration-style", "dotted");
+            testComputedStyle("webkitTextDecorationColor", "-webkit-text-decoration-color", "rgb(0, 0, 128)");
+            shouldBe("checkComputedStyleValue()", "true");
+            debug('');
+
+            document.body.removeChild(testContainer);
+        </script>
+        <script src="../../../../resources/js-test-post.js"></script>
+    </body>
+</html>

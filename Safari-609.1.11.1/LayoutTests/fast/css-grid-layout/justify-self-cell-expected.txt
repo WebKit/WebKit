@@ -1,0 +1,12 @@
+This test checks that the justify-self property is applied correctly.
+
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS

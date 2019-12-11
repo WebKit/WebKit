@@ -1,0 +1,6 @@
+text vpx_svc_dump_statistics
+text vpx_svc_encode
+text vpx_svc_get_message
+text vpx_svc_init
+text vpx_svc_release
+text vpx_svc_set_options

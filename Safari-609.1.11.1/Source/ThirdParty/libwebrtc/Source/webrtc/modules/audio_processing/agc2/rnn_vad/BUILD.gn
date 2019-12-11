@@ -1,0 +1,132 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../../webrtc.gni")
+
+rtc_source_set("rnn_vad") {
+  visibility = [ "../*" ]
+  sources = [
+    "auto_correlation.cc",
+    "auto_correlation.h",
+    "common.h",
+    "features_extraction.cc",
+    "features_extraction.h",
+    "lp_residual.cc",
+    "lp_residual.h",
+    "pitch_info.h",
+    "pitch_search.cc",
+    "pitch_search.h",
+    "pitch_search_internal.cc",
+    "pitch_search_internal.h",
+    "ring_buffer.h",
+    "rnn.cc",
+    "rnn.h",
+    "sequence_buffer.h",
+    "spectral_features.cc",
+    "spectral_features.h",
+    "spectral_features_internal.cc",
+    "spectral_features_internal.h",
+    "symmetric_matrix_buffer.h",
+  ]
+  deps = [
+    "..:biquad_filter",
+    "../../../../api:array_view",
+    "../../../../rtc_base:checks",
+    "../../../../rtc_base:rtc_base_approved",
+    "../../utility:pffft_wrapper",
+    "//third_party/rnnoise:rnn_vad",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("test_utils") {
+    testonly = true
+    sources = [
+      "test_utils.cc",
+      "test_utils.h",
+    ]
+    deps = [
+      ":rnn_vad",
+      "../../../../api:array_view",
+      "../../../../api:scoped_refptr",
+      "../../../../rtc_base:checks",
+      "../../../../test:fileutils",
+      "../../../../test:test_support",
+      "//third_party/abseil-cpp/absl/memory",
+    ]
+  }
+
+  unittest_resources = [
+    "../../../../resources/audio_processing/agc2/rnn_vad/band_energies.dat",
+    "../../../../resources/audio_processing/agc2/rnn_vad/pitch_buf_24k.dat",
+    "../../../../resources/audio_processing/agc2/rnn_vad/pitch_search_int.dat",
+    "../../../../resources/audio_processing/agc2/rnn_vad/pitch_lp_res.dat",
+    "../../../../resources/audio_processing/agc2/rnn_vad/samples.pcm",
+    "../../../../resources/audio_processing/agc2/rnn_vad/vad_prob.dat",
+  ]
+
+  if (is_ios) {
+    bundle_data("unittests_bundle_data") {
+      testonly = true
+      sources = unittest_resources
+      outputs = [
+        "{{bundle_resources_dir}}/{{source_file_part}}",
+      ]
+    }
+  }
+
+  rtc_source_set("unittests") {
+    testonly = true
+    sources = [
+      "auto_correlation_unittest.cc",
+      "features_extraction_unittest.cc",
+      "lp_residual_unittest.cc",
+      "pitch_search_internal_unittest.cc",
+      "pitch_search_unittest.cc",
+      "ring_buffer_unittest.cc",
+      "rnn_unittest.cc",
+      "rnn_vad_unittest.cc",
+      "sequence_buffer_unittest.cc",
+      "spectral_features_internal_unittest.cc",
+      "spectral_features_unittest.cc",
+      "symmetric_matrix_buffer_unittest.cc",
+    ]
+    deps = [
+      ":rnn_vad",
+      ":test_utils",
+      "../..:audioproc_test_utils",
+      "../../../../api:array_view",
+      "../../../../common_audio/",
+      "../../../../rtc_base:checks",
+      "../../../../rtc_base:logging",
+      "../../../../test:test_support",
+      "../../utility:pffft_wrapper",
+      "//third_party/rnnoise:rnn_vad",
+    ]
+    data = unittest_resources
+    if (is_ios) {
+      deps += [ ":unittests_bundle_data" ]
+    }
+  }
+
+  rtc_executable("rnn_vad_tool") {
+    testonly = true
+    sources = [
+      "rnn_vad_tool.cc",
+    ]
+    deps = [
+      ":rnn_vad",
+      "../../../../api:array_view",
+      "../../../../common_audio",
+      "../../../../rtc_base:rtc_base_approved",
+      "../../../../test:test_support",
+      "//third_party/abseil-cpp/absl/flags:flag",
+      "//third_party/abseil-cpp/absl/flags:parse",
+    ]
+  }
+}

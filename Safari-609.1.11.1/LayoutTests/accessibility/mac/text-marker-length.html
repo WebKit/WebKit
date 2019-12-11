@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="text" tabindex="0">text block</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests the text marker implemention of DRT is working by returning a marker range and by returning its correct length.");
+
+    if (window.accessibilityController) {
+
+          document.getElementById("text").focus();
+          var text = accessibilityController.focusedElement;
+          var textMarkerRange = text.textMarkerRangeForElement(text);
+          shouldBe("text.textMarkerRangeLength(textMarkerRange)", "10");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+This tests that modulo with zero does not crash but returns NaN.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mod(0) is NaN
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

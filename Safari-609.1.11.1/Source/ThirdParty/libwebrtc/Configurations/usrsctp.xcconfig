@@ -1,0 +1,15 @@
+PRODUCT_NAME = usrsctp;
+
+CLANG_WARN_BOOL_CONVERSION = YES;
+CLANG_WARN_ENUM_CONVERSION = YES;
+CLANG_WARN_INT_CONVERSION = YES;
+GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+COMBINE_HIDPI_IMAGES = NO;
+ENABLE_STRICT_OBJC_MSGSEND = YES;
+HEADER_SEARCH_PATHS = Source/ Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/ Source/third_party/usrsctp/usrsctplib/usrsctplib/ Source/third_party/boringssl/src/include/;
+INSTALL_PATH = /usr/local/lib;
+PUBLIC_HEADERS_FOLDER_PATH = /usr/local/include/libwebrtc;
+USE_HEADERMAP = NO;
+WARNING_CFLAGS = -Wno-deprecated-declarations $(inherited);
+GCC_PREPROCESSOR_DEFINITIONS = SCTP_PROCESS_LEVEL_LOCKS SCTP_SIMPLE_ALLOCATOR SCTP_USE_OPENSSL_SHA1 __Userspace__ HAVE_SA_LEN HAVE_SCONN_LEN __APPLE_USE_RFC_2292 __Userspace_os_Darwin $(inherited);
+OTHER_CFLAGS = -UINET -UINET6 -U__APPLE__;

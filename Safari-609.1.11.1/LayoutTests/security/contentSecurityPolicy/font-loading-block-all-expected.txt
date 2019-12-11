@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: Refused to load Ahem.woff because it does not appear in the font-src directive of the Content Security Policy.
+This test makes sure that the promise of a FontFace with no FontFaceSources gets rejected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS rejectedException.code is rejectedException.NETWORK_ERR
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

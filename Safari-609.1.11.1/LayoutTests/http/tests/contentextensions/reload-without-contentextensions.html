@@ -1,0 +1,39 @@
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function done(message)
+{
+    document.body.innerHTML = message;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+if (!window.internals)
+    done("FAIL: need internals API");
+
+async function doTest(shouldFail)
+{
+    const result = await fetch("resources/subresource-redirect.php", { mode : "no-cors" }).then(() => {
+        return !shouldFail;
+    }, () => {
+        return shouldFail;
+    });
+    if (!result) {
+        done("FAIL: reloaded = " + localStorage.reloaded);
+        return;
+    }
+    if (!!localStorage.reloaded) {
+        done("PASS");
+        return;
+    }
+    localStorage.reloaded = true;
+    internals.reloadWithoutContentExtensions();
+}
+
+doTest(!localStorage.reloaded);
+</script>
+</body>

@@ -1,0 +1,3 @@
+
+PASS Ensuring that fetch response body promise is not fulfilled when window is closed 
+

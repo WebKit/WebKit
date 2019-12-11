@@ -1,0 +1,3 @@
+
+PASS appearance of one scrollbar caused the other scrollbar to appear. 
+

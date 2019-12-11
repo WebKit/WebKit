@@ -1,0 +1,5 @@
+This is fallback content
+
+FAIL Children of a slot in a document tree should not be counted in flattened assigned nodes. assert_array_equals: property 0, expected Element node <slot id="slot"><div id="fallback">This is fallback conte... but got Element node <div id="fallback">This is fallback content</div>
+PASS Slot fallback content in shadow tree should be counted in flattened assigned nodes. 
+

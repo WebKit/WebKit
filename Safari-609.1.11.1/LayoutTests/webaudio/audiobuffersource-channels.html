@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+</head>
+
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Tests that AudioBufferSourceNode validates AudioBuffer in .buffer attribute setter.");
+
+var context;
+var source;
+
+function runTest() {
+    window.jsTestIsAsync = true;
+    
+    context = new webkitAudioContext();
+    source = context.createBufferSource();
+
+    shouldBeNull("source.buffer");
+
+    // Make sure we can't set to something which isn't an AudioBuffer.
+    shouldThrow("source.buffer = 57");
+
+    // Check that mono buffer can be set.
+    try {
+        var monoBuffer = context.createBuffer(1, 1024, context.sampleRate);
+        source.buffer = monoBuffer;
+        testPassed("Mono buffer can be set.");
+    } catch(e) {
+        testFailed("Mono buffer can not be set.");
+    }
+
+    // Check that stereo buffer can be set.
+    try {
+        var stereoBuffer = context.createBuffer(2, 1024, context.sampleRate);
+        source.buffer = stereoBuffer;
+        testPassed("Stereo buffer can be set.");
+    } catch(e) {
+        testFailed("Stereo buffer can not be set.");
+    }
+    
+    // Check buffers with more than two channels.
+    for (var i = 3; i < 10; ++i) {
+        try {
+            var buffer = context.createBuffer(i, 1024, context.sampleRate);
+            source.buffer = buffer;
+            var message = i + " channels buffer can be set.";
+            testPassed(message);
+        } catch(e) {
+            var message = i + " channels buffer can not be set.";
+            testFailed(message);
+        }
+    }
+
+    shouldThrow("context.createBuffer(64, 1024, context.sampleRate)");
+
+    shouldNotBe("source.buffer", "null");
+    shouldNotThrow("source.buffer = null");
+    shouldBeNull("source.buffer");
+        
+    finishJSTest();
+}
+
+runTest();
+
+</script>
+</body>
+</html>

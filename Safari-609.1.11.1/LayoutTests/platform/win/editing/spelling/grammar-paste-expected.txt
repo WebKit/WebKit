@@ -1,0 +1,22 @@
+FAIL: Timed out waiting for notifyDone to be called
+
+I have an grape. I have an muscat. I don't know.
+You has the right.
+I have an kiwi. I have no idea.
+I have an grape. I have an muscat. I don't know.
+Grammar checking for pasted text.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+FAIL DIV should have a marker on for 'You has the right.'
+FAIL DIV should have a marker on for 'I have a<b>n ki</b>wi. I have no idea.'
+FAIL DIV should have a marker on for 'I have an grape. I have an muscat. I don't know.'
+FAIL INPUT should have a marker on for 'You has the right.'
+FAIL INPUT should have a marker on for 'I have a<b>n ki</b>wi. I have no idea.'
+FAIL INPUT should have a marker on for 'I have an grape. I have an muscat. I don't know.'
+FAIL TEXTAREA should have a marker on for 'You has the right.'
+

@@ -1,0 +1,8 @@
+This is link_1.
+
+
+This is hidden link.
+This is link_2.
+
+PASS gFocusedDocument.activeElement.getAttribute("id") is "end"
+This test is to test that focusable elements with display:none do not grab the focus.

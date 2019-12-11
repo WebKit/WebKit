@@ -1,0 +1,29 @@
+[
+    {
+        "action": {
+            "type": "css-display-none",
+            "selector": ".hidden1"
+        },
+        "trigger": {
+            "url-filter": "this-does-not-match-the-url"
+        }
+    },
+    {
+        "action": {
+            "type": "css-display-none",
+            "selector": ".hidden2"
+        },
+        "trigger": {
+            "url-filter": "css-display-none-with-different-triggers-are-not-merged.html"
+        }
+    },
+    {
+        "action": {
+            "type": "css-display-none",
+            "selector": ".hidden3"
+        },
+        "trigger": {
+            "url-filter": "this-does-not-match-the-url-either"
+        }
+    }
+]

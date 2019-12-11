@@ -1,0 +1,46 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width">
+    <title></title>
+    <style>
+        .scroller {
+            margin: 10px;
+            overflow: scroll;
+            width: 200px;
+            height: 200px;
+            border: 1px solid black;
+            opacity: 0.8;
+        }
+        
+        .absolute {
+            position: absolute;
+            top: 100px;
+            width: 300px;
+            height: 20px;
+            background-color: green;
+            padding: 10px;
+        }
+        
+        .spacer {
+            height: 800px;
+        }
+        
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        window.addEventListener("load", () => {
+            if (window.internals)
+                document.getElementById("layers").innerText = window.internals.layerTreeAsText(document);
+        }, false);
+    </script>
+<body>
+    <div class='scroller'>
+        <div class="spacer">
+        <div class='absolute'>This layer should be composited.</div>
+    </div>
+<pre id="layers">Layer tree goes here</pre>
+</body>
+</html>

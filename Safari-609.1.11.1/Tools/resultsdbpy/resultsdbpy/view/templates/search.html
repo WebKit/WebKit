@@ -1,0 +1,292 @@
+<!--
+ Copyright (C) 2019 Apple Inc. All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions
+ are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+
+ THIS SOFTWARE IS PROVIDED BY APPLE INC. "AS IS" AND ANY
+ EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+-->
+
+{% extends "base.html" %}
+{% block head %}
+<link rel="stylesheet" type="text/css" href="assets/css/search.css">
+<link rel="stylesheet" type="text/css" href="assets/css/timeline.css">
+<link rel="stylesheet" type="text/css" href="assets/css/tooltip.css">
+
+<script type="module">
+import {CommitBank} from '/assets/js/commit.js';
+import {deepCompare, ErrorDisplay, queryToParams, paramsToQuery} from '/assets/js/common.js';
+import {Configuration} from '/assets/js/configuration.js';
+import {Drawer, BranchSelector, ConfigurationSelectors, LimitSlider} from '/assets/js/drawer.js';
+import {InvestigateDrawer} from '/assets/js/investigate.js';
+import {SearchBar} from '/assets/js/search.js';
+import {Legend, TimelineFromEndpoint} from '/assets/js/timeline.js';
+import {ToolTip} from '/assets/js/tooltip.js';
+import {DOM, REF, EventStream} from '/library/js/Ref.js';
+
+const DEFAULT_LIMIT = 100;
+const SUITES = JSON.parse('{{ suites|safe }}');
+
+class SearchView {
+    constructor() {    
+        this.currentParams = queryToParams(document.URL.split('?')[1]);
+        this.currentLimit = this.currentParams.limit ? parseInt(this.currentParams.limit[this.currentParams.limit.length - 1]) : DEFAULT_LIMIT;
+        delete this.currentParams.limit;
+
+        let state = {children: [], prepending: []};
+        if (this.currentParams.test && (!this.currentParams.suite || this.currentParams.test.length != this.currentParams.suite.length))
+            state = {error: "Query Error", description: 'Must have the same number of suites and tests in query'};
+        else if (this.currentParams.test) {
+            for (let i = 0; i < this.currentParams.test.length; ++i) {
+                state.children.push({
+                    suite: this.currentParams.suite[i],
+                    test: this.currentParams.test[i],
+                    timeline: new TimelineFromEndpoint(`api/results/${this.currentParams.suite[i]}/${this.currentParams.test[i]}`, this.currentParams.suite[i]),
+                });
+            }
+        }
+
+        delete this.currentParams.suite;
+        delete this.currentParams.test;
+
+        const self = this;
+        this.ref = REF.createRef({
+            state: state,
+            onStateUpdate: (element, diff, state) => {
+                if (diff.error) {
+                    DOM.inject(element, ErrorDisplay(diff));
+                    return;
+                }
+
+                function renderChild(child) {
+                    let exitRef = REF.createRef({
+                        onElementMount: element => {
+                            element.onclick = () => {
+                                for (let i = 0; i < self.ref.state.children.length; ++i) {
+                                    if (child.test !== self.ref.state.children[i].test && child.suite !== self.ref.state.children[i].suite)
+                                        continue;
+                                    self.ref.state.children.splice(i, 1);
+                                    break;
+                                }
+
+                                const splitURL = document.URL.split('?');
+                                let params = queryToParams(splitURL[1]);
+                                if (!params.suite)
+                                    params.suite = [];
+                                if (!params.test)
+                                    params.test = [];
+                                for (let i = 0; i < params.suite.length; ++i) {
+                                    // This shouldn't be possible, just keep the current params if it happens.
+                                    if (i >= params.test.length)
+                                        break;
+                                    if (params.suite[i] !== child.suite && params.test[i] !== child.test)
+                                        continue;
+                                    params.suite.splice(i, 1);
+                                    params.test.splice(i, 1);
+                                    break;
+                                }
+                                if (params.suite.length === 0)
+                                    delete params.suite;
+                                if (params.test.length === 0)
+                                    delete params.test;
+
+                                const queryString = paramsToQuery(params);
+                                window.history.pushState(queryString, '', splitURL[0] + '?' + queryString);
+
+                                const section = element.parentElement.parentElement.parentElement.parentElement;
+                                section.parentElement.removeChild(section);
+                            };
+                        },
+                    });
+
+                    return `<div class="section">
+                            <div class="header">
+                                <div class="title" style="font-size:var(--smallSize);word-break:break-word;">${child.test} (${child.suite})</div>
+                                <div class="actions">
+                                <div class="list">
+                                    <a class="item link-button" ref="${exitRef}">X</a>
+                                </div>
+                                </div>
+                            </div>
+                            ${child.timeline}
+                        </div>`;
+                }
+
+                if (diff.children)
+                    DOM.inject(element, diff.children.map(renderChild).join(''));
+                if (diff.prepending) {
+                    diff.prepending.forEach(child => {
+                        if (element.firstElementChild)
+                            DOM.after(element.firstElementChild, renderChild(child));
+                        else
+                            DOM.inject(element, renderChild(child));
+                        this.ref.state.children.unshift(child);
+                    });
+                } 
+            }
+        });
+    }
+    reload() {
+        let params = queryToParams(document.URL.split('?')[1]);
+        let limit = params.limit ? parseInt(params.limit[params.limit.length - 1]) : DEFAULT_LIMIT;
+
+        // Try and determine if the tests we're displaying have changed.
+        if (params.test && (!params.suite || params.test.length != params.suite.length))
+            this.ref.setState({error: "Query Error", description: 'Must have the same number of suites and tests in query'});
+        else if (params.test) {
+            let needReRender = params.test.length != this.ref.state.children.length;
+            let newChildren = [];
+
+            for (let i = 0; i < params.test.length; ++i) {
+                let didFind = false;
+                for (let search = 0; search < this.ref.state.children.length; ++search) {
+                    if (this.ref.state.children[search].suite === params.suite[i] && this.ref.state.children[search].test === params.test[i]) {
+                        newChildren.push(this.ref.state.children[search]);
+                        didFind = true;
+                        this.ref.state.children.splice(search, 1);
+                        break;
+                    } else
+                        this.ref.state.children[search].timeline.teardown();
+                    needReRender = true;
+                }
+                if (!didFind) {
+                    needReRender = true;
+
+                    newChildren.push({
+                        suite: params.suite[i],
+                        test: params.test[i],
+                        timeline: new TimelineFromEndpoint(`api/results/${params.suite[i]}/${params.test[i]}`),
+                    });
+                }
+            }
+
+            if (needReRender)
+                this.ref.setState({children: newChildren});
+            else
+                this.ref.state.children = newChildren;
+        }
+
+        delete params.limit;
+        delete params.suite;
+        delete params.test;
+
+        if (deepCompare(params, this.currentParams)) {
+            if (limit === this.currentLimit)
+                return;
+            if (limit < this.currentLimit) {
+                this.currentLimit = limit;
+                this.ref.state.children.forEach(child => {
+                    child.timeline.rerender();
+                });
+                return;
+            }
+            this.currentLimit = limit;
+        }
+
+        this.ref.state.children.forEach(child => {
+            child.timeline.reload();
+        });
+        this.currentParams = params;
+    }
+    toString() {
+        return `<div ref="${this.ref}"></div>`;
+    }
+    notifyTimelinesRender() {
+        this.ref.state.children.forEach(child => {
+            child.timeline.notifyRerender();
+        });
+    }
+}
+
+let view = new SearchView();
+const onLayoutChange = new EventStream();
+onLayoutChange.action(() => {
+    view.notifyTimelinesRender();
+});
+window.onpopstate = event => {view.reload();};
+window.onpushstate = event => {view.reload();};
+
+let viewport = null;
+DOM.inject(
+    document.getElementById('app'),
+    `${ToolTip}
+    ${InvestigateDrawer}
+    ${Drawer([
+        Legend(() => {
+            view.ref.state.children.forEach((child) => {
+                child.timeline.update();
+            });
+        }, false),
+        LimitSlider(() => {view.reload()}),
+        BranchSelector(() => {
+            CommitBank.reload();
+            view.reload();
+        }),
+        ConfigurationSelectors(() => {view.reload()}),
+    ], () => onLayoutChange.add())}
+
+    <div class="main right-sidebar under-topbar-with-actions">
+        <div class="content" ref=${REF.createRef({
+                onElementMount: (element) => {
+                    view.ref.state.children.forEach((child) => {
+                        child.timeline.viewport = element;
+                    });
+                    viewport = element;
+                }
+            })}>
+            ${SearchBar(function () {
+                const splitURL = document.URL.split('?');
+                let params = queryToParams(splitURL[1]);
+                if (!params.suite)
+                    params.suite = [];
+                if (!params.test)
+                    params.test = [];
+
+                for (let i = 0; i < arguments.length; i++) {
+                    let needToAdd = true;
+                    if (!needToAdd)
+                        continue;
+
+                    let child = {
+                        suite: arguments[i].suite,
+                        test: arguments[i].test,
+                        timeline: new TimelineFromEndpoint(`api/results/${arguments[i].suite}/${arguments[i].test}`, null, viewport),
+                    }
+
+                    view.ref.setState({prepending: [child]});
+                    params.suite.push(child.suite);
+                    params.test.push(child.test);
+                }
+                const queryString = paramsToQuery(params);
+                window.history.pushState(queryString, '', splitURL[0] + '?' + queryString);
+            }, SUITES)}
+            ${view}
+        </div>
+    </div>`
+);
+
+</script>
+
+{% endblock %}
+{% block content %}
+
+<div id="app">
+</div>
+
+{% endblock %}

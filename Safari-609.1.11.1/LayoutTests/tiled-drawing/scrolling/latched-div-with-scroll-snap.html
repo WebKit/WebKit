@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            body {
+                margin: 0;
+            }
+
+            #topTarget {
+                position: absolute;
+                top: 0;
+                left: 0;
+                border: 1px black solid;
+            }
+
+            #bottomTarget {
+                position: absolute;
+                top: 400px;
+                left: 0;
+                border: 1px black solid;
+            }
+
+            .gallery {
+                width: 400px;
+                height: 400px;
+                overflow-y: hidden;
+                overflow-x: auto;
+                margin-bottom: 2px;
+                scroll-snap-type: x mandatory;
+                opacity: 0.5;
+            }
+
+            .galleryDrawer {
+                width: 2400px;
+                height: 400px;
+            }
+
+            .colorBox {
+                height: 400px;
+                width: 400px;
+                float: left;
+                scroll-snap-align: start;
+            }
+            #itemH0, #itemV0 { background-color: red; }
+            #itemH1, #itemV1 { background-color: green; }
+            #itemH2, #itemV2 { background-color: blue; }
+            #itemH3, #itemV3 { background-color: aqua; }
+            #itemH4, #itemV4 { background-color: yellow; }
+            #itemH5, #itemV5 { background-color: fuchsia; }
+        </style>
+        <script>
+        function locationInWindowCoordinates(element)
+        {
+            var position = {};
+            position.x = element.offsetLeft;
+            position.y = element.offsetTop;
+
+            while (element.offsetParent) {
+                position.x = position.x + element.offsetParent.offsetLeft;
+                position.y = position.y + element.offsetParent.offsetTop;
+                if (element == document.getElementsByTagName("body")[0])
+                    break;
+
+                element = element.offsetParent;
+            }
+
+            return position;
+        }
+
+        let swipeWithMomentum = (element) => swipeInElement(element, true);
+        let swipeWithoutMomentum = (element) => swipeInElement(element, false);
+        function swipeInElement(element, momentum)
+        {
+            return new Promise(resolve => {
+                write(`* Swiping ${momentum ? "with" : "without"} momentum in ${element.id} with scroll offset ${element.scrollLeft}`);
+                let location = locationInWindowCoordinates(element);
+                internals.setPlatformMomentumScrollingPredictionEnabled(false);
+                eventSender.monitorWheelEvents();
+                eventSender.mouseMoveTo(location.x, location.y);
+                eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, "began", "none");
+                eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, "changed", "none");
+                eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, "changed", "none");
+                eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+                if (momentum) {
+                    eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, "none", "begin");
+                    eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, "none", "continue");
+                    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
+                }
+                eventSender.callAfterScrollingCompletes(() => {
+                    write(`  topTarget now has scroll offset ${topTarget.scrollLeft}`);
+                    write(`  bottomTarget now has scroll offset ${bottomTarget.scrollLeft}`);
+                    write("");
+                    resolve();
+                });
+            });
+        }
+
+        function run()
+        {
+            if (!window.eventSender)
+                return;
+
+            swipeWithMomentum(topTarget)
+                .then(() => swipeWithoutMomentum(topTarget))
+                .then(() => swipeWithMomentum(bottomTarget))
+                .then(() => swipeWithoutMomentum(bottomTarget))
+                .then(() => testRunner.notifyDone());
+        }
+        </script>
+    </head>
+    <body onload=run()>
+        <div style="position: relative; width: 400px">
+            <p>Manually test with the following steps:</p>
+            <p>1. Scroll with momentum to the green box in the first div.</p>
+            <p>2. In the first div, drag so the blue box is partially visible, then let go so the div snaps back to show green.</p>
+            <p>3. Scroll with momentum to the green box in the second div.</p>
+            <p>4. In the second div, drag so the blue box is partially visible, then let go so the div snaps back to show green.</p>
+            <div class="gallery" id="topTarget">
+                <div class="galleryDrawer">
+                    <div id="itemH0" class="colorBox"></div>
+                    <div id="itemH1" class="colorBox"></div>
+                    <div id="itemH2" class="colorBox"></div>
+                    <div id="itemH3" class="colorBox"></div>
+                    <div id="itemH4" class="colorBox"></div>
+                    <div id="itemH5" class="colorBox"></div>
+                </div>
+            </div>
+            <div class="gallery" id="bottomTarget">
+                <div class="galleryDrawer">
+                    <div id="itemV0" class="colorBox"></div>
+                    <div id="itemV1" class="colorBox"></div>
+                    <div id="itemV2" class="colorBox"></div>
+                    <div id="itemV3" class="colorBox"></div>
+                    <div id="itemV4" class="colorBox"></div>
+                    <div id="itemV5" class="colorBox"></div>
+                </div>
+            </div>
+            <div id="output"></div>
+            <script>
+                let write = s => output.innerHTML += s + "<br>";
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            </script>
+        </div>
+    </body>
+</html>

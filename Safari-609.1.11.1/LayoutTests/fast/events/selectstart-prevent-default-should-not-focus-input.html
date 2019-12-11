@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests that the input element does not get the focus when dragging mouse over it
+even when document has a selectstart event listener which prevents default.<br>
+To manually test, drag a mouse cursor over the input element.
+The input element should not gain focus.</p>
+<input type="text">
+<pre id="log"></pre>
+<script>
+
+document.addEventListener('selectstart', (event) => {
+    log.textContent += 'selectstart event\n';
+    event.preventDefault();
+});
+
+const input = document.querySelector('input');
+let inputElementWasFocused = false;
+input.addEventListener('focus', () => {
+    inputElementWasFocused = true;
+    log.textContent += 'FAIL - the input element was focused\n';
+});
+
+if (window.eventSender) {
+    testRunner.dumpAsText();
+
+    let x = input.offsetLeft + 5;
+    eventSender.mouseMoveTo(x, input.offsetTop - 5);
+    eventSender.mouseDown();
+    eventSender.leapForward(100);
+    eventSender.mouseMoveTo(x, input.offsetTop + 5);
+    eventSender.leapForward(100);
+    eventSender.mouseMoveTo(x, input.offsetTop + 100);
+    eventSender.mouseUp();
+
+    if (!inputElementWasFocused)
+        log.textContent += 'PASS - input element was not focused';
+
+} else
+    document.write('This test requires eventSender drag & drop support');
+
+</script>
+</body>
+</html>

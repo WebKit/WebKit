@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<title>Test moving up and down through non-rendered elements.</title>
+</head>
+<body>
+<div id="before" hidden></div>
+<h1 id="first_line">First line of rendered text</h1>
+<div id="after" hidden></div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test moving up and down through non-rendered elements. This test should execute quickly if it's working correctly; a timeout is a failure.");
+
+var before = document.getElementById("before");
+var after = document.getElementById("after");
+for (var i = 0; i < 1000; i++) {
+    before.appendChild(document.createElement("meta"));
+    after.appendChild(document.createElement("meta"));
+}
+
+function selectFirstLine() {
+    var selection = document.getSelection();
+    selection.removeAllRanges();
+    var range = document.createRange();
+    range.selectNode(document.getElementById("first_line"));
+   selection.addRange(range);
+}
+
+for (var i = 0; i < 100; i++) {
+    selectFirstLine();
+    if (window.testRunner)
+        testRunner.execCommand("MoveUpAndModifySelection");
+
+    selectFirstLine();
+   if (window.testRunner)
+        testRunner.execCommand("MoveDownAndModifySelection");
+}
+
+before.textContent = "";
+after.textContent = "";
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

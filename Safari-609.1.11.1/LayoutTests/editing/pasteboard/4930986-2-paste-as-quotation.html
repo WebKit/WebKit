@@ -1,0 +1,34 @@
+<html>
+<head>
+<style>
+blockquote {
+    color: blue;
+    border-left: 2px solid blue;
+    margin-left: 0px;
+    padding-left: 10px;
+}
+</style>
+<script>
+function runTest() {
+    document.addEventListener("beforecopy", (event) => event.preventDefault());
+    document.addEventListener("copy", (event) => {
+        event.clipboardData.setData("text/html", "<span class='Apple-style-span' style='color: black;'><span class='Apple-style-span' style='color: red;'>This text should be red (it should be wrapped in a style span).</span></span>");
+        event.preventDefault();
+    });
+    document.execCommand("Copy", false);
+
+    div = document.getElementById("edit");
+    div.focus();
+    document.execCommand("PasteAsQuotation", false);
+    if (window.testRunner) {
+        window.testRunner.dumpAsText();
+        document.body.innerText = document.getElementById("description").innerText + "\n" + div.innerHTML;
+    }
+}
+</script>
+</head>
+<body onload="runTest();">
+<div id="description">This tests to make sure that content that is colored by the user is pasted with that color during a Paste as Quotation.</div>
+<div id="edit" contenteditable="true"></div>
+</body>
+</html>

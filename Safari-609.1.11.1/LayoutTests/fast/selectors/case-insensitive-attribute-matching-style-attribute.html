@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style id="style">
+    * {
+        color: black;
+    }
+    [style*="PURPLE" i] {
+        color: red;
+    }
+</style>
+</head>
+<body>
+    <div id="test-root-with-renderer">
+        <div id="target-with-renderer" style="background-color: purple;"></div>
+    </div>
+
+    <div style="display:none">
+        <div id="target-without-renderer"style="background-color: purple;"></div>
+    </div>
+</body>
+<script>
+description('Test attribute matching with the case insensitive flag used to match the style attribute.');
+
+function testStyle(expectedValues) {
+    for (var key in expectedValues) {
+        shouldBeEqualToString('getComputedStyle(document.getElementById("target-with-renderer"))["' + key + '"]', expectedValues[key]);
+        shouldBeEqualToString('getComputedStyle(document.getElementById("target-without-renderer"))["' + key + '"]', expectedValues[key]);
+    }
+}
+
+function testQuerySelector(expectMatch) {
+    if (expectMatch) {
+        shouldBe('document.querySelectorAll("[style*=PURPLE i]").length', '2');
+        shouldBeEqualToString('document.querySelectorAll("[style*=PURPLE i]")[0].id', 'target-with-renderer');
+        shouldBeEqualToString('document.querySelectorAll("[style*=PURPLE i]")[1].id', 'target-without-renderer');
+    } else {
+        shouldBe('document.querySelectorAll("[style*=PURPLE i]").length', '0');
+    }
+}
+
+function test(expectMatch, expectedValues) {
+    testQuerySelector(expectMatch);
+    testStyle(expectedValues);
+}
+
+// Force a layout.
+var sideEffect = document.body.offsetTop;
+
+
+debug("Initial state.");
+test(true, {color: "rgb(255, 0, 0)", "background-color": "rgb(128, 0, 128)"});
+
+document.getElementById('test-root-with-renderer').style.display = "None";
+debug("");
+
+debug("Let's change the background color to something else than purple.");
+var targetWithRenderer = document.getElementById('target-with-renderer');
+var targetWithoutRenderer = document.getElementById('target-without-renderer');
+targetWithRenderer.style.backgroundColor = 'red';
+targetWithoutRenderer.style.backgroundColor = 'red';
+test(false, {color: "rgb(0, 0, 0)", "background-color": "rgb(255, 0, 0)"});
+debug("");
+
+debug("Back to purple.");
+targetWithRenderer.style.backgroundColor = 'purple';
+targetWithoutRenderer.style.backgroundColor = 'purple';
+test(true, {color: "rgb(255, 0, 0)", "background-color": "rgb(128, 0, 128)"});
+debug("");
+
+debug("Remove the style attribute entirely.");
+targetWithRenderer.removeAttribute('style');
+targetWithoutRenderer.removeAttribute('style');
+test(false, {});
+debug("");
+
+debug("Back to purple.");
+targetWithRenderer.style.backgroundColor = 'purple';
+targetWithoutRenderer.style.backgroundColor = 'purple';
+test(true, {color: "rgb(255, 0, 0)", "background-color": "rgb(128, 0, 128)"});
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

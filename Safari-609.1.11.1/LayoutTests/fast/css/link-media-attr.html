@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link id="link" rel="stylesheet" href="data:text/css,#target{color:red}" media="print">
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<span id="target"></span>
+<script>
+description("Modifying the media attribute of a link element to apply / unapply to the page should recalc styles");
+
+window.jsTestIsAsync = true;
+
+link = document.getElementById("link");
+target = document.getElementById("target");
+
+window.addEventListener("load", function() {
+    shouldBeEqualToString("link.media", "print");
+    shouldBeFalse("link.disabled");
+    shouldBeEqualToString("getComputedStyle(target).color", "rgb(0, 0, 0)");
+
+    evalAndLog('link.media = "screen"');
+    shouldBeEqualToString("link.media", "screen");
+    shouldBeFalse("link.disabled");
+    shouldBeEqualToString("getComputedStyle(target).color", "rgb(255, 0, 0)");
+
+    evalAndLog('link.media = "screen,screen"');
+    shouldBeEqualToString("link.media", "screen,screen");
+    shouldBeFalse("link.disabled");
+    shouldBeEqualToString("getComputedStyle(target).color", "rgb(255, 0, 0)");
+
+    evalAndLog('link.media = "print"');
+    shouldBeEqualToString("link.media", "print");
+    shouldBeFalse("link.disabled");
+    shouldBeEqualToString("getComputedStyle(target).color", "rgb(0, 0, 0)");
+
+    finishJSTest();
+});
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+Test script.onerror will be fired when the resource specified by "src" is not found.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Module is not executed yet.
+PASS error is not null
+PASS error.type is "error"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

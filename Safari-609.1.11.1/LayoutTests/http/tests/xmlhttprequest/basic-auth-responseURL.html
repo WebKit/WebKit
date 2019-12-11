@@ -1,0 +1,33 @@
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<div id="description"></div>
+<div id="console"></div>
+<script type="text/javascript">
+description("Test XMLHttpRequest responseURL.");
+window.jsTestIsAsync = true;
+    
+//async
+req = new XMLHttpRequest;
+debug('req.readyState = ' + req.readyState + ': responseURL = ' + req.responseURL);
+shouldBeEqualToString('req.responseURL', '');
+req.open("GET", "resources/basic-auth/basic-auth.php?uid=async", true, "async", "123");
+debug('req.readyState = ' + req.readyState + ': responseURL = ' + req.responseURL);
+shouldBeEqualToString('req.responseURL', '');
+req.onreadystatechange = processStateChange;
+req.send("");
+debug('req.readyState = ' + req.readyState + ': responseURL = ' + req.responseURL);
+shouldBeEqualToString('req.responseURL', '');
+
+function processStateChange() {
+    debug('req.readyState = ' + req.readyState + ': responseURL = ' + req.responseURL);
+
+    if (req.readyState == 4) {
+        shouldBeEqualToString('req.responseURL', 'http://127.0.0.1:8000/xmlhttprequest/resources/basic-auth/basic-auth.php?uid=async');
+        finishJSTest();
+    }
+}
+
+</script>
+</body>
+</html>

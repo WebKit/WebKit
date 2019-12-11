@@ -1,0 +1,45 @@
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<div id="btn" role="button" aria-roledescription="Super Button">text</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+function runTest() {
+    description("This tests that aria-roledescription works.");
+
+    if (window.accessibilityController) {
+
+        // Confirm we can override our role description.
+        debug("Role description: " + accessibilityController.accessibleElementById("btn").roleDescription + ".");
+
+        // Confirm our role description returns to default when set to zero length.
+        document.getElementById("btn").setAttribute("aria-roledescription", "");
+        debug("Role description: " + accessibilityController.accessibleElementById("btn").roleDescription + ".");
+
+        // Confirm our role description returns to default when set to whitespace only.
+        document.getElementById("btn").setAttribute("aria-roledescription", "     ");
+        debug("Role description: " + accessibilityController.accessibleElementById("btn").roleDescription + ".");
+
+        // Confirm our role description strips extraneous whitespace characters.
+        document.getElementById("btn").setAttribute("aria-roledescription", "          Super Button          ");
+        debug("Role description: " + accessibilityController.accessibleElementById("btn").roleDescription + ".");
+
+        // Confirm our role description returns to default when removed.
+        document.getElementById("btn").removeAttribute("aria-roledescription");
+        debug("Role description: " + accessibilityController.accessibleElementById("btn").roleDescription + ".");
+    }
+}
+
+runTest();
+</script>
+
+</body>
+<script src="../resources/js-test-post.js"></script>
+</html>

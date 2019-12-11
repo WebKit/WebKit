@@ -1,0 +1,15 @@
+<style>
+#d1 span { float:right; }
+</style>
+<p>This tests for a hang on delete where a style rule would cause style spans in content moved after the delete to be displayed as blocks. You should see Hello<b>World</b> below.</p>
+<div contenteditable="true">
+<div id="d1">Hello</div>
+<div id="d2" style="font-weight:bold">World</div>
+</div>
+
+<script>
+d2 = document.getElementById("d2");
+s = window.getSelection();
+s.setPosition(d2, 0);
+document.execCommand("Delete");
+</script>

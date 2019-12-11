@@ -1,0 +1,51 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true runSingly=true ] -->
+
+<html>
+<head>
+    <script src="../../../../resources/basic-gestures.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        async function runTest()
+        {
+            if (!testRunner.runUIScript)
+                return;
+
+            let output = '';
+            let target = document.getElementById('target');
+            let targetRect = document.getElementById('targetRect').getBoundingClientRect();
+            let pressPointX = targetRect.x + targetRect.width / 2;
+            let pressPointY = targetRect.y + targetRect.height / 2;
+
+            let result = await UIHelper.longPressAndGetContextMenuContentAt(pressPointX, pressPointY);
+            let results = JSON.parse(result).contextMenu;
+            if (results.url == 'http://localhost:54321/' && results.isLink)
+                output += 'PASS: correct page loaded in popover';
+            document.getElementById('target').innerHTML = output;
+
+            await liftUpAtPoint(pressPointX, pressPointY);
+            testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', runTest, false);
+    </script>
+    <style>
+        #target {
+            height: 100px;
+            width: 200px;
+            background-color: silver;
+        }
+    </style>
+    <meta name="viewport" content="initial-scale=1">
+</head>
+<body>
+<div id="target">
+    <a id="targetRect" href="http://localhost:54321">Link Test</a>
+    This test requires UIScriptController to run.
+</div>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <style>
+        body {
+            height: 2000px;
+        }
+        iframe {
+            margin-top: 300px;
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+
+        async function doTest()
+        {
+            await UIHelper.immediateUnstableScrollTo(0, 100);
+            await UIHelper.ensurePresentationUpdate();
+            
+            document.getElementById('layer-tree').textContent = internals.layerTreeAsText(document);
+            testRunner.notifyDone();
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<pre id="layer-tree"></pre>
+    <iframe srcdoc="
+        <style>
+            body {
+                height: 1000px;
+            }
+            .fixed {
+                position: fixed;
+                top: 10px;
+            }
+            .box {
+                width: 200px;
+                height: 200px;
+                background-color: blue;
+            }
+        </style>
+        <div id='box' class='fixed box'></div>"
+    ></iframe>
+</body>
+</html>

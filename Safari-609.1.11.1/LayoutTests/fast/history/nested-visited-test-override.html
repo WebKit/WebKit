@@ -1,0 +1,43 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description(":visited is only effective when the target is first encountered link element.");
+
+jsTestIsAsync = true;
+
+if (window.testRunner)
+    window.testRunner.keepWebHistory();
+
+function compareStyles()
+{
+
+    var anchor = document.createElement("a");
+    anchor.href="resources/dummy.html";
+    anchor.setAttribute("id", "one");
+    anchor.innerHTML = "<span>One</span>";
+    document.getElementById("enclosure").appendChild(anchor);
+
+    if (window.internals) {
+        style = internals.computedStyleIncludingVisitedInfo(document.getElementById("one").firstChild);
+        shouldBecomeEqualToString("style.color", "rgb(0, 128, 0)", finishJSTest);
+    }
+}
+</script>
+<style>
+.ok span { color: green; }
+.ok:visited span { color: red; }
+</style>
+</head>
+<body onload="compareStyles()">
+<iframe src="resources/dummy.html" style="display:none"></iframe>
+
+<p>This link should be green:</p>
+<p>
+<a id="enclosure" class="ok" href="http://madeup.site.com"></a>
+</p>
+
+<div id=console></div>
+</body>
+<script src="../../resources/js-test-post.js"></script>
+</html>

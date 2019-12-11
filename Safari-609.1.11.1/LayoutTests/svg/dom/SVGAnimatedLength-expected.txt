@@ -1,0 +1,27 @@
+This test checks the SVGAnimatedLength API - utilizing the width property of SVGRectElement
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check initial width value
+PASS rectElement.width.toString() is "[object SVGAnimatedLength]"
+PASS rectElement.width.baseVal.toString() is "[object SVGLength]"
+PASS rectElement.width.baseVal.value is 0
+
+Check that lengths are dynamic, caching value in a local variable and modifying it, should take effect
+PASS numRef.value is 100
+PASS rectElement.width.baseVal.value is 100
+
+Check that assigning to baseVal has no effect, as no setter is defined
+PASS rectElement.width.baseVal = -1 is -1
+PASS rectElement.width.baseVal = 'aString' is "aString"
+PASS rectElement.width.baseVal = rectElement is rectElement
+
+Check that the width value remained 100, and the baseVal type has not been changed
+PASS rectElement.width.baseVal.toString() is "[object SVGLength]"
+PASS rectElement.width.baseVal.value is 100
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

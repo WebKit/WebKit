@@ -1,0 +1,133 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+    <head>
+        <title>Selecting from a list of tracks</title>
+        <script src="media-controls.js"></script>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script src="trackmenu-test.js"></script>
+        <script>
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            function startTest()
+            {
+                trackListElement = getTrackListElement();
+                if (!trackListElement)
+                    return;
+                testExpected("trackListElement.offsetHeight", 0, ">");
+
+                consoleWrite("<br>*** Add another text track.");
+                run('video.addTextTrack("captions", "Commentary", "ru")');
+                showTrackMenu()
+                window.setTimeout(turnCaptionsOn, 100);
+                consoleWrite("");
+            }
+
+            function captionTrackMenuList()
+            {
+                var trackListElement = getTrackListElement();
+                if (!trackListElement)
+                    return;
+                // Track list should have a <ul> with <li> children (One of them is "Off").
+                var trackList = trackListElement.querySelector("ul");
+                if (!trackList) {
+                    failTest("Could not find a child ul element in track list menu");
+                    return;
+                }
+                var trackListItems = trackList.querySelectorAll("li");
+                if (!trackListItems) {
+                    failTest("Could not find child li elements in track list menu");
+                    return;
+                }
+
+                return trackListItems;
+            }
+
+            function testMenu()
+            {
+                trackListItems = captionTrackMenuList();
+                var expectedItemCount = video.textTracks.length + 2;
+                consoleWrite("There should be " + expectedItemCount + " items in the menu.");
+                testExpected("trackListItems.length", expectedItemCount);
+            }
+
+            function selectCaptionMenuItem(index, nextStep)
+            {
+                // Click on the selected item
+                var trackListItems = captionTrackMenuList();
+                var selectedTrackItem = trackListItems[index];
+                var boundingRect = selectedTrackItem.getBoundingClientRect();
+                var x = boundingRect.left + boundingRect.width / 2;
+                var y = boundingRect.top + boundingRect.height / 2;
+                eventSender.mouseMoveTo(x, y);
+                eventSender.mouseDown();
+                eventSender.mouseUp();
+                window.setTimeout(function() { testMenu(); nextStep(); }, 100);
+            }
+
+            function turnCaptionsOn()
+            {
+                consoleWrite("*** Turning captions on");
+                // Click on the third item, which is the second track (Off is the first item, Automatic is second)
+                selectCaptionMenuItem(3, testCaptionsVisible);
+            }
+
+            function testCaptionsVisible()
+            {
+                testExpected("video.textTracks.length", 4);
+                consoleWrite("Track 0 should be showing");
+                testExpected("video.textTracks[0].mode", "showing");
+                consoleWrite("Track 1 should be disabled");
+                testExpected("video.textTracks[1].mode", "disabled");
+                consoleWrite("Track 2 should be disabled");
+                testExpected("video.textTracks[2].mode", "disabled");
+                consoleWrite("Track 3 should be disabled");
+                testExpected("video.textTracks[3].mode", "disabled");
+                testExpected("textTrackDisplayElement(video, 'display').innerText", "Lorem");
+
+                consoleWrite("<br>*** Remove a track.");
+                run('video.removeChild(document.querySelectorAll("track")[0])');
+
+                clickCCButton();
+                window.setTimeout(turnCaptionsOff, 100);
+            }
+
+            function turnCaptionsOff()
+            {
+                consoleWrite("*** Turning captions off");
+                selectCaptionMenuItem(0, testCaptionsDisabled);
+            }
+
+            function testCaptionsDisabled()
+            {
+                testExpected("video.textTracks.length", 3);
+                consoleWrite("Track 0 should be disabled");
+                testExpected("video.textTracks[0].mode", "disabled");
+                consoleWrite("Track 1 should be disabled");
+                testExpected("video.textTracks[1].mode", "disabled");
+                consoleWrite("Track 2 should be disabled");
+                testExpected("video.textTracks[2].mode", "disabled");
+                testExpected("textTrackDisplayElement(video, 'display').innerText", "Lorem");
+                endTest();
+            }
+
+            function start()
+            {
+                findMediaElement();
+                video.src = findMediaFile('video', 'content/test');
+                waitForEvent('canplaythrough', function () { startTrackMenuTest(startTest); });
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <p>Test that we are able to trigger the list of captions, and select from the list.</p>
+        <video width="500" height="300" controls>
+            <track kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="fr">
+            <track kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="en">
+            <track kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="ja">
+        </video>
+    </body>
+</html>
+

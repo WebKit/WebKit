@@ -1,0 +1,62 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 5 of #text > DIV > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > DIV > BODY > HTML > #document to 6 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+
+
+Tests: 
+
+Copying and pasting a whole line followed by a blank line could remove the blank line incorrectly, as in the case described in 
+<rdar://problem/3951178> REGRESSION (Mail): blank line lost after pasting as quotation.
+
+
+Expected Results:
+
+Should see a blank line between "two" and "three"
+
+
+| "
+"
+| <div>
+|   class="editing"
+|   id="test"
+|   "
+"
+|   <div>
+|     "
+one
+"
+|   "
+"
+|   <div>
+|     "
+    "
+|     <br>
+|       class="khtml-block-placeholder"
+|     "
+"
+|   "
+"
+|   <div>
+|     <div>
+|       "two"
+|   <div>
+|     <#selection-caret>
+|     <br>
+|   "
+"
+|   <div>
+|     "
+    three
+"
+|   "
+"
+| "
+"

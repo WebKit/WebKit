@@ -1,0 +1,1637 @@
+# Turkish translation for webkit.
+# Copyright (C) 2014 webkit's COPYRIGHT HOLDER
+# This file is distributed under the same license as the webkit package.
+#
+# Elif Aydurmuş <elifaydrms@hotmail.com>, 2014.
+# Sabri Ünal <yakushabb@gmail.com>, 2014.
+# Furkan Usta <furkan.usta@ug.bilkent.edu.tr>, 2015.
+# Gökhan Gurbetoğlu <ggurbet@gmail.com>, 2014, 2015.
+# Muhammet Kara <muhammetk@gmail.com>, 2014, 2015, 2016.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: webkit HEAD\n"
+"Report-Msgid-Bugs-To: https://bugs.webkit.org\n"
+"POT-Creation-Date: 2016-03-22 15:34+0000\n"
+"PO-Revision-Date: 2016-04-16 23:59+0300\n"
+"Last-Translator: Muhammet Kara <muhammetk@gmail.com>\n"
+"Language-Team: Türkçe <gnome-turk@gnome.org>\n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Gtranslator 2.91.7\n"
+
+#: ../ErrorsGtk.cpp:32
+msgid "Load request cancelled"
+msgstr "Yükleme isteği iptal edildi"
+
+#: ../ErrorsGtk.cpp:37
+msgid "Not allowed to use restricted network port"
+msgstr "Sınırlı ağ bağlantı noktası kullanmaya izin verilmiyor"
+
+#: ../ErrorsGtk.cpp:42
+msgid "Blocked by content blocker"
+msgstr "İçerik engelleyici tarafından engellendi"
+
+#: ../ErrorsGtk.cpp:47
+msgid "URL cannot be shown"
+msgstr "URL gösterilemiyor"
+
+#: ../ErrorsGtk.cpp:52
+msgid "Frame load was interrupted"
+msgstr "Çerçeve yükleme kesintiye uğradı"
+
+#: ../ErrorsGtk.cpp:57
+msgid "Content with the specified MIME type cannot be shown"
+msgstr "Belirtilen MIME türündeki içerik gösterilemiyor"
+
+#: ../ErrorsGtk.cpp:62
+msgid "File does not exist"
+msgstr "Dosya mevcut değil"
+
+#: ../ErrorsGtk.cpp:67
+msgid "Plugin will handle load"
+msgstr "Yükleme işini eklenti halledecek"
+
+#: ../ErrorsGtk.cpp:77
+msgid "User cancelled the download"
+msgstr "Kullanıcı indirmeyi iptal etti"
+
+#: ../ErrorsGtk.cpp:92
+msgid "Printer not found"
+msgstr "Yazıcı bulunamadı"
+
+#: ../ErrorsGtk.cpp:97
+msgid "Invalid page range"
+msgstr "Geçersiz sayfa aralığı"
+
+#: ../LocalizedStringsGtk.cpp:55 ../LocalizedStringsGtk.cpp:60
+msgid "Submit"
+msgstr "Gönder"
+
+#: ../LocalizedStringsGtk.cpp:65
+msgid "Reset"
+msgstr "Sıfırla"
+
+#: ../LocalizedStringsGtk.cpp:70
+msgid "Details"
+msgstr "Ayrıntılar"
+
+#: ../LocalizedStringsGtk.cpp:75
+msgid "This is a searchable index. Enter search keywords: "
+msgstr "Bu aranabilir bir dizindir. Arama için anahtar sözcükleri girin:"
+
+#: ../LocalizedStringsGtk.cpp:80
+msgid "Choose File"
+msgstr "Dosya Seç"
+
+#: ../LocalizedStringsGtk.cpp:85
+msgid "Choose Files"
+msgstr "Dosyaları Seç"
+
+#: ../LocalizedStringsGtk.cpp:90 ../LocalizedStringsGtk.cpp:95
+msgid "(None)"
+msgstr "(Yok)"
+
+#: ../LocalizedStringsGtk.cpp:100
+msgid "Open Link in New _Window"
+msgstr "Bağlantıyı Yeni _Pencerede Aç"
+
+#: ../LocalizedStringsGtk.cpp:105
+msgid "_Download Linked File"
+msgstr "Bağlı Dosyayı _İndir"
+
+#: ../LocalizedStringsGtk.cpp:110
+msgid "Copy Link Loc_ation"
+msgstr "B_ağlantı Konumunu Kopyala"
+
+#: ../LocalizedStringsGtk.cpp:115
+msgid "Open _Image in New Window"
+msgstr "Resm_i Yeni Pencerede Aç"
+
+#: ../LocalizedStringsGtk.cpp:120
+msgid "Sa_ve Image As"
+msgstr "Resmi Farkl_ı Kaydet"
+
+#: ../LocalizedStringsGtk.cpp:125
+msgid "Cop_y Image"
+msgstr "Resmi Kop_yala"
+
+#: ../LocalizedStringsGtk.cpp:130
+msgid "Copy Image _Address"
+msgstr "Resim _Adresini Kopyala"
+
+#: ../LocalizedStringsGtk.cpp:135
+msgid "Open _Video in New Window"
+msgstr "_Videoyu Yeni Pencerede Aç"
+
+#: ../LocalizedStringsGtk.cpp:140
+msgid "Open _Audio in New Window"
+msgstr "Sesi Yeni Pencerede _Aç"
+
+#: ../LocalizedStringsGtk.cpp:145
+msgid "Download _Video"
+msgstr "_Videoyu İndir"
+
+#: ../LocalizedStringsGtk.cpp:150
+msgid "Download _Audio"
+msgstr "_Sesi İndir"
+
+#: ../LocalizedStringsGtk.cpp:155
+msgid "Cop_y Video Link Location"
+msgstr "Video Bağlantı Konumunu Kop_yala"
+
+#: ../LocalizedStringsGtk.cpp:160
+msgid "Cop_y Audio Link Location"
+msgstr "Ses Bağlantı Konumunu Kop_yala"
+
+#: ../LocalizedStringsGtk.cpp:165
+msgid "_Toggle Media Controls"
+msgstr "_Ortam Denetimlerini Göster/Gizle"
+
+#: ../LocalizedStringsGtk.cpp:170
+msgid "_Show Media Controls"
+msgstr "Ortam Denetimlerini Gö_ster"
+
+#: ../LocalizedStringsGtk.cpp:175
+msgid "_Hide Media Controls"
+msgstr "Ortam Denetimlerini _Gizle"
+
+#: ../LocalizedStringsGtk.cpp:180
+msgid "Toggle Media _Loop Playback"
+msgstr "Medyayı _Tekrarlı Oynatmayı Aç/Kapat"
+
+#: ../LocalizedStringsGtk.cpp:185
+msgid "Switch Video to _Fullscreen"
+msgstr "Tam _Ekrana Geçiş Yap"
+
+#: ../LocalizedStringsGtk.cpp:190
+msgid "_Play"
+msgstr "_Oynat"
+
+#: ../LocalizedStringsGtk.cpp:195
+msgid "_Pause"
+msgstr "_Duraklat"
+
+#: ../LocalizedStringsGtk.cpp:200
+msgid "_Mute"
+msgstr "_Sessiz"
+
+#: ../LocalizedStringsGtk.cpp:205
+msgid "Open _Frame in New Window"
+msgstr "Ç_erçeveyi Yeni Pencerede Aç"
+
+#: ../LocalizedStringsGtk.cpp:228
+msgid "_Insert Unicode Control Character"
+msgstr "Evrensel Kod Denetim Karakteri _Ekle"
+
+#: ../LocalizedStringsGtk.cpp:233
+msgid "Input _Methods"
+msgstr "Giriş _Yöntemleri"
+
+#: ../LocalizedStringsGtk.cpp:256
+msgid "_Reload"
+msgstr "Tek_rar Yükle"
+
+#: ../LocalizedStringsGtk.cpp:273
+msgid "No Guesses Found"
+msgstr "Hiçbir Tahmin Bulunamadı"
+
+#: ../LocalizedStringsGtk.cpp:278
+msgid "_Ignore Spelling"
+msgstr "_Yazım Denetimini Yoksay"
+
+#: ../LocalizedStringsGtk.cpp:283
+msgid "_Learn Spelling"
+msgstr "_Yazım Öğrenin"
+
+#: ../LocalizedStringsGtk.cpp:288
+msgid "_Search the Web"
+msgstr "Web'de _Ara"
+
+#: ../LocalizedStringsGtk.cpp:293
+msgid "_Look Up in Dictionary"
+msgstr "_Sözlüğe Bak"
+
+#: ../LocalizedStringsGtk.cpp:298
+msgid "_Open Link"
+msgstr "_Bağlantıyı Aç"
+
+#: ../LocalizedStringsGtk.cpp:303
+msgid "Ignore _Grammar"
+msgstr "_Dilbilgisini Yoksay"
+
+#: ../LocalizedStringsGtk.cpp:308
+msgid "Spelling and _Grammar"
+msgstr "Yazım Denetimi ve _Dilbilgisi"
+
+#: ../LocalizedStringsGtk.cpp:313
+msgid "_Show Spelling and Grammar"
+msgstr "Yazım Denetimi ve Dilbilgisini _Göster"
+
+#: ../LocalizedStringsGtk.cpp:313
+msgid "_Hide Spelling and Grammar"
+msgstr "Yazım Denetimi ve Dilbilgisini Gi_zle"
+
+#: ../LocalizedStringsGtk.cpp:318
+msgid "_Check Document Now"
+msgstr "Belgeyi Şimdi _Denetle"
+
+#: ../LocalizedStringsGtk.cpp:323
+msgid "Check Spelling While _Typing"
+msgstr "_Yazarken Yazım Denetimi Yap"
+
+#: ../LocalizedStringsGtk.cpp:328
+msgid "Check _Grammar With Spelling"
+msgstr "D_ilbilgisini Yazım Denetimiyle Birlikte Denetle"
+
+#: ../LocalizedStringsGtk.cpp:333
+msgid "_Font"
+msgstr "_Yazıtipi"
+
+#: ../LocalizedStringsGtk.cpp:356
+msgid "_Outline"
+msgstr "_Anahat"
+
+#: ../LocalizedStringsGtk.cpp:361
+msgid "Inspect _Element"
+msgstr "_Ögeyi İncele"
+
+#: ../LocalizedStringsGtk.cpp:366
+msgid "LRM _Left-to-right mark"
+msgstr "LRM _Soldan-sağa işareti"
+
+#: ../LocalizedStringsGtk.cpp:371
+msgid "RLM _Right-to-left mark"
+msgstr "RLM _Sağdan-sola işareti"
+
+#: ../LocalizedStringsGtk.cpp:376
+msgid "LRE Left-to-right _embedding"
+msgstr "LRE Soldan-sağa _katıştırma"
+
+#: ../LocalizedStringsGtk.cpp:381
+msgid "RLE Right-to-left e_mbedding"
+msgstr "RLE Sağdan-sola k_atıştırma"
+
+#: ../LocalizedStringsGtk.cpp:386
+msgid "LRO Left-to-right _override"
+msgstr "LRO Soldan-sağa _geçersiz kılma"
+
+#: ../LocalizedStringsGtk.cpp:391
+msgid "RLO Right-to-left o_verride"
+msgstr "RLO Sağdan-sola g_eçersiz kılma"
+
+#: ../LocalizedStringsGtk.cpp:396
+msgid "PDF _Pop directional formatting"
+msgstr "PDF Pop _yönlü biçimlendirme"
+
+#: ../LocalizedStringsGtk.cpp:401
+msgid "ZWS _Zero width space"
+msgstr "ZWS _Sıfır genişlikli boşluk"
+
+#: ../LocalizedStringsGtk.cpp:406
+msgid "ZWJ Zero width _joiner"
+msgstr "ZWJ Sıfır genişlikli _birleştirici"
+
+#: ../LocalizedStringsGtk.cpp:411
+msgid "ZWNJ Zero width _non-joiner"
+msgstr "ZWNJ Sıfır genişlikli _ayırıcı"
+
+#: ../LocalizedStringsGtk.cpp:416
+msgid "No recent searches"
+msgstr "Yakın tarihli arama yok"
+
+#: ../LocalizedStringsGtk.cpp:421
+msgid "Recent searches"
+msgstr "Son aramalar"
+
+#: ../LocalizedStringsGtk.cpp:426
+msgid "_Clear recent searches"
+msgstr "Son aramaları _temizle"
+
+#: ../LocalizedStringsGtk.cpp:431
+msgid "definition"
+msgstr "tanım"
+
+#: ../LocalizedStringsGtk.cpp:436
+msgid "description list"
+msgstr "açıklama listesi"
+
+#: ../LocalizedStringsGtk.cpp:441
+msgid "term"
+msgstr "terim"
+
+#: ../LocalizedStringsGtk.cpp:446
+msgid "description"
+msgstr "açıklama"
+
+#: ../LocalizedStringsGtk.cpp:451
+msgid "footer"
+msgstr "altbilgi"
+
+#: ../LocalizedStringsGtk.cpp:456
+msgid "cancel"
+msgstr "iptal"
+
+#: ../LocalizedStringsGtk.cpp:461
+msgid "password auto fill"
+msgstr "parola otomatik doldur"
+
+#: ../LocalizedStringsGtk.cpp:466
+msgid "contact info auto fill"
+msgstr "iletişim bilgisi otomatik doldur"
+
+#: ../LocalizedStringsGtk.cpp:471
+msgid "press"
+msgstr "bas"
+
+#: ../LocalizedStringsGtk.cpp:476
+msgid "select"
+msgstr "seç"
+
+#: ../LocalizedStringsGtk.cpp:481
+msgid "activate"
+msgstr "aktifleştir"
+
+#: ../LocalizedStringsGtk.cpp:486
+msgid "uncheck"
+msgstr "işareti kaldır"
+
+#: ../LocalizedStringsGtk.cpp:491
+msgid "check"
+msgstr "işaretle"
+
+#: ../LocalizedStringsGtk.cpp:496
+msgid "jump"
+msgstr "atla"
+
+#: ../LocalizedStringsGtk.cpp:516
+msgid "Missing Plug-in"
+msgstr "Eksik Eklenti"
+
+#: ../LocalizedStringsGtk.cpp:522
+msgid "Plug-in Failure"
+msgstr "Eklenti Hatası"
+
+#. FIXME: If this file gets localized, this should really be localized as one string with a wildcard for the number.
+#: ../LocalizedStringsGtk.cpp:540
+msgid " files"
+msgstr "dosya"
+
+#: ../LocalizedStringsGtk.cpp:545
+msgid "Unknown"
+msgstr "Bilinmiyor"
+
+#: ../LocalizedStringsGtk.cpp:550
+#, c-format
+msgctxt "Title string for images"
+msgid "%s  (%dx%d pixels)"
+msgstr "%s  (%dx%d piksel)"
+
+#: ../LocalizedStringsGtk.cpp:561
+msgid "Loading..."
+msgstr "Yükleniyor..."
+
+#: ../LocalizedStringsGtk.cpp:566
+msgid "Live Broadcast"
+msgstr "Canlı Yayın"
+
+#: ../LocalizedStringsGtk.cpp:572
+msgid "audio playback"
+msgstr "ses oynatma"
+
+#: ../LocalizedStringsGtk.cpp:574
+msgid "video playback"
+msgstr "video oynatma"
+
+#: ../LocalizedStringsGtk.cpp:576
+msgid "mute"
+msgstr "sesi kapat"
+
+#: ../LocalizedStringsGtk.cpp:578
+msgid "unmute"
+msgstr "sesi aç"
+
+#: ../LocalizedStringsGtk.cpp:580
+msgid "play"
+msgstr "oynat"
+
+#: ../LocalizedStringsGtk.cpp:582
+msgid "pause"
+msgstr "duraklat"
+
+#: ../LocalizedStringsGtk.cpp:584
+msgid "movie time"
+msgstr "film süresi"
+
+#: ../LocalizedStringsGtk.cpp:586
+msgid "timeline slider thumb"
+msgstr "zaman çizgisi kaydırma düğmesi"
+
+#: ../LocalizedStringsGtk.cpp:588
+msgid "back 30 seconds"
+msgstr "30 saniye geri"
+
+#: ../LocalizedStringsGtk.cpp:590
+msgid "return to realtime"
+msgstr "gerçek zamana dön"
+
+#: ../LocalizedStringsGtk.cpp:592
+msgid "elapsed time"
+msgstr "geçen süre"
+
+#: ../LocalizedStringsGtk.cpp:594
+msgid "remaining time"
+msgstr "kalan süre"
+
+#: ../LocalizedStringsGtk.cpp:596
+msgid "status"
+msgstr "durum"
+
+#: ../LocalizedStringsGtk.cpp:598
+msgid "enter fullscreen"
+msgstr "tam ekrana geç"
+
+#: ../LocalizedStringsGtk.cpp:600
+msgid "exit fullscreen"
+msgstr "tam ekrandan çık"
+
+#: ../LocalizedStringsGtk.cpp:602
+msgid "fast forward"
+msgstr "hızlı ileri"
+
+#: ../LocalizedStringsGtk.cpp:604
+msgid "fast reverse"
+msgstr "hızlı geri"
+
+#: ../LocalizedStringsGtk.cpp:606
+msgid "show closed captions"
+msgstr "alt yazıları göster"
+
+#: ../LocalizedStringsGtk.cpp:608
+msgid "hide closed captions"
+msgstr "alt yazıları gizle"
+
+#: ../LocalizedStringsGtk.cpp:610
+msgid "media controls"
+msgstr "ortam denetimleri"
+
+#: ../LocalizedStringsGtk.cpp:619
+msgid "audio element playback controls and status display"
+msgstr "ses ögesi yürütme denetimleri ve durum göstergesi"
+
+#: ../LocalizedStringsGtk.cpp:621
+msgid "video element playback controls and status display"
+msgstr "video ögesi yürütme denetimleri ve durum göstergesi"
+
+#: ../LocalizedStringsGtk.cpp:623
+msgid "mute audio tracks"
+msgstr "ses parçalarını sessize al"
+
+#: ../LocalizedStringsGtk.cpp:625
+msgid "unmute audio tracks"
+msgstr "ses parçalarının sesini aç"
+
+#: ../LocalizedStringsGtk.cpp:627
+msgid "begin playback"
+msgstr "oynatmayı başlat"
+
+#: ../LocalizedStringsGtk.cpp:629
+msgid "pause playback"
+msgstr "oynatmayı duraklat"
+
+#: ../LocalizedStringsGtk.cpp:631
+msgid "movie time scrubber"
+msgstr "film zamanı serbest kaydırma"
+
+#: ../LocalizedStringsGtk.cpp:633
+msgid "movie time scrubber thumb"
+msgstr "film zamanı serbest kaydırma düğmesi"
+
+#: ../LocalizedStringsGtk.cpp:635
+msgid "seek movie back 30 seconds"
+msgstr "filmi 30 saniye geri sar"
+
+#: ../LocalizedStringsGtk.cpp:637
+msgid "return streaming movie to real time"
+msgstr "film akışını gerçek zamanadöndür"
+
+#: ../LocalizedStringsGtk.cpp:639
+msgid "current movie time in seconds"
+msgstr "saniye cinsinden filmin şu anki zamanı"
+
+#: ../LocalizedStringsGtk.cpp:641
+msgid "number of seconds of movie remaining"
+msgstr "filmin saniye cinsinden kalan süresi"
+
+#: ../LocalizedStringsGtk.cpp:643
+msgid "current movie status"
+msgstr "filmin şu anki durumu"
+
+#: ../LocalizedStringsGtk.cpp:645
+msgid "seek quickly back"
+msgstr "hızlı geri sar"
+
+#: ../LocalizedStringsGtk.cpp:647
+msgid "seek quickly forward"
+msgstr "hızlı ileri sar"
+
+#: ../LocalizedStringsGtk.cpp:649
+msgid "Play movie in fullscreen mode"
+msgstr "Filmi tam ekran kipinde oynat"
+
+#: ../LocalizedStringsGtk.cpp:651
+msgid "Exit fullscreen mode"
+msgstr "Tam ekran kipinden çık"
+
+#: ../LocalizedStringsGtk.cpp:653
+msgid "start displaying closed captions"
+msgstr "alt yazıları göstermeye başla"
+
+#: ../LocalizedStringsGtk.cpp:655
+msgid "stop displaying closed captions"
+msgstr "alt yazıları göstermeyi durdur"
+
+#: ../LocalizedStringsGtk.cpp:664
+msgid "indefinite time"
+msgstr "belirsiz süre"
+
+#: ../LocalizedStringsGtk.cpp:694
+msgid "value missing"
+msgstr "değer eksik"
+
+#: ../LocalizedStringsGtk.cpp:730
+msgid "type mismatch"
+msgstr "tür uyumsuzluğu"
+
+#: ../LocalizedStringsGtk.cpp:753
+msgid "pattern mismatch"
+msgstr "desen uyuşmazlığı"
+
+#: ../LocalizedStringsGtk.cpp:758
+msgid "too long"
+msgstr "çok uzun"
+
+#: ../LocalizedStringsGtk.cpp:763
+msgid "range underflow"
+msgstr "aralık aşağı taşması"
+
+#: ../LocalizedStringsGtk.cpp:768
+msgid "range overflow"
+msgstr "aralık taşması"
+
+#: ../LocalizedStringsGtk.cpp:773
+msgid "step mismatch"
+msgstr "adım uyuşmazlığı"
+
+#: ../LocalizedStringsGtk.cpp:778
+msgid "Unacceptable TLS certificate"
+msgstr "Kabul edilemez TLS sertifikası"
+
+#: ../LocalizedStringsGtk.cpp:795
+msgctxt "Menu section heading for subtitles"
+msgid "Subtitles"
+msgstr "Altyazılar"
+
+#: ../LocalizedStringsGtk.cpp:800
+msgctxt ""
+"Menu item label for the track that represents disabling closed captions"
+msgid "Off"
+msgstr "Kapalı"
+
+#: ../LocalizedStringsGtk.cpp:805
+msgctxt "Menu item label for the automatically chosen track"
+msgid "Auto"
+msgstr "Otomatik"
+
+#: ../LocalizedStringsGtk.cpp:810
+msgctxt "Menu item label for a closed captions track that has no other name"
+msgid "No label"
+msgstr "Etiket yok"
+
+#: ../LocalizedStringsGtk.cpp:815
+msgctxt "Menu item label for an audio track that has no other name"
+msgid "No label"
+msgstr "Etiket yok"
+
+#: ../LocalizedStringsGtk.cpp:821
+msgctxt "Snapshotted Plug-In"
+msgid "Title of the label to show on a snapshotted plug-in"
+msgstr "Görüntüsü alınan bir eklenti üzerinde gösterilecek etiket başlığı"
+
+#: ../LocalizedStringsGtk.cpp:826
+msgctxt "Click to restart"
+msgid "Subtitle of the label to show on a snapshotted plug-in"
+msgstr "Görüntüsü alınan bir eklenti üzerinde gösterilecek etiket alt başlığı"
+
+#: ../../../../WebKit2/NetworkProcess/Downloads/soup/DownloadSoup.cpp:100
+#, c-format
+msgid ""
+"Cannot determine destination URI for download with suggested filename %s"
+msgstr "Önerilen dosya adı %s ile hedef indirme URI adresi belirlenemiyor"
+
+#. Title of the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:93
+msgid "Authentication Required"
+msgstr "Kimlik Doğrulaması Gerekli"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:104
+msgid "_Cancel"
+msgstr "_İptal"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:110
+msgid "_Authenticate"
+msgstr "_Kimlik Doğrulama"
+
+#. Prompt on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:122
+#, c-format
+msgid "Authentication required by %s:%i"
+msgstr "%s:%i tarafından kaynak doğrulama isteniyor"
+
+#. Label on the HTTP authentication dialog. %s is a (probably English) message from the website.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:131
+#, c-format
+msgid "The site says: “%s”"
+msgstr "Site diyor ki: “%s”"
+
+#. Check button on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:138
+msgid "_Remember password"
+msgstr "_Parolayı hatırla"
+
+#. Entry on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:147
+msgid "_Username"
+msgstr "K_ullanıcı adı"
+
+#. Entry on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:159
+msgid "_Password"
+msgstr "_Parola"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:164
+msgid "Destination"
+msgstr "Hedef"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:165
+msgid "The local URI to where the download will be saved"
+msgstr "İndirmenin kaydedileceği yerel URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:177
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:123
+msgid "Response"
+msgstr "Yanıt"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:178
+msgid "The response of the download"
+msgstr "İndirme yanıtı"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:195
+msgid "Estimated Progress"
+msgstr "Tahmini İlerleme"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:196
+msgid "Determines the current progress of the download"
+msgstr "İndirmenin şu anki ilerleyişini belirler"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:214
+msgid "Allow Overwrite"
+msgstr "Üzerine Yazmaya İzin Ver"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:215
+msgid "Whether the destination may be overwritten"
+msgstr "Hedefin üzerine yazılıp yazılamayacağı"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:142
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:322
+#, c-format
+msgid "Unknown favicon for page %s"
+msgstr "%s sayfası için bilinmeyen site simgesi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:148
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:278
+#, c-format
+msgid "Page %s does not have a favicon"
+msgstr "%s sayfası bir site simgesine sahip değil"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:272
+msgid "Favicons database not initialized yet"
+msgstr "Site simgesi veritabanı henüz ilklendirilmedi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:129
+msgid "MIME types filter"
+msgstr "MIME türleri süzgeci"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:130
+msgid "The filter currently associated with the request"
+msgstr "Halen istekle ilişkilendirilmiş olan süzgeç"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:143
+msgid "MIME types"
+msgstr "MIME türleri"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:144
+msgid "The list of MIME types associated with the request"
+msgstr "Taleple ilişkilendirilmiş olan MIME türlerinin listesi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:158
+msgid "Select multiple files"
+msgstr "Birden çok dosya seç"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:159
+msgid "Whether the file chooser should allow selecting multiple files"
+msgstr "Dosya seçicinin birden fazla dosya seçimine izin verip vermeyeceği"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:172
+msgid "Selected files"
+msgstr "Seçili dosyalar"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:173
+msgid "The list of selected files associated with the request"
+msgstr "Taleple ilişkilendirilmiş seçili dosyaların listesi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:190
+msgid "Search text"
+msgstr "Arama metni"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:191
+msgid "Text to search for in the view"
+msgstr "Görünümde aranacak metin"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:203
+msgid "Search Options"
+msgstr "Arama Seçenekleri"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:204
+msgid "Search options to be used in the search operation"
+msgstr "Arama işleminde kullanılacak arama seçenekleri"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:217
+msgid "Maximum matches count"
+msgstr "En yüksek eşleşme sayısı"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:218
+msgid "The maximum number of matches in a given text to report"
+msgstr "Bir metin içinde bildirilecek en fazla eşleşme sayısı"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:230
+msgid "WebView"
+msgstr "WebView"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:231
+msgid "The WebView associated with this find controller"
+msgstr "Bu bul denetimiyle ilişkilendirilmiş WebView"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:152
+msgid "Context"
+msgstr "Bağlam"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:153
+msgid "Flags with the context of the WebKitHitTestResult"
+msgstr "WebKitHitTestResult bağlamındaki bayraklar"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:166
+msgid "Link URI"
+msgstr "Bağlantı URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:167
+msgid "The link URI"
+msgstr "Bağlantı URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:179
+msgid "Link Title"
+msgstr "Bağlantı Başlığı"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:180
+msgid "The link title"
+msgstr "Bağlantı başlığı"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:192
+msgid "Link Label"
+msgstr "Bağlantı Etiketi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:193
+msgid "The link label"
+msgstr "Bağlantı etiketi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:205
+msgid "Image URI"
+msgstr "Resim URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:206
+msgid "The image URI"
+msgstr "Resim URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:218
+msgid "Media URI"
+msgstr "Ortam URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:219
+msgid "The media URI"
+msgstr "Ortam URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:113
+msgid "Navigation action"
+msgstr "Gezinti eylemi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:114
+msgid "The WebKitNavigationAction triggering this decision"
+msgstr "Bu seçimi tetikleyen WebKitNavigationAction"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:130
+msgid "Navigation type"
+msgstr "Gezinti türü"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:131
+msgid "The type of navigation triggering this decision"
+msgstr "Bu kararı tetikleyen gezinti türü"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:150
+msgid "Mouse button"
+msgstr "Fare düğmesi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:151
+msgid "The mouse button used if this decision was triggered by a mouse event"
+msgstr ""
+"Eğer bu karar bir fare olayı tarafından tetiklendiyse, kullanılan fare "
+"düğmesi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:169
+msgid "Mouse event modifiers"
+msgstr "Fare olay değiştiricileri"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:170
+msgid "The modifiers active if this decision was triggered by a mouse event"
+msgstr ""
+"Eğer bu karar bir fare olayı tarafından tetiklendiyse değiştiriciler aktiftir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:185
+msgid "Navigation URI request"
+msgstr "Gezinti URI isteği"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:186
+msgid "The URI request that is associated with this navigation"
+msgstr "Bu gezinti ile ilişkilendirilmiş URI isteği"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:201
+msgid "Frame name"
+msgstr "Çerçeve adı"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:202
+msgid "The name of the new frame this navigation action targets"
+msgstr "Bu gezinti eyleminin hedeflediği yeni çerçevenin adı"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:146
+msgid "Web View"
+msgstr "Web Görünümü"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:147
+msgid "The web view that will be printed"
+msgstr "Yazdırılacak web görünümü"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:159
+msgid "Print Settings"
+msgstr "Yazdırma Ayarları"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:160
+msgid "The initial print settings for the print operation"
+msgstr "Yazdırma işlemi için ilk yazdırma ayarları"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:171
+msgid "Page Setup"
+msgstr "Sayfa Yapısı"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:172
+msgid "The initial page setup for the print operation"
+msgstr "Yazdırma işlemi için ilk sayfa yapısı"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:91
+msgid "Response URI request"
+msgstr "Yanıt URI talebi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:92
+msgid "The URI request that is associated with this policy decision"
+msgstr "Bu ilke kararı ile ilişkilendirilmiş URI isteği"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:105
+msgid "URI response"
+msgstr "URI yanıtı"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:106
+msgid "The URI response that is associated with this policy decision"
+msgstr "Bu ilke kararı ile ilişkilendirilmiş URI yanıtı"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:497
+msgid "Enable JavaScript"
+msgstr "JavaScript'i Etkinleştir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:498
+msgid "Enable JavaScript."
+msgstr "JavaScript'i Etkinleştir."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:512
+msgid "Auto load images"
+msgstr "Resimleri otomatik yükle"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:513
+msgid "Load images automatically."
+msgstr "Resimleri otomatik olarak yükle."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:526
+msgid "Load icons ignoring image load setting"
+msgstr "Simgeleri resim yükleme ayalarını göz ardı ederek yükle"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:527
+msgid "Whether to load site icons ignoring image load setting."
+msgstr ""
+"Site simgeleri yüklenirken resim yükleme ayarlarının ihmal edilip edilmemesi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:544
+msgid "Enable offline web application cache"
+msgstr "Çevrimdışı web uygulama önbelleğini etkinleştir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:545
+msgid "Whether to enable offline web application cache."
+msgstr ""
+"Çevrimdışı web uygulama önbelleğinin etkinleştirilip etkinleştirilmeyeceği."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:561
+msgid "Enable HTML5 local storage"
+msgstr "HTML5 yerel depolamayı etkinleştir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:562
+msgid "Whether to enable HTML5 Local Storage support."
+msgstr "HTML5 yerel depolama desteğinin etkinleştirilp etkinleştirilmeyeceği"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:579
+msgid "Enable HTML5 database"
+msgstr "HTML5 veritabanını etkinleştir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:580
+msgid "Whether to enable HTML5 database support."
+msgstr "HTML5 veritabanı desteğinin etkinleştirilip etkinleştirilmeyeceği."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:593
+msgid "Enable XSS auditor"
+msgstr "XSS denetimini etkinleştir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:594
+msgid "Whether to enable the XSS auditor."
+msgstr "XSS denetiminin etkinleştirilip etkinleştirilmeyeceği."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:609
+msgid "Enable frame flattening"
+msgstr "Çerçeve düzleştirmeyi etkinleştir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:610
+msgid "Whether to enable frame flattening."
+msgstr "Çerçeve düzleştirmenin etkinleştirip etkinleştirilmeyeceği."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:622
+msgid "Enable plugins"
+msgstr "Eklentileri etkinleştir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:623
+msgid "Enable embedded plugin objects."
+msgstr "Gömülü eklenti nesnelerini etkinleştir."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:635
+msgid "Enable Java"
+msgstr "Java'yı Etkinleştir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:636
+msgid "Whether Java support should be enabled."
+msgstr "Java desteğinin etkinleştirilip etkinleştirilmeyeceği."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:649
+msgid "JavaScript can open windows automatically"
+msgstr "JavaScript otomatik olarak pencereleri açabilir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:650
+msgid "Whether JavaScript can open windows automatically."
+msgstr "JavaScript'in otomatik olarak penceleri açıp açamayacağı."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:665
+msgid "Enable hyperlink auditing"
+msgstr "Bağ denetimini etkinleştir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:666
+msgid "Whether <a ping> should be able to send pings."
+msgstr "<a ping>'in ping gönderip gönderemeyeceği. "
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:678
+msgid "Default font family"
+msgstr "Öntanımlı yazı tipi ailesi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:679
+msgid ""
+"The font family to use as the default for content that does not specify a "
+"font."
+msgstr ""
+"Belirli bir yazı tipi belirtmeyen içerikler için kullanılacak öntanımlı yazı "
+"tipi ailesi."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:692
+msgid "Monospace font family"
+msgstr "Eş aralıklı yazı tipi ailesi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:693
+msgid "The font family used as the default for content using monospace font."
+msgstr ""
+"Eş aralıklı yazı tipi kullanan içerikler için kullanılacak öntanımlı yazı "
+"tipi ailesi."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:705
+msgid "Serif font family"
+msgstr "Çıkıntılı (motifli) yazı tipi ailesi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:706
+msgid "The font family used as the default for content using serif font."
+msgstr ""
+"Çıkıntılı (motifli) yazı tipi kullanan içerikler için kullanılacak öntanımlı "
+"yazı tipi ailesi."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:718
+msgid "Sans-serif font family"
+msgstr "Çıkıntısız (motifsiz) yazı tipi ailesi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:719
+msgid "The font family used as the default for content using sans-serif font."
+msgstr ""
+"Çıkıntısız (motifsiz) yazı tipi kullanan içerikler için öntanımlı yazı tipi "
+"ailesi."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:731
+msgid "Cursive font family"
+msgstr "Bitişik el yazısı yazı tipi ailesi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:732
+msgid "The font family used as the default for content using cursive font."
+msgstr ""
+"El yazısı yazı tipi kullanan içerikler için kullanılacak öntanımlı yazı tipi."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:744
+msgid "Fantasy font family"
+msgstr "Fantezi yazı tipi ailesi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:745
+msgid "The font family used as the default for content using fantasy font."
+msgstr ""
+"Fantezi yazı tipini kullanan içerikler için kullanılacak öntanımlı yazı tipi."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:757
+msgid "Pictograph font family"
+msgstr "Piktogram yazı tipi ailesi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:758
+msgid "The font family used as the default for content using pictograph font."
+msgstr ""
+"Piktogram yazı tipi ailesi kullanan içerikler için kullanılacak öntanımlı "
+"yazı tipi."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:771
+msgid "Default font size"
+msgstr "Öntanımlı yazı tipi boyutu"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:772
+msgid "The default font size used to display text."
+msgstr "Metin görüntelemek için kullanılan öntanımlı yazı tipi boyutu."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:785
+msgid "Default monospace font size"
+msgstr "Öntanımlı eşaralıklı yazı tipi boyutu"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:786
+msgid "The default font size used to display monospace text."
+msgstr ""
+"Eşaralıklı metinleri görüntelemek için kullanılan öntanımlı yazı tipi boyutu"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:800
+msgid "Minimum font size"
+msgstr "En küçük yazıtipi boyutu"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:801
+msgid "The minimum font size used to display text."
+msgstr "Metin görüntülemek için kullanılan en küçük yazı tipi boyutu."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:813
+msgid "Default charset"
+msgstr "Öntanımlı karakter kümesi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:814
+msgid ""
+"The default text charset used when interpreting content with unspecified "
+"charset."
+msgstr ""
+"Karakter kümesi belirsiz içeriği yorumlarken kullanılan öntanımlı metin "
+"karakter kümesi."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:827
+msgid "Enable private browsing"
+msgstr "Gizli gezinmeyi etkinleştir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:828
+msgid "Whether to enable private browsing"
+msgstr "Gizli gezinmenin etkinleştirilip etkinleştirilmeyeceği"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:840
+msgid "Enable developer extras"
+msgstr "Geliştirici ekstralarını etkinleştir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:841
+msgid "Whether to enable developer extras"
+msgstr "Geliştirici ekstralarının etkinleştirilip etkinleştirilmeyeceği"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:853
+msgid "Enable resizable text areas"
+msgstr "Yeniden boyutlandırılabilir metin alanlarını etkinleştir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:854
+msgid "Whether to enable resizable text areas"
+msgstr ""
+"Yeniden boyutlandırılabilir metin alanlarının etkinleştirilip "
+"etkinleştirilmeyeceği"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:869
+msgid "Enable tabs to links"
+msgstr "Bağlantı sekmelerini etkinleştir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:870
+msgid "Whether to enable tabs to links"
+msgstr "Bağlantı sekmelerinin etkinleştirilip etkinleştirilmeyeceği"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:883
+msgid "Enable DNS prefetching"
+msgstr "DNS önyüklemeyi etkinleştir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:884
+msgid "Whether to enable DNS prefetching"
+msgstr "DNS önyüklemenin etkinleştirilip etkinleştirilmeyeceği"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:896
+msgid "Enable Caret Browsing"
+msgstr "Klavyeyle Gözatma'yı Etkinleştir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:897
+msgid "Whether to enable accessibility enhanced keyboard navigation"
+msgstr ""
+"Gelişmiş erişilebilirlik klavye gezintisinin etkinleştirilip "
+"etkinleştirilmeyeceği"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:912
+msgid "Enable Fullscreen"
+msgstr "Tam Ekranı Etkinleştir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:913
+msgid "Whether to enable the Javascript Fullscreen API"
+msgstr "Javascript Tam Ekran API'ının etkinleştirilip etkinleştirilmeyeceği"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:925
+msgid "Print Backgrounds"
+msgstr "Arka Planlarını Yazdır"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:926
+msgid "Whether background images should be drawn during printing"
+msgstr ""
+"Arka plan görüntülerinin yazdırma sırasında gösterilip gösterilmeyeceği"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:944
+msgid "Enable WebAudio"
+msgstr "WebAudio'yu Etkinleştir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:945
+msgid "Whether WebAudio content should be handled"
+msgstr "WebAudio içeriğinin ele alınması"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:959
+msgid "Enable WebGL"
+msgstr "WebGL Etkinleştir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:960
+msgid "Whether WebGL content should be rendered"
+msgstr "WebGL içeriğinin ekranda gösterilip gösterilmeyeceği"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:977
+msgid "Allow modal dialogs"
+msgstr "Kalıcı iletişim pencerelerine izin ver"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:978
+msgid "Whether it is possible to create modal dialogs"
+msgstr "Kalıcı iletişim pencerelerinin oluşturulabilmesi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:993
+msgid "Zoom Text Only"
+msgstr "Yalnızca Metni Yakınlaştır"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:994
+msgid "Whether zoom level of web view changes only the text size"
+msgstr ""
+"Web görünümünün yakınlaştırma düzeyinin sadece metin boyutunu değiştirip "
+"değiştirmeyeceği"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1008
+msgid "JavaScript can access clipboard"
+msgstr "JavaScript panoya erişebilir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1009
+msgid "Whether JavaScript can access Clipboard"
+msgstr "JavaScript'in Panoya erişip erişemeyeceği"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1025
+msgid "Media playback requires user gesture"
+msgstr "Ortam yürütmesi kullanıcı hareketi gerektirir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1026
+msgid "Whether media playback requires user gesture"
+msgstr "Ortam yürütmesinin kullanıcı hareketi gerektirip gerektirmeyeceği"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1040
+msgid "Media playback allows inline"
+msgstr "Ortam yürütme satıriçine izin verir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1041
+msgid "Whether media playback allows inline"
+msgstr "Ortam yürütmenin satıriçine izin verip vermemesi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1055
+msgid "Draw compositing indicators"
+msgstr "Kompozisyon belirteçlerini çiz"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1056
+msgid "Whether to draw compositing borders and repaint counters"
+msgstr ""
+"Kompozisyon kenarlıklarının çizilmesi ve sayaçların yeniden boyanıp "
+"boyanmaması"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1075
+msgid "Enable Site Specific Quirks"
+msgstr "Siteye Özgü Özellikleri Etkinleştir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1076
+msgid "Enables the site-specific compatibility workarounds"
+msgstr "Siteye özgü uyumluluk çözümlerini etkinleştirir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1096
+msgid "Enable page cache"
+msgstr "Sayfa önbelleğini etkinleştir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1097
+msgid "Whether the page cache should be used"
+msgstr "Sayfa önbelleğinin kullanılıp kullanılmayacağı"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1116
+msgid "User agent string"
+msgstr "Kullanıcı aracısı dizgesi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1117
+msgid "The user agent string"
+msgstr "Kullanıcı aracısı dizgesi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1129
+msgid "Enable smooth scrolling"
+msgstr "Yumuşak kaydırmayı etkinleştir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1130
+msgid "Whether to enable smooth scrolling"
+msgstr "Yumuşak kaydırmanın etkinleştirilip etkinleştirilmeyeceği"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1147
+msgid "Enable accelerated 2D canvas"
+msgstr "Hızlandırılmış 2B tuvali etkinleştir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1148
+msgid "Whether to enable accelerated 2D canvas"
+msgstr "Hızlandırılmış 2B tuvalin etkinleştirilip etkinleştirilmeyeceği"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1163
+msgid "Write console messages on stdout"
+msgstr "Uçbirim (konsol) iletilerini standart çıkışa yaz"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1164
+msgid "Whether to write console messages on stdout"
+msgstr ""
+"Uçbirim iletilerinin standart çıkış birimi üzerinde yazılıp yazılmaması"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1182
+msgid "Enable MediaStream"
+msgstr "MediaStream'i Etkinleştir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1183
+msgid "Whether MediaStream content should be handled"
+msgstr "MediaStream içeriğinin işlenip işlenmeyeceği"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1202
+msgid "Enable Spatial Navigation"
+msgstr "Uzamsal Gezinmeyi Etkinleştir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1203
+msgid "Whether to enable Spatial Navigation support."
+msgstr "Uzamsal Gezinme desteğinin etkinleştirilip etkinleştirilmeyeceği."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1222
+msgid "Enable MediaSource"
+msgstr "MediaSource'u Etkinleştir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1223
+msgid "Whether MediaSource should be enabled."
+msgstr "MediaSource'un etkinleştirilip etkinleştirilmeyeceği."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1241
+msgid "Allow file access from file URLs"
+msgstr "Dosya adreslerinden (URL) dosya erişimine izin ver"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1242
+msgid "Whether file access is allowed from file URLs."
+msgstr "Dosya adreslerinden (URL) dosya erişimine izin verilip verilmeyeceği."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:96
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:105
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:110
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:917
+msgid "URI"
+msgstr "URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:97
+msgid "The URI to which the request will be made."
+msgstr "İsteğin yapılacağı URI."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:106
+msgid "The URI for which the response was made."
+msgstr "Yanıtın verildiği URI."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:117
+msgid "Status Code"
+msgstr "Durum Kodu"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:118
+msgid "The status code of the response as returned by the server."
+msgstr "Sunucu tarafından döndürülen yanıtın durum kodu."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:130
+msgid "Content Length"
+msgstr "İçerik Uzunluğu"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:131
+msgid "The expected content length of the response."
+msgstr "Yanıtın beklenen içerik uzunluğu."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:143
+msgid "MIME Type"
+msgstr "MIME Türü"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:144
+msgid "The MIME type of the response"
+msgstr "Yanıt MIME türü"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:156
+msgid "Suggested Filename"
+msgstr "Önerilen Dosya Adı"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:157
+msgid "The suggested filename for the URI response"
+msgstr "URI yanıtı için önerilen dosya adı"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:173
+msgid "HTTP Headers"
+msgstr "HTTP Üstbilgileri"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:174
+msgid "The The HTTP headers of the response"
+msgstr "Yanıtın HTTP üstbilgileri"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:127
+msgid "Inspected URI"
+msgstr "İncelenen URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:128
+msgid "The URI that is currently being inspected"
+msgstr "Şu anda incelenmekte olan URI."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:139
+msgid "Attached Height"
+msgstr "Tutturma Yüksekliği"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:140
+msgid "The height that the inspector view should have when it is attached"
+msgstr "İnceleyici görünümünün tutturulduğunda sahip olması gereken yükseklik"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:157
+msgid "Can Attach"
+msgstr "Tutturulabilir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:158
+msgid ""
+"Whether the inspector can be attached to the same window that contains the "
+"inspected view"
+msgstr ""
+"İnceleyicinin, incelenen görünümü içeren pencereye tutturulup "
+"tutturulamayacağı"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:111
+msgid "The current active URI of the resource"
+msgstr "Kaynağın geçerli etkin adresi (URI)"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:124
+msgid "The response of the resource"
+msgstr "Kaynak yanıtı"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebViewBase.cpp:1302
+msgid "Website running in fullscreen mode"
+msgstr "Tam ekran kipinde çalışan web sitesi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:362
+msgid "Are you sure you want to leave this page?"
+msgstr "Bu sayfadan ayrılmak istediğinizden emin misiniz?"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:363
+msgid "Stay on Page"
+msgstr "Sayfada Kal"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:363
+msgid "Leave Page"
+msgstr "Sayfadan Ayrıl"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:558
+msgid "Select Files"
+msgstr "Dosyaları Seç"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:558
+msgid "Select File"
+msgstr "Dosya Seç"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:620
+msgid "Acknowledge"
+msgstr "Onayla"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:807
+msgid "Web Context"
+msgstr "Web Bağlamı"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:808
+msgid "The web context for the view"
+msgstr "Görünüme ait web bağlamı"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:825
+msgid "Related WebView"
+msgstr "İlişkili WebView"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:826
+msgid ""
+"The related WebKitWebView used when creating the view to share the same web "
+"process"
+msgstr ""
+"Aynı web sürecini paylaşmak için görüntü oluşturulurken kullanılan, ilişkili "
+"WebKitWebView"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:842
+msgid "WebView settings"
+msgstr "WebView ayarları"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:843
+msgid "The WebKitSettings of the view"
+msgstr "Görünüme ait WebKitSettings"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:859
+msgid "WebView user content manager"
+msgstr "WebView kullanıcı içerik yöneticisi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:860
+msgid "The WebKitUserContentManager of the view"
+msgstr "Görünüme ait WebKitUserContentManager"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:873
+msgid "Title"
+msgstr "Başlık"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:874
+msgid "Main frame document title"
+msgstr "Ana çerçeve belge başlığı"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:892
+msgid "Estimated Load Progress"
+msgstr "Tahmini Yükleme İlerlemesi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:893
+msgid "An estimate of the percent completion for a document load"
+msgstr "Bir belge yüklemesinin tahmini tamamlanma yüzdesi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:905
+msgid "Favicon"
+msgstr "Site Simgesi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:906
+msgid "The favicon associated to the view, if any"
+msgstr "Eğer varsa, görünümle ilişkilendirilmiş site simgesi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:918
+msgid "The current active URI of the view"
+msgstr "Görünümün geçerli aktif URI adresi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:933
+msgid "Zoom level"
+msgstr "Yakınlaştırma düzeyi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:934
+msgid "The zoom level of the view content"
+msgstr "Görünüm içeriğinin yakınlaştırma düzeyi"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:953
+msgid "Is Loading"
+msgstr "Yükleniyor"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:954
+msgid "Whether the view is loading a page"
+msgstr "Görünümün bir sayfa yüklemekte olması"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:974
+msgid "Whether the view is playing audio"
+msgstr "Görünümün bir ses dosyasını yürütmekte olması"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:991
+msgid "Editable"
+msgstr "Düzenlenebilir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:992
+msgid "Whether the content can be modified by the user."
+msgstr "İçeriğin kullanıcı tarafından değiştirilip değiştirilemeyeceği."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2955
+msgid "An exception was raised in JavaScript"
+msgstr "JavaScript'te bir istisna oluştu"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3415
+msgid "There was an error creating the snapshot"
+msgstr "Anlık görüntü oluşturulurken bir hata oluştu"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:210
+msgid "Geometry"
+msgstr "Geometri"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:211
+msgid "The size and position of the window on the screen."
+msgstr "Pencerenin ekrandaki boyutu ve konumu."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:223
+msgid "Toolbar Visible"
+msgstr "Araç Çubuğü Görünür"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:224
+msgid "Whether the toolbar should be visible for the window."
+msgstr "Araç çubuğunun pencere için görünür olup olmayacağı."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:236
+msgid "Statusbar Visible"
+msgstr "Durum Çubuğu Görünür"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:237
+msgid "Whether the statusbar should be visible for the window."
+msgstr "Durum çubuğunun pencere için görünür olup olmayacağı."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:249
+msgid "Scrollbars Visible"
+msgstr "Kaydırma Çubukları Görünür"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:250
+msgid "Whether the scrollbars should be visible for the window."
+msgstr "Pencere için kaydırma çubuklarının görünür olup olmayacağı."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:262
+msgid "Menubar Visible"
+msgstr "Menü Çubuğu Görünür"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:263
+msgid "Whether the menubar should be visible for the window."
+msgstr "Menü çubuğunun pencere için görünür olup olmayacağı"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:275
+msgid "Locationbar Visible"
+msgstr "Konum Çubuğu Görünür"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:276
+msgid "Whether the locationbar should be visible for the window."
+msgstr "Pencere için konum çubuğunun görünür olup olmayacağı."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:287
+msgid "Resizable"
+msgstr "Yeniden Boyutlandırılabilir"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:288
+msgid "Whether the window can be resized."
+msgstr "Pencerenin yeniden boyutlandırılabilir olup olmayacağı."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:300
+msgid "Fullscreen"
+msgstr "Tam Ekran"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:301
+msgid "Whether window will be displayed fullscreen."
+msgstr "Pencerenin tam ekran görüntülenip görüntülenmeyeceği."
+
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:179
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:184
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:187
+msgid "Web Inspector"
+msgstr "Web Denetçisi"

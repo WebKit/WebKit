@@ -1,0 +1,7 @@
+2d.pattern.paint.orientation.canvas
+
+Canvas patterns do not get flipped when painted
+
+
+FAIL Canvas patterns do not get flipped when painted null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

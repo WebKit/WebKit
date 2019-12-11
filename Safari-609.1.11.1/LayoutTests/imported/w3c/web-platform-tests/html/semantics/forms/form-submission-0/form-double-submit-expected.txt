@@ -1,0 +1,8 @@
+This frame should stay blank
+
+This frame should navigate (to 404)
+
+
+
+FAIL default submit action should supersede onclick submit() assert_unreached: Frame1 should not get navigated by this test. Reached unreachable code
+

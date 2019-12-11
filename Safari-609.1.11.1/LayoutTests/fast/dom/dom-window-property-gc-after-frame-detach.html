@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<iframe id="testFrame" src="about:blank"></iframe>
+<script>
+description("Tests that Window properties do not get GC'd before their Window.");
+jsTestIsAsync = true;
+
+var windowProperties = ["applicationCache", "history", "location", "locationbar", "menubar", "navigator", "personalbar", "screen", "scrollbars", "statusbar", "toolbar" ];
+
+onload = function() {
+    frameWindow = document.getElementById("testFrame").contentWindow;
+    for (let windowProperty of windowProperties)
+        eval("frameWindow." + windowProperty + ".foo = 1;");
+    document.getElementById("testFrame").remove();
+    for (let windowProperty of windowProperties)
+        shouldBe("frameWindow." + windowProperty + ".foo", "1");
+    debug("");
+    gc();
+    for (let windowProperty of windowProperties)
+        shouldBe("frameWindow." + windowProperty + ".foo", "1");
+    debug("");
+    setTimeout(() => {
+        gc();
+        for (let windowProperty of windowProperties)
+            shouldBe("frameWindow." + windowProperty + ".foo", "1");
+        finishJSTest();
+    }, 10);
+}
+</script>
+</body>

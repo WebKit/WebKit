@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+          overflow: hidden;
+      }
+
+      #perspective {
+          -webkit-perspective: 1000px;
+          position: absolute;
+          width: 600px;
+          left: -600px;
+      }
+
+      #transformed {
+          transform: rotateY(90deg);
+          -webkit-transform-origin: right;
+          background: green;
+          height: 800px;
+      }
+
+      #container {
+          position: relative;
+          overflow: hidden;
+          width: 800px;
+          height: 600px;
+      }
+    </style>
+  </style>
+  </head>
+  <body>
+    <!-- The green rectangle should be visible. -->
+    <div id="container">
+        <div id="perspective">
+            <div id="transformed"></div>
+        </div>
+    </div>
+  </body>
+</html>
+

@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 192x224
+    RenderSVGContainer {use} at (0,0) size 192x64
+      RenderSVGViewportContainer {svg} at (0,0) size 192x64
+        RenderSVGContainer {g} at (0,0) size 192x64
+          RenderSVGRect {rect} at (0,0) size 64x64 [fill={[type=SOLID] [color=#CC0000]}] [x=0.00] [y=0.00] [width=64.00] [height=64.00]
+          RenderSVGRect {rect} at (64,0) size 64x64 [fill={[type=SOLID] [color=#009900]}] [x=64.00] [y=0.00] [width=64.00] [height=64.00]
+          RenderSVGRect {rect} at (128,0) size 64x64 [fill={[type=SOLID] [color=#0000FF]}] [x=128.00] [y=0.00] [width=64.00] [height=64.00]
+    RenderSVGContainer {use} at (0,80) size 192x64 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,80.00)}]
+      RenderSVGContainer {g} at (0,80) size 192x64
+        RenderSVGRect {rect} at (0,80) size 64x64 [fill={[type=SOLID] [color=#CC0000]}] [x=0.00] [y=0.00] [width=64.00] [height=64.00]
+        RenderSVGRect {rect} at (64,80) size 64x64 [fill={[type=SOLID] [color=#009900]}] [x=64.00] [y=0.00] [width=64.00] [height=64.00]
+        RenderSVGRect {rect} at (128,80) size 64x64 [fill={[type=SOLID] [color=#0000FF]}] [x=128.00] [y=0.00] [width=64.00] [height=64.00]
+    RenderSVGContainer {use} at (0,160) size 64x64 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,160.00)}]
+      RenderSVGRect {rect} at (0,160) size 64x64 [fill={[type=SOLID] [color=#CC0000]}] [x=0.00] [y=0.00] [width=64.00] [height=64.00]
+    RenderSVGContainer {use} at (64,160) size 64x64 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,160.00)}]
+      RenderSVGRect {rect} at (64,160) size 64x64 [fill={[type=SOLID] [color=#009900]}] [x=64.00] [y=0.00] [width=64.00] [height=64.00]
+    RenderSVGContainer {use} at (128,160) size 64x64 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,160.00)}]
+      RenderSVGRect {rect} at (128,160) size 64x64 [fill={[type=SOLID] [color=#0000FF]}] [x=128.00] [y=0.00] [width=64.00] [height=64.00]
+    RenderSVGContainer {use} at (0,0) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,240.00)}]
+    RenderSVGContainer {use} at (0,0) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,240.00)}]
+    RenderSVGContainer {use} at (0,0) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,240.00)}]

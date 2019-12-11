@@ -1,0 +1,3 @@
+
+PASS XMLHttpRequest: event - error (order of events) 
+

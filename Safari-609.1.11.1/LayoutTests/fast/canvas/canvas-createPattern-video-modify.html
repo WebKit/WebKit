@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../media/media-file.js"></script>
+    <script src="../../resources/platform-helper.js"></script>
+</head>
+<body>
+<script>
+    description("Tests that modifying the video used in createPattern does not affect the pattern rendered.");
+
+    var buffer;
+    var canvas, context;
+    var modified = false;
+    var expectedResults = [
+        // Each entry is formatted as [x, y, r, g, b].
+        [40, 165, 194, 193, 14], // Represents yellow north west tile.
+        [355, 165, 194, 193, 14], // Represents yellow north east tile.
+        [40, 403, 194, 193, 14], // Represents yellow south west tile.
+        [355, 403, 194, 193, 14], // Represents yellow south east tile.
+    ];
+
+    var video = document.createElement("video");
+    video.addEventListener("loadeddata", loadeddata);
+    video.src = findMediaFile("video", "../../media/content/test");
+
+    function loadeddata()
+    {
+        if (!modified) {
+            canvas = document.createElement("canvas");
+            canvas.width = 2.5 * video.videoWidth;
+            canvas.height = 2.5 * video.videoHeight;
+            document.body.appendChild(canvas);
+
+            context = canvas.getContext("2d");
+            context.fillStyle = context.createPattern(video, "repeat");
+
+            video.src = findMediaFile("video", "../../media/content/counting");
+            modified = !modified;
+        } else {
+            context.fillRect(0, 0, canvas.width, canvas.height);
+
+            expectedResults.forEach(function(element) {
+                checkPixels(context, element[0], element[1], element[2], element[3], element[4], videoCanvasPixelComparisonTolerance());
+            });
+
+            finishJSTest();
+        }
+    }
+
+    function checkPixels(context, x, y, r, g, b, tolerance)
+    {
+        buffer = context.getImageData(x, y, 1, 1).data;
+        shouldBeCloseTo("buffer[0]", r, tolerance);
+        shouldBeCloseTo("buffer[1]", g, tolerance);
+        shouldBeCloseTo("buffer[2]", b, tolerance);
+    }
+
+    window.jsTestIsAsync = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

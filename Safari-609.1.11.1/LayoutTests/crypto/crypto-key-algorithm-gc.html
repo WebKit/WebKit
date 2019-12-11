@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/js-test-pre.js"></script>
+<script src="resources/common.js"></script>
+</head>
+<body>
+<script>
+
+description("Test that CryptoKey.algorithm preserves custom properties.");
+jsTestIsAsync = true;
+
+debug("\nGenerating a HMAC key with default length...");
+crypto.subtle.generateKey({name: "hmac", hash: "sha-1"}, true, ["sign", "verify"]).then(function(result) {
+    key = result;
+    startTest();
+});
+
+function startTest()
+{
+    shouldBeTrue("key.algorithm === key.algorithm");
+    key.algorithm.foo = "bar";
+    gc();
+    setTimeout(continueTest, 10);
+}
+
+function continueTest()
+{
+    gc();
+    setTimeout(finishTest, 10);
+}
+
+function finishTest()
+{
+    gc();
+    shouldBeEqualToString('key.algorithm.foo', 'bar');
+    finishJSTest();
+}
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

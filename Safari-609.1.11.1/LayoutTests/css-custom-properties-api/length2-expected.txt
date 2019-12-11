@@ -1,0 +1,12 @@
+test
+
+test
+
+test
+
+
+PASS Registration is successful 
+PASS Test 1 
+PASS Test 2 
+PASS Test 3 
+

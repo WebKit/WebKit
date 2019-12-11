@@ -1,0 +1,39 @@
+Testing that dynamic selectors have expected specificity values depending on the context node.
+
+
+p - :matches(div, article) (0, 0, 1) (dynamic)
+p - :matches(div, .foo, #bar, div#bar) (no value) (dynamic)
+p - div:nth-child(odd) (0, 1, 1)
+p - :nth-child(odd of div) (0, 1, 1) (dynamic)
+p - :nth-child(odd of div, .foo, #bar, div#bar) (no value) (dynamic)
+p - :nth-child(even of div, .foo, #bar, div#bar) (no value) (dynamic)
+p - :not(span, #missing) (1, 0, 0)
+p - :not(:not(:matches(div, .foo, #bar, div#bar))) (1, 0, 1)
+
+div - :matches(div, article) (0, 0, 1) (dynamic)
+div - :matches(div, .foo, #bar, div#bar) (0, 0, 1) (dynamic)
+div - div:nth-child(odd) (0, 1, 1)
+div - :nth-child(odd of div) (0, 1, 1) (dynamic)
+div - :nth-child(odd of div, .foo, #bar, div#bar) (0, 1, 1) (dynamic)
+div - :nth-child(even of div, .foo, #bar, div#bar) (no value) (dynamic)
+div - :not(span, #missing) (1, 0, 0)
+div - :not(:not(:matches(div, .foo, #bar, div#bar))) (1, 0, 1)
+
+.foo - :matches(div, article) (0, 0, 1) (dynamic)
+.foo - :matches(div, .foo, #bar, div#bar) (0, 1, 0) (dynamic)
+.foo - div:nth-child(odd) (0, 1, 1)
+.foo - :nth-child(odd of div) (0, 1, 1) (dynamic)
+.foo - :nth-child(odd of div, .foo, #bar, div#bar) (no value) (dynamic)
+.foo - :nth-child(even of div, .foo, #bar, div#bar) (0, 2, 0) (dynamic)
+.foo - :not(span, #missing) (1, 0, 0)
+.foo - :not(:not(:matches(div, .foo, #bar, div#bar))) (1, 0, 1)
+
+#bar - :matches(div, article) (0, 0, 1) (dynamic)
+#bar - :matches(div, .foo, #bar, div#bar) (1, 0, 1) (dynamic)
+#bar - div:nth-child(odd) (0, 1, 1)
+#bar - :nth-child(odd of div) (0, 1, 1) (dynamic)
+#bar - :nth-child(odd of div, .foo, #bar, div#bar) (1, 1, 1) (dynamic)
+#bar - :nth-child(even of div, .foo, #bar, div#bar) (no value) (dynamic)
+#bar - :not(span, #missing) (1, 0, 0)
+#bar - :not(:not(:matches(div, .foo, #bar, div#bar))) (1, 0, 1)
+

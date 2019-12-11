@@ -1,0 +1,32 @@
+<canvas></canvas>
+<div></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+let gl = document.querySelector("canvas").getContext("webgl");
+
+let shader1 = gl.createShader(gl.VERTEX_SHADER);
+gl.shaderSource(shader1, "attribute vec2 pos; void main() { gl_Position = vec4(pos, 0, 1); }");
+gl.compileShader(shader1);
+
+let shader2 = gl.createShader(gl.FRAGMENT_SHADER);
+gl.shaderSource(shader2, "precision mediump float; void main() { gl_FragColor = vec4(0,0.8,0,1); }");
+gl.compileShader(shader2);
+
+let program = gl.createProgram();
+gl.attachShader(program, shader1);
+gl.attachShader(program, shader2);
+gl.linkProgram(program);
+gl.useProgram(program);
+
+let buffer = gl.createBuffer();
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
+gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new ArrayBuffer(1), gl.STREAM_DRAW);
+gl.enableVertexAttribArray(0);
+gl.drawElements(gl.LINE_STRIP, 1, gl.UNSIGNED_BYTE, 0);
+if (gl.getError() == gl.INVALID_OPERATION)
+    document.querySelector("div").textContent = "PASS: Unable to draw with invalid vertexAttribArray0";
+else
+    document.querySelector("div").textContent = "FAIL: Was able to draw with invalid vertexAttribArray0";
+</script>

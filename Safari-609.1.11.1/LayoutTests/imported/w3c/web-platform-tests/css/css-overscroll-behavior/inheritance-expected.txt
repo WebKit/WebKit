@@ -1,0 +1,6 @@
+
+FAIL Property overscroll-behavior-x has initial value auto assert_true: overscroll-behavior-x doesn't seem to be supported in the computed style expected true got false
+FAIL Property overscroll-behavior-x does not inherit assert_true: expected true got false
+FAIL Property overscroll-behavior-y has initial value auto assert_true: overscroll-behavior-y doesn't seem to be supported in the computed style expected true got false
+FAIL Property overscroll-behavior-y does not inherit assert_true: expected true got false
+

@@ -1,0 +1,15 @@
+This test verifies the behaviour of Object.prototype.hasOwnProperty, as documented in ECMA-262 rev3 section 15.2.4.5.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS typeof {foo : 'yum'}.hasOwnProperty is "function"
+PASS ({foo : 'yum'}).hasOwnProperty('foo') is true
+PASS ''.hasOwnProperty('length') is true
+PASS ({foo : 'yum'}).hasOwnProperty('bar') is false
+PASS ({foo : 'yum'}).hasOwnProperty('toString') is false
+PASS ''.hasOwnProperty('toString') is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

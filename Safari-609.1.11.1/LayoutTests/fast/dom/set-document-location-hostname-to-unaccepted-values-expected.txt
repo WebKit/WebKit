@@ -1,0 +1,10 @@
+PASS: 'icl' + '\uf877' + 'oud.com' was not accepted.
+PASS: icloud.com:-1 was not accepted.
+PASS: icloud.com:11c was not accepted.
+PASS: icloud.com:11 was not accepted.
+PASS: icloud.com:80: was not accepted.
+PASS: icloud.com:80:80 was not accepted.
+PASS: icloud.com: was not accepted.
+PASS: :80 was not accepted.
+PASS: : was not accepted.
+

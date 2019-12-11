@@ -1,0 +1,516 @@
+# Copyright (c) 2019 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+group("e2e") {
+  testonly = true
+
+  deps = [
+    ":default_encoded_image_data_injector",
+    ":encoded_image_data_injector_api",
+    ":example_video_quality_analyzer",
+    ":id_generator",
+    ":quality_analyzing_video_decoder",
+    ":quality_analyzing_video_encoder",
+    ":single_process_encoded_image_data_injector",
+  ]
+  if (rtc_include_tests) {
+    deps += [
+      ":peerconnection_quality_test",
+      ":test_peer",
+      ":video_quality_analyzer_injection_helper",
+    ]
+  }
+}
+
+if (rtc_include_tests) {
+  group("e2e_unittests") {
+    testonly = true
+
+    deps = [
+      ":default_encoded_image_data_injector_unittest",
+      ":peer_connection_e2e_smoke_test",
+      ":single_process_encoded_image_data_injector_unittest",
+    ]
+  }
+}
+
+rtc_source_set("peer_connection_quality_test_params") {
+  visibility = [ "*" ]
+  testonly = true
+  sources = [
+    "peer_connection_quality_test_params.h",
+  ]
+
+  deps = [
+    "../../../api:callfactory_api",
+    "../../../api:fec_controller_api",
+    "../../../api:libjingle_peerconnection_api",
+    "../../../api:packet_socket_factory",
+    "../../../api:peer_connection_quality_test_fixture_api",
+    "../../../api/rtc_event_log",
+    "../../../api/task_queue",
+    "../../../api/transport:network_control",
+    "../../../api/video_codecs:video_codecs_api",
+    "../../../rtc_base",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
+rtc_source_set("encoded_image_data_injector_api") {
+  visibility = [ "*" ]
+  testonly = true
+  sources = [
+    "analyzer/video/encoded_image_data_injector.h",
+  ]
+
+  deps = [
+    "../../../api/video:encoded_image",
+  ]
+}
+
+rtc_source_set("default_encoded_image_data_injector") {
+  visibility = [ "*" ]
+  testonly = true
+  sources = [
+    "analyzer/video/default_encoded_image_data_injector.cc",
+    "analyzer/video/default_encoded_image_data_injector.h",
+  ]
+
+  deps = [
+    ":encoded_image_data_injector_api",
+    "../../../api/video:encoded_image",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:criticalsection",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
+rtc_source_set("single_process_encoded_image_data_injector") {
+  visibility = [ "*" ]
+  testonly = true
+  sources = [
+    "analyzer/video/single_process_encoded_image_data_injector.cc",
+    "analyzer/video/single_process_encoded_image_data_injector.h",
+  ]
+
+  deps = [
+    ":encoded_image_data_injector_api",
+    "../../../api/video:encoded_image",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:criticalsection",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
+rtc_source_set("id_generator") {
+  visibility = [ "*" ]
+  testonly = true
+  sources = [
+    "analyzer/video/id_generator.cc",
+    "analyzer/video/id_generator.h",
+  ]
+  deps = []
+}
+
+rtc_source_set("simulcast_dummy_buffer_helper") {
+  visibility = [ "*" ]
+  testonly = true
+  sources = [
+    "analyzer/video/simulcast_dummy_buffer_helper.cc",
+    "analyzer/video/simulcast_dummy_buffer_helper.h",
+  ]
+  deps = [
+    "../../../api/video:video_frame",
+    "../../../api/video:video_frame_i420",
+  ]
+}
+
+rtc_source_set("quality_analyzing_video_decoder") {
+  visibility = [ "*" ]
+  testonly = true
+  sources = [
+    "analyzer/video/quality_analyzing_video_decoder.cc",
+    "analyzer/video/quality_analyzing_video_decoder.h",
+  ]
+  deps = [
+    ":encoded_image_data_injector_api",
+    ":id_generator",
+    ":simulcast_dummy_buffer_helper",
+    "../../../api:video_quality_analyzer_api",
+    "../../../api/video:encoded_image",
+    "../../../api/video:video_frame",
+    "../../../api/video:video_frame_i420",
+    "../../../api/video:video_rtp_headers",
+    "../../../api/video_codecs:video_codecs_api",
+    "../../../modules/video_coding:video_codec_interface",
+    "../../../rtc_base:criticalsection",
+    "../../../rtc_base:logging",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_source_set("quality_analyzing_video_encoder") {
+  visibility = [ "*" ]
+  testonly = true
+  sources = [
+    "analyzer/video/quality_analyzing_video_encoder.cc",
+    "analyzer/video/quality_analyzing_video_encoder.h",
+  ]
+  deps = [
+    ":encoded_image_data_injector_api",
+    ":id_generator",
+    "../../../api:video_quality_analyzer_api",
+    "../../../api/video:encoded_image",
+    "../../../api/video:video_frame",
+    "../../../api/video:video_rtp_headers",
+    "../../../api/video_codecs:video_codecs_api",
+    "../../../modules/video_coding:video_codec_interface",
+    "../../../rtc_base:criticalsection",
+    "../../../rtc_base:logging",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("video_quality_analyzer_injection_helper") {
+    visibility = [ "*" ]
+    testonly = true
+    sources = [
+      "analyzer/video/video_quality_analyzer_injection_helper.cc",
+      "analyzer/video/video_quality_analyzer_injection_helper.h",
+    ]
+    deps = [
+      ":encoded_image_data_injector_api",
+      ":id_generator",
+      ":quality_analyzing_video_decoder",
+      ":quality_analyzing_video_encoder",
+      ":simulcast_dummy_buffer_helper",
+      "../../../api:stats_observer_interface",
+      "../../../api:video_quality_analyzer_api",
+      "../../../api/video:video_frame",
+      "../../../api/video:video_rtp_headers",
+      "../../../api/video_codecs:video_codecs_api",
+      "../../../test:video_test_common",
+      "../../../test:video_test_support",
+      "//third_party/abseil-cpp/absl/memory",
+    ]
+  }
+
+  rtc_source_set("echo_emulation") {
+    visibility = [ "*" ]
+    testonly = true
+    sources = [
+      "echo/echo_emulation.cc",
+      "echo/echo_emulation.h",
+    ]
+    deps = [
+      "../../../api:peer_connection_quality_test_fixture_api",
+      "../../../modules/audio_device:audio_device_impl",
+      "../../../rtc_base:rtc_base_approved",
+    ]
+  }
+
+  rtc_source_set("test_peer") {
+    visibility = [ "*" ]
+    testonly = true
+    sources = [
+      "test_peer.cc",
+      "test_peer.h",
+    ]
+    deps = [
+      ":echo_emulation",
+      ":peer_connection_quality_test_params",
+      ":video_quality_analyzer_injection_helper",
+      "../../../api:peer_connection_quality_test_fixture_api",
+      "../../../api:scoped_refptr",
+      "../../../api/rtc_event_log:rtc_event_log_factory",
+      "../../../api/task_queue",
+      "../../../api/task_queue:default_task_queue_factory",
+      "../../../api/video_codecs:builtin_video_decoder_factory",
+      "../../../api/video_codecs:builtin_video_encoder_factory",
+      "../../../media:rtc_audio_video",
+      "../../../media:rtc_media_base",
+      "../../../media:rtc_media_engine_defaults",
+      "../../../modules/audio_device:audio_device_api",
+      "../../../modules/audio_device:audio_device_impl",
+      "../../../modules/audio_processing:api",
+      "../../../modules/audio_processing/aec_dump:aec_dump",
+      "../../../p2p:rtc_p2p",
+      "../../../pc:pc_test_utils",
+      "../../../pc:peerconnection_wrapper",
+      "../../../rtc_base",
+      "../../../rtc_base:rtc_base_approved",
+      "../../../rtc_base:rtc_task_queue",
+      "../../../test:copy_to_file_audio_capturer",
+      "../../../test:video_test_common",
+      "//third_party/abseil-cpp/absl/memory",
+      "//third_party/abseil-cpp/absl/types:optional",
+    ]
+  }
+
+  rtc_source_set("peerconnection_quality_test") {
+    visibility = [ "*" ]
+    testonly = true
+
+    sources = [
+      "peer_connection_quality_test.cc",
+      "peer_connection_quality_test.h",
+    ]
+    deps = [
+      ":analyzer_helper",
+      ":default_audio_quality_analyzer",
+      ":default_video_quality_analyzer",
+      ":peer_connection_quality_test_params",
+      ":sdp_changer",
+      ":single_process_encoded_image_data_injector",
+      ":stats_poller",
+      ":test_peer",
+      ":video_quality_analyzer_injection_helper",
+      "../..:field_trial",
+      "../../../api:audio_quality_analyzer_api",
+      "../../../api:libjingle_peerconnection_api",
+      "../../../api:peer_connection_quality_test_fixture_api",
+      "../../../api:rtc_event_log_output_file",
+      "../../../api:scoped_refptr",
+      "../../../api:video_quality_analyzer_api",
+      "../../../api/rtc_event_log",
+      "../../../api/task_queue",
+      "../../../api/task_queue:default_task_queue_factory",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
+      "../../../pc:pc_test_utils",
+      "../../../pc:peerconnection",
+      "../../../rtc_base",
+      "../../../rtc_base:gunit_helpers",
+      "../../../rtc_base:rtc_base_approved",
+      "../../../rtc_base:rtc_task_queue",
+      "../../../rtc_base:safe_conversions",
+      "../../../rtc_base:task_queue_for_test",
+      "../../../rtc_base/task_utils:repeating_task",
+      "../../../system_wrappers",
+      "../../../system_wrappers:field_trial",
+      "../../../test:fileutils",
+      "../../../test:video_test_support",
+      "//third_party/abseil-cpp/absl/memory",
+    ]
+  }
+
+  rtc_source_set("single_process_encoded_image_data_injector_unittest") {
+    testonly = true
+    sources = [
+      "analyzer/video/single_process_encoded_image_data_injector_unittest.cc",
+    ]
+    deps = [
+      ":single_process_encoded_image_data_injector",
+      "../../../api/video:encoded_image",
+      "../../../rtc_base:rtc_base_approved",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_source_set("default_encoded_image_data_injector_unittest") {
+    testonly = true
+    sources = [
+      "analyzer/video/default_encoded_image_data_injector_unittest.cc",
+    ]
+    deps = [
+      ":default_encoded_image_data_injector",
+      "../../../api/video:encoded_image",
+      "../../../rtc_base:rtc_base_approved",
+      "../../../test:test_support",
+    ]
+  }
+
+  peer_connection_e2e_smoke_test_resources = [
+    "../../../resources/pc_quality_smoke_test_alice_source.wav",
+    "../../../resources/pc_quality_smoke_test_bob_source.wav",
+  ]
+  if (is_ios) {
+    bundle_data("peer_connection_e2e_smoke_test_resources_bundle_data") {
+      testonly = true
+      sources = peer_connection_e2e_smoke_test_resources
+      outputs = [
+        "{{bundle_resources_dir}}/{{source_file_part}}",
+      ]
+    }
+  }
+
+  rtc_source_set("peer_connection_e2e_smoke_test") {
+    testonly = true
+
+    sources = [
+      "peer_connection_e2e_smoke_test.cc",
+    ]
+    deps = [
+      ":default_audio_quality_analyzer",
+      ":default_video_quality_analyzer",
+      ":network_quality_metrics_reporter",
+      "../../../api:callfactory_api",
+      "../../../api:create_network_emulation_manager",
+      "../../../api:create_peerconnection_quality_test_fixture",
+      "../../../api:libjingle_peerconnection_api",
+      "../../../api:network_emulation_manager_api",
+      "../../../api:peer_connection_quality_test_fixture_api",
+      "../../../api:scoped_refptr",
+      "../../../api:simulated_network_api",
+      "../../../api/audio_codecs:builtin_audio_decoder_factory",
+      "../../../api/audio_codecs:builtin_audio_encoder_factory",
+      "../../../api/video_codecs:builtin_video_decoder_factory",
+      "../../../api/video_codecs:builtin_video_encoder_factory",
+      "../../../call:simulated_network",
+      "../../../media:rtc_audio_video",
+      "../../../modules/audio_device:audio_device_impl",
+      "../../../p2p:rtc_p2p",
+      "../../../pc:pc_test_utils",
+      "../../../pc:peerconnection_wrapper",
+      "../../../rtc_base",
+      "../../../rtc_base:gunit_helpers",
+      "../../../rtc_base:logging",
+      "../../../rtc_base:rtc_event",
+      "../../../test:fileutils",
+      "../../../test:test_support",
+      "//third_party/abseil-cpp/absl/memory",
+    ]
+    data = peer_connection_e2e_smoke_test_resources
+    if (is_ios) {
+      deps += [ ":peer_connection_e2e_smoke_test_resources_bundle_data" ]
+    }
+  }
+
+  rtc_source_set("stats_poller") {
+    testonly = true
+    sources = [
+      "stats_poller.cc",
+      "stats_poller.h",
+    ]
+    deps = [
+      ":test_peer",
+      "../../../api:libjingle_peerconnection_api",
+      "../../../api:stats_observer_interface",
+      "../../../rtc_base:logging",
+    ]
+  }
+}
+
+rtc_source_set("analyzer_helper") {
+  visibility = [ "*" ]
+  sources = [
+    "analyzer_helper.cc",
+    "analyzer_helper.h",
+  ]
+  deps = [
+    "../../../api:track_id_stream_label_map",
+    "../../../rtc_base:macromagic",
+    "../../../rtc_base/synchronization:sequence_checker",
+  ]
+}
+
+rtc_source_set("default_audio_quality_analyzer") {
+  visibility = [ "*" ]
+  testonly = true
+  sources = [
+    "analyzer/audio/default_audio_quality_analyzer.cc",
+    "analyzer/audio/default_audio_quality_analyzer.h",
+  ]
+
+  deps = [
+    "../..:perf_test",
+    "../../../api:audio_quality_analyzer_api",
+    "../../../api:libjingle_peerconnection_api",
+    "../../../api:stats_observer_interface",
+    "../../../api:track_id_stream_label_map",
+    "../../../rtc_base:criticalsection",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:rtc_numerics",
+  ]
+}
+
+rtc_source_set("example_video_quality_analyzer") {
+  visibility = [ "*" ]
+  testonly = true
+  sources = [
+    "analyzer/video/example_video_quality_analyzer.cc",
+    "analyzer/video/example_video_quality_analyzer.h",
+  ]
+
+  deps = [
+    "../../../api:video_quality_analyzer_api",
+    "../../../api/video:encoded_image",
+    "../../../api/video:video_frame",
+    "../../../api/video:video_rtp_headers",
+    "../../../rtc_base:criticalsection",
+    "../../../rtc_base:logging",
+  ]
+}
+
+rtc_source_set("default_video_quality_analyzer") {
+  visibility = [ "*" ]
+
+  testonly = true
+  sources = [
+    "analyzer/video/default_video_quality_analyzer.cc",
+    "analyzer/video/default_video_quality_analyzer.h",
+  ]
+
+  deps = [
+    "../..:perf_test",
+    "../../../api:video_quality_analyzer_api",
+    "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
+    "../../../api/video:encoded_image",
+    "../../../api/video:video_frame",
+    "../../../api/video:video_rtp_headers",
+    "../../../common_video",
+    "../../../rtc_base:criticalsection",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:rtc_event",
+    "../../../rtc_base:rtc_numerics",
+    "../../../system_wrappers",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
+rtc_source_set("network_quality_metrics_reporter") {
+  visibility = [ "*" ]
+  testonly = true
+  sources = [
+    "network_quality_metrics_reporter.cc",
+    "network_quality_metrics_reporter.h",
+  ]
+  deps = [
+    "../..:perf_test",
+    "../../../api:network_emulation_manager_api",
+    "../../../api:peer_connection_quality_test_fixture_api",
+    "../../../rtc_base:rtc_event",
+  ]
+}
+
+rtc_source_set("sdp_changer") {
+  testonly = true
+  sources = [
+    "sdp/sdp_changer.cc",
+    "sdp/sdp_changer.h",
+  ]
+  deps = [
+    "../../../api:array_view",
+    "../../../api:libjingle_peerconnection_api",
+    "../../../api:rtp_parameters",
+    "../../../media:rtc_media_base",
+    "../../../p2p:rtc_p2p",
+    "../../../pc:peerconnection",
+    "../../../pc:rtc_pc_base",
+    "../../../rtc_base:stringutils",
+    "//third_party/abseil-cpp/absl/memory:memory",
+    "//third_party/abseil-cpp/absl/strings:strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}

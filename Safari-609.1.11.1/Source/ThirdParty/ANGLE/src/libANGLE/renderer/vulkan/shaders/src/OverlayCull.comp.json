@@ -1,0 +1,19 @@
+{
+    "Description": [
+        "Copyright 2019 The ANGLE Project Authors. All rights reserved.",
+        "Use of this source code is governed by a BSD-style license that can be",
+        "found in the LICENSE file.",
+        "",
+        "OverlayCull.comp.json: Build parameters for OverlayCull.comp."
+    ],
+    "SubgroupSize": [
+        "Is8x4",
+        "Is8x8"
+    ],
+    "SubgroupOp": [
+        [ "SupportsBallot", "--target-env", "vulkan1.1" ],
+        [ "SupportsArithmetic", "--target-env", "vulkan1.1" ],
+        "SupportsNone"
+    ]
+}
+

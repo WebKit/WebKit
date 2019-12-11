@@ -1,0 +1,11 @@
+Tests that self.toString() works in workers
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+self.toString(): [object DedicatedWorkerGlobalScope]
+'self: ' + self: self: [object DedicatedWorkerGlobalScope]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

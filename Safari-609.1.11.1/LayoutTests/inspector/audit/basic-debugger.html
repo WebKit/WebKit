@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/audit-utilities.js"></script>
+<script>
+if (window.internals)
+    window.internals.settings.setUnhandledPromiseRejectionToConsoleEnabled(false);
+
+function test()
+{
+    InspectorTest.debug();
+
+    let suite = InspectorTest.Audit.createSuite("Audit.Basic");
+
+    suite.addTestCase({
+        name: "Audit.Basic.Debugger",
+        description: "Test that a debugger statement doesn't pause when running an audit.",
+        test(resolve, reject) {
+            const level = "pass";
+            let audit = new WI.AuditTestCase("Audit.Basic.Debugger", `function() { debugger; return "${level}"; }`);
+
+            let paused = false;
+            let pausedListener = WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                paused = true;
+
+                WI.debuggerManager.resume();
+            });
+
+            WI.auditManager.awaitEvent(WI.AuditManager.Event.TestCompleted).then((event) => {
+                InspectorTest.expectFalse(paused, "Should not pause on the debugger statement.");
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+
+                let results = WI.auditManager.results.lastValue;
+                InspectorTest.assert(results.length === 1, "There should be 1 result.");
+
+                let result = results[0];
+                InspectorTest.assert(result instanceof WI.AuditTestCaseResult, "Result should be a WI.AuditTestCaseResult.");
+                InspectorTest.expectEqual(result.level, level, `Result should be "${level}".`);
+            });
+
+            InspectorTest.log("Testing `debugger`...");
+
+            WI.auditManager.start([audit])
+            .then(resolve, reject);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing the basic functionality of audits.</p>
+</body>
+</html>

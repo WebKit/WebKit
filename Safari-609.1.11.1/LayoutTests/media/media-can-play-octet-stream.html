@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="video-test.js"></script>
+        <script>
+            function test()
+            {
+                testExpected("mediaElement.canPlayType('APPLICATION/octet-stream')", "");
+                testExpected("mediaElement.canPlayType('application/octet-stream;codecs=theora')", "");
+                testExpected("mediaElement.canPlayType('application/octet-stream;codecs=mp4')", "");
+             }
+
+            function start()
+            {
+                consoleWrite("<em>++ Test with &lt;video&gt; element.</em>");
+                mediaElement = document.getElementsByTagName('video')[0];
+                test();
+
+                consoleWrite("<br><em>++ Test with &lt;audio&gt; element.</em>");
+                mediaElement = new Audio();
+                test();
+
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <video controls></video>
+        <p>Test HTMLMediaElement <em>canPlayType()</em> method with "application/octet-stream".</p>
+        <p>These tests should always pass as no WebKit port should support "application/octet-stream".</p>
+    </body>
+</html>

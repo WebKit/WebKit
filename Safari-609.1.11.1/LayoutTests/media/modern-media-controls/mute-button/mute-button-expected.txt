@@ -1,0 +1,17 @@
+Testing the MuteButton class.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS muteButton.element.localName is "button"
+PASS muteButton.element.classList.contains("mute") is true
+PASS muteButton.iconName is Icons.Volume
+PASS muteButton.muted is false
+PASS mutedButton.muted is true
+PASS mutedButton.iconName became Icons.VolumeMuted
+PASS muteButton.image.element.style.webkitMaskImage.includes("macOS/VolumeHi.svg") became true
+PASS mutedButton.image.element.style.webkitMaskImage.includes("macOS/Mute.svg") became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

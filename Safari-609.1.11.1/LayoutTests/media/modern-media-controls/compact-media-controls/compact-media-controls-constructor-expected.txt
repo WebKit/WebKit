@@ -1,0 +1,17 @@
+CONSOLE MESSAGE: line 140: Button failed to load, iconName = PlayCompact, layoutTraits = 8, src = PlayCompact.pdf
+CONSOLE MESSAGE: line 140: Button failed to load, iconName = InvalidCompact, layoutTraits = 8, src = InvalidCompact.pdf
+CONSOLE MESSAGE: line 140: Button failed to load, iconName = ActivityIndicatorSpriteCompact, layoutTraits = 8, src = ActivityIndicatorSpriteCompact@1x.png
+Testing the CompactMediaControls constructor.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mediaControls.element.localName is "div"
+PASS mediaControls.element.className is "compact media-controls"
+PASS mediaControls.layoutTraits is LayoutTraits.Compact
+PASS mediaControls.state is CompactMediaControls.States.Paused
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

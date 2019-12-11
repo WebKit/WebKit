@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderImage {IMG} at (0,0) size 20x100
+      RenderBlock {DIV} at (0,0) size 300x54
+        RenderText {#text} at (40,0) size 32x17
+          text run at (40,0) width 32: "thisis"
+        RenderImage {IMG} at (20,0) size 20x30
+        RenderText {#text} at (72,0) size 272x53
+          text run at (72,0) width 208: "one run long long long long long"
+          text run at (40,18) width 252: "long long long long long long long long"
+          text run at (20,36) width 87: "long long text"

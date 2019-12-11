@@ -1,0 +1,5 @@
+2d.path.rect.winding
+Actual output:
+
+PASS Canvas test: 2d.path.rect.winding 
+

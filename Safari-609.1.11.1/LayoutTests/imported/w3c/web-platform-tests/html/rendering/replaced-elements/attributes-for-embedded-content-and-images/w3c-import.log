@@ -1,0 +1,34 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/align.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-dim-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-dim.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-no-alt-replaced.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-replaced-box-while-loading.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img_border_percent-expected.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img_border_percent.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/input-align-right-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/input-align-right-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/input-align-right-2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/input-align-right-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/input-type-change-from-image-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/input-type-change-from-image-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/object_border_perc-expected.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/object_border_perc.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/object_border_pixel-expected.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/object_border_pixel.xhtml

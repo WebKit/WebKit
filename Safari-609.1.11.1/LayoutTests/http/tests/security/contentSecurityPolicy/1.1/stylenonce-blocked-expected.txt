@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: line 1: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 6: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src directive of the Content Security Policy.
+Style that does not match a 'nonce-*' expression in 'style-src' should not be applied to the page.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.getComputedStyle(el).color is "rgb(0, 0, 0)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This text should be green.

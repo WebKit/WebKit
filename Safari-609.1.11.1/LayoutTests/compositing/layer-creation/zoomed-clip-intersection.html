@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .underlay {
+            position: fixed;
+            width: 1024px;
+            height: 1042px;
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+        
+        .image {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            background-color: green;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        if (window.internals)
+            window.internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
+
+        function doTest()
+        {
+            if (window.eventSender)
+                eventSender.scalePageBy(3, 3);
+
+            if (window.testRunner)
+              document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div class="underlay"></div>
+    <div class="image">Image</div>
+<pre id="layers"></pre>
+</body>
+</html>

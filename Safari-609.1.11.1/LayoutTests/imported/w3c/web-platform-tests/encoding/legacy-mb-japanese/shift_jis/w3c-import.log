@@ -1,0 +1,76 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/jis0208_index.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-csshiftjis.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-errors.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-ms932.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-ms_kanji.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-shift-jis.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-sjis.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-windows-31j.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode-x-sjis.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decode.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-decoder.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-csshiftjis.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-csshiftjis.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-errors-han.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-errors-han.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-errors-hangul.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-errors-hangul.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-errors-misc.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-errors-misc.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-ms932.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-ms932.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-ms_kanji.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-ms_kanji.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-shift-jis.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-shift-jis.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-sjis.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-sjis.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-windows-31j.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-windows-31j.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-x-sjis.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form-x-sjis.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-form.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-href-errors-han.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-href-errors-han.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-href-errors-hangul.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-href-errors-hangul.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-href-errors-misc.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-href-errors-misc.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-href.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encode-href.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis-encoder.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis_chars-csshiftjis.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis_chars-csshiftjis.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis_chars-ms932.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis_chars-ms932.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis_chars-ms_kanji.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis_chars-ms_kanji.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis_chars-shift-jis.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis_chars-shift-jis.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis_chars-sjis.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis_chars-sjis.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis_chars-windows-31j.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis_chars-windows-31j.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis_chars-x-sjis.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis_chars-x-sjis.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis_chars.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis_chars.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis_errors.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/shift_jis/sjis_errors.html.headers

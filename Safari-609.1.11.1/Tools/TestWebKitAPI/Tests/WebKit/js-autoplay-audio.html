@@ -1,0 +1,15 @@
+<html>
+    <head>
+        <script>
+            function pageLoaded() {
+                // Speed up the audio 3x so the test doesn't take 10 seconds.
+                var audio = document.getElementById("audio");
+                audio.playbackRate = 3;
+                audio.play();
+            }
+        </script>
+    </head>
+    <body onload="pageLoaded()">
+        <audio id="audio" src="silence-long.m4a" />
+    </body>
+</html>

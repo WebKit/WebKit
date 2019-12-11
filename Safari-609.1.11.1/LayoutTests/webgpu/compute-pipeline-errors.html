@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<title>Test Error Scopes.</title>
+<body>
+<script src="js/webgpu-functions.js"></script>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+let tests = {};
+let goodModule;
+
+tests["Compute compilation failed due to incorrect entry point string."] = async device => {
+    const goodWHLSL = `
+[numthreads(1, 1, 1)]
+compute void _compute_main() { }
+`;
+    goodModule = device.createShaderModule({ code: goodWHLSL });
+
+    device.pushErrorScope("validation");
+
+    device.createComputePipeline({
+        computeStage: {
+            module: goodModule,
+            entryPoint: "compute_main"
+        }
+    });
+
+    return popValidationError(device);
+};
+
+tests["Compute pipeline creation succeeded."] = async device => {
+    device.pushErrorScope("validation");
+
+    device.createComputePipeline({
+        computeStage: {
+            module: goodModule,
+            entryPoint: "_compute_main"
+        }
+    });
+
+    return popNullError(device);
+};
+
+tests["MSL pipeline creation failed due to invalid GPUShaderModule."] = async device => {
+    const badMSL = `This code should not compile.`;
+
+    device.pushErrorScope("none");
+
+    const badMSLModule = device.createShaderModule({ code: badMSL });
+
+    await device.popErrorScope();
+
+    device.pushErrorScope("validation");
+
+    device.createComputePipeline({
+        computeStage: {
+            module: badMSLModule,
+            entryPoint: "_compute_main"
+        }
+    });
+
+    return popValidationError(device);
+};
+
+tests["MSL pipeline creation failed due to incorrect entry point string."] = async device => {
+    const goodMSL = `
+kernel void _compute_main() { }
+`;
+    const mslModule = device.createShaderModule({ code: goodMSL });
+
+    device.pushErrorScope("validation");
+
+    device.createComputePipeline({
+        computeStage: {
+            module: mslModule,
+            entryPoint: "_compute_mai"
+        }
+    });
+
+    return popValidationError(device);
+};
+
+runTestsWithDevice(tests);
+</script>
+</body>

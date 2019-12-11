@@ -1,0 +1,36 @@
+CONSOLE MESSAGE: line 1: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 79: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src directive of the Content Security Policy.
+This test ensures that styles can be set by object.cloneNode()
+PASS node1.style.backgroundColor is "yellow"
+PASS node2.style.backgroundColor is "yellow"
+PASS node3.style.backgroundColor is "blue"
+PASS node4.style.backgroundColor is "blue"
+PASS node1.style.color is "red"
+PASS node2.style.color is "red"
+PASS node3.style.color is "green"
+PASS node4.style.color is "green"
+PASS window.getComputedStyle(node1).getPropertyCSSValue('background').cssText is window.getComputedStyle(node2).getPropertyCSSValue('background').cssText
+PASS window.getComputedStyle(node3).getPropertyCSSValue('background').cssText is window.getComputedStyle(node4).getPropertyCSSValue('background').cssText
+PASS window.getComputedStyle(node1).getPropertyCSSValue('color').cssText is window.getComputedStyle(node2).getPropertyCSSValue('color').cssText
+PASS window.getComputedStyle(node3).getPropertyCSSValue('color').cssText is window.getComputedStyle(node4).getPropertyCSSValue('color').cssText
+PASS ops.style.background is ""
+getComputedStyle(clonedOps).getPropertyCSSValue('background').cssText: rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box
+PASS ops.style.color is "red"
+PASS clonedOps.style.background is ""
+PASS violetOps.style.background is "rgb(238, 130, 238)"
+PASS window.getComputedStyle(clonedOps).getPropertyCSSValue('background').cssText is window.getComputedStyle(ops).getPropertyCSSValue('background').cssText
+PASS window.getComputedStyle(clonedOps).getPropertyCSSValue('color').cssText is window.getComputedStyle(ops).getPropertyCSSValue('color').cssText
+getComputedStyle(violetOps).getPropertyCSSValue('background').cssText: rgb(238, 130, 238) none repeat scroll 0% 0% / auto padding-box border-box
+PASS window.getComputedStyle(ops).getPropertyCSSValue('background').cssText is not window.getComputedStyle(violetOps).getPropertyCSSValue('background').cssText
+PASS window.getComputedStyle(clonedOps).getPropertyCSSValue('background').cssText is not window.getComputedStyle(violetOps).getPropertyCSSValue('background').cssText
+PASS ops.id is "ops"
+PASS ops.id is clonedOps.id
+Bug 112270 has more information on the subject.
+This is a div (nodes)
+This is a div. (node 1 or 2)
+This is a div. (node 1 or 2)
+This is a div. (node 3 or 4)
+Node #4
+Yet another div.
+Yet another div.
+Yet another div.

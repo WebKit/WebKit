@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that simple and normal line layout produce the same lines with hyphenate-limit-after</title>
+<style>
+div {
+  display: inline-block;
+  -webkit-hyphens: auto;
+  width: 50px;
+  border: 1px solid green;
+  margin-right: 50px;
+  vertical-align: top;
+}
+</style>
+<script>
+if (internal.settings)
+    internals.settings.setSimpleLineLayoutEnabled(false);
+</script>
+</head>
+<body>
+<div style="-webkit-hyphenate-limit-after: 1;">accoutrements accessories anomalistic auspicious favorable prosperous circumlocution conviviality coruscant cuddlesome cynosure equanimity excogitate gasconading idiosyncratic luminescent magnanimous nidificate penultimate perfidiousness perspicacious proficuous profitable advantageous remunerative profitability saxicolous sesquipedalian superabundant unencumbered responsibilities unparagoned peerless</div>
+<div style="-webkit-hyphenate-limit-after: 2;">accoutrements accessories anomalistic auspicious favorable prosperous circumlocution conviviality coruscant cuddlesome cynosure equanimity excogitate gasconading idiosyncratic luminescent magnanimous nidificate penultimate perfidiousness perspicacious proficuous profitable advantageous remunerative profitability saxicolous sesquipedalian superabundant unencumbered responsibilities unparagoned peerless</div>
+<div style="-webkit-hyphenate-limit-after: 3;">accoutrements accessories anomalistic auspicious favorable prosperous circumlocution conviviality coruscant cuddlesome cynosure equanimity excogitate gasconading idiosyncratic luminescent magnanimous nidificate penultimate perfidiousness perspicacious proficuous profitable advantageous remunerative profitability saxicolous sesquipedalian superabundant unencumbered responsibilities unparagoned peerless</div>
+<div style="-webkit-hyphenate-limit-after: 4;">accoutrements accessories anomalistic auspicious favorable prosperous circumlocution conviviality coruscant cuddlesome cynosure equanimity excogitate gasconading idiosyncratic luminescent magnanimous nidificate penultimate perfidiousness perspicacious proficuous profitable advantageous remunerative profitability saxicolous sesquipedalian superabundant unencumbered responsibilities unparagoned peerless</div>
+<div style="-webkit-hyphenate-limit-after: 5;">accoutrements accessories anomalistic auspicious favorable prosperous circumlocution conviviality coruscant cuddlesome cynosure equanimity excogitate gasconading idiosyncratic luminescent magnanimous nidificate penultimate perfidiousness perspicacious proficuous profitable advantageous remunerative profitability saxicolous sesquipedalian superabundant unencumbered responsibilities unparagoned peerless</div>
+<div style="-webkit-hyphenate-limit-after: 6;">accoutrements accessories anomalistic auspicious favorable prosperous circumlocution conviviality coruscant cuddlesome cynosure equanimity excogitate gasconading idiosyncratic luminescent magnanimous nidificate penultimate perfidiousness perspicacious proficuous profitable advantageous remunerative profitability saxicolous sesquipedalian superabundant unencumbered responsibilities unparagoned peerless</div>
+<div style="-webkit-hyphenate-limit-after: 7;">accoutrements accessories anomalistic auspicious favorable prosperous circumlocution conviviality coruscant cuddlesome cynosure equanimity excogitate gasconading idiosyncratic luminescent magnanimous nidificate penultimate perfidiousness perspicacious proficuous profitable advantageous remunerative profitability saxicolous sesquipedalian superabundant unencumbered responsibilities unparagoned peerless</div>
+<div style="-webkit-hyphenate-limit-after: 8;">accoutrements accessories anomalistic auspicious favorable prosperous circumlocution conviviality coruscant cuddlesome cynosure equanimity excogitate gasconading idiosyncratic luminescent magnanimous nidificate penultimate perfidiousness perspicacious proficuous profitable advantageous remunerative profitability saxicolous sesquipedalian superabundant unencumbered responsibilities unparagoned peerless</div>
+</body>
+</html>

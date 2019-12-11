@@ -1,0 +1,44 @@
+ 
+Tests that the NowPlaying information is updated correctly as attributes change.
+
+* NowPlaying should not be active before playback has started.
+RUN(video.src = findMediaFile("video", "resources/test"))
+EVENT(canplaythrough)
+RUN(nowPlayingState = internals.nowPlayingState)
+EXPECTED (nowPlayingState.registeredAsNowPlayingApplication == 'false') OK
+
+* Start to play, NowPlaying should become active.
+RUN(video.play())
+EVENT(playing)
+RUN(video.pause())
+
+* Title should be page title because video has no title.
+RUN(nowPlayingState = internals.nowPlayingState)
+EXPECTED (nowPlayingState.registeredAsNowPlayingApplication == 'true') OK
+EXPECTED (nowPlayingState.title == 'Page Title') OK
+EXPECTED (nowPlayingState.duration > '0') OK
+
+* Set video title, it should be used.
+RUN(video.title = "Video Title")
+RUN(nowPlayingState = internals.nowPlayingState)
+EXPECTED (nowPlayingState.registeredAsNowPlayingApplication == 'true') OK
+EXPECTED (nowPlayingState.title == 'Video Title') OK
+EXPECTED (nowPlayingState.duration > '0') OK
+
+* Clear video and page titles, page domain should be used.
+RUN(video.title = "")
+RUN(document.title = "")
+RUN(nowPlayingState = internals.nowPlayingState)
+EXPECTED (nowPlayingState.registeredAsNowPlayingApplication == 'true') OK
+EXPECTED (nowPlayingState.title == '127.0.0.1') OK
+EXPECTED (nowPlayingState.duration > '0') OK
+
+* Change currentTime, state should be updated.
+RUN(video.currentTime = video.currentTime + 0.5)
+RUN(nowPlayingState = internals.nowPlayingState)
+EXPECTED (nowPlayingState.registeredAsNowPlayingApplication == 'true') OK
+EXPECTED (nowPlayingState.title == '127.0.0.1') OK
+EXPECTED (nowPlayingState.duration > '0') OK
+
+END OF TEST
+

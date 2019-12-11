@@ -1,0 +1,9 @@
+Test unhandled promise rejection event handler returning false does not produce console messages.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS count is 3
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

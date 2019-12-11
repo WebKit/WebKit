@@ -1,0 +1,198 @@
+This test ensures WebKit lets user select bidirectional text intuitively. To manually test, select text in blue box in each test case below by a mouse drag from left to right. The changes in the selected text should match the expectations before |. Do the same by a mouse drag from right to left and expectations are after |.
+
+Test "abcABC" in "abcABC":
+Selecting from left to right
+PASS selected "a"
+PASS selected "ab"
+PASS selected "abc"
+PASS selected "abcAB"
+FAIL selected "abc" but expected "abcA"
+FAIL selected "abcAB" but expected "abcABC"
+FAIL selected "abcA" but expected "undefined"
+FAIL selected "abcAB" but expected "undefined"
+FAIL selected "abcA" but expected "undefined"
+FAIL selected "abcABC" but expected "undefined"
+Selecting from right to left
+PASS selected "A"
+PASS selected "AB"
+FAIL selected "A" but expected "ABC"
+FAIL selected "AB" but expected "cABC"
+FAIL selected "ABC" but expected "bcABC"
+FAIL selected "AB" but expected "abcABC"
+FAIL selected "ABC" but expected "undefined"
+FAIL selected "cABC" but expected "undefined"
+FAIL selected "bcABC" but expected "undefined"
+FAIL selected "abcABC" but expected "undefined"
+
+Test "ABCdef" in "ABCdef":
+Selecting from left to right
+PASS selected "C"
+FAIL selected "" but expected "BC"
+FAIL selected "C" but expected "ABC"
+FAIL selected "BC" but expected "ABCd"
+FAIL selected "C" but expected "ABCef"
+FAIL selected "BC" but expected "ABCdef"
+FAIL selected "ABC" but expected "undefined"
+FAIL selected "ABCd" but expected "undefined"
+FAIL selected "ABCde" but expected "undefined"
+FAIL selected "ABCdef" but expected "undefined"
+Selecting from right to left
+PASS selected "f"
+PASS selected "ef"
+PASS selected "def"
+PASS selected "BCdef"
+PASS selected "Cdef"
+FAIL selected "BCdef" but expected "ABCdef"
+FAIL selected "Cdef" but expected "undefined"
+FAIL selected "ABCdef" but expected "undefined"
+FAIL selected "Cdef" but expected "undefined"
+FAIL selected "ABCdef" but expected "undefined"
+
+Test "ABC" in "abcABCdef":
+Selecting from left to right
+PASS selected "C"
+FAIL selected "" but expected "BC"
+FAIL selected "C" but expected "ABC"
+FAIL selected "BC" but expected "undefined"
+FAIL selected "C" but expected "undefined"
+FAIL selected "BC" but expected "undefined"
+FAIL selected "ABC" but expected "undefined"
+Selecting from right to left
+PASS selected "A"
+PASS selected "AB"
+FAIL selected "A" but expected "ABC"
+FAIL selected "AB" but expected "undefined"
+FAIL selected "ABC" but expected "undefined"
+FAIL selected "AB" but expected "undefined"
+FAIL selected "ABC" but expected "undefined"
+
+Test "ABC" in "ABCdef":
+Selecting from left to right
+PASS selected "C"
+PASS selected "BC"
+PASS selected "ABC"
+Selecting from right to left
+PASS selected "A"
+PASS selected "AB"
+PASS selected "ABC"
+
+Test "ef" in "ABCdef":
+Selecting from left to right
+PASS selected "e"
+PASS selected "ef"
+Selecting from right to left
+PASS selected "f"
+PASS selected "ef"
+
+Test "AB" in "abcABC":
+Selecting from left to right
+PASS selected "B"
+FAIL selected "" but expected "AB"
+FAIL selected "B" but expected "undefined"
+FAIL selected "AB" but expected "undefined"
+Selecting from right to left
+PASS selected "A"
+PASS selected "AB"
+FAIL selected "A" but expected "undefined"
+FAIL selected "AB" but expected "undefined"
+
+Test "12" in "aXM12JNd":
+Selecting from left to right
+PASS selected "1"
+PASS selected "12"
+Selecting from right to left
+PASS selected "2"
+PASS selected "12"
+
+Test "ABC 123" in "ABC 123":
+Selecting from left to right
+PASS selected "1"
+PASS selected "12"
+PASS selected "123"
+PASS selected " 123"
+PASS selected "C 123"
+PASS selected "BC 123"
+PASS selected "ABC 123"
+Selecting from right to left
+PASS selected "A"
+PASS selected "AB"
+PASS selected "ABC"
+PASS selected "ABC "
+PASS selected "ABC 12"
+PASS selected "ABC 1"
+PASS selected "ABC 123"
+
+Test "ABC 123" in "ABC 123":
+Selecting from left to right
+PASS selected "1"
+PASS selected "12"
+FAIL selected "123" but expected " 123"
+FAIL selected " " but expected "C 123"
+FAIL selected "123" but expected "BC 123"
+FAIL selected " " but expected "ABC 123"
+FAIL selected "C " but expected "undefined"
+FAIL selected " " but expected "undefined"
+FAIL selected "C " but expected "undefined"
+FAIL selected "BC " but expected "undefined"
+FAIL selected "C " but expected "undefined"
+FAIL selected "BC " but expected "undefined"
+FAIL selected "123" but expected "undefined"
+Selecting from right to left
+PASS selected "A"
+PASS selected "AB"
+FAIL selected "A" but expected "ABC"
+FAIL selected "AB" but expected "ABC "
+FAIL selected "ABC" but expected "ABC 12"
+FAIL selected "AB" but expected "ABC 1"
+FAIL selected "ABC" but expected "ABC 123"
+FAIL selected "" but expected "undefined"
+FAIL selected "ABC" but expected "undefined"
+FAIL selected "" but expected "undefined"
+FAIL selected "ABC 12" but expected "undefined"
+FAIL selected "ABC 1" but expected "undefined"
+FAIL selected "123" but expected "undefined"
+
+Test "ABC" in "aABCb":
+Selecting from left to right
+PASS selected "C"
+FAIL selected "" but expected "BC"
+FAIL selected "C" but expected "ABC"
+FAIL selected "BC" but expected "undefined"
+FAIL selected "C" but expected "undefined"
+FAIL selected "BC" but expected "undefined"
+FAIL selected "ABC" but expected "undefined"
+Selecting from right to left
+PASS selected "A"
+PASS selected "AB"
+FAIL selected "A" but expected "ABC"
+FAIL selected "AB" but expected "undefined"
+FAIL selected "ABC" but expected "undefined"
+FAIL selected "AB" but expected "undefined"
+FAIL selected "ABC" but expected "undefined"
+
+Test "ABC" in "ABC":
+Selecting from left to right
+PASS selected "C"
+FAIL selected "" but expected "BC"
+FAIL selected "C" but expected "ABC"
+FAIL selected "BC" but expected "undefined"
+FAIL selected "C" but expected "undefined"
+FAIL selected "BC" but expected "undefined"
+FAIL selected "ABC" but expected "undefined"
+Selecting from right to left
+PASS selected "A"
+PASS selected "AB"
+FAIL selected "A" but expected "ABC"
+FAIL selected "AB" but expected "undefined"
+FAIL selected "ABC" but expected "undefined"
+FAIL selected "AB" but expected "undefined"
+FAIL selected "ABC" but expected "undefined"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+
+
+

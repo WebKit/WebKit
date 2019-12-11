@@ -1,0 +1,12 @@
+Blocked access to external URL http://example.test:8000/blink/sendbeacon/resources/save-beacon.php?name=cross-origin
+CONSOLE MESSAGE: line 1: Beacon API cannot load http://example.test:8000/blink/sendbeacon/resources/save-beacon.php?name=cross-origin due to access control checks.
+Verify navigator.sendBeacon() mixed content checking.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS navigator.sendBeacon("http://example.test:8000/blink/sendbeacon/resources/save-beacon.php?name=cross-origin", "CrossOrigin"); is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

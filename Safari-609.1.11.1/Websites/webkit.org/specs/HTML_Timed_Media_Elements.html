@@ -1,0 +1,1165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+        <title> Proposed HTML Timed Media Elements </title> 
+
+        <link href="./mediaelement.css" rel="stylesheet" type="text/css"> 
+
+        <style type="text/css">
+                h4 + .element { margin-top: -2.5em; padding-top: 2em; }
+                h4 + p + .element { margin-top: -5em; padding-top: 4em; }
+                .element { background: #EFE; color: #000; margin: 0 0 1em -1em; padding: 0 1em 0.25em 0.75em; border-left: solid #9F9 0.25em; -padding: 0; /* that last decl is for IE6. Try removing it, it's hilarious! */ }
+                .proposal { border: blue solid; padding: 1em; }
+                table.matrix, table.matrix td { border: none; text-align: right; }
+                table.matrix { margin-left: 2em; }
+
+                .history table { width: 100%; }
+                .history, .history td, .history th { border: solid thin; font-size: x-small }
+                td.hauthor, td.hdate { width: 10%; }
+                td.hversion { width: 5%; text-align: center; }
+                td.hchange { width: 100%; }
+                
+                .event-definition table { border: solid thin #000; width: 95%; }
+                .event-definition tr:last-child td { border: none; }
+                .event-definition th { text-align: left; font-weight: bold; border: none; border-right: 1px dashed #ccc; border-bottom: 1px dashed #ccc; white-space: nowrap; background-color: #F7F5D7; padding-left: 8px; padding-right: 8px; }
+                .event-definition td { width: 100%; font-family: monospace; font-weight: normal; padding-left: 1em; background-color: transparent; padding-right: 1em; border: none; }
+
+                /* needed to override wiki CSS */
+                a, a:link { text-decoration: underline;}
+                th { color: #000; }
+                
+                .obsolete {
+                  font-size: larger;
+                  color: red;
+                }
+        </style>
+
+</head>
+
+<body class="draft">
+
+        <div class="head">
+                <h1> HTML Timed Media Elements </h1> <h2 class="no-num no-toc" id="working"> Working Draft &mdash; 19 March 2007 </h2> 
+                <p class="copyright">&copy; Copyright 2007 Apple Inc. All rights reserved.</p>
+
+        </div>
+        <h2 class="no-num no-toc" id="abstract"> Abstract </h2> 
+
+        <p>This specification introduces features to HTML and the DOM for native support of timed media,
+        including but not limited to video and audio. </p>
+        
+        <h2 class="no-num no-toc" id="status"> Status of this document </h2> 
+
+        <p class="obsolete"><strong>This document is obsolete. Media Elements are now specified in the <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/video.html" title="4.8.6 The video element &mdash; HTML5 (including next generation additions still in development)">HTML5 specification</a>.</strong></p>
+        
+        <h2 class="no-num no-toc"id="contents"> Table of contents </h2>
+
+        <!--begin-toc-->
+        <ul class="toc">
+                <li><a href="#introduction"><span class="secno">1.</span> Introduction</a> 
+                        
+                <li><a href="#elements"><span class=secno>2.</span> Elements</a>
+                        <ul class=toc>
+
+                                <li><a href="#the-video-element"><span class=secno>2.1.</span> 
+                                The <code title=element-video>video </code>element</a>
+                                <ul class=toc>
+                                        <li><a href="#video-element-attributes"><span class=secno>2.1.1.</span> Element attributes</a>
+                                        <li><a href="#video-dom-attributes"><span class=secno>2.1.2.</span>DOM attributes</a>
+                                </ul>
+
+                                <li><a href="#the-audio-element"><span class=secno>2.2.</span> 
+                                The <code title=element-audio>audio</code> element</a>
+
+                                <li><a href="#the-common-attributes"><span class=secno>2.3.</span>  
+                                Attributes and methods common to <code title=element-video>video</code> and 
+                                <code title=element-audio>audio</code> elements</a>
+
+                                        <ul class=toc>
+                                                <li><a href="#common-element-attributes"><span class=secno>2.3.1.</span> Element attributes</a>
+                                                <li><a href="#common-dom-attributes"><span class=secno>2.3.2.</span> DOM attributes and methods</a>
+                                                <ul class=toc>
+                                                        <li><a href="#time-attributes"><span class=secno>2.3.2.1.</span> Time</a>
+                                                        <li><a href="#playback-attributes"><span class=secno>2.3.2.2.</span> Playback</a>
+                                                        <li><a href="#audio-attributes"><span class=secno>2.3.2.3.</span> Audio</a>
+                                                        <li><a href="#looping-attributes"><span class=secno>2.3.2.4.</span> Looping</a>
+                                                        <li><a href="#characteristics-attributes"><span class=secno>2.3.2.5.</span> Characteristics</a>
+                                                        <li><a href="#state-attributes"><span class=secno>2.3.2.6.</span> State</a>
+                                                        <li><a href="#time-triggers"><span class=secno>2.3.2.7.</span> Time triggers</a>
+                                                </ul>
+                                        </ul>
+                        </ul>
+
+                <li><a href="#events"><span class=secno>3.</span> Events</a>
+                        <ul class=toc>
+                                <li><a href="#load-events"><span class=secno>3.1.</span> 
+                                Media loading events</a>
+
+                                <li><a href="#playback-events"><span class=secno>3.1.</span> 
+                                Media playback events</a>
+                        </ul>
+
+                <li><a href="#window-additions"><span class=secno>4.</span> WindowHTML Additions</a>
+
+                <li class=no-num><a href="#references">References</a>
+                
+                <li class=no-num><a href="#acknowledgements">Acknowledgements</a>
+
+        </ul>
+        <!--end-toc-->
+
+        <hr>
+        <h2 id="introduction"><span class="secno">1.</span> Introduction</h2> 
+        <p><em>This section is non-normative.</em></p>
+
+        <p>While the World Wide Web has already been enriched by a variety of audio and video media,
+        support for timed media in user agents is currently provided by a variety of implementations
+        with their own peculiar sets of interfaces and behaviors. This proposal outlines a set of
+        standard interfaces and behaviors for timed media that can be supported by a variety of
+        implementations and applied to multiple audiovisual formats, with the goal of conferring upon
+        these types of media the benefits of native support, such as styling for presentation, improved
+        accessibility, and the opportunity to achieve greater uniformity of behavior.</p>
+
+        <p>Certain intrinsic characteristics of timed media and of its presentation must influence the
+        specifics of such a proposal:
+
+        <ul>
+                <li> A presentation of timed media may encompass one or more media substreams, e.g. video
+                and audio, that are rendered in concert with each other over time.
+
+                <li> Resources containing timed media may be very large in size, even indefinitely large,
+                and loaded and presented incrementally over time.
+
+                <li> A variety of protocols can be used to load timed media for presentation, and the rules
+                for use of these protocols vary. Some are intelligent about the timing characteristics of
+                media streams and others are not. Some are file-based protocols and others are not. Some
+                permit random access in the byte domain or in the time domain and others provide sequential
+                access only.
+
+                <li> Various states of timed media elements are subject to change, e.g. they can be ready to
+                play or not ready to play, they can be playing or not, they can be actively loading data or
+                not.
+
+                <li> The properties of timed media elements can change with the availability of additional
+                data according to the media formats and protocols in use, e.g. their total duration, their
+                natural width and height, and even the number and type of media substreams they encompass.
+        </ul>
+
+        <p>In sum timed media is inherently dynamic, not only in its presentation but also in its
+        behavior. The current proposal is intended to provide standard mechanisms for controlling and
+        responding to this dynamism, while deferring to the user agent the choice of degree of dynamism
+        that's useful and supportable.</p>
+
+        
+        <h2 id="elements"><span class="secno">2.</span> New Elements</h2> 
+        
+        <h4 id=the-video-element><span class=secno>2.1.</span> The <dfn id=video title=element-video>
+        <code>video</code></dfn> element</h4>
+
+        <dl class=element>
+
+                <dd><a href="http://www.whatwg.org/specs/web-apps/current-work/#strictly">Strictly inline-level</a> 
+                <a href="http://www.whatwg.org/specs/web-apps/current-work/#embedded0">embedded content</a>. 
+
+                <dt>Contexts in which this element may be used: 
+
+                <dd>As the only <a href="http://www.whatwg.org/specs/web-apps/current-work/#embedded0">embedded content</a> 
+                child of a <code><a href="http://www.whatwg.org/specs/web-apps/current-work/#figure0">figure</a></code> element. 
+
+                <dd>Where <a href="http://www.whatwg.org/specs/web-apps/current-work/#strictly">
+                strictly inline-level content</a> is allowed.
+
+                <dt>Content model: 
+
+                <dd>When used as the child of a 
+                <code><a href="http://www.whatwg.org/specs/web-apps/current-work/#figure0">figure</a></code>
+                element, or, when used as a 
+                <em><code><a href="http://www.whatwg.org/specs/web-apps/current-work/#figure0">figure</a></code> fallback 
+                <code><a href="#video">video</a></code></em>: zero or more 
+                <a href="http://www.whatwg.org/specs/web-apps/current-work/#block-level1">block-level elements</a> 
+                or a single
+                <code><a href="#video">video</a></code> element, which is then considered to be a
+                <em><code><a href="http://www.whatwg.org/specs/web-apps/current-work/#figure0">figure</a></code> fallback 
+                <code><a href="#video">video</a></code></em>.
+
+                <dd>Otherwise:
+                <a href="http://www.whatwg.org/specs/web-apps/current-work/#inline-level1"> inline-level content</a>.
+
+                <dt>Element-specific attributes: 
+                        <dd><code title="attr-media-src"><a href="#attr-src">src</a></code> (required) 
+                        <dd><code title="attr-media-type"><a href="#attr-type">type</a></code>
+                        <dd><code title="attr-video-height"><a href="#attr-height">height</a></code> 
+                        <dd><code title="attr-video-width"><a href="#attr-width">width</a></code> 
+                        <dd><code title="attr-media-autoplay"><a href="#attr-autoplay">autoplay</a></code>
+                        <dd><code title="attr-media-controller"><a href="#attr-controller">controller</a></code>
+                        
+                <dt>Predefined classes that apply to this element: 
+                <dd>None. 
+
+                <dt>
+                        DOM interface: 
+                <dd>
+<pre class="idl">interface <dfn id=html-video-element>HTMLVideoElement : HTMLTimedMediaElement</dfn> {
+           attribute long <a href="#dom-video-height" title="video-element-height">height</a>;
+           attribute long <a href="#dom-video-width" title="video-element-width">width</a>;
+};</pre> 
+
+                <p class=note>An instance of <code><a
+                href="#html-video-element">HTMLVideoElement</a></code> can be obtained using
+                the <code title=dom-video-constructor><a href="#video-constructor">Video</a></code> constructor.</p>
+
+        </dl>
+
+        <p>A <code title=element-video><a href="#video">video</a></code> element represents a video or
+        movie, with an alternate representation given by its contents.
+
+        <h6 id="video-element-attributes"><span class=secno>2.1.1.</span> Video specific element attributes</h6>
+        
+                <p>The <dfn id=attr-height title=attr-video-height><code>height</code></dfn> and
+                <dfn id=attr-width title=attr-video-width><code>width</code></dfn> attributes
+                give the preferred rendered dimensions of the media file if it is to be
+                shown in a visual medium. If only one is specified, the size the other 
+                is scaled preserving the media resource's intrinsic aspect ratio. These attributes must be either 
+                <a href="http://www.whatwg.org/specs/web-apps/current-work/#valid" title="valid non-negative integer">
+                valid non-negative integers</a> or 
+                <a href="http://www.whatwg.org/specs/web-apps/current-work/#valid3" title="valid non-negative percentage">
+                valid non-negative percentages.</a></p>
+                
+                <p>See below for definitions of 
+                        <code title="attr-media-src"><a href="#attr-src">src</a></code>,
+                        <code title="attr-media-type"><a href="#attr-type">type</a></code>,
+                        <code title="attr-media-autoplay"><a href="#attr-autoplay">autoplay</a></code>, and
+                        <code title="attr-media-controller"><a href="#attr-controller">controller</a></code>
+                </p>
+
+
+        <h6 id="video-dom-attributes"><span class=secno>2.1.2.</span> Video specific DOM attributes</h6>
+                <p>The DOM attributes <dfn id=dom-video-height title=video-element-height>
+                <code>height</code></dfn> and <dfn id=dom-video-width
+                title=video-element-width><code>width</code></dfn> must return the rendered
+                height and width of the media resource, in CSS pixels, if the media resource is being
+                rendered and is being rendered to a visual medium, or 0 otherwise. 
+                <a href="#refsCSS21">[CSS21]</a></p>
+        
+<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+        <h4 id=the-audio-element><span class=secno>2.2. </span>The <dfn id=audio title=element-audio>
+        <code>audio</code></dfn> element</h4>
+
+        <p><a href="http://www.whatwg.org/specs/web-apps/current-work/#strictly">Strictly 
+        inline-level</a> <a href="http://www.whatwg.org/specs/web-apps/current-work/#embedded0">embedded content</a>. 
+
+        <dl class=element>
+
+                <dt>Contexts in which this element may be used: 
+
+                <dd>As the only <a href="http://www.whatwg.org/specs/web-apps/current-work/#embedded0">embedded content</a> 
+                child of a <code><a href="http://www.whatwg.org/specs/web-apps/current-work/#figure0">figure</a></code> element. 
+
+                <dd>Where <a href="http://www.whatwg.org/specs/web-apps/current-work/#strictly">
+                strictly inline-level content</a> is allowed.
+
+                <dt>Content model: 
+
+                <dd>When used as the child of a 
+                <code><a href="http://www.whatwg.org/specs/web-apps/current-work/#figure0">figure</a></code>
+                element, or, when used as a 
+                <em><code><a href="http://www.whatwg.org/specs/web-apps/current-work/#figure0">figure</a></code> fallback 
+                <code><a href="#audio">audio</a></code></em>: zero or more 
+                <a href="http://www.whatwg.org/specs/web-apps/current-work/#block-level1">block-level elements</a> 
+                or a single
+                <code><a href="#audio">audio</a></code> element, which is then considered to be a
+                <em><code><a href="http://www.whatwg.org/specs/web-apps/current-work/#figure0">figure</a></code> fallback 
+                <code><a href="#audio">audio</a></code></em>.
+
+                <dd>Otherwise:
+                <a href="http://www.whatwg.org/specs/web-apps/current-work/#inline-level1"> inline-level content</a>.
+
+                <dt>Element-specific attributes: 
+                        <dd><code title="attr-media-src"><a href="#attr-src">src</a></code> (required) 
+                        <dd><code title="attr-media-type"><a href="#attr-type">type</a></code>
+                        <dd><code title="attr-media-autoplay"><a href="#attr-autoplay">autoplay</a></code>
+                        <dd><code title="attr-media-controller"><a href="#attr-controller">controller</a></code>
+                        
+                <dt>Predefined classes that apply to this element: 
+                <dd>None. 
+
+                <dt>DOM interface: 
+                <dd> No difference from <code><a href="#html-timed-media-element">HTMLTimedMediaElement</a></code>.
+
+    <p class=note>An instance of <code><a
+     href="#html-audio-element">HTMLAudioElement</a></code> can be obtained using
+     the <code title=dom-audio-constructor><a href="#audio">Audio</a></code> constructor.</p>
+
+        </dl>
+
+        <p>Audio objects have no spatial representation. They are heard and not seen. Otherwise they have 
+        the same API as video objects.</p>
+        
+        <p>The user agent must render only the audio media contained in the resource, regardless of
+        whatever else it might contain. If the source is an MP3 file containing synchronized lyrics, for
+        example, the user agent must render only the audio and not the text.</p>
+
+
+        <p>See below for definitions of 
+                <code title="attr-media-src"><a href="#attr-src">src</a></code>,
+                <code title="attr-media-type"><a href="#attr-type">type</a></code>,
+                <code title="attr-media-autoplay"><a href="#attr-autoplay">autoplay</a></code>, and
+                <code title="attr-media-controller"><a href="#attr-controller">controller</a></code>
+        </p>
+
+        <p class="big-issue">Need some words about using only audio when media file has both audio and 
+        video.</p>
+
+
+<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+        <h3 id=the-common-attributes><span class=secno>2.3.</span> Attributes common to the
+        <code title=element-video>video</code> and <code title=element-audio>audio</code> elements</h3>
+
+        <h5 id=common-element-attributes><span class=secno>2.3.1.</span> 
+        Element attributes common to <code title=element-video>video</code> and 
+        <code title=element-audio>audio</code> elements.</h5>
+
+        <p>The <dfn id="attr-src" title="attr-media-src"><code>src</code></dfn> attribute
+        must contain the URI (or IRI) of the media resource.
+        
+        <p>When the src attribute is set and the specified resource has a supported type, the user agent
+        must prepare to present it according to the appropriate transfer protocol. This may entail the
+        initiation of network sessions, including but not limited to file transfers. If the presentation
+        of timed media by the user agent has been disabled, if the resource has an unsupported type, or
+        if the preparations for its presentation fail either because of a protocol failure or because
+        the format of the media is unrecognized, the user agent must fire an error event on the element
+        and display the element's fallback content, if available.</p>
+
+        <p>The user agent may choose to proceed with the presentation of media that it can render
+        only partially, for any of the following reasons:
+
+        <ul>
+                <li> A media type is not supported, i.e. the resource contains one or more renderable substreams
+                of types not supported by the user agent.  Example: a 3GPP file with timed text on a device that
+                does not have a text renderer.
+
+                <li> A media format is not supported, i.e. a renderable substream of a type that's supported by
+                the user agent contains media that can't be decoded. Example: a user agent that supports only
+                H.264 at baseline profile encounters an MPEG-4 file with a video track with H.264 frames encoded
+                in main profile.
+
+                <li> Media can't be rendered under current constraints. Here there's no problem with media types
+                or formats but the resource can't be rendered anyway, possibly temporarily. Example: a user
+                agent that can decode only one H.264 video stream at a time is requested to decode multiple
+                streams simultaneously.
+        </ul>
+
+        <p>From the user's perspective, these cases look very much the same because their only obvious
+        symptom is that some or all of the media cannot be rendered. In this case, the user agent may emit
+        a <code title=event-mediarendererror><a href="#eventdef-event-mediarendererror">mediarendererror</a></code>.
+
+        <p>The <dfn id=attr-type title=attr-media-type><code>type</code></dfn>
+        attribute, if present, gives the MIME type of the media resource specified 
+        by <code title="attr-media-src"><a href="#attr-src">src</a></code>. This attribute is optional 
+        but recommended as it allows the user agent to avoid loading  information for unsupported 
+        content types. The value must be a valid MIME type <a href="#refsRFC2046">
+        [RFC2046]</a>, optionally with parameters indicating the codec(s) required to render the content
+        <a href="#refsRFC4281">[RFC4281]</a>. The <code title=attr-media-type>type</code> attribute 
+        is purely advisory and is only intended for static fallback, it is only considered when deciding
+        whether to initiate a load or not.</p>
+
+        <p>The <code title=attr-media-type>type</code> attribute can thus be used by the page author 
+        to select different content for different user agent configurations. For the following example:
+<pre >
+&lt;video src="big_264.mp4" type="video/mp4; codecs=mp4v.21.3"&gt;
+    &lt;video src="medium.mp4" type="video/mp4; codecs=mp4v.20.9"&gt;
+        &lt;img src="small.png" alt="alternate image for non-video browsers /&gt;
+    &lt;/video&gt;
+&lt;/video&gt;
+</pre>
+
+        <p>the user agent would choose the outmost &lt;video&gt; if it supports H.264 visual simple profile
+        level 1, else the inner &lt;video&gt; if it suports MPEG-4 visual simple profile level 0, else the 
+        &lt;img&gt; if it supports PNG, else the alternate text.
+
+        <p>Because the supportability and desirability of media container formats and media encoding
+        formats vary widely according to the needs and constraints of user agents, the process of static
+        fallback for HTML timed media elements allows the user agent to examine multiple descriptive
+        attributes that indicate the suitability of a given resource for loading and presentation.
+
+        <ol>
+                <li> Examine the <code title=attr-media-type><a href="#attr-type">type</a></code> attribute,
+                if present. If not present proceed to step 2.
+        
+                If the <code title=attr-media-type><a href="#attr-type">type</a></code>, optionally including
+                information about the codec(s) required to render it as described in RFC 4281, is not supported
+                by the user agent, the element doesn't represent anything except what its contents
+                represent and static fallback may ensue. <a href="#refsRFC4281">[RFC4281]</a>
+        
+                <li> Begin a load of the resource specified by the 
+                <code title=attr-media-src><a href="#attr-src">src</a></code> attribute. Note that dynamic 
+                fallback may ensue for a variety of reasons. See the discussion of 
+                "<code title=event-mediarendererror><a href="#eventdef-event-mediarendererror">mediarendererror</a></code>"
+                below.
+        </ol>
+
+        <p class="big-issue">Should there be other advisory markup attributes in order to describe
+        content even more precisely, e.g. dataRate? Should CSS Media Queries be extended to support 
+        bandwidth?
+
+        <p>The <dfn id=attr-autoplay title=attr-media-autoplay><code>autoplay</code></dfn> attribute is a 
+        <a href="http://www.whatwg.org/specs/web-apps/current-work/#boolean0">boolean attribute</a>.
+        If the attribute is present, the user agent must begin playing the element as soon as it 
+        estimates that playback will not be interrupted to rebuffer.</p>
+
+        <p>The <dfn id=attr-controller title=attr-media-controller><code>controller</code></dfn> attribute is a 
+        <a href="http://www.whatwg.org/specs/web-apps/current-work/#boolean0">boolean attribute</a>.
+        If the attribute is present, the user agent must display a user interface which allows the user
+        to control the media element. The <code title="attr-video-height"><a href="#attr-height">height</a></code> 
+        attribute on the element does not include the size of the controller, it is the size of the 
+        video element only. 
+        <span class="big-issue">Should we specify the position of the controller?</span>
+        <span class="big-issue">Should we specify <em>what</em> controls it should have?</span>
+        </p>
+
+        <p>The <code title=element-video><a href="#video">video</a></code>
+        and <code title=element-audio><a href="#audio">audio</a></code>
+        elements must implement the <code><a href="#html-timed-media-element">HTMLTimedMediaElement</a></code> interface:
+        
+
+<pre class="idl">interface <dfn id="html-timed-media-element">HTMLTimedMediaElement : HTMLElement</dfn> {
+           attribute DOMString <a href="#dom-src" title="dom-media-src">src</a>;
+           attribute DOMString <a href="#dom-type" title="dom-media-type">type</a>;
+
+  // <a href="#time-attributes">Time</a>
+           attribute float <a href="#starttime" title="dom-media-starttime">startTime</a>;
+           attribute float <a href="#endtime" title="dom-media-endtime">endTime</a>;
+           attribute float <a href="#currenttime" title="dom-media-currenttime">currentTime</a>;
+  readonly attribute float <a href="#duration" title="dom-media-duration">duration</a>;
+  readonly attribute float <a href="#availableduration" title="dom-media-availableduration">availableDuration</a>;
+
+  // <a href="#playback-attributes">Playback</a>
+           attribute float <a href="#currentrate" title="dom-media-currentrate">currentRate</a>;
+           attribute float <a href="#playrate" title="dom-media-playrate">playRate</a>;
+           attribute boolean <a href="#ispaused" title="dom-media-ispaused">isPaused</a>;
+
+  void <a href="#play" title="dom-media-play">play</a>();
+  void <a href="#pause" title="dom-media-pause">pause</a>();
+  void <a href="#step" title="dom-media-step">step</a>(in long numberOfFrames);
+
+  // <a href="#audio-attributes">Audio</a>
+           attribute float <a href="#volume" title="dom-media-volume">volume</a>;
+           attribute boolean <a href="#muted" title="dom-media-muted">muted</a>;
+ 
+  // <a href="#looping-attributes">Looping</a>
+           attribute long <a href="#loopcount" title="dom-media-loopcount">loopCount</a>;
+           attribute long <a href="#currentloop" title="dom-media-currentloop">currentLoop</a>;
+           attribute float <a href="#loopstarttime" title="dom-media-loopstarttime">loopStartTime</a>;
+           attribute float <a href="#loopendtime" title="dom-media-loopendtime">loopEndTime</a>;
+
+  // <a href="#characteristics-attributes">Characteristics</a>
+           attribute boolean <a href="#hasaudio" title="dom-media-hasaudio">hasAudio</a>;
+           attribute boolean <a href="#hasvisual" title="dom-media-hasvisual">hasVisual</a>;
+
+  // <a href="#state-attributes">State</a>
+  const unsigned short <a href="#uninitialized" title="dom-media-UNINITIALIZED">UNINITIALIZED</a> = 0;
+  const unsigned short <a href="#error" title="dom-media-ERROR">ERROR</a> = 1;
+  const unsigned short <a href="#understandable" title="dom-media-UNDERSTANDABLE">UNDERSTANDABLE</a> = 2;
+  const unsigned short <a href="#presentable" title="dom-media-PRESENTABLE">PRESENTABLE</a> = 3;
+  const unsigned short <a href="#playable" title="dom-media-PLAYABLE">PLAYABLE</a> = 4;
+  const unsigned short <a href="#playthroughok" title="dom-media-PLAYTHROUGHOK">PLAYTHROUGHOK</a> = 5;
+  const unsigned short <a href="#loaded" title="dom-media-LOADED">LOADED</a> = 6;
+
+  readonly attribute long <a href="#mediastatus" title="dom-media-mediastatus">mediaStatus</a>;
+
+  // <a href="#time-triggers">Timed triggers</a>
+  void <a href="#settimetrigger" title="dom-media-settimetrigger">setTimeTrigger</a>(in float time, in TimeTriggerListener listener);
+  void <a href="#removetimetrigger" title="dom-media-removetimetrigger">removeTimeTrigger</a>(in float time, in TimeTriggerListener listener);
+
+};</pre> 
+
+<pre class="idl">interface <dfn id="time-trigger-listener">TimeTriggerListener</dfn> {
+  void <a href="#handletimetrigger" title="timetrigger-listener-handletimetrigger">handleTimeTrigger</a>(in float time);
+};</pre> 
+
+
+        <h5 id=common-dom-attributes><span class=secno>2.3.2.</span> 
+        DOM attributes and methods common to <code title=element-video>video</code> and 
+        <code title=element-audio>audio</code> elements.</h5>
+
+        <p>The DOM attributes <dfn id=dom-src title=dom-media-src><code>src</code></dfn> 
+        and <dfn id=dom-type title=dom-media-type><code>type</code></dfn> 
+        each must reflect the respective content attributes of the same name.
+
+        <p>When the <code title=dom-media-src><a href="#dom-src">src</a></code>
+        attribute is set, the user agent must immediately begin to download the
+        specified resource unless the user agent cannot support <code title=element-video>
+        video</code>/<code title=element-audio>audio</code>, or its support for 
+        <code title=element-video>video</code>/<code title=element-audio>audio</code> has
+        been disabled. The <code title=dom-media-type>type</code>
+        attribute is considered at this time, so it should be cleared or reset when the
+        <code title=dom-media-src><a href="#dom-src">src</a></code> attribute it set to a media
+        resource with a different type. Fallback content must be reconsidered if the
+        user agent is unable to load and display the specified resource.
+        
+        
+        <h6 id="time-attributes"><span class=secno>2.3.2.1.</span> Time Attributes</h6>
+
+                <p>Media durations are not always finite. For example: the duration of a "live" RTP stream
+                is <em>indefinite</em> as long as it lasts, i.e. such streams typically proceed indefinitely
+                without signalling their duration until the server closes the session. </p>
+                
+                <p>A media resource which has a <em>finite</em> duration may not have a <em>known</em>
+                duration, or may not have a precisely known duration, for some period of time even after
+                playback can be initiated. For example: MPEG elementary streams, including audio elementary
+                streams such as MP3 files, must be completely scanned in order to determine their precise
+                duration. If a user agent reports an approximate duration, it must fire a 
+                <code title=event-durationchange><a href="#durationchange">durationchange</a></code> event 
+                when the estimate is refined or the precise duration becomes known.</p>
+
+                <p>Time values are represented as floating point numbers, representing a length of time in
+                seconds. A value of +infinity, ECMAScript <code>Number.POSITIVE_INFINITY</code>, signifies
+                an "indefinite" time. A time value of "Not A Number", ECMAScript <code>Number.NaN</code>,
+                signifies an unknown or unspecified time value. This approach has the advantage of encouraging 
+                script writers to cope with these situations, as opposed to the approach of defining other
+                attributes that need to be examined to determine the validity of the duration attribute but
+                which are easily ignored.</p>
+
+                <p class="big-issue">It would be helpful to have utility functions to convert from a formatted
+                time string to a double and back. Where should these go?</p>
+        
+                <p>The DOM attribute <dfn id=availableduration title=dom-media-availableduration>
+                <code>availableDuration</code></dfn> returns the duration of the portion of media which is 
+                available for playing. The user agent must fire an
+                <code title=event-availabledurationchange><a href="#availabledurationchange">availabledurationchange</a></code>
+                when the portion of media available for playing changes.</p>
+
+                <p>The DOM attribute <dfn id=duration title=dom-media-duration><code>duration</code></dfn> 
+                returns the total duration of the complete media file. For some media formats, the value 
+                returned may be an estimate. When an estimated duration is returned, the user agent will
+                fire a <code title=event-durationchange><a href="#durationchange">durationchange</a></code>
+                event when the estimate is refined or the precise duration becomes known.</p>
+
+                <p>The DOM attribute <dfn id=starttime title=dom-media-starttime><code>startTime</code></dfn> 
+                gets and sets the time at which a movie begins to play, and the time at which it stops
+                when playing in reverse. The initial value is 0. The value must be in the range from 0
+                to <code title=dom-media-endtime><a href="#endtime">endTime</a></code>. If the attribute is
+                set to a value greater than <code title=dom-media-endtime><a href="#endtime">endTime</a></code>,
+                it is clipped to <code title=dom-media-endtime><a href="#endtime">endTime</a></code>.
+                <span class="big-issue">Or should it retain the previous value???</span>
+                </p>
+
+                <p>The DOM attribute <dfn id=endtime title=dom-media-endtime><code>endTime</code></dfn> 
+                gets and sets the time at which a movie stops playing, and the time at which it begins when
+                playing in reverse. This attribute is initially set to <code>Number.NaN</code> to signal
+                that it has not been set. The value must be in the range from
+                <code title=dom-media-starttime><a href="#starttime">startTime</a></code> to 
+                <code title=dom-media-duration><a href="#duration">duration</a></code>. If the attribute
+                is set to a value outside this range, it is clipped to the nearest legal value.
+                <span class="big-issue">Or should it retain the previous value???</span>
+                </p>
+
+                <p>The DOM attribute <dfn id=currenttime title=dom-media-currentTime><code>currentTime</code></dfn>
+                gets and sets the position of the play head in the media element's timeline.</p>
+        
+        <h6 id="playback-attributes"><span class=secno>2.3.2.2.</span> Playback Attributes</h6>
+                <p>The DOM attribute <dfn id=currentrate title=dom-media-currentrate><code>currentRate</code></dfn> 
+                is the rate at which a media element is currently playing.</p>
+        
+                <p>The DOM attribute <dfn id=playrate title=dom-media-playrate><code>playRate</code></dfn>
+                is the rate that is implicitly set on a media element when its play() method is invoked.
+                Some media formats do not allow the play rate to be changed, for example a live RTP stream.
+                <span class="big-issue"> What should the UA do when someone tries to set the rate on a media
+                format that doesn't allow it? Should we specify the behavior?</span> This value is
+                initialized to the media resource's intrinsic value, eg. the <a href=
+                "http://developer.apple.com/documentation/QuickTime/QTFF/QTFFChap2/chapter_3_section_2.html#//apple_ref/doc/uid/TP40000939-CH204-32947">
+                <code>"preferred rate"</code></a> of a QuickTime movie, or 1 if there is no
+                intrinsic value. Changing the <code title=dom-media-playrate>playRate</code> when an element
+                is already playing shall <em>not</em> change the 
+                <code title=dom-media-currentrate>currentRate</code>. The rate change does not take effect until
+                the <code title=dom-media-play>play()</code> method is called again.</p>
+        
+                <p>The DOM attribute <dfn id=ispaused title=dom-media-ispaused><code>isPaused</code></dfn> 
+                returns a value that specifies whether the element is in a paused state. An element that
+                is not paused may have a rate of 0 if it is prerolling. <span class="big-issue">This
+                should be clarified</span></p>
+        
+                <p>The <dfn id=play title=dom-media-play><code>play()
+                </code></dfn> method begins playing the element at the <code title=dom-media-playrate>
+                <a href="#playrate">playRate</a></code>. </p>
+        
+                <p>The <dfn id=pause title=dom-media-pause><code>pause()</code></dfn> method sets the 
+                play rate to zero.</p>
+        
+                <p>The <dfn id=step title=dom-media-step><code>step(<var title="">numberOfFrames</var>)
+                </code></dfn> method steps the specified number of frames. Negative values step backwards.</p>
+
+        <h6 id="audio-attributes"><span class=secno>2.3.2.3.</span> Audio Attributes</h6>
+                <p>The DOM attribute <dfn id=volume title=dom-media-volume><code>volume</code></dfn> 
+                gets and sets the audio volume of the movie. Legal values are between '0' and '100',
+                values outside of this range are clipped.</p>
+        
+                <p>The DOM attribute <dfn id=muted title=dom-media-muted><code>muted</code></dfn> 
+                gets and sets a value that indicates whether the audio is turned on or off.</p>
+
+        <h6 id="looping-attributes"><span class=secno>2.3.2.4.</span> Looping Attributes</h6>
+
+                <p>The DOM attribute <dfn id=loopcount title=dom-media-loopcount><code>loopCount</code></dfn> 
+                gets and sets the number of loop itterations that will be played before the media stops.</p>
+
+                <p>The DOM attribute <dfn id=currentloop title=dom-media-currentloop><code>currentLoop</code></dfn> 
+                returns the index of the current itteration of the playback of the media. For example, on the 
+                first play through the value will be 0, the second time through it will be 1, etc. Playback
+                stops when <code title=dom-media-currentloop><a href="#currentloop">currentloop</a></code>
+                equals <code title=dom-media-loopcount><a href="#loopcount">loopCount</a></code>.</p>
+
+                <p>The DOM attribute <dfn id=loopstarttime title=dom-media-loopstarttime><code>loopStartTime</code></dfn> 
+                gets and sets the time at which a movie begins to play after looping, and the time at which
+                it loops when playing in reverse. The initial value is 0. The value must be in the range from 0
+                to <code title=dom-media-loopendtime><a href="#loopendtime">loopEndTime</a></code>.
+                If the attribute is set to a value outside this range, it is clipped to the nearest legal value. 
+                <span class="big-issue">Or should it retain the previous value???</span>
+                </p>
+
+                <p>The DOM attribute <dfn id=loopendtime title=dom-media-loopendtime><code>loopEndTime</code></dfn> 
+                gets and sets the time at which a movie loops, and the time at which it begins to play 
+                after looping when playing in reverse. This attribute is initially set to <code>Number.NaN</code> 
+                to signal that it has not been set. The value must be in the range from the
+                <code title=dom-media-loopstarttime><a href="#loopstarttime">loopStartTime</a></code>
+                to <code title=dom-media-duration><a href="#duration">duration</a></code>. If the attribute
+                is set to a value outside this range, it is clipped to the nearest legal value.
+                <span class="big-issue">Or should it retain the previous value???</span>
+                </p>
+
+        <h6 id="characteristics-attributes"><span class=secno>2.3.2.5.</span> Characteristics</h6>
+                <p>The DOM attribute <dfn id=hasaudio title=dom-media-hasaudio><code>hasAudio</code></dfn> 
+                returns a value that specifies whether the element has audio media.</p>
+
+                <p>The DOM attribute <dfn id=hasvisual title=dom-media-hasvisual><code>hasVisual</code></dfn> 
+                returns a value that specifies whether the element can draw on the screen. An 
+                <code title=element-audio><a href="#audio">audio</a></code> element whose 
+                <code title="attr-media-src">src</code>
+                attribute specifies a media resource that contains visual media shall return false since
+                the visual media will not be rendered.</p>
+
+        <h6 id="state-attributes"><span class=secno>2.3.2.6.</span> State</h6>
+                <p>The DOM attribute <dfn id=mediastatus title=dom-media-mediastatus><code>mediaStatus</code></dfn> 
+                returns the current state of the media element taking into consideration its current loading
+                progress and its playability. As loading progresses and playability changes, appropriate
+                events (e.g., "mediaunderstandable", "mediapresentable", "load") should be fired. However,
+                as it may be necessary to know the current state of the media element after state
+                transitions have already occurred, the mediaStatus attribute can be retrieved to know the
+                media element's current status.</p>
+                
+                <p>When the element is created the attribute must be set to 0. It can have the following
+                values:</p>
+
+                <dl>
+                        <dt>0 <dfn id=uninitialized title=dom-media-UNINITIALIZED><code>UNINITIALIZED</code></dfn> 
+                                <dd>The initial value.
+
+                        <dt>1 <dfn id=error title=dom-media-ERROR><code>ERROR</code></dfn> 
+                                <dd>This playability state indicates that some kind of error has occurred (which
+                                should also be signaled by an error event). One reason this state might be set is
+                                that the media file is invalid.
+
+                        <dt>2 <dfn id=understandable title=dom-media-UNDERSTANDABLE><code>UNDERSTANDABLE</code></dfn> 
+                                <dd>Attributes of the media element are now available for retrieval (e.g.,
+                                <code title=dom-media-duration><a href="#duration">duration</a></code>). It however 
+                                has not reached a state where it can render anything (e.g., an image if the media
+                                type is visual) or an attempt to play the content should be made.
+
+                        <dt>3 <dfn id=presentable title=dom-media-PRESENTABLE><code>PRESENTABLE</code></dfn> 
+                                <dd>The media element has loaded sufficient media data to render at the current time
+                                (e.g., it can render the video frame at the current time). It has not however loaded
+                                sufficient media data so that setting the 
+                                <code title=dom-media-currentrate><a href="#currentrate">currentRate</a></code>
+                                property to a non-zero value will render anything (video or audio) more.
+
+                        <dt>4 <dfn id=playable title=dom-media-PLAYABLE><code>PLAYABLE</code></dfn> 
+                                <dd>The media element has loaded sufficient media data so that if the play rate was
+                                set to a non-zero value, time will advance.
+
+                        <dt>5 <dfn id=playthroughok title=dom-media-PLAYTHROUGHOK><code>PLAYTHROUGHOK</code></dfn> 
+                                <dd>The media element has loaded sufficient media data and playback conditions
+                                (e.g., download rates, data rate of the media, playback rate) should allow for
+                                uninterrupted playback (i.e., no stalls) if the current playback rate is set to the
+                                value of playbackRate.
+
+                        <dt>6 <dfn id=loaded title=dom-media-LOADED><code>LOADED</code></dfn> 
+                                <dd>All necessary media data for the media element is available (and no data will be
+                                evicted). This is not strictly the same thing as all data for the media element's
+                                file or files is local, only that all data that can be referenced during playback 
+                                will remain available for the life span of the element. To detect if all data 
+                                across the media element's files is available, listen for the load event.
+                </dl>
+
+                <p>The <code title=dom-media-mediastatus><a href="#mediastatus">mediaStatus</a></code>
+                attribute and associated events are useful to an implementor of a custom play controller as
+                they can wait for <code title=dom-media-PLAYTHROUGHOK><a href="#playthroughok">PLAYTHROUGHOK</a></code>
+                or <code title=dom-media-LOADED><a href="#loaded">LOADED</a></code> to know that autoplay may start. Likewise, if
+                during playback, the playback catches up with download, one can pause playback by checking
+                for a state less than <code title=dom-media-PLAYABLE><a href="#playable">PLAYABLE</a></code>.</p>
+
+                <p>The mediaStatus state values are ordered so that as the media becomes more playable, the
+                values increase. An effect of this is that to detect if the current playability allows for
+                querying media properties (i.e., the media element is "understandable"), one can compare the current
+                <code title=dom-media-mediastatus><a href="#mediastatus">mediaStatus</a></code> against 
+                <code title=dom-media-UNDERSTANDABLE><a href="#understandable">UNDERSTANDABLE</a></code>.
+                If equal to or greater than <code title=dom-media-UNDERSTANDABLE><a href="#understandable">UNDERSTANDABLE</a></code>
+                , then properties can be queried. 
+                If less than <code title=dom-media-UNDERSTANDABLE><a href="#understandable">UNDERSTANDABLE</a></code>
+                (including the <code title=dom-media-ERROR><a href="#error">ERROR</a></code> state), 
+                properties should not be requested.</p>
+
+                <p>The following state chart illustrates the possible <code title=dom-media-mediastatus>mediaStatus</code>
+                state transitions.</p>
+        <img src="movie-status-states.png" alt="State chart" />
+
+                <p>It is possible for the states reported by <code title=dom-media-mediastatus><a href="#mediastatus">mediaStatus</a></code>
+                to regress as the result of a seek, a change in network conditions (bandwidth changes or
+                connection drops), changes in play rate/direction, changes in looping, cache unloading, etc.
+                Such changes from any of the presentable/playable states (i.e., 
+                <code title=dom-media-PRESENTABLE><a href="#presentable">PRESENTABLE</a></code>, 
+                <code title=dom-media-PLAYABLE><a href="#playable">PLAYABLE</a></code>,
+                <code title=dom-media-PLAYTHROUGHOK><a href="#playthroughok">PLAYTHROUGHOK</a></code>)
+                may push the media element's current media status to an earlier state,
+                including <code title=dom-media-UNDERSTANDABLE><a href="#understandable">UNDERSTANDABLE</a></code>.
+
+                <p>To accommodate media playback scenarios where previously loaded media data may be evicted
+                during playback (e.g., because of limited caching by the user agent), the 
+                <code title=dom-media-LOADED><a href="#loaded">LOADED</a></code> state (and
+                the firing of the "load" event) may only occur if all data becomes loaded and cannot be
+                evicted during the life of the media element.</p>
+
+
+        <h6 id="time-triggers"><span class=secno>2.3.2.7.</span> Time triggers</h6>
+                <p>The <dfn id=settimetrigger title=dom-media-settimetrigger>
+                <code>setTimeTrigger(<var title="">time</var>, <var title="">listener</var>)</code>
+                </dfn> method registers a callback for when the media element plays through 
+                <var title="">time</var>. <var title="">listener</var> must be an object implementing
+                the <code><a href="#time-trigger-listener">TimeTriggerListener</a></code> interface, or a JavaScript 
+                function.</p>
+        
+        
+                <p>The <dfn id=removetimetrigger title=dom-media-removetimetrigger>
+                <code>removeTimeTrigger(<var title="">time</var>, <var title="">listener</var>)</code>
+                </dfn> method removes a previously registered <code><a href="#time-trigger-listener">
+                TimeTriggerListener</a></code> from a media element.</p>
+
+        <h2 id="events"><span class="secno">3.</span> Events</h2> 
+        
+        <h3 id=load-events><span class=secno>3.1.</span> Media loading events</h3>
+
+        <div class='event-definition'>
+                <dl>
+                        <dt><dfn id=eventdef-event-abort class=event-abort><strong>abort</strong></dfn>
+                        <dd>
+                        <table >
+                                <tr><th><em>Type:</em><td>abort
+                                <tr><th><em>Namespace:</em><td>TBD
+                                <tr><th><em>Interface:</em><td><a href="http://www.w3.org/TR/DOM-Level-3-Events/events.html#Events-Event">Event</a>
+                                <tr><th><em>Cancelable:</em><td>No
+                                <tr><th><em>Bubbles:</em><td>Yes
+                                <tr><th><em>Target:</em><td>Element
+                                <tr><th><em>Context info:</em><td>None
+                        </table>
+                        <p>The <code title=event-abort>abort</code> event is fired when loading of the media
+                        element is canceled.
+                </dl>
+        </div>
+
+        <div class='event-definition'>
+                <dl>
+                        <dt><dfn id=eventdef-event-mediarendererror class=event-mediarendererror><strong>mediarendererror</strong></dfn>
+                        <dd>
+                        <table >
+                                <tr><th><em>Type:</em><td>mediarendererror
+                                <tr><th><em>Namespace:</em><td>TBD
+                                <tr><th><em>Interface:</em><td><a href="http://www.w3.org/TR/DOM-Level-3-Events/events.html#Events-Event">Event</a>
+                                <tr><th><em>Cancelable:</em><td>No
+                                <tr><th><em>Bubbles:</em><td>Yes
+                                <tr><th><em>Target:</em><td>Element
+                                <tr><th><em>Context info:</em><td>None
+                        </table>
+                        <p>The <code title=event-mediarendererror>mediarendererror</code> event is fired if a
+                        non-fatal error occurs during media playback that prevents the media resource from being
+                        completely rendered. For example: media type is not supported, i.e. the resource
+                        contains one or more renderable substreams of types not supported by the user agent; a
+                        media format is not supported, i.e. a renderable substream of a type that's supported by
+                        the user agent contains media that can't be decoded; or media can't be rendered under
+                        current constraints. Here there's no problem with media types or formats but the
+                        resource can't be rendered anyway, possibly temporarily.
+                </dl>
+        </div>
+
+        <div class='event-definition'>
+                <dl>
+                        <dt><dfn id=eventdef-event-error class=event-error><strong>error</strong></dfn>
+                        <dd>
+                        <table >
+                                <tr><th><em>Type:</em><td>error
+                                <tr><th><em>Namespace:</em><td>TBD
+                                <tr><th><em>Interface:</em><td><a href="http://www.w3.org/TR/DOM-Level-3-Events/events.html#Events-Event">Event</a>
+                                <tr><th><em>Cancelable:</em><td>No
+                                <tr><th><em>Bubbles:</em><td>Yes
+                                <tr><th><em>Target:</em><td>Element
+                                <tr><th><em>Context info:</em><td>None
+                        </table>
+                        <p>The <code title=event-error>error</code> event is fired if an error occurs during
+                        the loading of the media element. This event should not be fired if the loading was
+                        canceled; the abort error should be fired in that case.
+                </dl>
+        </div>
+
+        <div class='event-definition'>
+                <dl>
+                        <dt><dfn id=eventdef-event-load class=event-load><strong>load</strong></dfn>
+                        <dd>
+                        <table >
+                                <tr><th><em>Type:</em><td>load
+                                <tr><th><em>Namespace:</em><td>TBD
+                                <tr><th><em>Interface:</em><td><a href="http://www.w3.org/TR/DOM-Level-3-Events/events.html#Events-Event">Event</a>
+                                <tr><th><em>Cancelable:</em><td>No
+                                <tr><th><em>Bubbles:</em><td>No
+                                <tr><th><em>Target:</em><td>Element
+                                <tr><th><em>Context info:</em><td>None
+                        </table>
+                        <p>The <code title=event-load>load</code> event is fired when the media resource is
+                        completely loaded by the client. It should only be fired if the data will remain
+                        available for the life span of the element. Video and audio elements should be
+                        excluded from consideration for the document "load" event.
+                </dl>
+        </div>
+<code title=event-load><a href=#eventdef-event-load">load</a></code>
+        <div class='event-definition'>
+                <dl>
+                        <dt><dfn id=eventdef-event-ratechange class=event-ratechange><strong>ratechange</strong></dfn>
+                        <dd>
+                        <table >
+                                <tr><th><em>Type:</em><td>ratechange
+                                <tr><th><em>Namespace:</em><td>TBD
+                                <tr><th><em>Interface:</em><td><a href="http://www.w3.org/TR/DOM-Level-3-Events/events.html#Events-Event">Event</a>
+                                <tr><th><em>Cancelable:</em><td>No
+                                <tr><th><em>Bubbles:</em><td>No
+                                <tr><th><em>Target:</em><td>Element
+                                <tr><th><em>Context info:</em><td>None
+                        </table>
+                        <p>The <code title=event-ratechange>ratechange</code> event is fired soon after the 
+                        <code title=dom-media-currentrate><a href="#currentrate">currentRate</a></code> property 
+                        is changed from its previous value. Inspect the object's currentRate property for the new rate
+                        value. To detect that playback is starting, check that the new 
+                        <code title=dom-media-currentrate><a href="#currentrate">currentRate</a></code> is
+                        non-zero; to detect that playback has paused, check that the new 
+                        <code title=dom-media-currentrate><a href="#currentrate">currentRate</a></code> is zero (0).
+                </dl>
+        </div>
+
+        <div class='event-definition'>
+                <dl>
+                <dt><dfn id=eventdef-event-volumechange class=event-volumechange><strong>volumechange</strong></dfn>
+                        <dd>
+                        <table >
+                                <tr><th><em>Type:</em><td>volumechange
+                                <tr><th><em>Namespace:</em><td>TBD
+                                <tr><th><em>Interface:</em><td><a href="http://www.w3.org/TR/DOM-Level-3-Events/events.html#Events-Event">Event</a>
+                                <tr><th><em>Cancelable:</em><td>No
+                                <tr><th><em>Bubbles:</em><td>No
+                                <tr><th><em>Target:</em><td>Element
+                                <tr><th><em>Context info:</em><td>None
+                        </table>
+                        <p>The <code title=event-volumechange>volumechange</code> event is fired after either
+                        the <code title=dom-media-volume><a href="#volume">volume</a></code>
+                        or the <code title=dom-media-muted><a href="#muted">muted</a></code> property has changed from its
+                        previous value. Inspect the object's properties for the new value.
+                </dl>
+        </div>
+
+        <div class='event-definition'>
+                <dl>
+                <dt><dfn id=eventdef-event-durationchange class=event-durationchange><strong>durationchange</strong></dfn>
+                        <dd>
+                        <table >
+                                <tr><th><em>Type:</em><td>durationchange
+                                <tr><th><em>Namespace:</em><td>TBD
+                                <tr><th><em>Interface:</em><td><a href="http://www.w3.org/TR/DOM-Level-3-Events/events.html#Events-Event">Event</a>
+                                <tr><th><em>Cancelable:</em><td>No
+                                <tr><th><em>Bubbles:</em><td>No
+                                <tr><th><em>Target:</em><td>Element
+                                <tr><th><em>Context info:</em><td>None
+                        </table>
+                        <p>The <code title=event-durationchange>durationchange</code> event is fired if the 
+                        <code title=dom-media-duration><a href="#duration">duration</a></code>
+                        property of the media element changes. One reason this might occur is when the 
+                        <code title=dom-media-duration><a href="#duration">duration</a></code> for the media element
+                        which was previously estimated becomes known during loading. It might change for 
+                        other reasons that are not defined here.
+                </dl>
+        </div>
+
+        <div class='event-definition'>
+                <dl>
+                <dt><dfn id=eventdef-event-availabledurationchange class=event-availabledurationchange><strong>availabledurationchange</strong></dfn>
+                        <dd>
+                        <table >
+                                <tr><th><em>Type:</em><td>availabledurationchange
+                                <tr><th><em>Namespace:</em><td>TBD
+                                <tr><th><em>Interface:</em><td><a href="http://www.w3.org/TR/DOM-Level-3-Events/events.html#Events-Event">Event</a>
+                                <tr><th><em>Cancelable:</em><td>No
+                                <tr><th><em>Bubbles:</em><td>No
+                                <tr><th><em>Target:</em><td>Element
+                                <tr><th><em>Context info:</em><td>None
+                        </table>
+                        <p>The <code title=event-availabledurationchange>availabledurationchange</code> 
+                        event is fired if the <code title=dom-media-availableduration><a href="#availableduration">availableduration</a></code>
+                        property of the media element changes. One reason this might occur is during progressive
+                        download as more media is downloaded. It might change for other reasons that are not
+                        defined here. 
+                </dl>
+                <p class="big-issue">How often should the availabledurationchange event fire? Too often and we
+                waste a lot of cycles, too infrequently and the UI can get out of sync with reality.
+                Specifying a minimum time interval, eg. "at least once a second", is wasteful in a long file
+                when the play head is not near the available duration, but useful when the two are close...
+                </p>
+        </div>
+
+        <div class='event-definition'>
+                <dl>
+                <dt><dfn id=eventdef-event-loop class=event-loop><strong>loop</strong></dfn>
+                        <dd>
+                        <table >
+                                <tr><th><em>Type:</em><td>loop
+                                <tr><th><em>Namespace:</em><td>TBD
+                                <tr><th><em>Interface:</em><td><a href="http://www.w3.org/TR/DOM-Level-3-Events/events.html#Events-Event">Event</a>
+                                <tr><th><em>Cancelable:</em><td>No
+                                <tr><th><em>Bubbles:</em><td>No
+                                <tr><th><em>Target:</em><td>Element
+                                <tr><th><em>Context info:</em><td>None
+                        </table>
+                        <p>The <code title=event-loop>loop</code> event is fired when the media is playing 
+                        through a loop prior to its final loop according to its <code title=dom-media-loopcount>
+                        <a href="#loopcount">loopCount</a></code>.
+                </dl>
+        </div>
+
+        <div class='event-definition'>
+                <dl>
+                <dt><dfn id=eventdef-event-playcomplete class=event-playcomplete><strong>playcomplete</strong></dfn>
+                        <dd>
+                        <table >
+                                <tr><th><em>Type:</em><td>playcomplete
+                                <tr><th><em>Namespace:</em><td>TBD
+                                <tr><th><em>Interface:</em><td><a href="http://www.w3.org/TR/DOM-Level-3-Events/events.html#Events-Event">Event</a>
+                                <tr><th><em>Cancelable:</em><td>No
+                                <tr><th><em>Bubbles:</em><td>No
+                                <tr><th><em>Target:</em><td>Element
+                                <tr><th><em>Context info:</em><td>None
+                        </table>
+                        <p>The <code title=event-playcomplete>playcomplete</code> event is fired when the element
+                        automatically stops playback because it reaches the limit of playback (i.e., the value of the 
+                        <code title=dom-media-endtime><a href="#endtime">endTime</a></code>
+                        property if playing forward, <code title=dom-media-starttime><a href="#starttime">startTime</a></code>
+                        if playing backward) and the media is playing through its final repetition, according to its
+                        <code title=dom-media-loopcount><a href="#loopcount">loopCount</a></code>.
+                </dl>
+        </div>
+
+        <div class='event-definition'>
+                <dl>
+                <dt><dfn id=eventdef-event-timejump class=event-timejump><strong>timejump</strong></dfn>
+                        <dd>
+                        <table >
+                                <tr><th><em>Type:</em><td>timejump
+                                <tr><th><em>Namespace:</em><td>TBD
+                                <tr><th><em>Interface:</em><td><a href="http://www.w3.org/TR/DOM-Level-3-Events/events.html#Events-Event">Event</a>
+                                <tr><th><em>Cancelable:</em><td>No
+                                <tr><th><em>Bubbles:</em><td>No
+                                <tr><th><em>Target:</em><td>Element
+                                <tr><th><em>Context info:</em><td>None
+                        </table>
+                        <p>The <code title=event-timechange>timechange</code> event is fired when the media element's 
+                        current time changes by any other means than playback at the current rate. This can be either by an explicit
+                        change to the <code title=dom-media-currenttime><a href="#currenttime">currentTime</a></code>
+                        property (e.g., under script control) or by any other means than playback at the current rate. 
+                        In other words, this event is not fired during play back but is fired if the 
+                        <code title=dom-media-currenttime><a href="#currenttime">currentTime</a></code> 
+                        property is explicitly changed. Setting the <code title=dom-media-currenttime>
+                        <a href="#currenttime">currentTime</a></code> to its current value shall not fire the timechange event.
+                </dl>
+        </div>
+
+
+        <h3 id=playback-events><span class=secno>3.2.</span> Media playback events</h3>
+        <div class='event-definition'>
+                <dl>
+                <dt><dfn id=eventdef-event-mediaunderstandable class=event-mediaunderstandable><strong>mediaunderstandable</strong></dfn>
+                        <dd>
+                        <table >
+                                <tr><th><em>Type:</em><td>mediaunderstandable
+                                <tr><th><em>Namespace:</em><td>TBD
+                                <tr><th><em>Interface:</em><td><a href="http://www.w3.org/TR/DOM-Level-3-Events/events.html#Events-Event">Event</a>
+                                <tr><th><em>Cancelable:</em><td>No
+                                <tr><th><em>Bubbles:</em><td>No
+                                <tr><th><em>Target:</em><td>Element
+                                <tr><th><em>Context info:</em><td>None
+                        </table>
+                        <p>The <code title=event-mediaunderstandable>mediaunderstandable</code> event is 
+                        fired when the element's <code title=dom-media-mediastatus>
+                        <a href="#mediastatus">mediaStatus</a></code> transitions to or
+                        past the UNDERSTANDABLE state. This indicates that attributes of the object that are
+                        dependent upon the media resource or the loading of the resource (e.g., 
+                        <code title=dom-media-duration><a href="#duration">duration</a></code>,
+                        <code title=dom-media-availableduration><a href="#availableduration">availableDuration</a></code>,
+                        <code title=dom-media-hasaudio><a href="#hasaudio">hasAudio</a></code>, etc)
+                        can be retrieved. The UNDERSTANDABLE state does not
+                        indicate that the element can render anything (e.g., drawing a frame if the media 
+                        is visual or decoding audio if it has audio).
+                </dl>
+        </div>
+
+        <div class='event-definition'>
+                <dl>
+                <dt><dfn id=eventdef-event-mediapresentable class=event-mediapresentable><strong>mediapresentable</strong></dfn>
+                        <dd>
+                        <table >
+                                <tr><th><em>Type:</em><td>mediapresentable
+                                <tr><th><em>Namespace:</em><td>TBD
+                                <tr><th><em>Interface:</em><td><a href="http://www.w3.org/TR/DOM-Level-3-Events/events.html#Events-Event">Event</a>
+                                <tr><th><em>Cancelable:</em><td>No
+                                <tr><th><em>Bubbles:</em><td>No
+                                <tr><th><em>Target:</em><td>Element
+                                <tr><th><em>Context info:</em><td>None
+                        </table>
+                        <p>The <code title=event-mediapresentable>mediapresentable</code> event is fired 
+                        when the element's <code title=dom-media-mediastatus>
+                        <a href="#mediastatus">mediaStatus</a></code> transitions to or past the
+                        the PRESENTABLE state. This indicates that the media object can render something at
+                        the current time (e.g., it can render the video frame at the current time). The
+                        PRESENTABLE state does not however indicate that it has loaded sufficient media so
+                        that setting the <code title=dom-media-currentrate><a href="#currentrate">currentRate</a></code>
+                        property to a non-zero value will render anything more (video or audio).
+
+                </dl>
+        </div>
+
+        <div class='event-definition'>
+                <dl>
+                <dt><dfn id=eventdef-event-mediaplayable class=event-mediaplayable><strong>mediaplayable</strong></dfn>
+                        <dd>
+                        <table >
+                                <tr><th><em>Type:</em><td>mediaplayable
+                                <tr><th><em>Namespace:</em><td>TBD
+                                <tr><th><em>Interface:</em><td><a href="http://www.w3.org/TR/DOM-Level-3-Events/events.html#Events-Event">Event</a>
+                                <tr><th><em>Cancelable:</em><td>No
+                                <tr><th><em>Bubbles:</em><td>No
+                                <tr><th><em>Target:</em><td>Element
+                                <tr><th><em>Context info:</em><td>None
+                        </table>
+                        <p>The <code title=event-mediaplayable>mediaplayable</code> event is fired 
+                        when the element's <code title=dom-media-mediastatus>
+                        <a href="#mediastatus">mediaStatus</a></code> transitions to or past the
+                        PLAYABLE state. This indicates the object has loaded sufficient media data so that
+                        if the <code title=dom-media-currentrate><a href="#currentrate">currentRate</a></code>
+                        is set to a non-zero value, time will advance. An example usage
+                        would be not to allow the play button in a custom movie controller to take effect
+                        unless this state or better has been reached.
+                </dl>
+        </div>
+
+        <div class='event-definition'>
+                <dl>
+                <dt><dfn id=eventdef-event-mediacanplaythrough class=event-mediacanplaythrough><strong>mediacanplaythrough</strong></dfn>
+                        <dd>
+                        <table >
+                                <tr><th><em>Type:</em><td>mediacanplaythrough
+                                <tr><th><em>Namespace:</em><td>TBD
+                                <tr><th><em>Interface:</em><td><a href="http://www.w3.org/TR/DOM-Level-3-Events/events.html#Events-Event">Event</a>
+                                <tr><th><em>Cancelable:</em><td>No
+                                <tr><th><em>Bubbles:</em><td>No
+                                <tr><th><em>Target:</em><td>Element
+                                <tr><th><em>Context info:</em><td>None
+                        </table>
+                        <p>The <code title=event-mediacanplaythrough>mediacanplaythrough</code> event is 
+                        fired when the element's <code title=dom-media-mediastatus>
+                        <a href="#mediastatus">mediaStatus</a></code> transitions to
+                        or past the PLAYTHROUGHOK state. This indicates the object has loaded sufficient
+                        media data and playback conditions (e.g., download rates, data rate of the media,
+                        playback rate) are sufficient to allow for uninterrupted playback (i.e., no stalls)
+                        if the current playback rate is set to the value of <code title=dom-media-playrate>
+                        <a href="#playrate">playRate</a></code>. 
+                </dl>
+        </div>
+
+        <h2 id="window-additions"><span class="secno">4.</span> WindowHTML Additions</h2> 
+
+        <p>The <code><a href="#windowhtml">WindowHTML</a></code> object must
+        provide the following constructors:
+        
+        <dl>
+                <dt><dfn id=audio-constructor title=dom-audio-constructor><code>Audio()</code></dfn>
+                
+                <dd>
+                <p>Constructs an <code><a href="#html-audio-element">
+                HTMLAudioElement</a></code> object (a new <code title=element-audio><a href="#audio">audio</a></code>
+                element).
+
+                <dt><dfn id=video-constructor title=dom-video-constructor><code>Video()</code></dfn>
+                
+                <dt><dfn id=video-constructor-w title=dom-video-constructor-w><code>Video(in unsigned long <var
+                title="">width</var>)</code></dfn>
+                
+                <dt><dfn id=video-constructor-wh title=dom-video-constructor-wh><code>Video(in unsigned long <var
+                title="">width</var>, in unsigned long <var title="">height</var>)</code></dfn>
+        
+                <dd>
+                <p>Constructs an <code><a href="#html-video-element">
+                HTMLVideoElement</a></code> object (a new
+                <code title=element-video><a href="#video">video</a></code> element). If the <var title="">width</var>
+                and <var title="">height</var> arguments are both present, the new object's <code title=video-element-width>
+                <a href="#dom-video-width">width</a></code> and <code title=video-element-height><a href="#dom-video-height">
+                height</a></code> content attributes must be set to <var title="">width</var> and
+                <var title="">height</var>. If only the <var title="">width</var> argument is present,
+                the new object's <code title=video-element-width><a href="#dom-video-width">width</a></code> content
+                attribute must be set to <var title="">width</var> and the <code title=video-element-height>
+                <a href="#dom-video-height">height</a></code> content attribute must be set to a value that 
+                maintains the media resource's intrinsic aspect ratio.
+        </dl>
+
+
+
+        <h2 class=no-num id=references>References</h2>
+
+        <p>All references are normative unless marked "Informative".
+
+        <dl>
+                <dt id=refsCSS21>[CSS21]
+
+                <dd><cite><a href="http://www.w3.org/TR/2006/WD-CSS21-20061106">
+                        Cascading Style Sheets, level 2 revision 1 CSS 2.1 Specification
+                </a></cite>, 
+                H&aring;kon Wium Lie, Tantek &Ccedil;elik, Bert Bos, and Ian Hickson, Editors.
+                World Wide Web Consortium, 06&nbsp;Nov&nbsp;2006.
+                CSS 2.1 Specification is available at http://www.w3.org/TR/2006/WD-CSS21-20061106
+                
+                <dt id=refsRFC2046>[RFC2046]
+                
+                <dd><cite><a href="http://www.ietf.org/rfc/rfc2046">
+                        Multipurpose Internet Mail Extensions (MIME) Part Two: Media Types
+                </a></cite>, 
+                N. Freed, N. Borenstein. IETF, November&nbsp;1996. 
+                RFC 2046 is available at http://www.ietf.org/rfc/rfc2046
+                
+                <dt id=refsRFC4281>[RFC4281]
+                
+                <dd><cite><a href="http://www.ietf.org/rfc/rfc4281">
+                        The Codecs Parameter for "Bucket" Media Types
+                </a></cite>, 
+                R. Gellens, D. Singer, P. Frojdh. IETF, November&nbsp;2005. 
+                RFC 4281 is available at http://www.ietf.org/rfc/rfc4281
+                
+        </dl>
+
+        
+        <h2 class=no-num id=acknowledgements>Acknowledgements</h2>
+                <p class="big-issue">Coming soon</p>
+        
+</body>
+</html>
+

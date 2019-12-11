@@ -1,0 +1,9 @@
+Test of plugin support
+
+A user agent must not consider the types text/plain and application/octet-stream as having a registered plugin.
+
+
+Running test...
+
+PASS A user agent must not consider the type text/plain as having a registered plugin. 
+

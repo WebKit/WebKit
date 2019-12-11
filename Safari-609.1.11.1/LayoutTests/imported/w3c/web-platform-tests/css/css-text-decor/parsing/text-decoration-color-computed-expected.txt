@@ -1,0 +1,5 @@
+
+PASS Property text-decoration-color value 'rgb(0, 0, 255)' computes to 'rgb(0, 0, 255)' 
+PASS Property text-decoration-color value 'currentcolor' computes to 'rgb(0, 255, 0)' 
+FAIL Property text-decoration-color value 'inherit' computes to 'rgb(0, 255, 0)' assert_equals: expected "rgb(0, 255, 0)" but got "rgb(255, 0, 0)"
+

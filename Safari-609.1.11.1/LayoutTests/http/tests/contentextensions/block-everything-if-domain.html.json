@@ -1,0 +1,11 @@
+[
+    {
+        "action": {
+            "type": "block"
+        },
+        "trigger": {
+            "url-filter": ".*",
+            "if-domain": ["127.0.0.1"]
+        }
+    }
+]

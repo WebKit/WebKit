@@ -1,0 +1,50 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description('Tests that a page with a notification that is showing is able to enter the back/forward cache.');
+jsTestIsAsync = true;
+restoredFromCache = false;
+
+if (window.testRunner)
+    testRunner.grantWebNotificationPermission("file://");
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+
+    if (event.persisted) {
+        testPassed("Page did enter and was restored from the back/forward cache");
+        restoredFromCache = true;
+    }
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        testFailed("Page failed to enter the back/forward cache.");
+        finishJSTest();
+    }
+}, false);
+
+window.addEventListener('load', function() {
+    setTimeout(() => {
+        notification = new Notification('title', { body: 'body' });
+        notification.onerror = () => {
+            testFailed("Could not show the notification");
+            finishJSTest();
+        };
+        notification.onclose = () => {
+            testPassed("Received closed notification");
+            shouldBeTrue("restoredFromCache");
+            finishJSTest();
+        };
+        notification.ondisplay = () => {
+            window.location.href = "resources/page-cache-helper.html";
+        };
+    }, 0);
+}, false);
+</script>
+</body>
+</html>

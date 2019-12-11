@@ -1,0 +1,7 @@
+initial.colour
+
+Initial state is transparent black
+
+
+FAIL Initial state is transparent black null is not an object (evaluating 'ctx.getImageData')
+

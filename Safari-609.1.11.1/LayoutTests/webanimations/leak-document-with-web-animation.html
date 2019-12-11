@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<body onload="runTest()">
+<script src="../resources/js-test.js"></script>
+<script>
+description("This test asserts that Document doesn't leak when a Web Animation is created.");
+
+if (window.internals)
+    jsTestIsAsync = true;
+
+function runTest() {
+    if (!window.internals)
+        return;
+
+    var frame = document.body.appendChild(document.createElement("iframe"));
+
+    frame.onload = function() {
+        if (frame.src === 'about:blank')
+            return true;
+
+        documentIdentifier = internals.documentIdentifier(frame.contentDocument);
+        debug("The iframe has finished loading.");
+
+        frame.remove();
+        frame = null;
+
+        gc();
+        timeout = 0;
+        handle = setInterval(() => {
+            if (!internals.isDocumentAlive(documentIdentifier)) {
+                clearInterval(handle);
+                testPassed("The document was destroyed");
+                finishJSTest();
+                return;
+            }
+            timeout++;
+            if (timeout == 500) {
+                clearInterval(handle);
+                testFailed("The document was leaked");
+                finishJSTest();
+                return;
+            }
+            gc();
+        }, 10);
+    }
+
+    frame.src = 'resources/web-animation-leak-iframe.html';
+}
+
+</script>
+</body>
+</html>

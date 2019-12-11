@@ -1,0 +1,7 @@
+2d.shadow.enable.blur
+
+Shadows are drawn if shadowBlur is set
+
+
+FAIL Shadows are drawn if shadowBlur is set null is not an object (evaluating 'ctx.globalCompositeOperation = 'destination-atop'')
+

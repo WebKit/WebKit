@@ -1,0 +1,8 @@
+
+PASS play() overrides animation-play-state 
+PASS pause() overrides animation-play-state 
+PASS play() is overridden by later setting "animation-play-state: paused" 
+PASS play() flushes pending changes to animation-play-state first 
+PASS pause() applies pending changes to animation-play-state first 
+PASS Setting the current time completes a pending pause 
+

@@ -1,0 +1,137 @@
+<script>
+    function log(msg)
+    {
+        // alert(msg);
+        window.webkit.messageHandlers.testHandler.postMessage(msg);
+    }
+
+    function shouldBeType(_a, _type)
+    {
+        let exception;
+        let _av;
+        try {
+            _av = eval(_a);
+        } catch (e) {
+            exception = e;
+        }
+
+        const _typev = eval(_type);
+        if (_av instanceof _typev) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function shouldBeCryptoKey(_a, _key)
+    {
+        if (!(JSON.stringify(_key.key_ops) == JSON.stringify(_a.key_ops)) || !(_key.ext == _a.ext))
+            return false;
+        if (_key.kty  == "oct" && _a.kty == "oct")
+            return (_key.k == _a.k) && (_key.alg == _a.alg);
+        if (_key.kty  == "EC" && _a.kty == "EC")
+            return (_key.k == _a.k) && (_key.crv == _a.crv) && (_key.x == _a.x) && (_key.y == _a.y) && (_key.d == _a.d);
+        if (_key.kty  == "RSA" && _a.kty == "RSA")
+            return (_key.alg == _a.alg) && (_key.n == _a.n) && (_key.e == _a.e) && (_key.d == _a.d) && (_key.p == _a.p) && (_key.q == _a.q) && (_key.dp == _a.dp) && (_key.dq == _a.dq) && (_key.qi == _a.qi);
+        return false;
+    }
+
+    // Values that are used to infer the type of a given primitive type.
+    const testValues = [
+        undefined,
+        null,
+        5, // Int
+        0,
+        1,
+        false,
+        true,
+        5.5, // Double
+        "Hello,World!",
+        ""
+    ];
+
+    // Values that are used to infer the type of a given Boolean/String type.
+    const testTypeValues = [
+        { item: new Boolean(true), type: "Boolean", value: true },
+        { item: new Boolean(false), type: "Boolean", value: false },
+        { item: new String(), type: "String", value: "" }
+    ];
+
+    // Values are in JWK formats.
+    const testCryptoKeyValues = [
+        { kty: "oct", k: "YWJjZGVmZ2gxMjM0NTY3OA", alg: "A128CBC", use: "enc", key_ops: ['decrypt', 'encrypt', 'unwrapKey', 'wrapKey'], ext: true },
+        { kty: "EC", use: "sig", ext: true, crv: "P-256", x: "1FSVWieTvikFkG1NOyhkUCaMbdQhxwH6aCu4Ez-sRtA", y: "9jmNTLqM4cjBhdAnHcNI9YQV3O8LFmo-EdZWk8ntAaI", key_ops: ['verify'] },
+        { kty: "EC", use: "sig", ext: true, key_ops: ["sign"], crv: "P-256", x: "1FSVWieTvikFkG1NOyhkUCaMbdQhxwH6aCu4Ez-sRtA", y: "9jmNTLqM4cjBhdAnHcNI9YQV3O8LFmo-EdZWk8ntAaI", d: "ppxBSov3N8_AUcisAuvmLV4yE8e_L_BLE8bZb9Z1Xjg" },
+        { kty: "oct", k: "YWJjZGVmZ2gxMjM0NTY3OA", alg: "HS256", use: "sig", key_ops: ["sign", "verify"], ext: true, },
+        { kty: "RSA", alg: "PS256", use: "sig", key_ops: ["verify"], ext: true, n: "rcCUCv7Oc1HVam1DIhCzqknThWawOp8QLk8Ziy2p10ByjQFCajoFiyuAWl-R1WXZaf4xitLRracT9agpzIzc-MbLSHIGgWQGO21lGiImy5ftZ-D8bHAqRz2y15pzD4c4CEou7XSSLDoRnR0QG5MsDhD6s2gV9mwHkrtkCxtMWdBi-77as8wGmlNRldcOSgZDLK8UnCSgA1OguZ989bFyc8tOOEIb0xUSfPSz3LPSCnyYz68aDjmKVeNH-ig857OScyWbGyEy3Biw64qun3juUlNWsJ3zngkOdteYWytx5Qr4XKNs6R-Myyq72KUp02mJDZiiyiglxML_i3-_CeecCw", e: "AQAB" },
+        { kty: "RSA", alg: "PS1", use: "sig", key_ops: ["sign"], ext: true, n: "rcCUCv7Oc1HVam1DIhCzqknThWawOp8QLk8Ziy2p10ByjQFCajoFiyuAWl-R1WXZaf4xitLRracT9agpzIzc-MbLSHIGgWQGO21lGiImy5ftZ-D8bHAqRz2y15pzD4c4CEou7XSSLDoRnR0QG5MsDhD6s2gV9mwHkrtkCxtMWdBi-77as8wGmlNRldcOSgZDLK8UnCSgA1OguZ989bFyc8tOOEIb0xUSfPSz3LPSCnyYz68aDjmKVeNH-ig857OScyWbGyEy3Biw64qun3juUlNWsJ3zngkOdteYWytx5Qr4XKNs6R-Myyq72KUp02mJDZiiyiglxML_i3-_CeecCw", e: "AQAB", d: "eNLS37aCz7RXSNPD_DtLBJ6j5T8cSxdzRBCjPaI6WcGqJp16lq3UTwuoDLAqlA9oGYm238dsIWpuucP_lQtbWe-7SpxoI6_vmYGf7YVUHv1-DF9qiOmSrMmdxMnVOzYXY8RaT6thPjn_J5cfLV2xI_LwsrMtmpdSyNlgX0zTUhwtuahgAKMEChYjH2EnjHdHw6sY2-wApdcQI7ULE0oo5RzbQZpmuhcN9hiBc0L3hhF0qo50mbl02_65_GQ7DpVkXBxNgRBLzlPabmzzG2oAhfefLgYmSC1opaCkXE6vRWQNWNL45RZNZFYM3uoJghOMqGeocM0BpjdChHrPOlFvSQ", p: "4miTuAjKMeH5uJ5KB397QUwhbkYEgSbcA2mifmSkvE2018gb55qkBHK1eVryf1_m43LNlc6O_ak6gfzdZIZvS5NCGjPl0q09plUpu8qFOSspBwA67qGH76lFlZLn_d4yglS7wfLru4_5Ys8qLLs-DqVLviwposOnyyWqwM5AXp0", q: "xHYrzkivtmnz_sGchnWGc0q-pDOkKicptRpv2pMFIIXxnFX5aMeEXIZjVujXtwUy1UlFIN2GZJSvy5KJ79mu_XyNnFHMzedH-A3ee3u8h1UUrZF-vUu1_e4U_x67NN1dedzUSKynN7pFl3OkuShMBWGV-cwzOPdcVAfVuZlxUMc", dp: "fBzDzYDUBmBQGop7Hn0dvf_T27V6RqpctWo074CQZcFbP2atFVtKSj3viWT3xid2VHzcgiDHdfpM3nEVlEO1wwIonGCSvdjGEOZiiFVOjrZAOVxA8guOjyyFvqbXke06VwPIIVvfKeSU2zuhbP__1tt6F_fxow4Kb2xonGT0GGk", dq: "jmE2DiIPdhwDgLXAQpIaBqQ81bO3XfVT_LRULAwwwwlPuQV148H04zlh9TJ6Y2GZHYokV1U0eOBpJxfkb7dLYtpJpuiBjRf4yIUEoGlkkI_QlJnFSFr-YjGRdfNHqWBkxlSMZL770R9mIATndGkH7z5x-r9KwBZFC4FCG2hg_zE", qi: "YCX_pLwbMBA1ThVH0WcwmnytqNcrMCEwTm7ByA2eU6nWbQrULvf7m9_kzfLUcjsnpAVlBQG5JMXMy0Sq4ptwbywsa5-G8KAOOOR2L3v4hC-Eys9ftgFM_3i0o40eeQH4b3haPbntrIeMg8IzlOuVYKf9-2QuKDoWeRdd7NsdxTk" }
+    ];
+
+    const openRequest = indexedDB.open("backward_compatibility");
+    openRequest.onerror = function(event) {
+        log("Error: " + event.target.error.name);
+    };
+    openRequest.onsuccess = function(event) {
+        db = event.target.result;
+        readType();
+    };
+
+    let result = true;
+    function readType()
+    {
+        const objectStore = db.transaction("type").objectStore("type");
+        objectStore.openCursor().onsuccess = function(event) {
+            cursor = event.target.result;
+            if (cursor) {
+                result = result && shouldBeType("cursor.value", cursor.key);
+                cursor.continue();
+            } else
+                readValue();
+        };
+    }
+
+    function readValue()
+    {
+        const objectStore = db.transaction("value").objectStore("value");
+        objectStore.openCursor().onsuccess = function(event) {
+            cursor = event.target.result;
+            if (cursor) {
+                result = result && (cursor.value === testValues[cursor.key - 1]);
+                cursor.continue();
+            } else
+                readTypeValue();
+        };
+    }
+
+    function readTypeValue()
+    {
+        const objectStore = db.transaction("typeValue").objectStore("typeValue");
+        objectStore.openCursor().onsuccess = function(event) {
+            cursor = event.target.result;
+            if (cursor) {
+                result = result && shouldBeType("cursor.value", testTypeValues[cursor.key - 1].type) && (cursor.value == testTypeValues[cursor.key - 1].value);
+                cursor.continue();
+            } else {
+                readCryptoKey();
+            }
+        };
+    }
+
+    async function readCryptoKey()
+    {
+        const objectStore = db.transaction("cryptoKey").objectStore("cryptoKey");
+        objectStore.openCursor().onsuccess = async function(event) {
+            cursor = event.target.result;
+            if (cursor) {
+                const jwkKey = await crypto.subtle.exportKey("jwk", cursor.value);
+                result = result && shouldBeCryptoKey(jwkKey, testCryptoKeyValues[cursor.key - 1]);
+                cursor.continue();
+            } else {
+                if (result)
+                    log("Pass");
+                else
+                    log("Fail");
+            }
+        };
+    }
+</script>

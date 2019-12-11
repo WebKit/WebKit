@@ -1,0 +1,103 @@
+Image map - test 2 - 2 Links (alt tags)
+----------------------
+AXRole: AXGroup
+AXSubrole: (null)
+AXRoleDescription: group
+AXChildren: <array of size 2>
+AXHelp: 
+AXParent: <AXGroup>
+AXSize: NSSize: {784, 36}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXGroup>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXGroup>
+AXEndTextMarker: <AXGroup>
+AXVisited: 0
+AXLinkedUIElements: <array of size 0>
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXGroup>
+AXLanguage: 
+AXDOMIdentifier: result
+AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXGroup>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
+AXElementBusy: 0
+
+------------
+AXRole: AXLink
+AXSubrole: (null)
+AXRoleDescription: link
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXLink>
+AXSize: NSSize: {123, 62}
+AXTitle: 
+AXDescription: Link1
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXLink>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: (null)
+AXEndTextMarker: (null)
+AXVisited: 0
+AXLinkedUIElements: <array of size 0>
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXLink>
+AXLanguage: 
+AXDOMIdentifier: 
+AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXLink>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
+AXURL: http://www.apple.com/
+AXAccessKey: (null)
+AXLinkRelationshipType: 
+AXElementBusy: 0
+AXPath: <AXLink>
+
+------------
+AXRole: AXLink
+AXSubrole: (null)
+AXRoleDescription: link
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXLink>
+AXSize: NSSize: {122, 14}
+AXTitle: 
+AXDescription: Link2
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXLink>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: (null)
+AXEndTextMarker: (null)
+AXVisited: 0
+AXLinkedUIElements: <array of size 0>
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXLink>
+AXLanguage: 
+AXDOMIdentifier: 
+AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXLink>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
+AXURL: http://www.apple.com/
+AXAccessKey: (null)
+AXLinkRelationshipType: 
+AXElementBusy: 0
+AXPath: <AXLink>
+
+------------
+
+
+ 

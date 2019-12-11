@@ -1,0 +1,289 @@
+#!/usr/bin/env python
+
+# Copyright (C) 2009, 2015 Apple Inc.  All rights reserved.
+# Copyright (C) 2012 Google Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import errno
+import optparse
+import os
+import shutil
+import subprocess
+import sys
+import zipfile
+
+_configurationBuildDirectory = None
+_topLevelBuildDirectory = None
+_hostBuildDirectory = None
+
+PATH_TO_LAUNCHER = './Tools/WebKitArchiveSupport/run-webkit-archive'
+PATH_TO_README = './Tools/WebKitArchiveSupport/README'
+
+def main():
+    parser = optparse.OptionParser("usage: %prog [options] [action]")
+    parser.add_option("--platform", dest="platform")
+    parser.add_option("--debug", action="store_const", const="debug", dest="configuration")
+    parser.add_option("--release", action="store_const", const="release", dest="configuration")
+    parser.add_option("--minify", action="store_true", dest="minify", default=False,
+                      help="Create a minified archive by removing files that are not necessary for running applications against the built product, at the cost of complicating debugging.")
+                      
+    options, (action, ) = parser.parse_args()
+    if not options.platform:
+        parser.error("Platform is required")
+        return 1
+    if not options.configuration:
+        parser.error("Configuration is required")
+        return 1
+    if action not in ('archive', 'extract'):
+        parser.error("Action is required")
+        return 1
+
+    genericPlatform = options.platform.split('-', 1)[0]
+    determineWebKitBuildDirectories(genericPlatform, options.platform, options.configuration)
+    if not _topLevelBuildDirectory:
+        print >> sys.stderr, 'Could not determine top-level build directory'
+        return 1
+    if not _configurationBuildDirectory:
+        print >> sys.stderr, 'Could not determine configuration-specific build directory'
+        return 1
+
+    if action == 'archive':
+        return archiveBuiltProduct(options.configuration, genericPlatform, options.platform, options.minify)
+    else:
+        return extractBuiltProduct(options.configuration, genericPlatform)
+
+
+def webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, fullPlatform='', returnTopLevelDirectory=False):
+    if fullPlatform.startswith('ios-simulator'):
+        platform = 'ios-simulator'
+    elif platform == 'ios':
+        platform = 'device'
+    command = ['perl', os.path.join(os.path.dirname(__file__), '..', 'Scripts', 'webkit-build-directory'), '--' + platform, '--' + configuration]
+    if returnTopLevelDirectory:
+        command += ['--top-level']
+    else:
+        command += ['--configuration']
+    return subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0].strip()
+
+
+def determineWebKitBuildDirectories(platform, fullPlatform, configuration):
+    global _configurationBuildDirectory
+    global _topLevelBuildDirectory
+    global _hostBuildDirectory
+    _configurationBuildDirectory = webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, fullPlatform)
+    _topLevelBuildDirectory = webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, fullPlatform, returnTopLevelDirectory=True)
+    if platform == 'ios':
+        _hostBuildDirectory = webkitBuildDirectoryForConfigurationAndPlatform(configuration, 'mac')
+    else:
+        _hostBuildDirectory = _configurationBuildDirectory
+    
+    return _topLevelBuildDirectory
+
+
+def removeDirectoryIfExists(thinDirectory):
+    if os.path.isdir(thinDirectory):
+        shutil.rmtree(thinDirectory)
+
+
+def copyBuildFiles(source, destination, patterns):
+    shutil.copytree(source, destination, ignore=shutil.ignore_patterns(*patterns))
+
+
+def createZipFromList(listToZip, configuration, excludePattern=None):
+    archiveDir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'WebKitBuild'))
+    archiveFile = os.path.join(archiveDir, configuration + '.zip')
+
+    try:
+        os.unlink(archiveFile)
+    except OSError, e:
+        if e.errno != errno.ENOENT:
+            raise
+
+    if sys.platform.startswith('linux'):
+        zipCommand = ['zip', '-y', '-r', archiveFile] + listToZip
+        if excludePattern:
+            zipCommand += ['-x', excludePattern]
+        return subprocess.call(zipCommand, cwd=_configurationBuildDirectory)
+
+    raise NotImplementedError('Unsupported platform: {platform}'.format(platform=sys.platform))
+
+
+def createZipManually(directoryToZip, archiveFile):
+    archiveZip = zipfile.ZipFile(archiveFile, "w", zipfile.ZIP_DEFLATED)
+
+    for path, dirNames, fileNames in os.walk(directoryToZip):
+        relativePath = os.path.relpath(path, directoryToZip)
+        for fileName in fileNames:
+            archiveZip.write(os.path.join(path, fileName), os.path.join(relativePath, fileName))
+
+    archiveZip.close()
+
+def addFilesToArchive(archiveFile, pathToLauncher, pathToReadme):
+    command = ['/usr/bin/zip', '-j', archiveFile, pathToLauncher, pathToReadme]
+    return subprocess.call(command)
+
+def createZip(directoryToZip, configuration, embedParentDirectoryNameOnDarwin=False, minify=False):
+    archiveDir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "WebKitBuild"))
+    if minify:
+        configuration = 'minified-' + configuration
+    archiveFile = os.path.join(archiveDir, configuration + ".zip")
+
+    try:
+        os.unlink(archiveFile)
+    except OSError, e:
+        if e.errno != errno.ENOENT:
+            raise
+
+    if sys.platform == 'darwin':
+        command = ['ditto', '-c', '-k', '--sequesterRsrc']
+        if embedParentDirectoryNameOnDarwin:
+            command += ['--keepParent']
+        command += [directoryToZip, archiveFile]
+        return subprocess.call(command) or addFilesToArchive(archiveFile, PATH_TO_LAUNCHER, PATH_TO_README) 
+    elif sys.platform == 'cygwin':
+        return subprocess.call(["zip", "-r", archiveFile, "bin32"], cwd=directoryToZip)
+    elif sys.platform == 'win32':
+        createZipManually(directoryToZip, archiveFile)
+        return 0
+    elif sys.platform.startswith('linux'):
+        return subprocess.call(["zip", "-y", "-r", archiveFile, "."], cwd=directoryToZip)
+
+
+def dirContainsdwo(directory):
+    sourcedir = os.path.join(_configurationBuildDirectory, directory)
+    for root, dirs, files in os.walk(sourcedir, topdown=False):
+        for name in files:
+            if name.endswith(".dwo"):
+                return True
+    return False
+
+
+def minifyDirectory(platform, directory):
+    if platform == 'mac' or platform == 'ios':
+        dir_patterns = ('.dSYM', 'DerivedSources')
+        file_patterns = ('.a',)
+        for root, dirs, files in os.walk(directory):
+            if any(root.endswith(pattern) for pattern in dir_patterns):
+                print 'Removing: {}'.format(root)
+                shutil.rmtree(root)
+            for name in files:
+                if any(name.endswith(pattern) for pattern in file_patterns):
+                    print 'Removing: {}'.format(os.path.join(root, name))
+                    os.remove(os.path.join(root, name))
+
+
+def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
+    assert platform in ('mac', 'win', 'gtk', 'ios', 'wpe', 'wincairo')
+
+    if platform == 'ios':
+        combinedDirectory = os.path.join(_topLevelBuildDirectory, 'combined-mac-and-ios')
+        removeDirectoryIfExists(combinedDirectory)
+        os.makedirs(combinedDirectory)
+        if minify:
+            minifyDirectory(platform, _configurationBuildDirectory)
+            minifyDirectory(platform, _hostBuildDirectory)
+        if subprocess.call(['/bin/cp', '-pR', _configurationBuildDirectory, combinedDirectory]):
+            return 1
+        if subprocess.call(['/bin/cp', '-pR', _hostBuildDirectory, combinedDirectory]):
+            return 1
+
+        return createZip(combinedDirectory, configuration, minify=minify)
+    elif platform == 'mac':
+        if minify:
+            minifyDirectory(platform, _configurationBuildDirectory)
+        return createZip(_configurationBuildDirectory, configuration, embedParentDirectoryNameOnDarwin=True, minify=minify)
+    elif platform in ('win', 'wincairo'):
+        binType = 'bin64' if os.path.exists(os.path.join(_configurationBuildDirectory, 'bin64')) else 'bin32'
+        binDirectory = os.path.join(_configurationBuildDirectory, binType)
+        thinDirectory = os.path.join(_configurationBuildDirectory, 'thin')
+        thinBinDirectory = os.path.join(thinDirectory, binType)
+
+        removeDirectoryIfExists(thinDirectory)
+        copyBuildFiles(binDirectory, thinBinDirectory, ['*.ilk'])
+
+        # Save WinCairoRequirements version for test bot use
+        if platform == 'wincairo':
+            shutil.copy(
+                os.path.join(os.getenv('WEBKIT_LIBRARIES'), 'WinCairoRequirements.zip.version'),
+                os.path.join(thinDirectory, 'WinCairoRequirements.zip.config'))
+
+        if createZip(thinDirectory, configuration):
+            return 1
+
+        shutil.rmtree(thinDirectory)
+
+    elif platform == 'gtk' or platform == 'wpe':
+        # On GTK+/WPE we don't need the intermediate step of creating a thinDirectory
+        # to be compressed in a ZIP file, because we can create the ZIP directly.
+        # This is faster and requires less disk resources.
+        neededDirectories = ['bin', 'lib']
+        # When debug fission is enabled the directories below contain dwo files
+        # with the debug information needed to generate backtraces with GDB.
+        for objectDir in ['Tools', 'Source']:
+            if dirContainsdwo(objectDir):
+                neededDirectories.append(objectDir)
+
+        if createZipFromList(neededDirectories, configuration, excludePattern='*.o'):
+            return 1
+
+def unzipArchive(directoryToExtractTo, configuration):
+    archiveDir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "WebKitBuild"))
+    assert os.path.isdir(archiveDir)
+    archiveFile = os.path.join(archiveDir, configuration + ".zip")
+
+    if sys.platform == 'darwin':
+        if subprocess.call(["ditto", "-x", "-k", archiveFile, directoryToExtractTo]):
+            return 1
+    elif sys.platform == 'cygwin' or sys.platform.startswith('linux'):
+        if subprocess.call(["unzip", "-o", archiveFile], cwd=directoryToExtractTo):
+            return 1
+    elif sys.platform == 'win32':
+        archive = zipfile.ZipFile(archiveFile, "r")
+        archive.extractall(directoryToExtractTo)
+        archive.close()
+
+    os.unlink(archiveFile)
+
+
+def extractBuiltProduct(configuration, platform):
+    assert platform in ('mac', 'win', 'gtk', 'ios', 'wpe', 'wincairo')
+
+    archiveFile = os.path.join(_topLevelBuildDirectory, configuration + '.zip')
+
+    removeDirectoryIfExists(_configurationBuildDirectory)
+    os.makedirs(_configurationBuildDirectory)
+
+    if platform in ('mac', 'ios'):
+        return unzipArchive(_topLevelBuildDirectory, configuration)
+    elif platform in ('win', 'gtk', 'wpe', 'wincairo'):
+        print 'Extracting', _configurationBuildDirectory
+        if unzipArchive(_configurationBuildDirectory, configuration):
+            return 1
+
+        # Restore WinCairoRequirements version for test bot use
+        if platform == 'wincairo':
+            shutil.copy(os.path.join(_configurationBuildDirectory, 'WinCairoRequirements.zip.config'), os.getenv('WEBKIT_LIBRARIES'))
+
+
+if __name__ == '__main__':
+    sys.exit(main())

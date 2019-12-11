@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+target {
+    color: black;
+}
+target:nth-child(2 of target, trigger[style]) {
+    color: pink;
+}
+</style>
+</head>
+<body>
+    <div>
+        <!-- With renderer -->
+        <trigger></trigger>
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <target></target>
+    </div>
+    <div style="display:none;">
+        <!-- Without renderer -->
+        <trigger></trigger>
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <target></target>
+    </div>
+</body>
+<script>
+
+description('Test that style invalidation through inline-style propagates correctly to siblings when a combinator requires it.');
+
+function testTargetColor(expectedColor) {
+    let allTargets = document.querySelectorAll("target");
+    for (let i = 0; i < allTargets.length; ++i) {
+        shouldBeEqualToString('getComputedStyle(document.querySelectorAll("target")[' + i + ']).color', expectedColor);
+    }
+}
+
+testTargetColor('rgb(0, 0, 0)');
+
+// Set a style through CSS OM.
+function setPropertyWithCSSOM() {
+    let allTriggers = document.querySelectorAll("trigger");
+    for (let i = 0; i < allTriggers.length; ++i) {
+        allTriggers[i].style.cursor = "auto";
+    }
+}
+setPropertyWithCSSOM()
+testTargetColor('rgb(255, 192, 203)');
+
+// If we remove the attribute, we should be back to normal.
+function removeStyleAttribute() {
+    let allTriggers = document.querySelectorAll("trigger");
+    for (let i = 0; i < allTriggers.length; ++i) {
+        allTriggers[i].removeAttribute("style");
+    }
+}
+removeStyleAttribute();
+testTargetColor('rgb(0, 0, 0)');
+
+// Setting the style through a style attribute directly.
+function setStyleAttribute() {
+    let allTriggers = document.querySelectorAll("trigger");
+    for (let i = 0; i < allTriggers.length; ++i) {
+        allTriggers[i].setAttribute("style", "alt: \"WebKit!\"");
+    }
+}
+setStyleAttribute();
+testTargetColor('rgb(255, 192, 203)');
+
+// Removing the property on the style attribute through CSSOM.
+// This leaves an empty style attribute.
+function removePropertyWithCSSOM() {
+    let allTriggers = document.querySelectorAll("trigger");
+    for (let i = 0; i < allTriggers.length; ++i) {
+        allTriggers[i].style.removeProperty("alt");
+    }
+}
+removePropertyWithCSSOM()
+testTargetColor('rgb(255, 192, 203)');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

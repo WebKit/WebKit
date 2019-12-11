@@ -1,0 +1,16 @@
+<html>
+<head>
+    <script>
+    function subFrameFinishedLoading()
+    {
+        window.parent.count = window.parent.count + 1;
+        if (window.parent.count < 10)
+            window.parent.reloadSubframe();
+        else
+            window.parent.subFrameFinishedLoading();
+    }
+    </script>
+</head>
+  <iframe src="crash-during-iframe-load-stop-inner.html"></iframe>
+  <iframe src="data:text/html, <html></html>"></iframe>
+</html>

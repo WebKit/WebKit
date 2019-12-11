@@ -1,0 +1,55 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true internal:AsyncOverflowScrollingEnabled=true internal:AsyncFrameScrollingEnabled=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <style>
+        #scroller {
+            margin: 10px;
+            height: 300px;
+            width: 300px;
+            border: 1px solid black;
+            overflow: scroll;
+            z-index: 0;
+            position: relative;
+        }
+        
+        .box {
+            position: fixed;
+            margin-top: 200px;
+            width: 200px;
+            height: 200px;
+            background-color: green;
+        }
+        
+        .spacer {
+            border: 2px solid blue;
+            height: 5000px;
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        async function doTest()
+        {
+            await UIHelper.ensurePresentationUpdate(); // Not sure why this is necessary, but it is.
+            scroller.scrollTo(0, 200);
+            await UIHelper.ensurePresentationUpdate();
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div class="spacer">
+        <div id="scroller">
+            <div class="box"></div>
+            <div class="spacer"></div>
+        </div>
+    </div>
+</body>
+</html>

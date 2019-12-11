@@ -1,0 +1,4 @@
+
+FAIL share without a user gesture navigator.share is not a function. (In 'navigator.share({title: 'the title', text: 'the message',
+                               url: 'data:the url'})', 'navigator.share' is undefined)
+

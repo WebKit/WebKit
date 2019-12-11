@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<script>
+    var mouseButton = -1;
+    var menuType = "none";
+
+    function mouseDownHandler(event)
+    {
+        mouseButton = event.button;
+        event.preventDefault();
+    }
+    
+    function pressedMouseButton()
+    {
+        return mouseButton;
+    }
+ 
+    function contextMenuHandler(event)
+    {
+        menuType = "context";
+        event.preventDefault();
+    }
+  
+    function displayedMenu()
+    {
+        return menuType;
+    }
+
+    addEventListener("mousedown", mouseDownHandler);
+    addEventListener("contextmenu", contextMenuHandler);
+</script>

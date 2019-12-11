@@ -1,0 +1,89 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_source_set("task_queue") {
+  visibility = [ "*" ]
+  public = [
+    "queued_task.h",
+    "task_queue_base.h",
+    "task_queue_factory.h",
+  ]
+  sources = [
+    "task_queue_base.cc",
+  ]
+
+  deps = [
+    "../../rtc_base:checks",
+    "../../rtc_base:macromagic",
+    "//third_party/abseil-cpp/absl/base:config",
+    "//third_party/abseil-cpp/absl/base:core_headers",
+    "//third_party/abseil-cpp/absl/strings",
+  ]
+}
+
+rtc_source_set("task_queue_test") {
+  visibility = [ "*" ]
+  testonly = true
+  sources = [
+    "task_queue_test.cc",
+    "task_queue_test.h",
+  ]
+  deps = [
+    ":task_queue",
+    "../../rtc_base:refcount",
+    "../../rtc_base:rtc_event",
+    "../../rtc_base:timeutils",
+    "../../rtc_base/task_utils:to_queued_task",
+    "../../test:test_support",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/strings",
+  ]
+}
+
+rtc_source_set("default_task_queue_factory") {
+  visibility = [ "*" ]
+  if (!is_ios && !is_android) {
+    poisonous = [ "default_task_queue" ]
+  }
+  sources = [
+    "default_task_queue_factory.h",
+  ]
+  deps = [
+    ":task_queue",
+  ]
+
+  if (rtc_enable_libevent) {
+    sources += [ "default_task_queue_factory_libevent.cc" ]
+    deps += [ "../../rtc_base:rtc_task_queue_libevent" ]
+  } else if (is_mac || is_ios) {
+    sources += [ "default_task_queue_factory_gcd.cc" ]
+    deps += [ "../../rtc_base:rtc_task_queue_gcd" ]
+  } else if (is_win && current_os != "winuwp") {
+    sources += [ "default_task_queue_factory_win.cc" ]
+    deps += [ "../../rtc_base:rtc_task_queue_win" ]
+  } else {
+    sources += [ "default_task_queue_factory_stdlib.cc" ]
+    deps += [ "../../rtc_base:rtc_task_queue_stdlib" ]
+  }
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("task_queue_default_factory_unittests") {
+    testonly = true
+    sources = [
+      "default_task_queue_factory_unittest.cc",
+    ]
+    deps = [
+      ":default_task_queue_factory",
+      ":task_queue_test",
+      "../../test:test_support",
+    ]
+  }
+}

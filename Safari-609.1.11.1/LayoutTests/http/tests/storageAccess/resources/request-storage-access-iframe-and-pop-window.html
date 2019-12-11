@@ -1,0 +1,66 @@
+<html>
+<head>
+    <script>
+        const hashArguments = document.location.hash.substring(1).split(",");
+        const userShouldGrantAccess = hashArguments[0] === "userShouldGrantAccess";
+        const userShouldBeConsulted = hashArguments[1] === "userShouldBeConsulted";
+        const policyShouldGrantAccess = hashArguments[2] === "policyShouldGrantAccess";
+        const isSameOriginIframe = hashArguments[3] === "isSameOriginIframe";
+        const originIsNull = hashArguments[4] === "originIsNull";
+
+        if (window.testRunner) {
+            testRunner.setCanOpenWindows(false);
+            testRunner.setPopupBlockingEnabled(true);
+            testRunner.setCloseRemainingWindowsWhenComplete(true);
+        }
+
+        var requestStorageAccessResolved;
+
+        function messageToTop(message) {
+            top.postMessage(message, "http://127.0.0.1:8000");
+        }
+
+        function windowWasOpened()
+        {
+            if (userShouldBeConsulted && userShouldGrantAccess)
+                messageToTop("PASS Window was successfully opened with user interaction.");
+            else if (userShouldBeConsulted && !userShouldGrantAccess)
+                messageToTop("FAIL Window was opened even though the user explicitly declined permission.");
+            else if (!userShouldBeConsulted && !userShouldGrantAccess)
+                messageToTop("PASS Window was successfully opened with user interaction since the user was never consulted/prompted.");
+            else
+                messageToTop("FAIL Conflicting instructions: !userShouldBeConsulted && userShouldGrantAccess .");
+        }
+
+        function makeRequestWithUserGesture() {
+            var promise = document.requestStorageAccess();
+            promise.then(
+                function () {
+                    requestStorageAccessResolved = true;
+                    continueAfterRequestWithUserGesture();
+                },
+                function () {
+                    requestStorageAccessResolved = false;
+                    continueAfterRequestWithUserGesture();
+                }
+            );
+        }
+
+        function continueAfterRequestWithUserGesture() {
+            var win = window.open("request-storage-access-second-window.html", "test window");
+            if (!win) {
+                if (userShouldBeConsulted && userShouldGrantAccess)
+                    messageToTop("FAIL Window was not opened even though the user explicitly granted permission.");
+                else if (userShouldBeConsulted && !userShouldGrantAccess)
+                    messageToTop("PASS Window was blocked from opening.");
+                else if (!userShouldBeConsulted && !userShouldGrantAccess)
+                    messageToTop("FAIL Window was blocked from opening even though the user was never consulted/prompted.");
+                else
+                    messageToTop("FAIL Conflicting instructions: !userShouldBeConsulted && userShouldGrantAccess .");
+            }
+        }
+    </script>
+</head>
+<body onclick="makeRequestWithUserGesture()">
+</body>
+</html>

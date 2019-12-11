@@ -1,0 +1,5 @@
+Blocked access to external URL https://www.localhost:9443/fetch/api/resources/inspect-headers.py?cors&headers=referer
+CONSOLE MESSAGE: line 14: Fetch API cannot load https://www.localhost:9443/fetch/api/resources/inspect-headers.py?cors&headers=referer due to access control checks.
+
+FAIL Request's referrer is origin promise_test: Unhandled rejection with value: object "TypeError: Type error"
+

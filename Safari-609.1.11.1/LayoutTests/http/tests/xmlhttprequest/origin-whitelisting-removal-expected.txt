@@ -1,0 +1,55 @@
+CONSOLE MESSAGE: line 19: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 19: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/get.txt due to access control checks.
+CONSOLE MESSAGE: line 19: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 19: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/get.txt due to access control checks.
+CONSOLE MESSAGE: line 19: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 19: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/get.txt due to access control checks.
+CONSOLE MESSAGE: line 19: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 19: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/get.txt due to access control checks.
+CONSOLE MESSAGE: line 19: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 19: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/get.txt due to access control checks.
+CONSOLE MESSAGE: line 19: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 19: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/get.txt due to access control checks.
+CONSOLE MESSAGE: line 19: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 19: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/get.txt due to access control checks.
+CONSOLE MESSAGE: line 19: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: line 19: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/get.txt due to access control checks.
+Tests the behavior of whitelisting origins and removing them later.
+
+Testing: source origin: http://127.0.0.1:8000 destination origin: http:localhost 
+Loading: http://localhost:8000/xmlhttprequest/resources/get.txt (expecting NETWORK_ERR)
+PASS: NetworkError:  A network error occurred.
+Loading: http://localhost:8000/xmlhttprequest/resources/get.txt (expecting PASS)
+PASS: PASS
+Loading: http://localhost:8000/xmlhttprequest/resources/get.txt (expecting NETWORK_ERR)
+PASS: NetworkError:  A network error occurred.
+
+
+Testing: source origin: http://127.0.0.1:8000 destination origin: http:localhost allowing subdomains
+Loading: http://localhost:8000/xmlhttprequest/resources/get.txt (expecting NETWORK_ERR)
+PASS: NetworkError:  A network error occurred.
+Loading: http://localhost:8000/xmlhttprequest/resources/get.txt (expecting PASS)
+PASS: PASS
+Loading: http://localhost:8000/xmlhttprequest/resources/get.txt (expecting NETWORK_ERR)
+PASS: NetworkError:  A network error occurred.
+
+
+Testing: source origin: http://127.0.0.1:8000 destination origin: hTtP:LoCaLhOsT allowing subdomains
+Loading: http://localhost:8000/xmlhttprequest/resources/get.txt (expecting NETWORK_ERR)
+PASS: NetworkError:  A network error occurred.
+Loading: http://localhost:8000/xmlhttprequest/resources/get.txt (expecting PASS)
+PASS: PASS
+Loading: http://localhost:8000/xmlhttprequest/resources/get.txt (expecting NETWORK_ERR)
+PASS: NetworkError:  A network error occurred.
+
+
+Testing: source origin: http://127.0.0.1:8000 destination origin: http: allowing subdomains
+Loading: http://localhost:8000/xmlhttprequest/resources/get.txt (expecting NETWORK_ERR)
+PASS: NetworkError:  A network error occurred.
+Loading: http://localhost:8000/xmlhttprequest/resources/get.txt (expecting PASS)
+PASS: PASS
+Loading: http://localhost:8000/xmlhttprequest/resources/get.txt (expecting NETWORK_ERR)
+PASS: NetworkError:  A network error occurred.
+
+
+

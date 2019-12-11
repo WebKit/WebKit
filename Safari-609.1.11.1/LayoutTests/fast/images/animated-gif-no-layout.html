@@ -1,0 +1,43 @@
+<script>
+    // This test waits for a GIF repaint and double checks that there is a repaint only,
+    // no layout. If the test passes, there are two green squares. If it fails, then one
+    // or both of the squares is red instead.
+
+    var layoutCountBeforeTimer;
+
+    function animationComplete()
+    {
+        document.body.offsetWidth; // Explicitly trigger a layout.
+
+        if (window.internals && window.testRunner) {
+            var count = internals.layoutCount - layoutCountBeforeTimer;
+            if (count == 0) {
+                var indicator = document.getElementById("indicator");
+                indicator.addEventListener("load", function() { testRunner.notifyDone(); })
+                indicator.src = "resources/rgb-jpeg-green.jpg";
+                return;
+            }
+            testRunner.notifyDone();
+        }
+    }
+
+    function test()
+    {
+        document.body.offsetWidth; // Explicitly trigger a layout.
+
+        if (window.internals && window.testRunner) {
+            testRunner.waitUntilDone();
+            layoutCountBeforeTimer = internals.layoutCount;
+        }
+
+        // The 200ms value here is longer than the time it takes for gif-loop-count.gif
+        // to advance from its first frame to its second. There should be no race because
+        // the GIF timer should already be scheduled and this timer should share the
+        // same time base.
+        setTimeout(animationComplete, 200);
+    }
+</script>
+<body onload="test()">
+<img src="resources/gif-loop-count.gif" style="position:absolute;left:0;top:0">
+<img id="indicator" src="resources/rgb-jpeg-red.jpg" style="position:absolute;left:0;top:150">
+</body>

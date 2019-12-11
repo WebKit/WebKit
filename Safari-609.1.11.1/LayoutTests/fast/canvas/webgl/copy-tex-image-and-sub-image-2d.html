@@ -1,0 +1,186 @@
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="resources/webgl-test.js"></script>
+<script id="vshader" type="x-shader/x-vertex">
+attribute vec3 g_Position;
+attribute vec2 g_TexCoord0;
+
+varying vec2 texCoord;
+
+void main()
+{
+    gl_Position = vec4(g_Position.x, g_Position.y, g_Position.z, 1.0);
+    texCoord = g_TexCoord0;
+}
+</script>
+
+<script id="fshader" type="x-shader/x-fragment">
+#ifdef GL_ES
+precision mediump float;
+#endif
+uniform sampler2D tex;
+varying vec2 texCoord;
+void main()
+{
+    gl_FragColor = texture2D(tex, texCoord);
+}
+</script>
+
+<script>
+
+function init()
+{
+    if (window.initNonKhronosFramework) {
+        window.initNonKhronosFramework(true);
+    }
+
+    description('Verify copyTexImage2D and copyTexSubImage2D');
+
+    runTest();
+}
+
+// These two declarations need to be global for "shouldBe" to see them
+var pixel = [0, 0, 0];
+var correctColor = null;
+var gl = null;
+
+function runTestIteration(antialias)
+{
+    if (antialias)
+        gl = initWebGL("antialiasOn", "vshader", "fshader", [ "g_Position", "g_TexCoord0" ], [ 0, 0, 0, 1 ], 1);
+    else
+        gl = initWebGL("antialiasOff", "vshader", "fshader", [ "g_Position", "g_TexCoord0" ], [ 0, 0, 0, 1 ], 1, { antialias: false });
+
+    var textureLoc = gl.getUniformLocation(gl.program, "tex");
+
+    var vertices = new Float32Array([
+         1.0,  1.0, 0.0,
+        -1.0,  1.0, 0.0,
+        -1.0, -1.0, 0.0,
+         1.0,  1.0, 0.0,
+        -1.0, -1.0, 0.0,
+         1.0, -1.0, 0.0]);
+    var texCoords = new Float32Array([
+        1.0, 1.0,
+        0.0, 1.0,
+        0.0, 0.0,
+        1.0, 1.0,
+        0.0, 0.0,
+        1.0, 0.0]);
+    var texCoordOffset = vertices.byteLength;
+
+    var vbo = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+    gl.bufferData(gl.ARRAY_BUFFER,
+                  texCoordOffset + texCoords.byteLength,
+                  gl.STATIC_DRAW);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, vertices);
+    gl.bufferSubData(gl.ARRAY_BUFFER, texCoordOffset, texCoords);
+
+    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(1);
+    gl.vertexAttribPointer(1, 2, gl.FLOAT, false, 0, texCoordOffset);
+
+    gl.colorMask(1, 1, 1, 0);
+    gl.disable(gl.BLEND);
+    debug('Testing copyTexImage2D');
+
+    // Red canvas
+    gl.clearColor(1, 0, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    var texture = gl.createTexture();
+    // Bind the texture to texture unit 0
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    // Set up texture
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 2, 2, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+    glErrorShouldBe(gl, gl.NO_ERROR);
+    gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 0, 0, 2, 2, 0);
+    glErrorShouldBe(gl, gl.NO_ERROR);
+
+    // Green canvas
+    gl.clearColor(0, 1, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    // Point the uniform sampler to texture unit 0
+    gl.uniform1i(textureLoc, 0);
+    // Draw the triangles
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+    // Read back the rendering results, should be red
+    var buf = new Uint8Array(2 * 2 * 4);
+    gl.readPixels(0, 0, 2, 2, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+    var idx = 0;
+    correctColor = [255, 0, 0];
+    for (var y = 0; y < 2; y++) {
+        for (var x = 0; x < 2; x++) {
+            idx = (y * 2 + x) * 4;
+            pixel[0] = buf[idx];
+            pixel[1] = buf[idx + 1];
+            pixel[2] = buf[idx + 2];
+            shouldBe("pixel", "correctColor");
+        }
+    }
+
+    debug('Testing copyTexSubImage2D');
+
+    // Green canvas
+    gl.clearColor(0, 1, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    glErrorShouldBe(gl, gl.NO_ERROR);
+    gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, 2, 2);
+    glErrorShouldBe(gl, gl.NO_ERROR);
+
+    // Blue canvas
+    gl.clearColor(0, 0, 1, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    // Draw the triangles
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+    // Read back the rendering results, should be green
+    gl.readPixels(0, 0, 2, 2, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+    correctColor = [0, 255, 0];
+    for (var y = 0; y < 2; y++) {
+        for (var x = 0; x < 2; x++) {
+            idx = (y * 2 + x) * 4;
+            pixel[0] = buf[idx];
+            pixel[1] = buf[idx + 1];
+            pixel[2] = buf[idx + 2];
+            shouldBe("pixel", "correctColor");
+        }
+    }
+}
+
+function runTest(antialias)
+{
+    debug("Testing with antialias on");
+    runTestIteration(true);
+    debug("Testing with antialias off");
+    runTestIteration(false);
+    var epilogue = document.createElement("script");
+    epilogue.onload = finish;
+    epilogue.src = "../../../resources/js-test-post.js";
+    document.body.appendChild(epilogue);
+}
+
+function finish() {
+    if (window.nonKhronosFrameworkNotifyDone) {
+        window.nonKhronosFrameworkNotifyDone();
+    }
+}
+</script>
+</head>
+<body onload="init()">
+<canvas id="antialiasOn" width="2px" height="2px"></canvas>
+<canvas id="antialiasOff" width="2px" height="2px"></canvas>
+<div id="description"></div>
+<div id="console"></div>
+</body>
+</html>

@@ -1,0 +1,39 @@
+Basic testing for the File Upload Panel on iOS.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* accept = 
+PASS areArraysEqual(items, ["Photo Library", "Take Photo or Video", "Browse"]) is true
+
+* accept = image/*
+PASS areArraysEqual(items, ["Photo Library", "Take Photo", "Browse"]) is true
+
+* accept = video/*
+PASS areArraysEqual(items, ["Photo Library", "Take Video", "Browse"]) is true
+
+* accept = image/*, video/*
+PASS areArraysEqual(items, ["Photo Library", "Take Photo or Video", "Browse"]) is true
+
+* accept = .PNG, .GIF
+PASS areArraysEqual(items, ["Photo Library", "Take Photo", "Browse"]) is true
+
+* accept = .PNG, .GIF, .MOV
+PASS areArraysEqual(items, ["Photo Library", "Take Photo or Video", "Browse"]) is true
+
+* accept = audio/*
+PASS areArraysEqual(items, ["Photo Library", "Take Video", "Browse"]) is true
+
+* accept = .TXT
+PASS areArraysEqual(items, ["Browse"]) is true
+
+* accept = .PDF
+PASS areArraysEqual(items, ["Browse"]) is true
+
+* accept = .PDF, .TXT
+PASS areArraysEqual(items, ["Browse"]) is true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="150" viewBox="0 0 300 150">
+    <rect width="100%" height="100%" fill="red" />
+    <text id="text">
+        <tspan x="10" dy="1em">Foo</tspan>
+        <tspan x="10" dy="1.2em">Foo bar baz</tspan>
+    </text>
+    <defs>
+        <style type="text/css">
+        <![CDATA[
+            @font-face {
+                font-family: Ahem;
+                src: url(../../resources/Ahem.ttf);
+            }
+            text {
+                font-family: Ahem;
+                font-size: 40px;
+            }
+            ]]>
+        </style>
+        <script type="text/javascript">
+        <![CDATA[
+            if (window.testRunner)
+                testRunner.waitUntilDone();
+
+            setTimeout(function() {
+                // The point at 170,30 is contained within the text's bounding box
+                // but not in a painted part so the element should be the background.
+                document.elementFromPoint(170, 30).setAttribute("fill", "green");
+                document.getElementById("text").remove();
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 50);
+        ]]>
+        </script>
+    </defs>
+</svg>

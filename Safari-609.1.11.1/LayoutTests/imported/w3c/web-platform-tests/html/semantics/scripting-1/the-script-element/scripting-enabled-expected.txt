@@ -1,0 +1,3 @@
+
+PASS script on document returned by createHTMLDocument should not execute 
+

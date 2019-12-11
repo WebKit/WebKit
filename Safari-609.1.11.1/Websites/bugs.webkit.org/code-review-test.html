@@ -1,0 +1,471 @@
+<div>Tests for some of the easily unittestable parts of code-review.js. You should see a series of "PASS" lines.</div>
+<div>FIXME: Run these as part of the layout test suite?</div>
+
+<script>
+CODE_REVIEW_UNITTEST = true;
+
+window.onerror = function(errorMsg, url, lineNumber) {
+  log('FAIL: Received an error at line ' + lineNumber);
+  return false;
+}
+</script>
+<script src="https://webkit.org/ajax/libs/jquery/jquery-1.4.2.min.js"></script> 
+<script src="code-review.js"></script>
+<pre id="output"></pre>
+<div id="diff-content"></div>
+<script>
+function inherits(childConstructor, parentConstructor) {
+  function tempConstructor() {};
+  tempConstructor.prototype = parentConstructor.prototype;
+  childConstructor.prototype = new tempConstructor();
+  childConstructor.prototype.constructor = childConstructor;
+}
+
+function log(msg) {
+    document.getElementById('output').textContent += msg + '\n\n';
+}
+
+function ASSERT(msg, assertion) {
+    if (assertion)
+        log('PASS');
+    else
+        log('FAIL: ' + msg);
+}
+
+function ASSERT_EQUAL(actual, expected) {
+    if (actual == expected)
+        log('PASS');
+    else
+        log('FAIL:\ngot:\n' + actual + '\nexpected:\n' + expected + '');
+}
+
+function testTracLinks() {
+  var links = tracLinks('foo/bar/baz.cpp', '');
+  ASSERT_EQUAL($('<div>').append(links).html(),
+    '<a target="_blank" href="http://trac.webkit.org/log/trunk/foo/bar/baz.h">header</a>' +
+    '<a target="_blank" href="http://trac.webkit.org/browser/trunk/foo/bar/baz.cpp?annotate=blame">annotate</a>' +
+    '<a target="_blank" href="http://trac.webkit.org/log/trunk/foo/bar/baz.cpp">revision log</a>');
+
+  var links = tracLinks('foo/bar.cpp/qux.mm', '');
+  ASSERT_EQUAL($('<div>').append(links).html(),
+    '<a target="_blank" href="http://trac.webkit.org/log/trunk/foo/bar.cpp/qux.h">header</a>' +
+    '<a target="_blank" href="http://trac.webkit.org/browser/trunk/foo/bar.cpp/qux.mm?annotate=blame">annotate</a>' +
+    '<a target="_blank" href="http://trac.webkit.org/log/trunk/foo/bar.cpp/qux.mm">revision log</a>');
+
+  var links = tracLinks('foo/bar.h', '');
+  ASSERT_EQUAL($('<div>').append(links).html(),
+    '<a target="_blank" href="http://trac.webkit.org/browser/trunk/foo/bar.h?annotate=blame">annotate</a>' +
+    '<a target="_blank" href="http://trac.webkit.org/log/trunk/foo/bar.h">revision log</a>');
+
+  var links = tracLinks('foo/bar.gypi', '');
+  ASSERT_EQUAL($('<div>').append(links).html(),
+    '<a target="_blank" href="http://trac.webkit.org/browser/trunk/foo/bar.gypi?annotate=blame">annotate</a>' +
+    '<a target="_blank" href="http://trac.webkit.org/log/trunk/foo/bar.gypi">revision log</a>');
+
+  var links = tracLinks('foo/ChangeLog', '');
+  ASSERT_EQUAL($('<div>').append(links).html(),
+    '<a target="_blank" href="http://trac.webkit.org/browser/trunk/foo/ChangeLog?annotate=blame">annotate</a>' +
+    '<a target="_blank" href="http://trac.webkit.org/log/trunk/foo/ChangeLog">revision log</a>');
+}
+
+function testDraftCommentSaver() {
+  function MockLocalStorage() {
+      this.localStorageStore = {};
+      this.log = [];
+
+      this.getItem = function(key) {
+          this.log.push('getItem:' + key);
+          return this.localStorageStore[key];
+      };
+
+      this.setItem = function(key, value) {
+          // For testing sake, consider having more than 2 items to exceed the storage quota.
+          if (Object.keys(this.localStorageStore).length > 2) {
+              this.log.push('QuotaExceeded on setItem:' + key + ',' + value);
+              throw "QuotaExceeded";
+          }
+          this.log.push('setItem:' + key + ',' + value);
+          this.localStorageStore[key] = value;
+      };
+
+      this.removeItem = function(key) {
+          this.log.push('removeItem:' + key);
+          delete this.localStorageStore[key];
+      };
+
+      this.log_string = function() {
+          return this.log.join('\n');
+      };
+
+      this.key = function(i) {
+          return Object.keys(this.localStorageStore)[i];
+      };
+
+      this.__defineGetter__('length', function() {
+          return Object.keys(this.localStorageStore).length;
+      });
+  }
+
+  function MockDraftCommentSaver(attachment_id, opt_localStorage) {
+      DraftCommentSaver.call(this, attachment_id, opt_localStorage);
+  }
+
+  inherits(MockDraftCommentSaver, DraftCommentSaver)
+
+  MockDraftCommentSaver.prototype._json = function() {
+      return "{MOCK JSON}";
+  }
+
+  MockDraftCommentSaver.prototype._should_remove_comments = function(message) {
+      return false;
+  }
+
+  // Basic setItem.
+  var ls = new MockLocalStorage();
+  new MockDraftCommentSaver('1234', ls).save();
+  ASSERT_EQUAL(ls.log_string(), 'setItem:draft-comments-for-attachment-1234,{MOCK JSON}');
+
+  // Exceed quota, but succeed after erasing old reviews.
+  var ls = new MockLocalStorage();
+  ls.localStorageStore = {
+      'draft-comments-for-attachment-1': '{"born-on": 100, "comments":[]}',
+      'draft-comments-for-attachment-2': '{"born-on": 100, "comments":[]}',
+      'draft-comments-for-attachment-3': '{"born-on": 100, "comments":[]}',
+      'draft-comments-for-attachment-4': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}'
+  };
+  new MockDraftCommentSaver('1234', ls).save();
+  ASSERT_EQUAL(ls.log_string(), 'QuotaExceeded on setItem:draft-comments-for-attachment-1234,{MOCK JSON}\ngetItem:draft-comments-for-attachment-1\ngetItem:draft-comments-for-attachment-2\ngetItem:draft-comments-for-attachment-3\ngetItem:draft-comments-for-attachment-4\nremoveItem:draft-comments-for-attachment-1\nremoveItem:draft-comments-for-attachment-2\nremoveItem:draft-comments-for-attachment-3\nsetItem:draft-comments-for-attachment-1234,{MOCK JSON}');
+
+  // Exceed quota after erasing old reviews and fail after prompt.
+  var ls = new MockLocalStorage();
+  ls.localStorageStore = {
+      'draft-comments-for-attachment-1': '{"born-on": 100, "comments":[]}',
+      'draft-comments-for-attachment-2': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}',
+      'draft-comments-for-attachment-3': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}',
+      'draft-comments-for-attachment-4': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}'
+  };
+  var mockDraftSaver = new MockDraftCommentSaver('1234', ls);
+  mockDraftSaver.save();
+  // Second save to ensure that we stop trying to save when we fail the prompt.
+  mockDraftSaver.save();
+  ASSERT_EQUAL(ls.log_string(), 'QuotaExceeded on setItem:draft-comments-for-attachment-1234,{MOCK JSON}\ngetItem:draft-comments-for-attachment-1\ngetItem:draft-comments-for-attachment-2\ngetItem:draft-comments-for-attachment-3\ngetItem:draft-comments-for-attachment-4\nremoveItem:draft-comments-for-attachment-1\nQuotaExceeded on setItem:draft-comments-for-attachment-1234,{MOCK JSON}');
+
+  // Exceed quota after erasing old reviews, but succeed after prompt.
+  var ls = new MockLocalStorage();
+  ls.localStorageStore = {
+      'draft-comments-for-attachment-1': '{"born-on": 100, "comments":[]}',
+      'draft-comments-for-attachment-2': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}',
+      'draft-comments-for-attachment-3': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}',
+      'draft-comments-for-attachment-4': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}'
+  };
+  var mockDraftSaver = new MockDraftCommentSaver('1234', ls);
+  mockDraftSaver._should_remove_comments = function() { return true; };
+  mockDraftSaver.save();
+  ASSERT_EQUAL(ls.log_string(), 'QuotaExceeded on setItem:draft-comments-for-attachment-1234,{MOCK JSON}\ngetItem:draft-comments-for-attachment-1\ngetItem:draft-comments-for-attachment-2\ngetItem:draft-comments-for-attachment-3\ngetItem:draft-comments-for-attachment-4\nremoveItem:draft-comments-for-attachment-1\nQuotaExceeded on setItem:draft-comments-for-attachment-1234,{MOCK JSON}\nremoveItem:draft-comments-for-attachment-2\nremoveItem:draft-comments-for-attachment-3\nremoveItem:draft-comments-for-attachment-4\nsetItem:draft-comments-for-attachment-1234,{MOCK JSON}');
+
+  // Always exceeds quota, even after erasing all review comments. There should be no setItem calls.
+  var ls = new MockLocalStorage();
+  ls.setItem = function() {
+      this.log.push('QuotaExceeded on setItem:' + key + ',' + value);
+      throw "QuotaExceeded"; 
+  }
+  ls.localStorageStore = {
+      'draft-comments-for-attachment-1': '{"born-on": 100, "comments":[]}',
+      'draft-comments-for-attachment-2': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}',
+      'draft-comments-for-attachment-3': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}',
+      'draft-comments-for-attachment-4': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}'
+  };
+  var mockDraftSaver = new MockDraftCommentSaver('1234', ls);
+  mockDraftSaver._should_remove_comments = function() { return true; };
+  mockDraftSaver.save();
+  // Second save to ensure that we stop trying to save when we fail the prompt.
+  mockDraftSaver.save();
+  ASSERT_EQUAL(ls.log_string(), 'getItem:draft-comments-for-attachment-1\ngetItem:draft-comments-for-attachment-2\ngetItem:draft-comments-for-attachment-3\ngetItem:draft-comments-for-attachment-4\nremoveItem:draft-comments-for-attachment-1\nremoveItem:draft-comments-for-attachment-2\nremoveItem:draft-comments-for-attachment-3\nremoveItem:draft-comments-for-attachment-4');
+
+  var ls = new MockLocalStorage();
+  ls.localStorageStore = {
+      'draft-comments-for-attachment-1': '{"born-on": 100, "comments":[]}',
+      'draft-comments-for-attachment-2': '{"born-on": 100, "comments":[{"start_line_id": 1, "end_line_id": 2, "contents": "DUMMY CONTENTS"}, {"start_line_id": 3, "end_line_id": 4, "contents": "DUMMY CONTENTS 2"}]}'
+  };
+  var comments = new MockDraftCommentSaver('2', ls).saved_comments().comments;
+  ASSERT_EQUAL(comments.length, 2);
+  ASSERT_EQUAL(ls.log_string(), 'getItem:draft-comments-for-attachment-2');
+
+  var ls = new MockLocalStorage();
+  ls.localStorageStore = {
+      'draft-comments-for-attachment-1': 'corrupt comments'
+  };
+  var comments = new MockDraftCommentSaver('1', ls).saved_comments().comments;
+  ASSERT_EQUAL(ls.log_string(), 'getItem:draft-comments-for-attachment-1\nremoveItem:draft-comments-for-attachment-1');
+
+  var ls = new MockLocalStorage();
+  ls.localStorageStore = {
+      'draft-comments-for-attachment-1': '["also corrupt comments"]'
+  };
+  var comments = new MockDraftCommentSaver('1', ls).saved_comments().comments;
+  ASSERT_EQUAL(ls.log_string(), 'getItem:draft-comments-for-attachment-1\nremoveItem:draft-comments-for-attachment-1');
+}
+
+function stripBornOn(json) {
+  return json.replace(/\"born\-on\"\:\d+,/, "");
+}
+
+function strippedSavedComments() {
+  return stripBornOn(localStorage[g_draftCommentSaver.localStorageKey()]);
+}
+
+function syncSlideUp(type, handler) {
+  handler.call(this);
+}
+
+function testReadDiscardedCommentWithPreviousComment() {
+  document.getElementById('diff-content').innerHTML =
+      '<div class="FileDiff">' +
+        '<h1><a href="http://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog">Source/WebCore/ChangeLog</a></h1>' +
+        '<div class="DiffSection">' +
+          '<div class="DiffBlock">' +
+            '<div class="DiffBlockPart add">' +
+              '<div class="Line LineContainer add">' +
+                '<span class="from lineNumber">&nbsp;</span><span class="to lineNumber">1</span><span class="text">first diff block first line</span>' +
+              '</div>' +
+              '<div class="Line LineContainer add">' +
+                '<span class="from lineNumber">&nbsp;</span><span class="to lineNumber">2</span><span class="text"></span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="clear_float"></div>' +
+          '</div>' +
+          '<div class="DiffBlock">' +
+            '<div class="DiffBlockPart shared">' +
+              '<div class="Line LineContainer">' +
+                '<span class="from lineNumber">1</span><span class="to lineNumber">12</span><span class="text">second diff block first line</span>' +
+              '</div>' +
+              '</div><div class="clear_float">' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+
+  eraseDraftComments();
+  crawlDiff();
+
+  var line = document.getElementById('line0');
+  var author = "ojan@chromium.org";
+  var comment_text = "This change sux.";
+  addPreviousComment(line, author, comment_text);
+  var previous_comment = document.querySelector('.previousComment');
+  ASSERT("Line with only a previous comment should not have 'data-has-comment' attribute.", !line.getAttribute('data-has-comment'));
+
+  var new_comment = addCommentField(previous_comment);
+  new_comment.find('textarea').val("dummy content");
+  var frozen_comment = acceptComment(new_comment);
+
+  ASSERT_EQUAL(document.querySelectorAll('.comment').length, 1);
+  ASSERT_EQUAL(strippedSavedComments(), '{"comments":[{"start_line_id":"line0","end_line_id":"line0","contents":"dummy content"}],"overall-comments":""}');
+
+  unfreezeComment(frozen_comment);
+  // This is a hack to make slideUp synchronous so that we can keep this test from needing to be async.
+  jQuery.fn.slideUp = syncSlideUp;
+  discardComment(new_comment);
+
+  ASSERT('There should be no draft comments.', !document.querySelector('.comment'));
+  ASSERT_EQUAL(strippedSavedComments(), '{"comments":[],"overall-comments":""}');
+  ASSERT("Line with only a previous comment should not have 'data-has-comment' attribute.", !line.getAttribute('data-has-comment'));
+
+  new_comment = addCommentField(previous_comment);
+  new_comment.find('textarea').val("dummy content");
+  acceptComment(new_comment);
+
+  ASSERT_EQUAL(document.querySelectorAll('.comment').length, 1);
+  ASSERT_EQUAL(strippedSavedComments(), '{"comments":[{"start_line_id":"line0","end_line_id":"line0","contents":"dummy content"}],"overall-comments":""}');
+
+  document.getElementById('diff-content').innerHTML = '';
+}
+
+function testSideBySideDiffWithPreviousCommentsOnSharedLine() {
+  document.getElementById('diff-content').innerHTML =
+      '<div class="FileDiff">' +
+        '<h1><a href="http://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog">Source/WebCore/ChangeLog</a></h1>' +
+        '<div class="DiffSection">' +
+          '<div class="DiffBlock">' +
+            '<div class="DiffBlockPart shared">' +
+              '<div class="Line LineContainer">' +
+              '<span class="from lineNumber">336</span><span class="to lineNumber">338</span><span class="text">    layoutFlexItems(*m_orderIterator, lineContexts);</span>' +
+              '</div>' +
+              '<div class="Line LineContainer">' +
+              '<span class="from lineNumber">337</span><span class="to lineNumber">339</span><span class="text"></span>' +
+              '</div>' +
+              '<div class="Line LineContainer">' +
+              '<span class="from lineNumber">338</span><span class="to lineNumber">340</span><span class="text">    LayoutUnit oldClientAfterEdge = clientLogicalBottom();</span>' +
+              '</div>' +
+            '</div><div class="clear_float">' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+
+  eraseDraftComments();
+  crawlDiff();
+
+  convertAllFileDiffs('sidebyside', $('.FileDiff'));
+
+  displayPreviousComments([{
+    author: 'ojan@chromium.org',
+    file_name: 'Source/WebCore/ChangeLog',
+    line_number: 338,
+    comment_text: 'This change sux.'
+  }]);
+
+  var previous_comment = document.querySelector('.previousComment');
+  ASSERT_EQUAL(previous_comment.getAttribute('data-comment-for'), 'line0');
+
+  var new_comment = addCommentField(previous_comment);
+  ASSERT("New comment should exist and contain a textarea.", new_comment.find('textarea'));
+
+  document.getElementById('diff-content').innerHTML = '';
+}
+
+function testSanitizeFragmentForCopy() {
+  var fragment = document.createElement('div');
+  fragment.innerHTML = '<div class="FileDiff">' +
+      '<h1><a href="http://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog">Source/WebCore/ChangeLog</a></h1>' +
+      '<div class="FileDiffLinkContainer LinkContainer" style="opacity: 0;"><a href="javascript:" class="unify-link cremed" style="display: inline;">unified</a></div>' +
+      '<div class="DiffSection">' +
+        '<div class="DiffBlock">' +
+          '<div class="DiffBlockPart shared">' +
+            '<div class="Line LineContainer">' +
+              '<span class="from lineNumber">336</span><span class="to lineNumber">338</span><span class="text">    layoutFlexItems(*m_orderIterator, lineContexts);</span>' +
+            '</div>' +
+            '<div class="Line LineContainer">' +
+              '<span class="from lineNumber">337</span><span class="to lineNumber">339</span><span class="text"></span>' +
+            '</div>' +
+            '<div class="Line LineContainer">' +
+              '<span class="from lineNumber">338</span><span class="to lineNumber">340</span><span class="text">    LayoutUnit oldClientAfterEdge = clientLogicalBottom();</span>' +
+            '</div>' +
+          '</div><div class="clear_float"></div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+  var expectedWithLineNumbers = '<div class="FileDiff">' +
+      '<h1><a href="http://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog">Source/WebCore/ChangeLog</a></h1>' +
+      '<div class="DiffSection">' +
+        '<div class="DiffBlock">' +
+          '<div class="DiffBlockPart shared">' +
+            '<div class="Line LineContainer">' +
+              '<span class="from lineNumber">336</span><span class="to lineNumber">338</span><span class="text">    layoutFlexItems(*m_orderIterator, lineContexts);</span>' +
+            '</div>' +
+            '<div class="Line LineContainer">' +
+              '<span class="from lineNumber">337</span><span class="to lineNumber">339</span><span class="text"><br></span>' +
+            '</div>' +
+            '<div class="Line LineContainer">' +
+              '<span class="from lineNumber">338</span><span class="to lineNumber">340</span><span class="text">    LayoutUnit oldClientAfterEdge = clientLogicalBottom();</span>' +
+            '</div>' +
+          '</div><div class="clear_float"></div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+  var fragmentCopy = fragment.cloneNode(true);
+  sanitizeFragmentForCopy(fragmentCopy, false);
+  ASSERT_EQUAL(fragmentCopy.innerHTML, expectedWithLineNumbers);
+
+  var expectedWithOutLineNumbers = '<div class="FileDiff">' +
+      '<h1><a href="http://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog">Source/WebCore/ChangeLog</a></h1>' +
+      '<div class="DiffSection">' +
+        '<div class="DiffBlock">' +
+          '<div class="DiffBlockPart shared">' +
+            '<div class="Line LineContainer">' +
+              '<span class="text">    layoutFlexItems(*m_orderIterator, lineContexts);</span>' +
+            '</div>' +
+            '<div class="Line LineContainer">' +
+              '<span class="text"><br></span>' +
+            '</div>' +
+            '<div class="Line LineContainer">' +
+              '<span class="text">    LayoutUnit oldClientAfterEdge = clientLogicalBottom();</span>' +
+            '</div>' +
+          '</div><div class="clear_float"></div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+  var fragmentCopy = fragment.cloneNode(true);
+  sanitizeFragmentForCopy(fragmentCopy, true);
+  ASSERT_EQUAL(fragmentCopy.innerHTML, expectedWithOutLineNumbers);
+}
+
+function testIsChangeLog() {
+  ASSERT("Top-level ChangeLog file is a ChangeLog file", isChangeLog("ChangeLog"));
+  ASSERT("Second-level ChangeLog file is a ChangeLog file", isChangeLog("Tools/ChangeLog"));
+  ASSERT("prepare-ChangeLog is not a ChangeLog file", !isChangeLog("Tools/Scripts/prepare-ChangeLog"));
+  ASSERT("ChangeLog-script is not a ChangeLog file", !isChangeLog("Tools/Scripts/ChangeLog-script"));
+}
+
+function testSaveCommentsWithMissingLineIds() {
+  document.getElementById('diff-content').innerHTML =
+      '<div class="FileDiff">' +
+        '<h1><a href="http://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog">Source/WebCore/dummy.txt</a></h1>' +
+        '<div class="DiffSection">' +
+          '<div class="DiffBlock">' +
+            '<div class="DiffBlockPart shared">' +
+              '<div class="Line LineContainer">' +
+              '<span class="from lineNumber">6</span><span class="to lineNumber">8</span><span class="text">a</span>' +
+              '</div>' +
+              '<div class="Line LineContainer">' +
+              '<span class="from lineNumber">7</span><span class="to lineNumber">9</span><span class="text">b</span>' +
+              '</div>' +
+              '<div class="Line LineContainer">' +
+              '<span class="from lineNumber">8</span><span class="to lineNumber">10</span><span class="text">c</span>' +
+              '</div>' +
+            '</div><div class="clear_float">' +
+          '</div>' +
+        '</div>' +
+        '<div class="DiffSection">' +
+          '<div class="Line LineContainer context">' +
+            '<span class="from lineNumber">@</span><span class="to lineNumber">@</span><span class="text">static void willRemoveChildren(ContainerNode* container)</span>' +
+          '</div>' +
+          '<div class="DiffBlock">' +
+            '<div class="DiffBlockPart shared">' +
+            '<div class="Line LineContainer">' +
+              '<span class="from lineNumber">15</span><span class="to lineNumber">17</span><span class="text">d</span>' +
+            '</div>' +
+          '</div><div class="clear_float"></div></div>' +
+        '</div>' +
+      '</div>';
+
+  var file_name = "Source/WebCore/dummy.txt";
+  var file_contents = [];
+  for (var i = 0; i < 20; i++)
+    file_contents[i] = i;
+  setFileContents(file_name, file_contents, file_contents);
+
+  eraseDraftComments();
+  crawlDiff();
+
+  var new_comment = addCommentFor($('#line4'));
+  new_comment.find('textarea').val("dummy content");
+  acceptComment(new_comment);
+
+  $('.ExpandLink')[0].click();
+
+  // Strip the link to the context since that points to window.location.
+  ASSERT_EQUAL(serializedComments().replace(/View in context.*code-review-test.html/, ''),
+    '\n\n' +
+    '> Source/WebCore/dummy.txt:17\n\n\n' +
+    'dummy content');
+  document.getElementById('diff-content').innerHTML = '';
+}
+
+
+var tests_to_run = [
+    window.testTracLinks,
+    window.testDraftCommentSaver,
+    window.testReadDiscardedCommentWithPreviousComment,
+    window.testSideBySideDiffWithPreviousCommentsOnSharedLine,
+    window.testSanitizeFragmentForCopy,
+    window.testIsChangeLog,
+    window.testSaveCommentsWithMissingLineIds,
+];
+
+appendToolbar();
+for (var i = 0; i < tests_to_run.length; ++i)
+    tests_to_run[i]();
+</script>

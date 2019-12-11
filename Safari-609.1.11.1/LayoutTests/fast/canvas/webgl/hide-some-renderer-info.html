@@ -1,0 +1,57 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:WebGL2Enabled=true ] -->
+<html>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const debug = (msg) => {
+    const p = document.querySelector("p");
+    p.appendChild(document.createTextNode(msg));
+    p.appendChild(document.createElement("br"));
+}
+
+window.addEventListener("load", () => {
+    let canvas = document.createElement("canvas");
+    let gl = canvas.getContext("webgl");
+
+    let ext = gl.getExtension("WEBGL_debug_renderer_info");
+
+    if (!ext) {
+        debug("WebGL1: WEBGL_debug_renderer_info not available");
+        return;
+    }
+
+    let vendor = gl.getParameter(ext.UNMASKED_VENDOR_WEBGL);
+    let renderer = gl.getParameter(ext.UNMASKED_RENDERER_WEBGL);
+    if (vendor.includes("Apple") && renderer != "Apple GPU")
+        debug("FAIL: Renderer was not appropriately hidden for WebGL 1.")
+     else
+        debug("PASS: Renderer was appropriately hidden for WebGL 1.")
+
+    canvas = document.createElement("canvas");
+    gl = canvas.getContext("webgl2");
+
+    if (!gl) {
+        debug("WebGL2: Not available");
+        return;
+    }
+
+    ext = gl.getExtension("WEBGL_debug_renderer_info");
+
+    if (!ext) {
+        debug("WebGL2: WEBGL_debug_renderer_info not available");
+        return;
+    }
+
+    vendor = gl.getParameter(ext.UNMASKED_VENDOR_WEBGL);
+    renderer = gl.getParameter(ext.UNMASKED_RENDERER_WEBGL);
+    if (vendor.includes("Apple") && renderer != "Apple GPU")
+        debug("FAIL: Renderer was not appropriately hidden for WebGL 2.")
+     else
+        debug("PASS: Renderer was appropriately hidden for WebGL 2.")
+
+}, false);
+</script>
+<p>
+</p>
+</html>

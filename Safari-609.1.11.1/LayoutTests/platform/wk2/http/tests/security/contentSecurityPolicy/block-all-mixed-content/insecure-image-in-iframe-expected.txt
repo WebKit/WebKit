@@ -1,0 +1,29 @@
+main frame - didFinishDocumentLoadForFrame
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
+frame "<!--frame1-->" - didCommitLoadForFrame
+CONSOLE MESSAGE: Blocked mixed content http://127.0.0.1:8000/security/resources/compass.jpg because 'block-all-mixed-content' appears in the Content Security Policy.
+frame "<!--frame1-->" - didFinishDocumentLoadForFrame
+frame "<!--frame1-->" - didHandleOnloadEventsForFrame
+main frame - didHandleOnloadEventsForFrame
+frame "<!--frame1-->" - didFinishLoadForFrame
+main frame - didFinishLoadForFrame
+This test loads a secure iframe that loads an insecure image. We should trigger a mixed content block because the child frame has CSP directive block-all-mixed-content.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+
+documentURI: https://127.0.0.1:8443/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-image.html
+referrer: http://127.0.0.1:8000/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-iframe.html
+blockedURI: http://127.0.0.1:8000
+violatedDirective: block-all-mixed-content
+effectiveDirective: block-all-mixed-content
+originalPolicy: block-all-mixed-content
+sourceFile: 
+lineNumber: 0
+columnNumber: 0
+statusCode: 0
+
+

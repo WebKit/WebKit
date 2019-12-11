@@ -1,0 +1,34 @@
+
+PASS [foo="bar"] /* sanity check */ insertRule 
+PASS [foo="bar"] /* sanity check */ getting CSSRule#cssText 
+PASS [foo="bar"] /* sanity check */ getting CSSStyleRule#selectorText 
+PASS [foo="bar"] /* sanity check */ setting CSSStyleRule#selectorText 
+PASS [foo="bar"] /* sanity check */ insertRule in @media 
+PASS [foo="bar"] /* sanity check */ getting CSSRule#cssText in @media 
+PASS [foo="bar"] /* sanity check */ getting CSSStyleRule#selectorText in @media 
+PASS [foo="bar"] /* sanity check */ setting CSSStyleRule#selectorText in @media 
+PASS [foo="bar" i] insertRule 
+PASS [foo="bar" i] getting CSSRule#cssText 
+PASS [foo="bar" i] getting CSSStyleRule#selectorText 
+PASS [foo="bar" i] setting CSSStyleRule#selectorText 
+PASS [foo="bar" i] insertRule in @media 
+PASS [foo="bar" i] getting CSSRule#cssText in @media 
+PASS [foo="bar" i] getting CSSStyleRule#selectorText in @media 
+PASS [foo="bar" i] setting CSSStyleRule#selectorText in @media 
+PASS [foo="bar" /**/ i] insertRule 
+PASS [foo="bar" /**/ i] getting CSSRule#cssText 
+PASS [foo="bar" /**/ i] getting CSSStyleRule#selectorText 
+PASS [foo="bar" /**/ i] setting CSSStyleRule#selectorText 
+PASS [foo="bar" /**/ i] insertRule in @media 
+PASS [foo="bar" /**/ i] getting CSSRule#cssText in @media 
+PASS [foo="bar" /**/ i] getting CSSStyleRule#selectorText in @media 
+PASS [foo="bar" /**/ i] setting CSSStyleRule#selectorText in @media 
+PASS [foo="bar"/**/i] insertRule 
+PASS [foo="bar"/**/i] getting CSSRule#cssText 
+PASS [foo="bar"/**/i] getting CSSStyleRule#selectorText 
+PASS [foo="bar"/**/i] setting CSSStyleRule#selectorText 
+PASS [foo="bar"/**/i] insertRule in @media 
+PASS [foo="bar"/**/i] getting CSSRule#cssText in @media 
+PASS [foo="bar"/**/i] getting CSSStyleRule#selectorText in @media 
+PASS [foo="bar"/**/i] setting CSSStyleRule#selectorText in @media 
+

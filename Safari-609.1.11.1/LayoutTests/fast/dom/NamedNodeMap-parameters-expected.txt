@@ -1,0 +1,25 @@
+Tests related to parameters of the NamedNodeMap API
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS namedNodeMap.__proto__ is NamedNodeMap.prototype
+
+* Not enough parameters
+PASS namedNodeMap.getNamedItem() threw exception TypeError: Not enough arguments.
+PASS namedNodeMap.setNamedItem() threw exception TypeError: Not enough arguments.
+PASS namedNodeMap.removeNamedItem() threw exception TypeError: Not enough arguments.
+PASS namedNodeMap.item() threw exception TypeError: Not enough arguments.
+PASS namedNodeMap.getNamedItemNS() threw exception TypeError: Not enough arguments.
+PASS namedNodeMap.getNamedItemNS(null) threw exception TypeError: Not enough arguments.
+PASS namedNodeMap.setNamedItemNS() threw exception TypeError: Not enough arguments.
+PASS namedNodeMap.removeNamedItemNS() threw exception TypeError: Not enough arguments.
+PASS namedNodeMap.removeNamedItemNS(null) threw exception TypeError: Not enough arguments.
+
+* Wrong parameter type
+PASS namedNodeMap.setNamedItem(notAnAttr) threw exception TypeError: Argument 1 ('attr') to NamedNodeMap.setNamedItem must be an instance of Attr.
+PASS namedNodeMap.setNamedItemNS(notAnAttr) threw exception TypeError: Argument 1 ('attr') to NamedNodeMap.setNamedItemNS must be an instance of Attr.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

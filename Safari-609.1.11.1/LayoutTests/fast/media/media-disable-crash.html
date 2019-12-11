@@ -1,0 +1,27 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+function runTest()
+{
+    if (!window.internals)
+        return;
+
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    document.body.textContent = "TEST RUNNING";
+
+    internals.settings.setMediaEnabled(false);
+
+    var audioElement = document.createElement("audio");
+    audioElement = null;
+
+    gc();
+
+    document.body.textContent = "PASS: Test passes if this message is displayed and there was no crash or assertion."
+}
+</script>
+</head>
+<body onload="runTest()">NOT RUN: Test cannot run without using the internals object to call setMediaEnabled.</body>
+</html>

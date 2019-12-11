@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+<a id="href" href="simple.html">download</a>
+<script>
+    var element = document.getElementById("href");
+    var data = "fake data";
+    var blob = new Blob([data], {type: "model/vnd.usdz+zip"});
+    var url = window.URL.createObjectURL(blob);
+
+    element.href = url;
+    element.click();
+</script>
+</body>
+</html>

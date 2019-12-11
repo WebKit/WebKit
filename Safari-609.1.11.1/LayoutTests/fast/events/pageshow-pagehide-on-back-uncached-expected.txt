@@ -1,0 +1,8 @@
+main frame - has 1 onunload handler(s)
+ALERT: window.onload
+ALERT: window.onpageshow, target = [object HTMLDocument], persisted = false
+CONSOLE MESSAGE: line 27: Use of window.alert is not allowed while unloading a page.
+main frame - has 1 onunload handler(s)
+ALERT: window.onload
+ALERT: window.onpageshow, target = [object HTMLDocument], persisted = false
+Test pageshow/pagehide event behavior when navigating back to an uncached page.

@@ -1,0 +1,27 @@
+This tests that if an in-page link is activated, focus control is transferred to the fragment if possible.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Verify that the focus is on the link.
+PASS document.activeElement is link1
+Click the link and verify that focus has moved to the fragment.
+PASS document.activeElement is document.getElementById('fragment1')
+Move focus back to the link and verify.
+PASS document.activeElement is link1
+Send an enter key event which should also trigger focus to move to the fragment.
+PASS document.activeElement is document.getElementById('fragment1')
+Verify Tab behaves correctly after following the link.
+PASS document.activeElement is document.getElementById('fragment3')
+PASS document.activeElement is document.getElementById('fragment1')
+Activate a link that does not have a focusable fragment and verify that the currently focused element is unfocused.
+PASS document.activeElement is link2
+PASS document.activeElement is document.body
+PASS successfullyParsed is true
+
+TEST COMPLETE
+link1 link2 
+
+fragment1
+fragment2
+fragment3

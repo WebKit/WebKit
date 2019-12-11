@@ -1,0 +1,7 @@
+2d.clearRect.nonfinite
+clearRect() with Infinity/NaN is ignored
+Spec references: 2d.nonfinite
+Actual output:
+Expected output:
+
+Passed

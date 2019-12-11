@@ -1,0 +1,11 @@
+Test that setting a font with size in 'ex' units doesn't crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS size is within 10 of 25
+PASS family is 'sans-serif'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

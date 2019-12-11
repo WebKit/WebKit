@@ -1,0 +1,3 @@
+
+FAIL document.open and singleton replacement assert_equals: setTimeout expected false but got true
+

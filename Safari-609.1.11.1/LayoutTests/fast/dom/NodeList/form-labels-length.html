@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+
+description('Tests that removing and inserting an input element always invalidates the cache in the labels node list');
+
+var iframe = document.createElement('iframe');
+document.body.appendChild(iframe);
+var doc = iframe.contentDocument;
+
+doc.body.innerHTML = '<form><label><input id=someInput></label><label for=someInput></label></form><input id=otherInput>';
+var input = doc.getElementById('someInput');
+var form = doc.querySelector('form');
+form.elements[0];
+input.labels[0];
+form.id = 'someId';
+form.remove();
+doc.body.appendChild(input);
+
+shouldBe('input.labels.length', '0');
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

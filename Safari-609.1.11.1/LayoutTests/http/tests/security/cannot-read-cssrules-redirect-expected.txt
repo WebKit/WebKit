@@ -1,0 +1,26 @@
+CONSOLE MESSAGE: Cross-origin redirection to http://127.0.0.1:8000/security/resources/xorigincss1.css denied by Cross-Origin Resource Sharing policy: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+This test whether a script can read the rules from a cross-origin style sheet in the presence of redirects. For more information on why we block this, please see https://bugs.webkit.org/show_bug.cgi?id=20527.
+
+Test begins.
+== Same-Origin to Cross-Origin, no-cors mode ==
+cssRules: null
+rules: null
+== Cross-Origin to Same-Origin, no-cors mode ==
+cssRules: [object CSSRuleList]
+cssRules length: 1
+rules: [object CSSRuleList]
+rules length: 1
+== Same-Origin to Same-Origin, cors mode ==
+cssRules: [object CSSRuleList]
+cssRules length: 1
+rules: [object CSSRuleList]
+rules length: 1
+== Cross-Origin to Same-Origin, cors mode, successful cors check ==
+cssRules: [object CSSRuleList]
+cssRules length: 1
+rules: [object CSSRuleList]
+rules length: 1
+== Cross-Origin to Same-Origin, cors mode, failing cors check ==
+cssRules: null
+rules: null
+Test ends.

@@ -1,0 +1,16 @@
+<!DOCTYPE>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Checks that Range.cloneContents() throws a HierarchyRequestError when encountering a docType");
+
+var range = document.createRange();
+range.setStart(document, 0);
+range.setEnd(document, 2);
+
+shouldThrowErrorName("range.cloneContents()", "HierarchyRequestError");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+; Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+;
+; Redistribution and use in source and binary forms, with or without
+; modification, are permitted provided that the following conditions
+; are met:
+; 1. Redistributions of source code must retain the above copyright
+; notice, this list of conditions and the following disclaimer.
+; 2. Redistributions in binary form must reproduce the above copyright
+; notice, this list of conditions and the following disclaimer in the
+; documentation and/or other materials provided with the distribution.
+;
+; THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+; PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+; BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+; THE POSSIBILITY OF SUCH DAMAGE.
+
+(version 1)
+(deny default (with partial-symbolication))
+(allow system-audit file-read-metadata)
+
+(import "common.sb")
+
+(deny mach-lookup (xpc-service-name-prefix ""))
+
+(deny lsopen)
+
+(deny sysctl*)
+(allow sysctl-read
+    (sysctl-name
+        "hw.availcpu"
+        "hw.ncpu"
+        "hw.model"
+        "kern.memorystatus_level"
+        "vm.footprint_suspend"))
+
+;; Access to client's cache folder & re-vending to CFNetwork.
+;; FIXME: Remove the webkit specific extension classes <rdar://problem/17755931>
+(allow file-issue-extension (require-all
+    (extension "com.apple.app-sandbox.read-write")
+    (extension-class "com.apple.nsurlstorage.extension-cache")))
+
+;; App sandbox extensions
+(allow file-read* file-write* (extension "com.apple.app-sandbox.read-write"))
+(allow file-read* (extension "com.apple.app-sandbox.read"))
+
+;; FIXME: <rdar://problem/17909681> SSO expects to be able to walk the parent
+;; bundle to find Info plists, so we jump through a few hoops here to provide
+;; enough access to make it possible.
+
+;; IOKit user clients
+(allow iokit-open
+       (iokit-user-client-class "RootDomainUserClient"))
+
+;; Various services required by CFNetwork and other frameworks
+(allow mach-lookup
+       (global-name "com.apple.PowerManagement.control"))
+
+(network-client (remote tcp) (remote udp))
+
+;; allow 3rd party applications to access nsurlstoraged's top level domain data cache
+(allow-well-known-system-group-container-subpath-read
+    "/systemgroup.com.apple.nsurlstoragedresources/Library/dafsaData.bin")
+
+(allow file-read-data
+    (literal "/usr/local/lib/log") ; <rdar://problem/36629495>
+)
+
+;; Security framework
+(allow mach-lookup
+    (global-name "com.apple.ocspd")
+    (global-name "com.apple.securityd"))
+
+;; PassKit framework
+(allow mach-lookup
+    (global-name "com.apple.passd.in-app-payment")
+    (global-name "com.apple.passd.library"))
+
+(allow mach-lookup
+    (global-name "com.apple.FileCoordination")
+    (global-name "com.apple.dmd.policy")
+    (global-name "com.apple.siri.context.service")
+    (global-name "com.apple.ctcategories.service"))
+
+(deny file-write-create
+       (vnode-type SYMLINK))
+
+;; FIXME should be removed when <rdar://problem/30498072> is fixed.
+(allow network*
+    (local udp)
+    (remote udp)
+    (local tcp)
+    (remote tcp))
+
+;; Various services required by system frameworks
+(allow mach-lookup
+    (global-name "com.apple.lsd.mapdb")
+    (global-name "com.apple.analyticsd")
+    (global-name "com.apple.AppSSO.service-xpc"))
+
+;; For reporting progress for active downloads <rdar://problem/44405661>
+(allow mach-lookup
+    (global-name "com.apple.ProgressReporting"))
+
+ ;; <rdar://problem/47598758>
+(allow mach-lookup
+    (global-name "com.apple.nesessionmanager.content-filter"))
+
+;; Various shared memory accesses required by system frameworks
+(allow ipc-posix-shm-read-data
+    (ipc-posix-name "/com.apple.AppSSO.version"))

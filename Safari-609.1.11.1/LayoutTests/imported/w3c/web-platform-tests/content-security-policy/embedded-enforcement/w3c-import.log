@@ -1,0 +1,35 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/allow_csp_from-header.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/idlharness.window.js
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/iframe-csp-attribute.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/required-csp-header-cascade.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/required_csp-header-crlf.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/required_csp-header.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/subsumption_algorithm-general.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/subsumption_algorithm-hashes.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/subsumption_algorithm-host_sources-hosts.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/subsumption_algorithm-host_sources-paths.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/subsumption_algorithm-host_sources-ports.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/subsumption_algorithm-host_sources-protocols.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/subsumption_algorithm-nonces.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/subsumption_algorithm-none.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/subsumption_algorithm-self.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/subsumption_algorithm-strict_dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/subsumption_algorithm-unsafe_eval.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/subsumption_algorithm-unsafe_hashes.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement/subsumption_algorithm-unsafe_inline.html

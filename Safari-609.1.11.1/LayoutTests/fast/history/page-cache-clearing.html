@@ -1,0 +1,42 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that clearing the page cache doesn't leave pages in the cache.");
+window.jsTestIsAsync = true;
+
+if (!window.internals)
+    debug("This test requires window.internals");
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+    if (event.persisted) {
+        shouldBeTrue("window.internals.backForwardCacheSize() > 0");
+        evalAndLog("window.internals.clearBackForwardCache()");
+        shouldBe("window.internals.backForwardCacheSize()", "0");
+        finishJSTest();
+    }
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        testFailed("Page did not enter the page cache.");
+        finishJSTest();
+    }
+}, false);
+
+window.addEventListener('load', function() {
+    // Force a back navigation back to this page.
+    setTimeout(function() {
+        window.location.href = "resources/page-cache-helper.html";
+    }, 0);
+
+}, false);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../../../inspector/resources/inspector-test.js"></script>
+<script>
+function load()
+{
+    testRunner.waitUntilDone();
+
+    const url = "ws://127.0.0.1:8880/websocket/tests/hybi/inspector/echo";
+    let webSocket = new WebSocket(url);
+    webSocket.addEventListener("open", (event) => {
+        // Only run the tests once the websocket has connected.
+        runTest();
+    });
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("WebSocket.BeforeLoad");
+
+    function logReadyState(readyState) {
+        let readyStateString = "";
+
+        switch (readyState) {
+        case WI.WebSocketResource.ReadyState.Closed:
+            readyStateString = "closed";
+            break;
+
+        case WI.WebSocketResource.ReadyState.Connecting:
+            readyStateString = "connecting";
+            break;
+
+        case WI.WebSocketResource.ReadyState.Open:
+            readyStateString = "open";
+            break;
+
+        }
+
+        InspectorTest.log(`Resource has readyState "${readyStateString}"`);
+    }
+
+    suite.addTestCase({
+        name: "WebSocket.BeforeLoad",
+        description: "Test that the existing websocket is sent to the frontend when it is first opened.",
+        test(resolve, reject) {
+            const url = "ws://127.0.0.1:8880/websocket/tests/hybi/inspector/echo";
+            let webSocketResources = WI.networkManager.mainFrame.resourceCollectionForType(WI.Resource.Type.WebSocket);
+            InspectorTest.expectEqual(webSocketResources.size, 1, "Should have 1 WebSocketResource");
+
+            let webSocketResource = Array.from(webSocketResources)[0];
+            if (!webSocketResource) {
+                reject("Missing WebSocket resource.");
+                return;
+            }
+
+            InspectorTest.expectThat(webSocketResource instanceof WI.WebSocketResource, "Resource should be a WebSocket.");
+            InspectorTest.expectEqual(webSocketResource.url, url, `Resource URL should be "${url}".`);
+            InspectorTest.expectThat(!isEmptyObject(webSocketResource.requestHeaders), "Resource should have request headers.");
+            InspectorTest.expectThat(!isEmptyObject(webSocketResource.responseHeaders), "Resource should have response headers.");
+            InspectorTest.log(`Resource readyState should be ${String(webSocketResource.readyState)}.`);
+
+            resolve();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+<p>Tests that WebSockets created before the inspector loads are also tracked.</p>
+</body>
+</html>

@@ -1,0 +1,7 @@
+2d.getcontext.shared
+
+getContext('2d') returns objects which share canvas state
+
+
+FAIL getContext('2d') returns objects which share canvas state null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

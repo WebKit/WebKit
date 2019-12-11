@@ -1,0 +1,3 @@
+
+PASS EventSource: MIME type with trailing ; 
+

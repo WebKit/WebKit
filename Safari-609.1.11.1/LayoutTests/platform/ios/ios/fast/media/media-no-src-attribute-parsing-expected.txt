@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 13: PASS
+Test that attributes on media elements are parsed even when the media isn't playable. This test uses the class attribute as a proxy for correct attribute parsing. On success, you should see 'PASS' logged to the console.
+
+

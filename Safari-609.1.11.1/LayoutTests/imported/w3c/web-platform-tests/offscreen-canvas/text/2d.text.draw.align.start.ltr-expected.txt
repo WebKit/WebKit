@@ -1,0 +1,7 @@
+2d.text.draw.align.start.ltr
+
+textAlign start with ltr is the left edge
+
+
+FAIL textAlign start with ltr is the left edge null is not an object (evaluating 'ctx.font = '50px CanvasTest'')
+

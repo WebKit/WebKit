@@ -1,0 +1,42 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/all-hosts.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/chaining-invalid-selector.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/complex-matching.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/complex-non-matching.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/different-host.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/double-forward.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/host-stylesheet.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/inner-host.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/interaction-with-placeholder-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/interaction-with-placeholder.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/interaction-with-pseudo-elements.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/invalidation-change-exportparts-forward.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/invalidation-change-part-name-forward.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/invalidation-change-part-name-idl-domtokenlist.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/invalidation-change-part-name-idl-setter.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/invalidation-change-part-name.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/invalidation-complex-selector-forward.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/invalidation-complex-selector.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/multiple-parts.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/part-name-idl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/precedence-part-vs-part.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/simple-forward-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/simple-forward.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/simple-inline.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow-parts/simple.html

@@ -1,0 +1,15 @@
+Pointer Event: click event during capture
+
+Follow the test instructions with mouse. If you don't have the device skip it.
+
+Test Description: Click event should be sent to the first common ancestor of the pointerdown and pointerup targets.
+Click on the green box with the left button of mouse.
+Press down the left button on the blue box and drag to the green box and release the button.
+Repeat the two steps above once again.
+
+
+
+FAIL mouse click target during capture assert_equals: An element should only receive click when it is the first common ancestor of pointerdown and pointerup targets expected "pointerdown@green,gotpointercapture@blue,pointerup@blue,click@grey,lostpointercapture@blue" but got "pointerdown@green,gotpointercapture@blue,pointerup@blue,lostpointercapture@blue"
+PASS Click target when pointerup/down targeted at the same element with no capture 
+PASS Click target when pointerup/down targeted at different elements with no capture 
+

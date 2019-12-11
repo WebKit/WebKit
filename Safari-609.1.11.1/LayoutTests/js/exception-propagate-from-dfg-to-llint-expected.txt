@@ -1,0 +1,10 @@
+Ensures that we pass exceptions to the correct codeblock when throwing from the DFG to the LLInt.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Caught exception in correct codeblock
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,7 @@
+2d.transformation.setTransform.nonfinite
+
+setTransform() with Infinity/NaN is ignored
+
+
+FAIL setTransform() with Infinity/NaN is ignored null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

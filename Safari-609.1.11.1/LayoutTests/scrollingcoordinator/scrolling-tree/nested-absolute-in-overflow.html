@@ -1,0 +1,57 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <title>Nested absolutes don't with the overflow and are not stacking descendants: there should be no positioning nodes</title>
+    <style>
+        .scrollcontent {
+            height: 500px;
+        }
+        .scroller {
+            margin: 20px;
+            overflow: scroll;
+            height: 300px;
+            width: 300px;
+            border: 2px solid black;
+        }
+    
+        .absolute {
+            position:absolute;
+            left: 50px;
+            top: 50px;
+            width: 100px;
+            height: 100px;
+            background: gray;
+            border: 2px solid green;
+        }
+    
+        .inner {
+            left:25px;
+            top:25px;
+            width: 300px;
+        }
+
+        .scrollcontent {
+            height: 500px;
+            background-image: repeating-linear-gradient(white, silver 200px);
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        window.addEventListener('load', () => {
+            if (window.internals)
+                document.getElementById('tree').innerText = internals.scrollingStateTreeAsText();
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="absolute">abs
+            <div class="inner absolute">abs</div>
+        </div>
+        <div class="scrollcontent"></div>
+    </div>
+<pre id="tree"></pre>
+</body>
+</html>

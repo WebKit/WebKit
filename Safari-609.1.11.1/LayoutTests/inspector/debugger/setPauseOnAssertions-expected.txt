@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: line 8: Failing assertion
+CONSOLE MESSAGE: line 8: Failing assertion
+Debugger.setPauseOnAssertions
+
+
+== Running test suite: Debugger.setPauseOnAssertions
+-- Running test case: Debugger.setPauseOnAssertions.Disabled
+PASS: Should not pause.
+
+-- Running test case: Debugger.setPauseOnAssertions.Enabled
+PASS: Should paused.
+

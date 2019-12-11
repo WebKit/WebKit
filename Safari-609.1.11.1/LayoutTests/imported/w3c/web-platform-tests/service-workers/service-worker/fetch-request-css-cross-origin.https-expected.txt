@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: Did not parse stylesheet at 'https://localhost:9443/service-workers/service-worker/resources/cross-origin-html.css?mime=no' because non CSS MIME types are not allowed for cross-origin stylesheets.
+
+PASS setup global state 
+PASS MIME checking of CSS resources fetched via service worker when Content-Type is not set. 
+FAIL Same-origin policy for access to CSS resources fetched via service worker assert_throws: function "() => {
+    f.contentDocument.styleSheets[0].cssRules[0].cssText;
+  }" threw object "TypeError: null is not an object (evaluating 'f.contentDocument.styleSheets[0].cssRules[0]')" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
+PASS cleanup global state 
+

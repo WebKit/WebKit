@@ -1,0 +1,10 @@
+<?xml-stylesheet href="css3-modsel-89.css" type="text/css"?>
+<test>
+<blockquote xmlns="http://www.w3.org/1999/xhtml">
+<div>
+<div>
+<p>This text should be green.</p>
+</div>
+</div>
+</blockquote>
+</test>

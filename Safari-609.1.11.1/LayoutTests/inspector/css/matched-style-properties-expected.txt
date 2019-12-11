@@ -1,0 +1,10 @@
+Testing that the author rules returned by CSSStyleManager.stylesForNode have lowercase property names regardless of CSS source formatting.
+
+Property valid: background-color
+Property valid: color
+Property valid: border-style
+Property valid: border-width
+Property valid: position
+Property valid: top
+Property valid: left
+

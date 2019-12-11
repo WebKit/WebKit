@@ -1,0 +1,51 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+    <head>
+        <title>Selecting from a list of tracks</title>
+        <script src="media-controls.js"></script>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script src="trackmenu-test.js"></script>
+        <script>
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            function testMenu()
+            {
+                showTrackMenu();
+                trackListItems = captionTrackMenuList();
+                var matchingTracks = 0;
+                for (var i = 0; i < video.textTracks.length; ++i) {
+                    var kind = video.textTracks[i].kind;
+                    if (kind == "captions" || kind == "descriptions" || kind == "subtitles")
+                        ++matchingTracks;
+                }
+                consoleWrite("There are " + matchingTracks + " caption, description or subtitles tracks.");
+                
+                var expectedItemCount = matchingTracks + 2;
+                consoleWrite("Because of \"Off\" and \"Auto\", there should be " + expectedItemCount + " items in the menu.");
+                testExpected("trackListItems.length", expectedItemCount);
+                endTest();
+            }
+
+            function start()
+            {
+                findMediaElement();
+                video.src = findMediaFile('video', 'content/test');
+                waitForEvent('canplaythrough', testMenu);
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <p>Test that the track menu only shows captions, descriptions and subtitles.</p>
+        <video width="500" height="300" controls>
+            <track kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="fr">
+            <track kind="chapters" src="track/captions-webvtt/captions-fast.vtt" srclang="en">
+            <track kind="descriptions" src="track/captions-webvtt/captions-fast.vtt" srclang="en">
+            <track kind="metadata" src="track/captions-webvtt/captions-fast.vtt" srclang="en">
+            <track kind="subtitles" src="track/captions-webvtt/captions-fast.vtt" srclang="ja">
+        </video>
+    </body>
+</html>
+

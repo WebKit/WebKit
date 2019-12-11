@@ -1,0 +1,11 @@
+15.4.4.15-2-8 (TestCases/chapter15/15.4/15.4.4/15.4.4.15/15.4.4.15-2-8.js) Array.prototype.lastIndexOf when 'length' is own accessor property on an Array-like object
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ES5Harness.preconditionPassed is true
+PASS ES5Harness.testPassed is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

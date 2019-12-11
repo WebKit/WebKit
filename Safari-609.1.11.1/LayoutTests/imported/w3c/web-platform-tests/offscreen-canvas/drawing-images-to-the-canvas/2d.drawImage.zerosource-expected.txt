@@ -1,0 +1,7 @@
+2d.drawImage.zerosource
+
+drawImage with zero-sized source rectangle throws INDEX_SIZE_ERR
+
+
+FAIL drawImage with zero-sized source rectangle throws INDEX_SIZE_ERR null is not an object (evaluating 'ctx.fillStyle = '#0f0'')
+

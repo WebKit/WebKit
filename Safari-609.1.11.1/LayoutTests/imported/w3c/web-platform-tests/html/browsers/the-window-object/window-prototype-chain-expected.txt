@@ -1,0 +1,7 @@
+
+PASS window object 
+PASS Window.prototype 
+PASS Global scope polluter 
+PASS EventTarget.prototype 
+PASS Object.prototype 
+

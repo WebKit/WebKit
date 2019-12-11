@@ -1,0 +1,83 @@
+; Copyright (C) 2018 Apple Inc. All rights reserved.
+;
+; Redistribution and use in source and binary forms, with or without
+; modification, are permitted provided that the following conditions
+; are met:
+; 1. Redistributions of source code must retain the above copyright
+;    notice, this list of conditions and the following disclaimer.
+; 2. Redistributions in binary form must reproduce the above copyright
+;    notice, this list of conditions and the following disclaimer in the
+;    documentation and/or other materials provided with the distribution.
+;
+; THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+; PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+; BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+; THE POSSIBILITY OF SUCH DAMAGE.
+
+(define allow-symlinks #t)
+
+(define (home-subpath home-relative-subpath)
+    (subpath (string-append (param "HOME_DIR") home-relative-subpath)))
+(define (home-literal home-relative-literal)
+    (literal (string-append (param "HOME_DIR") home-relative-literal)))
+
+(allow file-read* file-write*
+    (home-literal "/Library/Preferences/com.cisco.webex.fuzzyWindowConfig.plist"))
+
+(allow file-read* file-write*
+    (home-literal "/Library/Preferences/com.webex.meetingmanager.plist"))
+
+(allow file-read* file-write* file-write-create
+    (home-subpath "/Library/Application Support/WebEx Folder"))
+
+;; FIXME: We should tigthen the sandbox to some tmp subfolders
+(allow file*
+    (prefix "/private/tmp"))
+
+(allow file-read-data file-write-data
+    (path "/dev/tty"))
+
+(allow process-exec)
+(allow process-fork)
+(allow distributed-notification-post)
+
+(allow mach-lookup
+    (global-name "com.apple.PerformanceAnalysis.animationperfd")
+    (global-name "com.apple.dock.fullscreen")
+    (global-name "com.apple.quicklook.ui.helper.active")
+    (global-name "com.apple.quicklook.ui.helper")
+    (global-name "com.apple.inputmethodkit.launchagent")
+    (global-name "com.apple.inputmethodkit.launcher")
+    (global-name "com.apple.inputmethodkit.getxpcendpoint"))
+
+(allow iokit-get-properties
+    (iokit-property "PowerControlSupported")
+    (iokit-property "SupportTapToWake")
+    (iokit-property "ResetOnLockMs")
+    (iokit-property "ResetOnUnlockMs")
+    (iokit-property "ShouldResetOnButton")
+    (iokit-property "WirelessChargingNotificationSupported")
+    (iokit-property "SupportsSilentClick")
+    (iokit-property "MinDigitizerPressureValue")
+    (iokit-property "AccurateMaxDigitizerPressureValue")
+    (iokit-property "ExtendedMaxDigitizerPressureValue")
+    (iokit-property "AnimationThresholds")
+    (iokit-property "ActivationThresholds")
+    (iokit-property "mt-device-id"))
+
+(webkit-powerbox)
+(webkit-printing)
+(webkit-camera)
+(webkit-microphone)
+
+(allow network-bind (local ip))
+
+(allow network-outbound)
+(allow network-inbound (local ip))

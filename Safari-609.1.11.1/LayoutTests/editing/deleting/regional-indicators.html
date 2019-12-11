@@ -1,0 +1,27 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<p>This test checks how backspacing works with regional indicator characters.</p>
+<div contenteditable id="test">🇯🇵🇯🇵🇯🇵</div> <!-- (j)(p)(j)(p)(j)(p) -->
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var div = document.getElementById("test");
+var afterLastIndicator = document.createRange();
+afterLastIndicator.setStart(div.firstChild, 12);
+document.getSelection().addRange(afterLastIndicator);
+document.execCommand("Delete");
+document.write("1. Delete a flag: " + (div.textContent == "🇯🇵🇯🇵" ? "PASS" : "FAIL") + "<br>");
+
+div.innerText = "a🇯" // a, (j)
+afterLastIndicator.setStart(div.firstChild, 3);
+document.getSelection().removeAllRanges();
+document.getSelection().addRange(afterLastIndicator);
+document.execCommand("Delete");
+document.write("2. Delete a lone regional indicator character: " + (div.textContent == "a" ? "PASS" : "FAIL"));
+</script>
+</body>
+</html>

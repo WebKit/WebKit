@@ -1,0 +1,294 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # watchedusers: string.
+  #               Comma-separated list of email addresses this user watches.
+  # watchers:     array.
+  #               Array of users watching this user's account.
+  # excludeself:  boolean.
+  #               True if user is not receiving self-generated mail.
+  # <rolename>:   Multiple hashes, one for each rolename (e.g. assignee; see
+  #               below), keyed by reasonname (e.g. comments; again, see
+  #               below). The value is a boolean - true if the user is
+  #               receiving mail for that reason when in that role.
+  #%]
+
+[%# If the user's bugmail has been disabled by admins, show a warning. %]
+[% IF user.email_disabled %]
+  <div class="warningmessages">
+    Your [% terms.bug %]mail has been disabled by the [% terms.Bugzilla %]
+    administrator.  Please contact [% Param('maintainer') %] to enable
+    [%+ terms.bug %]mails.
+  </div>
+[% END %]
+
+[% IF user.authorizer.can_change_email && Param('allowemailchange') %]
+  <p>
+    If you want to change your e-mail address
+    <b>[% user.email FILTER html %]</b> to which [% terms.Bugzilla %] sends
+    notifications, click the "Account Information" tab above.
+  </p>
+[% END %]
+
+<p>
+  If you don't like getting a notification for "trivial"
+  changes to [% terms.bugs %], you can use the settings below to
+  filter some or all notifications.
+</p>
+
+<script type="text/javascript">
+<!--
+function SetCheckboxes(setting) {
+  for (var count = 0; count < document.userprefsform.elements.length; count++) {
+    var theinput = document.userprefsform.elements[count];
+    if (theinput.type == "checkbox"
+        && !theinput.disabled
+        && !theinput.name.match("remove_ignored_bug"))
+    {
+      if (theinput.name.match("neg")) {
+        theinput.checked = !setting;
+      }
+      else {
+        theinput.checked = setting;
+      }
+    }
+  }
+}
+// -->
+</script>
+
+<input type="button" value="Enable All Mail" onclick="SetCheckboxes(true); return false;">
+<input type="button" value="Disable All Mail" onclick="SetCheckboxes(false); return false;">
+
+<hr>
+
+<h3>Global options</h3>
+
+[% prefname = "email-$constants.REL_ANY-$constants.EVT_FLAG_REQUESTED" %]
+<input type="checkbox" name="[% prefname %]" id="[% prefname %]" value="1"
+       [%+ 'checked="checked"' IF user.mail_settings.${constants.REL_ANY}.${constants.EVT_FLAG_REQUESTED} %]>
+<label for="[% prefname %]">Email me when someone asks me to set a flag</label>
+<br>
+[% prefname = "email-$constants.REL_ANY-$constants.EVT_REQUESTED_FLAG" %]
+<input type="checkbox" name="[% prefname %]" id="[% prefname %]" value="1"
+       [%+ 'checked="checked"' IF user.mail_settings.${constants.REL_ANY}.${constants.EVT_REQUESTED_FLAG} %]>
+<label for="[% prefname %]">Email me when someone sets a flag I asked for</label>
+
+[% IF user.is_global_watcher %]
+  <p>
+    You are watching all [% terms.bugs %]. To be removed from this role, contact
+    <a href="mailto:[% Param("maintainer") %]">[% Param("maintainer") %]</a>.
+  </p>
+[% END %]
+
+<hr>
+
+<h3>Field/recipient specific options</h3>
+
+[% events = [
+    { id = constants.EVT_ADDED_REMOVED,
+      description = "I'm added to or removed from this capacity" },
+    { id = constants.EVT_BUG_CREATED,
+      description = "A new $terms.bug is created" },
+    { id = constants.EVT_OPENED_CLOSED,
+      description = "The $terms.bug is resolved or reopened" },
+    { id = constants.EVT_COMPONENT,
+      description = "The product or component changes" },
+    { id = constants.EVT_PROJ_MANAGEMENT,
+      description = "The priority, status, severity, or milestone changes" },
+    { id = constants.EVT_COMMENT,
+      description = "New comments are added" },
+    { id = constants.EVT_ATTACHMENT,
+      description = "New attachments are added" },
+    { id = constants.EVT_ATTACHMENT_DATA,
+      description = "Attachment details changes" },
+    { id = constants.EVT_KEYWORD,
+      description = "The keywords field changes" },
+    { id = constants.EVT_CC,
+      description = "The CC field changes" },
+    { id = constants.EVT_DEPEND_BLOCK,
+      description = "The dependency tree changes" },
+    { id = constants.EVT_OTHER,
+      description = "Any field not mentioned above changes" },
+] %]
+
+[% neg_events = [
+    { id = constants.EVT_UNCONFIRMED,
+      description = "The $terms.bug is in the UNCONFIRMED state" },
+    { id = constants.EVT_CHANGED_BY_ME,
+      description = "The change was made by me" },
+] %]
+
+[% relationships = [
+    { id = constants.REL_ASSIGNEE,
+      description = "Assignee" },
+    { id = constants.REL_REPORTER,
+      description = "Reporter" },
+    { id = constants.REL_CC,
+      description = "CCed" },
+] %]
+
+[% IF Param('useqacontact') %]
+  [% relationships.push({ id = constants.REL_QA, 
+                          description = "QA Contact" }) %]
+[% END %]
+
+
+[%# This is up here so that the "relationships" hook can modify it. %]
+[% no_added_removed = [constants.REL_REPORTER] %]
+
+[% Hook.process('relationships') %]
+
+[% num_columns = relationships.size %]
+
+<table id="email_prefs">
+  <tr class="column_header">
+    <th colspan="[% num_columns FILTER html %]">
+      When my relationship to this [% terms.bug %] is:
+    </th>
+    <th>I want to receive mail when:</th>
+  </tr>
+
+  <tr>
+    [% FOREACH relationship = relationships %]
+      <th class="role_header">[% relationship.description FILTER html %]</th>
+    [% END %]
+  </tr>
+
+  [% FOREACH event = events %]  
+    [% count = loop.count() %]
+    <tr class="bz_row_[% count % 2 == 1 ? "odd" : "even" %]">
+      [% FOREACH relationship = relationships %]
+        <td class="center">
+          <input type="checkbox" value="1"
+                 name="email-[% relationship.id %]-[% event.id %]"
+                 [%# The combinations don't always make sense; disable a couple %]
+                 [% IF event.id == constants.EVT_ADDED_REMOVED
+                       AND no_added_removed.contains(relationship.id) %]
+                   disabled="disabled"
+                 [% ELSIF user.mail_settings.${relationship.id}.${event.id} %]
+                   checked="checked"
+                 [% END %]>
+        </td>
+      [% END %]
+      <td>
+        [% event.description FILTER html %]
+      </td>
+    </tr>
+  [% END %]
+
+  <tr class="column_header">
+    <th colspan="[% num_columns FILTER html %]">&nbsp;</th>
+    <th>but not when (overrides above):</th>
+  </tr>
+
+  [% FOREACH event = neg_events %]  
+    [% count = loop.count() %]
+    <tr class="bz_row_[% count % 2 == 1 ? "odd" : "even" %]">
+      [% FOREACH relationship = relationships %]
+        <td class="center">
+          <input type="checkbox" value="1"
+                 name="neg-email-[% relationship.id %]-[% event.id %]"
+                 [%+ 'checked="checked"' IF NOT user.mail_settings.${relationship.id}.${event.id} %]>
+        </td>
+      [% END %]
+      <td>[% event.description FILTER html %]</td>
+    </tr>
+  [% END %]
+</table>
+
+<hr>
+
+<h3>User Watching</h3>
+
+<p>
+If you watch a user, it is as if you are standing in their shoes for the 
+purposes of getting email. Email is sent or not according to <em>your</em>
+preferences for <em>their</em> relationship to the [% terms.bug %]
+(e.g. Assignee).
+</p>
+
+[% IF watchedusers.size %]
+  <p>You are watching everyone in the following list:</p>
+  <p>
+    <select id="watched_by_you" name="watched_by_you" multiple="multiple" size="5">
+        [% FOREACH w = watchedusers %]
+           <option value="[% w FILTER html %]">[% w FILTER html %]</option>
+        [% END %]
+    </select>
+    <br>
+    <input type="checkbox" id="remove_watched_users" name="remove_watched_users">
+    <label for="remove_watched_users">Remove selected users from my watch list</label>
+  </p>
+[% ELSE %]
+  <p>You are currently not watching any users.</p>
+[% END %]
+
+
+<p id="new_watched_by_you">Add users to my watch list (comma separated list):
+  [% INCLUDE global/userselect.html.tmpl
+     id => "new_watchedusers"
+     name => "new_watchedusers"
+     value => ""
+     size => 60
+     multiple => 5
+  %]
+</p>
+
+<p id="watching_you">Users watching you:<br>
+  [% IF watchers.size %]
+    [% FOREACH watcher = watchers %]
+      [% watcher FILTER html %] <br>
+    [% END %]
+  [% ELSE %]
+    <i>No one</i>
+  [% END %]
+</p>
+
+<hr>
+
+<h3>Ignore [% terms.Bugs %]</h3>
+
+<p>
+  You can specify a list of [% terms.bugs %] from which you never want to get
+  any email notification of any kind by adding their ID(s) as a comma-separated
+  list. Removing [% terms.abug %] by selecting it from the current ignored list 
+  will re-enable email notifications for the [% terms.bug %].
+</p>
+[% IF user.bugs_ignored.size %]
+  <p>
+    You are currently ignoring:
+    <table>
+    [% FOREACH bug = user.bugs_ignored %]
+      <tr>
+        <td>
+          <input type="checkbox" name="remove_ignored_bug_[% bug.id FILTER html %]" value="1">
+        </td>
+        <td><a href="[% urlbase FILTER html %]show_bug.cgi?id=[% bug.id FILTER uri %]">
+          [% bug.id FILTER html %]</a>
+        </td>
+        <td>[% bug.status FILTER html %]</td>
+        <td>
+          [% IF user.can_see_bug(bug.id) %]
+            - [% bug.summary FILTER html %]
+          [% ELSE %]
+            (private)
+          [% END %]
+        </td>
+      </tr>
+    [% END %]
+    </table>
+  </p>
+[% END %]
+
+<p>
+  Add [% terms.bugs %]:<br>
+  <input type="text" id="add_ignored_bugs" 
+         name="add_ignored_bugs" size="60">
+</p>

@@ -1,0 +1,105 @@
+<html>
+<head>
+<script src="../resources/libwrapjs.js"></script>
+<script src="../resources/cross-frame-access.js"></script>
+<script>
+    var code;
+    var openedWindow;
+
+    window.onload = function()
+    {
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.setCanOpenWindows();
+            testRunner.dumpAsText();
+            testRunner.dumpChildFramesAsText();
+        }
+
+        var message_fail = 'FAIL: XSS was allowed.';
+        var message_success = 'SUCCESS: Window remained in original SecurityOrigin.';
+
+        var write_func = 'function write(target, message) { target.document.body.innerHTML = message; }';
+
+        var try_attack = 'write(window.opener, ' + libwrapjs.in_string(message_fail) + ');';
+        var attack = 'setTimeout(function() {' + try_attack + '}, 100);';
+
+        var try_control = 'write(window.opener.top.frames[1], ' + libwrapjs.in_string(message_success) + ');';
+        var control = 'setTimeout(function() {' + try_control + '}, 200);';
+
+        var sigDone = 'setTimeout(function() { if (window.testRunner) testRunner.globalFlag = true; }, 300);';
+
+        var payload = 'document.write(' + libwrapjs.in_string(libwrapjs.in_script_tag(write_func + attack + control + sigDone)) + ');';
+        code = libwrapjs.in_script_tag(payload);
+        log("Code injected into window:");
+        log(code);
+
+        if (window.testRunner) {
+            setTimeout(pollForTest1, 1);
+        } else {
+            log("To run the test, click the button below when the frames finish loading.");
+            var button = document.createElement("button");
+            button.appendChild(document.createTextNode("Run Test"));
+            button.onclick = runTest;
+            document.body.appendChild(button);
+        }
+    }
+    
+    pollForTest1 = function()
+    {
+        if (!testRunner.globalFlag) {
+            setTimeout(pollForTest1, 1);
+            return;
+        }
+        runTest1();
+    }
+
+    runTest1 = function() {
+        frames[0].openWindow();
+        openedWindow = frames[0].openedWindow;
+
+        if (window.testRunner)
+            testRunner.globalFlag = false;
+
+        frames[0].location = 'http://localhost:8000/security/resources/innocent-victim-with-notify.html';
+
+        setTimeout(pollForTest2, 1);
+    }
+
+    pollForTest2 = function()
+    {
+        if (!testRunner.globalFlag) {
+            setTimeout(pollForTest2, 1);
+            return;
+        }
+        runTest2();
+    }
+
+    runTest2 = function()
+    {
+        openedWindow.document.write(code);
+        openedWindow.document.close();
+        if (window.testRunner) {
+            testRunner.globalFlag = false;
+            setTimeout(pollForDone, 1);
+        }
+    }
+
+    pollForDone = function()
+    {
+        if (!testRunner.globalFlag) {
+            setTimeout(pollForDone, 1);
+            return;
+        }
+        closeWindowAndNotifyDone(openedWindow);
+    }
+</script>
+</head>
+<body>
+<div>This page opens a window to &quot;&quot;, injects malicious code, and
+then navigates its opener to the victim.  The opened window then tries to
+scripts its opener after <code>document.write</code>ing a new document.</div>
+<pre id="console"></pre>
+<iframe style="border: solid 3px red;" src="../resources/open-window.html"></iframe>
+<iframe style="border: solid 3px green;" src="../resources/innocent-victim.html"></iframe>
+</body>
+</html>

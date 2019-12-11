@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 1: Use of window.alert is not allowed in a sandboxed frame when the allow-modals flag is not set.
+CONSOLE MESSAGE: line 1: window.alert returned undefined
+CONSOLE MESSAGE: line 1: Use of window.confirm is not allowed in a sandboxed frame when the allow-modals flag is not set.
+CONSOLE MESSAGE: line 1: window.confirm returned false
+CONSOLE MESSAGE: line 1: Use of window.prompt is not allowed in a sandboxed frame when the allow-modals flag is not set.
+CONSOLE MESSAGE: line 1: window.prompt returned null
+CONSOLE MESSAGE: line 1: window.print returned undefined
+CONSOLE MESSAGE: Use of window.print is not allowed in a sandboxed frame when the allow-modals flag is not set.
+CONSOLE MESSAGE: line 1: Use of window.print is not allowed in a sandboxed frame when the allow-modals flag is not set.
+CONSOLE MESSAGE: line 1: document.execCommand returned false
+This test passes if opening modal dialogs is blocked and the corresponding calls return immediately with the expected values.
+
+    

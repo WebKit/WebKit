@@ -1,0 +1,4 @@
+
+
+PASS Fetch event handler throws after a successful respondWith() 
+

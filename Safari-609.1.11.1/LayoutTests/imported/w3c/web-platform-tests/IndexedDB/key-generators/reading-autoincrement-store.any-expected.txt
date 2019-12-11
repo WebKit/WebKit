@@ -1,0 +1,5 @@
+
+PASS IDBObjectStore.getAll() for an autoincrement store 
+PASS IDBObjectStore.getAllKeys() for an autoincrement store 
+PASS IDBObjectStore.get() for an autoincrement store 
+

@@ -1,0 +1,38 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width">
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.setShouldLogDownloadCallbacks(true);
+        testRunner.waitUntilDownloadFinished();
+    }
+</script>
+</head>
+<body>
+<p>
+Tests that a suggested filename on a download attribute is allowed if
+<a id="dl" download="foo.pdf">the link</a> is a blob URL.
+<p>The suggested filename at the top should be foo.pdf.</p>
+<script>
+    function click(elmt)
+    {
+        if (!window.eventSender)
+            return;
+
+        UIHelper.activateAt(elmt.offsetLeft + 5, elmt.offsetTop + 5);
+    }
+
+    function runTest()
+    {
+        var blob = new Blob(["Hello world!"], {type: "application/octet-stream"});
+        var link = document.getElementById("dl");
+        link.href = window.URL.createObjectURL(blob);
+        click(link);
+    }
+    runTest();
+</script>
+</body>
+</html>

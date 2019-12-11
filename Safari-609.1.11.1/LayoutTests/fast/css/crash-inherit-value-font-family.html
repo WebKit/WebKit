@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>WebKit shouldn't crash on font face values "initial" and "inherit". You should see PASS below.</p>
+<font face="inherit"></font>
+<font face="initial"></font>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.write('PASS');
+</script>
+</body>
+</html>

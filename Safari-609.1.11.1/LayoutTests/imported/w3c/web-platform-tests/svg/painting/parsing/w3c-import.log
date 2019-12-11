@@ -1,0 +1,76 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/color-interpolation-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/color-interpolation-invalid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/color-interpolation-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/fill-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/fill-invalid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/fill-opacity-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/fill-opacity-invalid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/fill-opacity-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/fill-rule-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/fill-rule-invalid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/fill-rule-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/fill-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/image-rendering-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/image-rendering-invalid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/image-rendering-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/marker-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/marker-end-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/marker-end-invalid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/marker-end-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/marker-invalid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/marker-mid-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/marker-mid-invalid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/marker-mid-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/marker-start-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/marker-start-invalid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/marker-start-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/marker-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/paint-order-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/paint-order-invalid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/paint-order-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/shape-rendering-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/shape-rendering-invalid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/shape-rendering-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/stroke-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/stroke-dasharray-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/stroke-dasharray-invalid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/stroke-dasharray-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/stroke-dashoffset-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/stroke-dashoffset-invalid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/stroke-dashoffset-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/stroke-invalid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/stroke-linecap-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/stroke-linecap-invalid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/stroke-linecap-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/stroke-linejoin-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/stroke-linejoin-invalid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/stroke-linejoin-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/stroke-miterlimit-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/stroke-miterlimit-invalid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/stroke-miterlimit-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/stroke-opacity-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/stroke-opacity-invalid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/stroke-opacity-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/stroke-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/stroke-width-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/stroke-width-invalid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/stroke-width-valid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/text-rendering-computed.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/text-rendering-invalid.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/painting/parsing/text-rendering-valid.svg

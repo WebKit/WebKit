@@ -1,0 +1,79 @@
+# Copyright (c) 2017 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../../webrtc.gni")
+
+group("conversational_speech") {
+  testonly = true
+  deps = [
+    ":conversational_speech_generator",
+  ]
+}
+
+rtc_executable("conversational_speech_generator") {
+  testonly = true
+  sources = [
+    "generator.cc",
+  ]
+  deps = [
+    ":lib",
+    "../../../../test:fileutils",
+    "../../../../test:test_support",
+    "//third_party/abseil-cpp/absl/flags:flag",
+    "//third_party/abseil-cpp/absl/flags:parse",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
+rtc_static_library("lib") {
+  testonly = true
+  sources = [
+    "config.cc",
+    "config.h",
+    "multiend_call.cc",
+    "multiend_call.h",
+    "simulator.cc",
+    "simulator.h",
+    "timing.cc",
+    "timing.h",
+    "wavreader_abstract_factory.h",
+    "wavreader_factory.cc",
+    "wavreader_factory.h",
+    "wavreader_interface.h",
+  ]
+  deps = [
+    "../../../../api:array_view",
+    "../../../../common_audio",
+    "../../../../rtc_base:checks",
+    "../../../../rtc_base:rtc_base_approved",
+    "../../../../test:fileutils",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+  visibility = [ ":*" ]  # Only targets in this file can depend on this.
+}
+
+rtc_source_set("unittest") {
+  testonly = true
+  sources = [
+    "generator_unittest.cc",
+    "mock_wavreader.cc",
+    "mock_wavreader.h",
+    "mock_wavreader_factory.cc",
+    "mock_wavreader_factory.h",
+  ]
+  deps = [
+    ":lib",
+    "../../../../api:array_view",
+    "../../../../common_audio",
+    "../../../../rtc_base:rtc_base_approved",
+    "../../../../test:fileutils",
+    "../../../../test:test_support",
+    "//testing/gtest",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}

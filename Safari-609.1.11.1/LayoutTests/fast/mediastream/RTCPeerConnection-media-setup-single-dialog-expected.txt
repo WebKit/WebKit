@@ -1,0 +1,35 @@
+Test setting up media between two RTCPeerConnection instances with one single SDP dialog.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Create RTCPeerConnection A
+PASS pcA.signalingState is 'stable'
+PASS pcA.pendingLocalDescription is null
+PASS pcA.currentLocalDescription is null
+PASS pcA.pendingRemoteDescription is null
+PASS pcA.currentRemoteDescription is null
+
+Create RTCPeerConnection B
+PASS pcB.signalingState is 'stable'
+PASS pcB.pendingLocalDescription is null
+PASS pcB.currentLocalDescription is null
+PASS pcB.pendingRemoteDescription is null
+PASS pcB.currentRemoteDescription is null
+
+A: add media
+A: create offer
+A: got offer, set it as local description
+A: local offer set
+FAIL pcA.signalingState should be have-local-offer. Was stable.
+FAIL pcA.pendingLocalDescription is not an instance of RTCSessionDescription
+PASS pcA.currentLocalDescription is null
+
+A: send offer to B
+A --- offer --> B
+B: got offer from A, set it as remote description
+FAIL Error in promise chain: TypeError: Argument 1 ('description') to RTCPeerConnection.setRemoteDescription must be an instance of RTCSessionDescription
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

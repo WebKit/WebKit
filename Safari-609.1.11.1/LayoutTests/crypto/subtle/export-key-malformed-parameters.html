@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test exporting a key with malformed parameters");
+
+jsTestIsAsync = true;
+
+var nonExtractable = false;
+
+var fakedKey = {
+    type: "secret",
+    extractable: true,
+    algorithm: {name: "AES-CBC", length: 128},
+    usages: ["encrypt", "decrypt"]
+}
+
+crypto.subtle.generateKey({name: "aes-cbc", length: 128}, nonExtractable, ["decrypt", "encrypt", "unwrapKey", "wrapKey"]).then(function(result) {
+    key = result;
+
+    // Export nonextractable key.
+    shouldReject('crypto.subtle.exportKey("raw", key)');
+
+    finishJSTest();
+});
+
+// Not enough arguments.
+shouldReject('crypto.subtle.exportKey()');
+shouldReject('crypto.subtle.exportKey(1)');
+// Wrong CryptoKey.
+shouldReject('crypto.subtle.exportKey("raw", 1)');
+shouldReject('crypto.subtle.exportKey("raw", true)');
+shouldReject('crypto.subtle.exportKey("raw", null)');
+shouldReject('crypto.subtle.exportKey("raw", undefined)');
+shouldReject('crypto.subtle.exportKey("raw", Symbol())');
+shouldReject('crypto.subtle.exportKey("raw", { })');
+shouldReject('crypto.subtle.exportKey("raw", "foo")');
+shouldReject('crypto.subtle.exportKey("raw", fakedKey)');
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

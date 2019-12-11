@@ -1,0 +1,12 @@
+PASS first.getClientRects().length is 1
+PASS third.getClientRects().length is 1
+PASS first.getClientRects()[0].right is third.getClientRects()[0].right
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This test makes sure that you can opt-in to honoring the 'trak' table by specifying text-rendering: optimizeLegibility. The first and third lines below should have the same width. The middle one can (but doesn't have to) have a different width.
+hamburgefonstiv
+
+hamburgefonstiv
+
+hamburgefonstiv

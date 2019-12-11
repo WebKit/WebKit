@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="combo" tabindex=0 role="combobox" aria-expanded="false" aria-label="Test">
+<div role="listbox">
+<div role="option">option 1</div>
+<div role="option">option 2</div>
+</div>
+</div>
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the aria roles for combobox and aria-expanded work correctly in conjunction.");
+
+    if (window.accessibilityController) {
+
+          var combobox = document.getElementById("combo");
+          combobox.focus();
+
+          combobox = accessibilityController.focusedElement;
+
+          debug("Role: " + combobox.role);
+          shouldBe("combobox.isExpanded", "false");
+    
+          combobox.showMenu();
+
+          // As of now, the isExpanded value won't be updated through an AX call.
+          shouldBe("combobox.isExpanded", "false");
+
+          var firstChild = combobox.childAtIndex(0);
+          debug("Role: " + firstChild.role);
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

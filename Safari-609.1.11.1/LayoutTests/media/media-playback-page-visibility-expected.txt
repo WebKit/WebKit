@@ -1,0 +1,14 @@
+Media elements should be paused while in the background.
+
+
+Waiting for Content media to begin playing.
+Media began playing.
+EXPECTED (video.paused == 'false') OK
+EXPECTED (video.volume == '0') OK
+* Setting page visibility to hidden
+EXPECTED (video.paused == 'true') OK
+EXPECTED (video.paused == 'true') OK
+* Setting page visibility to visible
+EXPECTED (video.paused == 'false') OK
+END OF TEST
+

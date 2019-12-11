@@ -1,0 +1,58 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true internal:PreferFasterClickOverDoubleTap=false ] -->
+
+<html>
+<meta name="viewport" content="width=800">
+<head>
+    <style>
+        body {
+            font-family: system-ui;
+            line-height: 1.4;
+            padding: 10px 10px;
+            width: 500px;
+            margin: 0;
+        }
+    </style>
+    <script src="../../../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        async function runTest()
+        {
+            document.getElementById("target").addEventListener("click", handleClick, false);
+
+            if (!window.testRunner)
+                return;
+
+            await UIHelper.humanSpeedZoomByDoubleTappingAt(30, 30);
+            document.getElementById("target").textContent = "PASS: Double tap caused zoom.";
+            testRunner.notifyDone();
+        }
+
+        function handleClick(event)
+        {
+            document.getElementById("target").textContent = "FAIL: Click fired on element with handler.";
+            testRunner.notifyDone();
+        }
+    </script>
+    <style>
+        body {
+            margin: 0;
+        }
+        #target {
+            height: 100px;
+            width: 100px;
+            background-color: silver;
+        }
+    </style>
+</head>
+<body onload="runTest()">
+<div id="target"></div>
+<div id="description">This document doesn't have fast clicks because
+    it sets a viewport width. It has a significant zoom since the viewport
+    width is significantly bigger than the body width. However, it sets fast click everywhere to
+    false, so double tapping on the rectangle above should zoom.</div>
+</body>
+</html>

@@ -1,0 +1,3 @@
+
+PASS Update a registration on ServiceWorkerGlobalScope 
+

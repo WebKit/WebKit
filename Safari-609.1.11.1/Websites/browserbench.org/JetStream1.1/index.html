@@ -1,0 +1,68 @@
+<!--
+ Copyright (C) 2014 Apple Inc. All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions
+ are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+
+ THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JetStream 1.1</title>
+
+    <link rel="stylesheet" href="JetStream.css">
+
+    <script>
+    var allIsGood = true;
+    window.onerror = function() { allIsGood = false; }
+
+    function initialize() {
+        if (allIsGood)
+            JetStream.initialize();
+        else
+            document.getElementById("body").innerHTML = "<h1>ERROR</h1><p>Encountered errors during page load. Refusing to run a partial benchmark suite.</p>";
+    }
+    </script>
+
+    <script src="SunSpiderPayload.js"></script>
+    <script src="SimplePayload.js"></script>
+    <script src="JetStreamDriver.js"></script>
+    <script src="SunSpiderSetup.js"></script>
+    <script src="SimpleSetup.js"></script>
+    <script src="OctaneSetup.js"></script>
+    <script src="Octane2Setup.js"></script>
+    <script src="CDjsSetup.js"></script>
+    <script src="Reference.js"></script>
+</head>
+<body onload="initialize()">
+<main>
+    <a href="index.html"><img id="logo" src="JetStream-Logo.png" alt="JetStream"></a>
+
+    <p class="summary">JetStream is a JavaScript benchmark suite focused on the most advanced web applications. For more information, read the <a href="in-depth.html">in-depth analysis</a>. Bigger scores are better.</p>
+    <p class="summary" id="mode-description"></p>
+
+    <div id="result-summary"></div>
+    <div id="status"><a href="javascript:JetStream.start()">Start Test</a></div>
+
+    <table id="results"></table>
+</main>
+<iframe id="magic"></iframe>
+</body>
+</html>

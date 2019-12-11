@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+.button {
+  -webkit-appearance: outer-spin-button;
+  display: inline-block;
+}
+</style>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+document.getElementById('description').innerHTML = 'Test sizes of outer-spin-button. A spin-button height should be equal to or less than the corresponding text field height.';
+
+var body = document.body;
+for (var size = 8; size < 20; size++) {
+    var div = document.createElement('div');
+    body.appendChild(div);
+    div.innerHTML = '<input style="font-size:' + size + 'px" id=input' + size + '>'
+        + '<span class="button" style="font-size:' + size + 'px" id=span' + size + '></span>';
+    var input = document.getElementById('input' + size);
+    var spinButton = document.getElementById('span' + size);
+    // 6 is border-top + border-bottom + padding-top + padding-bottom in the default style.
+    shouldBeTrue('spinButton.offsetHeight <= input.offsetHeight + 6');
+}
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

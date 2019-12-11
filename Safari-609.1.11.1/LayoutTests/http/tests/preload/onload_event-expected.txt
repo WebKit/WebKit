@@ -1,0 +1,21 @@
+CONSOLE MESSAGE: line 34: <link rel=preload> must have a valid `as` value
+CONSOLE MESSAGE: line 35: <link rel=preload> must have a valid `as` value
+CONSOLE MESSAGE: line 36: <link rel=preload> must have a valid `as` value
+CONSOLE MESSAGE: line 37: <link rel=preload> must have a valid `as` value
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS styleLoaded is true
+PASS scriptLoaded is true
+PASS imageLoaded is true
+PASS fontLoaded is true
+PASS mediaLoaded is true
+PASS trackLoaded is true
+PASS gibberishLoaded is false
+PASS gibberishErrored is false
+PASS xsltLoaded is false
+PASS xsltErrored is false
+PASS noTypeLoaded is false
+PASS emptyTypeLoaded is false
+PASS fetchLoaded is true
+This test makes sure that link preload events are fired

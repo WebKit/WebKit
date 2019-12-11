@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="test" contenteditable="true">one three</div>
+
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
+if (window.internals)
+    internals.settings.setEditingBehavior("mac");
+
+Markup.description("The last paragraph of the incoming fragment should be in the same paragraph as 'three'.");
+
+var s = window.getSelection();
+var e = document.getElementById("test");
+
+s.setPosition(e, 0);
+s.modify("move", "forward", "word");
+s.modify("move", "forward", "character");
+
+document.execCommand("InsertHTML", false , "<br class='Apple-interchange-newline'><div>two</div>");
+
+Markup.dump('test');
+
+</script>
+</body>
+</html>

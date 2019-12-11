@@ -1,0 +1,12 @@
+Tests that the attribution is not updated if it gets a second conversion with lower priority.
+
+
+Converted Ad Click Attributions:
+WebCore::AdClickAttribution 1
+Source: 127.0.0.1
+Destination: localhost
+Campaign ID: 3
+Conversion data: 12
+Conversion priority: 4
+Conversion earliest time to send: Within 24-48 hours
+Conversion request sent: false

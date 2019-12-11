@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div contenteditable id="editor">
+    <table>
+        <tbody>
+            <tr><th>Left</th><th>Right</th></tr>
+            <tr><td id="foo">Foo</td><td>Bar</td></tr>
+            <tr><td>Baz</td><td id="garply">Garply</td> </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+<script>
+Markup.description("Verifies that 'InsertNestedUnorderedList' and 'InsertNestedOrderedList' work as expected in table cells. This test requires WebKitTestRunner or DumpRenderTree.");
+
+editor.focus();
+getSelection().setPosition(garply.childNodes[0], 0);
+document.execCommand("InsertNestedOrderedList");
+Markup.dump("editor", "After inserting a list in a table cell");
+
+selectAllCommand();
+document.execCommand("InsertNestedUnorderedList");
+Markup.dump("editor", "After wrapping the table in a list");
+
+getSelection().setPosition(foo.childNodes[0], 0);
+document.execCommand("InsertNestedUnorderedList");
+Markup.dump("editor", "After inserting a nested list below the outer list");
+
+getSelection().setPosition(garply.childNodes[0], 3);
+document.execCommand("InsertNestedOrderedList");
+Markup.dump("editor", "After inserting another list under a table cell");
+</script>
+</html>

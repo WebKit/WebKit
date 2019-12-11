@@ -1,0 +1,57 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<style type="text/css" media="screen">
+    
+    video, #host {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 800px;
+        height: 240px;
+    }
+    
+</style>
+<video src="../../content/test.mp4" controls autoplay></video>
+<div id="host"></div>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing the <code>VolumeSupport</code> behavior when clicking the volume slider.");
+
+const container = document.querySelector("div#host");
+const media = document.querySelector("video");
+const mediaController = createControls(container, media, null);
+
+const muteButtonElement = mediaController.controls.muteButton.element;
+const volumeSliderElement = mediaController.controls.volumeSlider.element;
+
+shouldBecomeEqual("media.paused", "false", () => {
+    shouldBecomeEqual("!!muteButtonElement.getBoundingClientRect().width", "true", () => {
+        // Controls are now visible, let's hover over the mute button to make the volume control visible.
+        const muteButtonBounds = muteButtonElement.getBoundingClientRect();
+        eventSender.mouseMoveTo(muteButtonBounds.left + muteButtonBounds.width / 2, muteButtonBounds.top + muteButtonBounds.height / 2);
+
+        shouldBecomeEqual("!!volumeSliderElement.getBoundingClientRect().width", "true", () => {
+            // Volume slider is visible, let's click in the middle of it.
+            const volumeSliderBounds = volumeSliderElement.getBoundingClientRect();
+            eventSender.mouseMoveTo(volumeSliderBounds.left + volumeSliderBounds.width / 2, volumeSliderBounds.top + volumeSliderBounds.height / 2);
+            eventSender.mouseDown();
+            eventSender.mouseUp();
+
+            // Ensure the volume slider remains visible.
+            shouldBeTrue("mediaController.controls.volumeSlider.parent.visible");
+
+            shouldBecomeEqual("media.volume", "0.51", () => {
+                container.remove();
+                media.remove();
+                finishJSTest();
+            });
+        });
+    });
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function triggerOverrideLoad(urlSuffix) {
+    let url = "http://127.0.0.1:8000/inspector/network/resources/override.txt";
+    if (urlSuffix)
+        url += urlSuffix;
+    fetch(url).then(() => {
+        TestPage.dispatchEventToFrontend("LoadComplete");
+    });
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("LocalResourceOverride");
+
+    async function logResource(resource) {
+        let responseSource = resource.responseSource === WI.Resource.ResponseSource.InspectorOverride ? String(resource.responseSource) : "<not-InspectorOverride>";
+        InspectorTest.log(`URL: ${resource.url}`);
+        InspectorTest.log(`MIME Type: ${resource.mimeType}`);
+        InspectorTest.log(`Status: ${resource.statusCode} ${resource.statusText}`);
+        InspectorTest.log(`Response Source: ${responseSource}`);
+        InspectorTest.log(`Response Headers:`);
+        let keys = Object.keys(resource.responseHeaders);
+        keys.sort();
+        for (let name of keys) {
+            let value = resource.responseHeaders[name];
+            if (!name.startsWith("X-") && !name.startsWith("Content-"))
+                value = "<filtered>";
+            InspectorTest.log(`  ${name}: ${value}`);
+        }
+
+        let {rawContent, rawBase64Encoded} = await resource.requestContent();
+        InspectorTest.log(`Content: ${rawBase64Encoded ? "[base64] " : ""}${rawContent}`);
+    }
+
+    function addTestCase({name, description, setup, teardown, expression, overrides}) {
+        suite.addTestCase({
+            name, description, setup, teardown,
+            async test() {
+                // Create overrides.
+                let localResourceOverrides = [];
+                for (let override of overrides) {
+                    InspectorTest.log("Creating Local Resource Override for: " + override.url);
+                    let localResourceOverride = WI.LocalResourceOverride.create(override);
+                    WI.networkManager.addLocalResourceOverride(localResourceOverride);
+                    localResourceOverrides.push(localResourceOverride);
+                }
+
+                InspectorTest.log("Triggering load...");
+                let [resourceWasAddedEvent, responseReceivedEvent, loadCompleteEvent] = await Promise.all([
+                    WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+                    WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived),
+                    InspectorTest.awaitEvent("LoadComplete"),
+                    InspectorTest.evaluateInPage(expression),
+                ]);
+
+                InspectorTest.log("Resource Loaded:");
+                let resource = resourceWasAddedEvent.data.resource;
+                await logResource(resource);
+
+                // Remove overrides.
+                for (let localResourceOverride of localResourceOverrides)
+                    WI.networkManager.removeLocalResourceOverride(localResourceOverride);
+            }
+        });
+    }
+
+    addTestCase({
+        name: "LocalResourceOverride.None",
+        description: "Load without an override.",
+        expression: `triggerOverrideLoad()`,
+        overrides: [],
+    });
+
+    addTestCase({
+        name: "LocalResourceOverride.Text",
+        description: "Load an override with text content.",
+        expression: `triggerOverrideLoad()`,
+        overrides: [{
+            url: "http://127.0.0.1:8000/inspector/network/resources/override.txt",
+            mimeType: "text/plain",
+            content: `PASS - OVERRIDDEN TEXT`,
+            base64Encoded: false,
+            statusCode: 987,
+            statusText: "Override Status Text",
+            headers: {
+                "X-Override-Header-1": "Override-Header-Value-1",
+                "X-Override-Header-2": "Override-Header-Value-2",
+            },
+        }]
+    });
+
+    addTestCase({
+        name: "LocalResourceOverride.JavaScript",
+        description: "Load an override with javascript content.",
+        expression: `triggerOverrideLoad()`,
+        overrides: [{
+            url: "http://127.0.0.1:8000/inspector/network/resources/override.txt",
+            mimeType: "application/javascript",
+            content: `/* PASS */ (function() { /* OVERRIDDEN */ })();`,
+            base64Encoded: false,
+            statusCode: 200,
+            statusText: "Super OK",
+            headers: {
+                "X-Custom-Header": "Header value",
+            },
+        }]
+    });
+
+    addTestCase({
+        name: "LocalResourceOverride.Image",
+        description: "Load an override with image content.",
+        expression: `triggerOverrideLoad()`,
+        overrides: [{
+            url: "http://127.0.0.1:8000/inspector/network/resources/override.txt",
+            mimeType: "image/png",
+            content: btoa("<data>"),
+            base64Encoded: true,
+            statusCode: 200,
+            statusText: "OK",
+            headers: {},
+        }]
+    });
+
+    addTestCase({
+        name: "LocalResourceOverride.URL.QueryString",
+        description: "Test overrides with different query strings.",
+        expression: `triggerOverrideLoad("?s=2")`,
+        overrides: [{
+            url: "http://127.0.0.1:8000/inspector/network/resources/override.txt?s=1",
+            mimeType: "text/plain",
+            content: "FAIL",
+            base64Encoded: false,
+            statusCode: 500,
+            statusText: "FAIL",
+            headers: {"X-Expected": "FAIL"},
+        }, {
+            url: "http://127.0.0.1:8000/inspector/network/resources/override.txt?s=2",
+            mimeType: "text/plain",
+            content: "PASS",
+            base64Encoded: false,
+            statusCode: 200,
+            statusText: "OK",
+            headers: {"X-Expected": "PASS"},
+        }]
+    });
+
+    addTestCase({
+        name: "LocalResourceOverride.URL.Fragment",
+        description: "Test override for a load with a fragment.",
+        expression: `triggerOverrideLoad("#frag")`,
+        overrides: [{
+            url: "http://127.0.0.1:8000/inspector/network/resources/override.txt",
+            mimeType: "text/plain",
+            content: "PASS",
+            base64Encoded: false,
+            statusCode: 200,
+            statusText: "OK",
+            headers: {"X-Expected": "PASS"},
+        }]
+    });
+
+    addTestCase({
+        name: "LocalResourceOverride.URL.CaseSensitive",
+        description: "Test override for a load with a fragment.",
+        expression: `triggerOverrideLoad("?CaSe=SeNsItIvE")`,
+        overrides: [{
+            url: "http://127.0.0.1:8000/inspector/network/resources/override.txt?case=sensitive",
+            mimeType: "text/plain",
+            content: "PASS",
+            base64Encoded: false,
+            statusCode: 200,
+            statusText: "OK",
+            headers: {"X-Expected": "PASS"},
+            isCaseSensitive: false,
+        }]
+    });
+
+    addTestCase({
+        name: "LocalResourceOverride.URL.IsRegex",
+        description: "Test override for a load with a fragment.",
+        expression: `triggerOverrideLoad("?t=123456789")`,
+        overrides: [{
+            url: "\\/override\\.txt\\?t=\\d+",
+            mimeType: "text/plain",
+            content: "PASS",
+            base64Encoded: false,
+            statusCode: 200,
+            statusText: "OK",
+            headers: {"X-Expected": "PASS"},
+            isRegex: true,
+        }]
+    });
+
+    addTestCase({
+        name: "LocalResourceOverride.URL.IsCaseSensitiveRegex",
+        description: "Test override for a load with a fragment.",
+        expression: `triggerOverrideLoad("?t=123456789")`,
+        overrides: [{
+            url: "\\/OvErRiDe\\.TxT\\?t=\\d+",
+            mimeType: "text/plain",
+            content: "PASS",
+            base64Encoded: false,
+            statusCode: 200,
+            statusText: "OK",
+            headers: {"X-Expected": "PASS"},
+            isCaseSensitive: false,
+            isRegex: true,
+        }]
+    });
+
+    addTestCase({
+        name: "LocalResourceOverride.404",
+        description: "Test for a 404 override.",
+        expression: `triggerOverrideLoad()`,
+        overrides: [{
+            url: "http://127.0.0.1:8000/inspector/network/resources/override.txt",
+            mimeType: "text/plain",
+            content: "PASS",
+            base64Encoded: false,
+            statusCode: 404,
+            statusText: "Not Found",
+            headers: {"X-Expected": "PASS"},
+            disabled: false,
+        }]
+    });
+
+    addTestCase({
+        name: "LocalResourceOverride.Enabled",
+        description: "Test for an enabled override.",
+        expression: `triggerOverrideLoad()`,
+        overrides: [{
+            url: "http://127.0.0.1:8000/inspector/network/resources/override.txt",
+            mimeType: "text/plain",
+            content: "PASS",
+            base64Encoded: false,
+            statusCode: 200,
+            statusText: "OK",
+            headers: {"X-Expected": "PASS"},
+            disabled: false,
+        }]
+    });
+
+    addTestCase({
+        name: "LocalResourceOverride.Disabled",
+        description: "Test for a disabled override.",
+        expression: `triggerOverrideLoad()`,
+        overrides: [{
+            url: "http://127.0.0.1:8000/inspector/network/resources/override.txt",
+            mimeType: "text/plain",
+            content: "FAIL",
+            base64Encoded: false,
+            statusCode: 500,
+            statusText: "FAIL",
+            headers: {"X-Expected": "FAIL"},
+            disabled: true,
+        }]
+    });
+
+    addTestCase({
+        name: "LocalResourceOverride.GlobalDisabled",
+        description: "Test for an override when they are globally disabled.",
+        expression: `triggerOverrideLoad()`,
+        async setup() { WI.networkManager.interceptionEnabled = false; },
+        async teardown() { WI.networkManager.interceptionEnabled = true; },
+        overrides: [{
+            url: "http://127.0.0.1:8000/inspector/network/resources/override.txt",
+            mimeType: "text/plain",
+            content: "FAIL",
+            base64Encoded: false,
+            statusCode: 500,
+            statusText: "FAIL",
+            headers: {"X-Expected": "FAIL"},
+        }]
+    });
+
+    suite.addTestCase({
+        name: "LocalResourceOverride.URL.Fragment",
+        description: "LocalResourceOverride creation strips a fragment",
+        async test() {
+            let localResourceOverride = WI.LocalResourceOverride.create({
+                url: "http://127.0.0.1:8000/inspector/network/resources/override.txt#test",
+                mimeType: "text/plain",
+                content: "OVERRIDDEN TEXT",
+                base64Encoded: false,
+                statusCode: 200,
+                statusText: "OK",
+                headers: {},
+            });
+
+            InspectorTest.expectEqual(localResourceOverride.localResource.url, "http://127.0.0.1:8000/inspector/network/resources/override.txt", "LocalResourceOverride creation should strip fragments.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for some LocalResourceOverride loads.</p>
+</body>
+</html>

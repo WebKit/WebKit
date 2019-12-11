@@ -1,0 +1,37 @@
+<html>
+<head>
+<script src="../../../../resources/basic-gestures.js"></script>
+<style>
+div {
+    width: 400px;
+    height: 400px;
+}
+</style>
+<script>
+async function test() {
+    if (!window.testRunner || !testRunner.runUIScript)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    document.body.addEventListener("touchstart", function( event ) {
+        result.innerHTML = "tapped";
+    }, false);
+
+    let element = document.getElementById("tapthis");
+    let rect = element.getBoundingClientRect();
+    let x = rect.left + rect.width / 2;
+    let y = rect.top + rect.height / 2;
+
+	await tapAtPoint(x, y);
+
+    testRunner.notifyDone();
+}
+</script>
+</head>
+<body onload="test()">
+<div id=tapthis></div>
+<pre id=result></pre>
+</body>
+</html>

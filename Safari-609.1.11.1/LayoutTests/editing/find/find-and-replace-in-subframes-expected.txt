@@ -1,0 +1,139 @@
+Verifies that find and replace can be used to replace words in different frames on the same page, as well as inside text fields. This test requires WebKitTestRunner.
+
+After replacing 'bar' with 'hello':
+| "
+        "
+| <p>
+|   "foo <#selection-anchor>hello<#selection-focus> baz"
+| "
+        "
+| <iframe>
+|   srcdoc="<body contenteditable>foo bar baz
+            <iframe srcdoc='<body contenteditable>bar</body>'></iframe>
+            <input value='foo bar baz'></input></body>"
+| "
+        "
+| <iframe>
+|   srcdoc="<iframe srcdoc='<body contenteditable>bar</body>'></iframe>
+            <iframe srcdoc='<input value=bar>'></iframe>
+            <div contenteditable>foo bar bar</div><textarea>foo bar bar</textarea>"
+| "
+        "
+| <input>
+|   value="foo bar baz"
+|   this.value="foo hello baz"
+|   <shadow:root>
+|     <div>
+|       contenteditable="plaintext-only"
+|       "foo hello baz"
+| "
+    "
+
+FRAME 0:
+| <head>
+| <body>
+|   contenteditable=""
+|   "foo <#selection-anchor>hello<#selection-focus> baz
+            "
+|   <iframe>
+|     srcdoc="<body contenteditable>bar</body>"
+|   "
+            "
+|   <input>
+|     value="foo bar baz"
+|     this.value="foo hello baz"
+|     <shadow:root>
+|       <div>
+|         contenteditable="plaintext-only"
+|         "foo hello baz"
+
+FRAME 1:
+| <head>
+| <body>
+|   <iframe>
+|     srcdoc="<body contenteditable>bar</body>"
+|   "
+            "
+|   <iframe>
+|     srcdoc="<input value=bar>"
+|   "
+            "
+|   <div>
+|     contenteditable=""
+|     "foo <#selection-anchor>hello<#selection-focus> hello"
+|   <textarea>
+|     this.value="foo hello hello"
+|     "foo bar bar"
+|     <shadow:root>
+|       <div>
+|         contenteditable="plaintext-only"
+|         "foo hello hello"
+
+After replacing the first occurrence of 'foo' with 'world':
+| "
+        "
+| <p>
+|   "<#selection-anchor>world<#selection-focus> hello baz"
+| "
+        "
+| <iframe>
+|   srcdoc="<body contenteditable>foo bar baz
+            <iframe srcdoc='<body contenteditable>bar</body>'></iframe>
+            <input value='foo bar baz'></input></body>"
+| "
+        "
+| <iframe>
+|   srcdoc="<iframe srcdoc='<body contenteditable>bar</body>'></iframe>
+            <iframe srcdoc='<input value=bar>'></iframe>
+            <div contenteditable>foo bar bar</div><textarea>foo bar bar</textarea>"
+| "
+        "
+| <input>
+|   value="foo bar baz"
+|   this.value="foo hello baz"
+|   <shadow:root>
+|     <div>
+|       contenteditable="plaintext-only"
+|       "foo hello baz"
+| "
+    "
+
+FRAME 0:
+| <head>
+| <body>
+|   contenteditable=""
+|   "foo <#selection-anchor>hello<#selection-focus> baz
+            "
+|   <iframe>
+|     srcdoc="<body contenteditable>bar</body>"
+|   "
+            "
+|   <input>
+|     value="foo bar baz"
+|     this.value="foo hello baz"
+|     <shadow:root>
+|       <div>
+|         contenteditable="plaintext-only"
+|         "foo hello baz"
+
+FRAME 1:
+| <head>
+| <body>
+|   <iframe>
+|     srcdoc="<body contenteditable>bar</body>"
+|   "
+            "
+|   <iframe>
+|     srcdoc="<input value=bar>"
+|   "
+            "
+|   <div>
+|     contenteditable=""
+|     "foo <#selection-anchor>hello<#selection-focus> hello"
+|   <textarea>
+|     this.value="foo hello hello"
+|     "foo bar bar"
+|     <shadow:root>
+|       <div>
+|         contenteditable="plaintext-only"
+|         "foo hello hello"

@@ -1,0 +1,24 @@
+CONSOLE MESSAGE: line 6: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 6: Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
+Test that code evaluated in the main frame cannot access $0 that resolves to a node in a frame from a different domain. Bug 105423.
+
+
+PASS: Page should have a subframe.
+
+== Running test suite: CommandLineAPI.$0.cross-frame
+-- Running test case: AttemptCrossFrame$0AccessFromMainFrame
+Setting $0 to node within subframe.
+PASS: MainFrame access to $0 node in subframe should be null.
+
+-- Running test case: AttemptSameFrame$0AccessFromMainFrame
+Setting $0 to node within the main frame.
+PASS: MainFrame access to $0 node in main frame should be a node.
+
+-- Running test case: AttemptCrossFrame$0AccessFromSubFrame
+Setting $0 to node within the main frame.
+PASS: SubFrame access to $0 node in main frame should be null.
+
+-- Running test case: AttemptSameFrame$0AccessFromSubFrame
+Setting $0 to node within the subframe.
+PASS: SubFrame access to $0 node in sub frame should be a node.
+

@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<select id="listbox" multiple="multiple">
+    <option>Option 1</option>
+    <option>Option 2</option>
+</select>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+    description("Tests clearing the selection of a multi-select select element.");
+    if (window.accessibilityController) {
+        var listbox = accessibilityController.accessibleElementById("listbox");
+        shouldBe("listbox.selectedChildrenCount", "0");
+
+        listbox.setSelectedChildAtIndex(0);
+        shouldBe("listbox.selectedChildrenCount", "1");
+
+        listbox.setSelectedChildAtIndex(1);
+        shouldBe("listbox.selectedChildrenCount", "2");
+
+        listbox.clearSelectedChildren();
+        shouldBe("listbox.selectedChildrenCount", "0");
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

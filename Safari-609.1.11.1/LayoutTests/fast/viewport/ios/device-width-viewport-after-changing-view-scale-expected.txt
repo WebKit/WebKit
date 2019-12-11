@@ -1,0 +1,46 @@
+setViewScale(0.50)
+window size: [640, 1096]
+square size: [64, 110]
+zoom scale: 0.50
+
+setViewScale(0.75)
+window size: [427, 731]
+square size: [43, 73]
+zoom scale: 0.75
+
+setViewScale(1.00)
+window size: [320, 548]
+square size: [32, 55]
+zoom scale: 1.00
+
+setViewScale(1.25)
+window size: [256, 438]
+square size: [26, 44]
+zoom scale: 1.25
+
+setViewScale(1.50)
+window size: [213, 365]
+square size: [21, 37]
+zoom scale: 1.50
+
+setViewScale(1.25)
+window size: [256, 438]
+square size: [26, 44]
+zoom scale: 1.25
+
+setViewScale(1.00)
+window size: [320, 548]
+square size: [32, 55]
+zoom scale: 1.00
+
+setViewScale(0.75)
+window size: [427, 731]
+square size: [43, 73]
+zoom scale: 0.75
+
+setViewScale(0.50)
+window size: [640, 1096]
+square size: [64, 110]
+zoom scale: 0.50
+
+

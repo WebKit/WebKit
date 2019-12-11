@@ -1,0 +1,74 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # otheruser: Bugzilla User Object; The user whose profile activity
+  #                                  we are viewing.
+  #
+  # listselectionvalues: selection values to recreate the current user list.
+  #
+  # profile_changes: An array of hashes containing the following fields:
+  # 
+  #   who: string; login name of who made the change
+  #   activity_when: string; when the change was made
+  #   what: string; the description of the field which was changed
+  #   removed: string; the removed value (maybe empty string)
+  #   added: string; the added value (maybe empty string)
+  #%]
+
+[% title = BLOCK %]
+  Account History for '[% otheruser.identity FILTER html %]'
+[% END %]
+
+
+[% PROCESS global/header.html.tmpl
+  title = title
+  style_urls = ['skins/standard/admin.css']
+%]
+
+[% PROCESS admin/users/listselectvars.html.tmpl
+  listselectionvalues = listselectionvalues
+%]
+
+[% columns =
+  [{name               => 'who'
+    heading            => 'Who'
+   }
+   {name               => 'activity_when'
+    heading            => 'When'
+   }
+   {name               => 'what'
+    heading            => 'What'
+    content_use_field  => 1
+   }
+   {name               => 'removed'
+    heading            => 'Removed'
+   }
+   {name               => 'added'
+    heading            => 'Added'
+   }
+  ]
+%]
+
+[% PROCESS admin/table.html.tmpl
+  columns = columns
+  data    = profile_changes
+%]
+
+<p><a href="editusers.cgi?action=edit&amp;userid=
+  [%- otheruser.id FILTER uri %]"
+  title="Edit user '[% otheruser.login FILTER html %]'">Edit this user</a> or
+  <a title="Search For Users" href="editusers.cgi">search for other accounts</a>
+  [% IF listselectionvalues.matchtype != 'exact' %]
+    or go <a title="Return to the user list"
+       href="editusers.cgi?action=list[% INCLUDE listselectionurlparams %]">back
+    to the user list</a>
+  [% END %]
+</p>
+
+[% PROCESS global/footer.html.tmpl %] 

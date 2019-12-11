@@ -1,0 +1,6 @@
+type.name
+HTMLCanvasElement type and toString
+Actual output:
+
+PASS HTMLCanvasElement type and toString 
+

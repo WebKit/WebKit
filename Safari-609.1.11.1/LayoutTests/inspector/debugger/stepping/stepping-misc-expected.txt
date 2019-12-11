@@ -1,0 +1,634 @@
+Checking pause locations when stepping in, out, and over misc statements.
+
+
+== Running test suite: Debugger.stepping.misc
+-- Running test case: Debugger.stepping.DebuggerStatement
+EXPRESSION: setTimeout(entryDebuggerStatement)
+STEPS: over, in, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryDebuggerStatement:12:5
+      8    }
+      9    
+     10    function entryDebuggerStatement() {
+ ->  11        |debugger;
+     12        debugger;
+     13        debugger;
+     14    }
+
+ACTION: step-over
+PAUSE AT entryDebuggerStatement:13:5
+      9    
+     10    function entryDebuggerStatement() {
+     11        debugger;
+ ->  12        |debugger;
+     13        debugger;
+     14    }
+     15    
+
+ACTION: step-in
+PAUSE AT entryDebuggerStatement:14:5
+     10    function entryDebuggerStatement() {
+     11        debugger;
+     12        debugger;
+ ->  13        |debugger;
+     14    }
+     15    
+     16    function entryBlockStatement() {
+
+ACTION: step-over
+PAUSE AT entryDebuggerStatement:15:2
+     11        debugger;
+     12        debugger;
+     13        debugger;
+ ->  14    }|
+     15    
+     16    function entryBlockStatement() {
+     17        debugger;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.BlockStatement
+EXPRESSION: setTimeout(entryBlockStatement)
+STEPS: over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryBlockStatement:18:5
+     14    }
+     15    
+     16    function entryBlockStatement() {
+ ->  17        |debugger;
+     18        {
+     19            let x = 1;
+     20        }
+
+ACTION: step-over
+PAUSE AT entryBlockStatement:20:9
+     16    function entryBlockStatement() {
+     17        debugger;
+     18        {
+ ->  19            |let x = 1;
+     20        }
+     21    }
+     22    
+
+ACTION: step-over
+PAUSE AT entryBlockStatement:22:2
+     18        {
+     19            let x = 1;
+     20        }
+ ->  21    }|
+     22    
+     23    function entryWithStatement() {
+     24        let o = {x:1, y:2};
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.WithStatement
+EXPRESSION: setTimeout(entryWithStatement)
+STEPS: over, over, over, over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryWithStatement:26:5
+     22    
+     23    function entryWithStatement() {
+     24        let o = {x:1, y:2};
+ ->  25        |debugger;
+     26        with (o)
+     27            a();
+     28        with (o) {
+
+ACTION: step-over
+PAUSE AT entryWithStatement:27:11
+     23    function entryWithStatement() {
+     24        let o = {x:1, y:2};
+     25        debugger;
+ ->  26        with (|o)
+     27            a();
+     28        with (o) {
+     29            a();
+
+ACTION: step-over
+PAUSE AT entryWithStatement:28:9
+     24        let o = {x:1, y:2};
+     25        debugger;
+     26        with (o)
+ ->  27            |a();
+     28        with (o) {
+     29            a();
+     30        }
+
+ACTION: step-over
+PAUSE AT entryWithStatement:29:11
+     25        debugger;
+     26        with (o)
+     27            a();
+ ->  28        with (|o) {
+     29            a();
+     30        }
+     31    }
+
+ACTION: step-over
+PAUSE AT entryWithStatement:30:9
+     26        with (o)
+     27            a();
+     28        with (o) {
+ ->  29            |a();
+     30        }
+     31    }
+     32    
+
+ACTION: step-over
+PAUSE AT entryWithStatement:32:2
+     28        with (o) {
+     29            a();
+     30        }
+ ->  31    }|
+     32    
+     33    function entryLabeledStatement() {
+     34        let arr = [];
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.LabeledStatement
+EXPRESSION: setTimeout(entryLabeledStatement)
+STEPS: over, over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryLabeledStatement:36:5
+     32    
+     33    function entryLabeledStatement() {
+     34        let arr = [];
+ ->  35        |debugger;
+     36    label:
+     37        {
+     38            arr.push(1);
+
+ACTION: step-over
+PAUSE AT entryLabeledStatement:39:9
+     35        debugger;
+     36    label:
+     37        {
+ ->  38            |arr.push(1);
+     39            break label;
+     40            arr.push(2);
+     41        }
+
+ACTION: step-over
+PAUSE AT entryLabeledStatement:40:9
+     36    label:
+     37        {
+     38            arr.push(1);
+ ->  39            |break label;
+     40            arr.push(2);
+     41        }
+     42    }
+
+ACTION: step-over
+PAUSE AT entryLabeledStatement:43:2
+     39            break label;
+     40            arr.push(2);
+     41        }
+ ->  42    }|
+     43    
+     44    function entryLabelBreakLoop() {
+     45        debugger;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.LabelBreakLoop
+EXPRESSION: setTimeout(entryLabelBreakLoop)
+STEPS: over, in, in, in, over, over, over, over, over, over, over, over, in, in, in, in, in, resume
+PAUSED (debugger-statement)
+PAUSE AT entryLabelBreakLoop:46:5
+     42    }
+     43    
+     44    function entryLabelBreakLoop() {
+ ->  45        |debugger;
+     46    outer:
+     47        for (let i = 0; ; ++i) {
+     48            for (let j = 0; j < 2; ++j) {
+
+ACTION: step-over
+PAUSE AT entryLabelBreakLoop:48:10
+     44    function entryLabelBreakLoop() {
+     45        debugger;
+     46    outer:
+ ->  47        for (|let i = 0; ; ++i) {
+     48            for (let j = 0; j < 2; ++j) {
+     49                if (i === 1 && j === 0)
+     50                    break outer;
+
+ACTION: step-in
+PAUSE AT entryLabelBreakLoop:49:14
+     45        debugger;
+     46    outer:
+     47        for (let i = 0; ; ++i) {
+ ->  48            for (|let j = 0; j < 2; ++j) {
+     49                if (i === 1 && j === 0)
+     50                    break outer;
+     51                a();
+
+ACTION: step-in
+PAUSE AT entryLabelBreakLoop:49:25
+     45        debugger;
+     46    outer:
+     47        for (let i = 0; ; ++i) {
+ ->  48            for (let j = 0; |j < 2; ++j) {
+     49                if (i === 1 && j === 0)
+     50                    break outer;
+     51                a();
+
+ACTION: step-in
+PAUSE AT entryLabelBreakLoop:50:17
+     46    outer:
+     47        for (let i = 0; ; ++i) {
+     48            for (let j = 0; j < 2; ++j) {
+ ->  49                if (|i === 1 && j === 0)
+     50                    break outer;
+     51                a();
+     52            }
+
+ACTION: step-over
+PAUSE AT entryLabelBreakLoop:52:13
+     48            for (let j = 0; j < 2; ++j) {
+     49                if (i === 1 && j === 0)
+     50                    break outer;
+ ->  51                |a();
+     52            }
+     53        }
+     54    }
+
+ACTION: step-over
+PAUSE AT entryLabelBreakLoop:49:32
+     45        debugger;
+     46    outer:
+     47        for (let i = 0; ; ++i) {
+ ->  48            for (let j = 0; j < 2; |++j) {
+     49                if (i === 1 && j === 0)
+     50                    break outer;
+     51                a();
+
+ACTION: step-over
+PAUSE AT entryLabelBreakLoop:49:25
+     45        debugger;
+     46    outer:
+     47        for (let i = 0; ; ++i) {
+ ->  48            for (let j = 0; |j < 2; ++j) {
+     49                if (i === 1 && j === 0)
+     50                    break outer;
+     51                a();
+
+ACTION: step-over
+PAUSE AT entryLabelBreakLoop:50:17
+     46    outer:
+     47        for (let i = 0; ; ++i) {
+     48            for (let j = 0; j < 2; ++j) {
+ ->  49                if (|i === 1 && j === 0)
+     50                    break outer;
+     51                a();
+     52            }
+
+ACTION: step-over
+PAUSE AT entryLabelBreakLoop:52:13
+     48            for (let j = 0; j < 2; ++j) {
+     49                if (i === 1 && j === 0)
+     50                    break outer;
+ ->  51                |a();
+     52            }
+     53        }
+     54    }
+
+ACTION: step-over
+PAUSE AT entryLabelBreakLoop:49:32
+     45        debugger;
+     46    outer:
+     47        for (let i = 0; ; ++i) {
+ ->  48            for (let j = 0; j < 2; |++j) {
+     49                if (i === 1 && j === 0)
+     50                    break outer;
+     51                a();
+
+ACTION: step-over
+PAUSE AT entryLabelBreakLoop:49:25
+     45        debugger;
+     46    outer:
+     47        for (let i = 0; ; ++i) {
+ ->  48            for (let j = 0; |j < 2; ++j) {
+     49                if (i === 1 && j === 0)
+     50                    break outer;
+     51                a();
+
+ACTION: step-over
+PAUSE AT entryLabelBreakLoop:48:23
+     44    function entryLabelBreakLoop() {
+     45        debugger;
+     46    outer:
+ ->  47        for (let i = 0; ; |++i) {
+     48            for (let j = 0; j < 2; ++j) {
+     49                if (i === 1 && j === 0)
+     50                    break outer;
+
+ACTION: step-in
+PAUSE AT entryLabelBreakLoop:49:14
+     45        debugger;
+     46    outer:
+     47        for (let i = 0; ; ++i) {
+ ->  48            for (|let j = 0; j < 2; ++j) {
+     49                if (i === 1 && j === 0)
+     50                    break outer;
+     51                a();
+
+ACTION: step-in
+PAUSE AT entryLabelBreakLoop:49:25
+     45        debugger;
+     46    outer:
+     47        for (let i = 0; ; ++i) {
+ ->  48            for (let j = 0; |j < 2; ++j) {
+     49                if (i === 1 && j === 0)
+     50                    break outer;
+     51                a();
+
+ACTION: step-in
+PAUSE AT entryLabelBreakLoop:50:17
+     46    outer:
+     47        for (let i = 0; ; ++i) {
+     48            for (let j = 0; j < 2; ++j) {
+ ->  49                if (|i === 1 && j === 0)
+     50                    break outer;
+     51                a();
+     52            }
+
+ACTION: step-in
+PAUSE AT entryLabelBreakLoop:51:17
+     47        for (let i = 0; ; ++i) {
+     48            for (let j = 0; j < 2; ++j) {
+     49                if (i === 1 && j === 0)
+ ->  50                    |break outer;
+     51                a();
+     52            }
+     53        }
+
+ACTION: step-in
+PAUSE AT entryLabelBreakLoop:55:2
+     51                a();
+     52            }
+     53        }
+ ->  54    }|
+     55    
+     56    function entryVariableDeclaration() {
+     57        debugger;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.VariableDeclaration
+EXPRESSION: setTimeout(entryVariableDeclaration)
+STEPS: over, in, in, in, resume
+PAUSED (debugger-statement)
+PAUSE AT entryVariableDeclaration:58:5
+     54    }
+     55    
+     56    function entryVariableDeclaration() {
+ ->  57        |debugger;
+     58        var a = 1,
+     59            x = 1;
+     60        let b = 2,
+
+ACTION: step-over
+PAUSE AT entryVariableDeclaration:59:5
+     55    
+     56    function entryVariableDeclaration() {
+     57        debugger;
+ ->  58        |var a = 1,
+     59            x = 1;
+     60        let b = 2,
+     61            y = 2;
+
+ACTION: step-in
+PAUSE AT entryVariableDeclaration:61:5
+     57        debugger;
+     58        var a = 1,
+     59            x = 1;
+ ->  60        |let b = 2,
+     61            y = 2;
+     62        const c = 3,
+     63            z = 3;
+
+ACTION: step-in
+PAUSE AT entryVariableDeclaration:63:5
+     59            x = 1;
+     60        let b = 2,
+     61            y = 2;
+ ->  62        |const c = 3,
+     63            z = 3;
+     64    }
+     65    
+
+ACTION: step-in
+PAUSE AT entryVariableDeclaration:65:2
+     61            y = 2;
+     62        const c = 3,
+     63            z = 3;
+ ->  64    }|
+     65    
+     66    function entryDestructuring() {
+     67        var o = {x:1, y:2};
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.Destructuring
+EXPRESSION: setTimeout(entryDestructuring)
+STEPS: over, in, in, resume
+PAUSED (debugger-statement)
+PAUSE AT entryDestructuring:70:5
+     66    function entryDestructuring() {
+     67        var o = {x:1, y:2};
+     68        var arr = [1, 2];
+ ->  69        |debugger;
+     70        var {x, y} = o;
+     71        var [w, z] = arr;
+     72    }
+
+ACTION: step-over
+PAUSE AT entryDestructuring:71:5
+     67        var o = {x:1, y:2};
+     68        var arr = [1, 2];
+     69        debugger;
+ ->  70        |var {x, y} = o;
+     71        var [w, z] = arr;
+     72    }
+     73    
+
+ACTION: step-in
+PAUSE AT entryDestructuring:72:5
+     68        var arr = [1, 2];
+     69        debugger;
+     70        var {x, y} = o;
+ ->  71        |var [w, z] = arr;
+     72    }
+     73    
+     74    function entryIfWithDotExpression() {
+
+ACTION: step-in
+PAUSE AT entryDestructuring:73:2
+     69        debugger;
+     70        var {x, y} = o;
+     71        var [w, z] = arr;
+ ->  72    }|
+     73    
+     74    function entryIfWithDotExpression() {
+     75        var o = {condition: true};
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.IfWithDotExpression
+EXPRESSION: setTimeout(entryIfWithDotExpression)
+STEPS: over, in, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryIfWithDotExpression:77:5
+     73    
+     74    function entryIfWithDotExpression() {
+     75        var o = {condition: true};
+ ->  76        |debugger;
+     77        if (o.condition)
+     78            a();
+     79    }
+
+ACTION: step-over
+PAUSE AT entryIfWithDotExpression:78:9
+     74    function entryIfWithDotExpression() {
+     75        var o = {condition: true};
+     76        debugger;
+ ->  77        if (|o.condition)
+     78            a();
+     79    }
+     80    
+
+ACTION: step-in
+PAUSE AT entryIfWithDotExpression:79:9
+     75        var o = {condition: true};
+     76        debugger;
+     77        if (o.condition)
+ ->  78            |a();
+     79    }
+     80    
+     81    function entryIfWithBracketExpression() {
+
+ACTION: step-over
+PAUSE AT entryIfWithDotExpression:80:2
+     76        debugger;
+     77        if (o.condition)
+     78            a();
+ ->  79    }|
+     80    
+     81    function entryIfWithBracketExpression() {
+     82        var o = {condition: true};
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.IfWithBracketExpression
+EXPRESSION: setTimeout(entryIfWithBracketExpression)
+STEPS: over, in, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryIfWithBracketExpression:84:5
+     80    
+     81    function entryIfWithBracketExpression() {
+     82        var o = {condition: true};
+ ->  83        |debugger;
+     84        if (o["condition"])
+     85            a();
+     86    }
+
+ACTION: step-over
+PAUSE AT entryIfWithBracketExpression:85:9
+     81    function entryIfWithBracketExpression() {
+     82        var o = {condition: true};
+     83        debugger;
+ ->  84        if (|o["condition"])
+     85            a();
+     86    }
+     87    
+
+ACTION: step-in
+PAUSE AT entryIfWithBracketExpression:86:9
+     82        var o = {condition: true};
+     83        debugger;
+     84        if (o["condition"])
+ ->  85            |a();
+     86    }
+     87    
+     88    function entryIfWithTaggedTemplate() {
+
+ACTION: step-over
+PAUSE AT entryIfWithBracketExpression:87:2
+     83        debugger;
+     84        if (o["condition"])
+     85            a();
+ ->  86    }|
+     87    
+     88    function entryIfWithTaggedTemplate() {
+     89        debugger;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.IfWithTaggedTemplate
+EXPRESSION: setTimeout(entryIfWithTaggedTemplate)
+STEPS: over, in, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryIfWithTaggedTemplate:90:5
+     86    }
+     87    
+     88    function entryIfWithTaggedTemplate() {
+ ->  89        |debugger;
+     90        if (String.raw`test`)
+     91            a();
+     92    }
+
+ACTION: step-over
+PAUSE AT entryIfWithTaggedTemplate:91:9
+     87    
+     88    function entryIfWithTaggedTemplate() {
+     89        debugger;
+ ->  90        if (|String.raw`test`)
+     91            a();
+     92    }
+     93    
+
+ACTION: step-in
+PAUSE AT entryIfWithTaggedTemplate:92:9
+     88    function entryIfWithTaggedTemplate() {
+     89        debugger;
+     90        if (String.raw`test`)
+ ->  91            |a();
+     92    }
+     93    
+     94    
+
+ACTION: step-over
+PAUSE AT entryIfWithTaggedTemplate:93:2
+     89        debugger;
+     90        if (String.raw`test`)
+     91            a();
+ ->  92    }|
+     93    
+     94    
+     95    // FIXME: Not Yet Tested
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>client rect precision test</title>
+    <style> 
+        #test {
+            width: 5px;
+            height: 5px;
+            background: navy;
+        }
+    </style>
+</head>
+<body>
+    <div id="test"></div>
+    <div id="console">
+        Box above should be 5x5px.<br>
+        PASS: getBoundingClientRect reports width with subpixel precision (4.5) and clientWidth reports snapped size (5).<br>
+    </div>
+</body>
+</html>

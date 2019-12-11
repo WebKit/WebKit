@@ -1,0 +1,97 @@
+This tests selection change notifications at text boundaries.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS addedNotification is true
+PASS results[i] is AXTextStateChangeTypeSelectionMove
+PASS results[i] is AXTextSelectionDirectionDiscontiguous
+PASS results[i] is AXTextStateChangeTypeSelectionBoundary
+PASS results[i] is AXTextSelectionDirectionPrevious
+PASS results[i] is AXTextSelectionGranularityCharacter
+PASS results[i] is AXTextStateChangeTypeSelectionBoundary
+PASS results[i] is AXTextSelectionDirectionNext
+PASS results[i] is AXTextSelectionGranularityCharacter
+PASS results[i] is AXTextStateChangeTypeSelectionBoundary
+PASS results[i] is AXTextSelectionDirectionPrevious
+PASS results[i] is AXTextSelectionGranularityLine
+PASS results[i] is AXTextStateChangeTypeSelectionBoundary
+PASS results[i] is AXTextSelectionDirectionNext
+PASS results[i] is AXTextSelectionGranularityLine
+PASS results[i] is AXTextStateChangeTypeSelectionBoundary
+PASS results[i] is AXTextSelectionDirectionPrevious
+PASS results[i] is AXTextSelectionGranularityWord
+PASS results[i] is AXTextStateChangeTypeSelectionBoundary
+PASS results[i] is AXTextSelectionDirectionNext
+PASS results[i] is AXTextSelectionGranularityWord
+PASS results[i] is AXTextStateChangeTypeSelectionBoundary
+PASS results[i] is AXTextSelectionDirectionBeginning
+PASS results[i] is AXTextSelectionGranularityLine
+PASS results[i] is AXTextStateChangeTypeSelectionBoundary
+PASS results[i] is AXTextSelectionDirectionEnd
+PASS results[i] is AXTextSelectionGranularityLine
+PASS results[i] is AXTextStateChangeTypeSelectionBoundary
+PASS results[i] is AXTextSelectionDirectionPrevious
+PASS results[i] is AXTextSelectionGranularityDocument
+PASS results[i] is AXTextStateChangeTypeSelectionBoundary
+PASS results[i] is AXTextSelectionDirectionNext
+PASS results[i] is AXTextSelectionGranularityDocument
+PASS results[i] is AXTextStateChangeTypeSelectionMove
+PASS results[i] is AXTextSelectionDirectionDiscontiguous
+PASS results[i] is AXTextStateChangeTypeSelectionBoundary
+PASS results[i] is AXTextSelectionDirectionPrevious
+PASS results[i] is AXTextSelectionGranularityCharacter
+PASS results[i] is AXTextStateChangeTypeSelectionBoundary
+PASS results[i] is AXTextSelectionDirectionNext
+PASS results[i] is AXTextSelectionGranularityCharacter
+PASS results[i] is AXTextStateChangeTypeSelectionBoundary
+PASS results[i] is AXTextSelectionDirectionPrevious
+PASS results[i] is AXTextSelectionGranularityWord
+PASS results[i] is AXTextStateChangeTypeSelectionBoundary
+PASS results[i] is AXTextSelectionDirectionNext
+PASS results[i] is AXTextSelectionGranularityWord
+PASS results[i] is AXTextStateChangeTypeSelectionBoundary
+PASS results[i] is AXTextSelectionDirectionBeginning
+PASS results[i] is AXTextSelectionGranularityLine
+PASS results[i] is AXTextStateChangeTypeSelectionBoundary
+PASS results[i] is AXTextSelectionDirectionEnd
+PASS results[i] is AXTextSelectionGranularityLine
+PASS results[i] is AXTextStateChangeTypeSelectionMove
+PASS results[i] is AXTextSelectionDirectionDiscontiguous
+PASS results[i] is AXTextStateChangeTypeSelectionBoundary
+PASS results[i] is AXTextSelectionDirectionPrevious
+PASS results[i] is AXTextSelectionGranularityCharacter
+PASS results[i] is AXTextStateChangeTypeSelectionBoundary
+PASS results[i] is AXTextSelectionDirectionNext
+PASS results[i] is AXTextSelectionGranularityCharacter
+PASS results[i] is AXTextStateChangeTypeSelectionBoundary
+PASS results[i] is AXTextSelectionDirectionPrevious
+PASS results[i] is AXTextSelectionGranularityLine
+PASS results[i] is AXTextStateChangeTypeSelectionBoundary
+PASS results[i] is AXTextSelectionDirectionNext
+PASS results[i] is AXTextSelectionGranularityLine
+PASS results[i] is AXTextStateChangeTypeSelectionBoundary
+PASS results[i] is AXTextSelectionDirectionPrevious
+PASS results[i] is AXTextSelectionGranularityWord
+PASS results[i] is AXTextStateChangeTypeSelectionBoundary
+PASS results[i] is AXTextSelectionDirectionNext
+PASS results[i] is AXTextSelectionGranularityWord
+PASS results[i] is AXTextStateChangeTypeSelectionBoundary
+PASS results[i] is AXTextSelectionDirectionBeginning
+PASS results[i] is AXTextSelectionGranularityLine
+PASS results[i] is AXTextStateChangeTypeSelectionBoundary
+PASS results[i] is AXTextSelectionDirectionEnd
+PASS results[i] is AXTextSelectionGranularityLine
+PASS results[i] is AXTextStateChangeTypeSelectionBoundary
+PASS results[i] is AXTextSelectionDirectionPrevious
+PASS results[i] is AXTextSelectionGranularityDocument
+PASS results[i] is AXTextStateChangeTypeSelectionBoundary
+PASS results[i] is AXTextSelectionDirectionNext
+PASS results[i] is AXTextSelectionGranularityDocument
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+ 
+

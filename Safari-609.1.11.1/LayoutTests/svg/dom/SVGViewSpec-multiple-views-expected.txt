@@ -1,0 +1,103 @@
+This test checks the SVGViewSpec API using multiple elements
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Loading external SVG resources/multiple-view-elements.svg#view1...
+
+
+Check transform value
+PASS currentView.transformString is ""
+PASS currentView.transform.numberOfItems is 0
+
+Check viewTarget value
+PASS currentView.viewTargetString is ""
+PASS currentView.viewTarget is null
+
+Check zoomAndPan value
+PASS currentView.zoomAndPan is SVGViewElement.SVG_ZOOMANDPAN_MAGNIFY
+
+Check viewBox value
+PASS currentView.viewBox.baseVal.x is 0
+PASS currentView.viewBox.baseVal.y is 0
+PASS currentView.viewBox.baseVal.width is 10
+PASS currentView.viewBox.baseVal.height is 10
+PASS currentView.viewBoxString is "0 0 10 10"
+
+Check preserveAspectRatio value
+PASS currentView.preserveAspectRatioString is "xMidYMid meet"
+PASS currentView.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMID
+PASS currentView.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
+
+Loading external SVG resources/multiple-view-elements.svg#view2...
+
+Verify that no load was performed, but only a different view was set on the same document
+PASS iframeElement.contentDocument.documentElement is firstDocumentElement
+
+Check transform value
+PASS currentView.transformString is ""
+PASS currentView.transform.numberOfItems is 0
+
+Check viewTarget value
+PASS currentView.viewTargetString is ""
+PASS currentView.viewTarget is null
+
+Check zoomAndPan value
+PASS currentView.zoomAndPan is SVGViewElement.SVG_ZOOMANDPAN_MAGNIFY
+
+Check viewBox value
+PASS currentView.viewBox.baseVal.x is 40
+PASS currentView.viewBox.baseVal.y is 0
+PASS currentView.viewBox.baseVal.width is 20
+PASS currentView.viewBox.baseVal.height is 10
+PASS currentView.viewBoxString is "40 0 20 10"
+
+Check preserveAspectRatio value
+PASS currentView.preserveAspectRatioString is "xMidYMax slice"
+PASS currentView.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMIDYMAX
+PASS currentView.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_SLICE
+
+Test dynamic modifications of the 'view2' element
+
+Check viewBox value after modification
+PASS currentView.viewBox.baseVal.x is 10
+PASS currentView.viewBox.baseVal.y is 10
+PASS currentView.viewBox.baseVal.width is 30
+PASS currentView.viewBox.baseVal.height is 30
+PASS currentView.viewBoxString is "10 10 30 30"
+
+Loading external SVG resources/multiple-view-elements.svg#svgView(viewBox(0 0 10 15);transform(scale(2 2));preserveAspectRatio(xMinYMax meet))...
+
+Verify that no load was performed, but only a different view was set on the same document
+PASS iframeElement.contentDocument.documentElement is firstDocumentElement
+
+Check transform value
+PASS currentView.transformString is "scale(2 2)"
+PASS currentView.transform.numberOfItems is 1
+PASS currentView.transform.getItem(0).type is SVGTransform.SVG_TRANSFORM_SCALE
+PASS currentView.transform.getItem(0).angle is 0
+PASS matrixToString(currentView.transform.getItem(0).matrix) is "[2.00 0.00 0.00 2.00 0.00 0.00]"
+
+Check viewTarget value
+PASS currentView.viewTargetString is ""
+PASS currentView.viewTarget is null
+
+Check zoomAndPan value
+PASS currentView.zoomAndPan is SVGViewElement.SVG_ZOOMANDPAN_MAGNIFY
+
+Check viewBox value
+PASS currentView.viewBox.baseVal.x is 0
+PASS currentView.viewBox.baseVal.y is 0
+PASS currentView.viewBox.baseVal.width is 10
+PASS currentView.viewBox.baseVal.height is 15
+PASS currentView.viewBoxString is "0 0 10 15"
+
+Check preserveAspectRatio value
+PASS currentView.preserveAspectRatioString is "xMinYMax meet"
+PASS currentView.preserveAspectRatio.baseVal.align is SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMINYMAX
+PASS currentView.preserveAspectRatio.baseVal.meetOrSlice is SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

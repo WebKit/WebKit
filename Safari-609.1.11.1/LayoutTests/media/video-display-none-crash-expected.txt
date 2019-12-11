@@ -1,0 +1,4 @@
+Test that pause() after changing display to "none" doesn't cause a crash.
+
+END OF TEST
+

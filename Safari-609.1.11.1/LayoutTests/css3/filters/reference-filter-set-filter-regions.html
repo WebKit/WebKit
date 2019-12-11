@@ -1,0 +1,31 @@
+<head>
+    <style>
+        .box {
+          width: 200px;
+          height: 200px;
+          background-color: silver;
+          filter: url(#filter);
+        }
+        
+        svg {
+            display: none; 
+        }
+    </style>
+</head>
+<body>
+   <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" version="1.1">
+    <defs>
+        <filter id="filter">
+            <feTurbulence type="turbulence" baseFrequency="0.01" numOctaves="1" seed="5" stitchTiles="stitch"/>
+            <feColorMatrix type="saturate" values="0"/>
+            <feComponentTransfer>
+                <feFuncR type="linear" slope="0" intercept="0"/>
+                <feFuncG type="linear" slope="0" intercept="0.5"/>
+                <feFuncB type="linear" slope="0" intercept="0"/>
+                <feFuncA type="linear" slope="0" intercept="1"/>
+            </feComponentTransfer>
+        </filter>
+    </defs>
+  </svg>
+  <div class="box"></div>
+</body>

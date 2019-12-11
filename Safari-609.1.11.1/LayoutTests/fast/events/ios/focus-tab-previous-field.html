@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<p>Tests that pressing shift + tab in a focused field focuses the previous field in tab order.</p>
+<p id="result">FAIL did not focus the first field.</p>
+<input type="text" id="firstField" onfocus="passed()"><input type="text" id="secondField" autofocus>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+async function runTest()
+{
+    if (!window.testRunner || !testRunner.runUIScript)
+        return;
+    await UIHelper.activateFormControl(document.getElementById("secondField"));
+    await UIHelper.keyDown("\t", ["shiftKey"]);
+}
+
+function passed()
+{
+    document.getElementById("result").textContent = "PASS focused the first field.";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+runTest();
+</script>
+</body>
+</html>

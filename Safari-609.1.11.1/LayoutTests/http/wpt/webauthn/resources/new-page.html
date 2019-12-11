@@ -1,0 +1,32 @@
+<script src="./util.js"></script>
+<script>
+    const url = new URL(window.location.href);
+    const isCreation = url.searchParams.get("creation");
+
+    const makeOptions = {
+        publicKey: {
+            rp: {
+                name: "example.com"
+            },
+            user: {
+                name: "John Appleseed",
+                id: asciiToUint8Array("123456"),
+                displayName: "Appleseed",
+            },
+            challenge: asciiToUint8Array("123456"),
+            pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+            timeout: 1
+        }
+    };
+    const requestOptions = {
+        publicKey: {
+            challenge: asciiToUint8Array("123456"),
+            timeout: 1
+        }
+    };
+
+    if (isCreation == "true")
+        navigator.credentials.create(makeOptions);
+    else
+        navigator.credentials.get(requestOptions);
+</script>

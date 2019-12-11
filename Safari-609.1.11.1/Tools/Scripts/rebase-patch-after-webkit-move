@@ -1,0 +1,148 @@
+#!/usr/bin/env python
+# Copyright (C) 2017 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import os
+import sys
+
+REBASE_DICTIONARY = {
+    'WebKit2/': 'WebKit/',
+    'WebKit/': 'WebKitLegacy/'
+}
+class RebaseStatus:
+    DO_NOT_NEED = 0
+    MAYBE_NEED = 1
+    NEED = 2
+    ALREADY = 3
+
+
+def append_source(path):
+    return os.path.join('Source', path)
+
+
+def is_editable_line(line):
+    editable_prefixes = ('Index: ', '--- ', '+++ ', 'diff --git ')
+    return any(map(line.startswith, editable_prefixes))
+
+
+def needs_rebase(line):
+    if not is_editable_line(line):
+        return RebaseStatus.DO_NOT_NEED
+
+    for current_name, rebased_name in REBASE_DICTIONARY.iteritems():
+        # Check if we've already rebased. We need to check if the rebased_name is already in the REBASE_DICTIONARY,
+        # in this case, we don't know if we've already been rebased.
+        if append_source(rebased_name) in line and rebased_name not in REBASE_DICTIONARY:
+            return RebaseStatus.ALREADY
+
+        # Check if we need to rebase. We need to check if the current name is one of the potential rebase names.
+        # In this case, we don't know if we need the rebase.
+        if append_source(current_name) in line and current_name not in REBASE_DICTIONARY.values():
+            return RebaseStatus.NEED
+
+    # Check if we might need a rebase
+    for current_name, rebased_name in REBASE_DICTIONARY.iteritems():
+        if append_source(current_name) in line:
+            return RebaseStatus.MAYBE_NEED
+
+    return RebaseStatus.DO_NOT_NEED
+
+
+def rebase_line(line):
+    if not is_editable_line(line):
+        for current_name, rebased_name in REBASE_DICTIONARY.iteritems():
+            if current_name in line:
+                sys.stderr.write('Found an instance of {} in the patch.  Did you mean to replace it with {}?\n'.format(current_name, rebased_name))
+        return line
+    for current_name, rebased_name in REBASE_DICTIONARY.iteritems():
+        if append_source(current_name) in line:
+            return line.replace(append_source(current_name), append_source(rebased_name))
+    return line
+
+
+def rebase(patch_content, output_file, patch_name):
+    rebase_status = RebaseStatus.DO_NOT_NEED
+    for line in patch_content:
+        line_status = needs_rebase(line)
+        if (rebase_status == RebaseStatus.NEED and line_status == RebaseStatus.ALREADY) or (rebase_status == RebaseStatus.ALREADY and line_status == RebaseStatus.NEED):
+            sys.stderr.write('{} is a partially rebased patch\n'.format(patch_name))
+            return -1
+        rebase_status = max(rebase_status, line_status)
+
+    if rebase_status == RebaseStatus.MAYBE_NEED and output_file == sys.stdout:
+        sys.stderr.write('Cannot determine if path from {} has already been rebased, rebasing anyways\n'.format(patch_name))
+    elif rebase_status == RebaseStatus.MAYBE_NEED:
+        rebase_status = RebaseStatus.MAYBE_NEED
+        sys.stdout.write('{} may have already been rebased, are you sure you want to rebase it Y/n?\n'.format(patch_name))
+        line = sys.stdin.readline().rstrip().upper()
+        if line == 'Y' or line == 'YES':
+            rebase_status = RebaseStatus.NEED
+
+    if rebase_status == RebaseStatus.ALREADY or rebase_status == RebaseStatus.MAYBE_NEED:
+        # Output the provided patch if no re-base is required
+        for line in patch_content:
+            output_file.write(line)
+        return 0
+
+    if rebase_status == RebaseStatus.MAYBE_NEED:
+        sys.stderr.write('Cannot determine if path from {} has already been rebased, rebasing anyways\n'.format(patch_name))
+
+    for line in patch_content:
+        output_file.write(rebase_line(line))
+
+    return 0
+
+
+def parse_arguments():
+    files_to_rebase = []
+    if len(sys.argv) == 1:
+        sys.stderr.write('Reading patch from stdin\n')
+        return []
+    elif sys.argv[1] == '-h' or sys.argv[1] == 'help':
+        print 'rebase-patch-after-webkit-move usage:'
+        print '\trebase-patch-after-webkit-move -h, help'
+        print '\t\tPrint this message'
+        print '\trebase-patch-after-webkit-move <path to patch>'
+        print '\t\tReplace the patch at the provided path with a rebased patch'
+        print '\trebase-patch-after-webkit-move'
+        print '\t\tTreat stdin as the patch to be rebased'
+        exit(0)
+
+    for path in sys.argv[1:]:
+        if not os.path.isfile(path):
+            sys.stderr.write('{} does not exist, cannot rebase patch\n'.format(path))
+            exit(1)
+        files_to_rebase.append(path)
+
+    return files_to_rebase
+
+
+if __name__ == '__main__':
+    files_to_rebase = parse_arguments()
+
+    status = 0
+    for path in files_to_rebase:
+        if rebase(open(path, 'r').readlines(), open(path, 'w'), path) != 0:
+            status = 1
+    if not files_to_rebase:
+        status = rebase(sys.stdin.readlines(), sys.stdout, 'STDIN')
+    exit(status)

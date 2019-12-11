@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 51x19
+          text run at (0,0) width 51: "Test for "
+        RenderInline {A} at (0,0) size 66x19 [color=#0000EE]
+          RenderText {#text} at (51,0) size 66x19
+            text run at (51,0) width 66: "bug 11590"
+        RenderText {#text} at (117,0) size 548x19
+          text run at (117,0) width 548: ": REGRESSION (r17726-r17742): Wikipedia page intermittently loads but doesn't render."
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 775x19
+          text run at (0,0) width 775: "All four sides of the square below should be present for this test to really pass, and WebKit shouldn't crash for it to pass partially."
+      RenderBlock {DIV} at (0,72) size 106x106 [border: (3px solid #000000)]

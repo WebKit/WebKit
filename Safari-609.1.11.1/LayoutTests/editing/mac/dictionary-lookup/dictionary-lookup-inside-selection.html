@@ -1,0 +1,19 @@
+<html>
+<head>
+    <script type="text/javascript" src="resources/lookup-test.js"></script>
+    <script>
+window.onload = function () {
+    var selection = window.getSelection();
+    var range = document.createRange();
+    range.selectNode(document.getElementById("select"));
+    selection.addRange(range);
+
+    runTest();
+}
+    </script>
+</head>
+<body>
+<!-- The hit word is inside the selection, so the whole selection should be looked up. -->
+<div>Some text to not look up. <span id="select">This part is all selected, and should be taken as a <span class="lookupInCenter" data-name="inside selected text">unit</span> when looked up.</span></div>
+</body>
+</html>

@@ -1,0 +1,46 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0. #%]
+
+[% PROCESS "global/field-descs.none.tmpl" %]
+
+[% column_headers = {
+  "type"            => "Flag",
+  "status"          => field_descs.bug_status,
+  "bug_summary"     => field_descs.short_desc,
+  "bug_id"          => field_descs.bug_id,
+  "attach_summary"  => "Attachment Description",
+  "attach_id"       => "Attachment ID",
+  "requester"       => "Requester",
+  "requestee"       => "Requestee",
+  "created"         => "Created",
+  "category"        => field_descs.product _ ": " _ field_descs.component,
+} %]
+
+[% display_columns = ["requester", "requestee", "type", "status",
+                      "bug_id", "bug_summary", "attach_id",
+                      "attach_summary", "created", "category"] %]
+
+[% IF requests.size == 0 %]
+No requests.
+[% ELSE %]
+  [% FOREACH column = display_columns %]
+    [% column_headers.$column FILTER csv %][% ',' IF NOT loop.last() %]
+  [% END %]
+
+  [% FOREACH request = requests %]
+    [% FOREACH column = display_columns %]
+      [% IF column == 'created' %]
+        [% request.$column FILTER time FILTER csv %]
+      [% ELSIF column.match('^requeste') %]
+        [% request.$column FILTER email FILTER csv %]
+      [% ELSE %]
+        [% request.$column FILTER csv %]
+      [% END %][% ',' IF NOT loop.last() %]
+    [% END %]
+
+  [% END %]
+[% END %]

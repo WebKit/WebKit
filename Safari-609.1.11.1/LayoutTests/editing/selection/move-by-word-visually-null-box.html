@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<script src="resources/move-by-word-visually.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+onload = function() {
+    try {
+        runTest();
+
+        // Test NULL VisiblePosition.
+        var selection = getSelection();
+        selection.setPosition(null, 0);
+        selection.modify("move", "right", "-webkit-visual-word");
+        document.body.innerHTML = "Crash test passed";
+    } finally {
+    }
+};
+
+if (window.testRunner && window.internals) {
+    testRunner.dumpAsText();
+    internals.settings.setEditingBehavior('win');
+}
+</script>
+<div id="console"></div>
+<div id="testMoveByWord">
+<output><div dir=ltr title="0|0" class="test_move_by_word">
+<div class="test_move_by_word" dir=ltr contenteditable title="0|0"></div>
+00<base dir=ltr class="test_move_by_word" title="3|3 1">
+</div>

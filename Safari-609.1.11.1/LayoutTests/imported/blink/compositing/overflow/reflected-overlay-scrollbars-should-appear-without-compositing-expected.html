@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<style>
+#container {
+    -webkit-box-reflect: below;
+}
+
+#clipper {
+  overflow: hidden;
+  width: 110px;
+  height: 100px;
+  margin: 10px;
+}
+
+#scroller {
+    width: 100px;
+    height: 100px;
+    border: 1px solid black;
+    overflow: auto;
+}
+
+
+#fixed {
+    width: 10px;
+    height: 10px;
+    position: fixed;
+    left: 200px;
+    background: blue;
+}
+
+#scrolled {
+    width: 100px;
+    height: 300px;
+    background: green;
+}
+</style>
+<script>
+if (window.internals) {
+    window.internals.settings.setOverlayScrollbarsEnabled(true);
+    window.internals.settings.setPreferCompositingToLCDTextEnabled(true);
+}
+
+if (window.testRunner)
+    window.testRunner.dumpAsTextWithPixelResults();
+
+onload = function() {
+    if (window.internals && window.testRunner)
+        window.testRunner.setCustomTextOutput(window.internals.layerTreeAsText(document));
+};
+</script>
+<div id="container">
+  <div id="clipper">
+    <div id="scroller">
+      <div id="fixed"></div>
+      <div id="scrolled"></div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,32 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/hidden-1a-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/hidden-1a.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/hidden-1b-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/hidden-1b.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/hidden-1c-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/hidden-1c.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/hidden-1d-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/hidden-1d.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/hidden-1e-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/hidden-1e.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/hidden-1f-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/hidden-1f.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/hidden-1g-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/hidden-1g.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/hidden-2-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/the-hidden-attribute/hidden-2.svg

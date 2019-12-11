@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+const shaderSource = `
+struct Container2x2 {
+    float x;
+    float2x2 m;
+    float y;
+}
+
+struct Container2x3 {
+    float x;
+    float2x3 m;
+    float y;
+}
+
+struct Container2x4 {
+    float x;
+    float2x4 m;
+    float y;
+}
+
+struct Container3x2 {
+    float x;
+    float3x2 m;
+    float y;
+}
+
+struct Container3x3 {
+    float x;
+    float3x3 m;
+    float y;
+}
+
+struct Container3x4 {
+    float x;
+    float3x4 m;
+    float y;
+}
+
+struct Container4x2 {
+    float x;
+    float4x2 m;
+    float y;
+}
+
+struct Container4x3 {
+    float x;
+    float4x3 m;
+    float y;
+}
+
+struct Container4x4 {
+    float x;
+    float4x4 m;
+    float y;
+}
+
+[numthreads(1, 1, 1)]
+compute void computeShader2x2(device Container2x2[] input : register(u0), device float[] output : register(u1)) {
+    output[0] = input[0].m[0][0];
+    output[1] = input[0].y;
+}
+
+[numthreads(1, 1, 1)]
+compute void computeShader2x3(device Container2x3[] input : register(u0), device float[] output : register(u1)) {
+    output[0] = input[0].m[0][0];
+    output[1] = input[0].y;
+}
+
+[numthreads(1, 1, 1)]
+compute void computeShader2x4(device Container2x4[] input : register(u0), device float[] output : register(u1)) {
+    output[0] = input[0].m[0][0];
+    output[1] = input[0].y;
+}
+
+[numthreads(1, 1, 1)]
+compute void computeShader3x2(device Container3x2[] input : register(u0), device float[] output : register(u1)) {
+    output[0] = input[0].m[0][0];
+    output[1] = input[0].y;
+}
+
+[numthreads(1, 1, 1)]
+compute void computeShader3x3(device Container3x3[] input : register(u0), device float[] output : register(u1)) {
+    output[0] = input[0].m[0][0];
+    output[1] = input[0].y;
+}
+
+[numthreads(1, 1, 1)]
+compute void computeShader3x4(device Container3x4[] input : register(u0), device float[] output : register(u1)) {
+    output[0] = input[0].m[0][0];
+    output[1] = input[0].y;
+}
+
+[numthreads(1, 1, 1)]
+compute void computeShader4x2(device Container4x2[] input : register(u0), device float[] output : register(u1)) {
+    output[0] = input[0].m[0][0];
+    output[1] = input[0].y;
+}
+
+[numthreads(1, 1, 1)]
+compute void computeShader4x3(device Container4x3[] input : register(u0), device float[] output : register(u1)) {
+    output[0] = input[0].m[0][0];
+    output[1] = input[0].y;
+}
+
+[numthreads(1, 1, 1)]
+compute void computeShader4x4(device Container4x4[] input : register(u0), device float[] output : register(u1)) {
+    output[0] = input[0].m[0][0];
+    output[1] = input[0].y;
+}
+`;
+
+async function start(device) {
+    const shaderModule = device.createShaderModule({code: shaderSource, isWHLSL: true});
+
+    const bindGroupLayoutDescriptor = {bindings: [{binding: 0, visibility: 7, type: "storage-buffer"}, {binding: 1, visibility: 7, type: "storage-buffer"}]};
+    const bindGroupLayout = device.createBindGroupLayout(bindGroupLayoutDescriptor);
+    const pipelineLayoutDescriptor = {bindGroupLayouts: [bindGroupLayout]};
+    const pipelineLayout = device.createPipelineLayout(pipelineLayoutDescriptor);
+
+    const inputSize = Float32Array.BYTES_PER_ELEMENT * 32;
+    const outputSize = Float32Array.BYTES_PER_ELEMENT * 2;
+
+    const uploadBufferDescriptor = {size: inputSize, usage: GPUBufferUsage.MAP_WRITE | GPUBufferUsage.COPY_SRC};
+    const uploadBuffer = device.createBuffer(uploadBufferDescriptor);
+    const uploadBufferArrayBuffer = await uploadBuffer.mapWriteAsync();
+    const uploadBufferFloat32Array = new Float32Array(uploadBufferArrayBuffer);
+    for (let i = 0; i < 32; ++i)
+        uploadBufferFloat32Array[i] = i;
+    uploadBuffer.unmap();
+
+    const inputBufferDescriptor = {size: inputSize, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.STORAGE};
+    const inputBuffer = device.createBuffer(inputBufferDescriptor);
+
+    const outputBufferDescriptor = {size: outputSize, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.MAP_READ};
+    const outputBuffer = device.createBuffer(outputBufferDescriptor);
+
+    const bindGroupDescriptor = {layout: bindGroupLayout, bindings: [{binding: 0, resource: {buffer: inputBuffer, size: inputSize}}, {binding: 1, resource: {buffer: outputBuffer, size: outputSize}}]};
+    const bindGroup = device.createBindGroup(bindGroupDescriptor);
+
+    let tests = ["computeShader2x2", "computeShader2x3", "computeShader2x4", "computeShader3x2", "computeShader3x3", "computeShader3x4", "computeShader4x2", "computeShader4x3", "computeShader4x4"];
+    let results = [];
+    for (let test of tests) {
+        const computePipeline = device.createComputePipeline({computeStage: {module: shaderModule, entryPoint: test}, layout: pipelineLayout});
+        const commandEncoder = device.createCommandEncoder(); // {}
+        commandEncoder.copyBufferToBuffer(uploadBuffer, 0, inputBuffer, 0, inputSize);
+        const computePassEncoder = commandEncoder.beginComputePass();
+        computePassEncoder.setPipeline(computePipeline);
+        computePassEncoder.setBindGroup(0, bindGroup);
+        computePassEncoder.dispatch(1, 1, 1);
+        computePassEncoder.endPass();
+        const commandBuffer = commandEncoder.finish();
+        device.getQueue().submit([commandBuffer]);
+
+        const outputArrayBuffer = await outputBuffer.mapReadAsync();
+        const outputFloat32Array = new Float32Array(outputArrayBuffer);
+        results.push(outputFloat32Array[0]);
+        results.push(outputFloat32Array[1]);
+        outputBuffer.unmap();
+    }
+    let expected = [2, 6, 4, 12, 4, 12, 2, 8, 4, 16, 4, 16, 2, 10, 4, 20, 4, 20];
+    let error = false;
+    for (let i = 0; i < expected.length; ++i) {
+        if (results[i] != expected[i]) {
+            testFailed("");
+            return;
+        }
+    }
+    testPassed("");
+}
+window.jsTestIsAsync = true;
+getBasicDevice().then(function(device) {
+    start(device).then(function() {
+        finishJSTest();
+    }, function(e) {
+        testFailed("");
+        finishJSTest();
+    });
+}, function() {
+    testPassed("");
+    finishJSTest();
+});
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

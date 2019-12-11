@@ -1,0 +1,3 @@
+
+FAIL list and writing-mode assert_equals: the height of li should be 45px, and no extra line generated expected 45 but got 63
+a b c

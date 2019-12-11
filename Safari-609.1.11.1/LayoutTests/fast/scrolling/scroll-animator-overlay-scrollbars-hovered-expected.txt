@@ -1,0 +1,19 @@
+CONSOLE MESSAGE: line 15: MainFrameView: didAddVerticalScrollbar
+CONSOLE MESSAGE: line 15: FrameView: didAddVerticalScrollbar
+CONSOLE MESSAGE: line 15: FrameView: didAddHorizontalScrollbar
+CONSOLE MESSAGE: line 15: FrameView: willRemoveVerticalScrollbar
+CONSOLE MESSAGE: line 15: MainFrameView: mouseEnteredContentArea
+CONSOLE MESSAGE: line 15: MainFrameView: mouseMovedInContentArea
+CONSOLE MESSAGE: line 16: FrameView: mouseEnteredHorizontalScrollbar
+CONSOLE MESSAGE: line 16: FrameView: mouseEnteredContentArea
+CONSOLE MESSAGE: line 16: MainFrameView: mouseMovedInContentArea
+CONSOLE MESSAGE: line 17: FrameView: mouseExitedHorizontalScrollbar
+CONSOLE MESSAGE: line 17: FrameView: mouseExitedContentArea
+CONSOLE MESSAGE: line 17: MainFrameView: mouseMovedInContentArea
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Test for https://bugs.webkit.org/show_bug.cgi?id=153304.
+
+
+

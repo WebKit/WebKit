@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<style>
+    video {
+        width: 480px;
+        height: 320px;
+    }
+    #bar {
+        margin-top: 5000px;
+    }
+</style>
+<script>
+    function pauseFirstVideoAndScrollToSecondVideo() {
+        document.querySelector("#bar").scrollIntoView();
+        document.querySelector("#foo").pause();
+    }
+    function handlePaused() {
+        setTimeout(function() {
+            try {
+                window.webkit.messageHandlers.testHandler.postMessage("paused");
+            } catch(e) { }
+        }, 0);
+    }
+    function beganAutoplaying() {
+        setTimeout(function() {
+            try {
+                window.webkit.messageHandlers.testHandler.postMessage("autoplayed");
+            } catch(e) {
+            }
+        }, 0)
+    }
+</script>
+<body>
+    <video autoplay onplaying=beganAutoplaying() loop id="foo" onpause=handlePaused()><source src="large-video-with-audio.mp4"></video>
+    <br>
+    <video id="bar"><source src="large-video-with-audio.mp4"></video>
+</body>
+<html>

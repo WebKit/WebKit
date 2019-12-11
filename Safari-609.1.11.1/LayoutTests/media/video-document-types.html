@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function log(msg)
+        {
+            document.getElementById('console').appendChild(document.createTextNode(msg + "\n"));
+        }
+        
+        function test()
+        {
+            var video = document.getElementById('fr').contentDocument.getElementsByTagName('video')[0];
+            if (video)
+                log("PASS: <video> used");
+            else
+                log("FAIL: <video> NOT used");
+
+            if (window.testRunner) {
+                testRunner.notifyDone();
+            }
+        }
+        </script>
+    </head>
+    <body onload="setTimeout(test, 250)">
+        <iframe src="content/counting.mp4" id="fr" width=380 height=330></iframe>
+        <p>This tests that a standalone MPEG-4 file with 'sdsm' and 'odsm' tracks is opened in a MediaDocument.</p>
+        <pre id="console"></pre>
+    </body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=../../media-resources/video-test.js></script>
+        <script src=../../media-resources/media-file.js></script>
+        <script>
+
+            if (window.testRunner) {
+                testRunner.setHandlesAuthenticationChallenges(true);
+                testRunner.setAuthenticationUsername("username");
+                testRunner.setAuthenticationPassword("password");
+            }
+
+            var tests;
+            var media = findMediaFile('video', 'test');
+            var type = mimeTypeForExtension(media.split('.').pop());
+
+            function startTests()
+            {
+                findMediaElement();
+                waitForEventAndFail('error');
+                waitForEventAndEnd('canplay');
+
+                testSameDomain();
+            }
+
+            function testSameDomain()
+            {
+                consoleWrite('Testing same domain (127.0.0.1)');
+                video.src = 'http://127.0.0.1:8000/media/resources/video-auth.php?name=' + media + '&type=' + type;
+                video.load();
+            }
+        </script>
+    </head>
+
+    <body onload="startTests()">
+        <video></video>
+        <br>
+        Tests that the media player sends authorization credentials when requesting a media file.
+    </body>
+</html>

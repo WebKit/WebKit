@@ -1,0 +1,5 @@
+
+FAIL direction doesn't affect :dir() assert_array_equals: lengths differ, expected 16 got 0
+This text is left to right
+this is right to left
+This text is left to rightthis is left to right

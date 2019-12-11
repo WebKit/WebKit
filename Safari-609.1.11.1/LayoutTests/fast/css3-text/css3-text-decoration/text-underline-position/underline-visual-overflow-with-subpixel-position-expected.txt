@@ -1,0 +1,7 @@
+PASS window.internals.repaintRectsAsText().indexOf('8 8 784 13') is not -1
+PASS window.internals.repaintRectsAsText().indexOf('8 20 784 13') is not -1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+foobar
+foobar

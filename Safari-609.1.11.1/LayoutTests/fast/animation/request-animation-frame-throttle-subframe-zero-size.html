@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that requestAnimationFrame is not throttled in zero-sized subframes");
+window.jsTestIsAsync = true;
+
+function runTest()
+{
+    testFrame = document.getElementById("testFrame");
+
+    // Force layout.
+    document.body.offsetTop;
+
+    shouldBeFalse("testFrame.contentWindow.internals.isRequestAnimationFrameThrottled()");
+    finishJSTest();
+}
+</script>
+<iframe id="testFrame" style="position: absolute; top: 800px; left: 0; height: 0;" src="resources/requestAnimationFrame-frame.html" onload="runTest()"></iframe>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

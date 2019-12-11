@@ -1,0 +1,6 @@
+
+FAIL TouchEvent's touches, targetTouches, and changedTouches should be retargeted. function is not a constructor (evaluating 'new Touch({
+        identifier: 0,
+        target: target0,
+    })')
+

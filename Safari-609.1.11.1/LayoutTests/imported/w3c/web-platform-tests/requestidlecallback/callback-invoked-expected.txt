@@ -1,0 +1,3 @@
+
+PASS requestIdleCallback callback is invoked at least once before the timeout 
+

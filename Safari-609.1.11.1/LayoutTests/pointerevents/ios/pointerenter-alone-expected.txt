@@ -1,0 +1,3 @@
+
+PASS Listening to a pointerenter event alone dispatches the event. 
+

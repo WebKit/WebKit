@@ -1,0 +1,10 @@
+This tests that Range.getClientRects() work correctly for partially selected vertical text.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS range1.getClientRects()[0].width is range2.getClientRects()[0].width
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

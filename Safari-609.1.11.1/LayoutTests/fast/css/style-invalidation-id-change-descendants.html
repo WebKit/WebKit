@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+* {
+    color: black;
+}
+#id1 target {
+    color: rgb(1, 1, 1);
+}
+
+#id2 > inert target {
+    color: rgb(2, 2, 2);
+}
+
+#id3 {
+    color: rgb(3, 3, 3);
+}
+
+#id4 {
+    color: rgb(4, 4, 4);
+}
+
+
+</style>
+</head>
+<body>
+    <root>
+        <!-- With renderer -->
+        <inert>
+            <inert>
+                <inert></inert>
+                <target>
+                    <inert></inert>
+                    <target></target>
+                </target>
+            </inert>
+            <target></target>
+            <inert></inert>
+        </inert>
+    </root>
+    <root style="display:none;">
+        <!-- Without renderer -->
+        <inert>
+            <inert>
+                <inert></inert>
+                <target>
+                    <inert></inert>
+                    <target></target>
+                </target>
+            </inert>
+            <target></target>
+            <inert></inert>
+        </inert>
+    </root>
+</body>
+<script>
+
+description('Test basic style invalidation optimization on id mutation');
+
+function testStyleChangeType(tag, type)
+{
+    var elements = document.querySelectorAll(tag);
+    for (var i = 0; i < elements.length; ++i) {
+        debug(window.internals.styleChangeType(elements[i]));
+        if (window.internals.styleChangeType(elements[i]) != type)
+            return false;
+    }
+    return true;
+}
+
+function testStyleInvalidation(expectedDescendantStyleChange) {
+    shouldBeTrue('testStyleChangeType("root", "' + expectedDescendantStyleChange +'")');
+}
+
+function setId(name) {
+    debug("Setting id " + name);
+    var allRoots = document.querySelectorAll("root");
+    allRoots[0].id = name;
+    allRoots[1].id = name
+}
+
+function checkStyle(n) {
+    document.documentElement.offsetTop;
+
+    hasExpectedStyle = true;
+    expectedColor = 'rgb('+n+', '+n+', '+n+')';
+    var targets = document.querySelectorAll("target");
+    for (var i = 0; i < targets.length; ++i) {
+        hasExpectedStyle = getComputedStyle(targets[i]).color == expectedColor;
+        if (!hasExpectedStyle)
+            break;
+    }
+    shouldBeTrue("hasExpectedStyle");
+}
+
+checkStyle(0);
+testStyleInvalidation("NoStyleChange");
+
+setId('NotThere');
+testStyleInvalidation("NoStyleChange");
+
+setId('id1');
+testStyleInvalidation("FullStyleChange");
+checkStyle(1);
+
+setId('id2');
+testStyleInvalidation("FullStyleChange");
+checkStyle(2);
+
+setId('id1');
+testStyleInvalidation("FullStyleChange");
+checkStyle(1);
+
+setId('id3');
+testStyleInvalidation("FullStyleChange");
+checkStyle(0);
+
+setId('id4');
+testStyleInvalidation("InlineStyleChange");
+checkStyle(0);
+
+setId('id4');
+testStyleInvalidation("NoStyleChange");
+checkStyle(0);
+
+setId('NotThere');
+testStyleInvalidation("InlineStyleChange");
+
+setId('id1');
+testStyleInvalidation("FullStyleChange");
+checkStyle(1);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

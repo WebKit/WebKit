@@ -1,0 +1,11 @@
+
+
+
+
+
+
+FAIL If constructing entry list flag of form is true, then return assert_equals: expected 1 but got 0
+PASS If form's firing submission events is true, then return; 'invalid' event 
+PASS If form's firing submission events is true, then return; 'submit' event 
+FAIL Cannot navigate (after constructing the entry list) assert_true: expected true got false
+

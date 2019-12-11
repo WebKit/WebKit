@@ -1,0 +1,4 @@
+
+PASS aborting a keepalive fetch should work 
+PASS aborting a detached keepalive fetch should not do anything 
+

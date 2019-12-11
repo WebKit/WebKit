@@ -1,0 +1,33 @@
+<style>
+section {
+    height: 400px;
+    width: 300px;
+    position: relative;
+}
+
+p {
+    padding: 0;
+    margin: 0;
+}
+
+.parent {
+    position: absolute;
+    left: 150px;
+    top: 0;
+    width: 150px;
+}
+
+.filtered {
+    background: white;
+    -webkit-filter: invert();
+}
+
+</style>
+<section>
+<p class="break-after">Hello</p>
+<div class="parent">
+    <p>Normal</p>
+    <p class="filtered">World</p>
+    <p>Normal</p>
+</div>
+</section>

@@ -1,0 +1,27 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing the <code>CompactMediaControls</code> layout.");
+
+const mediaControls = new CompactMediaControls;
+
+debug("With controls at their default state (paused) only the play button is showing.");
+shouldBe("mediaControls.children", "[mediaControls.playButton]");
+debug("");
+
+mediaControls.state = CompactMediaControls.States.Pending;
+debug("With controls at pending state, only the activity indicator is showing.");
+shouldBe("mediaControls.children", "[mediaControls.activityIndicator]");
+debug("");
+
+mediaControls.state = CompactMediaControls.States.Invalid;
+debug("With controls at invalid state, only the invalid icon is showing.");
+shouldBe("mediaControls.children", "[mediaControls.invalidButton]");
+debug("");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

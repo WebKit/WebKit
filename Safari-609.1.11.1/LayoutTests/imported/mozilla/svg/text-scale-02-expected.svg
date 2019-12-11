@@ -1,0 +1,11 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg">
+  <linearGradient id="g" gradientUnits="userSpaceOnUse" x1="100" y1="100" x2="500" y2="500">
+    <stop stop-color="red"/>
+    <stop stop-color="yellow" offset="1"/>
+  </linearGradient>
+  <rect x="100" y="100" width="400" height="400" fill="url(#g)"/>
+</svg>

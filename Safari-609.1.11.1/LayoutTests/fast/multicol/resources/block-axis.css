@@ -1,0 +1,41 @@
+body {
+    margin: 0;
+}
+
+div {
+    -webkit-logical-width: 200px;
+    -webkit-logical-height: 150px;
+    -webkit-column-gap: 30px;
+    -webkit-column-rule-width: 10px;
+    -webkit-column-rule-style: solid;
+    outline: 1px dashed lightblue;
+    -webkit-margin-after: 360px;
+    -webkit-border-before: 20px solid silver;
+    -webkit-margin-start: 20px;
+}
+
+div.horizontal
+{
+    -webkit-column-axis: vertical;
+}
+
+div.horizontal.flipped
+{
+    -webkit-writing-mode: horizontal-bt;
+}
+
+div.vertical
+{
+    -webkit-writing-mode: vertical-lr;
+    -webkit-column-axis: horizontal;
+}
+
+div.vertical.flipped
+{
+    -webkit-writing-mode: vertical-rl;
+}
+
+span {
+    background-color: yellow;
+    position: relative;
+}

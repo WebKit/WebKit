@@ -1,0 +1,4 @@
+This text should be green
+
+FAIL Preferred stylesheet where insertion order is tree order assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+

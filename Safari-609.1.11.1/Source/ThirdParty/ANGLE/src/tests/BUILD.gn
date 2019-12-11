@@ -1,0 +1,1004 @@
+# Copyright 2015 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/config/chromecast_build.gni")
+import("//testing/test.gni")
+import("../../gni/angle.gni")
+import("angle_unittests.gni")
+
+declare_args() {
+  # Don't build dEQP by default.
+  build_angle_deqp_tests = false
+  build_angle_gles1_conform_tests = false
+}
+
+if (!build_with_chromium) {
+  group("all") {
+    testonly = true
+    deps = [
+      "//src/tests:angle_end2end_tests",
+      "//src/tests:angle_perftests",
+      "//src/tests:angle_unittests",
+    ]
+    if (!is_fuchsia) {
+      deps += [
+        "//src/tests:angle_white_box_perftests",
+        "//src/tests:angle_white_box_tests",
+      ]
+    }
+    if (build_angle_deqp_tests && !is_fuchsia) {
+      deps += [
+        "//src/tests:angle_deqp_egl_no_gtest",
+        "//src/tests:angle_deqp_egl_tests",
+        "//src/tests:angle_deqp_gles2_no_gtest",
+        "//src/tests:angle_deqp_gles2_tests",
+        "//src/tests:angle_deqp_gles31_no_gtest",
+        "//src/tests:angle_deqp_gles31_tests",
+        "//src/tests:angle_deqp_gles3_no_gtest",
+        "//src/tests:angle_deqp_gles3_tests",
+      ]
+    }
+    if (build_angle_gles1_conform_tests) {
+      deps += [ "//src/tests:angle_gles1_conformance_tests" ]
+    }
+  }
+}
+
+angle_executable("angle_unittests_helper") {
+  sources = angle_unittests_helper_sources
+
+  deps = [
+    "${angle_root}:angle_common",
+  ]
+}
+
+test_expectations_sources = [
+  "test_expectations/GPUTestConfig.cpp",
+  "test_expectations/GPUTestConfig.h",
+  "test_expectations/GPUTestExpectationsParser.cpp",
+  "test_expectations/GPUTestExpectationsParser.h",
+]
+if (is_mac) {
+  test_expectations_sources_mac = [
+    "test_expectations/GPUTestConfig_mac.mm",
+    "test_expectations/GPUTestConfig_mac.h",
+  ]
+}
+
+config("angle_test_expectations_config") {
+  include_dirs = [ "${angle_root}:angle_common" ]
+}
+
+angle_static_library("angle_test_expectations") {
+  public_configs += [ ":angle_test_expectations_config" ]
+  public_deps = [
+    "${angle_root}:angle_common",
+    "${angle_root}:angle_gpu_info_util",
+    "${angle_root}:angle_util",
+  ]
+  sources = test_expectations_sources
+  if (is_mac) {
+    sources += test_expectations_sources_mac
+    libs = [ "Cocoa.framework" ]
+  }
+}
+
+angle_test("angle_unittests") {
+  sources = angle_unittests_sources
+  main = "angle_unittest_main"
+
+  if (angle_enable_hlsl) {
+    sources += angle_unittests_hlsl_sources
+    defines = [ "ANGLE_ENABLE_HLSL" ]
+  }
+
+  deps = [
+    ":angle_test_expectations",
+    "${angle_root}:libANGLE",
+    "${angle_root}:libfeature_support",
+    "${angle_root}:preprocessor",
+    "${angle_root}:translator",
+  ]
+  if (!is_android && !is_fuchsia) {
+    # SystemUtils.RunApp, the only unittest using a helper binary, is not supported on these
+    # platforms yet.
+    data_deps = [
+      ":angle_unittests_helper",
+    ]
+  }
+}
+
+if (is_win || is_linux || is_mac || is_android || is_fuchsia) {
+  import("angle_end2end_tests.gni")
+
+  angle_test("angle_end2end_tests") {
+    include_dirs = [ "." ]
+
+    sources = angle_end2end_tests_sources
+    main = "angle_end2end_tests_main"
+    libs = []
+
+    if (is_mac) {
+      sources += angle_end2end_tests_mac_sources
+      libs += [
+        "CoreFoundation.framework",
+        "IOSurface.framework",
+      ]
+    }
+    if (is_win) {
+      sources += angle_end2end_tests_win_sources
+    }
+    if (use_x11) {
+      sources += angle_end2end_tests_x11_sources
+    }
+    if (angle_enable_vulkan) {
+      sources += angle_end2end_tests_vulkan_sources
+    }
+
+    configs += [
+      "${angle_root}:libANGLE_config",
+      "${angle_root}:library_name_config",
+    ]
+
+    deps = [
+      ":angle_test_expectations",
+      "${angle_root}:angle_gpu_info_util",
+      "${angle_root}:angle_image_util",
+      "${angle_root}:angle_util",
+      "${angle_root}:angle_util_loader_headers",
+    ]
+
+    data_deps = [
+      "${angle_root}:libEGL",
+      "${angle_root}:libGLESv1_CM",
+      "${angle_root}:libGLESv2",
+    ]
+
+    if (is_android) {
+      use_native_activity = true
+    }
+    if (angle_enable_vulkan) {
+      deps += [ "${angle_root}/src/libANGLE/renderer/vulkan:angle_vulkan" ]
+    }
+  }
+}
+
+if (is_win || is_linux || is_mac || is_android) {
+  import("angle_white_box_tests.gni")
+
+  angle_test("angle_white_box_tests") {
+    include_dirs = [ "." ]
+    sources = angle_white_box_tests_sources
+    main = "angle_end2end_tests_main"
+
+    if (is_win) {
+      sources += angle_white_box_tests_win_sources
+    }
+
+    if (angle_enable_vulkan) {
+      sources += angle_white_box_tests_vulkan_sources
+    }
+
+    configs += [
+      "${angle_root}:libANGLE_config",
+      "${angle_root}:library_name_config",
+    ]
+
+    deps = [
+      "${angle_root}:angle_util_static",
+      "${angle_root}:libANGLE",
+      "${angle_root}:libEGL_static",
+      "${angle_root}:libGLESv2_static",
+      "${angle_root}:preprocessor",
+      "${angle_root}:translator",
+    ]
+
+    if (is_android) {
+      use_native_activity = true
+    }
+  }
+}
+
+if (is_win || is_linux || is_android || is_mac) {
+  import("angle_perftests.gni")
+
+  # This test suite is for perf tests that use ANGLE's internals in some direct way.
+  angle_test("angle_white_box_perftests") {
+    include_dirs = [ "." ]
+    sources = angle_white_box_perf_tests_sources
+    main = "angle_perftests_main"
+
+    deps = [
+      "${angle_jsoncpp_dir}:jsoncpp",
+      "${angle_root}:angle_util_static",
+      "${angle_root}:libANGLE",
+      "${angle_root}:libEGL_static",
+      "${angle_root}:libGLESv2_static",
+    ]
+
+    if (is_win) {
+      sources += angle_white_box_perf_tests_win_sources
+    }
+
+    if (angle_enable_vulkan) {
+      sources += angle_white_box_perf_tests_vulkan_sources
+      deps += [ "${angle_glslang_dir}:glslang_sources" ]
+    }
+
+    configs += [
+      "${angle_jsoncpp_dir}:jsoncpp_config",
+      "${angle_root}:libANGLE_config",
+      "${angle_root}:library_name_config",
+    ]
+
+    if (is_android) {
+      use_native_activity = true
+    }
+  }
+}
+
+if (is_win || is_linux || is_android || is_mac || is_fuchsia) {
+  import("angle_perftests.gni")
+
+  # This test suite is designed to run against a generic GL implementation.
+  angle_test("angle_perftests") {
+    include_dirs = [ "." ]
+    sources = angle_perf_tests_sources
+    main = "angle_perftests_main"
+
+    deps = [
+      "${angle_jsoncpp_dir}:jsoncpp",
+      "${angle_root}:angle_common",
+      "${angle_root}:angle_gpu_info_util",
+      "${angle_root}:angle_system_utils",
+      "${angle_root}:angle_util",
+      "${angle_root}:angle_util_loader_headers",
+    ]
+
+    data_deps = [
+      "${angle_root}:libEGL",
+      "${angle_root}:libGLESv2",
+    ]
+
+    configs += [
+      "${angle_jsoncpp_dir}:jsoncpp_config",
+      "${angle_root}:libANGLE_config",
+      "${angle_root}:library_name_config",
+    ]
+
+    if (is_android) {
+      use_native_activity = true
+    }
+
+    if (is_win || is_linux) {
+      data_deps += [ "${angle_root}/third_party/glmark2:glmark2_angle" ]
+    }
+    if (is_win && target_cpu != "arm64") {
+      data_deps += [ "${angle_root}/third_party/glmark2:glmark2_wgl" ]
+    }
+    if (is_linux) {
+      data_deps += [ "${angle_root}/third_party/glmark2:glmark2_glx" ]
+    }
+  }
+}
+
+###-----------------------------------------------------
+### ES 1 conformance tests
+###-----------------------------------------------------
+
+if (build_angle_gles1_conform_tests) {
+  gles1_conform_root = "$angle_root/third_party/gles1_conform"
+
+  config("angle_gles1_conform_support") {
+    include_dirs = [
+      "$gles1_conform_root",
+      "$gles1_conform_root/conform/conform",
+      "$gles1_conform_root/conform/conformshell",
+      "$gles1_conform_root/ctk",
+      "$gles1_conform_root/fixed",
+      "$gles1_conform_root/include",
+      "$gles1_conform_root/platform",
+    ]
+
+    defines = [
+      "COMMON",
+      "CONFORM_ALTERNATE_MAIN",
+      "NULLWS",
+    ]
+
+    # This is used by the tests to typedef uint32_t. For some reason only needed on mac.
+    if (is_mac) {
+      defines += [ "__linux" ]
+    }
+
+    cflags = []
+    if (is_clang) {
+      # Remove when crbug.com/428099 is resolved.
+      cflags += [
+        "-Wno-implicit-function-declaration",
+        "-Wno-int-to-pointer-cast",
+        "-Wno-self-assign",
+        "-Wno-sign-compare",
+        "-Wno-unused-const-variable",
+        "-Wno-unused-result",
+        "-Wno-unused-variable",
+
+        # Upstream tests do null pointer arithmetic, so disable those warnings.
+        "-Wno-null-pointer-arithmetic",
+      ]
+    } else {
+      cflags += [ "/wd4101" ]  # unreferenced local variable
+    }
+  }
+
+  # This source set is a bit special so we don't use angle_source_set.
+  source_set("angle_gles1_conformance_no_gtest") {
+    configs += [
+      ":angle_gles1_conform_support",
+      "$angle_root:internal_config",
+    ]
+
+    public_configs = [
+      "$angle_root:angle_static",
+      "$angle_root:angle_util_config",
+      "$angle_root:gl_prototypes",
+    ]
+
+    testonly = true
+
+    public_deps = [
+      "$angle_root:angle_common",
+      "$angle_root:angle_util_static",
+      "$angle_root:libEGL_static",
+      "$angle_root:libGLESv1_CM_static",
+      "$angle_root:libGLESv2_static",
+      "$angle_root:preprocessor",
+      "$angle_root:translator",
+    ]
+
+    sources = [
+      "$gles1_conform_root/conform/conform/apfunc.c",
+      "$gles1_conform_root/conform/conform/appl.c",
+      "$gles1_conform_root/conform/conform/bclear.c",
+      "$gles1_conform_root/conform/conform/bcolor.c",
+      "$gles1_conform_root/conform/conform/bcorner.c",
+      "$gles1_conform_root/conform/conform/blend.c",
+      "$gles1_conform_root/conform/conform/bufobj.c",
+      "$gles1_conform_root/conform/conform/clip.c",
+      "$gles1_conform_root/conform/conform/colramp.c",
+      "$gles1_conform_root/conform/conform/copytex.c",
+      "$gles1_conform_root/conform/conform/dither.c",
+      "$gles1_conform_root/conform/conform/divzero.c",
+      "$gles1_conform_root/conform/conform/drawtex.c",
+      "$gles1_conform_root/conform/conform/fogexp.c",
+      "$gles1_conform_root/conform/conform/foglin.c",
+      "$gles1_conform_root/conform/conform/gets.c",
+      "$gles1_conform_root/conform/conform/l_ac.c",
+      "$gles1_conform_root/conform/conform/l_al.c",
+      "$gles1_conform_root/conform/conform/l_am.c",
+      "$gles1_conform_root/conform/conform/l_ap.c",
+      "$gles1_conform_root/conform/conform/l_as.c",
+      "$gles1_conform_root/conform/conform/l_dl.c",
+      "$gles1_conform_root/conform/conform/l_dm.c",
+      "$gles1_conform_root/conform/conform/l_dmn.c",
+      "$gles1_conform_root/conform/conform/l_dmp.c",
+      "$gles1_conform_root/conform/conform/l_em.c",
+      "$gles1_conform_root/conform/conform/l_se.c",
+      "$gles1_conform_root/conform/conform/l_sed.c",
+      "$gles1_conform_root/conform/conform/l_sen.c",
+      "$gles1_conform_root/conform/conform/l_sep.c",
+      "$gles1_conform_root/conform/conform/l_sl.c",
+      "$gles1_conform_root/conform/conform/l_sm.c",
+      "$gles1_conform_root/conform/conform/l_sn.c",
+      "$gles1_conform_root/conform/conform/l_sp.c",
+      "$gles1_conform_root/conform/conform/lineaa.c",
+      "$gles1_conform_root/conform/conform/linehv.c",
+      "$gles1_conform_root/conform/conform/linerast.c",
+      "$gles1_conform_root/conform/conform/logicop.c",
+      "$gles1_conform_root/conform/conform/mask.c",
+      "$gles1_conform_root/conform/conform/mget.c",
+      "$gles1_conform_root/conform/conform/mipgen.c",
+      "$gles1_conform_root/conform/conform/miplevels.c",
+      "$gles1_conform_root/conform/conform/miplin.c",
+      "$gles1_conform_root/conform/conform/mipsel.c",
+      "$gles1_conform_root/conform/conform/mpalette.c",
+      "$gles1_conform_root/conform/conform/mquery.c",
+      "$gles1_conform_root/conform/conform/mstack.c",
+      "$gles1_conform_root/conform/conform/multitex.c",
+      "$gles1_conform_root/conform/conform/mustpass.c",
+      "$gles1_conform_root/conform/conform/packpix.c",
+      "$gles1_conform_root/conform/conform/pntaa.c",
+      "$gles1_conform_root/conform/conform/pntrast.c",
+      "$gles1_conform_root/conform/conform/pntsprt.c",
+      "$gles1_conform_root/conform/conform/pntszary.c",
+      "$gles1_conform_root/conform/conform/polycull.c",
+      "$gles1_conform_root/conform/conform/readfmt.c",
+      "$gles1_conform_root/conform/conform/rescalen.c",
+      "$gles1_conform_root/conform/conform/scissor.c",
+      "$gles1_conform_root/conform/conform/spclear.c",
+      "$gles1_conform_root/conform/conform/spcorner.c",
+      "$gles1_conform_root/conform/conform/spfunc.c",
+      "$gles1_conform_root/conform/conform/spop.c",
+      "$gles1_conform_root/conform/conform/tests.c",
+      "$gles1_conform_root/conform/conform/texcombine.c",
+      "$gles1_conform_root/conform/conform/texdecal.c",
+      "$gles1_conform_root/conform/conform/texedge.c",
+      "$gles1_conform_root/conform/conform/texpalet.c",
+      "$gles1_conform_root/conform/conform/trirast.c",
+      "$gles1_conform_root/conform/conform/tritile.c",
+      "$gles1_conform_root/conform/conform/userclip.c",
+      "$gles1_conform_root/conform/conform/vorder.c",
+      "$gles1_conform_root/conform/conform/vpclamp.c",
+      "$gles1_conform_root/conform/conform/xform.c",
+      "$gles1_conform_root/conform/conform/xformmix.c",
+      "$gles1_conform_root/conform/conform/xformn.c",
+      "$gles1_conform_root/conform/conform/xformvp.c",
+      "$gles1_conform_root/conform/conform/xformw.c",
+      "$gles1_conform_root/conform/conform/zbclear.c",
+      "$gles1_conform_root/conform/conform/zbfunc.c",
+      "$gles1_conform_root/conform/conformshell/conform.h",
+      "$gles1_conform_root/conform/conformshell/driver.c",
+      "$gles1_conform_root/conform/conformshell/driver.h",
+      "$gles1_conform_root/conform/conformshell/path.c",
+      "$gles1_conform_root/conform/conformshell/path.h",
+      "$gles1_conform_root/conform/conformshell/pathdata.c",
+      "$gles1_conform_root/conform/conformshell/pathdata.h",
+      "$gles1_conform_root/conform/conformshell/paths.c",
+      "$gles1_conform_root/conform/conformshell/shell.c",
+      "$gles1_conform_root/conform/conformshell/util.c",
+      "$gles1_conform_root/conform/conformshell/util.h",
+      "$gles1_conform_root/conform/conformshell/utilg.c",
+      "$gles1_conform_root/conform/conformshell/utilg.h",
+      "$gles1_conform_root/conform/conformshell/utilm.c",
+      "$gles1_conform_root/conform/conformshell/utilm.h",
+      "$gles1_conform_root/conform/conformshell/utilp.c",
+      "$gles1_conform_root/conform/conformshell/utilp.h",
+      "$gles1_conform_root/conform/conformshell/utilru.c",
+      "$gles1_conform_root/conform/conformshell/utilru.h",
+      "$gles1_conform_root/conform/conformshell/utils.c",
+      "$gles1_conform_root/conform/conformshell/utils.h",
+      "$gles1_conform_root/conform/conformshell/utilt.c",
+      "$gles1_conform_root/conform/conformshell/utilt.h",
+      "$gles1_conform_root/ctk/ctk.h",
+      "$gles1_conform_root/ctk/ctkn.c",
+      "$gles1_conform_root/ctk/glext.c",
+      "$gles1_conform_root/fixed/fixed.c",
+      "$gles1_conform_root/fixed/float64.c",
+      "$gles1_conform_root/fixed/int32.c",
+      "$gles1_conform_root/fixed/int64.c",
+      "$gles1_conform_root/platform/gl_fixed_point.h",
+      "$gles1_conform_root/platform/gl_single_precision.h",
+      "$gles1_conform_root/platform/math_fixed.h",
+      "$gles1_conform_root/platform/math_float.h",
+      "$gles1_conform_root/platform/platform.h",
+      "$gles1_conform_root/platform/platform_gl.h",
+      "$gles1_conform_root/platform/platform_random.h",
+      "$gles1_conform_root/platform/platform_stdlib.h",
+      "$gles1_conform_root/platform/platform_types.h",
+      "$gles1_conform_root/platform/printf_fixed.h",
+      "$gles1_conform_root/platform/printf_float.h",
+      "$gles1_conform_root/platform/random.c",
+      "$gles1_conform_root/platform/stdlib_ansi.h",
+    ]
+  }
+
+  angle_test("angle_gles1_conformance_tests") {
+    deps = [
+      ":angle_gles1_conformance_no_gtest",
+    ]
+
+    include_dirs = [ "." ]
+
+    sources = [
+      "gles1_conformance_tests/ConformanceTests.cpp",
+      "test_utils/ANGLETest.cpp",
+      "test_utils/ANGLETest.h",
+      "test_utils/angle_test_configs.cpp",
+      "test_utils/angle_test_configs.h",
+      "test_utils/angle_test_instantiate.cpp",
+      "test_utils/angle_test_instantiate.h",
+      "test_utils/gl_raii.h",
+    ]
+    main = "angle_end2end_tests_main"
+
+    configs += [
+      "${angle_root}:libANGLE_config",
+      "${angle_root}:library_name_config",
+      "${angle_root}:angle_backend_config",
+    ]
+
+    if (is_android) {
+      use_native_activity = true
+    }
+  }
+}
+
+###-----------------------------------------------------
+### dEQP tests
+###-----------------------------------------------------
+
+if (build_angle_deqp_tests && !is_fuchsia) {
+  import("deqp.gni")
+
+  config("angle_deqp_support") {
+    include_dirs = deqp_include_dirs
+    if (is_win && !is_clang) {
+      include_dirs += [ "$deqp_path/framework/platform/win32" ]
+      cflags = [
+        "/EHsc",  # dEQP requires exceptions
+        "/wd4091",  # typedef ignored when no variable is declared
+        "/wd4100",
+        "/wd4101",  # unreferenced local variable
+        "/wd4125",  # decimal digit terminates octal escape sequence
+        "/wd4127",  # conditional expression constant
+        "/wd4244",  # possible loss of data
+        "/wd4245",  # argument signed/unsigned mismatch
+        "/wd4297",  # function assumed not to throw an exception but does
+        "/wd4302",  # truncation
+        "/wd4311",  # pointer truncation
+        "/wd4389",  # signed/unsigned mismatch
+        "/wd4510",  # default constructor could not be generated
+        "/wd4512",
+        "/wd4610",  # cannot be instantiated
+        "/wd4611",  # setjmp interaction non-portable
+        "/wd4701",  # potentially uninit used
+        "/wd4702",  # unreachable code
+        "/wd4706",  # assignment within conditional expression
+        "/wd4838",  # conversion requires a narrowing conversion
+        "/wd4996",  # deprecated
+      ]
+    }
+    if (is_android) {
+      include_dirs += [ "$deqp_path/framework/platform/android" ]
+    }
+    defines = [
+      "DEQP_SUPPORT_GLES31=1",
+      "DEQP_SUPPORT_GLES3=1",
+      "DEQP_SUPPORT_GLES2=1",
+      "DEQP_SUPPORT_EGL=1",
+      "DEQP_TARGET_NAME=\"angle\"",
+      "DEQP_GLES31_RUNTIME_LOAD=1",
+      "DEQP_GLES3_RUNTIME_LOAD=1",
+      "DEQP_GLES2_RUNTIME_LOAD=1",
+      "QP_SUPPORT_PNG=1",
+      "_HAS_EXCEPTIONS=1",
+      "_MBCS",
+    ]
+
+    if (is_clang) {
+      # TODO(jmadill): Remove this once we fix dEQP.
+      cflags_c = [ "-Wno-unused-local-typedef" ]
+      cflags_cc = [
+        "-Wno-string-conversion",  # implicit conversion turns string literal into bool
+        "-Wno-unused-local-typedef",
+        "-Wno-unused-result",  # ignoring return value of function declared with 'nodiscard' attribute
+      ]
+    }
+
+    # Ask the system headers to expose all the regular function otherwise
+    # dEQP doesn't compile and produces warnings about implicitly defined
+    # functions.
+    if (is_linux) {
+      # This has to be GNU_SOURCE as on Linux dEQP uses syscall()
+      defines += [ "_GNU_SOURCE" ]
+    }
+    if (is_android || is_mac) {
+      # _XOPEN_SOURCE=600 is what is used in deqp/src/Android.mk
+      defines += [ "_XOPEN_SOURCE=600" ]
+    }
+  }
+
+  deqp_undefine_configs = [
+    "//build/config/compiler:chromium_code",
+    "//build/config/compiler:no_exceptions",
+    "//build/config/compiler:no_rtti",
+    "${angle_root}:extra_warnings",
+  ]
+
+  if (is_win) {
+    deqp_undefine_configs += [
+      "//build/config/win:lean_and_mean",
+      "//build/config/win:nominmax",
+      "//build/config/win:unicode",
+    ]
+  }
+
+  set_defaults("angle_deqp_source_set") {
+    public_configs = []
+    configs = angle_common_configs
+    cflags = []
+  }
+
+  template("angle_deqp_source_set") {
+    angle_source_set(target_name) {
+      forward_variables_from(invoker, "*")
+      suppressed_configs += deqp_undefine_configs
+
+      if (is_clang) {
+        cflags += [
+          # Suppress a spurious header warning. http://crbug.com/995046
+          "-Wno-nonportable-include-path",
+        ]
+      }
+    }
+  }
+
+  config("angle_deqp_framework_debase_config") {
+    include_dirs = [ "$deqp_path/framework/delibs/debase" ]
+  }
+
+  angle_deqp_source_set("angle_deqp_framework_debase") {
+    public_configs += [ ":angle_deqp_framework_debase_config" ]
+    sources = deqp_framework_debase_sources
+  }
+
+  config("angle_deqp_framework_decpp_config") {
+    include_dirs = [ "$deqp_path/framework/delibs/decpp" ]
+  }
+
+  angle_deqp_source_set("angle_deqp_framework_decpp") {
+    public_configs += [
+      ":angle_deqp_support",
+      ":angle_deqp_framework_decpp_config",
+      "//build/config/compiler:exceptions",
+      "//build/config/compiler:no_chromium_code",
+    ]
+    if (is_clang) {
+      cflags_cc = [
+        # Supresses self assign warnings in SharedPtr_selfTest
+        # Can be removed if dEQP or clang are fixed
+        "-Wno-self-assign",
+      ]
+    }
+
+    public_deps = [
+      ":angle_deqp_framework_debase",
+      ":angle_deqp_framework_delibs",
+    ]
+    sources = deqp_framework_decpp_sources
+  }
+
+  config("angle_deqp_libtester_config") {
+    defines = [ "ANGLE_DEQP_LIBTESTER_IMPLEMENTATION" ]
+
+    if (is_clang) {
+      # TODO(jmadill): Remove this once we fix dEQP.
+      cflags_cc = [
+        "-Wno-delete-non-virtual-dtor",
+        "-Wno-deprecated",
+
+        # Supresses self assign warning in setLumSat
+        # Can be removed if dEQP or clang are fixed
+        "-Wno-self-assign",
+      ]
+    }
+  }
+
+  config("angle_deqp_framework_delibs_config") {
+    include_dirs = [
+      "$deqp_path/framework/delibs/debase",
+      "$deqp_path/framework/delibs/depool",
+      "$deqp_path/framework/delibs/dethread",
+      "$deqp_path/framework/delibs/deutil",
+      "$deqp_path/framework/delibs/destream",
+    ]
+  }
+
+  angle_deqp_source_set("angle_deqp_framework_delibs") {
+    sources = deqp_framework_delibs_sources
+
+    if (is_win) {
+      sources += deqp_framework_delibs_sources_win
+    }
+    if (is_linux || is_android || is_mac) {
+      sources += deqp_framework_delibs_sources_unix
+    }
+
+    public_configs = [
+      ":angle_deqp_framework_delibs_config",
+      ":angle_deqp_support",
+    ]
+
+    public_deps = [
+      ":angle_deqp_framework_debase",
+    ]
+  }
+
+  config("angle_deqp_framework_common_config") {
+    include_dirs = [
+      "$deqp_path/framework/common",
+      "$deqp_path/framework/randomshaders",
+      "$deqp_path/framework/referencerenderer",
+    ]
+  }
+
+  angle_deqp_source_set("angle_deqp_framework_common") {
+    sources = deqp_framework_common_sources
+    public_configs = [ ":angle_deqp_framework_common_config" ]
+    public_deps = [
+      ":angle_deqp_framework_decpp",
+      ":angle_deqp_framework_qphelper",
+    ]
+  }
+
+  config("angle_deqp_framework_opengl_config") {
+    include_dirs = [
+      "$deqp_path/framework/opengl",
+      "$deqp_path/framework/opengl/simplereference",
+      "$deqp_path/framework/opengl/wrapper",
+    ]
+  }
+
+  angle_deqp_source_set("angle_deqp_framework_opengl") {
+    sources = deqp_framework_opengl_sources
+    public_configs = [ ":angle_deqp_framework_opengl_config" ]
+    public_deps = [
+      ":angle_deqp_framework_common",
+    ]
+  }
+
+  config("angle_deqp_framework_egl_config") {
+    include_dirs = [
+      "$deqp_path/framework/egl",
+      "$deqp_path/framework/egl/wrapper",
+    ]
+  }
+
+  angle_deqp_source_set("angle_deqp_framework_egl") {
+    sources = deqp_framework_egl_sources
+    public_configs = [ ":angle_deqp_framework_egl_config" ]
+    public_deps = [
+      ":angle_deqp_framework_opengl",
+    ]
+  }
+
+  config("angle_deqp_framework_qphelper_config") {
+    include_dirs = [ "$deqp_path/framework/qphelper" ]
+  }
+
+  angle_deqp_source_set("angle_deqp_framework_qphelper") {
+    sources = deqp_framework_qphelper_sources
+    public_deps = [
+      ":angle_deqp_framework_delibs",
+      "${angle_libpng_dir}:libpng",
+    ]
+    public_configs = [ ":angle_deqp_framework_qphelper_config" ]
+  }
+
+  config("angle_deqp_glshared_config") {
+    include_dirs = [ "$deqp_path/modules/glshared" ]
+  }
+
+  angle_deqp_source_set("angle_deqp_glshared") {
+    sources = deqp_glshared_sources
+    public_deps = [
+      ":angle_deqp_framework_opengl",
+    ]
+    public_configs = [ ":angle_deqp_glshared_config" ]
+  }
+
+  angle_deqp_source_set("angle_deqp_libtester") {
+    public_deps = [
+      ":angle_deqp_framework_common",
+      ":angle_deqp_framework_egl",
+      ":angle_deqp_glshared",
+      "${angle_root}:angle_common",
+      "${angle_root}:angle_util",
+      "${angle_root}:libEGL",
+      "${angle_root}:libGLESv2",
+    ]
+
+    configs += [ "${angle_root}:library_name_config" ]
+    public_configs += [ ":angle_deqp_libtester_config" ]
+    sources = deqp_libtester_sources
+    if (is_android) {
+      sources += deqp_libtester_sources_android
+      libs = [ "log" ]
+    }
+  }
+
+  set_defaults("angle_deqp_gtest") {
+    deps = []
+    sources = []
+    data = []
+    data_deps = []
+  }
+
+  template("angle_deqp_gtest") {
+    _api = target_name
+
+    config_name = "angle_deqp_${_api}_config"
+    config(config_name) {
+      defines = invoker.defines
+    }
+
+    shared_library_name = "angle_deqp_lib${_api}"
+    angle_shared_library(shared_library_name) {
+      forward_variables_from(invoker,
+                             [
+                               "sources",
+                               "deps",
+                               "data",
+                               "data_deps",
+                             ])
+
+      deps += [
+        ":angle_deqp_libtester",
+        "$angle_root:angle_util",
+      ]
+
+      suppressed_configs += deqp_undefine_configs
+      public_configs += [ ":$config_name" ]
+
+      sources += [
+        "deqp_support/angle_deqp_libtester.h",
+        "deqp_support/angle_deqp_libtester_main.cpp",
+        "deqp_support/tcuANGLEPlatform.cpp",
+        "deqp_support/tcuANGLEPlatform.h",
+      ]
+    }
+
+    if (!build_with_chromium) {
+      angle_executable("angle_deqp_${_api}_no_gtest") {
+        sources = [
+          "deqp_support/angle_deqp_tests_main.cpp",
+        ]
+        deps = [
+          ":$shared_library_name",
+        ]
+      }
+    }
+
+    angle_test("angle_deqp_${_api}_tests") {
+      deps = [
+        ":${shared_library_name}",
+        ":angle_test_expectations",
+        "${angle_root}:angle_common",
+        "${angle_root}:angle_util",
+      ]
+
+      # Must be included outside of the source set for the define
+      sources = [
+        "deqp_support/angle_deqp_gtest.cpp",
+      ]
+      main = "angle_deqp_tests_main"
+
+      data = [
+        "deqp_support/deqp_${_api}_test_expectations.txt",
+        "${invoker.mustpass_dir}/${invoker.mustpass_name}",
+      ]
+
+      if (is_android) {
+        use_native_activity = true
+      }
+    }
+  }
+
+  _android_mustpass = "$deqp_path/android/cts/master"
+  _aosp_mustpass =
+      "$deqp_path/external/openglcts/data/mustpass/gles/aosp_mustpass/master"
+  _khronos_mustpass =
+      "$deqp_path/external/openglcts/data/mustpass/gles/khronos_mustpass/master"
+
+  template("angle_deqp_core_gtest") {
+    _api = target_name
+    angle_deqp_gtest(target_name) {
+      forward_variables_from(invoker, "*")
+
+      defines += [ "ANGLE_DEQP_DATA_DIR=\"data\"" ]
+
+      mustpass_name = "${_api}-master.txt"
+      data = [
+        "$deqp_path/data/",
+      ]
+    }
+  }
+
+  angle_deqp_core_gtest("gles2") {
+    defines = [ "ANGLE_DEQP_GLES2_TESTS" ]
+    sources = deqp_gles2_sources
+    mustpass_dir = _aosp_mustpass
+  }
+
+  angle_deqp_core_gtest("gles3") {
+    defines = [ "ANGLE_DEQP_GLES3_TESTS" ]
+    sources = deqp_gles3_sources
+    mustpass_dir = _aosp_mustpass
+  }
+
+  angle_deqp_core_gtest("gles31") {
+    defines = [ "ANGLE_DEQP_GLES31_TESTS" ]
+    sources = deqp_gles31_sources
+    mustpass_dir = _aosp_mustpass
+  }
+
+  angle_deqp_core_gtest("egl") {
+    defines = [ "ANGLE_DEQP_EGL_TESTS" ]
+    sources = deqp_egl_sources
+    mustpass_dir = _android_mustpass
+  }
+
+  # The CTS also includes a set of "KHR" tests that are separate from the main body of dEQP tests.
+
+  config("angle_deqp_khr_common_config") {
+    include_dirs = [
+      "$deqp_path/external/openglcts/modules/common",
+      "$deqp_path/external/openglcts/modules/gl",
+      "$deqp_path/external/openglcts/modules/gles2",
+      "$deqp_path/external/openglcts/modules/gles3",
+      "$deqp_path/external/openglcts/modules/gles31",
+      "$deqp_path/external/openglcts/modules/gles32",
+      "$deqp_path/external/openglcts/modules/glesext",
+    ]
+    if (is_clang) {
+      cflags = [ "-Wno-header-hygiene" ]  # using namespace directive in global context in header
+    }
+  }
+
+  angle_deqp_source_set("angle_deqp_khr_common") {
+    sources = deqp_khr_common_sources + deqp_khr_test_module_headers +
+              deqp_khr_gl_sources + deqp_khr_gles2_sources +
+              deqp_khr_gles3_sources + deqp_khr_gles31_sources +
+              deqp_khr_gles32_sources + deqp_khr_glesext_sources +
+              [ "deqp_support/glcTestPackageEntry_override.cpp" ]
+    public_deps = [
+      ":angle_deqp_framework_egl",
+      ":angle_deqp_glshared",
+    ]
+    public_configs = [ ":angle_deqp_khr_common_config" ]
+
+    # This is a bit of a hack so one test can capture memory limits.
+    include_dirs = [ "$deqp_path/external/vulkancts/framework/vulkan" ]
+  }
+
+  # The KHR dEQP tests expect a root prefix of "gl_cts" for some reason.
+  # This means we need an extra copy step to make them happy.
+  copy("angle_deqp_khr_data") {
+    sources = [
+      "$deqp_path/external/openglcts/data/gles3/arrays.test",
+      "$deqp_path/external/openglcts/data/gles3/declarations.test",
+      "$deqp_path/external/openglcts/data/gles3/literal_parsing.test",
+      "$deqp_path/external/openglcts/data/gles3/name_hiding.test",
+      "$deqp_path/external/openglcts/data/gles3/preprocessor.test",
+      "$deqp_path/external/openglcts/data/gles3/switch.test",
+    ]
+
+    outputs = [
+      "$root_out_dir/$angle_data_dir/gl_cts/data/gles3/{{source_file_part}}",
+    ]
+  }
+
+  template("angle_deqp_khr_gtest") {
+    angle_deqp_gtest(target_name) {
+      forward_variables_from(invoker, "*")
+      deps = [
+        ":angle_deqp_khr_common",
+        ":angle_deqp_khr_data",
+      ]
+
+      defines += [ "ANGLE_DEQP_DATA_DIR=\"$angle_data_dir\"" ]
+
+      mustpass_dir = _khronos_mustpass
+
+      data_deps = [
+        ":angle_deqp_khr_data",
+      ]
+    }
+  }
+
+  angle_deqp_khr_gtest("khr_gles2") {
+    defines = [ "ANGLE_DEQP_KHR_GLES2_TESTS" ]
+    mustpass_name = "gles2-khr-master.txt"
+  }
+
+  angle_deqp_khr_gtest("khr_gles3") {
+    defines = [ "ANGLE_DEQP_KHR_GLES3_TESTS" ]
+    mustpass_name = "gles3-khr-master.txt"
+  }
+
+  angle_deqp_khr_gtest("khr_gles31") {
+    defines = [ "ANGLE_DEQP_KHR_GLES31_TESTS" ]
+    mustpass_name = "gles31-khr-master.txt"
+  }
+}

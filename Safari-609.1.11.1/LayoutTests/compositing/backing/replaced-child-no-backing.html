@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .container {
+            height: 200px;
+            width: 200px;
+            margin: 10px;
+        }
+        
+        .composited {
+            -webkit-transform: translateZ(0);
+        }
+        
+        .child {
+            position: relative;
+            height: 100%;
+            width: 100%;
+        }
+
+        .grandchild {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 150px;
+            height: 150px;
+            background-color: silver;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function dumpLayers()
+        {
+            var layersResult = document.getElementById('layers');
+            if (window.testRunner)
+                layersResult.innerText = window.internals.layerTreeAsText(document);
+        }
+
+        window.addEventListener('load', dumpLayers, false)
+    </script>
+</head>
+<body>
+    <div class="composited container"><img class="child" src="../resources/apple.jpg"></div>
+    <div class="composited container"><img class="child" src="../resources/apple.jpg" style="visibility:hidden"></div>
+
+<pre id="layers">Layer tree goes here in DRT</pre>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests the behavior of dispatchEvent() on a Window");
+jsTestIsAsync = true;
+
+onload = function(e) {
+    testEvent = e;
+
+    debug("* Received load event");
+    shouldBeEqualToString("testEvent.type", "load");
+    shouldBeFalse("testEvent.bubbles");
+    shouldBeFalse("testEvent.cancelable");
+    shouldBeFalse("testEvent.composed");
+    shouldBeTrue("testEvent.isTrusted");
+    shouldBe("testEvent.eventPhase", "Event.AT_TARGET");
+    shouldBe("testEvent.target", "window.document");
+    shouldBe("testEvent.currentTarget", "window");
+    shouldBeFalse("testEvent.cancelBubble");
+
+    // Should fail because the event is being dispatched.
+    evalAndLog("testEvent.initEvent('foo', true, true)");
+
+    shouldBeEqualToString("testEvent.type", "load");
+    shouldBeFalse("testEvent.bubbles");
+    shouldBeFalse("testEvent.cancelable");
+    shouldBeTrue("testEvent.isTrusted");
+
+    evalAndLog("testEvent.stopPropagation()");
+    shouldBeTrue("testEvent.cancelBubble");
+
+    setTimeout(function() {
+        debug("* Event is no longer being dispatched");
+        shouldBeEqualToString("testEvent.type", "load");
+        shouldBeFalse("testEvent.bubbles");
+        shouldBeFalse("testEvent.cancelable");
+        shouldBeFalse("testEvent.composed");
+        shouldBeTrue("testEvent.isTrusted");
+        shouldBe("testEvent.eventPhase", "Event.NONE");
+        shouldBe("testEvent.target", "window.document");
+        shouldBeNull("testEvent.currentTarget");
+        shouldBeFalse("testEvent.cancelBubble");
+
+        evalAndLog("testEvent.initEvent('bar', true, true)");
+        shouldBeEqualToString("testEvent.type", "bar");
+        shouldBeTrue("testEvent.bubbles");
+        shouldBeTrue("testEvent.cancelable");
+        shouldBeFalse("testEvent.composed");
+        shouldBeFalse("testEvent.isTrusted");
+        shouldBe("testEvent.eventPhase", "Event.NONE");
+        shouldBeNull("testEvent.target");
+        shouldBeNull("testEvent.currentTarget");
+
+        finishJSTest();
+    }, 0);
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

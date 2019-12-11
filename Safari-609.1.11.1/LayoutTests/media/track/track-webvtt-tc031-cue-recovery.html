@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+
+            numberOfTrackTests = 3;
+
+            function trackLoaded()
+            {
+                numberOfTracksLoaded++;
+                if (numberOfTracksLoaded == numberOfTrackTests) {
+                    testTrack(0);
+                    testTrack(1);
+                    testTrack(2);
+                }
+            }
+
+            function testTrack(i)
+            {
+                findMediaElement();
+                var expected =
+                {
+                    length: 2,
+                    tests:
+                    [
+                        {
+                            property: "startTime",
+                            values: [ "0", "2" ],
+                        },
+                        {
+                            property: "endTime",
+                            values: [ "1", "3" ],
+                        },
+                        {
+                            property: "text",
+                            values:
+                            [
+                                'Valid cue 1',
+                                'Valid cue 2',
+                            ],
+                        },
+                    ],
+                };
+
+                testCues(i, expected);
+
+                allTestsEnded();
+            }
+        </script>
+    </head>
+    <body onload="enableAllTextTracks()">
+      <p>Tests that a cue is recovered when a line with a "-->" is encountered (missing blank line separator).</p>
+        <video>
+            <track src="captions-webvtt/tc031-cue-recovery-header.vtt" onload="trackLoaded()">
+            <track src="captions-webvtt/tc031-cue-recovery-note.vtt" onload="trackLoaded()">
+            <track src="captions-webvtt/tc031-cue-recovery-cuetext.vtt" onload="trackLoaded()">
+        </video>
+    </body>
+</html>

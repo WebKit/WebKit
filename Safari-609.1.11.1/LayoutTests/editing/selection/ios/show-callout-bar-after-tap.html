@@ -1,0 +1,51 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+input {
+    font-size: 16px;
+    width: 100%;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+let input = null;
+
+addEventListener("load", async () => {
+    description("This test verifies that the callout bar is shown and can be interacted with after tapping inside an input field, such that the caret does not change. To run the test manually, tap the input field to focus it, tap again inside the input field to show the callout bar, and tap 'Select All'. The contents of the input field should be selected.");
+
+    input = document.querySelector("input");
+
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.activateAndWaitForInputSessionAt(150, 25);
+    await UIHelper.activateAt(250, 25);
+    await UIHelper.waitForMenuToShow();
+    await UIHelper.callFunctionAndWaitForEvent(() => {
+        UIHelper.chooseMenuAction("Select All");
+    }, document, "selectionchange");
+    shouldBe("input.selectionStart", "0");
+    shouldBe("input.selectionEnd", "11");
+
+    document.activeElement.blur();
+    await UIHelper.waitForKeyboardToHide();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<input value="Hello world"></input>
+<p id="description"></p>
+<p id="console"></p>
+</body>
+</html>

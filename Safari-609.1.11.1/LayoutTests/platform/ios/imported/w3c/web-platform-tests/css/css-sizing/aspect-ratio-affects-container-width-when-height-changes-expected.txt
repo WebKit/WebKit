@@ -1,0 +1,7 @@
+There should be a green square below, and no red.
+
+
+
+PASS Changing height should affect the descendant widths, due to aspect ratio 
+PASS #container 1 
+

@@ -1,0 +1,12 @@
+Test that if an arrity check causes a stack overflow, the exception goes to the right catch
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS gotRightCatch is true
+PASS gotWrongCatch1 is false
+PASS gotWrongCatch2 is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

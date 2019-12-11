@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<head>
+    <title>GC Heap Inspector</title>
+    <meta charset="utf8">
+    <style type="text/css" media="screen">
+
+        body {
+            font-family: "Helvetica Neue";
+            line-height: 1.3;
+        }
+
+        h1 {
+            margin-bottom: 0.2em;
+            font-size: 32px;
+        }
+
+        label {
+            font-size: 13px;
+        }
+
+        #dropTarget {
+            font-size: 12pt;
+            font-weight: bold;
+            color: #888;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            border: 2px solid rgba(0, 0, 0, 0.3);
+            background-color: rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        #dropTarget.dragOver {
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #ddd;
+        }
+        
+        details {
+            margin-left: 20px;
+        }
+        
+        ul.path {
+            margin-top: 5px;
+        }
+        
+        ul.instance-list {
+            margin-top: 0.3em;
+            padding-left: 1.2em;
+            list-style-type: none;
+        }
+
+        .node-id::before {
+            content: '@';
+        }
+
+        .node-id {
+            font-size: smaller;
+            color: silver;
+            display: none; /* Remove if you want to see cell identifiers. */
+        }
+
+        .node-address, .node-size, .node-label {
+            font-family: monospace;
+            color: gray;
+        }
+        
+        .retained-size {
+            font-family: monospace;
+            color: rgb(25, 88, 180);
+        }
+        
+        .node-gc-root {
+            font-size: smaller;
+            color: maroon;
+        }
+        
+        .node-gc-root img {
+            margin: 0 3px;
+            height: 1.4em;
+            width: 1.4em;
+            vertical-align: middle;
+            cursor: pointer;
+            display: none;
+        }
+        
+        .edge::before {
+            content: ' ⟹ ';
+            color: gray;
+        }
+
+        .edge::after {
+            content: ' ⟹';
+            color: gray;
+        }
+        
+        .edge-data {
+            font-family: monospace;
+            color: gray;
+        }
+        
+        ul.path {
+            list-style-type: none;
+        }
+        
+        #description {
+            position: fixed;
+            margin: 300px calc((100vw - 500px) / 2);
+            border: 2px solid rgba(0, 0, 0, 0.3);
+            background-color: rgba(0, 0, 0, 0.1);
+            padding: 20px 50px;
+            border-radius: 10px;
+            width: 500px;
+        }
+
+        #description > h1 {
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+        
+        #description code {
+            display: block;
+            margin: 15px 0;
+        }
+        
+        #description.hidden {
+            display: none;
+        }
+        
+        #uiContainer {
+            display: none;
+        }
+        
+    </style>
+
+    <script src="script/interface.js"></script>
+    <script src="heap-analysis/HeapSnapshot.js"></script>
+</head>
+<body>
+    <header>
+    <div id="dropTarget">Drop GC heap JSON file here to load.</div>
+    </header>
+
+    <section id="description">
+        <h1>GC heap debugger</h2>
+        <p>This page is for analyzing JSON dumps of the GC heap. To debug an issue that you think might be a leaked or abandoned object (often a Document or JSGlobalObject), load the test page, then navigate to about:blank or other simple page. Now simulate a memory warning (to clear the page cache) by issuing the following command in a Terminal window:
+        <code>notifyutil -p org.WebKit.lowMemory</code>
+        
+        You can now inspect the list of live documents via:
+        <code>notifyutil -p com.apple.WebKit.showAllDocuments</code>
+        
+        which prints its output to the system log. If this lists documents other than the current page, you may have a leaked or abandoned Document. To see if the GC heap is referencing that Document, obtain a GC heap dump:
+        <code>notifyutil -p com.apple.WebKit.dumpGCHeap</code>
+        
+        That command will generate a JSON file in /tmp (or equivalent); the file path is dumped to the system log. Drag that file onto the drop target in the top right (or use the ?filename= URL parameter).
+        </p>
+        <p>
+        For more information, see the wiki page on <a href="https://trac.webkit.org/wiki/Inspecting%20the%20GC%20heap">Inspecting the GC heap</a>.
+        </p>
+    </section>
+
+    <section id="uiContainer">
+
+        <div id="rooted">
+        </div>
+
+        <h1>All paths to…</h1>
+        <div id="all-paths">
+        </div>
+
+        <h1>Objects</h1>
+        <section id="categories">
+        </section>
+
+        <h1>Roots</h1>
+        <section id="roots">
+        </section>
+    </section>
+    
+</body>
+</html>

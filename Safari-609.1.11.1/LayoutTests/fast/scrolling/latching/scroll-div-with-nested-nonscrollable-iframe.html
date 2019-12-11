@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="help" href="http://www.w3.org/TR/DOM-Level-3-Events/#events-WheelEvent">
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+var divTarget;
+var pageScrollPositionBefore;
+var divScrollPositionBefore;
+
+function locationInWindowCoordinates(element)
+{
+    var position = {};
+    position.x = element.offsetLeft;
+    position.y = element.offsetTop;
+
+    while (element.offsetParent) {
+        position.x = position.x + element.offsetParent.offsetLeft;
+        position.y = position.y + element.offsetParent.offsetTop;
+        if (element == document.getElementsByTagName("body")[0])
+            break;
+
+        element = element.offsetParent;
+    }
+
+    return position;
+}
+
+function finishTest()
+{
+    finishJSTest();
+    testRunner.notifyDone();            
+}
+
+function checkForScroll()
+{
+    var pageScrollPositionAfter = document.scrollingElement.scrollTop;
+    var divScrollPositionAfter = divTarget.scrollTop;
+
+    if (divScrollPositionBefore != divScrollPositionAfter)
+        testPassed("div did scroll.");
+    else
+        testFailed("div did NOT scroll.");
+
+    if (pageScrollPositionBefore == pageScrollPositionAfter)
+        testPassed("Page did NOT scroll.");
+    else
+        testFailed("Page DID scroll.");
+
+    finishTest();
+}
+
+function scrollTest()
+{
+    pageScrollPositionBefore = document.scrollingElement.scrollTop;
+
+    divTarget = document.getElementById('scrollable_div');
+
+    var windowPosition = locationInWindowCoordinates(divTarget);
+
+    var startPosX = windowPosition.x + 0.5 * divTarget.clientWidth;
+    var startPosY = windowPosition.y + 0.5 * divTarget.clientHeight;
+
+    divScrollPositionBefore = divTarget.scrollTop;
+
+    eventSender.mouseMoveTo(startPosX, startPosY);
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'begin');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
+    eventSender.callAfterScrollingCompletes(checkForScroll);
+}
+
+function setupTopLevel()
+{
+    if (window.eventSender) {
+        jsTestIsAsync = true;
+        testRunner.waitUntilDone();
+
+        eventSender.monitorWheelEvents();
+        setTimeout(scrollTest, 0);
+    } else {
+        var messageLocation = document.getElementById('parent');
+        var message = document.createElement('div');
+        message.innerHTML = "<p>This test is better run under DumpRenderTree. To manually test it, place the mouse pointer<br/>"
+            + "inside the IFrame, then use the mouse wheel or a two-finger swipe to scroll the IFrame to the bottom (and beyond).<br/>"
+            + "<br/><br/>"
+            + "The test passes if you scroll far enough to see the row of END labels but the main page does not scroll.</p>";
+        messageLocation.appendChild(message);
+    }
+}
+
+</script>
+<div id="parent" style="height: 2000px">
+    <div id="source" style="height: 20px">
+        Put mouse inside the iframe (below) and flick downwards
+    </div>
+    <div id="scrollable_div" style="height: 400px; width: 430px; overflow-y:auto; padding: 0;">
+        <iframe id="non_scrollable_iframe" src="resources/background.html" style="height: 2100px; width:410px; overflow:hidden; scrolling: no" onload="setupTopLevel();">
+        </iframe>
+    </div>
+</div>
+<div id="console"></div>
+<script>
+description("Tests that iframe does scroll when inner iframe is NOT scrollable.");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

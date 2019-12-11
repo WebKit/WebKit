@@ -1,0 +1,10 @@
+Documents that CSS image values are not primitive values anymore.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS imageValue.cssValueType is CSSValue.CSS_PRIMITIVE_VALUE
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

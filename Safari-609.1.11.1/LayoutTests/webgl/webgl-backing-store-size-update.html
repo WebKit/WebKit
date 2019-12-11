@@ -1,0 +1,35 @@
+<canvas style="width:100px; height:100px;">
+<script type="text/javascript">
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    var canvas = document.querySelector("canvas");
+
+    function draw() {
+        // For the purpose of this test, we want the backing store metrics to
+        // not match the layout metrics.
+        var scaleFactor = 2;
+        canvas.width = canvas.clientWidth * scaleFactor;
+        canvas.height = canvas.clientHeight * scaleFactor;
+
+        var gl = canvas.getContext("webgl");
+        gl.clearColor(0, 0, 0, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+    }
+
+    // Size the canvas once at the initial 100px by 100px size.
+    draw();
+
+    // Now change the layout size of the canvas and in the next animation
+    // frame, after we know the layout size has taken effect, change the
+    // size of the backing store.
+    canvas.style.width = "50px";
+    canvas.style.height = "50px";
+    window.requestAnimationFrame(function() {
+        draw();
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+
+</script>
+</canvas>

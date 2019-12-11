@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x52
+  RenderBlock {HTML} at (0,0) size 800x52
+    RenderBody {BODY} at (8,16) size 784x20
+      RenderBlock {P} at (0,0) size 784x20
+        RenderInline {A} at (0,0) size 341x19 [color=#0000FF]
+          RenderText {#text} at (0,0) size 341x19
+            text run at (0,0) width 341: "While you are activating this link, it should go green."
+        RenderText {#text} at (340,0) size 429x19
+          text run at (340,0) width 429: " Check that once you have stopped activating it, it goes blue again."

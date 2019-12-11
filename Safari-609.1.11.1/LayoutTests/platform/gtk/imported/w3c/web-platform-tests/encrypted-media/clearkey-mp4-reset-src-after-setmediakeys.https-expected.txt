@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Media source error
+
+Harness Error (FAIL), message = Media source error
+
+PASS Reset src after setMediaKeys(). 
+

@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+
+<body>
+
+<div id="container">
+    <input id="email" type="email">
+    <input id="password" type="password">
+    <input id="search" type="search">
+    <input id="telephone" type="telephone">
+    <input id="text" type="text">
+    <input id="url" type="url">
+</div>
+
+<script>
+function focusAndType(id, text)
+{
+    var input = document.getElementById(id);
+    input.focus();
+    for (var i = 0, len = text.length; i < len; i++) {
+        eventSender.keyDown(text[i]);
+    }
+    return input;
+}
+
+function testOne(id, text, expected)
+{
+    result = expected || text;
+    shouldBeEqualToString('focusAndType("' + id + '", "' + text + '").value', result);
+}
+
+description("Check whether or not sanitization is performed on user input in text-input elements.");
+
+testOne("email",     "   foobar@example.com   ", "foobar@example.com");
+testOne("password",  "   foobar   ");
+testOne("search",    "   foobar   ");
+testOne("telephone", "   123-456-7890   ");
+testOne("text",      "   foobar   ");
+testOne("url",       "   https://foobar.example.com   ");
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

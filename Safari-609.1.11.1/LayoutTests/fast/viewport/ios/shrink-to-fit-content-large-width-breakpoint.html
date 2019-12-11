@@ -1,0 +1,52 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ shouldIgnoreMetaViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body, html {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+@media screen and (min-width: 780px) {
+    #bar {
+        min-width: 10000px;
+    }
+}
+
+.bar {
+    width: 800px;
+    height: 100px;
+    background: linear-gradient(to right, red 0%, green 50%, blue 100%);
+}
+
+#description {
+    width: 300px;
+    overflow: scroll;
+}
+</style>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<script>
+jsTestIsAsync = true;
+
+description("This test verifies that the shrink-to-fit-content heuristic doesn't induce more horizontal scrolling than we would otherwise have. To run the test manually, load the page and check that the bar almost entirely fits within the viewport, with no more than 480px of horizontal scrolling (on a 320px-wide device) and 20px of scrolling (on a 768px-wide device).");
+
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.ensurePresentationUpdate();
+    minScale = await UIHelper.minimumZoomScale();
+    shouldBe("minScale", "1");
+    shouldBeGreaterThanOrEqual("800", "document.scrollingElement.scrollWidth");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<div id="description"></div>
+<div id="bar" class="bar"></div>
+</body>
+</html>

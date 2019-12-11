@@ -1,0 +1,68 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x560
+  RenderBlock {HTML} at (0,0) size 800x560
+    RenderBody {BODY} at (8,21) size 784x363
+      RenderBlock {H1} at (0,0) size 784x37 [color=#990000]
+        RenderText {#text} at (0,0) size 701x37
+          text run at (0,0) width 701: "Webkit background image positioning on RTL text"
+      RenderBlock {H2} at (0,58) size 784x29
+        RenderText {#text} at (0,0) size 263x28
+          text run at (0,0) width 263: "Behaviour within <p> tag"
+      RenderBlock (floating) {DIV} at (0,106) size 318x207 [bgcolor=#DDDDDD]
+        RenderBlock {P} at (6,22) size 306x162
+          RenderText {#text} at (40,0) size 266x162
+            text run at (40,0) width 252: "Lorem ipsum dolor sit amet, consectetur"
+            text run at (40,18) width 95: "adipiscing elit. "
+            text run at (135,18) width 119: "Nam mollis, elit eu"
+            text run at (40,36) width 259: "vulputate ornare, est urna congue felis, id"
+            text run at (40,54) width 43: "auctor "
+            text run at (83,54) width 194: "arcu odio imperdiet nulla. Cras"
+            text run at (40,72) width 190: "viverra interdum diam blandit "
+            text run at (230,72) width 68: "adipiscing."
+            text run at (40,90) width 266: "Aliquam erat felis, iaculis sit amet rhoncus"
+            text run at (40,108) width 34: "quis, "
+            text run at (74,108) width 165: "condimentum at nisl. Duis"
+            text run at (40,126) width 230: "malesuada quam vel augue hendrerit"
+            text run at (40,144) width 40: "porta. "
+            text run at (80,144) width 192: "Nulla vitae elementum mauris."
+      RenderBlock (floating) {DIV} at (332,106) size 318x189 [bgcolor=#DDDDDD]
+        RenderBlock {P} at (6,22) size 306x144
+          RenderText {#text} at (40,0) size 244x144
+            text run at (40,0) width 226 RTL: "\x{5D4}\x{5D5}\x{5D1}\x{5DC}\x{5EA} \x{5D3}\x{5D9}\x{5E8}\x{5D5}\x{5EA} \x{5D1}\x{5DB}\x{5DC} \x{5D4}\x{5D0}\x{5E8}\x{5E5} \x{5E9}\x{5D9}\x{5E8}\x{5D5}\x{5EA}, \x{5D0}\x{5D9}\x{5DB}\x{5D5}\x{5EA}"
+            text run at (34,18) width 232 RTL: "\x{5D5}\x{5DE}\x{5D7}\x{5D9}\x{5E8}\x{5D9}\x{5DD} \x{5DC}\x{5DC}\x{5D0} \x{5EA}\x{5D7}\x{5E8}\x{5D5}\x{5EA} \x{5D4}\x{5D5}\x{5D1}\x{5DC}\x{5EA} \x{5D3}\x{5D9}\x{5E8}\x{5D5}\x{5EA} \x{5D1}\x{5DB}\x{5DC}"
+            text run at (22,36) width 244 RTL: "\x{5D4}\x{5D0}\x{5E8}\x{5E5} \x{5E9}\x{5D9}\x{5E8}\x{5D5}\x{5EA}, \x{5D0}\x{5D9}\x{5DB}\x{5D5}\x{5EA} \x{5D5}\x{5DE}\x{5D7}\x{5D9}\x{5E8}\x{5D9}\x{5DD} \x{5DC}\x{5DC}\x{5D0} \x{5EA}\x{5D7}\x{5E8}\x{5D5}\x{5EA}"
+            text run at (40,54) width 226 RTL: "\x{5D4}\x{5D5}\x{5D1}\x{5DC}\x{5EA} \x{5D3}\x{5D9}\x{5E8}\x{5D5}\x{5EA} \x{5D1}\x{5DB}\x{5DC} \x{5D4}\x{5D0}\x{5E8}\x{5E5} \x{5E9}\x{5D9}\x{5E8}\x{5D5}\x{5EA}, \x{5D0}\x{5D9}\x{5DB}\x{5D5}\x{5EA}"
+            text run at (34,72) width 232 RTL: "\x{5D5}\x{5DE}\x{5D7}\x{5D9}\x{5E8}\x{5D9}\x{5DD} \x{5DC}\x{5DC}\x{5D0} \x{5EA}\x{5D7}\x{5E8}\x{5D5}\x{5EA} \x{5D4}\x{5D5}\x{5D1}\x{5DC}\x{5EA} \x{5D3}\x{5D9}\x{5E8}\x{5D5}\x{5EA} \x{5D1}\x{5DB}\x{5DC}"
+            text run at (22,90) width 244 RTL: "\x{5D4}\x{5D0}\x{5E8}\x{5E5} \x{5E9}\x{5D9}\x{5E8}\x{5D5}\x{5EA}, \x{5D0}\x{5D9}\x{5DB}\x{5D5}\x{5EA} \x{5D5}\x{5DE}\x{5D7}\x{5D9}\x{5E8}\x{5D9}\x{5DD} \x{5DC}\x{5DC}\x{5D0} \x{5EA}\x{5D7}\x{5E8}\x{5D5}\x{5EA}"
+            text run at (40,108) width 226 RTL: "\x{5D4}\x{5D5}\x{5D1}\x{5DC}\x{5EA} \x{5D3}\x{5D9}\x{5E8}\x{5D5}\x{5EA} \x{5D1}\x{5DB}\x{5DC} \x{5D4}\x{5D0}\x{5E8}\x{5E5} \x{5E9}\x{5D9}\x{5E8}\x{5D5}\x{5EA}, \x{5D0}\x{5D9}\x{5DB}\x{5D5}\x{5EA}"
+            text run at (143,126) width 123 RTL: "\x{5D5}\x{5DE}\x{5D7}\x{5D9}\x{5E8}\x{5D9}\x{5DD} \x{5DC}\x{5DC}\x{5D0} \x{5EA}\x{5D7}\x{5E8}\x{5D5}\x{5EA}"
+      RenderBlock {HR} at (0,312) size 784x3 [border: (1px inset #000000)]
+      RenderBlock {H2} at (0,334) size 784x29
+        RenderText {#text} at (0,0) size 262x28
+          text run at (0,0) width 262: "Behaviour within <a> tag"
+      RenderBlock (floating) {DIV} at (0,382) size 318x157 [bgcolor=#DDDDDD]
+        RenderInline {A} at (0,0) size 303x144 [color=#0000EE]
+          RenderText {#text} at (46,6) size 303x144
+            text run at (46,6) width 252: "Lorem ipsum dolor sit amet, consectetur"
+            text run at (6,24) width 276: "adipiscing elit. Nam mollis, elit eu vulputate"
+            text run at (6,42) width 151: "ornare, est urna congue "
+            text run at (157,42) width 152: "felis, id auctor arcu odio"
+            text run at (6,60) width 274: "imperdiet nulla. Cras viverra interdum diam"
+            text run at (6,78) width 297: "blandit adipiscing. Aliquam erat felis, iaculis sit"
+            text run at (6,96) width 122: "amet rhoncus quis, "
+            text run at (128,96) width 165: "condimentum at nisl. Duis"
+            text run at (6,114) width 270: "malesuada quam vel augue hendrerit porta."
+            text run at (6,132) width 192: "Nulla vitae elementum mauris."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock (floating) {DIV} at (332,382) size 318x139 [bgcolor=#DDDDDD]
+        RenderInline {A} at (0,0) size 299x126 [color=#0000EE]
+          RenderText {#text} at (46,6) size 299x126
+            text run at (46,6) width 226 RTL: "\x{5D4}\x{5D5}\x{5D1}\x{5DC}\x{5EA} \x{5D3}\x{5D9}\x{5E8}\x{5D5}\x{5EA} \x{5D1}\x{5DB}\x{5DC} \x{5D4}\x{5D0}\x{5E8}\x{5E5} \x{5E9}\x{5D9}\x{5E8}\x{5D5}\x{5EA}, \x{5D0}\x{5D9}\x{5DB}\x{5D5}\x{5EA}"
+            text run at (42,24) width 270 RTL: "\x{5D5}\x{5DE}\x{5D7}\x{5D9}\x{5E8}\x{5D9}\x{5DD} \x{5DC}\x{5DC}\x{5D0} \x{5EA}\x{5D7}\x{5E8}\x{5D5}\x{5EA} \x{5D4}\x{5D5}\x{5D1}\x{5DC}\x{5EA} \x{5D3}\x{5D9}\x{5E8}\x{5D5}\x{5EA} \x{5D1}\x{5DB}\x{5DC} \x{5D4}\x{5D0}\x{5E8}\x{5E5}"
+            text run at (24,42) width 288 RTL: "\x{5E9}\x{5D9}\x{5E8}\x{5D5}\x{5EA}, \x{5D0}\x{5D9}\x{5DB}\x{5D5}\x{5EA} \x{5D5}\x{5DE}\x{5D7}\x{5D9}\x{5E8}\x{5D9}\x{5DD} \x{5DC}\x{5DC}\x{5D0} \x{5EA}\x{5D7}\x{5E8}\x{5D5}\x{5EA} \x{5D4}\x{5D5}\x{5D1}\x{5DC}\x{5EA} \x{5D3}\x{5D9}\x{5E8}\x{5D5}\x{5EA}"
+            text run at (41,60) width 271 RTL: "\x{5D1}\x{5DB}\x{5DC} \x{5D4}\x{5D0}\x{5E8}\x{5E5} \x{5E9}\x{5D9}\x{5E8}\x{5D5}\x{5EA}, \x{5D0}\x{5D9}\x{5DB}\x{5D5}\x{5EA} \x{5D5}\x{5DE}\x{5D7}\x{5D9}\x{5E8}\x{5D9}\x{5DD} \x{5DC}\x{5DC}\x{5D0} \x{5EA}\x{5D7}\x{5E8}\x{5D5}\x{5EA}"
+            text run at (32,78) width 280 RTL: "\x{5D4}\x{5D5}\x{5D1}\x{5DC}\x{5EA} \x{5D3}\x{5D9}\x{5E8}\x{5D5}\x{5EA} \x{5D1}\x{5DB}\x{5DC} \x{5D4}\x{5D0}\x{5E8}\x{5E5} \x{5E9}\x{5D9}\x{5E8}\x{5D5}\x{5EA}, \x{5D0}\x{5D9}\x{5DB}\x{5D5}\x{5EA} \x{5D5}\x{5DE}\x{5D7}\x{5D9}\x{5E8}\x{5D9}\x{5DD}"
+            text run at (13,96) width 299 RTL: "\x{5DC}\x{5DC}\x{5D0} \x{5EA}\x{5D7}\x{5E8}\x{5D5}\x{5EA} \x{5D4}\x{5D5}\x{5D1}\x{5DC}\x{5EA} \x{5D3}\x{5D9}\x{5E8}\x{5D5}\x{5EA} \x{5D1}\x{5DB}\x{5DC} \x{5D4}\x{5D0}\x{5E8}\x{5E5} \x{5E9}\x{5D9}\x{5E8}\x{5D5}\x{5EA}, \x{5D0}\x{5D9}\x{5DB}\x{5D5}\x{5EA}"
+            text run at (189,114) width 123 RTL: "\x{5D5}\x{5DE}\x{5D7}\x{5D9}\x{5E8}\x{5D9}\x{5DD} \x{5DC}\x{5DC}\x{5D0} \x{5EA}\x{5D7}\x{5E8}\x{5D5}\x{5EA}"
+        RenderText {#text} at (0,0) size 0x0

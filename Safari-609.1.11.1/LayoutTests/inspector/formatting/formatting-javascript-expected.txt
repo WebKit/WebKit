@@ -1,0 +1,35 @@
+Test JavaScript formatting.
+
+
+== Running test suite: JSFormatter
+-- Running test case: JSFormatter
+PASS: arrow-functions.js
+PASS: classes.js
+PASS: comments-and-preserve-newlines.js
+PASS: comments-only.js
+PASS: do-while-statement.js
+PASS: for-statements.js
+PASS: functions.js
+PASS: generators.js
+PASS: if-statement.js
+PASS: import.js
+PASS: label-break-continue-block.js
+PASS: logic-expressions.js
+PASS: new-expression.js
+PASS: numbers.js
+PASS: object-array-literal.js
+PASS: other-statements.js
+PASS: return-statement.js
+PASS: sample-jquery.js
+PASS: sample-normal-utilities.js
+PASS: sample-webinspector-object.js
+PASS: switch-case-default.js
+PASS: template-strings.js
+PASS: ternary-expressions.js
+PASS: try-catch-finally-statements.js
+PASS: unary-binary-expressions.js
+PASS: variable-declaration.js
+PASS: while-statement.js
+PASS: with-statement.js
+PASS: modules.js
+

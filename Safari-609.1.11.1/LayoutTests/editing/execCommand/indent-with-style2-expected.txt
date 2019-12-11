@@ -1,0 +1,12 @@
+This tests indenting paragraphs with different inline styles combinations.
+Bug 32233 Radar 7442387 
+Bug 32843 Radar 7489326
+
+one
+two three
+fourfive
+four
+foobar
+five six seven
+Before: one <div id="test1"><span class="Apple-style-span" style="background-color: rgb(255, 0, 0);">two</span> three</div> <div id="test2">four<span class="Apple-style-span" style="background-color: rgb(255, 0, 0);">five</span></div> <div><span class="Apple-style-span" style="background-color: rgb(255, 0, 0);">four</span></div> <ul><li><b>foo</b>bar</li></ul> <span class="Apple-style-span" style="background-color: rgb(255, 0, 0);"><font class="Apple-style-span" color="#3333FF">five</font></span> six <b><i>seven</i></b>
+After: <blockquote style="margin: 0 0 0 40px; border: none; padding: 0px;"> one <div id="test1"><span class="Apple-style-span" style="background-color: rgb(255, 0, 0);">two</span> three</div><div id="test2">four<span class="Apple-style-span" style="background-color: rgb(255, 0, 0);">five</span></div><div><span class="Apple-style-span" style="background-color: rgb(255, 0, 0);">four</span></div></blockquote> <ul><ul><li><b>foo</b>bar</li></ul></ul> <blockquote style="margin: 0 0 0 40px; border: none; padding: 0px;"><span class="Apple-style-span" style="background-color: rgb(255, 0, 0);"><font class="Apple-style-span" color="#3333FF">five</font></span> six <b><i>seven</i></b></blockquote>

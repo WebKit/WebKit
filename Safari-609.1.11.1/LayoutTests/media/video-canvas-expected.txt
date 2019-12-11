@@ -1,0 +1,36 @@
+ 
+Test <video> as a source for <canvas>.
+
+RUN(video.src = 'content/counting.mp4')
+EVENT(loadedmetadata)
+
+EXPECTED (r == '255') OK
+EXPECTED (g == '255') OK
+EXPECTED (b == '0') OK
+
+RUN(video.currentTime = 2)
+EXPECTED (r == '8') OK
+EXPECTED (g == '0') OK
+EXPECTED (b == '226') OK
+
+RUN(video.currentTime = 4)
+EXPECTED (r == '0') OK
+EXPECTED (g == '24') OK
+EXPECTED (b == '197') OK
+
+RUN(video.currentTime = 6)
+EXPECTED (r == '0') OK
+EXPECTED (g == '46') OK
+EXPECTED (b == '166') OK
+
+RUN(video.currentTime = 8)
+EXPECTED (r == '0') OK
+EXPECTED (g == '66') OK
+EXPECTED (b == '136') OK
+
+RUN(video.currentTime = 10)
+EXPECTED (r == '0') OK
+EXPECTED (g == '85') OK
+EXPECTED (b == '112') OK
+END OF TEST
+

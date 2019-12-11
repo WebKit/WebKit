@@ -1,0 +1,23 @@
+Testing that CSS.addRule works for all types of stylesheets.
+
+
+== Running test suite: CSS.addRule
+-- Running test case: CSS.addRule.InNonExistingInspectorStyleSheet
+PASS: Should not have any inspector style sheets for the main frame.
+PASS: Rule selector should be "body"
+PASS: Rule range should be [0:0,0:4]
+PASS: Rule origin should be "inspector"
+
+-- Running test case: CSS.addRule.InExistingInspectorStyleSheet
+PASS: Rule selector should be "div"
+PASS: Rule range should be [1:0,1:3]
+PASS: Rule origin should be "inspector"
+
+-- Running test case: CSS.addRule.ExternalStyleSheet
+PASS: Rule selector should be "div"
+PASS: Rule range should be [2:0,2:3]
+PASS: Rule origin should be "regular"
+
+-- Running test case: CSS.addRule.BadStyleSheetId
+PASS: Missing style sheet for given styleSheetId
+

@@ -1,0 +1,91 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_source_set("aec") {
+  configs += [ "..:apm_debug_dump" ]
+  sources = [
+    "aec_resampler.cc",
+    "aec_resampler.h",
+    "echo_cancellation.cc",
+    "echo_cancellation.h",
+  ]
+  deps = [
+    ":aec_core",
+    "..:apm_logging",
+    "../../../common_audio:common_audio_c",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+  ]
+}
+
+rtc_source_set("aec_core") {
+  configs += [ "..:apm_debug_dump" ]
+  sources = [
+    "aec_common.h",
+    "aec_core.cc",
+    "aec_core.h",
+    "aec_core_optimized_methods.h",
+  ]
+  deps = [
+    "..:apm_logging",
+    "../../../common_audio:common_audio_c",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base/system:arch",
+    "../../../system_wrappers:cpu_features_api",
+    "../../../system_wrappers:metrics",
+    "../utility:block_mean_calculator",
+    "../utility:legacy_delay_estimator",
+    "../utility:ooura_fft",
+  ]
+  cflags = []
+
+  if (current_cpu == "x86" || current_cpu == "x64") {
+    sources += [ "aec_core_sse2.cc" ]
+    if (is_posix || is_fuchsia) {
+      cflags += [ "-msse2" ]
+    }
+  }
+
+  if (rtc_build_with_neon) {
+    sources += [ "aec_core_neon.cc" ]
+
+    if (current_cpu != "arm64") {
+      # Enable compilation for the NEON instruction set.
+      suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+      cflags += [ "-mfpu=neon" ]
+    }
+
+    deps += [ "../../../common_audio" ]
+  }
+
+  if (current_cpu == "mipsel" && mips_float_abi == "hard") {
+    sources += [ "aec_core_mips.cc" ]
+  }
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("aec_unittests") {
+    testonly = true
+
+    sources = [
+      "echo_cancellation_unittest.cc",
+      "system_delay_unittest.cc",
+    ]
+    deps = [
+      ":aec",
+      ":aec_core",
+      "../../../rtc_base:checks",
+      "../../../rtc_base:rtc_base_approved",
+      "../../../test:test_support",
+      "//testing/gtest",
+    ]
+  }
+}

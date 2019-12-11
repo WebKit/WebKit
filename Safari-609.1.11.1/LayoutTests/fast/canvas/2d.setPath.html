@@ -1,0 +1,34 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableInspectorAdditions=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("The test to ensure that calling setPath with a Path2D works as expected.");
+
+function shouldHaveCurrentPointEqualTo(path, expected) {
+    shouldEvaluateTo(path + ".currentX", expected[0]);
+    shouldEvaluateTo(path + ".currentY", expected[1]);
+}
+
+var ctx = document.createElement("canvas").getContext("2d");
+var originalPath = ctx.getPath();
+shouldHaveCurrentPointEqualTo("originalPath", [0, 0]);
+
+ctx.beginPath();
+ctx.setPath(new Path2D("M 1 2"));
+var newPathFromPath2D = ctx.getPath();
+shouldHaveCurrentPointEqualTo("newPathFromPath2D", [1, 2]);
+
+ctx.beginPath();
+ctx.moveTo(1, 2);
+ctx.setPath(new Path2D);
+var newPathFromEmptyPath2D = ctx.getPath();
+shouldHaveCurrentPointEqualTo("newPathFromEmptyPath2D", [0, 0]);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

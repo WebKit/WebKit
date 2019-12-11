@@ -1,0 +1,239 @@
+This tests the accessible text alternatives results for SVG.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+test1:
+	Expected name: end
+	AXTitle: end
+	AXDescription: end
+	AXTitleUIElement: null
+test2:
+	Expected name: end
+	AXTitle: end
+	AXDescription: end
+	AXTitleUIElement: null
+test3:
+	Expected name: end
+	AXTitle: end
+	AXDescription: end
+	AXTitleUIElement: null
+test4:
+	Expected name: end
+	AXTitle: end
+	AXDescription: end
+	AXTitleUIElement: null
+test5:
+	Expected name: hello
+	AXTitle: 
+	AXDescription: hello
+	AXTitleUIElement: null
+test6:
+	Expected name: hello
+	AXTitle: 
+	AXDescription: hello
+	AXTitleUIElement: null
+test7:
+	Expected name: abc
+	AXTitle: 
+	AXDescription: abc
+	AXTitleUIElement: null
+test8:
+	Expected name: hi
+	AXTitle: 
+	AXDescription: hi
+	AXTitleUIElement: null
+test9:
+	Expected name: hi
+	AXTitle: 
+	AXDescription: hi
+	AXTitleUIElement: null
+test10:
+	Expected name: hi
+	AXTitle: 
+	AXDescription: hi
+	AXTitleUIElement: null
+test11:
+	Expected name: hola
+	AXTitle: 
+	AXDescription: hola
+	AXTitleUIElement: null
+test12:
+	Expected name: hola
+	AXTitle: 
+	AXDescription: hola
+	AXTitleUIElement: null
+test13:
+	Expected name: hola
+	AXTitle: 
+	AXDescription: hola
+	AXTitleUIElement: null
+test14:
+	Expected name: bob
+	AXTitle: 
+	AXDescription: bob
+	AXTitleUIElement: null
+test15:
+	Expected name: bob
+	AXTitle: 
+	AXDescription: bob
+	AXTitleUIElement: null
+test16:
+	Expected name: abc
+	AXTitle: 
+	AXDescription: abc
+	AXTitleUIElement: null
+test17:
+	Expected name: (empty)
+	AXTitle: 
+	AXDescription: 
+	AXTitleUIElement: null
+test18:
+	Expected name: waz up
+	AXTitle: 
+	AXDescription: waz up
+	AXTitleUIElement: null
+test19:
+	Expected name: Hallo
+	AXTitle: 
+	AXDescription: Hallo
+	AXTitleUIElement: null
+test20:
+	Expected name: the end
+	AXTitle: the end
+	AXDescription: the end
+	AXTitleUIElement: null
+test21:
+	Expected name: big end
+	AXTitle: big end
+	AXDescription: big end
+	AXTitleUIElement: null
+test22:
+	Expected name: big end
+	AXTitle: big end
+	AXDescription: big end
+	AXTitleUIElement: null
+test23:
+	Expected name: end
+	AXTitle: end
+	AXDescription: end
+	AXTitleUIElement: null
+test24:
+	Expected name: end
+	AXTitle: 
+	AXDescription: end
+	AXTitleUIElement: null
+test25:
+	Expected name: booth
+	AXTitle: 
+	AXDescription: booth
+	AXTitleUIElement: null
+test26:
+	Expected name: table
+	AXTitle: 
+	AXDescription: table
+	AXTitleUIElement: null
+test27:
+	Expected name: counter
+	AXTitle: 
+	AXDescription: counter
+	AXTitleUIElement: null
+test28:
+	Expected name: counter
+	AXTitle: 
+	AXDescription: counter
+	AXTitleUIElement: null
+test29:
+	Expected name: counter
+	AXTitle: 
+	AXDescription: counter
+	AXTitleUIElement: null
+test30:
+	Expected name: boulder
+	AXTitle: boulder
+	AXDescription: boulder
+	AXTitleUIElement: null
+test31:
+	Expected name: stone
+	AXTitle: 
+	AXDescription: stone
+	AXTitleUIElement: null
+test32:
+	Expected name: pebble
+	AXTitle: 
+	AXDescription: pebble
+	AXTitleUIElement: null
+test33:
+	Expected name: rock
+	AXTitle: 
+	AXDescription: rock
+	AXTitleUIElement: null
+test34:
+	Expected name: rock
+	AXTitle: 
+	AXDescription: rock
+	AXTitleUIElement: null
+test35:
+	Expected name: stone
+	AXTitle: 
+	AXDescription: stone
+	AXTitleUIElement: null
+test36:
+	Expected name: stone
+	AXTitle: 
+	AXDescription: stone
+	AXTitleUIElement: null
+test37:
+	Expected name: piedra
+	AXTitle: 
+	AXDescription: piedra
+	AXTitleUIElement: null
+test38:
+	Expected name: piedra
+	AXTitle: 
+	AXDescription: piedra
+	AXTitleUIElement: null
+test39:
+	Expected name: stone
+	AXTitle: 
+	AXDescription: stone
+	AXTitleUIElement: null
+test40:
+	Expected name: stone
+	AXTitle: 
+	AXDescription: stone
+	AXTitleUIElement: null
+test41:
+	Expected name: (empty)
+	AXTitle: 
+	AXDescription: 
+	AXTitleUIElement: null
+test42:
+	Expected name: (empty)
+	AXTitle: 
+	AXDescription:  
+	AXTitleUIElement: null
+test43:
+	Expected name: (empty)
+	AXTitle: 
+	AXDescription: 
+	AXTitleUIElement: null
+test44:
+	Expected name: (empty)
+	AXTitle: 
+	AXDescription:  
+	AXTitleUIElement: null
+test45:
+	Expected name: (empty)
+	AXTitle: 
+	AXDescription: 
+	AXTitleUIElement: null
+test46:
+	Expected name: (empty)
+	AXTitle: 
+	AXDescription:  
+	AXTitleUIElement: null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

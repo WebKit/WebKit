@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 25: SyntaxError: Unexpected token ')'
+
+PASS window.onerror - compile error in <script> 
+PASS window.onerror - compile error in <script> (column) 
+

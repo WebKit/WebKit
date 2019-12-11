@@ -1,0 +1,21 @@
+<html> 
+<head> 
+<style> 
+    @font-face { 
+        src: url(resources/mostly-empty-font.ttf) format(truetype);
+        font-family: MostlyEmptyFont;
+    }
+</style> 
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    document.onreadystatechange = function() {
+        if (document.readyState === 'complete')
+            setTimeout(function() {testRunner.notifyDone();}, 100);
+    };
+}
+</script>
+<body> 
+<div style="font-family: MostlyEmptyFont;">A B C D E F G H I J K L M N O P Q R S T U V W X Y Z</div> 
+</body> 
+</html> 

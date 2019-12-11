@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>This tests that we repaint focus ring properly.</title>
+<script src="resources/text-based-repaint.js"></script>
+<script>
+function repaintTest() {
+  document.getElementById("shrinkThis").style.height = "20px"; 
+  document.getElementById("enlargeThis").style.height = "80px"; 
+  document.getElementById("moveThisRelative").style.left = "150px"; 
+  document.getElementById("moveThisAbsolute").style.left = "150px"; 
+  document.getElementById("moveThisRelativeAndNotIntersected").style.left = "200px"; 
+  document.getElementById("removeOutline").style.outline = "none";
+  document.getElementById("addOutline").style.outline = "auto";
+}
+onload = runRepaintTest;
+</script>
+
+<style>
+div {
+	margin-top: 35px;
+}
+
+.outline-container {
+    width: 50px;
+    height: 50px;
+  	outline: auto;
+}
+
+img {
+    width: 30px;
+    height: 30px;
+}
+</style>
+</head>
+<body>
+<div class=outline-container><img style="margin-top: 30px; margin-left: 10px;" src="broken.jpg" id=shrinkThis></div>
+<div class=outline-container><img style="height: 50px;" src="broken.jpg" id=enlargeThis></div>
+<div class=outline-container><img style="position: relative; top: 10px; left: 40px;" src="broken.jpg" id=moveThisRelative></div>
+<div class=outline-container><img style="position: absolute; top: 380px; left: 10px;" src="broken.jpg" id=moveThisAbsolute></div>
+<div class=outline-container><img style="position: relative; top: 10px; left: 100px;" src="broken.jpg" id=moveThisRelativeAndNotIntersected></div>
+<div class=outline-container id=removeOutline><img style="margin-top: 30px; margin-left: 70px;" src="broken.jpg"></div>
+<div class=outline-container id=addOutline style="outline: none"><img style="margin-top: 30px; margin-left: 70px;" src="broken.jpg"></div>
+</body>
+</html>

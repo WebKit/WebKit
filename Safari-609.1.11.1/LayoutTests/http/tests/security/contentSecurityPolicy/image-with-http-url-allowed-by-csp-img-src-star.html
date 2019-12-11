@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="img-src *">
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+function didLoadImage()
+{
+    testPassed("did load image.");
+    finishJSTest();
+}
+
+function failedToLoadImage()
+{
+    testFailed("failed to load image.");
+    finishJSTest();
+}
+</script>
+</head>
+<body>
+<script>
+description("This tests that loading an image with an HTTP URL is allowed when the page has Content Security Policy &quot;img-src *&quot;.");
+</script>
+<img src="http://127.0.0.1:8000/security/resources/abe.png" onload="didLoadImage()" onerror="failedToLoadImage()">
+<script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>

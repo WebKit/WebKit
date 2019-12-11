@@ -1,0 +1,41 @@
+CONSOLE MESSAGE: Request header field Content-Type is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/cors/resources/preflight.py?token=44b62b54-3676-4dd8-9d6a-af6a5b83d8fb due to access control checks.
+CONSOLE MESSAGE: Request header field Content-Type is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/cors/resources/preflight.py?token=cd7cfb59-0aeb-4aa0-9f59-8f88ce067490 due to access control checks.
+CONSOLE MESSAGE: Request header field Content-Type is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/cors/resources/preflight.py?token=95cead1a-fb92-4cf4-aaf0-d792994c219c due to access control checks.
+CONSOLE MESSAGE: Request header field Content-Type is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/cors/resources/preflight.py?token=fc30ba73-f020-46b0-8a20-41440a52663c due to access control checks.
+CONSOLE MESSAGE: Request header field Content-Type is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/cors/resources/preflight.py?token=d83869fc-2604-40ba-89f1-712963eef0da due to access control checks.
+CONSOLE MESSAGE: Request header field Content-Type is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/cors/resources/preflight.py?token=a876fa51-a309-465e-90f4-11e9b165f153 due to access control checks.
+CONSOLE MESSAGE: Request header field Content-Type is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/cors/resources/preflight.py?token=94b7a20f-784d-427f-ab98-4baadc279bb8 due to access control checks.
+CONSOLE MESSAGE: Request header field Content-Type is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/cors/resources/preflight.py?token=1da5e5ec-2d59-4ee7-8c52-e2f49fab7fd5 due to access control checks.
+CONSOLE MESSAGE: Request header field Content-Type is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/cors/resources/preflight.py?token=548cadd2-965a-4d1a-b299-80f755834852 due to access control checks.
+CONSOLE MESSAGE: Request header field Content-Type is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/cors/resources/preflight.py?token=b287e816-5f15-4cfe-900d-f9ed078fcec3 due to access control checks.
+CONSOLE MESSAGE: Request header field Content-Type is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/cors/resources/preflight.py?token=fe73fef2-5bdc-45ac-a081-c68b563125b2 due to access control checks.
+CONSOLE MESSAGE: Request header field Content-Type is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8800/cors/resources/preflight.py?token=4b8474de-6cbf-4ac6-ab68-4e51cd846614 due to access control checks.
+
+PASS Preflight for {"content-type":"text /plain"} 
+PASS Preflight for {"content-type":"text\t/\tplain"} 
+PASS No preflight for {"content-type":"text/plain;"} 
+PASS No preflight for {"content-type":"text/plain;garbage"} 
+PASS Preflight for {"content-type":"text/plain;garbage\u0001\u0002"} 
+PASS Preflight for {"content-type":"text/plain,"} 
+PASS Preflight for {"content-type":",text/plain"} 
+PASS Preflight for {"content-type":"text/plain,text/plain"} 
+PASS Preflight for {"content-type":"text/plain,x/x"} 
+PASS Preflight for {"content-type":"text/plain\u000b"} 
+PASS Preflight for {"content-type":"text/plain\f"} 
+PASS Preflight for {"content-type":"application/www-form-urlencoded"} 
+PASS Preflight for {"content-type":"application/x-www-form-urlencoded;"} 
+PASS No preflight for {"content-type":"multipart/form-data"} 
+PASS Preflight for {"content-type":"multipart/form-data;\""} 
+

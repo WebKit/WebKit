@@ -1,0 +1,36 @@
+
+item1
+item2
+
+item1
+item2
+
+cell1
+
+treeitem1
+treeitem2
+This tests variations of the comboboxes and elements it can control and own. Then verifies the active-descendant is reflected correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS list.selectedChildrenCount is 0
+PASS list.selectedChildrenCount is 1
+PASS list.selectedChildAtIndex(0).isEqual(listitem1) is true
+PASS listbox.selectedChildrenCount is 0
+PASS listbox.selectedChildrenCount is 1
+PASS listbox.selectedChildAtIndex(0).isEqual(option2_1) is true
+PASS grid.selectedChildrenCount is 0
+PASS grid.selectedChildrenCount is 1
+PASS grid.selectedChildAtIndex(0).isEqual(row3_1) is true
+PASS tree.selectedChildrenCount is 0
+PASS tree.selectedChildrenCount is 1
+PASS tree.selectedChildAtIndex(0).isEqual(treeitem4_1) is true
+Received AXSelectedChildrenChanged for List1
+Received AXSelectedChildrenChanged for Listbox2
+Received AXSelectedRowsChanged for Grid3
+Received AXSelectedRowsChanged for Tree4
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

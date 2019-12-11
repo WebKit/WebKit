@@ -1,0 +1,3 @@
+
+FAIL getImageData() clamps colours to the range [0, 255] Can't find variable: OffscreenCanvas
+

@@ -1,0 +1,51 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.addEventListener("load", function() {
+    var cookie = document.cookie;
+
+    if (/font/.test(cookie) || /import/.test(cookie))
+        alert("FAIL! Cookies received: " + cookie);
+    else if (/img/.test(cookie))
+        alert("PASS");
+    else
+        alert("FAIL: Did not receive any cookies.")
+
+    document.cookie = "img=; Max-Age=-1; Path=/";
+    document.cookie = "font=; Max-Age=-1; Path=/";
+    document.cookie = "import=; Max-Age=-1; Path=/";
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, false);
+</script>
+First we load an image as a control to make sure we can set cookies:<br>
+<img src="http://127.0.0.1:8000/security/resources/set-cookie.php?name=img&amp;value=PASS">
+
+Then we load an SVGImage to see if we can issue network requests from inside the image:<br>
+<img height=200px src='data:image/svg+xml;utf8,
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs>
+
+<style type="text/css">
+@font-face { font-family: Extern2; src: url(http://127.0.0.1:8000/security/resources/set-cookie.php?name=font&amp;amp;value=FAIL) format("woff"); }
+
+.cc {
+font-family: Extern2;
+font-size: 20px;
+}
+</style>
+
+<style type="text/css">
+@import url("http://127.0.0.1:8000/security/resources/set-cookie.php?name=import&amp;amp;value=FAIL");
+</style>
+</defs>
+
+<polygon id="triangle" points="0,0 0,50 50,0" fill="#00FF00" stroke="#004400"/>
+<text x="50" y="50" class="cc">groebert</text>
+
+</svg>
+'>

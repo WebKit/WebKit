@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div style="display:none">
+<!-- Fails on the [data-html]. -->
+<div data-webkit data-foobar>
+  <div data-webkit>
+    <div data-webkit>
+      <div data-webkit>
+        <pre data-webkit>
+          <blockquote data-webkit><span data-webkit>Fail.</span></blockquote>
+        </pre>
+      </div>
+    </div>
+  <div>
+<div>
+
+<!-- Fails on the <div> tag. -->
+<div data-webkit>
+  <div data-webkit data-html>
+    <div data-webkit>
+      <pre data-webkit>
+        <blockquote data-webkit><span data-webkit>Fail.</span></blockquote>
+      </pre>
+    </div>
+  <div>
+</div>
+
+<!-- Simple matches. -->
+<div data-foobar>
+  <div data-webkit>
+    <div data-webkit data-html>
+      <pre data-webkit>
+        <blockquote data-webkit><span id="target1">Target 1</span></blockquote>
+      </pre>
+    </div>
+  <div>
+<div>
+<div data-webkit data-foobar>
+  <div data-webkit>
+    <div data-webkit data-html>
+      <pre data-webkit>
+        <pre data-webkit>
+          <blockquote data-webkit><span id="target2">Target 2</span></blockquote>
+        </pre>
+      </pre>
+    </div>
+  <div>
+<div>
+
+<!-- Multiple failures before a match. -->
+<div data-padding data-webkit data-foobar>
+  <div data-webkit data-padding>
+    <div data-html data-webkit data-padding>
+      <pre data-webkit data-padding>
+
+        <!-- This subtree lacks the [data-webkit] on the third level. -->
+        <div data-html data-padding>
+          <div data-html data-webkit data-padding>
+            <pre data-webkit data-padding>
+
+              <!-- This subtree lacks the [data-html] on the second level. -->
+              <div data-webkit data-padding>
+                <div data-webkit data-padding>
+                  <pre data-webkit data-padding>
+                    <blockquote data-webkit data-padding><span id="target3">Target 3</span></blockquote>
+                  </pre>
+                </div>
+              </div>
+
+            </pre>
+          </div>
+        <div>
+
+      </pre>
+    </div>
+  <div>
+<div>
+
+</div>
+</body>
+<script>
+description('Test backtracking of matching attributes with multiple child selector relations.');
+
+// Define the style dynamically to test lazy attributes.
+var allTargetSpans = document.querySelectorAll('blockquote>span');
+for (var i = 0; i < allTargetSpans.length; ++i)
+    allTargetSpans[i].style.textDecoration='underline';
+
+shouldBe('document.querySelectorAll("[data-foobar]>[data-webkit]>[data-html]>pre [style]").length', '3');
+shouldBeEqualToString('document.querySelectorAll("[data-foobar]>[data-webkit]>[data-html]>pre [style]")[0].id', 'target1');
+shouldBeEqualToString('document.querySelectorAll("[data-foobar]>[data-webkit]>[data-html]>pre [style]")[1].id', 'target2');
+shouldBeEqualToString('document.querySelectorAll("[data-foobar]>[data-webkit]>[data-html]>pre [style]")[2].id', 'target3');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

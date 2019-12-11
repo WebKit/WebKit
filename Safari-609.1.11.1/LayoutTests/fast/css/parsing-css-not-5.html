@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style id="style-container">
+</style>
+</head>
+<body>
+</body>
+<script>
+description('Test the parsing of :not(selectorList) for querySelector and style.');
+
+function testInvalidSelector(selectorString) {
+    shouldThrowErrorName('document.querySelector(":not(' + selectorString + ')")', 'SyntaxError');
+
+    var styleContainer = document.getElementById('style-container');
+    styleContainer.innerHTML = ':not(' + selectorString + ') { }';
+    shouldBe("document.getElementById('style-container').sheet.cssRules.length", "0");
+    styleContainer.innerHTML = '';
+}
+
+var invalidSelectors = [
+    // Pseudo elements.
+    "::first-letter",
+    "::first-line",
+    "::before",
+    "::after",
+    ":first-letter",
+    ":first-line",
+    ":before",
+    ":after",
+
+    // Not selectors.
+    "",
+    "    ",
+    ",",
+
+    ".123class",
+    "#123id",
+    "[]",
+    "()",
+    ")",
+    "{}",
+    "}",
+
+    // Empty functional pseudo classes.
+    ":not()",
+    ":matches()",
+    ":nth-child()",
+    ":nth-child(2n of)",
+
+    // Unbalanced parenthesized functional pseudo classes.
+    ":not(",
+    ":matches(",
+    ":nth-child(2n+1 of",
+];
+
+debug("1 invalid selectors");
+for (var i = 0; i < invalidSelectors.length; ++i) {
+    var selectorString = invalidSelectors[i];
+    testInvalidSelector(selectorString);
+}
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

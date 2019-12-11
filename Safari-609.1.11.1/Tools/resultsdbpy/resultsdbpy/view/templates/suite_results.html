@@ -1,0 +1,206 @@
+<!--
+ Copyright (C) 2019 Apple Inc. All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions
+ are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+
+ THIS SOFTWARE IS PROVIDED BY APPLE INC. "AS IS" AND ANY
+ EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+-->
+
+{% extends "base.html" %}
+{% block head %}
+<link rel="stylesheet" type="text/css" href="assets/css/search.css">
+<link rel="stylesheet" type="text/css" href="assets/css/timeline.css">
+<link rel="stylesheet" type="text/css" href="assets/css/tooltip.css">
+
+<script type="module">
+import {CommitBank} from '/assets/js/commit.js';
+import {deepCompare, ErrorDisplay, queryToParams, paramsToQuery} from '/assets/js/common.js';
+import {Configuration} from '/assets/js/configuration.js';
+import {Drawer, BranchSelector, ConfigurationSelectors, LimitSlider} from '/assets/js/drawer.js';
+import {InvestigateDrawer} from '/assets/js/investigate.js';
+import {Legend, TimelineFromEndpoint} from '/assets/js/timeline.js';
+import {ToolTip} from '/assets/js/tooltip.js';
+import {DOM, REF, EventStream} from '/library/js/Ref.js';
+
+const DEFAULT_LIMIT = 100;
+const SUITES = JSON.parse('{{ suites|safe }}');
+
+class MainView {
+    constructor() {    
+        this.currentParams = queryToParams(document.URL.split('?')[1]);
+        this.currentLimit = this.currentParams.limit ? parseInt(this.currentParams.limit[this.currentParams.limit.length - 1]) : DEFAULT_LIMIT;
+        delete this.currentParams.limit;
+
+        this.ref = REF.createRef({
+            state: SUITES,
+            onStateUpdate: (element, state) => {
+                if (!state)
+                    element.innerHTML = this.placeholder();
+                else if (state.error)
+                    element.innerHTML = ErrorDisplay(state);
+                else if (state.length === 0)
+                    element.innerHTML = ErrorDisplay({
+                        error: 'Not Found',
+                        description: 'No suites matching the specified criteria',
+                    });
+                else
+                    DOM.inject(element, this.render(state));
+            }
+        });
+        this.latestDispatch = Date.now();
+        this.children = {};
+
+        SUITES.forEach((suite) => {
+            this.children[suite] = new TimelineFromEndpoint('api/results/' + suite, suite);
+        });
+    }
+    unpackSuites(suitesJson) {
+        if (suitesJson.error)
+            return suitesJson;
+
+        let suites = new Set();
+        suitesJson.forEach((pair) => {
+            pair[1].forEach((suite) => {
+                suites.add(suite);
+            });
+        });
+
+        let sortedSuites = [...suites].sort();
+        Object.keys(this.children).forEach(key => {this.children[key].teardown();});
+        this.children = {};
+        sortedSuites.forEach((suite) => {
+            this.children[suite] = new TimelineFromEndpoint('api/results/' + suite);
+        });
+        return sortedSuites;
+    }
+    reload() {
+        let params = queryToParams(document.URL.split('?')[1]);
+        let limit = params.limit ? parseInt(params.limit[params.limit.length - 1]) : DEFAULT_LIMIT;
+        delete params.limit;
+
+        if (deepCompare(params, this.currentParams)) {
+            if (limit === this.currentLimit)
+                return;
+
+            for (let suite in this.children) {
+                if (limit > this.currentLimit)
+                    this.children[suite].reload();
+                else
+                    this.children[suite].rerender();
+            }
+            this.currentLimit = limit;
+            return;
+        }
+
+        let myDispatch = Date.now();
+        this.currentParams = params;
+        this.currentLimit = limit;
+        this.latestDispatch = Math.max(this.latestDispatch, myDispatch);
+        this.ref.setState(null);
+
+        let self = this;
+        let suiteParams = {};
+        Configuration.members().forEach(member => {
+            if (params[member])
+                suiteParams[member] = params[member];
+        });
+        if (params.branch)
+            suiteParams.branch = params.branch;
+        let query = paramsToQuery(suiteParams);
+        fetch(query ? 'api/suites?' + query: 'api/suites').then(response => {
+            response.json().then(json => {
+                if (myDispatch === this.latestDispatch)
+                    self.ref.setState(this.unpackSuites(json));
+            });
+        }).catch(error => {
+            if (myDispatch === self.latestDispatch)
+                self.ref.setState({error: "Connection Error", description: error});
+        });
+    }
+    placeholder() {
+        return `<div class="placeholder dimmer">
+                <div class="loader">
+                    <div class="spinner"></div>
+                </div>
+            </div>`;
+    }
+    toString() {
+        return `<div ref="${this.ref}"></div>`;
+    }
+    render(suites) {
+        let children = this.children;
+        return suites.map(suite => {
+            return `<div class="section">
+                    <div class="header">
+                        <div class="title">${suite}</div>
+                    </div>
+                    ${children[suite]}
+                </div><br>`;
+        }).join('');
+    }
+    notifyTimelinesRender() {
+        for (let suite in this.children) {
+            this.children[suite].notifyRerender();
+        }
+    }
+}
+
+let view = new MainView();
+const onLayoutChange = new EventStream();
+onLayoutChange.action(() => {
+    view.notifyTimelinesRender();
+});
+
+DOM.inject(document.getElementById('app'), `${ToolTip}
+${InvestigateDrawer}
+${Drawer([
+    Legend(() => {
+        for (let suite in view.children) {
+            view.children[suite].update();
+        }
+    }, true),
+    LimitSlider(() => {view.reload()}),
+    BranchSelector(() => {
+        CommitBank.reload();
+        view.reload();
+    }),
+    ConfigurationSelectors(() => {view.reload()}),
+], () => onLayoutChange.add())}
+<div class="main right-sidebar under-topbar-with-actions">
+    <div class="content" ref=${REF.createRef({
+            onElementMount: (element) => {
+                for (let suite in view.children) {
+                    view.children[suite].viewport = element;
+                }
+            }
+        })}>
+        ${view}
+    </div>
+</div>`);
+
+</script>
+
+{% endblock %}
+{% block content %}
+
+<div id="app">
+</div>
+
+{% endblock %}

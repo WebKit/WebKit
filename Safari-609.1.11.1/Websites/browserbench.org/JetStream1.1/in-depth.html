@@ -1,0 +1,384 @@
+<!--
+ Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions
+ are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+
+ THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JetStream 1.1 &mdash; In Depth Analysis</title>
+
+    <link rel="stylesheet" href="JetStream.css">
+</head>
+<body>
+<main>
+    <a href="index.html"><img id="logo" src="JetStream-Logo.png" alt="JetStream"></a>
+
+    <h1>In Depth Analysis</h1>
+
+    <p>
+    JetStream combines a variety of JavaScript benchmarks, covering a variety of
+    advanced workloads and programming techniques, and reports a single score that
+    balances them using geometric mean.
+    </p>
+
+    <p>
+    Each benchmark measures a distinct workload, and no single optimization
+    technique is sufficient to speed up all benchmarks. Latency tests measure that a
+    web application can start up quickly, ramp up to peak performance quickly, and
+    run smoothly without interruptions. Throughput tests measure the sustained peak
+    performance of a web application, ignoring ramp-up time and spikes in
+    smoothness. Some benchmarks demonstrate tradeoffs, and aggressive or specialized
+    optimization for one benchmark might make another benchmark slower.
+    </p>
+
+    <p>
+    JetStream includes benchmarks from the SunSpider 1.0.2 and Octane 2 JavaScript
+    benchmark suites. It also includes benchmarks from the LLVM compiler open source
+    project, compiled to JavaScript using Emscripten 1.13. It also includes a
+    benchmark based on the Apache Harmony open source project's HashMap and a port of
+    the <a href="https://www.cs.purdue.edu/sss/projects/cdx/">CDx</a> benchmark,
+    hand-translated to JavaScript.
+    </p>
+    
+    <p>
+    These benchmarks cover both classical performance measurements &mdash; like Martin
+    Richards's machine and language independent benchmark (richards) and the
+    Dhrystone synthetic computing benchmark (dry.c) &mdash; and real-world examples &mdash; like
+    the Mozilla open source project's PDF renderer (pdfjs), the Box2D JavaScript
+    physics engine (box2d), and the jQuery and Closure JavaScript libraries (code-
+    first-load, code-multi-load).
+    </p>
+    
+    <p>
+    Note that scores from JetStream 1.1 are not comparable to scores from other versions
+    of JetStream.
+    </p>
+    
+    <dl>
+    
+    <a name="3d-cube">
+    <dt>3d-cube</dt>
+    <dd>3D cube rotation benchmark by Simon Speich. This benchmark was
+    previously published as part of SunSpider. The original can be found
+    on <a href="http://www.speich.net/computer/moztesting/3d.htm">Simon's
+    web page</a>. Tests arrays and floating-point math in relatively
+    short-running code.  Source
+    code: <a href="sources/3d-cube.js">3d-cube.js</a></dd>
+    
+    <a name="3d-raytrace">
+    <dt>3d-raytrace</dt>
+    <dd>Simple raytracer written by Oliver Hunt of the WebKit team. This benchmark was
+      originally published in SunSpider.  Tests arrays and floating-point
+      math in relatively short-running code.  Source
+      code: <a href="sources/3d-raytrace.js">3d-raytrace.js</a></dd>
+    
+    <a name="base64">
+    <dt>base64</dt>
+    <dd>Base64 encoder/decoder written in JavaScript, originally from the Mozilla XML-RPC client component. Tests string manipulation. This benchmark was previously published as part of SunSpider.
+      Source code: <a href="sources/base64.js">base64.js</a></dd>
+    
+    <a name="cdjs">
+    <dt>cdjs</dt>
+    <dd>JavaScript implementation of the
+      <a href="https://www.cs.purdue.edu/sss/projects/cdx/">CDx collision detection
+        benchmark</a>. Measures the browser's worst-case performance over 200 collision
+      detection runs.
+      Source code: <a href="sources/cdjs-benchmark.js">benchmark.js</a>,
+      <a href="sources/cdjs-call_sign.js">call_sign.js</a>,
+      <a href="sources/cdjs-collision.js">collision.js</a>,
+      <a href="sources/cdjs-collision_detector.js">collision_detector.js</a>,
+      <a href="sources/cdjs-constants.js">constants.js</a>,
+      <a href="sources/cdjs-motion.js">motion.js</a>,
+      <a href="sources/cdjs-red_black_tree.js">red_black_tree.js</a>,
+      <a href="sources/cdjs-reduce_collision_set.js">reduce_collision_set.js</a>,
+      <a href="sources/cdjs-simulator.js">simulator.js</a>,
+      <a href="sources/cdjs-util.js">util.js</a>,
+      <a href="sources/cdjs-vector_2d.js">vector_2d.js</a>,
+      <a href="sources/cdjs-vector_3d.js">vector_3d.js</a></dd>
+    
+    <a name="code-first-load">
+    <dt>code-first-load</dt>
+    <dd>Test of code load speed of the jQuery and Closure libraries. This test attempts to defeat
+      the browser's caching capabilities by randomizing the source code, making it representative
+      of the first-load experience. This test was previously published in Octane version 2.
+      Source code: <a href="sources/code-first-load-code-load.js">code-load.js</a></dd>
+    
+    <a name="code-multi-load">
+    <dt>code-multi-load</dt>
+    <dd>Test of code load speed of the jQuery and Closure libraries. Because this test allows
+      caching, this is representative of revisiting the same website.
+      This test was previously published in Octane version 1.
+      Source code: <a href="sources/code-multi-load-code-load.js">code-load.js</a></dd>
+    
+    <a name="crypto-aes">
+    <dt>crypto-aes</dt>
+    <dd><a href="http://en.wikipedia.org/wiki/Advanced_Encryption_Standard">Advanced Encryption
+        Standard (AES)</a> implementation in JavaScript by Chris Veness. A newer version can be found <a href="http://www.movable-type.co.uk/scripts/aes.html">here</a>. Tests integer math.
+      This benchmark was previously published as part of SunSpider.
+      Source code: <a href="sources/crypto-aes.js">crypto-aes.js</a></dd>
+    
+    <a name="crypto-md5">
+    <dt>crypto-md5</dt>
+    <dd><a href="http://en.wikipedia.org/wiki/Md5">MD5</a> implementation in JavaScript by
+      Paul Johnston and others. Tests interesting integer math idioms.
+      This benchmark was previously published as part of SunSpider.
+      Source code: <a href="sources/crypto-md5.js">crypto-md5.js</a></dd>
+    
+    <a name="crypto-sha1">
+    <dt>crypto-sha1</dt>
+    <dd><a href="http://en.wikipedia.org/wiki/Sha1">SHA-1</a> implementation in JavaScript by
+      Paul Johnston and others. Tests interesting integer math idioms.
+      This benchmark was previously published as part of SunSpider.
+      Source code: <a href="sources/crypto-sha1.js">crypto-sha1.js</a></dd>
+    
+    <a name="date-format-tofte">
+    <dt>date-format-tofte</dt>
+    <dd>Date and time formatting test, based on code by Svend Tofte. Involves an interesting use of <code>eval</code> and also
+      covers string manipulation and JavaScript library functions.
+      This benchmark was previously published as part of SunSpider.
+      Source code: <a href="sources/date-format-tofte.js">date-format-tofte.js</a></dd>
+    
+    <a name="date-format-xparb">
+    <dt>date-format-xparb</dt>
+    <dd>Sophisticated date formatting and parsing library test, based on code by Barin Schwartz.
+      This benchmark was previously published as part of SunSpider.
+      Source code: <a href="sources/date-format-xparb.js">date-format-xparb.js</a></dd>
+    
+    <a name="mandreel-latency">
+    <dt>mandreel-latency</dt>
+    <dd>Tests the <a href="http://bulletphysics.org/">Bullet</a> physics engine's worst case
+      performance over many iterations. The physics engine is compiled to JavaScript with
+      <a href="http://www.mandreel.com">Mandreel</a>. JetStream also reports the throughput score
+      for this test as <a href="#mandreel">mandreel</a>.
+      This benchmark was previously published in Octane version 2, but JetStream uses a
+      <a href="http://trac.webkit.org/changeset/185425">different latency metric</a>
+      based on the average of the <a href="http://trac.webkit.org/changeset/186041">worst 0.5%</a>
+      samples.
+      Source code: <a href="sources/mandreel.js">mandreel.js</a></dd>
+    
+    <a name="n-body">
+    <dt>n-body</dt>
+    <dd>Classic solar system simulation benchmark from
+      <a href="http://shootout.alioth.debian.org/">The Great Computer Language Shootout</a>,
+      contributed by Isaac Guy. Tests math and object access performance. 
+      This benchmark was previously published in SunSpider.
+      Source code: <a href="sources/n-body.js">n-body.js</a></dd>
+    
+    <a name="regex-dna">
+    <dt>regex-dna</dt>
+    <dd>Regular-expression-based solution to DNA manipulation from
+      <a href="http://shootout.alioth.debian.org/">The Great Computer Language Shootout</a>,
+      contributed by Jesse Millikan.
+      This benchmark was previously published in SunSpider.
+      Source code: <a href="sources/regex-dna.js">regex-dna.js</a></dd>
+    
+    <a name="splay-latency">
+    <dt>splay-latency</dt>
+    <dd>Tests the worst-case performane of manipulating a
+      <a href="http://en.wikipedia.org/wiki/Splay_tree">splay tree</a> represented using plain
+      JavaScript objects. JetStream also reports the throughput score for this test
+      as <a href="#splay">splay</a>. This benchmark was previously published in Octane version 2, but JetStream uses a
+      <a href="http://trac.webkit.org/changeset/185425">different latency metric</a>
+      based on the average of the <a href="http://trac.webkit.org/changeset/186041">worst 0.5%</a>
+      samples.
+      Source code: <a href="sources/splay.js">splay.js</a></dd>
+    
+    <a name="tagcloud">
+    <dt>tagcloud</dt>
+    <dd>Parses JSON and generates markup for a <a href="http://en.wikipedia.org/wiki/Tag_cloud">tag
+        cloud</a> view of the data. Written by Maciej Stachowiak of the WebKit team. Exercises string parsing and manipulation.
+      This benchmark was originally published in SunSpider.
+      Source code: <a href="sources/tagcloud.js">tagcloud.js</a></dd>
+    
+    <a name="typescript">
+    <dt>typescript</dt>
+    <dd>Tests how quickly Microsoft's <a href="http://www.typescriptlang.org">TypeScript</a> compiler can
+      compile itself. This benchmark sets itself apart from the others due to its sheer size. More
+      than anything else this tests how quickly a JavaScript runtime can optimize a large pile of
+      code.
+      This benchmark was previously published in Octane version 2.
+      Source code: <a href="sources/typescript.js">typescript.js</a>, <a href="sources/typescript-compiler.js">typescript-compiler.js</a>, <a href="sources/typescript-input.js">typescript-input.js</a></dd>
+    
+    <a name="bigfib.cpp">
+    <dt>bigfib.cpp</dt>
+    <dd>C++ program for computing very large Fibonacci numbers using a BigInt class, compiled to JavaScript with
+      Emscripten. Tests asm.js performance, with a focus on complex C++ data structures. 
+      The original C++ version of this benchmark was previously published in the LLVM test suite.
+      Source code: <a href="sources/bigfib.cpp">bigfib.cpp</a>, <a href="sources/bigfib.cpp.js">bigfib.cpp.js</a></dd>
+    
+    <a name="box2d">
+    <dt>box2d</dt>
+    <dd>The Box2D physics engine <a href="https://code.google.com/p/box2dweb/">ported to JavaScript</a>. Tests floating point math and data structures. 
+      This benchmark was previously published in Octane version 2.
+      Source code: <a href="sources/box2d.js">box2d.js</a></dd>
+    
+    <a name="container.cpp">
+    <dt>container.cpp</dt>
+    <dd>Stepanov and Stroustrup's Standard
+        Container Benchmark compiled to JavaScript with
+      Emscripten. Tests asm.js performance, with a focus on complex C++ data structures. 
+      The original C++ version of this benchmark was previously published in the LLVM test suite.
+      Source code: <a href="sources/container.cpp">container.cpp</a>, <a href="sources/container.cpp.js">container.cpp.js</a></dd>
+    
+    <a name="crypto">
+    <dt>crypto</dt>
+    <dd>RSA cypher implemented in JavaScript by Tom Wu. Tests integer math and arrays.
+      This benchmark was previously published in Octane version 2.
+      Source code: <a href="sources/crypto.js">crypto.js</a></dd>
+    
+    <a name="delta-blue">
+    <dt>delta-blue</dt>
+    <dd>The classic DeltaBlue benchmark derived from a Smalltalk implementation by Maloney and
+      Wolczko. Tests devirtualization of JavaScript code that uses an idiomatic class hierarchy
+      construction.
+      This benchmark was previously published in Octane version 2.
+      Source code: <a href="sources/deltablue.js">deltablue.js</a></dd>
+    
+    <a name="dry.c">
+    <dt>dry.c</dt>
+    <dd>The classic Dhrystone benchmark program by Reinhold P. Weicker, translated from Ada to C
+      by Rick Richardson, and then compiled to JavaScript with Emscripten. Measures basic
+      integer arithmetic in asm.js code. 
+      The original C version of this benchmark was previously published in the LLVM test suite.
+      Source code: <a href="sources/dry.c">dry.c</a>, <a href="sources/dry.c.js">dry.c.js</a></dd>
+    
+    <a name="earley-boyer">
+    <dt>earley-boyer</dt>
+    <dd>Tests two classic Scheme benchmarks translated to JavaScript using scheme2js. The first
+      benchmark is Earley, is a chart parser algorithm due to Jay Earley. The second is
+      Boyer, a logic programming benchmark by Bob Boyer. Measures variadic functions and object
+      construction.
+      This benchmark was previously published in Octane version 2.
+      Source code: <a href="sources/earley-boyer.js">earley-boyer.js</a></dd>
+    
+    <a name="float-mm.c">
+    <dt>float-mm.c</dt>
+    <dd>Floating point matrix multiply benchmark, compiled to JavaScript with Emscripten.
+      The original C version of this benchmark was previously published in the LLVM test suite.
+      Source code: <a href="sources/float-mm.c">float-mm.c</a>, <a href="sources/float-mm.c.js">float-mm.c.js</a></dd>
+    
+    <a name="gbemu">
+    <dt>gbemu</dt>
+    <dd>Gameboy emulator written in JavaScript. Tests typed array and
+      property access performance. This benchmark was previously published in Octane version 2.
+    
+      Source code: <a href="sources/gbemu-part1.js">gbemu-part1.js</a>, <a href="sources/gbemu-part2.js">gbemu-part2.js</a></dd>
+    
+    <a name="gcc-loops.cpp">
+    <dt>gcc-loops.cpp</dt>
+    <dd>Example loops used to tune the GCC and LLVM vectorizers, compiled to JavaScript with
+      Emscripten. The original C++ version of this benchmark was previously published in the LLVM test suite.
+      Source code: <a href="sources/gcc-loops.cpp">gcc-loops.cpp</a></dd>
+    
+    <a name="hash-map">
+    <dt>hash-map</dt>
+    <dd>Apache Harmony java.util.HashMap implementation ported to JavaScript and benchmarked by
+      doing 500,000 inserts, 2,500,000 queries, and then iterating the associated entrySet. Tests
+      object-oriented JavaScript idioms and object construction. The JavaScript version of this benchmark
+      was originally published as part of the WebKit test suite.
+      Source code: <a href="sources/hash-map.js">hash-map.js</a></dd>
+    
+    <a name="mandreel">
+    <dt>mandreel</dt>
+    <dd>Tests the <a href="http://bulletphysics.org/">Bullet</a> physics engine's throughput.
+      The physics engine is compiled to JavaScript with
+      <a href="http://www.mandreel.com">Mandreel</a>. JetStream also reports the worst-case
+      performance score
+      for this test as <a href="#mandreel-latency">mandreel-latency</a>.
+      This benchmark was previously published in Octane version 2.
+      Source code: <a href="sources/mandreel.js">mandreel.js</a></dd>
+    
+    <a name="n-body.c">
+    <dt>n-body.c</dt>
+    <dd>Christoph Bauer's version of the classic solar system simulation benchmark from
+      <a href="http://shootout.alioth.debian.org/">The Great Computer Language Shootout</a>, written
+      in C and compiled to JavaScript with Emscripten. The original C version of this benchmark was previously published in the LLVM test suite.
+      Source code: <a href="sources/n-body.c">n-body.c</a>, <a href="sources/n-body.c.js">n-body.c.js</a></dd>
+    
+    <a name="navier-stokes">
+    <dt>navier-stokes</dt>
+    <dd>Fluid simulation written by Oliver Hunt of the WebKit team. Emphasizes floating point array performance.
+      This benchmark was previously published in Octane version 2.
+      Source code: <a href="sources/navier-stokes.js">navier-stokes.js</a></dd>
+    
+    <a name="pdfjs">
+    <dt>pdfjs</dt>
+    <dd>Mozilla's <a href="http://mozilla.github.io/pdf.js/">PDF reader written in JavaScript</a>.
+      This benchmark emphasizes array manipulation and bit operations.
+      This benchmark was previously published in Octane version 2.
+      Source code: <a href="sources/pdfjs.js">pdfjs.js</a></dd>
+    
+    <a name="proto-raytracer">
+    <dt>proto-raytracer</dt>
+    <dd>Ray tracer written in JavaScript using prototype.js. Tests object construction performance
+      and floating point math.
+      This benchmark was previously published in Octane version 2.
+      Source code: <a href="sources/raytrace.js">raytrace.js</a></dd>
+    
+    <a name="quicksort.c">
+    <dt>quicksort.c</dt>
+    <dd>Quicksort benchmark, compiled to JavaScript with Emscripten.
+      The original C version of this benchmark was previously published in the LLVM test suite.
+      Source code: <a href="sources/quicksort.c">quicksort.c</a>, <a href="sources/quicksort.c.js">quicksort.c.js</a></dd>
+    
+    <a name="regexp-2010">
+    <dt>regexp-2010</dt>
+    <dd>Collection of regular expressions found by the V8 team in 2010, curated into a benchmark.
+      This benchmark was previously published in Octane version 2.
+      Source code: <a href="sources/regexp.js">regexp.js</a></dd>
+    
+    <a name="richards">
+    <dt>richards</dt>
+    <dd>Martin Richard's <a href="http://www.cl.cam.ac.uk/~mr10/Bench.html">system language
+        benchmark</a> ported to JavaScript. Tests object property access performance.
+      This benchmark was previously published in Octane version 2.
+      Source code: <a href="sources/richards.js">richards.js</a></dd>
+    
+    <a name="splay">
+    <dt>splay</dt>
+    <dd>Tests the throughput of manipulating a
+      <a href="http://en.wikipedia.org/wiki/Splay_tree">splay tree</a> represented using plain
+      JavaScript objects. JetStream also reports the worst-case performance score for this test
+      as <a href="#splay-latency">splay-latency</a>.
+      This benchmark was previously published in Octane version 2.
+      Source code: <a href="sources/splay.js">splay.js</a></dd>
+    
+    <a name="towers.c">
+    <dt>towers.c</dt>
+    <dd>Towers of Hanoi benchmark from the LLVM test suite, compiled to JavaScript with Emscripten.
+      The original C version of this benchmark was previously published in the LLVM test suite.
+      Source code: <a href="sources/towers.c">towers.c</a>, <a href="sources/towers.c.js">towers.c.js</a></dd>
+    
+    <a name="zlib">
+    <dt>zlib</dt>
+    <dd>A benchmark based on compiling <a href="http://zlib.net">zlib</a> to JavaScript using
+      Emscripten. Based on the
+      <a href="https://github.com/kripken/emscripten/tree/master/tests/zlib">zlib emscripten
+        test</a> but modified to restrict code caching opportunities. 
+      This benchmark was previously published in Octane version 2.
+      Source code: <a href="sources/zlib.js">zlib.js</a>, <a href="sources/zlib-data.js">zlib-data.js</a></dd>
+    </dl>
+</main>
+</body>
+</html>
+

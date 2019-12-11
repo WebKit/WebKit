@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../../js-test-resources/js-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script type="text/javascript">
+description("Test that readyState is CLOSED within onerror event");
+
+window.jsTestIsAsync = true;
+
+var ws = new WebSocket("ws://localhost:8000/websocket/tests/hybi/resources/status-404-without-body.php");
+
+ws.onerror = function(event) {
+    debug("onerror() was called.");
+    shouldBe("ws.readyState", "3");
+    finishJSTest();
+};
+
+</script>
+<script src="../../../../js-test-resources/js-test.js"></script>
+</body>
+</html>

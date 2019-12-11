@@ -1,0 +1,7 @@
+
+PASS idl_test setup 
+PASS Partial interface MediaStreamTrack: original interface defined 
+PASS MediaStreamTrack interface: attribute contentHint 
+PASS MediaStreamTrack interface: audioTrack must inherit property "contentHint" with the proper type 
+PASS MediaStreamTrack interface: videoTrack must inherit property "contentHint" with the proper type 
+

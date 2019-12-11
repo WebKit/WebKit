@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 167: SyntaxError: Unexpected identifier 'a'
+
+
+
+PASS The EventHandler is an element's event handler and has no form owner. 
+PASS The EventHandler is an element's event handler and has a form owner. 
+PASS The EventHandler is not an element's event handler (i.e. Window's event handler) and has no form owner. 
+

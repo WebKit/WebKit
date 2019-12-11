@@ -1,0 +1,45 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600 layerType: background only
+layer at (10,10) size 620x318
+  RenderBlock (positioned) zI: -1 {DIV} at (10,10) size 620x318
+    RenderBlock {DIV} at (10,10) size 600x298 [color=#00FF00]
+      RenderText {#text} at (0,4) size 612x36
+        text run at (0,4) width 612: "xxxxxxxxxxxxxxxxx"
+      RenderBR {BR} at (0,0) size 0x0
+      RenderText {#text} at (0,47) size 612x36
+        text run at (0,47) width 612: "xxxxxxxxxxxxxxxxx"
+      RenderBR {BR} at (0,0) size 0x0
+      RenderText {#text} at (0,90) size 612x36
+        text run at (0,90) width 612: "xxxxxxxxxxxxxxxxx"
+      RenderBR {BR} at (0,0) size 0x0
+      RenderText {#text} at (0,133) size 612x36
+        text run at (0,133) width 612: "xxxxxxxxxxxxxxxxx"
+      RenderBR {BR} at (0,0) size 0x0
+      RenderText {#text} at (0,176) size 612x36
+        text run at (0,176) width 612: "xxxxxxxxxxxxxxxxx"
+      RenderBR {BR} at (0,0) size 0x0
+      RenderText {#text} at (0,219) size 612x36
+        text run at (0,219) width 612: "xxxxxxxxxxxxxxxxx"
+      RenderBR {BR} at (0,0) size 0x0
+      RenderText {#text} at (0,262) size 612x36
+        text run at (0,262) width 612: "xxxxxxxxxxxxxxxxx"
+      RenderBR {BR} at (0,0) size 0x0
+layer at (0,0) size 800x600 layerType: foreground only
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+layer at (10,10) size 620x315
+  RenderBlock (positioned) {DIV} at (10,10) size 620x315
+    RenderBlock {DIV} at (10,10) size 600x157
+      RenderText {#text} at (0,15) size 587x141
+        text run at (0,15) width 587: "This header should be centered"
+        text run at (0,101) width 303: "in the grid lines."
+    RenderBlock {DIV} at (10,166) size 600x139
+      RenderText {#text} at (0,36) size 104x15
+        text run at (0,36) width 104: "This text should snap"
+      RenderBR {BR} at (104,48) size 0x0
+      RenderText {#text} at (0,79) size 115x15
+        text run at (0,79) width 115: "to a 36px font-size grid."
+      RenderBR {BR} at (115,91) size 0x0
+      RenderText {#text} at (0,122) size 249x15
+        text run at (0,122) width 249: "There should be lots of spacing between these lines."

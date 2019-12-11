@@ -1,0 +1,31 @@
+Tests that the behavior of HTMLCollection's [[GetOwnProperty]] conforms to Web IDL
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* Named properties should not mask properties on the prototype
+PASS htmlCollection.namedItem('toString') is document.getElementById('toStringP')
+PASS htmlCollection.toString is HTMLCollection.prototype.toString
+
+* Named properties should not mask static properties on HTMLCollection
+PASS htmlCollection.namedItem('length') is document.getElementById('lengthP')
+PASS htmlCollection.length is 4
+
+* Named properties should not mask own properties on HTMLCollection
+htmlCollection.foo = 'foo'
+PASS htmlCollection.namedItem('foo') is document.getElementById('fooP')
+PASS htmlCollection.foo is "foo"
+
+* Named properties should not mask indexed properties
+PASS htmlCollection.item(0) is testDiv.firstElementChild
+PASS htmlCollection[0] is testDiv.firstElementChild
+PASS htmlCollection.namedItem('0') is document.getElementById('0P')
+PASS htmlCollection['0'] is testDiv.firstElementChild
+
+* Own properties on HTMLCollection should mask properties on prototype
+htmlCollection.toString = 'InstanceToString'
+PASS htmlCollection.toString is "InstanceToString"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

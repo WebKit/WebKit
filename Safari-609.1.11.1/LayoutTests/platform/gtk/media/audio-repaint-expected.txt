@@ -1,0 +1,63 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x17
+        RenderText {#text} at (0,0) size 699x17
+          text run at (0,0) width 609: "This tests that in a html document with inline audio content, the media element repaints correctly "
+          text run at (609,0) width 90: "while playing."
+      RenderBlock (anonymous) at (0,33) size 784x169
+        RenderMedia {AUDIO} at (0,0) size 300x30
+        RenderBR {BR} at (300,30) size 0x0
+        RenderBR {BR} at (300,85) size 0x0
+        RenderBR {BR} at (300,169) size 0x0
+layer at (8,71) size 300x30
+  RenderMedia {AUDIO} at (0,30) size 300x30
+layer at (8,71) size 300x30
+  RenderFlexibleBox {DIV} at (0,0) size 300x30
+    RenderBlock {DIV} at (0,0) size 300x30
+layer at (8,71) size 300x30
+  RenderFlexibleBox {DIV} at (0,0) size 300x30 [bgcolor=#141414CC]
+    RenderButton {BUTTON} at (9,0) size 30x30
+    RenderSlider {INPUT} at (49,11) size 115x8 [color=#E6E6E659]
+      RenderFlexibleBox {DIV} at (0,0) size 115x8 [border: (1px solid #E6E6E659)]
+        RenderBlock {DIV} at (1,-2) size 127x12
+          RenderBlock {DIV} at (-7,0) size 12x12 [color=#FFFFFF]
+    RenderBlock {DIV} at (179,0) size 74x30 [color=#FFFFFF]
+      RenderText {#text} at (0,7) size 74x15
+        text run at (0,7) width 74: "00:00 / 00:01"
+    RenderFlexibleBox {DIV} at (261,0) size 30x30
+      RenderButton {BUTTON} at (0,0) size 30x30
+layer at (8,41) size 300x30
+  RenderFlexibleBox {DIV} at (0,0) size 300x30
+    RenderBlock {DIV} at (0,0) size 300x30
+layer at (8,41) size 300x30
+  RenderFlexibleBox {DIV} at (0,0) size 300x30 [bgcolor=#141414CC]
+    RenderButton {BUTTON} at (9,0) size 30x30
+    RenderSlider {INPUT} at (49,11) size 115x8 [color=#E6E6E659]
+      RenderFlexibleBox {DIV} at (0,0) size 115x8 [border: (1px solid #E6E6E659)]
+        RenderBlock {DIV} at (1,-2) size 127x12
+          RenderBlock {DIV} at (-7,0) size 12x12 [color=#FFFFFF]
+    RenderBlock {DIV} at (179,0) size 74x30 [color=#FFFFFF]
+      RenderText {#text} at (0,7) size 74x15
+        text run at (0,7) width 74: "00:00 / 00:01"
+    RenderFlexibleBox {DIV} at (261,0) size 30x30
+      RenderButton {BUTTON} at (0,0) size 30x30
+layer at (8,153) size 300x30
+  RenderMedia {AUDIO} at (0,112) size 300x30
+layer at (8,153) size 300x30
+  RenderFlexibleBox {DIV} at (0,0) size 300x30
+    RenderBlock {DIV} at (0,0) size 300x30
+layer at (8,153) size 300x30
+  RenderFlexibleBox {DIV} at (0,0) size 300x30 [bgcolor=#141414CC]
+    RenderButton {BUTTON} at (9,0) size 30x30
+    RenderSlider {INPUT} at (49,11) size 115x8 [color=#E6E6E659]
+      RenderFlexibleBox {DIV} at (0,0) size 115x8 [border: (1px solid #E6E6E659)]
+        RenderBlock {DIV} at (1,-2) size 127x12
+          RenderBlock {DIV} at (-7,0) size 12x12 [color=#FFFFFF]
+    RenderBlock {DIV} at (179,0) size 74x30 [color=#FFFFFF]
+      RenderText {#text} at (0,7) size 74x15
+        text run at (0,7) width 74: "00:00 / 00:01"
+    RenderFlexibleBox {DIV} at (261,0) size 30x30
+      RenderButton {BUTTON} at (0,0) size 30x30

@@ -1,0 +1,3 @@
+
+PASS test that test div has paint() value 
+

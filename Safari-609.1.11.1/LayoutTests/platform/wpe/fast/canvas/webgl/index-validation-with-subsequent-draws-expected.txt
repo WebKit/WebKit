@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 43: TypeError: null is not an object (evaluating 'ext.drawElementsInstancedANGLE')
+

@@ -1,0 +1,26 @@
+Pointer Events Capture Test - capture and relatedTarget
+
+Test Description: This test checks if setCapture/releaseCapture functions works properly. Complete the following actions:
+Put your mouse over the purple rectangle. pointerover should be received for the purple rectangle
+Press and hold left mouse button over "Set Capture" button
+Move your mouse. pointerover should be received for the black rectangle
+Release left mouse button to complete the test.
+
+Test passes if the proper behavior of the events is observed.
+
+
+
+Pointer Events Capture Test
+
+Test complete: Scroll to Summary to view Pass/Fail Results.
+
+The following pointer types were detected: mouse.
+
+The following events were logged: pointerover@target1, pointerover@target0, gotpointercapture@target0, lostpointercapture@target0.
+
+Refresh the page to run the tests again with a different pointer type.
+
+
+PASS pointerover shouldn't trigger for the purple rectangle while the black rectangle has capture 
+PASS relatedTarget should not be null even when the capture is set. 
+

@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 1: dynamically added script element
+WI.Frame.extraScriptCollection.
+
+
+== Running test suite: WI.Frame.extraScriptCollection
+-- Running test case: FrameHasNoExtraScriptsYet
+PASS: Main frame should have no dynamic scripts.
+
+-- Running test case: AddExtraScript
+PASS: ExtraScriptAdded event fired.
+PASS: Script should identify as dynamic.
+PASS: Main frame should have 1 dynamic script.
+

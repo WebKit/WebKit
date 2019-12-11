@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<style>
+span::before {
+    content: "Before";
+}
+</style>
+<body id="body">
+
+<button id="button" type="button" aria-hidden="true" aria-haspopup="true"><span></span></button>
+<div id="button2" aria-labelledby="button">
+<button>click</button>
+</div>
+
+<p>Description text</p>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that it won't cause a crash when computing the text value of an AX object that is hidden and has no node.");
+
+    if (window.accessibilityController) {
+
+        var button = accessibilityController.accessibleElementById("button2");
+        // Do not crash
+        button.description;
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

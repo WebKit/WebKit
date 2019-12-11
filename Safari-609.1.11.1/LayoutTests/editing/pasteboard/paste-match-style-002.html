@@ -1,0 +1,62 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    font-size: 24px; 
+}
+.explanation { 
+    border: 2px solid blue; 
+    padding: 12px; 
+    font-size: 24px; 
+    margin-bottom: 24px;
+}
+.scenario { margin-bottom: 16px;}
+.scenario:first-line { font-weight: bold; margin-bottom: 16px;}
+.expected-results:first-line { font-weight: bold }
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    extendSelectionForwardByLineCommand();
+    cutCommand();
+    boldCommand();
+    pasteAndMatchStyleCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+
+<div class="explanation">
+<div class="scenario">
+Tests: 
+<br>
+Pasting and matching style when there is nothing typed, but the typing style is set to bold. This test was created after fixing <A HREF="rdar://problem/3976872">3976872</A>.
+</div>
+<div class="expected-results">
+Expected Results:
+<br>
+The pasted word should match the current typing style. In this case, the typing style is set to bold. Should see this content in the red box below:
+<BR>
+<b>hello</b>
+</div>
+</div>
+
+<div contenteditable id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
+<div id="test" class="editing">
+hello
+</div>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

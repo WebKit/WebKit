@@ -1,0 +1,6 @@
+Test calling functions in strict mode script from WorkerContext. Should print SUCCESS lines, followed by DONE.
+
+SUCCESS: postMessage() called directly
+SUCCESS: called function via attribute on WorkerGlobalScope
+DONE
+

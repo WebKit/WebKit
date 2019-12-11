@@ -1,0 +1,17 @@
+<body>
+<p>Test equality of plugin object properties.</p>
+<embed id="plugin" type="application/x-webkit-test-netscape"><br>
+<iframe srcdoc="<script>parent.plugin.remember(parent.document)</script>"></iframe>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+    
+window.onload = function() {
+    var plugin = document.getElementById('plugin');
+    var div = document.createElement('div');
+    div.textContent = "Send two references of a JavaScript object to the plugin for identity comparison in C++ " 
+        + (plugin.objectsAreSame(document, document) ? "PASS" : "FAIL");
+    document.body.appendChild(div);
+}
+</script>
+</body>

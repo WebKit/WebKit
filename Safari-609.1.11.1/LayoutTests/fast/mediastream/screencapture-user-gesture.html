@@ -1,0 +1,30 @@
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+promise_test(() => {
+    let promise;
+    internals.withUserGesture(() => {
+        promise = navigator.mediaDevices.getDisplayMedia({video : true});
+    });
+    return promise;
+}, "Allow getDisplayMedia call in case of user gesture");
+
+promise_test(() => {
+    let promise;
+    internals.withUserGesture(() => {
+        const promise1 = navigator.mediaDevices.getDisplayMedia({video : true});
+        const promise2 = navigator.mediaDevices.getDisplayMedia({video : true}).then(() => {
+            return Promise.reject("Second promise should reject");
+        }, () => {
+            return "Second promise rejected";
+        });
+        promise = Promise.all([promise1, promise2]);
+    });
+    return promise;
+}, "Disallow getDisplayMedia calls in case of user gesture if not the first call");
+
+
+promise_test((test) => {
+    return promise_rejects(test, "InvalidAccessError", navigator.mediaDevices.getDisplayMedia({video : true}));
+}, "Deny getDisplayMedia call if no user gesture");
+</script>

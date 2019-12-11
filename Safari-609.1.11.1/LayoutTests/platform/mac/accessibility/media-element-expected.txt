@@ -1,0 +1,98 @@
+
+Dump <video> element controller accessibility object tree at 'canplaythrough' event.
+
++++++++++++++++++++++++++++++++++++
+
+State at 'canplaythrough' event:
+
+    description: AXDescription: 
+    role: AXRole: AXGroup
+    subrole: AXSubrole: AXVideo
+
+
+        description: AXDescription: Video Playback
+        role: AXRole: AXToolbar
+
+
+            description: AXDescription: 
+            role: AXRole: AXGroup
+
+
+                description: AXDescription: 
+                role: AXRole: AXGroup
+
+
+                description: AXDescription: 
+                role: AXRole: AXGroup
+
+
+            description: AXDescription: Play
+            role: AXRole: AXButton
+
+
+            description: AXDescription: Rewind 30 Seconds
+            role: AXRole: AXButton
+
+
+            description: AXDescription: Elapsed 0 Seconds
+            role: AXRole: AXGroup
+            subrole: AXSubrole: AXApplicationTimer
+
+
+                description: AXDescription: 
+                role: AXRole: AXGroup
+
+
+                    description: AXDescription: 
+                    role: AXRole: AXStaticText
+
+
+            description: AXDescription: Duration
+            role: AXRole: AXSlider
+
+
+                description: AXDescription: 
+                role: AXRole: AXValueIndicator
+
+
+            description: AXDescription: Remaining 6 Seconds
+            role: AXRole: AXGroup
+            subrole: AXSubrole: AXApplicationTimer
+
+
+                description: AXDescription: 
+                role: AXRole: AXGroup
+
+
+                    description: AXDescription: 
+                    role: AXRole: AXStaticText
+
+
+            description: AXDescription: 
+            role: AXRole: AXGroup
+
+
+            description: AXDescription: 
+            role: AXRole: AXGroup
+
+
+            description: AXDescription: Volume
+            role: AXRole: AXSlider
+
+
+                description: AXDescription: 
+                role: AXRole: AXValueIndicator
+
+
+            description: AXDescription: Mute
+            role: AXRole: AXCheckBox
+
+
+            description: AXDescription: Display Full Screen
+            role: AXRole: AXButton
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

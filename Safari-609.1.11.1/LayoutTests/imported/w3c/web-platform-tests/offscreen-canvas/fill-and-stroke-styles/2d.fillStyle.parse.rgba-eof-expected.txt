@@ -1,0 +1,5 @@
+2d.fillStyle.parse.rgba-eof
+
+
+FAIL OffscreenCanvas test: 2d.fillStyle.parse.rgba-eof null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

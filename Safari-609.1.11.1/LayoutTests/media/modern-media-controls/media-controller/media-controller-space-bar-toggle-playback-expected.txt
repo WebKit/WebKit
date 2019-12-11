@@ -1,0 +1,29 @@
+Testing media is paused and resumed when pressing the space bar in fullscreen.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Obtained a 'play' event.
+
+Entering fullscreen.
+
+Obtained a 'webkitfullscreenchange' event.
+media.webkitDisplayingFullscreen = true.
+PASS media.paused is false
+
+Pressing the space bar.
+
+Obtained a 'pause' event.
+
+Pressing the space bar.
+
+Obtained a 'play' event.
+
+Obtained a 'webkitfullscreenchange' event.
+media.webkitDisplayingFullscreen = false.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

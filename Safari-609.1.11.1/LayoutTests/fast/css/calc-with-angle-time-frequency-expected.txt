@@ -1,0 +1,60 @@
+Tests that using angle, time and frequency units in calc() is working as intended.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+testDiv.style['-webkit-filter'] = 'hue-rotate(calc(300deg/2))'
+PASS testDiv.style['-webkit-filter'] is "hue-rotate(calc(150deg))"
+PASS window.getComputedStyle(testDiv).getPropertyValue('-webkit-filter') is "hue-rotate(150deg)"
+testDiv.style['-webkit-filter'] = 'hue-rotate(calc(300rad/2))'
+PASS testDiv.style['-webkit-filter'] is "hue-rotate(calc(150rad))"
+PASS window.getComputedStyle(testDiv).getPropertyValue('-webkit-filter') is "hue-rotate(8594.366926962348deg)"
+testDiv.style['-webkit-filter'] = 'hue-rotate(calc(300grad/2))'
+PASS testDiv.style['-webkit-filter'] is "hue-rotate(calc(150grad))"
+PASS window.getComputedStyle(testDiv).getPropertyValue('-webkit-filter') is "hue-rotate(135deg)"
+testDiv.style['-webkit-filter'] = 'hue-rotate(calc(3turn/2))'
+PASS testDiv.style['-webkit-filter'] is "hue-rotate(calc(1.5turn))"
+PASS window.getComputedStyle(testDiv).getPropertyValue('-webkit-filter') is "hue-rotate(540deg)"
+testDiv.style['-webkit-filter'] = 'hue-rotate(calc(1turn + 10deg))'
+PASS testDiv.style['-webkit-filter'] is "hue-rotate(calc(370deg))"
+PASS window.getComputedStyle(testDiv).getPropertyValue('-webkit-filter') is "hue-rotate(370deg)"
+testDiv.style['-webkit-filter'] = 'hue-rotate(calc(300deg + 30deg))'
+PASS testDiv.style['-webkit-filter'] is "hue-rotate(calc(330deg))"
+PASS window.getComputedStyle(testDiv).getPropertyValue('-webkit-filter') is "hue-rotate(330deg)"
+testDiv.style['-webkit-filter'] = 'hue-rotate(calc(2turn + 1turn))'
+PASS testDiv.style['-webkit-filter'] is "hue-rotate(calc(3turn))"
+PASS window.getComputedStyle(testDiv).getPropertyValue('-webkit-filter') is "hue-rotate(1080deg)"
+testDiv.style['transition-delay'] = 'calc(300ms/2)'
+PASS testDiv.style['transition-delay'] is "calc(150ms)"
+PASS window.getComputedStyle(testDiv).getPropertyValue('transition-delay') is "0.15s"
+testDiv.style['transition-delay'] = 'calc(300s/2)'
+PASS testDiv.style['transition-delay'] is "calc(150s)"
+PASS window.getComputedStyle(testDiv).getPropertyValue('transition-delay') is "150s"
+testDiv.style['transition-delay'] = 'calc(10s + 100ms)'
+PASS testDiv.style['transition-delay'] is "calc(10100ms)"
+PASS window.getComputedStyle(testDiv).getPropertyValue('transition-delay') is "10.1s"
+testDiv.style['transition-delay'] = 'calc(100ms + 10s)'
+PASS testDiv.style['transition-delay'] is "calc(10100ms)"
+PASS window.getComputedStyle(testDiv).getPropertyValue('transition-delay') is "10.1s"
+testDiv.style['transition-delay'] = 'calc(4s + 1s)'
+PASS testDiv.style['transition-delay'] is "calc(5s)"
+PASS window.getComputedStyle(testDiv).getPropertyValue('transition-delay') is "5s"
+testDiv.style['transition-delay'] = 'calc(4ms + 1ms)'
+PASS testDiv.style['transition-delay'] is "calc(5ms)"
+PASS window.getComputedStyle(testDiv).getPropertyValue('transition-delay') is "0.005s"
+testDiv.style['width'] = 'calc(300Hz/2)'
+PASS testDiv.style['width'] is ""
+testDiv.style['width'] = 'calc(300kHz/2)'
+PASS testDiv.style['width'] is ""
+testDiv.style['width'] = 'calc(10Hz + 20Hz)'
+PASS testDiv.style['width'] is ""
+testDiv.style['width'] = 'calc(10kHz + 20kHz)'
+PASS testDiv.style['width'] is ""
+testDiv.style['width'] = 'calc(10kHz + 200Hz)'
+PASS testDiv.style['width'] is ""
+testDiv.style['width'] = 'calc(200Hz + 10kHz)'
+PASS testDiv.style['width'] is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

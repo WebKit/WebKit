@@ -1,0 +1,8 @@
+2d.text.draw.align.end.rtl
+textAlign end with rtl is the left edge
+Actual output:
+Expected output:
+
+
+PASS textAlign end with rtl is the left edge 
+

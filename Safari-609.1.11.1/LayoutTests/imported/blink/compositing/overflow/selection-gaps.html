@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<style>
+  .container {
+    height: 500px;
+    width: 300px;
+    overflow: scroll;
+  }
+
+  .scrolled {
+    height: 50px;
+    width: 100px;
+    background: orange;
+    margin: 15px;
+    transform: translateZ(0);
+  }
+</style>
+<script>
+  if (window.internals)
+    window.internals.settings.setPreferCompositingToLCDTextEnabled(true);
+
+  onload = function()
+  {
+    var selection = getSelection();
+
+    var range = document.createRange();
+    range.selectNode(document.getElementById("selection"));
+    selection.addRange(range);
+  }
+</script>
+
+This test passes if the highlighted area includes the gaps between scrolled children.
+
+<div class="container">
+  <div class="scrolled">Lorem Ipsum</div>
+  <div class="scrolled">Lorem Ipsum</div>
+  <div class="scrolled" id="selection">Lorem Ipsum</div>
+  <div class="scrolled">Lorem Ipsum</div>
+  <div class="scrolled">Lorem Ipsum</div>
+  <div class="scrolled">Lorem Ipsum</div>
+  <div class="scrolled">Lorem Ipsum</div>
+  <div class="scrolled">Lorem Ipsum</div>
+  <div class="scrolled">Lorem Ipsum</div>
+  <div class="scrolled">Lorem Ipsum</div>
+</div>

@@ -1,0 +1,28 @@
+This is a test
+
+
+=== Enable the LayerTree agent ===
+
+PASS
+
+=== Get the Document ===
+
+PASS
+
+=== Get the layer tree ===
+
+PASS
+
+=== Check layers ===
+
+PASS: Expected number of anonymous layers.
+PASS: The sole anonymous layer has a non-zero node id.
+PASS: The sole anonymous layer has a :first-letter pseudo-element.
+
+=== Check node ===
+
+PASS: Node was found.
+PASS: Node has expected localName.
+PASS: Node has id.
+PASS: Node has expected id.
+

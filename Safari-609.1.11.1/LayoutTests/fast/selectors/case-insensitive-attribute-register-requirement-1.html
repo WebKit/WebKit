@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+testcase {
+    background-color: red;
+}
+</style>
+<style id="style">
+</style>
+</head>
+<body>
+    <div style="display:none" id="test-root">
+        <testcase id="testcase1" type="foobar" attribute1="Value1" class="bar baz bazoo"></testcase>
+        <testcase id="testcase2" type="Foobar" class="bar baz bazoo" attribute2="value2"></testcase>
+        <testcase id="testcase3" type="FOOBAR" attribute1="value1" class="foo baz bazoo"></testcase>
+        <testcase id="testcase4" type="foobar" attribute1="vAlue1" class="foo bar bazoo"></testcase>
+        <testcase id="testcase5" type="Foobar" class="foo baz bazoo" attribute2="value2"></testcase>
+        <testcase id="testcase6" type="FOOBAR" attribute1="vaLue1" class="foo bar baz"></testcase>
+        <testcase id="testcase7" type="foobar" attribute1="valUe1" class="bar baz bazoo"></testcase>
+        <testcase id="testcase8" type="Foobar" attribute1="valuE1" class="foo baz bazoo"></testcase>
+        <testcase id="testcase9" type="FOOBAR" class="foo bar bazoo" attribute2="value2"></testcase>
+        <testcase id="testcase10" type="foobar" attribute1="value1" class="foo bar bazoo"></testcase>
+    </div>
+</body>
+<script>
+description('Check various cases of register pressure with case-insensitive attribute matching (e.g. [foo=bar i]).');
+
+function testQuerySelector(selector, expectedIds) {
+    shouldBe("document.querySelectorAll('" + selector + "').length", '' + expectedIds.length);
+    for (var i = 0; i < expectedIds.length; ++i)
+        shouldBeEqualToString("document.querySelectorAll('" + selector + "')[" + i + "].id", expectedIds[i]);
+}
+
+function testStyling(selector, expectedIds) {
+    var stylingElement = document.getElementById("style");
+    stylingElement.innerHTML = '' + selector + ' { background-color: rgb(10, 100, 200); }';
+
+    var allTestCases = document.querySelectorAll("#test-root *");
+    for (var i = 0; i < allTestCases.length; ++i) {
+        var expectMatch = expectedIds.indexOf(allTestCases[i].id) >= 0;
+        shouldBeEqualToString('getComputedStyle(document.querySelectorAll("#test-root *")[' + i + ']).backgroundColor', expectMatch ? 'rgb(10, 100, 200)' : 'rgb(255, 0, 0)');
+    }
+
+    stylingElement.innerHTML = '';
+}
+
+function testSelector(selector, expectedIds) {
+    testQuerySelector(selector, expectedIds);
+    testStyling(selector, expectedIds);
+}
+
+function testSelectorVariants(selector, expectedIds) {
+    debug("Testing \"" + selector + "\"");
+    debug("-baseline:");
+    testSelector(selector, expectedIds);
+    debug("");
+
+    debug("-with tagname:");
+    testSelector('testcase' + selector, expectedIds);
+    debug("");
+
+    debug("-with classes:");
+    testSelector(':matches(.foo, .bar, .bazoo)' + selector, expectedIds);
+    debug("");
+
+    debug("-in functional pseudo classes:");
+    testSelector(':nth-child(n of :matches(' + selector + ', #this-is-not-in-the-document))', expectedIds);
+    debug("");
+
+
+    debug("");
+}
+
+var simpleCases = [
+    ["[type=foobar i]",["testcase1", "testcase2", "testcase3", "testcase4", "testcase5", "testcase6", "testcase7", "testcase8", "testcase9", "testcase10"]],
+    ["[attribute1=VALUE1 i]",["testcase1", "testcase3", "testcase4", "testcase6", "testcase7", "testcase8", "testcase10"]],
+    ["[type~=foobar i]",["testcase1", "testcase2", "testcase3", "testcase4", "testcase5", "testcase6", "testcase7", "testcase8", "testcase9", "testcase10"]],
+    ["[type|=foobar i]",["testcase1", "testcase2", "testcase3", "testcase4", "testcase5", "testcase6", "testcase7", "testcase8", "testcase9", "testcase10"]],
+    ["[type^=foOba i]",["testcase1", "testcase2", "testcase3", "testcase4", "testcase5", "testcase6", "testcase7", "testcase8", "testcase9", "testcase10"]],
+    ["[type$=oobAR i]",["testcase1", "testcase2", "testcase3", "testcase4", "testcase5", "testcase6", "testcase7", "testcase8", "testcase9", "testcase10"]],
+    ["[type*=OOba i]",["testcase1", "testcase2", "testcase3", "testcase4", "testcase5", "testcase6", "testcase7", "testcase8", "testcase9", "testcase10"]],
+];
+
+for (var testCase of simpleCases) {
+    testSelectorVariants(testCase[0], testCase[1]);
+
+    var repeatedSelector = testCase[0];
+    for (var i = 0; i < 20; ++i) {
+        repeatedSelector += testCase[0];
+    }
+    testSelectorVariants(repeatedSelector, testCase[1]);
+}
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

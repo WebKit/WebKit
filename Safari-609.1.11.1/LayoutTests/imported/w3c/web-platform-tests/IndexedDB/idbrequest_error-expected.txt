@@ -1,0 +1,3 @@
+
+PASS IDBRequest.error throws if ready state is pending 
+

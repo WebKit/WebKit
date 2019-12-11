@@ -1,0 +1,38 @@
+<head>
+    <script src="../../../../resources/js-test-pre.js"></script>
+    <script src="resources/location-tests-functions.js"></script>
+</head>
+
+<script>
+
+self.jsTestIsAsync = true;
+
+description("Test the Location object's ancestorOrigins property.")
+
+shouldBeType("window.location.ancestorOrigins", "DOMStringList");
+shouldBe("window.location.ancestorOrigins.length", "0");
+shouldBeTrue("window.location.ancestorOrigins === window.location.ancestorOrigins");
+
+var subframeOrigins;
+
+window.onmessage = function(event)
+{
+    subframeOrigins = event.data;
+
+    shouldBe("subframeOrigins.length", "1");
+    shouldBe("subframeOrigins[0]", "'file://'");
+
+    finishJSTest();
+}
+
+</script>
+<iframe srcdoc="
+  <script>
+    var origins = [];
+    for (var i = 0; i < location.ancestorOrigins.length; ++i) {
+        origins.push(location.ancestorOrigins.item(i));
+    }
+    top.postMessage(origins, '*')
+  </script>
+"></iframe>
+<script src="../../../../resources/js-test-post.js"></script>

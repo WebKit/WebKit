@@ -1,0 +1,31 @@
+{
+    "domain": "Audit",
+    "description": "",
+    "version": 3,
+    "targetTypes": ["javascript", "page", "service-worker", "worker"],
+    "commands": [
+        {
+            "name": "setup",
+            "description": "Creates the `WebInspectorAudit` object that is passed to run. Must call teardown before calling setup more than once.",
+            "parameters": [
+                { "name": "contextId", "$ref": "Runtime.ExecutionContextId", "optional": true, "description": "Specifies in which isolated context to run the test. Each content script lives in an isolated context and this parameter may be used to specify one of those contexts. If the parameter is omitted or 0 the evaluation will be performed in the context of the inspected page." }
+            ]
+        },
+        {
+            "name": "run",
+            "description": "Parses and evaluates the given test string and sends back the result. Returned values are saved to the \"audit\" object group. Call setup before and teardown after if the `WebInspectorAudit` object should be passed into the test.",
+            "parameters": [
+                { "name": "test", "type": "string", "description": "Test string to parse and evaluate." },
+                { "name": "contextId", "$ref": "Runtime.ExecutionContextId", "optional": true, "description": "Specifies in which isolated context to run the test. Each content script lives in an isolated context and this parameter may be used to specify one of those contexts. If the parameter is omitted or 0 the evaluation will be performed in the context of the inspected page." }
+            ],
+            "returns": [
+                { "name": "result", "$ref": "Runtime.RemoteObject", "description": "Evaluation result." },
+                { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True if the result was thrown during the evaluation." }
+            ]
+        },
+        {
+            "name": "teardown",
+            "description": "Destroys the `WebInspectorAudit` object that is passed to run. Must call setup before calling teardown."
+        }
+    ]
+}

@@ -1,0 +1,458 @@
+# Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../webrtc.gni")
+if (rtc_enable_protobuf) {
+  import("//third_party/protobuf/proto_library.gni")
+}
+if (is_android) {
+  import("//build/config/android/config.gni")
+  import("//build/config/android/rules.gni")
+}
+
+group("logging") {
+  deps = [
+    ":rtc_event_audio",
+    ":rtc_event_bwe",
+    ":rtc_event_log_impl_encoder",
+    ":rtc_event_pacing",
+    ":rtc_event_rtp_rtcp",
+    ":rtc_event_video",
+  ]
+}
+
+rtc_source_set("rtc_event_log_api") {
+  sources = [
+    "rtc_event_log/encoder/rtc_event_log_encoder.h",
+    "rtc_event_log/events/rtc_event.h",
+  ]
+
+  deps = [
+    "../api:rtp_parameters",
+    "../api:scoped_refptr",
+    "../api/rtc_event_log",
+    "../api/task_queue",
+    "../rtc_base:rtc_base_approved",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
+rtc_source_set("rtc_stream_config") {
+  sources = [
+    "rtc_event_log/rtc_stream_config.cc",
+    "rtc_event_log/rtc_stream_config.h",
+  ]
+
+  deps = [
+    ":rtc_event_log_api",
+    "../api:rtp_headers",
+    "../api:rtp_parameters",
+  ]
+}
+
+rtc_source_set("rtc_event_pacing") {
+  sources = [
+    "rtc_event_log/events/rtc_event_alr_state.cc",
+    "rtc_event_log/events/rtc_event_alr_state.h",
+  ]
+
+  deps = [
+    ":rtc_event_log_api",
+    "../api:scoped_refptr",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
+rtc_source_set("rtc_event_audio") {
+  sources = [
+    "rtc_event_log/events/rtc_event_audio_network_adaptation.cc",
+    "rtc_event_log/events/rtc_event_audio_network_adaptation.h",
+    "rtc_event_log/events/rtc_event_audio_playout.cc",
+    "rtc_event_log/events/rtc_event_audio_playout.h",
+    "rtc_event_log/events/rtc_event_audio_receive_stream_config.cc",
+    "rtc_event_log/events/rtc_event_audio_receive_stream_config.h",
+    "rtc_event_log/events/rtc_event_audio_send_stream_config.cc",
+    "rtc_event_log/events/rtc_event_audio_send_stream_config.h",
+  ]
+
+  deps = [
+    ":rtc_event_log_api",
+    ":rtc_stream_config",
+    "../api:scoped_refptr",
+    "../modules/audio_coding:audio_network_adaptor_config",
+    "../rtc_base:checks",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
+rtc_source_set("rtc_event_bwe") {
+  sources = [
+    "rtc_event_log/events/rtc_event_bwe_update_delay_based.cc",
+    "rtc_event_log/events/rtc_event_bwe_update_delay_based.h",
+    "rtc_event_log/events/rtc_event_bwe_update_loss_based.cc",
+    "rtc_event_log/events/rtc_event_bwe_update_loss_based.h",
+    "rtc_event_log/events/rtc_event_probe_cluster_created.cc",
+    "rtc_event_log/events/rtc_event_probe_cluster_created.h",
+    "rtc_event_log/events/rtc_event_probe_result_failure.cc",
+    "rtc_event_log/events/rtc_event_probe_result_failure.h",
+    "rtc_event_log/events/rtc_event_probe_result_success.cc",
+    "rtc_event_log/events/rtc_event_probe_result_success.h",
+    "rtc_event_log/events/rtc_event_route_change.cc",
+    "rtc_event_log/events/rtc_event_route_change.h",
+  ]
+
+  deps = [
+    ":rtc_event_log_api",
+    "../api:scoped_refptr",
+    "../modules/remote_bitrate_estimator",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
+rtc_source_set("rtc_event_generic_packet_events") {
+  visibility = [ "*" ]
+  sources = [
+    "rtc_event_log/events/rtc_event_generic_ack_received.cc",
+    "rtc_event_log/events/rtc_event_generic_ack_received.h",
+    "rtc_event_log/events/rtc_event_generic_packet_received.cc",
+    "rtc_event_log/events/rtc_event_generic_packet_received.h",
+    "rtc_event_log/events/rtc_event_generic_packet_sent.cc",
+    "rtc_event_log/events/rtc_event_generic_packet_sent.h",
+  ]
+  deps = [
+    ":rtc_event_log_api",
+    "../rtc_base:timeutils",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_source_set("rtc_event_rtp_rtcp") {
+  sources = [
+    "rtc_event_log/events/rtc_event_rtcp_packet_incoming.cc",
+    "rtc_event_log/events/rtc_event_rtcp_packet_incoming.h",
+    "rtc_event_log/events/rtc_event_rtcp_packet_outgoing.cc",
+    "rtc_event_log/events/rtc_event_rtcp_packet_outgoing.h",
+    "rtc_event_log/events/rtc_event_rtp_packet_incoming.cc",
+    "rtc_event_log/events/rtc_event_rtp_packet_incoming.h",
+    "rtc_event_log/events/rtc_event_rtp_packet_outgoing.cc",
+    "rtc_event_log/events/rtc_event_rtp_packet_outgoing.h",
+  ]
+
+  deps = [
+    ":rtc_event_log_api",
+    "../api:array_view",
+    "../api:scoped_refptr",
+    "../modules/rtp_rtcp:rtp_rtcp_format",
+    "../rtc_base:checks",
+    "../rtc_base:rtc_base_approved",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
+rtc_source_set("rtc_event_video") {
+  sources = [
+    "rtc_event_log/events/rtc_event_video_receive_stream_config.cc",
+    "rtc_event_log/events/rtc_event_video_receive_stream_config.h",
+    "rtc_event_log/events/rtc_event_video_send_stream_config.cc",
+    "rtc_event_log/events/rtc_event_video_send_stream_config.h",
+  ]
+
+  deps = [
+    ":rtc_event_log_api",
+    ":rtc_stream_config",
+    "../api:scoped_refptr",
+    "../rtc_base:checks",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
+# TODO(eladalon): Break down into (1) encoder and (2) decoder; we don't need
+# the decoder code in the WebRTC library, only in unit tests and tools.
+rtc_static_library("rtc_event_log_impl_encoder") {
+  sources = [
+    "rtc_event_log/encoder/blob_encoding.cc",
+    "rtc_event_log/encoder/blob_encoding.h",
+    "rtc_event_log/encoder/delta_encoding.cc",
+    "rtc_event_log/encoder/delta_encoding.h",
+    "rtc_event_log/encoder/rtc_event_log_encoder_common.cc",
+    "rtc_event_log/encoder/rtc_event_log_encoder_common.h",
+    "rtc_event_log/encoder/var_int.cc",
+    "rtc_event_log/encoder/var_int.h",
+  ]
+
+  defines = []
+
+  deps = [
+    "../api:rtp_headers",
+    "../api:rtp_parameters",
+    "../api/transport:network_control",
+    "../rtc_base:checks",
+    "../rtc_base:rtc_base_approved",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+
+  if (rtc_enable_protobuf) {
+    defines += [ "ENABLE_RTC_EVENT_LOG" ]
+    deps += [
+      ":ice_log",
+      ":rtc_event_audio",
+      ":rtc_event_bwe",
+      ":rtc_event_generic_packet_events",
+      ":rtc_event_log2_proto",
+      ":rtc_event_log_api",
+      ":rtc_event_log_proto",
+      ":rtc_event_pacing",
+      ":rtc_event_rtp_rtcp",
+      ":rtc_event_video",
+      ":rtc_stream_config",
+      "../api:array_view",
+      "../modules/audio_coding:audio_network_adaptor",
+      "../modules/remote_bitrate_estimator",
+      "../modules/rtp_rtcp:rtp_rtcp_format",
+    ]
+    sources += [
+      "rtc_event_log/encoder/rtc_event_log_encoder_legacy.cc",
+      "rtc_event_log/encoder/rtc_event_log_encoder_legacy.h",
+      "rtc_event_log/encoder/rtc_event_log_encoder_new_format.cc",
+      "rtc_event_log/encoder/rtc_event_log_encoder_new_format.h",
+    ]
+  }
+}
+
+# TODO(bugs.webrtc.org/6463): For backwards compatibility; delete as
+# soon as downstream dependencies are updated.
+rtc_source_set("rtc_event_log_impl_output") {
+  sources = [
+    "rtc_event_log/output/rtc_event_log_output_file.h",
+  ]
+  deps = [
+    "../api:rtc_event_log_output_file",
+  ]
+}
+
+if (rtc_enable_protobuf) {
+  rtc_source_set("rtc_event_log_impl") {
+    visibility = [ "../api/rtc_event_log:rtc_event_log_factory" ]
+    sources = [
+      "rtc_event_log/rtc_event_log_impl.cc",
+      "rtc_event_log/rtc_event_log_impl.h",
+    ]
+    deps = [
+      ":ice_log",
+      ":rtc_event_log_api",
+      ":rtc_event_log_impl_encoder",
+      "../api:libjingle_logging_api",
+      "../api/rtc_event_log",
+      "../api/task_queue",
+      "../rtc_base:checks",
+      "../rtc_base:rtc_base_approved",
+      "../rtc_base:rtc_task_queue",
+      "../rtc_base:safe_minmax",
+      "../rtc_base/synchronization:sequence_checker",
+      "//third_party/abseil-cpp/absl/memory",
+      "//third_party/abseil-cpp/absl/types:optional",
+    ]
+  }
+}
+
+rtc_source_set("fake_rtc_event_log") {
+  testonly = true
+  sources = [
+    "rtc_event_log/fake_rtc_event_log.cc",
+    "rtc_event_log/fake_rtc_event_log.h",
+    "rtc_event_log/fake_rtc_event_log_factory.cc",
+    "rtc_event_log/fake_rtc_event_log_factory.h",
+  ]
+
+  deps = [
+    ":ice_log",
+    ":rtc_event_log_api",
+    "../api/rtc_event_log",
+    "../rtc_base",
+    "../rtc_base:checks",
+  ]
+}
+
+if (rtc_enable_protobuf) {
+  proto_library("rtc_event_log_proto") {
+    visibility = [ "*" ]
+    sources = [
+      "rtc_event_log/rtc_event_log.proto",
+    ]
+    proto_out_dir = "logging/rtc_event_log"
+  }
+
+  proto_library("rtc_event_log2_proto") {
+    visibility = [ "*" ]
+    sources = [
+      "rtc_event_log/rtc_event_log2.proto",
+    ]
+    proto_out_dir = "logging/rtc_event_log"
+  }
+
+  rtc_static_library("rtc_event_log_parser") {
+    visibility = [ "*" ]
+    sources = [
+      "rtc_event_log/logged_events.cc",
+      "rtc_event_log/logged_events.h",
+      "rtc_event_log/rtc_event_log_parser.cc",
+      "rtc_event_log/rtc_event_log_parser.h",
+      "rtc_event_log/rtc_event_processor.cc",
+      "rtc_event_log/rtc_event_processor.h",
+    ]
+
+    deps = [
+      ":ice_log",
+      ":rtc_event_bwe",
+      ":rtc_event_log2_proto",
+      ":rtc_event_log_impl_encoder",
+      ":rtc_event_log_proto",
+      ":rtc_stream_config",
+      "../api:function_view",
+      "../api:rtp_headers",
+      "../api:rtp_parameters",
+      "../api/rtc_event_log",
+      "../api/units:data_rate",
+      "../api/units:time_delta",
+      "../api/units:timestamp",
+      "../call:video_stream_api",
+      "../modules:module_api",
+      "../modules/audio_coding:audio_network_adaptor",
+      "../modules/remote_bitrate_estimator",
+      "../modules/rtp_rtcp",
+      "../modules/rtp_rtcp:rtp_rtcp_format",
+      "../rtc_base:checks",
+      "../rtc_base:deprecation",
+      "../rtc_base:protobuf_utils",
+      "../rtc_base:rtc_base_approved",
+      "../rtc_base:rtc_numerics",
+      "//third_party/abseil-cpp/absl/memory",
+      "//third_party/abseil-cpp/absl/types:optional",
+    ]
+  }
+
+  if (rtc_include_tests) {
+    rtc_source_set("rtc_event_log_tests") {
+      testonly = true
+      assert(rtc_enable_protobuf)
+      defines = [ "ENABLE_RTC_EVENT_LOG" ]
+      sources = [
+        "rtc_event_log/encoder/blob_encoding_unittest.cc",
+        "rtc_event_log/encoder/delta_encoding_unittest.cc",
+        "rtc_event_log/encoder/rtc_event_log_encoder_common_unittest.cc",
+        "rtc_event_log/encoder/rtc_event_log_encoder_unittest.cc",
+        "rtc_event_log/rtc_event_log_unittest.cc",
+        "rtc_event_log/rtc_event_log_unittest_helper.cc",
+        "rtc_event_log/rtc_event_log_unittest_helper.h",
+        "rtc_event_log/rtc_event_processor_unittest.cc",
+      ]
+      deps = [
+        ":ice_log",
+        ":rtc_event_audio",
+        ":rtc_event_bwe",
+        ":rtc_event_generic_packet_events",
+        ":rtc_event_log2_proto",
+        ":rtc_event_log_impl_encoder",
+        ":rtc_event_log_parser",
+        ":rtc_event_log_proto",
+        ":rtc_event_pacing",
+        ":rtc_event_rtp_rtcp",
+        ":rtc_event_video",
+        ":rtc_stream_config",
+        "../api:array_view",
+        "../api:rtc_event_log_output_file",
+        "../api:rtp_headers",
+        "../api:rtp_parameters",
+        "../api/rtc_event_log",
+        "../api/rtc_event_log:rtc_event_log_factory",
+        "../api/task_queue:default_task_queue_factory",
+        "../call",
+        "../call:call_interfaces",
+        "../modules/audio_coding:audio_network_adaptor",
+        "../modules/remote_bitrate_estimator",
+        "../modules/rtp_rtcp:rtp_rtcp_format",
+        "../rtc_base:checks",
+        "../rtc_base:rtc_base_approved",
+        "../rtc_base:rtc_base_tests_utils",
+        "../system_wrappers",
+        "../test:fileutils",
+        "../test:test_support",
+        "//testing/gtest",
+        "//third_party/abseil-cpp/absl/memory",
+        "//third_party/abseil-cpp/absl/types:optional",
+      ]
+    }
+
+    rtc_executable("rtc_event_log_rtp_dump") {
+      testonly = true
+      sources = [
+        "rtc_event_log/rtc_event_log2rtp_dump.cc",
+      ]
+      deps = [
+        ":rtc_event_log_parser",
+        "../api:array_view",
+        "../api:rtp_headers",
+        "../api/rtc_event_log",
+        "../modules/rtp_rtcp",
+        "../modules/rtp_rtcp:rtp_rtcp_format",
+        "../rtc_base:checks",
+        "../rtc_base:protobuf_utils",
+        "../rtc_base:rtc_base_approved",
+        "../test:rtp_test_utils",
+        "//third_party/abseil-cpp/absl/flags:flag",
+        "//third_party/abseil-cpp/absl/flags:parse",
+        "//third_party/abseil-cpp/absl/flags:usage",
+        "//third_party/abseil-cpp/absl/memory",
+        "//third_party/abseil-cpp/absl/types:optional",
+      ]
+    }
+  }
+}
+
+rtc_source_set("ice_log") {
+  sources = [
+    "rtc_event_log/events/rtc_event_dtls_transport_state.cc",
+    "rtc_event_log/events/rtc_event_dtls_transport_state.h",
+    "rtc_event_log/events/rtc_event_dtls_writable_state.cc",
+    "rtc_event_log/events/rtc_event_dtls_writable_state.h",
+    "rtc_event_log/events/rtc_event_ice_candidate_pair.cc",
+    "rtc_event_log/events/rtc_event_ice_candidate_pair.h",
+    "rtc_event_log/events/rtc_event_ice_candidate_pair_config.cc",
+    "rtc_event_log/events/rtc_event_ice_candidate_pair_config.h",
+    "rtc_event_log/ice_logger.cc",
+    "rtc_event_log/ice_logger.h",
+  ]
+
+  deps = [
+    ":rtc_event_log_api",
+    "../api:libjingle_logging_api",
+
+    # For api/dtls_transport_interface.h
+    "../api:libjingle_peerconnection_api",
+    "../api/rtc_event_log",
+    "../rtc_base:rtc_base_approved",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("mocks") {
+    testonly = true
+    sources = [
+      "rtc_event_log/mock/mock_rtc_event_log.cc",
+      "rtc_event_log/mock/mock_rtc_event_log.h",
+    ]
+    deps = [
+      "../api/rtc_event_log",
+      "../test:test_support",
+    ]
+  }
+}

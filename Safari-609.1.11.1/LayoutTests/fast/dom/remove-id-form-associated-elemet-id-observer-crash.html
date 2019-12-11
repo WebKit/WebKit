@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests removing the id from an element when there is a form associated element observing the same ID.
+WebKit should not crash.</p>
+<div id="container">
+<p id="foo"></p>
+<form id="foo"></form>
+<fieldset form="foo"></fieldset>
+</div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.querySelector('#container p').removeAttribute('id');
+container.remove();
+document.write('PASS');
+</script>
+</body>
+</html>

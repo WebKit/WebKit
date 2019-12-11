@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<head>
+<link href="resources/grid.css" rel="stylesheet">
+<script type="text/javascript">
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<p>The test PASSES if it does not crash on Debug builds.</p>
+<div style="position: relative;">
+    <div class="grid">
+	<div style="width: 1px; grid-column-start: span 100;"></div>
+    </div>
+</div>
+
+<div style="position: relative;">
+    <div class="grid">
+	<div style="width: 1px; grid-column: span 100;"></div>
+    </div>
+</div>
+
+<div style="position: relative;">
+    <div class="grid">
+	<div style="width: 1px; grid-column-end: span 100;"></div>
+    </div>
+</div>
+
+</body>

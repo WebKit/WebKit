@@ -1,0 +1,26 @@
+Test that requestAnimationFrame gets throttled in low power mode.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.isRequestAnimationFrameThrottled() is false
+PASS internals.requestAnimationFrameInterval is Infinity
+rAFHandle = requestAnimationFrame(doWork);
+PASS internals.isRequestAnimationFrameThrottled() is false
+PASS internals.requestAnimationFrameInterval is 0.015
+internals.setLowPowerModeEnabled(true);
+PASS internals.isRequestAnimationFrameThrottled() is true
+PASS internals.requestAnimationFrameInterval is 0.030
+cancelAnimationFrame(rAFHandle);
+PASS internals.isRequestAnimationFrameThrottled() is true
+PASS internals.requestAnimationFrameInterval is 0.030
+rAFHandle = requestAnimationFrame(doWork);
+PASS internals.isRequestAnimationFrameThrottled() is true
+PASS internals.requestAnimationFrameInterval is 0.030
+internals.setLowPowerModeEnabled(false);
+PASS internals.isRequestAnimationFrameThrottled() is false
+PASS internals.requestAnimationFrameInterval is 0.015
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

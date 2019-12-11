@@ -1,0 +1,17 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useMockScrollbars=false ] -->
+<html>
+<head>
+<script>
+if (window.internals) {
+    internals.settings.setUserInterfaceDirectionPolicy("View");
+    internals.settings.setSystemLayoutDirection("RTL");
+}
+</script>
+</head>
+<body>
+<div style="width: 200px; height: 200px; position: relative; overflow: scroll;">
+<div style="width: 1px; height: 2000px; position: absolute; left: 0px; top: 0px;"></div>
+</div>
+<div style="width: 1px; height: 2000px; position: absolute; left: 0px; top: 0px;"></div>
+</body>
+<html>

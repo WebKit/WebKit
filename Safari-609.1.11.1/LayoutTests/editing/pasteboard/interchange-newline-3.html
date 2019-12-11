@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
+
+function runTest() {
+    Markup.description('This demonstrates a bug in interchange newline handling during paste.\n'
+    + 'There is an interchange newline at the end of the incoming fragment and so the caret should end up on an empty line.\n'
+    + 'The editable region is followed by non-editable content, which breaks the old code in paste that handled interchange newlines.');
+
+    var s = window.getSelection();
+    var e = document.getElementById("test");
+
+    s.setPosition(e, 0);
+    document.execCommand("InsertHTML", false, "foo<div>bar</div><br class='Apple-interchange-newline'>");
+
+    Markup.dump(document.body);
+}
+
+</script>
+</head>
+<body>
+<div id="test" contenteditable="true"></div>
+This is non-editable content.
+
+<script>
+runTest();
+</script>
+</body>
+</html>

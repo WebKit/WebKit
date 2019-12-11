@@ -1,0 +1,124 @@
+Test the parsing of :not(selectorList) for querySelector and style.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+1 valid selectors
+PASS document.querySelector(":not(*)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(*)"
+PASS document.querySelector(":not(*    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(*)"
+PASS document.querySelector(":not(foobar)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar)"
+PASS document.querySelector(":not(foobar    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar)"
+PASS document.querySelector(":not(#id)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id)"
+PASS document.querySelector(":not(#id    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id)"
+PASS document.querySelector(":not(.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class)"
+PASS document.querySelector(":not(.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class)"
+PASS document.querySelector(":not(:first-child)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:first-child)"
+PASS document.querySelector(":not(:first-child    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:first-child)"
+PASS document.querySelector(":not(:last-child)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child)"
+PASS document.querySelector(":not(:last-child    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:last-child)"
+PASS document.querySelector(":not(:visited)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:visited)"
+PASS document.querySelector(":not(:visited    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:visited)"
+PASS document.querySelector(":not(foobar#id.class)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class)"
+PASS document.querySelector(":not(foobar#id.class    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(foobar#id.class)"
+PASS document.querySelector(":not(.class:not(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class:not(.notclass))"
+PASS document.querySelector(":not(.class:not(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class:not(.notclass))"
+PASS document.querySelector(":not(.class:matches(.notclass))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class:matches(.notclass))"
+PASS document.querySelector(":not(.class:matches(.notclass)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class:matches(.notclass))"
+PASS document.querySelector(":not(#id:empty)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty)"
+PASS document.querySelector(":not(#id:empty    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty)"
+PASS document.querySelector(":not(a > b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a > b)"
+PASS document.querySelector(":not(a > b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a > b)"
+PASS document.querySelector(":not(a b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a b)"
+PASS document.querySelector(":not(a b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a b)"
+PASS document.querySelector(":not(a + b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a + b)"
+PASS document.querySelector(":not(a + b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a + b)"
+PASS document.querySelector(":not(a ~ b)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a ~ b)"
+PASS document.querySelector(":not(a ~ b    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a ~ b)"
+PASS document.querySelector(":not(a + b > c ~ d e + g)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a + b > c ~ d e + g)"
+PASS document.querySelector(":not(a + b > c ~ d e + g    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(a + b > c ~ d e + g)"
+PASS document.querySelector(":not(:-webkit-any(.selector, #tama, #hanayo, #midoriko))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(:-webkit-any(.selector, #tama, #hanayo, #midoriko)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:-webkit-any(.selector, #tama, #hanayo, #midoriko))"
+PASS document.querySelector(":not(:not(:link))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:not(:link))"
+PASS document.querySelector(":not(:not(:link)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:not(:link))"
+PASS document.querySelector(":not(:nth-child(2n of a, b, c))") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:nth-child(2n of a, b, c))"
+PASS document.querySelector(":not(:nth-child(2n of a, b, c)    )") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(:nth-child(2n of a, b, c))"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

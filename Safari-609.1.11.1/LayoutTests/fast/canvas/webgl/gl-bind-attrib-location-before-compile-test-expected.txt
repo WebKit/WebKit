@@ -1,0 +1,29 @@
+This test ensures WebGL implementations properly handle bindAttribLocation before compiling shaders.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Canvas.getContext
+PASS [object WebGLRenderingContext] is non-null.
+
+Checking gl.bindAttribLocation.
+PASS getError was expected value: NO_ERROR : bindAttribLocation should return NO_ERROR when called before compiling shader.
+PASS program linked successfully
+_glesVertex:5
+vColor   :2
+PASS location of _glesVertex should be 5
+PASS location of vColor should be 2
+PASS drawing is correct
+PASS program linked successfully
+_glesVertex:5
+vColor   :1
+PASS location of _glesVertex should be 5
+PASS location of vColor should be 1
+FAIL pixel at (20,15) is (0,255,0,255), should be (255,0,0,255)
+PASS getError was expected value: NO_ERROR : 
+
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

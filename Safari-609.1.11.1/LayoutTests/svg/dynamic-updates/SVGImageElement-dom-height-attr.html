@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="resources/SVGTestCase.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../fast/repaint/resources/repaint.js"></script>
+</head>
+<body onload="runRepaintTest()">
+<h1>SVG 1.1 dynamic update tests</h1>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+// [Name] SVGImageElement-dom-height-attr.js
+// [Expected rendering result] image at 0x0 size 200x200 - and a series of PASS messages
+
+description("Tests dynamic updates of the 'height' attribute of the SVGImageElement object")
+createSVGTestCase();
+
+var imageElement = createSVGElement("image");
+imageElement.setAttributeNS(xlinkNS, "xlink:href", "../custom/resources/green-checker.png");
+imageElement.setAttribute("preserveAspectRatio", "none");
+imageElement.setAttribute("x", "0");
+imageElement.setAttribute("y", "0");
+imageElement.setAttribute("width", "200");
+imageElement.setAttribute("height", "100");
+rootSVGElement.appendChild(imageElement);
+
+shouldBeEqualToString("imageElement.getAttribute('height')", "100");
+
+function repaintTest() {
+    imageElement.setAttribute("height", "200");
+    shouldBeEqualToString("imageElement.getAttribute('height')", "200");
+
+    completeTest();
+}
+
+var successfullyParsed = true;
+</script>
+</body>
+</html>

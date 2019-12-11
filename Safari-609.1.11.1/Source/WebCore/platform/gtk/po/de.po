@@ -1,0 +1,2732 @@
+# German translations for WebKit package.
+# This file is put in the public domain.
+# Copyright (C) 2009 Christian Dywan <christian@twotoasts.de>, 2009.
+# Mario Blättermann <mario.blaettermann@gmail.com>, 2010, 2012, 2018.
+# Christian Kirbach <Christian.Kirbach@gmail.com>, 2010, 2012.
+# Wolfgang Stöggl <c72578@yahoo.de>, 2012, 2015.
+# Christian Stadelmann <gnome-de@genodeftest.de>, 2014.
+# Bernd Homuth <dev@hmt.im>, 2015.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: webkit HEAD\n"
+"Report-Msgid-Bugs-To: https://bugs.webkit.org/enter_bug.cgi?"
+"product=WebKit&component=WebKitGTK\n"
+"POT-Creation-Date: 2019-09-03 15:30+0000\n"
+"PO-Revision-Date: 2018-08-03 14:51+0200\n"
+"Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
+"Language-Team: Deutsch <gnome-de@gnome.org>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 2.0.9\n"
+
+#: ../LocalizedStringsGtk.cpp:43
+msgid "Copy Link Loc_ation"
+msgstr "Verweisziel _kopieren"
+
+#: ../LocalizedStringsGtk.cpp:48
+msgid "Sa_ve Image As"
+msgstr "Bil_d speichern unter"
+
+#: ../LocalizedStringsGtk.cpp:53
+msgid "Copy Image _Address"
+msgstr "Bild_adresse kopieren"
+
+#: ../LocalizedStringsGtk.cpp:58
+msgid "Cop_y Video Link Location"
+msgstr "Video-Verweisziel _kopieren"
+
+#: ../LocalizedStringsGtk.cpp:63
+msgid "Cop_y Audio Link Location"
+msgstr "Audio-Verweisziel _kopieren"
+
+#: ../LocalizedStringsGtk.cpp:68
+msgid "_Toggle Media Controls"
+msgstr "Medien-Steuerung _an-/ausschalten"
+
+#: ../LocalizedStringsGtk.cpp:73
+msgid "_Show Media Controls"
+msgstr "Medien-Steuerung _anzeigen"
+
+#: ../LocalizedStringsGtk.cpp:78
+msgid "_Hide Media Controls"
+msgstr "Medien-Steuerung _verbergen"
+
+#: ../LocalizedStringsGtk.cpp:83
+msgid "Toggle Media _Loop Playback"
+msgstr "End_loswiedergabe von Medien ein-/ausschalten"
+
+#: ../LocalizedStringsGtk.cpp:88
+msgid "Switch Video to _Fullscreen"
+msgstr "Video in Vollbild umschalten"
+
+#: ../LocalizedStringsGtk.cpp:93
+msgid "_Delete"
+msgstr "_Löschen"
+
+#: ../LocalizedStringsGtk.cpp:98
+msgid "Select _All"
+msgstr "_Alles auswählen"
+
+#: ../LocalizedStringsGtk.cpp:103
+#, fuzzy
+#| msgctxt "Undo action name"
+#| msgid "Insert List"
+msgid "Insert _Emoji"
+msgstr "Liste einfügen"
+
+#: ../LocalizedStringsGtk.cpp:108
+msgid "_Insert Unicode Control Character"
+msgstr "_Unicode-Steuerzeichen einfügen"
+
+#: ../LocalizedStringsGtk.cpp:113
+msgid "Input _Methods"
+msgstr "Eingabe_methoden"
+
+#: ../LocalizedStringsGtk.cpp:118
+msgid "LRM _Left-to-right mark"
+msgstr "LRM Von-_links-nach-rechts-Marke"
+
+#: ../LocalizedStringsGtk.cpp:123
+msgid "RLM _Right-to-left mark"
+msgstr "RLM Von-_rechts-nach-links-Marke"
+
+#: ../LocalizedStringsGtk.cpp:128
+msgid "LRE Left-to-right _embedding"
+msgstr "LRE Von-links-nach-rechts-_Einbettung"
+
+#: ../LocalizedStringsGtk.cpp:133
+msgid "RLE Right-to-left e_mbedding"
+msgstr "RLE Von-rechts-nach-links-E_inbettung"
+
+#: ../LocalizedStringsGtk.cpp:138
+msgid "LRO Left-to-right _override"
+msgstr "LRO Von-links-nach-rechts-Ü_berschreiben"
+
+#: ../LocalizedStringsGtk.cpp:143
+msgid "RLO Right-to-left o_verride"
+msgstr "RLO Von-rechts-nach-links-Ü_berschreiben"
+
+#: ../LocalizedStringsGtk.cpp:148
+msgid "PDF _Pop directional formatting"
+msgstr "PDF Richtungsformatierungs-_Pop"
+
+#: ../LocalizedStringsGtk.cpp:153
+msgid "ZWS _Zero width space"
+msgstr "ZWS-Leerraum mit Breite _null"
+
+#: ../LocalizedStringsGtk.cpp:158
+msgid "ZWJ Zero width _joiner"
+msgstr "ZWJ-_Verbinder mit Breite null"
+
+#: ../LocalizedStringsGtk.cpp:163
+msgid "ZWNJ Zero width _non-joiner"
+msgstr "ZWNJ-_Trenner mit Breite null"
+
+#: ../LocalizedStringsGtk.cpp:169
+#, c-format
+msgid "Use at least one character"
+msgid_plural "Use at least %d characters"
+msgstr[0] "Zumindest ein Zeichen verwenden"
+msgstr[1] "Zumindest %d Zeichen verwenden"
+
+#: ../LocalizedStringsGtk.cpp:175
+#, c-format
+msgid "Use no more than one character"
+msgid_plural "Use no more than %d characters"
+msgstr[0] "Nicht mehr als ein Zeichen verwenden"
+msgstr[1] "Nicht mehr als %d Zeichen verwenden"
+
+#: ../../LocalizedStrings.cpp:97
+msgctxt "alt text for <input> elements with no alt, title, or value"
+msgid "Submit"
+msgstr "Absenden"
+
+#: ../../LocalizedStrings.cpp:102
+msgid "Reset"
+msgstr "Zurücksetzen"
+
+#: ../../LocalizedStrings.cpp:107
+msgid "This is a searchable index. Enter search keywords: "
+msgstr "Dieser Index ist durchsuchbar. Geben Sie Suchbegriffe ein: "
+
+#: ../../LocalizedStrings.cpp:113
+msgid "Submit"
+msgstr "Absenden"
+
+#: ../../LocalizedStrings.cpp:118
+msgid "Choose File"
+msgstr "Datei wählen"
+
+#: ../../LocalizedStrings.cpp:123
+msgid "Choose Files"
+msgstr "Dateien auswählen"
+
+#: ../../LocalizedStrings.cpp:128
+msgid "no file selected"
+msgstr "Keine Datei ausgewählt"
+
+#: ../../LocalizedStrings.cpp:133
+msgid "no files selected"
+msgstr "Keine Dateien ausgewählt"
+
+#: ../../LocalizedStrings.cpp:138
+msgid "Details"
+msgstr "Details"
+
+#: ../../LocalizedStrings.cpp:145
+msgid "Open Link in New _Window"
+msgstr "Verweis in neuem _Reiter öffnen"
+
+#: ../../LocalizedStrings.cpp:150
+msgid "_Download Linked File"
+msgstr "Verweisziel herunter_laden"
+
+#: ../../LocalizedStrings.cpp:156
+msgid "Copy Link"
+msgstr "Verweisziel kopieren"
+
+#: ../../LocalizedStrings.cpp:162
+msgid "Open _Image in New Window"
+msgstr "_Bild in neuem Fenster öffnen"
+
+#: ../../LocalizedStrings.cpp:168
+msgid "Download Image"
+msgstr "Bild herunterladen"
+
+#: ../../LocalizedStrings.cpp:174
+msgid "Cop_y Image"
+msgstr "Bild k_opieren"
+
+#: ../../LocalizedStrings.cpp:179
+msgid "Open _Frame in New Window"
+msgstr "_Rahmen in neuem Fenster öffnen"
+
+#: ../../LocalizedStrings.cpp:184
+msgid "_Copy"
+msgstr "_Kopieren"
+
+#: ../../LocalizedStrings.cpp:189
+msgid "_Back"
+msgstr "_Zurück"
+
+#: ../../LocalizedStrings.cpp:194
+msgid "_Forward"
+msgstr "_Vor"
+
+#: ../../LocalizedStrings.cpp:199
+msgid "_Stop"
+msgstr "_Anhalten"
+
+#: ../../LocalizedStrings.cpp:204
+msgid "_Reload"
+msgstr "_Neu laden"
+
+#: ../../LocalizedStrings.cpp:209
+msgid "Cu_t"
+msgstr "Aus_schneiden"
+
+#: ../../LocalizedStrings.cpp:214
+msgid "_Paste"
+msgstr "E_infügen"
+
+#: ../../LocalizedStrings.cpp:219
+msgid "No Guesses Found"
+msgstr "Keine Vorschläge verfügbar"
+
+#: ../../LocalizedStrings.cpp:224
+msgid "_Ignore Spelling"
+msgstr "Rechtschreibung _ignorieren"
+
+#: ../../LocalizedStrings.cpp:229
+msgid "_Learn Spelling"
+msgstr "Rechtschreibung _hinzufügen"
+
+#: ../../LocalizedStrings.cpp:238
+#, c-format
+msgid "Look Up “%s”"
+msgstr "»%s« nachschlagen"
+
+#: ../../LocalizedStrings.cpp:240
+msgid "Look Up “<selection>”"
+msgstr "»<Auswahl>« nachschlagen"
+
+#: ../../LocalizedStrings.cpp:246
+msgid "_Open Link"
+msgstr "Verweis ö_ffnen"
+
+#: ../../LocalizedStrings.cpp:251
+msgid "Ignore _Grammar"
+msgstr "Grammatik _ignorieren"
+
+#: ../../LocalizedStrings.cpp:256
+msgid "Spelling and _Grammar"
+msgstr "Rechtschreibung und _Grammatik"
+
+#: ../../LocalizedStrings.cpp:262
+msgid "_Show Spelling and Grammar"
+msgstr "Rechtschreibung und Grammatik _anzeigen"
+
+#: ../../LocalizedStrings.cpp:263
+msgid "_Hide Spelling and Grammar"
+msgstr "Rechtschreibung und Grammatik _verbergen"
+
+#: ../../LocalizedStrings.cpp:268
+msgid "_Check Document Now"
+msgstr "Dokument jetzt ü_berprüfen"
+
+#: ../../LocalizedStrings.cpp:273
+msgid "Check Spelling While _Typing"
+msgstr "Rechtschreibung beim _Eintippen überprüfen"
+
+#: ../../LocalizedStrings.cpp:278
+msgid "Check _Grammar With Spelling"
+msgstr "Grammatik beim _Eintippen überprüfen"
+
+#: ../../LocalizedStrings.cpp:283
+msgid "_Font"
+msgstr "_Schriftart"
+
+#: ../../LocalizedStrings.cpp:288
+msgid "_Bold"
+msgstr "_Fett"
+
+#: ../../LocalizedStrings.cpp:293
+msgid "_Italic"
+msgstr "_Kursiv"
+
+#: ../../LocalizedStrings.cpp:298
+msgid "_Underline"
+msgstr "_Unterstreichen"
+
+#: ../../LocalizedStrings.cpp:303
+msgid "_Outline"
+msgstr "_Umrandung"
+
+#: ../../LocalizedStrings.cpp:309
+msgid "Paragraph Direction"
+msgstr "Absatzrichtung"
+
+#: ../../LocalizedStrings.cpp:314
+msgid "Selection Direction"
+msgstr "Wählen Sie die Richtung"
+
+#: ../../LocalizedStrings.cpp:319
+msgid "Default"
+msgstr "Vorgabe"
+
+#: ../../LocalizedStrings.cpp:324
+msgid "Left to Right"
+msgstr "Links nach Rechts"
+
+#: ../../LocalizedStrings.cpp:329
+msgid "Right to Left"
+msgstr "Rechts nach Links"
+
+#: ../../LocalizedStrings.cpp:335
+msgid "Open _Video in New Window"
+msgstr "_Video in neuem Fenster öffnen"
+
+#: ../../LocalizedStrings.cpp:340
+msgid "Open _Audio in New Window"
+msgstr "_Audio in neuem Fenster öffnen"
+
+#: ../../LocalizedStrings.cpp:345
+msgid "Download _Video"
+msgstr "_Video herunterladen"
+
+#: ../../LocalizedStrings.cpp:350
+msgid "Download _Audio"
+msgstr "_Audio herunterladen"
+
+#: ../../LocalizedStrings.cpp:356
+msgid "Copy Video Address"
+msgstr "Videoadresse kopieren"
+
+#: ../../LocalizedStrings.cpp:361
+msgid "Copy Audio Address"
+msgstr "Audioadresse kopieren"
+
+#: ../../LocalizedStrings.cpp:366
+msgid "Controls"
+msgstr "Bedienelemente"
+
+#: ../../LocalizedStrings.cpp:371
+msgid "Show Controls"
+msgstr "Bedienelemente anzeigen"
+
+#: ../../LocalizedStrings.cpp:376
+msgid "Hide Controls"
+msgstr "Bedienelemente verbergen"
+
+#: ../../LocalizedStrings.cpp:381
+msgid "Loop"
+msgstr "Schleife"
+
+#: ../../LocalizedStrings.cpp:386
+msgid "Enter Full Screen"
+msgstr "Vollbild starten"
+
+#: ../../LocalizedStrings.cpp:391
+#, fuzzy
+#| msgctxt "Video Exit Fullscreen context menu item"
+#| msgid "Exit Full Screen"
+msgctxt "Video Exit Full Screen context menu item"
+msgid "Exit Full Screen"
+msgstr "Vollbild verlassen"
+
+#: ../../LocalizedStrings.cpp:397
+msgid "_Play"
+msgstr "_Wiedergeben"
+
+#: ../../LocalizedStrings.cpp:402
+msgid "_Pause"
+msgstr "_Anhalten"
+
+#: ../../LocalizedStrings.cpp:407
+msgid "_Mute"
+msgstr "_Stumm schalten"
+
+#: ../../LocalizedStrings.cpp:412
+msgid "Inspect _Element"
+msgstr "Element _untersuchen"
+
+#: ../../LocalizedStrings.cpp:418
+msgid "_Search the Web"
+msgstr "Im Netz _suchen"
+
+#: ../../LocalizedStrings.cpp:428
+msgid "No recent searches"
+msgstr "Keine vergangenen Suchen"
+
+#: ../../LocalizedStrings.cpp:433
+msgid "Recent Searches"
+msgstr "Letzte Suchen"
+
+#: ../../LocalizedStrings.cpp:438
+msgid "Clear Recent Searches"
+msgstr "Letzte Su_chen löschen"
+
+#: ../../LocalizedStrings.cpp:445
+msgid "HTML content"
+msgstr "HTML-Inhalt"
+
+#: ../../LocalizedStrings.cpp:450
+msgid "link"
+msgstr "Verweis"
+
+#: ../../LocalizedStrings.cpp:455
+msgid "list marker"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:460
+msgid "image map"
+msgstr "Bildkarte"
+
+#: ../../LocalizedStrings.cpp:465
+msgid "heading"
+msgstr "Überschrift"
+
+#: ../../LocalizedStrings.cpp:470
+msgid "color well"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:475
+msgid "definition"
+msgstr "Festlegung"
+
+#: ../../LocalizedStrings.cpp:480
+msgid "description list"
+msgstr "Beschreibungsliste"
+
+#: ../../LocalizedStrings.cpp:485
+msgid "term"
+msgstr "Begriff"
+
+#: ../../LocalizedStrings.cpp:490
+msgid "description"
+msgstr "Beschreibung"
+
+#: ../../LocalizedStrings.cpp:495
+msgid "details"
+msgstr "Details"
+
+#: ../../LocalizedStrings.cpp:500
+msgid "summary"
+msgstr "Zusammenfassung"
+
+#: ../../LocalizedStrings.cpp:505
+msgid "footer"
+msgstr "Fußzeile"
+
+#: ../../LocalizedStrings.cpp:510
+msgid "file upload button"
+msgstr "Knopf zum Hochladen"
+
+#: ../../LocalizedStrings.cpp:515
+msgid "output"
+msgstr "Ausgabe"
+
+#: ../../LocalizedStrings.cpp:520
+msgid "attachment"
+msgstr "Anhang"
+
+#: ../../LocalizedStrings.cpp:525
+msgid "cancel"
+msgstr "Abbrechen"
+
+#: ../../LocalizedStrings.cpp:530
+msgid "feed"
+msgstr "Nachrichtenquelle"
+
+#: ../../LocalizedStrings.cpp:535
+msgid "figure"
+msgstr "Abbildung"
+
+#: ../../LocalizedStrings.cpp:540
+msgid "email field"
+msgstr "E-Mail-Feld"
+
+#: ../../LocalizedStrings.cpp:545
+msgid "telephone number field"
+msgstr "Telefonnummern-Feld"
+
+#: ../../LocalizedStrings.cpp:550
+msgid "URL field"
+msgstr "URL-Feld"
+
+#: ../../LocalizedStrings.cpp:555
+msgid "date field"
+msgstr "Datums-Feld"
+
+#: ../../LocalizedStrings.cpp:560
+msgid "time field"
+msgstr "Zeit-Feld"
+
+#: ../../LocalizedStrings.cpp:565
+msgid "date and time field"
+msgstr "Felder für Datum und Uhrzeit"
+
+#: ../../LocalizedStrings.cpp:570
+msgid "month and year field"
+msgstr "Felder für Jahr und Monat"
+
+#: ../../LocalizedStrings.cpp:575
+msgid "number field"
+msgstr "Zahlenfeld"
+
+#: ../../LocalizedStrings.cpp:580
+msgid "week and year field"
+msgstr "Felder für Jahr und Woche"
+
+#: ../../LocalizedStrings.cpp:585
+msgid "press"
+msgstr "drücken"
+
+#: ../../LocalizedStrings.cpp:590
+msgid "select"
+msgstr "markieren"
+
+#: ../../LocalizedStrings.cpp:595
+msgid "activate"
+msgstr "aktivieren"
+
+#: ../../LocalizedStrings.cpp:600
+msgid "uncheck"
+msgstr "abwählen"
+
+#: ../../LocalizedStrings.cpp:605
+msgid "check"
+msgstr "wählen"
+
+#: ../../LocalizedStrings.cpp:610
+msgid "jump"
+msgstr "überspringen"
+
+#: ../../LocalizedStrings.cpp:634
+msgid "Apple Pay"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:639
+msgid "Buy with Apple Pay"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:644
+msgid "Set up with Apple Pay"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:649
+msgid "Donate with Apple Pay"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:654
+msgid "Check out with Apple Pay"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:659
+msgid "Book with Apple Pay"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:664
+msgid "Subscribe with Apple Pay"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:670
+#, fuzzy
+#| msgid "password auto fill"
+msgid "password AutoFill"
+msgstr "Passwörter automatisch eintragen"
+
+#: ../../LocalizedStrings.cpp:675
+#, fuzzy
+#| msgid "contact info auto fill"
+msgid "contact info AutoFill"
+msgstr "Kontaktdaten automatisch eintragen"
+
+#: ../../LocalizedStrings.cpp:680
+#, fuzzy
+#| msgid "password auto fill"
+msgid "strong password AutoFill"
+msgstr "Passwörter automatisch eintragen"
+
+#: ../../LocalizedStrings.cpp:685
+msgid "credit card AutoFill"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:690
+msgid "Strong Password"
+msgstr "Starkes Passwort"
+
+#: ../../LocalizedStrings.cpp:695
+msgid "Missing Plug-in"
+msgstr "Fehlende Erweiterung"
+
+#: ../../LocalizedStrings.cpp:700
+msgid "Plug-in Failure"
+msgstr "Versagen der Erweiterung"
+
+#: ../../LocalizedStrings.cpp:705
+msgctxt ""
+"Label text to be used if plugin is blocked by a page's Content Security "
+"Policy"
+msgid "Blocked Plug-in"
+msgstr "Blockierte Erweiterung"
+
+#: ../../LocalizedStrings.cpp:710
+msgctxt ""
+"Label text to be used when an insecure plug-in version was blocked from "
+"loading"
+msgid "Blocked Plug-in"
+msgstr "Blockierte Erweiterung"
+
+#: ../../LocalizedStrings.cpp:715
+msgctxt ""
+"Label text to be used when an unsupported plug-in was blocked from loading"
+msgid "Unsupported Plug-in"
+msgstr "Nicht unterstützte Erweiterung"
+
+#: ../../LocalizedStrings.cpp:720
+msgctxt ""
+"Label text to be used when a plug-in was blocked from loading because it was "
+"too small"
+msgid "Plug-In too small"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:725
+#, c-format
+msgid "%d files"
+msgstr "%d Dateien"
+
+#: ../../LocalizedStrings.cpp:730
+msgctxt "Unknown filesize FTP directory listing item"
+msgid "Unknown"
+msgstr "Unbekannt"
+
+#: ../../LocalizedStrings.cpp:749
+#, c-format
+msgid "%s %d×%d pixels"
+msgstr "%s %d×%d Pixel"
+
+#: ../../LocalizedStrings.cpp:751
+#, c-format
+msgid "<filename> %d×%d pixels"
+msgstr "<filename> %d×%d Pixel"
+
+#: ../../LocalizedStrings.cpp:757
+msgid "Loading…"
+msgstr "Ladevorgang …"
+
+#: ../../LocalizedStrings.cpp:762
+msgid "Live Broadcast"
+msgstr "Live-Ausstrahlung"
+
+#: ../../LocalizedStrings.cpp:768
+msgid "audio playback"
+msgstr "Audio-Wiedergabe"
+
+#: ../../LocalizedStrings.cpp:770
+msgid "video playback"
+msgstr "Video-Wiedergabe"
+
+#: ../../LocalizedStrings.cpp:772
+msgid "mute"
+msgstr "Stumm schalten"
+
+#: ../../LocalizedStrings.cpp:774
+msgid "unmute"
+msgstr "Laut schalten"
+
+#: ../../LocalizedStrings.cpp:776
+msgid "play"
+msgstr "Abspielen"
+
+#: ../../LocalizedStrings.cpp:778
+msgid "pause"
+msgstr "Pausieren"
+
+#: ../../LocalizedStrings.cpp:780
+msgid "movie time"
+msgstr "Filmdauer"
+
+#: ../../LocalizedStrings.cpp:782
+msgid "timeline slider thumb"
+msgstr "Rollbalken-Schieber der Zeitleiste"
+
+#: ../../LocalizedStrings.cpp:784
+msgid "back 30 seconds"
+msgstr "30 Sekunden zurück"
+
+#: ../../LocalizedStrings.cpp:786
+#, fuzzy
+#| msgid "return to realtime"
+msgid "return to real time"
+msgstr "Auf Echtzeit zurückstellen"
+
+#: ../../LocalizedStrings.cpp:788
+msgid "elapsed time"
+msgstr "Vergangene Zeit"
+
+#: ../../LocalizedStrings.cpp:790
+msgid "remaining time"
+msgstr "Verbleibende Zeit"
+
+#: ../../LocalizedStrings.cpp:792
+msgid "status"
+msgstr "Status"
+
+#: ../../LocalizedStrings.cpp:794
+msgid "enter full screen"
+msgstr "Vollbild starten"
+
+#: ../../LocalizedStrings.cpp:796
+msgid "exit full screen"
+msgstr "Vollbild verlassen"
+
+#: ../../LocalizedStrings.cpp:798
+msgid "fast forward"
+msgstr "Vorspulen"
+
+#: ../../LocalizedStrings.cpp:800
+msgid "fast reverse"
+msgstr "Zurückspulen"
+
+#: ../../LocalizedStrings.cpp:802
+msgid "show closed captions"
+msgstr "geschlossene Beschriftung zeigen"
+
+#: ../../LocalizedStrings.cpp:804
+msgid "hide closed captions"
+msgstr "geschlossene Beschriftung verbergen"
+
+#: ../../LocalizedStrings.cpp:817
+msgid "audio element playback controls and status display"
+msgstr "Wiedergabesteuerung und Statusanzeige für Audio-Elemente"
+
+#: ../../LocalizedStrings.cpp:819
+msgid "video element playback controls and status display"
+msgstr "Wiedergabesteuerung und Statusanzeige für Video-Elemente"
+
+#: ../../LocalizedStrings.cpp:821
+msgid "mute audio tracks"
+msgstr "Tonspuren stumm schalten"
+
+#: ../../LocalizedStrings.cpp:823
+msgid "unmute audio tracks"
+msgstr "Tonspuren laut schalten"
+
+#: ../../LocalizedStrings.cpp:825
+msgid "begin playback"
+msgstr "Wiedergabe starten"
+
+#: ../../LocalizedStrings.cpp:827
+msgid "pause playback"
+msgstr "Wiedergabe pausieren"
+
+#: ../../LocalizedStrings.cpp:829
+msgid "movie time scrubber"
+msgstr "Zeitschieber für Filme"
+
+#: ../../LocalizedStrings.cpp:831
+msgid "movie time scrubber thumb"
+msgstr "Zeitschiebergriff für Filme"
+
+#: ../../LocalizedStrings.cpp:833
+msgid "seek movie back 30 seconds"
+msgstr "Film 30 Sekunden zurückspulen"
+
+#: ../../LocalizedStrings.cpp:835
+msgid "resume real time streaming"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:837
+msgid "current movie time in seconds"
+msgstr "Aktuelle Filmwiedergabezeit in Sekunden"
+
+#: ../../LocalizedStrings.cpp:839
+msgid "number of seconds of movie remaining"
+msgstr "Anzahl verbleibender Sekunden des Films"
+
+#: ../../LocalizedStrings.cpp:841
+msgid "current movie status"
+msgstr "Status des aktuellen Films"
+
+#: ../../LocalizedStrings.cpp:843
+msgid "seek quickly back"
+msgstr "Schnell zurückspulen"
+
+#: ../../LocalizedStrings.cpp:845
+msgid "seek quickly forward"
+msgstr "Schnell vorspulen"
+
+#: ../../LocalizedStrings.cpp:847
+#, fuzzy
+#| msgid "Play movie in fullscreen mode"
+msgid "Play movie in full screen mode"
+msgstr "Den momentanen Film im Vollbildmodus wiedergeben"
+
+#: ../../LocalizedStrings.cpp:849
+msgid "start displaying closed captions"
+msgstr "beginnen, geschlossene Beschriftung zu zeigen"
+
+#: ../../LocalizedStrings.cpp:851
+msgid "stop displaying closed captions"
+msgstr "beenden, geschlossene Beschriftung zu zeigen"
+
+#: ../../LocalizedStrings.cpp:864
+msgid "indefinite time"
+msgstr "Unbegrenzte Zeit"
+
+#: ../../LocalizedStrings.cpp:873
+#, c-format
+msgid "%1$d days %2$d hours %3$d minutes %4$d seconds"
+msgstr "%1$d Tage %2$d Stunden %3$d Minuten %4$d Sekunden"
+
+#: ../../LocalizedStrings.cpp:875
+#, c-format
+msgid "%1$d hours %2$d minutes %3$d seconds"
+msgstr "%1$d Stunden %2$d Minuten %3$d Sekunden"
+
+#: ../../LocalizedStrings.cpp:877
+#, c-format
+msgid "%1$d minutes %2$d seconds"
+msgstr "%1$d Minuten %2$d Sekunden"
+
+#: ../../LocalizedStrings.cpp:878
+#, c-format
+msgid "%1$d seconds"
+msgstr "%1$d Sekunden"
+
+#: ../../LocalizedStrings.cpp:883
+msgid "Fill out this field"
+msgstr "Bitte geben Sie Informationen in dieses Feld ein"
+
+#: ../../LocalizedStrings.cpp:888
+msgid "Select this checkbox"
+msgstr "Dieses Ankreuzfeld auswählen"
+
+#: ../../LocalizedStrings.cpp:893
+msgid "Select a file"
+msgstr "Wählen Sie eine Datei"
+
+#: ../../LocalizedStrings.cpp:903
+msgid "Select one of these options"
+msgstr "Wählen Sie eine der folgenden Möglichkeiten:"
+
+#: ../../LocalizedStrings.cpp:908
+msgid "Select an item in the list"
+msgstr "Wählen Sie einen Punkt in der Liste"
+
+#: ../../LocalizedStrings.cpp:913
+msgid "Invalid value"
+msgstr "Ungültiger Wert"
+
+#: ../../LocalizedStrings.cpp:918
+msgid "Enter an email address"
+msgstr "Geben Sie eine E-Mail-Adresse ein"
+
+#: ../../LocalizedStrings.cpp:928
+msgid "Enter a URL"
+msgstr "Bitte geben Sie eine Adresse ein"
+
+#: ../../LocalizedStrings.cpp:933
+msgid "Match the requested format"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:939
+#, c-format
+msgid "Use at least %d characters"
+msgstr "Verwenden Sie mindestens %d Zeichen"
+
+#: ../../LocalizedStrings.cpp:945
+#, c-format
+msgid "Use no more than %d characters"
+msgstr "Nicht mehr als %d Zeichen verwenden"
+
+#: ../../LocalizedStrings.cpp:955
+#, c-format
+msgid "Value must be greater than or equal to %s"
+msgstr "Wert muss größer oder gleich %s sein"
+
+#: ../../LocalizedStrings.cpp:958
+msgid "range underflow"
+msgstr "Bereich unterschritten"
+
+#: ../../LocalizedStrings.cpp:967
+#, c-format
+msgid "Value must be less than or equal to %s"
+msgstr "Wert muss kleiner oder gleich %s sein"
+
+#: ../../LocalizedStrings.cpp:970
+msgid "range overflow"
+msgstr "Bereich überschritten"
+
+#: ../../LocalizedStrings.cpp:976
+msgid "Enter a valid value"
+msgstr "Geben Sie einen gültigen Wert ein"
+
+#: ../../LocalizedStrings.cpp:981
+msgid "Enter a number"
+msgstr "Geben Sie eine Zahl ein"
+
+#: ../../LocalizedStrings.cpp:986
+msgid "Click to Exit Full Screen"
+msgstr "Vollbild verlassen"
+
+#: ../../LocalizedStrings.cpp:993
+msgid "Subtitles"
+msgstr "Untertitel"
+
+#: ../../LocalizedStrings.cpp:998
+msgid "Off"
+msgstr "Aus"
+
+#: ../../LocalizedStrings.cpp:1003
+msgid "Auto (Recommended)"
+msgstr "Automatisch (empfohlen)"
+
+#: ../../LocalizedStrings.cpp:1008
+msgctxt "Menu item label for a text track that has no other name"
+msgid "Unknown"
+msgstr "Unbekannt"
+
+#: ../../LocalizedStrings.cpp:1013
+msgctxt "Menu item label for an audio track that has no other name"
+msgid "Unknown"
+msgstr "Unbekannt"
+
+#: ../../LocalizedStrings.cpp:1059
+msgid "Snapshotted Plug-In"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1064
+msgid "Click to restart"
+msgstr "Zum Neustarten klicken"
+
+#: ../../LocalizedStrings.cpp:1069
+msgid "Show in blocked plug-in"
+msgstr "In blockierter Erweiterung anzeigen"
+
+#: ../../LocalizedStrings.cpp:1079
+#, c-format
+msgid "%s WebCrypto Master Key"
+msgstr "%s WebCrypto Master-Schlüssel"
+
+#: ../../LocalizedStrings.cpp:1087
+msgid "Used to encrypt WebCrypto keys in persistent storage, such as IndexedDB"
+msgstr ""
+"Wird zur Verschlüsselung von WebCrypto-Schlüsseln in persistenten "
+"Datenspeichern verwendet, zum Beispiel IndexedDB"
+
+#: ../../LocalizedStrings.cpp:1096
+msgctxt "Title of the OK button for the number pad in zoomed form controls."
+msgid "OK"
+msgstr "Ok"
+
+#: ../../LocalizedStrings.cpp:1101
+msgid "Done"
+msgstr "Fertig"
+
+#: ../../LocalizedStrings.cpp:1106
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: ../../LocalizedStrings.cpp:1111
+msgid "Hide"
+msgstr "Verbergen"
+
+#: ../../LocalizedStrings.cpp:1116
+msgid "Go"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1121
+msgid "Search"
+msgstr "Suchen"
+
+#: ../../LocalizedStrings.cpp:1126
+msgctxt "Set button below date picker"
+msgid "Set"
+msgstr "Setzen"
+
+#: ../../LocalizedStrings.cpp:1131
+msgctxt "Day label in date picker"
+msgid "DAY"
+msgstr "TAG"
+
+#: ../../LocalizedStrings.cpp:1136
+msgctxt "Month label in date picker"
+msgid "MONTH"
+msgstr "MONAT"
+
+#: ../../LocalizedStrings.cpp:1141
+msgctxt "Year label in date picker"
+msgid "YEAR"
+msgstr "JAHR"
+
+#: ../../LocalizedStrings.cpp:1149
+msgid "Unacceptable TLS certificate"
+msgstr "Inakzeptables TLS-Zertifikat"
+
+#: ../../network/soup/NetworkStorageSessionSoup.cpp:236
+#, fuzzy
+#| msgid "WebKitGTK+ password"
+msgid "WebKitGTK password"
+msgstr "WebKitGTK+-Passwort"
+
+#: ../../../editing/EditAction.cpp:43
+msgctxt "Undo action name"
+msgid "Set Color"
+msgstr "Farbe festlegen"
+
+#: ../../../editing/EditAction.cpp:45
+msgctxt "Undo action name"
+msgid "Set Background Color"
+msgstr "Hintergrundfarbe festlegen"
+
+#: ../../../editing/EditAction.cpp:47
+msgctxt "Undo action name"
+msgid "Turn Off Kerning"
+msgstr "Kerning ausschalten"
+
+#: ../../../editing/EditAction.cpp:49
+msgctxt "Undo action name"
+msgid "Tighten Kerning"
+msgstr "Laufweite verringern"
+
+#: ../../../editing/EditAction.cpp:51
+msgctxt "Undo action name"
+msgid "Loosen Kerning"
+msgstr "Laufweite erhöhen"
+
+#: ../../../editing/EditAction.cpp:53
+msgctxt "Undo action name"
+msgid "Use Standard Kerning"
+msgstr "Standard-Laufweite verwenden"
+
+#: ../../../editing/EditAction.cpp:55
+msgctxt "Undo action name"
+msgid "Turn Off Ligatures"
+msgstr "Ligaturen ausschalten"
+
+#: ../../../editing/EditAction.cpp:57
+msgctxt "Undo action name"
+msgid "Use Standard Ligatures"
+msgstr "Standard-Ligaturen verwenden"
+
+#: ../../../editing/EditAction.cpp:59
+msgctxt "Undo action name"
+msgid "Use All Ligatures"
+msgstr "Alle Ligaturen verwenden"
+
+#: ../../../editing/EditAction.cpp:61
+msgctxt "Undo action name"
+msgid "Raise Baseline"
+msgstr "Grundlinie anheben"
+
+#: ../../../editing/EditAction.cpp:63
+msgctxt "Undo action name"
+msgid "Lower Baseline"
+msgstr "Grundlinie absenken"
+
+#: ../../../editing/EditAction.cpp:65
+msgctxt "Undo action name"
+msgid "Set Traditional Character Shape"
+msgstr "Traditionelle Zeichenform verwenden"
+
+#: ../../../editing/EditAction.cpp:67
+msgctxt "Undo action name"
+msgid "Set Font"
+msgstr "Schriftart festlegen"
+
+#: ../../../editing/EditAction.cpp:69
+msgctxt "Undo action name"
+msgid "Change Attributes"
+msgstr "Attribute ändern"
+
+#: ../../../editing/EditAction.cpp:71
+msgctxt "Undo action name"
+msgid "Align Left"
+msgstr "Linksbündig"
+
+#: ../../../editing/EditAction.cpp:73
+msgctxt "Undo action name"
+msgid "Align Right"
+msgstr "Rechtsbündig"
+
+#: ../../../editing/EditAction.cpp:75
+msgctxt "Undo action name"
+msgid "Center"
+msgstr "Zentrieren"
+
+#: ../../../editing/EditAction.cpp:77
+msgctxt "Undo action name"
+msgid "Justify"
+msgstr "Ausrichten"
+
+#: ../../../editing/EditAction.cpp:80
+msgctxt "Undo action name"
+msgid "Set Writing Direction"
+msgstr "Schreibrichtung festlegen"
+
+#: ../../../editing/EditAction.cpp:82
+msgctxt "Undo action name"
+msgid "Subscript"
+msgstr "Tiefstellung"
+
+#: ../../../editing/EditAction.cpp:84
+msgctxt "Undo action name"
+msgid "Superscript"
+msgstr "Hochstellung"
+
+#: ../../../editing/EditAction.cpp:86
+msgctxt "Undo action name"
+msgid "Underline"
+msgstr "Unterstrichen"
+
+#: ../../../editing/EditAction.cpp:88
+msgctxt "Undo action name"
+msgid "Outline"
+msgstr "Umriss"
+
+#: ../../../editing/EditAction.cpp:90
+#, fuzzy
+#| msgid "description"
+msgctxt "Undo action name"
+msgid "Unscript"
+msgstr "Beschreibung"
+
+#: ../../../editing/EditAction.cpp:92
+msgctxt "Undo action name"
+msgid "Drag"
+msgstr "Ziehen"
+
+#: ../../../editing/EditAction.cpp:94
+msgctxt "Undo action name"
+msgid "Cut"
+msgstr "Ausschneiden"
+
+#: ../../../editing/EditAction.cpp:96
+msgctxt "Undo action name"
+msgid "Bold"
+msgstr "Fett"
+
+#: ../../../editing/EditAction.cpp:98
+msgctxt "Undo action name"
+msgid "Italics"
+msgstr "Kursiv"
+
+#: ../../../editing/EditAction.cpp:100
+msgctxt "Undo action name"
+msgid "Delete"
+msgstr "Löschen"
+
+#: ../../../editing/EditAction.cpp:102
+#, fuzzy
+msgctxt "Undo action name"
+msgid "Dictation"
+msgstr "Diktat"
+
+#: ../../../editing/EditAction.cpp:104
+msgctxt "Undo action name"
+msgid "Paste"
+msgstr "Einfügen"
+
+#: ../../../editing/EditAction.cpp:106
+msgctxt "Undo action name"
+msgid "Paste Font"
+msgstr "Schrift einfügen"
+
+#: ../../../editing/EditAction.cpp:108
+msgctxt "Undo action name"
+msgid "Paste Ruler"
+msgstr "Lineal einfügen"
+
+#: ../../../editing/EditAction.cpp:123
+msgctxt "Undo action name"
+msgid "Typing"
+msgstr "Texteingabe"
+
+#: ../../../editing/EditAction.cpp:125
+msgctxt "Undo action name"
+msgid "Create Link"
+msgstr "Verknüpfung erstellen"
+
+#: ../../../editing/EditAction.cpp:127
+msgctxt "Undo action name"
+msgid "Unlink"
+msgstr "Verknüpfung lösen"
+
+#: ../../../editing/EditAction.cpp:130
+msgctxt "Undo action name"
+msgid "Insert List"
+msgstr "Liste einfügen"
+
+#: ../../../editing/EditAction.cpp:132
+msgctxt "Undo action name"
+msgid "Formatting"
+msgstr "Formatierung"
+
+#: ../../../editing/EditAction.cpp:134
+msgctxt "Undo action name"
+msgid "Indent"
+msgstr "Einrückung"
+
+#: ../../../editing/EditAction.cpp:136
+msgctxt "Undo action name"
+msgid "Outdent"
+msgstr "Ausrücken"
+
+#: ../../../editing/EditAction.cpp:140
+msgctxt "Undo action name"
+msgid "Convert to Ordered List"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:142
+msgctxt "Undo action name"
+msgid "Convert to Unordered List"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:144
+#, fuzzy
+#| msgctxt "Undo action name"
+#| msgid "Insert List"
+msgctxt "Undo action name"
+msgid "Insert Drawing"
+msgstr "Liste einfügen"
+
+#: ../../../../JavaScriptCore/API/glib/JSCOptions.cpp:661
+#, fuzzy
+#| msgid "Search Options"
+msgid "JSC Options"
+msgstr "Suchoptionen"
+
+#: ../../../../JavaScriptCore/API/glib/JSCOptions.cpp:661
+#, fuzzy
+#| msgid "Search Options"
+msgid "Show JSC Options"
+msgstr "Suchoptionen"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:153
+msgid "Context"
+msgstr "Kontext"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:154
+msgid "Flags with the context of the WebKitHitTestResult"
+msgstr "Flags mit dem Kontext von WebKitHitTestResult"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:167
+msgid "Link URI"
+msgstr "Adresse des Verweises"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:168
+msgid "The link URI"
+msgstr "Adresse des Verweises"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:180
+msgid "Link Title"
+msgstr "Verknüpfungstitel"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:181
+msgid "The link title"
+msgstr "Verweistitel"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:193
+msgid "Link Label"
+msgstr "Verweisbeschriftung"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:194
+msgid "The link label"
+msgstr "Die Beschriftung des Verweises"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:206
+msgid "Image URI"
+msgstr "Bildadresse"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:207
+msgid "The image URI"
+msgstr "Die Bildadresse"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:219
+msgid "Media URI"
+msgstr "Medienadresse"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:220
+msgid "The media URI"
+msgstr "Die Medienadresse"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitURIRequest.cpp:96
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:104
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:111
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1069
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:445
+msgid "URI"
+msgstr "Adresse"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitURIRequest.cpp:97
+msgid "The URI to which the request will be made."
+msgstr "Die Adresse, an welche die Anfrage gestellt wird."
+
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:105
+msgid "The URI for which the response was made."
+msgstr "Die Adresse, an welche die Antwort gegeben wurde."
+
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:116
+msgid "Status Code"
+msgstr "Status-Code"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:117
+msgid "The status code of the response as returned by the server."
+msgstr "Der Status-Code der vom Server gelieferten Antwort."
+
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:129
+msgid "Content Length"
+msgstr "Inhaltslänge"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:130
+msgid "The expected content length of the response."
+msgstr "Die erwartete Inhaltslänge der Antwort."
+
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:142
+msgid "MIME Type"
+msgstr "MIME-Typ"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:143
+msgid "The MIME type of the response"
+msgstr "Der MIME-Typ der Antwort"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:155
+msgid "Suggested Filename"
+msgstr "Vorgeschlagener Dateiname"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:156
+msgid "The suggested filename for the URI response"
+msgstr "Der vorgeschlagene Dateiname der Adressantwort"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:172
+msgid "HTTP Headers"
+msgstr "HTTP-Kopfzeilen"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:173
+msgid "The The HTTP headers of the response"
+msgstr "Die HTTP-Kopfzeilen der Antwort"
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:42
+msgid "Not allowed to use restricted network port"
+msgstr "Keine Berechtigung, einen eingeschränkten Netzwerk-Port zu verwenden"
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:47
+msgid "The URL was blocked by a content blocker"
+msgstr "Die Adresse wurde durch eine Inhaltssperre blockiert"
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:52
+msgid "The URL can’t be shown"
+msgstr "Die Adresse kann nicht angezeigt werden"
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:57
+#, fuzzy
+#| msgid "The URL was blocked by a content filter"
+msgid "The URL was blocked by device restrictions"
+msgstr "Die Adresse wurde durch einen Inhaltssperrenfilter blockiert"
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:62
+msgid "Frame load interrupted"
+msgstr "Laden des Rahmens wurde unterbrochen"
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:67
+msgid "Error handling synchronous load with custom protocol"
+msgstr ""
+"Fehler bei der Verarbeitung synchroner Last mit benutzerdefiniertem Protokoll"
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:73
+msgid "The URL was blocked by a content filter"
+msgstr "Die Adresse wurde durch einen Inhaltssperrenfilter blockiert"
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:79
+msgid "Content with specified MIME type can’t be shown"
+msgstr "Der Inhalt kann mit dem angegebenen MIME-Typen nicht angezeigt werden"
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:84
+#, fuzzy
+#| msgid "Plugin will handle load"
+msgid "Plug-in handled load"
+msgstr "Inhalt wird durch Erweiterung geladen"
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:92
+msgid "WebKit encountered an internal error"
+msgstr "WebKit hat einen internen Fehler entdeckt"
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:98
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:2099
+msgid "Load request cancelled"
+msgstr "Ladeanforderung abgebrochen"
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:103
+msgid "File does not exist"
+msgstr "Datei ist nicht vorhanden"
+
+#: ../../../../WebKit/Shared/gtk/WebErrorsGtk.cpp:43
+msgid "Printer not found"
+msgstr "Drucker nicht gefunden"
+
+#: ../../../../WebKit/Shared/gtk/WebErrorsGtk.cpp:48
+msgid "Invalid page range"
+msgstr "Ungültiger Seitenbereich"
+
+#: ../../../../WebKit/Shared/soup/WebErrorsSoup.cpp:44
+msgid "User cancelled the download"
+msgstr "Download wurde vom Benutzer abgebrochen"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitAutomationSession.cpp:264
+msgid "Identifier"
+msgstr "Bezeichner"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitAutomationSession.cpp:265
+msgid "The automation session identifier"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:165
+msgid "Destination"
+msgstr "Ziel"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:166
+msgid "The local URI to where the download will be saved"
+msgstr "Die lokale Adresse, an die heruntergeladen wird"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:178
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:124
+msgid "Response"
+msgstr "Antwort"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:179
+msgid "The response of the download"
+msgstr "Die Antwort beim Herunterladen"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:196
+msgid "Estimated Progress"
+msgstr "Geschätzter Fortschritt"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:197
+msgid "Determines the current progress of the download"
+msgstr "Bestimmt den aktuellen Fortschritt des Herunterladens"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:215
+msgid "Allow Overwrite"
+msgstr "Überschreiben erlauben"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:216
+msgid "Whether the destination may be overwritten"
+msgstr "Gibt an, ob das Ziel überschrieben werden darf"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitEditorState.cpp:93
+msgid "Typing Attributes"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitEditorState.cpp:94
+msgid "Flags with the typing attributes"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:148
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:433
+#, c-format
+msgid "Unknown favicon for page %s"
+msgstr "Unbekanntes Favoritensymbol für Seite %s"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:153
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:389
+#, c-format
+msgid "Page %s does not have a favicon"
+msgstr "Die Seite %s hat kein Favoritensymbol"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:383
+msgid "Favicons database not initialized yet"
+msgstr "Die Datenbank für Favoritensymbole ist noch nicht initialisiert"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:139
+msgid "MIME types filter"
+msgstr "Filter für MIME-Typen"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:140
+msgid "The filter currently associated with the request"
+msgstr "Der Filter, der mit der Anfrage verknüpft ist"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:155
+msgid "MIME types"
+msgstr "MIME-Typen"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:156
+msgid "The list of MIME types associated with the request"
+msgstr "Die Liste der MIME-Typen, die mit der Anfrage verknüpft sind"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:170
+msgid "Select multiple files"
+msgstr "Mehrere Dateien wählen"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:171
+msgid "Whether the file chooser should allow selecting multiple files"
+msgstr "Legt fest, ob der Dateiwähler die Auswahl mehrerer Dateien zulässt"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:184
+msgid "Selected files"
+msgstr "Ausgewählte Dateien"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:185
+msgid "The list of selected files associated with the request"
+msgstr "Die Liste der gewählten Dateien, die mit der Anfrage verknüpft sind"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:193
+msgid "Search text"
+msgstr "Suchtext"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:194
+msgid "Text to search for in the view"
+msgstr "In der Ansicht zu suchender Text"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:206
+msgid "Search Options"
+msgstr "Suchoptionen"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:207
+msgid "Search options to be used in the search operation"
+msgstr "Zu verwendende Suchoptionen im Suchvorgang"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:220
+msgid "Maximum matches count"
+msgstr "Maximale Trefferzahl"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:221
+msgid "The maximum number of matches in a given text to report"
+msgstr "Der höchste zu meldende Trefferzahl in einem gegebenen Text"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:233
+msgid "WebView"
+msgstr "Webansicht"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:234
+msgid "The WebView associated with this find controller"
+msgstr "Die Webansicht, die mit dem Suchfeld verknüpft ist"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitGeolocationManager.cpp:351
+#, fuzzy
+#| msgid "Enable page cache"
+msgid "Enable high accuracy"
+msgstr "Seiten-Cache aktivieren"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitGeolocationManager.cpp:352
+#, fuzzy
+#| msgid "Whether MediaSource should be enabled."
+msgid "Whether high accuracy is enabled"
+msgstr "Legt fest, ob MediaSource aktiviert werden soll."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:118
+msgid "Navigation action"
+msgstr "Navigationsaktion"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:119
+msgid "The WebKitNavigationAction triggering this decision"
+msgstr "»WebKitNavigationAction«, welches diese Entscheidung auslöst"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:136
+msgid "Navigation type"
+msgstr "Navigationstyp"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:137
+msgid "The type of navigation triggering this decision"
+msgstr "Der Typ der Navigation, welcher diese Entscheidung auslöst"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:156
+msgid "Mouse button"
+msgstr "Maustaste"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:157
+msgid "The mouse button used if this decision was triggered by a mouse event"
+msgstr ""
+"Die verwendete Maustaste, wenn diese Entscheidung durch ein Mausereignis "
+"ausgelöst wurde"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:175
+msgid "Mouse event modifiers"
+msgstr "Zusatztasten für Mausereignisse"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:176
+msgid "The modifiers active if this decision was triggered by a mouse event"
+msgstr ""
+"Die aktive Zusatztaste, falls diese Entscheidung auf Basis eines "
+"Mausereignisses ausgelöst wurde"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:191
+msgid "Navigation URI request"
+msgstr "Adressanfrage der Navigation"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:192
+msgid "The URI request that is associated with this navigation"
+msgstr "Die Adresse, die mit dieser Navigation verknüpft ist"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:208
+msgid "Frame name"
+msgstr "Der Name des Rahmens"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:209
+msgid "The name of the new frame this navigation action targets"
+msgstr "Der Name des neuen Rahmens, auf den dieser Navigationsvorgang zielt"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:103
+msgid "ID"
+msgstr "Kennung"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:104
+msgid "The unique id for the notification"
+msgstr "Die eindeutige Kennung der Benachrichtugung"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:118
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1022
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintCustomWidget.cpp:135
+msgid "Title"
+msgstr "Titel"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:119
+msgid "The title for the notification"
+msgstr "Der Titel der Benachrichtigung"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:133
+msgid "Body"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:134
+msgid "The body for the notification"
+msgstr "Der Inhalt der Benachrichtigung"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:148
+msgid "Tag"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:149
+#, fuzzy
+msgid "The tag identifier for the notification"
+msgstr "Der Titel der Benachrichtigung"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitResponsePolicyDecision.cpp:92
+msgid "Response URI request"
+msgstr "Antwort der Adressanfrage"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitResponsePolicyDecision.cpp:93
+msgid "The URI request that is associated with this policy decision"
+msgstr ""
+"Die Adressanfrage, die mit dieser Richtlinienentscheidung verknüpft ist"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitResponsePolicyDecision.cpp:106
+msgid "URI response"
+msgstr "Adressantwort"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitResponsePolicyDecision.cpp:107
+msgid "The URI response that is associated with this policy decision"
+msgstr ""
+"Die Adressantwort, die mit dieser Richtlinienentscheidung verknüpft ist"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:612
+msgid "Enable JavaScript"
+msgstr "JavaScript aktivieren"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:613
+msgid "Enable JavaScript."
+msgstr "JavaScript aktivieren."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:627
+msgid "Auto load images"
+msgstr "Bilder automatisch laden"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:628
+msgid "Load images automatically."
+msgstr "Bilder automatisch laden."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:641
+msgid "Load icons ignoring image load setting"
+msgstr "Symbole laden und dabei die Bildladeeinstellungen ignorieren"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:642
+msgid "Whether to load site icons ignoring image load setting."
+msgstr ""
+"Legt fest, ob Symbole geladen und dabei die Bildladeeinstellungen ignoriert "
+"werden."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:659
+msgid "Enable offline web application cache"
+msgstr "Offline-Webanwendungscache aktivieren"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:660
+msgid "Whether to enable offline web application cache."
+msgstr ""
+"Legt fest, ob der Offline-Webanwendungs-Zwischenspeicher aktiviert werden "
+"soll."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:676
+msgid "Enable HTML5 local storage"
+msgstr "Lokale Speicherung nach HTML5 aktivieren"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:677
+msgid "Whether to enable HTML5 Local Storage support."
+msgstr "Legt fest, ob lokale Speicherung nach HTML5 unterstützt werden soll."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:689
+msgid "Enable HTML5 database"
+msgstr "HTML5-Datenbank aktivieren"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:690
+msgid "Whether to enable HTML5 database support."
+msgstr "Legt fest, ob HTML5-Datenbanken unterstützt werden."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:703
+msgid "Enable XSS auditor"
+msgstr "XSS-Auditor aktivieren"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:704
+msgid "Whether to enable the XSS auditor."
+msgstr "Legt fest, ob der XSS-Auditor aktiviert werden soll."
+
+# Steht so im KDE-Browser rekonq.
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:719
+msgid "Enable frame flattening"
+msgstr "Rahmen zusammenfügen"
+
+# Steht so im KDE-Browser rekonq.
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:720
+msgid "Whether to enable frame flattening."
+msgstr "Legt fest, ob Rahmen zusammengefügt werden sollen."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:732
+msgid "Enable plugins"
+msgstr "Erweiterungen aktivieren"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:733
+msgid "Enable embedded plugin objects."
+msgstr "Eingebettete Erweiterungs-Objekte aktivieren."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:745
+msgid "Enable Java"
+msgstr "Java aktivieren"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:746
+msgid "Whether Java support should be enabled."
+msgstr "Legt fest, ob Unterstützung für Java aktiviert werden soll."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:759
+msgid "JavaScript can open windows automatically"
+msgstr "JavaScript darf Fenster automatisch öffnen"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:760
+msgid "Whether JavaScript can open windows automatically."
+msgstr "Legt fest, ob JavaScript Fenster automatisch öffnen darf."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:775
+msgid "Enable hyperlink auditing"
+msgstr "Hyperlink-Kontrolle aktivieren"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:776
+msgid "Whether <a ping> should be able to send pings."
+msgstr "Legt fest, ob <a ping> Pings senden darf."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:788
+msgid "Default font family"
+msgstr "Voreingestellte Schriftfamilie"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:789
+msgid ""
+"The font family to use as the default for content that does not specify a "
+"font."
+msgstr "Die vorgegebene Schriftfamilie für Inhalt ohne festgelegte Schriftart."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:802
+msgid "Monospace font family"
+msgstr "Monospace-Schriftfamilie"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:803
+msgid "The font family used as the default for content using monospace font."
+msgstr ""
+"Die voreingestellte Schriftfamilie zur Darstellung von Monospace-Schrift."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:815
+msgid "Serif font family"
+msgstr "Serif-Schriftfamilie"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:816
+msgid "The font family used as the default for content using serif font."
+msgstr ""
+"Die voreingestellte Schriftfamilie zur Darstellung von Inhalt mit Serif-"
+"Schrift."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:828
+msgid "Sans-serif font family"
+msgstr "Sans-Serif-Schriftfamilie"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:829
+msgid "The font family used as the default for content using sans-serif font."
+msgstr ""
+"Die vorgegebene Schriftfamilie für Inhalt, der Sans-Serif-Schriftart "
+"vorschreibt."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:841
+msgid "Cursive font family"
+msgstr "Kursiv-Schriftfamilie"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:842
+msgid "The font family used as the default for content using cursive font."
+msgstr ""
+"Die voreingestellte Schriftfamilie zur Darstellung von Inhalt mit Kursiv-"
+"Schrift."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:854
+msgid "Fantasy font family"
+msgstr "Fantasy-Schriftfamilie"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:855
+msgid "The font family used as the default for content using fantasy font."
+msgstr ""
+"Die voreingestellte Schriftfamilie zur Darstellung von Inhalt mit Fantasy-"
+"Schrift."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:867
+msgid "Pictograph font family"
+msgstr "Schriftart für Piktogramme"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:868
+msgid "The font family used as the default for content using pictograph font."
+msgstr ""
+"Die voreingestellte Schriftfamilie zur Darstellung von Inhalt mit Piktogramm-"
+"Schrift."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:881
+msgid "Default font size"
+msgstr "Voreingestellte Schriftgröße"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:882
+msgid "The default font size used to display text."
+msgstr "Die voreingestellte Schriftgröße zur Darstellung von Text."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:895
+msgid "Default monospace font size"
+msgstr "Voreingestellte Monospace-Schriftgröße"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:896
+msgid "The default font size used to display monospace text."
+msgstr ""
+"Die voreingestellte Schriftgröße zur Darstellung von dicktengleichem Text."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:910
+msgid "Minimum font size"
+msgstr "Mindestschriftgröße"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:911
+msgid "The minimum font size used to display text."
+msgstr "Die Mindestgröße der Schrift zur Darstellung von Text."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:923
+msgid "Default charset"
+msgstr "Voreingestellter Zeichensatz"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:924
+msgid ""
+"The default text charset used when interpreting content with unspecified "
+"charset."
+msgstr ""
+"Der vorgegebene Zeichensatz beim Interpretieren von Inhalt, der keinen "
+"Zeichensatz vorschreibt."
+
+# Steht so im KDE-Browser rekonq.
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:940
+msgid "Enable private browsing"
+msgstr "Privaten Modus aktivieren"
+
+# Steht so im KDE-Browser rekonq.
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:941
+msgid "Whether to enable private browsing"
+msgstr "Legt fest, ob der private Modus aktiviert werden soll"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:954
+msgid "Enable developer extras"
+msgstr "Erweiterungen für Entwickler aktivieren"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:955
+msgid "Whether to enable developer extras"
+msgstr "Legt fest, ob Erweiterungen für Entwickler aktivieren werden sollen"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:967
+msgid "Enable resizable text areas"
+msgstr "Größenänderung für Textfelder erlauben"
+
+# Steht so im KDE-Browser rekonq.
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:968
+msgid "Whether to enable resizable text areas"
+msgstr "Legt fest, ob Größenänderung für Textfelder erlaubt sind"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:983
+msgid "Enable tabs to links"
+msgstr "Reiter für Verknüpfungen"
+
+# Steht so im KDE-Browser rekonq.
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:984
+msgid "Whether to enable tabs to links"
+msgstr "Legt fest, ob Reiter für Verknüpfungen aktiviert werden sollen"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:997
+msgid "Enable DNS prefetching"
+msgstr "DNS-Vorabanfragen aktivieren"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:998
+msgid "Whether to enable DNS prefetching"
+msgstr "Legt fest, ob DNS-Vorabanfragen aktiviert werden sollen"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1010
+msgid "Enable Caret Browsing"
+msgstr "Caret-Modus aktivieren"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1011
+msgid "Whether to enable accessibility enhanced keyboard navigation"
+msgstr ""
+"Legt fest, ob die erweiterte barrierefreie Tastaturnavigation aktiviert "
+"werden soll"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1026
+msgid "Enable Fullscreen"
+msgstr "Vollbild aktivieren"
+
+# Steht so im KDE-Browser rekonq.
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1027
+msgid "Whether to enable the Javascript Fullscreen API"
+msgstr "Legt fest, ob die Javascript-Vollbild-API aktiviert werden sollen"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1039
+msgid "Print Backgrounds"
+msgstr "Hintergründe drucken"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1040
+msgid "Whether background images should be drawn during printing"
+msgstr "Legt fest, ob Hintergrundbilder beim Drucken gezeichnet werden sollen"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1058
+msgid "Enable WebAudio"
+msgstr "WebAudio aktivieren"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1059
+msgid "Whether WebAudio content should be handled"
+msgstr "Legt fest, ob WebAudio-Inhalte verarbeitet werden sollen"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1073
+msgid "Enable WebGL"
+msgstr "WebGL aktivieren"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1074
+msgid "Whether WebGL content should be rendered"
+msgstr "Legt fest, ob WebGL-Inhalt dargestellt werden soll"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1091
+msgid "Allow modal dialogs"
+msgstr "Modale Dialoge erlauben"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1092
+msgid "Whether it is possible to create modal dialogs"
+msgstr "Legt fest, ob es möglich ist, modale Dialoge zu erstellen"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1107
+msgid "Zoom Text Only"
+msgstr "Nur Text vergrößern"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1108
+msgid "Whether zoom level of web view changes only the text size"
+msgstr ""
+"Legt fest, ob die Vergrößerungsstufe der Web-Ansicht nur die Textgröße ändert"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1122
+msgid "JavaScript can access clipboard"
+msgstr "JavaScript-Zugriff auf Zwischenablage"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1123
+msgid "Whether JavaScript can access Clipboard"
+msgstr "Legt fest, ob JavaScript auf die Zwischenablage zugreifen darf"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1139
+msgid "Media playback requires user gesture"
+msgstr "Medienwiedergabe erfordert Benutzergesten"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1140
+msgid "Whether media playback requires user gesture"
+msgstr "Legt fest, ob Medienwiedergabe Benutzergesten erfordert"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1154
+msgid "Media playback allows inline"
+msgstr "Eingebettete Medienwiedergabe erlauben"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1155
+msgid "Whether media playback allows inline"
+msgstr "Legt fest, ob eingebettete Medien wiedergegeben werden dürfen"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1169
+msgid "Draw compositing indicators"
+msgstr "»Compositing«-Indikatoren zeichnen"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1170
+msgid "Whether to draw compositing borders and repaint counters"
+msgstr ""
+"Legt fest, ob »Compositing«-Ränder und Zähler für erneutes Zeichnen "
+"dargestellt werden"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1189
+msgid "Enable Site Specific Quirks"
+msgstr "Seitenspezifische Fehlerumgehungen aktivieren"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1190
+msgid "Enables the site-specific compatibility workarounds"
+msgstr "Seitenspezifische Kompatibilitätsprobleme umgehen"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1210
+msgid "Enable page cache"
+msgstr "Seiten-Cache aktivieren"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1211
+msgid "Whether the page cache should be used"
+msgstr "Legt fest, ob Seiten-Cache verwendet werden soll"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1230
+msgid "User agent string"
+msgstr "»User-Agent«-Identifikation"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1231
+msgid "The user agent string"
+msgstr "Die Zeichenkette zur »User-Agent«-Identifikation"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1243
+msgid "Enable smooth scrolling"
+msgstr "Weichen Bildlauf aktivieren"
+
+# Steht so im KDE-Browser rekonq.
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1244
+msgid "Whether to enable smooth scrolling"
+msgstr "Legt fest, ob weicher Bildlauf aktiviert werden soll"
+
+# Steht so im KDE-Browser rekonq.
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1261
+msgid "Enable accelerated 2D canvas"
+msgstr "Beschleunigten 2D-Rahmen aktivieren"
+
+# Steht so im KDE-Browser rekonq.
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1262
+msgid "Whether to enable accelerated 2D canvas"
+msgstr "Legt fest, ob ein beschleunigter 2D-Rahmen aktiviert werden soll"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1277
+msgid "Write console messages on stdout"
+msgstr "Konsolennachrichten auf stdout schreiben"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1278
+msgid "Whether to write console messages on stdout"
+msgstr "Legt fest, ob Konsolennachrichten auf stdout geschrieben werden sollen"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1296
+msgid "Enable MediaStream"
+msgstr "Medienstrom einschalten"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1297
+msgid "Whether MediaStream content should be handled"
+msgstr "Legt fest, ob ein Inhalt mit Medienstrom verarbeitet werden soll"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1313
+msgid "Enable mock capture devices"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1314
+msgid "Whether we expose mock capture devices or not"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1333
+msgid "Enable Spatial Navigation"
+msgstr "Tastaturnavigation aktivieren"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1334
+msgid "Whether to enable Spatial Navigation support."
+msgstr "Legt fest, ob die räumliche Navigation aktiviert werden soll."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1352
+msgid "Enable MediaSource"
+msgstr "MediaSource aktivieren"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1353
+msgid "Whether MediaSource should be enabled."
+msgstr "Legt fest, ob MediaSource aktiviert werden soll."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1373
+msgid "Enable EncryptedMedia"
+msgstr "EncryptedMedia aktivieren"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1374
+msgid "Whether EncryptedMedia should be enabled."
+msgstr "Legt fest, ob EncryptedMedia aktiviert werden soll."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1395
+msgid "Enable MediaCapabilities"
+msgstr "MediaCapabilities aktivieren"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1396
+msgid "Whether MediaCapabilities should be enabled."
+msgstr "Legt fest, ob MediaCapabilities aktiviert werden soll."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1414
+msgid "Allow file access from file URLs"
+msgstr "Dateizugriff über Datei-Adressen erlauben"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1415
+msgid "Whether file access is allowed from file URLs."
+msgstr "Legt fest, ob Dateizugriff über Datei-Adressen erlaubt werden soll."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1434
+msgid "Allow universal access from the context of file scheme URLs"
+msgstr "Universellen Zugriff über Datei-Adressen erlauben"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1435
+msgid ""
+"Whether or not universal access is allowed from the context of file scheme "
+"URLs"
+msgstr ""
+"Legt fest, ob ein genereller Zugriff über Datei-Adressen erlaubt werden soll"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1460
+msgid "Hardware Acceleration Policy"
+msgstr "Regeln für Hardwarebeschleunigung"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1461
+msgid "The policy to decide how to enable and disable hardware acceleration"
+msgstr ""
+"Die Regeln zur Aktivierung oder Deaktivierung der Hardwarebeschleunigung"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1476
+msgid "Enable back-forward navigation gestures"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1477
+msgid "Whether horizontal swipe gesture will trigger back-forward navigation"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1494
+#, fuzzy
+#| msgid "Enable JavaScript"
+msgid "Enable JavaScript Markup"
+msgstr "JavaScript aktivieren"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1495
+#, fuzzy
+#| msgid "Enable JavaScript."
+msgid "Enable JavaScript in document markup."
+msgstr "JavaScript aktivieren."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1511
+#, fuzzy
+#| msgid "Enable WebAudio"
+msgid "Enable media"
+msgstr "WebAudio aktivieren"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1512
+#, fuzzy
+#| msgid "Whether WebAudio content should be handled"
+msgid "Whether media content should be handled"
+msgstr "Legt fest, ob WebAudio-Inhalte verarbeitet werden sollen"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserContentFilterStore.cpp:139
+#, fuzzy
+#| msgid "Local Storage Directory"
+msgid "Storage directory path"
+msgstr "Ordner für lokale Speicherung"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserContentFilterStore.cpp:140
+#, fuzzy
+#| msgid "The directory where HTTP disk cache will be stored"
+msgid "The directory where user content filters are stored"
+msgstr "Der Ordner, in dem der HTTP-Zwischenspeicher angelegt wird"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:169
+msgid "Is for audio device"
+msgstr "Für Audiogerät"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:170
+msgid ""
+"Whether the media device to which the permission was requested has a "
+"microphone or not."
+msgstr ""
+"Gibt an, ob das Mediengerät, für die der Zugriff angefragt wurde, über ein "
+"Mikrofon verfügt oder nicht."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:182
+msgid "Is for video device"
+msgstr "Für Videogerät"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:183
+msgid ""
+"Whether the media device to which the permission was requested has a video "
+"capture capability or not."
+msgstr ""
+"Gibt an, ob das Mediengerät, für die der Zugriff angefragt wurde, über "
+"Videoaufnahme verfügt oder nicht."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:424
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:270
+msgid "Local Storage Directory"
+msgstr "Ordner für lokale Speicherung"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:425
+msgid "The directory where local storage data will be saved"
+msgstr "Der Ordner, in dem lokale Daten gespeichert werden"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:442
+msgid "Website Data Manager"
+msgstr "Datenverwaltung der Internetseite"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:443
+msgid "The WebKitWebsiteDataManager associated with this context"
+msgstr "Der mit diesem Kontext verknüpfte WebKitWebsiteDataManager"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:112
+msgid "The current active URI of the resource"
+msgstr "Die aktuelle aktive Adresse der Ressource"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:125
+msgid "The response of the resource"
+msgstr "Die Antwort der Ressource"
+
+#. This fails when the page is closed or frame is destroyed, so we can just cancel the operation.
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:349
+msgid "Operation was cancelled"
+msgstr "Vorgang wurde abgebrochen"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteData.cpp:189
+msgid "Local files"
+msgstr "Lokale Dateien"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:235
+msgid "Base Data Directory"
+msgstr "Basisordner für Daten"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:236
+msgid "The base directory for Website data"
+msgstr "Der Basisordner für Internetseiten-Daten"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:253
+msgid "Base Cache Directory"
+msgstr "Basisordner für Zwischenspeicher"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:254
+msgid "The base directory for Website cache"
+msgstr "Der Basisordner für Zwischenspeicherdaten von Internetseiten"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:271
+msgid "The directory where local storage data will be stored"
+msgstr "Der Ordner, in dem lokale Daten gespeichert werden"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:287
+msgid "Disk Cache Directory"
+msgstr "Zwischenspeicher-Ordner"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:288
+msgid "The directory where HTTP disk cache will be stored"
+msgstr "Der Ordner, in dem der HTTP-Zwischenspeicher angelegt wird"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:304
+#, fuzzy
+#| msgid "Enable offline web application cache"
+msgid "Offline Web Application Cache Directory"
+msgstr "Offline-Webanwendungscache aktivieren"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:305
+msgid "The directory where offline web application cache will be stored"
+msgstr ""
+"Der Ordner, der als Offline-Webanwendungs-Zwischenspeicher aktiviert werden "
+"soll"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:321
+msgid "IndexedDB Directory"
+msgstr "IndexedDB-Ordner"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:322
+msgid "The directory where IndexedDB databases will be stored"
+msgstr "Der Ordner, in dem IndexedDB-Datenbanken gespeichert werden sollen"
+
+# Kein Dateisystemordner, sondern ein Verzeichnisdienst?
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:340
+msgid "WebSQL Directory"
+msgstr "WebSQL-Ordner"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:341
+msgid "The directory where WebSQL databases will be stored"
+msgstr "Der Ordner, in dem WebSQL-Datenbanken gespeichert werden sollen"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:357
+#, fuzzy
+#| msgid "Base Cache Directory"
+msgid "HSTS Cache Directory"
+msgstr "Basisordner für Zwischenspeicher"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:358
+#, fuzzy
+#| msgid "The directory where HTTP disk cache will be stored"
+msgid ""
+"The directory where the HTTP Strict-Transport-Security cache will be stored"
+msgstr "Der Ordner, in dem der HTTP-Zwischenspeicher angelegt wird"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:378
+msgid "Whether the WebKitWebsiteDataManager is ephemeral"
+msgstr "Gibt an, ob WebKitWebsiteDataManager flüchtig ist"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:686
+msgid "Acknowledge"
+msgstr "Zustimmen"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:942
+msgid "Backend"
+msgstr "Backend"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:943
+msgid "The backend for the web view"
+msgstr "Das Backend für die Web-Ansicht"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:956
+msgid "Web Context"
+msgstr "Web-Kontext"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:957
+msgid "The web context for the view"
+msgstr "Der Web-Kontext für die Ansicht"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:974
+msgid "Related WebView"
+msgstr "Verknüpfte Webansicht"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:975
+msgid ""
+"The related WebKitWebView used when creating the view to share the same web "
+"process"
+msgstr ""
+"Das verwendete WebKitWebView, das bei der Ansichtserstellung verwendet "
+"wurde, um denselben Web-Prozess zu teilen"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:991
+msgid "WebView settings"
+msgstr "Einstellungen WebView"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:992
+msgid "The WebKitSettings of the view"
+msgstr "Die WebKit-Einstellungen der Ansicht"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1008
+msgid "WebView user content manager"
+msgstr "Inhaltsverwaltung für WebView"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1009
+msgid "The WebKitUserContentManager of the view"
+msgstr "WebKitUserContentManager der Ansicht"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1023
+msgid "Main frame document title"
+msgstr "Dokumententitel des Hauptrahmens"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1041
+msgid "Estimated Load Progress"
+msgstr "Geschätzter Ladefortschritt"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1042
+msgid "An estimate of the percent completion for a document load"
+msgstr "Geschätzter Ladefortschritt eines Dokuments in Prozent"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1055
+msgid "Favicon"
+msgstr "Favoritensymbol"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1056
+msgid "The favicon associated to the view, if any"
+msgstr "Das Favoritensymbol der Ansicht, falls vorhanden"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1070
+msgid "The current active URI of the view"
+msgstr "Die aktuelle aktive Adresse der Ansicht"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1085
+msgid "Zoom level"
+msgstr "Vergrößerungsstufe"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1086
+msgid "The zoom level of the view content"
+msgstr "Die Vergrößerungsstufe der Inhaltsansicht"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1105
+msgid "Is Loading"
+msgstr "Ladevorgang"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1106
+msgid "Whether the view is loading a page"
+msgstr "Zeigt an, ob die Ansicht eine Seite lädt"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1126
+msgid "Whether the view is playing audio"
+msgstr "Zeigt an, ob die Ansicht Ton ausgibt"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1149
+msgid "Whether the web view is ephemeral"
+msgstr "Gibt an, ob die Web-Ansicht flüchtig ist"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1168
+#, fuzzy
+#| msgid "Whether the view is playing audio"
+msgid "Whether the web view is controlled by automation"
+msgstr "Zeigt an, ob die Ansicht Ton ausgibt"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1185
+msgid "Editable"
+msgstr "Bearbeitbar"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1186
+msgid "Whether the content can be modified by the user."
+msgstr "Legt fest, ob der Inhalt durch den Benutzer bearbeitet werden darf."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:3936
+msgid "There was an error creating the snapshot"
+msgstr "Es trat ein Fehler beim Erstellen des Schnappschusses auf"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:218
+msgid "Geometry"
+msgstr "Fenstereinstellung"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:219
+msgid "The size and position of the window on the screen."
+msgstr "Größe und Position des Fensters auf dem Bildschirm."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:232
+msgid "Toolbar Visible"
+msgstr "Werkzeugleiste sichtbar"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:233
+msgid "Whether the toolbar should be visible for the window."
+msgstr "Legt fest, ob die Werkzeugleiste sichtbar für das Fenster sein soll."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:245
+msgid "Statusbar Visible"
+msgstr "Statusleiste sichtbar"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:246
+msgid "Whether the statusbar should be visible for the window."
+msgstr "Legt fest, ob die Statusleiste sichtbar für das Fenster sein soll."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:258
+msgid "Scrollbars Visible"
+msgstr "Bildlaufleisten sichtbar"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:259
+msgid "Whether the scrollbars should be visible for the window."
+msgstr ""
+"Legt fest, ob die Bildlaufleisten sichtbar für das Fenster sein sollen."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:271
+msgid "Menubar Visible"
+msgstr "Menüleiste sichtbar"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:272
+msgid "Whether the menubar should be visible for the window."
+msgstr "Legt fest, ob die Menüleiste sichtbar für das Fenster sein soll."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:284
+msgid "Locationbar Visible"
+msgstr "Adressleiste sichtbar"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:285
+msgid "Whether the locationbar should be visible for the window."
+msgstr "Legt fest, ob die Adressleiste sichtbar für das Fenster sein soll."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:296
+msgid "Resizable"
+msgstr "Größenveränderlich"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:297
+msgid "Whether the window can be resized."
+msgstr "Gibt an, ob die Größe des Fensters geändert werden kann."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:309
+msgid "Fullscreen"
+msgstr "Vollbild"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:310
+msgid "Whether window will be displayed fullscreen."
+msgstr "Legt fest, ob das Fenster im Vollbild angezeigt werden soll."
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:92
+msgid "Authentication Required"
+msgstr "Legitimierung erforderlich"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:106
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:214
+msgid "_Cancel"
+msgstr "_Abbrechen"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:112
+msgid "_Authenticate"
+msgstr "_Legitimieren"
+
+#. Prompt on the HTTP authentication dialog.
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:125
+#, c-format
+msgid "Authentication required by %s:%i"
+msgstr "Legitimierung wird erfordert von %s:%i"
+
+#. Label on the HTTP authentication dialog. %s is a (probably English) message from the website.
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:134
+#, c-format
+msgid "The site says: “%s”"
+msgstr "Die Seite meldet: »%s«"
+
+#. Check button on the HTTP authentication dialog.
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:141
+msgid "_Remember password"
+msgstr "An Passwort _erinnern"
+
+#. Entry on the HTTP authentication dialog.
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:150
+msgid "_Username"
+msgstr "_Benutzername"
+
+#. Entry on the HTTP authentication dialog.
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:162
+msgid "_Password"
+msgstr "_Passwort"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitColorChooserRequest.cpp:132
+msgid "Current RGBA color"
+msgstr "Aktuelle RGBA-Farbe"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitColorChooserRequest.cpp:133
+msgid "The current RGBA color for the request"
+msgstr "Die aktuelle RGBA-Farbe für die Anfrage"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitEmojiChooser.cpp:360
+msgid "Recent"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitEmojiChooser.cpp:398
+#, fuzzy
+#| msgid "No Guesses Found"
+msgid "No Results Found"
+msgstr "Keine Vorschläge verfügbar"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitEmojiChooser.cpp:407
+#, fuzzy
+#| msgid "No recent searches"
+msgid "Try a different search"
+msgstr "Keine vergangenen Suchen"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitEmojiChooser.cpp:477
+msgid "Smileys & People"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitEmojiChooser.cpp:478
+msgid "Body & Clothing"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitEmojiChooser.cpp:479
+msgid "Animals & Nature"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitEmojiChooser.cpp:480
+msgid "Food & Drink"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitEmojiChooser.cpp:481
+msgid "Travel & Places"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitEmojiChooser.cpp:482
+#, fuzzy
+#| msgid "activate"
+msgid "Activities"
+msgstr "aktivieren"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitEmojiChooser.cpp:483
+msgid "Objects"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitEmojiChooser.cpp:484
+msgid "Symbols"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitEmojiChooser.cpp:485
+msgid "Flags"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintCustomWidget.cpp:118
+msgid "Widget"
+msgstr "Widget"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintCustomWidget.cpp:119
+msgid "Widget that will be added to the print dialog."
+msgstr "Widget, das dem Druckdialog hinzugefügt werden soll."
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintCustomWidget.cpp:136
+msgid "Title of the widget that will be added to the print dialog."
+msgstr "Titel des Widgets, das dem Druckdialog hinzugefügt werden soll."
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:158
+msgid "Web View"
+msgstr "Webansicht"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:159
+msgid "The web view that will be printed"
+msgstr "Die Webansicht, die gedruckt wird"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:171
+msgid "Print Settings"
+msgstr "Druckeinstellungen"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:172
+msgid "The initial print settings for the print operation"
+msgstr "Die ursprünglichen Druckeinstellungen für diesen Druckvorgang"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:183
+msgid "Page Setup"
+msgstr "Seiteneinstellung"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:184
+msgid "The initial page setup for the print operation"
+msgstr "Die ursprünglichen Druckeinstellungen für diesen Druckvorgang"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:197
+msgid "_Close"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:216
+#, fuzzy
+#| msgctxt "Title of the OK button for the number pad in zoomed form controls."
+#| msgid "OK"
+msgid "_OK"
+msgstr "Ok"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:223
+msgid "Are you sure you want to leave this page?"
+msgstr "Sind Sie sicher, dass Sie diese Seite verlassen möchten?"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:225
+msgid "Stay on Page"
+msgstr "Auf der Seite bleiben"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:227
+msgid "Leave Page"
+msgstr "Seite verlassen"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:128
+msgid "Inspected URI"
+msgstr "Untersuchte Adresse"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:129
+msgid "The URI that is currently being inspected"
+msgstr "Die Adresse, die derzeit untersucht wird"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:140
+msgid "Attached Height"
+msgstr "Höhe wenn angehängt"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:141
+msgid "The height that the inspector view should have when it is attached"
+msgstr "Die Höhe der Inspector-Ansicht, wenn er angehängt ist"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:158
+msgid "Can Attach"
+msgstr "Kann angehängt werden"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:159
+msgid ""
+"Whether the inspector can be attached to the same window that contains the "
+"inspected view"
+msgstr ""
+"Legt fest, ob der Inspector an dasselbe Fenster angehängt werden darf, das "
+"die Inspector-Ansicht zeigt"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp:1533
+msgid "Website running in fullscreen mode"
+msgstr "Internetseite läuft im Vollbildmodus"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewGtk.cpp:76
+msgid "Select Files"
+msgstr "Dateien auswählen"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewGtk.cpp:76
+msgid "Select File"
+msgstr "Datei wählen"
+
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:67
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:130
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:153
+msgid "Failed to connect to geolocation service"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:203
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:254
+msgid "Failed to determine position from geolocation service"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/gtk/WebColorPickerGtk.cpp:102
+msgid "Select Color"
+msgstr "Farbe auswählen"
+
+#: ../../../../WebKit/UIProcess/gtk/WebKitInspectorWindow.cpp:54
+msgid "Web Inspector"
+msgstr "Web-Inspector"
+
+#: ../../../../WebKit/UIProcess/WebsiteData/WebsiteDataRecord.cpp:40
+msgid "Local documents on your computer"
+msgstr "Lokale Dokumente auf Ihrem Rechner"
+
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebHitTestResult.cpp:103
+msgid "Node"
+msgstr "Knoten"
+
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebHitTestResult.cpp:104
+msgid "The WebKitDOMNode"
+msgstr "Das WebKitDOMNode"
+
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:446
+msgid "The current active URI of the web page"
+msgstr "Die aktuelle aktive Adresse der Internetseite"
+
+#~ msgid "return streaming movie to real time"
+#~ msgstr "Streaming-Video auf Echtzeit zurückstellen"

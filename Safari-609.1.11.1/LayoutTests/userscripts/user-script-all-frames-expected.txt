@@ -1,0 +1,11 @@
+If any thingers appear on this page, the test has failed.  
+
+--------
+Frame: '<!--frame1-->'
+--------
+
+
+--------
+Frame: '<!--frame2-->'
+--------
+

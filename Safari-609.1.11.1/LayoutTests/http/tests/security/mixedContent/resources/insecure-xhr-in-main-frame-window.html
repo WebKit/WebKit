@@ -1,0 +1,33 @@
+<html>
+<body>
+<script>
+
+window.onload = function() {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function() {
+        alert("FAIL: load was not blocked");
+        if (window.testRunner)
+            testRunner.notifyDone();
+    };
+
+    // When XHR is blocked due to mixed content blocking, it just appears as if the load stalls,
+    // see https://bugs.webkit.org/show_bug.cgi?id=145717.
+    setTimeout(function() {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 2000);
+
+    try {
+        xhr.open("GET", "http://127.0.0.1:8000/");
+    } catch (ex) {
+        // Firefox raises an exception, which is one way to make this detectable.
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+
+    xhr.send(null);
+};
+</script>
+
+</body>
+</html>

@@ -1,0 +1,3 @@
+
+PASS IDBIndex.getKey() - returns the key of the first record within the range  
+

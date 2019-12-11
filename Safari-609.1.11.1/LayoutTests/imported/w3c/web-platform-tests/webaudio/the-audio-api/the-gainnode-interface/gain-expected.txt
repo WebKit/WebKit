@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 85: TypeError: function is not a constructor (evaluating 'new ChannelMergerNode(
+                context, {numberOfInputs: context.destination.channelCount})')
+
+Harness Error (FAIL), message = TypeError: function is not a constructor (evaluating 'new ChannelMergerNode(
+                context, {numberOfInputs: context.destination.channelCount})')
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS > [create context] Create context for test 
+PASS < [create context] All assertions passed. (total 0 assertions) 
+PASS > [test] GainNode functionality 
+

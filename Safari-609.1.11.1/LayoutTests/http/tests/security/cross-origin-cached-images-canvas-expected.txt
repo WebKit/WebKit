@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 27: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+Trying to load and render in canvas sequentially the same image from different origins (no cors mode).
+
+PASS: Successfully retrieved image data.
+PASS: The image is not same-origin with this document.
+  

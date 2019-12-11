@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test WrapKey operation with malformed parameters");
+
+jsTestIsAsync = true;
+
+var extractable = true;
+var nonExtractable = false;
+var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
+var aesCbcParams = {
+    name: "aes-cbc",
+    iv: asciiToUint8Array("jnOw99oOZFLIEPMr"),
+}
+
+// Not enough arguments.
+shouldReject('crypto.subtle.wrapKey()');
+shouldReject('crypto.subtle.wrapKey(1)');
+shouldReject('crypto.subtle.wrapKey(1, 2)');
+shouldReject('crypto.subtle.wrapKey(1, 2, 3)');
+
+crypto.subtle.importKey("raw", rawKey, "aes-kw", extractable, ["wrapKey", "unwrapKey"]).then(function(result) {
+    wrappingKey = result;
+    return crypto.subtle.importKey("raw", rawKey, "aes-cbc", nonExtractable, ["encrypt", "decrypt"]);
+}).then(function(result) {
+    key = result;
+
+    // Wrong AlgorithmIdentifier
+    shouldReject('crypto.subtle.wrapKey("raw", key, wrappingKey, "HMAC")');
+    shouldReject('crypto.subtle.wrapKey("raw", key, wrappingKey, aesCbcParams)');
+    // Non-extractable
+    shouldReject('crypto.subtle.wrapKey("raw", key, wrappingKey, "AES-KW")');
+
+    return crypto.subtle.importKey("raw", rawKey, "aes-kw", extractable, ["unwrapKey"]);
+}).then(function(result) {
+    wrappingKey = result;
+
+    // Wrong usage
+    shouldReject('crypto.subtle.wrapKey("raw", key, wrappingKey, "AES-KW")').then(finishJSTest);
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

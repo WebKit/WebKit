@@ -1,0 +1,847 @@
+Checking pause locations when stepping in, out, and over in loops.
+
+
+== Running test suite: Debugger.stepping.loops
+-- Running test case: Debugger.stepping.While
+EXPRESSION: setTimeout(entryWhile)
+STEPS: over, over, over, over, over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryWhile:13:5
+      9    
+     10    function entryWhile() {
+     11        let i = 2;
+ ->  12        |debugger;
+     13        while (i > 0)
+     14            --i;
+     15    }
+
+ACTION: step-over
+PAUSE AT entryWhile:14:12
+     10    function entryWhile() {
+     11        let i = 2;
+     12        debugger;
+ ->  13        while (|i > 0)
+     14            --i;
+     15    }
+     16    
+
+ACTION: step-over
+PAUSE AT entryWhile:15:9
+     11        let i = 2;
+     12        debugger;
+     13        while (i > 0)
+ ->  14            |--i;
+     15    }
+     16    
+     17    function entryDoWhile() {
+
+ACTION: step-over
+PAUSE AT entryWhile:14:12
+     10    function entryWhile() {
+     11        let i = 2;
+     12        debugger;
+ ->  13        while (|i > 0)
+     14            --i;
+     15    }
+     16    
+
+ACTION: step-over
+PAUSE AT entryWhile:15:9
+     11        let i = 2;
+     12        debugger;
+     13        while (i > 0)
+ ->  14            |--i;
+     15    }
+     16    
+     17    function entryDoWhile() {
+
+ACTION: step-over
+PAUSE AT entryWhile:14:12
+     10    function entryWhile() {
+     11        let i = 2;
+     12        debugger;
+ ->  13        while (|i > 0)
+     14            --i;
+     15    }
+     16    
+
+ACTION: step-over
+PAUSE AT entryWhile:16:2
+     12        debugger;
+     13        while (i > 0)
+     14            --i;
+ ->  15    }|
+     16    
+     17    function entryDoWhile() {
+     18        let i = 2;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.DoWhile
+EXPRESSION: setTimeout(entryDoWhile)
+STEPS: over, over, over, over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryDoWhile:20:5
+     16    
+     17    function entryDoWhile() {
+     18        let i = 2;
+ ->  19        |debugger;
+     20        do {
+     21            --i;
+     22        } while (i > 0);
+
+ACTION: step-over
+PAUSE AT entryDoWhile:22:9
+     18        let i = 2;
+     19        debugger;
+     20        do {
+ ->  21            |--i;
+     22        } while (i > 0);
+     23    }
+     24    
+
+ACTION: step-over
+PAUSE AT entryDoWhile:23:14
+     19        debugger;
+     20        do {
+     21            --i;
+ ->  22        } while (|i > 0);
+     23    }
+     24    
+     25    function entryTraditionalFor() {
+
+ACTION: step-over
+PAUSE AT entryDoWhile:22:9
+     18        let i = 2;
+     19        debugger;
+     20        do {
+ ->  21            |--i;
+     22        } while (i > 0);
+     23    }
+     24    
+
+ACTION: step-over
+PAUSE AT entryDoWhile:23:14
+     19        debugger;
+     20        do {
+     21            --i;
+ ->  22        } while (|i > 0);
+     23    }
+     24    
+     25    function entryTraditionalFor() {
+
+ACTION: step-over
+PAUSE AT entryDoWhile:24:2
+     20        do {
+     21            --i;
+     22        } while (i > 0);
+ ->  23    }|
+     24    
+     25    function entryTraditionalFor() {
+     26        debugger;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.TraditionalForStepOver
+EXPRESSION: setTimeout(entryTraditionalFor)
+STEPS: over, over, over, over, over, over, over, over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryTraditionalFor:27:5
+     23    }
+     24    
+     25    function entryTraditionalFor() {
+ ->  26        |debugger;
+     27        for (let i = 0; i < 2; ++i)
+     28            a();
+     29    }
+
+ACTION: step-over
+PAUSE AT entryTraditionalFor:28:10
+     24    
+     25    function entryTraditionalFor() {
+     26        debugger;
+ ->  27        for (|let i = 0; i < 2; ++i)
+     28            a();
+     29    }
+     30    
+
+ACTION: step-over
+PAUSE AT entryTraditionalFor:28:21
+     24    
+     25    function entryTraditionalFor() {
+     26        debugger;
+ ->  27        for (let i = 0; |i < 2; ++i)
+     28            a();
+     29    }
+     30    
+
+ACTION: step-over
+PAUSE AT entryTraditionalFor:29:9
+     25    function entryTraditionalFor() {
+     26        debugger;
+     27        for (let i = 0; i < 2; ++i)
+ ->  28            |a();
+     29    }
+     30    
+     31    function entryTraditionalForNoInit() {
+
+ACTION: step-over
+PAUSE AT entryTraditionalFor:28:28
+     24    
+     25    function entryTraditionalFor() {
+     26        debugger;
+ ->  27        for (let i = 0; i < 2; |++i)
+     28            a();
+     29    }
+     30    
+
+ACTION: step-over
+PAUSE AT entryTraditionalFor:28:21
+     24    
+     25    function entryTraditionalFor() {
+     26        debugger;
+ ->  27        for (let i = 0; |i < 2; ++i)
+     28            a();
+     29    }
+     30    
+
+ACTION: step-over
+PAUSE AT entryTraditionalFor:29:9
+     25    function entryTraditionalFor() {
+     26        debugger;
+     27        for (let i = 0; i < 2; ++i)
+ ->  28            |a();
+     29    }
+     30    
+     31    function entryTraditionalForNoInit() {
+
+ACTION: step-over
+PAUSE AT entryTraditionalFor:28:28
+     24    
+     25    function entryTraditionalFor() {
+     26        debugger;
+ ->  27        for (let i = 0; i < 2; |++i)
+     28            a();
+     29    }
+     30    
+
+ACTION: step-over
+PAUSE AT entryTraditionalFor:28:21
+     24    
+     25    function entryTraditionalFor() {
+     26        debugger;
+ ->  27        for (let i = 0; |i < 2; ++i)
+     28            a();
+     29    }
+     30    
+
+ACTION: step-over
+PAUSE AT entryTraditionalFor:30:2
+     26        debugger;
+     27        for (let i = 0; i < 2; ++i)
+     28            a();
+ ->  29    }|
+     30    
+     31    function entryTraditionalForNoInit() {
+     32        let i = 0;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.TraditionalForStepIn
+EXPRESSION: setTimeout(entryTraditionalFor)
+STEPS: over, in, in, over, in, in, over, in, in, resume
+PAUSED (debugger-statement)
+PAUSE AT entryTraditionalFor:27:5
+     23    }
+     24    
+     25    function entryTraditionalFor() {
+ ->  26        |debugger;
+     27        for (let i = 0; i < 2; ++i)
+     28            a();
+     29    }
+
+ACTION: step-over
+PAUSE AT entryTraditionalFor:28:10
+     24    
+     25    function entryTraditionalFor() {
+     26        debugger;
+ ->  27        for (|let i = 0; i < 2; ++i)
+     28            a();
+     29    }
+     30    
+
+ACTION: step-in
+PAUSE AT entryTraditionalFor:28:21
+     24    
+     25    function entryTraditionalFor() {
+     26        debugger;
+ ->  27        for (let i = 0; |i < 2; ++i)
+     28            a();
+     29    }
+     30    
+
+ACTION: step-in
+PAUSE AT entryTraditionalFor:29:9
+     25    function entryTraditionalFor() {
+     26        debugger;
+     27        for (let i = 0; i < 2; ++i)
+ ->  28            |a();
+     29    }
+     30    
+     31    function entryTraditionalForNoInit() {
+
+ACTION: step-over
+PAUSE AT entryTraditionalFor:28:28
+     24    
+     25    function entryTraditionalFor() {
+     26        debugger;
+ ->  27        for (let i = 0; i < 2; |++i)
+     28            a();
+     29    }
+     30    
+
+ACTION: step-in
+PAUSE AT entryTraditionalFor:28:21
+     24    
+     25    function entryTraditionalFor() {
+     26        debugger;
+ ->  27        for (let i = 0; |i < 2; ++i)
+     28            a();
+     29    }
+     30    
+
+ACTION: step-in
+PAUSE AT entryTraditionalFor:29:9
+     25    function entryTraditionalFor() {
+     26        debugger;
+     27        for (let i = 0; i < 2; ++i)
+ ->  28            |a();
+     29    }
+     30    
+     31    function entryTraditionalForNoInit() {
+
+ACTION: step-over
+PAUSE AT entryTraditionalFor:28:28
+     24    
+     25    function entryTraditionalFor() {
+     26        debugger;
+ ->  27        for (let i = 0; i < 2; |++i)
+     28            a();
+     29    }
+     30    
+
+ACTION: step-in
+PAUSE AT entryTraditionalFor:28:21
+     24    
+     25    function entryTraditionalFor() {
+     26        debugger;
+ ->  27        for (let i = 0; |i < 2; ++i)
+     28            a();
+     29    }
+     30    
+
+ACTION: step-in
+PAUSE AT entryTraditionalFor:30:2
+     26        debugger;
+     27        for (let i = 0; i < 2; ++i)
+     28            a();
+ ->  29    }|
+     30    
+     31    function entryTraditionalForNoInit() {
+     32        let i = 0;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.TraditionalForNoInit
+EXPRESSION: setTimeout(entryTraditionalForNoInit)
+STEPS: over, in, over, in, in, over, in, in, resume
+PAUSED (debugger-statement)
+PAUSE AT entryTraditionalForNoInit:34:5
+     30    
+     31    function entryTraditionalForNoInit() {
+     32        let i = 0;
+ ->  33        |debugger;
+     34        for (; i < 2; ++i)
+     35            a();
+     36    }
+
+ACTION: step-over
+PAUSE AT entryTraditionalForNoInit:35:12
+     31    function entryTraditionalForNoInit() {
+     32        let i = 0;
+     33        debugger;
+ ->  34        for (; |i < 2; ++i)
+     35            a();
+     36    }
+     37    
+
+ACTION: step-in
+PAUSE AT entryTraditionalForNoInit:36:9
+     32        let i = 0;
+     33        debugger;
+     34        for (; i < 2; ++i)
+ ->  35            |a();
+     36    }
+     37    
+     38    function entryForIn() {
+
+ACTION: step-over
+PAUSE AT entryTraditionalForNoInit:35:19
+     31    function entryTraditionalForNoInit() {
+     32        let i = 0;
+     33        debugger;
+ ->  34        for (; i < 2; |++i)
+     35            a();
+     36    }
+     37    
+
+ACTION: step-in
+PAUSE AT entryTraditionalForNoInit:35:12
+     31    function entryTraditionalForNoInit() {
+     32        let i = 0;
+     33        debugger;
+ ->  34        for (; |i < 2; ++i)
+     35            a();
+     36    }
+     37    
+
+ACTION: step-in
+PAUSE AT entryTraditionalForNoInit:36:9
+     32        let i = 0;
+     33        debugger;
+     34        for (; i < 2; ++i)
+ ->  35            |a();
+     36    }
+     37    
+     38    function entryForIn() {
+
+ACTION: step-over
+PAUSE AT entryTraditionalForNoInit:35:19
+     31    function entryTraditionalForNoInit() {
+     32        let i = 0;
+     33        debugger;
+ ->  34        for (; i < 2; |++i)
+     35            a();
+     36    }
+     37    
+
+ACTION: step-in
+PAUSE AT entryTraditionalForNoInit:35:12
+     31    function entryTraditionalForNoInit() {
+     32        let i = 0;
+     33        debugger;
+ ->  34        for (; |i < 2; ++i)
+     35            a();
+     36    }
+     37    
+
+ACTION: step-in
+PAUSE AT entryTraditionalForNoInit:37:2
+     33        debugger;
+     34        for (; i < 2; ++i)
+     35            a();
+ ->  36    }|
+     37    
+     38    function entryForIn() {
+     39        let o = {key1: 1, key2: 2};
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.ForIn
+EXPRESSION: setTimeout(entryForIn)
+STEPS: over, over, over, over, over, over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryForIn:41:5
+     37    
+     38    function entryForIn() {
+     39        let o = {key1: 1, key2: 2};
+ ->  40        |debugger;
+     41        for (let property in o)
+     42            a();
+     43    }
+
+ACTION: step-over
+PAUSE AT entryForIn:42:26
+     38    function entryForIn() {
+     39        let o = {key1: 1, key2: 2};
+     40        debugger;
+ ->  41        for (let property in |o)
+     42            a();
+     43    }
+     44    
+
+ACTION: step-over
+PAUSE AT entryForIn:42:10
+     38    function entryForIn() {
+     39        let o = {key1: 1, key2: 2};
+     40        debugger;
+ ->  41        for (|let property in o)
+     42            a();
+     43    }
+     44    
+
+ACTION: step-over
+PAUSE AT entryForIn:43:9
+     39        let o = {key1: 1, key2: 2};
+     40        debugger;
+     41        for (let property in o)
+ ->  42            |a();
+     43    }
+     44    
+     45    function entryForOf() {
+
+ACTION: step-over
+PAUSE AT entryForIn:42:10
+     38    function entryForIn() {
+     39        let o = {key1: 1, key2: 2};
+     40        debugger;
+ ->  41        for (|let property in o)
+     42            a();
+     43    }
+     44    
+
+ACTION: step-over
+PAUSE AT entryForIn:43:9
+     39        let o = {key1: 1, key2: 2};
+     40        debugger;
+     41        for (let property in o)
+ ->  42            |a();
+     43    }
+     44    
+     45    function entryForOf() {
+
+ACTION: step-over
+PAUSE AT entryForIn:42:10
+     38    function entryForIn() {
+     39        let o = {key1: 1, key2: 2};
+     40        debugger;
+ ->  41        for (|let property in o)
+     42            a();
+     43    }
+     44    
+
+ACTION: step-over
+PAUSE AT entryForIn:44:2
+     40        debugger;
+     41        for (let property in o)
+     42            a();
+ ->  43    }|
+     44    
+     45    function entryForOf() {
+     46        let arr = [1, 2];
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.ForIn
+EXPRESSION: setTimeout(entryForOf)
+STEPS: over, over, over, over, over, over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryForOf:48:5
+     44    
+     45    function entryForOf() {
+     46        let arr = [1, 2];
+ ->  47        |debugger;
+     48        for (let value of arr)
+     49            a();
+     50    }
+
+ACTION: step-over
+PAUSE AT entryForOf:49:23
+     45    function entryForOf() {
+     46        let arr = [1, 2];
+     47        debugger;
+ ->  48        for (let value of |arr)
+     49            a();
+     50    }
+     51    
+
+ACTION: step-over
+PAUSE AT entryForOf:49:10
+     45    function entryForOf() {
+     46        let arr = [1, 2];
+     47        debugger;
+ ->  48        for (|let value of arr)
+     49            a();
+     50    }
+     51    
+
+ACTION: step-over
+PAUSE AT entryForOf:50:9
+     46        let arr = [1, 2];
+     47        debugger;
+     48        for (let value of arr)
+ ->  49            |a();
+     50    }
+     51    
+     52    function entryWhileBreakContinue() {
+
+ACTION: step-over
+PAUSE AT entryForOf:49:10
+     45    function entryForOf() {
+     46        let arr = [1, 2];
+     47        debugger;
+ ->  48        for (|let value of arr)
+     49            a();
+     50    }
+     51    
+
+ACTION: step-over
+PAUSE AT entryForOf:50:9
+     46        let arr = [1, 2];
+     47        debugger;
+     48        for (let value of arr)
+ ->  49            |a();
+     50    }
+     51    
+     52    function entryWhileBreakContinue() {
+
+ACTION: step-over
+PAUSE AT entryForOf:49:10
+     45    function entryForOf() {
+     46        let arr = [1, 2];
+     47        debugger;
+ ->  48        for (|let value of arr)
+     49            a();
+     50    }
+     51    
+
+ACTION: step-over
+PAUSE AT entryForOf:51:2
+     47        debugger;
+     48        for (let value of arr)
+     49            a();
+ ->  50    }|
+     51    
+     52    function entryWhileBreakContinue() {
+     53        let i = 0;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.WhileBreakContinue
+EXPRESSION: setTimeout(entryWhileBreakContinue)
+STEPS: over, over, over, over, over, over, over, over, over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryWhileBreakContinue:55:5
+     51    
+     52    function entryWhileBreakContinue() {
+     53        let i = 0;
+ ->  54        |debugger;
+     55        while (truthy) {
+     56            ++i;
+     57            if (i === 1)
+
+ACTION: step-over
+PAUSE AT entryWhileBreakContinue:56:12
+     52    function entryWhileBreakContinue() {
+     53        let i = 0;
+     54        debugger;
+ ->  55        while (|truthy) {
+     56            ++i;
+     57            if (i === 1)
+     58                continue;
+
+ACTION: step-over
+PAUSE AT entryWhileBreakContinue:57:9
+     53        let i = 0;
+     54        debugger;
+     55        while (truthy) {
+ ->  56            |++i;
+     57            if (i === 1)
+     58                continue;
+     59            if (i === 2)
+
+ACTION: step-over
+PAUSE AT entryWhileBreakContinue:58:13
+     54        debugger;
+     55        while (truthy) {
+     56            ++i;
+ ->  57            if (|i === 1)
+     58                continue;
+     59            if (i === 2)
+     60                break;
+
+ACTION: step-over
+PAUSE AT entryWhileBreakContinue:59:13
+     55        while (truthy) {
+     56            ++i;
+     57            if (i === 1)
+ ->  58                |continue;
+     59            if (i === 2)
+     60                break;
+     61        }
+
+ACTION: step-over
+PAUSE AT entryWhileBreakContinue:56:12
+     52    function entryWhileBreakContinue() {
+     53        let i = 0;
+     54        debugger;
+ ->  55        while (|truthy) {
+     56            ++i;
+     57            if (i === 1)
+     58                continue;
+
+ACTION: step-over
+PAUSE AT entryWhileBreakContinue:57:9
+     53        let i = 0;
+     54        debugger;
+     55        while (truthy) {
+ ->  56            |++i;
+     57            if (i === 1)
+     58                continue;
+     59            if (i === 2)
+
+ACTION: step-over
+PAUSE AT entryWhileBreakContinue:58:13
+     54        debugger;
+     55        while (truthy) {
+     56            ++i;
+ ->  57            if (|i === 1)
+     58                continue;
+     59            if (i === 2)
+     60                break;
+
+ACTION: step-over
+PAUSE AT entryWhileBreakContinue:60:13
+     56            ++i;
+     57            if (i === 1)
+     58                continue;
+ ->  59            if (|i === 2)
+     60                break;
+     61        }
+     62    }
+
+ACTION: step-over
+PAUSE AT entryWhileBreakContinue:61:13
+     57            if (i === 1)
+     58                continue;
+     59            if (i === 2)
+ ->  60                |break;
+     61        }
+     62    }
+     63    
+
+ACTION: step-over
+PAUSE AT entryWhileBreakContinue:63:2
+     59            if (i === 2)
+     60                break;
+     61        }
+ ->  62    }|
+     63    
+     64    function entryForBreakContinue() {
+     65        let i = 0;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.ForBreakContinue
+EXPRESSION: setTimeout(entryForBreakContinue)
+STEPS: over, over, over, over, over, over, over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryForBreakContinue:67:5
+     63    
+     64    function entryForBreakContinue() {
+     65        let i = 0;
+ ->  66        |debugger;
+     67        for (;;) {
+     68            ++i;
+     69            if (i === 1)
+
+ACTION: step-over
+PAUSE AT entryForBreakContinue:69:9
+     65        let i = 0;
+     66        debugger;
+     67        for (;;) {
+ ->  68            |++i;
+     69            if (i === 1)
+     70                continue;
+     71            if (i === 2)
+
+ACTION: step-over
+PAUSE AT entryForBreakContinue:70:13
+     66        debugger;
+     67        for (;;) {
+     68            ++i;
+ ->  69            if (|i === 1)
+     70                continue;
+     71            if (i === 2)
+     72                break;
+
+ACTION: step-over
+PAUSE AT entryForBreakContinue:71:13
+     67        for (;;) {
+     68            ++i;
+     69            if (i === 1)
+ ->  70                |continue;
+     71            if (i === 2)
+     72                break;
+     73        }
+
+ACTION: step-over
+PAUSE AT entryForBreakContinue:69:9
+     65        let i = 0;
+     66        debugger;
+     67        for (;;) {
+ ->  68            |++i;
+     69            if (i === 1)
+     70                continue;
+     71            if (i === 2)
+
+ACTION: step-over
+PAUSE AT entryForBreakContinue:70:13
+     66        debugger;
+     67        for (;;) {
+     68            ++i;
+ ->  69            if (|i === 1)
+     70                continue;
+     71            if (i === 2)
+     72                break;
+
+ACTION: step-over
+PAUSE AT entryForBreakContinue:72:13
+     68            ++i;
+     69            if (i === 1)
+     70                continue;
+ ->  71            if (|i === 2)
+     72                break;
+     73        }
+     74    }
+
+ACTION: step-over
+PAUSE AT entryForBreakContinue:73:13
+     69            if (i === 1)
+     70                continue;
+     71            if (i === 2)
+ ->  72                |break;
+     73        }
+     74    }
+     75    
+
+ACTION: step-over
+PAUSE AT entryForBreakContinue:75:2
+     71            if (i === 2)
+     72                break;
+     73        }
+ ->  74    }|
+     75    
+     76    // ---------
+     77    
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+

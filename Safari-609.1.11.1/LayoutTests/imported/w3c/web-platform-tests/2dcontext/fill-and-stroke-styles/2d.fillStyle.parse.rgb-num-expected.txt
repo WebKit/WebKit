@@ -1,0 +1,7 @@
+2d.fillStyle.parse.rgb-num
+Actual output:
+Expected output:
+
+
+PASS Canvas test: 2d.fillStyle.parse.rgb-num 
+

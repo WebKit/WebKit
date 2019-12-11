@@ -1,0 +1,10 @@
+This test checks for a regression against split() function ignores case insensitive modifier.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS "1s2S3".split(/s/i).toString() is "1,2,3"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

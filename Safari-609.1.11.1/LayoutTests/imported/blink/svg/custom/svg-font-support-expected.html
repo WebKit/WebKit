@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<style>
+    @import url('../../resources/opensans/OpenSans-Regular.woff') format('woff');
+</style>
+crbug.com/242735: This test passes if no SVG fonts are used.
+
+<p>
+    <div>This text should use the default font.</div>
+    <div>This text should use the default font.</div>
+</p>
+
+<p>
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="300" height="12pt">
+        <text y="12pt">This text should use the default font.</text>
+    </svg><br>
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="300" height="12pt">
+        <text y="12pt">This text should use the default font.</text>
+    </svg>
+</p>
+
+<p>
+    <div>This text should use the default font.</div>
+    <div>This text should use the default font.</div>
+</p>
+
+<p>
+    <div style="font-family: Verdana;">This text should use Verdana.</div>
+    <div style="font-family: Verdana;">This text should use Verdana.</div>
+</p>
+
+<p>
+    <div style="font-family: Open Sans;">This text should use Open Sans.</div>
+    <div style="font-family: Open Sans;">This text should use Open Sans.</div>
+</p>

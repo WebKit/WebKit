@@ -1,0 +1,4 @@
+
+
+FAIL Navigating to new page should reset to "auto" and navigating back should restore and respect scroll restoration mode assert_equals: scripted scrolling should take effect expected 500 but got 0
+

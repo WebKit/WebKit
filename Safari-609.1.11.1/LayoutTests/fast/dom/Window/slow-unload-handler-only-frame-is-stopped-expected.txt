@@ -1,0 +1,7 @@
+frame "foo" - has 1 onunload handler(s)
+CONSOLE MESSAGE: line 1: Uncaught Error: Too much time spent in unload handler.
+This is a test for bug 34226: [v8]: Regression: onunload event handling. If successful, PASS should be printed below.
+
+PASS
+
+

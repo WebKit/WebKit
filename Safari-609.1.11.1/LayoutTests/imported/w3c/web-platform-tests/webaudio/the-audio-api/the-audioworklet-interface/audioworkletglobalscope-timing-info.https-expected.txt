@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 52: TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')
+
+FAIL 
+      Test currentTime and currentFrame in AudioWorkletGlobalScope
+     TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')
+

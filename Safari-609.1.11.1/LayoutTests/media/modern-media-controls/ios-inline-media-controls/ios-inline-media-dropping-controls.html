@@ -1,0 +1,38 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing <code>IOSInlineMediaControls</code> and dropping controls.");
+
+window.jsTestIsAsync = true;
+
+const mediaControls = new IOSInlineMediaControls({ width: 680, height: 300 });
+
+const droppableControls = [
+    mediaControls.skipForwardButton,
+    mediaControls.skipBackButton,
+    mediaControls.airplayButton,
+    mediaControls.tracksButton
+];
+
+function ready()
+{
+    return droppableControls.concat(mediaControls.playPauseButton).every(button => button.width > 0);
+}
+
+shouldBecomeEqual("ready()", "true", () => {
+    debug("");
+    droppableControls.forEach(control => {
+        while (control.visible)
+            mediaControls.width--;
+        debug(`${control.constructor.name} was dropped at ${mediaControls.width + 1}.`);
+    });
+    debug("");
+    finishJSTest();
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

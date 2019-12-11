@@ -1,0 +1,7 @@
+2d.shadow.clip.2
+Shadows are not drawn outside the clipping region
+Spec references: 2d.shadow.render
+Actual output:
+Expected output:
+
+Passed

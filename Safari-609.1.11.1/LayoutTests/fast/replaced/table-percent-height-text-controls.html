@@ -1,0 +1,103 @@
+<html>
+<head>
+<title>Test for Buzilla Bug 15359: JPEG image not shown when height is specified as percentage inside a table</title>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function getComputedStyleForElement(element, cssPropertyName)
+{
+    if (!element)
+        return null;
+
+    if (window.getComputedStyle)
+        return window.getComputedStyle(element, '').getPropertyValue(cssPropertyName.replace(/([A-Z])/g, "-$1").toLowerCase());
+
+    if (element.currentStyle)
+        return element.currentStyle[cssPropertyName];
+
+    return null;
+}
+
+function getWidth(id)
+{
+    return getComputedStyleForElement(document.getElementById(id), 'width');
+}
+
+function getFullHeight(id)
+{
+    var element = document.getElementById(id);
+    var h = parseFloat(getComputedStyleForElement(element, 'border-top-width'));
+    h += parseFloat(getComputedStyleForElement(element, 'padding-top'));
+    h += parseFloat(getComputedStyleForElement(element, 'height'));
+    h += parseFloat(getComputedStyleForElement(element, 'padding-bottom'));
+    h += parseFloat(getComputedStyleForElement(element, 'border-bottom-width'));
+    return h + 'px';
+}
+
+function parsePixelValue(str)
+{
+    if (typeof str != "string" || str.length < 3 || str.substr(str.length - 2) != "px") {
+        testFailed(str + " is unparsable.");
+        return -1;
+    }
+    return parseFloat(str);
+}
+
+function isEqual(expression75, expression100)
+{
+    var str75 = eval(expression75);
+    var str100 = eval(expression100);
+    var num75 = parsePixelValue(str75);
+    var num100 = parsePixelValue(str100);
+    if (num75 < 0 || num100 < 0)
+        return;
+    if (num75 == num100)
+        testPassed(expression75 + " is equal to " + expression100 + ".");
+    else
+        testFailed(expression75 + " [" + str75 + "] is not equal to " + expression100 + " [" + str100 + "].");
+}
+
+function test()
+{
+    description("This test checks that text controls with percentage heights within table cells have the correct height." +
+        "Text controls are in a different test than other replaced elements because their metrics are platform-specific.");
+
+    shouldBe("getWidth('input-password-75')", "getWidth('input-password-100')");
+    shouldBeTrue("getFullHeight('input-password-75') != '0px'");
+    isEqual("getFullHeight('input-password-75')", "getFullHeight('input-password-100')");
+
+    shouldBe("getWidth('input-text-75')", "getWidth('input-text-100')");
+    shouldBeTrue("getFullHeight('input-text-75') != '0px'");
+    isEqual("getFullHeight('input-text-75')", "getFullHeight('input-text-100')");
+
+    shouldBe("getWidth('textarea-75')", "getWidth('textarea-100')");
+    shouldBeTrue("getFullHeight('textarea-75') != '0px'");
+    isEqual("getFullHeight('textarea-75')", "getFullHeight('textarea-100')");
+
+    isSuccessfullyParsed();
+
+    if (window.testRunner) { 
+        testRunner.notifyDone();
+    }
+}
+</script>
+</head>
+<body onload="test()">
+
+<table><tr><td><input type="password" id="input-password-75" style="height: 75%;"></td></tr></table>
+<table><tr><td><input type="password" id="input-password-100" style="height: 100%;"></td></tr></table>
+
+<table><tr><td><input type="text" id="input-text-75" style="height: 75%;"></td></tr></table>
+<table><tr><td><input type="text" id="input-text-100" style="height: 100%;"></td></tr></table>
+
+<table><tr><td><textarea id="textarea-75" style="height: 75%;"></textarea></td></tr></table>
+<table><tr><td><textarea id="textarea-100" style="height: 100%;"></textarea></td></tr></table>
+
+<p id="description"></p>
+<div id="console"></div>
+</body>
+</html>

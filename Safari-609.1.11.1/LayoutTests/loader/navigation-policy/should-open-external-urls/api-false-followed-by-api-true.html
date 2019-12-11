@@ -1,0 +1,11 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpPolicyDelegateCallbacks();
+    testRunner.queueLoad("resources/do-nothing");
+    testRunner.queueLoad("resources/notify-done.html", "", true);
+}
+</script>
+This test loads a page via API with the flag not set.<br>
+It then loads a page via API with the flag set to true.<br>
+The first load should have the flag defaulted to false, the second load should have it be true.<br>

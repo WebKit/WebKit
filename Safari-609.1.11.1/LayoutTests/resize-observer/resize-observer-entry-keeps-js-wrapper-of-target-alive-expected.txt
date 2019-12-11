@@ -1,0 +1,22 @@
+CONSOLE MESSAGE: ResizeObserver loop completed with undelivered notifications.
+CONSOLE MESSAGE: ResizeObserver loop completed with undelivered notifications.
+CONSOLE MESSAGE: ResizeObserver loop completed with undelivered notifications.
+CONSOLE MESSAGE: ResizeObserver loop completed with undelivered notifications.
+CONSOLE MESSAGE: ResizeObserver loop completed with undelivered notifications.
+CONSOLE MESSAGE: ResizeObserver loop completed with undelivered notifications.
+CONSOLE MESSAGE: ResizeObserver loop completed with undelivered notifications.
+CONSOLE MESSAGE: ResizeObserver loop completed with undelivered notifications.
+CONSOLE MESSAGE: ResizeObserver loop completed with undelivered notifications.
+This tests that JS wrappers of targets in an ResizeObserverEntry do not get collected.
+
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+

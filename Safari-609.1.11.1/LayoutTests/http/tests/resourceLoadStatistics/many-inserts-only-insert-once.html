@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+        <title>Tests that many inserts into the database only result in one row.</title>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body>
+<script>
+    testRunner.setUseITPDatabase(true);
+    description("Tests that many inserts into the database only result in one row.");
+    jsTestIsAsync = true;
+
+    const topFrameUrl = "http://127.0.0.1:8000/temp";
+    const subframeUrl = "http://127.0.1.1:8000/temp";
+
+    function checkClassificationAndContinue() {
+        if (!testRunner.isStatisticsRegisteredAsSubFrameUnder(subframeUrl, topFrameUrl)) {
+            testFailed("url did not get set as subframe.");
+            setEnableFeature(false, finishJSTest);
+        } else if (!testRunner.isStatisticsRegisteredAsRedirectingTo(subframeUrl, topFrameUrl)) {
+            testFailed("url did not get set as redirecting to top frame.");
+            setEnableFeature(false, finishJSTest);
+        } else if (!testRunner.isStatisticsRegisteredAsSubresourceUnder(subframeUrl, topFrameUrl)) {
+            testFailed("url did not get set as subresource.");
+            setEnableFeature(false, finishJSTest);
+        } else {
+            testPassed("url set as subframe");
+            checkCountStatistics();
+        }
+    }
+
+    function insertManyTimes(url) {
+        testRunner.setStatisticsSubframeUnderTopFrameOrigin(url, topFrameUrl);
+        testRunner.setStatisticsSubframeUnderTopFrameOrigin(url, topFrameUrl);
+        testRunner.setStatisticsSubframeUnderTopFrameOrigin(url, topFrameUrl);
+        testRunner.setStatisticsSubframeUnderTopFrameOrigin(url, topFrameUrl);
+        
+        testRunner.setStatisticsSubresourceUnderTopFrameOrigin(url, topFrameUrl);
+        testRunner.setStatisticsSubresourceUnderTopFrameOrigin(url, topFrameUrl);
+        testRunner.setStatisticsSubresourceUnderTopFrameOrigin(url, topFrameUrl);
+        testRunner.setStatisticsSubresourceUnderTopFrameOrigin(url, topFrameUrl);
+        
+        
+        testRunner.setStatisticsSubresourceUniqueRedirectTo(url, topFrameUrl);
+        testRunner.setStatisticsSubresourceUniqueRedirectTo(url, topFrameUrl);
+        testRunner.setStatisticsSubresourceUniqueRedirectTo(url, topFrameUrl);
+        testRunner.setStatisticsSubresourceUniqueRedirectTo(url, topFrameUrl);
+    }
+
+    function setUpStatisticsAndContinue() {
+        insertManyTimes(subframeUrl);
+        testRunner.installStatisticsDidScanDataRecordsCallback(checkClassificationAndContinue);
+        testRunner.statisticsProcessStatisticsAndDataRecords();
+    }
+
+    function checkCountStatistics(result) {
+        if (testRunner.isStatisticsOnlyInDatabaseOnce(subframeUrl, topFrameUrl))
+            testPassed("Relationships are only in the database once.");
+        else
+            testFailed("Relationships are in the database more than once.");
+
+        setEnableFeature(false, finishJSTest);
+    }
+
+    if (window.testRunner) {
+        setEnableFeature(true, function() {
+            testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
+            setUpStatisticsAndContinue();
+        });
+    }
+</script>
+</body>
+</html>

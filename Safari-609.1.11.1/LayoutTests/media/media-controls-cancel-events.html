@@ -1,0 +1,81 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=media-controls.js></script>
+        <script src=video-test.js></script>
+        <script>
+            function bodyClick(event)
+            {
+                consoleWrite("");
+                failTest("'click' event handler on video parent triggered!");
+            }
+
+            function moveMouseToControlElement(elementName, click)
+            {
+                var controlLocation;
+                try {
+                    controlLocation = mediaControlsButtonCoordinates(video, elementName);
+                } catch (exception) {
+                    failTest(exception.description);
+                    return;
+                }
+
+                eventSender.mouseMoveTo(controlLocation[0], controlLocation[1]);
+                if (click) {
+                    eventSender.mouseDown();
+                    eventSender.mouseUp();
+                }
+            }
+
+            function canplaythrough()
+            {
+                consoleWrite("<br>clicking in the play button<br>");
+                moveMouseToControlElement("play-button", true);
+            }
+
+            function playing()
+            {
+                consoleWrite("<br>clicking in mute button<br>");
+                moveMouseToControlElement("mute-button", true);
+            }
+
+            function volumechange()
+            {
+                consoleWrite("<br>clicking in closed caption button<br>");
+                moveMouseToControlElement("toggle-closed-captions-button", true);
+                window.setTimeout(finish, 100);
+            }
+
+            function finish()
+            {
+                consoleWrite("100ms timer fired<br>");
+                endTest();
+            }
+
+            function start()
+            {
+                findMediaElement();
+
+                waitForEventOnce("canplaythrough", canplaythrough);
+                waitForEventOnce("playing", playing);
+                waitForEventOnce('volumechange', volumechange);
+
+                video.src = findMediaFile("video", "content/test");
+
+                if (!window.internals) {
+                    failTest('This test requires window.internals.');
+                    return;
+                }
+            }
+        </script>
+    </head>
+
+    <body onload="start()" onclick="bodyClick()">
+        <p>Test that 'click' events in the media controls don't propogate to the page.</p>
+        <p>This test only runs in DRT!</p>
+        <video controls>
+            <track src="track/captions-webvtt/captions-fast.vtt" kind="captions" srclang="en">
+        </video>
+    </body>
+</html>

@@ -1,0 +1,7 @@
+2d.imageData.create1.zero
+
+createImageData(null) throws TypeError
+
+
+PASS createImageData(null) throws TypeError 
+

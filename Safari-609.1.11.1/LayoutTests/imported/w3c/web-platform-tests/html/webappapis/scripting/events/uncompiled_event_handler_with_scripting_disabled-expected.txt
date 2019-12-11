@@ -1,0 +1,3 @@
+
+PASS when scripting is disabled, the handler is never compiled 
+

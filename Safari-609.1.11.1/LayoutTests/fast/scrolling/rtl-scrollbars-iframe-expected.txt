@@ -1,0 +1,10 @@
+This test makes sure that document.elementFromPoint() works correctly with RTL scrollbars.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS iframeDocument.elementFromPoint(7, 7).id is "a"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

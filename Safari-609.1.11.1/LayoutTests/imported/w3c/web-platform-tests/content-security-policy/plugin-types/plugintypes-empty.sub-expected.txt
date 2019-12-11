@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: 'plugin-types' Content Security Policy directive is empty; all plugins will be blocked.
+
+CONSOLE MESSAGE: Refused to load http://localhost:8800/content-security-policy/support/media/flash.swf because its MIME type does not appear in the plugin-types directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://localhost:8800/content-security-policy/support/media/flash.swf because its MIME type does not appear in the plugin-types directive of the Content Security Policy.
+
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN Should not load the object because plugin-types allows no plugins 
+

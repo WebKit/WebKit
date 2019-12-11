@@ -1,0 +1,38 @@
+Test for <rdar://4968855> Shift-PageUp/Shift-PageDown only select one line of text. To test, press Shift-PageDown and Shift-PageUp to see if more than one line of text is selected.
+
+
+Pressing Shift-PageDown with the caret at the top of the textarea
+Selected text:
+this is some text
+that spans multiple lines
+
+
+
+
+
+
+
+
+
+
+
+and goes on for quite a while
+
+Pressing Shift-PageUp with the caret at the bottom of the textarea
+Selected text:
+this is some text
+that spans multiple lines
+
+
+
+
+
+
+
+
+
+
+
+and goes on for quite a while
+
+

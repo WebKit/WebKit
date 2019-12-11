@@ -1,0 +1,103 @@
+/*
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ * Copyright (C) 2006 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+interface SVGPathElement : SVGGeometryElement {
+    unsigned long getPathSegAtLength(optional unrestricted float distance = NaN);
+
+    SVGPathSegClosePath createSVGPathSegClosePath();
+
+    SVGPathSegMovetoAbs createSVGPathSegMovetoAbs(optional unrestricted float x = NaN,
+                                                  optional unrestricted float y = NaN);
+    SVGPathSegMovetoRel createSVGPathSegMovetoRel(optional unrestricted float x = NaN,
+                                                  optional unrestricted float y = NaN);
+
+    SVGPathSegLinetoAbs createSVGPathSegLinetoAbs(optional unrestricted float x = NaN,
+                                                  optional unrestricted float y = NaN);
+    SVGPathSegLinetoRel createSVGPathSegLinetoRel(optional unrestricted float x = NaN,
+                                                  optional unrestricted float y = NaN);
+
+    SVGPathSegCurvetoCubicAbs createSVGPathSegCurvetoCubicAbs(optional unrestricted float x = NaN,
+                                                              optional unrestricted float y = NaN,
+                                                              optional unrestricted float x1 = NaN,
+                                                              optional unrestricted float y1 = NaN,
+                                                              optional unrestricted float x2 = NaN,
+                                                              optional unrestricted float y2 = NaN);
+    SVGPathSegCurvetoCubicRel createSVGPathSegCurvetoCubicRel(optional unrestricted float x = NaN,
+                                                              optional unrestricted float y = NaN,
+                                                              optional unrestricted float x1 = NaN,
+                                                              optional unrestricted float y1 = NaN,
+                                                              optional unrestricted float x2 = NaN,
+                                                              optional unrestricted float y2 = NaN);
+
+    SVGPathSegCurvetoQuadraticAbs createSVGPathSegCurvetoQuadraticAbs(optional unrestricted float x = NaN,
+                                                                      optional unrestricted float y = NaN,
+                                                                      optional unrestricted float x1 = NaN,
+                                                                      optional unrestricted float y1 = NaN);
+    SVGPathSegCurvetoQuadraticRel createSVGPathSegCurvetoQuadraticRel(optional unrestricted float x = NaN,
+                                                                      optional unrestricted float y = NaN,
+                                                                      optional unrestricted float x1 = NaN,
+                                                                      optional unrestricted float y1 = NaN);
+
+    SVGPathSegArcAbs createSVGPathSegArcAbs(optional unrestricted float x = NaN,
+                                            optional unrestricted float y = NaN,
+                                            optional unrestricted float r1 = NaN,
+                                            optional unrestricted float r2 = NaN,
+                                            optional unrestricted float angle = NaN,
+                                            optional boolean largeArcFlag = false,
+                                            optional boolean sweepFlag = false);
+    SVGPathSegArcRel createSVGPathSegArcRel(optional unrestricted float x = NaN,
+                                            optional unrestricted float y = NaN,
+                                            optional unrestricted float r1 = NaN,
+                                            optional unrestricted float r2 = NaN,
+                                            optional unrestricted float angle = NaN,
+                                            optional boolean largeArcFlag = false,
+                                            optional boolean sweepFlag = false);
+
+    SVGPathSegLinetoHorizontalAbs createSVGPathSegLinetoHorizontalAbs(optional unrestricted float x = NaN);
+    SVGPathSegLinetoHorizontalRel createSVGPathSegLinetoHorizontalRel(optional unrestricted float x = NaN);
+
+    SVGPathSegLinetoVerticalAbs createSVGPathSegLinetoVerticalAbs(optional unrestricted float y = NaN);
+    SVGPathSegLinetoVerticalRel createSVGPathSegLinetoVerticalRel(optional unrestricted float y = NaN);
+
+    SVGPathSegCurvetoCubicSmoothAbs createSVGPathSegCurvetoCubicSmoothAbs(optional unrestricted float x = NaN,
+                                                                          optional unrestricted float y = NaN,
+                                                                          optional unrestricted float x2 = NaN,
+                                                                          optional unrestricted float y2 = NaN);
+    SVGPathSegCurvetoCubicSmoothRel createSVGPathSegCurvetoCubicSmoothRel(optional unrestricted float x = NaN,
+                                                                          optional unrestricted float y = NaN,
+                                                                          optional unrestricted float x2 = NaN,
+                                                                          optional unrestricted float y2 = NaN);
+
+    SVGPathSegCurvetoQuadraticSmoothAbs createSVGPathSegCurvetoQuadraticSmoothAbs(optional unrestricted float x = NaN,
+                                                                                  optional unrestricted float y = NaN);
+    SVGPathSegCurvetoQuadraticSmoothRel createSVGPathSegCurvetoQuadraticSmoothRel(optional unrestricted float x = NaN,
+                                                                                  optional unrestricted float y = NaN);
+
+    readonly attribute SVGPathSegList pathSegList;
+    readonly attribute SVGPathSegList normalizedPathSegList;
+    readonly attribute SVGPathSegList animatedPathSegList;
+    readonly attribute SVGPathSegList animatedNormalizedPathSegList;
+};

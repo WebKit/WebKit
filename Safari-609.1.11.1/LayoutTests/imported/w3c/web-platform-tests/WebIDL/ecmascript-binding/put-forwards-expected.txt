@@ -1,0 +1,8 @@
+
+PASS Overriding getter of [PutForwards] attribute 
+PASS Overriding setter of [PutForwards] target attribute 
+PASS Overriding target of [PutForwards] attribute 
+PASS Exception propagation from getter of [PutForwards] attribute 
+PASS Exception propagation from setter of [PutForwards] target attribute 
+PASS TypeError when getter of [PutForwards] attribute returns non-object 
+

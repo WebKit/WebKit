@@ -1,0 +1,102 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        #overflowing {
+            width: 200px;
+            height: 200px;
+            margin: 10px;
+            border: 1px solid black;
+            overflow: scroll;
+        }
+        
+        .content {
+            height: 400px;
+            background-image: linear-gradient(white, gray)
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+        
+        function logResult(s)
+        {
+            document.getElementById('result').textContent += s + "\n";
+        }
+
+        var scrollTopBeforeScroll;
+        var postScrollCallback;
+
+        function divScrolled()
+        {
+            var newScrollTop = document.getElementById('overflowing').scrollTop;
+
+            if (newScrollTop > scrollTopBeforeScroll)
+                logResult('PASS: mouseWheel caused scrolling');
+            else
+                logResult('FAIL; mouseWheel did not scroll; scrollTop is ' + newScrollTop + ', was ' + scrollTopBeforeScroll);
+
+            if (postScrollCallback)
+                postScrollCallback();
+        }
+        
+        function testScrollability(completionHandler)
+        {
+            var divTarget = document.getElementById('overflowing');
+            var divBounds = divTarget.getBoundingClientRect();
+            
+            scrollTopBeforeScroll = divTarget.scrollTop;
+            logResult('Sending mouseWheel events');
+
+            eventSender.mouseMoveTo(divBounds.left + 10, divBounds.top + 10);
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+
+            postScrollCallback = completionHandler;
+        }
+        
+        function startTest()
+        {
+            if (!window.eventSender) {
+                logResult('This test must be run in DumpRenderTree/WebKitTestRunner');
+                return;
+            }
+
+            testScrollability(function() {
+                window.setTimeout(function() {
+                    logResult('\nNavigating forward then back\n');
+                    window.location.href = "data:text/html,<body onload='history.back()'></body>";
+                }, 0);
+            });
+            
+        }
+        
+        var showCount = 0;
+        function pageShowed()
+        {
+            if (++showCount == 2) {
+                testScrollability(function() {
+                    testRunner.notifyDone();
+                });
+            }
+        }
+        
+        window.addEventListener('load', startTest, false);
+        window.addEventListener('pageshow', pageShowed, false);
+    </script>
+</head>
+<body>
+
+<div id="overflowing" onscroll="divScrolled()">
+    <div class="content">
+    </div>
+</div>
+
+<pre id="result"></pre>
+</body>
+</html>

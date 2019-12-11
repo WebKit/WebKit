@@ -1,0 +1,45 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script src="resources/breakpoint.js"></script>
+<script>
+function test()
+{
+    InspectorProtocol.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.setBreakpointsActive", {active: true});
+
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    {
+        if (/resources\/breakpoint\.js$/.test(messageObject.params.url)) {
+            ProtocolTest.log("Found breakpoint.js");
+            var scriptIdentifier = messageObject.params.scriptId;
+            var location = {scriptId: scriptIdentifier, lineNumber: 3, columnNumber: 0};
+            InspectorProtocol.sendCommand("Debugger.setBreakpoint", {location: location}, function(responseObject) {
+                InspectorProtocol.checkForError(responseObject);
+                InspectorProtocol.sendCommand("Debugger.setBreakpoint", {location: location}, function(responseObject) {
+                    if (!responseObject.error) {
+                        ProtocolTest.log("FAIL: Expected error setting duplicate breakpoint");
+                        ProtocolTest.completeTest();
+                    } else {
+                        ProtocolTest.log("PASS: Received error setting duplicate breakpoint: " + responseObject.error.message);
+                        ProtocolTest.log("Running breakpointBasic");
+                        InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointBasic()"});
+                    }
+                });
+            });
+        }
+    }
+
+    InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject)
+    {
+        ProtocolTest.log("Hit Breakpoint!");
+        ProtocolTest.log("PASS");
+        ProtocolTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Debugger.setBreakpoint on line:0 in &lt;script src="..."&gt;</p>
+</body>
+</html>

@@ -1,0 +1,8 @@
+When prompted, accept to share your audio and video streams.
+
+This test checks that the HTMLMediaElement preload 'none' attribute value is ignored for MediaStream used as srcObject and MediaStream object URLs used as src.
+
+
+FAIL Test that preload 'none' is ignored for MediaStream object URL used as srcObject for audio assert_unreached: 'suspend' should not be fired. Reached unreachable code
+FAIL Test that preload 'none' is ignored for MediaStream used as srcObject for video assert_unreached: 'suspend' should not be fired. Reached unreachable code
+

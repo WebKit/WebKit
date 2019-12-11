@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description('Test getting the port attribute of the URL in a URL object.');
+
+var a = new URL("about:blank");
+
+debug("Default port is empty");
+shouldBe("a.port", "''");
+
+debug("Unspecified port should return empty string");
+a.href = "http://example.com/";
+shouldBe("a.port", "''");
+
+debug("Empty port should be empty");
+a.href = "http://example.com:/";
+shouldBe("a.port", "''");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

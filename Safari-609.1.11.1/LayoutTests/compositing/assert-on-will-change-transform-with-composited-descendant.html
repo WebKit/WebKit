@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+</script>
+<style>
+.container {
+    overflow: hidden;
+    will-change: -webkit-transform;
+}
+
+.inner {
+    z-index: -1;
+    position: relative;
+    transform: translateZ(0);
+}
+</style>
+</head>
+<body>
+PASS if no assert in debug.
+<div class=container><div class=inner></div></div>
+</body>
+</html>

@@ -1,0 +1,78 @@
+This logs DOM mousedown, mousemove, and mouseup events that are dispatched when single tapping an element while holding modifier keys. Must be run in WebKitTestRunner.
+
+
+Test Command + Single Tap:
+type: mousemove, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: false, ctrlKey: false, metaKey: true, shiftKey: false
+type: mousedown, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: false, ctrlKey: false, metaKey: true, shiftKey: false
+type: mouseup, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: false, ctrlKey: false, metaKey: true, shiftKey: false
+
+Test Option + Single Tap:
+type: mousemove, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false
+type: mousedown, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false
+type: mouseup, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false
+
+Test Control + Single Tap:
+type: mousemove, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: false, ctrlKey: true, metaKey: false, shiftKey: false
+type: mousedown, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: false, ctrlKey: true, metaKey: false, shiftKey: false
+type: mouseup, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: false, ctrlKey: true, metaKey: false, shiftKey: false
+
+Test Shift + Single Tap:
+type: mousemove, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: false, ctrlKey: false, metaKey: false, shiftKey: true
+type: mousedown, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: false, ctrlKey: false, metaKey: false, shiftKey: true
+type: mouseup, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: false, ctrlKey: false, metaKey: false, shiftKey: true
+
+Test Command + Option + Single Tap:
+type: mousemove, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: true, ctrlKey: false, metaKey: true, shiftKey: false
+type: mousedown, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: true, ctrlKey: false, metaKey: true, shiftKey: false
+type: mouseup, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: true, ctrlKey: false, metaKey: true, shiftKey: false
+
+Test Command + Control + Single Tap:
+type: mousemove, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: false, ctrlKey: true, metaKey: true, shiftKey: false
+type: mousedown, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: false, ctrlKey: true, metaKey: true, shiftKey: false
+type: mouseup, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: false, ctrlKey: true, metaKey: true, shiftKey: false
+
+Test Command + Shift + Single Tap:
+type: mousemove, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: false, ctrlKey: false, metaKey: true, shiftKey: true
+type: mousedown, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: false, ctrlKey: false, metaKey: true, shiftKey: true
+type: mouseup, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: false, ctrlKey: false, metaKey: true, shiftKey: true
+
+Test Option + Control + Single Tap:
+type: mousemove, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: true, ctrlKey: true, metaKey: false, shiftKey: false
+type: mousedown, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: true, ctrlKey: true, metaKey: false, shiftKey: false
+type: mouseup, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: true, ctrlKey: true, metaKey: false, shiftKey: false
+
+Test Option + Shift + Single Tap:
+type: mousemove, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true
+type: mousedown, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true
+type: mouseup, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true
+
+Test Control + Shift + Single Tap:
+type: mousemove, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: false, ctrlKey: true, metaKey: false, shiftKey: true
+type: mousedown, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: false, ctrlKey: true, metaKey: false, shiftKey: true
+type: mouseup, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: false, ctrlKey: true, metaKey: false, shiftKey: true
+
+Test Command + Option + Control + Single Tap:
+type: mousemove, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: true, ctrlKey: true, metaKey: true, shiftKey: false
+type: mousedown, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: true, ctrlKey: true, metaKey: true, shiftKey: false
+type: mouseup, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: true, ctrlKey: true, metaKey: true, shiftKey: false
+
+Test Command + Option + Shift + Single Tap:
+type: mousemove, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: true, ctrlKey: false, metaKey: true, shiftKey: true
+type: mousedown, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: true, ctrlKey: false, metaKey: true, shiftKey: true
+type: mouseup, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: true, ctrlKey: false, metaKey: true, shiftKey: true
+
+Test Command + Control + Shift + Single Tap:
+type: mousemove, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: false, ctrlKey: true, metaKey: true, shiftKey: true
+type: mousedown, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: false, ctrlKey: true, metaKey: true, shiftKey: true
+type: mouseup, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: false, ctrlKey: true, metaKey: true, shiftKey: true
+
+Test Option + Control + Shift + Single Tap:
+type: mousemove, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: true, ctrlKey: true, metaKey: false, shiftKey: true
+type: mousedown, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: true, ctrlKey: true, metaKey: false, shiftKey: true
+type: mouseup, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: true, ctrlKey: true, metaKey: false, shiftKey: true
+
+Test Command + Option + Control + Shift + Single Tap:
+type: mousemove, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: true, ctrlKey: true, metaKey: true, shiftKey: true
+type: mousedown, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: true, ctrlKey: true, metaKey: true, shiftKey: true
+type: mouseup, x: 72, y: 136, offsetX: 64, offsetY: 64, button: 0, buttons: 0, screenX: 72, screenY: 136, clientX: 72, clientY: 136, altKey: true, ctrlKey: true, metaKey: true, shiftKey: true
+

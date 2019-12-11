@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../video-test.js"></script>
+    <script src="../media-file.js"></script>
+    <script>
+        window.addEventListener('load', async event => {
+            findMediaElement();
+
+            video.setAttribute('autopictureinpicture', 'foo');
+            testExpected('video.autoPictureInPicture', true);
+            video.removeAttribute('autopictureinpicture');
+            testExpected('video.autoPictureInPicture', false);
+
+            video.autoPictureInPicture = true;
+            testExpected("video.getAttribute('autopictureinpicture')", '');
+            video.autoPictureInPicture = false;
+            testExpected("video.getAttribute('autopictureinpicture')", null);
+
+            video.setAttribute('disablepictureinpicture', 'foo');
+            testExpected('video.disablePictureInPicture', true);
+            video.removeAttribute('disablepictureinpicture');
+            testExpected('video.disablePictureInPicture', false);
+
+            video.disablePictureInPicture = true;
+            testExpected("video.getAttribute('disablepictureinpicture')", '');
+            video.disablePictureInPicture = false;
+            testExpected("video.getAttribute('disablepictureinpicture')", null);
+
+            endTest();
+        });
+    </script>
+</head>
+<body>
+    <div>This tests that two picture-in-picture API related properties (autoPictureInPicture and disablePictureInPicture) of video element works.</div>
+    <video controls></video>
+</body>
+</html>

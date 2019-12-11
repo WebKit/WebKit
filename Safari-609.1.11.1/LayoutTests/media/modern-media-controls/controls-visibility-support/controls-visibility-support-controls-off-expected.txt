@@ -1,0 +1,15 @@
+Testing the ControlsVisibilitySupport behavior without controls.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Media has not begun loading yet
+PASS mediaController.controls.visible is false
+
+Media has loaded metadata
+PASS mediaController.controls.visible is false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

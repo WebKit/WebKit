@@ -1,0 +1,20 @@
+header 1
+header 2
+header 3
+cell
+cell
+cell
+cell
+cell
+cell
+header 1	header 2	header 2
+cell	cell	cell
+cell
+AXRole: AXTable
+AXRole: AXTable
+AXRole: AXColumnHeader
+AXRole: AXColumnHeader
+AXRole: AXRowHeader
+AXRole: AXCell
+Test passed
+

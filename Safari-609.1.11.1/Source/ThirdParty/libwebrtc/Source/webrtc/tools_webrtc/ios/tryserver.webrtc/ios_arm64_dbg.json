@@ -1,0 +1,22 @@
+{
+  "comments": [
+    "Builder for 64-bit devices.",
+    "NOTE: Update cache entry in cr-buildbucket.cfg when changing xcode version."
+  ],
+  "xcode build version": "10l232m",
+  "gn_args": [
+    "goma_dir=\"$(goma_dir)\"",
+    "ios_enable_code_signing=false",
+    "is_component_build=false",
+    "is_debug=true",
+    "target_cpu=\"arm64\"",
+    "target_os=\"ios\"",
+    "use_goma=true"
+  ],
+  "use_analyze": false,
+  "additional_compile_targets": [ "all" ],
+  "configuration": "Debug",
+  "sdk": "iphoneos10.3",
+  "tests": [
+  ]
+}

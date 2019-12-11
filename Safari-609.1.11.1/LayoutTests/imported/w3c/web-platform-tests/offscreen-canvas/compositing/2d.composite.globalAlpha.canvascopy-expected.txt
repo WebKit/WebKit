@@ -1,0 +1,5 @@
+2d.composite.globalAlpha.canvascopy
+
+
+FAIL OffscreenCanvas test: 2d.composite.globalAlpha.canvascopy null is not an object (evaluating 'ctx2.fillStyle = '#0f0'')
+

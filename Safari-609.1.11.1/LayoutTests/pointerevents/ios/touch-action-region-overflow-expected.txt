@@ -1,0 +1,105 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 671.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 671.00)
+      (contentsOpaque 1)
+      (event region
+        (rect (0,0) width=800 height=671)
+      )
+      (children 3
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 200.00 200.00)
+          (event region
+            (rect (0,0) width=200 height=200)
+          )
+          (children 1
+            (GraphicsLayer
+              (bounds 200.00 200.00)
+              (children 1
+                (GraphicsLayer
+                  (anchor 0.00 0.00)
+                  (bounds 500.00 500.00)
+                  (drawsContent 1)
+                  (event region
+                    (rect (0,0) width=500 height=500)
+                    (touch-action
+                      (none                      
+                        (rect (150,150) width=100 height=100)
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 208.00)
+          (bounds 200.00 200.00)
+          (event region
+            (rect (0,0) width=200 height=200)
+          )
+          (children 1
+            (GraphicsLayer
+              (bounds origin 150.00 150.00)
+              (bounds 200.00 200.00)
+              (children 1
+                (GraphicsLayer
+                  (scrollOffset (150,150))
+                  (anchor 0.00 0.00)
+                  (bounds 500.00 500.00)
+                  (drawsContent 1)
+                  (event region
+                    (rect (0,0) width=500 height=500)
+                    (touch-action
+                      (none                      
+                        (rect (150,150) width=100 height=100)
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 408.00)
+          (bounds 250.00 250.00)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=250 height=250)
+          )
+          (children 1
+            (GraphicsLayer
+              (offsetFromRenderer width=25 height=25)
+              (position 25.00 25.00)
+              (bounds origin 150.00 150.00)
+              (bounds 200.00 200.00)
+              (children 1
+                (GraphicsLayer
+                  (offsetFromRenderer width=25 height=25)
+                  (scrollOffset (150,150))
+                  (anchor 0.00 0.00)
+                  (bounds 500.00 500.00)
+                  (drawsContent 1)
+                  (event region
+                    (rect (0,0) width=500 height=500)
+                    (touch-action
+                      (none                      
+                        (rect (150,150) width=100 height=100)
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

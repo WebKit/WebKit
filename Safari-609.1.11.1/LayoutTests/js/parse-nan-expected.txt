@@ -1,0 +1,10 @@
+This test checks for a crash when parsing NaN. You should see the text 'NaN' below.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+NaN
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

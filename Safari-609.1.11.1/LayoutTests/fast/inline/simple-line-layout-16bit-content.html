@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+<head>
+<title>This tests that we use simple line layout to layout/render 16bit content.</title>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+<style>
+  div {
+    color: transparent;
+  }
+</style>
+<script>
+  if (window.internals)
+    internals.settings.setSimpleLineLayoutDebugBordersEnabled(true);
+</script>
+</head>
+<body>
+  <div>uüúoöóőaáeé</div>
+</body>
+</html>

@@ -1,0 +1,28 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/option-element-constructor.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/option-form.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/option-index.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/option-label-value.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/option-label.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/option-selected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/option-text-backslash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/option-text-label.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/option-text-recurse.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/option-text-setter.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/option-text-spaces.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/option-value.html

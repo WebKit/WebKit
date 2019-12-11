@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 2534: Error: assert_equals: should scroll to fragment expected 800 but got 0
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Manual scroll restoration should take precedent over scrolling to fragment in cross origin navigation Test timed out
+

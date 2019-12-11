@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 25: TypeError: context.createStereoPanner is not a function. (In 'context.createStereoPanner()', 'context.createStereoPanner' is undefined)
+
+Harness Error (FAIL), message = TypeError: context.createStereoPanner is not a function. (In 'context.createStereoPanner()', 'context.createStereoPanner' is undefined)
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS > [test] Attributes and basic functionality of StereoPannerNode 
+

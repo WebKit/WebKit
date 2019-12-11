@@ -1,0 +1,19 @@
+Tests that line terminators \r, \n, or \r\n are properly parsed, even when there is no newline at eof.
+
+
+
+*** Testing text track 0
+EXPECTED (cues.length == '1') OK
+EXPECTED (cues[0].id == '1') OK
+EXPECTED (cues[0].startTime == '0') OK
+EXPECTED (cues[0].endTime == '30.5') OK
+EXPECTED (cues[0].text == 'Bear is Coming!!!!!') OK
+
+*** Testing text track 1
+EXPECTED (cues.length == '1') OK
+EXPECTED (cues[0].id == '1') OK
+EXPECTED (cues[0].startTime == '0') OK
+EXPECTED (cues[0].endTime == '30.5') OK
+EXPECTED (cues[0].text == 'Bear is Coming!!!!!') OK
+END OF TEST
+

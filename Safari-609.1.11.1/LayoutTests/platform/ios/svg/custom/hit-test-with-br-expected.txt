@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x100
+  RenderBlock {html} at (0,0) size 800x100
+    RenderBody {body} at (8,16) size 784x76
+      RenderBlock {p} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 671x19
+          text run at (0,0) width 446: "A test for hit testing when an svg container is relatively positioned in "
+          text run at (445,0) width 226: "a containing block. See bug 13981."
+      RenderBlock (anonymous) at (0,36) size 784x40
+        RenderBR {br} at (0,0) size 0x19
+        RenderSVGRoot {svg} at (8,72) size 720x15
+          RenderSVGRect {rect} at (8,72) size 720x15 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=720.00] [height=15.00]
+        RenderText {#text} at (0,0) size 0x0
+caret: position 0 of child 3 {br} of body

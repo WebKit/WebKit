@@ -1,0 +1,9 @@
+Tests that AudioContext resume method resolve promises when notified by Page that it can start media playback.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS context resolve callback called
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

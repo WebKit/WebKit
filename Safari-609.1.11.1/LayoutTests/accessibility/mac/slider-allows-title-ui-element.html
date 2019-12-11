@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<label for="slider" tabindex="0" id="title">Color:</label>
+<input id="slider" type="range" min="0" value="0" max="6">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that sliders are allowed to have title UI elements.");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("slider").focus();
+        var slider = accessibilityController.focusedElement;
+
+        document.getElementById("title").focus();
+        var title = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0).childAtIndex(0);
+
+        shouldBeTrue("slider.titleUIElement().isEqual(title)");
+        shouldBe("title.role", "'AXRole: AXStaticText'");
+        shouldBe("title.childAtIndex(0).role", "'AXRole: AXStaticText'");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

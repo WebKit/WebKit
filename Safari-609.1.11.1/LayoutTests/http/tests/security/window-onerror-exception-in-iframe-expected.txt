@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 7: IframeException
+Test that exceptions in iframe are not reported to the main frame window.onerror handler. window.onerror should print exactly one line.
+
+Main frame window.onerror: MainFrameException at window-onerror-exception-in-iframe.html:34:27 MainFrameException
+DONE
+

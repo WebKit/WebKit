@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+PASS if no crash.
+<div id=pparent><div id=cchild><span></span><div style="float: left; width: 10px; height: 10px;"></div><div></div></div><div></div></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.body.offsetHeight;
+pparent.removeChild(cchild);
+</script>
+</body>
+</html>

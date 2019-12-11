@@ -1,0 +1,4 @@
+Not Found
+
+The requested URL /xmlhttprequest/http://:password@localhost:8000/xmlhttprequest/resources/basic-auth-nouserpass/basic-auth-nouserpass.php was not found on this server.
+Apache/1.3.33 Server at 127.0.0.1 Port 8000

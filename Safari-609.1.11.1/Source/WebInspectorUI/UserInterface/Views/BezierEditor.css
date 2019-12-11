@@ -1,0 +1,127 @@
+/*
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.bezier-editor {
+    width: 200px;
+    height: 258px;
+
+    --bezier-editor-preview-translateX: 170px;
+}
+
+body[dir=ltr] .bezier-editor {
+    --bezier-editor-preview-translateX-animate: var(--bezier-editor-preview-translateX);
+}
+
+body[dir=rtl] .bezier-editor {
+    --bezier-editor-preview-translateX-animate: calc(-1 * var(--bezier-editor-preview-translateX));
+}
+
+.bezier-editor > .bezier-preview {
+    width: calc(100% - 10px);
+    height: 25px;
+    margin: 5px 5px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.bezier-editor > .bezier-preview > div {
+    width: 20px;
+    height: 20px;
+    background-color: var(--glyph-color-active);
+    border-radius: 50%;
+}
+
+.bezier-editor > .bezier-preview-timing {
+    position: absolute;
+    top: 34px;
+    -webkit-margin-start: 11px;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid var(--text-color);
+}
+
+.bezier-editor > .bezier-preview.animate > div,
+.bezier-editor > .bezier-preview-timing.animate {
+    animation: bezierPreview 2.5s linear 250ms infinite;
+}
+
+@keyframes bezierPreview {
+    from { transform: translateX(0); }
+    10% { transform: translateX(0); }
+    90% { transform: translateX(var(--bezier-editor-preview-translateX-animate)); }
+    to { transform: translateX(var(--bezier-editor-preview-translateX-animate)); }
+}
+
+.bezier-editor > .bezier-container {
+    margin: 0 8px;
+}
+
+body[dir=rtl] .bezier-editor > .bezier-container {
+    transform: scaleX(-1);
+}
+
+.bezier-editor > .bezier-container .linear-curve {
+    fill: none;
+    stroke: var(--text-color-quaternary);
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.bezier-editor > .bezier-container .bezier-curve {
+    fill: none;
+    stroke: var(--text-color);
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.bezier-editor > .bezier-container .control-line {
+    fill: none;
+    stroke: var(--glyph-color-active);
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.bezier-editor > .bezier-container .control-handle {
+    r: 5px;
+    fill: var(--glyph-color-active);
+}
+
+.bezier-editor > .bezier-container .control-handle.selected {
+    r: 7px;
+}
+
+.bezier-editor > .number-input-container {
+    display: flex;
+    width: calc(100% - 10px);
+    margin: 0 5px;
+    padding-top: 7px;
+    border-top: 1px solid var(--border-color);
+}
+
+.bezier-editor > .number-input-container > input {
+    width: 100%;
+    margin: 0 2px;
+    padding: 1px 0 1px;
+    text-align: end;
+}

@@ -1,0 +1,12 @@
+<link rel="manifest" href="urlscheme://1" media="print">
+<link rel="manifest" href="urlscheme://2">
+<script>
+if (window.testRunner) {
+    testRunner.dumpResourceLoadCallbacks();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.getApplicationManifestThen(function() {
+        testRunner.notifyDone();
+    });
+}
+</script>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/ui-helper.js"></script>
+<p>This tests removing an image map area inside a shadow tree. WebKit should not hit any assertions.</p>
+<div id="result"></div>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const host = document.createElement('div');
+document.body.appendChild(host);
+
+const shadowRoot = host.attachShadow({mode: 'closed'});
+shadowRoot.innerHTML = `<div></div>`;
+
+const container = document.createElement('div');
+document.body.appendChild(container);
+container.innerHTML = `<img src="resources/green-400x400.png" width="400" height="400" usemap="#imagemap" onload="startTest()">
+<map name="imagemap">
+    <area id="area" shape="rect" coords="0,0,200,200" href="#" tabindex="0">
+</map>`;
+
+function startTest()
+{
+    shadowRoot.firstChild.appendChild(container);
+    container.remove();
+    document.getElementById('result').textContent = 'PASS';
+}
+
+</script>
+</body>
+</head>
+</html>

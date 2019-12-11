@@ -1,0 +1,3 @@
+On success, two same text string with equal width will be rendered.
+
+TEST PASSED

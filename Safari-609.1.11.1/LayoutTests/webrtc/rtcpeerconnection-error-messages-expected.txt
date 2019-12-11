@@ -1,0 +1,30 @@
+TypeError: The RTCPeerConnection.localDescription getter can only be used on instances of RTCPeerConnection
+TypeError: The RTCPeerConnection.currentLocalDescription getter can only be used on instances of RTCPeerConnection
+TypeError: The RTCPeerConnection.pendingLocalDescription getter can only be used on instances of RTCPeerConnection
+TypeError: The RTCPeerConnection.remoteDescription getter can only be used on instances of RTCPeerConnection
+TypeError: The RTCPeerConnection.currentRemoteDescription getter can only be used on instances of RTCPeerConnection
+TypeError: The RTCPeerConnection.pendingRemoteDescription getter can only be used on instances of RTCPeerConnection
+TypeError: The RTCPeerConnection.signalingState getter can only be used on instances of RTCPeerConnection
+TypeError: The RTCPeerConnection.iceGatheringState getter can only be used on instances of RTCPeerConnection
+TypeError: The RTCPeerConnection.iceConnectionState getter can only be used on instances of RTCPeerConnection
+TypeError: The RTCPeerConnection.connectionState getter can only be used on instances of RTCPeerConnection
+[object RTCPeerConnection] has no property named canTrickleIceCandidates
+[object RTCPeerConnection] has no property named defaultIceServers
+TypeError: Can only call RTCPeerConnection.getConfiguration on instances of RTCPeerConnection
+TypeError: Can only call RTCPeerConnection.setConfiguration on instances of RTCPeerConnection
+TypeError: Can only call RTCPeerConnection.close on instances of RTCPeerConnection
+TypeError: The RTCPeerConnection.onnegotiationneeded getter can only be used on instances of RTCPeerConnection
+TypeError: The RTCPeerConnection.onicecandidate getter can only be used on instances of RTCPeerConnection
+[object RTCPeerConnection] has no property named onicecandidateerror
+TypeError: The RTCPeerConnection.onsignalingstatechange getter can only be used on instances of RTCPeerConnection
+TypeError: The RTCPeerConnection.oniceconnectionstatechange getter can only be used on instances of RTCPeerConnection
+TypeError: The RTCPeerConnection.onicegatheringstatechange getter can only be used on instances of RTCPeerConnection
+TypeError: The RTCPeerConnection.onconnectionstatechange getter can only be used on instances of RTCPeerConnection
+Promise rejected with: TypeError: Can only call RTCPeerConnection.createOffer on instances of RTCPeerConnection
+Promise rejected with: TypeError: Can only call RTCPeerConnection.createAnswer on instances of RTCPeerConnection
+Promise rejected with: TypeError: Can only call RTCPeerConnection.setLocalDescription on instances of RTCPeerConnection
+Promise rejected with: TypeError: Can only call RTCPeerConnection.setRemoteDescription on instances of RTCPeerConnection
+Promise rejected with: TypeError: Can only call RTCPeerConnection.addIceCandidate on instances of RTCPeerConnection
+
+PASS Exercising TypeError messages in RTCPeerConnection 
+

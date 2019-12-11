@@ -1,0 +1,37 @@
+<p>This test verifies that script elements are not inserted into the document if the WebCore scriptMarkupEnabled setting is false.</p>
+<pre id="log"></pre>
+
+<script>
+function log(s)
+{
+    document.getElementById("log").appendChild(document.createTextNode(s + "\n"));
+}
+
+function shouldBe(aDescription, a, b)
+{
+    if (a == b) {
+        log("PASS: " + aDescription + " should be " + b + " and is.");
+        return;
+    }
+
+    log("FAIL: " + aDescription + " should be " + b + " but instead is " + a + ".");
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    window.internals.settings.setScriptMarkupEnabled(false);
+} else
+    log("This test depends on the JavaScriptMarkupEnabled setting being false.");
+
+window.onload = function test()
+{
+	var documentWithScript = frames[0].document;
+    shouldBe('documentWithScript.getElementsByTagName("script").length', documentWithScript.getElementsByTagName("script").length, 0);
+
+    var documentWithSVGScript = frames[1].document;
+    shouldBe('documentWithSVGScript.getElementsByTagName("script").length', documentWithSVGScript.getElementsByTagName("script").length, 0);
+}
+</script>
+
+<iframe srcdoc="<script>var pwned = 1;</script>"></iframe>
+<iframe srcdoc="<svg><script>var pwned = 1;</script></svg>"></iframe>

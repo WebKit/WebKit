@@ -1,0 +1,3 @@
+
+FAIL clearRect is affected by transforms Can't find variable: OffscreenCanvas
+

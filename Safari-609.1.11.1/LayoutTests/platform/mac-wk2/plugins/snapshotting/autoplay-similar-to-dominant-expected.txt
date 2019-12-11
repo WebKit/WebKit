@@ -1,0 +1,6 @@
+The dominant plugin should play automatically, and trigger all the others to play as well, since they are the same origin.
+
+PASS
+
+
+

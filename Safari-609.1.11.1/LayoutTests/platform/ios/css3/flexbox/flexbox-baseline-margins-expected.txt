@@ -1,0 +1,68 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x569
+  RenderBlock {HTML} at (0,0) size 800x569
+    RenderBody {BODY} at (8,8) size 784x553
+      RenderBlock {DIV} at (0,0) size 784x69
+        RenderText {#text} at (0,28) size 73x19
+          text run at (0,28) width 73: "before text "
+        RenderBlock {DIV} at (72,0) size 76x69 [bgcolor=#D3D3D3] [border: (11px solid #FFC0CB)]
+          RenderFlexibleBox {DIV} at (11,18) size 53x40
+            RenderBlock (anonymous) at (0,10) size 53x30
+              RenderText {#text} at (0,0) size 53x19
+                text run at (0,0) width 53: "baseline"
+        RenderText {#text} at (147,28) size 62x19
+          text run at (147,28) width 62: " after text"
+      RenderBlock {DIV} at (0,69) size 784x114
+        RenderText {#text} at (0,67) size 86x19
+          text run at (0,67) width 86: "Should align "
+        RenderBlock {DIV} at (85,8) size 99x98 [border: (11px solid #FFC0CB)]
+          RenderFlexibleBox {DIV} at (11,11) size 76x76 [bgcolor=#FFC0CB]
+            RenderBlock {DIV} at (13,13) size 50x50 [bgcolor=#D3D3D3]
+        RenderText {#text} at (183,67) size 61x19
+          text run at (183,67) width 61: " with the "
+        RenderBlock {DIV} at (243,21) size 73x72
+          RenderFlexibleBox {DIV} at (0,0) size 72x72 [bgcolor=#FFC0CB] [border: (11px solid #FFC0CB)]
+            RenderBlock {DIV} at (11,11) size 50x50 [bgcolor=#D3D3D3]
+        RenderText {#text} at (315,67) size 71x19
+          text run at (315,67) width 71: " bottom of "
+        RenderBlock {DIV} at (385,0) size 73x114
+          RenderFlexibleBox {DIV} at (0,21) size 72x72 [bgcolor=#FFC0CB] [border: (11px solid #FFC0CB)]
+            RenderBlock {DIV} at (11,11) size 50x50 [bgcolor=#D3D3D3]
+        RenderText {#text} at (457,67) size 89x19
+          text run at (457,67) width 89: " the grey box."
+      RenderBlock {DIV} at (0,183) size 784x64
+        RenderText {#text} at (0,41) size 142x19
+          text run at (0,41) width 142: "Should align with the "
+        RenderBlock {DIV} at (141,0) size 49x64
+          RenderFlexibleBox {DIV} at (0,0) size 48x64 [bgcolor=#FFFFFF]
+            RenderBlock {DIV} at (0,8) size 48x48 [bgcolor=#D3D3D3] [border: (11px solid #FFC0CB)]
+        RenderText {#text} at (189,41) size 155x19
+          text run at (189,41) width 155: " bottom of the pink box."
+      RenderBlock {DIV} at (0,247) size 784x73
+        RenderText {#text} at (0,53) size 114x19
+          text run at (0,53) width 114: "Should align 8px "
+        RenderFlexibleBox {DIV} at (113,8) size 53x52 [bgcolor=#D3D3D3] [border: (11px solid #FFC0CB)]
+        RenderText {#text} at (165,53) size 121x19
+          text run at (165,53) width 121: " below the bottom "
+        RenderFlexibleBox {DIV} at (285,12) size 49x48 [bgcolor=#D3D3D3] [border: (11px solid #FFC0CB)]
+        RenderText {#text} at (333,53) size 106x19
+          text run at (333,53) width 106: " of the pink box."
+      RenderBlock {DIV} at (0,320) size 784x178
+        RenderText {#text} at (0,99) size 191x19
+          text run at (0,99) width 191: "Should align with the bottom "
+        RenderBlock {DIV} at (190,8) size 147x162 [bgcolor=#FFC0CB] [border: (11px solid #FFC0CB)]
+          RenderFlexibleBox {DIV} at (24,32) size 98x98 [border: (11px solid #FFC0CB)]
+        RenderText {#text} at (336,99) size 174x19
+          text run at (336,99) width 174: " of the horizontal scrollbar."
+      RenderBlock {DIV} at (0,498) size 784x55
+        RenderText {#text} at (0,35) size 188x19
+          text run at (0,35) width 188: "Should align 10px below the "
+        RenderBlock {DIV} at (187,0) size 51x50 [bgcolor=#FFC0CB]
+          RenderFlexibleBox {DIV} at (0,0) size 50x50
+        RenderText {#text} at (237,35) size 281x19
+          text run at (237,35) width 281: " of the horizontal scrollbar, if one is visible."
+layer at (247,396) size 50x46 clip at (247,405) size 35x22
+  RenderBlock {DIV} at (24,28) size 50x46 [bgcolor=#D3D3D3] [border: (9px solid #FFC0CB) none]
+layer at (196,506) size 50x50 clip at (196,506) size 35x25
+  RenderBlock {DIV} at (0,0) size 50x50 [bgcolor=#D3D3D3] [border: none (10px solid #FFC0CB) none]

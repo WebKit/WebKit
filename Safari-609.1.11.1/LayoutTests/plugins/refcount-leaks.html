@@ -1,0 +1,74 @@
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+
+<script>
+function noop(x) {
+}
+
+function doGC() {
+    // GC twice to make sure everything is cleaned up.
+    for (var i = 0; i < 2; i++) {
+        gc();
+    }
+}
+
+var countOrig;
+var countAfterCreate;
+var countAfterGC;
+var testObj;
+var refOrig;
+var refAfterGet;
+var refAfterGetGC;
+var refBeforePass;
+var refAfterPass;
+var refAfterPassAndGC;
+
+function runtest() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    // Test that objects are deleted after their JS references are released.
+    countOrig = plug.testObjectCount;
+    let x;
+    for (let i = 0; i < 50; ++i)
+        x = plug.testCreateTestObject();
+    countAfterCreate = plug.testObjectCount;
+    x = null;
+    doGC();
+    countAfterGC = plug.testObjectCount;
+    shouldBe('countAfterCreate === countOrig + 50', 'true');
+    shouldBe('countAfterGC < countAfterCreate', 'true');
+
+    // Test that the object refcount returns to normal after JS references
+    // are released.
+    testObj = plug.testObject;
+    refOrig = testObj.refCount;
+    for (let i = 0; i < 50; ++i)
+        plug.testObject;
+    refAfterGet = testObj.refCount;
+    doGC();
+    refAfterGetGC = testObj.refCount;
+    shouldBe('refAfterGet === refOrig + 50', 'true');
+    shouldBe('refAfterGetGC < refAfterGet', 'true');
+
+    // Test that calling NPN_Invoke with our object as a parameter returns
+    // our refcount to normal (may require a GC).
+    refBeforePass = testObj.refCount;
+    for (let i = 0; i < 50; ++i)
+        plug.testPassTestObject("noop", testObj);
+    refAfterPass = testObj.refCount;
+    doGC();
+    refAfterPassAndGC = testObj.refCount;
+    shouldBe('refAfterPass === refBeforePass + 50', 'true');
+    shouldBe('refAfterPassAndGC < refAfterPass', 'true');
+}
+</script>
+
+<body onload="runtest()">
+
+    Test that we can get an NPObject returned through a method on
+    an NPAPI Object.<P>
+
+    <embed name="plug" type="application/x-webkit-test-netscape">
+</body>

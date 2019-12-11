@@ -1,0 +1,100 @@
+/*
+ * Copyright (C) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1.  Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+enum AudioContextState {
+    "suspended",
+    "running",
+    "interrupted",
+    "closed"
+};
+
+[
+    ActiveDOMObject,
+    Conditional=WEB_AUDIO,
+    Constructor,
+    ConstructorCallWith=Document,
+    EnabledBySetting=WebAudio,
+    ExportMacro=WEBCORE_EXPORT,
+    InterfaceName=webkitAudioContext,
+] interface AudioContext : EventTarget {
+    // All rendered audio ultimately connects to destination, which represents the audio hardware.
+    readonly attribute AudioDestinationNode destination;
+
+    // All scheduled times are relative to this time in seconds.
+    readonly attribute unrestricted double currentTime;
+
+    // All AudioNodes in the context run at this sample-rate (sample-frames per second).
+    readonly attribute unrestricted float sampleRate;
+
+    // All panning is relative to this listener.
+    readonly attribute AudioListener listener;
+
+    [ImplementedAs=suspendRendering] Promise<void> suspend();
+    [ImplementedAs=resumeRendering] Promise<void> resume();
+    Promise<void> close();
+
+    readonly attribute AudioContextState state;
+    attribute EventHandler onstatechange;
+
+    // Number of AudioBufferSourceNodes that are currently playing.
+    readonly attribute unsigned long activeSourceCount;
+    
+    [MayThrowException] AudioBuffer createBuffer(unsigned long numberOfChannels, unsigned long numberOfFrames, unrestricted float sampleRate);
+    [MayThrowException] AudioBuffer createBuffer(ArrayBuffer buffer, boolean mixToMono);
+
+    // Asynchronous audio file data decoding.
+    // FIXME: successCallback should be optional and the callbacks should not be nullable. This should also return a Promise.
+    void decodeAudioData(ArrayBuffer audioData, AudioBufferCallback? successCallback, optional AudioBufferCallback? errorCallback);
+
+    // Sources
+    [MayThrowException] AudioBufferSourceNode createBufferSource();
+
+    [Conditional=VIDEO, MayThrowException] MediaElementAudioSourceNode createMediaElementSource(HTMLMediaElement mediaElement);
+
+    [Conditional=MEDIA_STREAM, MayThrowException] MediaStreamAudioSourceNode createMediaStreamSource(MediaStream mediaStream);
+    [Conditional=MEDIA_STREAM, MayThrowException] MediaStreamAudioDestinationNode createMediaStreamDestination();
+
+    // Processing nodes
+    [MayThrowException] GainNode createGain();
+    [MayThrowException] DelayNode createDelay(optional unrestricted double maxDelayTime = 1);
+    [MayThrowException] BiquadFilterNode createBiquadFilter();
+    [MayThrowException] WaveShaperNode createWaveShaper();
+    [MayThrowException] PannerNode createPanner();
+    [MayThrowException] ConvolverNode createConvolver();
+    [MayThrowException] DynamicsCompressorNode createDynamicsCompressor();
+    [MayThrowException] AnalyserNode createAnalyser();
+    [MayThrowException] ScriptProcessorNode createScriptProcessor(optional unsigned long bufferSize = 0, optional unsigned long numberOfInputChannels = 2, optional unsigned long numberOfOutputChannels = 2);
+    [MayThrowException] OscillatorNode createOscillator();
+    [MayThrowException] PeriodicWave createPeriodicWave(Float32Array real, Float32Array imag);
+
+    // Channel splitting and merging
+    [MayThrowException] ChannelSplitterNode createChannelSplitter(optional unsigned long numberOfOutputs = 6);
+    [MayThrowException] ChannelMergerNode createChannelMerger(optional unsigned long numberOfInputs = 6);
+
+    // Offline rendering
+    // void prepareOfflineBufferRendering(unsigned long numberOfChannels, unsigned long numberOfFrames, unrestricted float sampleRate);
+    attribute EventHandler oncomplete;
+    void startRendering();
+};

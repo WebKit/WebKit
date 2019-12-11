@@ -1,0 +1,2 @@
+Background should be green.
+SUCCESS

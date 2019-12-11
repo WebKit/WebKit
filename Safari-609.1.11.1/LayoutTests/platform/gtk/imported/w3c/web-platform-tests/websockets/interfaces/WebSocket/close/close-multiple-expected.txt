@@ -1,0 +1,3 @@
+
+PASS WebSockets: close() several times 
+

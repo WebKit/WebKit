@@ -1,0 +1,8 @@
+transformed
+Test passes if the hover state of a transformed div is activated on the entire surface of the div.
+
+Element at 70, 70 has id "transformed": PASS
+Element at 630, 130 has id "transformed": PASS
+Element at 40, 130 has id "transformed": PASS
+Element at 620, 270 has id "transformed": PASS
+

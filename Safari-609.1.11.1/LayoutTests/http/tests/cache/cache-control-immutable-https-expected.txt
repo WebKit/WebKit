@@ -1,0 +1,3 @@
+HTTPS: Test if non-expired subresource with Cache-control: immutable is revalidated: NO (expected NO)
+HTTPS: Test if expired subresource with Cache-control: immutable is revalidated: YES (expected YES)
+

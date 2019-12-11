@@ -1,0 +1,6 @@
+-:2: warning: b
+-:5: warning: c
+-:8: warning: d
+-:10: warning: c
+-:12: warning: b
+-:13: error: `%endscope': already popped all levels

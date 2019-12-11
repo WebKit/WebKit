@@ -1,0 +1,34 @@
+Test that setVersion is not blocked if handle closed in versionchange handler.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+blockedEventFired = false
+versionchangeEventFired = false
+indexedDB.open(dbname)
+
+prepareDatabase():
+h1 = event.target.result
+h1.onversionchange = h1OnVersionChange
+indexedDB.open(dbname, 2)
+
+h1OnVersionChange():
+versionchangeEventFired = true
+PASS event.oldVersion is 1
+PASS event.newVersion is 2
+h1.close()
+
+h2UpgradeNeeded():
+PASS event.oldVersion is 1
+PASS event.newVersion is 2
+
+h2OpenSuccess():
+PASS versionchangeEventFired is true
+PASS blockedEventFired is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,8 @@
+2d.fillStyle.parse.rgb-clamp-2
+Assumes colours are clamped to [0,255].
+Actual output:
+Expected output:
+
+
+PASS Canvas test: 2d.fillStyle.parse.rgb-clamp-2 
+

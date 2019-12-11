@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 61x132
+        RenderBlock {CAPTION} at (0,0) size 61x106
+          RenderTable {TABLE} at (0,0) size 61x106
+            RenderTableSection {TBODY} at (0,0) size 61x106
+              RenderTableRow {TR} at (0,2) size 61x102
+                RenderTableCell {TD} at (2,2) size 57x102 [r=0 c=0 rs=1 cs=1]
+                  RenderText {#text} at (1,1) size 49x99
+                    text run at (1,1) width 49: "Another"
+                    text run at (1,21) width 29: "table"
+                    text run at (1,41) width 34: "inside"
+                    text run at (1,61) width 18: "the"
+                    text run at (1,81) width 44: "caption"
+        RenderTableSection {TBODY} at (0,106) size 61x26
+          RenderTableRow {TR} at (0,2) size 61x22
+            RenderTableCell {TD} at (2,2) size 57x22 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 55x19
+                text run at (1,1) width 55: "First row"

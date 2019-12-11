@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 9: window.name should equal "test" after a same-origin sub frame navigation.
+CONSOLE MESSAGE: line 4: window.name equals "test".
+

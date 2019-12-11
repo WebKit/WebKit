@@ -1,0 +1,20 @@
+<script>
+    var xhr = new parent.XMLHttpRequest;
+    xhr.open("GET", "xmlhttprequest-constructor-in-detached-document-frame.html");
+    xhr.onreadystatechange = function(evt) {
+        if (evt.target.readyState == 4) {
+            parent.setTimeout("pass()", 0);
+            var xhrConstructor = XMLHttpRequest; // The constructor may not be reachable as window object property after detaching the frame.
+            parent.document.body.removeChild(parent.document.getElementsByTagName("iframe")[0]);
+            try {
+                var req = new XMLHttpRequest;
+            } catch (ex) {
+                var req = new xhrConstructor;
+            }
+            req.open("GET", "xmlhttprequest-constructor-in-detached-document-frame.html", false);
+            req.send(null);
+        }
+    }
+    xhr.send(null);
+    xhr = null;
+</script>

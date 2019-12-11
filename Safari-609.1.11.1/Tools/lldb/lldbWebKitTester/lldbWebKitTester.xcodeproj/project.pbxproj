@@ -1,0 +1,211 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0FC1C35420E5391E001E9FB0 /* DumpClassLayoutTesting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC1C35320E5391E001E9FB0 /* DumpClassLayoutTesting.cpp */; };
+		7CB6844B1AFA7978002B305C /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB6844A1AFA7978002B305C /* main.cpp */; };
+		CE6C3AFF20C0B17B003E33D8 /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE6C3AFE20C0B17B003E33D8 /* libWTF.a */; };
+		CE6C3B0120C0C444003E33D8 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CE6C3B0020C0C443003E33D8 /* libicucore.dylib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		7C4AB39F1AF0276C003FC8D1 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0FC1C35320E5391E001E9FB0 /* DumpClassLayoutTesting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DumpClassLayoutTesting.cpp; sourceTree = "<group>"; };
+		0FC1C35520E53932001E9FB0 /* DumpClassLayoutTesting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DumpClassLayoutTesting.h; sourceTree = "<group>"; };
+		7C2227511AFC4D9C008C3338 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		7C2227521AFC4D9C008C3338 /* lldbWebKitTester.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = lldbWebKitTester.xcconfig; sourceTree = "<group>"; };
+		7C2227531AFC4D9C008C3338 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
+		7C4AB3A11AF0276C003FC8D1 /* lldbWebKitTester */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = lldbWebKitTester; sourceTree = BUILT_PRODUCTS_DIR; };
+		7CB6844A1AFA7978002B305C /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = SOURCE_ROOT; };
+		CE6C3AFE20C0B17B003E33D8 /* libWTF.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CE6C3B0020C0C443003E33D8 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		7C4AB39E1AF0276C003FC8D1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CE6C3B0120C0C444003E33D8 /* libicucore.dylib in Frameworks */,
+				CE6C3AFF20C0B17B003E33D8 /* libWTF.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		7C2227501AFC4D0A008C3338 /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				7C2227511AFC4D9C008C3338 /* Base.xcconfig */,
+				7C2227531AFC4D9C008C3338 /* DebugRelease.xcconfig */,
+				7C2227521AFC4D9C008C3338 /* lldbWebKitTester.xcconfig */,
+			);
+			path = Configurations;
+			sourceTree = "<group>";
+		};
+		7C4AB3981AF0276C003FC8D1 = {
+			isa = PBXGroup;
+			children = (
+				7C2227501AFC4D0A008C3338 /* Configurations */,
+				CE3F4425205C6A01007195B3 /* Frameworks */,
+				CE3F4424205C66D9007195B3 /* lldbWebKitTester */,
+				7C4AB3A21AF0276C003FC8D1 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		7C4AB3A21AF0276C003FC8D1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7C4AB3A11AF0276C003FC8D1 /* lldbWebKitTester */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CE3F4424205C66D9007195B3 /* lldbWebKitTester */ = {
+			isa = PBXGroup;
+			children = (
+				0FC1C35320E5391E001E9FB0 /* DumpClassLayoutTesting.cpp */,
+				0FC1C35520E53932001E9FB0 /* DumpClassLayoutTesting.h */,
+				7CB6844A1AFA7978002B305C /* main.cpp */,
+			);
+			name = lldbWebKitTester;
+			sourceTree = "<group>";
+		};
+		CE3F4425205C6A01007195B3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CE6C3B0020C0C443003E33D8 /* libicucore.dylib */,
+				CE6C3AFE20C0B17B003E33D8 /* libWTF.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		7C4AB3A01AF0276C003FC8D1 /* lldbWebKitTester */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7C4AB3A81AF0276C003FC8D1 /* Build configuration list for PBXNativeTarget "lldbWebKitTester" */;
+			buildPhases = (
+				7C4AB39D1AF0276C003FC8D1 /* Sources */,
+				7C4AB39E1AF0276C003FC8D1 /* Frameworks */,
+				7C4AB39F1AF0276C003FC8D1 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = lldbWebKitTester;
+			productName = lldbWebKitTester;
+			productReference = 7C4AB3A11AF0276C003FC8D1 /* lldbWebKitTester */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		7C4AB3991AF0276C003FC8D1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0700;
+			};
+			buildConfigurationList = 7C4AB39C1AF0276C003FC8D1 /* Build configuration list for PBXProject "lldbWebKitTester" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 7C4AB3981AF0276C003FC8D1;
+			productRefGroup = 7C4AB3A21AF0276C003FC8D1 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				7C4AB3A01AF0276C003FC8D1 /* lldbWebKitTester */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		7C4AB39D1AF0276C003FC8D1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0FC1C35420E5391E001E9FB0 /* DumpClassLayoutTesting.cpp in Sources */,
+				7CB6844B1AFA7978002B305C /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		7C4AB3A61AF0276C003FC8D1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7C2227531AFC4D9C008C3338 /* DebugRelease.xcconfig */;
+			buildSettings = {
+				DEBUG_DEFINES = "$(DEBUG_DEFINES_debug)";
+			};
+			name = Debug;
+		};
+		7C4AB3A71AF0276C003FC8D1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7C2227531AFC4D9C008C3338 /* DebugRelease.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		7C4AB3A91AF0276C003FC8D1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7C2227521AFC4D9C008C3338 /* lldbWebKitTester.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		7C4AB3AA1AF0276C003FC8D1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7C2227521AFC4D9C008C3338 /* lldbWebKitTester.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7C4AB39C1AF0276C003FC8D1 /* Build configuration list for PBXProject "lldbWebKitTester" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7C4AB3A61AF0276C003FC8D1 /* Debug */,
+				7C4AB3A71AF0276C003FC8D1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7C4AB3A81AF0276C003FC8D1 /* Build configuration list for PBXNativeTarget "lldbWebKitTester" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7C4AB3A91AF0276C003FC8D1 /* Debug */,
+				7C4AB3AA1AF0276C003FC8D1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 7C4AB3991AF0276C003FC8D1 /* Project object */;
+}

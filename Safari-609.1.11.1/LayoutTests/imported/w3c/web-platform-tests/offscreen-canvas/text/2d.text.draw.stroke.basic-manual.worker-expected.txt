@@ -1,0 +1,3 @@
+
+FAIL strokeText draws stroked text Can't find variable: OffscreenCanvas
+

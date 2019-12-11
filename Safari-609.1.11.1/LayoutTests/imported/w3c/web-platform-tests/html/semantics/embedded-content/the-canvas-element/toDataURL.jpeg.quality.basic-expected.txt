@@ -1,0 +1,8 @@
+toDataURL.jpeg.quality.basic
+toDataURL with JPEG uses the quality parameter
+Actual output:
+Expected output:
+
+
+PASS toDataURL with JPEG uses the quality parameter 
+

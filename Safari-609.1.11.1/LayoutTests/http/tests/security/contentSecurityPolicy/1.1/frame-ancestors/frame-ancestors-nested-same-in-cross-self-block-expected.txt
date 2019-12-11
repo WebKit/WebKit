@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: Refused to load http://localhost:8080/security/contentSecurityPolicy/resources/frame-ancestors.pl?policy=%27self%27 because it does not appear in the frame-ancestors directive of the Content Security Policy.
+A 'frame-ancestors' CSP directive with a value 'same' should block render in same-origin nested frames. This test PASSED if you do not see any content in the inner-most nested iframe below. Otherwise, it FAILED.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+Testing a same-origin child with a policy of "'self'" nested in a cross-origin parent.
+
+
+
+--------
+Frame: '<!--frame2-->'
+--------
+

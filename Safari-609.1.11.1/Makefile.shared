@@ -1,0 +1,120 @@
+SCRIPTS_PATH ?= ../Tools/Scripts
+
+SET_COLOR_DIAGNOSTICS_ARG = if [[ -t 1 ]]; then COLOR_DIAGNOSTICS_ARG="COLOR_DIAGNOSTICS=YES"; fi
+XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()' -- $(BUILD_WEBKIT_OPTIONS)` $${COLOR_DIAGNOSTICS_ARG} $(ARGS)
+
+ifneq (,$(SDKROOT))
+	ifneq (,$(OVERRIDE_SDKROOT))
+		ifneq (default,$(OVERRIDE_SDKROOT))
+			XCODE_OPTIONS := $(XCODE_OPTIONS) SDKROOT=$(OVERRIDE_SDKROOT)
+		endif
+		OVERRIDE_SDKROOT =
+	else
+		XCODE_OPTIONS := $(XCODE_OPTIONS) SDKROOT=$(SDKROOT)
+	endif
+endif
+
+ifneq (,$(ARCHS))
+	ifneq (,$(OVERRIDE_ARCHS))
+		ifneq (default,$(OVERRIDE_ARCHS))
+			XCODE_OPTIONS := $(XCODE_OPTIONS) ARCHS="$(OVERRIDE_ARCHS)"
+			XCODE_OPTIONS += ONLY_ACTIVE_ARCH=NO
+		endif
+		OVERRIDE_ARCHS =
+	else
+		XCODE_OPTIONS := $(XCODE_OPTIONS) ARCHS="$(ARCHS)"
+		XCODE_OPTIONS += ONLY_ACTIVE_ARCH=NO
+		# Make Plugin.32 and Plugin.64 build even when they can't be built for the specified architecture.
+		ifeq ($(ARCHS),i386)
+			XCODE_OPTIONS += VALID_ARCHS=i386
+		endif
+		ifeq ($(ARCHS),x86_64)
+			XCODE_OPTIONS += VALID_ARCHS=x86_64
+		endif
+	endif
+endif
+
+ifneq (,$(SDK_VARIANT))
+	XCODE_OPTIONS += SDK_VARIANT="$(SDK_VARIANT)"
+endif
+
+ifeq (, $(findstring WK_USE_CCACHE, $(ARGS)))
+	ifneq (, $(shell which ccache))
+		XCODE_OPTIONS += WK_USE_CCACHE=YES
+	endif
+endif
+
+ifeq ($(findstring UseNewBuildSystem,$(ARGS)),)
+	CAN_USE_XCBUILD = $(shell perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print canUseXCBuild()')
+	ifeq ($(CAN_USE_XCBUILD),1)
+		XCODE_OPTIONS += -UseNewBuildSystem=YES
+		XCODE_OPTIONS += USE_NEW_BUILD_SYSTEM=YES
+	else
+		XCODE_OPTIONS += -UseNewBuildSystem=NO
+	endif
+endif
+
+DEFAULT_VERBOSITY := $(shell defaults read org.webkit.BuildConfiguration BuildTranscriptVerbosity 2>/dev/null || echo "default")
+VERBOSITY ?= $(DEFAULT_VERBOSITY)
+
+ifeq ($(VERBOSITY),default)
+OUTPUT_FILTER = cat
+XCODE_OPTIONS += -hideShellScriptEnvironment
+else
+ifeq ($(VERBOSITY),noisy)
+OUTPUT_FILTER = cat
+else
+OUTPUT_FILTER = $(SCRIPTS_PATH)/filter-build-webkit
+endif
+endif
+
+ifeq ($(ASAN),YES)
+ASAN_OPTION=--asan
+else
+ifeq ($(ASAN),NO)
+ASAN_OPTION=--no-asan
+endif
+endif
+
+ifeq ($(WK_LTO_MODE),full)
+WK_LTO_OPTION=--lto-mode=full
+else ifeq ($(WK_LTO_MODE),thin)
+WK_LTO_OPTION=--lto-mode=thin
+else ifeq ($(WK_LTO_MODE),none)
+WK_LTO_OPTION=--lto-mode=none
+endif
+
+export DSYMUTIL_NUM_THREADS = $(shell sysctl -n hw.activecpu)
+
+# Run xcodebuild with the same PATH with which the Xcode IDE runs, to mitigate unnecessary rebuilds due to PATH differences.
+# See <rdar://problem/16466196>.
+export PATH = $(shell getconf PATH)
+
+all: set_asan_configuration
+	( $(SET_COLOR_DIAGNOSTICS_ARG); xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
+
+debug d development dev develop: force
+	$(SCRIPTS_PATH)/set-webkit-configuration --debug $(ASAN_OPTION) $(WK_LTO_OPTION)
+	( $(SET_COLOR_DIAGNOSTICS_ARG); xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
+
+release r deployment dep deploy: force
+	$(SCRIPTS_PATH)/set-webkit-configuration --release $(ASAN_OPTION) $(WK_LTO_OPTION)
+	( $(SET_COLOR_DIAGNOSTICS_ARG); xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
+
+analyze:
+	$(SCRIPTS_PATH)/set-webkit-configuration --debug $(ASAN_OPTION) $(WK_LTO_OPTION)
+ifndef PATH_TO_SCAN_BUILD
+	( $(SET_COLOR_DIAGNOSTICS_ARG); xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) RUN_CLANG_STATIC_ANALYZER=YES | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
+else
+	( $(SET_COLOR_DIAGNOSTICS_ARG); $(PATH_TO_SCAN_BUILD) xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
+endif
+
+set_asan_configuration:
+ifneq (,$(ASAN_OPTION))
+	$(SCRIPTS_PATH)/set-webkit-configuration $(ASAN_OPTION)
+endif
+
+clean:
+	( $(SET_COLOR_DIAGNOSTICS_ARG); xcodebuild $(OTHER_OPTIONS) -alltargets clean $(XCODE_OPTIONS) | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
+
+force: ;

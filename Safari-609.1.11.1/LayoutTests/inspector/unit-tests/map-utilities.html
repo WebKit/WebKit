@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("Map");
+
+    suite.addTestCase({
+        name: "Map.fromObject",
+        test() {
+            const key1 = "key1";
+            const key2 = "key2";
+            const value1 = "value1";
+            const value2 = 200;
+            const object = {
+                [key1]: value1,
+                [key2]: value2,
+            };
+
+            let map = Map.fromObject(object);
+            InspectorTest.expectEqual(map.size, 2, "Map from simple object should have size 2.");
+            InspectorTest.expectThat(Array.shallowEqual(Array.from(map.keys()), [key1, key2]), "Map from simple object should have keys: key1 and key2.");
+            InspectorTest.expectThat(Array.shallowEqual(Array.from(map.values()), [value1, value2]), "Map from simple object should have values: value1 and value2.");
+
+            let emptyMap = Map.fromObject({});
+            InspectorTest.expectEqual(emptyMap.size, 0, "Map from empty object should be empty.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Map.prototype.take",
+        test() {
+            const key = "key";
+            const value = "value";
+
+            let map = new Map;
+            map.set(key, value);
+            InspectorTest.expectTrue(map.has(key), "Map has `key`.");
+            InspectorTest.expectEqual(map.get(key), value, "Map has `key` => `value`.");
+            InspectorTest.expectEqual(map.take(key), value, "Map take `key` => `value`.");
+            InspectorTest.expectFalse(map.has(key), "Map does not have `key`.");
+            InspectorTest.expectEqual(map.get(key), undefined, "Map has `key` => `undefined`.");
+            InspectorTest.expectEqual(map.take("doesNotExistKey"), undefined, "Map take `doesNotExistKey` => `undefined`.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Map.prototype.getOrInitialize",
+        test() {
+            const key = "key";
+            const value = "value";
+            const value2 = "value2";
+
+            let map = new Map;
+            InspectorTest.expectEqual(map.get(key), undefined, "Map does not have `key`.");
+            InspectorTest.expectEqual(map.getOrInitialize(key, value), value, "Map should have initialized `key` with `value`.");
+            InspectorTest.expectEqual(map.get(key), value, "Map does have `key` => `value`.");
+            InspectorTest.expectEqual(map.getOrInitialize(key, value2), value, "Map should get `key` with `value` without re-initializing.");
+            InspectorTest.expectEqual(map.get(key), value, "Map still has `key` => `value`.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onLoad="runTest()">
+</body>
+</html>

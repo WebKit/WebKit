@@ -1,0 +1,63 @@
+<html>
+<script type="text/javascript">
+
+    function drawCanvas(context) {
+        context.lineWidth = 10.0;
+        context.lineCap = "round";
+
+        context.beginPath();
+
+        // Draw a bounds rect (default color is black)
+        context.strokeRect(0, 0, 300, 300);
+
+        context.strokeStyle = "#808080";
+
+        // Draw a vertical line
+        context.moveTo(150, 100);
+        context.lineTo(150, 200);
+        context.stroke();
+
+        // Draw a horizontal line
+        context.moveTo(100, 150);
+        context.lineTo(200, 150);
+        context.stroke();
+    }
+
+    function _onload() {
+        var context = document.getElementById("myCanvas").getContext("2d");
+        drawCanvas(context);
+    }
+</script>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+<body id="body" onload="_onload()">
+
+<html>
+ 
+    <!-- This test makes sure that a canvas element shows up as an image -->
+ 
+    <canvas id="myCanvas" style="width:300px;height:300px;"  width='300' height='300' alt="canvas 1"></canvas>
+
+    <div id="result"></div>
+     
+    <script>
+        if (window.accessibilityController) {
+            var result = document.getElementById("result");
+
+            var body = document.getElementById("body");
+            body.focus();
+            var canvasElement = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(0);
+            
+            var pattern = "AXRole: AXImage";
+            if (canvasElement.allAttributes().indexOf(pattern) != -1) {
+                result.innerText += "Test passed\n";
+            }
+            else {
+                 result.innerText += "Test failed\n" + canvasElement.allAttributes();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+
+PASS Test <object> being ignored inside media element 
+

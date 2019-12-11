@@ -1,0 +1,22 @@
+PASS selectWordBackward(container); /* <span>I</span>'ll */ getSelection().toString(); is "I'll"
+PASS selectWordBackward(container); /* <span>I'</span>ll */ getSelection().toString(); is "I'll"
+PASS selectWordBackward(container); /* <span>I'l</span>l */ getSelection().toString(); is "I'll"
+PASS selectWordBackward(container); /* I'<span>ll</span> */ getSelection().toString(); is "I'll"
+PASS selectWordBackward(container); /* I<span>'l</span>l */ getSelection().toString(); is "I'll"
+FAIL selectWordBackward(container); /* <span>e</span>́'ll */ getSelection().toString(); should be é'll. Was ll.
+PASS selectWordBackward(container); /* <span>é</span>'ll */ getSelection().toString(); is "é'll"
+PASS selectWordBackward(container); /* <span>é'</span>ll */ getSelection().toString(); is "é'll"
+PASS selectWordBackward(container); /* <span>é'l</span>l */ getSelection().toString(); is "é'll"
+FAIL selectWordBackward(container); /* e<span>́</span>'ll */ getSelection().toString(); should be é'll. Was ll.
+FAIL selectWordBackward(container); /* e<span>́'</span>ll */ getSelection().toString(); should be é'll. Was ll.
+FAIL selectWordBackward(container); /* e<span>́'l</span>l */ getSelection().toString(); should be é'll. Was ll.
+FAIL selectWordBackward(container); /* e<span>́'ll</span> */ getSelection().toString(); should be é'll. Was ll.
+PASS selectWordBackward(container); /* é<span>'</span>ll */ getSelection().toString(); is "é'll"
+PASS selectWordBackward(container); /* é<span>'l</span>l */ getSelection().toString(); is "é'll"
+PASS selectWordBackward(container); /* é<span>'ll</span> */ getSelection().toString(); is "é'll"
+PASS selectWordBackward(container); /* é<span>'</span>ll */ getSelection().toString(); is "é'll"
+PASS selectWordBackward(container); /* é<span>'l</span>l */ getSelection().toString(); is "é'll"
+PASS selectWordBackward(container); /* é<span>'ll</span> */ getSelection().toString(); is "é'll"
+PASS selectWordBackward(container); /* é'<span>l</span>l */ getSelection().toString(); is "é'll"
+This test checks moving to the previous word boundary across multiple text nodes.
+For example, when "I" and "'ll" are put in a separate text node, we should not erroneously report the previous word boundary to be between "'" and "ll".

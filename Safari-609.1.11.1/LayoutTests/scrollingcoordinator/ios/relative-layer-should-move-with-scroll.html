@@ -1,0 +1,62 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <style>
+        #scroller {
+            margin: 10px;
+            height: 300px;
+            width: 300px;
+            border: 1px solid black;
+            overflow: scroll;
+        }
+        
+        .box {
+            position: relative;
+            z-index: 0; /* stacking context ancestor is the root */
+            top: 250px;
+            width: 200px;
+            height: 200px;
+            background-color: blue;
+        }
+        
+        .scroll-content {
+            height: 2000px;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        function getUnstableScrollScript(x, y, scrollX, scrollY)
+        {
+            return `(function() {
+                uiController.scrollUpdatesDisabled = true;
+                uiController.immediateScrollElementAtContentPointToOffset(${x}, ${y}, ${scrollX}, ${scrollY});
+                uiController.doAfterPresentationUpdate(function() {
+                    uiController.uiScriptComplete();
+                });
+            })();`;
+        }
+
+        function doTest()
+        {
+            if (!testRunner.runUIScript)
+                return
+
+            testRunner.runUIScript(getUnstableScrollScript(50, 50, 0, 250), () => {
+                testRunner.notifyDone();
+            });
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div id="scroller">
+        <div class="scroll-content">
+            <div class="box"></div>
+        </div>
+    </div>
+</body>
+</html>

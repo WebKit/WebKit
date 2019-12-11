@@ -1,0 +1,3 @@
+
+PASS Test AnalyserNode when the input is scaled 
+

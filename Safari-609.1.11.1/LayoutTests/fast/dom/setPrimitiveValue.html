@@ -1,0 +1,46 @@
+<html>
+<head>
+<style>
+div.test {
+    position: absolute;
+    left: 250px;
+    top: 100px;
+}
+</style>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function runTest() 
+{
+    var helloText = document.getElementById("hello");
+    var positionField = document.getElementById("style position"); 
+    var position = 50.0;
+
+    var textRule = document.styleSheets[0].cssRules[0];
+    var s = textRule.style;
+    var leftValue = s.getPropertyCSSValue("left");
+    var console = document.getElementById("console");
+
+    try
+    {
+        leftValue.setFloatValue(leftValue.primitiveType, parseFloat(position));
+    }
+    catch (e)
+    {
+        var line = document.createElement("div");
+        line.innerText = "setFloatValue " + e.message;
+        console.appendChild(line);
+    }
+}
+
+</script>
+</head>
+<body onload="runTest();">
+Test CSSPrimitiveValue setters.
+<div class="test" id="hello"></div>
+<pre id="console"></pre>
+</body>
+</html>
+

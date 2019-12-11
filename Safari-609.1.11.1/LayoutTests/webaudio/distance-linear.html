@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <script src="resources/audio-testing.js"></script>
+    <script src="../resources/js-test.js"></script>
+    <script src="resources/distance-model-testing.js"></script>
+  </head>
+
+  <body>
+    <div id="description"></div>
+    <div id="console"></div>
+
+    <script>
+      description("Test linear distance model of AudioPannerNode.");
+
+      function runTest() {
+          window.jsTestIsAsync = true;
+
+          // Create offline audio context.
+          context = new webkitOfflineAudioContext(2, sampleRate * renderLengthSeconds, sampleRate);
+
+          // Create temp panner to get linear value for testing.
+          var pannerModel = context.createPanner();
+          createTestAndRun(context, "linear");
+      }
+
+      runTest();
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            var lastTime = -1;
+            function start() {
+                findMediaElement();
+                video.src = findMediaFile("video", "content/test");
+                waitForEventOnce('canplaythrough', canPlayThrough);
+            }
+
+            function canPlayThrough() {
+                video.playbackRate = -1;
+                video.currentTime = 3;
+                waitForEventOnce('seeked', seeked);
+                video.play();
+            }
+
+            function seeked() {
+                waitForEvent('timeupdate', timeupdate);
+            }
+
+            function timeupdate() {
+                if (lastTime == -1) {
+                    lastTime = video.currentTime;
+                    return;
+                }
+                testExpected("video.currentTime", 3, "<");
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <video></video>
+        <p>Test that seeking with a negative playbackRate works correctly.</p>
+    </body>
+</html>

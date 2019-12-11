@@ -1,0 +1,10 @@
+<p>This tests for a crash on Undo.  You should see an empty input field below.</p>
+<input type="text" id="input">
+
+<script>
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+document.getElementById("input").focus();
+document.execCommand("InsertText", false, "x");
+document.execCommand("Undo");
+</script>

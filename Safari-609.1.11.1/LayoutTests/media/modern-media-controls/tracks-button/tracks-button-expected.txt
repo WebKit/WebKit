@@ -1,0 +1,14 @@
+Testing the TracksButton class.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS tracksButton.element.localName is "button"
+PASS tracksButton.element.classList.contains("tracks") is true
+PASS tracksButton.iconName is Icons.Tracks
+PASS tracksButton.image.element.style.webkitMaskImage.includes("macOS/MediaSelector.svg") became true
+PASS fullscreenTracksButton.image.element.style.webkitMaskImage.includes("macOS/MediaSelector-fullscreen.svg") became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,106 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing that control bars and the mute button respect the user interface layout direction.");
+
+window.jsTestIsAsync = true;
+
+const mediaControls = new MacOSInlineMediaControls({ width: 600, height: 250 });
+mediaControls.usesLTRUserInterfaceLayoutDirection = true;
+
+mediaControls.element.style.position = "relative";
+document.body.appendChild(mediaControls.element);
+
+step1();
+
+function step1()
+{
+    debug("width = 600");
+    debug("muted = false");
+    debug("usesLTRUserInterfaceLayoutDirection = true");
+    shouldBecomeEqual("mediaControls.muteButton.iconName", "Icons.Volume", () => {
+        shouldBecomeEqual("mediaControls.topLeftControlsBar.children[1].children", "[mediaControls.fullscreenButton, mediaControls.pipButton]", () => {
+            shouldBecomeEqualToString("getComputedStyle(mediaControls.topLeftControlsBar.element).left", "6px", step2);
+        });
+    });
+}
+
+function step2()
+{
+    debug("");
+    debug("width = 600");
+    debug("muted = false");
+    debug("usesLTRUserInterfaceLayoutDirection = false");
+    mediaControls.usesLTRUserInterfaceLayoutDirection = false;
+    shouldBecomeEqual("mediaControls.muteButton.iconName", "Icons.Volume", () => {
+        shouldBecomeEqual("mediaControls.topLeftControlsBar.children[1].children", "[mediaControls.pipButton, mediaControls.fullscreenButton]", () => {
+            shouldBecomeEqualToString("getComputedStyle(mediaControls.topLeftControlsBar.element).right", "6px", step3);
+        });
+    });
+}
+
+function step3()
+{
+    debug("");
+    debug("width = 250");
+    debug("muted = false");
+    debug("usesLTRUserInterfaceLayoutDirection = false");
+    mediaControls.width = 250;
+    shouldBecomeEqual("mediaControls.muteButton.iconName", "Icons.VolumeRTL", () => {
+        shouldBecomeEqual("mediaControls.topLeftControlsBar.children[1].children", "[mediaControls.pipButton, mediaControls.fullscreenButton]", () => {
+            shouldBecomeEqualToString("getComputedStyle(mediaControls.topLeftControlsBar.element).right", "6px", step4);
+        });
+    });
+}
+
+function step4()
+{
+    debug("");
+    debug("width = 250");
+    debug("muted = true");
+    debug("usesLTRUserInterfaceLayoutDirection = false");
+    mediaControls.muteButton.muted = true;
+    shouldBecomeEqual("mediaControls.muteButton.iconName", "Icons.VolumeMutedRTL", () => {
+        shouldBecomeEqual("mediaControls.topLeftControlsBar.children[1].children", "[mediaControls.pipButton, mediaControls.fullscreenButton]", () => {
+            shouldBecomeEqualToString("getComputedStyle(mediaControls.topLeftControlsBar.element).right", "6px", step5);
+        });
+    });
+}
+
+function step5()
+{
+    debug("");
+    debug("width = 250");
+    debug("muted = true");
+    debug("usesLTRUserInterfaceLayoutDirection = true");
+    mediaControls.usesLTRUserInterfaceLayoutDirection = true;
+    shouldBecomeEqual("mediaControls.muteButton.iconName", "Icons.VolumeMuted", () => {
+        shouldBecomeEqual("mediaControls.topLeftControlsBar.children[1].children", "[mediaControls.fullscreenButton, mediaControls.pipButton]", () => {
+            shouldBecomeEqualToString("getComputedStyle(mediaControls.topLeftControlsBar.element).left", "6px", done);
+        });
+    });
+}
+
+function done()
+{
+    debug("");
+    mediaControls.element.remove();
+    finishJSTest();
+}
+
+// debug("Mute button is enabled");
+// shouldBe("mediaControls.muteButton.parent.parent", "mediaControls.topRightControlsBar");
+// shouldBe("mediaControls.topRightControlsBar.parent", "mediaControls");
+//
+// debug("")
+// debug("Mute button is disabled");
+// mediaControls.muteButton.enabled = false;
+// shouldBe("mediaControls.muteButton.parent.parent", "mediaControls.topRightControlsBar");
+// shouldBeNull("mediaControls.topRightControlsBar.parent");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

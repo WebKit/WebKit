@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<title>Canvas test: security.dataURI</title>
+<meta name="author" content="Philip Taylor">
+<script src="../common/canvas-tests.js"></script>
+<link rel="stylesheet" href="../common/canvas-tests.css">
+<body class="show_output">
+
+<h1><a href="index.security.html">security</a>.dataURI</h1>
+<p class="desc">data: URIs do not count as different-origin, and do not taint the canvas</p>
+
+<div class="refs">Spec references:
+<ul>
+</ul>
+</div>
+
+<p class="output">Actual output:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+<p class="output expectedtext">Expected output:<p><img src="../resources/green-100x50.png" class="output expected" id="expected" alt="">
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+ctx.fillStyle = '#0f0';
+ctx.fillRect(0, 0, 100, 50);
+var data = canvas.toDataURL();
+ctx.fillStyle = '#f00';
+ctx.fillRect(0, 0, 100, 50);
+var img = new Image();
+deferTest();
+img.onload = wrapFunction(function ()
+{
+    ctx.drawImage(img, 0, 0);
+    canvas.toDataURL(); // should be permitted
+    _assertPixel(canvas, 50,25, 0,255,0,255, "50,25", "0,255,0,255");
+});
+img.src = data;
+
+
+});
+</script>
+

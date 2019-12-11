@@ -1,0 +1,7 @@
+2d.strokeRect.path
+strokeRect does not affect the current path
+Spec references: 2d.strokeRect
+Actual output:
+Expected output:
+
+Passed

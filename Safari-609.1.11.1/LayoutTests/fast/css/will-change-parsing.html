@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            description("This tests checks that will-change parses correctly.");
+
+            function test(value)
+            {
+                var div = document.createElement("div");
+                div.setAttribute("style", value);
+                document.body.appendChild(div);
+
+                var result = div.style.getPropertyValue("will-change");
+                document.body.removeChild(div);
+                return result;
+            }
+
+            function testComputedStyle(value)
+            {
+                var div = document.createElement("div");
+                div.setAttribute("style", value);
+                document.body.appendChild(div);
+
+                var result = window.getComputedStyle(div).willChange;
+                document.body.removeChild(div);
+                return result;
+            }
+
+            shouldBe('testComputedStyle("will-change:;")', '"auto"');
+            shouldBe('testComputedStyle("will-change: contents, all;")', '"auto"');
+            shouldBe('testComputedStyle("will-change: contents;")', '"contents"');
+            
+            shouldBe('test("will-change: inherit;")', '"inherit"');
+            shouldBe('test("will-change: initial;")', '"initial"');
+            shouldBe('test("will-change: all;")', '""');
+            shouldBe('test("will-change: none;")', '""');
+            shouldBe('test("will-change: default;")', '""');
+            shouldBe('test("will-change: will-change;")', '""');
+
+            shouldBe('test("will-change: auto;")', '"auto"');
+            shouldBe('test("will-change: auto, contents;")', '""');
+            shouldBe('test("will-change: scroll-position;")', '"scroll-position"');
+            shouldBe('test("will-change: contents;")', '"contents"');
+            
+            shouldBe('test("will-change: scroll-position, scroll-position;")', '"scroll-position, scroll-position"');
+
+            shouldBe('test("will-change: contents, scroll-position, transform;")', '"contents, scroll-position, transform"');
+            shouldBe('test("will-change: contents, transform, scroll-position, transform;")', '"contents, transform, scroll-position, transform"');
+
+            shouldBe('test("will-change: , background;")', '""');
+            shouldBe('test("will-change: background, transform;")', '"background, transform"');
+            shouldBe('test("will-change: background transform;")', '""');
+            shouldBe('test("will-change: background, all;")', '""');
+            shouldBe('test("will-change: background, will-change;")', '""');
+
+            shouldBe('test("will-change: unknown-property;")', '"unknown-property"');
+            
+            shouldBe('test("will-change: transform, initial;")', '""');
+            shouldBe('test("will-change: default;")', '""');
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

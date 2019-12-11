@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+           col {
+                width: 200px;
+            }
+            td {
+                background-color: #66f;
+                height: 25px;
+            }
+        </style>
+        <script src="../../../resources/js-test-pre.js"></script>
+        <script>
+            function runTest() {
+                description('Tests that the width of table cell changes on changing the colgroup width to new width which is less than its originally defined width. New width should be 100');
+
+                setTimeout(function() {
+                    var col = document.getElementById('thecol');
+	                col.style.width="100px";
+                    shouldBe("document.getElementById('colWidth').offsetWidth","100");
+                    finishJSTest();
+                }, 0);
+            }
+            var jsTestIsAsync = true;
+        </script>
+    </head>
+   <body onload="runTest()">
+        <table>
+            <colgroup>
+                <col id="thecol">
+            </colgroup>
+            <tbody>
+            <tr>
+                <td id="colWidth"></td>
+            </tr>
+            </tbody>
+        </table>
+        <script src="../../../resources/js-test-post.js"></script>
+    </body>
+</html>

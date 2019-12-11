@@ -1,0 +1,5 @@
+
+PASS e.style['grid-template-areas'] = "auto" should not set the property value 
+PASS e.style['grid-template-areas'] = "none \"first\"" should not set the property value 
+PASS e.style['grid-template-areas'] = "\"first\" none" should not set the property value 
+

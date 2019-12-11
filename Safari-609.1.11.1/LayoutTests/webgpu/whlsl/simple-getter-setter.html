@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Test the WHLSL test harness.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.simplePropertyGet = async () => {
+    let program = `
+        struct Foo {
+            int x;
+        }
+        int foo()
+        {
+            Foo foo;
+            foo.x = 7804;
+            return foo.x;
+        }
+    `;
+    assert_equals(await callIntFunction(program, "foo", []), 7804);
+};
+
+runTests(whlslTests);
+</script>
+</html>

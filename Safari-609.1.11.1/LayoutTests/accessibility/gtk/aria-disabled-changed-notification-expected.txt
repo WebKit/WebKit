@@ -1,0 +1,15 @@
+This tests that changing the aria-disabled value results in a state-changed notification.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Setting aria-disabled to true on textbox1.
+Setting aria-disabled to false on textbox2.
+AXDisabledStateChanged true on textbox1
+AXSensitiveStateChanged false on textbox1
+AXDisabledStateChanged false on textbox2
+AXSensitiveStateChanged true on textbox2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

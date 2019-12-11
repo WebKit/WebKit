@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+This test makes sure repaint rects are correct for thick underlines. The test passes if you don't see anything below.
+<div id="target" style="font: 48px 'Times'; text-decoration: underline; text-decoration-thickness: 100px;">Hello</div>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+window.setTimeout(function() {
+    let target = document.getElementById("target");
+    target.parentElement.removeChild(target);
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 20);
+</script>
+</body>
+</html>

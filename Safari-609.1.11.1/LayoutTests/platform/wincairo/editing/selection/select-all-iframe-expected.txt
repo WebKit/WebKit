@@ -1,0 +1,56 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 4 of BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 11 of #text > DIV > BODY > HTML > #document to 11 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 11 of #text > DIV > BODY > HTML > #document to 11 of #text > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 11 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 11 of #text > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock (anonymous) at (0,0) size 784x174
+        RenderIFrame {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
+          layer at (0,0) size 300x150
+            RenderView at (0,0) size 300x150
+          layer at (0,0) size 300x150
+            RenderBlock {HTML} at (0,0) size 300x150
+              RenderBody {BODY} at (8,8) size 284x134 [bgcolor=#FFFFE0]
+                RenderBlock {DIV} at (0,0) size 284x20
+                  RenderBR {BR} at (0,0) size 0x19
+        RenderBR {BR} at (304,154) size 0x0
+        RenderBR {BR} at (0,154) size 0x19
+      RenderBlock {P} at (0,190) size 784x40
+        RenderInline {B} at (0,0) size 658x19
+          RenderText {#text} at (0,0) size 658x19
+            text run at (0,0) width 491: "This test uses the eventSender to do a mouse click to focus the subframe. "
+            text run at (491,0) width 167: "It won't run interactively."
+        RenderText {#text} at (658,0) size 773x39
+          text run at (658,0) width 4: " "
+          text run at (662,0) width 111: "To run it manually,"
+          text run at (0,20) width 271: "click on the iframe, Select All, then hit delete."
+      RenderBlock (anonymous) at (0,246) size 784x60
+        RenderText {#text} at (0,0) size 755x59
+          text run at (0,0) width 748: "Selecting all the content in a contenteditable iframe should select the iframe itself (to help the user delete the iframe) only if the"
+          text run at (0,20) width 182: "iframe is in an editable region. "
+          text run at (182,20) width 406: "This test loads ../resources/select-all-iframe-src.html into an iframe. "
+          text run at (588,20) width 167: "That file does a Select All +"
+          text run at (0,40) width 47: "Delete. "
+          text run at (47,40) width 160: "Two things should happen:"
+      RenderBlock {UL} at (0,322) size 784x60
+        RenderListItem {LI} at (40,0) size 744x40
+          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderText {#text} at (0,0) size 725x39
+            text run at (0,0) width 428: "The Select All operation should not select the iframe, only it's contents. "
+            text run at (428,0) width 297: "The results of the Select All will be apparent from"
+            text run at (0,20) width 399: "the delegate messages that DumpRenderTree receives and dumps."
+        RenderListItem {LI} at (40,40) size 744x20
+          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderText {#text} at (0,0) size 321x19
+            text run at (0,0) width 321: "The contents of the editable iframe should be deleted."

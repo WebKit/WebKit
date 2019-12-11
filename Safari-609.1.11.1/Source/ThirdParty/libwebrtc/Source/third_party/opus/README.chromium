@@ -1,0 +1,25 @@
+Name: opus
+URL: https://git.xiph.org/?p=opus.git;a=snapshot;h=3fe744ea04fdcc418fb85c2c133d13372ebb019b;sf=tgz
+Version: 3fe744ea04fdcc418fb85c2c133d13372ebb019b
+License: BSD
+License File: src/COPYING
+Security Critical: yes
+
+Description:
+This directory contains a copy of Opus library
+
+This library is used by Chrome Remote Desktop and WebRTC for audio stream
+encoding/decoding.
+
+Local changes:
+* copy .gitignore from https://git.xiph.org/?p=opus.git;a=tree
+* set 'x' flags: "chmod 750 win32/genversion.bat"
+* Apply https://git.xiph.org/?p=opus.git;a=commitdiff;h=46560534fcb5710a894a341c2f9526db58fd7087#patch1
+* Apply https://github.com/xiph/opus/pull/73
+* Apply https://github.com/xiph/opus/pull/87
+* Make sure HB_gain is not NaN in an attempt to fix chromium:826914
+* Saturate add to avoid int overflow to fix chromium:842528. This should be
+  reverted when updating to v1.3
+* Apply https://github.com/xiph/opus/commit/4f4b11c2398e96134dc62ee794bfe33ecd6e9bd2
+* Apply https://git.xiph.org/?p=opus.git;a=commit;h=812ae3fb5c589aaafe761b8ebf86bcbbb8f0ed76
+* Apply https://git.xiph.org/?p=opus.git;a=commit;h=cd529ed

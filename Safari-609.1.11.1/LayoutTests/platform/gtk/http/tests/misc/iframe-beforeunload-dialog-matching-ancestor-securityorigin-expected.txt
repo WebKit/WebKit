@@ -1,0 +1,2 @@
+CONFIRM: This is beforeunload from an iframe.
+

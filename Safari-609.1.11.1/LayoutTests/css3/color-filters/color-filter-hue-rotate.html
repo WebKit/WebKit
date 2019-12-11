@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableColorFilter=true ] -->
+<html>
+    <head>
+        <title>CSS Test: hue-rotate -apple-color-filter</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+        <link rel="match" href="-apple-color-filter-hue-rotate-expected.html">
+
+        <meta name="assert" content="hue-rotate -apple-color-filter">
+        <style type="text/css">
+            .test
+            {
+                width: 100px;
+                height: 100px;
+                background-color: blue;
+                border: 50px solid green;
+                margin: 10px;
+                float: left;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="test" style="-apple-color-filter: hue-rotate()"></div>
+        <div class="test" style="-apple-color-filter: hue-rotate(540deg)"></div>
+        <div class="test" style="-apple-color-filter: hue-rotate(360deg)"></div>
+        <div class="test" style="-apple-color-filter: hue-rotate(90deg)"></div>
+        <div class="test" style="-apple-color-filter: hue-rotate(0)"></div>
+        <div class="test" style="-apple-color-filter: hue-rotate(-180deg)"></div>
+    </body>
+</html>

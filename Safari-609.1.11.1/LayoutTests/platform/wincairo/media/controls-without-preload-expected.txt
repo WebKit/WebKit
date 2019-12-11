@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 298x19
+          text run at (0,0) width 298: "The controls should not depend on preload value."
+      RenderBlock (anonymous) at (0,36) size 784x150
+        RenderText {#text} at (0,0) size 0x0
+layer at (8,44) size 200x150
+  RenderVideo {VIDEO} at (0,0) size 200x150
+layer at (8,44) size 200x150
+  RenderFlexibleBox {DIV} at (0,0) size 200x150
+layer at (8,149) size 200x45
+  RenderFlexibleBox {DIV} at (0,105) size 200x45
+layer at (8,149) size 200x45
+  RenderBlock (positioned) {DIV} at (0,0) size 200x45
+layer at (8,149) size 200x45
+  RenderBlock (positioned) {DIV} at (0,0) size 200x45 [bgcolor=#1E1E1E73]
+layer at (8,149) size 200x45
+  RenderBlock (positioned) {DIV} at (0,0) size 200x45 [bgcolor=#292929]
+layer at (16,174) size 12x15
+  RenderButton {BUTTON} at (8,25) size 12x15 [color=#FFFFFF]
+layer at (44,174) size 16x15
+  RenderButton {BUTTON} at (36,24) size 16x16 [color=#FFFFFF]
+layer at (154,169) size 14x25
+  RenderFlexibleBox {DIV} at (146,20) size 14x25
+layer at (154,174) size 14x15
+  RenderButton {BUTTON} at (0,5) size 14x15 [color=#FFFFFF]
+layer at (184,174) size 16x15
+  RenderButton {BUTTON} at (176,25) size 16x15 [color=#FFFFFF]

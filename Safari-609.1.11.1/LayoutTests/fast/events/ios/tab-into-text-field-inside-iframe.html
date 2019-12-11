@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<iframe id="test-container" srcdoc="<input onfocus='window.parent.passed()'>"></iframe>
+<script>
+window.jsTestIsAsync = true;
+
+function passed()
+{
+    testPassed("focused text field inside iframe");
+    document.body.removeChild(document.getElementById("test-container"));
+    finishJSTest();
+}
+
+function runTest()
+{
+    if (!window.testRunner)
+        return;
+    UIHelper.keyDown("\t");
+}
+
+description("This tests that you can tab cycle into a field inside an iframe.");
+runTest();
+</script>
+</body>
+</html>

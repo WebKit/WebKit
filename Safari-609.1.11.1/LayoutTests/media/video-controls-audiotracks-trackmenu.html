@@ -1,0 +1,78 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+    <head>
+        <title>Selecting from a list of tracks</title>
+        <script src="media-controls.js"></script>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script src="trackmenu-test.js"></script>
+        <script>
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            function startTest()
+            {
+                if (window.internals)
+                    internals.suspendAnimations();
+
+                // enable only the first audio track
+                for (var i = 0; i < video.audioTracks.length; ++i)
+                    video.audioTracks[i].enabled = (i == 0);
+
+                showTrackMenu();
+                window.setTimeout(testAudioTrackEnabled, 100);
+            }
+
+            function testMenu()
+            {
+                trackListItems = audioTrackMenuList();
+                var expectedItemCount = video.audioTracks.length;
+                consoleWrite("There should be " + expectedItemCount + " items in the menu.");
+                testExpected("trackListItems.length", expectedItemCount);
+            }
+
+            function testAudioTrackEnabled()
+            {
+                trackListItems = audioTrackMenuList();
+                consoleWrite("*** Menu item 0 should be selected");
+
+                testExpected("trackListItems.length", 3);
+                testExpected("trackListItems[0].classList.contains('selected')", true);
+                testExpected("trackListItems[1].classList.contains('selected')", false);
+                testExpected("trackListItems[2].classList.contains('selected')", false);
+
+                window.setTimeout(selectDifferentAudioTrack, 100);
+            }
+
+            function selectDifferentAudioTrack()
+            {
+                consoleWrite("*** Selecting French Track");
+                selectAudioTrackMenuItem("French");
+                setTimeout(testAudioTrackDisabled, 100);
+            }
+
+            function testAudioTrackDisabled()
+            {
+                testExpected("video.audioTracks.length", 3);
+                testExpected("video.audioTracks[0].enabled", false);
+                testExpected("video.audioTracks[1].enabled", true);
+                testExpected("video.audioTracks[2].enabled", false);
+                endTest();
+            }
+
+            function start()
+            {
+                findMediaElement();
+                video.src = findMediaFile('video', 'content/audio-tracks');
+                waitForEvent('canplaythrough', startTest);
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <p>Test that we are able to trigger the list of captions, and select from the list.</p>
+        <video width="640" height="480" controls>
+        </video>
+    </body>
+</html>
+

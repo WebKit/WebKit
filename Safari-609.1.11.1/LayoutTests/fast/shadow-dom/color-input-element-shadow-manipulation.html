@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+function runTest() {
+    var bounds = color_input_element.getBoundingClientRect();
+    var range = document.caretRangeFromPoint(bounds.left + 10, bounds.top + 10);
+    var shadow_tree_container = range.commonAncestorContainer;
+    shadow_tree_container.prepend("foo");
+    color_input_element.disabled = true;
+    testPassed("Passes if we did not debug assert.");
+    finishJSTest();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <input type="color" id="color_input_element" style="position:absolute; height: 100px; width: 100px;">
+</body>
+</html>

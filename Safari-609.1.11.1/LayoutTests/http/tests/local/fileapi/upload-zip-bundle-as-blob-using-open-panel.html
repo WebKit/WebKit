@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<div id=description></div>
+<input type=file id=fileInput></div>
+<div id=console></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+description("Test that bundles are automatically zipped when uploaded with XMLHttpRequest. To test manually, please select a file bundle in the \"Choose File\" input below.");
+jsTestIsAsync = true;
+
+window.onload = function()
+{
+    var fileInput = document.getElementById("fileInput");
+
+    fileInput.addEventListener("change", onchange, true);
+
+    if (!window.testRunner)
+        return;
+
+    var centerX = fileInput.offsetLeft + fileInput.offsetWidth / 2;
+    var centerY = fileInput.offsetTop + fileInput.offsetHeight / 2;
+    testRunner.setOpenPanelFiles(["resources/document.rtfd"]);
+    UIHelper.activateAt(centerX, centerY);
+}
+
+function onchange(event)
+{
+    var file = event.target.files.item(0);
+    var xhr = new XMLHttpRequest;
+    xhr.open("POST", "http://127.0.0.1:8000/xmlhttprequest/resources/post-echo.cgi", true);
+    xhr.responseType = "arraybuffer";
+    xhr.send(file);
+    xhr.onloadend = function() {
+        responseArray = new Uint8Array(xhr.response);
+        shouldBe("String.fromCharCode(responseArray[0], responseArray[1])", "'PK'");
+        finishJSTest();
+    }
+}
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

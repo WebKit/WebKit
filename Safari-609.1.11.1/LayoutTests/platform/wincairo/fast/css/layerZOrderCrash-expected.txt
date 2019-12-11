@@ -1,0 +1,34 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock (relative positioned) {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 591x19
+          text run at (0,0) width 591: "To reproduce this bug outside of DumpRenderTree, click the link below. If broken, we will crash. "
+        RenderBR {BR} at (591,15) size 0x0
+layer at (8,28) size 56x96
+  RenderTable {TABLE} at (0,20) size 56x96
+    RenderTableSection {TBODY} at (0,0) size 56x96
+      RenderTableRow {TR} at (0,2) size 56x22
+        RenderTableCell {TD} at (2,2) size 52x22 [r=0 c=0 rs=1 cs=1]
+          RenderInline {A} at (0,0) size 21x19 [color=#0000EE]
+            RenderText {#text} at (1,1) size 21x19
+              text run at (1,1) width 21: "link"
+      RenderTableRow {TR} at (0,26) size 56x68
+        RenderTableCell {TD} at (2,26) size 52x68 [r=1 c=0 rs=1 cs=1]
+layer at (11,55) size 50x66
+  RenderTable {TABLE} at (1,1) size 50x66
+    RenderTableSection {TBODY} at (0,0) size 50x66
+      RenderTableRow {TR} at (0,2) size 50x62
+        RenderTableCell {TD} at (2,2) size 46x62 [r=0 c=0 rs=1 cs=1]
+          RenderText {#text} at (1,1) size 44x19
+            text run at (1,1) width 44: "content"
+          RenderBR {BR} at (45,16) size 0x0
+          RenderText {#text} at (1,21) size 44x19
+            text run at (1,21) width 44: "content"
+          RenderBR {BR} at (45,36) size 0x0
+          RenderText {#text} at (1,41) size 44x19
+            text run at (1,41) width 44: "content"
+          RenderBR {BR} at (45,56) size 0x0
+caret: position 5 of child 0 {#text} of body

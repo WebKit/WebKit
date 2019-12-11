@@ -1,0 +1,4 @@
+
+
+PASS textarea setCustomValidity is correct 
+

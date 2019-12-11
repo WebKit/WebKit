@@ -1,0 +1,42 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+<head>
+<script src="media-controls.js"></script>
+<script src="media-file.js"></script>
+<script src="video-test.js"></script>
+<script>
+if (window.internals) {
+    internals.settings.setVideoPlaybackRequiresUserGesture(true);
+    internals.settings.setRequiresUserGestureToLoadVideo(true);
+}
+
+var didUserGesture = false;
+
+function checkDidLoadMetadataAfterUserGesture()
+{
+    if (didUserGesture)
+        passTest("Did load metadata after user gesture.");
+    else
+        failTest("Did load metadata without user gesture");
+}
+
+function performClickOnPlayButton()
+{
+    didUserGesture = true;
+    clickPlayButton(video);
+}
+
+function start()
+{
+    findMediaElement();
+    waitForEvent("loadedmetadata", checkDidLoadMetadataAfterUserGesture);
+    video.src = findMediaFile("video", "content/test");
+
+    window.setTimeout(performClickOnPlayButton, 0);
+}
+</script>
+</head>
+<body onload="start()">
+    <video id="video" controls></video>
+</body>
+</html>

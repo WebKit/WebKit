@@ -1,0 +1,3 @@
+
+PASS Testing that panning in the x-axis on an element with touch-action: pan-x triggers a pointercancel event. 
+

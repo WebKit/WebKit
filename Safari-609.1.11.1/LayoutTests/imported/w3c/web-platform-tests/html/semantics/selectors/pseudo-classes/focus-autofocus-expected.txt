@@ -1,0 +1,4 @@
+
+
+FAIL :focus selector should work with an autofocused element. assert_array_equals: lengths differ, expected 1 got 0
+

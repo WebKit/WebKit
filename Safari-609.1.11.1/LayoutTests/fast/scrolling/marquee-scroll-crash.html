@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function testcase()
+        {
+            var iframe = document.getElementById('iframe');
+            var frameDocElement = iframe.contentDocument.documentElement;
+            frameDocElement.innerHTML = '<object>cc</object>';
+            frameDocElement.addEventListener('beforeload', frameBeforeLoad, true);
+            window.getSelection().selectAllChildren(document.body);
+        }
+
+        function frameBeforeLoad(event)
+        {
+            document.write('Test passes if it does not crash.');
+        }
+    </script>
+    </head>
+    <body onload='testcase();'>
+        <iframe id='iframe'></iframe>
+        <marquee>marquee</marquee>
+    </body>
+</html>

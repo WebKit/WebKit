@@ -1,0 +1,12 @@
+This test follows a link with a ping attribute where the ping URL matches a 'css-display-none' rule.
+This text should remain visible.
+ Link with ping
+
+
+--------
+Frame: 'result_frame'
+--------
+Ping received.
+HTTP_HOST: 127.0.0.1:8000
+REQUEST_URI: /contentextensions/resources/save-ping.php?test=contentextensions-hide-on-ping
+No cookies in ping.

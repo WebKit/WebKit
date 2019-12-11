@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../resources/log-pause-location.js"></script>
+<script>
+function entry() {
+    debugger;
+    alert(1);
+    alert(2); // Set an autoContinue breakpoint on this line.
+    alert(3);
+}
+
+// ---------
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.StepThroughAutoContinueBreakpoint");
+
+    suite.addTestCase({
+        name: "StepThroughAutoContinueBreakpoint",
+        description: "Stepping through statements should still work after encountering an autoContinue breakpoint.",
+        test(resolve, reject) {
+            // Set autoContinue breakpoint.
+            let script = WI.networkManager.mainFrame.mainResource.scripts[0];
+            var location = script.createSourceCodeLocation(8, 0);
+            var breakpoint = new WI.Breakpoint(location);
+            breakpoint.autoContinue = true;
+            breakpoint.createAction(WI.BreakpointAction.Type.Evaluate, null, "alert(1.5);");
+            WI.debuggerManager.addBreakpoint(breakpoint);
+
+            // Step through the breakpoint.
+            InspectorTest.evaluateInPage("setTimeout(entry)");
+            WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                InspectorTest.log(`PAUSED (${WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target).pauseReason})`);
+            });
+            WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
+                if (!WI.debuggerManager.activeCallFrame)
+                    return;
+                logPauseLocation();
+                WI.debuggerManager.stepInto();
+            });
+            WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Resumed, (event) => {
+                InspectorTest.log("RESUMED");
+                resolve();
+            });
+        }
+    });
+
+    loadMainPageContent().then(() => {
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Ensure stepping works through an autoContinue breakpoint.</p>
+</body>
+</html>

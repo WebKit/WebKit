@@ -1,0 +1,10 @@
+This test checks to ensure that a webgl context can be created with the 'webgl' context ID
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS context exists
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

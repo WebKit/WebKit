@@ -1,0 +1,280 @@
+#!/usr/bin/env python
+
+# Copyright (C) 2017 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+# 3.  Neither the name of Apple Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import argparse
+import bisect
+import json
+import math
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+import urllib2
+import urlparse
+from webkitpy.common.memoized import memoized
+
+REST_API_URL = 'https://q1tzqfy48e.execute-api.us-west-2.amazonaws.com/v2_2/'
+REST_API_ARCHIVE_ENDPOINT = 'archives/'
+REST_API_MINIFIED_ARCHIVE_ENDPOINT = 'minified-archives/'
+REST_API_PLATFORM_ENDPOINT = 'platforms'
+REST_API_MINIFIED_PLATFORM_ENDPOINT = 'minified-platforms'
+
+
+def bisect_builds(revision_list, start_index, end_index, options):
+    while True:
+        index_to_test = pick_next_build(revision_list, start_index, end_index)
+        if index_to_test == None:
+            print('No more builds to test...')
+            exit(1)
+        download_archive(options, revision_list[index_to_test])
+        extract_archive(options)
+        reproduces = test_archive(options, revision_list[index_to_test])
+
+        if reproduces:          # bisect left
+            index_to_test -= 1  # We can remove this from the end of the list of builds to test
+            bisect_builds(revision_list, start_index, index_to_test, options)
+        if not reproduces:      # bisect right
+            index_to_test += 1  # We can remove this from the start of the list of builds to test
+            bisect_builds(revision_list, index_to_test, end_index, options)
+
+
+def download_archive(options, revision):
+    api_url = get_api_archive_url(options)
+    s3_url = get_s3_location_for_revision(api_url, revision)
+    print('Archive URL: {}'.format(s3_url))
+    command = ['python', '../BuildSlaveSupport/download-built-product', '--{}'.format(options.configuration), '--platform', options.platform, s3_url]
+    print('Downloading revision: {}'.format(revision))
+    subprocess.check_call(command)
+
+
+def extract_archive(options):
+    command = ['python', '../BuildSlaveSupport/built-product-archive', '--platform', options.platform, '--%s' % options.configuration, 'extract']
+    subprocess.check_call(command)
+
+
+# ---- bisect helpers from https://docs.python.org/2/library/bisect.html ----
+def find_le(a, x):
+    """Find rightmost value less than or equal to x"""
+    i = bisect.bisect_right(a, x)
+    if i:
+        return i - 1
+    raise ValueError
+
+
+def find_ge(a, x):
+    """Find leftmost item greater than or equal to x"""
+    i = bisect.bisect_left(a, x)
+    if i != len(a):
+        return i
+    raise ValueError
+# ---- end bisect helpers ----
+
+
+def get_api_archive_url(options, LastEvaluatedKey=None):
+    if options.full:
+        base_url = urlparse.urljoin(REST_API_URL, REST_API_ARCHIVE_ENDPOINT)
+    else:
+        base_url = urlparse.urljoin(REST_API_URL, REST_API_MINIFIED_ARCHIVE_ENDPOINT)
+
+    api_url = urlparse.urljoin(base_url, '-'.join([options.platform, options.architecture, options.configuration]))
+    if LastEvaluatedKey:
+        querystring = urllib2.quote(json.dumps(LastEvaluatedKey))
+        api_url += '?ExclusiveStartKey=' + querystring
+        
+    return api_url
+
+
+def get_indices_from_revisions(revision_list, start_revision, end_revision):
+    if start_revision is None:
+        print('WARNING: No starting revision was given, defaulting to first available for this configuration')
+        start_index = 0
+    else:
+        start_index = find_ge(revision_list, start_revision)
+
+    if end_revision is None:
+        print('WARNING: No ending revision was given, defaulting to last avialable for this configuration')
+        end_index = len(revision_list) - 1
+    else:
+        end_index = find_le(revision_list, end_revision)
+
+    return start_index, end_index
+
+
+def get_sorted_revisions(revisions_dict):
+    revisions = [int(item['revision']['N']) for item in revisions_dict['revisions']['Items']]
+    return sorted(revisions)
+    
+
+def get_s3_location_for_revision(url, revision):
+    url = '/'.join([url, str(revision)])
+    r = urllib2.urlopen(url)
+    data = json.load(r)
+    
+    for archive in data['archive']:
+        s3_url = archive['s3_url']
+    return s3_url
+
+
+def parse_args(args):
+    helptext = 'bisect-builds is designed to help pinpoint regressions to specific code changes. It does this by bisecting across archives produced by build.webkit.org. Full and "minified" archives are available. Minified archives are significantly smaller, as they have been stripped of dSYMs and other non-essential components.'
+    parser = argparse.ArgumentParser(description=helptext)
+    parser.add_argument('-c', '--configuration', default='release', help='The configuration to query [release | debug]')
+    parser.add_argument('-a', '--architecture', default='x86_64', help='The architecture to query [x86_64 | i386]')
+    parser.add_argument('-p', '--platform', default='None', required=True, help='The platform to query [mac-sierra | gtk | ios-simulator | win]')
+    parser.add_argument('-f', '--full', action='store_true', default=False, help='Use full archives containing debug symbols. These are significantly larger files!')
+    parser.add_argument('-s', '--start', default=None, type=int, help='The starting revision to bisect.')
+    parser.add_argument('-e', '--end', default=None, type=int, help='The ending revision to bisect')
+    parser.add_argument('-l', '--list', action='store_true', default=False, help='Display a list of platforms and revisions')
+    return parser.parse_args(args)
+
+
+def pick_next_build(revision_list, start_index, end_index):
+    revisions_remaining = (end_index - start_index) + 1
+    print('Found {} revisions in this range to test...'.format(revisions_remaining))
+
+    if start_index >= end_index:
+        print('No archives available between {} and {}'.format(revision_list[end_index], revision_list[start_index]))
+        return None
+
+    middleIndex = (start_index + end_index) / 2
+    return int(math.ceil(middleIndex))
+
+
+def prompt_did_reproduce():
+    var = raw_input('\nDid the error reproduce? [y/n]: ')
+    var = var.lower()
+    if 'y' in var:
+        return True
+    if 'n' in var:
+        return False
+    else:
+        prompt_did_reproduce()
+    
+
+def set_webkit_output_dir(temp_dir):
+    print('Setting environment variable WEBKIT_OUTPUTDIR to {}'.format(temp_dir))
+    os.environ['WEBKIT_OUTPUTDIR'] = temp_dir
+
+
+def test_archive(options, revision):
+    print('Testing revision {}...'.format(revision))
+    command = []
+    if 'mac' in options.platform:
+        command = ['./run-safari']
+    elif 'ios' in options.platform:
+        command = ['./run-safari', '--simulator']
+    else:
+        print('Default test behavior for this platform is not implemented...'.format(options.platform))
+
+    if command:
+        subprocess.call(command)
+    return prompt_did_reproduce()
+
+
+def get_platforms(endpoint):
+    platform_url = urlparse.urljoin(REST_API_URL, endpoint)
+    r = urllib2.urlopen(platform_url)
+    data = json.load(r)
+    platforms = []
+    for platform in data.get('Items'):
+        platforms.append(str(platform['identifier']['S']))
+    
+    return platforms
+     
+@memoized
+def minified_platforms():
+    return get_platforms(REST_API_MINIFIED_PLATFORM_ENDPOINT)
+ 
+@memoized
+def unminified_platforms():
+    return get_platforms(REST_API_PLATFORM_ENDPOINT)
+ 
+def is_supported_platform(options):
+    platform = '-'.join([options.platform, options.architecture, options.configuration])    
+    if options.full:
+        return platform in unminified_platforms()
+    return platform in minified_platforms()
+
+
+def validate_options(options):
+    if not is_supported_platform(options):
+        print('Unsupported platform combination: [{}], exiting...'.format('-'.join([options.platform, options.architecture, options.configuration])))
+        if options.full:
+            print('Available Unminified platforms: {}'.format(unminified_platforms()))
+        else:
+            print('Available Minified platforms: {}'.format(minified_platforms()))
+            print('INFO: pass --full to try against full archives')
+        exit(1)
+
+def print_list_and_exit(revision_list, options):
+        print('Supported minified platforms: {}'.format(minified_platforms()))
+        print('Supported unminified platforms: {}'.format(unminified_platforms()))
+        print('{} revisions available for supplied platform: {}-{}-{}:'.format(len(revision_list), options.platform, options.architecture, options.configuration))
+        print(revision_list)
+        exit(0)
+
+def fetch_revision_list(options, LastEvaluatedKey=None):
+    url = get_api_archive_url(options, LastEvaluatedKey)
+    r = urllib2.urlopen(url)
+    data = json.load(r)
+    revision_list = get_sorted_revisions(data)
+
+    if 'LastEvaluatedKey' in data['revisions']:
+        LastEvaluatedKey = data['revisions']['LastEvaluatedKey']
+        revision_list += fetch_revision_list(options, LastEvaluatedKey)
+        
+    return revision_list
+    
+def main(options):
+    validate_options(options)
+    revision_list = fetch_revision_list(options)
+    
+    if options.list:
+        print_list_and_exit(revision_list, options)
+
+    start_index, end_index = get_indices_from_revisions(revision_list, options.start, options.end)
+    print('Bisecting between {} and {}'.format(revision_list[start_index], revision_list[end_index]))
+    
+    # from here forward, use indices instead of revisions
+    bisect_builds(revision_list, start_index, end_index, options)
+
+
+if __name__ == '__main__':
+    options = parse_args(sys.argv[1:])
+    script_path = os.path.abspath(__file__)
+    script_directory = os.path.dirname(script_path)
+    os.chdir(script_directory)
+    webkit_output_dir = tempfile.mkdtemp()
+    set_webkit_output_dir(webkit_output_dir)
+    try:
+        main(options)    
+    except KeyboardInterrupt:
+        exit("Aborting.")
+    finally:
+        shutil.rmtree(webkit_output_dir, ignore_errors=True)

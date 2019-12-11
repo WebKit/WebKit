@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.square {
+    display: inline-block;
+    height: 128px;
+    width: 128px;
+    margin: 20px;
+    background-color: yellow;
+}
+
+#webkit-box-shadow-before-box-shadow {
+    -webkit-box-shadow: 0 0 10px 1px red;
+    box-shadow: 0 0 12px 1px green; /* Should override -webkit-box-shadow */
+}
+
+#box-shadow-before-webkit-box-shadow {
+    box-shadow: 0 0 12px 1px red;
+    -webkit-box-shadow: 0 0 10px 1px green; /* Should override box-shadow */
+}
+</style>
+</head>
+<body>
+    <!-- Test that we apply box-shadow and -webkit-box-shadow in the order they are parsed. -->
+    <div class="square" id="webkit-box-shadow-before-box-shadow"></div>
+    <div class="square" id="box-shadow-before-webkit-box-shadow"></div>
+</body>
+</html>

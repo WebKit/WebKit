@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 4: The XSS Auditor refused to execute a script in 'http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?test=/security/xssAuditor/embed-tag-null-char.html&q=%3Cembed%20name=%27plugin%27%20type=%27application/x-webkit-test-netscape%27%20src=%27http://127.0.0.1:8000/sec%00urity/xssAuditor/resources/dummy.swf%27%3E%3C/embed%3E' because its source code was found within the request. The auditor was enabled because the server did not send an 'X-XSS-Protection' header.
+

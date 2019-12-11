@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/runner.js"></script>
+<script>
+var target = document.createElement("canvas");
+target.width = 300;
+target.height = 150;
+var context = target.getContext("2d");
+context.globalCompositeOperation = "destination-atop";
+context.fillStyle = "rgba(0,128,0,0.5)";
+
+PerfTestRunner.measureRunsPerSecond({run: function() {
+    context.fillRect(10,10,10,10);
+}});
+</script>
+</body>
+</html>

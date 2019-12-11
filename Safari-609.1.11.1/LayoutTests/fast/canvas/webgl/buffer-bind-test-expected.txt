@@ -1,0 +1,19 @@
+Checks a buffer can only be bound to 1 target.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Canvas.getContext
+PASS context exists
+
+PASS should be able to bind buffer.
+PASS should be able to unbind buffer.
+PASS should get INVALID_OPERATION if attempting to bind buffer to different target
+PASS should be able to bind buffer.
+PASS should be able to unbind buffer.
+PASS should get INVALID_OPERATION if attempting to bind buffer to different target
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

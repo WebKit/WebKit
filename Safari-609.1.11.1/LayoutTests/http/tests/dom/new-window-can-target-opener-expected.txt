@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 15: PASS: New window should have an opener
+CONSOLE MESSAGE: line 21: PASS: New window should be able to look up opener by name
+CONSOLE MESSAGE: line 27: PASS: New window should have URL 'http://127.0.0.1:8000/dom/new-window-can-target-opener.html'
+Make sure that windows opened via window.open can target their opener
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+

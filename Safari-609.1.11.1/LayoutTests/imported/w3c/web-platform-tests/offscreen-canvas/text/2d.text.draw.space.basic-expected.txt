@@ -1,0 +1,7 @@
+2d.text.draw.space.basic
+
+U+0020 is rendered the correct size (1em wide)
+
+
+FAIL U+0020 is rendered the correct size (1em wide) null is not an object (evaluating 'ctx.font = '50px CanvasTest'')
+

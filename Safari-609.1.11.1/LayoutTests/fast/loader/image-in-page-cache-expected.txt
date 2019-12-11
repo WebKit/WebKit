@@ -1,0 +1,17 @@
+https://bugs.webkit.org/show_bug.cgi?id=86668 Images in cached pages should not be updated when a live page is using that same image.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Opening animated-image.html in new window
+PASS Opened animated-image.html
+Opening animated-image2.html in otherWindow
+PASS Opened animated-image2.html
+Opening animated-image3.html in otherWindow
+PASS Opened animated-image3.html
+Closing otherWindow
+PASS Closed otherWindow
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

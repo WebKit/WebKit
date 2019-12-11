@@ -1,0 +1,239 @@
+#!/usr/bin/env python -u
+
+# Copyright (C) 2019 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+# 3.  Neither the name of Apple Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import sys
+import argparse
+import json
+
+try:
+    from scipy import stats
+except:
+    print "ERROR: scipy package is not installed. Run `pip install scipy`"
+    sys.exit(1)
+
+try:
+    import numpy
+except:
+    print "ERROR: numpy package is not installed. Run `pip install numpy`"
+    sys.exit(1)
+
+def readJSONFile(path):
+    with open(path, 'r') as contents:
+        return json.loads(contents.read())
+
+Speedometer2 = "Speedometer2"
+JetStream2 = "JetStream2"
+PLT5 = "PLT5"
+MotionMark = "MotionMark"
+MotionMark1_1 = "MotionMark-1.1"
+
+def detectJetStream2(payload):
+    return "JetStream2.0" in payload
+
+def JetStream2Results(payload):
+    assert detectJetStream2(payload)
+
+    js = payload["JetStream2.0"]
+    iterations = len(js["tests"]["gaussian-blur"]["metrics"]["Score"]["current"])
+    results = []
+    for i in range(iterations):
+        scores = []
+        for test in js["tests"].keys():
+            scores.append(js["tests"][test]["metrics"]["Score"]["current"][i])
+        geomean = stats.gmean(scores)
+        
+        results.append(geomean)
+
+    return results
+
+def detectSpeedometer2(payload):
+    return "Speedometer-2" in payload
+
+def Speedometer2Results(payload):
+    assert detectSpeedometer2(payload)
+    results = []
+    for arr in payload["Speedometer-2"]["metrics"]["Score"]["current"]:
+        results.append(numpy.mean(arr))
+    return results
+
+def detectPLT5(payload):
+    if "iterations" not in payload:
+        return False
+    iterations = payload["iterations"]
+    if not isinstance(iterations, list):
+        return False
+    if not len(iterations):
+        return False
+    if "cold" not in iterations[0]:
+        return False
+    if "warm" not in iterations[0]:
+        return False
+    if "Geometric" not in iterations[0]:
+        return False
+    return True
+
+def PLT5Results(payload):
+    assert detectPLT5(payload)
+    results = []
+    for obj in payload["iterations"]:
+        results.append(obj["Geometric"])
+    return results
+
+def detectMotionMark(payload):
+    return "MotionMark" in payload
+
+def detectMotionMark1_1(payload):
+    return "MotionMark-1.1" in payload
+
+def motionMarkResults(payload):
+    assert detectMotionMark(payload) or detectMotionMark1_1(payload)
+    if detectMotionMark(payload):
+        payload = payload["MotionMark"]
+    else:
+        payload = payload["MotionMark-1.1"]
+    testNames = payload["tests"].keys()
+    numTests = len(payload["tests"][testNames[0]]["metrics"]["Score"]["current"])
+    results = []
+    for i in range(numTests):
+        scores = []
+        for test in testNames:
+            scores.append(payload["tests"][test]["metrics"]["Score"]["current"][i])
+        results.append(stats.gmean(scores))
+
+    return results
+
+def motionMark1_1Results(payload):
+    return motionMarkResults(payload)
+
+def detectBenchmark(payload):
+    if detectJetStream2(payload):
+        return JetStream2
+    if detectSpeedometer2(payload):
+        return Speedometer2
+    if detectPLT5(payload):
+        return PLT5
+    if detectMotionMark(payload):
+        return MotionMark
+    if detectMotionMark1_1(payload):
+        return MotionMark1_1
+    return None
+
+def biggerIsBetter(benchmarkType):
+    if benchmarkType == JetStream2:
+        return True
+    if benchmarkType == Speedometer2:
+        return True
+    if benchmarkType == MotionMark:
+        return True
+    if benchmarkType == MotionMark1_1:
+        return True
+    if benchmarkType == PLT5:
+        return False
+
+    print "Should not be reached."
+    assert False
+
+def ttest(benchmarkType, a, b):
+    # We use two-tailed Welch's
+    (tStatistic, pValue) = stats.ttest_ind(a, b, equal_var=False)
+    aMean = numpy.mean(a)
+    bMean = numpy.mean(b)
+    print "a mean = {:.5f}".format(aMean)
+    print "b mean = {:.5f}".format(bMean)
+
+    print "pValue = {:.10f}".format(pValue)
+
+    if biggerIsBetter(benchmarkType):
+        print "(Bigger means are better.)"
+        if aMean > bMean:
+            print "{:.3f} times worse".format((aMean / bMean))
+        else:
+            print "{:.3f} times better".format((bMean / aMean))
+    else:
+        print "(Smaller means are better.)"
+        if aMean > bMean:
+            print "{:.3f} times better".format((aMean / bMean))
+        else:
+            print "{:.3f} times worse".format((bMean / aMean))
+
+    if pValue <= 0.05:
+        print "Results ARE significant"
+    else:
+        print "Results ARE NOT significant"
+
+def getOptions():
+    parser = argparse.ArgumentParser(description="Compare two WebKit benchmark results. Pass in two JSON result files to compare them. This script prints the pValue along with the magnitude of the change.")
+
+    parser.add_argument("-a",
+        type=str,
+        required=True,
+        help="a of a/b. Path to JSON results file.")
+
+    parser.add_argument("-b",
+        type=str,
+        required=True,
+        help="b of a/b. Path to JSON results file.")
+
+    return parser.parse_known_args()[0]
+
+
+def main():
+    args = getOptions()
+
+    a = readJSONFile(args.a)
+    b = readJSONFile(args.b)
+
+    typeA = detectBenchmark(a)
+    typeB = detectBenchmark(b)
+
+    if typeA != typeB:
+        print "-a and -b are not the same benchmark. a={} b={}".format(typeA, typeB)
+        sys.exit(1)
+
+    if not (typeA and typeB):
+        print "Unknown benchmark type. a={} b={}".format(typeA, typeB)
+        sys.exit(1)
+    
+    if typeA == JetStream2:
+        ttest(typeA, JetStream2Results(a), JetStream2Results(b))
+    elif typeA == Speedometer2:
+        ttest(typeA, Speedometer2Results(a), Speedometer2Results(b))
+    elif typeA == MotionMark:
+        ttest(typeA, motionMarkResults(a), motionMarkResults(b))
+    elif typeA == MotionMark1_1:
+        ttest(typeA, motionMark1_1Results(a), motionMark1_1Results(b))
+    elif typeA == PLT5:
+        ttest(typeA, PLT5Results(a), PLT5Results(b))
+    else:
+        print "Unknown benchmark type"
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
+

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../editing.js"></script>
+
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+    
+function editingTest() {
+    var container = document.getElementById('sample');
+    var range = document.createRange()
+    range.setEndAfter(container.lastChild);
+    window.getSelection().addRange(range);
+    document.execCommand('formatblock', false, '<h1>');
+    document.write("PASS. WebKit didn't crash.");
+};
+</script>
+</head>
+<body onload=runEditingTest()>
+<pre id="sample" contenteditable="true">
+foo
+<div contenteditable="false">bar
+</div>
+
+</pre>
+</body>
+</html>

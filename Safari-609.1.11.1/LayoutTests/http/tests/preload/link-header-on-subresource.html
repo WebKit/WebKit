@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText()
+        testRunner.waitUntilDone();
+    }
+</script>
+<script src="/js-test-resources/js-test.js"></script>
+<link rel=stylesheet href="resources/dummy-preloads-subresource.css.php">
+<script>
+    setInterval(function() {
+        if (internals.isPreloaded("../resources/dummy.js") && internals.isPreloaded("../resources/dummy.js?media"))
+            testRunner.notifyDone();
+        }, 100);
+</script>
+

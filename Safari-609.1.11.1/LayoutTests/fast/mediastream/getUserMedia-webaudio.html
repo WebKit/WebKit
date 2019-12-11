@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing getUserMedia plugged in Web Audio</title>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+        <script src="../../webrtc/routines.js"></script>
+    </head>
+    <body>
+        <script>
+if (window.testRunner)
+    testRunner.setUserMediaPermission(true);
+
+var finishTest, errorTest;
+promise_test((test) => {
+    return navigator.mediaDevices.getUserMedia({ audio: true}).then((stream) => {
+        return new Promise((resolve, reject) => {
+            finishTest = resolve;
+            errorTest = reject;
+            var audioContext = new webkitAudioContext();
+            var script = audioContext.createScriptProcessor(2048, 1, 1);
+            script.onaudioprocess = (event) => {
+                var squaredSum = 0.0;
+                event.inputBuffer.getChannelData(0).forEach((value) => {
+                    squaredSum += value * value;
+                });
+                // Mock source should send some bips with sufficient energy to finish the test
+                if (squaredSum > 30) {
+                    source.disconnect(script);
+                    script.disconnect(audioContext.destination);
+                    finishTest();
+                }
+            };
+            let source = audioContext.createMediaStreamSource(stream);
+
+            source.connect(script);
+            script.connect(audioContext.destination);
+        });
+    });
+}, "Plugging in getUserMedia audio stream into Web Audio");
+
+function waitFor(duration)
+{
+    return new Promise(resolve => setTimeout(resolve, duration));
+}
+
+promise_test(async (test) => {
+    if (!window.internals)
+        return Promise.reject("Internals API required");
+
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: {deviceId: true}});
+    internals.setMockAudioTrackChannelNumber(stream.getAudioTracks()[0], 1);
+
+    var audioContext = new webkitAudioContext();
+    var script = audioContext.createScriptProcessor(2048, 1, 1);
+    let source = audioContext.createMediaStreamSource(stream);
+    source.connect(script);
+    script.connect(audioContext.destination);
+
+    await waitFor(200);
+
+    internals.setMockAudioTrackChannelNumber(stream.getAudioTracks()[0], 2);
+    await waitFor(200);
+
+    source.disconnect(script);
+    script.disconnect(audioContext.destination);
+}, "Web Audio should work even if number of channels of a track increases from 1 to 2");
+
+promise_test(async (test) => {
+    if (!window.internals)
+        return Promise.reject("Internals API required");
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    internals.useMockAudioDestinationCocoa();
+
+    var audioContext = new webkitAudioContext();
+    var analyzer = audioContext.createAnalyser();
+    analyzer.fftSize = 256;
+    let source = audioContext.createMediaStreamSource(stream);
+    source.connect(analyzer);
+    analyzer.connect(audioContext.destination);
+
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    source.disconnect(analyzer);
+    analyzer.disconnect(audioContext.destination);
+}, "Web Audio should work with mock audio destination");
+
+var context;
+async function checkForNoise(stream, counter)
+{
+    if (!counter)
+        counter = 1;
+    else if (++counter > 4)
+        return Promise.resolve(false);
+    results = await analyseAudio(stream, 100, context);
+    if (results.heardNoise)
+        return Promise.resolve(true);
+    var results = await checkForNoise(stream, counter);
+    return results;
+}
+
+promise_test(async (test) => {
+    context = new webkitAudioContext();
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    let stream = await navigator.mediaDevices.getUserMedia({audio: { echoCancellation : true}});
+    assert_true(stream.getAudioTracks()[0].getSettings().echoCancellation);
+    const results = await analyseAudio(stream, 100, context);
+    assert_false(results.heardNoise, "should not hear noise");
+
+    stream = await navigator.mediaDevices.getUserMedia({audio: { echoCancellation : false}});
+    assert_false(stream.getAudioTracks()[0].getSettings().echoCancellation, "settings is ok");
+    const heardNoise = await checkForNoise(stream);
+    assert_true(heardNoise, "heard noise");
+
+    context.close();
+    context = null;
+}, "Check echo cancellation can be disabled in getUserMedia call");
+
+        </script>
+    </body>
+</html>

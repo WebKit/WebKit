@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 1: SecurityError: Blocked a frame with origin "http://localhost:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
+Opener Frame
+
+Pass: Cross frame access from a javascript: URL on a different domain was denied.
+
+

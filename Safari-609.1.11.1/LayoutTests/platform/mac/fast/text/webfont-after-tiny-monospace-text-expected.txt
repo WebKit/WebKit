@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x30
+        RenderInline {SPAN} at (0,0) size 100x10
+          RenderText {#text} at (0,13) size 100x10
+            text run at (0,13) width 100: "Tiny monospace text."
+        RenderText {#text} at (100,0) size 5x30
+          text run at (100,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 222x30
+          RenderText {#text} at (105,0) size 222x30
+            text run at (105,0) width 222: "This text should not be jagged."
+        RenderText {#text} at (0,0) size 0x0

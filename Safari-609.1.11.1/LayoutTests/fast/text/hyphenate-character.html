@@ -1,0 +1,87 @@
+<style>
+    html {
+        -webkit-locale: "en_US";
+    }
+
+    .text-box {
+        border: solid;
+        padding: 4px;
+        width: 330px;
+        font-size: 18px;
+        text-align: justify;
+        -webkit-hyphens: auto;
+    }
+
+    .float {
+        width: 75px;
+        height: 5em;
+        background-color: aliceblue;
+        float: right;
+        margin-left: 10px;
+    }
+
+    .hyphenate-character-auto {
+        -webkit-hyphenate-character: auto;
+    }
+
+    .hyphenate-character-bullet {
+        -webkit-hyphenate-character: "\2022";
+    }
+
+    .hyphenate-character-tilde-dot {
+        -webkit-hyphenate-character: "\B7~";
+    }
+
+    .test {
+        float: left;
+        margin: 0 4px;
+    }
+</style>
+<div class="test">
+    <p>The initial value (should be like <tt>auto</tt>)</p>
+    <div class="text-box">
+        <div class="float"></div>
+        The chief difficulty Alice found at first was in managing her
+        flamingo: she succeeded in getting its body tucked away,
+        comfortably enough, under her arm, with its legs hanging down,
+        but generally, just as she had got its neck nicely straightened
+        out, and was going to give the hedgehog a blow with its head, it
+        would twist itself round and look up in her face&#x2026;
+    </div>
+</div>
+<div class="test">
+    <p>The default (<tt>hyphenate-character: auto</tt>)</p>
+    <div class="text-box hyphenate-character-auto">
+        <div class="float"></div>
+        The chief difficulty Alice found at first was in managing her
+        flamingo: she succeeded in getting its body tucked away,
+        comfortably enough, under her arm, with its legs hanging down,
+        but generally, just as she had got its neck nicely straightened
+        out, and was going to give the hedgehog a blow with its head, it
+        would twist itself round and look up in her face&#x2026;
+    </div>
+</div>
+<div class="test">
+    <p>Bullet (<tt>hyphenate-character: "\2022"</tt>)</p>
+    <div class="text-box hyphenate-character-bullet">
+        <div class="float"></div>
+        The chief difficulty Alice found at first was in managing her
+        flamingo: she succeeded in getting its body tucked away,
+        comfortably enough, under her arm, with its legs hanging down,
+        but generally, just as she had got its neck nicely straightened
+        out, and was going to give the hedgehog a blow with its head, it
+        would twist itself round and look up in her face&#x2026;
+    </div>
+</div>
+<div class="test">
+    <p>Middle dot and tilde (<tt>hyphenate-character: "\B7~"</tt>)</p>
+    <div class="text-box hyphenate-character-tilde-dot">
+        <div class="float"></div>
+        The chief difficulty Alice found at first was in managing her
+        flamingo: she succeeded in getting its body tucked away,
+        comfortably enough, under her arm, with its legs hanging down,
+        but generally, just as she had got its neck nicely straightened
+        out, and was going to give the hedgehog a blow with its head, it
+        would twist itself round and look up in her face&#x2026;
+    </div>
+</div>

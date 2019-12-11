@@ -1,0 +1,9 @@
+Make sure that we do not crash when a frame gets detached in a message event handler.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,23 @@
+<html>
+<body>
+  <iframe id="iframe" src="data:,%41%42%43%44%45%46%47%48%82%82"></iframe>
+  <p id="result"></p>
+  <script>
+    if (window.testRunner) {
+      testRunner.dumpAsText(false);
+      testRunner.waitUntilDone();
+    }
+
+    setTimeout(copyIframeText, 500);
+    
+    function copyIframeText()
+    {  
+      var iframe = document.getElementById("iframe");
+      var result = document.getElementById("result");
+      result.innerHTML = iframe.contentDocument.body.innerHTML;
+      if (window.testRunner)
+        testRunner.notifyDone();
+    }
+  </script>
+</body>
+</html>

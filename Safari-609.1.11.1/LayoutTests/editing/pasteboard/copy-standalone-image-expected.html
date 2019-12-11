@@ -1,0 +1,15 @@
+<html>
+<body>
+<p>This is an automatic test of copying an image document.</p>
+<p>To perform this test manually, click once in the image frame, choose Edit -> Copy
+then click in the red box and paste the image. If the image pastes successfully the
+test is passed.</p>
+
+<iframe name="imageframe" src="../resources/abe.png"></iframe>
+
+<div id="dest" contenteditable="true"><img src="../resources/abe.png" style="-webkit-user-select:none;"></div>
+<script>
+frames['imageframe'].focus();
+</script>
+</body>
+</html>

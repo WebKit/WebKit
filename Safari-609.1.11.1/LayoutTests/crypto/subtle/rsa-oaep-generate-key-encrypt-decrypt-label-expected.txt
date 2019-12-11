@@ -1,0 +1,14 @@
+Test encrypting&decrypting using RSA-OAEP SHA-512 algorithm with a generated key and a label
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Generating a key...
+Encrypting...
+PASS bytesToASCIIString(cipherText) is not "Hello, World!"
+Decrypting...
+PASS bytesToASCIIString(decryptedText) is plainText
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

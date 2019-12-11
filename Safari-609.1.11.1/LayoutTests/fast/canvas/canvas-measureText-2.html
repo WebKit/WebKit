@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset=UTF-8>
+
+        <script src="../../resources/js-test-pre.js"></script>
+
+        <script>
+            var texts = ['Some simple text', 'དབུ་མེད་']; // tibetan script triggers complex path
+            var baselines = ['top', 'hanging', 'middle', 'alphabetic', 'ideographic', 'bottom'];
+            var aligns = ['start', 'end', 'left', 'right', 'center'];
+
+            function tests() {
+                var canvas = document.getElementById("canvas");
+                var ctx = canvas.getContext("2d");
+                ctx.font = "14px sans-serif";
+
+                for (var i = 0; i < texts.length; i++) {
+                    for (var j = 0; j < baselines.length; j++) {
+                        for (var k = 0; k < aligns.length; k++) {
+                            var text = texts[i];
+                            var align = aligns[k];
+                            var baseline = baselines[j];
+                            debug('baseline=' + baseline + ' align=' + align + ' text="' + text + '"');
+                            ctx.textBaseline = baseline;
+                            ctx.textAlign = align;
+                            metrics = ctx.measureText(text);
+
+                            shouldBeCloseTo("metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width", 0, 1);
+
+                            shouldBeGreaterThanOrEqual("metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent", "0");
+                            shouldBeGreaterThanOrEqual("metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent", "0");
+                            shouldBeGreaterThanOrEqual("metrics.emHeightAscent + metrics.emHeightDescent", "0");
+
+                            if (baseline === 'top')
+                                shouldBeZero("Math.abs(metrics.emHeightAscent)");
+                            if (baseline === 'bottom')
+                                shouldBeZero("Math.abs(metrics.emHeightDescent)");
+                            if (baseline === 'hanging')
+                                shouldBeZero("Math.abs(metrics.hangingBaseline)");
+                            if (baseline === 'alphabetic')
+                                shouldBeZero("Math.abs(metrics.alphabeticBaseline)");
+                            if (baseline === 'ideographic')
+                                shouldBeZero("Math.abs(metrics.ideographicBaseline)");
+
+                            shouldBeGreaterThanOrEqual("metrics.emHeightAscent", "metrics.hangingBaseline");
+                            shouldBeGreaterThanOrEqual("metrics.hangingBaseline", "metrics.alphabeticBaseline");
+                            shouldBeGreaterThanOrEqual("metrics.alphabeticBaseline", "metrics.ideographicBaseline");
+                            shouldBeGreaterThanOrEqual("metrics.ideographicBaseline", "-metrics.emHeightDescent");
+                        }
+                    }
+                }
+
+            }
+
+            window.addEventListener('load', tests, true);
+
+        </script>
+
+    </head>
+
+    <body>
+
+        <canvas id="canvas"></canvas>
+
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

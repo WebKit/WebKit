@@ -1,0 +1,32 @@
+<html>
+<head>
+    <head>
+    <script>
+        function startTest() {
+            if (window.testRunner) {
+                testRunner.waitUntilDone();
+                testRunner.setBackingScaleFactor(2, finishTest);
+            }
+        }
+
+        function finishTest() {
+            var test = document.getElementById("foo");
+            test.innerHTML = window.devicePixelRatio;
+            setTimeout(function() { testRunner.notifyDone(); }, 0);
+        }
+    </script>
+    
+<style>
+    #foo {
+        width:100px;
+        height:100px;
+        background-image: -webkit-image-set(url('resources/blue-100-px-square.png') 1x, url('resources/green-200-px-square.png') 2x);
+    }
+</style>
+</head>
+
+<body onload="startTest();">
+    <div>This test passes if the div below is a blue 100px square when the deviceScaleFactor is 1, and if it is a 100px green square when the deviceScaleFactor is 2. When run in the test harness, this test is distinct from image-set-as-background, because it ensures that the green image loads dynamically when the scale factor changes.</div>
+    <div id=foo></div>
+</body>
+</html>

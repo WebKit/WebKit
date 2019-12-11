@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that it is possible to access SQLTransaction.constructor.prototype and that it is correct");
+jsTestIsAsync = true;
+
+var db = openDatabase('mydb', '1.0', 'my first database', 2 * 1024 * 1024);
+
+db.transaction(function (tx) {
+     transaction = tx;
+     shouldBe("transaction.__proto__", "SQLTransaction.prototype");
+     shouldBe("transaction.constructor", "SQLTransaction");
+     shouldBe("transaction.constructor.prototype", "SQLTransaction.prototype");
+     finishJSTest();
+});
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <video id="video" autoplay width=480px height=480px controls ></video>
+        <canvas id="canvas" width=480px height=480px></canvas>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+        <script>
+
+function isPixelGray(pixel)
+{
+    return pixel[0] === 128 && pixel[1] === 128 && pixel[2] === 128 && pixel[3] === 255;
+}
+
+promise_test(async () => {
+    let stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    stream = null;
+
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    let cameraID = undefined;
+    devices.forEach(device => { if (device.label == "Mock video device 2") cameraID = device.deviceId; });
+    assert_true(cameraID !== undefined, "Found camera2");
+    
+    stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: cameraID }, width: 480, height: 480 } });
+    video.srcObject = stream;
+    await video.play();
+    
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(video, 0 ,0);
+
+    assert_true(isPixelGray(ctx.getImageData(5, 5, 1, 1).data), "Pixel at 5x5 is not black.");
+    assert_true(isPixelGray(ctx.getImageData(10, 200, 1, 1).data), "Pixel at 10x200 is not black.");
+}, "Video frames are resized in letterbox-mode when captured at non-native size.");
+
+        </script>
+    </head>
+</html>

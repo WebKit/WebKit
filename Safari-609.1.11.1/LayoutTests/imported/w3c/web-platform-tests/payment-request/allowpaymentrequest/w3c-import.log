@@ -1,0 +1,28 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/active-document-cross-origin.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/active-document-same-origin.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/allowpaymentrequest-attribute-cross-origin-bc-containers.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/allowpaymentrequest-attribute-same-origin-bc-containers.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/basic.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/common.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/echo-PaymentRequest.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/no-attribute-cross-origin-bc-containers.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/no-attribute-same-origin-bc-containers.https.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/removing-allowpaymentrequest.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/setting-allowpaymentrequest-timing.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/setting-allowpaymentrequest.https.sub.html

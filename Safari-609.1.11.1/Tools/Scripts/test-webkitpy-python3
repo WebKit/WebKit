@@ -1,0 +1,112 @@
+#!/usr/bin/env python3
+# Copyright (C) 2019 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+import sys
+sys.dont_write_bytecode = True
+
+import argparse
+import os
+import sys
+import unittest
+
+from webkitpy.common.checkout.scm.scm_unittest import SCMTest
+
+
+PYTHON3_COMPATIBLE_DIRECTORIES = [
+  'webkitpy.common',
+  'webkitpy.layout_tests.controllers',
+  'webkitpy.layout_tests.layout_package',
+  'webkitpy.layout_tests.models',
+  'webkitpy.layout_tests.servers',
+  'webkitpy.layout_tests.views',
+  'webkitpy.port',
+  'webkitpy.results',
+  'webkitpy.style',
+  'webkitpy.xcode',
+]
+SLOW_TESTS = [
+    SCMTest,
+]
+
+def is_slow(candidate):
+    if isinstance(candidate, unittest.suite.TestSuite):
+        return any(is_slow(test) for test in candidate)
+    for test in SLOW_TESTS:
+        if isinstance(candidate, test):
+            return True
+    return False
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Run unit tests with Python3. This is intended as a temporary script during the Python2/3 transition')
+    parser.add_argument(
+        '-v', '--verbose',
+        default=False, action='store_true',
+        help='Verbose output',
+    )
+    parser.add_argument(
+        '-f', '--stop-on-fail',
+        default=False, action='store_true',
+        help='Stop on first fail or error',
+    )
+    parser.add_argument(
+        '-a', '--all',
+        default=False, action='store_true',
+        help='Enables SCM tests, which are slow and so disable by default',
+    )
+
+    if len(PYTHON3_COMPATIBLE_DIRECTORIES) == 1:
+        compatible_directories_readable = PYTHON3_COMPATIBLE_DIRECTORIES[0]
+    else:
+        compatible_directories_readable = '{} and {}'.format(
+            ', '.join(PYTHON3_COMPATIBLE_DIRECTORIES[:-1]),
+            PYTHON3_COMPATIBLE_DIRECTORIES[-1],
+        )
+    parser.add_argument(
+        'modules_to_test', nargs='*',
+        help='Modules to be tested. By default, this is {}'.format(compatible_directories_readable),
+        default=PYTHON3_COMPATIBLE_DIRECTORIES,
+    )
+    options = parser.parse_args()
+
+    root = os.path.dirname(os.path.abspath(__file__))
+
+    suite = unittest.TestSuite()
+    for module_name in options.modules_to_test:
+        module_suite = unittest.defaultTestLoader.discover(os.path.join(root, module_name.replace('.', '/')), pattern='*test.py', top_level_dir=root)
+        for test in (module_suite or []):
+            if options.all or not is_slow(test):
+                suite.addTest(test)
+
+    if suite.countTestCases() == 0:
+        raise RuntimeError('No matching tests found.')
+
+    from webkitpy.thirdparty import autoinstall_everything
+    autoinstall_everything()
+
+    result = unittest.TextTestRunner(verbosity=int(options.verbose) + 1, failfast=options.stop_on_fail, buffer=not options.verbose).run(suite)
+    return len(result.errors)
+
+if __name__ == '__main__':
+    sys.exit(main())

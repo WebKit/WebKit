@@ -1,0 +1,6 @@
+2d.getcontext.unique
+getContext('2d') returns the same object
+Actual output:
+
+PASS getContext('2d') returns the same object 
+

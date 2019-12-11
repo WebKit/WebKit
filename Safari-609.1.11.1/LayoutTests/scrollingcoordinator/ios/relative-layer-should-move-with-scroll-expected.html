@@ -1,0 +1,52 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <style>
+        #scroller {
+            margin: 10px;
+            height: 300px;
+            width: 300px;
+            border: 1px solid black;
+            overflow: scroll;
+        }
+        
+        .box {
+            position: relative;
+            z-index: 0; /* stacking context ancestor is the root */
+            top: 250px;
+            width: 200px;
+            height: 200px;
+            background-color: blue;
+        }
+        
+        .scroll-content {
+            height: 2000px;
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        async function doTest()
+        {
+            await UIHelper.ensurePresentationUpdate(); // Not sure why this is necessary, but it is.
+            scroller.scrollTo(0, 250);
+            await UIHelper.ensurePresentationUpdate();
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div id="scroller">
+        <div class="scroll-content">
+            <div class="box"></div>
+        </div>
+    </div>
+</body>
+</html>

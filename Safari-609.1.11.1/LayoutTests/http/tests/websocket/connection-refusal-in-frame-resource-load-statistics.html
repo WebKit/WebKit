@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<head>
+    <script src="../resources/js-test-pre.js"></script>
+    <script src="/resourceLoadStatistics/resources/util.js"></script>
+</head>
+<body onload="runTest()">
+<script>
+    description('Construct a cross-site WebSocket in a frame with server-side refusal. The test passes if Resource Load Statistics logs it properly.');
+
+    window.jsTestIsAsync = true;
+
+    const numberOfNotificationsExpected = 2;
+    let numberOfNotificationsReceived = 0;
+    function completeTest() {
+        numberOfNotificationsReceived++;
+        if (testRunner.isStatisticsRegisteredAsSubresourceUnder("http://localhost", "http://127.0.0.1")) {
+            testPassed("localhost registered as subresource under 127.0.0.1.");
+            setEnableFeature(false, finishJSTest);
+        } else {
+            if (numberOfNotificationsReceived >= numberOfNotificationsExpected) {
+                testFailed("localhost not registered as subresource under 127.0.0.1.");
+                setEnableFeature(false, finishJSTest);
+            } else {
+                testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
+                testRunner.statisticsNotifyObserver();
+            }
+        }
+    }
+
+    function runTest() {
+        setEnableFeature(true, function() {
+            if (testRunner.isStatisticsRegisteredAsSubresourceUnder("http://localhost", "http://127.0.0.1"))
+                testFailed("localhost already registered as subresource under 127.0.0.1.");
+
+            let iframeElement = document.createElement("iframe");
+            iframeElement.src = "resources/localhost-websocket-connect.html";
+            iframeElement.id = "testIframe";
+            document.body.appendChild(iframeElement);
+
+            testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
+            testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
+        });
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>

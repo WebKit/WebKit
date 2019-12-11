@@ -1,0 +1,1319 @@
+Test CSS SourceMap.
+
+
+== Running test suite: SourceMaps.CSS
+-- Running test case: SourceMaps.CSS.1
+Original Content Length
+Formatted Content Length
+---- Original to Formatted ----
+Original: 0 (0, 1)
+  0| @#media(max-device-width:480px){body{color:red;background:blue}}
+Formatted: 0 (0, 1)
+  0| @#media (max-device-width: 480px) {
+  1|     body {
+  2|         color: red;
+
+Original: 1 (0, 2)
+  0| @m#edia(max-device-width:480px){body{color:red;background:blue}}
+Formatted: 1 (0, 2)
+  0| @m#edia (max-device-width: 480px) {
+  1|     body {
+  2|         color: red;
+
+Original: 2 (0, 3)
+  0| @me#dia(max-device-width:480px){body{color:red;background:blue}}
+Formatted: 2 (0, 3)
+  0| @me#dia (max-device-width: 480px) {
+  1|     body {
+  2|         color: red;
+
+Original: 3 (0, 4)
+  0| @med#ia(max-device-width:480px){body{color:red;background:blue}}
+Formatted: 3 (0, 4)
+  0| @med#ia (max-device-width: 480px) {
+  1|     body {
+  2|         color: red;
+
+Original: 4 (0, 5)
+  0| @medi#a(max-device-width:480px){body{color:red;background:blue}}
+Formatted: 4 (0, 5)
+  0| @medi#a (max-device-width: 480px) {
+  1|     body {
+  2|         color: red;
+
+Original: 5 (0, 6)
+  0| @media#(max-device-width:480px){body{color:red;background:blue}}
+Formatted: 5 (0, 7)
+  0| @media #(max-device-width: 480px) {
+  1|     body {
+  2|         color: red;
+
+Original: 6 (0, 7)
+  0| @media(#max-device-width:480px){body{color:red;background:blue}}
+Formatted: 7 (0, 8)
+  0| @media (#max-device-width: 480px) {
+  1|     body {
+  2|         color: red;
+
+Original: 7 (0, 8)
+  0| @media(m#ax-device-width:480px){body{color:red;background:blue}}
+Formatted: 8 (0, 9)
+  0| @media (m#ax-device-width: 480px) {
+  1|     body {
+  2|         color: red;
+
+Original: 8 (0, 9)
+  0| @media(ma#x-device-width:480px){body{color:red;background:blue}}
+Formatted: 9 (0, 10)
+  0| @media (ma#x-device-width: 480px) {
+  1|     body {
+  2|         color: red;
+
+Original: 9 (0, 10)
+  0| @media(max#-device-width:480px){body{color:red;background:blue}}
+Formatted: 10 (0, 11)
+  0| @media (max#-device-width: 480px) {
+  1|     body {
+  2|         color: red;
+
+Original: 10 (0, 11)
+  0| @media(max-#device-width:480px){body{color:red;background:blue}}
+Formatted: 11 (0, 12)
+  0| @media (max-#device-width: 480px) {
+  1|     body {
+  2|         color: red;
+
+Original: 11 (0, 12)
+  0| @media(max-d#evice-width:480px){body{color:red;background:blue}}
+Formatted: 12 (0, 13)
+  0| @media (max-d#evice-width: 480px) {
+  1|     body {
+  2|         color: red;
+
+Original: 12 (0, 13)
+  0| @media(max-de#vice-width:480px){body{color:red;background:blue}}
+Formatted: 13 (0, 14)
+  0| @media (max-de#vice-width: 480px) {
+  1|     body {
+  2|         color: red;
+
+Original: 13 (0, 14)
+  0| @media(max-dev#ice-width:480px){body{color:red;background:blue}}
+Formatted: 14 (0, 15)
+  0| @media (max-dev#ice-width: 480px) {
+  1|     body {
+  2|         color: red;
+
+Original: 14 (0, 15)
+  0| @media(max-devi#ce-width:480px){body{color:red;background:blue}}
+Formatted: 15 (0, 16)
+  0| @media (max-devi#ce-width: 480px) {
+  1|     body {
+  2|         color: red;
+
+Original: 15 (0, 16)
+  0| @media(max-devic#e-width:480px){body{color:red;background:blue}}
+Formatted: 16 (0, 17)
+  0| @media (max-devic#e-width: 480px) {
+  1|     body {
+  2|         color: red;
+
+Original: 16 (0, 17)
+  0| @media(max-device#-width:480px){body{color:red;background:blue}}
+Formatted: 17 (0, 18)
+  0| @media (max-device#-width: 480px) {
+  1|     body {
+  2|         color: red;
+
+Original: 17 (0, 18)
+  0| @media(max-device-#width:480px){body{color:red;background:blue}}
+Formatted: 18 (0, 19)
+  0| @media (max-device-#width: 480px) {
+  1|     body {
+  2|         color: red;
+
+Original: 18 (0, 19)
+  0| @media(max-device-w#idth:480px){body{color:red;background:blue}}
+Formatted: 19 (0, 20)
+  0| @media (max-device-w#idth: 480px) {
+  1|     body {
+  2|         color: red;
+
+Original: 19 (0, 20)
+  0| @media(max-device-wi#dth:480px){body{color:red;background:blue}}
+Formatted: 20 (0, 21)
+  0| @media (max-device-wi#dth: 480px) {
+  1|     body {
+  2|         color: red;
+
+Original: 20 (0, 21)
+  0| @media(max-device-wid#th:480px){body{color:red;background:blue}}
+Formatted: 21 (0, 22)
+  0| @media (max-device-wid#th: 480px) {
+  1|     body {
+  2|         color: red;
+
+Original: 21 (0, 22)
+  0| @media(max-device-widt#h:480px){body{color:red;background:blue}}
+Formatted: 22 (0, 23)
+  0| @media (max-device-widt#h: 480px) {
+  1|     body {
+  2|         color: red;
+
+Original: 22 (0, 23)
+  0| @media(max-device-width#:480px){body{color:red;background:blue}}
+Formatted: 23 (0, 24)
+  0| @media (max-device-width#: 480px) {
+  1|     body {
+  2|         color: red;
+
+Original: 23 (0, 24)
+  0| @media(max-device-width:#480px){body{color:red;background:blue}}
+Formatted: 24 (0, 26)
+  0| @media (max-device-width: #480px) {
+  1|     body {
+  2|         color: red;
+
+Original: 24 (0, 25)
+  0| @media(max-device-width:4#80px){body{color:red;background:blue}}
+Formatted: 26 (0, 27)
+  0| @media (max-device-width: 4#80px) {
+  1|     body {
+  2|         color: red;
+
+Original: 25 (0, 26)
+  0| @media(max-device-width:48#0px){body{color:red;background:blue}}
+Formatted: 27 (0, 28)
+  0| @media (max-device-width: 48#0px) {
+  1|     body {
+  2|         color: red;
+
+Original: 26 (0, 27)
+  0| @media(max-device-width:480#px){body{color:red;background:blue}}
+Formatted: 28 (0, 29)
+  0| @media (max-device-width: 480#px) {
+  1|     body {
+  2|         color: red;
+
+Original: 27 (0, 28)
+  0| @media(max-device-width:480p#x){body{color:red;background:blue}}
+Formatted: 29 (0, 30)
+  0| @media (max-device-width: 480p#x) {
+  1|     body {
+  2|         color: red;
+
+Original: 28 (0, 29)
+  0| @media(max-device-width:480px#){body{color:red;background:blue}}
+Formatted: 30 (0, 31)
+  0| @media (max-device-width: 480px#) {
+  1|     body {
+  2|         color: red;
+
+Original: 29 (0, 30)
+  0| @media(max-device-width:480px)#{body{color:red;background:blue}}
+Formatted: 31 (0, 33)
+  0| @media (max-device-width: 480px) #{
+  1|     body {
+  2|         color: red;
+
+Original: 30 (0, 31)
+  0| @media(max-device-width:480px){#body{color:red;background:blue}}
+Formatted: 33 (1, 4)
+  0| @media (max-device-width: 480px) {
+  1|     #body {
+  2|         color: red;
+  3|         background: blue
+
+Original: 31 (0, 32)
+  0| @media(max-device-width:480px){b#ody{color:red;background:blue}}
+Formatted: 39 (1, 5)
+  0| @media (max-device-width: 480px) {
+  1|     b#ody {
+  2|         color: red;
+  3|         background: blue
+
+Original: 32 (0, 33)
+  0| @media(max-device-width:480px){bo#dy{color:red;background:blue}}
+Formatted: 40 (1, 6)
+  0| @media (max-device-width: 480px) {
+  1|     bo#dy {
+  2|         color: red;
+  3|         background: blue
+
+Original: 33 (0, 34)
+  0| @media(max-device-width:480px){bod#y{color:red;background:blue}}
+Formatted: 41 (1, 7)
+  0| @media (max-device-width: 480px) {
+  1|     bod#y {
+  2|         color: red;
+  3|         background: blue
+
+Original: 34 (0, 35)
+  0| @media(max-device-width:480px){body#{color:red;background:blue}}
+Formatted: 42 (1, 9)
+  0| @media (max-device-width: 480px) {
+  1|     body #{
+  2|         color: red;
+  3|         background: blue
+
+Original: 35 (0, 36)
+  0| @media(max-device-width:480px){body{#color:red;background:blue}}
+Formatted: 44 (2, 8)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|         #color: red;
+  3|         background: blue
+  4|     }
+
+Original: 36 (0, 37)
+  0| @media(max-device-width:480px){body{c#olor:red;background:blue}}
+Formatted: 54 (2, 9)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|         c#olor: red;
+  3|         background: blue
+  4|     }
+
+Original: 37 (0, 38)
+  0| @media(max-device-width:480px){body{co#lor:red;background:blue}}
+Formatted: 55 (2, 10)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|         co#lor: red;
+  3|         background: blue
+  4|     }
+
+Original: 38 (0, 39)
+  0| @media(max-device-width:480px){body{col#or:red;background:blue}}
+Formatted: 56 (2, 11)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|         col#or: red;
+  3|         background: blue
+  4|     }
+
+Original: 39 (0, 40)
+  0| @media(max-device-width:480px){body{colo#r:red;background:blue}}
+Formatted: 57 (2, 12)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|         colo#r: red;
+  3|         background: blue
+  4|     }
+
+Original: 40 (0, 41)
+  0| @media(max-device-width:480px){body{color#:red;background:blue}}
+Formatted: 58 (2, 13)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|         color#: red;
+  3|         background: blue
+  4|     }
+
+Original: 41 (0, 42)
+  0| @media(max-device-width:480px){body{color:#red;background:blue}}
+Formatted: 59 (2, 15)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|         color: #red;
+  3|         background: blue
+  4|     }
+
+Original: 42 (0, 43)
+  0| @media(max-device-width:480px){body{color:r#ed;background:blue}}
+Formatted: 61 (2, 16)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|         color: r#ed;
+  3|         background: blue
+  4|     }
+
+Original: 43 (0, 44)
+  0| @media(max-device-width:480px){body{color:re#d;background:blue}}
+Formatted: 62 (2, 17)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|         color: re#d;
+  3|         background: blue
+  4|     }
+
+Original: 44 (0, 45)
+  0| @media(max-device-width:480px){body{color:red#;background:blue}}
+Formatted: 63 (2, 18)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|         color: red#;
+  3|         background: blue
+  4|     }
+
+Original: 45 (0, 46)
+  0| @media(max-device-width:480px){body{color:red;#background:blue}}
+Formatted: 64 (3, 8)
+  1|     body {
+  2|         color: red;
+  3|         #background: blue
+  4|     }
+  5| }
+
+Original: 46 (0, 47)
+  0| @media(max-device-width:480px){body{color:red;b#ackground:blue}}
+Formatted: 74 (3, 9)
+  1|     body {
+  2|         color: red;
+  3|         b#ackground: blue
+  4|     }
+  5| }
+
+Original: 47 (0, 48)
+  0| @media(max-device-width:480px){body{color:red;ba#ckground:blue}}
+Formatted: 75 (3, 10)
+  1|     body {
+  2|         color: red;
+  3|         ba#ckground: blue
+  4|     }
+  5| }
+
+Original: 48 (0, 49)
+  0| @media(max-device-width:480px){body{color:red;bac#kground:blue}}
+Formatted: 76 (3, 11)
+  1|     body {
+  2|         color: red;
+  3|         bac#kground: blue
+  4|     }
+  5| }
+
+Original: 49 (0, 50)
+  0| @media(max-device-width:480px){body{color:red;back#ground:blue}}
+Formatted: 77 (3, 12)
+  1|     body {
+  2|         color: red;
+  3|         back#ground: blue
+  4|     }
+  5| }
+
+Original: 50 (0, 51)
+  0| @media(max-device-width:480px){body{color:red;backg#round:blue}}
+Formatted: 78 (3, 13)
+  1|     body {
+  2|         color: red;
+  3|         backg#round: blue
+  4|     }
+  5| }
+
+Original: 51 (0, 52)
+  0| @media(max-device-width:480px){body{color:red;backgr#ound:blue}}
+Formatted: 79 (3, 14)
+  1|     body {
+  2|         color: red;
+  3|         backgr#ound: blue
+  4|     }
+  5| }
+
+Original: 52 (0, 53)
+  0| @media(max-device-width:480px){body{color:red;backgro#und:blue}}
+Formatted: 80 (3, 15)
+  1|     body {
+  2|         color: red;
+  3|         backgro#und: blue
+  4|     }
+  5| }
+
+Original: 53 (0, 54)
+  0| @media(max-device-width:480px){body{color:red;backgrou#nd:blue}}
+Formatted: 81 (3, 16)
+  1|     body {
+  2|         color: red;
+  3|         backgrou#nd: blue
+  4|     }
+  5| }
+
+Original: 54 (0, 55)
+  0| @media(max-device-width:480px){body{color:red;backgroun#d:blue}}
+Formatted: 82 (3, 17)
+  1|     body {
+  2|         color: red;
+  3|         backgroun#d: blue
+  4|     }
+  5| }
+
+Original: 55 (0, 56)
+  0| @media(max-device-width:480px){body{color:red;background#:blue}}
+Formatted: 83 (3, 18)
+  1|     body {
+  2|         color: red;
+  3|         background#: blue
+  4|     }
+  5| }
+
+Original: 56 (0, 57)
+  0| @media(max-device-width:480px){body{color:red;background:#blue}}
+Formatted: 84 (3, 20)
+  1|     body {
+  2|         color: red;
+  3|         background: #blue
+  4|     }
+  5| }
+
+Original: 57 (0, 58)
+  0| @media(max-device-width:480px){body{color:red;background:b#lue}}
+Formatted: 86 (3, 21)
+  1|     body {
+  2|         color: red;
+  3|         background: b#lue
+  4|     }
+  5| }
+
+Original: 58 (0, 59)
+  0| @media(max-device-width:480px){body{color:red;background:bl#ue}}
+Formatted: 87 (3, 22)
+  1|     body {
+  2|         color: red;
+  3|         background: bl#ue
+  4|     }
+  5| }
+
+Original: 59 (0, 60)
+  0| @media(max-device-width:480px){body{color:red;background:blu#e}}
+Formatted: 88 (3, 23)
+  1|     body {
+  2|         color: red;
+  3|         background: blu#e
+  4|     }
+  5| }
+
+Original: 60 (0, 61)
+  0| @media(max-device-width:480px){body{color:red;background:blue#}}
+Formatted: 89 (4, 4)
+  2|         color: red;
+  3|         background: blue
+  4|     #}
+  5| }
+  6| 
+
+Original: 61 (0, 62)
+  0| @media(max-device-width:480px){body{color:red;background:blue}#}
+Formatted: 95 (5, 0)
+  3|         background: blue
+  4|     }
+  5| #}
+  6| 
+
+Original: 62 (0, 63)
+  0| @media(max-device-width:480px){body{color:red;background:blue}}#
+Formatted: 97 (5, 1)
+  3|         background: blue
+  4|     }
+  5| }#
+  6| 
+
+
+---- Formatted to Original ----
+Formatted: 0 (0, 1)
+  0| @#media (max-device-width: 480px) {
+  1|     body {
+  2|         color: red;
+Original: 0 (0, 1)
+  0| @#media(max-device-width:480px){body{color:red;background:blue}}
+
+Formatted: 1 (0, 2)
+  0| @m#edia (max-device-width: 480px) {
+  1|     body {
+  2|         color: red;
+Original: 1 (0, 2)
+  0| @m#edia(max-device-width:480px){body{color:red;background:blue}}
+
+Formatted: 2 (0, 3)
+  0| @me#dia (max-device-width: 480px) {
+  1|     body {
+  2|         color: red;
+Original: 2 (0, 3)
+  0| @me#dia(max-device-width:480px){body{color:red;background:blue}}
+
+Formatted: 3 (0, 4)
+  0| @med#ia (max-device-width: 480px) {
+  1|     body {
+  2|         color: red;
+Original: 3 (0, 4)
+  0| @med#ia(max-device-width:480px){body{color:red;background:blue}}
+
+Formatted: 4 (0, 5)
+  0| @medi#a (max-device-width: 480px) {
+  1|     body {
+  2|         color: red;
+Original: 4 (0, 5)
+  0| @medi#a(max-device-width:480px){body{color:red;background:blue}}
+
+Formatted: 5 (0, 6)
+  0| @media# (max-device-width: 480px) {
+  1|     body {
+  2|         color: red;
+Original: 5 (0, 6)
+  0| @media#(max-device-width:480px){body{color:red;background:blue}}
+
+Formatted: 6 (0, 7)
+  0| @media #(max-device-width: 480px) {
+  1|     body {
+  2|         color: red;
+Original: 6 (0, 6)
+  0| @media#(max-device-width:480px){body{color:red;background:blue}}
+
+Formatted: 7 (0, 8)
+  0| @media (#max-device-width: 480px) {
+  1|     body {
+  2|         color: red;
+Original: 6 (0, 7)
+  0| @media(#max-device-width:480px){body{color:red;background:blue}}
+
+Formatted: 8 (0, 9)
+  0| @media (m#ax-device-width: 480px) {
+  1|     body {
+  2|         color: red;
+Original: 7 (0, 8)
+  0| @media(m#ax-device-width:480px){body{color:red;background:blue}}
+
+Formatted: 9 (0, 10)
+  0| @media (ma#x-device-width: 480px) {
+  1|     body {
+  2|         color: red;
+Original: 8 (0, 9)
+  0| @media(ma#x-device-width:480px){body{color:red;background:blue}}
+
+Formatted: 10 (0, 11)
+  0| @media (max#-device-width: 480px) {
+  1|     body {
+  2|         color: red;
+Original: 9 (0, 10)
+  0| @media(max#-device-width:480px){body{color:red;background:blue}}
+
+Formatted: 11 (0, 12)
+  0| @media (max-#device-width: 480px) {
+  1|     body {
+  2|         color: red;
+Original: 10 (0, 11)
+  0| @media(max-#device-width:480px){body{color:red;background:blue}}
+
+Formatted: 12 (0, 13)
+  0| @media (max-d#evice-width: 480px) {
+  1|     body {
+  2|         color: red;
+Original: 11 (0, 12)
+  0| @media(max-d#evice-width:480px){body{color:red;background:blue}}
+
+Formatted: 13 (0, 14)
+  0| @media (max-de#vice-width: 480px) {
+  1|     body {
+  2|         color: red;
+Original: 12 (0, 13)
+  0| @media(max-de#vice-width:480px){body{color:red;background:blue}}
+
+Formatted: 14 (0, 15)
+  0| @media (max-dev#ice-width: 480px) {
+  1|     body {
+  2|         color: red;
+Original: 13 (0, 14)
+  0| @media(max-dev#ice-width:480px){body{color:red;background:blue}}
+
+Formatted: 15 (0, 16)
+  0| @media (max-devi#ce-width: 480px) {
+  1|     body {
+  2|         color: red;
+Original: 14 (0, 15)
+  0| @media(max-devi#ce-width:480px){body{color:red;background:blue}}
+
+Formatted: 16 (0, 17)
+  0| @media (max-devic#e-width: 480px) {
+  1|     body {
+  2|         color: red;
+Original: 15 (0, 16)
+  0| @media(max-devic#e-width:480px){body{color:red;background:blue}}
+
+Formatted: 17 (0, 18)
+  0| @media (max-device#-width: 480px) {
+  1|     body {
+  2|         color: red;
+Original: 16 (0, 17)
+  0| @media(max-device#-width:480px){body{color:red;background:blue}}
+
+Formatted: 18 (0, 19)
+  0| @media (max-device-#width: 480px) {
+  1|     body {
+  2|         color: red;
+Original: 17 (0, 18)
+  0| @media(max-device-#width:480px){body{color:red;background:blue}}
+
+Formatted: 19 (0, 20)
+  0| @media (max-device-w#idth: 480px) {
+  1|     body {
+  2|         color: red;
+Original: 18 (0, 19)
+  0| @media(max-device-w#idth:480px){body{color:red;background:blue}}
+
+Formatted: 20 (0, 21)
+  0| @media (max-device-wi#dth: 480px) {
+  1|     body {
+  2|         color: red;
+Original: 19 (0, 20)
+  0| @media(max-device-wi#dth:480px){body{color:red;background:blue}}
+
+Formatted: 21 (0, 22)
+  0| @media (max-device-wid#th: 480px) {
+  1|     body {
+  2|         color: red;
+Original: 20 (0, 21)
+  0| @media(max-device-wid#th:480px){body{color:red;background:blue}}
+
+Formatted: 22 (0, 23)
+  0| @media (max-device-widt#h: 480px) {
+  1|     body {
+  2|         color: red;
+Original: 21 (0, 22)
+  0| @media(max-device-widt#h:480px){body{color:red;background:blue}}
+
+Formatted: 23 (0, 24)
+  0| @media (max-device-width#: 480px) {
+  1|     body {
+  2|         color: red;
+Original: 22 (0, 23)
+  0| @media(max-device-width#:480px){body{color:red;background:blue}}
+
+Formatted: 24 (0, 25)
+  0| @media (max-device-width:# 480px) {
+  1|     body {
+  2|         color: red;
+Original: 23 (0, 24)
+  0| @media(max-device-width:#480px){body{color:red;background:blue}}
+
+Formatted: 25 (0, 26)
+  0| @media (max-device-width: #480px) {
+  1|     body {
+  2|         color: red;
+Original: 24 (0, 24)
+  0| @media(max-device-width:#480px){body{color:red;background:blue}}
+
+Formatted: 26 (0, 27)
+  0| @media (max-device-width: 4#80px) {
+  1|     body {
+  2|         color: red;
+Original: 24 (0, 25)
+  0| @media(max-device-width:4#80px){body{color:red;background:blue}}
+
+Formatted: 27 (0, 28)
+  0| @media (max-device-width: 48#0px) {
+  1|     body {
+  2|         color: red;
+Original: 25 (0, 26)
+  0| @media(max-device-width:48#0px){body{color:red;background:blue}}
+
+Formatted: 28 (0, 29)
+  0| @media (max-device-width: 480#px) {
+  1|     body {
+  2|         color: red;
+Original: 26 (0, 27)
+  0| @media(max-device-width:480#px){body{color:red;background:blue}}
+
+Formatted: 29 (0, 30)
+  0| @media (max-device-width: 480p#x) {
+  1|     body {
+  2|         color: red;
+Original: 27 (0, 28)
+  0| @media(max-device-width:480p#x){body{color:red;background:blue}}
+
+Formatted: 30 (0, 31)
+  0| @media (max-device-width: 480px#) {
+  1|     body {
+  2|         color: red;
+Original: 28 (0, 29)
+  0| @media(max-device-width:480px#){body{color:red;background:blue}}
+
+Formatted: 31 (0, 32)
+  0| @media (max-device-width: 480px)# {
+  1|     body {
+  2|         color: red;
+Original: 29 (0, 30)
+  0| @media(max-device-width:480px)#{body{color:red;background:blue}}
+
+Formatted: 32 (0, 33)
+  0| @media (max-device-width: 480px) #{
+  1|     body {
+  2|         color: red;
+Original: 30 (0, 30)
+  0| @media(max-device-width:480px)#{body{color:red;background:blue}}
+
+Formatted: 33 (0, 34)
+  0| @media (max-device-width: 480px) {#
+  1|     body {
+  2|         color: red;
+Original: 30 (0, 31)
+  0| @media(max-device-width:480px){#body{color:red;background:blue}}
+
+Formatted: 34 (1, 0)
+  0| @media (max-device-width: 480px) {
+  1| #    body {
+  2|         color: red;
+  3|         background: blue
+Original: 31 (0, 31)
+  0| @media(max-device-width:480px){#body{color:red;background:blue}}
+
+Formatted: 35 (1, 1)
+  0| @media (max-device-width: 480px) {
+  1|  #   body {
+  2|         color: red;
+  3|         background: blue
+Original: 31 (0, 31)
+  0| @media(max-device-width:480px){#body{color:red;background:blue}}
+
+Formatted: 36 (1, 2)
+  0| @media (max-device-width: 480px) {
+  1|   #  body {
+  2|         color: red;
+  3|         background: blue
+Original: 31 (0, 31)
+  0| @media(max-device-width:480px){#body{color:red;background:blue}}
+
+Formatted: 37 (1, 3)
+  0| @media (max-device-width: 480px) {
+  1|    # body {
+  2|         color: red;
+  3|         background: blue
+Original: 31 (0, 31)
+  0| @media(max-device-width:480px){#body{color:red;background:blue}}
+
+Formatted: 38 (1, 4)
+  0| @media (max-device-width: 480px) {
+  1|     #body {
+  2|         color: red;
+  3|         background: blue
+Original: 31 (0, 31)
+  0| @media(max-device-width:480px){#body{color:red;background:blue}}
+
+Formatted: 39 (1, 5)
+  0| @media (max-device-width: 480px) {
+  1|     b#ody {
+  2|         color: red;
+  3|         background: blue
+Original: 31 (0, 32)
+  0| @media(max-device-width:480px){b#ody{color:red;background:blue}}
+
+Formatted: 40 (1, 6)
+  0| @media (max-device-width: 480px) {
+  1|     bo#dy {
+  2|         color: red;
+  3|         background: blue
+Original: 32 (0, 33)
+  0| @media(max-device-width:480px){bo#dy{color:red;background:blue}}
+
+Formatted: 41 (1, 7)
+  0| @media (max-device-width: 480px) {
+  1|     bod#y {
+  2|         color: red;
+  3|         background: blue
+Original: 33 (0, 34)
+  0| @media(max-device-width:480px){bod#y{color:red;background:blue}}
+
+Formatted: 42 (1, 8)
+  0| @media (max-device-width: 480px) {
+  1|     body# {
+  2|         color: red;
+  3|         background: blue
+Original: 34 (0, 35)
+  0| @media(max-device-width:480px){body#{color:red;background:blue}}
+
+Formatted: 43 (1, 9)
+  0| @media (max-device-width: 480px) {
+  1|     body #{
+  2|         color: red;
+  3|         background: blue
+Original: 35 (0, 35)
+  0| @media(max-device-width:480px){body#{color:red;background:blue}}
+
+Formatted: 44 (1, 10)
+  0| @media (max-device-width: 480px) {
+  1|     body {#
+  2|         color: red;
+  3|         background: blue
+Original: 35 (0, 36)
+  0| @media(max-device-width:480px){body{#color:red;background:blue}}
+
+Formatted: 45 (2, 0)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2| #        color: red;
+  3|         background: blue
+  4|     }
+Original: 36 (0, 36)
+  0| @media(max-device-width:480px){body{#color:red;background:blue}}
+
+Formatted: 46 (2, 1)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|  #       color: red;
+  3|         background: blue
+  4|     }
+Original: 36 (0, 36)
+  0| @media(max-device-width:480px){body{#color:red;background:blue}}
+
+Formatted: 47 (2, 2)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|   #      color: red;
+  3|         background: blue
+  4|     }
+Original: 36 (0, 36)
+  0| @media(max-device-width:480px){body{#color:red;background:blue}}
+
+Formatted: 48 (2, 3)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|    #     color: red;
+  3|         background: blue
+  4|     }
+Original: 36 (0, 36)
+  0| @media(max-device-width:480px){body{#color:red;background:blue}}
+
+Formatted: 49 (2, 4)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|     #    color: red;
+  3|         background: blue
+  4|     }
+Original: 36 (0, 36)
+  0| @media(max-device-width:480px){body{#color:red;background:blue}}
+
+Formatted: 50 (2, 5)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|      #   color: red;
+  3|         background: blue
+  4|     }
+Original: 36 (0, 36)
+  0| @media(max-device-width:480px){body{#color:red;background:blue}}
+
+Formatted: 51 (2, 6)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|       #  color: red;
+  3|         background: blue
+  4|     }
+Original: 36 (0, 36)
+  0| @media(max-device-width:480px){body{#color:red;background:blue}}
+
+Formatted: 52 (2, 7)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|        # color: red;
+  3|         background: blue
+  4|     }
+Original: 36 (0, 36)
+  0| @media(max-device-width:480px){body{#color:red;background:blue}}
+
+Formatted: 53 (2, 8)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|         #color: red;
+  3|         background: blue
+  4|     }
+Original: 36 (0, 36)
+  0| @media(max-device-width:480px){body{#color:red;background:blue}}
+
+Formatted: 54 (2, 9)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|         c#olor: red;
+  3|         background: blue
+  4|     }
+Original: 36 (0, 37)
+  0| @media(max-device-width:480px){body{c#olor:red;background:blue}}
+
+Formatted: 55 (2, 10)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|         co#lor: red;
+  3|         background: blue
+  4|     }
+Original: 37 (0, 38)
+  0| @media(max-device-width:480px){body{co#lor:red;background:blue}}
+
+Formatted: 56 (2, 11)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|         col#or: red;
+  3|         background: blue
+  4|     }
+Original: 38 (0, 39)
+  0| @media(max-device-width:480px){body{col#or:red;background:blue}}
+
+Formatted: 57 (2, 12)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|         colo#r: red;
+  3|         background: blue
+  4|     }
+Original: 39 (0, 40)
+  0| @media(max-device-width:480px){body{colo#r:red;background:blue}}
+
+Formatted: 58 (2, 13)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|         color#: red;
+  3|         background: blue
+  4|     }
+Original: 40 (0, 41)
+  0| @media(max-device-width:480px){body{color#:red;background:blue}}
+
+Formatted: 59 (2, 14)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|         color:# red;
+  3|         background: blue
+  4|     }
+Original: 41 (0, 42)
+  0| @media(max-device-width:480px){body{color:#red;background:blue}}
+
+Formatted: 60 (2, 15)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|         color: #red;
+  3|         background: blue
+  4|     }
+Original: 42 (0, 42)
+  0| @media(max-device-width:480px){body{color:#red;background:blue}}
+
+Formatted: 61 (2, 16)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|         color: r#ed;
+  3|         background: blue
+  4|     }
+Original: 42 (0, 43)
+  0| @media(max-device-width:480px){body{color:r#ed;background:blue}}
+
+Formatted: 62 (2, 17)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|         color: re#d;
+  3|         background: blue
+  4|     }
+Original: 43 (0, 44)
+  0| @media(max-device-width:480px){body{color:re#d;background:blue}}
+
+Formatted: 63 (2, 18)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|         color: red#;
+  3|         background: blue
+  4|     }
+Original: 44 (0, 45)
+  0| @media(max-device-width:480px){body{color:red#;background:blue}}
+
+Formatted: 64 (2, 19)
+  0| @media (max-device-width: 480px) {
+  1|     body {
+  2|         color: red;#
+  3|         background: blue
+  4|     }
+Original: 45 (0, 46)
+  0| @media(max-device-width:480px){body{color:red;#background:blue}}
+
+Formatted: 65 (3, 0)
+  1|     body {
+  2|         color: red;
+  3| #        background: blue
+  4|     }
+  5| }
+Original: 46 (0, 46)
+  0| @media(max-device-width:480px){body{color:red;#background:blue}}
+
+Formatted: 66 (3, 1)
+  1|     body {
+  2|         color: red;
+  3|  #       background: blue
+  4|     }
+  5| }
+Original: 46 (0, 46)
+  0| @media(max-device-width:480px){body{color:red;#background:blue}}
+
+Formatted: 67 (3, 2)
+  1|     body {
+  2|         color: red;
+  3|   #      background: blue
+  4|     }
+  5| }
+Original: 46 (0, 46)
+  0| @media(max-device-width:480px){body{color:red;#background:blue}}
+
+Formatted: 68 (3, 3)
+  1|     body {
+  2|         color: red;
+  3|    #     background: blue
+  4|     }
+  5| }
+Original: 46 (0, 46)
+  0| @media(max-device-width:480px){body{color:red;#background:blue}}
+
+Formatted: 69 (3, 4)
+  1|     body {
+  2|         color: red;
+  3|     #    background: blue
+  4|     }
+  5| }
+Original: 46 (0, 46)
+  0| @media(max-device-width:480px){body{color:red;#background:blue}}
+
+Formatted: 70 (3, 5)
+  1|     body {
+  2|         color: red;
+  3|      #   background: blue
+  4|     }
+  5| }
+Original: 46 (0, 46)
+  0| @media(max-device-width:480px){body{color:red;#background:blue}}
+
+Formatted: 71 (3, 6)
+  1|     body {
+  2|         color: red;
+  3|       #  background: blue
+  4|     }
+  5| }
+Original: 46 (0, 46)
+  0| @media(max-device-width:480px){body{color:red;#background:blue}}
+
+Formatted: 72 (3, 7)
+  1|     body {
+  2|         color: red;
+  3|        # background: blue
+  4|     }
+  5| }
+Original: 46 (0, 46)
+  0| @media(max-device-width:480px){body{color:red;#background:blue}}
+
+Formatted: 73 (3, 8)
+  1|     body {
+  2|         color: red;
+  3|         #background: blue
+  4|     }
+  5| }
+Original: 46 (0, 46)
+  0| @media(max-device-width:480px){body{color:red;#background:blue}}
+
+Formatted: 74 (3, 9)
+  1|     body {
+  2|         color: red;
+  3|         b#ackground: blue
+  4|     }
+  5| }
+Original: 46 (0, 47)
+  0| @media(max-device-width:480px){body{color:red;b#ackground:blue}}
+
+Formatted: 75 (3, 10)
+  1|     body {
+  2|         color: red;
+  3|         ba#ckground: blue
+  4|     }
+  5| }
+Original: 47 (0, 48)
+  0| @media(max-device-width:480px){body{color:red;ba#ckground:blue}}
+
+Formatted: 76 (3, 11)
+  1|     body {
+  2|         color: red;
+  3|         bac#kground: blue
+  4|     }
+  5| }
+Original: 48 (0, 49)
+  0| @media(max-device-width:480px){body{color:red;bac#kground:blue}}
+
+Formatted: 77 (3, 12)
+  1|     body {
+  2|         color: red;
+  3|         back#ground: blue
+  4|     }
+  5| }
+Original: 49 (0, 50)
+  0| @media(max-device-width:480px){body{color:red;back#ground:blue}}
+
+Formatted: 78 (3, 13)
+  1|     body {
+  2|         color: red;
+  3|         backg#round: blue
+  4|     }
+  5| }
+Original: 50 (0, 51)
+  0| @media(max-device-width:480px){body{color:red;backg#round:blue}}
+
+Formatted: 79 (3, 14)
+  1|     body {
+  2|         color: red;
+  3|         backgr#ound: blue
+  4|     }
+  5| }
+Original: 51 (0, 52)
+  0| @media(max-device-width:480px){body{color:red;backgr#ound:blue}}
+
+Formatted: 80 (3, 15)
+  1|     body {
+  2|         color: red;
+  3|         backgro#und: blue
+  4|     }
+  5| }
+Original: 52 (0, 53)
+  0| @media(max-device-width:480px){body{color:red;backgro#und:blue}}
+
+Formatted: 81 (3, 16)
+  1|     body {
+  2|         color: red;
+  3|         backgrou#nd: blue
+  4|     }
+  5| }
+Original: 53 (0, 54)
+  0| @media(max-device-width:480px){body{color:red;backgrou#nd:blue}}
+
+Formatted: 82 (3, 17)
+  1|     body {
+  2|         color: red;
+  3|         backgroun#d: blue
+  4|     }
+  5| }
+Original: 54 (0, 55)
+  0| @media(max-device-width:480px){body{color:red;backgroun#d:blue}}
+
+Formatted: 83 (3, 18)
+  1|     body {
+  2|         color: red;
+  3|         background#: blue
+  4|     }
+  5| }
+Original: 55 (0, 56)
+  0| @media(max-device-width:480px){body{color:red;background#:blue}}
+
+Formatted: 84 (3, 19)
+  1|     body {
+  2|         color: red;
+  3|         background:# blue
+  4|     }
+  5| }
+Original: 56 (0, 57)
+  0| @media(max-device-width:480px){body{color:red;background:#blue}}
+
+Formatted: 85 (3, 20)
+  1|     body {
+  2|         color: red;
+  3|         background: #blue
+  4|     }
+  5| }
+Original: 57 (0, 57)
+  0| @media(max-device-width:480px){body{color:red;background:#blue}}
+
+Formatted: 86 (3, 21)
+  1|     body {
+  2|         color: red;
+  3|         background: b#lue
+  4|     }
+  5| }
+Original: 57 (0, 58)
+  0| @media(max-device-width:480px){body{color:red;background:b#lue}}
+
+Formatted: 87 (3, 22)
+  1|     body {
+  2|         color: red;
+  3|         background: bl#ue
+  4|     }
+  5| }
+Original: 58 (0, 59)
+  0| @media(max-device-width:480px){body{color:red;background:bl#ue}}
+
+Formatted: 88 (3, 23)
+  1|     body {
+  2|         color: red;
+  3|         background: blu#e
+  4|     }
+  5| }
+Original: 59 (0, 60)
+  0| @media(max-device-width:480px){body{color:red;background:blu#e}}
+
+Formatted: 89 (3, 24)
+  1|     body {
+  2|         color: red;
+  3|         background: blue#
+  4|     }
+  5| }
+Original: 60 (0, 61)
+  0| @media(max-device-width:480px){body{color:red;background:blue#}}
+
+Formatted: 90 (4, 0)
+  2|         color: red;
+  3|         background: blue
+  4| #    }
+  5| }
+  6| 
+Original: 61 (0, 61)
+  0| @media(max-device-width:480px){body{color:red;background:blue#}}
+
+Formatted: 91 (4, 1)
+  2|         color: red;
+  3|         background: blue
+  4|  #   }
+  5| }
+  6| 
+Original: 61 (0, 61)
+  0| @media(max-device-width:480px){body{color:red;background:blue#}}
+
+Formatted: 92 (4, 2)
+  2|         color: red;
+  3|         background: blue
+  4|   #  }
+  5| }
+  6| 
+Original: 61 (0, 61)
+  0| @media(max-device-width:480px){body{color:red;background:blue#}}
+
+Formatted: 93 (4, 3)
+  2|         color: red;
+  3|         background: blue
+  4|    # }
+  5| }
+  6| 
+Original: 61 (0, 61)
+  0| @media(max-device-width:480px){body{color:red;background:blue#}}
+
+Formatted: 94 (4, 4)
+  2|         color: red;
+  3|         background: blue
+  4|     #}
+  5| }
+  6| 
+Original: 61 (0, 61)
+  0| @media(max-device-width:480px){body{color:red;background:blue#}}
+
+Formatted: 95 (4, 5)
+  2|         color: red;
+  3|         background: blue
+  4|     }#
+  5| }
+  6| 
+Original: 61 (0, 62)
+  0| @media(max-device-width:480px){body{color:red;background:blue}#}
+
+Formatted: 96 (5, 0)
+  3|         background: blue
+  4|     }
+  5| #}
+  6| 
+Original: 62 (0, 62)
+  0| @media(max-device-width:480px){body{color:red;background:blue}#}
+
+Formatted: 97 (5, 1)
+  3|         background: blue
+  4|     }
+  5| }#
+  6| 
+Original: 62 (0, 63)
+  0| @media(max-device-width:480px){body{color:red;background:blue}}#
+
+Formatted: 98 (6, 0)
+  4|     }
+  5| }
+  6| #
+Original: 63 (1, 0)
+  0| @media(max-device-width:480px){body{color:red;background:blue}}
+
+

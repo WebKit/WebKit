@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function triggerLogs() {
+    let test = {};
+    Object.defineProperty(test, "foo", {
+        get() { console.log("FAILURE: Should not fire getter") }
+    });
+    console.log(test);
+    console.log({test});
+    console.log([test]);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("InjectedScript.GetterInvocation.Preview");
+
+    suite.addTestCase({
+        name: "InjectedScript.GetterInvocation.Preview",
+        description: "Getters should not be invoked during object previews.",
+        async test() {
+            await InspectorTest.evaluateInPage(`triggerLogs()`);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that certain InjectedScriptSource operations do not invoke user getters.</p>
+</body>
+</html>

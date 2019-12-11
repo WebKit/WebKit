@@ -1,0 +1,71 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<meta name=viewport content="width=device-width, initial-scale=1">
+<body contenteditable height="100%">
+    <div>Here's to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes.</div>
+    <div>The ones who see things differently. They're not fond of rules. And they have no respect for the status quo.</div>
+    <div>You can quote them, disagree with them, glorify or vilify them. About the only thing you can't do is ignore them.</div>
+    <div>Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius.</div>
+    <div>Because the people who are crazy enough to think they can change the world, are the ones who do.</div>
+    <div id="output" style="color: green; margin-top: 1em;"></div>
+</body>
+<script>
+    function tapInEditorToShowKeyboardScript()
+    {
+        return `
+        (() => {
+            uiController.didShowKeyboardCallback = () => {
+                uiController.uiScriptComplete();
+            };
+            uiController.singleTapAtPoint(50, 50, () => { });
+        })();`;
+    }
+
+    function tapInEditorScript()
+    {
+        return `
+        (() => {
+            uiController.singleTapAtPoint(50, 50, () => {
+                uiController.uiScriptComplete();
+            });
+        })();`;
+    }
+
+    function appendOutput(message)
+    {
+        let code = document.createElement("code");
+        code.appendChild(document.createTextNode(message));
+        output.appendChild(code);
+        output.appendChild(document.createElement("br"));
+    }
+
+    (() => {
+        let hasSeenRangeSelection = false;
+        document.designMode = "on";
+        document.addEventListener("selectionchange", () => {
+            if (!getSelection().rangeCount)
+                return;
+
+            let selectionIsCollapsed = getSelection().getRangeAt(0).collapsed;
+            if (!selectionIsCollapsed) {
+                appendOutput("Expanded selection to range.");
+                hasSeenRangeSelection = true;
+            }
+            if (hasSeenRangeSelection && selectionIsCollapsed) {
+                appendOutput("Collapsed selection to caret.");
+                testRunner.notifyDone();
+            }
+        });
+
+        if (!window.testRunner) {
+            appendOutput("To manually test, make a selection and tap inside of it. This should result in a caret selection.");
+            return;
+        }
+
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        testRunner.runUIScript(tapInEditorToShowKeyboardScript(), () => {
+            document.execCommand("SelectAll");
+            testRunner.runUIScript(tapInEditorScript(), () => { });
+        });
+    })();
+</script>

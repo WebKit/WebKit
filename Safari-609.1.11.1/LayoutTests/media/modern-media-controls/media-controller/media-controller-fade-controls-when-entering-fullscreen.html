@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<video src="../../content/test.mp4" style="width: 640px; height: 480px;" controls autoplay></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Fading in the controls when entering fullscreen.");
+
+const media = document.querySelector("video");
+const shadowRoot = window.internals.shadowRoot(media);
+let mediaControls = shadowRoot.lastElementChild.lastElementChild;
+
+media.addEventListener("play", () => {
+    media.pause();
+
+    window.requestAnimationFrame(() => {
+        debug("We should not fade the controls in when showing them inline the first time");
+        shouldBeFalse("mediaControls.classList.contains('fade-in')");
+        
+        clickOnFullscreenButton();
+        media.addEventListener("webkitfullscreenchange", () => {
+            mediaControls = shadowRoot.lastElementChild.lastElementChild;
+            debug("Obtained a webkitfullscreenchange event");
+            shouldBeTrue("media.webkitDisplayingFullscreen");
+            debug("We should fade the controls in when showing them fullscreen");
+            shouldBeTrue("mediaControls.classList.contains('fade-in')");
+
+            debug("");
+            media.remove();
+            finishJSTest();
+        });
+    });
+});
+
+function clickOnFullscreenButton()
+{
+    debug("Clicking on the fullscreen button");
+    const bounds = shadowRoot.lastChild.querySelector("button.fullscreen").getBoundingClientRect();
+    eventSender.mouseMoveTo(bounds.left + 1, bounds.top + 1);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

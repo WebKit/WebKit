@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script>
+        if (window.internals)
+            window.internals.settings.setSubresourceIntegrityEnabled(false);
+    </script>
+    <script src="/js-test-resources/testharness.js"></script>
+    <script src="/js-test-resources/testharnessreport.js"></script>
+    <script src="resources/sri-utilities.js"></script>
+</head>
+<body>
+    <div id="log"></div>
+    <div id="container"></div>
+<script>
+
+test(function() {
+    var linkElement = document.createElement("link");
+    assert_false("integrity" in linkElement, "integrity", "The 'integrity' property is not exposed on the link element.");
+}, "Test that Subresource Integrity's 'integrity' property is not exposed on the <link> element.");
+
+test(function() {
+    var scriptElement = document.createElement("script");
+    assert_false("integrity" in scriptElement, "The 'integrity' property is not exposed on the script element.");
+    
+}, "Test that Subresource Integrity's 'integrity' property is not exposed on the <script> element.");
+
+new SRIScriptTest(
+    true,
+    "Same-origin with incorrect hash, but should evaluate successfully due to Subresource Integrity being disabled.",
+    "resources/non-matching-digest.js",
+    "sha256-deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdead"
+);
+
+new SRIStyleTest(
+    true,
+    "Same-origin with incorrect hash, but should evaluate successfully due to Subresource Integrity being disabled.",
+    {
+        href: "resources/style.css",
+        integrity: "sha256-deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdead"
+    }
+);
+
+SRITests.execute();
+
+</script>
+</body>
+</html>

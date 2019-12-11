@@ -1,0 +1,4 @@
+
+PASS Service Worker should respond to fetch event after the hash changes 
+PASS Service Worker should respond to fetch event after the pushState 
+

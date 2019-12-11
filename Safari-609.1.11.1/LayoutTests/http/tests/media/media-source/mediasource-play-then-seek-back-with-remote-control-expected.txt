@@ -1,0 +1,3 @@
+
+PASS Test playing then seeking back with remote control command.(PASS if no crash) 
+

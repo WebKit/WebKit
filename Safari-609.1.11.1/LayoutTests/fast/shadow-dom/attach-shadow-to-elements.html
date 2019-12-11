@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+const elements = ['a', 'abbr', 'acronym', 'address', 'applet', 'area', 'article', 'aside', 'attachment', 'audio',
+    'b', 'base', 'basefont', 'bdi', 'bdo', 'bgsound', 'big', 'blockquote', 'body', 'br', 'button',
+    'canvas', 'caption', 'center', 'cite', 'code', 'col', 'colgroup', 'command',
+    'data', 'datalist', 'dd', 'del', 'details', 'dfn', 'dialog', 'dir', 'div', 'dl', 'dt',
+    'em', 'embed', 'fieldset', 'figcaption', 'figure', 'font', 'footer', 'form', 'frame', 'frameset',
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head', 'header', 'hgroup', 'hr', 'html', 'i', 'iframe', 'image', 'img', 'input', 'ins',
+    'kbd', 'keygen', 'label', 'layer', 'legend', 'li', 'link', 'listing', 'main', 'map', 'mark', 'marquee', 'menu', 'menuitem', 'meta', 'meter',
+    'nav', 'nobr', 'noembed', 'noframes', 'nolayer', 'object', 'ol', 'optgroup', 'option', 'output',
+    'p', 'param', 'picture', 'plaintext', 'pre', 'progress', 'q', 'rb', 'rp', 'rt', 'rtc', 'ruby',
+    's', 'samp', 'script', 'section', 'select', 'slot ', 'small', 'source', 'span', 'strike', 'strong', 'style', 'sub', 'summary', 'sup',
+    'table', 'tbody', 'td', 'template', 'textarea', 'tfoot', 'th', 'thead', 'time', 'title', 'tr', 'track', 'tt',
+    'u', 'ul', 'var', 'video', 'wbr', 'xmp', 'noscript'];
+
+const elementsThatSupportShadowRoot = new Set(['article', 'aside', 'blockquote', 'body', 'div', 'footer',
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'main', 'nav', 'p', 'section', 'span']);
+
+for (const localName of elements) {
+    if (elementsThatSupportShadowRoot.has(localName)) {
+        shouldBeTrue(`document.createElement("${localName}").attachShadow({mode: "open"}) instanceof ShadowRoot`);
+        shouldBeTrue(`document.createElement("${localName}").attachShadow({mode: "closed"}) instanceof ShadowRoot`);
+    } else {
+        shouldThrowErrorName(`document.createElement("${localName}").attachShadow({mode: "open"})`, 'NotSupportedError');
+        shouldThrowErrorName(`document.createElement("${localName}").attachShadow({mode: "closed"})`, 'NotSupportedError');
+    }
+}
+
+</script>
+</body>
+</html>

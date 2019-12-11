@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<body onload="loaded()">
+<form action="http://127.0.0.1:8080/resources/doesnotexist"></form>
+<script>
+function loaded() {
+    if (window.opener)
+        window.opener.postMessage('done', '*');
+}
+</script>
+</body>

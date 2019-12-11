@@ -1,0 +1,21 @@
+# This file is used in addition to the one already maintained in Chrome.
+# It acts as a place holder for future additions for this project.
+# It must exist for the Python wrapper script to work properly.
+
+# There are two of suppressions in this file.
+# 1. third_party libraries
+# 2. libyuv stuff
+# 3. libjingle stuff (talk folder)
+#-----------------------------------------------------------------------
+
+# third_party libraries
+{
+   bug_729
+   Memcheck:Free
+   fun:_ZdaPv
+   ...
+   fun:_ZN7testing8internal12UnitTestImplD1Ev
+   ...
+}
+
+# libyuv (empty so far)

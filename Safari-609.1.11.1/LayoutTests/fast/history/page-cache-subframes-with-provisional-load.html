@@ -1,0 +1,50 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<iframe id="testFrame1" src="about:blank"></iframe>
+<iframe id="testFrame2" src="about:blank"></iframe>
+<iframe id="testFrame3" src="about:blank"></iframe>
+<iframe id="testFrame4" src="about:blank"></iframe>
+<iframe id="testFrame5" src="about:blank"></iframe>
+<a id="testLink" href="resources/page-cache-helper.html" style="display: none">Link</a>
+<script>
+description("Tests that iframes with a pending provisional or scheduled load do not prevent page caching.");
+jsTestIsAsync = true;
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+
+    if (event.persisted) {
+        testPassed("Page restored from Page Cache.");
+        finishJSTest();
+    }
+});
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        testFailed("Page did not enter the page cache.");
+        finishJSTest();
+    }
+
+    // Trigger a quick redirect in the subframe.
+    testFrame3.contentWindow.location.replace("resources/dummy.html");
+});
+
+testFrame5.contentWindow.location.replace("resources/dummy.html");
+
+onload = () => {
+    testFrame4.contentWindow.location.replace("resources/dummy.html");
+    setTimeout(() => {
+         // Trigger a quick redirect in the subframe.
+         testFrame1.contentWindow.location.replace("resources/dummy.html");
+
+         testLink.click();
+
+         testFrame2.contentWindow.location.replace("resources/dummy.html");
+    }, 0);
+}
+</script>
+</html>

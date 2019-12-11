@@ -1,0 +1,5 @@
+ALERT: window.onload
+ALERT: window.onpageshow, target = [object HTMLDocument], persisted = false
+CONSOLE MESSAGE: line 25: Use of window.alert is not allowed while unloading a page.
+ALERT: window.onpageshow, target = [object HTMLDocument], persisted = true
+Test pageshow/pagehide event behavior when navigating back to an cached page.

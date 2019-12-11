@@ -1,0 +1,65 @@
+CONSOLE MESSAGE: line 14: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/filters-with-quantifiers-combined.html from loading a resource from http://localhost:8000/resources/square100.png?abcabc
+CONSOLE MESSAGE: line 15: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/filters-with-quantifiers-combined.html from loading a resource from http://localhost:8000/resources/square100.png?abccabc
+CONSOLE MESSAGE: line 16: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/filters-with-quantifiers-combined.html from loading a resource from http://localhost:8000/resources/square100.png?defghi
+CONSOLE MESSAGE: line 17: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/filters-with-quantifiers-combined.html from loading a resource from http://localhost:8000/resources/square100.png?defgghi
+CONSOLE MESSAGE: line 18: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/filters-with-quantifiers-combined.html from loading a resource from http://localhost:8000/resources/square100.png?jklmno
+CONSOLE MESSAGE: line 19: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/filters-with-quantifiers-combined.html from loading a resource from http://localhost:8000/resources/square100.png?jkljklmno
+CONSOLE MESSAGE: line 20: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/filters-with-quantifiers-combined.html from loading a resource from http://localhost:8000/resources/square100.png?pqrstv
+CONSOLE MESSAGE: line 21: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/filters-with-quantifiers-combined.html from loading a resource from http://localhost:8000/resources/square100.png?pqrabcstv
+CONSOLE MESSAGE: line 22: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/filters-with-quantifiers-combined.html from loading a resource from http://localhost:8000/resources/square100.png?wxyabc
+CONSOLE MESSAGE: line 23: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/filters-with-quantifiers-combined.html from loading a resource from http://localhost:8000/resources/square100.png?wxydefabc
+CONSOLE MESSAGE: line 24: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/filters-with-quantifiers-combined.html from loading a resource from http://localhost:8000/resources/square100.png?acbwxy
+CONSOLE MESSAGE: line 25: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/filters-with-quantifiers-combined.html from loading a resource from http://localhost:8000/resources/square100.png?abcacbdefabcdjklwhitelistwxy
+layer at (0,0) size 785x952
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x952
+  RenderBlock {HTML} at (0,0) size 785x952
+    RenderBody {BODY} at (8,8) size 769x936
+      RenderText {#text} at (0,0) size 200x18
+        text run at (0,0) width 200: "The images below should load."
+      RenderBR {BR} at (199,14) size 1x0
+      RenderImage {IMG} at (0,18) size 100x100
+      RenderBR {BR} at (100,118) size 0x0
+      RenderImage {IMG} at (0,118) size 100x100
+      RenderBR {BR} at (100,218) size 0x0
+      RenderImage {IMG} at (0,218) size 100x100
+      RenderBR {BR} at (100,318) size 0x0
+      RenderImage {IMG} at (0,318) size 100x100
+      RenderBR {BR} at (100,418) size 0x0
+      RenderImage {IMG} at (0,418) size 100x100
+      RenderBR {BR} at (100,518) size 0x0
+      RenderImage {IMG} at (0,518) size 100x100
+      RenderBR {BR} at (100,618) size 0x0
+      RenderImage {IMG} at (0,618) size 100x100
+      RenderBR {BR} at (100,718) size 0x0
+      RenderImage {IMG} at (0,718) size 100x100
+      RenderBR {BR} at (100,818) size 0x0
+      RenderImage {IMG} at (0,818) size 100x100
+      RenderBR {BR} at (100,918) size 0x0
+      RenderText {#text} at (0,918) size 242x18
+        text run at (0,918) width 242: "The images below should be blocked."
+      RenderBR {BR} at (241,932) size 1x0
+      RenderImage {IMG} at (0,936) size 0x0
+      RenderBR {BR} at (0,936) size 0x0
+      RenderImage {IMG} at (0,936) size 0x0
+      RenderBR {BR} at (0,936) size 0x0
+      RenderImage {IMG} at (0,936) size 0x0
+      RenderBR {BR} at (0,936) size 0x0
+      RenderImage {IMG} at (0,936) size 0x0
+      RenderBR {BR} at (0,936) size 0x0
+      RenderImage {IMG} at (0,936) size 0x0
+      RenderBR {BR} at (0,936) size 0x0
+      RenderImage {IMG} at (0,936) size 0x0
+      RenderBR {BR} at (0,936) size 0x0
+      RenderImage {IMG} at (0,936) size 0x0
+      RenderBR {BR} at (0,936) size 0x0
+      RenderImage {IMG} at (0,936) size 0x0
+      RenderBR {BR} at (0,936) size 0x0
+      RenderImage {IMG} at (0,936) size 0x0
+      RenderBR {BR} at (0,936) size 0x0
+      RenderImage {IMG} at (0,936) size 0x0
+      RenderBR {BR} at (0,936) size 0x0
+      RenderImage {IMG} at (0,936) size 0x0
+      RenderBR {BR} at (0,936) size 0x0
+      RenderImage {IMG} at (0,936) size 0x0
+      RenderBR {BR} at (0,936) size 0x0

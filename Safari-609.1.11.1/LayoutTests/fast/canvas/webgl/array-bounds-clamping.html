@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+  "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>WebGL array bounds clamping conformance test.</title>
+<script src="../../../resources/js-test.js"></script>
+<script src="resources/webgl-test.js"> </script>
+</head>
+<body>
+<canvas id="example" width="40" height="40" style="width: 40px; height: 40px;"></canvas>
+<div id="description"></div>
+<div id="console"></div>
+<script id="vshader" type="x-shader/x-vertex">
+#ifdef GL_ES
+precision highp float;
+#endif
+attribute vec4 vPosition;
+attribute float index;
+uniform float shades[8];
+varying vec4 texColor;
+void main()
+{
+    gl_Position = vPosition;
+    texColor = vec4(shades[int(index)], 0, 0, 1.0);
+}
+</script>
+
+<script id="fshader" type="x-shader/x-fragment">
+#ifdef GL_ES
+precision highp float;
+#endif
+varying vec4 texColor;
+void main()
+{
+    gl_FragColor = texColor;
+}
+</script>
+
+<script>
+function init()
+{
+    if (window.initNonKhronosFramework)
+        window.initNonKhronosFramework(false);
+
+    debug("Checks that array access in a shader can not read out of bounds");
+    debug("");
+
+    gl = initWebGL("example", "vshader", "fshader", [ "vPosition", "index" ],
+                   [ 1, 1, 1, 1 ], 1);
+
+    gl.disable(gl.DEPTH_TEST);
+    gl.disable(gl.BLEND);
+
+    var vertexObject = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);
+    gl.bufferData(gl.ARRAY_BUFFER,
+                  new Float32Array([ -1,1,0, 1,1,0, -1,-1,0,
+                                     -1,-1,0, 1,1,0, 1,-1,0 ]),
+                  gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+
+    var vertexObject = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);
+    gl.bufferData(gl.ARRAY_BUFFER,
+                  // Create an array that exercises well outside the
+                  // limits on each side, near the limits, and the
+                  // exact limits.
+                  // This should be clamped to [0, 0, 0, 7, 7, 7]
+                  new Float32Array([ -123456789, -1, 0, 7, 8, 123456789]),
+                  gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(1);
+    gl.vertexAttribPointer(1, 1, gl.FLOAT, false, 0, 0);
+
+    var loc = gl.getUniformLocation(gl.program, "shades");
+    gl.uniform1fv(loc, [0.25, 0.5, 0, 0, 0, 0, 0.75, 1]);
+
+    checkRedValue(0, 38, 64, "Top left corner should clamp to index 0");
+    checkRedValue(37, 38, 64, "Inside top right corner should clamp to index 0");
+    checkRedValue(0, 1, 64, "Inside bottom left corner should clamp to index 0");
+
+    checkRedValue(38, 0, 255, "Bottom right corner should clamp to index 7");
+    checkRedValue(3, 1, 255, "Outside bottom left corner should clamp to index 7");
+    checkRedValue(38, 37, 255, "Outside top right corner should clamp to index 7");
+
+    function checkRedValue(x, y, value, msg) {
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+        gl.flush();
+        var buf = new Uint8Array(4);
+        gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+        if (buf[0] != value || buf[1] != 0 || buf[2] != 0 || buf[3] != 255) {
+            debug('expected: rgb(' + value + ', 0, 0, 255) was rgb(' + buf[0] + ', ' + buf[1] + ', ' + buf[2] + ', ' + buf[3] + ')');
+            testFailed(msg);
+            return;
+        }
+        testPassed(msg);
+    }
+}
+
+init();
+</script>
+</body>
+</html>
+

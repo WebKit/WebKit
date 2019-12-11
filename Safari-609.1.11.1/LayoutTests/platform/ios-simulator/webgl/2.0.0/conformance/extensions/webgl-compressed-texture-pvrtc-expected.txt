@@ -1,0 +1,18 @@
+CONSOLE MESSAGE: line 276: TypeError: wtu.drawQuad is not a function. (In 'wtu.drawQuad(gl)', 'wtu.drawQuad' is undefined)
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../resources/webgl_test_files/conformance/extensions/webgl-compressed-texture-pvrtc.html
+[ 1: PASS ] WebGL context exists
+[ 2: PASS ] supportedFormats is []
+[ 3: PASS ] Successfully enabled WEBGL_compressed_texture_pvrtc extension
+[ 4: PASS ] WEBGL_compressed_texture_pvrtc listed as supported and getExtension succeeded
+[ 5: PASS ] ext['COMPRESSED_RGB_PVRTC_4BPPV1_IMG'] is 0x8c00
+[ 6: PASS ] ext['COMPRESSED_RGB_PVRTC_2BPPV1_IMG'] is 0x8c01
+[ 7: PASS ] ext['COMPRESSED_RGBA_PVRTC_4BPPV1_IMG'] is 0x8c02
+[ 8: PASS ] ext['COMPRESSED_RGBA_PVRTC_2BPPV1_IMG'] is 0x8c03
+[ 9: PASS ] supportedFormats.length is 4
+[ 10: PASS ] getError was expected value: NO_ERROR : uploading compressed texture
+[ 11: PASS ] getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+[ 12: FAIL ] successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+[ FAIL ] 1 failures reported
+

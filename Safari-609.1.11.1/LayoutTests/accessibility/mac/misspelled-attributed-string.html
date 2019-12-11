@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner)
+   testRunner.dumpAsText();
+</script>
+</head>
+<body>
+
+<div contenteditable=true id="content" role="textbox">
+wrods is misspelled aab lotsi nowadays. euep.
+</div>
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that misspelled words are correctly marked when asking for an attributed string.");
+
+    if (window.accessibilityController) {
+        var content = document.getElementById("content");
+        content.focus();
+
+        // Iterate all the words so that misspelled markings get generated.
+        var length = content.innerText.length;
+        var s = window.getSelection();
+        s.setPosition(content, 0);
+        for (var k = 0; k < length; k++) {
+            s.modify("move", "forward", "character");
+        }
+        
+        var text = accessibilityController.focusedElement;
+        // wrods
+        shouldBe("text.stringForRange(0, 5)", "'wrods'");
+        shouldBeTrue("text.attributedStringRangeIsMisspelled(0, 5)");
+
+        // is
+        shouldBe("text.stringForRange(6, 2)", "'is'");
+        shouldBeFalse("text.attributedStringRangeIsMisspelled(6, 2)");
+
+        // misspelled
+        shouldBe("text.stringForRange(9, 10)", "'misspelled'");
+        shouldBeFalse("text.attributedStringRangeIsMisspelled(9, 10)");
+
+        // aab
+        shouldBe("text.stringForRange(20, 3)", "'aab'");
+        shouldBeTrue("text.attributedStringRangeIsMisspelled(20, 3)");
+   
+        // lotsi
+        shouldBe("text.stringForRange(24, 5)", "'lotsi'");
+        shouldBeTrue("text.attributedStringRangeIsMisspelled(24, 5)");
+
+        // nowadays
+        shouldBe("text.stringForRange(30, 8)", "'nowadays'");
+        shouldBeFalse("text.attributedStringRangeIsMisspelled(30, 8)");
+
+        // eue9
+        shouldBe("text.stringForRange(40, 5)", "'euep.'");
+        shouldBeTrue("text.attributedStringRangeIsMisspelled(40, 5)");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+
+</body>
+</html>
+

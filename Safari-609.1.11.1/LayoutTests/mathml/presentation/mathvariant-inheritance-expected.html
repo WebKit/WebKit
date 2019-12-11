@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+  <head>
+    <title>mathvariant inheritance</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+
+    <!-- Verify that fraktur is inherited on mtext. -->
+    <math>
+      <mtext>𝔄</mtext>
+    </math><br/>
+    <math>
+      <mstyle>
+        <mtext>𝔄</mtext>
+      </mstyle>
+    </math><br/>
+
+    <!-- Verify that the value specified on the mtext overrides the inherited value. -->
+    <math>
+      <mtext>𝒜</mtext>
+    </math><br/>
+    <math>
+      <mstyle>
+        <mtext>𝒜</mtext>
+      </mstyle>
+    </math><br/>
+
+    <!-- Verify that the inherited value replaces the implicit italic value of the mi. -->
+    <math>
+      <mi>𝔄</mi>
+    </math><br/>
+    <math>
+      <mstyle>
+        <mi>𝔄</mi>
+      </mstyle>
+    </math><br/>
+
+    <!-- Test a chain of inheritance -->
+    <math>
+      <mtext>𝔄</mtext>
+      <mstyle>
+        <mtext>𝔸</mtext>
+        <mstyle>
+          <mtext>𝒜</mtext>
+        </mstyle>
+      </mstyle>
+    </math>
+
+  </body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html> 
+<html>
+<head>
+    <title>Test request animation value for non-animating element</title>
+    <script>
+    if (window.testRunner)
+        testRunner.dumpAsText(true);
+    </script>
+</head>
+<body>
+    <p>The test passes if it does not crash.</p>
+    <div>
+        A certain amount of content is needed in the page to trigger the bug.
+        A certain amount of content is needed in the page to trigger the bug.
+        A certain amount of content is needed in the page to trigger the bug.
+        A certain amount of content is needed in the page to trigger the bug.
+        A certain amount of content is needed in the page to trigger the bug.
+        A certain amount of content is needed in the page to trigger the bug.
+        A certain amount of content is needed in the page to trigger the bug.
+        A certain amount of content is needed in the page to trigger the bug.
+        A certain amount of content is needed in the page to trigger the bug.
+        A certain amount of content is needed in the page to trigger the bug.
+        A certain amount of content is needed in the page to trigger the bug.
+        A certain amount of content is needed in the page to trigger the bug.
+    </div>
+    <svg>
+        <textPath>
+            <animate to="1px" from="0px" attributeName="x" attributeType="XML" />
+        </textPath>
+    </svg>
+</body>
+</html>

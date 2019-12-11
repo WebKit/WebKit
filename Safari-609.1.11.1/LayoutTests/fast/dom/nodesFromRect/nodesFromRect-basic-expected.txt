@@ -1,0 +1,48 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+PASS All correct nodes found for rect
+

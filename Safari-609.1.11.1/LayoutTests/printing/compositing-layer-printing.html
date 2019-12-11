@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Printing compositing layers</title>
+  <style type="text/css">
+    .box {
+      height: 100px;
+      width: 100px;
+      margin: 10px;
+      background-color: green;
+    }
+  </style>
+  <script>
+    if (window.testRunner)
+      testRunner.setPrinting();
+  </script>
+</head>
+<body>
+  <p>You should see two green squares below on screen, and when printed.</p>
+  <div class="box"></div>
+  <div class="box" style="-webkit-transform: translateZ(0)"></div>
+</body>
+</html>

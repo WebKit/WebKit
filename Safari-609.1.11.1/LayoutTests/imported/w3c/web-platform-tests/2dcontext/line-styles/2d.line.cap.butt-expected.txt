@@ -1,0 +1,8 @@
+2d.line.cap.butt
+lineCap 'butt' is rendered correctly
+Actual output:
+Expected output:
+
+
+PASS lineCap 'butt' is rendered correctly 
+

@@ -1,0 +1,20 @@
+Pointer Event: Suppress compatibility mouse events on click
+
+When a pointerdown is canceled, a click/tap shouldn't fire any compatibility mouse events except click event.
+
+Click or tap on Target0.
+Click or tap on Target1.
+Click Done.
+Target0
+Target1
+Done
+The following pointer types were detected: touch.
+
+The following events were logged: click@target0, mousedown@target1, mouseup@target1, click@target1.
+
+
+PASS Suppress compat mouse events on click 
+PASS primary pointer pointerdown@target0 
+PASS primary pointer pointerdown@target1 
+PASS Event log 
+

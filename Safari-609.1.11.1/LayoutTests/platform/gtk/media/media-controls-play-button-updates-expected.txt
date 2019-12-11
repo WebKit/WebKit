@@ -1,0 +1,42 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x351
+  RenderBlock {HTML} at (0,0) size 800x351
+    RenderBody {BODY} at (8,16) size 784x327
+      RenderBlock {P} at (0,0) size 784x17
+        RenderText {#text} at (0,0) size 535x17
+          text run at (0,0) width 535: "This tests if media controls play button is properly updated accroding to mouse clicks"
+      RenderBlock (anonymous) at (0,33) size 784x243
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,276) size 784x51
+        RenderText {#text} at (0,0) size 162x17
+          text run at (0,0) width 162: "EVENT(canplaythrough)"
+        RenderBR {BR} at (162,0) size 0x17
+        RenderText {#text} at (0,17) size 111x17
+          text run at (0,17) width 111: "EVENT(playing)"
+        RenderBR {BR} at (111,17) size 0x17
+        RenderText {#text} at (0,34) size 100x17
+          text run at (0,34) width 100: "EVENT(pause)"
+        RenderBR {BR} at (100,34) size 0x17
+layer at (8,49) size 320x240
+  RenderVideo {VIDEO} at (0,0) size 320x240
+layer at (8,49) size 320x240
+  RenderFlexibleBox {DIV} at (0,0) size 320x240
+    RenderBlock {DIV} at (0,200) size 320x40
+layer at (13,254) size 310x30
+  RenderFlexibleBox {DIV} at (5,5) size 310x30 [bgcolor=#141414CC]
+    RenderSlider {INPUT} at (49,11) size 93x8 [color=#E6E6E659]
+      RenderFlexibleBox {DIV} at (0,0) size 93x8 [border: (1px solid #E6E6E659)]
+        RenderBlock {DIV} at (1,-2) size 105x12
+          RenderBlock {DIV} at (-7,0) size 13x12 [color=#FFFFFF]
+    RenderBlock {DIV} at (157,0) size 74x30 [color=#FFFFFF]
+      RenderText {#text} at (0,7) size 74x15
+        text run at (0,7) width 74: "00:00 / 00:06"
+    RenderButton {BUTTON} at (239,0) size 30x30
+    RenderFlexibleBox {DIV} at (271,0) size 30x30
+      RenderButton {BUTTON} at (0,0) size 30x30
+layer at (22,254) size 30x30
+  RenderButton {BUTTON} at (9,0) size 30x30

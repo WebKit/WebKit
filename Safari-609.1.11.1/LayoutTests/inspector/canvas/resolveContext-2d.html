@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function load() {
+    window.context2d = document.body.appendChild(document.createElement("canvas")).getContext("2d");
+
+    runTest();
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Canvas.resolveContext2D");
+
+    suite.addTestCase({
+        name: `Canvas.resolveContext2D.validIdentifier`,
+        description: "Should return a valid object for the given canvas identifier.",
+        test(resolve, reject) {
+            let canvas = WI.canvasManager.canvases.find((canvas) => canvas.contextType === WI.Canvas.ContextType.Canvas2D);
+            if (!canvas) {
+                reject(`Missing Canvas.`);
+                return;
+            }
+
+            const objectGroup = "test";
+            CanvasAgent.resolveContext(canvas.identifier, objectGroup)
+            .then(({object}) => {
+                InspectorTest.expectEqual(object.type, "object", `Payload should have type "object".`);
+                InspectorTest.expectEqual(object.className, "CanvasRenderingContext2D", `Payload should have className "CanvasRenderingContext2D".`);
+            })
+            .then(resolve, reject);
+        }
+    });
+
+    // ------
+
+    suite.addTestCase({
+        name: "Canvas.resolveContext.invalidIdentifier",
+        description: "Invalid canvas identifiers should cause an error.",
+        test(resolve, reject) {
+            const identifier = "DOES_NOT_EXIST";
+            const objectGroup = "test";
+            CanvasAgent.resolveContext(identifier, objectGroup, (error) => {
+                InspectorTest.expectThat(error, "Should produce an error.");
+                InspectorTest.log("Error: " + error);
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Tests for the Canvas.resolveContext command for 2D contexts.</p>
+</body>
+</html>

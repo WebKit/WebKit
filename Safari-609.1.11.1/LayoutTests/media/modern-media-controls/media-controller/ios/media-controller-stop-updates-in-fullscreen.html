@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../resources/media-controls-utils.js" type="text/javascript"></script>
+<body>
+<video src="../../../content/test.mp4" style="width: 320px; height: 240px;" controls autoplay plays-inline></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing we stop updating controls while in fullscreen and then update them again when back to inline on iOS.");
+
+const media = document.querySelector("video");
+const button = document.body.appendChild(document.createElement("button"));
+button.textContent = "Enter Fullscreen";
+button.style = "position: absolute; left: 0; top: 0";
+
+media.addEventListener("webkitpresentationmodechanged", () => {
+    if (media.webkitDisplayingFullscreen) {
+        debug("");
+        debug("Entered fullscreen");
+
+        shouldBeFalse("media.paused");
+        shouldBecomeEqual("window.internals.shadowRoot(media).querySelector('.media-controls').childElementCount", "0", () => {
+            media.pause();
+            media.webkitExitFullscreen();
+        });
+    } else {
+        debug("");
+        debug("Exited fullscreen");
+        endTest();
+    }
+});
+
+media.addEventListener("play", () => {
+    debug("");
+    debug("Obtained a 'play' event.");
+
+    startTest();
+});
+
+function enterFullscreen() {
+    debug("");
+    debug("Entering fullscreen.");
+    button.addEventListener("click", () => {
+        try {
+            media.webkitEnterFullscreen();
+        } catch(e) {
+            debug("Toggling fullscreen failed.");
+            finishJSTest();
+        }
+    });
+
+    pressOnElement(button);
+}
+
+function startTest()
+{
+    enterFullscreen();
+}
+
+function endTest()
+{
+    debug("");
+    button.remove();
+    media.remove();
+    finishJSTest();
+}
+
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>

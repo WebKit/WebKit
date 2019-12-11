@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Testing local audio capture playback causes "playing" event to fire</title>
+    <script src="../resources/testharness.js"></script>
+    <script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+    <script src ="routines.js"></script>
+    <script>
+    var context = new webkitAudioContext();
+    promise_test((test) => {
+        if (window.testRunner)
+            testRunner.setUserMediaPermission(true);
+
+        return navigator.mediaDevices.getUserMedia({audio: true}).then((localStream) => {
+            var clonedTrack;
+            var remoteTrack;
+            var remoteStream;
+            return new Promise((resolve, reject) => {
+                createConnections((firstConnection) => {
+                    var track = localStream.getAudioTracks()[0];
+                    clonedTrack = track.clone();
+                    track.enabled = false;
+                    firstConnection.addTrack(localStream.getAudioTracks()[0], localStream);
+                }, (secondConnection) => {
+                    secondConnection.ontrack = (trackEvent) => {
+                        remoteStream = trackEvent.streams[0];
+                        remoteTrack = remoteStream.getAudioTracks()[0];
+                        resolve();
+                    };
+                });
+            }).then(() => {
+                return analyseAudio(remoteStream, 200, context).then((results) => {
+                    assert_false(results.heardHum, "Did not hear hum from remote disabled track");
+                });
+            }).then(() => {
+                return analyseAudio(new MediaStream([clonedTrack]), 200, context).then((results) => {
+                    assert_true(results.heardHum, "Heard hum from cloned track");
+                });
+            }).then(() => {
+                return context.close();
+            });
+        });
+    }, "Muting an outgoing audio track but not its clone");
+    </script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<html>
+<head>
+<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=UTF-8">
+<title>Test for Range.expand()</title>
+<script>
+function log(str)
+{
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode(str));
+    var console = document.getElementById("console");
+    console.appendChild(li);
+}
+
+function assertEqual(test_name, actual, expected)
+{
+    if (actual != expected) {
+        log("==================================");
+        log("FAILED test " + test_name);
+        log("actual: " + actual);
+        log("expected: " + expected);
+        if (actual.length != expected.length) {
+            log("length !=" + "; actual.length: " + actual.length + "; expected.length: " + expected.length);
+            log("escaped actual: " + escape(actual));
+            log("escaped expected: " + escape(expected));
+            var length = actual.length;
+            if (actual.length > expected.length)
+                length = expected.length;
+            for (var i=0; i<length; ++i) {
+                log("i: " + i + "; actual: " + actual[i] + "; expected: " + expected[i]);
+                if (actual[i] != expected[i])
+                    log("!=");
+            }
+        }
+        else {
+            log("actual: " + escape(actual));
+            log("expected: " + escape(expected));
+            for (var i=0; i<actual.length; ++i) {
+                log("i: " + i + "; actual: " + actual[i] + "; expected: " + expected[i]);
+                if (actual[i] != expected[i])
+                    log("!=");
+            }
+            
+        }
+    }
+}
+
+function expandRangeString(range, startId, startOffset, endId, endOffset, expandUnit, firstChild)
+{
+    var startNode = document.getElementById(startId);
+    if (firstChild == true)
+        startNode = startNode.firstChild;
+    var endNode = document.getElementById(endId);
+    if (firstChild == true)
+        endNode = endNode.firstChild;
+    range.setStart(startNode, startOffset);
+    range.setEnd(endNode, endOffset);
+    range.expand(expandUnit);
+    return range.toString();
+}
+
+function test()
+{
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    // test 1 - Expand to document.
+    var range = document.createRange();
+    var actual = expandRangeString(range, 'myspan', 0, 'myspan', 0, 'document', false);
+    var expected = 'This is the begin of a block. A block is a collection of sentences. Each sentence begins with capital\x0Aletter and ends with a punctuation.\x0A\x0ANow, a sentence\x0Ais divided into\x0Amultiple lines.\x0A\x0ARoll the mouse around the page. The coordinates\x0Aof the mouse pointer are currently atop an elementwhose ID \x0Ais:"".\x0A\x0A\x0A\x0A    Cell A1\x0A    Cell B1\x0A\x0A\x0A    Cell A2\x0A    Cell B2\x0A\x0A\x0ASection 1\x0Atext.\x0ASection 2\x0Atext.\x0A\x0AHere is a positioned element.\x0A在甲型H1N1流感可能出现大流行的警告声中，昨天召开的江苏省2009-2010年度流感防制研讨会注定与往年不同。每年都会召开的一次例会，今年足足提前了一个月；会上研讨的主题，已从以前的季节性流感，变成以甲型H1N1流感为重点。\x0Aבלשכת שר החוץ הגיבו להתקפות עליו בעקבות הנחייתו לדרוש מהמועמדים לקורס צוערים שירות צבאי או לאומי: "המתקיפים צבועים, מי שרוצה לייצג את המדינה רוצה גם לשרת אותה"'
+    assertEqual("document1", actual, expected);
+
+    // test 2 - Expand to block.
+    actual = expandRangeString(range, 'td_A1', 0, 'td_A1', 0, 'block', false);
+    assertEqual("block2", actual, "Cell A1");
+
+    // test 3 - Expand to block, different range start and end offset.
+    actual = expandRangeString(range, 'td_A1', 1, 'td_A1', 2, 'block', true);
+    assertEqual("block3", actual, "Cell A1");
+
+    // test 4 - Expand to block, different range start and end node.
+    actual = expandRangeString(range, 'td_A1', 0, 'td_B1', 0, 'block', false);
+    assertEqual("block4", actual, "Cell A1\x0A    Cell B1");
+
+    // test 5 - Expand to sentence.
+    actual = expandRangeString(range, 'instructions', 0, 'instructions', 0, 'sentence', false);
+    assertEqual("sentence5", actual, "Roll the mouse around the page. ");
+
+    // test 6 - Expand to sentence, different range start and end offset.
+    actual = expandRangeString(range, 'instructions', 1, 'instructions', 2, 'sentence', true);
+    assertEqual("sentence6", actual, "Roll the mouse around the page. ");
+
+    // test 7 - Expand to sentence, different range start and end node.
+    actual = expandRangeString(range, 'instructions', 0, 'mybr', 0, 'sentence', false);
+    assertEqual("sentence7", actual, "Roll the mouse around the page. The coordinates\x0Aof the mouse pointer are currently atop an element");
+
+    // test 8 - Sentence does not go upstream?
+    actual = expandRangeString(range, 'multilineSentence', 0, 'multilineSentence', 0, 'sentence', false);
+    assertEqual("sentence8", actual, "Now, a sentence\x0Ais divided into\x0Amultiple lines.");
+    
+    actual = expandRangeString(range, 'multilineSentence', 1, 'multilineSentence', 5, 'sentence', true);
+    assertEqual("sentence9", actual, "Now, a sentence\x0Ais divided into\x0Amultiple lines.");
+    
+    actual = expandRangeString(range, 'multilineSentence', 20, 'multilineSentence', 20, 'sentence', true);
+    assertEqual("sentence10", actual, "is divided into\x0Amultiple lines.");
+    
+    actual = expandRangeString(range, 'multilineSentence', 40, 'multilineSentence', 40, 'sentence', true);
+    assertEqual("sentence11", actual, "multiple lines.");
+    
+    // Expand word.
+    // Same range start and end, both at the begin of word.
+    actual = expandRangeString(range, 'mydiv', 0, 'mydiv', 0, 'word', false);
+    assertEqual("word1", actual, "Here");
+    
+    // Same range start and end, both at the begin of a word.
+    actual = expandRangeString(range, 'mydiv', 1, 'mydiv', 1, 'word', true);
+    assertEqual("word2", actual, "Here");
+    
+    // Same range start and end, both at the middle of a word.
+    actual = expandRangeString(range, 'mydiv', 3, 'mydiv', 3, 'word', true);
+    assertEqual("word3", actual, "Here");
+    
+    // Same range start and end, both at the end of a word.
+    actual = expandRangeString(range, 'mydiv', 4, 'mydiv', 4, 'word', true);
+    assertEqual("word4", actual, "Here");
+    
+    // Different range start and end offset, both at the middle of a word.
+    actual = expandRangeString(range, 'mydiv', 2, 'mydiv', 3, 'word', true);
+    assertEqual("word5", actual, "Here");
+   
+    // Different range start and end offset, start at the begin of a word,
+    // and end at the end of a word.
+    actual = expandRangeString(range, 'mydiv', 5, 'mydiv', 4, 'word', true);
+    assertEqual("word6", actual, "Here");
+   
+    // Different range start and end offset, start at the begin of a word,
+    // and end at the middle of a word.
+    actual = expandRangeString(range, 'mydiv', 1, 'mydiv', 3, 'word', true);
+    assertEqual("word7", actual, "Here");
+   
+    // Different range start and end offset, start at the middle of a word,
+    // and end at the end of a word.
+    actual = expandRangeString(range, 'mydiv', 2, 'mydiv', 4, 'word', true);
+    assertEqual("word8", actual, "Here");
+   
+    // Across more than 1 word.
+    // Start at the begin of 1st word, end at the end of last word.
+    actual = expandRangeString(range, 'mydiv', 1, 'mydiv', 7, 'word', true);
+    assertEqual("word9", actual, "Here is");
+   
+    // Start at the middle of 1st word, end at the middle of last word.
+    actual = expandRangeString(range, 'mydiv', 2, 'mydiv', 6, 'word', true);
+    assertEqual("word10", actual, "Here is");
+
+    // Start at the begin of 1st word, end at the middle of last word.
+    actual = expandRangeString(range, 'mydiv', 1, 'mydiv', 6, 'word', true);
+    assertEqual("word11", actual, "Here is");
+
+    // Start at the middle of 1st word, end at the end of last word.
+    actual = expandRangeString(range, 'mydiv', 2, 'mydiv', 7, 'word', true);
+    assertEqual("word12", actual, "Here is");
+
+    // Word and space.
+    actual = expandRangeString(range, 'mydiv', 4, 'mydiv', 5, 'word', true);
+    assertEqual("word13", actual, "Here ");
+
+    // Word across different nodes.
+    actual = expandRangeString(range, 'mydiv', 1, 'he-div', 0, 'word', true);
+    assertEqual("word14", actual, "Here is a positioned element.\x0A在甲型H1N1流感可能出现大流行的警告声中，昨天召开的江苏省2009-2010年度流感防制研讨会注定与往年不同。每年都会召开的一次例会，今年足足提前了一个月；会上研讨的主题，已从以前的季节性流感，变成以甲型H1N1流感为重点。\x0Aבלשכת");
+
+    // Test for Chinese. No Chinese segmentation in platform/mac.
+    actual = expandRangeString(range, 'zh-CN-div', 0, 'zh-CN-div', 0, 'word', true);
+    assertEqual("Chinese word0", actual, "在");
+    actual = expandRangeString(range, 'zh-CN-div', 1, 'zh-CN-div', 1, 'word', true);
+    assertEqual("Chinese word1", actual, "甲");
+    actual = expandRangeString(range, 'zh-CN-div', 2, 'zh-CN-div', 2, 'word', true);
+    assertEqual("Chinese word1", actual, "型");
+
+    actual = expandRangeString(range, 'zh-CN-div', 3, 'zh-CN-div', 3, 'sentence', true);
+    assertEqual("Chinese sentence: ", actual, "在甲型H1N1流感可能出现大流行的警告声中，昨天召开的江苏省2009-2010年度流感防制研讨会注定与往年不同。");
+
+    actual = expandRangeString(range, 'zh-CN-div', 3, 'zh-CN-div', 3, 'block', true);
+    assertEqual("Chinese block: ", actual, "在甲型H1N1流感可能出现大流行的警告声中，昨天召开的江苏省2009-2010年度流感防制研讨会注定与往年不同。每年都会召开的一次例会，今年足足提前了一个月；会上研讨的主题，已从以前的季节性流感，变成以甲型H1N1流感为重点。");
+
+    // Test for Hebrew.
+    actual = expandRangeString(range, 'he-div', 1, 'he-div', 1, 'word', true);
+    assertEqual("Hebrew word", actual,  "בלשכת");
+
+    actual = expandRangeString(range, 'he-div', 1, 'he-div', 1, 'sentence', true);
+    assertEqual("Hebrew sentence", actual, 'בלשכת שר החוץ הגיבו להתקפות עליו בעקבות הנחייתו לדרוש מהמועמדים לקורס צוערים שירות צבאי או לאומי: "המתקיפים צבועים, מי שרוצה לייצג את המדינה רוצה גם לשרת אותה"' );
+
+    actual = expandRangeString(range, 'he-div', 0, 'he-div', 0, 'sentence', false);
+    assertEqual("Hebrew block", actual, 'בלשכת שר החוץ הגיבו להתקפות עליו בעקבות הנחייתו לדרוש מהמועמדים לקורס צוערים שירות צבאי או לאומי: "המתקיפים צבועים, מי שרוצה לייצג את המדינה רוצה גם לשרת אותה"'    );
+}
+</script>
+<body onload="test()">
+<p>This is the begin of a block. A block is a collection of sentences. Each sentence begins with capital
+letter and ends with a punctuation.
+</p>
+<p id="multilineSentence">Now, a sentence
+is divided into
+multiple lines.
+</p>
+<p id="instructions">Roll the mouse around the page. The coordinates
+of the mouse pointer are currently atop an element<br id="mybr">whose ID 
+is:"<span id="myspan" style="font-weight:bold"></span>".</p>
+
+<table border=1 id="myTable">
+<tr id="tr1">
+    <td id="td_A1">Cell A1</td>
+    <td id="td_B1">Cell B1</td>
+</tr>
+<tr id="tr2">
+    <td id="td_A2">Cell A2</td>
+    <td id="td_B2">Cell B2</td>
+</tr>
+</table>
+<h2 id="sec1">Section 1</h2>
+<p id="p1">text.</p>
+<h2 id="sec2">Section 2</h2>
+<p id="p2">text.</p>
+<div id="mydiv" style="position:absolute; top:340; left:300; background-color:yellow">
+Here is a positioned element.</div>
+<div id="zh-CN-div">在甲型H1N1流感可能出现大流行的警告声中，昨天召开的江苏省2009-2010年度流感防制研讨会注定与往年不同。每年都会召开的一次例会，今年足足提前了一个月；会上研讨的主题，已从以前的季节性流感，变成以甲型H1N1流感为重点。</div>
+<div id="he-div">בלשכת שר החוץ הגיבו להתקפות עליו בעקבות הנחייתו לדרוש מהמועמדים לקורס צוערים שירות צבאי או לאומי: "המתקיפים צבועים, מי שרוצה לייצג את המדינה רוצה גם לשרת אותה"</div>
+<ul id="console"></ul>
+
+</body>
+</html>

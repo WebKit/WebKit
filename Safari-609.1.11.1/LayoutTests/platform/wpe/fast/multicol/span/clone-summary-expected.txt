@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x48
+  RenderBlock {HTML} at (0,0) size 800x48
+    RenderBody {BODY} at (8,8) size 784x32
+layer at (8,8) size 784x32
+  RenderBlock {DIV} at (0,0) size 784x32
+    RenderMultiColumnSet at (0,0) size 784x16
+    RenderBlock {DIV} at (0,16) size 784x0 [color=#FFFFFF]
+    RenderMultiColumnSet at (0,16) size 784x16
+layer at (8,8) size 117x32
+  RenderMultiColumnFlowThread at (0,0) size 118x32
+    RenderBlock {SUMMARY} at (0,0) size 118x32 [color=#FFFFFF]
+      RenderBlock (anonymous) at (0,0) size 118x16
+        RenderText {#text} at (0,0) size 16x16
+          text run at (0,0) width 16: "a"
+      RenderMultiColumnSpannerPlaceholder at (0,16) size 0x0
+      RenderBlock (anonymous) at (0,16) size 118x16
+        RenderText {#text} at (0,0) size 16x16
+          text run at (0,0) width 16: "b"

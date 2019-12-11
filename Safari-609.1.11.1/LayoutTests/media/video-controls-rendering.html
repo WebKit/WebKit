@@ -1,0 +1,19 @@
+<!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<script src="media-file.js"></script>
+<script src="video-paint-test.js"></script>
+<body>
+<p>Test controls placement. </p>
+<div>
+    <video controls></video>
+</div>
+<div>
+    <video controls style="width: 320px;"></video>
+</div>
+<div>
+    <video controls style="position: absolute; width: 320px;"></video>
+</div>
+<script>
+init();
+setSrcByTagName('video', findMediaFile('video', 'content/test'));
+</script>
+</body>

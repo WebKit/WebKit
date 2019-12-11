@@ -1,0 +1,3 @@
+
+PASS XMLHttpRequest: open() resolving URLs (about:blank iframe) 
+

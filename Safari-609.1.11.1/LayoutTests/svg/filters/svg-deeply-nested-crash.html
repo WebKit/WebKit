@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<script>
+function addFilterEffects(filterId, count) {
+  // inserts a new tree of 'count' feGaussianBlur effects to 
+  // the filter whose id = 'filterId'
+  var filter = document.getElementById(filterId);
+  for (var i = 0; i < count; i++) {
+    var feElement = document.createElementNS("http://www.w3.org/2000/svg", "feGaussianBlur");
+	// Make the first effect be the root of the tree
+    if (i == 0) {
+	    feElement.setAttribute("in", "SourceGraphic");
+	}
+    feElement.setAttribute("stdDeviation", "1.0");
+    filter.appendChild(feElement);
+  }
+}
+if (window.testRunner)
+    testRunner.dumpAsText();
+window.addEventListener("load", function () {
+  // will be ignored: # of effects in the filter map > 200
+  addFilterEffects("Ignored200", 100000);
+  // will be ignored: # of effects connected to lastEffect > 100
+  addFilterEffects("Ignored100", 50);
+  addFilterEffects("Ignored100", 149);
+  // will be used: # of effects in the filter map == 200 but  # of effects connected to lastEffect < 100
+  addFilterEffects("TripleBlur", 196);
+  addFilterEffects("TripleBlur", 3);
+}, false);
+</script>
+<svg width="500" height="300" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <filter id="Ignored200">
+  </filter>
+  <filter id="Ignored100">
+  </filter>
+  <filter id="TripleBlur">
+  </filter>
+  <filter id="ShiftAndBlur">
+    <feOffset dx="10" dy="10" />
+    <feGaussianBlur stdDeviation="8.0" />
+  </filter>
+</defs>
+<rect fill="red" x="10px" y="10px" width="20px" height="20px" filter="url(#Ignored200)"/>
+<rect fill="yellow" x="10px" y="10px" width="20px" height="20px" filter="url(#Ignored100)"/>
+<rect fill="blue" x="10px" y="10px" width="20px" height="20px" filter="url(#TripleBlur)"/>
+<circle fill="green" cx="100" cy="100" r="100"filter="url(#ShiftAndBlur)" />
+<text transform="translate(210,210)">
+  PASS
+</text>
+</svg>

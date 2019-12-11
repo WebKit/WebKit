@@ -1,0 +1,10 @@
+Checks that the first parameter to window.showModalDialog() is mandatory
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.showModalDialog() threw exception TypeError: Not enough arguments.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

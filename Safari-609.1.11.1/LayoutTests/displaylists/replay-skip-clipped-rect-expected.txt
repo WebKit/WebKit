@@ -1,0 +1,17 @@
+recorded: 
+(translate
+  (x 0.00)
+  (y 0.00))
+(fill-composited-rect
+  (extent at (412,0) size 100x100)
+  (rect at (412,0) size 100x100)
+  (color #0000FF)
+  (composite-operation source-over)
+  (blend-mode normal))
+
+replayed: 
+(
+  (clip at (512,0) size 512x200)
+(translate
+  (x 0.00)
+  (y 0.00))

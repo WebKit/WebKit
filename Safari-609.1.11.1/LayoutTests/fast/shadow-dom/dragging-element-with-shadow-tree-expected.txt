@@ -1,0 +1,9 @@
+This tests starting a drag inside a shadow tree when the shadow host is draggable.
+To manually test, drag and drop the blue box below into a green box.
+
+here
+dragstart event fired on target for: target
+dragenter event fired on destination for: destination
+drop event fired on destination for: destination
+dragend event fired on target for: target
+

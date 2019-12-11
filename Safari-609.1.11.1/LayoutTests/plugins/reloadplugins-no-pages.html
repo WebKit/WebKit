@@ -1,0 +1,19 @@
+<html>
+<body>
+<embed name="plg" type="application/x-webkit-test-netscape"></embed>
+<p>Test for NPN_RelaodPlugin in which reloadOpenPages is false. You should see one alert, indicating that the page was loaded once.</p>
+<div id='res'>FAILURE</div>
+<script>
+    alert("Page was loaded");
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    try {
+        plg.reloadPluginsNoPages();
+        document.getElementById('res').innerHTML='SUCCESS';
+    } catch (ex) {
+        alert("Exception: " + ex.description + ". Test plugin was not found");
+    }
+</script>
+</body>
+</html>

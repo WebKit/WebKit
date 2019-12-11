@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This test checks animated SVG image on the body when it is reattached.</title>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+<style>
+body {
+    background-image: url('data:image/svg+xml,%3Csvg%20version%3D%221.1%22%20class%3D%22wufoo-ad%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20viewBox%3D%220%200%20400%20400%22%20enable-background%3D%22new%200%200%20400%20400%22%20xml%3Aspace%3D%22preserve%22%3E%0A%3Ccircle%20id%3D%22my-circle%22%20r%3D%2230%22%20cx%3D%2250%22%20cy%3D%2250%22%20fill%3D%22orange%22%20%2F%3E%0A%20%20%3Canimate%20%0A%20%20%20%20xlink%3Ahref%3D%22%23my-circle%22%0A%20%20%20%20attributeName%3D%22fill%22%0A%20%20%20%20attributeType%20%3D%20%22css%22%0A%20%20%20%20from%3D%22red%22%0A%20%20%20%20to%3D%22blue%22%20%0A%20%20%20%20dur%3D%2210s%22%0A%20%20%20%20fill%3D%22freeze%22%20%2F%3E%0A%3C%2Fsvg%3E%0A');
+}
+</style>
+</head>
+<body>PASS if no crash.</body>
+<script>
+var body = document.body;
+var root = document.body.parentNode;
+setTimeout(function() {
+	root.removeChild(body);
+	root.appendChild(body);
+    if (window.testRunner)
+	    testRunner.notifyDone();
+}, 10);
+</script>
+</html>

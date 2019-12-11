@@ -1,0 +1,4 @@
+2d.text.font.parse.size.percentage.default
+Spec references: 2d.text.font.undefined
+Actual output:
+Passed

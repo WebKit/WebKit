@@ -1,0 +1,19 @@
+<div id=playground></div>
+<embed id="plg" type="application/x-webkit-test-netscape" ondestroy="pluginDestroyed()"></embed>
+<script>
+function pluginDestroyed()
+{
+    try {
+        var req = new XMLHttpRequest;
+        req.open("GET", "/", true);
+        req.send();
+
+        document.referrer;
+
+        document.getElementById("playground").innerHTML = "<div onclick='alert(0)'></div>"
+    } catch (ex) {
+        alert("Unexpected exception: " + ex);
+    }
+}
+
+</script>

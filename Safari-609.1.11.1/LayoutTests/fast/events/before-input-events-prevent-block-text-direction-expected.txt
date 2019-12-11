@@ -1,0 +1,17 @@
+Hello world
+
+*** TESTING RICH TEXT ***
+Initial text direction: "rtl"
+Fired onbeforeinput event of inputType 'formatSetBlockTextDirection' with data: 'ltr'
+Text direction after setting to LTR while preventing default: "rtl"
+Fired onbeforeinput event of inputType 'formatSetBlockTextDirection' with data: 'ltr'
+Fired input event of inputType 'formatSetBlockTextDirection' with data: 'ltr'
+Text direction after setting to LTR without preventing default: "ltr"
+*** TESTING PLAIN TEXT ***
+Initial text direction: "rtl"
+Fired onbeforeinput event of inputType 'formatSetBlockTextDirection' with data: 'ltr'
+Text direction after setting to LTR while preventing default: "rtl"
+Fired onbeforeinput event of inputType 'formatSetBlockTextDirection' with data: 'ltr'
+Fired input event of inputType 'formatSetBlockTextDirection' with data: 'ltr'
+Text direction after setting to LTR without preventing default: "ltr"
+

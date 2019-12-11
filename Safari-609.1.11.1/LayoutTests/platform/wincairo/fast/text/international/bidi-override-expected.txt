@@ -1,0 +1,157 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x356
+  RenderBlock {HTML} at (0,0) size 800x356
+    RenderBody {BODY} at (8,16) size 784x332
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 296x19
+          text run at (0,0) width 296: "All rows should be identical to the reference row."
+      RenderTable {TABLE} at (0,36) size 506x117 [border: none]
+        RenderTableSection {TBODY} at (0,0) size 505x116
+          RenderTableRow {TR} at (0,0) size 505x29
+            RenderTableCell {TD} at (0,0) size 93x29 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (28,5) size 61x19
+                text run at (28,5) width 61: "Reference"
+            RenderTableCell {TD} at (93,0) size 206x29 [border: (1px solid #008000)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (5,5) size 197x19
+                text run at (5,5) width 41: "abcdef"
+                text run at (46,5) width 20 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+                text run at (66,5) width 36: "ghijkl "
+                text run at (102,5) width 39 RTL: "\x{5D6}\x{5D7}\x{5D8}\x{5D9}\x{5DB}\x{5DC}"
+                text run at (141,5) width 22: "abc"
+                text run at (163,5) width 39 RTL: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}\x{5D4}\x{5D5}"
+            RenderTableCell {TD} at (299,0) size 206x29 [border: (1px solid #008000)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (5,5) size 197x19
+                text run at (5,5) width 39 RTL: "\x{5D6}\x{5D7}\x{5D8}\x{5D9}\x{5DB}\x{5DC}"
+                text run at (44,5) width 22: "abc"
+                text run at (66,5) width 39 RTL: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}\x{5D4}\x{5D5}"
+                text run at (105,5) width 4 RTL: " "
+                text run at (109,5) width 41: "abcdef"
+                text run at (150,5) width 20 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+                text run at (170,5) width 32: "ghijkl"
+          RenderTableRow {TR} at (0,29) size 505x29
+            RenderTableCell {TD} at (0,29) size 93x29 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (9,5) size 80x19
+                text run at (9,5) width 80: "CSS, siblings"
+            RenderTableCell {TD} at (93,29) size 206x29 [border: (1px solid #008000)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (5,5) size 22x19
+                text run at (5,5) width 22: "abc"
+              RenderInline {SPAN} at (0,0) size 56x19
+                RenderText {#text} at (27,5) size 56x19
+                  text run at (27,5) width 56 RTL override: "ihg\x{5D0}\x{5D1}\x{5D2}fed"
+              RenderText {#text} at (83,5) size 119x19
+                text run at (83,5) width 19: "jkl "
+                text run at (182,5) width 20 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+              RenderInline {SPAN} at (0,0) size 62x19
+                RenderText {#text} at (120,5) size 62x19
+                  text run at (120,5) width 62 LTR override: "\x{5D8}\x{5D7}\x{5D6}abc\x{5D5}\x{5D4}\x{5D3}"
+              RenderText {#text} at (102,5) size 18x19
+                text run at (102,5) width 18 RTL: "\x{5D9}\x{5DB}\x{5DC}"
+            RenderTableCell {TD} at (299,29) size 206x29 [border: (1px solid #008000)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (109,5) size 22x19
+                text run at (109,5) width 22: "abc"
+              RenderInline {SPAN} at (0,0) size 56x19
+                RenderText {#text} at (131,5) size 56x19
+                  text run at (131,5) width 56 RTL override: "ihg\x{5D0}\x{5D1}\x{5D2}fed"
+              RenderText {#text} at (85,5) size 117x19
+                text run at (85,5) width 24 RTL: " \x{5D0}\x{5D1}\x{5D2}"
+                text run at (187,5) width 15: "jkl"
+              RenderInline {SPAN} at (0,0) size 62x19
+                RenderText {#text} at (23,5) size 62x19
+                  text run at (23,5) width 62 LTR override: "\x{5D8}\x{5D7}\x{5D6}abc\x{5D5}\x{5D4}\x{5D3}"
+              RenderText {#text} at (5,5) size 18x19
+                text run at (5,5) width 18 RTL: "\x{5D9}\x{5DB}\x{5DC}"
+          RenderTableRow {TR} at (0,58) size 505x29
+            RenderTableCell {TD} at (0,58) size 93x29 [border: (1px solid #008000)] [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (5,5) size 84x19
+                text run at (5,5) width 84: "CSS, children"
+            RenderTableCell {TD} at (93,58) size 206x29 [border: (1px solid #008000)] [r=2 c=1 rs=1 cs=1]
+              RenderInline {SPAN} at (0,0) size 93x19
+                RenderText {#text} at (5,5) size 22x19
+                  text run at (5,5) width 22: "abc"
+                RenderInline {SPAN} at (0,0) size 56x19
+                  RenderText {#text} at (27,5) size 56x19
+                    text run at (27,5) width 56 RTL override: "ihg\x{5D0}\x{5D1}\x{5D2}fed"
+                RenderText {#text} at (83,5) size 15x19
+                  text run at (83,5) width 15: "jkl"
+              RenderText {#text} at (98,5) size 4x19
+                text run at (98,5) width 4: " "
+              RenderInline {SPAN} at (0,0) size 100x19
+                RenderText {#text} at (182,5) size 20x19
+                  text run at (182,5) width 20 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+                RenderInline {SPAN} at (0,0) size 62x19
+                  RenderText {#text} at (120,5) size 62x19
+                    text run at (120,5) width 62 LTR override: "\x{5D8}\x{5D7}\x{5D6}abc\x{5D5}\x{5D4}\x{5D3}"
+                RenderText {#text} at (102,5) size 18x19
+                  text run at (102,5) width 18 RTL: "\x{5D9}\x{5DB}\x{5DC}"
+            RenderTableCell {TD} at (299,58) size 206x29 [border: (1px solid #008000)] [r=2 c=2 rs=1 cs=1]
+              RenderInline {SPAN} at (0,0) size 93x19
+                RenderText {#text} at (109,5) size 22x19
+                  text run at (109,5) width 22: "abc"
+                RenderInline {SPAN} at (0,0) size 56x19
+                  RenderText {#text} at (131,5) size 56x19
+                    text run at (131,5) width 56 RTL override: "ihg\x{5D0}\x{5D1}\x{5D2}fed"
+                RenderText {#text} at (187,5) size 15x19
+                  text run at (187,5) width 15: "jkl"
+              RenderText {#text} at (105,5) size 4x19
+                text run at (105,5) width 4 RTL: " "
+              RenderInline {SPAN} at (0,0) size 100x19
+                RenderText {#text} at (85,5) size 20x19
+                  text run at (85,5) width 20 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+                RenderInline {SPAN} at (0,0) size 62x19
+                  RenderText {#text} at (23,5) size 62x19
+                    text run at (23,5) width 62 LTR override: "\x{5D8}\x{5D7}\x{5D6}abc\x{5D5}\x{5D4}\x{5D3}"
+                RenderText {#text} at (5,5) size 18x19
+                  text run at (5,5) width 18 RTL: "\x{5D9}\x{5DB}\x{5DC}"
+          RenderTableRow {TR} at (0,87) size 505x29
+            RenderTableCell {TD} at (0,87) size 93x29 [border: (1px solid #008000)] [r=3 c=0 rs=1 cs=1]
+              RenderText {#text} at (38,5) size 51x19
+                text run at (38,5) width 51: "Unicode"
+            RenderTableCell {TD} at (93,87) size 206x29 [border: (1px solid #008000)] [r=3 c=1 rs=1 cs=1]
+              RenderText {#text} at (5,5) size 197x19
+                text run at (5,5) width 22: "abc"
+                text run at (27,5) width 56 RTL override: "\x{202E}ihg\x{5D0}\x{5D1}\x{5D2}fed"
+                text run at (83,5) width 19: "\x{202C}jkl "
+                text run at (102,5) width 18 RTL: "\x{202C}\x{5D9}\x{5DB}\x{5DC}"
+                text run at (120,5) width 62 LTR override: "\x{202D}\x{5D8}\x{5D7}\x{5D6}abc\x{5D5}\x{5D4}\x{5D3}"
+                text run at (182,5) width 20 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+            RenderTableCell {TD} at (299,87) size 206x29 [border: (1px solid #008000)] [r=3 c=2 rs=1 cs=1]
+              RenderText {#text} at (5,5) size 197x19
+                text run at (5,5) width 18 RTL: "\x{202C}\x{5D9}\x{5DB}\x{5DC}"
+                text run at (23,5) width 62 LTR override: "\x{202D}\x{5D8}\x{5D7}\x{5D6}abc\x{5D5}\x{5D4}\x{5D3}"
+                text run at (85,5) width 20 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+                text run at (105,5) width 4 RTL: " "
+                text run at (109,5) width 22: "abc"
+                text run at (131,5) width 56 RTL override: "\x{202E}ihg\x{5D0}\x{5D1}\x{5D2}fed"
+                text run at (187,5) width 15: "\x{202C}jkl"
+      RenderBlock {P} at (0,169) size 784x20
+        RenderText {#text} at (0,0) size 367x19
+          text run at (0,0) width 367: "The CSS column should be identical to the reference column."
+      RenderTable {TABLE} at (0,205) size 219x127 [border: none]
+        RenderTableSection {TBODY} at (0,0) size 218x126
+          RenderTableRow {TR} at (0,0) size 218x29
+            RenderTableCell {TD} at (0,0) size 109x29 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (24,5) size 62x19
+                text run at (24,5) width 62: "Reference"
+            RenderTableCell {TD} at (109,0) size 109x29 [border: (1px solid #008000)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (40,5) size 30x19
+                text run at (40,5) width 30: "CSS"
+          RenderTableRow {TR} at (0,29) size 218x97
+            RenderTableCell {TD} at (0,29) size 109x97 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=1]
+              RenderBlock {P} at (5,21) size 100x20
+                RenderText {#text} at (3,0) size 94x19
+                  text run at (3,0) width 42: "abcdef"
+                  text run at (44,0) width 21 RTL: "\x{5D0}\x{5D1}\x{5D2}"
+                  text run at (64,0) width 33: "ghijkl"
+              RenderBlock {P} at (5,57) size 100x20
+                RenderText {#text} at (0,0) size 100x19
+                  text run at (0,0) width 39 RTL: "\x{5D6}\x{5D7}\x{5D8}\x{5D9}\x{5DB}\x{5DC}"
+                  text run at (39,0) width 22: "abc"
+                  text run at (61,0) width 39 RTL: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}\x{5D4}\x{5D5}"
+            RenderTableCell {TD} at (109,29) size 109x97 [border: (1px solid #008000)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (5,21) size 100x20
+                RenderText {#text} at (3,0) size 94x19
+                  text run at (3,0) width 94 RTL override: "lkjihg\x{5D0}\x{5D1}\x{5D2}fedcba"
+              RenderBlock {P} at (5,57) size 100x20
+                RenderText {#text} at (0,0) size 100x19
+                  text run at (0,0) width 100 LTR override: "\x{5DC}\x{5DB}\x{5D9}\x{5D8}\x{5D7}\x{5D6}abc\x{5D5}\x{5D4}\x{5D3}\x{5D2}\x{5D1}\x{5D0}"

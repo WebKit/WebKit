@@ -1,0 +1,3 @@
+
+PASS Document.getElementsByName() should be a live collection 
+

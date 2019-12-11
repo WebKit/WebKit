@@ -1,0 +1,3 @@
+
+FAIL text field selection for the input textarea assert_equals: updated selectionStart expected 1 but got 0
+

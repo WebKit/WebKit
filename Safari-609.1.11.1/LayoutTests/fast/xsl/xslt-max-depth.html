@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test-pre.js"></script>
+<script id="xml_content" type="text/plain"><?xml version="1.0" encoding="utf-8"?>
+<doc/>
+</script>
+<script id="xslt_content" type="text/plain"><?xml version="1.0" encoding="utf-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+    <xsl:template match="*">
+        <xsl:apply-imports/>
+        <xsl:apply-templates select=".">
+            <xsl:with-param name="whatever_1">whatever_2</xsl:with-param>
+        </xsl:apply-templates>
+    </xsl:template>
+</xsl:stylesheet>
+</script>
+</head>
+<body>
+<script>
+description("Test max depth of xsl transform.");
+
+window.jsTestIsAsync = true;
+
+window.onload = function() {
+    let domParser = new DOMParser();
+    let processor = new XSLTProcessor();
+    processor.importStylesheet(domParser.parseFromString(document.getElementById("xslt_content").textContent, "text/xml"));
+    processor.transformToFragment(domParser.parseFromString(document.getElementById("xml_content").textContent, "text/xml"), document);
+    finishJSTest();
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html style="font-family: ahem; -webkit-font-smoothing: none;">
+<style>
+    #div1 { 
+        -webkit-column-count: 2;
+    }
+    #span1:after 
+    {
+        display: block;
+        content: counter(c);
+        color: green;
+        -webkit-column-span: all;
+    }
+</style>
+<div id="div1">
+A<span id="span1" style="color: blue">B</span>C
+</div>
+<script>
+function runTest()
+{
+    span1 = document.getElementById('span1');
+    span1.style.display = 'block';
+    document.body.offsetTop;
+    document.body.style.zoom = 2;
+}
+
+window.onload = runTest;
+</script>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="plugin-types text/html">
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+if (window.internals)
+    window.internals.settings.setQuickTimePluginReplacementEnabled(true);
+
+function done()
+{
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+document.addEventListener("securitypolicyviolation", done, false);
+</script>
+</head>
+<body>
+<embed type="video/quicktime" width="640" height="480" src="../../plugins/resources/yellow.mov" qtsrc="../../plugins/resources/orange.mov">
+</body>
+</html>

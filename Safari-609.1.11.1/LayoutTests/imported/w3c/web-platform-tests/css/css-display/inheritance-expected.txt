@@ -1,0 +1,4 @@
+
+PASS Property display has initial value inline 
+PASS Property display does not inherit 
+

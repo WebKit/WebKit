@@ -1,0 +1,33 @@
+<html>
+<head>
+<title>required and valueMissing on new input types</title>
+<script language="JavaScript" type="text/javascript">
+    function log(message) {
+        document.getElementById("console").innerHTML += "<li>"+message+"</li>";
+    }
+
+    function test() {
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        v = document.getElementsByName("victim");
+
+        for (i = 0; i < v.length; i++)
+            log(v[i].validity.valueMissing ? "SUCCESS" : "FAILURE");
+    }
+</script>
+</head>
+<body onload="test()">
+<p>There's a list of form control elements below, required attribute applies to them but they're empty:
+validity.valueMissing should be true.</p>
+<input name="victim" type="text" required />
+<input name="victim" type="search" required />
+<input name="victim" type="url" required />
+<input name="victim" type="telephone" required />
+<input name="victim" type="email" required />
+<input name="victim" type="password" required />
+<input name="victim" type="number" required />
+<hr>
+<ol id="console"></ol>
+</body>
+</html>

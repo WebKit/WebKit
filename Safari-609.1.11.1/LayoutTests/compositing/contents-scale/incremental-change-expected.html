@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        .container {
+            width: 100px;
+            height: 100px;
+            margin: 200px;
+            -webkit-perspective: 1000px;
+            border: 1px solid black;
+        }
+        
+        .middle {
+            -webkit-transform-style: preserve-3d;
+            -webkit-transform: translate3d(0px, 0px, 800px);
+            width: 100px;
+            height: 100px;
+        }
+        
+        #leaf {
+            width: 400px;
+            height: 401px;
+            position: absolute;
+            border: 5px solid blue;
+            -webkit-transform-origin: top left;
+            -webkit-transform: matrix3d(
+                    0.2, 0, 0, 0,
+                    0, 0.2, 0, 0,
+                    0, 0, 0.2, 0,
+                    0, 0, 0, 1);
+            background-image: repeating-linear-gradient(white, black 50px, white 50px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="middle">
+            <div id="leaf">
+            </div>
+        </div>
+    </div>
+</body>
+</html>

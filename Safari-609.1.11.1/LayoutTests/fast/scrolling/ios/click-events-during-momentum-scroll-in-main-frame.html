@@ -1,0 +1,62 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true internal:AsyncOverflowScrollingEnabled=true internal:AsyncFrameScrollingEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+html, body {
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+
+#content {
+    width: 100px;
+    height: 5000px;
+    box-sizing: border-box;
+    padding: 20px;
+    background: linear-gradient(to bottom, red 0%, green 50%, blue 100%);
+}
+</style>
+<body onload="runTest()">
+<div id="content"></div>
+</body>
+<script>
+jsTestIsAsync = true;
+const minimumExpectedScrollTop = 1000;
+let reachedMinimumScrollPosition = false;
+
+addEventListener("scroll", observeScrollEvent);
+document.body.addEventListener("click", () => testFailed("Observed unexpected click event."), { once: true });
+
+function noteTestProgress() {
+    if (!window.progress)
+        progress = 0;
+    if (++progress == 2)
+        finishJSTest();
+}
+
+async function observeScrollEvent() {
+    if (!window.testRunner || document.scrollingElement.scrollTop < minimumExpectedScrollTop || reachedMinimumScrollPosition)
+        return;
+
+    reachedMinimumScrollPosition = true;
+    testPassed(`document.scrollingElement.scrollTop passed ${minimumExpectedScrollTop}`);
+    removeEventListener("scroll", observeScrollEvent);
+    await UIHelper.activateAt(160, document.scrollingElement.scrollTop + 350);
+    noteTestProgress();
+}
+
+async function runTest()
+{
+    description("Verifies that tapping the page during momentum scrolling does not dispatch click events to the page. To run the test manually, swipe up to scroll down; while the page is momentum scrolling, tap the screen to interrupt scrolling. The page should not observe any click events.");
+
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.dragFromPointToPoint(160, 450, 160, 50, 0.1);
+    noteTestProgress();
+}
+</script>
+</html>

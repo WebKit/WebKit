@@ -1,0 +1,4 @@
+FAILED (This TC requires JavaScript enabled)
+
+PASS  scheduler: document.write external - multiple 
+

@@ -1,0 +1,10 @@
+Shop
+This tests that boundsForRange with invalid text marker is not causing crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

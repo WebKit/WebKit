@@ -1,0 +1,3 @@
+This tests that passing string parameters to the XSLTProcessor works as expected. If this test is successful, the text "SUCCESS" will be shown below.
+
+SUCCESS

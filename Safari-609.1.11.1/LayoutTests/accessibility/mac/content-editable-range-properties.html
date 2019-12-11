@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+
+<div tabindex="0" id="textbox1" contenteditable="true" role="textbox">Single line test</div>
+
+<div tabindex="0" id="textbox2" contenteditable="true" role="textbox">
+Multiple<br>
+Line<br>
+Textbox
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that contenteditable nodes return the correct information for range and selection based attributes.");
+
+    if (window.accessibilityController) {
+        // Test the single line textbox.
+        var textElement = document.getElementById("textbox1");
+        textElement.focus();
+        var axElement = accessibilityController.focusedElement;
+
+        var s = window.getSelection();
+        s.setPosition(textElement, 0);
+        for (var k = 0; k < 3; k++) {
+            s.modify("move", "forward", "character");
+        }
+        shouldBe("axElement.selectedTextRange", "'{3, 0}'");
+
+        for (var k = 0; k < 3; k++) {
+            s.modify("extend", "forward", "character");
+        }
+        shouldBe("axElement.selectedTextRange", "'{3, 3}'");
+        shouldBe("axElement.stringAttributeValue('AXSelectedText')", "'gle'");
+
+        s.modify("extend", "forward", "character");
+        shouldBe("axElement.selectedTextRange", "'{3, 4}'");
+
+        // Test the multi-line textbox.
+        textElement = document.getElementById("textbox2");
+        textElement.focus();
+        axElement = accessibilityController.focusedElement;
+
+        s = window.getSelection();
+        s.setPosition(textElement, 0);
+        for (var k = 0; k < 12; k++) {
+            s.modify("move", "forward", "character");
+        }
+        shouldBe("axElement.selectedTextRange", "'{12, 0}'");
+
+        for (var k = 0; k < 6; k++) {
+            s.modify("extend", "forward", "character");
+        }
+        shouldBe("axElement.selectedTextRange", "'{12, 6}'");
+        var matchedText = "e\nText";
+        shouldBe("axElement.stringAttributeValue('AXSelectedText')", "matchedText");
+
+        s.modify("extend", "forward", "character");
+        shouldBe("axElement.selectedTextRange", "'{12, 7}'");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

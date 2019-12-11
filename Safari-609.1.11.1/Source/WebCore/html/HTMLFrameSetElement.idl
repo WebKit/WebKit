@@ -1,0 +1,39 @@
+/*
+ * Copyright (C) 2006, 2007, 2009, 2010 Apple Inc. All rights reserve
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+interface HTMLFrameSetElement : HTMLElement {
+    [CEReactions=NotNeeded, Reflect] attribute DOMString cols;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString rows;
+
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onblur;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onerror;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onfocus;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onfocusin;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onfocusout;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onload;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onresize;
+    [NotEnumerable, WindowEventHandler] attribute EventHandler onscroll;
+
+    // Non-standard named getter
+    // FIXME: This is not in the standard, can we remove this?
+    getter WindowProxy (DOMString name);
+};
+
+HTMLFrameSetElement implements WindowEventHandlers;

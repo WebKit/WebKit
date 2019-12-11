@@ -1,0 +1,4 @@
+Download started.
+Downloading URL with suggested filename "download-binary.php"
+Download completed.
+

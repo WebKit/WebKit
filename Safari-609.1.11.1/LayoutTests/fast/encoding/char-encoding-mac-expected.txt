@@ -1,0 +1,17 @@
+This tests encoding characters in various character sets.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS encode('mac', 'U+221A') is '%C3'
+PASS encode('macintosh', 'U+221A') is '%C3'
+PASS encode('MacRoman', 'U+221A') is '%C3'
+PASS encode('x-mac-greek', 'U+0391') is '%B0'
+PASS encode('x-mac-cyrillic', 'U+0410') is '%80'
+PASS encode('mac-cyrillic', 'U+0410') is '%80'
+PASS encode('x-mac-centraleurroman', 'U+0100') is '%81'
+PASS encode('x-mac-turkish', 'U+00C5') is '%81'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,78 @@
+<html>
+<body>
+<p>Test EventSource text/event-stream parsing. Should print a series of PASS messages followed by DONE.</p>
+<div id="result"></div>
+<script>
+function log(msg) {
+    document.getElementById("result").innerHTML += msg + "<br>";
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var count = -1;
+var es = new EventSource("resources/event-stream.php");
+
+es.onopen = function (evt) {
+    if (!evt.data)
+        log("PASS: got open event");
+    else
+        log("PASS: got open event from server");
+};
+
+es.onmessage = function (evt) {
+    switch(count++) {
+        case -1:
+            if (evt.data == "\n\n")
+                log("PASS: received event with two newlines");
+            break;
+        case 0:
+            if (evt.data == "simple")
+                log("PASS: received event with data \"simple\"");
+            break;
+        case 1:
+            if (evt.data == "spanning\nmultiple\n\nlines\n")
+                log("PASS: received event with data spanning multiple lines");
+            break;
+        case 2:
+            if (evt.data == "id is 1" && evt.lastEventId == "1")
+                log("PASS: received event and lastEventId is \"1\"");
+            break
+        case 3:
+            if (evt.data == "id is still 1" && evt.lastEventId == "1")
+                log("PASS: received event and lastEventId is still \"1\"");
+            break;
+        case 4:
+            if (evt.data == "no id" && evt.lastEventId == "")
+                log("PASS: received event and lastEventId has been cleared");
+            break;
+        case 5:
+            if (evt.data == "a message event with the name \"message\"")
+                log("PASS: received event and the event name has been reset");
+            break;
+        case 6:
+            if (evt.data == "a line ending with crlf\na line with a : (colon)\na line ending with cr");
+                log("PASS: received event with data that contains a colon");
+            break;
+        default:
+            log("FAIL: got unexpected event");
+            es.close();
+    }
+};
+
+es.onerror = function () {
+    es.close();
+
+    if (count != 7)
+        log("FAIL: got unexpected error event");
+    else
+        log("DONE");
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+</script>
+</body>
+</html>

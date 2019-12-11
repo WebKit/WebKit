@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<body><div id="tests"><div style="width: 1ex; font-size: 1em; white-space: pre-wrap;"
+></div><div style="width: 1ex; font-size: 1em; white-space: pre-wrap; word-wrap: break-word;"
+></div><textarea style="width: 1ex; font-size: 1em;"
+></textarea></div><pre id="log"></pre><script>
+
+function assertEqual(name, length, endOffset)
+{
+    log.textContent += '\n' + name + ': ';
+    if (length != endOffset)
+        log.textContent += 'FAIL - length was ' + length + ' but selection end was ' + endOffset + ' after selecting all text';
+    else
+        log.textContent += 'PASS';
+}
+
+var tests = document.getElementById('tests').childNodes;
+var log = document.getElementById('log');
+log.textContent = 'This test ensures WebKit renders the trailing whitespace properly. You should see PASS thrice below.\n';
+
+var letter = 'a';
+for (var i = 0; i < tests.length; i++, letter = String.fromCharCode(letter.charCodeAt(0) + 1)) {
+    if (tests[i].select) {
+        tests[i].value = letter + '\t';
+        tests[i].focus();
+        tests[i].select();
+        var endOffset = tests[i].selectionEnd;
+    } else {
+        tests[i].textContent = letter + '\t';
+        window.getSelection().selectAllChildren(tests[i]);
+        var endOffset = window.getSelection().getRangeAt(0).endOffset;
+    }
+    assertEqual('test ' + i, 2, endOffset);
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    document.getElementById('tests').style.display = 'none';
+}
+
+</script></pre></body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<style>
+body {
+    margin: 0;
+}
+#source {
+    width: 300px;
+    height: 300px;
+}
+#target {
+    border: 1px blue dashed;
+    font-family: monospace;
+    overflow: scroll;
+    white-space: nowrap;
+    width: 100%;
+    height: 300px;
+}
+</style>
+
+<body onload=setup()>
+<a id="link" href="https://www.webkit.org/"><img id="source" src="../resources/abe.png"></img></a>
+<div id="target"></div>
+</body>
+
+<script>
+function append(text) {
+    let div = document.createElement("div");
+    div.textContent = text;
+    target.appendChild(div);
+}
+
+function simulateDragAndDrop() {
+    let x = source.offsetLeft + source.offsetWidth / 2;
+    let y = source.offsetTop + source.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.leapForward(500);
+    eventSender.mouseMoveTo(x, y + 300);
+    eventSender.mouseUp();
+}
+
+async function setup() {
+    target.addEventListener("dragenter", event => event.preventDefault());
+    target.addEventListener("dragover", event => event.preventDefault());
+    target.addEventListener("drop", event => {
+        for (const type of ["URL", "url", "text/uri-list"])
+            append(`${type}: "${event.dataTransfer.getData(type)}"`);
+        for (const file of event.dataTransfer.files)
+            append(`Found file of type ${file.type}`);
+        event.preventDefault();
+    });
+
+    if (!window.testRunner || !window.eventSender || !window.internals)
+        return;
+
+    internals.settings.setCustomPasteboardDataEnabled(true);
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    await source.decode();
+
+    append(`1. link.href = "${link.href}"`);
+    simulateDragAndDrop();
+
+    link.href = "file:///foo/bar/baz";
+    append(`2. link.href = "${link.href}"`);
+    simulateDragAndDrop();
+
+    link.href = "data:text/plain;base64,SGVsbG8sIFdvcmxkIQ%3D%3D";
+    append(`3. link.href = "${link.href}"`);
+    simulateDragAndDrop();
+
+    link.href = "blob:https://www.webkit.org/1ef10222-3882-48c0-875e-1b55e845a931";
+    append(`4. link.href = "${link.href}"`);
+    simulateDragAndDrop();
+
+    link.href = "ftp://some/server/somewhere";
+    append(`5. link.href = "${link.href}"`);
+    simulateDragAndDrop();
+
+    testRunner.notifyDone();
+}
+</script>
+</html>

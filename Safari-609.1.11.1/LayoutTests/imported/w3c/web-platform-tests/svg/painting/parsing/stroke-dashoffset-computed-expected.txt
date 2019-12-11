@@ -1,0 +1,14 @@
+
+PASS Property stroke-dashoffset value '10' computes to '10px' 
+PASS Property stroke-dashoffset value '0.5em' computes to '20px' 
+PASS Property stroke-dashoffset value 'calc(10px + 0.5em)' computes to '30px' 
+PASS Property stroke-dashoffset value 'calc(10px - 0.5em)' computes to '-10px' 
+PASS Property stroke-dashoffset value '-40%' computes to '-40%' 
+PASS Property stroke-dashoffset value 'calc(50% + 60px)' computes to 'calc(50% + 60px)' 
+PASS Property stroke-dashoffset value '254cm' computes to '9600px' 
+PASS Property stroke-dashoffset value '2540mm' computes to '9600px' 
+PASS Property stroke-dashoffset value '10160Q' computes to '9600px' 
+PASS Property stroke-dashoffset value '1in' computes to '96px' 
+PASS Property stroke-dashoffset value '6pc' computes to '96px' 
+PASS Property stroke-dashoffset value '72pt' computes to '96px' 
+

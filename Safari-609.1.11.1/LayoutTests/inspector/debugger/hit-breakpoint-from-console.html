@@ -1,0 +1,43 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script src="resources/breakpoint.js"></script>
+<script>
+function test()
+{
+    InspectorProtocol.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.setBreakpointsActive", {active: true});
+
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    {
+        if (/resources\/breakpoint\.js$/.test(messageObject.params.url)) {
+            ProtocolTest.log("Found breakpoint.js");
+            var scriptIdentifier = messageObject.params.scriptId;
+            var location = {scriptId: scriptIdentifier, lineNumber: 18, columnNumber: 0};
+            var options = {
+                condition: "a > 10",
+            };
+            InspectorProtocol.sendCommand("Debugger.setBreakpoint", {location: location, options: options}, function(responseObject) {
+                InspectorProtocol.checkForError(responseObject);
+                // Should NOT hit breakpoint (a < 10).
+                InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointActions(2, {x:1,y:2})"});
+                // Should hit breakpoint (a > 10).
+                InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointActions(12, {x:1,y:2})"});
+            });
+        }
+    }
+
+    InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject)
+    {
+        ProtocolTest.log("Hit Breakpoint!");
+        ProtocolTest.log("PASS");
+        ProtocolTest.completeTest();
+    }
+
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Debugger.setBreakpoint on line:18 in &lt;script src="resources/breakpoint.js"&gt;</p>
+</body>
+</html>

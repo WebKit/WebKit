@@ -1,0 +1,22 @@
+Tests that SVG animations are properly paused in disconnected iframes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS frameWindow.internals.areSVGAnimationsPaused is false
+PASS frameWindow.document.getElementsByTagName('svg')[0].animationsPaused() is false
+PASS grandChildWindow.internals.areSVGAnimationsPaused is false
+PASS grandChildWindow.document.getElementsByTagName('svg')[0].animationsPaused() is false
+Removing iframe from the document.
+PASS frameWindow.internals.areSVGAnimationsPaused is true
+PASS frameWindow.document.getElementsByTagName('svg')[0].animationsPaused() is true
+PASS grandChildWindow.internals.areSVGAnimationsPaused is true
+PASS grandChildWindow.document.getElementsByTagName('svg')[0].animationsPaused() is true
+Add iframe back into the document.
+PASS frame.contentWindow.internals.areSVGAnimationsPaused is false
+PASS frame.contentDocument.getElementsByTagName('svg')[0].animationsPaused() is false
+PASS grandChildWindow.document.getElementsByTagName('svg')[0].animationsPaused() is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

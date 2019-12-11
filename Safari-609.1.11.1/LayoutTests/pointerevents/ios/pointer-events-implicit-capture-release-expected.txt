@@ -1,0 +1,3 @@
+
+PASS Calling releasePointerCapture() in the 'pointerdown' event handler makes hasPointerCapture() return false. 
+

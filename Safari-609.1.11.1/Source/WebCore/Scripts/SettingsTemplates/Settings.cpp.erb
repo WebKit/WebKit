@@ -1,0 +1,144 @@
+/*
+ * THIS FILE WAS AUTOMATICALLY GENERATED, DO NOT EDIT.
+ *
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "Settings.h"
+
+#include "InspectorInstrumentation.h"
+#include "Page.h"
+#include "SettingsDefaultValues.h"
+
+namespace WebCore {
+
+Ref<Settings> Settings::create(Page* page)
+{
+    return adoptRef(*new Settings(page));
+}
+
+Settings::Settings(Page* page)
+    : SettingsBase(page)
+<%- for @setting in @unconditionalNonBoolSetting do -%>
+    , m_<%= @setting.name %>(<%= @setting.initial %>)
+<%- end -%>
+<%- for @conditional in @conditionals do -%>
+<%- if @conditional.nonBoolSettings.length != 0 -%>
+#if ENABLE(<%= @conditional.condition %>)
+<%- for @setting in @conditional.nonBoolSettings -%>
+    , m_<%= @setting.name %>(<%= @setting.initial %>)
+<%- end -%>
+#endif
+<%- end -%>
+<%- end -%>
+<%- for @setting in @unconditionalBoolSetting do -%>
+    , m_<%= @setting.name %>(<%= @setting.initial %>)
+<%- end -%>
+<%- for @conditional in @conditionals do -%>
+<%- if @conditional.boolSettings.length != 0 -%>
+#if ENABLE(<%= @conditional.condition %>)
+<%- for @setting in @conditional.boolSettings -%>
+    , m_<%= @setting.name %>(<%= @setting.initial %>)
+<%- end -%>
+#endif
+<%- end -%>
+<%- end -%>
+{
+}
+
+Settings::~Settings()
+{
+}
+
+<%- for @setting in @unconditionalSettingWithComplexGetters do -%>
+<%= @setting.parameterType %> Settings::<%= @setting.getterFunctionName %>() const
+{
+<%- if @setting.hasInspectorOverride? -%>
+    if (UNLIKELY(m_<%= @setting.name %>InspectorOverride)) {
+        ASSERT(InspectorInstrumentation::hasFrontends());
+        return m_<%= @setting.name %>InspectorOverride.value();
+    }
+<%- end -%>
+    return m_<%= @setting.name %>;
+}
+
+<%- end -%>
+<%- for @setting in @unconditionalSettingWithComplexSetters do -%>
+void Settings::<%= @setting.setterFunctionName %>(<%= @setting.parameterType %> <%= @setting.name %>)
+{
+    if (m_<%= @setting.name %> == <%= @setting.name %>)
+        return;
+    m_<%= @setting.name %> = <%= @setting.name %>;
+    <%= @setting.onChange %>();
+}
+
+<%- end -%>
+<%- for @conditional in @conditionals do -%>
+<%- if @conditional.settingsWithComplexGetters.length != 0 or @conditional.settingsWithComplexSetters.length != 0-%>
+#if ENABLE(<%= @conditional.condition %>)
+<%- for @setting in @conditional.settingsWithComplexGetters do -%>
+<%= @setting.parameterType %> Settings::<%= @setting.getterFunctionName %>() const
+{
+<%- if @setting.hasInspectorOverride? -%>
+    if (UNLIKELY(m_<%= @setting.name %>InspectorOverride)) {
+        ASSERT(InspectorInstrumentation::hasFrontends());
+        return m_<%= @setting.name %>InspectorOverride.value();
+    }
+<%- end -%>
+    return m_<%= @setting.name %>;
+}
+<%- end -%>
+<%- for @setting in @conditional.settingsWithComplexSetters -%>
+void Settings::<%= @setting.setterFunctionName %>(<%= @setting.parameterType %> <%= @setting.name %>)
+{
+    if (m_<%= @setting.name %> == <%= @setting.name %>)
+        return;
+    m_<%= @setting.name %> = <%= @setting.name %>;
+    <%= @setting.onChange %>();
+}
+<%- end -%>
+#endif
+
+<%- end -%>
+<%- end -%>
+<%- for @setting in @inspectorOverrideSettings do -%>
+<%- if @setting.hasComplexSetter? -%>
+void Settings::<%= @setting.setterFunctionName %>InspectorOverride(Optional<<%= @setting.parameterType %>> <%= @setting.name %>InspectorOverride)
+{
+    if (m_<%= @setting.name %>InspectorOverride == <%= @setting.name %>InspectorOverride)
+        return;
+    m_<%= @setting.name %>InspectorOverride = <%= @setting.name %>InspectorOverride;
+<%- if @setting.conditional -%>
+#if ENABLE(<%= @setting.conditional %>)
+<%- end -%>
+    <%= @setting.onChange %>();
+<%- if @setting.conditional -%>
+#endif
+<%- end -%>
+}
+
+<%- end -%>
+<%- end -%>
+}

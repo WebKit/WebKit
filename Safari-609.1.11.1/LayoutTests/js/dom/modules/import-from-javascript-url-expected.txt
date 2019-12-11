@@ -1,0 +1,14 @@
+Test import from javascript URL.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Module is not executed yet.
+Module execution is confined in the module environment.
+PASS typeof cocoa is "undefined"
+PASS typeof exportedCocoa is "object"
+PASS exportedCocoa.taste() is "nice"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+MODULE

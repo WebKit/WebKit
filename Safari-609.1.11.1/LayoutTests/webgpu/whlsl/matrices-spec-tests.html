@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>Test the WHLSL test harness.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.builtinMatrices = async () => {
+    let program = `
+        float foo()
+        {
+            float2x2 a;
+            a[0][0] = 1;
+            a[0][1] = 2;
+            a[1][0] = 3;
+            a[1][1] = 4;
+            return a[0][0];
+        }
+        float foo2()
+        {
+            float2x3 a;
+            a[0][0] = 1;
+            a[0][1] = 2;
+            a[0][2] = 3;
+            a[1][0] = 4;
+            a[1][1] = 5;
+            a[1][2] = 6;
+            return a[1][2];
+        }
+        float foo3()
+        {
+            float2x2 a;
+            return a[0][0];
+        }
+        bool foo4()
+        {
+            float2x2 a;
+            a[0][0] = 1;
+            a[0][1] = 2;
+            a[1][0] = 3;
+            a[1][1] = 4;
+            float2x2 b;
+            b[0][0] = 5;
+            b[0][1] = 6;
+            b[1][0] = 7;
+            b[1][1] = 8;
+            for (uint i = 0; i < 2; ++i) {
+                for (uint j = 0; j < 2; ++j) {
+                    a[i][j] += 4;
+                }
+            }
+            return all(a == b);
+        }
+        bool foo5()
+        {
+            float2x2 a;
+            a[0] = float2(1, 2);
+            a[1] = float2(3, 4);
+            float2x2 b;
+            b[0][0] = 1;
+            b[0][1] = 2;
+            b[1][0] = 3;
+            b[1][1] = 4;
+            return all(a == b);
+        }
+        bool foo6()
+        {
+            float2x2 a;
+            a[0][0] = 1;
+            a[0][1] = 2;
+            a[1][0] = 3;
+            a[1][1] = 4;
+            float2x2 b;
+            b[0][0] = 5;
+            b[0][1] = 10;
+            b[1][0] = 18;
+            b[1][1] = 24;
+            a[0] *= 5;
+            a[1] *= 6;
+            return all(a == b);
+        }
+        float foo7()
+        {
+            float2x3 a = float2x3(float3(3, 4, 5), float3(6, 7, 8));
+            return a[0][2];
+        }
+    `;
+    assert_equals(await callFloatFunction(program, "foo", []), 1);
+    assert_equals(await callFloatFunction(program, "foo2", []), 6);
+    assert_equals(await callFloatFunction(program, "foo3", []), 0);
+    assert_equals(await callBoolFunction(program,  "foo4", []), true);
+    assert_equals(await callBoolFunction(program,  "foo5", []), true);
+    assert_equals(await callBoolFunction(program,  "foo6", []), true);
+    assert_equals(await callFloatFunction(program, "foo7", []), 5);
+};
+
+whlslTests.matrixMultiplication = async () => {
+    let program = `
+        float2x4 multiply(float2x3 x, float3x4 y) {
+            // Copied and pasted from the standard library
+            float2x4 result;
+            result[0][0] = 0;
+            result[0][0] += x[0][0] * y[0][0];
+            result[0][0] += x[0][1] * y[1][0];
+            result[0][0] += x[0][2] * y[2][0];
+            result[0][1] = 0;
+            result[0][1] += x[0][0] * y[0][1];
+            result[0][1] += x[0][1] * y[1][1];
+            result[0][1] += x[0][2] * y[2][1];
+            result[0][2] = 0;
+            result[0][2] += x[0][0] * y[0][2];
+            result[0][2] += x[0][1] * y[1][2];
+            result[0][2] += x[0][2] * y[2][2];
+            result[0][3] = 0;
+            result[0][3] += x[0][0] * y[0][3];
+            result[0][3] += x[0][1] * y[1][3];
+            result[0][3] += x[0][2] * y[2][3];
+            result[1][0] = 0;
+            result[1][0] += x[1][0] * y[0][0];
+            result[1][0] += x[1][1] * y[1][0];
+            result[1][0] += x[1][2] * y[2][0];
+            result[1][1] = 0;
+            result[1][1] += x[1][0] * y[0][1];
+            result[1][1] += x[1][1] * y[1][1];
+            result[1][1] += x[1][2] * y[2][1];
+            result[1][2] = 0;
+            result[1][2] += x[1][0] * y[0][2];
+            result[1][2] += x[1][1] * y[1][2];
+            result[1][2] += x[1][2] * y[2][2];
+            result[1][3] = 0;
+            result[1][3] += x[1][0] * y[0][3];
+            result[1][3] += x[1][1] * y[1][3];
+            result[1][3] += x[1][2] * y[2][3];
+            return result;
+        }
+        float2x3 matrix1() {
+            float2x3 x;
+            x[0][0] = 2;
+            x[0][1] = 3;
+            x[0][2] = 5;
+            x[1][0] = 7;
+            x[1][1] = 11;
+            x[1][2] = 13;
+            return x;
+        }
+        float3x4 matrix2() {
+            float3x4 y;
+            y[0][0] = 17;
+            y[0][1] = 19;
+            y[0][2] = 23;
+            y[0][3] = 29;
+            y[1][0] = 31;
+            y[1][1] = 37;
+            y[1][2] = 41;
+            y[1][3] = 43;
+            y[2][0] = 47;
+            y[2][1] = 53;
+            y[2][2] = 59;
+            y[2][3] = 61;
+            return y;
+        }
+        float foo00() {
+            return multiply(matrix1(), matrix2())[0][0];
+        }
+        float foo01() {
+            return multiply(matrix1(), matrix2())[0][1];
+        }
+        float foo02() {
+            return multiply(matrix1(), matrix2())[0][2];
+        }
+        float foo03() {
+            return multiply(matrix1(), matrix2())[0][3];
+        }
+        float foo10() {
+            return multiply(matrix1(), matrix2())[1][0];
+        }
+        float foo11() {
+            return multiply(matrix1(), matrix2())[1][1];
+        }
+        float foo12() {
+            return multiply(matrix1(), matrix2())[1][2];
+        }
+        float foo13() {
+            return multiply(matrix1(), matrix2())[1][3];
+        }
+    `;
+    assert_equals(await callFloatFunction(program, "foo00", []), 17 * 2 + 31 * 3 + 47 * 5);
+    assert_equals(await callFloatFunction(program, "foo01", []), 19 * 2 + 37 * 3 + 53 * 5);
+    assert_equals(await callFloatFunction(program, "foo02", []), 23 * 2 + 41 * 3 + 59 * 5);
+    assert_equals(await callFloatFunction(program, "foo03", []), 29 * 2 + 43 * 3 + 61 * 5);
+    assert_equals(await callFloatFunction(program, "foo10", []), 17 * 7 + 31 * 11 + 47 * 13);
+    assert_equals(await callFloatFunction(program, "foo11", []), 19 * 7 + 37 * 11 + 53 * 13);
+    assert_equals(await callFloatFunction(program, "foo12", []), 23 * 7 + 41 * 11 + 59 * 13);
+    assert_equals(await callFloatFunction(program, "foo13", []), 29 * 7 + 43 * 11 + 61 * 13);
+};
+
+runTests(whlslTests);
+</script>
+</html>

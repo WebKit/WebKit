@@ -1,0 +1,13 @@
+15 hrs, 10 min
+This tests that items with aria-selected are reported as selected children of the parent container.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Time 'role': AXRole: AXWebArea
+Time 'subrole': 
+Time 'value': 
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

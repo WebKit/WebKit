@@ -1,0 +1,3 @@
+
+PASS Window object's name IDL attribute 
+

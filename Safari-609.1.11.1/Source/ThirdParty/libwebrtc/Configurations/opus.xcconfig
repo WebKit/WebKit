@@ -1,0 +1,25 @@
+#include "WebKitTargetConditionals.xcconfig"
+
+PRODUCT_NAME = opus;
+
+CLANG_WARN_BOOL_CONVERSION = YES;
+CLANG_WARN_ENUM_CONVERSION = YES;
+CLANG_WARN_INT_CONVERSION = YES;
+GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+COMBINE_HIDPI_IMAGES = NO;
+ENABLE_STRICT_OBJC_MSGSEND = YES;
+HEADER_SEARCH_PATHS = Source/third_party/opus/src/include Source/third_party/opus/src/celt Source/third_party/opus/src/silk Source/third_party/opus/src/silk/float Source/third_party/opus/src;
+INSTALL_PATH = /usr/local/lib;
+PUBLIC_HEADERS_FOLDER_PATH = /usr/local/include/libwebrtc;
+USE_HEADERMAP = NO;
+WARNING_CFLAGS = -Wno-incompatible-pointer-types $(inherited)
+GCC_PREPROCESSOR_DEFINITIONS = VAR_ARRAYS OPUS_BUILD OPUS_EXPORT= HAVE_LRINT HAVE_LRINTF $(inherited);
+GCC_PREPROCESSOR_DEFINITIONS[arch=arm64*] = $(inherited) OPUS_ARM_PRESUME_AARCH64_NEON_INTR;
+GCC_PREPROCESSOR_DEFINITIONS[arch=x86_64] = $(inherited) OPUS_X86_MAY_HAVE_SSE2 OPUS_X86_PRESUME_SSE2 $(SSE4_FLAG);
+
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*] = *_sse.c *_sse4_1.c x86_silk_map.c;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*] = *_sse.c *_sse2.c *_sse4_1.c x86_silk_map.c;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = $(EXCLUDED_SOURCE_FILE_NAMES_macosx_$(TARGET_MAC_OS_X_VERSION_MAJOR));
+
+// The iOS Simulator can't use SSE4 intrinsics, but macOS can.
+SSE4_FLAG[sdk=macosx*] = OPUS_X86_MAY_HAVE_SSE4_1;

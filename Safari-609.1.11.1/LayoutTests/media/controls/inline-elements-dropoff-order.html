@@ -1,0 +1,162 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+    <head>
+        <script src="../media-file.js"></script>
+        <script src="controls-test-helpers.js"></script>
+        <script>
+
+            const allButtons = [
+                "Play Button", "Rewind Button", "Status Display", "Mute Box", "AppleTV Device Picker", 
+                "Picture-in-picture Button", "Caption Button", "Fullscreen Button", "Timeline", 
+                "Current Time", "Thumbnail Track", "Time Remaining"
+            ];
+            const tester = new ControlsTest("non-existent-media-file", "error")
+                .whenReady(setup)
+                .start();
+
+            function setup()
+            {
+                internals.settings.setAllowsPictureInPictureMediaPlayback(true);
+                internals.settings.setAllowsAirPlayForMediaPlayback(false);
+
+                tester.test("We are using the Apple idiom")
+                    .value(tester.currentState.idiom)
+                    .isEqualTo("apple");
+                tester.startNewSection("*** Test the controls layout without video ***");
+                runTestsWithoutVideo();
+            }
+
+            function testControls(data, nextTest)
+            {
+                if (!data.length) {
+                    if (typeof nextTest === "function")
+                        nextTest();
+                    else
+                        tester.end();
+                    return;
+                }
+                
+                const test = data.shift();
+                
+                if (typeof tester.media.webkitSupportsPresentationMode !== "function" || !tester.media.webkitSupportsPresentationMode('picture-in-picture'))
+                    test.visible = test.visible.filter(name => name.indexOf("Picture-in-picture Button") === -1);
+                if (!internals.setMockMediaPlaybackTargetPickerState)
+                    test.visible = test.visible.filter(name => name.indexOf("AppleTV Device Picker") === -1);
+
+                tester.media.style.width = test.width + "px";
+                window.setTimeout( () => {
+                    tester.logMessage(`* Width ${tester.media.style.width}:`);
+
+                    const isVisible = (state, name) => { 
+                        if (state === null || typeof state.className !== "string")
+                            return false;
+                        return state.className.indexOf("dropped") === -1 && state.className.indexOf("hidden") === -1;
+                    }
+
+                    test.visible.forEach(name => {
+                        const state = tester.stateForControlsElement(name, true);
+                        tester.test(`${name} is visible`)
+                            .value(isVisible(state))
+                            .isTrue();
+                    });
+
+                    allButtons.filter(name => test.visible.indexOf(name) === -1).forEach(name => {
+                        const state = tester.stateForControlsElement(name, true);
+                        tester.test(`${name} is not visible`)
+                            .value(isVisible(state))
+                            .isFalse();
+                    });
+
+                    tester.logBlankLine();
+                    testControls(data, nextTest);
+                }, 100);
+            }
+
+            function runTestsWithoutVideo()
+            {
+                const setupNextTest = () => {
+                    tester.resetEventTrigger("canplaythrough")
+                        .whenReady(runTestsWithVideo)
+                        .media.src = findMediaFile("video", "../content/test");
+                    tester.startNewSection("*** Test the controls layout with video ***");
+                };
+
+                const data = [
+                    { width: 60, visible : ["Play Button", "Status Display"] },
+                    { width: 90, visible : ["Play Button", "Rewind Button", "Status Display"] },
+                    { width: 200, visible : ["Play Button", "Rewind Button", "Status Display", "Mute Box"] },
+                ];
+                testControls(data, setupNextTest);
+            }
+
+            function runTestsWithVideo()
+            {
+                const setupNextTest = () => {
+                    tester.startNewSection("*** Test the controls layout with video and a caption track ***")
+                    const track = document.createElement("track");
+                    track.kind = "captions";
+                    track.src = `data:text/vtt,${encodeURIComponent("WEBVTT\n\n00:00:00.000 --> 00:00:01.000\nCaption 1\n")}`;
+                    tester.media.appendChild(track);
+                    
+                    runTestsWithTextTrack();
+                };
+
+                const data = [
+                    { width: 60,  visible : ["Play Button"] },
+                    { width: 90,  visible : ["Play Button", "Fullscreen Button"] },
+                    { width: 120, visible : ["Play Button", "Rewind Button", "Fullscreen Button"] },
+                    { width: 150, visible : ["Play Button", "Rewind Button", "Mute Box", "Fullscreen Button"] },
+                    { width: 200, visible : ["Play Button", "Rewind Button", "Mute Box", "Picture-in-picture Button", "Fullscreen Button"] },
+                    { width: 400, visible : ["Play Button", "Rewind Button", "Timeline", "Current Time", "Thumbnail Track", "Time Remaining", "Mute Box", "Picture-in-picture Button", "Fullscreen Button"] },
+                ];
+
+                testControls(data, setupNextTest);
+            }
+
+            function runTestsWithTextTrack()
+            {
+                const setupNextTest = () => {
+                    tester.startNewSection("*** Test the controls layout with video, a caption track, and AppleTV ***");
+                    internals.settings.setAllowsAirPlayForMediaPlayback(true);
+                    internals.setMockMediaPlaybackTargetPickerState("Sleepy TV", "DeviceAvailable");
+                    runTestsWithVideoAndAppleTV();
+                };
+
+                const data = [
+                    { width: 60,  visible : ["Play Button"] },
+                    { width: 90,  visible : ["Play Button", "Fullscreen Button"] },
+                    { width: 120, visible : ["Play Button", "Rewind Button", "Fullscreen Button"] },
+                    { width: 150, visible : ["Play Button", "Rewind Button", "Mute Box", "Fullscreen Button"] },
+                    { width: 180, visible : ["Play Button", "Rewind Button", "Mute Box", "Caption Button", "Fullscreen Button"] },
+                    { width: 200, visible : ["Play Button", "Rewind Button", "Mute Box", "Caption Button", "Picture-in-picture Button", "Fullscreen Button"] },
+                    { width: 400, visible : ["Play Button", "Rewind Button", "Current Time", "Timeline", "Thumbnail Track", "Time Remaining", "Mute Box", "Caption Button", "Picture-in-picture Button", "Fullscreen Button"] },
+                ];
+                
+                testControls(data, internals.setMockMediaPlaybackTargetPickerState ? setupNextTest : null);
+            }
+
+            function runTestsWithVideoAndAppleTV()
+            {
+                const data = [
+                    { width: 60,  visible : ["Play Button"] },
+                    { width: 90,  visible : ["Play Button", "Fullscreen Button"] },
+                    { width: 120, visible : ["Play Button", "Rewind Button", "Fullscreen Button"] },
+                    { width: 150, visible : ["Play Button", "Rewind Button", "Mute Box", "Fullscreen Button"] },
+                    { width: 180, visible : ["Play Button", "Rewind Button", "Mute Box", "Caption Button", "Fullscreen Button"] },
+                    { width: 200, visible : ["Play Button", "Rewind Button", "Mute Box", "Caption Button", "Picture-in-picture Button", "Fullscreen Button"] },
+                    { width: 350, visible : ["Play Button", "Rewind Button", "Mute Box", "AppleTV Device Picker", "Caption Button", "Picture-in-picture Button", "Fullscreen Button"] },
+                    { width: 400, visible : ["Play Button", "Rewind Button", "Current Time", "Timeline", "Thumbnail Track", "Time Remaining", "Mute Box", "AppleTV Device Picker", "Caption Button", "Picture-in-picture Button", "Fullscreen Button"] },
+                ];
+
+                testControls(data);
+            }
+
+
+        </script>
+    </head>
+    <body>
+        <p>Test control element visibility at different element widths.</p>
+        <p>This test only runs in DRT!</p>
+        <video controls></video>
+    </body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SCSU character set blacklisted</title>
+    <script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    description("Test that character set SCSU is not supported and we default to ISO-8859-1. With support for SCSU the iframe renders a Cyrillic string. Without it renders garbage.");
+    window.jsTestIsAsync = true;
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+    }
+    function run() {
+        var scsuFrame = document.getElementById("scsuFrame");
+        if (scsuFrame.contentDocument.charset === "windows-1252") {
+            testPassed("charset is windows-1252");
+        } else {
+            testFailed("charset is " + scsuFrame.contentDocument.charset);
+        }
+        finishJSTest();
+    }
+</script>
+<iframe id="scsuFrame" src="resources/scsu-cyrillic.php" onload="run()"></iframe>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!--
+ Copyright (C) 2019 Apple Inc. All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions
+ are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+
+ THIS SOFTWARE IS PROVIDED BY APPLE INC. "AS IS" AND ANY
+ EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+-->
+
+{% extends "base.html" %}
+{% block head %}
+<link rel="stylesheet" type="text/css" href="assets/css/commit.css">
+
+<script type="module">
+import {REF, DOM} from '/library/js/Ref.js';
+import {ErrorDisplay} from '/assets/js/common.js';
+import {CommitTable} from '/assets/js/commit.js';
+import {Drawer, BranchSelector, LimitSlider} from '/assets/js/drawer.js';
+
+var oneLine = true;
+
+class Table {
+    constructor() {
+        this.ref = REF.createRef({
+            state: null,
+            onStateUpdate: (element, state) => {
+                if (!state)
+                    element.innerHTML = this.placeholder();
+                else if (state.error)
+                    element.innerHTML = ErrorDisplay(state);
+                else
+                    element.innerHTML = CommitTable(state, [], oneLine);
+            }
+        });
+        this.latestDispatch = 0;
+
+        this.reload();
+    }
+    placeholder() {
+        return `<div class="placeholder dimmer">
+                <div class="loader">
+                    <div class="spinner"></div>
+                </div>
+            </div>`;
+    }
+    toString() {
+        return `<div ref="${this.ref}"></div>`;
+    }
+    reload() {
+        var query = document.URL.split('?')[1]
+        var myDispatch = Date.now();
+        this.latestDispatch = Math.max(this.latestDispatch, myDispatch);
+        this.ref.setState(null);
+
+        fetch(query ? 'api/commits?' + query : 'api/commits').then(response => {
+            response.json().then(json => {
+                if (myDispatch == this.latestDispatch)
+                    this.ref.setState(json);
+            });
+        }).catch(error => {
+            if (myDispatch == this.latestDispatch)
+                this.ref.setState({error: "Connection Error", description: error});
+        });
+    }
+}
+
+function OneLineSwitch() {
+    const switchRef = REF.createRef({
+        onElementMount: (element) => {
+            element.onchange = () => {
+                oneLine = element.checked;
+                table.reload();
+            }
+        },
+    });
+    return `<div class="input">
+            <label style="color:var(--inverseColor)">One-line:</label>
+            <label class="switch">
+                <input type="checkbox" ref="${switchRef}" checked=${oneLine}>
+                <span class="slider"></span>
+            </label>
+        </div>`;
+}
+
+var table = new Table();
+DOM.inject(document.getElementById('app'), `${Drawer([
+    LimitSlider(() => {table.reload()}, 10000, 1000),
+    OneLineSwitch(),
+    BranchSelector(() => {table.reload()}),
+])}
+<div class="main right-sidebar under-topbar-with-actions">
+    <div class="content">${table}</div>
+</div>`);
+
+</script>
+
+{% endblock %}
+{% block content %}
+
+<div id="app">
+</div>
+
+
+{% endblock %}

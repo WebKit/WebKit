@@ -1,0 +1,3 @@
+
+PASS Test that failure to fetch dependency leads to error event on script. 
+

@@ -1,0 +1,4 @@
+
+FAIL A constructed EventTarget can be used as expected function is not a constructor (evaluating 'new EventTarget()')
+FAIL EventTarget can be subclassed function is not a constructor (evaluating 'super(...args)')
+

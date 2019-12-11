@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that applying rotation on a subpixel (absolute)positioned box does not change its position/size.</title>
+<head>
+<style>
+  div {
+    background: green;
+    width: 9px;
+    height: 9px;
+    position: absolute;
+  }
+</style>
+</head>
+<body>
+<p id="container"></p>
+<script>
+  var container = document.getElementById("container");
+  adjustment = 0.1;
+  for (i = 0; i < 10; ++i) {
+    adjustment+=0.1;
+    for (j = 0; j < 10; ++j) {
+      var e = document.createElement("div");
+      e.style.top = (11 * i + j * adjustment) + "px";
+      e.style.left = (11 * j + i * adjustment) + "px";
+      container.appendChild(e);
+    }
+  }
+</script>
+</body>
+</html>

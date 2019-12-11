@@ -1,0 +1,56 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+<head>
+    <title>media-fullscreen-return-to-inline</title>
+
+    <script src="video-test.js"></script>
+    <script src="media-file.js"></script>
+
+    <script>
+    function go()
+    {
+        findMediaElement();
+        run('internals.settings.setAllowsInlineMediaPlayback(false)');
+        run('internals.settings.setAllowsInlineMediaPlaybackAfterFullscreen(false)');
+        run('video.src = findMediaFile("video", "content/test")');
+        waitForEventOnce('canplaythrough', canplaythrough);
+    }
+
+    function canplaythrough()
+    {
+        runWithKeyDown('video.play()');
+        waitForEventOnce('webkitfullscreenchange', beginfullscreen1);
+    }
+
+    function beginfullscreen1()
+    {
+        run('video.webkitExitFullscreen()');
+        waitForEventOnce('pause', pause);
+    }
+
+    function pause()
+    {
+        run('internals.settings.setAllowsInlineMediaPlaybackAfterFullscreen(true)');
+        runWithKeyDown('video.play()');
+        waitForEventOnce('webkitfullscreenchange', beginfullscreen2);
+    }
+
+    function beginfullscreen2()
+    {
+        run('video.webkitExitFullscreen()');
+        waitForEventOnce('webkitfullscreenchange', endfullscreen);
+    }
+
+    function endfullscreen()
+    {
+        testExpected('video.paused', false);
+        endTest();
+    }
+    </script>
+
+</head>
+
+<body onload="go()">
+    <video controls></video>
+</body>
+</html>

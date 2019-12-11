@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+
+<title>Historical DOM features must be removed</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<div id=log></div>
+<script>
+function isInterfaceNuked(name) {
+  test(function() {
+    assert_equals(window[name], undefined)
+  }, "Historical DOM features must be removed: " + name)
+}
+var nukedInterfaces = [
+  "DOMConfiguration",
+  "DOMCursor",
+  "DOMError",
+  "DOMErrorHandler",
+  "DOMImplementationList",
+  "DOMImplementationSource",
+  "DOMLocator",
+  "DOMObject",
+  "DOMRequest",
+  "DOMSettableTokenList",
+  "DOMUserData",
+  "Entity",
+  "EntityReference",
+  "EventException", // DOM Events
+  "NameList",
+  "Notation",
+  "TypeInfo",
+  "UserDataHandler",
+  "RangeException" // DOM Range
+]
+nukedInterfaces.forEach(isInterfaceNuked)
+
+function isNukedFromDocument(name) {
+  test(function() {
+    var doc = document.implementation.createDocument(null,null,null)
+    assert_equals(document[name], undefined)
+    assert_equals(doc[name], undefined)
+  }, "Historical DOM features must be removed: " + name)
+}
+var documentNuked = [
+  "createEntityReference",
+  "xmlEncoding",
+  "xmlStandalone",
+  "xmlVersion",
+  "strictErrorChecking",
+  "domConfig",
+  "normalizeDocument",
+  "renameNode",
+  "defaultCharset",
+  "height",
+  "width",
+  // https://github.com/whatwg/html/commit/a64aea7fdb221bba027d95dc3cabda09e0b3e5dc
+  "commands",
+  // https://github.com/whatwg/html/commit/797b4d273955a0fe3cc2e2d0ca5d578f37c0f126
+  "cssElementMap",
+  // https://github.com/whatwg/html/commit/e236f46820b93d6fe2e2caae0363331075c6c4fb
+  "async",
+]
+documentNuked.forEach(isNukedFromDocument)
+
+test(function() {
+  // https://github.com/whatwg/html/commit/e236f46820b93d6fe2e2caae0363331075c6c4fb
+  assert_false("load" in document);
+}, "document.load");
+
+test(function() {
+  // https://github.com/whatwg/html/commit/523f7a8773d2ab8a1eb0da6510651e8c5d2a7531
+  var doc = document.implementation.createDocument(null, null, null);
+  assert_false("load" in doc);
+}, "XMLDocument.load");
+
+test(function() {
+  assert_equals(document.implementation["getFeature"], undefined)
+}, "DOMImplementation.getFeature() must be nuked.")
+
+function isNukedFromElement(name) {
+  test(function() {
+    var ele = document.createElementNS("test", "test")
+    assert_equals(document.body[name], undefined)
+    assert_equals(ele[name], undefined)
+  }, "Historical DOM features must be removed: " + name)
+}
+var elementNuked = [
+  "schemaTypeInfo",
+  "setIdAttribute",
+  "setIdAttributeNS",
+  "setIdAttributeNode"
+]
+elementNuked.forEach(isNukedFromElement)
+
+function isNukedFromAttr(name) {
+  test(function() {
+    var attr = document.createAttribute("test")
+    assert_equals(attr[name], undefined)
+  }, "Attr member must be nuked: " + name)
+}
+var attrNuked = [
+  "schemaTypeInfo",
+  "isId"
+]
+attrNuked.forEach(isNukedFromAttr)
+
+function isNukedFromDoctype(name) {
+  test(function() {
+    var doctype = document.implementation.createDocumentType("test", "", "")
+    assert_equals(doctype[name], undefined)
+  }, "DocumentType member must be nuked: " + name)
+}
+var doctypeNuked = [
+  "entities",
+  "notations",
+  "internalSubset"
+]
+doctypeNuked.forEach(isNukedFromDoctype)
+
+function isNukedFromText(name) {
+  test(function() {
+    var text = document.createTextNode("test")
+    assert_equals(text[name], undefined)
+  }, "Text member must be nuked: " + name)
+}
+var textNuked = [
+  "isElementContentWhitespace",
+  "replaceWholeText"
+]
+textNuked.forEach(isNukedFromText)
+
+function isNukedFromNode(name) {
+  test(function() {
+    var doc = document.implementation.createDocument(null,null,null)
+    var doctype = document.implementation.createDocumentType("test", "", "")
+    var text = document.createTextNode("test")
+    assert_equals(doc[name], undefined)
+    assert_equals(doctype[name], undefined)
+    assert_equals(text[name], undefined)
+  }, "Node member must be nuked: " + name)
+}
+var nodeNuked = [
+  "hasAttributes",
+  "attributes",
+  "namespaceURI",
+  "prefix",
+  "localName",
+  "isSupported",
+  "getFeature",
+  "getUserData",
+  "setUserData",
+  "rootNode",
+]
+nodeNuked.forEach(isNukedFromNode)
+
+function isNukedFromWindow(name) {
+  test(function() {
+    assert_equals(window[name], undefined)
+  }, "Window member must be nuked: " + name)
+}
+var windowNuked = [
+  "attachEvent"
+]
+windowNuked.forEach(isNukedFromWindow)
+
+function isRemovedFromEvent(name) {
+  test(() => {
+    assert_equals(Event[name], undefined)
+  }, "Event should not have this constant: " + name)
+}
+var EventRemoved = [
+  "MOUSEDOWN",
+  "MOUSEUP",
+  "MOUSEOVER",
+  "MOUSEOUT",
+  "MOUSEMOVE",
+  "MOUSEDRAG",
+  "CLICK",
+  "DBLCLICK",
+  "KEYDOWN",
+  "KEYUP",
+  "KEYPRESS",
+  "DRAGDROP",
+  "FOCUS",
+  "BLUR",
+  "SELECT",
+  "CHANGE"
+]
+EventRemoved.forEach(isRemovedFromEvent)
+
+var EventPrototypeRemoved = [
+  "getPreventDefault",
+]
+EventPrototypeRemoved.forEach(name => {
+  test(() => {
+    assert_equals(Event.prototype[name], undefined)
+    assert_equals((new Event("test"))[name], undefined)
+  }, "Event.prototype should not have this property: " + name)
+})
+</script>

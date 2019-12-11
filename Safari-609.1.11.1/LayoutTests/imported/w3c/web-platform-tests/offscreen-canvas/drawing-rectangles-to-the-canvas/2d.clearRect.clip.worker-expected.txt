@@ -1,0 +1,3 @@
+
+FAIL clearRect is affected by clipping regions Can't find variable: OffscreenCanvas
+

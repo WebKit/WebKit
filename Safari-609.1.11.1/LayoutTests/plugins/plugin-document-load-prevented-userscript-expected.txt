@@ -1,0 +1,1 @@
+This tests https://bugs.webkit.org/show_bug.cgi?id=46773 by having the load of the plugin inside the plugin document be cancelled. If there is no crash, the test passed.  

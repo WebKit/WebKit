@@ -1,0 +1,60 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <style>
+        .scroller {
+            margin: 10px;
+            height: 300px;
+            width: 300px;
+            border: 1px solid black;
+            overflow: scroll;
+        }
+        
+        .box {
+            position: fixed;
+            margin-top: 200px;
+            width: 200px;
+            height: 200px;
+            background-color: green;
+        }
+        
+        .spacer {
+            height: 800px;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+
+        function getScrollingTreeUIScript()
+        {
+            return `(function() {
+                return uiController.scrollingTreeAsText;
+            })();`;
+        }
+
+        function doTest()
+        {
+            if (!testRunner.runUIScript)
+                return
+
+            testRunner.runUIScript(getScrollingTreeUIScript(), function(scrollingTree) {
+                document.getElementById('layers').textContent = scrollingTree;
+                testRunner.notifyDone();
+            });
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="box"></div>
+        <div class="spacer"></div>
+    </div>
+<pre id="layers"></pre>
+</body>
+</html>

@@ -1,0 +1,4 @@
+This test triggers an ASSERT that occurs when we are ignoring spaces (to collapse them into a single whitespace mark) but then encounter a line break. Because we don't ignore the first space (but do ignore subsequent spaces), when we hit a newline in an RTL context we want to ignore that first space as well (so as not to push the text away from the right edge). We do this by decrementing the InlineIterator pointing to this first space, so all the spaces get ignored. However, if that space is the first character in a Text node, the decrement will try to go past the beginning of the node, and trigger an ASSERT.
+a 
+
+

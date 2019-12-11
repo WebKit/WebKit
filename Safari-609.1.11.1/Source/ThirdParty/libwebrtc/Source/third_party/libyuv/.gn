@@ -1,0 +1,42 @@
+# Copyright 2015 The LibYuv Project Authors. All rights reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS. All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("//build/dotfile_settings.gni")
+
+# The location of the build configuration file.
+buildconfig = "//build/config/BUILDCONFIG.gn"
+
+# The secondary source root is a parallel directory tree where
+# GN build files are placed when they can not be placed directly
+# in the source tree, e.g. for third party source trees.
+secondary_source = "//build/secondary/"
+
+# These are the targets to check headers for by default. The files in targets
+# matching these patterns (see "gn help label_pattern" for format) will have
+# their includes checked for proper dependencies when you run either
+# "gn check" or "gn gen --check".
+check_targets = [ "//libyuv/*" ]
+
+# These are the list of GN files that run exec_script. This whitelist exists
+# to force additional review for new uses of exec_script, which is strongly
+# discouraged except for gypi_to_gn calls.
+exec_script_whitelist = build_dotfile_settings.exec_script_whitelist +
+                        [ "//build_overrides/build.gni" ]
+
+default_args = {
+  mac_sdk_min = "10.12"
+
+  # LibYUV does not want to switch to C++14 yet.
+  use_cxx11 = true
+
+  # LibYUV relies on Chromium's Android test infrastructure.
+  use_cxx11_on_android = false
+
+  # https://bugs.chromium.org/p/libyuv/issues/detail?id=826
+  ios_deployment_target = "10.0"
+}

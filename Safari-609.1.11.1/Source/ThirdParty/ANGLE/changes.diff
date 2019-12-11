@@ -1,0 +1,92 @@
+From e29224ba15b723527c541859d0767393b1f2e905 Mon Sep 17 00:00:00 2001
+From: Don <don.j.olmstead@gmail.com>
+Date: Thu, 9 May 2019 12:12:42 -0700
+Subject: [PATCH 1/2] Add licensing clarification
+
+---
+ src/compiler/preprocessor/ExpressionParser.cpp | 2 ++
+ src/compiler/translator/glslang_tab.cpp        | 2 ++
+ src/compiler/translator/glslang_tab.h          | 2 ++
+ 3 files changed, 6 insertions(+)
+
+diff --git a/src/compiler/preprocessor/ExpressionParser.cpp b/src/compiler/preprocessor/ExpressionParser.cpp
+index 1b71ef75a..5c2b9e7a0 100644
+--- a/src/compiler/preprocessor/ExpressionParser.cpp
++++ b/src/compiler/preprocessor/ExpressionParser.cpp
+@@ -1,5 +1,7 @@
+ /* A Bison parser, made by GNU Bison 3.0.4.  */
+ 
++/* Apple Note: For the avoidance of doubt, Apple elects to distribute this file under the terms of the BSD license. */
++
+ /* Bison implementation for Yacc-like parsers in C
+ 
+    Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+diff --git a/src/compiler/translator/glslang_tab.cpp b/src/compiler/translator/glslang_tab.cpp
+index e49325c03..5fe7c4943 100644
+--- a/src/compiler/translator/glslang_tab.cpp
++++ b/src/compiler/translator/glslang_tab.cpp
+@@ -1,5 +1,7 @@
+ /* A Bison parser, made by GNU Bison 3.0.4.  */
+ 
++/* Apple Note: For the avoidance of doubt, Apple elects to distribute this file under the terms of the BSD license. */
++
+ /* Bison implementation for Yacc-like parsers in C
+ 
+    Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+diff --git a/src/compiler/translator/glslang_tab.h b/src/compiler/translator/glslang_tab.h
+index 5ffee8a4c..3774e91d1 100644
+--- a/src/compiler/translator/glslang_tab.h
++++ b/src/compiler/translator/glslang_tab.h
+@@ -1,5 +1,7 @@
+ /* A Bison parser, made by GNU Bison 3.0.4.  */
+ 
++/* Apple Note: For the avoidance of doubt, Apple elects to distribute this file under the terms of the BSD license. */
++
+ /* Bison interface for Yacc-like parsers in C
+ 
+    Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+-- 
+2.19.0.605.g01d371f741-goog
+
+
+From c17fff937db47af831017b044acf11d20286620f Mon Sep 17 00:00:00 2001
+From: James Darpinian <jdarpinian@chromium.org>
+Date: Wed, 11 Sep 2019 18:12:01 -0700
+Subject: [PATCH 2/2] Disable -Wglobal-constructors false positives
+
+---
+ src/common/utilities.cpp | 3 +++
+ src/libANGLE/State.cpp   | 3 +++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/src/common/utilities.cpp b/src/common/utilities.cpp
+index 44f925dad..38ddd43d7 100644
+--- a/src/common/utilities.cpp
++++ b/src/common/utilities.cpp
+@@ -6,6 +6,9 @@
+ 
+ // utilities.cpp: Conversion functions and other utility routines.
+ 
++// Older clang versions have a false positive on this warning here.
++#pragma clang diagnostic ignored "-Wglobal-constructors"
++
+ #include "common/utilities.h"
+ #include <GLSLANG/ShaderVars.h>
+ #include "common/mathutil.h"
+diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
+index cbd3f6632..1421b8636 100644
+--- a/src/libANGLE/State.cpp
++++ b/src/libANGLE/State.cpp
+@@ -6,6 +6,9 @@
+ 
+ // State.cpp: Implements the State class, encapsulating raw GL state.
+ 
++// Older clang versions have a false positive on this warning here.
++#pragma clang diagnostic ignored "-Wglobal-constructors"
++
+ #include "libANGLE/State.h"
+ 
+ #include <string.h>
+-- 
+2.19.0.605.g01d371f741-goog
+

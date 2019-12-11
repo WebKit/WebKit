@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+li+li+:nth-last-child(-5n+14)+li+li+li~li+li+li~li {
+    color:rgb(4, 5, 6);
+}
+ul>[foo=bar]:nth-last-child(-3n+18)+li+li+li~li+li+li~li>span.first>span.second a {
+    background-color:rgb(1,2,3);
+}
+ul>:nth-last-child(-3n+3)>*>* a {
+    opacity: 0.5;
+}
+</style>
+</head>
+<body>
+<div>
+    <ul style="display:none">
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+        <li foo=bar><span class="first"><span class="second"><span><a href="http://www.webkit.org">WebKit!</a></span></span></span></li>
+    </ul>
+</div>
+</body>
+<script>
+
+description('Test nth-last-child inside deep backtracking.');
+
+// nth-last-child inside two adjacent backtracking chains.
+shouldBe('document.querySelectorAll("li+li+:nth-last-child(-5n+14)+li+li+li~li+li+li~li").length', '7');
+var allItems = document.querySelectorAll('li');
+shouldBe('allItems.length', '20');
+var coloredItems = 0;
+for (var i = 0; i < allItems.length; ++i) {
+    if (getComputedStyle(allItems[i]).color === 'rgb(4, 5, 6)')
+        coloredItems++;
+}
+shouldBe('coloredItems', '7');
+
+// nth-last-child inside two adjacent backtracking chains, inside one descendant backtracking chain.
+shouldBe('document.querySelectorAll("ul>[foo=bar]:nth-last-child(-3n+18)+li+li+li~li+li+li~li>span.first>span.second a").length', '11');
+var allLinks = document.querySelectorAll('a');
+shouldBe('allLinks.length', '20');
+var backgroundColoredCount = 0;
+var nonOpaqueCount = 0;
+for (var i = 0; i < allLinks.length; ++i) {
+    var computedStyle = getComputedStyle(allLinks[i]);
+    if (computedStyle.backgroundColor === 'rgb(1, 2, 3)')
+        backgroundColoredCount++;
+    if (computedStyle.opacity === '0.5')
+        ++nonOpaqueCount;
+}
+shouldBe('backgroundColoredCount', '11');
+
+shouldBe('document.querySelectorAll("ul>:nth-last-child(-3n+3)>*>* a").length', '1');
+shouldBe('nonOpaqueCount', '1');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

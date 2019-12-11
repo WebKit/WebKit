@@ -1,0 +1,32 @@
+<div>
+Range::nodeWillBeRemoved() might be called with removed node, when DOMNodeRemovedFromDocument event handler calls removeChild(), for node being removed.
+</div>
+<div id="mainDiv">
+    <div id="childDiv">foo</div>
+</div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var done = false;
+document.addEventListener("DOMNodeRemovedFromDocument", function () {
+    if (done)
+        return;
+    done = true;
+    var beingRemoved = event.srcElement;
+    beingRemoved.parentNode.removeChild(beingRemoved);
+}, true);
+
+var childDiv = document.getElementById('childDiv')
+
+var range = document.createRange();
+range.selectNode(childDiv);
+
+try {
+    childDiv.parentNode.removeChild(childDiv);
+} catch (e) {
+    // We get 'NotFoundError'.
+}
+
+document.getElementById('mainDiv').outerHTML = 'PASS; NOT CRASHED';
+</script>

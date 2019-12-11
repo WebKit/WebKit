@@ -1,0 +1,55 @@
+<!DOCTYPE html><!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true internal:AsyncFrameScrollingEnabled=true ] -->
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description('This tests that scroll event is dispatched in the update-the-rendering step in the event loop across all relevant frames');
+jsTestIsAsync = true;
+
+function createIframe(parentDocument)
+{
+    const iframe = document.createElement('iframe');
+    iframe.style.width = '100px';
+    iframe.style.height = '100px';
+    parentDocument.body.appendChild(iframe);
+    iframe.contentDocument.body.innerHTML = '<style> body { height: 2000px; } </style><span>hello, world</span>';
+    return iframe;
+}
+
+function updateLayout(iframe)
+{
+    iframe.contentDocument.querySelector("span").getBoundingClientRect();
+}
+
+const iframeA = createIframe(document);
+const iframeAA = createIframe(iframeA.contentDocument);
+const iframeB = createIframe(document);
+
+const logs = [];
+requestAnimationFrame(() => {
+    setTimeout(() => {
+        iframeAA.contentDocument.addEventListener('scroll', () => logs.push('AA'));
+        iframeA.contentDocument.addEventListener('scroll', () => logs.push('A'));
+        iframeB.contentDocument.addEventListener('scroll', () => logs.push('B'));
+
+        evalAndLog('iframeB.contentWindow.scrollTo(0, 1000); updateLayout(iframeB)');
+        evalAndLog('iframeA.contentWindow.scrollTo(0, 1000); updateLayout(iframeA)');
+        evalAndLog('iframeAA.contentWindow.scrollTo(0, 1000); updateLayout(iframeAA)');
+        shouldBe('logs.length', '0');
+        setTimeout(() => {
+            requestAnimationFrame(() => {
+                debug('After requestAnimationFrame');
+                shouldBe('logs.length', '3');
+                shouldBeEqualToString('logs.join(", ")', 'A, AA, B');
+                iframeA.remove();
+                iframeB.remove();
+                finishJSTest();
+            });
+        }, 0);
+    }, 0);
+});
+
+</script>
+</body>
+</html>

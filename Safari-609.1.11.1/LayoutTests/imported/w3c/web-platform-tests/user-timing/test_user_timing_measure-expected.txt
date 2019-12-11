@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 58: ReferenceError: Can't find variable: wp_test
+Description
+
+This test validates that the performance.measure() method is working properly. This test creates the following measures to test this method:
+
+"measure_no_start_no_end": created using a measure() call without a startMark or endMark provided
+"measure_start_no_end": created using a measure() call with only the startMark provided
+"measure_start_end": created using a measure() call with both a startMark or endMark provided
+"measure_no_start_no_end": duplicate of the first measure, used to confirm names can be re-used
+After creating each measure, the existence of these measures is validated by calling performance.getEntriesByName() (both with and without the entryType parameter provided), performance.getEntriesByType(), and performance.getEntries()
+
+FAIL window.performance User Timing measure() method is working properly ReferenceError: Can't find variable: wp_test
+

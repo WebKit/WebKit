@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+        count = 0;
+        function finish()
+        {
+            count = count + 1;
+            if (count == 2 && window.testRunner) {
+                console.log("Test Passed! WebKit didn't crash.")
+                testRunner.notifyDone();
+            }
+        }
+        function remove(event)
+        {
+            event.target.remove();
+            finish();
+        }
+        </script>
+    </head>
+    <body>
+        <input id="input" type="range" style="width: 500px;" oninput="remove(event)">
+        <script>
+        function getDragUIScript(startX, startY, endX, endY)
+        {
+            return `
+            (function() {
+                uiController.dragFromPointToPoint(${startX}, ${startY}, ${endX}, ${endY}, 0.15, function() {
+                    uiController.uiScriptComplete("Dispatched Drag");
+                });
+            })();`
+        }
+
+        onload = function() {
+            var input = document.getElementById("input");
+            var centerX = input.offsetLeft + input.offsetWidth / 2;
+            var centerY = input.offsetTop + input.offsetHeight / 2;
+            if (window.testRunner) {
+                testRunner.waitUntilDone();
+                testRunner.dumpAsText();
+                testRunner.runUIScript(getDragUIScript(centerX, centerY, input.offsetLeft + input.offsetWidth, centerY), function(result) { finish(); });
+            }
+        };
+        </script>
+    </body>
+</html>

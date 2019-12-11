@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+
+description('This tests disconnecting a MutationObserver while a mutation record is enqueued. WebKit should not crash.');
+
+if (!window.GCController)
+    testFailed('This test requires GCController');
+else {
+    jsTestIsAsync = true;
+
+    var observer = new MutationObserver(function() {});
+
+    var div = document.createElement('div');
+    document.body.appendChild(div);
+
+    observer.observe(div, {childList: true});
+
+    var script = document.createElement('script');
+    script.textContent = 'disconnectObserver()';
+
+    var child = document.createElement('div');
+    child.appendChild(script);
+    div.appendChild(child);
+
+    function disconnectObserver() {
+        observer.disconnect();
+        observer = null;
+        GCController.collect();
+        observer = new MutationObserver(function() {});
+    }
+
+    window.onload = () => {
+        testPassed('WebKit did not crash');
+        finishJSTest();
+    }
+}
+
+var successfullyParsed = true;
+
+</script>
+</body>
+</html>

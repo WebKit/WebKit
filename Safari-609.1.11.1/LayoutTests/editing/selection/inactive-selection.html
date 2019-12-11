@@ -1,0 +1,28 @@
+<p>This test verifies that an editable element in one frame retains an inactive selection
+after you've made a selection in another frame.</p>
+<hr>
+<pre id="console"></pre>
+
+<iframe src="data:text/html, <div id='input' contenteditable='true'>should be an inactive selection</div>"></iframe>
+<br>
+<input id='input' type="text" value="random text">
+<div>
+<script>
+window.onload = function() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+        
+    var div = frames[0].document.getElementById('input');
+    frames[0].getSelection().setBaseAndExtent(div, 0, div, 1);
+    frames[0].focus();
+
+    window.focus();
+    document.getElementById('input').focus();
+
+    var selectionString = frames[0].getSelection().toString();
+    if (div.innerText == selectionString)
+        document.getElementById('console').innerHTML = 'PASS: inactive selection retained.';
+    else
+        document.getElementById('console').innerHTML = 'FAIL: inactive selection should be "' + div.innerText + '" but instead is ' + selectionString  + '.';
+}
+</script>

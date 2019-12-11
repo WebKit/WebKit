@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that parent clipping is applied properly when ancestor border-radius is present.</title>
+<style>
+  .outer {
+    overflow: hidden;
+    border-radius: 20px 0px 0px 0px;
+  }
+
+  .inner {
+    overflow: hidden;
+    position: relative;
+    height: 10px;
+    width: 10px;
+  }
+
+  .content {
+	width: 100px;
+	height: 100px;
+	background-color: red;
+  }
+</style>
+</head>
+<body>
+<div class=outer>
+  <div class=inner>
+    <div class=content></div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<html> 
+<head>
+
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+</style>
+
+<script>
+
+function editingTest() {
+    for (i = 0; i < 4; i++)
+    	moveSelectionForwardByCharacterCommand(); 
+    for (i = 0; i < 3; i++)
+    	extendSelectionForwardByCharacterCommand(); 
+    deleteCommand(); 
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body contenteditable="true">
+
+Should see a blank line between "foo" and "baz"
+<div style="height: 24px"></div>
+
+<div id="root" class="editing">
+<div id="test">foo</div>bar<div>baz</div>
+
+<!-- 
+
+Fix for this bug:
+
+<rdar://problem/3928305> selecting an entire line and typing over causes new inserted text at top of document
+
+-->
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

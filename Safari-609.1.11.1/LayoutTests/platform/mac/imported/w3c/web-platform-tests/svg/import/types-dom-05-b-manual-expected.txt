@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (16,21) size 615x296
+      RenderSVGText {text} at (10,13) size 369x22 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 369x21
+          chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 47 width 368.19: "Test side effects of assigning to valueAsString"
+      RenderSVGRect {rect} at (16,66) size 51x51 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=40.00] [width=30.00] [height=30.00]
+      RenderSVGRect {rect} at (16,133) size 51x51 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=80.00] [width=30.00] [height=30.00]
+      RenderSVGRect {rect} at (16,200) size 51x50 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=120.00] [width=30.00] [height=30.00]
+      RenderSVGRect {rect} at (16,266) size 51x51 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=160.00] [width=30.00] [height=30.00]
+      RenderSVGContainer {g} at (83,76) size 312x230
+        RenderSVGText {text} at (50,46) size 177x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 177x18
+            chunk 1 text run 1 at (50.00,60.00) startOffset 0 endOffset 25 width 176.78: "Valid string on SVGLength"
+        RenderSVGText {text} at (50,86) size 187x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 187x18
+            chunk 1 text run 1 at (50.00,100.00) startOffset 0 endOffset 27 width 186.78: "Invalid string on SVGLength"
+        RenderSVGText {text} at (50,126) size 170x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 170x18
+            chunk 1 text run 1 at (50.00,140.00) startOffset 0 endOffset 24 width 169.26: "Valid string on SVGAngle"
+        RenderSVGText {text} at (50,166) size 180x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 180x18
+            chunk 1 text run 1 at (50.00,180.00) startOffset 0 endOffset 26 width 179.27: "Invalid string on SVGAngle"
+      RenderSVGResourceMarker {marker} [id="m"] [markerUnits=strokeWidth] [ref at (0,0)] [angle=1.80]
+    RenderSVGContainer {g} at (16,517) size 381x62
+      RenderSVGText {text} at (10,310) size 229x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 229x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.6 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

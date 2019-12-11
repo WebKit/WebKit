@@ -1,0 +1,34 @@
+This test makes sure that un-handled requests in a transaction receive onerror callbacks when the transaction is aborted.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+Initial upgrade needed: Old version - 0 New version - 1
+Error handling: "objectStore.put({ bar: 'A' }, 1);" (error)
+Error handling: "objectStore.put({ bar: 'B' }, 2);" (error)
+Error handling: "objectStore.put({ bar: 'C' }, 3);" (error)
+Initial upgrade versionchange transaction aborted
+Second upgrade needed: Old version - 0 New version - 1
+Success handling: "objectStore.put({ bar: 'A' }, 1);"
+Success handling: "objectStore.put({ bar: 'B' }, 2);"
+Success handling: "objectStore.put({ bar: 'C' }, 3);"
+Second upgrade versionchange transaction completed
+Error handling: "objectStore.get(1);" (error)
+Error handling: "objectStore.get(2);" (error)
+Error handling: "objectStore.get(3);" (error)
+Error handling: "objectStore.put({ bar: 'D' }, 4);" (error)
+Error handling: "objectStore.put({ bar: 'E' }, 5);" (error)
+Error handling: "objectStore.put({ bar: 'F' }, 6);" (error)
+readwrite transaction aborted
+Error handling: "objectStore.get(1);" (error)
+Error handling: "objectStore.get(2);" (error)
+Error handling: "objectStore.get(3);" (error)
+readonly transaction aborted
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

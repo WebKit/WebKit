@@ -1,0 +1,11 @@
+Tests for WI.Script.SourceType.
+
+
+== Running test suite: WI.Script.SourceType
+-- Running test case: WI.Script.SourceType.Program
+PASS: <script> should be SourceType.Program.
+
+-- Running test case: WI.Script.SourceType.Module
+PASS: imported module should be SourceType.Module.
+PASS: <script type="module"> should be SourceType.Module.
+

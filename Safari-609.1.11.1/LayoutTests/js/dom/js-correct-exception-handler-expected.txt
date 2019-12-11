@@ -1,0 +1,10 @@
+Verify that handle exceptions flowing throw inline callframes correctly
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS test() threw exception Error.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

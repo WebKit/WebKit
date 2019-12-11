@@ -1,0 +1,13 @@
+This tests that changing the aria-pressed value results in a state-changed notification.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Setting aria-pressed to true on button1.
+Setting aria-pressed to false on button2.
+AXPressedStateChanged true on button1
+AXPressedStateChanged false on button2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

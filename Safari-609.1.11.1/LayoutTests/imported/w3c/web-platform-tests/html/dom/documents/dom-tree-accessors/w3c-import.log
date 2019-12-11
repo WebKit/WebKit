@@ -1,0 +1,47 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/Document.body.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/Document.currentScript.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/Document.getElementsByClassName-null-undef.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/Element.getElementsByClassName-null-undef.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/cross-domain.js
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.embeds-document.plugins-01.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.forms.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByClassName-same.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.head-01.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.head-02.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.images.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.links.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.scripts.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.title-01.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.title-02.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.title-03.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.title-04.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.title-05.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.title-06.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.title-07.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.title-08.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.title-09.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.title-not-in-html-svg.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-01.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-02.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-03.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-04.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-05.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-06.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-07.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-08.html

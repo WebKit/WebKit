@@ -1,0 +1,22 @@
+Testing that entering fullscreen then going back into inline presents inline controls.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Media started playing, we pause it and enter fullscreen by clicking on the matching button.
+PASS shadowRoot.querySelector('.media-controls').classList.contains('inline') is true
+
+Media entered fullscreen.
+PASS shadowRoot.querySelector('.media-controls').classList.contains('fullscreen') is true
+
+We exit fullscreen by clicking on the matching button.
+
+Media exited fullscreen.
+PASS shadowRoot.querySelector('.media-controls').classList.contains('inline') is true
+PASS shadowRoot.querySelector('.start-button') is null
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,25 @@
+<body>
+<!-- http://bugs.webkit.org/show_bug.cgi?id=13605 - crash with an invalid range -->
+<div id=test contenteditable></div>
+<script type="text/javascript">
+
+    if (window.testRunner) {
+        
+        try {
+        
+            testRunner.dumpAsText();
+        
+            window.getSelection().setPosition(document.getElementById("test"), 0);
+            var replacementString = textInputController.makeAttributedString("SUCCESS");
+            replacementString.addAttribute("NSTextInputReplacementRangeAttributeName", "{0,1}");
+            textInputController.setMarkedText(replacementString, 1, 0);
+
+        } catch (ex) {
+            alert("Exception: " + ex.description);
+        }
+        
+    } else {
+        document.write("(cannot run interactively)");
+    }
+</script>
+</body>

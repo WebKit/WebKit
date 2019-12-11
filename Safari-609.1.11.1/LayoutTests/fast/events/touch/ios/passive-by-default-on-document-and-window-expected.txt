@@ -1,0 +1,9 @@
+touchstart on body - cancelable: false defaultPrevented: false 
+touchstart on documentElement - cancelable: false defaultPrevented: false 
+touchstart on document - cancelable: false defaultPrevented: false 
+touchstart on window - cancelable: false defaultPrevented: false 
+touchend on body - cancelable: false defaultPrevented: false 
+touchend on documentElement - cancelable: false defaultPrevented: false 
+touchend on document - cancelable: false defaultPrevented: false 
+touchend on window - cancelable: false defaultPrevented: false 
+Done

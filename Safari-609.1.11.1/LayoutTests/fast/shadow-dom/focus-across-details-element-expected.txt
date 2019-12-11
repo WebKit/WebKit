@@ -1,0 +1,15 @@
+Tests for moving focus across details element. The existence of shadow tree on details element should not affect the focus sequential navigation ordering.
+To manually test, press tab key five times and then shift+tab five times. It should traverse focusable elements in the increasing numerical order and then in the reverse order.
+
+1. Focusable element with tabindex=1
+2. Focusable element in details with tabindex=2
+3. Focusable element in details with tabindex=3
+4. Focusable element in summary with tabindex=4
+5. Focusable element in details with tabindex=5
+6. Focusable element in details with tabindex=6
+5. Focusable element in details with tabindex=5
+4. Focusable element in summary with tabindex=4
+3. Focusable element in details with tabindex=3
+2. Focusable element in details with tabindex=2
+1. Focusable element with tabindex=1
+

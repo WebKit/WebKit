@@ -1,0 +1,10 @@
+These next three lines should be the same width
+
+This is some text
+
+This is some text
+
+This is some text
+
+PASS: system-ui and -apple-system widths were the same
+PASS: system-ui and -apple-system-font widths were the same

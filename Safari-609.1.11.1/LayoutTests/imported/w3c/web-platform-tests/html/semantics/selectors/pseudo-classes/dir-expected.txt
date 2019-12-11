@@ -1,0 +1,5 @@
+
+FAIL ':dir(rtl)' matches all elements whose directionality is 'rtl'. assert_array_equals: lengths differ, expected 6 got 0
+FAIL ':dir(ltr)' matches all elements whose directionality is 'ltr'. assert_array_equals: lengths differ, expected 22 got 0
+FAIL ':dir(ltr)' doesn't match elements not in the document. assert_array_equals: lengths differ, expected 22 got 0
+WERBEH HEBREW HEBREW WERBEH HEBREW إيان WERBEH WERBEH HEBREW ‮WERBEH‬ HEBREW إيان עברית

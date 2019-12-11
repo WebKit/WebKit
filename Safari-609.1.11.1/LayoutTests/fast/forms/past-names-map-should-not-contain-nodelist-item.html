@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<form><input type="text" name="foo"><input type="text" name="foo"></form>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+description("This test ensures that none of elements in a node list returned by the named getter of a form element are added to the past names map of the element.");
+
+var form = document.querySelector('form');
+shouldBe("form['foo'].length", "2");
+shouldBe("form['foo'][0]", "form.firstChild");
+shouldBe("form['foo'][1]", "form.lastChild");
+shouldBe("form.lastChild.name = 'bar'; form['bar']", "form.lastChild");
+shouldBe("form.firstChild.name = 'bar'; form['bar'].length", "2");
+shouldBeUndefined("form['foo']", "form.firstChild");
+
+form.style.display = 'none';
+
+var successfullyParsed = true;
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

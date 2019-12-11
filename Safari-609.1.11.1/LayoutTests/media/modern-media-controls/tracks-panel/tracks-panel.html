@@ -1,0 +1,20 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing the <code>TracksPanel</code> class properties.");
+
+const tracksPanel = new TracksPanel;
+
+debug("Basic properties");
+shouldBeEqualToString("tracksPanel.element.localName", "div");
+shouldBeEqualToString("tracksPanel.element.className", "tracks-panel");
+shouldBeFalse("tracksPanel.presented");
+shouldBe("tracksPanel.rightX", "0");
+
+debug("");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

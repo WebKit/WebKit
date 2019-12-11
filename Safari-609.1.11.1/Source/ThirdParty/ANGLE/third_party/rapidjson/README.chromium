@@ -1,0 +1,7 @@
+Name: RapidJSON
+URL: https://github.com/TenCent/rapidjson
+License: MIT
+License File: src/license.txt
+
+Description:
+A fast JSON parser/generator for C++ with both SAX/DOM style API.

@@ -1,0 +1,30 @@
+CONSOLE MESSAGE: Cross-origin redirection to http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow.cgi denied by Cross-Origin Resource Sharing policy: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/resources/redirect.php?url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow.cgi due to access control checks.
+CONSOLE MESSAGE: line 25: Cross-origin redirection denied by Cross-Origin Resource Sharing policy.
+CONSOLE MESSAGE: line 25: XMLHttpRequest cannot load http://localhost:8000/resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi due to access control checks.
+CONSOLE MESSAGE: Cross-origin redirection to http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi denied by Cross-Origin Resource Sharing policy: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi due to access control checks.
+Tests that redirects between origins are never allowed, even when access control is involved.
+
+Per the spec, these test cases should be allowed, but cross-origin redirects are currently unsupported in WebCore.
+
+Testing /resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi (sync)
+Expecting success: true
+FAIL: NetworkError:  A network error occurred.
+Testing /resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi(async)
+Expecting success: true
+PASS: PASS: Cross-domain access allowed.
+
+Testing http://localhost:8000/resources/redirect.php?url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow.cgi (sync)
+Expecting success: false
+PASS: NetworkError:  A network error occurred.
+Testing http://localhost:8000/resources/redirect.php?url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow.cgi(async)
+Expecting success: false
+PASS: 0
+Testing http://localhost:8000/resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi (sync)
+Expecting success: false
+PASS: NetworkError:  A network error occurred.
+Testing http://localhost:8000/resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi(async)
+Expecting success: false
+PASS: 0
+

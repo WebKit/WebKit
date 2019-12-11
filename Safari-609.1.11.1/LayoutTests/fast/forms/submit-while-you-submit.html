@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<form action="javascript:testPassed('Form was submitted'); finishJSTest()" onsubmit="onSubmit()">
+<input type="submit" id="submitButton">
+</form>
+<script>
+
+description("Test that calling submit() during submit event handling works.");
+jsTestIsAsync = true;
+
+function onSubmit()
+{
+    document.forms[0].submit();
+    event.preventDefault();
+}
+
+function simulateClick(id)
+{
+    var rect = document.getElementById(id).getBoundingClientRect();
+    eventSender.mouseMoveTo(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+if (window.eventSender)
+    simulateClick("submitButton");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

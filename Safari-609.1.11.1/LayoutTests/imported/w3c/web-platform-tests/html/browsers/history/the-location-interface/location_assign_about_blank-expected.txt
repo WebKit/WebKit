@@ -1,0 +1,3 @@
+
+PASS location.assign with initial about:blank browsing context 
+

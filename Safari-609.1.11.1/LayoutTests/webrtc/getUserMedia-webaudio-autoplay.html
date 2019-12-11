@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing webaudio autoplay in case of camera capture</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script>
+test(() => {
+    assert_true(!!window.internals, "Test requires internals API");
+
+    var context = new webkitAudioContext();
+    internals.setAudioContextRestrictions(context, 'RequireUserGestureForAudioStart');
+
+    var node = context.createBufferSource();
+    node.connect(context.destination);
+    node.start();
+}, "Ensuring autoplay does not work when starting an audio node and getUserMedia is off");
+
+promise_test((test) => {
+    if (!window.internals)
+        return Promise.reject("Test requires internals API");
+
+    var context = new webkitAudioContext();
+    internals.setAudioContextRestrictions(context, 'RequireUserGestureForAudioStart');
+
+    var node = context.createBufferSource();
+    node.connect(context.destination);
+
+    var resolve, reject;
+    var promise = new Promise((res, rej) => {
+        resolve = res;
+        reject = rej;
+    });
+    context.resume().then(() => {
+        reject("context should not have resumed");
+    });
+    setTimeout(() => {
+        resolve();
+    }, 50);
+    return promise;
+}, "Ensuring autoplay works when resuming audio context and getUserMedia is off");
+
+promise_test((test) => {
+    if (!window.internals)
+        return Promise.reject("Test requires internals API");
+    return navigator.mediaDevices.getUserMedia({audio: true}).then((stream) => {
+        var context = new webkitAudioContext();
+        internals.setAudioContextRestrictions(context, 'RequireUserGestureForAudioStart');
+
+        var node = context.createBufferSource();
+        node.connect(context.destination);
+        node.start();
+    });
+}, "Ensuring autoplay works when starting an audio node and getUserMedia is on");
+
+promise_test((test) => {
+    if (!window.internals)
+        return Promise.reject("Test requires internals API");
+    return navigator.mediaDevices.getUserMedia({audio: true}).then((stream) => {
+        var context = new webkitAudioContext();
+        internals.setAudioContextRestrictions(context, 'RequireUserGestureForAudioStart');
+
+        var node = context.createBufferSource();
+        node.connect(context.destination);
+        return context.resume();
+    });
+}, "Ensuring autoplay works when resuming audio context and getUserMedia is on");
+        </script>
+    </body>
+</html>

@@ -1,0 +1,124 @@
+/*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.quick-console {
+    position: relative;
+    min-height: var(--console-prompt-min-height);
+
+    display: flex;
+    align-items: flex-end;
+
+    color: var(--text-color);
+    background-color: var(--background-color-code);
+    border-top: 1px solid var(--border-color);
+    padding: 3px 0 4px;
+
+    outline: none;
+    overflow: hidden;
+
+    font-family: Menlo, monospace;
+}
+
+.quick-console.showing-log {
+    border-top-color: hsl(0, 0%, 94%) !important;
+}
+
+.quick-console > .console-prompt {
+    display: flex;
+    flex: 1;
+
+    align-items: flex-start;
+
+    max-height: 150px;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+    pointer-events: none;
+}
+
+.quick-console > .console-prompt > .glyph {
+    position: relative;
+    z-index: 1;
+
+    top: 4px;
+    left: 4px;
+
+    margin-right: 2px;
+
+    width: 12px;
+    height: 12px;
+
+    fill: var(--glyph-color-active);
+}
+
+.quick-console > .console-prompt > .CodeMirror {
+    pointer-events: all;
+    margin: 4px 0 2px;
+}
+
+.quick-console > .navigation-bar {
+    background: transparent;
+    border: none;
+
+    height: 21px;
+}
+
+.quick-console .execution-context {
+    margin-top: -1px;
+}
+
+.quick-console > .navigation-bar > .hierarchical-path .execution-context {
+    -webkit-margin-end: 7px;
+}
+
+.quick-console > .navigation-bar > .hierarchical-path .execution-context .separator {
+    display: none;
+}
+
+.quick-console > .navigation-bar > .hierarchical-path:not(.automatic-execution-context) {
+    -webkit-padding-start: 5px;
+}
+
+.quick-console > .navigation-bar > .hierarchical-path:not(.automatic-execution-context) .execution-context {
+    background: var(--selected-background-color);
+    border-radius: 3px;
+    color: var(--selected-foreground-color);
+}
+
+.quick-console > .navigation-bar > .hierarchical-path:not(.automatic-execution-context) .execution-context .selector-arrows {
+    color: var(--selected-foreground-color);
+    opacity: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+    .CodeMirror .jump-to-symbol-highlight,
+    .meta-key-pressed .spreadsheet-css-declaration:not(.locked) :matches(.name, .value):not(.editing):hover {
+        color: var(--syntax-highlight-link-color) !important;
+    }
+
+    .quick-console.showing-log {
+        border-top-color: var(--console-message-separator) !important;
+    }
+}

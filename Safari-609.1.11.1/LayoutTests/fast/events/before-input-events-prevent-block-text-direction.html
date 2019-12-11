@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        #editor {
+            direction: rtl;
+            border: 1px blue dashed;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="editor" contenteditable oninput=handleInputEvent(event) onbeforeinput=handleBeforeInputEvent(event)>
+        <div id="content">Hello world</div>
+    </div>
+    <input type="text" id="textfield" value="hi" dir="rtl" oninput=handleInputEvent(event) onbeforeinput=handleBeforeInputEvent(event)></input>
+    <div id="output"></div>
+    <script>
+        let write = s => output.innerHTML += `${s}<br>`;
+        (function()
+        {
+            window.shouldPreventDefault = true;
+            if (!window.eventSender || !window.internals || !window.testRunner) {
+                write("To test manually, try to change the text direction to ltr. This should be prevented.");
+                return;
+            }
+
+            internals.settings.setInputEventsEnabled(true);
+            testRunner.dumpAsText();
+            editor.focus();
+            write("*** TESTING RICH TEXT ***");
+            write(`Initial text direction: "${getComputedStyle(content).direction}"`);
+
+            internals.setBaseWritingDirection("Ltr");
+            write(`Text direction after setting to LTR while preventing default: "${getComputedStyle(content).direction}"`);
+
+            window.shouldPreventDefault = false;
+
+            internals.setBaseWritingDirection("Ltr");
+            write(`Text direction after setting to LTR without preventing default: "${getComputedStyle(content).direction}"`);
+
+            window.shouldPreventDefault = true;
+            textfield.focus();
+            write("*** TESTING PLAIN TEXT ***");
+            write(`Initial text direction: "${textfield.getAttribute("dir")}"`);
+
+            internals.setBaseWritingDirection("Ltr");
+            write(`Text direction after setting to LTR while preventing default: "${textfield.getAttribute("dir")}"`);
+
+            window.shouldPreventDefault = false;
+
+            internals.setBaseWritingDirection("Ltr");
+            write(`Text direction after setting to LTR without preventing default: "${textfield.getAttribute("dir")}"`);
+        })();
+
+        function handleInputEvent(event)
+        {
+            write(`Fired input event of inputType '${event.inputType}' with data: '${event.data}'`);
+        }
+
+        function handleBeforeInputEvent(event)
+        {
+            write(`Fired onbeforeinput event of inputType '${event.inputType}' with data: '${event.data}'`);
+            if (window.shouldPreventDefault)
+                event.preventDefault();
+        }
+    </script>
+</body>
+</html>

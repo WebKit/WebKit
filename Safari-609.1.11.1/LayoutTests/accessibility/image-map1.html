@@ -1,0 +1,42 @@
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+<body id="body">
+    
+    <!-- Test image map -->
+    <map id="apple" name="imagemap1">
+      <area shape="rect" coords="10,10,133,72" href="http://www.apple.com" title="Link1" />
+      <area shape="rect" coords="12,74,134,88" href="http://www.apple.com" title="Link2" />
+      <area shape="rect" coords="11,91,133,105" href="http://www.apple.com" title="Link3" />
+      <area shape="default" nohref="nohref" alt="" />
+    </map>
+
+    <img src="resources/cake.png"  border="0" align="left" usemap="#imagemap1" vspace="1">
+
+<p id="description"></p>
+<div id="console"></div>
+     
+<script>
+        description("This tests that you can reach the links within an image map.");
+
+        if (window.accessibilityController) {
+            document.getElementById("body").focus();
+
+            var body = accessibilityController.focusedElement;
+            for (var k = 0; k < 3; k++) {
+                var link = body.childAtIndex(k);
+                debug("Link" + (k + 1) + " role: " + link.role);
+                debug("Link" + (k + 1) + " title: " + link.title);
+                debug("Link" + (k + 1) + " description: " + link.description + "\n");
+            }
+         }
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

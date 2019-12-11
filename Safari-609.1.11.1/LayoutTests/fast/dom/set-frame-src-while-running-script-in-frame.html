@@ -1,0 +1,13 @@
+<html>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+</script>
+<iframe src="resources/set-frame-src-while-running-script-in-frame.html"></iframe>
+<body>
+<p>This tests that a frame can set its src to "about:blank" while running inside a &lt;script&gt; without an assertion failing.</p>
+<p>SUCCESS - Didn't crash!</p>
+</body>
+</html>

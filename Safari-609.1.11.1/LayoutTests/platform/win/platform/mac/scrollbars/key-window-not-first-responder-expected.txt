@@ -1,0 +1,77 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 53x18
+          text run at (0,0) width 53: "Test for "
+        RenderInline {I} at (0,0) size 742x36
+          RenderInline {A} at (0,0) size 154x18 [color=#0000EE]
+            RenderText {#text} at (53,0) size 154x18
+              text run at (53,0) width 154: "rdar://problem/6935192"
+          RenderText {#text} at (207,0) size 742x36
+            text run at (207,0) width 4: " "
+            text run at (211,0) width 500: "REGRESSION (Safari 3-Safari 4): Scroll bars in key window draw as inactive "
+            text run at (711,0) width 31: "if the"
+            text run at (0,18) width 139: "WebView is not active"
+        RenderText {#text} at (139,18) size 4x18
+          text run at (139,18) width 4: "."
+      RenderBlock (anonymous) at (0,52) size 784x467
+        RenderListBox {SELECT} at (2,2) size 48x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderText {#text} at (52,40) size 4x18
+          text run at (52,40) width 4: " "
+        RenderListBox {SELECT} at (58,2) size 48x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderListBox {SELECT} at (110,2) size 48x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderListBox {SELECT} at (162,2) size 48x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderListBox {SELECT} at (214,2) size 48x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderListBox {SELECT} at (266,2) size 48x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderListBox {SELECT} at (318,2) size 48x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderListBox {SELECT} at (370,2) size 48x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderListBox {SELECT} at (422,2) size 48x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderListBox {SELECT} at (474,2) size 48x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderListBox {SELECT} at (526,2) size 48x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderListBox {SELECT} at (578,2) size 48x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderText {#text} at (628,40) size 4x18
+          text run at (628,40) width 4: " "
+        RenderBR {BR} at (632,54) size 0x0
+        RenderText {#text} at (52,449) size 4x18
+          text run at (52,449) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+layer at (9,122) size 50x400 clip at (9,122) size 35x400 scrollHeight 600
+  RenderBlock {DIV} at (1,62) size 50x400
+    RenderBlock {DIV} at (0,0) size 35x600
+layer at (65,122) size 50x400 clip at (65,122) size 35x400 scrollHeight 600
+  RenderBlock {DIV} at (57,62) size 50x400
+    RenderBlock {DIV} at (0,0) size 35x600
+layer at (117,122) size 50x400 clip at (117,122) size 35x400 scrollHeight 600
+  RenderBlock {DIV} at (109,62) size 50x400
+    RenderBlock {DIV} at (0,0) size 35x600
+layer at (169,122) size 50x400 clip at (169,122) size 35x400 scrollHeight 600
+  RenderBlock {DIV} at (161,62) size 50x400
+    RenderBlock {DIV} at (0,0) size 35x600
+layer at (221,122) size 50x400 clip at (221,122) size 35x400 scrollHeight 600
+  RenderBlock {DIV} at (213,62) size 50x400
+    RenderBlock {DIV} at (0,0) size 35x600
+layer at (273,122) size 50x400 clip at (273,122) size 35x400 scrollHeight 600
+  RenderBlock {DIV} at (265,62) size 50x400
+    RenderBlock {DIV} at (0,0) size 35x600
+layer at (325,122) size 50x400 clip at (325,122) size 35x400 scrollHeight 600
+  RenderBlock {DIV} at (317,62) size 50x400
+    RenderBlock {DIV} at (0,0) size 35x600
+layer at (377,122) size 50x400 clip at (377,122) size 35x400 scrollHeight 600
+  RenderBlock {DIV} at (369,62) size 50x400
+    RenderBlock {DIV} at (0,0) size 35x600
+layer at (429,122) size 50x400 clip at (429,122) size 35x400 scrollHeight 600
+  RenderBlock {DIV} at (421,62) size 50x400
+    RenderBlock {DIV} at (0,0) size 35x600
+layer at (481,122) size 50x400 clip at (481,122) size 35x400 scrollHeight 600
+  RenderBlock {DIV} at (473,62) size 50x400
+    RenderBlock {DIV} at (0,0) size 35x600
+layer at (533,122) size 50x400 clip at (533,122) size 35x400 scrollHeight 600
+  RenderBlock {DIV} at (525,62) size 50x400
+    RenderBlock {DIV} at (0,0) size 35x600
+layer at (585,122) size 50x400 clip at (585,122) size 35x400 scrollHeight 600
+  RenderBlock {DIV} at (577,62) size 50x400
+    RenderBlock {DIV} at (0,0) size 35x600

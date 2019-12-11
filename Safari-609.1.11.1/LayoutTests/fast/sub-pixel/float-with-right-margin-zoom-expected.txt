@@ -1,0 +1,4 @@
+PASS elements[0].getBoundingClientRect().top is elements[1].getBoundingClientRect().top
+Both elements below should be on the same line.
+
+

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body onunload="unload()">
+<script src="/common/utils.js"></script>
+<script src="/common/get-host-info.sub.js"></script>
+
+<script>
+const RESOURCES_DIR = "/beacon/resources/";
+var id = self.token();
+
+function unload() {
+    var testUrl = RESOURCES_DIR + "content-type.py?cmd=put&id=" + id;
+    navigator.sendBeacon(testUrl, "test");
+}
+</script>
+</body>
+</html>

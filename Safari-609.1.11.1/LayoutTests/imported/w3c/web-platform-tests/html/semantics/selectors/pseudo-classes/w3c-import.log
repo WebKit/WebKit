@@ -1,0 +1,39 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/checked-type-change.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/checked.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/default.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/dir.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/dir01.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/disabled.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/enabled.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/focus-autofocus.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/focus-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/focus.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/indeterminate-radio.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/indeterminate-type-change.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/indeterminate.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/inrange-outofrange-type-change.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/inrange-outofrange.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/link.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/placeholder-shown-type-change.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/readwrite-readonly-type-change.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/readwrite-readonly.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/required-optional-hidden.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/required-optional.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/utils.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/valid-invalid.html

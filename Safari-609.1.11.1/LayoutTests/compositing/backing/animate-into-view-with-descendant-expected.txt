@@ -1,0 +1,30 @@
+T
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 912.00 585.00)
+  (backingStoreAttached 1)
+  (children 1
+    (GraphicsLayer
+      (bounds 912.00 585.00)
+      (contentsOpaque 1)
+      (backingStoreAttached 1)
+      (children 1
+        (GraphicsLayer
+          (position 503.00 66.00)
+          (bounds 20.00 20.00)
+          (backingStoreAttached 1)
+          (transform [1.50 -0.00 0.00 0.00] [0.00 0.50 0.00 0.00] [0.00 0.00 1.00 0.00] [-565.25 7.75 0.00 1.00])
+          (children 1
+            (GraphicsLayer
+              (anchor 0.50 0.52)
+              (bounds 10.00 31.00)
+              (drawsContent 1)
+              (backingStoreAttached 1)
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

@@ -1,0 +1,98 @@
+/*
+ * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/* Controls bar */
+
+.media-controls.mac.fullscreen {
+    --controls-bar-width: 468px;
+    --tracks-panel-right-margin: 40px;
+
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.media-controls.mac.fullscreen > .controls-bar {
+    left: calc((100% - var(--controls-bar-width)) / 2);
+    bottom: 25px;
+    width: var(--controls-bar-width);
+    height: var(--fullscreen-controls-bar-height);
+}
+
+/* Volume slider */
+
+.media-controls.mac.fullscreen:not(.uses-ltr-user-interface-layout-direction) .volume.slider {
+    transform: scaleX(-1);
+}
+
+/* Button containers */
+
+.media-controls.mac.fullscreen .buttons-container {
+    height: 44px;
+}
+
+.media-controls.mac.fullscreen .buttons-container.left {
+    top: 16px;
+    height: 16px;
+}
+
+.media-controls.mac.fullscreen .buttons-container.center {
+    left: 50%;
+    top: 3px;
+    transform: translateX(-50%);
+}
+
+/* Make right container flush to the right */
+
+.media-controls.mac.fullscreen .buttons-container.right {
+    right: 0;
+}
+
+/* Buttons placement for right container */
+
+.media-controls.mac.fullscreen .buttons-container.right button {
+    top: 18px;
+}
+
+/* Scrubber */
+
+.media-controls.mac.fullscreen .time-control {
+    position: absolute;
+    left: 10px;
+    top: 49px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+}
+
+/* Status Label */
+
+.media-controls.mac.fullscreen > .controls-bar .status-label {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 13px;
+    font-size: 14px;
+    text-align: center;
+}

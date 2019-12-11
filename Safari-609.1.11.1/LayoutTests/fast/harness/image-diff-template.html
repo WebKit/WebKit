@@ -1,0 +1,183 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>__TITLE__</title>
+<style>
+    .imageContainer {
+        position: absolute;
+        margin: 10px;
+        outline: 10px solid silver;
+    }
+    
+    .imageContainer > img {
+        display: block;
+    }
+
+    
+    .controls {
+        margin-bottom: 20px;
+    }
+    
+    .controls button {
+        width: 12em;
+    }
+    
+    .controls td {
+        padding: 0 10px;
+    }
+    
+    .controls label {
+        font-family: -webkit-system-font;
+        font-size: 11px;
+    }
+    
+    .buttons {
+    }
+    .controls > .indicator {
+        display: table-cell;
+        -webkit-column-span: 1;
+        border-top: 2px solid black;
+    }
+    
+    button.selected {
+        text-decoration: underline;
+    }
+</style>
+</head>
+<body>
+<table class="controls">
+    <tr>
+        <td></td>
+        <td><button id="expected-label" data-type="expected" onclick="switchToImage(this)">Expected Image</button></td>
+        <td><button id="actual-label" data-type="actual" onclick="switchToImage(this)">Actual Image</button></td>
+        <td><button id="diff-label" data-type="diff" onclick="switchToImage(this)">Diff Image</button></td>
+    </tr>
+    <tr>
+        <td><input type="checkbox" id="animate" onchange="toggleAnimate()" checked></input><label for="animate">Animate:</label></td>
+        <td><input type="checkbox" id="cycle-expected" onchange="updateImageCycle()" checked></input><label for="cycle-expected">Expected</label></td>
+        <td><input type="checkbox" id="cycle-actual" onchange="updateImageCycle()" checked></input><label for="cycle-actual">Actual</label></td>
+        <td><input type="checkbox" id="cycle-diff" onchange="updateImageCycle()"></input><label for="cycle-diff">Diff</label></td>
+    </tr>
+</table>
+
+<div class="imageContainer" data-prefix="__PREFIX__">Loading...</div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var container = document.querySelector('.imageContainer');
+
+var data = {
+    'expected' : {
+        'image' : preloadImage(container.getAttribute('data-prefix') + '-expected.png'),
+        'label' : document.getElementById('expected-label'),
+    },
+    'actual' : {
+        'image' : preloadImage(container.getAttribute('data-prefix') + '-actual.png'),
+        'label' : document.getElementById('actual-label'),
+    },
+    'diff' : {
+        'image' : preloadImage(container.getAttribute('data-prefix') + '-diff.png'),
+        'label' : document.getElementById('diff-label'),
+    },
+};
+
+var preloadedImageCount = 0;
+
+function preloadComplete()
+{
+    ++preloadedImageCount;
+    if (preloadedImageCount < 3)
+        return;
+    
+    showImage(data['actual']);
+    updateImageCycle();
+    startCyclingImages();
+}
+
+function preloadImage(url)
+{
+    image = new Image();
+    image.addEventListener('load', preloadComplete);
+    image.src = url;
+    return image;
+}
+
+function switchToImage(element)
+{
+    var imageType = element.getAttribute('data-type');
+    showImage(data[imageType]);
+}
+
+function resetLabels()
+{
+    for (var item in data)
+        data[item].label.classList.remove('selected');
+}
+
+function showImage(categoryData)
+{
+    container.replaceChild(categoryData.image, container.firstChild);
+    
+    resetLabels();
+    categoryData.label.classList.add('selected');
+}
+
+function updateImageCycle()
+{
+    data.expected.cycle = document.getElementById('cycle-expected').checked;
+    data.actual.cycle = document.getElementById('cycle-actual').checked;
+    data.diff.cycle = document.getElementById('cycle-diff').checked;
+}
+
+function getCurrentlyShowingImageType()
+{
+    for (var item in data) {
+        if (data[item].label.classList.contains('selected'))
+            return item;
+    }
+}
+
+function toggleAnimate()
+{
+    if (document.getElementById('animate').checked)
+        startCyclingImages();
+    else
+        stopCyclingImages();
+}
+
+var cycleIntervalID;
+function startCyclingImages()
+{
+    stopCyclingImages();
+    cycleIntervalID = window.setInterval(cycleImages, 2000);
+}
+
+function stopCyclingImages()
+{
+    if (cycleIntervalID) {
+        window.clearInterval(cycleIntervalID);
+        cycleIntervalID = undefined;
+    }
+}
+
+function cycleImages()
+{
+    var currentImage = getCurrentlyShowingImageType();
+    var order = ['expected', 'actual', 'diff'];
+    var index = order.indexOf(currentImage);
+    
+    var currIndex = (index + 1) % order.length;
+    do {
+        var type = order[currIndex];
+        if (data[type].cycle)
+            break;
+        
+        currIndex = (currIndex + 1) % order.length;
+    } while (currIndex != index);
+
+    showImage(data[order[currIndex]]);
+}
+</script>
+</body>
+</html>

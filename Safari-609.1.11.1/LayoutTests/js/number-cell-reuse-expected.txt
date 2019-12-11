@@ -1,0 +1,21 @@
+This test checks corner cases of the number cell reuse code. In particular, it checks for known cases where code generation for number cell reuse caused assertions to fail.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS leftConstantRightSimple(2) is 0.4
+PASS leftConstantRightComplex(1) is 0.2
+PASS leftSimpleRightConstant(2) is 0.4
+PASS leftComplexRightConstant(1) is 0.2
+PASS leftThisRightSimple(2) is NaN
+PASS leftThisRightSimple.call(2, 2) is 8
+PASS leftThisRightComplex(2) is NaN
+PASS leftThisRightComplex.call(2, 2) is 12
+PASS leftSimpleRightThis(2) is NaN
+PASS leftSimpleRightThis.call(2, 2) is 8
+PASS leftComplexRightThis(2) is NaN
+PASS leftComplexRightThis.call(2, 2) is 12
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,31 @@
+<html>
+
+<head>
+<style>
+    .buttons {
+        font-size: 0px;
+    }
+    .button {
+        display: inline-block;
+        float: none;
+        font-size: 16px;
+    }
+</style>
+</head>
+
+<body>
+    <div>
+        This test verifies that divs containing zero pixel fonts do not corrupt
+        the page rendering (bug <a href="https://bugs.webkit.org/show_bug.cgi?id=60917">60917</a>).
+        There line below should read "GoldilocksBearBearBear".
+    </div>
+
+    <div class="buttons">
+        <div class="button">Goldilocks </div>
+        <div class="button">Bear </div>
+        <div class="button">Bear </div>
+        <div class="button">Bear </div>
+  </div>
+</body>
+
+</html>

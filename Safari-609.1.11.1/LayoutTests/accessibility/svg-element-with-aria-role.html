@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<div class="contents">
+  <svg xmlns="http://www.w3.org/2000/svg" id="test1" role="graphics-document">
+    <g role="graphics-object" id="test2"></g>
+  </svg>
+  <svg xmlns="http://www.w3.org/2000/svg" id="test3" role="button" aria-label="click me">
+    <rect fill="gray" stroke="black" width="60" height="15" />
+  </svg>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that ARIA roles used on SVG elements are exposed.")
+    if (window.accessibilityController) {
+        var test = accessibilityController.accessibleElementById("test1");
+        debug("test1: " + test.role + " " + test.subrole);
+
+        test = accessibilityController.accessibleElementById("test2");
+        debug("test2: " + test.role + " " + test.subrole);
+
+        test = accessibilityController.accessibleElementById("test3");
+        debug("test3: " + test.role + " " + test.subrole);
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

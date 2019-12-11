@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<div id="testDiv" style="position: absolute;"></div>
+<pre id="testPre"><pre>
+<script>
+description("Tests that negative calc() values are properly clamped when needed.");
+
+var testDiv = document.getElementById("testDiv");
+var testPre = document.getElementById("testPre");
+
+shouldBeEmptyString("testDiv.style['width']");
+
+evalAndLog("testDiv.style['width'] = '100px'");
+evalAndLog("testDiv.style['width'] = 'calc(5px - 10px)'");
+shouldBeEqualToString("testDiv.style['width']", "calc(-5px)");
+shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('width')", "0px");
+
+evalAndLog("testDiv.style['width'] = '100px'");
+evalAndLog("testDiv.style['width'] = 'calc(10% - 100px)'");
+shouldBeEqualToString("testDiv.style['width']", "calc(10% - 100px)");
+shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('width')", "0px");
+
+evalAndLog("testDiv.style['line-height'] = '10%'");
+evalAndLog("testDiv.style['line-height'] = 'calc(10% - 20%)'");
+shouldBeEqualToString("testDiv.style['line-height']", "calc(-10%)");
+shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('line-height')", "0px");
+
+evalAndLog("testPre.style['tab-size'] = '8'");
+evalAndLog("testPre.style['tab-size'] = 'calc(2 - 4)'");
+shouldBeEqualToString("testPre.style['tab-size']", "8");
+shouldBeEqualToString("window.getComputedStyle(testPre).getPropertyValue('tab-size')", "8");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>

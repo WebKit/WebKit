@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 1: SyntaxError: import.meta is only valid inside modules.
+
+Harness Error (FAIL), message = SyntaxError: import.meta is only valid inside modules.
+
+FAIL Test import.meta.url on the top-level module script. promise_test: Unhandled rejection with value: "SyntaxError: import.meta is only valid inside modules."
+FAIL Test import.meta.url on the imported module script. assert_true: expected true got false
+FAIL Test import.meta.url on the imported module script with a fragment. assert_true: expected true got false
+

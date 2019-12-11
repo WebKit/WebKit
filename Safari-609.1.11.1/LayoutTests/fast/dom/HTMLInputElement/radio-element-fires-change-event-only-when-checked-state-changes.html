@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+description("Tests that clicking a radio element only fires a 'change' event if its checked state actually changes.");
+jsTestIsAsync = true
+
+let a_events = [];
+let b_events = [];
+
+onload = () => {
+    a = document.getElementById("a");
+    b = document.getElementById("b");
+
+    a.onchange = () => { a_events.push('change'); }
+    a.oninput = () => { a_events.push('input'); }
+    a.onclick = () => { a_events.push('click') }
+    b.onchange = () => { b_events.push('change'); }
+    b.oninput = () => { b_events.push('input'); }
+    b.onclick = () => { b_events.push('click') }
+    a.click();
+
+    shouldBeEqualToString("a_events.toString()", "click");
+    shouldBeEqualToString("b_events.toString()", "");
+
+    a_events = [];
+    b_events = [];
+    b.click();
+    shouldBeEqualToString("a_events.toString()", "");
+    shouldBeEqualToString("b_events.toString()", "click,input,change");
+
+    finishJSTest();
+}
+</script>
+<input type="radio" name="foo" id="a" value="a" checked>a</input>
+<input type="radio" name="foo" id="b" value="b">b</input>
+</body>
+</html>

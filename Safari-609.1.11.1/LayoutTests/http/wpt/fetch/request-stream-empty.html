@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Consuming Request body with non BufferSource ReadableStream chunks</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script>
+function createRequestWithEmptyReadableStream()
+{
+    var stream = new ReadableStream({start: controller => {
+        controller.close();
+    }});
+    return new Request("", {body: stream, method: "POST"});
+}
+
+function createRequestWithEmptyChunkReadableStream()
+{
+    var stream = new ReadableStream({start: controller => {
+        controller.enqueue(new Uint8Array(0));
+        controller.close();
+    }});
+    return new Request("", {body: stream, method: "POST"});
+}
+
+promise_test(test => {
+    return createRequestWithEmptyReadableStream().text().then(text => {
+        assert_equals(text, "");
+    });
+}, "Empty stream body as text");
+
+promise_test(test => {
+    return createRequestWithEmptyReadableStream().arrayBuffer().then(buffer => {
+        assert_equals(buffer.byteLength, 0, "Resolved value should be empty");
+    });
+}, "Empty stream body as arrayBuffer");
+
+promise_test(test => {
+    return promise_rejects(test, "SyntaxError", createRequestWithEmptyReadableStream().json());
+}, "Empty stream body as JSON");
+
+promise_test(test => {
+    return createRequestWithEmptyReadableStream().blob().then(function(bodyAsBlob) {
+        var promise = new Promise(function(resolve, reject) {
+            var reader = new FileReader();
+            reader.onload = () => { resolve(reader.result) };
+            reader.onerror = () => { reject("Blob's reader failed"); };
+            reader.readAsText(bodyAsBlob);
+        });
+        return promise.then(function(body) {
+            assert_equals(body, "", "Resolved value should be empty");
+        });
+  });
+}, "Empty stream body as blob");
+
+promise_test(test => {
+    return createRequestWithEmptyChunkReadableStream().text().then(text => {
+        assert_equals(text, "");
+    });
+}, "Empty chunk stream body as text");
+
+promise_test(test => {
+    return createRequestWithEmptyChunkReadableStream().arrayBuffer().then(buffer => {
+        assert_equals(buffer.byteLength, 0, "Resolved value should be empty");
+    });
+}, "Empty chunk stream body as arrayBuffer");
+
+promise_test(test => {
+    return promise_rejects(test, "SyntaxError", createRequestWithEmptyReadableStream().json());
+}, "Empty chunk stream body as JSON");
+
+promise_test(test => {
+    return createRequestWithEmptyChunkReadableStream().blob().then(function(bodyAsBlob) {
+        var promise = new Promise(function(resolve, reject) {
+            var reader = new FileReader();
+            reader.onload = () => { resolve(reader.result) };
+            reader.onerror = () => { reject("Blob's reader failed"); };
+            reader.readAsText(bodyAsBlob);
+        });
+        return promise.then(function(body) {
+            assert_equals(body, "", "Resolved value should be empty");
+        });
+  });
+}, "Empty chunk stream body as blob");
+    </script>
+  </body>
+</html>

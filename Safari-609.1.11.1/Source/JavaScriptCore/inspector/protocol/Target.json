@@ -1,0 +1,56 @@
+{
+    "domain": "Target",
+    "debuggableTypes": ["web-page"],
+    "targetTypes": ["web-page"],
+    "types": [
+        {
+            "id": "TargetInfo",
+            "type": "object",
+            "description": "Description of a target.",
+            "properties": [
+                { "name": "targetId", "type": "string", "description": "Unique identifier for the target." },
+                { "name": "type", "type": "string", "enum": ["page", "service-worker", "worker"] },
+                { "name": "isProvisional", "type": "boolean", "optional": true, "description": "True value indicates that this is a provisional page target i.e. Such target may be created when current page starts cross-origin navigation. Eventually each provisional target is either committed and swaps with the current target or gets destroyed, e.g. in case of load request failure." }
+            ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "sendMessageToTarget",
+            "description": "Send an Inspector Protocol message to be dispatched to a Target's agents.",
+            "parameters": [
+                { "name": "targetId", "type": "string" },
+                { "name": "message", "type": "string", "description": "JSON Inspector Protocol message (command) to be dispatched on the backend." }
+            ]
+        }
+    ],
+    "events": [
+        {
+            "name": "targetCreated",
+            "parameters": [
+                { "name": "targetInfo", "$ref": "TargetInfo" }
+            ]
+        },
+        {
+            "name": "targetDestroyed",
+            "parameters": [
+                { "name": "targetId", "type": "string" }
+            ]
+        },
+        {
+            "name": "didCommitProvisionalTarget",
+            "description": "This event is fired when provisional load is committed. Provisional target swaps with the current target.",
+            "parameters": [
+                { "name": "oldTargetId", "type": "string", "description": "ID of the old target that is swapped with the committed one." },
+                { "name": "newTargetId", "type": "string", "description": "ID of the committed target." }
+            ]
+        },
+        {
+            "name": "dispatchMessageFromTarget",
+            "parameters": [
+                { "name": "targetId", "type": "string" },
+                { "name": "message", "type": "string", "description": "JSON Inspector Protocol message (response or event) to be dispatched on the frontend." }
+            ]
+        }
+    ]
+}

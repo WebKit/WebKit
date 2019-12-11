@@ -1,0 +1,57 @@
+<html>
+<head>
+    <script src="../../resources/cross-frame-access.js"></script>
+    <script>
+        window.onload = function()
+        {
+            document.getElementsByTagName('h4')[0].innerHTML = document.domain;
+            if (window.testRunner) {
+                setTimeout(pollForTest, 1);
+            } else {
+                log("Click the link to run the test.");
+            }
+        }
+
+        pollForTest = function()
+        {
+            if (!testRunner.globalFlag) {
+                setTimeout(pollForTest, 1);
+                return;
+            }
+            runTest();
+        }
+
+        runTest = function()
+        {
+            if (!window.testRunner)
+                return;
+
+            plg.getURL("navigation-happened.html", "toNavigate");
+
+            start = new Date();
+            myInterval = setInterval(checkIfDone, 500);
+        }
+
+        checkIfDone = function()
+        {
+            var numOpenWindows = testRunner.windowCount();
+            var now = new Date();
+            if (numOpenWindows == 2) {
+                log("Test PASSED");
+                clearInterval(myInterval);
+                testRunner.notifyDone();            
+            } else if (now - start > 10000) {
+                log('TEST FAILED: Window count ' + numOpenWindows);
+                clearInterval(myInterval);
+                testRunner.notifyDone();
+            }
+        }
+    </script>
+</head>
+<body>
+    <embed name="plg" type="application/x-webkit-test-netscape"></embed>
+    <h3>Frame-with-plugin-to-navigate</h3>
+    <h4>DOMAIN</h4>
+    <pre id='console'></pre>
+</body>
+</html>

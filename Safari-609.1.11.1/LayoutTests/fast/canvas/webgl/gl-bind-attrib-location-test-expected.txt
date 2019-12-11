@@ -1,0 +1,29 @@
+This test ensures WebGL implementations don't allow names that start with 'gl_' when calling bindAttribLocation.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Canvas.getContext
+PASS [object WebGLRenderingContext] is non-null.
+
+Checking gl.bindAttribLocation.
+PASS getError was expected value: INVALID_OPERATION : bindAttribLocation should return INVALID_OPERATION if name starts with 'gl_'
+PASS getError was expected value: INVALID_OPERATION : bindAttribLocation should return INVALID_OPERATION if name starts with 'gl_'
+PASS program linked successfully
+vPosition:3
+vColor   :2
+PASS location of vPositon should be 3
+PASS location of vColor should be 2
+PASS drawing is correct
+PASS program linked successfully
+vPosition:3
+vColor   :0
+PASS location of vPositon should be 3
+PASS location of vColor should be 0
+PASS drawing is correct
+PASS getError was expected value: NO_ERROR : 
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

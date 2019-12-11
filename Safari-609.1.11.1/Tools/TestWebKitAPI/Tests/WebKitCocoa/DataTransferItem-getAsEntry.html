@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+html, body {
+    font-family: -apple-system;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    font-size: 1em;
+}
+
+#droparea {
+    margin-top: 1em;
+    width: 100%;
+    height: 200px;
+    top: 0;
+    left: 0;
+}
+
+#output {
+    width: 100%;
+    height: calc(100% - 200px);
+    font-family: monospace;
+}
+</style>
+
+<div id="droparea">
+    <div>To manually test, drop something into this area and observe the output below.</div>
+</div>
+<textarea id="output"></textarea>
+
+<script>
+    function getChildEntries(entry) {
+        if (!entry.isDirectory)
+            return Promise.resolve([]);
+
+        return new Promise((resolve, reject) => {
+            let result = [];
+            let reader = entry.createReader();
+            let doBatch = () => {
+                reader.readEntries(entries => {
+                    if (entries.length > 0) {
+                        entries.forEach(e => result.push(e));
+                        doBatch();
+                    } else
+                        resolve(result);
+                }, reject);
+            };
+            doBatch();
+        });
+    }
+
+    droparea.addEventListener("dragenter", event => event.preventDefault());
+    droparea.addEventListener("dragover", event => event.preventDefault());
+    droparea.addEventListener("drop", handleDrop);
+
+    async function handleDrop(event)
+    {
+        await logItemAndFileEntryInformation(event.dataTransfer.items);
+        event.preventDefault();
+        webkit.messageHandlers.testHandler.postMessage("dropped");
+    }
+
+    function fileFromFileSystemFileEntry(fileEntry)
+    {
+        return new Promise(resolve => fileEntry.file(file => resolve(file)));
+    }
+
+    async function representationForFileSystemEntry(entry)
+    {
+        let lines = [];
+        if (entry.isDirectory) {
+            lines.push(`DIR: ${entry.fullPath}`);
+            for (let child of await getChildEntries(entry))
+                lines = lines.concat(await representationForFileSystemEntry(child));
+        } else if (entry.isFile) {
+            let file = await fileFromFileSystemFileEntry(entry);
+            lines.push(`FILE: ${entry.fullPath} ('${file.type}', ${file.size} bytes)`);
+        }
+        return lines;
+    }
+
+    async function logItemAndFileEntryInformation(items)
+    {
+        output.value = "";
+        for (let index = 0; index < items.length; index++) {
+            let item = items.item(index);
+            output.value += `Found data transfer item (kind: '${item.kind}', type: '${item.type}')\n`;
+            let entry = item.webkitGetAsEntry();
+            if (entry)
+                output.value += (await representationForFileSystemEntry(entry)).sort().join("\n");
+        }
+    }
+</script>
+</html>

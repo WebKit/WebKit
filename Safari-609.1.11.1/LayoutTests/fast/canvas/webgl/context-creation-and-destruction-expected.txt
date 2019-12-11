@@ -1,0 +1,25 @@
+Test that contexts are freed and garbage collected reasonably
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+test 1 of 8
+PASS getError was expected value: NO_ERROR : Should be no errors
+test 2 of 8
+PASS getError was expected value: NO_ERROR : Should be no errors
+test 3 of 8
+PASS getError was expected value: NO_ERROR : Should be no errors
+test 4 of 8
+PASS getError was expected value: NO_ERROR : Should be no errors
+test 5 of 8
+PASS getError was expected value: NO_ERROR : Should be no errors
+test 6 of 8
+PASS getError was expected value: NO_ERROR : Should be no errors
+test 7 of 8
+PASS getError was expected value: NO_ERROR : Should be no errors
+test 8 of 8
+PASS getError was expected value: NO_ERROR : Should be no errors
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

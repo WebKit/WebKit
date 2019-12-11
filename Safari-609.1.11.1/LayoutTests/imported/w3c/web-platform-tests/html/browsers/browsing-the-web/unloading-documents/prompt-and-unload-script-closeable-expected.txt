@@ -1,0 +1,7 @@
+main frame - has 1 onunload handler(s)
+CONSOLE MESSAGE: line 12: Can't close the window since it was not opened by JavaScript
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT beforeunload and unload events fire after window.close() in script-closeable browsing context Test timed out
+

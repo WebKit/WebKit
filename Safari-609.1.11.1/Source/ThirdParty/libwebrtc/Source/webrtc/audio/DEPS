@@ -1,0 +1,26 @@
+include_rules = [
+  "+call",
+  "+common_audio",
+  "+logging/rtc_event_log",
+  "+modules/audio_coding",
+  "+modules/audio_device",
+  "+modules/audio_mixer",
+  "+modules/audio_processing",
+  "+modules/audio_processing/include",
+  "+modules/bitrate_controller",
+  "+modules/congestion_controller",
+  "+modules/pacing",
+  "+modules/remote_bitrate_estimator",
+  "+modules/rtp_rtcp",
+  "+modules/utility",
+  "+system_wrappers",
+]
+
+specific_include_rules = {
+  "audio_send_stream.cc": [
+    "+modules/audio_coding/codecs/cng/audio_encoder_cng.h",
+  ],
+  "audio_transport_impl.h": [
+    "+modules/audio_processing/typing_detection.h",
+  ]
+}

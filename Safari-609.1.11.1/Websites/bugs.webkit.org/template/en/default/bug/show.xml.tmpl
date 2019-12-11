@@ -1,0 +1,161 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+[% PROCESS bug/time.html.tmpl %]
+[% USE Bugzilla %]
+[% cgi = Bugzilla.cgi %]
+<?xml version="1.0" [% IF Param('utf8') %]encoding="UTF-8" [% END %]standalone="yes" ?>
+<!DOCTYPE bugzilla [% IF cgi.param('dtd') %][[% PROCESS pages/bugzilla.dtd.tmpl %]][% ELSE %]SYSTEM "[% urlbase FILTER xml %]page.cgi?id=bugzilla.dtd"[% END %]>
+
+<bugzilla version="[% constants.BUGZILLA_VERSION %]"
+          urlbase="[% urlbase FILTER xml %]"
+          [%# Note that the maintainer's email is not filtered, 
+            # intentionally. Even logged-out users should be able
+            # to see that, since it will be in error messages anyway. 
+          %]
+          maintainer="[% Param('maintainer') FILTER xml %]"
+[% IF user.id %]
+          exporter="[% user.email FILTER email FILTER xml %]"
+[% END %]
+>
+
+[% FOREACH bug = bugs %]
+  [% IF bug.error %]
+    <bug error="[% bug.error FILTER xml %]">
+      <bug_id>[% bug.bug_id FILTER xml %]</bug_id>
+    </bug>
+  [% ELSE %]
+    <bug>
+      [% FOREACH field = bug.fields %]
+        [% IF displayfields.$field %]
+          [%+ PROCESS bug_field %]
+        [% END %]
+      [% END %]
+
+      [%# This is here so automated clients can still use process_bug.cgi %]
+      [% IF displayfields.token && user.id %]
+          <token>[% issue_hash_token([bug.id, bug.delta_ts]) FILTER xml %]</token>
+      [% END %]
+
+      [%# Now handle 'special' fields #%]
+      [% IF displayfields.group %]
+        [% FOREACH g = bug.groups %]
+          [% NEXT UNLESS g.ison %]
+          <group id="[% g.bit FILTER xml %]">[% g.name FILTER xml %]</group>
+        [% END %]
+      [% END %]
+
+      [%# Bug Flags %]
+      [% PROCESS section_flags obj => bug %]
+
+      [% IF displayfields.long_desc %]
+          [% sort_order = user.settings.comment_sort_order.value %]
+          <comment_sort_order>[% sort_order FILTER xml %]</comment_sort_order>  
+          
+        [% FOREACH c = bug.comments %]
+          [% PROCESS a_comment %]
+        [% END %]
+      [% END %]
+      
+      [% IF displayfields.attachment %]
+        [% FOREACH a = bug.attachments %]
+          [% NEXT IF a.isprivate && !user.is_insider %]
+          <attachment
+              isobsolete="[% a.isobsolete FILTER xml %]"
+              ispatch="[% a.ispatch FILTER xml %]"
+              isprivate="[% a.isprivate FILTER xml %]"
+          >
+            <attachid>[% a.id %]</attachid>
+            <date>[% a.attached FILTER time("%Y-%m-%d %T %z") FILTER xml %]</date>
+            <delta_ts>[% a.modification_time FILTER time("%Y-%m-%d %T %z") FILTER xml %]</delta_ts>
+            <desc>[% a.description FILTER xml %]</desc>
+            <filename>[% a.filename FILTER xml %]</filename>
+            <type>[% a.contenttype FILTER xml %]</type>
+            <size>[% a.datasize FILTER xml %]</size>
+            <attacher[% IF a.attacher.name != '' %] name="[% a.attacher.name FILTER xml %]"[% END -%]>
+            [% a.attacher.email FILTER email FILTER xml %]</attacher>
+            [%# This is here so automated clients can still use attachment.cgi %]
+            [% IF displayfields.token && user.id %]
+              <token>[% issue_hash_token([a.id, a.modification_time]) FILTER xml %]</token>
+            [% END %]
+            [% IF displayfields.attachmentdata %]
+              <data encoding="base64">[% a.data FILTER base64 %]</data>
+            [% END %]
+
+            [% PROCESS section_flags obj => a %]
+          </attachment>
+        [% END %]
+      [% END %]
+      
+      [% Hook.process("bug_end") %]
+
+    </bug>
+  [% END %]
+[% END %]
+
+</bugzilla>
+
+[% BLOCK bug_field %]
+  [% field_values = bug.$field %]
+  [%# Work around TT bug https://rt.cpan.org/Public/Bug/Display.html?id=9802 %]
+  [% IF bug.$field.size == 1 %]
+    [% field_values = [bug.$field.first] %]
+  [% END %]
+
+  [% FOREACH val = field_values %]
+    [%# We need to handle some fields differently. This should become
+      # nicer once we have custfields, and a type attribute for the fields
+      #%]
+    [% name = '' %]
+    [% IF field == 'reporter' OR field == 'assigned_to' OR
+          field == 'qa_contact' %]
+      [% name = val.name %]
+      [% val = val.email FILTER email %]
+    [% ELSIF field == 'cc' %]
+        [% val = val FILTER email %]
+    [% ELSIF field == 'creation_ts' OR field == 'delta_ts' %]
+      [% val = val FILTER time("%Y-%m-%d %T %z") %]
+    [% ELSIF field == "see_also" %]
+      [% val = val.name %]
+    [% END %]
+    <[% field %][% IF name != '' %] name="[% name FILTER xml %]"[% END -%]>
+      [%- val FILTER xml %]</[% field %]>
+  [% END %]
+[% END %]
+
+[% BLOCK section_flags %]
+  [% RETURN UNLESS displayfields.flag %]
+  
+  [% FOREACH flag = obj.flags %]
+    <flag name="[% flag.type.name FILTER xml %]"
+          id="[% flag.id FILTER xml %]"
+          type_id="[% flag.type_id FILTER xml %]"
+          status="[% flag.status FILTER xml %]"
+          setter="[% flag.setter.email FILTER email FILTER xml %]"
+      [% IF flag.status == "?" && flag.requestee %]
+          requestee="[% flag.requestee.email FILTER email FILTER xml %]"
+      [% END %]
+    />
+  [% END %]
+[% END %]
+
+[% BLOCK a_comment %]
+  [% RETURN IF c.is_private && !user.is_insider %]
+  <long_desc isprivate="[% c.is_private FILTER xml %]" >
+    <commentid>[% c.id FILTER xml %]</commentid>
+    <comment_count>[% c.count FILTER xml %]</comment_count>
+    [% IF c.is_about_attachment %]
+      <attachid>[% c.extra_data FILTER xml %]</attachid>
+    [% END %]
+    <who name="[% c.author.name FILTER xml %]">[% c.author.email FILTER email FILTER xml %]</who>
+    <bug_when>[% c.creation_ts FILTER time("%Y-%m-%d %T %z") FILTER xml %]</bug_when>
+    [% IF user.is_timetracker && (c.work_time - 0 != 0) %]
+      <work_time>[% PROCESS formattimeunit time_unit = c.work_time FILTER xml %]</work_time>
+    [% END %]
+    <thetext>[% c.body_full FILTER xml %]</thetext>
+  </long_desc>
+[% END %]

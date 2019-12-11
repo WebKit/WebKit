@@ -1,0 +1,143 @@
+#!/usr/bin/env python
+# vim: set ft=python:
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2018 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+# OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+# Extract dependency information from the output of `make -d`, generating a
+# list of top-level targets (which are assumed to be generated/output files)
+# and a list of leaf dependencies (which are assumed to be the base input
+# files). Read the make dependency information from stdin and write the results
+# to the specified files.
+
+
+from __future__ import print_function
+
+import argparse
+import re
+import sys
+
+
+class Parser(object):
+
+    fileNamePattern         = r"`([^']+)'"
+    rePrerequisite          = re.compile(r"Prerequisite {} is .* than target {}".format(fileNamePattern, fileNamePattern))
+    reMustRemakeTarget      = re.compile(r"Must remake target {}".format(fileNamePattern))
+    reWasConsideredAlready  = re.compile(r"{} was considered already.".format(fileNamePattern))
+    rePruningFile           = re.compile(r"Pruning file {}.".format(fileNamePattern))
+
+    def __init__(self):
+        self.targets = {}
+        self.prereqs = {}
+
+    def nextLine(self, input):
+        while True:
+            line = input.readline()
+            if not line: break
+            line = line.strip()
+            if line: yield line
+
+    def addTarget(self, target):
+        if target != 'all' and target != 'force':
+            self.targets[target] = 1
+
+    def addPrereq(self, prereq):
+        if prereq != 'all' and prereq != 'force':
+            self.prereqs[prereq] = 1
+
+    def doParse(self, input):
+
+        # Pull out everything that looks like a target or prerequisite.
+
+        for line in self.nextLine(input):
+            m = Parser.rePrerequisite.search(line)
+            if m:
+                self.addTarget(m.group(2))
+                self.addPrereq(m.group(1))
+                continue
+
+            m = Parser.reMustRemakeTarget.search(line)
+            if m:
+                self.addTarget(m.group(1))
+                continue
+
+            m = Parser.reWasConsideredAlready.search(line)
+            if m:
+                self.addTarget(m.group(1))
+                continue
+
+            m = Parser.rePruningFile.search(line)
+            if m:
+                self.addPrereq(m.group(1))
+                continue
+
+        # Regarding prerequisites, we're interested in only those that aren't
+        # also targets. We only want ones that don't have build rules, and
+        # hence must already exist. Those are our inputs.
+
+        for key in self.targets.keys():
+            self.prereqs.pop(key, None)
+
+    def printInputs(self, inputsFile):
+        with open(inputsFile, 'w') as toFile:
+            [ print("{}".format(f), file = toFile) for f in sorted(self.prereqs.keys()) ]
+
+    def printOutputs(self, outputsFile):
+        with open(outputsFile, 'w') as toFile:
+            [ print("{}".format(f), file = toFile) for f in sorted(self.targets.keys()) ]
+
+
+def parseArgs():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        '--input',
+        metavar='<xcfilelist>',
+        type=str,
+        required = True,
+        help='path to the xcfilelist holding input files')
+
+    parser.add_argument(
+        '--output',
+        metavar='<xcfilelist>',
+        type=str,
+        required = True,
+        help='path to the xcfilelist holding output/generated files')
+
+    return parser.parse_args()
+
+
+def main():
+    args = parseArgs()
+    parser = Parser()
+
+    parser.doParse(sys.stdin)
+    parser.printInputs(args.input)
+    parser.printOutputs(args.output)
+
+
+if __name__ == '__main__':
+    main()

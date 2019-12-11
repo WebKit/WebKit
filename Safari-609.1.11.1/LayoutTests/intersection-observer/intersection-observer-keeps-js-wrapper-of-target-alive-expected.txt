@@ -1,0 +1,4 @@
+This tests that JS wrappers of targets enqueued to be delivered to an intersection observer do not get collected.
+
+PASS
+

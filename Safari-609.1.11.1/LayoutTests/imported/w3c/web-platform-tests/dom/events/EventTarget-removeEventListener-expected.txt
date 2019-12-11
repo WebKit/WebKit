@@ -1,0 +1,3 @@
+
+PASS removing a null event listener should succeed 
+

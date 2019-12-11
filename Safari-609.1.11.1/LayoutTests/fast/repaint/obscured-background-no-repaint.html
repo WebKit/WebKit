@@ -1,0 +1,105 @@
+<html>
+<head>
+<script>jsTestIsAsync = true;</script>
+<script src="../../resources/js-test-pre.js"></script>
+<style type="text/css">
+    #test1 div {
+        height: 100px;
+        width: 100px;
+    }
+    #test1 .parent {
+        background-image: url(resources/animated.gif)
+    }
+    #test1 .child {
+        background-color: green;
+    }
+
+    #test2 .parent {
+        position: relative;
+        height: 100px;
+        width: 100px;
+        background-image: url(resources/animated.gif);
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+
+    #test2 .child {
+        background-color: green;
+        position: relative;
+        left: 25px;
+        top: 25px;
+        height: 50px;
+        width: 50px;
+    }
+    #test3 img {
+        background-image: url(resources/animated.gif)
+    }
+    #test4 .parent {
+        position: relative;
+        height: 100px;
+        width: 100px;
+        background-color: red;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-image: url(resources/animated.gif)
+    }
+</style>
+<script>
+    description("Test that obscured animated gif does not trigger repaints. This test requires DRT.");
+    function startTrackingRepaints()
+    {
+        document.body.offsetTop;
+        window.internals.startTrackingRepaints();
+        testRunner.displayAndTrackRepaints();
+        setTimeout(logRepaints, 200);
+    }
+
+    function logRepaints()
+    {
+        repaintRects = window.internals.repaintRectsAsText();
+        window.internals.stopTrackingRepaints();
+
+        shouldBeEqualToString("repaintRects", "");
+
+        finishJSTest();
+    }
+
+    function start() {
+        if (!window.testRunner || !window.internals)
+            return;
+
+        var img = new Image();
+        img.onload = startTrackingRepaints;
+        img.src = "resources/animated.gif";
+    }
+</script>
+</head>
+<body onload="start()">
+<div id="test1">
+    <div class="parent">
+        <div class="child">
+        </div>
+    </div>
+</div>
+<div id="test2">
+    <div class="parent">
+        <div class="child">
+        </div>
+    </div>
+</div>
+<div id="test3">
+    <img src="resources/apple.jpg">
+</div>
+<div id="test4">
+    <div class="parent">
+        <a>
+            <div></div>
+            <div>
+                <img src="resources/apple.jpg">
+            </div>
+        </a>
+    </div>
+</div>
+</body>
+<script src="../../resources/js-test-post.js"></script>
+</html>

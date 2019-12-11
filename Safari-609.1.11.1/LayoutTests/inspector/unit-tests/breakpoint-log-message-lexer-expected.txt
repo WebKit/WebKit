@@ -1,0 +1,44 @@
+Check that BreakpointLogMessageLexer correctly tokenizes breakpoint action log messages. Message text can include template literal placeholders.
+
+
+== Running test suite: Debugger.BreakpointLogMessageLexer
+-- Running test case: EmptyMessage
+Input: 
+PASS: Token stream should match expected tokens.
+
+-- Running test case: TextOnly
+Input: hello world
+PASS: Token stream should match expected tokens.
+
+-- Running test case: PlaceholderOnly
+Input: ${x}
+PASS: Token stream should match expected tokens.
+
+-- Running test case: NestedTemplateLiteral
+Input: ${'x' + `${'y'}`}
+PASS: Token stream should match expected tokens.
+
+-- Running test case: TextBeforePlaceholder
+Input: abc ${x}
+PASS: Token stream should match expected tokens.
+
+-- Running test case: TextAfterPlaceholder
+Input: ${x} abc
+PASS: Token stream should match expected tokens.
+
+-- Running test case: PlaceholderWithNestedBraces
+Input: ${({a: '${}'}).a}
+PASS: Token stream should match expected tokens.
+
+-- Running test case: PlaceholderWithRegExpLiteral
+Input: ${/\}/.test('${')}
+PASS: Token stream should match expected tokens.
+
+-- Running test case: MultiplePlaceholders
+Input: ${1} ${2}
+PASS: Token stream should match expected tokens.
+
+-- Running test case: ExpressionFollowedByBraces
+Input: ${1}{2}
+PASS: Token stream should match expected tokens.
+

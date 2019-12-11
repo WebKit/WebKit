@@ -1,0 +1,16 @@
+<style>
+ruby {
+    float:left;
+    column-count: 2;
+}
+</style>		
+<ruby id=ruby>content</ruby>
+Pass if no crash.
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.body.offsetHeight;
+ruby.innerHTML="<button>click me</button>";	
+styleSheet = document.styleSheets[0];
+styleSheet.addRule('#ruby::before','content: counter(coun2)');
+</script>

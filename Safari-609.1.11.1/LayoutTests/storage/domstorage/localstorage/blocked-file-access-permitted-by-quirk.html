@@ -1,0 +1,18 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    // 'NeedsLocalStorageQuirk' is the default state, but I set it explicitly in case this ever changes.
+    testRunner.setNeedsStorageAccessFromFileURLsQuirk(true);
+    testRunner.setAllowUniversalAccessFromFileURLs(false);
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<iframe src="resources/allowed-example.html"></iframe>
+<div id="results"></div>
+Test that the local storage quirk allows us to access localStorage from a file URL, even if unversal access is turned off.
+</body>
+</html>

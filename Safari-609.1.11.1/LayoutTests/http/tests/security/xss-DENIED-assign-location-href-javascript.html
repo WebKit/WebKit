@@ -1,0 +1,16 @@
+<html>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.dumpChildFramesAsText();
+}
+
+function runTest() {
+  frames[0].location.href = 'javascript:3'; 
+}
+
+</script>
+<body onload="runTest()">
+<iframe src="http://localhost:8000/security/resources/localPage.html"></iframe>
+</body>
+</html>

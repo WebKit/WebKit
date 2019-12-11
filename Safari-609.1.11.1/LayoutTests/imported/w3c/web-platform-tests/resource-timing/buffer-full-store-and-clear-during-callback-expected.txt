@@ -1,0 +1,3 @@
+
+PASS Test that entries overflowing the buffer trigger the buffer full event, can be stored, and find themselves in the primary buffer after it's cleared. 
+

@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:49001/handshake_protocol' failed: Unexpected response code: 400
+
+PASS WebSockets: protocol in response but no requested protocol 
+

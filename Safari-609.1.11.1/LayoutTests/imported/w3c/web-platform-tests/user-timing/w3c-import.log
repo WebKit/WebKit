@@ -1,0 +1,36 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/user-timing/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/user-timing/clear_all_marks.any.js
+/LayoutTests/imported/w3c/web-platform-tests/user-timing/clear_all_measures.any.js
+/LayoutTests/imported/w3c/web-platform-tests/user-timing/clear_non_existent_mark.any.js
+/LayoutTests/imported/w3c/web-platform-tests/user-timing/clear_non_existent_measure.any.js
+/LayoutTests/imported/w3c/web-platform-tests/user-timing/clear_one_mark.any.js
+/LayoutTests/imported/w3c/web-platform-tests/user-timing/clear_one_measure.any.js
+/LayoutTests/imported/w3c/web-platform-tests/user-timing/entry_type.any.js
+/LayoutTests/imported/w3c/web-platform-tests/user-timing/idlharness.html
+/LayoutTests/imported/w3c/web-platform-tests/user-timing/invoke_with_timing_attributes.html
+/LayoutTests/imported/w3c/web-platform-tests/user-timing/invoke_with_timing_attributes.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/user-timing/invoke_without_parameter.html
+/LayoutTests/imported/w3c/web-platform-tests/user-timing/mark.any.js
+/LayoutTests/imported/w3c/web-platform-tests/user-timing/mark_exceptions.html
+/LayoutTests/imported/w3c/web-platform-tests/user-timing/measure.html
+/LayoutTests/imported/w3c/web-platform-tests/user-timing/measure_exceptions_navigation_timing.html
+/LayoutTests/imported/w3c/web-platform-tests/user-timing/measure_navigation_timing.html
+/LayoutTests/imported/w3c/web-platform-tests/user-timing/measure_syntax_err.any.js
+/LayoutTests/imported/w3c/web-platform-tests/user-timing/supported-usertiming-types.any.js
+/LayoutTests/imported/w3c/web-platform-tests/user-timing/user_timing_exists.any.js

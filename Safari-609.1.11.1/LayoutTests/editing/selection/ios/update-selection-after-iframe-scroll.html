@@ -1,0 +1,104 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true internal:AsyncFrameScrollingEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src='../../../resources/ui-helper.js'></script>
+<script src='../../../resources/basic-gestures.js'></script>
+<meta name=viewport content='width=device-width'>
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+#target {
+    width: 320px;
+    height: 160px;
+}
+</style>
+<script>
+
+jsTestIsAsync = true;
+function rectsAreEqual(rects, otherRects)
+{
+    if (rects.length != otherRects.length)
+        return false;
+
+    for (let i = 0; i < rects.length; ++i) {
+        if (rects[i].top != otherRects[i].top
+            || rects[i].left != otherRects[i].left
+            || rects[i].width != otherRects[i].width
+            || rects[i].height != otherRects[i].height)
+            return false;
+    }
+
+    return true;
+}
+
+async function waitForSelectionRectsToChange(fromRects)
+{
+    let rects = fromRects;
+    while (rectsAreEqual(rects, fromRects))
+        rects = await UIHelper.getUISelectionViewRects();
+    return rects;
+}
+
+addEventListener('load', async function() {
+    description('This test verifies that a selection in an iframe area is kept up to date after scrolling. To test manually, tap the frame and scroll the editable area down; the selection move to account for the new scroll position.');
+
+    const iframe = document.getElementById('scrollingiframe');
+
+    await UIHelper.activateElementAndWaitForInputSession(iframe);
+    selectionRectsBefore = await waitForSelectionRectsToChange([]);
+
+    await UIHelper.immediateScrollElementAtContentPointToOffset(100, 400, 0, 50);
+    selectionRectsAfter = await waitForSelectionRectsToChange(selectionRectsBefore);
+
+    shouldBe('selectionRectsBefore[0].top', '74');
+    shouldBe('selectionRectsBefore[0].width', '184');
+    shouldBe('selectionRectsBefore[0].left', '10');
+    shouldBe('selectionRectsBefore[0].height', '19');
+    shouldBe('selectionRectsBefore[1].top', '93');
+    shouldBe('selectionRectsBefore[1].width', '167');
+    shouldBe('selectionRectsBefore[1].left', '10');
+    shouldBe('selectionRectsBefore[1].height', '20');
+
+    shouldBe('selectionRectsAfter[0].top', '24');
+    shouldBe('selectionRectsAfter[0].width', '184');
+    shouldBe('selectionRectsAfter[0].left', '10');
+    shouldBe('selectionRectsAfter[0].height', '19');
+    shouldBe('selectionRectsAfter[1].top', '43');
+    shouldBe('selectionRectsAfter[1].width', '167');
+    shouldBe('selectionRectsAfter[1].left', '10');
+    shouldBe('selectionRectsAfter[1].height', '20');
+
+    finishJSTest();
+});
+</script>
+</head>
+
+<body>
+<iframe width="200" height="500" scrolling="yes" srcdoc="
+    <div id='editor' contenteditable>
+        <p>The quick brown fox jumped over the lazy dog.</p>
+        <p id='select-target'>The quick brown fox jumped over the lazy dog.</p>
+        <p>The quick brown fox jumped over the lazy dog.</p>
+        <p>The quick brown fox jumped over the lazy dog.</p>
+        <p>The quick brown fox jumped over the lazy dog.</p>
+        <p>The quick brown fox jumped over the lazy dog.</p>
+        <p>The quick brown fox jumped over the lazy dog.</p>
+        <p>The quick brown fox jumped over the lazy dog.</p>
+        <p>The quick brown fox jumped over the lazy dog.</p>
+    </div>
+    <script>
+        addEventListener('click', event => {
+        getSelection().selectAllChildren(document.getElementById('select-target'));
+        event.preventDefault();
+    });
+    </script>
+        " id="scrollingiframe"></iframe>
+<div id="description"></div>
+
+</body>
+</html>

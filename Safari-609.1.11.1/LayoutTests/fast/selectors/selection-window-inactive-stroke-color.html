@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<style>
+span { font-size: 3em; }
+::selection {
+    stroke-color: blue;
+    stroke-width: 2px;
+}
+::selection:window-inactive {
+    stroke-color: rgba(63, 128, 33, 0.95); /* green; alpha < 1 so that we don't blend the background color with white. */
+}
+</style>
+<span>Any textual selection in this sentence should have a green stroke color when the window is inactive.</span>
+<script>
+var span = document.querySelector("span");
+window.getSelection().setBaseAndExtent(span, 0, span, 1);
+if (window.testRunner)
+    testRunner.setWindowIsKey(false);
+</script>

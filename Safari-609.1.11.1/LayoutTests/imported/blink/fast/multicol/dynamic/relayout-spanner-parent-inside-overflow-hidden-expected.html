@@ -1,0 +1,7 @@
+<!DOCTYPE html>
+<p>Change the width of the parent of a spanner when inside a fixed-size clipped block. The spanner
+    should not be affected by this, since the parent isn't the containing block. This also tests
+    that we don't perform any optimized subtree layout operations incompatible with multicol (which
+    would typically cause assertion failures).</p>
+<p>You should see the word "PASS" below, with large letter spacing.</p>
+<div style="line-height:2em;">P A S S</div>

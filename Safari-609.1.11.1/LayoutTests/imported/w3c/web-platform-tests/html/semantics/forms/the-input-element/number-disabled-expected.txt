@@ -1,0 +1,4 @@
+ 
+
+PASS disabled works on number input regardless of appearance 
+

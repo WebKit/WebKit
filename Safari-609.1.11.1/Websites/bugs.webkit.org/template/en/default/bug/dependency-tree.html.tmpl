@@ -1,0 +1,261 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% filtered_desc = blocked_tree.$bugid.short_desc FILTER html %]
+[% PROCESS global/header.html.tmpl
+   title           = "Dependency tree for $terms.Bug $bugid"
+   header          = "Dependency tree for 
+                      <a href=\"show_bug.cgi?id=$bugid\">$terms.Bug $bugid</a>"
+   javascript_urls = ["js/expanding-tree.js"]
+   style_urls      = ['skins/standard/bug.css']
+   subheader       = filtered_desc
+   doc_section     = "using/understanding.html"
+%]
+
+[% PROCESS depthControlToolbar %]
+  
+[% INCLUDE tree_section ids=dependson_ids type=1 %]
+ 
+[% INCLUDE tree_section ids=blocked_ids type=2 %] 
+
+[% PROCESS depthControlToolbar %]
+
+[% PROCESS global/footer.html.tmpl %]
+
+[%###########################################################################%]
+[%# Tree-drawing blocks                                                     #%]
+[%###########################################################################%]
+
+[% BLOCK tree_section %]
+  [%# INTERFACE
+    #   - ids: a list of bug IDs to be displayed as children
+    #   - type: the type of tree. 1 = depends on, 2 = blockeds
+    # GLOBALS
+    #   - seen: Maintains a global hash of bugs that have been displayed
+    #%]
+  [% global.seen = {} %]
+  [%# Display the tree of bugs that this bug depends on. %]
+  <h3>
+    <a href="show_bug.cgi?id=[% bugid %]">[% terms.Bug %] [%+ bugid %]</a> 
+    [% IF type == 1 %]
+        [% tree_name = "dependson_tree" %]
+        [% IF ids.size %]
+            depends on 
+        [% ELSE %]
+            does not depend on any [% 'open ' IF hide_resolved %][% terms.bugs %].
+        [% END %]
+    [% ELSIF type == 2 %]
+        [% tree_name = "blocked_tree" %]
+        [% IF ids.size %] 
+            blocks 
+        [% ELSE %]
+            does not block any [% 'open ' IF hide_resolved %][% terms.bugs %].
+        [% END %]
+    [% END %]
+    [% IF ids.size %]
+        [%+ (ids.size == 1) ? "one" : ids.size %]
+        [%+ IF hide_resolved %]open[% END %]
+        [%+ (ids.size == 1) ? terms.bug : terms.bugs %]:
+    [% END %] 
+  </h3>
+  [% IF ids.size %]
+    [%# 27 chars is the length of buglist.cgi?tweak=&bug_id=" %]
+    [% use_post = (ids.join(",").length > constants.CGI_URI_LIMIT - 27 ) ? 1 : 0 %]
+    [% IF use_post %]
+      <form action="buglist.cgi" method="post">
+      <input type="hidden" name="bug_id" value="[% ids.join(",") %]">
+    [% END %]
+
+    [% IF maxdepth -%]Up to [% maxdepth %] level[% "s" IF maxdepth > 1 %] deep | [% END -%]
+    [% IF use_post %]
+      <button>view as [% terms.bug %] list</button>
+      [% IF user.in_group('editbugs') && ids.size > 1 %]
+        | <button type="submit" name="tweak" value="1">change several</button>
+      [% END %]
+      </form>
+    [% ELSE %]
+      <a href="buglist.cgi?bug_id=[% ids.join(",") %]">view as [% terms.bug %] list</a>
+      [% IF user.in_group('editbugs') && ids.size > 1 %]
+        | <a href="buglist.cgi?bug_id=[% ids.join(",") %]&amp;tweak=1">change several</a>
+      [% END %]
+    [% END %]
+
+    <ul class="tree">
+      [% INCLUDE display_tree tree=$tree_name %]
+    </ul>
+  [% END %]
+[% END %]
+
+
+[% BLOCK display_tree %]
+  [%# INTERFACE
+    #   - bugid: the ID of the bug being displayed
+    #   - tree: a hash of bug objects and of bug dependencies
+    #%]
+  [% bug = tree.$bugid %]
+  <li>
+    [%- INCLUDE bullet bugid=bugid tree=tree -%]
+    <span class="summ[% "_deep" IF tree.dependencies.$bugid.size %]" 
+          id="[% bugid FILTER html %]" 
+          [% IF global.seen.$bugid %]
+            onMouseover="duplicatedover('[% bugid FILTER html %]')"
+            onMouseout="duplicatedout('[% bugid FILTER html %]')"
+          [% END %]>
+      [%- INCLUDE buglink bug=bug bugid=bugid %]
+    </span>
+    [% IF global.seen.$bugid %]
+      <b><a title="Already displayed above; click to locate"
+            onclick="duplicated('[% bugid FILTER html %]')"
+            href="#b[% bugid %]">(*)</a></b>
+    [% ELSIF tree.dependencies.$bugid.size %]
+      <ul>
+        [% FOREACH depid = tree.dependencies.$bugid %]
+          [% INCLUDE display_tree bugid=depid %]
+        [% END %]
+      </ul>
+    [% END %]
+  </li>
+  [% global.seen.$bugid = 1 %]
+[% END %]
+
+[% BLOCK bullet %]
+  [% IF tree.dependencies.$bugid.size && ! global.seen.$bugid %]
+    [% extra_class = " b_open" %]
+    [% extra_args = 'onclick="return doToggle(this, event)"' %] 
+  [% END %]
+  <a id="b[% bugid %]" 
+     class="b [%+ extra_class FILTER none %]"
+     title="Click to expand or contract this portion of the tree. Hold down the Ctrl key while clicking to expand or contract all subtrees."
+     [% extra_args FILTER none %]>&nbsp;&nbsp;</a>
+[% END %]
+
+[% BLOCK buglink %]
+  [% isclosed = !bug.isopened %]
+  [% FILTER closed(isclosed) -%]
+    <a title="[% INCLUDE buginfo bug=bug %]"
+       href="show_bug.cgi?id=[% bugid %]">
+      <b>[%- bugid %]:</b>
+      <span class="summ_text">[%+ bug.short_desc FILTER html %]</span>
+      <span class="summ_info">[[% INCLUDE buginfo %]]</span>
+    </a>
+    <a href="showdependencytree.cgi?id=[% bugid FILTER uri %]"
+       class="tree_link">
+      <img src="skins/standard/dependency-tree/tree.png"
+           title="See dependency tree for [% terms.bug %] [%+ bugid FILTER html %]">
+    </a>
+  [% END %]
+[% END %]
+
+[% BLOCK buginfo %]
+  [% display_value("bug_status", bug.bug_status) FILTER html -%]
+  [%- IF bug.resolution %] [%+ display_value("resolution", bug.resolution) FILTER html %][% END %];
+  [%-%] assigned to [% bug.assigned_to.login FILTER email FILTER html %]
+  [% IF Param("usetargetmilestone") AND bug.target_milestone %]
+    [%-%]; target: [% bug.target_milestone FILTER html %]
+  [% END %]
+[% END %]
+
+[%###########################################################################%]
+[%# Block for depth control toolbar                                         #%]
+[%###########################################################################%]
+
+[% BLOCK depthControlToolbar %]
+ <table class="dependency_tree_controls">
+   <tr>
+   [%# Hide/show resolved button
+       Swaps text depending on the state of hide_resolved %]
+   <td>
+   <form method="get" action="showdependencytree.cgi">
+     <input name="id" type="hidden" value="[% bugid %]">
+     [% IF maxdepth %]
+       <input name="maxdepth" type="hidden" value="[% maxdepth %]">
+     [% END %]
+     <input type="hidden" name="hide_resolved" value="[% hide_resolved ? 0 : 1 %]">
+     <input type="submit" id="toggle_visibility"
+            value="[% IF hide_resolved %]Show[% ELSE %]Hide[% END %] Resolved">
+   </form>
+   </td>
+
+   <td>
+     Max Depth:
+   </td>
+
+   <td>
+     &nbsp;
+   </td>
+
+   <td>
+   <form method="get" action="showdependencytree.cgi">
+     [%# set to one form %]
+     <input type="submit" id="change_maxdepth" value="1"
+       [% "disabled" IF realdepth < 2 || maxdepth == 1 %]>
+     <input name="id" type="hidden" value="[% bugid %]">
+     <input name="maxdepth" type="hidden" value="1">
+     <input name="hide_resolved" type="hidden" value="[% hide_resolved %]">
+   </form>
+   </td>
+
+   <td>
+   <form method="get" action="showdependencytree.cgi">
+     [%# Minus one form
+         Allow subtracting only when realdepth and maxdepth > 1 %]
+     <input name="id" type="hidden" value="[% bugid %]">
+     <input name="maxdepth" type="hidden" value="[%
+         maxdepth == 1 ? 1
+                       : ( maxdepth ? maxdepth - 1 : realdepth - 1 )
+     %]">
+     <input name="hide_resolved" type="hidden" value="[% hide_resolved %]">
+     <input type="submit" id="decrease_depth" value="&lt;"
+       [% "disabled" IF realdepth < 2 || ( maxdepth && maxdepth < 2 ) %]>
+   </form>
+   </td>
+
+   <td>
+   <form method="get" action="showdependencytree.cgi">
+     [%# Limit entry form: the button cannot do anything when total depth
+         is less than two, so disable it %]
+     <input name="maxdepth" size="4" maxlength="4" value="[%
+         maxdepth > 0 && maxdepth <= realdepth ? maxdepth : ""
+     %]">
+     <input name="id" type="hidden" value="[% bugid %]">
+     <input name="hide_resolved" type="hidden" value="[% hide_resolved %]">
+     <noscript>
+       <input type="submit" id="change_depth" value="Change"
+              [% "disabled" IF realdepth < 2 %]>
+     </noscript>
+   </form>
+   </td>
+
+   <td>
+   <form method="get" action="showdependencytree.cgi">
+     [%# plus one form
+         Disable button if total depth < 2, or if depth set to unlimited %]
+     <input name="id" type="hidden" value="[% bugid %]">
+     [% IF maxdepth %]
+       <input name="maxdepth" type="hidden" value="[% maxdepth + 1 %]">
+     [% END %]
+     <input name="hide_resolved" type="hidden" value="[% hide_resolved %]">
+     <input type="submit" id="increase_depth" value="&gt;"
+        [% "disabled" IF realdepth < 2 || !maxdepth || maxdepth >= realdepth %]>
+   </form>
+   </td>
+
+   <td>
+   <form method="get" action="showdependencytree.cgi">
+     [%# Unlimited button %]
+     <input name="id" type="hidden" value="[% bugid %]">
+     <input name="hide_resolved" type="hidden" value="[% hide_resolved %]">
+     <input type="submit" id="remove_limit"
+       value="Unlimited"
+       [% "disabled" IF maxdepth == 0 || maxdepth == realdepth %]>
+   </form>
+   </td>
+ </tr>
+</table>
+
+[% END %]

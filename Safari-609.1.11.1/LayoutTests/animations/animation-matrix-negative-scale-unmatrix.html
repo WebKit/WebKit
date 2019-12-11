@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+    <head>
+        <!--
+        This test performs an animation of the matrix operator. The matrix is defined so that the
+        decomposition (unmatrix) algorithm is tested on the path where the matrix is negated and the
+        the scaling factors are also negated.
+        The animation is started and a snapshot is taken after start. The "d" component of matrix
+        should be negative.
+        -->
+        <style type="text/css" media="screen">
+            #box {
+                width: 100px;
+                height: 100px;
+                background-color: blue;
+                -webkit-animation-duration: 1s;
+            }
+
+            @-webkit-keyframes anim {
+                from { -webkit-transform: matrix(1, 0, 0, -1, 0, 0); }
+                to { -webkit-transform: matrix(1, 0, 0, 1, 0, 0); }
+            }
+        </style>
+        <script type="text/javascript" charset="utf-8">
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+
+            result = "PASS";
+
+            function snapshot()
+            {
+                var boxComputedStyle = window.getComputedStyle(document.getElementById('box'));
+                var matrix = new WebKitCSSMatrix(boxComputedStyle.webkitTransform);
+
+                // "d" component (scaleY) should be negative.
+                if (matrix["d"] > 0)
+                    result = "FAIL(scaleY was positive, expected to be negative)";
+
+                document.getElementById('result').innerHTML = result;
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
+
+            function startAnimation()
+            {
+                document.getElementById("box").style.webkitAnimationName = "anim";
+            }
+
+            document.addEventListener('webkitAnimationStart', snapshot, false);
+        </script>
+    </head>
+    <body>
+        <div id="box"></div>
+        <div id="result"></div>
+        <script>
+            startAnimation();
+        </script>
+    </body>
+</html>

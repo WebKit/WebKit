@@ -1,0 +1,24 @@
+<html>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function runTest()
+{
+    document.write("PASS");
+    
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function select()
+{
+    document.execCommand("SelectAll");
+}
+
+window.addEventListener("selectstart", runTest, true);
+window.setInterval(select, 0);
+</script>
+</html>

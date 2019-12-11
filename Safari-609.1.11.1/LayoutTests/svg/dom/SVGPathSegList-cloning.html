@@ -1,0 +1,54 @@
+<html>
+<head>
+    <style type="text/css">
+      .cls1 {
+        stroke: black;
+        fill: rgb(0,128,255);
+        stroke-width: 1;
+      }
+    </style>
+
+<script type="text/javascript">
+function setup() {
+ var SHOW_BUG = true;
+ 
+ var SVGNS = 'http://www.w3.org/2000/svg';
+ var svg = document.createElementNS(SVGNS, "svg");
+ svg.width.baseVal.valueAsString = "400px";
+ svg.height.baseVal.valueAsString = "400px";
+ svg.viewBox.baseVal.x = 0;
+ svg.viewBox.baseVal.y = 0;
+ svg.viewBox.baseVal.width = 200;
+ svg.viewBox.baseVal.height = 90;
+ 
+ var path1 = document.createElementNS(SVGNS, "path");
+ if (SHOW_BUG) {
+     path1.pathSegList.appendItem(path1.createSVGPathSegMovetoAbs(10, 10));
+     path1.pathSegList.appendItem(path1.createSVGPathSegLinetoAbs(25, 15));
+     path1.pathSegList.appendItem(path1.createSVGPathSegLinetoAbs(110, 75));
+     path1.pathSegList.appendItem(path1.createSVGPathSegLinetoAbs(120, 90));
+     path1.pathSegList.appendItem(path1.createSVGPathSegLinetoAbs(42, 42));
+     path1.pathSegList.appendItem(path1.createSVGPathSegClosePath());
+ } else {
+     path1.setAttributeNS(null, 'd', "M 10 10 L 25 15 L 110 75 L 120 90 L 42 42 Z");
+ }
+ 
+ path1.style.setProperty("stroke", "black", "");
+ path1.style.setProperty("fill", "red", "");
+ var path2 = path1.cloneNode(true);
+ path2.setAttributeNS(null, 'transform', "translate(75, 0)");
+ 
+ var drawing = document.getElementById("drawing");
+ svg.appendChild(path1);
+ svg.appendChild(path2);
+ drawing.appendChild(svg);
+}
+</script>
+</head>
+<body onload="setup()">
+<p>Below is a JavaScript-generated svg drawing. You should see two red blobs: the left, a programmatically generated path and the right, its clone.</p>
+<div id="drawing"></div>
+</body>
+</html>
+
+

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <script>
+        description("Testing Page::isPlayingAudio() with web audio");
+
+        jsTestIsAsync = true;
+
+        if (window.internals)
+            shouldBeFalse("window.internals.pageMediaState().includes('IsPlayingAudio')");
+
+        var context = new webkitAudioContext();
+        var frequency = 300;
+        var oscillator = context.createOscillator();
+
+        if (window.internals)
+            shouldBeFalse("window.internals.pageMediaState().includes('IsPlayingAudio')");
+
+        oscillator.frequency.value = frequency;
+        oscillator.type = 0;
+        oscillator.connect(context.destination);
+        oscillator.start(0);
+
+        shouldBecomeEqual("window.internals.pageMediaState().includes('IsPlayingAudio')", "true", finishJSTest);
+    </script>
+    <script src="../resources/js-test-post.js"></script>
+</body>
+</html>

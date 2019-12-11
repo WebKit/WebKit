@@ -1,0 +1,8 @@
+Common tests for Canvas.updateShader command.
+
+
+== Running test suite: Canvas.updateShader
+-- Running test case: Canvas.updateShader.ProgramId.Invalid
+PASS: Should produce an error.
+Error: Missing program for given programId
+

@@ -1,0 +1,10 @@
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../resources/webgl_test_files/conformance/context/context-no-alpha-fbo-with-alpha.html
+[ 1: PASS ] gl = getWebGL({ alpha: false, antialias: false }) is non-null.
+[ 2: FAIL ] Alpha channel of clearColor should be ignored at (0, 0) expected: 0,0,0,255 was 0,0,0,179
+[ 3: PASS ] Alpha channel of clearColor should be obeyed for FBO with alpha channel
+[ 4: FAIL ] Alpha channel of back buffer should still be 255 at (0, 0) expected: 0,0,0,255 was 0,0,0,0
+[ 5: PASS ] successfullyParsed is true
+[ FAIL ] 2 failures reported
+

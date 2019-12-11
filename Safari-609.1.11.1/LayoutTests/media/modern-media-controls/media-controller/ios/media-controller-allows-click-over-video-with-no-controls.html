@@ -1,0 +1,29 @@
+<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../resources/media-controls-utils.js" type="text/javascript"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<body>
+<video src="../../../content/test.mp4" style="width: 320px; position: absolute; left: 0; top: 0;" type="video/mp4" playsinline muted controls></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing that a click event is correctly dispatched when tapping over a &lt;video> element with default controls disabled after being originally enabled.");
+
+const media = document.querySelector("video");
+
+media.addEventListener("click", event => {
+    debug("Obtained click event.");
+    debug("");
+    finishJSTest();
+});
+
+media.addEventListener("loadedmetadata", event => {
+    debug("Media loaded, disabling controls.");
+    media.controls = false;
+    debug("Tapping on media.");
+    pressOnElement(media);
+});
+
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>

@@ -1,0 +1,53 @@
+Test that HTMLSelectElement.add() works when passing an index or an HTML option element as its second argument.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Call HTMLSelectElement.add() with zero arguments:
+PASS testAdd() threw exception TypeError: Not enough arguments.
+
+Call HTMLSelectElement.add() with one argument:
+PASS testAdd(createOption("Y1")) is "0,1,2,Y1"
+PASS testAdd("foo") threw exception TypeError: Type error.
+PASS testAdd(undefined) threw exception TypeError: Type error.
+PASS testAdd(null) threw exception TypeError: Type error.
+
+Call HTMLSelectElement.add() with two arguments:
+PASS testAdd(createOption("Y2"), null) is "0,1,2,Y2"
+PASS testAdd(createOption("Y3"), 0) is "Y3,0,1,2"
+PASS testAdd(createOption("Y4"), 1) is "0,Y4,1,2"
+PASS testAdd(createOption("Y5"), 2) is "0,1,Y5,2"
+PASS testAdd(createOption("Y6"), 3) is "0,1,2,Y6"
+PASS testAdd(createOption("Y7"), 100) is "0,1,2,Y7"
+PASS testAdd(createOption("Y8"), -100) is "0,1,2,Y8"
+PASS testAdd(createOption("Y9"), "0") is "Y9,0,1,2"
+PASS testAdd(createOption("Y10"), "1") is "0,Y10,1,2"
+PASS testAdd(createOption("Y11"), "2") is "0,1,Y11,2"
+PASS testAdd(createOption("Y12"), true) is "0,Y12,1,2"
+PASS testAdd(createOption("Y13"), false) is "Y13,0,1,2"
+PASS testAdd(createOption("Y14"), 2147483647) is "0,1,2,Y14"
+PASS testAdd(createOption("Y15"), 2147483648) is "0,1,2,Y15"
+PASS testAdd(createOption("Y16"), -2147483647) is "0,1,2,Y16"
+PASS testAdd(createOption("Y17"), -2147483648) is "0,1,2,Y17"
+PASS testAdd(createOption("Y18"), -2147483649) is "0,1,2,Y18"
+PASS testAdd(createOption("Y19"), Infinity) is "Y19,0,1,2"
+PASS testAdd(createOption("Y20"), -Infinity) is "Y20,0,1,2"
+PASS testAdd(createOption("Y21"), "foo") is "Y21,0,1,2"
+PASS testAdd(createOption("Y22"), NaN) is "Y22,0,1,2"
+PASS testAdd(createOption("Y23"), undefined) is "0,1,2,Y23"
+PASS testAdd(createOption("Y24"), -2) is "0,1,2,Y24"
+PASS testAdd(createOption("X"), mySelect.options[0]) is "X,0,1,2"
+PASS testAdd(createOption("X"), mySelect.options[1]) is "0,X,1,2"
+PASS testAdd(createOption("X"), mySelect.options[2]) is "0,1,X,2"
+PASS testAdd("foo", 0) threw exception TypeError: Type error.
+PASS testAdd(undefined, 0) threw exception TypeError: Type error.
+PASS testAdd(null, 0) threw exception TypeError: Type error.
+
+Call HTMLSelectElement.add() with three arguments (when it only takes two arguments):
+PASS testAdd(createOption("X"), 0, "unnecessary extra argument - should be ignored") is "X,0,1,2"
+PASS testAdd(createOption("X"), mySelect.options[1], "unnecessary extra argument - should be ignored") is "0,X,1,2"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

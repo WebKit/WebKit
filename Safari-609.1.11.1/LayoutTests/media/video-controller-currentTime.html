@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            function start()
+            {
+                findMediaElement();
+                video.src = findMediaFile("video", "content/test");
+                waitForEventOnce('canplaythrough', canPlayThrough);
+            }
+
+            function canPlayThrough()
+            {
+                testDOMException("video.currentTime = 3", "DOMException.INVALID_STATE_ERR");
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <video mediaGroup="group" controls></video>
+        <p>Test that seeking video with media controller throws invalid state exception.</p>
+    </body>
+</html>

@@ -1,0 +1,17 @@
+<html>
+    <head>
+        <title>Loading WebKit...</title>
+        <meta http-equiv="refresh" content="1;URL=https://webkit.org/nightly/start/">
+        <script type="text/javascript">
+            var script = document.createElement('script');
+            script.src = "x-webkit-launcher:webkit-version-information.js";
+            script.onload = function() {
+                if (webKitBranch && webKitRevision)
+                    document.location = "https://webkit.org/nightly/start/" + webKitBranch + "/" + webKitRevision;
+            }
+            document.documentElement.appendChild(script);
+        </script>
+    </head>
+    <body>
+    </body>
+</html>

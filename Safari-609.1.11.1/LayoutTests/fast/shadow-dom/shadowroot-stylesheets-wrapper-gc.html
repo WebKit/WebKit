@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/gc.js"></script>
+<p>This tests that StyleSheetList of a shadow root does not get collected as long as the shadow root is alive.</p>
+<pre><script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function createShadow() {
+    const host = document.createElement('div');
+    const shadowRoot = host.attachShadow({mode: 'closed'});
+    shadowRoot.styleSheets.alive = true;
+    return shadowRoot;
+}
+
+for (let i = 0; i < 10; i++) {
+    const shadowRoot = createShadow();
+    gc();
+    document.write(shadowRoot.styleSheets.alive ? 'PASS' : 'FAIL - styleSheets got collected');
+    document.write('<br>');
+}
+
+</script></pre>
+</body>
+</html>

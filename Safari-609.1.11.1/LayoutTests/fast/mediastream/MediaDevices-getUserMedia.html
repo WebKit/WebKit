@@ -1,0 +1,184 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <p id="description"></p>
+        <div id="console"></div>
+        <script>
+            description("Tests getUserMedia (Promise-based version on navigator.mediaDevices)");
+
+            function setUserMediaPermission(isGranted) {
+                if (window.testRunner)
+                    testRunner.setUserMediaPermission(isGranted);
+                else
+                    debug("This test can not be run without the testRunner");
+            }
+
+            var stream;
+            var errorArg;
+
+            let audioConstraints;
+            let videoConstraints;
+
+            function invalidGotStream() {
+                testFailed("Stream generated when an error should have occurred.");
+                finishJSTest();
+            }
+
+            function error1(e) {
+                testFailed(`Error callback called, error = ${e}`);
+                finishJSTest();
+            }
+
+            function errorWithConstraints2(e) {
+                testPassed("Error callback called.");
+                errorArg = e;
+                shouldBeEqualToString("errorArg.name", "OverconstrainedError");
+
+                finishJSTest();
+            }
+
+            function errorWithConstraints1() {
+                testPassed("Error callback called.");
+
+                videoConstraints = {
+                    width: {
+                        max: -1,
+                        ideal: 2
+                    },
+                    height: 11
+                };
+                debug("");
+                shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:false, video:videoConstraints}).then(invalidGotStream).catch(errorWithConstraints2)");
+            }
+
+            function gotStreamWithConstraints3(s) {
+                stream = s;
+                testPassed("Stream 7 generated.");
+
+                shouldBeEqualToString("stream.getVideoTracks()[0].getSettings().facingMode", "user");
+                shouldBe("stream.getAudioTracks().length", "0");
+
+                audioConstraints = {
+                    sampleRate: {
+                        min: .6,
+                        max: .5,
+                        ideal: 1.0
+                    },
+                    sampleRate: {
+                        exact: 88000
+                    }
+                };
+                debug("");
+                shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:audioConstraints, video:false}).then(invalidGotStream).catch(errorWithConstraints1)");
+            }
+
+            function gotStreamWithConstraints2(s) {
+                stream = s;
+                testPassed("Stream 6 generated.");
+
+                shouldBe("stream.getAudioTracks().length", "0");
+                shouldBe("stream.getVideoTracks().length", "1");
+
+                videoConstraints = {
+                    facingMode: {
+                        exact: ['user']
+                    },
+                };
+                debug("");
+                shouldNotThrow("navigator.mediaDevices.getUserMedia({video:videoConstraints}).then(gotStreamWithConstraints3).catch(error1)");
+            }
+
+            function gotStreamWithConstraints1(s) {
+                stream = s;
+                testPassed("Stream 5 generated.");
+
+                shouldBe("stream.getAudioTracks().length", "1");
+                shouldBe("stream.getVideoTracks().length", "0");
+
+                videoConstraints = {
+                    width: {
+                        min: 160,
+                        max: 960,
+                        ideal: 320
+                    },
+                    height: 240,
+                    facingMode: {
+                        exact: ['environment']
+                    }
+                };
+                debug("");
+                shouldNotThrow("navigator.mediaDevices.getUserMedia({video:videoConstraints}).then(gotStreamWithConstraints2)");
+            }
+
+            function gotStream4(s) {
+                stream = s;
+                testPassed("Stream 4 generated.");
+                shouldBe("stream.getAudioTracks().length", "1");
+                shouldBe("stream.getVideoTracks().length", "1");
+
+                audioConstraints = {
+                    sampleRate: {
+                        min: 44100,
+                        exact: 44100,
+                        max: 48000,
+                        ideal: 44100
+                    },
+                    sampleSize: 11
+                };
+                debug("");
+                shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:audioConstraints}).then(gotStreamWithConstraints1)");
+            }
+
+            function gotStream3(s) {
+                stream = s;
+                testPassed("Stream 3 generated.");
+                shouldBe("stream.getAudioTracks().length", "1");
+                shouldBe("stream.getVideoTracks().length", "1");
+
+                debug("");
+                shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:{}, video:{}}).then(gotStream4);");
+            }
+
+            function gotStream2(s) {
+                stream = s;
+                testPassed("Stream 2 generated.");
+                shouldBe("stream.getAudioTracks().length", "0");
+                shouldBe("stream.getVideoTracks().length", "1");
+
+                debug("");
+                shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(gotStream3);");
+            }
+
+            function gotStream1(s) {
+                stream = s;
+                testPassed("Stream 1 generated.");
+                shouldBe("stream.getAudioTracks().length", "1");
+                shouldBe("stream.getVideoTracks().length", "0");
+
+                debug("");
+                shouldNotThrow("navigator.mediaDevices.getUserMedia({video:true}).then(gotStream2);")
+            }
+
+            navigator.mediaDevices.getUserMedia().then(invalidGotStream, function(error) {
+                testPassed("navigator.mediaDevices.getUserMedia() rejected with error: " + error);
+            });
+            navigator.mediaDevices.getUserMedia({}).then(invalidGotStream, function(error) {
+                testPassed("navigator.mediaDevices.getUserMedia({}) rejected with error: " + error);
+            });
+            shouldBe("typeof navigator.mediaDevices.webkitGetUserMedia", "'undefined'");
+            setUserMediaPermission(true);
+            debug("");
+            shouldNotThrow("navigator.mediaDevices.getUserMedia({audio:true}).then(gotStream1);");
+            navigator.mediaDevices.getUserMedia.apply(undefined, {audio:true}).then(invalidGotStream, function(error) {
+                 testPassed("navigator.mediaDevices.getUserMedia.apply(undefined) rejected with error: " + error);
+            });
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

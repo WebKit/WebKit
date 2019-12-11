@@ -1,0 +1,36 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+
+function load()
+{
+    var frame = document.createElement("iframe");
+    frame.src = "resources/blank.html";
+    document.body.appendChild(frame);
+}
+
+function test()
+{
+    InspectorProtocol.eventHandler["Page.frameStartedLoading"] = onStart;
+    InspectorProtocol.eventHandler["Page.frameStoppedLoading"] = onStop;
+    InspectorProtocol.sendCommand("Page.enable", {});
+
+    function onStart()
+    {
+        ProtocolTest.log("Started loading");
+    }
+    function onStop()
+    {
+        ProtocolTest.log("Stopped loading");
+        ProtocolTest.completeTest();
+    }
+
+    InspectorProtocol.sendCommand("Runtime.evaluate", { "expression": "load()" });
+}
+
+</script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

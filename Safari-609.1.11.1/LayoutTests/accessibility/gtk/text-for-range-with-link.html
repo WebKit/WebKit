@@ -1,0 +1,25 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<p id="content">A paragraph with <a href='http://webkit.org'>a link</a> in the middle</p>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests the ability to get element text for a specified range.");
+    if (window.accessibilityController) {
+        document.getElementById("body").focus();
+        var webArea = accessibilityController.focusedElement;
+
+        var paragraph = webArea.childAtIndex(0);
+        shouldBe("paragraph.stringForRange(0, -1)", "'A paragraph with a link in the middle'");
+
+        var link = paragraph.childAtIndex(0);
+        shouldBe("link.stringForRange(0, -1)", "'a link'");
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+This test that progress events are fired for XMLHttpRequestUpload objects.
+
+PASS: onprogress event fired on XMLHttpRequestUpload.
+onprogress: [object XMLHttpRequestProgressEvent] [Loaded: 4 Total: 4]
+

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { weight: '100 200' })).weight", "100 200");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { weight: 'a100 200' })).weight");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { weight: '100a 200' })).weight");
+shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { weight: '100   200' })).weight", "100 200");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { weight: '100 a 200' })).weight");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { weight: '100 a200' })).weight");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { weight: '100 200a' })).weight");
+shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { weight: '50 150' })).weight", "50 150");
+shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { weight: '2 3' })).weight", "2 3");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { weight: '-3 -2' })).weight");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { weight: '5 4' })).weight");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { weight: '100 200 3' })).weight");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { weight: '100 200 a' })).weight");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { weight: '-3' })).weight");
+
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { stretch: 'semi-expanded expanded' })).stretch");
+shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { stretch: '100% 200%' })).stretch", "100% 200%");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { stretch: 'a100% 200%' })).stretch");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { stretch: '100%a 200%' })).stretch");
+shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { stretch: '100%   200%' })).stretch", "100% 200%");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { stretch: '100% a 200%' })).stretch");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { stretch: '100% a200%' })).stretch");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { stretch: '100% 200%a' })).stretch");
+shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { stretch: '50% 60%' })).stretch", "50% 60%");
+shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { stretch: '2% 3%' })).stretch", "2% 3%");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { stretch: '-3% -2%' })).stretch");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { stretch: '5% 4%' })).stretch");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { stretch: '100% 200% 3%' })).stretch");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { stretch: '100% 200% a' })).stretch");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { stretch: '-3%' })).stretch");
+
+shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { style: 'oblique 10deg 20deg' })).style", "oblique 10deg 20deg");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { style: 'oblique a10deg 20deg' })).style");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { style: 'oblique 10dega 20deg' })).style");
+shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { style: 'oblique 10deg  20deg' })).style", "oblique 10deg 20deg");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { style: 'oblique 10deg a 20deg' })).style");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { style: 'oblique 10deg a20deg' })).style");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { style: 'oblique 10deg 20dega' })).style");
+shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { style: 'oblique 50deg 60deg' })).style", "oblique 50deg 60deg");
+shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { style: 'oblique 2deg 3deg' })).style", "oblique 2deg 3deg");
+shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { style: 'oblique -3deg -2deg' })).style", "oblique -3deg -2deg");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { style: 'oblique 5deg 4deg' })).style");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { style: 'oblique 10deg 20deg 3deg' })).style");
+shouldThrow("(new FontFace('asdf', 'url(notreal)', { style: 'oblique 10deg 20deg a' })).style");
+shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { style: 'oblique -3deg' })).style", "oblique -3deg");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

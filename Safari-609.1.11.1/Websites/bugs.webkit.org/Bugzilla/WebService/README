@@ -1,0 +1,18 @@
+The class structure of these files is a little strange, and this README
+explains it.
+
+Our goal is to make JSON::RPC and XMLRPC::Lite both work with the same code.
+(That is, we want to have one WebService API, and have two frontends for it.)
+
+The problem is that these both pass different things for $self to WebService
+methods.
+
+When XMLRPC::Lite calls a method, $self is the name of the *class* the 
+method is in. For example, if we call Bugzilla.version(), the first argument
+is Bugzilla::WebService::Bugzilla. So in order to have $self
+(our first argument) act correctly in XML-RPC, we make all WebService
+classes use parent qw(Bugzilla::WebService). 
+
+When JSON::RPC calls a method, $self is the JSON-RPC *server object*. In other
+words, it's an instance of Bugzilla::WebService::Server::JSONRPC. So we have
+Bugzilla::WebService::Server::JSONRPC inherit from Bugzilla::WebService.

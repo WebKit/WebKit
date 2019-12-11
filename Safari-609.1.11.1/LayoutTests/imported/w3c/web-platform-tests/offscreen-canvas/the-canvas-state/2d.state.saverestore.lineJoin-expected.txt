@@ -1,0 +1,7 @@
+2d.state.saverestore.lineJoin
+
+save()/restore() works for lineJoin
+
+
+FAIL save()/restore() works for lineJoin null is not an object (evaluating 'ctx.lineJoin')
+

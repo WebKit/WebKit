@@ -1,0 +1,12 @@
+<script>
+window.onmessage = function (event) {
+    var msg = event.data;
+
+    if (msg.consumeInFrame &&
+        msg.count >= msg.consumeIndex &&
+        window.open("about:blank", Math.random()))
+        msg.consumeCount++;
+
+    event.source.postMessage(msg, "*");
+}
+</script>

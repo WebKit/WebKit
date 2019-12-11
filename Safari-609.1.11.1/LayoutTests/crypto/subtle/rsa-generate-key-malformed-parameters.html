@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test generating an RSA key with malformed-paramters.");
+
+jsTestIsAsync = true;
+
+var extractable = true;
+var publicExponent = new Uint8Array([0x01, 0x00, 0x01]);
+
+// Malformed AlgorithmIdentifiers
+shouldReject('crypto.subtle.generateKey("RSAES-PKCS1-v1_5", extractable, ["encrypt", "decrypt"])');
+shouldReject('crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5"}, extractable, ["encrypt", "decrypt"])');
+shouldReject('crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: undefined, publicExponent: publicExponent}, extractable, ["encrypt", "decrypt"])');
+shouldReject('crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: Symbol(), publicExponent: publicExponent}, extractable, ["encrypt", "decrypt"])');
+shouldReject('crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: 1}, extractable, ["encrypt", "decrypt"])');
+shouldReject('crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: true}, extractable, ["encrypt", "decrypt"])');
+shouldReject('crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: null}, extractable, ["encrypt", "decrypt"])');
+shouldReject('crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: undefined}, extractable, ["encrypt", "decrypt"])');
+shouldReject('crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: { }}, extractable, ["encrypt", "decrypt"])');
+shouldReject('crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: Symbol()}, extractable, ["encrypt", "decrypt"])');
+shouldReject('crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: "foo"}, extractable, ["encrypt", "decrypt"])');
+shouldReject('crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: [ ]}, extractable, ["encrypt", "decrypt"])');
+// Missing hash
+shouldReject('crypto.subtle.generateKey({name: "RSASSA-PKCS1-v1_5", modulusLength: 2048, publicExponent: publicExponent}, extractable, ["sign", "verify"])');
+shouldReject('crypto.subtle.generateKey({name: "RSA-OAEP", modulusLength: 2048, publicExponent: publicExponent}, extractable, ["decrypt", "encrypt"])');
+// Wrong usages
+shouldReject('crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: publicExponent}, extractable, ["sign"])');
+shouldReject('crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: publicExponent}, extractable, ["verify"])');
+shouldReject('crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: publicExponent}, extractable, ["deriveKey"])');
+shouldReject('crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: publicExponent}, extractable, ["deriveBits"])');
+shouldReject('crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: publicExponent}, extractable, ["wrapKey"])');
+shouldReject('crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: publicExponent}, extractable, ["unwrapKey"])');
+shouldReject('crypto.subtle.generateKey({name: "RSASSA-PKCS1-v1_5", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["encrypt"])');
+shouldReject('crypto.subtle.generateKey({name: "RSASSA-PKCS1-v1_5", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["decrypt"])');
+shouldReject('crypto.subtle.generateKey({name: "RSASSA-PKCS1-v1_5", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["deriveKey"])');
+shouldReject('crypto.subtle.generateKey({name: "RSASSA-PKCS1-v1_5", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["deriveBits"])');
+shouldReject('crypto.subtle.generateKey({name: "RSASSA-PKCS1-v1_5", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["wrapKey"])');
+shouldReject('crypto.subtle.generateKey({name: "RSASSA-PKCS1-v1_5", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["unwrapKey"])');
+shouldReject('crypto.subtle.generateKey({name: "RSA-OAEP", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["sign"])');
+shouldReject('crypto.subtle.generateKey({name: "RSA-OAEP", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["verify"])');
+shouldReject('crypto.subtle.generateKey({name: "RSA-OAEP", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["deriveKey"])');
+shouldReject('crypto.subtle.generateKey({name: "RSA-OAEP", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["deriveBits"])');
+shouldReject('crypto.subtle.generateKey({name: "RSA-PSS", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["encrypt"])');
+shouldReject('crypto.subtle.generateKey({name: "RSA-PSS", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["decrypt"])');
+shouldReject('crypto.subtle.generateKey({name: "RSA-PSS", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["deriveKey"])');
+shouldReject('crypto.subtle.generateKey({name: "RSA-PSS", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["deriveBits"])');
+shouldReject('crypto.subtle.generateKey({name: "RSA-PSS", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["wrapKey"])');
+shouldReject('crypto.subtle.generateKey({name: "RSA-PSS", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["unwrapKey"])');
+// modulusLength = 0
+shouldReject('crypto.subtle.generateKey({name: "RSASSA-PKCS1-v1_5", modulusLength: 0, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["sign", "verify"])').then(finishJSTest);
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

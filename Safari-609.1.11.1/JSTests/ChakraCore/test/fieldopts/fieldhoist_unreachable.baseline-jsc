@@ -1,0 +1,3 @@
+Exception: ReferenceError: Can't find variable: obj9
+fieldhoist_unreachable.js:13:9
+global code@fieldhoist_unreachable.js:15:3

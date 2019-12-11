@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>video-create-with-user-gesture</title>
+    <script src=media-file.js></script>
+    <script src=video-test.js></script>
+    <script>
+    function runTest() {
+        run('window.internals.settings.setVideoPlaybackRequiresUserGesture(true);');
+        runWithKeyDown(() => {
+            run('video = document.createElement("video")');
+        });
+        run('video.src = findMediaFile("video", "content/test")');
+        run('video.setAttribute("autoplay", "")');
+        run('document.body.appendChild(video)');
+        waitForEventAndEnd('playing');
+        failTestIn(10000);
+    }
+    </script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

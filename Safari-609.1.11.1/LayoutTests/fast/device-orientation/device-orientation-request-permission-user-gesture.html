@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that DeviceOrientationEvent.requestPermission() requires a user gesture.");
+jsTestIsAsync = true;
+
+
+DeviceOrientationEvent.requestPermission().then((result) => {
+    testFailed("requestPermission promise was not rejected");
+}, (_e) => {
+    e = _e;
+    console.log(e);
+    shouldBeEqualToString("e.name", "NotAllowedError");
+    finishJSTest();
+});
+</script>
+</body>
+</html>

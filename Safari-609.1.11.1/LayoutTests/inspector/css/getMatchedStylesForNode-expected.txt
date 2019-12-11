@@ -1,0 +1,1074 @@
+Testing CSS.getMatchedStylesForNode.
+
+Enabling Page domain...
+Requesting document...
+Querying for "div#x"...
+Getting matched styles for "div#x"...
+
+Matched:
+[
+  {
+    "rule": {
+      "selectorList": {
+        "selectors": [
+          {
+            "text": "div",
+            "specificity": [
+              0,
+              0,
+              1
+            ]
+          }
+        ],
+        "text": "div",
+        "range": "<filtered>"
+      },
+      "sourceLine": "<filtered>",
+      "origin": "regular",
+      "style": {
+        "cssProperties": [
+          {
+            "name": "z-index",
+            "value": "300",
+            "text": "z-index: 300;",
+            "range": "<filtered>",
+            "implicit": false,
+            "status": "active"
+          }
+        ],
+        "shorthandEntries": [],
+        "styleId": "<filtered>",
+        "width": "",
+        "height": "",
+        "range": "<filtered>",
+        "cssText": " z-index: 300; "
+      },
+      "sourceURL": "<filtered>",
+      "ruleId": "<filtered>"
+    },
+    "matchingSelectors": [
+      0
+    ]
+  },
+  {
+    "rule": {
+      "selectorList": {
+        "selectors": [
+          {
+            "text": "#x",
+            "specificity": [
+              1,
+              0,
+              0
+            ]
+          }
+        ],
+        "text": "#x",
+        "range": "<filtered>"
+      },
+      "sourceLine": "<filtered>",
+      "origin": "regular",
+      "style": {
+        "cssProperties": [
+          {
+            "name": "z-index",
+            "value": "200",
+            "text": "z-index: 200;",
+            "range": "<filtered>",
+            "implicit": false,
+            "status": "active"
+          }
+        ],
+        "shorthandEntries": [],
+        "styleId": "<filtered>",
+        "width": "",
+        "height": "",
+        "range": "<filtered>",
+        "cssText": " z-index: 200; "
+      },
+      "sourceURL": "<filtered>",
+      "ruleId": "<filtered>"
+    },
+    "matchingSelectors": [
+      0
+    ]
+  },
+  {
+    "rule": {
+      "selectorList": {
+        "selectors": [
+          {
+            "text": "div#x",
+            "specificity": [
+              1,
+              0,
+              1
+            ]
+          }
+        ],
+        "text": "div#x",
+        "range": "<filtered>"
+      },
+      "sourceLine": "<filtered>",
+      "origin": "regular",
+      "style": {
+        "cssProperties": [
+          {
+            "name": "z-index",
+            "value": "100",
+            "text": "z-index: 100;",
+            "range": "<filtered>",
+            "implicit": false,
+            "status": "active"
+          }
+        ],
+        "shorthandEntries": [],
+        "styleId": "<filtered>",
+        "width": "",
+        "height": "",
+        "range": "<filtered>",
+        "cssText": " z-index: 100; "
+      },
+      "sourceURL": "<filtered>",
+      "ruleId": "<filtered>"
+    },
+    "matchingSelectors": [
+      0
+    ]
+  }
+]
+
+Pseudo:
+[
+  {
+    "pseudoId": "first-line",
+    "matches": [
+      {
+        "rule": {
+          "selectorList": {
+            "selectors": [
+              {
+                "text": "div::first-line",
+                "specificity": [
+                  0,
+                  0,
+                  2
+                ]
+              }
+            ],
+            "text": "div::first-line",
+            "range": "<filtered>"
+          },
+          "sourceLine": "<filtered>",
+          "origin": "regular",
+          "style": {
+            "cssProperties": [
+              {
+                "name": "z-index",
+                "value": "1",
+                "text": "z-index: 1;",
+                "range": "<filtered>",
+                "implicit": false,
+                "status": "active"
+              }
+            ],
+            "shorthandEntries": [],
+            "styleId": "<filtered>",
+            "width": "",
+            "height": "",
+            "range": "<filtered>",
+            "cssText": " z-index: 1; "
+          },
+          "sourceURL": "<filtered>",
+          "ruleId": "<filtered>"
+        },
+        "matchingSelectors": [
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "pseudoId": "first-letter",
+    "matches": [
+      {
+        "rule": {
+          "selectorList": {
+            "selectors": [
+              {
+                "text": "div::first-letter",
+                "specificity": [
+                  0,
+                  0,
+                  2
+                ]
+              }
+            ],
+            "text": "div::first-letter",
+            "range": "<filtered>"
+          },
+          "sourceLine": "<filtered>",
+          "origin": "regular",
+          "style": {
+            "cssProperties": [
+              {
+                "name": "z-index",
+                "value": "2",
+                "text": "z-index: 2;",
+                "range": "<filtered>",
+                "implicit": false,
+                "status": "active"
+              }
+            ],
+            "shorthandEntries": [],
+            "styleId": "<filtered>",
+            "width": "",
+            "height": "",
+            "range": "<filtered>",
+            "cssText": " z-index: 2; "
+          },
+          "sourceURL": "<filtered>",
+          "ruleId": "<filtered>"
+        },
+        "matchingSelectors": [
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "pseudoId": "marker",
+    "matches": [
+      {
+        "rule": {
+          "selectorList": {
+            "selectors": [
+              {
+                "text": "div::marker",
+                "specificity": [
+                  0,
+                  0,
+                  2
+                ]
+              }
+            ],
+            "text": "div::marker",
+            "range": "<filtered>"
+          },
+          "sourceLine": "<filtered>",
+          "origin": "regular",
+          "style": {
+            "cssProperties": [
+              {
+                "name": "z-index",
+                "value": "3",
+                "text": "z-index: 3;",
+                "range": "<filtered>",
+                "implicit": false,
+                "status": "active"
+              }
+            ],
+            "shorthandEntries": [],
+            "styleId": "<filtered>",
+            "width": "",
+            "height": "",
+            "range": "<filtered>",
+            "cssText": " z-index: 3; "
+          },
+          "sourceURL": "<filtered>",
+          "ruleId": "<filtered>"
+        },
+        "matchingSelectors": [
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "pseudoId": "before",
+    "matches": [
+      {
+        "rule": {
+          "selectorList": {
+            "selectors": [
+              {
+                "text": "div::before",
+                "specificity": [
+                  0,
+                  0,
+                  2
+                ]
+              }
+            ],
+            "text": "div::before",
+            "range": "<filtered>"
+          },
+          "sourceLine": "<filtered>",
+          "origin": "regular",
+          "style": {
+            "cssProperties": [
+              {
+                "name": "z-index",
+                "value": "4",
+                "text": "z-index: 4;",
+                "range": "<filtered>",
+                "implicit": false,
+                "status": "active"
+              }
+            ],
+            "shorthandEntries": [],
+            "styleId": "<filtered>",
+            "width": "",
+            "height": "",
+            "range": "<filtered>",
+            "cssText": " z-index: 4; "
+          },
+          "sourceURL": "<filtered>",
+          "ruleId": "<filtered>"
+        },
+        "matchingSelectors": [
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "pseudoId": "after",
+    "matches": [
+      {
+        "rule": {
+          "selectorList": {
+            "selectors": [
+              {
+                "text": "div::after",
+                "specificity": [
+                  0,
+                  0,
+                  2
+                ]
+              }
+            ],
+            "text": "div::after",
+            "range": "<filtered>"
+          },
+          "sourceLine": "<filtered>",
+          "origin": "regular",
+          "style": {
+            "cssProperties": [
+              {
+                "name": "z-index",
+                "value": "5",
+                "text": "z-index: 5;",
+                "range": "<filtered>",
+                "implicit": false,
+                "status": "active"
+              }
+            ],
+            "shorthandEntries": [],
+            "styleId": "<filtered>",
+            "width": "",
+            "height": "",
+            "range": "<filtered>",
+            "cssText": " z-index: 5; "
+          },
+          "sourceURL": "<filtered>",
+          "ruleId": "<filtered>"
+        },
+        "matchingSelectors": [
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "pseudoId": "selection",
+    "matches": [
+      {
+        "rule": {
+          "selectorList": {
+            "selectors": [
+              {
+                "text": "div::selection",
+                "specificity": [
+                  0,
+                  0,
+                  2
+                ]
+              }
+            ],
+            "text": "div::selection",
+            "range": "<filtered>"
+          },
+          "sourceLine": "<filtered>",
+          "origin": "regular",
+          "style": {
+            "cssProperties": [
+              {
+                "name": "z-index",
+                "value": "6",
+                "text": "z-index: 6;",
+                "range": "<filtered>",
+                "implicit": false,
+                "status": "active"
+              }
+            ],
+            "shorthandEntries": [],
+            "styleId": "<filtered>",
+            "width": "",
+            "height": "",
+            "range": "<filtered>",
+            "cssText": " z-index: 6; "
+          },
+          "sourceURL": "<filtered>",
+          "ruleId": "<filtered>"
+        },
+        "matchingSelectors": [
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "pseudoId": "scrollbar",
+    "matches": [
+      {
+        "rule": {
+          "selectorList": {
+            "selectors": [
+              {
+                "text": "div::-webkit-scrollbar",
+                "specificity": [
+                  0,
+                  0,
+                  2
+                ]
+              }
+            ],
+            "text": "div::-webkit-scrollbar",
+            "range": "<filtered>"
+          },
+          "sourceLine": "<filtered>",
+          "origin": "regular",
+          "style": {
+            "cssProperties": [
+              {
+                "name": "z-index",
+                "value": "7",
+                "text": "z-index: 7;",
+                "range": "<filtered>",
+                "implicit": false,
+                "status": "active"
+              }
+            ],
+            "shorthandEntries": [],
+            "styleId": "<filtered>",
+            "width": "",
+            "height": "",
+            "range": "<filtered>",
+            "cssText": " z-index: 7; "
+          },
+          "sourceURL": "<filtered>",
+          "ruleId": "<filtered>"
+        },
+        "matchingSelectors": [
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "pseudoId": "scrollbar-thumb",
+    "matches": [
+      {
+        "rule": {
+          "selectorList": {
+            "selectors": [
+              {
+                "text": "div::-webkit-scrollbar-thumb",
+                "specificity": [
+                  0,
+                  0,
+                  2
+                ]
+              }
+            ],
+            "text": "div::-webkit-scrollbar-thumb",
+            "range": "<filtered>"
+          },
+          "sourceLine": "<filtered>",
+          "origin": "regular",
+          "style": {
+            "cssProperties": [
+              {
+                "name": "z-index",
+                "value": "8",
+                "text": "z-index: 8;",
+                "range": "<filtered>",
+                "implicit": false,
+                "status": "active"
+              }
+            ],
+            "shorthandEntries": [],
+            "styleId": "<filtered>",
+            "width": "",
+            "height": "",
+            "range": "<filtered>",
+            "cssText": " z-index: 8; "
+          },
+          "sourceURL": "<filtered>",
+          "ruleId": "<filtered>"
+        },
+        "matchingSelectors": [
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "pseudoId": "scrollbar-button",
+    "matches": [
+      {
+        "rule": {
+          "selectorList": {
+            "selectors": [
+              {
+                "text": "div::-webkit-scrollbar-button",
+                "specificity": [
+                  0,
+                  0,
+                  2
+                ]
+              }
+            ],
+            "text": "div::-webkit-scrollbar-button",
+            "range": "<filtered>"
+          },
+          "sourceLine": "<filtered>",
+          "origin": "regular",
+          "style": {
+            "cssProperties": [
+              {
+                "name": "z-index",
+                "value": "9",
+                "text": "z-index: 9;",
+                "range": "<filtered>",
+                "implicit": false,
+                "status": "active"
+              }
+            ],
+            "shorthandEntries": [],
+            "styleId": "<filtered>",
+            "width": "",
+            "height": "",
+            "range": "<filtered>",
+            "cssText": " z-index: 9; "
+          },
+          "sourceURL": "<filtered>",
+          "ruleId": "<filtered>"
+        },
+        "matchingSelectors": [
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "pseudoId": "scrollbar-track",
+    "matches": [
+      {
+        "rule": {
+          "selectorList": {
+            "selectors": [
+              {
+                "text": "div::-webkit-scrollbar-track",
+                "specificity": [
+                  0,
+                  0,
+                  2
+                ]
+              }
+            ],
+            "text": "div::-webkit-scrollbar-track",
+            "range": "<filtered>"
+          },
+          "sourceLine": "<filtered>",
+          "origin": "regular",
+          "style": {
+            "cssProperties": [
+              {
+                "name": "z-index",
+                "value": "10",
+                "text": "z-index: 10;",
+                "range": "<filtered>",
+                "implicit": false,
+                "status": "active"
+              }
+            ],
+            "shorthandEntries": [],
+            "styleId": "<filtered>",
+            "width": "",
+            "height": "",
+            "range": "<filtered>",
+            "cssText": " z-index: 10; "
+          },
+          "sourceURL": "<filtered>",
+          "ruleId": "<filtered>"
+        },
+        "matchingSelectors": [
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "pseudoId": "scrollbar-track-piece",
+    "matches": [
+      {
+        "rule": {
+          "selectorList": {
+            "selectors": [
+              {
+                "text": "div::-webkit-scrollbar-track-piece",
+                "specificity": [
+                  0,
+                  0,
+                  2
+                ]
+              }
+            ],
+            "text": "div::-webkit-scrollbar-track-piece",
+            "range": "<filtered>"
+          },
+          "sourceLine": "<filtered>",
+          "origin": "regular",
+          "style": {
+            "cssProperties": [
+              {
+                "name": "z-index",
+                "value": "11",
+                "text": "z-index: 11;",
+                "range": "<filtered>",
+                "implicit": false,
+                "status": "active"
+              }
+            ],
+            "shorthandEntries": [],
+            "styleId": "<filtered>",
+            "width": "",
+            "height": "",
+            "range": "<filtered>",
+            "cssText": " z-index: 11; "
+          },
+          "sourceURL": "<filtered>",
+          "ruleId": "<filtered>"
+        },
+        "matchingSelectors": [
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "pseudoId": "scrollbar-corner",
+    "matches": [
+      {
+        "rule": {
+          "selectorList": {
+            "selectors": [
+              {
+                "text": "div::-webkit-scrollbar-corner",
+                "specificity": [
+                  0,
+                  0,
+                  2
+                ]
+              }
+            ],
+            "text": "div::-webkit-scrollbar-corner",
+            "range": "<filtered>"
+          },
+          "sourceLine": "<filtered>",
+          "origin": "regular",
+          "style": {
+            "cssProperties": [
+              {
+                "name": "z-index",
+                "value": "12",
+                "text": "z-index: 12;",
+                "range": "<filtered>",
+                "implicit": false,
+                "status": "active"
+              }
+            ],
+            "shorthandEntries": [],
+            "styleId": "<filtered>",
+            "width": "",
+            "height": "",
+            "range": "<filtered>",
+            "cssText": " z-index: 12; "
+          },
+          "sourceURL": "<filtered>",
+          "ruleId": "<filtered>"
+        },
+        "matchingSelectors": [
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "pseudoId": "resizer",
+    "matches": [
+      {
+        "rule": {
+          "selectorList": {
+            "selectors": [
+              {
+                "text": "div::-webkit-resizer",
+                "specificity": [
+                  0,
+                  0,
+                  2
+                ]
+              }
+            ],
+            "text": "div::-webkit-resizer",
+            "range": "<filtered>"
+          },
+          "sourceLine": "<filtered>",
+          "origin": "regular",
+          "style": {
+            "cssProperties": [
+              {
+                "name": "z-index",
+                "value": "13",
+                "text": "z-index: 13;",
+                "range": "<filtered>",
+                "implicit": false,
+                "status": "active"
+              }
+            ],
+            "shorthandEntries": [],
+            "styleId": "<filtered>",
+            "width": "",
+            "height": "",
+            "range": "<filtered>",
+            "cssText": " z-index: 13; "
+          },
+          "sourceURL": "<filtered>",
+          "ruleId": "<filtered>"
+        },
+        "matchingSelectors": [
+          0
+        ]
+      }
+    ]
+  }
+]
+
+Inherited:
+[
+  {
+    "matchedCSSRules": [
+      {
+        "rule": {
+          "selectorList": {
+            "selectors": [
+              {
+                "text": "body",
+                "specificity": [
+                  0,
+                  0,
+                  1
+                ]
+              }
+            ],
+            "text": "body",
+            "range": "<filtered>"
+          },
+          "sourceLine": "<filtered>",
+          "origin": "regular",
+          "style": {
+            "cssProperties": [
+              {
+                "name": "color",
+                "value": "red",
+                "text": "color: red;",
+                "range": "<filtered>",
+                "implicit": false,
+                "status": "active"
+              }
+            ],
+            "shorthandEntries": [],
+            "styleId": "<filtered>",
+            "width": "",
+            "height": "",
+            "range": "<filtered>",
+            "cssText": " color: red; "
+          },
+          "sourceURL": "<filtered>",
+          "ruleId": "<filtered>",
+          "groupings": [
+            {
+              "text": "(min-width: 0px)",
+              "type": "media-import-rule",
+              "sourceURL": "<filtered>"
+            }
+          ]
+        },
+        "matchingSelectors": [
+          0
+        ]
+      },
+      {
+        "rule": {
+          "selectorList": {
+            "selectors": [
+              {
+                "text": "body",
+                "specificity": [
+                  0,
+                  0,
+                  1
+                ]
+              }
+            ],
+            "text": "body",
+            "range": "<filtered>"
+          },
+          "sourceLine": "<filtered>",
+          "origin": "regular",
+          "style": {
+            "cssProperties": [
+              {
+                "name": "color",
+                "value": "red",
+                "text": "color: red;",
+                "range": "<filtered>",
+                "implicit": false,
+                "status": "active"
+              }
+            ],
+            "shorthandEntries": [],
+            "styleId": "<filtered>",
+            "width": "",
+            "height": "",
+            "range": "<filtered>",
+            "cssText": " color: red; "
+          },
+          "sourceURL": "<filtered>",
+          "ruleId": "<filtered>"
+        },
+        "matchingSelectors": [
+          0
+        ]
+      },
+      {
+        "rule": {
+          "selectorList": {
+            "selectors": [
+              {
+                "text": "body",
+                "specificity": [
+                  0,
+                  0,
+                  1
+                ]
+              }
+            ],
+            "text": "body",
+            "range": "<filtered>"
+          },
+          "sourceLine": "<filtered>",
+          "origin": "regular",
+          "style": {
+            "cssProperties": [
+              {
+                "name": "color",
+                "value": "red",
+                "text": "color: red;",
+                "range": "<filtered>",
+                "implicit": false,
+                "status": "active"
+              }
+            ],
+            "shorthandEntries": [],
+            "styleId": "<filtered>",
+            "width": "",
+            "height": "",
+            "range": "<filtered>",
+            "cssText": " color: red; "
+          },
+          "sourceURL": "<filtered>",
+          "ruleId": "<filtered>",
+          "groupings": [
+            {
+              "text": "(min-width: 1px)",
+              "type": "media-rule",
+              "sourceURL": "<filtered>"
+            }
+          ]
+        },
+        "matchingSelectors": [
+          0
+        ]
+      },
+      {
+        "rule": {
+          "selectorList": {
+            "selectors": [
+              {
+                "text": "body",
+                "specificity": [
+                  0,
+                  0,
+                  1
+                ]
+              }
+            ],
+            "text": "body",
+            "range": "<filtered>"
+          },
+          "sourceLine": "<filtered>",
+          "origin": "regular",
+          "style": {
+            "cssProperties": [
+              {
+                "name": "color",
+                "value": "red",
+                "text": "color: red;",
+                "range": "<filtered>",
+                "implicit": false,
+                "status": "active"
+              }
+            ],
+            "shorthandEntries": [],
+            "styleId": "<filtered>",
+            "width": "",
+            "height": "",
+            "range": "<filtered>",
+            "cssText": " color: red; "
+          },
+          "sourceURL": "<filtered>",
+          "ruleId": "<filtered>",
+          "groupings": [
+            {
+              "text": "(display: block)",
+              "type": "supports-rule",
+              "sourceURL": "<filtered>"
+            },
+            {
+              "text": "(min-width: 2px)",
+              "type": "media-rule",
+              "sourceURL": "<filtered>"
+            }
+          ]
+        },
+        "matchingSelectors": [
+          0
+        ]
+      },
+      {
+        "rule": {
+          "selectorList": {
+            "selectors": [
+              {
+                "text": "body",
+                "specificity": [
+                  0,
+                  0,
+                  1
+                ]
+              }
+            ],
+            "text": "body",
+            "range": "<filtered>"
+          },
+          "sourceLine": "<filtered>",
+          "origin": "regular",
+          "style": {
+            "cssProperties": [
+              {
+                "name": "color",
+                "value": "red",
+                "text": "color: red;",
+                "range": "<filtered>",
+                "implicit": false,
+                "status": "active"
+              }
+            ],
+            "shorthandEntries": [],
+            "styleId": "<filtered>",
+            "width": "",
+            "height": "",
+            "range": "<filtered>",
+            "cssText": " color: red;"
+          },
+          "sourceURL": "<filtered>",
+          "ruleId": "<filtered>",
+          "groupings": [
+            {
+              "text": "(min-width: 3px)",
+              "type": "media-style-node",
+              "sourceURL": "<filtered>"
+            }
+          ]
+        },
+        "matchingSelectors": [
+          0
+        ]
+      },
+      {
+        "rule": {
+          "selectorList": {
+            "selectors": [
+              {
+                "text": "body",
+                "specificity": [
+                  0,
+                  0,
+                  1
+                ]
+              }
+            ],
+            "text": "body",
+            "range": "<filtered>"
+          },
+          "sourceLine": "<filtered>",
+          "origin": "regular",
+          "style": {
+            "cssProperties": [
+              {
+                "name": "color",
+                "value": "red",
+                "text": "color: red;",
+                "range": "<filtered>",
+                "implicit": false,
+                "status": "active"
+              }
+            ],
+            "shorthandEntries": [],
+            "styleId": "<filtered>",
+            "width": "",
+            "height": "",
+            "range": "<filtered>",
+            "cssText": " color: red; "
+          },
+          "sourceURL": "<filtered>",
+          "ruleId": "<filtered>",
+          "groupings": [
+            {
+              "text": "(min-width: 4px)",
+              "type": "media-link-node",
+              "sourceURL": "<filtered>"
+            }
+          ]
+        },
+        "matchingSelectors": [
+          0
+        ]
+      }
+    ]
+  }
+]
+

@@ -1,0 +1,22 @@
+Tests that the NPRuntime implementation works as expected
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS argumentsLength is 7
+PASS typeof(undefinedArgument) is 'undefined'
+PASS typeof(nullArgument) is 'object'
+PASS nullArgument is null
+PASS typeof(booleanArgument) is 'boolean'
+PASS booleanArgument is true
+PASS typeof(intArgument) is 'number'
+PASS intArgument is 242
+PASS typeof(doubleArgument) is 'number'
+PASS doubleArgument is 242.242
+PASS typeof(stringArgument) is 'string'
+PASS stringArgument is 'Hello, World'
+PASS typeof(objectArgument) is 'object'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

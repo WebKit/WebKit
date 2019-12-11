@@ -1,0 +1,4 @@
+This test's dominant plugin should play automatically
+
+PASS
+

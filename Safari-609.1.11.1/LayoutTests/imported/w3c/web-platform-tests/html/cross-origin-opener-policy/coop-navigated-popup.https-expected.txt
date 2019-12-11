@@ -1,0 +1,3 @@
+
+FAIL Open a popup to a document without COOP, then navigate it to a document with Can't find variable: BroadcastChannel
+

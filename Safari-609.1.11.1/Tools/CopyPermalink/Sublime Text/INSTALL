@@ -1,0 +1,14 @@
+Copy WebKit Permalink is a Sublime Text plugin that copies to the Clipboard a permanent hyperlink to the currently selected line in the active document.
+
+== How to install ==
+
+Copy the directory CopyWebKitPermalink (located in the same directory as this file) to your Packages directory. On Mac, you can open your Packages directory by launching Sublime Text and choosing Sublime Text > Preferences > Browse Packages from the menu bar.
+
+== How to use ==
+
+Control-click (on Mac) or right-click (on Linux and Windows) on a line and select Copy WebKit Permalink or Copy WebKit Permalink to Blame from the context menu to copy to the Clipboard a permanent hyperlink to the selected line without or with blame annotations, respectively.
+
+== Key bindings for Mac ==
+
+Without blame annotations: Command + Shift + Control + C
+With blame annotations: Command + Shift + Control + Option + C

@@ -1,0 +1,31 @@
+<html>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+<body id="body">
+    
+    <div id="result"></div>
+    
+    <!-- Test image map -->
+    <map id="apple" name="imagemap1">
+      <area shape="rect" coords="10,10,133,72" href="http://www.apple.com" alt="Link1" />
+      <area shape="rect" coords="12,74,134,88" href="http://www.apple.com" alt="Link2" />
+    </map>
+
+    <img src="resources/cake.png"  border="0" align="left" usemap="#imagemap1" vspace="1">
+
+     
+    <script>
+        if (window.accessibilityController) {
+            var result = document.getElementById("result");
+
+            var body = document.getElementById("body");
+            body.focus();
+            result.innerText += "Image map - test 2 - 2 Links (alt tags)\n";
+            result.innerText += "----------------------\n";
+            result.innerText += accessibilityController.focusedElement.attributesOfChildren() + "\n\n"; 
+        }
+    </script>
+</body>
+</html>

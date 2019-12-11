@@ -1,0 +1,8 @@
+2d.drawImage.incomplete.reload
+Actual output:
+Expected output:
+
+ 
+
+PASS Canvas test: 2d.drawImage.incomplete.reload 
+

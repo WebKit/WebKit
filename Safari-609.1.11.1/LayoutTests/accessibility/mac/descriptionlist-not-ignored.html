@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<dl id="test">
+<dt><div>term</div></dt>
+<dd><div>description</div></dd>
+</dl>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that dt and dd elements are not ignored if their render objects have block render objects children.");
+
+    if (window.accessibilityController) {
+        var test = accessibilityController.accessibleElementById("test");
+        shouldBe("test.childrenCount", "2");
+
+        var dt = test.childAtIndex(0);
+        shouldBeEqualToString("dt.role", "AXRole: AXGroup");
+        shouldBeEqualToString("dt.subrole", "AXSubrole: AXTerm");
+
+        var dd = test.childAtIndex(1);
+        shouldBeEqualToString("dd.role", "AXRole: AXGroup");
+        shouldBeEqualToString("dd.subrole", "AXSubrole: AXDescription");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

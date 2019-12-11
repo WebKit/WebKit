@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<script>
+
+var openRequest = window.indexedDB.open("IndexedDBTempFileSize");
+
+openRequest.onsuccess = function(event) {
+    window.webkit.messageHandlers.testHandler.postMessage('Success');
+}
+
+openRequest.onerror = function(event) {
+    window.webkit.messageHandlers.testHandler.postMessage('Error');
+}
+
+</script>

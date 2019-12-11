@@ -1,0 +1,8 @@
+toDataURL.png.primarycolours
+toDataURL with PNG handles simple colours correctly
+Actual output:
+Expected output:
+
+
+PASS toDataURL with PNG handles simple colours correctly 
+

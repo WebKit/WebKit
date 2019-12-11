@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 770x39
+          text run at (0,0) width 585: "This tests Select All when the caret is inside an editable region that is inside a non editable region. "
+          text run at (585,0) width 185: "Whenever the selection is in an"
+          text run at (0,20) width 478: "editable region, Select All should select the contents of the highest editable root."
+      RenderBlock {DIV} at (0,56) size 784x60
+        RenderBlock {DIV} at (0,0) size 784x20
+          RenderText {#text} at (0,0) size 26x19
+            text run at (0,0) width 26: "One"
+        RenderBlock {DIV} at (0,20) size 784x20
+          RenderInline {SPAN} at (0,0) size 28x19
+            RenderText {#text} at (0,0) size 28x19
+              text run at (0,0) width 28: "Two"
+          RenderText {#text} at (28,0) size 4x19
+            text run at (28,0) width 4: " "
+          RenderInline {SPAN} at (0,0) size 35x19
+            RenderText {#text} at (32,0) size 35x19
+              text run at (32,0) width 35: "Three"
+        RenderBlock {DIV} at (0,40) size 784x20
+          RenderText {#text} at (0,0) size 29x19
+            text run at (0,0) width 29: "Four"
+selection start: position 0 of child 0 {#text} of child 1 {DIV} of child 2 {DIV} of body
+selection end:   position 4 of child 0 {#text} of child 5 {DIV} of child 2 {DIV} of body

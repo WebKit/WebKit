@@ -1,0 +1,8 @@
+ 
+PASS bubbleRect.top is hostRect.bottom
+PASS hostRect.left <= bubbleRect.left && bubbleRect.left <= hostRect.right is true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

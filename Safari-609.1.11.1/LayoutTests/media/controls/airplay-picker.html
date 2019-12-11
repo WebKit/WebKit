@@ -1,0 +1,70 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+    <head>
+        <script src="../media-file.js"></script>
+        <script src="controls-test-helpers.js"></script>
+        <script>
+            internals.setMockMediaPlaybackTargetPickerEnabled(false);
+            var tester = new ControlsTest()
+                .whenReady(runTestsWithoutDevice)
+                .start();
+
+            function runTestsWithoutDevice()
+            {
+                var currentState = tester.currentState;
+                tester.test("We are using the apple idiom")
+                    .value(currentState.idiom)
+                    .isEqualTo("apple");
+
+                tester.startNewSection("Test the AppleTV picker button");
+                var statusState = tester.stateForControlsElement("AppleTV Device Picker");
+
+                tester.test("Name is 'AppleTV Device Picker'")
+                    .value(statusState.name)
+                    .isEqualTo("AppleTV Device Picker");
+
+                tester.test("Has hidden class")
+                    .value(statusState.className)
+                    .isEqualTo("hidden");
+
+                tester.test("CSS display: none")
+                    .value(statusState.computedStyle.display)
+                    .isEqualTo("none");
+
+                tester.test("Aria label is 'Choose Wireless Display'")
+                    .value(statusState.ariaLabel)
+                    .isEqualTo("Choose Wireless Display");
+
+                internals.setMockMediaPlaybackTargetPickerEnabled(true);
+                internals.setMockMediaPlaybackTargetPickerState("Sleepy TV", "DeviceAvailable");
+                window.setTimeout(runTestsWithDevice, 100);
+            }
+
+            function runTestsWithDevice()
+            {
+                tester.startNewSection("Simulate an available AppleTV");
+                var statusState = tester.stateForControlsElement("AppleTV Device Picker", true);
+
+                tester.test("Name is 'AppleTV Device Picker'")
+                    .value(statusState.name)
+                    .isEqualTo("AppleTV Device Picker");
+
+                tester.test("Does not have hidden class")
+                    .value(statusState.className)
+                    .doesNotContain("hidden");
+
+                tester.test("CSS display: block")
+                    .value(statusState.computedStyle.display)
+                    .isEqualTo("block");
+
+                tester.end();
+            }
+
+        </script>
+    </head>
+    <body>
+        <p>This tests the wireless device picker icon.</p>
+        <p>This test only runs in DRT!</p>
+        <video controls></video>
+    </body>
+</html>

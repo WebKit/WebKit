@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body onload="start()">
+<p id="description"></p>
+<div id="console"></div>
+<video controls width="680" height="360"></video>
+<video controls width="680" height="360"></video>
+<canvas width="680" height="360"></canvas>
+<script>
+    let mediaStream;
+    let videos;
+    let buffer;
+    let currentTest = 0;
+    
+    function isPixelTransparent(pixel)
+    {
+        return pixel[0] === 0 && pixel[1] === 0 && pixel[2] === 0 && pixel[3] === 0;
+    }
+
+    function isPixelBlack(pixel)
+    {
+        return pixel[0] === 0 && pixel[1] === 0 && pixel[2] === 0 && pixel[3] === 255;
+    }
+
+    function isPixelGray(pixel)
+    {
+        return pixel[0] === 128 && pixel[1] === 128 && pixel[2] === 128 && pixel[3] === 255;
+    }
+
+    function verifyFramesBeingDisplayed()
+    {
+        videos[currentTest].removeEventListener('playing', verifyFramesBeingDisplayed, false)
+
+        canvas = document.querySelector('canvas');
+        context = canvas.getContext('2d');
+        
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        let x = canvas.width * .035;
+        let y = canvas.height * 0.6 + 2 + x;
+        buffer = context.getImageData(x, y, 1, 1).data;
+        shouldBeTrue('isPixelTransparent(buffer)');
+        
+        evalAndLog(`context.drawImage(videos[${currentTest}], 0, 0, ${canvas.width}, ${canvas.height})`);
+        buffer = context.getImageData(x, y, 1, 1).data;
+        shouldBeFalse('isPixelTransparent(buffer)');
+        shouldBeFalse('isPixelBlack(buffer)');
+
+        x = canvas.width * .05;
+        y = canvas.height * .05;
+        buffer = context.getImageData(x, y, 1, 1).data;
+        shouldBeFalse('isPixelTransparent(buffer)');
+        if (!currentTest)
+            shouldBeTrue('isPixelBlack(buffer)');
+        else
+            shouldBeTrue('isPixelGray(buffer)');
+
+        if (currentTest >= 1) {
+            finishJSTest();
+            return;
+        }
+        
+        videos[currentTest].pause();
+        ++currentTest;
+        requestNextStream();
+    }
+
+    function setupVideoElement(stream)
+    {
+        mediaStream = stream;
+        testPassed('mediaDevices.getUserMedia generated a stream successfully.');
+        evalAndLog(`videos[${currentTest}].srcObject = mediaStream`);
+    }
+
+    function canplay()
+    {
+        videos[currentTest].removeEventListener('canplay', canplay, false)
+        evalAndLog(`videos[${currentTest}].play()`);
+    }
+    
+    function requestNextStream()
+    {
+        debug(`<br> === checking pixels from ${!currentTest ? "front" : "back"} camera ===`);
+        let constraints = {video : !currentTest ? true : {facingMode: "environment"}};
+        navigator.mediaDevices.getUserMedia(constraints).then(setupVideoElement);
+    }
+    
+    function start()
+    {
+        description("Tests that the stream displays captured buffers to the video element.");
+        if (window.testRunner)
+            testRunner.setUserMediaPermission(true);
+
+        videos = Array.from(document.getElementsByTagName('video'));
+        videos.forEach((video) => {
+            video.addEventListener('canplay', canplay, false);
+            video.addEventListener('playing', verifyFramesBeingDisplayed, false);
+        });
+        requestNextStream();
+    }
+
+    window.jsTestIsAsync = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

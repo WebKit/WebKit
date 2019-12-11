@@ -1,0 +1,125 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+    <head>
+        <script src="../media-file.js"></script>
+        <script src="controls-test-helpers.js"></script>
+        <script>
+            var maxAttemptsToTestPlaceholderVisibility = 10;
+            var attemptsToTestPlaceholderVisibility = 0;
+
+            if (window.internals)
+                window.internals.settings.setAllowsPictureInPictureMediaPlayback(true);
+
+            const tester = new ControlsTest("non-existent-media-file", "error")
+                .whenReady(runTestsWithoutVideo)
+                .start();
+
+            function runTestsWithoutVideo()
+            {
+                const currentState = tester.currentState;
+                tester.test("We are using the apple idiom")
+                    .value(currentState.idiom)
+                    .isEqualTo("apple");
+
+                tester.startNewSection("Test the picture-in-picture button without video", true);
+
+                const stateForPictureInPictureButton = tester.stateForControlsElement("Picture-in-picture Button");
+                tester.test("Picture-in-picture button should not be visible if there's no video")
+                    .value(stateForPictureInPictureButton.className)
+                    .contains("hidden");
+
+                tester.resetEventTrigger("canplaythrough")
+                    .whenReady(runTestsWithVideo)
+                    .media.src = findMediaFile("video", "../content/test");
+            }
+
+            function runTestsWithVideo()
+            {
+                tester.startNewSection("Test the picture-in-picture button with valid video");
+
+                const stateForPictureInPictureButton = tester.stateForControlsElement("Picture-in-picture Button", true);
+                tester.test("Picture-in-picture button should be visible if there's video")
+                    .value(stateForPictureInPictureButton.className)
+                    .doesNotContain("hidden");
+
+                tester.test("Picture-in-picture button should be in the dom if there's video")
+                    .value(stateForPictureInPictureButton.parentElement)
+                    .isNotEqualTo(undefined);
+
+                const stateForPlaceholder = tester.stateForControlsElement("Inline playback placeholder", true);
+                tester.test("Inline placeholder should not be visible at this point")
+                    .value(stateForPlaceholder.className)
+                    .contains("hidden");
+
+                internals.setMediaElementRestrictions(tester.media, "NoRestrictions");
+                tester.resetEventTrigger("webkitpresentationmodechanged")
+                    .whenReady(testPIPPlaceholder)
+                    .media.webkitSetPresentationMode("picture-in-picture");
+            }
+
+            function testPIPPlaceholder()
+            {
+                tester.startNewSection("Test for the pip placeholder visibility in pip mode");
+
+                tester.test("Should be in pip mode")
+                    .value(tester.media.webkitPresentationMode)
+                    .isEqualTo("picture-in-picture");
+
+                pollPIPPlaceholderVisibilityChange();
+            }
+
+            function pollPIPPlaceholderVisibilityChange()
+            {
+                const stateForPlaceholder = tester.stateForControlsElement("Inline playback placeholder", true);
+                if (stateForPlaceholder.className.indexOf("hidden") >= 0) {
+                    if (attemptsToTestPlaceholderVisibility > maxAttemptsToTestPlaceholderVisibility) {
+                        tester.logFailure("Inline placeholder did not become visible after video enters picture-in-picture.");
+                        tester.end();
+                        return;
+                    }
+
+                    // Use 33 to match PlaceholderPollingDelay in mediaControlsApple.js.
+                    setTimeout(pollPIPPlaceholderVisibilityChange, 33);
+                    attemptsToTestPlaceholderVisibility++;
+                    return;
+                }
+
+                tester.test("Inline placeholder should be visible at this point")
+                    .value(stateForPlaceholder.className)
+                    .doesNotContain("hidden");
+
+                const controlsObserver = new MutationObserver(controlsDidChange);
+                controlsObserver.observe(tester.media, { attributes: true, attributeFilter: ['controls'] });
+
+                tester.media.removeAttribute('controls');
+            }
+
+            function controlsDidChange()
+            {
+                tester.startNewSection("Test for the pip placeholder visibility in pip mode without a 'controls' attribute");
+
+                tester.test("Should still be in pip mode")
+                    .value(tester.media.webkitPresentationMode)
+                    .isEqualTo("picture-in-picture");
+
+                tester.test("No controls attribute")
+                    .value(tester.media.hasAttribute('controls'))
+                    .isFalse();
+
+                const stateForPlaceholder = tester.stateForControlsElement("Inline playback placeholder", true);
+                tester.test("Inline placeholder should still be visible")
+                    .value(stateForPlaceholder.className)
+                    .doesNotContain("hidden");
+
+                tester.media.webkitSetPresentationMode("inline");
+
+                tester.end();
+            }
+        </script>
+    </head>
+    <body>
+        <p>This tests the picture-in-picture button.</p>
+        <p>This test only runs in DRT!</p>
+        <video controls></video>
+    </body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        svg {
+            border: 1px solid black;
+            display: block;
+            margin: 2px;
+        }
+    </style>
+</head>
+<body>
+    <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 780 80" style="width: 780px; height: 80px">
+        <rect width="120" height="30" fill="green" style="transform: translate(390px, 5px)"/>
+        <rect width="120" height="30" fill="green" style="transform: translate(330px, 40px)"/>
+    </svg>
+    <!-- No viewBox -->
+    <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="width: 780px; height: 80px">
+        <rect width="120" height="30" fill="green" style="transform: translate(390px, 5px)"/>
+        <rect width="120" height="30" fill="green" style="transform: translate(330px, 40px)"/>
+    </svg>
+
+    <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 100 400" style="width: 100px; height: 400px; display: inline-block;">
+        <rect width="30" height="120" fill="green" style="transform: translate(5px, 200px"/>
+        <rect width="30" height="120" fill="green" style="transform: translate(40px, 140px)"/>
+    </svg>
+    <!-- No viewBox -->
+    <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="width: 100px; height: 400px; display: inline-block;">
+        <rect width="30" height="120" fill="green" style="transform: translate(5px, 200px)"/>
+        <rect width="30" height="120" fill="green" style="transform: translate(40px, 140px)"/>
+    </svg>
+
+    <!-- viewBox with non-zero origin -->
+    <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="-20 50 100 400" style="width: 100px; height: 400px; display: inline-block;">
+        <rect width="30" height="120" fill="green" style="transform: translate(5px, 200px"/>
+        <rect width="30" height="120" fill="green" style="transform: translate(40px, 140px)"/>
+    </svg>
+
+    <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="width: 400px; height: 400px; display: inline-block;">
+        <rect width="80" height="80" fill="green" style="transform: translate(200px, 200px); transform-box: view-box;"/>
+        <rect width="80" height="80" fill="blue" style="transform: translate(40px, 40px); transform-box: fill-box;"/>
+    </svg>
+
+</body>
+</html>

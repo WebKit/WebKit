@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 3: Viewport argument value "yes" for key "width" is invalid, and has been ignored.
+CONSOLE MESSAGE: line 3: Viewport argument value "no" for key "height" is invalid, and has been ignored.
+ALERT: viewport size 64x70.4 scale 5 with limits [5, 5] and userScalable true
+

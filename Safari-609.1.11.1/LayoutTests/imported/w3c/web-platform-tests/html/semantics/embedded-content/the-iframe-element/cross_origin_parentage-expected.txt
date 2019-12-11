@@ -1,0 +1,9 @@
+Blocked access to external URL http://www1.web-platform.test:8000/html/semantics/embedded-content/the-iframe-element/cross_origin_child.html
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS Check the frame heriarchy 
+TIMEOUT Check the frame heriarchy 1 Test timed out
+TIMEOUT Check the frame heriarchy 2 Test timed out
+

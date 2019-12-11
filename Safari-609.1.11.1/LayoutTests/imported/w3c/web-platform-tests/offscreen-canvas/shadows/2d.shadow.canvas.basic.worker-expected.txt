@@ -1,0 +1,3 @@
+
+FAIL Shadows are drawn for canvases Can't find variable: OffscreenCanvas
+

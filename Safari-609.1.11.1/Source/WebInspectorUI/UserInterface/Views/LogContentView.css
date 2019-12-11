@@ -1,0 +1,332 @@
+/*
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.log-scope-bar > li:not(.unread) > .indicator {
+    display: none;
+}
+
+.log-scope-bar > li.unread > .indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    animation: unread-background-pulse 1.5s ease-in-out infinite alternate-reverse;
+    -webkit-clip-path: circle(50% at 50% 50%);
+
+    -webkit-margin-start: -10px;
+    -webkit-margin-end: 2px;
+}
+
+.log-scope-bar > li.unread:hover > .indicator {
+    visibility: hidden;
+}
+
+.log-scope-bar > li.unread.evaluations > .indicator {
+    background-color: darkgrey;
+}
+
+.log-scope-bar > li.unread.errors > .indicator {
+    background-color: hsl(0, 95%, 72%);
+}
+
+.log-scope-bar > li.unread.warnings > .indicator {
+    background-color: hsl(48, 98%, 51%);
+}
+
+.log-scope-bar > li.unread.logs > .indicator {
+    background-color: hsl(213, 92%, 77%);
+}
+
+@keyframes unread-background-pulse {
+    from { background-color: transparent; }
+}
+
+.content-view.log {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.console-messages {
+    display: flex;
+    flex-direction: column;
+
+    word-wrap: break-word;
+
+    font-family: -webkit-system-font, sans-serif;
+    font-size: 12px;
+
+    min-height: 100%;
+
+    outline: none;
+}
+
+.console-messages > :first-child {
+    margin-top: auto;
+}
+
+.console-item {
+    border-top: 1px solid hsl(0, 0%, 94%);
+}
+
+.console-error-level:not(.filtered-out, .filtered-out-by-search),
+.console-error-level:not(.filtered-out, .filtered-out-by-search) + .console-item {
+    border-top-color: hsl(0, 100%, 92%);
+}
+
+.console-warning-level:not(.filtered-out, .filtered-out-by-search),
+.console-warning-level:not(.filtered-out, .filtered-out-by-search) + .console-item {
+    border-top-color: hsl(40, 100%, 90%);
+}
+
+.console-item::before {
+    position: absolute;
+    left: 4px;
+    height: 12px;
+    width: 12px;
+}
+
+.console-item.selected::after {
+    position: absolute;
+    display: block;
+    content: "";
+    left: 0;
+    top: -1px;
+    bottom: 0;
+    background: hsl(0, 0%, 60%);
+    width: 2px;
+    z-index: 10;
+}
+
+.console-messages:focus .console-item.selected .data-grid tr.selected {
+    background-color: hsl(210, 90%, 90%) !important;
+}
+
+.console-item .data-grid tr.selected {
+    background-color: hsl(210, 0%, 90%) !important;
+}
+
+.console-messages:focus .console-item .data-grid tr.selected td:not(:last-child) {
+    border-right-color: hsl(210, 70%, 75%);
+}
+
+.console-messages:focus .console-item.selected {
+    background-color: hsl(210, 98%, 96%);
+    border-color: hsl(210, 90%, 93%);
+}
+
+.console-messages:focus .console-item.selected + .console-item {
+    border-top-color: hsl(210, 90%, 93%);
+}
+
+.console-messages:focus .console-item.selected::after {
+    background-color: var(--glyph-color-active);
+}
+
+.console-messages:focus .console-item.selected .go-to-link {
+    color: hsl(210, 100%, 33%);
+}
+
+.console-group-title {
+    font-weight: bold;
+}
+
+.console-group-title::before {
+    content: "";
+    background-image: url(../Images/DisclosureTriangles.svg#open-normal);
+    background-size: 13px 13px;
+    top: 4px;
+    width: 13px;
+    height: 13px;
+}
+
+body[dir=ltr] .console-group-title::before {
+    left: 4px;
+}
+
+body[dir=rtl] .console-group-title::before {
+    transform: scaleX(-1);
+    right: 4px;
+}
+
+.console-group.collapsed .console-group-title::before {
+    background-image: url(../Images/DisclosureTriangles.svg#closed-normal);
+}
+
+.console-group.collapsed > .console-group-messages {
+    display: none;
+}
+
+.console-group {
+    position: relative;
+}
+
+.console-session-header {
+    text-align: center;
+    padding: 6px 0;
+}
+
+.console-session:first-of-type .console-session-header {
+    color: hsl(0, 0%, 60%);
+}
+
+.console-session:not(:first-of-type) {
+    border-top: 0.5px dashed var(--border-color);
+}
+
+.console-session:not(:first-of-type) .console-session-header {
+    color: hsl(0, 0%, 30%);
+    background-color: hsl(0, 0%, 95%);
+}
+
+.console-messages a {
+    color: hsl(0, 0%, 32%);
+    cursor: pointer;
+}
+
+.console-messages a:hover {
+    color: hsl(0, 0%, 14%);
+}
+
+.console-messages .data-grid {
+    clear: both;
+}
+
+.console-item.filtered-out {
+    display: none;
+}
+
+.search-in-progress .console-item.filtered-out-by-search {
+    display: none;
+}
+
+.search-in-progress .console-item:not(.filtered-out-by-search) .highlighted {
+    color: black;
+    background-color: hsla(53, 83%, 53%, 0.2);
+    border-bottom: 1px solid hsl(47, 82%, 60%);
+}
+
+.search-in-progress .console-item:not(.filtered-out-by-search) .highlighted.selected {
+    background-color: hsla(53, 83%, 53%, 0.75);
+}
+
+.search-in-progress .console-item:not(.filtered-out-by-search).special-user-log .console-message-body .highlighted {
+    color: var(--selected-foreground-color);
+    background-color: var(--selected-background-color-highlight);
+
+    border-bottom: none;
+    text-decoration: underline;
+}
+
+.console-user-command::before,
+.console-messages:focus .console-item.selected .console-user-command::before,
+.console-user-command-result.console-log-level::before,
+.console-messages:focus .console-item.selected .console-user-command-result.console-log-level::before {
+        /* Accessible label alternative for icon indicating console input/output/warning/error, etc. */
+        alt: attr(data-labelprefix);
+}
+
+@media (prefers-color-scheme: dark) {
+    .console-messages {
+        background-color: var(--background-color-code);
+    }
+
+    .console-item {
+        border-top-color: var(--console-message-separator);
+    }
+
+    .console-item .data-grid tr.selected {
+        background-color: hsl(210, 0%, 35%) !important;
+    }
+
+    .console-messages:focus .console-item.selected .data-grid tr.selected {
+        background-color: hsl(210, 90%, 35%) !important;
+    }
+
+    .console-messages:focus .console-item .data-grid tr.selected td:not(:last-child) {
+        border-right-color: hsl(210, 70%, 25%);
+    }
+
+    .console-messages {
+        --background-color-selected: hsl(233, 30%, 30%);
+        --border-color-selected: hsl(224, 30%, 35%);
+        --border-color-error: hsla(20, 100%, 50%, 0.12);
+        --border-color-warning: hsla(40, 100%, 50%, 0.12);
+    }
+
+    .console-messages:focus .console-item.selected {
+        background-color: var(--background-color-selected);
+        border-color: var(--border-color-selected);
+    }
+
+    .console-messages:focus .console-item.selected + .console-item {
+        border-color: var(--border-color-selected);
+    }
+
+    .console-session:first-of-type .console-session-header {
+        color: var(--text-color-tertiary);
+    }
+
+    .console-session:not(:first-of-type) .console-session-header {
+        color: unset;
+        background-color: unset;
+    }
+
+    .console-messages a {
+        color: var(--selected-secondary-text-color);
+        cursor: pointer;
+    }
+
+    .console-messages a:hover {
+        color: var(--selected-secondary-text-color-active);
+    }
+
+    .console-error-level {
+        background-color: var(--error-background-color-secondary);
+        border-color: var(--border-color-error);
+    }
+
+    .console-error-level:not(.filtered-out, .filtered-out-by-search), .console-error-level:not(.filtered-out, .filtered-out-by-search) + .console-item {
+        border-top-color: var(--border-color-error);
+    }
+
+    .console-warning-level {
+        background-color: var(--warning-background-color-secondary);
+        border-color: var(--border-color-warning);
+    }
+
+    .console-warning-level:not(.filtered-out, .filtered-out-by-search), .console-warning-level:not(.filtered-out, .filtered-out-by-search) + .console-item {
+        border-top-color: var(--border-color-warning);
+    }
+
+    .search-in-progress .console-item:not(.filtered-out-by-search) .highlighted {
+        color: var(--search-highlight-text-color);
+        background-color: var(--search-highlight-background-color);
+        border-bottom-color: var(--search-highlight-underline-color);
+    }
+
+    .search-in-progress .console-item:not(.filtered-out-by-search) .highlighted.selected {
+        color: var(--search-highlight-text-color-active);
+        background-color: var(--search-highlight-background-color-active);
+    }
+}

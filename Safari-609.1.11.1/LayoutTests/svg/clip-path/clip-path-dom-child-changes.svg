@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<clipPath id="clip1">
+  <rect width="400" height="400"/>
+</clipPath>
+
+<g clip-path="url(#clip1)">
+  <rect width="400" height="400" fill="red"/>
+  <rect width="200" height="200" fill="green"/>
+</g>
+
+<script>
+var clip = document.getElementById("clip1");
+var rect = clip.firstChild.nextSibling;
+rect.setAttribute("transform", "scale(0.5)");
+</script>
+</svg>

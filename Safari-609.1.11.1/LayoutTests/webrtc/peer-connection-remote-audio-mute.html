@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Testing local audio capture playback causes "playing" event to fire</title>
+    <script src="../resources/testharness.js"></script>
+    <script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+    <script src ="routines.js"></script>
+    <script>
+
+    var context = new webkitAudioContext();
+    var remoteStream;
+    async function checkForSound(expected, message, count)
+    {
+        if (count === undefined)
+            count = 0;
+
+        var results = await analyseAudio(remoteStream, 200, context);
+        if (results.heardHum === expected)
+            return;
+        if (count > 50)
+            return Promise.reject("checkForSound timed out when testing: " + message);
+
+        await waitFor(100);
+        return checkForSound(expected, message, ++count);
+    }
+
+    promise_test((test) => {
+        if (window.testRunner)
+            testRunner.setUserMediaPermission(true);
+
+        return navigator.mediaDevices.getUserMedia({audio: true}).then((localStream) => {
+            var remoteTrack;
+            return new Promise((resolve, reject) => {
+                createConnections((firstConnection) => {
+                    firstConnection.addTrack(localStream.getAudioTracks()[0], localStream);
+                }, (secondConnection) => {
+                    secondConnection.ontrack = (trackEvent) => {
+                        remoteStream = trackEvent.streams[0];
+                        remoteTrack = remoteStream.getAudioTracks()[0];
+                        resolve();
+                    };
+                });
+            }).then(() => {
+                return checkForSound(true, "should hear hum from remote enabled track");
+            }).then(() => {
+                remoteTrack.enabled = false;
+                return waitFor(100);
+            }).then(() => {
+                return checkForSound(false, "should not hear hum from remote disabled track");
+            }).then(() => {
+                return context.close();
+            });
+        });
+    }, "Muting an incoming audio track");
+    </script>
+</body>
+</html>

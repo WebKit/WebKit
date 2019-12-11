@@ -1,0 +1,48 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<style type="text/css" media="screen">
+    
+.media-controls {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+    
+</style>
+<script type="text/javascript">
+
+description("Testing the <code>MacOSInlineMediaControls</code> computed styles.");
+
+window.jsTestIsAsync = true;
+
+const mediaControls = new MacOSInlineMediaControls({ width: 680, height: 300 });
+
+let style, bounds;
+scheduler.frameDidFire = function()
+{
+    document.body.appendChild(mediaControls.element);
+
+    style = window.getComputedStyle(mediaControls.bottomControlsBar.element);
+    bounds = mediaControls.bottomControlsBar.element.getBoundingClientRect();
+    
+    shouldBeEqualToString("style.left", "6px");
+    shouldBeEqualToString("style.bottom", "6px");
+    shouldBeEqualToString("style.width", "668px");
+    shouldBeEqualToString("style.height", "31px");
+
+    shouldBe("bounds.left", "6");
+    shouldBe("bounds.top", "263");
+    shouldBe("bounds.width", "668");
+    shouldBe("bounds.height", "31");
+
+    mediaControls.element.remove();
+
+    debug("");
+    finishMediaControlsTest();
+};
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

@@ -1,0 +1,4 @@
+
+PASS nonArrayRefArrayLengthFail 
+PASS nonArrayRefArrayLengthSucceed 
+

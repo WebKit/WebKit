@@ -1,0 +1,37 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/BarProp.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/Document-defaultView.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/Window-document.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/close-method.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/closed-attribute.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/document-attribute.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/focus.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/historical.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/length-attribute.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/name-attribute.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/noopener-noreferrer-BarProp.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/noopener-noreferrer-sizing.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/self-et-al.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-aliases.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-indexed-properties-strict.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-indexed-properties.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-defaults.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-noopener.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-noreferrer.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-properties.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-prototype-chain.html

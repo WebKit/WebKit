@@ -1,0 +1,14 @@
+Test for error messages for in
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 20   in   'in in in'   threw exception TypeError: "in in in" is not an Object. (evaluating '20   in   'in in in'').
+PASS 20   in   true   threw exception TypeError: true is not an Object. (evaluating '20   in   true').
+PASS 20   in   {}.foo   threw exception TypeError: {}.foo is not an Object. (evaluating '20   in   {}.foo').
+PASS 20   in   20   threw exception TypeError: 20 is not an Object. (evaluating '20   in   20').
+PASS 20   in   null   threw exception TypeError: null is not an Object. (evaluating '20   in   null').
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,7 @@
+Clicking in iframe has activation state in child
+
+Click inside the light-grey area.
+
+
+FAIL Values adjust on activity undefined is not an object (evaluating 'navigator.userActivation.isActive')
+

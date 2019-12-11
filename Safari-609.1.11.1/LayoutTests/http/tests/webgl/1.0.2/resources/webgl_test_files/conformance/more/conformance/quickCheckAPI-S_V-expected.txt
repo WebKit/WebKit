@@ -1,0 +1,2175 @@
+PASS
+
+testValidArgs
+PASS: Valid args: stencilMaskSeparate(1032,709302763) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,709302763) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,2933074514) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,2933074514) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,489518994) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,489518994) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,2895284208) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,2895284208) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,3555588610) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,3555588610) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,2268879691) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,2268879691) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,2949969997) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,2949969997) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,1122749844) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,1122749844) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,1431446194) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,1431446194) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,2016383025) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,2016383025) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,2235039012) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,2235039012) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,2011673178) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,2011673178) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,1083777183) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,1083777183) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,4043403176) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,4043403176) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,1907896322) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,1907896322) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,1754858453) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,1754858453) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,768050481) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,768050481) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,853621338) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,853621338) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,3590013054) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,3590013054) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,1040125921) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,1040125921) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,1496280219) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,1496280219) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,1245953667) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,1245953667) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,3933585408) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,3933585408) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,3721269238) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,3721269238) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,364180595) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,364180595) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,1948082366) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,1948082366) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,1890111438) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,1890111438) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,419116746) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,419116746) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,1940082385) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,1940082385) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,3103396270) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,3103396270) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,1866674514) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,1866674514) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,2598797489) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,2598797489) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,2965900040) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,2965900040) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,1947443808) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,1947443808) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,466210682) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,466210682) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,1538557179) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,1538557179) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,655573034) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,655573034) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,3170114789) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,3170114789) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,2265181993) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,2265181993) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,1146058544) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,1146058544) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,3390136091) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,3390136091) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,192324725) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,192324725) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,369001929) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,369001929) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,2255821169) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,2255821169) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,1673271215) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,1673271215) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,1968345122) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,1968345122) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,4217911710) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,4217911710) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,2315275455) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,2315275455) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,1769686002) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,1769686002) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,1733303749) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,1733303749) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,561976501) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,561976501) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,921928386) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,921928386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,2291339758) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,2291339758) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,1193915040) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,1193915040) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,1313640386) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,1313640386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,1406806114) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,1406806114) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,2643939366) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,2643939366) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,2059388730) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,2059388730) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,3248569757) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,3248569757) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,277938451) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,277938451) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,1921802148) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,1921802148) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,4000417287) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,4000417287) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,1826910832) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,1826910832) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,2721207925) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,2721207925) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,2845944260) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,2845944260) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,1281309705) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,1281309705) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,1723263485) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,1723263485) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,2258658435) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,2258658435) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,1236678844) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,1236678844) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,3934955564) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,3934955564) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,3896621292) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,3896621292) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,4255845016) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,4255845016) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,3791249266) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,3791249266) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,367266882) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,367266882) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,3415024727) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,3415024727) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,1974670221) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,1974670221) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,1524266296) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,1524266296) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,2394347315) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,2394347315) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,2812570596) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,2812570596) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,1004138954) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,1004138954) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,2772847208) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,2772847208) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,2797381193) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,2797381193) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,2372135341) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,2372135341) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,2520422917) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,2520422917) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,1829011084) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,1829011084) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,1960305007) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,1960305007) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,3179220100) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,3179220100) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,891254954) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,891254954) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,845561708) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,845561708) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,1052126389) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,1052126389) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,2808906411) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,2808906411) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,4207662419) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,4207662419) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,1977549842) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,1977549842) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,1751764566) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,1751764566) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,1081260351) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,1081260351) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1029,3106829254) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1029,3106829254) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,3476836850) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,3476836850) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,3762525338) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,3762525338) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1028,1742352136) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1028,1742352136) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilMaskSeparate(1032,4061894554) (in assert)
+true
+PASS: This should work: stencilMaskSeparate(1032,4061894554) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(5386,7683,34055) (in assert)
+true
+PASS: This should work: stencilOp(5386,7683,34055) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(34055,0,7683) (in assert)
+true
+PASS: This should work: stencilOp(34055,0,7683) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(34055,7680,7680) (in assert)
+true
+PASS: This should work: stencilOp(34055,7680,7680) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7680,34055,7683) (in assert)
+true
+PASS: This should work: stencilOp(7680,34055,7683) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7683,7681,5386) (in assert)
+true
+PASS: This should work: stencilOp(7683,7681,5386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(34055,34056,7682) (in assert)
+true
+PASS: This should work: stencilOp(34055,34056,7682) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(5386,7682,7682) (in assert)
+true
+PASS: This should work: stencilOp(5386,7682,7682) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7683,5386,5386) (in assert)
+true
+PASS: This should work: stencilOp(7683,5386,5386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(0,5386,5386) (in assert)
+true
+PASS: This should work: stencilOp(0,5386,5386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7683,7681,7682) (in assert)
+true
+PASS: This should work: stencilOp(7683,7681,7682) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7683,34055,7680) (in assert)
+true
+PASS: This should work: stencilOp(7683,34055,7680) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7682,7682,34056) (in assert)
+true
+PASS: This should work: stencilOp(7682,7682,34056) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7682,7680,7682) (in assert)
+true
+PASS: This should work: stencilOp(7682,7680,7682) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(0,5386,7682) (in assert)
+true
+PASS: This should work: stencilOp(0,5386,7682) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7681,34055,7682) (in assert)
+true
+PASS: This should work: stencilOp(7681,34055,7682) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(34056,7682,34056) (in assert)
+true
+PASS: This should work: stencilOp(34056,7682,34056) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7680,7683,5386) (in assert)
+true
+PASS: This should work: stencilOp(7680,7683,5386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(0,7683,7681) (in assert)
+true
+PASS: This should work: stencilOp(0,7683,7681) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(5386,7681,7681) (in assert)
+true
+PASS: This should work: stencilOp(5386,7681,7681) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7681,0,7681) (in assert)
+true
+PASS: This should work: stencilOp(7681,0,7681) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(0,7680,7682) (in assert)
+true
+PASS: This should work: stencilOp(0,7680,7682) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7680,0,34055) (in assert)
+true
+PASS: This should work: stencilOp(7680,0,34055) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7681,7683,7681) (in assert)
+true
+PASS: This should work: stencilOp(7681,7683,7681) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(34056,34055,7682) (in assert)
+true
+PASS: This should work: stencilOp(34056,34055,7682) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7682,7683,34055) (in assert)
+true
+PASS: This should work: stencilOp(7682,7683,34055) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(34056,7680,7681) (in assert)
+true
+PASS: This should work: stencilOp(34056,7680,7681) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7680,34055,7681) (in assert)
+true
+PASS: This should work: stencilOp(7680,34055,7681) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7682,7683,0) (in assert)
+true
+PASS: This should work: stencilOp(7682,7683,0) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(34055,34056,34056) (in assert)
+true
+PASS: This should work: stencilOp(34055,34056,34056) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7683,5386,7680) (in assert)
+true
+PASS: This should work: stencilOp(7683,5386,7680) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(0,7682,5386) (in assert)
+true
+PASS: This should work: stencilOp(0,7682,5386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(0,7680,7680) (in assert)
+true
+PASS: This should work: stencilOp(0,7680,7680) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(5386,34055,7681) (in assert)
+true
+PASS: This should work: stencilOp(5386,34055,7681) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(34055,7681,34056) (in assert)
+true
+PASS: This should work: stencilOp(34055,7681,34056) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7682,0,34055) (in assert)
+true
+PASS: This should work: stencilOp(7682,0,34055) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7683,7682,0) (in assert)
+true
+PASS: This should work: stencilOp(7683,7682,0) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7682,7682,7680) (in assert)
+true
+PASS: This should work: stencilOp(7682,7682,7680) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(0,7681,7682) (in assert)
+true
+PASS: This should work: stencilOp(0,7681,7682) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(0,7682,7682) (in assert)
+true
+PASS: This should work: stencilOp(0,7682,7682) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7680,34056,7683) (in assert)
+true
+PASS: This should work: stencilOp(7680,34056,7683) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7681,7683,34056) (in assert)
+true
+PASS: This should work: stencilOp(7681,7683,34056) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7682,34056,7682) (in assert)
+true
+PASS: This should work: stencilOp(7682,34056,7682) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7682,34056,7680) (in assert)
+true
+PASS: This should work: stencilOp(7682,34056,7680) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(0,0,34056) (in assert)
+true
+PASS: This should work: stencilOp(0,0,34056) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(34055,5386,7680) (in assert)
+true
+PASS: This should work: stencilOp(34055,5386,7680) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(34056,7683,7680) (in assert)
+true
+PASS: This should work: stencilOp(34056,7683,7680) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7682,7683,7680) (in assert)
+true
+PASS: This should work: stencilOp(7682,7683,7680) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7681,34056,7681) (in assert)
+true
+PASS: This should work: stencilOp(7681,34056,7681) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(34056,34056,5386) (in assert)
+true
+PASS: This should work: stencilOp(34056,34056,5386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7683,5386,7681) (in assert)
+true
+PASS: This should work: stencilOp(7683,5386,7681) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7680,34056,0) (in assert)
+true
+PASS: This should work: stencilOp(7680,34056,0) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(34055,34055,34055) (in assert)
+true
+PASS: This should work: stencilOp(34055,34055,34055) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7680,7682,34055) (in assert)
+true
+PASS: This should work: stencilOp(7680,7682,34055) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7680,5386,0) (in assert)
+true
+PASS: This should work: stencilOp(7680,5386,0) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7680,5386,7681) (in assert)
+true
+PASS: This should work: stencilOp(7680,5386,7681) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7680,7680,7683) (in assert)
+true
+PASS: This should work: stencilOp(7680,7680,7683) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(34055,0,7681) (in assert)
+true
+PASS: This should work: stencilOp(34055,0,7681) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7681,7681,7681) (in assert)
+true
+PASS: This should work: stencilOp(7681,7681,7681) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7682,7681,5386) (in assert)
+true
+PASS: This should work: stencilOp(7682,7681,5386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(0,7682,0) (in assert)
+true
+PASS: This should work: stencilOp(0,7682,0) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(0,7680,5386) (in assert)
+true
+PASS: This should work: stencilOp(0,7680,5386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(34056,7682,5386) (in assert)
+true
+PASS: This should work: stencilOp(34056,7682,5386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7683,34055,34056) (in assert)
+true
+PASS: This should work: stencilOp(7683,34055,34056) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(5386,34056,34056) (in assert)
+true
+PASS: This should work: stencilOp(5386,34056,34056) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(34056,0,5386) (in assert)
+true
+PASS: This should work: stencilOp(34056,0,5386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(34055,5386,0) (in assert)
+true
+PASS: This should work: stencilOp(34055,5386,0) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7681,5386,5386) (in assert)
+true
+PASS: This should work: stencilOp(7681,5386,5386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7680,7683,0) (in assert)
+true
+PASS: This should work: stencilOp(7680,7683,0) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(5386,34055,7680) (in assert)
+true
+PASS: This should work: stencilOp(5386,34055,7680) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7681,7681,0) (in assert)
+true
+PASS: This should work: stencilOp(7681,7681,0) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7681,7680,7680) (in assert)
+true
+PASS: This should work: stencilOp(7681,7680,7680) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7683,0,0) (in assert)
+true
+PASS: This should work: stencilOp(7683,0,0) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(34055,7683,34055) (in assert)
+true
+PASS: This should work: stencilOp(34055,7683,34055) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7683,5386,34056) (in assert)
+true
+PASS: This should work: stencilOp(7683,5386,34056) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7682,7682,34055) (in assert)
+true
+PASS: This should work: stencilOp(7682,7682,34055) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7681,5386,34055) (in assert)
+true
+PASS: This should work: stencilOp(7681,5386,34055) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7683,34055,7682) (in assert)
+true
+PASS: This should work: stencilOp(7683,34055,7682) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7683,7681,34056) (in assert)
+true
+PASS: This should work: stencilOp(7683,7681,34056) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(34056,7680,7680) (in assert)
+true
+PASS: This should work: stencilOp(34056,7680,7680) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7681,7680,7682) (in assert)
+true
+PASS: This should work: stencilOp(7681,7680,7682) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(0,34055,0) (in assert)
+true
+PASS: This should work: stencilOp(0,34055,0) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7681,7680,34056) (in assert)
+true
+PASS: This should work: stencilOp(7681,7680,34056) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(5386,7683,5386) (in assert)
+true
+PASS: This should work: stencilOp(5386,7683,5386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7680,7680,5386) (in assert)
+true
+PASS: This should work: stencilOp(7680,7680,5386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7683,34055,34055) (in assert)
+true
+PASS: This should work: stencilOp(7683,34055,34055) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(5386,7681,0) (in assert)
+true
+PASS: This should work: stencilOp(5386,7681,0) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(34055,7682,34055) (in assert)
+true
+PASS: This should work: stencilOp(34055,7682,34055) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(34056,7680,7682) (in assert)
+true
+PASS: This should work: stencilOp(34056,7680,7682) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7683,34055,7683) (in assert)
+true
+PASS: This should work: stencilOp(7683,34055,7683) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(0,5386,7683) (in assert)
+true
+PASS: This should work: stencilOp(0,5386,7683) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7682,7682,7683) (in assert)
+true
+PASS: This should work: stencilOp(7682,7682,7683) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7683,34056,7683) (in assert)
+true
+PASS: This should work: stencilOp(7683,34056,7683) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(34056,7683,34055) (in assert)
+true
+PASS: This should work: stencilOp(34056,7683,34055) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(7683,7681,7683) (in assert)
+true
+PASS: This should work: stencilOp(7683,7681,7683) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOp(34056,7681,34055) (in assert)
+true
+PASS: This should work: stencilOp(34056,7681,34055) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,7681,0,34055) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,7681,0,34055) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,7683,5386,7680) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,7683,5386,7680) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,7682,34056,7682) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,7682,34056,7682) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,34055,7680,7682) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,34055,7680,7682) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,7681,34056,5386) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,7681,34056,5386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,7682,7683,7683) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,7682,7683,7683) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,34056,7683,0) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,34056,7683,0) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,7683,7683,7682) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,7683,7683,7682) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,7683,5386,7682) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,7683,5386,7682) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,5386,7680,0) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,5386,7680,0) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,7683,0,7680) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,7683,0,7680) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,7680,0,7681) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,7680,0,7681) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,7682,34056,5386) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,7682,34056,5386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,34055,0,34056) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,34055,0,34056) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,7682,7682,7681) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,7682,7682,7681) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,7681,34056,34055) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,7681,34056,34055) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,7681,34055,5386) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,7681,34055,5386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,7683,34056,34055) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,7683,34056,34055) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,5386,34055,7680) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,5386,34055,7680) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,7682,5386,34055) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,7682,5386,34055) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,34055,34056,34055) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,34055,34056,34055) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,0,7681,7683) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,0,7681,7683) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,7680,0,7681) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,7680,0,7681) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,7683,5386,34055) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,7683,5386,34055) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,5386,0,7683) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,5386,0,7683) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,0,0,7680) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,0,0,7680) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,34056,34056,7681) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,34056,34056,7681) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,34056,7683,0) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,34056,7683,0) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,5386,7682,5386) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,5386,7682,5386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,7680,0,7680) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,7680,0,7680) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,7680,34056,34056) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,7680,34056,34056) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,7681,7681,5386) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,7681,7681,5386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,7680,7682,34056) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,7680,7682,34056) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,7680,7683,34055) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,7680,7683,34055) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,5386,5386,34056) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,5386,5386,34056) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,0,7683,5386) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,0,7683,5386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,7680,7681,7681) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,7680,7681,7681) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,0,34055,7680) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,0,34055,7680) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,5386,34056,5386) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,5386,34056,5386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,34056,7681,7682) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,34056,7681,7682) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,7683,34055,7681) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,7683,34055,7681) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,7683,34056,7683) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,7683,34056,7683) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,7682,34056,7683) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,7682,34056,7683) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,5386,34056,7682) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,5386,34056,7682) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,7682,34056,34056) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,7682,34056,34056) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,34056,7682,7681) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,34056,7682,7681) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,7681,7683,34055) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,7681,7683,34055) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,7681,7680,34055) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,7681,7680,34055) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,34055,5386,34055) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,34055,5386,34055) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,5386,34055,7681) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,5386,34055,7681) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,7683,34056,7681) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,7683,34056,7681) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,7682,34055,7680) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,7682,34055,7680) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,7680,0,0) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,7680,0,0) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,34055,5386,34055) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,34055,5386,34055) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,5386,7680,5386) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,5386,7680,5386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,7683,34055,7682) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,7683,34055,7682) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,7682,0,5386) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,7682,0,5386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,0,34056,7681) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,0,34056,7681) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,7681,7680,5386) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,7681,7680,5386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,0,34056,7681) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,0,34056,7681) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,7682,7680,34056) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,7682,7680,34056) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,0,7681,7681) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,0,7681,7681) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,7681,34055,34055) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,7681,34055,34055) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,34056,0,7683) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,34056,0,7683) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,0,7681,7683) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,0,7681,7683) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,5386,7683,0) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,5386,7683,0) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,7681,5386,7680) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,7681,5386,7680) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,7682,5386,7681) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,7682,5386,7681) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,7683,7681,5386) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,7683,7681,5386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,34055,0,7683) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,34055,0,7683) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,5386,7682,7683) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,5386,7682,7683) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,5386,7683,5386) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,5386,7683,5386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,34056,34056,7683) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,34056,34056,7683) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,0,34055,7683) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,0,34055,7683) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,7682,7682,0) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,7682,7682,0) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,5386,7681,7681) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,5386,7681,7681) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,7681,34056,0) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,7681,34056,0) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,7681,7682,0) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,7681,7682,0) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,7680,7683,34056) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,7680,7683,34056) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,7683,34056,7682) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,7683,34056,7682) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,7681,7682,7682) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,7681,7682,7682) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,7683,0,7682) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,7683,0,7682) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,5386,7683,34056) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,5386,7683,34056) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,7681,7681,34056) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,7681,7681,34056) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,7683,7683,0) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,7683,7683,0) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,34055,0,0) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,34055,0,0) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,7683,34055,7681) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,7683,34055,7681) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,7683,7680,7680) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,7683,7680,7680) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,7683,34056,7681) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,7683,34056,7681) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,7680,5386,7682) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,7680,5386,7682) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,7681,7683,5386) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,7681,7683,5386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,34055,7683,0) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,34055,7683,0) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,7681,0,5386) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,7681,0,5386) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1028,34055,5386,34056) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1028,34055,5386,34056) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1032,34055,7681,34056) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1032,34055,7681,34056) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: stencilOpSeparate(1029,0,34055,34056) (in assert)
+true
+PASS: This should work: stencilOpSeparate(1029,0,34055,34056) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34071,0,6407,6407,5121,[object HTMLImageElement]) (in assert)
+true
+PASS: This should work: texImage2D(34071,0,6407,6407,5121,[object HTMLImageElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34074,0,6409,16,16,0,6409,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34074,0,6409,16,16,0,6409,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(3553,0,6407,6407,5121,[object HTMLVideoElement]) (in assert)
+true
+PASS: This should work: texImage2D(3553,0,6407,6407,5121,[object HTMLVideoElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34072,0,6410,16,16,0,6410,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34072,0,6410,16,16,0,6410,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(3553,0,6406,16,16,0,6406,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(3553,0,6406,16,16,0,6406,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34070,0,6406,16,16,0,6406,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34070,0,6406,16,16,0,6406,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(3553,0,6406,16,16,0,6406,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(3553,0,6406,16,16,0,6406,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34073,0,6409,6409,5121,[ImageData]) (in assert)
+true
+PASS: This should work: texImage2D(34073,0,6409,6409,5121,[ImageData]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34072,0,6408,16,16,0,6408,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34072,0,6408,16,16,0,6408,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34073,0,6407,16,16,0,6407,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34073,0,6407,16,16,0,6407,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34074,0,6408,16,16,0,6408,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34074,0,6408,16,16,0,6408,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34073,0,6408,6408,5121,[object HTMLVideoElement]) (in assert)
+true
+PASS: This should work: texImage2D(34073,0,6408,6408,5121,[object HTMLVideoElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34070,0,6410,6410,5121,[object HTMLVideoElement]) (in assert)
+true
+PASS: This should work: texImage2D(34070,0,6410,6410,5121,[object HTMLVideoElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34070,0,6408,16,16,0,6408,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34070,0,6408,16,16,0,6408,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(3553,0,6410,16,16,0,6410,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(3553,0,6410,16,16,0,6410,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34073,0,6407,16,16,0,6407,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34073,0,6407,16,16,0,6407,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34071,0,6409,6409,5121,[object HTMLVideoElement]) (in assert)
+true
+PASS: This should work: texImage2D(34071,0,6409,6409,5121,[object HTMLVideoElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34073,0,6408,6408,5121,[object HTMLVideoElement]) (in assert)
+true
+PASS: This should work: texImage2D(34073,0,6408,6408,5121,[object HTMLVideoElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34073,0,6410,6410,5121,[object HTMLImageElement]) (in assert)
+true
+PASS: This should work: texImage2D(34073,0,6410,6410,5121,[object HTMLImageElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34069,0,6406,6406,5121,[object HTMLCanvasElement]) (in assert)
+true
+PASS: This should work: texImage2D(34069,0,6406,6406,5121,[object HTMLCanvasElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34070,0,6408,16,16,0,6408,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34070,0,6408,16,16,0,6408,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34070,0,6406,6406,5121,[object HTMLImageElement]) (in assert)
+true
+PASS: This should work: texImage2D(34070,0,6406,6406,5121,[object HTMLImageElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34071,0,6408,16,16,0,6408,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34071,0,6408,16,16,0,6408,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34069,0,6408,16,16,0,6408,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34069,0,6408,16,16,0,6408,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34069,0,6408,6408,5121,[ImageData]) (in assert)
+true
+PASS: This should work: texImage2D(34069,0,6408,6408,5121,[ImageData]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34069,0,6408,16,16,0,6408,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34069,0,6408,16,16,0,6408,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(3553,0,6407,16,16,0,6407,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(3553,0,6407,16,16,0,6407,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34073,0,6409,6409,5121,[object HTMLVideoElement]) (in assert)
+true
+PASS: This should work: texImage2D(34073,0,6409,6409,5121,[object HTMLVideoElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34072,0,6408,6408,5121,[object HTMLVideoElement]) (in assert)
+true
+PASS: This should work: texImage2D(34072,0,6408,6408,5121,[object HTMLVideoElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34074,0,6409,6409,5121,[object HTMLCanvasElement]) (in assert)
+true
+PASS: This should work: texImage2D(34074,0,6409,6409,5121,[object HTMLCanvasElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34069,0,6407,6407,5121,[object HTMLVideoElement]) (in assert)
+true
+PASS: This should work: texImage2D(34069,0,6407,6407,5121,[object HTMLVideoElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34074,0,6409,16,16,0,6409,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34074,0,6409,16,16,0,6409,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34072,0,6409,16,16,0,6409,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34072,0,6409,16,16,0,6409,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34072,0,6406,16,16,0,6406,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34072,0,6406,16,16,0,6406,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34073,0,6407,16,16,0,6407,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34073,0,6407,16,16,0,6407,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34071,0,6409,16,16,0,6409,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34071,0,6409,16,16,0,6409,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34069,0,6408,16,16,0,6408,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34069,0,6408,16,16,0,6408,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34072,0,6410,6410,5121,[object HTMLVideoElement]) (in assert)
+true
+PASS: This should work: texImage2D(34072,0,6410,6410,5121,[object HTMLVideoElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34071,0,6408,16,16,0,6408,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34071,0,6408,16,16,0,6408,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34069,0,6407,16,16,0,6407,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34069,0,6407,16,16,0,6407,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34073,0,6409,6409,5121,[object HTMLCanvasElement]) (in assert)
+true
+PASS: This should work: texImage2D(34073,0,6409,6409,5121,[object HTMLCanvasElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34072,0,6407,6407,5121,[ImageData]) (in assert)
+true
+PASS: This should work: texImage2D(34072,0,6407,6407,5121,[ImageData]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(3553,0,6408,16,16,0,6408,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(3553,0,6408,16,16,0,6408,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34074,0,6407,16,16,0,6407,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34074,0,6407,16,16,0,6407,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34070,0,6410,16,16,0,6410,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34070,0,6410,16,16,0,6410,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34071,0,6409,6409,5121,[object HTMLVideoElement]) (in assert)
+true
+PASS: This should work: texImage2D(34071,0,6409,6409,5121,[object HTMLVideoElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34072,0,6409,6409,5121,[object HTMLCanvasElement]) (in assert)
+true
+PASS: This should work: texImage2D(34072,0,6409,6409,5121,[object HTMLCanvasElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34073,0,6406,6406,5121,[object HTMLImageElement]) (in assert)
+true
+PASS: This should work: texImage2D(34073,0,6406,6406,5121,[object HTMLImageElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34073,0,6409,6409,5121,[object HTMLCanvasElement]) (in assert)
+true
+PASS: This should work: texImage2D(34073,0,6409,6409,5121,[object HTMLCanvasElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(3553,0,6410,6410,5121,[object HTMLCanvasElement]) (in assert)
+true
+PASS: This should work: texImage2D(3553,0,6410,6410,5121,[object HTMLCanvasElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34073,0,6408,6408,5121,[object HTMLCanvasElement]) (in assert)
+true
+PASS: This should work: texImage2D(34073,0,6408,6408,5121,[object HTMLCanvasElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34074,0,6406,6406,5121,[object HTMLCanvasElement]) (in assert)
+true
+PASS: This should work: texImage2D(34074,0,6406,6406,5121,[object HTMLCanvasElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(3553,0,6407,6407,5121,[object HTMLImageElement]) (in assert)
+true
+PASS: This should work: texImage2D(3553,0,6407,6407,5121,[object HTMLImageElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34069,0,6409,6409,5121,[ImageData]) (in assert)
+true
+PASS: This should work: texImage2D(34069,0,6409,6409,5121,[ImageData]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34069,0,6409,16,16,0,6409,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34069,0,6409,16,16,0,6409,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34069,0,6410,16,16,0,6410,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34069,0,6410,16,16,0,6410,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34073,0,6408,6408,5121,[object HTMLVideoElement]) (in assert)
+true
+PASS: This should work: texImage2D(34073,0,6408,6408,5121,[object HTMLVideoElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34074,0,6409,6409,5121,[object HTMLCanvasElement]) (in assert)
+true
+PASS: This should work: texImage2D(34074,0,6409,6409,5121,[object HTMLCanvasElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(3553,0,6408,16,16,0,6408,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(3553,0,6408,16,16,0,6408,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34073,0,6410,6410,5121,[ImageData]) (in assert)
+true
+PASS: This should work: texImage2D(34073,0,6410,6410,5121,[ImageData]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(3553,0,6408,6408,5121,[ImageData]) (in assert)
+true
+PASS: This should work: texImage2D(3553,0,6408,6408,5121,[ImageData]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34074,0,6410,6410,5121,[object HTMLVideoElement]) (in assert)
+true
+PASS: This should work: texImage2D(34074,0,6410,6410,5121,[object HTMLVideoElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34070,0,6409,6409,5121,[object HTMLCanvasElement]) (in assert)
+true
+PASS: This should work: texImage2D(34070,0,6409,6409,5121,[object HTMLCanvasElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34069,0,6409,6409,5121,[object HTMLVideoElement]) (in assert)
+true
+PASS: This should work: texImage2D(34069,0,6409,6409,5121,[object HTMLVideoElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34070,0,6406,16,16,0,6406,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34070,0,6406,16,16,0,6406,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34072,0,6410,6410,5121,[object HTMLCanvasElement]) (in assert)
+true
+PASS: This should work: texImage2D(34072,0,6410,6410,5121,[object HTMLCanvasElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34071,0,6407,6407,5121,[ImageData]) (in assert)
+true
+PASS: This should work: texImage2D(34071,0,6407,6407,5121,[ImageData]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(3553,0,6409,6409,5121,[ImageData]) (in assert)
+true
+PASS: This should work: texImage2D(3553,0,6409,6409,5121,[ImageData]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34070,0,6409,16,16,0,6409,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34070,0,6409,16,16,0,6409,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34074,0,6408,16,16,0,6408,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34074,0,6408,16,16,0,6408,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34074,0,6406,6406,5121,[object HTMLImageElement]) (in assert)
+true
+PASS: This should work: texImage2D(34074,0,6406,6406,5121,[object HTMLImageElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34072,0,6409,16,16,0,6409,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34072,0,6409,16,16,0,6409,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34069,0,6408,16,16,0,6408,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34069,0,6408,16,16,0,6408,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(3553,0,6408,6408,5121,[object HTMLCanvasElement]) (in assert)
+true
+PASS: This should work: texImage2D(3553,0,6408,6408,5121,[object HTMLCanvasElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(3553,0,6407,16,16,0,6407,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(3553,0,6407,16,16,0,6407,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34071,0,6406,16,16,0,6406,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34071,0,6406,16,16,0,6406,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34070,0,6408,6408,5121,[object HTMLCanvasElement]) (in assert)
+true
+PASS: This should work: texImage2D(34070,0,6408,6408,5121,[object HTMLCanvasElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34074,0,6409,16,16,0,6409,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34074,0,6409,16,16,0,6409,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34070,0,6407,6407,5121,[ImageData]) (in assert)
+true
+PASS: This should work: texImage2D(34070,0,6407,6407,5121,[ImageData]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34069,0,6408,6408,5121,[object HTMLCanvasElement]) (in assert)
+true
+PASS: This should work: texImage2D(34069,0,6408,6408,5121,[object HTMLCanvasElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34074,0,6409,6409,5121,[ImageData]) (in assert)
+true
+PASS: This should work: texImage2D(34074,0,6409,6409,5121,[ImageData]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34071,0,6408,16,16,0,6408,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34071,0,6408,16,16,0,6408,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34070,0,6408,6408,5121,[object HTMLImageElement]) (in assert)
+true
+PASS: This should work: texImage2D(34070,0,6408,6408,5121,[object HTMLImageElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34069,0,6406,16,16,0,6406,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34069,0,6406,16,16,0,6406,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34070,0,6409,6409,5121,[object HTMLImageElement]) (in assert)
+true
+PASS: This should work: texImage2D(34070,0,6409,6409,5121,[object HTMLImageElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34072,0,6409,6409,5121,[ImageData]) (in assert)
+true
+PASS: This should work: texImage2D(34072,0,6409,6409,5121,[ImageData]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34072,0,6409,6409,5121,[ImageData]) (in assert)
+true
+PASS: This should work: texImage2D(34072,0,6409,6409,5121,[ImageData]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34070,0,6410,16,16,0,6410,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34070,0,6410,16,16,0,6410,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34071,0,6407,16,16,0,6407,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34071,0,6407,16,16,0,6407,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34071,0,6409,16,16,0,6409,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34071,0,6409,16,16,0,6409,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34070,0,6408,6408,5121,[object HTMLVideoElement]) (in assert)
+true
+PASS: This should work: texImage2D(34070,0,6408,6408,5121,[object HTMLVideoElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(3553,0,6409,6409,5121,[object HTMLVideoElement]) (in assert)
+true
+PASS: This should work: texImage2D(3553,0,6409,6409,5121,[object HTMLVideoElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34072,0,6409,6409,5121,[object HTMLVideoElement]) (in assert)
+true
+PASS: This should work: texImage2D(34072,0,6409,6409,5121,[object HTMLVideoElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34073,0,6406,6406,5121,[object HTMLVideoElement]) (in assert)
+true
+PASS: This should work: texImage2D(34073,0,6406,6406,5121,[object HTMLVideoElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(3553,0,6408,16,16,0,6408,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(3553,0,6408,16,16,0,6408,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34069,0,6409,6409,5121,[object HTMLVideoElement]) (in assert)
+true
+PASS: This should work: texImage2D(34069,0,6409,6409,5121,[object HTMLVideoElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34071,0,6408,6408,5121,[object HTMLImageElement]) (in assert)
+true
+PASS: This should work: texImage2D(34071,0,6408,6408,5121,[object HTMLImageElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(3553,0,6410,16,16,0,6410,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(3553,0,6410,16,16,0,6410,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34074,0,6407,6407,5121,[object HTMLImageElement]) (in assert)
+true
+PASS: This should work: texImage2D(34074,0,6407,6407,5121,[object HTMLImageElement]) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texImage2D(34073,0,6408,16,16,0,6408,5121,null) (in assert)
+true
+PASS: This should work: texImage2D(34073,0,6408,16,16,0,6408,5121,null) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameterf(3553,10241,9987) (in assert)
+true
+PASS: This should work: texParameterf(3553,10241,9987) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameterf(3553,10240,9728) (in assert)
+true
+PASS: This should work: texParameterf(3553,10240,9728) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameterf(34067,10243,10497) (in assert)
+true
+PASS: This should work: texParameterf(34067,10243,10497) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameterf(3553,10243,33071) (in assert)
+true
+PASS: This should work: texParameterf(3553,10243,33071) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameterf(3553,10242,33648) (in assert)
+true
+PASS: This should work: texParameterf(3553,10242,33648) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameterf(3553,10243,33648) (in assert)
+true
+PASS: This should work: texParameterf(3553,10243,33648) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameterf(34067,10241,9728) (in assert)
+true
+PASS: This should work: texParameterf(34067,10241,9728) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameterf(3553,10240,9729) (in assert)
+true
+PASS: This should work: texParameterf(3553,10240,9729) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameterf(3553,10241,9986) (in assert)
+true
+PASS: This should work: texParameterf(3553,10241,9986) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameterf(3553,10242,33071) (in assert)
+true
+PASS: This should work: texParameterf(3553,10242,33071) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameterf(34067,10241,9987) (in assert)
+true
+PASS: This should work: texParameterf(34067,10241,9987) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameterf(34067,10241,9729) (in assert)
+true
+PASS: This should work: texParameterf(34067,10241,9729) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameterf(34067,10241,9986) (in assert)
+true
+PASS: This should work: texParameterf(34067,10241,9986) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameterf(34067,10242,10497) (in assert)
+true
+PASS: This should work: texParameterf(34067,10242,10497) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameterf(34067,10241,9985) (in assert)
+true
+PASS: This should work: texParameterf(34067,10241,9985) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameterf(34067,10240,9728) (in assert)
+true
+PASS: This should work: texParameterf(34067,10240,9728) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameterf(3553,10243,10497) (in assert)
+true
+PASS: This should work: texParameterf(3553,10243,10497) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameterf(34067,10241,9984) (in assert)
+true
+PASS: This should work: texParameterf(34067,10241,9984) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameterf(34067,10240,9729) (in assert)
+true
+PASS: This should work: texParameterf(34067,10240,9729) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameterf(34067,10242,33648) (in assert)
+true
+PASS: This should work: texParameterf(34067,10242,33648) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameterf(34067,10243,33071) (in assert)
+true
+PASS: This should work: texParameterf(34067,10243,33071) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameterf(3553,10241,9985) (in assert)
+true
+PASS: This should work: texParameterf(3553,10241,9985) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameterf(3553,10242,10497) (in assert)
+true
+PASS: This should work: texParameterf(3553,10242,10497) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameterf(34067,10243,33648) (in assert)
+true
+PASS: This should work: texParameterf(34067,10243,33648) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameterf(3553,10241,9729) (in assert)
+true
+PASS: This should work: texParameterf(3553,10241,9729) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameterf(3553,10241,9728) (in assert)
+true
+PASS: This should work: texParameterf(3553,10241,9728) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameterf(34067,10242,33071) (in assert)
+true
+PASS: This should work: texParameterf(34067,10242,33071) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameteri(34067,10240,9729) (in assert)
+true
+PASS: This should work: texParameteri(34067,10240,9729) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameteri(3553,10241,9729) (in assert)
+true
+PASS: This should work: texParameteri(3553,10241,9729) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameteri(34067,10243,10497) (in assert)
+true
+PASS: This should work: texParameteri(34067,10243,10497) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameteri(3553,10242,33648) (in assert)
+true
+PASS: This should work: texParameteri(3553,10242,33648) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameteri(3553,10240,9728) (in assert)
+true
+PASS: This should work: texParameteri(3553,10240,9728) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameteri(3553,10241,9985) (in assert)
+true
+PASS: This should work: texParameteri(3553,10241,9985) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameteri(3553,10243,33648) (in assert)
+true
+PASS: This should work: texParameteri(3553,10243,33648) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameteri(3553,10243,33071) (in assert)
+true
+PASS: This should work: texParameteri(3553,10243,33071) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameteri(3553,10240,9729) (in assert)
+true
+PASS: This should work: texParameteri(3553,10240,9729) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameteri(34067,10240,9728) (in assert)
+true
+PASS: This should work: texParameteri(34067,10240,9728) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameteri(34067,10241,9728) (in assert)
+true
+PASS: This should work: texParameteri(34067,10241,9728) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameteri(34067,10243,33071) (in assert)
+true
+PASS: This should work: texParameteri(34067,10243,33071) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameteri(34067,10242,33071) (in assert)
+true
+PASS: This should work: texParameteri(34067,10242,33071) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameteri(34067,10242,10497) (in assert)
+true
+PASS: This should work: texParameteri(34067,10242,10497) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameteri(3553,10243,10497) (in assert)
+true
+PASS: This should work: texParameteri(3553,10243,10497) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameteri(3553,10242,10497) (in assert)
+true
+PASS: This should work: texParameteri(3553,10242,10497) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameteri(34067,10241,9985) (in assert)
+true
+PASS: This should work: texParameteri(34067,10241,9985) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameteri(3553,10241,9728) (in assert)
+true
+PASS: This should work: texParameteri(3553,10241,9728) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameteri(34067,10243,33648) (in assert)
+true
+PASS: This should work: texParameteri(34067,10243,33648) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameteri(3553,10241,9987) (in assert)
+true
+PASS: This should work: texParameteri(3553,10241,9987) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameteri(34067,10241,9986) (in assert)
+true
+PASS: This should work: texParameteri(34067,10241,9986) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameteri(3553,10242,33071) (in assert)
+true
+PASS: This should work: texParameteri(3553,10242,33071) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameteri(34067,10241,9987) (in assert)
+true
+PASS: This should work: texParameteri(34067,10241,9987) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameteri(34067,10241,9729) (in assert)
+true
+PASS: This should work: texParameteri(34067,10241,9729) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: texParameteri(34067,10241,9984) (in assert)
+true
+PASS: This should work: texParameteri(34067,10241,9984) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(1034,-168,2957,587) (in assert)
+true
+PASS: This should work: viewport(1034,-168,2957,587) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(1375,-15,3000,1680) (in assert)
+true
+PASS: This should work: viewport(1375,-15,3000,1680) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(1381,1138,2277,3000) (in assert)
+true
+PASS: This should work: viewport(1381,1138,2277,3000) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-575,-641,3,700) (in assert)
+true
+PASS: This should work: viewport(-575,-641,3,700) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-502,-1111,1069,2367) (in assert)
+true
+PASS: This should work: viewport(-502,-1111,1069,2367) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(1212,197,415,2892) (in assert)
+true
+PASS: This should work: viewport(1212,197,415,2892) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-475,1325,2471,1710) (in assert)
+true
+PASS: This should work: viewport(-475,1325,2471,1710) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(377,-727,1583,498) (in assert)
+true
+PASS: This should work: viewport(377,-727,1583,498) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(388,-1025,1917,1774) (in assert)
+true
+PASS: This should work: viewport(388,-1025,1917,1774) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(176,105,719,0) (in assert)
+true
+PASS: This should work: viewport(176,105,719,0) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(1049,-556,201,1023) (in assert)
+true
+PASS: This should work: viewport(1049,-556,201,1023) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-221,294,2727,663) (in assert)
+true
+PASS: This should work: viewport(-221,294,2727,663) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-1495,405,1230,279) (in assert)
+true
+PASS: This should work: viewport(-1495,405,1230,279) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-843,157,2866,119) (in assert)
+true
+PASS: This should work: viewport(-843,157,2866,119) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(71,-1392,0,1707) (in assert)
+true
+PASS: This should work: viewport(71,-1392,0,1707) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(1020,-404,303,1613) (in assert)
+true
+PASS: This should work: viewport(1020,-404,303,1613) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(1185,-1256,2733,932) (in assert)
+true
+PASS: This should work: viewport(1185,-1256,2733,932) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-1367,-851,0,1018) (in assert)
+true
+PASS: This should work: viewport(-1367,-851,0,1018) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(1310,-378,2060,1505) (in assert)
+true
+PASS: This should work: viewport(1310,-378,2060,1505) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-401,1407,1538,1975) (in assert)
+true
+PASS: This should work: viewport(-401,1407,1538,1975) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-991,150,534,0) (in assert)
+true
+PASS: This should work: viewport(-991,150,534,0) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-924,904,627,1581) (in assert)
+true
+PASS: This should work: viewport(-924,904,627,1581) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-1054,398,1124,1436) (in assert)
+true
+PASS: This should work: viewport(-1054,398,1124,1436) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(130,-184,1161,3000) (in assert)
+true
+PASS: This should work: viewport(130,-184,1161,3000) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-288,991,1763,2073) (in assert)
+true
+PASS: This should work: viewport(-288,991,1763,2073) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-1076,-181,2461,23) (in assert)
+true
+PASS: This should work: viewport(-1076,-181,2461,23) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-574,-1063,669,61) (in assert)
+true
+PASS: This should work: viewport(-574,-1063,669,61) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-1310,193,751,2513) (in assert)
+true
+PASS: This should work: viewport(-1310,193,751,2513) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(1141,212,798,2638) (in assert)
+true
+PASS: This should work: viewport(1141,212,798,2638) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-1111,1035,569,473) (in assert)
+true
+PASS: This should work: viewport(-1111,1035,569,473) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-494,1088,2762,2733) (in assert)
+true
+PASS: This should work: viewport(-494,1088,2762,2733) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-93,318,1470,2067) (in assert)
+true
+PASS: This should work: viewport(-93,318,1470,2067) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-77,-695,220,3000) (in assert)
+true
+PASS: This should work: viewport(-77,-695,220,3000) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-863,1480,2329,1214) (in assert)
+true
+PASS: This should work: viewport(-863,1480,2329,1214) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(1356,1493,880,1906) (in assert)
+true
+PASS: This should work: viewport(1356,1493,880,1906) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-1094,795,0,2469) (in assert)
+true
+PASS: This should work: viewport(-1094,795,0,2469) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-396,245,667,69) (in assert)
+true
+PASS: This should work: viewport(-396,245,667,69) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(516,695,509,1438) (in assert)
+true
+PASS: This should work: viewport(516,695,509,1438) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(515,394,3000,1881) (in assert)
+true
+PASS: This should work: viewport(515,394,3000,1881) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-894,-1341,745,2139) (in assert)
+true
+PASS: This should work: viewport(-894,-1341,745,2139) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-60,-1031,211,2391) (in assert)
+true
+PASS: This should work: viewport(-60,-1031,211,2391) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(331,31,2016,1146) (in assert)
+true
+PASS: This should work: viewport(331,31,2016,1146) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(597,-1405,2299,2560) (in assert)
+true
+PASS: This should work: viewport(597,-1405,2299,2560) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-1227,713,3000,1341) (in assert)
+true
+PASS: This should work: viewport(-1227,713,3000,1341) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(1084,61,150,727) (in assert)
+true
+PASS: This should work: viewport(1084,61,150,727) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(398,851,64,2614) (in assert)
+true
+PASS: This should work: viewport(398,851,64,2614) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(432,-91,565,1320) (in assert)
+true
+PASS: This should work: viewport(432,-91,565,1320) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(1420,1138,533,1060) (in assert)
+true
+PASS: This should work: viewport(1420,1138,533,1060) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(1109,-841,2421,495) (in assert)
+true
+PASS: This should work: viewport(1109,-841,2421,495) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(592,987,1506,1166) (in assert)
+true
+PASS: This should work: viewport(592,987,1506,1166) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-511,-638,987,1609) (in assert)
+true
+PASS: This should work: viewport(-511,-638,987,1609) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-1297,1453,1495,895) (in assert)
+true
+PASS: This should work: viewport(-1297,1453,1495,895) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-506,-1350,656,1405) (in assert)
+true
+PASS: This should work: viewport(-506,-1350,656,1405) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(843,-740,742,1539) (in assert)
+true
+PASS: This should work: viewport(843,-740,742,1539) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-1285,1263,2903,2825) (in assert)
+true
+PASS: This should work: viewport(-1285,1263,2903,2825) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(1126,-1386,2228,41) (in assert)
+true
+PASS: This should work: viewport(1126,-1386,2228,41) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-713,-1399,2231,794) (in assert)
+true
+PASS: This should work: viewport(-713,-1399,2231,794) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(796,-397,154,2407) (in assert)
+true
+PASS: This should work: viewport(796,-397,154,2407) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-121,55,0,1544) (in assert)
+true
+PASS: This should work: viewport(-121,55,0,1544) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(637,-1412,1073,3000) (in assert)
+true
+PASS: This should work: viewport(637,-1412,1073,3000) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(363,1156,2243,2480) (in assert)
+true
+PASS: This should work: viewport(363,1156,2243,2480) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-420,-1063,1108,1292) (in assert)
+true
+PASS: This should work: viewport(-420,-1063,1108,1292) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-1246,-839,2963,1220) (in assert)
+true
+PASS: This should work: viewport(-1246,-839,2963,1220) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-659,1141,2810,346) (in assert)
+true
+PASS: This should work: viewport(-659,1141,2810,346) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-576,224,593,0) (in assert)
+true
+PASS: This should work: viewport(-576,224,593,0) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(9,1136,2824,719) (in assert)
+true
+PASS: This should work: viewport(9,1136,2824,719) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-499,-363,3000,979) (in assert)
+true
+PASS: This should work: viewport(-499,-363,3000,979) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-939,394,2257,1763) (in assert)
+true
+PASS: This should work: viewport(-939,394,2257,1763) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-521,239,3000,189) (in assert)
+true
+PASS: This should work: viewport(-521,239,3000,189) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(1032,1365,200,0) (in assert)
+true
+PASS: This should work: viewport(1032,1365,200,0) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-907,-645,1389,1642) (in assert)
+true
+PASS: This should work: viewport(-907,-645,1389,1642) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(1010,-1203,619,1122) (in assert)
+true
+PASS: This should work: viewport(1010,-1203,619,1122) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(699,1297,2105,2143) (in assert)
+true
+PASS: This should work: viewport(699,1297,2105,2143) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-405,110,1441,2521) (in assert)
+true
+PASS: This should work: viewport(-405,110,1441,2521) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-748,-854,2784,1875) (in assert)
+true
+PASS: This should work: viewport(-748,-854,2784,1875) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-164,-887,2524,2568) (in assert)
+true
+PASS: This should work: viewport(-164,-887,2524,2568) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-821,-396,1668,1140) (in assert)
+true
+PASS: This should work: viewport(-821,-396,1668,1140) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(552,-1278,257,1852) (in assert)
+true
+PASS: This should work: viewport(552,-1278,257,1852) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(784,924,933,249) (in assert)
+true
+PASS: This should work: viewport(784,924,933,249) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(426,1365,2703,1581) (in assert)
+true
+PASS: This should work: viewport(426,1365,2703,1581) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(1162,1320,1580,3000) (in assert)
+true
+PASS: This should work: viewport(1162,1320,1580,3000) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(506,-54,2015,1305) (in assert)
+true
+PASS: This should work: viewport(506,-54,2015,1305) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-312,-1438,2089,3000) (in assert)
+true
+PASS: This should work: viewport(-312,-1438,2089,3000) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-960,-1278,2330,1979) (in assert)
+true
+PASS: This should work: viewport(-960,-1278,2330,1979) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(949,702,1358,3000) (in assert)
+true
+PASS: This should work: viewport(949,702,1358,3000) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-1484,-599,2206,2285) (in assert)
+true
+PASS: This should work: viewport(-1484,-599,2206,2285) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(845,849,1905,2392) (in assert)
+true
+PASS: This should work: viewport(845,849,1905,2392) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(1190,-1046,2192,1783) (in assert)
+true
+PASS: This should work: viewport(1190,-1046,2192,1783) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-559,-1212,2326,194) (in assert)
+true
+PASS: This should work: viewport(-559,-1212,2326,194) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(682,-888,240,1934) (in assert)
+true
+PASS: This should work: viewport(682,-888,240,1934) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(269,-79,287,310) (in assert)
+true
+PASS: This should work: viewport(269,-79,287,310) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(617,651,535,1017) (in assert)
+true
+PASS: This should work: viewport(617,651,535,1017) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-1278,-169,1575,613) (in assert)
+true
+PASS: This should work: viewport(-1278,-169,1575,613) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(1367,-1315,2870,784) (in assert)
+true
+PASS: This should work: viewport(1367,-1315,2870,784) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(721,43,395,2780) (in assert)
+true
+PASS: This should work: viewport(721,43,395,2780) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(1147,1331,1298,1779) (in assert)
+true
+PASS: This should work: viewport(1147,1331,1298,1779) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(787,-822,541,2995) (in assert)
+true
+PASS: This should work: viewport(787,-822,541,2995) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(-1261,1457,0,1608) (in assert)
+true
+PASS: This should work: viewport(-1261,1457,0,1608) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(1367,242,1120,463) (in assert)
+true
+PASS: This should work: viewport(1367,242,1120,463) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})
+PASS: Valid args: viewport(1312,-1240,148,248) (in assert)
+true
+PASS: This should work: viewport(1312,-1240,148,248) (in assertOk)
+(function (){rv = GL[name].apply(GL, args); ok = true;})

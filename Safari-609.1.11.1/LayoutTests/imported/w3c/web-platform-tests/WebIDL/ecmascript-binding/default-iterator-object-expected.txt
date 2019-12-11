@@ -1,0 +1,5 @@
+
+PASS Default iterator objects for an interface have the same prototype 
+PASS Object.prototype.toString returns correct value 
+FAIL @@toStringTag has correct value from prototype assert_equals: expected (string) "URLSearchParams Iterator" but got (undefined) undefined
+

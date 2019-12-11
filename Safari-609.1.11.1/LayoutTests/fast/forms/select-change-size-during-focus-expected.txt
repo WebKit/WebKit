@@ -1,0 +1,3 @@
+WebKit bug #131566: Assertion failure changing select element size during focus event dispatch. This test passes if it does not assert in a debug build.
+
+

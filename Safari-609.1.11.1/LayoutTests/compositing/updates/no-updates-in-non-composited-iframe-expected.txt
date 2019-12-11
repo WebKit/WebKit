@@ -1,0 +1,29 @@
+Test that compositing updates do not happen in an iframe with no compoting layers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial
+PASS updateCount is 0
+Layout
+PASS updateCount is 0
+Change stacking order
+PASS updateCount is 0
+Negative z-order child
+PASS updateCount is 0
+Change visibility
+PASS updateCount is 0
+Change content
+PASS updateCount is 0
+Change clip path
+PASS updateCount is 0
+Change transform
+PASS updateCount is 0
+Image change
+PASS updateCount is 0
+Remove layer
+PASS updateCount is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

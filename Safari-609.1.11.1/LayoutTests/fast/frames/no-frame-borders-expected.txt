@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderFrameSet {FRAMESET} at (0,0) size 800x600
+      RenderFrame {FRAME} at (0,0) size 800x84
+        layer at (0,0) size 800x84
+          RenderView at (0,0) size 800x84
+        layer at (0,0) size 800x84
+          RenderBlock {HTML} at (0,0) size 800x84
+            RenderBody {BODY} at (10,0) size 780x84
+      RenderFrameSet {FRAMESET} at (0,104) size 800x496
+        RenderFrame {FRAME} at (0,0) size 180x496
+          layer at (0,0) size 180x496
+            RenderView at (0,0) size 180x496
+          layer at (0,0) size 180x496
+            RenderBlock {HTML} at (0,0) size 180x496
+              RenderBody {BODY} at (10,0) size 160x496
+        RenderFrame {FRAME} at (200,0) size 600x496
+          layer at (0,0) size 600x496
+            RenderView at (0,0) size 600x496
+          layer at (0,0) size 600x496
+            RenderBlock {HTML} at (0,0) size 600x496
+              RenderBody {BODY} at (0,0) size 600x496

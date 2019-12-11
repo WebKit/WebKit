@@ -1,0 +1,95 @@
+/*
+ * Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ * Copyright (C) 2012 Samsung Electronics. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+[
+    ExportMacro=WEBCORE_EXPORT,
+    JSGenerateToNativeObject,
+] interface HTMLInputElement : HTMLElement {
+    [CEReactions=NotNeeded, Reflect] attribute DOMString accept;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString alt;
+    [CEReactions=NotNeeded] attribute DOMString autocomplete;
+    [CEReactions=NotNeeded, Reflect] attribute boolean autofocus;
+    [CEReactions=NotNeeded, Reflect=checked] attribute boolean defaultChecked;
+    attribute boolean checked;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString dirName;
+    [CEReactions=NotNeeded, Reflect] attribute boolean disabled;
+    readonly attribute HTMLFormElement form;
+    attribute FileList? files;
+    [CEReactions=NotNeeded] attribute USVString formAction;
+
+    [CEReactions=NotNeeded] attribute DOMString formEnctype;
+    [CEReactions=NotNeeded] attribute DOMString formMethod;
+
+    [CEReactions=NotNeeded, Reflect] attribute boolean formNoValidate;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString formTarget;
+    [CEReactions=NotNeeded] attribute unsigned long height;
+    attribute boolean indeterminate;
+    [Conditional=DATALIST_ELEMENT] readonly attribute HTMLElement list;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString max;
+    [CEReactions=NotNeeded] attribute long minLength;
+    [CEReactions=NotNeeded] attribute long maxLength;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString min;
+    [CEReactions=NotNeeded, Reflect] attribute boolean multiple;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString name;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString pattern;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString placeholder;
+    [CEReactions=NotNeeded, Reflect] attribute boolean readOnly;
+    [CEReactions=NotNeeded, Reflect] attribute boolean required;
+    [CEReactions=NotNeeded] attribute unsigned long size;
+    [CEReactions=NotNeeded, Reflect, URL] attribute USVString src;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString step;
+    [CEReactions=NotNeeded] attribute DOMString type; // readonly dropped as part of DOM level 2
+    [CEReactions=NotNeeded] attribute DOMString defaultValue;
+    // See the discussion in https://bugs.webkit.org/show_bug.cgi?id=100085
+    [CEReactions=NotNeeded] attribute [TreatNullAs=EmptyString] DOMString value;
+    attribute Date? valueAsDate;
+    attribute unrestricted double valueAsNumber;
+
+    [MayThrowException] void stepUp(optional long n = 1);
+    [MayThrowException] void stepDown(optional long n = 1);
+
+    [CEReactions=NotNeeded] attribute unsigned long width;
+    readonly attribute boolean willValidate;
+    readonly attribute ValidityState validity;
+    readonly attribute DOMString validationMessage;
+    boolean checkValidity();
+    [EnabledAtRuntime=InteractiveFormValidation] boolean reportValidity();
+    void setCustomValidity(DOMString error);
+
+    readonly attribute NodeList labels;
+
+    void select();
+    [ImplementedAs=selectionStartForBindings] attribute long selectionStart;
+    [ImplementedAs=selectionEndForBindings] attribute long selectionEnd;
+    [ImplementedAs=selectionDirectionForBindings] attribute DOMString selectionDirection;
+
+    [MayThrowException] void setRangeText(DOMString replacement);
+    [MayThrowException] void setRangeText(DOMString replacement, unsigned long start, unsigned long end, optional DOMString selectionMode);
+
+    [ImplementedAs=setSelectionRangeForBindings, MayThrowException] void setSelectionRange(long start, long end, optional DOMString direction);
+
+    [CEReactions=NotNeeded, Reflect] attribute DOMString align;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString useMap;
+    [CEReactions=NotNeeded, Reflect] attribute boolean incremental;
+
+    // See http://www.w3.org/TR/html-media-capture/
+    [CEReactions=NotNeeded, Conditional=MEDIA_CAPTURE, Reflect] attribute DOMString capture;
+};

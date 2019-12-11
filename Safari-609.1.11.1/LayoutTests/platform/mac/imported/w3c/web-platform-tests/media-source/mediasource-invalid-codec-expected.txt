@@ -1,0 +1,4 @@
+
+PASS Test an MP4 with an invalid codec results in an error. 
+FAIL Test a WebM with an invalid codec results in an error. assert_true: Media type not supported in this browser: isTypeSupported('video/webm; codecs="vp8"') expected true got false
+

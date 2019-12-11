@@ -1,0 +1,3 @@
+
+FAIL save()/restore() works for shadowColor Can't find variable: OffscreenCanvas
+

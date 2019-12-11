@@ -1,0 +1,146 @@
+body {
+    background-color: rgba(239, 175, 82, 1);
+    font-family: Helvetica;
+    color: rgba(230, 131, 99, 1);
+}
+
+p {
+    color: rgba(54, 115, 171, 1);
+}
+
+.animation-container h1 {
+    font-variant: small-caps;
+    margin-top: 0.2em;
+    font-size: 34pt;
+    font-weight: bold;
+    text-align: center;
+}
+
+.animation-container {
+    position: relative;
+    overflow: hidden;
+    height: 400px;
+    width: calc(100% - 100px);
+    margin: 1200px 50px;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: rgba(54, 115, 171, 1);
+    border: 10px solid rgba(94, 189, 186, 1);
+    border-radius: 20px;
+}
+
+.animation-container .box {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    background-color: rgba(219, 89, 54, 1);
+    border-radius: 10px;
+}
+
+.slide.box {
+    display: inline-block;
+    transform: translateX(2000px);
+}
+
+.animation-container.visible > .slide.box {
+    transform: translateX(20px);
+    transition: transform 2s;
+}
+
+.slide.animation-container div:nth-of-type(1) {
+    transition-delay: 1s !important;
+}
+.slide.animation-container div:nth-of-type(2) {
+    transition-delay: 1.4s !important;;
+}
+.slide.animation-container div:nth-of-type(3) {
+    transition-delay: 1.8s !important;;
+}
+
+.spin {
+    margin: 50px calc((100% - 200px) / 2);
+}
+
+.animation-container.visible .spin {
+    animation: spin 3s 1s 10;
+}
+
+@keyframes spin {
+    from { transform: rotate(0); }
+    to   { transform: rotate(360deg); }
+}
+
+.animation-container.svg {
+    height: 650px;
+}
+
+.animation-container.svg path {
+    stroke-width: 8px;
+    fill: none;
+    stroke: #f9727f;
+    stroke-dasharray: 80px;
+    stroke-linecap: round;
+}
+
+.animation-container.svg.visible {
+    animation-name: stroke-move;
+    animation-duration: 6s;
+    animation-delay: 1s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+@keyframes stroke-move {
+  from {
+      stroke-dashoffset: 0;
+  }
+  to {
+      stroke-dashoffset: 500px;
+  }
+}
+
+.animation-container.svg circle {
+    fill: #c26c84;
+    stroke-width: 12px;
+    stroke: #fab193;
+    r: 50px;
+}
+
+.animation-container.svg.visible circle {
+    animation-name: circle-scale;
+    animation-duration: 1.5s;
+    animation-delay: 2s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+.animation-container.svg circle:nth-of-type(2) {
+    animation-duration: 1.7s;
+}
+
+.animation-container.svg circle:nth-of-type(3) {
+    animation-duration: 1.2s;
+}
+
+.animation-container.svg circle:nth-of-type(4) {
+    animation-duration: 2.1s;
+}
+
+.animation-container.svg circle:nth-of-type(5) {
+    animation-duration: 1.6s;
+}
+
+@keyframes circle-scale {
+  from {
+      stroke-width: 12px;
+      fill-opacity: 1;
+      r: 50px;
+  }
+  to {
+      stroke-width: 2px;
+      fill-opacity: 0.3;
+      r: 80px;
+  }
+}

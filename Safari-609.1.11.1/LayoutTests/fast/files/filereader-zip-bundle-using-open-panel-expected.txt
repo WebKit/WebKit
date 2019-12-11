@@ -1,0 +1,12 @@
+OPEN FILE PANEL
+Test that bundles are automatically zipped when accessed via FileReader. To test manually, please select a bundle in the "Choose File" input below.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS file.size > 400 is true
+PASS reader.result is 'PK'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

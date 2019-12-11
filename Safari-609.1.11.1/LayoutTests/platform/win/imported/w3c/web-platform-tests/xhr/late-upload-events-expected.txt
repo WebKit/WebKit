@@ -1,0 +1,10 @@
+Blocked access to external URL http://www1.localhost:8800/cors/resources/status.py?headers=custom-header
+CONSOLE MESSAGE: line 30: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/status.py?headers=custom-header due to access control checks.
+CONSOLE MESSAGE: CORS-preflight request was blocked
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/status.py?headers=custom-header due to access control checks.
+Adding upload event listeners after send()
+
+
+FAIL Late listeners: No preflight assert_equals: expected 200 but got 0
+FAIL Late listeners: Preflight assert_equals: expected 200 but got 0
+

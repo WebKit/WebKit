@@ -1,0 +1,17 @@
+The test passes if you see green boxes following the contour of a circle. There should be no red.
+
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+
+PASS CSS Test: Left float with radial gradient shape, shape margin, and shape-image-threshold 
+

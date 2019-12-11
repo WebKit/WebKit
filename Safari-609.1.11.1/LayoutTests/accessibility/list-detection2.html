@@ -1,0 +1,203 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>List; presentation heuristics</title>
+    <meta charset="utf-8"> 
+    <style type="text/css">
+    html, body {
+        font-size: 100%;
+    } 
+    h1 {
+        font-size: 1em;
+    }
+    .inline, .inline li {
+        display: inline;
+    }
+    .nomarkers {
+        list-style: none;
+    }
+    .imagemarkers {
+        list-style-image: url(data:image/gif;base64,R0lGODlhEAARAJECAOHh4UpKSgAAAAAAACH5BAEAAAIALAAAAAAQABEAAAIllB8Zx63b4otSUWcvyuz5D4biSD7AiZroWSXa5r7CJNOvra1RAQA7);
+    }
+    .imagemarkersbefore li::before {
+        content: url(data:image/gif;base64,R0lGODlhEAARAJECAOHh4UpKSgAAAAAAACH5BAEAAAIALAAAAAAQABEAAAIllB8Zx63b4otSUWcvyuz5D4biSD7AiZroWSXa5r7CJNOvra1RAQA7) " ";
+    }
+    .bulletmarkersbefore li::before {
+        content: "• ";
+    }
+    .countermarkersbefore {
+        counter-reset: number;
+        list-style-type: none;
+    }
+    .countermarkersbefore li::before {
+        counter-increment: number;
+        content: counters(number,".") ". ";
+    }
+    .backgroundmarkers li {
+        padding-left: 30px;
+        background: transparent url(data:image/gif;base64,R0lGODlhEAARAJECAOHh4UpKSgAAAAAAACH5BAEAAAIALAAAAAAQABEAAAIllB8Zx63b4otSUWcvyuz5D4biSD7AiZroWSXa5r7CJNOvra1RAQA7) left center no-repeat;
+    }
+    .backgroundmarkersbefore li::before {
+        display: inline-block;
+        content: " ";
+        width: 17px;
+        height: 17px;
+        background: transparent url(data:image/gif;base64,R0lGODlhEAARAJECAOHh4UpKSgAAAAAAACH5BAEAAAIALAAAAAAQABEAAAIllB8Zx63b4otSUWcvyuz5D4biSD7AiZroWSXa5r7CJNOvra1RAQA7) left center no-repeat;
+    }
+</style>
+</head>
+<body onload="runTest();">
+<script src="../resources/js-test-pre.js"></script>
+
+<div id="examples">
+
+    <!-- @data-role is the expectation -->
+
+    <h1>list because of explicit role, despite style and lack of list markers</h1>
+    <ul role="list" data-role="list" class="ex inline" data-note=" w/ explicit role and displayed inline">
+        <li>foo</li>
+        <li>bar</li>
+        <li>baz</li>
+    </ul>
+    <ul role="list" data-role="list" class="ex nomarkers" data-note=" w/ explicit role but no markers">
+        <li>foo</li>
+        <li>bar</li>
+        <li>baz</li>
+    </ul>
+
+    <h1>list because of rendered list markers (exposed as AXListMarker)</h1>
+    <ul data-role="list" class="ex" data-note=" w/ default list markers">
+        <li>foo</li>
+        <li>bar</li>
+        <li>baz</li>
+    </ul>
+    <ol data-role="list" class="ex" data-note=" w/ default list counters">
+        <li>foo</li>
+        <li>bar</li>
+        <li>baz</li>
+    </ol>
+    <ul data-role="list" class="ex imagemarkers" data-note=" w/ list-style-image">
+        <li>foo</li>
+        <li>bar</li>
+        <li>baz</li>
+    </ul>
+
+    <h1>list because these list markers consist of CSS-generated content on ::before pseudo element. Note: WebKit is not exposing these as AXListMarker; need another bug for that.</h1>
+    <ul data-role="list" class="ex nomarkers imagemarkersbefore" data-note=" w/ image content on ::before">
+        <li>foo</li>
+        <li>bar</li>
+        <li>baz</li>
+    </ul>
+    <ul data-role="list" class="ex nomarkers inline imagemarkersbefore" data-note=" w/ image content on inline ::before">
+        <li>foo</li>
+        <li>bar</li>
+        <li>baz</li>
+    </ul>
+    <ul data-role="list" class="ex nomarkers bulletmarkersbefore" data-note=" w/ bullet content on ::before">
+        <li>foo</li>
+        <li>bar</li>
+        <li>baz</li>
+    </ul>
+    <ul data-role="list" class="ex nomarkers inline bulletmarkersbefore" data-note=" w/ bullet content on inline ::before">
+        <li>foo</li>
+        <li>bar</li>
+        <li>baz</li>
+    </ul>
+    <ol data-role="list" class="ex nomarkers countermarkersbefore" data-note=" w/ counter content on ::before">
+        <li>foo</li>
+        <li>bar</li>
+        <li>baz</li>
+    </ol>
+    <ol data-role="list" class="ex nomarkers inline countermarkersbefore" data-note=" w/ counter content on inline ::before">
+        <li>foo</li>
+        <li>bar</li>
+        <li>baz</li>
+    </ol>
+
+    <p>Since many web pages suffer from "list-itis" and some users have noted that they don't want to hear about so many lists, any UL or OL that does not match one of the above heuristics should not be exposed as a list. Chances are that they are just presentational lists using the elements for the sake of a styling hook.</p>
+
+
+    <h1>EXPLICIT FAILURE CASES: These next examples are <strong>NOT</strong> lists because these "list markers" are faked as background images. One is even a background image on a ::before pseudo-element, but that does not count as a listmarker. List markers should only be inferred by the <code>content</code> property or the <code>list-style</code> properties.</h1>
+    <ul data-role="" class="ex nomarkers backgroundmarkers" data-note=" w/ background image (NOT A LIST)">
+        <li>foo</li>
+        <li>bar</li>
+        <li>baz</li>
+    </ul>
+    <ul data-role="" class="ex nomarkers backgroundmarkersbefore" data-note=" w/ background on ::before (NOT A LIST)">
+        <li>foo</li>
+        <li>bar</li>
+        <li>baz</li>
+    </ul>
+
+    <h1>EXPLICIT FAILURE CASES: These next examples are <strong>NOT</strong> there is no explicit role or any style or list markers to indicate this is actually intended as a list.</h1>
+    <ul data-role="" class="ex inline" data-note=" w/o explicit role and displayed inline, which defaults to no markers (NOT A LIST)">
+        <li>foo</li>
+        <li>bar</li>
+        <li>baz</li>
+    </ul>
+    <ol data-role="" class="ex inline" data-note=" w/o explicit role and displayed inline, which defaults to no markers (NOT A LIST)">
+        <li>foo</li>
+        <li>bar</li>
+        <li>baz</li>
+    </ol>
+    <ul data-role="" class="ex nomarkers" data-note=" w/o explicit role and no markers (NOT A LIST)">
+        <li>foo</li>
+        <li>bar</li>
+        <li>baz</li>
+    </ul>
+
+
+</div>
+
+<div id="console"></div>
+<script>
+function runTest() {
+  if (window.testRunner && window.accessibilityController) {
+    description("This tests that heurisitics for determining meaningful lists versus presentational lists result in the same computed role, regardless of platform.")
+    var examples = document.querySelectorAll(".ex");
+    var el, contentAttrRoleString, axElement, computedAriaRole, output, expectedRole, expectation, result, note;
+    for (var i = 0, c = examples.length; i < c; i++) {
+        el = examples[i];
+        el.id = "ex" + i
+
+        axElement = accessibilityController.accessibleElementById(el.id);
+        if (!axElement)
+            continue;
+
+        computedAriaRole = axElement.computedRoleString;
+
+        contentAttrRoleString = el.getAttribute("role");
+        note = el.getAttribute("data-note")
+        output = el.tagName.toLowerCase() + (contentAttrRoleString ? ("[role=\""+contentAttrRoleString+"\"]") : "") + (note ? note : "");
+        output += " -> ";
+        output += computedAriaRole;
+        output += ". ";
+
+        expectedRole = "";
+        if (el.hasAttribute("data-role")) {
+            expectedRole = el.getAttribute("data-role");
+        }
+
+        expectation = expectedRole;
+        matchedResults = (computedAriaRole == expectedRole)
+
+        result = document.getElementById('console');
+        if (matchedResults) {
+            result.innerText += "PASS: " + output + "\n";
+        } else {
+            result.innerText += "FAIL: " + output + "Expected: " + expectation + ".\n";
+        }
+    }
+
+    // Once tests are complete, hide all the example markup.
+    examples = document.querySelectorAll(".ex, #examples");
+    for (var i = 0, c = examples.length; i < c; i++)
+        examples[i].style.display = "none";
+  }
+}
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
+
+

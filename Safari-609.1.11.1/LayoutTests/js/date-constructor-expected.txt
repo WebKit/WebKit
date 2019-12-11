@@ -1,0 +1,45 @@
+This test case tests the Date constructor. In particular, it tests many cases of creating a Date from another Date and creating a Date from an object that has both valueOf and toString functions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS isNaN(new Date("")) is true
+PASS new Date(1111).getTime() is 1111
+PASS new Date(object).getTime() is 1111
+PASS new Date(new Date(1111)).getTime() is 1111
+PASS new Date(new Date(1111).toString()).getTime() is 1000
+PASS new Date(1111, 1).getTime() - timeZoneOffset is -27104803200000
+PASS new Date(1111, 1, 1).getTime() - timeZoneOffset is -27104803200000
+PASS new Date(1111, 1, 1, 1).getTime() - timeZoneOffset is -27104799600000
+PASS new Date(1111, 1, 1, 1, 1).getTime() - timeZoneOffset is -27104799540000
+PASS new Date(1111, 1, 1, 1, 1, 1).getTime() - timeZoneOffset is -27104799539000
+PASS new Date(1111, 1, 1, 1, 1, 1, 1).getTime() - timeZoneOffset is -27104799538999
+PASS new Date(1111, 1, 1, 1, 1, 1, 1, 1).getTime() - timeZoneOffset is -27104799538999
+PASS new Date(1111, 1, 1, 1, 1, 1, 1, 1, 1).getTime() - timeZoneOffset is -27104799538999
+PASS new Date(1111, 1, 1, 1, 1, 1, 1, 1, 1).getTime() - timeZoneOffset is -27104799538999
+PASS new Date(new Date(1111, 1)).getTime() - timeZoneOffset is -27104803200000
+PASS new Date(new Date(1111, 1, 1)).getTime() - timeZoneOffset is -27104803200000
+PASS new Date(new Date(1111, 1, 1, 1)).getTime() - timeZoneOffset is -27104799600000
+PASS new Date(new Date(1111, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset is -27104799539000
+PASS new Date(new Date(1111, 1, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset is -27104799538999
+PASS new Date(new Date(1111, 1, 1, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset is -27104799538999
+PASS new Date(new Date(1111, 1, 1, 1, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset is -27104799538999
+PASS Number(new Date(new Date(Infinity, 1, 1, 1, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset) is Number.NaN
+PASS Number(new Date(new Date(1, Infinity, 1, 1, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset) is Number.NaN
+PASS Number(new Date(new Date(1, 1, Infinity, 1, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset) is Number.NaN
+PASS Number(new Date(new Date(1, 1, 1, Infinity, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset) is Number.NaN
+PASS Number(new Date(new Date(1, 1, 1, 1, Infinity, 1, 1, 1, 1)).getTime() - timeZoneOffset) is Number.NaN
+PASS Number(new Date(new Date(1, 1, 1, 1, 1, Infinity, 1, 1, 1)).getTime() - timeZoneOffset) is Number.NaN
+PASS Number(new Date(new Date(1, 1, 1, 1, 1, 1, Infinity, 1, 1)).getTime() - timeZoneOffset) is Number.NaN
+PASS Number(new Date(new Date(1, 1, 1, 1, 1, 1, 1, 1, Infinity)).getTime() - timeZoneOffset) is -2174770738999
+PASS new Date(6501480442020679337816440, 81696082856817131586190070, 1, 1, 1, 1, 1).getTime() is Number.NaN
+PASS new Date(Date.parse('28 Feb 1000 GMT')).toGMTString() is "Fri, 28 Feb 1000 00:00:00 GMT"
+PASS new Date(Date.parse('1 Dec 988 GMT')).toGMTString() is "Mon, 01 Dec 0988 00:00:00 GMT"
+PASS new Date(Date.parse('1 Mar 1000 GMT')).toGMTString() is "Sat, 01 Mar 1000 00:00:00 GMT"
+PASS testStr is "1234567"
+PASS testStr is "1234567"
+PASS leapTestResult is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

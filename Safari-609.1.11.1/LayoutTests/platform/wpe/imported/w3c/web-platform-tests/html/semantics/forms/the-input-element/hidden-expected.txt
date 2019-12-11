@@ -1,0 +1,13 @@
+Hidden input element
+
+
+PASS Value returns the current value for hidden 
+PASS Setting value changes the current value for hidden 
+PASS files attribute must return null for hidden 
+PASS valueAsDate attribute must return null for hidden 
+PASS valueAsNumber attribute must return NaN for hidden 
+FAIL list attribute must return null for hidden assert_equals: expected (object) null but got (undefined) undefined
+PASS stepDown does not apply for hidden 
+PASS stepUp does not apply for hidden 
+PASS input type=hidden is barred from constraint validation 
+

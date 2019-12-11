@@ -1,0 +1,15 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of OL > DIV > BODY > HTML > #document to 11 of OL > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 6 of OL > DIV > BODY > HTML > #document to 7 of OL > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > LI > OL > OL > DIV > BODY > HTML > #document to 4 of #text > LI > OL > OL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+This tests indenting "three" and "four". You should see 1 through 4 in order before numbers "two" through "five".
+one
+two
+three
+four
+five
+Before: <li>one</li> <ol><li>two</li></ol> <li id="test1">three</li> <li id="test2">four</li> <ol><li>five</li></ol>
+After: <li>one</li> <ol><li>two</li><li id="test1">three</li><li id="test2">four</li><li>five</li></ol>

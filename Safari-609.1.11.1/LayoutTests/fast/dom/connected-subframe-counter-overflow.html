@@ -1,0 +1,23 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('The connected subframe counter should not overflow and make `disconnectSubframes` leave active subframes in a detached DOM node.');
+
+const FRAME_COUNT = 1024;
+
+let container = document.body.appendChild(document.createElement('div'));
+for (let i = 0; i < FRAME_COUNT; ++i) {
+  let frame = container.appendChild(document.createElement('iframe'));
+  frame.style.display = 'none';
+}
+container.remove();
+
+shouldBeNull('container.firstChild.contentWindow');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

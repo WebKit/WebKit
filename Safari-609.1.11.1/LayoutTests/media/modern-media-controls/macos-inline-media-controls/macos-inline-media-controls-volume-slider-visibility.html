@@ -1,0 +1,39 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing the <code>MacOSInlineMediaControls</code> volume slider visibility.");
+
+const mediaControls = new MacOSInlineMediaControls;
+const volumeSliderContainer = mediaControls.volumeSlider.parent;
+
+debug("Default state")
+shouldBeNull("volumeSliderContainer.parent");
+
+debug("");
+debug("Mouse enters the mute button");
+mediaControls.muteButton.element.dispatchEvent(new MouseEvent("mouseenter"));
+shouldBe("volumeSliderContainer.parent", "mediaControls");
+
+debug("");
+debug("Mouse leaves the mute button");
+mediaControls.muteButton.element.dispatchEvent(new MouseEvent("mouseleave"));
+shouldBeNull("volumeSliderContainer.parent");
+
+debug("");
+debug("Mouse enters the mute button, then leaves it but enters the volume slider container");
+mediaControls.muteButton.element.dispatchEvent(new MouseEvent("mouseenter"));
+mediaControls.muteButton.element.dispatchEvent(new MouseEvent("mouseleave", { relatedTarget: volumeSliderContainer.element }));
+shouldBe("volumeSliderContainer.parent", "mediaControls");
+
+debug("");
+debug("Mouse leaves the volume slider container");
+volumeSliderContainer.element.dispatchEvent(new MouseEvent("mouseleave"));
+shouldBeNull("volumeSliderContainer.parent");
+
+debug("");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

@@ -1,0 +1,4 @@
+ 
+
+FAIL svgscript-nonces-hidden TypeError: null is not an object (evaluating 'document.currentScript.setAttribute')
+

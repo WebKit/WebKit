@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            background-image: repeating-linear-gradient(white, silver 300px);
+        }
+    </style>
+    
+    <script>
+        function doTest()
+        {
+            window.setTimeout(function() {
+                document.body.style.height = "2000px";
+                window.parent.frameDidChange();
+            }, 0);
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+</body>
+</html>

@@ -1,0 +1,184 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+  
+[% SWITCH field.type %]
+  [% CASE [ constants.FIELD_TYPE_FREETEXT,
+            constants.FIELD_TYPE_TEXTAREA, 
+            constants.FIELD_TYPE_UNKNOWN ] %]
+    [% INCLUDE "bug/field-label.html.tmpl"
+      field = field
+      tag_name = "span"
+      editable = 1
+    %]
+    [% INCLUDE "search/type-select.html.tmpl"
+       name = field.name _ "_type",
+       types = types, 
+       selected = type_selected
+    %]    
+    <input name="[% field.name FILTER html %]" 
+           id="[% field.name FILTER html %]" size="40"
+           [% IF onchange %] onchange="[% onchange FILTER html %]"[% END %]
+           value="[% value FILTER html %]" [% 'autofocus' IF focus %]>
+  [% CASE constants.FIELD_TYPE_KEYWORDS %]
+    [% INCLUDE "bug/field-label.html.tmpl"
+      field = field
+      tag_name = "span"
+      editable = 1
+    %]
+    [% INCLUDE "search/type-select.html.tmpl"
+       name = field.name _ "_type",
+       types = types, 
+       selected = type_selected
+    %]
+    <div id="[% field.name FILTER html %]_container">
+       <input name="[% field.name FILTER html %]" 
+              id="[% field.name FILTER html %]" size="40"
+              [% IF onchange %] onchange="[% onchange FILTER html %]"[% END %]
+              value="[% value FILTER html %]" [% 'autofocus' IF focus %]>
+       <div id="[% field.name FILTER html %]_autocomplete"></div>
+    </div>
+    <script type="text/javascript">
+      if (typeof YAHOO.bugzilla.field_array === "undefined")
+        YAHOO.bugzilla.field_array = [];
+      YAHOO.bugzilla.field_array["[% field.name FILTER js %]"] = [
+        [%- FOREACH val = possible_values %]
+          [%-# %]"[% val FILTER js %]"
+          [%- "," IF NOT loop.last %][% END %]];
+      YAHOO.bugzilla.fieldAutocomplete.init('[% field.name FILTER js %]',
+                                            '[% field.name FILTER js %]_autocomplete');
+    </script>
+  [% CASE [constants.FIELD_TYPE_DATETIME, constants.FIELD_TYPE_DATE] %]
+    [% INCLUDE "bug/field-label.html.tmpl"
+      field = field
+      tag_name = "span"
+      editable = 1
+    %]
+    from <input name="[% field.name FILTER html %]from" 
+                id="[% field.name FILTER html %]" 
+                size="10" maxlength="10"
+                value="[% value.0 FILTER html %]" 
+                onchange="updateCalendarFromField(this);[% onchange FILTER html %]">
+         <button type="button" class="calendar_button"
+                        id="button_calendar_[% field.name FILTER html %]"
+                        onclick="showCalendar('[% field.name FILTER js %]')">
+           <span>Calendar</span>
+         </button>
+         <span id="con_calendar_[% field.name FILTER html %]"></span>               
+    to <input name="[% field.name FILTER html %]to" 
+              id="[% field.name FILTER html %]to" size="10" maxlength="10"
+              value="[% value.1 FILTER html %]" 
+              onchange="updateCalendarFromField(this);[% onchange FILTER html %]">
+       <button type="button" class="calendar_button"
+                      id="button_calendar_[% field.name FILTER html %]to"
+                      onclick="showCalendar('[% field.name FILTER js %]to')">
+         <span>Calendar</span>
+       </button>
+    <small>(YYYY-MM-DD or relative dates)</small>
+    
+    <span id="con_calendar_[% field.name FILTER html %]to"></span>
+    <script type="text/javascript">
+      <!--
+        [%+ PROCESS "global/calendar.js.tmpl" id = field.name %]
+        [% PROCESS "global/calendar.js.tmpl" id = field.name _ 'to' %]
+      //--></script>
+  [% CASE [ constants.FIELD_TYPE_SINGLE_SELECT, 
+            constants.FIELD_TYPE_MULTI_SELECT ] %]
+    <div id="container_[% field.name FILTER html %]" class="search_field_grid">      
+      [% INCLUDE "bug/field-label.html.tmpl"
+        field = field
+        editable = 1
+        tag_name = "span"
+      %]
+      <select name="[% field.name FILTER html%]" 
+              id="[% field.name FILTER html %]" 
+        [% IF onchange %] onchange="[% onchange FILTER html %]"[% END %]
+        multiple="multiple" size="7">
+        [% legal_values = ${field.name} %]
+        [% IF field.name == "component" %]
+          [% legal_values = ${"component_"} %]
+        [% END %]
+        [% FOREACH current_value = legal_values %]
+          [% SET v = current_value.name OR '---' -%]
+          [% SET display = display_value(field.name, current_value.name) %]
+          <option value="[% v FILTER html %]"
+            id="v[% current_value.id FILTER html %]_[% field.name FILTER html %]"
+            [% ' selected="selected"' IF value.contains( v ) %]>
+            [%~ display FILTER html ~%]
+          </option>
+        [% END %]
+      </select>
+    </div>
+
+    [% IF value_controllers.${field.name}.defined %]
+      <script type="text/javascript"><!--
+        [%+ FILTER collapse %]
+          [% FOREACH accessor = value_controllers.${field.name}.keys %]
+            [% PROCESS controller_js %]
+          [% END %]
+        [%~ END ~%]
+      // --></script>
+    [% END %]
+    [% IF duplicates.${field.name}.keys.size %]
+      [% SET field_dups = duplicates.${field.name} %]
+      [% SET dup_counts = duplicate_count.${field.name} %]
+      <script type="text/javascript">
+       [%+ FILTER collapse %]
+          bz_option_duplicates['[% field.name FILTER js %]'] = {
+            [% FOREACH dup = field_dups.keys %]
+              [% dup FILTER js %]:[% field_dups.$dup.id FILTER js %]
+              [%~ ',' UNLESS loop.last %]
+            [% END ~%]
+          };
+          bz_option_duplicate_count['[% field.name FILTER js %]'] = {
+            [% FOREACH dup_target = dup_counts.keys %]
+              [% dup_target FILTER js %]:[% dup_counts.$dup_target FILTER js %]
+              [%~ ',' UNLESS loop.last %]
+            [% END %]
+          };
+        [% END %]
+      </script>
+    [% END %]
+
+  [% END %]
+[%# END OF SWITCH %]
+
+[% BLOCK controller_js %]
+  [%# If there are selected values already, we need to fire the
+    # "change" event once the page has loaded, so we can set all
+    # the values in all the other <select>s properly.
+    #%]
+  YAHOO.util.Event.onDOMReady(function() {
+      var field = document.getElementById('[% field.name FILTER js %]');
+      if (field.selectedIndex != -1) bz_fireEvent(field, 'change');
+  });
+
+  [% SET sub_field = value_controllers.${field.name}.$accessor %]
+  [% SET prod_per_class = {} %]
+  [% IF field.name == "classification" %]
+    [% FOREACH p = product %]
+      [% prod_per_class.${p.classification_id}.${p.id} = 1 %]
+    [% END %]
+  [% END %]
+
+  [% FOREACH legal_value = legal_values %]
+    [% SET controlled_ids = [] %]
+    [% IF field.name == "classification" %]
+      [% controlled_ids = prod_per_class.${legal_value.id}.keys %]
+    [% ELSE %]
+      [% FOREACH sub_value = legal_value.$accessor %]
+        [% controlled_ids.push(sub_value.id) %]
+      [% END %]
+    [% END %]
+    [% NEXT IF !controlled_ids.size %]
+      showValueWhen('[% sub_field.name FILTER js %]',
+                    [[% controlled_ids.join(',') FILTER js %]],
+                    '[% field.name FILTER js %]',
+                    [% legal_value.id FILTER js %],
+                    true);
+  [% END %]
+[% END %]

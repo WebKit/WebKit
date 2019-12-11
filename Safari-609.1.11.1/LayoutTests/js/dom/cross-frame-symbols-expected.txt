@@ -1,0 +1,15 @@
+Tests Symbol and global symbol registry identity
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS frame.Symbol.iterator is Symbol.iterator
+PASS frame.Symbol('Hello') is not Symbol('Hello')
+PASS Symbol.keyFor(sym) is 'Hello'
+PASS frame.Symbol.keyFor(sym) is 'Hello'
+PASS Symbol.for('Hello') is sym
+PASS frame.Symbol.for('Hello') is sym
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

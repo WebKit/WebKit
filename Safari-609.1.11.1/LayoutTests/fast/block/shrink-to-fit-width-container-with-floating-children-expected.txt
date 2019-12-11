@@ -1,0 +1,5 @@
+webkit.org/b/114879: Respect http://www.w3.org/TR/CSS21/visudet.html#Computing_widths_and_margins when calculating the min/max width of non-replaced absolute, floating an inline-block containers - i.e. they should shrink-to-fit.
+
+ PASS
+PASS
+PASS

@@ -1,0 +1,34 @@
+fixed
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 320.00 5013.00)
+  (visible rect 0.00, 1000.00 106.67 x 182.67)
+  (coverage rect 0.00, 1000.00 106.67 x 182.67)
+  (intersects coverage rect 1)
+  (contentsScale 6.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 320.00 5013.00)
+      (contentsOpaque 1)
+      (visible rect 0.00, 1000.00 106.67 x 182.67)
+      (coverage rect 0.00, 957.33 192.00 x 268.00)
+      (intersects coverage rect 1)
+      (contentsScale 6.00)
+      (children 1
+        (GraphicsLayer
+          (position 10.00 0.00)
+          (approximate position 10.00 634.66)
+          (bounds 100.00 548.00)
+          (usingTiledLayer 1)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (visible rect 0.00, 365.34 96.67 x 182.66)
+          (coverage rect -10.00, 322.68 192.00 x 268.00)
+          (intersects coverage rect 1)
+          (contentsScale 6.00)
+        )
+      )
+    )
+  )
+)
+

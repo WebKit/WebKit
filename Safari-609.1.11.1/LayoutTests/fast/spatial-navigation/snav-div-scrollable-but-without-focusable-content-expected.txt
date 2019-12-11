@@ -1,0 +1,19 @@
+
+
+
+
+PASS gFocusedDocument.activeElement.getAttribute("id") is "start"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "start"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "start"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "start"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "start"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "start"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "end"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "end"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "end"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "end"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "end"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "end"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "end"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "start"
+This test is to test that a scrollable div can scroll and reveal its content even if it does not have any focusable content.

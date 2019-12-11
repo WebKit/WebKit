@@ -1,0 +1,3 @@
+
+FAIL applet elements are (mostly) gone assert_equals: expected (undefined) undefined but got (string) "test1"
+

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test passing capture device IDs to getUserMedia</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script>
+    var devices = [];
+
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    promise_test((test) => {
+        return navigator.mediaDevices.enumerateDevices()
+            .then((devices) => {
+                assert_greater_than(devices.length, 0);
+                let device = devices[0];
+                
+                assert_true(device instanceof MediaDeviceInfo);
+                assert_class_string(device, "MediaDeviceInfo");
+                assert_true('deviceId' in device);
+                assert_true('kind' in device);
+                assert_true('label' in device);
+                assert_true('groupId' in device);
+                assert_true('toJSON' in device);
+                
+                let serializedResult = device.toJSON();
+                assert_equals(serializedResult['deviceId'], device.deviceId);
+                assert_equals(serializedResult['kind'], device.kind);
+                assert_equals(serializedResult['label'], device.label);
+                assert_equals(serializedResult['groupId'], device.groupId);
+            });
+    }, "Test properties of MediaDeviceInfo");
+
+    </script>
+</head>
+<body>
+</body>
+</html>

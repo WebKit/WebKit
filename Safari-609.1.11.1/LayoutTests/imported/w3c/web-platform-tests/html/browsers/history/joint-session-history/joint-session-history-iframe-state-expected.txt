@@ -1,0 +1,4 @@
+
+
+FAIL Joint session history should not override parent's state. assert_object_equals: value is null, expected object
+

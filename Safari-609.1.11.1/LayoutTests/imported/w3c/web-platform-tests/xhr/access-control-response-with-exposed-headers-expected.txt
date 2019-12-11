@@ -1,0 +1,3 @@
+
+PASS Test CORS response with 'Access-Control-Expose-Headers' header 
+

@@ -1,0 +1,1732 @@
+2019-10-26  Chris Lord  <clord@igalia.com>
+
+        Put OffscreenCanvas behind a build flag
+        https://bugs.webkit.org/show_bug.cgi?id=203146
+
+        Reviewed by Ryosuke Niwa.
+
+        * StitchMarker/wtf/FeatureDefines.h:
+
+2019-10-21  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Perf test SVG/UnderTheSeeBenchmark.html timeouts.
+        https://bugs.webkit.org/show_bug.cgi?id=203229
+
+        Unreviewed gardening.
+
+        * Skipped: Mark 2 new tests timing out in the GTK perf bot.
+
+2019-10-17  Saam Barati  <sbarati@apple.com>
+
+        Have a CLI version of JetStream 2 to run on watchOS
+        https://bugs.webkit.org/show_bug.cgi?id=202998
+        <rdar://problem/56208554>
+
+        Reviewed by Tadeu Zagallo.
+
+        This patch adds a CLI version of JS2 to run on watchOS. We run most subtests
+        from the browser version of JS2, but skip a few tests that are particularly
+        long running, like WSL and some of WTB. We also don't run the Wasm tests
+        as we don't JIT on watchOS. Each test runs for fewer iterations in the watch
+        version. 15 is the default iteration count. This benchmark runs in 7 minutes on
+        a Series 4 watch.
+
+        * JetStream2/JetStreamDriver.js:
+        (getIterationCount):
+        (getWorstCaseCount):
+        (Driver.prototype.async.start):
+        (Driver.prototype.resultsJSON):
+        (Driver.prototype.dumpJSONResultsIfNeeded):
+        (Driver.prototype.async.reportScoreToRunBenchmarkRunner):
+        (DefaultBenchmark):
+        * JetStream2/RexBench/UniPoker/benchmark.js:
+        (Benchmark.prototype.validate):
+        (Benchmark):
+        * JetStream2/watch-cli.js: Added.
+
+2019-10-17  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [Linux] Avoid usage of <sys/sysctl.h> in MallocBench
+        https://bugs.webkit.org/show_bug.cgi?id=203109
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * MallocBench/MallocBench/CPUCount.cpp: Only include <sys/sysctl.h> if
+        the sysctl() function will be used.
+
+2019-10-17  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Perf test IndexedDB/basic/index-cursor-delete.html timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=203083
+
+        Unreviewed gardening.
+
+        * Skipped: Skip a test that is timing out on the GTK perf bot.
+
+2019-09-24  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] Add ValueBitRShift into DFG
+        https://bugs.webkit.org/show_bug.cgi?id=192663
+
+        Reviewed by Robin Morisset.
+
+        * BigIntBench/big-int-simple-rshift.js: Added.
+        (bigInt):
+
+2019-09-09  Jon Lee  <jonlee@apple.com>
+
+        Upload triangles tests for 3D suite in MotionMark
+        https://bugs.webkit.org/show_bug.cgi?id=201606
+
+        Reviewed by Simon Fraser.
+
+        * MotionMark/resources/debug-runner/motionmark.css:
+        * MotionMark/resources/debug-runner/tests.js:
+        * MotionMark/tests/3d/resources/webgl.js:
+        * MotionMark/tests/3d/resources/webgpu.js: Added.
+        * MotionMark/tests/3d/triangles-webgl.html: Renamed from Websites/browserbench.org/MotionMark1.1/tests/3d/webgl.html.
+        * MotionMark/tests/3d/triangles-webgpu.html: Copied from PerformanceTests/MotionMark/tests/3d/webgl.html.
+
+2019-08-29  Keith Rollin  <krollin@apple.com>
+
+        Update .xcconfig symbols to reflect the current set of past and future product versions.
+        https://bugs.webkit.org/show_bug.cgi?id=200720
+        <rdar://problem/54305032>
+
+        Reviewed by Alex Christensen.
+
+        Remove version symbols related to old OS's we no longer support,
+        ensure that version symbols are defined for OS's we do support.
+
+        * MediaTime/Configurations/Base.xcconfig:
+        * MediaTime/Configurations/DebugRelease.xcconfig:
+
+2019-08-21  Sihui Liu  <sihui_liu@apple.com>
+
+        Add some IDB performance tests
+        https://bugs.webkit.org/show_bug.cgi?id=200906
+
+        Reviewed by Geoffrey Garen.
+
+        Add test coverage for IDB performance, and organize IDB tests into two categories.
+
+        * IndexedDB/basic/index-count-key.html: Added.
+        * IndexedDB/basic/index-count.html: Added.
+        * IndexedDB/basic/index-cursor-advance.html: Added.
+        * IndexedDB/basic/index-cursor-continue.html: Added.
+        * IndexedDB/basic/index-cursor-continuePrimaryKey.html: Added.
+        * IndexedDB/basic/index-cursor-delete.html: Added.
+        * IndexedDB/basic/index-cursor-update.html: Added.
+        * IndexedDB/basic/index-get.html: Added.
+        * IndexedDB/basic/index-multientry.html: Renamed from PerformanceTests/IndexedDB/index-multientry.html.
+        * IndexedDB/basic/objectstore-add.html: Added.
+        * IndexedDB/basic/objectstore-clear.html: Added.
+        * IndexedDB/basic/objectstore-count.html: Added.
+        * IndexedDB/basic/objectstore-cursor-advance.html: Added.
+        * IndexedDB/basic/objectstore-cursor-continue.html: Added.
+        * IndexedDB/basic/objectstore-cursor-delete.html: Added.
+        * IndexedDB/basic/objectstore-cursor-update.html: Added.
+        * IndexedDB/basic/objectstore-cursor.html: Renamed from PerformanceTests/IndexedDB/objectstore-cursor.html.
+        * IndexedDB/basic/objectstore-delete.html: Renamed from PerformanceTests/IndexedDB/index-get.html.
+        * IndexedDB/basic/objectstore-get.html: Added.
+        * IndexedDB/basic/objectstore-put.html: Renamed from PerformanceTests/IndexedDB/objectstore-get.html.
+        * IndexedDB/stress/large-array-keys.html: Renamed from PerformanceTests/IndexedDB/large-array-keys.html.
+        * IndexedDB/stress/large-binary-keys.html: Renamed from PerformanceTests/IndexedDB/large-binary-keys.html.
+        * IndexedDB/stress/large-number-of-inserts-responsiveness.html: Renamed from PerformanceTests/IndexedDB/large-number-of-inserts-responsiveness.html.
+        * IndexedDB/stress/large-number-of-inserts.html: Renamed from PerformanceTests/IndexedDB/large-number-of-inserts.html.
+        * IndexedDB/stress/large-string-keys.html: Renamed from PerformanceTests/IndexedDB/large-string-keys.html.
+        * Skipped:
+
+2019-08-19  Sihui Liu  <sihui_liu@apple.com>
+
+        Remove IDB-specific quota
+        https://bugs.webkit.org/show_bug.cgi?id=196545
+        <rdar://problem/54201783>
+
+        Reviewed by Youenn Fablet.
+
+        * IndexedDB/large-binary-keys.html:
+        * IndexedDB/large-string-keys.html:
+
+2019-08-14  Keith Rollin  <krollin@apple.com>
+
+        Remove support for macOS < 10.13
+        https://bugs.webkit.org/show_bug.cgi?id=200694
+        <rdar://problem/54278851>
+
+        Reviewed by Youenn Fablet.
+
+        Update conditionals that reference __MAC_OS_X_VERSION_MIN_REQUIRED and
+        __MAC_OS_X_VERSION_MAX_ALLOWED, assuming that they both have values >=
+        101300. This means that expressions like
+        "__MAC_OS_X_VERSION_MIN_REQUIRED < 101300" are always False and
+        "__MAC_OS_X_VERSION_MIN_REQUIRED >= 101300" are always True.
+
+        * StitchMarker/wtf/Platform.h:
+        * StitchMarker/wtf/dependencies/bmalloc/BPlatform.h:
+        * StitchMarker/wtf/text/icu/TextBreakIteratorICU.h:
+        (WTF::TextBreakIteratorICU::TextBreakIteratorICU):
+        (WTF::caretRules): Deleted.
+
+2019-08-06  Michael Saboff  <msaboff@apple.com>
+
+        Make JSC memory benchmark available on OpenSource
+        https://bugs.webkit.org/show_bug.cgi?id=195012
+
+        Reviewed by Saam Barati.
+
+        This patch upstreams the RAMification memory benchmark to open source.
+
+        The prior RAMification.py driver script in the Internal directory has been moved here
+        with the device execution code seperated out to a new Internal driver script.
+        As a result, command line argument parsing as well as acting on the resulting argument
+        values has changed.  The remote device Runner creates an ArgumentParser object that is
+        passed through main().  In main(), if we have an ArgumentParser, we use it otherwise we
+        create one for benchmarking locally.  The arguments object returned from argument
+        parsing is now passed to the Runner constructor so it can extract the settings appropriate
+        for that particular runner.
+
+        Added some sane argument default values for the JSC command patch and the JetStream2
+        source directory.
+
+        Updated the Lua tests to eliminate the testing harness and its overhead, matching what was
+        done in the Internal tree.
+
+        * JetStream2/LuaJSFight/hello_world.js:
+        (Benchmark.prototype.runIteration): Deleted.
+        (Benchmark): Deleted.
+        * JetStream2/LuaJSFight/list_search.js:
+        (run): Deleted.
+        (Benchmark.prototype.runIteration): Deleted.
+        (Benchmark): Deleted.
+        * JetStream2/LuaJSFight/lists.js:
+        (): Deleted.
+        (Benchmark.prototype.runIteration): Deleted.
+        (Benchmark): Deleted.
+        * JetStream2/LuaJSFight/richards.js: Added.
+        (runRichards):
+        (Scheduler):
+        (Scheduler.prototype.addIdleTask):
+        (Scheduler.prototype.addWorkerTask):
+        (Scheduler.prototype.addHandlerTask):
+        (Scheduler.prototype.addDeviceTask):
+        (Scheduler.prototype.addRunningTask):
+        (Scheduler.prototype.addTask):
+        (Scheduler.prototype.schedule):
+        (Scheduler.prototype.release):
+        (Scheduler.prototype.holdCurrent):
+        (Scheduler.prototype.suspendCurrent):
+        (Scheduler.prototype.queue):
+        (TaskControlBlock):
+        (TaskControlBlock.prototype.setRunning):
+        (TaskControlBlock.prototype.markAsNotHeld):
+        (TaskControlBlock.prototype.markAsHeld):
+        (TaskControlBlock.prototype.isHeldOrSuspended):
+        (TaskControlBlock.prototype.markAsSuspended):
+        (TaskControlBlock.prototype.markAsRunnable):
+        (TaskControlBlock.prototype.run):
+        (TaskControlBlock.prototype.checkPriorityAdd):
+        (TaskControlBlock.prototype.toString):
+        (IdleTask):
+        (IdleTask.prototype.run):
+        (IdleTask.prototype.toString):
+        (DeviceTask):
+        (DeviceTask.prototype.run):
+        (DeviceTask.prototype.toString):
+        (WorkerTask):
+        (WorkerTask.prototype.run):
+        (WorkerTask.prototype.toString):
+        (HandlerTask):
+        (HandlerTask.prototype.run):
+        (HandlerTask.prototype.toString):
+        (Packet):
+        (Packet.prototype.addTo):
+        (Packet.prototype.toString):
+        * JetStream2/LuaJSFight/string_lists.js:
+        (): Deleted.
+        (Benchmark.prototype.runIteration): Deleted.
+        (Benchmark): Deleted.
+        * JetStream2/RAMification.py: Added.
+        (mean):
+        (geomean):
+        (frameworkPathFromExecutablePath):
+        (parseArgs):
+        (parseArgs.optStrToBool):
+        (BaseRunner):
+        (BaseRunner.__init__):
+        (BaseRunner.setup):
+        (BaseRunner.setEnv):
+        (BaseRunner.unsetEnv):
+        (BaseRunner.resetForTest):
+        (BaseRunner.processLine):
+        (BaseRunner.setReturnCode):
+        (BaseRunner.getResults):
+        (LocalRunner):
+        (LocalRunner.__init__):
+        (LocalRunner.runOneTest):
+        (main):
+        (main.runTestList):
+        * JetStream2/__init__.py: Added.
+
+2019-07-23  Keith Rollin  <krollin@apple.com>
+
+        Remove rest of NavigatorContentUtils support
+        https://bugs.webkit.org/show_bug.cgi?id=200052
+        <rdar://problem/53467357>
+
+        Reviewed by Alex Christensen.
+
+        Bug 196070 removes most of the support for the never-used
+        NavigatorContentUtils facility. However, there were still a couple of
+        left-over references after that change. This patch sweeps those up.
+
+        * StitchMarker/wtf/FeatureDefines.h:
+
+2019-07-12  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] Add ValueBitLShift into DFG
+        https://bugs.webkit.org/show_bug.cgi?id=192664
+
+        Reviewed by Saam Barati.
+
+        * BigIntBench/big-int-simple-lshift.js: Added.
+
+2019-06-28  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Remove traces of ENABLE_ICONDATABASE remaining after its removal in 219733
+        https://bugs.webkit.org/show_bug.cgi?id=199317
+
+        Reviewed by Michael Catanzaro.
+
+        While IconDatabase and all code using it was removed,
+        ENABLE_ICONDATABASE still exists as build option and C++ macro.
+
+        * StitchMarker/wtf/FeatureDefines.h:
+
+2019-06-27  Beth Dakin  <bdakin@apple.com>
+
+        Upstream use of MACCATALYST
+        https://bugs.webkit.org/show_bug.cgi?id=199245
+        rdar://problem/51687723
+
+        Reviewed by Tim Horton.
+
+        * MediaTime/Configurations/SDKVariant.xcconfig:
+
+2019-06-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove support for GTK2 plugins
+        https://bugs.webkit.org/show_bug.cgi?id=199065
+
+        Reviewed by Sergio Villar Senin.
+
+        * StitchMarker/wtf/Platform.h:
+
+2019-05-08  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] Add ValueMod into DFG
+        https://bugs.webkit.org/show_bug.cgi?id=186174
+
+        Reviewed by Saam Barati.
+
+        * BigIntBench/big-int-simple-mod.js: Added.
+
+2019-05-06  Saam Barati  <sbarati@apple.com>
+
+        JS2 should print scores for different categories
+        https://bugs.webkit.org/show_bug.cgi?id=197605
+
+        Reviewed by Yusuke Suzuki.
+
+        * JetStream2/JetStreamDriver.js:
+        (displayCategoryScores):
+        (isInBrowser.document.onkeydown):
+        (Driver.prototype.async.start):
+        (Driver.prototype.async.reportScoreToRunBenchmarkRunner):
+
+2019-04-16  Jon Lee  <jonlee@apple.com>
+
+        [MotionMark] The text "kkkj" is causing Firefox console warning: `unreachable code after return statement`
+        https://bugs.webkit.org/show_bug.cgi?id=196814
+
+        Reviewed by Wenson Hsieh.
+
+        * MotionMark/resources/extensions.js:
+        (subtract.subtract.sampleY):
+
+2019-04-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] FontPlatformData objects aren't cached at all when using font-family:system-ui
+        https://bugs.webkit.org/show_bug.cgi?id=196846
+        <rdar://problem/49499971>
+
+        Reviewed by Simon Fraser and Darin Adler.
+
+        * Layout/system-ui-rebuild-emoji.html: Added.
+
+2019-04-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        -apple-trailing-word is needed for browser detection
+        https://bugs.webkit.org/show_bug.cgi?id=196575
+
+        Unreviewed.
+
+        * MotionMark/resources/debug-runner/motionmark.css:
+        (#intro .start-benchmark p):
+
+2019-03-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        REGRESSION (r242911?): High Sierra Release WK2 Perf bot timing out while running IndexedDB/large-number-of-inserts.html
+        https://bugs.webkit.org/show_bug.cgi?id=195952
+
+        Unreviewed test gardening.
+
+        * Skipped: Skip the affected test so the bot will finish the run.
+
+2019-03-27  Saam Barati  <sbarati@apple.com>
+
+        JetStream 2 should not report time values as scores
+        https://bugs.webkit.org/show_bug.cgi?id=196334
+
+        Reviewed by Yusuke Suzuki.
+
+        * JetStream2/JetStreamDriver.js:
+        (toTimeValue):
+        (Driver.prototype.async.reportScoreToRunBenchmarkRunner):
+
+2019-03-27  Saam barati  <sbarati@apple.com>
+
+        Unreviewed. Fix individual benchmark description urls to go to in-depth.html instead of about.html
+
+        * JetStream2/JetStreamDriver.js:
+        (Driver.prototype.prepareToRun.text.div.id.string_appeared_here.h3):
+
+2019-03-25  Saam barati  <sbarati@apple.com>
+
+        Update the blurb describing JetStream2 and fix a broken link in the in-depth page.
+
+        Rubber-stamped by Filip Pizlo.
+
+        * JetStream2/in-depth.html:
+        * JetStream2/index.html:
+
+2019-03-18  Saam Barati  <sbarati@apple.com>
+
+        Add a plan file for JetStream 2
+        https://bugs.webkit.org/show_bug.cgi?id=190734
+
+        Reviewed by Mark Lam.
+
+        Make the delay when starting via run-benchmark longer to allow
+        the page's animation to finish.
+
+        * JetStream2/JetStreamDriver.js:
+        (Driver.prototype.async.initialize):
+
+2019-03-15  Jon Davis  <jond@apple.com>
+
+        Fixed a bug preventing the overall sore to be displayed on JetStream2
+        https://bugs.webkit.org/show_bug.cgi?id=195817
+
+        Rubber-stamped by Saam Barati.
+
+        * JetStream2/JetStreamDriver.js:
+        (Driver.prototype.async.start):
+
+2019-03-14  Jon Davis  <jond@apple.com>
+
+        Implement a new design for JetStream2
+        https://bugs.webkit.org/show_bug.cgi?id=195492
+
+        Reviewed by Saam Barati.
+
+        * JetStream2/JetStream.css:
+        (html):
+        (body):
+        (::selection):
+        (main):
+        (.logo):
+        (.logo .logo-image):
+        (#jetstreams):
+        (#jetstreams svg):
+        (.summary):
+        (.summary + .summary):
+        (.summary:empty):
+        (article, .summary):
+        (h1):
+        (h2, h3, h4, h5, h6):
+        (h4, h5, h6):
+        (p):
+        (h5, h6):
+        (h6):
+        (a:link,):
+        (a:hover,):
+        (#status):
+        (#status label,):
+        (a.button):
+        (#status.loading):
+        (#status.error):
+        (.error h2, .error p):
+        (.error h2):
+        (#result-summary):
+        (#result-summary label):
+        (#result-summary .score):
+        (#result-summary .score .interval):
+        (#results):
+        (.benchmark):
+        (.benchmark h3, .benchmark h4, .benchmark .result, .benchmark label):
+        (.benchmark-running h4, .benchmark-running .result, .benchmark-running label):
+        (.benchmark-done h3, .benchmark-done h4, .benchmark-done .result, .benchmark-done label):
+        (.benchmark h3):
+        (.benchmark-running h3):
+        (.benchmark-done h3):
+        (.benchmark h3 a,):
+        (.benchmark-done h3 a:hover):
+        (.benchmark h4):
+        (.benchmark-done h4):
+        (.benchmark p,):
+        (.benchmark .result):
+        (.benchmark-done .result):
+        (.benchmark label):
+        (.benchmark-done label):
+        (@keyframes fadein):
+        (to):
+        (@keyframes scaledown):
+        (@keyframes shine):
+        (100%):
+        (@keyframes swingin):
+        (@media (max-width: 415px)):
+        (#logo): Deleted.
+        (p.summary): Deleted.
+        (p.summary + p.summary): Deleted.
+        (p.summary:empty): Deleted.
+        (p:first-of-type): Deleted.
+        (#status a:link): Deleted.
+        (.interval): Deleted.
+        (a:link, a:visited): Deleted.
+        (a:link:hover): Deleted.
+        (table): Deleted.
+        (td, th): Deleted.
+        (th): Deleted.
+        (tr:first-child > th:nth-child(even)): Deleted.
+        (tr:nth-child(even):not(:first-child, .benchmark-running)): Deleted.
+        (.result): Deleted.
+        (.benchmark-running): Deleted.
+        (:not(.benchmark-running) .result): Deleted.
+        (.benchmark-running .result): Deleted.
+        (.benchmark-name): Deleted.
+        (.result.category,): Deleted.
+        (.benchmark-name:not(.category):not(.geometric-mean)): Deleted.
+        (.geometric-mean): Deleted.
+        (.benchmark-name:not(:first-child)): Deleted.
+        (.benchmark-name a:link,): Deleted.
+        (.highlighted-result): Deleted.
+        * JetStream2/JetStream2Logo.svg: Added.
+        * JetStream2/JetStreamDriver.js:
+        (updateUI):
+        (Driver.prototype.async.start):
+        (Driver.prototype.prepareToRun.text.div.id.string_appeared_here.h3):
+        (Driver.prototype.prepareToRun.text.span):
+        (Driver.prototype.prepareToRun.a.h3.h4):
+        (Driver.prototype.prepareToRun.text.div):
+        (Driver.prototype.async.initialize):
+        (Driver.prototype.async.fetchResources.prototype.statusElement.onclick):
+        (prototype.fetchResources):
+        (prototype.updateUIBeforeRun):
+        (prototype.updateUIAfterRun):
+        (Driver.prototype.async.fetchResources.statusElement.innerHTML.a.href.string_appeared_here):
+        (Driver.prototype.async.fetchResources):
+        (Driver.prototype.prepareToRun.text.tr.id.string_appeared_here.FIXME.link.to.benchmark.explanation.td): Deleted.
+        * JetStream2/clouds.svg: Added.
+        * JetStream2/in-depth.html:
+        * JetStream2/index.html:
+        * JetStream2/jetstreams.svg: Added.
+
+2019-03-11  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] Implement "~" unary operation
+        https://bugs.webkit.org/show_bug.cgi?id=182216
+
+        Reviewed by Keith Miller.
+
+        * BigIntBench/big-int-simple-bit-not.js: Added.
+
+2019-03-04  Saam Barati  <sbarati@apple.com>
+
+        Add a detailed summary page for JetStream 2
+        https://bugs.webkit.org/show_bug.cgi?id=195014
+
+        Rubber-stamped by Darin Adler.
+
+        * JetStream2/JetStream.css:
+        (a:link, a:visited):
+        * JetStream2/in-depth.html: Added.
+
+2019-02-08  Saam barati  <sbarati@apple.com>
+
+        Update JetStream2 CLI to not print "ms" since we now just print the score values
+        https://bugs.webkit.org/show_bug.cgi?id=193981
+
+        Reviewed by Yusuke Suzuki.
+
+        * JetStream2/JetStreamDriver.js:
+        (DefaultBenchmark.prototype.updateUIAfterRun):
+        (DefaultBenchmark):
+        (WSLBenchmark.prototype.updateUIAfterRun):
+        (WSLBenchmark):
+        (WasmBenchmark.prototype.updateUIAfterRun):
+        (WasmBenchmark):
+
+2019-01-31  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION (r240358): IndexedDB/large-binary-keys.html and IndexedDB/large-string-keys.html perf tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=193956
+        <rdar://problem/47623109>
+
+        Reviewed by Ryosuke Niwa.
+
+        r240358 sets default IDB quota as 50 MB for single test, we need to increase that for big tests. 
+
+        * IndexedDB/large-binary-keys.html:
+        * IndexedDB/large-string-keys.html:
+
+2019-01-18  Saam Barati  <sbarati@apple.com>
+
+        Use scores everywhere in JetStream2's UI
+        https://bugs.webkit.org/show_bug.cgi?id=193593
+
+        Reviewed by Keith Miller.
+
+        * JetStream2/JetStreamDriver.js:
+        (DefaultBenchmark.prototype.processResults):
+        (DefaultBenchmark.prototype.get score):
+        (DefaultBenchmark.scoreDescription):
+        (WSLBenchmark.prototype.processResults):
+        (WSLBenchmark.prototype.get score):
+        (WSLBenchmark.scoreDescription):
+        (WasmBenchmark.prototype.processResults):
+        (WasmBenchmark.prototype.get score):
+        (WasmBenchmark.scoreDescription):
+        * JetStream2/index.html:
+
+2019-01-18  Jer Noble  <jer.noble@apple.com>
+
+        SDK_VARIANT build destinations should be separate from non-SDK_VARIANT builds
+        https://bugs.webkit.org/show_bug.cgi?id=189553
+
+        Reviewed by Tim Horton.
+
+        * MediaTime/Configurations/Base.xcconfig:
+        * MediaTime/Configurations/SDKVariant.xcconfig: Added.
+
+2019-01-17  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, rolling out r240124.
+
+        This commit broke an internal build.
+
+        Reverted changeset:
+
+        "SDK_VARIANT build destinations should be separate from non-
+        SDK_VARIANT builds"
+        https://bugs.webkit.org/show_bug.cgi?id=189553
+        https://trac.webkit.org/changeset/240124
+
+2019-01-17  Jer Noble  <jer.noble@apple.com>
+
+        SDK_VARIANT build destinations should be separate from non-SDK_VARIANT builds
+        https://bugs.webkit.org/show_bug.cgi?id=189553
+
+        Reviewed by Tim Horton.
+
+        * MediaTime/Configurations/Base.xcconfig:
+        * MediaTime/Configurations/SDKVariant.xcconfig: Added.
+
+2018-12-20  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] We should enable CSE into arithmetic operations that speculate BigIntUse
+        https://bugs.webkit.org/show_bug.cgi?id=192723
+
+        Reviewed by Yusuke Suzuki.
+
+        * BigIntBench/big-int-cse.js: Added.
+        * BigIntBench/big-int-global-cse.js: Added.
+        * BigIntBench/big-int-licm.js: Added.
+
+2018-12-19  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r239377.
+        https://bugs.webkit.org/show_bug.cgi?id=192921
+
+        broke 32-bit JSC tests (Requested by keith_miller on #webkit).
+
+        Reverted changeset:
+
+        "[BigInt] We should enable CSE into arithmetic operations that
+        speculate BigIntUse"
+        https://bugs.webkit.org/show_bug.cgi?id=192723
+        https://trac.webkit.org/changeset/239377
+
+2018-12-19  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] We should enable CSE into arithmetic operations that speculate BigIntUse
+        https://bugs.webkit.org/show_bug.cgi?id=192723
+
+        Reviewed by Saam Barati.
+
+        * BigIntBench/big-int-cse.js: Added.
+        * BigIntBench/big-int-global-cse.js: Added.
+        * BigIntBench/big-int-licm.js: Added.
+
+2018-12-17  Suresh Koppisetty  <skoppisetty@apple.com>
+
+        Add "-o/--output" option to startup.py and new_tab.py benchmark scripts to save the results in json format.
+        https://bugs.webkit.org/show_bug.cgi?id=192385
+
+        Reviewed by Ryosuke Niwa.
+
+        Sample json output for new tab benchmark script after running for 2 iterations and 2 groups. Values are in milliseconds.
+        {
+                "NewTabBenchmark": {
+                        "metrics": {
+                                "Time": {
+                                        "current": [
+                                                [
+                                                        410.2939453125,
+                                                        307.81494140625
+                                                ],
+                                                [
+                                                        340.616943359375,
+                                                        265.94384765625
+                                                ]
+                                        ]
+                                }
+                        }
+                }
+        }
+
+        Sample json output for startup time benchmark script after running for 2 iterations. Values are in milliseconds.
+        {
+                "StartupBenchmark": {
+                        "metrics": {
+                                "Time": {
+                                        "current": [
+                                                [
+                                                        1415.2099609375,
+                                                        1439.552978515625
+                                                ]
+                                        ]
+                                }
+                        }
+                }
+        }
+
+        * LaunchTime/launch_time.py:
+        * LaunchTime/new_tab.py:
+        (NewTabBenchmark.get_test_name):
+        * LaunchTime/startup.py:
+        (StartupBenchmark.get_test_name):
+
+2018-12-17  Suresh Koppisetty  <skoppisetty@apple.com>
+
+        Import FeedbackServer only if "-f/--feedback-in-browser" option is enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=192378
+
+        Reviewed by Ryosuke Niwa.
+
+        FeedbackServer currently depends on Tornado-5.1, which further adds
+        dependency of "singledispatch", "backports-abc" and "futures" python libraries.
+        Importing FeedbackServer only if "-f/--feedback-in-browser" option is enabled
+        will let us run the benchmark scripts without installing any new python libraries.
+
+        * LaunchTime/launch_time.py:
+        * LaunchTime/new_tab.py:
+
+2018-12-13  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] Add ValueDiv into DFG
+        https://bugs.webkit.org/show_bug.cgi?id=186178
+
+        Reviewed by Yusuke Suzuki.
+
+        * BigIntBench/big-int-simple-div.js: Added.
+        * BigIntBench/value-div-type-propagation.js: Added.
+
+2018-12-10  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] Add ValueMul into DFG
+        https://bugs.webkit.org/show_bug.cgi?id=186175
+
+        Reviewed by Yusuke Suzuki.
+
+        * BigIntBench/big-int-simple-mul.js: Added.
+        * BigIntBench/value-mul-type-propagation.js: Added.
+
+2018-11-07  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] Add support to BigInt into ValueAdd
+        https://bugs.webkit.org/show_bug.cgi?id=186177
+
+        Reviewed by Keith Miller.
+
+        The idea of BigIntBench is to provide a set of microbenchmarks and
+        benchmarks to evaluate how fast BigInt computations are happening on
+        JSC implementation.
+
+        Now, we are adding microbenchmarks in this set,
+        but the plan is to move these tests to "JSTest/microbenchmarks" when
+        BigInt is enabled by default. After that, the focus of Bigint bench is
+        to provide a set of tests that represents real use cases of BigInt in
+        JS programs.
+
+        * BigIntBench/big-int-add-prediction-propagation.js: Added.
+        * BigIntBench/big-int-simple-add.js: Added.
+        * BigIntBench/big-int-simple-sub.js: Added.
+
+2018-11-07  Tadeu Zagallo  <tzagallo@apple.com>
+
+        REGRESSION(r237547): Test failures on 32-bit JSC since the JIT was disabled
+        https://bugs.webkit.org/show_bug.cgi?id=191184
+
+        Reviewed by Saam Barati.
+
+        Skip test when the JIT is disabled, it takes too long to run on CLoop.
+
+        * JetStream/cdjs/main.js:
+
+2018-11-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Cache glyph paths and share underline skipping code between all the ports
+        https://bugs.webkit.org/show_bug.cgi?id=191239
+
+        Reviewed by Alex Christensen.
+
+        Measures the performance of drawing a whole lot of underlines
+
+        * Layout/underline.html: Added.
+
+2018-10-25  Saam Barati  <sbarati@apple.com>
+
+        Check in corresponding C code in JetStream 2
+        https://bugs.webkit.org/show_bug.cgi?id=190733
+
+        Rubber-stamped by Filip Pizlo.
+
+        * JetStream2/simple/float-mm.c: Added.
+        * JetStream2/wasm/HashSet.cpp: Added.
+        * JetStream2/wasm/gcc-loops.cpp: Added.
+        * JetStream2/wasm/quicksort.c: Added.
+        * JetStream2/wasm/TSF: Added.
+        * JetStream2/wasm/TSF/build.sh: Added.
+        * JetStream2/wasm/TSF/config.h: Added.
+        * JetStream2/wasm/TSF/gpc.h: Added.
+        * JetStream2/wasm/TSF/gpc_code_gen_util.c: Added.
+        * JetStream2/wasm/TSF/gpc_instruction.c: Added.
+        * JetStream2/wasm/TSF/gpc_instruction_dispatch.gen: Added.
+        * JetStream2/wasm/TSF/gpc_instruction_size.gen: Added.
+        * JetStream2/wasm/TSF/gpc_instruction_stack_effects.gen: Added.
+        * JetStream2/wasm/TSF/gpc_instruction_static_size.gen: Added.
+        * JetStream2/wasm/TSF/gpc_instruction_to_string.gen: Added.
+        * JetStream2/wasm/TSF/gpc_int_common.h: Added.
+        * JetStream2/wasm/TSF/gpc_intable.c: Added.
+        * JetStream2/wasm/TSF/gpc_internal.h: Added.
+        * JetStream2/wasm/TSF/gpc_interpreter.gen: Added.
+        * JetStream2/wasm/TSF/gpc_program.c: Added.
+        * JetStream2/wasm/TSF/gpc_proto.c: Added.
+        * JetStream2/wasm/TSF/gpc_stack_height.c: Added.
+        * JetStream2/wasm/TSF/gpc_threaded.c: Added.
+        * JetStream2/wasm/TSF/gpc_worklist.h: Added.
+        * JetStream2/wasm/TSF/tsf.h: Added.
+        * JetStream2/wasm/TSF/tsf_adaptive_reader.c: Added.
+        * JetStream2/wasm/TSF/tsf_asprintf.c: Added.
+        * JetStream2/wasm/TSF/tsf_atomics.h: Added.
+        * JetStream2/wasm/TSF/tsf_buf_reader.c: Added.
+        * JetStream2/wasm/TSF/tsf_buf_writer.c: Added.
+        * JetStream2/wasm/TSF/tsf_buffer.c: Added.
+        * JetStream2/wasm/TSF/tsf_build_defines.h: Added.
+        * JetStream2/wasm/TSF/tsf_config.h: Added.
+        * JetStream2/wasm/TSF/tsf_config_stub.h: Added.
+        * JetStream2/wasm/TSF/tsf_copier.c: Added.
+        * JetStream2/wasm/TSF/tsf_define_helpers.c: Added.
+        * JetStream2/wasm/TSF/tsf_define_helpers.h: Added.
+        * JetStream2/wasm/TSF/tsf_destructor.c: Added.
+        * JetStream2/wasm/TSF/tsf_error.c: Added.
+        * JetStream2/wasm/TSF/tsf_format.h: Added.
+        * JetStream2/wasm/TSF/tsf_fsdb.c: Added.
+        * JetStream2/wasm/TSF/tsf_fsdb_protocol.c: Added.
+        * JetStream2/wasm/TSF/tsf_fsdb_protocol.h: Added.
+        * JetStream2/wasm/TSF/tsf_generator.c: Added.
+        * JetStream2/wasm/TSF/tsf_gpc_code_gen.c: Added.
+        * JetStream2/wasm/TSF/tsf_indent.h: Added.
+        * JetStream2/wasm/TSF/tsf_internal.h: Added.
+        * JetStream2/wasm/TSF/tsf_internal_config.h: Added.
+        * JetStream2/wasm/TSF/tsf_internal_config_stub.h: Added.
+        * JetStream2/wasm/TSF/tsf_inttypes.h: Added.
+        * JetStream2/wasm/TSF/tsf_io.c: Added.
+        * JetStream2/wasm/TSF/tsf_io_utils.c: Added.
+        * JetStream2/wasm/TSF/tsf_ir.c: Added.
+        * JetStream2/wasm/TSF/tsf_ir.h: Added.
+        * JetStream2/wasm/TSF/tsf_ir_different.c: Added.
+        * JetStream2/wasm/TSF/tsf_ir_different.h: Added.
+        * JetStream2/wasm/TSF/tsf_ir_speed.c: Added.
+        * JetStream2/wasm/TSF/tsf_limits.c: Added.
+        * JetStream2/wasm/TSF/tsf_named_type.c: Added.
+        * JetStream2/wasm/TSF/tsf_native.c: Added.
+        * JetStream2/wasm/TSF/tsf_parser.c: Added.
+        * JetStream2/wasm/TSF/tsf_primitive.c: Added.
+        * JetStream2/wasm/TSF/tsf_ra_type_man.c: Added.
+        * JetStream2/wasm/TSF/tsf_reflect.c: Added.
+        * JetStream2/wasm/TSF/tsf_region.h: Added.
+        * JetStream2/wasm/TSF/tsf_serial_in_man.c: Added.
+        * JetStream2/wasm/TSF/tsf_serial_out_man.c: Added.
+        * JetStream2/wasm/TSF/tsf_serial_protocol.h: Added.
+        * JetStream2/wasm/TSF/tsf_sha1.c: Added.
+        * JetStream2/wasm/TSF/tsf_sha1.h: Added.
+        * JetStream2/wasm/TSF/tsf_sha1_writer.c: Added.
+        * JetStream2/wasm/TSF/tsf_sort.c: Added.
+        * JetStream2/wasm/TSF/tsf_st.c: Added.
+        * JetStream2/wasm/TSF/tsf_st.h: Added.
+        * JetStream2/wasm/TSF/tsf_st_typetable.c: Added.
+        * JetStream2/wasm/TSF/tsf_stream_file_input.c: Added.
+        * JetStream2/wasm/TSF/tsf_stream_file_output.c: Added.
+        * JetStream2/wasm/TSF/tsf_type.c: Added.
+        * JetStream2/wasm/TSF/tsf_type_in_map.c: Added.
+        * JetStream2/wasm/TSF/tsf_type_out_map.c: Added.
+        * JetStream2/wasm/TSF/tsf_type_table.c: Added.
+        * JetStream2/wasm/TSF/tsf_types.h: Added.
+        * JetStream2/wasm/TSF/tsf_util.h: Added.
+        * JetStream2/wasm/TSF/tsf_version.c: Added.
+        * JetStream2/wasm/TSF/tsf_zip_abstract.c: Added.
+        * JetStream2/wasm/TSF/tsf_zip_abstract.h: Added.
+        * JetStream2/wasm/TSF/tsf_zip_attr.c: Added.
+        * JetStream2/wasm/TSF/tsf_zip_reader.c: Added.
+        * JetStream2/wasm/TSF/tsf_zip_writer.c: Added.
+
+2018-10-18  Saam Barati  <sbarati@apple.com>
+
+        Make JetStream 2
+        https://bugs.webkit.org/show_bug.cgi?id=187829
+
+        Rubber-stamped by Mark Lam.
+
+        This patch checks in the new JetStream 2 benchmark. JetStream 2 is
+        a new JavaScript and Web Assembly benchmark. JetStream 2's goal
+        is to measure the startup, worst case, and peak throughput performance
+        of the JavaScript engine. JetStream 2 incorporates these previous
+        benchmarks:
+        - JetStream
+        - ARES-6
+        - Kraken
+        - Web Tooling Benchmark
+        - WasmBench
+        - RexBench
+        
+        JetStream 2 also adds some new benchmarks:
+        - Two tests emphasizing web worker performance.
+        - One test emphasizing Promise, async iteration, and DataView performance.
+        - Two new code load tests.
+        - WSL: a test measuring all kinds of things, especially emphasizing exception performance.
+
+        * JetStream2: Added.
+
+2018-10-02  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r236613): Parser/html-parser.html performance test is failing
+        https://bugs.webkit.org/show_bug.cgi?id=190201
+
+        Unreviewed, apply the same fix as in r236699 to make sure the iframe is treated as
+        same origin, so that calls to document.open() / document.write() succeed.
+
+        * Parser/html-parser.html:
+
+2018-10-01  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r236613): Parser/HTML5-8266-ParseOnly.html performance tests no longer runs
+        https://bugs.webkit.org/show_bug.cgi?id=190174
+
+        Reviewed by Ryosuke Niwa.
+
+        Update iframe's sandbox to use 'allow-same-origin' so that the iframe is treated as same-origin and so that
+        the top frame can call document.open() / document.write() on the subframe. This test was also failing in
+        Firefox without this change.
+
+        * Parser/HTML5-8266-ParseOnly.html:
+
+2018-08-27  Aditya Keerthi  <akeerthi@apple.com>
+
+        Consolidate ENABLE_INPUT_TYPE_COLOR and ENABLE_INPUT_TYPE_COLOR_POPOVER
+        https://bugs.webkit.org/show_bug.cgi?id=188931
+
+        Reviewed by Wenson Hsieh.
+
+        * StitchMarker/wtf/FeatureDefines.h: Removed ENABLE_INPUT_TYPE_COLOR_POPOVER.
+
+2018-08-23  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Have checks are not getting set inside CMake properly
+        https://bugs.webkit.org/show_bug.cgi?id=188901
+
+        Reviewed by Michael Catanzaro.
+
+        Add notification that MallocBench is disabled.
+
+        * CMakeLists.txt:
+
+2018-08-23  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add HAVE_MALLOC_TRIM definition
+        https://bugs.webkit.org/show_bug.cgi?id=188897
+
+        Reviewed by Konstantin Tokarev.
+
+        MallocBench should only be built on Apple platforms and platforms that
+        have malloc_trim.
+
+        * CMakeLists.txt:
+
+2018-08-13  Jon Lee  <jonlee@apple.com>
+
+        Update MotionMark version number
+        https://bugs.webkit.org/show_bug.cgi?id=188535
+        <rdar://problem/43254078>
+
+        Reviewed by Said Abou-Hallawa.
+
+        * MotionMark/resources/strings.js: To 1.1.
+
+2018-08-13  Jon Lee  <jonlee@apple.com>
+
+        [MotionMark] Update Multiply test
+        https://bugs.webkit.org/show_bug.cgi?id=188532
+        <rdar://problem/43252151>
+
+        Reviewed by Said Abou-Hallawa.
+
+        Update Multiply test to have a larger upper limit of number of particles. Cycle through three
+        different ways of hiding an element. Add new Multiple suite that isolates those components for
+        debugging purposes.
+
+        * MotionMark/resources/debug-runner/tests.js:
+        * MotionMark/tests/dom/multiply.html: Added.
+        * MotionMark/tests/dom/resources/multiply.js: Added.
+        * MotionMark/tests/master/resources/multiply.js:
+
+2018-08-13  Jon Lee  <jonlee@apple.com>
+
+        [MotionMark] Update Leaves test
+        https://bugs.webkit.org/show_bug.cgi?id=188530
+        <rdar://problem/43251862>
+
+        Reviewed by Said Abou-Hallawa.
+
+        Update Leaves test to include opacity and scale. Add new Leaves suite that isolate those components
+        for debugging purposes.
+
+        * MotionMark/resources/debug-runner/tests.js:
+        * MotionMark/tests/dom/leaves.html:
+        * MotionMark/tests/dom/resources/leaves.js:
+        * MotionMark/tests/master/resources/leaves.js:
+
+2018-08-10  Ben Richards  <benton_richards@apple.com>
+
+        Add ability to ignore process prewarming for launch time benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=188462
+
+        Reviewed by Ryosuke Niwa.
+
+        Added a flag to the new tab benchmark that will open a blank tab before the tab to be measured in order to ignore process prewarming.
+
+        * LaunchTime/launch_time.py:
+        (DefaultLaunchTimeHandler):
+        (DefaultLaunchTimeHandler.on_receive_stop_time): Deleted.
+        (DefaultLaunchTimeHandler.on_receive_stop_signal):
+        (DefaultLaunchTimeHandler.do_HEAD):
+        (DefaultLaunchTimeHandler.do_GET):
+        (DefaultLaunchTimeHandler.do_POST):
+        (LaunchTimeBenchmark):
+        (LaunchTimeBenchmark._standard_deviation): Fixed divide by zero bug when '-n' is set to 1
+        (LaunchTimeBenchmark.open_tab): Added option to open a blank tab
+        (LaunchTimeBenchmark.run):
+        * LaunchTime/new_tab.py:
+        (NewTabBenchmark.initialize):
+        (NewTabBenchmark.run_iteration):
+        (NewTabBenchmark.will_parse_arguments):
+        (NewTabBenchmark.did_parse_arguments):
+        (NewTabBenchmark.ResponseHandler.Handler.get_test_page):
+        (NewTabBenchmark.ResponseHandler.Handler.on_receive_stop_time): Deleted.
+        (NewTabBenchmark.ResponseHandler.Handler.on_receive_stop_signal):
+        (NewTabBenchmark):
+        * LaunchTime/startup.py:
+        (StartupBenchmark.ResponseHandler.Handler.get_test_page):
+        (StartupBenchmark.ResponseHandler.Handler.on_receive_stop_time): Deleted.
+        (StartupBenchmark.ResponseHandler.Handler.on_receive_stop_signal):
+        (StartupBenchmark):
+
+2018-08-10  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, rolling out r234750.
+
+        Caused 185 perf test failures.
+
+        Reverted changeset:
+
+        "Add ability to ignore process prewarming for launch time
+        benchmark"
+        https://bugs.webkit.org/show_bug.cgi?id=188462
+        https://trac.webkit.org/changeset/234750
+
+2018-08-09  Ben Richards  <benton_richards@apple.com>
+
+        Add ability to ignore process prewarming for launch time benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=188462
+
+        Reviewed by Ryosuke Niwa.
+
+        Added a flag to the new tab benchmark that will open a blank tab before the tab to be measured in order to ignore process prewarming.
+
+        * LaunchTime/launch_time.py:
+        (DefaultLaunchTimeHandler):
+        (DefaultLaunchTimeHandler.on_receive_stop_time): Deleted.
+        (DefaultLaunchTimeHandler.on_receive_stop_signal):
+        (DefaultLaunchTimeHandler.do_HEAD):
+        (DefaultLaunchTimeHandler.do_GET):
+        (DefaultLaunchTimeHandler.do_POST):
+        (LaunchTimeBenchmark):
+        (LaunchTimeBenchmark._standard_deviation): Fixed divide by zero bug when '-n' is set to 1
+        (LaunchTimeBenchmark.open_tab): Added option to open a blank tab
+        (LaunchTimeBenchmark.run):
+        * LaunchTime/new_tab.py:
+        (NewTabBenchmark.initialize):
+        (NewTabBenchmark.run_iteration):
+        (NewTabBenchmark.will_parse_arguments):
+        (NewTabBenchmark.did_parse_arguments):
+        (NewTabBenchmark.ResponseHandler.Handler.get_test_page):
+        (NewTabBenchmark.ResponseHandler.Handler.on_receive_stop_time): Deleted.
+        (NewTabBenchmark.ResponseHandler.Handler.on_receive_stop_signal):
+        (NewTabBenchmark):
+        * LaunchTime/startup.py:
+        (StartupBenchmark.ResponseHandler.Handler.get_test_page):
+        (StartupBenchmark.ResponseHandler.Handler.on_receive_stop_time): Deleted.
+        (StartupBenchmark.ResponseHandler.Handler.on_receive_stop_signal):
+        (StartupBenchmark):
+
+2018-07-26  Andy VanWagoner  <andy@vanwagoner.family>
+
+        [INTL] Remove INTL sub-feature compile flags
+        https://bugs.webkit.org/show_bug.cgi?id=188081
+
+        Reviewed by Michael Catanzaro.
+
+        Removed old and unused i18n flag.
+
+        * StitchMarker/wtf/FeatureDefines.h:
+
+2018-07-20  David Fenton  <david_fenton@apple.com>
+
+        REGRESSION (234006) ERROR: Blocked access to external URL http://code.jquery.com/jquery-1.9.1.min.js
+        https://bugs.webkit.org/show_bug.cgi?id=187858
+
+        Unreviewed test gardening, skipped test.
+
+        * Skipped: LaunchTime
+
+2018-07-19  Ben Richards  <benton_richards@apple.com>
+
+        Add benchmark for WebKit process launch times
+        https://bugs.webkit.org/show_bug.cgi?id=186414
+
+        Reviewed by Ryosuke Niwa.
+
+        Added two benchmarks, one for measuring browser new tab launch time and one for browser startup time.
+
+        * LaunchTime/.gitignore: Added.
+        * LaunchTime/feedback_client.html: Added.
+        Displays benchmark progress in browser
+        * LaunchTime/feedback_server.py: Added.
+        (FeedbackServer): Sends data to feedback_client via websocket
+        (FeedbackServer.__init__):
+        (FeedbackServer._create_app):
+        (FeedbackServer._start_server):
+        (FeedbackServer._send_all_messages):
+        (FeedbackServer.start):
+        (FeedbackServer.stop):
+        (FeedbackServer.send_message): Send a message to the feedback_client
+        (FeedbackServer.wait_until_client_has_loaded): Wait until the feedback_client has opened a websocket connection to the feedback_server
+        (FeedbackServer.MainHandler): Handler factory to create handler that serves feedback_client.html
+        (FeedbackServer.MainHandler.Handler):
+        (FeedbackServer.MainHandler.Handler.get):
+        (FeedbackServer.WSHandler): Handler factory to create handler that sends data to feedback client
+        (FeedbackServer.WSHandler.Handler):
+        (FeedbackServer.WSHandler.Handler.open): On websocket connection opened
+        (FeedbackServer.WSHandler.Handler.on_close): On websocket connection closed
+        * LaunchTime/launch_time.py: Added.
+        (DefaultLaunchTimeHandler): Abstract HTTP request handler for launch time benchmarks
+        (DefaultLaunchTimeHandler.get_test_page): Default test page to be overridden by benchmarks
+        (DefaultLaunchTimeHandler.get_blank_page):
+        (DefaultLaunchTimeHandler.on_receive_stop_time):
+        (DefaultLaunchTimeHandler.do_HEAD):
+        (DefaultLaunchTimeHandler.do_GET):
+        (DefaultLaunchTimeHandler.do_POST):
+        (DefaultLaunchTimeHandler.log_message): Suppresses HTTP logs from SimpleHTTPRequestHandler
+        (LaunchTimeBenchmark): Abstract class which launch time benchmarks inherit from and override methods desired to customize
+        (LaunchTimeBenchmark.__init__):
+        (LaunchTimeBenchmark._parse_browser_bundle_path): Parser for bundle path option
+        (LaunchTimeBenchmark._parse_args):
+        (LaunchTimeBenchmark._run_server): Target function for main server thread
+        (LaunchTimeBenchmark._setup_servers):
+        (LaunchTimeBenchmark._clean_up):
+        (LaunchTimeBenchmark._exit_due_to_exception):
+        (LaunchTimeBenchmark._geometric_mean):
+        (LaunchTimeBenchmark._standard_deviation):
+        (LaunchTimeBenchmark._compute_results): Returns mean and std dev of list of results and pretty prints if should_print=True is specified
+        (LaunchTimeBenchmark._wait_times): Mimic numpy.linspace
+        (LaunchTimeBenchmark.open_tab): Open a browser tab with the html given by self.response_handler.get_test_page
+        (LaunchTimeBenchmark.launch_browser): Open a broser to either the feedback client (if option is set) or a blank page
+        (LaunchTimeBenchmark.quit_browser):
+        (LaunchTimeBenchmark.quit_browser.quit_app):
+        (LaunchTimeBenchmark.quit_browser.is_app_closed):
+        (LaunchTimeBenchmark.close_tab):
+        (LaunchTimeBenchmark.wait):
+        (LaunchTimeBenchmark.log): Print to console and send to feedback client if --feedback-in-browser flag is used
+        (LaunchTimeBenchmark.log_verbose): Only logs if --verbose flag is used
+        (LaunchTimeBenchmark.run):
+        (LaunchTimeBenchmark.group_init): Initialization done before each round of iterations
+        (LaunchTimeBenchmark.run_iteration):
+        (LaunchTimeBenchmark.initialize): Convenience method to be overriden by subclasses which is called at the end of __init__
+        (LaunchTimeBenchmark.will_parse_arguments): Called before argparse.parse_args to let subclasses add new command line arguments
+        (LaunchTimeBenchmark.did_parse_arguments): Called after argparse.parse_args to let subclass initialize based on command line arguments
+        * LaunchTime/new_tab.py: Added
+        (NewTabBenchmark):
+        (NewTabBenchmark._parse_wait_time): Parser for wait time option
+        (NewTabBenchmark.initialize):
+        (NewTabBenchmark.run_iteration):
+        (NewTabBenchmark.group_init):
+        (NewTabBenchmark.will_parse_arguments):
+        (NewTabBenchmark.did_parse_arguments):
+        (NewTabBenchmark.ResponseHandler):
+        (NewTabBenchmark.ResponseHandler.Handler):
+        (NewTabBenchmark.ResponseHandler.Handler.get_test_page):
+        * LaunchTime/startup.py: Added
+        (StartupBenchmark): This benchmark measures browser startup time and initial page load time
+        (StartupBenchmark.initialize):
+        (StartupBenchmark.run_iteration):
+        (StartupBenchmark.ResponseHandler):
+        (StartupBenchmark.ResponseHandler.Handler):
+        (StartupBenchmark.ResponseHandler.Handler.get_test_page):
+        * LaunchTime/thirdparty/__init__.py: Added.
+        (AutoinstallImportHook): Auto installs tornado package for feedback server
+        (AutoinstallImportHook.__init__):
+        (AutoinstallImportHook._ensure_autoinstalled_dir_is_in_sys_path):
+        (AutoinstallImportHook.find_module):
+        (AutoinstallImportHook._install_tornado):
+        (AutoinstallImportHook.greater_than_equal_to_version):
+        (AutoinstallImportHook._install):
+        (AutoinstallImportHook.get_latest_pypi_url):
+        (AutoinstallImportHook.install_binary):
+        (autoinstall_everything):
+        (get_os_info):
+
+2018-06-25  Jon Lee  <jonlee@apple.com>
+
+        [MotionMark] Add support for version numbers
+        https://bugs.webkit.org/show_bug.cgi?id=186479
+
+        Reviewed by Said Abou-Hallawa.
+
+        Add support for displaying the version number as well as including it in the JSON results.
+
+        When loading the front page, script replaces any element with classname version with the
+        version number of the benchmark, which is stored in Strings.version.
+
+        The JSON structure for the results includes a new version property:
+            {
+              "version": "1.0",
+              "options": { ... },
+              "data": [ ... ]
+            }
+
+        When dragging a results file, the version listed will come from the JSON file. Older
+        results will not have had the version property, in which case it will default to "1.0".
+
+        * MotionMark/index.html: Update title to some other default. Script will update it.
+        Include the version number in the logo title.
+        * MotionMark/developer.html: Ditto.
+        * MotionMark/about.html: Ditto.
+
+        * MotionMark/resources/runner/motionmark.js:
+        (ResultsDashboard): Update constructor to include version. This is used when serializing
+        results out to JSON, and displaying the results panel in developer mode.
+        (ResultsDashboard._processData): When running the benchmark, include benchmark version string
+        in the results object.
+        (ResultsDashboard.version):
+        (window.benchmarkRunnerClient.willStartFirstIteration): When running the benchmark, pass the
+        benchmark version string to the dashboard, which holds the results.
+        (window.sectionsManager.setSectionVersion): Helper function to update the element in the
+        section with the class name version.
+        (window.benchmarkController.initialize): Populate all DOM elements with class name "version"
+        with the version string. Update the page title.
+        (window.benchmarkController.showResults): When showing results, update the version string
+        based on what is included in the JSON results, which would be the same as the benchmark version.
+        * MotionMark/resources/runner/motionmark.css: Include missing copyright. Wrap the SVG logo
+        in a div and include the version string.
+        * MotionMark/resources/strings.js: Add strings for the page title template, and the version.
+
+        * MotionMark/resources/debug-runner/motionmark.css:
+        * MotionMark/resources/debug-runner/motionmark.js:
+        (window.benchmarkRunnerClient.willStartFirstIteration): When running the benchmark, pass the
+        benchmark version string to the dashboard, which holds the results.
+        (window.benchmarkController.initialize): Populate all DOM elements with class name "version"
+        with the version string. Update the page title. When dragging in JSON results, look for
+        version to pass to the dashboard. If it doesn't exist, default to "1.0".
+        (window.benchmarkController.showResults): When showing results, update the version string
+        based on what is included in the JSON results, instead of the current benchmark version.
+        * MotionMark/resources/debug-runner/tests.js: Update page title template.
+
+2018-06-08  Jon Lee  <jonlee@apple.com>
+
+        [MotionMark] Rename Suits test files
+        https://bugs.webkit.org/show_bug.cgi?id=186447
+
+        Reviewed by Said Abou-Hallawa.
+
+        * MotionMark/resources/runner/tests.js:
+        * MotionMark/tests/master/resources/suits.js: Renamed from PerformanceTests/MotionMark/tests/master/resources/svg-particles.js.
+        * MotionMark/tests/master/suits.html: Renamed from PerformanceTests/MotionMark/tests/master/svg-particles.html.
+        * MotionMark/tests/svg/suits.html:
+
+2018-06-08  Jon Lee  <jonlee@apple.com>
+
+        Add sub-tests based on Suits
+        https://bugs.webkit.org/show_bug.cgi?id=186260
+
+        Reviewed by Said Abou-Hallawa.
+
+        Add a new developer Suits suite with sub-tests that isolate parts of each particle.
+        The sub-tests are:
+            - Particles using only clip paths
+            - Particles using only shapes
+            - Particles that have no gradients
+            - Particles that have no rotation
+            - Particles that do not move around at all (but all of the physics calculations are
+            still performed)
+
+        * MotionMark/resources/debug-runner/tests.js:
+        * MotionMark/tests/master/resources/svg-particles.js: Rename the stage, particle, and
+        benchmark to "Suits" from "SVG". Change SuitsParticle so that we guarantee 50% clip and
+        shape paths rather than relying on random chance. Wrap a check around creation of the
+        gradient element, and use a simple fill color when we aren't using a gradient.
+        * MotionMark/tests/svg/suits.html: Added.
+        * MotionMark/tests/svg/suits.js: Added.
+        Look for the query string and set the particle based on what is selected.
+
+2018-06-06  Jon Lee  <jonlee@apple.com>
+
+        Allow the ramp controller to run tests that take less time than the initial ramp-up phase
+        https://bugs.webkit.org/show_bug.cgi?id=186257
+
+        Reviewed by Said Abou-Hallawa.
+
+        * MotionMark/tests/resources/main.js: Extend the desired end timestamp when ramp-up occurs.
+        Previously the controller assumed that the duration of the test was always longer than the
+        time it took to figure out the order of magnitude of particles to render. When that range
+        is determined, the end timestamp is then extended. If the duration is too short, the controller
+        would throw an exception. The fix is to continue extending the timestamp every time the order of
+        magnitude tiers up.
+
+        In general testing with really short durations isn't practical, but sometimes it is
+        desired for debugging.
+
+        To avoid confusion of the private variables, I renamed Benchmark._startTimestamp to
+        Benchmark._benchmarkStartTimestamp, to disambiguate from Controller._startTimestamp.
+        Benchmark._startTimestamp is set once and never changed, after the initial 100ms warm-up.
+        Controller._startTimestamp is initialized to 0 (which means "not initialized"), and then after
+        the warm up is complete, set in Controller.start() to the same wall clock timestamp, and never
+        changed afterwards.
+
+2018-06-06  Jon Lee  <jonlee@apple.com>
+
+        Remove unneeded data processing in MotionMark
+        https://bugs.webkit.org/show_bug.cgi?id=186256
+
+        Reviewed by Said Abou-Hallawa.
+
+        Remove calculation of average frame rate based on multiple samples at a given complexity.
+        It is not used in the calculation of the score, and is just extra work to do at the end
+        of a test.
+
+        * MotionMark/developer.html: Remove options to show average data and regression based on
+        that data.
+        * MotionMark/resources/debug-runner/graph.js: Remove data. Update the time graph that
+        shows the relationship between the break point in the regression against the complexity
+        graph.
+        * MotionMark/resources/debug-runner/motionmark.css: Make the confidence intervals easier
+        to see.
+        * MotionMark/resources/runner/motionmark.js: Simplify score calculation now that we are
+        only calculating regressions on the raw data. We were calculating it based on the averages,
+        but that was just for analysis, and not used in the actual score. Get rid of the
+        |complexitySamples| local variable.
+        * MotionMark/resources/strings.js: Remove unneeded string constant.
+        * MotionMark/tests/resources/main.js:
+        (processSamples): Refactor so that more of it can be shared between Controller and
+        RampController. It also avoids processing the raw samples (controllerSamples) twice for
+        the ramp controller.
+        (_processComplexitySamples): Remove logic to calculate averages based on complexity.
+        (_processMarks): Split this out from the old processSamples.
+        (_processControllerSamples): Split this out from the old processSamples.
+
+2018-06-06  Jon Lee  <jonlee@apple.com>
+
+        Strip out more characters when creating permalinks
+        https://bugs.webkit.org/show_bug.cgi?id=186259
+
+        Reviewed by Said Abou-Hallawa.
+
+        Tests and suites may have names that make permalinks to the tests less readable when
+        shared. Expand the set of characters that are stripped out of the names.
+
+        * MotionMark/resources/debug-runner/motionmark.js: Refactor to call
+        stripUnwantedCharactersForURL. For existing links, decode the suite and test names.
+        * MotionMark/resources/extensions.js:
+        (Utilities.stripUnwantedCharactersForURL): Rename from stripNonASCIICharacters.
+        Remove any non-alphanumeric character.
+
+2018-06-04  Jon Lee  <jonlee@apple.com>
+
+        Remove unnecessary MotionMark controllers
+        https://bugs.webkit.org/show_bug.cgi?id=186255
+
+        Reviewed by Said Abou-Hallawa.
+
+        Get rid of the ramp30 and the fixed-with-a-step controllers, which aren't used for testing
+        or debugging.
+
+        * MotionMark/developer.html: Move the "ramp" option as first, since that is the default
+        controller for the benchmark.
+        * MotionMark/resources/debug-runner/motionmark.js:
+        * MotionMark/resources/runner/motionmark.js: Added missing copyright notice.
+        * MotionMark/tests/resources/main.js:
+
+2018-05-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Improve the performance of Font::canRenderCombiningCharacterSequence()
+        https://bugs.webkit.org/show_bug.cgi?id=185933
+
+        Reviewed by Ryosuke Niwa.
+
+        * Layout/ComplexLongUnique.html: Added.
+
+2018-05-25  Saam Barati  <sbarati@apple.com>
+
+        Have a memory test where we can validate JSCs mini memory mode
+        https://bugs.webkit.org/show_bug.cgi?id=185932
+
+        Reviewed by Mark Lam.
+
+        We add a directory here with the contents of the testmem benchmark.
+        To run it, use `Tools/Scripts/run-testmem`. To add new tests in the future,
+        you just need to add JS files to this directory.
+
+        * testmem: Added.
+        * testmem/air.js: Added.
+        * testmem/base64.js: Added.
+        * testmem/basic.js: Added.
+        * testmem/box2d.js: Added.
+        * testmem/crypto-md5.js: Added.
+        * testmem/date-format-tofte.js: Added.
+        * testmem/earley-boyer.js: Added.
+        * testmem/hash-map.js: Added.
+        * testmem/regex-dna.js: Added.
+        * testmem/splay.js: Added.
+        * testmem/tagcloud.js: Added.
+
+2018-05-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r232052.
+
+        Breaks internal builds.
+
+        Reverted changeset:
+
+        "Use more C++17"
+        https://bugs.webkit.org/show_bug.cgi?id=185176
+        https://trac.webkit.org/changeset/232052
+
+2018-05-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use more C++17
+        https://bugs.webkit.org/show_bug.cgi?id=185176
+
+        Reviewed by JF Bastien.
+
+        * MallocBench/MallocBench.xcodeproj/project.pbxproj:
+        * MediaTime/Configurations/Base.xcconfig:
+        * MediaTime/MediaTime.xcodeproj/project.pbxproj:
+
+2018-04-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Improve the performance of FontCascadeDescription's effectiveFamilies
+        https://bugs.webkit.org/show_bug.cgi?id=184720
+
+        Reviewed by Simon Fraser.
+
+        This performance test calls SystemFontDatabase::systemFontCascadeList() around 2,000,000 times (before
+        this patch is applied), which is roughly equivalent to the page we found the performance problem on.
+        The calling pattern is roughly equivalent in this test.
+
+        * Layout/system-ui.html: Added.
+
+2018-03-08  Antti Koivisto  <antti@apple.com>
+
+        Update StyleBench version number in page title to 0.3
+
+        * StyleBench/index.html:
+
+        There has been a bunch of changes, most notably the addition of attribute selector test step.
+
+2018-02-16  Dean Jackson  <dino@apple.com>
+
+        Use OPENGL macros to be more clear about which OpenGL/ES WebGL uses on Cocoa
+        https://bugs.webkit.org/show_bug.cgi?id=182894
+
+        Reviewed by Tim Horton.
+
+        Rename OPENGL_ES_2 to OPENGL_ES.
+
+        * StitchMarker/wtf/Platform.h:
+
+2018-02-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make run-perf-tests work with Speedometer 2.0 and re-enable the test
+        https://bugs.webkit.org/show_bug.cgi?id=182088
+
+        Reviewed by Antti Koivisto.
+
+        This patch updates the test harness to report new metrics of Speedometer 2.0.
+
+        Replaced the total time by the geometric mean of the time spent in each suite, and added scores
+        as a metric in addition to time. Also, updated the PerfTestRunner harness and the results template
+        to support "Score" metric with "pt" as its unit.
+
+        * Skipped: Unskipped the test.
+        * Speedometer/resources/benchmark-report.js:
+        (window.benchmarkClient.willStartFirstIteration..createTest): Added the unit as an optional argument
+        to report the score in addition to time. Also report the geomean of time instead of the total time.
+        (window.benchmarkClient.willStartFirstIteration): Report the geomean of time.
+        (window.benchmarkClient.didRunSuites): Record the entire measuredValues instead of just tests.
+        (window.benchmarkClient.didFinishLastIteration): Report the scores.
+
+2018-02-09  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Use REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR on any non-Windows port.
+        https://bugs.webkit.org/show_bug.cgi?id=182623
+
+        Reviewed by Alex Christensen.
+
+        * StitchMarker/wtf/Platform.h:
+        Simplify #if.
+
+2018-02-01  Antti Koivisto  <antti@apple.com>
+
+        StyleBench: Attribute selectors and other improvements
+        https://bugs.webkit.org/show_bug.cgi?id=182387
+
+        Reviewed by Joseph Pecoraro.
+
+        - Add some attributes to elements in all tests
+        - Add some attribute selectors to stylesheets in all tests
+        - Also add some * selectors to all stylesheets.
+        - Add attribute mutation step to all suites
+        - Make test steps do more mutations (25->100) and reduce the number of steps to keep testing time in check.
+          Too fast steps were running into timer resolution limits.
+
+        * StyleBench/resources/style-bench.js:
+        (defaultConfiguration):
+        (prototype.randomAttributeName):
+        (prototype.randomAttributeValue):
+        (prototype.randomAttributeSelector):
+        (prototype.makeCompoundSelector):
+        (prototype.makeElement):
+        (prototype.addClasses):
+        (prototype.removeClasses):
+        (prototype.mutateAttributes):
+        (prototype.async.runForever):
+        * StyleBench/resources/tests.js:
+        (makeSteps):
+        (makeSuite):
+
+2018-02-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Make MallocBench easier for non-WebKit engineers to run
+        https://bugs.webkit.org/show_bug.cgi?id=182415
+
+        Reviewed by Saam Barati.
+
+        * MallocBench/MallocBench.xcodeproj/project.pbxproj: Use c++14 so we
+        can make_unique.
+
+        Specify that we support all Darwin platforms so you can test them.
+
+        * MallocBench/run-malloc-benchmarks: Specify the path to MallocBench
+        and libmbmalloc explicitly, rather than computing them implicitly
+        using webkitdirs. Non-WebKit folks don't have the directory structure
+        required by webkitdirs.
+
+        Remove Linux-specific and cmake-specific behaviors because we only
+        needed them in the world of implicit path computation.
+
+2018-01-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make run-perf-tests work with StyleBench and re-enable it
+        https://bugs.webkit.org/show_bug.cgi?id=182322
+
+        Reviewed by Antti Koivisto.
+
+        This patch updates the test harness to report new metrics of StyleBench.
+
+        Replaced the total time by the geometric mean of the time spent in each suite, and added scores
+        as a metric in addition to time. Also, updated the PerfTestRunner harness and the results template
+        to support "Score" metric with "pt" as its unit.
+
+        * Skipped: Unskipped the test.
+        * StyleBench/resources/benchmark-report.js:
+        (window.benchmarkClient.willStartFirstIteration..createTest): Added the unit as an optional argument
+        to report the score in addition to time. Also report the geomean of time instead of the total time.
+        (window.benchmarkClient.willStartFirstIteration): Report the geomean of time.
+        (window.benchmarkClient.didRunSuites): Record the entire measuredValues instead of just tests.
+        (window.benchmarkClient.didFinishLastIteration): Report the scores.
+        * resources/results-template.html: Added "Score" as a metric and "pt" as its unit.
+        * resources/runner.js:
+        (PerfTestRunner..finish): Ditto.
+
+2018-01-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        StyleBench: Generate more mutation steps
+        https://bugs.webkit.org/show_bug.cgi?id=182291
+
+        Rubber-stamped by Antti Koivisto
+
+        Use zero-based index instead of one-based index.
+
+        * StyleBench/resources/tests.js:
+        (makeSteps):
+
+2018-01-30  Antti Koivisto  <antti@apple.com>
+
+        StyleBench: Generate more mutation steps
+        https://bugs.webkit.org/show_bug.cgi?id=182291
+
+        Reviewed by Ryosuke Niwa.
+
+        The test should be doing multiple rounds of mutations in a single document to test what is supposed to test (like it did before r227756).
+        This also makes test results more stable and less dependent on possible first-time costs.
+
+        * StyleBench/resources/benchmark-runner.js:
+
+        Adjust correctionFactor to match the new steps count. With 1.5 Firefox is ~72rpm.
+
+        * StyleBench/resources/tests.js:
+        (makeSteps):
+
+        Generate 10 rounds of class/element mutation steps.
+        Give each generated step unique name so reporting works.
+        Make individual steps do fewer mutations.
+
+2018-01-29  Antti Koivisto  <antti@apple.com>
+
+        StyleBench: Remove : from a test name
+        https://bugs.webkit.org/show_bug.cgi?id=182258
+
+        Reviewed by Ryosuke Niwa.
+
+        It breaks reporting.
+
+        * StyleBench/resources/style-bench.js:
+        (nthPseudoClassConfiguration):
+
+2018-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Temporarily skip StyleBench until webkit.org/b/182088 is fixed.
+
+        * Skipped:
+
+2018-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make StyleBench compatible with run-benchmark and run-perf-tests
+        https://bugs.webkit.org/show_bug.cgi?id=182262
+
+        Reviewed by Antti Koivisto.
+
+        Copied resource files referenced from Speedometer directory since run-benchmark needs to be able
+        to checkout each benchmark separately.
+
+        Removed the code to create tests of the same name five times in makeSteps since this
+        won't be compatible with either run-benchmark or run-perf-tests.
+
+        * StyleBench/index.html: Removed the code to show warnings for local files since run-benchmark
+        doesn't use HTTP server in WebDriver mode.
+        * StyleBench/resources/benchmark-report.js: Copied from resources/benchmark-report.js.
+        * StyleBench/resources/benchmark-runner.js: Copied from resources/benchmark-runner.js.
+        (BenchmarkRunner.prototype._finalize): Use the correction factor of 8 instead of 5 in StyleBench.
+        * StyleBench/resources/gauge.png: Copied from resources/gauge.png.
+        * StyleBench/resources/gauge@2x.png: Copied from resources/gauge@2x.png.
+        * StyleBench/resources/main.css: Copied from resources/main.css.
+        * StyleBench/resources/main.js: Copied from resources/main.js.
+        * StyleBench/resources/tests.js:
+        (makeSteps): Only make each test once.
+
+2018-01-26  Chris Nardi  <cnardi@chromium.org>
+
+        Addressing post-review comments after r226614
+        https://bugs.webkit.org/show_bug.cgi?id=182151
+
+        Reviewed by Myles C. Maxfield.
+
+        * StitchMarker/wtf/text/StringImpl.h:
+        (WTF::isSpaceOrNewline):
+        * StitchMarker/wtf/text/TextBreakIterator.cpp:
+        (WTF::numCodeUnitsInGraphemeClusters):
+        * StitchMarker/wtf/text/TextBreakIterator.h:
+
+2018-01-22  Antti Koivisto  <antti@apple.com>
+
+        StyleBench: Separate test for :nth pseudo classes
+        https://bugs.webkit.org/show_bug.cgi?id=181932
+
+        Reviewed by Sam Weinig.
+
+        Optimization strategies for nth are different from other structural pseudo classes (:first-child etc). Move them to a separate test.
+
+        * StyleBench/resources/style-bench.js:
+        (structuralPseudoClassConfiguration):
+        (nthPseudoClassConfiguration):
+
+            Add a new configuration.
+
+        (predefinedConfigurations):
+        (pseudoClassConfiguration): Deleted.
+
+2018-01-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Temporarily skip Speedometer until we fix the metrics.
+
+        * Skipped:
+
+2018-01-16  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Mac CMake build after r222900
+
+        * MallocBench/MallocBench/CMakeLists.txt:
+        The mbmalloc target doesn't exist if we're not in developer mode, so only use it if we are.
+
+2018-01-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Speedometer 2.0: Update the About page.
+        https://bugs.webkit.org/show_bug.cgi?id=175918
+
+        Reviewed by Keith Miller.
+
+        Updated the about page for Speedometer 2.0.
+
+        * Speedometer/index.html:
+
+== Rolled over to ChangeLog-2018-01-01 ==

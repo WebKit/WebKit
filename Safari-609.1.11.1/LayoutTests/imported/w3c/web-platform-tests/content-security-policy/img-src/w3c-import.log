@@ -1,0 +1,26 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/icon-allowed.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/icon-blocked.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/img-src-4_1.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/img-src-full-host-wildcard-blocked.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/img-src-host-partial-wildcard-allowed.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/img-src-none-blocks.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/img-src-port-wildcard-allowed.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/img-src-self-unique-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/img-src-wildcard-allowed.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/img-src/report-blocked-data-uri.sub.html

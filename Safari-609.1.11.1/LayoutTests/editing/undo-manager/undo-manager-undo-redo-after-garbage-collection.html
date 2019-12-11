@@ -1,0 +1,35 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ enableUndoManagerAPI=true ] -->
+<html>
+    <meta charset="utf8">
+    <head>
+        <script src="../../resources/js-test.js"></script>
+        <script src="../editing.js"></script>
+        <script>
+        function runTest() {
+            description("Verifies that undo and redo callback handlers survive garbage collection. This test requires WebKitTestRunner.");
+
+            text = document.getElementById("text");
+
+            document.undoManager.addItem(new UndoItem({
+                label: "Test action",
+                undo: () => text.textContent = "After undo",
+                redo: () => text.textContent = "After redo"
+            }));
+
+            if (window.GCController)
+                GCController.collect();
+
+            document.execCommand("Undo");
+            shouldBeEqualToString("text.textContent", "After undo");
+
+            document.execCommand("Redo");
+            shouldBeEqualToString("text.textContent", "After redo");
+        }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <div id="text">Initial state</div>
+        <pre id="description"></pre>
+        <pre id="console"></pre>
+    </body>
+</html>

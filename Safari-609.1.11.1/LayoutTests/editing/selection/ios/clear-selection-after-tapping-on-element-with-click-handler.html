@@ -1,0 +1,53 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<head>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test.js"></script>
+    <style>
+    body {
+        margin: 0;
+    }
+
+    #target {
+        font-size: 100px;
+    }
+
+    #clickTarget {
+        width: 100px;
+        height: 100px;
+        background-color: tomato;
+    }
+    </style>
+    <script>
+    jsTestIsAsync = true;
+    progress = 0;
+
+    function checkProgress() {
+        if (++progress != 2)
+            return;
+
+        shouldBeEqualToString("getSelection().toString()", "");
+        shouldBeEqualToString("getSelection().type", "Caret");
+        finishJSTest();
+    }
+
+    function run() {
+        description("This test verifies that the DOM selection is dismissed when tapping on an element that listens to click events. To manually test, select 'WebKit' and tap on the red square. The selection should be dismissed, and the output area should indicate that no text is selected.");
+
+        document.addEventListener("selectionchange", () => document.getElementById("result").textContent = getSelection().toString());
+        const clickTarget = document.getElementById("clickTarget");
+        clickTarget.addEventListener("click", checkProgress);
+        getSelection().selectAllChildren(document.getElementById("selectionTarget"));
+
+        if (window.testRunner)
+            UIHelper.activateElement(clickTarget).then(checkProgress);
+    }
+    </script>
+</head>
+<body onload="run()">
+    <div id="selectionTarget">WebKit</div>
+    <div id="clickTarget"></div>
+    <pre>The selected text is: "<span id="result"></span>"</pre>
+</body>
+</html>

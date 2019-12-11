@@ -1,0 +1,21 @@
+item 0
+item 1
+item 2	item 3
+End of test
+This tests the hierarchy for required child elements of presentational parents.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+AXRole: AXWebArea AXValue: 
+  AXRole: AXStaticText AXValue: item 0
+  AXRole: AXStaticText AXValue: item 1
+  AXRole: AXWebArea AXValue: 
+    AXRole: AXStaticText AXValue: item 2
+  AXRole: AXWebArea AXValue: 
+    AXRole: AXStaticText AXValue: item 3
+  AXRole: AXGroup AXValue: 
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

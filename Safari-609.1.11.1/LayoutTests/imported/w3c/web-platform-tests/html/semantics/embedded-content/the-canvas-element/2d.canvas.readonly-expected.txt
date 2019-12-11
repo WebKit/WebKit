@@ -1,0 +1,6 @@
+2d.canvas.readonly
+CanvasRenderingContext2D.canvas is readonly
+Actual output:
+
+PASS CanvasRenderingContext2D.canvas is readonly 
+

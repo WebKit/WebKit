@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+PASS if no crash.
+<table>
+  <tbody>
+    <tr id="tr_first_table"></tr>
+  </tbody>
+  <tbody>
+   <tr>
+     <th>2</th>
+     <th id="th_first_table">3</th>
+  </tr>
+  </tbody>
+</table>
+<br>
+<table>
+  <th id="th_second_table">4</th>
+  <th rowspan="6" id="th_withh_rowspan">5</th>
+</table>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+  
+document.body.offsetHeight;
+th_second_table.appendChild(th_first_table);
+document.body.offsetHeight;
+tr_first_table.appendChild(th_withh_rowspan);
+document.body.offsetHeight;
+</script>
+</body>
+</html>

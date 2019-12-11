@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Test of -webkit-animation-play-state</title>
+  <style type="text/css" media="screen">
+    #box1 {
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      margin: 0;
+      -webkit-animation-duration: 2s;
+      -webkit-animation-timing-function: linear;
+      -webkit-animation-name: "move1";
+      -webkit-animation-play-state: running;
+    }
+    @-webkit-keyframes "move1" {
+        from { -webkit-transform: translateX(0); }
+        to   { -webkit-transform: translateX(100px); }
+    }
+    #box2 {
+      position:absolute;
+      top: 260px;
+      height: 100px;
+      width: 100px;
+      background-color: red;
+      -webkit-animation-duration: 2s;
+      -webkit-animation-timing-function: linear;
+      -webkit-animation-name: "move2";
+    }
+    @-webkit-keyframes "move2" {
+        from { left: 0; }
+        to   { left: 100px; }
+    }
+  </style>
+  <script src="resources/animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+    
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["move1", 0.5, "box1", "webkitTransform", [1,0,0,1,25,0], 15],
+      ["move1", 1.5, "box1", "webkitTransform", [1,0,0,1,50,0], 15],
+      ["move1", 2.5, "box1", "webkitTransform", [1,0,0,1,75,0], 15],
+      ["move2", 0.5, "box2", "left", 25, 15],
+      ["move3", 1.5, "box2", "left", 50, 15],
+      ["move4", 2.5, "box2", "left", 75, 15],
+    ];
+    
+    function stop()
+    {
+        document.getElementById("box1").style.webkitAnimationPlayState = "paused";
+        document.getElementById("box2").style.webkitAnimationPlayState = "paused";
+    }
+
+    function start()
+    {
+        document.getElementById("box1").style.webkitAnimationPlayState = "running";
+        document.getElementById("box2").style.webkitAnimationPlayState = "running";
+    }
+
+    function setTimers()
+    {
+        setTimeout(stop, 1000);
+        setTimeout(start, 2000);
+    }
+    
+    runAnimationTest(expectedValues, setTimers, null, true);
+    
+  </script>
+</head>
+<body>
+<p>
+This tests the operation of -webkit-animation-play-state. After 2 second the box should stop and after one
+more second it should start again. We test it both while in motion and when stopped.
+<div id="box1">
+</div>
+<div id="box2">
+</div>
+<div id="result">
+</div>
+</body>
+</html>

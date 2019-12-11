@@ -1,0 +1,13 @@
+Tests assigning a calculated value to 'transition-delay' CSS property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testDiv.style['transition-delay'] is ""
+testDiv.style['transition-delay'] = 'calc(300ms/2)'
+PASS testDiv.style['transition-delay'] is "calc(150ms)"
+PASS window.getComputedStyle(testDiv).getPropertyValue('transition-delay') is "0.15s"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

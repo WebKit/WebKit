@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 8: ReferenceError: Can't find variable: SharedWorker
+
+FAIL WorkerLocation with redirects: classic shared workers ReferenceError: Can't find variable: SharedWorker
+

@@ -1,0 +1,122 @@
+Tests for various method names
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Instance methods
+PASS class A { 0.1() { return 1; } }; (new A)[0.1]() is 1
+PASS class A { get() { return 2; } }; (new A).get() is 2
+PASS class A { set() { return 3; } }; (new A).set() is 3
+PASS class A { get get() { return 4; } }; (new A).get is 4
+PASS class A { get set() { return 5; } }; (new A).set is 5
+PASS setterValue = undefined; class A { set get(x) { setterValue = x; } }; (new A).get = 6; setterValue is 6
+PASS setterValue = undefined; class A { set set(x) { setterValue = x; } }; (new A).set = 7; setterValue is 7
+
+Static methods
+PASS class A { static 0.1() { return 101; } }; A[0.1]() is 101
+PASS class A { static get() { return 102; } }; A.get() is 102
+PASS class A { static set() { return 103; } }; A.set() is 103
+PASS class A { static get get() { return 104; } }; A.get is 104
+PASS class A { static get set() { return 105; } }; A.set is 105
+PASS setterValue = undefined; class A { static set get(x) { setterValue = x; } }; A.get = 106; setterValue is 106
+PASS setterValue = undefined; class A { static set set(x) { setterValue = x; } }; A.set = 107; setterValue is 107
+PASS class X {static arguments() {}} did not throw exception.
+PASS class X {static caller() {}} did not throw exception.
+PASS (class X {static arguments() {return staticMethodValue;}}).arguments() is staticMethodValue
+PASS (class X {static caller() {return staticMethodValue;}}).caller() is staticMethodValue
+PASS (class X {static arguments() {return staticMethodValue;}}).hasOwnProperty('arguments') is true
+PASS (class X {static caller() {return staticMethodValue;}}).hasOwnProperty('caller') is true
+PASS class X {static get arguments() {}} did not throw exception.
+PASS class X {static get caller() {}} did not throw exception.
+PASS (class X {static get arguments() {return staticMethodValue;}}).arguments is staticMethodValue
+PASS (class X {static get caller() {return staticMethodValue;}}).caller is staticMethodValue
+PASS (class X {static get arguments() {return staticMethodValue;}}).hasOwnProperty('arguments') is true
+PASS (class X {static get caller() {return staticMethodValue;}}).hasOwnProperty('caller') is true
+PASS class X {static caller() {return staticMethodValue;}};X.arguments = function(){} threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context..
+PASS class X {static arguments() {return staticMethodValue;}}; X.caller = function(){} threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context..
+PASS class X {static caller() {return "";}} X.caller = function(){ return staticMethodValue; };X.caller() is staticMethodValue
+PASS class X {static arguments() {return "";}}; X.arguments = function(){ return staticMethodValue; };X.arguments() is staticMethodValue
+PASS class X {static caller() {return "";}} X["caller"] = function(){ return staticMethodValue; };X.caller() is staticMethodValue
+PASS class X {static arguments() {return "";}}; X["arguments"] = function(){ return staticMethodValue; };X.arguments() is staticMethodValue
+PASS class X {static *caller() {yield staticMethodValue;}}; X.caller().next().value is staticMethodValue
+PASS class X {static *arguments() {yield staticMethodValue;}}; X.arguments().next().value is staticMethodValue
+PASS class X {static *caller() {yield;}}; X["caller"] = function*(){yield staticMethodValue;}; X.caller().next().value is staticMethodValue
+PASS class X {static *arguments() {yield;}}; X["arguments"] = function*(){yield staticMethodValue;}; X.arguments().next().value is staticMethodValue
+PASS class X {*caller() {yield staticMethodValue;}}; let x = new X; x.caller().next().value is staticMethodValue
+PASS class X {*arguments() {yield staticMethodValue;}}; let x = new X; x.arguments().next().value is staticMethodValue
+PASS class X {*caller() {yield;}}; let x = new X; x["caller"] = function*(){yield staticMethodValue;}; x.caller().next().value is staticMethodValue
+PASS class X {*arguments() {yield;}}; let x = new X; x["arguments"] = function*(){yield staticMethodValue;}; x.arguments().next().value is staticMethodValue
+
+Instance methods with computed names
+PASS class A { ['a' + 'b']() { return 211; } }; (new A).ab() is 211
+PASS class A { ['a' + 0]() { return 212; } }; (new A).a0() is 212
+PASS class A { [0.1]() { return 213; } }; (new A)[0.1]() is 213
+PASS class A { [1]() { return 214; } }; (new A)[1]() is 214
+PASS A = createClassWithInstanceMethod('foo', 215); (new A)['foo']() is 215
+PASS A = createClassWithInstanceMethod('foo', 216); B = createClassWithInstanceMethod('bar', 217); [(new A)['foo'](), (new B)['bar']()] is [216, 217]
+PASS x = 218; class A { [x++]() { return x; } }; (new A)[218]() is 219
+PASS x = undefined; class A { [(x=220) && 'foo']() { return x; } }; (new A).foo() is 220
+PASS x = 221; class A { [(x1=x) && x++]() { return x1; } [(x2=x) && x++]() { return x2; } }; [(new A)[221](), (new A)[222]()] is [221, 222]
+PASS x = 1; class A { ['foo' + x++]() { return 223; } ['foo' + x++]() { return 224; } }; [(new A).foo1(), (new A).foo2()] is [223, 224]
+PASS x = 1; class A { ['foo' + ++x]() { return 225; } [(x1=x) && 'foo' + x++]() { return 226; } }; [x1, x, (new A).foo2()] is [2, 3, 226]
+
+Static methods with computed names
+PASS class A { static ['a' + 'b']() { return 311; } }; A.ab() is 311
+PASS class A { static ['a' + 0]() { return 312; } }; A.a0() is 312
+PASS class A { static [0.1]() { return 313; } }; A[0.1]() is 313
+PASS class A { static [1]() { return 314; } }; A[1]() is 314
+PASS A = createClassWithStaticMethod('foo', 315); A['foo']() is 315
+PASS A = createClassWithStaticMethod('foo', 316); B = createClassWithStaticMethod('bar', 317); [A['foo'](), B['bar']()] is [316, 317]
+PASS x = 218; class A { static [x++]() { return x; } }; A[218]() is 219
+PASS x = undefined; class A { static [(x=220) && 'foo']() { return x; } }; A.foo() is 220
+PASS x = 221; class A { static [(x1=x) && x++]() { return x1; } static [(x2=x) && x++]() { return x2; } }; [A[221](), A[222]()] is [221, 222]
+PASS x = 1; class A { static ['foo' + x++]() { return 223; } static ['foo' + x++]() { return 224; } }; [A.foo1(), A.foo2()] is [223, 224]
+PASS x = 1; class A { static ['foo' + ++x]() { return 225; } static [(x1=x) && 'foo' + x++]() { return 226; } }; [x1, x, A.foo2()] is [2, 3, 226]
+
+Instance methods with duplicated names
+PASS class A { ab() { return 401 } ab() { return 402; } }; (new A).ab() is 402
+PASS class A { 'a'() { return 403 } 'a'() { return 404; } }; (new A).a() is 404
+PASS class A { 1() { return 405 } 1() { return 406; } }; (new A)[1]() is 406
+PASS class A { 0.1() { return 407 } 0.1() { return 408; } }; (new A)[0.1]() is 408
+PASS class A { ab() { return 409 } ['a' + 'b']() { return 410; } }; (new A).ab() is 410
+PASS class A { ['ab']() { return 411 } ab() { return 412; } }; (new A).ab() is 412
+PASS class A { a() { return 413 } ['a']() { return 414; } a() { return 415; } }; (new A).a() is 415
+PASS class A { ['b']() { return 416 } b() { return 417; } ['b']() { return 418; } }; (new A).b() is 418
+PASS class A { a() { return 419 } get a() { return 420; } }; (new A).a is 420
+PASS class A { get a() { return 421 } a() { return 422 } }; (new A).a() is 422
+PASS setterValue = undefined; class A { a() { return 423 } set a(x) { setterValue = x } }; (new A).a = 424; setterValue is 424
+PASS setterValue = undefined; class A { set a(x) { setterValue = x } a() { return 425 } }; (new A).a() is 425
+PASS setterValue = undefined; class A { get foo() { return 426 } set foo(x) { setterValue = x; } }; a = new A; a.foo = a.foo; setterValue is 426
+PASS class A { get foo() { } foo() { } set foo(x) { } }; valueTypes((new A).__proto__, 'foo') is ['value']
+PASS class A { set foo(x) { } foo() { } get foo() { } }; valueTypes((new A).__proto__, 'foo') is ['value']
+PASS class A { foo() { } get foo() { } set foo(x) { } }; valueTypes((new A).__proto__, 'foo') is ['get', 'set']
+PASS class A { foo() { } set foo(x) { } get foo() { } }; valueTypes((new A).__proto__, 'foo') is ['get', 'set']
+PASS class A { get foo() { } set foo(x) { } foo() { } }; valueTypes((new A).__proto__, 'foo') is ['value']
+PASS class A { set foo(x) { } get foo() { } foo() { } }; valueTypes((new A).__proto__, 'foo') is ['value']
+
+Static methods with duplicated names
+PASS class A { static ab() { return 501 } static ab() { return 502; } }; A.ab() is 502
+PASS class A { static 'a'() { return 503 } static 'a'() { return 504; } }; A.a() is 504
+PASS class A { static 1() { return 505 } static 1() { return 506; } }; A[1]() is 506
+PASS class A { static 0.1() { return 507 } static 0.1() { return 508; } }; A[0.1]() is 508
+PASS class A { static ab() { return 509 } static ['a' + 'b']() { return 510; } }; A.ab() is 510
+PASS class A { static ['ab']() { return 511 } static ab() { return 512; } }; A.ab() is 512
+PASS class A { static a() { return 513 } static ['a']() { return 514; } static a() { return 515; } }; A.a() is 515
+PASS class A { static ['b']() { return 516 } static b() { return 517; } static ['b']() { return 518; } }; A.b() is 518
+PASS class A { static a() { return 519 } static get a() { return 520; } }; A.a is 520
+PASS class A { static get a() { return 521 } static a() { return 522 } }; A.a() is 522
+PASS setterValue = undefined; class A { static a() { return 523 } static set a(x) { setterValue = x } }; A.a = 524; setterValue is 524
+PASS setterValue = undefined; class A { static set a(x) { setterValue = x } static a() { return 525 } }; A.a() is 525
+PASS setterValue = undefined; class A { static get foo() { return 526 } static set foo(x) { setterValue = x; } }; A.foo = A.foo; setterValue is 526
+PASS class A { static get foo() { } static foo() { } static set foo(x) { } }; valueTypes(A, 'foo') is ['value']
+PASS class A { static set foo(x) { } static foo() { } static get foo() { } }; valueTypes(A, 'foo') is ['value']
+PASS class A { static foo() { } static get foo() { } static set foo(x) { } }; valueTypes(A, 'foo') is ['get', 'set']
+PASS class A { static foo() { } static set foo(x) { } static get foo() { } }; valueTypes(A, 'foo') is ['get', 'set']
+PASS class A { static get foo() { } static set foo(x) { } static foo() { } }; valueTypes(A, 'foo') is ['value']
+PASS class A { static set foo(x) { } static get foo() { } static foo() { } }; valueTypes(A, 'foo') is ['value']
+
+Static methods with duplicated names
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

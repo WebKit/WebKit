@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<style>
+:invalid {
+  background-color: #ff0000;
+}
+</style>
+</head>
+<body>
+<div id=parent>
+<input type=number id=number>
+<input id=another>
+</div>
+<script>
+description('A number input fields with a bad input string should make validity.badInput true and have :invalid style.');
+
+function colorOf(el) {
+    return document.defaultView.getComputedStyle(el, null).getPropertyValue('background-color');
+}
+var invalidStyleColor = 'rgb(255, 0, 0)';
+
+var number = document.getElementById('number');
+number.focus();
+debug('Initial state. The elment has no value.');
+shouldNotBe('colorOf(number)', 'invalidStyleColor');
+shouldBeFalse('number.validity.badInput');
+
+debug("Type '-'. The element becomes badInput.");
+document.execCommand('InsertText', false, '-');
+shouldBe('colorOf(number)', 'invalidStyleColor');
+shouldBeFalse('number.validity.valid');
+shouldBeTrue('number.validity.badInput');
+shouldBeEqualToString('number.value', '');
+
+debug("Type '1' additionally. The element becomes valid.");
+document.execCommand('InsertText', false, '1');
+shouldNotBe('colorOf(number)', 'invalidStyleColor');
+shouldBeFalse('number.validity.badInput');
+shouldBeEqualToString('number.value', '-1');
+
+debug("Type 'a' additionally. The element becomes badInput again.");
+document.execCommand('InsertText', false, 'a');
+shouldBe('colorOf(number)', 'invalidStyleColor');
+shouldBeTrue('number.validity.badInput');
+shouldBeEqualToString('number.value', '');
+
+debug("The element losts focus. The element state should not be changed.");
+document.getElementById('another').focus();
+shouldBe('colorOf(number)', 'invalidStyleColor');
+shouldBeTrue('number.validity.badInput');
+// Visible value is '-1a'.
+number.focus();
+document.execCommand('SelectAll');
+shouldBeEqualToString('document.getSelection().toString()', '-1a');
+shouldBeEqualToString('number.value', '');
+
+debug("The element losts a renderer. The element state should not be changed.");
+shouldBeTrue('number.style.display = "none"; number.validity.badInput');
+
+number.style.display = 'inline-block';
+number.focus();
+debug('A bad input should be cleared by value="".');
+shouldBeEqualToString('number.value = ""; document.execCommand("SelectAll"); document.getSelection().toString()', '');
+
+document.getElementById('parent').innerHTML = '';
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

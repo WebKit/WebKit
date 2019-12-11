@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Cannot load https://localhost:9443/media/foo.vtt?url=https://127.0.0.1:9443/media/foo-no-cors.vtt&mode=cors.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Cannot load https://localhost:9443/media/foo.vtt?url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Fredirect.py%3FRedirect%3Dhttps%253A%252F%252F127.0.0.1%253A9443%252Fmedia%252Ffoo-no-cors.vtt&mode=cors&credentials=same-origin.
+
+PASS initialize global state 
+PASS same-origin text track should load 
+FAIL cross-origin text track with no-cors request should not load assert_equals: expected "error event" but got "load event"
+PASS cross-origin text track with rejected cors request should not load 
+FAIL cross-origin text track with approved cors request should not load assert_equals: expected "error event" but got "load event"
+PASS same-origin text track that redirects same-origin should load 
+FAIL same-origin text track that redirects cross-origin should not load assert_equals: expected "error event" but got "load event"
+PASS same-origin text track that redirects to a cross-origin text track with rejected cors should not load 
+FAIL same-origin text track that redirects to a cross-origin text track with approved cors should not load assert_equals: expected "error event" but got "load event"
+PASS restore global state 
+

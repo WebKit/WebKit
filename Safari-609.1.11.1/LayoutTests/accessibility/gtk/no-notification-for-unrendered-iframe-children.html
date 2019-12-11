@@ -1,0 +1,50 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body aria-label="outer body">
+<p id="description"></p>
+<iframe aria-label="outer iframe" id="iframe"></iframe>
+<div id="console"></div>
+<script>
+window.jsTestIsAsync = true;
+
+description("This test ensures that a children-changed notification is not emitted for children of not-yet-rendered nested iframes.");
+function runTest() {
+
+    if (window.accessibilityController) {
+        var axWebArea = accessibilityController.rootElement.childAtIndex(0);
+
+        // Generate the hierarchy before registering a listener so that we only see new notifications.
+        touchAccessibilityTree(axWebArea);
+
+        accessibilityController.addNotificationListener(function(element, notification, child) {
+            if (notification == "AXChildrenAdded" && element.role == "AXRole: AXGroup")
+                debug(notification + " on " + element.title + " (" + (child ? child.title : "null") + ")");
+        });
+    }
+
+    // Write content in the outer iframe, including an inner iframe. The latter should not emit a notification.
+    var iframe = document.getElementById("iframe");
+    var doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write("<html><body aria-label='inner body'><iframe aria-label='inner iframe' src='about:config'></body></html>");
+    doc.close();
+
+    // Re-generate the hierarchy to trigger the notifications.
+    touchAccessibilityTree(axWebArea);
+
+    window.setTimeout(function() {
+        if (window.accessibilityController) {
+            accessibilityController.removeNotificationListener();
+        }
+
+        finishJSTest();
+    }, 0);
+}
+runTest();
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

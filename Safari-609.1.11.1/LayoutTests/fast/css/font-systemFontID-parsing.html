@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<div id="testDivInvalid" style="font: caption icon"></div>
+<div id="testDivValid" style="font: caption"></div>
+<script>
+description("Tests 'font' CSS property parsing with system font values.");
+
+shouldBeNull("testDivInvalid.style.getPropertyCSSValue('font-family')");
+shouldNotBe("testDivValid.style.getPropertyCSSValue('font-family')", "null");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

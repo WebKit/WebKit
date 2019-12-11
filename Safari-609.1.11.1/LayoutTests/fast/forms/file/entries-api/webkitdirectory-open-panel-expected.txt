@@ -1,0 +1,23 @@
+OPEN FILE PANEL
+-> DIRECTORIES ARE ALLOWED
+Tests choosing a folder via the file picker when using webkitdirectory.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS inputElement.webkitdirectory is true
+PASS fileList.length is 5
+PASS fileList contains file file1.txt
+PASS file.webkitRelativePath is "testFiles/file1.txt"
+PASS fileList contains file file2.txt
+PASS file.webkitRelativePath is "testFiles/file2.txt"
+PASS fileList contains file file3.txt
+PASS file.webkitRelativePath is "testFiles/subfolder1/file3.txt"
+PASS fileList contains file file4.txt
+PASS file.webkitRelativePath is "testFiles/subfolder2/file4.txt"
+PASS fileList contains file file5.txt
+PASS file.webkitRelativePath is "testFiles/subfolder2/subfolder2a/file5.txt"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

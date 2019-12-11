@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.setXSSAuditorEnabled(true);
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<iframe src="http://localhost:8000/security/xssAuditor/intercept/echo-form-action.pl/%22%20onmouseover=%22JavaScript:alert(document.domain)%22%20name=%22?m=login"></iframe>
+</body>
+</html>

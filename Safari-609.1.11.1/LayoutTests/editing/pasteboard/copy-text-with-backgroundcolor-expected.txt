@@ -1,0 +1,78 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 7 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 14 of #text > SPAN > DIV > BODY > HTML > #document to 14 of #text > SPAN > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 14 of #text > SPAN > DIV > BODY > HTML > #document to 14 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 14 of #text > SPAN > DIV > BODY > HTML > #document to 14 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 16 of #text > SPAN > DIV > DIV > BODY > HTML > #document to 16 of #text > SPAN > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 16 of #text > SPAN > DIV > DIV > BODY > HTML > #document to 16 of #text > SPAN > DIV > DIV > BODY > HTML > #document toDOMRange:range from 16 of #text > SPAN > DIV > DIV > BODY > HTML > #document to 16 of #text > SPAN > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 22 of #text > SPAN > DIV > DIV > BODY > HTML > #document to 22 of #text > SPAN > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 22 of #text > SPAN > DIV > DIV > BODY > HTML > #document to 22 of #text > SPAN > DIV > DIV > BODY > HTML > #document toDOMRange:range from 22 of #text > DIV > DIV > BODY > HTML > #document to 22 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+
+Markup before:
+| "
+"
+| <span>
+|   style="background-color: rgb(255, 0, 0);"
+|   "<#selection-caret>Red background"
+| "
+"
+| <div>
+|   id="test2"
+|   <span>
+|     style="background-color: green;"
+|     "Green background"
+| "
+"
+| <div>
+|   id="test3"
+|   <span>
+|     style="background-color: rgb(255, 0, 0, 0);"
+|     "Transparent background"
+| "
+"
+
+Markup after:
+| "
+"
+| <span>
+|   style="background-color: rgb(255, 0, 0);"
+|   "Red background"
+| <span>
+|   style="background-color: rgb(255, 0, 0);"
+|   "Red background"
+| <div>
+|   id="test2"
+|   <span>
+|     style="background-color: green;"
+|     "Green background"
+|   <span>
+|     style="background-color: rgb(0, 128, 0);"
+|     "Green background"
+| "
+"
+| <div>
+|   id="test3"
+|   <span>
+|     style="background-color: rgb(255, 0, 0, 0);"
+|     "Transparent background"
+|   "Transparent background<#selection-caret>"
+| "
+"

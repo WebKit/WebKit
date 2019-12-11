@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceFilter {filter} [id="filter"] [filterUnits=userSpaceOnUse] [primitiveUnits=userSpaceOnUse]
+        [feFlood flood-color="#008000" flood-opacity="1.00"]
+    RenderSVGContainer {g} at (0,0) size 800x600
+      RenderSVGRect {rect} at (0,0) size 800x600 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+        [filter="filter"] RenderSVGResourceFilter {filter} at (0,0) size 20000x20000

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body>
+<canvas id="canvas" width="30" height="30"></canvas>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that the element parameter to drawFocusIfNeeded() is non-nullable.");
+
+var canvas = document.getElementById("canvas").getContext("2d");
+shouldThrowErrorName("canvas.drawFocusIfNeeded(null)", "TypeError");
+
+var path = new Path2D();
+path.rect(10, 10, 10, 10);
+shouldThrowErrorName("canvas.drawFocusIfNeeded(path, null)", "TypeError");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

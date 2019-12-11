@@ -1,0 +1,29 @@
+<html>
+<head>
+<title>basic "autofocus" test</title>
+<style>
+ input { background:red }
+ input:focus { background:lime }
+</style>
+<script language="JavaScript" type="text/javascript">
+    function log(message) {
+        document.getElementById("console").innerHTML += "<li>"+message+"</li>";
+    }
+
+    function test() {
+        if (window.testRunner)
+            testRunner.dumpAsText();
+            
+        if (document.activeElement == document.getElementsByTagName("input")[0])
+            log("SUCCESS");
+        else
+            log("FAILURE");
+    }
+</script>
+</head>
+<body onload="test()">
+<p>This form control should have a green background and active state: <input autofocus>
+<hr>
+<ol id="console"></ol>
+</body>
+</html>

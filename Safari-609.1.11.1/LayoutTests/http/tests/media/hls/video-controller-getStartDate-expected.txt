@@ -1,0 +1,9 @@
+ 
+Test that getStartDate() returns appropriate NaN or date.
+
+EVENT(canplaythrough)
+EVENT(canplaythrough)
+EXPECTED (isNaN(video.getStartDate()) == 'true') OK
+EXPECTED (video.getStartDate().toUTCString() == 'Wed, 03 Nov 2010 08:00:00 GMT') OK
+END OF TEST
+

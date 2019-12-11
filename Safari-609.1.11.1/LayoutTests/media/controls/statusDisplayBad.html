@@ -1,0 +1,50 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+    <head>
+        <script src="../media-file.js"></script>
+        <script src="controls-test-helpers.js"></script>
+        <script>
+            var tester = new ControlsTest("non-existent-media-file", "error")
+                .whenReady(runTests)
+                .start();
+
+            function runTests()
+            {
+                currentState = tester.currentState;
+                tester.test("We are using the apple idiom")
+                    .value(currentState.idiom)
+                    .isEqualTo("apple");
+
+                tester.startNewSection("Get the status label state");
+                var statusDisplayLabelState = tester.stateForControlsElement("Status Display");
+
+                tester.test("Name is 'Status Display'")
+                    .value(statusDisplayLabelState.name)
+                    .isEqualTo("Status Display");
+
+                tester.test("Has empty class")
+                    .value(statusDisplayLabelState.className)
+                    .isEmptyString();
+
+                tester.test("Content is 'Error'")
+                    .value(statusDisplayLabelState.textContent)
+                    .isEqualTo("Error");
+
+                tester.test("CSS display: block")
+                    .value(statusDisplayLabelState.computedStyle.display)
+                    .isEqualTo("block");
+
+                tester.test("Displayed bounds is non-zero")
+                    .value(statusDisplayLabelState.bounds.width)
+                    .isNotZero();
+
+                tester.end();
+            }
+        </script>
+    </head>
+    <body>
+        <p>This tests that the status display has the corrent error message.</p>
+        <p>This test only runs in DRT!</p>
+        <video controls></video>
+    </body>
+</html>

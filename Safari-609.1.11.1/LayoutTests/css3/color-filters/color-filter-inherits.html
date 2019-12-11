@@ -1,0 +1,27 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableColorFilter=true ] -->
+<html>
+    <head>
+        <title>CSS Test: -apple-color-filter is inherited</title>
+        <link rel="author" title="Apple" href="http://www.apple.com/">
+        <link rel="match" href="-apple-color-filter-inherits-expected.html">
+
+        <meta name="assert" content="-apple-color-filter is inherited">
+        <style type="text/css">
+            .test
+            {
+                font: 120px Ahem;
+                -apple-color-filter: invert();
+            }
+            
+            .test > div {
+                color: rgb(255, 128, 255);
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test passes if there is a green square.</p>
+        <div class="test">
+            <div>A</div>
+        </div>
+    </body>
+</html>

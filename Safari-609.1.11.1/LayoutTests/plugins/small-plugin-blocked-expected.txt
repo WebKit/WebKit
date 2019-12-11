@@ -1,0 +1,17 @@
+This tests that small plugins are blocked
+
+0x0 is BLOCKED
+
+1x1 is BLOCKED
+
+4x4 is BLOCKED
+
+5x5 is BLOCKED
+
+6x6 is RUNNING
+
+1x6 is RUNNING
+
+6x1 is RUNNING
+
+      

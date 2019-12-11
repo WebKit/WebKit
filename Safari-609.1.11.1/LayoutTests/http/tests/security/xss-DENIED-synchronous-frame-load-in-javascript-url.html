@@ -1,0 +1,42 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+	testRunner.dumpAsText();
+	testRunner.waitUntilDone();
+	testRunner.setCanOpenWindows();
+	testRunner.setCloseRemainingWindowsWhenComplete(true);
+}
+
+window.onload = function()
+{
+	victim = document.body.appendChild(document.createElement("iframe"));
+	wnd = victim.contentWindow.open();
+	victim.src = "http://localhost:8080/security/resources/innocent-victim.html";
+	victim.onload = function() {
+		victim.onload = null;
+
+		wnd.eval("(" + function() {
+			location = "javascript:(" + function() {
+				a = document.createElement("a");
+				a.href = "about:blank";
+				e = document.createEvent("MouseEvent");
+				e.initMouseEvent("click");
+				a.dispatchEvent(e);
+
+				return "<script>(" + function() {
+					opener.location = "javascript:alert(document.body.innerHTML)";
+
+					if (window.testRunner)
+						setTimeout("testRunner.notifyDone()", 0);
+				} + ")()<\/script>";
+			} + ")()";
+		} + ")()");
+	}
+}
+</script>
+</head>
+<body>
+This test passes if there's no alert dialog.
+</body>
+</html>

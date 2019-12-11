@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Testing redirection with images fetched with cors mode</title>
+
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<img id="image1" style="visibility:hidden"></img>
+<img id="image2" crossorigin="use-credentials" style="visibility:hidden"></img>
+<script type="text/javascript">
+var imageURLAfterCORSInvalidRedirection = "http://localhost:8000/resources/redirect.php?url=http://127.0.0.1:8000/security/resources/allow-if-origin.php&allowCache";
+promise_test((test) => {
+    return new Promise((resolve, reject) => {
+        var image = document.getElementById("image1");
+        image.onload = resolve;
+        image.onerror = () => { reject("image loading failed unexpectedly"); };
+        image.src = imageURLAfterCORSInvalidRedirection;
+    });
+}, "Loading an image in no-cors mode after a CORS invalid redirection is ok");
+
+promise_test((test) => {
+    return new Promise((resolve, reject) => {
+        var image = document.getElementById("image2");
+        image.onerror = resolve;
+        image.onload = () => { reject("image loading succeeded unexpectedly"); };
+        image.src = imageURLAfterCORSInvalidRedirection;
+    });
+}, "Loading an image in cors mode after a CORS invalid redirection is stopped");
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+[%# 
+  # Copyright (C) 2008, 2013 Apple Inc. All rights reserved.
+  # 
+  # Redistribution and use in source and binary forms, with or without
+  # modification, are permitted provided that the following conditions
+  # are met:
+  # 1.  Redistributions of source code must retain the above copyright
+  #     notice, this list of conditions and the following disclaimer.
+  # 2.  Redistributions in binary form must reproduce the above copyright
+  #     notice, this list of conditions and the following disclaimer in the
+  #     documentation and/or other materials provided with the distribution.
+  # 
+  # THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+  # EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+  # WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  # DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+  # DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+  # (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  # LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+  # ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+  # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  #%]
+
+[%# if WEBKIT_CHANGES %]
+[% IF (product == "WebKit" || product == "Security") %] 
+    <tr id="legal" class="expert_fields" style="display: none;">
+      <th>Legal:</th>
+      <td>
+        <b>WebKit Contribution Terms:</b><br/>
+        <br/>
+        Hello and thank you for contributing a patch.  Here is our licensing policy and terms for contributing code to the WebKit project.<br/>
+        <br/>
+        <ol>
+          <li>If you are sending in a patch to existing WebKit code, you agree by clicking below that your changes are licensed under the existing license terms of the file you are modifying (i.e., BSD license or GNU Lesser General Public License v.2.1, LGPL v. 2.1).  Please also add your copyright (name and year) to the relevant files for changes that are more than 10 lines of code.</li>
+          <li>If you are sending in a new file for inclusion in WebKit (no code copied from another source), the preferred license is BSD, but LGPL 2.1 is an option as well.  Please include your copyright (name and year) and license preference (BSD or LGPL 2.1).  By clicking below you agree that your file is licensed under either the BSD license or LGPL 2.1, as indicated in your file.</li>
+          <li>If you aren't the author of the patch, you agree to include the original copyright notices and licensing terms with it, to the extent that they exist.  If there wasn't a copyright notice or license, please make a note of it.  Generally we can only take in patches that are BSD- or LGPL-licensed in order to maintain license compatibility within the project.</li>
+        </ol>
+      </td>
+    </tr>
+[% END %]
+[%# endif // WEBKIT_CHANGES %]

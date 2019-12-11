@@ -1,0 +1,7 @@
+2d.path.arc.nonfinite
+
+arc() with Infinity/NaN is ignored
+
+
+FAIL arc() with Infinity/NaN is ignored null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

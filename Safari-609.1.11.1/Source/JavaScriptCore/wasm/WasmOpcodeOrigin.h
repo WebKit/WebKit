@@ -1,0 +1,59 @@
+/*
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if ENABLE(WEBASSEMBLY)
+
+#include "B3Origin.h"
+#include "WasmFormat.h"
+
+#include <wtf/ForbidHeapAllocation.h>
+
+namespace JSC { namespace Wasm {
+
+class OpcodeOrigin {
+    WTF_FORBID_HEAP_ALLOCATION;
+public:
+    OpcodeOrigin() = default;
+    OpcodeOrigin(OpType opcode, size_t offset)
+    {
+        ASSERT(static_cast<uint32_t>(offset) == offset);
+        packedData = (static_cast<uint64_t>(opcode) << 32) | offset;
+    }
+
+    void dump(PrintStream&) const;
+
+    OpType opcode() const { return static_cast<OpType>(packedData >> 32); }
+    size_t location() const { return static_cast<uint32_t>(packedData); }
+
+private:
+    static_assert(sizeof(void*) == sizeof(uint64_t), "this packing doesn't work if this isn't the case");
+    uint64_t packedData { 0 };
+};
+
+} } // namespace JSC::Wasm
+
+#endif // ENABLE(WEBASSEMBLY)

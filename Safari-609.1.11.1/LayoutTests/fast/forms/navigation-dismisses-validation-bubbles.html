@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+<form>
+<input id="testInput" type="text" required>
+<input id="testSubmit" type="submit">
+</form>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+document.getElementById("testSubmit").onclick = function() {
+    setTimeout(function() {
+        window.location = "resources/check-validation-bubble-not-visible.html";
+    }, 0);
+}
+
+onload = function() {
+    document.getElementById("testSubmit").click();
+};
+</script>
+</body>
+</html>

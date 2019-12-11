@@ -1,0 +1,15 @@
+<html>
+<head>
+<script type="text/javascript">
+function startTest()
+{
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.queueLoad("resources/reload-subframe.pl?type=iframe");
+    testRunner.queueReload();
+}
+</script>
+</head>
+<body onload="startTest();">
+</body>
+</html>

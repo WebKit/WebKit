@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+class Parent {
+    constructor()
+    {
+        this.x = 1;
+    }
+};
+
+class Child extends Parent {
+    constructor()
+    {
+        console.log("before super");
+        debugger;
+        super();
+        console.log("after super");
+    }
+};
+
+function triggerPause() {
+    new Child;
+}
+
+function test()
+{
+    InspectorProtocol.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.setBreakpointsActive", {active: true});
+
+    let suite = ProtocolTest.createAsyncSuite("PauseInConstructorBeforeSuper");
+
+    suite.addTestCase({
+        name: "TriggerPauseInConstructorBeforeSuper",
+        description: "Trigger a pause in a constructor before calling super should not crash.",
+        test(resolve, reject) {
+            ProtocolTest.evaluateInPage("triggerPause()");
+
+            InspectorProtocol.eventHandler["Debugger.paused"] = (messageObject) => {
+                ProtocolTest.pass("Paused");
+
+                let callFrameIdentifier = messageObject.params.callFrames[0].callFrameId;
+                InspectorProtocol.sendCommand("Debugger.evaluateOnCallFrame", {callFrameId: callFrameIdentifier, expression: "this"}, (messageObject) => {
+                    ProtocolTest.expectThat(messageObject.result.result.type === "undefined", "`this` should be undefined and not cause a crash.");
+                });
+
+                InspectorProtocol.sendCommand("Debugger.resume");
+            };
+
+            InspectorProtocol.eventHandler["Debugger.resumed"] = (messageObject) => {
+                ProtocolTest.pass("Resumed");
+                resolve();
+            };
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Pause in constructor before super should not crash.</p>
+</body>
+</html>

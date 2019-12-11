@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: '*w.localhost:8800'. It will be ignored.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains an invalid source: 'w*.localhost:8800'. It will be ignored.
+CONSOLE MESSAGE: Refused to load http://www.localhost:8800/content-security-policy/generic/wildcardHostTestSuceeds.js because it does not appear in the script-src directive of the Content Security Policy.
+test wildcard host name matching (asterisk as part of a subdomain is not accepted)
+
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN Should fire violation events for every failed violation 
+PASS Wildcard host matching works. 
+

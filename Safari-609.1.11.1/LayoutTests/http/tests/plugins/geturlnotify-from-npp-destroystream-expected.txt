@@ -1,0 +1,2 @@
+This tests that a plug-in that calls NPP_GetURLNotify from its NPP_DestroyStream during teardown will not cause a crash.
+SUCCESS! Did not crash!

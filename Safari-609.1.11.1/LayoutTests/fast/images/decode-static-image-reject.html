@@ -1,0 +1,33 @@
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <div></div>
+    <script>
+        description("Test rejecting the decode() promise when loading the image fails.");
+        jsTestIsAsync = true;
+
+        var image = new Image;
+        image.decode()
+        .catch(reason => {
+            debug("Failed to decode image with no source. Result is: " + reason);
+            image.src = "wrongname.png";
+            return image.decode();
+        })
+        .catch(reason => {
+            debug("Failed to decode image with non-existent source. Result is: " + reason);
+            image.src = "100x100-red.psd";
+            return image.decode();
+        })
+        .catch(reason => {
+            debug("Failed to decode image with unsupported image format. Result is: " + reason);
+            image.src = "https://server:80a80/";
+            return image.decode();
+        })
+        .catch(reason => {
+            debug("Failed to decode image with invalid URL. Result is: " + reason);
+            finishJSTest();
+        });
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>

@@ -1,0 +1,44 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+if (rtc_include_tests) {
+  rtc_source_set("video_codecs_api_unittests") {
+    testonly = true
+    sources = [
+      "builtin_video_encoder_factory_unittest.cc",
+      "video_decoder_software_fallback_wrapper_unittest.cc",
+      "video_encoder_software_fallback_wrapper_unittest.cc",
+    ]
+
+    deps = [
+      "..:builtin_video_encoder_factory",
+      "..:rtc_software_fallback_wrappers",
+      "..:video_codecs_api",
+      "../..:fec_controller_api",
+      "../..:mock_video_encoder",
+      "../../../api:scoped_refptr",
+      "../../../modules:module_api",
+      "../../../modules/video_coding:video_codec_interface",
+      "../../../modules/video_coding:video_coding_utility",
+      "../../../modules/video_coding:webrtc_vp8",
+      "../../../rtc_base:checks",
+      "../../../rtc_base:rtc_base_tests_utils",
+      "../../../test:field_trial",
+      "../../../test:test_support",
+      "../../video:encoded_image",
+      "../../video:video_bitrate_allocation",
+      "../../video:video_frame",
+      "../../video:video_frame_i420",
+      "../../video:video_rtp_headers",
+      "//testing/gtest",
+      "//third_party/abseil-cpp/absl/memory",
+    ]
+  }
+}

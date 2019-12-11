@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/cors/resources/304.py?id=7&r=%s1560002646354 due to access control checks.
+CORS - 304 Responses
+
+
+PASS A 304 response with no CORS headers inherits from the stored response 
+PASS A 304 can expand Access-Control-Expose-Headers 
+PASS A 304 can contract Access-Control-Expose-Headers 
+PASS A 304 can change Access-Control-Allow-Origin 
+

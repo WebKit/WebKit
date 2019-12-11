@@ -1,0 +1,357 @@
+This file details the changelog of Capstone.
+
+[ Arm ]
+
+- Fix a bug where Arm.Operand is wrongly calculated for the second and
+  following operands
+- Fix a bug where Arm.OpInfo.memBarrier and Arm.OpInfo.op is wrongly
+  calculated
+
+[ Bindings ]
+
+- Java; add Capstone.strerror() and CsInsn.regsAccess().
+
+---------------------------------
+Version 3.0.2: March 11th, 2015
+
+
+[ Library ]
+
+- On *nix, only export symbols that are part of the API (instead of all
+  the internal symbols).
+
+
+[ X86 ]
+
+- Do not consider 0xF2 as REPNE prefix if it is a part of instruction encoding.
+- Fix implicit registers read/written & instruction groups of some instructions.
+- More flexible on the order of prefixes, so better handle some tricky
+  instructions.
+- REPNE prefix can go with STOS & MOVS instructions.
+- Fix a compilation bug for X86_REDUCE mode.
+- Fix operand size of instructions with operand PTR []
+
+
+[ Arm ]
+
+- Fix a bug where arm_op_mem.disp is wrongly calculated (in DETAIL mode).
+- Fix a bug on handling the If-Then block.
+
+
+[ Mips ]
+
+- Sanity check for the input size for MIPS64 mode.
+
+
+[ MSVC ]
+
+- Compile capstone.dll with static runtime MSVCR built in.
+
+
+[ Python binding ]
+
+- Fix a compiling issue of Cython binding with gcc 4.9.
+
+---------------------------------
+Version 3.0.1: February 03rd, 2015
+
+[ X86 ]
+
+- Properly handle LOCK, REP, REPE & REPNE prefixes.
+- Handle undocumented immediates for SSE's (V)CMPPS/PD/SS/SD instructions.
+- Print LJUMP/LCALL without * as prefix for Intel syntax.
+- Handle REX prefix properly for segment/MMX related instructions (x86_64).
+- Instruction with length > 15 is consider invalid.
+- Handle some tricky encodings for instructions MOVSXD, FXCH, FCOM, FCOMP,
+  FSTP, FSTPNCE, NOP.
+- Handle some tricky code for some X86_64 instructions with REX prefix.
+- Add missing operands in detail mode for PUSH , POP , IN/OUT reg, reg
+- MOV32ms & MOV32sm should reference word rather than dword.
+
+
+[ Arm64 ]
+
+- BL & BLR instructions do not read SP register.
+- Print absolute (rather than relative) address for instructions B, BL,
+  CBNZ, ADR.
+
+
+[ Arm ]
+
+- Instructions ADC & SBC do not update flags.
+- BL & BLX do not read SP, but PC register.
+- Alias LDR instruction with operands [sp], 4 to POP.
+- Print immediate operand of MVN instruction in positive hexadecimal form.
+
+
+[ PowerPC ]
+
+- Fix some compilation bugs when DIET mode is enable.
+- Populate SLWI/SRWI instruction details with SH operand.
+
+
+[ Python binding ]
+
+- Fix a Cython bug when CsInsn.bytes returns a shorten array of bytes.
+- Fixed a memory leak for Cython disasm functions when we immaturely quit
+  the enumeration of disassembled instructions.
+- Fix a NULL memory access issue when SKIPDATA & Detail modes are enable
+  at the same time.
+- Fix a memory leaking bug when when we stop enumeration over the disassembled
+  instructions prematurely.
+- Export generic operand types & groups (CS_OP_xxx & CS_GRP_xxx).
+
+---------------------------------
+Version 3.0: November 19th, 2014
+
+[ API ]
+
+- New API: cs_disasm_iter & cs_malloc. See docs/README for tutorials.
+- Renamed cs_disasm_ex to cs_disasm (cs_disasm_ex is still supported, but
+  marked obsolete to be removed in future)
+- Support SKIPDATA mode, so Capstone can jump over unknown data and keep going
+  from the next legitimate instruction. See docs/README for tutorials.
+- More details provided in cs_detail struct for all architectures.
+- API version was bumped to 3.0.
+
+
+[ Bindings ]
+
+- Python binding supports Python3 (besides Python2).
+- Support Ocaml binding.
+- Java: add close() method to be used to deinitialize a Capstone object when
+  no longer use it.
+
+
+[ Architectures ]
+
+- New architectures: Sparc, SystemZ & XCore.
+- Important bugfixes for Arm, Arm64, Mips, PowerPC & X86.
+- Support more instructions for Arm, Arm64, Mips, PowerPC & X86.
+- Always expose absolute addresses rather than relative addresses (Arm, Arm64,
+  Mips, PPC, Sparc, X86).
+- Use common instruction operand types REG, IMM, MEM & FP across all
+  architectures (to enable cross-architecture analysis).
+- Use common instruction group types across all architectures (to enable
+  cross-architecture analysis).
+
+
+[ X86 ]
+
+- X86 engine is mature & handles all the malware tricks (that we are aware of).
+- Added a lot of new instructions (such as AVX512, 3DNow, etc).
+- Add prefix symbols X86_PREFIX_REP/REPNE/LOCK/CS/DS/SS/FS/GS/ES/OPSIZE/ADDRSIZE.
+- Print immediate in positive form & hexadecimal for AND/OR/XOR instructions.
+- More friendly disassembly for JMP16i (in the form segment:offset)
+
+
+[ Mips ]
+
+- Engine added supports for new hardware modes: Mips32R6 (CS_MODE_MIPS32R6) &
+  MipsGP64 (CS_MODE_MIPSGP64).
+- Removed the ABI-only mode CS_MODE_N64.
+- New modes CS_MODE_MIPS32 & CS_MODE_MIPS64 (to use instead of CS_MODE_32 &
+  CS_MODE_64).
+
+
+[ ARM ]
+
+- Support new mode CS_MODE_V8 for Armv8 A32 encodings.
+- Print immediate in positive form & hexadecimal for AND/ORR/EOR/BIC instructions
+
+
+[ ARM64 ]
+
+- Print immediate in hexadecimal for AND/ORR/EOR/TST instructions.
+
+
+[ PowerPC ]
+
+- Do not print a dot in front of absolute address.
+
+
+[ Other features ]
+
+- Support for Microsoft Visual Studio (so enable Windows native compilation).
+- Support CMake compilation.
+- Cross-compile for Android.
+- Build libraries/tests using XCode project
+- Much faster, while consuming less memory for all architectures.
+
+---------------------------------
+Version 2.1.2: April 3rd, 2014
+
+This is a stable release to fix some bugs deep in the core. There is no update
+to any architectures or bindings, so bindings version 2.1 can be used with this
+version 2.1.2 just fine.
+
+[ Core changes]
+
+- Support cross-compilation for all iDevices (iPhone/iPad/iPod).
+- X86: do not print memory offset in negative form.
+- Fix a bug in X86 when Capstone cannot handle short instruction.
+- Print negative number above -9 without prefix 0x (arm64, mips, arm).
+- Correct the SONAME setup for library versioning (Linux, *BSD, Solaris).
+- Set library versioning for dylib of OSX.
+
+---------------------------------
+Version 2.1.1: March 13th, 2014
+
+This is a stable release to fix some bugs deep in the core. There is no update
+to any architectures or bindings, so bindings version 2.1 can be used with this
+version 2.1.1 just fine.
+
+[ Core changes]
+
+- Fix a buffer overflow bug in Thumb mode (ARM). Some special input can
+  trigger this flaw.
+- Fix a crash issue when embedding Capstone into OSX kernel. This should
+  also enable Capstone to be embedded into other systems with limited stack
+  memory size such as Linux kernel or some firmwares.
+- Use a proper SONAME for library versioning (Linux).
+
+---------------------------------
+Version 2.1: March 5th, 2014
+
+[ API changes ]
+
+- API version has been bumped to 2.1.
+- Change prototype of cs_close() to be able to invalidate closed handle.
+  See http://capstone-engine.org/version_2.1_API.html for more information.
+- Extend cs_support() to handle more query types, not only about supported
+  architectures. This change is backward compatible, however, so existent code
+  do not need to be modified to support this.
+- New query type CS_SUPPORT_DIET for cs_support() to ask about diet status of
+  the engine.
+- New error code CS_ERR_DIET to report errors about newly added diet mode.
+- New error code CS_ERR_VERSION to report issue of incompatible versions between
+  bindings & core engine.
+
+
+[ Core changes ]
+
+- On memory usage, Capstone uses about 40% less memory, while still faster
+  than version 2.0.
+- All architectures are much smaller: binaries size reduce at least 30%.
+  Especially, X86-only binary reduces from 1.9MB to just 720KB.
+- Support "diet" mode, in which engine size is further reduced (by around 40%)
+  for embedding purpose. The price to pay is that we have to sacrifice some
+  non-critical data fields. See http://capstone-engine.org/diet.html for more
+  details.
+
+
+[ Architectures ]
+
+- Update all 5 architectures to fix bugs.
+- PowerPC:
+	- New instructions: FMR & MSYNC.
+- Mips:
+	- New instruction: DLSA
+- X86:
+	- Properly handle AVX-512 instructions.
+	- New instructions: PSETPM, SALC, INT1, GETSEC.
+	- Fix some memory leaking issues in case of prefixed instructions such
+	  as LOCK, REP, REPNE.
+
+
+[ Python binding ]
+
+- Verify the core version at initialization time. Refuse to run if its version
+  is different from the core's version.
+- New API disasm_lite() added to Cs class. This light API only returns tuples of
+  (address, size, mnemonic, op_str), rather than list of CsInsn objects. This
+  improves performance by around 30% in some benchmarks.
+- New API version_bind() returns binding's version, which might differ from
+  the core's API version if the binding is out-of-date.
+- New API debug() returns information on Cython support, diet status & archs
+  compiled in.
+- Fixed some memory leaking bugs for Cython binding.
+- Fix a bug crashing Cython code when accessing @regs_read/regs_write/groups.
+- Support diet mode.
+
+
+[ Java binding ]
+
+- Fix some memory leaking bugs.
+- New API version() returns combined version.
+- Support diet mode.
+- Better support for detail option.
+
+
+[ Miscellaneous ]
+
+- make.sh now can uninstall the core engine. This is done with:
+
+	$ sudo ./make.sh uninstall
+
+----------------------------------
+Version 2.0: January 22nd, 2014
+
+Release 2.0 deprecates verison 1.0 and brings a lot of crucial changes.
+
+[ API changes ]
+
+- API version has been bumped to 2.0 (see cs_version() API)
+- New API cs_strerror(errno) returns a string describing error code given
+  in its only argument.
+- cs_version() now returns combined version encoding both major & minor versions.
+- New option CS_OPT_MODE allows to change engine’s mode at run-time with
+  cs_option().
+- New option CS_OPT_MEM allows to specify user-defined functions for dynamically
+  memory management used internally by Capstone. This is useful to embed Capstone
+  into special environments such as kernel or firware.
+- New API cs_support() can be used to check if this lib supports a particular
+  architecture (this is necessary since we now allow to choose which architectures
+  to compile in).
+- The detail option is OFF by default now. To get detail information, it should be
+  explicitly turned ON. The details then can be accessed using cs_insn.detail
+  pointer (to newly added structure cs_detail)
+
+
+[ Core changes ]
+
+- On memory usage, Capstone uses much less memory, but a lot faster now.
+- User now can choose which architectures to be supported by modifying config.mk
+  before compiling/installing.
+
+
+[ Architectures ]
+
+- Arm
+     - Support Big-Endian mode (besides Little-Endian mode).
+     - Support friendly register, so instead of output sub "r12,r11,0x14",
+	 we have "sub ip,fp,0x14".
+- Arm64: support Big-Endian mode (besides Little-Endian mode).
+- PowerPC: newly added.
+- Mips: support friendly register, so instead of output "srl $2,$1,0x1f",
+     we have "srl $v0,$at,0x1f".
+- X86: bug fixes.
+
+
+[ Python binding ]
+
+- Python binding is vastly improved in performance: around 3 ~ 4 times faster
+  than in 1.0.
+- Cython support has been added, which can further speed up over the default
+  pure Python binding (up to 30% in some cases)
+- Function cs_disasm_quick() & Cs.disasm() now use generator (rather than a list)
+  to return succesfully disassembled instructions. This improves the performance
+  and reduces memory usage.
+
+
+[ Java binding ]
+
+- Better performance & bug fixes.
+
+
+[ Miscellaneous ]
+
+- Fixed some installation issues with Gentoo Linux.
+- Capstone now can easily compile/install on all *nix, including Linux, OSX,
+  {Net, Free, Open}BSD & Solaris.
+
+----------------------------------
+[Version 1.0]: December 18th, 2013
+
+- Initial public release.
+

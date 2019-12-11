@@ -1,0 +1,59 @@
+Verify we invalidate radio button groups to match :indeterminate when a button is checked/unchecked
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS elementsWithIndeterminateStyle() is ["radio1", "radio2", "radio3", "radio4", "radio5", "radio6", "radio7", "radio8", "radio9", "radio10"]
+PASS checkedElements() is []
+Check radio3
+PASS elementsWithIndeterminateStyle() is ["radio6", "radio7", "radio8", "radio9", "radio10"]
+PASS checkedElements() is ["radio3"]
+Check radio8
+PASS elementsWithIndeterminateStyle() is []
+PASS checkedElements() is ["radio3", "radio8"]
+Check radio4
+PASS elementsWithIndeterminateStyle() is []
+PASS checkedElements() is ["radio4", "radio8"]
+Check radio9
+PASS elementsWithIndeterminateStyle() is []
+PASS checkedElements() is ["radio4", "radio9"]
+Uncheck radio4
+PASS elementsWithIndeterminateStyle() is ["radio1", "radio2", "radio3", "radio4", "radio5"]
+PASS checkedElements() is ["radio9"]
+Uncheck radio9
+PASS elementsWithIndeterminateStyle() is ["radio1", "radio2", "radio3", "radio4", "radio5", "radio6", "radio7", "radio8", "radio9", "radio10"]
+PASS checkedElements() is []
+Check radio1
+PASS elementsWithIndeterminateStyle() is ["radio6", "radio7", "radio8", "radio9", "radio10"]
+PASS checkedElements() is ["radio1"]
+Check radio2
+PASS elementsWithIndeterminateStyle() is ["radio6", "radio7", "radio8", "radio9", "radio10"]
+PASS checkedElements() is ["radio2"]
+Remove radio3 from its group
+PASS elementsWithIndeterminateStyle() is ["radio3", "radio6", "radio7", "radio8", "radio9", "radio10"]
+PASS checkedElements() is ["radio2"]
+Remove radio6 from its group
+PASS elementsWithIndeterminateStyle() is ["radio3", "radio6", "radio7", "radio8", "radio9", "radio10"]
+PASS checkedElements() is ["radio2"]
+Remove radio2 from its group
+PASS elementsWithIndeterminateStyle() is ["radio1", "radio3", "radio4", "radio5", "radio6", "radio7", "radio8", "radio9", "radio10"]
+PASS checkedElements() is ["radio2"]
+Check radio7
+PASS elementsWithIndeterminateStyle() is ["radio1", "radio3", "radio4", "radio5", "radio6"]
+PASS checkedElements() is ["radio2", "radio7"]
+Check radio8
+PASS elementsWithIndeterminateStyle() is ["radio1", "radio3", "radio4", "radio5", "radio6"]
+PASS checkedElements() is ["radio2", "radio8"]
+Remove radio9 from its group
+PASS elementsWithIndeterminateStyle() is ["radio1", "radio3", "radio4", "radio5", "radio6", "radio9"]
+PASS checkedElements() is ["radio2", "radio8"]
+Remove radio8 from its group
+PASS elementsWithIndeterminateStyle() is ["radio1", "radio3", "radio4", "radio5", "radio6", "radio7", "radio9", "radio10"]
+PASS checkedElements() is ["radio2", "radio8"]
+Remove radio7 from its group
+PASS elementsWithIndeterminateStyle() is ["radio1", "radio3", "radio4", "radio5", "radio6", "radio7", "radio9", "radio10"]
+PASS checkedElements() is ["radio2", "radio8"]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

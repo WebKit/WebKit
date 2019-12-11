@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="host"></div>
+<button>Enter fullscreen</button>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description('Test that webkitFullscreenElement retargets the fullscreen element inside a shadow tree.');
+
+let shadowHost = document.getElementById('host');
+let shadowRoot = shadowHost.attachShadow({mode: 'closed'});
+shadowRoot.innerHTML = '<span>full screen content</span>';
+
+function goFullscreen() {
+    shadowRoot.querySelector('span').webkitRequestFullscreen();
+    setTimeout(function () {
+        if (done)
+            return;
+
+        testFailed('webkitfullscreenchange was not fired');
+        finishJSTest();
+    }, 2000);
+}
+
+let done = false;
+function finalizeTest() {
+    if (done)
+        return;
+    done = true;
+
+    shouldBe('document.querySelector(":-webkit-full-screen-ancestor")', 'document.documentElement');
+    finishJSTest();
+}
+
+shadowRoot.addEventListener('webkitfullscreenchange', finalizeTest);
+document.addEventListener('fullscreenchange', finalizeTest); // Standard fullscreenchange only fires at document level.
+
+let button = document.querySelector('button');
+button.onclick = goFullscreen;
+
+if (window.eventSender) {
+    jsTestIsAsync = true;
+    eventSender.mouseMoveTo(button.offsetLeft + 5, button.offsetTop + 5);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+</script>
+</body>
+</html>

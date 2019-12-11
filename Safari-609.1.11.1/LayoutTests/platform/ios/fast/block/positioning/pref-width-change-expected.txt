@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+layer at (8,8) size 206x26
+  RenderBlock (relative positioned) {DIV} at (0,0) size 206x26 [border: (3px solid #000000)]
+layer at (146,11) size 65x20
+  RenderBlock (positioned) {DIV} at (138,3) size 65x20
+    RenderText {#text} at (0,0) size 65x19
+      text run at (0,0) width 65: "longertext"

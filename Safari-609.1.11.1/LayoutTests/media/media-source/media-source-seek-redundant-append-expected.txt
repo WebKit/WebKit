@@ -1,0 +1,36 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+RUN(source.duration = 310)
+RUN(sourceBuffer.timestampOffset = 300)
+RUN(video.play())
+START seekAndAppend: time=300, segments=[0, 3)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+Successful append
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(1)))
+Successful append
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(2)))
+Successful append
+SUCCESS seekAndAppend: time=300, segments=[0, 3)
+START waitForVideoToReach(300.2)
+SUCCESS waitForVideoToReach(300.2)
+START seekAndAppend: time=309.2, segments=[9, 10)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(9)))
+Successful append
+SUCCESS seekAndAppend: time=309.2, segments=[9, 10)
+START waitForVideoToReach(309.7)
+SUCCESS waitForVideoToReach(309.7)
+RUN(video.currentTime = 308.9)
+START seekAndAppend: time=308.9, segments=[8, 10)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(8)))
+Successful append
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(9)))
+Successful append
+SUCCESS seekAndAppend: time=308.9, segments=[8, 10)
+RUN(source.endOfStream())
+EVENT(ended)
+END OF TEST
+

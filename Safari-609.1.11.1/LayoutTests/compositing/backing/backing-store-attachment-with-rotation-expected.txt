@@ -1,0 +1,23 @@
+top left
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 950.00 600.00)
+  (backingStoreAttached 1)
+  (children 1
+    (GraphicsLayer
+      (bounds 950.00 600.00)
+      (contentsOpaque 1)
+      (backingStoreAttached 1)
+      (children 1
+        (GraphicsLayer
+          (position 550.00 13.00)
+          (bounds 400.00 400.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (backingStoreAttached 1)
+        )
+      )
+    )
+  )
+)
+

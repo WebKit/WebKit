@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src=../../resources/testharness.js></script>
+<script src=../../resources/testharnessreport.js></script>
+<script>
+function testOnDocument(eventHandler, description)
+{
+    test(function() {
+        assert_idl_attribute(document, eventHandler, "document has " + eventHandler + " IDL attribute");
+        assert_own_property(Document.prototype, eventHandler, eventHandler + " on Document prototype");
+        assert_true(eventHandler in document, eventHandler + " in document is true");
+        assert_true(Object.getOwnPropertyDescriptor(Document.prototype, eventHandler).enumerable, "document." + eventHandler + " is enumerable");
+    }, description);
+}
+
+function testOnElement(eventHandler, description)
+{
+    test(function() {
+        assert_idl_attribute(document.body, eventHandler, "element has " + eventHandler + " IDL attribute");
+        assert_own_property(Element.prototype, eventHandler, eventHandler + " on Element prototype");
+        assert_true(eventHandler in document.body, eventHandler + " in element is true");
+        assert_true(Object.getOwnPropertyDescriptor(Element.prototype, eventHandler).enumerable, "element." + eventHandler + " is enumerable");
+   }, description);
+}
+
+for (let eventHandler of ["oncopy", "oncut", "onpaste"]) {
+    testOnDocument(eventHandler, eventHandler + " EventHandler on Document");
+    testOnElement(eventHandler, eventHandler + " EventHander on Element");
+}
+</script>
+</body>
+</html>

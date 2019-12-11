@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<body onload="loaded()">
+<form action="javascript:void()"></form>
+<script>
+function loaded() {
+    if (window.opener)
+        window.opener.postMessage('done', '*');
+}
+</script>
+</body>

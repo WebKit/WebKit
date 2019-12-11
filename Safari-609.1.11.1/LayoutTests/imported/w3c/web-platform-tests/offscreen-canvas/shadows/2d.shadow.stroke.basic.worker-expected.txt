@@ -1,0 +1,3 @@
+
+FAIL Shadows are drawn for strokes Can't find variable: OffscreenCanvas
+

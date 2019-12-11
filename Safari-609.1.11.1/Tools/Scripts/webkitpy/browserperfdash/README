@@ -1,0 +1,5 @@
+The scripts inside this folder allow to send the data from run-benchmark
+to a server running the browserperfdash web app below:
+
+Source code: https://github.com/Igalia/browserperfdash
+Deployment:  https://browserperfdash.igalia.com/

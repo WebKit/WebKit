@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+            width: 2000px;
+        }
+        
+        .fixed {
+            position: fixed;
+            top: 50px;
+            left: 40px;
+            border: 1px solid black;
+        }
+    </style>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+    description("Tests scrolling to an anchor inside position:fixed doesn't try to scroll the page");
+    window.jsTestIsAsync = true;
+
+    function runTest()
+    {
+        window.scrollTo(100, 800);
+        setTimeout(function() {
+            window.location='#anchor';
+            setTimeout(finishTest, 0);
+        }, 0);
+    }
+
+    function finishTest()
+    {
+        if (window.location.toString().indexOf("#") == -1) {
+            setTimeout(finishTest, 0);
+            return;
+        }
+        
+        shouldBe('document.scrollingElement.scrollTop', '800');
+        shouldBe('document.scrollingElement.scrollLeft', '100');
+
+        finishJSTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+
+<div class="fixed">
+    <a name="anchor">Anchor is here</a>
+</div>
+
+<script src="../../resources/js-test-post.js"></script>
+
+</body></html>

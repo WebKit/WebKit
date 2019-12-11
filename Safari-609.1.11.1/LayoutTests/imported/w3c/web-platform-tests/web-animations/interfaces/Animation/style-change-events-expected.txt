@@ -1,0 +1,22 @@
+
+FAIL All property keys are recognized assert_in_array: Test property 'replaceState' should be one of the properties on  Animation value "replaceState" not in array ["id", "effect", "timeline", "startTime", "currentTime", "playbackRate", "playState", "pending", "onfinish", "oncancel", "ready", "finished", "cancel", "finish", "play", "pause", "updatePlaybackRate", "reverse", "Animation constructor"]
+FAIL Animation.id produces expected style change events assert_false: A transition should NOT have been triggered expected false got true
+FAIL Animation.effect produces expected style change events assert_false: A transition should NOT have been triggered expected false got true
+FAIL Animation.timeline produces expected style change events assert_false: A transition should NOT have been triggered expected false got true
+FAIL Animation.startTime produces expected style change events assert_false: A transition should NOT have been triggered expected false got true
+FAIL Animation.currentTime produces expected style change events assert_false: A transition should NOT have been triggered expected false got true
+FAIL Animation.playbackRate produces expected style change events assert_false: A transition should NOT have been triggered expected false got true
+FAIL Animation.playState produces expected style change events assert_false: A transition should NOT have been triggered expected false got true
+FAIL Animation.pending produces expected style change events assert_false: A transition should NOT have been triggered expected false got true
+FAIL Animation.onfinish produces expected style change events assert_false: A transition should NOT have been triggered expected false got true
+FAIL Animation.oncancel produces expected style change events assert_false: A transition should NOT have been triggered expected false got true
+FAIL Animation.ready produces expected style change events assert_false: A transition should NOT have been triggered expected false got true
+FAIL Animation.finished produces expected style change events assert_false: A transition should NOT have been triggered expected false got true
+FAIL Animation.cancel produces expected style change events assert_false: A transition should NOT have been triggered expected false got true
+FAIL Animation.finish produces expected style change events assert_false: A transition should NOT have been triggered expected false got true
+FAIL Animation.play produces expected style change events assert_false: A transition should NOT have been triggered expected false got true
+FAIL Animation.pause produces expected style change events assert_false: A transition should NOT have been triggered expected false got true
+FAIL Animation.updatePlaybackRate produces expected style change events assert_false: A transition should NOT have been triggered expected false got true
+FAIL Animation.reverse produces expected style change events assert_false: A transition should NOT have been triggered expected false got true
+FAIL Animation.Animation constructor produces expected style change events assert_false: A transition should NOT have been triggered expected false got true
+

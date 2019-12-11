@@ -1,0 +1,28 @@
+flex rows - column-axis baseline - the blue orthogonal item didn't participate in the first iteration
+É
+É
+É
+ flex row - column-axis baseline - the blue relative sized item didn't participate in the first iterarion
+É
+É
+ flex row - both the blue relative sized and red orthogonal didn't participate in the first iteration
+É
+É
+ flex column - row-axis baseline - the blue orthogonal item didn't participate in the first iteration
+É
+É
+É
+ flex column - column-axis baseline - the blue relative sized item didn't participate in the first iterarion
+É
+É
+ flex columns - both the blue relative sized and red orthogonal didn't participate in the first iteration
+É
+É
+
+PASS .grid 1 
+PASS .grid 2 
+PASS .grid 3 
+PASS .grid 4 
+PASS .grid 5 
+PASS .grid 6 
+

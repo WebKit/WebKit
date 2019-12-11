@@ -1,0 +1,3 @@
+
+PASS <textarea> validity state should be preserved after a clone 
+

@@ -1,0 +1,4 @@
+WebView navigated to url "http://127.0.0.1:8000/globalhistory/history-delegate-basic-visited-links.html" with title "" with HTTP equivalent method "GET".  The navigation was successful and was not a client redirect.
+Asked to populate visited links for WebView "http://127.0.0.1:8000/globalhistory/history-delegate-basic-visited-links.html"
+This tests to see if the history delegate is notified to populate the visited links hash.
+Am I a visited link?

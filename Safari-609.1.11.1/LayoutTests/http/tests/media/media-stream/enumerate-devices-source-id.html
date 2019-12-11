@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            iframe { border: 1px solid black; }
+        </style>
+        <script src="../../../../resources/js-test-pre.js"></script>
+        <script>
+            window.jsTestIsAsync = true;
+
+            if (internals)
+                internals.setResourceLoadStatisticsEnabled(false);
+
+            if (window.testRunner)
+                testRunner.setUserMediaPermission(true);
+
+            function setup()
+            {
+                description("Tests that mediaDevices.enumerateDevices returns the same ids for devices in the same frame/subframe .");
+            }
+
+            let map = { };
+            function checkID(origin, device)
+            {
+                let origins = `${document.origin}-${origin}`;
+
+                if (!map[origins])
+                    map[origins] = { };
+
+                let originInfo = map[origins];
+                if (!originInfo[device.deviceId])
+                    originInfo[device.deviceId] = device.kind;
+                
+                if (originInfo[device.deviceId] != device.kind)
+                    testFailed(`: duplicate device IDs for ${device.kind} and ${originInfo[device.deviceId]} in ${origin}/${document.origin}`);
+
+                if (Object.keys(originInfo).length > 4)
+                    testFailed(`: more then four unique device IDs in ${origin}/${document.origin}`);
+            }
+
+            let eventCount = 0;
+            async function handler(event) 
+            {
+                event.data.devices.forEach(device => { checkID(event.data.origin, device); });
+
+                if (++eventCount != 6)
+                    return;
+
+                await navigator.mediaDevices.getUserMedia({video: true, audio: true });
+                let devices = await navigator.mediaDevices.enumerateDevices();
+                devices.forEach(device => checkID(document.origin, device));
+
+                debug('');
+                if (internals)
+                    internals.setResourceLoadStatisticsEnabled(true);
+                finishJSTest();
+            }
+
+            addEventListener("message", handler, false);
+
+        </script> 
+    </head>
+    <body onload="setup()">
+        <iframe allow="camera;microphone" src="http://localhost:8000/media/media-stream/resources/enumerate-devices-source-id-frame.html?1"></iframe>
+        <br>
+        <iframe allow="camera;microphone" src="http://127.0.0.1:8000/media/media-stream/resources/enumerate-devices-source-id-frame.html?2"></iframe>
+        <br>
+        <iframe allow="camera;microphone" src="http://localhost:8000/media/media-stream/resources/enumerate-devices-source-id-frame.html?3"></iframe>
+        <div id="console"></div>
+        <script src="../../../../resources/js-test-post.js"></script>
+    </body>
+</html>

@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: line 6: Unsafe JavaScript attempt to initiate navigation for frame with URL 'http://127.0.0.1:8000/security/block-top-level-navigations-by-third-party-iframes.html' from frame with URL 'http://localhost:8000/security/resources/navigate-top-level-frame-to-failure-page.html'. The frame attempting navigation of the top-level window is cross-origin and the user has never interacted with the frame.
+
+CONSOLE MESSAGE: line 6: SecurityError: The operation is insecure.
+CONSOLE MESSAGE: line 6: Unsafe JavaScript attempt to initiate navigation for frame with URL 'http://127.0.0.1:8000/security/block-top-level-navigations-by-third-party-iframes.html' from frame with URL 'http://localhost:8000/security/resources/navigate-top-level-frame-to-failure-page.html'. The frame attempting navigation of the top-level window is cross-origin and the user has never interacted with the frame.
+
+CONSOLE MESSAGE: line 6: SecurityError: The operation is insecure.
+Test blocking of suspicious top-level navigations by a third-party iframe
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS All navigations by subframes have been blocked
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

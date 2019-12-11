@@ -1,0 +1,5 @@
+Tests expiration of ad click attribution.
+
+
+
+No stored Ad Click Attribution data.

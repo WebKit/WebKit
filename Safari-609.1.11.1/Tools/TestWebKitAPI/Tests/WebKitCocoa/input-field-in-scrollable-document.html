@@ -1,0 +1,36 @@
+<html>
+
+<head>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        input {
+            width: 100%;
+            height: 400px;
+            margin-bottom: 5000px;
+        }
+    </style>
+    <script type="text/javascript">
+        function loaded() {
+            var input = document.querySelector("input");
+            input.setSelectionRange(0, 0);
+            input.focus();
+        }
+
+        function focused() {
+            setTimeout(() => window.webkit.messageHandlers.testHandler.postMessage("focused"), 0);
+        }
+
+        function input() {
+            setTimeout(() => window.webkit.messageHandlers.testHandler.postMessage("input"), 0);
+        }
+    </script>
+</head>
+
+<body onload=loaded()>
+    <input onfocus=focused() oninput=input()></input>
+</body>
+
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px;
+    word-wrap: break-word;
+    -khtml-nbsp-mode: space;
+    -khtml-line-break: after-white-space;
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    selectAllCommand();
+    deleteCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+
+<!-- 
+
+Expected results:
+
+All the content in the contenteditable div should be deleted, 
+including the "you can't see this." span.
+
+-->
+
+</head> 
+<body>
+<div contenteditable id="root" class="editing">
+<span style="display: hidden">you can't see this.</span> 
+<span id="test">you can see this.</span>
+</div>
+
+<script>
+runDumpAsTextEditingTest(true);
+</script>
+
+</body>
+</html>

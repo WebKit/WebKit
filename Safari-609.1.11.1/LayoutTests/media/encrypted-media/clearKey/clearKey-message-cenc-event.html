@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Message ClearKey CENC Event</title>
+    <script src="../medias-enc.js"></script>
+    <script src="../../video-test.js"></script>
+    <script src="encrypted-media-clearKey-handler.js"></script>
+    <script>
+
+    const videoConf = streamMedias["simpleClearKey"].video;
+
+    function runTest() {
+
+        findMediaElement();
+
+        let emeHandler = new EncryptedMediaHandler(video, videoConf);
+        if (!emeHandler)
+            endTest();
+
+        /* Overload the onMessage callback of EncryptedMediaHandler */
+        emeHandler.onMessage = function(event) {
+            let msgStr = String.fromCharCode.apply(String, new Uint8Array(event.message));
+            let msgJSON = JSON.parse(msgStr);
+            let kid = Base64ToHex(msgJSON.kids[0]).toLowerCase();
+            let key = videoConf.keys[kid];
+            if (key)
+                logResult(true, "Expected Kid");
+            endTest();
+        }
+
+        let source = document.createElement('source');
+        source.setAttribute("src", videoConf.path);
+        source.setAttribute("type", videoConf.mimeType);
+        video.appendChild(source);
+        video.play();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

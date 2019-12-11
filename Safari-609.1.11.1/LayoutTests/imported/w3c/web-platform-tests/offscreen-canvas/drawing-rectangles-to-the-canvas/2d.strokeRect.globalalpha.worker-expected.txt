@@ -1,0 +1,3 @@
+
+FAIL strokeRect is affected by globalAlpha Can't find variable: OffscreenCanvas
+

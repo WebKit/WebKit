@@ -1,0 +1,196 @@
+asdf	asdf
+asdf	asdf
+asdf	asdf
+asdf	asdf
+asdf	asdf
+
+------------------------------------
+AXRole: AXTable
+AXSubrole: (null)
+AXRoleDescription: table
+AXChildren: <array of size 4>
+AXHelp: 
+AXParent: <AXTable>
+AXSize: NSSize: {58, 20}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXTable>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXTable>
+AXEndTextMarker: <AXTable>
+AXVisited: 0
+AXLinkedUIElements: <array of size 0>
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXTable>
+AXLanguage: 
+AXDOMIdentifier: testTable2
+AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXTable>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
+AXRows: <array of size 1>
+AXVisibleRows: <array of size 1>
+AXColumns: <array of size 2>
+AXVisibleColumns: <array of size 2>
+AXVisibleCells: <array of size 2>
+AXColumnHeaderUIElements: <array of size 0>
+AXRowHeaderUIElements: <array of size 0>
+AXHeader: <AXTable>
+AXColumnCount: 2
+AXRowCount: 1
+AXARIAColumnCount: 0
+AXARIARowCount: 0
+AXElementBusy: 0
+
+
+AXRole: AXTable
+AXSubrole: (null)
+AXRoleDescription: table
+AXChildren: <array of size 4>
+AXHelp: 
+AXParent: <AXTable>
+AXSize: NSSize: {63, 24}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXTable>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXTable>
+AXEndTextMarker: <AXTable>
+AXVisited: 0
+AXLinkedUIElements: <array of size 0>
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXTable>
+AXLanguage: 
+AXDOMIdentifier: testTable3
+AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXTable>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
+AXRows: <array of size 1>
+AXVisibleRows: <array of size 1>
+AXColumns: <array of size 2>
+AXVisibleColumns: <array of size 2>
+AXVisibleCells: <array of size 2>
+AXColumnHeaderUIElements: <array of size 0>
+AXRowHeaderUIElements: <array of size 0>
+AXHeader: <AXTable>
+AXColumnCount: 2
+AXRowCount: 1
+AXARIAColumnCount: 0
+AXARIARowCount: 0
+AXElementBusy: 0
+
+
+AXRole: AXTable
+AXSubrole: (null)
+AXRoleDescription: table
+AXChildren: <array of size 4>
+AXHelp: 
+AXParent: <AXTable>
+AXSize: NSSize: {57, 20}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXTable>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXTable>
+AXEndTextMarker: <AXTable>
+AXVisited: 0
+AXLinkedUIElements: <array of size 0>
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXTable>
+AXLanguage: 
+AXDOMIdentifier: testTable4
+AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXTable>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
+AXRows: <array of size 1>
+AXVisibleRows: <array of size 1>
+AXColumns: <array of size 2>
+AXVisibleColumns: <array of size 2>
+AXVisibleCells: <array of size 2>
+AXColumnHeaderUIElements: <array of size 0>
+AXRowHeaderUIElements: <array of size 0>
+AXHeader: <AXTable>
+AXColumnCount: 2
+AXRowCount: 1
+AXARIAColumnCount: 0
+AXARIARowCount: 0
+AXElementBusy: 0
+
+
+AXRole: AXGroup
+AXSubrole: (null)
+AXRoleDescription: group
+AXChildren: <array of size 1>
+AXHelp: 
+AXParent: <AXGroup>
+AXSize: NSSize: {29, 20}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXGroup>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXGroup>
+AXEndTextMarker: <AXGroup>
+AXVisited: 0
+AXLinkedUIElements: <array of size 0>
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXGroup>
+AXLanguage: 
+AXDOMIdentifier: 
+AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXGroup>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
+AXTitleUIElement: (null)
+AXElementBusy: 0
+
+
+AXRole: AXGroup
+AXSubrole: (null)
+AXRoleDescription: group
+AXChildren: <array of size 1>
+AXHelp: 
+AXParent: <AXGroup>
+AXSize: NSSize: {30, 20}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXGroup>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXGroup>
+AXEndTextMarker: <AXGroup>
+AXVisited: 0
+AXLinkedUIElements: <array of size 0>
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXGroup>
+AXLanguage: 
+AXDOMIdentifier: 
+AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXGroup>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
+AXTitleUIElement: (null)
+AXElementBusy: 0
+
+
+

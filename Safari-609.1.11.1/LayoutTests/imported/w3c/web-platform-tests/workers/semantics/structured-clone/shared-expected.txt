@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 19: ReferenceError: Can't find variable: SharedWorker
+
+FAIL structured clone to shared worker ReferenceError: Can't find variable: SharedWorker
+

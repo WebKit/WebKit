@@ -1,0 +1,6 @@
+Here's to the crazy ones, the misfits, the rebels, the troublemakers, the round pegs in the square holes. The ones who see things differently. They're not fond of rules. You can quote them, disagree with them, glorify or vilify them, but the only thing you can't do is ignore them because they change things.
+Verifies that selection UI is hidden after the editable area becomes hidden, following a selection change. This test requires WebKitTestRunner.
+
+Caret rect after focus: (left = 161, top = 151, width = 2, height = 30)
+Selection rects after select all:
+Caret rect after collapsing: (left = 269, top = 271, width = 2, height = 30)

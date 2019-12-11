@@ -1,0 +1,37 @@
+Strip tabs and newlines according to URL spec: https://url.spec.whatwg.org/#concept-basic-url-parser
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS canonicalize('scheme://username:password@host.name:5000/path?query#fragment') is 'scheme://username:password@host.name:5000/path?query#fragment'
+PASS canonicalize('\tsch\neme\r://username:password@host.name:5000/path?query#fragment') is 'scheme://username:password@host.name:5000/path?query#fragment'
+PASS canonicalize('scheme:\t/\n/username:password@host.name:5000/path?query#fragment') is 'scheme://username:password@host.name:5000/path?query#fragment'
+PASS canonicalize('scheme://\tuser\rname\n:\rpassw\nord\t@host.name:5000/path?query#fragment') is 'scheme://username:password@host.name:5000/path?query#fragment'
+PASS canonicalize('scheme://username:password@\tho\nst\r.\tna\nme\r:5000/path?query#fragment') is 'scheme://username:password@host.name:5000/path?query#fragment'
+PASS canonicalize('scheme://username:password@host.name:\t5\n000\r/path?query#fragment') is 'scheme://username:password@host.name:5000/path?query#fragment'
+PASS canonicalize('scheme://username:password@host.name:5000/\tpa\nth\r?query#fragment') is 'scheme://username:password@host.name:5000/path?query#fragment'
+PASS canonicalize('scheme://username:password@host.name:5000/path?\tqu\nery\r#fragment') is 'scheme://username:password@host.name:5000/path?query#fragment'
+PASS canonicalize('scheme://username:password@host.name:5000/path?query#\tfr\nagment\r') is 'scheme://username:password@host.name:5000/path?query#fragment'
+PASS canonicalize('\tht\ntp\r://www.example.com/') is 'http://www.example.com/'
+PASS canonicalize('\tht\ntps\r://www.example.com/') is 'https://www.example.com/'
+PASS canonicalize('\tfi\nle\r:///var/tmp') is 'file:///var/tmp'
+PASS canonicalize('file://\n/v\tar\r/\ttm\np\r') is 'file:///var/tmp'
+PASS canonicalize('http://\n12\r7\t.0.0.1\t/') is 'http://127.0.0.1/'
+FAIL canonicalize('http://\n[\r200\t1\r:\t5:\n:042:44::0370:7334\r]\t/') should be http://[2001:5::042:44::0370:7334]/. Was http://
+[
+200	1
+:	5:
+:042:44::0370:7334
+]	/.
+PASS canonicalize('http://\tlo\ncalhost\r') is 'http://localhost/'
+PASS canonicalize('\t/\n/\rsch\teme\n/relative\r') is 'file://scheme/relative'
+PASS canonicalize('\t/\npa\rth\t/\nabsolute\r') is 'file:///path/absolute'
+PASS canonicalize('\td\nata\r:image/png;base64,invalidData') is 'data:image/png;base64,invalidData'
+PASS canonicalize('data:\tim\rage/png\n;\tbas\ne64\r,\tinv\nalidData\r') is 'data:image/png;base64,invalidData'
+PASS canonicalize('\tjav\nascript\r:alert(1);') is 'javascript:alert(1);'
+PASS canonicalize('javascript:\tal\rert\n(\n1)\t;\r') is 'javascript:alert(1);'
+PASS canonicalize(relativePathSchemeLessURL) is expectedRelativePathSchemeLessURL
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

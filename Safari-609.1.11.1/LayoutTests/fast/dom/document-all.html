@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<head>
+    <title>document.all</title>
+<body>
+<p>Tests document.all</p>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+
+let validNamedElementTags = ['a', 'applet', 'button', 'embed', 'form', 'frame', 'frameset', 'iframe', 'img', 'input', 'map', 'meta', 'object', 'select', 'textarea'];
+let invalidNamedElementTags = ['div', 'span'];
+let validAnInvalidNamedElementTags = validNamedElementTags.concat(invalidNamedElementTags);
+
+let playground = document.createElement('div');
+document.body.append(playground);
+
+test(function() {
+    assert_equals(document.all[0], document.documentElement);
+    assert_equals(document.all[1], document.head);
+    assert_equals(document.all[2], document.head.firstElementChild);
+}, "document.all's index getter returns all the elements in document order");
+
+test(function() {
+    assert_equals(document.all[document.all.length + 1], undefined);
+}, "document.all's index getter returns undefined for indexes greater than length");
+
+test(function() {
+    assert_equals(document.all[-1], undefined);
+}, "document.all's index getter returns undefined for indexes less than zero");
+
+for (let elementTag of validNamedElementTags) {
+    test(function() {
+        let element = document.createElement(elementTag);
+        element.setAttribute("name", "testName");
+        playground.append(element);
+    
+        assert_equals(document.all.namedItem('testName'), element);
+        assert_equals(document.all['testName'], element);
+        assert_equals(document.all.item('testName'), element);
+        assert_equals(document.all('testName'), element);
+    
+        element.remove();
+    }, "document.all's name attribute accessing works for " + elementTag);
+}
+
+for (let elementTag of invalidNamedElementTags) {
+    test(function() {
+        let element = document.createElement(elementTag);
+        element.setAttribute("name", "testName");
+        playground.append(element);
+    
+        assert_equals(document.all.namedItem('testName'), null);
+        assert_equals(document.all['testName'], undefined);
+        assert_equals(document.all.item('testName'), null);
+        assert_equals(document.all('testName'), null);
+    
+        element.remove();
+    }, "document.all's name attribute accessing doesn't work for " + elementTag);
+}
+
+for (let elementTag of validAnInvalidNamedElementTags) {
+    test(function() {
+        let element = document.createElement(elementTag);
+        element.setAttribute("id", "testId");
+        playground.append(element);
+    
+        assert_equals(document.all.namedItem('testId'), element);
+        assert_equals(document.all['testId'], element);
+        assert_equals(document.all.item('testId'), element);
+        assert_equals(document.all('testId'), element);
+    
+        element.remove();
+    }, "document.all's id attribute accessing works for " + elementTag);
+}
+
+test(function() {
+    let element1 = document.createElement('button');
+    element1.setAttribute("name", "test");
+    playground.append(element1);
+
+    let element2 = document.createElement('span');
+    element2.setAttribute("id", "test");
+    playground.append(element2);
+
+    assert_equals(document.all.namedItem('test').length, 2);
+    assert_equals(document.all['test'].length, 2);
+    assert_equals(document.all.item('test').length, 2);
+    assert_equals(document.all('test').length, 2);
+    assert_class_string(document.all.namedItem('test'), "HTMLCollection");
+    assert_class_string(document.all['test'], "HTMLCollection");
+    assert_class_string(document.all.item('test'), "HTMLCollection");
+    assert_class_string(document.all('test'), "HTMLCollection");
+
+    element1.remove();
+    element2.remove();
+}, "document.all will return a sub-collection if the name/id is found more than once");
+
+test(function() {
+    let element1 = document.createElement('button');
+    element1.setAttribute("name", "test");
+    playground.append(element1);
+
+    let element2 = document.createElement('span');
+    element2.setAttribute("id", "test");
+    playground.append(element2);
+
+    let element3 = document.createElement('span');
+    element3.setAttribute("name", "test");
+    playground.append(element2);
+
+    assert_equals(document.all.namedItem('test').length, 2);
+    assert_equals(document.all['test'].length, 2);
+    assert_equals(document.all.item('test').length, 2);
+    assert_equals(document.all('test').length, 2);
+    assert_equals(document.all.namedItem('test')[0], element1);
+    assert_equals(document.all.namedItem('test')[1], element2);
+    assert_equals(document.all['test'][0], element1);
+    assert_equals(document.all['test'][1], element2);
+    assert_equals(document.all.item('test')[0], element1);
+    assert_equals(document.all.item('test')[1], element2);
+    assert_equals(document.all('test')[0], element1);
+    assert_equals(document.all('test')[1], element2);
+
+    element1.remove();
+    element2.remove();
+    element3.remove();
+}, "document.all will return a sub-collection if the name/id is found more than once, but still adheres to the rules about what tags can have names");
+
+test(function() {
+    let element1 = document.createElement('button');
+    element1.setAttribute("name", "test");
+    playground.append(element1);
+
+    let element2 = document.createElement('span');
+    element2.setAttribute("id", "test");
+    playground.append(element2);
+
+    let collection = document.all.namedItem('test');
+    assert_equals(collection.length, 2);
+
+    let element3 = document.createElement('img');
+    element3.setAttribute("name", "test");
+    playground.append(element3);
+
+    assert_equals(collection.length, 3);
+
+    element1.remove();
+    element2.remove();
+
+    assert_equals(collection.length, 1);
+
+    element3.remove();
+}, "document.all will return a sub-collection if the name/id is found more than once, that is live");
+
+test(function() {
+    assert_throws(new TypeError(), function() { document.all.namedItem() });
+}, "document.all's namedItem function requires passing an argument");
+
+test(function() {
+    assert_equals(document.all.item(), null);
+    assert_equals(document.all(), null);
+}, "document.all's item function and legacy caller functionality allow passing no arguments");
+
+test(function() {
+    let element = document.createElement('button');
+    element.setAttribute("name", "0");
+    playground.append(element);
+
+    assert_equals(document.all.item('0'), document.documentElement);
+    assert_equals(document.all('0'), document.documentElement);
+    assert_equals(document.all.namedItem('0'), element);
+
+    element.remove();
+}, "document.all's item function and legacy caller functionality will try to convert their DOMString argument to an index before name lookup");
+
+playground.remove();
+
+</script>
+</body>

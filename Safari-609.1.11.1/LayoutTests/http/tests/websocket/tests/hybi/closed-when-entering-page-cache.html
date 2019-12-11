@@ -1,0 +1,59 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script>
+description("Test that an open WebSocket does not prevent a page from entering page cache.");
+
+window.jsTestIsAsync = true;
+
+var wasRestoredFromPageCache = false;
+var receivedErrorEvent = false;
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+
+    if (event.persisted) {
+        testPassed("Page did enter and was restored from the page cache");
+        wasRestoredFromPageCache = true;
+    }
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        testFailed("Page did not enter the page cache.");
+        finishJSTest();
+    }
+}, false);
+
+window.addEventListener('load', function() {
+    ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/echo");
+    ws.onerror = function(ev) {
+        receivedErrorEvent = true;
+        testPassed("error event fired");
+        shouldBeTrue("wasRestoredFromPageCache");
+    }
+    ws.onclose = function(ev) {
+        testPassed("close event fired");
+        shouldBeTrue("wasRestoredFromPageCache");
+        shouldBeTrue("receivedErrorEvent");
+        closeEvent = ev;
+        shouldBeFalse("closeEvent.wasClean");
+        shouldBe("closeEvent.code", "1006");
+        finishJSTest();
+    };
+
+    // This needs to happen in a setTimeout because a navigation inside the onload handler would
+    // not create a history entry.
+    setTimeout(function() {
+      // Force a back navigation back to this page.
+      window.location.href = "/navigation/resources/page-cache-helper.html";
+    }, 0);
+}, false);
+
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>

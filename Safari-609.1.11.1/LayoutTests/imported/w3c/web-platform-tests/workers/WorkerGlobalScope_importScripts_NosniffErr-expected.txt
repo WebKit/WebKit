@@ -1,0 +1,3 @@
+
+PASS importScripts throws on 'nosniff' violation 
+

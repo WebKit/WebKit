@@ -1,0 +1,106 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+    <title>Click on volume bar on a MediaDocument does not pause.</title>
+
+    <head>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script src="media-controls.js"></script>
+        <script type="text/javascript">
+            var mediaElement;
+
+            function calculateElementCoordinates(id)
+            {
+                var elementCoordinates;
+
+                try {
+                    elementCoordinates = mediaControlsButtonCoordinates(mediaElement, id);
+                } catch (exception) {
+                    consoleWrite("ERROR: unable to get controls coordinates.");
+                    failTest();
+                }
+
+                var frameBoundingRect = document.querySelector("iframe").getBoundingClientRect();
+                elementCoordinates[0] += frameBoundingRect.left;
+                elementCoordinates[1] += frameBoundingRect.top;
+
+                return elementCoordinates;
+            }
+
+            function clickVolumeSlider()
+            {
+                if (!window.eventSender) {
+                    failTest("ERROR: no event sender.");
+                    return;
+                }
+
+                var muteButtonCoordinates;
+                var volumeSliderCoordinates;
+
+                muteButtonCoordinates = calculateElementCoordinates("mute-button");
+                eventSender.mouseMoveTo(muteButtonCoordinates[0], muteButtonCoordinates[1]);
+
+                // Forcing relayout calculations to say that you are
+                // triggering the volume slider to show up for
+                // controls that work that way.
+                document.body.offsetTop;
+
+                volumeSliderCoordinates = calculateElementCoordinates("volume-slider");
+                eventSender.mouseMoveTo(volumeSliderCoordinates[0], volumeSliderCoordinates[1]);
+                eventSender.mouseDown();
+                eventSender.mouseUp();
+            }
+
+            function finishTest()
+            {
+                testExpected("mediaElement.volume", 1, "!=");
+                testExpected("mediaElement.paused", false);
+
+                endTest();
+            }
+
+            function frameLoaded()
+            {
+                consoleWrite("Video frame loaded.");
+
+                var standaloneMediaDocument = document.getElementById("videoframe").contentDocument;
+                mediaElement = standaloneMediaDocument.querySelector("video");
+                if (!mediaElement) {
+                    failTest("ERROR: Video element was not found in frameLoaded().");
+                    return;
+                }
+
+                internals.suspendAnimations(); // Volumebar can be animated and we would need a timeout to have it shown.
+
+                mediaElement.volume = 1;
+
+                waitForEventAndFail("error");
+                waitForEventOnce('playing', playing);
+
+                mediaElement.pause();
+                handlePromise(mediaElement.play());
+            }
+
+            function playing()
+            {
+                testExpected("mediaElement.volume", 1);
+                testExpected("mediaElement.paused", false);
+
+                waitForEvent('volumechange', finishTest);
+
+                clickVolumeSlider();
+            }
+        </script>
+    </head>
+    <body>
+        <p>Click on volume bar on a MediaDocument does not pause.</p>
+        <iframe id="videoframe" width=380 height=330"></iframe>
+        <script type="text/javascript">
+            onload = function() {
+                var videoframe = document.getElementById("videoframe");
+                videoframe.onload = frameLoaded;
+                videoframe.src = findMediaFile("video", "content/test");
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,8 @@
+This tests that
+
+PASS webArea.description is 'AXDescription: FirstTitle'
+PASS webArea.description is 'AXDescription: SecondTitle'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

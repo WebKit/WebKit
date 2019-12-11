@@ -1,0 +1,93 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+#editor {
+    width: 1px;
+    height: 1px;
+    outline: none;
+    overflow: hidden;
+    opacity: 0;
+}
+
+button {
+    width: 320px;
+    height: 100px;
+}
+</style>
+</head>
+<body>
+<button onclick="editor.focus()">Focus the editor</button>
+<div id="editor" contenteditable autocorrect="off" autocapitalize="off" spellcheck="false"></div>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+jsTestIsAsync = true;
+
+function caretRectToString(rect) {
+    if (!rect.width && !rect.height)
+        return "empty";
+    return `(left=${rect.left}, top=${rect.top}, width=${rect.width}, height=${rect.height})`;
+}
+
+async function checkCaretRect(description)
+{
+    await UIHelper.ensurePresentationUpdate();
+    const rect = await UIHelper.getUICaretViewRect();
+    debug(`${description}, the caret rect is ${caretRectToString(rect)}`);
+}
+
+(async () => {
+    description("Verifies that selection UI is suppressed when the editable root is extremely small. To manually test, "
+        + "tap on the button above and verify that (1) the editable element is focused, and (2) selection handles are "
+        + "not shown.");
+
+    await UIHelper.activateAndWaitForInputSessionAt(160, 50);
+    await checkCaretRect("After focus");
+
+    await UIHelper.zoomToScale(3);
+    await UIHelper.typeCharacter("a");
+    await checkCaretRect("After zooming in");
+    await UIHelper.zoomToScale(1);
+
+    editor.style.width = "100px";
+    editor.style.height = "100px";
+    await UIHelper.typeCharacter("b");
+    await checkCaretRect("After making editor large");
+
+    editor.style.opacity = 1;
+    await UIHelper.typeCharacter("c");
+    await checkCaretRect("After making editor opaque");
+
+    editor.style.width = "1px";
+    editor.style.height = "1px";
+    await UIHelper.typeCharacter("d");
+    await checkCaretRect("After making editor tiny again");
+
+    editor.style.opacity = 0;
+    await UIHelper.typeCharacter("e");
+    await checkCaretRect("After making editor transparent again");
+
+    editor.style.width = "100px";
+    editor.style.height = "100px";
+    await UIHelper.typeCharacter("f");
+    await checkCaretRect("After making editor large again");
+
+    editor.style.opacity = 1;
+    await UIHelper.typeCharacter("g");
+    await checkCaretRect("After making editor opaque again");
+
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

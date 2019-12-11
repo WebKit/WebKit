@@ -1,0 +1,21 @@
+<body>
+<p>This test passes if the module script loads.</p>
+<pre></pre>
+<script crossorigin="use-credentials">
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function done(msg) {
+    document.querySelector("pre").innerHTML = msg;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+// Executed with "omit".
+// https://github.com/tc39/proposal-dynamic-import/blob/master/HTML%20Integration.md
+import("http://localhost:8000/security/resources/cors-script.php?credentials=false").then(
+    function() { done("PASS");},
+    function() { done("FAIL"); });
+</script>

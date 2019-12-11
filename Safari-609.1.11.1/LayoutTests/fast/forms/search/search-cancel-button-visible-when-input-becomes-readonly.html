@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests that the search cancel button renders when the field becomes read only (no change).</p>
+<input type="search" id="search" value="search">
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+var search = document.getElementById("search");
+
+function makeFieldReadOnlyAndNotifyDone()
+{
+    search.readOnly = true;
+    if (window.internals)
+        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+window.setTimeout(makeFieldReadOnlyAndNotifyDone, 0);
+</script>
+</body>
+</html>

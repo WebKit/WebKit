@@ -1,0 +1,5 @@
+This tests tooltip across shadow boundaries. To manually test, hover over two boxes below. You should see tooltips for each.
+
+PASS - Tooltip on a node inside a shadow tree with title on its shadow host ancestor
+PASS - Tooltip on a slotted node with title on its slot
+

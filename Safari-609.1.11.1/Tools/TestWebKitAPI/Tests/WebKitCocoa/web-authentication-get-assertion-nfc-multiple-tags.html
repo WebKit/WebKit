@@ -1,0 +1,16 @@
+<input type="text" id="input">
+<script>
+    if (window.internals) {
+        internals.setMockWebAuthenticationConfiguration({ silentFailure: true, nfc: { multiplePhysicalTags:true } });
+        internals.withUserGesture(() => { input.focus(); });
+    }
+
+    const options = {
+        publicKey: {
+            challenge: new Uint8Array(16),
+            timeout: 100,
+        }
+    };
+
+    navigator.credentials.get(options);
+</script>

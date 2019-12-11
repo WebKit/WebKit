@@ -1,0 +1,41 @@
+<html>
+<head>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/local/fileapi/resources/temp-file-utils.js"></script>
+<script>
+
+const tempFileContent = "TEST";
+const tempFileName = "test.tmp";
+
+function onChange()
+{
+    document.forms[0].submit();
+}
+
+function test()
+{
+    let tempFilePath = createTempFile(tempFileName, tempFileContent);
+
+    let input = document.getElementsByTagName("input")[0];
+    input.onchange = onChange;
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        testRunner.setOpenPanelFiles([tempFilePath]);
+
+        var centerX = input.offsetLeft + input.offsetWidth / 2;
+        var centerY = input.offsetTop + input.offsetHeight / 2;
+        UIHelper.activateAt(centerX, centerY);
+    }
+}
+
+window.onload = test;
+</script>
+</head>
+<body>
+<form enctype="multipart/form-data" method="POST" action="http://localhost:8000/misc/resources/check-test-file.php">
+<input name="data" type="file"></input>
+</form>
+</body>
+</html>

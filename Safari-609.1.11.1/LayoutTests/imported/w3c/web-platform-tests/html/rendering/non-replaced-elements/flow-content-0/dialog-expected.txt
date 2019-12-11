@@ -1,0 +1,10 @@
+
+
+
+FAIL Closed dialog in width: 540px iframe assert_equals: display expected "none" but got "inline"
+FAIL Open dialog in width: 540px iframe assert_equals: display expected "block" but got "inline"
+FAIL Modal dialog in width: 540px iframe assert_equals: display expected "block" but got "inline"
+FAIL Closed dialog in width: 538px iframe assert_equals: display expected "none" but got "inline"
+FAIL Open dialog in width: 538px iframe assert_equals: display expected "block" but got "inline"
+FAIL Modal dialog in width: 538px iframe assert_equals: display expected "block" but got "inline"
+

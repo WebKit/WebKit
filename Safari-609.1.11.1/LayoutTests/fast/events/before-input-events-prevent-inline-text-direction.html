@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<meta charset="utf8">
+<html>
+<head>
+    <script src="../../resources/dump-as-markup.js"></script>
+    <style>
+        #editor {
+            border: 1px blue dashed;
+        }
+    </style>
+    <script>
+        const dumpMarkupOnInput = e => Markup.dump(e.target, `${e.type}, ${e.inputType}, ${e.data} on #${e.target.id}`);
+
+        Markup.description("Verifies that changing the text writing direction fires input events which may be prevented. To manually test, select 'מקור' in the top contenteditable and change the selection direction to 'left to right'; then, select the same word in the prevented contenteditable and change selection direction to 'left to right'. Check that the bottom editable area's contents did not change.");
+        Markup.noAutoDump();
+
+        addEventListener("load", () => {
+            const notPrevented = document.querySelector("#notPrevented");
+            const prevented = document.querySelector("#prevented");
+
+            notPrevented.addEventListener("input", dumpMarkupOnInput);
+            notPrevented.addEventListener("beforeinput", dumpMarkupOnInput);
+            prevented.addEventListener("input", dumpMarkupOnInput);
+            prevented.addEventListener("beforeinput", event => {
+                dumpMarkupOnInput(event);
+                event.preventDefault();
+            });
+
+            getSelection().setBaseAndExtent(notPrevented.firstChild, 6, notPrevented.firstChild, 10);
+            if (!window.testRunner)
+                return;
+            testRunner.execCommand("MakeTextWritingDirectionLeftToRight");
+            getSelection().setBaseAndExtent(notPrevented.lastChild, 11, notPrevented.lastChild, 16);
+            testRunner.execCommand("MakeTextWritingDirectionRightToLeft");
+
+            getSelection().setBaseAndExtent(prevented.firstChild, 6, prevented.firstChild, 10);
+            testRunner.execCommand("MakeTextWritingDirectionLeftToRight");
+            getSelection().setBaseAndExtent(prevented.lastChild, 21, prevented.lastChild, 26);
+            testRunner.execCommand("MakeTextWritingDirectionRightToLeft");
+
+            Markup.notifyDone();
+        });
+    </script>
+</head>
+<body>
+    <div contenteditable id="notPrevented">Hello מקור השם עברית world</div>
+    <div contenteditable id="prevented">Hello מקור השם עברית world</div>
+</body>
+</html>

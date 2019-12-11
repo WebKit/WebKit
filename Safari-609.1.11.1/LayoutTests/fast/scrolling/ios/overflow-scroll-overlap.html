@@ -1,0 +1,149 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../resources/overflow-scroll-overlap.js"></script>
+<style>
+.case {
+    width: 150px;
+    height: 150px;
+    display: inline-block;
+    position: relative;
+}
+.scrollcontent {
+    width: 500px;
+    height: 500px;
+    background: green;
+}
+
+.overflowscroll {
+    overflow: scroll;
+    height: 100px;
+    width: 100px;
+    position: absolute;
+    border: 2px solid black;
+}
+.overlapping {
+    position:absolute;
+    left: 25px;
+    top: 25px;
+    width: 100px;
+    height: 100px;
+    background: red;
+}
+.clip {
+    position:absolute;
+    width: 100px;
+    height: 100px;
+    overflow:hidden;
+}
+.large {
+    width: 3000px;
+    height: 150px;
+}
+#log {
+    position:relative;
+    white-space: pre;
+}
+</style>
+</head>
+<body onload="runTest()">
+<p>
+Test that overlapped, nested and clipped scrollable areas are correctly targeted.
+</p>
+<div class="case">
+    <div class="overflowscroll target" style="z-index:1">
+        <div class="scrollcontent"></div>
+    </div>
+    <div class="overlapping"></div>
+</div>
+
+<div class="case">
+    <div class="overflowscroll target">
+        <div class="scrollcontent"></div>
+    </div>
+    <div class="overlapping" style="z-index:1"></div>
+</div>
+
+<div class="case ">
+    <div class="overflowscroll target" style="z-index:1">
+        <div class="scrollcontent"></div>
+    </div>
+    <div class="overflowscroll" style="left:20px; top:20px; z-index:0;">
+        <div class="scrollcontent"></div>
+    </div>
+</div>
+
+<div class="case">
+    <div class="overflowscroll target">
+        <div class="scrollcontent"></div>
+    </div>
+    <div class="overflowscroll" style="left:20px; top:20px; z-index:1;">
+        <div class="scrollcontent"></div>
+    </div>
+</div>
+
+<div class="case">
+    <div class="overflowscroll target">
+        <div class="scrollcontent" style="z-index:1"></div>
+        <div class="overflowscroll" style="left:20px; top:20px;">
+            <div class="scrollcontent"></div>
+        </div>
+    </div>
+</div>
+
+<div class="case">
+    <div class="overflowscroll target">
+        <div class="scrollcontent" style="z-index:1"></div>
+        <div class="overflowscroll" style="left:60px; top:60px;">
+            <div class="scrollcontent"></div>
+        </div>
+    </div>
+</div>
+
+<div class="case">
+    <div class="overflowscroll target">
+        <div class="scrollcontent large" style="z-index:1"></div>
+        <div class="overflowscroll" style="left:20px; top:20px;">
+            <div class="scrollcontent large"></div>
+        </div>
+    </div>
+</div>
+
+<div class="case">
+    <div class="overflowscroll target">
+        <div class="scrollcontent large" style="z-index:1"></div>
+        <div class="overflowscroll" style="left:60px; top:60px;">
+            <div class="scrollcontent large"></div>
+        </div>
+    </div>
+</div>
+
+<div class="case">
+    <div class="clip" style="left:20px; top:20px;">
+        <div class="overflowscroll target" style="left:-20px; top:-20px;">
+            <div class="scrollcontent"></div>
+        </div>
+    </div>
+</div>
+
+<div class="case">
+    <div class="clip" style="left:60px; top:60px;">
+        <div class="overflowscroll target" style="left:-60px; top:-60px;">
+            <div class="scrollcontent"></div>
+        </div>
+    </div>
+</div>
+
+<div class="case">
+    <div class="overflowscroll target">
+        <div class="scrollcontent"></div>
+    </div>
+    <div class="overlapping large" style="z-index:1"></div>
+</div>
+
+<div id=log></div>
+
+</body>
+</html>

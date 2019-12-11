@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that animated SVG images are properly paused when loaded in a new iframe inside a hidden page");
+jsTestIsAsync = true;
+
+function frameLoadedInBackground()
+{
+    testImage = frame.contentDocument.getElementById("testImage");
+    shouldBecomeEqual("internals.isImageAnimating(testImage)", "false", function() {
+        document.onvisibilitychange = null;
+        debug("Setting page visibility to visible");
+        if (window.testRunner)
+            testRunner.setPageVisibility('visible');
+
+        shouldBecomeEqual("internals.isImageAnimating(testImage)", "true", finishJSTest);
+    });
+}
+
+window.onload = function() {
+    document.onvisibilitychange = function() {
+        setTimeout(function() {
+            shouldBeTrue("document.hidden");
+            frame = document.createElement("iframe");
+            frame.src = "resources/iframe-with-animated-svg-image.html";
+            frame.onload = frameLoadedInBackground;
+            document.body.appendChild(frame);
+        }, 30);
+    };
+
+    debug("Setting page visibility to hidden");
+    if (window.testRunner)
+        testRunner.setPageVisibility('hidden');
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Ping</title>
+<script src="resources/utilities.js"></script>
+<script>
+
+var testCalled = false;
+
+function test() {
+    if (!testCalled) {
+        if (window.testRunner && window.internals) {
+            testRunner.setStatisticsShouldDowngradeReferrer(false, function () { });
+            testRunner.dumpAsText();
+            internals.settings.setHyperlinkAuditingEnabled(true);
+            testRunner.waitUntilDone();
+        }
+        testCalled = true;
+        return;
+    }
+
+    clickElement(document.getElementById("a"));
+}
+
+</script>
+</head>
+<body onload="test();">
+<img src="../resources/delete-ping.php" onload="test();" onerror="test();"></img>
+<a id="a" href="../resources/check-ping.php" ping="http://localhost:8000/navigation/resources/save-Ping.php">Navigate and send ping</a>
+</body></html>

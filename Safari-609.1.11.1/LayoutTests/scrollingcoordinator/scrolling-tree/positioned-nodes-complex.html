@@ -1,0 +1,170 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+    <head>
+        <title>
+            Test scrolling tree stucture with various positioning and clipping configurations
+        </title>
+        <style>
+        .container {
+            position: relative;
+            height: 250px;
+            width: 250px;
+            transform: translateZ(0);
+            border: 1px solid black;
+            margin: 10px;
+            float: left;
+        }
+
+        .scroller {
+            margin: 10px;
+            background-color: silver;
+            border: 1px solid black;
+            padding: 10px;
+            width: 200px;
+            height: 150px;
+            overflow: scroll;
+        }
+
+        .stacking-containing {
+            position: relative;
+            z-index: 0;
+        }
+
+        .stacking {
+            opacity: 0.75;
+        }
+
+        .containing {
+            position: relative;
+        }
+
+        .box {
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+        }
+
+        .absolute {
+            position: absolute;
+            left: 100px;
+            transform: translateZ(0);
+        }
+
+        .composited {
+            transform: translateZ(0);
+            background-color: orange;
+        }
+
+        .scrolling-content {
+            height: 1000px;
+        }
+
+        .sharing-preventer {
+            transform: translateZ(0);
+            margin: 10px;
+            width: 10px;
+            height: 10px;
+        }
+        </style>
+        <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function doTest() {
+            if (window.internals)
+                document.getElementById('scrollingTree').innerText = window.internals.scrollingStateTreeAsText() + "\n";
+        }
+
+        window.addEventListener('load', doTest, false);
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <!-- containing block outside overflow, composited ancestor inside -->
+            <div class="scroller">
+                <div class="scrolling-content">
+                    Scrolling content
+                    <div class="sharing-preventer"></div>
+                    <div class="stacking">
+                        Stacking
+                        <div class="sharing-preventer"></div>
+                        <div class="absolute box"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <!-- composited outside overflow, containing block inside. -->
+            <div class="scroller">
+                <div class="scrolling-content">
+                    Scrolling content
+                    <div class="sharing-preventer"></div>
+                    <div class="containing">
+                        Containing
+                        <div class="sharing-preventer"></div>
+                        <div class="absolute box"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <!-- composited outside overflow, containing block outside. -->
+            <div class="scroller">
+                <div class="scrolling-content">
+                    Scrolling content
+                    <div class="sharing-preventer"></div>
+                    <div class="absolute box"></div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <!-- containing block outside, composited ancestor outside. -->
+            <div class="containing">
+                Containing
+                <div class="stacking">
+                    Stacking
+                    <div class="scroller">
+                        <div class="scrolling-content">
+                            Scrolling content
+                            <div class="sharing-preventer"></div>
+                            <div class="absolute box"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="scroller">
+                <div class="scrolling-content">
+                    Scrolling content
+                    <div class="sharing-preventer"></div>
+                    <div class="stacking">
+                        Stacking
+                        <div class="containing">
+                            Containing
+                            <div class="sharing-preventer"></div>
+                            <div class="absolute box"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="scroller">
+                <div class="scrolling-content">
+                    Scrolling content
+                    <div class="sharing-preventer"></div>
+                    <div class="containing">
+                        Containing
+                        <div class="stacking">
+                            Stacking
+                            <div class="sharing-preventer"></div>
+                            <div class="absolute box"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <pre id="scrollingTree"></pre>
+    </body>
+</html>

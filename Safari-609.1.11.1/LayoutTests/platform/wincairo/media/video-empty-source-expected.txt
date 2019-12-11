@@ -1,0 +1,40 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 409x19
+          text run at (0,0) width 409: "Slider drawing with no source. The controls should render correctly."
+      RenderBlock (anonymous) at (0,36) size 784x152
+        RenderText {#text} at (0,0) size 0x0
+layer at (8,44) size 302x152
+  RenderVideo {VIDEO} at (0,0) size 302x152 [border: (1px solid #000000)]
+layer at (9,45) size 300x150
+  RenderFlexibleBox {DIV} at (1,1) size 300x150
+layer at (9,150) size 300x45
+  RenderFlexibleBox {DIV} at (0,105) size 300x45
+layer at (9,150) size 300x45
+  RenderBlock (positioned) {DIV} at (0,0) size 300x45
+layer at (9,150) size 300x45
+  RenderBlock (positioned) {DIV} at (0,0) size 300x45 [bgcolor=#1E1E1E73]
+layer at (9,150) size 300x45
+  RenderBlock (positioned) {DIV} at (0,0) size 300x45 [bgcolor=#292929]
+layer at (17,175) size 12x15
+  RenderButton {BUTTON} at (8,25) size 12x15 [color=#FFFFFF]
+layer at (45,175) size 16x15
+  RenderButton {BUTTON} at (36,24) size 16x16 [color=#FFFFFF]
+layer at (69,170) size 101x25
+  RenderBlock {DIV} at (60,20) size 101x25 [color=#FFFFFF]
+    RenderText {#text} at (12,4) size 29x16
+      text run at (12,4) width 29: "Error"
+layer at (170,174) size 77x17
+  RenderFlexibleBox {DIV} at (161,24) size 77x17
+layer at (172,174) size 73x17
+  RenderFlexibleBox {DIV} at (2,0) size 73x17
+layer at (255,170) size 14x25
+  RenderFlexibleBox {DIV} at (246,20) size 14x25
+layer at (255,175) size 14x15
+  RenderButton {BUTTON} at (0,5) size 14x15 [color=#FFFFFF]
+layer at (285,175) size 16x15
+  RenderButton {BUTTON} at (276,25) size 16x15 [color=#FFFFFF]

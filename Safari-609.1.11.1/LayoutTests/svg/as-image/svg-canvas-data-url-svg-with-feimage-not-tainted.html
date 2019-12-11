@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <canvas></canvas>
+    <script type="text/javascript">
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        jsTestIsAsync = true;
+        description("Canvas should not be tainted if a data url image with a data url &lt;feimage&gt; which has a &lt;foreignObject&gt; is drawn into the canvas.");
+
+        var data = "data:image/svg+xml;charset=utf-8,"
+                + '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100px" height="100px">'
+                + '    <defs>'
+                + '        <filter id="image">'
+                + '            <feImage xlink:href="data:image/svg+xml;charset=utf-8;base64,'
+                + '                PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDBweCIgaGVpZ2h0PSIxMDBweCI+DQog'
+                + '                ICAgPGZvcmVpZ25PYmplY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSI+DQogICAgICAgIDxkaXYgeG1sbnM9Imh0dHA6'
+                + '                Ly93d3cudzMub3JnLzE5OTkveGh0bWwiIHN0eWxlPSJ3aWR0aDogMTAwJTsgaGVpZ2h0OiAxMDAlOyBiYWNrZ3JvdW5kLWNv'
+                + '                bG9yOiBncmVlbjsiPjwvZGl2Pg0KICAgIDwvZm9yZWlnbk9iamVjdD4nDQo8L3N2Zz4NCg0K">'
+                + '            </feImage>'
+                + '        </filter>'
+                + '    </defs>'
+                + '    <rect width="100%" height="100%" style="filter:url(#image);"/>'
+                + '</svg>';
+
+        var svg = new Image();
+        svg.onload = function() {
+            var canvas = document.querySelector('canvas');
+            window.ctx = canvas.getContext('2d');
+
+            // Wait for the data uri in the image to load.
+            setTimeout(function() {
+                ctx.drawImage(svg, 0, 0);
+                shouldNotThrow("window.ctx.getImageData(0, 0, 1, 1)");
+                finishJSTest();
+            }, 50);
+        }
+        svg.src = data;
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

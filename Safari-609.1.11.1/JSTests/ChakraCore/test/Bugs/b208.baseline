@@ -1,0 +1,2 @@
+testMin = SIMD.Float32x4(NaN, NaN, NaN, NaN)
+testMax = SIMD.Float32x4(NaN, NaN, NaN, NaN)

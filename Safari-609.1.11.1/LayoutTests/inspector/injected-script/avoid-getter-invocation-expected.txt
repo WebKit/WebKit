@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 11: [object Object]
+CONSOLE MESSAGE: line 12: [object Object]
+CONSOLE MESSAGE: line 13: [object Object]
+Test that certain InjectedScriptSource operations do not invoke user getters.
+
+
+== Running test suite: InjectedScript.GetterInvocation.Preview
+-- Running test case: InjectedScript.GetterInvocation.Preview
+

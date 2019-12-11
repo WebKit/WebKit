@@ -1,0 +1,54 @@
+table {
+    font-size: small;
+}
+
+table, td {
+    border-collapse: collapse;
+    border: solid 1px #ccc;
+}
+
+td {
+    padding: 5px;
+}
+
+td pre {
+    max-height: 30em;
+    overflow: scroll;
+    margin: 0;
+    padding: 0;
+}
+
+tbody.odd {
+    background: #f6f6f6;
+}
+
+.action-field, .notice {
+    min-width: 50ex;
+    display: inline-block;
+    margin: 1em 0px;
+    margin-right: 1em;
+    border: solid 1px #ccc;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.action-field h2 {
+    font-size: 1em;
+    font-weight: normal;
+    padding: 0;
+    margin: 0 0 1em 0;
+}
+
+form {
+    display: inline;
+}
+
+label {
+    display: inline-block;
+}
+
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    word-break: break-all;
+}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../../resources/js-test-pre.js"></script>
+<script src="resources/helpers.js"></script>
+<style>* { margin: 0; padding: 0; }</style>
+</head>
+<body>
+<div id="box" style="background:blue;width:100px;height:100px;position:absolute;top:100px;left:100px"></div>
+<p id="description"></p>
+<div id="console"></div>
+<!-- Filler to allow scrolling -->
+<div style="width:1500px;height:1500px;"></div>
+<script>
+description("This tests Element.getBoundingClientRects and getClientRects positions when unscaled, scaled, and panned.");
+
+const scale = 2;
+const panX = 10;
+const panY = 10;
+
+var box = document.getElementById('box');
+
+debug('unscaled');
+setExpectedClientRectValues(100, 200, 100, 200, 100, 100);
+verifyClientRect(box.getBoundingClientRect());
+verifyClientRect(box.getClientRects()[0]);
+
+debug('');
+debug('scaled and panned');
+setInitialScaleAndPanBy(scale, panX, panY);
+setExpectedClientRectValues(100-panX, 200-panX, 100-panY, 200-panY, 100, 100);
+verifyClientRect(box.getBoundingClientRect());
+verifyClientRect(box.getClientRects()[0]);
+
+var successfullyParsed = true;
+endTest();
+</script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+CONSOLE MESSAGE: line 21: video loaded
+CONSOLE MESSAGE: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/text-track-blocked.html from loading a resource from http://127.0.0.1:8000/media-resources/track/captions-webvtt/captions-fast.vtt
+CONSOLE MESSAGE: line 14: vttError
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 262x18
+        text run at (0,0) width 262: "The following text track should not load."
+      RenderBR {BR} at (261,14) size 1x0
+      RenderText {#text} at (0,0) size 0x0
+layer at (8,26) size 320x240
+  RenderVideo {VIDEO} at (0,18) size 320x240
+layer at (8,26) size 320x240
+  RenderBlock (relative positioned) {DIV} at (0,0) size 320x240
+layer at (8,26) size 320x240
+  RenderBlock (positioned) {DIV} at (0,0) size 320x240

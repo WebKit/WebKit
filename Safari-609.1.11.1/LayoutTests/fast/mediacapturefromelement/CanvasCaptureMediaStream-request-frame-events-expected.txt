@@ -1,0 +1,10 @@
+Exercises the requestFrame() call on captureStream(0).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Got a stream from canvas.
+PASS stream.getVideoTracks().length is 1
+PASS track.readyState is "live"
+PASS Plugged stream to video tag.
+ 

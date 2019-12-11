@@ -1,0 +1,9 @@
+Tests what happens when you present a CSE opportunity across an out-of-bounds string access.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Passed some tests silently.
+
+TEST COMPLETE
+

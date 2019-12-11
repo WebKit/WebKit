@@ -1,0 +1,91 @@
+layer at (0,0) size 785x759
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x759
+  RenderBlock {HTML} at (0,0) size 785x759
+    RenderBody {BODY} at (8,8) size 769x743 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 769x18
+        RenderText {#text} at (0,0) size 363x18
+          text run at (0,0) width 363: "The style declarations which apply to the text below are:"
+      RenderBlock {PRE} at (0,34) size 769x90
+        RenderText {#text} at (0,0) size 430x90
+          text run at (0,0) width 422: ".zero {background-color: silver; border-top-width: 0;}"
+          text run at (0,15) width 398: ".one {border-top-width: 25px; border-style: solid;}"
+          text run at (0,30) width 406: ".two {border-top-width: thick; border-style: solid;}"
+          text run at (0,45) width 430: ".three {border-top-width: medium; border-style: solid;}"
+          text run at (0,60) width 406: ".four {border-top-width: thin; border-style: solid;}"
+          text run at (0,75) width 242: ".five {border-top-width: 25px;}"
+      RenderBlock {HR} at (0,137) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,155) size 769x18
+        RenderText {#text} at (0,0) size 160x18
+          text run at (0,0) width 160: "(These will only work if "
+        RenderInline {CODE} at (0,0) size 95x15
+          RenderText {#text} at (159,2) size 95x15
+            text run at (159,2) width 95: "border-style"
+        RenderText {#text} at (253,0) size 92x18
+          text run at (253,0) width 92: " is supported.)"
+      RenderBlock {P} at (0,189) size 769x18 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 208x18
+          text run at (0,0) width 208: "This element has a class of zero."
+      RenderBlock {P} at (0,223) size 769x46 [border: (25px solid #000000) (3px solid #000000)]
+        RenderText {#text} at (3,25) size 383x18
+          text run at (3,25) width 383: "This paragraph should have a top border width of 25 pixels."
+      RenderBlock {P} at (0,285) size 769x26 [border: (5px solid #000000) (3px solid #000000)]
+        RenderText {#text} at (3,5) size 340x18
+          text run at (3,5) width 340: "This paragraph should have a thick top border width."
+      RenderBlock {P} at (0,327) size 769x24 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 360x18
+          text run at (3,3) width 360: "This paragraph should have a medium top border width."
+      RenderBlock {P} at (0,367) size 769x22 [border: (1px solid #000000) (3px solid #000000)]
+        RenderText {#text} at (3,1) size 332x18
+          text run at (3,1) width 332: "This paragraph should have a thin top border width."
+      RenderBlock {P} at (0,405) size 769x18
+        RenderText {#text} at (0,0) size 534x18
+          text run at (0,0) width 534: "This paragraph should have no border and no extra \"padding\" on its top side, as no "
+        RenderInline {CODE} at (0,0) size 95x15
+          RenderText {#text} at (533,2) size 95x15
+            text run at (533,2) width 95: "border-style"
+        RenderText {#text} at (627,0) size 55x18
+          text run at (627,0) width 55: " was set."
+      RenderTable {TABLE} at (0,439) size 704x304 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 702x302
+          RenderTableRow {TR} at (0,0) size 702x26
+            RenderTableCell {TD} at (0,0) size 702x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 161x18
+                RenderText {#text} at (4,4) size 161x18
+                  text run at (4,4) width 161: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,26) size 702x276
+            RenderTableCell {TD} at (0,151) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x18
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,26) size 690x276 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 682x18
+                RenderText {#text} at (0,0) size 160x18
+                  text run at (0,0) width 160: "(These will only work if "
+                RenderInline {CODE} at (0,0) size 95x15
+                  RenderText {#text} at (159,2) size 95x15
+                    text run at (159,2) width 95: "border-style"
+                RenderText {#text} at (253,0) size 92x18
+                  text run at (253,0) width 92: " is supported.)"
+              RenderBlock {P} at (4,38) size 682x18 [bgcolor=#C0C0C0]
+                RenderText {#text} at (0,0) size 208x18
+                  text run at (0,0) width 208: "This element has a class of zero."
+              RenderBlock {P} at (4,72) size 682x46 [border: (25px solid #000000) (3px solid #000000)]
+                RenderText {#text} at (3,25) size 383x18
+                  text run at (3,25) width 383: "This paragraph should have a top border width of 25 pixels."
+              RenderBlock {P} at (4,134) size 682x26 [border: (5px solid #000000) (3px solid #000000)]
+                RenderText {#text} at (3,5) size 340x18
+                  text run at (3,5) width 340: "This paragraph should have a thick top border width."
+              RenderBlock {P} at (4,176) size 682x24 [border: (3px solid #000000)]
+                RenderText {#text} at (3,3) size 360x18
+                  text run at (3,3) width 360: "This paragraph should have a medium top border width."
+              RenderBlock {P} at (4,216) size 682x22 [border: (1px solid #000000) (3px solid #000000)]
+                RenderText {#text} at (3,1) size 332x18
+                  text run at (3,1) width 332: "This paragraph should have a thin top border width."
+              RenderBlock {P} at (4,254) size 682x18
+                RenderText {#text} at (0,0) size 534x18
+                  text run at (0,0) width 534: "This paragraph should have no border and no extra \"padding\" on its top side, as no "
+                RenderInline {CODE} at (0,0) size 95x15
+                  RenderText {#text} at (533,2) size 95x15
+                    text run at (533,2) width 95: "border-style"
+                RenderText {#text} at (627,0) size 55x18
+                  text run at (627,0) width 55: " was set."

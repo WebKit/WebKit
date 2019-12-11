@@ -1,0 +1,29 @@
+This test verifies that encodings that used to be supported by TEC on macOS are still supported.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+The following encoding names are supported by WebKit cross-platform, but some may be removed at a later time.
+PASS new TextDecoder("iso-8859-10").encoding is "iso-8859-10"
+PASS new TextDecoder("iso8859101992").encoding is "iso-8859-10"
+PASS new TextDecoder("isoir157").encoding is "iso-8859-10"
+PASS new TextDecoder("csisolatin6").encoding is "iso-8859-10"
+PASS new TextDecoder("latin6").encoding is "iso-8859-10"
+PASS new TextDecoder("l6").encoding is "iso-8859-10"
+PASS new TextDecoder("iso-8859-11").encoding is "windows-874"
+PASS new TextDecoder("iso-8859-14").encoding is "iso-8859-14"
+PASS new TextDecoder("isoceltic").encoding is "iso-8859-14"
+PASS new TextDecoder("iso8859141998").encoding is "iso-8859-14"
+PASS new TextDecoder("isoir199").encoding is "iso-8859-14"
+PASS new TextDecoder("latin8").encoding is "iso-8859-14"
+PASS new TextDecoder("l8").encoding is "iso-8859-14"
+PASS new TextDecoder("iso-8859-16").encoding is "iso-8859-16"
+PASS new TextDecoder("isoir226").encoding is "iso-8859-16"
+PASS new TextDecoder("iso8859162001").encoding is "iso-8859-16"
+PASS new TextDecoder("l10").encoding is "iso-8859-16"
+PASS new TextDecoder("latin10").encoding is "iso-8859-16"
+PASS new TextDecoder("koi8-u").encoding is "koi8-u"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

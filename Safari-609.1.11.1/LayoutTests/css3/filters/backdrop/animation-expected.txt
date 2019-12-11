@@ -1,0 +1,11 @@
+        
+PASS - "webkitBackdropFilter" property for "grayscale-box" element at 1s saw something close to: grayscale(0.5)
+PASS - "webkitBackdropFilter" property for "sepia-box" element at 1s saw something close to: sepia(0.5)
+PASS - "webkitBackdropFilter" property for "saturate-box" element at 1s saw something close to: saturate(0.5)
+PASS - "webkitBackdropFilter" property for "huerotate-box" element at 1s saw something close to: hue-rotate(90deg)
+PASS - "webkitBackdropFilter" property for "invert-box" element at 1s saw something close to: invert(0.5)
+PASS - "webkitBackdropFilter" property for "opacity-box" element at 1s saw something close to: opacity(0.5)
+PASS - "webkitBackdropFilter" property for "brightness-box" element at 1s saw something close to: brightness(0.5)
+PASS - "webkitBackdropFilter" property for "contrast-box" element at 1s saw something close to: contrast(0.5)
+PASS - "webkitBackdropFilter" property for "blur-box" element at 1s saw something close to: blur(10px)
+

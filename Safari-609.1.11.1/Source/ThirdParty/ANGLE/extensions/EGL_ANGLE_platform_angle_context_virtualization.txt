@@ -1,0 +1,80 @@
+Name
+
+    ANGLE_platform_angle_context_virtualization
+
+Name Strings
+
+    EGL_ANGLE_platform_angle_context_virtualization
+
+Contributors
+
+    Geoff Lang, Google
+
+Contacts
+
+    Geoff Lang, Google (geofflang 'at' chromium 'dot' org)
+
+Status
+
+    Draft
+
+Version
+
+    Version 1, 2018-06-11
+
+Number
+
+    EGL Extension XXX
+
+Extension Type
+
+    EGL client extension
+
+Dependencies
+
+    Requires ANGLE_platform_angle.
+
+Overview
+
+    This extension allows the client to request a Display that internally
+    virtualizes contexts. Requesting virtualized contexts may impact
+    performance or ability to render from multiple threads simultaneously.
+
+New Types
+
+    None
+
+New Procedures and Functions
+
+    None
+
+New Tokens
+
+    Accepted as an attribute name in the <attrib_list> argument of
+    eglGetPlatformDisplayEXT:
+
+        EGL_PLATFORM_ANGLE_CONTEXT_VIRTUALIZATION_ANGLE    0x3481
+
+Additions to the EGL Specification
+
+    None.
+
+New Behavior
+
+    To request a display that internally utilizes context virtualization,
+    use the attribute EGL_PLATFORM_ANGLE_CONTEXT_VIRTUALIZATION_ANGLE.
+    EGL_TRUE enables context virtualization and EGL false disables it.
+    If it is set to EGL_DONT_CARE, the default setting depends on the
+    implementation. Any value other than these will result in an error.
+    The default value for EGL_PLATFORM_ANGLE_CONTEXT_VIRTUALIZATION_ANGLE
+    is EGL_DONT_CARE. Display creation may fail if hardware limitations
+    prohibit the requested setting.
+
+Issues
+
+    None
+
+Revision History
+
+    Version 1, 2018-06-11 (Geoff Lang)
+      - Initial draft

@@ -1,0 +1,21 @@
+  
+Test play() when concurrent playback not allowed.
+
+RUN(internals.setMediaSessionRestrictions('videoaudio', 'ConcurrentPlaybackNotPermitted'))
+
+EVENT(canplaythrough)
+EVENT(canplaythrough)
+
+** Play first video...
+RUN(videos[0].play())
+EVENT(playing)
+
+** Starting the second video, the first one should pause.
+RUN(videos[1].play())
+EVENT(playing)
+
+EXPECTED (videos[0].paused == 'true') OK
+EXPECTED (videos[1].paused == 'false') OK
+
+END OF TEST
+

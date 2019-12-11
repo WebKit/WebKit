@@ -1,0 +1,12 @@
+This test verifies that the time picker is presented and can be used to choose a time. To manually run the test, tap the time input to show the time picker, and then select '9:41 am'.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Handled change event
+PASS Handled blur event
+PASS time.value is '09:41'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

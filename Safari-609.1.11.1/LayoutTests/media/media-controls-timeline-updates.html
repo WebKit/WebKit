@@ -1,0 +1,57 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script src=media-controls.js></script>
+        <script>
+            var video;
+
+            function init()
+            {
+                findMediaElement();
+                video.src = findMediaFile("video", "content/test");
+
+                waitForEvent("canplaythrough", canplaythrough);
+                waitForEvent("playing", function() { setTimeout(function () {  }, 200); });
+                waitForEvent("pause", paused);
+                waitForEventAndFail("error");
+            }
+
+            function timeLineValue()
+            {
+                var timeline = mediaControlsElement(internals.shadowRoot(video).firstChild.firstChild, '-webkit-media-controls-timeline');
+                if (!timeline)
+                    throw "Failed to find -webkit-media-controls-timeline";
+
+                return timeline.value;
+            }
+
+            function paused()
+            {
+                test("video.currentTime > 0");
+                test("timeLineValue() > 0");
+
+                endTest();
+            }
+
+            function canplaythrough()
+            {
+                if (!window.testRunner)
+                    return;
+
+                testExpected("timeLineValue()", 0);
+
+                video.addEventListener("seeked", function() {
+                    video.play();
+                });
+                video.fastSeek(video.duration - 1);
+            }
+        </script>
+    </head>
+    <body onload="init()">
+        <p>This tests that media controls timeline updates during playback.</p>
+        <p>This test only runs in DRT!</p>
+        <video controls></video>
+    </body>
+</html>

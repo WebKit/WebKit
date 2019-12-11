@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .box {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 400px;
+            height: 400px;
+            background-image: url('../resources/alpha-blocks.png');
+            background-size: 400px 400px;
+        }
+        
+        #box.moved {
+            background-position: -100px -100px;
+            top: 110px;
+            left: 110px;
+        }
+        
+        .composited {
+            -webkit-transform: translateZ(0);
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function test()
+        {
+            window.setTimeout(function() {
+                document.body.offsetTop;
+                if (window.internals)
+                    window.internals.startTrackingRepaints();
+
+                document.getElementById('box').classList.add('moved');
+
+                if (window.internals)
+                    document.getElementById('repaintRects').textContent = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        }
+        window.addEventListener('load', test, false);
+    </script>
+</head>
+<body>
+
+    <div id="box" class="composited box"></div>
+    <pre id="repaintRects"></pre>
+</body>
+</html>

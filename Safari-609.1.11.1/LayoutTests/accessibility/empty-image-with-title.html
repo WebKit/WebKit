@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body id="body">
+
+<img id="image1" src="foo.gif" title="baz" width="100" height="100">
+<div id="console"></div>
+
+<script>
+
+    description("This tests that if a missing image has a title attribute, it still appears in the AX hierarchy.");
+
+    if (window.accessibilityController) {
+
+          var image1 = accessibilityController.accessibleElementById("image1");
+          debug("image1.role is " + image1.role);
+
+          var accNameWithSource = platformValueForW3CName(image1, true);
+          debug("image1's accessible name with source is " + accNameWithSource);
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

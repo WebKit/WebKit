@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+description("Tests navigating a window which has an opener cycle.");
+jsTestIsAsync = true;
+if (window.testRunner)
+    testRunner.setCanOpenWindows();
+
+function tryNavigateFoo()
+{
+    open("about:blank", "foo");
+    finishJSTest();
+}
+
+onload = function() {
+    w = window.open("resources/window-open-opener-cycle2.html", "foo");
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests modifying selection after triggering a style change. Selection should be updated immediately.
+You should see the "hello" selected below as "world" turns red.</p>
+<input type="text" value="hello" autofocus/>
+<input type="text" value="world" style="color: red" />
+<style> * {outline: none} </style>
+<script>
+document.querySelector('input').select();
+</script>
+</body>
+</html>

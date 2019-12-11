@@ -1,0 +1,20 @@
+This tests removing empty lines at the end of an textarea.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+textarea.focus();
+textarea.selectionStart = textarea.selectionEnd = textarea.value.length
+PASS textarea.value is "hello\n\n"
+PASS textarea.selectionStart is 7
+PASS textarea.selectionEnd is 7
+PASS document.execCommand("delete", false, null); textarea.value is "hello\n"
+PASS textarea.selectionStart is 6
+PASS textarea.selectionEnd is 6
+PASS document.execCommand("delete", false, null); textarea.value is "hello"
+PASS textarea.selectionStart is 5
+PASS textarea.selectionEnd is 5
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

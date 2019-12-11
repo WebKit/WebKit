@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<script>
+  if (window.internals)
+    internals.settings.setSpringTimingFunctionEnabled(true);
+</script>
+<style type="text/css" media="screen">
+  .box {
+    position: relative;
+    left: 100px;
+    top: 0px;
+    height: 5px;
+    width: 5px;
+    background-color: blue;
+    animation-duration: 1s;
+    animation-name: anim;
+  }
+  @keyframes anim {
+      from { left: 0px; }
+      to   { left: 500px; }
+  }
+  #box1 {
+    animation-timing-function: spring(1 100 10 0);
+  }
+  
+</style>
+<script src="resources/animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+
+  const expectedValues = [
+    // [animation-name, time, element-id, property, expected-value, tolerance]
+    ["anim", 0.25, "box1", "left", 512, 5],
+    ["anim", 0.50, "box1", "left", 537, 5],
+    ["anim", 0.75, "box1", "left", 487, 5],
+  ];
+
+  runAnimationTest(expectedValues);
+
+</script>
+<body>
+This test performs an animation of the left property. It animates over 1 second.
+It takes 3 snapshots and expects each result to be within a specified range.
+<div class="box" id="box1"></div>
+<div id="result">
+</div>
+</body>

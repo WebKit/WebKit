@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+  <p>Choose: <input value='foo' type='checkbox'/>foo <input value='bar' type='checkbox'/>bar (pick one)</p>
+  <p>Choose: <select name='foo'><option>bar</option><option>baz</option></select> (pick one)</p>
+  <p><input name='foobarbutton' value='foobar' type='button'/></p>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests the ability to get element text for a specified range.");
+    if (window.accessibilityController) {
+        document.getElementById("body").focus();
+        var webArea = accessibilityController.focusedElement;
+
+        var paragraph1 = webArea.childAtIndex(0);
+        var paragraph2 = webArea.childAtIndex(1);
+        var paragraph3 = webArea.childAtIndex(2);
+        shouldBe("paragraph1.stringForRange(0, -1)", "'Choose: \357\277\274foo \357\277\274bar (pick one)'");
+        shouldBe("paragraph2.stringForRange(0, -1)", "'Choose: \357\277\274 (pick one)'");
+        shouldBe("paragraph3.stringForRange(0, -1)", "'\357\277\274'");
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

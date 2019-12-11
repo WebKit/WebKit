@@ -1,0 +1,6 @@
+This test verifies that a sandboxed IFrame with the keywords allow-scripts and allow-same-origin is allowed to navigate an ancestor in the frame tree by assigning the location attribute.
+
+This test will print "PASS" on success.
+
+               
+PASS

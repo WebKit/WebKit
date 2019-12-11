@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.hidden {
+    display: none;
+}
+
+#ellipsizedText {
+    font-size: 300%;
+    text-overflow: ellipsis;
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 55px;
+    height: 55px;
+    background-color: green;
+    color: red;
+}
+</style>
+</head>
+<body>
+<div id="manual-instructions" class="hidden">
+    <p>Tests that a text-overflow box is scrollable. To run by hand, perform the following:</p>
+    <ol>
+        <li>Click anywhere in the green box (below) to focus it.</li>
+        <li>Press the down arrow on the keyboard.</li>
+    </ol>
+    <p>This test PASSED if you see a solid green square. Otherwise, it FAILED.</p>
+</div>
+<div id="ellipsizedText" contenteditable="true">abcde</div>
+<script>
+function done()
+{
+    document.getElementById("ellipsizedText").blur(); // To avoid painting the caret.
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function runTest()
+{
+    function scrollToEndOfLine() {
+        return UIHelper.keyDown("downArrow");
+    }
+    UIHelper.activateAndWaitForInputSessionAt(0, 0).then(scrollToEndOfLine);
+}
+
+document.getElementById("ellipsizedText").addEventListener("scroll", done, {once: true});
+
+if (!window.testRunner)
+    document.getElementById("manual-instructions").classList.remove("hidden"); // Show manual instructions
+else {
+    testRunner.waitUntilDone();
+
+    runTest();
+}
+</script>
+</body>
+</html>

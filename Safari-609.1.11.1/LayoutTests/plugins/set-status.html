@@ -1,0 +1,15 @@
+<html>
+<meta charset="utf-8">
+<body>
+<embed name="plg" type="application/x-webkit-test-netscape"></embed>
+<p>PASS if status bar says "PASS".</p>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpStatusCallbacks();
+        testRunner.dumpAsText();
+    }
+
+    plg.setStatus(); // Try sending a null string, which used to cause a crash.
+    plg.setStatus("PАSS");
+
+</script></body></html>

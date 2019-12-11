@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>This tests that we don't crash in autosize mode with subtree layout.</title>
+<style>
+    div {
+        position: absolute;
+        overflow: hidden;
+        width: 10px;
+        height: 10px;
+    }
+</style>
+</head>
+<body>
+<div>Pass if no crash or assert.<div id=resizeThis></div></div>
+<script>
+if (window.internals)
+    internals.enableAutoSizeMode(true, 800, 600);
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+setTimeout(function() {
+    document.getElementById("resizeThis").style.width = "20px";
+    if (window.testRunner)
+        testRunner.notifyDone();
+    }, 0);
+</script>
+</body>
+</html>

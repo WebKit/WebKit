@@ -1,0 +1,99 @@
+Test Supported Number of Channels for ConvolverNode
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ConvolverNode with buffer of 1 channels did not throw exception.
+PASS ConvolverNode with buffer of 2 channels did not throw exception.
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS ConvolverNode with buffer of 4 channels did not throw exception.
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS function () {
+                convolver.buffer = buffer;
+            } threw exception NotSupportedError: The operation is not supported..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

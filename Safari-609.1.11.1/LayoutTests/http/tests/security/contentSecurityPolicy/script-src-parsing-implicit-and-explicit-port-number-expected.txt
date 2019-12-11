@@ -1,0 +1,28 @@
+Tests script-src source expression matching with implicit and explicit default port numbers.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame2-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame3-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame4-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame5-->'
+--------
+PASS

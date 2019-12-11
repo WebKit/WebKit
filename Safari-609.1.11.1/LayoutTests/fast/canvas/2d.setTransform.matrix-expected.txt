@@ -1,0 +1,133 @@
+The test to ensure that calling setTransform with a DOMMatrix works as expected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS originalTransform.a is 1
+PASS originalTransform.b is 0
+PASS originalTransform.c is 0
+PASS originalTransform.d is 1
+PASS originalTransform.e is 0
+PASS originalTransform.f is 0
+PASS newTransformFromDOMMatrix.a is 1
+PASS newTransformFromDOMMatrix.b is 2
+PASS newTransformFromDOMMatrix.c is 3
+PASS newTransformFromDOMMatrix.d is 4
+PASS newTransformFromDOMMatrix.e is 5
+PASS newTransformFromDOMMatrix.f is 6
+PASS newTransformFromEmptyDOMMatrix.a is 1
+PASS newTransformFromEmptyDOMMatrix.b is 0
+PASS newTransformFromEmptyDOMMatrix.c is 0
+PASS newTransformFromEmptyDOMMatrix.d is 1
+PASS newTransformFromEmptyDOMMatrix.e is 0
+PASS newTransformFromEmptyDOMMatrix.f is 0
+PASS newTransformFrom3dDOMMatrix.m11 is 1
+PASS newTransformFrom3dDOMMatrix.m12 is 2
+PASS newTransformFrom3dDOMMatrix.m13 is 0
+PASS newTransformFrom3dDOMMatrix.m14 is 0
+PASS newTransformFrom3dDOMMatrix.m21 is 5
+PASS newTransformFrom3dDOMMatrix.m22 is 6
+PASS newTransformFrom3dDOMMatrix.m23 is 0
+PASS newTransformFrom3dDOMMatrix.m24 is 0
+PASS newTransformFrom3dDOMMatrix.m31 is 0
+PASS newTransformFrom3dDOMMatrix.m32 is 0
+PASS newTransformFrom3dDOMMatrix.m33 is 1
+PASS newTransformFrom3dDOMMatrix.m34 is 0
+PASS newTransformFrom3dDOMMatrix.m41 is 13
+PASS newTransformFrom3dDOMMatrix.m42 is 14
+PASS newTransformFrom3dDOMMatrix.m43 is 0
+PASS newTransformFrom3dDOMMatrix.m44 is 1
+PASS newTransformFromEmptyObject.a is 1
+PASS newTransformFromEmptyObject.b is 0
+PASS newTransformFromEmptyObject.c is 0
+PASS newTransformFromEmptyObject.d is 1
+PASS newTransformFromEmptyObject.e is 0
+PASS newTransformFromEmptyObject.f is 0
+PASS newTransformFromObject.a is 1
+PASS newTransformFromObject.b is 2
+PASS newTransformFromObject.c is 3
+PASS newTransformFromObject.d is 4
+PASS newTransformFromObject.e is 5
+PASS newTransformFromObject.f is 6
+PASS function () {
+    ctx.setTransform({a: 1, m11: 11, b: 2, m12: 12, c: 3, m21: 21, d: 4, m22: 22, e: 5, m41: 41, f: 6, m42: 42});
+} threw exception TypeError: init.a and init.m11 do not match.
+PASS newTransformFromInvalidMatrixObject.a is 1
+PASS newTransformFromInvalidMatrixObject.b is 2
+PASS newTransformFromInvalidMatrixObject.c is 3
+PASS newTransformFromInvalidMatrixObject.d is 4
+PASS newTransformFromInvalidMatrixObject.e is 5
+PASS newTransformFromInvalidMatrixObject.f is 6
+PASS function () {
+    ctx.setTransform(1);
+} threw exception TypeError: Type error.
+PASS newTransformFromNonObjectNumber.a is 1
+PASS newTransformFromNonObjectNumber.b is 2
+PASS newTransformFromNonObjectNumber.c is 3
+PASS newTransformFromNonObjectNumber.d is 4
+PASS newTransformFromNonObjectNumber.e is 5
+PASS newTransformFromNonObjectNumber.f is 6
+PASS function () {
+    ctx.setTransform("test");
+} threw exception TypeError: Type error.
+PASS newTransformFromNonObjectString.a is 1
+PASS newTransformFromNonObjectString.b is 2
+PASS newTransformFromNonObjectString.c is 3
+PASS newTransformFromNonObjectString.d is 4
+PASS newTransformFromNonObjectString.e is 5
+PASS newTransformFromNonObjectString.f is 6
+PASS function () {
+    ctx.setTransform(true);
+} threw exception TypeError: Type error.
+PASS newTransformFromNonObjectBoolean.a is 1
+PASS newTransformFromNonObjectBoolean.b is 2
+PASS newTransformFromNonObjectBoolean.c is 3
+PASS newTransformFromNonObjectBoolean.d is 4
+PASS newTransformFromNonObjectBoolean.e is 5
+PASS newTransformFromNonObjectBoolean.f is 6
+PASS newTransformFromInvalidValueObject.a is 1
+PASS newTransformFromInvalidValueObject.b is 2
+PASS newTransformFromInvalidValueObject.c is 3
+PASS newTransformFromInvalidValueObject.d is 4
+PASS newTransformFromInvalidValueObject.e is 5
+PASS newTransformFromInvalidValueObject.f is 6
+PASS newTransformFromInvalidKeyObject.a is 1
+PASS newTransformFromInvalidKeyObject.b is 0
+PASS newTransformFromInvalidKeyObject.c is 0
+PASS newTransformFromInvalidKeyObject.d is 1
+PASS newTransformFromInvalidKeyObject.e is 0
+PASS newTransformFromInvalidKeyObject.f is 0
+PASS newTransformFromNull.a is 1
+PASS newTransformFromNull.b is 0
+PASS newTransformFromNull.c is 0
+PASS newTransformFromNull.d is 1
+PASS newTransformFromNull.e is 0
+PASS newTransformFromNull.f is 0
+PASS newTransformFromEmptyArray.a is 1
+PASS newTransformFromEmptyArray.b is 0
+PASS newTransformFromEmptyArray.c is 0
+PASS newTransformFromEmptyArray.d is 1
+PASS newTransformFromEmptyArray.e is 0
+PASS newTransformFromEmptyArray.f is 0
+PASS newTransformFromArray.a is 1
+PASS newTransformFromArray.b is 0
+PASS newTransformFromArray.c is 0
+PASS newTransformFromArray.d is 1
+PASS newTransformFromArray.e is 0
+PASS newTransformFromArray.f is 0
+PASS newTransformFromInvalidArray.a is 1
+PASS newTransformFromInvalidArray.b is 0
+PASS newTransformFromInvalidArray.c is 0
+PASS newTransformFromInvalidArray.d is 1
+PASS newTransformFromInvalidArray.e is 0
+PASS newTransformFromInvalidArray.f is 0
+PASS newTransformFromNoArgument.a is 1
+PASS newTransformFromNoArgument.b is 0
+PASS newTransformFromNoArgument.c is 0
+PASS newTransformFromNoArgument.d is 1
+PASS newTransformFromNoArgument.e is 0
+PASS newTransformFromNoArgument.f is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

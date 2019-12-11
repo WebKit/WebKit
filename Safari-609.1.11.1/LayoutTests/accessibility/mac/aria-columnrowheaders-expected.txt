@@ -1,0 +1,198 @@
+Placeholder content header 2 header 3
+obj1 obj2 obj3
+obj1 obj2 obj3
+This tests that ARIA rowheader and columnheader roles are identified correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+AXRole: AXCell
+AXSubrole: (null)
+AXRoleDescription: cell
+AXChildren: <array of size 1>
+AXHelp: 
+AXParent: <AXCell>
+AXSize: NSSize: {127, 18}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXCell>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXCell>
+AXEndTextMarker: <AXCell>
+AXVisited: 0
+AXLinkedUIElements: <array of size 0>
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXCell>
+AXLanguage: 
+AXDOMIdentifier: test
+AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
+AXRowIndexRange: NSRange: {0, 1}
+AXColumnIndexRange: NSRange: {0, 1}
+AXColumnHeaderUIElements: <array of size 0>
+AXRowHeaderUIElements: <array of size 0>
+AXARIAColumnIndex: -1
+AXARIARowIndex: -1
+AXElementBusy: 0
+AXRequired: 0
+
+------------
+AXRole: AXCell
+AXSubrole: (null)
+AXRoleDescription: cell
+AXChildren: <array of size 1>
+AXHelp: 
+AXParent: <AXCell>
+AXSize: NSSize: {54, 18}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXCell>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXCell>
+AXEndTextMarker: <AXCell>
+AXVisited: 0
+AXLinkedUIElements: <array of size 0>
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXCell>
+AXLanguage: 
+AXDOMIdentifier: 
+AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
+AXRowIndexRange: NSRange: {0, 1}
+AXColumnIndexRange: NSRange: {1, 1}
+AXColumnHeaderUIElements: <array of size 0>
+AXRowHeaderUIElements: <array of size 0>
+AXARIAColumnIndex: -1
+AXARIARowIndex: -1
+AXElementBusy: 0
+AXRequired: 0
+
+------------
+AXRole: AXCell
+AXSubrole: (null)
+AXRoleDescription: cell
+AXChildren: <array of size 1>
+AXHelp: 
+AXParent: <AXCell>
+AXSize: NSSize: {55, 18}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXCell>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXCell>
+AXEndTextMarker: <AXCell>
+AXVisited: 0
+AXLinkedUIElements: <array of size 0>
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXCell>
+AXLanguage: 
+AXDOMIdentifier: 
+AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
+AXRowIndexRange: NSRange: {0, 1}
+AXColumnIndexRange: NSRange: {2, 1}
+AXColumnHeaderUIElements: <array of size 0>
+AXRowHeaderUIElements: <array of size 0>
+AXARIAColumnIndex: -1
+AXARIARowIndex: -1
+AXElementBusy: 0
+AXRequired: 0
+
+------------
+
+AXRole: AXCell
+AXSubrole: (null)
+AXRoleDescription: cell
+AXChildren: <array of size 1>
+AXHelp: 
+AXParent: <AXCell>
+AXSize: NSSize: {28, 18}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXCell>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXCell>
+AXEndTextMarker: <AXCell>
+AXVisited: 0
+AXLinkedUIElements: <array of size 0>
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXCell>
+AXLanguage: 
+AXDOMIdentifier: obj1
+AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
+AXRowIndexRange: NSRange: {1, 1}
+AXColumnIndexRange: NSRange: {0, 1}
+AXColumnHeaderUIElements: <array of size 0>
+AXRowHeaderUIElements: <array of size 0>
+AXARIAColumnIndex: -1
+AXARIARowIndex: -1
+AXElementBusy: 0
+AXRequired: 0
+
+------------
+AXRole: AXCell
+AXSubrole: (null)
+AXRoleDescription: cell
+AXChildren: <array of size 1>
+AXHelp: 
+AXParent: <AXCell>
+AXSize: NSSize: {28, 18}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXCell>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXCell>
+AXEndTextMarker: <AXCell>
+AXVisited: 0
+AXLinkedUIElements: <array of size 0>
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXCell>
+AXLanguage: 
+AXDOMIdentifier: 
+AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXCell>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
+AXRowIndexRange: NSRange: {2, 1}
+AXColumnIndexRange: NSRange: {0, 1}
+AXColumnHeaderUIElements: <array of size 0>
+AXRowHeaderUIElements: <array of size 0>
+AXARIAColumnIndex: -1
+AXARIARowIndex: -1
+AXElementBusy: 0
+AXRequired: 0
+
+------------
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

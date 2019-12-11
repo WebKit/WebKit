@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 78: TypeError: 'undefined' is not a function (evaluating 'wtu.setupNoTexCoordTextureProgram(gl)')
+This test verifies the functionality of the OES_element_index_uint extension, if it is available.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS WebGL context exists
+PASS Successfully enabled OES_element_index_uint extension
+PASS OES_element_index_uint listed as supported and getExtension succeeded
+Test that draws with unsigned integer indices produce the expected results
+

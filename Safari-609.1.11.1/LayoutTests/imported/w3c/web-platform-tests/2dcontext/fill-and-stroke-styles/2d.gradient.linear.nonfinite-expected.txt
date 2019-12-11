@@ -1,0 +1,7 @@
+2d.gradient.linear.nonfinite
+createLinearGradient() throws TypeError if arguments are not finite
+Defined in "Web IDL" (draft)
+Actual output:
+
+PASS createLinearGradient() throws TypeError if arguments are not finite 
+

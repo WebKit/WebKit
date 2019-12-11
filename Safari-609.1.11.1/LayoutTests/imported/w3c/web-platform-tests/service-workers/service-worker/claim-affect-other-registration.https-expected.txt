@@ -1,0 +1,3 @@
+
+PASS claim() should affect the originally controlling registration. 
+

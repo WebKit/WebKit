@@ -1,0 +1,3 @@
+
+PASS Eval is allowed because the CSP is report-only 
+

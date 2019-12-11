@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../video-test.js"></script>
+    <script src="../media-file.js"></script>
+    <script>
+        window.addEventListener('load', async event => {
+            findMediaElement();
+
+            run('internals.settings.setAllowsPictureInPictureMediaPlayback(true)');
+            run('internals.setPictureInPictureAPITestEnabled(video, true)');
+            run('video.src = findMediaFile("video", "../content/test")');
+            await waitFor(video, 'canplaythrough');
+
+            video.requestPictureInPicture()
+            .then(() => {
+                failTest("request Picture-in-Picture requires a user gesture.");
+            })
+            .catch(error => {
+                window.error = error;
+                testExpected('error.name', 'NotAllowedError');
+                endTest();
+            });
+        });
+    </script>
+</head>
+<body>
+    <div>This tests that request Picture-in-Picture requires a user gesture.</div>
+    <video controls></video>
+</body>
+</html>

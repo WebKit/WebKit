@@ -1,0 +1,49 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in Webkit.
+Instead, push changes to the W3C CSS repo:
+	http://hg.csswg.org/test
+Or create a pull request on the W3C CSS github:
+	https://github.com/w3c/csswg-test
+
+Then run the Tools/Scripts/import-w3c-tests in Webkit to reimport
+
+Do NOT modify or remove this file
+
+------------------------------------------------------------------------
+Last Import: 2014-11-06 09:44
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+clip-path
+shape-outside
+shape-image-threshold
+shape-margin
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/w3c/css-shapes-1/spec-examples/shape-outside-001-expected.html
+/LayoutTests/w3c/css-shapes-1/spec-examples/shape-outside-001.html
+/LayoutTests/w3c/css-shapes-1/spec-examples/shape-outside-002-expected.html
+/LayoutTests/w3c/css-shapes-1/spec-examples/shape-outside-002.html
+/LayoutTests/w3c/css-shapes-1/spec-examples/shape-outside-003-expected.html
+/LayoutTests/w3c/css-shapes-1/spec-examples/shape-outside-003.html
+/LayoutTests/w3c/css-shapes-1/spec-examples/shape-outside-004-expected.html
+/LayoutTests/w3c/css-shapes-1/spec-examples/shape-outside-004.html
+/LayoutTests/w3c/css-shapes-1/spec-examples/shape-outside-005-expected.html
+/LayoutTests/w3c/css-shapes-1/spec-examples/shape-outside-005.html
+/LayoutTests/w3c/css-shapes-1/spec-examples/shape-outside-006-expected.html
+/LayoutTests/w3c/css-shapes-1/spec-examples/shape-outside-006.html
+/LayoutTests/w3c/css-shapes-1/spec-examples/shape-outside-007-expected.html
+/LayoutTests/w3c/css-shapes-1/spec-examples/shape-outside-007.html
+/LayoutTests/w3c/css-shapes-1/spec-examples/shape-outside-008-expected.html
+/LayoutTests/w3c/css-shapes-1/spec-examples/shape-outside-008.html
+/LayoutTests/w3c/css-shapes-1/spec-examples/shape-outside-010.html
+/LayoutTests/w3c/css-shapes-1/spec-examples/shape-outside-011.html
+/LayoutTests/w3c/css-shapes-1/spec-examples/shape-outside-012.html
+/LayoutTests/w3c/css-shapes-1/spec-examples/shape-outside-013.html
+/LayoutTests/w3c/css-shapes-1/spec-examples/shape-outside-014.html
+/LayoutTests/w3c/css-shapes-1/spec-examples/shape-outside-015.html
+/LayoutTests/w3c/css-shapes-1/spec-examples/shape-outside-016.html
+/LayoutTests/w3c/css-shapes-1/spec-examples/shape-outside-017.html
+/LayoutTests/w3c/css-shapes-1/spec-examples/shape-outside-018.html
+/LayoutTests/w3c/css-shapes-1/spec-examples/shape-outside-019.html

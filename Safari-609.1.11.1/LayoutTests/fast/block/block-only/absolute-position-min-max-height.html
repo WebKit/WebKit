@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div {
+    border: 1px solid green;
+}
+
+div > div {
+    border: 1px solid red;
+}
+</style>
+</head>
+<body>
+<div style="position: absolute; width: 100px;">
+    <div style="height: 50px; width: 100px;"></div>
+</div>
+
+<div style="position: absolute; top: 100px; width: 100px; max-height: 100px;">
+    <div style="height: 150px; width: 100px;"></div>
+</div>
+
+<div style="position: absolute; top: 300px; width: 100px; min-height: 300px">
+    <div style="height: 50px; width: 100px;"></div>
+</div>
+</body>
+</html>

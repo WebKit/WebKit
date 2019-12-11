@@ -1,0 +1,2 @@
+ This tests that a plugin can enumerate an object's properties using NPN_Enumerate. It also tests that JavaScript can enumerate a plugin object's properties. If this test is successful the text "SUCCESS" will be show below.
+SUCCESS

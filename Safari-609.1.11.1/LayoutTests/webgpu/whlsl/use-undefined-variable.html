@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+const shaderSource = `
+[numthreads(1, 1, 1)]
+compute void computeShader(device float[] buffer : register(u0), float3 threadID : SV_DispatchThreadID) {
+    float foo;
+    if (foo) {
+        x = x + 1;
+    }
+}
+`;
+
+async function start() {
+    const adapter = await navigator.gpu.requestAdapter();
+    const device = await adapter.requestDevice();
+
+    const shaderModule = device.createShaderModule({code: shaderSource});
+    const computeStage = {module: shaderModule, entryPoint: "computeShader"};
+
+    const bindGroupLayoutDescriptor = {bindings: [{binding: 0, visibility: 7, type: "storage-buffer"}]};
+    const bindGroupLayout = device.createBindGroupLayout(bindGroupLayoutDescriptor);
+    const pipelineLayoutDescriptor = {bindGroupLayouts: [bindGroupLayout]};
+    const pipelineLayout = device.createPipelineLayout(pipelineLayoutDescriptor);
+
+    const computePipelineDescriptor = {computeStage, layout: pipelineLayout};
+    const computePipeline = device.createComputePipeline(computePipelineDescriptor);
+}
+
+window.jsTestIsAsync = true;
+getBasicDevice().then(function(device) {
+    start(device).then(function() {
+    testPassed("");
+        finishJSTest();
+    }, function() {
+        testFailed("");
+        finishJSTest();
+    });
+}, function() {
+    testPassed("");
+    finishJSTest();
+});
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

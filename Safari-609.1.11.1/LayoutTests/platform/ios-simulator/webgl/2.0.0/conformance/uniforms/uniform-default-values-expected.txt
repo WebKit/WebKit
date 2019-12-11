@@ -1,0 +1,346 @@
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../resources/webgl_test_files/conformance/uniforms/uniform-default-values.html
+[ 1: PASS ] uniform is zero
+[ 2: PASS ] should be green
+[ 3: PASS ] should be red
+[ 4: PASS ] should be green
+[ 5: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 6: PASS ] uniform is zero
+[ 7: PASS ] should be green
+[ 8: PASS ] should be red
+[ 9: PASS ] should be green
+[ 10: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 11: PASS ] uniform is zero
+[ 12: PASS ] should be green
+[ 13: PASS ] should be red
+[ 14: PASS ] should be green
+[ 15: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 16: PASS ] uniform is zero
+[ 17: PASS ] should be green
+[ 18: PASS ] should be red
+[ 19: PASS ] should be green
+[ 20: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 21: PASS ] uniform is zero
+[ 22: PASS ] should be green
+[ 23: PASS ] should be red
+[ 24: PASS ] should be green
+[ 25: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 26: PASS ] uniform is zero
+[ 27: PASS ] should be green
+[ 28: PASS ] should be red
+[ 29: PASS ] should be green
+[ 30: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 31: PASS ] uniform is zero
+[ 32: PASS ] should be green
+[ 33: PASS ] should be red
+[ 34: PASS ] should be green
+[ 35: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 36: PASS ] uniform is zero
+[ 37: PASS ] should be green
+[ 38: PASS ] should be red
+[ 39: PASS ] should be green
+[ 40: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 41: PASS ] uniform is zero
+[ 42: PASS ] should be green
+[ 43: PASS ] should be red
+[ 44: PASS ] should be green
+[ 45: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 46: PASS ] uniform is zero
+[ 47: PASS ] should be green
+[ 48: PASS ] should be red
+[ 49: PASS ] should be green
+[ 50: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 51: PASS ] uniform is zero
+[ 52: PASS ] should be green
+[ 53: PASS ] should be red
+[ 54: PASS ] should be green
+[ 55: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 56: PASS ] uniform is zero
+[ 57: PASS ] should be green
+[ 58: PASS ] should be red
+[ 59: PASS ] should be green
+[ 60: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 61: PASS ] uniform is zero
+[ 62: PASS ] should be green
+[ 63: PASS ] should be red
+[ 64: PASS ] should be green
+[ 65: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 66: PASS ] uniform is zero
+[ 67: PASS ] should be green
+[ 68: PASS ] should be red
+[ 69: PASS ] should be green
+[ 70: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 71: PASS ] uniform is zero
+[ 72: PASS ] should be green
+[ 73: PASS ] should be red
+[ 74: PASS ] should be green
+[ 75: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 76: PASS ] uniform is zero
+[ 77: PASS ] should be green
+[ 78: PASS ] should be red
+[ 79: PASS ] should be green
+[ 80: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 81: PASS ] uniform is zero
+[ 82: PASS ] should be green
+[ 83: PASS ] should be red
+[ 84: PASS ] should be green
+[ 85: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 86: PASS ] uniform is zero
+[ 87: PASS ] should be green
+[ 88: PASS ] should be red
+[ 89: PASS ] should be green
+[ 90: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 91: PASS ] uniform is zero
+[ 92: PASS ] should be green
+[ 93: PASS ] should be red
+[ 94: PASS ] should be green
+[ 95: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 96: PASS ] uniform is zero
+[ 97: PASS ] should be green
+[ 98: PASS ] should be red
+[ 99: PASS ] should be green
+[ 100: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 101: PASS ] uniform is zero
+[ 102: PASS ] should be green
+[ 103: PASS ] should be red
+[ 104: PASS ] should be green
+[ 105: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 106: PASS ] uniform is zero
+[ 107: PASS ] should be green
+[ 108: PASS ] should be red
+[ 109: PASS ] should be green
+[ 110: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 111: PASS ] uniform is zero
+[ 112: PASS ] should be green
+[ 113: PASS ] should be red
+[ 114: PASS ] should be green
+[ 115: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 116: PASS ] uniform is zero
+[ 117: PASS ] should be green
+[ 118: PASS ] should be red
+[ 119: PASS ] should be green
+[ 120: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 121: PASS ] uniform is zero
+[ 122: PASS ] should be green
+[ 123: PASS ] should be red
+[ 124: PASS ] should be green
+[ 125: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 126: PASS ] uniform is zero
+[ 127: PASS ] should be green
+[ 128: PASS ] should be red
+[ 129: PASS ] should be green
+[ 130: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 131: PASS ] uniform is zero
+[ 132: PASS ] should be green
+[ 133: PASS ] should be red
+[ 134: PASS ] should be green
+[ 135: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 136: PASS ] uniform is zero
+[ 137: PASS ] should be green
+[ 138: PASS ] should be red
+[ 139: PASS ] should be green
+[ 140: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 141: PASS ] uniform is zero
+[ 142: PASS ] should be green
+[ 143: PASS ] should be red
+[ 144: PASS ] should be green
+[ 145: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 146: PASS ] uniform is zero
+[ 147: PASS ] should be green
+[ 148: PASS ] should be red
+[ 149: PASS ] should be green
+[ 150: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 151: PASS ] uniform is zero
+[ 152: PASS ] should be green
+[ 153: PASS ] should be red
+[ 154: PASS ] should be green
+[ 155: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 156: PASS ] uniform is zero
+[ 157: PASS ] should be green
+[ 158: PASS ] should be red
+[ 159: PASS ] should be green
+[ 160: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 161: PASS ] uniform is zero
+[ 162: PASS ] should be green
+[ 163: PASS ] should be red
+[ 164: PASS ] should be green
+[ 165: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 166: PASS ] uniform is zero
+[ 167: PASS ] should be green
+[ 168: PASS ] should be red
+[ 169: PASS ] should be green
+[ 170: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 171: PASS ] uniform is zero
+[ 172: PASS ] should be green
+[ 173: PASS ] should be red
+[ 174: PASS ] should be green
+[ 175: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 176: PASS ] uniform is zero
+[ 177: PASS ] should be green
+[ 178: PASS ] should be red
+[ 179: PASS ] should be green
+[ 180: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 181: PASS ] uniform is zero
+[ 182: PASS ] should be green
+[ 183: PASS ] should be red
+[ 184: PASS ] should be green
+[ 185: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 186: PASS ] uniform is zero
+[ 187: PASS ] should be green
+[ 188: PASS ] should be red
+[ 189: PASS ] should be green
+[ 190: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 191: PASS ] uniform is zero
+[ 192: PASS ] should be green
+[ 193: PASS ] should be red
+[ 194: PASS ] should be green
+[ 195: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 196: PASS ] uniform is zero
+[ 197: PASS ] should be green
+[ 198: PASS ] should be red
+[ 199: PASS ] should be green
+[ 200: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 201: PASS ] uniform is zero
+[ 202: PASS ] should be green
+[ 203: PASS ] should be red
+[ 204: PASS ] should be green
+[ 205: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 206: PASS ] uniform is zero
+[ 207: PASS ] should be green
+[ 208: PASS ] should be red
+[ 209: PASS ] should be green
+[ 210: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 211: PASS ] uniform is zero
+[ 212: PASS ] should be green
+[ 213: PASS ] should be red
+[ 214: PASS ] should be green
+[ 215: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 216: PASS ] uniform is zero
+[ 217: PASS ] should be green
+[ 218: PASS ] should be red
+[ 219: PASS ] should be green
+[ 220: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 221: PASS ] uniform is zero
+[ 222: PASS ] should be green
+[ 223: PASS ] should be red
+[ 224: PASS ] should be green
+[ 225: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 226: PASS ] uniform is zero
+[ 227: PASS ] should be green
+[ 228: PASS ] should be red
+[ 229: PASS ] should be green
+[ 230: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 231: PASS ] uniform is zero
+[ 232: PASS ] should be green
+[ 233: PASS ] should be red
+[ 234: PASS ] should be green
+[ 235: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 236: PASS ] uniform is zero
+[ 237: PASS ] should be green
+[ 238: PASS ] should be red
+[ 239: PASS ] should be green
+[ 240: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 241: PASS ] uniform is zero
+[ 242: PASS ] should be green
+[ 243: PASS ] should be red
+[ 244: PASS ] should be green
+[ 245: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 246: PASS ] uniform is zero
+[ 247: PASS ] should be green
+[ 248: PASS ] should be red
+[ 249: PASS ] should be green
+[ 250: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 251: PASS ] uniform is zero
+[ 252: PASS ] should be green
+[ 253: PASS ] should be red
+[ 254: PASS ] should be green
+[ 255: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 256: PASS ] uniform is zero
+[ 257: PASS ] should be green
+[ 258: PASS ] should be red
+[ 259: PASS ] should be green
+[ 260: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 261: PASS ] uniform is zero
+[ 262: PASS ] should be green
+[ 263: PASS ] should be red
+[ 264: PASS ] should be green
+[ 265: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 266: PASS ] uniform is zero
+[ 267: PASS ] should be green
+[ 268: PASS ] should be red
+[ 269: PASS ] should be green
+[ 270: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 271: PASS ] uniform is zero
+[ 272: PASS ] should be green
+[ 273: PASS ] should be red
+[ 274: PASS ] should be green
+[ 275: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 276: PASS ] uniform is zero
+[ 277: PASS ] should be green
+[ 278: PASS ] should be red
+[ 279: PASS ] should be green
+[ 280: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 281: PASS ] uniform is zero
+[ 282: PASS ] should be green
+[ 283: PASS ] should be red
+[ 284: PASS ] should be green
+[ 285: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 286: PASS ] uniform is zero
+[ 287: PASS ] should be green
+[ 288: PASS ] should be red
+[ 289: PASS ] should be green
+[ 290: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 291: PASS ] uniform is zero
+[ 292: PASS ] should be green
+[ 293: PASS ] should be red
+[ 294: PASS ] should be green
+[ 295: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 296: PASS ] uniform is zero
+[ 297: PASS ] should be green
+[ 298: PASS ] should be red
+[ 299: PASS ] should be green
+[ 300: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 301: PASS ] uniform is zero
+[ 302: PASS ] should be green
+[ 303: PASS ] should be red
+[ 304: PASS ] should be green
+[ 305: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 306: PASS ] uniform is zero
+[ 307: PASS ] should be green
+[ 308: PASS ] should be red
+[ 309: PASS ] should be green
+[ 310: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 311: PASS ] uniform is zero
+[ 312: PASS ] should be green
+[ 313: PASS ] should be red
+[ 314: PASS ] should be green
+[ 315: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 316: PASS ] uniform is zero
+[ 317: PASS ] should be green
+[ 318: PASS ] should be red
+[ 319: PASS ] should be green
+[ 320: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 321: PASS ] uniform is zero
+[ 322: PASS ] should be green
+[ 323: PASS ] should be red
+[ 324: PASS ] should be green
+[ 325: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 326: PASS ] uniform is zero
+[ 327: FAIL ] should be green at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 328: PASS ] should be red
+[ 329: FAIL ] should be green at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 330: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 331: PASS ] uniform is zero
+[ 332: PASS ] should be green
+[ 333: PASS ] should be red
+[ 334: PASS ] should be green
+[ 335: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 336: PASS ] uniform is zero
+[ 337: FAIL ] should be green at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 338: PASS ] should be red
+[ 339: FAIL ] should be green at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 340: PASS ] getError was expected value: NO_ERROR : should be no GL errors
+[ 341: PASS ] successfullyParsed is true
+[ FAIL ] 4 failures reported
+

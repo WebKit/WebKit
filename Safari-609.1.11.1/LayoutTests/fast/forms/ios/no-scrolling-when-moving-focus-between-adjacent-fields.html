@@ -1,0 +1,112 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ shouldIgnoreMetaViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <style>
+        html, body {
+            margin: 0;
+            width: 320px;
+            height: 100%;
+            overflow: scroll;
+        }
+
+        input {
+            width: 44px;
+            height: 40px;
+            font-size: 18px;
+        }
+
+        .outer-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 400px;
+            width: 100%;
+        }
+
+        .inner-container {
+            margin: 0 auto;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="outer-container">
+        <div class="inner-container">
+            <input name="search" type="tel" id="first"></input>
+            <input type="tel" id="second"></input>
+        </div>
+    </div>
+    <div id="description"></div>
+    <div id="output"></div>
+    <script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    firstField = document.getElementById("first");
+    secondField = document.getElementById("second");
+    output = document.getElementById("output");
+    currentScrollPosition = 0;
+    shouldLogScrollDeltas = false;
+    observedUnnecessaryScrolling = false;
+
+    function moveFocusToOtherField(event) {
+        event.target.value = event.data;
+        const fieldToFocus = event.target == firstField ? secondField : firstField;
+        fieldToFocus.focus();
+        event.preventDefault();
+    }
+
+    firstField.addEventListener("input", moveFocusToOtherField);
+    secondField.addEventListener("input", moveFocusToOtherField);
+
+    document.addEventListener("scroll", () => {
+        const scrollDelta = document.scrollingElement.scrollTop - currentScrollPosition;
+        if (shouldLogScrollDeltas && Math.abs(scrollDelta) > 1) {
+            testFailed(`Scrolled by amount: ${scrollDelta}`);
+            observedUnnecessaryScrolling = true;
+        }
+        currentScrollPosition = document.scrollingElement.scrollTop;
+    });
+
+    addEventListener("load", async () => {
+        description("This test verifies that moving focus between two fields that are at the same y offset does not induce vertical scrolling. To test manually, focus the left field and press any key. Focus should move to the right field, and there should be no scrolling.");
+        if (!window.testRunner) {
+            shouldLogScrollDeltas = true;
+            return;
+        }
+
+        await UIHelper.setHardwareKeyboardAttached(false);
+        await UIHelper.activateElementAndWaitForInputSession(firstField);
+        await UIHelper.ensureVisibleContentRectUpdate();
+
+        shouldLogScrollDeltas = true;
+
+        for (let i = 0; i < 10; ++i) {
+            const observedInputEvent = new Promise(resolve => {
+                const resolveAfterZeroDelay = () => setTimeout(resolve, 0);
+                document.activeElement.addEventListener("input", resolveAfterZeroDelay, { "once" : true });
+            });
+            await UIHelper.keyDown(String(i));
+            await observedInputEvent;
+        }
+
+        if (observedUnnecessaryScrolling)
+            testFailed("Observed unnecessary scrolling");
+        else
+            testPassed("Did not observe unnecessary scrolling");
+
+        shouldLogScrollDeltas = false;
+
+        document.activeElement.blur();
+        await UIHelper.waitForKeyboardToHide();
+
+        testRunner.notifyDone();
+    });
+    </script>
+</body>
+</html>

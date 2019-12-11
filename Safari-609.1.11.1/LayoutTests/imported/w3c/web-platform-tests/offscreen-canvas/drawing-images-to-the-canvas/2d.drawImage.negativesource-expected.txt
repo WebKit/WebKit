@@ -1,0 +1,7 @@
+2d.drawImage.negativesource
+
+Negative source width/height represents the correct rectangle
+
+
+FAIL Negative source width/height represents the correct rectangle null is not an object (evaluating 'ctx.fillStyle = '#f00'')
+

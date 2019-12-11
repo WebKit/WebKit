@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<canvas></canvas>
+<span style="padding: 0px; font-size: 12px; font-family: Arial; display: inline; visibility: hidden">a&#x3000;b&#x3000;c</span>
+<script>
+    var canvas = document.getElementsByTagName('canvas')[0];
+    var context = canvas.getContext('2d');
+    var iSp = '\u3000';
+    var str = 'a' + iSp + 'b' + iSp + 'c';
+    context.font = '12px Arial';
+    canvasWidth = context.measureText(str).width;
+
+    var span = document.getElementsByTagName('span')[0];
+    spanWidth = span.getBoundingClientRect().width;
+    shouldBe("spanWidth", "canvasWidth");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

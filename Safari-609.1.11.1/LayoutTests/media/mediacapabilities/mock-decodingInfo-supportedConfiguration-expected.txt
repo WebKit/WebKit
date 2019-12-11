@@ -1,0 +1,30 @@
+RUN(internals.enableMockMediaCapabilities())
+RUN(internals.settings.setMediaCapabilitiesExtensionsEnabled(true))
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs="avc1"', height: 720, bitrate: 1000, width: 1280, framerate: 24.5 }, unsupportedProperty: true });)
+Promise resolved OK
+EXPECTED (info.supported == 'true') OK
+EXPECTED (info.smooth == 'true') OK
+EXPECTED (info.powerEfficient == 'true') OK
+EXPECTED (typeof info.supportedConfiguration != 'undefined') OK
+EXPECTED (info.supportedConfiguration.type == 'file') OK
+EXPECTED (info.supportedConfiguration.video.contentType == 'video/mp4; codecs="avc1"') OK
+EXPECTED (info.supportedConfiguration.video.height == '720') OK
+EXPECTED (info.supportedConfiguration.video.bitrate == '1000') OK
+EXPECTED (info.supportedConfiguration.video.width == '1280') OK
+EXPECTED (info.supportedConfiguration.video.framerate == '24.5') OK
+EXPECTED (typeof info.supportedConfiguration.unsupportedProperty == 'undefined') OK
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', video: { contentType: 'video/mp4; codecs="avc1"', height: 720, bitrate: 1000, width: 1280, framerate: 24.5 }, unsupportedProperty: true });)
+Promise resolved OK
+EXPECTED (info.supported == 'false') OK
+EXPECTED (info.smooth == 'false') OK
+EXPECTED (info.powerEfficient == 'false') OK
+EXPECTED (typeof info.supportedConfiguration != 'undefined') OK
+EXPECTED (info.supportedConfiguration.type == 'media-source') OK
+EXPECTED (info.supportedConfiguration.video.contentType == 'video/mp4; codecs="avc1"') OK
+EXPECTED (info.supportedConfiguration.video.height == '720') OK
+EXPECTED (info.supportedConfiguration.video.bitrate == '1000') OK
+EXPECTED (info.supportedConfiguration.video.width == '1280') OK
+EXPECTED (info.supportedConfiguration.video.framerate == '24.5') OK
+EXPECTED (typeof info.supportedConfiguration.unsupportedProperty == 'undefined') OK
+END OF TEST
+

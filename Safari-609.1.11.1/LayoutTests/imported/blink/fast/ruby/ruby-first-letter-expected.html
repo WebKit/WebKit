@@ -1,0 +1,40 @@
+<!doctype html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style>
+  .blue { font-size: 20px; color: blue; }
+</style>
+
+<div>This test is verifying that adding content that uses first letter into
+ruby tags works correctly.</div>
+
+<p>&lt;ruby&gt; is defined in the
+<ruby id='ruby'>
+  H<rt><span class="blue">H</span>yper</rt>
+  T<rt><span class="blue">T</span>ext</rt>
+  M<rt><span class="blue">M</span>arkup</rt>
+  L<rt><span class="blue">L</span>anguage</rt>
+  5<rt><span class="blue">L</span>evel 5</rt>
+  T<rt><span class="blue">T</span>est</rt>
+</ruby> specs.</p>
+
+<ruby xml:lang="ja">
+  <rbc>
+    <rb class='rb'>text斎</rb>
+    <rb>藤</rb>
+    <rb>信</rb>
+    <rb>男</rb>
+  </rbc>
+  <rtc class="reading">
+    <rt class='rt'>content textさい</rt>
+    <rt>とう</rt>
+    <rt>のぶ</rt>
+    <rt>お</rt>
+  </rtc>
+  <rtc class="annotation">
+    <rt rbspan="4" xml:lang="en">content W3C Associate Chairman</rt>
+  </rtc>
+
+  <rp>(</rp>
+  <rt><span class="blue">a</span>aa</rt>
+  <rp>)</rp>
+</ruby>

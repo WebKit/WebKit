@@ -1,0 +1,53 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # product: object; Bugzilla::Product object representing the product to
+  #               which the version belongs.
+  # version: object; Bugzilla::Version object representing the version
+  #
+  # no_XXX_link: boolean; if defined, then don't show the corresponding
+  #                       link. Supported parameters are:
+  #
+  # no_edit_version_link
+  # no_edit_other_versions_link
+  # no_add_version_link
+  #%]
+
+<hr>
+
+<p>
+
+[% UNLESS no_add_version_link %]
+  <a title="Add a version to product '[% product.name FILTER html %]'"
+     href="editversions.cgi?action=add&amp;product=
+          [%- product.name FILTER uri %]">Add</a> a version. 
+[% END %]
+
+[% IF version.name && !no_edit_version_link %]
+  Edit version <a 
+  title="Edit Version '[% version.name FILTER html %]' of product '
+         [%- product.name FILTER html %]'"
+  href="editversions.cgi?action=edit&amp;product=
+        [%- product.name FILTER uri %]&amp;version=
+        [%- version.name FILTER uri %]">
+        '[% version.name FILTER html %]'</a>.
+[% END %]
+
+[% UNLESS no_edit_other_versions_link %]
+  Edit other versions of product <a 
+  href="editversions.cgi?product=
+        [%- product.name FILTER uri %]">'[% product.name FILTER html %]'</a>.
+
+[% END %]
+
+  Edit product <a 
+  href="editproducts.cgi?action=edit&amp;product=
+        [%- product.name FILTER uri %]">'[% product.name FILTER html %]'</a>.
+
+</p>

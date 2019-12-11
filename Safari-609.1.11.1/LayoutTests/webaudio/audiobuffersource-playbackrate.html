@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+
+<!--
+Tests that AudioBufferSourceNode can playback at different rates properly.
+Render 72 notes over a 6 octave range.
+-->
+
+<html>
+<head>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+<script type="text/javascript" src="resources/buffer-loader.js"></script>
+
+</head>
+<body>
+
+<script>
+
+window.onload = init;
+
+var sampleRate = 44100.0;
+var numberOfNotes = 72; // play over a 6 octave range
+var noteDuration = 0.050;
+var noteSpacing = noteDuration + 0.005; // leave 5ms of silence between each "note"
+var lengthInSeconds = numberOfNotes * noteSpacing;
+
+var context = 0;
+var sinWaveBuffer = 0;
+
+function createOneCycleSinWaveBuffer(frequency, sampleRate) {
+    var duration = 1 / frequency;
+    var sampleFrameLength = duration * sampleRate;
+    
+    var audioBuffer = context.createBuffer(2, sampleFrameLength, sampleRate);
+
+    var n = audioBuffer.length;
+    var channelL = audioBuffer.getChannelData(0);
+    var channelR = audioBuffer.getChannelData(1);
+
+    for (var i = 0; i < n; ++i) {
+        channelL[i] = Math.sin(frequency * 2.0*Math.PI * i / sampleRate);
+        channelR[i] = channelL[i];
+    }
+
+    return audioBuffer;
+}
+
+function playNote(time, duration, playbackRate) {
+    var source = context.createBufferSource();
+    source.buffer = sinWaveBuffer;
+    source.playbackRate.value = playbackRate;
+    
+    var gainNode = context.createGain();
+    source.connect(gainNode);
+    gainNode.connect(context.destination);
+
+    // Loop and play for the given duration.
+    source.loop = true;
+    source.start(time);
+    source.stop(time + duration);
+    
+    // Apply quick fade-in and fade-out to avoid clicks.
+    gainNode.gain.value = 0;
+    gainNode.gain.setValueAtTime(0, time);
+    gainNode.gain.linearRampToValueAtTime(1, time + 0.005);
+    gainNode.gain.setValueAtTime(1, time + duration - 0.005);
+    gainNode.gain.linearRampToValueAtTime(0, time + duration);
+}
+
+function init() {
+    if (!window.testRunner)
+        return;
+
+    // Create offline audio context.
+    context = new webkitOfflineAudioContext(2, sampleRate * lengthInSeconds, sampleRate);
+
+    // Create a single cycle of a sine wave.
+    // We'll loop this to play notes of a given duration, at a given playback rate.
+    sinWaveBuffer = createOneCycleSinWaveBuffer(440.0, sampleRate);
+
+    // Play 48 notes over a 4 octave range.
+    for (var i = 0; i < numberOfNotes; ++i) {
+        var time = i * noteSpacing;
+
+        var semitone = i - numberOfNotes/2; // start three octaves down
+        
+        // Convert from semitone to rate.
+        var playbackRate = Math.pow(2, semitone / 12);
+
+        playNote(time, noteDuration, playbackRate);
+    }
+
+    context.oncomplete = finishAudioTest;
+    context.startRendering();
+
+    testRunner.waitUntilDone();
+}
+
+</script>
+
+</body>
+</html>

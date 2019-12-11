@@ -1,0 +1,8 @@
+
+PASS setterWithMatchedType 
+PASS setterWithNoGetterOverload 
+PASS setterWithNoGetterOverloadFixed 
+PASS recursiveSetters 
+PASS loneSetter 
+PASS loneSetterPointer 
+

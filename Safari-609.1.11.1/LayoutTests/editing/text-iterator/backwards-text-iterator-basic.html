@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="container"></div>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description('Unit tests for SimplifiedBackwardsTextIterator. It currently shows a bug that it generates an extra new line at the beginning.');
+
+function rangeForMarkup(markup) {
+    container.innerHTML = markup;
+    const range = new Range;
+    range.selectNodeContents(container);
+    return range;
+}
+
+function plainTextWithTextIterator(markup) {
+    return internals.rangeAsText(rangeForMarkup(markup));
+}
+
+function plainTextWithBackwardsTextIterator(markup) {
+    return internals.rangeAsTextUsingBackwardsTextIterator(rangeForMarkup(markup));
+}
+
+shouldBe('plainTextWithTextIterator("<div>hello</div>world")', '"hello\\nworld"');
+shouldBe('plainTextWithBackwardsTextIterator("<div>hello</div>world")', '"\\nhello\\nworld"');
+
+debug('');
+
+shouldBe('plainTextWithTextIterator("<div>hello</div><div>world</div>")', '"hello\\nworld"');
+shouldBe('plainTextWithBackwardsTextIterator("<div>hello</div><div>world</div>")', '"\\nhello\\nworld"');
+
+debug('');
+
+shouldBe('plainTextWithTextIterator("<div><b>h</b>ello <span>world</span></div>WebKit")', '"hello world\\nWebKit"');
+shouldBe('plainTextWithBackwardsTextIterator("<div><b>h</b>ello <span>world</span></div>WebKit")', '"\\nhello world\\nWebKit"');
+
+debug('');
+
+shouldBe('plainTextWithTextIterator("hello<br>world<br>")', '"hello\\nworld\\n"');
+shouldBe('plainTextWithBackwardsTextIterator("hello<br>world<br>")', '"hello\\nworld"');
+
+debug('');
+
+shouldBe('plainTextWithTextIterator("<ul><li>hello<li>world</ul>WebKit")', '"hello\\nworld\\nWebKit"');
+shouldBe('plainTextWithBackwardsTextIterator("<ul><li>hello<li>world</ul>WebKit")', '"\\n\\nhello\\nworld\\nWebKit"');
+
+debug('');
+
+shouldBe('plainTextWithTextIterator("<table><tr><td>hello</td><td>world</td></table>")', '"hello\tworld"');
+shouldBe('plainTextWithBackwardsTextIterator("<table><tr><td>hello</td><td>world</td></table>")', '"\\n\\nhello\\nworld"');
+
+container.innerHTML = '';
+
+successfullyParsed = true;
+</script>
+</body>
+</html>

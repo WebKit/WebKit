@@ -1,0 +1,75 @@
+
+FAIL Margin properties on maction assert_approx_equals: top margin expected 50 +/- 1 but got 100
+FAIL Margin properties on maction (rtl) assert_approx_equals: top margin expected 50 +/- 1 but got 100
+FAIL Margin properties on maction (no margin-collapsing) assert_approx_equals: top margin expected 100 +/- 1 but got 200
+FAIL Margin properties on menclose assert_approx_equals: left margin expected 30 +/- 1 but got 0
+FAIL Margin properties on menclose (rtl) assert_approx_equals: left margin expected 30 +/- 1 but got 0
+FAIL Margin properties on menclose (no margin-collapsing) assert_approx_equals: left margin expected 60 +/- 1 but got 30
+FAIL Margin properties on merror assert_approx_equals: top margin expected 50 +/- 1 but got 100
+FAIL Margin properties on merror (rtl) assert_approx_equals: top margin expected 50 +/- 1 but got 100
+FAIL Margin properties on merror (no margin-collapsing) assert_approx_equals: top margin expected 100 +/- 1 but got 200
+FAIL Margin properties on mfrac assert_approx_equals: left margin expected 30 +/- 1 but got 0
+FAIL Margin properties on mfrac (rtl) assert_approx_equals: left margin expected 30 +/- 1 but got 0
+FAIL Margin properties on mfrac (no margin-collapsing) assert_approx_equals: left margin expected 60 +/- 1 but got 30
+FAIL Margin properties on mi assert_approx_equals: top margin expected 50 +/- 1 but got 100
+FAIL Margin properties on mi (rtl) assert_approx_equals: top margin expected 50 +/- 1 but got 100
+FAIL Margin properties on mi (no margin-collapsing) assert_approx_equals: top margin expected 100 +/- 1 but got 200
+FAIL Margin properties on mmultiscripts assert_approx_equals: top margin expected 50 +/- 1 but got 0
+FAIL Margin properties on mmultiscripts (rtl) assert_approx_equals: top margin expected 50 +/- 1 but got 0
+FAIL Margin properties on mmultiscripts (no margin-collapsing) assert_approx_equals: bottom margin expected 120 +/- 1 but got 10
+FAIL Margin properties on mn assert_approx_equals: top margin expected 50 +/- 1 but got 100
+FAIL Margin properties on mn (rtl) assert_approx_equals: top margin expected 50 +/- 1 but got 100
+FAIL Margin properties on mn (no margin-collapsing) assert_approx_equals: top margin expected 100 +/- 1 but got 200
+FAIL Margin properties on mo assert_approx_equals: top margin expected 50 +/- 1 but got 100
+FAIL Margin properties on mo (rtl) assert_approx_equals: top margin expected 50 +/- 1 but got 100
+FAIL Margin properties on mo (no margin-collapsing) assert_approx_equals: top margin expected 100 +/- 1 but got 200
+FAIL Margin properties on mover assert_approx_equals: top margin expected 50 +/- 1 but got 0
+FAIL Margin properties on mover (rtl) assert_approx_equals: top margin expected 50 +/- 1 but got 0
+FAIL Margin properties on mover (no margin-collapsing) assert_approx_equals: bottom margin expected 120 +/- 1 but got 10
+FAIL Margin properties on mpadded assert_approx_equals: left margin expected 30 +/- 1 but got 0
+FAIL Margin properties on mpadded (rtl) assert_approx_equals: left margin expected 30 +/- 1 but got 0
+FAIL Margin properties on mpadded (no margin-collapsing) assert_approx_equals: left margin expected 60 +/- 1 but got 30
+FAIL Margin properties on mphantom assert_approx_equals: top margin expected 50 +/- 1 but got 100
+FAIL Margin properties on mphantom (rtl) assert_approx_equals: top margin expected 50 +/- 1 but got 100
+FAIL Margin properties on mphantom (no margin-collapsing) assert_approx_equals: top margin expected 100 +/- 1 but got 200
+FAIL Margin properties on mroot assert_approx_equals: top margin expected 50 +/- 1 but got 0
+FAIL Margin properties on mroot (rtl) assert_approx_equals: top margin expected 50 +/- 1 but got 0
+FAIL Margin properties on mroot (no margin-collapsing) assert_approx_equals: bottom margin expected 120 +/- 1 but got 10
+FAIL Margin properties on mrow assert_approx_equals: top margin expected 50 +/- 1 but got 100
+FAIL Margin properties on mrow (rtl) assert_approx_equals: top margin expected 50 +/- 1 but got 100
+FAIL Margin properties on mrow (no margin-collapsing) assert_approx_equals: top margin expected 100 +/- 1 but got 200
+FAIL Margin properties on ms assert_approx_equals: top margin expected 50 +/- 1 but got 100
+FAIL Margin properties on ms (rtl) assert_approx_equals: top margin expected 50 +/- 1 but got 100
+FAIL Margin properties on ms (no margin-collapsing) assert_approx_equals: top margin expected 100 +/- 1 but got 200
+FAIL Margin properties on mspace assert_approx_equals: left/right margin expected 70 +/- 1 but got 0
+FAIL Margin properties on msqrt assert_approx_equals: top margin expected 50 +/- 1 but got 0
+FAIL Margin properties on msqrt (rtl) assert_approx_equals: top margin expected 50 +/- 1 but got 0
+FAIL Margin properties on msqrt (no margin-collapsing) assert_approx_equals: bottom margin expected 120 +/- 1 but got 10
+FAIL Margin properties on mstyle assert_approx_equals: top margin expected 50 +/- 1 but got 100
+FAIL Margin properties on mstyle (rtl) assert_approx_equals: top margin expected 50 +/- 1 but got 100
+FAIL Margin properties on mstyle (no margin-collapsing) assert_approx_equals: top margin expected 100 +/- 1 but got 200
+FAIL Margin properties on msub assert_approx_equals: top margin expected 50 +/- 1 but got 0
+FAIL Margin properties on msub (rtl) assert_approx_equals: top margin expected 50 +/- 1 but got 0
+FAIL Margin properties on msub (no margin-collapsing) assert_approx_equals: bottom margin expected 120 +/- 1 but got 10
+FAIL Margin properties on msubsup assert_approx_equals: top margin expected 50 +/- 1 but got 0
+FAIL Margin properties on msubsup (rtl) assert_approx_equals: top margin expected 50 +/- 1 but got 0
+FAIL Margin properties on msubsup (no margin-collapsing) assert_approx_equals: bottom margin expected 120 +/- 1 but got 10
+FAIL Margin properties on msup assert_approx_equals: top margin expected 50 +/- 1 but got 0
+FAIL Margin properties on msup (rtl) assert_approx_equals: top margin expected 50 +/- 1 but got 0
+FAIL Margin properties on msup (no margin-collapsing) assert_approx_equals: bottom margin expected 120 +/- 1 but got 10
+PASS Margin properties on mtable 
+PASS Margin properties on mtable (rtl) 
+FAIL Margin properties on mtable (no margin-collapsing) assert_approx_equals: top margin expected 100 +/- 1 but got 150
+FAIL Margin properties on mtext assert_approx_equals: top margin expected 50 +/- 1 but got 100
+FAIL Margin properties on mtext (rtl) assert_approx_equals: top margin expected 50 +/- 1 but got 100
+FAIL Margin properties on mtext (no margin-collapsing) assert_approx_equals: top margin expected 100 +/- 1 but got 200
+FAIL Margin properties on munder assert_approx_equals: top margin expected 50 +/- 1 but got 0
+FAIL Margin properties on munder (rtl) assert_approx_equals: top margin expected 50 +/- 1 but got 0
+FAIL Margin properties on munder (no margin-collapsing) assert_approx_equals: bottom margin expected 120 +/- 1 but got 10
+FAIL Margin properties on munderover assert_approx_equals: top margin expected 50 +/- 1 but got 0
+FAIL Margin properties on munderover (rtl) assert_approx_equals: top margin expected 50 +/- 1 but got 0
+FAIL Margin properties on munderover (no margin-collapsing) assert_approx_equals: bottom margin expected 120 +/- 1 but got 10
+FAIL Margin properties on semantics assert_approx_equals: top margin expected 50 +/- 1 but got 100
+FAIL Margin properties on semantics (rtl) assert_approx_equals: top margin expected 50 +/- 1 but got 100
+FAIL Margin properties on semantics (no margin-collapsing) assert_approx_equals: top margin expected 100 +/- 1 but got 200
+

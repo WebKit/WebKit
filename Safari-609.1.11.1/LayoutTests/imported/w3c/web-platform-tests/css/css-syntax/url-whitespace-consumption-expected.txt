@@ -1,0 +1,3 @@
+
+FAIL whitespace is optional between url( token and the string token assert_equals: expected "url(\"foo\")" but got "url(\"http://localhost:8800/css/css-syntax/foo\")"
+

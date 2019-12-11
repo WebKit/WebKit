@@ -1,0 +1,24 @@
+CONSOLE MESSAGE: line 6: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/domain-rules.html from loading a resource from http://127.0.0.1:8000/resources/square100.png?should_be_blocked_1
+CONSOLE MESSAGE: line 7: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/domain-rules.html from loading a resource from http://127.0.0.1:8000/resources/square100.png?should_be_blocked_2
+CONSOLE MESSAGE: line 8: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/domain-rules.html from loading a resource from http://127.0.0.1:8000/resources/square100.png?should_be_blocked_3
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 200x18
+        text run at (0,0) width 200: "The images below should load."
+      RenderBR {BR} at (199,14) size 1x0
+      RenderImage {IMG} at (0,18) size 100x100
+      RenderBR {BR} at (100,118) size 0x0
+      RenderImage {IMG} at (0,118) size 100x100
+      RenderBR {BR} at (100,218) size 0x0
+      RenderText {#text} at (0,218) size 242x18
+        text run at (0,218) width 242: "The images below should be blocked."
+      RenderBR {BR} at (241,232) size 1x0
+      RenderImage {IMG} at (0,236) size 0x0
+      RenderBR {BR} at (0,236) size 0x0
+      RenderImage {IMG} at (0,236) size 0x0
+      RenderBR {BR} at (0,236) size 0x0
+      RenderImage {IMG} at (0,236) size 0x0
+      RenderBR {BR} at (0,236) size 0x0

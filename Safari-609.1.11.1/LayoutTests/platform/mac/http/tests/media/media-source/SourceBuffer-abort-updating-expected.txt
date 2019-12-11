@@ -1,0 +1,14 @@
+
+FAIL SourceBuffer#abort() (video/webm; codecs="vorbis,vp8") : Check the algorithm when the updating attribute is true. assert_unreached: Browser doesn't support the MIME used in this test: video/webm; codecs="vorbis,vp8" Reached unreachable code(stack: assert@http://127.0.0.1:8000/w3c/resources/testharness.js:2060:37
+assert_unreached@http://127.0.0.1:8000/w3c/resources/testharness.js:1056:16
+http://127.0.0.1:8000/media/media-source/SourceBuffer-abort-updating.html:33:29
+step@http://127.0.0.1:8000/w3c/resources/testharness.js:1160:30
+isTypeSupported@http://127.0.0.1:8000/media/media-source/SourceBuffer-abort-updating.html:32:18
+isTypeSupported@[native code]
+http://127.0.0.1:8000/media/media-source/SourceBuffer-abort-updating.html:42:36
+step@http://127.0.0.1:8000/w3c/resources/testharness.js:1160:30
+async_test@http://127.0.0.1:8000/w3c/resources/testharness.js:460:26
+mediaTest@http://127.0.0.1:8000/media/media-source/SourceBuffer-abort-updating.html:41:15
+global code@http://127.0.0.1:8000/media/media-source/SourceBuffer-abort-updating.html:88:14)
+PASS SourceBuffer#abort() (video/mp4) : Check the algorithm when the updating attribute is true. 
+

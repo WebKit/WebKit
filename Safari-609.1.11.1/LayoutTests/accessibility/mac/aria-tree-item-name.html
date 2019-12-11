@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<ul id="tree" role="tree" aria-label="Help Topics">
+  <li id="item0" role="treeitem" aria-expanded="true">Release Notes
+    <ul role="group">
+      <li id="item1" role="treeitem" aria-label="item 1">Power Search</li>
+      <li id="item2" role="treeitem" aria-labelledby="label">Power Search</li>
+    </ul>
+  </li>
+</ul>
+
+<p id="label">item 2</p>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that name calculation is correct for treeitems.");
+
+    if (window.accessibilityController) {
+    
+          // Treeitems missing a label are labeled by child elements.
+          var item0 = accessibilityController.accessibleElementById("item0");
+          shouldBe("item0.description", "'AXDescription: Release Notes'");
+          
+          // aria-label case.
+          var item1 = accessibilityController.accessibleElementById("item1");
+          shouldBe("item1.description", "'AXDescription: item 1'");
+          
+          // aria-labelledby case.
+          var item2 = accessibilityController.accessibleElementById("item2");
+          shouldBe("item2.description", "'AXDescription: item 2'");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8>
+<meta name="timeout" content="long">
+<title>vector ctor.</title>
+<script src="js/test-harness.js"></script>
+<script src="../js/webgpu-functions.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const whlslTests = {};
+
+whlslTests.vectorConstructor = async () => {
+    const program = `
+        bool foo() {
+            float3 v = float3(float2(10.0, 11.0), 12.0);
+            return v.x == 10.0 && v.y == 11.0 && v.z == 12.0;
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.vectorConstructor2 = async () => {
+    const program = `
+        bool foo() {
+            float3 v = float3(10.0, float2(11.0, 12.0));
+            return v.x == 10.0 && v.y == 11.0 && v.z == 12.0;
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+whlslTests.vectorConstructor3 = async () => {
+    const program = `
+        bool foo() {
+            bool3 v = bool3(true, bool2(false, true));
+            return v.x && !v.y && v.z;
+        }
+    `;
+
+    assert_equals(await callBoolFunction(program,  "foo", []), true);
+};
+
+runTests(whlslTests);
+</script>
+</html>

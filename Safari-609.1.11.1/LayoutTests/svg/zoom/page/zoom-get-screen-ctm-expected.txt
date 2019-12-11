@@ -1,0 +1,14 @@
+This test checks getScreenCTM() on zoomed pages.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS CTM1 is "1, 0, 0, 1, 0, 100"
+PASS CTM2 is "1, 0, 0, 1, 100, 200"
+PASS CTM3 is "1, 0, 0, 1, 200, 300"
+PASS CTM4 is "1, 0, 0, 1, 300, 400"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

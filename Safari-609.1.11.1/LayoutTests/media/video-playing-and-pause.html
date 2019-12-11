@@ -1,0 +1,12 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script src="media-file.js"></script>
+        <script src="video-paint-test.js"></script>
+    </head>
+    <body onload="setSrcByTagName('video', findMediaFile('video', 'content/test')); initAndPause()">
+        <p>Test that pausing the media element in "playing" event handler pauses the media immediately. The video should show the first frame.</p>
+        <video controls></video>
+    </body>
+</html>
+

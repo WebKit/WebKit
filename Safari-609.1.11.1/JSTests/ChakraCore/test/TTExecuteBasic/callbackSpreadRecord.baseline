@@ -1,0 +1,12 @@
+Start Global Code
+Hello World - Global
+End Global Code
+Start Foo1
+Hello World - CallBack 1
+End Foo1
+Start Foo2
+Hello World - CallBack 2
+End Foo2
+Start Foo3
+Hello World - CallBack 3
+End Foo3

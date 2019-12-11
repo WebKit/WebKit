@@ -1,0 +1,3 @@
+
+FAIL shared-script ReferenceError: Can't find variable: SharedWorker
+

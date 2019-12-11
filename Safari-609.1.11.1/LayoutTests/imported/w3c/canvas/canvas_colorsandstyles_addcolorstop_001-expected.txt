@@ -1,0 +1,6 @@
+Description: addColorStop(offset, color) must throw a SYNTAX_ERR exception if the color passed cannot be parsed.
+
+Test passes if the word "PASS" appears below.
+
+PASS
+

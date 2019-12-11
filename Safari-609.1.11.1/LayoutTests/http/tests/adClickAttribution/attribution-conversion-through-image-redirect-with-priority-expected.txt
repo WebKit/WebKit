@@ -1,0 +1,12 @@
+Tests triggering of ad click attribution conversions with priority.
+
+
+Converted Ad Click Attributions:
+WebCore::AdClickAttribution 1
+Source: 127.0.0.1
+Destination: localhost
+Campaign ID: 3
+Conversion data: 12
+Conversion priority: 3
+Conversion earliest time to send: Within 24-48 hours
+Conversion request sent: false

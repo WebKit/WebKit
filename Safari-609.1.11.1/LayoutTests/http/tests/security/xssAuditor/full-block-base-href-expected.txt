@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 4: The XSS Auditor blocked access to 'http://127.0.0.1:8000/security/xssAuditor/resources/echo-head-base-href.pl?enable-full-block=1&q=%3Cbase%20href=%27http://localhost:8000/security/xssAuditor/resources/base-href/%27%3E' because the source code of a script was found within the request. The server sent an 'X-XSS-Protection' header requesting this behavior.
+There should be no content in the iframe below:
+
+
+
+--------
+Frame: 'frame'
+--------
+

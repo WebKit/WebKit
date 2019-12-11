@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+description("Check that exact matching is used when comparing a request's originating url and the value provided by Access-Control-Allow-Origin.");
+var urlTemplate = "http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=";
+
+function shouldPass(origin) {
+    debug("Should allow origin: '" + origin + "'");
+    xhr = new XMLHttpRequest();
+    xhr.open('GET', urlTemplate + encodeURIComponent(origin), false);
+    shouldBeUndefined("xhr.send(null)");
+}
+
+function shouldFail(origin) {
+    debug("Should disallow origin: '" + origin + "'");
+    xhr = new XMLHttpRequest();
+    xhr.open('GET', urlTemplate + encodeURIComponent(origin), false);
+    shouldThrow("xhr.send(null)");
+}
+
+var pageOrigin = document.origin;
+
+shouldPass("*");
+shouldPass(" *  ");
+shouldPass("	*");
+shouldPass(pageOrigin);
+shouldPass(" " + pageOrigin);
+shouldPass(" " + pageOrigin + "   	 ");
+shouldPass("	" + pageOrigin);
+shouldFail(location.protocol + "//www2." + location.host);
+shouldFail("//" + location.host);
+shouldFail("://" + location.host);
+shouldFail("ftp://" + location.host);
+shouldFail("http:://" + location.host);
+shouldFail("http:/" + location.host);
+shouldFail("http:" + location.host);
+shouldFail(location.host);
+shouldFail(pageOrigin + "?");
+shouldFail(pageOrigin + "/");
+shouldFail(pageOrigin + " /");
+shouldFail(pageOrigin + "#");
+shouldFail(pageOrigin + "%23");
+shouldFail(pageOrigin + ":80");
+shouldFail(pageOrigin + "\0");
+shouldFail(pageOrigin.toUpperCase());
+shouldFail(location.protocol.toUpperCase() + "//" + location.host);
+shouldFail("-");
+shouldFail("**");
+shouldFail("\0*");
+shouldFail("*\0");
+shouldFail("'*'");
+shouldFail('"*"');
+shouldFail("* *");
+shouldFail("*" + location.protocol + "//" + "*");
+shouldFail("*" + pageOrigin);
+shouldFail("* " + pageOrigin);
+shouldFail("\0" + pageOrigin);
+shouldFail("null " + pageOrigin);
+shouldFail("http://example.net");
+shouldFail("null");
+shouldFail("");
+shouldFail(location.href);
+shouldFail(location.href.replace(/\/[^\/]*$/, '/'));
+shouldFail(location.href.replace(location.hostname, "localhost"));
+
+// Tests with multiple Access-Control-Allow-Origin headers (expected to fail)
+shouldFail(pageOrigin + ", *");
+shouldFail(pageOrigin + ",*");
+shouldFail("*, " + pageOrigin);
+shouldFail("*," + pageOrigin);
+shouldFail(pageOrigin + "," + pageOrigin);
+shouldFail(pageOrigin + ",http://example.net");
+shouldFail("http://example.net," + pageOrigin);
+shouldFail(",");
+shouldFail("," + pageOrigin);
+shouldFail(pageOrigin + ",");
+
+</script>
+<script src="../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

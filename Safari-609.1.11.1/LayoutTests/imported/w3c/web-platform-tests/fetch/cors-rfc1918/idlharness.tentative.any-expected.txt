@@ -1,0 +1,8 @@
+
+PASS idl_test setup 
+PASS Partial interface Document: original interface defined 
+PASS Partial interface WorkerGlobalScope: original interface defined 
+PASS WorkerGlobalScope interface: existence and properties of interface object 
+FAIL Document interface: attribute addressSpace assert_true: The prototype object must have a property "addressSpace" expected true got false
+FAIL Document interface: document must inherit property "addressSpace" with the proper type assert_inherits: property "addressSpace" not found in prototype chain
+

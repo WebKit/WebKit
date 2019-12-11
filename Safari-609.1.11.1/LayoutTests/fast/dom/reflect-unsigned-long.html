@@ -1,0 +1,73 @@
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("This tests covers the behavior of reflecting IDL attributes of type unsigned long");
+// https://html.spec.whatwg.org/multipage/infrastructure.html#reflecting-content-attributes-in-idl-attributes
+
+var video = document.createElement("video");
+
+debug("* Default value");
+shouldBeNull("video.getAttribute('width')");
+shouldBe("video.width", "0");
+
+debug("");
+debug("* Regular value");
+evalAndLog("video.setAttribute('width', '123')");
+shouldBeEqualToString("video.getAttribute('width')", "123");
+shouldBe("video.width", "123");
+evalAndLog("video.width = 123");
+shouldBeEqualToString("video.getAttribute('width')", "123");
+shouldBe("video.width", "123");
+
+debug("");
+debug("* Boundary");
+evalAndLog("video.setAttribute('width', '2147483647')");
+shouldBeEqualToString("video.getAttribute('width')", "2147483647");
+shouldBe("video.width", "2147483647");
+evalAndLog("video.width = 2147483647");
+shouldBeEqualToString("video.getAttribute('width')", "2147483647");
+shouldBe("video.width", "2147483647");
+
+debug("");
+debug("* Out of range value");
+evalAndLog("video.setAttribute('width', '2147483649')");
+shouldBeEqualToString("video.getAttribute('width')", "2147483649");
+shouldBe("video.width", "0");
+evalAndLog("video.width = 2147483649");
+shouldBeEqualToString("video.getAttribute('width')", "0");
+shouldBe("video.width", "0");
+
+debug("");
+debug("* Default value");
+shouldBeNull("video.getAttribute('height')");
+shouldBe("video.height", "0");
+
+debug("");
+debug("* Regular value");
+evalAndLog("video.setAttribute('height', '123')");
+shouldBeEqualToString("video.getAttribute('height')", "123");
+shouldBe("video.height", "123");
+evalAndLog("video.height = 123");
+shouldBeEqualToString("video.getAttribute('height')", "123");
+shouldBe("video.height", "123");
+
+debug("");
+debug("* Boundary");
+evalAndLog("video.setAttribute('height', '2147483647')");
+shouldBeEqualToString("video.getAttribute('height')", "2147483647");
+shouldBe("video.height", "2147483647");
+evalAndLog("video.height = 2147483647");
+shouldBeEqualToString("video.getAttribute('height')", "2147483647");
+shouldBe("video.height", "2147483647");
+
+debug("");
+debug("* Out of range value");
+evalAndLog("video.setAttribute('height', '2147483649')");
+shouldBeEqualToString("video.getAttribute('height')", "2147483649");
+shouldBe("video.height", "0");
+evalAndLog("video.height = 2147483649");
+shouldBeEqualToString("video.getAttribute('height')", "0");
+shouldBe("video.height", "0");
+
+debug("");
+</script>
+<script src="../../resources/js-test-post.js"></script>

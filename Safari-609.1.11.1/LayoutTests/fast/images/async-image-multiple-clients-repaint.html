@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .box {
+        image-rendering: crisp-edges;
+    }
+    .small-box {
+        height: 50px;
+        width: 100px;
+        background-position: -50px -16500px;
+        background-size: 200px 33100px;
+    }
+    .large-box {
+        height: 100px;
+        width: 200px;
+        background-position: -100px -33000px;
+        background-size: 400px 66200px;
+    }
+    .vertical-space {
+        height: 250px;
+        width: 250px;
+    }
+    .image-background {
+    }
+</style>
+</head>
+<body>
+    <div class="box small-box image-background"></div>
+    <br>
+    <div class="vertical-space"></div>
+    <br>
+    <div class="box large-box image-background"></div>
+    <script>
+        function setElementImageBackground(element, image) {
+            return new Promise((resolve) => {
+                element.style.backgroundImage = 'url(' + image.src + ')';
+
+                // Force layout and display so the image frame starts decoding
+                document.body.offsetHeight;
+                testRunner.display();
+ 
+                element.addEventListener("webkitImageFrameReady", function() {
+                    resolve();
+                }, false);
+            });
+        }
+
+        function recordAndStopTrackingRepaints() {
+            var repaintRects = window.internals.repaintRectsAsText();
+            internals.stopTrackingRepaints()
+            var pre = document.createElement('pre');
+            document.body.appendChild(pre);
+            pre.innerHTML = repaintRects;
+        }
+
+        (function() {
+            if (window.internals && window.testRunner) {
+                internals.clearMemoryCache();
+                internals.settings.setWebkitImageReadyEventEnabled(true);
+                internals.settings.setLargeImageAsyncDecodingEnabled(true);
+                testRunner.dumpAsText(true);
+                testRunner.waitUntilDone();
+            }
+
+            var image = new Image();
+            image.onload = function() {
+                // Force async image decoding for this image.
+                if (window.internals)
+                    internals.setLargeImageAsyncDecodingEnabledForTesting(image, true);
+
+                if (window.internals && window.testRunner) {
+                    setElementImageBackground(document.querySelector(".small-box"), image).then(() => {
+                        // Call the next setElementImageBackground() asynchronously, using setTimeout(, 0),
+                        // to avoid calling testRunner.display() while the webkitImageFrameReady callback of
+                        // the previous setElementImageBackground() still in the call stack.
+                        setTimeout(function() {
+                            internals.startTrackingRepaints();
+                            setElementImageBackground(document.querySelector(".large-box"), image).then(() => {
+                                recordAndStopTrackingRepaints();
+                                testRunner.notifyDone();
+                            });
+                        }, 0);
+                    });
+                } else {
+                    document.querySelector(".small-box").style.backgroundImage = 'url(' + image.src + ')';
+                    document.querySelector(".large-box").style.backgroundImage = 'url(' + image.src + ')';
+                }
+            }
+            image.src = "resources/sprite-sheet-red-green-blue.png";
+        })();
+    </script>
+</body>
+</html>

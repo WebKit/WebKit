@@ -1,0 +1,41 @@
+<html>
+<body>
+<embed name="plg" type="application/x-webkit-test-netscape" width="100px" height="100px">
+<p>Test for NPP_SetWindow calls sent while a plug-in resizes itself.</p>
+<pre id=result></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+}
+
+function resizePlugin(width, height)
+{
+    plg.style.width = width + "px";
+    plg.style.height = height + "px";
+}
+
+function test()
+{
+    try {
+        plg.resizeTo(200, 200);
+        document.getElementById("result").innerHTML = plg.lastSetWindowArguments
+            + "\nHeight and width should equal 200, and the plug-in size should not change on scroll.";
+    } catch (ex) {
+        alert("Exception: " + ex.description + ". Test plugin was not found");
+    }
+}
+
+plg.onclick = test;
+
+if (window.eventSender) {
+    eventSender.mouseMoveTo(50, 70);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+} else
+    document.getElementById("result").innerHTML = "Please click the plug-in square above.\n&nbsp;";
+
+</script>
+<div style="visibility:hidden;height:5000px"></div>
+</body>
+</html>

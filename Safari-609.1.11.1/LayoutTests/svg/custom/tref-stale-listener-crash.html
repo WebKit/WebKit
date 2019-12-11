@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body onload="crash()">
+  <!-- Test for https://bugs.webkit.org/show_bug.cgi?id=94487 -->
+  <input/>
+  <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g>
+      <tref xlink:href="#target"/>
+      <g id="target"></g>
+    </g>
+  </svg>
+  <input/>
+  <div>PASS: did not crash.</div>
+
+  <script>
+    if (window.testRunner)
+      testRunner.dumpAsText();
+
+    function crash() {
+      document.designMode='on';
+      document.execCommand('selectall');
+      document.execCommand('FormatBlock', false, '<'+'pre>');
+    }
+  </script>
+</body>
+</html>

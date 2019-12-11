@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 1: Use of window.alert is not allowed while unloading a page.
+PASSED if didn't crash in two seconds.

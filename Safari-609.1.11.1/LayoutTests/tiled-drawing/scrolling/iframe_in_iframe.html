@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>iFrame in iFrame Test</title>
+        <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        .container {
+            width:100%;
+            overflow:auto;
+            height:auto;
+        }
+
+        .innercontainer {
+            height:100%;
+            width:50%;
+        }
+        </style>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+<script>
+
+var iframeTarget;
+var innerIFrameTarget;
+var pageScrollPositionBefore;
+var iFrameScrollPositionBefore;
+var continueCount = 5;
+
+function checkForScroll()
+{
+    // The IFrame should not have scrolled at all.
+    var pageScrollPositionAfter = document.scrollingElement.scrollTop;
+    var iFrameScrollPositionAfter = window.frames['target'].document.scrollingElement.scrollTop;
+    var innerIFrameScrollPositionAfter = iframeTarget.contentWindow.frames['target'].document.scrollingElement.scrollTop;
+
+    if (pageScrollPositionBefore != pageScrollPositionAfter)
+        testFailed("Page received wheel events.");
+    else
+        testPassed("Page did not receive wheel events.");
+
+    if (iFrameScrollPositionBefore != iFrameScrollPositionAfter)
+        testFailed("iframe received wheel events.");
+    else
+        testPassed("iframe did not receive wheel events.");
+
+    if (innerIFrameScrollPositionBefore != innerIFrameScrollPositionAfter)
+        testPassed("iframe received wheel events.");
+    else
+        testFailed("iframe did not receive wheel events.");
+
+    finishJSTest();
+    testRunner.notifyDone();
+}
+
+function scrollTest()
+{
+    pageScrollPositionBefore = document.scrollingElement.scrollTop;
+
+    iframeTarget = document.getElementById('target');
+
+    var iFrameScrollingElement = window.frames['target'].document.scrollingElement;
+    iFrameScrollPositionBefore = iFrameScrollingElement.scrollTop;
+
+    innerIFrameTarget = iframeTarget.contentWindow.frames['target'].document.scrollingElement;
+    innerIFrameScrollPositionBefore = innerIFrameTarget.scrollTop;
+
+    // Scroll the #source until we reach the #target.
+    var startPosX = Math.round(iframeTarget.offsetLeft) + 20;
+    var startPosY = Math.round(iframeTarget.offsetTop) + 80;
+    eventSender.mouseMoveTo(startPosX, startPosY);
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'begin');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
+    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
+    eventSender.callAfterScrollingCompletes(checkForScroll);
+}
+
+function setupTopLevel()
+{
+    if (window.eventSender) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+
+        eventSender.monitorWheelEvents();
+        setTimeout(scrollTest, 0);
+    }
+}
+</script>
+        <div class="container">
+            <div class="innercontainer">
+                <div style="width:100%;">
+                    <div>Inner Frame:</div>
+                    <div style="height:92%;">
+                        <iframe id="target" name="target" src="resources/testContent.html" onload="setupTopLevel();"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="console"></div>
+        <script>
+        description("Tests that iframe doesn't pass wheel events to main frame when scrolling inside iframe");
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

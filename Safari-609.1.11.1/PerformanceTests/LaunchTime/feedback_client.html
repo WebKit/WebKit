@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Launch Time Benchmark</title>
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+  </head>
+  <body style="font-family: -apple-system; font-size:1.5em;">
+    <h2>Benchmark Progress</h2>
+    <p id="output" style="white-space: pre-line;"></p>
+    <strong id="done"></strong>
+  </body>
+</html>
+<script>
+  if (!("WebSocket" in window)) {
+    alert("Your browser does not support web sockets");
+  } else {
+    setup();
+  }
+
+  function setup() {
+    const host = "ws://localhost:{{ port }}/ws";
+    const socket = new WebSocket(host);
+
+    if (socket) {
+      socket.onmessage = message => showServerMessage(message.data);
+      socket.onclose = () => document.getElementById('done').textContent = 'DONE';
+    } else {
+      console.log("invalid socket");
+    }
+
+    function showServerMessage(text) {
+      text = text.replace(/\n/g, "\r\n");
+      const output = document.getElementById('output');
+      output.textContent = output.textContent.concat(text)
+    }
+  }
+</script>

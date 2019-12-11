@@ -1,0 +1,16 @@
+<div>Pass if no crash or assert</div>
+<input id="ice" name="ice-cream-choice">
+<datalist id="ice-cream-flavors">
+    <option value="Chocolate">
+    </option><option value="Coconut">
+    </option><option value="Mint">
+	</option>
+</datalist>
+
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.body.offsetHeight;
+ice.setAttribute("list", "ice-cream-flavors");
+document.body.appendChild(ice.cloneNode());
+</script>

@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>SendBeacon CORS preflight on redirect test from cross origin to same origin</title>
+    <script src=/resources/testharness.js></script>
+    <script src=/resources/testharnessreport.js></script>
+  </head>
+  <body>
+    <script src="/common/utils.js"></script>
+    <script src="/common/get-host-info.sub.js"></script>
+    <script>
+var RESOURCES_DIR = "/WebKit/beacon/resources/";
+
+function pollResult(test, id) {
+  var checkUrl = RESOURCES_DIR + "beacon-preflight.py?cmd=get&id=" + id;
+
+  return new Promise(resolve => {
+    step_timeout(test.step_func(() => {
+      fetch(checkUrl).then(response => {
+        response.json().then(body => {
+          resolve(body);
+        });
+      });
+    }), 1000);
+  });
+}
+
+function testCORSPreflightRedirectSuccess(what) {
+  var testBase = get_host_info().HTTP_REMOTE_ORIGIN + RESOURCES_DIR;
+  var id = self.token();
+  var target = encodeURIComponent(get_host_info().HTTP_ORIGIN + RESOURCES_DIR + "beacon-preflight.py?allowCors=1&cmd=put&id=" + id);
+
+  // 307 & 308 redirections are the only ones that maintain the POST method.
+  var testUrl = testBase + "redirect.py?redirect_status=307&location=" + target;
+
+  promise_test(function(test) {
+    assert_true(navigator.sendBeacon(testUrl, what), "SendBeacon Succeeded");
+    return pollResult(test, id) .then(result => {
+      assert_equals(result['preflight'], 1, "Received preflight")
+      assert_equals(result['preflight_referer'], document.URL, "Preflight referer header")
+      assert_equals(result['preflight_requested_method'], "POST", "Preflight requested method")
+      assert_equals(result['preflight_origin'], "null", "Received beacon")
+      assert_equals(result['beacon'], 1, "Received beacon")
+      assert_equals(result['beacon_origin'], "null", "Received beacon")
+    });
+  }, "CORS preflight success test");
+}
+
+let blob = new Blob(["123"], {type: "application/octet-stream"});
+testCORSPreflightRedirectSuccess(blob);
+    </script>
+  </body>
+</html>

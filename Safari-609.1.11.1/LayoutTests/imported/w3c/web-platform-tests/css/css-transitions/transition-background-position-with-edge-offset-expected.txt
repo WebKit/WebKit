@@ -1,0 +1,3 @@
+
+PASS background-position not equals to end value 
+

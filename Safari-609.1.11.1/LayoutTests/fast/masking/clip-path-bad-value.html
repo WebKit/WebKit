@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test-pre.js"></script>
+<div id="myDiv"></div>
+
+<script>
+description("Makes sure we don't crash in the StyleBuilder if bad values are used for -webkit-clip-path property.");
+
+var badValues = [
+    "auto", // Unexpected primitive value.
+    "1px 2px", // an unexpected list.
+    "content-box border-box", // 2 reference boxes.
+    "circle(50% at 50% 50%) circle(20% at 20% 20%)", // 2 shapes.
+    "circle(50% at 50% 50%) border-box content-box", // extra reference box.
+    "copy", // a cursor.
+    " ", // a space.
+    "", // empty.
+];
+
+var testElement = document.getElementById("myDiv");
+for (var i = 0; i < badValues.length; ++i) {
+    testElement.style["-webkit-clip-path"] = badValues[i];
+    shouldBeEqualToString("document.defaultView.getComputedStyle(testElement)['-webkit-clip-path']", "none");
+    testPassed("No crash for " + badValues[i] + " value");
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>

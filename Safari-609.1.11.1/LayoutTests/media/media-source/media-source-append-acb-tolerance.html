@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-append-acb-tolerance</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+    var bufferedSamples;
+    var enqueuedSamples;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function impreciseSampleRun(start, end) {
+        // A common case for WebM files is for duration to have greater precision than timestamps.
+        // This is because DefaultDuration is always set in nanoseconds (per spec), while other timestamps are set in
+        // Timescale (usually milliseconds).
+        // These settings try to replicate the timing found in a typical WebM 30 fps video.
+        // Duration here is set to microseconds instead of nanoseconds because otherwise MockSampleBox would overflow
+        // after just 2.133 seconds.
+        const samples = [];
+        const fps = 30;
+        const numFrames = (end - start) * fps;
+        for (let numFrame = 0; numFrame < numFrames; numFrame++) {
+            const ptsMilliseconds = Math.round(1000 * (start + numFrame / fps));
+            const durationMicroseconds = 33333;
+            samples.push(makeASample(1000 * ptsMilliseconds, 1000 * ptsMilliseconds, durationMicroseconds, 1e6,
+                1, numFrame === 0 ? SAMPLE_FLAG.SYNC : SAMPLE_FLAG.NONE));
+        }
+        return concatenateSamples(samples);
+    }
+
+    window.addEventListener('load', async () => {
+        findMediaElement();
+        source = new MediaSource();
+        testExpected('source.readyState', 'closed');
+        const sourceOpened = waitFor(source, 'sourceopen');
+
+        const videoSource = document.createElement('source');
+        videoSource.type = 'video/mock; codecs=mock';
+        videoSource.src = URL.createObjectURL(source);
+        video.appendChild(videoSource);
+
+        await sourceOpened;
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+
+        initSegment = makeAInit(15, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+
+        run('sourceBuffer.appendBuffer(initSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Segment A
+        run('sourceBuffer.appendBuffer(impreciseSampleRun(0, 5))');
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Segment C
+        run('sourceBuffer.appendBuffer(impreciseSampleRun(10, 15))');
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Segment B
+        run('sourceBuffer.appendBuffer(impreciseSampleRun(5, 10))');
+        await waitFor(sourceBuffer, 'updateend');
+
+        bufferedSamples = internals.bufferedSamplesForTrackID(sourceBuffer, 1);
+        enqueuedSamples = internals.enqueuedSamplesForTrackID(sourceBuffer, 1);
+
+        // 30 samples were appended in total. All of them should have ended up in buffered samples and in the decode queue.
+        testExpected('bufferedSamples.length', 15 * 30);
+        testExpected('enqueuedSamples.length', 15 * 30);
+
+        enqueuedSamples.forEach(consoleWrite);
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

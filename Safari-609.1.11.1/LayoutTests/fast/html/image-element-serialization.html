@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Test that an <image> element in HTML has an end tag when serialized.");
+
+var div = document.createElement("div");
+var image = document.createElement("image");
+shouldBe("image.__proto__", "HTMLUnknownElement.prototype");
+div.appendChild(image);
+shouldBeEqualToString("div.innerHTML", "<image></image>");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

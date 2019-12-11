@@ -1,0 +1,23 @@
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+CONSOLE MESSAGE: Blocked mixed content http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi because 'block-all-mixed-content' appears in the Content Security Policy.
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+This test opens a window and loads insecure data via synchronous XHR. We should trigger a mixed content block because the main frame in the window has CSP directive block-all-mixed-content.
+
+documentURI: https://127.0.0.1:8443/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-xhr.html
+referrer: http://127.0.0.1:8000/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-synchronous-in-main-frame.html
+blockedURI: http://127.0.0.1:8000
+violatedDirective: block-all-mixed-content
+effectiveDirective: block-all-mixed-content
+originalPolicy: block-all-mixed-content
+sourceFile: https://127.0.0.1:8443/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-xhr.html
+lineNumber: 30
+columnNumber: 9
+statusCode: 0
+
+

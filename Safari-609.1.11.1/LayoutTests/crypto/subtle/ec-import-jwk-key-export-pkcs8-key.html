@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing a jwk private ECDH key and then export it in PKCS8 format");
+
+jsTestIsAsync = true;
+
+var jwkKey = {
+    kty: "EC",
+    ext: true,
+    key_ops: ["deriveBits", "deriveKey"],
+    crv: "P-256",
+    x: "1FSVWieTvikFkG1NOyhkUCaMbdQhxwH6aCu4Ez-sRtA",
+    y: "9jmNTLqM4cjBhdAnHcNI9YQV3O8LFmo-EdZWk8ntAaI",
+    d: "ppxBSov3N8_AUcisAuvmLV4yE8e_L_BLE8bZb9Z1Xjg",
+};
+var expectedPkcs8KeyHex = "308187020100301306072a8648ce3d020106082a8648ce3d030107046d306b0201010420a69c414a8bf737cfc051c8ac02ebe62d5e3213c7bf2ff04b13c6d96fd6755e38a14403420004d454955a2793be2905906d4d3b286450268c6dd421c701fa682bb8133fac46d0f6398d4cba8ce1c8c185d0271dc348f58415dcef0b166a3e11d65693c9ed01a2";
+var extractable = true;
+
+debug("Importing a key...");
+crypto.subtle.importKey("jwk", jwkKey, { name: "ECDH", namedCurve: "P-256" }, extractable, ["deriveKey", "deriveBits"]).then(function(result) {
+    return crypto.subtle.exportKey("pkcs8", result);
+}).then(function(result) {
+    privateKey = result;
+
+    shouldBe("bytesToHexString(privateKey)", "expectedPkcs8KeyHex");
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

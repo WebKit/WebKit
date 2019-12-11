@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>This tests that clipping on composited layer works properly..</title>
+    <style>
+        .container {
+            position: relative;
+            margin: 10px;
+            width: 200px;
+            height: 200px;
+            padding: 0.5px;
+            border: 0.5px solid black;
+            overflow: hidden;
+            display: inline-block;
+        }
+        
+        .contents {
+            width: 200px;
+            height: 300px;
+            background-color: blue;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="contents"></div>
+    </div>
+
+    <div class="container" style="left: 0.3px; top: 0.3px;">
+        <div class="contents"></div>
+    </div>
+
+    <div class="container" style="left: 0.15px; top: 0.15px;">
+        <div class="contents"></div>
+    </div>
+
+    <div class="container" style="left: 0.6px; top: 0.6px;">
+        <div class="contents"></div>
+    </div>
+
+    <div class="container" style="left: 0.8px; top: 0.8px;">
+        <div class="contents"></div>
+    </div>
+</body>
+</html>

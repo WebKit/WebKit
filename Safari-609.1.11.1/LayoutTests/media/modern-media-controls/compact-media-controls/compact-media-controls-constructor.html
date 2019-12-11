@@ -1,0 +1,18 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing the <code>CompactMediaControls</code> constructor.");
+
+const mediaControls = new CompactMediaControls;
+
+shouldBeEqualToString("mediaControls.element.localName", "div");
+shouldBeEqualToString("mediaControls.element.className", "compact media-controls");
+shouldBe("mediaControls.layoutTraits", "LayoutTraits.Compact");
+shouldBe("mediaControls.state", "CompactMediaControls.States.Paused");
+debug("");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

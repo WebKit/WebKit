@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+
+description("This tests the prototype chain of DOMException objects.")
+
+var e;
+try {
+  document.appendChild(document);
+   // raises a HIERARCHY_REQUEST_ERR
+} catch (err) {
+  e = err;
+}
+
+shouldBeEqualToString("e.toString()", "HierarchyRequestError: The operation would yield an incorrect node tree.");
+shouldBeEqualToString("Object.prototype.toString.call(e)", "[object DOMException]");
+shouldBeEqualToString("Object.prototype.toString.call(e.__proto__)", "[object DOMExceptionPrototype]");
+shouldBeEqualToString("Object.prototype.toString.call(e.__proto__.__proto__)", "[object Object]");
+shouldBeEqualToString("e.constructor.toString()", "function DOMException() {\n    [native code]\n}");
+shouldBeTrue("e instanceof DOMException");
+shouldBeTrue("e instanceof Error");
+shouldBe("e.constructor", "window.DOMException");
+shouldBe("e.HIERARCHY_REQUEST_ERR", "e.constructor.HIERARCHY_REQUEST_ERR");
+shouldBe("e.HIERARCHY_REQUEST_ERR", "3");
+shouldBe("e.code", "3");
+shouldBeEqualToString("e.name", "HierarchyRequestError");
+shouldBeEqualToString("e.message", "The operation would yield an incorrect node tree.");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>

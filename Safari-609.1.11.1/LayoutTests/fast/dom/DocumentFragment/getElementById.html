@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="notInFragment"></div>
+<div id="duplicateId1"></div>
+<script>
+
+description("Tests that getElementById() API is exposed on DocumentFragment nodes.");
+
+var fragment = new DocumentFragment();
+var div = document.createElement("div");
+div.id = "divID";
+fragment.appendChild(div);
+var a = document.createElement("a");
+a.id = "aID";
+div.appendChild(a);
+var span = document.createElement("span");
+span.id = "duplicateId1";
+div.appendChild(span);
+var h1 = document.createElement("h1");
+h1.id = "duplicateId2";
+div.appendChild(h1);
+var h2 = document.createElement("h2");
+h2.id = "duplicateId2";
+div.appendChild(h2);
+
+shouldBe("fragment.getElementById('divID')", "div");
+shouldBe("fragment.getElementById('aID')", "a");
+shouldBeNull("fragment.getElementById('notInFragment')");
+shouldBeNull("fragment.getElementById('doesNotExist')");
+
+// Duplicate ID cases.
+shouldBe("fragment.getElementById('duplicateId1')", "span"); // Should return the Element *inside* the DocumentFragment.
+shouldBe("fragment.getElementById('duplicateId2')", "h1"); // Should return the first matching Element in case of duplicate.
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

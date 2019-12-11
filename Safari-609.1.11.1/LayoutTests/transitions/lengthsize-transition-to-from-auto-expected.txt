@@ -1,0 +1,4 @@
+PASS - "background-size" property for "test1" element at 1s saw something close to: 55,10
+PASS - "background-size" property for "test2" element at 1s saw something close to: 10
+PASS - "background-size" property for "test3" element at 1s saw something close to: 10,10
+

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+        }
+      
+        .outer {
+            background: blue;
+            margin-top: 120px;
+            height: 200px;
+            padding: 10px;
+        }
+
+        .sticky {
+            position: sticky;
+            position: -webkit-sticky;
+            top: 0px;
+        }
+
+       .inner {
+            padding: 10px;
+            background: orange;
+            top: 10px;
+            height: 80px;
+        }
+    </style>
+    <script>
+        function startTest()
+        {
+            document.scrollingElement.scrollTop = 2000;
+        }
+        
+        window.addEventListener('load', startTest, false);
+    </script>
+</head>
+<body>
+  <div class="outer sticky">
+    <div class="inner sticky"></div>
+</body>
+</html>

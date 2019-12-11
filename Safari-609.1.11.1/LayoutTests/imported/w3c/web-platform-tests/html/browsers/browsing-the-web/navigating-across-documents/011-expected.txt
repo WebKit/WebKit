@@ -1,0 +1,3 @@
+
+PASS Link with onclick navigation to javascript url with document.write and href navigation  
+ Test

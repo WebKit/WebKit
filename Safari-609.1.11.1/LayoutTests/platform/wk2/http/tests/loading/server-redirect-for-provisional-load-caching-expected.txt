@@ -1,0 +1,29 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+http://127.0.0.1:8000/loading/server-redirect-for-provisional-load-caching.html - didFinishLoading
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
+http://127.0.0.1:8000/loading/resources/server-redirect.php - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/loading/resources/server-redirect.php, main document URL http://127.0.0.1:8000/loading/server-redirect-for-provisional-load-caching.html, http method GET> redirectResponse (null)
+http://127.0.0.1:8000/loading/resources/server-redirect.php - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/loading/resources/server-redirect-result.html, main document URL http://127.0.0.1:8000/loading/server-redirect-for-provisional-load-caching.html, http method GET> redirectResponse <NSURLResponse http://127.0.0.1:8000/loading/resources/server-redirect.php, http status code 301>
+frame "<!--frame1-->" - didReceiveServerRedirectForProvisionalLoadForFrame
+http://127.0.0.1:8000/loading/resources/server-redirect.php - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/loading/resources/server-redirect-result.html, http status code 200>
+frame "<!--frame1-->" - didCommitLoadForFrame
+frame "<!--frame1-->" - willPerformClientRedirectToURL: http://127.0.0.1:8000/loading/resources/server-redirect.php 
+frame "<!--frame1-->" - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+frame "<!--frame1-->" - didFinishLoadForFrame
+main frame - didFinishLoadForFrame
+http://127.0.0.1:8000/loading/resources/server-redirect.php - didFinishLoading
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
+http://127.0.0.1:8000/loading/resources/server-redirect.php - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/loading/resources/server-redirect.php, main document URL http://127.0.0.1:8000/loading/server-redirect-for-provisional-load-caching.html, http method GET> redirectResponse (null)
+frame "<!--frame1-->" - didReceiveServerRedirectForProvisionalLoadForFrame
+http://127.0.0.1:8000/loading/resources/server-redirect.php - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/loading/resources/server-redirect-result.html, http status code 200>
+frame "<!--frame1-->" - didCancelClientRedirectForFrame
+frame "<!--frame1-->" - didCommitLoadForFrame
+http://127.0.0.1:8000/loading/resources/server-redirect.php - didFinishLoading
+frame "<!--frame1-->" - didFinishDocumentLoadForFrame
+frame "<!--frame1-->" - didHandleOnloadEventsForFrame
+frame "<!--frame1-->" - didFinishLoadForFrame
+Test passes if the second redirection which is loaded from the cache dispatches didReceiveServerRedirectForProvisionalLoadForFrame.
+
+

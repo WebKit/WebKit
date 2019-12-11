@@ -1,0 +1,25 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+
+<body contenteditable="true"><span id="start" contenteditable="false">On</span>ly the first two letters of the first word in this sentence should be selected.  To run this test manually, double click between the first two letters of the first word of the first sentence.</body>
+
+<script>
+if (window.testRunner) {
+    var s = window.getSelection();
+    
+    var start = document.getElementById("start");
+    
+    var x, y;
+    
+    x = start.offsetLeft + start.offsetWidth / 2;
+    y = start.offsetTop + start.offsetHeight / 2;
+    
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+</script>

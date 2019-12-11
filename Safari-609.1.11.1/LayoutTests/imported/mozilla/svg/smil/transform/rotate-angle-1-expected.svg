@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(50 50)">
+    <path d="M-2 50h4v -90h4l -6 -10 -6 10h4z" fill="blue"
+      transform="rotate(90)"/>
+  </g>
+  <g transform="translate(150 50)">
+    <path d="M-2 50h4v -90h4l -6 -10 -6 10h4z" fill="blue"
+      transform="rotate(90)"/>
+  </g>
+  <g transform="translate(250 50)">
+    <path d="M-2 50h4v -90h4l -6 -10 -6 10h4z" fill="blue"
+      transform="rotate(90)"/>
+  </g>
+  <g transform="translate(50 150)">
+    <path d="M-2 50h4v -90h4l -6 -10 -6 10h4z" fill="blue"
+      transform="rotate(90)"/>
+  </g>
+  <g transform="translate(150 150)">
+    <path d="M-2 50h4v -90h4l -6 -10 -6 10h4z" fill="blue"
+      transform="rotate(90)"/>
+  </g>
+  <g transform="translate(250 150)">
+    <path d="M-2 50h4v -90h4l -6 -10 -6 10h4z" fill="blue"
+      transform="rotate(90)"/>
+  </g>
+  <g transform="translate(50 250)">
+    <path d="M-2 50h4v -90h4l -6 -10 -6 10h4z" fill="blue"
+      transform="rotate(90)"/>
+  </g>
+  <g transform="translate(150 250)">
+    <path d="M-2 50h4v -90h4l -6 -10 -6 10h4z" fill="blue"
+      transform="rotate(90)"/>
+  </g>
+  <g transform="translate(250 250)">
+    <path d="M-2 50h4v -90h4l -6 -10 -6 10h4z" fill="blue"
+      transform="rotate(90)"/>
+  </g>
+</svg>

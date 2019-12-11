@@ -1,0 +1,3009 @@
+This tests that register allocation still works under register pressure induced by inlining, out-of-line function calls (i.e. unconditional register flushing), and slow paths for object creation (i.e. conditional register flushing).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS o.a is bar(2 * i + 1, i)
+PASS o.b is bar(2 * i, i)
+PASS o.c is i
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

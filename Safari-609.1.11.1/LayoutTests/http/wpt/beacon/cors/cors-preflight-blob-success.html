@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>SendBeacon CORS preflight test</title>
+    <script src=/resources/testharness.js></script>
+    <script src=/resources/testharnessreport.js></script>
+  </head>
+  <body>
+    <script src="/common/utils.js"></script>
+    <script src="/common/get-host-info.sub.js"></script>
+    <script>
+var RESOURCES_DIR = "/WebKit/beacon/resources/";
+
+function pollResult(test, id) {
+  var checkUrl = RESOURCES_DIR + "beacon-preflight.py?cmd=get&id=" + id;
+
+  return new Promise(resolve => {
+    step_timeout(test.step_func(() => {
+      fetch(checkUrl).then(response => {
+        response.json().then(body => {
+          resolve(body);
+        });
+      });
+    }), 1000);
+  });
+}
+
+function testCORSPreflightSuccess(what) {
+  var testBase = get_host_info().HTTP_REMOTE_ORIGIN + RESOURCES_DIR;
+  var id = self.token();
+  var testUrl = testBase + "beacon-preflight.py?allowCors=1&cmd=put&id=" + id;
+
+  promise_test(function(test) {
+    assert_true(navigator.sendBeacon(testUrl, what), "SendBeacon Succeeded");
+    return pollResult(test, id) .then(result => {
+      assert_equals(result['preflight'], 1, "Received preflight")
+      assert_equals(result['preflight_referer'], document.URL, "Preflight referer header")
+      assert_equals(result['preflight_origin'], 'http://localhost:8800', "Preflight origin header")
+      assert_equals(result['preflight_requested_method'], "POST", "Preflight requested method")
+      let requested_headers = result['preflight_requested_headers'].toLowerCase()
+      assert_true(requested_headers.includes("content-type"), "Content-Type header is requested")
+      assert_false(requested_headers.includes("referer"), "Referer header is requested")
+      assert_false(requested_headers.includes("origin"), "Origin header is requested")
+      assert_equals(result['beacon'], 1, "Received beacon")
+    });
+  }, "CORS preflight success test");
+}
+
+let blob = new Blob(["123"], {type: "application/octet-stream"});
+testCORSPreflightSuccess(blob);
+    </script>
+  </body>
+</html>

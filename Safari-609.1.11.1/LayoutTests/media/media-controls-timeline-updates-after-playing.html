@@ -1,0 +1,49 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<p>This tests if media controls shows up and timeline is accordingly updated after playing the video.</p>
+<video controls></video>
+<script src=media-file.js></script>
+<script src=video-test.js></script>
+<script src=media-controls.js></script>
+<script>
+function timeLineValue()
+{
+    var timeline = mediaControlsElement(internals.shadowRoot(video).firstChild.firstChild, '-webkit-media-controls-timeline');
+    if (!timeline)
+        throw "Failed to find -webkit-media-controls-timeline";
+
+    return timeline.value;
+}
+
+function canplaythrough()
+{
+    if (!window.testRunner) {
+        endTest();
+        return;
+    }
+
+    testExpected("timeLineValue()", 0);
+    run('video.fastSeek(video.duration - 1)');
+}
+
+function seeked()
+{
+    run("video.play()");
+}
+
+function paused()
+{
+    // timeLineValue returns a two decimal value.
+    test("Math.floor(video.currentTime * 100) / 100 == timeLineValue()");
+    endTest();
+}
+
+var video;
+findMediaElement();
+video.src = findMediaFile("video", "content/test");
+
+waitForEvent("canplaythrough", canplaythrough);
+waitForEvent("seeked", seeked);
+waitForEvent("play");
+waitForEvent("pause", paused);
+waitForEventAndFail("error");
+</script>

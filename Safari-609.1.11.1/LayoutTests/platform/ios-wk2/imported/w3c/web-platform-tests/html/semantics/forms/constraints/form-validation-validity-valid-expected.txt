@@ -1,0 +1,45 @@
+
+PASS [INPUT in TEXT status] validity.valid must be false if validity.patternMismatch is true 
+PASS [INPUT in TEXT status] validity.valid must be false if validity.valueMissing is true 
+PASS [INPUT in SEARCH status] validity.valid must be false if validity.patternMismatch is true 
+PASS [INPUT in SEARCH status] validity.valid must be false if validity.valueMissing is true 
+PASS [INPUT in TEL status] validity.valid must be false if validity.patternMismatch is true 
+PASS [INPUT in TEL status] validity.valid must be false if validity.valueMissing is true 
+PASS [INPUT in PASSWORD status] validity.valid must be false if validity.patternMismatch is true 
+PASS [INPUT in PASSWORD status] validity.valid must be false if validity.valueMissing is true 
+PASS [INPUT in URL status] validity.valid must be false if validity.patternMismatch is true 
+PASS [INPUT in URL status] validity.valid must be false if validity.typeMismatch is true 
+PASS [INPUT in URL status] validity.valid must be false if validity.valueMissing is true 
+PASS [INPUT in EMAIL status] validity.valid must be false if validity.patternMismatch is true 
+PASS [INPUT in EMAIL status] validity.valid must be false if validity.typeMismatch is true 
+PASS [INPUT in EMAIL status] validity.valid must be false if validity.valueMissing is true 
+PASS [INPUT in DATETIME-LOCAL status] validity.valid must be false if validity.rangeOverflow is true 
+PASS [INPUT in DATETIME-LOCAL status] validity.valid must be false if validity.rangeUnderflow is true 
+PASS [INPUT in DATETIME-LOCAL status] validity.valid must be false if validity.stepMismatch is true 
+PASS [INPUT in DATETIME-LOCAL status] validity.valid must be false if validity.valueMissing is true 
+PASS [INPUT in DATE status] validity.valid must be false if validity.rangeOverflow is true 
+PASS [INPUT in DATE status] validity.valid must be false if validity.rangeUnderflow is true 
+PASS [INPUT in DATE status] validity.valid must be false if validity.stepMismatch is true 
+PASS [INPUT in DATE status] validity.valid must be false if validity.valueMissing is true 
+PASS [INPUT in MONTH status] validity.valid must be false if validity.rangeOverflow is true 
+PASS [INPUT in MONTH status] validity.valid must be false if validity.rangeUnderflow is true 
+PASS [INPUT in MONTH status] validity.valid must be false if validity.stepMismatch is true 
+PASS [INPUT in MONTH status] validity.valid must be false if validity.valueMissing is true 
+PASS [INPUT in WEEK status] validity.valid must be false if validity.rangeOverflow is true 
+PASS [INPUT in WEEK status] validity.valid must be false if validity.rangeUnderflow is true 
+PASS [INPUT in WEEK status] validity.valid must be false if validity.stepMismatch is true 
+PASS [INPUT in WEEK status] validity.valid must be false if validity.valueMissing is true 
+PASS [INPUT in TIME status] validity.valid must be false if validity.rangeOverflow is true 
+PASS [INPUT in TIME status] validity.valid must be false if validity.rangeUnderflow is true 
+PASS [INPUT in TIME status] validity.valid must be false if validity.stepMismatch is true 
+PASS [INPUT in TIME status] validity.valid must be false if validity.valueMissing is true 
+PASS [INPUT in NUMBER status] validity.valid must be false if validity.rangeOverflow is true 
+PASS [INPUT in NUMBER status] validity.valid must be false if validity.rangeUnderflow is true 
+PASS [INPUT in NUMBER status] validity.valid must be false if validity.stepMismatch is true 
+PASS [INPUT in NUMBER status] validity.valid must be false if validity.valueMissing is true 
+PASS [INPUT in CHECKBOX status] validity.valid must be false if validity.valueMissing is true 
+PASS [INPUT in RADIO status] validity.valid must be false if validity.valueMissing is true 
+PASS [INPUT in FILE status] validity.valid must be false if validity.valueMissing is true 
+PASS [select]  validity.valid must be false if validity.valueMissing is true 
+PASS [textarea]  validity.valid must be false if validity.valueMissing is true 
+

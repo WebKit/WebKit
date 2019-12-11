@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 744x584
+      RenderBlock {P} at (0,0) size 80x584
+        RenderInline {SPAN} at (0,0) size 55x192
+          RenderText {#text} at (24,0) size 55x96
+            text run at (24,0) width 96: "\x{6587}\x{5B57}"
+          RenderInline {SPAN} at (0,0) size 55x48
+            RenderCombineText {#text} at (24,96) size 55x48
+              text run at (24,96) width 48: "\x{FFFC}"
+          RenderText {#text} at (24,144) size 55x48
+            text run at (24,144) width 48: "\x{5E74}"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (128,0) size 83x584
+        RenderInline {SPAN} at (0,0) size 55x192
+          RenderText {#text} at (27,0) size 55x96
+            text run at (27,0) width 96: "\x{6587}\x{5B57}"
+          RenderInline {SPAN} at (0,0) size 55x48
+            RenderCombineText {#text} at (27,96) size 55x48
+              text run at (27,96) width 48: "\x{FFFC}"
+          RenderText {#text} at (27,144) size 55x48
+            text run at (27,144) width 48: "\x{5E74}"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (259,0) size 80x584
+        RenderInline {SPAN} at (0,0) size 55x192
+          RenderText {#text} at (24,0) size 55x96
+            text run at (24,0) width 96: "\x{6587}\x{5B57}"
+          RenderInline {SPAN} at (0,0) size 55x48
+            RenderCombineText {#text} at (24,96) size 55x48
+              text run at (24,96) width 48: "\x{FFFC}"
+          RenderText {#text} at (24,144) size 55x48
+            text run at (24,144) width 48: "\x{5E74}"
+        RenderText {#text} at (0,0) size 0x0

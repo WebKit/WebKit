@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Performance Dashboard is Loading...</title>
+
+    <link rel="prefetch" href="../data/manifest.json">
+    <script type="application/json" src="../data/manifest.json"></script>
+    <script>
+
+        function redirectToV3IfNeeded()
+        {
+            var hash = window.location.hash;
+            if (hash.startsWith('#/analysis') || hash.startsWith('#/dashboard'))
+                window.location.pathname = '/v3/';
+        }
+
+        window.onhashchange = redirectToV3IfNeeded;
+        redirectToV3IfNeeded();
+
+    </script>
+
+    <link rel="stylesheet" href="app.css">
+    <link rel="stylesheet" href="chart-pane.css">
+
+    <script src="js/jquery.min.js" defer></script>
+    <script src="js/jquery.min.js" defer></script>
+    <script src="js/handlebars.js" defer></script>
+    <script src="js/ember.js" defer></script>
+    <script src="js/ember-data.js" defer></script>
+    <script src="js/d3/d3.min.js" defer></script>
+    <script src="../shared/statistics.js" defer></script>
+    <script src="statistics-strategies.js" defer></script>
+    <script src="data.js" defer></script>
+    <script src="app.js" defer></script>
+    <script src="manifest.js" defer></script>
+    <script src="analysis.js" defer></script>
+    <script src="popup.js" defer></script>
+    <script src="interactive-chart.js" defer></script>
+    <script src="commits-viewer.js" defer></script>
+
+    <script type="text/x-handlebars" data-template-name="dashboard">
+        <header id="header">
+            {{partial "navbar"}}
+            {{view App.NumberOfDaysControlView tagName="ul" numberOfDays=numberOfDays}}
+            <ul class="controls">
+                <li>
+                    <a href="javascript:false" class="control-button" {{action toggleEditMode}}>
+                        {{#if controller.editMode}}
+                            Finish editing
+                        {{else}}
+                            Edit
+                        {{/if}}
+                    </a>
+                </li>
+            </ul>
+        </header>
+
+        <table {{bind-attr class=":dashboard editMode:editMode:readonly"}}>
+        <thead>
+            <tr>
+                <td></td>
+                {{#each headerColumns}}
+                    {{#if controller.editMode}}
+                        <th>
+                            <a href="javascript:false" title="Remove column" {{action "removeColumn" index}}>
+                                {{partial "close-button"}}
+                            </a>
+                            {{input value=label}}
+                        </th>
+                    {{else}}
+                        <th>{{label}}</th>
+                    {{/if}}
+                {{/each}}
+                {{#if controller.editMode}}
+                    <td>{{input value=newColumnHeader action="addColumn" placeholder="Add a column"}}</td>
+                {{/if}}
+            </tr>
+        </thead>
+        <tbody>
+            {{#each rows}}
+                <tr>
+                    {{#if controller.editMode}}
+                        <th>
+                            <a href="javascript:false" title="Remove row" {{action "removeRow" this}}>
+                                {{partial "close-button"}}
+                            </a>
+                            {{input value=header}}
+                        </th>
+                    {{else}}
+                        <th><span class="label">{{header}}</span></th>
+                    {{/if}}
+                    {{#each cells}}
+                        <td>
+                            {{#if empty}}
+                                {{#if controller.editMode}}
+                                    {{view App.PopupView list=pickerData label='Choose'}}
+                                {{/if}}
+                            {{else}}
+                                {{#if chartData}}
+                                    <div class="dashboard-status">
+                                        {{#if latestStatus}}
+                                            {{latestStatus.currentValue}}{{chartData.unit}}
+                                            {{#if latestStatus.label}}
+                                                <span {{bind-attr class=":status-label latestStatus.className"}}>{{latestStatus.label}}</span>
+                                            {{/if}}
+                                        {{/if}}
+                                    </div>
+                                    {{#link-to 'charts' (query-params paneList=paneList since=controller.since)}}
+                                        {{interactive-chart
+                                            chartData=chartData
+                                            domain=controller.sharedDomain
+                                            enableSelection=false}}
+                                    {{/link-to}}
+                                {{else}}
+                                    {{#if failure}}
+                                        <div class="failure">{{failure}}</div>
+                                    {{else}}
+                                        <div class="progress">{{partial "spinner"}}</div>
+                                    {{/if}}
+                                {{/if}}
+                                {{#if controller.editMode}}
+                                    <a href="javascript:false" title="Reset pane" class="reset" {{action "resetPane" this}}>
+                                        {{partial "close-button"}}
+                                    </a>
+                                {{/if}}
+                            {{/if}}
+                        </td>
+                    {{/each}}
+                    {{#if controller.editMode}}
+                        <td></td>
+                    {{/if}}
+                </tr>
+            {{/each}}
+            {{#if controller.editMode}}
+                <tr>
+                    <td>{{input value=newRowHeader action="addRow" placeholder="Add a row"}}</td>
+                    {{#each emptyRow}}
+                        <td></td>
+                    {{/each}}
+                    <td></td>
+                </tr>
+            {{/if}}
+        </tbody>
+        </table>
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="charts">
+        <header id="header">
+            {{partial "navbar"}}
+            <ul class="controls">
+                <li>{{view App.PopupView list=platforms label='Add pane'}}</li>
+            </ul>
+            <ul class="controls">
+                <li>{{view App.StartTimeSliderView startTime=startTime oldestStartTime=oldestStartTime}}</li>
+            </ul>
+        </header>
+
+        {{#each panes itemController="pane"}}
+            <section class="chart-pane in-charts" tabindex="0">
+                <header>
+                    <h1 {{action "toggleDetails"}}>{{metric.fullName}} - {{platform.name}}</h1>
+                    <a href="javascript:false" title="Close" class="close-button" {{action "close"}}>{{partial "close-button"}}</a>
+                    {{#if movingAverageStrategies}}
+                        <a href="javascript:false" title="Statistical Tools" class="stat-button" {{action "toggleStatPane"}}>{{partial "stat-button"}}</a>
+                    {{/if}}
+                    <a href="javascript:false" {{bind-attr title=showOutlierTitle class=":outlier-button showOutlier:show:hide"}}
+                        {{action "toggleShowOutlier"}}>
+                        {{partial "outlier-button"}}
+                    </a>
+                    <a href="javascript:false" title="Analyze the selected range" class="analysis-button" {{action "toggleBugsPane"}}>
+                        {{partial "analysis-button"}}
+                    </a>
+                    {{#if App.Manifest.repositoriesWithReportedCommits}}
+                        <a href="javascript:false" title="Search commits by a keyword" class="search-button" {{action "toggleSearchPane"}}>{{partial "search-button"}}</a>
+                    {{/if}}
+                </header>
+
+                <div class="body">
+                    <div class="svg-container">
+                    {{#if chartData}}
+                        {{interactive-chart
+                            chartData=chartData
+                            ranges=ranges
+                            domain=mainPlotDomain
+                            interactive=true
+                            currentItem=hoveredOrSelectedItem
+                            currentTime=sharedTime
+                            selectedItem=selectedItem
+                            highlightedItems=highlightedItems
+                            rangeRoute="analysisTask"
+                            selection=timeRange
+                            selectedPoints=selectedPoints
+                            showFullYAxis=showFullYAxis
+                            zoomable=true
+                            zoom="zoomed"}}
+                    {{else}}
+                        {{#if failure}}
+                            <div class="failure">{{failure}}</div>
+                        {{else}}
+                            <div class="progress">{{partial "spinner"}}</div>
+                        {{/if}}
+                    {{/if}}
+                    </div>
+                    <div class="details">
+                        <div class="overview">
+                        {{#if chartData}}
+                            {{interactive-chart
+                                chartData=chartData
+                                showYAxis=false
+                                domain=overviewDomain
+                                selection=overviewSelection}}
+                        {{/if}}
+                        </div>
+                        <div class="details-table-container">
+                            {{partial "chart-details"}}
+                        </div>
+                    </div>
+                </div>
+
+                <div {{bind-attr class=":popup-pane :analysis-pane showingAnalysisPane::hidden"}}>
+                    <section class="analysis-option-option">
+                        <h1>Start A/B testing or associate bugs</h1>
+                        <label>Name: {{input type=text value=newAnalysisTaskName}} <button {{action "createAnalysisTask"}} {{bind-attr disabled=cannotAnalyze}}>Analyze</button></label>
+                    </section>
+                    <section class="analysis-option-option">
+                        <h1>Marking outliers</h1>
+                        <label>{{input type=checkbox checked=selectedItemIsMarkedOutlier disabled=cannotMarkOutlier}} Mark as an outlier and hide it.</label>
+                    </section>
+                </div>
+
+                <form {{bind-attr class=":popup-pane :search-pane showingSearchPane::hidden"}}>
+                    <span class="repositories">
+                        {{view Ember.Select
+                            content=App.Manifest.repositoriesWithReportedCommits
+                            optionValuePath='content.id'
+                            optionLabelPath='content.name'
+                            selection=commitSearchRepository}}
+                    </span>
+                    {{input action="searchCommit" placeholder="Name or email" value=commitSearchKeyword}}
+                </form>
+
+                {{partial "stat-pane"}}
+
+                <nav class="alternative-pane-actions">
+                    <ul>
+                        {{#each alternativePanes}}
+                            <li><a href="javascript:false" {{action "addAlternativePanes" pane platform metrics}}>{{label}}</a></li>
+                        {{/each}}
+                    </ul>
+                </nav>
+            </section>
+        {{/each}}
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="components/interactive-chart">
+        {{#if interactive}}
+            <div class="selection-toolbar" style="display: none;">
+                <a href="javascript:false" class="button" {{action "zoom"}}>
+                    <svg class="zoom" viewBox="0 0 100 100">
+                        <g stroke-width="0" stroke="none">
+                            <polygon points="25,25 5,50 25,75"/>
+                            <polygon points="75,25 95,50 75,75"/>
+                        </g>
+                        <line x1="20" y1="50" x2="80" y2="50" stroke-width="10"></line>
+                    </svg>
+                </a>
+            </div>
+        {{/if}}
+        <div class="rangeBarsContainerInlineStyle">
+            {{#each rangeBars}}
+                {{#link-to linkRoute linkId title=label}}
+                    <span {{bind-attr class=":rangeBar status" style=inlineStyle}}></span>
+                {{/link-to}}
+            {{/each}}
+        </div>
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="chart-details">
+    {{#if details}}
+        <table class="details-table">
+            <tbody class="bugs">
+            {{#each details.bugTrackers}}
+                {{#if bugs}}
+                    <tr>
+                        <th>{{label}}</th>
+                        <td>
+                        [{{bugUrl}}]
+                        <a {{bind-attr href=bugUrl}} target="_blank">{{bugNumber}}</a>
+                        </td>
+                    </tr>
+                {{/if}}
+            {{/each}}
+            </tbody>
+            <tbody class="status">
+                <tr>
+                    <th>Current</th>
+                    <td>
+                        {{details.status.currentValue}} {{chartData.unit}}
+                        {{#if details.status.valueDelta}}
+                            ({{details.status.valueDelta}} {{chartData.unit}} / {{details.status.relativeDelta}})
+                        {{/if}}
+                        {{#if details.status.label}}
+                            <br>
+                            <span {{bind-attr class=details.status.className}}>{{details.status.label}}</span>
+                        {{/if}}
+                    </td>
+                </tr>
+            </tbody>
+            <tbody>
+            {{#if details.buildNumber}}
+                <tr>
+                    <th>Build</th>
+                    <td>
+                        {{#if details.buildURL}}
+                            <a {{bind-attr href=details.buildURL}} target="_blank">{{details.buildNumber}}</a>
+                        {{else}}
+                            {{details.buildNumber}}
+                        {{/if}}
+                        ({{details.buildTime}})
+                    </td>
+                </tr>
+            {{/if}}
+            {{#each details.revisions}}
+                <tr>
+                    <th>{{name}}</th>
+                    <td>
+                        {{#if url}}
+                            <a {{bind-attr href=url}} target="_blank">{{label}}</a>
+                        {{else}}
+                            {{label}}
+                        {{/if}}
+                    </td>
+                </tr>
+            {{/each}}
+            </tbody>
+        </table>
+        <div class="commits">
+            {{#each details.revisions}}
+                {{commits-viewer repository=repository revisionInfo=this caption=name}}
+            {{/each}}
+        </div>
+    {{/if}}
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="components/commits-viewer">
+    {{#if commits}}
+        <table {{bind-attr class=":commits-viewer visible::hidden"}}>
+            {{#if caption}}
+                <caption {{action toggleVisibility}}>{{caption}} commits</caption>
+            {{/if}}
+            {{#if visible}}
+                <tbody>
+                    {{#each commits}}
+                        <tr>
+                            <th>
+                                {{#if url}}
+                                    <a {{bind-attr href=url}} target="_blank">{{revision}}</a>
+                                {{else}}
+                                    {{revision}}
+                                {{/if}}
+                            </th>
+                            <th>{{author}}</th>
+                            <td>{{message}}</td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            {{/if}}
+        </table>
+    {{/if}}
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="close-button">
+        <svg class="close-button icon-button" viewBox="0 0 100 100">
+            <g stroke="black" stroke-width="10">
+                <circle cx="50" cy="50" r="45" fill="transparent"/>
+                <polygon points="30,30 70,70" />
+                <polygon points="30,70 70,30" />
+            </g>
+        </svg>
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="stat-button">
+        <svg class="stat-button icon-button" viewBox="10 0 110 100">
+            <g stroke="none" stroke-width="0" fill="black">
+                <path id="upper-sigma" d="M 5 5 H 95 V 40 h -10 c -5 -20 -5 -20 -25 -20 H 35 L 60 50 l -20 0" />
+                <use xlink:href="#upper-sigma" transform="translate(0, 100) scale(1, -1)" />
+            </g>
+        </svg>
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="stat-pane">
+        <section {{bind-attr class=":popup-pane :stat-pane showingStatPane::hidden"}}>
+            <section class="stat-option">
+                <h1>Moving average</h1>
+                <label>Type: {{view Ember.Select
+                    content=movingAverageStrategies
+                    optionValuePath='content'
+                    optionLabelPath='content.label'
+                    selection=chosenMovingAverageStrategy}}</label>
+                    {{#if chosenMovingAverageStrategy.description}}
+                        <p class="description">{{chosenMovingAverageStrategy.description}}</p>
+                    {{/if}}
+                {{#each chosenMovingAverageStrategy.parameterList}}
+                    <label>{{label}}: {{input type="number" value=value min=min max=max step=step}}</label>
+                {{/each}}
+            </section>
+            {{#if chosenMovingAverageStrategy.execute}}
+                <section class="stat-option">
+                    <h1>Envelope</h1>
+                    <label>Type: {{view Ember.Select
+                        content=envelopingStrategies
+                        optionValuePath='content'
+                        optionLabelPath='content.label'
+                        selection=chosenEnvelopingStrategy}}</label>
+                    {{#if chosenEnvelopingStrategy.description}}
+                        <p class="description">{{chosenEnvelopingStrategy.description}}</p>
+                    {{/if}}
+                    {{#each chosenEnvelopingStrategy.parameterList}}
+                        <label>{{label}}: <input type="number" {{bind-attr value=value min=min max=max step=step}}></label>
+                    {{/each}}
+                </section>
+            {{/if}}
+            {{#if chosenMovingAverageStrategy.isSegmentation}}
+                <section class="stat-option">
+                    <h1>A/B Test Range Selection</h1>
+                    <label>Type: {{view Ember.Select
+                        content=testRangeSelectionStrategies
+                        optionValuePath='content'
+                        optionLabelPath='content.label'
+                        selection=chosenTestRangeSelectionStrategy}}</label>
+                    {{#if chosenTestRangeSelectionStrategy.description}}
+                        <p class="description">{{chosenTestRangeSelectionStrategy.description}}</p>
+                    {{/if}}
+                </section>
+            {{/if}}
+            {{#if chosenEnvelopingStrategy.execute}}
+                <section class="stat-option">
+                    <h1>Anomaly Detection</h1>
+                    {{#each anomalyDetectionStrategies}}
+                        <label {{bind-attr title=description}}>{{input type="checkbox" name=id checked=enabled}}{{label}}</label>
+                    {{/each}}
+                </section>
+            {{/if}}
+        </section>
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="outlier-button">
+        <svg class="outlier-button icon-button" viewBox="0 0 100 100">
+            <g stroke="black" fill="black" stroke-width="15">
+                <line x1="0" y1="70" x2="40" y2="70"/>
+                <circle cx="15" cy="70" r="8"/>
+                <circle cx="45" cy="70" r="8"/>
+                <circle cx="85" cy="70" r="8"/>
+                <line x1="85" y1="70" x2="100" y2="70"/>
+                <g class="show-outlier-icon">
+                    <line x1="45" y1="70" x2="65" y2="20"/>
+                    <line x1="65" y1="20" x2="85" y2="70"/>
+                    <circle cx="65" cy="20" r="8"/>
+                </g>
+                <g class="hide-outlier-icon">
+                    <line x1="45" y1="70" x2="85" y2="70"/>
+                </g>
+            </g>
+        </svg>
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="analysis-button">
+        <svg class="analysis-button icon-button" viewBox="0 0 100 100">
+            <g stroke="black" fill="black" stroke-width="15">
+                <circle cx="50" cy="50" r="40" fill="transparent"/>
+                <line x1="50" y1="25" x2="50" y2="55"/>
+                <circle cx="50" cy="67.5" r="10" stroke="none"/>
+            </g>
+        </svg>
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="search-button">
+        <svg class="search-button icon-button" viewBox="0 0 100 100">
+            <g stroke="black" stroke-width="15">
+                <circle cx="60" cy="40" r="30" fill="transparent"/>
+                <line x1="10" y1="90" x2="40" y2="60"/>
+            </g>
+        </svg>
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="spinner">
+        <svg class="spinner" viewBox="0 0 100 100">
+            <line x1="10" y1="50" x2="30" y2="50" stroke="black" stroke-width="10" stroke-linecap="round"/>
+            <line x1="21.72" y1="21.72" x2="35.86" y2="35.86" stroke="black" stroke-width="10" stroke-linecap="round"/>
+            <line x1="50" y1="10" x2="50" y2="30" stroke="black" stroke-width="10" stroke-linecap="round"/>
+            <line x1="78.28" y1="21.72" x2="64.14" y2="35.86" stroke="black" stroke-width="10" stroke-linecap="round"/>
+            <line x1="70" y1="50" x2="90" y2="50" stroke="black" stroke-width="10" stroke-linecap="round"/>
+            <line x1="65.86" y1="65.86" x2="78.28" y2="78.28" stroke="black" stroke-width="10" stroke-linecap="round"/>
+            <line x1="50" y1="70" x2="50" y2="90" stroke="black" stroke-width="10" stroke-linecap="round"/>
+            <line x1="21.72" y1="78.28" x2="35.86" y2="65.86" stroke="black" stroke-width="10" stroke-linecap="round"/>
+        </svg>
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="navbar">
+        <nav id="navigation" role="navigation">
+            <h1><a href="#">{{App.Manifest.siteTitle}}</a></h1>
+            <ul>
+                {{#each App.Manifest.dashboards}}
+                    {{#if name}}
+                        {{#link-to 'dashboard' name tagName='li'}}
+                            {{#link-to 'dashboard' name}}{{label}}{{/link-to}}
+                        {{/link-to}}
+                    {{/if}}
+                {{/each}}
+                {{#link-to 'charts' tagName='li'}}
+                    {{#link-to 'charts'}}Charts{{/link-to}}
+                {{/link-to}}
+                {{#link-to 'analysis' tagName='li'}}
+                    {{#link-to 'analysis'}}Analysis{{/link-to}}
+                {{/link-to}}
+            </ul>
+        </nav>
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="number-of-days-controls">
+        <li class="numberOfDaysIs1">
+            <a href="javascript:false" class="control-button" {{action "setNumberOfDays" 1}}>1D</a>
+        </li>
+        <li class="numberOfDaysIs7">
+            <a href="javascript:false" class="control-button" {{action "setNumberOfDays" 7}}>1W</a>
+        </li>
+        <li class="numberOfDaysIs30">
+            <a href="javascript:false" class="control-button" {{action "setNumberOfDays" 30}}>1M</a>
+        </li>
+        <li class="numberOfDaysIs90">
+            <a href="javascript:false" class="control-button" {{action "setNumberOfDays" 90}}>3M</a>
+        </li>
+        <li class="numberOfDaysIs183">
+            <a href="javascript:false" class="control-button" {{action "setNumberOfDays" 183}}>6M</a>
+        </li>
+        <li class="numberOfDaysIs365">
+            <a href="javascript:false" class="control-button" {{action "setNumberOfDays" 365}}>1Y</a>
+        </li>
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="start-time-slider">
+        <label><input type="range"> <span class="numberOfDays">X</span> days</label>
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="popup">
+        <span class="label">{{view App.PopupButtonView tagName="a" label=view.label }}</span>
+        {{view view.popupListContainerView viewName="popupListContainerViewInstance"}}
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="popup-list">
+        {{#each view.list}}
+            {{#if isSeparator}}
+                <li><hr></li>
+            {{else }} {{#if children}}
+                <li>{{view App.PopupView list=children label=label}}</li>
+            {{else}}
+                <li>
+                    {{#if actionName}}
+                        <a href="javascript:false" class="label" {{action actionName actionArgument}}>{{label}}</a>
+                    {{else}}
+                        <a class="label">{{label}}</a>
+                    {{/if}}
+                </li>
+            {{/if}} {{/if}}
+        {{/each}}
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="analysis">
+        <header id="header">
+            {{partial "navbar"}}
+        </header>
+
+        <table id="analysis-tasks">
+            <thead>
+                <tr>
+                    <td>Name</td>
+                    <td>Status</td>
+                    <td>Author</td>
+                    <td>Created at</td>
+                    <td>Platform</td>
+                    <td>Test</td>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each model.tasks}}
+                    <tr>
+                        <td class="task-name">{{#link-to 'analysisTask' id}}{{name}}{{/link-to}}</td>
+                        <td class="status">{{statusLabel}}</td>
+                        <td class="author">{{author}}</td>
+                        <td class="created-at">{{formattedCreatedAt}}</td>
+                        <td class="platform-name">{{platform.label}}</td>
+                        <td class="test-name">{{metric.fullName}}</td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="analysisTask">
+        <header id="header">
+            {{partial "navbar"}}
+        </header>
+
+        <h2 id="analysis-task-title">{{label}}</h2>
+        {{#if platform.label}}
+            <h3 id="analysis-task-testname">{{metric.fullName}} - {{platform.label}}</h3>
+        {{/if}}
+
+        {{#if pane}}
+            <section class="analysis-chart-pane chart-pane" tabindex="0">
+                <div class="svg-container">
+                    {{interactive-chart
+                        chartData=pane.chartData
+                        ranges=pane.ranges
+                        domain=overviewDomain
+                        interactive=true
+                        currentItem=pane.hoveredOrSelectedItem
+                        selectedPoints=pane.selectedPoints
+                        selection=timeRange
+                        highlightedItems=highlightedItems
+                        rangeRoute="analysisTask"}}
+                </div>
+                <div class="details">
+                    <div class="details-table-container">
+                        {{#if details}}
+                            {{partial "chart-details"}}
+                        {{else}}
+                            {{partial "analysisStatusForm"}}
+                        {{/if}}
+                    </div>
+                </div>
+            </section>
+        {{/if}}
+
+        {{partial "testGroupForm"}}
+
+        {{#each testGroupPanes}}
+            {{partial "testGroup"}}
+        {{/each}}
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="testGroup">
+        <section class="analysis-group">
+            <h1>{{name}}</h1>
+            <div class="table-container">
+                <table class="results">
+                    <thead>
+                        <tr>
+                            <td colspan="2">Configuration</td>
+                            <td>Results</td>
+                            <td>Status</td>
+                            {{#each repositories}}
+                                <td>{{name}}</td>
+                            {{/each}}
+                        </tr>
+                    </thead>
+                    {{#each configurations}}
+                        <tbody {{bind-attr class="showRequestList::hideRequests"}}>
+                            <tr class="summary" {{action toggleShowRequestList this}}>
+                                <td class="config-letter" colspan="2">{{summary.configLetter}}</td>
+                                {{#with summary}}
+                                    {{partial "testGroupRow"}}
+                                {{/with}}
+                            </tr>
+                            {{#each requests}}
+                                <tr class="request">
+                                    {{#with ../this}}
+                                        <td class="config-letter" {{action toggleShowRequestList this}}></td>
+                                    {{/with}}
+                                    <td>Run {{orderLabel}}</td>
+                                    {{partial "testGroupRow"}}
+                                </tr>
+                            {{/each}}
+                        </tbody>
+                    {{/each}}
+                    {{#each comparisons}}
+                        <tbody>
+                            <tr>
+                                <td colspan="2">{{label}}</td>
+                                <td>{{difference}}</td>
+                                <td>{{result}}</td>
+                                {{#with ../this}}
+                                    {{#each repositories}}
+                                        <td></td>
+                                    {{/each}}
+                                {{/with}}
+                            </tr>
+                        </tbody>
+                    {{/each}}
+                </table>
+            </div>
+            <div class="reference-chart">
+                {{#if referenceChart}}
+                    {{interactive-chart
+                        chartData=referenceChart.data
+                        domain=overviewDomain
+                        showYAxis=false
+                        enableSelection=false
+                        highlightedItems=referenceChart.highlightedItems}}
+                {{/if}}
+            </div>
+        </section>
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="testGroupRow">
+        <td>
+            {{#if value}}
+                {{box-plot range=valueRange value=value delta=delta}}
+            {{/if}}
+            {{formattedValue}}
+        </td>
+        <td>
+            <a {{bind-attr href=url title=buildLabel}}>{{statusLabel}}</a>
+        </td>
+        {{#each revisionList}}
+            <td>{{this}}</td>
+        {{/each}}
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="testGroupForm">
+    {{#if rootConfigurations}}
+        <form method="POST" {{action "createTestGroup" newTestGroupName repetitionCount on="submit"}}>
+            <section class="analysis-group">
+                <h1>{{input name="name" value=newTestGroupName placeholder="Test group name" required=true type="text"}}</h1>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Configuration</th>
+                            {{#each configurations}}
+                                <th>{{this}}</th>
+                            {{/each}}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each rootConfigurations}}
+                            <tr>
+                                <th>{{name}}</th>
+                                {{#each sets}}
+                                    <td>
+                                        {{view Ember.Select name=name content=options
+                                            optionValuePath="content.value" optionLabelPath="content.label"
+                                            selection=selection}}
+                                        {{#if selection.isCustom}}
+                                            {{input name="customValue" type=text value=customValue}}
+                                        {{/if}}
+                                        </td>
+                                {{/each}}
+                            </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+                <label>Number of runs {{view Ember.Select content=possibleRepetitionCounts value=repetitionCount}}</label>
+                <button type="submit">Start A/B testing</button>
+            </section>
+        </form>
+    {{/if}}
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="analysisStatusForm">
+        <table class="analysis-bugs">
+            <tbody>
+                {{#each model.bugs}}
+                    <tr>
+                        <th>{{bugTracker.name}}</th>
+                        <td>
+                            <a {{bind-attr href=url}} target="_blank">{{number}}</a>
+                            <a href="javascript:false" {{action "deleteBug" this}}>{{partial "close-button"}}</a>
+                        </td>
+                    </tr>
+                {{/each}}
+                {{#if bugTrackers}}
+                    <tr>
+                        <td>
+                            {{view Ember.Select content=bugTrackers optionValuePath="content" optionLabelPath="content.name" value=chosenBugTracker}}
+                        </td>
+                        <td>
+                            {{input id=elementId type=text value=editedBugNumber}}
+                            <button {{action "addBug" chosenBugTracker editedBugNumber}}>Add</button>
+                        </td>
+                    </tr>
+                {{/if}}
+            </tbody>
+            <tbody>
+                <tr>
+                    <th><label for="analysis-status">Status<label></th>
+                    <td>
+                        <form class="analysis-bugs" {{action "saveStatus" on="submit"}}>
+                            {{view Ember.Select id="analysis-status" content=analysisResultOptions optionValuePath="content"
+                                optionLabelPath="content.label" selection=chosenAnalysisResult}}
+                            <input type="submit" value="Save"><br>
+                            <label {{bind-attr class="needsFeedback::hidden"}}>{{input type=checkbox checked=notNeeded}} This should not have been created</label>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </script>
+
+</head>
+<body>
+</body>
+</html>

@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 37: TypeError: undefined is not an object (evaluating 'realtimeContext.audioWorklet.addModule')
+
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'realtimeContext.audioWorklet.addModule')
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS > [construction-before-module-loading]  
+FAIL X Creating a node before loading a module should throw. threw "ReferenceError" instead of InvalidStateError. assert_true: expected true got false
+FAIL < [construction-before-module-loading] 1 out of 1 assertions were failed. assert_true: expected true got false
+PASS > [construction-after-module-loading]  
+

@@ -1,0 +1,44 @@
+<html>
+    <head>
+        <title>Test case for bug 5122: Equivalent of Mozilla's DOMContentLoaded needed</title>
+        <script type="text/javascript">
+            function log(message)
+            {
+                var item = document.createElement("li");
+                item.appendChild(document.createTextNode(message));
+                document.getElementById('log').appendChild(item);
+            }
+
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                log = alert;
+            }
+
+
+            document.addEventListener('DOMContentLoaded', function() { log('DOMContentLoaded event fired on document!'); }, false);
+            window.addEventListener('DOMContentLoaded', function() {
+                log('DOMContentLoaded event bubbled to window!');
+                timestamp = new Date().getTime();
+            }, false);
+            window.addEventListener('load', function() { 
+                newTimestamp = new Date().getTime();
+                log('load event fired!');
+                if (!timestamp)
+                    log('FAILED: DOMContentLoaded did not fire');
+                else if (timestamp == newTimestamp)
+                    log('FAILED: no time passed between DOMContentLoaded and load events');
+                else
+                    log('PASSED');
+            }, false);
+        </script>
+    </head>
+    <body>
+        <h1>Test case for <a href='http://bugs.webkit.org/show_bug.cgi?id=5122'>bug 5122</a>: Equivalent of Mozilla's DOMContentLoaded needed</h1>
+
+        <p>You should see a PASSED message.</p>
+
+        <img src='/navigation/resources/slow-resource.pl?delay=250'>
+        <ol id='log'>
+        </ol>
+    </body>
+</html>

@@ -1,0 +1,25 @@
+<p>The dominant plugin should play automatically, and trigger all the others to play as well, since they are the same origin.</p>
+<div id="result">FAIL</div>
+<script>
+if (window.testRunner) {
+    internals.settings.setPlugInSnapshottingEnabled(true);
+    internals.settings.setMaximumPlugInSnapshotAttempts(0);
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    setTimeout(function () {
+        var result = document.getElementById("result");
+        var embed1 = document.getElementById("plugin1");
+        var embed2 = document.getElementById("plugin2");
+        if (!internals.isPluginSnapshotted(embed1)
+            && !internals.isPluginSnapshotted(embed2))
+        	result.innerHTML = "PASS";
+        testRunner.notifyDone();
+    }, 1000);
+}
+</script>
+<p>
+<embed id="plugin1" src="../resources/test.mov" width="400" height="400"></embed>
+</p>
+<p>
+<embed id="plugin2" src="../resources/test.mov" width="50" height="50"></embed>
+</p>

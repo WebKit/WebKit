@@ -1,0 +1,48 @@
+CONSOLE MESSAGE: line 29: The console function $() has changed from $=getElementById(id) to $=querySelector(selector). You might try $("#%s")
+Tests that command line api works.
+
+
+== Running test suite: Console.TestCommandLineAPI
+-- Running test case: EvaluateArrayKeys
+Input: keys([3,4])
+Output: 0,1
+
+-- Running test case: EvaluateArrayValues
+Input: values([3,4])
+Output: 3,4
+
+-- Running test setup.
+-- Running test case: EvaluateDollarZero
+Input: $0
+Output: [object HTMLParagraphElement]
+
+-- Running test setup.
+-- Running test case: EvaluateInvalidSelector
+Input: $('foo')
+CONSOLE: The console function $() has changed from $=getElementById(id) to $=querySelector(selector). You might try $("#%s")
+Output: null
+
+-- Running test case: EvaluateIdSelector
+Input: $('#foo')
+Output: [object HTMLParagraphElement]
+
+-- Running test case: EvaluateIdSelectorWithContext
+Input: $('#foo', document.body)
+Output: [object HTMLParagraphElement]
+
+-- Running test case: EvaluateIdSelectorWithInvalidContext
+Input: $('#foo', 'non-node')
+Output: [object HTMLParagraphElement]
+
+-- Running test case: EvaluateIdSelectorDynamicContext
+Input: $('#foo', $('#bar'))
+Output: null
+
+-- Running test case: EvaluateElementSelectorAll
+Input: $$('p')
+Output: [object HTMLParagraphElement],[object HTMLParagraphElement]
+
+-- Running test case: EvaluateElementSelectorAllWithContext
+Input: $$('p', document.body)
+Output: [object HTMLParagraphElement],[object HTMLParagraphElement]
+

@@ -1,0 +1,13 @@
+This xdgmime from
+https://cgit.freedesktop.org/xdg/xdgmime/
+
+xdgmime is the reference implementation of the Freedesktop.org MIME specification:
+https://www.freedesktop.org/wiki/Specifications/shared-mime-info-spec/
+
+Current version is based on revision e70017739ff7643bf2dbbfc8524562cb6ee450ed
+cloned from git://anongit.freedesktop.org/xdg/xdgmime.
+
+Changes for the WebKit project:
+
+ - Add xdg_mime_get_simple_globs
+ - s/^#include <config.h>/#include "cmakeconfig.h"/g

@@ -1,0 +1,67 @@
+# Copyright (c) 2019 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_source_set("repeating_task") {
+  sources = [
+    "repeating_task.cc",
+    "repeating_task.h",
+  ]
+  deps = [
+    ":to_queued_task",
+    "..:logging",
+    "..:thread_checker",
+    "..:timeutils",
+    "../../api/task_queue",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../synchronization:sequence_checker",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
+rtc_source_set("to_queued_task") {
+  sources = [
+    "to_queued_task.h",
+  ]
+  deps = [
+    "../../api/task_queue",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("repeating_task_unittests") {
+    testonly = true
+    sources = [
+      "repeating_task_unittest.cc",
+    ]
+    deps = [
+      ":repeating_task",
+      "..:rtc_base_approved",
+      "..:rtc_task_queue",
+      "..:task_queue_for_test",
+      "../../test:test_support",
+      "//third_party/abseil-cpp/absl/memory",
+    ]
+  }
+
+  rtc_source_set("to_queued_task_unittests") {
+    testonly = true
+    sources = [
+      "to_queued_task_unittest.cc",
+    ]
+    deps = [
+      ":to_queued_task",
+      "../../api/task_queue",
+      "../../test:test_support",
+      "//third_party/abseil-cpp/absl/memory",
+    ]
+  }
+}

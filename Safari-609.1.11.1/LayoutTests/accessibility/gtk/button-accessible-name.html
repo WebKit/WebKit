@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<form>
+<input id="button" type="submit" value="The Button"/>
+</form>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("This tests that the text of a button is exposed to Assistive Technologies.");
+
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+if (window.accessibilityController) {
+  button = document.getElementById("button");
+  button.focus();
+
+  axButton = accessibilityController.focusedElement;
+  shouldBe("axButton.role", "'AXRole: AXButton'");
+  shouldBe("axButton.title", "'AXTitle: The Button'");
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

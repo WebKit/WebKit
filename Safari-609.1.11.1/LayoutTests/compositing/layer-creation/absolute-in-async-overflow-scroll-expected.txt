@@ -1,0 +1,43 @@
+This layer should be composited.
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (position 18.00 10.00)
+          (bounds 202.00 202.00)
+          (opacity 0.80)
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (offsetFromRenderer width=1 height=1)
+              (position 1.00 1.00)
+              (bounds 185.00 185.00)
+              (children 1
+                (GraphicsLayer
+                  (offsetFromRenderer width=1 height=1)
+                  (anchor 0.00 0.00)
+                  (bounds 185.00 841.00)
+                  (drawsContent 1)
+                  (children 1
+                    (GraphicsLayer
+                      (position 0.00 89.00)
+                      (bounds 320.00 40.00)
+                      (contentsOpaque 1)
+                      (drawsContent 1)
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

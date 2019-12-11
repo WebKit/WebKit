@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        function loaded() {
+            try {
+                window.webkit.messageHandlers.testHandler.postMessage("loaded");
+            } catch(e) { }
+        }
+
+        function play() {
+            document.getElementById("video").play().then(function() {
+                try {
+                    window.webkit.messageHandlers.testHandler.postMessage("playing");
+                } catch(e) { }
+            });
+        }
+    </script>
+</head>
+
+<body onload="loaded()">
+    <video id="video" controls src="test.mp4"></video>
+</body>
+</html>

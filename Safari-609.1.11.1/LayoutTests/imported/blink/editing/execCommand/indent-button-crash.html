@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var scriptElements = document.getElementsByTagName('script');
+for (var i = 0; i < scriptElements.length; i++) {
+    scriptElements[i].parentNode.removeChild(scriptElements[i]);
+}
+
+document.addEventListener('DOMCharacterDataModified', function() {
+    document.execCommand('Indent');
+});
+
+document.addEventListener('selectstart', function() {
+    var element = event.srcElement;
+    element.insertAdjacentElement('beforebegin', document.createElement('foo'));
+    element.insertAdjacentHTML('beforebegin', '<bar1><bar2><bar3>abc');
+});
+
+onload = function() {
+    document.execCommand('SelectAll', false);
+    document.designMode = 'on';
+    window.getSelection().getRangeAt(0).deleteContents();
+    document.body.textContent = 'PASS if Blink doesn\'t crash.';
+};
+</script>
+<style>
+*:read-write {
+    -webkit-appearance: push-button;
+}
+</style>
+<link>

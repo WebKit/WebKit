@@ -1,0 +1,48 @@
+<head>
+    <style>
+        html, body { margin:0; overflow: hidden; }
+    </style>
+    <script src="../../resources/js-test.js"></script>
+</head>
+
+<div>This tests that a usually overflow: hidden viewport should be scrollable when scaled. Otherwise, you can't get to content
+    you would have been able to get to had you not been zoomed it.</div>
+<div id="console"></div>
+
+<div style='font-size:40px; height: 1000px;'>
+</div>
+
+<script>
+    (function() {
+        if (!window.testRunner) {
+            debug("This test only works in the test runner.");
+            return;
+        }
+        
+        jsTestIsAsync = true;
+
+        // Force a layout.
+        document.body.offsetLeft;
+
+        if (window.internals)
+            window.internals.setPageScaleFactor(2, 0, 0);
+
+        // Note that with CSSOMViewScrollingAPI enabled, the HTML body is potentially scrollable.
+        // Hence document.scrollingElement is null and we can't use document.body.scrollTop to
+        // retrieve the vertical scroll offset of the viewport.
+        // See https://drafts.csswg.org/cssom-view/#potentially-scrollable,
+        // https://drafts.csswg.org/cssom-view/#dom-document-scrollingelement
+        // and https://drafts.csswg.org/cssom-view/#dom-element-scrolltop
+        shouldBe("window.scrollY", "0");
+
+        document.body.onscroll = function() {
+            shouldBe("window.scrollY", "100");
+            finishJSTest();
+        }
+
+        if (window.eventSender) {
+            eventSender.mouseMoveTo(100, 100);
+            eventSender.mouseScrollBy(0, -5);
+        }
+    })();
+</script>

@@ -1,0 +1,3 @@
+
+FAIL Line caps are drawn at the corners of an unclosed rectangle Can't find variable: OffscreenCanvas
+

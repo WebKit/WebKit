@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<title>text field selection</title>
+<link rel="author" title="Denis Ah-Kang" href="mailto:denis@w3.org">
+<link rel=help href="https://html.spec.whatwg.org/multipage/#textFieldSelection">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<div id="log"></div>
+<script>
+  var nonApplicableTypes = ["hidden", "email", "datetime-local", "date", "month", "week", "time", "number", "range", "color", "checkbox", "radio", "file", "submit", "image", "reset", "button"];
+  var applicableTypes = ["text", "search", "tel", "url", "password", "aninvalidtype", null];
+
+  nonApplicableTypes.forEach(function(type){
+    var el = document.createElement("input");
+    el.type = type;
+
+    if (el.type != type) {
+      // Type is not supported - don't bother with the following checks.
+      return;
+    }
+
+    test(() => {
+      assert_equals(el.selectionStart, null);
+    }, `selectionStart on an input[type=${type}] returns null`);
+
+    test(() => {
+      assert_equals(el.selectionEnd, null);
+    }, `selectionEnd on an input[type=${type}] returns null`);
+
+    test(() => {
+      assert_equals(el.selectionDirection, null);
+    }, `selectionDirection on an input[type=${type}] returns null`);
+
+    test(() => {
+      assert_throws("InvalidStateError", function(){
+        el.selectionStart = 0;
+      });
+    }, `assigning selectionStart on an input[type=${type}] throws InvalidStateError`);
+
+    test(() => {
+      assert_throws("InvalidStateError", function(){
+        el.selectionEnd = 0;
+      });
+    }, `assigning selectionEnd on an input[type=${type}] throws InvalidStateError`);
+
+    test(() => {
+      assert_throws("InvalidStateError", function(){
+        el.selectionDirection = 'none';
+      });
+    }, `assigning selectionDirection on an input[type=${type}] throws InvalidStateError`);
+
+    test(() => {
+      assert_throws("InvalidStateError", function(){
+        el.setRangeText("foobar");
+      });
+    }, `setRangeText on an input[type=${type}] throws InvalidStateError`);
+
+    test(() => {
+      assert_throws("InvalidStateError", function(){
+        el.setSelectionRange(0, 1);
+      });
+    }, `setSelectionRange on an input[type=${type}] throws InvalidStateError`);
+  });
+
+  applicableTypes.forEach(function(type) {
+    var el = document.createElement("input");
+    if (type) el.type = type;
+
+    test(() => {
+      assert_equals(el.selectionStart, 0);
+    }, `selectionStart on an input[type=${type}] returns a value`);
+
+    test(() => {
+      assert_equals(el.selectionEnd, 0);
+    }, `selectionEnd on an input[type=${type}] returns a value`);
+
+    test(() => {
+      assert_in_array(el.selectionDirection, ["forward", "none"]);
+    }, `selectionDirection on an input[type=${type}] returns a value`);
+
+    test(() => {
+      el.selectionStart = 1;
+    }, `assigning selectionStart on an input[type=${type}] doesn't throw an exception`);
+
+    test(() => {
+      el.selectionEnd = 1;
+    }, `assigning selectionEnd on an input[type=${type}] doesn't throw an exception`);
+
+    test(() => {
+      el.selectionDirection = "forward";
+    }, `assigning selectionDirection on an input[type=${type}] doesn't throw an exception`);
+
+    test(() => {
+      el.setRangeText("foobar");
+    }, `setRangeText on an input[type=${type}] doesn't throw an exception`);
+
+    test(() => {
+      el.setSelectionRange(0, 1);
+    }, `setSelectionRange on an input[type=${type}] doesn't throw an exception`);
+  });
+</script>

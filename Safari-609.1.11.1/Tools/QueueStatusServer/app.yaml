@@ -1,0 +1,20 @@
+application: webkit-queues
+version: 1
+runtime: python27
+threadsafe: false
+api_version: 1
+
+builtins:
+- datastore_admin: on
+- remote_api: on
+
+handlers:
+- url: /stylesheets
+  static_dir: stylesheets
+
+- url: /robots.txt
+  static_files: robots.txt
+  upload: robots.txt
+
+- url: /.*
+  script: main.py

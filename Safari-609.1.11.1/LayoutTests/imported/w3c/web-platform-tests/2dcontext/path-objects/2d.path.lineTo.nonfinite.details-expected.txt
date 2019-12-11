@@ -1,0 +1,8 @@
+2d.path.lineTo.nonfinite.details
+lineTo() with Infinity/NaN for first arg still converts the second arg
+Actual output:
+Expected output:
+
+
+PASS lineTo() with Infinity/NaN for first arg still converts the second arg 
+

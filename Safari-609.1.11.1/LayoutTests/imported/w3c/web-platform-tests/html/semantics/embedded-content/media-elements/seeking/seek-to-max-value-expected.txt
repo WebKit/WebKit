@@ -1,0 +1,3 @@
+
+FAIL seek to Number.MAX_VALUE assert_equals: expected 1 but got 0
+

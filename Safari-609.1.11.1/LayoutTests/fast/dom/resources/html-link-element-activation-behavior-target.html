@@ -1,0 +1,10 @@
+<head>
+<script>
+function ok(){
+    window.parent.postMessage("test:ok", "*");
+}
+</script>
+</head>
+<body onload="ok()">
+<h1>target</h1>
+</body>

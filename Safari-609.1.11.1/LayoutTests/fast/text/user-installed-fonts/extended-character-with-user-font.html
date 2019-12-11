@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+        <script>
+if (window.internals)
+    internals.invalidateFontCache();
+if (window.testRunner)
+    testRunner.installFakeHelvetica("SingleExtendedCharacter");
+        </script>
+        <!-- Character known by user installed font only -->
+        <td>&#x011721;</td>
+    </body>
+</html>

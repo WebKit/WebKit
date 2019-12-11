@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#test {
+    height: 128px;
+    width: 128px;
+}
+</style>
+<meta http-equiv="Content-Security-Policy" content="style-src 'sha256-UlHF+LyhzFszDEVcgrr4JNgh3h/eBWJs5r2HIcUgk74=' 'sha256-tzp0RMqnX/8k4uE4GZ9/3sxSZ1heLIfaPj6t+3ZLhLE='">
+<meta http-equiv="Content-Security-Policy" content="style-src 'sha384-7hEvQRmos3fV1heSS9e144eWoL63w9tye191zgxVJqikLbI9TjFHMU8d2LBAkHeP' 'sha256-tzp0RMqnX/8k4uE4GZ9/3sxSZ1heLIfaPj6t+3ZLhLE='">
+<style>#test { background-color: green !important; }</style> <!-- 'sha256-tzp0RMqnX/8k4uE4GZ9/3sxSZ1heLIfaPj6t+3ZLhLE=' -->
+<style>#test { background-color: red !important; } /* First stylesheet */</style> <!-- 'sha256-mRL83PV+VxdmTe3LECHAWjLIzcfUolip8jDpwc3qC38=' -->
+<style>#test { background-color: red !important; } /* Second stylesheet */</style> <!-- 'sha384-7hEvQRmos3fV1heSS9e144eWoL63w9tye191zgxVJqikLbI9TjFHMU8d2LBAkHeP' -->
+</head>
+<body>
+<p>Tests that an inline stylesheet is allowed to be applied only if its hash appears in all policies. This test PASSED if you see a green square below. Otherwise, it FAILED.</p>
+<div id="test"></div>
+</body>
+</html>

@@ -1,0 +1,4 @@
+2d.text.align.valid
+Spec references: 2d.text.align.get 2d.text.align.set
+Actual output:
+Passed

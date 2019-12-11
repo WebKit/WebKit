@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Request signal</title>
+        <script src="/resources/testharness.js"></script>
+        <script src="/resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script>
+test(() => {
+    new Request("/", {signal: null});
+    new Request("/", {signal: undefined});
+    assert_throws(new TypeError, () => { new Request("/", {signal: "my signal"}) });
+}, "Request from URL with signal");
+
+test(() => {
+    const controller = new AbortController();
+    const request = new Request("/", {signal : controller.signal});
+    controller.abort();
+
+    const r1 = new Request(request, {signal: undefined});
+    assert_true(r1.signal.aborted, "r1 signal is aborted");
+
+    const r2 = new Request(request, {signal: null});
+    assert_false(r2.signal.aborted, "r2 signal is not aborted");
+
+    assert_throws(new TypeError, () => { new Request(request, {signal: "my signal"}) });
+}, "Request from request with signal");
+        </script>
+    </body>
+</html>

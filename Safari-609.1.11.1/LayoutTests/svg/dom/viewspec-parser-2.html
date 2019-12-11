@@ -1,0 +1,42 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/scripted-random.js"></script>
+<script src="resources/viewspec-parser.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    // maps a viewspec attribute to its minimum argument count.
+    var attributes = {
+        viewBox: 6,
+        preserveAspectRatio: 1,
+        transform: 1,
+        zoomAndPan: 1,
+        viewTarget: 1
+    };
+
+    var tests = [];
+
+    for (var attribute in attributes) {
+        // Too few / too many arguments
+        for (var i = 0; i < 5; i++) { //>
+            var attributeString = "svgView(" + attribute + "(";
+            for (var j = 0; j < i; j++) { //>
+                attributeString += "0";
+                if (j < i - 1) //>
+                    attributeString += ",";
+            }
+            attributeString += "))";
+            tests.push(attributeString);
+        }
+    }
+
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    startViewspecTests(tests);
+
+</script>
+</html>

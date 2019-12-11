@@ -1,0 +1,42 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # keyword: A Bugzilla::Keyword object.
+  #%]
+
+[% PROCESS global/header.html.tmpl
+  title = "Delete Keyword"
+  style_urls = ['skins/standard/admin.css']
+%]
+
+<h2>Confirmation</h2>
+
+<p class="confirmation">
+  [% IF keyword.bug_count == 1 %]
+    There is one [% terms.bug %]
+  [% ELSIF keyword.bug_count > 1 %]
+    There are [% keyword.bug_count FILTER html %] [%+ terms.bugs %]
+  [% END %]
+   with the <em>[% keyword.name FILTER html %]</em> keyword set.
+</p>
+
+<p>
+  Do you really want to delete this keyword?
+</p>
+
+<form method="post" action="editkeywords.cgi">
+  <input type="hidden" name="id" value="[% keyword.id FILTER html %]">
+  <input type="hidden" name="action" value="delete">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
+  <input type="submit" id="delete" value="Yes, delete">
+</form>
+
+<p><a href="editkeywords.cgi">Edit other keywords</a>.</p>
+
+[% PROCESS global/footer.html.tmpl %] 

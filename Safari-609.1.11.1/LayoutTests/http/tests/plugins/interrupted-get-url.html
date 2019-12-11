@@ -1,0 +1,17 @@
+<html>
+<body>
+FAILURE
+<embed name="plg" type="application/x-webkit-test-netscape"></embed>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    plg.getURL("resources/slow-resource.pl");
+    
+    setTimeout(function() { window.location = "resources/interrupted-get-url-success.html";  }, 200);
+
+</script>
+</body>
+</html>

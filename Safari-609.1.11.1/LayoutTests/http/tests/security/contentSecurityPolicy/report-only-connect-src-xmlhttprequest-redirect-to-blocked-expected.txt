@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: The Content Security Policy 'connect-src http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.php' was delivered in report-only mode, but does not specify a 'report-uri'; the policy will have no effect. Please either add a 'report-uri' directive, or deliver the policy via the 'Content-Security-Policy' header.
+CONSOLE MESSAGE: [Report Only] Refused to connect to http://localhost:8000/security/contentSecurityPolicy/resources/xhr-redirect-not-allowed.pl because it does not appear in the connect-src directive of the Content Security Policy.
+PASS XMLHttpRequest.send() did follow the redirect.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

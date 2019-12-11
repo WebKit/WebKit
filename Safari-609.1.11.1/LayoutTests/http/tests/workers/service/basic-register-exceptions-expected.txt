@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 24: Registration failed with error: TypeError: Script http://127.0.0.1:8000/workers/service/image-mime-type.php load failed
+CONSOLE MESSAGE: line 24: Registration failed with error: TypeError: serviceWorker.register() cannot be called with an empty script URL
+CONSOLE MESSAGE: line 24: Registration failed with error: TypeError: serviceWorker.register() must be called with a valid relative script URL
+CONSOLE MESSAGE: line 24: Registration failed with error: TypeError: serviceWorker.register() must be called with a script URL whose protocol is either HTTP or HTTPS
+CONSOLE MESSAGE: line 24: Registration failed with error: TypeError: serviceWorker.register() must be called with a script URL whose path does not contain '%2f' or '%5c'
+CONSOLE MESSAGE: line 24: Registration failed with error: TypeError: Scope URL provided to serviceWorker.register() must be either HTTP or HTTPS
+CONSOLE MESSAGE: line 24: Registration failed with error: TypeError: Scope URL provided to serviceWorker.register() cannot have a path that contains '%2f' or '%5c'
+CONSOLE MESSAGE: line 24: Registration failed with error: SecurityError: Script origin does not match the registering client's origin
+CONSOLE MESSAGE: line 24: Registration failed with error: SecurityError: Scope origin does not match the registering client's origin
+

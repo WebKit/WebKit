@@ -1,0 +1,12 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+if (location.protocol != "https:")
+    location = "https://127.0.0.1:8443/navigation/resources/https-no-store-subframe-in-page-cache.html";
+
+</script>

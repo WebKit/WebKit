@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.internals) {
+    internals.clearMemoryCache();
+    internals.invalidateFontCache();
+}
+</script>
+<style>
+@font-face {
+    font-family: "WebFont";
+    src: url("slow-ahem-loading.cgi");
+}
+
+@font-face {
+    font-family: "WebFont";
+    src: url("../resources/Ahem.woff");
+}
+</style>
+</head>
+<body>
+This test makes sure that system fallback fonts during loading are invisible when the loading font is invisible. The test passes if this text is the only text on the page.
+<div style="font: 48px 'WebFont', 'Helvetica';">&#x306E;</div>
+</body>
+</html>

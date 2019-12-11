@@ -1,0 +1,3 @@
+
+PASS Default column-gap is not interpolable 
+

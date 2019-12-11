@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+ <head> 
+  <style>
+    .block { background: green; }
+    .inline { display: inline; font: 30px/1 Ahem;}
+    .left { margin-left: 1px; }
+    .right { margin-right: 1px; }
+  </style> 
+  <script src="../../resources/check-layout.js"></script>
+ </head> 
+ <body> 
+  <p> The first two green bars below should be 30px high and the last should be 60px high.</p>
+  <div class="block" data-expected-height="30"><div class="inline left"><div></div></div></div>
+  <div class="block" data-expected-height="30"><div class="inline right"><div></div></div></div>
+  <div class="block" data-expected-height="60"><div class="inline left right"><div></div></div></div>
+  <script>
+   checkLayout('body > div')
+  </script>
+ </body>
+</html>

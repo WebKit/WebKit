@@ -1,0 +1,3 @@
+Test that script execution doesn't block on print sheet load.
+
+PASS

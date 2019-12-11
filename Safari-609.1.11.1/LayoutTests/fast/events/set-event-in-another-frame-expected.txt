@@ -1,0 +1,9 @@
+ 
+Helpers loaded!
+--- Test begins ---
+window.event = undefined
+--- After window.event = null ---
+window.event = null
+--- After MouseEvent completes ---
+window.event = undefined
+--- Test ends ---

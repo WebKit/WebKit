@@ -1,0 +1,57 @@
+Tests for Event Timer breakpoints.
+
+
+== Running test suite: DOMDebugger.Event.Timer
+-- Running test case: DOMDebugger.Event.Interval.AddBreakpoint
+Adding "interval" Event Breakpoint...
+Firing "setInterval" on window...
+PASS: Should pause before event handler is run.
+CALL STACK:
+0: [F] handleWindow_setInterval
+ASYNC CALL STACK:
+1: --- setInterval ---
+2: [F] trigger_setInterval
+3: [P] Global Code
+-- Running test teardown.
+
+-- Running test case: DOMDebugger.Event.Interval.AddDisabledBreakpoint
+Adding "interval" Event Breakpoint...
+Disabling "interval" Event Breakpoint...
+Firing "setInterval" on window...
+PASS: Should not pause for disabled breakpoint.
+-- Running test teardown.
+
+-- Running test case: DOMDebugger.Event.Interval.RemoveBreakpoint
+Adding "interval" Event Breakpoint...
+Removing "interval" Event Breakpoint...
+Firing "setInterval" on window...
+PASS: Should not pause for removed breakpoint.
+-- Running test teardown.
+
+-- Running test case: DOMDebugger.Event.Interval.RemoveDisabledBreakpoint
+Adding "interval" Event Breakpoint...
+Disabling "interval" Event Breakpoint...
+Removing "interval" Event Breakpoint...
+Firing "setInterval" on window...
+PASS: Should not pause for removed disabled breakpoint.
+-- Running test teardown.
+
+-- Running test case: DOMDebugger.Event.Interval.RepeatFireBreakpoint
+Adding "interval" Event Breakpoint...
+Firing "setInterval" on window...
+PASS: Should pause before event handler is run.
+CALL STACK:
+0: [F] handleRepeat
+ASYNC CALL STACK:
+1: --- setInterval ---
+2: [F] repeatSetInterval
+3: [P] Global Code
+PASS: Should pause before event handler is run.
+CALL STACK:
+0: [F] handleRepeat
+ASYNC CALL STACK:
+1: --- setInterval ---
+2: [F] repeatSetInterval
+3: [P] Global Code
+-- Running test teardown.
+

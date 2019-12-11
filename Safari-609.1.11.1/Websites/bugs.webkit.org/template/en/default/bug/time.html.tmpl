@@ -1,0 +1,30 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% BLOCK formattimeunit %]
+  [%# INTERFACE:
+    # time_unit:  the number converting, converts to 2 decimal places
+    #             unless the last character is a 0, then it truncates to 
+    #             1 decimal place
+    #%]
+  [% time_unit = time_unit FILTER format('%.2f') %]
+  [% time_unit.replace('0\Z', '') %]
+[% END %]
+
+[% BLOCK calculatepercentage %]
+  [%# INTERFACE:
+    # act:   actual time  
+    # rem:   remaining time
+    # %]
+  [% IF (act + rem) > 0 %]
+    [% (act / (act + rem)) * 100 
+       FILTER format("%d") %]
+  [% ELSE %]
+    0
+  [% END %]
+[% END %]

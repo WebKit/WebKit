@@ -1,0 +1,33 @@
+Pointer Events touch-action attribute support
+
+Test Description: Test will automatically check parsing behaviour of various touch-action combinations.
+
+touch-action: basic verification
+
+
+PASS default 
+PASS stylesheet-none 
+PASS explicit-auto 
+PASS explicit-pan-x 
+PASS explicit-pan-y 
+PASS explicit-pan-x-pan-y 
+PASS explicit-pan-y-pan-x 
+PASS explicit-manipulation 
+PASS explicit-none 
+PASS explicit-invalid-1 
+PASS explicit-invalid-2 
+PASS explicit-invalid-3 
+PASS explicit-invalid-4 
+PASS explicit-invalid-5 
+PASS explicit-invalid-6 
+PASS explicit-invalid-7 
+PASS explicit-invalid-8 
+PASS explicit-invalid-9 
+PASS explicit-invalid-10 
+PASS explicit-invalid-11 
+PASS explicit-invalid-12 
+PASS explicit-invalid-13 
+PASS not-inherited 
+PASS inherit 
+PASS initial 
+

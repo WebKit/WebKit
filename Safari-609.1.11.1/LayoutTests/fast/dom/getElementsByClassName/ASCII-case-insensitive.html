@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<script src="../../../resources/js-test.js"></script>
+
+<div id="a" class="a"></div>
+<div id="ä" class="ä"></div>
+<div id="A" class="A"></div>
+<div id="Ä" class="Ä"></div>
+
+<script>
+
+function getByClassName(classNames)
+{
+    var nodes = document.getElementsByClassName(classNames);
+    var result = "";
+    for (var i = 0; i < nodes.length; ++i) {
+        if (i)
+            result += " ";
+        result += nodes[i].id;
+    }
+    return result;
+}
+
+shouldBeEqualToString("getByClassName('a')", "a A");
+shouldBeEqualToString("getByClassName('A')", "a A");
+shouldBeEqualToString("getByClassName('ä')", "ä");
+shouldBeEqualToString("getByClassName('Ä')", "Ä");
+
+</script>

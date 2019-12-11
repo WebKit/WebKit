@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>user-gesture-preserved-across-xmlhttprequest</title>
+    <script src='/media-resources/media-file.js'></script>
+    <script src='/media-resources/video-test.js'></script>
+
+    <script>
+        let autoRun = true;
+
+        if (window.testRunner) {
+           testRunner.dumpAsText();
+           testRunner.waitUntilDone();
+           testRunner.setCanOpenWindows(true);
+        }
+
+        function doXHR(delay, timeout, completionHandler)
+        {
+            var xhr = new XMLHttpRequest();
+            if (window.internals)
+                window.internals.setXHRMaximumIntervalForUserGestureForwarding(xhr, timeout);
+
+            xhr.open('GET', `/xmlhttprequest/resources/download-with-delay.php?iteration=1&delay=${delay}`, true);
+
+            xhr.onload = (evt) => {
+                consoleWrite(`EVENT(load): readyState = ${xhr.readyState}`);
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        completionHandler();
+                    } else {
+                        logResult(Failed, `xhr.onload, status = ${xhr.statusText}`);
+                    }
+                }
+            };
+
+            xhr.onerror = (err) => {
+                logResult(Failed, `xhr.onerror, status = ${xhr.statusText}`);
+            };
+
+            xhr.send(null);
+        }
+
+        function testComplete()
+        {
+            if (autoRun)
+                nextTest();
+        }
+
+        function runTest(test)
+        {
+            if (!test.sequence.length) {
+                switch (test.action) {
+                case 'play':
+                    if (test.success)
+                        run("shouldResolve(mediaElement.play()).then(testComplete, testComplete)");
+                    else
+                        run("shouldReject(mediaElement.play()).then(testComplete, testComplete)");
+                    break;
+
+                case 'popup':
+                    if (window.internals)
+                        internals.settings.setJavaScriptCanOpenWindowsAutomatically(false);
+                    testExpected('window.open("about:blank")', null, test.success ? '!=' : '==');
+                    testComplete();
+                    break;
+                }
+                return;
+            }
+
+            let command = test.sequence.shift().trim().split(' ');
+            let delay = command[0];
+            let method = command[1].toLowerCase();
+
+            switch (method) {
+            case 'xhr':
+                consoleWrite(`sending XHR, delay = ${delay}`);
+                doXHR(delay, test.timeout || 0.6, () => runTest(test));
+                break;
+            case 'timeout':
+                consoleWrite(`setting timeout, delay = ${delay}`);
+                setTimeout(() => { runTest(test); }, delay);
+                break;
+            }
+
+        }
+
+        let tests = [
+            { title : 'gesture -> XHR -> timeout -> XHR -> window.open: should fail because XHR only propagates user gesture for media',
+                action : 'popup', withkey : true,  success : false,  sequence : ['100 XHR', '100 timeout', '100 xhr'] },
+
+            { title : 'gesture -> timeout -> XHR -> timeout -> window.open: should succeed',
+                action : 'popup', withkey : true,  success : true,  sequence : ['100 timeout', '100 xhr', '100 timeout'] },
+
+            { title : 'gesture -> timeout -> XHR -> timeout -> video playback: should succeed',
+                action : 'play',  withkey : true,  success : true,  sequence : ['100 timeout', '100 XHR', '100 timeout'] },
+
+            { title : 'gesture -> XHR -> timeout -> XHR -> video playback: should succeed',
+                action : 'play',  withkey : true,  success : true,  sequence : ['100 XHR', '100 timeout', '100 xhr'] },
+
+            { title : 'NO gesture -> XHR -> timeout -> video playback: should fail',
+                action : 'play',  withkey : false,  success : false,  sequence : ['100 XHR', '100 timeout'] },
+
+            { title : 'gesture -> "long" XHR -> video playback: should fail',
+                action : 'play',  withkey : false,  success : false,  timeout : 0.1, sequence : ['300 XHR'] },
+        ];
+
+        function nextTest()
+        {
+            if (!tests.length) {
+                consoleWrite('');
+                endTest()
+                return;
+            }
+
+            let test = tests.shift();
+            let action = () => { runTest(test) };
+            consoleWrite(`<br>** ${test.title}`);
+            switch (test.action) {
+            case 'play':
+                let container = document.getElementById('parent');
+                if (container.firstChild)
+                    container.removeChild(container.firstChild);
+
+                mediaElement = document.createElement('video');
+                if (window.internals)
+                    internals.setMediaElementRestrictions(mediaElement, 'RequireUserGestureForAudioRateChange');
+
+                mediaElement.src = "/media-resources/content/" + findMediaFile("video", "test");
+                mediaElement.controls = 1;
+                container.appendChild(mediaElement);
+                waitForEvent('canplaythrough', event => {
+                    if (test.withkey)
+                        runWithKeyDown(action);
+                    else
+                        action();
+                });
+
+                break;
+
+            case 'popup':
+                if (test.withkey)
+                    runWithKeyDown(action);
+                else
+                    action();
+                break;
+            }
+        }
+
+        function start()
+        {
+            if (autoRun)
+                nextTest();
+        }
+
+    </script>
+</head>
+
+<body onload="start()">
+    <p>Test that a user gesture is preserved across XHR and setTimeout.</p>
+    <div id='parent'></div>
+    <button onclick="nextTest()">Run!</button><br>
+    <pre id='consoleLog'></pre>
+</body>
+</html>
+

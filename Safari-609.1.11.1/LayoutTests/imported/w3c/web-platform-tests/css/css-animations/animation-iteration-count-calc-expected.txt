@@ -1,0 +1,3 @@
+
+PASS calc() should be accepted in animation-iteration-count. 
+

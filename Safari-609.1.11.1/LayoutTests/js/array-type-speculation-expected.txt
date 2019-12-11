@@ -1,0 +1,25 @@
+This tests that storing into something that is not array does not crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS result is "foo"
+PASS result is "foo"
+PASS result is undefined
+PASS result is undefined
+PASS result is undefined
+PASS result is "foo"
+PASS result is undefined
+PASS result is "foo"
+PASS result is "foo"
+PASS result is undefined
+PASS result is "foo"
+PASS result is undefined
+PASS result is undefined
+PASS result is undefined
+PASS result is "foo"
+PASS result is "foo"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

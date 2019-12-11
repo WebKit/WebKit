@@ -1,0 +1,62 @@
+/*
+ * Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ * Copyright (C) 2011 Motorola Mobility, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+interface HTMLTextAreaElement : HTMLElement {
+    [CEReactions=NotNeeded, Reflect] attribute boolean autofocus;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString dirName;
+    [CEReactions=NotNeeded, Reflect] attribute boolean disabled;
+    readonly attribute HTMLFormElement form;
+    [CEReactions=NotNeeded] attribute long minLength;
+    [CEReactions=NotNeeded] attribute long maxLength;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString name;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString placeholder;
+    [CEReactions=NotNeeded, Reflect] attribute boolean readOnly;
+    [CEReactions=NotNeeded, Reflect] attribute boolean required;
+    [CEReactions=NotNeeded] attribute unsigned long rows;
+    [CEReactions=NotNeeded] attribute unsigned long cols;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString wrap;
+
+    readonly attribute DOMString type;
+    [CEReactions=NotNeeded] attribute DOMString defaultValue;
+    attribute [TreatNullAs=EmptyString] DOMString value;
+    readonly attribute unsigned long textLength;
+
+    readonly attribute boolean willValidate;
+    readonly attribute ValidityState validity;
+    readonly attribute DOMString validationMessage;
+    boolean checkValidity();
+    [EnabledAtRuntime=InteractiveFormValidation] boolean reportValidity();
+    void setCustomValidity(DOMString error);
+
+    readonly attribute NodeList labels;
+
+    void select();
+    attribute long selectionStart;
+    attribute long selectionEnd;
+    attribute DOMString selectionDirection;
+
+    [MayThrowException] void setRangeText(DOMString replacement);
+    [MayThrowException] void setRangeText(DOMString replacement, unsigned long start, unsigned long end, optional DOMString selectionMode);
+
+    void setSelectionRange(optional long start = 0, optional long end = 0, optional DOMString direction);
+
+    [CEReactions=NotNeeded] attribute DOMString autocomplete;
+};

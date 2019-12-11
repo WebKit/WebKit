@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Test passes if you see a single 100px by 100px green box below.</p>
+<div id="host" style="width: 100px; height: 100px;"></div>
+<svg>
+    <linearGradient id="gradient">
+        <stop offset="0%" stop-color="red" />
+    </linearGradient>
+</svg>
+<template>
+    <svg viewbox="0 0 100 100">
+        <linearGradient id="gradient">
+            <stop offset="0%" stop-color="green" />
+        </linearGradient>
+        <linearGradient id="gradientUse" fill="red" href="#gradient"></linearGradient>
+        <rect id="rect" width="100" height="100" fill="url(#gradientUse)">
+    </svg>
+</template>
+<script>
+
+const shadowRoot = host.attachShadow({mode: 'closed'});
+shadowRoot.appendChild(document.querySelector('template').content.cloneNode(true));
+
+</script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+first blockquote level 1
+second blockquote level 1
+plain text paragraph
+
+sans-serif black bold text with underline
+
+serif blue italic text
+
+This tests the ability to search for accessible elements by key or text.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS resultElement.role is 'AXRole: AXStaticText'
+PASS resultElement.stringValue is 'AXValue: first blockquote level 1'
+PASS resultElement.role is 'AXRole: AXStaticText'
+PASS resultElement.stringValue is 'AXValue: second blockquote level 1'
+PASS resultElement.role is 'AXRole: AXStaticText'
+PASS resultElement.stringValue is 'AXValue: plain text paragraph'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

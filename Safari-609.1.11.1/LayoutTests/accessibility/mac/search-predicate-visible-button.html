@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<blockquote>first blockquote level 1</blockquote>
+<blockquote>second blockquote level 1</blockquote>
+<p style="color:black; font-family:sans-serif; font-weight:bold; text-decoration:underline;">sans-serif black bold text with underline</p>
+<p style="color:blue; font-family:serif; font-style:italic;">serif blue italic text</p>
+<form>
+<input type="text" /><br />
+<input type="checkbox" value="Checkbox" /> checkbox<br />
+<input type="submit" value="Submit" />
+</form>
+<img id="image" src="resources/cake.png" alt="Test">
+<h1>first heading level 1</h1>
+<h1>second heading level 1</h1>
+<h2>heading level 2</h2>
+<h3>heading level 3</h3>
+<h4>heading level 4</h4>
+<h5>heading level 5</h5>
+<h6>heading level 6</h6>
+<p id="banner" role="banner">landmark</p>
+<a href="#image">link</a>
+<ol><li>list item</li></ol>
+<p aria-live="polite">live region</p>
+<ul role="radiogroup"><li role="radio">radio button</li></ul>
+<table>
+<thead><tr><td>first table heading level 1</td></tr></thead>
+<tbody><tr><td>first table body level 1</td></tr></tbody>
+</table>
+<table>
+<thead><tr><td>second table heading level 1</td></tr></thead>
+<tbody><tr><td>second table body level 1</td></tr></tbody>
+</table>
+<ul role="tree"><li role="treeitem">tree item</li></ul>
+
+<h1>isVisible test start</h1>
+<div id="group" style="overflow: scroll; width:100px; height:100px;">
+    <button id="button">test button 1</button><BR>
+    test test test test <br>
+    test test test test <br>
+    test test test test <br>
+    test test test test <br>
+    test test test test <br>
+    test test test test <br>
+    test test test test <br>
+    test test test test <br>
+    test test test test <br>
+    <button id="button">test button 2</button>
+</div>
+<button id="button">test button 3</button>
+
+    
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests the ability to search for accessible elements by key or text.");
+
+    if (window.accessibilityController) {
+        document.getElementById("body").focus();
+        var containerElement = accessibilityController.focusedElement;
+        var startElement;
+        var resultElement;
+
+        // lets scroll to the top of the page and ensure that the submit button is visible
+        startElement = accessibilityController.focusedElement.childAtIndex(0);
+        startElement.scrollToMakeVisible();
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXButtonSearchKey", "", true);
+        shouldBe("resultElement.role", "'AXRole: AXButton'");
+        shouldBe("resultElement.title", "'AXTitle: Submit'");
+
+        // there should be no more visible buttons
+        resultElement = containerElement.uiElementForSearchPredicate(resultElement, true, "AXButtonSearchKey", "", true);
+        shouldBeUndefined("resultElement");
+    }
+    
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

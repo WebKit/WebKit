@@ -1,0 +1,7 @@
+2d.transformation.transform.identity
+transform() with the identity matrix does nothing
+Spec references: 2d.transformation.transform
+Actual output:
+Expected output:
+
+Passed

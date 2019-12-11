@@ -1,0 +1,5 @@
+2d.pattern.basic.zerocanvas
+
+
+FAIL OffscreenCanvas test: 2d.pattern.basic.zerocanvas assert_throws: function "function () { ctx.createPattern(offscreenCanvas, 'repeat'); }" threw object "TypeError: null is not an object (evaluating 'ctx.createPattern')" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to undefined, expected 11
+

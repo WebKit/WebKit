@@ -1,0 +1,3 @@
+Double-click in the white space below this text block -- should not crash.
+BUG 23232.
+PASS

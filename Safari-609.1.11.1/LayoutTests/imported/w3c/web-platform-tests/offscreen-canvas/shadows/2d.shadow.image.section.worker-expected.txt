@@ -1,0 +1,3 @@
+
+FAIL Shadows are not drawn for areas outside image source rectangles Can't find variable: OffscreenCanvas
+

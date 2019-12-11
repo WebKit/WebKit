@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 19: Error: requestIdleCallbackException
+
+PASS requestIdleCallback callback exceptions are reported to error handler 
+

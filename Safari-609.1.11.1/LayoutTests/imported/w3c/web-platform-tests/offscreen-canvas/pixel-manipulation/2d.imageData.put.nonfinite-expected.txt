@@ -1,0 +1,7 @@
+2d.imageData.put.nonfinite
+
+putImageData() throws TypeError if arguments are not finite
+
+
+FAIL putImageData() throws TypeError if arguments are not finite null is not an object (evaluating 'ctx.getImageData')
+

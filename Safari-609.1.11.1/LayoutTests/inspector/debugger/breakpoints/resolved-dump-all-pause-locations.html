@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../resources/log-pause-location.js"></script>
+<script src="resources/dump.js"></script>
+<script src="resources/dump-general.js"></script>
+<script src="resources/dump-functions.js"></script>
+<script src="resources/dump-unicode.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.resolvedBreakpoint.dumpAllLocations");
+
+    window.addDumpAllPauseLocationsTestCase(suite, {
+        name: "Debugger.resolvedBreakpoint.dumpAllLocations.General",
+        scriptRegex: /dump-general\.js$/,
+    });
+
+    window.addDumpAllPauseLocationsTestCase(suite, {
+        name: "Debugger.resolvedBreakpoint.dumpAllLocations.Functions",
+        scriptRegex: /dump-functions\.js$/,
+    });
+
+    window.addDumpAllPauseLocationsTestCase(suite, {
+        name: "Debugger.resolvedBreakpoint.dumpAllLocations.Unicode",
+        scriptRegex: /dump-unicode\.js$/,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Checking all resolved breakpoint locations in a script.</p>
+</body>
+</html>

@@ -1,0 +1,16 @@
+This tests that requestIdleCallback identifier starts from 1 in each document.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS requestIdleCallback(() => { }) is 1
+PASS requestIdleCallback(() => { }) is 2
+PASS iframe1.contentWindow.requestIdleCallback(() => { }) is 1
+PASS iframe2.contentWindow.requestIdleCallback(() => { }) is 1
+PASS iframe1.contentWindow.requestIdleCallback(() => { }) is 2
+PASS iframe1.contentWindow.requestIdleCallback(() => { }) is 3
+PASS iframe2.contentWindow.requestIdleCallback(() => { }) is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,44 @@
+<html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+ 
+    <input placeholder="search" type="text" name="q" size="15" maxlength="255" id="searchterm" />
+
+    <input id="password" class="field" type="password" name="sc1798" value="" placeholder="Password" spellcheck="true" maxlength="5096">
+    
+    <span id="label">Birthday:</span>
+    <div id="search" role="searchbox" aria-labelledby="label" aria-placeholder="MM-DD-YYYY">03-14-1879</div>
+    
+    <input type="text" id="input" placeholder="Fill in the blank" aria-placeholder="aria placeholder">
+    
+    <p id="description"></p>
+    <div id="console"></div>
+     
+    <script>
+        if (window.accessibilityController) {
+            description("This test makes sure that the placeholder is returned as the correct attribute");
+
+            var field = document.getElementById("searchterm").focus();
+            var fieldElement = accessibilityController.focusedElement;
+            shouldBe("fieldElement.stringAttributeValue('AXPlaceholderValue')", "'search'");
+
+            document.getElementById("password").focus();
+            var pass = accessibilityController.focusedElement;
+            shouldBe("pass.stringAttributeValue('AXPlaceholderValue')", "'Password'");
+            
+            var search = accessibilityController.accessibleElementById("search");
+            shouldBe("search.stringAttributeValue('AXPlaceholderValue')", "'MM-DD-YYYY'");
+            
+            // When the placeholder and aria-placeholder attributes are both present, use the placeholder
+            // attribute's value.
+            var input = accessibilityController.accessibleElementById("input");
+            shouldBe("input.stringAttributeValue('AXPlaceholderValue')", "'Fill in the blank'");
+        }
+    </script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+# Copyright (C) 2014 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+messages -> WebPasteboardProxy NotRefCounted {
+#if PLATFORM(IOS_FAMILY)
+    WriteURLToPasteboard(struct WebCore::PasteboardURL url, String pasteboardName)
+    WriteWebContentToPasteboard(struct WebCore::PasteboardWebContent content, String pasteboardName)
+    WriteImageToPasteboard(struct WebCore::PasteboardImage pasteboardImage, String pasteboardName)
+    WriteStringToPasteboard(String pasteboardType, String text, String pasteboardName)
+    UpdateSupportedTypeIdentifiers(Vector<String> identifiers, String pasteboardName)
+#endif
+
+    WriteCustomData(Vector<WebCore::PasteboardCustomData> data, String pasteboardName) -> (int64_t changeCount) Synchronous
+    TypesSafeForDOMToReadAndWrite(String pasteboardName, String origin) -> (Vector<String> types) Synchronous
+    AllPasteboardItemInfo(String pasteboardName, int64_t changeCount) -> (Optional<Vector<WebCore::PasteboardItemInfo>> allInfo) Synchronous
+    InformationForItemAtIndex(uint64_t index, String pasteboardName, int64_t changeCount) -> (Optional<WebCore::PasteboardItemInfo> info) Synchronous
+    GetPasteboardItemsCount(String pasteboardName) -> (uint64_t itemsCount) Synchronous
+    ReadStringFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName) -> (String string) Synchronous
+    ReadURLFromPasteboard(uint64_t index, String pasteboardName) -> (String url, String title) Synchronous
+    ReadBufferFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName) -> (WebKit::SharedMemory::Handle handle, uint64_t size) Synchronous
+
+#if PLATFORM(COCOA)
+    # Pasteboard messages.
+    GetNumberOfFiles(String pasteboardName) -> (uint64_t numberOfFiles) Synchronous
+    GetPasteboardTypes(String pasteboardName) -> (Vector<String> types) Synchronous
+    GetPasteboardPathnamesForType(String pasteboardName, String pasteboardType) -> (Vector<String> pathnames, WebKit::SandboxExtension::HandleArray sandboxExtensions) Synchronous WantsConnection
+    GetPasteboardStringForType(String pasteboardName, String pasteboardType) -> (String string) Synchronous
+    GetPasteboardStringsForType(String pasteboardName, String pasteboardType) -> (Vector<String> strings) Synchronous
+    GetPasteboardBufferForType(String pasteboardName, String pasteboardType) -> (WebKit::SharedMemory::Handle handle, uint64_t size) Synchronous
+    PasteboardCopy(String fromPasteboard, String toPasteboard) -> (int64_t changeCount) Synchronous
+    GetPasteboardChangeCount(String pasteboardName) -> (int64_t changeCount) Synchronous
+    GetPasteboardUniqueName() -> (String pasteboardName) Synchronous
+    GetPasteboardColor(String pasteboardName) -> (WebCore::Color color) Synchronous
+    GetPasteboardURL(String pasteboardName) -> (String urlString) Synchronous
+    AddPasteboardTypes(String pasteboardName, Vector<String> pasteboardTypes) -> (int64_t changeCount) Synchronous
+    SetPasteboardTypes(String pasteboardName, Vector<String> pasteboardTypes) -> (int64_t changeCount) Synchronous
+    SetPasteboardURL(struct WebCore::PasteboardURL pasteboardURL, String pasteboardName) -> (int64_t changeCount) Synchronous WantsConnection
+    SetPasteboardColor(String pasteboardName, WebCore::Color color) -> (int64_t changeCount) Synchronous
+    SetPasteboardStringForType(String pasteboardName, String pasteboardType, String string) -> (int64_t changeCount) Synchronous
+    SetPasteboardBufferForType(String pasteboardName, String pasteboardType, WebKit::SharedMemory::Handle handle, uint64_t size) -> (int64_t changeCount) Synchronous
+#endif
+
+#if PLATFORM(GTK)
+    WriteToClipboard(String pasteboardName, struct WebKit::WebSelectionData pasteboardContent)
+    ReadFromClipboard(String pasteboardName) -> (struct WebKit::WebSelectionData pasteboardContent) Synchronous
+#endif
+
+#if USE(LIBWPE)
+    GetPasteboardTypes() -> (Vector<String> types) Synchronous
+    WriteWebContentToPasteboard(struct WebCore::PasteboardWebContent content)
+    WriteStringToPasteboard(String pasteboardType, String text)
+#endif
+}

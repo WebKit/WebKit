@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText()
+        testRunner.waitUntilDone();
+    }
+</script>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+    finishedScript = false;
+    finishedImage = false;
+    windowOnLoad = false;
+    function test() {
+        shouldBeTrue("windowOnLoad");
+        if (finishedImage && finishedScript) {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+    };
+    // The rand value is necessary to cache-bust slow resources.
+    var rand = Math.random();
+    document.write("<link rel=preload href='../resources/slow-script.pl?delay=200;rand=" + rand + "' as=script onload='window.finishedScript = true; test();'>");
+    document.write("<link rel=preload href='../resources/slow-image.php?rand=" + rand + "' as=image onload='window.finishedImage = true; test();'>");
+</script>
+<body>
+<script>
+    window.addEventListener("load", function() {
+        shouldBeFalse("finishedScript");
+        shouldBeFalse("finishedImage");
+        windowOnLoad = true;
+    });
+</script>
+</body>

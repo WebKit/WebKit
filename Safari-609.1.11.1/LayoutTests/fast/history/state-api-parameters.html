@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that the second parameter to history.replaceState() / pushState() is mandatory.");
+
+shouldThrow("history.replaceState()", "'TypeError: Not enough arguments'");
+shouldThrow("history.replaceState({})", "'TypeError: Not enough arguments'");
+shouldThrow("history.pushState()", "'TypeError: Not enough arguments'");
+shouldThrow("history.pushState({})", "'TypeError: Not enough arguments'");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

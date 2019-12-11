@@ -1,0 +1,18 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<p>This tests inserting a paragraph separator after a horizontal rule.  You should see 'foo', empty paragraph, horizontal rule, 'bar', and the caret should be just after the horizontal rule. <b>This demonstrates 8345.  The caret after a horizontal rule is drawn in the same location as the caret before a horizontal rule.</p>
+<div contenteditable="true" id="div">foo<hr>bar</div>
+
+<script>
+if (window.internals)
+    internals.settings.setEditingBehavior('mac');
+var sel = window.getSelection();
+var div = document.getElementById("div");
+sel.setPosition(div, 0);
+sel.modify("move", "forward", "word");
+sel.modify("move", "forward", "character");
+sel.modify("move", "forward", "character");
+document.execCommand("InsertParagraph");
+</script>

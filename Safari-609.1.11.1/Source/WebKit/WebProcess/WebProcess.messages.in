@@ -1,0 +1,166 @@
+# Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+messages -> WebProcess LegacyReceiver NotRefCounted {
+    InitializeWebProcess(struct WebKit::WebProcessCreationParameters processCreationParameters)
+    SetWebsiteDataStoreParameters(struct WebKit::WebProcessDataStoreParameters parameters)
+
+    # Create a new page.
+    CreateWebPage(WebCore::PageIdentifier newPageID, struct WebKit::WebPageCreationParameters pageCreationParameters)
+
+    PrewarmGlobally();
+    PrewarmWithDomainInformation(struct WebCore::PrewarmInformation prewarmInformation)
+
+    # Global preferences.
+    SetCacheModel(enum:uint8_t WebKit::CacheModel cacheModel)
+
+    RegisterURLSchemeAsEmptyDocument(String scheme)
+    RegisterURLSchemeAsSecure(String scheme)
+    RegisterURLSchemeAsBypassingContentSecurityPolicy(String scheme)
+    SetDomainRelaxationForbiddenForURLScheme(String scheme)
+    RegisterURLSchemeAsLocal(String scheme)
+    RegisterURLSchemeAsNoAccess(String scheme)
+    RegisterURLSchemeAsDisplayIsolated(String scheme)
+    RegisterURLSchemeAsCORSEnabled(String scheme)
+    RegisterURLSchemeAsCachePartitioned(String scheme)
+    RegisterURLSchemeAsCanDisplayOnlyIfCanRequest(String scheme)
+
+    SetDefaultRequestTimeoutInterval(double timeoutInterval)
+    SetAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
+    SetShouldUseFontSmoothing(bool useFontSmoothing)
+    SetResourceLoadStatisticsEnabled(bool resourceLoadStatisticsEnabled);
+    ClearResourceLoadStatistics();
+    UserPreferredLanguagesChanged(Vector<String> languages)
+    FullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
+
+    # Plug-ins.
+    DidAddPlugInAutoStartOriginHash(uint32_t hash, WallTime expirationTime)
+    ResetPlugInAutoStartOriginHashes(HashMap<uint32_t,WallTime> hashes)
+    SetPluginLoadClientPolicy(uint8_t policy, String host, String bundleIdentifier, String versionString)
+    ResetPluginLoadClientPolicies(HashMap<String, HashMap<String, HashMap<String, uint8_t>>> pluginLoadClientPolicies)
+    ClearPluginClientPolicies()
+    RefreshPlugins()
+
+    void StartMemorySampler(WebKit::SandboxExtension::Handle sampleLogFileHandle, String sampleLogFilePath, double interval);
+    void StopMemorySampler();
+
+    SetTextCheckerState(struct WebKit::TextCheckerState textCheckerState)
+
+    SetEnhancedAccessibility(bool flag)
+
+    GetWebCoreStatistics(uint64_t callbackID)
+    GarbageCollectJavaScriptObjects()
+    SetJavaScriptGarbageCollectorTimerEnabled(bool enable)
+
+    SetInjectedBundleParameter(String parameter, IPC::DataReference value);
+    SetInjectedBundleParameters(IPC::DataReference parameters);
+    HandleInjectedBundleMessage(String messageName, WebKit::UserData messageBody);
+
+    FetchWebsiteData(OptionSet<WebKit::WebsiteDataType> websiteDataTypes) -> (struct WebKit::WebsiteData websiteData) Async
+    DeleteWebsiteData(OptionSet<WebKit::WebsiteDataType> websiteDataTypes, WallTime modifiedSince) -> () Async
+    DeleteWebsiteDataForOrigins(OptionSet<WebKit::WebsiteDataType> websiteDataTypes, Vector<WebCore::SecurityOriginData> origins) -> () Async
+
+    SetHiddenPageDOMTimerThrottlingIncreaseLimit(int milliseconds)
+#if PLATFORM(COCOA)
+    SetQOS(int latencyQOS, int throughputQOS)
+#endif
+
+    SetMemoryCacheDisabled(bool disabled);
+
+#if ENABLE(SERVICE_CONTROLS)
+    SetEnabledServices(bool hasImageServices, bool hasSelectionServices, bool hasRichContentServices)
+#endif
+
+    EnsureAutomationSessionProxy(String sessionIdentifier)
+    DestroyAutomationSessionProxy()
+
+    PrepareToSuspend(bool isSuspensionImminent) -> () Async
+    ProcessDidResume()
+
+    MainThreadPing()
+    BackgroundResponsivenessPing()
+
+#if ENABLE(GAMEPAD)
+    SetInitialGamepads(Vector<WebKit::GamepadData> gamepadDatas)
+    GamepadConnected(WebKit::GamepadData gamepadData)
+    GamepadDisconnected(unsigned index)
+#endif
+
+#if ENABLE(SERVICE_WORKER)
+    EstablishWorkerContextConnectionToNetworkProcess(uint64_t pageGroupID, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, struct WebKit::WebPreferencesStore store, WebCore::RegistrableDomain domain, struct WebKit::ServiceWorkerInitializationData initializationData)
+    RegisterServiceWorkerClients()
+#endif
+
+    SetHasSuspendedPageProxy(bool hasSuspendedPageProxy);
+    SetIsInProcessCache(bool isInProcessCache)
+    MarkIsNoLongerPrewarmed()
+    UpdateActivePages()
+    GetActivePagesOriginsForTesting() -> (Vector<String> activeOrigins) Async
+
+#if PLATFORM(MAC)
+    SetScreenProperties(struct WebCore::ScreenProperties screenProperties)
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    ScrollerStylePreferenceChanged(bool useOvelayScrollbars)
+    DisplayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
+    DisplayWasRefreshed(uint32_t displayID)
+#endif
+#endif
+
+#if PLATFORM(IOS)
+    BacklightLevelDidChange(float backlightLevel)
+#endif
+
+    IsJITEnabled() -> (bool enabled) Async
+
+#if PLATFORM(COCOA)
+    SetMediaMIMETypes(Vector<String> types)
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+    AddMockMediaDevice(struct WebCore::MockMediaDevice device);
+    ClearMockMediaDevices();
+    RemoveMockMediaDevice(String persistentId);
+    ResetMockMediaDevices();
+
+#if ENABLE(SANDBOX_EXTENSIONS)
+    GrantUserMediaDeviceSandboxExtensions(WebKit::MediaDeviceSandboxExtensions sandboxExtensions)
+    RevokeUserMediaDeviceSandboxExtensions(Vector<String> sandboxExtensionIDs)
+#endif
+#endif
+
+    ClearCurrentModifierStateForTesting()
+
+    SetBackForwardCacheCapacity(unsigned capacity);
+    ClearCachedPage(struct WebCore::BackForwardItemIdentifier backForwardItemID) -> () Async
+
+#if PLATFORM(IOS_FAMILY)
+    UnblockAccessibilityServer(WebKit::SandboxExtension::Handle handle)
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    SendMessageToWebExtension(struct WebKit::UserMessage userMessage)
+#endif
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    SeedResourceLoadStatisticsForTesting(WebCore::RegistrableDomain firstPartyDomain, WebCore::RegistrableDomain thirdPartyDomain, bool shouldScheduleNotification) -> () Async
+#endif
+}

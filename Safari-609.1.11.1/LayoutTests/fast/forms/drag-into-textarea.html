@@ -1,0 +1,48 @@
+<script>
+
+function runTest() {
+    var input = document.getElementById("input");
+    var x = input.offsetLeft + input.offsetWidth / 2;
+    var y = input.offsetTop + input.offsetHeight / 2;
+
+    var textarea = document.getElementById("textarea");
+    var tx = textarea.offsetLeft + textarea.offsetWidth / 2;
+    var ty = textarea.offsetTop + textarea.offsetHeight / 2;
+
+    input.select();
+
+    if (!window.testRunner)
+        return;
+    if (!window.eventSender)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    // Leap the event time so that mouseMove will start a new drag instead of changing selection.
+    eventSender.leapForward(400);
+    eventSender.mouseMoveTo(tx, ty);
+    eventSender.mouseUp();
+
+    if (input.value == "" && textarea.value == "drag this text into the text area below")
+        document.getElementById("result").innerText = "Test succeeded!";
+    else
+        document.getElementById("result").innerText = "Test failed! Input value was " + input.value + " and text area value was " + textarea.value + ".";
+
+    testRunner.notifyDone();
+}
+
+</script>
+
+<body onload="runTest()">
+
+<p>This tests dragging text from an input element into a text area element.</p>
+<p>When the test is run, the follow text field should be empty:</p>
+<p><input id="input" type="text" value="drag this text into the text area below" size="50"></p>
+<p>And the following text area should have text in it:</p>
+<p><textarea id="textarea" cols="50" rows="10"></textarea></p>
+<p id="result">If the test has completed this sentence should be replaced by a success message.</p>
+
+</body>

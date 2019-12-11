@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script src="resources/clearSessionStorage.js"></script>
+<input id="testInput" type="text"></input>
+<script>
+description("Tests updating sessionStorage in the keydown handler and makes sure the value is updated synchronously.");
+
+function keydownHandler()
+{
+    debug("Setting setItemSynchronousKeydownTestValue to 1 in keydown handler.");
+    sessionStorage.setItemSynchronousKeydownTestValue = 1;
+}
+
+testInput.focus();
+testInput.onkeydown = keydownHandler;
+sessionStorage.setItemSynchronousKeydownTestValue = 0;
+shouldBeEqualToString("sessionStorage.setItemSynchronousKeydownTestValue", "0");
+
+// keydownHandler() should be called synchronously.
+if (window.eventSender)
+    eventSender.keyDown('a');
+
+shouldBeEqualToString("sessionStorage.setItemSynchronousKeydownTestValue", "1");
+</script>
+<script>
+sessionStorage.removeItem("setItemSynchronousKeydownTestValue");
+</script>
+</body>
+</html>

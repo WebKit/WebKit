@@ -1,0 +1,20 @@
+<html>
+<head>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows(true);
+    testRunner.setNewWindowsCopyBackForwardList(true);
+}
+
+</script>
+</head>
+<body onload="window.open('data:text/html,<script>if (window.testRunner) testRunner.notifyDone();</script>');">
+<pre>
+This test only works in DRT by tickling the [WebView _loadBackForwardListFromOtherView:] method.
+If it doesn't crash, then the test passes.
+</pre>
+</body>
+</html>

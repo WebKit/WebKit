@@ -1,0 +1,4 @@
+This test confirms that XSL stylesheets are properly handled if loaded during 'beforeload' events. It passes if no debug assertions are fired.
+
+PASS: No assertions hit.
+

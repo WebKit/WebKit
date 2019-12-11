@@ -1,0 +1,21 @@
+This page tests the regex examples from the ECMA-262 specification.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS regex01.exec("abc") is ["a"]
+PASS regex02.exec("abc") is ["abc", "a", "a", undefined, "bc", undefined, "bc"]
+PASS regex03.exec("abcdefghi") is ["abcde"]
+PASS regex04.exec("abcdefghi") is ["abc"]
+PASS regex05.exec("aabaac") is ["aaba", "ba"]
+PASS "aaaaaaaaaa,aaaaaaaaaaaaaaa".replace(regex06,"$1") is "aaaaa"
+PASS regex07.exec("zaacbbbcac") is ["zaacbbbcac", "z", "ac", "a", undefined, "c"]
+PASS regex08.exec("b") is ["", undefined]
+PASS regex09.exec("baaaac") is ["b", ""]
+PASS regex10.exec("baaabac") is ["", "aaa"]
+PASS regex11.exec("baaabac") is ["aba", "a"]
+PASS regex12.exec("baaabaac") is ["baaabaac", "ba", undefined, "abaac"]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

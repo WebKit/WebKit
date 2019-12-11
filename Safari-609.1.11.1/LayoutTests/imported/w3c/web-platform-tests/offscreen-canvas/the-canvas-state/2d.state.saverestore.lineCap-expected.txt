@@ -1,0 +1,7 @@
+2d.state.saverestore.lineCap
+
+save()/restore() works for lineCap
+
+
+FAIL save()/restore() works for lineCap null is not an object (evaluating 'ctx.lineCap')
+

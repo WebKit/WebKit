@@ -1,0 +1,1 @@
+(function(a,b,c){let sum=a;sum+=b;sum+=c;return sum;})()

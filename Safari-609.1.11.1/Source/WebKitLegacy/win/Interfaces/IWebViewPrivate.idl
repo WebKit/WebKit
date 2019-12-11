@@ -1,0 +1,365 @@
+/*
+ * Copyright (C) 2006-2016 Apple Inc.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#ifndef DO_NO_IMPORTS
+import "oaidl.idl";
+import "ocidl.idl";
+import "IWebFormDelegate.idl";
+import "IWebFrameLoadDelegatePrivate.idl";
+import "IWebHistoryDelegate.idl";
+import "IWebInspector.idl";
+import "IWebInspectorPrivate.idl";
+#endif
+
+// Sent when IWebView::close is called. No userInfo is associated with this notification.
+cpp_quote("#define WebViewWillCloseNotification L\"WebViewWillCloseNotification\"")
+
+interface IEnumTextMatches;
+interface IWebFormDelegate;
+interface IWebFrameLoadDelegatePrivate;
+interface IWebHistoryDelegate;
+interface IWebInspector;
+interface IWebInspectorPrivate;
+interface IWebURLRequest;
+interface IWebView;
+
+typedef enum {
+    WebInjectAtDocumentStart = 0,
+    WebInjectAtDocumentEnd,
+} WebUserScriptInjectionTime;
+
+typedef enum {
+    WebInjectInAllFrames = 0,
+    WebInjectInTopFrameOnly,
+} WebUserContentInjectedFrames;
+
+[
+    object,
+    oleautomation,
+    uuid(44914369-DEB5-4fcf-A6A3-30C02E73154F),
+    pointer_default(unique)
+]
+interface IWebViewPrivate : IUnknown
+{
+    /*!
+        @method _setInViewSourceMode:
+        @abstract Used to place a WebView into a special source-viewing mode.
+        - (void)_setInViewSourceMode:(BOOL)flag;
+      */
+    HRESULT setInViewSourceMode([in] BOOL flag);
+
+    /*!
+        @method _inViewSourceMode;
+        @abstract Whether or not the WebView is in source-view mode for HTML.
+        - (BOOL)_inViewSourceMode;
+      */
+    HRESULT inViewSourceMode([out, retval] BOOL* flag);
+
+    HRESULT viewWindow([out, retval] HWND* window);
+
+    // May well become public
+    //- (void)_setFormDelegate:(id<WebFormDelegate>)delegate;
+    HRESULT setFormDelegate([in] IWebFormDelegate* formDelegate);
+
+    //- (id<WebFormDelegate>)_formDelegate;
+    HRESULT formDelegate([out, retval] IWebFormDelegate** formDelegate);
+
+    HRESULT setFrameLoadDelegatePrivate([in] IWebFrameLoadDelegatePrivate* frameLoadDelegatePrivate);
+    HRESULT frameLoadDelegatePrivate([out, retval] IWebFrameLoadDelegatePrivate** frameLoadDelegatePrivate);
+
+    HRESULT scrollOffset([out, retval] LPPOINT offset);
+    HRESULT scrollBy([in] LPPOINT offset);
+    HRESULT visibleContentRect([out, retval] LPRECT rect);
+    
+    // SPI for DumpRenderTree
+    HRESULT updateFocusedAndActiveState();
+
+    // Support for displaying multiple text matches.
+    HRESULT markAllMatchesForText([in] BSTR search, [in] BOOL caseSensitive, [in] BOOL highlight, [in] UINT limit, [out] UINT* matches);
+    HRESULT unmarkAllTextMatches();
+    HRESULT rectsForTextMatches([out]IEnumTextMatches** pmatches);
+    HRESULT selectionRect([in, out] RECT* rc);
+    HRESULT generateSelectionImage(BOOL forceWhiteText, [out, retval] HBITMAP* hBitmap);
+
+    HRESULT canHandleRequest([in] IWebURLRequest* request, [out, retval] BOOL* result);
+
+    HRESULT clearFocusNode();
+
+    HRESULT setTabKeyCyclesThroughElements([in] BOOL cycles);
+    HRESULT tabKeyCyclesThroughElements([out, retval] BOOL* result);
+
+    HRESULT setAllowSiteSpecificHacks([in] BOOL allows);
+    HRESULT addAdditionalPluginDirectory([in] BSTR directory);
+
+    HRESULT loadBackForwardListFromOtherView([in] IWebView* otherView);
+
+    HRESULT setCustomDropTarget([in] IDropTarget* dt);
+    HRESULT removeCustomDropTarget();
+
+    HRESULT setInitialFocus([in] BOOL forward);
+
+    HRESULT inspector([out, retval] IWebInspector**);
+
+    HRESULT clearUndoRedoOperations();
+
+    HRESULT setProhibitsMainFrameScrolling([in] BOOL prohibits);
+
+    // SPI for DumpRenderTree. This is global to all WebViews.
+    HRESULT setShouldApplyMacFontAscentHack([in] BOOL shouldApply);
+
+    /*!
+        @method shouldClose:
+        @abstract This function will fire the before unload handler for a page.  
+        If the user cancels the closing of a webview from the alert popped up by the 
+        before unload handler, then this function will return false.
+    */
+    HRESULT shouldClose([out, retval] BOOL* result);
+
+    // SPI for DumpRenderTree
+    HRESULT executeCoreCommandByName([in] BSTR name, [in] BSTR value);
+
+    HRESULT windowAncestryDidChange();
+
+    HRESULT paintDocumentRectToContext([in] RECT rect, [in] HDC dc);
+
+    HRESULT setDefersCallbacks([in] BOOL defersCallbacks);
+    HRESULT defersCallbacks([out, retval] BOOL* defersCallbacks);
+
+    HRESULT standardUserAgentWithApplicationName([in] BSTR applicationName, [retval][out] BSTR* groupName);
+
+    HRESULT setCustomHTMLTokenizerTimeDelay([in] double timeDelay);
+    HRESULT setCustomHTMLTokenizerChunkSize([in] int chunkSize);
+
+    HRESULT backingStore([out, retval] HBITMAP* hBitmap);
+
+    HRESULT setTransparent([in] BOOL transparent);
+    HRESULT transparent([out, retval] BOOL* transparent);
+
+    HRESULT setAlwaysUsesComplexTextCodePath([in] BOOL complex);
+    HRESULT alwaysUsesComplexTextCodePath([out, retval] BOOL* complex);
+
+    HRESULT setCookieEnabled([in] BOOL enable);
+    HRESULT cookieEnabled([out, retval] BOOL* enabled);
+
+    HRESULT setMediaVolume([in] float volume);
+    HRESULT mediaVolume([out, retval] float* volume);
+
+    // SPI for DumpRenderTree
+    HRESULT clearMainFrameName();
+
+    HRESULT globalHistoryItem([out, retval] IWebHistoryItem**);
+
+    HRESULT registerEmbeddedViewMIMEType([in] BSTR mimeType);
+
+    HRESULT setMemoryCacheDelegateCallsEnabled([in] BOOL enabled);
+
+    HRESULT setJavaScriptURLsAreAllowed([in] BOOL areAllowed);
+
+    HRESULT setCanStartPlugins([in] BOOL canStartPlugins);
+
+    /*!
+        @method MIMETypeForExtension:
+        @abstract Returns the mime type for a certian file extension.
+        @param path The extension of the file to check.
+        @result The mime type of the specified extension.
+        + (BSTR)MIMETypeForPath:(NSString *)path;
+    */
+    HRESULT MIMETypeForExtension([in] BSTR extension, [out, retval] BSTR* mimeType);
+
+    HRESULT addUserScriptToGroup([in] BSTR groupName, [in] IWebScriptWorld*, [in] BSTR source, [in] BSTR url,
+                                 [in] unsigned whitelistCount, [in, size_is(whitelistCount)] BSTR* whitelist,
+                                 [in] unsigned blacklistCount, [in, size_is(blacklistCount)] BSTR* blacklist,
+                                 [in] WebUserScriptInjectionTime injectionTime);
+    HRESULT addUserStyleSheetToGroup([in] BSTR groupName, [in] IWebScriptWorld*, [in] BSTR source, [in] BSTR url,
+                                     [in] unsigned whitelistCount, [in, size_is(whitelistCount)] BSTR* whitelist,
+                                     [in] unsigned blacklistCount, [in, size_is(blacklistCount)] BSTR* blacklist);
+    HRESULT removeUserScriptFromGroup([in] BSTR groupName, [in] IWebScriptWorld*, [in] BSTR url);
+    HRESULT removeUserStyleSheetFromGroup([in] BSTR groupName, [in] IWebScriptWorld*, [in] BSTR url);
+    HRESULT removeUserScriptsFromGroup([in] BSTR groupName, [in] IWebScriptWorld*);
+    HRESULT removeUserStyleSheetsFromGroup([in] BSTR groupName, [in] IWebScriptWorld*);
+    HRESULT removeAllUserContentFromGroup([in] BSTR groupName);
+
+    HRESULT unused1();
+    HRESULT unused2();
+
+    // If rect is 0, the entire backing store will be invalidated.
+    HRESULT invalidateBackingStore([in] const RECT* rect);
+
+    // Whitelists access from an origin (sourceOrigin) to a set of one or more origins described by the parameters:
+    // - destinationProtocol: The protocol to grant access to.
+    // - destinationHost: The host to grant access to.
+    // - allowDestinationSubdomains: If host is a domain, setting this to YES will whitelist host and all its subdomains, recursively.
+    HRESULT addOriginAccessWhitelistEntry([in] BSTR sourceOrigin, [in] BSTR destinationProtocol, [in] BSTR destinationHost, [in] BOOL allowDestinationSubdomains);
+
+    // Removes a white list entry created with addOriginAccessWhitelistEntry. See above.
+    HRESULT removeOriginAccessWhitelistEntry([in] BSTR sourceOrigin, [in] BSTR destinationProtocol, [in] BSTR destinationHost, [in] BOOL allowDestinationSubdomains);
+
+    // Removes all white list entries created with addOriginAccessWhitelistEntry.
+    HRESULT resetOriginAccessWhitelists();
+
+    HRESULT setHistoryDelegate([in] IWebHistoryDelegate* historyDelegate);
+    HRESULT historyDelegate([out,retval] IWebHistoryDelegate** historyDelegate);
+    HRESULT addVisitedLinks([in] BSTR* visitedURLs, [in] unsigned visitedURLCount);
+
+    HRESULT unused3();
+    HRESULT unused4();
+    HRESULT unused5();
+
+    HRESULT setGeolocationProvider([in] IWebGeolocationProvider* locationProvider);
+    HRESULT geolocationProvider([out, retval] IWebGeolocationProvider** locationProvider);
+    HRESULT geolocationDidChangePosition([in] IWebGeolocationPosition* position);
+    HRESULT geolocationDidFailWithError([in] IWebError* error);
+
+    HRESULT setDomainRelaxationForbiddenForURLScheme([in] BOOL forbidden, [in] BSTR scheme);
+
+    HRESULT registerURLSchemeAsSecure([in] BSTR scheme);
+
+    HRESULT nextDisplayIsSynchronous();
+
+    HRESULT paintScrollViewRectToContextAtPoint([in] RECT rect, [in] POINT pt, [in] HDC dc);
+
+    [local] HRESULT reportException([in] JSContextRef context, [in] JSValueRef exception);
+
+    [local] HRESULT elementFromJS([in] JSContextRef context, [in] JSValueRef nodeObject, [out, retval] IDOMElement** element);
+
+
+    /*!
+        @method defaultMinimumTimerInterval
+        @discussion Returns the default minimum interval for DOMTimers on all pages, not
+        just the one associated with this receiver.
+        - (double)interval;
+    */
+    HRESULT defaultMinimumTimerInterval([out, retval] double* interval);
+
+    /*!
+        @method setMinimumTimerInterval
+        @discussion Sets the minimum interval for DOMTimers on the web page associated
+        with the receiver.
+        - (double)interval;
+    */
+    HRESULT setMinimumTimerInterval([in] double interval);
+
+    /*!
+        @method _HTTPPipeliningEnabled
+        @abstract Checks the HTTP pipelining status.
+        @discussion Defaults to NO.
+        @result YES if HTTP pipelining is enabled, NO if not enabled.
+     */
+    HRESULT httpPipeliningEnabled([out, retval] BOOL* enabled);
+
+    /*!
+        @method _setHTTPPipeliningEnabled:
+        @abstract Set the HTTP pipelining status.
+        @discussion Defaults to NO.
+        @param enabled The new HTTP pipelining status.
+     */
+    HRESULT setHTTPPipeliningEnabled([in] BOOL enabled);
+
+    HRESULT setUsesLayeredWindow([in] BOOL usesLayeredWindow);
+    HRESULT usesLayeredWindow([out, retval] BOOL* usesLayeredWindow);
+
+    HRESULT registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing([in] BSTR scheme);
+    HRESULT registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing([in] BSTR scheme);
+    // Used by TextInputController in DumpRenderTree
+
+    HRESULT setCompositionForTesting([in] BSTR composition,[in] UINT from,[in] UINT length);
+
+    HRESULT hasCompositionForTesting([out, retval] BOOL* result);
+
+    HRESULT confirmCompositionForTesting([in] BSTR composition);
+
+    HRESULT compositionRangeForTesting([out] UINT* startPosition, [out] UINT* length);
+
+    HRESULT firstRectForCharacterRangeForTesting([in] UINT location, [in] UINT length, [out, retval] RECT* resultRect);
+
+    HRESULT selectedRangeForTesting([out] UINT* location, [out] UINT* length);
+}
+
+cpp_quote("#if defined(__GNUC__) || defined(__clang__)")
+cpp_quote("#pragma GCC diagnostic push")
+cpp_quote("#pragma GCC diagnostic ignored \"-Woverloaded-virtual\"")
+cpp_quote("#endif")
+
+[ uuid(671FB259-ABEF-48FC-88FB-EC4CF304E866) ]
+interface IWebViewPrivate2 : IWebViewPrivate
+{
+    // SPI for DumpRenderTree
+    HRESULT setLoadResourcesSerially([in] BOOL serialize);
+
+    HRESULT scaleWebView([in] double scale, [in] POINT origin);
+
+    HRESULT dispatchPendingLoadRequests();
+
+    HRESULT setCustomBackingScaleFactor([in] double);
+    HRESULT backingScaleFactor([out] double*);
+
+    HRESULT addUserScriptToGroup([in] BSTR groupName, [in] IWebScriptWorld*, [in] BSTR source, [in] BSTR url,
+        [in] unsigned whitelistCount, [in, size_is(whitelistCount)] BSTR* whitelist,
+        [in] unsigned blacklistCount, [in, size_is(blacklistCount)] BSTR* blacklist,
+        [in] WebUserScriptInjectionTime injectionTime, [in] WebUserContentInjectedFrames injectedFrames);
+
+    HRESULT addUserStyleSheetToGroup([in] BSTR groupName, [in] IWebScriptWorld*, [in] BSTR source, [in] BSTR url,
+        [in] unsigned whitelistCount, [in, size_is(whitelistCount)] BSTR* whitelist,
+        [in] unsigned blacklistCount, [in, size_is(blacklistCount)] BSTR* blacklist,
+        [in] WebUserContentInjectedFrames injectedFrames);
+}
+
+cpp_quote("#if defined(__GNUC__) || defined(__clang__)")
+cpp_quote("#pragma GCC diagnostic pop")
+cpp_quote("#endif")
+
+typedef enum {
+    WebFindOptionsCaseInsensitive = 1 << 0,
+    WebFindOptionsAtWordStarts = 1 << 1,
+    WebFindOptionsTreatMedialCapitalAsWordStart = 1 << 2,
+    WebFindOptionsBackwards = 1 << 3,
+    WebFindOptionsWrapAround = 1 << 4,
+    WebFindOptionsStartInSelection = 1 << 5
+} WebFindOptions;
+
+[ uuid(08C88359-76AA-48F2-BA27-820540E781E9) ]
+interface IWebViewPrivate3 : IWebViewPrivate2
+{
+    HRESULT layerTreeAsString([out] BSTR*);
+    HRESULT findString([in] BSTR, [in] WebFindOptions, [out] BOOL* found); 
+}
+
+typedef enum {
+    WebPageVisibilityStateVisible,
+    WebPageVisibilityStateHidden,
+    WebPageVisibilityStatePrerender
+} WebPageVisibilityState;
+
+[ uuid(793565B9-5168-4FF4-B841-1BE78DB1B1F8) ]
+interface IWebViewPrivate4 : IWebViewPrivate3
+{
+    HRESULT setVisibilityState([in] WebPageVisibilityState);
+}
+
+[uuid(05375C57-A03B-463A-A5D9-0A9F6A61C779)]
+interface IWebViewPrivate5 : IWebViewPrivate4
+{
+    HRESULT exitFullscreenIfNeeded();
+}

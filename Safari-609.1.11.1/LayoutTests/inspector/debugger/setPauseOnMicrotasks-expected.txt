@@ -1,0 +1,22 @@
+Tests for Debugger.setPauseOnMicrotasks command.
+
+
+== Running test suite: Debugger.setPauseOnMicrotasks
+-- Running test case: Debugger.setPauseOnMicrotasks.Disabled.queueMicrotask
+PASS: Should not have paused.
+
+-- Running test case: Debugger.setPauseOnMicrotasks.Enabled.queueMicrotask
+PASS: Should have paused.
+
+-- Running test case: Debugger.setPauseOnMicrotasks.Disabled.Promise.resolve
+PASS: Should not have paused.
+
+-- Running test case: Debugger.setPauseOnMicrotasks.Enabled.Promise.resolve
+PASS: Should have paused.
+
+-- Running test case: Debugger.setPauseOnMicrotasks.Disabled.Promise.reject
+PASS: Should not have paused.
+
+-- Running test case: Debugger.setPauseOnMicrotasks.Enabled.Promise.reject
+PASS: Should have paused.
+

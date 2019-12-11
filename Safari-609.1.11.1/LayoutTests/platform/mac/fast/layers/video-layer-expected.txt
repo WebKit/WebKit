@@ -1,0 +1,39 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderInline {A} at (0,0) size 310x18 [color=#0000EE]
+          RenderText {#text} at (0,0) size 310x18
+            text run at (0,0) width 310: "https://bugs.webkit.org/show_bug.cgi?id=25066"
+        RenderBR {BR} at (309,14) size 1x0
+        RenderText {#text} at (0,18) size 421x18
+          text run at (0,18) width 421: "controls should not be misplaced when video gets a RenderLayer."
+      RenderBlock (anonymous) at (0,52) size 784x252
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+layer at (58,110) size 302x152 isolatesBlending
+  RenderVideo {VIDEO} at (50,50) size 302x152 [border: (1px solid #000000)]
+layer at (59,111) size 300x150
+  RenderFlexibleBox {DIV} at (1,1) size 300x150
+layer at (59,216) size 300x45
+  RenderFlexibleBox {DIV} at (0,105) size 300x45
+layer at (59,216) size 300x45 isolatesBlending
+  RenderBlock (positioned) {DIV} at (0,0) size 300x45
+layer at (59,216) size 300x45
+  RenderBlock (positioned) {DIV} at (0,0) size 300x45 [bgcolor=#1E1E1E73]
+layer at (59,216) size 300x45 blendMode: lighten
+  RenderBlock (positioned) {DIV} at (0,0) size 300x45 [bgcolor=#292929]
+layer at (67,241) size 12x15 blendMode: plus-lighter
+  RenderButton {BUTTON} at (8,25) size 12x15 [color=#FFFFFF]
+layer at (95,241) size 16x15 blendMode: plus-lighter
+  RenderButton {BUTTON} at (36,24) size 16x16 [color=#FFFFFF]
+layer at (236,240) size 93x17
+  RenderFlexibleBox {DIV} at (177,24) size 93x17
+layer at (238,240) size 89x17
+  RenderFlexibleBox {DIV} at (2,0) size 89x17
+layer at (337,236) size 14x25
+  RenderFlexibleBox {DIV} at (278,20) size 14x25
+layer at (337,241) size 14x15 blendMode: plus-lighter
+  RenderButton {BUTTON} at (0,5) size 14x15 [color=#FFFFFF]

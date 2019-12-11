@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body id="body">
+
+<!-- Example 1: controls a list -->
+<input type="text" role="combobox" id="combobox1" aria-controls="list1" aria-label="Combobox1">
+<div role="list" id="list1" aria-label="List1">
+<div role="listitem" id="item1_1">item1</div>
+<div role="listitem" id="item1_2">item2</div>
+</div>
+
+<!-- Example 2: owns a listbox -->
+<input type="text" role="combobox" id="combobox2" aria-owns="listbox2" aria-label="Combobox2">
+<div role="listbox" id="listbox2" aria-label="Listbox2">
+<div role="option" id="option2_1">item1</div>
+<div role="option" id="option2_2">item2</div>
+</div>
+
+<!-- Example 3: owns a grid -->
+<input type="text" role="combobox" id="combobox3" aria-owns="grid3" aria-label="Combobox3">
+<div role="grid" id="grid3" aria-label="Grid3">
+<div role="row" id="row3_1">
+<div role="gridcell" id="gridcell3_1">cell1</div>
+</div>
+</div>
+
+<!-- Example 3: owns a tree -->
+<input type="text" role="combobox" id="combobox4" aria-owns="tree4" aria-label="Combobox4">
+<div role="tree" id="tree4" aria-label="Tree4">
+<div role="treeitem" id="treeitem4_1">treeitem1</div>
+<div role="treeitem" id="treeitem4_2">treeitem2</div>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests variations of the comboboxes and elements it can control and own. Then verifies the active-descendant is reflected correctly.");
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+        var selectedChildrenChangeCount = 0;
+
+        window.accessibilityController.addNotificationListener(function (target, notification) {
+            if (notification == "AXSelectedChildrenChanged" || notification == "AXSelectedRowsChanged") {
+                selectedChildrenChangeCount++;
+                var targetString = platformValueForW3CName(target);
+                debug("Received " + notification + " for " + targetString);
+                if (selectedChildrenChangeCount == 4) {
+                    accessibilityController.removeNotificationListener();
+                    finishJSTest(); 
+                }
+            }
+        });
+
+        // Example 1: aria-controls a list.
+        document.getElementById("combobox1").focus();
+        var list = accessibilityController.accessibleElementById("list1");
+        shouldBe("list.selectedChildrenCount", "0");
+        // Set active-descendant, verify notification is sent and that list has correct selected children.
+        document.getElementById("combobox1").setAttribute("aria-activedescendant", "item1_1");
+        var listitem1 = accessibilityController.accessibleElementById("item1_1");
+        shouldBe("list.selectedChildrenCount", "1");
+        shouldBeTrue("list.selectedChildAtIndex(0).isEqual(listitem1)");
+
+        // Example 2: aria-owns a listbox.
+        document.getElementById("combobox2").focus();
+        var listbox = accessibilityController.accessibleElementById("listbox2");
+        shouldBe("listbox.selectedChildrenCount", "0");
+        // Set active-descendant, verify notification is sent and that list has correct selected children.
+        document.getElementById("combobox2").setAttribute("aria-activedescendant", "option2_1");
+        var option2_1 = accessibilityController.accessibleElementById("option2_1");
+        shouldBe("listbox.selectedChildrenCount", "1");
+        shouldBeTrue("listbox.selectedChildAtIndex(0).isEqual(option2_1)");
+
+        // Example 3: aria-owns a grid.
+        document.getElementById("combobox3").focus();
+        var grid = accessibilityController.accessibleElementById("grid3");
+        shouldBe("grid.selectedChildrenCount", "0");
+        // Set active-descendant, verify notification is sent and that list has correct selected children.
+        document.getElementById("combobox3").setAttribute("aria-activedescendant", "row3_1");
+        var row3_1 = accessibilityController.accessibleElementById("row3_1");
+        shouldBe("grid.selectedChildrenCount", "1");
+        shouldBeTrue("grid.selectedChildAtIndex(0).isEqual(row3_1)");
+
+        // Example 4: aria-owns a tree.
+        document.getElementById("combobox4").focus();
+        var tree = accessibilityController.accessibleElementById("tree4");
+        shouldBe("tree.selectedChildrenCount", "0");
+        // Set active-descendant, verify notification is sent and that list has correct selected children.
+        document.getElementById("combobox4").setAttribute("aria-activedescendant", "treeitem4_1");
+        var treeitem4_1 = accessibilityController.accessibleElementById("treeitem4_1");
+        shouldBe("tree.selectedChildrenCount", "1");
+        shouldBeTrue("tree.selectedChildAtIndex(0).isEqual(treeitem4_1)");
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
+

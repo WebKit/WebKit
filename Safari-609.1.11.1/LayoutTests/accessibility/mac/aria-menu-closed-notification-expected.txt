@@ -1,0 +1,11 @@
+This tests that an AXMenuClosed notification gets fired when an ARIA menu popup closes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS addedNotification is true
+Received menu closed notification: AXMenuClosed
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+description("This tests pasting a multi-line text into a textarea that contains a single new line. WebKit should preserve the number of new lines.");
+
+var textarea = document.createElement("textarea");
+textarea.value = "\n";
+textarea.rows = 10;
+document.body.appendChild(textarea);
+textarea.focus();
+shouldBe("document.execCommand('InsertHTML', false, 'first<br><br>third'); textarea.value", "'first\\n\\nthird\\n'");
+
+var successfullyParsed = true;
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

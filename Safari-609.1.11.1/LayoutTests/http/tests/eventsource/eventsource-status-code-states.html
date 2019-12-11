@@ -1,0 +1,78 @@
+<html>
+<body>
+<p>Test EventSource states for different status codes. Should print a series of PASS messages followed by DONE.</p>
+<div id="result"></div>
+<script>
+function log(msg) {
+    document.getElementById("result").innerHTML += msg + "<br>";
+}
+
+function arrayCompare(a1, a2) {
+    if (a1.length != a2.length)
+        return false;
+    for (var i = 0; i < a1.length; i++)
+        if (a1[i] != a2[i])
+            return false;
+    return true;
+}
+
+var stateNames = ["CONNECTING", "OPEN", "CLOSED"];
+for (var i in stateNames)
+    eval("var " + stateNames[i] + " = " + i);
+
+var tests = [{"code": 200, "expectedStates": [CONNECTING, OPEN, OPEN, CONNECTING, CLOSED]},
+             {"code": 204, "expectedStates": [CONNECTING,,, CLOSED, CLOSED]},
+             {"code": 205, "expectedStates": [CONNECTING,,, CLOSED, CLOSED]},
+             {"code": 202, "expectedStates": [CONNECTING,,, CLOSED, CLOSED]}, // other 2xx
+             {"code": 301, "expectedStates": [CONNECTING, OPEN, OPEN, CONNECTING, CLOSED]},
+             {"code": 302, "expectedStates": [CONNECTING, OPEN, OPEN, CONNECTING, CLOSED]},
+             {"code": 303, "expectedStates": [CONNECTING, OPEN, OPEN, CONNECTING, CLOSED]},
+             {"code": 307, "expectedStates": [CONNECTING, OPEN, OPEN, CONNECTING, CLOSED]},
+             {"code": 404, "expectedStates": [CONNECTING,,, CLOSED, CLOSED]}]; // any other
+var count = 0;
+
+function runTest() {
+    if (count >= tests.length) {
+        log("DONE");
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+
+    var states = [];
+    var es = new EventSource("resources/status-codes.php?status-code=" + tests[count].code);
+    states[0] = es.readyState;
+
+    es.onopen = function () {
+        states[1] = es.readyState;
+    };
+
+    es.onmessage = function (evt) {
+        states[2] = es.readyState;
+    };
+
+    es.onerror = function () {
+        states[3] = es.readyState;
+        es.close();
+        states[4] = es.readyState;
+
+        var result = arrayCompare(states, tests[count].expectedStates) ? "PASS" : "FAIL";
+        result += ": status code " + tests[count].code + " resulted in states ";
+        for (var i in states)
+            result += (i != 0 ? ", " : "") + stateNames[states[i]];
+        log(result);
+
+        setTimeout(runTest, 0);
+        count++;
+    };
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+runTest();
+</script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 768x39
+          text run at (0,0) width 568: "This test case shows how WIDTH can set the width of the table to a fixed size using PIXELS. "
+          text run at (568,0) width 200: "This first table has a width of 400"
+          text run at (0,20) width 38: "pixels."
+      RenderTable {TABLE} at (0,40) size 400x50
+        RenderTableSection {TBODY} at (0,0) size 400x50
+          RenderTableRow {TR} at (0,2) size 400x22
+            RenderTableCell {TD} at (2,2) size 133x22 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 60x19
+                text run at (1,1) width 60: "Navigator"
+            RenderTableCell {TD} at (136,2) size 138x22 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 66x19
+                text run at (1,1) width 66: "Messenger"
+            RenderTableCell {TD} at (275,2) size 124x22 [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 52x19
+                text run at (1,1) width 52: "Collabra"
+          RenderTableRow {TR} at (0,26) size 400x22
+            RenderTableCell {TD} at (2,26) size 133x22 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 64x19
+                text run at (1,1) width 64: "Composer"
+            RenderTableCell {TD} at (136,26) size 138x22 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 55x19
+                text run at (1,1) width 55: "Calendar"
+            RenderTableCell {TD} at (275,26) size 124x22 [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 59x19
+                text run at (1,1) width 59: "Netcaster"
+      RenderBlock (anonymous) at (0,90) size 784x40
+        RenderBR {BR} at (0,0) size 0x19
+        RenderText {#text} at (0,20) size 301x19
+          text run at (0,20) width 301: "While, this second table has a width of 300 pixels."
+      RenderTable {TABLE} at (0,130) size 300x50
+        RenderTableSection {TBODY} at (0,0) size 300x50
+          RenderTableRow {TR} at (0,2) size 300x22
+            RenderTableCell {TD} at (2,2) size 99x22 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 60x19
+                text run at (1,1) width 60: "Navigator"
+            RenderTableCell {TD} at (102,2) size 103x22 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 66x19
+                text run at (1,1) width 66: "Messenger"
+            RenderTableCell {TD} at (206,2) size 93x22 [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 52x19
+                text run at (1,1) width 52: "Collabra"
+          RenderTableRow {TR} at (0,26) size 300x22
+            RenderTableCell {TD} at (2,26) size 99x22 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 64x19
+                text run at (1,1) width 64: "Composer"
+            RenderTableCell {TD} at (102,26) size 103x22 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 55x19
+                text run at (1,1) width 55: "Calendar"
+            RenderTableCell {TD} at (206,26) size 93x22 [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 59x19
+                text run at (1,1) width 59: "Netcaster"

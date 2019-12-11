@@ -1,0 +1,58 @@
+Tests sending and receiving binary data.
+
+
+== Running test suite: WebSocket.Binary
+-- Running test case: WebSocket.BinaryBlob
+PASS: Resource size should be 13 bytes.
+PASS: Frame should not have data.
+PASS: Frame should be binary.
+PASS: Frame should be outgoing.
+PASS: Frame should have walltime.
+PASS: Resource size should increase by 13 bytes.
+PASS: Frame should not have data.
+PASS: Frame should be binary.
+PASS: Frame should be incoming.
+PASS: Frame walltime should be greater than the previous one.
+PASS: Resource size should increase by 21 bytes.
+PASS: Frame should not have data.
+PASS: Frame should be binary.
+PASS: Frame should be incoming.
+PASS: Frame walltime should be greater than the previous one.
+PASS: Resource size should not increase.
+PASS: Frame should not have data.
+PASS: Frame should be binary.
+PASS: Frame should be incoming.
+PASS: Frame walltime should be greater than the previous one.
+PASS: Resource size should increase by 256 bytes.
+PASS: Frame should not have data.
+PASS: Frame should be binary.
+PASS: Frame should be incoming.
+PASS: Frame walltime should be greater than the previous one.
+
+-- Running test case: WebSocket.ArrayBuffer
+PASS: Resource size should be 13 bytes.
+PASS: Frame should not have data.
+PASS: Frame should be binary.
+PASS: Frame should be outgoing.
+PASS: Frame should have walltime.
+PASS: Resource size should increase by 13 bytes.
+PASS: Frame should not have data.
+PASS: Frame should be binary.
+PASS: Frame should be incoming.
+PASS: Frame walltime should be greater than the previous one.
+PASS: Resource size should increase by 21 bytes.
+PASS: Frame should not have data.
+PASS: Frame should be binary.
+PASS: Frame should be incoming.
+PASS: Frame walltime should be greater than the previous one.
+PASS: Resource size should not increase.
+PASS: Frame should not have data.
+PASS: Frame should be binary.
+PASS: Frame should be incoming.
+PASS: Frame walltime should be greater than the previous one.
+PASS: Resource size should increase by 256 bytes.
+PASS: Frame should not have data.
+PASS: Frame should be binary.
+PASS: Frame should be incoming.
+PASS: Frame walltime should be greater than the previous one.
+

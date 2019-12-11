@@ -1,0 +1,4 @@
+
+PASS MessageChannel's ports as MessagePort objects 
+PASS Old-style array objects 
+

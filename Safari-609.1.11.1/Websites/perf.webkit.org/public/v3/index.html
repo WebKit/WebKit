@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- This document needs to a valid XML to be parsed by xml.dom.minidom.parse in tools/bundle-v3-scripts -->
+    <meta charset="utf-8" />
+    <title>Performance Dashboard is Loading...</title>
+
+    <link rel="prefetch" href="../data/manifest.json" />
+
+    <style>
+        html, body {
+            padding: 0;
+            margin: 0;
+        }
+
+        body {
+            font-family: 'San Francisco', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-weight: 300;
+            min-width: 50rem;
+        }
+    </style>
+
+    <script>
+        // Load indivisual JS files when bundled-scripts.js failed to load as a fallback during development.
+        function loadUnbundledScripts() {
+            var scripts = document.getElementById('unbundled-scripts').content.cloneNode(true).querySelectorAll('script');
+
+            console.log(
+`Loading ${scripts.length} JS files using the slow path for development.
+Run tools/bundle-v3-scripts to speed up the load time for production.`);
+
+            for (var i = 0; !(i >= scripts.length); i++) {
+                scripts[i].async = false;
+                document.head.appendChild(scripts[i]);
+            }
+        }
+    </script>
+
+    <template id="unbundled-scripts">
+        <script src="../shared/statistics.js"></script>
+        <script src="../shared/common-remote.js"></script>
+        <script src="../shared/common-component-base.js"></script>
+
+        <script src="instrumentation.js"></script>
+        <script src="remote.js"></script>
+        <script src="privileged-api.js"></script>
+        <script src="async-task.js"></script>
+        <script src="lazily-evaluated-function.js"></script>
+        <script src="commit-set-range-bisector.js"></script>
+
+        <script src="models/time-series.js"></script>
+        <script src="models/measurement-adaptor.js"></script>
+        <script src="models/measurement-cluster.js"></script>
+        <script src="models/measurement-set.js"></script>
+        <script src="models/analysis-results.js"></script>
+        <script src="models/data-model.js"></script>
+        <script src="models/commit-log.js"></script>
+        <script src="models/platform.js"></script>
+        <script src="models/builder.js"></script>
+        <script src="models/test.js"></script>
+        <script src="models/metric.js"></script>
+        <script src="models/repository.js"></script>
+        <script src="models/bug-tracker.js"></script>
+        <script src="models/bug.js"></script>
+        <script src="models/analysis-task.js"></script>
+        <script src="models/test-group.js"></script>
+        <script src="models/build-request.js"></script>
+        <script src="models/commit-set.js"></script>
+        <script src="models/triggerable.js"></script>
+        <script src="models/uploaded-file.js"></script>
+        <script src="models/manifest.js"></script>
+
+        <script src="components/base.js"></script>
+        <script src="components/spinner-icon.js"></script>
+        <script src="components/button-base.js"></script>
+        <script src="components/warning-icon.js"></script>
+        <script src="components/close-button.js"></script>
+        <script src="components/commit-log-viewer.js"></script>
+        <script src="components/owned-commit-viewer.js"></script>
+        <script src="components/editable-text.js"></script>
+        <script src="components/expand-collapse-button.js"></script>
+        <script src="components/time-series-chart.js"></script>
+        <script src="components/interactive-time-series-chart.js"></script>
+        <script src="components/dashboard-chart-status-view.js"></script>
+        <script src="components/pane-selector.js"></script>
+        <script src="components/bar-graph-group.js"></script>
+        <script src="components/results-table.js"></script>
+        <script src="components/analysis-results-viewer.js"></script>
+        <script src="components/test-group-results-viewer.js"></script>
+        <script src="components/test-group-revision-table.js"></script>
+        <script src="components/test-group-form.js"></script>
+        <script src="components/customizable-test-group-form.js"></script>
+        <script src="components/chart-styles.js"></script>
+        <script src="components/chart-status-evaluator.js"></script>
+        <script src="components/chart-revision-range.js"></script>
+        <script src="components/chart-pane-base.js"></script>
+        <script src="components/mutable-list-view.js"></script>
+        <script src="components/analysis-task-bug-list.js"></script>
+        <script src="components/ratio-bar-graph.js"></script>
+        <script src="components/custom-analysis-task-configurator.js"></script>
+        <script src="components/custom-configuration-test-group-form.js"></script>
+        <script src="components/instant-file-uploader.js"></script>
+        <script src="components/freshness-indicator.js"></script>
+        <script src="components/plus-button.js"></script>
+        <script src="components/minus-button.js"></script>
+        <script src="components/combo-box.js"></script>
+
+        <script src="pages/page.js"></script>
+        <script src="pages/page-router.js"></script>
+        <script src="pages/heading.js"></script>
+        <script src="pages/toolbar.js"></script>
+        <script src="pages/page-with-heading.js"></script>
+        <script src="pages/domain-control-toolbar.js"></script>
+        <script src="pages/dashboard-toolbar.js"></script>
+        <script src="pages/dashboard-page.js"></script>
+        <script src="pages/chart-pane-status-view.js"></script>
+        <script src="pages/chart-pane.js"></script>
+        <script src="pages/charts-toolbar.js"></script>
+        <script src="pages/charts-page.js"></script>
+        <script src="pages/analysis-category-toolbar.js"></script>
+        <script src="pages/analysis-category-page.js"></script>
+        <script src="pages/analysis-task-page.js"></script>
+        <script src="pages/create-analysis-task-page.js"></script>
+        <script src="pages/build-request-queue-page.js"></script>
+        <script src="pages/summary-page.js"></script>
+        <script src="pages/test-freshness-page.js"></script>
+
+        <script src="main.js"></script>
+    </template>
+    <script src="bundled-scripts.js" onerror="loadUnbundledScripts()"></script>
+</head>
+<body>
+</body>
+</html>

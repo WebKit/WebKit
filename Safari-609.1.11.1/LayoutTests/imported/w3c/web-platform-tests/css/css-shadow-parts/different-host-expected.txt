@@ -1,0 +1,4 @@
+The following text should be green: 
+
+PASS Part is not styled when host is not selected 
+

@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>This tests that soft-hyphen is placed correctly when it is the first breaking opportunity.</title>
+<style>
+.wrap {
+    width: 200px;
+    border: 1px solid;
+}
+.soft-hyphen {
+    color: red;
+}
+</style>
+</head>
+<body>
+<h2>No extra element.</h2>
+<div class="wrap">mmmmmmmmmmmmmm&shy;mmmmmmmmmmmmmm
+</div>
+<h2>Soft hyphen inside a styled span.</h2>
+<div class="wrap">mmmmmmmmmmmmmm<span class="soft-hyphen">&shy;</span>mmmmmmmmmmmmmm
+</div>
+<h2>Soft hyphen at the end of a styled span with text in it.</h2>
+<div class="wrap">mmmmmmmmmmmmm<span class="soft-hyphen">m&shy;</span>mmmmmmmmmmmmmm
+</div>
+<h2>Soft hyphen at the start of a styled span with text in it.</h2>
+<div class="wrap">mmmmmmmmmmmmmm<span class="soft-hyphen">&shy;m</span>mmmmmmmmmmmmm
+</div>
+</body>
+</html>

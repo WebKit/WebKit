@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<!--  Copyright © 2017 Chromium authors and World Wide Web Consortium, (Massachusetts Institute of Technology, ERCIM, Keio University, Beihang).  -->
+<!--  Copyright (C) 2017 Apple Inc. All rights reserved.  -->
+<!-- FIXME: Upstream this test to web-platform-tests/payment-request/. -->
+<meta charset="utf-8">
+<title>Tests for PaymentRequest.canMakePayment() method</title>
+<link rel="help" href="https://w3c.github.io/browser-payment-api/#canmakepayment-method">
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+const applePay = Object.freeze({
+    supportedMethods: "https://apple.com/apple-pay",
+    data: {
+        version: 2,
+        merchantIdentifier: "",
+        merchantCapabilities: ["supports3DS"],
+        supportedNetworks: ["visa", "masterCard"],
+        countryCode: "US",
+    }
+});
+const defaultMethods = Object.freeze([applePay]);
+const defaultDetails = Object.freeze({
+  total: {
+    label: "Total",
+    amount: {
+      currency: "USD",
+      value: "1.00",
+    },
+  },
+});
+
+// FIXME: This can be removed in favor of the test in imported/w3c/web-platform-tests/payment-request once we support test_driver.bless().
+user_activation_test(async t => {
+  const request = new PaymentRequest(defaultMethods, defaultDetails);
+  const acceptPromise = request.show(); // Sets state to "interactive"
+  const canMakePaymentPromise = request.canMakePayment();
+  try {
+    const result = await canMakePaymentPromise;
+    assert_true(
+      false,
+      `canMakePaymentPromise should have thrown InvalidStateError`
+    );
+  } catch (err) {
+    await promise_rejects(t, "InvalidStateError", canMakePaymentPromise);
+  } finally {
+    await request.abort();
+    await promise_rejects(t, "AbortError", acceptPromise);
+  }
+  // The state should be "closed"
+  await promise_rejects(t, "InvalidStateError", request.canMakePayment());
+}, 'If request.[[state]] is "interactive", then return a promise rejected with an "InvalidStateError" DOMException.');
+
+// FIXME: This can be removed in favor of the test in imported/w3c/web-platform-tests/payment-request once we support test_driver.bless().
+user_activation_test(async t => {
+  const request = new PaymentRequest(defaultMethods, defaultDetails);
+  const acceptPromise = request.show(); // Sets state to "interactive"
+  acceptPromise.catch(() => {}); // no-op, just to silence unhandled rejection in devtools.
+  await request.abort(); // The state is now "closed"
+  await promise_rejects(t, "InvalidStateError", request.canMakePayment());
+  try {
+    const result = await request.canMakePayment();
+    assert_true(
+      false,
+      `should have thrown InvalidStateError, but instead returned "${result}"`
+    );
+  } catch (err) {
+    assert_equals(
+      err.name,
+      "InvalidStateError",
+      "must be an InvalidStateError."
+    );
+  }
+}, 'If request.[[state]] is "closed", then return a promise rejected with an "InvalidStateError" DOMException.');
+
+promise_test(async t => {
+  internals.mockPaymentCoordinator.setCanMakePaymentsWithActiveCard(false);
+  const request = new PaymentRequest(defaultMethods, defaultDetails);
+  assert_true(
+    await request.canMakePayment(),
+    `canMakePaymentPromise should be true`
+  );
+  internals.mockPaymentCoordinator.setCanMakePaymentsWithActiveCard(true);
+}, `Return a promise that resolves to true when Apple Pay is available, even if there isn't an active card.`);
+</script>

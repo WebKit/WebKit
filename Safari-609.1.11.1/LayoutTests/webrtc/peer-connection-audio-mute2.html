@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Testing web audio on peer connection audio tracks</title>
+    <script src="../resources/testharness.js"></script>
+    <script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+    <script src ="routines.js"></script>
+    <script>
+    var context = new webkitAudioContext();
+    promise_test((test) => {
+        var localTrack;
+        return navigator.mediaDevices.getUserMedia({audio: true}).then((localStream) => {
+            localTrack = localStream.getAudioTracks()[0];
+            var remoteStream;
+            return new Promise((resolve, reject) => {
+                createConnections((firstConnection) => {
+                    firstConnection.addTrack(localTrack, localStream);
+                }, (secondConnection) => {
+                    secondConnection.ontrack = (trackEvent) => {
+                        remoteStream = trackEvent.streams[0];
+                        resolve();
+                    };
+                });
+            }).then(() => {
+                return doHumAnalysis(remoteStream, true);
+            }).then((value) => {
+                assert_true(value, "heard hum from remote enabled track");
+            }).then(() => {
+                localTrack.enabled = false;
+                return doHumAnalysis(remoteStream, false);
+            }).then((value) => {
+                assert_true(value, "not heard hum from remote disabled track");
+            }).then(() => {
+                localTrack.enabled = true;
+                return doHumAnalysis(remoteStream, true);
+            }).then((value) => {
+                assert_true(value, "heard hum from remote reenabled track");
+            }).then(() => {
+                return context.close();
+            });
+        });
+    }, "Muting and unmuting a local audio track");
+    </script>
+</body>
+</html>

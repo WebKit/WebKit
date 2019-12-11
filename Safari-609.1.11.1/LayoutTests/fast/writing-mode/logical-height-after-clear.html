@@ -1,0 +1,56 @@
+<style>
+    div.test {
+        -webkit-logical-width: 50px;
+        -webkit-logical-height: 100px;
+        background-color: red;
+    }
+
+    div.float {
+        float: left;
+        -webkit-logical-height: 50px;
+        -webkit-logical-width: 50px;
+        background-color: blue;
+    }
+
+    div.clear {
+        clear: left;
+    }
+
+    div.green {
+        background-color: green;
+        -webkit-logical-height: 25px;
+    }
+
+    div.lr {
+        -webkit-writing-mode: vertical-lr;
+    }
+
+    div.rl {
+        -webkit-writing-mode: vertical-rl;
+    }
+</style>
+<div class="test lr">
+    <div class="float"></div>
+    <div class="clear"></div>
+    <div class="green"></div>
+    <div class="green"></div>
+</div>
+
+<div class="test lr">
+    <div class="float"></div>
+    <div class="clear green"></div>
+    <div class="green"></div>
+</div>
+
+<div class="test rl">
+    <div class="float"></div>
+    <div class="clear"></div>
+    <div class="green"></div>
+    <div class="green"></div>
+</div>
+
+<div class="test rl">
+    <div class="float"></div>
+    <div class="clear green"></div>
+    <div class="green"></div>
+</div>

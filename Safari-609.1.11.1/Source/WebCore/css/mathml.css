@@ -1,0 +1,231 @@
+@namespace "http://www.w3.org/1998/Math/MathML";
+
+:any-link {
+    color: -webkit-link;
+    cursor: auto;
+}
+
+:any-link:active {
+    color: -webkit-activelink;
+}
+
+:focus {
+    outline: auto 5px -webkit-focus-ring-color
+}
+
+math {
+    display: inline;
+
+    /*
+    We use the exact bounding boxes of glyphs to avoid excessive gaps in mathematical formulas.
+    FIXME: Should we replace this with a more general handling of ink/logical ascent/descent?
+    See http://webkit.org/b/130326, http://webkit.org/b/156841 and
+    http://www.mathml-association.org/MathMLinHTML5/S3.html#SS1.SSS1
+    */
+    -webkit-line-box-contain: glyphs replaced;
+
+    /*
+    Inheriting the following properties can cause excessive spacing of mathematical formulas so we
+    just reset them to their default values.
+    */
+    text-indent: 0;
+    line-height: normal;
+    word-spacing: normal;
+    letter-spacing: normal;
+
+    /*
+    In some countries and languages, text is written from right-to-left while mathematical formulas
+    are written from left-to-write. Hence it is wrong to inherit the direction and we reset that
+    property to left-to-write. Per the MathML specification, authors should explicitly use the "dir"
+    attribute on the <math> element if they want to force the overall direction of the mathematical
+    formulas.
+    */
+    direction: ltr;
+
+    /*
+    Mathematical formula inside an italic paragraph should not inherit the font-style as this gives
+    poor rendering and is confusing with the mathvariant italic.
+    */
+    font-style: normal;
+
+    /* Fonts with appropriate Unicode coverage and OpenType features are required for good math
+    rendering. These requirements as well as the up-to-date list of known math fonts to fulfill
+    these requirements are listed on http://trac.webkit.org/wiki/MathML/Fonts.
+    Inheriting the font-family is likely to make MathML use text fonts that are not designed for
+    math layout and thus would cause very poor mathematical rendering. Consequently, the default
+    font-family on the <math> tag is set to a list of recommended math fonts.
+    For best rendering, authors and readers are encouraged to use text and math fonts with consistent
+    style (appearance, size...), see http://trac.webkit.org/wiki/MathML/Fonts#CustomizingMathFont
+    FIXME: Should we make math font properties configurable (http://webkit.org/b/156843)?
+    */
+    font-family:
+       /*
+       This font has Computer Modern style and is provided with most TeX & Linux distributions.
+       We put it as the default because its style is familiar to TeX, Wikipedia and math people.
+       */
+       "Latin Modern Math",
+
+       /*
+       The following fonts have Times style and are provided with most TeX & Linux distributions.
+       We put XITS & STIX as a second option because they have very good unicode coverage.
+       STIX Two is a complete redesign of STIX that fixes serious bugs in version one so we put it in first position.
+       XITS is a fork of STIX with bug fixes and more Arabic/RTL features so we put it in second position.
+       */
+       "STIX Two Math",
+       "XITS Math",
+       "STIX Math",
+       "Libertinus Math",
+       "TeX Gyre Termes Math",
+
+       /*
+       These fonts respectively have style compatible with Bookman Old and Century Schoolbook.
+       They are provided with most TeX & Linux distributions.
+       */
+       "TeX Gyre Bonum Math",
+       "TeX Gyre Schola",
+
+       /*
+       DejaVu is pre-installed on many Linux distributions and is included in LibreOffice.
+       */
+       "DejaVu Math TeX Gyre",
+
+       /*
+       The following fonts have Palatino style and are provided with most TeX & Linux distributions.
+       Asana Math has some rendering issues (e.g. missing italic correction) so we put it after.
+       */
+       "TeX Gyre Pagella Math",
+       "Asana Math",
+
+       /*
+       The following fonts are proprietary and have not much been tested so we put them at the end.
+       Cambria Math it is pre-installed on Windows 7 and higher.
+       */
+       "Cambria Math",
+       "Lucida Bright Math",
+       "Minion Math",
+
+       /*
+       The following fonts do not satisfy the requirements for good mathematical rendering.
+       These are pre-installed on Mac and iOS so we list them to provide minimal unicode-based
+       mathematical rendering. For more explanation of fallback mechanisms and missing features see
+       http://trac.webkit.org/wiki/MathML/Fonts#ObsoleteFontsandFallbackMechanisms.
+       STIX fonts have best unicode coverage so we put them first. */
+       STIXGeneral,
+       STIXSizeOneSym,
+       Symbol,
+       "Times New Roman",
+
+       /* Mathematical fonts generally use "serif" style. Hence we append the generic "serif" family
+       as a fallback in order to increase our chance to find a mathematical font. */
+       serif;
+
+    /* FIXME: Should we reset more CSS properties (http://webkit.org/b/156839)? */
+}
+
+math[display="block"] {
+    display: block;
+    page-break-inside: avoid;
+}
+
+ms, mspace, mtext, mi, mn, mo, mrow, mfenced, mfrac, msub, msup, msubsup, mmultiscripts, mprescripts, none, munder, mover, munderover, msqrt, mroot, merror, mphantom, mstyle, menclose, semantics, mpadded, maction {
+    display: block;
+}
+
+ms, mtext, mi, mn, mo, annotation, mtd {
+    white-space: nowrap !important;
+}
+
+msub > * + *, msup > * + *, msubsup > * + *, mmultiscripts > * + *, munder > * + *, mover > * + *, munderover > * + * {
+    font-size: 0.75em; /* FIXME: MathML standard is 0.71em */
+}
+mroot > *:last-child {
+    font-size: 0.5625em; /* This 0.75^2 since the scriptlevel is incremented by 2 in the index. */
+}
+
+mi {
+    -webkit-padding-end: 0.1em;
+}
+msub > mi:first-child, msubsup > mi:first-child {
+    -webkit-padding-end: 0;
+}
+msubsup > mi:first-child + * + * {
+    -webkit-margin-start: 0.14em; /* This is larger than 0.1em because the child's font-size is smaller than the <msubsup>'s. */
+}
+
+mphantom {
+    visibility: hidden;
+}
+
+/* This is a special style for erroneous markup. */
+merror {
+    outline: solid thin red;
+    font-weight: bold;
+    font-family: sans-serif;
+    background-color: lightYellow;
+}
+
+mtable {
+    display: inline-table;
+    text-align: center;
+}
+
+mtr {
+    display: table-row;
+}
+
+mtd {
+    display: table-cell;
+    padding: 0.5ex;
+}
+/* Use inline-block for children so that the text-align property is taken into account */
+mtd > * {
+    display: inline-block;
+}
+
+mtable[columnalign="left"], mtr[columnalign="left"], mtd[columnalign="left"] {
+    text-align: left;
+}
+
+mtable[columnalign="right"], mtr[columnalign="right"], mtd[columnalign="right"] {
+    text-align: right;
+}
+
+mtable[rowalign="top"] mtd, mtable mtr[rowalign="top"] mtd, mtable mtr mtd[rowalign="top"] {
+    vertical-align: top;
+}
+
+mtable[rowalign="bottom"] mtd, mtable mtr[rowalign="bottom"] mtd, mtable mtr mtd[rowalign="bottom"] {
+    vertical-align: bottom;
+}
+
+mtable[rowalign="center"] mtd, mtable mtr[rowalign="center"] mtd, mtable mtr mtd[rowalign="center"] {
+    vertical-align: middle;
+}
+
+mtable[frame="solid"] {
+    border: solid thin;
+}
+
+mtable[frame="dashed"] {
+    border: dashed thin;
+}
+
+mtable[rowlines="solid"], mtable[rowlines="dashed"], mtable[columnlines="solid"], mtable[columnlines="dashed"] {
+    border-collapse: collapse;
+}
+
+mtable[rowlines="solid"] > mtr + mtr {
+    border-top: solid thin;
+}
+
+mtable[rowlines="dashed"] > mtr + mtr {
+    border-top: dashed thin;
+}
+
+mtable[columnlines="solid"] > mtr > mtd + mtd {
+    border-left: solid thin;
+}
+
+mtable[columnlines="dashed"] > mtr > mtd + mtd {
+    border-left: dashed thin;
+}

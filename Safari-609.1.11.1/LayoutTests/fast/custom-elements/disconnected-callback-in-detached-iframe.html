@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Custom Elements: disconnectedCallback must be enqueued inside a detached iframe</title>
+<meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
+<meta name="assert" content="disconnectedCallback must be enqueued inside a detached iframe">
+<meta name="help" content="https://dom.spec.whatwg.org/#concept-node-remove">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/custom-elements/resources/custom-elements-helpers.js"></script>
+<script src="../../imported/w3c/web-platform-tests/custom-elements/reactions/resources/reactions.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+
+function create_iframe_and_wait_for_onload() {
+    return new Promise(function (resolve) {
+        let iframe = document.createElement('iframe');
+        iframe.onload = function () { resolve(iframe); }
+        document.body.appendChild(iframe);
+    });
+}
+
+let element = define_custom_element_in_window(window, 'test-element');
+
+promise_test(() => {
+    return create_iframe_and_wait_for_onload().then((iframe) => {
+        let testElement = document.createElement('test-element');
+        assert_array_equals(element.takeLog().types(), ['constructed']);
+
+        let contentDocument = iframe.contentDocument;
+        iframe.contentDocument.body.appendChild(testElement);
+        assert_array_equals(element.takeLog().types(), ['adopted', 'connected']);
+
+        iframe.remove();
+        assert_array_equals(element.takeLog().types(), []);
+
+        contentDocument.body.remove();
+        assert_array_equals(element.takeLog().types(), ['disconnected']);
+    });
+}, 'Removing a custom element inside a detached iframe must enqueue disconnectedCallback');
+
+</script>
+</body>
+</html>

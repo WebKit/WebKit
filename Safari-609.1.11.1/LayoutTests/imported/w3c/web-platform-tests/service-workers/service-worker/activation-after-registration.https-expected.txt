@@ -1,0 +1,3 @@
+
+PASS activation occurs after registration 
+

@@ -1,0 +1,72 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that a page with an EventSource that is connected can enter the PageCache.");
+jsTestIsAsync = true;
+
+let restoredFromPageCache = false;
+let openEventCount = 0;
+let errorEventCount = 0;
+let shouldNavigateOnMessage = true;
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+
+    if (event.persisted) {
+        testPassed("Page did enter and was restored from the page cache");
+        restoredFromPageCache = true;
+    }
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        testFailed("Page did not enter the page cache.");
+        finishJSTest();
+    }
+}, false);
+
+onload = () => {
+    setTimeout(() => {
+       eventSource = new EventSource("resources/infinite-event-stream.php");
+
+        eventSource.onerror = () => {
+            testPassed("Received error event");
+            errorEventCount++;
+            shouldBeTrue("restoredFromPageCache");
+            shouldBe("openEventCount", "1");
+        }
+
+        eventSource.onopen = () => {
+            testPassed("Received open event");
+            openEventCount++;
+        }
+
+        eventSource.onmessage = () => {
+            if (shouldNavigateOnMessage) {
+                shouldNavigateOnMessage = false;
+                testPassed("Received message before entering page cache");
+                setTimeout(() => {
+                    window.location = "/navigation/resources/page-cache-helper.html";
+                }, 0);
+                return;
+            }
+            if (!restoredFromPageCache)
+                return;
+
+            testPassed("Received message after restoring from page cache");
+            shouldBe("openEventCount", "2");
+            shouldBe("errorEventCount", "1");
+            finishJSTest();
+        }
+    }, 0);
+}
+
+</script>
+</body>
+</html>

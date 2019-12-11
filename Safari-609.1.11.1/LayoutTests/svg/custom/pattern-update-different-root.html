@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    svg {
+        width: 100px;
+        height: 100px;
+    }
+</style>
+</head>
+<body>
+    <svg>
+        <pattern id="r1" width="100%" height="100%" xlink:href="#r2" patternUnits="userSpaceOnUse"/>
+        <rect width="100%" height="100%" fill="url(#r1)"/>
+    </svg>
+    <svg>
+        <pattern id="r2">
+            <rect width="100%" height="100%" fill="green"/>
+        </pattern>
+    </svg>
+</body>
+</html>

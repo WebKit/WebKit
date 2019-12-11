@@ -1,0 +1,14 @@
+Header
+Header2
+Description text
+
+This tests that when a node is labelling multiple child nodes it won't cause crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+AXDescription: Description text
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

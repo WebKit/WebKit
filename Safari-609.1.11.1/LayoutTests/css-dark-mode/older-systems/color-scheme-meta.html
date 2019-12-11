@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+
+<style>
+#test1 {
+    color: text;
+}
+</style>
+
+<meta id="meta" name="color-scheme" content="light">
+
+<div id="test1"></div>
+
+<script>
+function test_prop(id, prop, expected) {
+    assert_equals(window.getComputedStyle(document.getElementById(id)).getPropertyValue(prop).trim(), expected);
+}
+
+function test_color_is_black(id) {
+    test_prop("test1", "color", "rgb(0, 0, 0)");
+}
+
+test(function() {
+    test_color_is_black("test1");
+}, "Element colors are correct in light color scheme with only light color scheme");
+
+test(function() {
+    document.getElementById("meta").content = "light dark";
+}, "Color schemes changed to light and dark");
+
+test(function() {
+    test_color_is_black("test1");
+}, "Element colors are correct in light color scheme with light and dark color scheme");
+
+test(function() {
+    document.getElementById("meta").content = "dark";
+}, "Color schemes changed to dark");
+
+test(function() {
+    test_color_is_black("test1");
+}, "Element colors are correct in light color scheme with only dark color scheme");
+
+test(function() {
+    document.getElementById("meta").content = "light ,foo ";
+}, "Color schemes changed to light and a bogus value");
+
+test(function() {
+    test_color_is_black("test1");
+}, "Element colors are correct in light color scheme with only light color scheme 2");
+
+test(function() {
+    document.getElementById("meta").content = "";
+}, "Color schemes changed to empty value");
+
+test(function() {
+    test_color_is_black("test1");
+}, "Element colors are correct in light color scheme with implicit light color scheme");
+
+test(function() {
+    document.getElementById("meta").content = "   light, dark ";
+}, "Color schemes changed to light and dark 2");
+
+test(function() {
+    test_color_is_black("test1");
+}, "Element colors are correct in light color scheme with light and dark color scheme 2");
+
+test(function() {
+    document.getElementById("meta").content = ", foo dark";
+}, "Color schemes changed to a bogus value and dark");
+
+test(function() {
+    test_color_is_black("test1");
+}, "Element colors are correct in light color scheme with dark color scheme");
+</script>

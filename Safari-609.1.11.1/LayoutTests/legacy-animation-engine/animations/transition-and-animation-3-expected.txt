@@ -1,0 +1,4 @@
+Once animation has finished, box should be running left transition from 100px to 200px.
+
+PASS - "left" property for "test" element at 0.2s saw something close to: 100
+

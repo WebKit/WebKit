@@ -1,0 +1,29 @@
+Test that RuntimeManager.evaluateInInspectedWindow respects the selected execution context.
+
+
+== Running test suite: RuntimeManager.activeExecutionContext
+-- Running test case: InitialScriptExecutionContext
+PASS: The initial active execution context should be the main execution context.
+
+-- Running test case: ScriptExecutionContextMainContext
+Passphrase in selected frame: coldwater
+PASS: The passphrase should match the phrase defined in the main frame.
+
+-- Running test case: ScriptExecutionContextMainFrameContext
+Passphrase in selected frame: coldwater
+PASS: The passphrase should match the phrase defined in the main frame.
+
+-- Running test case: ScriptExecutionContextSubFrame
+PASS: The test page should only have one sub-frame.
+Passphrase in selected frame: rosewater
+PASS: The passphrase should match the phrase defined in the subframe.
+
+-- Running test case: ScriptExecutionContextMainFrameAgain
+Passphrase in selected frame: coldwater
+PASS: The passphrase should match the phrase defined in the main frame.
+
+-- Running test case: ScriptExecutionContextRemoveSubframe
+PASS: The test page should only have one sub-frame.
+PASS: The test page should now have no sub-frames.
+PASS: When a selected non-top-level execution context is removed, the active execution context should revert to the main frame context.
+

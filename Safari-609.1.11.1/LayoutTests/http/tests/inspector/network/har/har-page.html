@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/inspector-test.js"></script>
+<script src="../../../cookies/resources/cookie-utilities.js"></script>
+<script>
+function test()
+{
+    function HARJSONFilter(key, value) {
+        // Filter out the creator.version / browser.version but leave a top level version.
+        if ((key === "creator" || key === "browser") && value.version) {
+            value.version = "<filtered>";
+            return value;
+        }
+
+        // Cache may or may not have been used so remove optional fields which may or may not be set.
+        if (key === "connection")
+            return undefined;
+        if (key === "serverIPAddress")
+            return undefined;
+        if (key === "_transferSize")
+            return undefined;
+        if (key === "_fetchType")
+            return undefined;
+
+        // If cached the protocol might not be available.
+        if (key === "httpVersion")
+            return "<filtered>";
+
+        // Headers include dynamic data.
+        if (key === "headers")
+            return "<filtered>";
+
+        // Dates would change between test runs.
+        if (key.endsWith("DateTime"))
+            return "<filtered>";
+
+        // If any files are modified, we'd need to update the test without this filter.
+        if (key == "size")
+            return "<filtered>";
+
+        // Size data may or may not be available, but could change based on headers.
+        if (key.endsWith("Size"))
+            return "<filtered>";
+
+        // Reduce the file contents.
+        if (key === "text") {
+            InspectorTest.assert(value.length > 0, "The file should have contents.");
+            return "<filtered>";
+        }
+
+        // Sort cookies by name to make cookie order deterministic between test runs. We assume
+        // that cookies have names that consist of only ASCII characters.
+        if (key === "cookies") {
+            value.sort((a, b) => { return a.name === b.name ? 0 : (a.name < b.name ? -1 : 1); });
+            return value;
+        }
+
+        // Since cache may or may not be used, timing data may be variable.
+        // NOTE: SSL should always be -1 for this test case.
+        if (key === "time")
+            return "<filtered>";
+        if (key === "timings") {
+            value.blocked = "<filtered>";
+            value.dns = "<filtered>";
+            value.connect = "<filtered>";
+            value.send = "<filtered>";
+            value.wait = "<filtered>";
+            value.receive = "<filtered>";
+        }
+
+        // PageTimings can be variable.
+        if (key === "onContentLoad" || key === "onLoad")
+            return "<filtered>";
+
+        return value;
+    }
+
+    let suite = InspectorTest.createAsyncSuite("HAR.Page");
+
+    suite.addTestCase({
+        name: "HAR.Basic.Page",
+        description: "Should be able to generate a HAR with all of this test page's resources.",
+        async test() {
+            InspectorTest.reloadPage({ignoreCache: true});
+            await InspectorTest.awaitEvent("LoadComplete");
+            InspectorTest.evaluateInPage("setup()");
+            await InspectorTest.awaitEvent("SetupComplete");
+
+            let resources = [WI.networkManager.mainFrame.mainResource, ...WI.networkManager.mainFrame.resourceCollection];
+            let har = await WI.HARBuilder.buildArchive(resources);
+            InspectorTest.json(har, HARJSONFilter);
+            InspectorTest.evaluateInPage("cleanup()");
+            await InspectorTest.awaitEvent("CleanComplete");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>HAR Page Test.</p>
+<script>
+async function setup()
+{
+    await resetCookies();
+    await setCookie("simple", "simple");
+    await setCookie("path", "path", {"path": "/A/B/C"}); // This cookie will not be sent in subsequent requests from this page.
+
+    // Secure cookies will only be sent in subsequent requests from this page if the page was served over HTTPS.
+    await setCookie("secure", "secure", {"secure": null});
+    await setCookie("secure-and-http-only", "secure-and-http-only", {"secure": null, "HttpOnly": null});
+
+    await setCookie("with-expiration", "with-expiration", {"Expires": new Date("01/04/5000").toGMTString()});
+    await setCookie("http-only", "http-only", {"HttpOnly": null});
+    await setCookie("same-site-strict", "same-site-strict", {"SameSite": "Strict", "path": "/"});
+    await setCookie("same-site-ignored-because-no-value", "same-site-ignored-because-no-value", {"SameSite": null, "path": "/"});
+    await setCookie("same-site-ignored-because-unknown-value", "same-site-ignored-because-unknown-value", {"SameSite": "invalid", "path": "/"});
+    await setCookie("same-site-lax", "same-site-lax", {"SameSite": "Lax", "path": "/"});
+    TestPage.dispatchEventToFrontend("SetupComplete");
+}
+
+async function cleanup()
+{
+    await resetCookies();
+    TestPage.dispatchEventToFrontend("CleanComplete");
+}
+
+window.addEventListener("load", () => {
+    TestPage.dispatchEventToFrontend("LoadComplete");
+});
+</script>
+</body>
+</html>

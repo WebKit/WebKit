@@ -1,0 +1,18 @@
+PointerMove
+
+Test Description: This test checks if pointermove event are triggered by button state changes
+Put your mouse over the black rectangle
+Press a button and hold it
+Press a second button
+Release the second button
+Release the first button to complete the test
+
+Pointer Events pointermove on button state changes Tests
+
+The following pointer types were detected: mouse.
+
+Refresh the page to run the tests again.
+
+
+PASS pointermove events received for button state changes 
+

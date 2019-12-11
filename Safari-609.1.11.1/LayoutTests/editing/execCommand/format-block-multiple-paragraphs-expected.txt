@@ -1,0 +1,232 @@
+This tests ensures formatBlock do not make multiple elements when formatting multiple paragraphs.
+
+Formatting:
+| "
+"
+| <div>
+|   "<#selection-anchor>hello"
+| <div>
+|   "world"
+| <div>
+|   "WebKit<#selection-focus>"
+| "
+"
+
+by p yields:
+| "
+"
+| <p>
+|   "<#selection-anchor>hello"
+|   <br>
+|   "world"
+|   <br>
+|   "WebKit<#selection-focus>"
+| "
+"
+
+Formatting:
+| "
+"
+| <p>
+|   "<#selection-anchor>hello"
+| <p>
+|   "world<#selection-focus>"
+| "
+"
+
+by blockquote yields:
+| "
+"
+| <blockquote>
+|   "<#selection-anchor>hello"
+|   <br>
+|   "world<#selection-focus>"
+| "
+"
+
+Formatting:
+| "
+"
+| <div>
+|   "<#selection-anchor>hello"
+|   <pre>
+|     "world<#selection-focus>"
+| "
+"
+
+by p yields:
+| "
+"
+| <p>
+|   "<#selection-anchor>hello"
+|   <br>
+|   "world<#selection-focus>"
+| "
+"
+
+Formatting:
+| "
+"
+| <h1>
+|   "<#selection-anchor>hello"
+| <div>
+|   <h2>
+|     "world"
+|   <h3>
+|     "WebKit<#selection-focus>"
+| "
+"
+
+by pre yields:
+| "
+"
+| <pre>
+|   "<#selection-anchor>hello"
+|   <br>
+|   "world"
+|   <br>
+|   "WebKit<#selection-focus>"
+| "
+"
+
+Formatting:
+| "
+"
+| <div>
+|   "hello"
+|   <p>
+|     "<#selection-anchor>world"
+|   "webki<#selection-focus>t"
+| "
+"
+
+by h1 yields:
+| "
+"
+| <div>
+|   "hello"
+|   <h1>
+|     "<#selection-anchor>world"
+|     <br>
+|     "webkit<#selection-focus>"
+| "
+"
+
+Formatting:
+| "
+"
+| <pre>
+|   "<#selection-anchor>hello
+world<#selection-focus>
+webkit
+"
+| "
+"
+
+by blockquote yields:
+| "
+"
+| <pre>
+|   <blockquote>
+|     "<#selection-anchor>hello"
+|     <br>
+|     "world<#selection-focus>"
+|   "webkit
+"
+| "
+"
+
+Formatting:
+| "
+"
+| <pre>
+|   "hello
+<#selection-anchor>world
+webki<#selection-focus>t
+"
+| "
+"
+
+by blockquote yields:
+| "
+"
+| <pre>
+|   "hello
+"
+|   <blockquote>
+|     "<#selection-anchor>world"
+|     <br>
+|     "webki<#selection-focus>t"
+| "
+"
+
+Formatting:
+| "
+<#selection-anchor>hello"
+| <p>
+|   "world<#selection-focus>"
+| <p>
+|   "webkit"
+| "
+
+"
+
+by pre yields:
+| <pre>
+|   "<#selection-anchor>
+hello"
+|   <br>
+|   "worl<#selection-focus>d"
+| <p>
+|   "webkit"
+| "
+
+"
+
+Formatting:
+| "
+"
+| <div>
+|   "hello"
+| <div>
+|   "<#selection-anchor>world"
+| <div>
+|   "webki<#selection-focus>t"
+| "
+"
+
+by pre yields:
+| "
+"
+| <div>
+|   "hello"
+| <pre>
+|   "<#selection-anchor>world"
+|   <br>
+|   "webki<#selection-focus>t"
+| "
+"
+
+Formatting:
+| "
+"
+| <ul>
+|   <li>
+|     "<#selection-anchor>hello"
+|   <li>
+|     "world<#selection-focus>"
+| "
+"
+
+by blockquote yields:
+| "
+"
+| <blockquote>
+|   <ul>
+|     <li>
+|       "<#selection-anchor>hello"
+|   <ul>
+|     <li>
+|       "world<#selection-focus>"
+| "
+"

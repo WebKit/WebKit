@@ -1,0 +1,7 @@
+2d.imageData.get.clamp
+
+getImageData() clamps colours to the range [0, 255]
+
+
+FAIL getImageData() clamps colours to the range [0, 255] null is not an object (evaluating 'ctx.fillStyle = 'rgb(-100, -200, -300)'')
+

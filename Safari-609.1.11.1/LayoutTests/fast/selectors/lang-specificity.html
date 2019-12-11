@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+:lang(fr):lang(fr-be):lang(fr) #target1 {
+    color: rgb(1, 2, 3);
+}
+:lang(fr):lang(fr-ca) #target2 {
+    color: rgb(4, 5, 6);
+}
+:lang(fr-ch):lang(fr) #target3 {
+    color: rgb(7, 8, 9);
+}
+</style>
+</head>
+<body>
+    <div style="display:none">
+        <a lang="FR-BE">
+            <b>
+                <c id="target1"></c>
+            </b>
+        </a>
+        <a lang="FR-CA">
+            <b>
+                <c id="target2"></c>
+            </b>
+        </a>
+        <a lang="FR-CH">
+            <b>
+                <c id="target3"></c>
+            </b>
+        </a>
+    </div>
+</body>
+<script>
+description('Verify selector specifying multiple :lang() pseudo class.');
+
+debug("HTML lang only")
+shouldBe('document.querySelectorAll(":lang(fr):lang(fr-be):lang(fr) #target1").length', '1');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target1")).color', 'rgb(1, 2, 3)');
+shouldBe('document.querySelectorAll(":lang(fr):lang(fr-ca) #target2").length', '1');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target2")).color', 'rgb(4, 5, 6)');
+shouldBe('document.querySelectorAll(":lang(fr):lang(fr-ch) #target3").length', '1');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target3")).color', 'rgb(7, 8, 9)');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

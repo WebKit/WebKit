@@ -1,0 +1,65 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x280
+  RenderBlock {html} at (0,0) size 800x280
+    RenderBody {body} at (8,8) size 784x264
+      RenderTable {table} at (0,0) size 126x264
+        RenderTableSection (anonymous) at (0,148) size 126x2
+          RenderTableRow (anonymous) at (0,0) size 126x0
+            RenderTableCell (anonymous) at (2,0) size 122x0 [r=0 c=0 rs=1 cs=1]
+        RenderBlock {caption} at (0,36) size 126x36
+          RenderText {#text} at (15,0) size 96x36
+            text run at (15,0) width 96: "PASS: Normal"
+            text run at (38,18) width 50: "Caption"
+        RenderTableSection {thead} at (0,126) size 126x22
+          RenderTableRow (anonymous) at (0,2) size 126x18
+            RenderTableCell (anonymous) at (2,2) size 122x18 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 67x18
+                text run at (0,0) width 67: "HEADER"
+        RenderTableSection {tbody} at (0,150) size 126x38
+          RenderTableRow (anonymous) at (0,0) size 126x36
+            RenderTableCell (anonymous) at (2,0) size 122x36 [r=0 c=0 rs=1 cs=1]
+              RenderBR {br} at (0,0) size 0x18
+              RenderText {#text} at (0,18) size 122x18
+                text run at (0,18) width 122: "Some body content"
+              RenderBR {br} at (122,18) size 0x18
+        RenderTableSection {tfoot} at (0,190) size 126x20
+          RenderTableRow (anonymous) at (0,0) size 126x18
+            RenderTableCell (anonymous) at (2,0) size 122x18 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 64x18
+                text run at (0,0) width 64: "FOOTER"
+        RenderTableSection (anonymous) at (0,188) size 126x2
+          RenderTableRow (anonymous) at (0,0) size 126x0
+            RenderTableCell (anonymous) at (2,0) size 122x0 [r=0 c=0 rs=1 cs=1]
+        RenderBlock {caption} at (0,72) size 126x54
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {caption} at (0,126) size 126x0
+layer at (8,218) size 126x54
+  RenderBlock {caption} at (0,210) size 126x54
+    RenderText {#text} at (25,0) size 116x54
+      text run at (25,0) width 76: "PASS: First"
+      text run at (5,18) width 116: "Caption aligned to"
+      text run at (29,36) width 68: "the bottom"
+layer at (10,156) size 230x18
+  RenderBlock (positioned) {caption} at (10,156) size 230x18
+    RenderText {#text} at (0,0) size 230x18
+      text run at (0,0) width 230: "PASS: Caption with a fixed position"
+layer at (8,8) size 126x36
+  RenderBlock {caption} at (0,0) size 126x36
+    RenderText {#text} at (14,0) size 102x36
+      text run at (14,0) width 98: "PASS: Caption"
+      text run at (12,18) width 102: "with opacity 0.7"
+layer at (10,196) size 331x18
+  RenderBlock (positioned) {caption} at (10,196) size 331x18
+    RenderText {#text} at (0,0) size 331x18
+      text run at (0,0) width 331: "PASS: Caption with a fixed position and opacity 0.6"
+layer at (8,80) size 118x54
+  RenderInline {a} at (0,0) size 118x54
+    RenderText {#text} at (14,0) size 118x54
+      text run at (14,0) width 98: "PASS: Caption"
+      text run at (4,18) width 118: "with opacity 0.5 in"
+      text run at (14,36) width 98: "one of its child."
+layer at (71,134) size 443x18
+  RenderBlock (positioned) {a} at (71,134) size 443x18
+    RenderText {#text} at (0,0) size 443x18
+      text run at (0,0) width 443: "PASS: Caption with opacity 0.4 and fixed position of one of the child."

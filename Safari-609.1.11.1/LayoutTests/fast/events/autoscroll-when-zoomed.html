@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 1000px;
+        }
+        #container {
+            position: relative;
+            top: -10px;
+            left: 50px;
+            width: 400px;
+            outline: 1px solid black;
+            font-family: monospace;
+        }
+    </style>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+        window.jsTestIsAsync = true;
+        
+        const pageScale = 1.5;
+        const eventCount = 50;
+        var scrollCount = 0;
+
+        var start;
+        var end;
+        var firstRange;
+        
+        function testComplete()
+        {
+            eventSender.mouseMoveTo(pageScale * end.x, 0);
+            eventSender.mouseUp();
+
+            firstRange = window.getSelection().getRangeAt(0);
+            shouldBe('firstRange.startOffset', '51');
+            shouldBe('firstRange.endOffset', '400');
+
+            finishJSTest();
+        }
+        
+        function waitForScrolledToTop()
+        {
+            if (window.scrollY == 0) {
+                testComplete();
+                return;
+            }
+            
+            window.setTimeout(waitForScrolledToTop, 2);
+        }
+        
+        function doOneScroll()
+        {
+            if (++scrollCount == eventCount) {
+                waitForScrolledToTop();
+                return;
+            }
+
+            eventSender.mouseMoveTo(pageScale * end.x, pageScale * (end.y - scrollCount));
+            window.setTimeout(doOneScroll, 2);
+        }
+
+        function doTest()
+        {
+            if (!window.testRunner || !window.eventSender) {
+                debug('This test requires testRunner and eventSender');
+                return;
+            }
+            
+            window.internals.setPageScaleFactor(pageScale, 0, 0);
+
+            var containerRect = document.getElementById('container').getBoundingClientRect();
+            var lineHeight = containerRect.height / 3;
+            
+            window.scrollTo(0, containerRect.bottom - lineHeight);
+            containerRect = document.getElementById('container').getBoundingClientRect(); // Scrolling changed it.
+
+            start = { x: containerRect.left + 10, y: 2 * lineHeight / 3 };
+            end = { x: containerRect.right - 10, y: 16 };
+            
+            eventSender.mouseMoveTo(pageScale * start.x, pageScale * start.y);
+            eventSender.mouseDown();
+
+            doOneScroll();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<div id="container">
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+</div>
+
+<p>This test ensures that drag-selecting works correctly in the main frame.</p>
+
+<div id="console"></div>
+
+<script src="../../resources/js-test-post.js"></script>
+
+</body>
+</html>

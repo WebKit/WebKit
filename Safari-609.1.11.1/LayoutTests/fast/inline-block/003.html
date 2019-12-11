@@ -1,0 +1,25 @@
+<html>
+<head>
+<style>
+div{ display: inline-block; border:2px solid blue; width:300px; }
+marquee { border:2px solid green; margin: 0; white-space: normal; }
+</style>
+</head>
+<body>
+The two divs below should be on the same line, since they are display: inline-block.
+
+<center>
+<div>This is div one.</div><div>This is div two.</div>
+</center>
+
+The two marquees below should be on separate lines, since marquees fill the width of a containing
+block by default.
+
+
+<span>
+<marquee>This is div one.</marquee>
+<marquee>This is div two.</marquee>
+</span>
+
+</body>
+</html>

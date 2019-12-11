@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner)
+   testRunner.dumpAsText();
+</script>
+</head>
+<body>
+
+<div>
+<a href="#name1" id="name1link">Name</a><BR>
+<a href="#name2" id="name2link">Name 2</a>
+</div>
+
+<BR><BR><BR><BR>
+<BR><BR><BR><BR>
+<a name="name1"></a>Linked Element 1<BR>
+<a name="name2"></a>Linked Element 2<BR>
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test that if a page's URL has a fragment appended to itself, it will still be able to find internal links within itself.");
+
+    if (window.accessibilityController) {
+        window.location.hash = 'name1';
+        var body = accessibilityController.rootElement.childAtIndex(0);
+        shouldBeTrue("body.url.indexOf('#name1') > -1"); 
+        document.getElementById("name1link").focus();
+        var link = accessibilityController.focusedElement;
+        var linkedElement = link.linkedUIElementAtIndex(0);
+        shouldBe("linkedElement.stringValue", "'AXValue: Linked Element 1'");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+
+</body>
+</html>
+

@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/subresource-redirect-blocked.html from loading a resource from http://localhost:8000/resources/square128.png
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 155x18
+        text run at (0,0) width 155: "This page has an image."
+      RenderBR {BR} at (154,14) size 1x0
+      RenderText {#text} at (0,18) size 415x18
+        text run at (0,18) width 415: "The image load should be blocked by the content extension filter"
+      RenderBR {BR} at (414,32) size 1x0
+      RenderImage {IMG} at (0,36) size 20x20
+      RenderText {#text} at (0,0) size 0x0

@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+
+<input type="text" id="toBeRemoved" onfocus="focusHandler(this)"></input>
+
+
+<script>
+
+var jsTestIsAsync = true;
+
+description("This tests that focusing and removing element won't cause crash.");
+
+if (window.testRunner && window.accessibilityController) {
+
+    // Try to focus on the element.
+    accessibilityController.accessibleElementById("toBeRemoved").takeFocus();
+}
+
+function focusHandler(node) 
+{
+    // Make sure we don't crash after removing the element. 
+    node.parentNode.removeChild(node);
+    gc();
+    setTimeout("finishTest()", 0);
+}
+
+function finishTest()
+{
+    // Element should be removed while on focus
+    shouldBe("document.getElementById(\"toBeRemoved\")", "null");
+    
+    // Make sure accessing the element won't lead to crash
+    var detached = accessibilityController.accessibleElementById("toBeRemoved")
+    finishJSTest();
+}
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+[
+  {
+    "evaluate": {
+      "localVar": {
+        "#__proto__": {
+          "constructor": "function <large string>",
+          "hasOwnProperty": "function <large string>",
+          "propertyIsEnumerable": "function <large string>",
+          "isPrototypeOf": "function <large string>",
+          "toLocaleString": "function <large string>",
+          "toString": "function <large string>",
+          "valueOf": "function <large string>",
+          "#__proto__": "object null",
+          "__defineGetter__": "function <large string>",
+          "__defineSetter__": "function <large string>",
+          "__lookupGetter__": "function <large string>",
+          "__lookupSetter__": "function <large string>"
+        },
+        "a": {
+          "#__proto__": "Object {...}",
+          "b": "number 1"
+        }
+      }
+    }
+  },
+  {
+    "evaluate": {
+      "globalVar": {
+        "#__proto__": "Object {...}",
+        "a": "string Hello World",
+        "b": "RegExp regex"
+      }
+    }
+  },
+  {
+    "evaluate": {
+      "x": "number 3.141592653589793"
+    }
+  },
+  {
+    "evaluate": {
+      "x": "number -Infinity"
+    }
+  },
+  {
+    "evaluate": {
+      "x": "object null"
+    }
+  },
+  {
+    "evaluate": {
+      "x": "number NaN"
+    }
+  }
+]

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="resources/wheel-handler-region-helper.js"></script>
+    <script>
+        function doTest()
+        {
+            document.addEventListener('mousewheel', function() { });
+            dumpRegion();
+        }
+
+        window.addEventListener('load', doTest);
+    </script>
+</head>
+<body>
+
+<pre id="output"></pre>
+
+</body>
+</html>

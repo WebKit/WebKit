@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<body>
+<script src="../../../../resources/js-test-pre.js"></script>
+<script>
+jsTestIsAsync = true;
+
+window.onmessage = function(e) {
+    debug("* Child received message " + e.data + " from parent");
+    messageEvent = e;
+    shouldBe("messageEvent.source", "parent");
+    debug("* Sending message " + (e.data + 1) + " to parent");
+    messageEvent.source.postMessage(e.data + 1, "*");
+}
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>

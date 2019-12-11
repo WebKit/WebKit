@@ -1,0 +1,102 @@
+/*
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+[
+    Constructor(optional (DOMString or sequence<unrestricted double>) init),
+    ConstructorMayThrowException,
+    ConstructorCallWith=ScriptExecutionContext,
+    ExportMacro=WEBCORE_EXPORT,
+    Exposed=(Window,Worker),
+    ImplementationLacksVTable
+] interface DOMMatrixReadOnly {
+    [MayThrowException, NewObject] static DOMMatrixReadOnly fromMatrix(optional DOMMatrixInit other);
+    [MayThrowException, NewObject] static DOMMatrixReadOnly fromFloat32Array(Float32Array array32);
+    [MayThrowException, NewObject] static DOMMatrixReadOnly fromFloat64Array(Float64Array array64);
+
+    // These attributes are simple aliases for certain elements of the 4x4 matrix
+    readonly attribute unrestricted double a; // Alias for m11.
+    readonly attribute unrestricted double b; // Alias for m12.
+    readonly attribute unrestricted double c; // Alias for m21.
+    readonly attribute unrestricted double d; // Alias for m22.
+    readonly attribute unrestricted double e; // Alias for m41.
+    readonly attribute unrestricted double f; // Alias for m42.
+
+    readonly attribute unrestricted double m11;
+    readonly attribute unrestricted double m12;
+    readonly attribute unrestricted double m13;
+    readonly attribute unrestricted double m14;
+    readonly attribute unrestricted double m21;
+    readonly attribute unrestricted double m22;
+    readonly attribute unrestricted double m23;
+    readonly attribute unrestricted double m24;
+    readonly attribute unrestricted double m31;
+    readonly attribute unrestricted double m32;
+    readonly attribute unrestricted double m33;
+    readonly attribute unrestricted double m34;
+    readonly attribute unrestricted double m41;
+    readonly attribute unrestricted double m42;
+    readonly attribute unrestricted double m43;
+    readonly attribute unrestricted double m44;
+
+    readonly attribute boolean is2D;
+    readonly attribute boolean isIdentity;
+
+    // Immutable transform methods
+    [NewObject] DOMMatrix translate(optional unrestricted double tx = 0,
+                                    optional unrestricted double ty = 0,
+                                    optional unrestricted double tz = 0);
+    [NewObject] DOMMatrix scale(optional unrestricted double scaleX = 1,
+                                optional unrestricted double scaleY,
+                                optional unrestricted double scaleZ = 1,
+                                optional unrestricted double originX = 0,
+                                optional unrestricted double originY = 0,
+                                optional unrestricted double originZ = 0);
+    [NewObject] DOMMatrix scale3d(optional unrestricted double scale = 1,
+                                  optional unrestricted double originX = 0,
+                                  optional unrestricted double originY = 0,
+                                  optional unrestricted double originZ = 0);
+    [NewObject] DOMMatrix rotate(optional unrestricted double rotX = 0,
+                                 optional unrestricted double rotY,
+                                 optional unrestricted double rotZ); // Angles are in degrees.
+    [NewObject] DOMMatrix rotateFromVector(optional unrestricted double x = 0,
+                                           optional unrestricted double y = 0);
+    [NewObject] DOMMatrix rotateAxisAngle(optional unrestricted double x = 0,
+                                          optional unrestricted double y = 0,
+                                          optional unrestricted double z = 0,
+                                          optional unrestricted double angle = 0); // Angle is in degrees.
+    [NewObject] DOMMatrix skewX(optional unrestricted double sx = 0); // Angle is in degrees.
+    [NewObject] DOMMatrix skewY(optional unrestricted double sy = 0); // Angle is in degrees.
+    [MayThrowException, NewObject] DOMMatrix multiply(optional DOMMatrixInit other);
+    [NewObject] DOMMatrix flipX();
+    [NewObject] DOMMatrix flipY();
+    [NewObject] DOMMatrix inverse();
+
+    [NewObject] DOMPoint transformPoint(optional DOMPointInit point);
+    [MayThrowException] Float32Array toFloat32Array();
+    [MayThrowException] Float64Array toFloat64Array();
+
+    [Exposed=Window, MayThrowException] stringifier;
+    serializer = { attribute };
+};

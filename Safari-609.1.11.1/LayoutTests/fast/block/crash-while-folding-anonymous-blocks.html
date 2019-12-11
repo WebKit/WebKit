@@ -1,0 +1,33 @@
+<span id=foo9><div id=foo7></div></span><div id=foo1></div><div id=foo2></div><div id=foo3></div><span id=foo12><div id=foo10></div></span><div id=foo4></div><div id=foo5></div><div id=foo6></div><span id=foo11><table><colgroup><col></colgroup></table><div id=foo8></div></span><script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+// Setting up 3 continuations in separate blocks.
+document.body.offsetHeight;
+
+let di = document.createElement("div");
+foo2.appendChild(di);
+foo2.style.display = "inline";
+document.body.offsetHeight;
+
+foo1.remove();
+foo3.remove();
+document.body.offsetHeight;
+
+foo2.remove();
+document.body.offsetHeight;
+
+let di2 = document.createElement("div");
+foo5.appendChild(di2);
+foo5.style.display = "inline";
+document.body.offsetHeight;
+
+foo4.remove();
+foo6.remove();
+foo5.remove();
+foo7.remove();
+foo9.remove();
+foo10.remove();
+document.body.offsetHeight;
+foo12.remove();
+document.body.offsetHeight;
+</script>

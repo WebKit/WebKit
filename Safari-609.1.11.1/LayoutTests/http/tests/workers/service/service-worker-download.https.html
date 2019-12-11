@@ -1,0 +1,22 @@
+<html>
+<head>
+<script src="resources/sw-test-pre.js"></script>
+</head>
+<body>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.setShouldLogDownloadCallbacks(true);
+  testRunner.waitUntilDownloadFinished();
+  testRunner.setShouldDownloadUndisplayableMIMETypes(true);
+}
+
+async function doTest()
+{
+    await interceptedFrame("resources/service-worker-download-worker.js", "/workers/service/resources/");
+    window.location = "/workers/service/resources/download-binary.php";
+}
+doTest();
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+
+    // This is a contrived test. We normally do not allow cross-origin XML Stylesheets.
+    testRunner.addOriginAccessWhitelistEntry("http://127.0.0.1:8000", "http", "localhost", false);
+}
+</script>
+</head>
+<body>
+<iframe src="resources/xsl-redirect-allowed.php?csp=script-src+http%3A//127.0.0.1%3A8000/resources/redirect.php+http%3A//localhost%3A8000/this-path-should-be-ignored-when-matching-a-redirected-request+%27unsafe-inline%27"></iframe>
+</body>
+</html>

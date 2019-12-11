@@ -1,0 +1,19 @@
+Ensure proper this value in tail deleted frames.
+
+
+== Running test suite: Debugger.TailDeletedFrames.ThisValue
+-- Running test case: Debugger.TailDeletedFrames.Scopes
+PAUSED
+CALL STACK:
+0: [F] a
+  this: aThis - 2
+1: -F- b
+  this: bThis - 1
+2: -F- c
+  this: cThis - 0
+3: [F] startABC
+  this: undefined
+4: [P] Global Code
+  this: c - 
+RESUMED
+

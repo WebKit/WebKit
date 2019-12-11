@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function runTest() {
+    var iframe = document.getElementById("iframe");
+    var iframeWindow = window[0];
+    var toInsert = div;
+    var iframeBody = iframeWindow.document.body;
+    iframeBody.before(document.body);
+    iframe.after(toInsert);
+    console.log("PASS: did not crash");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>This test passes if it does not crash.</p>
+    <form id="form">
+        <textarea form="form">aaaaaaaa</textarea>
+        <iframe id="iframe"></iframe>
+    </form>
+    <div id="div">
+        <dir><object id=“wtf"></object></dir>
+    <div>
+</body>
+</html>

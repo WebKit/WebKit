@@ -1,0 +1,53 @@
+Basic Interface test for user-timing APIs.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PerformanceMark
+PASS PerformanceMark is defined.
+PASS new PerformanceMark() threw exception TypeError: function is not a constructor (evaluating 'new PerformanceMark()').
+
+PerformanceMeasure
+PASS PerformanceMeasure is defined.
+PASS new PerformanceMeasure() threw exception TypeError: function is not a constructor (evaluating 'new PerformanceMeasure()').
+
+Performance extensions
+PASS Performance.prototype.mark is defined.
+PASS Performance.prototype.measure is defined.
+PASS Performance.prototype.clearMarks is defined.
+PASS Performance.prototype.clearMeasures is defined.
+PASS performance.mark() threw exception TypeError: Not enough arguments.
+PASS performance.mark("mark_name") did not throw exception.
+PASS performance.measure() threw exception TypeError: Not enough arguments.
+PASS performance.measure("measure_name") did not throw exception.
+PASS performance.clearMarks() did not throw exception.
+PASS performance.clearMarks("mark_name") did not throw exception.
+PASS performance.clearMeasures() did not throw exception.
+PASS performance.clearMeasures("measure_name") did not throw exception.
+
+Starting worker: resources/user-timing-api.js
+[Worker] PerformanceMark
+PASS [Worker] PerformanceMark is defined.
+PASS [Worker] new PerformanceMark() threw exception TypeError: function is not a constructor (evaluating 'new PerformanceMark()').
+[Worker] 
+[Worker] PerformanceMeasure
+PASS [Worker] PerformanceMeasure is defined.
+PASS [Worker] new PerformanceMeasure() threw exception TypeError: function is not a constructor (evaluating 'new PerformanceMeasure()').
+[Worker] 
+[Worker] Performance extensions
+PASS [Worker] Performance.prototype.mark is defined.
+PASS [Worker] Performance.prototype.measure is defined.
+PASS [Worker] Performance.prototype.clearMarks is defined.
+PASS [Worker] Performance.prototype.clearMeasures is defined.
+PASS [Worker] performance.mark() threw exception TypeError: Not enough arguments.
+PASS [Worker] performance.mark("mark_name") did not throw exception.
+PASS [Worker] performance.measure() threw exception TypeError: Not enough arguments.
+PASS [Worker] performance.measure("measure_name") did not throw exception.
+PASS [Worker] performance.clearMarks() did not throw exception.
+PASS [Worker] performance.clearMarks("mark_name") did not throw exception.
+PASS [Worker] performance.clearMeasures() did not throw exception.
+PASS [Worker] performance.clearMeasures("measure_name") did not throw exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

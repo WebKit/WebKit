@@ -1,0 +1,47 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% series_name = BLOCK %]
+  [% series.category FILTER html %] /
+  [%+ series.subcategory FILTER html %] /
+  [%+ series.name FILTER html %]
+[% END %]
+
+[% PROCESS global/header.html.tmpl title = "Delete Series"
+                                   style_urls = ['skins/standard/admin.css'] %]
+
+<p>
+  You are going to completely remove the <b>[% series_name FILTER none %]</b> series
+  from the database. All data related to this series will be permanently deleted.
+</p>
+<p>
+  [% IF series.creator %]
+    This series has been created by <a href="mailto:[% series.creator.email FILTER html %]">
+    [% series.creator.email FILTER html %]</a>
+  [% ELSE %]
+    This series has been automatically created by Bugzilla
+  [% END %]
+
+  [% IF series.public %]
+    and is public.
+  [% ELSIF series.creator %]
+    and is only visible by this user.
+  [% ELSE %]
+    and cannot be displayed by anybody.
+  [% END %]
+</p>
+
+<p class="areyoureallyreallysure">Are you sure you want to delete this series?</p>
+
+<p>
+  <a href="chart.cgi?action=delete&amp;series_id=[% series.series_id FILTER html %]&amp;token=
+           [%- issue_hash_token([series.id, series.name]) FILTER uri %]">Yes, delete</a> |
+  <a href="chart.cgi">No, go back to the charts page</a>
+</p>
+
+[% PROCESS global/footer.html.tmpl %]

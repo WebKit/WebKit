@@ -1,0 +1,7 @@
+Blocked access to external URL http://www1.localhost:8800/html/webappapis/scripting/processing-model-2/support/undefined-variable-in-setTimeout.js
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN window.onerror - runtime error in cross-origin setTimeout 
+NOTRUN window.onerror - runtime error in cross-origin setTimeout (column) 
+

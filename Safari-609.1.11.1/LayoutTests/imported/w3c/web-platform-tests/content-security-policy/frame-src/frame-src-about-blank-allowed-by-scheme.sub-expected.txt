@@ -1,0 +1,6 @@
+This frame should not be blocked by Content-Security-Policy.
+
+
+
+PASS Expecting logs: ["PASS"] 
+

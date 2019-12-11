@@ -1,0 +1,4 @@
+
+PASS Testing MediaDevices addEventListener/removeEventListener 
+PASS Capture 'devicechange' event with addEventListener 
+

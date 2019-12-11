@@ -1,0 +1,8 @@
+2d.text.draw.align.start.ltr
+textAlign start with ltr is the left edge
+Actual output:
+Expected output:
+
+
+PASS textAlign start with ltr is the left edge 
+

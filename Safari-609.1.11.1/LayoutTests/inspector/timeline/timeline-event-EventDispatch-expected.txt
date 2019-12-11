@@ -1,0 +1,41 @@
+Tests 'EventDispatch' Timeline event records.
+
+  
+
+== Running test suite: TimelineEvent.EventDispatch
+-- Running test case: TimelineEvent.EventDispatch.Handler.Regular
+Starting Capture...
+Evaluating...
+PASS: click handler fired
+Stopping Capture...
+PASS: Should be 1 EventDispatched record.
+DETAILS: {"type":"click","defaultPrevented":false}
+PASS: ScriptTimelineRecord extraDetails should show default was not prevented.
+
+-- Running test case: TimelineEvent.EventDispatch.Handler.DefaultPrevented
+Starting Capture...
+Evaluating...
+PASS: click handler fired, will prevent default
+Stopping Capture...
+PASS: Should be 1 EventDispatched record.
+DETAILS: {"type":"click","defaultPrevented":true}
+PASS: ScriptTimelineRecord extraDetails should show default was prevented.
+
+-- Running test case: TimelineEvent.EventDispatch.AttributeHandler.Regular
+Starting Capture...
+Evaluating...
+PASS: b1 onclick attribute handler fired
+Stopping Capture...
+PASS: Should be 1 EventDispatched record.
+DETAILS: {"type":"click","defaultPrevented":false}
+PASS: ScriptTimelineRecord extraDetails should show default was not prevented.
+
+-- Running test case: TimelineEvent.EventDispatch.AttributeHandler.DefaultPrevented
+Starting Capture...
+Evaluating...
+PASS: b2 onclick attribute handler fired, will prevent default
+Stopping Capture...
+PASS: Should be 1 EventDispatched record.
+DETAILS: {"type":"click","defaultPrevented":true}
+PASS: ScriptTimelineRecord extraDetails should show default was prevented.
+

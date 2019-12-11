@@ -1,0 +1,372 @@
+This logs DOM keydown, keyup, keypress events that are dispatched when pressing key commands of the form Option + Shift + X. Must be run in WebKitTestRunner.
+
+
+Test Option + Shift + a:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: Å, code: KeyA, keyIdentifier: U+0041, keyCode: 65, charCode: 0, keyCode: 65, which: 65, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: Å, code: KeyA, keyIdentifier: , keyCode: 197, charCode: 197, keyCode: 197, which: 197, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Å, code: KeyA, keyIdentifier: U+0041, keyCode: 65, charCode: 0, keyCode: 65, which: 65, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + b:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: ı, code: KeyB, keyIdentifier: U+0042, keyCode: 66, charCode: 0, keyCode: 66, which: 66, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: ı, code: KeyB, keyIdentifier: , keyCode: 305, charCode: 305, keyCode: 305, which: 305, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: ı, code: KeyB, keyIdentifier: U+0042, keyCode: 66, charCode: 0, keyCode: 66, which: 66, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + c:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: Ç, code: KeyC, keyIdentifier: U+0043, keyCode: 67, charCode: 0, keyCode: 67, which: 67, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: Ç, code: KeyC, keyIdentifier: , keyCode: 199, charCode: 199, keyCode: 199, which: 199, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Ç, code: KeyC, keyIdentifier: U+0043, keyCode: 67, charCode: 0, keyCode: 67, which: 67, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + d:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: Î, code: KeyD, keyIdentifier: U+0044, keyCode: 68, charCode: 0, keyCode: 68, which: 68, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: Î, code: KeyD, keyIdentifier: , keyCode: 206, charCode: 206, keyCode: 206, which: 206, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Î, code: KeyD, keyIdentifier: U+0044, keyCode: 68, charCode: 0, keyCode: 68, which: 68, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + f:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: Ï, code: KeyF, keyIdentifier: U+0046, keyCode: 70, charCode: 0, keyCode: 70, which: 70, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: Ï, code: KeyF, keyIdentifier: , keyCode: 207, charCode: 207, keyCode: 207, which: 207, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Ï, code: KeyF, keyIdentifier: U+0046, keyCode: 70, charCode: 0, keyCode: 70, which: 70, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + g:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: ˝, code: KeyG, keyIdentifier: U+0047, keyCode: 71, charCode: 0, keyCode: 71, which: 71, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: ˝, code: KeyG, keyIdentifier: , keyCode: 733, charCode: 733, keyCode: 733, which: 733, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: ˝, code: KeyG, keyIdentifier: U+0047, keyCode: 71, charCode: 0, keyCode: 71, which: 71, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + h:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: Ó, code: KeyH, keyIdentifier: U+0048, keyCode: 72, charCode: 0, keyCode: 72, which: 72, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: Ó, code: KeyH, keyIdentifier: , keyCode: 211, charCode: 211, keyCode: 211, which: 211, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Ó, code: KeyH, keyIdentifier: U+0048, keyCode: 72, charCode: 0, keyCode: 72, which: 72, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + j:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: Ô, code: KeyJ, keyIdentifier: U+004A, keyCode: 74, charCode: 0, keyCode: 74, which: 74, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: Ô, code: KeyJ, keyIdentifier: , keyCode: 212, charCode: 212, keyCode: 212, which: 212, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Ô, code: KeyJ, keyIdentifier: U+004A, keyCode: 74, charCode: 0, keyCode: 74, which: 74, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + k:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: , code: KeyK, keyIdentifier: U+004B, keyCode: 75, charCode: 0, keyCode: 75, which: 75, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: , code: KeyK, keyIdentifier: , keyCode: 63743, charCode: 63743, keyCode: 63743, which: 63743, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: , code: KeyK, keyIdentifier: U+004B, keyCode: 75, charCode: 0, keyCode: 75, which: 75, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + l:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: Ò, code: KeyL, keyIdentifier: U+004C, keyCode: 76, charCode: 0, keyCode: 76, which: 76, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: Ò, code: KeyL, keyIdentifier: , keyCode: 210, charCode: 210, keyCode: 210, which: 210, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Ò, code: KeyL, keyIdentifier: U+004C, keyCode: 76, charCode: 0, keyCode: 76, which: 76, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + m:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: Â, code: KeyM, keyIdentifier: U+004D, keyCode: 77, charCode: 0, keyCode: 77, which: 77, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: Â, code: KeyM, keyIdentifier: , keyCode: 194, charCode: 194, keyCode: 194, which: 194, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Â, code: KeyM, keyIdentifier: U+004D, keyCode: 77, charCode: 0, keyCode: 77, which: 77, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + o:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: Ø, code: KeyO, keyIdentifier: U+004F, keyCode: 79, charCode: 0, keyCode: 79, which: 79, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: Ø, code: KeyO, keyIdentifier: , keyCode: 216, charCode: 216, keyCode: 216, which: 216, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Ø, code: KeyO, keyIdentifier: U+004F, keyCode: 79, charCode: 0, keyCode: 79, which: 79, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + p:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: ∏, code: KeyP, keyIdentifier: U+0050, keyCode: 80, charCode: 0, keyCode: 80, which: 80, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: ∏, code: KeyP, keyIdentifier: , keyCode: 8719, charCode: 8719, keyCode: 8719, which: 8719, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: ∏, code: KeyP, keyIdentifier: U+0050, keyCode: 80, charCode: 0, keyCode: 80, which: 80, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + q:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: Œ, code: KeyQ, keyIdentifier: U+0051, keyCode: 81, charCode: 0, keyCode: 81, which: 81, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: Œ, code: KeyQ, keyIdentifier: , keyCode: 338, charCode: 338, keyCode: 338, which: 338, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Œ, code: KeyQ, keyIdentifier: U+0051, keyCode: 81, charCode: 0, keyCode: 81, which: 81, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + r:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: ‰, code: KeyR, keyIdentifier: U+0052, keyCode: 82, charCode: 0, keyCode: 82, which: 82, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: ‰, code: KeyR, keyIdentifier: , keyCode: 8240, charCode: 8240, keyCode: 8240, which: 8240, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: ‰, code: KeyR, keyIdentifier: U+0052, keyCode: 82, charCode: 0, keyCode: 82, which: 82, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + s:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: Í, code: KeyS, keyIdentifier: U+0053, keyCode: 83, charCode: 0, keyCode: 83, which: 83, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: Í, code: KeyS, keyIdentifier: , keyCode: 205, charCode: 205, keyCode: 205, which: 205, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Í, code: KeyS, keyIdentifier: U+0053, keyCode: 83, charCode: 0, keyCode: 83, which: 83, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + t:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: ˇ, code: KeyT, keyIdentifier: U+0054, keyCode: 84, charCode: 0, keyCode: 84, which: 84, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: ˇ, code: KeyT, keyIdentifier: , keyCode: 711, charCode: 711, keyCode: 711, which: 711, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: ˇ, code: KeyT, keyIdentifier: U+0054, keyCode: 84, charCode: 0, keyCode: 84, which: 84, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + v:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: ◊, code: KeyV, keyIdentifier: U+0056, keyCode: 86, charCode: 0, keyCode: 86, which: 86, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: ◊, code: KeyV, keyIdentifier: , keyCode: 9674, charCode: 9674, keyCode: 9674, which: 9674, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: ◊, code: KeyV, keyIdentifier: U+0056, keyCode: 86, charCode: 0, keyCode: 86, which: 86, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + w:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: „, code: KeyW, keyIdentifier: U+0057, keyCode: 87, charCode: 0, keyCode: 87, which: 87, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: „, code: KeyW, keyIdentifier: , keyCode: 8222, charCode: 8222, keyCode: 8222, which: 8222, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: „, code: KeyW, keyIdentifier: U+0057, keyCode: 87, charCode: 0, keyCode: 87, which: 87, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + x:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: ˛, code: KeyX, keyIdentifier: U+0058, keyCode: 88, charCode: 0, keyCode: 88, which: 88, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: ˛, code: KeyX, keyIdentifier: , keyCode: 731, charCode: 731, keyCode: 731, which: 731, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: ˛, code: KeyX, keyIdentifier: U+0058, keyCode: 88, charCode: 0, keyCode: 88, which: 88, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + y:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: Á, code: KeyY, keyIdentifier: U+0059, keyCode: 89, charCode: 0, keyCode: 89, which: 89, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: Á, code: KeyY, keyIdentifier: , keyCode: 193, charCode: 193, keyCode: 193, which: 193, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Á, code: KeyY, keyIdentifier: U+0059, keyCode: 89, charCode: 0, keyCode: 89, which: 89, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + z:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: ¸, code: KeyZ, keyIdentifier: U+005A, keyCode: 90, charCode: 0, keyCode: 90, which: 90, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: ¸, code: KeyZ, keyIdentifier: , keyCode: 184, charCode: 184, keyCode: 184, which: 184, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: ¸, code: KeyZ, keyIdentifier: U+005A, keyCode: 90, charCode: 0, keyCode: 90, which: 90, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + 0:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: ‚, code: Digit0, keyIdentifier: U+0029, keyCode: 48, charCode: 0, keyCode: 48, which: 48, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: ‚, code: Digit0, keyIdentifier: , keyCode: 8218, charCode: 8218, keyCode: 8218, which: 8218, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: ‚, code: Digit0, keyIdentifier: U+0030, keyCode: 48, charCode: 0, keyCode: 48, which: 48, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + 1:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: ⁄, code: Digit1, keyIdentifier: U+0021, keyCode: 49, charCode: 0, keyCode: 49, which: 49, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: ⁄, code: Digit1, keyIdentifier: , keyCode: 8260, charCode: 8260, keyCode: 8260, which: 8260, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: ⁄, code: Digit1, keyIdentifier: U+0031, keyCode: 49, charCode: 0, keyCode: 49, which: 49, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + 2:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: €, code: Digit2, keyIdentifier: U+0040, keyCode: 50, charCode: 0, keyCode: 50, which: 50, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: €, code: Digit2, keyIdentifier: , keyCode: 8364, charCode: 8364, keyCode: 8364, which: 8364, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: €, code: Digit2, keyIdentifier: U+0032, keyCode: 50, charCode: 0, keyCode: 50, which: 50, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + 3:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: ‹, code: Digit3, keyIdentifier: U+0023, keyCode: 51, charCode: 0, keyCode: 51, which: 51, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: ‹, code: Digit3, keyIdentifier: , keyCode: 8249, charCode: 8249, keyCode: 8249, which: 8249, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: ‹, code: Digit3, keyIdentifier: U+0033, keyCode: 51, charCode: 0, keyCode: 51, which: 51, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + 4:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: ›, code: Digit4, keyIdentifier: U+0024, keyCode: 52, charCode: 0, keyCode: 52, which: 52, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: ›, code: Digit4, keyIdentifier: , keyCode: 8250, charCode: 8250, keyCode: 8250, which: 8250, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: ›, code: Digit4, keyIdentifier: U+0034, keyCode: 52, charCode: 0, keyCode: 52, which: 52, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + 5:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: ﬁ, code: Digit5, keyIdentifier: U+0025, keyCode: 53, charCode: 0, keyCode: 53, which: 53, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: ﬁ, code: Digit5, keyIdentifier: , keyCode: 64257, charCode: 64257, keyCode: 64257, which: 64257, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: ﬁ, code: Digit5, keyIdentifier: U+0035, keyCode: 53, charCode: 0, keyCode: 53, which: 53, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + 6:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: ﬂ, code: Digit6, keyIdentifier: U+005E, keyCode: 54, charCode: 0, keyCode: 54, which: 54, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: ﬂ, code: Digit6, keyIdentifier: , keyCode: 64258, charCode: 64258, keyCode: 64258, which: 64258, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: ﬂ, code: Digit6, keyIdentifier: U+0036, keyCode: 54, charCode: 0, keyCode: 54, which: 54, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + 7:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: ‡, code: Digit7, keyIdentifier: U+0026, keyCode: 55, charCode: 0, keyCode: 55, which: 55, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: ‡, code: Digit7, keyIdentifier: , keyCode: 8225, charCode: 8225, keyCode: 8225, which: 8225, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: ‡, code: Digit7, keyIdentifier: U+0037, keyCode: 55, charCode: 0, keyCode: 55, which: 55, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + 8:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: °, code: Digit8, keyIdentifier: U+002A, keyCode: 56, charCode: 0, keyCode: 56, which: 56, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: °, code: Digit8, keyIdentifier: , keyCode: 176, charCode: 176, keyCode: 176, which: 176, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: °, code: Digit8, keyIdentifier: U+0038, keyCode: 56, charCode: 0, keyCode: 56, which: 56, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + 9:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: ·, code: Digit9, keyIdentifier: U+0028, keyCode: 57, charCode: 0, keyCode: 57, which: 57, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: ·, code: Digit9, keyIdentifier: , keyCode: 183, charCode: 183, keyCode: 183, which: 183, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: ·, code: Digit9, keyIdentifier: U+0039, keyCode: 57, charCode: 0, keyCode: 57, which: 57, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + -:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: —, code: Minus, keyIdentifier: U+005F, keyCode: 189, charCode: 0, keyCode: 189, which: 189, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: —, code: Minus, keyIdentifier: , keyCode: 8212, charCode: 8212, keyCode: 8212, which: 8212, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: —, code: Minus, keyIdentifier: U+002D, keyCode: 189, charCode: 0, keyCode: 189, which: 189, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + =:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: ±, code: Equal, keyIdentifier: U+002B, keyCode: 187, charCode: 0, keyCode: 187, which: 187, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: ±, code: Equal, keyIdentifier: , keyCode: 177, charCode: 177, keyCode: 177, which: 177, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: ±, code: Equal, keyIdentifier: U+003D, keyCode: 187, charCode: 0, keyCode: 187, which: 187, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + [:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: ”, code: BracketLeft, keyIdentifier: U+007B, keyCode: 219, charCode: 0, keyCode: 219, which: 219, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: ”, code: BracketLeft, keyIdentifier: , keyCode: 8221, charCode: 8221, keyCode: 8221, which: 8221, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: ”, code: BracketLeft, keyIdentifier: U+005B, keyCode: 219, charCode: 0, keyCode: 219, which: 219, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + ]:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: ’, code: BracketRight, keyIdentifier: U+007D, keyCode: 221, charCode: 0, keyCode: 221, which: 221, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: ’, code: BracketRight, keyIdentifier: , keyCode: 8217, charCode: 8217, keyCode: 8217, which: 8217, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: ’, code: BracketRight, keyIdentifier: U+005D, keyCode: 221, charCode: 0, keyCode: 221, which: 221, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + ;:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: Ú, code: Semicolon, keyIdentifier: U+003A, keyCode: 186, charCode: 0, keyCode: 186, which: 186, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: Ú, code: Semicolon, keyIdentifier: , keyCode: 218, charCode: 218, keyCode: 218, which: 218, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Ú, code: Semicolon, keyIdentifier: U+003B, keyCode: 186, charCode: 0, keyCode: 186, which: 186, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + ':
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: Æ, code: Quote, keyIdentifier: U+0022, keyCode: 222, charCode: 0, keyCode: 222, which: 222, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: Æ, code: Quote, keyIdentifier: , keyCode: 198, charCode: 198, keyCode: 198, which: 198, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Æ, code: Quote, keyIdentifier: U+0027, keyCode: 222, charCode: 0, keyCode: 222, which: 222, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + ,:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: ¯, code: Comma, keyIdentifier: U+003C, keyCode: 188, charCode: 0, keyCode: 188, which: 188, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: ¯, code: Comma, keyIdentifier: , keyCode: 175, charCode: 175, keyCode: 175, which: 175, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: ¯, code: Comma, keyIdentifier: U+002C, keyCode: 188, charCode: 0, keyCode: 188, which: 188, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + .:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: ˘, code: Period, keyIdentifier: U+003E, keyCode: 190, charCode: 0, keyCode: 190, which: 190, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: ˘, code: Period, keyIdentifier: , keyCode: 728, charCode: 728, keyCode: 728, which: 728, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: ˘, code: Period, keyIdentifier: U+002E, keyCode: 190, charCode: 0, keyCode: 190, which: 190, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+
+Test Option + Shift + /:
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 1, keyLocation: 1
+type: keydown, key: ¿, code: Slash, keyIdentifier: U+003F, keyCode: 191, charCode: 0, keyCode: 191, which: 191, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keypress, key: ¿, code: Slash, keyIdentifier: , keyCode: 191, charCode: 191, keyCode: 191, which: 191, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: ¿, code: Slash, keyIdentifier: U+002F, keyCode: 191, charCode: 0, keyCode: 191, which: 191, altKey: true, ctrlKey: false, metaKey: false, shiftKey: true, location: 0, keyLocation: 0
+type: keyup, key: Shift, code: ShiftLeft, keyIdentifier: Shift, keyCode: 16, charCode: 0, keyCode: 16, which: 16, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+

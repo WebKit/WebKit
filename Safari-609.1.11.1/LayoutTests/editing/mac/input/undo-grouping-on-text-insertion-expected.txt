@@ -1,0 +1,9 @@
+When inserting text with the undo insertion attribute, each blob of inserted text should create an undo group so that, sending an undo command will undo just that last text insertion.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS textArea.innerText is 'test1test2test3no1no2'
+PASS textArea.innerText is 'test1test2test3'
+PASS textArea.innerText is 'test1test2'
+PASS textArea.innerText is 'test1'
+

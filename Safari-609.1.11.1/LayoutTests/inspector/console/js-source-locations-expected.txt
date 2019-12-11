@@ -1,0 +1,19 @@
+CONSOLE MESSAGE: line 1: error script
+CONSOLE MESSAGE: line 1: warn script
+CONSOLE MESSAGE: line 5: error script
+CONSOLE MESSAGE: line 6: warn script
+CONSOLE MESSAGE: line 7: TypeError: undefined is not an object (evaluating '[].x.x')
+CONSOLE MESSAGE: line 9: warn 1
+CONSOLE MESSAGE: line 9: error 1
+CONSOLE MESSAGE: line 10: error 2
+Tests that JavaScript errors and warnings from inline script tags and external files are sent to the console with correct line and column information.
+
+{"source":"console-api","level":"error","text":"error script","location":"errors.js:1:14","parameters":[{"type":"string"}]}
+{"source":"console-api","level":"warning","text":"warn script","location":"errors.js:1:44","parameters":[{"type":"string"}]}
+{"source":"console-api","level":"error","text":"error script","location":"errors.js:5:18","parameters":[{"type":"string"}]}
+{"source":"console-api","level":"warning","text":"warn script","location":"errors.js:6:17","parameters":[{"type":"string"}]}
+{"source":"javascript","level":"error","text":"TypeError: undefined is not an object (evaluating '[].x.x')","location":"js-source-locations.html:7:18"}
+{"source":"console-api","level":"warning","text":"warn 1","location":"js-source-locations.html:9:13","parameters":[{"type":"string"}]}
+{"source":"console-api","level":"error","text":"error 1","location":"js-source-locations.html:9:38","parameters":[{"type":"string"}]}
+{"source":"console-api","level":"error","text":"error 2","location":"js-source-locations.html:10:17","parameters":[{"type":"string"}]}
+

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<head>
+    <link rel="stylesheet" href="resources/blending-style.css">
+    <script>
+        if (window.testRunner)
+            window.testRunner.dumpAsText(true);
+    </script>
+</head>
+<!-- This file should contain two divs with 3 background layers. Test background blend mode differences when only one layer blends differently. -->
+<body>
+    <div class="green margin10 bigbox bg-full ducky-and-gradient" style="background-blend-mode: multiply, difference, normal;"></div>
+    <div class="green margin10 bigbox bg-full ducky-and-gradient" style="background-blend-mode: difference, difference, normal;"></div>
+</body>

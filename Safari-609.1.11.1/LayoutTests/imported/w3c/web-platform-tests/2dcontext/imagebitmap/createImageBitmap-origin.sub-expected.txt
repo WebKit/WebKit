@@ -1,0 +1,16 @@
+Blocked access to external URL http://www1.localhost:8800/images/red.png
+Blocked access to external URL http://www1.localhost:8800/images/red.png
+Blocked access to external URL http://www1.localhost:8800/media/movie_300.mp4
+Blocked access to external URL http://www1.localhost:8800/media/movie_300.mp4
+Blocked access to external URL http://www1.localhost:8800/common/redirect.py?location=http://localhost:8800/media/movie_300.mp4
+Blocked access to external URL http://www1.localhost:8800/images/red.png
+Blocked access to external URL http://www1.localhost:8800/images/red.png
+
+FAIL cross-origin HTMLImageElement promise_test: Unhandled rejection with value: object "[object Event]"
+FAIL cross-origin SVGImageElement promise_test: Unhandled rejection with value: object "[object Event]"
+FAIL cross-origin HTMLVideoElement promise_test: Unhandled rejection with value: object "[object Event]"
+FAIL redirected to cross-origin HTMLVideoElement promise_test: Unhandled rejection with value: object "[object Event]"
+FAIL redirected to same-origin HTMLVideoElement promise_test: Unhandled rejection with value: object "[object Event]"
+FAIL unclean HTMLCanvasElement promise_test: Unhandled rejection with value: object "[object Event]"
+FAIL unclean ImageBitmap promise_test: Unhandled rejection with value: object "[object Event]"
+

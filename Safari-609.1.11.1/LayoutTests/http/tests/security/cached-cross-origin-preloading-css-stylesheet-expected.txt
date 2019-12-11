@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+
+PASS: did not load http://localhost:8000/security/resources/allow-if-origin.php?delay=1000&allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss1.css&contentType=text/css&allowCredentials (cors mode)
+PASS: loaded successfuly http://localhost:8000/security/resources/allow-if-origin.php?delay=1000&allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=xorigincss2.css&contentType=text/css&allowCredentials (cors mode)
+PASS: loaded successfuly http://localhost:8000/security/resources/allow-if-origin.php?delay=1000&allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss1.css&contentType=text/css&allowCredentials (no-cors mode)
+PASS: loaded successfuly http://localhost:8080/security/resources/allow-if-origin.php?delay=1000&allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=xorigincss1.css&contentType=text/css&allowCredentials (cors mode)
+PASS: loaded successfuly http://localhost:8080/security/resources/allow-if-origin.php?delay=1000&allowCache&origin=http%3A%2F%2Flocalhost%3A8080&name=xorigincss2.css&contentType=text/css&allowCredentials (no-cors mode)
+DONE

@@ -1,0 +1,11 @@
+<html>
+<script>
+    if (window.testRunner)
+        testRunner.dumpResourceLoadCallbacks();
+</script>
+<body>
+We should not attempt to load the image URL below:
+<br>
+<img src="x-apple-ql-id://nonexistent.jpg">
+</body>
+</html>

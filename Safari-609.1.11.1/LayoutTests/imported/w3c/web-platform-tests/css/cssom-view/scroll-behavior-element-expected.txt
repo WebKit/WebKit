@@ -1,0 +1,36 @@
+
+PASS Element with auto scroll-behavior ; scroll() with default behavior 
+PASS Element with auto scroll-behavior ; scroll() with auto behavior 
+PASS Element with auto scroll-behavior ; scroll() with instant behavior 
+FAIL Element with auto scroll-behavior ; scroll() with smooth behavior assert_less_than: Should not set scrollLeft immediately expected a number less than 500 but got 500
+FAIL Element with smooth scroll-behavior ; scroll() with default behavior assert_less_than: Should not set scrollLeft immediately expected a number less than 500 but got 500
+FAIL Element with smooth scroll-behavior ; scroll() with auto behavior assert_less_than: Should not set scrollLeft immediately expected a number less than 500 but got 500
+PASS Element with smooth scroll-behavior ; scroll() with instant behavior 
+FAIL Element with smooth scroll-behavior ; scroll() with smooth behavior assert_less_than: Should not set scrollLeft immediately expected a number less than 500 but got 500
+PASS Element with auto scroll-behavior ; scrollTo() with default behavior 
+PASS Element with auto scroll-behavior ; scrollTo() with auto behavior 
+PASS Element with auto scroll-behavior ; scrollTo() with instant behavior 
+FAIL Element with auto scroll-behavior ; scrollTo() with smooth behavior assert_less_than: Should not set scrollLeft immediately expected a number less than 500 but got 500
+FAIL Element with smooth scroll-behavior ; scrollTo() with default behavior assert_less_than: Should not set scrollLeft immediately expected a number less than 500 but got 500
+FAIL Element with smooth scroll-behavior ; scrollTo() with auto behavior assert_less_than: Should not set scrollLeft immediately expected a number less than 500 but got 500
+PASS Element with smooth scroll-behavior ; scrollTo() with instant behavior 
+FAIL Element with smooth scroll-behavior ; scrollTo() with smooth behavior assert_less_than: Should not set scrollLeft immediately expected a number less than 500 but got 500
+PASS Element with auto scroll-behavior ; scrollBy() with default behavior 
+PASS Element with auto scroll-behavior ; scrollBy() with auto behavior 
+PASS Element with auto scroll-behavior ; scrollBy() with instant behavior 
+FAIL Element with auto scroll-behavior ; scrollBy() with smooth behavior assert_less_than: Should not set scrollLeft immediately expected a number less than 500 but got 500
+FAIL Element with smooth scroll-behavior ; scrollBy() with default behavior assert_less_than: Should not set scrollLeft immediately expected a number less than 500 but got 500
+FAIL Element with smooth scroll-behavior ; scrollBy() with auto behavior assert_less_than: Should not set scrollLeft immediately expected a number less than 500 but got 500
+PASS Element with smooth scroll-behavior ; scrollBy() with instant behavior 
+FAIL Element with smooth scroll-behavior ; scrollBy() with smooth behavior assert_less_than: Should not set scrollLeft immediately expected a number less than 500 but got 500
+PASS Element with auto scroll-behavior ; scrollIntoView() with default behavior 
+PASS Element with auto scroll-behavior ; scrollIntoView() with auto behavior 
+PASS Element with auto scroll-behavior ; scrollIntoView() with instant behavior 
+FAIL Element with auto scroll-behavior ; scrollIntoView() with smooth behavior assert_less_than: Should not set scrollLeft immediately expected a number less than 500 but got 500
+FAIL Element with smooth scroll-behavior ; scrollIntoView() with default behavior assert_less_than: Should not set scrollLeft immediately expected a number less than 500 but got 500
+FAIL Element with smooth scroll-behavior ; scrollIntoView() with auto behavior assert_less_than: Should not set scrollLeft immediately expected a number less than 500 but got 500
+PASS Element with smooth scroll-behavior ; scrollIntoView() with instant behavior 
+FAIL Element with smooth scroll-behavior ; scrollIntoView() with smooth behavior assert_less_than: Should not set scrollLeft immediately expected a number less than 500 but got 500
+PASS Aborting an ongoing smooth scrolling on an element with another smooth scrolling 
+PASS Aborting an ongoing smooth scrolling on an element with an instant scrolling 
+

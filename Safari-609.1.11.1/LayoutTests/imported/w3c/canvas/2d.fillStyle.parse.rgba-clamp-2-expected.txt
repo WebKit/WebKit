@@ -1,0 +1,6 @@
+2d.fillStyle.parse.rgba-clamp-2
+Spec references: 2d.colours.parse
+Actual output:
+Expected output:
+
+Passed

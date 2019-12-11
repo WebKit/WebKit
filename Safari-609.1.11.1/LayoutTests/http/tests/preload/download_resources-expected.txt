@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 13: <link rel=preload> must have a valid `as` value
+CONSOLE MESSAGE: line 14: <link rel=preload> must have a valid `as` value
+This test makes sure that link preload preloads resources
+
+PASS Makes sure that preloaded resources are downloaded 
+

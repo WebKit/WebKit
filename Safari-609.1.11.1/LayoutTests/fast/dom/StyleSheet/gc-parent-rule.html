@@ -1,0 +1,39 @@
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body onload="test()">
+<script>
+window.jsTestIsAsync = true;
+description("Test that CSS rules don't lose custom properties on GC when only reachable through child rules.");
+
+function createCSSStyleSheet()
+{
+    const style = document.createElement("style");
+    document.head.appendChild(style);
+    const sheet = style.sheet;
+    document.head.removeChild(style);
+    return sheet;
+}
+
+function test()
+{
+    sheet = createCSSStyleSheet();
+    shouldBe("sheet.__proto__", "CSSStyleSheet.prototype");
+    sheet.insertRule("@media all { div { color:black } }", 0);
+    rule = sheet.rules[0].cssRules[0];
+    rule.parentRule.foo = "bar";
+    sheet = null;
+
+    gc();
+    setTimeout(function() {
+        gc();
+        shouldBe('rule.parentRule.foo', '"bar"');
+        finishJSTest();
+    }, 0);
+}
+</script>
+<foo id="mystyle" style="display:none">.div { color: white; }</foo>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

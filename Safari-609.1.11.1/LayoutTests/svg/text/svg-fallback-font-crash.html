@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: 'Litherum';
+    src: url("./resources/Litherum.svg") format(svg)
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+This test makes sure that there is no crash if a character is rendered with a SVG fallback font. The test is successful if there is no crash.
+<div style="font-family: 'Helvetica' 'Litherum';">This is a foreign character. &#x20001; That was a foreign character.</div>
+</body>
+</html>

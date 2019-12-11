@@ -1,0 +1,25 @@
+<html>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setXSSAuditorEnabled(true);
+}
+
+function runtest()
+{
+    frames[0].document.getElementById("plg").foobar; // Force plug-in load.
+
+    location = "data:text/html,PASS if didn't crash." +
+        "<script>" + 
+        "if (window.testRunner)" +
+        "   testRunner.notifyDone();" +
+        "</scr" + "ipt>";
+}
+
+
+</script>
+<body onload="runtest()">
+<iframe id="frame" src="resources/js-from-destroy-frame.html"></iframe>
+</body>
+</html>

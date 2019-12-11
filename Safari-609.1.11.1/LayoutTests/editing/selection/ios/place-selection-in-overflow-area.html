@@ -1,0 +1,88 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
+    <title></title>
+    <style>
+        #editable {
+            width: 300px;
+            height: 300px;
+            border: 1px solid black;
+            font-family: monospace;
+            line-height: 1.5em;
+        }
+        
+        .output {
+            margin-left: 60px;
+        }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function selectionToString(container)
+        {
+            const selection = getSelection();
+            if (!selection.rangeCount)
+                return "(no selection)";
+
+            const range = selection.getRangeAt(0);
+            const nodeIndex = Array.prototype.indexOf.call(container.childNodes, range.startContainer);
+
+            return `(node at ${nodeIndex}#${range.startOffset}, ${range.endContainer}#${range.endOffset})`;
+        }
+
+        async function runTest()
+        {
+            let container = document.getElementById('editable');
+            await UIHelper.activateAndWaitForInputSessionAt(25, 25);
+            document.querySelector("#selection-before").textContent = selectionToString(container);
+
+            await UIHelper.tapAt(25, 400);
+            document.querySelector("#selection-after").textContent = selectionToString(container);
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        
+        window.addEventListener('load', runTest, false);
+    </script>
+</head>
+<body>
+    <div id="editable" contenteditable>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+        line<br>
+    </div>
+
+<div class="output">Selection before tap: <span id="selection-before"></span></div>
+<div class="output">Selection after tap: <span id="selection-after"></span></div>
+
+</body>
+</html>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2016 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 16 16">
+    <circle fill="rgb(224, 166, 133)" cx="8" cy="8" r="7.5" stroke="rgb(179, 114, 76)"/>
+    <path d="M 3.00628662 11.0028076 L 3 5 L 8 3 L 13 5.00280762 L 13 11.0028076 L 8 13 L 3.00628662 11.0028076 Z" stroke="rgb(179, 114, 76)"/>
+    <path d="M 3.00628662 5.00280762 L 8 7 L 8 13 L 3.00628662 11.0028076 L 3.00628662 5.00280762 Z M 8 7 L 8 13 L 13 11.0028076 L 13 5.00280762 L 8 7 Z M 8 3 L 13 5 L 8 7 L 3 5 L 8 3 Z" fill="white" stroke="rgb(179, 114, 76)" stroke-width="0.5" stroke-linejoin="bevel"/>
+</svg>

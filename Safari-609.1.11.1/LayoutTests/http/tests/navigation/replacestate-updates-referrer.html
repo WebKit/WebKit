@@ -1,0 +1,13 @@
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+
+onload = function() {
+  history.replaceState(null, null, "/foo");
+
+  sessionStorage.expectedReferrer = location.href;
+  location = "/navigation/resources/check-referrer.html";
+}
+</script>

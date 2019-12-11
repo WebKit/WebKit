@@ -1,0 +1,3 @@
+
+FAIL Base URL in workers: importScripts assert_equals: expected "gamma" but got "beta"
+

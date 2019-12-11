@@ -1,0 +1,32 @@
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script>
+description("Tests that speculative validation does not break redirects.");
+jsTestIsAsync = true;
+
+state = "warmup";
+
+function frameLoaded()
+{
+    if (state == "warmup") {
+        state = "flushingMetadata";
+        document.getElementById("testFrame").src = "about:blank";
+        return;
+    }
+    if (state == "flushingMetadata") {
+        // Navigate frame to its original location again. This time it should speculatively
+        // validate subresources as we have subresource loads metadata in the disk cache.
+        state = "speculativeRevalidation";
+        document.getElementById("testFrame").src = "resources/cacheable-redirect-frame.php";
+        return;
+    }
+    if (state == "speculativeRevalidation") {
+        testDiv = frames[0].document.getElementById("testDiv");
+        shouldBeEqualToString("frames[0].getComputedStyle(testDiv).color", "rgb(0, 128, 0)");
+        finishJSTest();
+        return;
+    }
+}
+
+</script>
+<iframe id="testFrame" src="resources/cacheable-redirect-frame.php" onload="frameLoaded()"></iframe>
+<script src="/js-test-resources/js-test-post.js"></script>

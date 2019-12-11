@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="referrer" content="origin">
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows();
+}
+
+function receiveMessage(messageEvent) {
+    if (messageEvent.data === "done") {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    } else if (messageEvent.data === "ready")
+        document.getElementById("target").contentWindow.postMessage("new-window", "*");
+    else
+        document.getElementById("log").innerHTML += messageEvent.data + "<br>";
+}
+
+window.addEventListener("message", receiveMessage, false);
+</script>
+</head>
+<body>
+<p>This test embeds a subframe that opens a new window. It passes, if the referrer is the origin only.</p>
+<div id="log"></div>
+<iframe id="target" src="resources/nested-referrer-policy-postmessage.html"></iframe>
+</body>
+</html>

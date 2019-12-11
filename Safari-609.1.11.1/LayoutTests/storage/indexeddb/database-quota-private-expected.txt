@@ -1,0 +1,36 @@
+Tests IndexedDB's quota enforcing mechanism.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.open('database-quota')
+db = event.target.result
+db.setVersion('new version')
+setVersionSuccess():
+trans = event.target.result
+PASS trans !== null is true
+Deleted all object stores.
+PASS db.version is "new version"
+PASS db.name is "database-quota"
+PASS db.objectStoreNames is []
+PASS db.objectStoreNames.length is 0
+PASS db.objectStoreNames.contains('') is false
+db.createObjectStore("test123")
+PASS db.objectStoreNames is ['test123']
+PASS db.objectStoreNames.length is 1
+PASS db.objectStoreNames.contains('') is false
+PASS db.objectStoreNames.contains('test456') is false
+PASS db.objectStoreNames.contains('test123') is true
+trans = db.transaction(['test123'], 'readwrite')
+Creating 'data' which contains 64K of data
+PASS data.length is 65536
+store = trans.objectStore('test123')
+Error function called: (13) The transaction was aborted, so the request cannot be fulfilled.
+event.preventDefault()
+PASS Adding data failed due to quota error. Data added was about 5 MB
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

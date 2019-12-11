@@ -1,0 +1,34 @@
+<html>
+<head>
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <script>
+        function loaded()
+        {
+            document.getElementsByTagName('h4')[0].innerHTML = document.domain;
+        }
+
+        function startTest(event)
+        {
+            var button = document.getElementById("button");
+            UIHelper.activateAt(event.data.x + button.offsetLeft + 2, event.data.y + button.offsetTop + 2).catch(function(reason) {
+                parent.postMessage("Failed to emulate user interaction: " + reason, "*");
+            });
+        }
+
+        function performTest()
+        {
+            try {
+                parent.location = "http://localhost:8000/security/frameNavigation/resources/navigation-changed-iframe.html";
+            } catch (e) {
+                parent.postMessage("cannot navigate", "*");
+            }
+        }
+
+        window.addEventListener("message", startTest, false);
+    </script>
+</head>
+<body onload="loaded();">
+    <h4>DOMAIN</h4>
+    <button id="button" onclick="performTest();">Perform Test</button>
+</body>
+</html>

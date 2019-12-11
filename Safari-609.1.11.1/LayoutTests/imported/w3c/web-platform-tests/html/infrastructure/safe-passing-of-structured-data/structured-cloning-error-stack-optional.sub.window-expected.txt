@@ -1,0 +1,16 @@
+Blocked access to external URL http://www1.127.0.0.1:8800/html/infrastructure/safe-passing-of-structured-data/resources/echo-iframe.html
+Blocked access to external URL http://www1.127.0.0.1:8800/html/infrastructure/safe-passing-of-structured-data/resources/echo-iframe.html
+Blocked access to external URL http://www1.127.0.0.1:8800/html/infrastructure/safe-passing-of-structured-data/resources/echo-iframe.html
+Blocked access to external URL http://www1.127.0.0.1:8800/html/infrastructure/safe-passing-of-structured-data/resources/echo-iframe.html
+
+FAIL page-created Error (worker) The object can not be cloned.
+FAIL page-created Error (cross-site iframe) The object can not be cloned.
+PASS page-created DOMException (worker) 
+PASS page-created DOMException (cross-site iframe) 
+FAIL JS-engine-created TypeError (worker) The object can not be cloned.
+FAIL JS-engine-created TypeError (cross-site iframe) The object can not be cloned.
+FAIL web API-created TypeError (worker) The object can not be cloned.
+FAIL web API-created TypeError (cross-site iframe) The object can not be cloned.
+FAIL web API-created DOMException (worker) The object can not be cloned.
+FAIL web API-created DOMException (cross-site iframe) The object can not be cloned.
+

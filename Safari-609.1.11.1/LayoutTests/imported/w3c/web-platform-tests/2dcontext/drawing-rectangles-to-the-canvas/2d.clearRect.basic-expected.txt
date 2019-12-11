@@ -1,0 +1,8 @@
+2d.clearRect.basic
+clearRect clears to transparent black
+Actual output:
+Expected output:
+
+
+PASS clearRect clears to transparent black 
+

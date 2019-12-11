@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    div {
+        line-height: 30px;
+        font-size: 14px;
+    }
+    button {
+        height: 30px;
+    }
+</style>
+</script>
+</head>
+<body>
+    <p>Bug: webkit.org/b/111974 - vertical-align only applies to inline-level elements and table-cells. The text below should be aligned horiontally.
+    <div>
+        <button>All </button> This <span>text</span> is <a href="#">aligned</a>.
+    </div>
+</body>
+</html>
+
+

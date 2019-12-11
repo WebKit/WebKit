@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Web Audio Sample</title>
+    <script>
+        var context = new webkitAudioContext();
+        var gainNode = context.createGainNode();
+        gainNode.connect(context.destination);
+        gainNode.gain.value = 2;
+
+        var frequency = 1000;
+        var duration = 1000;
+    
+        function playNormal() {
+            var oscillator = context.createOscillator();
+            oscillator.frequency.value = frequency;
+            oscillator.type = 0;
+            oscillator.connect(context.destination);
+            oscillator.noteOn(0);
+            setTimeout(function(){ oscillator.disconnect(); }, duration);
+        }
+        
+        function playLoud() {
+            var oscillator = context.createOscillator();
+            oscillator.frequency.value = frequency;
+            oscillator.type = 0;
+            oscillator.connect(gainNode);
+            oscillator.noteOn(0);
+            setTimeout(function(){ oscillator.disconnect(); }, duration);
+        }
+    </script>
+</head>
+<body>
+    <p>
+        This tests that output audio is clamped to 0db maximum.  Press each button below in turn.  The apparent volume for both should be equal, even though the second button plays with 2x gain of the first. The resulting waveforms are not equal, however, as the second button audio is clipped to a square wave shape.
+    </p>
+    <button onclick="playNormal()">normal volume</button><button onclick="playLoud()">double volume</button>
+</body>
+</html>

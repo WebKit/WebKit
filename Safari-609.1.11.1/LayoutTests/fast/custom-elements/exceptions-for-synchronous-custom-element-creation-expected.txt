@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 18: TypeError: The result of constructing a custom element must be a HTMLElement
+CONSOLE MESSAGE: line 28: NotSupportedError: A newly constructed custom element must not have attributes
+CONSOLE MESSAGE: line 38: NotSupportedError: A newly constructed custom element must not have child nodes
+CONSOLE MESSAGE: line 48: NotSupportedError: A newly constructed custom element must not have a parent node
+CONSOLE MESSAGE: line 59: NotSupportedError: A newly constructed custom element belongs to a wrong document
+CONSOLE MESSAGE: line 69: NotSupportedError: A newly constructed custom element has incorrect local name
+

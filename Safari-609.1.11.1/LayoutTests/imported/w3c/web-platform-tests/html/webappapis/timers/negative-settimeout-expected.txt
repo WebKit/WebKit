@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 3082: Error: assert_unreached: Reached unreachable code
+
+PASS Negative timeout in setTimeout 
+

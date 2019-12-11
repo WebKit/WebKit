@@ -1,0 +1,23 @@
+Tests that the input type can be set to 'file' after having been set to another type
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS input.type is "text"
+PASS input.getAttribute('type') is null
+input.setAttribute('type', 'radio')
+PASS input.type is "radio"
+PASS input.getAttribute('type') is "radio"
+input.setAttribute('type', 'file')
+PASS input.type is "file"
+PASS input.getAttribute('type') is "file"
+input.type = 'radio'
+PASS input.type is "radio"
+PASS input.getAttribute('type') is "radio"
+input.type = 'file'
+PASS input.type is "file"
+PASS input.getAttribute('type') is "file"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

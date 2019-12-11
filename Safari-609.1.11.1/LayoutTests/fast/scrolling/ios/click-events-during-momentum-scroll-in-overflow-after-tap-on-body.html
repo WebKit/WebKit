@@ -1,0 +1,87 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true internal:AsyncOverflowScrollingEnabled=true internal:AsyncFrameScrollingEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+
+#scroller {
+    width: 100%;
+    height: 50%;
+    overflow: scroll;
+    border: 4px solid black;
+    box-sizing: border-box;
+}
+
+#content {
+    width: 100px;
+    height: 5000px;
+    box-sizing: border-box;
+    padding: 20px;
+    background: linear-gradient(to bottom, red 0%, green 50%, blue 100%);
+}
+
+#target {
+    width: 100%;
+    height: 50px;
+    margin-top: 1em;
+}
+</style>
+<body onload="runTest()">
+    <div id="scroller">
+        <div id="content"></div>
+    </div>
+    <div id="target"></div>
+    <p id="description"></p>
+    <p id="console"></p>
+</body>
+<script>
+jsTestIsAsync = true;
+
+let reachedMinimumScrollPosition = false;
+const minimumExpectedScrollTop = 400;
+const scroller = document.getElementById("scroller");
+
+scroller.addEventListener("scroll", observeScrollEvent);
+document.body.addEventListener("click", () => {
+    testPassed("Observed click event.");
+    noteTestProgress();
+}, { once: true });
+
+function noteTestProgress() {
+    if (!window.progress)
+        progress = 0;
+    if (++progress == 3)
+        finishJSTest();
+}
+
+async function observeScrollEvent() {
+    if (!window.testRunner || scroller.scrollTop < minimumExpectedScrollTop || reachedMinimumScrollPosition)
+        return;
+
+    reachedMinimumScrollPosition = true;
+    testPassed(`scroller.scrollTop passed ${minimumExpectedScrollTop}`);
+    removeEventListener("scroll", observeScrollEvent);
+    await UIHelper.activateElement(document.getElementById("target"));
+    noteTestProgress();
+}
+
+async function runTest()
+{
+    description("Verifies that tapping outside of a subscrollable region during momentum scrolling dispatches click events. To run the test manually, swipe up on the black box to scroll it; while scrolling, tap outside of the scrollable area. The page should observe click events.");
+
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.dragFromPointToPoint(160, 200, 160, 50, 0.1);
+    noteTestProgress();
+}
+</script>
+</html>

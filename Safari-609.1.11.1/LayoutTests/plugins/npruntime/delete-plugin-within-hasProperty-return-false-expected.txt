@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 13: Uncaught ReferenceError: NPObject deleted
+

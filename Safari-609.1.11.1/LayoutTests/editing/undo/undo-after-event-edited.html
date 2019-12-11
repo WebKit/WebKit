@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+* { display:block; }
+.collapse { visibility:collapse; }
+</style>
+<script>
+
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    window.testRunner.waitUntilDone();
+}
+
+document.designMode = "on";
+var scriptElements = document.getElementsByTagName("script");
+scriptElements[0].parentNode.removeChild(scriptElements[0]);
+var eventHandlerActive = false;
+
+document.addEventListener("input", function () {
+    if (eventHandlerActive)
+        return;
+    eventHandlerActive = true;
+    var srcElement = event.srcElement;
+    document.execCommand('InsertText',false,'dummy text');
+    srcElement.textContent = "Pass. Test didn't crash.";
+    eventHandlerActive = false;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, true);
+
+document.addEventListener("DOMCharacterDataModified", function () {
+    document.execCommand('InsertParagraph',false,false);
+}, false);
+
+window.addEventListener("load", function() {
+  document.execCommand("SelectAll", false)
+  var documentFragment = getSelection().getRangeAt(0).extractContents();
+  document.execCommand('Undo', false);
+});
+
+</script>
+</head>
+<body>
+<table class="collapse">
+<caption>
+original text
+</caption>
+</table>
+</body>
+</html>

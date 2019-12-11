@@ -1,0 +1,6 @@
+font-weight-download-2.html - didFinishLoading
+Ahem_CJK.ttf - willSendRequest <NSURLRequest URL Ahem_CJK.ttf, main document URL font-weight-download-2.html, http method GET> redirectResponse (null)
+Ahem_CJK.ttf - didReceiveResponse <NSURLResponse Ahem_CJK.ttf, http status code 0>
+Ahem_CJK.ttf - didFinishLoading
+This test makes sure that unnecessary fonts aren't downloaded. The test fails if Ahem.otf is downloaded.
+横

@@ -1,0 +1,70 @@
+<!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script src=media-controls.js></script>
+        <script>
+
+            function fullscreenchange()
+            {
+                if (!document.webkitIsFullScreen)
+                    endfullscreen();
+            }
+
+            function playing()
+            {
+                consoleWrite("<br>** Entered fullscreen");
+                testExpected("video.webkitDisplayingFullscreen", true);
+                run("video.webkitExitFullScreen()");
+            }
+
+            function endfullscreen()
+            {
+                consoleWrite("<br>** Exited fullscreen");
+                endTest();
+            }
+
+            function canplaythrough()
+            {
+                testExpected("video.webkitSupportsFullscreen", true);
+                testExpected("video.webkitDisplayingFullscreen", false);
+
+                consoleWrite("<br>** Clicking \'play\' button...");
+
+                try {
+                    clickPlayButton(video);
+                } catch (exception) {
+                    failTest(exception.description);
+                    return;
+                }
+            }
+
+
+            function start()
+            {
+                if (!window.internals) {
+                    failTest('This test requires window.internals.');
+                    return;
+                }
+
+                video = document.getElementsByTagName('video')[0];
+                waitForEvent("canplaythrough", canplaythrough);
+                waitForEvent('playing', playing);
+
+                video.addEventListener('webkitendfullscreen', endfullscreen, true);
+                video.addEventListener('webkitfullscreenchange', fullscreenchange, true);
+
+                video.src = findMediaFile("video", "content/test");
+
+                run("internals.settings.setAllowsInlineMediaPlayback(false)");
+                consoleWrite("");
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <video controls></video>
+        <p>Test play() when &lt;video&gt; playback requires fullscreen.</p>
+    </body>
+</html>

@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 26: <link rel=preload> must have a valid `as` value
+CONSOLE MESSAGE: line 28: <link rel=preload> must have a valid `as` value
+This test makes sure that link preload triggers error events for non-existing resources.
+
+PASS Makes sure that preloaded resources trigger onerror 
+

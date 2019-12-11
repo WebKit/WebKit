@@ -1,0 +1,10 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE 
+Does the event have an inputType method? YES
+Does the event have InputEvent's prototype? YES
+What is the event's id? editable
+Does the event bubble? YES
+Is the event cancelable? NO
+Is the event composed? YES
+

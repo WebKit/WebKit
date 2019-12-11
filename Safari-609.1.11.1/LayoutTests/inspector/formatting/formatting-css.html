@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/formatting-utilities.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("CSSFormatter");
+
+    addFormattingTests(suite, "text/css", [
+        "resources/css-tests/basic.css",
+        "resources/css-tests/comment.css",
+        "resources/css-tests/gradient.css",
+        "resources/css-tests/keyframes.css",
+        "resources/css-tests/media-query.css",
+        "resources/css-tests/selectors.css",
+        "resources/css-tests/wrapping.css",
+    ]);
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test CSS formatting.</p>
+</body>
+</html>

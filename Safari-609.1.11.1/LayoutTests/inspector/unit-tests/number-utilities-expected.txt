@@ -1,0 +1,89 @@
+
+== Running test suite: NumberUtilities
+-- Running test case: Number.constrain
+PASS: constrain of a value between min and max does not change
+PASS: constrain of a value between min and max does not change
+PASS: constrain of a value between min and max does not change
+PASS: constrain of a value between min and max does not change
+PASS: constrain of a value below min becomes min
+PASS: constrain of a value below min becomes min
+PASS: constrain of a value below min becomes min
+PASS: constrain of a value above max becomes max
+PASS: constrain of a value above max becomes max
+PASS: constrain of a value above max becomes max
+PASS: constrain of NaN becomes min
+
+-- Running test case: Number.secondsToString
+PASS: normal resolution of 0ms should be ms with no decimals
+PASS: normal resolution of sub 1ms should be ms
+PASS: normal resolution of sub 10ms should be ms
+PASS: normal resolution of sub 100ms should be ms
+PASS: normal resolution of greater than 100ms but sub 1s should be ms
+PASS: normal resolution of greater than 1s but sub 1min should be seconds
+PASS: normal resolution of greater than 1s but sub 1min should be seconds
+PASS: normal resolution of greater than 1min but sub 1hr should be minutes
+PASS: normal resolution of greater than 1min but sub 1hr should be minutes
+PASS: normal resolution of greater than 1hr but sub 1 day should be hrs
+PASS: normal resolution of greater than 1 day should be days
+PASS: normal resolution of greater than 1 day should be days
+PASS: normal resolution of super small value should be ms with no decimals
+PASS: high resolution of 0ms should be ms with no decimals
+PASS: high resolution of sub 1ms should be ms with decimals
+PASS: high resolution of sub 10ms should be ms with decimals
+PASS: high resolution of sub 100ms should be ms with decimals
+PASS: high resolution of greater than 100ms but sub 1s should be ms with decimals
+PASS: high resolution of greater than 1s should be seconds with decimals
+PASS: high resolution of greater than 1s should be seconds with decimals
+PASS: high resolution of greater than 1s should be seconds with decimals
+PASS: high resolution greater than 1s should be seconds with decimals
+PASS: high resolution of super small value should be ms with no decimals
+
+-- Running test case: Number.bytesToString
+PASS: normal resolution of sub 1k should be bytes
+PASS: normal resolution of sub 10k should be kilobytes
+PASS: normal resolution of sub 10k should be kilobytes
+PASS: normal resolution of sub 10mb should be megabytes
+PASS: normal resolution of greater than 10mb should be megabytes
+PASS: high resolution of sub 1k should be bytes
+PASS: high resolution of sub 10k should be kilobytes
+PASS: high resolution of sub 10k should be kilobytes
+PASS: high resolution of sub 10mb should be megabytes
+PASS: high resolution of greater than 10mb should be megabytes
+
+-- Running test case: Number.percentageString
+PASS: precision should default to 1 if unspecified
+
+-- Running test case: Number.zeroPad
+PASS: padding of 0 should add no zeros
+PASS: padding of 1 with one digit should add no zeros
+PASS: padding of 2 with one digit should add one zero
+PASS: padding of 1 with two digits should add no zeros
+PASS: padding of 2 with two digits should add no zeros
+PASS: padding of 3 with two digits should add one zero
+PASS: padding of 4 with two digits should add two zeros
+PASS: padding of 2 with one decimal should add no zeros
+PASS: padding of 3 with one decimal should add no zeros
+PASS: padding of 4 with one decimal should add one zero
+
+-- Running test case: Number.countDigits
+PASS: 0 should have 1 digit
+PASS: -0 should have 1 digit
+PASS: 10 should have 2 digits
+PASS: -10 should have 2 digits
+PASS: 100 should have 3 digits
+PASS: -100 should have 3 digits
+PASS: 1000 should have 4 digits
+PASS: -1000 should have 4 digits
+PASS: 10000 should have 5 digits
+PASS: -10000 should have 5 digits
+PASS: 100000 should have 6 digits
+PASS: -100000 should have 6 digits
+PASS: 1000000 should have 7 digits
+PASS: -1000000 should have 7 digits
+PASS: 10000000 should have 8 digits
+PASS: -10000000 should have 8 digits
+PASS: 100000000 should have 9 digits
+PASS: -100000000 should have 9 digits
+PASS: 1000000000 should have 10 digits
+PASS: -1000000000 should have 10 digits
+

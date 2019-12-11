@@ -1,0 +1,9 @@
+When prompted, accept to share your video stream.
+
+Description
+
+This test checks that MediaStream.getTrackById behaves as expected
+
+
+PASS Tests that MediaStream.getTrackById works as expected 
+

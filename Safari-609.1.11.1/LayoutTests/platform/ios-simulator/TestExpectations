@@ -1,0 +1,135 @@
+# These are the layout test expectations for Apple's iOS simulator port of WebKit (both WebKit1 and WebKit2).
+#
+# See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
+#
+
+accessibility/insert-newline.html [ Pass ]
+accessibility/misspelling-range.html [ Pass ]
+css3/font-variant-small-caps-synthesis-coverage.html [ ImageOnlyFailure ]
+fast/frames/sandboxed-iframe-close-top-noclose.html [ Failure ]
+fast/multicol/flexbox-rows.html [ Skip ]
+workers/wasm-mem-post-message.html [ Failure ]
+
+fast/forms/input-text-word-wrap.html [ Skip ]
+fast/forms/search-vertical-alignment.html [ Skip ]
+fast/forms/searchfield-heights.html [ Skip ]
+fast/forms/visual-hebrew-text-field.html [ Skip ]
+
+# The MediaSource API is unsupported on iOS simulator.
+fast/media/ios/ipad/enable-MediaSource-API-in-modern-compatibility-mode.html [ Skip ]
+
+# -webkit-flex off-by-one px
+webkit.org/b/126898 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
+
+fast/block/positioning/rtl-fixed-positioning.html [ Failure ]
+fast/canvas/canvas-blending-global-alpha.html [ Failure ]
+fast/dom/Window/open-invalid-url.html [ Failure ]
+fast/events/before-input-delete-empty-list-target-ranges.html [ Failure ]
+fast/events/before-input-events-prevent-insert-composition.html [ Failure ]
+fast/events/before-input-events-prevent-recomposition.html [ Failure ]
+fast/events/document-elementFromPoint.html [ Failure ]
+fast/events/input-events-forecolor-data.html [ Failure ]
+fast/events/input-events-ime-composition.html [ Failure ]
+fast/events/input-events-selection-forecolor-data.html [ Failure ]
+fast/events/input-events-spell-checking-datatransfer.html [ Failure ]
+fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
+fast/events/fire-scroll-event.html [ Failure ]
+
+media/track/track-in-band-legacy-api.html [ Failure ]
+media/track/video-track-alternate-groups.html [ Failure ]
+
+svg/filters/filter-hidden-content.svg [ Failure ]
+
+transforms/hittest-translated-content-off-to-infinity-and-back.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/172965 media/track/track-cue-overlap-snap-to-lines-not-set.html [ Failure ]
+
+webkit.org/b/156718 storage/websql/alter-to-info-table.html [ Failure ]
+
+# This test relies on Arial being used to draw Arabic. However, on iOS,
+# we explicitly disallow this because this font is too slow.
+fast/text/initial-advance-in-intermediate-run-complex.html [ ImageOnlyFailure ]
+
+# Simulator doesn't support WebAssembly.
+http/tests/security/contentSecurityPolicy/WebAssembly-allowed.html [ Failure ]
+http/tests/security/contentSecurityPolicy/WebAssembly-blocked-in-about-blank-iframe.html [ Failure ]
+http/tests/security/contentSecurityPolicy/WebAssembly-blocked-in-external-script.html [ Failure ]
+http/tests/security/contentSecurityPolicy/WebAssembly-blocked-in-subframe.html [ Failure ]
+http/tests/security/contentSecurityPolicy/WebAssembly-blocked.html [ Failure ]
+wasm/iframe-postmessage.html [ Skip ]
+wasm/iframe-parent-postmessage.html [ Skip ]
+wasm/window-postmessage.html [ Skip ]
+
+# These tests seem to fail due pixel rounding errors in the absolute positioned elements used as reference.
+webkit.org/b/170176 fast/inline-block/baseline-vertical-01.html [ ImageOnlyFailure ]
+webkit.org/b/170176 fast/inline-block/baseline-vertical-02.html [ ImageOnlyFailure ]
+webkit.org/b/170176 fast/inline-block/baseline-vertical-03.html [ ImageOnlyFailure ]
+webkit.org/b/170176 fast/inline-block/baseline-vertical-04.html [ ImageOnlyFailure ]
+
+# WebGL tests which need triaging https://bugs.webkit.org/b/174100
+webgl/1.0.3/conformance/uniforms/uniform-default-values.html [ Failure ]
+
+# This test requires Skia, which isn't available on iOS.
+webkit.org/b/174079 fast/text/variations/skia-postscript-name.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/fetch/api/abort/general.any.worker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/2dcontext/transformations/canvas_transformations_reset_001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-fragment-scrolling-cross-origin.html [ Failure ]
+imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-offer.html [ Failure ]
+
+# Simulator doesn't support WebAssembly.
+imported/w3c/web-platform-tests/wasm/wasm_stream_instantiate_test.html  [ Skip ]
+imported/w3c/web-platform-tests/wasm/wasm_stream_compile_test.html  [ Skip ]
+
+# macOS doesn't have ICU v59
+webkit.org/b/185375 js/intl-numberformat-format-to-parts.html [ Failure ]
+
+# Imported css-text test suite from WPT
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-001.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-002.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-003.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-004.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-005.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-006.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-007.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-011.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-014.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-normal-ko-000.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ui/outline-020.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/selectors/selectors-empty-001.xml [ ImageOnlyFailure ]
+
+webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-break-spaces-002.html [ ImageOnlyFailure ]
+
+# Baseline Alignment tests affected by 1px diff failures only on Mac and iOS platforms
+webkit.org/b/170293 fast/css-grid-layout/grid-align-baseline-vertical.html [ Failure ]
+webkit.org/b/170293 fast/css-grid-layout/grid-self-baseline-two-dimensional.html [ Failure ]
+webkit.org/b/170293 fast/css-grid-layout/grid-self-baseline-03.html [ ImageOnlyFailure ]
+webkit.org/b/170293 fast/css-grid-layout/grid-self-baseline-04.html [ ImageOnlyFailure ]
+webkit.org/b/170293 fast/css-grid-layout/grid-self-baseline-vertical-rl-05.html [ ImageOnlyFailure ]
+webkit.org/b/170293 fast/css-grid-layout/grid-self-baseline-vertical-rl-04.html [ ImageOnlyFailure ]
+webkit.org/b/170293 fast/css-grid-layout/grid-self-baseline-06.html [ ImageOnlyFailure ]
+webkit.org/b/170293 fast/css-grid-layout/grid-self-baseline-07.html [ ImageOnlyFailure ]
+
+
+# A sub-test in this test is extremely flaky and fails most of the time, messing up partial-failure expectations
+webkit.org/b/189686 webgl/2.0.0/conformance2/renderbuffers/multisampled-renderbuffer-initialization.html [ Skip ]
+webkit.org/b/189686 webgl/2.0.0/conformance/reading/read-pixels-test.html [ Slow ]
+# Crashes
+webkit.org/b/189686 webgl/2.0.0/conformance2/buffers/one-large-uniform-buffer.html [ Skip ]
+
+imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-georgian.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-greek.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-lists/list-and-writing-mode-001.html [ Failure ]
+
+webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-width-1000px.html [ Pass Failure ]
+webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay.html [ Pass Failure ]
+webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/error-codes/error.html [ Pass Failure ]
+
+imported/w3c/web-platform-tests/wasm [ Skip ]
+
+webkit.org/b/201509 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html [ Failure ]
+
+webkit.org/b/202648 crypto/workers/subtle/aes-indexeddb.html [ Skip ]
+
+# WebGPU is not enabled on iOS Simulator.
+webgpu [ Skip ]

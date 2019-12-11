@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Ensure PerformanceObserver callback fires for all observed entries between observe/disconnect calls.");
+window.jsTestIsAsync = true;
+
+let shouldEnd = false;
+
+let observer = new PerformanceObserver((list) => {
+    debug("PerformanceObserver callback fired: " + list.getEntries().length + " entries");
+    for (let mark of list.getEntries()) {
+        if (mark.name === "mark5" || mark.name === "mark6")
+            testFailed("Should not have observed " + mark.name);
+        else
+            testPassed(mark.name);
+    }
+    if (shouldEnd)
+        finishJSTest();
+});
+observer.observe({entryTypes: ["mark"]});
+
+// ---
+
+performance.mark("mark1");
+
+setTimeout(() => {
+    performance.mark("mark2");
+    performance.mark("mark3");
+}, 50);
+
+setTimeout(() => {
+    performance.mark("mark4");
+    observer.disconnect();
+    performance.mark("mark5"); // NOT seen.
+}, 100);
+
+setTimeout(() => {
+    performance.mark("mark6"); // NOT seen.
+    observer.observe({entryTypes: ["mark"]});
+    performance.mark("mark7");
+    shouldEnd = true;
+}, 150);
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

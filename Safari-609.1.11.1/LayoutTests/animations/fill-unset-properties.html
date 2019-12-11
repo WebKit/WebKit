@@ -1,0 +1,67 @@
+<html> 
+<head>
+<title>Unfilled Properties Test</title> 
+<style type="text/css" media="screen">
+#box {
+    height: 50px;
+    width: 200px;
+    background-color: blue;
+    -webkit-transition-duration: 1s,2s;
+    -webkit-transition-property: opacity, left, opacity, top, width, opacity, height, opacity;
+    -webkit-transition-delay: 3s,4s,5s;
+    -webkit-transition-timing-function: linear;
+    -webkit-animation-name: a, b, c, d, e;
+    -webkit-animation-duration: 10s, 20s;
+    -webkit-animation-delay: 1s;
+    -webkit-animation-fill-mode: forwards, backwards;
+}
+@-webkit-keyframes a { }
+@-webkit-keyframes b { }
+@-webkit-keyframes c { }
+@-webkit-keyframes d { }
+@-webkit-keyframes e { }
+</style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner)
+        testRunner.dumpAsText();
+  
+    const kExpectedResults = [
+      { 'property': 'webkitTransitionDuration', 'value': '2s, 2s, 1s, 1s, 2s' },
+      { 'property': 'webkitTransitionProperty', 'value': 'left, top, width, height, opacity' },
+      { 'property': 'webkitTransitionDelay',    'value': '4s, 3s, 4s, 3s, 4s' },
+      { 'property': 'webkitTransitionTimingFunction', 'value': 'linear, linear, linear, linear, linear' },
+      { 'property': 'webkitAnimationName',      'value': 'a, b, c, d, e' },
+      { 'property': 'webkitAnimationDuration',  'value': '10s, 20s, 10s, 20s, 10s' },
+      { 'property': 'webkitAnimationDelay',     'value': '1s, 1s, 1s, 1s, 1s' },
+      { 'property': 'webkitAnimationFillMode',  'value': 'forwards, backwards, forwards, backwards, forwards' },
+    ];
+    
+    function start()
+    {
+        var box = document.getElementById('box');
+        var resultsString = "";
+        var boxStyle = window.getComputedStyle(box);
+        
+        kExpectedResults.forEach(function(curItem) {
+          var computedValue = boxStyle[curItem.property];
+          var expectedValue = curItem.value;
+          if (computedValue == expectedValue)
+            resultsString += "Testing " + curItem.property + ": PASS" + "<br>";
+          else
+            resultsString += "Testing " + curItem.property + " expected <code>" + curItem.value + "</code> got <code>" + computedValue + "</code>: FAIL" + "<br>";
+        });
+
+        var results = document.getElementById('result');
+        results.innerHTML = resultsString;
+    }
+    
+    window.addEventListener('load', start, false);
+  </script>
+</head> 
+<body>
+<div id="box">
+</div>
+<div id="result">
+</div>
+</body>
+</html>

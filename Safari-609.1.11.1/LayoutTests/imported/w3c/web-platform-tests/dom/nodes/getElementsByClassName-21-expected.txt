@@ -1,0 +1,10 @@
+
+PASS delete element from collection 
+test link #foo
+text
+text caption
+TEXT head
+td text
+td te xt
+TEXT foot
+xt te

@@ -1,0 +1,2 @@
+@import url('test-css-import-recurse.css');
+.blue { color: blue; }

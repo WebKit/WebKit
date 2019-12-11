@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 98: SyntaxError: No identifiers allowed directly after numeric literal
+
+FAIL Indexed DB and Structured Serializing/Deserializing SyntaxError: No identifiers allowed directly after numeric literal
+

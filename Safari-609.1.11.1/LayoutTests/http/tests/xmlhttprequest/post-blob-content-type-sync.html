@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="/js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+  <script src="post-blob-content-type-tests.js"></script>
+  <script type="text/javascript">
+    description("Test verifies that content MIME type is set correctly " +
+                "when Blob is sent using " +
+                "<a href='http://www.w3.org/TR/XMLHttpRequest/#the-send-method'>XMLHttpRequest synchronously.</a>");
+
+    var xhr;
+    var expectedMimeType;
+
+    function runSyncTests() {
+        var testCount = xhrBlobTestCases.length;
+        for (var i = 0; i < testCount; i++) {
+            var mime = xhrBlobTestCases[i].mime;
+            var expectedMime = xhrBlobTestCases[i].expectedMime;
+            var url = xhrBlobTestCases[i].url !== undefined ? xhrBlobTestCases[i].url + xhrBlobTestUrl : xhrBlobTestUrl;
+            url += xhrBlobTestCases[i].allowOrigin || "";
+            if (xhrBlobTestCases[i].shouldThrow !== undefined) {
+                try {
+                    testBlobContentTypeSync(url, mime, expectedMime);
+                } catch (e) {
+                    testPassed("Exception should be thrown.")
+                }
+            } else {
+                testBlobContentTypeSync(url, mime, expectedMime);
+            }
+        }
+    }
+
+    function testBlobContentTypeSync(url, mimeType, expectedMime) {
+        var blob;
+        if (mimeType !== "")
+            blob = new Blob(["Test content"], {type: mimeType});
+        else
+            blob = new Blob(["Test content"]);
+
+        xhr = new XMLHttpRequest();
+        xhr.open("POST", url, false);
+        xhr.send(blob);
+        if (xhr.status === 200) {
+            expectedMimeType = JSON.parse(xhr.response)['content-type'] || "";
+            shouldBeEqualToString("expectedMimeType", expectedMime);
+        } else
+            testFailed("Unknown error");
+
+    }
+
+    runSyncTests();
+
+  </script>
+  <script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>

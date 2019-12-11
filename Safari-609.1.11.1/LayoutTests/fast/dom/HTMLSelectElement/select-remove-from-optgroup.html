@@ -1,0 +1,15 @@
+<script>
+window.onload = function() {
+	var parent = document.getElementById('id_1');
+	parent.removeChild(parent.childNodes[0]);
+	parent.removeChild(parent.childNodes[0]);
+	document.getElementById('id_0').appendChild(document.activeElement);
+}
+</script>
+<template id="id_0"></template>
+<select required>
+	<optgroup id="id_1">
+		<option></option>
+	</optgroup>
+</select>
+The test passes if this does not cause a debug assert.

@@ -1,0 +1,6 @@
+Test passes if the image is blocked.
+
+
+
+PASS Expecting logs: ["PASS","TEST COMPLETE"] 
+

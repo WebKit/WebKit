@@ -1,0 +1,10 @@
+Tests that an empty line after an identifier line discards the current cue and restarts the cue loop.
+
+
+
+*** Testing text track 0
+EXPECTED (cues.length == '2') OK
+EXPECTED (cues[0].text == 'First') OK
+EXPECTED (cues[1].text == 'Second') OK
+END OF TEST
+

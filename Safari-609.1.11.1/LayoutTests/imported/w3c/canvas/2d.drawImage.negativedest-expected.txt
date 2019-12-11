@@ -1,0 +1,8 @@
+2d.drawImage.negativedest
+Negative destination width/height represents the correct rectangle
+Spec references: 2d.drawImage.direction
+Actual output:
+Expected output:
+
+Passed
+

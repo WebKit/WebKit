@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../editing.js"></script>
+</head>
+<body>
+<div id="dropzone" style="width: 200px; height: 200px; background-color: grey;"></div>
+<script>
+description("Basic test coverage for dataTransferItem.webkitGetAsEntry()");
+jsTestIsAsync = true;
+
+var dropzone = document.getElementById('dropzone');
+dropzone.ondrop = function(e) {
+    e.preventDefault();
+    dataTransfer = e.dataTransfer;
+
+    shouldBe("dataTransfer.items.length", "2");
+
+    firstDataTransferItem = dataTransfer.items[0];
+    shouldBeEqualToString("firstDataTransferItem.kind", "file");
+    shouldBeEqualToString("firstDataTransferItem.type", "text/plain");
+    firstFile = firstDataTransferItem.getAsFile();
+    shouldBeEqualToString("firstFile.name", "test.txt");
+    shouldBe("firstFile.size", "5");
+    shouldBeEqualToString("firstFile.type", "text/plain");
+
+    firstEntry = firstDataTransferItem.webkitGetAsEntry();
+    shouldBeFalse("firstEntry.isDirectory");
+    shouldBeTrue("firstEntry.isFile");
+    shouldBeEqualToString("firstEntry.name", "test.txt");
+    shouldBeEqualToString("firstEntry.fullPath", "/test.txt");
+
+    // Second item.
+    secondDataTransferItem = dataTransfer.items[1];
+    shouldBeEqualToString("secondDataTransferItem.kind", "file");
+    shouldBeEqualToString("secondDataTransferItem.type", "");
+    secondFile = secondDataTransferItem.getAsFile();
+    shouldBeEqualToString("secondFile.name", "testFiles");
+    shouldBeOneOfValues("secondFile.size", [272, 256]); // Chrome returns folder size, Firefox returns 0. 256 in APFS, 272 in HFS+ 
+    shouldBeEqualToString("secondFile.type", "");
+
+    secondEntry = secondDataTransferItem.webkitGetAsEntry();
+    shouldBeTrue("secondEntry.isDirectory");
+    shouldBeFalse("secondEntry.isFile");
+    shouldBeEqualToString("secondEntry.name", "testFiles");
+    shouldBeEqualToString("secondEntry.fullPath", "/testFiles");
+
+    fileSystemRoot = secondEntry.filesystem.root;
+    shouldBeTrue("fileSystemRoot.isDirectory");
+    shouldBeFalse("fileSystemRoot.isFile");
+    shouldBeEqualToString("fileSystemRoot.name", "");
+    shouldBeEqualToString("fileSystemRoot.fullPath", "/");
+
+    finishJSTest();
+};
+
+dropzone.ondragover = function(ev) {
+    ev.preventDefault();
+}
+
+onload = function() {
+    dragFilesOntoElement(dropzone, ['../../../fast/forms/resources/test.txt', '../../../fast/forms/file/entries-api/resources/testFiles']);
+}
+</script>
+</body>
+</html>

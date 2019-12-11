@@ -1,0 +1,3 @@
+
+PASS IDBCursor.advance() - index - throw TypeError 
+

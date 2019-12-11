@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body id="body">
+
+<div role="textbox" tabindex=0 id="textbox" contenteditable=true>
+content inside
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+<div id="notifications"></div>
+
+<script>
+
+    description("This tests that ARIA removing an element from a live region sends the correct notification.");
+
+    var axTextbox = 0;
+    function notificationCallback(notification) {
+        if (notification == "AXValueChanged") {
+           document.getElementById("notifications").innerHTML += "Successfully received " + notification + "<br>";
+           axTextbox.removeNotificationListener();
+           finishJSTest();
+        }
+        else if (notification == "AXSelectedTextChanged") {
+           document.getElementById("notifications").innerHTML += "Successfully received " + notification + "<br>";
+        }
+    }
+
+    if (window.accessibilityController) {
+        jsTestIsAsync = true;
+
+        textbox = document.getElementById("textbox");
+        textbox.focus();
+
+        var axTextbox = accessibilityController.focusedElement;
+        
+        var addedNotification = axTextbox.addNotificationListener(notificationCallback);
+        shouldBe("addedNotification", "true");
+
+        // Trigger selection changes.
+        var s = window.getSelection();
+        s.setPosition(textbox, 0);
+        for (var k = 0; k < 3; k++) {
+            s.modify("move", "forward", "character");
+        }
+
+        // Trigger value change.
+        document.execCommand("InsertText", false, "hello ");
+    }
+
+</script>
+</body>
+</html>

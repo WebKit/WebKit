@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<script src="resources/text-based-repaint.js" type="text/javascript"></script>
+<style>
+#test {
+    background-color: red;
+    color: white;
+    overflow: hidden;
+}
+
+#test::selection {
+    background-color: green;
+}
+</style>
+<script>
+    function repaintTest() {
+        getSelection().setBaseAndExtent(test, 0, test, 1);
+    };
+</script>
+
+<body onload="runRepaintTest()">
+    <p id="test">Should have green background</p>
+</body>

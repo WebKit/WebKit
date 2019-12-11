@@ -1,0 +1,90 @@
+<html>
+<head>
+<script src="../editing.js"></script>
+</head>
+<body>
+<textarea id="test"></textarea>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("The test verifies if the spelling markers remain if a whitespace "
+    + "is added before or after the misspelled word. "
+    + "The test succeeds if the word 'meagesga' has red underline.");
+
+jsTestIsAsync = true;
+
+if (window.internals) {
+    internals.settings.setUnifiedTextCheckerEnabled(true);
+    internals.settings.setAsynchronousSpellCheckingEnabled(true);
+}
+
+function resetText() {
+    document.getElementById('test').focus();
+    execSelectAllCommand();
+    execDeleteCommand();
+    typeCharacterCommand('i');
+    typeCharacterCommand('t');
+    typeCharacterCommand('\'');
+    typeCharacterCommand('s');
+    typeCharacterCommand(' ');
+    typeCharacterCommand('a');
+    typeCharacterCommand(' ');
+    typeCharacterCommand('m');
+    typeCharacterCommand('e');
+    typeCharacterCommand('a');
+    typeCharacterCommand('g');
+    typeCharacterCommand('e');
+    typeCharacterCommand('s');
+    typeCharacterCommand('g');
+    typeCharacterCommand('a');
+    typeCharacterCommand(' ');
+}
+
+var expectedMisspelledPosition;
+function checkSpellingMarkerAfterAddingWhitespace(testCase)
+{
+    resetText();
+
+    if (testCase.updateCaretPosition) {
+        testCase.updateCaretPosition();
+        evalAndLog("typeCharacterCommand(' ')");
+    }
+
+   expectedMisspelledPosition = testCase.misspelledPosition;
+
+    if (window.internals) {
+        shouldBecomeEqual("internals.hasSpellingMarker(expectedMisspelledPosition, 8)", "true", function() {
+            debug("");
+            done();
+        });
+    } else
+        done();
+}
+
+var testCases = [
+    {
+        updateCaretPosition: null,
+        misspelledPosition: 7
+    },
+    {
+        updateCaretPosition: function() { evalAndLog("execMoveSelectionBackwardByWordCommand()"); },
+        misspelledPosition: 8
+    },
+    {
+        updateCaretPosition: function() { evalAndLog("execMoveSelectionBackwardByCharacterCommand()"); },
+        misspelledPosition: 7
+    }
+];
+
+function done()
+{
+    var testCase = testCases.shift();
+    if (testCase)
+        return setTimeout(checkSpellingMarkerAfterAddingWhitespace(testCase), 0);
+
+    finishJSTest();
+}
+done();
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

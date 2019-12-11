@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test UnwrapKey operation with malformed parameters");
+
+jsTestIsAsync = true;
+
+var extractable = true;
+var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
+var aesCbcParams = {
+    name: "aes-cbc",
+    iv: asciiToUint8Array("jnOw99oOZFLIEPMr"),
+}
+var wrappedRawKey = hexStringToUint8Array("d64787ab3e048dbdc30bb62781c9f18e58ad7dbfc64aab16");
+var wrappedJwkKey = hexStringToUint8Array( "848aa2f70ee18e2953520132a79cf479b03a8732a3cc73f8c51c68456d3c2557e8be9d5911b2a74267e282a87ffeed88dfbac38a22c26ba621f83915d7539420a4dc0b2329c585b442967367c1ea6c1126f98c4f13b7c8cb7402b86a5844c19420ea333dc33d908be89172f8bac59b403fe202f32c8eed19f431cedfc3383f536f3557163b1311ae42ee5486c6dafee968640d6b6999c687f37fba8d65cc662f1c84f16245665e4af41c98e8b63632cc1d19e2bece2154c7eab1905f3f6ab17b495cefec3508e9b451f2ea1422b97f275dfdc118f46af02040250d0e55d8d8d172b969bbcf7314a257f10b98d2c47c6c72a727acaf4c96340d590ebcebc61f73b7a868b490f3c1e17c59ea479a3b8db5574153de46cfdbb07cfc5e95ebcf7ad3d5fa057ba946d6da872c4bef3af6d7013e222c227650d0022c94d306cb14e203aad378d171c7c24f824c31b81fd18265e0de2f4b415584ebc4adeb5880c4eddbc88b854699f7aa74d6a10ca5df8978f27b5d1372b31ea67a9c4841ae101ea6ad78df0580b70358e6933ac92f7faee5320af329d8349a7b98690708a388737604be0affaa0669410d8d93dc4e4f57e14583253f11e5b27c89b84f1f3038bae6d9b37e3eb64b63ad1880627aef3b19e3e851cfae639ec46dd06fd131b51f530b37260b836d9013d8ad7c8640096070f96984c528ee5e20b69f3cd98a269621cd886ccb16d9c526a87cd5c458541309bb7fa4f3337305d76fc050d39ca8b1fdb0675a11a40ffde9cebb33ddc485e5dc5e7667b08c2a3e0136d063a447aee5a8f650429c5e422a706c4c240a4d11f4a9b5782f2cba2575f0c32cb477a9f0cef97fa993977104181315ff90e46f3b12b8b00f4a7611c42b1bb53d0e6021ab21ee8ae606d9f06dfedb891763007e020977c28b46d5f33bc35c12061d90ebbe02cab58783c0cac0c6f14ed735204f23d0eb6a9fe9edea2aecb1ac213f58b42d5d96374ec70ca288a31016ba02adef43250d717e9fab8982a1a180b1f3944d450c159010fd23f354d88502ec702882ae3edd567c6a6edf3cb2e34edc13f410a25d97298ab9062ddb566576fa8b6599bba205bab55aa5f3f37edaf7733cf249e69c74da975ef249ca673da749d86babebdf55410a389720ac943f1e9d921f5d69c5789636cb904fb9263744236eade9acae889a01c237ab3436101463dfa9d92f936c1b652c80f3abba76023ebe5b9bfdd54735e3a3494de18a456967f58758e546021feef3fa3e6c239981aa06f1f7ddc415d957ff9919bbec5f36af092a81ba6c14fe644d2ee98a2fcdee2ed70b87a53ffa327b25b4569c5886b15f2bd583d6f5bd7e951a915142baa08c6a9c343c200678a005fad22a337d2c5627f8c816db2525a7e121849b9da756eee68a240452849ffdb9651f998257c62e8fdcdc48dadfc3ebb18f7eb5461442008846a629ec8149c052f357bf5889095047b272bce0ff505953e7cd525b24c838ba6e9ed91922a30eeb858de8556f19f761d0287d768876346a5dcac3dbadd7a30072c9338162be5812166d961f4031f962ef668781d39d0fc69fe5f4494e31ec082d4a0140e368b69975beeba120ef9b651ead531b4d44296bd3cfe2ce7f97bb5bb4921061b12c2e1c4c10928c0980ff8d488a2282d0c056a40260167410e39664f75ff1f1249820e174eed978318a05e654b8aa6c60b70001a7a04f0aff17597dd9ab3ccc34f5ba2e352b7244dd3dccb462d7175b95ae3970ec5858e2312aac7c2c79a37b53d089f988720a4c04df6328a384004d0d51eafb9486623099a98e69be5169201c88824acc2bb0e1790889014a1797c168e98d19f0787c2935cfbc3bf24c4adad69a81e0e6adf8c21e3c4789064aa31a025dff5cc6eaba3f3e43f10a9d531f47963372120e2366b84c281ed968d9d11c1d103826c9362741e1267d1a3e8d2188761fa876b7b09617df14130c07209f1f1188ff40971b86607dee14d556a880447901c69d29cb16c027c3aae316ff00132bdfcd0e39c5e201252c9771483ccb275b0c67b3cb4dcd19198c7718634460254dfd6f8df4374b8bedee7dd20ce411b5f987cac2ce17492aa78f919c6d5e555000f47f7b8a9896d448bc4fc13e40a9e5c02258d509a7289f44d7250e89260233bf96702bb3d350451f03d802e0e37d9f01cce4c78869403493eb9890c2c09109d1f427f59cf091cd1c836e25a9bb065041407c2183f643bce2e72db1e7caeac42e2d8379f8b84df2cc7b1d055f42d6f62e0cb5771a14ae8872792350e5f770115a86564f60a785c53325c8c084afe214da3cac1783e2be9099d96ddbe9cc3ea3dd1d3ae50526b4afe24397420a3e4fa697613421");
+
+// Not enough arguments.
+shouldReject('crypto.subtle.unwrapKey()');
+shouldReject('crypto.subtle.unwrapKey(1)');
+shouldReject('crypto.subtle.unwrapKey(1, 2)');
+shouldReject('crypto.subtle.unwrapKey(1, 2, 3)');
+shouldReject('crypto.subtle.unwrapKey(1, 2, 3, 4)');
+shouldReject('crypto.subtle.unwrapKey(1, 2, 3, 4, 5)');
+shouldReject('crypto.subtle.unwrapKey(1, 2, 3, 4, 5, 6)');
+
+crypto.subtle.importKey("raw", rawKey, "aes-kw", extractable, ["wrapKey", "unwrapKey"]).then(function(result) {
+    unwrappingKey = result;
+
+    // Wrong AlgorithmIdentifier
+    shouldReject('crypto.subtle.unwrapKey("raw", wrappedRawKey, unwrappingKey, "HMAC", "AES-CBC", extractable, ["encrypt", "decrypt"])');
+    shouldReject('crypto.subtle.unwrapKey("raw", wrappedRawKey, unwrappingKey, aesCbcParams, "AES-CBC", extractable, ["encrypt", "decrypt"])');
+    // Wrong format
+    return shouldReject('crypto.subtle.unwrapKey("jwk", wrappedRawKey, unwrappingKey, "AES-KW", "AES-CBC", extractable, ["encrypt", "decrypt"])');
+}).then(function() {
+    // Empty usages
+    return shouldReject('crypto.subtle.unwrapKey("raw", wrappedRawKey, unwrappingKey, "AES-KW", "AES-CBC", extractable, [ ])');
+}).then(function() {
+    return crypto.subtle.importKey("raw", rawKey, "aes-cbc", extractable, ["wrapKey", "unwrapKey"]);
+}).then(function(result) {
+    unwrappingKey = result;
+
+    // Empty usages
+    return shouldReject('crypto.subtle.unwrapKey("jwk", wrappedJwkKey, unwrappingKey, aesCbcParams, {name: "RSA-OAEP", hash: "SHA-1"}, extractable, [ ])');
+}).then(function() {
+    return crypto.subtle.importKey("raw", rawKey, "aes-kw", extractable, ["wrapKey"]);
+}).then(function(result) {
+    unwrappingKey = result;
+
+    // Wrong usage
+    shouldReject('crypto.subtle.unwrapKey("raw", wrappedRawKey, unwrappingKey, "AES-KW", "AES-CBC", extractable, ["encrypt", "decrypt"])').then(finishJSTest);
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

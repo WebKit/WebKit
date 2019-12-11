@@ -1,0 +1,15 @@
+<head>
+    <script src="resources/repaint.js"></script>
+    <script>
+        function repaintTest()
+        {
+            document.getElementById("target").style.display = "none";
+        }
+    </script>
+</head>
+<body onload="runRepaintTest()">
+    <div style="margin-left: 100px; font: 100px ahem; -webkit-font-smoothing: none; height: 100px;">
+        <span id="target" style="position: relative; left: -100px; color: red;">ab</span>
+    </div>
+    <div style="width: 100px; height: 100px; background-color: green; margin-top: -100px;"></div>
+</body>

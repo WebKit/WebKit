@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<head>
+<script>
+    if (window.testRunner)
+        window.testRunner.dumpAsText(true);
+</script>
+<style>
+    li {
+        margin: 5px;
+        width: 130px;
+        height: 130px;
+        background: linear-gradient(to right, gray 0%, gray 100%), green;
+        display: block;
+        float: left;
+    }
+</style>
+<!-- This file should contain a gradient on top of a background color for every type of blending. -->
+<body>
+    <ul>
+        <li style="background-blend-mode: normal, normal"></li>
+        <li style="background-blend-mode: multiply, normal"></li>
+        <li style="background-blend-mode: screen, normal"></li>
+        <li style="background-blend-mode: overlay, normal"></li>
+        <li style="background-blend-mode: darken, normal"></li>
+        <li style="background-blend-mode: lighten, normal"></li>
+        <li style="background-blend-mode: color-dodge, normal"></li>
+        <li style="background-blend-mode: color-burn, normal"></li>
+        <li style="background-blend-mode: hard-light, normal"></li>
+        <li style="background-blend-mode: soft-light, normal"></li>
+        <li style="background-blend-mode: difference, normal"></li>
+        <li style="background-blend-mode: exclusion, normal"></li>
+    </ul>
+</body>
+

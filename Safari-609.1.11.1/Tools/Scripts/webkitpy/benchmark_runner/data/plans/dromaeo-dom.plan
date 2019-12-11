@@ -1,0 +1,10 @@
+{
+    "timeout": 1200,
+    "count": 1,
+    "remote_archive": "https://github.com/jeresig/dromaeo/archive/ed7e6a8f25ea72f45c191f34a68722f80dc3c513.zip",
+    "webserver_benchmark_patch": "data/patches/webserver/Dromaeo.patch",
+    "webdriver_benchmark_patch": "data/patches/webdriver/Dromaeo.patch",
+    "create_script": ["make", "web"],
+    "entry_point": "web/index.html?dom",
+    "output_file": "dromaeo.result"
+}

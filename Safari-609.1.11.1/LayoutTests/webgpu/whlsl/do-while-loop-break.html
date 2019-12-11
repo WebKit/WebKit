@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/webgpu-functions.js"></script>
+</head>
+<body>
+<canvas id="canvas" width="400" height="400"></canvas>
+<script>
+const shaderSource = `
+struct VertexOut {
+    float4 position : SV_Position;
+    float shade : attribute(0);
+}
+
+vertex VertexOut vertexShader(float4 position : attribute(0), float shade : attribute(1)) {
+    VertexOut result;
+
+    bool b = true;
+    do {
+        if (b) {
+            break;
+        }
+    } while ((shade = 1.0, false));
+
+    result.position = position;
+    result.shade = shade;
+
+    return result;
+}
+
+fragment float4 fragmentShader(float shade : attribute(0)) : SV_Target 0 {
+    return float4(shade, shade, shade, 1.0);
+}
+`;
+
+const canvas = document.getElementById("canvas");
+
+async function start(device) {
+    const shaderModule = device.createShaderModule({code: shaderSource});
+    const vertexStage = {module: shaderModule, entryPoint: "vertexShader"};
+    const fragmentStage = {module: shaderModule, entryPoint: "fragmentShader"};
+    const primitiveTopology = "triangle-strip";
+    const rasterizationState = {frontFace: "cw", cullMode: "none"};
+    const alphaBlend = {};
+    const colorBlend = {};
+    const colorStates = [{format: "rgba8unorm", alphaBlend, colorBlend, writeMask: 15}]; // GPUColorWrite.ALL
+    const depthStencilState = null;
+
+    const attribute0 = {shaderLocation: 0, format: "float4", offset: 0};
+    const attribute1 = {shaderLocation: 1, format: "float", offset: 16};
+    const attributes = [attribute0, attribute1];
+    const input0 = {stride: 20, attributeSet: attributes};
+    const inputs = [input0];
+    const vertexInput = {vertexBuffers: inputs};
+
+    const bindGroupLayoutDescriptor = {bindings: [{binding: 0, visibility: 7, type: "uniform-buffer"}]};
+    const bindGroupLayout = device.createBindGroupLayout(bindGroupLayoutDescriptor);
+    const pipelineLayoutDescriptor = {bindGroupLayouts: [bindGroupLayout]};
+    const pipelineLayout = device.createPipelineLayout(pipelineLayoutDescriptor);
+
+    const renderPipelineDescriptor = {vertexStage, fragmentStage, primitiveTopology, rasterizationState, colorStates, depthStencilState, vertexInput, sampleCount: 1, layout: pipelineLayout};
+    const renderPipeline = device.createRenderPipeline(renderPipelineDescriptor);
+
+    const vertexBuffer0Descriptor = {size: Float32Array.BYTES_PER_ELEMENT * 5 * 4, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.MAP_WRITE};
+    const vertexBuffer0 = device.createBuffer(vertexBuffer0Descriptor);
+    const vertexBuffer0ArrayBuffer = await vertexBuffer0.mapWriteAsync();
+    const vertexBuffer0Float32Array = new Float32Array(vertexBuffer0ArrayBuffer);
+    vertexBuffer0Float32Array[0] = -0.5;
+    vertexBuffer0Float32Array[1] = -0.5;
+    vertexBuffer0Float32Array[2] = 1.0;
+    vertexBuffer0Float32Array[3] = 1.0;
+    vertexBuffer0Float32Array[4] = 0.0;
+
+    vertexBuffer0Float32Array[5] = -0.5;
+    vertexBuffer0Float32Array[6] = 0.5;
+    vertexBuffer0Float32Array[7] = 1.0;
+    vertexBuffer0Float32Array[8] = 1.0;
+    vertexBuffer0Float32Array[9] = 0.0;
+
+    vertexBuffer0Float32Array[10] = 0.5;
+    vertexBuffer0Float32Array[11] = -0.5;
+    vertexBuffer0Float32Array[12] = 1.0;
+    vertexBuffer0Float32Array[13] = 1.0;
+    vertexBuffer0Float32Array[14] = 0.0;
+
+    vertexBuffer0Float32Array[15] = 0.5;
+    vertexBuffer0Float32Array[16] = 0.5;
+    vertexBuffer0Float32Array[17] = 1.0;
+    vertexBuffer0Float32Array[18] = 1.0;
+    vertexBuffer0Float32Array[19] = 0.0;
+    vertexBuffer0.unmap();
+
+    const resourceBufferDescriptor = {size: Float32Array.BYTES_PER_ELEMENT, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.MAP_WRITE};
+    const resourceBuffer = device.createBuffer(resourceBufferDescriptor);
+    const resourceBufferArrayBuffer = await resourceBuffer.mapWriteAsync();
+    const resourceBufferFloat32Array = new Float32Array(resourceBufferArrayBuffer);
+    resourceBufferFloat32Array[0] = 1;
+    resourceBuffer.unmap();
+
+    const bufferBinding = {buffer: resourceBuffer, size: 4};
+    const bindGroupBinding = {binding: 0, resource: bufferBinding};
+    const bindGroupDescriptor = {layout: bindGroupLayout, bindings: [bindGroupBinding]};
+    const bindGroup = device.createBindGroup(bindGroupDescriptor);
+
+    const context = canvas.getContext("gpu");
+    const swapChainDescriptor = {device, format: "bgra8unorm"};
+    const swapChain = context.configureSwapChain(swapChainDescriptor);
+    const outputTexture = swapChain.getCurrentTexture();
+    const outputTextureView = outputTexture.createDefaultView();
+
+    const commandEncoder = device.createCommandEncoder(); // {}
+    const red = {r: 0, g: 0, b: 1, a: 1};
+    const colorAttachments = [{attachment: outputTextureView, resolveTarget: null, loadOp: "clear", storeOp: "store", clearColor: red}];
+    const depthStencilAttachment = null;
+    const renderPassDescriptor = {colorAttachments, depthStencilAttachment};
+    const renderPassEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+    renderPassEncoder.setPipeline(renderPipeline);
+    renderPassEncoder.setBindGroup(0, bindGroup);
+    renderPassEncoder.setVertexBuffers(0, [vertexBuffer0], [0]);
+    renderPassEncoder.draw(4, 1, 0, 0);
+    renderPassEncoder.endPass();
+    const commandBuffer = commandEncoder.finish();
+    device.getQueue().submit([commandBuffer]);
+}
+if (window.testRunner)
+    testRunner.waitUntilDone();
+getBasicDevice().then(function(device) {
+    start(device).then(function() {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, function() {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+}, function() {
+    drawBlackSquareOnBlueBackgroundInSoftware(canvas);
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+Test that fill and stroke properties accept system colors
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Testing system colorActiveBorder
+PASS computedStyleText.fill is computedStyleDiv.color
+PASS computedStyleText.stroke is computedStyleDiv.color
+Testing system colorActiveCaption
+PASS computedStyleText.fill is computedStyleDiv.color
+PASS computedStyleText.stroke is computedStyleDiv.color
+Testing system colorAppWorkspace
+PASS computedStyleText.fill is computedStyleDiv.color
+PASS computedStyleText.stroke is computedStyleDiv.color
+Testing system colorBackground
+PASS computedStyleText.fill is computedStyleDiv.color
+PASS computedStyleText.stroke is computedStyleDiv.color
+Testing system colorButtonFace
+PASS computedStyleText.fill is computedStyleDiv.color
+PASS computedStyleText.stroke is computedStyleDiv.color
+Testing system colorButtonHighlight
+PASS computedStyleText.fill is computedStyleDiv.color
+PASS computedStyleText.stroke is computedStyleDiv.color
+Testing system colorButtonShadow
+PASS computedStyleText.fill is computedStyleDiv.color
+PASS computedStyleText.stroke is computedStyleDiv.color
+Testing system colorButtonText
+PASS computedStyleText.fill is computedStyleDiv.color
+PASS computedStyleText.stroke is computedStyleDiv.color
+Testing system colorCaptionText
+PASS computedStyleText.fill is computedStyleDiv.color
+PASS computedStyleText.stroke is computedStyleDiv.color
+Testing system colorGrayText
+PASS computedStyleText.fill is computedStyleDiv.color
+PASS computedStyleText.stroke is computedStyleDiv.color
+Testing system colorHighlight
+PASS computedStyleText.fill is computedStyleDiv.color
+PASS computedStyleText.stroke is computedStyleDiv.color
+Testing system colorHighlightText
+PASS computedStyleText.fill is computedStyleDiv.color
+PASS computedStyleText.stroke is computedStyleDiv.color
+Testing system colorInactiveBorder
+PASS computedStyleText.fill is computedStyleDiv.color
+PASS computedStyleText.stroke is computedStyleDiv.color
+Testing system colorInactiveCaption
+PASS computedStyleText.fill is computedStyleDiv.color
+PASS computedStyleText.stroke is computedStyleDiv.color
+Testing system colorInactiveCaptionText
+PASS computedStyleText.fill is computedStyleDiv.color
+PASS computedStyleText.stroke is computedStyleDiv.color
+Testing system colorInfoBackground
+PASS computedStyleText.fill is computedStyleDiv.color
+PASS computedStyleText.stroke is computedStyleDiv.color
+Testing system colorInfoText
+PASS computedStyleText.fill is computedStyleDiv.color
+PASS computedStyleText.stroke is computedStyleDiv.color
+Testing system colorMenu
+PASS computedStyleText.fill is computedStyleDiv.color
+PASS computedStyleText.stroke is computedStyleDiv.color
+Testing system colorMenuText
+PASS computedStyleText.fill is computedStyleDiv.color
+PASS computedStyleText.stroke is computedStyleDiv.color
+Testing system colorScrollbar
+PASS computedStyleText.fill is computedStyleDiv.color
+PASS computedStyleText.stroke is computedStyleDiv.color
+Testing system colorThreeDDarkShadow
+PASS computedStyleText.fill is computedStyleDiv.color
+PASS computedStyleText.stroke is computedStyleDiv.color
+Testing system colorThreeDFace
+PASS computedStyleText.fill is computedStyleDiv.color
+PASS computedStyleText.stroke is computedStyleDiv.color
+Testing system colorThreeDHighlight
+PASS computedStyleText.fill is computedStyleDiv.color
+PASS computedStyleText.stroke is computedStyleDiv.color
+Testing system colorThreeDLightShadow
+PASS computedStyleText.fill is computedStyleDiv.color
+PASS computedStyleText.stroke is computedStyleDiv.color
+Testing system colorThreeDShadow
+PASS computedStyleText.fill is computedStyleDiv.color
+PASS computedStyleText.stroke is computedStyleDiv.color
+Testing system colorWindow
+PASS computedStyleText.fill is computedStyleDiv.color
+PASS computedStyleText.stroke is computedStyleDiv.color
+Testing system colorWindowFrame
+PASS computedStyleText.fill is computedStyleDiv.color
+PASS computedStyleText.stroke is computedStyleDiv.color
+Testing system colorWindowText
+PASS computedStyleText.fill is computedStyleDiv.color
+PASS computedStyleText.stroke is computedStyleDiv.color
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

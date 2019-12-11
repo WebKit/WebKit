@@ -1,0 +1,46 @@
+
+PASS button.form 
+PASS fieldset.form 
+PASS input.form 
+PASS object.form 
+PASS output.form 
+PASS select.form 
+PASS textarea.form 
+PASS label.form 
+PASS label-form.form 
+PASS label-form-form2.form 
+PASS label-with-control.form 
+PASS label-for.form 
+PASS label-for-control-form-in-form.form 
+PASS label-for-control-form.form 
+PASS label-in-table.form 
+PASS label-in-table-with-control.form 
+PASS label-in-table-for.form 
+button
+
+fieldset
+
+
+object
+
+output
+
+
+
+
+
+label
+
+label-form
+
+label-form-form2
+
+label-with-control 
+
+label-for 
+
+ label-for-control-form-in-form
+
+ label-for-control-form
+
+label-in-table	label-in-table 	label-in-table-for	

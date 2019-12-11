@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<body>
+<script src="../resources/runner.js"></script>
+<script>
+var count = 0;
+PerfTestRunner.measureRunsPerSecond({run() {
+    new Intl.DateTimeFormat('am-ET-u-nu-ethi-ca-ethiopic-amete-alem', {
+        localeMatcher: 'best fit',
+        timeZone: 'Africa/Addis_Ababa',
+        hour12: true,
+        formatMatcher: 'best fit',
+        weekday: 'long',
+        era: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        second: '2-digit',
+        timeZoneName: 'long'
+    });
+    count++;
+}});
+</script>
+</body>

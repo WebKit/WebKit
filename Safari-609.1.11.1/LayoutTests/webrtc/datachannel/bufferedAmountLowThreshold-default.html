@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Testing bufferedAmountLowThreashold default RTCDataChannel attribute and event</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script src ="../routines.js"></script>
+    <script>
+window.addEventListener("unhandledrejection", event => {
+    event.preventDefault();
+});
+
+var localChannel;
+
+function closeDataChannels() {
+    localChannel.close();
+    closeConnections();
+}
+
+var longString = "abcdefgh";
+for (var cptr = 0; cptr < 10; ++cptr)
+    longString += longString;
+
+function sendMessages(channel)
+{
+    while(channel.bufferedAmount < 1000)
+        channel.send(longString);
+}
+
+promise_test((test) => {
+    return new Promise((resolve, reject) => {
+        createConnections((localConnection) => {
+            localChannel = localConnection.createDataChannel('sendDataChannel');
+            localChannel.onopen = () => { sendMessages(localChannel); };
+            localChannel.onbufferedamountlow = () => {
+                resolve();
+            }
+            assert_equals(localChannel.bufferedAmountLowThreshold, 0, "default bufferedAmountLowThreshold value");
+        }, (remoteConnection) => {
+        });
+        setTimeout(() => reject('timed out'), 5000);
+    }).then (() => {
+        closeDataChannels();
+    });
+}, "Default buffer threshold");
+
+    </script>
+  </body>
+</html>

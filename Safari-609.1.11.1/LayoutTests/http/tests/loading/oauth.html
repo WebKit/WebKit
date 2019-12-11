@@ -1,0 +1,22 @@
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setHandlesAuthenticationChallenges(false);
+    if (testRunner.setShouldLogCanAuthenticateAgainstProtectionSpace) {
+        testRunner.setShouldLogCanAuthenticateAgainstProtectionSpace(true);
+        testRunner.waitUntilDone();
+    }
+}
+
+function runtest() {
+	setTimeout(()=>{
+		fetch("resources/oauth-subresource.php").then(()=>{
+		    if (window.testRunner)
+		        testRunner.notifyDone();
+		});
+	}, 0);
+}
+</script>
+<body onload="runtest()"></body>

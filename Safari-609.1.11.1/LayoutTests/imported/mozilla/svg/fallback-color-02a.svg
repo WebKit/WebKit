@@ -1,0 +1,13 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" >
+
+<title>Testcase for fallback colours</title>
+
+<!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=368840 -->
+<!-- See also http://www.w3.org/Graphics/SVG/Test/20061213/htmlObjectHarness/full-pservers-grad-17-b.html -->
+
+	<line x1="0%" y1="50%" x2="100%" y2="50%" stroke="url(#null)" stroke-width="200%"/>
+</svg>

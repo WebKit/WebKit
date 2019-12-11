@@ -1,0 +1,26 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: NotAllowedError: The request is not allowed by the user agent or the platform in the current context, possibly because the user denied permission.
+Test that "fullscreen requires user gesture restriction" is removed by a user gesture.
+
+Click me!
+RUN(internals.settings.setAllowsInlineMediaPlayback(false))
+RUN(internals.setMediaElementRestrictions(video, "RequireUserGestureForFullscreen"))
+* set video.src
+
+EVENT(canplaythrough)
+
+* video.play() should fail 
+RUN(video.play())
+EXPECTED (video.paused == 'true') OK
+
+* clicking button
+
+EVENT(click)
+* video.play() should work from within a click handler
+EXPECTED (video.paused == 'true') OK
+RUN(video.play())
+
+EVENT(webkitfullscreenchange)
+EXPECTED (video.paused == 'false') OK
+
+END OF TEST
+

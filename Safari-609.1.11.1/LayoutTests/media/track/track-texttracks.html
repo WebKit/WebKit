@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+
+            var trackElement;
+
+            function start()
+            {
+                findMediaElement();
+
+                consoleWrite("** Add a track with video.addTextTrack().");
+                run("video.addTextTrack('descriptions', 'Descriptions Track', 'en')");
+
+                consoleWrite("<br>** Add a &lt;track&gt; element with DOM API.");
+                run("trackElement = document.createElement('track')");
+                run("trackElement.setAttribute('kind', 'chapters')");
+                run("video.appendChild(trackElement)");
+
+                consoleWrite("<br>** Verify track order.");
+                testExpected("video.textTracks.length", 3);
+                testExpected("video.textTracks[0].kind", "captions");
+                testExpected("video.textTracks[1].kind", "chapters");
+                testExpected("video.textTracks[2].kind", "descriptions");
+
+                consoleWrite("<br>** Verify the default parameters of the text track object returned by addTextTrack(). **");
+                testExpected("video.textTracks[2].mode == 'hidden'", true);
+                testExpected("video.textTracks[2].cues != null", true);
+                testExpected("video.textTracks[2].cues.length == 0", true);
+
+                consoleWrite("<br>** Add another &lt;track&gt; element, is should insert before the addTextTrack() track.");
+                run("trackElement = document.createElement('track')");
+                run("trackElement.setAttribute('kind', 'metadata')");
+                run("video.appendChild(trackElement)");
+
+                testExpected("video.textTracks.length", 4);
+                testExpected("video.textTracks[0].kind", "captions");
+                testExpected("video.textTracks[1].kind", "chapters");
+                testExpected("video.textTracks[2].kind", "metadata");
+                testExpected("video.textTracks[3].kind", "descriptions");
+
+                consoleWrite("");
+                endTest();
+            }
+
+        </script>
+    </head>
+    <body onload="start()">
+        <p>Tests that TextTracks in a TextTrackList are kept in the correct order.</p>
+        <video>
+            <track id="track_1" kind="captions" src="captions-webvtt/tc004-webvtt-file.vtt" >
+        </video>
+    </body>
+</html>

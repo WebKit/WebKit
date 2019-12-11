@@ -1,0 +1,13 @@
+diff --git a/src/vrcommon/pathtools_public.cpp b/src/vrcommon/pathtools_public.cpp
+index 7f7c7e8..de7a72a 100644
+--- a/src/vrcommon/pathtools_public.cpp
++++ b/src/vrcommon/pathtools_public.cpp
+@@ -655,7 +655,7 @@ bool Path_WriteBinaryFile(const std::string &strFilename, unsigned char *pData,
+               fclose(f);
+        }
+ 
+-       return written = nSize ? true : false;
++       return written == nSize ? true : false;
+ }
+ 
+ std::string Path_ReadTextFile( const std::string &strFilename )

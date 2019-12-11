@@ -1,0 +1,91 @@
+-khtml-drag
+-webkit-any
+-webkit-any-link, PseudoClassAnyLinkDeprecated, PseudoElementUnknown
+-webkit-autofill
+-webkit-autofill-strong-password
+-webkit-autofill-strong-password-viewable
+-webkit-direct-focus
+-webkit-drag
+-webkit-full-page-media
+active
+after, PseudoClassUnknown, PseudoElementAfter
+any-link
+before, PseudoClassUnknown, PseudoElementBefore
+checked
+corner-present
+decrement
+default
+defined
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+dir
+#endif
+disabled
+double-button
+empty
+enabled
+end
+first-child
+first-letter, PseudoClassUnknown, PseudoElementFirstLetter
+first-line, PseudoClassUnknown, PseudoElementFirstLine
+first-of-type
+focus
+focus-within
+#if ENABLE(ATTACHMENT_ELEMENT)
+has-attachment
+#endif
+horizontal
+host, PseudoClassHost, PseudoElementUnknown
+hover
+in-range
+increment
+indeterminate
+invalid
+lang
+last-child
+last-of-type
+link
+matches
+no-button
+not
+nth-child
+nth-last-child
+nth-last-of-type
+nth-of-type
+only-child
+only-of-type
+optional
+out-of-range
+placeholder-shown
+read-only
+read-write
+required
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+role
+#endif
+root
+scope
+single-button
+start
+target
+valid
+vertical
+visited
+window-inactive
+
+#if ENABLE(FULLSCREEN_API)
+-webkit-animating-full-screen-transition
+-webkit-full-screen
+-webkit-full-screen-ancestor
+-webkit-full-screen-document
+-webkit-full-screen-controls-hidden
+#endif
+
+#if ENABLE(PICTURE_IN_PICTURE_API)
+picture-in-picture
+#endif
+
+#if ENABLE(VIDEO_TRACK)
+future
+past
+#endif
+

@@ -1,0 +1,445 @@
+2019-08-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Add makeUnique<T>, which ensures T is fast-allocated, makeUnique / makeUniqueWithoutFastMallocCheck part
+        https://bugs.webkit.org/show_bug.cgi?id=200620
+
+        Reviewed by Geoffrey Garen.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+        (WebInspectorClient::createFrontendSettings):
+
+2019-08-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r248454): WK1 inspector frontend client doesn't queue messages to the frontend before it's loaded
+        https://bugs.webkit.org/show_bug.cgi?id=200587
+
+        Reviewed by Joseph Pecoraro.
+
+        WK1 inspector sends messages to the frontend using `WebCore::InspectorClient::doDispatchMessageOnFrontendPage`,
+        which does not do any sort of queueing to wait until the frontend is loaded (`InspectorFrontendHost.loaded()`).
+
+        Now that we are sending messages immediately, we should always queue.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+        (WebInspectorClient::sendMessageToFrontend):
+        Leverage the base `InspectorFrontendClientLocal`'s functions for queueing messages.
+
+2019-07-02  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Debug: "Reset Web Inspector" should also clear the saved window size and attachment side
+        https://bugs.webkit.org/show_bug.cgi?id=198956
+
+        Reviewed by Matt Baker.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+        (deleteSetting): Added.
+        (WebInspectorClient::deleteInspectorStartsAttached): Added.
+        (WebInspectorClient::deleteInspectorAttachDisabled): Added.
+        (WebInspectorClient::createFrontendSettings):
+
+2018-01-30  Don Olmstead  <don.olmstead@sony.com>
+
+        JSExports.h should be included as <JavaScriptCore/JSExportMacros.h>
+        https://bugs.webkit.org/show_bug.cgi?id=182312
+
+        Reviewed by Michael Catanzaro.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+
+2016-10-26  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: remove unused bool return value from FrontendChannel::sendMessageToFrontend
+        https://bugs.webkit.org/show_bug.cgi?id=164046
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+        (WebInspectorClient::sendMessageToFrontend):
+
+2016-10-11  Alex Christensen  <achristensen@webkit.org>
+
+        Remove dead networking code
+        https://bugs.webkit.org/show_bug.cgi?id=163263
+
+        Reviewed by Daniel Bates.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+
+2016-08-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove unused includes of wtf headers
+        https://bugs.webkit.org/show_bug.cgi?id=160839
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+
+2016-07-14  Chris Dumez  <cdumez@apple.com>
+
+        Use emptyString() instead of "" when possible
+        https://bugs.webkit.org/show_bug.cgi?id=159789
+
+        Reviewed by Alex Christensen.
+
+        Use emptyString() instead of "" when possible to reduce String allocations.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+        (populateSetting):
+
+2015-05-01  Martin Robinson  <mrobinson@igalia.com>
+
+        USE(...) macro should expect unprefixed variables
+        https://bugs.webkit.org/show_bug.cgi?id=144454
+
+        Reviewed by Daniel Bates.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp: Replace all occurrences WTF_USE with USE.
+
+2015-04-22  Darin Adler  <darin@apple.com>
+
+        Remove OwnPtr and PassOwnPtr use from WebKit/cf, WebKit/mac, and WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=143943
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp: Removed unneeded include.
+
+2014-09-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove WinCE port from trunk
+        https://bugs.webkit.org/show_bug.cgi?id=136951
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+
+2014-02-17  Sergio Correia  <sergio.correia@openbossa.org>
+
+        Replace uses of PassOwnPtr/OwnPtr with std::unique_ptr in WebCore/inspector
+        https://bugs.webkit.org/show_bug.cgi?id=128681
+
+        Reviewed by Timothy Hatcher.
+
+        Another step towards getting rid of PassOwnPtr/OwnPtr, now targeting
+        WebCore/inspector/*. Besides files in there, a few other files in
+        JavaScriptCore/inspector, WebKit/, WebKit2/WebProcess/WebCoreSupport/
+        and WebCore/testing were touched.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+
+2013-12-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Push Remote Inspector debugging connection management into JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=124613
+
+        Reviewed by Timothy Hatcher.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+        (WebInspectorClient::sendMessageToFrontend):
+
+2013-10-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Upstream ENABLE(REMOTE_INSPECTOR) and enable on iOS and Mac
+        https://bugs.webkit.org/show_bug.cgi?id=123111
+
+        Reviewed by Timothy Hatcher.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+
+2013-04-27  Darin Adler  <darin@apple.com>
+
+        Move from constructor and member function adoptCF/NS to free function adoptCF/NS.
+        https://bugs.webkit.org/show_bug.cgi?id=115307
+
+        Reviewed by Geoffrey Garen.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+        (populateSetting): Use adoptCF.
+
+2013-04-02  Timothy Hatcher  <timothy@apple.com>
+
+        Provide a user default that can be used to disable docking of the Web Inspector.
+
+        The user default is "WebKit Web Inspector Setting - inspectorAttachDisabled".
+
+        https://webkit.org/b/113779
+        rdar://problem/13446021
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+        (WebInspectorClient::inspectorAttachDisabled): Added.
+        (WebInspectorClient::setInspectorAttachDisabled): Added.
+
+2012-10-29  Anders Carlsson  <andersca@apple.com>
+
+        String::createCFString should return a RetainPtr
+        https://bugs.webkit.org/show_bug.cgi?id=100419
+
+        Reviewed by Andreas Kling.
+
+        Update callers of String::createCFString.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+        (createKeyForPreferences):
+        (populateSetting):
+        (storeSetting):
+
+2012-09-05  Sam Weinig  <sam@webkit.org>
+
+        Part 2 of removing PlatformString.h, remove PlatformString.h
+        https://bugs.webkit.org/show_bug.cgi?id=95931
+
+        Reviewed by Adam Barth.
+
+        Remove PlatformString.h
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+        (WebInspectorClient::createFrontendSettings):
+
+2012-06-19  Sergio Villar Senin  <svillar@igalia.com>
+
+        Calling nativeImageForCurrentFrame() causes assertion failure: m_verifier.isSafeToUse()
+        https://bugs.webkit.org/show_bug.cgi?id=67582
+
+        Reviewed by David Levin.
+
+        Fixes windows build.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+
+2011-12-20  Pavel Feldman  <pavel.feldman@gmail.com>
+
+        Web Inspector: reproducible crash after closing web inspector and browser window  (iCab)
+        https://bugs.webkit.org/show_bug.cgi?id=74255
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+        (WebInspectorClient::releaseFrontend):
+
+2011-12-14  Hajime Morrita  <morrita@chromium.org>
+
+        JS_INLINE and WTF_INLINE should be visible from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=73191
+
+        Reviewed by Kevin Ollivier.
+
+        Removed macro definitions which is now provided by Platform.h
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+
+2011-12-02  Hajime Morrita  <morrita@chromium.org>
+
+        Unreviewed, rolling out r101751 and r101775.
+        http://trac.webkit.org/changeset/101751
+        http://trac.webkit.org/changeset/101775
+        https://bugs.webkit.org/show_bug.cgi?id=73191
+
+        breaks Windows build
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+
+2011-12-01  Hajime Morrita  <morrita@chromium.org>
+
+        JS_INLINE and WTF_INLINE should be visible from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=73191
+
+        Reviewed by Kevin Ollivier.
+
+        Removed macro definitions which is now provided by Platform.h
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+
+2011-08-03  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Web Inspector: Remove InspectorFrontendHost load/saveSessionSetting
+        https://bugs.webkit.org/show_bug.cgi?id=65582
+
+        Reviewed by Pavel Feldman.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+
+2011-03-15  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Darin Adler.
+
+        Introduce WTF_USE_EXPORT_MACROS, which will allow us to put shared library import/export
+        info into the headers rather than in export symbol definition files, but disable it on 
+        all platforms initially so we can deal with port build issues one port at a time.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=27551
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+
+2011-02-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Rename PLATFORM(CF) to USE(CF)
+        https://bugs.webkit.org/show_bug.cgi?id=53540
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+
+2011-02-03  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: remove settings related methods from InspectorClient
+        https://bugs.webkit.org/show_bug.cgi?id=53686
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+        (populateSetting):
+        (storeSetting):
+        (WebInspectorClient::createFrontendSettings):
+
+2011-01-26  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: inspector should start in attached state by default
+        https://bugs.webkit.org/show_bug.cgi?id=53165
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+        (WebInspectorClient::inspectorStartsAttached):
+
+2011-01-25  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: remove "attached" state related methods from InspectorAgent
+        https://bugs.webkit.org/show_bug.cgi?id=53086
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+        (WebInspectorClient::sendMessageToFrontend):
+        (WebInspectorClient::inspectorStartsAttached):
+        (WebInspectorClient::setInspectorStartsAttached):
+        (WebInspectorClient::releaseFrontendPage):
+
+2011-01-03  Pratik Solanki  <psolanki@apple.com>
+
+        Mac build fix. Define WTF_USE_CFNETWORK for Windows build only.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+
+2011-01-03  Brian Weinstein  <bweinstein@apple.com>
+
+        Windows build fix. Define WTF_USE_CFNETWORK in WebInspectorClientCF.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+
+2010-10-18  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Web Inspector: [crash] when Inspector Open in CSSStyleSelector::loadPendingImages().
+        https://bugs.webkit.org/show_bug.cgi?id=46224
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+        (WebInspectorClient::sendMessageToFrontend):
+
+2010-06-14  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: On the way to Remote Debugging we want to transfer dom/timeline/etc
+        data from inspected page to WebInspector as JSON string via http. The native
+        serialization to JSON string is supported by InspectorValue's classes. This patch
+        has the implementation of sendMessageToFrontend function. WebKit version of it still
+        uses ScriptFunctionCall and will be switched to another transport a little bit later.
+        https://bugs.webkit.org/show_bug.cgi?id=40134
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+        (WebInspectorClient::releaseFrontendPage):
+        (WebInspectorClient::sendMessageToFrontend):
+
+2010-06-09  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r60889.
+        http://trac.webkit.org/changeset/60889
+        https://bugs.webkit.org/show_bug.cgi?id=40365
+
+        gtk bot has some kind of memory corruption (Requested by
+        loislo on #webkit).
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+        (WebInspectorClient::storeSetting):
+
+2010-06-07  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: On the way to Remote Debugging we want to transfer dom/timeline/etc
+        data from inspected page to WebInspector as JSON string via http. The native
+        serialization to JSON string is supported by InspectorValue's classes. This patch
+        has the implementation of sendMessageToFrontend function. WebKit version of it still
+        uses ScriptFunctionCall and will be switched to another transport a little bit later.
+        https://bugs.webkit.org/show_bug.cgi?id=40134
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+        (WebInspectorClient::releaseFrontendPage):
+        (WebInspectorClient::sendMessageToFrontend):
+
+2010-01-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33057
+        REGRESSION(r49365): typeof(xhr.responseText) != "string" in Windows
+
+        <rdar://problem/7296920> REGRESSION: WebKit fails to start PeaceKeeper benchmark
+
+        * WebCoreSupport/WebInspectorClientCF.cpp: Define JS_EXPORTCLASS. I'm not sure why this
+        isn't done in JSC globally for all possible clients, but keeping the current design for now.
+
+2009-12-03  Pavel Feldman  <pfeldman@dhcp-172-28-174-220.spb.corp.google.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Simplify the settings support in inspector controller.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32076
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+        (WebInspectorClient::populateSetting):
+        (WebInspectorClient::storeSetting):
+
+2009-04-20  Steve Falkenburg  <sfalken@apple.com>
+
+        Separate JavaScriptCore.dll from WebKit.dll.
+        Slight performance improvement or no change on benchmarks.
+        
+        Allows us to break a circular dependency between CFNetwork and WebKit on Windows,
+        and simplifies standalone JavaScriptCore builds.
+        
+        Reviewed by Oliver Hunt.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp: Workaround for lack of config.h in shared WebKit file (WebKit/win uses config.h from WebCore).
+
+2008-12-09  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Fix bustage.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+
+2008-10-24  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * WebCoreSupport/WebInspectorClientCF.cpp: Define WTF_PLATFORM_CF
+        manually. Normally this gets defined on Windows by including config.h,
+        but Mac has no config.h for WebKit, so we can't do that here.
+
+2008-10-24  Timothy Hatcher  <timothy@apple.com>
+
+        Implement new InspectorClient methods to work with Settings.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21856
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp: Added.
+        (createKeyForPreferences): Helper to make the preference key.
+        (WebInspectorClient::populateSetting): Read the preference value from CFPreferences.
+        (WebInspectorClient::storeSetting): Write the setting value to  CFPreferences.
+        (WebInspectorClient::removeSetting): Remove the preference from CFPreferences.

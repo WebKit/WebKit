@@ -1,0 +1,6 @@
+
+FAIL setRemoteDescription(rollback) in have-remote-offer state should revert to stable state promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
+PASS setRemoteDescription(rollback) from stable state should reject with InvalidStateError 
+FAIL setRemoteDescription(rollback) should ignore invalid sdp content and succeed promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
+FAIL local offer created before setRemoteDescription(remote offer) then rollback should still be usable promise_test: Unhandled rejection with value: object "InvalidStateError: Description type incompatible with current signaling state"
+

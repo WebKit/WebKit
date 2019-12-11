@@ -1,0 +1,7 @@
+Vertex Shader compiled.
+Fragment Shader compiled.
+Program linked. Detaching and deleting shaders.
+Color uniform location was identified.
+Position attribute location was identified.
+Drawn.
+

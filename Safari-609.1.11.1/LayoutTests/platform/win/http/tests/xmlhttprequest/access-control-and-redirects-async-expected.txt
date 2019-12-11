@@ -1,0 +1,34 @@
+CONSOLE MESSAGE: Cross-origin redirection to http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi denied by Cross-Origin Resource Sharing policy: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi due to access control checks.
+CONSOLE MESSAGE: Cross-origin redirection to foo://bar.cgi denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?url=foo://bar.cgi&%20%20access-control-allow-origin=http://127.0.0.1:8000 due to access control checks.
+CONSOLE MESSAGE: Preflight response is not successful
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?redirect-preflight=true&%20%20url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi&%20%20access-control-allow-origin=* due to access control checks.
+CONSOLE MESSAGE: Request header field x-webkit is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi due to access control checks.
+Tests that asynchronous XMLHttpRequests handle redirects according to the CORS standard.
+
+Testing http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi without credentials
+Expecting success: false
+PASS: 0
+Testing http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi&  access-control-allow-origin=http://127.0.0.1:8000 without credentials
+Expecting success: true
+PASS: PASS: Cross-domain access allowed.
+
+Testing http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?url=http://username:password@localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi&  access-control-allow-origin=http://127.0.0.1:8000 without credentials
+Expecting success: true
+PASS: PASS: Cross-domain access allowed.
+
+Testing http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?url=foo://bar.cgi&  access-control-allow-origin=http://127.0.0.1:8000 without credentials
+Expecting success: false
+PASS: 0
+Testing http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?redirect-preflight=true&  url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi&  access-control-allow-origin=* without credentials
+Expecting success: false
+PASS: 0
+Testing http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?redirect-preflight=false&  url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi&  access-control-allow-origin=*&  access-control-allow-headers=x-webkit without credentials
+Expecting success: false
+PASS: 0
+Testing resources/redirect-cors.php?url=http://127.0.0.1:8000/xmlhttprequest/resources/get.txt without credentials
+Expecting success: true
+PASS: PASS
+

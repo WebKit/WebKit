@@ -1,0 +1,7 @@
+2d.composite.image.source-in
+Actual output:
+Expected output:
+
+
+PASS Canvas test: 2d.composite.image.source-in 
+

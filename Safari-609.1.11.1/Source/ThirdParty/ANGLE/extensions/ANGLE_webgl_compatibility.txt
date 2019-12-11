@@ -1,0 +1,81 @@
+Name
+
+    ANGLE_webgl_compatibility
+
+Name Strings
+
+    GL_ANGLE_webgl_compatibility
+
+Contributors
+
+    Geoff Lang
+
+Contact
+
+    Geoff Lang (geofflang 'at' google.com)
+
+Notice
+
+    Copyright (c) 2016 The Khronos Group Inc. Copyright terms at
+        http://www.khronos.org/registry/speccopyright.html
+
+Status
+
+    Draft
+
+Version
+
+    Version 2, November 28, 2016
+
+Number
+
+    OpenGL ES Extension #??
+
+Dependencies
+
+    Requires OpenGL ES 2.0
+
+    Written against the OpenGL ES 2.0 specification.
+
+    Interacts with EGL_ANGLE_create_context_webgl_compatibility (or equivalent)
+    extension.
+
+Overview
+
+    With this extension enabled, the OpenGL ES context will have additional
+    features and validation to be compatible with the WebGL specification.
+
+New Procedures and Functions
+
+    None
+
+
+New Tokens
+
+    None
+
+Additions to the OpenGL ES Specification
+
+    Additional validation will be performed according to the the sections of
+    the WebGL specification entitled "Differences Between WebGL and OpenGL ES
+    2.0" and "Differences Between WebGL and OpenGL ES 3.0".
+
+New State
+
+    None
+
+Conformance Tests
+
+    TBD
+
+Issues
+
+    None
+
+Revision History
+
+    Rev.    Date         Author     Changes
+    ----  -------------  ---------  ----------------------------------------
+      1   Sept 16, 2016  geofflang  Initial version
+      2    Nov 28, 2016  geofflang  Break the extension requests into a
+                                    separate extension.

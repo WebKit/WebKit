@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that simple line layout takes text stroke width value into account when calculating repaint rects.</title>
+<style>
+	div {
+		position: absolute;
+		-webkit-text-stroke-width: 10px;
+	}
+</style>
+<script>jsTestIsAsync = true;</script>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+	if (window.internals)
+		internals.startTrackingRepaints();
+</script>
+</head>
+<body>
+	<div id=foo>foobar</div>
+<script>
+	setTimeout(function() { 
+		document.getElementById("foo").style.left = "100px";
+		document.body.offsetWidth;
+		if (window.internals) {
+			shouldNotBe("internals.repaintRectsAsText().indexOf('90 8 62 18')", "-1");
+			internals.stopTrackingRepaints();
+			finishJSTest();
+		}
+	}
+	, 0);
+</script>
+</body>
+<script src="../../resources/js-test-post.js"></script>
+</html>

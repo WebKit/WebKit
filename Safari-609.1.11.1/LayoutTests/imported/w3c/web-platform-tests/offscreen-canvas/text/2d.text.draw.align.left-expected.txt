@@ -1,0 +1,7 @@
+2d.text.draw.align.left
+
+textAlign left is the left of the first em square (not the bounding box)
+
+
+FAIL textAlign left is the left of the first em square (not the bounding box) null is not an object (evaluating 'ctx.font = '50px CanvasTest'')
+

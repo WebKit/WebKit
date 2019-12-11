@@ -1,0 +1,35 @@
+<input type="text" id="input">
+<script>
+    const testNfcCtapVersionBase64 = "RklET18yXzCQAA==";
+    const testGetInfoResponseApduBase64 =
+        "AKYBgmZVMkZfVjJoRklET18yXzACgWtobWFjLXNlY3JldANQbUS6m/bsLkm5MAyP" +
+        "6SDLcwSkYnJr9WJ1cPVkcGxhdPRpY2xpZW50UGlu9AUZBLAGgQGQAA==";
+    const testAssertionMessageApduBase64 =
+        "AKMBomJpZFhAKAitzuj+Tslzelf3/vZwIGtDQNgoKeFd5oEieYzhyzA65saf0tK2" +
+        "w/mooa7tQtGgDdwZIjOhjcuZ0pQ1ajoE4GR0eXBlanB1YmxpYy1rZXkCWCVGzH+5" +
+        "Z51VstuQkuHI2eXh0Ct1gPC0gSx3CWLh5I9a2AEAAABQA1hHMEUCIQCSFTuuBWgB" +
+        "4/F0VB7DlUVM09IHPmxe1MzHUwRoCRZbCAIgGKov6xoAx2MEf6/6qNs8OutzhP2C" +
+        "QoJ1L7Fe64G9uBeQAA==";
+    if (window.internals) {
+        internals.setMockWebAuthenticationConfiguration({ silentFailure: true, nfc: { payloadBase64: [testNfcCtapVersionBase64, testGetInfoResponseApduBase64, testAssertionMessageApduBase64] } });
+        internals.withUserGesture(() => { input.focus(); });
+    }
+
+    const options = {
+        publicKey: {
+            challenge: new Uint8Array(16),
+            timeout: 100,
+            allowCredentials: [
+                { type: "public-key", id: new Uint8Array(16), transports: ["nfc"] }
+            ],
+        }
+    };
+
+    navigator.credentials.get(options).then(credential => {
+        // console.log("Succeeded!");
+        window.webkit.messageHandlers.testHandler.postMessage("Succeeded!");
+    }, error => {
+        // console.log(error.message);
+        window.webkit.messageHandlers.testHandler.postMessage(error.message);
+    });
+</script>

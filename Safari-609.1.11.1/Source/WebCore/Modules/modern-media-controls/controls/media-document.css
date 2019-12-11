@@ -1,0 +1,77 @@
+/*
+ * Copyright (C) 2017 Apple Inc. All Rights Reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+:host(.media-document) {
+    max-width: 100% !important;
+    max-height: 100% !important;
+    min-height: 50px !important;
+}
+
+/* Audio */
+
+:host(.media-document.audio) {
+    padding: 0 10px;
+    box-sizing: border-box;
+    height: var(--inline-controls-bar-height) !important;
+}
+
+:host(.media-document.audio.mac) {
+    width: 650px !important;
+    min-height: var(--inline-controls-bar-height) !important;
+}
+
+:host(.media-document.audio.ipad) {
+    width: 650px !important;
+}
+
+:host(.media-document.audio.iphone) {
+    width: 100% !important;
+}
+
+/* Video */
+
+:host(.media-document.video.mac) {
+    min-width: 700px !important;
+}
+
+:host(.media-document.video.ipad) {
+    min-width: 700px !important;
+}
+
+@media (max-width: 699px) {
+    :host(.media-document.video.ipad) {
+        min-width: 100% !important;
+    }
+}
+
+:host(.media-document.video.iphone) {
+    width: 100% !important;
+}
+
+/* Invalid state */
+
+:host(.media-document.video.invalid) .placard {
+    background-color: transparent;
+}

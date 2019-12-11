@@ -1,0 +1,10 @@
+Test import with non existing module.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS String(error) is "TypeError: Importing a module script failed."
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,68 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <title>Tests that we make a scrolling tree node for composited layers nested inside position:absolute in a scroller</title>
+    <style>
+        .scroller {
+            overflow: scroll;
+            margin: 20px;
+            height: 300px;
+            width: 300px;
+            border: 2px solid black;
+            opacity: 0.8;
+        }
+
+        .scroller > .scroller {
+            height: 250px;
+            width: 250px;
+        }
+
+        .absolute {
+            position:absolute;
+            left: 50px;
+            top: 50px;
+            width: 200px;
+            height: 120px;
+            padding: 20px;
+            background: gray;
+        }
+        
+        .composited {
+            transform: translateZ(0);
+        }
+        
+        .box {
+            width: 100px;
+            height: 100px;
+            background-color: green;
+        }
+        
+        .spacer {
+            height: 500px;
+            width: 20px;
+            background-color: silver;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        window.addEventListener('load', () => {
+            if (window.internals)
+                document.getElementById('tree').innerText = internals.scrollingStateTreeAsText();
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="scroller">
+            <div class="absolute">
+                <!-- <div class="composited box"></div> -->
+            </div>
+            <div class="spacer"></div>
+        </div>
+        <div class="spacer"></div>
+    </div>
+<pre id="tree"></pre>
+</body>
+</html>

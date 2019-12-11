@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: line 13: TypeError: undefined is not a function (evaluating 'window.testRunner.setMainFrameIsFirstResponder(false)')
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 780x19
+          text run at (0,0) width 780: "This tests that the selection tint is grey when the WebView is not focused (using the pixel output from DumpRenderTree)."
+      RenderBlock {DIV} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 182x19
+          text run at (0,0) width 182: "This text should be selected."

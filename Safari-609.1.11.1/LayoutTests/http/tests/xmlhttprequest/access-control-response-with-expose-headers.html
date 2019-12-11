@@ -1,0 +1,25 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+window.jsTestIsAsync = true;
+description('Test for bug 41210: Cross Origin XMLHttpRequest can not expose headers indicated in Access-Control-Expose-Headers HTTP Response Header.');
+var xhr = new XMLHttpRequest();
+xhr.onreadystatechange=function() {
+    if (xhr.readyState==4) {
+        shouldBe("xhr.getResponseHeader(\"X-FOO\")","'BAR'");
+        shouldBe("xhr.getResponseHeader(\"x-foo\")","'BAR'");
+        shouldBeNull("xhr.getResponseHeader(\"X-TEST\")");
+        finishJSTest();
+    }
+}
+var url = "http://localhost:8000/xmlhttprequest/resources/access-control-response-with-expose-headers.php";
+xhr.open("GET",url);
+xhr.send(null);
+</script>
+<script src="../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

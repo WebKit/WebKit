@@ -1,0 +1,80 @@
+Tests TextTrackCue's addCue and removeCue
+
+
+
+*** Test cues loaded from the file.
+EXPECTED (cues.length == '4') OK
+EXPECTED (cues.getCueById('1').startTime == '0') OK
+EXPECTED (cues[1].startTime == '31') OK
+EXPECTED (cues[2].startTime == '61') OK
+EXPECTED (cues.getCueById('4').startTime == '121') OK
+EXPECTED (cues.getCueById('junk') == 'undefined') OK
+
+*** Create a new cue, check values
+RUN(textCue = new VTTCue(33, 3.4, 'Sausage?'))
+EXPECTED (textCue.track == 'null') OK
+EXPECTED (textCue.id == '') OK
+EXPECTED (textCue.startTime == '33') OK
+EXPECTED (textCue.endTime == '3.4') OK
+EXPECTED (textCue.pauseOnExit == 'false') OK
+EXPECTED (textCue.vertical == '') OK
+EXPECTED (textCue.snapToLines == 'true') OK
+EXPECTED (textCue.line == '-1') OK
+EXPECTED (textCue.position == 'auto') OK
+EXPECTED (textCue.size == '100') OK
+EXPECTED (textCue.align == 'center') OK
+
+*** Add the new cue to a track, make sure it is inserted correctly.
+RUN(testTrack.track.addCue(textCue))
+EXPECTED (textCue.track == '[object TextTrack]') OK
+EXPECTED (cues[1].startTime == '31') OK
+EXPECTED (cues[2].startTime == '33') OK
+EXPECTED (cues[3].startTime == '61') OK
+
+*** create a new cue and add it to a track created with video.addTextTrack, make sure it is inserted correctly.
+RUN(newTrack = video.addTextTrack("subtitles", "French subtitles", "fr"))
+RUN(newTrack.addCue(new VTTCue(0.0, 1.0, "Test!")))
+RUN(newCue = newTrack.cues[0])
+EXPECTED (newCue.track == '[object TextTrack]') OK
+EXPECTED (newCue.id == '') OK
+EXPECTED (newCue.startTime == '0') OK
+EXPECTED (newCue.endTime == '1') OK
+EXPECTED (newCue.pauseOnExit == 'false') OK
+EXPECTED (newCue.vertical == '') OK
+EXPECTED (newCue.snapToLines == 'true') OK
+EXPECTED (newCue.line == '-1') OK
+EXPECTED (newCue.position == 'auto') OK
+EXPECTED (newCue.size == '100') OK
+EXPECTED (newCue.align == 'center') OK
+
+*** Create an old-style cue with an id.
+RUN(invalidCue = new VTTCue('sausage-cue', 33, 3.4, 'Sausage?'))
+TypeError: The provided value is non-finite
+EXPECTED (window.invalidCue == 'undefined') OK
+EXPECTED (testTrack.track.cues.length == '5') OK
+
+*** Remove a cue created with addCue().
+RUN(testTrack.track.removeCue(textCue))
+EXPECTED (textCue.track == 'null') OK
+EXPECTED (cues[1].startTime == '31') OK
+EXPECTED (cues[2].startTime == '61') OK
+
+*** Remove a cue added from the WebVTT file.
+RUN(textCue = cues[2])
+RUN(testTrack.track.removeCue(textCue))
+EXPECTED (textCue.track == 'null') OK
+EXPECTED (cues[1].startTime == '31') OK
+EXPECTED (cues[2].startTime == '121') OK
+
+*** Try to remove the cue again.
+TEST(testTrack.track.removeCue(textCue)) THROWS(DOMException.NOT_FOUND_ERR) OK
+
+*** Add a cue before all the existing cues.
+RUN(testTrack.track.addCue(new VTTCue(0, 31, 'I am first')))
+EXPECTED (cues[0].startTime == '0') OK
+EXPECTED (cues[0].endTime == '31') OK
+EXPECTED (cues[1].startTime == '0') OK
+EXPECTED (cues[1].endTime == '30.5') OK
+EXPECTED (cues[2].startTime == '31') OK
+END OF TEST
+

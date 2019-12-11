@@ -1,0 +1,9 @@
+This test ensures that we properly reattach collapsed whitespace when sibling style changes require. Test passes if the spans below are justified across the page.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS
+ spans[spans.length - 1].offsetLeft is >= container.offsetWidth * 2 / 3
+
+

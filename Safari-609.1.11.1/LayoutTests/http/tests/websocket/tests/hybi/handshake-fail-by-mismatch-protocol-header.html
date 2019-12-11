@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Test whether WebSocket handshake fails if the server sends mismatched Sec-WebSocket-Protocol header.");
+
+window.jsTestIsAsync = true;
+
+var url = "ws://localhost:8880/websocket/tests/hybi/handshake-fail-by-mismatch-protocol-header";
+var closeEvent;
+var ws;
+var protocolCase = ["", "MatchProtocol", ["MatchProtocol1", "MatchProtocol2"]];
+
+function doTest(index)
+{
+    if (protocolCase[index] === "")
+        ws = new WebSocket(url);
+    else
+        ws = new WebSocket(url, protocolCase[index]);
+
+    ws.onopen = function()
+    {
+        testFailed("Connection established.");
+        ws.close();
+    };
+
+    ws.onclose = function(event)
+    {
+        closeEvent = event;
+        shouldBeFalse("closeEvent.wasClean");
+        if (index === protocolCase.length - 1) {
+            finishJSTest();
+            return;
+        }
+        doTest(index + 1);        
+    };
+}
+
+doTest(0);
+
+</script>
+<script src="../../../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

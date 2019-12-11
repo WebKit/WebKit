@@ -1,0 +1,37 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/cloning-steps.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/multiline-placeholder-cr-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/multiline-placeholder-cr.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/multiline-placeholder-crlf-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/multiline-placeholder-crlf.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/multiline-placeholder-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/multiline-placeholder.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-maxlength.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-minlength.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-newline-bidi-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-newline-bidi.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-setcustomvalidity.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-textLength.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-type.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-validity-clone.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/value-defaultValue-textContent-xhtml.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/value-defaultValue-textContent.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/wrap-reflect-1a-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/wrap-reflect-1a.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/wrap-reflect-1b-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/wrap-reflect-1b.html

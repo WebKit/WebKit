@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x462
+  RenderBlock {html} at (0,0) size 800x462
+    RenderBody {body} at (8,16) size 784x438
+      RenderBlock {p} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 781x19
+          text run at (0,0) width 781: "The svg area contained in the div element (red box), should contain four masked circles, that do not pixelate after resizing"
+      RenderBlock {div} at (0,36) size 402x402 [border: (1px solid #FF0000)]
+        RenderSVGRoot {svg} at (42,119) size 334x268
+          RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+            RenderSVGResourceLinearGradient {linearGradient} [id="gradient"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,1)]
+              RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
+              RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
+            RenderSVGResourceMasker {mask} [id="mask"] [maskUnits=userSpaceOnUse] [maskContentUnits=userSpaceOnUse]
+              RenderSVGEllipse {circle} at (9,53) size 167x200 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=25.00] [cy=20.00] [r=20.00]
+              RenderSVGEllipse {circle} at (9,253) size 167x200 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=25.00] [cy=60.00] [r=20.00]
+              RenderSVGEllipse {circle} at (242,53) size 167x200 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=75.00] [cy=20.00] [r=20.00]
+              RenderSVGEllipse {circle} at (242,253) size 167x200 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=75.00] [cy=60.00] [r=20.00]
+          RenderSVGContainer {g} at (42,119) size 334x268
+            RenderSVGRect {rect} at (42,119) size 334x268 [fill={[type=LINEAR-GRADIENT] [id="gradient"]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
+              [masker="mask"] RenderSVGResourceMasker {mask} at (25,20) size 50x40
+        RenderText {#text} at (0,0) size 0x0

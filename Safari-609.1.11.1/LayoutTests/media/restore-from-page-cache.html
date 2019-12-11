@@ -1,0 +1,86 @@
+<!-- webkit-test-runner [ enableBackForwardCache=true ] -->
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            var mediaFile = findMediaFile("video", "content/test");
+            var loadCount = 0;
+
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+
+            function pageshow(evt) 
+            {
+                if (!evt.persisted) {
+                    // this is the first time the page has been loaded, setup the video element
+                    setup();
+                } else {
+                    consoleWrite("*** Page returned from cache");
+
+                    testExpected("loadCount", 1);
+
+                    // Dump the height of the video so we can verify that the player was restored.
+                    video = document.getElementsByTagName('video')[0];
+                    videoComputedStyle = getComputedStyle(video);
+                    testExpected("videoComputedStyle.width", "320px");
+                    testExpected("videoComputedStyle.height", "240px");
+
+                    // schedule the test to end shortly, but wait long enough for the element to fire loading events
+                    //  if that is going to happen
+                    setTimeout(function() { if (window.testRunner) testRunner.notifyDone(); }, 200);
+                }
+            }
+
+            function pagehide()
+            {
+                // Have the video element generate some events that need to be suspended.
+                // We use multiple events to verify that they fire in the correct order.
+                consoleWrite("*** Changing playbackRate just before going into cache, to schedule a ratechange event.");
+                document.getElementsByTagName("video")[0].playbackRate = 2; 
+                consoleWrite("*** Changing volume just before going into cache, to schedule a volumechange event.");
+                document.getElementsByTagName("video")[0].volume = 0.5; 
+            }
+
+            function canplaythrough() 
+            {
+                testExpected("loadCount", 0);
+                if (!loadCount) {
+                    video = document.getElementsByTagName('video')[0];
+                    consoleWrite("*** Page going into cache");
+                    setTimeout('window.location = "data:text/html,<script>history.back()<" + "/script>"', 0);
+                }
+                ++loadCount;
+            }
+
+            function propertyChangeCallback(evt)
+            {
+                consoleWrite("*** " + evt.type +  " event fired. This should happen AFTER returning from cache.");
+            }
+
+            function setup()
+            {
+                video = mediaElement = document.getElementsByTagName('video')[0];
+
+                waitForEvent('loadstart');
+                waitForEvent('canplaythrough', canplaythrough);
+                
+                video.src = mediaFile;
+
+                video.onratechange = propertyChangeCallback;
+                video.onvolumechange = propertyChangeCallback;
+            }
+
+            window.onpageshow = pageshow;
+            window.onpagehide = pagehide;
+        </script>
+    </head>
+    <body>
+
+        <video controls > </video>
+        <p>Make sure we don't reload a &lt;video&gt; element when navigating back to an uncached page.</p>
+    </body>
+</html>
+

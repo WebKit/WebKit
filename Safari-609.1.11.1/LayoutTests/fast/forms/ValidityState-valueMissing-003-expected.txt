@@ -1,0 +1,22 @@
+This test checks validity.valueMissing of disabled form controls with blank values, blank options selected, or nothing selected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS valueMissingFor("input") is false
+PASS valueMissingFor("textarea") is false
+PASS valueMissingFor("select-no-option") is false
+PASS valueMissingFor("select-placeholder-selected") is false
+PASS valueMissingFor("select-without-placeholder") is false
+PASS valueMissingFor("select-placeholder-selected-size2") is false
+PASS valueMissingFor("select-without-placeholder-size2") is false
+PASS valueMissingFor("select-none-selected-multiple") is false
+PASS valueMissingFor("select-fake-placeholder-selected-multiple") is false
+PASS valueMissingFor("select-without-fake-placeholder-multiple") is false
+PASS valueMissingFor("select-none-selected-size2-multiple") is false
+PASS valueMissingFor("select-fake-placeholder-selected-size2-multiple") is false
+PASS valueMissingFor("select-without-fake-placeholder-size2-multiple") is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+            

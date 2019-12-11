@@ -1,0 +1,9 @@
+This tests the delay between when you type and the search event fires.
+
+As of this writing we can't use DOM events to type into a search field, so the test uses the event sender and only runs under DumpRenderTree.
+
+
+
+The two rows below should match.
+0.5 0.4 0.3 0.2 0.2 0
+0.5 0.4 0.3 0.2 0.2 0

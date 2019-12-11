@@ -1,0 +1,1305 @@
+/*
+ * The default style sheet used to render HTML.
+ *
+ * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
+ * Copyright (C) 2003-2011, 2014 Apple Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ *
+ */
+
+@namespace "http://www.w3.org/1999/xhtml";
+
+html {
+    display: block;
+#if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
+    color: text;
+#endif
+}
+
+/* children of the <head> element all have display:none */
+head, link, meta, script, style, title {
+    display: none;
+}
+
+/* generic block-level elements */
+
+body {
+    display: block;
+    margin: 8px;
+}
+
+p {
+    display: block;
+    -webkit-margin-before: 1__qem;
+    -webkit-margin-after: 1__qem;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
+}
+
+address, article, aside, div, footer, header, hgroup, layer, main, nav, section {
+    display: block;
+}
+
+marquee {
+    display: inline-block;
+}
+
+blockquote {
+    display: block;
+    -webkit-margin-before: 1__qem;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 40px;
+    -webkit-margin-end: 40px;
+}
+
+figcaption {
+    display: block;
+}
+
+figure {
+    display: block;
+    -webkit-margin-before: 1em;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 40px;
+    -webkit-margin-end: 40px;
+}
+
+q {
+    display: inline;
+}
+
+q::before {
+    content: open-quote;
+}
+
+q::after {
+    content: close-quote;
+}
+
+center {
+    display: block;
+    /* special centering to be able to emulate the html4/netscape behaviour */
+    text-align: -webkit-center;
+}
+
+hr {
+    display: block;
+    -webkit-margin-before: 0.5em;
+    -webkit-margin-after: 0.5em;
+    -webkit-margin-start: auto;
+    -webkit-margin-end: auto;
+    border-style: inset;
+    border-width: 1px;
+}
+
+video {
+    object-fit: contain;
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    -webkit-tap-highlight-color: transparent;
+#endif
+}
+
+/* heading elements */
+
+h1 {
+    display: block;
+    font-size: 2em;
+    -webkit-margin-before: 0.67__qem;
+    -webkit-margin-after: 0.67em;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
+    font-weight: bold;
+}
+
+:matches(article, aside, nav, section) h1 {
+    font-size: 1.5em;
+    -webkit-margin-before: 0.83__qem;
+    -webkit-margin-after: 0.83em;
+}
+
+:matches(article, aside, nav, section) :matches(article, aside, nav, section) h1 {
+    font-size: 1.17em;
+    -webkit-margin-before: 1__qem;
+    -webkit-margin-after: 1em;
+}
+
+:matches(article, aside, nav, section) :matches(article, aside, nav, section) :matches(article, aside, nav, section) h1 {
+    font-size: 1.00em;
+    -webkit-margin-before: 1.33__qem;
+    -webkit-margin-after: 1.33em;
+}
+
+:matches(article, aside, nav, section) :matches(article, aside, nav, section) :matches(article, aside, nav, section) :matches(article, aside, nav, section) h1 {
+    font-size: .83em;
+    -webkit-margin-before: 1.67__qem;
+    -webkit-margin-after: 1.67em;
+}
+
+:matches(article, aside, nav, section) :matches(article, aside, nav, section) :matches(article, aside, nav, section) :matches(article, aside, nav, section) :matches(article, aside, nav, section) h1 {
+    font-size: .67em;
+    -webkit-margin-before: 2.33__qem;
+    -webkit-margin-after: 2.33em;
+}
+
+h2 {
+    display: block;
+    font-size: 1.5em;
+    -webkit-margin-before: 0.83__qem;
+    -webkit-margin-after: 0.83em;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
+    font-weight: bold;
+}
+
+h3 {
+    display: block;
+    font-size: 1.17em;
+    -webkit-margin-before: 1__qem;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
+    font-weight: bold;
+}
+
+h4 {
+    display: block;
+    -webkit-margin-before: 1.33__qem;
+    -webkit-margin-after: 1.33em;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
+    font-weight: bold;
+}
+
+h5 {
+    display: block;
+    font-size: .83em;
+    -webkit-margin-before: 1.67__qem;
+    -webkit-margin-after: 1.67em;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
+    font-weight: bold;
+}
+
+h6 {
+    display: block;
+    font-size: .67em;
+    -webkit-margin-before: 2.33__qem;
+    -webkit-margin-after: 2.33em;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
+    font-weight: bold;
+}
+
+/* tables */
+
+table {
+    display: table;
+    border-collapse: separate;
+    border-spacing: 2px;
+    border-color: gray;
+}
+
+thead {
+    display: table-header-group;
+    vertical-align: middle;
+    border-color: inherit;
+}
+
+tbody {
+    display: table-row-group;
+    vertical-align: middle;
+    border-color: inherit;
+}
+
+tfoot {
+    display: table-footer-group;
+    vertical-align: middle;
+    border-color: inherit;
+}
+
+/* for tables without table section elements (can happen with XHTML or dynamically created tables) */
+table > tr {
+    vertical-align: middle;
+}
+
+col {
+    display: table-column;
+}
+
+colgroup {
+    display: table-column-group;
+}
+
+tr {
+    display: table-row;
+    vertical-align: inherit;
+    border-color: inherit;
+}
+
+td, th {
+    display: table-cell;
+    vertical-align: inherit;
+}
+
+th {
+    font-weight: bold;
+}
+
+caption {
+    display: table-caption;
+    text-align: -webkit-center;
+}
+
+/* lists */
+
+ul, menu, dir {
+    display: block;
+    list-style-type: disc;
+    -webkit-margin-before: 1__qem;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
+    -webkit-padding-start: 40px;
+}
+
+ol {
+    display: block;
+    list-style-type: decimal;
+    -webkit-margin-before: 1__qem;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
+    -webkit-padding-start: 40px;
+}
+
+li {
+    display: list-item;
+    text-align: -webkit-match-parent;
+}
+
+ul ul, ol ul {
+    list-style-type: circle;
+}
+
+ol ol ul, ol ul ul, ul ol ul, ul ul ul {
+    list-style-type: square;
+}
+
+dd {
+    display: block;
+    -webkit-margin-start: 40px;
+}
+
+dl {
+    display: block;
+    -webkit-margin-before: 1__qem;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
+}
+
+dt {
+    display: block;
+}
+
+ol ul, ul ol, ul ul, ol ol {
+    -webkit-margin-before: 0;
+    -webkit-margin-after: 0;
+}
+
+/* form elements */
+
+form {
+    display: block;
+    margin-top: 0__qem;
+}
+
+label {
+    cursor: default;
+}
+
+legend {
+    display: block;
+    -webkit-padding-start: 2px;
+    -webkit-padding-end: 2px;
+    border: none;
+}
+
+fieldset {
+    display: block;
+    -webkit-margin-start: 2px;
+    -webkit-margin-end: 2px;
+    -webkit-padding-before: 0.35em;
+    -webkit-padding-start: 0.75em;
+    -webkit-padding-end: 0.75em;
+    -webkit-padding-after: 0.625em;
+    border: 2px groove ThreeDFace;
+    min-width: min-content;
+}
+
+button {
+    -webkit-appearance: button;
+}
+
+/* Form controls don't go vertical. */
+input, textarea, keygen, select, button, meter, progress {
+    -webkit-writing-mode: horizontal-tb !important;
+}
+
+input, textarea, keygen, select, button {
+    margin: 0__qem;
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+    font: -webkit-small-control;
+#endif
+    color: initial;
+    letter-spacing: normal;
+    word-spacing: normal;
+    line-height: normal;
+    text-transform: none;
+    text-indent: 0;
+    text-shadow: none;
+    display: inline-block;
+    text-align: start;
+}
+
+input[type="hidden"] {
+    display: none;
+}
+
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+textarea,
+input[type="range"],
+#endif
+input,
+input:matches([type="password"], [type="search"]) {
+    -webkit-appearance: textfield;
+#if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
+    color: text;
+    background-color: -webkit-control-background;
+#else
+    background-color: white;
+#endif
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    border-radius: 5px;
+    font: 11px Helvetica, -webkit-pictograph;
+    border: 1px solid #4c4c4c;
+    padding: 0.2em 0.5em 0.3em 0.5em;
+#else
+    border: 2px inset;
+    padding: 1px;
+#endif
+    -webkit-rtl-ordering: logical;
+    -webkit-user-select: text;
+    cursor: auto;
+}
+
+#if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
+@media (prefers-dark-interface) {
+    input,
+    input:matches([type="password"], [type="search"]) {
+        background-color: transparent;
+    }
+}
+#endif
+
+input[type="search"] {
+    -webkit-appearance: searchfield;
+    box-sizing: border-box;
+}
+
+input::-webkit-textfield-decoration-container {
+    display: flex;
+    align-items: center;
+    content: none !important;
+}
+
+input::-webkit-clear-button {
+    -webkit-appearance: searchfield-cancel-button;
+    display: inline-block;
+    flex: none;
+    margin-left: 2px;
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: searchfield-cancel-button;
+    display: block;
+    flex: none;
+    align-self: flex-start;
+    margin: auto 0;
+}
+
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: searchfield-decoration;
+    display: block;
+    flex: none;
+    align-self: flex-start;
+    margin: auto 0;
+}
+
+input[type="search"]::-webkit-search-results-decoration {
+    -webkit-appearance: searchfield-results-decoration;
+    display: block;
+    flex: none;
+    align-self: flex-start;
+    margin: auto 0;
+}
+
+input[type="search"]::-webkit-search-results-button {
+    -webkit-appearance: searchfield-results-button;
+    display: block;
+    flex: none;
+}
+
+#if defined(ENABLE_INPUT_TYPE_DATE) && ENABLE_INPUT_TYPE_DATE
+input[type="date"] {
+    align-items: center;
+    -webkit-appearance: menulist-button;
+    display: -webkit-inline-flex;
+    overflow: hidden;
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+    width: 10em;
+#endif
+}
+#endif
+#if defined(ENABLE_INPUT_TYPE_DATETIME_INCOMPLETE) && ENABLE_INPUT_TYPE_DATETIME_INCOMPLETE
+input[type="datetime"] {
+    align-items: center;
+    -webkit-appearance: menulist-button;
+    display: -webkit-inline-flex;
+    overflow: hidden;
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+    width: 10em;
+#endif
+}
+#endif
+#if defined(ENABLE_INPUT_TYPE_DATETIMELOCAL) && ENABLE_INPUT_TYPE_DATETIMELOCAL
+input[type="datetime-local"] {
+    align-items: center;
+    -webkit-appearance: menulist-button;
+    display: -webkit-inline-flex;
+    overflow: hidden;
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+    width: 10em;
+#endif
+}
+#endif
+#if defined(ENABLE_INPUT_TYPE_MONTH) && ENABLE_INPUT_TYPE_MONTH
+input[type="month"] {
+    align-items: center;
+    -webkit-appearance: menulist-button;
+    display: -webkit-inline-flex;
+    overflow: hidden;
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+    width: 10em;
+#endif
+}
+#endif
+#if defined(ENABLE_INPUT_TYPE_TIME) && ENABLE_INPUT_TYPE_TIME
+input[type="time"] {
+    align-items: center;
+    -webkit-appearance: menulist-button;
+    display: -webkit-inline-flex;
+    overflow: hidden;
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+    width: 10em;
+#endif
+}
+#endif
+#if defined(ENABLE_INPUT_TYPE_WEEK) && ENABLE_INPUT_TYPE_WEEK
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+input[type="week"] {
+    align-items: center;
+    -webkit-appearance: menulist-button;
+    display: -webkit-inline-flex;
+    overflow: hidden;
+    width: 10em;
+}
+#endif
+#endif
+
+input::-webkit-date-and-time-value {
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    margin-right: 18px;
+#else
+    margin: 1px 24px 1px 4px;
+    white-space: pre;
+#endif
+}
+
+input::-webkit-inner-spin-button {
+    -webkit-appearance: inner-spin-button;
+    display: block;
+    position: relative;
+    cursor: default;
+    /* This height property is ignored for input type "number" and others which
+     * use RenderTextControlSingleLine as renderer which sets height of spin
+     * button in layout(). */
+    height: 1.5em;
+    flex: none;
+    -webkit-user-select: none;
+}
+
+input::-webkit-strong-password-auto-fill-button {
+    flex-shrink: 1 !important;
+    font-family: -apple-system !important;
+    -webkit-text-security: none !important;
+    -webkit-user-select: none !important;
+    pointer-events: none !important;
+    text-align: right !important;
+    color: rgba(0, 0, 0, 0.8) !important;
+    padding-left: 6px !important;
+    white-space: nowrap !important;
+}
+
+input::-webkit-credentials-auto-fill-button {
+    -webkit-mask-image: url('data:image/svg+xml,<svg viewBox="0 0 44 24" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M 30.25 9.25 L 36.5 15.75 L 42.75 9.25" fill="none" stroke="black" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><g><path d="M 16 3.5 C 16 2.672 16.672 2 17.5 2 C 18.3 2 19 2.7 19 3.5 C 19 4.3 18.3 5 17.5 5 C 16.7 5 16 4.3 16 3.5 Z M 11 6.5 C 11 10.1 13.9 13 17.5 13 C 21.1 13 24 10.1 24 6.5 C 24 2.9 21.1 0 17.5 0 C 13.9 0 11 2.9 11 6.5 Z"/><path d="M 20 17.3 L 20 18.6 L 20.9 19.9 C 21 20 21 20 21 20 L 17.7 23.8 C 17.7 23.8 17.7 23.8 17.7 23.8 C 17.5 23.9 17.4 23.9 17.3 23.8 L 15 21 L 15 11 L 20 11 L 20 14.8 L 21 15.9 C 21 16 21 16 20.9 16.1 L 20 17.3 Z M 17 13 L 17 21.3 L 17.5 21.8 L 18 21.3 L 18 13 L 17 13 Z"/></g></svg>');
+    -webkit-mask-size: 22px 12px;
+    width: 22px;
+    height: 12px;
+    margin-left: 3px;
+    margin-right: 2px;
+    background-color: black;
+    flex: none;
+    -webkit-user-select: none;
+}
+
+input::-webkit-credentials-auto-fill-button:hover {
+    background-color: rgb(0, 122, 255);
+}
+
+input::-webkit-credentials-auto-fill-button:active {
+    background-color: rgb(0, 60, 219);
+}
+
+input::-webkit-contacts-auto-fill-button {
+    -webkit-mask-image: url('data:image/svg+xml,<svg viewBox="0 0 44 24" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M 30.25 9.25 L 36.5 15.75 L 42.75 9.25" fill="none" stroke="black" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="11" fill="none" stroke="black" stroke-width="2"/><path d="M 12 11.5 C 10.3 11.5 9 10.1 9 8.2 C 9 6.5 10.3 5 12 5 C 13.6 5 15 6.5 15 8.2 C 15 10.1 13.6 11.5 12 11.5 Z M 6.6 18 C 6.2 18 6 17.7 6 17.4 C 6 16.2 7.9 13 12 13 C 16.1 13 18 16.2 18 17.4 C 18 17.7 17.8 18 17.4 18 L 6.6 18 Z"/></svg>');
+    -webkit-mask-size: 22px 12px;
+    width: 22px;
+    height: 12px;
+    margin-left: 3px;
+    margin-right: 2px;
+    background-color: black;
+    flex: none;
+    -webkit-user-select: none;
+}
+
+input::-webkit-contacts-auto-fill-button:hover {
+    background-color: rgb(0, 122, 255);
+}
+
+input::-webkit-contacts-auto-fill-button:active {
+    background-color: rgb(0, 60, 219);
+}
+
+input::-webkit-credit-card-auto-fill-button {
+    -webkit-mask-image: url('data:image/svg+xml,<svg viewBox="0 0 44 24" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M 30.25 9.25 L 36.5 15.75 L 42.75 9.25" fill="none" stroke="black" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="1" y="4" width="22" height="16" rx="2" fill="none" stroke="black" stroke-width="2"/><rect x="2" y="8" width="20" height="3"/><rect x="3" y="12" width="5" height="4" rx="1"/></svg>');
+    -webkit-mask-size: 22px 12px;
+    width: 22px;
+    height: 12px;
+    margin-left: 3px;
+    margin-right: 2px;
+    background-color: black;
+    flex: none;
+    -webkit-user-select: none;
+}
+
+input::-webkit-credit-card-auto-fill-button:hover {
+    background-color: rgb(0, 122, 255);
+}
+
+input::-webkit-credit-card-auto-fill-button:active {
+    background-color: rgb(0, 60, 219);
+}
+
+input::-webkit-caps-lock-indicator {
+    -webkit-appearance: caps-lock-indicator;
+    content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17"><path fill="black" fill-opacity="0.4" d="M12.5 0.5A 4 4 0 0 1 16.5 4.5L 16.5 12.5A 4 4 0 0 1 12.5 16.5L 4.5 16.5A 4 4 0 0 1 0.5 12.5L 0.5 4.5A 4 4 0 0 1 4.5 0.5L 12.5 0.5M 8.5 2L 4 7L 6.25 7L 6.25 10.25L 10.75 10.25L 10.75 7L 13 7L 8.5 2M 10.75 12L 6.25 12L 6.25 14.25L 10.75 14.25L 10.75 12"/></svg>');
+    align-self: stretch;
+    flex: none;
+    -webkit-user-select: none;
+}
+
+#if defined(ENABLE_DATALIST_ELEMENT) && ENABLE_DATALIST_ELEMENT
+input::-webkit-list-button {
+    -webkit-appearance: list-button;
+    display: block;
+    position: relative;
+    cursor: default;
+    align-self: stretch;
+    flex: none;
+    -webkit-user-select: none;
+    width: 16px;
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" stroke="black" fill="black" width="16" height="16"><polygon points="8 11.031, 4.5 4.969, 11.5 4.969"/></svg>');
+    /* Make it easier to hit the button on iOS */
+    padding: 7px;
+    margin: -7px;
+#else
+    height: 100%;
+#endif
+}
+#endif
+
+keygen, select {
+    border-radius: 5px;
+}
+
+keygen::-webkit-keygen-select {
+    margin: 0px;
+}
+
+textarea {
+    -webkit-appearance: textarea;
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+#if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
+    color: text;
+    background-color: -webkit-control-background;
+#else
+    background-color: white;
+#endif
+    border: 1px solid;
+    -webkit-rtl-ordering: logical;
+    -webkit-user-select: text;
+    padding: 2px;
+#else
+    -webkit-nbsp-mode: space;
+    -webkit-line-break: after-white-space;
+
+    /* On iOS we want to inherit the left and right padding for consistency with
+     other form controls (e.g. <input type="text">). We want to override the top
+     and bottom padding to ensure we have a symmetric look for text areas. */
+    padding-top: 2px;
+    padding-bottom: 2px;
+#endif
+    flex-direction: column;
+    resize: auto;
+    cursor: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+::placeholder {
+    -webkit-text-security: none;
+    color: darkGray;
+    pointer-events: none !important;
+}
+
+input::placeholder {
+    white-space: pre;
+    word-wrap: normal;
+    overflow: hidden;
+}
+
+input[type="password"] {
+    -webkit-text-security: disc !important;
+}
+
+input:matches([type="hidden"], [type="image"], [type="file"]) {
+    -webkit-appearance: initial;
+    padding: initial;
+    background-color: initial;
+    border: initial;
+}
+
+input[type="file"] {
+    align-items: baseline;
+    color: inherit;
+    text-align: start !important;
+}
+
+input:-webkit-autofill-strong-password {
+    -webkit-user-select: none !important;
+}
+
+input:-webkit-autofill-strong-password, input:-webkit-autofill-strong-password-viewable {
+    -webkit-text-security: none !important;
+    cursor: default !important;
+    font-family: monospace;
+}
+
+input:-webkit-autofill, input:-webkit-autofill-strong-password, input:-webkit-autofill-strong-password-viewable {
+    background-color: #FAFFBD !important;
+    background-image: none !important;
+    color: #000000 !important;
+}
+
+input:matches([type="radio"], [type="checkbox"]) {
+    margin: 3px 2px;
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    border: 1px solid #4c4c4c;
+    box-sizing: border-box;
+#else
+    padding: initial;
+    background-color: initial;
+    border: initial;
+#endif
+}
+
+input:matches([type="button"], [type="submit"], [type="reset"]) {
+    -webkit-appearance: push-button;
+    white-space: pre;
+}
+
+input[type="file"]::-webkit-file-upload-button {
+    -webkit-appearance: push-button;
+    white-space: nowrap;
+    margin: 0;
+    font-size: inherit;
+}
+
+input:matches([type="button"], [type="submit"], [type="reset"]), input[type="file"]::-webkit-file-upload-button, button {
+    align-items: flex-start;
+    text-align: center;
+    cursor: default;
+    color: ButtonText;
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+    padding: 2px 6px 3px 6px;
+    border: 2px outset ButtonFace;
+    background-color: ButtonFace;
+#else
+    padding: 0 1.0em;
+    border: 1px solid #4c4c4c;
+    /* We want to be as close to background-color:transparent as possible without actually being transparent. */
+    background-color: rgba(255, 255, 255, 0.01);
+    font: 11px Helvetica;
+#endif
+    box-sizing: border-box;
+}
+
+input:matches([type="button"], [type="submit"], [type="reset"]):active, input[type="file"]::-webkit-file-upload-button:active, button:active {
+    color: ActiveButtonText;
+}
+
+input[type="range"] {
+    -webkit-appearance: slider-horizontal;
+    padding: initial;
+    border: initial;
+    margin: 2px;
+    color: #909090;
+}
+
+input[type="range"]::-webkit-slider-container, input[type="range"]::-webkit-media-slider-container {
+    flex: 1;
+    box-sizing: border-box;
+    display: flex;
+    align-contents: center;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    flex: 1;
+    align-self: center;
+
+    box-sizing: border-box;
+    display: block;
+}
+
+input[type="range"]::-webkit-slider-thumb, input[type="range"]::-webkit-media-slider-thumb {
+    -webkit-appearance: sliderthumb-horizontal;
+    box-sizing: border-box;
+    display: block;
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    background-color: white;
+    border: 1px solid rgb(66, 66, 66);
+    padding: 0px;
+#endif
+}
+
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+input[type="range"]::-webkit-slider-thumb:active {
+    background-color: black;
+}
+
+input:disabled, textarea:disabled {
+    opacity: 0.4;
+}
+
+input[readonly], textarea[readonly] {
+    border-color: rgb(188, 188, 188);
+}
+#endif
+
+input:matches([type="button"], [type="submit"], [type="reset"]):disabled,
+input[type="file"]:disabled::-webkit-file-upload-button, button:disabled,
+select:disabled, keygen:disabled, optgroup:disabled, option:disabled,
+select[disabled]>option {
+    color: GrayText;
+}
+
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+input:matches([type="button"], [type="submit"], [type="reset"]):active, input[type="file"]:active::-webkit-file-upload-button, button:active {
+    border-style: inset;
+}
+
+input:matches([type="button"], [type="submit"], [type="reset"]):active:disabled,
+input[type="file"]:active:disabled::-webkit-file-upload-button, button:active:disabled {
+    border-style: outset;
+}
+#endif
+
+area, param {
+    display: none;
+}
+
+input[type="checkbox"] {
+    -webkit-appearance: checkbox;
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+    box-sizing: border-box;
+#else
+    border-radius: 5px;
+    width: 16px;
+    height: 16px;
+    padding: 0px;
+    /* We want to be as close to background:transparent as possible without actually being transparent */
+    background-color: rgba(255, 255, 255, 0.01);
+#endif
+}
+
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+input[type="radio"] {
+    -webkit-appearance: radio;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    padding: 0px;
+    /* We want to be as close to background:transparent as possible without actually being transparent */
+    background-color: rgba(255, 255, 255, 0.01);
+}
+
+input[type="checkbox"]:indeterminate {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+input[type="checkbox"]:indeterminate:disabled {
+    opacity: 0.4;
+    background: rgba(0, 0, 0, 0.8);
+}
+
+input:matches([type="checkbox"], [type="radio"]):checked {
+    border-color: rgba(255, 255, 255, 0.0);
+}
+
+input:matches([type="checkbox"], [type="radio"]):checked:disabled {
+    opacity: 0.4;
+    background: rgba(0, 0, 0, 0.8);
+}
+#endif
+
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+input[type="radio"] {
+    -webkit-appearance: radio;
+    box-sizing: border-box;
+}
+#endif
+
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+select:focus {
+    border-color: rgb(17, 46, 135);
+}
+#endif
+
+#if defined(ENABLE_INPUT_TYPE_COLOR) && ENABLE_INPUT_TYPE_COLOR
+
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+input[type="color"] {
+    padding: 0.3em;
+}
+#endif
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+    display: flex;
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    padding: 0;
+#else
+    padding: 4px 2px 5px;
+#endif
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+}
+
+input[type="color"]::-webkit-color-swatch {
+    background-color: #000000;
+    border-radius: 2px;
+    flex: 1;
+}
+
+#endif // defined(ENABLE_INPUT_TYPE_COLOR) && ENABLE_INPUT_TYPE_COLOR
+
+select {
+    box-sizing: border-box;
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    -webkit-appearance: menulist-button;
+    letter-spacing: normal;
+    word-spacing: normal;
+    line-height: normal;
+    border: 1px solid #4c4c4c;
+    /* We want to be as close to background:transparent as possible without actually being transparent */
+    background-color: rgba(255, 255, 255, 0.01);
+    font: 11px Helvetica;
+    padding: 0 0.4em 0 0.4em;
+#else
+    -webkit-appearance: menulist;
+    border: 1px solid;
+#if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
+    color: text;
+    background-color: -webkit-control-background;
+#else
+    color: black;
+    background-color: white;
+#endif
+#endif
+    align-items: center;
+    white-space: pre;
+    -webkit-rtl-ordering: logical;
+    cursor: default;
+}
+
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+select:matches([size], [multiple], [size][multiple]) {
+    -webkit-appearance: listbox;
+    align-items: flex-start;
+    border: 1px inset gray;
+    border-radius: initial;
+    white-space: initial;
+}
+
+select:matches([size="0"], [size="1"]) {
+    -webkit-appearance: menulist;
+    align-items: center;
+    border: 1px solid;
+    border-radius: 5px;
+    white-space: pre;
+}
+#endif
+
+optgroup {
+    font-weight: bolder;
+}
+
+option {
+    font-weight: normal;
+}
+
+output {
+    display: inline;
+}
+
+/* form validation message bubble */
+
+::-webkit-validation-bubble {
+    display: inline-block;
+    z-index: 2147483647;
+    position: absolute;
+    opacity: 0.95;
+    line-height: 0;
+    margin: 0;
+    -webkit-text-security: none;
+    transition: opacity 05.5s ease;
+}
+
+::-webkit-validation-bubble-message {
+    display: flex;
+    position: relative;
+    top: -4px;
+    font: message-box;
+    color: black;
+    min-width: 50px;
+    max-width: 200px;
+    border: solid 2px #400;
+    background: -webkit-gradient(linear, left top, left bottom, from(#f8ecec), to(#e8cccc));
+    padding: 8px;
+    border-radius: 8px;
+    -webkit-box-shadow: 4px 4px 4px rgba(100,100,100,0.6),
+        inset -2px -2px 1px #d0c4c4,
+        inset 2px 2px 1px white;
+    line-height: normal;
+    white-space: normal;
+    z-index: 2147483644;
+}
+
+::-webkit-validation-bubble-text-block {
+    flex: 1;
+}
+
+::-webkit-validation-bubble-heading {
+    font-weight: bold;
+}
+
+::-webkit-validation-bubble-arrow {
+    display: inline-block;
+    position: relative;
+    left: 32px;
+    width: 16px;
+    height: 16px;
+    background-color: #f8ecec;
+    border-width: 2px 0 0 2px;
+    border-style: solid;
+    border-color: #400;
+    box-shadow: inset 2px 2px 1px white;
+    -webkit-transform-origin: 0 0;
+    transform: rotate(45deg);
+    z-index: 2147483645;
+}
+
+::-webkit-validation-bubble-arrow-clipper {
+    display: block;
+    overflow: hidden;
+    height: 16px;
+}
+
+#if defined(ENABLE_METER_ELEMENT) && ENABLE_METER_ELEMENT
+/* meter */
+
+meter {
+    -webkit-appearance: meter;
+    box-sizing: border-box;
+    display: inline-block;
+    height: 1em;
+    width: 5em;
+    vertical-align: -0.2em;
+}
+
+#endif
+
+/* progress */
+
+progress {
+    -webkit-appearance: progress-bar;
+    box-sizing: border-box;
+    display: inline-block;
+    height: 1em;
+    width: 10em;
+    vertical-align: -0.2em;
+}
+
+progress::-webkit-progress-inner-element {
+    -webkit-appearance: inherit;
+    box-sizing: inherit;
+    height: 100%;
+    width: 100%;
+}
+
+progress::-webkit-progress-bar {
+    background-color: gray;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+progress::-webkit-progress-value {
+    background-color: green;
+    height: 100%;
+    width: 50%; /* should be removed later */
+    box-sizing: border-box;
+}
+
+/* inline elements */
+
+u, ins {
+    text-decoration: underline;
+}
+
+strong, b {
+    font-weight: bold;
+}
+
+i, cite, em, var, address, dfn {
+    font-style: italic;
+}
+
+tt, code, kbd, samp {
+    font-family: monospace;
+}
+
+pre, xmp, plaintext, listing {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+    margin: 1__qem 0;
+}
+
+mark {
+    background-color: yellow;
+    color: black;
+}
+
+big {
+    font-size: larger;
+}
+
+small {
+    font-size: smaller;
+}
+
+s, strike, del {
+    text-decoration: line-through;
+}
+
+sub {
+    vertical-align: sub;
+    font-size: smaller;
+}
+
+sup {
+    vertical-align: super;
+    font-size: smaller;
+}
+
+nobr {
+    white-space: nowrap;
+}
+
+/* states */
+
+:-webkit-direct-focus {
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    outline: auto 3px -webkit-focus-ring-color;
+#else
+    outline: auto 5px -webkit-focus-ring-color;
+#endif
+}
+
+/* Read-only text fields do not show a focus ring but do still receive focus */
+html:focus, body:focus, input[readonly]:focus, applet:focus, embed:focus, iframe:focus, object:focus {
+    outline: none;
+}
+
+#if !defined(WTF_PLATFORM_IOS_FAMILY) || !WTF_PLATFORM_IOS_FAMILY
+input:focus, textarea:focus, keygen:focus, select:focus {
+    outline-offset: -2px;
+}
+#endif
+
+input:matches([type="button"], [type="checkbox"], [type="file"], [type="hidden"], [type="image"], [type="radio"], [type="reset"], [type="search"], [type="submit"]):focus,
+input[type="file"]:focus::-webkit-file-upload-button {
+    outline-offset: 0;
+}
+
+a:any-link {
+    color: -webkit-link;
+    text-decoration: underline;
+    cursor: auto;
+}
+
+a:any-link:active {
+    color: -webkit-activelink;
+}
+
+/* HTML5 ruby elements */
+
+ruby, rt {
+    text-indent: 0; /* blocks used for ruby rendering should not trigger this */
+}
+
+rt {
+    line-height: normal;
+    -webkit-text-emphasis: none;
+}
+
+ruby > rt {
+    display: block;
+    font-size: -webkit-ruby-text;
+    text-align: start;
+}
+
+ruby > rp {
+    display: none;
+}
+
+/* other elements */
+
+noframes {
+    display: none;
+}
+
+frameset, frame {
+    display: block;
+}
+
+frameset {
+    border-color: inherit;
+}
+
+iframe {
+    border: 2px inset;
+}
+
+details {
+    display: block;
+}
+
+summary {
+    display: block;
+}
+
+summary::-webkit-details-marker {
+    display: inline-block;
+    width: 0.66em;
+    height: 0.66em;
+    margin-right: 0.4em;
+}
+
+template {
+    display: none;
+}
+
+bdi, output {
+    unicode-bidi: isolate;
+}
+
+bdo {
+    unicode-bidi: bidi-override;
+}
+
+slot {
+    display: contents;
+}
+
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+applet, embed, object, img {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+:any-link img {
+    -webkit-tap-highlight-color: inherit;
+}
+#endif
+
+#if defined(ENABLE_ATTACHMENT_ELEMENT) && ENABLE_ATTACHMENT_ELEMENT
+attachment {
+    -webkit-appearance: attachment;
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    color: -apple-system-blue;
+#endif
+}
+#endif
+
+/* page */
+
+@page {
+    /* FIXME: Define the right default values for page properties. */
+    size: auto;
+    margin: auto;
+    padding: 0px;
+    border-width: 0px;
+}
+
+/* noscript is handled internally, as it depends on settings. */
+
+/* Default support for "Smart Invert" where all content color except media is inverted. */ 
+@media (inverted-colors) {
+    img:not(picture>img), picture, video { filter: invert(100%); } /* Images and videos double-inverted. */
+}

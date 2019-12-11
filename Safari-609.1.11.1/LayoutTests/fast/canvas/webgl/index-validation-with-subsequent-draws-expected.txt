@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 50: WebGL: INVALID_OPERATION: drawElements: unable to simulate vertexAttrib0 array
+CONSOLE MESSAGE: line 56: WebGL: INVALID_OPERATION: drawElements: unable to simulate vertexAttrib0 array
+

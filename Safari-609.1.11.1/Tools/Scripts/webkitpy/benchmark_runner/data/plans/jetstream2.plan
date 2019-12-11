@@ -1,0 +1,7 @@
+{
+    "timeout": 1200,
+    "count": 5,
+    "local_copy": "../../../../PerformanceTests/JetStream2/",
+    "entry_point": "index.html?report=true",
+    "output_file": "jetstream2.result"
+}

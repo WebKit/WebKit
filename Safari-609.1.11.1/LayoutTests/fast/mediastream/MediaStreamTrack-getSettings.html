@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script src="./resources/getUserMedia-helper.js"></script>
+        <script>
+            let track;
+
+            function limitPrecision(value, precision)
+            {
+                if (typeof value === "number" && value % 1 != 0)
+                    return value.toFixed(precision);
+                return value;
+            }
+            
+            function forEachNativeProperty(list, func)
+            {
+                for (let property in list) {
+                    if (list.hasOwnProperty(property, list[property]) || list.__proto__.hasOwnProperty(property))
+                        func(property, list[property]);
+                }
+            }
+            
+            function listTrackSettings(track)
+            {
+                debug(`${track.kind} track settings:`);
+                forEachNativeProperty(track.getSettings(), (property, value) => {
+                    if (property == "deviceId")
+                        value = "&lt;UUID>";
+                    else
+                        value = limitPrecision(value, 3);
+                    debug(`  settings.${property} = ${value}`);
+                });
+
+                debug("");
+            }
+
+            function checkTrackSettings(t)
+            {
+                track = t;
+                forEachNativeProperty(track.getSettings(), (property, value) => {
+                    shouldBeTrue(`"${property}" in track.getCapabilities()`);
+                });
+            }
+
+            async function start()
+            {
+                description("Tests MediaStreamTrack.getSettings.");
+                let stream = await navigator.mediaDevices.getUserMedia({audio:true, video:true});
+
+                listTrackSettings(stream.getVideoTracks()[0]);
+                listTrackSettings(stream.getAudioTracks()[0]);
+
+                debug('According to the spec: "[every setting] MUST be a member of the set defined for that property by getCapabilities()"<br>');
+                checkTrackSettings(stream.getVideoTracks()[0]);
+                checkTrackSettings(stream.getAudioTracks()[0]);
+                finishJSTest();
+            }
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+
+    </head>
+    <body onload="start()">
+        <p id="description"></p>
+        <div id="console"></div>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

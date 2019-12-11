@@ -1,0 +1,29 @@
+<!-- webkit-test-runner [ useThreadedScrolling=false internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<script type="text/javascript">
+    function runTest() {
+        document.getElementById("container").scrollLeft = -715;
+    }
+</script>
+<style>
+#container {
+    direction: rtl;
+    overflow: scroll;
+    width: 300px;
+    height: 300px;
+}
+#overflow {
+    width: 1000px;
+    height: 1000px;
+    background-color: green;
+}
+</style>
+</head>
+<body onload="runTest();">
+<div id="container">
+<div id="overflow">
+</div>
+</div>
+</body>
+</html>

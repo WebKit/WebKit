@@ -1,0 +1,18 @@
+Pointer Events Capture Test - release capture on pointercancel
+
+Test Description: This test checks if setCapture/releaseCapture functions works properly. Complete the following actions:
+Touch black rectangle and do not release your touch
+Move your touch to scroll the page. "lostpointercapture" should be logged inside of the black rectangle immediately after "pointercancel"
+
+Test passes if the proper behavior of the events is observed.
+Pointer Events Capture Test
+
+Test complete: Scroll to Summary to view Pass/Fail Results.
+
+The following pointer types were detected: touch.
+
+The following events were logged: gotpointercapture@target0, pointercancel@target0, lostpointercapture@target0.
+
+
+PASS pointer capture is released on pointercancel 
+

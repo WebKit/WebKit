@@ -1,0 +1,34 @@
+CONSOLE MESSAGE: line 1: TypeError: undefined is not an object (evaluating '({}).a.b')
+CONSOLE MESSAGE: line 3: TypeError: undefined is not an object (evaluating '({}).a.b')
+CONSOLE MESSAGE: line 8: NotFoundError: The object can not be found here.
+CONSOLE MESSAGE: line 24: exception in host function
+CONSOLE MESSAGE: line 13: exception string
+CONSOLE MESSAGE: line 18: [object Object]
+CONSOLE MESSAGE: line 18: Error: error message
+Regression test for https://bugs.webkit.org/show_bug.cgi?id=133182
+
+Stepping after breaking on uncaught exceptions should not crash.
+
+[1] Testing statement '({}).a.b.c.d;'
+[1] Paused and about to step
+[1] Resumed
+[2] Testing statement 'exceptionBasic();'
+[2] Paused and about to step
+[2] Resumed
+[3] Testing statement 'exceptionDOM();'
+[3] Paused and about to step
+[3] Resumed
+[4] Testing statement 'exceptionInHostFunction();'
+[4] Paused and about to step
+[4] Resumed
+[5] Testing statement 'throwString();'
+[5] Paused and about to step
+[5] Resumed
+[6] Testing statement 'throwParam({x:1});'
+[6] Paused and about to step
+[6] Resumed
+[7] Testing statement 'throwParam(new Error('error message'));'
+[7] Paused and about to step
+[7] Resumed
+PASS - paused for each uncaught exception
+

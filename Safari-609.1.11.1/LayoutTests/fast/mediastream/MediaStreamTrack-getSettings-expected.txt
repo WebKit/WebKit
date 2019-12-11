@@ -1,0 +1,33 @@
+Tests MediaStreamTrack.getSettings.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+video track settings:
+  settings.deviceId = <UUID>
+  settings.facingMode = user
+  settings.frameRate = 30
+  settings.height = 480
+  settings.width = 640
+
+audio track settings:
+  settings.deviceId = <UUID>
+  settings.echoCancellation = false
+  settings.sampleRate = 44100
+  settings.volume = 1
+
+According to the spec: "[every setting] MUST be a member of the set defined for that property by getCapabilities()"
+
+PASS "deviceId" in track.getCapabilities() is true
+PASS "facingMode" in track.getCapabilities() is true
+PASS "frameRate" in track.getCapabilities() is true
+PASS "height" in track.getCapabilities() is true
+PASS "width" in track.getCapabilities() is true
+PASS "deviceId" in track.getCapabilities() is true
+PASS "echoCancellation" in track.getCapabilities() is true
+PASS "sampleRate" in track.getCapabilities() is true
+PASS "volume" in track.getCapabilities() is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,7 @@
+2d.path.isPointInPath.arc
+
+isPointInPath() works on arcs
+
+
+FAIL isPointInPath() works on arcs null is not an object (evaluating 'ctx.arc')
+

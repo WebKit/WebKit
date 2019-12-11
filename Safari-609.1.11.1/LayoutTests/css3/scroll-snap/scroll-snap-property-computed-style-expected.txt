@@ -1,0 +1,236 @@
+Test the computed style of the scroll-snap-* properties.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+invalid snap type: `potato`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-type') is 'none'
+
+empty string for snap type: ``
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-type') is 'none'
+
+too many values: `block mandatory proximity`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-type') is 'none'
+
+none following axis: `both none`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-type') is 'none'
+
+two axis values: `block inline`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-type') is 'none'
+
+two strictness values: `proximity mandatory`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-type') is 'none'
+
+axis following strictness: `mandatory inline`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-type') is 'none'
+
+initial value: `initial`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-type') is 'none'
+
+only strictness: `mandatory`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-type') is 'both mandatory'
+
+only axis: `both`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-type') is 'both proximity'
+
+none: `none`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-type') is 'none'
+
+strictness following axis: `inline mandatory`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-type') is 'inline mandatory'
+
+invalid snap align: `potato`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
+
+empty string: ``
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
+
+too many values: `start center end`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
+
+invalid second value: `start wut`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
+
+invalid first value: `wat center`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
+
+one length: `10px`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
+
+two lengths: `10px 50px`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
+
+initial value: `initial`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
+
+single value: `start`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'start start'
+
+two values: `start end`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'start end'
+
+invalid scroll padding: `potato`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is '0px'
+
+empty string: ``
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is '0px'
+
+too many values: `1px 2px 3px 4px 5px`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is '0px'
+
+attempt to use auto: `auto auto`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is '0px'
+
+single length: `10px`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is '10px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is '10px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '10px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '10px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is '10px'
+
+two percentages: `10% 20%`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is '10% 20%'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is '10%'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '20%'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '20%'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is '10%'
+
+three lengths: `1px 2px 3px`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is '1px 2px 3px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is '1px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '2px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '2px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is '3px'
+
+four values: `50px 10% 20% 50px`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is '50px 10% 20% 50px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is '50px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '50px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '10%'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is '20%'
+
+calc expression: `calc(50px + 10%) 20px`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is 'calc(50px + 10%) 20px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is 'calc(50px + 10%)'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '20px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '20px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is 'calc(50px + 10%)'
+
+various units: `1em 5mm 2in 4cm`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is '16px 18.89763832092285px 192px 151.1811065673828px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is '16px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '151.1811065673828px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '18.89763832092285px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is '192px'
+
+subpixel values: `10.4375px 6.5px`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is '10.4375px 6.5px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is '10.4375px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '6.5px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '6.5px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is '10.4375px'
+
+invalid scroll padding: `potato`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-top') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-left') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-right') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-bottom') is '0px'
+
+empty string: ``
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-top') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-left') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-right') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-bottom') is '0px'
+
+too many values: `1px 2px 3px 4px 5px`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-top') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-left') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-right') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-bottom') is '0px'
+
+attempt to use auto: `auto auto`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-top') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-left') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-right') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-bottom') is '0px'
+
+attempt to use percentage: `25% 25%`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-top') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-left') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-right') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-bottom') is '0px'
+
+attempt to use calc: `calc(25% + 10px)`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-top') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-left') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-right') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-bottom') is '0px'
+
+single length: `10px`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin') is '10px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-top') is '10px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-left') is '10px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-right') is '10px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-bottom') is '10px'
+
+two lengths: `10px 20px`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin') is '10px 20px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-top') is '10px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-left') is '20px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-right') is '20px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-bottom') is '10px'
+
+three lengths: `1px 2px 3px`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin') is '1px 2px 3px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-top') is '1px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-left') is '2px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-right') is '2px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-bottom') is '3px'
+
+four lengths: `50px 10px 20px 50px`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin') is '50px 10px 20px 50px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-top') is '50px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-left') is '50px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-right') is '10px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-bottom') is '20px'
+
+various units: `1em 5mm 2in 4cm`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin') is '16px 18.89763832092285px 192px 151.1811065673828px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-top') is '16px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-left') is '151.1811065673828px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-right') is '18.89763832092285px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-bottom') is '192px'
+
+subpixel values: `10.4375px 6.5px`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin') is '10.4375px 6.5px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-top') is '10.4375px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-left') is '6.5px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-right') is '6.5px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-bottom') is '10.4375px'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

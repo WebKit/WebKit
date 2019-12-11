@@ -1,0 +1,19 @@
+CONSOLE MESSAGE: Refused to load localhost:8801/preload/resources/dummy.js because it does not appear in the style-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://localhost:8800/preload/resources/dummy.css because it does not appear in the style-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://localhost:8800/preload/resources/square.png because it does not appear in the img-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://localhost:8800/fonts/CanvasTest.ttf because it does not appear in the font-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://localhost:8800/preload/resources/white.mp4 because it does not appear in the media-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://localhost:8800/preload/resources/sound_5.oga because it does not appear in the media-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://localhost:8800/preload/resources/foo.vtt because it does not appear in the media-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load localhost:8801/preload/resources/dummy.js because it does not appear in the style-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://localhost:8800/preload/resources/dummy.css because it does not appear in the style-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://localhost:8800/preload/resources/square.png because it does not appear in the img-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://localhost:8800/fonts/CanvasTest.ttf because it does not appear in the font-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://localhost:8800/preload/resources/white.mp4 because it does not appear in the media-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://localhost:8800/preload/resources/sound_5.oga because it does not appear in the media-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://localhost:8800/preload/resources/foo.vtt because it does not appear in the media-src directive of the Content Security Policy.
+CONSOLE MESSAGE: line 14: <link rel=preload> must have a valid `as` value
+CONSOLE MESSAGE: line 15: <link rel=preload> must have a valid `as` value
+
+PASS Makes sure that preload requests respect CSP 
+

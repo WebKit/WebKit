@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 4: ReferenceError: Can't find variable: SharedWorker
+
+FAIL messagechannel in shared worker Can't find variable: SharedWorker
+

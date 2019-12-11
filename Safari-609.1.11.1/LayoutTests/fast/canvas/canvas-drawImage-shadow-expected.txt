@@ -1,0 +1,60 @@
+Ensure correct behavior of canvas with image shadow. A square with a cut-out top-right corner should be displayed with solid shadow (top) and blur shadow (bottom).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS d[0] is 0
+PASS d[1] is 0
+PASS d[2] is 0
+PASS d[3] is 0
+PASS d[0] is 240
+PASS d[1] is 50
+PASS d[2] is 50
+PASS d[3] is 255
+PASS d[0] is 240
+PASS d[1] is 50
+PASS d[2] is 50
+PASS d[3] is 255
+PASS d[0] is 0
+PASS d[1] is 0
+PASS d[2] is 0
+PASS d[3] is 0
+PASS d[0] is 0
+PASS d[1] is 0
+PASS d[2] is 0
+PASS d[3] is 0
+PASS d[0] is 0
+PASS d[1] is 0
+PASS d[2] is 0
+PASS d[3] is 0
+PASS d[0] is 0
+PASS d[1] is 0
+PASS d[2] is 255
+PASS d[3] should not be 255 and it's not.
+PASS d[0] is 0
+PASS d[1] is 0
+PASS d[2] is 255
+PASS d[3] should not be 255 and it's not.
+PASS d[0] is 0
+PASS d[1] is 0
+PASS d[2] is 255
+PASS d[3] should not be 255 and it's not.
+PASS d[0] is 0
+PASS d[1] is 0
+PASS d[2] is 255
+PASS d[3] should not be 255 and it's not.
+PASS d[0] is 0
+PASS d[1] is 0
+PASS d[2] is 255
+PASS d[0] is 0
+PASS d[1] is 0
+PASS d[2] is 0
+PASS d[3] is 0
+PASS d[0] is 0
+PASS d[1] is 0
+PASS d[2] is 0
+PASS d[3] is 0
+

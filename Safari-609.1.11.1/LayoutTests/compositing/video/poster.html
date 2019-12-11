@@ -1,0 +1,32 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+<head>
+<style>
+video {
+    width: 300px;
+    height: 300px;
+}
+video::-webkit-media-controls-fullscreen-button,
+video::-webkit-media-controls-timeline-container,
+video::-webkit-media-controls-mute-button,
+video::-webkit-media-controls-wireless-playback-picker-button {
+    display: none;
+}
+</style>
+<script src="../../media/media-file.js"></script>
+</head>
+<body>
+<p>This test makes sure that video posters are displayed even after the source is loaded</p>
+<video controls id="v" poster="../resources/simple_image.png"></video>
+<script>
+var v = document.getElementById("v");
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    v.addEventListener("canplaythrough", function() {
+        testRunner.notifyDone();
+    });
+}
+v.setAttribute("src", findMediaFile("video", "../resources/video"));
+</script>
+</body>
+</html>

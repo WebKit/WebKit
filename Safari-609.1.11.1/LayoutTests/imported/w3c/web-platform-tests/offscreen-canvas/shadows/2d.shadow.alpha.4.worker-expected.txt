@@ -1,0 +1,3 @@
+
+FAIL Shadows with alpha components are correctly affected by globalAlpha Can't find variable: OffscreenCanvas
+

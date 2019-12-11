@@ -1,0 +1,14 @@
+Test passes if it does not debug assert.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Test 1: Empty <mo> tag:
+
+Test 2: Multi-character <mo> tag:
+
+++
+

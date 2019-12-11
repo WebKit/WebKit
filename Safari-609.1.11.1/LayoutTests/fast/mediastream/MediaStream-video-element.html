@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script>
+            var video;
+            var mediaStream;
+
+            function logEvent(element, eventName, func)
+            {
+                function _eventCallback(evt)
+                {
+                    if (window.wasFinishJSTestCalled)
+                        return;
+
+                    debug(`Event <em>'${evt.type}'</em>`);
+                    if (func)
+                        func(evt);
+                }
+                element.addEventListener(eventName, _eventCallback, true);
+            }
+
+            function limitPrecision(value, precision)
+            {
+                if (typeof value === "number" && value % 1 != 0)
+                    return value.toFixed(precision);
+                return value;
+            }
+
+            function enumerateProperties(object, workFunc)
+            {
+                for (var property in object) {
+                    if (!object.hasOwnProperty(property) && !object.__proto__.hasOwnProperty(property))
+                        continue;
+                    if (object[property] === undefined)
+                        continue;
+
+                    if (typeof object[property] === "function")
+                        workFunc(property, "[native function]");
+                    else
+                        workFunc(property, limitPrecision(object[property], 2));
+                }
+            }
+
+            function checkElementTrack(track)
+            {
+                enumerateProperties(track, function(property, value) {
+                    if (property == "id")
+                        value = "&lt;UUID>";
+                    debug(`  track.${property} = ${value}`);
+                });
+            }
+
+            function checkVideoElement()
+            {
+                evalAndLog("video.pause()");
+
+                debug("<br>**** check video element ****");
+                shouldBe('video.videoWidth', 'mediaStream.getVideoTracks()[0].getSettings().width');
+                shouldBe('video.videoHeight', 'mediaStream.getVideoTracks()[0].getSettings().height');
+
+                debug("<br>**** check video tracks ****");
+                shouldBe('video.videoTracks.length', '1');
+                shouldBe('video.videoTracks[0].id', 'mediaStream.getVideoTracks()[0].id');
+                shouldBeEqualToString('video.videoTracks[0].language', '');
+                shouldBeEqualToString('video.videoTracks[0].kind', 'main');
+
+                debug("<br>video.videoTracks[0] properties:");
+                checkElementTrack(video.videoTracks[0]);
+
+                debug("<br>**** check audio tracks ****");
+                shouldBe('video.audioTracks.length', '1');
+                shouldBe('video.audioTracks[0].id', 'mediaStream.getAudioTracks()[0].id');
+                shouldBeEqualToString('video.audioTracks[0].language', '');
+                shouldBeEqualToString('video.audioTracks[0].kind', 'main');
+
+                debug("<br>video.audioTracks[0] properties:");
+                checkElementTrack(video.audioTracks[0]);
+
+                debug("");
+                finishJSTest();
+            }
+
+            function canplay()
+            {
+                debug("<br>*** start playback ****");
+                evalAndLog("video.play()");
+                setTimeout(checkVideoElement, 100);
+            }
+
+            function setupStream(stream)
+            {
+                mediaStream = stream;
+                testPassed('mediaDevices.getUserMedia succeeded.');
+
+                debug("<br>**** setup video element ****");
+                evalAndLog("video.srcObject = mediaStream");
+            }
+
+            function start()
+            {
+                description("Tests MediaStreamTrack callbacks.");
+                video = document.querySelector('video');
+                logEvent(video, 'loadedmetadata')
+                logEvent(video, 'canplay', canplay)
+                logEvent(video, 'canplaythrough')
+                logEvent(video, 'loadeddata')
+                logEvent(video, 'play')
+
+                debug("<br>**** calling mediaDevices.getUserMedia() ****");
+                if (window.testRunner)
+                    testRunner.setUserMediaPermission(true);
+                navigator.mediaDevices.getUserMedia( {video: true, audio: true} )
+                    .then(setupStream)
+                    .catch(function(reason) {
+                        debug(`Stream generation failed with error: ${reason}`);
+                    });
+            }
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+    </head>
+    <body onload="start()">
+        <p id="description"></p>
+        <video controls  width="680" height="360"></video>
+        <div id="console"></div>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

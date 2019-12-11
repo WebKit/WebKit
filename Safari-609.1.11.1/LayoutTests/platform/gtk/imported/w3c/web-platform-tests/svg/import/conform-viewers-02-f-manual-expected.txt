@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (198,39) size 404x411
+      RenderSVGText {text} at (119,23) size 242x21 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 242x21
+          chunk 1 (middle anchor) text run 1 at (119.20,40.00) startOffset 0 endOffset 31 width 241.60: "Test data uri with svgz content"
+      RenderSVGText {text} at (208,183) size 63x21 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 63x21
+          chunk 1 (middle anchor) text run 1 at (209.00,200.00) startOffset 0 endOffset 6 width 62.01: "FAILED"
+      RenderSVGImage {image} at (216,116) size 334x334
+    RenderSVGContainer {g} at (16,518) size 380x60
+      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 228x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.6 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

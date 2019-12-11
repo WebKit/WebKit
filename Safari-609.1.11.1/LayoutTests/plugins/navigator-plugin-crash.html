@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+    Test passes if WebKit doesn't crash.
+    <script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.setCanOpenWindows();
+        testRunner.setPopupBlockingEnabled(false);
+        testRunner.setCloseRemainingWindowsWhenComplete(true);
+        testRunner.waitUntilDone();
+    }
+
+    onload = function() {
+        var t1 = window.open('target.html', '_blank');
+        var data = t1.navigator.plugins[0];
+        t1.close();
+        setTimeout(function() {
+            // Do not expect crashes.
+            JSON.stringify(data);
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 200);
+    }
+    </script>
+</body>
+</html>

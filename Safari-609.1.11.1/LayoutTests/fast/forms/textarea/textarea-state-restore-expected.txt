@@ -1,0 +1,9 @@
+Confirm nothing is saved and restored:
+PASS $("inserted").value is ""
+PASS $("saved1").value is ""
+PASS $("saved2").value is "aaa\nbbb"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

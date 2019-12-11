@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 7: TypeError: document.getElementById("testPlugin").testDOMAccess is not a function. (In 'document.getElementById("testPlugin").testDOMAccess()', 'document.getElementById("testPlugin").testDOMAccess' is undefined)
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 742x19
+          text run at (0,0) width 488: "This page tests whether Netscape plug-ins can access their own DOM elements. "
+          text run at (488,0) width 254: "The plug-in should have a 3px red border."
+      RenderBlock (anonymous) at (0,36) size 784x200
+        RenderEmbeddedObject {EMBED} at (0,0) size 200x200
+        RenderText {#text} at (0,0) size 0x0

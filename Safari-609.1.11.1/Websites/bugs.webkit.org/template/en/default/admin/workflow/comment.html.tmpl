@@ -1,0 +1,81 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% INCLUDE global/header.html.tmpl
+   title = "Comments Required on Status Transitions"
+   style_urls = ['skins/standard/admin.css']
+%]
+
+<script type="text/javascript">
+<!--
+  function toggle_cell(cell) {
+    if (cell.checked)
+      cell.parentNode.className = "checked";
+    else
+      cell.parentNode.className = "";
+  }
+//-->
+</script>
+
+<p>
+  This page allows you to define which status transitions require a comment
+  by the user doing the change.
+</p>
+
+<form id="workflow_form" method="POST" action="editworkflow.cgi">
+<table id="workflow">
+  <tr>
+    <th colspan="2">&nbsp;</th>
+    <th colspan="[% statuses.size FILTER html %]" class="title">To</th>
+  </tr>
+
+  <tr>
+    <th rowspan="[% statuses.size + 2 FILTER html %]" class="title">From</th>
+    <th>&nbsp;</th>
+    [% FOREACH status = statuses %]
+      <th class="[% status.is_open ? "open-status" : "closed-status" %] center">
+        [% display_value("bug_status", status.name) FILTER html %]
+      </th>
+    [% END %]
+  </tr>
+
+  [%# This defines the entry point in the workflow %]
+  [% p = [{id => 0, name => "{Start}", is_open => 1}] %]
+  [% FOREACH status = p.merge(statuses) %]
+    <tr class="highlight">
+      <th class="[% status.is_open ? "open-status" : "closed-status" %]">
+        [% display_value("bug_status", status.name) FILTER html %]
+      </th>
+
+      [% FOREACH new_status = statuses %]
+        [% IF workflow.${status.id}.${new_status.id}.defined %]
+          <td class="[% "checked" IF workflow.${status.id}.${new_status.id} %]"
+              title="From [% status.name FILTER html %] to [% new_status.name FILTER html %]">
+            <input type="checkbox" name="c_[% status.id %]_[% new_status.id %]"
+                   id="c_[% status.id %]_[% new_status.id %]" onclick="toggle_cell(this)"
+              [% " checked='checked'" IF workflow.${status.id}.${new_status.id} %]>
+          </td>
+        [% ELSE %]
+          <td class="forbidden">&nbsp;</td>
+        [% END %]
+      [% END %]
+    </tr>
+  [% END %]
+</table>
+
+<p class="center">
+  <input type="hidden" name="action" value="update_comment">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
+  <input type="submit" id="update_comment" value="Commit Changes"> -
+  <a href="editworkflow.cgi?action=edit_comment">Cancel Changes</a> -
+  <a href="editworkflow.cgi">View Current Workflow</a>
+</p>
+
+</form>
+
+[% INCLUDE global/footer.html.tmpl %]

@@ -1,0 +1,115 @@
+<html>
+<head>
+<script>
+    function print(message, color) 
+    {
+        var paragraph = document.createElement("div");
+        paragraph.appendChild(document.createTextNode(message));
+        paragraph.style.fontFamily = "monospace";
+        if (color)
+            paragraph.style.color = color;
+            document.getElementById("console").appendChild(paragraph);
+    }
+
+    function shouldBe(a, b)
+    {
+        var evalA = eval(a);
+        if (evalA == b) 
+            print("PASS: " + a + " should be " + b + " and is.", "green");
+        else {
+            print("FAIL: " + a + " should be " + b + " but instead is " + evalA + ".", "red");
+            numErrors ++;
+        }
+    }
+    
+    function step() {
+        switch (state) {
+            case 0:
+            shouldBe('window.history.length == originalHistoryLength', true);
+            shouldBe('window.location.hash', '');
+            window.location.hash = 'foo';
+            shouldBe('window.location.hash', '#foo');
+            shouldBe("window.location == originalLocation + '#foo'", true);
+            shouldBe('window.history.length ==  originalHistoryLength + 1', true);
+            break;
+        case 1:
+            window.location.hash = 'bar';
+            shouldBe('window.location.hash', '#bar');
+            shouldBe("window.location == originalLocation + '#bar'", true);
+            shouldBe('window.history.length == originalHistoryLength + 2', true);
+            break;
+        case 2:
+            window.location.hash = 'bar';
+            shouldBe('window.location.hash', '#bar');
+            shouldBe("window.location == originalLocation + '#bar'", true);
+            shouldBe('window.history.length == originalHistoryLength + 2', true);
+            break;        
+        case 3:
+            shouldBe('window.location.hash', '#bar');
+            shouldBe("window.location == originalLocation + '#bar'", true);
+            window.history.back();
+            // history.back() is asychronous, location should be unchanged
+            shouldBe('window.location.hash', '#bar');
+            shouldBe("window.location == originalLocation + '#bar'", true);
+            break;
+        case 4:
+            shouldBe('window.location.hash', '#foo');
+            shouldBe("window.location == originalLocation + '#foo'", true);
+            window.history.back();
+            // history.back() is asychronous, location should be unchanged
+            shouldBe('window.location.hash', '#foo');
+            shouldBe("window.location == originalLocation + '#foo'", true);
+            break;
+        case 5:
+            shouldBe('window.location.hash', '');
+            shouldBe("window.location == originalLocation", true);
+            window.history.forward();
+            // history.forward() is asychronous, location should be unchanged
+            shouldBe('window.location.hash', '');
+            shouldBe("window.location == originalLocation", true);
+            break;
+        case 6:
+            shouldBe('window.location.hash', '#foo');
+            shouldBe("window.location == originalLocation + '#foo'", true);
+            window.location.hash = '';
+            if (numErrors == 0)
+                print("SUCCESS!", "green")
+            else
+                print("FAILURE: one or more tests failed", "red");
+                
+            if (window.testRunner)
+                testRunner.notifyDone();
+                
+            return;
+        }
+        
+        state ++;
+        
+        // Do the step in a timeout to give asynchornous history.back/forward()
+        // calls a chance to run.
+        setTimeout(step, 0);
+    }
+        
+    function runTests() {
+        if (window.testRunner) {
+            testRunner.clearBackForwardList();
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+        
+        state = 0;
+        numErrors = 0;
+        originalLocation = window.location.href;
+        originalHistoryLength = window.history.length;
+
+        // Location changes need to happen outside the onload handler to generate history entries.
+        setTimeout(step, 0);
+    }
+    </script>
+</head>
+<body onload="runTests();">
+<p>This tests that modifying location.hash works as it should</p>
+<div id="console">
+</div>
+</body>
+</html>

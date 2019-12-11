@@ -1,0 +1,16 @@
+<p>This tests for a crash when deleting a selection that starts before the first child of a block and ends after the last child (which must be a link) of another block. There shouldn't be any content in the editable region below.</p>
+<div id="div" contenteditable="true">
+<div>foo</div>
+<div>bar <a href="http://www.apple.com/">baz</a></div>
+</div>
+
+<script>
+if (window.testRunner) {
+    window.testRunner.dumpEditingCallbacks();
+    window.testRunner.dumpAsText();
+}
+div = document.getElementById("div");
+div.focus();
+document.execCommand("SelectAll");
+document.execCommand("Delete");
+</script>

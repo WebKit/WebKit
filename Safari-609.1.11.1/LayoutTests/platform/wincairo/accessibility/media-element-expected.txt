@@ -1,0 +1,63 @@
+
+Dump <video> element controller accessibility object tree at 'canplaythrough' event.
+
++++++++++++++++++++++++++++++++++++
+
+State at 'canplaythrough' event:
+
+    description: AXDescription: 
+    role: AXRole: AXWebArea
+
+
+        description: AXDescription: Video Playback
+        role: AXRole: tool bar
+
+
+            description: AXDescription: 
+            role: AXRole: AXGroup
+
+
+                description: AXDescription: 
+                role: AXRole: AXGroup
+
+
+                description: AXDescription: 
+                role: AXRole: AXGroup
+
+
+            description: AXDescription: Play
+            role: AXRole: AXButton
+
+
+            description: AXDescription: Rewind 30 Seconds
+            role: AXRole: AXButton
+
+
+            description: AXDescription: 
+            role: AXRole: AXGroup
+
+
+            description: AXDescription: 
+            role: AXRole: AXGroup
+
+
+            description: AXDescription: Volume
+            role: AXRole: slider
+
+
+                description: AXDescription: 
+                role: AXRole: AXWebArea
+
+
+            description: AXDescription: Mute
+            role: AXRole: AXCheckBox
+
+
+            description: AXDescription: Captions
+            role: AXRole: AXComboBox
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

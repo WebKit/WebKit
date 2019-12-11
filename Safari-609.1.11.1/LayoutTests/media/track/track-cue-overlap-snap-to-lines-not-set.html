@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script src=../media-controls.js></script>
+
+        <script>
+
+        var cueDisplayElement;
+
+        DOMRect.prototype.intersects = function(that)
+        {
+            // Separating axis theorem:
+            return Math.abs(this.top - that.top) < Math.abs(this.height + that.height) / 2
+                && Math.abs(this.left - that.left) < Math.abs(this.width + that.width) / 2;
+        }
+
+        function findOverlappingElement(element)
+        {
+            var elementRect = element.getBoundingClientRect();
+            var siblings = element.parentElement.children;
+            for (var i = 0; i < siblings.length; ++i) {
+                var sibling = siblings[i];
+                if (sibling === element)
+                    continue;
+
+                var siblingRect = sibling.getBoundingClientRect();
+                if (elementRect.intersects(siblingRect))
+                    return sibling;
+            }
+            return null;
+        }
+
+        function seeked()
+        {
+            testTrack = document.querySelector('track');
+            consoleWrite("Active cues: " + testTrack.track.activeCues.length);
+
+            for (var i = 0; i < testTrack.track.activeCues.length; ++i) {
+                var cueDisplayElement = textTrackDisplayElement(video, 'display', i);
+                var overlappingElement = findOverlappingElement(cueDisplayElement);
+                if (overlappingElement) {
+                    failTest("Cue element number " + i + " overlaps with element " + overlappingElement + ".");
+                    return;
+                }
+            }
+
+            logResult(true, "No cue elements overlap.");
+            endTest();
+        };
+
+        function loaded()
+        {
+            consoleWrite("Test that TextTrack's cues are rendered correctly when the snap to lines flag is not set.");
+
+            findMediaElement();
+            video.src = findMediaFile('video', '../content/test');
+
+            waitForEvent('canplaythrough', function() {
+                waitForEvent('seeked', seeked, false, true);
+                video.currentTime = 4.10;
+            });
+        }
+
+        setCaptionDisplayMode('Automatic');
+        </script>
+    </head>
+    <body onload="loaded()">
+        <video controls>
+            <track src="captions-webvtt/captions-snap-to-lines-not-set.vtt" kind="captions" default>
+        </video>
+    </body>
+</html>

@@ -1,0 +1,24 @@
+<!doctype html>
+<head>
+    <script src="resources/text-based-repaint.js"></script>
+    <script>
+    function repaintTest()
+    {
+        var target = document.getElementById("target");
+        getSelection().setBaseAndExtent(target, 0, target.nextSibling, 1);
+    }
+    </script>
+    <style>
+        body { margin: 0px; }
+        #target::selection { background-color: green; }
+    </style>
+</head>
+<body onload="runRepaintTest()">
+    <div style="position: absolute; margin-left: 200px;">
+        <div>Bug <a href="http://webkit.org/b/111000">111000</a>: Selection gaps don't repaint correctly with transforms</div>
+        <div>This tests that absolute elements that get transformed are invalidated correctly. The box will be completely green if the selected area was invalidated correctly.</div>
+    </div>
+    <div style="-webkit-transform: translate(50px, 50px);">
+        <div id="target" style="background-color: red; width: 100px; height: 100px; position: absolute;"><br/></div><br/>
+    </div>
+</body>

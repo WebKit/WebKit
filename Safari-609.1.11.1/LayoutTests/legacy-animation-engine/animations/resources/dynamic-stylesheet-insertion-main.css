@@ -1,0 +1,37 @@
+body {
+  width: 320px;
+  height: 480px;
+}
+
+#splash {
+  position: absolute;
+  left: 20px;
+  left: 60px;
+  width: 100px;
+  height: 100px;
+  background-color: blue;
+  -webkit-transform: translate3d(0,80px,0);
+  -webkit-animation-name: splashdown;
+  -webkit-animation-duration: 0.6s;
+  -webkit-animation-delay: 0.1s;
+}
+
+@-webkit-keyframes splashdown {
+  0% {
+    -webkit-transform: translate3d(0, -300px, 0);
+  }
+  30% {
+    -webkit-animation-timing-function: ease-in;
+    -webkit-transform: translate3d(0, 20px, 0);
+  }
+  40% {
+    -webkit-animation-timing-function: ease-in-out;
+    -webkit-transform: translate3d(0, 100px, 0);
+  }
+  90% {
+    -webkit-transform: translate3d(0, 100px, 0);
+  }
+  100% {
+    -webkit-transform: translate3d(0, 100px, 0);
+  }
+}

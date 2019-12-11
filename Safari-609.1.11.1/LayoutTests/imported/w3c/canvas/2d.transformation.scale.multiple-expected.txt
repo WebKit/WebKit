@@ -1,0 +1,7 @@
+2d.transformation.scale.multiple
+Multiple scale()s combine
+Spec references: 2d.transformation.scale.multiple
+Actual output:
+Expected output:
+
+Passed
