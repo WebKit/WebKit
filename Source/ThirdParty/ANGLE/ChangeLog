@@ -1,3 +1,16 @@
+2019-12-11  Dean Jackson  <dino@apple.com>
+
+        Produce a dummy libANGLE.a file to fool Apple's build test infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=205068
+        <rdar://problem/57713353>
+
+        Unreviewed followup to apply the script to Mac Catalyst builds.
+
+        Note that this phase can be removed in a few days when Apple's Test
+        Platform realises it doesn't need libANGLE.a any more.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+
 2019-12-10  Dean Jackson  <dino@apple.com>
 
         Produce a dummy libANGLE.a file to fool Apple's build test infrastructure
