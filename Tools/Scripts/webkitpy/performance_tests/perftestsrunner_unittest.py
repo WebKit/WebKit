@@ -78,7 +78,7 @@ class MainTest(unittest.TestCase):
         add_file('test2.html')
         add_file('test3.html')
         port.host.filesystem.chdir(runner._port.perf_tests_dir()[:runner._port.perf_tests_dir().rfind(runner._host.filesystem.sep)])
-        self.assertItemsEqual(self._collect_tests_and_sort_test_name(runner), ['test1.html', 'test2.html'])
+        self.assertEqual(self._collect_tests_and_sort_test_name(runner), ['test1.html', 'test2.html'])
 
     def test_collect_tests_with_index_html_and_resources(self):
         runner, port = self.create_runner()
@@ -97,7 +97,7 @@ class MainTest(unittest.TestCase):
         self._add_file(runner, 'inspector/resources', 'resource_file.html')
         self._add_file(runner, 'unsupported', 'unsupported_test2.html')
         port.skipped_perf_tests = lambda: ['inspector/unsupported_test1.html', 'unsupported']
-        self.assertItemsEqual(self._collect_tests_and_sort_test_name(runner), ['inspector/test1.html', 'inspector/test2.html'])
+        self.assertEqual(self._collect_tests_and_sort_test_name(runner), ['inspector/test1.html', 'inspector/test2.html'])
 
     def test_collect_tests_with_skipped_list_and_files(self):
         runner, port = self.create_runner(args=['Suite/Test1.html', 'Suite/SkippedTest1.html', 'SkippedSuite/Test1.html'])
@@ -109,7 +109,7 @@ class MainTest(unittest.TestCase):
         self._add_file(runner, 'Suite', 'SkippedTest1.html')
         self._add_file(runner, 'Suite', 'SkippedTest2.html')
         port.skipped_perf_tests = lambda: ['Suite/SkippedTest1.html', 'Suite/SkippedTest1.html', 'SkippedSuite']
-        self.assertItemsEqual(self._collect_tests_and_sort_test_name(runner),
+        self.assertEqual(self._collect_tests_and_sort_test_name(runner),
             ['SkippedSuite/Test1.html', 'Suite/SkippedTest1.html', 'Suite/Test1.html'])
 
     def test_collect_tests_with_ignored_skipped_list(self):
@@ -121,7 +121,7 @@ class MainTest(unittest.TestCase):
         self._add_file(runner, 'inspector/resources', 'resource_file.html')
         self._add_file(runner, 'unsupported', 'unsupported_test2.html')
         port.skipped_perf_tests = lambda: ['inspector/unsupported_test1.html', 'unsupported']
-        self.assertItemsEqual(self._collect_tests_and_sort_test_name(runner), ['inspector/test1.html', 'inspector/test2.html', 'inspector/unsupported_test1.html', 'unsupported/unsupported_test2.html'])
+        self.assertEqual(self._collect_tests_and_sort_test_name(runner), ['inspector/test1.html', 'inspector/test2.html', 'inspector/unsupported_test1.html', 'unsupported/unsupported_test2.html'])
 
     def test_default_args(self):
         runner, port = self.create_runner()

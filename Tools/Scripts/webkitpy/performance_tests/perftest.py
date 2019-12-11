@@ -126,7 +126,7 @@ class PerfTest(object):
         return self._port.create_driver(worker_number=0, no_timeout=no_timeout)
 
     def run(self, time_out_ms, no_timeout=False):
-        for _ in xrange(self._test_runner_count):
+        for _ in range(self._test_runner_count):
             driver = self._create_driver(no_timeout)
             try:
                 if not self._run_with_driver(driver, time_out_ms):
@@ -168,8 +168,13 @@ class PerfTest(object):
         stdev = math.sqrt(square_sum / (len(sorted_values) - 1)) if len(sorted_values) > 1 else 0
 
         _log.info('RESULT %s= %s %s' % (test_name, mean, unit))
-        _log.info('median= %s %s, stdev= %s %s, min= %s %s, max= %s %s' %
-            (median, unit, stdev, unit, sorted_values[0], unit, sorted_values[-1], unit))
+        _log.info('median= {median} {unit}, stdev= {stdev} {unit}, min= {min} {unit}, max= {max} {unit}'.format(
+            median=median,
+            stdev=round(stdev, 10),
+            min=sorted_values[0],
+            max=sorted_values[-1],
+            unit=unit,
+        ))
 
     _description_regex = re.compile(r'^Description: (?P<description>.*)$', re.IGNORECASE)
     _metrics_regex = re.compile(r'^(?P<subtest>[A-Za-z0-9\(\[].+?)?:(?P<metric>[A-Z][A-Za-z]+)(:(?P<aggregator>[A-Z][A-Za-z]+))? -> \[(?P<values>(\d+(\.\d+)?)(, \d+(\.\d+)?)+)\] (?P<unit>[a-z/]+)?$')
@@ -193,7 +198,7 @@ class PerfTest(object):
                 return False
 
             metric = self._ensure_metrics(metric_match.group('metric'), metric_match.group('subtest'), metric_match.group('unit'), metric_match.group('aggregator'))
-            metric.append_group(map(lambda value: float(value), metric_match.group('values').split(', ')))
+            metric.append_group(list(map(lambda value: float(value), metric_match.group('values').split(', '))))
 
         return True
 

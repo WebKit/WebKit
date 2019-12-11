@@ -1,5 +1,28 @@
 2019-12-11  Jonathan Bedard  <jbedard@apple.com>
 
+        Python 3: Add support in webkitpy.performance_tests
+        https://bugs.webkit.org/show_bug.cgi?id=205122
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/test-webkitpy-python3: Add webkitpy.performance_tests.
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest.run): Use range over xrange.
+        (PerfTest.log_statistics): Python 3 may use more precision than Python 2.
+        (PerfTest._run_with_driver): Convert list to map.
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        (TestPerfTest._assert_results_are_correct): Convert map to list.
+        * Scripts/webkitpy/performance_tests/perftestsrunner_integrationtest.py:
+        (MainTest._test_run_with_json_output): Use range over xrange, convert keys to list.
+        (MainTest.test_run_with_upload_json_should_generate_perf_webkit_json):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (MainTest.test_collect_tests_with_multile_files): Use assertEqual over assertItemsEqual.
+        (MainTest.test_collect_tests_with_skipped_list): Ditto.
+        (MainTest.test_collect_tests_with_skipped_list_and_files): Ditto.
+        (MainTest.test_collect_tests_with_ignored_skipped_list): Ditto.
+
+2019-12-11  Jonathan Bedard  <jbedard@apple.com>
+
         Python 3: Add support in webkitpy.w3c
         https://bugs.webkit.org/show_bug.cgi?id=205118
 

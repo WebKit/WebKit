@@ -93,9 +93,9 @@ class TestPerfTest(unittest.TestCase):
         test.run_single = lambda driver, path, time_out_ms: output
         self.assertTrue(test.run(10))
         subtests = test._metrics
-        self.assertEqual(map(lambda test: test['name'], subtests), [None])
+        self.assertEqual(list(map(lambda test: test['name'], subtests)), [None])
         metrics = subtests[0]['metrics']
-        self.assertEqual(map(lambda metric: metric.name(), metrics), ['Time'])
+        self.assertEqual(list(map(lambda metric: metric.name(), metrics)), ['Time'])
         self.assertEqual(metrics[0].flattened_iteration_values(), [1080, 1120, 1095, 1101, 1104] * 4)
 
     def test_parse_output(self):
@@ -227,24 +227,24 @@ Dojo - div ~ div:Time -> [6673, 6675, 6714, 6848, 6902] ms
             actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
 
         subtests = test._metrics
-        self.assertEqual(map(lambda test: test['name'], subtests), ['some test', 'some other test = else',
+        self.assertEqual(list(map(lambda test: test['name'], subtests)), ['some test', 'some other test = else',
             'Array Construction, []', 'Concat String', 'jQuery - addClass', 'Dojo - div:only-child',
             'Dojo - div:nth-child(2n+1)', 'Dojo - div > div', 'Dojo - div ~ div', None])
 
         some_test_metrics = subtests[0]['metrics']
-        self.assertEqual(map(lambda metric: metric.name(), some_test_metrics), ['Time'])
+        self.assertEqual(list(map(lambda metric: metric.name(), some_test_metrics)), ['Time'])
         self.assertEqual(some_test_metrics[0].path(), ['some-dir', 'some-test', 'some test'])
         self.assertEqual(some_test_metrics[0].flattened_iteration_values(), [1, 2, 3, 4, 5] * 4)
 
         some_other_test_metrics = subtests[1]['metrics']
-        self.assertEqual(map(lambda metric: metric.name(), some_other_test_metrics), ['Time', 'Malloc'])
+        self.assertEqual(list(map(lambda metric: metric.name(), some_other_test_metrics)), ['Time', 'Malloc'])
         self.assertEqual(some_other_test_metrics[0].path(), ['some-dir', 'some-test', 'some other test = else'])
         self.assertEqual(some_other_test_metrics[0].flattened_iteration_values(), [6, 7, 8, 9, 10] * 4)
         self.assertEqual(some_other_test_metrics[1].path(), ['some-dir', 'some-test', 'some other test = else'])
         self.assertEqual(some_other_test_metrics[1].flattened_iteration_values(), [11, 12, 13, 14, 15] * 4)
 
         main_metrics = subtests[len(subtests) - 1]['metrics']
-        self.assertEqual(map(lambda metric: metric.name(), main_metrics), ['Time'])
+        self.assertEqual(list(map(lambda metric: metric.name(), main_metrics)), ['Time'])
         self.assertEqual(main_metrics[0].path(), ['some-dir', 'some-test'])
         self.assertEqual(main_metrics[0].flattened_iteration_values(), [1080, 1120, 1095, 1101, 1104] * 4)
 
@@ -272,28 +272,28 @@ BackboneJS-TodoMVC:Time -> [862, 855, 855, 849, 854] ms
             actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
 
         subtests = test._metrics
-        self.assertEqual(map(lambda test: test['name'], subtests), [None, 'EmberJS-TodoMVC', 'EmberJS-TodoMVC/a', 'BackboneJS-TodoMVC'])
+        self.assertEqual(list(map(lambda test: test['name'], subtests)), [None, 'EmberJS-TodoMVC', 'EmberJS-TodoMVC/a', 'BackboneJS-TodoMVC'])
 
         main_metrics = subtests[0]['metrics']
-        self.assertEqual(map(lambda metric: metric.name(), main_metrics), ['Time'])
+        self.assertEqual(list(map(lambda metric: metric.name(), main_metrics)), ['Time'])
         self.assertEqual(main_metrics[0].aggregator(), 'Total')
         self.assertEqual(main_metrics[0].path(), ['some-dir', 'some-test'])
         self.assertEqual(main_metrics[0].flattened_iteration_values(), [2324, 2328, 2345, 2314, 2312] * 4)
 
         some_test_metrics = subtests[1]['metrics']
-        self.assertEqual(map(lambda metric: metric.name(), some_test_metrics), ['Time'])
+        self.assertEqual(list(map(lambda metric: metric.name(), some_test_metrics)), ['Time'])
         self.assertEqual(some_test_metrics[0].aggregator(), 'Total')
         self.assertEqual(some_test_metrics[0].path(), ['some-dir', 'some-test', 'EmberJS-TodoMVC'])
         self.assertEqual(some_test_metrics[0].flattened_iteration_values(), [1462, 1473, 1490, 1465, 1458] * 4)
 
         some_test_metrics = subtests[2]['metrics']
-        self.assertEqual(map(lambda metric: metric.name(), some_test_metrics), ['Time'])
+        self.assertEqual(list(map(lambda metric: metric.name(), some_test_metrics)), ['Time'])
         self.assertEqual(some_test_metrics[0].aggregator(), None)
         self.assertEqual(some_test_metrics[0].path(), ['some-dir', 'some-test', 'EmberJS-TodoMVC', 'a'])
         self.assertEqual(some_test_metrics[0].flattened_iteration_values(), [1, 2, 3, 4, 5] * 4)
 
         some_test_metrics = subtests[3]['metrics']
-        self.assertEqual(map(lambda metric: metric.name(), some_test_metrics), ['Time'])
+        self.assertEqual(list(map(lambda metric: metric.name(), some_test_metrics)), ['Time'])
         self.assertEqual(some_test_metrics[0].aggregator(), None)
         self.assertEqual(some_test_metrics[0].path(), ['some-dir', 'some-test', 'BackboneJS-TodoMVC'])
         self.assertEqual(some_test_metrics[0].flattened_iteration_values(), [862, 855, 855, 849, 854] * 4)
