@@ -110,7 +110,7 @@ LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const 
                 ASSERT(inlineTextItem.length());
                 if (inlineTextItem.length() == 1)
                     return { BreakingContext::ContentWrappingRule::Keep, { } };
-                auto firstCharacterWidth = TextUtil::width(inlineTextItem.layoutBox(), inlineTextItem.start(), inlineTextItem.start() + 1);
+                auto firstCharacterWidth = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.start() + 1);
                 return { BreakingContext::ContentWrappingRule::Split, BreakingContext::PartialTrailingContent { firstTextRunIndex, 1, firstCharacterWidth, false } };
             }
             return { BreakingContext::ContentWrappingRule::Split, partialTrailingContent };
@@ -219,7 +219,7 @@ Optional<LineBreaker::LeftSide> LineBreaker::tryBreakingTextRun(const Content::R
     if (!hyphenLocation || hyphenLocation < limitBefore)
         return { };
     // hyphenLocation is relative to the start of this InlineItemText.
-    auto trailingPartialRunWidthWithHyphen = TextUtil::width(inlineTextItem.layoutBox(), inlineTextItem.start(), inlineTextItem.start() + hyphenLocation) + hyphenWidth; 
+    auto trailingPartialRunWidthWithHyphen = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.start() + hyphenLocation) + hyphenWidth; 
     return LeftSide { hyphenLocation, trailingPartialRunWidthWithHyphen, true };
 }
 

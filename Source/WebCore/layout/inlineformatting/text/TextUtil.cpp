@@ -29,14 +29,20 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FontCascade.h"
+#include "InlineTextItem.h"
 #include "RenderStyle.h"
 
 namespace WebCore {
 namespace Layout {
 
-Optional<unsigned> TextUtil::hyphenPositionBefore(const InlineItem&, unsigned, unsigned)
+InlineLayoutUnit TextUtil::width(const InlineTextItem& inlineTextItem, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft)
 {
-    return WTF::nullopt;
+    // Fast path for single whitespace character.
+    if (inlineTextItem.isWhitespace() && (to - from) == 1) {
+        auto font = inlineTextItem.style().fontCascade();
+        return font.spaceWidth() + font.wordSpacing();
+    }
+    return TextUtil::width(inlineTextItem.layoutBox(), from, to, contentLogicalLeft);
 }
 
 InlineLayoutUnit TextUtil::width(const Box& inlineBox, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft)

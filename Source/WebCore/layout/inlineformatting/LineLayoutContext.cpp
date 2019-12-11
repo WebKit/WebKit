@@ -42,13 +42,10 @@ static InlineLayoutUnit inlineItemWidth(const FormattingContext& formattingConte
 
     if (is<InlineTextItem>(inlineItem)) {
         auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
-        auto contentWidth = inlineTextItem.width();
-        if (!contentWidth) {
-            auto end = inlineTextItem.isCollapsible() ? inlineTextItem.start() + 1 : inlineTextItem.end();
-            contentWidth = TextUtil::width(inlineTextItem.layoutBox(), inlineTextItem.start(), end, contentLogicalLeft);
-        }
-        auto wordSpacing = InlineLayoutUnit(inlineTextItem.isWhitespace() ? inlineTextItem.style().fontCascade().wordSpacing() : 0);
-        return *contentWidth + wordSpacing;
+        if (auto contentWidth = inlineTextItem.width())
+            return *contentWidth;
+        auto end = inlineTextItem.isCollapsible() ? inlineTextItem.start() + 1 : inlineTextItem.end();
+        return TextUtil::width(inlineTextItem, inlineTextItem.start(), end, contentLogicalLeft);
     }
 
     auto& layoutBox = inlineItem.layoutBox();
