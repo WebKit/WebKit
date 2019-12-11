@@ -278,6 +278,9 @@ String ViewGestureController::SnapshotRemovalTracker::eventsDescription(Events e
     if (event & ViewGestureController::SnapshotRemovalTracker::ScrollPositionRestoration)
         description.append("ScrollPositionRestoration ");
 
+    if (event & ViewGestureController::SnapshotRemovalTracker::SwipeAnimationEnd)
+        description.append("SwipeAnimationEnd ");
+
     return description.toString();
 }
 
@@ -553,6 +556,42 @@ void ViewGestureController::forceRepaintIfNeeded()
 void ViewGestureController::willEndSwipeGesture(WebBackForwardListItem& targetItem, bool cancelled)
 {
     m_webPageProxy.navigationGestureWillEnd(!cancelled, targetItem);
+
+    if (cancelled)
+        return;
+
+    uint64_t renderTreeSize = 0;
+    if (ViewSnapshot* snapshot = targetItem.snapshot())
+        renderTreeSize = snapshot->renderTreeSize();
+    auto renderTreeSizeThreshold = renderTreeSize * swipeSnapshotRemovalRenderTreeSizeTargetFraction;
+
+    m_webPageProxy.goToBackForwardItem(targetItem);
+
+    auto* currentItem = m_webPageProxy.backForwardList().currentItem();
+    // The main frame will not be navigated so hide the snapshot right away.
+    if (currentItem && currentItem->itemIsClone(targetItem)) {
+        removeSwipeSnapshot();
+        return;
+    }
+
+    SnapshotRemovalTracker::Events desiredEvents = SnapshotRemovalTracker::VisuallyNonEmptyLayout
+        | SnapshotRemovalTracker::MainFrameLoad
+        | SnapshotRemovalTracker::SubresourceLoads
+        | SnapshotRemovalTracker::ScrollPositionRestoration
+        | SnapshotRemovalTracker::SwipeAnimationEnd;
+
+    if (renderTreeSizeThreshold) {
+        desiredEvents |= SnapshotRemovalTracker::RenderTreeSizeThreshold;
+        m_snapshotRemovalTracker.setRenderTreeSizeThreshold(renderTreeSizeThreshold);
+    }
+
+    m_snapshotRemovalTracker.start(desiredEvents, [this] { this->forceRepaintIfNeeded(); });
+
+    // FIXME: Like on iOS, we should ensure that even if one of the timeouts fires,
+    // we never show the old page content, instead showing the snapshot background color.
+
+    if (ViewSnapshot* snapshot = targetItem.snapshot())
+        m_backgroundColorForCurrentSnapshot = snapshot->backgroundColor();
 }
 
 void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, bool cancelled)
@@ -570,38 +609,9 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
         return;
     }
 
-    uint64_t renderTreeSize = 0;
-    if (ViewSnapshot* snapshot = targetItem->snapshot())
-        renderTreeSize = snapshot->renderTreeSize();
-    auto renderTreeSizeThreshold = renderTreeSize * swipeSnapshotRemovalRenderTreeSizeTargetFraction;
-
     m_webPageProxy.navigationGestureDidEnd(true, *targetItem);
-    m_webPageProxy.goToBackForwardItem(*targetItem);
 
-    auto* currentItem = m_webPageProxy.backForwardList().currentItem();
-    // The main frame will not be navigated so hide the snapshot right away.
-    if (currentItem && currentItem->itemIsClone(*targetItem)) {
-        removeSwipeSnapshot();
-        return;
-    }
-
-    SnapshotRemovalTracker::Events desiredEvents = SnapshotRemovalTracker::VisuallyNonEmptyLayout
-        | SnapshotRemovalTracker::MainFrameLoad
-        | SnapshotRemovalTracker::SubresourceLoads
-        | SnapshotRemovalTracker::ScrollPositionRestoration;
-
-    if (renderTreeSizeThreshold) {
-        desiredEvents |= SnapshotRemovalTracker::RenderTreeSizeThreshold;
-        m_snapshotRemovalTracker.setRenderTreeSizeThreshold(renderTreeSizeThreshold);
-    }
-
-    m_snapshotRemovalTracker.start(desiredEvents, [this] { this->forceRepaintIfNeeded(); });
-
-    // FIXME: Like on iOS, we should ensure that even if one of the timeouts fires,
-    // we never show the old page content, instead showing the snapshot background color.
-
-    if (ViewSnapshot* snapshot = targetItem->snapshot())
-        m_backgroundColorForCurrentSnapshot = snapshot->backgroundColor();
+    m_snapshotRemovalTracker.eventOccurred(SnapshotRemovalTracker::SwipeAnimationEnd);
 }
 
 void ViewGestureController::requestRenderTreeSizeNotificationIfNeeded()

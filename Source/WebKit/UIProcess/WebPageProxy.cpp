@@ -3122,6 +3122,9 @@ void WebPageProxy::commitProvisionalPage(FrameIdentifier frameID, uint64_t navig
         shouldDelayClosingUntilEnteringAcceleratedCompositingMode = ShouldDelayClosingUntilEnteringAcceleratedCompositingMode::Yes;
 #endif
 
+    if (m_isLayerTreeFrozenDueToSwipeAnimation)
+        send(Messages::WebPage::UnfreezeLayerTreeDueToSwipeAnimation());
+
     processDidTerminate(ProcessTerminationReason::NavigationSwap);
 
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
@@ -8417,6 +8420,10 @@ void WebPageProxy::navigationGestureDidBegin()
 void WebPageProxy::navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem& item)
 {
     PageClientProtector protector(pageClient());
+    if (willNavigate) {
+        m_isLayerTreeFrozenDueToSwipeAnimation = true;
+        send(Messages::WebPage::FreezeLayerTreeDueToSwipeAnimation());
+    }
 
     pageClient().navigationGestureWillEnd(willNavigate, item);
 
@@ -8430,6 +8437,11 @@ void WebPageProxy::navigationGestureDidEnd(bool willNavigate, WebBackForwardList
     pageClient().navigationGestureDidEnd(willNavigate, item);
 
     m_navigationClient->didEndNavigationGesture(*this, willNavigate, item);
+
+    if (m_isLayerTreeFrozenDueToSwipeAnimation) {
+        m_isLayerTreeFrozenDueToSwipeAnimation = false;
+        send(Messages::WebPage::UnfreezeLayerTreeDueToSwipeAnimation());
+    }
 }
 
 void WebPageProxy::navigationGestureDidEnd()

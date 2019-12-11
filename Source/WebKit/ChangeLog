@@ -1,3 +1,51 @@
+2019-12-10  Chris Dumez  <cdumez@apple.com>
+
+        [macOS] Issue load sooner on swipe back/forward navigation
+        https://bugs.webkit.org/show_bug.cgi?id=205087
+
+        Reviewed by Tim Horton.
+
+        Issue load sooner on swipe back/forward navigation on macOS. We were waiting until the end of
+        the swipe animation to issue the load. We now issue the load as soon as the user lifts the finger
+        off the screen and thus commits to navigating. This results in improved perceived performance
+        when swiping back/forward to navigate.
+
+        This patch does not take care of iOS because the ViewGestureController logic is different on that
+        platform. There is no reason we shouldn't be able to do the same optimization on iOS too though.
+
+        To achieve the behavior change on macOS, the following was done:
+        - Issue the load in ViewGestureController::willEndSwipeGesture() instead of
+          ViewGestureController::endSwipeGesture().
+        - Add a new SnapshotRemovalTracker::Event::SwipeAnimationEnd event and wait for this event before
+          taking away the snapshot. This makes sure we do not take away the swipe snapshot until the swipe
+          animation is actually over (now that we start the navigation during the animation, instead of
+          after).
+        - To make sure that layer being swiped away stays the same until the end of the animation, I added
+          a new SwipeAnimation reason for freezing the layer tree. At the beginning of the animation, the
+          UIProcess sends a FreezeLayerTreeDueToSwipeAnimation IPC to the WebProcess to add this layer tree
+          freeze reason. At the end of the animation, the UIProcess sends the UnfreezeLayerTreeDueToSwipeAnimation
+          IPC to remove this freeze reason. Without this change, the layer being swiped away would sometimes
+          start showing the destination site being loaded before the end of the animation. On cross-process
+          navigation, not freezing the layer tree would cause the swipe animation to get interrupted when
+          we have something to paint in the new process before the end of the swipe animation.
+
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::initializeWebPage):
+        * UIProcess/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::eventsDescription):
+        (WebKit::ViewGestureController::willEndSwipeGesture):
+        (WebKit::ViewGestureController::endSwipeGesture):
+        * UIProcess/ViewGestureController.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::commitProvisionalPage):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isLayerTreeFrozenDueToSwipeAnimation const):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::freezeLayerTreeDueToSwipeAnimation):
+        (WebKit::WebPage::unfreezeLayerTreeDueToSwipeAnimation):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2019-12-10  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Fix MSVC warning C4701: potentially uninitialized local variable 'x' used

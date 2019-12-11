@@ -194,7 +194,8 @@ private:
             RepaintAfterNavigation = 1 << 2,
             MainFrameLoad = 1 << 3,
             SubresourceLoads = 1 << 4,
-            ScrollPositionRestoration = 1 << 5
+            ScrollPositionRestoration = 1 << 5,
+            SwipeAnimationEnd = 1 << 6
         };
         typedef uint8_t Events;
 

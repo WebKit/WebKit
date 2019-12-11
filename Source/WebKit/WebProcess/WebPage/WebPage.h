@@ -729,12 +729,16 @@ public:
         PageSuspended           = 1 << 3,
         Printing                = 1 << 4,
         ProcessSwap             = 1 << 5,
+        SwipeAnimation          = 1 << 6,
     };
     void freezeLayerTree(LayerTreeFreezeReason);
     void unfreezeLayerTree(LayerTreeFreezeReason);
 
     void markLayersVolatile(Function<void(bool)>&& completionHandler = { });
     void cancelMarkLayersVolatile();
+
+    void freezeLayerTreeDueToSwipeAnimation();
+    void unfreezeLayerTreeDueToSwipeAnimation();
 
     NotificationPermissionRequestManager* notificationPermissionRequestManager();
 

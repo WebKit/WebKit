@@ -1290,6 +1290,8 @@ public:
     void endColorPicker();
 #endif
 
+    bool isLayerTreeFrozenDueToSwipeAnimation() const { return m_isLayerTreeFrozenDueToSwipeAnimation; }
+
     WebCore::IntSize minimumSizeForAutoLayout() const { return m_minimumSizeForAutoLayout; }
     void setMinimumSizeForAutoLayout(const WebCore::IntSize&);
 
@@ -2639,6 +2641,7 @@ private:
     COMPtr<ID3D11Device1> m_device;
 #endif
     bool m_isQuotaIncreaseDenied { false };
+    bool m_isLayerTreeFrozenDueToSwipeAnimation { false };
     
     String m_overriddenMediaType;
         

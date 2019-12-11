@@ -4665,6 +4665,16 @@ void WebPage::effectiveAppearanceDidChange(bool useDarkAppearance, bool useEleva
 }
 #endif
 
+void WebPage::freezeLayerTreeDueToSwipeAnimation()
+{
+    freezeLayerTree(LayerTreeFreezeReason::SwipeAnimation);
+}
+
+void WebPage::unfreezeLayerTreeDueToSwipeAnimation()
+{
+    unfreezeLayerTree(LayerTreeFreezeReason::SwipeAnimation);
+}
+
 void WebPage::beginPrinting(FrameIdentifier frameID, const PrintInfo& printInfo)
 {
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);

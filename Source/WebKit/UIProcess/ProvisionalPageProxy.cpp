@@ -143,6 +143,9 @@ void ProvisionalPageProxy::initializeWebPage()
     parameters.isProcessSwap = true;
     m_process->send(Messages::WebProcess::CreateWebPage(m_webPageID, parameters), 0);
     m_process->addVisitedLinkStoreUser(m_page.visitedLinkStore(), m_page.identifier());
+
+    if (m_page.isLayerTreeFrozenDueToSwipeAnimation())
+        send(Messages::WebPage::FreezeLayerTreeDueToSwipeAnimation());
 }
 
 void ProvisionalPageProxy::loadData(API::Navigation& navigation, const IPC::DataReference& data, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, Optional<WebsitePoliciesData>&& websitePolicies)
