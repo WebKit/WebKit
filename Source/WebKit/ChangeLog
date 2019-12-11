@@ -1,3 +1,52 @@
+2019-12-11  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Implement dummy _WKWebAuthenticationPanel SPIs for CTAP PIN support
+        https://bugs.webkit.org/show_bug.cgi?id=205100
+        <rdar://problem/57822953>
+
+        Reviewed by Brent Fulgham.
+
+        This patch implements dummy _WKWebAuthenticationPanel SPIs for CTAP PIN support.
+        CTAP PIN is a way for authenticators to be able to do user verification by asking
+        clients/users for a pre-set PIN. Here is the spec:
+        https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#authenticatorClientPIN
+        In order to support this, WebKit needs to interacts with UIClients to ask users
+        to enter the PINs. Therefore, a new set of SPI is needed.
+
+        Here is the proposed SPI for WebKit to ask Safari for the PIN:
+        @protocol _WKWebAuthenticationPanelDelegate <NSObject>
+        @optional
+        ...
+        - (void)panel:(_WKWebAuthenticationPanel *)panel requestPINWithRetries:(NSUInteger)retries completionHandler:(void (^)(NSData *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+        ...
+        @end
+
+        Retries is the number of retires before the authenticator getting blocked, which
+        is a state that only factory reset can save the authenticator. UIClients can have
+        a threshold and WARN users loudly when the threshold is reached.
+        A byte array that is less than or equal to 63 bytes is expected to return to the
+        passed completion handler. Otherwise, the completion handler will bail out.
+
+        For error handling:
+        typedef NS_ENUM(NSInteger, _WKWebAuthenticationPanelUpdate) {
+            ...
+            _WKWebAuthenticationPanelUpdatePINBlocked,
+            _WKWebAuthenticationPanelUpdatePINAuthBlocked,
+            _WKWebAuthenticationPanelUpdatePINInvalid,
+        } WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+        The above three error will be passed to UIClients via updateWebAuthenticationPanel SPI.
+        _WKWebAuthenticationPanelUpdatePINBlocked means the authenticator is dead. A factory
+        reset is needed.
+        _WKWebAuthenticationPanelUpdatePINAuthBlocked means 3 consecutive mismatches. The
+        authenticator will need to be reconnected.
+        _WKWebAuthenticationPanelUpdatePINInvalid means a wrong PIN is provided. This will
+        often be followed with another requestPINWithRetries delegate call.
+        Here is the spec for the error:
+        https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#using-pinToken-in-authenticatorMakeCredential.
+
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.h:
+
 2019-12-10  Chris Dumez  <cdumez@apple.com>
 
         [macOS] Issue load sooner on swipe back/forward navigation
