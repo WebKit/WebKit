@@ -29,8 +29,8 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
-#import "WKWebViewTesting.h"
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS_FAMILY)

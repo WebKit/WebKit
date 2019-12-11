@@ -29,7 +29,6 @@
 #import "TestWKWebView.h"
 #import "Utilities.h"
 #import "WKWebViewConfigurationExtras.h"
-#import "WKWebViewTesting.h"
 #import <WebKit/WKContext.h>
 #import <WebKit/WKContextPrivateMac.h>
 #import <WebKit/WKGeolocationManager.h>
@@ -37,6 +36,7 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKRetainPtr.h>
 #import <WebKit/WKUIDelegatePrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKHitTestResult.h>
 #import <WebKit/_WKInspector.h>
 #import <wtf/RetainPtr.h>

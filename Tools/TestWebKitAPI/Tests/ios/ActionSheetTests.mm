@@ -35,9 +35,9 @@
 #import "TestWKWebView.h"
 #import "TestWKWebViewController.h"
 #import "UIKitSPI.h"
-#import "WKWebViewTesting.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <WebKit/WKUIDelegatePrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKActivatedElementInfo.h>
 #import <WebKit/_WKElementAction.h>
 #import <wtf/BlockPtr.h>

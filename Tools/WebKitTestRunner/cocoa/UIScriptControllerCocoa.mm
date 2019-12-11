@@ -31,7 +31,6 @@
 #import "TestController.h"
 #import "TestRunnerWKWebView.h"
 #import "UIScriptContext.h"
-#import "WKWebViewTesting.h"
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <WebKit/WKWebViewPrivate.h>
 

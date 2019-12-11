@@ -31,7 +31,6 @@
 #import "TestInputDelegate.h"
 #import "TestWKWebView.h"
 #import "UIKitSPI.h"
-#import "WKWebViewTesting.h"
 #import <WebKit/WKWebViewPrivate.h>
 
 @interface TestWKWebView (AutocorrectionTests)

@@ -39,7 +39,6 @@
 @class _WKActivatedElementInfo;
 @class _WKElementAction;
 @class _WKFrameHandle;
-@class _WKInspector;
 
 #if TARGET_OS_IOS
 @class UIContextMenuConfiguration;
@@ -183,7 +182,6 @@ struct UIEdgeInsets;
 - (void)_webView:(WKWebView *)webView dataInteraction:(id)interaction session:(id)session didEndWithOperation:(NSUInteger)operation WK_API_AVAILABLE(ios(11.0));
 - (void)_webView:(WKWebView *)webView dataInteractionOperationWasHandled:(BOOL)handled forSession:(id)session itemProviders:(NSArray *)itemProviders WK_API_AVAILABLE(ios(11.0));
 - (NSUInteger)_webView:(WKWebView *)webView willUpdateDataInteractionOperationToOperation:(NSUInteger)operation forSession:(id)session WK_API_AVAILABLE(ios(11.0));
-
 #if TARGET_OS_IOS
 - (UIDropProposal *)_webView:(WKWebView *)webView willUpdateDropProposalToProposal:(UIDropProposal *)proposal forSession:(id <UIDropSession>)session WK_API_AVAILABLE(ios(12.2));
 - (UITargetedDragPreview *)_webView:(WKWebView *)webView previewForLiftingItem:(UIDragItem *)item session:(id <UIDragSession>)session WK_API_AVAILABLE(ios(11.0));
@@ -192,7 +190,6 @@ struct UIEdgeInsets;
 - (NSInteger)_webView:(WKWebView *)webView dataOwnerForDropSession:(id <UIDropSession>)session WK_API_AVAILABLE(ios(11.0));
 - (NSInteger)_webView:(WKWebView *)webView dataOwnerForDragSession:(id <UIDragSession>)session WK_API_AVAILABLE(ios(11.0));
 #endif
-
 - (void)_webView:(WKWebView *)webView didChangeSafeAreaShouldAffectObscuredInsets:(BOOL)safeAreaShouldAffectObscuredInsets WK_API_AVAILABLE(ios(11.0));
 - (void)_webView:(WKWebView *)webView didPresentFocusedElementViewController:(UIViewController *)controller WK_API_AVAILABLE(ios(12.0));
 - (void)_webView:(WKWebView *)webView didDismissFocusedElementViewController:(UIViewController *)controller WK_API_AVAILABLE(ios(12.0));
@@ -207,7 +204,6 @@ struct UIEdgeInsets;
 - (void)_webView:(WKWebView *)webView shouldAllowDeviceOrientationAndMotionAccessRequestedByFrame:(WKFrameInfo *)requestingFrame decisionHandler:(void (^)(BOOL))decisionHandler WK_API_AVAILABLE(ios(13.0));
 
 #else // !TARGET_OS_IPHONE
-
 - (void)_prepareForImmediateActionAnimationForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4));
 - (void)_cancelImmediateActionAnimationForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4));
 - (void)_completeImmediateActionAnimationForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4));
@@ -241,7 +237,6 @@ struct UIEdgeInsets;
     @param inspector The Web Inspector instance attached to this WKWebView.
 */
 - (void)_webView:(WKWebView *)webView didAttachInspector:(_WKInspector *)inspector WK_API_AVAILABLE(macos(WK_MAC_TBA));
-
 #endif // !TARGET_OS_IPHONE
 
 @end

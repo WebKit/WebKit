@@ -28,7 +28,6 @@
 #import "PlatformUtilities.h"
 #import "TestInputDelegate.h"
 #import "TestWKWebView.h"
-#import "WKWebViewTesting.h"
 #import <WebKit/WKWebViewPrivate.h>
 
 #if PLATFORM(IOS_FAMILY)

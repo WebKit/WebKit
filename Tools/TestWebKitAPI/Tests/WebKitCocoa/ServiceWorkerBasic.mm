@@ -31,12 +31,12 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
-#import "WKWebViewTesting.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKURLSchemeHandler.h>
 #import <WebKit/WKURLSchemeTaskPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WKWebsiteDataStoreRef.h>
 #import <WebKit/WebKit.h>

@@ -26,7 +26,6 @@
 #import "config.h"
 #import "TestRunnerWKWebView.h"
 
-#import "WKWebViewTesting.h"
 #import "WebKitTestRunnerDraggingInfo.h"
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <wtf/Assertions.h>
@@ -37,7 +36,6 @@
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
 #import <WebKit/WKWebViewPrivate.h>
-
 @interface WKWebView ()
 
 // FIXME: move these to WKWebView_Private.h

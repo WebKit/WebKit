@@ -31,7 +31,6 @@
 #import "PlatformWebView.h"
 #import "Test.h"
 #import "TestWKWebView.h"
-#import "WKWebViewTesting.h"
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <WebKit/WKPagePrivateMac.h>
 #import <WebKit/WKPreferencesPrivate.h>
@@ -39,6 +38,7 @@
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKURLCF.h>
 #import <WebKit/WKView.h>
+#import <WebKit/WKViewPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>

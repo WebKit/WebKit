@@ -29,11 +29,11 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
-#import "WKWebViewTesting.h"
 #import <WebKit/WKPreferences.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/RetainPtr.h>
 

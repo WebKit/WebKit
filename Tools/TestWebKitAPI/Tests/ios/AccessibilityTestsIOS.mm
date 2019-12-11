@@ -31,7 +31,6 @@
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
-#import "WKWebViewTesting.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKRemoteObjectInterface.h>
 #import <WebKit/_WKRemoteObjectRegistry.h>

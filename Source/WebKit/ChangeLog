@@ -1,3 +1,17 @@
+2019-12-11  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, rolling out r253376.
+
+        Broke internal builds
+
+        Reverted changeset:
+
+        "Move WKWebView code related to testing to new files, with
+        their own headers, and stop exposing test-only functions as
+        SPI."
+        https://bugs.webkit.org/show_bug.cgi?id=205021
+        https://trac.webkit.org/changeset/253376
+
 2019-12-11  Chris Dumez  <cdumez@apple.com>
 
         There should be no user-noticeable delay when closing a tab
