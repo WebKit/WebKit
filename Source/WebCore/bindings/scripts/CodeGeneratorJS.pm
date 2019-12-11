@@ -5222,7 +5222,7 @@ sub GenerateOperationTrampolineDefinition
 
 sub GenerateOperationBodyDefinition
 {
-    my ($outputArray, $interface, $className, $operation, $functionName, $functionImplementationName, $functionBodyName, $generatingOverloadDispatcher) = @_;
+    my ($outputArray, $interface, $className, $operation, $functionName, $functionImplementationName, $functionBodyName, $isOverloaded, $generatingOverloadDispatcher) = @_;
 
     my $hasPromiseReturnType = $codeGenerator->IsPromiseType($operation->type);
     my $idlOperationType = $hasPromiseReturnType ? "IDLOperationReturningPromise" : "IDLOperation";
@@ -5241,9 +5241,11 @@ sub GenerateOperationBodyDefinition
     push(@$outputArray, "    UNUSED_PARAM(callFrame);\n");
     push(@$outputArray, "    UNUSED_PARAM(throwScope);\n");
 
-    if (!$generatingOverloadDispatcher) {
-        GenerateCustomElementReactionsStackIfNeeded($outputArray, $operation, "*lexicalGlobalObject");
+    GenerateCustomElementReactionsStackIfNeeded($outputArray, $operation, "*lexicalGlobalObject") unless $generatingOverloadDispatcher;
 
+    # For overloads, we generate the security check in the overload dispatcher, instead of the body of each overload, as per specification:
+    # https://heycam.github.io/webidl/#dfn-create-operation-function
+    if (!$isOverloaded || $generatingOverloadDispatcher) {
         if ($interface->extendedAttributes->{CheckSecurity} and !$operation->extendedAttributes->{DoNotCheckSecurity}) {
             assert("Security checks are not supported for static operations.") if $operation->isStatic;
             
@@ -5335,7 +5337,7 @@ sub GenerateOperationDefinition
     my $functionImplementationName = $operation->extendedAttributes->{ImplementedAs} || $codeGenerator->WK_lcfirst($operation->name);
     my $functionBodyName = ($isOverloaded ? $functionName . $operation->{overloadIndex} : $functionName) . "Body";
 
-    GenerateOperationBodyDefinition($outputArray, $interface, $className, $operation, $functionName, $functionImplementationName, $functionBodyName);
+    GenerateOperationBodyDefinition($outputArray, $interface, $className, $operation, $functionName, $functionImplementationName, $functionBodyName, $isOverloaded);
 
     # Overloaded operations don't generate a trampoline for each overload, and instead have a single dispatch trampoline
     # that gets generated after the last overload body has been generated.
@@ -5352,7 +5354,7 @@ sub GenerateOperationDefinition
         push(@$outputArray, "#if ${overloadsConditionalString}\n\n") if $overloadsConditionalString;
 
         my $overloadDispatcherFunctionBodyName = $functionName . "OverloadDispatcher";
-        GenerateOperationBodyDefinition($outputArray, $interface, $className, $operation, $functionName, $functionImplementationName, $overloadDispatcherFunctionBodyName, 1);
+        GenerateOperationBodyDefinition($outputArray, $interface, $className, $operation, $functionName, $functionImplementationName, $overloadDispatcherFunctionBodyName, $isOverloaded, 1);
         GenerateOperationTrampolineDefinition($outputArray, $interface, $className, $operation, $functionName, $overloadDispatcherFunctionBodyName);
     
         push(@$outputArray, "#endif\n\n") if $overloadsConditionalString;

@@ -9,6 +9,8 @@ PASS Object.getOwnPropertyDescriptor(window, "menubar").get.call(crossOriginWind
 PASS Object.getOwnPropertyDescriptor(window, "scrollbars").get.call(crossOriginWindow) threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
 PASS Object.getOwnPropertyDescriptor(window, "navigator").get.call(crossOriginWindow) threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
 PASS Object.getOwnPropertyDescriptor(window, "screenX").get.call(crossOriginWindow) threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..
+PASS Calling createImageBitmap rejected promise with exception SecurityError.
+PASS Calling fetch rejected promise with exception SecurityError.
 PASS Object.getOwnPropertyDescriptor(window.__proto__, "constructor").get.call(crossOriginWindow) threw exception TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(window.__proto__, "constructor").get.call').
 PASS Object.getOwnPropertyDescriptor(window.__proto__, "constructor").get.call(crossOriginWindow.__proto__) threw exception TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(window.__proto__, "constructor").get.call').
 PASS crossOriginWindow.constructor threw exception SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match..

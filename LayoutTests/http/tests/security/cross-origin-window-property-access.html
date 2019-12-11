@@ -9,33 +9,33 @@
 description("Tests that using another window's property getter does not bypass cross-origin checks.");
 jsTestIsAsync = true;
 
-function shouldThrowOrReturnUndefined(expression)
+function callingFunctionShouldRejectPromiseWithErrorName(functionName, errorName)
 {
-    try {
-        result = eval(expression);
-    } catch (e) {
-        testPassed(expression + " threw exception " + e + ".");
-        return;
-    }
-    if (result === undefined)
-        testPassed(expression + " returned undefined.");
-    else
-        testFailed(expression + " returned " + result);
+    return Object.getOwnPropertyDescriptor(window, functionName).value.call(crossOriginWindow).then(() => {
+        testFailed("Calling " + functionName + " did not reject the promise");
+    }, (e) => {
+        if (e.name == errorName)
+           testPassed("Calling " + functionName + " rejected promise with exception " + errorName + ".");
+       else
+           testFailed("Calling " + functionName + " should reject promise with exception " + errorName + ". Rejected with exception " + e.name + " instead.");
+    });
 }
 
-function runTest()
+async function runTest()
 {
     crossOriginWindow = frames[0];
-    shouldThrowOrReturnUndefined('Object.getOwnPropertyDescriptor(window, "document").get.call(crossOriginWindow)');
-    shouldThrowOrReturnUndefined('Object.getOwnPropertyDescriptor(window, "name").get.call(crossOriginWindow)');
-    shouldThrowOrReturnUndefined('Object.getOwnPropertyDescriptor(window, "menubar").get.call(crossOriginWindow)');
-    shouldThrowOrReturnUndefined('Object.getOwnPropertyDescriptor(window, "scrollbars").get.call(crossOriginWindow)');
-    shouldThrowOrReturnUndefined('Object.getOwnPropertyDescriptor(window, "navigator").get.call(crossOriginWindow)');
-    shouldThrowOrReturnUndefined('Object.getOwnPropertyDescriptor(window, "screenX").get.call(crossOriginWindow)');
-    shouldThrowOrReturnUndefined('Object.getOwnPropertyDescriptor(window.__proto__, "constructor").get.call(crossOriginWindow)');
-    shouldThrowOrReturnUndefined('Object.getOwnPropertyDescriptor(window.__proto__, "constructor").get.call(crossOriginWindow.__proto__)');
-    shouldThrowOrReturnUndefined('crossOriginWindow.constructor');
-    shouldThrowOrReturnUndefined('Object.getOwnPropertyDescriptor(crossOriginWindow.__proto__, "constructor").value');
+    shouldThrowErrorName('Object.getOwnPropertyDescriptor(window, "document").get.call(crossOriginWindow)', 'SecurityError');
+    shouldThrowErrorName('Object.getOwnPropertyDescriptor(window, "name").get.call(crossOriginWindow)', 'SecurityError');
+    shouldThrowErrorName('Object.getOwnPropertyDescriptor(window, "menubar").get.call(crossOriginWindow)', 'SecurityError');
+    shouldThrowErrorName('Object.getOwnPropertyDescriptor(window, "scrollbars").get.call(crossOriginWindow)', 'SecurityError');
+    shouldThrowErrorName('Object.getOwnPropertyDescriptor(window, "navigator").get.call(crossOriginWindow)', 'SecurityError');
+    shouldThrowErrorName('Object.getOwnPropertyDescriptor(window, "screenX").get.call(crossOriginWindow)', 'SecurityError');
+    await callingFunctionShouldRejectPromiseWithErrorName('createImageBitmap', 'SecurityError');
+    await callingFunctionShouldRejectPromiseWithErrorName('fetch', 'SecurityError');
+    shouldThrowErrorName('Object.getOwnPropertyDescriptor(window.__proto__, "constructor").get.call(crossOriginWindow)', 'TypeError');
+    shouldThrowErrorName('Object.getOwnPropertyDescriptor(window.__proto__, "constructor").get.call(crossOriginWindow.__proto__)', 'TypeError');
+    shouldThrowErrorName('crossOriginWindow.constructor', 'SecurityError');
+    shouldThrowErrorName('Object.getOwnPropertyDescriptor(crossOriginWindow.__proto__, "constructor").value', 'SecurityError');
     shouldBeTrue('Object.getOwnPropertyDescriptor(window, "location").get.call(crossOriginWindow) === crossOriginWindow.location');
     finishJSTest();
 }

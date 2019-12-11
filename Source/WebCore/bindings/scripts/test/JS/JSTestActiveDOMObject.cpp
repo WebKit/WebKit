@@ -22,6 +22,7 @@
 #include "JSTestActiveDOMObject.h"
 
 #include "ActiveDOMObject.h"
+#include "CustomElementReactionQueue.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMBindingSecurity.h"
@@ -49,6 +50,7 @@ using namespace JSC;
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionExcitingFunction(JSC::JSGlobalObject*, JSC::CallFrame*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionPostMessage(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionOverloadedMethod(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 // Attributes
 
@@ -119,6 +121,7 @@ static const HashTableValue JSTestActiveDOMObjectPrototypeTableValues[] =
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestActiveDOMObjectConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestActiveDOMObjectConstructor) } },
     { "excitingFunction", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestActiveDOMObjectPrototypeFunctionExcitingFunction), (intptr_t) (1) } },
     { "postMessage", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestActiveDOMObjectPrototypeFunctionPostMessage), (intptr_t) (1) } },
+    { "overloadedMethod", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestActiveDOMObjectPrototypeFunctionOverloadedMethod), (intptr_t) (1) } },
 };
 
 const ClassInfo JSTestActiveDOMObjectPrototype::s_info = { "TestActiveDOMObjectPrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestActiveDOMObjectPrototype) };
@@ -253,6 +256,57 @@ static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionPostMess
 EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionPostMessage(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
     return IDLOperation<JSTestActiveDOMObject>::call<jsTestActiveDOMObjectPrototypeFunctionPostMessageBody>(*lexicalGlobalObject, *callFrame, "postMessage");
+}
+
+static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionOverloadedMethod1Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestActiveDOMObject>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(lexicalGlobalObject);
+    UNUSED_PARAM(callFrame);
+    UNUSED_PARAM(throwScope);
+    CustomElementReactionStack customElementReactionStack(*lexicalGlobalObject);
+    auto& impl = castedThis->wrapped();
+    auto param = convert<IDLDOMString>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    impl.overloadedMethod(WTFMove(param));
+    return JSValue::encode(jsUndefined());
+}
+
+static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionOverloadedMethod2Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestActiveDOMObject>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(lexicalGlobalObject);
+    UNUSED_PARAM(callFrame);
+    UNUSED_PARAM(throwScope);
+    auto& impl = castedThis->wrapped();
+    auto param1 = convert<IDLInterface<Node>>(*lexicalGlobalObject, callFrame->uncheckedArgument(0), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 0, "param1", "TestActiveDOMObject", "overloadedMethod", "Node"); });
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    auto param2 = convert<IDLInterface<Node>>(*lexicalGlobalObject, callFrame->uncheckedArgument(1), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 1, "param2", "TestActiveDOMObject", "overloadedMethod", "Node"); });
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    impl.overloadedMethod(*param1, *param2);
+    return JSValue::encode(jsUndefined());
+}
+
+static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionOverloadedMethodOverloadDispatcher(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestActiveDOMObject>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(lexicalGlobalObject);
+    UNUSED_PARAM(callFrame);
+    UNUSED_PARAM(throwScope);
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, castedThis->wrapped().window(), ThrowSecurityError))
+        return JSValue::encode(jsUndefined());
+    VM& vm = JSC::getVM(lexicalGlobalObject);
+    UNUSED_PARAM(vm);
+    size_t argsCount = std::min<size_t>(2, callFrame->argumentCount());
+    if (argsCount == 1) {
+        return jsTestActiveDOMObjectPrototypeFunctionOverloadedMethod1Body(lexicalGlobalObject, callFrame, castedThis, throwScope);
+    }
+    if (argsCount == 2) {
+        return jsTestActiveDOMObjectPrototypeFunctionOverloadedMethod2Body(lexicalGlobalObject, callFrame, castedThis, throwScope);
+    }
+    return argsCount < 1 ? throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject)) : throwVMTypeError(lexicalGlobalObject, throwScope);
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionOverloadedMethod(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+{
+    return IDLOperation<JSTestActiveDOMObject>::call<jsTestActiveDOMObjectPrototypeFunctionOverloadedMethodOverloadDispatcher>(*lexicalGlobalObject, *callFrame, "overloadedMethod");
 }
 
 void JSTestActiveDOMObject::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)

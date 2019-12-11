@@ -32,4 +32,7 @@
     readonly attribute long excitingAttr;
     void excitingFunction(Node nextChild);
     [DoNotCheckSecurity] void postMessage(DOMString message);
+
+    [CEReactions] void overloadedMethod(DOMString param);
+    void overloadedMethod(Node param1, Node param2);
 };

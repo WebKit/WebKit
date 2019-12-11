@@ -21,8 +21,12 @@ FAIL Only whitelisted properties are accessible cross-origin (cross-origin) asse
 FAIL Only whitelisted properties are accessible cross-origin (same-origin + document.domain) assert_throws: Should throw when writing to toString on Location function "function () { win.location[prop] = undefined; }" did not throw
 FAIL Only whitelisted properties are accessible cross-origin (cross-site) assert_throws: Should throw when writing to toString on Location function "function () { win.location[prop] = undefined; }" did not throw
 FAIL Only whitelisted properties are usable as cross-origin this objects (cross-origin) promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Only whitelisted properties are usable as cross-origin this objects (same-origin + document.domain) assert_throws: Should throw when calling window.createImageBitmap with cross-origin this object function "function () { throw e }" threw object "TypeError: Not enough arguments" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
-FAIL Only whitelisted properties are usable as cross-origin this objects (cross-site) assert_throws: Should throw when calling window.createImageBitmap with cross-origin this object function "function () { throw e }" threw object "TypeError: Not enough arguments" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
+FAIL Only whitelisted properties are usable as cross-origin this objects (same-origin + document.domain) assert_throws: Should throw when calling window.AudioContext with cross-origin this object function "function webkitAudioContext() {
+    [native code]
+}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
+FAIL Only whitelisted properties are usable as cross-origin this objects (cross-site) assert_throws: Should throw when calling window.AudioContext with cross-origin this object function "function webkitAudioContext() {
+    [native code]
+}" threw object "TypeError: Constructor requires 'new' operator" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
 PASS [[GetPrototypeOf]] should return null (cross-origin) 
 PASS [[GetPrototypeOf]] should return null (same-origin + document.domain) 
 PASS [[GetPrototypeOf]] should return null (cross-site) 

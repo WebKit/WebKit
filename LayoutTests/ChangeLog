@@ -1,3 +1,15 @@
+2019-12-11  Chris Dumez  <cdumez@apple.com>
+
+        [Bindings] Cross-origin checks happen too late for overloaded methods
+        https://bugs.webkit.org/show_bug.cgi?id=205092
+
+        Reviewed by Sam Weinig.
+
+        Extend layout test coverage.
+
+        * http/tests/security/cross-origin-window-property-access-expected.txt:
+        * http/tests/security/cross-origin-window-property-access.html:
+
 2019-12-11  youenn fablet  <youenn@apple.com>
 
         (r252889) webrtc/peerconnection-page-cache.html is crashing on iOS Debug

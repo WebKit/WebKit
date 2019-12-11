@@ -1,3 +1,23 @@
+2019-12-11  Chris Dumez  <cdumez@apple.com>
+
+        [Bindings] Cross-origin checks happen too late for overloaded methods
+        https://bugs.webkit.org/show_bug.cgi?id=205092
+
+        Reviewed by Sam Weinig.
+
+        Cross-origin checks happen too late for overloaded methods. We're supposed to do the security check
+        and then find the right overload to call [1]. In our bindings, we first find the right overload body
+        to call and then do the security check in the body of the chosen overload. This results in the wrong
+        exception being thrown in some cases (TypeError due to missing arguments instead of a SecurityError).
+
+        [1] https://heycam.github.io/webidl/#dfn-create-operation-function
+
+        No new tests, updated existing tests.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateOperationBodyDefinition):
+        (GenerateOperationDefinition):
+
 2019-12-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Make incremental builds faster after modifying DisplayListItems.h
