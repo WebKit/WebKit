@@ -1,3 +1,16 @@
+2019-12-11  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add HarfBuzz targets
+        https://bugs.webkit.org/show_bug.cgi?id=205042
+
+        Reviewed by Konstantin Tokarev.
+
+        Use the HarfBuzz targets directly instead of HARFBUZZ_LIBRARIES and
+        HARFBUZZ_INCLUDE_DIRS.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+
 2019-12-11  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, a nit after r253366
