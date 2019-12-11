@@ -276,7 +276,7 @@ static const unsigned wheelEventQueueSizeThreshold = 10;
 static const Seconds resetRecentCrashCountDelay = 30_s;
 static unsigned maximumWebProcessRelaunchAttempts = 1;
 static const Seconds audibleActivityClearDelay = 10_s;
-static const Seconds tryCloseTimeoutDelay = 500_ms;
+static const Seconds tryCloseTimeoutDelay = 50_ms;
 
 namespace WebKit {
 using namespace WebCore;
