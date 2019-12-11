@@ -1,3 +1,24 @@
+2019-12-11  Jonathan Bedard  <jbedard@apple.com>
+
+        Add test-lldb-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=187916
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/test-lldb-webkit: Added.
+        (NoAction): Argparse action which support --<variable> and --no-<variable>.
+        (LldbTester): Wrapper around webkitpy's Tester class.
+        (LldbTester.parse_args): Specialized argparse for lldb tests.
+        (LldbTester.run): Setup environment and build lldb test runner.
+        (main):
+        * Scripts/webkitpy/test/main.py:
+        (main): Remove lldb testing code.
+        (Tester._parse_args): Ditto.
+        (Tester.run): Ditto.
+        (Tester._run_tests): Ditto.
+        (Tester._test_names): Ditto.
+        (_supports_building_and_running_lldb_tests): Deleted.
+
 2019-12-10  Per Arne Vollan  <pvollan@apple.com>
 
         Fix API test failure after r253351
