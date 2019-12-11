@@ -38,7 +38,7 @@ public:
     }
 
     DeferrableTask(T& t)
-        : m_dispatcher(t)
+        : m_dispatcher(&t)
     {
     }
 

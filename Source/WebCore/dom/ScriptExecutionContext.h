@@ -187,6 +187,7 @@ public:
         bool m_isCleanupTask;
     };
 
+    void enqueueTaskForDispatcher(Function<void()>&& function) { postTask(WTFMove(function)); }
     virtual void postTask(Task&&) = 0; // Executes the task on context's thread asynchronously.
 
     template<typename... Arguments>

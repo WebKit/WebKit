@@ -149,6 +149,7 @@ class HTMLMediaElement
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
+    , public CanMakeWeakPtr<HTMLMediaElement, WeakPtrFactoryInitialization::Eager>
 {
     WTF_MAKE_ISO_ALLOCATED(HTMLMediaElement);
 public:
@@ -953,6 +954,9 @@ private:
     const Logger& mediaPlayerLogger() final { return logger(); }
 #endif
 
+    friend class TaskDispatcher<HTMLMediaElement>;
+    void enqueueTaskForDispatcher(Function<void()>&&);
+
     Timer m_progressEventTimer;
     Timer m_playbackProgressTimer;
     Timer m_scanTimer;
@@ -962,7 +966,7 @@ private:
     DeferrableTask<Timer> m_checkPlaybackTargetCompatablityTask;
     DeferrableTask<Timer> m_updateMediaStateTask;
     DeferrableTask<Timer> m_mediaEngineUpdatedTask;
-    DeferrableTask<Timer> m_updatePlayStateTask;
+    DeferrableTask<HTMLMediaElement> m_updatePlayStateTask;
     DeferrableTask<Timer> m_resumeTaskQueue;
     DeferrableTask<Timer> m_seekTaskQueue;
     DeferrableTask<Timer> m_playbackControlsManagerBehaviorRestrictionsQueue;

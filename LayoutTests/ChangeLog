@@ -1,3 +1,13 @@
+2019-12-11  youenn fablet  <youenn@apple.com>
+
+        (r252889) webrtc/peerconnection-page-cache.html is crashing on iOS Debug
+        https://bugs.webkit.org/show_bug.cgi?id=205017
+        <rdar://problem/57757026>
+
+        Reviewed by Eric Carlson.
+
+        * platform/ios/TestExpectations:
+
 2019-12-11  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed GTK gardening after r253360.

@@ -1,3 +1,32 @@
+2019-12-11  youenn fablet  <youenn@apple.com>
+
+        (r252889) webrtc/peerconnection-page-cache.html is crashing on iOS Debug
+        https://bugs.webkit.org/show_bug.cgi?id=205017
+        <rdar://problem/57757026>
+
+        Reviewed by Eric Carlson.
+
+        HTMLMediaElement is scheduling some tasks using Timers that are not suspendable.
+        This patch uses task enqueuing through the script execution context event loop which respects page cache suspend/resume logic
+        for the update play state timer.
+        Other timers should follow.
+
+        Covered by tests no longer crashing in Debug mode.
+
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::enqueueTaskForDispatcher):
+        * dom/TaskSource.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::enqueueTaskForDispatcher):
+        * html/HTMLMediaElement.h:
+        * platform/DeferrableTask.h:
+        (WebCore::DeferrableTask::DeferrableTask):
+        * platform/GenericTaskQueue.h:
+        (WebCore::TaskDispatcher::TaskDispatcher):
+        (WebCore::TaskDispatcher::postTask):
+        (WebCore::GenericTaskQueue::GenericTaskQueue):
+
 2019-12-11  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Fix fast/text/hyphenate-limit-lines.html

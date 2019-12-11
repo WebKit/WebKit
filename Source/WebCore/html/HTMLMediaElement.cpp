@@ -429,6 +429,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_scanTimer(*this, &HTMLMediaElement::scanTimerFired)
     , m_playbackControlsManagerBehaviorRestrictionsTimer(*this, &HTMLMediaElement::playbackControlsManagerBehaviorRestrictionsTimerFired)
     , m_seekToPlaybackPositionEndedTimer(*this, &HTMLMediaElement::seekToPlaybackPositionEndedTimerFired)
+    , m_updatePlayStateTask(*this)
     , m_asyncEventQueue(MainThreadGenericEventQueue::create(*this))
     , m_lastTimeUpdateEventMovieTime(MediaTime::positiveInfiniteTime())
     , m_firstTimePlaying(true)
@@ -8207,6 +8208,22 @@ bool HTMLMediaElement::hasMediaStreamSource() const
 #else
     return false;
 #endif
+}
+
+void HTMLMediaElement::enqueueTaskForDispatcher(Function<void()>&& function)
+{
+    if (!isMainThread()) {
+        callOnMainThread([this, weakThis = makeWeakPtr(*this), function = WTFMove(function)]() mutable {
+            if (!weakThis)
+                return;
+            enqueueTaskForDispatcher(WTFMove(function));
+        });
+        return;
+    }
+
+    if (!scriptExecutionContext())
+        return;
+    scriptExecutionContext()->eventLoop().queueTask(TaskSource::MediaElement, WTFMove(function));
 }
 
 }
