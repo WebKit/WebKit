@@ -215,8 +215,8 @@ private:
     RefPtr<UniqueIDBDatabaseTransaction> takeNextRunnableTransaction(bool& hadDeferredTransactions);
 
     bool prepareToFinishTransaction(UniqueIDBDatabaseTransaction&, UniqueIDBDatabaseTransaction::State);
-    void abortTransactionOnMainThread(UniqueIDBDatabaseTransaction&, const LockHolder&);
-    void commitTransactionOnMainThread(UniqueIDBDatabaseTransaction&, const LockHolder&);
+    void abortTransactionOnMainThread(UniqueIDBDatabaseTransaction&);
+    void commitTransactionOnMainThread(UniqueIDBDatabaseTransaction&);
 
     void clearStalePendingOpenDBRequests();
 

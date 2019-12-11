@@ -1,3 +1,102 @@
+2019-12-11  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: remove LockHolder parameters
+        https://bugs.webkit.org/show_bug.cgi?id=205076
+
+        Reviewed by Alex Christensen.
+
+        The LockHolder parameters were used to only ensure we have acquired a lock before using IDBBackingStore. To work
+        toward https://bugs.webkit.org/show_bug.cgi?id=203690 we will not need these any more.
+
+        No behavior change.
+
+        * Modules/indexeddb/server/IDBBackingStore.h:
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::beginTransaction):
+        (WebCore::IDBServer::MemoryIDBBackingStore::abortTransaction):
+        (WebCore::IDBServer::MemoryIDBBackingStore::commitTransaction):
+        (WebCore::IDBServer::MemoryIDBBackingStore::createObjectStore):
+        (WebCore::IDBServer::MemoryIDBBackingStore::deleteObjectStore):
+        (WebCore::IDBServer::MemoryIDBBackingStore::renameObjectStore):
+        (WebCore::IDBServer::MemoryIDBBackingStore::clearObjectStore):
+        (WebCore::IDBServer::MemoryIDBBackingStore::createIndex):
+        (WebCore::IDBServer::MemoryIDBBackingStore::deleteIndex):
+        (WebCore::IDBServer::MemoryIDBBackingStore::renameIndex):
+        (WebCore::IDBServer::MemoryIDBBackingStore::keyExistsInObjectStore):
+        (WebCore::IDBServer::MemoryIDBBackingStore::deleteRange):
+        (WebCore::IDBServer::MemoryIDBBackingStore::addRecord):
+        (WebCore::IDBServer::MemoryIDBBackingStore::getRecord):
+        (WebCore::IDBServer::MemoryIDBBackingStore::getAllRecords):
+        (WebCore::IDBServer::MemoryIDBBackingStore::getIndexRecord):
+        (WebCore::IDBServer::MemoryIDBBackingStore::getCount):
+        (WebCore::IDBServer::MemoryIDBBackingStore::generateKeyNumber):
+        (WebCore::IDBServer::MemoryIDBBackingStore::revertGeneratedKeyNumber):
+        (WebCore::IDBServer::MemoryIDBBackingStore::maybeUpdateKeyGeneratorNumber):
+        (WebCore::IDBServer::MemoryIDBBackingStore::openCursor):
+        (WebCore::IDBServer::MemoryIDBBackingStore::iterateCursor):
+        (WebCore::IDBServer::MemoryIDBBackingStore::infoForObjectStore):
+        (WebCore::IDBServer::MemoryIDBBackingStore::deleteBackingStore):
+        (WebCore::IDBServer::MemoryIDBBackingStore::close):
+        * Modules/indexeddb/server/MemoryIDBBackingStore.h:
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getOrEstablishDatabaseInfo):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::beginTransaction):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::abortTransaction):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::commitTransaction):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::renameObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::clearObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::renameIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::keyExistsInObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteRange):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::addRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getAllRecords):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getIndexRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getCount):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::generateKeyNumber):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::revertGeneratedKeyNumber):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::maybeUpdateKeyGeneratorNumber):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::openCursor):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::iterateCursor):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::prefetchCursor):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteBackingStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::close):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::hasTransaction const):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::performUnconditionalDeleteBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::shutdownForClose):
+        (WebCore::IDBServer::UniqueIDBDatabase::performStartVersionChangeTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::openBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::performCreateObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::performDeleteObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::performRenameObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::performClearObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::performCreateIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::performDeleteIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::performRenameIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::performPutOrAdd):
+        (WebCore::IDBServer::UniqueIDBDatabase::performGetRecord):
+        (WebCore::IDBServer::UniqueIDBDatabase::performGetIndexRecord):
+        (WebCore::IDBServer::UniqueIDBDatabase::performGetAllRecords):
+        (WebCore::IDBServer::UniqueIDBDatabase::performGetCount):
+        (WebCore::IDBServer::UniqueIDBDatabase::performDeleteRecord):
+        (WebCore::IDBServer::UniqueIDBDatabase::performOpenCursor):
+        (WebCore::IDBServer::UniqueIDBDatabase::performIterateCursor):
+        (WebCore::IDBServer::UniqueIDBDatabase::performPrefetchCursor):
+        (WebCore::IDBServer::UniqueIDBDatabase::performCommitTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::performAbortTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::performActivateTransactionInBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::abortTransactionOnMainThread):
+        (WebCore::IDBServer::UniqueIDBDatabase::commitTransactionOnMainThread):
+        (WebCore::IDBServer::UniqueIDBDatabase::suspend):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
 2019-12-11  youenn fablet  <youenn@apple.com>
 
         (r252889) webrtc/peerconnection-page-cache.html is crashing on iOS Debug

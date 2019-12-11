@@ -54,44 +54,43 @@ public:
     
     ~SQLiteIDBBackingStore() final;
 
-    IDBError getOrEstablishDatabaseInfo(IDBDatabaseInfo&, const LockHolder&) final;
+    IDBError getOrEstablishDatabaseInfo(IDBDatabaseInfo&) final;
 
-    IDBError beginTransaction(const IDBTransactionInfo&, const LockHolder&) final;
-    IDBError abortTransaction(const IDBResourceIdentifier& transactionIdentifier, const LockHolder&) final;
-    IDBError commitTransaction(const IDBResourceIdentifier& transactionIdentifier, const LockHolder&) final;
-    IDBError createObjectStore(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo&, const LockHolder&) final;
-    IDBError deleteObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const LockHolder&) final;
-    IDBError renameObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const String& newName, const LockHolder&) final;
-    IDBError clearObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const LockHolder&) final;
-    IDBError createIndex(const IDBResourceIdentifier& transactionIdentifier, const IDBIndexInfo&, const LockHolder&) final;
-    IDBError deleteIndex(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const LockHolder&) final;
-    IDBError renameIndex(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName, const LockHolder&) final;
-    IDBError keyExistsInObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyData&, bool& keyExists, const LockHolder&) final;
-    IDBError deleteRange(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData&, const LockHolder&) final;
-    IDBError addRecord(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo&, const IDBKeyData&, const IDBValue&, const LockHolder&) final;
-    IDBError getRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData&, IDBGetRecordDataType, IDBGetResult& outValue, const LockHolder&) final;
-    IDBError getAllRecords(const IDBResourceIdentifier& transactionIdentifier, const IDBGetAllRecordsData&, IDBGetAllResult& outValue, const LockHolder&) final;
-    IDBError getIndexRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, IndexedDB::IndexRecordType, const IDBKeyRangeData&, IDBGetResult& outValue, const LockHolder&) final;
-    IDBError getCount(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const IDBKeyRangeData&, uint64_t& outCount, const LockHolder&) final;
-    IDBError generateKeyNumber(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t& keyNumber, const LockHolder&) final;
-    IDBError revertGeneratedKeyNumber(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t keyNumber, const LockHolder&) final;
-    IDBError maybeUpdateKeyGeneratorNumber(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, double newKeyNumber, const LockHolder&) final;
-    IDBError openCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBCursorInfo&, IDBGetResult& outResult, const LockHolder&) final;
-    IDBError iterateCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier, const IDBIterateCursorData&, IDBGetResult& outResult, const LockHolder&) final;
-    bool prefetchCursor(const IDBResourceIdentifier&, const IDBResourceIdentifier&, const LockHolder&) final;
+    IDBError beginTransaction(const IDBTransactionInfo&) final;
+    IDBError abortTransaction(const IDBResourceIdentifier& transactionIdentifier) final;
+    IDBError commitTransaction(const IDBResourceIdentifier& transactionIdentifier) final;
+    IDBError createObjectStore(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo&) final;
+    IDBError deleteObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier) final;
+    IDBError renameObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const String& newName) final;
+    IDBError clearObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier) final;
+    IDBError createIndex(const IDBResourceIdentifier& transactionIdentifier, const IDBIndexInfo&) final;
+    IDBError deleteIndex(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier) final;
+    IDBError renameIndex(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName) final;
+    IDBError keyExistsInObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyData&, bool& keyExists) final;
+    IDBError deleteRange(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData&) final;
+    IDBError addRecord(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo&, const IDBKeyData&, const IDBValue&) final;
+    IDBError getRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData&, IDBGetRecordDataType, IDBGetResult& outValue) final;
+    IDBError getAllRecords(const IDBResourceIdentifier& transactionIdentifier, const IDBGetAllRecordsData&, IDBGetAllResult& outValue) final;
+    IDBError getIndexRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, IndexedDB::IndexRecordType, const IDBKeyRangeData&, IDBGetResult& outValue) final;
+    IDBError getCount(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const IDBKeyRangeData&, uint64_t& outCount) final;
+    IDBError generateKeyNumber(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t& keyNumber) final;
+    IDBError revertGeneratedKeyNumber(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t keyNumber) final;
+    IDBError maybeUpdateKeyGeneratorNumber(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, double newKeyNumber) final;
+    IDBError openCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBCursorInfo&, IDBGetResult& outResult) final;
+    IDBError iterateCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier, const IDBIterateCursorData&, IDBGetResult& outResult) final;
+    bool prefetchCursor(const IDBResourceIdentifier&, const IDBResourceIdentifier&) final;
 
-    IDBObjectStoreInfo* infoForObjectStore(uint64_t objectStoreIdentifier, const LockHolder&) final;
-    void deleteBackingStore(const LockHolder&) final;
+    IDBObjectStoreInfo* infoForObjectStore(uint64_t objectStoreIdentifier) final;
+    void deleteBackingStore() final;
 
-    bool supportsSimultaneousTransactions(const LockHolder&) final { return false; }
-    bool isEphemeral(const LockHolder&) final { return false; }
+    bool supportsSimultaneousTransactions() final { return false; }
+    bool isEphemeral() final { return false; }
 
-    bool hasTransaction(const IDBResourceIdentifier&, const LockHolder&) const final;
+    bool hasTransaction(const IDBResourceIdentifier&) const final;
 
     void unregisterCursor(SQLiteIDBCursor&);
 
     IDBError getBlobRecordsForObjectStoreRecord(int64_t objectStoreRecord, Vector<String>& blobURLs, Vector<String>& blobFilePaths);
-    IDBObjectStoreInfo* infoForObjectStore(uint64_t objectStoreIdentifier);
 
     static String databaseNameFromEncodedFilename(const String&);
     static uint64_t databasesSizeForDirectory(const String& directory);
@@ -133,7 +132,7 @@ private:
     IDBError getAllIndexRecords(const IDBResourceIdentifier& transactionIdentifier, const IDBGetAllRecordsData&, IDBGetAllResult& outValue);
 
     void closeSQLiteDB();
-    void close(const LockHolder&) final;
+    void close() final;
 
     enum class SQL : size_t {
         CreateObjectStoreInfo,

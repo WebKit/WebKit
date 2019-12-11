@@ -60,44 +60,42 @@ class IDBBackingStore {
 public:
     virtual ~IDBBackingStore() { RELEASE_ASSERT(!isMainThread()); }
 
-    // All functions should take a LockHolder to make sure they have acquired lock when being called.
-    // This is used to make sure database operations would not be performed when process is suspended.
-    virtual IDBError getOrEstablishDatabaseInfo(IDBDatabaseInfo&, const LockHolder&) = 0;
+    virtual IDBError getOrEstablishDatabaseInfo(IDBDatabaseInfo&) = 0;
 
-    virtual IDBError beginTransaction(const IDBTransactionInfo&, const LockHolder&) = 0;
-    virtual IDBError abortTransaction(const IDBResourceIdentifier& transactionIdentifier, const LockHolder&) = 0;
-    virtual IDBError commitTransaction(const IDBResourceIdentifier& transactionIdentifier, const LockHolder&) = 0;
+    virtual IDBError beginTransaction(const IDBTransactionInfo&) = 0;
+    virtual IDBError abortTransaction(const IDBResourceIdentifier& transactionIdentifier) = 0;
+    virtual IDBError commitTransaction(const IDBResourceIdentifier& transactionIdentifier) = 0;
 
-    virtual IDBError createObjectStore(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo&, const LockHolder&) = 0;
-    virtual IDBError deleteObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const LockHolder&) = 0;
-    virtual IDBError renameObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const String& newName, const LockHolder&) = 0;
-    virtual IDBError clearObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const LockHolder&) = 0;
-    virtual IDBError createIndex(const IDBResourceIdentifier& transactionIdentifier, const IDBIndexInfo&, const LockHolder&) = 0;
-    virtual IDBError deleteIndex(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const LockHolder&) = 0;
-    virtual IDBError renameIndex(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName, const LockHolder&) = 0;
-    virtual IDBError keyExistsInObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyData&, bool& keyExists, const LockHolder&) = 0;
-    virtual IDBError deleteRange(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData&, const LockHolder&) = 0;
-    virtual IDBError addRecord(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo&, const IDBKeyData&, const IDBValue&, const LockHolder&) = 0;
-    virtual IDBError getRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData&, IDBGetRecordDataType, IDBGetResult& outValue, const LockHolder&) = 0;
-    virtual IDBError getAllRecords(const IDBResourceIdentifier& transactionIdentifier, const IDBGetAllRecordsData&, IDBGetAllResult& outValue, const LockHolder&) = 0;
-    virtual IDBError getIndexRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, IndexedDB::IndexRecordType, const IDBKeyRangeData&, IDBGetResult& outValue, const LockHolder&) = 0;
-    virtual IDBError getCount(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const IDBKeyRangeData&, uint64_t& outCount, const LockHolder&) = 0;
-    virtual IDBError generateKeyNumber(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t& keyNumber, const LockHolder&) = 0;
-    virtual IDBError revertGeneratedKeyNumber(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t keyNumber, const LockHolder&) = 0;
-    virtual IDBError maybeUpdateKeyGeneratorNumber(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, double newKeyNumber, const LockHolder&) = 0;
-    virtual IDBError openCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBCursorInfo&, IDBGetResult& outResult, const LockHolder&) = 0;
-    virtual IDBError iterateCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier, const IDBIterateCursorData&, IDBGetResult& outResult, const LockHolder&) = 0;
-    virtual bool prefetchCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier, const LockHolder&) = 0;
+    virtual IDBError createObjectStore(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo&) = 0;
+    virtual IDBError deleteObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier) = 0;
+    virtual IDBError renameObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const String& newName) = 0;
+    virtual IDBError clearObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier) = 0;
+    virtual IDBError createIndex(const IDBResourceIdentifier& transactionIdentifier, const IDBIndexInfo&) = 0;
+    virtual IDBError deleteIndex(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier) = 0;
+    virtual IDBError renameIndex(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName) = 0;
+    virtual IDBError keyExistsInObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyData&, bool& keyExists) = 0;
+    virtual IDBError deleteRange(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData&) = 0;
+    virtual IDBError addRecord(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo&, const IDBKeyData&, const IDBValue&) = 0;
+    virtual IDBError getRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData&, IDBGetRecordDataType, IDBGetResult& outValue) = 0;
+    virtual IDBError getAllRecords(const IDBResourceIdentifier& transactionIdentifier, const IDBGetAllRecordsData&, IDBGetAllResult& outValue) = 0;
+    virtual IDBError getIndexRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, IndexedDB::IndexRecordType, const IDBKeyRangeData&, IDBGetResult& outValue) = 0;
+    virtual IDBError getCount(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const IDBKeyRangeData&, uint64_t& outCount) = 0;
+    virtual IDBError generateKeyNumber(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t& keyNumber) = 0;
+    virtual IDBError revertGeneratedKeyNumber(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t keyNumber) = 0;
+    virtual IDBError maybeUpdateKeyGeneratorNumber(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, double newKeyNumber) = 0;
+    virtual IDBError openCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBCursorInfo&, IDBGetResult& outResult) = 0;
+    virtual IDBError iterateCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier, const IDBIterateCursorData&, IDBGetResult& outResult) = 0;
+    virtual bool prefetchCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier) = 0;
 
-    virtual IDBObjectStoreInfo* infoForObjectStore(uint64_t objectStoreIdentifier, const LockHolder&) = 0;
-    virtual void deleteBackingStore(const LockHolder&) = 0;
+    virtual IDBObjectStoreInfo* infoForObjectStore(uint64_t objectStoreIdentifier) = 0;
+    virtual void deleteBackingStore() = 0;
 
-    virtual bool supportsSimultaneousTransactions(const LockHolder&) = 0;
-    virtual bool isEphemeral(const LockHolder&) = 0;
+    virtual bool supportsSimultaneousTransactions() = 0;
+    virtual bool isEphemeral() = 0;
 
-    virtual void close(const LockHolder&) = 0;
+    virtual void close() = 0;
 
-    virtual bool hasTransaction(const IDBResourceIdentifier&, const LockHolder&) const = 0;
+    virtual bool hasTransaction(const IDBResourceIdentifier&) const = 0;
 protected:
     IDBBackingStore() { RELEASE_ASSERT(!isMainThread()); }
 };
