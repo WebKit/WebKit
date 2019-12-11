@@ -1,5 +1,19 @@
 2019-12-11  Daniel Bates  <dabates@apple.com>
 
+        Remove unused Frame parameter from moveByGranularityRespectingWordBoundary() and take const VisiblePosition&
+        https://bugs.webkit.org/show_bug.cgi?id=205137
+
+        Reviewed by Wenson Hsieh.
+
+        moveByGranularityRespectingWordBoundary() never makes use of the passed Frame and does not mutate the
+        passed VisiblePosition. So, do not accept the former and take the latter as a const lvalue reference.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::moveByGranularityRespectingWordBoundary):
+        (WebKit::WebPage::requestDocumentEditingContext):
+
+2019-12-11  Daniel Bates  <dabates@apple.com>
+
         UIWKDocumentContext returns 0 character rects when caret is at beginning or end of text
         https://bugs.webkit.org/show_bug.cgi?id=205135
         <rdar://problem/56887914>

@@ -3867,7 +3867,7 @@ void WebPage::updateSelectionWithDelta(int64_t locationDelta, int64_t lengthDelt
     completionHandler();
 }
 
-static VisiblePosition moveByGranularityRespectingWordBoundary(Frame& frame, VisiblePosition& position, TextGranularity granularity, uint64_t granularityCount, SelectionDirection direction)
+static VisiblePosition moveByGranularityRespectingWordBoundary(const VisiblePosition& position, TextGranularity granularity, uint64_t granularityCount, SelectionDirection direction)
 {
     bool backwards = direction == DirectionBackward;
     auto farthestPositionInDirection = backwards ? startOfEditableContent(position) : endOfEditableContent(position);
@@ -3992,8 +3992,8 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
     VisiblePosition contextBeforeStart;
     VisiblePosition contextAfterEnd;
     if (request.granularityCount) {
-        contextBeforeStart = moveByGranularityRespectingWordBoundary(frame.get(), rangeOfInterestStart, request.surroundingGranularity, request.granularityCount, DirectionBackward);
-        contextAfterEnd = moveByGranularityRespectingWordBoundary(frame.get(), rangeOfInterestEnd, request.surroundingGranularity, request.granularityCount, DirectionForward);
+        contextBeforeStart = moveByGranularityRespectingWordBoundary(rangeOfInterestStart, request.surroundingGranularity, request.granularityCount, DirectionBackward);
+        contextAfterEnd = moveByGranularityRespectingWordBoundary(rangeOfInterestEnd, request.surroundingGranularity, request.granularityCount, DirectionForward);
     } else {
         contextBeforeStart = rangeOfInterestStart;
         contextAfterEnd = rangeOfInterestEnd;
