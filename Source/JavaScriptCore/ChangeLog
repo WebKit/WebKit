@@ -1,3 +1,36 @@
+2019-12-10  Mark Lam  <mark.lam@apple.com>
+
+        Worklist::deleteCancelledPlansForVM() should not assume that a cancelled plan is ready for deletion.
+        https://bugs.webkit.org/show_bug.cgi?id=205086
+        <rdar://problem/57795002>
+
+        Reviewed by Saam Barati.
+
+        Consider this race scenario:
+        1. The DFG thread finds a plan and started compiling, and it's holding a ref to
+           the plan while it's compiling.
+        2. The GC thread discovers that we no longer need the plan and cancels it.
+        3. After the plan is cancelled but while the DFG thread is still compiling, the
+           mutator thread calls Worklist::deleteCancelledPlansForVM().
+
+           Worklist::deleteCancelledPlansForVM() was assuming that by the time it is
+           called, Worklist::m_cancelledPlansPendingDestruction will contain the last ref
+           to the cancelled plan.  However, this is an incorrect assumption, and the
+           assertion there that asserts refCount == 1 will fail.
+
+        This patch fixes Worklist::deleteCancelledPlansForVM() to append the cancelled
+        plan back into m_cancelledPlansPendingDestruction if its refCount is not 1
+        (implying that the compiler thread still has a ref to it), and defer deletion of
+        the plan to a subsequent call to deleteCancelledPlansForVM().
+
+        This patch also adds a WTFMove to Worklist::removeDeadPlans() when we append the
+        cancelled plan to m_cancelledPlansPendingDestruction there.  This saves us one
+        unnecessary ref and deref of the plan.
+
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::deleteCancelledPlansForVM):
+        (JSC::DFG::Worklist::removeDeadPlans):
+
 2019-12-10  Saam Barati  <sbarati@apple.com>
 
         methodOfGettingAValueProfileFor should return argument value profiles even when node and operandNode are the same origin

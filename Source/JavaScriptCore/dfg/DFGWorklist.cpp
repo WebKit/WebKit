@@ -307,9 +307,19 @@ void Worklist::waitUntilAllPlansForVMAreReady(VM& vm)
 void Worklist::deleteCancelledPlansForVM(LockHolder&, VM& vm)
 {
     RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
-#if !ASSERT_DISABLED
     HashSet<RefPtr<Plan>> removedPlans;
-#endif
+
+    // The following scenario can occur:
+    // 1. The DFG thread started compiling a plan.
+    // 2. The GC thread cancels the plan, and adds it to m_cancelledPlansPendingDestruction.
+    // 3. The DFG thread finishes compiling, and discovers that the thread is cancelled.
+    //    To avoid destructing the plan in the DFG thread, it adds it to
+    //    m_cancelledPlansPendingDestruction.
+    // 4. The above occurs before the mutator runs deleteCancelledPlansForVM().
+    //
+    // Hence, the same cancelled plan can appear in m_cancelledPlansPendingDestruction
+    // more than once. This is why we need to filter the cancelled plans through
+    // the removedPlans HashSet before we do the refCount check below.
 
     for (size_t i = 0; i < m_cancelledPlansPendingDestruction.size(); ++i) {
         RefPtr<Plan> plan = m_cancelledPlansPendingDestruction[i];
@@ -317,18 +327,15 @@ void Worklist::deleteCancelledPlansForVM(LockHolder&, VM& vm)
             continue;
         m_cancelledPlansPendingDestruction[i--] = m_cancelledPlansPendingDestruction.last();
         m_cancelledPlansPendingDestruction.removeLast();
-#if !ASSERT_DISABLED
-        removedPlans.add(plan);
-#endif
+        removedPlans.add(WTFMove(plan));
     }
 
-#if !ASSERT_DISABLED
     while (!removedPlans.isEmpty()) {
         RefPtr<Plan> plan = removedPlans.takeAny();
-        RELEASE_ASSERT(plan->stage() == Plan::Cancelled);
-        RELEASE_ASSERT(plan->refCount() == 1);
+        ASSERT(plan->stage() == Plan::Cancelled);
+        if (plan->refCount() > 1)
+            m_cancelledPlansPendingDestruction.append(WTFMove(plan));
     }
-#endif
 }
 
 void Worklist::removeAllReadyPlansForVM(VM& vm, Vector<RefPtr<Plan>, 8>& myReadyPlans)
@@ -459,7 +466,7 @@ void Worklist::removeDeadPlans(VM& vm)
                 RefPtr<Plan> plan = m_plans.take(*iter);
                 plan->cancel();
                 if (!isInMutator)
-                    m_cancelledPlansPendingDestruction.append(plan);
+                    m_cancelledPlansPendingDestruction.append(WTFMove(plan));
             }
             Deque<RefPtr<Plan>> newQueue;
             while (!m_queue.isEmpty()) {
