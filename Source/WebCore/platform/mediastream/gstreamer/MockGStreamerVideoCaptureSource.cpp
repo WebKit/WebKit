@@ -43,6 +43,13 @@ public:
         return *this;
     }
 
+    const Vector<Ref<VideoPreset>>& presets()
+    {
+        return MockRealtimeVideoSource::presets();
+    }
+
+    bool canResizeVideoFrames() const final { return true; }
+
     void updateSampleBuffer()
     {
         auto imageBuffer = this->imageBuffer();
@@ -139,6 +146,11 @@ const RealtimeMediaSourceCapabilities& MockGStreamerVideoCaptureSource::capabili
     m_capabilities = m_wrappedSource->asRealtimeMediaSource().capabilities();
     m_currentSettings = m_wrappedSource->asRealtimeMediaSource().settings();
     return m_capabilities.value();
+}
+
+void MockGStreamerVideoCaptureSource::generatePresets()
+{
+    setSupportedPresets(m_wrappedSource->presets());
 }
 
 void MockGStreamerVideoCaptureSource::captureFailed()

@@ -573,7 +573,9 @@ webkit.org/b/79203 fast/mediastream/MediaStream-video-element-video-tracks-disab
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element-displays-buffer.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stats.html [ Timeout Crash ]
 webkit.org/b/79203 fast/mediastream/get-display-media-muted.html [ Timeout ]
+webkit.org/b/79203 fast/mediastream/constraint-intrinsic-size.html [ Skip ]
 webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Timeout ]
+webkit.org/b/205057 fast/mediastream/MediaStreamTrack-getSettings.html [ Failure ]
 # Crash is bug #176801
 webkit.org/b/160996 fast/mediastream/MediaStream-video-element-video-tracks-disabled.html [ ImageOnlyFailure Crash ]
 webkit.org/b/173257 fast/mediastream/getUserMedia-grant-persistency3.html [ Pass Failure ]
@@ -2206,6 +2208,7 @@ webkit.org/b/198113 fast/mediastream/media-stream-page-muted.html [ Timeout Pass
 
 webkit.org/b/191886 fast/mediastream/MediaStream-video-element-remove-track.html [ Failure ]
 
+
 # Console log lines may appear in a different order so we silence them.
 imported/w3c/web-platform-tests/offscreen-canvas/convert-to-blob/offscreencanvas.convert.to.blob.w.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/offscreen-canvas/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.w.html [ DumpJSConsoleLogInStdErr ]
@@ -3752,7 +3755,6 @@ webkit.org/b/198121 fast/text/large-synthetic-bold-with-scale-transform.html [ I
 webkit.org/b/199001 accessibility/set-selected-text-range-after-newline.html [ Failure ]
 webkit.org/b/199002 compositing/repaint/scroller-with-foreground-layer-repaints.html [ Failure ]
 webkit.org/b/199004 fast/events/fire-mousedown-while-pressing-mouse-button.html [ Failure ]
-webkit.org/b/199006 fast/mediastream/MediaStreamTrack-getCapabilities.html [ Failure ]
 
 webkit.org/b/199009 fast/text/variations/optical-sizing-units.html [ ImageOnlyFailure ]
 
@@ -3761,9 +3763,6 @@ webkit.org/b/199859 imported/w3c/web-platform-tests/css/css-text/line-break/line
 webkit.org/b/199860 accessibility/button-with-aria-haspopup-role.html [ Failure ]
 webkit.org/b/199860 accessibility/datalist.html [ Failure ]
 webkit.org/b/199868 accessibility/gtk/aria-haspopup.html [ Failure ]
-
-webkit.org/b/199440 fast/mediastream/apply-constraints-video.html [ Failure ]
-webkit.org/b/199440 fast/mediastream/getUserMedia-video-rescaling.html [ Failure ]
 
 webkit.org/b/199437 compositing/geometry/limit-layer-bounds-clipping-ancestor.html [ Failure ]
 

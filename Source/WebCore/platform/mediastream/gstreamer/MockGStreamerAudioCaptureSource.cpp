@@ -62,6 +62,10 @@ public:
 
     void addHum(float amplitude, float frequency, float sampleRate, uint64_t start, float *p, uint64_t count)
     {
+        if (echoCancellation()) {
+            GST_DEBUG("echo cancel off..., no hum");
+            return;
+        }
         float humPeriod = sampleRate / frequency;
         for (uint64_t i = start, end = start + count; i < end; ++i) {
             float a = amplitude * sin(i * s_Tau / humPeriod);

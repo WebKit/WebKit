@@ -1,3 +1,26 @@
+2019-12-11  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer][MediaStream] Fix GStreamer capturer mock
+        https://bugs.webkit.org/show_bug.cgi?id=205066
+
+        - Presets where wrongly generated based on GStreamer capabilities
+        - Audio capturer was not taking into account echo cancellation
+
+        Reviewed by Philippe Normand.
+
+        This fixes a few tests
+
+        * platform/mediastream/RealtimeVideoCaptureSource.h:
+        (WebCore::RealtimeVideoCaptureSource::canResizeVideoFrames const):
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.h:
+        * platform/mediastream/gstreamer/MockGStreamerAudioCaptureSource.cpp:
+        (WebCore::WrappedMockRealtimeAudioSource::addHum):
+        * platform/mediastream/gstreamer/MockGStreamerVideoCaptureSource.cpp:
+        (WebCore::WrappedMockRealtimeVideoSource::presets):
+        (WebCore::MockGStreamerVideoCaptureSource::generatePresets):
+        * platform/mediastream/gstreamer/MockGStreamerVideoCaptureSource.h:
+        * platform/mock/MockRealtimeVideoSource.h:
+
 2019-12-11  Charlie Turner  <cturner@igalia.com>
 
         [GStreamer] Invalid use of UTF-8 validation in ClearKey key data

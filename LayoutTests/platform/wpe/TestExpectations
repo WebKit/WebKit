@@ -116,6 +116,8 @@ webkit.org/b/79203 fast/mediastream/MediaStream-video-element.html [ Failure Pas
 webkit.org/b/160996 fast/mediastream/MediaStream-video-element-video-tracks-disabled.html [ Timeout ImageOnlyFailure Crash ]
 webkit.org/b/173257 fast/mediastream/getUserMedia-grant-persistency3.html [ Pass Failure ]
 
+webkit.org/b/205057 fast/mediastream/MediaStreamTrack-getSettings.html [ Failure ]
+
 # Canvas captureStream support is not implemented
 webkit.org/b/169811 fast/mediacapturefromelement [ Skip ]
 webkit.org/b/169811 fast/mediastream/captureStream/ [ Failure ]
@@ -1871,6 +1873,14 @@ webkit.org/b/192883 fast/cookies/cookie-averse-document.html [ Failure ]
 webkit.org/b/192883 fast/cookies/local-file-can-set-cookies.html [ Failure ]
 
 webkit.org/b/192886 fast/mediastream/media-stream-renders-first-frame.html [ Failure ]
+webkit.org/b/192888 fast/mediastream/resize-letterbox.html [ Failure ]
+webkit.org/b/192888 fast/mediastream/resize-trim.html [ Failure ]
+
+# No support for screen capture
+webkit.org/b/79203 fast/mediastream/screencapture-user-gesture.html [ Skip ]
+webkit.org/b/79203 fast/mediastream/get-display-media-muted.html [ Skip ]
+webkit.org/b/79203 fast/mediastream/constraint-intrinsic-size.html [ Skip ]
+webkit.org/b/198113 fast/mediastream/media-stream-page-muted.html [ Timeout Pass ]
 
 webkit.org/b/192891 fast/writing-mode/vertical-align-table-baseline.html [ Failure ]
 
@@ -1930,9 +1940,6 @@ webkit.org/b/195671 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/196195 inspector/console/console-screenshot.html [ Failure ]
 
 webkit.org/b/196199 http/tests/IndexedDB/storage-limit-1.https.html [ Failure ]
-
-webkit.org/b/199440 fast/mediastream/apply-constraints-video.html [ Failure ]
-webkit.org/b/199440 fast/mediastream/getUserMedia-video-rescaling.html [ Failure ]
 
 webkit.org/b/200301 storage/websql/alter-to-info-table.html [ Failure ]
 webkit.org/b/200301 storage/websql/test-authorizer.html [ Failure ]

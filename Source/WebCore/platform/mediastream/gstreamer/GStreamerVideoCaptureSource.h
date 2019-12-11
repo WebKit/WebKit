@@ -49,7 +49,7 @@ protected:
     void startProducingData() override;
     void stopProducingData() override;
     bool canResizeVideoFrames() const final { return true; }
-    void generatePresets() final;
+    void generatePresets() override;
 
 
     mutable Optional<RealtimeMediaSourceCapabilities> m_capabilities;

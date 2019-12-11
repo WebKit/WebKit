@@ -62,6 +62,7 @@ protected:
     Seconds elapsedTime();
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) override;
     MediaSample::VideoRotation sampleRotation() const final { return m_deviceOrientation; }
+    void generatePresets() override;
 
 private:
     const RealtimeMediaSourceCapabilities& capabilities() final;
@@ -76,7 +77,6 @@ private:
     void setFrameRateWithPreset(double, RefPtr<VideoPreset>) final;
     IntSize captureSize() const;
 
-    void generatePresets() final;
 
     bool isMockSource() const final { return true; }
 

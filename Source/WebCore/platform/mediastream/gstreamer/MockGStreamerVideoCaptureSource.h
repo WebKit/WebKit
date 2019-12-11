@@ -40,6 +40,7 @@ public:
     void applyConstraints(const MediaConstraints&, ApplyConstraintsHandler&&) final;
 
 private:
+    void generatePresets() final;
     void stopProducingData() final;
     void startProducingData() final;
     const RealtimeMediaSourceSettings& settings() final;

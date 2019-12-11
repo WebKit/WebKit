@@ -1,3 +1,16 @@
+2019-12-11  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer][MediaStream] Fix GStreamer capturer mock
+        https://bugs.webkit.org/show_bug.cgi?id=205066
+
+        - Presets where wrongly generated based on GStreamer capabilities
+        - Audio capturer was not taking into account echo cancellation
+
+        Reviewed by Philippe Normand.
+
+        * platform/gtk/TestExpectations: Updated expectations as required
+        * platform/wpe/TestExpectations: Updated expectations as required
+
 2019-12-10  Peng Liu  <peng.liu6@apple.com>
 
         Create a TestExpectations file for the GPU process related work
