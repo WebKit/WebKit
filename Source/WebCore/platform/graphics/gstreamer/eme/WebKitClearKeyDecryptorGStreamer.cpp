@@ -136,7 +136,7 @@ static bool findAndSetKey(WebKitMediaClearKeyDecryptPrivate* priv, const String&
     }
 
     ASSERT(keyValue.sizeInBytes() == CLEARKEY_SIZE);
-    if (gcry_error_t error = gcry_cipher_setkey(priv->handle, keyValue.utf8().data(), keyValue.sizeInBytes())) {
+    if (gcry_error_t error = gcry_cipher_setkey(priv->handle, keyValue.characters8(), keyValue.sizeInBytes())) {
         GST_ERROR_OBJECT(priv, "gcry_cipher_setkey failed: %s", gpg_strerror(error));
         return false;
     }

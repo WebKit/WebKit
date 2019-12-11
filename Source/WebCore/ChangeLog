@@ -1,3 +1,17 @@
+2019-12-11  Charlie Turner  <cturner@igalia.com>
+
+        [GStreamer] Invalid use of UTF-8 validation in ClearKey key data
+        https://bugs.webkit.org/show_bug.cgi?id=205106
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        media/encrypted-media/clearKey/clearKey-cenc-audio-playback-mse.html
+
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp:
+        (findAndSetKey): Mistakenly was using utf-8 conversions on binary
+        data, which in some cases caused invalid key data being given to
+        GCrypt.
+
 2019-12-11  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Put all API related JS cells into IsoSubspace
