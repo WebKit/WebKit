@@ -1,3 +1,17 @@
+2019-12-11  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Partial trailing width should include the hyphen when applicable
+        https://bugs.webkit.org/show_bug.cgi?id=205090
+        <rdar://problem/57813491>
+
+        Reviewed by Antti Koivisto.
+
+        In order to properly text-align: justify the content, we need to know the final width of
+        the trailing run including the injected hyphen.
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::LineBreaker::tryBreakingTextRun const):
+
 2019-12-11  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer][MediaStream] Fix GStreamer capturer mock

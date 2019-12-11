@@ -201,27 +201,26 @@ Optional<LineBreaker::LeftSide> LineBreaker::tryBreakingTextRun(const Content::R
         return { };
 
     unsigned leftSideLength = runLength;
+    // FIXME: We might want to cache the hyphen width.
+    auto& fontCascade = style.fontCascade();
+    auto hyphenWidth = InlineLayoutUnit { fontCascade.width(TextRun { StringView { style.hyphenString() } }) };
     if (!findLastBreakablePosition) {
-        auto& fontCascade = style.fontCascade();
-        // FIXME: We might want to cache the hyphen width.
-        auto hyphenWidth = InlineLayoutUnit { fontCascade.width(TextRun { StringView { style.hyphenString() } }) };
         auto availableWidthExcludingHyphen = availableWidth - hyphenWidth;
-
         if (availableWidthExcludingHyphen <= 0 || !enoughWidthForHyphenation(availableWidthExcludingHyphen, fontCascade.pixelSize()))
             return { };
-
         leftSideLength = TextUtil::split(inlineTextItem.layoutBox(), inlineTextItem.start(), runLength, overflowRun.logicalWidth, availableWidthExcludingHyphen, { }).length;
     }
     if (leftSideLength < limitBefore)
         return { };
-
     auto textContent = inlineTextItem.layoutBox().textContext()->content;
     // Adjust before index to accommodate the limit-after value (it's the last potential hyphen location in this run).
     auto hyphenBefore = std::min(leftSideLength, runLength - limitAfter) + 1;
     unsigned hyphenLocation = lastHyphenLocation(StringView(textContent).substring(inlineTextItem.start(), inlineTextItem.length()), hyphenBefore, style.locale());
     if (!hyphenLocation || hyphenLocation < limitBefore)
         return { };
-    return LeftSide { hyphenLocation, TextUtil::width(inlineTextItem.layoutBox(), inlineTextItem.start(), hyphenLocation), true };
+    // hyphenLocation is relative to the start of this InlineItemText.
+    auto trailingPartialRunWidthWithHyphen = TextUtil::width(inlineTextItem.layoutBox(), inlineTextItem.start(), inlineTextItem.start() + hyphenLocation) + hyphenWidth; 
+    return LeftSide { hyphenLocation, trailingPartialRunWidthWithHyphen, true };
 }
 
 bool LineBreaker::Content::isAtContentBoundary(const InlineItem& inlineItem, const Content& content)
