@@ -63,6 +63,7 @@ NetworkProcess/Downloads/DownloadMonitor.cpp
 NetworkProcess/Downloads/PendingDownload.cpp
 
 NetworkProcess/IndexedDB/WebIDBConnectionToClient.cpp
+NetworkProcess/IndexedDB/WebIDBServer.cpp
 
 NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp @no-unify
 NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.cpp

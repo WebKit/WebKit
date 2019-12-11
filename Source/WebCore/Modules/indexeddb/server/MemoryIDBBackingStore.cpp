@@ -269,7 +269,7 @@ IDBError MemoryIDBBackingStore::deleteIndex(const IDBResourceIdentifier& transac
         return IDBError { ConstraintError };
 
     auto error = objectStore->deleteIndex(*rawTransaction, indexIdentifier);
-    if (!error.isNull())
+    if (error.isNull())
         objectStoreInfo->deleteIndex(indexIdentifier);
 
     return error;

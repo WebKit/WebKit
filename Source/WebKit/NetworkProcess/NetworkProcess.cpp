@@ -1434,7 +1434,7 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
 
 #if ENABLE(INDEXED_DATABASE)
     if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases) && !sessionID.isEphemeral())
-        idbServer(sessionID).closeAndDeleteDatabasesModifiedSince(modifiedSince, [clearTasksHandler = clearTasksHandler.copyRef()] { });
+        webIDBServer(sessionID).closeAndDeleteDatabasesModifiedSince(modifiedSince, [clearTasksHandler = clearTasksHandler.copyRef()] { });
 #endif
 
 #if ENABLE(SERVICE_WORKER)
@@ -1530,7 +1530,7 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
 
 #if ENABLE(INDEXED_DATABASE)
     if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases) && !sessionID.isEphemeral())
-        idbServer(sessionID).closeAndDeleteDatabasesForOrigins(originDatas, [clearTasksHandler = clearTasksHandler.copyRef()] { });
+        webIDBServer(sessionID).closeAndDeleteDatabasesForOrigins(originDatas, [clearTasksHandler = clearTasksHandler.copyRef()] { });
 #endif
 
 #if ENABLE(SERVICE_WORKER)
@@ -1740,7 +1740,7 @@ void NetworkProcess::deleteWebsiteDataForRegistrableDomains(PAL::SessionID sessi
                     callbackAggregator->m_domains.add(domain);
                 }
 
-                idbServer(sessionID).closeAndDeleteDatabasesForOrigins(entriesToDelete, [callbackAggregator = callbackAggregator.copyRef()] { });
+                webIDBServer(sessionID).closeAndDeleteDatabasesForOrigins(entriesToDelete, [callbackAggregator = callbackAggregator.copyRef()] { });
             });
         }));
     }
@@ -2066,8 +2066,8 @@ void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandl
     RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::prepareToSuspend(), isSuspensionImminent: %d", this, isSuspensionImminent);
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(INDEXED_DATABASE)
-    for (auto& server : m_idbServers.values())
-        server->tryStop(isSuspensionImminent ? IDBServer::ShouldForceStop::Yes : IDBServer::ShouldForceStop::No);
+    for (auto& server : m_webIDBServers.values())
+        server->suspend(isSuspensionImminent ? IDBServer::ShouldForceStop::Yes : IDBServer::ShouldForceStop::No);
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -2128,7 +2128,7 @@ void NetworkProcess::resume()
         server->endSuspension();
 #endif
 #if PLATFORM(IOS_FAMILY) && ENABLE(INDEXED_DATABASE)
-    for (auto& server : m_idbServers.values())
+    for (auto& server : m_webIDBServers.values())
         server->resume();
 #endif
 
@@ -2187,7 +2187,7 @@ void NetworkProcess::didSyncAllCookies()
 }
 
 #if ENABLE(INDEXED_DATABASE)
-Ref<IDBServer::IDBServer> NetworkProcess::createIDBServer(PAL::SessionID sessionID)
+Ref<WebIDBServer> NetworkProcess::createWebIDBServer(PAL::SessionID sessionID)
 {
     String path;
     if (!sessionID.isEphemeral()) {
@@ -2195,16 +2195,16 @@ Ref<IDBServer::IDBServer> NetworkProcess::createIDBServer(PAL::SessionID session
         path = m_idbDatabasePaths.get(sessionID);
     }
 
-    return IDBServer::IDBServer::create(sessionID, path, [this, weakThis = makeWeakPtr(this), sessionID](const auto& origin, uint64_t spaceRequested) {
+    return WebIDBServer::create(sessionID, path, [this, weakThis = makeWeakPtr(this), sessionID](const auto& origin, uint64_t spaceRequested) {
         RefPtr<StorageQuotaManager> storageQuotaManager = weakThis ? this->storageQuotaManager(sessionID, origin) : nullptr;
         return storageQuotaManager ? storageQuotaManager->requestSpaceOnBackgroundThread(spaceRequested) : StorageQuotaManager::Decision::Deny;
     });
 }
 
-IDBServer::IDBServer& NetworkProcess::idbServer(PAL::SessionID sessionID)
+WebIDBServer& NetworkProcess::webIDBServer(PAL::SessionID sessionID)
 {
-    return *m_idbServers.ensure(sessionID, [this, sessionID] {
-        return this->createIDBServer(sessionID);
+    return *m_webIDBServers.ensure(sessionID, [this, sessionID] {
+        return this->createWebIDBServer(sessionID);
     }).iterator->value;
 }
 

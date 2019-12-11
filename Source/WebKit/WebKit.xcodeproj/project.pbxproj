@@ -1300,6 +1300,7 @@
 		9323611E1B015DA800FA9232 /* _WKOverlayScrollbarStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 9323611D1B015DA800FA9232 /* _WKOverlayScrollbarStyle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93261161214054F4000806E7 /* WebIDBConnectionToClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 939288DD21404D6C00EBBA33 /* WebIDBConnectionToClient.h */; };
 		933DF82E1B3BC09000AEA9E3 /* WKImagePreviewViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 933DF82D1B3BC09000AEA9E3 /* WKImagePreviewViewController.h */; };
+		933E835523A07C0600DEF289 /* WebIDBServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 933E835323A07BF800DEF289 /* WebIDBServer.h */; };
 		934B724419F5B9BE00AE96D6 /* WKActionMenuItemTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 934B724319F5B9BE00AE96D6 /* WKActionMenuItemTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9356F2DC2152B6B500E6D5DF /* WebSWClientConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A53021F4793B200DCDC0A /* WebSWClientConnection.h */; };
 		9356F2DD2152B6F600E6D5DF /* WebSWServerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 93BA04E02151ADF4007F455F /* WebSWServerConnection.h */; };
@@ -4070,6 +4071,8 @@
 		9323611D1B015DA800FA9232 /* _WKOverlayScrollbarStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKOverlayScrollbarStyle.h; sourceTree = "<group>"; };
 		933DF82D1B3BC09000AEA9E3 /* WKImagePreviewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKImagePreviewViewController.h; sourceTree = "<group>"; };
 		933DF82F1B3BC0B400AEA9E3 /* WKImagePreviewViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKImagePreviewViewController.mm; sourceTree = "<group>"; };
+		933E835323A07BF800DEF289 /* WebIDBServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebIDBServer.h; sourceTree = "<group>"; };
+		933E835423A07BF900DEF289 /* WebIDBServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebIDBServer.cpp; sourceTree = "<group>"; };
 		934B724319F5B9BE00AE96D6 /* WKActionMenuItemTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKActionMenuItemTypes.h; sourceTree = "<group>"; };
 		935EEB951277616D003322B8 /* WKBundleBackForwardList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleBackForwardList.cpp; sourceTree = "<group>"; };
 		935EEB961277616D003322B8 /* WKBundleBackForwardList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleBackForwardList.h; sourceTree = "<group>"; };
@@ -7653,6 +7656,8 @@
 				939288E121404E1000EBBA33 /* WebIDBConnectionToClient.cpp */,
 				939288DD21404D6C00EBBA33 /* WebIDBConnectionToClient.h */,
 				939288E221404E1000EBBA33 /* WebIDBConnectionToClient.messages.in */,
+				933E835423A07BF900DEF289 /* WebIDBServer.cpp */,
+				933E835323A07BF800DEF289 /* WebIDBServer.h */,
 			);
 			path = IndexedDB;
 			sourceTree = "<group>";
@@ -10239,6 +10244,7 @@
 				5105237A1C73DA77007993CB /* WebIDBConnectionToClientMessages.h in Headers */,
 				514129941C6428BB0059E714 /* WebIDBConnectionToServer.h in Headers */,
 				510523741C73D38B007993CB /* WebIDBConnectionToServerMessages.h in Headers */,
+				933E835523A07C0600DEF289 /* WebIDBServer.h in Headers */,
 				BCCF6ABD12C91EF9008F9C35 /* WebImage.h in Headers */,
 				1C8E28201275D15400BC7BD0 /* WebInspector.h in Headers */,
 				BC032D8210F4378D0058C15A /* WebInspectorClient.h in Headers */,

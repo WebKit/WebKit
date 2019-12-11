@@ -56,6 +56,7 @@ class IDBServer;
 namespace WebKit {
 
 class NetworkProcess;
+class WebIDBServer;
 
 class WebIDBConnectionToClient final : public WebCore::IDBServer::IDBConnectionToClientDelegate, public IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
@@ -134,7 +135,7 @@ private:
 
     template<class MessageType> void handleGetResult(const WebCore::IDBResultData&);
 
-    WebCore::IDBServer::IDBServer& idbServer();
+    WebIDBServer& idbServer();
 
     NetworkConnectionToWebProcess& m_connection;
     WebCore::IDBConnectionIdentifier m_identifier;

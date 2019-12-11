@@ -42,7 +42,7 @@ using namespace WebCore;
 
 Ref<InProcessIDBServer> InProcessIDBServer::create(PAL::SessionID sessionID)
 {
-    Ref<InProcessIDBServer> server = adoptRef(*new InProcessIDBServer(sessionID));
+    Ref<InProcessIDBServer> server = adoptRef(*new InProcessIDBServer(sessionID, emptyString()));
     server->m_server->registerConnection(server->connectionToClient());
     return server;
 }
@@ -73,15 +73,6 @@ static inline IDBServer::IDBServer::StorageQuotaManagerSpaceRequester storageQuo
         auto* storageQuotaManager = weakServer ? server->quotaManager(origin) : nullptr;
         return storageQuotaManager ? storageQuotaManager->requestSpaceOnBackgroundThread(spaceRequested) : StorageQuotaManager::Decision::Deny;
     };
-}
-
-InProcessIDBServer::InProcessIDBServer(PAL::SessionID sessionID)
-    : m_server(IDBServer::IDBServer::create(sessionID, storageQuotaManagerSpaceRequester(*this)))
-{
-    ASSERT(isMainThread());
-    relaxAdoptionRequirement();
-    m_connectionToServer = IDBClient::IDBConnectionToServer::create(*this);
-    m_connectionToClient = IDBServer::IDBConnectionToClient::create(*this);
 }
 
 InProcessIDBServer::InProcessIDBServer(PAL::SessionID sessionID, const String& databaseDirectoryPath)

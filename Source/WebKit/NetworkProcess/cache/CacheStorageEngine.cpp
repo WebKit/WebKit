@@ -246,7 +246,7 @@ uint64_t Engine::diskUsage(const String& rootPath, const WebCore::ClientOrigin& 
     return getDirectorySize(directoryPath);
 }
 
-void Engine::requestSpace(const ClientOrigin& origin, uint64_t spaceRequested, CompletionHandler<void(WebCore::StorageQuotaManager::Decision)>&& callback)
+void Engine::requestSpace(const WebCore::ClientOrigin& origin, uint64_t spaceRequested, CompletionHandler<void(WebCore::StorageQuotaManager::Decision)>&& callback)
 {
     ASSERT(isMainThread());
 

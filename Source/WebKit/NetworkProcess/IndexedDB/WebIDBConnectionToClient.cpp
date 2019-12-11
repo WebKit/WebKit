@@ -33,6 +33,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebIDBConnectionToServerMessages.h"
 #include "WebIDBResult.h"
+#include "WebIDBServer.h"
 #include <WebCore/IDBError.h>
 #include <WebCore/IDBGetAllRecordsData.h>
 #include <WebCore/IDBGetRecordData.h>
@@ -56,9 +57,9 @@ WebIDBConnectionToClient::~WebIDBConnectionToClient()
 {
 }
 
-IDBServer::IDBServer& WebIDBConnectionToClient::idbServer()
+WebIDBServer& WebIDBConnectionToClient::idbServer()
 {
-    return m_connection.networkProcess().idbServer(m_connection.sessionID());
+    return m_connection.networkProcess().webIDBServer(m_connection.sessionID());
 }
 
 void WebIDBConnectionToClient::disconnectedFromWebProcess()

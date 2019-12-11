@@ -46,21 +46,9 @@
 namespace WebCore {
 namespace IDBServer {
 
-Ref<IDBServer> IDBServer::create(PAL::SessionID sessionID, StorageQuotaManagerSpaceRequester&& quotaManagerGetter)
+Ref<IDBServer> IDBServer::create(PAL::SessionID sessionID, const String& databaseDirectoryPath, StorageQuotaManagerSpaceRequester&& spaceRequester)
 {
-    return adoptRef(*new IDBServer(sessionID, WTFMove(quotaManagerGetter)));
-}
-
-Ref<IDBServer> IDBServer::create(PAL::SessionID sessionID, const String& databaseDirectoryPath, StorageQuotaManagerSpaceRequester&& quotaManagerGetter)
-{
-    return adoptRef(*new IDBServer(sessionID, databaseDirectoryPath, WTFMove(quotaManagerGetter)));
-}
-
-IDBServer::IDBServer(PAL::SessionID sessionID, StorageQuotaManagerSpaceRequester&& spaceRequester)
-    : CrossThreadTaskHandler("IndexedDatabase Server", AutodrainedPoolForRunLoop::Use)
-    , m_sessionID(sessionID)
-    , m_spaceRequester(WTFMove(spaceRequester))
-{
+    return adoptRef(*new IDBServer(sessionID, databaseDirectoryPath, WTFMove(spaceRequester)));
 }
 
 IDBServer::IDBServer(PAL::SessionID sessionID, const String& databaseDirectoryPath, StorageQuotaManagerSpaceRequester&& spaceRequester)

@@ -1,3 +1,68 @@
+2019-12-11  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: Introduce WebIDBServer class
+        https://bugs.webkit.org/show_bug.cgi?id=205095
+
+        Reviewed by Alex Christensen.
+
+        Work towards <rdar://problem/56908496>. WebIDBServer currently is just a wrapper of WebCore::IDBServer.
+
+        * NetworkProcess/IndexedDB/WebIDBConnectionToClient.cpp:
+        (WebKit::WebIDBConnectionToClient::idbServer):
+        * NetworkProcess/IndexedDB/WebIDBConnectionToClient.h:
+        * NetworkProcess/IndexedDB/WebIDBServer.cpp: Added.
+        (WebKit::WebIDBServer::create):
+        (WebKit::WebIDBServer::WebIDBServer):
+        (WebKit::WebIDBServer::registerConnection):
+        (WebKit::WebIDBServer::unregisterConnection):
+        (WebKit::WebIDBServer::closeAndDeleteDatabasesModifiedSince):
+        (WebKit::WebIDBServer::closeAndDeleteDatabasesForOrigins):
+        (WebKit::WebIDBServer::suspend):
+        (WebKit::WebIDBServer::resume):
+        (WebKit::WebIDBServer::openDatabase):
+        (WebKit::WebIDBServer::deleteDatabase):
+        (WebKit::WebIDBServer::abortTransaction):
+        (WebKit::WebIDBServer::commitTransaction):
+        (WebKit::WebIDBServer::didFinishHandlingVersionChangeTransaction):
+        (WebKit::WebIDBServer::createObjectStore):
+        (WebKit::WebIDBServer::deleteObjectStore):
+        (WebKit::WebIDBServer::renameObjectStore):
+        (WebKit::WebIDBServer::clearObjectStore):
+        (WebKit::WebIDBServer::createIndex):
+        (WebKit::WebIDBServer::deleteIndex):
+        (WebKit::WebIDBServer::renameIndex):
+        (WebKit::WebIDBServer::putOrAdd):
+        (WebKit::WebIDBServer::getRecord):
+        (WebKit::WebIDBServer::getAllRecords):
+        (WebKit::WebIDBServer::getCount):
+        (WebKit::WebIDBServer::deleteRecord):
+        (WebKit::WebIDBServer::openCursor):
+        (WebKit::WebIDBServer::iterateCursor):
+        (WebKit::WebIDBServer::establishTransaction):
+        (WebKit::WebIDBServer::databaseConnectionPendingClose):
+        (WebKit::WebIDBServer::databaseConnectionClosed):
+        (WebKit::WebIDBServer::abortOpenAndUpgradeNeeded):
+        (WebKit::WebIDBServer::didFireVersionChangeEvent):
+        (WebKit::WebIDBServer::openDBRequestCancelled):
+        (WebKit::WebIDBServer::getAllDatabaseNames):
+        (WebKit::WebIDBServer::confirmDidCloseFromServer):
+        * NetworkProcess/IndexedDB/WebIDBServer.h: Added.
+        * NetworkProcess/NetworkProcess.cpp: replace WebCore::IDBServer with WebIDBServer.
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcess::deleteWebsiteDataForRegistrableDomains):
+        (WebKit::NetworkProcess::prepareToSuspend):
+        (WebKit::NetworkProcess::resume):
+        (WebKit::NetworkProcess::createWebIDBServer):
+        (WebKit::NetworkProcess::webIDBServer):
+        (WebKit::NetworkProcess::createIDBServer): Deleted.
+        (WebKit::NetworkProcess::idbServer): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::requestSpace):
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-12-11  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add HarfBuzz targets
