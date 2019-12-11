@@ -1,3 +1,16 @@
+2019-12-11  Daniel Bates  <dabates@apple.com>
+
+        UIWKDocumentContext returns 0 character rects when caret is at beginning or end of text
+        https://bugs.webkit.org/show_bug.cgi?id=205135
+        <rdar://problem/56887914>
+
+        Reviewed by Wenson Hsieh.
+
+        Add tests that request rects when the insertion point is at the beginning or end of the text.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DocumentEditingContext.mm:
+        (TEST):
+
 2019-12-11  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Combine AuthenticatorResponse and PublicKeyCredentialData

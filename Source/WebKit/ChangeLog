@@ -1,3 +1,20 @@
+2019-12-11  Daniel Bates  <dabates@apple.com>
+
+        UIWKDocumentContext returns 0 character rects when caret is at beginning or end of text
+        https://bugs.webkit.org/show_bug.cgi?id=205135
+        <rdar://problem/56887914>
+
+        Reviewed by Wenson Hsieh.
+
+        When the specified position to move from is at the beginning or end of the text then return
+        the position of the beginning or end of the nearest word based on the specified direction.
+
+        Currently we always return the null position. As a result we do not compute a valid
+        character range to convert to rectangles.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::moveByGranularityRespectingWordBoundary):
+
 2019-12-11  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Combine AuthenticatorResponse and PublicKeyCredentialData

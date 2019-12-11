@@ -395,4 +395,91 @@ TEST(WebKit, DocumentEditingContextSpatialRequestInTextField)
     }
 }
 
+TEST(WebKit, DocumentEditingContextCaretAtStartOfText)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:applyStyle(@"<p id='text' contenteditable>The quick brown fox jumps over the lazy dog.</p>")];
+    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.firstChild, 0, text.firstChild, 0)"]; // Will focus <p>.
+
+    auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestRects, UITextGranularityWord, 1)];
+    EXPECT_NOT_NULL(context);
+    EXPECT_NULL(context.contextBefore);
+    EXPECT_NULL(context.selectedText);
+    EXPECT_NSSTRING_EQ("The quick", context.contextAfter);
+
+    auto *textRects = context.textRects;
+    ASSERT_EQ(9U, textRects.count);
+    EXPECT_EQ(CGRectMake(0, 0, 10, 19), textRects[0].CGRectValue); // T
+    EXPECT_EQ(CGRectMake(9, 0, 9, 19), textRects[1].CGRectValue); // h
+    EXPECT_EQ(CGRectMake(17, 0, 8, 19), textRects[2].CGRectValue); // e
+    EXPECT_EQ(CGRectMake(24, 0, 5, 19), textRects[3].CGRectValue); //
+    EXPECT_EQ(CGRectMake(28, 0, 9, 19), textRects[4].CGRectValue); // q
+    EXPECT_EQ(CGRectMake(36, 0, 9, 19), textRects[5].CGRectValue); // u
+    EXPECT_EQ(CGRectMake(44, 0, 6, 19), textRects[6].CGRectValue); // i
+    EXPECT_EQ(CGRectMake(49, 0, 8, 19), textRects[7].CGRectValue); // c
+    EXPECT_EQ(CGRectMake(56, 0, 9, 19), textRects[8].CGRectValue); // k
+}
+
+TEST(WebKit, DocumentEditingContextCaretAtStartOfTextWithLeadingNonBreakableSpace)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:applyStyle(@"<p id='text' contenteditable>&nbsp;The quick brown fox jumps over the lazy dog.</p>")];
+    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.firstChild, 0, text.firstChild, 0)"]; // Will focus <p>.
+
+    auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestRects, UITextGranularityWord, 1)];
+    EXPECT_NOT_NULL(context);
+    EXPECT_NULL(context.contextBefore);
+    EXPECT_NULL(context.selectedText);
+    EXPECT_NSSTRING_EQ(" The", context.contextAfter);
+
+    auto *textRects = context.textRects;
+    ASSERT_EQ(4U, textRects.count);
+    EXPECT_EQ(CGRectMake(0, 0, 4, 19), textRects[0].CGRectValue); //
+    EXPECT_EQ(CGRectMake(4, 0, 10, 19), textRects[1].CGRectValue); // T
+    EXPECT_EQ(CGRectMake(13, 0, 9, 19), textRects[2].CGRectValue); // h
+    EXPECT_EQ(CGRectMake(21, 0, 8, 19), textRects[3].CGRectValue); // e
+}
+
+
+TEST(WebKit, DocumentEditingContextCaretAtEndOfText)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:applyStyle(@"<p id='text' contenteditable>The quick brown fox jumps over the lazy dog.</p>")];
+    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.firstChild, text.firstChild.length, text.firstChild, text.firstChild.length)"]; // Will focus <p>.
+
+    auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestRects, UITextGranularityWord, 1)];
+    EXPECT_NOT_NULL(context);
+    EXPECT_NSSTRING_EQ("dog.", context.contextBefore);
+    EXPECT_NULL(context.selectedText);
+    EXPECT_NULL(context.contextAfter);
+
+    auto *textRects = context.textRects;
+    ASSERT_EQ(4U, textRects.count);
+    EXPECT_EQ(CGRectMake(268, 0, 9, 19), textRects[0].CGRectValue); // d
+    EXPECT_EQ(CGRectMake(276, 0, 9, 19), textRects[1].CGRectValue); // o
+    EXPECT_EQ(CGRectMake(284, 0, 9, 19), textRects[2].CGRectValue); // g
+    EXPECT_EQ(CGRectMake(292, 0, 5, 19), textRects[3].CGRectValue); // .
+}
+
+TEST(WebKit, DocumentEditingContextCaretAtEndOfTextWithTrailingNonBreakableSpace)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:applyStyle(@"<p id='text' contenteditable>The quick brown fox jumps over the lazy dog.&nbsp;</p>")];
+    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.firstChild, text.firstChild.length, text.firstChild, text.firstChild.length)"]; // Will focus <p>.
+
+    auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestRects, UITextGranularityWord, 1)];
+    EXPECT_NOT_NULL(context);
+    EXPECT_NSSTRING_EQ("dog. ", context.contextBefore);
+    EXPECT_NULL(context.selectedText);
+    EXPECT_NULL(context.contextAfter);
+
+    auto *textRects = context.textRects;
+    ASSERT_EQ(5U, textRects.count);
+    EXPECT_EQ(CGRectMake(268, 0, 9, 19), textRects[0].CGRectValue); // d
+    EXPECT_EQ(CGRectMake(276, 0, 9, 19), textRects[1].CGRectValue); // o
+    EXPECT_EQ(CGRectMake(284, 0, 9, 19), textRects[2].CGRectValue); // g
+    EXPECT_EQ(CGRectMake(292, 0, 5, 19), textRects[3].CGRectValue); // .
+    EXPECT_EQ(CGRectMake(296, 0, 5, 19), textRects[4].CGRectValue); //
+}
+
 #endif // PLATFORM(IOS_FAMILY) && HAVE(UI_WK_DOCUMENT_CONTEXT)
