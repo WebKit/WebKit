@@ -73,7 +73,7 @@ void CtapAuthenticator::continueMakeCredentialAfterResponseReceived(Vector<uint8
             receiveRespond(ExceptionData { UnknownError, makeString("Unknown internal error. Error code: ", static_cast<uint8_t>(error)) });
         return;
     }
-    receiveRespond(WTFMove(*response));
+    receiveRespond(response.releaseNonNull());
 }
 
 void CtapAuthenticator::getAssertion()
@@ -100,7 +100,7 @@ void CtapAuthenticator::continueGetAssertionAfterResponseReceived(Vector<uint8_t
         receiveRespond(ExceptionData { UnknownError, makeString("Unknown internal error. Error code: ", static_cast<uint8_t>(error)) });
         return;
     }
-    receiveRespond(WTFMove(*response));
+    receiveRespond(response.releaseNonNull());
 }
 
 bool CtapAuthenticator::tryDowngrade()

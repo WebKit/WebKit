@@ -29,10 +29,11 @@
 #if ENABLE(WEB_AUTHN)
 
 #import <Security/SecItem.h>
+#import <WebCore/AuthenticatorAssertionResponse.h>
+#import <WebCore/AuthenticatorAttestationResponse.h>
 #import <WebCore/CBORWriter.h>
 #import <WebCore/ExceptionData.h>
 #import <WebCore/PublicKeyCredentialCreationOptions.h>
-#import <WebCore/PublicKeyCredentialData.h>
 #import <WebCore/PublicKeyCredentialRequestOptions.h>
 #import <WebCore/WebAuthenticationConstants.h>
 #import <WebCore/WebAuthenticationUtils.h>
@@ -340,7 +341,7 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(SecKeyRef privateKe
     }
     auto attestationObject = buildAttestationObject(WTFMove(authData), "Apple", WTFMove(attestationStatementMap), creationOptions.attestation);
 
-    receiveRespond(PublicKeyCredentialData { ArrayBuffer::create(credentialId.data(), credentialId.size()), true, nullptr, ArrayBuffer::create(attestationObject.data(), attestationObject.size()), nullptr, nullptr, nullptr, WTF::nullopt });
+    receiveRespond(AuthenticatorAttestationResponse::create(credentialId, attestationObject));
 }
 
 void LocalAuthenticator::getAssertion()
@@ -481,7 +482,7 @@ void LocalAuthenticator::continueGetAssertionAfterUserConsented(LocalConnection:
     }
 
     // Step 13.
-    receiveRespond(PublicKeyCredentialData { ArrayBuffer::create(credentialId.data(), credentialId.size()), false, nullptr, nullptr, ArrayBuffer::create(authData.data(), authData.size()), ArrayBuffer::create(signature.data(), signature.size()), ArrayBuffer::create(userhandle.data(), userhandle.size()), WTF::nullopt });
+    receiveRespond(AuthenticatorAssertionResponse::create(credentialId, authData, signature, userhandle));
 }
 
 } // namespace WebKit

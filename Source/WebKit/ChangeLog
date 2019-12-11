@@ -1,3 +1,33 @@
+2019-12-11  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Combine AuthenticatorResponse and PublicKeyCredentialData
+        https://bugs.webkit.org/show_bug.cgi?id=190783
+        <rdar://problem/57781183>
+
+        Reviewed by Brent Fulgham.
+
+        Code in WebKit are changed to use AuthenticatorResponse and its subtypes.
+
+        * UIProcess/WebAuthentication/Authenticator.h:
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::respondReceived):
+        (WebKit::AuthenticatorManager::invokePendingCompletionHandler):
+        * UIProcess/WebAuthentication/AuthenticatorManager.h:
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterAttested):
+        (WebKit::LocalAuthenticator::continueGetAssertionAfterUserConsented):
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp:
+        (WebKit::WebAuthenticatorCoordinatorProxy::handleRequest):
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.h:
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.messages.in:
+        * UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp:
+        (WebKit::CtapAuthenticator::continueMakeCredentialAfterResponseReceived const):
+        (WebKit::CtapAuthenticator::continueGetAssertionAfterResponseReceived):
+        * UIProcess/WebAuthentication/fido/U2fAuthenticator.cpp:
+        (WebKit::U2fAuthenticator::continueRegisterCommandAfterResponseReceived):
+        (WebKit::U2fAuthenticator::continueSignCommandAfterResponseReceived):
+        * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp:
+
 2019-12-11  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r253376.

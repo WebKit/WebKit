@@ -147,15 +147,15 @@ static cbor::CBORValue::MapValue createFidoAttestationStatementFromU2fRegisterRe
 
 } // namespace
 
-Optional<PublicKeyCredentialData> readU2fRegisterResponse(const String& rpId, const Vector<uint8_t>& u2fData, const AttestationConveyancePreference& attestation)
+RefPtr<AuthenticatorAttestationResponse> readU2fRegisterResponse(const String& rpId, const Vector<uint8_t>& u2fData, const AttestationConveyancePreference& attestation)
 {
     auto publicKey = extractECPublicKeyFromU2fRegistrationResponse(u2fData);
     if (publicKey.isEmpty())
-        return WTF::nullopt;
+        return nullptr;
 
     auto attestedCredentialData = createAttestedCredentialDataFromU2fRegisterResponse(u2fData, publicKey);
     if (attestedCredentialData.isEmpty())
-        return WTF::nullopt;
+        return nullptr;
 
     // Extract the credentialId for packing into the response data.
     auto credentialId = extractCredentialIdFromU2fRegistrationResponse(u2fData);
@@ -166,17 +166,17 @@ Optional<PublicKeyCredentialData> readU2fRegisterResponse(const String& rpId, co
 
     auto fidoAttestationStatement = createFidoAttestationStatementFromU2fRegisterResponse(u2fData, kU2fKeyHandleOffset + credentialId.size());
     if (fidoAttestationStatement.empty())
-        return WTF::nullopt;
+        return nullptr;
 
     auto attestationObject = buildAttestationObject(WTFMove(authData), "fido-u2f", WTFMove(fidoAttestationStatement), attestation);
 
-    return PublicKeyCredentialData { ArrayBuffer::create(credentialId.data(), credentialId.size()), true, nullptr, ArrayBuffer::create(attestationObject.data(), attestationObject.size()), nullptr, nullptr, nullptr, WTF::nullopt };
+    return AuthenticatorAttestationResponse::create(credentialId, attestationObject);
 }
 
-Optional<PublicKeyCredentialData> readU2fSignResponse(const String& rpId, const Vector<uint8_t>& keyHandle, const Vector<uint8_t>& u2fData)
+RefPtr<AuthenticatorAssertionResponse> readU2fSignResponse(const String& rpId, const Vector<uint8_t>& keyHandle, const Vector<uint8_t>& u2fData)
 {
     if (keyHandle.isEmpty() || u2fData.size() <= signatureIndex)
-        return WTF::nullopt;
+        return nullptr;
 
     // 1 byte flags, 4 bytes counter
     auto flags = u2fData[flagIndex];
@@ -186,7 +186,11 @@ Optional<PublicKeyCredentialData> readU2fSignResponse(const String& rpId, const 
     counter += u2fData[counterIndex + 3];
     auto authData = buildAuthData(rpId, flags, counter, { });
 
-    return PublicKeyCredentialData { ArrayBuffer::create(keyHandle.data(), keyHandle.size()), false, nullptr, nullptr, ArrayBuffer::create(authData.data(), authData.size()), ArrayBuffer::create(u2fData.data() + signatureIndex, u2fData.size() - signatureIndex), nullptr, WTF::nullopt };
+    // FIXME: Find a way to remove the need of constructing a vector here.
+    Vector<uint8_t> signature;
+    signature.append(u2fData.data() + signatureIndex, u2fData.size() - signatureIndex);
+
+    return AuthenticatorAssertionResponse::create(keyHandle, authData, signature, { });
 }
 
 } // namespace fido

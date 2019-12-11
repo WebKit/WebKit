@@ -243,7 +243,7 @@ void AuthenticatorManager::respondReceived(Respond&& respond)
         return;
     ASSERT(m_pendingCompletionHandler);
 
-    auto shouldComplete = WTF::holds_alternative<PublicKeyCredentialData>(respond);
+    auto shouldComplete = WTF::holds_alternative<Ref<AuthenticatorResponse>>(respond);
     if (!shouldComplete)
         shouldComplete = WTF::get<ExceptionData>(respond).code == InvalidStateError;
     if (shouldComplete) {
@@ -349,7 +349,7 @@ void AuthenticatorManager::runPanel()
 void AuthenticatorManager::invokePendingCompletionHandler(Respond&& respond)
 {
     if (auto *panel = m_pendingRequestData.panel.get()) {
-        WTF::switchOn(respond, [&](const PublicKeyCredentialData&) {
+        WTF::switchOn(respond, [&](const Ref<AuthenticatorResponse>&) {
             panel->client().dismissPanel(WebAuthenticationResult::Succeeded);
         }, [&](const ExceptionData&) {
             panel->client().dismissPanel(WebAuthenticationResult::Failed);

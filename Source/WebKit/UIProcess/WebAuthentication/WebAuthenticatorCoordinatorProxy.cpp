@@ -35,8 +35,8 @@
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
+#include <WebCore/AuthenticatorResponseData.h>
 #include <WebCore/ExceptionData.h>
-#include <WebCore/PublicKeyCredentialData.h>
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
@@ -67,10 +67,10 @@ void WebAuthenticatorCoordinatorProxy::getAssertion(FrameIdentifier frameId, Sec
 
 void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestData&& data, RequestCompletionHandler&& handler)
 {
-    auto callback = [handler = WTFMove(handler)] (Variant<PublicKeyCredentialData, ExceptionData>&& result) mutable {
+    auto callback = [handler = WTFMove(handler)] (Variant<Ref<AuthenticatorResponse>, ExceptionData>&& result) mutable {
         ASSERT(RunLoop::isMain());
-        WTF::switchOn(result, [&](const PublicKeyCredentialData& data) {
-            handler(data, { });
+        WTF::switchOn(result, [&](const Ref<AuthenticatorResponse>& response) {
+            handler(response->data(), { });
         }, [&](const ExceptionData& exception) {
             handler({ }, exception);
         });

@@ -35,7 +35,7 @@
 namespace WebCore {
 struct ExceptionData;
 struct PublicKeyCredentialCreationOptions;
-struct PublicKeyCredentialData;
+struct AuthenticatorResponseData;
 struct PublicKeyCredentialRequestOptions;
 struct SecurityOriginData;
 }
@@ -54,7 +54,7 @@ public:
     ~WebAuthenticatorCoordinatorProxy();
 
 private:
-    using RequestCompletionHandler = CompletionHandler<void(const WebCore::PublicKeyCredentialData&, const WebCore::ExceptionData&)>;
+    using RequestCompletionHandler = CompletionHandler<void(const WebCore::AuthenticatorResponseData&, const WebCore::ExceptionData&)>;
     using QueryCompletionHandler = CompletionHandler<void(bool)>;
 
     // IPC::MessageReceiver.

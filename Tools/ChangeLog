@@ -1,3 +1,15 @@
+2019-12-11  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Combine AuthenticatorResponse and PublicKeyCredentialData
+        https://bugs.webkit.org/show_bug.cgi?id=190783
+        <rdar://problem/57781183>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebCore/CtapResponseTest.cpp:
+        (TestWebKitAPI::TEST):
+        Updates tests accordingly.
+
 2019-12-11  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r253376.

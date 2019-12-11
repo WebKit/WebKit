@@ -31,8 +31,8 @@
 #include "WebAuthenticatorCoordinatorProxyMessages.h"
 #include "WebFrame.h"
 #include "WebPage.h"
+#include <WebCore/AuthenticatorResponseData.h>
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
-#include <WebCore/PublicKeyCredentialData.h>
 #include <WebCore/PublicKeyCredentialRequestOptions.h>
 #include <WebCore/SecurityOrigin.h>
 

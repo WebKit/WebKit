@@ -34,12 +34,14 @@ namespace WebCore {
 
 class AuthenticatorResponse;
 
-struct PublicKeyCredentialData {
-    RefPtr<ArrayBuffer> rawId;
+struct AuthenticatorResponseData {
+    bool isAuthenticatorAttestationResponse;
 
     // AuthenticatorResponse
-    bool isAuthenticatorAttestationResponse;
-    RefPtr<ArrayBuffer> clientDataJSON;
+    RefPtr<ArrayBuffer> rawId;
+
+    // Extensions
+    Optional<bool> appid;
 
     // AuthenticatorAttestationResponse
     RefPtr<ArrayBuffer> attestationObject;
@@ -49,16 +51,12 @@ struct PublicKeyCredentialData {
     RefPtr<ArrayBuffer> signature;
     RefPtr<ArrayBuffer> userHandle;
 
-    // Extensions
-    Optional<bool> appid;
-
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<PublicKeyCredentialData> decode(Decoder&);
+    template<class Decoder> static Optional<AuthenticatorResponseData> decode(Decoder&);
 };
 
-// Noted: clientDataJSON is never encoded or decoded as it is never sent across different processes.
 template<class Encoder>
-void PublicKeyCredentialData::encode(Encoder& encoder) const
+void AuthenticatorResponseData::encode(Encoder& encoder) const
 {
     if (!rawId) {
         encoder << true;
@@ -97,9 +95,9 @@ void PublicKeyCredentialData::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<PublicKeyCredentialData> PublicKeyCredentialData::decode(Decoder& decoder)
+Optional<AuthenticatorResponseData> AuthenticatorResponseData::decode(Decoder& decoder)
 {
-    PublicKeyCredentialData result;
+    AuthenticatorResponseData result;
 
     Optional<bool> isEmpty;
     decoder >> isEmpty;

@@ -268,6 +268,9 @@ Modules/webaudio/WaveShaperNode.cpp
 Modules/webaudio/WaveShaperProcessor.cpp
 
 Modules/webauthn/AuthenticatorCoordinator.cpp
+Modules/webauthn/AuthenticatorAssertionResponse.cpp
+Modules/webauthn/AuthenticatorAttestationResponse.cpp
+Modules/webauthn/AuthenticatorResponse.cpp
 Modules/webauthn/PublicKeyCredential.cpp
 Modules/webauthn/WebAuthenticationUtils.cpp
 Modules/webauthn/apdu/ApduCommand.cpp
@@ -2653,6 +2656,7 @@ JSAudioParam.cpp
 JSAudioProcessingEvent.cpp
 JSAttestationConveyancePreference.cpp
 JSAuthenticationExtensionsClientInputs.cpp
+JSAuthenticationExtensionsClientOutputs.cpp
 JSAuthenticatorAssertionResponse.cpp
 JSAuthenticatorAttestationResponse.cpp
 JSAuthenticatorResponse.cpp

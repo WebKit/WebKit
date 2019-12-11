@@ -28,48 +28,35 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "AuthenticatorAssertionResponse.h"
-#include "AuthenticatorAttestationResponse.h"
 #include "AuthenticatorCoordinator.h"
 #include "AuthenticatorResponse.h"
 #include "Document.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Page.h"
-#include "PublicKeyCredentialData.h"
 #include "RuntimeEnabledFeatures.h"
 #include <wtf/text/Base64.h>
 
 namespace WebCore {
 
-RefPtr<PublicKeyCredential> PublicKeyCredential::tryCreate(PublicKeyCredentialData&& data)
+Ref<PublicKeyCredential> PublicKeyCredential::create(Ref<AuthenticatorResponse>&& response)
 {
-    if (!data.rawId || !data.clientDataJSON)
-        return nullptr;
-
-    if (data.isAuthenticatorAttestationResponse) {
-        if (!data.attestationObject)
-            return nullptr;
-
-        return adoptRef(*new PublicKeyCredential(data.rawId.releaseNonNull(), AuthenticatorAttestationResponse::create(data.clientDataJSON.releaseNonNull(), data.attestationObject.releaseNonNull()), { data.appid }));
-    }
-
-    if (!data.authenticatorData || !data.signature)
-        return nullptr;
-
-    return adoptRef(*new PublicKeyCredential(data.rawId.releaseNonNull(), AuthenticatorAssertionResponse::create(data.clientDataJSON.releaseNonNull(), data.authenticatorData.releaseNonNull(), data.signature.releaseNonNull(), WTFMove(data.userHandle)), { data.appid }));
+    return adoptRef(*new PublicKeyCredential(WTFMove(response)));
 }
 
-PublicKeyCredential::PublicKeyCredential(Ref<ArrayBuffer>&& id, Ref<AuthenticatorResponse>&& response, AuthenticationExtensionsClientOutputs&& extensions)
-    : BasicCredential(WTF::base64URLEncode(id->data(), id->byteLength()), Type::PublicKey, Discovery::Remote)
-    , m_rawId(WTFMove(id))
+ArrayBuffer* PublicKeyCredential::rawId() const
+{
+    return m_response->rawId();
+}
+
+AuthenticationExtensionsClientOutputs PublicKeyCredential::getClientExtensionResults() const
+{
+    return m_response->extensions();
+}
+
+PublicKeyCredential::PublicKeyCredential(Ref<AuthenticatorResponse>&& response)
+    : BasicCredential(WTF::base64URLEncode(response->rawId()->data(), response->rawId()->byteLength()), Type::PublicKey, Discovery::Remote)
     , m_response(WTFMove(response))
-    , m_extensions(WTFMove(extensions))
 {
-}
-
-PublicKeyCredential::AuthenticationExtensionsClientOutputs PublicKeyCredential::getClientExtensionResults() const
-{
-    return m_extensions;
 }
 
 void PublicKeyCredential::isUserVerifyingPlatformAuthenticatorAvailable(Document& document, DOMPromiseDeferred<IDLBoolean>&& promise)

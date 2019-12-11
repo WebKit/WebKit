@@ -85,35 +85,35 @@ static Vector<uint8_t> getCredentialId(const Vector<uint8_t>& authenticatorData)
 
 // Decodes byte array response from authenticator to CBOR value object and
 // checks for correct encoding format.
-Optional<PublicKeyCredentialData> readCTAPMakeCredentialResponse(const Vector<uint8_t>& inBuffer, const WebCore::AttestationConveyancePreference& attestation)
+RefPtr<AuthenticatorAttestationResponse> readCTAPMakeCredentialResponse(const Vector<uint8_t>& inBuffer, const AttestationConveyancePreference& attestation)
 {
     if (inBuffer.size() <= kResponseCodeLength)
-        return WTF::nullopt;
+        return nullptr;
 
     Vector<uint8_t> buffer;
     buffer.append(inBuffer.data() + 1, inBuffer.size() - 1);
     Optional<CBOR> decodedResponse = cbor::CBORReader::read(buffer);
     if (!decodedResponse || !decodedResponse->isMap())
-        return WTF::nullopt;
+        return nullptr;
     const auto& decodedMap = decodedResponse->getMap();
 
     auto it = decodedMap.find(CBOR(1));
     if (it == decodedMap.end() || !it->second.isString())
-        return WTF::nullopt;
+        return nullptr;
     auto format = it->second.clone();
 
     it = decodedMap.find(CBOR(2));
     if (it == decodedMap.end() || !it->second.isByteString())
-        return WTF::nullopt;
+        return nullptr;
     auto authenticatorData = it->second.clone();
 
     auto credentialId = getCredentialId(authenticatorData.getByteString());
     if (credentialId.isEmpty())
-        return WTF::nullopt;
+        return nullptr;
 
     it = decodedMap.find(CBOR(3));
     if (it == decodedMap.end() || !it->second.isMap())
-        return WTF::nullopt;
+        return nullptr;
     auto attStmt = it->second.clone();
 
     Optional<Vector<uint8_t>> attestationObject;
@@ -130,56 +130,53 @@ Optional<PublicKeyCredentialData> readCTAPMakeCredentialResponse(const Vector<ui
         attestationObject = cbor::CBORWriter::write(CBOR(WTFMove(attestationObjectMap)));
     }
 
-    return PublicKeyCredentialData { ArrayBuffer::create(credentialId.data(), credentialId.size()), true, nullptr, ArrayBuffer::create(attestationObject.value().data(), attestationObject.value().size()), nullptr, nullptr, nullptr, WTF::nullopt };
+    return AuthenticatorAttestationResponse::create(credentialId, *attestationObject);
 }
 
-Optional<PublicKeyCredentialData> readCTAPGetAssertionResponse(const Vector<uint8_t>& inBuffer)
+RefPtr<AuthenticatorAssertionResponse> readCTAPGetAssertionResponse(const Vector<uint8_t>& inBuffer)
 {
     if (inBuffer.size() <= kResponseCodeLength)
-        return WTF::nullopt;
+        return nullptr;
 
     Vector<uint8_t> buffer;
     buffer.append(inBuffer.data() + 1, inBuffer.size() - 1);
     Optional<CBOR> decodedResponse = cbor::CBORReader::read(buffer);
 
     if (!decodedResponse || !decodedResponse->isMap())
-        return WTF::nullopt;
+        return nullptr;
 
     auto& responseMap = decodedResponse->getMap();
 
-    RefPtr<ArrayBuffer> credentialId;
     auto it = responseMap.find(CBOR(1));
-    if (it != responseMap.end() && it->second.isMap()) {
-        auto& credential = it->second.getMap();
-        auto itr = credential.find(CBOR(kCredentialIdKey));
-        if (itr == credential.end() || !itr->second.isByteString())
-            return WTF::nullopt;
-        auto& id = itr->second.getByteString();
-        credentialId = ArrayBuffer::create(id.data(), id.size());
-    }
+    if (it == responseMap.end() || !it->second.isMap())
+        return nullptr;
+    auto& credential = it->second.getMap();
+    auto itr = credential.find(CBOR(kCredentialIdKey));
+    if (itr == credential.end() || !itr->second.isByteString())
+        return nullptr;
+    auto& credentialId = itr->second.getByteString();
 
     it = responseMap.find(CBOR(2));
     if (it == responseMap.end() || !it->second.isByteString())
-        return WTF::nullopt;
+        return nullptr;
     auto& authData = it->second.getByteString();
 
     it = responseMap.find(CBOR(3));
     if (it == responseMap.end() || !it->second.isByteString())
-        return WTF::nullopt;
+        return nullptr;
     auto& signature = it->second.getByteString();
 
-    RefPtr<ArrayBuffer> userHandle;
     it = responseMap.find(CBOR(4));
     if (it != responseMap.end() && it->second.isMap()) {
         auto& user = it->second.getMap();
         auto itr = user.find(CBOR(kEntityIdMapKey));
         if (itr == user.end() || !itr->second.isByteString())
-            return WTF::nullopt;
-        auto& id = itr->second.getByteString();
-        userHandle = ArrayBuffer::create(id.data(), id.size());
+            return nullptr;
+        auto& userHandle = itr->second.getByteString();
+        return AuthenticatorAssertionResponse::create(credentialId, authData, signature, userHandle);
     }
 
-    return PublicKeyCredentialData { WTFMove(credentialId), false, nullptr, nullptr, ArrayBuffer::create(authData.data(), authData.size()), ArrayBuffer::create(signature.data(), signature.size()), WTFMove(userHandle), WTF::nullopt };
+    return AuthenticatorAssertionResponse::create(credentialId, authData, signature, { });
 }
 
 Optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector<uint8_t>& inBuffer)

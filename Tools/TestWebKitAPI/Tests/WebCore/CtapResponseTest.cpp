@@ -355,7 +355,7 @@ TEST(CTAPResponseTest, TestReadMakeCredentialResponse)
 {
     auto makeCredentialResponse = readCTAPMakeCredentialResponse(convertBytesToVector(TestData::kTestMakeCredentialResponse, sizeof(TestData::kTestMakeCredentialResponse)));
     ASSERT_TRUE(makeCredentialResponse);
-    auto cborAttestationObject = cbor::CBORReader::read(convertBytesToVector(reinterpret_cast<uint8_t*>(makeCredentialResponse->attestationObject->data()), makeCredentialResponse->attestationObject->byteLength()));
+    auto cborAttestationObject = cbor::CBORReader::read(convertBytesToVector(reinterpret_cast<uint8_t*>(makeCredentialResponse->attestationObject()->data()), makeCredentialResponse->attestationObject()->byteLength()));
     ASSERT_TRUE(cborAttestationObject);
     ASSERT_TRUE(cborAttestationObject->isMap());
 
@@ -393,8 +393,8 @@ TEST(CTAPResponseTest, TestReadMakeCredentialResponse)
     ASSERT_EQ(certificate.getArray().size(), 1u);
     ASSERT_TRUE(certificate.getArray()[0].isByteString());
     EXPECT_EQ(certificate.getArray()[0].getByteString(), convertBytesToVector(TestData::kCtap2MakeCredentialCertificate, sizeof(TestData::kCtap2MakeCredentialCertificate)));
-    EXPECT_EQ(makeCredentialResponse->rawId->byteLength(), sizeof(TestData::kCtap2MakeCredentialCredentialId));
-    EXPECT_EQ(memcmp(makeCredentialResponse->rawId->data(), TestData::kCtap2MakeCredentialCredentialId, sizeof(TestData::kCtap2MakeCredentialCredentialId)), 0);
+    EXPECT_EQ(makeCredentialResponse->rawId()->byteLength(), sizeof(TestData::kCtap2MakeCredentialCredentialId));
+    EXPECT_EQ(memcmp(makeCredentialResponse->rawId()->data(), TestData::kCtap2MakeCredentialCredentialId, sizeof(TestData::kCtap2MakeCredentialCredentialId)), 0);
 }
 
 // Leveraging example 5 of section 6.1 of the CTAP spec.
@@ -404,10 +404,10 @@ TEST(CTAPResponseTest, TestReadGetAssertionResponse)
     auto getAssertionResponse = readCTAPGetAssertionResponse(convertBytesToVector(TestData::kDeviceGetAssertionResponse, sizeof(TestData::kDeviceGetAssertionResponse)));
     ASSERT_TRUE(getAssertionResponse);
 
-    EXPECT_EQ(getAssertionResponse->authenticatorData->byteLength(), sizeof(TestData::kCtap2GetAssertionAuthData));
-    EXPECT_EQ(memcmp(getAssertionResponse->authenticatorData->data(), TestData::kCtap2GetAssertionAuthData, sizeof(TestData::kCtap2GetAssertionAuthData)), 0);
-    EXPECT_EQ(getAssertionResponse->signature->byteLength(), sizeof(TestData::kCtap2GetAssertionSignature));
-    EXPECT_EQ(memcmp(getAssertionResponse->signature->data(), TestData::kCtap2GetAssertionSignature, sizeof(TestData::kCtap2GetAssertionSignature)), 0);
+    EXPECT_EQ(getAssertionResponse->authenticatorData()->byteLength(), sizeof(TestData::kCtap2GetAssertionAuthData));
+    EXPECT_EQ(memcmp(getAssertionResponse->authenticatorData()->data(), TestData::kCtap2GetAssertionAuthData, sizeof(TestData::kCtap2GetAssertionAuthData)), 0);
+    EXPECT_EQ(getAssertionResponse->signature()->byteLength(), sizeof(TestData::kCtap2GetAssertionSignature));
+    EXPECT_EQ(memcmp(getAssertionResponse->signature()->data(), TestData::kCtap2GetAssertionSignature, sizeof(TestData::kCtap2GetAssertionSignature)), 0);
 }
 
 // Test that U2F register response is properly parsed.
@@ -415,12 +415,11 @@ TEST(CTAPResponseTest, TestParseRegisterResponseData)
 {
     auto response = readU2fRegisterResponse(TestData::kRelyingPartyId, convertBytesToVector(TestData::kTestU2fRegisterResponse, sizeof(TestData::kTestU2fRegisterResponse)));
     ASSERT_TRUE(response);
-    EXPECT_EQ(response->rawId->byteLength(), sizeof(TestData::kU2fSignKeyHandle));
-    EXPECT_EQ(memcmp(response->rawId->data(), TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle)), 0);
-    EXPECT_TRUE(response->isAuthenticatorAttestationResponse);
+    EXPECT_EQ(response->rawId()->byteLength(), sizeof(TestData::kU2fSignKeyHandle));
+    EXPECT_EQ(memcmp(response->rawId()->data(), TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle)), 0);
     auto expectedAttestationObject = getTestAttestationObjectBytes();
-    EXPECT_EQ(response->attestationObject->byteLength(), expectedAttestationObject.size());
-    EXPECT_EQ(memcmp(response->attestationObject->data(), expectedAttestationObject.data(), expectedAttestationObject.size()), 0);
+    EXPECT_EQ(response->attestationObject()->byteLength(), expectedAttestationObject.size());
+    EXPECT_EQ(memcmp(response->attestationObject()->data(), expectedAttestationObject.data(), expectedAttestationObject.size()), 0);
 }
 
 // Test malformed user public key.
@@ -522,13 +521,12 @@ TEST(CTAPResponseTest, TestParseSignResponseData)
 {
     auto response = readU2fSignResponse(TestData::kRelyingPartyId, getTestCredentialRawIdBytes(), getTestSignResponse());
     ASSERT_TRUE(response);
-    EXPECT_EQ(response->rawId->byteLength(), sizeof(TestData::kU2fSignKeyHandle));
-    EXPECT_EQ(memcmp(response->rawId->data(), TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle)), 0);
-    EXPECT_FALSE(response->isAuthenticatorAttestationResponse);
-    EXPECT_EQ(response->authenticatorData->byteLength(), sizeof(TestData::kTestSignAuthenticatorData));
-    EXPECT_EQ(memcmp(response->authenticatorData->data(), TestData::kTestSignAuthenticatorData, sizeof(TestData::kTestSignAuthenticatorData)), 0);
-    EXPECT_EQ(response->signature->byteLength(), sizeof(TestData::kU2fSignature));
-    EXPECT_EQ(memcmp(response->signature->data(), TestData::kU2fSignature, sizeof(TestData::kU2fSignature)), 0);
+    EXPECT_EQ(response->rawId()->byteLength(), sizeof(TestData::kU2fSignKeyHandle));
+    EXPECT_EQ(memcmp(response->rawId()->data(), TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle)), 0);
+    EXPECT_EQ(response->authenticatorData()->byteLength(), sizeof(TestData::kTestSignAuthenticatorData));
+    EXPECT_EQ(memcmp(response->authenticatorData()->data(), TestData::kTestSignAuthenticatorData, sizeof(TestData::kTestSignAuthenticatorData)), 0);
+    EXPECT_EQ(response->signature()->byteLength(), sizeof(TestData::kU2fSignature));
+    EXPECT_EQ(memcmp(response->signature()->data(), TestData::kU2fSignature, sizeof(TestData::kU2fSignature)), 0);
 }
 
 TEST(CTAPResponseTest, TestParseU2fSignWithNullKeyHandle)

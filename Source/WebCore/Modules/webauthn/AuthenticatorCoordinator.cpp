@@ -32,12 +32,12 @@
 #include "AuthenticatorAssertionResponse.h"
 #include "AuthenticatorAttestationResponse.h"
 #include "AuthenticatorCoordinatorClient.h"
+#include "AuthenticatorResponseData.h"
 #include "Document.h"
 #include "JSBasicCredential.h"
 #include "JSDOMPromiseDeferred.h"
 #include "PublicKeyCredential.h"
 #include "PublicKeyCredentialCreationOptions.h"
-#include "PublicKeyCredentialData.h"
 #include "PublicKeyCredentialRequestOptions.h"
 #include "RegistrableDomain.h"
 #include "LegacySchemeRegistry.h"
@@ -185,15 +185,15 @@ void AuthenticatorCoordinator::create(const Document& document, const PublicKeyC
         return;
     }
 
-    auto callback = [clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), abortSignal = WTFMove(abortSignal)] (PublicKeyCredentialData&& data, ExceptionData&& exception) mutable {
+    auto callback = [clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), abortSignal = WTFMove(abortSignal)] (AuthenticatorResponseData&& data, ExceptionData&& exception) mutable {
         if (abortSignal && abortSignal->aborted()) {
             promise.reject(Exception { AbortError, "Aborted by AbortSignal."_s });
             return;
         }
 
-        data.clientDataJSON = WTFMove(clientDataJson);
-        if (auto publicKeyCredential = PublicKeyCredential::tryCreate(WTFMove(data))) {
-            promise.resolve(publicKeyCredential.get());
+        if (auto response = AuthenticatorResponse::tryCreate(WTFMove(data))) {
+            response->setClientDataJSON(WTFMove(clientDataJson));
+            promise.resolve(PublicKeyCredential::create(response.releaseNonNull()).ptr());
             return;
         }
         ASSERT(!exception.message.isNull());
@@ -256,15 +256,15 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
         return;
     }
 
-    auto callback = [clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), abortSignal = WTFMove(abortSignal)] (PublicKeyCredentialData&& data, ExceptionData&& exception) mutable {
+    auto callback = [clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), abortSignal = WTFMove(abortSignal)] (AuthenticatorResponseData&& data, ExceptionData&& exception) mutable {
         if (abortSignal && abortSignal->aborted()) {
             promise.reject(Exception { AbortError, "Aborted by AbortSignal."_s });
             return;
         }
 
-        data.clientDataJSON = WTFMove(clientDataJson);
-        if (auto publicKeyCredential = PublicKeyCredential::tryCreate(WTFMove(data))) {
-            promise.resolve(publicKeyCredential.get());
+        if (auto response = AuthenticatorResponse::tryCreate(WTFMove(data))) {
+            response->setClientDataJSON(WTFMove(clientDataJson));
+            promise.resolve(PublicKeyCredential::create(response.releaseNonNull()).ptr());
             return;
         }
         ASSERT(!exception.message.isNull());

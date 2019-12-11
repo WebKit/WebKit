@@ -30,8 +30,8 @@
 #include "Authenticator.h"
 #include "AuthenticatorTransportService.h"
 #include "WebAuthenticationRequestData.h"
+#include <WebCore/AuthenticatorResponse.h>
 #include <WebCore/ExceptionData.h>
-#include <WebCore/PublicKeyCredentialData.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
@@ -48,7 +48,7 @@ class AuthenticatorManager : public AuthenticatorTransportService::Observer, pub
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(AuthenticatorManager);
 public:
-    using Respond = Variant<WebCore::PublicKeyCredentialData, WebCore::ExceptionData>;
+    using Respond = Variant<Ref<WebCore::AuthenticatorResponse>, WebCore::ExceptionData>;
     using Callback = CompletionHandler<void(Respond&&)>;
     using TransportSet = HashSet<WebCore::AuthenticatorTransport, WTF::IntHash<WebCore::AuthenticatorTransport>, WTF::StrongEnumHashTraits<WebCore::AuthenticatorTransport>>;
 

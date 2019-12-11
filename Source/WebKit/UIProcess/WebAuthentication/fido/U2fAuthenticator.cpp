@@ -161,7 +161,7 @@ void U2fAuthenticator::continueRegisterCommandAfterResponseReceived(ApduResponse
             receiveRespond(ExceptionData { UnknownError, "Couldn't parse the U2F register response."_s });
             return;
         }
-        receiveRespond(WTFMove(*response));
+        receiveRespond(response.releaseNonNull());
         return;
     }
     case ApduResponse::Status::SW_CONDITIONS_NOT_SATISFIED:
@@ -205,7 +205,7 @@ void U2fAuthenticator::continueSignCommandAfterResponseReceived(ApduResponse&& a
     auto& requestOptions = WTF::get<PublicKeyCredentialRequestOptions>(requestData().options);
     switch (apduResponse.status()) {
     case ApduResponse::Status::SW_NO_ERROR: {
-        Optional<PublicKeyCredentialData> response;
+        RefPtr<AuthenticatorAssertionResponse> response;
         if (m_isAppId) {
             ASSERT(requestOptions.extensions && !requestOptions.extensions->appid.isNull());
             response = readU2fSignResponse(requestOptions.extensions->appid, requestOptions.allowCredentials[m_nextListIndex - 1].idVector, apduResponse.data());
@@ -216,9 +216,9 @@ void U2fAuthenticator::continueSignCommandAfterResponseReceived(ApduResponse&& a
             return;
         }
         if (m_isAppId)
-            response->appid = m_isAppId;
+            response->setExtensions({ m_isAppId });
 
-        receiveRespond(WTFMove(*response));
+        receiveRespond(response.releaseNonNull());
         return;
     }
     case ApduResponse::Status::SW_CONDITIONS_NOT_SATISFIED:

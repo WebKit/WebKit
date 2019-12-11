@@ -1,3 +1,91 @@
+2019-12-11  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthn] Combine AuthenticatorResponse and PublicKeyCredentialData
+        https://bugs.webkit.org/show_bug.cgi?id=190783
+        <rdar://problem/57781183>
+
+        Reviewed by Brent Fulgham.
+
+        This patch combines AuthenticatorResponse and PublicKeyCredentialData, and therefore renames
+        PublicKeyCredentialData to AuthenticatorResponseData as well. The complexity of WebKit's CTAP
+        implementation has reached the point that PublicKeyCredentialData is not appropriate to represent
+        all the different type of responses from authenticators anymore. For example, authenticatorGetNextAssertion
+        depends on the numberOfCredentials member from authenticatorGetAssertion response to function, but
+        numberOfCredentials is not used anywhere else. Therefore, a polymorphic type is needed to
+        represent different responses from authenticators instead of an uniform one, i.e., PublicKeyCredentialData.
+
+        AuthenticatorResponse seems to be the best fit. However, there are some limitations:
+        1) it is a WebIDL interface, and therefore is RefCounted. RefCounted objects cannot be serialized through
+        IPC. To solve this, AuthenticatorResponseData (PublicKeyCredentialData) is kept as an intermediate type
+        that is only used during IPC.
+        2) it doesn't contain all the information from an actual authenticator response. To solve this, it
+        has been enlarged to include all members from PublicKeyCredential. After this patch, PublicKeyCredential
+        will be a thin wrapper on top of AuthenticatorResponse.
+
+        Covered by existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Headers.cmake:
+        * Modules/webauthn/AuthenticationExtensionsClientOutputs.h: Copied from Source/WebCore/Modules/webauthn/PublicKeyCredential.idl.
+        * Modules/webauthn/AuthenticationExtensionsClientOutputs.idl: Copied from Source/WebCore/Modules/webauthn/PublicKeyCredential.idl.
+        This is separated from PublicKeyCredential such that AuthenticatorResponse can include it.
+        * Modules/webauthn/AuthenticatorAssertionResponse.cpp: Added.
+        (WebCore::AuthenticatorAssertionResponse::create):
+        (WebCore::AuthenticatorAssertionResponse::AuthenticatorAssertionResponse):
+        (WebCore::AuthenticatorAssertionResponse::data const):
+        * Modules/webauthn/AuthenticatorAssertionResponse.h:
+        (WebCore::AuthenticatorAssertionResponse::create): Deleted.
+        (WebCore::AuthenticatorAssertionResponse::AuthenticatorAssertionResponse): Deleted.
+        * Modules/webauthn/AuthenticatorAttestationResponse.cpp: Copied from Source/WebCore/Modules/webauthn/AuthenticatorAttestationResponse.h.
+        (WebCore::AuthenticatorAttestationResponse::create):
+        (WebCore::AuthenticatorAttestationResponse::AuthenticatorAttestationResponse):
+        (WebCore::AuthenticatorAttestationResponse::data const):
+        * Modules/webauthn/AuthenticatorAttestationResponse.h:
+        (WebCore::AuthenticatorAttestationResponse::create): Deleted.
+        (WebCore::AuthenticatorAttestationResponse::AuthenticatorAttestationResponse): Deleted.
+        * Modules/webauthn/AuthenticatorCoordinator.cpp:
+        (WebCore::AuthenticatorCoordinator::create const):
+        (WebCore::AuthenticatorCoordinator::discoverFromExternalSource const):
+        * Modules/webauthn/AuthenticatorCoordinatorClient.h:
+        * Modules/webauthn/AuthenticatorResponse.cpp: Copied from Source/WebCore/Modules/webauthn/PublicKeyCredential.cpp.
+        (WebCore::AuthenticatorResponse::tryCreate):
+        (WebCore::AuthenticatorResponse::data const):
+        (WebCore::AuthenticatorResponse::extensions const):
+        (WebCore::AuthenticatorResponse::setClientDataJSON):
+        (WebCore::AuthenticatorResponse::clientDataJSON const):
+        (WebCore::AuthenticatorResponse::AuthenticatorResponse):
+        * Modules/webauthn/AuthenticatorResponse.h:
+        (WebCore::AuthenticatorResponse::rawId const):
+        (WebCore::AuthenticatorResponse::setExtensions):
+        (WebCore::AuthenticatorResponse::AuthenticatorResponse): Deleted.
+        (WebCore::AuthenticatorResponse::clientDataJSON const): Deleted.
+        * Modules/webauthn/AuthenticatorResponseData.h: Renamed from Source/WebCore/Modules/webauthn/PublicKeyCredentialData.h.
+        (WebCore::AuthenticatorResponseData::encode const):
+        (WebCore::AuthenticatorResponseData::decode):
+        * Modules/webauthn/PublicKeyCredential.cpp:
+        (WebCore::PublicKeyCredential::create):
+        (WebCore::PublicKeyCredential::rawId const):
+        (WebCore::PublicKeyCredential::getClientExtensionResults const):
+        (WebCore::PublicKeyCredential::PublicKeyCredential):
+        (WebCore::PublicKeyCredential::tryCreate): Deleted.
+        * Modules/webauthn/PublicKeyCredential.h:
+        * Modules/webauthn/PublicKeyCredential.idl:
+        * Modules/webauthn/fido/DeviceResponseConverter.cpp:
+        (fido::readCTAPMakeCredentialResponse):
+        (fido::readCTAPGetAssertionResponse):
+        * Modules/webauthn/fido/DeviceResponseConverter.h:
+        A more appropriate derived type of AuthenticatorResponse is used to replace PublicKeyCredentialData.
+        * Modules/webauthn/fido/U2fResponseConverter.cpp:
+        (fido::readU2fRegisterResponse):
+        (fido::readU2fSignResponse):
+        * Modules/webauthn/fido/U2fResponseConverter.h:
+        A more appropriate derived type of AuthenticatorResponse is used to replace PublicKeyCredentialData.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-12-11  Eric Carlson  <eric.carlson@apple.com>
 
         Add encoders for MediaPlayerEnum enums

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,34 +27,10 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "ExceptionData.h"
-#include <wtf/CompletionHandler.h>
-#include <wtf/HashMap.h>
-#include <wtf/WeakPtr.h>
-
 namespace WebCore {
 
-class DeferredPromise;
-class Frame;
-class SecurityOrigin;
-
-struct AuthenticatorResponseData;
-struct PublicKeyCredentialCreationOptions;
-struct PublicKeyCredentialRequestOptions;
-
-using RequestCompletionHandler = CompletionHandler<void(WebCore::AuthenticatorResponseData&&, WebCore::ExceptionData&&)>;
-using QueryCompletionHandler = CompletionHandler<void(bool)>;
-
-class WEBCORE_EXPORT AuthenticatorCoordinatorClient : public CanMakeWeakPtr<AuthenticatorCoordinatorClient> {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(AuthenticatorCoordinatorClient);
-public:
-    AuthenticatorCoordinatorClient() = default;
-    virtual ~AuthenticatorCoordinatorClient() = default;
-
-    virtual void makeCredential(const Frame&, const SecurityOrigin&, const Vector<uint8_t>&, const PublicKeyCredentialCreationOptions&, RequestCompletionHandler&&) { };
-    virtual void getAssertion(const Frame&, const SecurityOrigin&, const Vector<uint8_t>&, const PublicKeyCredentialRequestOptions&, RequestCompletionHandler&&) { };
-    virtual void isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&&) { };
+struct AuthenticationExtensionsClientOutputs {
+    Optional<bool> appid;
 };
 
 } // namespace WebCore
