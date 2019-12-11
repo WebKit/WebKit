@@ -1,3 +1,13 @@
+2019-12-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Adhocly created CallLinkInfo in GetterSetterAccess should be owned by GCAwareJITStubRoutine
+        https://bugs.webkit.org/show_bug.cgi?id=204876
+
+        Reviewed by Saam Barati.
+
+        * stress/code-emitted-by-getter-setter-access-case-should-hold-ownership-of-call-link-info.js: Added.
+        (func):
+
 2019-12-09  Tadeu Zagallo  <tzagallo@apple.com>
 
         REGRESSION(r253140): WebAssembly validation should check for unmatched else before calling addElse/addElseToUnreachable

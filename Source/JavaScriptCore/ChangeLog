@@ -1,3 +1,43 @@
+2019-12-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Adhocly created CallLinkInfo in GetterSetterAccess should be owned by GCAwareJITStubRoutine
+        https://bugs.webkit.org/show_bug.cgi?id=204876
+
+        Reviewed by Saam Barati.
+
+        When emitting GetterSetterAccessCase code in IC, we dynamically create CallLinkInfo which is owned by GetterSetterAccessCase,
+        and we use this pointer for GetterSetter calls (like, operationLinkCall etc.). The problem is that IC code is not destroyed
+        so long as it is live in the stack. For example, GetterSetterAccessCase might be destroyed when the StructureStubInfo is reset,
+        while executing the emitted code. So, the code is still pointing already-destroyed CallLinkInfo.
+
+        In this patch, CallLinkInfo used for GetterSetterAccessCase code is owned by emitted code, which means, owned by
+        MarkingGCAwareJITStubRoutine. So it is kept so long as the code is live. We use Bag<CallLinkInfo> to create a CallLinkInfo,
+        and MarkingGCAwareJITStubRoutine owns it.
+
+        The important question is whether we should call CallLinkInfo::visitWeak when the associated GetterSetterAccessCase is already
+        destroyed. We do not need to call it since (1) it is just clearing CallLinkInfo, and (2) this information will not be used
+        by anyone since associated GetterSetterAccessCase is already destroyed.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/GetterSetterAccessCase.h:
+        (JSC::GetterSetterAccessCase::callLinkInfo const):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/PolymorphicAccess.h:
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitDumbVirtualCall):
+        * jit/GCAwareJITStubRoutine.cpp:
+        (JSC::MarkingGCAwareJITStubRoutine::MarkingGCAwareJITStubRoutine):
+        (JSC::GCAwareJITStubRoutineWithExceptionHandler::GCAwareJITStubRoutineWithExceptionHandler):
+        (JSC::createJITStubRoutine):
+        * jit/GCAwareJITStubRoutine.h:
+        (JSC::GCAwareJITStubRoutine::create):
+        (JSC::createJITStubRoutine): Deleted.
+        * jit/Repatch.cpp:
+        (JSC::linkSlowFor):
+        (JSC::linkVirtualFor):
+
 2019-12-10  Mark Lam  <mark.lam@apple.com>
 
         Worklist::deleteCancelledPlansForVM() should not assume that a cancelled plan is ready for deletion.

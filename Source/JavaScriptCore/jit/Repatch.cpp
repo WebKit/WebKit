@@ -913,7 +913,7 @@ static void linkSlowFor(VM& vm, CallLinkInfo& callLinkInfo)
 {
     MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunk = virtualThunkFor(vm, callLinkInfo);
     linkSlowFor(vm, callLinkInfo, virtualThunk);
-    callLinkInfo.setSlowStub(createJITStubRoutine(virtualThunk, vm, nullptr, true));
+    callLinkInfo.setSlowStub(GCAwareJITStubRoutine::create(virtualThunk, vm));
 }
 
 static JSCell* webAssemblyOwner(JSCell* callee)
@@ -1041,7 +1041,7 @@ static void linkVirtualFor(VM& vm, CallFrame* callFrame, CallLinkInfo& callLinkI
 
     MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunk = virtualThunkFor(vm, callLinkInfo);
     revertCall(vm, callLinkInfo, virtualThunk);
-    callLinkInfo.setSlowStub(createJITStubRoutine(virtualThunk, vm, nullptr, true));
+    callLinkInfo.setSlowStub(GCAwareJITStubRoutine::create(virtualThunk, vm));
     callLinkInfo.setClearedByVirtual();
 }
 

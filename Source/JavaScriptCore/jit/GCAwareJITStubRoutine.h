@@ -51,6 +51,11 @@ class GCAwareJITStubRoutine : public JITStubRoutine {
 public:
     GCAwareJITStubRoutine(const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&);
     virtual ~GCAwareJITStubRoutine();
+
+    static Ref<JITStubRoutine> create(const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, VM& vm)
+    {
+        return adoptRef(*new GCAwareJITStubRoutine(code, vm));
+    }
     
     void markRequiredObjects(SlotVisitor& visitor)
     {
@@ -76,7 +81,7 @@ private:
 class MarkingGCAwareJITStubRoutine : public GCAwareJITStubRoutine {
 public:
     MarkingGCAwareJITStubRoutine(
-        const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, const JSCell* owner, const Vector<JSCell*>&);
+        const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, const JSCell* owner, const Vector<JSCell*>&, Bag<CallLinkInfo>&&);
     virtual ~MarkingGCAwareJITStubRoutine();
     
 protected:
@@ -84,6 +89,7 @@ protected:
 
 private:
     Vector<WriteBarrier<JSCell>> m_cells;
+    Bag<CallLinkInfo> m_callLinkInfos;
 };
 
 
@@ -94,7 +100,7 @@ class GCAwareJITStubRoutineWithExceptionHandler : public MarkingGCAwareJITStubRo
 public:
     typedef GCAwareJITStubRoutine Base;
 
-    GCAwareJITStubRoutineWithExceptionHandler(const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, const JSCell* owner, const Vector<JSCell*>&, CodeBlock*, DisposableCallSiteIndex);
+    GCAwareJITStubRoutineWithExceptionHandler(const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, const JSCell* owner, const Vector<JSCell*>&, Bag<CallLinkInfo>&&, CodeBlock*, DisposableCallSiteIndex);
 
     void aboutToDie() override;
     void observeZeroRefCount() override;
@@ -125,8 +131,8 @@ private:
 
 Ref<JITStubRoutine> createJITStubRoutine(
     const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, const JSCell* owner, bool makesCalls,
-    const Vector<JSCell*>& = { }, 
-    CodeBlock* codeBlockForExceptionHandlers = nullptr, DisposableCallSiteIndex exceptionHandlingCallSiteIndex = DisposableCallSiteIndex());
+    const Vector<JSCell*>&, Bag<CallLinkInfo>&& callLinkInfos,
+    CodeBlock* codeBlockForExceptionHandlers, DisposableCallSiteIndex exceptionHandlingCallSiteIndex);
 
 } // namespace JSC
 

@@ -81,9 +81,10 @@ void GCAwareJITStubRoutine::markRequiredObjectsInternal(SlotVisitor&)
 
 MarkingGCAwareJITStubRoutine::MarkingGCAwareJITStubRoutine(
     const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, VM& vm, const JSCell* owner,
-    const Vector<JSCell*>& cells)
+    const Vector<JSCell*>& cells, Bag<CallLinkInfo>&& callLinkInfos)
     : GCAwareJITStubRoutine(code, vm)
     , m_cells(cells.size())
+    , m_callLinkInfos(WTFMove(callLinkInfos))
 {
     for (unsigned i = cells.size(); i--;)
         m_cells[i].set(vm, owner, cells[i]);
@@ -101,9 +102,9 @@ void MarkingGCAwareJITStubRoutine::markRequiredObjectsInternal(SlotVisitor& visi
 
 
 GCAwareJITStubRoutineWithExceptionHandler::GCAwareJITStubRoutineWithExceptionHandler(
-    const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, VM& vm,  const JSCell* owner, const Vector<JSCell*>& cells,
+    const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, VM& vm,  const JSCell* owner, const Vector<JSCell*>& cells, Bag<CallLinkInfo>&& callLinkInfos,
     CodeBlock* codeBlockForExceptionHandlers, DisposableCallSiteIndex exceptionHandlerCallSiteIndex)
-    : MarkingGCAwareJITStubRoutine(code, vm, owner, cells)
+    : MarkingGCAwareJITStubRoutine(code, vm, owner, cells, WTFMove(callLinkInfos))
     , m_codeBlockWithExceptionHandler(codeBlockForExceptionHandlers)
     , m_exceptionHandlerCallSiteIndex(exceptionHandlerCallSiteIndex)
 {
@@ -136,21 +137,25 @@ Ref<JITStubRoutine> createJITStubRoutine(
     const JSCell* owner,
     bool makesCalls,
     const Vector<JSCell*>& cells,
+    Bag<CallLinkInfo>&& callLinkInfos,
     CodeBlock* codeBlockForExceptionHandlers,
     DisposableCallSiteIndex exceptionHandlerCallSiteIndex)
 {
-    if (!makesCalls)
+    if (!makesCalls) {
+        // Allocating CallLinkInfos means we should have calls.
+        ASSERT(callLinkInfos.isEmpty());
         return adoptRef(*new JITStubRoutine(code));
+    }
     
     if (codeBlockForExceptionHandlers) {
         RELEASE_ASSERT(JITCode::isOptimizingJIT(codeBlockForExceptionHandlers->jitType()));
-        return adoptRef(*new GCAwareJITStubRoutineWithExceptionHandler(code, vm, owner, cells, codeBlockForExceptionHandlers, exceptionHandlerCallSiteIndex));
+        return adoptRef(*new GCAwareJITStubRoutineWithExceptionHandler(code, vm, owner, cells, WTFMove(callLinkInfos), codeBlockForExceptionHandlers, exceptionHandlerCallSiteIndex));
     }
 
-    if (cells.isEmpty())
-        return adoptRef(*new GCAwareJITStubRoutine(code, vm));
+    if (cells.isEmpty() && callLinkInfos.isEmpty())
+        return GCAwareJITStubRoutine::create(code, vm);
     
-    return adoptRef(*new MarkingGCAwareJITStubRoutine(code, vm, owner, cells));
+    return adoptRef(*new MarkingGCAwareJITStubRoutine(code, vm, owner, cells, WTFMove(callLinkInfos)));
 }
 
 } // namespace JSC

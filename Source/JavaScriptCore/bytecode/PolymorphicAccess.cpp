@@ -720,7 +720,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
     for (auto& entry : cases)
         doesCalls |= entry->doesCalls(&cellsToMark);
     
-    m_stubRoutine = createJITStubRoutine(code, vm, codeBlock, doesCalls, cellsToMark, codeBlockThatOwnsExceptionHandlers, callSiteIndexForExceptionHandling);
+    m_stubRoutine = createJITStubRoutine(code, vm, codeBlock, doesCalls, cellsToMark, WTFMove(state.m_callLinkInfos), codeBlockThatOwnsExceptionHandlers, callSiteIndexForExceptionHandling);
     m_watchpoints = WTFMove(state.watchpoints);
     if (!state.weakReferences.isEmpty())
         m_weakReferences = makeUnique<Vector<WriteBarrier<JSCell>>>(WTFMove(state.weakReferences));

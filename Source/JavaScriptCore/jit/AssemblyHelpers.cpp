@@ -633,7 +633,7 @@ void AssemblyHelpers::emitDumbVirtualCall(VM& vm, JSGlobalObject* globalObject, 
     addLinkTask(
         [=, &vm] (LinkBuffer& linkBuffer) {
             MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunk = virtualThunkFor(vm, *info);
-            info->setSlowStub(createJITStubRoutine(virtualThunk, vm, nullptr, true));
+            info->setSlowStub(GCAwareJITStubRoutine::create(virtualThunk, vm));
             linkBuffer.link(call, CodeLocationLabel<JITStubRoutinePtrTag>(virtualThunk.code()));
         });
 }

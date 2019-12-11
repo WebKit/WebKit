@@ -1532,7 +1532,8 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             state.setSpillStateForJSGetterSetter(spillState);
 
             RELEASE_ASSERT(!access.callLinkInfo());
-            access.m_callLinkInfo = makeUnique<CallLinkInfo>();
+            CallLinkInfo* callLinkInfo = state.m_callLinkInfos.add();
+            access.m_callLinkInfo = callLinkInfo;
 
             // FIXME: If we generated a polymorphic call stub that jumped back to the getter
             // stub, which then jumped back to the main code, then we'd have a reachability
@@ -1542,10 +1543,9 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             // be GC objects, and then we'd be able to say that the polymorphic call stub has a
             // reference to the getter stub.
             // https://bugs.webkit.org/show_bug.cgi?id=148914
-            access.callLinkInfo()->disallowStubs();
+            callLinkInfo->disallowStubs();
 
-            access.callLinkInfo()->setUpCall(
-                CallLinkInfo::Call, stubInfo.codeOrigin, loadedValueGPR);
+            callLinkInfo->setUpCall(CallLinkInfo::Call, stubInfo.codeOrigin, loadedValueGPR);
 
             CCallHelpers::JumpList done;
 

@@ -216,6 +216,7 @@ struct AccessGenerationState {
     FPRReg scratchFPR { InvalidFPRReg };
     std::unique_ptr<WatchpointsOnStructureStubInfo> watchpoints;
     Vector<WriteBarrier<JSCell>> weakReferences;
+    Bag<CallLinkInfo> m_callLinkInfos;
 
     void installWatchpoint(const ObjectPropertyCondition&);
 
