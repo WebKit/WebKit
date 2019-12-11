@@ -39,7 +39,8 @@ static HashSet<StorageThread*>& activeStorageThreads()
     return threads;
 }
 
-StorageThread::StorageThread()
+StorageThread::StorageThread(Type type)
+    : m_type(type)
 {
     ASSERT(isMainThread());
 }
@@ -54,9 +55,16 @@ void StorageThread::start()
 {
     ASSERT(isMainThread());
     if (!m_thread) {
-        m_thread = Thread::create("WebCore: LocalStorage", [this] {
-            threadEntryPoint();
-        });
+        if (m_type == Type::LocalStorage) {
+            m_thread = Thread::create("LocalStorage", [this] {
+                threadEntryPoint();
+            });
+        } else {
+            ASSERT(m_type == Type::IndexedDB);
+            m_thread = Thread::create("IndexedDB", [this] {
+                threadEntryPoint();
+            });
+        }
     }
     activeStorageThreads().add(this);
 }
