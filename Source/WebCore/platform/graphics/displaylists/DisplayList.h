@@ -25,7 +25,8 @@
 
 #pragma once
 
-#include "DisplayListItems.h"
+#include "FloatRect.h"
+#include "GraphicsContext.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
@@ -36,12 +37,117 @@ class TextStream;
 
 namespace WebCore {
 
-class FloatRect;
-class GraphicsContext;
-
 namespace DisplayList {
 
-class Item;
+enum class ItemType : uint8_t {
+    Save,
+    Restore,
+    Translate,
+    Rotate,
+    Scale,
+    ConcatenateCTM,
+    SetState,
+    SetLineCap,
+    SetLineDash,
+    SetLineJoin,
+    SetMiterLimit,
+    ClearShadow,
+    Clip,
+    ClipOut,
+    ClipOutToPath,
+    ClipPath,
+    DrawGlyphs,
+    DrawImage,
+    DrawTiledImage,
+    DrawTiledScaledImage,
+#if USE(CG) || USE(CAIRO) || USE(DIRECT2D)
+    DrawNativeImage,
+#endif
+    DrawPattern,
+    DrawRect,
+    DrawLine,
+    DrawLinesForText,
+    DrawDotsForDocumentMarker,
+    DrawEllipse,
+    DrawPath,
+    DrawFocusRingPath,
+    DrawFocusRingRects,
+    FillRect,
+    FillRectWithColor,
+    FillRectWithGradient,
+    FillCompositedRect,
+    FillRoundedRect,
+    FillRectWithRoundedHole,
+    FillPath,
+    FillEllipse,
+    StrokeRect,
+    StrokePath,
+    StrokeEllipse,
+    ClearRect,
+    BeginTransparencyLayer,
+    EndTransparencyLayer,
+#if USE(CG)
+    ApplyStrokePattern, // FIXME: should not be a recorded item.
+    ApplyFillPattern, // FIXME: should not be a recorded item.
+#endif
+    ApplyDeviceScaleFactor,
+};
+
+class Item : public RefCounted<Item> {
+public:
+    Item() = delete;
+
+    WEBCORE_EXPORT Item(ItemType);
+    WEBCORE_EXPORT virtual ~Item();
+
+    ItemType type() const
+    {
+        return m_type;
+    }
+
+    virtual void apply(GraphicsContext&) const = 0;
+
+    static constexpr bool isDisplayListItem = true;
+
+    virtual bool isDrawingItem() const { return false; }
+
+    // A state item is one preserved by Save/Restore.
+    bool isStateItem() const
+    {
+        return isStateItemType(m_type);
+    }
+
+    static bool isStateItemType(ItemType itemType)
+    {
+        switch (itemType) {
+        case ItemType::Translate:
+        case ItemType::Rotate:
+        case ItemType::Scale:
+        case ItemType::ConcatenateCTM:
+        case ItemType::SetState:
+        case ItemType::SetLineCap:
+        case ItemType::SetLineDash:
+        case ItemType::SetLineJoin:
+        case ItemType::SetMiterLimit:
+        case ItemType::ClearShadow:
+            return true;
+        default:
+            return false;
+        }
+        return false;
+    }
+
+#if !defined(NDEBUG) || !LOG_DISABLED
+    WTF::CString description() const;
+#endif
+    static size_t sizeInBytes(const Item&);
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<Item>> decode(Decoder&);
+
+private:
+    ItemType m_type;
+};
 
 enum AsTextFlag {
     None                            = 0,

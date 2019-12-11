@@ -1121,6 +1121,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/graphics/angle/Extensions3DANGLE.h
 
+    platform/graphics/displaylists/DisplayList.h
     platform/graphics/displaylists/DisplayListItems.h
 
     platform/graphics/cv/ImageTransferSessionVT.h

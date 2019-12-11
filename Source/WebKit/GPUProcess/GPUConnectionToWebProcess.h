@@ -29,6 +29,7 @@
 
 #include "Connection.h"
 #include "GPUConnectionToWebProcessMessagesReplies.h"
+#include <WebCore/DisplayListItems.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/RefCounted.h>
 

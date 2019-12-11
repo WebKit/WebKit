@@ -1,3 +1,26 @@
+2019-12-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Make incremental builds faster after modifying DisplayListItems.h
+        https://bugs.webkit.org/show_bug.cgi?id=205032
+
+        Reviewed by Tim Horton.
+
+        Move the declaration of DisplayList::Item currently in DisplayListItems.h out into DisplayList.h, such that
+        adding or modifying encoding and decoding logic in DisplayListItems.h dirties fewer source files when
+        rebuilding.
+
+        * Headers.cmake:
+        * platform/graphics/displaylists/DisplayList.h:
+        (WebCore::DisplayList::Item::type const):
+        (WebCore::DisplayList::Item::isDrawingItem const):
+        (WebCore::DisplayList::Item::isStateItem const):
+        (WebCore::DisplayList::Item::isStateItemType):
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::Item::type const): Deleted.
+        (WebCore::DisplayList::Item::isDrawingItem const): Deleted.
+        (WebCore::DisplayList::Item::isStateItem const): Deleted.
+        (WebCore::DisplayList::Item::isStateItemType): Deleted.
+
 2019-12-11  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: export some functions in WebCore
