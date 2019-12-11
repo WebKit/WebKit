@@ -32,11 +32,11 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import "WKWebViewTesting.h"
 #import <WebKit/WKBackForwardListItemPrivate.h>
 #import <WebKit/WKPage.h>
 #import <WebKit/WKPagePrivate.h>
 #import <WebKit/WKWebView.h>
-#import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
 static bool didForceRepaint;

@@ -30,13 +30,13 @@
 #import "EventSerializerMac.h"
 #import "PlatformViewHelpers.h"
 #import "PlatformWebView.h"
-#import "SharedEventStreamsMac.h"
-#import "TestController.h"
 #import "PlatformWebView.h"
+#import "SharedEventStreamsMac.h"
 #import "StringFunctions.h"
 #import "TestController.h"
 #import "TestRunnerWKWebView.h"
 #import "UIScriptContext.h"
+#import "WKWebViewTesting.h"
 #import <JavaScriptCore/JSContext.h>
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <JavaScriptCore/JSValue.h>

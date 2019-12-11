@@ -33,6 +33,7 @@
 #import "TestInvocation.h"
 #import "TestRunnerWKWebView.h"
 #import "UIKitSPI.h"
+#import "WKWebViewTesting.h"
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <WebKit/WKPreferencesPrivate.h>

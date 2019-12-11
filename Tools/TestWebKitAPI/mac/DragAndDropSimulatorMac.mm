@@ -31,6 +31,7 @@
 #import "PlatformUtilities.h"
 #import "TestDraggingInfo.h"
 #import "TestWKWebView.h"
+#import "WKWebViewTesting.h"
 #import <cmath>
 #import <wtf/WeakObjCPtr.h>
 

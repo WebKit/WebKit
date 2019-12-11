@@ -30,8 +30,8 @@
 #import "TestWKWebView.h"
 #import "Utilities.h"
 #import "WKWebViewConfigurationExtras.h"
+#import "WKWebViewTesting.h"
 #import <WebKit/WKViewPrivate.h>
-#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebKit.h>
 
 static bool hasTriggerInfo;

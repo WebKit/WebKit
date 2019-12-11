@@ -37,6 +37,7 @@
 #import "TestRunnerWKWebView.h"
 #import "UIKitSPI.h"
 #import "UIScriptContext.h"
+#import "WKWebViewTesting.h"
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <JavaScriptCore/OpaqueJSString.h>
 #import <UIKit/UIKit.h>

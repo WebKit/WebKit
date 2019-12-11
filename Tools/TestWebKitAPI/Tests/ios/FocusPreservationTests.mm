@@ -32,6 +32,7 @@
 #import "TestInputDelegate.h"
 #import "TestWKWebView.h"
 #import "UIKitSPI.h"
+#import "WKWebViewTesting.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKInputDelegate.h>
 #import <wtf/BlockPtr.h>

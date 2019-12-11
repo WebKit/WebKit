@@ -29,7 +29,7 @@
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
-
+#import "WKWebViewTesting.h"
 #import <Carbon/Carbon.h>
 #import <WebKit/WebKitPrivate.h>
 
