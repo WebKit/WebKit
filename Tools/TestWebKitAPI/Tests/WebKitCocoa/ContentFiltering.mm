@@ -38,7 +38,12 @@
 #import <WebKit/_WKDownloadDelegate.h>
 #import <WebKit/_WKRemoteObjectInterface.h>
 #import <WebKit/_WKRemoteObjectRegistry.h>
+#import <pal/spi/cocoa/NEFilterSourceSPI.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SoftLinking.h>
+
+SOFT_LINK_FRAMEWORK_OPTIONAL(NetworkExtension);
+SOFT_LINK_CLASS_OPTIONAL(NetworkExtension, NEFilterSource);
 
 using Decision = WebCore::MockContentFilterSettings::Decision;
 using DecisionPoint = WebCore::MockContentFilterSettings::DecisionPoint;
@@ -375,8 +380,17 @@ TEST(ContentFiltering, LoadAlternateAfterFinishedAddingDataWK2)
 
 @end
 
+static BOOL filterRequired(id self, SEL _cmd)
+{
+    return YES;
+}
+
 TEST(ContentFiltering, LazilyLoadPlatformFrameworks)
 {
+    // Swizzle [NEFilterSource filterRequired] to return YES in the UI process since NetworkExtension will not be loaded otherwise.
+    Method method = class_getClassMethod(getNEFilterSourceClass(), @selector(filterRequired));
+    method_setImplementation(method, reinterpret_cast<IMP>(filterRequired));
+
     @autoreleasepool {
         auto controller = adoptNS([[LazilyLoadPlatformFrameworksController alloc] init]);
         [controller expectParentalControlsLoaded:NO networkExtensionLoaded:NO];

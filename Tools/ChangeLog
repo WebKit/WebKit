@@ -1,3 +1,17 @@
+2019-12-10  Per Arne Vollan  <pvollan@apple.com>
+
+        Fix API test failure after r253351
+        https://bugs.webkit.org/show_bug.cgi?id=205089
+
+        Reviewed by Brent Fulgham.
+
+        With the patch landed in r253351, the NetworkExtension framework will not be loaded in the WebContent process unless
+        [NEFilterSource filterRequired] returns YES. Swizzle this method to return YES in the UI process.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentFiltering.mm:
+        (filterRequired):
+        (TEST):
+
 2019-12-10  Chris Dumez  <cdumez@apple.com>
 
         Gyroscope (DeviceMotion related) permission cannot be requested in WKWebView unless the client app sets a WKUIDelegate
