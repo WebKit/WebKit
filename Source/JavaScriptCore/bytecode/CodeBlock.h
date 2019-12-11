@@ -371,6 +371,10 @@ public:
     void linkIncomingCall(CallFrame* callerFrame, LLIntCallLinkInfo*);
 
     const Instruction* outOfLineJumpTarget(const Instruction* pc);
+    int outOfLineJumpOffset(InstructionStream::Offset offset)
+    {
+        return m_unlinkedCode->outOfLineJumpOffset(offset);
+    }
     int outOfLineJumpOffset(const Instruction* pc);
     int outOfLineJumpOffset(const InstructionStream::Ref& instruction)
     {

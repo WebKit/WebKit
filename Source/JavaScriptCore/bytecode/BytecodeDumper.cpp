@@ -69,8 +69,11 @@ void BytecodeDumperBase::dumpValue(VirtualRegister reg)
 template<typename Traits>
 void BytecodeDumperBase::dumpValue(GenericBoundLabel<Traits> label)
 {
-    InstructionStream::Offset targetOffset = label.target() + m_currentLocation;
-    m_out.print(label.target(), "(->", targetOffset, ")");
+    int target = label.target();
+    if (!target)
+        target = outOfLineJumpOffset(m_currentLocation);
+    InstructionStream::Offset targetOffset = target + m_currentLocation;
+    m_out.print(target, "(->", targetOffset, ")");
 }
 
 template void BytecodeDumperBase::dumpValue(GenericBoundLabel<JSGeneratorTraits>);
@@ -86,6 +89,12 @@ CString BytecodeDumper<Block>::registerName(int r) const
         return constantName(r);
 
     return toCString(VirtualRegister(r));
+}
+
+template <class Block>
+int BytecodeDumper<Block>::outOfLineJumpOffset(InstructionStream::Offset offset) const
+{
+    return m_block->outOfLineJumpOffset(offset);
 }
 
 template<class Block>

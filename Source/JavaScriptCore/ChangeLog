@@ -1,3 +1,15 @@
+2019-12-10  Saam Barati  <sbarati@apple.com>
+
+        BytecodeDumper should print out of line jump targets
+        https://bugs.webkit.org/show_bug.cgi?id=205091
+
+        Reviewed by Tadeu Zagallo and Yusuke Suzuki.
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumperBase::dumpValue):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::outOfLineJumpOffset):
+
 2019-12-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Adhocly created CallLinkInfo in GetterSetterAccess should be owned by GCAwareJITStubRoutine

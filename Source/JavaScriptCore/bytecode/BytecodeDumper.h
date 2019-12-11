@@ -62,6 +62,7 @@ public:
 
 protected:
     virtual CString registerName(int) const = 0;
+    virtual int outOfLineJumpOffset(InstructionStream::Offset) const = 0;
 
     BytecodeDumperBase(PrintStream& out)
         : m_out(out)
@@ -91,6 +92,7 @@ protected:
     void dumpBytecode(const InstructionStream::Ref& it, const ICStatusMap&);
 
     CString registerName(int r) const override;
+    int outOfLineJumpOffset(InstructionStream::Offset offset) const override;
 
 private:
     virtual CString constantName(int index) const;
