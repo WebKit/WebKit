@@ -1,3 +1,15 @@
+2019-12-11  Keith Miller  <keith_miller@apple.com>
+
+        Add test for osr exiting with interpreter on the stack
+        https://bugs.webkit.org/show_bug.cgi?id=205124
+
+        Reviewed by Mark Lam.
+
+        I forgot to add this test before.
+
+        * stress/osr-exit-with-interpreter-on-stack.js: Added.
+        (foo):
+
 2019-12-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Adhocly created CallLinkInfo in GetterSetterAccess should be owned by GCAwareJITStubRoutine
