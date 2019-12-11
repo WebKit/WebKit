@@ -55,7 +55,7 @@ public:
 
     bool isNull() const { return !m_code; }
 
-    IDBError isolatedCopy() const;
+    WEBCORE_EXPORT IDBError isolatedCopy() const;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, IDBError&);

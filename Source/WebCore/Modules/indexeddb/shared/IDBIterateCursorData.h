@@ -36,7 +36,7 @@ struct IDBIterateCursorData {
     IDBKeyData primaryKeyData;
     unsigned count;
 
-    IDBIterateCursorData isolatedCopy() const;
+    WEBCORE_EXPORT IDBIterateCursorData isolatedCopy() const;
 
 #if !LOG_DISABLED
     String loggingString() const;

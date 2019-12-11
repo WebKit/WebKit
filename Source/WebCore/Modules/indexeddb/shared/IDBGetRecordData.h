@@ -40,7 +40,7 @@ struct IDBGetRecordData {
     IDBKeyRangeData keyRangeData;
     IDBGetRecordDataType type;
 
-    IDBGetRecordData isolatedCopy() const;
+    WEBCORE_EXPORT IDBGetRecordData isolatedCopy() const;
 
 #if !LOG_DISABLED
     String loggingString() const;

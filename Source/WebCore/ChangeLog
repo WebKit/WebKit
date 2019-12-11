@@ -1,5 +1,30 @@
 2019-12-11  Sihui Liu  <sihui_liu@apple.com>
 
+        IndexedDB: export some functions in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=205081
+
+        Reviewed by Alex Christensen.
+
+        We will need these in https://bugs.webkit.org/show_bug.cgi?id=203690.
+
+        No behavior change.
+
+        * Modules/indexeddb/IDBKeyData.h:
+        * Modules/indexeddb/IDBKeyRangeData.h:
+        * Modules/indexeddb/IDBValue.h:
+        * Modules/indexeddb/shared/IDBCursorInfo.h:
+        * Modules/indexeddb/shared/IDBError.h:
+        * Modules/indexeddb/shared/IDBGetAllRecordsData.h:
+        * Modules/indexeddb/shared/IDBGetRecordData.h:
+        * Modules/indexeddb/shared/IDBIterateCursorData.h:
+        * Modules/indexeddb/shared/IDBObjectStoreInfo.h:
+        * Modules/indexeddb/shared/IDBRequestData.h:
+        * Modules/indexeddb/shared/IDBResourceIdentifier.h:
+        * Modules/indexeddb/shared/IDBResultData.h:
+        * Modules/indexeddb/shared/IDBTransactionInfo.h:
+
+2019-12-11  Sihui Liu  <sihui_liu@apple.com>
+
         IndexedDB: remove LockHolder parameters
         https://bugs.webkit.org/show_bug.cgi?id=205076
 

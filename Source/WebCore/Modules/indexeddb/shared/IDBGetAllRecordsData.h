@@ -44,7 +44,7 @@ struct IDBGetAllRecordsData {
     uint64_t objectStoreIdentifier;
     uint64_t indexIdentifier;
 
-    IDBGetAllRecordsData isolatedCopy() const;
+    WEBCORE_EXPORT IDBGetAllRecordsData isolatedCopy() const;
 
 #if !LOG_DISABLED
     String loggingString() const;

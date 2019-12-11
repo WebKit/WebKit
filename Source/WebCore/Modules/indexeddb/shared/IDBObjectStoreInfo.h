@@ -47,7 +47,7 @@ public:
 
     void rename(const String& newName) { m_name = newName; }
 
-    IDBObjectStoreInfo isolatedCopy() const;
+    WEBCORE_EXPORT IDBObjectStoreInfo isolatedCopy() const;
 
     IDBIndexInfo createNewIndex(const String& name, IDBKeyPath&&, bool unique, bool multiEntry);
     void addExistingIndex(const IDBIndexInfo&);

@@ -74,7 +74,7 @@ public:
     
     IDBConnectionIdentifier connectionIdentifier() const { return m_idbConnectionIdentifier; }
 
-    IDBResourceIdentifier isolatedCopy() const;
+    WEBCORE_EXPORT IDBResourceIdentifier isolatedCopy() const;
 
 #if !LOG_DISABLED
     String loggingString() const;

@@ -64,7 +64,7 @@ public:
     bool isDirectionForward() const;
     CursorDuplicity duplicity() const;
 
-    IDBCursorInfo isolatedCopy() const;
+    WEBCORE_EXPORT IDBCursorInfo isolatedCopy() const;
 
     WEBCORE_EXPORT IDBCursorInfo();
     template<class Encoder> void encode(Encoder&) const;

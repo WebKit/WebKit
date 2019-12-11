@@ -45,7 +45,7 @@ public:
     IDBValue(const ThreadSafeDataBuffer&, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths);
 
     void setAsIsolatedCopy(const IDBValue&);
-    IDBValue isolatedCopy() const;
+    WEBCORE_EXPORT IDBValue isolatedCopy() const;
 
     const ThreadSafeDataBuffer& data() const { return m_data; }
     const Vector<String>& blobURLs() const { return m_blobURLs; }

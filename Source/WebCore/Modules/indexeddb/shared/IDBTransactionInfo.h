@@ -56,7 +56,7 @@ public:
     enum IsolatedCopyTag { IsolatedCopy };
     IDBTransactionInfo(const IDBTransactionInfo&, IsolatedCopyTag);
 
-    IDBTransactionInfo isolatedCopy() const;
+    WEBCORE_EXPORT IDBTransactionInfo isolatedCopy() const;
 
     const IDBResourceIdentifier& identifier() const { return m_identifier; }
 

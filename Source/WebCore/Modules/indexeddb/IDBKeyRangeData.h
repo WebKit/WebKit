@@ -68,7 +68,7 @@ struct IDBKeyRangeData {
         upperOpen = keyRange->upperOpen();
     }
 
-    IDBKeyRangeData isolatedCopy() const;
+    WEBCORE_EXPORT IDBKeyRangeData isolatedCopy() const;
 
     WEBCORE_EXPORT RefPtr<IDBKeyRange> maybeCreateIDBKeyRange() const;
 
