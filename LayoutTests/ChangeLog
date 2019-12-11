@@ -1,3 +1,12 @@
+2019-12-10  Peng Liu  <peng.liu6@apple.com>
+
+        Create a TestExpectations file for the GPU process related work
+        https://bugs.webkit.org/show_bug.cgi?id=205088
+
+        Reviewed by Tim Horton.
+
+        * gpu-process/TestExpectations: Added.
+
 2019-12-10  youenn fablet  <youenn@apple.com>
 
         Mark some WPT test folders as DumpJSConsoleLogInStdErr
