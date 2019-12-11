@@ -28,6 +28,7 @@
 #pragma once
 
 #include "AffineTransform.h"
+#include "Image.h"
 
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
