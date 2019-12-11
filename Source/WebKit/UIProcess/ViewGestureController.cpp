@@ -163,6 +163,7 @@ bool ViewGestureController::canSwipeInDirection(SwipeDirection direction) const
 
 void ViewGestureController::didStartProvisionalOrSameDocumentLoadForMainFrame()
 {
+    m_didStartProvisionalLoad = true;
     m_snapshotRemovalTracker.resume();
 #if !PLATFORM(IOS_FAMILY)
     requestRenderTreeSizeNotificationIfNeeded();
@@ -565,6 +566,7 @@ void ViewGestureController::willEndSwipeGesture(WebBackForwardListItem& targetIt
         renderTreeSize = snapshot->renderTreeSize();
     auto renderTreeSizeThreshold = renderTreeSize * swipeSnapshotRemovalRenderTreeSizeTargetFraction;
 
+    m_didStartProvisionalLoad = false;
     m_webPageProxy.goToBackForwardItem(targetItem);
 
     auto* currentItem = m_webPageProxy.backForwardList().currentItem();

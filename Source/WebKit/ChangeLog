@@ -1,3 +1,25 @@
+2019-12-11  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Issue load sooner on swipe back/forward navigation
+        https://bugs.webkit.org/show_bug.cgi?id=205127
+        <rdar://problem/57843862>
+
+        Reviewed by Tim Horton.
+
+        Issue load sooner on swipe back/forward navigation on iOS. We were waiting until the end of
+        the swipe animation to issue the load. We now issue the load as soon as the user lifts the finger
+        off the screen and thus commits to navigating. This results in improved perceived performance
+        when swiping back/forward to navigate.
+
+        * UIProcess/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::didStartProvisionalOrSameDocumentLoadForMainFrame):
+        (WebKit::ViewGestureController::willEndSwipeGesture):
+        * UIProcess/ViewGestureController.h:
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::willEndSwipeGesture):
+        (WebKit::ViewGestureController::endSwipeGesture):
+
 2019-12-11  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: Introduce WebIDBServer class
