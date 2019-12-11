@@ -125,7 +125,7 @@ public:
     void canPlayFastReverseDidChange(bool);
     void canPlayFastForwardDidChange(bool);
 
-    void setBufferingPolicy(MediaPlayerEnums::BufferingPolicy) override;
+    void setBufferingPolicy(MediaPlayer::BufferingPolicy) override;
 
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     void outputMediaDataWillChange(AVPlayerItemVideoOutput*);

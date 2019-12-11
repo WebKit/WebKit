@@ -67,8 +67,8 @@ MediaPlayerPrivateMediaFoundation::MediaPlayerPrivateMediaFoundation(MediaPlayer
     , m_hasVideo(false)
     , m_preparingToPlay(false)
     , m_volume(1.0)
-    , m_networkState(MediaPlayer::Empty)
-    , m_readyState(MediaPlayer::HaveNothing)
+    , m_networkState(MediaPlayer::NetworkState::Empty)
+    , m_readyState(MediaPlayer::ReadyState::HaveNothing)
 {
     createSession();
 }
@@ -126,12 +126,12 @@ void MediaPlayerPrivateMediaFoundation::getSupportedTypes(HashSet<String, ASCIIC
 MediaPlayer::SupportsType MediaPlayerPrivateMediaFoundation::supportsType(const MediaEngineSupportParameters& parameters)
 {
     if (parameters.type.isEmpty())
-        return MediaPlayer::IsNotSupported;
+        return MediaPlayer::SupportsType::IsNotSupported;
 
     if (mimeTypeCache().contains(parameters.type.containerType()))
-        return MediaPlayer::IsSupported;
+        return MediaPlayer::SupportsType::IsSupported;
 
-    return MediaPlayer::IsNotSupported;
+    return MediaPlayer::SupportsType::IsNotSupported;
 }
 
 void MediaPlayerPrivateMediaFoundation::load(const String& url)
@@ -143,9 +143,9 @@ void MediaPlayerPrivateMediaFoundation::load(const String& url)
 
     startCreateMediaSource(url);
 
-    m_networkState = MediaPlayer::Loading;
+    m_networkState = MediaPlayer::NetworkState::Loading;
     m_player->networkStateChanged();
-    m_readyState = MediaPlayer::HaveNothing;
+    m_readyState = MediaPlayer::ReadyState::HaveNothing;
     m_player->readyStateChanged();
 }
 
@@ -731,15 +731,15 @@ void MediaPlayerPrivateMediaFoundation::updateReadyState()
 
     MediaPlayer::ReadyState oldReadyState = m_readyState;
     if (percentageOfPlaybackBufferFilled >= 100) {
-        m_readyState = MediaPlayer::HaveEnoughData;
+        m_readyState = MediaPlayer::ReadyState::HaveEnoughData;
         if (m_preparingToPlay) {
             pause();
             m_preparingToPlay = false;
         }
     } else if (percentageOfPlaybackBufferFilled > 0)
-        m_readyState = MediaPlayer::HaveFutureData;
+        m_readyState = MediaPlayer::ReadyState::HaveFutureData;
     else
-        m_readyState = MediaPlayer::HaveCurrentData;
+        m_readyState = MediaPlayer::ReadyState::HaveCurrentData;
 
     if (m_readyState != oldReadyState)
         m_player->readyStateChanged();
@@ -799,7 +799,7 @@ void MediaPlayerPrivateMediaFoundation::onSessionStarted()
 
 void MediaPlayerPrivateMediaFoundation::onSessionEnded()
 {
-    m_networkState = MediaPlayer::Loaded;
+    m_networkState = MediaPlayer::NetworkState::Loaded;
     m_player->networkStateChanged();
 
     m_paused = true;

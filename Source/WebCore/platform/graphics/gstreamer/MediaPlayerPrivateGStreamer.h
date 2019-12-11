@@ -309,7 +309,7 @@ protected:
 #endif
 
     void timeChanged();
-    void loadingFailed(MediaPlayer::NetworkState, MediaPlayer::ReadyState = MediaPlayer::HaveNothing, bool forceNotifications = false);
+    void loadingFailed(MediaPlayer::NetworkState, MediaPlayer::ReadyState = MediaPlayer::ReadyState::HaveNothing, bool forceNotifications = false);
     void loadStateChanged();
 
 #if USE(TEXTURE_MAPPER_GL)
@@ -347,8 +347,8 @@ protected:
     GRefPtr<GstElement> m_pipeline;
     IntSize m_size;
 
-    MediaPlayer::ReadyState m_readyState { MediaPlayer::HaveNothing };
-    mutable MediaPlayer::NetworkState m_networkState { MediaPlayer::Empty };
+    MediaPlayer::ReadyState m_readyState { MediaPlayer::ReadyState::HaveNothing };
+    mutable MediaPlayer::NetworkState m_networkState { MediaPlayer::NetworkState::Empty };
 
     mutable Lock m_sampleMutex;
     GRefPtr<GstSample> m_sample;

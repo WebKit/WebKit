@@ -334,13 +334,13 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
     if (![_avPlayerController delegate])
         return;
 
-    WebCore::MediaPlayerEnums::VideoGravity gravity = WebCore::MediaPlayerEnums::VideoGravityResizeAspect;
+    MediaPlayerEnums::VideoGravity gravity = MediaPlayerEnums::VideoGravity::ResizeAspect;
     if (videoGravity == AVLayerVideoGravityResize)
-        gravity = WebCore::MediaPlayerEnums::VideoGravityResize;
+        gravity = MediaPlayerEnums::VideoGravity::Resize;
     if (videoGravity == AVLayerVideoGravityResizeAspect)
-        gravity = WebCore::MediaPlayerEnums::VideoGravityResizeAspect;
+        gravity = MediaPlayerEnums::VideoGravity::ResizeAspect;
     else if (videoGravity == AVLayerVideoGravityResizeAspectFill)
-        gravity = WebCore::MediaPlayerEnums::VideoGravityResizeAspectFill;
+        gravity = MediaPlayerEnums::VideoGravity::ResizeAspectFill;
     else
         ASSERT_NOT_REACHED();
     

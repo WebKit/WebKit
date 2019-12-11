@@ -131,12 +131,12 @@ MediaPlayer::SupportsType MediaPlayerPrivateHolePunch::supportsType(const MediaE
     // Spec says we should not return "probably" if the codecs string is empty.
     if (!containerType.isEmpty() && mimeTypeCache().contains(containerType)) {
         if (parameters.type.codecs().isEmpty())
-            return MediaPlayer::MayBeSupported;
+            return MediaPlayer::SupportsType::MayBeSupported;
 
-        return MediaPlayer::IsSupported;
+        return MediaPlayer::SupportsType::IsSupported;
     }
 
-    return MediaPlayer::IsNotSupported;
+    return MediaPlayer::SupportsType::IsNotSupported;
 }
 
 void MediaPlayerPrivateHolePunch::registerMediaEngine(MediaEngineRegistrar registrar)

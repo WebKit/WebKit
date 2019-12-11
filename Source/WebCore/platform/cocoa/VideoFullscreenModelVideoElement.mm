@@ -148,7 +148,7 @@ void VideoFullscreenModelVideoElement::requestFullscreenMode(HTMLMediaElementEnu
     if (m_videoElement && m_videoElement->fullscreenMode() != mode)
         m_videoElement->setFullscreenMode(mode);
 
-    if (m_videoElement && finishedWithMedia && mode == MediaPlayerEnums::VideoFullscreenModeNone) {
+    if (m_videoElement && finishedWithMedia && mode == MediaPlayer::VideoFullscreenModeNone) {
         if (m_videoElement->document().isMediaDocument()) {
             if (auto* window = m_videoElement->document().domWindow())
                 window->history().back();
@@ -164,7 +164,7 @@ void VideoFullscreenModelVideoElement::setVideoLayerFrame(FloatRect rect)
         m_videoElement->setVideoFullscreenFrame(rect);
 }
 
-void VideoFullscreenModelVideoElement::setVideoLayerGravity(MediaPlayerEnums::VideoGravity gravity)
+void VideoFullscreenModelVideoElement::setVideoLayerGravity(MediaPlayer::VideoGravity gravity)
 {
     m_videoElement->setVideoFullscreenGravity(gravity);
 }

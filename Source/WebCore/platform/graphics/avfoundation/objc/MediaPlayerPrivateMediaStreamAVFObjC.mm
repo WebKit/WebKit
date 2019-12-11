@@ -240,7 +240,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::getSupportedTypes(HashSet<String, ASC
 
 MediaPlayer::SupportsType MediaPlayerPrivateMediaStreamAVFObjC::supportsType(const MediaEngineSupportParameters& parameters)
 {
-    return parameters.isMediaStream ? MediaPlayer::IsSupported : MediaPlayer::IsNotSupported;
+    return parameters.isMediaStream ? MediaPlayer::SupportsType::IsSupported : MediaPlayer::SupportsType::IsNotSupported;
 }
 
 #pragma mark -
@@ -526,7 +526,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::load(const String&)
 {
     // This media engine only supports MediaStream URLs.
     scheduleDeferredTask([this] {
-        setNetworkState(MediaPlayer::FormatError);
+        setNetworkState(MediaPlayer::NetworkState::FormatError);
     });
 }
 
@@ -535,7 +535,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::load(const String&, MediaSourcePrivat
 {
     // This media engine only supports MediaStream URLs.
     scheduleDeferredTask([this] {
-        setNetworkState(MediaPlayer::FormatError);
+        setNetworkState(MediaPlayer::NetworkState::FormatError);
     });
 }
 #endif
@@ -552,7 +552,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::load(MediaStreamPrivate& stream)
 
     scheduleDeferredTask([this] {
         updateTracks();
-        setNetworkState(MediaPlayer::Idle);
+        setNetworkState(MediaPlayer::NetworkState::Idle);
         updateReadyState();
     });
 }

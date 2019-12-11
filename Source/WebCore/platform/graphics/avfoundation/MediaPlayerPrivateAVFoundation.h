@@ -166,7 +166,7 @@ protected:
     void load(const String&, MediaSourcePrivateClient*) override;
 #endif
 #if ENABLE(MEDIA_STREAM)
-    void load(MediaStreamPrivate&) override { setNetworkState(MediaPlayer::FormatError); }
+    void load(MediaStreamPrivate&) override { setNetworkState(MediaPlayer::NetworkState::FormatError); }
 #endif
     void cancelLoad() override = 0;
 
@@ -295,7 +295,7 @@ protected:
     MediaRenderingMode currentRenderingMode() const;
     MediaRenderingMode preferredRenderingMode() const;
 
-    bool metaDataAvailable() const { return m_readyState >= MediaPlayer::HaveMetadata; }
+    bool metaDataAvailable() const { return m_readyState >= MediaPlayer::ReadyState::HaveMetadata; }
     double requestedRate() const;
     MediaTime maxTimeLoaded() const;
     bool isReadyForVideoSetup() const;

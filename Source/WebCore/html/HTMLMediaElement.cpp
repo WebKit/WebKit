@@ -817,13 +817,13 @@ void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomStrin
         updateSleepDisabling();
     else if (name == preloadAttr) {
         if (equalLettersIgnoringASCIICase(value, "none"))
-            m_preload = MediaPlayer::None;
+            m_preload = MediaPlayer::Preload::None;
         else if (equalLettersIgnoringASCIICase(value, "metadata"))
-            m_preload = MediaPlayer::MetaData;
+            m_preload = MediaPlayer::Preload::MetaData;
         else {
             // The spec does not define an "invalid value default" but "auto" is suggested as the
             // "missing value default", so use it for everything except "none" and "metadata"
-            m_preload = MediaPlayer::Auto;
+            m_preload = MediaPlayer::Preload::Auto;
         }
 
         // The attribute must be ignored if the autoplay attribute is present
@@ -1156,13 +1156,13 @@ String HTMLMediaElement::canPlayType(const String& mimeType) const
     // 4.8.10.3
     switch (support)
     {
-        case MediaPlayer::IsNotSupported:
+        case MediaPlayer::SupportsType::IsNotSupported:
             canPlay = emptyString();
             break;
-        case MediaPlayer::MayBeSupported:
+        case MediaPlayer::SupportsType::MayBeSupported:
             canPlay = "maybe"_s;
             break;
-        case MediaPlayer::IsSupported:
+        case MediaPlayer::SupportsType::IsSupported:
             canPlay = "probably"_s;
             break;
     }
@@ -1447,13 +1447,13 @@ void HTMLMediaElement::selectMediaResource()
             //    attribute was last changed.
             URL absoluteURL = getNonEmptyURLAttribute(srcAttr);
             if (absoluteURL.isEmpty()) {
-                mediaLoadingFailed(MediaPlayer::FormatError);
+                mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
                 ALWAYS_LOG(logSiteIdentifier, "empty 'src'");
                 return;
             }
 
             if (!isSafeToLoadURL(absoluteURL, Complain) || !dispatchBeforeLoadEvent(absoluteURL.string())) {
-                mediaLoadingFailed(MediaPlayer::FormatError);
+                mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
                 return;
             }
 
@@ -1509,26 +1509,26 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
 
     RefPtr<Frame> frame = document().frame();
     if (!frame) {
-        mediaLoadingFailed(MediaPlayer::FormatError);
+        mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
         return;
     }
 
     Page* page = frame->page();
     if (!page) {
-        mediaLoadingFailed(MediaPlayer::FormatError);
+        mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
         return;
     }
 
     URL url = initialURL;
     if (!url.isEmpty() && !frame->loader().willLoadMediaElementURL(url, *this)) {
-        mediaLoadingFailed(MediaPlayer::FormatError);
+        mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
         return;
     }
 
 #if ENABLE(CONTENT_EXTENSIONS)
     if (auto documentLoader = makeRefPtr(frame->loader().documentLoader())) {
         if (page->userContentProvider().processContentRuleListsForLoad(url, ContentExtensions::ResourceType::Media, *documentLoader).summary.blockedLoad) {
-            mediaLoadingFailed(MediaPlayer::FormatError);
+            mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
             return;
         }
     }
@@ -1543,7 +1543,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
         // Resources that are not present in the manifest will always fail to load (at least, after the
         // cache has been primed the first time), making the testing of offline applications simpler.
         if (!resource || resource->path().isEmpty()) {
-            mediaLoadingFailed(MediaPlayer::NetworkError);
+            mediaLoadingFailed(MediaPlayer::NetworkState::NetworkError);
             return;
         }
     }
@@ -1597,7 +1597,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
             // Forget our reference to the MediaSource, so we leave it alone
             // while processing remainder of load failure.
             m_mediaSource = nullptr;
-            mediaLoadingFailed(MediaPlayer::FormatError);
+            mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
         }
     }
 #endif
@@ -1606,7 +1606,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
         loadAttempted = true;
         ALWAYS_LOG(LOGIDENTIFIER, "loading media stream blob");
         if (!m_player->load(m_mediaStreamSrcObject->privateStream()))
-            mediaLoadingFailed(MediaPlayer::FormatError);
+            mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
     }
 #endif
 
@@ -1614,11 +1614,11 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
         loadAttempted = true;
         ALWAYS_LOG(LOGIDENTIFIER, "loading generic blob");
         if (!m_player->load(m_blob->url(), contentType, keySystem))
-            mediaLoadingFailed(MediaPlayer::FormatError);
+            mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
     }
 
     if (!loadAttempted && !m_player->load(url, contentType, keySystem))
-        mediaLoadingFailed(MediaPlayer::FormatError);
+        mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
 
     // If there is no poster to display, allow the media engine to render video frames as soon as
     // they are available.
@@ -2214,9 +2214,9 @@ void HTMLMediaElement::mediaLoadingFailedFatally(MediaPlayer::NetworkState error
 
     // 2 - Set the error attribute to a new MediaError object whose code attribute is
     // set to MEDIA_ERR_NETWORK/MEDIA_ERR_DECODE.
-    if (error == MediaPlayer::NetworkError)
+    if (error == MediaPlayer::NetworkState::NetworkError)
         m_error = MediaError::create(MediaError::MEDIA_ERR_NETWORK);
-    else if (error == MediaPlayer::DecodeError)
+    else if (error == MediaPlayer::NetworkState::DecodeError)
         m_error = MediaError::create(MediaError::MEDIA_ERR_DECODE);
     else
         ASSERT_NOT_REACHED();
@@ -2285,20 +2285,6 @@ static void logMediaLoadRequest(Page* page, const String& mediaEngine, const Str
     page->sawMediaEngine(mediaEngine);
 }
 
-static String stringForNetworkState(MediaPlayer::NetworkState state)
-{
-    switch (state) {
-    case MediaPlayer::Empty: return "Empty"_s;
-    case MediaPlayer::Idle: return "Idle"_s;
-    case MediaPlayer::Loading: return "Loading"_s;
-    case MediaPlayer::Loaded: return "Loaded"_s;
-    case MediaPlayer::FormatError: return "FormatError"_s;
-    case MediaPlayer::NetworkError: return "NetworkError"_s;
-    case MediaPlayer::DecodeError: return "DecodeError"_s;
-    default: return emptyString();
-    }
-}
-
 void HTMLMediaElement::mediaLoadingFailed(MediaPlayer::NetworkState error)
 {
     stopPeriodicTimers();
@@ -2330,9 +2316,9 @@ void HTMLMediaElement::mediaLoadingFailed(MediaPlayer::NetworkState error)
         return;
     }
 
-    if ((error == MediaPlayer::NetworkError && m_readyState >= HAVE_METADATA) || error == MediaPlayer::DecodeError)
+    if ((error == MediaPlayer::NetworkState::NetworkError && m_readyState >= HAVE_METADATA) || error == MediaPlayer::NetworkState::DecodeError)
         mediaLoadingFailedFatally(error);
-    else if ((error == MediaPlayer::FormatError || error == MediaPlayer::NetworkError) && m_loadState == LoadingFromSrcAttr)
+    else if ((error == MediaPlayer::NetworkState::FormatError || error == MediaPlayer::NetworkState::NetworkError) && m_loadState == LoadingFromSrcAttr)
         noneSupported();
 
     updateDisplayState();
@@ -2343,7 +2329,7 @@ void HTMLMediaElement::mediaLoadingFailed(MediaPlayer::NetworkState error)
 
     ERROR_LOG(LOGIDENTIFIER, "error = ", static_cast<int>(error));
 
-    logMediaLoadRequest(document().page(), String(), stringForNetworkState(error), false);
+    logMediaLoadRequest(document().page(), String(), convertEnumerationToString(error), false);
 
     m_mediaSession->clientCharacteristicsChanged();
 }
@@ -2353,18 +2339,18 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
     if (static_cast<int>(state) != static_cast<int>(m_networkState))
         ALWAYS_LOG(LOGIDENTIFIER, "new state = ", state, ", current state = ", m_networkState);
 
-    if (state == MediaPlayer::Empty) {
+    if (state == MediaPlayer::NetworkState::Empty) {
         // Just update the cached state and leave, we can't do anything.
         m_networkState = NETWORK_EMPTY;
         return;
     }
 
-    if (state == MediaPlayer::FormatError || state == MediaPlayer::NetworkError || state == MediaPlayer::DecodeError) {
+    if (state == MediaPlayer::NetworkState::FormatError || state == MediaPlayer::NetworkState::NetworkError || state == MediaPlayer::NetworkState::DecodeError) {
         mediaLoadingFailed(state);
         return;
     }
 
-    if (state == MediaPlayer::Idle) {
+    if (state == MediaPlayer::NetworkState::Idle) {
         if (m_networkState > NETWORK_IDLE) {
             changeNetworkStateFromLoadingToIdle();
             setShouldDelayLoadEvent(false);
@@ -2373,13 +2359,13 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
         }
     }
 
-    if (state == MediaPlayer::Loading) {
+    if (state == MediaPlayer::NetworkState::Loading) {
         if (m_networkState < NETWORK_LOADING || m_networkState == NETWORK_NO_SOURCE)
             startProgressEventTimer();
         m_networkState = NETWORK_LOADING;
     }
 
-    if (state == MediaPlayer::Loaded) {
+    if (state == MediaPlayer::NetworkState::Loaded) {
         if (m_networkState != NETWORK_IDLE)
             changeNetworkStateFromLoadingToIdle();
         m_completelyLoaded = true;
@@ -3026,7 +3012,7 @@ void HTMLMediaElement::seekWithTolerance(const MediaTime& inTime, const MediaTim
         return;
 
     // If the media engine has been told to postpone loading data, let it go ahead now.
-    if (m_preload < MediaPlayer::Auto && m_readyState < HAVE_FUTURE_DATA)
+    if (m_preload < MediaPlayer::Preload::Auto && m_readyState < HAVE_FUTURE_DATA)
         prepareToPlay();
 
     // Get the current time before setting m_seeking, m_lastSeekTime is returned once it is set.
@@ -3198,7 +3184,7 @@ HTMLMediaElement::ReadyState HTMLMediaElement::readyState() const
 
 MediaPlayer::MovieLoadType HTMLMediaElement::movieLoadType() const
 {
-    return m_player ? m_player->movieLoadType() : MediaPlayer::Unknown;
+    return m_player ? m_player->movieLoadType() : MediaPlayer::MovieLoadType::Unknown;
 }
 
 bool HTMLMediaElement::hasAudio() const
@@ -3494,11 +3480,11 @@ String HTMLMediaElement::preload() const
 #endif
 
     switch (m_preload) {
-    case MediaPlayer::None:
+    case MediaPlayer::Preload::None:
         return "none"_s;
-    case MediaPlayer::MetaData:
+    case MediaPlayer::Preload::MetaData:
         return "metadata"_s;
-    case MediaPlayer::Auto:
+    case MediaPlayer::Preload::Auto:
         return "auto"_s;
     }
 
@@ -4733,7 +4719,7 @@ URL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* ke
             if (!document().settings().allowMediaContentTypesRequiringHardwareSupportAsFallback() || Traversal<HTMLSourceElement>::nextSkippingChildren(source))
                 parameters.contentTypesRequiringHardwareSupport = mediaContentTypesRequiringHardwareSupport();
 
-            if (!MediaPlayer::supportsType(parameters))
+            if (MediaPlayer::supportsType(parameters) == MediaPlayer::SupportsType::IsNotSupported)
                 goto CheckAgain;
         }
 
@@ -5070,7 +5056,7 @@ void HTMLMediaElement::mediaPlayerResourceNotSupported()
     INFO_LOG(LOGIDENTIFIER);
 
     // The MediaPlayer came across content which no installed engine supports.
-    mediaLoadingFailed(MediaPlayer::FormatError);
+    mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
 }
 
 // MediaPlayerPresentation methods

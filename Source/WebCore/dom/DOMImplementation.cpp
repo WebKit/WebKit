@@ -159,7 +159,7 @@ Ref<Document> DOMImplementation::createDocument(const String& type, Frame* frame
     MediaEngineSupportParameters parameters;
     parameters.type = ContentType { type };
     parameters.url = url;
-    if (MediaPlayer::supportsType(parameters))
+    if (MediaPlayer::supportsType(parameters) != MediaPlayer::SupportsType::IsNotSupported)
         return MediaDocument::create(frame, url);
 #endif
 

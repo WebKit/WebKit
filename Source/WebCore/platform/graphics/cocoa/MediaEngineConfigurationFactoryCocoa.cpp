@@ -57,7 +57,7 @@ void createMediaPlayerDecodingConfigurationCocoa(MediaDecodingConfiguration&& co
         MediaEngineSupportParameters parameters { };
         parameters.type = ContentType(videoConfiguration.contentType);
         parameters.isMediaSource = configuration.type == MediaDecodingType::MediaSource;
-        if (MediaPlayer::supportsType(parameters) != MediaPlayer::IsSupported) {
+        if (MediaPlayer::supportsType(parameters) != MediaPlayer::SupportsType::IsSupported) {
             callback({{ }, WTFMove(configuration)});
             return;
         }
@@ -108,7 +108,7 @@ void createMediaPlayerDecodingConfigurationCocoa(MediaDecodingConfiguration&& co
         MediaEngineSupportParameters parameters { };
         parameters.type = ContentType(configuration.audio.value().contentType);
         parameters.isMediaSource = configuration.type == MediaDecodingType::MediaSource;
-        if (MediaPlayer::supportsType(parameters) != MediaPlayer::IsSupported) {
+        if (MediaPlayer::supportsType(parameters) != MediaPlayer::SupportsType::IsSupported) {
             callback({{ }, WTFMove(configuration)});
             return;
         }

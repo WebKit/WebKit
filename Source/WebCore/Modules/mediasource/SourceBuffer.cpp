@@ -883,8 +883,8 @@ void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& en
         // 3.4 If this object is in activeSourceBuffers, the current playback position is greater than or equal to start
         // and less than the remove end timestamp, and HTMLMediaElement.readyState is greater than HAVE_METADATA, then set
         // the HTMLMediaElement.readyState attribute to HAVE_METADATA and stall playback.
-        if (m_active && currentMediaTime >= start && currentMediaTime < end && m_private->readyState() > MediaPlayer::HaveMetadata)
-            m_private->setReadyState(MediaPlayer::HaveMetadata);
+        if (m_active && currentMediaTime >= start && currentMediaTime < end && m_private->readyState() > MediaPlayer::ReadyState::HaveMetadata)
+            m_private->setReadyState(MediaPlayer::ReadyState::HaveMetadata);
     }
     
     updateBufferedFromTrackBuffers();
@@ -1285,7 +1285,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(const Init
     m_pendingInitializationSegmentForChangeType = false;
 
     // 6. If the HTMLMediaElement.readyState attribute is HAVE_NOTHING, then run the following steps:
-    if (m_private->readyState() == MediaPlayer::HaveNothing) {
+    if (m_private->readyState() == MediaPlayer::ReadyState::HaveNothing) {
         // 6.1 If one or more objects in sourceBuffers have first initialization segment flag set to false, then abort these steps.
         for (auto& sourceBuffer : *m_source->sourceBuffers()) {
             if (!sourceBuffer->m_receivedFirstInitializationSegment)
@@ -1294,14 +1294,14 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(const Init
 
         // 6.2 Set the HTMLMediaElement.readyState attribute to HAVE_METADATA.
         // 6.3 Queue a task to fire a simple event named loadedmetadata at the media element.
-        m_private->setReadyState(MediaPlayer::HaveMetadata);
+        m_private->setReadyState(MediaPlayer::ReadyState::HaveMetadata);
     }
 
     // 7. If the active track flag equals true and the HTMLMediaElement.readyState
     // attribute is greater than HAVE_CURRENT_DATA, then set the HTMLMediaElement.readyState
     // attribute to HAVE_METADATA.
-    if (activeTrackFlag && m_private->readyState() > MediaPlayer::HaveCurrentData)
-        m_private->setReadyState(MediaPlayer::HaveMetadata);
+    if (activeTrackFlag && m_private->readyState() > MediaPlayer::ReadyState::HaveCurrentData)
+        m_private->setReadyState(MediaPlayer::ReadyState::HaveMetadata);
 }
 
 bool SourceBuffer::validateInitializationSegment(const InitializationSegment& segment)

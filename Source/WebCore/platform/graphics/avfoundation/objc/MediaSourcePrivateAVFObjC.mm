@@ -82,7 +82,7 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateAVFObjC::addSourceBuffer(const C
     MediaEngineSupportParameters parameters;
     parameters.isMediaSource = true;
     parameters.type = contentType;
-    if (MediaPlayerPrivateMediaSourceAVFObjC::supportsType(parameters) == MediaPlayer::IsNotSupported)
+    if (MediaPlayerPrivateMediaSourceAVFObjC::supportsType(parameters) == MediaPlayer::SupportsType::IsNotSupported)
         return NotSupported;
 
     auto newSourceBuffer = SourceBufferPrivateAVFObjC::create(this);
@@ -131,7 +131,7 @@ void MediaSourcePrivateAVFObjC::durationChanged()
 void MediaSourcePrivateAVFObjC::markEndOfStream(EndOfStreamStatus status)
 {
     if (status == EosNoError)
-        m_player->setNetworkState(MediaPlayer::Loaded);
+        m_player->setNetworkState(MediaPlayer::NetworkState::Loaded);
     m_isEnded = true;
 }
 

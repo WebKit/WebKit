@@ -151,7 +151,7 @@ public:
 
     virtual void setPreload(MediaPlayer::Preload) { }
 
-    virtual bool hasAvailableVideoFrame() const { return readyState() >= MediaPlayer::HaveCurrentData; }
+    virtual bool hasAvailableVideoFrame() const { return readyState() >= MediaPlayer::ReadyState::HaveCurrentData; }
 
     virtual bool canLoadPoster() const { return false; }
     virtual void setPoster(const String&) { }
@@ -192,7 +192,7 @@ public:
     virtual bool didPassCORSAccessCheck() const { return false; }
     virtual Optional<bool> wouldTaintOrigin(const SecurityOrigin&) const { return WTF::nullopt; }
 
-    virtual MediaPlayer::MovieLoadType movieLoadType() const { return MediaPlayer::Unknown; }
+    virtual MediaPlayer::MovieLoadType movieLoadType() const { return MediaPlayer::MovieLoadType::Unknown; }
 
     virtual void prepareForRendering() { }
 

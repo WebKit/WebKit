@@ -195,7 +195,7 @@ enum class PIPState {
     [_pipViewController setPlaying:_playing];
     [self setVideoDimensions:NSEqualSizes(_videoDimensions, NSZeroSize) ? frame.size : _videoDimensions];
     if (_videoFullscreenInterfaceMac && _videoFullscreenInterfaceMac->videoFullscreenModel())
-        _videoFullscreenInterfaceMac->videoFullscreenModel()->setVideoLayerGravity(MediaPlayerEnums::VideoGravityResizeAspectFill);
+        _videoFullscreenInterfaceMac->videoFullscreenModel()->setVideoLayerGravity(MediaPlayerEnums::VideoGravity::ResizeAspectFill);
 
     _videoViewContainer = adoptNS([[WebVideoViewContainer alloc] initWithFrame:frame]);
     [_videoViewContainer setVideoViewContainerDelegate:self];
@@ -302,7 +302,7 @@ enum class PIPState {
             context.allowsImplicitAnimation = NO;
             [_videoViewContainer setFrame:_returningRect];
             _videoFullscreenInterfaceMac->videoFullscreenModel()->setVideoLayerFrame([_videoViewContainer bounds]);
-            _videoFullscreenInterfaceMac->videoFullscreenModel()->setVideoLayerGravity(MediaPlayerEnums::VideoGravityResizeAspect);
+            _videoFullscreenInterfaceMac->videoFullscreenModel()->setVideoLayerGravity(MediaPlayerEnums::VideoGravity::ResizeAspect);
 
             [[_returningWindow contentView] addSubview:_videoViewContainer.get() positioned:NSWindowAbove relativeTo:nil];
         } completionHandler:nil];
@@ -311,7 +311,7 @@ enum class PIPState {
     if (!self.isExitingToStandardFullscreen) {
         if (VideoFullscreenModel* videoFullscreenModel = _videoFullscreenInterfaceMac->videoFullscreenModel()) {
             videoFullscreenModel->didExitPictureInPicture();
-            videoFullscreenModel->setVideoLayerGravity(MediaPlayerEnums::VideoGravityResizeAspect);
+            videoFullscreenModel->setVideoLayerGravity(MediaPlayerEnums::VideoGravity::ResizeAspect);
         }
     }
 

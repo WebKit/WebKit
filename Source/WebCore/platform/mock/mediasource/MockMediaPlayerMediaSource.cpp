@@ -62,27 +62,27 @@ void MockMediaPlayerMediaSource::getSupportedTypes(HashSet<String, ASCIICaseInse
 MediaPlayer::SupportsType MockMediaPlayerMediaSource::supportsType(const MediaEngineSupportParameters& parameters)
 {
     if (!parameters.isMediaSource)
-        return MediaPlayer::IsNotSupported;
+        return MediaPlayer::SupportsType::IsNotSupported;
 
     auto containerType = parameters.type.containerType();
     if (containerType.isEmpty() || !mimeTypeCache().contains(containerType))
-        return MediaPlayer::IsNotSupported;
+        return MediaPlayer::SupportsType::IsNotSupported;
 
     auto codecs = parameters.type.parameter(ContentType::codecsParameter());
     if (codecs.isEmpty())
-        return MediaPlayer::MayBeSupported;
+        return MediaPlayer::SupportsType::MayBeSupported;
 
     if (codecs == "mock" || codecs == "kcom")
-        return MediaPlayer::IsSupported;
+        return MediaPlayer::SupportsType::IsSupported;
 
-    return MediaPlayer::MayBeSupported;
+    return MediaPlayer::SupportsType::MayBeSupported;
 }
 
 MockMediaPlayerMediaSource::MockMediaPlayerMediaSource(MediaPlayer* player)
     : m_player(player)
     , m_currentTime(MediaTime::zeroTime())
-    , m_readyState(MediaPlayer::HaveNothing)
-    , m_networkState(MediaPlayer::Empty)
+    , m_readyState(MediaPlayer::ReadyState::HaveNothing)
+    , m_networkState(MediaPlayer::NetworkState::Empty)
     , m_playing(false)
     , m_seekCompleted(true)
 {

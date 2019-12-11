@@ -703,8 +703,8 @@ MediaPlayer::Preload MediaElementSession::effectivePreloadForElement() const
         return preload;
 
     if (m_restrictions & AutoPreloadingNotPermitted) {
-        if (preload > MediaPlayer::MetaData)
-            return MediaPlayer::MetaData;
+        if (preload > MediaPlayer::Preload::MetaData)
+            return MediaPlayer::Preload::MetaData;
     }
 
     return preload;

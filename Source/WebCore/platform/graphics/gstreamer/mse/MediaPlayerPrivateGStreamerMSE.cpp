@@ -58,11 +58,11 @@
 static const char* dumpReadyState(WebCore::MediaPlayer::ReadyState readyState)
 {
     switch (readyState) {
-    case WebCore::MediaPlayer::HaveNothing: return "HaveNothing";
-    case WebCore::MediaPlayer::HaveMetadata: return "HaveMetadata";
-    case WebCore::MediaPlayer::HaveCurrentData: return "HaveCurrentData";
-    case WebCore::MediaPlayer::HaveFutureData: return "HaveFutureData";
-    case WebCore::MediaPlayer::HaveEnoughData: return "HaveEnoughData";
+    case WebCore::MediaPlayer::ReadyState::HaveNothing: return "HaveNothing";
+    case WebCore::MediaPlayer::ReadyState::HaveMetadata: return "HaveMetadata";
+    case WebCore::MediaPlayer::ReadyState::HaveCurrentData: return "HaveCurrentData";
+    case WebCore::MediaPlayer::ReadyState::HaveFutureData: return "HaveFutureData";
+    case WebCore::MediaPlayer::ReadyState::HaveEnoughData: return "HaveEnoughData";
     default: return "(unknown)";
     }
 }
@@ -113,7 +113,7 @@ void MediaPlayerPrivateGStreamerMSE::load(const String& urlString)
 {
     if (!urlString.startsWith("mediasource")) {
         // Properly fail so the global MediaPlayer tries to fallback to the next MediaPlayerPrivate.
-        m_networkState = MediaPlayer::FormatError;
+        m_networkState = MediaPlayer::NetworkState::FormatError;
         m_player->networkStateChanged();
         return;
     }
@@ -270,7 +270,7 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek()
             m_shouldResetPipeline = true;
             m_isSeeking = false;
             if (!changePipelineState(GST_STATE_PAUSED))
-                loadingFailed(MediaPlayer::Empty);
+                loadingFailed(MediaPlayer::NetworkState::Empty);
             else
                 m_isSeeking = true;
         }
@@ -304,7 +304,7 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek()
             m_isSeeking = false;
             return false;
         }
-        m_readyState = MediaPlayer::HaveMetadata;
+        m_readyState = MediaPlayer::ReadyState::HaveMetadata;
         notifySeekNeedsDataForTime(seekTime);
         ASSERT(!m_mseSeekCompleted);
         return true;
@@ -405,12 +405,12 @@ void MediaPlayerPrivateGStreamerMSE::setReadyState(MediaPlayer::ReadyState ready
         return;
     }
 
-    GST_DEBUG("Ready State Changed manually from %u to %u", m_readyState, readyState);
+    GST_DEBUG("Ready State Changed manually from %u to %u", static_cast<unsigned>(m_readyState), static_cast<unsigned>(readyState));
     MediaPlayer::ReadyState oldReadyState = m_readyState;
     m_readyState = readyState;
     GST_DEBUG("m_readyState: %s -> %s", dumpReadyState(oldReadyState), dumpReadyState(m_readyState));
 
-    if (oldReadyState < MediaPlayer::HaveCurrentData && m_readyState >= MediaPlayer::HaveCurrentData) {
+    if (oldReadyState < MediaPlayer::ReadyState::HaveCurrentData && m_readyState >= MediaPlayer::ReadyState::HaveCurrentData) {
         GST_DEBUG("[Seek] Reporting load state changed to trigger seek continuation");
         loadStateChanged();
     }
@@ -420,7 +420,7 @@ void MediaPlayerPrivateGStreamerMSE::setReadyState(MediaPlayer::ReadyState ready
     GstStateChangeReturn getStateResult = gst_element_get_state(m_pipeline.get(), &pipelineState, nullptr, 250 * GST_NSECOND);
     bool isPlaying = (getStateResult == GST_STATE_CHANGE_SUCCESS && pipelineState == GST_STATE_PLAYING);
 
-    if (m_readyState == MediaPlayer::HaveMetadata && oldReadyState > MediaPlayer::HaveMetadata && isPlaying) {
+    if (m_readyState == MediaPlayer::ReadyState::HaveMetadata && oldReadyState > MediaPlayer::ReadyState::HaveMetadata && isPlaying) {
         GST_TRACE("Changing pipeline to PAUSED...");
         bool ok = changePipelineState(GST_STATE_PAUSED);
         GST_TRACE("Changed pipeline to PAUSED: %s", ok ? "Success" : "Error");
@@ -446,7 +446,7 @@ void MediaPlayerPrivateGStreamerMSE::seekCompleted()
 
     doSeek();
 
-    if (!seeking() && m_readyState >= MediaPlayer::HaveFutureData)
+    if (!seeking() && m_readyState >= MediaPlayer::ReadyState::HaveFutureData)
         changePipelineState(GST_STATE_PLAYING);
 
     if (!seeking())
@@ -506,26 +506,26 @@ void MediaPlayerPrivateGStreamerMSE::updateStates()
         // Update ready and network states.
         switch (state) {
         case GST_STATE_NULL:
-            m_readyState = MediaPlayer::HaveNothing;
+            m_readyState = MediaPlayer::ReadyState::HaveNothing;
             GST_DEBUG("m_readyState=%s", dumpReadyState(m_readyState));
-            m_networkState = MediaPlayer::Empty;
+            m_networkState = MediaPlayer::NetworkState::Empty;
             break;
         case GST_STATE_READY:
-            m_readyState = MediaPlayer::HaveMetadata;
+            m_readyState = MediaPlayer::ReadyState::HaveMetadata;
             GST_DEBUG("m_readyState=%s", dumpReadyState(m_readyState));
-            m_networkState = MediaPlayer::Empty;
+            m_networkState = MediaPlayer::NetworkState::Empty;
             break;
         case GST_STATE_PAUSED:
         case GST_STATE_PLAYING:
             if (seeking()) {
-                m_readyState = MediaPlayer::HaveMetadata;
+                m_readyState = MediaPlayer::ReadyState::HaveMetadata;
                 // FIXME: Should we manage NetworkState too?
                 GST_DEBUG("m_readyState=%s", dumpReadyState(m_readyState));
             } else {
-                if (m_readyState < MediaPlayer::HaveFutureData)
-                    m_readyState = MediaPlayer::HaveFutureData;
+                if (m_readyState < MediaPlayer::ReadyState::HaveFutureData)
+                    m_readyState = MediaPlayer::ReadyState::HaveFutureData;
                 GST_DEBUG("m_readyState=%s", dumpReadyState(m_readyState));
-                m_networkState = MediaPlayer::Loading;
+                m_networkState = MediaPlayer::NetworkState::Loading;
             }
 
             if (m_eosMarked && state == GST_STATE_PLAYING)
@@ -581,10 +581,10 @@ void MediaPlayerPrivateGStreamerMSE::updateStates()
         m_isLiveStream = true;
 
         if (state == GST_STATE_READY) {
-            m_readyState = MediaPlayer::HaveNothing;
+            m_readyState = MediaPlayer::ReadyState::HaveNothing;
             GST_DEBUG("m_readyState=%s", dumpReadyState(m_readyState));
         } else if (state == GST_STATE_PAUSED) {
-            m_readyState = MediaPlayer::HaveEnoughData;
+            m_readyState = MediaPlayer::ReadyState::HaveEnoughData;
             GST_DEBUG("m_readyState=%s", dumpReadyState(m_readyState));
             m_isPaused = true;
         } else if (state == GST_STATE_PLAYING)
@@ -593,7 +593,7 @@ void MediaPlayerPrivateGStreamerMSE::updateStates()
         if (!m_isPaused && m_playbackRate)
             changePipelineState(GST_STATE_PLAYING);
 
-        m_networkState = MediaPlayer::Loading;
+        m_networkState = MediaPlayer::NetworkState::Loading;
         break;
     default:
         GST_DEBUG("Else : %d", getStateResult);
@@ -606,11 +606,11 @@ void MediaPlayerPrivateGStreamerMSE::updateStates()
         m_player->playbackStateChanged();
 
     if (m_networkState != oldNetworkState) {
-        GST_DEBUG("Network State Changed from %u to %u", oldNetworkState, m_networkState);
+        GST_DEBUG("Network State Changed from %u to %u", static_cast<unsigned>(oldNetworkState), static_cast<unsigned>(m_networkState));
         m_player->networkStateChanged();
     }
     if (m_readyState != oldReadyState) {
-        GST_DEBUG("Ready State Changed from %u to %u", oldReadyState, m_readyState);
+        GST_DEBUG("Ready State Changed from %u to %u", static_cast<unsigned>(oldReadyState), static_cast<unsigned>(m_readyState));
         m_player->readyStateChanged();
     }
 
@@ -719,7 +719,7 @@ void MediaPlayerPrivateGStreamerMSE::getSupportedTypes(HashSet<String, ASCIICase
 
 MediaPlayer::SupportsType MediaPlayerPrivateGStreamerMSE::supportsType(const MediaEngineSupportParameters& parameters)
 {
-    MediaPlayer::SupportsType result = MediaPlayer::IsNotSupported;
+    MediaPlayer::SupportsType result = MediaPlayer::SupportsType::IsNotSupported;
     if (!parameters.isMediaSource)
         return result;
 
@@ -727,7 +727,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamerMSE::supportsType(const Med
 
     // YouTube TV provides empty types for some videos and we want to be selected as best media engine for them.
     if (containerType.isEmpty()) {
-        result = MediaPlayer::MayBeSupported;
+        result = MediaPlayer::SupportsType::MayBeSupported;
         GST_DEBUG("mime-type \"%s\" supported: %s", parameters.type.raw().utf8().data(), convertEnumerationToString(result).utf8().data());
         return result;
     }
@@ -737,7 +737,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamerMSE::supportsType(const Med
     // Spec says we should not return "probably" if the codecs string is empty.
     if (gstRegistryScanner.isContainerTypeSupported(containerType)) {
         Vector<String> codecs = parameters.type.codecs();
-        result = codecs.isEmpty() ? MediaPlayer::MayBeSupported : (gstRegistryScanner.areAllCodecsSupported(codecs) ? MediaPlayer::IsSupported : MediaPlayer::IsNotSupported);
+        result = codecs.isEmpty() ? MediaPlayer::SupportsType::MayBeSupported : (gstRegistryScanner.areAllCodecsSupported(codecs) ? MediaPlayer::SupportsType::IsSupported : MediaPlayer::SupportsType::IsNotSupported);
     }
 
     auto finalResult = extendedSupportsType(parameters, result);
@@ -760,8 +760,8 @@ MediaTime MediaPlayerPrivateGStreamerMSE::currentMediaTime() const
     MediaTime position = MediaPlayerPrivateGStreamer::currentMediaTime();
 
     if (m_eosPending && position >= durationMediaTime()) {
-        if (m_networkState != MediaPlayer::Loaded) {
-            m_networkState = MediaPlayer::Loaded;
+        if (m_networkState != MediaPlayer::NetworkState::Loaded) {
+            m_networkState = MediaPlayer::NetworkState::Loaded;
             m_player->networkStateChanged();
         }
 

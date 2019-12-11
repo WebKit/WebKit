@@ -130,7 +130,7 @@ void MediaSource::setPrivateAndOpen(Ref<MediaSourcePrivate>&& mediaSourcePrivate
     //    Run the "If the media data cannot be fetched at all, due to network errors, causing the user agent to give up trying
     //    to fetch the resource" steps of the resource fetch algorithm's media data processing steps list.
     if (!isClosed()) {
-        m_mediaElement->mediaLoadingFailedFatally(MediaPlayer::NetworkError);
+        m_mediaElement->mediaLoadingFailedFatally(MediaPlayer::NetworkState::NetworkError);
         return;
     }
 
@@ -243,7 +243,7 @@ void MediaSource::seekToTime(const MediaTime& time)
     if (!hasBufferedTime(time)) {
         // 1. If the HTMLMediaElement.readyState attribute is greater than HAVE_METADATA,
         // then set the HTMLMediaElement.readyState attribute to HAVE_METADATA.
-        m_private->setReadyState(MediaPlayer::HaveMetadata);
+        m_private->setReadyState(MediaPlayer::ReadyState::HaveMetadata);
 
         // 2. The media element waits until an appendBuffer() or an appendStream() call causes the coded
         // frame processing algorithm to set the HTMLMediaElement.readyState attribute to a value greater
@@ -426,7 +426,7 @@ void MediaSource::monitorSourceBuffers()
 
     // Note, the behavior if activeSourceBuffers is empty is undefined.
     if (!m_activeSourceBuffers) {
-        m_private->setReadyState(MediaPlayer::HaveNothing);
+        m_private->setReadyState(MediaPlayer::ReadyState::HaveNothing);
         return;
     }
 
@@ -441,7 +441,7 @@ void MediaSource::monitorSourceBuffers()
         // 1. Set the HTMLMediaElement.readyState attribute to HAVE_METADATA.
         // 2. If this is the first transition to HAVE_METADATA, then queue a task to fire a simple event
         // named loadedmetadata at the media element.
-        m_private->setReadyState(MediaPlayer::HaveMetadata);
+        m_private->setReadyState(MediaPlayer::ReadyState::HaveMetadata);
 
         // 3. Abort these steps.
         return;
@@ -456,7 +456,7 @@ void MediaSource::monitorSourceBuffers()
         // 1. Set the HTMLMediaElement.readyState attribute to HAVE_ENOUGH_DATA.
         // 2. Queue a task to fire a simple event named canplaythrough at the media element.
         // 3. Playback may resume at this point if it was previously suspended by a transition to HAVE_CURRENT_DATA.
-        m_private->setReadyState(MediaPlayer::HaveEnoughData);
+        m_private->setReadyState(MediaPlayer::ReadyState::HaveEnoughData);
 
         if (m_pendingSeekTime.isValid())
             completeSeek();
@@ -471,7 +471,7 @@ void MediaSource::monitorSourceBuffers()
         // 1. Set the HTMLMediaElement.readyState attribute to HAVE_FUTURE_DATA.
         // 2. If the previous value of HTMLMediaElement.readyState was less than HAVE_FUTURE_DATA, then queue a task to fire a simple event named canplay at the media element.
         // 3. Playback may resume at this point if it was previously suspended by a transition to HAVE_CURRENT_DATA.
-        m_private->setReadyState(MediaPlayer::HaveFutureData);
+        m_private->setReadyState(MediaPlayer::ReadyState::HaveFutureData);
 
         if (m_pendingSeekTime.isValid())
             completeSeek();
@@ -488,7 +488,7 @@ void MediaSource::monitorSourceBuffers()
     // event named loadeddata at the media element.
     // 3. Playback is suspended at this point since the media element doesn't have enough data to
     // advance the media timeline.
-    m_private->setReadyState(MediaPlayer::HaveCurrentData);
+    m_private->setReadyState(MediaPlayer::ReadyState::HaveCurrentData);
 
     if (m_pendingSeekTime.isValid())
         completeSeek();
@@ -637,13 +637,13 @@ void MediaSource::streamEndedWithError(Optional<EndOfStreamError> error)
             //    Run the "If the media data cannot be fetched at all, due to network errors, causing
             //    the user agent to give up trying to fetch the resource" steps of the resource fetch algorithm.
             //    NOTE: This step is handled by HTMLMediaElement::mediaLoadingFailed().
-            m_mediaElement->mediaLoadingFailed(MediaPlayer::NetworkError);
+            m_mediaElement->mediaLoadingFailed(MediaPlayer::NetworkState::NetworkError);
         } else {
             //  ↳ If the HTMLMediaElement.readyState attribute is greater than HAVE_NOTHING
             //    Run the "If the connection is interrupted after some media data has been received, causing the
             //    user agent to give up trying to fetch the resource" steps of the resource fetch algorithm.
             //    NOTE: This step is handled by HTMLMediaElement::mediaLoadingFailedFatally().
-            m_mediaElement->mediaLoadingFailedFatally(MediaPlayer::NetworkError);
+            m_mediaElement->mediaLoadingFailedFatally(MediaPlayer::NetworkState::NetworkError);
         }
     } else {
         // ↳ If error is set to "decode"
@@ -654,12 +654,12 @@ void MediaSource::streamEndedWithError(Optional<EndOfStreamError> error)
             //    Run the "If the media data can be fetched but is found by inspection to be in an unsupported
             //    format, or can otherwise not be rendered at all" steps of the resource fetch algorithm.
             //    NOTE: This step is handled by HTMLMediaElement::mediaLoadingFailed().
-            m_mediaElement->mediaLoadingFailed(MediaPlayer::FormatError);
+            m_mediaElement->mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
         } else {
             //  ↳ If the HTMLMediaElement.readyState attribute is greater than HAVE_NOTHING
             //    Run the media data is corrupted steps of the resource fetch algorithm.
             //    NOTE: This step is handled by HTMLMediaElement::mediaLoadingFailedFatally().
-            m_mediaElement->mediaLoadingFailedFatally(MediaPlayer::DecodeError);
+            m_mediaElement->mediaLoadingFailedFatally(MediaPlayer::NetworkState::DecodeError);
         }
     }
 }
@@ -894,9 +894,9 @@ bool MediaSource::isTypeSupported(const String& type)
     MediaPlayer::SupportsType supported = MediaPlayer::supportsType(parameters);
 
     if (codecs.isEmpty())
-        return supported != MediaPlayer::IsNotSupported;
+        return supported != MediaPlayer::SupportsType::IsNotSupported;
 
-    return supported == MediaPlayer::IsSupported;
+    return supported == MediaPlayer::SupportsType::IsSupported;
 }
 
 bool MediaSource::isOpen() const

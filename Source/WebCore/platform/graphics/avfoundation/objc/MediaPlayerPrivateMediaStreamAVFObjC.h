@@ -158,14 +158,14 @@ private:
 
     void paint(GraphicsContext&, const FloatRect&) override;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
-    bool metaDataAvailable() const { return m_mediaStreamPrivate && m_readyState >= MediaPlayer::HaveMetadata; }
+    bool metaDataAvailable() const { return m_mediaStreamPrivate && m_readyState >= MediaPlayer::ReadyState::HaveMetadata; }
 
     void acceleratedRenderingStateChanged() override;
     bool supportsAcceleratedRendering() const override { return true; }
 
     bool hasSingleSecurityOrigin() const override { return true; }
 
-    MediaPlayer::MovieLoadType movieLoadType() const override { return MediaPlayer::LiveStream; }
+    MediaPlayer::MovieLoadType movieLoadType() const override { return MediaPlayer::MovieLoadType::LiveStream; }
 
     String engineDescription() const override;
 
@@ -255,8 +255,8 @@ private:
     HashMap<String, RefPtr<VideoTrackPrivateMediaStream>> m_videoTrackMap;
     PendingSampleQueue m_pendingVideoSampleQueue;
 
-    MediaPlayer::NetworkState m_networkState { MediaPlayer::Empty };
-    MediaPlayer::ReadyState m_readyState { MediaPlayer::HaveNothing };
+    MediaPlayer::NetworkState m_networkState { MediaPlayer::NetworkState::Empty };
+    MediaPlayer::ReadyState m_readyState { MediaPlayer::ReadyState::HaveNothing };
     FloatSize m_intrinsicSize;
     float m_volume { 1 };
     DisplayMode m_displayMode { None };

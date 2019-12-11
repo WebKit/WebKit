@@ -369,7 +369,7 @@ void MediaPlayerPrivateAVFoundationObjC::clearMediaCacheForOrigins(const String&
 MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlayer* player)
     : MediaPlayerPrivateAVFoundation(player)
     , m_videoFullscreenLayerManager(makeUnique<VideoFullscreenLayerManagerObjC>())
-    , m_videoFullscreenGravity(MediaPlayer::VideoGravityResizeAspect)
+    , m_videoFullscreenGravity(MediaPlayer::VideoGravity::ResizeAspect)
     , m_objcObserver(adoptNS([[WebCoreAVFMovieObserver alloc] initWithPlayer:makeWeakPtr(*this)]))
     , m_videoFrameHasDrawn(false)
     , m_haveCheckedPlayability(false)
@@ -1091,11 +1091,11 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenGravity(MediaPlayer::
         return;
 
     NSString *videoGravity = AVLayerVideoGravityResizeAspect;
-    if (gravity == MediaPlayer::VideoGravityResize)
+    if (gravity == MediaPlayer::VideoGravity::Resize)
         videoGravity = AVLayerVideoGravityResize;
-    else if (gravity == MediaPlayer::VideoGravityResizeAspect)
+    else if (gravity == MediaPlayer::VideoGravity::ResizeAspect)
         videoGravity = AVLayerVideoGravityResizeAspect;
-    else if (gravity == MediaPlayer::VideoGravityResizeAspectFill)
+    else if (gravity == MediaPlayer::VideoGravity::ResizeAspectFill)
         videoGravity = AVLayerVideoGravityResizeAspectFill;
     else
         ASSERT_NOT_REACHED();
@@ -1592,30 +1592,30 @@ MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationObjC::supportsType(const
 {
 #if ENABLE(MEDIA_SOURCE)
     if (parameters.isMediaSource)
-        return MediaPlayer::IsNotSupported;
+        return MediaPlayer::SupportsType::IsNotSupported;
 #endif
 #if ENABLE(MEDIA_STREAM)
     if (parameters.isMediaStream)
-        return MediaPlayer::IsNotSupported;
+        return MediaPlayer::SupportsType::IsNotSupported;
 #endif
 
     auto containerType = parameters.type.containerType();
     if (isUnsupportedMIMEType(containerType))
-        return MediaPlayer::IsNotSupported;
+        return MediaPlayer::SupportsType::IsNotSupported;
 
     if (!staticMIMETypeList().contains(containerType) && !AVAssetMIMETypeCache::singleton().canDecodeType(containerType))
-        return MediaPlayer::IsNotSupported;
+        return MediaPlayer::SupportsType::IsNotSupported;
 
     // The spec says:
     // "Implementors are encouraged to return "maybe" unless the type can be confidently established as being supported or not."
     if (parameters.type.codecs().isEmpty())
-        return MediaPlayer::MayBeSupported;
+        return MediaPlayer::SupportsType::MayBeSupported;
 
     if (!contentTypeMeetsHardwareDecodeRequirements(parameters.type, parameters.contentTypesRequiringHardwareSupport))
-        return MediaPlayer::IsNotSupported;
+        return MediaPlayer::SupportsType::IsNotSupported;
 
     NSString *typeString = [NSString stringWithFormat:@"%@; codecs=\"%@\"", (NSString *)containerType, (NSString *)parameters.type.parameter(ContentType::codecsParameter())];
-    return [PAL::getAVURLAssetClass() isPlayableExtendedMIMEType:typeString] ? MediaPlayer::IsSupported : MediaPlayer::MayBeSupported;
+    return [PAL::getAVURLAssetClass() isPlayableExtendedMIMEType:typeString] ? MediaPlayer::SupportsType::IsSupported : MediaPlayer::SupportsType::MayBeSupported;
 }
 
 bool MediaPlayerPrivateAVFoundationObjC::supportsKeySystem(const String& keySystem, const String& mimeType)
@@ -1624,7 +1624,7 @@ bool MediaPlayerPrivateAVFoundationObjC::supportsKeySystem(const String& keySyst
     if (!keySystem.isEmpty()) {
         // "Clear Key" is only supported with HLS:
         if (equalIgnoringASCIICase(keySystem, "org.w3c.clearkey") && !mimeType.isEmpty() && !equalIgnoringASCIICase(mimeType, "application/x-mpegurl"))
-            return MediaPlayer::IsNotSupported;
+            return false;
 
         if (!keySystemIsSupported(keySystem))
             return false;

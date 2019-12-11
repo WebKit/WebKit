@@ -253,7 +253,6 @@ public:
     void invalidate();
 
     // Media engine support.
-    using MediaPlayerEnums::SupportsType;
     static SupportsType supportsType(const MediaEngineSupportParameters&);
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
     static bool isAvailable();
@@ -611,7 +610,7 @@ private:
     ContentType m_contentType;
     String m_keySystem;
     IntSize m_size;
-    Preload m_preload { Auto };
+    Preload m_preload { Preload::Auto };
     double m_volume { 1 };
     bool m_visible { false };
     bool m_muted { false };

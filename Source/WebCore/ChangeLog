@@ -1,3 +1,146 @@
+2019-12-11  Eric Carlson  <eric.carlson@apple.com>
+
+        Add encoders for MediaPlayerEnum enums
+        https://bugs.webkit.org/show_bug.cgi?id=205125
+        <rdar://problem/57842985>
+
+        Reviewed by Dean Jackson.
+
+        No new tests, no functional change.
+
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::CDM::getSupportedCapabilitiesForAudioVideoType):
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::setPrivateAndOpen):
+        (WebCore::MediaSource::seekToTime):
+        (WebCore::MediaSource::monitorSourceBuffers):
+        (WebCore::MediaSource::streamEndedWithError):
+        (WebCore::MediaSource::isTypeSupported):
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::removeCodedFrames):
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment):
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        (WebCore::HTMLMediaElement::canPlayType const):
+        (WebCore::HTMLMediaElement::selectMediaResource):
+        (WebCore::HTMLMediaElement::loadResource):
+        (WebCore::HTMLMediaElement::mediaLoadingFailedFatally):
+        (WebCore::HTMLMediaElement::mediaLoadingFailed):
+        (WebCore::HTMLMediaElement::setNetworkState):
+        (WebCore::HTMLMediaElement::seekWithTolerance):
+        (WebCore::HTMLMediaElement::movieLoadType const):
+        (WebCore::HTMLMediaElement::preload const):
+        (WebCore::HTMLMediaElement::selectNextSourceChild):
+        (WebCore::HTMLMediaElement::mediaPlayerResourceNotSupported):
+        (WebCore::stringForNetworkState): Deleted.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::videoFullscreenGravity const):
+        (WebCore::HTMLMediaElement::preloadValue const):
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::effectivePreloadForElement const):
+        * platform/cocoa/VideoFullscreenModelVideoElement.mm:
+        (WebCore::VideoFullscreenModelVideoElement::requestFullscreenMode):
+        (WebCore::VideoFullscreenModelVideoElement::setVideoLayerGravity):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::bestMediaEngineForSupportParameters):
+        (WebCore::MediaPlayer::supportsType):
+        (WebCore::MediaPlayer::networkStateChanged):
+        (WebCore::convertEnumerationToString):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerEnums.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::hasAvailableVideoFrame const):
+        (WebCore::MediaPlayerPrivateInterface::movieLoadType const):
+        * platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm:
+        (WebCore::CDMPrivateMediaSourceAVFObjC::supportsKeySystemAndMimeType):
+        (WebCore::CDMPrivateMediaSourceAVFObjC::supportsMIMEType):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation):
+        (WebCore::MediaPlayerPrivateAVFoundation::load):
+        (WebCore::MediaPlayerPrivateAVFoundation::prepareToPlay):
+        (WebCore::MediaPlayerPrivateAVFoundation::isReadyForVideoSetup const):
+        (WebCore::MediaPlayerPrivateAVFoundation::updateStates):
+        (WebCore::MediaPlayerPrivateAVFoundation::movieLoadType const):
+        (WebCore::MediaPlayerPrivateAVFoundation::setPreload):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        (WebCore::MediaPlayerPrivateAVFoundation::metaDataAvailable const):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::supportsType):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenGravity):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::supportsType):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::supportsKeySystem):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::supportsType):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::load):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::movieLoadType const):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::shouldBePlaying const):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setReadyState):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::supportsType):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::load):
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm:
+        (WebCore::MediaSourcePrivateAVFObjC::addSourceBuffer):
+        (WebCore::MediaSourcePrivateAVFObjC::markEndOfStream):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::readyState const):
+        (WebCore::SourceBufferPrivateAVFObjC::canSwitchToType):
+        * platform/graphics/cocoa/MediaEngineConfigurationFactoryCocoa.cpp:
+        (WebCore::createMediaPlayerDecodingConfigurationCocoa):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::loadFull):
+        (WebCore::MediaPlayerPrivateGStreamer::load):
+        (WebCore::MediaPlayerPrivateGStreamer::cancelLoad):
+        (WebCore::MediaPlayerPrivateGStreamer::prepareToPlay):
+        (WebCore::MediaPlayerPrivateGStreamer::play):
+        (WebCore::MediaPlayerPrivateGStreamer::setPreload):
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::updateStates):
+        (WebCore::MediaPlayerPrivateGStreamer::loadNextLocation):
+        (WebCore::MediaPlayerPrivateGStreamer::supportsType):
+        (WebCore::MediaPlayerPrivateGStreamer::updateDownloadBufferingFlag):
+        (WebCore::MediaPlayerPrivateGStreamer::movieLoadType const):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (dumpReadyState):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::load):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::doSeek):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::setReadyState):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::seekCompleted):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::updateStates):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::supportsType):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::currentMediaTime const):
+        * platform/graphics/holepunch/MediaPlayerPrivateHolePunch.cpp:
+        (WebCore::MediaPlayerPrivateHolePunch::supportsType):
+        * platform/graphics/holepunch/MediaPlayerPrivateHolePunch.h:
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::MediaPlayerPrivateMediaFoundation):
+        (WebCore::MediaPlayerPrivateMediaFoundation::supportsType):
+        (WebCore::MediaPlayerPrivateMediaFoundation::load):
+        (WebCore::MediaPlayerPrivateMediaFoundation::updateReadyState):
+        (WebCore::MediaPlayerPrivateMediaFoundation::onSessionEnded):
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerLayer setVideoGravity:]):
+        * platform/mac/VideoFullscreenInterfaceMac.mm:
+        (-[WebVideoFullscreenInterfaceMacObjC setUpPIPForVideoView:withFrame:inWindow:]):
+        (-[WebVideoFullscreenInterfaceMacObjC pipDidClose:]):
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.cpp:
+        (WebCore::MockMediaPlayerMediaSource::supportsType):
+        (WebCore::MockMediaPlayerMediaSource::MockMediaPlayerMediaSource):
+        * platform/mock/mediasource/MockMediaSourcePrivate.cpp:
+        (WebCore::MockMediaSourcePrivate::addSourceBuffer):
+        (WebCore::MockMediaSourcePrivate::markEndOfStream):
+        * platform/mock/mediasource/MockSourceBufferPrivate.cpp:
+        (WebCore::MockSourceBufferPrivate::readyState const):
+        (WebCore::MockSourceBufferPrivate::canSwitchToType):
+
 2019-12-11  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: Introduce WebIDBServer class

@@ -143,8 +143,8 @@ public:
     bool hasClosedCaptions() const final { return false; }
     void setClosedCaptionsVisible(bool) final { };
 
-    MediaPlayer::NetworkState networkState() const final { return MediaPlayer::Empty; }
-    MediaPlayer::ReadyState readyState() const final { return MediaPlayer::HaveNothing; }
+    MediaPlayer::NetworkState networkState() const final { return MediaPlayer::NetworkState::Empty; }
+    MediaPlayer::ReadyState readyState() const final { return MediaPlayer::ReadyState::HaveNothing; }
 
     float maxTimeSeekable() const final { return 0; }
     double minTimeSeekable() const final { return 0; }
@@ -312,7 +312,7 @@ static const MediaPlayerFactory* bestMediaEngineForSupportParameters(const Media
     }
 
     const MediaPlayerFactory* foundEngine = nullptr;
-    MediaPlayer::SupportsType supported = MediaPlayer::IsNotSupported;
+    MediaPlayer::SupportsType supported = MediaPlayer::SupportsType::IsNotSupported;
     for (auto& engine : installedMediaEngines()) {
         if (current) {
             if (current == &engine)
@@ -916,11 +916,11 @@ MediaPlayer::SupportsType MediaPlayer::supportsType(const MediaEngineSupportPara
     // user agent knows it cannot render or is the type "application/octet-stream"
     AtomString containerType = parameters.type.containerType();
     if (containerType == applicationOctetStream())
-        return IsNotSupported;
+        return SupportsType::IsNotSupported;
 
     const MediaPlayerFactory* engine = bestMediaEngineForSupportParameters(parameters);
     if (!engine)
-        return IsNotSupported;
+        return SupportsType::IsNotSupported;
 
     return engine->supportsTypeAndCodecs(parameters);
 }
@@ -1170,7 +1170,7 @@ void MediaPlayer::networkStateChanged()
 {
     // If more than one media engine is installed and this one failed before finding metadata,
     // let the next engine try.
-    if (m_private->networkState() >= FormatError && m_private->readyState() < HaveMetadata) {
+    if (m_private->networkState() >= MediaPlayer::NetworkState::FormatError && m_private->readyState() < MediaPlayer::ReadyState::HaveMetadata) {
         client().mediaPlayerEngineFailedToLoad();
         if (installedMediaEngines().size() > 1 && (m_contentType.isEmpty() || nextBestMediaEngine(m_currentMediaEngine))) {
             m_reloadTimer.startOneShot(0_s);
@@ -1566,7 +1566,7 @@ const Logger& MediaPlayer::mediaPlayerLogger()
 }
 #endif
 
-String convertEnumerationToString(MediaPlayerEnums::ReadyState enumerationValue)
+String convertEnumerationToString(MediaPlayer::ReadyState enumerationValue)
 {
     static const NeverDestroyed<String> values[] = {
         MAKE_STATIC_STRING_IMPL("HaveNothing"),
@@ -1575,16 +1575,16 @@ String convertEnumerationToString(MediaPlayerEnums::ReadyState enumerationValue)
         MAKE_STATIC_STRING_IMPL("HaveFutureData"),
         MAKE_STATIC_STRING_IMPL("HaveEnoughData"),
     };
-    static_assert(static_cast<size_t>(MediaPlayerEnums::HaveNothing) == 0, "MediaPlayerEnums::HaveNothing is not 0 as expected");
-    static_assert(static_cast<size_t>(MediaPlayerEnums::HaveMetadata) == 1, "MediaPlayerEnums::HaveMetadata is not 1 as expected");
-    static_assert(static_cast<size_t>(MediaPlayerEnums::HaveCurrentData) == 2, "MediaPlayerEnums::HaveCurrentData is not 2 as expected");
-    static_assert(static_cast<size_t>(MediaPlayerEnums::HaveFutureData) == 3, "MediaPlayerEnums::HaveFutureData is not 3 as expected");
-    static_assert(static_cast<size_t>(MediaPlayerEnums::HaveEnoughData) == 4, "MediaPlayerEnums::HaveEnoughData is not 4 as expected");
+    static_assert(static_cast<size_t>(MediaPlayer::ReadyState::HaveNothing) == 0, "MediaPlayer::ReadyState::HaveNothing is not 0 as expected");
+    static_assert(static_cast<size_t>(MediaPlayer::ReadyState::HaveMetadata) == 1, "MediaPlayer::ReadyState::HaveMetadata is not 1 as expected");
+    static_assert(static_cast<size_t>(MediaPlayer::ReadyState::HaveCurrentData) == 2, "MediaPlayer::ReadyState::HaveCurrentData is not 2 as expected");
+    static_assert(static_cast<size_t>(MediaPlayer::ReadyState::HaveFutureData) == 3, "MediaPlayer::ReadyState::HaveFutureData is not 3 as expected");
+    static_assert(static_cast<size_t>(MediaPlayer::ReadyState::HaveEnoughData) == 4, "MediaPlayer::ReadyState::HaveEnoughData is not 4 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-String convertEnumerationToString(MediaPlayerEnums::NetworkState enumerationValue)
+String convertEnumerationToString(MediaPlayer::NetworkState enumerationValue)
 {
     static const NeverDestroyed<String> values[] = {
         MAKE_STATIC_STRING_IMPL("Empty"),
@@ -1595,46 +1595,46 @@ String convertEnumerationToString(MediaPlayerEnums::NetworkState enumerationValu
         MAKE_STATIC_STRING_IMPL("NetworkError"),
         MAKE_STATIC_STRING_IMPL("DecodeError"),
     };
-    static_assert(static_cast<size_t>(MediaPlayerEnums::Empty) == 0, "MediaPlayerEnums::Empty is not 0 as expected");
-    static_assert(static_cast<size_t>(MediaPlayerEnums::Idle) == 1, "MediaPlayerEnums::Idle is not 1 as expected");
-    static_assert(static_cast<size_t>(MediaPlayerEnums::Loading) == 2, "MediaPlayerEnums::Loading is not 2 as expected");
-    static_assert(static_cast<size_t>(MediaPlayerEnums::Loaded) == 3, "MediaPlayerEnums::Loaded is not 3 as expected");
-    static_assert(static_cast<size_t>(MediaPlayerEnums::FormatError) == 4, "MediaPlayerEnums::FormatError is not 4 as expected");
-    static_assert(static_cast<size_t>(MediaPlayerEnums::NetworkError) == 5, "MediaPlayerEnums::NetworkError is not 5 as expected");
-    static_assert(static_cast<size_t>(MediaPlayerEnums::DecodeError) == 6, "MediaPlayerEnums::DecodeError is not 6 as expected");
+    static_assert(static_cast<size_t>(MediaPlayer::NetworkState::Empty) == 0, "MediaPlayer::NetworkState::Empty is not 0 as expected");
+    static_assert(static_cast<size_t>(MediaPlayer::NetworkState::Idle) == 1, "MediaPlayer::NetworkState::Idle is not 1 as expected");
+    static_assert(static_cast<size_t>(MediaPlayer::NetworkState::Loading) == 2, "MediaPlayer::NetworkState::Loading is not 2 as expected");
+    static_assert(static_cast<size_t>(MediaPlayer::NetworkState::Loaded) == 3, "MediaPlayer::NetworkState::Loaded is not 3 as expected");
+    static_assert(static_cast<size_t>(MediaPlayer::NetworkState::FormatError) == 4, "MediaPlayer::NetworkState::FormatError is not 4 as expected");
+    static_assert(static_cast<size_t>(MediaPlayer::NetworkState::NetworkError) == 5, "MediaPlayer::NetworkError is not 5 as expected");
+    static_assert(static_cast<size_t>(MediaPlayer::NetworkState::DecodeError) == 6, "MediaPlayer::NetworkState::DecodeError is not 6 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-String convertEnumerationToString(MediaPlayerEnums::Preload enumerationValue)
+String convertEnumerationToString(MediaPlayer::Preload enumerationValue)
 {
     static const NeverDestroyed<String> values[] = {
         MAKE_STATIC_STRING_IMPL("None"),
         MAKE_STATIC_STRING_IMPL("MetaData"),
         MAKE_STATIC_STRING_IMPL("Auto"),
     };
-    static_assert(!static_cast<size_t>(MediaPlayerEnums::None), "MediaPlayerEnums::None is not 0 as expected");
-    static_assert(static_cast<size_t>(MediaPlayerEnums::MetaData) == 1, "MediaPlayerEnums::MetaData is not 1 as expected");
-    static_assert(static_cast<size_t>(MediaPlayerEnums::Auto) == 2, "MediaPlayerEnums::Auto is not 2 as expected");
+    static_assert(!static_cast<size_t>(MediaPlayer::Preload::None), "MediaPlayer::Preload::None is not 0 as expected");
+    static_assert(static_cast<size_t>(MediaPlayer::Preload::MetaData) == 1, "MediaPlayer::Preload::MetaData is not 1 as expected");
+    static_assert(static_cast<size_t>(MediaPlayer::Preload::Auto) == 2, "MediaPlayer::Preload::Auto is not 2 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-String convertEnumerationToString(MediaPlayerEnums::SupportsType enumerationValue)
+String convertEnumerationToString(MediaPlayer::SupportsType enumerationValue)
 {
     static const NeverDestroyed<String> values[] = {
         MAKE_STATIC_STRING_IMPL("IsNotSupported"),
         MAKE_STATIC_STRING_IMPL("IsSupported"),
         MAKE_STATIC_STRING_IMPL("MayBeSupported"),
     };
-    static_assert(!static_cast<size_t>(MediaPlayerEnums::IsNotSupported), "MediaPlayerEnums::IsNotSupported is not 0 as expected");
-    static_assert(static_cast<size_t>(MediaPlayerEnums::IsSupported) == 1, "MediaPlayerEnums::IsSupported is not 1 as expected");
-    static_assert(static_cast<size_t>(MediaPlayerEnums::MayBeSupported) == 2, "MediaPlayerEnums::MayBeSupported is not 2 as expected");
+    static_assert(!static_cast<size_t>(MediaPlayer::SupportsType::IsNotSupported), "MediaPlayer::SupportsType::IsNotSupported is not 0 as expected");
+    static_assert(static_cast<size_t>(MediaPlayer::SupportsType::IsSupported) == 1, "MediaPlayer::SupportsType::IsSupported is not 1 as expected");
+    static_assert(static_cast<size_t>(MediaPlayer::SupportsType::MayBeSupported) == 2, "MediaPlayer::SupportsType::MayBeSupported is not 2 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-String convertEnumerationToString(MediaPlayerEnums::BufferingPolicy enumerationValue)
+String convertEnumerationToString(MediaPlayer::BufferingPolicy enumerationValue)
 {
     static const NeverDestroyed<String> values[] = {
         MAKE_STATIC_STRING_IMPL("Default"),
@@ -1642,10 +1642,10 @@ String convertEnumerationToString(MediaPlayerEnums::BufferingPolicy enumerationV
         MAKE_STATIC_STRING_IMPL("MakeResourcesPurgeable"),
         MAKE_STATIC_STRING_IMPL("PurgeResources"),
     };
-    static_assert(!static_cast<size_t>(MediaPlayerEnums::BufferingPolicy::Default), "MediaPlayerEnums::Default is not 0 as expected");
-    static_assert(static_cast<size_t>(MediaPlayerEnums::BufferingPolicy::LimitReadAhead) == 1, "MediaPlayerEnums::LimitReadAhead is not 1 as expected");
-    static_assert(static_cast<size_t>(MediaPlayerEnums::BufferingPolicy::MakeResourcesPurgeable) == 2, "MediaPlayerEnums::MakeResourcesPurgeable is not 2 as expected");
-    static_assert(static_cast<size_t>(MediaPlayerEnums::BufferingPolicy::PurgeResources) == 3, "MediaPlayerEnums::PurgeResources is not 3 as expected");
+    static_assert(!static_cast<size_t>(MediaPlayer::BufferingPolicy::Default), "MediaPlayer::Default is not 0 as expected");
+    static_assert(static_cast<size_t>(MediaPlayer::BufferingPolicy::LimitReadAhead) == 1, "MediaPlayer::LimitReadAhead is not 1 as expected");
+    static_assert(static_cast<size_t>(MediaPlayer::BufferingPolicy::MakeResourcesPurgeable) == 2, "MediaPlayer::MakeResourcesPurgeable is not 2 as expected");
+    static_assert(static_cast<size_t>(MediaPlayer::BufferingPolicy::PurgeResources) == 3, "MediaPlayer::PurgeResources is not 3 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
     return values[static_cast<size_t>(enumerationValue)];
 }

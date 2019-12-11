@@ -814,7 +814,7 @@ void SourceBufferPrivateAVFObjC::removedFromMediaSource()
 
 MediaPlayer::ReadyState SourceBufferPrivateAVFObjC::readyState() const
 {
-    return m_mediaSource ? m_mediaSource->player()->readyState() : MediaPlayer::HaveNothing;
+    return m_mediaSource ? m_mediaSource->player()->readyState() : MediaPlayer::ReadyState::HaveNothing;
 }
 
 void SourceBufferPrivateAVFObjC::setReadyState(MediaPlayer::ReadyState readyState)
@@ -1289,7 +1289,7 @@ bool SourceBufferPrivateAVFObjC::canSwitchToType(const ContentType& contentType)
     MediaEngineSupportParameters parameters;
     parameters.isMediaSource = true;
     parameters.type = contentType;
-    return MediaPlayerPrivateMediaSourceAVFObjC::supportsType(parameters) != MediaPlayer::IsNotSupported;
+    return MediaPlayerPrivateMediaSourceAVFObjC::supportsType(parameters) != MediaPlayer::SupportsType::IsNotSupported;
 }
 
 void SourceBufferPrivateAVFObjC::setVideoLayer(AVSampleBufferDisplayLayer* layer)
