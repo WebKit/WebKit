@@ -33,9 +33,12 @@
 
 namespace JSC {
     
-class JSAPIWrapperObject : public JSDestructibleObject {
+class JSAPIWrapperObject : public JSNonFinalObject {
 public:
-    typedef JSDestructibleObject Base;
+    using Base = JSNonFinalObject;
+
+    template<typename, SubspaceAccess>
+    static void subspaceFor(VM&) { RELEASE_ASSERT_NOT_REACHED(); }
     
     void finishCreation(VM&);
     static void visitChildren(JSCell*, JSC::SlotVisitor&);

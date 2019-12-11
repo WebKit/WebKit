@@ -96,7 +96,7 @@ public:
     
     static void destroy(JSCell*);
     
-    const ClassInfo* classInfo() const { return m_classInfo; }
+    const ClassInfo* classInfo(VM&) const { return m_classInfo; }
     
 protected:
     JSSegmentedVariableObject(VM&, Structure*, JSScope*);

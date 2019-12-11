@@ -26,15 +26,21 @@
 #ifndef JSCallbackConstructor_h
 #define JSCallbackConstructor_h
 
-#include "JSDestructibleObject.h"
 #include "JSObjectRef.h"
 
 namespace JSC {
 
-class JSCallbackConstructor final : public JSDestructibleObject {
+class JSCallbackConstructor final : public JSNonFinalObject {
 public:
-    typedef JSDestructibleObject Base;
+    using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | ImplementsHasInstance | ImplementsDefaultHasInstance;
+    static constexpr bool needsDestruction = true;
+
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.callbackConstructorSpace<mode>();
+    }
 
     static JSCallbackConstructor* create(JSGlobalObject* globalObject, Structure* structure, JSClassRef classRef, JSObjectCallAsConstructorCallback callback) 
     {

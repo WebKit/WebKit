@@ -1,3 +1,17 @@
+2019-12-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Put all API related JS cells into IsoSubspace
+        https://bugs.webkit.org/show_bug.cgi?id=205097
+
+        Reviewed by Mark Lam.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::finishCreation):
+        * bindings/js/JSDOMWrapper.cpp:
+        (WebCore::JSDOMObject::JSDOMObject):
+        * bindings/js/JSWindowProxy.cpp:
+        (WebCore::JSWindowProxy::setWindow):
+
 2019-12-10  youenn fablet  <youenn@apple.com>
 
         TrackListBase does not need to be an ActiveDOMObject

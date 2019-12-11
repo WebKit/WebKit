@@ -28,16 +28,17 @@
 #include "JSCallbackObject.h"
 
 #include "Heap.h"
+#include "JSAPIWrapperObject.h"
 #include "JSCInlines.h"
 #include <wtf/text/StringHash.h>
 
 namespace JSC {
 
 // Define the two types of JSCallbackObjects we support.
-template <> const ClassInfo JSCallbackObject<JSDestructibleObject>::s_info = { "CallbackObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCallbackObject) };
+template <> const ClassInfo JSCallbackObject<JSNonFinalObject>::s_info = { "CallbackObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCallbackObject) };
 template <> const ClassInfo JSCallbackObject<JSGlobalObject>::s_info = { "CallbackGlobalObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCallbackObject) };
 
-template<> const bool JSCallbackObject<JSDestructibleObject>::needsDestruction = true;
+template<> const bool JSCallbackObject<JSNonFinalObject>::needsDestruction = true;
 template<> const bool JSCallbackObject<JSGlobalObject>::needsDestruction = false;
 
 template<>
@@ -49,7 +50,7 @@ JSCallbackObject<JSGlobalObject>* JSCallbackObject<JSGlobalObject>::create(VM& v
 }
 
 template <>
-Structure* JSCallbackObject<JSDestructibleObject>::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
+Structure* JSCallbackObject<JSNonFinalObject>::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
 { 
     return Structure::create(vm, globalObject, proto, TypeInfo(ObjectType, StructureFlags), info()); 
 }
@@ -58,6 +59,32 @@ template <>
 Structure* JSCallbackObject<JSGlobalObject>::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
 { 
     return Structure::create(vm, globalObject, proto, TypeInfo(GlobalObjectType, StructureFlags), info()); 
+}
+
+template <>
+IsoSubspace* JSCallbackObject<JSNonFinalObject>::subspaceForImpl(VM& vm, SubspaceAccess mode)
+{
+    switch (mode) {
+    case SubspaceAccess::OnMainThread:
+        return vm.callbackObjectSpace<SubspaceAccess::OnMainThread>();
+    case SubspaceAccess::Concurrently:
+        return vm.callbackObjectSpace<SubspaceAccess::Concurrently>();
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+template <>
+IsoSubspace* JSCallbackObject<JSGlobalObject>::subspaceForImpl(VM& vm, SubspaceAccess mode)
+{
+    switch (mode) {
+    case SubspaceAccess::OnMainThread:
+        return vm.callbackGlobalObjectSpace<SubspaceAccess::OnMainThread>();
+    case SubspaceAccess::Concurrently:
+        return vm.callbackGlobalObjectSpace<SubspaceAccess::Concurrently>();
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 } // namespace JSC

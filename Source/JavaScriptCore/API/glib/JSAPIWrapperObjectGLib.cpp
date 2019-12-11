@@ -72,6 +72,19 @@ template <> const ClassInfo JSCallbackObject<JSAPIWrapperObject>::s_info = { "JS
 template<> const bool JSCallbackObject<JSAPIWrapperObject>::needsDestruction = true;
 
 template <>
+IsoSubspace* JSCallbackObject<JSAPIWrapperObject>::subspaceForImpl(VM& vm, SubspaceAccess mode)
+{
+    switch (mode) {
+    case SubspaceAccess::OnMainThread:
+        return vm.apiWrapperObjectSpace<SubspaceAccess::OnMainThread>();
+    case SubspaceAccess::Concurrently:
+        return vm.apiWrapperObjectSpace<SubspaceAccess::Concurrently>();
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+template <>
 Structure* JSCallbackObject<JSAPIWrapperObject>::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
 {
     return Structure::create(vm, globalObject, proto, TypeInfo(ObjectType, StructureFlags), &s_info);

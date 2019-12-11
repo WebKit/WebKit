@@ -78,7 +78,9 @@
 #include "IsoHeapCellType.h"
 #include "JITCode.h"
 #include "JITWorklist.h"
+#include "JSAPIGlobalObject.h"
 #include "JSAPIValueWrapper.h"
+#include "JSAPIWrapperObject.h"
 #include "JSArray.h"
 #include "JSArrayBuffer.h"
 #include "JSArrayBufferConstructor.h"
@@ -86,7 +88,9 @@
 #include "JSBigInt.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
+#include "JSCallbackConstructor.h"
 #include "JSCallbackFunction.h"
+#include "JSCallbackObject.h"
 #include "JSCallee.h"
 #include "JSCustomGetterSetterFunction.h"
 #include "JSDestructibleObjectHeapCellType.h"
@@ -132,7 +136,6 @@
 #include "NativeExecutable.h"
 #include "Nodes.h"
 #include "NumberObject.h"
-#include "ObjCCallbackFunction.h"
 #include "Parser.h"
 #include "PredictionFileCreatingFuzzerAgent.h"
 #include "ProfilerDatabase.h"
@@ -193,7 +196,12 @@
 #include "RegExp.h"
 #endif
 
+#if JSC_OBJC_API_ENABLED
+#include "ObjCCallbackFunction.h"
+#endif
+
 #ifdef JSC_GLIB_API_ENABLED
+#include "JSAPIWrapperGlobalObject.h"
 #include "JSCCallbackFunction.h"
 #endif
 
@@ -293,6 +301,8 @@ VM::VM(VMType vmType, HeapType heapType)
     , immutableButterflyHeapCellType(makeUnique<HeapCellType>(CellAttributes(DoesNotNeedDestruction, HeapCell::JSCellWithInteriorPointers)))
     , cellHeapCellType(makeUnique<HeapCellType>(CellAttributes(DoesNotNeedDestruction, HeapCell::JSCell)))
     , destructibleCellHeapCellType(makeUnique<HeapCellType>(CellAttributes(NeedsDestruction, HeapCell::JSCell)))
+    , callbackConstructorHeapCellType(makeUnique<IsoHeapCellType<JSCallbackConstructor>>())
+    , callbackObjectHeapCellType(makeUnique<IsoHeapCellType<JSCallbackObject<JSNonFinalObject>>>())
     , dateInstanceHeapCellType(makeUnique<IsoHeapCellType<DateInstance>>())
     , errorInstanceHeapCellType(makeUnique<IsoHeapCellType<ErrorInstance>>())
     , jsModuleRecordHeapCellType(makeUnique<IsoHeapCellType<JSModuleRecord>>())
@@ -303,9 +313,11 @@ VM::VM(VMType vmType, HeapType heapType)
     , weakSetHeapCellType(makeUnique<IsoHeapCellType<JSWeakSet>>())
     , destructibleObjectHeapCellType(makeUnique<JSDestructibleObjectHeapCellType>())
 #if JSC_OBJC_API_ENABLED
+    , apiWrapperObjectHeapCellType(makeUnique<IsoHeapCellType<JSCallbackObject<JSAPIWrapperObject>>>())
     , objCCallbackFunctionHeapCellType(makeUnique<IsoHeapCellType<ObjCCallbackFunction>>())
 #endif
 #ifdef JSC_GLIB_API_ENABLED
+    , apiWrapperObjectHeapCellType(makeUnique<IsoHeapCellType<JSCallbackObject<JSAPIWrapperObject>>>())
     , jscCallbackFunctionHeapCellType(makeUnique<IsoHeapCellType<JSCCallbackFunction>>())
 #endif
 #if ENABLE(INTL)
@@ -1361,12 +1373,17 @@ void VM::ensureShadowChicken()
     }
 
 
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(apiGlobalObjectSpace, cellHeapCellType.get(), JSAPIGlobalObject)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(apiValueWrapperSpace, cellHeapCellType.get(), JSAPIValueWrapper)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(arrayBufferSpace, cellHeapCellType.get(), JSArrayBuffer)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(asyncGeneratorSpace, cellHeapCellType.get(), JSAsyncGenerator)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(bigIntObjectSpace, cellHeapCellType.get(), BigIntObject)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(booleanObjectSpace, cellHeapCellType.get(), BooleanObject)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(boundFunctionSpace, cellHeapCellType.get(), JSBoundFunction) // Hash:0xd7916d41
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(callbackConstructorSpace, callbackConstructorHeapCellType.get(), JSCallbackConstructor)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(callbackGlobalObjectSpace, cellHeapCellType.get(), JSCallbackObject<JSGlobalObject>)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(callbackFunctionSpace, cellHeapCellType.get(), JSCallbackFunction) // Hash:0xe7648ebc
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(callbackObjectSpace, callbackObjectHeapCellType.get(), JSCallbackObject<JSNonFinalObject>)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(customGetterSetterFunctionSpace, cellHeapCellType.get(), JSCustomGetterSetterFunction) // Hash:0x18091000
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(dataViewSpace, cellHeapCellType.get(), JSDataView)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(errorInstanceSpace, errorInstanceHeapCellType.get(), ErrorInstance) // Hash:0x3f40d4a
@@ -1398,10 +1415,13 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(weakMapSpace, weakMapHeapCellType.get(),
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(weakSetSpace, weakSetHeapCellType.get(), JSWeakSet) // Hash:0x4c781b30
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(weakObjectRefSpace, cellHeapCellType.get(), JSWeakObjectRef) // Hash:0x8ec68f1f
 #if JSC_OBJC_API_ENABLED
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(apiWrapperObjectSpace, apiWrapperObjectHeapCellType.get(), JSCallbackObject<JSAPIWrapperObject>)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(objCCallbackFunctionSpace, objCCallbackFunctionHeapCellType.get(), ObjCCallbackFunction) // Hash:0x10f610b8
 #endif
 #ifdef JSC_GLIB_API_ENABLED
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(apiWrapperObjectSpace, apiWrapperObjectHeapCellType.get(), JSCallbackObject<JSAPIWrapperObject>)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(jscCallbackFunctionSpace, jscCallbackFunctionHeapCellType.get(), JSCCallbackFunction)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(callbackAPIWrapperGlobalObjectSpace, cellHeapCellType.get(), JSCallbackObject<JSAPIWrapperGlobalObject>)
 #endif
 #if ENABLE(INTL)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(intlCollatorSpace, intlCollatorHeapCellType.get(), IntlCollator)

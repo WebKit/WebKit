@@ -1,3 +1,60 @@
+2019-12-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Put all API related JS cells into IsoSubspace
+        https://bugs.webkit.org/show_bug.cgi?id=205097
+
+        Reviewed by Mark Lam.
+
+        This patch puts API related JS cells into IsoSubspace.
+
+        * API/JSAPIGlobalObject.h:
+        (JSC::JSAPIGlobalObject::create): Deleted.
+        (JSC::JSAPIGlobalObject::createStructure): Deleted.
+        (JSC::JSAPIGlobalObject::JSAPIGlobalObject): Deleted.
+        * API/JSAPIValueWrapper.h:
+        * API/JSAPIWrapperObject.h:
+        (JSC::JSAPIWrapperObject::subspaceFor):
+        * API/JSAPIWrapperObject.mm:
+        (JSC::JSCallbackObject<JSAPIWrapperObject>::subspaceForImpl):
+        * API/JSCallbackConstructor.cpp:
+        (JSC::JSCallbackConstructor::JSCallbackConstructor):
+        * API/JSCallbackConstructor.h:
+        * API/JSCallbackObject.cpp:
+        (JSC::JSCallbackObject<JSNonFinalObject>::createStructure):
+        (JSC::JSCallbackObject<JSNonFinalObject>::subspaceForImpl):
+        (JSC::JSCallbackObject<JSGlobalObject>::subspaceForImpl):
+        (JSC::JSCallbackObject<JSDestructibleObject>::createStructure): Deleted.
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::init):
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::prototype):
+        * API/JSObjectRef.cpp:
+        (JSObjectMake):
+        (JSObjectGetPrivate):
+        (JSObjectSetPrivate):
+        (JSObjectGetPrivateProperty):
+        (JSObjectSetPrivateProperty):
+        (JSObjectDeletePrivateProperty):
+        * API/JSValueRef.cpp:
+        (JSValueIsObjectOfClass):
+        * API/JSWeakObjectMapRefPrivate.cpp:
+        * API/glib/JSAPIWrapperGlobalObject.cpp:
+        (JSC::JSCallbackObject<JSAPIWrapperGlobalObject>::subspaceForImpl):
+        * API/glib/JSAPIWrapperGlobalObject.h:
+        (JSC::JSAPIWrapperGlobalObject::subspaceFor):
+        * API/glib/JSAPIWrapperObjectGLib.cpp:
+        (JSC::JSCallbackObject<JSAPIWrapperObject>::subspaceForImpl):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSSegmentedVariableObject.cpp:
+        (JSC::JSSegmentedVariableObject::finishCreation):
+        * runtime/JSSegmentedVariableObject.h:
+        (JSC::JSSegmentedVariableObject::classInfo const):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2019-12-10  Saam Barati  <sbarati@apple.com>
 
         BytecodeDumper should print out of line jump targets

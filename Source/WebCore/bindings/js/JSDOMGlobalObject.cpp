@@ -149,7 +149,7 @@ void JSDOMGlobalObject::finishCreation(VM& vm)
 
     addBuiltinGlobals(vm);
 
-    RELEASE_ASSERT(classInfo());
+    RELEASE_ASSERT(classInfo(vm));
 }
 
 void JSDOMGlobalObject::finishCreation(VM& vm, JSObject* thisValue)
@@ -159,7 +159,7 @@ void JSDOMGlobalObject::finishCreation(VM& vm, JSObject* thisValue)
 
     addBuiltinGlobals(vm);
 
-    RELEASE_ASSERT(classInfo());
+    RELEASE_ASSERT(classInfo(vm));
 }
 
 ScriptExecutionContext* JSDOMGlobalObject::scriptExecutionContext() const

@@ -131,7 +131,7 @@ protected:
     void finishCreation(VM&);
 
 public:
-    typedef Parent Base;
+    using Base = Parent;
     static constexpr unsigned StructureFlags = Base::StructureFlags | ProhibitsPropertyCaching | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | ImplementsHasInstance | OverridesGetPropertyNames | OverridesGetCallData;
     static_assert(!(StructureFlags & ImplementsDefaultHasInstance), "using customHasInstance");
 
@@ -151,6 +151,12 @@ public:
     static void destroy(JSCell* cell)
     {
         static_cast<JSCallbackObject*>(cell)->JSCallbackObject::~JSCallbackObject();
+    }
+
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return subspaceForImpl(vm, mode);
     }
 
     void setPrivate(void* data);
@@ -184,6 +190,7 @@ public:
     using Parent::methodTable;
 
 private:
+    static IsoSubspace* subspaceForImpl(VM&, SubspaceAccess);
     static String className(const JSObject*, VM&);
     static String toStringName(const JSObject*, JSGlobalObject*);
 

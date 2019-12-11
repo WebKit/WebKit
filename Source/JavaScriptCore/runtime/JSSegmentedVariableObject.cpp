@@ -119,7 +119,7 @@ void JSSegmentedVariableObject::finishCreation(VM& vm)
     Base::finishCreation(vm);
     setSymbolTable(vm, SymbolTable::create(vm));
     vm.heap.addFinalizer(this, [] (JSCell* cell) {
-        static_cast<JSSegmentedVariableObject*>(cell)->classInfo()->methodTable.destroy(cell);
+        static_cast<JSSegmentedVariableObject*>(cell)->m_classInfo->methodTable.destroy(cell);
     });
 }
 

@@ -105,6 +105,19 @@ void JSAPIWrapperObject::visitChildren(JSCell* cell, JSC::SlotVisitor& visitor)
         scanExternalObjectGraph(visitor.vm(), visitor, wrappedObject);
 }
 
+template <>
+IsoSubspace* JSCallbackObject<JSAPIWrapperObject>::subspaceForImpl(VM& vm, SubspaceAccess mode)
+{
+    switch (mode) {
+    case SubspaceAccess::OnMainThread:
+        return vm.apiWrapperObjectSpace<SubspaceAccess::OnMainThread>();
+    case SubspaceAccess::Concurrently:
+        return vm.apiWrapperObjectSpace<SubspaceAccess::Concurrently>();
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
 } // namespace JSC
 
 #endif // JSC_OBJC_API_ENABLED

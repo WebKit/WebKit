@@ -126,13 +126,16 @@ class IntlCollator;
 class IntlDateTimeFormat;
 class IntlNumberFormat;
 class IntlPluralRules;
+class JSAPIWrapperObject;
 class JSCCallbackFunction;
+class JSCallbackConstructor;
 class JSCustomGetterSetterFunction;
 class JSDestructibleObjectHeapCellType;
 class JSGlobalObject;
 class JSModuleNamespaceObject;
 class JSModuleRecord;
 class JSNativeStdFunction;
+class JSNonFinalObject;
 class JSObject;
 class JSPromise;
 class JSPropertyNameEnumerator;
@@ -182,6 +185,7 @@ class WebAssemblyFunction;
 class WebAssemblyModuleRecord;
 
 template<typename CellType> class IsoHeapCellType;
+template<typename Parent> class JSCallbackObject;
 
 #if ENABLE(FTL_JIT)
 namespace FTL {
@@ -359,6 +363,8 @@ public:
     std::unique_ptr<HeapCellType> immutableButterflyHeapCellType;
     std::unique_ptr<HeapCellType> cellHeapCellType;
     std::unique_ptr<HeapCellType> destructibleCellHeapCellType;
+    std::unique_ptr<IsoHeapCellType<JSCallbackConstructor>> callbackConstructorHeapCellType;
+    std::unique_ptr<IsoHeapCellType<JSCallbackObject<JSNonFinalObject>>> callbackObjectHeapCellType;
     std::unique_ptr<IsoHeapCellType<DateInstance>> dateInstanceHeapCellType;
     std::unique_ptr<IsoHeapCellType<ErrorInstance>> errorInstanceHeapCellType;
     std::unique_ptr<IsoHeapCellType<JSModuleRecord>> jsModuleRecordHeapCellType;
@@ -369,9 +375,11 @@ public:
     std::unique_ptr<IsoHeapCellType<JSWeakSet>> weakSetHeapCellType;
     std::unique_ptr<JSDestructibleObjectHeapCellType> destructibleObjectHeapCellType;
 #if JSC_OBJC_API_ENABLED
+    std::unique_ptr<IsoHeapCellType<JSCallbackObject<JSAPIWrapperObject>>> apiWrapperObjectHeapCellType;
     std::unique_ptr<IsoHeapCellType<ObjCCallbackFunction>> objCCallbackFunctionHeapCellType;
 #endif
 #ifdef JSC_GLIB_API_ENABLED
+    std::unique_ptr<IsoHeapCellType<JSCallbackObject<JSAPIWrapperObject>>> apiWrapperObjectHeapCellType;
     std::unique_ptr<IsoHeapCellType<JSCCallbackFunction>> jscCallbackFunctionHeapCellType;
 #endif
 #if ENABLE(INTL)
@@ -458,17 +466,25 @@ public:
 
 
 #if JSC_OBJC_API_ENABLED
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(apiWrapperObjectSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(objCCallbackFunctionSpace)
 #endif
 #ifdef JSC_GLIB_API_ENABLED
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(apiWrapperObjectSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(jscCallbackFunctionSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(callbackAPIWrapperGlobalObjectSpace)
 #endif
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(apiGlobalObjectSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(apiValueWrapperSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(arrayBufferSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(asyncGeneratorSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(bigIntObjectSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(booleanObjectSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(boundFunctionSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(callbackConstructorSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(callbackGlobalObjectSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(callbackFunctionSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(callbackObjectSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(customGetterSetterFunctionSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(dataViewSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(errorInstanceSpace)

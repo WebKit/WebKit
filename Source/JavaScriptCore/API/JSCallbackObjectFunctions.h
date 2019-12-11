@@ -125,7 +125,7 @@ void JSCallbackObject<Parent>::init(JSGlobalObject* globalObject)
         initialize(toRef(globalObject), toRef(jsCast<JSObject*>(this)));
     }
     
-    m_classInfo = this->classInfo();
+    m_classInfo = this->classInfo(getVM(globalObject));
 }
 
 template <class Parent>

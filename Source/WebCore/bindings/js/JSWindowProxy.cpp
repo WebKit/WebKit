@@ -75,7 +75,7 @@ void JSWindowProxy::destroy(JSCell* cell)
 
 void JSWindowProxy::setWindow(VM& vm, JSDOMGlobalObject& window)
 {
-    ASSERT(window.classInfo() == JSDOMWindow::info() || window.classInfo() == JSRemoteDOMWindow::info());
+    ASSERT(window.classInfo(vm) == JSDOMWindow::info() || window.classInfo(vm) == JSRemoteDOMWindow::info());
     setTarget(vm, &window);
     structure(vm)->setGlobalObject(vm, &window);
     GCController::singleton().garbageCollectSoon();

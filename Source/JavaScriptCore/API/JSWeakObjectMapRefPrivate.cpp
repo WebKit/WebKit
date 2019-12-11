@@ -64,7 +64,7 @@ void JSWeakObjectMapSet(JSContextRef ctx, JSWeakObjectMapRef map, void* key, JSO
         return;
     ASSERT(obj->inherits<JSProxy>(vm)
         || obj->inherits<JSCallbackObject<JSGlobalObject>>(vm)
-        || obj->inherits<JSCallbackObject<JSDestructibleObject>>(vm));
+        || obj->inherits<JSCallbackObject<JSNonFinalObject>>(vm));
     map->map().set(key, obj);
 }
 

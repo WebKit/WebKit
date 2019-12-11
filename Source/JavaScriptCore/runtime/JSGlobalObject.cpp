@@ -670,7 +670,7 @@ void JSGlobalObject::init(VM& vm)
         });
     m_callbackObjectStructure.initLater(
         [] (const Initializer<Structure>& init) {
-            init.set(JSCallbackObject<JSDestructibleObject>::createStructure(init.vm, init.owner, init.owner->m_objectPrototype.get()));
+            init.set(JSCallbackObject<JSNonFinalObject>::createStructure(init.vm, init.owner, init.owner->m_objectPrototype.get()));
         });
 
 #if JSC_OBJC_API_ENABLED

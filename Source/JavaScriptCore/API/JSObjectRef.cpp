@@ -96,7 +96,7 @@ JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef jsClass, void* data)
     if (!jsClass)
         return toRef(constructEmptyObject(globalObject));
 
-    JSCallbackObject<JSDestructibleObject>* object = JSCallbackObject<JSDestructibleObject>::create(globalObject, globalObject->callbackObjectStructure(), jsClass, data);
+    JSCallbackObject<JSNonFinalObject>* object = JSCallbackObject<JSNonFinalObject>::create(globalObject, globalObject->callbackObjectStructure(), jsClass, data);
     if (JSObject* prototype = jsClass->prototype(globalObject))
         object->setPrototypeDirect(vm, prototype);
 
@@ -567,8 +567,8 @@ void* JSObjectGetPrivate(JSObjectRef object)
 
     if (classInfo->isSubClassOf(JSCallbackObject<JSGlobalObject>::info()))
         return static_cast<JSCallbackObject<JSGlobalObject>*>(jsObject)->getPrivate();
-    if (classInfo->isSubClassOf(JSCallbackObject<JSDestructibleObject>::info()))
-        return static_cast<JSCallbackObject<JSDestructibleObject>*>(jsObject)->getPrivate();
+    if (classInfo->isSubClassOf(JSCallbackObject<JSNonFinalObject>::info()))
+        return static_cast<JSCallbackObject<JSNonFinalObject>*>(jsObject)->getPrivate();
 #if JSC_OBJC_API_ENABLED
     if (classInfo->isSubClassOf(JSCallbackObject<JSAPIWrapperObject>::info()))
         return static_cast<JSCallbackObject<JSAPIWrapperObject>*>(jsObject)->getPrivate();
@@ -594,8 +594,8 @@ bool JSObjectSetPrivate(JSObjectRef object, void* data)
         static_cast<JSCallbackObject<JSGlobalObject>*>(jsObject)->setPrivate(data);
         return true;
     }
-    if (classInfo->isSubClassOf(JSCallbackObject<JSDestructibleObject>::info())) {
-        static_cast<JSCallbackObject<JSDestructibleObject>*>(jsObject)->setPrivate(data);
+    if (classInfo->isSubClassOf(JSCallbackObject<JSNonFinalObject>::info())) {
+        static_cast<JSCallbackObject<JSNonFinalObject>*>(jsObject)->setPrivate(data);
         return true;
     }
 #if JSC_OBJC_API_ENABLED
@@ -624,8 +624,8 @@ JSValueRef JSObjectGetPrivateProperty(JSContextRef ctx, JSObjectRef object, JSSt
 
     if (jsObject->inherits<JSCallbackObject<JSGlobalObject>>(vm))
         result = jsCast<JSCallbackObject<JSGlobalObject>*>(jsObject)->getPrivateProperty(name);
-    else if (jsObject->inherits<JSCallbackObject<JSDestructibleObject>>(vm))
-        result = jsCast<JSCallbackObject<JSDestructibleObject>*>(jsObject)->getPrivateProperty(name);
+    else if (jsObject->inherits<JSCallbackObject<JSNonFinalObject>>(vm))
+        result = jsCast<JSCallbackObject<JSNonFinalObject>*>(jsObject)->getPrivateProperty(name);
 #if JSC_OBJC_API_ENABLED
     else if (jsObject->inherits<JSCallbackObject<JSAPIWrapperObject>>(vm))
         result = jsCast<JSCallbackObject<JSAPIWrapperObject>*>(jsObject)->getPrivateProperty(name);
@@ -650,8 +650,8 @@ bool JSObjectSetPrivateProperty(JSContextRef ctx, JSObjectRef object, JSStringRe
         jsCast<JSCallbackObject<JSGlobalObject>*>(jsObject)->setPrivateProperty(vm, name, jsValue);
         return true;
     }
-    if (jsObject->inherits<JSCallbackObject<JSDestructibleObject>>(vm)) {
-        jsCast<JSCallbackObject<JSDestructibleObject>*>(jsObject)->setPrivateProperty(vm, name, jsValue);
+    if (jsObject->inherits<JSCallbackObject<JSNonFinalObject>>(vm)) {
+        jsCast<JSCallbackObject<JSNonFinalObject>*>(jsObject)->setPrivateProperty(vm, name, jsValue);
         return true;
     }
 #if JSC_OBJC_API_ENABLED
@@ -679,8 +679,8 @@ bool JSObjectDeletePrivateProperty(JSContextRef ctx, JSObjectRef object, JSStrin
         jsCast<JSCallbackObject<JSGlobalObject>*>(jsObject)->deletePrivateProperty(name);
         return true;
     }
-    if (jsObject->inherits<JSCallbackObject<JSDestructibleObject>>(vm)) {
-        jsCast<JSCallbackObject<JSDestructibleObject>*>(jsObject)->deletePrivateProperty(name);
+    if (jsObject->inherits<JSCallbackObject<JSNonFinalObject>>(vm)) {
+        jsCast<JSCallbackObject<JSNonFinalObject>*>(jsObject)->deletePrivateProperty(name);
         return true;
     }
 #if JSC_OBJC_API_ENABLED
