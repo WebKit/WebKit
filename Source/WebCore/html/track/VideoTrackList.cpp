@@ -94,10 +94,5 @@ EventTargetInterface VideoTrackList::eventTargetInterface() const
     return VideoTrackListEventTargetInterfaceType;
 }
 
-const char* VideoTrackList::activeDOMObjectName() const
-{
-    return "VideoTrackList";
-}
-
 } // namespace WebCore
 #endif

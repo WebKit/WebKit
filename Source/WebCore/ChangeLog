@@ -1,3 +1,29 @@
+2019-12-10  youenn fablet  <youenn@apple.com>
+
+        TrackListBase does not need to be an ActiveDOMObject
+        https://bugs.webkit.org/show_bug.cgi?id=205063
+
+        Reviewed by Eric Carlson.
+
+        Made TrackListBase a ContextDestructrionObserver instead of an ActiveDOMObject.
+        No observable change of behavior.
+
+        * html/track/AudioTrackList.cpp:
+        (WebCore::AudioTrackList::activeDOMObjectName const): Deleted.
+        * html/track/AudioTrackList.h:
+        * html/track/AudioTrackList.idl:
+        * html/track/TextTrackList.cpp:
+        (WebCore::TextTrackList::activeDOMObjectName const): Deleted.
+        * html/track/TextTrackList.h:
+        * html/track/TextTrackList.idl:
+        * html/track/TrackListBase.cpp:
+        (WebCore::TrackListBase::TrackListBase):
+        * html/track/TrackListBase.h:
+        * html/track/VideoTrackList.cpp:
+        (WebCore::VideoTrackList::activeDOMObjectName const): Deleted.
+        * html/track/VideoTrackList.h:
+        * html/track/VideoTrackList.idl:
+
 2019-12-10  Cathie Chen  <cathiechen@igalia.com>
 
         Fixed Pattern.h compile error

@@ -40,12 +40,11 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(TrackListBase);
 
 TrackListBase::TrackListBase(HTMLMediaElement* element, ScriptExecutionContext* context)
-    : ActiveDOMObject(context)
+    : ContextDestructionObserver(context)
     , m_element(element)
     , m_asyncEventQueue(MainThreadGenericEventQueue::create(*this))
 {
     ASSERT(!context || is<Document>(context));
-    suspendIfNeeded();
 }
 
 TrackListBase::~TrackListBase()
