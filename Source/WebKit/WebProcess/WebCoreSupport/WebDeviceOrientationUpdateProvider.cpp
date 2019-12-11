@@ -49,26 +49,60 @@ WebDeviceOrientationUpdateProvider::~WebDeviceOrientationUpdateProvider()
     WebProcess::singleton().removeMessageReceiver(Messages::WebDeviceOrientationUpdateProvider::messageReceiverName(), m_pageIdentifier);
 }
 
-void WebDeviceOrientationUpdateProvider::startUpdating(WebCore::MotionManagerClient& client)
+void WebDeviceOrientationUpdateProvider::startUpdatingDeviceOrientation(WebCore::MotionManagerClient& client)
 {
-    if (m_clients.isEmpty() && m_page)
+    if (m_deviceOrientationClients.computesEmpty() && m_page)
         m_page->send(Messages::WebDeviceOrientationUpdateProviderProxy::StartUpdatingDeviceOrientation());
-    m_clients.add(&client);
+    m_deviceOrientationClients.add(client);
 }
 
-void WebDeviceOrientationUpdateProvider::stopUpdating(WebCore::MotionManagerClient& client)
+void WebDeviceOrientationUpdateProvider::stopUpdatingDeviceOrientation(WebCore::MotionManagerClient& client)
 {
-    if (m_clients.isEmpty())
+    if (m_deviceOrientationClients.computesEmpty())
         return;
-    m_clients.remove(&client);
-    if (m_clients.isEmpty() && m_page)
+    m_deviceOrientationClients.remove(client);
+    if (m_deviceOrientationClients.computesEmpty() && m_page)
         m_page->send(Messages::WebDeviceOrientationUpdateProviderProxy::StopUpdatingDeviceOrientation());
+}
+
+void WebDeviceOrientationUpdateProvider::startUpdatingDeviceMotion(WebCore::MotionManagerClient& client)
+{
+    if (m_deviceMotionClients.computesEmpty() && m_page)
+        m_page->send(Messages::WebDeviceOrientationUpdateProviderProxy::StartUpdatingDeviceMotion());
+    m_deviceMotionClients.add(client);
+}
+
+void WebDeviceOrientationUpdateProvider::stopUpdatingDeviceMotion(WebCore::MotionManagerClient& client)
+{
+    if (m_deviceMotionClients.computesEmpty())
+        return;
+    m_deviceMotionClients.remove(client);
+    if (m_deviceMotionClients.computesEmpty() && m_page)
+        m_page->send(Messages::WebDeviceOrientationUpdateProviderProxy::StopUpdatingDeviceMotion());
 }
 
 void WebDeviceOrientationUpdateProvider::deviceOrientationChanged(double alpha, double beta, double gamma, double compassHeading, double compassAccuracy)
 {
-    for (auto* client : copyToVector(m_clients))
-        client->orientationChanged(alpha, beta, gamma, compassHeading, compassAccuracy);
+    Vector<WeakPtr<WebCore::MotionManagerClient>> clients;
+    for (auto& client : m_deviceOrientationClients)
+        clients.append(makeWeakPtr(&client));
+
+    for (auto& client : clients) {
+        if (client)
+            client->orientationChanged(alpha, beta, gamma, compassHeading, compassAccuracy);
+    }
+}
+
+void WebDeviceOrientationUpdateProvider::deviceMotionChanged(double xAcceleration, double yAcceleration, double zAcceleration, double xAccelerationIncludingGravity, double yAccelerationIncludingGravity, double zAccelerationIncludingGravity, double xRotationRate, double yRotationRate, double zRotationRate)
+{
+    Vector<WeakPtr<WebCore::MotionManagerClient>> clients;
+    for (auto& client : m_deviceMotionClients)
+        clients.append(makeWeakPtr(&client));
+    
+    for (auto& client : clients) {
+        if (client)
+            client->motionChanged(xAcceleration, yAcceleration, zAcceleration, xAccelerationIncludingGravity, yAccelerationIncludingGravity,  zAccelerationIncludingGravity, xRotationRate, yRotationRate, zRotationRate);
+    }
 }
 
 }

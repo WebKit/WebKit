@@ -53,7 +53,7 @@ void DeviceOrientationClientIOS::startUpdating()
     m_updating = true;
 
     if (m_deviceOrientationUpdateProvider) {
-        m_deviceOrientationUpdateProvider->startUpdating(*this);
+        m_deviceOrientationUpdateProvider->startUpdatingDeviceOrientation(*this);
         return;
     }
 
@@ -68,7 +68,7 @@ void DeviceOrientationClientIOS::stopUpdating()
     m_updating = false;
 
     if (m_deviceOrientationUpdateProvider) {
-        m_deviceOrientationUpdateProvider->stopUpdating(*this);
+        m_deviceOrientationUpdateProvider->stopUpdatingDeviceOrientation(*this);
         return;
     }
 
@@ -84,7 +84,7 @@ DeviceOrientationData* DeviceOrientationClientIOS::lastOrientation() const
 void DeviceOrientationClientIOS::deviceOrientationControllerDestroyed()
 {
     if (m_deviceOrientationUpdateProvider) {
-        m_deviceOrientationUpdateProvider->stopUpdating(*this);
+        m_deviceOrientationUpdateProvider->stopUpdatingDeviceOrientation(*this);
         return;
     }
 

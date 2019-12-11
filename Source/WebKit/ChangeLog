@@ -1,3 +1,33 @@
+2019-12-10  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Calls to the device motion API should be done in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=204770
+
+        Reviewed by Brent Fulgham.
+
+        The class WebDeviceOrientationUpdateProviderProxy will handle messages to start and stop updating device motion
+        in the UI process. Also, add a message to update the device motion in the WebContent process. In the UI process,
+        the device motion API is called through the already existing WebCoreMotionManager class.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * UIProcess/ios/WebDeviceOrientationUpdateProviderProxy.h:
+        * UIProcess/ios/WebDeviceOrientationUpdateProviderProxy.messages.in:
+        * UIProcess/ios/WebDeviceOrientationUpdateProviderProxy.mm:
+        (WebKit::WebDeviceOrientationUpdateProviderProxy::startUpdatingDeviceMotion):
+        (WebKit::WebDeviceOrientationUpdateProviderProxy::stopUpdatingDeviceMotion):
+        (WebKit::WebDeviceOrientationUpdateProviderProxy::motionChanged):
+        * WebProcess/WebCoreSupport/WebDeviceOrientationUpdateProvider.cpp:
+        (WebKit::WebDeviceOrientationUpdateProvider::startUpdatingDeviceOrientation):
+        (WebKit::WebDeviceOrientationUpdateProvider::stopUpdatingDeviceOrientation):
+        (WebKit::WebDeviceOrientationUpdateProvider::startUpdatingDeviceMotion):
+        (WebKit::WebDeviceOrientationUpdateProvider::stopUpdatingDeviceMotion):
+        (WebKit::WebDeviceOrientationUpdateProvider::deviceOrientationChanged):
+        (WebKit::WebDeviceOrientationUpdateProvider::deviceMotionChanged):
+        (WebKit::WebDeviceOrientationUpdateProvider::startUpdating): Deleted.
+        (WebKit::WebDeviceOrientationUpdateProvider::stopUpdating): Deleted.
+        * WebProcess/WebCoreSupport/WebDeviceOrientationUpdateProvider.h:
+        * WebProcess/WebCoreSupport/WebDeviceOrientationUpdateProvider.messages.in:
+
 2019-12-10  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, drop debug assertion in InspectorTargetProxy::didCommitProvisionalTarget() that is hitting after r253337

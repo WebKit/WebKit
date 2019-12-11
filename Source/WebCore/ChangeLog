@@ -1,5 +1,49 @@
 2019-12-10  Per Arne Vollan  <pvollan@apple.com>
 
+        [iOS] Calls to the device motion API should be done in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=204770
+
+        Reviewed by Brent Fulgham.
+
+        The device motion API on iOS is communicating with iohideventsystem. Since mach lookup to this daemon
+        will be closed, the calls to this API should be moved from the WebContent process to the UI process.
+        This patch implements forwarding of the device orientation requests to the UI process through the
+        class, DeviceOrientationUpdateProvider, which is subclassed by WebDeviceOrientationUpdateProvider in
+        modern WebKit. This class implements forwarding of the requests to the UI process, and receives
+        device orientation updates from the UI process. An instance of this class will be shared by all
+        device orientation clients on a page, and passed as part of the page configuration parameters. On
+        the UI process side, the class WebDeviceOrientationUpdateProviderProxy attached to the Web page
+        proxy is taking care of calling the device orientation API through the existing WebCoreMotionManager
+        Objective-C class, and send device orientation updates back to the Web process. Also, use a weak
+        hash set of clients in WebDeviceOrientationUpdateProvider.
+
+        No new tests, covered by existing tests.
+
+        * dom/Document.cpp:
+        * platform/ios/DeviceMotionClientIOS.h:
+        * platform/ios/DeviceMotionClientIOS.mm:
+        (WebCore::DeviceMotionClientIOS::DeviceMotionClientIOS):
+        (WebCore::DeviceMotionClientIOS::startUpdating):
+        (WebCore::DeviceMotionClientIOS::stopUpdating):
+        (WebCore::DeviceMotionClientIOS::deviceMotionControllerDestroyed):
+        * platform/ios/DeviceOrientationClientIOS.mm:
+        (WebCore::DeviceOrientationClientIOS::startUpdating):
+        (WebCore::DeviceOrientationClientIOS::stopUpdating):
+        (WebCore::DeviceOrientationClientIOS::deviceOrientationControllerDestroyed):
+        * platform/ios/DeviceOrientationUpdateProvider.h:
+        * platform/ios/MotionManagerClient.h:
+        (WebCore::MotionManagerClient::orientationChanged):
+        (WebCore::MotionManagerClient::motionChanged):
+        * platform/ios/WebCoreMotionManager.h:
+        * platform/ios/WebCoreMotionManager.mm:
+        (-[WebCoreMotionManager addMotionClient:]):
+        (-[WebCoreMotionManager removeMotionClient:]):
+        (-[WebCoreMotionManager checkClientStatus]):
+        (-[WebCoreMotionManager sendAccelerometerData:]):
+        (-[WebCoreMotionManager sendMotionData:withHeading:]):
+
+2019-12-10  Per Arne Vollan  <pvollan@apple.com>
+
         Make it possible to add regression tests for blocked XPC services
         https://bugs.webkit.org/show_bug.cgi?id=204967
 

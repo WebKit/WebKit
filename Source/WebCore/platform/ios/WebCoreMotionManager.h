@@ -43,7 +43,7 @@ class MotionManagerClient;
 WEBCORE_EXPORT @interface WebCoreMotionManager : NSObject {
     CMMotionManager* m_motionManager;
     CLLocationManager* m_locationManager;
-    HashSet<WebCore::DeviceMotionClientIOS*> m_deviceMotionClients;
+    WeakHashSet<WebCore::MotionManagerClient> m_deviceMotionClients;
     WeakHashSet<WebCore::MotionManagerClient> m_deviceOrientationClients;
     NSTimer* m_updateTimer;
     BOOL m_gyroAvailable;
@@ -52,8 +52,8 @@ WEBCORE_EXPORT @interface WebCoreMotionManager : NSObject {
 }
 
 + (WebCoreMotionManager *)sharedManager;
-- (void)addMotionClient:(WebCore::DeviceMotionClientIOS *)client;
-- (void)removeMotionClient:(WebCore::DeviceMotionClientIOS *)client;
+- (void)addMotionClient:(WebCore::MotionManagerClient *)client;
+- (void)removeMotionClient:(WebCore::MotionManagerClient *)client;
 - (void)addOrientationClient:(WebCore::MotionManagerClient *)client;
 - (void)removeOrientationClient:(WebCore::MotionManagerClient *)client;
 - (BOOL)gyroAvailable;

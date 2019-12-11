@@ -100,16 +100,16 @@ static const double kGravity = 9.80665;
     [super dealloc];
 }
 
-- (void)addMotionClient:(WebCore::DeviceMotionClientIOS *)client
+- (void)addMotionClient:(WebCore::MotionManagerClient *)client
 {
-    m_deviceMotionClients.add(client);
+    m_deviceMotionClients.add(*client);
     if (m_initialized)
         [self checkClientStatus];
 }
 
-- (void)removeMotionClient:(WebCore::DeviceMotionClientIOS *)client
+- (void)removeMotionClient:(WebCore::MotionManagerClient *)client
 {
-    m_deviceMotionClients.remove(client);
+    m_deviceMotionClients.remove(*client);
     if (m_initialized)
         [self checkClientStatus];
 }
@@ -171,7 +171,7 @@ static const double kGravity = 9.80665;
     // be no chance that m_motionManager has not been created.
     ASSERT(m_motionManager);
 
-    if (m_deviceMotionClients.size() || m_deviceOrientationClients.computeSize()) {
+    if (m_deviceMotionClients.computeSize() || m_deviceOrientationClients.computeSize()) {
         if (m_gyroAvailable)
             [m_motionManager startDeviceMotionUpdates];
         else
@@ -225,8 +225,15 @@ static const double kGravity = 9.80665;
     WebThreadRun(^{
         CMAcceleration accel = newAcceleration.acceleration;
 
-        for (auto& client : copyToVector(m_deviceMotionClients))
-            client->motionChanged(0, 0, 0, accel.x * kGravity, accel.y * kGravity, accel.z * kGravity, 0, 0, 0);
+        Vector<WeakPtr<WebCore::MotionManagerClient>> motionClients;
+        motionClients.reserveInitialCapacity(m_deviceMotionClients.computeSize());
+        for (auto& client : m_deviceMotionClients)
+            motionClients.uncheckedAppend(makeWeakPtr(&client));
+
+        for (auto& client : motionClients) {
+            if (client)
+                client->motionChanged(0, 0, 0, accel.x * kGravity, accel.y * kGravity, accel.z * kGravity, 0, 0, 0);
+        }
     });
 }
 
@@ -243,8 +250,15 @@ static const double kGravity = 9.80665;
 
         CMRotationRate rotationRate = newMotion.rotationRate;
 
-        for (auto& client : copyToVector(m_deviceMotionClients))
-            client->motionChanged(userAccel.x * kGravity, userAccel.y * kGravity, userAccel.z * kGravity, totalAccel.x * kGravity, totalAccel.y * kGravity, totalAccel.z * kGravity, rad2deg(rotationRate.x), rad2deg(rotationRate.y), rad2deg(rotationRate.z));
+        Vector<WeakPtr<WebCore::MotionManagerClient>> motionClients;
+        motionClients.reserveInitialCapacity(m_deviceMotionClients.computeSize());
+        for (auto& client : m_deviceMotionClients)
+            motionClients.uncheckedAppend(makeWeakPtr(&client));
+        
+        for (auto& client : motionClients) {
+            if (client)
+                client->motionChanged(userAccel.x * kGravity, userAccel.y * kGravity, userAccel.z * kGravity, totalAccel.x * kGravity, totalAccel.y * kGravity, totalAccel.z * kGravity, rad2deg(rotationRate.x), rad2deg(rotationRate.y), rad2deg(rotationRate.z));
+        }
 
         CMAttitude* attitude = newMotion.attitude;
 

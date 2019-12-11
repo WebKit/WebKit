@@ -30,15 +30,17 @@
 #include "DeviceMotionClient.h"
 #include "DeviceMotionController.h"
 #include "DeviceMotionData.h"
+#include "DeviceOrientationUpdateProvider.h"
+#include "MotionManagerClient.h"
 #include <wtf/RefPtr.h>
 
 OBJC_CLASS WebCoreMotionManager;
 
 namespace WebCore {
 
-class DeviceMotionClientIOS : public DeviceMotionClient {
+class DeviceMotionClientIOS : public DeviceMotionClient, public MotionManagerClient {
 public:
-    DeviceMotionClientIOS();
+    DeviceMotionClientIOS(RefPtr<DeviceOrientationUpdateProvider>&&);
     ~DeviceMotionClientIOS() override;
     void setController(DeviceMotionController*) override;
     void startUpdating() override;
@@ -46,13 +48,14 @@ public:
     DeviceMotionData* lastMotion() const override;
     void deviceMotionControllerDestroyed() override;
 
-    void motionChanged(double, double, double, double, double, double, double, double, double);
+    void motionChanged(double, double, double, double, double, double, double, double, double) override;
 
 private:
-    WebCoreMotionManager* m_motionManager;
-    DeviceMotionController* m_controller;
+    WebCoreMotionManager* m_motionManager { nullptr };
+    DeviceMotionController* m_controller { nullptr };
     RefPtr<DeviceMotionData> m_currentDeviceMotionData;
-    bool m_updating;
+    RefPtr<DeviceOrientationUpdateProvider> m_deviceOrientationUpdateProvider;
+    bool m_updating { false };
 };
 
 } // namespace WebCore

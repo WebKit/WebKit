@@ -37,10 +37,14 @@ class DeviceOrientationUpdateProvider : public RefCounted<DeviceOrientationUpdat
 public:
     virtual ~DeviceOrientationUpdateProvider() { }
 
-    virtual void startUpdating(MotionManagerClient&) = 0;
-    virtual void stopUpdating(MotionManagerClient&) = 0;
+    virtual void startUpdatingDeviceOrientation(MotionManagerClient&) = 0;
+    virtual void stopUpdatingDeviceOrientation(MotionManagerClient&) = 0;
+
+    virtual void startUpdatingDeviceMotion(MotionManagerClient&) = 0;
+    virtual void stopUpdatingDeviceMotion(MotionManagerClient&) = 0;
 
     virtual void deviceOrientationChanged(double, double, double, double, double) = 0;
+    virtual void deviceMotionChanged(double, double, double, double, double, double, double, double, double) = 0;
     
 protected:
     DeviceOrientationUpdateProvider() = default;

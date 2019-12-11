@@ -30,7 +30,7 @@
 
 #include <WebCore/DeviceOrientationUpdateProvider.h>
 
-#include <wtf/HashSet.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
@@ -46,16 +46,20 @@ private:
     ~WebDeviceOrientationUpdateProvider();
 
     // WebCore::DeviceOrientationUpdateProvider
-    void startUpdating(WebCore::MotionManagerClient&) final;
-    void stopUpdating(WebCore::MotionManagerClient&) final;
+    void startUpdatingDeviceOrientation(WebCore::MotionManagerClient&) final;
+    void stopUpdatingDeviceOrientation(WebCore::MotionManagerClient&) final;
+    void startUpdatingDeviceMotion(WebCore::MotionManagerClient&) final;
+    void stopUpdatingDeviceMotion(WebCore::MotionManagerClient&) final;
     void deviceOrientationChanged(double, double, double, double, double) final;
+    void deviceMotionChanged(double, double, double, double, double, double, double, double, double) final;
 
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     WeakPtr<WebPage> m_page;
     WebCore::PageIdentifier m_pageIdentifier;
-    HashSet<WebCore::MotionManagerClient*> m_clients;
+    WeakHashSet<WebCore::MotionManagerClient> m_deviceOrientationClients;
+    WeakHashSet<WebCore::MotionManagerClient> m_deviceMotionClients;
 };
 
 }

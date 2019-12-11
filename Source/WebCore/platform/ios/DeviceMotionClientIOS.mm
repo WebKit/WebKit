@@ -33,10 +33,9 @@
 
 namespace WebCore {
 
-DeviceMotionClientIOS::DeviceMotionClientIOS()
+DeviceMotionClientIOS::DeviceMotionClientIOS(RefPtr<DeviceOrientationUpdateProvider>&& deviceOrientationUpdateProvider)
     : DeviceMotionClient()
-    , m_motionManager(nullptr)
-    , m_updating(0)
+    , m_deviceOrientationUpdateProvider(WTFMove(deviceOrientationUpdateProvider))
 {
 }
 
@@ -53,6 +52,11 @@ void DeviceMotionClientIOS::startUpdating()
 {
     m_updating = true;
 
+    if (m_deviceOrientationUpdateProvider) {
+        m_deviceOrientationUpdateProvider->startUpdatingDeviceMotion(*this);
+        return;
+    }
+
     if (!m_motionManager)
         m_motionManager = [WebCoreMotionManager sharedManager];
 
@@ -62,6 +66,11 @@ void DeviceMotionClientIOS::startUpdating()
 void DeviceMotionClientIOS::stopUpdating()
 {
     m_updating = false;
+
+    if (m_deviceOrientationUpdateProvider) {
+        m_deviceOrientationUpdateProvider->stopUpdatingDeviceMotion(*this);
+        return;
+    }
 
     // Remove ourselves as the motion client so we won't get updates.
     [m_motionManager removeMotionClient:this];
@@ -74,6 +83,11 @@ DeviceMotionData* DeviceMotionClientIOS::lastMotion() const
 
 void DeviceMotionClientIOS::deviceMotionControllerDestroyed()
 {
+    if (m_deviceOrientationUpdateProvider) {
+        m_deviceOrientationUpdateProvider->stopUpdatingDeviceMotion(*this);
+        return;
+    }
+
     [m_motionManager removeMotionClient:this];
 }
 

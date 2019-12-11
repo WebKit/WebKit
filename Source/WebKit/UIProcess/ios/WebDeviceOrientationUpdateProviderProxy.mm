@@ -57,9 +57,24 @@ void WebDeviceOrientationUpdateProviderProxy::stopUpdatingDeviceOrientation()
     [[WebCoreMotionManager sharedManager] removeOrientationClient:this];
 }
 
+void WebDeviceOrientationUpdateProviderProxy::startUpdatingDeviceMotion()
+{
+    [[WebCoreMotionManager sharedManager] addMotionClient:this];
+}
+
+void WebDeviceOrientationUpdateProviderProxy::stopUpdatingDeviceMotion()
+{
+    [[WebCoreMotionManager sharedManager] removeMotionClient:this];
+}
+
 void WebDeviceOrientationUpdateProviderProxy::orientationChanged(double alpha, double beta, double gamma, double compassHeading, double compassAccuracy)
 {
     m_page.send(Messages::WebDeviceOrientationUpdateProvider::DeviceOrientationChanged(alpha, beta, gamma, compassHeading, compassAccuracy));
+}
+
+void WebDeviceOrientationUpdateProviderProxy::motionChanged(double xAcceleration, double yAcceleration, double zAcceleration, double xAccelerationIncludingGravity, double yAccelerationIncludingGravity, double zAccelerationIncludingGravity, double xRotationRate, double yRotationRate, double zRotationRate)
+{
+    m_page.send(Messages::WebDeviceOrientationUpdateProvider::DeviceMotionChanged(xAcceleration, yAcceleration, zAcceleration, xAccelerationIncludingGravity, yAccelerationIncludingGravity, zAccelerationIncludingGravity, xRotationRate, yRotationRate, zRotationRate));
 }
 
 } // namespace WebKit

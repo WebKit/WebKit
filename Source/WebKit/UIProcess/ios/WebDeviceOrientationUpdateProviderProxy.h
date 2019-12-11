@@ -42,11 +42,15 @@ public:
 
     void startUpdatingDeviceOrientation();
     void stopUpdatingDeviceOrientation();
-    
+
+    void startUpdatingDeviceMotion();
+    void stopUpdatingDeviceMotion();
+
 private:
     // WebCore::WebCoreMotionManagerClient
     void orientationChanged(double, double, double, double, double) final;
-    
+    void motionChanged(double, double, double, double, double, double, double, double, double) final;
+
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
