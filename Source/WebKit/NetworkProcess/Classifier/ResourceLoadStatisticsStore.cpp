@@ -504,7 +504,7 @@ bool ResourceLoadStatisticsStore::hasStatisticsExpired(WallTime mostRecentUserIn
 {
     ASSERT(!RunLoop::isMain());
 
-    unsigned operatingDatesWindowInDays;
+    unsigned operatingDatesWindowInDays = 0;
     switch (operatingDatesWindow) {
     case OperatingDatesWindow::Long:
         operatingDatesWindowInDays = operatingDatesWindowLong;

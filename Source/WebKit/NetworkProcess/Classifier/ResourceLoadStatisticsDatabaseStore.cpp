@@ -2167,7 +2167,7 @@ bool ResourceLoadStatisticsDatabaseStore::shouldRemoveAllButCookiesFor(const Dom
     bool isRemovalEnabled = firstPartyWebsiteDataRemovalMode() != FirstPartyWebsiteDataRemovalMode::None || resourceStatistic.isScheduledForAllButCookieDataRemoval;
     bool isResourceGrandfathered = shouldCheckForGrandfathering && resourceStatistic.grandfathered;
 
-    OperatingDatesWindow window;
+    OperatingDatesWindow window { };
     switch (firstPartyWebsiteDataRemovalMode()) {
     case FirstPartyWebsiteDataRemovalMode::AllButCookies:
         FALLTHROUGH;

@@ -1,3 +1,17 @@
+2019-12-10  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Fix MSVC warning C4701: potentially uninitialized local variable 'x' used
+        https://bugs.webkit.org/show_bug.cgi?id=205052
+
+        Reviewed by Don Olmstead.
+
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::setLineCap): Zero-initialize a local variable cairoCap.
+        (WebCore::Cairo::setLineJoin): Zero-initialize a local variable cairoJoin
+        * platform/network/NetworkStorageSession.cpp:
+        (WebCore::NetworkStorageSession::shouldBlockCookies const): Added
+        ASSERT_NOT_REACHED() and return false at the end of the function.
+
 2019-12-10  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Calls to the device motion API should be done in the UI process

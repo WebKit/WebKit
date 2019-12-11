@@ -632,7 +632,7 @@ bool ShadowState::isRequired(PlatformContextCairo& platformContext) const
 
 void setLineCap(PlatformContextCairo& platformContext, LineCap lineCap)
 {
-    cairo_line_cap_t cairoCap;
+    cairo_line_cap_t cairoCap { };
     switch (lineCap) {
     case ButtCap:
         cairoCap = CAIRO_LINE_CAP_BUTT;
@@ -657,7 +657,7 @@ void setLineDash(PlatformContextCairo& platformContext, const DashArray& dashes,
 
 void setLineJoin(PlatformContextCairo& platformContext, LineJoin lineJoin)
 {
-    cairo_line_join_t cairoJoin;
+    cairo_line_join_t cairoJoin { };
     switch (lineJoin) {
     case MiterJoin:
         cairoJoin = CAIRO_LINE_JOIN_MITER;
