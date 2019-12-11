@@ -420,7 +420,7 @@ class TestImporter(object):
             if line.startswith('//') and 'META: global=' in line:
                 items = line.split('META: global=', 1)[1].split(',')
                 suffixes = [self.globalToSuffix.get(item.strip(), '') for item in items]
-                environments = filter(None, set(suffixes))
+                environments = list(filter(None, set(suffixes)))
         return set(environments) if len(environments) else ['html', 'worker.html']
 
     def write_html_files_for_templated_js_tests(self, orig_filepath, new_filepath):

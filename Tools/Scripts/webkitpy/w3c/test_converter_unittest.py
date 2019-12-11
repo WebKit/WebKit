@@ -32,6 +32,7 @@ import unittest
 from webkitpy.common.host import Host
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.webkit_finder import WebKitFinder
+from webkitpy.common.unicode_compatibility import unicode
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 from webkitpy.w3c.test_converter import _W3CTestConverter
 
@@ -325,7 +326,7 @@ CONTENT OF TEST
         self.assertEqual(converted[2], original, 'test should not have been converted')
 
     def verify_test_harness_paths(self, converter, converted, test_path, num_src_paths, num_href_paths):
-        if isinstance(converted, basestring):
+        if isinstance(converted, str) or isinstance(converted, unicode):
             converted = BeautifulSoup(converted)
 
         resources_dir = converter.path_from_webkit_root("LayoutTests", "resources")

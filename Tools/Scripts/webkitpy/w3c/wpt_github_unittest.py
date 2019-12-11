@@ -30,6 +30,7 @@ import base64
 import unittest
 
 from webkitpy.common.host_mock import MockHost
+from webkitpy.common.unicode_compatibility import encode_if_necessary, decode_for
 from webkitpy.w3c.wpt_github import WPTGitHub, MergeError
 
 
@@ -45,4 +46,4 @@ class WPTGitHubTest(unittest.TestCase):
     def test_auth_token(self):
         self.assertEqual(
             self.wpt_github.auth_token(),
-            base64.encodestring('rutabaga:decafbad').strip())
+            decode_for(base64.encodestring(encode_if_necessary('rutabaga:decafbad')), str).strip())

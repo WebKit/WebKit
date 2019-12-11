@@ -47,7 +47,7 @@ def convert_for_webkit(new_path, filename, reference_support_info, host=Host(), 
     """ Converts a file's |contents| so it will function correctly in its |new_path| in Webkit.
 
     Returns the list of modified properties and the modified text if the file was modifed, None otherwise."""
-    contents = host.filesystem.read_binary_file(filename)
+    contents = host.filesystem.read_text_file(filename)
     converter = _W3CTestConverter(new_path, filename, reference_support_info, host, convert_test_harness_links, webkit_test_runner_options)
     if filename.endswith('.css'):
         return converter.add_webkit_prefix_to_unprefixed_properties_and_values(contents)
@@ -106,7 +106,7 @@ class _W3CTestConverter(HTMLParser):
             return []
         properties = json.loads(contents)['properties']
         property_names = []
-        for property_name, property_dict in properties.iteritems():
+        for property_name, property_dict in properties.items():
             property_names.append(property_name)
             if 'codegen-properties' in property_dict:
                 codegen_options = property_dict['codegen-properties']

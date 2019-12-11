@@ -1,3 +1,30 @@
+2019-12-11  Jonathan Bedard  <jbedard@apple.com>
+
+        Python 3: Add support in webkitpy.w3c
+        https://bugs.webkit.org/show_bug.cgi?id=205118
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/test-webkitpy-python3: Add webkitpy.w3c.
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (MockFileSystem.open_binary_file_for_reading): Missing file should cause Filesystem exception.
+        (MockFileSystem.read_binary_file): Ditto.
+        (MockFileSystem.open_text_file_for_reading): Ditto.
+        (MockFileSystem.remove): Ditto.
+        * Scripts/webkitpy/w3c/test_converter.py:
+        (convert_for_webkit): Convert binary file to text file.
+        (_W3CTestConverter.read_webkit_prefixed_css_property_list): Use items over iteritems.
+        * Scripts/webkitpy/w3c/test_converter_unittest.py:
+        (verify_test_harness_paths): Use Python 3 compatible type check.
+        * Scripts/webkitpy/w3c/test_downloader.py:
+        (TestDownloader._init_paths_from_expectations): Use items over iteritems.
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.readEnvironmentsForTemplateTest): Convert filter to list.
+        * Scripts/webkitpy/w3c/wpt_github.py:
+        (WPTGitHub.auth_token): Encode base64 input and decode base64 output.
+        * Scripts/webkitpy/w3c/wpt_github_unittest.py:
+        (WPTGitHubTest.test_auth_token):
+
 2019-12-10  Simon Fraser  <simon.fraser@apple.com>
 
         Move WKWebView code related to testing to new files, with their own headers, and stop exposing test-only functions as SPI.

@@ -316,13 +316,13 @@ class MockFileSystem(object):
         return (WritableBinaryFileObject(self, path), path)
 
     def open_binary_file_for_reading(self, path):
-        if self.files[path] is None:
+        if self.files.get(path) is None:
             self._raise_not_found(path)
         return ReadableBinaryFileObject(self, path, self.files[path])
 
     def read_binary_file(self, path):
         # Intentionally raises KeyError if we don't recognize the path.
-        if self.files[path] is None:
+        if self.files.get(path) is None:
             self._raise_not_found(path)
         return self.files[path]
 
@@ -333,7 +333,7 @@ class MockFileSystem(object):
         self.written_files[path] = unicode_compatibility.encode_for(contents, bytes)
 
     def open_text_file_for_reading(self, path, errors='strict'):
-        if self.files[path] is None:
+        if self.files.get(path) is None:
             self._raise_not_found(path)
         return ReadableTextFileObject(self, path, self.files[path])
 
@@ -381,7 +381,7 @@ class MockFileSystem(object):
         return rel_path
 
     def remove(self, path):
-        if self.files[path] is None:
+        if self.files.get(path) is None:
             self._raise_not_found(path)
         self.files[path] = None
         self.written_files[path] = None

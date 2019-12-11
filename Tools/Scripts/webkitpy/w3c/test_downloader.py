@@ -96,7 +96,7 @@ class TestDownloader(object):
 
     def _init_paths_from_expectations(self):
         import_lines = json.loads(self._filesystem.read_text_file(self.import_expectations_path))
-        for path, policy in import_lines.iteritems():
+        for path, policy in import_lines.items():
             if policy == 'skip':
                 self.paths_to_skip.append(path)
             elif policy == 'import':
