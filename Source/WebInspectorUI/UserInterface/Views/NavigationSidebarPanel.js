@@ -705,7 +705,7 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
                 return false;
 
             if (matchTypeOnly)
-                return true;
+                return !!typeIdentifier;
 
             var candidateObjectCookie = {};
             if (representedObject.saveIdentityToCookie)
