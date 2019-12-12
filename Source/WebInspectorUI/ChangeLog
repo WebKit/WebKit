@@ -1,5 +1,28 @@
 2019-12-11  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION(r253173): Console: evaluating a command should automatically scroll to it's result
+        https://bugs.webkit.org/show_bug.cgi?id=205105
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView):
+        (WI.LogContentView.prototype.get scrollableElements):
+        (WI.LogContentView.prototype._updateMessagesSelection):
+        (WI.LogContentView.prototype._highlightSearchMatchAtIndex):
+        (WI.LogContentView.prototype.layout): Deleted.
+        (WI.LogContentView.prototype._ensureMessageIsVisible): Deleted.
+        (WI.LogContentView.prototype._positionForMessage): Deleted.
+        Now that this uses `display: flex;`, the actual scrollable element is the `messagesElement`,
+        so use that instead when manually setting the `scrollTop`. Use `scrollIntoViewIfNeeded` when
+        revealing search results instead of any custom scroll offset calculations.
+
+        * UserInterface/Views/LogContentView.css:
+        (.content-view.log > .hidden-messages-banner):
+        Drive-by: ensure that the hidden messages banner doesn't shrink.
+
+2019-12-11  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: simplify the text of the script blackboxing context menu item
         https://bugs.webkit.org/show_bug.cgi?id=205099
 

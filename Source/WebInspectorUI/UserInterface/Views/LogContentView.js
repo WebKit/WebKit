@@ -57,7 +57,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         this._keyboardShortcutCommandA = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "A");
         this._keyboardShortcutEsc = new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Escape);
 
-        this._logViewController = new WI.JavaScriptLogViewController(this.messagesElement, this.element, this.prompt, this, "console-prompt-history");
+        this._logViewController = new WI.JavaScriptLogViewController(this.messagesElement, this.messagesElement, this.prompt, this, "console-prompt-history");
         this._lastMessageView = null;
 
         const fixed = true;
@@ -172,7 +172,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     get scrollableElements()
     {
-        return [this.element];
+        return [this.messagesElement];
     }
 
     get shouldKeepElementsScrolledToBottom()
@@ -352,13 +352,6 @@ WI.LogContentView = class LogContentView extends WI.ContentView
             this.messagesElement.focus();
         else
             this.prompt.focus();
-    }
-
-    // Protected
-
-    layout()
-    {
-        this._scrollElementHeight = this.messagesElement.getBoundingClientRect().height;
     }
 
     // Private
@@ -717,37 +710,11 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         if (!rangeSelection)
             this._referenceMessageForRangeSelection = message;
 
-        if (shouldScrollIntoView && !alreadySelectedMessage)
-            this._ensureMessageIsVisible(this._selectedMessages.lastValue);
-    }
-
-    _ensureMessageIsVisible(message)
-    {
-        if (!message)
-            return;
-
-        var y = this._positionForMessage(message).y;
-        if (y < 0) {
-            this.element.scrollTop += y;
-            return;
+        if (shouldScrollIntoView && !alreadySelectedMessage) {
+            let lastMessage = this._selectedMessages.lastValue;
+            if (lastMessage)
+                lastMessage.scrollIntoViewIfNeeded();
         }
-
-        var nextMessage = this._nextMessage(message);
-        if (nextMessage) {
-            y = this._positionForMessage(nextMessage).y;
-            if (y > this._scrollElementHeight)
-                this.element.scrollTop += y - this._scrollElementHeight;
-        } else {
-            y += message.getBoundingClientRect().height;
-            if (y > this._scrollElementHeight)
-                this.element.scrollTop += y - this._scrollElementHeight;
-        }
-    }
-
-    _positionForMessage(message)
-    {
-        var pagePoint = window.webkitConvertPointFromNodeToPage(message, new WebKitPoint(0, 0));
-        return window.webkitConvertPointFromPageToNode(this.element, pagePoint);
     }
 
     _isMessageVisible(message)
@@ -1204,7 +1171,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         this._selectedSearchMatch = this._searchMatches[index];
         this._selectedSearchMatch.highlight.classList.add(WI.LogContentView.SelectedStyleClassName);
 
-        this._ensureMessageIsVisible(this._selectedSearchMatch.message);
+        this._selectedSearchMatch.message.scrollIntoViewIfNeeded(false);
     }
 
     _provisionalLoadStarted()

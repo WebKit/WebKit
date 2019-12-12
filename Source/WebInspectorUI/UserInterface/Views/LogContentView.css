@@ -30,20 +30,18 @@
 
 .content-view.log > .hidden-messages-banner {
     display: flex;
+    flex-shrink: 0;
     justify-content: center;
     align-items: center;
     position: relative;
     height: var(--navigation-bar-height);
     padding: 0 4px;
     color: var(--yellow-highlight-text-color);
-    background-color: var(--yellow-highlight-background-color);
-    border-bottom: 1px solid var(--border-color);
-}
-
-.content-view.log > .hidden-messages-banner {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    background-color: var(--yellow-highlight-background-color);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .content-view.log > .hidden-messages-banner > button {
