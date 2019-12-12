@@ -1,3 +1,15 @@
+2019-12-12  Patrick Griffis  <pgriffis@igalia.com>
+
+        [SOUP] Use new API for strict secure cookies
+        https://bugs.webkit.org/show_bug.cgi?id=169356
+
+        Reviewed by Michael Catanzaro.
+
+        Remove expected failures for secure cookie tests
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2019-12-12  Truitt Savell  <tsavell@apple.com>
 
         REGRESSION: (r251677) imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-3.html is a flakey failure

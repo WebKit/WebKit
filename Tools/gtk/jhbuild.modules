@@ -230,7 +230,7 @@
             hash="sha256:f8fd0aeb66252dfcc638f14d9be1e2362fdaf2ca86bde0444ff4d5cc961b560f"/>
   </autotools>
 
-  <meson id="libsoup" mesonargs="-Dintrospection=false -Dgssapi=false -Dvapi=false">
+  <meson id="libsoup" mesonargs="-Dintrospection=disabled -Dgssapi=disabled -Dvapi=disabled">
     <if condition-set="macos">
       <mesonargs value="-Dtls_check=false"/>
     </if>
@@ -238,9 +238,9 @@
       <dep package="glib-networking"/>
       <dep package="libpsl"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/libsoup/2.67/libsoup-${version}.tar.xz" version="2.67.91"
+    <branch module="/pub/GNOME/sources/libsoup/2.68/libsoup-${version}.tar.xz" version="2.68.3"
             repo="ftp.gnome.org"
-            hash="sha256:390b5b28263d3bdf9866fa694346caa5e4bcb986e014e3383e9b6130b706f3da">
+            hash="sha256:534bb08e35b0ff3702f3adfde87d3441e27c12f9f5ec351f056fe04cba02bafb">
     </branch>
   </meson>
 

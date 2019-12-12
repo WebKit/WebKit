@@ -1,3 +1,15 @@
+2019-12-12  Patrick Griffis  <pgriffis@igalia.com>
+
+        [SOUP] Use new API for strict secure cookies
+        https://bugs.webkit.org/show_bug.cgi?id=169356
+
+        Reviewed by Michael Catanzaro.
+
+        Update libsoup to fix a secure cookie test
+
+        * gtk/jhbuild.modules:
+        * wpe/jhbuild.modules:
+
 2019-12-11  Jonathan Bedard  <jbedard@apple.com>
 
         Python 3: Support serial ServerProcess tests
