@@ -1,3 +1,19 @@
+2019-12-12  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r229930, r231063): WebKitLegacy.xcconfig overwrites OTHER_CFLAGS, OTHER_CPLUSPLUSFLAGS and OTHER_LDFLAGS from Base.xcconfig
+        <https://webkit.org/b/205144>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/WebKitLegacy.xcconfig:
+        (OTHER_CFLAGS): Add back $(inherited) to fix the bug.
+        (OTHER_CFLAGS_COCOA_TOUCH): Add variable to hold value.
+        (OTHER_CFLAGS_COCOA_TOUCH_YES): Remove unused $(inherited).
+        (OTHER_CFLAGS_COCOA_TOUCH_NO): Ditto.
+        (OTHER_CPLUSPLUSFLAGS): Add back $(inherited) to fix the
+        bug, and don't assume $(OTHER_CFLAGS) is identical to this.
+        (OTHER_LDFLAGS): Add back $(inherited) to fix the bug.
+
 2019-12-09  Eric Carlson  <eric.carlson@apple.com>
 
         Rename media in the GPU process preference
