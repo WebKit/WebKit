@@ -24,8 +24,10 @@ if (self.testRunner) {
 
     // Make WebAudio map to webkitWebAudio for WPT tests
     if (location.port == 8800 || location.port == 9443) {
-        self.AudioContext = self.webkitAudioContext;
-        self.OfflineAudioContext = self.webkitOfflineAudioContext;
+        if (window.webkitAudioContext && !window.AudioContext)
+            Object.defineProperty(self, "AudioContext", Object.getOwnPropertyDescriptor(self, "webkitAudioContext"));
+        if (window.webkitOfflineAudioContext && !window.OfflineAudioContext)
+            Object.defineProperty(self, "OfflineAudioContext", Object.getOwnPropertyDescriptor(self, "webkitOfflineAudioContext"));
     }
 
     if (testRunner.setStatisticsShouldDowngradeReferrer) 
