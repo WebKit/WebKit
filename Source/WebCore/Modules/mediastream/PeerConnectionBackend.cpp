@@ -99,11 +99,11 @@ void PeerConnectionBackend::createOfferSucceeded(String&& sdp)
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "Create offer succeeded:\n", sdp);
 
-    if (m_peerConnection.isClosed())
-        return;
-
     ASSERT(m_offerAnswerPromise);
-    m_peerConnection.doTask([promise = WTFMove(m_offerAnswerPromise), sdp = filterSDP(WTFMove(sdp))]() mutable {
+    m_peerConnection.doTask([this, promise = WTFMove(m_offerAnswerPromise), sdp = filterSDP(WTFMove(sdp))]() mutable {
+        if (m_peerConnection.isClosed())
+            return;
+
         promise->resolve(RTCSessionDescription::Init { RTCSdpType::Offer, sdp });
     });
 }
@@ -113,11 +113,11 @@ void PeerConnectionBackend::createOfferFailed(Exception&& exception)
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "Create offer failed:", exception.message());
 
-    if (m_peerConnection.isClosed())
-        return;
-
     ASSERT(m_offerAnswerPromise);
-    m_peerConnection.doTask([promise = WTFMove(m_offerAnswerPromise), exception = WTFMove(exception)]() mutable {
+    m_peerConnection.doTask([this, promise = WTFMove(m_offerAnswerPromise), exception = WTFMove(exception)]() mutable {
+        if (m_peerConnection.isClosed())
+            return;
+
         promise->reject(WTFMove(exception));
     });
 }
@@ -136,11 +136,11 @@ void PeerConnectionBackend::createAnswerSucceeded(String&& sdp)
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "Create answer succeeded:\n", sdp);
 
-    if (m_peerConnection.isClosed())
-        return;
-
     ASSERT(m_offerAnswerPromise);
-    m_peerConnection.doTask([promise = WTFMove(m_offerAnswerPromise), sdp = WTFMove(sdp)]() mutable {
+    m_peerConnection.doTask([this, promise = WTFMove(m_offerAnswerPromise), sdp = WTFMove(sdp)]() mutable {
+        if (m_peerConnection.isClosed())
+            return;
+
         promise->resolve(RTCSessionDescription::Init { RTCSdpType::Answer, sdp });
     });
 }
@@ -150,11 +150,11 @@ void PeerConnectionBackend::createAnswerFailed(Exception&& exception)
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "Create answer failed:", exception.message());
 
-    if (m_peerConnection.isClosed())
-        return;
-
     ASSERT(m_offerAnswerPromise);
-    m_peerConnection.doTask([promise = WTFMove(m_offerAnswerPromise), exception = WTFMove(exception)]() mutable {
+    m_peerConnection.doTask([this, promise = WTFMove(m_offerAnswerPromise), exception = WTFMove(exception)]() mutable {
+        if (m_peerConnection.isClosed())
+            return;
+
         promise->reject(WTFMove(exception));
     });
 }
@@ -196,12 +196,11 @@ void PeerConnectionBackend::setLocalDescriptionSucceeded()
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    if (m_peerConnection.isClosed())
-        return;
-
-
     ASSERT(m_setDescriptionPromise);
-    m_peerConnection.doTask([promise = WTFMove(m_setDescriptionPromise)]() mutable {
+    m_peerConnection.doTask([this, promise = WTFMove(m_setDescriptionPromise)]() mutable {
+        if (m_peerConnection.isClosed())
+            return;
+
         promise->resolve();
     });
 }
@@ -211,11 +210,11 @@ void PeerConnectionBackend::setLocalDescriptionFailed(Exception&& exception)
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "Set local description failed:", exception.message());
 
-    if (m_peerConnection.isClosed())
-        return;
-
     ASSERT(m_setDescriptionPromise);
-    m_peerConnection.doTask([promise = WTFMove(m_setDescriptionPromise), exception = WTFMove(exception)]() mutable {
+    m_peerConnection.doTask([this, promise = WTFMove(m_setDescriptionPromise), exception = WTFMove(exception)]() mutable {
+        if (m_peerConnection.isClosed())
+            return;
+
         promise->reject(WTFMove(exception));
     });
 }
@@ -256,9 +255,9 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded()
 {
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "Set remote description succeeded");
+    ASSERT(m_setDescriptionPromise);
 
-    ASSERT(!m_peerConnection.isClosed());
-
+    auto promise = WTFMove(m_setDescriptionPromise);
     auto events = WTFMove(m_pendingTrackEvents);
     for (auto& event : events) {
         auto& track = event.track.get();
@@ -272,12 +271,10 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded()
         track.source().setMuted(false);
     }
 
-    if (m_peerConnection.isClosed())
-        return;
+    m_peerConnection.doTask([this, promise = WTFMove(promise)]() mutable {
+        if (m_peerConnection.isClosed())
+            return;
 
-
-    ASSERT(m_setDescriptionPromise);
-    m_peerConnection.doTask([promise = WTFMove(m_setDescriptionPromise)]() mutable {
         promise->resolve();
     });
 }
@@ -290,9 +287,11 @@ void PeerConnectionBackend::setRemoteDescriptionFailed(Exception&& exception)
     ASSERT(m_pendingTrackEvents.isEmpty());
     m_pendingTrackEvents.clear();
 
-    ASSERT(!m_peerConnection.isClosed());
     ASSERT(m_setDescriptionPromise);
-    m_peerConnection.doTask([promise = WTFMove(m_setDescriptionPromise), exception = WTFMove(exception)]() mutable {
+    m_peerConnection.doTask([this, promise = WTFMove(m_setDescriptionPromise), exception = WTFMove(exception)]() mutable {
+        if (m_peerConnection.isClosed())
+            return;
+
         promise->reject(WTFMove(exception));
     });
 }
@@ -337,11 +336,11 @@ void PeerConnectionBackend::addIceCandidateSucceeded()
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "Adding ice candidate succeeded");
 
-    if (m_peerConnection.isClosed())
-        return;
-
     ASSERT(m_addIceCandidatePromise);
-    m_peerConnection.doTask([promise = WTFMove(m_addIceCandidatePromise)]() mutable {
+    m_peerConnection.doTask([this, promise = WTFMove(m_addIceCandidatePromise)]() mutable {
+        if (m_peerConnection.isClosed())
+            return;
+
         promise->resolve();
     });
 }
@@ -351,11 +350,11 @@ void PeerConnectionBackend::addIceCandidateFailed(Exception&& exception)
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "Adding ice candidate failed:", exception.message());
 
-    if (m_peerConnection.isClosed())
-        return;
-
     ASSERT(m_addIceCandidatePromise);
-    m_peerConnection.doTask([promise = WTFMove(m_addIceCandidatePromise), exception = WTFMove(exception)]() mutable {
+    m_peerConnection.doTask([this, promise = WTFMove(m_addIceCandidatePromise), exception = WTFMove(exception)]() mutable {
+        if (m_peerConnection.isClosed())
+            return;
+
         promise->reject(WTFMove(exception));
     });
 }
