@@ -69,8 +69,6 @@ WI.QuickConsole = class QuickConsole extends WI.View
         this._executionContextSelectorDivider = new WI.DividerNavigationItem;
         this._navigationBar.addNavigationItem(this._executionContextSelectorDivider);
 
-        this._initializeMainExecutionContextPathComponent();
-
         WI.settings.consoleSavedResultAlias.addEventListener(WI.Setting.Event.Changed, this._updateAutomaticExecutionContextPathComponentTooltip, this);
 
         WI.consoleDrawer.toggleButtonShortcutTooltip(this._toggleOrFocusKeyboardShortcut);
@@ -90,6 +88,10 @@ WI.QuickConsole = class QuickConsole extends WI.View
         WI.domManager.addEventListener(WI.DOMManager.Event.InspectedNodeChanged, this._handleInspectedNodeChanged, this);
 
         WI.TabBrowser.addEventListener(WI.TabBrowser.Event.SelectedTabContentViewDidChange, this._updateStyles, this);
+
+        WI.whenTargetsAvailable().then(() => {
+            this._initializeMainExecutionContextPathComponent();
+        });
     }
 
     // Public
@@ -114,8 +116,6 @@ WI.QuickConsole = class QuickConsole extends WI.View
 
     _pageTargetTransitioned()
     {
-        if (WI.mainTarget instanceof WI.MultiplexingBackendTarget)
-            return;
         this._initializeMainExecutionContextPathComponent();
     }
 
@@ -124,8 +124,11 @@ WI.QuickConsole = class QuickConsole extends WI.View
         if (!WI.mainTarget || WI.mainTarget instanceof WI.MultiplexingBackendTarget)
             return;
 
+        let nextSibling = this._mainExecutionContextPathComponent ? this._mainExecutionContextPathComponent.nextSibling : null;
+
         this._mainExecutionContextPathComponent = this._createExecutionContextPathComponent(WI.mainTarget.executionContext);
         this._mainExecutionContextPathComponent.previousSibling = this._automaticExecutionContextPathComponent;
+        this._mainExecutionContextPathComponent.nextSibling = nextSibling;
 
         this._automaticExecutionContextPathComponent.nextSibling = this._mainExecutionContextPathComponent;
 
@@ -166,7 +169,6 @@ WI.QuickConsole = class QuickConsole extends WI.View
             }
         }
 
-        console.assert(executionContext);
         if (!executionContext)
             executionContext = WI.mainTarget.executionContext;
 
@@ -384,6 +386,7 @@ WI.QuickConsole = class QuickConsole extends WI.View
     {
         if (frame.isMainFrame()) {
             this._shouldAutomaticallySelectExecutionContext = true;
+            this._initializeMainExecutionContextPathComponent();
             return;
         }
 

@@ -1,5 +1,37 @@
 2019-12-11  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION: Console: unable to switch execution contexts
+        https://bugs.webkit.org/show_bug.cgi?id=205102
+        <rdar://problem/57748393>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/QuickConsole.js:
+        (WI.QuickConsole):
+        Wait to initialize the main execution context path component until we actually have a main
+        execution context.
+
+        (WI.QuickConsole.prototype._pageTargetTransitioned):
+        Remove unnecessary duplicate early return.
+
+        (WI.QuickConsole.prototype._initializeMainExecutionContextPathComponent):
+        Restore the link to the next path component if the main execution context path component is
+        recreated when there already exist other execution contexts.
+
+        (WI.QuickConsole.prototype._selectExecutionContext):
+        Remove unnecessary assertion.
+
+        (WI.QuickConsole.prototype._removeExecutionContextPathComponentForFrame):
+        When the execution context of the main frame changes, recreate the main execution context
+        path component so it has the right `representedObject`.
+
+        * UserInterface/Views/HierarchicalPathNavigationItem.js:
+        (WI.HierarchicalPathNavigationItem.prototype.update):
+        Only hide the tooltip if we're not `sizeToFit` as otherwise we never unhide it due to an
+        early return (`sizeToFit` just makes everything visible).
+
+2019-12-11  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Elements: Styles: hovering over an invalid value while holding ⌘ doesn't change the color of the text
         https://bugs.webkit.org/show_bug.cgi?id=205039
 

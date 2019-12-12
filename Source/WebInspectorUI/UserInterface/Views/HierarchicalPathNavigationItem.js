@@ -114,17 +114,19 @@ WI.HierarchicalPathNavigationItem = class HierarchicalPathNavigationItem extends
             this._collapsedComponent = null;
         }
 
+        let sizesToFit = navigationBar.sizesToFit;
+
         // Expand our components to full width to test if the items can fit at full width.
         for (var i = 0; i < this._components.length; ++i) {
             this._components[i].hidden = false;
             this._components[i].forcedWidth = null;
-            this._components[i].hideTooltip = true;
+            this._components[i].hideTooltip = !sizesToFit;
         }
 
         if (options.expandOnly)
             return;
 
-        if (navigationBar.sizesToFit)
+        if (sizesToFit)
             return;
 
         // Iterate over all the other navigation items in the bar and calculate their width.
