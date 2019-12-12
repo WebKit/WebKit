@@ -1,3 +1,10 @@
+2019-12-11  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, a nit after r253366
+
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.h:
+        Change the parameter type of the completion handler from NSData to NSString.
+
 2019-12-11  Daniel Bates  <dabates@apple.com>
 
         Remove unused Frame parameter from moveByGranularityRespectingWordBoundary() and take const VisiblePosition&
