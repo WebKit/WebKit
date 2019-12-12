@@ -117,13 +117,13 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
     if (sourceCode.supportsScriptBlackboxing) {
         let blackboxData = WI.debuggerManager.blackboxDataForSourceCode(sourceCode);
         if (blackboxData && blackboxData.type === WI.DebuggerManager.BlackboxType.Pattern) {
-            contextMenu.appendItem(WI.UIString("Reveal blackbox pattern"), () => {
+            contextMenu.appendItem(WI.UIString("Reveal Blackbox Pattern"), () => {
                 WI.showSettingsTab({
                     blackboxPatternToSelect: blackboxData.regex,
                 });
             });
         } else {
-            contextMenu.appendItem(blackboxData ? WI.UIString("Unblackbox script to include it when debugging") : WI.UIString("Blackbox script to ignore it when debugging"), () => {
+            contextMenu.appendItem(blackboxData ? WI.UIString("Unblackbox Script") : WI.UIString("Blackbox Script"), () => {
                 WI.debuggerManager.setShouldBlackboxScript(sourceCode, !blackboxData);
             });
         }

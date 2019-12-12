@@ -1,5 +1,20 @@
 2019-12-11  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: simplify the text of the script blackboxing context menu item
+        https://bugs.webkit.org/show_bug.cgi?id=205099
+
+        Reviewed by Brian Burg.
+
+        "Blackbox script to ignore it when debugging" is a bit too long for a context menu item.
+        We should use something simpler, like "Blackbox Script".
+
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForSourceCode):
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2019-12-11  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: replace all "Remove" context menu items with "Delete" to be consistent
         https://bugs.webkit.org/show_bug.cgi?id=205098
 

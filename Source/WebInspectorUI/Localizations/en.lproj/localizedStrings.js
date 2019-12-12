@@ -175,6 +175,7 @@ localizedStrings["Beacons"] = "Beacons";
 localizedStrings["Binary Frame"] = "Binary Frame";
 localizedStrings["Binding"] = "Binding";
 localizedStrings["Blackbox"] = "Blackbox";
+localizedStrings["Blackbox Script"] = "Blackbox Script";
 localizedStrings["Blackbox script to ignore it when debugging"] = "Blackbox script to ignore it when debugging";
 localizedStrings["Block Variables"] = "Block Variables";
 localizedStrings["Body:"] = "Body:";
@@ -967,9 +968,9 @@ localizedStrings["Return type for anonymous function"] = "Return type for anonym
 localizedStrings["Return type for function: %s"] = "Return type for function: %s";
 localizedStrings["Return value is not an object, string, or boolean"] = "Return value is not an object, string, or boolean";
 localizedStrings["Reveal"] = "Reveal";
+localizedStrings["Reveal Blackbox Pattern"] = "Reveal Blackbox Pattern";
 localizedStrings["Reveal Descendant Breakpoints"] = "Reveal Descendant Breakpoints";
 localizedStrings["Reveal Local Override"] = "Reveal Local Override";
-localizedStrings["Reveal blackbox pattern"] = "Reveal blackbox pattern";
 /* Open Elements tab and select this node in DOM tree */
 localizedStrings["Reveal in DOM Tree"] = "Reveal in DOM Tree";
 localizedStrings["Reveal in Elements Tab"] = "Reveal in Elements Tab";
@@ -1248,6 +1249,7 @@ localizedStrings["URL Breakpoint\u2026"] = "URL Breakpoint\u2026";
 localizedStrings["URL Pattern"] = "URL Pattern";
 localizedStrings["Unable to determine path to property from root"] = "Unable to determine path to property from root";
 localizedStrings["Unable to show certificate for \u201C%s\u201D"] = "Unable to show certificate for \u201C%s\u201D";
+localizedStrings["Unblackbox Script"] = "Unblackbox Script";
 localizedStrings["Unblackbox script to include it when debugging"] = "Unblackbox script to include it when debugging";
 /* Break (pause) on uncaught (unhandled) exceptions */
 localizedStrings["Uncaught Exceptions"] = "Uncaught Exceptions";
