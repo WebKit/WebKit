@@ -18,7 +18,7 @@ window.addEventListener("pageshow", function(event) {
         handle2 = setTimeout(() => {
             testFailed("Page restored from cache but the promise was not resolved.");
             finishJSTest();
-        }, 10000);
+        }, 20000);
     }
 });
 
@@ -47,22 +47,15 @@ window.addEventListener("pagehide", function(event) {
     tryCache();
 });
 
-async function clearExistingCache()
-{
-    try {
-        await self.caches.delete('page-cache-test');
-    } catch (e) {
-    }
-}
-
 onload = () => {
-    clearExistingCache();
+    if (window.testRunner)
+        testRunner.clearDOMCaches();
 
     setTimeout(() => {
         handle1 = setTimeout(() => {
             testFailed("Timed out while waiting for the cache to open");
             finishJSTest();
-        }, 10000);
+        }, 20000);
         caches.open('page-cache-test').then((_cache) => {
             clearTimeout(handle1);
             cache = _cache;
