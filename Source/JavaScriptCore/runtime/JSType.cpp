@@ -107,6 +107,7 @@ void printInternal(PrintStream& out, JSC::JSType type)
     CASE(JSWeakSetType)
     CASE(WebAssemblyModuleType)
     CASE(StringObjectType)
+    CASE(DerivedStringObjectType)
     CASE(MaxJSType)
     }
 }

@@ -74,6 +74,7 @@ inline To jsCast(JSValue from)
     macro(JSLexicalEnvironment, JSType::LexicalEnvironmentType, JSType::ModuleEnvironmentType) \
     macro(JSSymbolTableObject, JSType::GlobalObjectType, JSType::ModuleEnvironmentType) \
     macro(JSScope, JSType::GlobalObjectType, JSType::WithScopeType) \
+    macro(StringObject, JSType::StringObjectType, JSType::DerivedStringObjectType) \
 
 
 // Forward declare the classes because they may not already exist.

@@ -1,3 +1,39 @@
+2019-12-12  Mark Lam  <mark.lam@apple.com>
+
+        DFG and FTL expects String.prototype to not qualify for StringObjectUse.
+        https://bugs.webkit.org/show_bug.cgi?id=205147
+        <rdar://problem/57748888>
+
+        Reviewed by Saam Barati.
+
+        Currently, String.prototype's JSType is StringObjectType.
+
+        However, in the compiler, there are a few places that expect that the
+        String.prototype value to not qualify as StringObjectUse.  These places are:
+        1. SpeculatedType.cpp's speculationFromClassInfo() will speculate SpecObjectOther
+           for the StringPrototype object.
+        2. DFGFixupPhase.cpp's addCheckStructureForOriginalStringObjectUse() only emits a
+           CheckStructure against globalObject->stringObjectStructure().  It does not
+           check against String.prototype's structure.
+
+        To resolve this discrepancy, we can either do:
+        a. change String.prototype's JSType to something else.
+        b. fix the places in the compiler to accept String.prototype as StringObjectUse.
+
+        (a) is trivial and cheap to do.  (b) is doable but will result in less optimal
+        compiled code.  Since passing String.prototype as a StringObject is expected to
+        be a rare thing in JS code, it's not worth incurring the cost for (b).  In this
+        patch, we apply (a) to fix the discrepancy.
+
+        Also added a specialization case to FOR_EACH_JS_DYNAMIC_CAST_JS_TYPE_OVERLOAD
+        for jsDynamicCast<StringObject> for completeness.
+
+        * runtime/JSCast.h:
+        * runtime/JSType.cpp:
+        (WTF::printInternal):
+        * runtime/JSType.h:
+        * runtime/StringPrototype.h:
+
 2019-12-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] IsoHeapCellType should have destroy function member instead of specializing template function

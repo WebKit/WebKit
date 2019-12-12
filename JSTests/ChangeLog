@@ -1,3 +1,13 @@
+2019-12-12  Mark Lam  <mark.lam@apple.com>
+
+        DFG and FTL expects String.prototype to not qualify for StringObjectUse.
+        https://bugs.webkit.org/show_bug.cgi?id=205147
+        <rdar://problem/57748888>
+
+        Reviewed by Saam Barati.
+
+        * stress/ftl-expects-string-prototype-to-not-be-StringObjectUse.js: Added.
+
 2019-12-11  Keith Miller  <keith_miller@apple.com>
 
         Add test for osr exiting with interpreter on the stack
