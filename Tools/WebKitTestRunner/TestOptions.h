@@ -97,7 +97,7 @@ struct TestOptions {
     bool enableBackForwardCache { false };
     bool enableLazyImageLoading { false };
     bool allowsLinkPreview { true };
-    bool enableCaptureVideoInUIProcess { true };
+    bool enableCaptureVideoInUIProcess { false };
 
     double contentInsetTop { 0 };
 

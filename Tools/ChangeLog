@@ -1,3 +1,27 @@
+2019-12-11  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r253328. rdar://problem/57759297
+
+    Disable video capture in UIProcess for WebKitTestRunner
+    https://bugs.webkit.org/show_bug.cgi?id=205054
+    
+    Reviewed by Eric Carlson.
+    
+    * WebKitTestRunner/TestOptions.h:
+    Some tests are still flaky as noted in bug 205053 and this option is still experimental.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@253328 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-12-10  youenn fablet  <youenn@apple.com>
+
+            Disable video capture in UIProcess for WebKitTestRunner
+            https://bugs.webkit.org/show_bug.cgi?id=205054
+
+            Reviewed by Eric Carlson.
+
+            * WebKitTestRunner/TestOptions.h:
+            Some tests are still flaky as noted in bug 205053 and this option is still experimental.
+
 2019-12-06  Jonathan Bedard  <jbedard@apple.com>
 
         Python 3: Add support in webkitpy.tool (Follow-up, part 2)
