@@ -1,3 +1,19 @@
+2019-12-11  Jonathan Bedard  <jbedard@apple.com>
+
+        Python 3: Support serial ServerProcess tests
+        https://bugs.webkit.org/show_bug.cgi?id=205146
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess.write): Flush stdin after writing to it.
+        * Scripts/webkitpy/port/server_process_unittest.py:
+        (TestServerProcess): print to stderr in Python 2/3 compatible way.
+        (TestServerProcess.serial_test_basic): ServerProcess speaks in bytes.
+        (TestServerProcess.serial_test_read_after_process_exits): Ditto.
+        (TestServerProcess.serial_test_process_crashing): Ditto.
+        (TestServerProcess.serial_test_process_crashing_no_data): Ditto.
+
 2019-12-11  Daniel Bates  <dabates@apple.com>
 
         UIWKDocumentContext returns 0 character rects when caret is at beginning or end of text
