@@ -1,3 +1,17 @@
+2019-12-12  Alex Christensen  <achristensen@webkit.org>
+
+        Don't assert in HTTPServer::respondToRequests when connections fail
+        https://bugs.webkit.org/show_bug.cgi?id=205072
+        <rdar://problem/57718266>
+
+        Reviewed by Alexey Proskuryakov.
+
+        We have records that this assertion is being hit, but it's probably when things are being torn down after the test passes.
+        If someone actually has a connection failure that breaks a test, we'll notice elsewhere.
+
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::HTTPServer::respondToRequests):
+
 2019-12-12  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Deny mach lookup access to content filter service in the WebContent sandbox

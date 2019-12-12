@@ -55,8 +55,7 @@ HTTPServer::HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>> re
 void HTTPServer::respondToRequests(nw_connection_t connection)
 {
     nw_connection_receive(connection, 1, std::numeric_limits<uint32_t>::max(), ^(dispatch_data_t content, nw_content_context_t context, bool complete, nw_error_t error) {
-        ASSERT(!error);
-        if (!content)
+        if (error || !content)
             return;
         __block Vector<char> request;
         dispatch_data_apply(content, ^bool(dispatch_data_t, size_t, const void* buffer, size_t size) {
