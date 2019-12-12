@@ -19,3 +19,5 @@
   (composite-operation source-over)
   (blend-mode normal))
 (restore)
+(set-ctm
+  (set-ctm {m=((1.00,0.00)(0.00,1.00)) t=(0.00,22.00)}))

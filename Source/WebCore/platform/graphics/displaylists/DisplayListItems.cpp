@@ -68,6 +68,8 @@ size_t Item::sizeInBytes(const Item& item)
         return sizeof(downcast<Rotate>(item));
     case ItemType::Scale:
         return sizeof(downcast<Scale>(item));
+    case ItemType::SetCTM:
+        return sizeof(downcast<SetCTM>(item));
     case ItemType::ConcatenateCTM:
         return sizeof(downcast<ConcatenateCTM>(item));
     case ItemType::SetState:
@@ -268,6 +270,26 @@ void Scale::apply(GraphicsContext& context) const
 static TextStream& operator<<(TextStream& ts, const Scale& item)
 {
     ts.dumpProperty("size", item.amount());
+
+    return ts;
+}
+
+SetCTM::SetCTM(const AffineTransform& transform)
+    : Item(ItemType::SetCTM)
+    , m_transform(transform)
+{
+}
+
+SetCTM::~SetCTM() = default;
+
+void SetCTM::apply(GraphicsContext& context) const
+{
+    context.setCTM(m_transform);
+}
+
+static TextStream& operator<<(TextStream& ts, const SetCTM& item)
+{
+    ts.dumpProperty("set-ctm", item.transform());
 
     return ts;
 }
@@ -1308,6 +1330,7 @@ static TextStream& operator<<(TextStream& ts, const ItemType& type)
     case ItemType::Translate: ts << "translate"; break;
     case ItemType::Rotate: ts << "rotate"; break;
     case ItemType::Scale: ts << "scale"; break;
+    case ItemType::SetCTM: ts << "set-ctm"; break;
     case ItemType::ConcatenateCTM: ts << "concatentate-ctm"; break;
     case ItemType::SetState: ts << "set-state"; break;
     case ItemType::SetLineCap: ts << "set-line-cap"; break;
@@ -1376,6 +1399,9 @@ TextStream& operator<<(TextStream& ts, const Item& item)
         break;
     case ItemType::Scale:
         ts << downcast<Scale>(item);
+        break;
+    case ItemType::SetCTM:
+        ts << downcast<SetCTM>(item);
         break;
     case ItemType::ConcatenateCTM:
         ts << downcast<ConcatenateCTM>(item);

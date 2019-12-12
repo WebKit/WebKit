@@ -264,6 +264,45 @@ Optional<Ref<Scale>> Scale::decode(Decoder& decoder)
     return Scale::create(*scale);
 }
 
+class SetCTM : public Item {
+public:
+    static Ref<SetCTM> create(const AffineTransform& matrix)
+    {
+        return adoptRef(*new SetCTM(matrix));
+    }
+
+    WEBCORE_EXPORT virtual ~SetCTM();
+
+    const AffineTransform& transform() const { return m_transform; }
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<SetCTM>> decode(Decoder&);
+
+private:
+    WEBCORE_EXPORT SetCTM(const AffineTransform&);
+
+    void apply(GraphicsContext&) const override;
+
+    AffineTransform m_transform;
+};
+
+template<class Encoder>
+void SetCTM::encode(Encoder& encoder) const
+{
+    encoder << m_transform;
+}
+
+template<class Decoder>
+Optional<Ref<SetCTM>> SetCTM::decode(Decoder& decoder)
+{
+    Optional<AffineTransform> transform;
+    decoder >> transform;
+    if (!transform)
+        return WTF::nullopt;
+
+    return SetCTM::create(*transform);
+}
+
 class ConcatenateCTM : public Item {
 public:
     static Ref<ConcatenateCTM> create(const AffineTransform& matrix)
@@ -2590,6 +2629,9 @@ void Item::encode(Encoder& encoder) const
     case ItemType::Scale:
         encoder << downcast<Scale>(*this);
         break;
+    case ItemType::SetCTM:
+        encoder << downcast<SetCTM>(*this);
+        break;
     case ItemType::ConcatenateCTM:
         encoder << downcast<ConcatenateCTM>(*this);
         break;
@@ -2750,6 +2792,10 @@ Optional<Ref<Item>> Item::decode(Decoder& decoder)
         break;
     case ItemType::Scale:
         if (auto item = Scale::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
+        break;
+    case ItemType::SetCTM:
+        if (auto item = SetCTM::decode(decoder))
             return static_reference_cast<Item>(WTFMove(*item));
         break;
     case ItemType::ConcatenateCTM:
@@ -2948,6 +2994,7 @@ SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(Restore)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(Translate)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(Rotate)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(Scale)
+SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(SetCTM)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(ConcatenateCTM)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(SetState)
 SPECIALIZE_TYPE_TRAITS_DISPLAYLIST_ITEM(SetLineCap)

@@ -1,3 +1,13 @@
+2019-12-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Implement DisplayListRecorder::Recorder::getCTM and DisplayListRecorder::Recorder::setCTM
+        https://bugs.webkit.org/show_bug.cgi?id=205139
+
+        Reviewed by Simon Fraser.
+
+        * displaylists/extent-includes-transforms-expected.txt:
+        * platform/mac-wk1/displaylists/extent-includes-transforms-expected.txt:
+
 2019-12-11  Chris Dumez  <cdumez@apple.com>
 
         [Bindings] Cross-origin checks happen too late for overloaded methods

@@ -46,6 +46,7 @@ enum class ItemType : uint8_t {
     Rotate,
     Scale,
     ConcatenateCTM,
+    SetCTM,
     SetState,
     SetLineCap,
     SetLineDash,
@@ -124,6 +125,7 @@ public:
         case ItemType::Rotate:
         case ItemType::Scale:
         case ItemType::ConcatenateCTM:
+        case ItemType::SetCTM:
         case ItemType::SetState:
         case ItemType::SetLineCap:
         case ItemType::SetLineDash:

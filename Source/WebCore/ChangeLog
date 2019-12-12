@@ -1,3 +1,52 @@
+2019-12-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Implement DisplayListRecorder::Recorder::getCTM and DisplayListRecorder::Recorder::setCTM
+        https://bugs.webkit.org/show_bug.cgi?id=205139
+
+        Reviewed by Simon Fraser.
+
+        Implements these two methods on Recorder, which are invoked from GraphicsContext::setCTM and
+        GraphicsContext::getCTM, respectively. See below for more details.
+
+        Additionally rebaselines displaylists/extent-includes-transforms.html.
+
+        * platform/graphics/displaylists/DisplayList.h:
+
+        Add a new type to represent the SetCTM display list item.
+
+        (WebCore::DisplayList::Item::isStateItemType):
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::Item::sizeInBytes):
+        (WebCore::DisplayList::SetCTM::SetCTM):
+        (WebCore::DisplayList::SetCTM::apply const):
+        (WebCore::DisplayList::operator<<):
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::SetCTM::create):
+        (WebCore::DisplayList::SetCTM::transform const):
+        (WebCore::DisplayList::SetCTM::encode const):
+        (WebCore::DisplayList::SetCTM::decode):
+        (WebCore::DisplayList::Item::encode const):
+        (WebCore::DisplayList::Item::decode):
+
+        Add DisplayList::SetCTM, which represents a call to set the current transformation matrix on the graphics
+        context. This is very similar to ConcatCTM.
+
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::setCTM):
+
+        Set the current state's CTM to the new value. Additionally, update clipBounds by applying the inverse
+        transformation matrix of the inverse of the original CTM, multiplied by the new CTM. This is because setting
+        the CTM from to `B` from `A` is equivalent to multiplying `A` by `A_inverse * B`, so we want to map the clip
+        rect through the inverse of this matrix, `(A_inverse * B)_inverse`.
+
+        (WebCore::DisplayList::Recorder::getCTM):
+
+        Return the current CTM by asking the topmost state on the stack, and ignore the IncludeDeviceScale flag for the
+        time being.
+
+        (WebCore::DisplayList::Recorder::ContextState::setCTM):
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+
 2019-12-11  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add OpenJPEG find module

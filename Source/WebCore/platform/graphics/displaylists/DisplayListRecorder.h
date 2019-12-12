@@ -166,6 +166,7 @@ private:
         void rotate(float angleInRadians);
         void scale(const FloatSize&);
         void concatCTM(const AffineTransform&);
+        void setCTM(const AffineTransform&);
     };
     
     const ContextState& currentState() const;
