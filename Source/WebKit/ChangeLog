@@ -1,3 +1,17 @@
+2019-12-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: tests is_element_enabled/enabled.py::test_fieldset_disabled_descendant are failing
+        https://bugs.webkit.org/show_bug.cgi?id=204700
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Add ElementEnabled atom to easily implement is element enabled command.
+
+        * UIProcess/Automation/atoms/ElementEnabled.js: Added.
+        (isEnabled.isDisabledAttributeSupported):
+        (isEnabled.findParent):
+        (isEnabled):
+
 2019-12-11  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, a nit after r253366

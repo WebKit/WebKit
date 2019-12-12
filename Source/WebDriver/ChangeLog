@@ -1,3 +1,19 @@
+2019-12-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: tests is_element_enabled/enabled.py::test_fieldset_disabled_descendant are failing
+        https://bugs.webkit.org/show_bug.cgi?id=204700
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Fixes: imported/w3c/webdriver/tests/is_element_enabled/enabled.py::test_fieldset_disabled_descendant[button]
+               imported/w3c/webdriver/tests/is_element_enabled/enabled.py::test_fieldset_disabled_descendant[input]
+               imported/w3c/webdriver/tests/is_element_enabled/enabled.py::test_fieldset_disabled_descendant[select]
+               imported/w3c/webdriver/tests/is_element_enabled/enabled.py::test_fieldset_disabled_descendant[textarea]
+
+        * CMakeLists.txt: Add ElementEnabled.js to compilation.
+        * Session.cpp:
+        (WebDriver::Session::isElementEnabled): Use ElementEnabled atom instead.
+
 2019-12-10  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Fix MSVC warning C4701: potentially uninitialized local variable 'x' used

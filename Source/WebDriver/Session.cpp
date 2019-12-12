@@ -1307,7 +1307,7 @@ void Session::isElementEnabled(const String& elementID, Function<void (CommandRe
         parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
         if (m_currentBrowsingContext)
             parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
-        parameters->setString("function"_s, "function(element) { return element.disabled === undefined ? true : !element.disabled }"_s);
+        parameters->setString("function"_s, String(ElementEnabledJavaScript, sizeof(ElementEnabledJavaScript)));
         parameters->setArray("arguments"_s, WTFMove(arguments));
         m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = protectedThis.copyRef(), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
