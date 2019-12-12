@@ -146,7 +146,7 @@ LineLayoutContext::LineContent LineLayoutContext::close(LineBuilder& line, unsig
 
 LineLayoutContext::IsEndOfLine LineLayoutContext::placeInlineItem(LineBuilder& line, const InlineItem& inlineItem)
 {
-    auto currentLogicalRight = line.lineBox().logicalRight();
+    auto currentLogicalRight = line.lineBox().logicalWidth() + m_uncommittedContent.width();
     auto itemLogicalWidth = inlineItemWidth(formattingContext(), inlineItem, currentLogicalRight);
 
     // Floats are special, they are intrusive but they don't really participate in the line layout context.

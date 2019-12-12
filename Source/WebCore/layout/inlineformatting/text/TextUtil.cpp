@@ -37,8 +37,8 @@ namespace Layout {
 
 InlineLayoutUnit TextUtil::width(const InlineTextItem& inlineTextItem, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft)
 {
-    // Fast path for single whitespace character.
-    if (inlineTextItem.isWhitespace() && (to - from) == 1) {
+    // Fast path for collapsed whitespace.
+    if (inlineTextItem.isCollapsible()) {
         auto font = inlineTextItem.style().fontCascade();
         return font.spaceWidth() + font.wordSpacing();
     }

@@ -1,3 +1,25 @@
+2019-12-12  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Fix fast/text/whitespace/simple-line-layout-tab-position.html
+        https://bugs.webkit.org/show_bug.cgi?id=205160
+        <rdar://problem/57876474>
+
+        Reviewed by Antti Koivisto.
+
+        Use the content box (and not the border box) as the start position when measuring text and also include
+        the not-yet committed content.
+        e.g. <pre style="padding: 100px;">text[tab character]</pre>
+        When we measure the width of the [tab] character, the start position input to the text measuring is
+        1. relative to the content box (0px vs 100px)
+        2. includes the [text] not-yet committed content width
+
+        This patch also ensures that we only fast-path the collapsible whitespace characters.
+
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::LineLayoutContext::placeInlineItem):
+        * layout/inlineformatting/text/TextUtil.cpp:
+        (WebCore::Layout::TextUtil::width):
+
 2019-12-12  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r252979): Avoid unnecessary work when searching for the flow when constructing line layout iteratorAvoid unnecessary work when searching for the flow when constructing line layout iterator
