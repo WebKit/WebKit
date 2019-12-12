@@ -8,18 +8,12 @@ CONSOLE MESSAGE: line 302: Blocked a frame with origin "http://localhost:8800" f
 CONSOLE MESSAGE: Unable to post message to http://does-not.exist. Recipient has origin http://127.0.0.1:8800.
 
 
-FAIL Basic sanity-checking (cross-origin) assert_equals: Overrides visible in the same-origin case expected (string) "override" but got (function) function "function focus() {
-    [native code]
-}"
-FAIL Basic sanity-checking (same-origin + document.domain) assert_equals: Overrides visible in the same-origin case expected (string) "override" but got (function) function "function focus() {
-    [native code]
-}"
-FAIL Basic sanity-checking (cross-site) assert_equals: Overrides visible in the same-origin case expected (string) "override" but got (function) function "function focus() {
-    [native code]
-}"
-FAIL Only whitelisted properties are accessible cross-origin (cross-origin) assert_throws: Should throw when writing to toString on Location function "function () { win.location[prop] = undefined; }" did not throw
-FAIL Only whitelisted properties are accessible cross-origin (same-origin + document.domain) assert_throws: Should throw when writing to toString on Location function "function () { win.location[prop] = undefined; }" did not throw
-FAIL Only whitelisted properties are accessible cross-origin (cross-site) assert_throws: Should throw when writing to toString on Location function "function () { win.location[prop] = undefined; }" did not throw
+PASS Basic sanity-checking (cross-origin) 
+PASS Basic sanity-checking (same-origin + document.domain) 
+PASS Basic sanity-checking (cross-site) 
+PASS Only whitelisted properties are accessible cross-origin (cross-origin) 
+PASS Only whitelisted properties are accessible cross-origin (same-origin + document.domain) 
+PASS Only whitelisted properties are accessible cross-origin (cross-site) 
 FAIL Only whitelisted properties are usable as cross-origin this objects (cross-origin) promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
 FAIL Only whitelisted properties are usable as cross-origin this objects (same-origin + document.domain) assert_throws: Should throw when calling window.AudioContext with cross-origin this object function "function webkitAudioContext() {
     [native code]

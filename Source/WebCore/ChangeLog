@@ -1,3 +1,21 @@
+2019-12-11  Chris Dumez  <cdumez@apple.com>
+
+        Trying to set toString / valueOf on a cross-origin Location object should throw a SecurityError
+        https://bugs.webkit.org/show_bug.cgi?id=205143
+
+        Reviewed by Ryosuke Niwa.
+
+        Trying to set toString / valueOf on a cross-origin Location object should throw a SecurityError.
+        We previously silently ignored those.
+
+        No new tests, rebaselined existing test.
+
+        fast/dom/Window/Location/location-override-toString.html also makes sure we still cannot override the
+        value to location.toString (same origin).
+
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::putCommon):
+
 2019-12-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Implement DisplayListRecorder::Recorder::getCTM and DisplayListRecorder::Recorder::setCTM

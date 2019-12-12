@@ -1,5 +1,19 @@
 2019-12-11  Chris Dumez  <cdumez@apple.com>
 
+        Trying to set toString / valueOf on a cross-origin Location object should throw a SecurityError
+        https://bugs.webkit.org/show_bug.cgi?id=205143
+
+        Reviewed by Ryosuke Niwa.
+
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-expected.txt:
+        Rebaseline WPT test now that more checks are passing.
+
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/frame.html:
+        Resync from upstream ab28e18f067f17a76d9. This was causing 3 sanity checks in cross-origin-objects.html
+        to fail.
+
+2019-12-11  Chris Dumez  <cdumez@apple.com>
+
         [Bindings] Cross-origin checks happen too late for overloaded methods
         https://bugs.webkit.org/show_bug.cgi?id=205092
 

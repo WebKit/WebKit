@@ -109,9 +109,6 @@ bool JSLocation::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* lex
 static bool putCommon(JSLocation& thisObject, JSGlobalObject& lexicalGlobalObject, PropertyName propertyName)
 {
     VM& vm = lexicalGlobalObject.vm();
-    // Silently block access to toString and valueOf.
-    if (propertyName == vm.propertyNames->toString || propertyName == vm.propertyNames->valueOf)
-        return true;
 
     // Always allow assigning to the whole location.
     // However, alllowing assigning of pieces might inadvertently disclose parts of the original location.
