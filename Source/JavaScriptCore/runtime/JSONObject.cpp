@@ -185,6 +185,7 @@ static inline String gap(JSGlobalObject* globalObject, JSValue space)
 
     // If the space value is a string, use it as the gap string, otherwise use no gap string.
     String spaces = space.getString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
     if (spaces.length() <= maxGapLength)
         return spaces;
     return spaces.substringSharingImpl(0, maxGapLength);

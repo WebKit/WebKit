@@ -1,5 +1,15 @@
 2019-12-12  Mark Lam  <mark.lam@apple.com>
 
+        Fix missing exception check in JSON Stringifier's gap function.
+        https://bugs.webkit.org/show_bug.cgi?id=205171
+        <rdar://problem/57871842>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/missing-exception-check-in-json-stringifier-gap.js: Added.
+
+2019-12-12  Mark Lam  <mark.lam@apple.com>
+
         DFG and FTL expects String.prototype to not qualify for StringObjectUse.
         https://bugs.webkit.org/show_bug.cgi?id=205147
         <rdar://problem/57748888>
