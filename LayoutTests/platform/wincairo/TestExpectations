@@ -1292,6 +1292,8 @@ fast/dom/HTMLInputElement/change-type-in-input-event-listener.html [ Skip ]
 ##############################   Editing Issues   ##############################
 ################################################################################
 
+webkit.org/b/203100 editing/async-clipboard [ Skip ]
+
 ###### Pasteboard
 editing/pasteboard/ [ Pass Failure ImageOnlyFailure ]
 editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html [ Skip ]
