@@ -1,3 +1,14 @@
+2019-12-11  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add OpenJPEG find module
+        https://bugs.webkit.org/show_bug.cgi?id=204657
+
+        Reviewed by Michael Catanzaro.
+
+        Use OpenJPEG target.
+
+        * platform/ImageDecoders.cmake:
+
 2019-12-11  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthn] Combine AuthenticatorResponse and PublicKeyCredentialData

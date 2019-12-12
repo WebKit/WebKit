@@ -13,14 +13,19 @@ find_package(Sqlite 3.23.1 REQUIRED)
 find_package(ZLIB 1.2.11 REQUIRED)
 find_package(LibPSL 0.20.2 REQUIRED)
 
-find_package(WebP 1.0.0)
-
-if (WEBP_FOUND)
-    SET_AND_EXPOSE_TO_BUILD(USE_WEBP ON)
-endif ()
-
 if (ENABLE_XSLT)
     find_package(LibXslt 1.1.32 REQUIRED)
+endif ()
+
+# Optional packages
+find_package(OpenJPEG 2.3.1)
+if (OpenJPEG_FOUND)
+    SET_AND_EXPOSE_TO_BUILD(USE_OPENJPEG ON)
+endif ()
+
+find_package(WebP 1.0.0)
+if (WEBP_FOUND)
+    SET_AND_EXPOSE_TO_BUILD(USE_WEBP ON)
 endif ()
 
 SET_AND_EXPOSE_TO_BUILD(USE_CAIRO ON)

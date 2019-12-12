@@ -40,12 +40,7 @@ list(APPEND WebCore_LIBRARIES
 )
 
 if (OpenJPEG_FOUND)
-    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-        ${OPENJPEG_INCLUDE_DIRS}
-    )
-    list(APPEND WebCore_LIBRARIES
-      ${OPENJPEG_LIBRARIES}
-    )
+    list(APPEND WebCore_LIBRARIES OpenJPEG::OpenJPEG)
 endif ()
 
 if (WEBP_FOUND)
