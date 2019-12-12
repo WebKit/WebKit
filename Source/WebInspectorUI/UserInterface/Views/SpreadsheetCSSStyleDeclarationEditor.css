@@ -47,13 +47,18 @@
     outline: none;
 }
 
-.spreadsheet-style-declaration-editor .property:not(.disabled) .name {
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .name:not(.editing),
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .name:not(:hover, .editing) {
     color: var(--syntax-highlight-boolean-color);
 }
 
-.spreadsheet-style-declaration-editor .property:not(.disabled) .value {
-    color: var(--text-color);
+.spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .value {
     white-space: pre-wrap;
+}
+
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .value:not(.editing),
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .value:not(:hover, .editing) {
+    color: var(--text-color);
 }
 
 .spreadsheet-style-declaration-editor .property:not(.disabled).has-newline .value-container {
@@ -98,19 +103,30 @@
 }
 
 .spreadsheet-style-declaration-editor .property.disabled {
-    color: var(--syntax-highlight-comment-color) !important;
+    color: var(--syntax-highlight-comment-color);
 }
 
-.spreadsheet-style-declaration-editor .property:matches(.invalid-name, .other-vendor, .overridden):not(.disabled) .content > * {
+.spreadsheet-style-declaration-editor > .property:matches(.invalid-name, .other-vendor, .overridden):not(.disabled) > .content > *:not(.name, .value-container),
+.spreadsheet-style-declaration-editor > .property:matches(.invalid-name, .other-vendor, .overridden):not(.disabled) > .content > .value-container > *:not(.value),
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:matches(.invalid-name, .other-vendor, .overridden):not(.disabled) > .content > :matches(.name, .value-container):not(.editing),
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:matches(.invalid-name, .other-vendor, .overridden):not(.disabled) > .content > .value-container > .value:not(.editing),
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:matches(.invalid-name, .other-vendor, .overridden):not(.disabled) > .content > :matches(.name, .value-container):not(:hover, .editing),
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:matches(.invalid-name, .other-vendor, .overridden):not(.disabled) > .content > .value-container > .value:not(:hover, .editing) {
     text-decoration: line-through;
     -webkit-text-decoration-color: hsla(0, 0%, var(--foreground-lightness), 0.6);
 }
 
-.spreadsheet-style-declaration-editor .property.invalid-name:not(.disabled) .content > * {
+.spreadsheet-style-declaration-editor > .property.invalid-name:not(.disabled) > .content > *:not(.name, .value-container),
+.spreadsheet-style-declaration-editor > .property.invalid-name:not(.disabled) > .content > .value-container > *:not(.value),
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property.invalid-name:not(.disabled) > .content > :matches(.name, .value-container):not(.editing),
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property.invalid-name:not(.disabled) > .content > .value-container > .value:not(.editing),
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property.invalid-name:not(.disabled) > .content > :matches(.name, .value-container):not(:hover, .editing),
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property.invalid-name:not(.disabled) > .content > .value-container > .value:not(:hover, .editing) {
     -webkit-text-decoration-color: hsla(0, 100%, 50%, 0.5);
 }
 
-.spreadsheet-style-declaration-editor .property.invalid-value:not(.disabled) .content .value {
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property.invalid-value:not(.disabled) > .content .value:not(.editing),
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property.invalid-value:not(.disabled) > .content .value:not(:hover, .editing) {
     text-decoration: line-through;
     -webkit-text-decoration-color: hsla(0, 100%, 50%, 0.5);
 }
@@ -168,11 +184,13 @@ body:matches(.window-docked-inactive, .window-inactive) .spreadsheet-style-decla
     color: hsl(0, 0%, 50%) !important;
 }
 
-.spreadsheet-style-declaration-editor .property:not(.disabled) .token-link {
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .value:not(.editing) .token-link,
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .value:not(:hover, .editing) .token-link {
     color: var(--syntax-highlight-link-color);
 }
 
-.spreadsheet-style-declaration-editor .property:not(.disabled) .token-string {
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .value:not(.editing) .token-string,
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .value:not(:hover, .editing) .token-string {
     color: var(--syntax-highlight-string-color);
 }
 
@@ -199,14 +217,15 @@ body:matches(.window-docked-inactive, .window-inactive) .spreadsheet-style-decla
     white-space: nowrap;
 }
 
-.meta-key-pressed .spreadsheet-css-declaration:not(.locked) :matches(.name, .value):not(.editing):hover {
+body.meta-key-pressed .spreadsheet-css-declaration:not(.locked) > .spreadsheet-style-declaration-editor > .property > .content :matches(.name, .value):not(.editing):hover {
     color: var(--syntax-highlight-link-color) !important;
     text-decoration: underline !important;
     cursor: pointer !important;
     -webkit-text-stroke-width: 0 !important;
 }
 
-.spreadsheet-style-declaration-editor .property:not(.disabled) .token-comment {
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .value:not(.editing) .token-comment,
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .value:not(:hover, .editing) .token-comment {
     color: var(--syntax-highlight-comment-color);
 }
 
