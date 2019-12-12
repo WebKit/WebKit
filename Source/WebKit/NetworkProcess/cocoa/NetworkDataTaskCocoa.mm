@@ -94,12 +94,14 @@ void NetworkDataTaskCocoa::applySniffingPoliciesAndBindRequestToInferfaceIfNeede
 #endif
 
     auto& cocoaSession = static_cast<NetworkSessionCocoa&>(*m_session);
+    auto& boundInterfaceIdentifier = cocoaSession.boundInterfaceIdentifier();
+    auto* proxyConfiguration = cocoaSession.proxyConfiguration();
     if (shouldContentSniff
 #if USE(CFNETWORK_CONTENT_ENCODING_SNIFFING_OVERRIDE)
         && shouldContentEncodingSniff
 #endif
-        && cocoaSession.m_boundInterfaceIdentifier.isNull()
-        && !cocoaSession.m_proxyConfiguration)
+        && boundInterfaceIdentifier.isNull()
+        && !proxyConfiguration)
         return;
 
     auto mutableRequest = adoptNS([nsRequest mutableCopy]);
@@ -112,11 +114,11 @@ void NetworkDataTaskCocoa::applySniffingPoliciesAndBindRequestToInferfaceIfNeede
     if (!shouldContentSniff)
         [mutableRequest _setProperty:@NO forKey:(NSString *)_kCFURLConnectionPropertyShouldSniff];
 
-    if (!cocoaSession.m_boundInterfaceIdentifier.isNull())
-        [mutableRequest setBoundInterfaceIdentifier:cocoaSession.m_boundInterfaceIdentifier];
+    if (!boundInterfaceIdentifier.isNull())
+        [mutableRequest setBoundInterfaceIdentifier:boundInterfaceIdentifier];
 
-    if (cocoaSession.m_proxyConfiguration)
-        CFURLRequestSetProxySettings([mutableRequest _CFURLRequest], cocoaSession.m_proxyConfiguration.get());
+    if (proxyConfiguration)
+        CFURLRequestSetProxySettings([mutableRequest _CFURLRequest], proxyConfiguration);
 
     nsRequest = mutableRequest.autorelease();
 }

@@ -61,7 +61,6 @@ struct SessionWrapper : public CanMakeWeakPtr<SessionWrapper> {
 };
 
 class NetworkSessionCocoa final : public NetworkSession {
-    friend class NetworkDataTaskCocoa;
 public:
     static std::unique_ptr<NetworkSession> create(NetworkProcess&, NetworkSessionCreationParameters&&);
 
@@ -94,12 +93,13 @@ public:
     bool hasIsolatedSession(const WebCore::RegistrableDomain) const override;
     void clearIsolatedSessions() override;
 
+    SessionWrapper& sessionWrapperForTask(const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy);
+
 private:
     void invalidateAndCancel() override;
     void clearCredentials() override;
     bool shouldLogCookieInformation() const override { return m_shouldLogCookieInformation; }
     Seconds loadThrottleLatency() const override { return m_loadThrottleLatency; }
-    SessionWrapper& sessionWrapperForTask(const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy);
     SessionWrapper& isolatedSession(WebCore::StoredCredentialsPolicy, const WebCore::RegistrableDomain);
 
 #if HAVE(NSURLSESSION_WEBSOCKET)

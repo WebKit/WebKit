@@ -1,3 +1,17 @@
+2019-12-12  Alex Christensen  <achristensen@webkit.org>
+
+        NetworkDataTaskCocoa and NetworkSessionCocoa should use public methods instead of being friends
+        https://bugs.webkit.org/show_bug.cgi?id=204242
+
+        Reviewed by Chris Dumez.
+
+        This makes them stay good abstractions, and probably could make a good meme about not having any friends.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::applySniffingPoliciesAndBindRequestToInferfaceIfNeeded):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+
 2019-12-12  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Deny mach lookup access to content filter service in the WebContent sandbox
