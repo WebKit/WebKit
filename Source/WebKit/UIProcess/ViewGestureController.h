@@ -366,6 +366,7 @@ private:
     RetainPtr<WKSwipeTransitionController> m_swipeInteractiveTransitionDelegate;
     RetainPtr<_UIViewControllerOneToOneTransitionContext> m_swipeTransitionContext;
     uint64_t m_snapshotRemovalTargetRenderTreeSize { 0 };
+    bool m_didCallWillEndSwipeGesture { false };
 #endif
 
 #if PLATFORM(GTK)

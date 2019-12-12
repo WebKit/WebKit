@@ -257,6 +257,7 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     [m_swipeTransitionContext _setAnimator:animationController.get()];
     [m_swipeTransitionContext _setInteractor:transition];
     [m_swipeTransitionContext _setTransitionIsInFlight:YES];
+    m_didCallWillEndSwipeGesture = false;
     [m_swipeTransitionContext _setInteractiveUpdateHandler:^(BOOL finish, CGFloat percent, BOOL transitionCompleted, _UIViewControllerTransitionContext *) {
         if (finish)
             willEndSwipeGesture(*targetItem, !transitionCompleted);
@@ -274,6 +275,7 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
 
 void ViewGestureController::willEndSwipeGesture(WebBackForwardListItem& targetItem, bool cancelled)
 {
+    m_didCallWillEndSwipeGesture = true;
     m_webPageProxyForBackForwardListForCurrentSwipe->navigationGestureWillEnd(!cancelled, targetItem);
 
     if (cancelled)
@@ -298,8 +300,7 @@ void ViewGestureController::willEndSwipeGesture(WebBackForwardListItem& targetIt
         | SnapshotRemovalTracker::RepaintAfterNavigation
         | SnapshotRemovalTracker::MainFrameLoad
         | SnapshotRemovalTracker::SubresourceLoads
-        | SnapshotRemovalTracker::ScrollPositionRestoration
-        | SnapshotRemovalTracker::SwipeAnimationEnd, [this] {
+        | SnapshotRemovalTracker::ScrollPositionRestoration, [this] {
         this->removeSwipeSnapshot();
     });
 
@@ -311,6 +312,10 @@ void ViewGestureController::willEndSwipeGesture(WebBackForwardListItem& targetIt
 
 void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, _UIViewControllerTransitionContext *context, bool cancelled)
 {
+    // At least in the context of a simulated swipe, it is possible that endSwipeGesture() gets called but not willEndSwipeGesture().
+    if (!m_didCallWillEndSwipeGesture)
+        willEndSwipeGesture(*targetItem, cancelled);
+
     [context _setTransitionIsInFlight:NO];
     [context _setInteractor:nil];
     [context _setAnimator:nil];
@@ -331,8 +336,6 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
             m_webPageProxy.navigationGestureDidEnd();
         return;
     }
-
-    m_snapshotRemovalTracker.eventOccurred(SnapshotRemovalTracker::SwipeAnimationEnd);
 
     m_webPageProxyForBackForwardListForCurrentSwipe->navigationGestureDidEnd(true, *targetItem);
     if (&m_webPageProxy != m_webPageProxyForBackForwardListForCurrentSwipe)

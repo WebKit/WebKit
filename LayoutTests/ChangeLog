@@ -1,5 +1,14 @@
 2019-12-12  Chris Dumez  <cdumez@apple.com>
 
+        Regression(r253394) swipe/basic-cached-back-swipe.html is timing out on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=205173
+
+        Reviewed by Tim Horton.
+
+        * platform/ios/swipe/basic-cached-back-swipe-expected.txt:
+
+2019-12-12  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, try to address flakiness of http/tests/cache-storage/page-cache-domcache-pending-promise.html on EWS
 
         * http/tests/cache-storage/page-cache-domcache-pending-promise.html:

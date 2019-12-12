@@ -1,3 +1,28 @@
+2019-12-12  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r253394) swipe/basic-cached-back-swipe.html is timing out on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=205173
+
+        Reviewed by Tim Horton.
+
+        Test test was calling beginSimulatedSwipeInDirectionForTesting / completeSimulatedSwipeInDirectionForTesting
+        on the ViewGestureController. This was causing beginSwipeGesture() and endSwipeGesture() but not
+        willEndSwipeGesture(). This was causing the timeout since willEndSwipeGesture() now actually triggers the
+        load.
+
+        This patch also gets rid of the SnapshotRemovalTracker::SwipeAnimationEnd. We don't really need it since
+        we already wait for SnapshotRemovalTracker::RepaintAfterNavigation and we won't repaint until the swipe
+        animation is over (due to the layer tree being frozen during the swipe animation). The SwipeAnimationEnd
+        was causing trouble because the provisional load may not have started yet by the time endSwipeGesture()
+        is called, which means that the call to eventOccurred(SwipeAnimationEnd) would get ignored because the
+        SnapshotRemovalTracker is still paused (it gets unpaused when the provisional load actually starts).
+
+        * UIProcess/ViewGestureController.h:
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::willEndSwipeGesture):
+        (WebKit::ViewGestureController::endSwipeGesture):
+
 2019-12-12  Alex Christensen  <achristensen@webkit.org>
 
         NetworkDataTaskCocoa and NetworkSessionCocoa should use public methods instead of being friends
