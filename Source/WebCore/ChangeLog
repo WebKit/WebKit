@@ -1,3 +1,21 @@
+2019-12-12  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r252979): Avoid unnecessary work when searching for the flow when constructing line layout iteratorAvoid unnecessary work when searching for the flow when constructing line layout iterator
+        https://bugs.webkit.org/show_bug.cgi?id=205155
+        <rdar://problem/57846936>
+
+        Reviewed by Zalan Bujtas.
+
+        We unecessarily searched the ancestor chain flow the RenderFlow. We can avoid this
+        for now since we know only candidate it the direct parent.
+
+        * rendering/line/LineLayoutTraversal.cpp:
+        (WebCore::LineLayoutTraversal::lineLayoutSystemFlowForRenderer):
+        (WebCore::LineLayoutTraversal::firstTextBoxFor):
+        (WebCore::LineLayoutTraversal::firstTextBoxInTextOrderFor):
+        (WebCore::LineLayoutTraversal::elementBoxFor):
+        (WebCore::LineLayoutTraversal::flowForText): Deleted.
+
 2019-12-12  youenn fablet  <youenn@apple.com>
 
         Roll-out part of revision 253275 related to rotation handling

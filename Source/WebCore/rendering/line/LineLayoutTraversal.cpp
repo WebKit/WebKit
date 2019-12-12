@@ -70,33 +70,34 @@ bool TextBoxIterator::atEnd() const
     });
 }
 
-static const RenderBlockFlow& flowForText(const RenderText& text)
+static const RenderBlockFlow* lineLayoutSystemFlowForRenderer(const RenderObject& renderer)
 {
-    return downcast<RenderBlockFlow>(*text.containingBlockForObjectInFlow());
+    // In currently supported cases the renderer is always direct child of the flow.
+    if (!is<RenderBlockFlow>(*renderer.parent()))
+        return nullptr;
+    return downcast<RenderBlockFlow>(renderer.parent());
 }
 
 TextBoxIterator firstTextBoxFor(const RenderText& text)
 {
-    auto& flow = flowForText(text);
-
-    if (auto* simpleLineLayout = flow.simpleLineLayout()) {
-        auto range = simpleLineLayout->runResolver().rangeForRenderer(text);
-        return { SimplePath { range.begin(), range.end() } };
-    }
+    if (auto* flow = lineLayoutSystemFlowForRenderer(text)) {
+        if (auto* simpleLineLayout = flow->simpleLineLayout()) {
+            auto range = simpleLineLayout->runResolver().rangeForRenderer(text);
+            return { SimplePath { range.begin(), range.end() } };
+        }
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (auto* layoutFormattingContextLineLayout = flow.layoutFormattingContextLineLayout())
-        return layoutFormattingContextLineLayout->textBoxesFor(text);
+        if (auto* layoutFormattingContextLineLayout = flow->layoutFormattingContextLineLayout())
+            return layoutFormattingContextLineLayout->textBoxesFor(text);
 #endif
+    }
 
     return { ComplexPath { text.firstTextBox() } };
 }
 
 TextBoxIterator firstTextBoxInTextOrderFor(const RenderText& text)
 {
-    auto& flow = flowForText(text);
-
-    if (flow.complexLineLayout() && text.containsReversedText() && text.firstTextBox()) {
+    if (text.firstTextBox() && text.containsReversedText()) {
         Vector<const InlineTextBox*> sortedTextBoxes;
         for (auto* textBox = text.firstTextBox(); textBox; textBox = textBox->nextTextBox())
             sortedTextBoxes.append(textBox);
@@ -127,21 +128,17 @@ bool ElementBoxIterator::atEnd() const
 
 ElementBoxIterator elementBoxFor(const RenderLineBreak& renderElement)
 {
-    auto* containingBlock = renderElement.containingBlock();
-    if (!is<RenderBlockFlow>(containingBlock))
-        return { };
-
-    auto& flow = downcast<RenderBlockFlow>(*containingBlock);
-
-    if (auto* simpleLineLayout = flow.simpleLineLayout()) {
-        auto range = simpleLineLayout->runResolver().rangeForRenderer(renderElement);
-        return { SimplePath(range.begin(), range.end()) };
-    }
+    if (auto* flow = lineLayoutSystemFlowForRenderer(renderElement)) {
+        if (auto* simpleLineLayout = flow->simpleLineLayout()) {
+            auto range = simpleLineLayout->runResolver().rangeForRenderer(renderElement);
+            return { SimplePath(range.begin(), range.end()) };
+        }
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (auto* layoutFormattingContextLineLayout = flow.layoutFormattingContextLineLayout())
-        return layoutFormattingContextLineLayout->elementBoxFor(renderElement);
+        if (auto* layoutFormattingContextLineLayout = flow->layoutFormattingContextLineLayout())
+            return layoutFormattingContextLineLayout->elementBoxFor(renderElement);
 #endif
+    }
 
     return { ComplexPath(renderElement.inlineBoxWrapper()) };
 }
