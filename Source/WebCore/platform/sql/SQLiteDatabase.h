@@ -135,7 +135,7 @@ public:
 #ifndef NDEBUG
     WEBCORE_EXPORT void disableThreadingChecks();
 #else
-    WEBCORE_EXPORT void disableThreadingChecks() {}
+    void disableThreadingChecks() { }
 #endif
 
     WEBCORE_EXPORT static void setIsDatabaseOpeningForbidden(bool);
