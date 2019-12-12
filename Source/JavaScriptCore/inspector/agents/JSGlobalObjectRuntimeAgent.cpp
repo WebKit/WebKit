@@ -30,9 +30,9 @@
 #include "InjectedScriptManager.h"
 #include "JSGlobalObject.h"
 
-using namespace JSC;
-
 namespace Inspector {
+
+using namespace JSC;
 
 JSGlobalObjectRuntimeAgent::JSGlobalObjectRuntimeAgent(JSAgentContext& context)
     : InspectorRuntimeAgent(context)

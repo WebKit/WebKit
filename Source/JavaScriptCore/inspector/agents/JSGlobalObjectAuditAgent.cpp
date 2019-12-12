@@ -34,9 +34,9 @@
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
-using namespace JSC;
-
 namespace Inspector {
+
+using namespace JSC;
 
 JSGlobalObjectAuditAgent::JSGlobalObjectAuditAgent(JSAgentContext& context)
     : InspectorAuditAgent(context)

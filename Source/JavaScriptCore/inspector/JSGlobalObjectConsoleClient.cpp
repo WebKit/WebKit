@@ -34,9 +34,9 @@
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
 
-using namespace JSC;
-
 namespace Inspector {
+
+using namespace JSC;
 
 #if !LOG_DISABLED
 static bool sLogToSystemConsole = true;

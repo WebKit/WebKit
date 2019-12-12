@@ -76,6 +76,7 @@
 #include "IntlNumberFormatConstructor.h"
 #include "IntlPluralRulesConstructor.h"
 #include "IsoHeapCellType.h"
+#include "IsoInlinedHeapCellType.h"
 #include "JITCode.h"
 #include "JITWorklist.h"
 #include "JSAPIGlobalObject.h"
@@ -301,40 +302,40 @@ VM::VM(VMType vmType, HeapType heapType)
     , immutableButterflyHeapCellType(makeUnique<HeapCellType>(CellAttributes(DoesNotNeedDestruction, HeapCell::JSCellWithInteriorPointers)))
     , cellHeapCellType(makeUnique<HeapCellType>(CellAttributes(DoesNotNeedDestruction, HeapCell::JSCell)))
     , destructibleCellHeapCellType(makeUnique<HeapCellType>(CellAttributes(NeedsDestruction, HeapCell::JSCell)))
-    , callbackConstructorHeapCellType(makeUnique<IsoHeapCellType<JSCallbackConstructor>>())
-    , callbackObjectHeapCellType(makeUnique<IsoHeapCellType<JSCallbackObject<JSNonFinalObject>>>())
-    , dateInstanceHeapCellType(makeUnique<IsoHeapCellType<DateInstance>>())
-    , errorInstanceHeapCellType(makeUnique<IsoHeapCellType<ErrorInstance>>())
-    , jsModuleRecordHeapCellType(makeUnique<IsoHeapCellType<JSModuleRecord>>())
-    , moduleNamespaceObjectHeapCellType(makeUnique<IsoHeapCellType<JSModuleNamespaceObject>>())
-    , nativeStdFunctionHeapCellType(makeUnique<IsoHeapCellType<JSNativeStdFunction>>())
-    , stringHeapCellType(makeUnique<IsoHeapCellType<JSString>>())
-    , weakMapHeapCellType(makeUnique<IsoHeapCellType<JSWeakMap>>())
-    , weakSetHeapCellType(makeUnique<IsoHeapCellType<JSWeakSet>>())
+    , callbackConstructorHeapCellType(IsoHeapCellType::create<JSCallbackConstructor>())
+    , callbackObjectHeapCellType(IsoHeapCellType::create<JSCallbackObject<JSNonFinalObject>>())
+    , dateInstanceHeapCellType(IsoHeapCellType::create<DateInstance>())
+    , errorInstanceHeapCellType(IsoHeapCellType::create<ErrorInstance>())
+    , jsModuleRecordHeapCellType(IsoHeapCellType::create<JSModuleRecord>())
+    , moduleNamespaceObjectHeapCellType(IsoHeapCellType::create<JSModuleNamespaceObject>())
+    , nativeStdFunctionHeapCellType(IsoHeapCellType::create<JSNativeStdFunction>())
+    , stringHeapCellType(makeUnique<IsoInlinedHeapCellType<JSString>>())
+    , weakMapHeapCellType(IsoHeapCellType::create<JSWeakMap>())
+    , weakSetHeapCellType(IsoHeapCellType::create<JSWeakSet>())
     , destructibleObjectHeapCellType(makeUnique<JSDestructibleObjectHeapCellType>())
 #if JSC_OBJC_API_ENABLED
-    , apiWrapperObjectHeapCellType(makeUnique<IsoHeapCellType<JSCallbackObject<JSAPIWrapperObject>>>())
-    , objCCallbackFunctionHeapCellType(makeUnique<IsoHeapCellType<ObjCCallbackFunction>>())
+    , apiWrapperObjectHeapCellType(IsoHeapCellType::create<JSCallbackObject<JSAPIWrapperObject>>())
+    , objCCallbackFunctionHeapCellType(IsoHeapCellType::create<ObjCCallbackFunction>())
 #endif
 #ifdef JSC_GLIB_API_ENABLED
-    , apiWrapperObjectHeapCellType(makeUnique<IsoHeapCellType<JSCallbackObject<JSAPIWrapperObject>>>())
-    , jscCallbackFunctionHeapCellType(makeUnique<IsoHeapCellType<JSCCallbackFunction>>())
+    , apiWrapperObjectHeapCellType(IsoHeapCellType::create<JSCallbackObject<JSAPIWrapperObject>>())
+    , jscCallbackFunctionHeapCellType(IsoHeapCellType::create<JSCCallbackFunction>())
 #endif
 #if ENABLE(INTL)
-    , intlCollatorHeapCellType(makeUnique<IsoHeapCellType<IntlCollator>>())
-    , intlDateTimeFormatHeapCellType(makeUnique<IsoHeapCellType<IntlDateTimeFormat>>())
-    , intlNumberFormatHeapCellType(makeUnique<IsoHeapCellType<IntlNumberFormat>>())
-    , intlPluralRulesHeapCellType(makeUnique<IsoHeapCellType<IntlPluralRules>>())
+    , intlCollatorHeapCellType(IsoHeapCellType::create<IntlCollator>())
+    , intlDateTimeFormatHeapCellType(IsoHeapCellType::create<IntlDateTimeFormat>())
+    , intlNumberFormatHeapCellType(IsoHeapCellType::create<IntlNumberFormat>())
+    , intlPluralRulesHeapCellType(IsoHeapCellType::create<IntlPluralRules>())
 #endif
 #if ENABLE(WEBASSEMBLY)
-    , webAssemblyCodeBlockHeapCellType(makeUnique<IsoHeapCellType<JSWebAssemblyCodeBlock>>())
-    , webAssemblyFunctionHeapCellType(makeUnique<IsoHeapCellType<WebAssemblyFunction>>())
-    , webAssemblyGlobalHeapCellType(makeUnique<IsoHeapCellType<JSWebAssemblyGlobal>>())
-    , webAssemblyInstanceHeapCellType(makeUnique<IsoHeapCellType<JSWebAssemblyInstance>>())
-    , webAssemblyMemoryHeapCellType(makeUnique<IsoHeapCellType<JSWebAssemblyMemory>>())
-    , webAssemblyModuleHeapCellType(makeUnique<IsoHeapCellType<JSWebAssemblyModule>>())
-    , webAssemblyModuleRecordHeapCellType(makeUnique<IsoHeapCellType<WebAssemblyModuleRecord>>())
-    , webAssemblyTableHeapCellType(makeUnique<IsoHeapCellType<JSWebAssemblyTable>>())
+    , webAssemblyCodeBlockHeapCellType(IsoHeapCellType::create<JSWebAssemblyCodeBlock>())
+    , webAssemblyFunctionHeapCellType(IsoHeapCellType::create<WebAssemblyFunction>())
+    , webAssemblyGlobalHeapCellType(IsoHeapCellType::create<JSWebAssemblyGlobal>())
+    , webAssemblyInstanceHeapCellType(IsoHeapCellType::create<JSWebAssemblyInstance>())
+    , webAssemblyMemoryHeapCellType(IsoHeapCellType::create<JSWebAssemblyMemory>())
+    , webAssemblyModuleHeapCellType(IsoHeapCellType::create<JSWebAssemblyModule>())
+    , webAssemblyModuleRecordHeapCellType(IsoHeapCellType::create<WebAssemblyModuleRecord>())
+    , webAssemblyTableHeapCellType(IsoHeapCellType::create<JSWebAssemblyTable>())
 #endif
     , primitiveGigacageAuxiliarySpace("Primitive Gigacage Auxiliary", heap, auxiliaryHeapCellType.get(), primitiveGigacageAllocator.get()) // Hash:0x3e7cd762
     , jsValueGigacageAuxiliarySpace("JSValue Gigacage Auxiliary", heap, auxiliaryHeapCellType.get(), jsValueGigacageAllocator.get()) // Hash:0x241e946

@@ -29,9 +29,9 @@
 #include "JSCInlines.h"
 #include "JSInjectedScriptHost.h"
 
-using namespace JSC;
-
 namespace Inspector {
+
+using namespace JSC;
 
 InjectedScriptHost::~InjectedScriptHost()
 {

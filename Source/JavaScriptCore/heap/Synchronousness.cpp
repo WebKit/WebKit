@@ -28,9 +28,9 @@
 
 #include <wtf/PrintStream.h>
 
-using namespace JSC;
-
 namespace WTF {
+
+using namespace JSC;
 
 void printInternal(PrintStream& out, Synchronousness synchronousness)
 {

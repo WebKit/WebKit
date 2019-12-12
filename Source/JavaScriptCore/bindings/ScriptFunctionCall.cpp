@@ -36,9 +36,9 @@
 #include "JSLock.h"
 #include <wtf/text/WTFString.h>
 
-using namespace JSC;
-
 namespace Deprecated {
+
+using namespace JSC;
 
 void ScriptCallArgumentHandler::appendArgument(const String& argument)
 {

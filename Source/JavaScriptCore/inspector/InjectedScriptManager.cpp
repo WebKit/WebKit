@@ -42,9 +42,9 @@
 #include "SourceCode.h"
 #include <wtf/JSONValues.h>
 
-using namespace JSC;
-
 namespace Inspector {
+
+using namespace JSC;
 
 InjectedScriptManager::InjectedScriptManager(InspectorEnvironment& environment, Ref<InjectedScriptHost>&& injectedScriptHost)
     : m_environment(environment)

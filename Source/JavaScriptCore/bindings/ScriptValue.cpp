@@ -35,10 +35,9 @@
 #include "JSCInlines.h"
 #include "JSLock.h"
 
-using namespace JSC;
-using namespace Inspector;
-
 namespace Inspector {
+
+using namespace JSC;
 
 static RefPtr<JSON::Value> jsToInspectorValue(JSGlobalObject* globalObject, JSValue value, int maxDepth)
 {

@@ -26,9 +26,9 @@
 #include "config.h"
 #include "JavaScriptCallFrame.h"
 
-using namespace JSC;
-
 namespace Inspector {
+
+using namespace JSC;
 
 JavaScriptCallFrame::JavaScriptCallFrame(Ref<DebuggerCallFrame>&& debuggerCallFrame)
     : m_debuggerCallFrame(WTFMove(debuggerCallFrame))

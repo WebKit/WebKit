@@ -525,6 +525,7 @@ heap/HeapSnapshotBuilder.cpp
 heap/IncrementalSweeper.cpp
 heap/IsoAlignedMemoryAllocator.cpp
 heap/IsoCellSet.cpp
+heap/IsoHeapCellType.cpp
 heap/IsoSubspace.cpp
 heap/IsoSubspacePerVM.cpp
 heap/JITStubRoutineSet.cpp

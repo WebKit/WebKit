@@ -33,9 +33,9 @@
 #include "ScriptDebugServer.h"
 #include <wtf/Stopwatch.h>
 
-using namespace JSC;
-
 namespace Inspector {
+
+using namespace JSC;
 
 InspectorScriptProfilerAgent::InspectorScriptProfilerAgent(AgentContext& context)
     : InspectorAgentBase("ScriptProfiler"_s)

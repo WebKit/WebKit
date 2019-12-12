@@ -26,9 +26,9 @@
 #include "config.h"
 #include "PerGlobalObjectWrapperWorld.h"
 
-using namespace JSC;
-
 namespace Inspector {
+
+using namespace JSC;
 
 JSValue PerGlobalObjectWrapperWorld::getWrapper(JSGlobalObject* globalObject)
 {

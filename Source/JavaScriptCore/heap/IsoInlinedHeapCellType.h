@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc.  All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,25 +20,39 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSHeapFinalizerPrivate.h"
+#include "HeapCellType.h"
+#include "MarkedBlockInlines.h"
 
-#include "APICast.h"
-#include "JSCInlines.h"
+namespace JSC {
 
-void JSContextGroupAddHeapFinalizer(JSContextGroupRef group, JSHeapFinalizer finalizer, void *userData)
-{
-    JSC::VM* vm = toJS(group);
-    JSC::JSLockHolder locker(vm);
-    vm->heap.addHeapFinalizerCallback(JSC::HeapFinalizerCallback(finalizer, userData));
-}
+template<typename CellType>
+class IsoInlinedHeapCellType final : public HeapCellType {
+public:
+    IsoInlinedHeapCellType()
+        : HeapCellType(CellAttributes(CellType::needsDestruction ? NeedsDestruction : DoesNotNeedDestruction, HeapCell::JSCell))
+    {
+    }
 
-void JSContextGroupRemoveHeapFinalizer(JSContextGroupRef group, JSHeapFinalizer finalizer, void *userData)
-{
-    JSC::VM* vm = toJS(group);
-    JSC::JSLockHolder locker(vm);
-    vm->heap.removeHeapFinalizerCallback(JSC::HeapFinalizerCallback(finalizer, userData));
-}
+    struct DestroyFunc {
+        ALWAYS_INLINE void operator()(VM&, JSCell* cell) const
+        {
+            CellType::destroy(cell);
+        }
+    };
+
+    void finishSweep(MarkedBlock::Handle& handle, FreeList* freeList) override
+    {
+        handle.finishSweepKnowingHeapCellType(freeList, DestroyFunc());
+    }
+
+    void destroy(VM&, JSCell* cell) override
+    {
+        CellType::destroy(cell);
+    }
+};
+
+} // namespace JSC
+

@@ -184,7 +184,8 @@ class WatchpointSet;
 class WebAssemblyFunction;
 class WebAssemblyModuleRecord;
 
-template<typename CellType> class IsoHeapCellType;
+class IsoHeapCellType;
+template<typename CellType> class IsoInlinedHeapCellType;
 template<typename Parent> class JSCallbackObject;
 
 #if ENABLE(FTL_JIT)
@@ -363,40 +364,40 @@ public:
     std::unique_ptr<HeapCellType> immutableButterflyHeapCellType;
     std::unique_ptr<HeapCellType> cellHeapCellType;
     std::unique_ptr<HeapCellType> destructibleCellHeapCellType;
-    std::unique_ptr<IsoHeapCellType<JSCallbackConstructor>> callbackConstructorHeapCellType;
-    std::unique_ptr<IsoHeapCellType<JSCallbackObject<JSNonFinalObject>>> callbackObjectHeapCellType;
-    std::unique_ptr<IsoHeapCellType<DateInstance>> dateInstanceHeapCellType;
-    std::unique_ptr<IsoHeapCellType<ErrorInstance>> errorInstanceHeapCellType;
-    std::unique_ptr<IsoHeapCellType<JSModuleRecord>> jsModuleRecordHeapCellType;
-    std::unique_ptr<IsoHeapCellType<JSModuleNamespaceObject>> moduleNamespaceObjectHeapCellType;
-    std::unique_ptr<IsoHeapCellType<JSNativeStdFunction>> nativeStdFunctionHeapCellType;
-    std::unique_ptr<IsoHeapCellType<JSString>> stringHeapCellType;
-    std::unique_ptr<IsoHeapCellType<JSWeakMap>> weakMapHeapCellType;
-    std::unique_ptr<IsoHeapCellType<JSWeakSet>> weakSetHeapCellType;
+    std::unique_ptr<IsoHeapCellType> callbackConstructorHeapCellType;
+    std::unique_ptr<IsoHeapCellType> callbackObjectHeapCellType;
+    std::unique_ptr<IsoHeapCellType> dateInstanceHeapCellType;
+    std::unique_ptr<IsoHeapCellType> errorInstanceHeapCellType;
+    std::unique_ptr<IsoHeapCellType> jsModuleRecordHeapCellType;
+    std::unique_ptr<IsoHeapCellType> moduleNamespaceObjectHeapCellType;
+    std::unique_ptr<IsoHeapCellType> nativeStdFunctionHeapCellType;
+    std::unique_ptr<IsoInlinedHeapCellType<JSString>> stringHeapCellType;
+    std::unique_ptr<IsoHeapCellType> weakMapHeapCellType;
+    std::unique_ptr<IsoHeapCellType> weakSetHeapCellType;
     std::unique_ptr<JSDestructibleObjectHeapCellType> destructibleObjectHeapCellType;
 #if JSC_OBJC_API_ENABLED
-    std::unique_ptr<IsoHeapCellType<JSCallbackObject<JSAPIWrapperObject>>> apiWrapperObjectHeapCellType;
-    std::unique_ptr<IsoHeapCellType<ObjCCallbackFunction>> objCCallbackFunctionHeapCellType;
+    std::unique_ptr<IsoHeapCellType> apiWrapperObjectHeapCellType;
+    std::unique_ptr<IsoHeapCellType> objCCallbackFunctionHeapCellType;
 #endif
 #ifdef JSC_GLIB_API_ENABLED
-    std::unique_ptr<IsoHeapCellType<JSCallbackObject<JSAPIWrapperObject>>> apiWrapperObjectHeapCellType;
-    std::unique_ptr<IsoHeapCellType<JSCCallbackFunction>> jscCallbackFunctionHeapCellType;
+    std::unique_ptr<IsoHeapCellType> apiWrapperObjectHeapCellType;
+    std::unique_ptr<IsoHeapCellType> jscCallbackFunctionHeapCellType;
 #endif
 #if ENABLE(INTL)
-    std::unique_ptr<IsoHeapCellType<IntlCollator>> intlCollatorHeapCellType;
-    std::unique_ptr<IsoHeapCellType<IntlDateTimeFormat>> intlDateTimeFormatHeapCellType;
-    std::unique_ptr<IsoHeapCellType<IntlNumberFormat>> intlNumberFormatHeapCellType;
-    std::unique_ptr<IsoHeapCellType<IntlPluralRules>> intlPluralRulesHeapCellType;
+    std::unique_ptr<IsoHeapCellType> intlCollatorHeapCellType;
+    std::unique_ptr<IsoHeapCellType> intlDateTimeFormatHeapCellType;
+    std::unique_ptr<IsoHeapCellType> intlNumberFormatHeapCellType;
+    std::unique_ptr<IsoHeapCellType> intlPluralRulesHeapCellType;
 #endif
 #if ENABLE(WEBASSEMBLY)
-    std::unique_ptr<IsoHeapCellType<JSWebAssemblyCodeBlock>> webAssemblyCodeBlockHeapCellType;
-    std::unique_ptr<IsoHeapCellType<WebAssemblyFunction>> webAssemblyFunctionHeapCellType;
-    std::unique_ptr<IsoHeapCellType<JSWebAssemblyGlobal>> webAssemblyGlobalHeapCellType;
-    std::unique_ptr<IsoHeapCellType<JSWebAssemblyInstance>> webAssemblyInstanceHeapCellType;
-    std::unique_ptr<IsoHeapCellType<JSWebAssemblyMemory>> webAssemblyMemoryHeapCellType;
-    std::unique_ptr<IsoHeapCellType<JSWebAssemblyModule>> webAssemblyModuleHeapCellType;
-    std::unique_ptr<IsoHeapCellType<WebAssemblyModuleRecord>> webAssemblyModuleRecordHeapCellType;
-    std::unique_ptr<IsoHeapCellType<JSWebAssemblyTable>> webAssemblyTableHeapCellType;
+    std::unique_ptr<IsoHeapCellType> webAssemblyCodeBlockHeapCellType;
+    std::unique_ptr<IsoHeapCellType> webAssemblyFunctionHeapCellType;
+    std::unique_ptr<IsoHeapCellType> webAssemblyGlobalHeapCellType;
+    std::unique_ptr<IsoHeapCellType> webAssemblyInstanceHeapCellType;
+    std::unique_ptr<IsoHeapCellType> webAssemblyMemoryHeapCellType;
+    std::unique_ptr<IsoHeapCellType> webAssemblyModuleHeapCellType;
+    std::unique_ptr<IsoHeapCellType> webAssemblyModuleRecordHeapCellType;
+    std::unique_ptr<IsoHeapCellType> webAssemblyTableHeapCellType;
 #endif
     
     CompleteSubspace primitiveGigacageAuxiliarySpace; // Typed arrays, strings, bitvectors, etc go here.

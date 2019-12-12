@@ -32,9 +32,9 @@
 #include "JSFunction.h"
 #include "JSJavaScriptCallFrame.h"
 
-using namespace JSC;
-
 namespace Inspector {
+
+using namespace JSC;
 
 // Functions.
 static EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFramePrototypeFunctionEvaluateWithScopeExtension(JSGlobalObject*, CallFrame*);

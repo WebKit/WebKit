@@ -34,9 +34,9 @@
 
 #include "JSCInlines.h"
 
-using namespace JSC;
-
 namespace Deprecated {
+
+using namespace JSC;
 
 ScriptObject::ScriptObject(JSGlobalObject* globalObject, JSObject* object)
     : ScriptValue(globalObject->vm(), object)

@@ -35,9 +35,9 @@
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
 
-using namespace JSC;
-
 namespace Inspector {
+
+using namespace JSC;
 
 JSGlobalObjectDebuggerAgent::JSGlobalObjectDebuggerAgent(JSAgentContext& context, InspectorConsoleAgent* consoleAgent)
     : InspectorDebuggerAgent(context)

@@ -1,3 +1,70 @@
+2019-12-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] IsoHeapCellType should have destroy function member instead of specializing template function
+        https://bugs.webkit.org/show_bug.cgi?id=205152
+
+        Reviewed by Saam Barati.
+
+        We were specializing MarkedBlock::Handle::specializedSweep in 5 different ways for each IsoSubspace-ed cell.
+        This bloats binary. Instead of specializing it with CellType, we specialize it with one functor, which invokes
+        function pointer held by IsoHeapCellType. This requires one indirect function call per cell. But this is OK since,
+
+        1. We were using JSDestructibleObject's cell->classInfo->methodTable.destroy function call to dispatch destruction,
+           before IsoSubspace replaces them with IsoHeapCellType-based destruction. Compared to that, the new one is still
+           saving one pointer chasing basically (classInfo dereference, we assume cell deference is no cost since it will
+           be done anyway).
+        2. We still keep JSString's destroy function inlining by using IsoInlinedHeapCellType. This is important since
+           it is critical to performance and we had JSStringHeapCellType before we replaced it with IsoHeapCellType.
+           But IsoInlinedHeapCellType specialization is for only one class so generated binary size is the same to the
+           old code using JSStringHeapCellType.
+
+        This saves 480KB binary-size in JavaScriptCore. And more importantly, after this patch, adding IsoSubspace
+        will not bloat code, so we can simply put things into IsoSubspace.
+
+        This patch also removes `using namespace JSC;` in global code in JavaScriptCore except for API codes, since
+        it starts causing build failure due to unified builds: API defines JSType enum in a global scope, which is
+        different from our JSC::JSType. If we do `using namespace JSC;` in a global scope, it can lead to ambiguity of
+        looking up.
+
+        * API/JSHeapFinalizerPrivate.cpp:
+        (JSContextGroupAddHeapFinalizer):
+        (JSContextGroupRemoveHeapFinalizer):
+        * API/JSHeapFinalizerPrivate.h:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * assembler/AbstractMacroAssembler.cpp:
+        * bindings/ScriptFunctionCall.cpp:
+        * bindings/ScriptObject.cpp:
+        * bindings/ScriptValue.cpp:
+        * heap/IsoHeapCellType.cpp: Copied from Source/JavaScriptCore/assembler/AbstractMacroAssembler.cpp.
+        (JSC::IsoHeapCellType::finishSweep):
+        (JSC::IsoHeapCellType::destroy):
+        * heap/IsoHeapCellType.h:
+        * heap/IsoInlinedHeapCellType.h: Copied from Source/JavaScriptCore/heap/IsoHeapCellType.h.
+        * heap/MutatorState.cpp:
+        * heap/Synchronousness.cpp:
+        * inspector/InjectedScriptHost.cpp:
+        * inspector/InjectedScriptManager.cpp:
+        * inspector/JSGlobalObjectConsoleClient.cpp:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        * inspector/JSGlobalObjectScriptDebugServer.cpp:
+        * inspector/JSInjectedScriptHost.cpp:
+        * inspector/JSInjectedScriptHostPrototype.cpp:
+        * inspector/JSJavaScriptCallFrame.cpp:
+        * inspector/JSJavaScriptCallFramePrototype.cpp:
+        * inspector/JavaScriptCallFrame.cpp:
+        * inspector/PerGlobalObjectWrapperWorld.cpp:
+        * inspector/ScriptCallStackFactory.cpp:
+        * inspector/ScriptDebugServer.cpp:
+        * inspector/agents/InspectorHeapAgent.cpp:
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        * inspector/agents/JSGlobalObjectAuditAgent.cpp:
+        * inspector/agents/JSGlobalObjectDebuggerAgent.cpp:
+        * inspector/agents/JSGlobalObjectRuntimeAgent.cpp:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2019-12-11  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Put all API related JS cells into IsoSubspace

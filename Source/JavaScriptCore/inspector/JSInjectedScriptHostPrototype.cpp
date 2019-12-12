@@ -34,9 +34,9 @@
 #include "JSFunction.h"
 #include "JSInjectedScriptHost.h"
 
-using namespace JSC;
-
 namespace Inspector {
+
+using namespace JSC;
 
 static EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionSubtype(JSGlobalObject*, CallFrame*);
 static EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionFunctionDetails(JSGlobalObject*, CallFrame*);

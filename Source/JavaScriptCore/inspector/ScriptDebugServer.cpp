@@ -41,9 +41,9 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
 
-using namespace JSC;
-
 namespace Inspector {
+
+using namespace JSC;
 
 ScriptDebugServer::ScriptDebugServer(VM& vm)
     : Debugger(vm)

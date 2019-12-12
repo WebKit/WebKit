@@ -36,9 +36,9 @@
 #include "VM.h"
 #include <wtf/Stopwatch.h>
 
-using namespace JSC;
-
 namespace Inspector {
+
+using namespace JSC;
 
 InspectorHeapAgent::InspectorHeapAgent(AgentContext& context)
     : InspectorAgentBase("Heap"_s)

@@ -31,9 +31,9 @@
 #include "JSLock.h"
 #include "RemoteInspectionTarget.h"
 
-using namespace JSC;
-
 namespace Inspector {
+
+using namespace JSC;
 
 JSGlobalObjectScriptDebugServer::JSGlobalObjectScriptDebugServer(JSGlobalObject& globalObject)
     : ScriptDebugServer(globalObject.vm())

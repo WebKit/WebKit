@@ -26,7 +26,7 @@
 #ifndef JSHeapFinalizerPrivate_h
 #define JSHeapFinalizerPrivate_h
 
-#include <JavaScriptCore/JSContextRef.h>
+#include <JavaScriptCore/JSBase.h>
 #include <stdbool.h>
 
 #ifdef __cplusplus
