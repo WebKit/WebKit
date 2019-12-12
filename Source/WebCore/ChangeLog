@@ -1,3 +1,17 @@
+2019-12-12  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] Paint seemingly blank runs (0 width, result of negative letter-spacing)
+        https://bugs.webkit.org/show_bug.cgi?id=205114
+        <rdar://problem/57837165>
+
+        Reviewed by Antti Koivisto.
+
+        Let's not intersect the run's rect with the damaged area when we don't yet have any paint
+        overflow information (This should rather use the line box set to identify the line range to paint.)
+
+        * layout/displaytree/DisplayInlineContent.cpp:
+        (WebCore::Display:: const):
+
 2019-12-12  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Deny mach lookup access to content filter service in the WebContent sandbox
