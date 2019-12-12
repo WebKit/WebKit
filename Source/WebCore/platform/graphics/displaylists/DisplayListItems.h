@@ -3052,6 +3052,7 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
     WebCore::DisplayList::ItemType::Translate,
     WebCore::DisplayList::ItemType::Rotate,
     WebCore::DisplayList::ItemType::Scale,
+    WebCore::DisplayList::ItemType::SetCTM,
     WebCore::DisplayList::ItemType::ConcatenateCTM,
     WebCore::DisplayList::ItemType::SetState,
     WebCore::DisplayList::ItemType::SetLineCap,

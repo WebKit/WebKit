@@ -1,3 +1,16 @@
+2019-12-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a missing entry in EnumTraits<WebCore::DisplayList::ItemType>
+        https://bugs.webkit.org/show_bug.cgi?id=205154
+        <rdar://problem/57864862>
+
+        Reviewed by Tim Horton.
+
+        Add a missing `ItemType::SetCTM`. This will be tested in a future patch by enabling canvas layout tests with
+        GPU process enabled.
+
+        * platform/graphics/displaylists/DisplayListItems.h:
+
 2019-12-11  Chris Dumez  <cdumez@apple.com>
 
         Trying to set toString / valueOf on a cross-origin Location object should throw a SecurityError
