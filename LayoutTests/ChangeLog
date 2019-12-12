@@ -1,3 +1,9 @@
+2019-12-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed test gardening for WinCairo
+
+        * platform/wincairo/TestExpectations: Unskip fast/text.
+
 2019-12-11  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed test gardening for WinCairo
