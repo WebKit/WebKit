@@ -41,9 +41,28 @@ SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
 
 namespace WebCore {
 
+#if PLATFORM(IOS)
+ParentalControlsContentFilter::SandboxExtensionState ParentalControlsContentFilter::m_sandboxExtensionState = SandboxExtensionState::NotSet;
+#endif
+
 bool ParentalControlsContentFilter::enabled()
 {
+#if PLATFORM(IOS)
+    bool enabled = false;
+    switch (m_sandboxExtensionState) {
+    case SandboxExtensionState::Consumed:
+        enabled = true;
+        break;
+    case SandboxExtensionState::NotConsumed:
+        enabled = false;
+        break;
+    case SandboxExtensionState::NotSet:
+        enabled = [getWebFilterEvaluatorClass() isManagedSession];
+        break;
+    }
+#else
     bool enabled = [getWebFilterEvaluatorClass() isManagedSession];
+#endif
     LOG(ContentFiltering, "ParentalControlsContentFilter is %s.\n", enabled ? "enabled" : "not enabled");
     return enabled;
 }
@@ -127,6 +146,13 @@ void ParentalControlsContentFilter::updateFilterState()
         LOG(ContentFiltering, "ParentalControlsContentFilter stopped buffering with state %d and replacement data length %zu.\n", m_state, [m_replacementData length]);
 #endif
 }
+
+#if PLATFORM(IOS)
+void ParentalControlsContentFilter::setHasConsumedSandboxExtension(bool hasConsumedSandboxExtension)
+{
+    m_sandboxExtensionState = (hasConsumedSandboxExtension ? SandboxExtensionState::Consumed : SandboxExtensionState::NotConsumed);
+}
+#endif
 
 } // namespace WebCore
 

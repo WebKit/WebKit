@@ -1,3 +1,24 @@
+2019-12-12  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Deny mach lookup access to content filter service in the WebContent sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=205077
+
+        Reviewed by Brent Fulgham.
+
+        Mach lookup access to the content filter service in the WebContent process is only needed if
+        [WebFilterEvaluator isManagedSession] evaluates to true. If this is the case, issue the needed
+        mach lookup sandbox extension to the WebContent process, where it will be consumed.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2019-12-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: tests is_element_enabled/enabled.py::test_fieldset_disabled_descendant are failing

@@ -1,3 +1,17 @@
+2019-12-12  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Deny mach lookup access to content filter service in the WebContent sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=205077
+
+        Reviewed by Brent Fulgham.
+
+        With this patch, the WebContentAnalysis framework will not be loaded in the WebContent process unless
+        [WebFilterEvaluator isManagedSession] returns YES. Swizzle this method to return YES in the UI process.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentFiltering.mm:
+        (isManagedSession):
+        (TEST):
+
 2019-12-12  Patrick Griffis  <pgriffis@igalia.com>
 
         [SOUP] Use new API for strict secure cookies

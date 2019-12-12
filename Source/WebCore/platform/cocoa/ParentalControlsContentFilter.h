@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ParentalControlsContentFilter_h
-#define ParentalControlsContentFilter_h
+#pragma once
 
 #include "PlatformContentFilter.h"
 #include <wtf/Compiler.h>
@@ -49,6 +48,11 @@ public:
 #if ENABLE(CONTENT_FILTERING)
     ContentFilterUnblockHandler unblockHandler() const override;
 #endif
+    
+#if PLATFORM(IOS)
+    WEBCORE_EXPORT static void setHasConsumedSandboxExtension(bool);
+#endif
+
 private:
     static bool enabled();
 
@@ -57,8 +61,16 @@ private:
 
     RetainPtr<WebFilterEvaluator> m_webFilterEvaluator;
     RetainPtr<NSData> m_replacementData;
+
+#if PLATFORM(IOS)
+    enum class SandboxExtensionState : uint8_t {
+        Consumed,
+        NotConsumed,
+        NotSet
+    };
+
+    WEBCORE_EXPORT static SandboxExtensionState m_sandboxExtensionState;
+#endif
 };
     
 } // namespace WebCore
-
-#endif // ParentalControlsContentFilter_h

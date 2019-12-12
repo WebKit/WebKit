@@ -69,7 +69,11 @@
 #endif
 
 #if PLATFORM(IOS)
+#import <pal/spi/cocoa/WebFilterEvaluatorSPI.h>
 #import <sys/utsname.h>
+
+SOFT_LINK_PRIVATE_FRAMEWORK(WebContentAnalysis);
+SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
 #endif
 
 #if PLATFORM(COCOA)
@@ -310,6 +314,14 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
         parameters.neHelperExtensionHandle = WTFMove(handle);
         SandboxExtension::createHandleForMachLookup("com.apple.nesessionmanager.content-filter", WTF::nullopt, handle);
         parameters.neSessionManagerExtensionHandle = WTFMove(handle);
+    }
+#endif
+    
+#if PLATFORM(IOS)
+    if ([getWebFilterEvaluatorClass() isManagedSession]) {
+        SandboxExtension::Handle handle;
+        SandboxExtension::createHandleForMachLookup("com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI", WTF::nullopt, handle);
+        parameters.contentFilterExtensionHandle = WTFMove(handle);
     }
 #endif
 }

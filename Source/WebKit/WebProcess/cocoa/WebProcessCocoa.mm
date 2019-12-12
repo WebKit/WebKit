@@ -81,6 +81,7 @@
 
 #if PLATFORM(IOS)
 #import "UIKitSPI.h"
+#import <WebCore/ParentalControlsContentFilter.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -229,6 +230,10 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #if PLATFORM(IOS)
     if (parameters.compilerServiceExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.compilerServiceExtensionHandle);
+
+    if (parameters.contentFilterExtensionHandle)
+        SandboxExtension::consumePermanently(*parameters.contentFilterExtensionHandle);
+    ParentalControlsContentFilter::setHasConsumedSandboxExtension(parameters.contentFilterExtensionHandle.hasValue());
 #endif
     
 #if PLATFORM(COCOA)
