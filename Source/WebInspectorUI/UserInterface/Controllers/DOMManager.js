@@ -587,7 +587,12 @@ WI.DOMManager = class DOMManager extends WI.Object
             showRulers: WI.settings.showRulersDuringElementSelection.value,
         };
         target.DOMAgent.setInspectModeEnabled.invoke(commandArguments, (error) => {
-            this._inspectModeEnabled = error ? false : enabled;
+            if (error) {
+                WI.reportInternalError(error);
+                return;
+            }
+
+            this._inspectModeEnabled = enabled;
             this.dispatchEventToListeners(WI.DOMManager.Event.InspectModeStateChanged);
         });
     }

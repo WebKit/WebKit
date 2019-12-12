@@ -44,6 +44,13 @@ InspectorFrontendAPI = {
 
     setTimelineProfilingEnabled: function(enabled)
     {
+        if (!WI.targetsAvailable()) {
+            WI.whenTargetsAvailable().then(() => {
+                InspectorFrontendAPI.setTimelineProfilingEnabled(enabled);
+            });
+            return;
+        }
+
         WI.showTimelineTab();
 
         if (WI.timelineManager.isCapturing() === enabled)
@@ -57,6 +64,13 @@ InspectorFrontendAPI = {
 
     setElementSelectionEnabled: function(enabled)
     {
+        if (!WI.targetsAvailable()) {
+            WI.whenTargetsAvailable().then(() => {
+                InspectorFrontendAPI.setElementSelectionEnabled(enabled);
+            });
+            return;
+        }
+
         WI.domManager.inspectModeEnabled = enabled;
     },
 

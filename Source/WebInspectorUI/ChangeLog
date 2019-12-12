@@ -1,3 +1,26 @@
+2019-12-12  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r251227): Uncaught Exception: undefined is not an object (evaluating 'target.DOMAgent.setInspectModeEnabled')
+        https://bugs.webkit.org/show_bug.cgi?id=205148
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.setTimelineProfilingEnabled):
+        (InspectorFrontendAPI.setElementSelectionEnabled):
+        If there are no targets available yet (`WI.targetsAvailable()`), then wait for targets to
+        be available (`WI.whenTargetsAvailable()`) before performing the intended logic, as the
+        `InspectorFrontendAPI` only waits for the backend connection to be established before
+        dispatching, meaning that there may not be a page target yet. Other `InspectorFrontendAPI`
+        functions don't need to be changed because they don't cause commands to be invoked.
+
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager.prototype.set inspectModeEnabled):
+        Drive-by: don't assume that inspect mode is disabled if an error is thrown.
+
+        * UserInterface/Base/Main.js:
+        Drive-by: remove duplicate function `WI._toggleInspectMode` as it already exists.
+
 2019-12-11  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION: Console: unable to switch execution contexts

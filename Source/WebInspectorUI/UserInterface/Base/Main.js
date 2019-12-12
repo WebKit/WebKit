@@ -2322,11 +2322,6 @@ WI._updateInspectModeToolbarButton = function()
     WI._inspectModeToolbarButton.hidden = !InspectorBackend.hasDomain("DOM");
 };
 
-WI._toggleInspectMode = function(event)
-{
-    WI.domManager.inspectModeEnabled = !WI.domManager.inspectModeEnabled;
-};
-
 WI._showConsoleTab = function(event)
 {
     WI.showConsoleTab();
