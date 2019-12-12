@@ -86,7 +86,7 @@ WI.BootstrapScriptTreeElement = class BootstrapScriptTreeElement extends WI.Scri
             WI.networkManager.bootstrapScriptEnabled = !WI.networkManager.bootstrapScriptEnabled;
         });
 
-        contextMenu.appendItem(WI.UIString("Remove Inspector Bootstrap Script"), () => {
+        contextMenu.appendItem(WI.UIString("Delete Inspector Bootstrap Script"), () => {
             WI.networkManager.destroyBootstrapScript();
         });
 

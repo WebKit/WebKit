@@ -140,7 +140,7 @@ WI.BlackboxSettingsView = class BlackboxSettingsView extends WI.SettingsView
         let removeBlackboxBodyCell = tableBodyRow.appendChild(document.createElement("td"));
         removeBlackboxBodyCell.classList.add("remove-blackbox");
 
-        let removeBlackboxButton = removeBlackboxBodyCell.appendChild(WI.ImageUtilities.useSVGSymbol("Images/NavigationItemTrash.svg", "remove-blackbox-button", WI.UIString("Remove Blackbox")));
+        let removeBlackboxButton = removeBlackboxBodyCell.appendChild(WI.ImageUtilities.useSVGSymbol("Images/NavigationItemTrash.svg", "remove-blackbox-button", WI.UIString("Delete Blackbox")));
         removeBlackboxButton.addEventListener("click", (event) => {
             if (regex)
                 WI.debuggerManager.setShouldBlackboxPattern(regex, false);

@@ -83,8 +83,17 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
             let localResourceOverride = WI.networkManager.localResourceOverrideForURL(sourceCode.url);
             if (localResourceOverride) {
                 contextMenu.appendSeparator();
+
                 contextMenu.appendItem(WI.UIString("Reveal Local Override"), () => {
                     WI.showLocalResourceOverride(localResourceOverride);
+                });
+
+                contextMenu.appendItem(localResourceOverride.disabled ? WI.UIString("Enable Local Override") : WI.UIString("Disable Local Override"), () => {
+                    localResourceOverride.disabled = !localResourceOverride.disabled;
+                });
+
+                contextMenu.appendItem(WI.UIString("Delete Local Override"), () => {
+                    WI.networkManager.removeLocalResourceOverride(localResourceOverride);
                 });
             }
         }

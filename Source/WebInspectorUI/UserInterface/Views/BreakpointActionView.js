@@ -64,7 +64,7 @@ WI.BreakpointActionView = class BreakpointActionView extends WI.Object
         let removeActionButton = buttonContainerElement.appendChild(document.createElement("button"));
         removeActionButton.className = "breakpoint-action-remove-button";
         removeActionButton.addEventListener("click", this._removeAction.bind(this));
-        removeActionButton.title = WI.UIString("Remove this breakpoint action");
+        removeActionButton.title = WI.UIString("Delete this breakpoint action");
 
         this._bodyElement = this._element.appendChild(document.createElement("div"));
         this._bodyElement.className = "breakpoint-action-block-body";

@@ -109,7 +109,7 @@ WI.LocalResourceOverrideTreeElement = class LocalResourceOverrideTreeElement ext
             this._localResourceOverride.disabled = !this._localResourceOverride.disabled;
         });
 
-        contextMenu.appendItem(WI.UIString("Remove Local Override"), () => {
+        contextMenu.appendItem(WI.UIString("Delete Local Override"), () => {
             WI.networkManager.removeLocalResourceOverride(this._localResourceOverride);
         });
 

@@ -1,5 +1,32 @@
 2019-12-11  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: replace all "Remove" context menu items with "Delete" to be consistent
+        https://bugs.webkit.org/show_bug.cgi?id=205098
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/BlackboxSettingsView.js:
+        (WI.BlackboxSettingsView.prototype._addRow):
+        * UserInterface/Views/BootstrapScriptTreeElement.js:
+        (WI.BootstrapScriptTreeElement.prototype.populateContextMenu):
+        * UserInterface/Views/BreakpointActionView.js:
+        (WI.BreakpointActionView):
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForSourceCode):
+        Drive-by: if a local override exists for the given source code, add an item for
+                  enabling/disabling and deleting it.
+        * UserInterface/Views/LocalResourceOverrideTreeElement.js:
+        (WI.LocalResourceOverrideTreeElement.prototype.populateContextMenu):
+        * UserInterface/Views/ProbeSetDetailsSection.js:
+        (WI.ProbeSetDetailsSection):
+        * UserInterface/Views/ResourceContentView.js:
+        (WI.ResourceContentView):
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+        (WI.ScopeChainDetailsSidebarPanel.prototype._objectTreeElementAddContextMenuItems):
+        * Localizations/en.lproj/localizedStrings.js:
+
+2019-12-11  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Uncaught Exception: Missing frame for given frameId (on techcrunch.com)
         https://bugs.webkit.org/show_bug.cgi?id=205130
         <rdar://problem/57847699>
