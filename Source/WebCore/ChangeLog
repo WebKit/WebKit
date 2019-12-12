@@ -1,3 +1,18 @@
+2019-12-12  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Fix fast/text/whitespace/023.html
+        https://bugs.webkit.org/show_bug.cgi?id=205170
+        <rdar://problem/57881365>
+
+        Reviewed by Antti Koivisto.
+
+        Do not try to find expansion opportunities in content with preserved whitespace.
+
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::ContinousContent::ContinousContent):
+        (WebCore::Layout::LineBuilder::ContinousContent::append):
+        (WebCore::Layout::LineBuilder::ContinousContent::close):
+
 2019-12-12  Patrick Griffis  <pgriffis@igalia.com>
 
         [SOUP] Use new API for strict secure cookies

@@ -36,6 +36,12 @@
 namespace WebCore {
 namespace Layout {
 
+static inline bool isWhitespacePreserved(const RenderStyle& style)
+{
+    auto whitespace = style.whiteSpace();
+    return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::BreakSpaces;
+}
+
 struct LineBuilder::ContinousContent {
 public:
     ContinousContent(const InlineItemRun&, bool textIsAlignJustify);
@@ -48,7 +54,7 @@ private:
     bool canBeMerged(const InlineItemRun& run) const { return run.isText() && !run.isCollapsedToZeroAdvanceWidth() && &m_initialInlineRun.layoutBox() == &run.layoutBox(); }
 
     const InlineItemRun& m_initialInlineRun;
-    const bool m_textIsAlignJustify { false };
+    const bool m_collectExpansionOpportunities { false };
     unsigned m_expandedLength { 0 };
     InlineLayoutUnit m_expandedWidth { 0 };
     bool m_trailingRunCanBeExpanded { false };
@@ -58,7 +64,7 @@ private:
 
 LineBuilder::ContinousContent::ContinousContent(const InlineItemRun& initialInlineRun, bool textIsAlignJustify)
     : m_initialInlineRun(initialInlineRun)
-    , m_textIsAlignJustify(textIsAlignJustify)
+    , m_collectExpansionOpportunities(textIsAlignJustify && !isWhitespacePreserved(m_initialInlineRun.style())) // Do not collect expansion data on preserved whitespace content (we should not mutate the spacing between runs in such cases).
     , m_trailingRunCanBeExpanded(canBeExpanded(initialInlineRun))
 {
 }
@@ -77,7 +83,7 @@ bool LineBuilder::ContinousContent::append(const InlineItemRun& inlineItemRun)
     m_expandedLength += inlineItemRun.textContext()->length();
     m_expandedWidth += inlineItemRun.logicalWidth();
 
-    if (m_textIsAlignJustify) {
+    if (m_collectExpansionOpportunities) {
         m_hasTrailingExpansionOpportunity = inlineItemRun.hasExpansionOpportunity();
         if (m_hasTrailingExpansionOpportunity)
             ++m_expansionOpportunityCount;
@@ -95,7 +101,7 @@ LineBuilder::Run LineBuilder::ContinousContent::close()
     auto length = textContext.length() + m_expandedLength;
     textContext.expand(length);
 
-    if (m_textIsAlignJustify) {
+    if (m_collectExpansionOpportunities) {
         // FIXME: This is a very simple expansion merge. We should eventually switch over to FontCascade::expansionOpportunityCount.
         ExpansionBehavior expansionBehavior = m_hasTrailingExpansionOpportunity ? (ForbidLeadingExpansion | AllowTrailingExpansion) : (AllowLeadingExpansion | AllowTrailingExpansion);
         if (m_initialInlineRun.hasExpansionOpportunity())
