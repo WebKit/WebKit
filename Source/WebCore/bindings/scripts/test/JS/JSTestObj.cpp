@@ -1827,6 +1827,7 @@ private:
 
     void finishCreation(JSC::VM&);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestObjPrototype, JSTestObjPrototype::Base);
 
 using JSTestObjConstructor = JSDOMConstructor<JSTestObj>;
 

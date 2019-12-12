@@ -526,8 +526,15 @@ public:
     }
         
 public:
-    typedef JSSegmentedVariableObject Base;
+    using Base = JSSegmentedVariableObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable | OverridesGetOwnPropertySlot | OverridesGetPropertyNames | IsImmutablePrototypeExoticObject;
+
+    static constexpr bool needsDestruction = true;
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.globalObjectSpace<mode>();
+    }
 
     JS_EXPORT_PRIVATE static JSGlobalObject* create(VM&, Structure*);
 

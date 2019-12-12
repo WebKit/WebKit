@@ -69,6 +69,7 @@ private:
 
     void finishCreation(JSC::VM&);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestNamedSetterWithOverrideBuiltinsPrototype, JSTestNamedSetterWithOverrideBuiltinsPrototype::Base);
 
 using JSTestNamedSetterWithOverrideBuiltinsConstructor = JSDOMConstructorNotConstructable<JSTestNamedSetterWithOverrideBuiltins>;
 

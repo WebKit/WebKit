@@ -31,6 +31,12 @@
 
 namespace JSC {
 
+IsoHeapCellType::IsoHeapCellType(DestructionMode destructionMode, DestroyFunctionPtr destroyFunction)
+    : HeapCellType(CellAttributes(destructionMode, HeapCell::JSCell))
+    , m_destroy(destroyFunction)
+{
+}
+
 void IsoHeapCellType::finishSweep(MarkedBlock::Handle& handle, FreeList* freeList)
 {
     handle.finishSweepKnowingHeapCellType(freeList, *this);

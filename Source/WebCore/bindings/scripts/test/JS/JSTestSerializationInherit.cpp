@@ -76,6 +76,7 @@ private:
 
     void finishCreation(JSC::VM&);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestSerializationInheritPrototype, JSTestSerializationInheritPrototype::Base);
 
 using JSTestSerializationInheritConstructor = JSDOMConstructorNotConstructable<JSTestSerializationInherit>;
 

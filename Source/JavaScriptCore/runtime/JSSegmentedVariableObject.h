@@ -50,19 +50,14 @@ class LLIntOffsetsExtractor;
 class JSSegmentedVariableObject : public JSSymbolTableObject {
     friend class JIT;
     friend class LLIntOffsetsExtractor;
-
 public:
     using Base = JSSymbolTableObject;
 
     DECLARE_INFO;
 
     static constexpr bool needsDestruction = true;
-
     template<typename CellType, SubspaceAccess>
-    static CompleteSubspace* subspaceFor(VM& vm)
-    {
-        return &vm.cellSpace;
-    }
+    static void subspaceFor(VM&) { RELEASE_ASSERT_NOT_REACHED(); }
 
     bool isValidScopeOffset(ScopeOffset offset)
     {
@@ -94,10 +89,6 @@ public:
     JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
     JS_EXPORT_PRIVATE static void analyzeHeap(JSCell*, HeapAnalyzer&);
     
-    static void destroy(JSCell*);
-    
-    const ClassInfo* classInfo(VM&) const { return m_classInfo; }
-    
 protected:
     JSSegmentedVariableObject(VM&, Structure*, JSScope*);
     
@@ -107,7 +98,6 @@ protected:
     
 private:
     SegmentedVector<WriteBarrier<Unknown>, 16> m_variables;
-    const ClassInfo* m_classInfo;
 #ifndef NDEBUG
     bool m_alreadyDestroyed { false }; // We use these assertions to check that we aren't doing ancient hacks that result in this being destroyed more than once.
 #endif

@@ -1,3 +1,52 @@
+2019-12-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Lock-down JSGlobalObject and derived classes in IsoSubspace
+        https://bugs.webkit.org/show_bug.cgi?id=205108
+
+        Reviewed by Mark Lam.
+
+        This patch puts JSGlobalLexicalEnvironment and JSGlobalObject (and its derived classes including JSDOMWindow etc.) in IsoSubspace.
+        We were using `addFinalizer` feature to call destructors for these objects since they do not inherit JSDestructibleObject. But now
+        each derived classes has its IsoSubspace. So we do not need to use finalizer feature: just setting specialized HeapCellType works.
+
+        * API/JSAPIGlobalObject.h:
+        * API/JSCallbackObject.cpp:
+        * API/glib/JSAPIWrapperGlobalObject.cpp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/SuperSampler.h:
+        * heap/CellAttributes.h:
+        * heap/FreeList.h:
+        * heap/IsoHeapCellType.cpp:
+        (JSC::IsoHeapCellType::IsoHeapCellType):
+        * heap/IsoHeapCellType.h:
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::Handle::setIsFreeListed): Deleted.
+        * heap/MarkedBlockInlines.h:
+        (JSC::MarkedBlock::Handle::setIsFreeListed):
+        * jsc.cpp:
+        (GlobalObject::create): Deleted.
+        (GlobalObject::createStructure): Deleted.
+        (GlobalObject::javaScriptRuntimeFlags): Deleted.
+        (GlobalObject::finishCreation): Deleted.
+        (GlobalObject::addFunction): Deleted.
+        * runtime/JSGlobalLexicalEnvironment.h:
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::subspaceFor):
+        * runtime/JSSegmentedVariableObject.cpp:
+        (JSC::JSSegmentedVariableObject::JSSegmentedVariableObject):
+        (JSC::JSSegmentedVariableObject::finishCreation):
+        (JSC::JSSegmentedVariableObject::destroy): Deleted.
+        * runtime/JSSegmentedVariableObject.h:
+        (JSC::JSSegmentedVariableObject::subspaceFor):
+        (JSC::JSSegmentedVariableObject::classInfo const): Deleted.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * testRegExp.cpp:
+        (GlobalObject::create): Deleted.
+        (GlobalObject::createStructure): Deleted.
+        (GlobalObject::finishCreation): Deleted.
+
 2019-12-12  Mark Lam  <mark.lam@apple.com>
 
         Fix missing exception check in JSON Stringifier's gap function.

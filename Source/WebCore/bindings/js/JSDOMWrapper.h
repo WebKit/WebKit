@@ -67,7 +67,6 @@ protected:
 };
 
 WEBCORE_EXPORT JSC::CompleteSubspace* outputConstraintSubspaceFor(JSC::VM&);
-WEBCORE_EXPORT JSC::CompleteSubspace* globalObjectOutputConstraintSubspaceFor(JSC::VM&);
 
 template<typename ImplementationClass> class JSDOMWrapper : public JSDOMObject {
 public:

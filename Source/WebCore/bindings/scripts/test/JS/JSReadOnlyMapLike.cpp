@@ -83,6 +83,7 @@ private:
 
     void finishCreation(JSC::VM&);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSReadOnlyMapLikePrototype, JSReadOnlyMapLikePrototype::Base);
 
 using JSReadOnlyMapLikeConstructor = JSDOMConstructorNotConstructable<JSReadOnlyMapLike>;
 

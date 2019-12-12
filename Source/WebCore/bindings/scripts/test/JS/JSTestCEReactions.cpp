@@ -92,6 +92,7 @@ private:
 
     void finishCreation(JSC::VM&);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestCEReactionsPrototype, JSTestCEReactionsPrototype::Base);
 
 using JSTestCEReactionsConstructor = JSDOMConstructorNotConstructable<JSTestCEReactions>;
 

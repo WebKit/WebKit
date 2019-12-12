@@ -39,7 +39,7 @@ template <> const ClassInfo JSCallbackObject<JSNonFinalObject>::s_info = { "Call
 template <> const ClassInfo JSCallbackObject<JSGlobalObject>::s_info = { "CallbackGlobalObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCallbackObject) };
 
 template<> const bool JSCallbackObject<JSNonFinalObject>::needsDestruction = true;
-template<> const bool JSCallbackObject<JSGlobalObject>::needsDestruction = false;
+template<> const bool JSCallbackObject<JSGlobalObject>::needsDestruction = true;
 
 template<>
 JSCallbackObject<JSGlobalObject>* JSCallbackObject<JSGlobalObject>::create(VM& vm, JSClassRef classRef, Structure* structure)

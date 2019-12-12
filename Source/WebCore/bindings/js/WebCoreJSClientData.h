@@ -62,13 +62,34 @@ public:
     JSC::IsoSubspace& runtimeMethodSpace() { return m_runtimeMethodSpace; }
     
     JSC::CompleteSubspace& outputConstraintSpace() { return m_outputConstraintSpace; }
-    JSC::CompleteSubspace& globalObjectOutputConstraintSpace() { return m_globalObjectOutputConstraintSpace; }
+
+    JSC::IsoSubspace& subspaceForJSDOMWindow() { return m_subspaceForJSDOMWindow; }
+    JSC::IsoSubspace& subspaceForJSDedicatedWorkerGlobalScope() { return m_subspaceForJSDedicatedWorkerGlobalScope; }
+    JSC::IsoSubspace& subspaceForJSRemoteDOMWindow() { return m_subspaceForJSRemoteDOMWindow; }
+    JSC::IsoSubspace& subspaceForJSWorkerGlobalScope() { return m_subspaceForJSWorkerGlobalScope; }
+#if ENABLE(SERVICE_WORKER)
+    JSC::IsoSubspace& subspaceForJSServiceWorkerGlobalScope() { return m_subspaceForJSServiceWorkerGlobalScope; }
+#endif
+#if ENABLE(CSS_PAINTING_API)
+    JSC::IsoSubspace& subspaceForJSPaintWorkletGlobalScope() { return m_subspaceForJSPaintWorkletGlobalScope; }
+    JSC::IsoSubspace& subspaceForJSWorkletGlobalScope() { return m_subspaceForJSWorkletGlobalScope; }
+#endif
     
     template<typename Func>
     void forEachOutputConstraintSpace(const Func& func)
     {
         func(m_outputConstraintSpace);
-        func(m_globalObjectOutputConstraintSpace);
+        func(m_subspaceForJSDOMWindow);
+        func(m_subspaceForJSDedicatedWorkerGlobalScope);
+        func(m_subspaceForJSRemoteDOMWindow);
+        func(m_subspaceForJSWorkerGlobalScope);
+#if ENABLE(SERVICE_WORKER)
+        func(m_subspaceForJSServiceWorkerGlobalScope);
+#endif
+#if ENABLE(CSS_PAINTING_API)
+        func(m_subspaceForJSPaintWorkletGlobalScope);
+        func(m_subspaceForJSWorkletGlobalScope);
+#endif
     }
 
 private:
@@ -77,11 +98,34 @@ private:
 
     JSBuiltinFunctions m_builtinFunctions;
     WebCoreBuiltinNames m_builtinNames;
-    
+
+    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSDOMWindow;
+    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSDedicatedWorkerGlobalScope;
+    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSRemoteDOMWindow;
+    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSWorkerGlobalScope;
+#if ENABLE(SERVICE_WORKER)
+    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSServiceWorkerGlobalScope;
+#endif
+#if ENABLE(CSS_PAINTING_API)
+    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSPaintWorkletGlobalScope;
+    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSWorkletGlobalScope;
+#endif
+
     JSC::IsoSubspace m_runtimeMethodSpace;
+
+    JSC::IsoSubspace m_subspaceForJSDOMWindow;
+    JSC::IsoSubspace m_subspaceForJSDedicatedWorkerGlobalScope;
+    JSC::IsoSubspace m_subspaceForJSRemoteDOMWindow;
+    JSC::IsoSubspace m_subspaceForJSWorkerGlobalScope;
+#if ENABLE(SERVICE_WORKER)
+    JSC::IsoSubspace m_subspaceForJSServiceWorkerGlobalScope;
+#endif
+#if ENABLE(CSS_PAINTING_API)
+    JSC::IsoSubspace m_subspaceForJSPaintWorkletGlobalScope;
+    JSC::IsoSubspace m_subspaceForJSWorkletGlobalScope;
+#endif
     
     JSC::CompleteSubspace m_outputConstraintSpace;
-    JSC::CompleteSubspace m_globalObjectOutputConstraintSpace;
 };
 
 } // namespace WebCore

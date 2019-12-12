@@ -97,6 +97,7 @@ private:
 
     void finishCreation(JSC::VM&);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestCallTracerPrototype, JSTestCallTracerPrototype::Base);
 
 using JSTestCallTracerConstructor = JSDOMConstructorNotConstructable<JSTestCallTracer>;
 

@@ -81,6 +81,7 @@ private:
 
     void finishCreation(JSC::VM&);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSReadOnlySetLikePrototype, JSReadOnlySetLikePrototype::Base);
 
 using JSReadOnlySetLikeConstructor = JSDOMConstructorNotConstructable<JSReadOnlySetLike>;
 

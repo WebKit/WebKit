@@ -49,11 +49,6 @@ JSC::CompleteSubspace* outputConstraintSubspaceFor(JSC::VM& vm)
     return &static_cast<JSVMClientData*>(vm.clientData)->outputConstraintSpace();
 }
 
-JSC::CompleteSubspace* globalObjectOutputConstraintSubspaceFor(JSC::VM& vm)
-{
-    return &static_cast<JSVMClientData*>(vm.clientData)->globalObjectOutputConstraintSpace();
-}
-
 JSC::JSValue cloneAcrossWorlds(JSC::JSGlobalObject& lexicalGlobalObject, const JSDOMObject& owner, JSC::JSValue value)
 {
     if (isWorldCompatible(lexicalGlobalObject, value))

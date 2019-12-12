@@ -66,8 +66,8 @@ public:
     
     void clear();
     
-    void initializeList(FreeCell* head, uintptr_t secret, unsigned bytes);
-    void initializeBump(char* payloadEnd, unsigned remaining);
+    JS_EXPORT_PRIVATE void initializeList(FreeCell* head, uintptr_t secret, unsigned bytes);
+    JS_EXPORT_PRIVATE void initializeBump(char* payloadEnd, unsigned remaining);
     
     bool allocationWillFail() const { return !head() && !m_remaining; }
     bool allocationWillSucceed() const { return !allocationWillFail(); }
@@ -89,7 +89,7 @@ public:
     static ptrdiff_t offsetOfOriginalSize() { return OBJECT_OFFSETOF(FreeList, m_originalSize); }
     static ptrdiff_t offsetOfCellSize() { return OBJECT_OFFSETOF(FreeList, m_cellSize); }
     
-    void dump(PrintStream&) const;
+    JS_EXPORT_PRIVATE void dump(PrintStream&) const;
 
     unsigned cellSize() const { return m_cellSize; }
     

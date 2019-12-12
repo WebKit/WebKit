@@ -95,14 +95,8 @@ void JSSegmentedVariableObject::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer
     }
 }
 
-void JSSegmentedVariableObject::destroy(JSCell* cell)
-{
-    static_cast<JSSegmentedVariableObject*>(cell)->JSSegmentedVariableObject::~JSSegmentedVariableObject();
-}
-
 JSSegmentedVariableObject::JSSegmentedVariableObject(VM& vm, Structure* structure, JSScope* scope)
     : JSSymbolTableObject(vm, structure, scope)
-    , m_classInfo(structure->classInfo())
 {
 }
 
@@ -118,9 +112,6 @@ void JSSegmentedVariableObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     setSymbolTable(vm, SymbolTable::create(vm));
-    vm.heap.addFinalizer(this, [] (JSCell* cell) {
-        static_cast<JSSegmentedVariableObject*>(cell)->m_classInfo->methodTable.destroy(cell);
-    });
 }
 
 } // namespace JSC

@@ -126,12 +126,15 @@ class IntlCollator;
 class IntlDateTimeFormat;
 class IntlNumberFormat;
 class IntlPluralRules;
+class JSAPIGlobalObject;
+class JSAPIWrapperGlobalObject;
 class JSAPIWrapperObject;
 class JSCCallbackFunction;
 class JSCallbackConstructor;
 class JSCustomGetterSetterFunction;
 class JSDestructibleObjectHeapCellType;
 class JSGlobalObject;
+class JSGlobalLexicalEnvironment;
 class JSModuleNamespaceObject;
 class JSModuleRecord;
 class JSNativeStdFunction;
@@ -364,10 +367,14 @@ public:
     std::unique_ptr<HeapCellType> immutableButterflyHeapCellType;
     std::unique_ptr<HeapCellType> cellHeapCellType;
     std::unique_ptr<HeapCellType> destructibleCellHeapCellType;
+    std::unique_ptr<IsoHeapCellType> apiGlobalObjectHeapCellType;
     std::unique_ptr<IsoHeapCellType> callbackConstructorHeapCellType;
+    std::unique_ptr<IsoHeapCellType> callbackGlobalObjectHeapCellType;
     std::unique_ptr<IsoHeapCellType> callbackObjectHeapCellType;
     std::unique_ptr<IsoHeapCellType> dateInstanceHeapCellType;
     std::unique_ptr<IsoHeapCellType> errorInstanceHeapCellType;
+    std::unique_ptr<IsoHeapCellType> globalLexicalEnvironmentHeapCellType;
+    std::unique_ptr<IsoHeapCellType> globalObjectHeapCellType;
     std::unique_ptr<IsoHeapCellType> jsModuleRecordHeapCellType;
     std::unique_ptr<IsoHeapCellType> moduleNamespaceObjectHeapCellType;
     std::unique_ptr<IsoHeapCellType> nativeStdFunctionHeapCellType;
@@ -381,6 +388,7 @@ public:
 #endif
 #ifdef JSC_GLIB_API_ENABLED
     std::unique_ptr<IsoHeapCellType> apiWrapperObjectHeapCellType;
+    std::unique_ptr<IsoHeapCellType> callbackAPIWrapperGlobalObjectHeapCellType;
     std::unique_ptr<IsoHeapCellType> jscCallbackFunctionHeapCellType;
 #endif
 #if ENABLE(INTL)
@@ -439,6 +447,7 @@ public:
     IsoSubspace executableToCodeBlockEdgeSpace;
     IsoSubspace functionSpace;
     IsoSubspace getterSetterSpace;
+    IsoSubspace globalLexicalEnvironmentSpace;
     IsoSubspace internalFunctionSpace;
     IsoSubspace nativeExecutableSpace;
     IsoSubspace numberObjectSpace;
@@ -493,6 +502,7 @@ public:
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(float64ArraySpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(functionRareDataSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(generatorSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(globalObjectSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(int8ArraySpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(int16ArraySpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(int32ArraySpace)

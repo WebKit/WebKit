@@ -70,6 +70,7 @@ private:
 
     void finishCreation(JSC::VM&);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestNamedAndIndexedSetterNoIdentifierPrototype, JSTestNamedAndIndexedSetterNoIdentifierPrototype::Base);
 
 using JSTestNamedAndIndexedSetterNoIdentifierConstructor = JSDOMConstructorNotConstructable<JSTestNamedAndIndexedSetterNoIdentifier>;
 

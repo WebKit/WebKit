@@ -181,6 +181,7 @@ private:
 
     void finishCreation(JSC::VM&);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestInterfacePrototype, JSTestInterfacePrototype::Base);
 
 using JSTestInterfaceConstructor = JSDOMConstructor<JSTestInterface>;
 

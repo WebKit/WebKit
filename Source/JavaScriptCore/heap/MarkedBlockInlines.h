@@ -483,6 +483,12 @@ inline MarkedBlock::Handle::MarksMode MarkedBlock::Handle::marksMode()
     return marksAreUseful ? MarksNotStale : MarksStale;
 }
 
+inline void MarkedBlock::Handle::setIsFreeListed()
+{
+    m_directory->setIsEmpty(NoLockingNecessary, this, false);
+    m_isFreeListed = true;
+}
+
 template <typename Functor>
 inline IterationStatus MarkedBlock::Handle::forEachLiveCell(const Functor& functor)
 {

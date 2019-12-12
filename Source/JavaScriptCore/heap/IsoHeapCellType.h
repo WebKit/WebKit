@@ -32,11 +32,7 @@ class IsoHeapCellType final : public HeapCellType {
 public:
     using DestroyFunctionPtr = void (*)(JSCell*);
 
-    IsoHeapCellType(DestructionMode destructionMode, DestroyFunctionPtr destroyFunction)
-        : HeapCellType(CellAttributes(destructionMode, HeapCell::JSCell))
-        , m_destroy(destroyFunction)
-    {
-    }
+    JS_EXPORT_PRIVATE IsoHeapCellType(DestructionMode, DestroyFunctionPtr);
 
     template<typename CellType>
     static std::unique_ptr<IsoHeapCellType> create()
@@ -44,8 +40,8 @@ public:
         return makeUnique<IsoHeapCellType>(CellType::needsDestruction ? NeedsDestruction : DoesNotNeedDestruction, &CellType::destroy);
     }
 
-    void finishSweep(MarkedBlock::Handle&, FreeList*) override;
-    void destroy(VM&, JSCell*) override;
+    JS_EXPORT_PRIVATE void finishSweep(MarkedBlock::Handle&, FreeList*) override;
+    JS_EXPORT_PRIVATE void destroy(VM&, JSCell*) override;
 
     ALWAYS_INLINE void operator()(VM&, JSCell* cell) const
     {

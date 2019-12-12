@@ -84,6 +84,7 @@ private:
 
     void finishCreation(JSC::VM&);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSSetLikePrototype, JSSetLikePrototype::Base);
 
 using JSSetLikeConstructor = JSDOMConstructorNotConstructable<JSSetLike>;
 

@@ -56,7 +56,7 @@ namespace JSC {
 
 template <> const ClassInfo JSCallbackObject<JSAPIWrapperGlobalObject>::s_info = { "JSAPIWrapperGlobalObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCallbackObject) };
 
-template<> const bool JSCallbackObject<JSAPIWrapperGlobalObject>::needsDestruction = false;
+template<> const bool JSCallbackObject<JSAPIWrapperGlobalObject>::needsDestruction = true;
 
 template <>
 IsoSubspace* JSCallbackObject<JSAPIWrapperGlobalObject>::subspaceForImpl(VM& vm, SubspaceAccess mode)

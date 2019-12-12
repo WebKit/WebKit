@@ -40,7 +40,7 @@ struct CellAttributes {
     {
     }
     
-    void dump(PrintStream& out) const;
+    JS_EXPORT_PRIVATE void dump(PrintStream& out) const;
     
     DestructionMode destruction { DoesNotNeedDestruction };
     HeapCell::Kind cellKind { HeapCell::JSCell };

@@ -490,6 +490,7 @@ private:
 
     void finishCreation(JSC::VM&);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestDOMJITPrototype, JSTestDOMJITPrototype::Base);
 
 using JSTestDOMJITConstructor = JSDOMConstructorNotConstructable<JSTestDOMJIT>;
 

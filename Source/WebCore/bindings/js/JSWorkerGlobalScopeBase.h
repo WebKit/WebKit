@@ -48,8 +48,12 @@ class JSServiceWorkerGlobalScope;
 #endif
 
 class JSWorkerGlobalScopeBase : public JSDOMGlobalObject {
-    typedef JSDOMGlobalObject Base;
 public:
+    using Base = JSDOMGlobalObject;
+
+    template<typename, JSC::SubspaceAccess>
+    static void subspaceFor(JSC::VM&) { RELEASE_ASSERT_NOT_REACHED(); }
+
     static void destroy(JSC::JSCell*);
 
     DECLARE_INFO;

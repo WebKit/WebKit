@@ -2777,6 +2777,11 @@ EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionTestFeatureGetSec
 
 #endif
 
+JSC::IsoSubspace* JSTestGlobalObject::subspaceForImpl(JSC::VM& vm)
+{
+    return &static_cast<JSVMClientData*>(vm.clientData)->subspaceForJSTestGlobalObject();
+}
+
 void JSTestGlobalObject::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
     auto* thisObject = jsCast<JSTestGlobalObject*>(cell);

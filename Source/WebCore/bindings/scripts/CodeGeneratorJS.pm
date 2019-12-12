@@ -2622,8 +2622,6 @@ sub GenerateHeader
         push(@headerContent, "    }\n\n");
     }
 
-    push(@headerContent, "    static constexpr bool needsDestruction = false;\n\n") if IsDOMGlobalObject($interface);
-
     $structureFlags{"JSC::HasStaticPropertyTable"} = 1 if InstancePropertyCount($interface) > 0;
     $structureFlags{"JSC::NewImpurePropertyFiresWatchpoints"} = 1 if $interface->extendedAttributes->{NewImpurePropertyFiresWatchpoints};
     $structureFlags{"JSC::IsImmutablePrototypeExoticObject"} = 1 if $interface->extendedAttributes->{IsImmutablePrototypeExoticObject};
@@ -2793,6 +2791,13 @@ sub GenerateHeader
         }
     }
 
+    # FIXME: We put this unconditionally to put all the WebCore JS wrappers in each IsoSubspace.
+    # https://bugs.webkit.org/show_bug.cgi?id=205107
+    if (IsDOMGlobalObject($interface)) {
+        push(@headerContent, "    template<typename, JSC::SubspaceAccess> static JSC::IsoSubspace* subspaceFor(JSC::VM& vm) { return subspaceForImpl(vm); }\n");
+        push(@headerContent, "    static JSC::IsoSubspace* subspaceForImpl(JSC::VM& vm);\n");
+    }
+
     # visit function
     if ($needsVisitChildren) {
         push(@headerContent, "    static void visitChildren(JSCell*, JSC::SlotVisitor&);\n");
@@ -2812,8 +2817,9 @@ sub GenerateHeader
             # program resumed since the last call to visitChildren or visitOutputConstraints. Since
             # this just calls visitAdditionalChildren, you usually don't have to worry about this.
             push(@headerContent, "    static void visitOutputConstraints(JSCell*, JSC::SlotVisitor&);\n");
-            my $subspaceFunc = IsDOMGlobalObject($interface) ? "globalObjectOutputConstraintSubspaceFor" : "outputConstraintSubspaceFor";
-            push(@headerContent, "    template<typename, JSC::SubspaceAccess> static JSC::CompleteSubspace* subspaceFor(JSC::VM& vm) { return $subspaceFunc(vm); }\n");
+            if (!IsDOMGlobalObject($interface)) {
+                push(@headerContent, "    template<typename, JSC::SubspaceAccess> static JSC::CompleteSubspace* subspaceFor(JSC::VM& vm) { return outputConstraintSubspaceFor(vm); }\n");
+            }
         }
     }
 
@@ -4613,6 +4619,14 @@ sub GenerateImplementation
     
     GenerateIterableDefinition($interface) if $interface->iterable;
     GenerateSerializerDefinition($interface, $className) if $interface->serializable;
+
+    if (IsDOMGlobalObject($interface)) {
+        AddToImplIncludes("WebCoreJSClientData.h");
+        push(@implContent, "JSC::IsoSubspace* ${className}::subspaceForImpl(JSC::VM& vm)\n");
+        push(@implContent, "{\n");
+        push(@implContent, "    return &static_cast<JSVMClientData*>(vm.clientData)->subspaceFor${className}();\n");
+        push(@implContent, "}\n\n");
+    }
 
     if ($needsVisitChildren) {
         push(@implContent, "void ${className}::visitChildren(JSCell* cell, SlotVisitor& visitor)\n");
@@ -7190,7 +7204,8 @@ sub GeneratePrototypeDeclaration
         push(@$outputArray, ";\n");
     }
 
-    push(@$outputArray, "};\n\n");
+    push(@$outputArray, "};\n");
+    push(@$outputArray, "STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(${prototypeClassName}, ${prototypeClassName}::Base);\n\n");
 }
 
 sub GetConstructorTemplateClassName

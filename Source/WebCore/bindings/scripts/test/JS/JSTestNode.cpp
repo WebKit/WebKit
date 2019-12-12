@@ -94,6 +94,7 @@ private:
 
     void finishCreation(JSC::VM&);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestNodePrototype, JSTestNodePrototype::Base);
 
 using JSTestNodeConstructor = JSDOMConstructor<JSTestNode>;
 

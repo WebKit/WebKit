@@ -73,6 +73,7 @@ private:
 
     void finishCreation(JSC::VM&);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestStringifierAnonymousOperationPrototype, JSTestStringifierAnonymousOperationPrototype::Base);
 
 using JSTestStringifierAnonymousOperationConstructor = JSDOMConstructorNotConstructable<JSTestStringifierAnonymousOperation>;
 

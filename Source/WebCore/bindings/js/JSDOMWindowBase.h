@@ -48,14 +48,14 @@ class JSDOMWindowBasePrivate;
 class JSWindowProxy;
 
 class WEBCORE_EXPORT JSDOMWindowBase : public JSDOMGlobalObject {
-    typedef JSDOMGlobalObject Base;
-protected:
-    JSDOMWindowBase(JSC::VM&, JSC::Structure*, RefPtr<DOMWindow>&&, JSWindowProxy*);
-    void finishCreation(JSC::VM&, JSWindowProxy*);
+public:
+    using Base = JSDOMGlobalObject;
 
     static void destroy(JSCell*);
 
-public:
+    template<typename, JSC::SubspaceAccess>
+    static void subspaceFor(JSC::VM&) { RELEASE_ASSERT_NOT_REACHED(); }
+
     void updateDocument();
 
     DOMWindow& wrapped() const { return *m_wrapped; }
@@ -86,6 +86,9 @@ public:
     static void fireFrameClearedWatchpointsForWindow(DOMWindow*);
 
 protected:
+    JSDOMWindowBase(JSC::VM&, JSC::Structure*, RefPtr<DOMWindow>&&, JSWindowProxy*);
+    void finishCreation(JSC::VM&, JSWindowProxy*);
+
     JSC::WatchpointSet m_windowCloseWatchpoints;
 
 private:

@@ -482,7 +482,7 @@ static inline String stringFromUTF(const Vector& utf8)
     return String::fromUTF8WithLatin1Fallback(utf8.data(), utf8.size());
 }
 
-class GlobalObject : public JSGlobalObject {
+class GlobalObject final : public JSGlobalObject {
 private:
     GlobalObject(VM&, Structure*);
 
@@ -495,8 +495,6 @@ public:
         object->finishCreation(vm, arguments);
         return object;
     }
-
-    static constexpr bool needsDestruction = false;
 
     DECLARE_INFO;
     static const GlobalObjectMethodTable s_globalObjectMethodTable;
@@ -664,6 +662,7 @@ protected:
     static JSInternalPromise* moduleLoaderFetch(JSGlobalObject*, JSModuleLoader*, JSValue, JSValue, JSValue);
     static JSObject* moduleLoaderCreateImportMetaProperties(JSGlobalObject*, JSModuleLoader*, JSValue, JSModuleRecord*, JSValue);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(GlobalObject, JSGlobalObject);
 
 static bool supportsRichSourceInfo = true;
 static bool shellSupportsRichSourceInfo(const JSGlobalObject*)

@@ -74,6 +74,7 @@ private:
 
     void finishCreation(JSC::VM&);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestNamedGetterWithIdentifierPrototype, JSTestNamedGetterWithIdentifierPrototype::Base);
 
 using JSTestNamedGetterWithIdentifierConstructor = JSDOMConstructorNotConstructable<JSTestNamedGetterWithIdentifier>;
 

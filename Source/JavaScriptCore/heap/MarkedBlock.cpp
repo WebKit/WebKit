@@ -113,12 +113,6 @@ void MarkedBlock::Handle::unsweepWithNoNewlyAllocated()
     m_isFreeListed = false;
 }
 
-void MarkedBlock::Handle::setIsFreeListed()
-{
-    m_directory->setIsEmpty(NoLockingNecessary, this, false);
-    m_isFreeListed = true;
-}
-
 void MarkedBlock::Handle::stopAllocating(const FreeList& freeList)
 {
     auto locker = holdLock(blockFooter().m_lock);

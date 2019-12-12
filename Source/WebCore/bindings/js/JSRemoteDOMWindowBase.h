@@ -35,12 +35,14 @@ class JSWindowProxy;
 class JSRemoteDOMWindow;
 
 class WEBCORE_EXPORT JSRemoteDOMWindowBase : public JSDOMGlobalObject {
-protected:
-    JSRemoteDOMWindowBase(JSC::VM&, JSC::Structure*, RefPtr<RemoteDOMWindow>&&, JSWindowProxy*);
+public:
+    using Base = JSDOMGlobalObject;
 
     static void destroy(JSCell*);
 
-public:
+    template<typename, JSC::SubspaceAccess>
+    static void subspaceFor(JSC::VM&) { RELEASE_ASSERT_NOT_REACHED(); }
+
     RemoteDOMWindow& wrapped() const { return *m_wrapped; }
 
     DECLARE_INFO;
@@ -48,6 +50,9 @@ public:
     static const JSC::GlobalObjectMethodTable s_globalObjectMethodTable;
 
     static JSC::RuntimeFlags javaScriptRuntimeFlags(const JSC::JSGlobalObject*);
+
+protected:
+    JSRemoteDOMWindowBase(JSC::VM&, JSC::Structure*, RefPtr<RemoteDOMWindow>&&, JSWindowProxy*);
 
 private:
     RefPtr<RemoteDOMWindow> m_wrapped;
