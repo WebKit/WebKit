@@ -64,7 +64,6 @@ private:
     bool preventSourceFromStopping() final;
     void videoSampleAvailable(MediaSample&) final;
 
-    MediaSample::VideoRotation m_rotation { MediaSample::VideoRotation::None };
     Ref<RealtimeVideoCaptureSource> m_source;
     RealtimeMediaSourceSettings m_currentSettings;
 };

@@ -36,7 +36,6 @@ RealtimeVideoSource::RealtimeVideoSource(Ref<RealtimeVideoCaptureSource>&& sourc
 {
     m_source->addObserver(*this);
     m_currentSettings = m_source->settings();
-    m_rotation = m_source->sampleRotation();
     setSize(m_source->size());
 }
 
@@ -93,28 +92,12 @@ void RealtimeVideoSource::sourceMutedChanged()
 
 void RealtimeVideoSource::sourceSettingsChanged()
 {
+    auto rotation = m_source->sampleRotation();
     auto size = this->size();
     if (size.isEmpty())
         size = m_source->size();
-
-    auto rotation = m_source->sampleRotation();
-    if (m_rotation != rotation) {
-        bool shouldTransposeSize = false;
-        switch (m_rotation) {
-        case MediaSample::VideoRotation::None:
-        case MediaSample::VideoRotation::UpsideDown:
-            shouldTransposeSize = rotation == MediaSample::VideoRotation::Left || rotation == MediaSample::VideoRotation::Right;
-            break;
-        case MediaSample::VideoRotation::Left:
-        case MediaSample::VideoRotation::Right:
-            shouldTransposeSize = rotation == MediaSample::VideoRotation::None || rotation == MediaSample::VideoRotation::UpsideDown;
-        }
-        m_rotation = rotation;
-        if (shouldTransposeSize) {
-            size = size.transposedSize();
-            setSize(size);
-        }
-    }
+    if (rotation == MediaSample::VideoRotation::Left || rotation == MediaSample::VideoRotation::Right)
+        size = size.transposedSize();
 
     m_currentSettings.setWidth(size.width());
     m_currentSettings.setHeight(size.height());
