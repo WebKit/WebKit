@@ -1,3 +1,14 @@
+2019-12-12  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add LibPSL::LibPSL target
+        https://bugs.webkit.org/show_bug.cgi?id=205149
+
+        Reviewed by Michael Catanzaro.
+
+        Use LibPSL target.
+
+        * platform/Curl.cmake:
+
 2019-12-12  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Fix fast/text/whitespace/simple-line-layout-tab-position.html

@@ -1,3 +1,14 @@
+2019-12-12  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add LibPSL::LibPSL target
+        https://bugs.webkit.org/show_bug.cgi?id=205149
+
+        Reviewed by Michael Catanzaro.
+
+        Add a LibPSL target into the FindLibPSL module.
+
+        * Source/cmake/FindLibPSL.cmake:
+
 2019-12-11  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add OpenJPEG find module

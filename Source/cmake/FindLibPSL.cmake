@@ -1,11 +1,4 @@
-# - Try to find LibPSL
-# This module defines the following variables:
-#
-#  LIBPSL_FOUND - LibPSL was found
-#  LIBPSL_INCLUDE_DIRS - the LibPSL include directories
-#  LIBPSL_LIBRARIES - link these to use LibPSL
-#
-# Copyright (C) 2018 Sony Interactive Entertainment Inc.
+# Copyright (C) 2018, 2019 Sony Interactive Entertainment Inc.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -28,18 +21,56 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-find_path(LIBPSL_INCLUDE_DIRS
+#[=======================================================================[.rst:
+FindLibPSL
+--------------
+
+Find LibPSL headers and libraries.
+
+Imported Targets
+^^^^^^^^^^^^^^^^
+
+``LibPSL::LibPSL``
+  The LibPSL library, if found.
+
+Result Variables
+^^^^^^^^^^^^^^^^
+
+This will define the following variables in your project:
+
+``LibPSL_FOUND``
+  true if (the requested version of) LibPSL is available.
+``LibPSL_VERSION``
+  the version of LibPSL.
+``LibPSL_LIBRARIES``
+  the libraries to link against to use LibPSL.
+``LibPSL_INCLUDE_DIRS``
+  where to find the LibPSL headers.
+``LibPSL_COMPILE_OPTIONS``
+  this should be passed to target_compile_options(), if the
+  target is not used for linking
+
+#]=======================================================================]
+
+include(FindPkgConfig)
+pkg_check_modules(PC_LIBPSL QUIET libpsl)
+set(LibPSL_COMPILE_OPTIONS ${PC_LIBPSL_CFLAGS_OTHER})
+set(LibPSL_VERSION ${PC_LIBPSL_VERSION})
+
+find_path(LibPSL_INCLUDE_DIR
     NAMES libpsl.h
+    HINTS ${PC_LIBPSL_INCLUDEDIR} ${PC_LIBPSL_INCLUDE_DIR}
     PATH_SUFFIXES libpsl
 )
 
-find_library(LIBPSL_LIBRARIES
-    NAMES psl
+find_library(LibPSL_LIBRARY
+    NAMES ${LibPSL_NAMES} psl
+    HINTS ${PC_LIBPSL_LIBDIR} ${PC_LIBPSL_LIBRARY_DIRS}
 )
 
-if (LIBPSL_INCLUDE_DIRS)
-    if (EXISTS "${LIBPSL_INCLUDE_DIRS}/libpsl.h")
-        file(READ "${LIBPSL_INCLUDE_DIRS}/libpsl.h" LIBPSL_VERSION_CONTENT)
+if (LibPSL_INCLUDE_DIR AND NOT LibPSL_VERSION)
+    if (EXISTS "${LibPSL_INCLUDE_DIR}/libpsl.h")
+        file(READ "${LibPSL_INCLUDE_DIR}/libpsl.h" LIBPSL_VERSION_CONTENT)
 
         string(REGEX MATCH "#define +PSL_VERSION_MAJOR +([0-9]+)" _dummy "${LIBPSL_VERSION_CONTENT}")
         set(LIBPSL_VERSION_MAJOR "${CMAKE_MATCH_1}")
@@ -55,10 +86,24 @@ if (LIBPSL_INCLUDE_DIRS)
 endif ()
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(LibPSL REQUIRED_VARS LIBPSL_INCLUDE_DIRS LIBPSL_LIBRARIES
-                                         VERSION_VAR LIBPSL_VERSION)
-
-mark_as_advanced(
-    LIBPSL_INCLUDE_DIRS
-    LIBPSL_LIBRARIES
+find_package_handle_standard_args(LibPSL
+    FOUND_VAR LibPSL_FOUND
+    REQUIRED_VARS LibPSL_LIBRARY LibPSL_INCLUDE_DIR
+    VERSION_VAR LibPSL_VERSION
 )
+
+if (LibPSL_LIBRARY AND NOT TARGET LibPSL::LibPSL)
+    add_library(LibPSL::LibPSL UNKNOWN IMPORTED GLOBAL)
+    set_target_properties(LibPSL::LibPSL PROPERTIES
+        IMPORTED_LOCATION "${LibPSL_LIBRARY}"
+        INTERFACE_COMPILE_OPTIONS "${LibPSL_COMPILE_OPTIONS}"
+        INTERFACE_INCLUDE_DIRECTORIES "${LibPSL_INCLUDE_DIR}"
+    )
+endif ()
+
+mark_as_advanced(LibPSL_INCLUDE_DIR LIBPSL_LIBRARIES)
+
+if (LibPSL_FOUND)
+    set(LibPSL_LIBRARIES ${LibPSL_LIBRARY})
+    set(LibPSL_INCLUDE_DIRS ${LibPSL_INCLUDE_DIR})
+endif ()
