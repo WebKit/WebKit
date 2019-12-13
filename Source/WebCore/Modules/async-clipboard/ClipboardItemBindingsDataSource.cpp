@@ -26,12 +26,15 @@
 #include "config.h"
 #include "ClipboardItemBindingsDataSource.h"
 
+#include "BitmapImage.h"
 #include "Blob.h"
 #include "Clipboard.h"
 #include "ClipboardItem.h"
 #include "Document.h"
 #include "FileReaderLoader.h"
 #include "Frame.h"
+#include "GraphicsContext.h"
+#include "ImageBuffer.h"
 #include "JSBlob.h"
 #include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
@@ -252,10 +255,51 @@ void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::didFail(int)
     invokeCompletionHandler();
 }
 
+void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::sanitizeDataIfNeeded()
+{
+    if (m_type == "text/html"_s) {
+        String markupToSanitize;
+        if (WTF::holds_alternative<Ref<SharedBuffer>>(m_data)) {
+            auto& buffer = WTF::get<Ref<SharedBuffer>>(m_data);
+            markupToSanitize = String::fromUTF8(buffer->data(), buffer->size());
+        } else if (WTF::holds_alternative<String>(m_data))
+            markupToSanitize = WTF::get<String>(m_data);
+
+        if (markupToSanitize.isEmpty())
+            return;
+
+        m_data = { sanitizeMarkup(markupToSanitize) };
+    }
+
+    if (m_type == "image/png"_s) {
+        RefPtr<SharedBuffer> bufferToSanitize;
+        if (WTF::holds_alternative<Ref<SharedBuffer>>(m_data))
+            bufferToSanitize = WTF::get<Ref<SharedBuffer>>(m_data).ptr();
+        else if (WTF::holds_alternative<String>(m_data))
+            bufferToSanitize = utf8Buffer(WTF::get<String>(m_data));
+
+        if (!bufferToSanitize || bufferToSanitize->isEmpty())
+            return;
+
+        auto bitmapImage = BitmapImage::create();
+        bitmapImage->setData(WTFMove(bufferToSanitize), true);
+        auto imageBuffer = ImageBuffer::create(bitmapImage->size(), Unaccelerated);
+        if (!imageBuffer) {
+            m_data = { nullString() };
+            return;
+        }
+
+        imageBuffer->context().drawImage(bitmapImage.get(), FloatPoint::zero());
+        m_data = { SharedBuffer::create(imageBuffer->toData("image/png"_s)) };
+    }
+}
+
 void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::invokeCompletionHandler()
 {
-    if (auto completion = WTFMove(m_completionHandler))
+    if (auto completion = WTFMove(m_completionHandler)) {
+        sanitizeDataIfNeeded();
         completion();
+    }
 }
 
 void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::didResolveToBlob(ScriptExecutionContext& context, Ref<Blob>&& blob)

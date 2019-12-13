@@ -73,6 +73,7 @@ private:
     private:
         ClipboardItemTypeLoader(const String& type, CompletionHandler<void()>&&);
 
+        void sanitizeDataIfNeeded();
         void invokeCompletionHandler();
 
         // FileReaderLoaderClient methods.

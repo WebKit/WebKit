@@ -68,7 +68,7 @@ static ImageType cocoaTypeToImageType(const String& cocoaType)
     if (cocoaType == String(kUTTypeTIFF))
         return ImageType::TIFF;
 #if PLATFORM(MAC)
-    if (cocoaType == "Apple PNG pasteboard type") // NSPNGPboardType
+    if (cocoaType == String(legacyPNGPasteboardType())) // NSPNGPboardType
         return ImageType::PNG;
 #endif
     if (cocoaType == String(kUTTypePNG))

@@ -1,3 +1,19 @@
+2019-12-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Sanitize HTML and image data written using clipboard.write
+        https://bugs.webkit.org/show_bug.cgi?id=205188
+        <rdar://problem/57612968>
+
+        Reviewed by Darin Adler.
+
+        Adds an API test to verify that the markup written to the platform pasteboard on macOS and iOS is sanitized, and
+        does not contain hidden content, such as script elements.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ClipboardTests.mm:
+        (-[TestWKWebView writeString:toClipboardWithType:]):
+        (readMarkupFromPasteboard):
+        * TestWebKitAPI/Tests/WebKitCocoa/clipboard.html:
+
 2019-12-13  Kate Cheney  <katherine_cheney@apple.com>
 
         Create WebKit API calls for ITP Data

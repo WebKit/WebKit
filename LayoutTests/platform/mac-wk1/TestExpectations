@@ -72,6 +72,7 @@ editing/async-clipboard/clipboard-change-data-while-reading.html [ Skip ]
 editing/async-clipboard/clipboard-do-not-read-text-from-platform-if-text-changes.html [ Skip ]
 editing/async-clipboard/clipboard-read-text-from-platform.html [ Skip ]
 editing/async-clipboard/clipboard-read-text-same-origin.html [ Skip ]
+editing/async-clipboard/sanitize-when-reading-markup.html [ Skip ]
 
 imported/w3c/web-platform-tests/websockets/Close-1000-reason.any.html [ Pass Failure ]
 imported/w3c/web-platform-tests/websockets/Close-1000-reason.any.worker.html [ Pass Failure ]

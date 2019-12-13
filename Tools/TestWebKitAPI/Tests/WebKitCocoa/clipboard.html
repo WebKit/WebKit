@@ -28,6 +28,18 @@ function loadDocument(blob) {
 clipboardData = [];
 exception = null;
 
+async function writeStringToClipboard(type, string) {
+    try {
+        const itemData = {};
+        itemData[type] = string;
+        await navigator.clipboard.write([new ClipboardItem(itemData)]);
+    } catch (e) {
+        exception = e;
+    } finally {
+        webkit.messageHandlers.testHandler.postMessage("wroteStringToClipboard");
+    }
+}
+
 async function readClipboard() {
     try {
         const items = await navigator.clipboard.read();

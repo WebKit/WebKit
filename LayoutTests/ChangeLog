@@ -1,3 +1,25 @@
+2019-12-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Sanitize HTML and image data written using clipboard.write
+        https://bugs.webkit.org/show_bug.cgi?id=205188
+        <rdar://problem/57612968>
+
+        Reviewed by Darin Adler.
+
+        * editing/async-clipboard/sanitize-when-reading-markup-expected.txt: Added.
+        * editing/async-clipboard/sanitize-when-reading-markup.html: Added.
+
+        Add a test to verify that markup is sanitized when copying and pasting across different security origins.
+
+        * editing/async-clipboard/sanitize-when-writing-image-expected.txt: Added.
+        * editing/async-clipboard/sanitize-when-writing-image.html: Added.
+
+        Add a test to verify that "image/png" data is sanitized, and one or more written image data that cannot be
+        decoded results in the promise being rejected.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2019-12-13  Chris Dumez  <cdumez@apple.com>
 
         Behavior of [[GetOwnProperty]] for cross-origin windows is not spec-compliant

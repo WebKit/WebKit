@@ -226,7 +226,7 @@ int64_t PlatformPasteboard::write(const PasteboardCustomData& data)
 {
     NSMutableArray *types = [NSMutableArray array];
     data.forEachType([&] (auto& type) {
-        NSString *platformType = platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(type);
+        NSString *platformType = platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(type, IncludeImageTypes::Yes);
         if (platformType.length)
             [types addObject:platformType];
     });
@@ -237,11 +237,19 @@ int64_t PlatformPasteboard::write(const PasteboardCustomData& data)
 
     [m_pasteboard declareTypes:types owner:nil];
 
-    data.forEachPlatformString([&] (auto& type, auto& data) {
-        auto platformType = platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(type);
-        ASSERT(!platformType.isEmpty());
-        if (!platformType.isEmpty())
-            [m_pasteboard setString:data forType:platformType];
+    data.forEachPlatformStringOrBuffer([&] (auto& type, auto& stringOrBuffer) {
+        auto platformType = platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(type, IncludeImageTypes::Yes);
+        if (platformType.isEmpty())
+            return;
+
+        if (WTF::holds_alternative<Ref<SharedBuffer>>(stringOrBuffer)) {
+            if (auto platformData = WTF::get<Ref<SharedBuffer>>(stringOrBuffer)->createNSData())
+                [m_pasteboard setData:platformData.get() forType:platformType];
+        } else if (WTF::holds_alternative<String>(stringOrBuffer)) {
+            auto string = WTF::get<String>(stringOrBuffer);
+            if (!!string)
+                [m_pasteboard setString:string forType:platformType];
+        }
     });
 
     if (shouldWriteCustomData) {
@@ -257,7 +265,7 @@ int64_t PlatformPasteboard::changeCount() const
     return [m_pasteboard.get() changeCount];
 }
 
-String PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(const String& domType)
+String PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(const String& domType, IncludeImageTypes includeImageTypes)
 {
     if (domType == "text/plain")
         return legacyStringPasteboardType();
@@ -267,6 +275,9 @@ String PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite
 
     if (domType == "text/uri-list")
         return legacyURLPasteboardType();
+
+    if (includeImageTypes == IncludeImageTypes::Yes && domType == "image/png")
+        return legacyPNGPasteboardType();
 
     return { };
 }
@@ -474,14 +485,13 @@ static RetainPtr<NSPasteboardItem> createPasteboardItem(const PasteboardCustomDa
         if (!platformType)
             return;
 
-        if (WTF::holds_alternative<String>(stringOrBuffer)) {
-            [item setString:WTF::get<String>(stringOrBuffer) forType:platformType];
-            return;
-        }
-
         if (WTF::holds_alternative<Ref<SharedBuffer>>(stringOrBuffer)) {
             if (auto platformData = WTF::get<Ref<SharedBuffer>>(stringOrBuffer)->createNSData())
                 [item setData:platformData.get() forType:platformType];
+        } else if (WTF::holds_alternative<String>(stringOrBuffer)) {
+            auto string = WTF::get<String>(stringOrBuffer);
+            if (!!string)
+                [item setString:string forType:platformType];
         }
     });
 

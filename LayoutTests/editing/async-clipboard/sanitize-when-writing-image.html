@@ -1,0 +1,84 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true experimental:AsyncClipboardAPIEnabled=true ] -->
+<html>
+    <meta charset="utf8">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../resources/js-test.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
+        <script src="./resources/async-clipboard-helpers.js"></script>
+        <style>
+            button {
+                display: block;
+                margin: 40px 0;
+            }
+        </style>
+    </head>
+    <script>
+        jsTestIsAsync = true;
+        doneWritingFirstImage = false;
+        doneWritingSecondImage = false;
+
+        async function runTest() {
+            description("This test verifies that navigator.clipboard.writeText sanitizes 'image/png'. To manually run the test, click the buttons labeled (1), (2), and then (3)");
+
+            const writeValidImageButton = document.getElementById("valid");
+            const writeInvalidImageButton = document.getElementById("invalid");
+            const writeBothImagesButton = document.getElementById("both");
+
+            const validImageItem = new ClipboardItem({ "image/png" : imageBlob() });
+            const invalidImageItem = new ClipboardItem({ "image/png" : imageBlob("ThisIsNotActuallyBase64ImageData") });
+
+            writeValidImageButton.addEventListener("click", async () => {
+                try {
+                    await navigator.clipboard.write([validImageItem]);
+                    testPassed("Wrote a valid image to the clipboard.");
+                } catch (exception) {
+                    testFailed("Did not write a valid image to the clipboard.");
+                } finally {
+                    doneWritingFirstImage = true;
+                }
+            });
+
+            writeInvalidImageButton.addEventListener("click", async () => {
+                try {
+                    await navigator.clipboard.write([invalidImageItem]);
+                    testFailed("Should not have written anything to the clipboard.");
+                } catch (exception) {
+                    testPassed("Did not write an invalid image to the clipboard.");
+                } finally {
+                    doneWritingSecondImage = true;
+                }
+            });
+
+            writeBothImagesButton.addEventListener("click", async () => {
+                try {
+                    await navigator.clipboard.write([validImageItem, invalidImageItem]);
+                    testFailed("Should not have written anything to the clipboard.");
+                } catch (exception) {
+                    testPassed("Did not write an invalid image to the clipboard.");
+                } finally {
+                    [writeValidImageButton, writeInvalidImageButton, writeBothImagesButton].map(button => button.remove());
+                    finishJSTest();
+                }
+            });
+
+            if (!window.testRunner)
+                return;
+
+            await UIHelper.activateElement(writeValidImageButton);
+            await new Promise(resolve => shouldBecomeEqual("doneWritingFirstImage", "true", resolve));
+            await UIHelper.activateElement(writeInvalidImageButton);
+            await new Promise(resolve => shouldBecomeEqual("doneWritingSecondImage", "true", resolve));
+            await UIHelper.activateElement(writeBothImagesButton);
+        }
+
+        addEventListener("load", runTest);
+    </script>
+    <body>
+        <button id="valid">1. Write valid item</button>
+        <button id="invalid">2. Write invalid item</button>
+        <button id="both">3. Write valid and invalid items</button>
+        <p id="description"></p>
+        <p id="console"></p>
+    </body>
+</html>

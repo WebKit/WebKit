@@ -86,6 +86,11 @@ inline NSString *legacyFilesPromisePasteboardType()
     return NSFilesPromisePboardType;
 }
 
+inline NSString *legacyPNGPasteboardType()
+{
+    return @"Apple PNG pasteboard type";
+}
+
 } // namespace WebCore
 
 ALLOW_DEPRECATED_DECLARATIONS_END

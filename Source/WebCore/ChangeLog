@@ -1,3 +1,55 @@
+2019-12-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Clipboard API] Sanitize HTML and image data written using clipboard.write
+        https://bugs.webkit.org/show_bug.cgi?id=205188
+        <rdar://problem/57612968>
+
+        Reviewed by Darin Adler.
+
+        Sanitizes HTML ("text/html") and image ("image/png") content when writing to the platform pasteboard using the
+        clipboard API. See below for more details.
+
+        Tests: editing/async-clipboard/sanitize-when-reading-markup.html
+               editing/async-clipboard/sanitize-when-writing-image.html
+               ClipboardTests.WriteSanitizedMarkup
+
+        * Modules/async-clipboard/ClipboardItemBindingsDataSource.cpp:
+        (WebCore::ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::sanitizeDataIfNeeded):
+
+        Add a new helper method to sanitize `m_data` after loading finishes, but before invoking the completion handler
+        to notify the data source about the clipboard data. Currently, we support writing "text/plain", "text/uri-list",
+        "text/html" and "image/png"; we sanitize HTML by stripping away hidden content such as comments, script, and
+        event listeners, and sanitize image data by painting it into a new graphics context and re-encoding the rendered
+        contents as an image.
+
+        (WebCore::ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::invokeCompletionHandler):
+        * Modules/async-clipboard/ClipboardItemBindingsDataSource.h:
+        * platform/PlatformPasteboard.h:
+        * platform/cocoa/PasteboardCocoa.mm:
+        (WebCore::cocoaTypeToImageType):
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite):
+
+        Adjust these helpers to map "image/png" to the platform PNG type on iOS ("public.png"). The extra
+        IncludeImageTypes argument was added to avoid considering "image/png" a web-safe type for writing and reading
+        when exercising DataTransfer APIs, which currently don't support reading the "image/png" MIME type. In the
+        future, we should consider adding support for image sanitization when using DataTransfer.setData or
+        DataTransferItemList.add, and then remove this flag.
+
+        (WebCore::createItemProviderRegistrationList):
+        * platform/mac/LegacyNSPasteboardTypes.h:
+
+        Add an entry for legacyPNGPasteboardType on macOS, and replace one use of it in PasteboardCocoa.mm.
+
+        (WebCore::legacyPNGPasteboardType):
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::PlatformPasteboard::write):
+        (WebCore::PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite):
+
+        Likewise, map "image/png" to legacyPNGPasteboardType() on macOS, which was added above.
+
+        (WebCore::createPasteboardItem):
+
 2019-12-13  Chris Dumez  <cdumez@apple.com>
 
         Behavior of [[GetOwnProperty]] for cross-origin windows is not spec-compliant

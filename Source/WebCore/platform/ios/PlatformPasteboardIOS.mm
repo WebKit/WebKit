@@ -322,7 +322,7 @@ String PlatformPasteboard::uniqueName()
     return String();
 }
 
-String PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(const String& domType)
+String PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(const String& domType, IncludeImageTypes includeImageTypes)
 {
     if (domType == "text/plain")
         return kUTTypePlainText;
@@ -332,6 +332,9 @@ String PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite
 
     if (domType == "text/uri-list")
         return kUTTypeURL;
+
+    if (includeImageTypes == IncludeImageTypes::Yes && domType == "image/png")
+        return kUTTypePNG;
 
     return { };
 }
@@ -603,7 +606,7 @@ static RetainPtr<WebItemProviderRegistrationInfoList> createItemProviderRegistra
             return;
 
         NSString *stringValue = value;
-        auto cocoaType = PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(type).createCFString();
+        auto cocoaType = PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(type, PlatformPasteboard::IncludeImageTypes::Yes).createCFString();
         if (UTTypeConformsTo(cocoaType.get(), kUTTypeURL))
             [representationsToRegister addRepresentingObject:[NSURL URLWithString:stringValue]];
         else if (UTTypeConformsTo(cocoaType.get(), kUTTypePlainText))
