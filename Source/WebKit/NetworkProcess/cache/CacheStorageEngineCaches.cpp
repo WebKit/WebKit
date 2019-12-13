@@ -660,10 +660,14 @@ void Caches::cacheInfos(uint64_t updateCounter, CacheInfosCallback&& callback)
 
 void Caches::appendRepresentation(StringBuilder& builder) const
 {
+    ASSERT(m_pendingInitializationCallbacks.isEmpty());
+    ASSERT(m_pendingWritingCachesToDiskCallbacks.isEmpty());
+
     builder.append("{ \"persistent\": [");
 
     bool isFirst = true;
     for (auto& cache : m_caches) {
+        ASSERT(!cache.hasPendingOpeningCallbacks());
         if (!isFirst)
             builder.append(", ");
         isFirst = false;

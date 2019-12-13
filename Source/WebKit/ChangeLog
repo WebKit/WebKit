@@ -1,3 +1,21 @@
+2019-12-13  youenn fablet  <youenn@apple.com>
+
+        Help debugging flaky http/tests/cache-storage/page-cache-domcachestorage-pending-promise.html
+        https://bugs.webkit.org/show_bug.cgi?id=205209
+
+        Reviewed by Chris Dumez.
+
+        Add a bunch of asserts that no pending activity is happening in the Cache Storage backend is happening
+        when querying the backend representation, which is a debug tool.
+        No change of behavior.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::representation):
+        * NetworkProcess/cache/CacheStorageEngineCache.h:
+        (WebKit::CacheStorage::Cache::hasPendingOpeningCallbacks const):
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::appendRepresentation const):
+
 2019-12-13  Kate Cheney  <katherine_cheney@apple.com>
 
         Create WebKit API calls for ITP Data

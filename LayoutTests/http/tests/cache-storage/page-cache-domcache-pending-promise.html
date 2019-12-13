@@ -52,8 +52,10 @@ onload = () => {
         testRunner.clearDOMCaches();
 
     setTimeout(() => {
-        handle1 = setTimeout(() => {
+        handle1 = setTimeout(async () => {
             testFailed("Timed out while waiting for the cache to open");
+            if (window.internals)
+                console.log(await internals.cacheStorageEngineRepresentation());
             finishJSTest();
         }, 20000);
         caches.open('page-cache-test').then((_cache) => {

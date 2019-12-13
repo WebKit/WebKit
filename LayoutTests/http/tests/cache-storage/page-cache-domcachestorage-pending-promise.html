@@ -25,7 +25,15 @@ window.addEventListener("pagehide", function(event) {
         finishJSTest();
     }
 
+    const handle1 = setTimeout(async () => {
+        testFailed("Timed out while waiting for the cache to open");
+        if (window.internals)
+            console.log(await internals.cacheStorageEngineRepresentation());
+        finishJSTest();
+    }, 10000);
+
     caches.open('test').then(() => {
+       clearTimeout(handle1);
        testPassed("Opened the cache");
        shouldBeTrue("!!restoredFromPageCache");
        finishJSTest();

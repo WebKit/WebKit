@@ -93,6 +93,8 @@ public:
     };
     static Optional<DecodedRecord> decodeRecordHeader(const NetworkCache::Storage::Record&);
 
+    bool hasPendingOpeningCallbacks() const { return !m_pendingOpeningCallbacks.isEmpty(); }
+
 private:
     Vector<RecordInformation>* recordsFromURL(const URL&);
     const Vector<RecordInformation>* recordsFromURL(const URL&) const;

@@ -802,6 +802,9 @@ void Engine::unlock(uint64_t cacheIdentifier)
 
 String Engine::representation()
 {
+    ASSERT(m_pendingClearCallbacks.isEmpty());
+    ASSERT(m_initializationCallbacks.isEmpty());
+
     bool isFirst = true;
     StringBuilder builder;
     builder.append("{ \"path\": \"");
