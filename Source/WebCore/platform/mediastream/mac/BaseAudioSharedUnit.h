@@ -23,17 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
 #if ENABLE(MEDIA_STREAM)
 
+#include "RealtimeMediaSourceCapabilities.h"
 #include <pal/cf/CoreMediaSoftLink.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
+#include <wtf/MediaTime.h>
 #include <wtf/RecursiveLockAdapter.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class AudioStreamDescription;
 class CoreAudioCaptureSource;
+class PlatformAudioData;
 
 class BaseAudioSharedUnit {
 public:
