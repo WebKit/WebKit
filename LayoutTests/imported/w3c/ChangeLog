@@ -1,5 +1,20 @@
 2019-12-12  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, land missing baselines from r253453.
+
+        * web-platform-tests/workers/SharedWorker-MessageEvent-source.any-expected.txt: Added.
+        * web-platform-tests/workers/SharedWorker-MessageEvent-source.any.worker-expected.txt: Added.
+        * web-platform-tests/workers/SharedWorker-replace-EventHandler.any-expected.txt: Added.
+        * web-platform-tests/workers/SharedWorker-replace-EventHandler.any.worker-expected.txt: Added.
+        * web-platform-tests/workers/examples/onconnect.any-expected.txt: Added.
+        * web-platform-tests/workers/examples/onconnect.any.worker-expected.txt: Added.
+        * web-platform-tests/workers/semantics/interface-objects/003.any-expected.txt: Added.
+        * web-platform-tests/workers/semantics/interface-objects/003.any.worker-expected.txt: Added.
+        * web-platform-tests/workers/semantics/interface-objects/004.any-expected.txt: Added.
+        * web-platform-tests/workers/semantics/interface-objects/004.any.worker-expected.txt: Added.
+
+2019-12-12  Chris Dumez  <cdumez@apple.com>
+
         Re-sync workers web-platform-tests from upstream
         https://bugs.webkit.org/show_bug.cgi?id=205180
 
