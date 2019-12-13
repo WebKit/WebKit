@@ -1,3 +1,14 @@
+2019-12-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [watchOS] Apple.com is rendered in Times New Roman
+        https://bugs.webkit.org/show_bug.cgi?id=205179
+        <rdar://problem/57233936>
+
+        Reviewed by Tim Horton.
+
+        * fast/text/smiley-local-font-src-expected.html: Added.
+        * fast/text/smiley-local-font-src.html: Added.
+
 2019-12-13  Chris Dumez  <cdumez@apple.com>
 
         Implement PostMessageOptions for postMessage

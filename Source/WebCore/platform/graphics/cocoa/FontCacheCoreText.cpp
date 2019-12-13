@@ -969,11 +969,7 @@ public:
         const auto& folded = FontCascadeDescription::foldedFamilyName(postScriptName);
         return m_postScriptNameToFontDescriptors.ensure(folded, [&] {
             auto postScriptNameString = folded.createCFString();
-#if (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || PLATFORM(MAC)
             CFStringRef nameAttribute = kCTFontPostScriptNameAttribute;
-#else
-            CFStringRef nameAttribute = kCTFontNameAttribute;
-#endif
             auto attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
             CFDictionaryAddValue(attributes.get(), kCTFontEnabledAttribute, kCFBooleanTrue);
             CFDictionaryAddValue(attributes.get(), nameAttribute, postScriptNameString.get());
