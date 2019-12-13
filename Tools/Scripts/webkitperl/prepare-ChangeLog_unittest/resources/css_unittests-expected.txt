@@ -98,34 +98,24 @@
       '.media-query::before'
     ],
     [
-      '89',
-      '96',
-      '@media only screen and (max-width: 980px)'
-    ],
-    [
       '90',
       '90',
-      '.media-query a'
-    ],
-    [
-      '91',
-      '94',
-      '@media (-webkit-min-device-pixel-ratio: 2)'
+      '@media only screen and (max-width: 980px) .media-query a'
     ],
     [
       '92',
       '92',
-      '.both a'
+      '@media only screen and (max-width: 980px) @media (-webkit-min-device-pixel-ratio: 2) .both a'
     ],
     [
       '93',
       '93',
-      '.both b'
+      '@media only screen and (max-width: 980px) @media (-webkit-min-device-pixel-ratio: 2) .both b'
     ],
     [
       '95',
       '95',
-      '.media-query b'
+      '@media only screen and (max-width: 980px) .media-query b'
     ],
     [
       '98',

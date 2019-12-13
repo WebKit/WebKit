@@ -1,3 +1,14 @@
+2019-12-13  Devin Rousso  <drousso@apple.com>
+
+        Prefix CSS selectors with all applicable CSS groupings when generating a ChangeLog
+        https://bugs.webkit.org/show_bug.cgi?id=205196
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/prepare-ChangeLog:
+        (get_selector_line_ranges_for_css):
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/css_unittests-expected.txt:
+
 2019-12-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Several tests crashing after r247898 "Reorganize UIScriptController into platform-specific subclasses"

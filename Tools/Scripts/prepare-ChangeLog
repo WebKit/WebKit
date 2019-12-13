@@ -1876,6 +1876,7 @@ sub get_selector_line_ranges_for_css($$)
     my @stack;
     my $context;
     my @currentParseMode = ("global");
+    my @groupingStack;
     my $selectorBraces = 0;
 
     while (<$fileHandle>) {
@@ -1895,11 +1896,20 @@ sub get_selector_line_ranges_for_css($$)
 
                     $inBrace -= 1;
 
-                    pop(@currentParseMode);
-                    my $name = pop(@stack);
-                    my $startLine = pop(@stack);
-                    my $endLine = $.;
-                    push(@ranges, [$startLine, $endLine, $name]);
+                    my $parseMode = pop(@currentParseMode);
+                    if ($parseMode eq "selector") {
+                        my $name = pop(@stack);
+                        my $startLine = pop(@stack);
+                        my $endLine = $.;
+                        my $groupingPrefix = join(" ", @groupingStack);
+                        if (length $groupingPrefix) {
+                            $groupingPrefix .= " "
+                        }
+                        push(@ranges, [$startLine, $endLine, $groupingPrefix . $name]);
+                    } elsif ($parseMode eq "media") {
+                        pop(@groupingStack);
+                    }
+
                     $selectorBraces = 0;
                 }
             } elsif ($token eq "/*") {
@@ -1913,7 +1923,7 @@ sub get_selector_line_ranges_for_css($$)
                     my $startLine = $.;
                     if ($token =~ /^\@media/) {
                         push(@currentParseMode, "media");
-                        push(@stack, ($startLine, $token));
+                        push(@groupingStack, $token);
                     } else {
                         push(@currentParseMode, "selector");
                         push(@stack, ($startLine, $token));
