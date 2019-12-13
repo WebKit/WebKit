@@ -1,5 +1,12 @@
 2019-12-13  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rebaseline a couple of iOS swiping tests after r253450
+
+        * platform/ios/swipe/main-frame-pinning-requirement-expected.txt:
+        * platform/ios/swipe/pushState-cached-back-swipe-expected.txt:
+
+2019-12-13  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, skip several SharedWorkers tests as we do not support this feature.
 
         * TestExpectations:
