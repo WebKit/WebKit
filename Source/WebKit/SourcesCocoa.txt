@@ -59,6 +59,8 @@ NetworkProcess/webrtc/NetworkRTCSocket.cpp
 
 GPUProcess/ios/GPUProcessIOS.mm
 GPUProcess/mac/GPUProcessMac.mm
+GPUProcess/media/RemoteMediaPlayerProxy.cpp
+GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp
 GPUProcess/EntryPoint/Cocoa/XPCService/GPUServiceEntryPoint.mm
 
 Platform/cf/ModuleCF.cpp
@@ -628,5 +630,7 @@ EditableImageControllerMessageReceiver.cpp
 GPUConnectionToWebProcessMessageReceiver.cpp
 GPUProcessProxyMessageReceiver.cpp
 GPUProcessMessageReceiver.cpp
+//RemoteMediaPlayerManagerMessageReceiver.cpp
+//RemoteMediaPlayerManagerProxyMessageReceiver.cpp
 ServiceWorkerFetchTaskMessageReceiver.cpp
 TextCheckingControllerProxyMessageReceiver.cpp

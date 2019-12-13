@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+# Copyright (C) 2010-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -219,10 +219,11 @@ def types_that_cannot_be_forward_declared():
         'WebCore::SWServerConnectionIdentifier',
         'WebKit::ActivityStateChangeID',
         'WebKit::LayerHostingContextID',
-        'WebKit::TransactionID',
+        'WebKit::MediaPlayerPrivateRemoteIdentifier',
         'WebKit::StorageAreaIdentifier',
         'WebKit::StorageAreaImplIdentifier',
         'WebKit::StorageNamespaceIdentifier',
+        'WebKit::TransactionID',
         'WebKit::UserContentControllerIdentifier',
         'WebKit::WebPageProxyIdentifier',
     ])
@@ -603,6 +604,7 @@ def headers_for_type(type):
         'WebKit::WebMouseEvent': ['"WebEvent.h"'],
         'WebKit::WebTouchEvent': ['"WebEvent.h"'],
         'WebKit::WebWheelEvent': ['"WebEvent.h"'],
+        'WebCore::MediaEngineSupportParameters': ['<WebCore/MediaPlayer.h>'],
         'struct WebCore::ElementContext': ['<WebCore/ElementContext.h>'],
         'struct WebKit::WebUserScriptData': ['"WebUserContentControllerDataTypes.h"'],
         'struct WebKit::WebUserStyleSheetData': ['"WebUserContentControllerDataTypes.h"'],

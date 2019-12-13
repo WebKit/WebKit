@@ -32,10 +32,12 @@
 #include <WebCore/DisplayListItems.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/RefCounted.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebKit {
 
 class GPUProcess;
+class RemoteMediaPlayerManagerProxy;
 
 class GPUConnectionToWebProcess
     : public RefCounted<GPUConnectionToWebProcess>
@@ -55,13 +57,18 @@ public:
 private:
     GPUConnectionToWebProcess(GPUProcess&, WebCore::ProcessIdentifier, IPC::Connection::Identifier);
 
+    RemoteMediaPlayerManagerProxy& remoteMediaPlayerManagerProxy();
+
     // IPC::Connection::Client
     void didClose(IPC::Connection&) override;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
 
     Ref<IPC::Connection> m_connection;
     Ref<GPUProcess> m_gpuProcess;
     const WebCore::ProcessIdentifier m_webProcessIdentifier;
+    std::unique_ptr<RemoteMediaPlayerManagerProxy> m_remoteMediaPlayerManagerProxy;
 };
 
 } // namespace WebKit

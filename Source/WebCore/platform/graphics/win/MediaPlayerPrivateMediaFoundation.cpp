@@ -79,12 +79,30 @@ MediaPlayerPrivateMediaFoundation::~MediaPlayerPrivateMediaFoundation()
     endSession();
 }
 
+class MediaPlayerFactoryMediaFoundation final : public MediaPlayerFactory {
+private:
+    MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::MediaFoundation; };
+
+    std::unique_ptr<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final
+    {
+        return makeUnique<MediaPlayerPrivateMediaFoundation>(player);
+    }
+
+    void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types) const final
+    {
+        return MediaPlayerPrivateMediaFoundation::getSupportedTypes(types);
+    }
+
+    MediaPlayer::SupportsType supportsTypeAndCodecs(const MediaEngineSupportParameters& parameters) const final
+    {
+        return MediaPlayerPrivateMediaFoundation::supportsType(parameters);
+    }
+};
+
 void MediaPlayerPrivateMediaFoundation::registerMediaEngine(MediaEngineRegistrar registrar)
 {
-    if (isAvailable()) {
-        registrar([](MediaPlayer* player) { return makeUnique<MediaPlayerPrivateMediaFoundation>(player); },
-            getSupportedTypes, supportsType, 0, 0, 0, 0);
-    }
+    if (isAvailable())
+        registrar(makeUnique<MediaPlayerFactoryMediaFoundation>());
 }
 
 bool MediaPlayerPrivateMediaFoundation::isAvailable() 

@@ -37,11 +37,27 @@
 
 namespace WebCore {
 
+class MediaPlayerFactoryMediaSourceMock final : public MediaPlayerFactory {
+private:
+    MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::MockMSE; };
+
+    std::unique_ptr<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final { return makeUnique<MockMediaPlayerMediaSource>(player); }
+
+    void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types) const final
+    {
+        return MockMediaPlayerMediaSource::getSupportedTypes(types);
+    }
+
+    MediaPlayer::SupportsType supportsTypeAndCodecs(const MediaEngineSupportParameters& parameters) const final
+    {
+        return MockMediaPlayerMediaSource::supportsType(parameters);
+    }
+};
+
 // MediaPlayer Enigne Support
 void MockMediaPlayerMediaSource::registerMediaEngine(MediaEngineRegistrar registrar)
 {
-    registrar([] (MediaPlayer* player) { return makeUnique<MockMediaPlayerMediaSource>(player); }, getSupportedTypes,
-        supportsType, 0, 0, 0, 0);
+    registrar(makeUnique<MediaPlayerFactoryMediaSourceMock>());
 }
 
 // FIXME: What does the word "cache" mean here?

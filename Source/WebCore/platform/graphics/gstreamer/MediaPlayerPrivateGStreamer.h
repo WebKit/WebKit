@@ -394,6 +394,7 @@ private:
     GstElement* createAudioSink();
     GstElement* audioSink() const;
 
+    friend class MediaPlayerFactoryGStreamer;
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 

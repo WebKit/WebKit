@@ -72,14 +72,37 @@ GST_DEBUG_CATEGORY(webkit_mse_debug);
 
 namespace WebCore {
 
+class MediaPlayerFactoryGStreamerMSE final : public MediaPlayerFactory {
+private:
+    MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::GStreamerMSE; };
+
+    std::unique_ptr<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final
+    {
+        return makeUnique<MediaPlayerPrivateGStreamerMSE>(player);
+    }
+
+    void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types) const final
+    {
+        return MediaPlayerPrivateGStreamerMSE::getSupportedTypes(types);
+    }
+
+    MediaPlayer::SupportsType supportsTypeAndCodecs(const MediaEngineSupportParameters& parameters) const final
+    {
+        return MediaPlayerPrivateGStreamerMSE::supportsType(parameters);
+    }
+
+    bool supportsKeySystem(const String& keySystem, const String& mimeType) const final
+    {
+        return MediaPlayerPrivateGStreamerMSE::supportsKeySystem(keySystem, mimeType);
+    }
+};
+
 void MediaPlayerPrivateGStreamerMSE::registerMediaEngine(MediaEngineRegistrar registrar)
 {
     initializeGStreamerAndRegisterWebKitElements();
     GST_DEBUG_CATEGORY_INIT(webkit_mse_debug, "webkitmse", 0, "WebKit MSE media player");
-    if (isAvailable()) {
-        registrar([](MediaPlayer* player) { return makeUnique<MediaPlayerPrivateGStreamerMSE>(player); },
-            getSupportedTypes, supportsType, nullptr, nullptr, nullptr, supportsKeySystem);
-    }
+    if (isAvailable())
+        registrar(makeUnique<MediaPlayerFactoryGStreamerMSE>());
 }
 
 MediaPlayerPrivateGStreamerMSE::MediaPlayerPrivateGStreamerMSE(MediaPlayer* player)

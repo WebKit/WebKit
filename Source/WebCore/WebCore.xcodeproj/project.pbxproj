@@ -104,6 +104,7 @@
 		071E496E1AD5AA0D008A50B4 /* MediaPlaybackTargetMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 071E496D1AD5AA0D008A50B4 /* MediaPlaybackTargetMac.mm */; };
 		071E49701AD5AB5E008A50B4 /* MediaPlaybackTargetMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 071E496F1AD5AB5E008A50B4 /* MediaPlaybackTargetMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0720B0A114D3323500642955 /* GenericEventQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0720B09F14D3323500642955 /* GenericEventQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0725EFA9239AD79300A538A9 /* MediaPlayerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 079F5E4B0F3BEBEA005E0782 /* MediaPlayerPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07277E4D17D018CC0015534D /* JSMediaStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 07277E4117D018CC0015534D /* JSMediaStream.h */; };
 		07277E4D17D018CC0015534E /* JSCanvasCaptureMediaStreamTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 07277E4117D018CC0015534E /* JSCanvasCaptureMediaStreamTrack.h */; };
 		07277E4F17D018CC0015534D /* JSMediaStreamAudioDestinationNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 07277E4317D018CC0015534D /* JSMediaStreamAudioDestinationNode.h */; };
@@ -31402,6 +31403,7 @@
 				077B64131B94F12E003E9AD5 /* MediaPlaybackTargetPickerMock.h in Headers */,
 				E44613E40CD681A200FADA75 /* MediaPlayer.h in Headers */,
 				CD5209E41B0BD8380077184E /* MediaPlayerEnums.h in Headers */,
+				0725EFA9239AD79300A538A9 /* MediaPlayerPrivate.h in Headers */,
 				076F0D0E12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h in Headers */,
 				DF9AFD7213FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.h in Headers */,
 				CDC8B5A3180463470016E685 /* MediaPlayerPrivateMediaSourceAVFObjC.h in Headers */,

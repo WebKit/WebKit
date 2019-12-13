@@ -24,6 +24,7 @@ VPATH = \
     $(WebKit2) \
     $(WebKit2)/GPUProcess \
     $(WebKit2)/GPUProcess/mac \
+    $(WebKit2)/GPUProcess/media \
     $(WebKit2)/NetworkProcess \
     $(WebKit2)/NetworkProcess/Cookies \
     $(WebKit2)/NetworkProcess/cache \
@@ -49,6 +50,7 @@ VPATH = \
     $(WebKit2)/WebProcess/FullScreen \
     $(WebKit2)/WebProcess/Geolocation \
     $(WebKit2)/WebProcess/GPU \
+    $(WebKit2)/WebProcess/GPU/media \
     $(WebKit2)/WebProcess/IconDatabase \
     $(WebKit2)/WebProcess/MediaCache \
     $(WebKit2)/WebProcess/MediaStream \
@@ -135,6 +137,8 @@ MESSAGE_RECEIVERS = \
     PluginProcessProxy \
     PluginProxy \
     RemoteLayerTreeDrawingAreaProxy \
+    RemoteMediaPlayerManager \
+    RemoteMediaPlayerManagerProxy \
     RemoteObjectRegistry \
     RemoteScrollingCoordinator \
     RemoteWebInspectorProxy \

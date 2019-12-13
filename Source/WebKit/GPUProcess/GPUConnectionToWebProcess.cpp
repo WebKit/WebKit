@@ -35,6 +35,8 @@
 #include "GPUProcessProxyMessages.h"
 #include "Logging.h"
 #include "RemoteLayerTreeDrawingAreaProxyMessages.h"
+#include "RemoteMediaPlayerManagerProxy.h"
+#include "RemoteMediaPlayerManagerProxyMessages.h"
 #include "RemoteScrollingCoordinatorTransaction.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
@@ -72,6 +74,32 @@ void GPUConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection& connec
 {
     WTFLogAlways("Received an invalid message \"%s.%s\" from the web process.\n", messageReceiverName.toString().data(), messageName.toString().data());
     CRASH();
+}
+
+RemoteMediaPlayerManagerProxy& GPUConnectionToWebProcess::remoteMediaPlayerManagerProxy()
+{
+    if (!m_remoteMediaPlayerManagerProxy)
+        m_remoteMediaPlayerManagerProxy = makeUnique<RemoteMediaPlayerManagerProxy>(*this);
+
+    return *m_remoteMediaPlayerManagerProxy;
+}
+
+void GPUConnectionToWebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+{
+    if (decoder.messageReceiverName() == Messages::RemoteMediaPlayerManagerProxy::messageReceiverName()) {
+        remoteMediaPlayerManagerProxy().didReceiveMessageFromWebProcess(connection, decoder);
+        return;
+    }
+}
+
+void GPUConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+{
+    if (decoder.messageReceiverName() == Messages::RemoteMediaPlayerManagerProxy::messageReceiverName()) {
+        remoteMediaPlayerManagerProxy().didReceiveSyncMessageFromWebProcess(connection, decoder, replyEncoder);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 } // namespace WebKit

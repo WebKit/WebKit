@@ -312,6 +312,10 @@
 #include "WebDeviceOrientationUpdateProvider.h"
 #endif
 
+#if ENABLE(GPU_PROCESS)
+#include "RemoteMediaPlayerManager.h"
+#endif
+
 namespace WebKit {
 using namespace JSC;
 using namespace WebCore;
@@ -3606,6 +3610,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
     if (m_drawingArea)
         m_drawingArea->updatePreferences(store);
+
+#if ENABLE(GPU_PROCESS)
+    WebProcess::singleton().supplement<RemoteMediaPlayerManager>()->updatePreferences(settings);
+#endif
 }
 
 #if ENABLE(DATA_DETECTION)

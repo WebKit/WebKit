@@ -31,6 +31,7 @@
 #include "ViewUpdateDispatcherMessages.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <WebCore/PageIdentifier.h>
 #include <wtf/RunLoop.h>
 
 namespace WebKit {
@@ -75,7 +76,7 @@ void ViewUpdateDispatcher::visibleContentRectUpdate(WebCore::PageIdentifier page
 
 void ViewUpdateDispatcher::dispatchVisibleContentRectUpdate()
 {
-    HashMap<PageIdentifier, UpdateData> update;
+    HashMap<WebCore::PageIdentifier, UpdateData> update;
     {
         LockHolder locker(&m_dataMutex);
         update = WTFMove(m_latestUpdate);

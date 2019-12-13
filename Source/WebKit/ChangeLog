@@ -1,3 +1,187 @@
+2019-12-13  Eric Carlson  <eric.carlson@apple.com>
+
+        Add infrastructure needed for playing media player in the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=205094
+        <rdar://problem/57815393>
+
+        Reviewed by Youenn Fablet.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::GPUConnectionToWebProcess):
+        (WebKit::GPUConnectionToWebProcess::~GPUConnectionToWebProcess):
+        (WebKit::GPUConnectionToWebProcess::didReceiveMessage):
+        (WebKit::GPUConnectionToWebProcess::didReceiveSyncMessage):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp: Added.
+        (WebKit::nullLogger):
+        (WebKit::RemoteMediaPlayerManagerProxy::PlayerProxy::PlayerProxy):
+        (WebKit::RemoteMediaPlayerManagerProxy::PlayerProxy::~PlayerProxy):
+        (WebKit::RemoteMediaPlayerManagerProxy::RemoteMediaPlayerManagerProxy):
+        (WebKit::RemoteMediaPlayerManagerProxy::~RemoteMediaPlayerManagerProxy):
+        (WebKit::RemoteMediaPlayerManagerProxy::createMediaPlayer):
+        (WebKit::RemoteMediaPlayerManagerProxy::getSupportedTypes):
+        (WebKit::RemoteMediaPlayerManagerProxy::supportsType):
+        (WebKit::RemoteMediaPlayerManagerProxy::originsInMediaCache):
+        (WebKit::RemoteMediaPlayerManagerProxy::clearMediaCache):
+        (WebKit::RemoteMediaPlayerManagerProxy::clearMediaCacheForOrigins):
+        (WebKit::RemoteMediaPlayerManagerProxy::supportsKeySystem):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h: Added.
+        (WebKit::RemoteMediaPlayerManagerProxy::webProcessConnection const):
+        (WebKit::RemoteMediaPlayerManagerProxy::didReceiveMessageFromWebProcess):
+        (WebKit::RemoteMediaPlayerManagerProxy::didReceiveSyncMessageFromWebProcess):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.messages.in: Added.
+        * Scripts/webkit/messages.py:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp: Added.
+        (WebKit::MediaPlayerPrivateRemote::MediaPlayerPrivateRemote):
+        (WebKit::MediaPlayerPrivateRemote::~MediaPlayerPrivateRemote):
+        (WebKit::MediaPlayerPrivateRemote::MediaPlayerPrivateRemote::load):
+        (WebKit::MediaPlayerPrivateRemote::load):
+        (WebKit::MediaPlayerPrivateRemote::cancelLoad):
+        (WebKit::MediaPlayerPrivateRemote::prepareToPlay):
+        (WebKit::MediaPlayerPrivateRemote::platformLayer const):
+        (WebKit::MediaPlayerPrivateRemote::setVideoFullscreenLayer):
+        (WebKit::MediaPlayerPrivateRemote::updateVideoFullscreenInlineImage):
+        (WebKit::MediaPlayerPrivateRemote::setVideoFullscreenFrame):
+        (WebKit::MediaPlayerPrivateRemote::setVideoFullscreenGravity):
+        (WebKit::MediaPlayerPrivateRemote::setVideoFullscreenMode):
+        (WebKit::MediaPlayerPrivateRemote::videoFullscreenStandbyChanged):
+        (WebKit::MediaPlayerPrivateRemote::accessLog const):
+        (WebKit::MediaPlayerPrivateRemote::errorLog const):
+        (WebKit::MediaPlayerPrivateRemote::platformErrorCode const):
+        (WebKit::MediaPlayerPrivateRemote::play):
+        (WebKit::MediaPlayerPrivateRemote::pause):
+        (WebKit::MediaPlayerPrivateRemote::setBufferingPolicy):
+        (WebKit::MediaPlayerPrivateRemote::supportsPictureInPicture const):
+        (WebKit::MediaPlayerPrivateRemote::supportsFullscreen const):
+        (WebKit::MediaPlayerPrivateRemote::supportsScanning const):
+        (WebKit::MediaPlayerPrivateRemote::requiresImmediateCompositing const):
+        (WebKit::MediaPlayerPrivateRemote::canSaveMediaData const):
+        (WebKit::MediaPlayerPrivateRemote::naturalSize const):
+        (WebKit::MediaPlayerPrivateRemote::hasVideo const):
+        (WebKit::MediaPlayerPrivateRemote::hasAudio const):
+        (WebKit::MediaPlayerPrivateRemote::setVisible):
+        (WebKit::MediaPlayerPrivateRemote::MediaPlayerPrivateRemote::durationMediaTime const):
+        (WebKit::MediaPlayerPrivateRemote::currentMediaTime const):
+        (WebKit::MediaPlayerPrivateRemote::getStartDate const):
+        (WebKit::MediaPlayerPrivateRemote::seek):
+        (WebKit::MediaPlayerPrivateRemote::seekWithTolerance):
+        (WebKit::MediaPlayerPrivateRemote::seeking const):
+        (WebKit::MediaPlayerPrivateRemote::startTime const):
+        (WebKit::MediaPlayerPrivateRemote::setRateDouble):
+        (WebKit::MediaPlayerPrivateRemote::rate const):
+        (WebKit::MediaPlayerPrivateRemote::setPreservesPitch):
+        (WebKit::MediaPlayerPrivateRemote::paused const):
+        (WebKit::MediaPlayerPrivateRemote::setVolumeDouble):
+        (WebKit::MediaPlayerPrivateRemote::setMuted):
+        (WebKit::MediaPlayerPrivateRemote::hasClosedCaptions const):
+        (WebKit::MediaPlayerPrivateRemote::setClosedCaptionsVisible):
+        (WebKit::MediaPlayerPrivateRemote::maxFastForwardRate const):
+        (WebKit::MediaPlayerPrivateRemote::minFastReverseRate const):
+        (WebKit::MediaPlayerPrivateRemote::networkState const):
+        (WebKit::MediaPlayerPrivateRemote::readyState const):
+        (WebKit::MediaPlayerPrivateRemote::seekable const):
+        (WebKit::MediaPlayerPrivateRemote::buffered const):
+        (WebKit::MediaPlayerPrivateRemote::maxMediaTimeSeekable const):
+        (WebKit::MediaPlayerPrivateRemote::minMediaTimeSeekable const):
+        (WebKit::MediaPlayerPrivateRemote::seekableTimeRangesLastModifiedTime const):
+        (WebKit::MediaPlayerPrivateRemote::liveUpdateInterval const):
+        (WebKit::MediaPlayerPrivateRemote::totalBytes const):
+        (WebKit::MediaPlayerPrivateRemote::didLoadingProgress const):
+        (WebKit::MediaPlayerPrivateRemote::setSize):
+        (WebKit::MediaPlayerPrivateRemote::paint):
+        (WebKit::MediaPlayerPrivateRemote::paintCurrentFrameInContext):
+        (WebKit::MediaPlayerPrivateRemote::copyVideoTextureToPlatformTexture):
+        (WebKit::MediaPlayerPrivateRemote::nativeImageForCurrentTime):
+        (WebKit::MediaPlayerPrivateRemote::setPreload):
+        (WebKit::MediaPlayerPrivateRemote::hasAvailableVideoFrame const):
+        (WebKit::MediaPlayerPrivateRemote::canLoadPoster const):
+        (WebKit::MediaPlayerPrivateRemote::setPoster):
+        (WebKit::MediaPlayerPrivateRemote::enterFullscreen):
+        (WebKit::MediaPlayerPrivateRemote::exitFullscreen):
+        (WebKit::MediaPlayerPrivateRemote::wirelessPlaybackTargetName const):
+        (WebKit::MediaPlayerPrivateRemote::wirelessPlaybackTargetType const):
+        (WebKit::MediaPlayerPrivateRemote::wirelessVideoPlaybackDisabled const):
+        (WebKit::MediaPlayerPrivateRemote::setWirelessVideoPlaybackDisabled):
+        (WebKit::MediaPlayerPrivateRemote::canPlayToWirelessPlaybackTarget const):
+        (WebKit::MediaPlayerPrivateRemote::isCurrentPlaybackTargetWireless const):
+        (WebKit::MediaPlayerPrivateRemote::setWirelessPlaybackTarget):
+        (WebKit::MediaPlayerPrivateRemote::setShouldPlayToPlaybackTarget):
+        (WebKit::MediaPlayerPrivateRemote::canEnterFullscreen const):
+        (WebKit::MediaPlayerPrivateRemote::supportsAcceleratedRendering const):
+        (WebKit::MediaPlayerPrivateRemote::acceleratedRenderingStateChanged):
+        (WebKit::MediaPlayerPrivateRemote::shouldMaintainAspectRatio const):
+        (WebKit::MediaPlayerPrivateRemote::setShouldMaintainAspectRatio):
+        (WebKit::MediaPlayerPrivateRemote::hasSingleSecurityOrigin const):
+        (WebKit::MediaPlayerPrivateRemote::didPassCORSAccessCheck const):
+        (WebKit::MediaPlayerPrivateRemote::wouldTaintOrigin const):
+        (WebKit::MediaPlayerPrivateRemote::movieLoadType const):
+        (WebKit::MediaPlayerPrivateRemote::prepareForRendering):
+        (WebKit::MediaPlayerPrivateRemote::mediaTimeForTimeValue const):
+        (WebKit::MediaPlayerPrivateRemote::maximumDurationToCacheMediaTime const):
+        (WebKit::MediaPlayerPrivateRemote::decodedFrameCount const):
+        (WebKit::MediaPlayerPrivateRemote::droppedFrameCount const):
+        (WebKit::MediaPlayerPrivateRemote::audioDecodedByteCount const):
+        (WebKit::MediaPlayerPrivateRemote::videoDecodedByteCount const):
+        (WebKit::MediaPlayerPrivateRemote::setPrivateBrowsingMode):
+        (WebKit::MediaPlayerPrivateRemote::engineDescription const):
+        (WebKit::MediaPlayerPrivateRemote::audioSourceProvider):
+        (WebKit::MediaPlayerPrivateRemote::createSession):
+        (WebKit::MediaPlayerPrivateRemote::setCDMSession):
+        (WebKit::MediaPlayerPrivateRemote::keyAdded):
+        (WebKit::MediaPlayerPrivateRemote::cdmInstanceAttached):
+        (WebKit::MediaPlayerPrivateRemote::cdmInstanceDetached):
+        (WebKit::MediaPlayerPrivateRemote::attemptToDecryptWithInstance):
+        (WebKit::MediaPlayerPrivateRemote::waitingForKey const):
+        (WebKit::MediaPlayerPrivateRemote::requiresTextTrackRepresentation const):
+        (WebKit::MediaPlayerPrivateRemote::setTextTrackRepresentation):
+        (WebKit::MediaPlayerPrivateRemote::syncTextTrackBounds):
+        (WebKit::MediaPlayerPrivateRemote::tracksChanged):
+        (WebKit::MediaPlayerPrivateRemote::simulateAudioInterruption):
+        (WebKit::MediaPlayerPrivateRemote::beginSimulatedHDCPError):
+        (WebKit::MediaPlayerPrivateRemote::endSimulatedHDCPError):
+        (WebKit::MediaPlayerPrivateRemote::languageOfPrimaryAudioTrack const):
+        (WebKit::MediaPlayerPrivateRemote::extraMemoryCost const):
+        (WebKit::MediaPlayerPrivateRemote::fileSize const):
+        (WebKit::MediaPlayerPrivateRemote::ended const):
+        (WebKit::MediaPlayerPrivateRemote::videoPlaybackQualityMetrics):
+        (WebKit::MediaPlayerPrivateRemote::notifyTrackModeChanged):
+        (WebKit::MediaPlayerPrivateRemote::notifyActiveSourceBuffersChanged):
+        (WebKit::MediaPlayerPrivateRemote::setShouldDisableSleep):
+        (WebKit::MediaPlayerPrivateRemote::applicationWillResignActive):
+        (WebKit::MediaPlayerPrivateRemote::applicationDidBecomeActive):
+        (WebKit::MediaPlayerPrivateRemote::performTaskAtMediaTime):
+        (WebKit::MediaPlayerPrivateRemote::shouldIgnoreIntrinsicSize):
+        (WebKit::MediaPlayerPrivateRemote::logChannel const):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h: Added.
+        * WebProcess/GPU/media/MediaPlayerPrivateRemoteIdentifier.h: Added.
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp: Added.
+        (WebKit::MediaPlayerRemoteFactory::MediaPlayerRemoteFactory):
+        (WebKit::RemoteMediaPlayerManager::RemoteMediaPlayerManager):
+        (WebKit::RemoteMediaPlayerManager::~RemoteMediaPlayerManager):
+        (WebKit::RemoteMediaPlayerManager::supplementName):
+        (WebKit::RemoteMediaPlayerManager::initialize):
+        (WebKit::RemoteMediaPlayerManager::createRemoteMediaPlayer):
+        (WebKit::RemoteMediaPlayerManager::getSupportedTypes):
+        (WebKit::RemoteMediaPlayerManager::supportsTypeAndCodecs):
+        (WebKit::RemoteMediaPlayerManager::supportsKeySystem):
+        (WebKit::RemoteMediaPlayerManager::originsInMediaCache):
+        (WebKit::RemoteMediaPlayerManager::clearMediaCache):
+        (WebKit::RemoteMediaPlayerManager::clearMediaCacheForOrigins):
+        (WebKit::RemoteMediaPlayerManager::networkStateChanged):
+        (WebKit::RemoteMediaPlayerManager::updatePreferences):
+        (WebKit::RemoteMediaPlayerManager::gpuProcessConnection const):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.h: Added.
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.messages.in: Added.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebProcess.cpp:
+
 2019-12-13  Jim Mason  <jmason@ibinx.com>
 
         [GTK] WebKitGTK build hangs on g-ir-scanner

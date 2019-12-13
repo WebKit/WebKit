@@ -464,14 +464,37 @@ bool MediaPlayerPrivateGStreamer::isAvailable()
     return factory;
 }
 
+class MediaPlayerFactoryGStreamer final : public MediaPlayerFactory {
+private:
+    MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::GStreamer; };
+
+    std::unique_ptr<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final
+    {
+        return makeUnique<MediaPlayerPrivateGStreamer>(player);
+    }
+
+    void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types) const final
+    {
+        return MediaPlayerPrivateGStreamer::getSupportedTypes(types);
+    }
+
+    MediaPlayer::SupportsType supportsTypeAndCodecs(const MediaEngineSupportParameters& parameters) const final
+    {
+        return MediaPlayerPrivateGStreamer::supportsType(parameters);
+    }
+
+    bool supportsKeySystem(const String& keySystem, const String& mimeType) const final
+    {
+        return MediaPlayerPrivateGStreamer::supportsKeySystem(keySystem, mimeType);
+    }
+};
+
 void MediaPlayerPrivateGStreamer::registerMediaEngine(MediaEngineRegistrar registrar)
 {
     initializeDebugCategory();
 
-    if (isAvailable()) {
-        registrar([](MediaPlayer* player) { return makeUnique<MediaPlayerPrivateGStreamer>(player); },
-            getSupportedTypes, supportsType, nullptr, nullptr, nullptr, supportsKeySystem);
-    }
+    if (isAvailable())
+        registrar(makeUnique<MediaPlayerFactoryGStreamer>());
 }
 
 void MediaPlayerPrivateGStreamer::loadFull(const String& urlString, const String& pipelineName)

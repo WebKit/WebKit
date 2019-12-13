@@ -98,6 +98,7 @@ public:
 #endif
 
 private:
+    friend class MediaPlayerFactoryHolePunch;
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,14 +90,6 @@
 
 namespace WebCore {
 
-#if !RELEASE_LOG_DISABLED
-static RefPtr<Logger>& nullLogger()
-{
-    static NeverDestroyed<RefPtr<Logger>> logger;
-    return logger;
-}
-#endif
-
 // a null player to make MediaPlayer logic simpler
 
 class NullMediaPlayerPrivate final : public MediaPlayerPrivateInterface {
@@ -166,8 +158,22 @@ public:
     bool hasSingleSecurityOrigin() const final { return true; }
 };
 
+#if !RELEASE_LOG_DISABLED
+static RefPtr<Logger>& nullLogger()
+{
+    static NeverDestroyed<RefPtr<Logger>> logger;
+    return logger;
+}
+#endif
+
+static const Vector<WebCore::ContentType>& nullContentTypeVector()
+{
+    static NeverDestroyed<Vector<WebCore::ContentType>> vector;
+    return vector;
+}
+
 class NullMediaPlayerClient : public MediaPlayerClient {
-public:
+private:
 #if !RELEASE_LOG_DISABLED
     const Logger& mediaPlayerLogger() final
     {
@@ -179,7 +185,10 @@ public:
         return *nullLogger().get();
     }
 #endif
+
+    const Vector<WebCore::ContentType>& mediaContentTypesRequiringHardwareSupport() const final { return nullContentTypeVector(); }
 };
+
 
 const Vector<ContentType>& MediaPlayerClient::mediaContentTypesRequiringHardwareSupport() const
 {
@@ -195,17 +204,7 @@ static MediaPlayerClient& nullMediaPlayerClient()
 
 // engine support
 
-struct MediaPlayerFactory {
-    CreateMediaEnginePlayer constructor;
-    MediaEngineSupportedTypes getSupportedTypes;
-    MediaEngineSupportsType supportsTypeAndCodecs;
-    MediaEngineOriginsInMediaCache originsInMediaCache;
-    MediaEngineClearMediaCache clearMediaCache;
-    MediaEngineClearMediaCacheForOrigins clearMediaCacheForOrigins;
-    MediaEngineSupportsKeySystem supportsKeySystem;
-};
-
-static void addMediaEngine(CreateMediaEnginePlayer&&, MediaEngineSupportedTypes, MediaEngineSupportsType, MediaEngineOriginsInMediaCache, MediaEngineClearMediaCache, MediaEngineClearMediaCacheForOrigins, MediaEngineSupportsKeySystem);
+static void addMediaEngine(std::unique_ptr<MediaPlayerFactory>&&);
 
 static Lock mediaEngineVectorLock;
 
@@ -215,10 +214,21 @@ static bool& haveMediaEnginesVector()
     return haveVector;
 }
 
-static Vector<MediaPlayerFactory>& mutableInstalledMediaEnginesVector()
+static Vector<std::unique_ptr<MediaPlayerFactory>>& mutableInstalledMediaEnginesVector()
 {
-    static NeverDestroyed<Vector<MediaPlayerFactory>> installedEngines;
+    static NeverDestroyed<Vector<std::unique_ptr<MediaPlayerFactory>>> installedEngines;
     return installedEngines;
+}
+
+static RemoteMediaPlayerSupport::RegisterRemotePlayerCallback& registerRemotePlayerCallback()
+{
+    static NeverDestroyed<RemoteMediaPlayerSupport::RegisterRemotePlayerCallback> callback;
+    return callback;
+}
+
+void RemoteMediaPlayerSupport::setRegisterRemotePlayerCallback(RegisterRemotePlayerCallback&& callback)
+{
+    registerRemotePlayerCallback() = WTFMove(callback);
 }
 
 static void buildMediaEnginesVector()
@@ -226,10 +236,15 @@ static void buildMediaEnginesVector()
     ASSERT(mediaEngineVectorLock.isLocked());
 
 #if USE(AVFOUNDATION)
+
     if (DeprecatedGlobalSettings::isAVFoundationEnabled()) {
 
+        auto& registerRemoteEngine = registerRemotePlayerCallback();
 #if PLATFORM(COCOA)
-        MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(addMediaEngine);
+        if (registerRemoteEngine)
+            registerRemoteEngine(addMediaEngine, MediaPlayerEnums::MediaEngineIdentifier::AVFoundation);
+        else
+            MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(addMediaEngine);
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
@@ -265,7 +280,7 @@ static void buildMediaEnginesVector()
     haveMediaEnginesVector() = true;
 }
 
-static const Vector<MediaPlayerFactory>& installedMediaEngines()
+static const Vector<std::unique_ptr<MediaPlayerFactory>>& installedMediaEngines()
 {
     {
         auto locker = holdLock(mediaEngineVectorLock);
@@ -276,14 +291,9 @@ static const Vector<MediaPlayerFactory>& installedMediaEngines()
     return mutableInstalledMediaEnginesVector();
 }
 
-static void addMediaEngine(CreateMediaEnginePlayer&& constructor, MediaEngineSupportedTypes getSupportedTypes, MediaEngineSupportsType supportsType,
-    MediaEngineOriginsInMediaCache originsInMediaCache, MediaEngineClearMediaCache clearMediaCache, MediaEngineClearMediaCacheForOrigins clearMediaCacheForOrigins, MediaEngineSupportsKeySystem supportsKeySystem)
+static void addMediaEngine(std::unique_ptr<MediaPlayerFactory>&& factory)
 {
-    ASSERT(constructor);
-    ASSERT(getSupportedTypes);
-    ASSERT(supportsType);
-
-    mutableInstalledMediaEnginesVector().append(MediaPlayerFactory { WTFMove(constructor), getSupportedTypes, supportsType, originsInMediaCache, clearMediaCache, clearMediaCacheForOrigins, supportsKeySystem });
+    mutableInstalledMediaEnginesVector().append(WTFMove(factory));
 }
 
 static const AtomString& applicationOctetStream()
@@ -296,6 +306,21 @@ static const AtomString& textPlain()
 {
     static NeverDestroyed<const AtomString> textPlain("text/plain", AtomString::ConstructFromLiteral);
     return textPlain;
+}
+
+const MediaPlayerFactory* MediaPlayer::mediaEngine(MediaPlayerEnums::MediaEngineIdentifier identifier)
+{
+    auto& engines = installedMediaEngines();
+    auto currentIndex = engines.findMatching([identifier] (auto& engine) {
+        return engine->identifier() == identifier;
+    });
+
+    if (currentIndex == notFound) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    return engines[currentIndex].get();
 }
 
 static const MediaPlayerFactory* bestMediaEngineForSupportParameters(const MediaEngineSupportParameters& parameters, const MediaPlayerFactory* current = nullptr)
@@ -315,34 +340,46 @@ static const MediaPlayerFactory* bestMediaEngineForSupportParameters(const Media
     MediaPlayer::SupportsType supported = MediaPlayer::SupportsType::IsNotSupported;
     for (auto& engine : installedMediaEngines()) {
         if (current) {
-            if (current == &engine)
+            if (current == engine.get())
                 current = nullptr;
             continue;
         }
-        MediaPlayer::SupportsType engineSupport = engine.supportsTypeAndCodecs(parameters);
+        MediaPlayer::SupportsType engineSupport = engine->supportsTypeAndCodecs(parameters);
         if (engineSupport > supported) {
             supported = engineSupport;
-            foundEngine = &engine;
+            foundEngine = engine.get();
         }
     }
 
     return foundEngine;
 }
 
-static const MediaPlayerFactory* nextMediaEngine(const MediaPlayerFactory* current)
+const MediaPlayerFactory* MediaPlayer::nextMediaEngine(const MediaPlayerFactory* current)
 {
+    if (m_activeEngineIdentifier) {
+        auto* engine = mediaEngine(m_activeEngineIdentifier.value());
+        return current != engine ? engine : nullptr;
+    }
+
     auto& engines = installedMediaEngines();
     if (engines.isEmpty())
         return nullptr;
 
     if (!current) 
-        return &engines.first();
+        return engines.first().get();
 
-    size_t currentIndex = current - &engines.first();
+    auto currentIndex = engines.findMatching([current] (auto& engine) {
+        return engine.get() == current;
+    });
+    if (currentIndex == notFound) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
     if (currentIndex + 1 >= engines.size())
         return nullptr;
 
-    return &engines[currentIndex + 1];
+    return engines[currentIndex + 1].get();
 }
 
 // media player
@@ -352,10 +389,23 @@ Ref<MediaPlayer> MediaPlayer::create(MediaPlayerClient& client)
     return adoptRef(*new MediaPlayer(client));
 }
 
+Ref<MediaPlayer> MediaPlayer::create(MediaPlayerClient& client, MediaPlayerEnums::MediaEngineIdentifier mediaEngineIdentifier)
+{
+    return adoptRef(*new MediaPlayer(client, mediaEngineIdentifier));
+}
+
 MediaPlayer::MediaPlayer(MediaPlayerClient& client)
     : m_client(&client)
     , m_reloadTimer(*this, &MediaPlayer::reloadTimerFired)
     , m_private(makeUnique<NullMediaPlayerPrivate>(this))
+{
+}
+
+MediaPlayer::MediaPlayer(MediaPlayerClient& client, MediaPlayerEnums::MediaEngineIdentifier mediaEngineIdentifier)
+    : m_client(&client)
+    , m_reloadTimer(*this, &MediaPlayer::reloadTimerFired)
+    , m_private(makeUnique<NullMediaPlayerPrivate>(this))
+    , m_activeEngineIdentifier(mediaEngineIdentifier)
 {
 }
 
@@ -441,7 +491,7 @@ bool MediaPlayer::load(MediaStreamPrivate& mediaStream)
 }
 #endif
 
-const MediaPlayerFactory* MediaPlayer::nextBestMediaEngine(const MediaPlayerFactory* current) const
+const MediaPlayerFactory* MediaPlayer::nextBestMediaEngine(const MediaPlayerFactory* current)
 {
     MediaEngineSupportParameters parameters;
     parameters.type = m_contentType;
@@ -452,6 +502,17 @@ const MediaPlayerFactory* MediaPlayer::nextBestMediaEngine(const MediaPlayerFact
 #if ENABLE(MEDIA_STREAM)
     parameters.isMediaStream = !!m_mediaStream;
 #endif
+
+    if (m_activeEngineIdentifier) {
+        if (current)
+            return nullptr;
+
+        auto* engine = mediaEngine(m_activeEngineIdentifier.value());
+        if (engine && engine->supportsTypeAndCodecs(parameters) != SupportsType::IsNotSupported)
+            return engine;
+
+        return nullptr;
+    }
 
     return bestMediaEngineForSupportParameters(parameters, current);
 }
@@ -489,13 +550,15 @@ void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
         m_private = nullptr;
     } else if (m_currentMediaEngine != engine) {
         m_currentMediaEngine = engine;
-        m_private = engine->constructor(this);
-        client().mediaPlayerEngineUpdated();
-        m_private->setPrivateBrowsingMode(m_privateBrowsing);
-        m_private->setPreload(m_preload);
-        m_private->setPreservesPitch(preservesPitch());
-        if (m_shouldPrepareToRender)
-            m_private->prepareForRendering();
+        m_private = engine->createMediaEnginePlayer(this);
+        if (m_private) {
+            client().mediaPlayerEngineUpdated();
+            m_private->setPrivateBrowsingMode(m_privateBrowsing);
+            m_private->setPreload(m_preload);
+            m_private->setPreservesPitch(preservesPitch());
+            if (m_shouldPrepareToRender)
+                m_private->prepareForRendering();
+        }
     }
 
     if (m_private) {
@@ -512,8 +575,12 @@ void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
         m_private->load(m_url.string());
     } else {
         m_private = makeUnique<NullMediaPlayerPrivate>(this);
-        client().mediaPlayerEngineUpdated();
-        client().mediaPlayerResourceNotSupported();
+        if (!m_activeEngineIdentifier && installedMediaEngines().size() > 1 && nextBestMediaEngine(m_currentMediaEngine))
+            m_reloadTimer.startOneShot(0_s);
+        else {
+            client().mediaPlayerEngineUpdated();
+            client().mediaPlayerResourceNotSupported();
+        }
     }
 
     m_initializingMediaEngine = false;
@@ -929,7 +996,7 @@ void MediaPlayer::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& t
 {
     for (auto& engine : installedMediaEngines()) {
         HashSet<String, ASCIICaseInsensitiveHash> engineTypes;
-        engine.getSupportedTypes(engineTypes);
+        engine->getSupportedTypes(engineTypes);
         types.add(engineTypes.begin(), engineTypes.end());
     }
 } 
@@ -1125,34 +1192,28 @@ static void addToHash(HashSet<T>& toHash, HashSet<T>&& fromHash)
 HashSet<RefPtr<SecurityOrigin>> MediaPlayer::originsInMediaCache(const String& path)
 {
     HashSet<RefPtr<SecurityOrigin>> origins;
-    for (auto& engine : installedMediaEngines()) {
-        if (!engine.originsInMediaCache)
-            continue;
-        addToHash(origins, engine.originsInMediaCache(path));
-    }
+    for (auto& engine : installedMediaEngines())
+        addToHash(origins, engine->originsInMediaCache(path));
+
     return origins;
 }
 
 void MediaPlayer::clearMediaCache(const String& path, WallTime modifiedSince)
 {
-    for (auto& engine : installedMediaEngines()) {
-        if (engine.clearMediaCache)
-            engine.clearMediaCache(path, modifiedSince);
-    }
+    for (auto& engine : installedMediaEngines())
+        engine->clearMediaCache(path, modifiedSince);
 }
 
 void MediaPlayer::clearMediaCacheForOrigins(const String& path, const HashSet<RefPtr<SecurityOrigin>>& origins)
 {
-    for (auto& engine : installedMediaEngines()) {
-        if (engine.clearMediaCacheForOrigins)
-            engine.clearMediaCacheForOrigins(path, origins);
-    }
+    for (auto& engine : installedMediaEngines())
+        engine->clearMediaCacheForOrigins(path, origins);
 }
 
 bool MediaPlayer::supportsKeySystem(const String& keySystem, const String& mimeType)
 {
     for (auto& engine : installedMediaEngines()) {
-        if (engine.supportsKeySystem && engine.supportsKeySystem(keySystem, mimeType))
+        if (engine->supportsKeySystem(keySystem, mimeType))
             return true;
     }
     return false;
@@ -1172,7 +1233,7 @@ void MediaPlayer::networkStateChanged()
     // let the next engine try.
     if (m_private->networkState() >= MediaPlayer::NetworkState::FormatError && m_private->readyState() < MediaPlayer::ReadyState::HaveMetadata) {
         client().mediaPlayerEngineFailedToLoad();
-        if (installedMediaEngines().size() > 1 && (m_contentType.isEmpty() || nextBestMediaEngine(m_currentMediaEngine))) {
+        if (!m_activeEngineIdentifier && installedMediaEngines().size() > 1 && (m_contentType.isEmpty() || nextBestMediaEngine(m_currentMediaEngine))) {
             m_reloadTimer.startOneShot(0_s);
             return;
         }

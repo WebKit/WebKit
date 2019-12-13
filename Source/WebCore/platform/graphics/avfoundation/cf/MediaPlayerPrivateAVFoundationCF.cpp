@@ -342,11 +342,37 @@ static dispatch_queue_t globalLoaderDelegateQueue()
 }
 #endif
 
+class MediaPlayerFactoryAVFoundationCF final : public MediaPlayerFactory {
+private:
+    MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::AVFoundationCF; };
+
+    std::unique_ptr<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final
+    {
+        return makeUnique<MediaPlayerPrivateAVFoundationCF>(player);
+    }
+
+    void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types) const final
+    {
+        return MediaPlayerPrivateAVFoundationCF::getSupportedTypes(types);
+    }
+
+    MediaPlayer::SupportsType supportsTypeAndCodecs(const MediaEngineSupportParameters& parameters) const final
+    {
+        return MediaPlayerPrivateAVFoundationCF::supportsType(parameters);
+    }
+
+    bool supportsKeySystem(const String& keySystem, const String& mimeType) const final
+    {
+        return MediaPlayerPrivateAVFoundationCF::supportsKeySystem(keySystem, mimeType);
+    }
+};
+
 void MediaPlayerPrivateAVFoundationCF::registerMediaEngine(MediaEngineRegistrar registrar)
 {
-    if (isAvailable())
-        registrar([](MediaPlayer* player) { return makeUnique<MediaPlayerPrivateAVFoundationCF>(player); },
-            getSupportedTypes, supportsType, 0, 0, 0, supportsKeySystem);
+    if (!isAvailable())
+        return;
+
+    registrar(makeUnique<MediaPlayerFactoryAVFoundationCF>());
 }
 
 MediaPlayerPrivateAVFoundationCF::MediaPlayerPrivateAVFoundationCF(MediaPlayer* player)

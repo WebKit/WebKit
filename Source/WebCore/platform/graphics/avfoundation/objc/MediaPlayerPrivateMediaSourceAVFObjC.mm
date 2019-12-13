@@ -196,14 +196,34 @@ MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
 #pragma mark -
 #pragma mark MediaPlayer Factory Methods
 
+class MediaPlayerFactoryMediaSourceAVFObjC final : public MediaPlayerFactory {
+private:
+    MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMSE; };
+
+    std::unique_ptr<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final
+    {
+        return makeUnique<MediaPlayerPrivateMediaSourceAVFObjC>(player);        
+    }
+
+    void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types) const final
+    {
+        return MediaPlayerPrivateMediaSourceAVFObjC::getSupportedTypes(types);
+    }
+
+    MediaPlayer::SupportsType supportsTypeAndCodecs(const MediaEngineSupportParameters& parameters) const final
+    {
+        return MediaPlayerPrivateMediaSourceAVFObjC::supportsType(parameters);
+    }
+};
+
 void MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine(MediaEngineRegistrar registrar)
 {
     if (!isAvailable())
         return;
 
-    registrar([](MediaPlayer* player) { return makeUnique<MediaPlayerPrivateMediaSourceAVFObjC>(player); },
-        getSupportedTypes, supportsType, 0, 0, 0, 0);
     ASSERT(AVAssetMIMETypeCache::singleton().isAvailable());
+
+    registrar(makeUnique<MediaPlayerFactoryMediaSourceAVFObjC>());
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::isAvailable()

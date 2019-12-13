@@ -164,6 +164,10 @@
 #include <JavaScriptCore/RemoteInspector.h>
 #endif
 
+#if ENABLE(GPU_PROCESS)
+#include "RemoteMediaPlayerManager.h"
+#endif
+
 // This should be less than plugInAutoStartExpirationTimeThreshold in PlugInAutoStartProvider.
 static const Seconds plugInAutoStartExpirationTimeUpdateThreshold { 29 * 24 * 60 * 60 };
 
@@ -221,7 +225,11 @@ WebProcess::WebProcess()
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     addSupplement<UserMediaCaptureManager>();
 #endif
-    
+
+#if ENABLE(GPU_PROCESS)
+    addSupplement<RemoteMediaPlayerManager>();
+#endif
+
     Gigacage::forbidDisablingPrimitiveGigacage();
 }
 

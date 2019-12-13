@@ -67,6 +67,7 @@ class InbandTextTrackPrivate;
 class LegacyCDMSessionClient;
 class MediaPlaybackTarget;
 class MediaPlayer;
+class MediaPlayerFactory;
 class MediaPlayerPrivateInterface;
 class MediaPlayerRequestInstallMissingPluginsCallback;
 class MediaSourcePrivateClient;
@@ -76,7 +77,6 @@ class TextTrackRepresentation;
 
 struct Cookie;
 struct GraphicsDeviceAdapter;
-struct MediaPlayerFactory;
 
 struct MediaEngineSupportParameters {
     ContentType type;
@@ -84,6 +84,46 @@ struct MediaEngineSupportParameters {
     bool isMediaSource { false };
     bool isMediaStream { false };
     Vector<ContentType> contentTypesRequiringHardwareSupport;
+
+    template<class Encoder>
+    void encode(Encoder& encoder) const
+    {
+        encoder << type;
+        encoder << url;
+        encoder << isMediaSource;
+        encoder << contentTypesRequiringHardwareSupport;
+    }
+
+    template <class Decoder>
+    static Optional<MediaEngineSupportParameters> decode(Decoder& decoder)
+    {
+        Optional<ContentType> type;
+        decoder >> type;
+        if (!type)
+            return WTF::nullopt;
+
+        Optional<URL> url;
+        decoder >> url;
+        if (!url)
+            return WTF::nullopt;
+
+        Optional<bool> isMediaSource;
+        decoder >> isMediaSource;
+        if (!isMediaSource)
+            return WTF::nullopt;
+
+        Optional<bool> isMediaStream;
+        decoder >> isMediaStream;
+        if (!isMediaStream)
+            return WTF::nullopt;
+
+        Optional<Vector<ContentType>> typesRequiringHardware;
+        decoder >> typesRequiringHardware;
+        if (!typesRequiringHardware)
+            return WTF::nullopt;
+
+        return {{ WTFMove(*type), WTFMove(*url), WTFMove(*isMediaSource), WTFMove(*isMediaStream), WTFMove(*typesRequiringHardware) }};
+    }
 };
 
 struct VideoPlaybackQualityMetrics {
@@ -235,7 +275,7 @@ public:
 #endif
 
     virtual bool mediaPlayerShouldDisableSleep() const { return false; }
-    virtual const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const;
+    virtual const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const = 0;
     virtual bool mediaPlayerShouldCheckHardwareSupport() const { return false; }
 
 #if !RELEASE_LOG_DISABLED
@@ -244,15 +284,18 @@ public:
 #endif
 };
 
-class MediaPlayer : public MediaPlayerEnums, public RefCounted<MediaPlayer> {
+class WEBCORE_EXPORT MediaPlayer : public MediaPlayerEnums, public RefCounted<MediaPlayer> {
     WTF_MAKE_NONCOPYABLE(MediaPlayer); WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<MediaPlayer> create(MediaPlayerClient&);
+    static Ref<MediaPlayer> create(MediaPlayerClient&, MediaPlayerEnums::MediaEngineIdentifier);
     virtual ~MediaPlayer();
 
     void invalidate();
 
     // Media engine support.
+    using MediaPlayerEnums::SupportsType;
+    static const MediaPlayerFactory* mediaEngine(MediaPlayerEnums::MediaEngineIdentifier);
     static SupportsType supportsType(const MediaEngineSupportParameters&);
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
     static bool isAvailable();
@@ -531,11 +574,11 @@ public:
     static void resetMediaEngines();
 
 #if USE(GSTREAMER)
-    WEBCORE_EXPORT void simulateAudioInterruption();
+    void simulateAudioInterruption();
 #endif
 
-    WEBCORE_EXPORT void beginSimulatedHDCPError();
-    WEBCORE_EXPORT void endSimulatedHDCPError();
+    void beginSimulatedHDCPError();
+    void endSimulatedHDCPError();
 
     String languageOfPrimaryAudioTrack() const;
 
@@ -570,7 +613,7 @@ public:
     void applicationDidBecomeActive();
 
 #if USE(AVFOUNDATION)
-    WEBCORE_EXPORT AVPlayer *objCAVFoundationAVPlayer() const;
+    AVPlayer *objCAVFoundationAVPlayer() const;
 #endif
 
     bool performTaskAtMediaTime(WTF::Function<void()>&&, MediaTime);
@@ -595,11 +638,13 @@ public:
 
 private:
     MediaPlayer(MediaPlayerClient&);
+    MediaPlayer(MediaPlayerClient&, MediaPlayerEnums::MediaEngineIdentifier);
 
     MediaPlayerClient& client() const { return *m_client; }
 
-    const MediaPlayerFactory* nextBestMediaEngine(const MediaPlayerFactory*) const;
+    const MediaPlayerFactory* nextBestMediaEngine(const MediaPlayerFactory*);
     void loadWithNextMediaEngine(const MediaPlayerFactory*);
+    const MediaPlayerFactory* nextMediaEngine(const MediaPlayerFactory*);
     void reloadTimerFired();
 
     MediaPlayerClient* m_client;
@@ -609,6 +654,7 @@ private:
     URL m_url;
     ContentType m_contentType;
     String m_keySystem;
+    Optional<MediaPlayerEnums::MediaEngineIdentifier> m_activeEngineIdentifier;
     IntSize m_size;
     Preload m_preload { Preload::Auto };
     double m_volume { 1 };
@@ -628,22 +674,37 @@ private:
 #endif
 };
 
-using CreateMediaEnginePlayer = WTF::Function<std::unique_ptr<MediaPlayerPrivateInterface> (MediaPlayer*)>;
-typedef void (*MediaEngineSupportedTypes)(HashSet<String, ASCIICaseInsensitiveHash>& types);
-typedef MediaPlayer::SupportsType (*MediaEngineSupportsType)(const MediaEngineSupportParameters& parameters);
-typedef HashSet<RefPtr<SecurityOrigin>> (*MediaEngineOriginsInMediaCache)(const String& path);
-typedef void (*MediaEngineClearMediaCache)(const String& path, WallTime modifiedSince);
-typedef void (*MediaEngineClearMediaCacheForOrigins)(const String& path, const HashSet<RefPtr<SecurityOrigin>>&);
-typedef bool (*MediaEngineSupportsKeySystem)(const String& keySystem, const String& mimeType);
+class MediaPlayerFactory {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    MediaPlayerFactory() = default;
+    virtual ~MediaPlayerFactory() = default;
 
-typedef void (*MediaEngineRegistrar)(CreateMediaEnginePlayer&&, MediaEngineSupportedTypes, MediaEngineSupportsType,
-    MediaEngineOriginsInMediaCache, MediaEngineClearMediaCache, MediaEngineClearMediaCacheForOrigins, MediaEngineSupportsKeySystem);
-typedef void (*MediaEngineRegister)(MediaEngineRegistrar);
+    virtual MediaPlayerEnums::MediaEngineIdentifier identifier() const  = 0;
+    virtual std::unique_ptr<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer*) const = 0;
+    virtual void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&) const = 0;
+    virtual MediaPlayer::SupportsType supportsTypeAndCodecs(const MediaEngineSupportParameters&) const = 0;
+
+    virtual HashSet<RefPtr<SecurityOrigin>> originsInMediaCache(const String&) const { return { }; }
+    virtual void clearMediaCache(const String&, WallTime) const { }
+    virtual void clearMediaCacheForOrigins(const String&, const HashSet<RefPtr<SecurityOrigin>>&) const { }
+    virtual bool supportsKeySystem(const String& /* keySystem */, const String& /* mimeType */) const { return false; }
+};
+
+using MediaEngineRegistrar = void(std::unique_ptr<MediaPlayerFactory>&&);
+using MediaEngineRegister = void(MediaEngineRegistrar);
 
 class MediaPlayerFactorySupport {
 public:
     WEBCORE_EXPORT static void callRegisterMediaEngine(MediaEngineRegister);
 };
+
+class RemoteMediaPlayerSupport {
+public:
+    using RegisterRemotePlayerCallback = WTF::Function<void(MediaEngineRegistrar, MediaPlayerEnums::MediaEngineIdentifier)>;
+    WEBCORE_EXPORT static void setRegisterRemotePlayerCallback(RegisterRemotePlayerCallback&&);
+};
+
 
 } // namespace WebCore
 

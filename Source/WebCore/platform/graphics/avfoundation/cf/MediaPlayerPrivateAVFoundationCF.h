@@ -61,6 +61,7 @@ public:
     static void registerMediaEngine(MediaEngineRegistrar);
 
 private:
+    friend class MediaPlayerFactoryAVFoundationCF;
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
     static bool supportsKeySystem(const String& keySystem, const String& mimeType);

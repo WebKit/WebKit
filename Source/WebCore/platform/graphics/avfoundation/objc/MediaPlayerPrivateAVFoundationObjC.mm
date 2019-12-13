@@ -273,14 +273,54 @@ static dispatch_queue_t globalPullDelegateQueue()
 }
 #endif
 
+class MediaPlayerFactoryAVFoundationObjC final : public MediaPlayerFactory {
+private:
+    MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::AVFoundation; };
+
+    std::unique_ptr<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final
+    {
+        return makeUnique<MediaPlayerPrivateAVFoundationObjC>(player);
+    }
+
+    void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types) const final
+    {
+        return MediaPlayerPrivateAVFoundationObjC::getSupportedTypes(types);
+    }
+
+    MediaPlayer::SupportsType supportsTypeAndCodecs(const MediaEngineSupportParameters& parameters) const final
+    {
+        return MediaPlayerPrivateAVFoundationObjC::supportsType(parameters);
+    }
+
+    HashSet<RefPtr<SecurityOrigin>> originsInMediaCache(const String& path) const final
+    {
+        return MediaPlayerPrivateAVFoundationObjC::originsInMediaCache(path);
+    }
+
+    void clearMediaCache(const String& path, WallTime modifiedSince) const final
+    {
+        return MediaPlayerPrivateAVFoundationObjC::clearMediaCache(path, modifiedSince);
+    }
+
+    void clearMediaCacheForOrigins(const String& path, const HashSet<RefPtr<SecurityOrigin>>& origins) const final
+    {
+        return MediaPlayerPrivateAVFoundationObjC::clearMediaCacheForOrigins(path, origins);
+    }
+
+    bool supportsKeySystem(const String& keySystem, const String& mimeType) const final
+    {
+        return MediaPlayerPrivateAVFoundationObjC::supportsKeySystem(keySystem, mimeType);
+    }
+};
+
 void MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(MediaEngineRegistrar registrar)
 {
     if (!isAvailable())
         return;
 
-    registrar([](MediaPlayer* player) { return makeUnique<MediaPlayerPrivateAVFoundationObjC>(player); },
-            getSupportedTypes, supportsType, originsInMediaCache, clearMediaCache, clearMediaCacheForOrigins, supportsKeySystem);
     ASSERT(AVAssetMIMETypeCache::singleton().isAvailable());
+
+    registrar(makeUnique<MediaPlayerFactoryAVFoundationObjC>());
 }
 
 static AVAssetCache *assetCacheForPath(const String& path)

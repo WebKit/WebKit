@@ -87,6 +87,18 @@ public:
         MakeResourcesPurgeable,
         PurgeResources,
     };
+
+    enum class MediaEngineIdentifier : uint8_t {
+        AVFoundation,
+        AVFoundationMSE,
+        AVFoundationMediaStream,
+        AVFoundationCF,
+        GStreamer,
+        GStreamerMSE,
+        HolePunch,
+        MediaFoundation,
+        MockMSE,
+    };
 };
 
 WTF::String convertEnumerationToString(MediaPlayerEnums::ReadyState);
@@ -139,7 +151,6 @@ template<> struct EnumTraits<WebCore::MediaPlayerEnums::NetworkState> {
         WebCore::MediaPlayerEnums::NetworkState::DecodeError
     >;
 };
-
 
 template<> struct EnumTraits<WebCore::MediaPlayerEnums::ReadyState> {
     using values = EnumValues<
@@ -196,6 +207,20 @@ template<> struct EnumTraits<WebCore::MediaPlayerEnums::BufferingPolicy> {
         WebCore::MediaPlayerEnums::BufferingPolicy::LimitReadAhead,
         WebCore::MediaPlayerEnums::BufferingPolicy::MakeResourcesPurgeable,
         WebCore::MediaPlayerEnums::BufferingPolicy::PurgeResources
+        >;
+    };
+
+template<> struct EnumTraits<WebCore::MediaPlayerEnums::MediaEngineIdentifier> {
+    using values = EnumValues<
+        WebCore::MediaPlayerEnums::MediaEngineIdentifier,
+        WebCore::MediaPlayerEnums::MediaEngineIdentifier::AVFoundation,
+        WebCore::MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMSE,
+        WebCore::MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMediaStream,
+        WebCore::MediaPlayerEnums::MediaEngineIdentifier::GStreamer,
+        WebCore::MediaPlayerEnums::MediaEngineIdentifier::GStreamerMSE,
+        WebCore::MediaPlayerEnums::MediaEngineIdentifier::HolePunch,
+        WebCore::MediaPlayerEnums::MediaEngineIdentifier::MediaFoundation,
+        WebCore::MediaPlayerEnums::MediaEngineIdentifier::MockMSE
     >;
 };
 

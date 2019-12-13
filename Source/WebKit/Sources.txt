@@ -500,6 +500,8 @@ WebProcess/MediaStream/MediaDeviceSandboxExtensions.cpp
 WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp
 
 WebProcess/GPU/GPUProcessConnection.cpp
+WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp
+WebProcess/GPU/media/RemoteMediaPlayerManager.cpp
 
 WebProcess/Network/NetworkProcessConnection.cpp
 WebProcess/Network/WebLoaderStrategy.cpp

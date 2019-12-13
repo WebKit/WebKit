@@ -114,6 +114,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/PluginProxyMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteLayerTreeDrawingAreaProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteLayerTreeDrawingAreaProxyMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaPlayerManagerMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaPlayerManagerMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaPlayerManagerMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaPlayerManagerProxyMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaPlayerManagerProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteMediaPlayerManagerProxyMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteObjectRegistryMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteObjectRegistryMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/RemoteObjectRegistryMessagesReplies.h

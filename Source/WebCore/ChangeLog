@@ -1,3 +1,107 @@
+2019-12-13  Eric Carlson  <eric.carlson@apple.com>
+
+        Add infrastructure needed for playing media player in the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=205094
+        <rdar://problem/57815393>
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, no functional change yet.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/ContentType.h:
+        (WebCore::ContentType::encode const):
+        (WebCore::ContentType::decode):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::nullLogger):
+        (WebCore::nullContentTypeVector):
+        (WebCore::mutableInstalledMediaEnginesVector):
+        (WebCore::registerRemotePlayerCallback):
+        (WebCore::RemoteMediaPlayerSupport::setRegisterRemotePlayerCallback):
+        (WebCore::buildMediaEnginesVector):
+        (WebCore::installedMediaEngines):
+        (WebCore::addMediaEngine):
+        (WebCore::MediaPlayer::mediaEngine):
+        (WebCore::bestMediaEngineForSupportParameters):
+        (WebCore::MediaPlayer::nextMediaEngine):
+        (WebCore::MediaPlayer::create):
+        (WebCore::MediaPlayer::MediaPlayer):
+        (WebCore::MediaPlayer::nextBestMediaEngine):
+        (WebCore::MediaPlayer::loadWithNextMediaEngine):
+        (WebCore::MediaPlayer::getSupportedTypes):
+        (WebCore::MediaPlayer::originsInMediaCache):
+        (WebCore::MediaPlayer::clearMediaCache):
+        (WebCore::MediaPlayer::clearMediaCacheForOrigins):
+        (WebCore::MediaPlayer::supportsKeySystem):
+        (WebCore::MediaPlayer::networkStateChanged):
+        (WebCore::nextMediaEngine): Deleted.
+        (WebCore::MediaPlayer::nextBestMediaEngine const): Deleted.
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaEngineSupportParameters::encode const):
+        (WebCore::MediaEngineSupportParameters::decode):
+        (WebCore::MediaPlayerFactory::~MediaPlayerFactory):
+        (WebCore::MediaPlayerFactory::originsInMediaCache const):
+        (WebCore::MediaPlayerFactory::clearMediaCache const):
+        (WebCore::MediaPlayerFactory::clearMediaCacheForOrigins const):
+        (WebCore::MediaPlayerFactory::supportsKeySystem const):
+        (WebCore::MediaPlayer::setVideoFullscreenLayer): Deleted.
+        (WebCore::MediaPlayer::size const): Deleted.
+        (WebCore::MediaPlayer::invalidTime): Deleted.
+        (WebCore::MediaPlayer::platformVolumeConfigurationRequired const): Deleted.
+        (WebCore::MediaPlayer::contentMIMEType const): Deleted.
+        (WebCore::MediaPlayer::contentTypeCodecs const): Deleted.
+        (WebCore::MediaPlayer::contentMIMETypeWasInferredFromExtension const): Deleted.
+        (WebCore::MediaPlayer::mediaPlayerLogIdentifier): Deleted.
+        (WebCore::MediaPlayer::renderingCanBeAccelerated const): Deleted.
+        (WebCore::MediaPlayer::renderingModeChanged const): Deleted.
+        (WebCore::MediaPlayer::acceleratedCompositingEnabled): Deleted.
+        (WebCore::MediaPlayer::activeSourceBuffersChanged): Deleted.
+        (WebCore::MediaPlayer::playerContentBoxRect const): Deleted.
+        (WebCore::MediaPlayer::playerContentsScale const): Deleted.
+        (WebCore::MediaPlayer::shouldUsePersistentCache const): Deleted.
+        (WebCore::MediaPlayer::mediaCacheDirectory const): Deleted.
+        (WebCore::MediaPlayer::isVideoPlayer const): Deleted.
+        (WebCore::MediaPlayer::mediaEngineUpdated): Deleted.
+        (WebCore::MediaPlayer::isLooping const): Deleted.
+        (WebCore::MediaPlayer::requestInstallMissingPlugins): Deleted.
+        (WebCore::MediaPlayer::client const): Deleted.
+        * platform/graphics/MediaPlayerEngineIdentifiers.h: Copied from Source/WebCore/platform/ContentType.h.
+        (WebCore::MediaPlayerEngineIdentifiers::avFoundationEngineIdentifier):
+        (WebCore::MediaPlayerEngineIdentifiers::avFoundationMSEEngineIdentifier):
+        (WebCore::MediaPlayerEngineIdentifiers::avFoundationMediaStreamEngineIdentifier):
+        (WebCore::MediaPlayerEngineIdentifiers::GStreamerMediaEngineIdentifier):
+        (WebCore::MediaPlayerEngineIdentifiers::GStreamerMSEMediaEngineIdentifier):
+        (WebCore::MediaPlayerEngineIdentifiers::holePunchMediaEngineIdentifier):
+        (WebCore::MediaPlayerEngineIdentifiers::MediaFoundationMediaEngineIdentifier):
+        * platform/graphics/PlatformTimeRanges.h:
+        (WebCore::PlatformTimeRanges::PlatformTimeRanges): Deleted.
+        (WebCore::PlatformTimeRanges::length const): Deleted.
+        (WebCore::PlatformTimeRanges::Range::Range): Deleted.
+        (WebCore::PlatformTimeRanges::Range::isPointInRange const): Deleted.
+        (WebCore::PlatformTimeRanges::Range::isOverlappingRange const): Deleted.
+        (WebCore::PlatformTimeRanges::Range::isContiguousWithRange const): Deleted.
+        (WebCore::PlatformTimeRanges::Range::unionWithOverlappingOrContiguousRange const): Deleted.
+        (WebCore::PlatformTimeRanges::Range::isBeforeRange const): Deleted.
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::registerMediaEngine):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::registerMediaEngine):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::registerMediaEngine):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::registerMediaEngine):
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::registerMediaEngine):
+        * platform/graphics/holepunch/MediaPlayerPrivateHolePunch.cpp:
+        (WebCore::MediaPlayerPrivateHolePunch::registerMediaEngine):
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::registerMediaEngine):
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.cpp:
+        (WebCore::MockMediaPlayerMediaSource::registerMediaEngine):
+
 2019-12-13  Cathie Chen  <cathiechen@igalia.com>
 
         Fixed compile error in BaseAudioSharedUnit.h
