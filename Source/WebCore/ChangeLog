@@ -1,3 +1,35 @@
+2019-12-12  Jer Noble  <jer.noble@apple.com>
+
+        Add logging for MediaCapabilities.decodeInfo()
+        https://bugs.webkit.org/show_bug.cgi?id=205172
+
+        Reviewed by Eric Carlson.
+
+        Add logging for decodingInfo() that can emit string versions of both the input
+        MediaConfiguration and the output MediaCapabilitiesInfo objects.
+
+        * Modules/mediacapabilities/MediaCapabilities.cpp:
+        (WebCore::MediaCapabilities::decodingInfo):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediacapabilities/MediaCapabilitiesLogging.cpp: Added.
+        (WebCore::toJSONObject):
+        (WebCore::toJSONString):
+        (WTF::LogArgument<WebCore::VideoConfiguration>::toString):
+        (WTF::LogArgument<WebCore::AudioConfiguration>::toString):
+        (WTF::LogArgument<WebCore::MediaConfiguration>::toString):
+        (WTF::LogArgument<WebCore::MediaDecodingConfiguration>::toString):
+        (WTF::LogArgument<WebCore::MediaEncodingConfiguration>::toString):
+        (WTF::LogArgument<WebCore::MediaCapabilitiesInfo>::toString):
+        (WTF::LogArgument<WebCore::MediaCapabilitiesDecodingInfo>::toString):
+        (WTF::LogArgument<WebCore::MediaCapabilitiesEncodingInfo>::toString):
+        (WTF::LogArgument<WebCore::ColorGamut>::toString):
+        (WTF::LogArgument<WebCore::HdrMetadataType>::toString):
+        (WTF::LogArgument<WebCore::TransferFunction>::toString):
+        (WTF::LogArgument<WebCore::MediaDecodingType>::toString):
+        (WTF::LogArgument<WebCore::MediaEncodingType>::toString):
+        * platform/mediacapabilities/MediaCapabilitiesLogging.h: Added.
+
 2019-12-12  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r172814): Don't export inline SQLiteDatabase::disableThreadingChecks() method

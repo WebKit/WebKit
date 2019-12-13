@@ -31,13 +31,16 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSMediaCapabilitiesDecodingInfo.h"
 #include "JSMediaCapabilitiesEncodingInfo.h"
+#include "Logging.h"
 #include "MediaCapabilitiesDecodingInfo.h"
 #include "MediaCapabilitiesEncodingInfo.h"
+#include "MediaCapabilitiesLogging.h"
 #include "MediaDecodingConfiguration.h"
 #include "MediaEncodingConfiguration.h"
 #include "MediaEngineConfigurationFactory.h"
 #include "Settings.h"
 #include <wtf/HashSet.h>
+#include <wtf/Logger.h>
 
 namespace WebCore {
 
@@ -167,10 +170,16 @@ void MediaCapabilities::decodingInfo(Document& document, MediaDecodingConfigurat
     // 2.4 Media Capabilities Interface
     // https://wicg.github.io/media-capabilities/#media-capabilities-interface
 
+    auto identifier = WTF::Logger::LogSiteIdentifier("MediaCapabilities", __func__, this);
+    Ref<Logger> logger = document.logger();
+
     // 1. If configuration is not a valid MediaConfiguration, return a Promise rejected with a TypeError.
     // 2. If configuration.video is present and is not a valid video configuration, return a Promise rejected with a TypeError.
     // 3. If configuration.audio is present and is not a valid audio configuration, return a Promise rejected with a TypeError.
     if (!isValidMediaConfiguration(configuration)) {
+#if !RELEASE_LOG_DISABLED
+        logger->info(LogMedia, identifier, " - Rejected. configuration: ", configuration);
+#endif
         promise->reject(TypeError);
         return;
     }
@@ -181,10 +190,10 @@ void MediaCapabilities::decodingInfo(Document& document, MediaDecodingConfigurat
     // 4. Let p be a new promise.
     // 5. In parallel, run the create a MediaCapabilitiesInfo algorithm with configuration and resolve p with its result.
     // 6. Return p.
-    m_taskQueue.enqueueTask([configuration = WTFMove(configuration), promise = WTFMove(promise)] () mutable {
+    m_taskQueue.enqueueTask([configuration = WTFMove(configuration), promise = WTFMove(promise), logger = WTFMove(logger), identifier = WTFMove(identifier)] () mutable {
 
         // 2.2.3 If configuration is of type MediaDecodingConfiguration, run the following substeps:
-        MediaEngineConfigurationFactory::DecodingConfigurationCallback callback = [promise = WTFMove(promise)] (auto info) mutable {
+        MediaEngineConfigurationFactory::DecodingConfigurationCallback callback = [promise = WTFMove(promise), logger = WTFMove(logger), identifier = WTFMove(identifier)] (auto info) mutable {
             // 2.2.3.1. If the user agent is able to decode the media represented by
             // configuration, set supported to true. Otherwise set it to false.
             // 2.2.3.2. If the user agent is able to decode the media represented by
@@ -196,6 +205,9 @@ void MediaCapabilities::decodingInfo(Document& document, MediaDecodingConfigurat
             // consideration the current power source in order to determine the
             // decoding power efficiency unless the device’s power source has side
             // effects such as enabling different decoding modules.
+#if !RELEASE_LOG_DISABLED
+            logger->info(LogMedia, identifier, "::callback() - Resolved. info: ", info);
+#endif
             promise->resolve<IDLDictionary<MediaCapabilitiesDecodingInfo>>(WTFMove(info));
         };
 

@@ -1958,6 +1958,7 @@ platform/graphics/transforms/TransformationMatrix.cpp
 platform/graphics/transforms/TranslateTransformOperation.cpp
 
 platform/mediacapabilities/MediaEngineConfigurationFactory.cpp
+platform/mediacapabilities/MediaCapabilitiesLogging.cpp
 
 platform/mediarecorder/MediaRecorderPrivateMock.cpp
 
