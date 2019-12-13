@@ -247,14 +247,14 @@ class ExecutiveTest(unittest.TestCase):
 
         NUM_PROCESSES = 4
         DELAY_SECS = 0.25
-        cmd_line = [sys.executable, '-c', 'import time; time.sleep(%f); print "hello"' % DELAY_SECS]
+        cmd_line = [sys.executable, '-c', 'import time; time.sleep(%f); print("hello")' % DELAY_SECS]
         cwd = os.getcwd()
         commands = [tuple([cmd_line, cwd])] * NUM_PROCESSES
         start = time.time()
         command_outputs = Executive().run_in_parallel(commands, processes=NUM_PROCESSES)
         done = time.time()
         self.assertTrue(done - start < NUM_PROCESSES * DELAY_SECS)
-        self.assertEqual([output[1] for output in command_outputs], ["hello\n"] * NUM_PROCESSES)
+        self.assertEqual([output[1] for output in command_outputs], [b'hello\n'] * NUM_PROCESSES)
         self.assertEqual([],  multiprocessing.active_children())
 
     def test_run_in_parallel_assert_nonempty(self):

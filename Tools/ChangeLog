@@ -1,3 +1,15 @@
+2019-12-12  Jonathan Bedard  <jbedard@apple.com>
+
+        Python 3: Support serial webkitpy.common tests
+        https://bugs.webkit.org/show_bug.cgi?id=205162
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive.running_pids): Processess are encoded as bytes.
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        (ExecutiveTest.serial_test_run_in_parallel): Use Python 3 compatible print statements.
+
 2019-12-12  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         webkit-patch print-expectations fails to format TestExpectationLine with DumpJSConsoleLogInStdErr

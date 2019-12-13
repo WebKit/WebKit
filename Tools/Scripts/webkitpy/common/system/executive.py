@@ -305,8 +305,8 @@ class Executive(AbstractExecutive):
                     try:
                         # In some cases the line can contain one or more
                         # leading white-spaces, so strip it before split.
-                        pid, process_name = line.strip().split(' ', 1)
-                        if process_name_filter(process_name):
+                        pid, process_name = line.strip().split(b' ', 1)
+                        if process_name_filter(unicode_compatibility.decode_for(process_name, str)):
                             running_pids.append(int(pid))
                     except ValueError as e:
                         pass
