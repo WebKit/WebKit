@@ -1,3 +1,20 @@
+2019-12-13  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Deny mach lookup access to "*.apple-extension-service" in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=205134
+        <rdar://problem/56984257>
+
+        Reviewed by Brent Fulgham.
+
+        Add test for mach lookup access to "*.apple-extension-service".
+
+        * TestExpectations:
+        * fast/sandbox: Added.
+        * fast/sandbox/ios: Added.
+        * fast/sandbox/ios/sandbox-mach-lookup-expected.txt: Added.
+        * fast/sandbox/ios/sandbox-mach-lookup.html: Added.
+        * platform/ios-device-wk2/TestExpectations:
+
 2019-12-13  youenn fablet  <youenn@apple.com>
 
         Help debugging flaky http/tests/cache-storage/page-cache-domcachestorage-pending-promise.html

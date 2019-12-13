@@ -443,7 +443,6 @@
 
     (allow mach-lookup (with report) (with telemetry)
         (global-name-regex #"^com\.apple\.uikit\.viewservice\..+")
-        (xpc-service-name-regex #"\.apple-extension-service$") ;; <rdar://problem/19525887>
         (xpc-service-name-regex #"\.viewservice$") ;; <rdar://problem/31252371>
     )
 

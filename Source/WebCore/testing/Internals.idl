@@ -825,4 +825,5 @@ enum CompositingPolicy {
     DOMString highlightPseudoElementColor(DOMString highlightName, Element element);
 
     boolean hasSandboxMachLookupAccessToGlobalName(DOMString process, DOMString service);
+    boolean hasSandboxMachLookupAccessToXPCServiceName(DOMString process, DOMString service);
 };
