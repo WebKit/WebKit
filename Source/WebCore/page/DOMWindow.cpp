@@ -985,30 +985,27 @@ void DOMWindow::focus(bool allowFocus)
     if (!frame())
         return;
 
-    Page* page = frame()->page();
+    auto protectedFrame = makeRefPtr(frame());
+
+    Page* page = protectedFrame->page();
     if (!page)
         return;
 
-    allowFocus = allowFocus || WindowFocusAllowedIndicator::windowFocusAllowed() || !frame()->settings().windowFocusRestricted();
+    allowFocus = allowFocus || WindowFocusAllowedIndicator::windowFocusAllowed() || !protectedFrame->settings().windowFocusRestricted();
 
     // If we're a top level window, bring the window to the front.
-    if (frame()->isMainFrame() && allowFocus)
+    if (protectedFrame->isMainFrame() && allowFocus)
         page->chrome().focus();
 
-    if (!frame())
-        return;
-
-    if (!frame()->hasHadUserInteraction() && !isSameSecurityOriginAsMainFrame())
+    if (!protectedFrame->hasHadUserInteraction() && !isSameSecurityOriginAsMainFrame())
         return;
 
     // Clear the current frame's focused node if a new frame is about to be focused.
-    Frame* focusedFrame = page->focusController().focusedFrame();
-    if (focusedFrame && focusedFrame != frame())
+    auto focusedFrame = makeRefPtr(page->focusController().focusedFrame());
+    if (focusedFrame && focusedFrame != protectedFrame)
         focusedFrame->document()->setFocusedElement(nullptr);
 
-    // setFocusedElement may clear frame(), so recheck before using it.
-    if (auto* frame = this->frame())
-        frame->eventHandler().focusDocumentView();
+    protectedFrame->eventHandler().focusDocumentView();
 }
 
 void DOMWindow::blur()
