@@ -153,6 +153,8 @@ public:
         Preferences,
         RequestStorageAccessConfirmResultListener,
         ResourceLoadStatisticsStore,
+        ResourceLoadStatisticsFirstParty,
+        ResourceLoadStatisticsThirdParty,
         RunBeforeUnloadConfirmPanelResultListener,
         RunJavaScriptAlertResultListener,
         RunJavaScriptConfirmResultListener,

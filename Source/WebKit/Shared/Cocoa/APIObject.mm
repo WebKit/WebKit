@@ -80,6 +80,8 @@
 #import "_WKInspectorInternal.h"
 #import "_WKInternalDebugFeatureInternal.h"
 #import "_WKProcessPoolConfigurationInternal.h"
+#import "_WKResourceLoadStatisticsFirstPartyInternal.h"
+#import "_WKResourceLoadStatisticsThirdPartyInternal.h"
 #import "_WKUserContentWorldInternal.h"
 #import "_WKUserInitiatedActionInternal.h"
 #import "_WKUserStyleSheetInternal.h"
@@ -323,6 +325,14 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::CustomHeaderFields:
         wrapper = [_WKCustomHeaderFields alloc];
+        break;
+
+    case Type::ResourceLoadStatisticsFirstParty:
+        wrapper = [_WKResourceLoadStatisticsFirstParty alloc];
+        break;
+
+    case Type::ResourceLoadStatisticsThirdParty:
+        wrapper = [_WKResourceLoadStatisticsThirdParty alloc];
         break;
 
     case Type::UserContentWorld:

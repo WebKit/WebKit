@@ -103,15 +103,15 @@ void ResourceLoadStatisticsMemoryStore::calculateAndSubmitTelemetry() const
         WebResourceLoadStatisticsTelemetry::calculateAndSubmit(*this);
 }
 
-static void ensureThirdPartyDataForSpecificFirstPartyDomain(Vector<ThirdPartyDataForSpecificFirstParty>& thirdPartyDataForSpecificFirstPartyDomain, const RegistrableDomain& firstPartyDomain, bool thirdPartyHasStorageAccess)
+static void ensureThirdPartyDataForSpecificFirstPartyDomain(Vector<WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty>& thirdPartyDataForSpecificFirstPartyDomain, const RegistrableDomain& firstPartyDomain, bool thirdPartyHasStorageAccess)
 {
-    ThirdPartyDataForSpecificFirstParty thirdPartyDataForSpecificFirstParty { firstPartyDomain, thirdPartyHasStorageAccess };
+    WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty thirdPartyDataForSpecificFirstParty { firstPartyDomain, thirdPartyHasStorageAccess };
     thirdPartyDataForSpecificFirstPartyDomain.appendIfNotContains(thirdPartyDataForSpecificFirstParty);
 }
 
-static Vector<ThirdPartyDataForSpecificFirstParty> getThirdPartyDataForSpecificFirstPartyDomains(const ResourceLoadStatistics& thirdPartyStatistic)
+static Vector<WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty> getThirdPartyDataForSpecificFirstPartyDomains(const ResourceLoadStatistics& thirdPartyStatistic)
 {
-    Vector<ThirdPartyDataForSpecificFirstParty> thirdPartyDataForSpecificFirstPartyDomains;
+    Vector<WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty> thirdPartyDataForSpecificFirstPartyDomains;
 
     for (auto firstPartyDomain : thirdPartyStatistic.subframeUnderTopFrameDomains)
         ensureThirdPartyDataForSpecificFirstPartyDomain(thirdPartyDataForSpecificFirstPartyDomains, firstPartyDomain, thirdPartyStatistic.storageAccessUnderTopFrameDomains.contains(firstPartyDomain));
@@ -130,14 +130,14 @@ static bool hasBeenThirdParty(const ResourceLoadStatistics& statistic)
         || !statistic.subresourceUniqueRedirectsTo.isEmpty();
 }
 
-Vector<ThirdPartyData> ResourceLoadStatisticsMemoryStore::aggregatedThirdPartyData() const
+Vector<WebResourceLoadStatisticsStore::ThirdPartyData> ResourceLoadStatisticsMemoryStore::aggregatedThirdPartyData() const
 {
     ASSERT(!RunLoop::isMain());
 
-    Vector<ThirdPartyData> thirdPartyDataList;
+    Vector<WebResourceLoadStatisticsStore::ThirdPartyData> thirdPartyDataList;
     for (auto& statistic : m_resourceStatisticsMap.values()) {
         if (hasBeenThirdParty(statistic))
-            thirdPartyDataList.append(ThirdPartyData { statistic.registrableDomain, getThirdPartyDataForSpecificFirstPartyDomains(statistic) });
+            thirdPartyDataList.append(WebResourceLoadStatisticsStore::ThirdPartyData { statistic.registrableDomain, getThirdPartyDataForSpecificFirstPartyDomains(statistic) });
     }
     std::sort(thirdPartyDataList.rbegin(), thirdPartyDataList.rend());
     return thirdPartyDataList;

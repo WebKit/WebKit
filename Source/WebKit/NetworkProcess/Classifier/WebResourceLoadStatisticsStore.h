@@ -27,6 +27,9 @@
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 
+#include "ArgumentCoders.h"
+#include "Decoder.h"
+#include "Encoder.h"
 #include "StorageAccessStatus.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebsiteDataType.h"
@@ -78,6 +81,30 @@ struct RegistrableDomainsToBlockCookiesFor {
     RegistrableDomainsToBlockCookiesFor isolatedCopy() const { return { domainsToBlockAndDeleteCookiesFor.isolatedCopy(), domainsToBlockButKeepCookiesFor.isolatedCopy(), domainsWithUserInteractionAsFirstParty.isolatedCopy() }; }
 };
 
+class WebResourceLoadStatisticsStore final : public ThreadSafeRefCounted<WebResourceLoadStatisticsStore, WTF::DestructionThread::Main> {
+public:
+    using ResourceLoadStatistics = WebCore::ResourceLoadStatistics;
+    using RegistrableDomain = WebCore::RegistrableDomain;
+    using TopFrameDomain = WebCore::RegistrableDomain;
+    using SubFrameDomain = WebCore::RegistrableDomain;
+    using SubResourceDomain = WebCore::RegistrableDomain;
+    using RedirectDomain = WebCore::RegistrableDomain;
+    using RedirectedFromDomain = WebCore::RegistrableDomain;
+    using RedirectedToDomain = WebCore::RegistrableDomain;
+    using NavigatedFromDomain = WebCore::RegistrableDomain;
+    using NavigatedToDomain = WebCore::RegistrableDomain;
+    using DomainInNeedOfStorageAccess = WebCore::RegistrableDomain;
+    using OpenerDomain = WebCore::RegistrableDomain;
+    using StorageAccessWasGranted = WebCore::StorageAccessWasGranted;
+    using StorageAccessPromptWasShown = WebCore::StorageAccessPromptWasShown;
+
+    static Ref<WebResourceLoadStatisticsStore> create(NetworkSession& networkSession, const String& resourceLoadStatisticsDirectory, ShouldIncludeLocalhost shouldIncludeLocalhost)
+    {
+        return adoptRef(*new WebResourceLoadStatisticsStore(networkSession, resourceLoadStatisticsDirectory, shouldIncludeLocalhost));
+    }
+
+    ~WebResourceLoadStatisticsStore();
+
 struct ThirdPartyDataForSpecificFirstParty {
     WebCore::RegistrableDomain firstPartyDomain;
     bool storageAccessGranted;
@@ -85,6 +112,27 @@ struct ThirdPartyDataForSpecificFirstParty {
     String toString() const
     {
         return makeString("Has been granted storage access under ", firstPartyDomain.string(), ": ", storageAccessGranted ? '1' : '0');
+    }
+
+    void encode(IPC::Encoder& encoder) const
+    {
+        encoder << firstPartyDomain;
+        encoder << storageAccessGranted;
+    }
+
+    static Optional<ThirdPartyDataForSpecificFirstParty> decode(IPC::Decoder& decoder)
+    {
+        Optional<WebCore::RegistrableDomain> decodedDomain;
+        decoder >> decodedDomain;
+        if (!decodedDomain)
+            return WTF::nullopt;
+
+        Optional<bool> decodedStorageAccess;
+        decoder >> decodedStorageAccess;
+        if (!decodedStorageAccess)
+            return WTF::nullopt;
+
+        return {{ WTFMove(*decodedDomain), WTFMove(*decodedStorageAccess) }};
     }
 
     bool operator==(ThirdPartyDataForSpecificFirstParty const other) const
@@ -112,35 +160,32 @@ struct ThirdPartyData {
         return stringBuilder.toString();
     }
 
+    void encode(IPC::Encoder& encoder) const
+    {
+        encoder << thirdPartyDomain;
+        encoder << underFirstParties;
+    }
+
+    static Optional<ThirdPartyData> decode(IPC::Decoder& decoder)
+    {
+        Optional<WebCore::RegistrableDomain> decodedDomain;
+        decoder >> decodedDomain;
+        if (!decodedDomain)
+            return WTF::nullopt;
+
+        Optional<Vector<ThirdPartyDataForSpecificFirstParty>> decodedFirstParties;
+        decoder >> decodedFirstParties;
+        if (!decodedFirstParties)
+            return WTF::nullopt;
+
+        return {{ WTFMove(*decodedDomain), WTFMove(*decodedFirstParties) }};
+    }
+
     bool operator<(const ThirdPartyData &other) const
     {
         return underFirstParties.size() < other.underFirstParties.size();
     }
 };
-
-class WebResourceLoadStatisticsStore final : public ThreadSafeRefCounted<WebResourceLoadStatisticsStore, WTF::DestructionThread::Main> {
-public:
-    using ResourceLoadStatistics = WebCore::ResourceLoadStatistics;
-    using RegistrableDomain = WebCore::RegistrableDomain;
-    using TopFrameDomain = WebCore::RegistrableDomain;
-    using SubFrameDomain = WebCore::RegistrableDomain;
-    using SubResourceDomain = WebCore::RegistrableDomain;
-    using RedirectDomain = WebCore::RegistrableDomain;
-    using RedirectedFromDomain = WebCore::RegistrableDomain;
-    using RedirectedToDomain = WebCore::RegistrableDomain;
-    using NavigatedFromDomain = WebCore::RegistrableDomain;
-    using NavigatedToDomain = WebCore::RegistrableDomain;
-    using DomainInNeedOfStorageAccess = WebCore::RegistrableDomain;
-    using OpenerDomain = WebCore::RegistrableDomain;
-    using StorageAccessWasGranted = WebCore::StorageAccessWasGranted;
-    using StorageAccessPromptWasShown = WebCore::StorageAccessPromptWasShown;
-
-    static Ref<WebResourceLoadStatisticsStore> create(NetworkSession& networkSession, const String& resourceLoadStatisticsDirectory, ShouldIncludeLocalhost shouldIncludeLocalhost)
-    {
-        return adoptRef(*new WebResourceLoadStatisticsStore(networkSession, resourceLoadStatisticsDirectory, shouldIncludeLocalhost));
-    }
-
-    ~WebResourceLoadStatisticsStore();
 
     void didDestroyNetworkSession();
 
@@ -235,7 +280,7 @@ public:
 
     void resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&&);
     void requestStorageAccessUnderOpener(DomainInNeedOfStorageAccess&&, WebCore::PageIdentifier openerID, OpenerDomain&&);
-    Vector<ThirdPartyData> aggregatedThirdPartyData();
+    void aggregatedThirdPartyData(CompletionHandler<void(Vector<WebResourceLoadStatisticsStore::ThirdPartyData>&&)>&&);
 
 private:
     explicit WebResourceLoadStatisticsStore(NetworkSession&, const String&, ShouldIncludeLocalhost);

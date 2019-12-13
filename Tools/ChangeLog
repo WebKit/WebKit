@@ -1,3 +1,21 @@
+2019-12-13  Kate Cheney  <katherine_cheney@apple.com>
+
+        Create WebKit API calls for ITP Data
+        https://bugs.webkit.org/show_bug.cgi?id=204932
+        <rdar://problem/57632753>
+
+        Reviewed by Alex Christensen. 
+
+        Added a test to check that the ITP data summary was being properly
+        aggregated and sent to the UIProcess, and to make sure the API works
+        as expected. Added interface declarations to the file to allow for
+        use of the _WKResourceLoadStatisticsFirstParty and
+        _WKResourceLoadStatisticsThirdParty classes without having
+        to import the header files.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        (TEST):
+
 2019-12-13  Devin Rousso  <drousso@apple.com>
 
         Prefix CSS selectors with all applicable CSS groupings when generating a ChangeLog

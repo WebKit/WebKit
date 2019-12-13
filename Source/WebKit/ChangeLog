@@ -1,3 +1,76 @@
+2019-12-13  Kate Cheney  <katherine_cheney@apple.com>
+
+        Create WebKit API calls for ITP Data
+        https://bugs.webkit.org/show_bug.cgi?id=204932
+        <rdar://problem/57632753>
+
+        Reviewed by Alex Christensen. 
+
+        This patch exposes ITP data captured in the network process through the
+        Objective C API using two new classes: _WKResourceLoadStatisticsFirstParty
+        and _WKResourceLoadStatisticsThirdParty.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ensureThirdPartyDataForSpecificFirstPartyDomain):
+        (WebKit::getThirdPartyDataForSpecificFirstPartyDomains):
+        (WebKit::ResourceLoadStatisticsMemoryStore::aggregatedThirdPartyData const):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        Updated mentions of ThirdPartyData to include the
+        WebResourceLoadStatisticsStore:: class specifier after relocating
+        ThirdPartyData.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::aggregatedThirdPartyData):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        Updated the data to be sent via completion handler from
+        WebResourceLoadStatisticsStore so that calls to
+        aggregatedThirdPartyData() are happening on a background thread.
+
+        * Shared/API/APIObject.h:
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * UIProcess/API/APIResourceLoadStatisticsFirstParty.h: Added.
+        * UIProcess/API/APIResourceLoadStatisticsThirdParty.h: Added.
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _getResourceLoadStatisticsDataSummary:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/API/Cocoa/_WKResourceLoadStatisticsFirstParty.h: Added.
+        * UIProcess/API/Cocoa/_WKResourceLoadStatisticsFirstParty.mm: Added.
+        (-[_WKResourceLoadStatisticsFirstParty dealloc]):
+        (-[_WKResourceLoadStatisticsFirstParty firstPartyDomain]):
+        (-[_WKResourceLoadStatisticsFirstParty storageAccess]):
+        (-[_WKResourceLoadStatisticsFirstParty _apiObject]):
+        * UIProcess/API/Cocoa/_WKResourceLoadStatisticsFirstPartyInternal.h: Added.
+        * UIProcess/API/Cocoa/_WKResourceLoadStatisticsThirdParty.h: Added.
+        * UIProcess/API/Cocoa/_WKResourceLoadStatisticsThirdParty.mm: Added.
+        (-[_WKResourceLoadStatisticsThirdParty dealloc]):
+        (-[_WKResourceLoadStatisticsThirdParty thirdPartyDomain]):
+        (-[_WKResourceLoadStatisticsThirdParty underFirstParties]):
+        (-[_WKResourceLoadStatisticsThirdParty _apiObject]):
+        * UIProcess/API/Cocoa/_WKResourceLoadStatisticsThirdPartyInternal.h: Added.
+        _WKResourceLoadStatisticsFirstParty and _WKResourceLoadStatisticsThirdParty
+        represent first and third party domains respectively which hold ITP
+        data and are strongly typed to ensure the correct data is being
+        exposed via API. The function and parameter names for storage access
+        specify "third party" because each WKITPFirstParty holds data relevent
+        to a specific third party and storage access would not make sense in
+        just a first party context.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::getResourceLoadStatisticsDataSummary):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::getResourceLoadStatisticsDataSummary):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::getResourceLoadStatisticsDataSummary):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-12-13  Eric Carlson  <eric.carlson@apple.com>
 
         Add infrastructure needed for playing media player in the GPU process
