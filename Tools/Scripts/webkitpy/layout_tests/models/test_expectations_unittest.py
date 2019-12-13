@@ -401,6 +401,9 @@ class ExpectationSyntaxTests(Base):
         self.assert_tokenize_exp('foo.html [ WontFix ImageOnlyFailure ]', modifiers=['WONTFIX'], expectations=['IMAGE'])
         self.assert_tokenize_exp('foo.html [ WontFix Pass Failure ]', modifiers=['WONTFIX'], expectations=['PASS', 'FAIL'])
 
+    def test_dump_js_console_log_in_stderr(self):
+        self.assert_tokenize_exp('foo.html [ DumpJSConsoleLogInStdErr ]', modifiers=['DUMPJSCONSOLELOGINSTDERR'], expectations=['PASS'])
+
     def test_blank_line(self):
         self.assert_tokenize_exp('', name=None)
 
@@ -710,6 +713,8 @@ class TestExpectationSerializationTests(unittest.TestCase):
         self.assert_round_trip('# Foo')
         self.assert_round_trip('# Foo :')
         self.assert_round_trip('# Foo : =')
+        self.assert_round_trip('foo [ Crash Skip WontFix ]')
+        self.assert_round_trip('foo [ DumpJSConsoleLogInStdErr Image ]')
 
     def test_list_roundtrip(self):
         self.assert_list_round_trip('')

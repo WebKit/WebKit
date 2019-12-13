@@ -242,6 +242,7 @@ class TestExpectationParser(object):
     # FIXME: Update the original modifiers list and remove this once the old syntax is gone.
     _expectation_tokens = {
         'Crash': 'CRASH',
+        'DumpJSConsoleLogInStdErr': 'DUMPJSCONSOLELOGINSTDERR',
         'Failure': 'FAIL',
         'ImageOnlyFailure': 'IMAGE',
         'Leak': 'LEAK',

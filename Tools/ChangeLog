@@ -1,3 +1,15 @@
+2019-12-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        webkit-patch print-expectations fails to format TestExpectationLine with DumpJSConsoleLogInStdErr
+        https://bugs.webkit.org/show_bug.cgi?id=194283
+
+        Reviewed by Youenn Fablet.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser): Add DumpJSConsoleLogInStdErr to TestExpectationParser._expectation_tokens.
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        Added a tokenize test and round tip test for DumpJSConsoleLogInStdErr.
+
 2019-12-12  Alex Christensen  <achristensen@webkit.org>
 
         Don't assert in HTTPServer::respondToRequests when connections fail
