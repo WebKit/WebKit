@@ -28,6 +28,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "InlineItem.h"
+#include <wtf/text/TextBreakIterator.h>
 
 namespace WebCore {
 
@@ -46,6 +47,7 @@ public:
     };
     static SplitData split(const Box&, unsigned startPosition, unsigned length, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft);
     static bool shouldPreserveTrailingWhitespace(const RenderStyle&);
+    static unsigned findNextBreakablePosition(LazyLineBreakIterator&, unsigned startPosition, const RenderStyle&);
 
 private:
     static InlineLayoutUnit fixedPitchWidth(const StringView&, const RenderStyle&, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft);

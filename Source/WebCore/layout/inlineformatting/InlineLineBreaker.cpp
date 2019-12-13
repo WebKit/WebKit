@@ -223,6 +223,30 @@ Optional<LineBreaker::LeftSide> LineBreaker::tryBreakingTextRun(const Content::R
     return LeftSide { hyphenLocation, trailingPartialRunWidthWithHyphen, true };
 }
 
+static bool endsWithBreakingOpportunity(const InlineTextItem& previousTextItem, const InlineTextItem& nextInlineTextItem)
+{
+    ASSERT(!previousTextItem.isWhitespace());
+    ASSERT(!nextInlineTextItem.isWhitespace());
+    // When both these non-whitespace runs belong to the same layout box, it's guaranteed that
+    // they are split at a soft breaking opportunity. See InlineTextItem::moveToNextBreakablePosition.
+    if (&previousTextItem.layoutBox() == &nextInlineTextItem.layoutBox())
+        return true;
+    // Now we need to collect at least 3 adjacent characters to be able to make a descision whether the previous text item ends with breaking opportunity.
+    // [ex-][ample] <- second to last[x] last[-] current[a]
+    // We need at least 1 character in the current inline text item and 2 more from previous inline items.
+    auto previousContent = previousTextItem.layoutBox().textContext()->content;
+    auto lineBreakIterator = LazyLineBreakIterator { nextInlineTextItem.layoutBox().textContext()->content };
+    auto previousContentLength = previousContent.length();
+    // FIXME: We should look into the entire uncommitted content for more text context.
+    UChar lastCharacter = previousContentLength ? previousContent[previousContentLength - 1] : 0;
+    UChar secondToLastCharacter = previousContentLength > 1 ? previousContent[previousContentLength - 2] : 0;
+    lineBreakIterator.setPriorContext(lastCharacter, secondToLastCharacter);
+    // Now check if we can break right at the inline item boundary.
+    // With the [ex-ample], findNextBreakablePosition should return the startPosition (0).
+    // FIXME: Check if there's a more correct way of finding breaking opportunities.
+    return !TextUtil::findNextBreakablePosition(lineBreakIterator, 0, nextInlineTextItem.style());
+}
+
 bool LineBreaker::Content::isAtContentBoundary(const InlineItem& inlineItem, const Content& content)
 {
     // https://drafts.csswg.org/css-text-3/#line-break-details
@@ -269,12 +293,7 @@ bool LineBreaker::Content::isAtContentBoundary(const InlineItem& inlineItem, con
             auto& previousInlineTextItem = downcast<InlineTextItem>(*lastUncomittedContent);
             if (previousInlineTextItem.isWhitespace())
                 return true;
-            // When both these non-whitespace runs belong to the same layout box, it's guaranteed that
-            // they are split at a soft breaking opportunity. See InlineTextItem::moveToNextBreakablePosition.
-            if (&inlineItem.layoutBox() == &lastUncomittedContent->layoutBox())
-                return true;
-            // FIXME: check if <span>text-</span><span>text</span> should be handled here as well.
-            return false;
+            return endsWithBreakingOpportunity(previousInlineTextItem, downcast<InlineTextItem>(inlineItem));
         }
         // <img>text -> the inline box is on a commit boundary.
         if (lastUncomittedContent->isBox())

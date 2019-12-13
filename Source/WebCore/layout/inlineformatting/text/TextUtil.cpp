@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "BreakLines.h"
 #include "FontCascade.h"
 #include "InlineTextItem.h"
 #include "RenderStyle.h"
@@ -131,6 +132,28 @@ bool TextUtil::shouldPreserveTrailingWhitespace(const RenderStyle& style)
 {
     auto whitespace = style.whiteSpace();
     return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap;
+}
+
+unsigned TextUtil::findNextBreakablePosition(LazyLineBreakIterator& lineBreakIterator, unsigned startPosition, const RenderStyle& style)
+{
+    auto keepAllWordsForCJK = style.wordBreak() == WordBreak::KeepAll;
+    auto breakNBSP = style.autoWrap() && style.nbspMode() == NBSPMode::Space;
+
+    if (keepAllWordsForCJK) {
+        if (breakNBSP)
+            return nextBreakablePositionKeepingAllWords(lineBreakIterator, startPosition);
+        return nextBreakablePositionKeepingAllWordsIgnoringNBSP(lineBreakIterator, startPosition);
+    }
+
+    if (lineBreakIterator.mode() == LineBreakIteratorMode::Default) {
+        if (breakNBSP)
+            return WebCore::nextBreakablePosition(lineBreakIterator, startPosition);
+        return nextBreakablePositionIgnoringNBSP(lineBreakIterator, startPosition);
+    }
+
+    if (breakNBSP)
+        return nextBreakablePositionWithoutShortcut(lineBreakIterator, startPosition);
+    return nextBreakablePositionIgnoringNBSPWithoutShortcut(lineBreakIterator, startPosition);
 }
 
 }
