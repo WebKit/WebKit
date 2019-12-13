@@ -1,3 +1,12 @@
+2019-12-13  Charlie Turner  <cturner@igalia.com>
+
+        [GStreamer][EME] Update expectation for media/encrypted-media/clearKey/clearKey-cenc-video-playback-mse.html
+        https://bugs.webkit.org/show_bug.cgi?id=205215
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations: Update bug URL to new failure reason.
+
 2019-12-13  youenn fablet  <youenn@apple.com>
 
         Add support for WebIDL set-like forEach
