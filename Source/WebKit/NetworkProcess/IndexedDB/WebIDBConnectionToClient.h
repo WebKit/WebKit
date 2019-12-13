@@ -28,26 +28,11 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "MessageSender.h"
-#include "NetworkConnectionToWebProcess.h"
 #include <WebCore/IDBConnectionToClient.h>
 #include <WebCore/IndexedDB.h>
 #include <WebCore/ProcessIdentifier.h>
 
 namespace WebCore {
-class IDBCursorInfo;
-class IDBIndexInfo;
-class IDBKeyData;
-class IDBObjectStoreInfo;
-class IDBRequestData;
-class IDBTransactionInfo;
-class IDBValue;
-class SerializedScriptValue;
-struct IDBGetAllRecordsData;
-struct IDBGetRecordData;
-struct IDBIterateCursorData;
-struct IDBKeyRangeData;
-struct SecurityOriginData;
-
 namespace IDBServer {
 class IDBServer;
 }
@@ -61,50 +46,16 @@ class WebIDBServer;
 class WebIDBConnectionToClient final : public WebCore::IDBServer::IDBConnectionToClientDelegate, public IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WebIDBConnectionToClient(NetworkConnectionToWebProcess&, WebCore::IDBConnectionIdentifier);
+    WebIDBConnectionToClient(IPC::Connection&, WebCore::IDBConnectionIdentifier);
 
     virtual ~WebIDBConnectionToClient();
 
     WebCore::IDBServer::IDBConnectionToClient& connectionToClient();
     WebCore::IDBConnectionIdentifier identifier() const final { return m_identifier; }
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
-    void disconnectedFromWebProcess();
-
 private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final { return 0; }
-
-    // Messages received from WebProcess
-    void deleteDatabase(const WebCore::IDBRequestData&);
-    void openDatabase(const WebCore::IDBRequestData&);
-    void abortTransaction(const WebCore::IDBResourceIdentifier&);
-    void commitTransaction(const WebCore::IDBResourceIdentifier&);
-    void didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier&);
-    void createObjectStore(const WebCore::IDBRequestData&, const WebCore::IDBObjectStoreInfo&);
-    void deleteObjectStore(const WebCore::IDBRequestData&, const String& objectStoreName);
-    void renameObjectStore(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier, const String& newName);
-    void clearObjectStore(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier);
-    void createIndex(const WebCore::IDBRequestData&, const WebCore::IDBIndexInfo&);
-    void deleteIndex(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier, const String& indexName);
-    void renameIndex(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName);
-    void putOrAdd(const WebCore::IDBRequestData&, const WebCore::IDBKeyData&, const WebCore::IDBValue&, WebCore::IndexedDB::ObjectStoreOverwriteMode);
-    void getRecord(const WebCore::IDBRequestData&, const WebCore::IDBGetRecordData&);
-    void getAllRecords(const WebCore::IDBRequestData&, const WebCore::IDBGetAllRecordsData&);
-    void getCount(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&);
-    void deleteRecord(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&);
-    void openCursor(const WebCore::IDBRequestData&, const WebCore::IDBCursorInfo&);
-    void iterateCursor(const WebCore::IDBRequestData&, const WebCore::IDBIterateCursorData&);
-
-    void establishTransaction(uint64_t databaseConnectionIdentifier, const WebCore::IDBTransactionInfo&);
-    void databaseConnectionPendingClose(uint64_t databaseConnectionIdentifier);
-    void databaseConnectionClosed(uint64_t databaseConnectionIdentifier);
-    void abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier);
-    void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer);
-    void openDBRequestCancelled(const WebCore::IDBRequestData&);
-    void confirmDidCloseFromServer(uint64_t databaseConnectionIdentifier);
-
-    void getAllDatabaseNames(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& openingOrigin, uint64_t callbackID);
 
     // IDBConnectionToClientDelegate
     void didDeleteDatabase(const WebCore::IDBResultData&) final;
@@ -135,9 +86,7 @@ private:
 
     template<class MessageType> void handleGetResult(const WebCore::IDBResultData&);
 
-    WebIDBServer& idbServer();
-
-    NetworkConnectionToWebProcess& m_connection;
+    Ref<IPC::Connection> m_connection;
     WebCore::IDBConnectionIdentifier m_identifier;
     Ref<WebCore::IDBServer::IDBConnectionToClient> m_connectionToClient;
 };

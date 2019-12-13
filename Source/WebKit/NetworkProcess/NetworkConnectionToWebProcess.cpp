@@ -54,8 +54,7 @@
 #include "ServiceWorkerFetchTaskMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
-#include "WebIDBConnectionToClient.h"
-#include "WebIDBConnectionToClientMessages.h"
+#include "WebIDBServerMessages.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPoolMessages.h"
 #include "WebResourceLoadStatisticsStore.h"
@@ -220,9 +219,8 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
     }
 
 #if ENABLE(INDEXED_DATABASE)
-    if (decoder.messageReceiverName() == Messages::WebIDBConnectionToClient::messageReceiverName()) {
-        if (m_webIDBConnection)
-            m_webIDBConnection->didReceiveMessage(connection, decoder);
+    if (decoder.messageReceiverName() == Messages::WebIDBServer::messageReceiverName()) {
+        m_networkProcess->webIDBServer(m_sessionID).didReceiveMessage(connection, decoder);
         return;
     }
 #endif
@@ -314,7 +312,7 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
     // root activity trackers.
     stopAllNetworkActivityTracking();
 
-    m_networkProcess->connectionToWebProcessClosed(connection);
+    m_networkProcess->connectionToWebProcessClosed(connection, m_sessionID);
 
     m_networkProcess->removeNetworkConnectionToWebProcess(*this);
 
@@ -325,11 +323,6 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
     }
 #endif
 
-#if ENABLE(INDEXED_DATABASE)
-    if (auto idbConnection = std::exchange(m_webIDBConnection, { }))
-        idbConnection->disconnectedFromWebProcess();
-#endif
-    
 #if ENABLE(SERVICE_WORKER)
     unregisterSWConnection();
 #endif
@@ -908,16 +901,6 @@ size_t NetworkConnectionToWebProcess::findNetworkActivityTracker(ResourceLoadIde
         return item.resourceID == resourceID;
     });
 }
-
-#if ENABLE(INDEXED_DATABASE)
-void NetworkConnectionToWebProcess::establishIDBConnectionToServer()
-{
-    LOG(IndexedDB, "NetworkConnectionToWebProcess::establishIDBConnectionToServer - %" PRIu64, m_sessionID.toUInt64());
-    ASSERT(!m_webIDBConnection);
-    
-    m_webIDBConnection = makeUnique<WebIDBConnectionToClient>(*this, m_webProcessIdentifier);
-}
-#endif
     
 #if ENABLE(SERVICE_WORKER)
 void NetworkConnectionToWebProcess::unregisterSWConnection()

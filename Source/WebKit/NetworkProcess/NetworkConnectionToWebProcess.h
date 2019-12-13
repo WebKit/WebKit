@@ -72,7 +72,6 @@ class NetworkResourceLoadParameters;
 class NetworkSession;
 class NetworkSocketChannel;
 class NetworkSocketStream;
-class WebIDBConnectionToClient;
 class WebSWServerConnection;
 class WebSWServerToContextConnection;
 typedef uint64_t ResourceLoadIdentifier;
@@ -220,11 +219,6 @@ private:
 
     void createSocketChannel(const WebCore::ResourceRequest&, const String& protocol, uint64_t identifier);
 
-#if ENABLE(INDEXED_DATABASE)
-    // Messages handlers (Modern IDB).
-    void establishIDBConnectionToServer();
-#endif
-
 #if ENABLE(SERVICE_WORKER)
     void establishSWServerConnection();
     void establishSWContextConnection(WebCore::RegistrableDomain&&);
@@ -334,10 +328,6 @@ private:
     bool m_captureExtraNetworkLoadMetricsEnabled { false };
 
     RefPtr<CacheStorageEngineConnection> m_cacheStorageConnection;
-
-#if ENABLE(INDEXED_DATABASE)
-    std::unique_ptr<WebIDBConnectionToClient> m_webIDBConnection;
-#endif
 
 #if ENABLE(SERVICE_WORKER)
     WeakPtr<WebSWServerConnection> m_swConnection;

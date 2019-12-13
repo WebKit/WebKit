@@ -270,7 +270,7 @@ public:
     void setSessionIsControlledByAutomation(PAL::SessionID, bool);
     bool sessionIsControlledByAutomation(PAL::SessionID) const;
 
-    void connectionToWebProcessClosed(IPC::Connection&);
+    void connectionToWebProcessClosed(IPC::Connection&, PAL::SessionID);
     void getLocalStorageOriginDetails(PAL::SessionID, CompletionHandler<void(Vector<LocalStorageDatabaseTracker::OriginDetails>&&)>&&);
 
 #if ENABLE(CONTENT_EXTENSIONS)

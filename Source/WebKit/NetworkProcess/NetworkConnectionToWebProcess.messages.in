@@ -74,10 +74,6 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     GetNetworkLoadIntermediateInformation(uint64_t resourceLoadIdentifier) -> (Vector<WebCore::NetworkTransactionInformation> transactions) Synchronous
     TakeNetworkLoadInformationMetrics(uint64_t resourceLoadIdentifier) -> (WebCore::NetworkLoadMetrics networkMetrics) Synchronous
 
-#if ENABLE(INDEXED_DATABASE)
-    EstablishIDBConnectionToServer()
-#endif
-
 #if ENABLE(SERVICE_WORKER)
     EstablishSWContextConnection(WebCore::RegistrableDomain domain)
     CloseSWContextConnection()

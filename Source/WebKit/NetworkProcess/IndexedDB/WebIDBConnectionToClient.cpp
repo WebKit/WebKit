@@ -28,48 +28,31 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "DataReference.h"
-#include "NetworkProcess.h"
-#include "WebCoreArgumentCoders.h"
 #include "WebIDBConnectionToServerMessages.h"
 #include "WebIDBResult.h"
 #include "WebIDBServer.h"
-#include <WebCore/IDBError.h>
 #include <WebCore/IDBGetAllRecordsData.h>
 #include <WebCore/IDBGetRecordData.h>
 #include <WebCore/IDBResultData.h>
-#include <WebCore/IDBValue.h>
-#include <WebCore/ThreadSafeDataBuffer.h>
 #include <WebCore/UniqueIDBDatabaseConnection.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-WebIDBConnectionToClient::WebIDBConnectionToClient(NetworkConnectionToWebProcess& connection, WebCore::IDBConnectionIdentifier serverConnectionIdentifier)
-    : m_connection(connection)
+WebIDBConnectionToClient::WebIDBConnectionToClient(IPC::Connection& connection, WebCore::IDBConnectionIdentifier serverConnectionIdentifier)
+    : m_connection(makeRef(connection))
     , m_identifier(serverConnectionIdentifier)
     , m_connectionToClient(IDBServer::IDBConnectionToClient::create(*this))
 {
-    idbServer().registerConnection(m_connectionToClient);
 }
 
 WebIDBConnectionToClient::~WebIDBConnectionToClient()
 {
 }
 
-WebIDBServer& WebIDBConnectionToClient::idbServer()
-{
-    return m_connection.networkProcess().webIDBServer(m_connection.sessionID());
-}
-
-void WebIDBConnectionToClient::disconnectedFromWebProcess()
-{
-    idbServer().unregisterConnection(m_connectionToClient);
-}
-
 IPC::Connection* WebIDBConnectionToClient::messageSenderConnection() const
 {
-    return &m_connection.connection();
+    return m_connection.ptr();
 }
 
 WebCore::IDBServer::IDBConnectionToClient& WebIDBConnectionToClient::connectionToClient()
@@ -211,141 +194,6 @@ void WebIDBConnectionToClient::notifyOpenDBRequestBlocked(const WebCore::IDBReso
 void WebIDBConnectionToClient::didGetAllDatabaseNames(uint64_t callbackID, const Vector<String>& databaseNames)
 {
     send(Messages::WebIDBConnectionToServer::DidGetAllDatabaseNames(callbackID, databaseNames));
-}
-
-void WebIDBConnectionToClient::deleteDatabase(const IDBRequestData& request)
-{
-    idbServer().deleteDatabase(request);
-}
-
-void WebIDBConnectionToClient::openDatabase(const IDBRequestData& request)
-{
-    idbServer().openDatabase(request);
-}
-
-void WebIDBConnectionToClient::abortTransaction(const IDBResourceIdentifier& transactionIdentifier)
-{
-    idbServer().abortTransaction(transactionIdentifier);
-}
-
-void WebIDBConnectionToClient::commitTransaction(const IDBResourceIdentifier& transactionIdentifier)
-{
-    idbServer().commitTransaction(transactionIdentifier);
-}
-
-void WebIDBConnectionToClient::didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
-{
-    idbServer().didFinishHandlingVersionChangeTransaction(databaseConnectionIdentifier, transactionIdentifier);
-}
-
-void WebIDBConnectionToClient::createObjectStore(const IDBRequestData& request, const IDBObjectStoreInfo& info)
-{
-    idbServer().createObjectStore(request, info);
-}
-
-void WebIDBConnectionToClient::deleteObjectStore(const IDBRequestData& request, const String& name)
-{
-    idbServer().deleteObjectStore(request, name);
-}
-
-void WebIDBConnectionToClient::renameObjectStore(const IDBRequestData& request, uint64_t objectStoreIdentifier, const String& newName)
-{
-    idbServer().renameObjectStore(request, objectStoreIdentifier, newName);
-}
-
-void WebIDBConnectionToClient::clearObjectStore(const IDBRequestData& request, uint64_t objectStoreIdentifier)
-{
-    idbServer().clearObjectStore(request, objectStoreIdentifier);
-}
-
-void WebIDBConnectionToClient::createIndex(const IDBRequestData& request, const IDBIndexInfo& info)
-{
-    idbServer().createIndex(request, info);
-}
-
-void WebIDBConnectionToClient::deleteIndex(const IDBRequestData& request, uint64_t objectStoreIdentifier, const String& name)
-{
-    idbServer().deleteIndex(request, objectStoreIdentifier, name);
-}
-
-void WebIDBConnectionToClient::renameIndex(const IDBRequestData& request, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName)
-{
-    idbServer().renameIndex(request, objectStoreIdentifier, indexIdentifier, newName);
-}
-
-void WebIDBConnectionToClient::putOrAdd(const IDBRequestData& request, const IDBKeyData& key, const IDBValue& value, IndexedDB::ObjectStoreOverwriteMode mode)
-{
-    idbServer().putOrAdd(request, key, value, mode);
-}
-
-void WebIDBConnectionToClient::getRecord(const IDBRequestData& request, const IDBGetRecordData& getRecordData)
-{
-    idbServer().getRecord(request, getRecordData);
-}
-
-void WebIDBConnectionToClient::getAllRecords(const IDBRequestData& request, const IDBGetAllRecordsData& getAllRecordsData)
-{
-    idbServer().getAllRecords(request, getAllRecordsData);
-}
-
-void WebIDBConnectionToClient::getCount(const IDBRequestData& request, const IDBKeyRangeData& range)
-{
-    idbServer().getCount(request, range);
-}
-
-void WebIDBConnectionToClient::deleteRecord(const IDBRequestData& request, const IDBKeyRangeData& range)
-{
-    idbServer().deleteRecord(request, range);
-}
-
-void WebIDBConnectionToClient::openCursor(const IDBRequestData& request, const IDBCursorInfo& info)
-{
-    idbServer().openCursor(request, info);
-}
-
-void WebIDBConnectionToClient::iterateCursor(const IDBRequestData& request, const IDBIterateCursorData& data)
-{
-    idbServer().iterateCursor(request, data);
-}
-
-void WebIDBConnectionToClient::establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo& info)
-{
-    idbServer().establishTransaction(databaseConnectionIdentifier, info);
-}
-
-void WebIDBConnectionToClient::databaseConnectionPendingClose(uint64_t databaseConnectionIdentifier)
-{
-    idbServer().databaseConnectionPendingClose(databaseConnectionIdentifier);
-}
-
-void WebIDBConnectionToClient::databaseConnectionClosed(uint64_t databaseConnectionIdentifier)
-{
-    idbServer().databaseConnectionClosed(databaseConnectionIdentifier);
-}
-
-void WebIDBConnectionToClient::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
-{
-    idbServer().abortOpenAndUpgradeNeeded(databaseConnectionIdentifier, transactionIdentifier);
-}
-
-void WebIDBConnectionToClient::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
-{
-    idbServer().didFireVersionChangeEvent(databaseConnectionIdentifier, transactionIdentifier, connectionClosed);
-}
-
-void WebIDBConnectionToClient::openDBRequestCancelled(const IDBRequestData& requestData)
-{
-    idbServer().openDBRequestCancelled(requestData);
-}
-
-void WebIDBConnectionToClient::confirmDidCloseFromServer(uint64_t databaseConnectionIdentifier)
-{
-    idbServer().confirmDidCloseFromServer(databaseConnectionIdentifier);
-}
-
-void WebIDBConnectionToClient::getAllDatabaseNames(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& openingOrigin, uint64_t callbackID)
-{
-    idbServer().getAllDatabaseNames(identifier(), topOrigin, openingOrigin, callbackID);
 }
 
 } // namespace WebKit

@@ -164,8 +164,8 @@ MESSAGE_RECEIVERS = \
     WebFullScreenManagerProxy \
     WebGeolocationManager \
     WebGeolocationManagerProxy \
-    WebIDBConnectionToClient \
     WebIDBConnectionToServer \
+    WebIDBServer \
     WebInspector \
     WebInspectorInterruptDispatcher \
     WebInspectorProxy \

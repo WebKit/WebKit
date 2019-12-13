@@ -387,6 +387,8 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
     connection.setOnLineState(NetworkStateNotifier::singleton().onLine());
 
     m_storageManagerSet->addConnection(connection.connection());
+
+    webIDBServer(sessionID).addConnection(connection.connection(), identifier);
 }
 
 void NetworkProcess::clearCachedCredentials()
@@ -2527,9 +2529,10 @@ void NetworkProcess::getLocalStorageOriginDetails(PAL::SessionID sessionID, Comp
     });
 }
 
-void NetworkProcess::connectionToWebProcessClosed(IPC::Connection& connection)
+void NetworkProcess::connectionToWebProcessClosed(IPC::Connection& connection, PAL::SessionID sessionID)
 {
     m_storageManagerSet->removeConnection(connection);
+    webIDBServer(sessionID).removeConnection(connection);
 }
 
 NetworkConnectionToWebProcess* NetworkProcess::webProcessConnection(ProcessIdentifier identifier) const

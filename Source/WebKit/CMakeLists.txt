@@ -112,7 +112,7 @@ list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
 set(WebKit_MESSAGES_IN_FILES
     NetworkProcess/Cookies/WebCookieManager.messages.in
 
-    NetworkProcess/IndexedDB/WebIDBConnectionToClient.messages.in
+    NetworkProcess/IndexedDB/WebIDBServer.messages.in
 
     NetworkProcess/NetworkConnectionToWebProcess.messages.in
     NetworkProcess/NetworkContentRuleListManager.messages.in

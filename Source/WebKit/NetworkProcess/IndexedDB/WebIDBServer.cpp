@@ -269,11 +269,14 @@ void WebIDBServer::openDBRequestCancelled(const WebCore::IDBRequestData& request
     m_server->openDBRequestCancelled(requestData);
 }
 
-void WebIDBServer::getAllDatabaseNames(WebCore::IDBConnectionIdentifier serverConnectionIdentifier, const WebCore::SecurityOriginData& mainFrameOrigin, const WebCore::SecurityOriginData& openingOrigin, uint64_t callbackID)
+void WebIDBServer::getAllDatabaseNames(IPC::Connection& connection, const WebCore::SecurityOriginData& mainFrameOrigin, const WebCore::SecurityOriginData& openingOrigin, uint64_t callbackID)
 {
     ASSERT(RunLoop::isMain());
 
-    m_server->getAllDatabaseNames(serverConnectionIdentifier, mainFrameOrigin, openingOrigin, callbackID);
+    auto* webIDBConnection = m_connectionMap.get(connection.uniqueID());
+    ASSERT(webIDBConnection);
+
+    m_server->getAllDatabaseNames(webIDBConnection->identifier(), mainFrameOrigin, openingOrigin, callbackID);
 }
     
 void WebIDBServer::confirmDidCloseFromServer(uint64_t databaseConnectionIdentifier)
@@ -281,6 +284,28 @@ void WebIDBServer::confirmDidCloseFromServer(uint64_t databaseConnectionIdentifi
     ASSERT(RunLoop::isMain());
 
     m_server->confirmDidCloseFromServer(databaseConnectionIdentifier);
+}
+
+void WebIDBServer::addConnection(IPC::Connection& connection, WebCore::ProcessIdentifier processIdentifier)
+{
+    ASSERT(RunLoop::isMain());
+
+    auto[iter, isNewEntry] = m_connectionMap.ensure(connection.uniqueID(), [&connection, processIdentifier] {
+        return makeUnique<WebIDBConnectionToClient>(connection, processIdentifier);
+    });
+    
+    ASSERT(isNewEntry);
+
+    m_server->registerConnection(iter->value->connectionToClient());
+}
+
+void WebIDBServer::removeConnection(IPC::Connection& connection)
+{
+    auto takenConnection = m_connectionMap.take(connection.uniqueID());
+
+    ASSERT(takenConnection);
+
+    m_server->unregisterConnection(takenConnection->connectionToClient());
 }
 
 } // namespace WebKit

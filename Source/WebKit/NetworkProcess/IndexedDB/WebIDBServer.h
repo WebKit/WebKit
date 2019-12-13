@@ -82,13 +82,20 @@ public:
     void didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer);
     void openDBRequestCancelled(const WebCore::IDBRequestData&);
     void confirmDidCloseFromServer(uint64_t databaseConnectionIdentifier);
-    void getAllDatabaseNames(WebCore::IDBConnectionIdentifier, const WebCore::SecurityOriginData&, const WebCore::SecurityOriginData&, uint64_t callbackID);
+    void getAllDatabaseNames(IPC::Connection&, const WebCore::SecurityOriginData&, const WebCore::SecurityOriginData&, uint64_t callbackID);
+
+    void addConnection(IPC::Connection&, WebCore::ProcessIdentifier);
+    void removeConnection(IPC::Connection&);
+
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
 private:
     WebIDBServer(PAL::SessionID, const String& directory, WebCore::IDBServer::IDBServer::StorageQuotaManagerSpaceRequester&&);
 
     Ref<WebCore::IDBServer::IDBServer> m_server;
     bool m_isSuspended { false };
+
+    HashMap<IPC::Connection::UniqueID, std::unique_ptr<WebIDBConnectionToClient>> m_connectionMap;
 };
 
 } // namespace WebKit
