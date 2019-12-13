@@ -24,15 +24,15 @@ var scrollEventCount = 0;
 window.addEventListener('scroll', function(e) {
   ++scrollEventCount;
   debug('Received scroll event ' + scrollEventCount);
+  window.setTimeout(function() {
+    shouldBe('scrollEventCount', '1');
+    finishJSTest();
+  }, 10);
 }, false);
 
 function onPageLoad()
 {
     testScrollListener();
-    window.setTimeout(function() {
-      shouldBe('scrollEventCount', '1');
-      finishJSTest();
-    }, 10); // Scroll events are async.
 };
 
 window.addEventListener('load', onPageLoad, false);

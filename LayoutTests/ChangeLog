@@ -1,5 +1,11 @@
 2019-12-13  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, address flakiness of fast/scrolling/ios/scroll-event-from-scrollTo.html
+
+        * fast/scrolling/ios/scroll-event-from-scrollTo.html:
+
+2019-12-13  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rebaseline a couple of iOS swiping tests after r253450
 
         * platform/ios/swipe/main-frame-pinning-requirement-expected.txt:
