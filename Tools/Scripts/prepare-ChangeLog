@@ -1474,6 +1474,7 @@ sub get_function_line_ranges_for_javascript($$)
     my $functionJustSeen = 0;
     my $getterJustSeen = 0;
     my $setterJustSeen = 0;
+    my $asyncJustSeen = 0;
     my $assignmentJustSeen = 0;
     my $staticOrContructorSeen = 0;
 
@@ -1659,6 +1660,13 @@ sub get_function_line_ranges_for_javascript($$)
                 next;
             }
 
+            # Async prefix.
+            if ($1 eq 'async') {
+                next if $lastToken eq '.';
+                $asyncJustSeen = 1;
+                next;
+            }
+
             # Static.
             if ($1 eq 'static' or $1 eq 'constructor') {
                 $staticOrContructorSeen = 1;
@@ -1686,14 +1694,15 @@ sub get_function_line_ranges_for_javascript($$)
                 push(@currentFunctionNames, $currentClass);
                 push(@currentFunctionDepths, $bracesDepth);
                 push(@currentFunctionStartLines, $.);
-            } elsif ($getterJustSeen or $setterJustSeen) {
+            } elsif ($getterJustSeen or $setterJustSeen or $asyncJustSeen) {
                 $word = "get $word" if $getterJustSeen;
                 $word = "set $word" if $setterJustSeen;
+                $word = "async $word" if $asyncJustSeen;
 
                 push(@currentIdentifiers, $word);
 
                 my $mode = $currentParsingMode[$#currentParsingMode];
-                my $currentFunction = join('.', (@currentScopes, ($mode eq 'class') ? "prototype" : "", @currentIdentifiers));
+                my $currentFunction = join('.', (@currentScopes, ($mode eq 'class' and !$staticOrContructorSeen) ? "prototype" : "", @currentIdentifiers));
                 $currentFunction =~ s/\.{2,}/\./g; # Removes consecutive periods.
 
                 push(@currentParsingMode, "function");
@@ -1719,6 +1728,7 @@ sub get_function_line_ranges_for_javascript($$)
             $functionJustSeen = 0;
             $getterJustSeen = 0;
             $setterJustSeen = 0;
+            $asyncJustSeen = 0;
             $assignmentJustSeen = 0;
         }
     }

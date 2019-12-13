@@ -237,3 +237,25 @@ class IssueWithMapGetAndSet {
     {
     }
 };
+
+class AsyncFuncClass {
+    static async staticAsync()
+    {
+    }
+
+    async methodAsync()
+    {
+    }
+
+    async get getAsync()
+    {
+    }
+
+    async set setAsync()
+    {
+    }
+};
+
+async function asyncFunc1()
+{
+}

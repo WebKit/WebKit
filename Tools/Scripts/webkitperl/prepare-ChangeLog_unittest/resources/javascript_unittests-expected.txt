@@ -261,6 +261,36 @@
       '222',
       '239',
       'IssueWithMapGetAndSet'
+    ],
+    [
+      242,
+      244,
+      'AsyncFuncClass.async staticAsync'
+    ],
+    [
+      246,
+      248,
+      'AsyncFuncClass.prototype.async methodAsync'
+    ],
+    [
+      250,
+      252,
+      'AsyncFuncClass.prototype.async get getAsync'
+    ],
+    [
+      254,
+      256,
+      'AsyncFuncClass.prototype.async set setAsync'
+    ],
+    [
+      241,
+      257,
+      'AsyncFuncClass'
+    ],
+    [
+      259,
+      261,
+      'async asyncFunc1'
     ]
   ]
 }
