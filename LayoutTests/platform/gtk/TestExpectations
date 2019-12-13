@@ -2970,10 +2970,6 @@ webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside
 webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-inset-003.html [ Failure ]
 webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-polygon-004.html [ Failure ]
 
-webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/animation/shape-image-threshold-interpolation.html [ Failure Pass ]
-webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/animation/shape-margin-interpolation.html [ Failure Pass ]
-webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/animation/shape-outside-interpolation.html [ Failure Pass ]
-
 webkit.org/b/139486 fast/css3-text/css3-text-decoration/text-decoration-skip/decoration-skip-crash-fallback-svg.html [ ImageOnlyFailure ]
 
 webkit.org/b/124566 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Failure ]

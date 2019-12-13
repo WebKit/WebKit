@@ -1,3 +1,12 @@
+2019-12-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Fix some errors on the TestExpectations files.
+
+        Unreviewed gardening.
+
+        * TestExpectations: Add missing expectation.
+        * platform/gtk/TestExpectations: Remove repeated entries
+
 2019-12-13  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, address flakiness of fast/scrolling/ios/scroll-event-from-scrollTo.html
