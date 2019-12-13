@@ -141,11 +141,13 @@ Ref<DOMCache> DOMCacheStorage::findCacheOrCreate(CacheInfo&& info)
    return DOMCache::create(*scriptExecutionContext(), WTFMove(info.name), info.identifier, m_connection.copyRef());
 }
 
-void DOMCacheStorage::retrieveCaches(WTF::Function<void(Optional<Exception>&&)>&& callback)
+void DOMCacheStorage::retrieveCaches(CompletionHandler<void(Optional<Exception>&&)>&& callback)
 {
     auto origin = this->origin();
-    if (!origin)
+    if (!origin) {
+        callback(convertToExceptionAndLog(scriptExecutionContext(), DOMCacheEngine::Error::Stopped));
         return;
+    }
 
     m_connection->retrieveCaches(*origin, m_updateCounter, [this, callback = WTFMove(callback), pendingActivity = makePendingActivity(*this)](CacheInfosOrError&& result) mutable {
         if (!m_isStopped) {

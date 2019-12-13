@@ -48,6 +48,8 @@ static inline Exception errorToException(Error error)
         return Exception { QuotaExceededError, "Quota exceeded"_s };
     case Error::Internal:
         return Exception { TypeError, "Internal error"_s };
+    case Error::Stopped:
+        return Exception { TypeError, "Context is stopped"_s };
     default:
         ASSERT_NOT_REACHED();
         return Exception { TypeError, "Connection stopped"_s };
