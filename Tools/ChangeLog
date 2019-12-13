@@ -1,3 +1,29 @@
+2019-12-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Several tests crashing after r247898 "Reorganize UIScriptController into platform-specific subclasses"
+        https://bugs.webkit.org/show_bug.cgi?id=200534
+
+        Reviewed by Alejandro G. Castro.
+
+        Add implementation of several UIScriptController virtual methods to avoid crashes.
+
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
+        (WTR::PlatformWebView::~PlatformWebView):
+        (WTR::PlatformWebView::addToWindow):
+        (WTR::PlatformWebView::removeFromWindow):
+        * WebKitTestRunner/gtk/UIScriptControllerGtk.cpp:
+        (WTR::UIScriptControllerGtk::doAsyncTask):
+        (WTR::UIScriptControllerGtk::setContinuousSpellCheckingEnabled):
+        (WTR::UIScriptControllerGtk::copyText):
+        (WTR::UIScriptControllerGtk::dismissMenu):
+        (WTR::UIScriptControllerGtk::isShowingMenu const):
+        (WTR::UIScriptControllerGtk::activateAtPoint):
+        (WTR::UIScriptControllerGtk::activateDataListSuggestion):
+        (WTR::UIScriptControllerGtk::simulateAccessibilitySettingsChangeNotification):
+        (WTR::UIScriptControllerGtk::removeViewFromWindow):
+        (WTR::UIScriptControllerGtk::addViewToWindow):
+        * WebKitTestRunner/gtk/UIScriptControllerGtk.h:
+
 2019-12-12  Simon Fraser  <simon.fraser@apple.com>
 
         Move WKWebView code related to testing to new files, with new private "for testing" headers.

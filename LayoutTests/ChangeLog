@@ -1,3 +1,14 @@
+2019-12-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Several tests crashing after r247898 "Reorganize UIScriptController into platform-specific subclasses"
+        https://bugs.webkit.org/show_bug.cgi?id=200534
+
+        Reviewed by Alejandro G. Castro.
+
+        Update expectations.
+
+        * platform/gtk/TestExpectations:
+
 2019-12-12  Chris Dumez  <cdumez@apple.com>
 
         Re-sync service-workers web-platform-tests from upstream

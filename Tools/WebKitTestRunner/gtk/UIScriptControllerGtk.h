@@ -42,6 +42,16 @@ public:
     void beginBackSwipe(JSValueRef) override;
     void completeBackSwipe(JSValueRef) override;
     bool isShowingDataListSuggestions() const override;
+    void doAsyncTask(JSValueRef) override;
+    void setContinuousSpellCheckingEnabled(bool) override;
+    void copyText(JSStringRef) override;
+    void dismissMenu() override;
+    bool isShowingMenu() const override;
+    void activateAtPoint(long x, long y, JSValueRef callback) override;
+    void activateDataListSuggestion(unsigned index, JSValueRef callback) override;
+    void simulateAccessibilitySettingsChangeNotification(JSValueRef) override;
+    void removeViewFromWindow(JSValueRef) override;
+    void addViewToWindow(JSValueRef) override;
 };
 
 } // namespace WTR

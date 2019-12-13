@@ -26,10 +26,15 @@
 #include "config.h"
 #include "UIScriptControllerGtk.h"
 
+#include "EventSenderProxy.h"
 #include "PlatformWebView.h"
 #include "TestController.h"
+#include "TextChecker.h"
+#include "UIScriptContext.h"
+#include <JavaScriptCore/OpaqueJSString.h>
 #include <WebKit/WKViewPrivate.h>
 #include <gtk/gtk.h>
+#include <wtf/RunLoop.h>
 
 namespace WTR {
 
@@ -58,6 +63,99 @@ bool UIScriptControllerGtk::isShowingDataListSuggestions() const
     if (auto* popup = g_object_get_data(G_OBJECT(webView), "wk-datalist-popup"))
         return gtk_widget_get_mapped(GTK_WIDGET(popup));
     return false;
+}
+
+void UIScriptControllerGtk::doAsyncTask(JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+    RunLoop::main().dispatch([this, protectedThis = makeRef(*this), callbackID] {
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    });
+}
+
+void UIScriptControllerGtk::setContinuousSpellCheckingEnabled(bool enabled)
+{
+    WebKit::TextChecker::setContinuousSpellCheckingEnabled(enabled);
+}
+
+void UIScriptControllerGtk::copyText(JSStringRef text)
+{
+    auto string = text->string().utf8();
+    gtk_clipboard_set_text(gtk_clipboard_get(GDK_SELECTION_CLIPBOARD), string.data(), string.length());
+}
+
+void UIScriptControllerGtk::dismissMenu()
+{
+    // FIXME: implement.
+}
+
+bool UIScriptControllerGtk::isShowingMenu() const
+{
+    // FIXME: implement.
+    return false;
+}
+
+void UIScriptControllerGtk::activateAtPoint(long x, long y, JSValueRef callback)
+{
+    auto* eventSender = TestController::singleton().eventSenderProxy();
+    if (!eventSender) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+
+    eventSender->mouseMoveTo(x, y);
+    eventSender->mouseDown(0, 0);
+    eventSender->mouseUp(0, 0);
+
+    RunLoop::main().dispatch([this, protectedThis = makeRef(*this), callbackID] {
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    });
+}
+
+void UIScriptControllerGtk::activateDataListSuggestion(unsigned index, JSValueRef callback)
+{
+    // FIXME: implement.
+    UNUSED_PARAM(index);
+
+    doAsyncTask(callback);
+}
+
+void UIScriptControllerGtk::simulateAccessibilitySettingsChangeNotification(JSValueRef callback)
+{
+    // FIXME: implement.
+    doAsyncTask(callback);
+}
+
+void UIScriptControllerGtk::removeViewFromWindow(JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+    auto* mainWebView = TestController::singleton().mainWebView();
+    mainWebView->removeFromWindow();
+
+    RunLoop::main().dispatch([this, protectedThis = makeRef(*this), callbackID] {
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    });
+}
+
+void UIScriptControllerGtk::addViewToWindow(JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+    auto* mainWebView = TestController::singleton().mainWebView();
+    mainWebView->addToWindow();
+
+    RunLoop::main().dispatch([this, protectedThis = makeRef(*this), callbackID] {
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    });
 }
 
 } // namespace WTR

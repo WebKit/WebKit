@@ -56,6 +56,9 @@ PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration, const Tes
 
 PlatformWebView::~PlatformWebView()
 {
+    if (gtk_bin_get_child(GTK_BIN(m_window)) != GTK_WIDGET(m_view))
+        g_object_unref(GTK_WIDGET(m_view));
+
     gtk_widget_destroy(m_window);
     if (m_otherWindow)
         gtk_widget_destroy(m_otherWindow);
@@ -139,10 +142,19 @@ void PlatformWebView::removeChromeInputField()
 
 void PlatformWebView::addToWindow()
 {
+    if (gtk_bin_get_child(GTK_BIN(m_window)) == GTK_WIDGET(m_view))
+        return;
+
+    gtk_container_add(GTK_CONTAINER(m_window), GTK_WIDGET(m_view));
+    g_object_unref(GTK_WIDGET(m_view));
 }
 
 void PlatformWebView::removeFromWindow()
 {
+    if (gtk_bin_get_child(GTK_BIN(m_window)) == GTK_WIDGET(m_view)) {
+        g_object_ref(GTK_WIDGET(m_view));
+        gtk_container_remove(GTK_CONTAINER(m_window), GTK_WIDGET(m_view));
+    }
 }
 
 void PlatformWebView::makeWebViewFirstResponder()
