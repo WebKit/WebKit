@@ -6180,6 +6180,8 @@ void WebPageProxy::failedToShowPopupMenu()
 
 void WebPageProxy::showPopupMenu(const IntRect& rect, uint64_t textDirection, const Vector<WebPopupItem>& items, int32_t selectedIndex, const PlatformPopupMenuData& data)
 {
+    MESSAGE_CHECK(m_process, selectedIndex == -1 || static_cast<uint32_t>(selectedIndex) < items.size());
+
     if (m_activePopupMenu) {
         m_activePopupMenu->hidePopupMenu();
         m_activePopupMenu->invalidate();

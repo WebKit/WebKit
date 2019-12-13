@@ -1,3 +1,16 @@
+2019-12-13  David Kilzer  <ddkilzer@apple.com>
+
+        Add MESSAGE_CHECK() for selectedIndex in Messages::WebPageProxy::ShowPopupMenu
+        <https://webkit.org/b/205177>
+        <rdar://problem/57337872>
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showPopupMenu): Add MESSAGE_CHECK() to
+        validate the `selectedIndex` parameter, which must be -1 to
+        select no items, or a valid zero-based index into `items`.
+
 2019-12-13  Alex Christensen  <achristensen@webkit.org>
 
         Allow cross-origin requests to WKURLSchemeHandlers
