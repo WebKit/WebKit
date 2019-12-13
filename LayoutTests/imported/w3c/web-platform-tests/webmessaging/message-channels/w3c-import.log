@@ -21,4 +21,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/message-channels/004-2.html
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/message-channels/004.html
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/message-channels/close.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/message-channels/dictionary-transferrable.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/message-channels/user-activation.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/message-channels/worker-post-after-close.html
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/message-channels/worker.html

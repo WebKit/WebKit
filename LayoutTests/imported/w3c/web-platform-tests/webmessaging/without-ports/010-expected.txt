@@ -7,11 +7,11 @@ PASS 1
 PASS NaN 
 PASS Infinity 
 PASS string 
-FAIL date Can't find variable: sameDate
+PASS date 
 PASS regex 
 PASS self 
-FAIL array Can't find variable: assert_array_equals_
-FAIL object Can't find variable: assert_object_equals_
+PASS array 
+PASS object 
 PASS error 
 PASS unreached 
 

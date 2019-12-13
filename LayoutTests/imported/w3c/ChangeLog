@@ -1,5 +1,16 @@
 2019-12-12  Chris Dumez  <cdumez@apple.com>
 
+        Re-sync webmessaging web-platform-tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=205178
+
+        Reviewed by Alex Christensen.
+
+        Re-sync webmessaging web-platform-tests from upstream ab28e18f067f17a.
+
+        * web-platform-tests/webmessaging/*: Updated
+
+2019-12-12  Chris Dumez  <cdumez@apple.com>
+
         window.AudioContext / window.OfflineAudioContext should not be enumerable
         https://bugs.webkit.org/show_bug.cgi?id=205163
 

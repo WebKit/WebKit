@@ -336,6 +336,7 @@ imported/w3c/web-platform-tests/html/browsers/offline/application-cache-api/api_
 imported/w3c/web-platform-tests/cors/image-tainting-in-cross-origin-iframe.sub.html [ Skip ]
 imported/w3c/web-platform-tests/dom/events/EventListener-incumbent-global-1.sub.html [ Skip ]
 imported/w3c/web-platform-tests/dom/events/EventListener-incumbent-global-2.sub.html [ Skip ]
+imported/w3c/web-platform-tests/webmessaging/broadcastchannel/origin.window.html [ Skip ]
 
 # Newly imported WPT ref tests failures.
 imported/w3c/web-platform-tests/html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters/dir-isolation-001a.html [ ImageOnlyFailure ]
