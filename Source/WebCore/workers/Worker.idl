@@ -32,7 +32,8 @@
 ] interface Worker : EventTarget {
     void terminate();
 
-    [CallWith=GlobalObject, MayThrowException] void postMessage(any message, optional sequence<object> transfer = []);
+    [CallWith=GlobalObject, MayThrowException] void postMessage(any message, sequence<object> transfer);
+    [CallWith=GlobalObject, MayThrowException] void postMessage(any message, optional PostMessageOptions options);
     attribute EventHandler onmessage;
 };
 

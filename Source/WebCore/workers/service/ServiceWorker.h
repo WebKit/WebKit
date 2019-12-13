@@ -30,6 +30,7 @@
 #include "ActiveDOMObject.h"
 #include "ContextDestructionObserver.h"
 #include "EventTarget.h"
+#include "PostMessageOptions.h"
 #include "ServiceWorkerData.h"
 #include <JavaScriptCore/Strong.h>
 #include <wtf/RefCounted.h>
@@ -58,7 +59,7 @@ public:
     
     void updateState(State);
 
-    ExceptionOr<void> postMessage(ScriptExecutionContext&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
+    ExceptionOr<void> postMessage(ScriptExecutionContext&, JSC::JSValue message, PostMessageOptions&&);
 
     ServiceWorkerIdentifier identifier() const { return m_data.identifier; }
     ServiceWorkerRegistrationIdentifier registrationIdentifier() const { return m_data.registrationIdentifier; }

@@ -960,6 +960,7 @@ set(WebCore_NON_SVG_IDL_FILES
     page/PerformanceResourceTiming.idl
     page/PerformanceServerTiming.idl
     page/PerformanceTiming.idl
+    page/PostMessageOptions.idl
     page/RemoteDOMWindow.idl
     page/ResizeObserver.idl
     page/ResizeObserverCallback.idl

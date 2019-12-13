@@ -33,6 +33,7 @@
 #include "Frame.h"
 #include "FrameDestructionObserver.h"
 #include "ImageBitmap.h"
+#include "PostMessageOptions.h"
 #include "ScrollToOptions.h"
 #include "ScrollTypes.h"
 #include "Supplementable.h"
@@ -95,6 +96,16 @@ struct WindowFeatures;
 
 enum SetLocationLocking { LockHistoryBasedOnGestureState, LockHistoryAndBackForwardList };
 enum class IncludeTargetOrigin { No, Yes };
+
+struct WindowPostMessageOptions : public PostMessageOptions {
+    WindowPostMessageOptions() = default;
+    WindowPostMessageOptions(String&& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
+        : PostMessageOptions(WTFMove(transfer))
+        , targetOrigin(WTFMove(targetOrigin))
+    { }
+
+    String targetOrigin { "/"_s };
+};
 
 // FIXME: Rename DOMWindow to LocalWindow and AbstractDOMWindow to DOMWindow.
 class DOMWindow final
@@ -250,7 +261,12 @@ public:
 
     String crossDomainAccessErrorMessage(const DOMWindow& activeWindow, IncludeTargetOrigin);
 
-    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, DOMWindow& incumbentWindow, JSC::JSValue message, const String& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&&);
+    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, DOMWindow& incumbentWindow, JSC::JSValue message, WindowPostMessageOptions&&);
+    ExceptionOr<void> postMessage(JSC::JSGlobalObject& globalObject, DOMWindow& incumbentWindow, JSC::JSValue message, String&& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
+    {
+        return postMessage(globalObject, incumbentWindow, message, WindowPostMessageOptions { WTFMove(targetOrigin), WTFMove(transfer) });
+    }
+
     void postMessageTimerFired(PostMessageTimer&);
 
     void languagesChanged();

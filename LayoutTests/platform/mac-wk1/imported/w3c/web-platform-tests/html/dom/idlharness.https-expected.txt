@@ -4180,8 +4180,8 @@ PASS Window interface: operation alert(DOMString)
 PASS Window interface: operation confirm(DOMString) 
 PASS Window interface: operation prompt(DOMString, DOMString) 
 PASS Window interface: operation print() 
-FAIL Window interface: operation postMessage(any, USVString, [object Object]) assert_equals: property has wrong .length expected 1 but got 2
-FAIL Window interface: operation postMessage(any, WindowPostMessageOptions) assert_equals: property has wrong .length expected 1 but got 2
+PASS Window interface: operation postMessage(any, USVString, [object Object]) 
+PASS Window interface: operation postMessage(any, WindowPostMessageOptions) 
 PASS Window interface: operation captureEvents() 
 PASS Window interface: operation releaseEvents() 
 FAIL Window interface: attribute external assert_own_property: The global object must have a property "external" expected property "external" missing

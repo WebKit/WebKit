@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include "PostMessageOptions.h"
 #include "WorkerGlobalScope.h"
 
 namespace JSC {
@@ -54,7 +55,7 @@ public:
 
     const String& name() const { return m_name; }
 
-    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
+    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, PostMessageOptions&&);
 
     DedicatedWorkerThread& thread();
 

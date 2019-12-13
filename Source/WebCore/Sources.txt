@@ -3160,6 +3160,7 @@ JSPopStateEvent.cpp
 JSPositionCallback.cpp
 JSPositionErrorCallback.cpp
 JSPositionOptions.cpp
+JSPostMessageOptions.cpp
 JSProcessingInstruction.cpp
 JSProgressEvent.cpp
 JSPromiseRejectionEvent.cpp

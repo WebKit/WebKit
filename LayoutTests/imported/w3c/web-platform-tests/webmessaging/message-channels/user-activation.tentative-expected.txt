@@ -1,3 +1,3 @@
 
-FAIL user activation messagechannel test Type error
+FAIL user activation messagechannel test undefined is not an object (evaluating 'e.userActivation.isActive')
 

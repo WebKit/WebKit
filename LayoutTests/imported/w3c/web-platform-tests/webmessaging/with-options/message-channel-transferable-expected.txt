@@ -1,3 +1,3 @@
 
-FAIL MessageChannel's ports as MessagePort objects The string did not match the expected pattern.
+PASS MessageChannel's ports as MessagePort objects 
 

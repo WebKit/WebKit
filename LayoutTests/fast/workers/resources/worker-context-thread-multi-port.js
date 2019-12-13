@@ -28,7 +28,7 @@ try {
 }
 
 try {
-    postMessage("notAnArray", channel3.port1);
+    postMessage("notAnArray", "foo");
     testFailed("posting a non-array should throw");
 } catch (e) {
     testPassed("posting a non-array did throw: " + e);

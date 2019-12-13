@@ -98,6 +98,7 @@ typedef USVString CSSOMString;
     [EnabledBySetting=requestIdleCallback] void cancelIdleCallback(unsigned long handle);
 
     [CallWith=GlobalObject&IncumbentWindow, DoNotCheckSecurity, ForwardDeclareInHeader, MayThrowException] void postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
+    [CallWith=GlobalObject&IncumbentWindow, DoNotCheckSecurity, ForwardDeclareInHeader, MayThrowException] void postMessage(any message, optional WindowPostMessageOptions options);
 
     // Obsolete members, still part of the HTML specification (https://html.spec.whatwg.org/#Window-partial).
     void captureEvents(); // Not implemented. Also not in modern standards. Empty function may help compatibility with legacy content.
@@ -203,6 +204,12 @@ typedef USVString CSSOMString;
     [NotEnumerable, ImplementedAs=onwebkitAnimationIteration] attribute EventHandler onwebkitanimationiteration;
     [NotEnumerable, ImplementedAs=onwebkitAnimationStart] attribute EventHandler onwebkitanimationstart;
     [NotEnumerable, ImplementedAs=onwebkitTransitionEnd] attribute EventHandler onwebkittransitionend;
+};
+
+[
+    ImplementedAs=WindowPostMessageOptions
+] dictionary WindowPostMessageOptions : PostMessageOptions {
+  USVString targetOrigin = "/";
 };
 
 DOMWindow implements GlobalCrypto;

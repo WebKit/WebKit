@@ -30,6 +30,7 @@
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "EventTarget.h"
 #include "MessagePort.h"
+#include "PostMessageOptions.h"
 #include "WorkerScriptLoaderClient.h"
 #include <JavaScriptCore/RuntimeFlags.h>
 #include <wtf/MonotonicTime.h>
@@ -57,7 +58,7 @@ public:
     static ExceptionOr<Ref<Worker>> create(ScriptExecutionContext&, JSC::RuntimeFlags, const String& url, const Options&);
     virtual ~Worker();
 
-    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
+    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, PostMessageOptions&&);
 
     void terminate();
 

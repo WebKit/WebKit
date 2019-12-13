@@ -1,3 +1,54 @@
+2019-12-13  Chris Dumez  <cdumez@apple.com>
+
+        Implement PostMessageOptions for postMessage
+        https://bugs.webkit.org/show_bug.cgi?id=191028
+
+        Reviewed by Alex Christensen.
+
+        Implement PostMessageOptions dictionary parameter for postMessage:
+        - https://github.com/whatwg/html/issues/3799
+        - https://github.com/w3c/ServiceWorker/pull/1344
+
+        Blink and Gecko already support this.
+
+        No new tests, rebaselined existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::postMessage):
+        * dom/MessagePort.h:
+        * dom/MessagePort.idl:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::postMessage):
+        * page/DOMWindow.h:
+        (WebCore::WindowPostMessageOptions::WindowPostMessageOptions):
+        * page/DOMWindow.idl:
+        * page/PostMessageOptions.h: Copied from Source/WebCore/workers/service/ServiceWorkerClient.idl.
+        (WebCore::PostMessageOptions::PostMessageOptions):
+        * page/PostMessageOptions.idl: Copied from Source/WebCore/workers/service/ServiceWorkerClient.idl.
+        * workers/DedicatedWorkerGlobalScope.cpp:
+        (WebCore::DedicatedWorkerGlobalScope::postMessage):
+        * workers/DedicatedWorkerGlobalScope.h:
+        * workers/DedicatedWorkerGlobalScope.idl:
+        * workers/Worker.cpp:
+        (WebCore::Worker::postMessage):
+        * workers/Worker.h:
+        * workers/Worker.idl:
+        * workers/service/ServiceWorker.cpp:
+        (WebCore::ServiceWorker::postMessage):
+        * workers/service/ServiceWorker.h:
+        * workers/service/ServiceWorker.idl:
+        * workers/service/ServiceWorkerClient.cpp:
+        (WebCore::ServiceWorkerClient::postMessage):
+        * workers/service/ServiceWorkerClient.h:
+        * workers/service/ServiceWorkerClient.idl:
+
 2019-12-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Implement encoding/decoding for DisplayList::DrawNativeImage

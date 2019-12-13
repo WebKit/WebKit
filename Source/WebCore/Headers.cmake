@@ -809,6 +809,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/PlugInClient.h
     page/PointerCaptureController.h
     page/PointerLockController.h
+    page/PostMessageOptions.h
     page/PrewarmInformation.h
     page/PrintContext.h
     page/ProcessWarming.h

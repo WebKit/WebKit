@@ -21,7 +21,7 @@ shouldThrow('worker.postMessage("notAPort", [channel3.port1, {}, channel3.port2]
 // Should be OK to send channel3.port1/2 (should not have been disentangled by the previous failed calls).
 worker.postMessage("failed ports", [channel3.port1, channel3.port2]);
 
-shouldThrow('worker.postMessage("notAnArray", channel3.port1)')
+shouldThrow('worker.postMessage("notAnArray", "foo")')
 shouldThrow('worker.postMessage("notASequence", [{length: 3}])');
 
 worker.postMessage("done", [channel.port2]);

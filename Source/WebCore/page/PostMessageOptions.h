@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=SERVICE_WORKER,
-    CustomToJSObject,
-    EnabledAtRuntime=ServiceWorker,
-    Exposed=ServiceWorker,
-    InterfaceName=Client,
-] interface ServiceWorkerClient {
-    readonly attribute USVString url;
-    readonly attribute FrameType frameType;
-    readonly attribute ServiceWorkerClientType type;
-    readonly attribute DOMString id;
+#pragma once
 
-    [CallWith=ScriptExecutionContext, MayThrowException] void postMessage(any message, sequence<object> transfer);
-    [CallWith=ScriptExecutionContext, MayThrowException] void postMessage(any message, optional PostMessageOptions options);
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/Strong.h>
+#include <wtf/Vector.h>
+
+namespace WebCore {
+
+struct PostMessageOptions {
+    PostMessageOptions() = default;
+    PostMessageOptions(Vector<JSC::Strong<JSC::JSObject>>&& transfer)
+        : transfer(WTFMove(transfer))
+    { }
+
+    Vector<JSC::Strong<JSC::JSObject>> transfer;
 };
 
-enum FrameType {
-  "auxiliary",
-  "top-level",
-  "nested",
-  "none"
-};
+}

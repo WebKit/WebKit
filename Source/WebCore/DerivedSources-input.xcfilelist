@@ -914,6 +914,7 @@ $(PROJECT_DIR)/page/PerformanceObserverEntryList.idl
 $(PROJECT_DIR)/page/PerformanceResourceTiming.idl
 $(PROJECT_DIR)/page/PerformanceServerTiming.idl
 $(PROJECT_DIR)/page/PerformanceTiming.idl
+$(PROJECT_DIR)/page/PostMessageOptions.idl
 $(PROJECT_DIR)/page/RemoteDOMWindow.idl
 $(PROJECT_DIR)/page/ResizeObserver.idl
 $(PROJECT_DIR)/page/ResizeObserverCallback.idl

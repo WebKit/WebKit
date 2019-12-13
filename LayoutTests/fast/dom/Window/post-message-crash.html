@@ -14,14 +14,23 @@ if (window.testRunner) {
 
 var n = 0;
 
-window.onerror = function() {
+function finishIfNeeded()
+{
     if (++n === 2) {
         document.querySelector('pre').textContent = 'PASS';
         if (window.testRunner)
             testRunner.notifyDone();
     }
+}
+
+window.onerror = function() {
+    finishIfNeeded();
     return true;
 };
+
+onmessage = () => {
+    finishIfNeeded();
+}
 
 requestAnimationFrame(postMessage);
 setTimeout(postMessage);

@@ -1,5 +1,34 @@
 2019-12-13  Chris Dumez  <cdumez@apple.com>
 
+        Implement PostMessageOptions for postMessage
+        https://bugs.webkit.org/show_bug.cgi?id=191028
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline WPT tests now that we have more passes.
+
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-expected.txt:
+        * web-platform-tests/html/browsers/windows/document-access/document_access_parent_access.tentative-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-matchall-frozen.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/postmessage.https-expected.txt:
+        * web-platform-tests/webmessaging/message-channels/dictionary-transferrable-expected.txt:
+        * web-platform-tests/webmessaging/message-channels/user-activation.tentative-expected.txt:
+        * web-platform-tests/webmessaging/postMessage_MessagePorts_xsite.sub.window-expected.txt:
+        * web-platform-tests/webmessaging/with-options/host-specific-origin-expected.txt:
+        * web-platform-tests/webmessaging/with-options/message-channel-transferable-expected.txt:
+        * web-platform-tests/webmessaging/with-options/no-target-origin-expected.txt:
+        * web-platform-tests/webmessaging/with-options/null-transfer-expected.txt:
+        * web-platform-tests/webmessaging/with-options/one-arg-expected.txt:
+        * web-platform-tests/webmessaging/with-options/slash-origin-expected.txt:
+        * web-platform-tests/webmessaging/with-options/undefined-transferable-expected.txt:
+        * web-platform-tests/webmessaging/with-options/unknown-parameter-expected.txt:
+        * web-platform-tests/webmessaging/without-ports/008-expected.txt:
+        * web-platform-tests/webmessaging/worker_postMessage_user_activation.tentative-expected.txt:
+        * web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/postMessage/second-argument-dictionary-expected.txt:
+        * web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/postMessage/second-argument-null-expected.txt:
+
+2019-12-13  Chris Dumez  <cdumez@apple.com>
+
         REGRESSION: (r251677) imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-3.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=205164
         <rdar://problem/57879042>

@@ -82,13 +82,13 @@ String ServiceWorkerClient::id() const
     return identifier().toString();
 }
 
-ExceptionOr<void> ServiceWorkerClient::postMessage(ScriptExecutionContext& context, JSC::JSValue messageValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
+ExceptionOr<void> ServiceWorkerClient::postMessage(ScriptExecutionContext& context, JSC::JSValue messageValue, PostMessageOptions&& options)
 {
     auto* execState = context.execState();
     ASSERT(execState);
 
     Vector<RefPtr<MessagePort>> ports;
-    auto messageData = SerializedScriptValue::create(*execState, messageValue, WTFMove(transfer), ports, SerializationContext::WorkerPostMessage);
+    auto messageData = SerializedScriptValue::create(*execState, messageValue, WTFMove(options.transfer), ports, SerializationContext::WorkerPostMessage);
     if (messageData.hasException())
         return messageData.releaseException();
 
