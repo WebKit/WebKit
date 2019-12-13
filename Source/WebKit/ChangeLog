@@ -1,3 +1,16 @@
+2019-12-12  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Add sandbox telemetry to mach lookup rules in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=205175
+
+        Reviewed by Brent Fulgham.
+
+        We have already added telemetry to many mach lookup rules, but some were missing telemetry.
+
+        No new tests, no behavior change.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-12-12  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: make WebIDBServer a MessageReceiver to replace WebIDBConnection
