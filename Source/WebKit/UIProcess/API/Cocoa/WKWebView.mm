@@ -421,30 +421,6 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
-- (BOOL)_isShowingVideoPictureInPicture
-{
-#if !HAVE(AVKIT)
-    return false;
-#else
-    if (!_page || !_page->videoFullscreenManager())
-        return false;
-
-    return _page->videoFullscreenManager()->hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
-#endif
-}
-
-- (BOOL)_mayAutomaticallyShowVideoPictureInPicture
-{
-#if !HAVE(AVKIT)
-    return false;
-#else
-    if (!_page || !_page->videoFullscreenManager())
-        return false;
-
-    return _page->videoFullscreenManager()->mayAutomaticallyShowVideoPictureInPicture();
-#endif
-}
-
 static bool shouldAllowPictureInPictureMediaPlayback()
 {
     static bool shouldAllowPictureInPictureMediaPlayback = dyld_get_program_sdk_version() >= DYLD_IOS_VERSION_9_0;
@@ -455,45 +431,6 @@ static bool shouldAllowSettingAnyXHRHeaderFromFileURLs()
 {
     static bool shouldAllowSettingAnyXHRHeaderFromFileURLs = (WebCore::IOSApplication::isCardiogram() || WebCore::IOSApplication::isNike()) && !linkedOnOrAfter(WebKit::SDKVersion::FirstThatDisallowsSettingAnyXHRHeaderFromFileURLs);
     return shouldAllowSettingAnyXHRHeaderFromFileURLs;
-}
-
-- (void)_incrementFocusPreservationCount
-{
-    ++_focusPreservationCount;
-}
-
-- (void)_decrementFocusPreservationCount
-{
-    if (_focusPreservationCount)
-        --_focusPreservationCount;
-}
-
-- (void)_resetFocusPreservationCount
-{
-    _focusPreservationCount = 0;
-}
-
-- (BOOL)_isRetainingActiveFocusedState
-{
-    // Focus preservation count fulfills the same role as active focus state count.
-    // However, unlike active focus state, it may be reset to 0 without impacting the
-    // behavior of -_retainActiveFocusedState, and it's harmless to invoke
-    // -_decrementFocusPreservationCount after resetting the count to 0.
-    return _focusPreservationCount || _activeFocusedStateRetainCount;
-}
-
-- (BOOL)_effectiveAppearanceIsDark
-{
-    return self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark;
-}
-
-- (BOOL)_effectiveUserInterfaceLevelIsElevated
-{
-#if HAVE(OS_DARK_MODE_SUPPORT) && !PLATFORM(WATCHOS)
-    return self.traitCollection.userInterfaceLevel == UIUserInterfaceLevelElevated;
-#else
-    return NO;
-#endif
 }
 
 #endif // PLATFORM(IOS_FAMILY)
@@ -917,6 +854,8 @@ static void validate(WKWebViewConfiguration *configuration)
     return [super valueForUndefinedKey:key];
 }
 
+#pragma mark - API
+
 - (WKWebViewConfiguration *)configuration
 {
     return [[_configuration copy] autorelease];
@@ -1246,16 +1185,6 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
     _page->setCustomUserAgent(customUserAgent);
 }
 
-- (WKPageRef)_pageForTesting
-{
-    return toAPI(_page.get());
-}
-
-- (WebKit::WebPageProxy *)_page
-{
-    return _page.get();
-}
-
 - (BOOL)allowsLinkPreview
 {
 #if PLATFORM(MAC)
@@ -1284,20 +1213,6 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
     [_contentView _didChangeLinkPreviewAvailability];
 #endif // HAVE(LINK_PREVIEW)
 #endif // PLATFORM(IOS_FAMILY)
-}
-
-- (CGSize)_viewportSizeForCSSViewportUnits
-{
-    return _page->viewportSizeForCSSViewportUnits();
-}
-
-- (void)_setViewportSizeForCSSViewportUnits:(CGSize)viewportSize
-{
-    auto viewportSizeForViewportUnits = WebCore::IntSize(viewportSize);
-    if (viewportSizeForViewportUnits.isEmpty())
-        [NSException raise:NSInvalidArgumentException format:@"Viewport size should not be empty"];
-
-    _page->setViewportSizeForCSSViewportUnits(viewportSizeForViewportUnits);
 }
 
 static NSTextAlignment nsTextAlignment(WebKit::TextAlignment alignment)
@@ -1475,9 +1390,209 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
-#pragma mark iOS-specific methods
+#pragma mark - macOS/iOS implementation methods
+
+- (WKPageRef)_pageForTesting
+{
+    return toAPI(_page.get());
+}
+
+- (WebKit::WebPageProxy *)_page
+{
+    return _page.get();
+}
+
+- (id <WKURLSchemeHandler>)urlSchemeHandlerForURLScheme:(NSString *)urlScheme
+{
+    auto* handler = static_cast<WebKit::WebURLSchemeHandlerCocoa*>(_page->urlSchemeHandlerForScheme(urlScheme));
+    return handler ? handler->apiHandler() : nil;
+}
+
++ (BOOL)handlesURLScheme:(NSString *)urlScheme
+{
+    return WebCore::LegacySchemeRegistry::isBuiltinScheme(urlScheme);
+}
+
+- (Optional<BOOL>)_resolutionForShareSheetImmediateCompletionForTesting
+{
+    return _resolutionForShareSheetImmediateCompletionForTesting;
+}
+
+- (void)createPDFWithConfiguration:(WKPDFConfiguration *)pdfConfiguration completionHandler:(void (^)(NSData *pdfDocumentData, NSError *error))completionHandler
+{
+    WebCore::FrameIdentifier frameID;
+    if (auto mainFrame = _page->mainFrame())
+        frameID = mainFrame->frameID();
+    else {
+        completionHandler(nil, createNSError(WKErrorUnknown).get());
+        return;
+    }
+
+    Optional<WebCore::FloatRect> floatRect;
+    if (pdfConfiguration && !CGRectIsNull(pdfConfiguration.rect))
+        floatRect = WebCore::FloatRect(pdfConfiguration.rect);
+
+    auto handler = makeBlockPtr(completionHandler);
+    _page->drawToPDF(frameID, floatRect, [retainedSelf = retainPtr(self), handler = WTFMove(handler)](const IPC::DataReference& pdfData, WebKit::CallbackBase::Error error) {
+        if (error != WebKit::CallbackBase::Error::None) {
+            handler(nil, createNSError(WKErrorUnknown).get());
+            return;
+        }
+
+        auto data = adoptCF(CFDataCreate(kCFAllocatorDefault, pdfData.data(), pdfData.size()));
+        handler((NSData *)data.get(), nil);
+    });
+}
+
+- (void)createWebArchiveDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler
+{
+    auto handler = adoptNS([completionHandler copy]);
+
+    _page->getWebArchiveOfFrame(_page->mainFrame(), [handler](API::Data* data, WebKit::CallbackBase::Error error) {
+        void (^completionHandlerBlock)(NSData *, NSError *) = (void (^)(NSData *, NSError *))handler.get();
+        if (error != WebKit::CallbackBase::Error::None) {
+            // FIXME: Pipe a proper error in from the WebPageProxy.
+            completionHandlerBlock(nil, [NSError errorWithDomain:WKErrorDomain code:static_cast<int>(error) userInfo:nil]);
+        } else
+            completionHandlerBlock(wrapper(*data), nil);
+    });
+}
+
+inline WebKit::FindOptions toFindOptions(WKFindConfiguration *configuration)
+{
+    unsigned findOptions = 0;
+
+    if (!configuration.caseSensitive)
+        findOptions |= WebKit::FindOptionsCaseInsensitive;
+    if (configuration.backwards)
+        findOptions |= WebKit::FindOptionsBackwards;
+    if (configuration.wraps)
+        findOptions |= WebKit::FindOptionsWrapAround;
+
+    return static_cast<WebKit::FindOptions>(findOptions);
+}
+
+- (void)findString:(NSString *)string withConfiguration:(WKFindConfiguration *)configuration completionHandler:(void (^)(WKFindResult *result))completionHandler
+{
+    if (!string.length) {
+        completionHandler([[[WKFindResult alloc] _initWithMatchFound:NO] autorelease]);
+        return;
+    }
+
+    _page->findString(string, toFindOptions(configuration), 1, [handler = makeBlockPtr(completionHandler)](bool found, WebKit::CallbackBase::Error error) {
+        handler([[[WKFindResult alloc] _initWithMatchFound:(error == WebKit::CallbackBase::Error::None && found)] autorelease]);
+    });
+}
+
+- (void)setMediaType:(NSString *)mediaStyle
+{
+    _page->setOverriddenMediaType(mediaStyle);
+}
+
+- (NSString *)mediaType
+{
+    return _page->overriddenMediaType().isNull() ? nil : (NSString *)_page->overriddenMediaType();
+}
 
 #if PLATFORM(IOS_FAMILY)
+
+#pragma mark - UIView overrides
+
+- (void)setFrame:(CGRect)frame
+{
+    CGRect oldFrame = self.frame;
+    [super setFrame:frame];
+
+    if (!CGSizeEqualToSize(oldFrame.size, frame.size))
+        [self _frameOrBoundsChanged];
+}
+
+- (void)setBounds:(CGRect)bounds
+{
+    CGRect oldBounds = self.bounds;
+    [super setBounds:bounds];
+    [_customContentFixedOverlayView setFrame:self.bounds];
+
+    if (!CGSizeEqualToSize(oldBounds.size, bounds.size))
+        [self _frameOrBoundsChanged];
+}
+
+- (void)layoutSubviews
+{
+    [_safeBrowsingWarning setFrame:self.bounds];
+    [super layoutSubviews];
+    [self _frameOrBoundsChanged];
+}
+
+- (UIScrollView *)scrollView
+{
+    return _scrollView.get();
+}
+
+#pragma mark - iOS implementation methods
+
+- (BOOL)_isShowingVideoPictureInPicture
+{
+#if !HAVE(AVKIT)
+    return false;
+#else
+    if (!_page || !_page->videoFullscreenManager())
+        return false;
+
+    return _page->videoFullscreenManager()->hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
+#endif
+}
+
+- (BOOL)_mayAutomaticallyShowVideoPictureInPicture
+{
+#if !HAVE(AVKIT)
+    return false;
+#else
+    if (!_page || !_page->videoFullscreenManager())
+        return false;
+
+    return _page->videoFullscreenManager()->mayAutomaticallyShowVideoPictureInPicture();
+#endif
+}
+
+- (void)_incrementFocusPreservationCount
+{
+    ++_focusPreservationCount;
+}
+
+- (void)_decrementFocusPreservationCount
+{
+    if (_focusPreservationCount)
+        --_focusPreservationCount;
+}
+
+- (void)_resetFocusPreservationCount
+{
+    _focusPreservationCount = 0;
+}
+
+- (BOOL)_isRetainingActiveFocusedState
+{
+    // Focus preservation count fulfills the same role as active focus state count.
+    // However, unlike active focus state, it may be reset to 0 without impacting the
+    // behavior of -_retainActiveFocusedState, and it's harmless to invoke
+    // -_decrementFocusPreservationCount after resetting the count to 0.
+    return _focusPreservationCount || _activeFocusedStateRetainCount;
+}
+
+- (BOOL)_effectiveAppearanceIsDark
+{
+    return self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark;
+}
+
+- (BOOL)_effectiveUserInterfaceLevelIsElevated
+{
+#if HAVE(OS_DARK_MODE_SUPPORT) && !PLATFORM(WATCHOS)
+    return self.traitCollection.userInterfaceLevel == UIUserInterfaceLevelElevated;
+#else
+    return NO;
+#endif
+}
 
 - (BOOL)_shouldAvoidResizingWhenInputViewBoundsChange
 {
@@ -1515,37 +1630,6 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     if (![self usesStandardContentView] && [_customContentView respondsToSelector:@selector(web_isBackground)])
         return [_customContentView web_isBackground];
     return [_contentView isBackground];
-}
-
-- (void)setFrame:(CGRect)frame
-{
-    CGRect oldFrame = self.frame;
-    [super setFrame:frame];
-
-    if (!CGSizeEqualToSize(oldFrame.size, frame.size))
-        [self _frameOrBoundsChanged];
-}
-
-- (void)setBounds:(CGRect)bounds
-{
-    CGRect oldBounds = self.bounds;
-    [super setBounds:bounds];
-    [_customContentFixedOverlayView setFrame:self.bounds];
-
-    if (!CGSizeEqualToSize(oldBounds.size, bounds.size))
-        [self _frameOrBoundsChanged];
-}
-
-- (void)layoutSubviews
-{
-    [_safeBrowsingWarning setFrame:self.bounds];
-    [super layoutSubviews];
-    [self _frameOrBoundsChanged];
-}
-
-- (UIScrollView *)scrollView
-{
-    return _scrollView.get();
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -2717,7 +2801,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     return [_configuration _editableImagesEnabled];
 }
 
-#pragma mark - UIScrollViewDelegate
+#pragma mark UIScrollViewDelegate
 
 - (BOOL)usesStandardContentView
 {
@@ -2904,6 +2988,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [_contentView didInterruptScrolling];
     [self _scheduleVisibleContentRectUpdateAfterScrollInView:scrollView];
 }
+
+#pragma mark end UIScrollViewDelegate
 
 - (UIView *)_enclosingViewForExposedRectComputation
 {
@@ -3634,7 +3720,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
 #endif // PLATFORM(IOS_FAMILY)
 
-#pragma mark OS X-specific methods
+#pragma mark - NSView overrides
 
 #if PLATFORM(MAC)
 
@@ -3685,6 +3771,8 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     _impl->setFrameSize(NSSizeToCGSize(size));
 }
 
+#pragma mark - macOS implementation
+
 - (void)_web_grantDOMPasteAccess
 {
     _impl->handleDOMPasteRequestWithResult(WebCore::DOMPasteAccessResponse::GrantedForGesture);
@@ -3709,6 +3797,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     _impl->renewGState();
     [super renewGState];
 }
+
+#pragma mark - macOS IBAction/NSResponder
 
 #define WEBCORE_COMMAND(command) - (void)command:(id)sender { _impl->executeEditCommandForSelector(_cmd); }
 
@@ -4690,6 +4780,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 #endif // PLATFORM(MAC)
 
+#pragma mark - touchBar methods
+
 #if HAVE(TOUCH_BAR)
 
 @dynamic touchBar;
@@ -4722,101 +4814,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 #endif // HAVE(TOUCH_BAR)
 
-- (id <WKURLSchemeHandler>)urlSchemeHandlerForURLScheme:(NSString *)urlScheme
-{
-    auto* handler = static_cast<WebKit::WebURLSchemeHandlerCocoa*>(_page->urlSchemeHandlerForScheme(urlScheme));
-    return handler ? handler->apiHandler() : nil;
-}
-
-+ (BOOL)handlesURLScheme:(NSString *)urlScheme
-{
-    return WebCore::LegacySchemeRegistry::isBuiltinScheme(urlScheme);
-}
-
-- (Optional<BOOL>)_resolutionForShareSheetImmediateCompletionForTesting
-{
-    return _resolutionForShareSheetImmediateCompletionForTesting;
-}
-
-- (void)createPDFWithConfiguration:(WKPDFConfiguration *)pdfConfiguration completionHandler:(void (^)(NSData *pdfDocumentData, NSError *error))completionHandler
-{
-    WebCore::FrameIdentifier frameID;
-    if (auto mainFrame = _page->mainFrame())
-        frameID = mainFrame->frameID();
-    else {
-        completionHandler(nil, createNSError(WKErrorUnknown).get());
-        return;
-    }
-
-    Optional<WebCore::FloatRect> floatRect;
-    if (pdfConfiguration && !CGRectIsNull(pdfConfiguration.rect))
-        floatRect = WebCore::FloatRect(pdfConfiguration.rect);
-
-    auto handler = makeBlockPtr(completionHandler);
-    _page->drawToPDF(frameID, floatRect, [retainedSelf = retainPtr(self), handler = WTFMove(handler)](const IPC::DataReference& pdfData, WebKit::CallbackBase::Error error) {
-        if (error != WebKit::CallbackBase::Error::None) {
-            handler(nil, createNSError(WKErrorUnknown).get());
-            return;
-        }
-
-        auto data = adoptCF(CFDataCreate(kCFAllocatorDefault, pdfData.data(), pdfData.size()));
-        handler((NSData *)data.get(), nil);
-    });
-}
-
-- (void)createWebArchiveDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler
-{
-    auto handler = adoptNS([completionHandler copy]);
-
-    _page->getWebArchiveOfFrame(_page->mainFrame(), [handler](API::Data* data, WebKit::CallbackBase::Error error) {
-        void (^completionHandlerBlock)(NSData *, NSError *) = (void (^)(NSData *, NSError *))handler.get();
-        if (error != WebKit::CallbackBase::Error::None) {
-            // FIXME: Pipe a proper error in from the WebPageProxy.
-            completionHandlerBlock(nil, [NSError errorWithDomain:WKErrorDomain code:static_cast<int>(error) userInfo:nil]);
-        } else
-            completionHandlerBlock(wrapper(*data), nil);
-    });
-}
-
-inline WebKit::FindOptions toFindOptions(WKFindConfiguration *configuration)
-{
-    unsigned findOptions = 0;
-
-    if (!configuration.caseSensitive)
-        findOptions |= WebKit::FindOptionsCaseInsensitive;
-    if (configuration.backwards)
-        findOptions |= WebKit::FindOptionsBackwards;
-    if (configuration.wraps)
-        findOptions |= WebKit::FindOptionsWrapAround;
-
-    return static_cast<WebKit::FindOptions>(findOptions);
-}
-
-- (void)findString:(NSString *)string withConfiguration:(WKFindConfiguration *)configuration completionHandler:(void (^)(WKFindResult *result))completionHandler
-{
-    if (!string.length) {
-        completionHandler([[[WKFindResult alloc] _initWithMatchFound:NO] autorelease]);
-        return;
-    }
-
-    _page->findString(string, toFindOptions(configuration), 1, [handler = makeBlockPtr(completionHandler)](bool found, WebKit::CallbackBase::Error error) {
-        handler([[[WKFindResult alloc] _initWithMatchFound:(error == WebKit::CallbackBase::Error::None && found)] autorelease]);
-    });
-}
-
-- (void)setMediaType:(NSString *)mediaStyle
-{
-    _page->setOverriddenMediaType(mediaStyle);
-}
-
-- (NSString *)mediaType
-{
-    return _page->overriddenMediaType().isNull() ? nil : (NSString *)_page->overriddenMediaType();
-}
-
 @end
 
+#pragma mark - WKWebView (WKPrivate)
+
 @implementation WKWebView (WKPrivate)
+
+#pragma mark - macOS WKPrivate
 
 #if PLATFORM(MAC)
 
@@ -4984,7 +4988,14 @@ WEBCORE_PRIVATE_COMMAND(pasteAndMatchStyle)
     return _impl->totalHeightOfBanners();
 }
 
+- (void)_setShouldSuppressFirstResponderChanges:(BOOL)shouldSuppress
+{
+    _impl->setShouldSuppressFirstResponderChanges(shouldSuppress);
+}
+
 #endif // PLATFORM(MAC)
+
+#pragma mark - iOS WKPrivate
 
 #if PLATFORM(IOS_FAMILY)
 
@@ -5097,7 +5108,79 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     return self._currentContentView.isFirstResponder;
 }
 
+- (void (^)(void))_retainActiveFocusedState
+{
+    ++_activeFocusedStateRetainCount;
+
+    // FIXME: Use something like CompletionHandlerCallChecker to ensure that the returned block is called before it's released.
+    return [[[self] {
+        --_activeFocusedStateRetainCount;
+    } copy] autorelease];
+}
+
+- (void)_becomeFirstResponderWithSelectionMovingForward:(BOOL)selectingForward completionHandler:(void (^)(BOOL didBecomeFirstResponder))completionHandler
+{
+    typeof(completionHandler) completionHandlerCopy = nil;
+    if (completionHandler)
+        completionHandlerCopy = Block_copy(completionHandler);
+
+    [_contentView _becomeFirstResponderWithSelectionMovingForward:selectingForward completionHandler:[completionHandlerCopy](BOOL didBecomeFirstResponder) {
+        if (!completionHandlerCopy)
+            return;
+
+        completionHandlerCopy(didBecomeFirstResponder);
+        Block_release(completionHandlerCopy);
+    }];
+}
+
+- (id)_snapshotLayerContentsForBackForwardListItem:(WKBackForwardListItem *)item
+{
+    if (_page->backForwardList().currentItem() == &item._item)
+        _page->recordNavigationSnapshot(*_page->backForwardList().currentItem());
+
+    if (auto* viewSnapshot = item._item.snapshot())
+        return viewSnapshot->asLayerContents();
+
+    return nil;
+}
+
+- (NSArray *)_dataDetectionResults
+{
+#if ENABLE(DATA_DETECTION)
+    return [_contentView _dataDetectionResults];
+#else
+    return nil;
+#endif
+}
+
+- (void)_accessibilityRetrieveSpeakSelectionContent
+{
+    [_contentView accessibilityRetrieveSpeakSelectionContent];
+}
+
+// This method is for subclasses to override.
+// Currently it's only in TestRunnerWKWebView.
+- (void)_accessibilityDidGetSpeakSelectionContent:(NSString *)content
+{
+}
+
 #endif // PLATFORM(IOS_FAMILY)
+
+#pragma mark - macOS/iOS WKPrivate
+
+- (CGSize)_viewportSizeForCSSViewportUnits
+{
+    return _page->viewportSizeForCSSViewportUnits();
+}
+
+- (void)_setViewportSizeForCSSViewportUnits:(CGSize)viewportSize
+{
+    auto viewportSizeForViewportUnits = WebCore::IntSize(viewportSize);
+    if (viewportSizeForViewportUnits.isEmpty())
+        [NSException raise:NSInvalidArgumentException format:@"Viewport size should not be empty"];
+
+    _page->setViewportSizeForCSSViewportUnits(viewportSizeForViewportUnits);
+}
 
 - (_WKInspector *)_inspector
 {
@@ -5564,69 +5647,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     [self createPDFWithConfiguration:pdfConfiguration completionHandler:completionHandler];
 }
 
-#if PLATFORM(MAC)
-- (void)_setShouldSuppressFirstResponderChanges:(BOOL)shouldSuppress
-{
-    _impl->setShouldSuppressFirstResponderChanges(shouldSuppress);
-}
-#endif
-
 #if PLATFORM(IOS_FAMILY)
-- (void (^)(void))_retainActiveFocusedState
-{
-    ++_activeFocusedStateRetainCount;
-
-    // FIXME: Use something like CompletionHandlerCallChecker to ensure that the returned block is called before it's released.
-    return [[[self] {
-        --_activeFocusedStateRetainCount;
-    } copy] autorelease];
-}
-
-- (void)_becomeFirstResponderWithSelectionMovingForward:(BOOL)selectingForward completionHandler:(void (^)(BOOL didBecomeFirstResponder))completionHandler
-{
-    typeof(completionHandler) completionHandlerCopy = nil;
-    if (completionHandler)
-        completionHandlerCopy = Block_copy(completionHandler);
-
-    [_contentView _becomeFirstResponderWithSelectionMovingForward:selectingForward completionHandler:[completionHandlerCopy](BOOL didBecomeFirstResponder) {
-        if (!completionHandlerCopy)
-            return;
-
-        completionHandlerCopy(didBecomeFirstResponder);
-        Block_release(completionHandlerCopy);
-    }];
-}
-
-- (id)_snapshotLayerContentsForBackForwardListItem:(WKBackForwardListItem *)item
-{
-    if (_page->backForwardList().currentItem() == &item._item)
-        _page->recordNavigationSnapshot(*_page->backForwardList().currentItem());
-
-    if (auto* viewSnapshot = item._item.snapshot())
-        return viewSnapshot->asLayerContents();
-
-    return nil;
-}
-
-- (NSArray *)_dataDetectionResults
-{
-#if ENABLE(DATA_DETECTION)
-    return [_contentView _dataDetectionResults];
-#else
-    return nil;
-#endif
-}
-
-- (void)_accessibilityRetrieveSpeakSelectionContent
-{
-    [_contentView accessibilityRetrieveSpeakSelectionContent];
-}
-
-// This method is for subclasses to override.
-// Currently it's only in TestRunnerWKWebView.
-- (void)_accessibilityDidGetSpeakSelectionContent:(NSString *)content
-{
-}
 
 - (UITextInputAssistantItem *)inputAssistantItem
 {
@@ -6505,7 +6526,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 }
 #endif
 
-#pragma mark iOS-specific methods
+#pragma mark - iOS WKPrivate
 
 #if PLATFORM(IOS_FAMILY)
 
@@ -7033,7 +7054,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 #else // #if PLATFORM(IOS_FAMILY)
 
-#pragma mark - OS X-specific methods
+#pragma mark - macOS WKPrivate
 
 - (BOOL)_drawsBackground
 {

@@ -287,6 +287,55 @@
 
 2019-12-12  Simon Fraser  <simon.fraser@apple.com>
 
+        Minor WKWebView.mm code rearrangement
+        https://bugs.webkit.org/show_bug.cgi?id=205129
+
+        Reviewed by Tim Horton.
+
+        Throw in some more #pragma marks and move some functions around, with the goal of
+        having the implementation order mostly follow header order, and grouping related functions.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _pageForTesting]):
+        (-[WKWebView _page]):
+        (-[WKWebView urlSchemeHandlerForURLScheme:]):
+        (+[WKWebView handlesURLScheme:]):
+        (-[WKWebView _resolutionForShareSheetImmediateCompletionForTesting]):
+        (-[WKWebView createPDFWithConfiguration:completionHandler:]):
+        (-[WKWebView createWebArchiveDataWithCompletionHandler:]):
+        (toFindOptions):
+        (-[WKWebView findString:withConfiguration:completionHandler:]):
+        (-[WKWebView setMediaType:]):
+        (-[WKWebView mediaType]):
+        (-[WKWebView layoutSubviews]):
+        (-[WKWebView scrollView]):
+        (-[WKWebView _isShowingVideoPictureInPicture]):
+        (-[WKWebView _mayAutomaticallyShowVideoPictureInPicture]):
+        (-[WKWebView _incrementFocusPreservationCount]):
+        (-[WKWebView _decrementFocusPreservationCount]):
+        (-[WKWebView _resetFocusPreservationCount]):
+        (-[WKWebView _isRetainingActiveFocusedState]):
+        (-[WKWebView _effectiveAppearanceIsDark]):
+        (-[WKWebView _effectiveUserInterfaceLevelIsElevated]):
+        (-[WKWebView _shouldAvoidResizingWhenInputViewBoundsChange]):
+        (-[WKWebView _dragInteractionPolicy]):
+        (-[WKWebView _setDragInteractionPolicy:]):
+        (-[WKWebView _populateArchivedSubviews:]):
+        (-[WKWebView _isBackground]):
+        (-[WKWebView _setShouldSuppressFirstResponderChanges:]):
+        (-[WKWebView _retainActiveFocusedState]):
+        (-[WKWebView _becomeFirstResponderWithSelectionMovingForward:completionHandler:]):
+        (-[WKWebView _snapshotLayerContentsForBackForwardListItem:]):
+        (-[WKWebView _dataDetectionResults]):
+        (-[WKWebView _accessibilityRetrieveSpeakSelectionContent]):
+        (-[WKWebView _accessibilityDidGetSpeakSelectionContent:]):
+        (-[WKWebView _viewportSizeForCSSViewportUnits]):
+        (-[WKWebView _setViewportSizeForCSSViewportUnits:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationCoordinator.mm: Unified sources build fix (seen while doing other stuff).
+
+2019-12-12  Simon Fraser  <simon.fraser@apple.com>
+
         Move WKWebView code related to testing to new files, with new private "for testing" headers.
         https://bugs.webkit.org/show_bug.cgi?id=205021
 
