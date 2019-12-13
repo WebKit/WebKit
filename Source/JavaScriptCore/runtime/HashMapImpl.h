@@ -53,8 +53,8 @@ struct HashMapBucketDataKeyValue {
 };
 
 template <typename Data>
-class HashMapBucket : public JSCell {
-    typedef JSCell Base;
+class HashMapBucket final : public JSCell {
+    using Base = JSCell;
 
     template <typename T = Data>
     static typename std::enable_if<std::is_same<T, HashMapBucketDataKey>::value, Structure*>::type selectStructure(VM& vm)
@@ -72,16 +72,21 @@ public:
     static const HashTableType Type = Data::Type;
     static const ClassInfo s_info; // This is never accessed directly, since that would break linkage on some compilers.
 
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        if constexpr (Type == HashTableType::Key)
+            return vm.setBucketSpace<mode>();
+        else
+            return vm.mapBucketSpace<mode>();
+    }
 
     static const ClassInfo* info()
     {
-        switch (Type) {
-        case HashTableType::Key:
+        if constexpr (Type == HashTableType::Key)
             return getHashMapBucketKeyClassInfo();
-        case HashTableType::KeyValue:
+        else
             return getHashMapBucketKeyValueClassInfo();
-        }
-        RELEASE_ASSERT_NOT_REACHED();
     }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)

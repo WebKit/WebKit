@@ -444,6 +444,7 @@ public:
     IsoSubspace customGetterSetterSpace;
     IsoSubspace dateInstanceSpace;
     IsoSubspace domAttributeGetterSetterSpace;
+    IsoSubspace exceptionSpace;
     IsoSubspace executableToCodeBlockEdgeSpace;
     IsoSubspace functionSpace;
     IsoSubspace getterSetterSpace;
@@ -452,13 +453,16 @@ public:
     IsoSubspace nativeExecutableSpace;
     IsoSubspace numberObjectSpace;
     IsoSubspace promiseSpace;
+    IsoSubspace propertyNameEnumeratorSpace;
     IsoSubspace propertyTableSpace;
+    IsoSubspace regExpSpace;
     IsoSubspace regExpObjectSpace;
     IsoSubspace ropeStringSpace;
     IsoSubspace scopedArgumentsSpace;
     IsoSubspace sparseArrayValueMapSpace;
     IsoSubspace stringSpace;
     IsoSubspace stringObjectSpace;
+    IsoSubspace structureChainSpace;
     IsoSubspace structureRareDataSpace;
     IsoSubspace structureSpace;
     IsoSubspace symbolTableSpace;
@@ -507,14 +511,23 @@ public:
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(int16ArraySpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(int32ArraySpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(jsModuleRecordSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(mapBucketSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(mapIteratorSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(mapSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(moduleNamespaceObjectSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(nativeStdFunctionSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(proxyObjectSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(proxyRevokeSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(scopedArgumentsTableSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(scriptFetchParametersSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(scriptFetcherSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(setBucketSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(setIteratorSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(setSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(sourceCodeSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(symbolSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(symbolObjectSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(templateObjectDescriptorSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(uint8ArraySpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(uint8ClampedArraySpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(uint16ArraySpace)

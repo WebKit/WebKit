@@ -161,6 +161,7 @@
 #include "StrictEvalActivation.h"
 #include "StringObject.h"
 #include "StrongInlines.h"
+#include "StructureChain.h"
 #include "StructureInlines.h"
 #include "SymbolObject.h"
 #include "TestRunnerUtils.h"
@@ -357,6 +358,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , customGetterSetterSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), CustomGetterSetter)
     , dateInstanceSpace ISO_SUBSPACE_INIT(heap, dateInstanceHeapCellType.get(), DateInstance)
     , domAttributeGetterSetterSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), DOMAttributeGetterSetter)
+    , exceptionSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), Exception)
     , executableToCodeBlockEdgeSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), ExecutableToCodeBlockEdge) // Hash:0x7b730b20
     , functionSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSFunction) // Hash:0x800fca72
     , getterSetterSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), GetterSetter)
@@ -365,13 +367,16 @@ VM::VM(VMType vmType, HeapType heapType)
     , nativeExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), NativeExecutable) // Hash:0x67567f95
     , numberObjectSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), NumberObject)
     , promiseSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSPromise)
+    , propertyNameEnumeratorSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSPropertyNameEnumerator)
     , propertyTableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), PropertyTable) // Hash:0xc6bc9f12
+    , regExpSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), RegExp)
     , regExpObjectSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), RegExpObject)
     , ropeStringSpace ISO_SUBSPACE_INIT(heap, stringHeapCellType.get(), JSRopeString)
     , scopedArgumentsSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), ScopedArguments)
     , sparseArrayValueMapSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), SparseArrayValueMap)
     , stringSpace ISO_SUBSPACE_INIT(heap, stringHeapCellType.get(), JSString) // Hash:0x90cf758f
     , stringObjectSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), StringObject)
+    , structureChainSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), StructureChain)
     , structureRareDataSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), StructureRareData) // Hash:0xaca4e62d
     , structureSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), Structure) // Hash:0x1f1bcdca
     , symbolTableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), SymbolTable) // Hash:0xc5215afd
@@ -1405,14 +1410,23 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(jsModuleRecordSpace, jsModuleRecordHeapC
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(int8ArraySpace, cellHeapCellType.get(), JSInt8Array)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(int16ArraySpace, cellHeapCellType.get(), JSInt16Array)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(int32ArraySpace, cellHeapCellType.get(), JSInt32Array)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(mapBucketSpace, cellHeapCellType.get(), JSMap::BucketType)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(mapIteratorSpace, cellHeapCellType.get(), JSMapIterator)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(mapSpace, cellHeapCellType.get(), JSMap)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(moduleNamespaceObjectSpace, moduleNamespaceObjectHeapCellType.get(), JSModuleNamespaceObject)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(nativeStdFunctionSpace, nativeStdFunctionHeapCellType.get(), JSNativeStdFunction) // Hash:0x70ed61e4
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(proxyObjectSpace, cellHeapCellType.get(), ProxyObject)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(proxyRevokeSpace, cellHeapCellType.get(), ProxyRevoke) // Hash:0xb506a939
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(scopedArgumentsTableSpace, destructibleCellHeapCellType.get(), ScopedArgumentsTable)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(scriptFetchParametersSpace, destructibleCellHeapCellType.get(), JSScriptFetchParameters)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(scriptFetcherSpace, destructibleCellHeapCellType.get(), JSScriptFetcher)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(setBucketSpace, cellHeapCellType.get(), JSSet::BucketType)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(setIteratorSpace, cellHeapCellType.get(), JSSetIterator)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(setSpace, cellHeapCellType.get(), JSSet)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(sourceCodeSpace, destructibleCellHeapCellType.get(), JSSourceCode)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(symbolSpace, destructibleCellHeapCellType.get(), Symbol)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(symbolObjectSpace, cellHeapCellType.get(), SymbolObject)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(templateObjectDescriptorSpace, destructibleCellHeapCellType.get(), JSTemplateObjectDescriptor)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(uint8ArraySpace, cellHeapCellType.get(), JSUint8Array)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(uint8ClampedArraySpace, cellHeapCellType.get(), JSUint8ClampedArray)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(uint16ArraySpace, cellHeapCellType.get(), JSUint16Array)

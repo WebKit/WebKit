@@ -37,6 +37,11 @@ public:
 
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
     static constexpr bool needsDestruction = true;
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.templateObjectDescriptorSpace<mode>();
+    }
     DECLARE_INFO;
 
     static JSTemplateObjectDescriptor* create(VM&, Ref<TemplateObjectDescriptor>&&, int);

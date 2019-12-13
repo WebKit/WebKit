@@ -37,6 +37,12 @@ public:
     using Base = JSCell;
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.propertyNameEnumeratorSpace;
+    }
+
     static JSPropertyNameEnumerator* create(VM&, Structure*, uint32_t, uint32_t, PropertyNameArray&&);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)

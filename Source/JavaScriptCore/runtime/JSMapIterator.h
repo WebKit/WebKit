@@ -39,6 +39,12 @@ public:
 
     DECLARE_EXPORT_INFO;
 
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.mapIteratorSpace<mode>();
+    }
+
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());

@@ -37,6 +37,12 @@ public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
     static constexpr bool needsDestruction = true;
 
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.exceptionSpace;
+    }
+
     enum StackCaptureAction {
         CaptureStack,
         DoNotCaptureStack

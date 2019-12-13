@@ -43,6 +43,12 @@ public:
     using Base = JSCell;
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
+    template<typename CellType, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.structureChainSpace;
+    }
+
     static StructureChain* create(VM&, JSObject*);
     WriteBarrier<Structure>* head() { return m_vector.get(); }
     static void visitChildren(JSCell*, SlotVisitor&);

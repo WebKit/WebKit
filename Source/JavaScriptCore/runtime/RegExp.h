@@ -42,11 +42,17 @@ class RegExp final : public JSCell {
     friend class CachedRegExp;
 
 public:
-    typedef JSCell Base;
+    using Base = JSCell;
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
+    static constexpr bool needsDestruction = true;
+
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.regExpSpace;
+    }
 
     JS_EXPORT_PRIVATE static RegExp* create(VM&, const String& pattern, OptionSet<Yarr::Flags>);
-    static constexpr bool needsDestruction = true;
     static void destroy(JSCell*);
     static size_t estimatedSize(JSCell*, VM&);
     JS_EXPORT_PRIVATE static void dumpToStream(const JSCell*, PrintStream&);
