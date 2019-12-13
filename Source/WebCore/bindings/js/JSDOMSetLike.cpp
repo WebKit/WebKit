@@ -32,6 +32,11 @@
 
 namespace WebCore {
 
+void DOMSetAdapter::clear()
+{
+    clearBackingSet(m_lexicalGlobalObject, m_backingSet);
+}
+
 std::pair<bool, std::reference_wrapper<JSC::JSObject>> getBackingSet(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& setLike)
 {
     auto& vm = lexicalGlobalObject.vm();
@@ -94,6 +99,26 @@ JSC::JSValue forwardFunctionCallToBackingSet(JSC::JSGlobalObject& lexicalGlobalO
         arguments.append(callFrame.uncheckedArgument(cptr));
     ASSERT(!arguments.hasOverflowed());
     return JSC::call(&lexicalGlobalObject, function, callType, callData, &backingSet, arguments);
+}
+
+JSC::JSValue forwardForEachCallToBackingSet(JSDOMGlobalObject& globalObject, JSC::CallFrame& callFrame, JSC::JSObject& setLike)
+{
+    auto result = getBackingSet(globalObject, setLike);
+    ASSERT(!result.first);
+
+    auto* function = globalObject.builtinInternalFunctions().jsDOMBindingInternals().m_forEachWrapperFunction.get();
+    ASSERT(function);
+
+    JSC::CallData callData;
+    JSC::CallType callType = JSC::getCallData(globalObject.vm(), function, callData);
+    ASSERT(callType != JSC::CallType::None);
+
+    JSC::MarkedArgumentBuffer arguments;
+    arguments.append(&result.second.get());
+    for (size_t cptr = 0; cptr < callFrame.argumentCount(); ++cptr)
+        arguments.append(callFrame.uncheckedArgument(cptr));
+    ASSERT(!arguments.hasOverflowed());
+    return JSC::call(&globalObject, function, callType, callData, &setLike, arguments);
 }
 
 }

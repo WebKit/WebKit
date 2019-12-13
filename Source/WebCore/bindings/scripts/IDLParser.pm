@@ -2110,12 +2110,23 @@ sub parseSetLikeProperties
     $valuesOperation->extendedAttributes->{NotEnumerable} = 1;
     $valuesOperation->type(makeSimpleType("any"));
 
-    # FIXME: Add support to forEach
+    my $forEachOperation = IDLOperation->new();
+    $forEachOperation->name("forEach");
+    $forEachOperation->isSetLike(1);
+    my $forEachArgument = IDLArgument->new();
+    $forEachArgument->name("callback");
+    $forEachArgument->type(makeSimpleType("any"));
+    $forEachArgument->extendedAttributes($extendedAttributeList);
+    push(@{$forEachOperation->arguments}, ($forEachArgument));
+    $forEachOperation->extendedAttributes($extendedAttributeList);
+    $forEachOperation->extendedAttributes->{Enumerable} = 1;
+    $forEachOperation->type(makeSimpleType("any"));
 
     push(@{$setlike->operations}, $hasOperation);
     push(@{$setlike->operations}, $entriesOperation);
     push(@{$setlike->operations}, $keysOperation);
     push(@{$setlike->operations}, $valuesOperation);
+    push(@{$setlike->operations}, $forEachOperation);
 
     return $setlike if $isReadOnly;
 

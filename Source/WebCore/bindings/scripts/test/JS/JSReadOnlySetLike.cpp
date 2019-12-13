@@ -50,6 +50,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsReadOnlySetLikePrototypeFunctionHas(JSC::JSG
 JSC::EncodedJSValue JSC_HOST_CALL jsReadOnlySetLikePrototypeFunctionEntries(JSC::JSGlobalObject*, JSC::CallFrame*);
 JSC::EncodedJSValue JSC_HOST_CALL jsReadOnlySetLikePrototypeFunctionKeys(JSC::JSGlobalObject*, JSC::CallFrame*);
 JSC::EncodedJSValue JSC_HOST_CALL jsReadOnlySetLikePrototypeFunctionValues(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsReadOnlySetLikePrototypeFunctionForEach(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 // Attributes
 
@@ -110,6 +111,7 @@ static const HashTableValue JSReadOnlySetLikePrototypeTableValues[] =
     { "entries", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsReadOnlySetLikePrototypeFunctionEntries), (intptr_t) (0) } },
     { "keys", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsReadOnlySetLikePrototypeFunctionKeys), (intptr_t) (0) } },
     { "values", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsReadOnlySetLikePrototypeFunctionValues), (intptr_t) (0) } },
+    { "forEach", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsReadOnlySetLikePrototypeFunctionForEach), (intptr_t) (1) } },
 };
 
 const ClassInfo JSReadOnlySetLikePrototype::s_info = { "ReadOnlySetLikePrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSReadOnlySetLikePrototype) };
@@ -258,6 +260,23 @@ static inline JSC::EncodedJSValue jsReadOnlySetLikePrototypeFunctionValuesBody(J
 EncodedJSValue JSC_HOST_CALL jsReadOnlySetLikePrototypeFunctionValues(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
     return IDLOperation<JSReadOnlySetLike>::call<jsReadOnlySetLikePrototypeFunctionValuesBody>(*lexicalGlobalObject, *callFrame, "values");
+}
+
+static inline JSC::EncodedJSValue jsReadOnlySetLikePrototypeFunctionForEachBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSReadOnlySetLike>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(lexicalGlobalObject);
+    UNUSED_PARAM(callFrame);
+    UNUSED_PARAM(throwScope);
+    if (UNLIKELY(callFrame->argumentCount() < 1))
+        return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
+    auto callback = convert<IDLAny>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    return JSValue::encode(toJS<IDLAny>(forwardForEachToSetLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(callback))));
+}
+
+EncodedJSValue JSC_HOST_CALL jsReadOnlySetLikePrototypeFunctionForEach(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+{
+    return IDLOperation<JSReadOnlySetLike>::call<jsReadOnlySetLikePrototypeFunctionForEachBody>(*lexicalGlobalObject, *callFrame, "forEach");
 }
 
 void JSReadOnlySetLike::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)

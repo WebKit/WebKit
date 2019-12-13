@@ -48,8 +48,9 @@ test(() => {
     }
     assert_equals(keysTest, "testAtestB", "keys test");
 
+    assert_equals(maplike.forEach.length, 1);
     let forEachTest = "";
-    maplike.forEach((value, key, object) => {
+    const forEachResult = maplike.forEach((value, key, object) => {
         forEachTest += key;
         forEachTest += ',';
         forEachTest += value;
@@ -57,6 +58,7 @@ test(() => {
         assert_equals(object, maplike);
     });
     assert_equals(forEachTest, "testA,2 testB,3 ", "forEach test");
+    assert_equals(forEachResult, undefined);
 
     maplike.clear();
     assert_array_equals(maplike.inspectKeys(), []);

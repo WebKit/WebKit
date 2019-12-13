@@ -101,13 +101,18 @@ JSC::JSValue forwardFunctionCallToBackingMap(JSC::JSGlobalObject& lexicalGlobalO
 
 JSC::JSValue forwardForEachCallToBackingMap(JSDOMGlobalObject& globalObject, JSC::CallFrame& callFrame, JSC::JSObject& mapLike)
 {
-    auto* function = globalObject.builtinInternalFunctions().jsDOMBindingInternals().m_mapLikeForEachFunction.get();
+    auto result = getBackingMap(globalObject, mapLike);
+    ASSERT(!result.first);
+
+    auto* function = globalObject.builtinInternalFunctions().jsDOMBindingInternals().m_forEachWrapperFunction.get();
     ASSERT(function);
 
     JSC::CallData callData;
     auto callType = JSC::getCallData(globalObject.vm(), function, callData);
     ASSERT(callType != JSC::CallType::None);
+
     JSC::MarkedArgumentBuffer arguments;
+    arguments.append(&result.second.get());
     for (size_t cptr = 0; cptr < callFrame.argumentCount(); ++cptr)
         arguments.append(callFrame.uncheckedArgument(cptr));
     ASSERT(!arguments.hasOverflowed());

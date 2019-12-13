@@ -34,6 +34,7 @@
 namespace WebCore {
 
 WEBCORE_EXPORT std::pair<bool, std::reference_wrapper<JSC::JSObject>> getBackingSet(JSC::JSGlobalObject&, JSC::JSObject& setLike);
+WEBCORE_EXPORT JSC::JSValue forwardForEachCallToBackingSet(JSDOMGlobalObject&, JSC::CallFrame&, JSC::JSObject& setLike);
 WEBCORE_EXPORT JSC::JSValue forwardAttributeGetterToBackingSet(JSC::JSGlobalObject&, JSC::JSObject&, const JSC::Identifier&);
 WEBCORE_EXPORT JSC::JSValue forwardFunctionCallToBackingSet(JSC::JSGlobalObject&, JSC::CallFrame&, JSC::JSObject&, const JSC::Identifier&);
 WEBCORE_EXPORT void clearBackingSet(JSC::JSGlobalObject&, JSC::JSObject&);
@@ -44,7 +45,9 @@ template<typename WrapperClass> JSC::JSValue forwardSizeToSetLike(JSC::JSGlobalO
 template<typename WrapperClass> JSC::JSValue forwardEntriesToSetLike(JSC::JSGlobalObject&, JSC::CallFrame&, WrapperClass&);
 template<typename WrapperClass> JSC::JSValue forwardKeysToSetLike(JSC::JSGlobalObject&, JSC::CallFrame&, WrapperClass&);
 template<typename WrapperClass> JSC::JSValue forwardValuesToSetLike(JSC::JSGlobalObject&, JSC::CallFrame&, WrapperClass&);
+template<typename WrapperClass, typename Callback> JSC::JSValue forwardForEachToSetLike(JSC::JSGlobalObject&, JSC::CallFrame&, WrapperClass&, Callback&&);
 template<typename WrapperClass> JSC::JSValue forwardClearToSetLike(JSC::JSGlobalObject&, JSC::CallFrame&, WrapperClass&);
+
 template<typename WrapperClass, typename ItemType> JSC::JSValue forwardHasToSetLike(JSC::JSGlobalObject&, JSC::CallFrame&, WrapperClass&, ItemType&&);
 template<typename WrapperClass, typename ItemType> JSC::JSValue forwardAddToSetLike(JSC::JSGlobalObject&, JSC::CallFrame&, WrapperClass&, ItemType&&);
 template<typename WrapperClass, typename ItemType> JSC::JSValue forwardDeleteToSetLike(JSC::JSGlobalObject&, JSC::CallFrame&, WrapperClass&, ItemType&&);
@@ -52,7 +55,7 @@ template<typename WrapperClass, typename ItemType> JSC::JSValue forwardDeleteToS
 class DOMSetAdapter {
 public:
     DOMSetAdapter(JSC::JSGlobalObject&, JSC::JSObject&);
-    template<class IDLType> void add(typename IDLType::ParameterType value);
+    template<typename IDLType> void add(typename IDLType::ParameterType value);
     void clear();
 
 private:
@@ -66,20 +69,16 @@ inline DOMSetAdapter::DOMSetAdapter(JSC::JSGlobalObject& lexicalGlobalObject, JS
 {
 }
 
-template<class IDLType>
-inline void DOMSetAdapter::add(typename IDLType::ParameterType value)
+template<typename IDLType>
+void DOMSetAdapter::add(typename IDLType::ParameterType value)
 {
     JSC::JSLockHolder locker(&m_lexicalGlobalObject);
     auto item = toJS<IDLType>(m_lexicalGlobalObject, *JSC::jsCast<JSDOMGlobalObject*>(&m_lexicalGlobalObject), std::forward<typename IDLType::ParameterType>(value));
     addToBackingSet(m_lexicalGlobalObject, m_backingSet, item);
 }
 
-inline void DOMSetAdapter::clear()
-{
-    clearBackingSet(m_lexicalGlobalObject, m_backingSet);
-}
-
-template<typename WrapperClass> inline JSC::JSObject& getAndInitializeBackingSet(JSC::JSGlobalObject& lexicalGlobalObject, WrapperClass& setLike)
+template<typename WrapperClass>
+JSC::JSObject& getAndInitializeBackingSet(JSC::JSGlobalObject& lexicalGlobalObject, WrapperClass& setLike)
 {
     auto pair = getBackingSet(lexicalGlobalObject, setLike);
     if (pair.first) {
@@ -89,37 +88,43 @@ template<typename WrapperClass> inline JSC::JSObject& getAndInitializeBackingSet
     return pair.second.get();
 }
 
-template<typename WrapperClass> inline JSC::JSValue forwardSizeToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, WrapperClass& setLike)
+template<typename WrapperClass>
+JSC::JSValue forwardSizeToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, WrapperClass& setLike)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     return forwardAttributeGetterToBackingSet(lexicalGlobalObject, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->size);
 }
 
-template<typename WrapperClass> inline JSC::JSValue forwardEntriesToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& setLike)
+template<typename WrapperClass>
+JSC::JSValue forwardEntriesToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& setLike)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     return forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->builtinNames().entriesPublicName());
 }
 
-template<typename WrapperClass> inline JSC::JSValue forwardKeysToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& setLike)
+template<typename WrapperClass>
+JSC::JSValue forwardKeysToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& setLike)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     return forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->builtinNames().keysPublicName());
 }
 
-template<typename WrapperClass> inline JSC::JSValue forwardValuesToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& setLike)
+template<typename WrapperClass>
+JSC::JSValue forwardValuesToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& setLike)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     return forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->builtinNames().valuesPublicName());
 }
 
-template<typename WrapperClass, typename ItemType> inline JSC::JSValue forwardHasToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& setLike, ItemType&&)
+template<typename WrapperClass, typename Callback>
+JSC::JSValue forwardForEachToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& setLike, Callback&&)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    return forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->builtinNames().hasPublicName());
+    getAndInitializeBackingSet(lexicalGlobalObject, setLike);
+    return forwardForEachCallToBackingSet(*JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), callFrame, setLike);
 }
 
-template<typename WrapperClass> inline JSC::JSValue forwardClearToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& setLike)
+template<typename WrapperClass>
+JSC::JSValue forwardClearToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& setLike)
 {
     setLike.wrapped().clearFromSetLike();
 
@@ -127,7 +132,15 @@ template<typename WrapperClass> inline JSC::JSValue forwardClearToSetLike(JSC::J
     return forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->clear);
 }
 
-template<typename WrapperClass, typename ItemType> inline JSC::JSValue forwardAddToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& setLike, ItemType&& item)
+template<typename WrapperClass, typename ItemType>
+JSC::JSValue forwardHasToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& setLike, ItemType&&)
+{
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    return forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->builtinNames().hasPublicName());
+}
+
+template<typename WrapperClass, typename ItemType>
+JSC::JSValue forwardAddToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& setLike, ItemType&& item)
 {
     setLike.wrapped().addToSetLike(std::forward<ItemType>(item));
 
@@ -136,7 +149,8 @@ template<typename WrapperClass, typename ItemType> inline JSC::JSValue forwardAd
     return &setLike;
 }
 
-template<typename WrapperClass, typename ItemType> inline JSC::JSValue forwardDeleteToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& setLike, ItemType&& item)
+template<typename WrapperClass, typename ItemType>
+JSC::JSValue forwardDeleteToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& setLike, ItemType&& item)
 {
     auto isDeleted = setLike.wrapped().removeFromSetLike(std::forward<ItemType>(item));
     UNUSED_PARAM(isDeleted);

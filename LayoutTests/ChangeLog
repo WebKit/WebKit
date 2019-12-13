@@ -1,3 +1,13 @@
+2019-12-13  youenn fablet  <youenn@apple.com>
+
+        Add support for WebIDL set-like forEach
+        https://bugs.webkit.org/show_bug.cgi?id=204847
+
+        Reviewed by Chris Dumez.
+
+        * js/dom/maplike.html:
+        * js/dom/setlike.html:
+
 2019-12-13  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION: (r251677) imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-3.html is a flaky failure

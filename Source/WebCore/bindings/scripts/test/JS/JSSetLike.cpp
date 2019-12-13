@@ -50,6 +50,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsSetLikePrototypeFunctionHas(JSC::JSGlobalObj
 JSC::EncodedJSValue JSC_HOST_CALL jsSetLikePrototypeFunctionEntries(JSC::JSGlobalObject*, JSC::CallFrame*);
 JSC::EncodedJSValue JSC_HOST_CALL jsSetLikePrototypeFunctionKeys(JSC::JSGlobalObject*, JSC::CallFrame*);
 JSC::EncodedJSValue JSC_HOST_CALL jsSetLikePrototypeFunctionValues(JSC::JSGlobalObject*, JSC::CallFrame*);
+JSC::EncodedJSValue JSC_HOST_CALL jsSetLikePrototypeFunctionForEach(JSC::JSGlobalObject*, JSC::CallFrame*);
 JSC::EncodedJSValue JSC_HOST_CALL jsSetLikePrototypeFunctionAdd(JSC::JSGlobalObject*, JSC::CallFrame*);
 JSC::EncodedJSValue JSC_HOST_CALL jsSetLikePrototypeFunctionClear(JSC::JSGlobalObject*, JSC::CallFrame*);
 JSC::EncodedJSValue JSC_HOST_CALL jsSetLikePrototypeFunctionDelete(JSC::JSGlobalObject*, JSC::CallFrame*);
@@ -113,6 +114,7 @@ static const HashTableValue JSSetLikePrototypeTableValues[] =
     { "entries", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsSetLikePrototypeFunctionEntries), (intptr_t) (0) } },
     { "keys", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsSetLikePrototypeFunctionKeys), (intptr_t) (0) } },
     { "values", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsSetLikePrototypeFunctionValues), (intptr_t) (0) } },
+    { "forEach", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsSetLikePrototypeFunctionForEach), (intptr_t) (1) } },
     { "add", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsSetLikePrototypeFunctionAdd), (intptr_t) (1) } },
     { "clear", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsSetLikePrototypeFunctionClear), (intptr_t) (0) } },
     { "delete", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsSetLikePrototypeFunctionDelete), (intptr_t) (1) } },
@@ -264,6 +266,23 @@ static inline JSC::EncodedJSValue jsSetLikePrototypeFunctionValuesBody(JSC::JSGl
 EncodedJSValue JSC_HOST_CALL jsSetLikePrototypeFunctionValues(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
 {
     return IDLOperation<JSSetLike>::call<jsSetLikePrototypeFunctionValuesBody>(*lexicalGlobalObject, *callFrame, "values");
+}
+
+static inline JSC::EncodedJSValue jsSetLikePrototypeFunctionForEachBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSSetLike>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(lexicalGlobalObject);
+    UNUSED_PARAM(callFrame);
+    UNUSED_PARAM(throwScope);
+    if (UNLIKELY(callFrame->argumentCount() < 1))
+        return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
+    auto callback = convert<IDLAny>(*lexicalGlobalObject, callFrame->uncheckedArgument(0));
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    return JSValue::encode(toJS<IDLAny>(forwardForEachToSetLike(*lexicalGlobalObject, *callFrame, *castedThis, WTFMove(callback))));
+}
+
+EncodedJSValue JSC_HOST_CALL jsSetLikePrototypeFunctionForEach(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)
+{
+    return IDLOperation<JSSetLike>::call<jsSetLikePrototypeFunctionForEachBody>(*lexicalGlobalObject, *callFrame, "forEach");
 }
 
 static inline JSC::EncodedJSValue jsSetLikePrototypeFunctionAddBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSSetLike>::ClassParameter castedThis, JSC::ThrowScope& throwScope)

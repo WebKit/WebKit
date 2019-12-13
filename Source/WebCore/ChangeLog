@@ -1,3 +1,41 @@
+2019-12-13  youenn fablet  <youenn@apple.com>
+
+        Add support for WebIDL set-like forEach
+        https://bugs.webkit.org/show_bug.cgi?id=204847
+
+        Reviewed by Chris Dumez.
+
+        Add support to setlike forEach as done for maplike.
+        Covered by rebased binding tests and updated layout test.
+
+        * bindings/js/JSDOMBindingInternals.js:
+        (forEachWrapper):
+        * bindings/js/JSDOMMapLike.cpp:
+        (WebCore::forwardForEachCallToBackingMap):
+        * bindings/js/JSDOMSetLike.cpp:
+        (WebCore::DOMSetAdapter::clear):
+        (WebCore::forwardForEachCallToBackingSet):
+        * bindings/js/JSDOMSetLike.h:
+        (WebCore::DOMSetAdapter::add):
+        (WebCore::getAndInitializeBackingSet):
+        (WebCore::forwardSizeToSetLike):
+        (WebCore::forwardEntriesToSetLike):
+        (WebCore::forwardKeysToSetLike):
+        (WebCore::forwardValuesToSetLike):
+        (WebCore::forwardForEachToSetLike):
+        (WebCore::forwardClearToSetLike):
+        (WebCore::forwardHasToSetLike):
+        (WebCore::forwardAddToSetLike):
+        (WebCore::forwardDeleteToSetLike):
+        * bindings/scripts/IDLParser.pm:
+        (parseSetLikeProperties):
+        * bindings/scripts/test/JS/JSReadOnlySetLike.cpp:
+        (WebCore::jsReadOnlySetLikePrototypeFunctionForEachBody):
+        (WebCore::jsReadOnlySetLikePrototypeFunctionForEach):
+        * bindings/scripts/test/JS/JSSetLike.cpp:
+        (WebCore::jsSetLikePrototypeFunctionForEachBody):
+        (WebCore::jsSetLikePrototypeFunctionForEach):
+
 2019-12-13  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION: (r251677) imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-3.html is a flaky failure
