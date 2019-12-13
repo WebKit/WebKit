@@ -1,3 +1,14 @@
+2019-12-13  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] The AGX compiler service is incorrectly listed as a global name in sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=205189
+
+        Reviewed by Brent Fulgham.
+
+        It should be a XPC service name.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-12-12  Simon Fraser  <simon.fraser@apple.com>
 
         Move WKWebView code related to testing to new files, with new private "for testing" headers.
