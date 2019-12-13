@@ -2514,6 +2514,7 @@ static void dumpException(GlobalObject* globalObject, JSValue exception)
     } while (false)
 
     auto exceptionString = exception.toWTFString(globalObject);
+    CHECK_EXCEPTION();
     Expected<CString, UTF8ConversionError> expectedCString = exceptionString.tryGetUtf8();
     if (expectedCString)
         printf("Exception: %s\n", expectedCString.value().data());
@@ -2538,16 +2539,20 @@ static void dumpException(GlobalObject* globalObject, JSValue exception)
     JSValue stackValue = exception.get(globalObject, stackID);
     CHECK_EXCEPTION();
     
-    if (nameValue.toWTFString(globalObject) == "SyntaxError"
-        && (!fileNameValue.isUndefinedOrNull() || !lineNumberValue.isUndefinedOrNull())) {
-        printf(
-            "at %s:%s\n",
-            fileNameValue.toWTFString(globalObject).utf8().data(),
-            lineNumberValue.toWTFString(globalObject).utf8().data());
+    auto nameString = nameValue.toWTFString(globalObject);
+    CHECK_EXCEPTION();
+
+    if (nameString == "SyntaxError" && (!fileNameValue.isUndefinedOrNull() || !lineNumberValue.isUndefinedOrNull())) {
+        auto fileNameString = fileNameValue.toWTFString(globalObject);
+        CHECK_EXCEPTION();
+        auto lineNumberString = lineNumberValue.toWTFString(globalObject);
+        CHECK_EXCEPTION();
+        printf("at %s:%s\n", fileNameString.utf8().data(), lineNumberString.utf8().data());
     }
     
     if (!stackValue.isUndefinedOrNull()) {
         auto stackString = stackValue.toWTFString(globalObject);
+        CHECK_EXCEPTION();
         if (stackString.length())
             printf("%s\n", stackString.utf8().data());
     }

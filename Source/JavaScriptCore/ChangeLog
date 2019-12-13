@@ -1,3 +1,25 @@
+2019-12-12  Mark Lam  <mark.lam@apple.com>
+
+        Fix missing exception in JSValue::toWTFStringSlowCase().
+        https://bugs.webkit.org/show_bug.cgi?id=205176
+        <rdar://problem/57871899>
+
+        Reviewed by Yusuke Suzuki.
+
+        Also fix all the new exception check failures that fall out of change.
+        Also replaced some ASSERTs with EXCEPTION_ASSERT so that we can run the exception
+        check validation on a release build.
+
+        * dfg/DFGOperations.cpp:
+        * jsc.cpp:
+        (dumpException):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncPush):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createError):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::toWTFStringSlowCase const):
+
 2019-12-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Lock-down JSGlobalObject and derived classes in IsoSubspace

@@ -404,6 +404,7 @@ JSString* JSValue::toStringSlowCase(JSGlobalObject* globalObject, bool returnEmp
 String JSValue::toWTFStringSlowCase(JSGlobalObject* globalObject) const
 {
     VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     if (isInt32())
         return vm.numericStrings.add(asInt32());
     if (isDouble())
@@ -416,7 +417,9 @@ String JSValue::toWTFStringSlowCase(JSGlobalObject* globalObject) const
         return vm.propertyNames->nullKeyword.string();
     if (isUndefined())
         return vm.propertyNames->undefinedKeyword.string();
-    return toString(globalObject)->value(globalObject);
+    JSString* string = toString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    RELEASE_AND_RETURN(scope, string->value(globalObject));
 }
 
 } // namespace JSC

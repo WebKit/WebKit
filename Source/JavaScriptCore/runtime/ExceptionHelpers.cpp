@@ -266,7 +266,7 @@ JSObject* createError(JSGlobalObject* globalObject, JSValue value, const String&
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     String valueDescription = errorDescriptionForValue(globalObject, value);
-    ASSERT(scope.exception() || !!valueDescription);
+    EXCEPTION_ASSERT(scope.exception() || !!valueDescription);
     if (!valueDescription) {
         scope.clearException();
         return createOutOfMemoryError(globalObject);
