@@ -50,7 +50,7 @@ private:
     static gboolean incomingConnectionCallback(GSocketService*, GSocketConnection*, GObject*, RemoteInspectorServer*);
     void incomingConnection(Ref<SocketConnection>&&);
 
-    static const SocketConnection::MessageHandlers s_messageHandlers;
+    static const SocketConnection::MessageHandlers& messageHandlers();
     void connectionDidClose(SocketConnection&);
     void setTargetList(SocketConnection&, GVariant*);
     GVariant* setupInspectorClient(SocketConnection&, const char* clientBackendCommandsHash);

@@ -74,7 +74,7 @@ private:
     void dispatchMessage(const String&);
 
 #if USE(GLIB)
-    static const SocketConnection::MessageHandlers s_messageHandlers;
+    static const SocketConnection::MessageHandlers& messageHandlers();
     void connectionDidClose();
     void launchBrowser(Function<void (Optional<String> error)>&&);
     void connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&&);

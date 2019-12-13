@@ -30,6 +30,7 @@
 
 #include "RemoteInspectorUtils.h"
 #include <gio/gio.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -93,7 +94,9 @@ static RemoteInspector::Client::SessionCapabilities processSessionCapabilities(G
     return capabilities;
 }
 
-const SocketConnection::MessageHandlers RemoteInspectorServer::s_messageHandlers = {
+const SocketConnection::MessageHandlers& RemoteInspectorServer::messageHandlers()
+{
+    static NeverDestroyed<const SocketConnection::MessageHandlers> messageHandlers = SocketConnection::MessageHandlers({
     { "DidClose", std::pair<CString, SocketConnection::MessageCallback> { { },
         [](SocketConnection& connection, GVariant*, gpointer userData) {
             auto& inspectorServer = *static_cast<RemoteInspectorServer*>(userData);
@@ -163,7 +166,9 @@ const SocketConnection::MessageHandlers RemoteInspectorServer::s_messageHandlers
                 clientCapabilities ? clientCapabilities->browserVersion.utf8().data() : ""));
         }}
     }
-};
+    });
+    return messageHandlers;
+}
 
 RemoteInspectorServer& RemoteInspectorServer::singleton()
 {
@@ -194,7 +199,7 @@ bool RemoteInspectorServer::start(const char* address, unsigned port)
 
 gboolean RemoteInspectorServer::incomingConnectionCallback(GSocketService*, GSocketConnection* connection, GObject*, RemoteInspectorServer* inspectorServer)
 {
-    inspectorServer->incomingConnection(SocketConnection::create(GRefPtr<GSocketConnection>(connection), s_messageHandlers, inspectorServer));
+    inspectorServer->incomingConnection(SocketConnection::create(GRefPtr<GSocketConnection>(connection), messageHandlers(), inspectorServer));
     return TRUE;
 }
 

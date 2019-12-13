@@ -71,7 +71,7 @@ public:
     void closeFromFrontend(uint64_t connectionID, uint64_t targetID);
 
 private:
-    static const SocketConnection::MessageHandlers s_messageHandlers;
+    static const SocketConnection::MessageHandlers& messageHandlers();
     void setupConnection(Ref<SocketConnection>&&);
     void connectionDidClose();
 

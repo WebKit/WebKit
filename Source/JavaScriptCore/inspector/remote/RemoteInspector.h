@@ -178,7 +178,7 @@ private:
 #endif
 #if USE(GLIB)
     void setupConnection(Ref<SocketConnection>&&);
-    static const SocketConnection::MessageHandlers s_messageHandlers;
+    static const SocketConnection::MessageHandlers& messageHandlers();
 
     void receivedGetTargetListMessage();
     void receivedSetupMessage(TargetID);

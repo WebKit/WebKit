@@ -66,7 +66,7 @@ void RemoteInspector::start()
             RemoteInspector* inspector = static_cast<RemoteInspector*>(userData);
             GUniqueOutPtr<GError> error;
             if (GRefPtr<GSocketConnection> connection = adoptGRef(g_socket_client_connect_to_host_finish(G_SOCKET_CLIENT(client), result, &error.outPtr())))
-                inspector->setupConnection(SocketConnection::create(WTFMove(connection), s_messageHandlers, inspector));
+                inspector->setupConnection(SocketConnection::create(WTFMove(connection), messageHandlers(), inspector));
             else if (!g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
                 g_warning("RemoteInspector failed to connect to inspector server at: %s: %s", g_getenv("WEBKIT_INSPECTOR_SERVER"), error->message);
         }, this);
@@ -92,7 +92,9 @@ void RemoteInspector::stopInternal(StopSource)
     m_socketConnection = nullptr;
 }
 
-const SocketConnection::MessageHandlers RemoteInspector::s_messageHandlers = {
+const SocketConnection::MessageHandlers& RemoteInspector::messageHandlers()
+{
+    static NeverDestroyed<const SocketConnection::MessageHandlers> messageHandlers = SocketConnection::MessageHandlers({
     { "DidClose", std::pair<CString, SocketConnection::MessageCallback> { { },
         [](SocketConnection&, GVariant*, gpointer userData) {
             auto& inspector = *static_cast<RemoteInspector*>(userData);
@@ -130,7 +132,9 @@ const SocketConnection::MessageHandlers RemoteInspector::s_messageHandlers = {
             inspector.receivedCloseMessage(targetID);
         }}
     }
-};
+    });
+    return messageHandlers;
+}
 
 void RemoteInspector::setupConnection(Ref<SocketConnection>&& connection)
 {

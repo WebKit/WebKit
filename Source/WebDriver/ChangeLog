@@ -1,3 +1,22 @@
+2019-12-13  Jim Mason  <jmason@ibinx.com>
+
+        [GTK] WebKitGTK build hangs on g-ir-scanner
+        https://bugs.webkit.org/show_bug.cgi?id=204715
+
+        This patch fixes the static initialization order problem
+        introduced by Bug 204503.
+
+        The patch replaces the static data members with statics that
+        are constructed only upon first access (i.e., the 'construct
+        on first use' idiom).
+
+        Reviewed by Carlos Garcia Campos.
+
+        * SessionHost.h:
+        * glib/SessionHostGlib.cpp:
+        (WebDriver::SessionHost::messageHandlers):
+        (WebDriver::SessionHost::connectToBrowser):
+
 2019-12-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: tests is_element_enabled/enabled.py::test_fieldset_disabled_descendant are failing

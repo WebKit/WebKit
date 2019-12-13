@@ -28,6 +28,7 @@
 
 #include "WebDriverService.h"
 #include <gio/gio.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/UUID.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -43,7 +44,9 @@ SessionHost::~SessionHost()
         g_subprocess_force_exit(m_browser.get());
 }
 
-const SocketConnection::MessageHandlers SessionHost::s_messageHandlers = {
+const SocketConnection::MessageHandlers& SessionHost::messageHandlers()
+{
+    static NeverDestroyed<const SocketConnection::MessageHandlers> messageHandlers = SocketConnection::MessageHandlers({
     { "DidClose", std::pair<CString, SocketConnection::MessageCallback> { { },
         [](SocketConnection&, GVariant*, gpointer userData) {
             auto& sessionHost = *static_cast<SessionHost*>(userData);
@@ -86,7 +89,9 @@ const SocketConnection::MessageHandlers SessionHost::s_messageHandlers = {
             sessionHost.sendMessageToFrontend(connectionID, targetID, message);
         }}
     }
-};
+    });
+    return messageHandlers;
+}
 
 void SessionHost::connectToBrowser(Function<void (Optional<String> error)>&& completionHandler)
 {
@@ -191,7 +196,7 @@ void SessionHost::connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&& 
                     data->completionHandler(String::fromUTF8(error->message));
                     return;
                 }
-                data->sessionHost->setupConnection(SocketConnection::create(WTFMove(connection), s_messageHandlers, data->sessionHost));
+                data->sessionHost->setupConnection(SocketConnection::create(WTFMove(connection), messageHandlers(), data->sessionHost));
                 data->completionHandler(WTF::nullopt);
         }, data);
     });
