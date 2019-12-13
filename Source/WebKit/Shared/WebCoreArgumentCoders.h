@@ -89,6 +89,7 @@ class KeyframeValueList;
 class LayoutSize;
 class LayoutPoint;
 class LinearTimingFunction;
+class NativeImageHandle;
 class Notification;
 class PasteboardCustomData;
 class ProtectionSpace;
@@ -381,6 +382,11 @@ template<> struct ArgumentCoder<WebCore::Cursor> {
 template<> struct ArgumentCoder<WebCore::ImageHandle> {
     static void encode(Encoder&, const WebCore::ImageHandle&);
     static bool decode(Decoder&, WebCore::ImageHandle&);
+};
+
+template<> struct ArgumentCoder<WebCore::NativeImageHandle> {
+    static void encode(Encoder&, const WebCore::NativeImageHandle&);
+    static bool decode(Decoder&, WebCore::NativeImageHandle&);
 };
 
 template<> struct ArgumentCoder<WebCore::ResourceRequest> {

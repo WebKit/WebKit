@@ -668,7 +668,7 @@ DrawNativeImage::DrawNativeImage(const NativeImagePtr& image, const FloatSize& i
     , m_image(image)
 #endif
     , m_imageSize(imageSize)
-    , m_destination(destRect)
+    , m_destinationRect(destRect)
     , m_srcRect(srcRect)
     , m_options(options)
 {
@@ -677,10 +677,12 @@ DrawNativeImage::DrawNativeImage(const NativeImagePtr& image, const FloatSize& i
 #endif
 }
 
+DrawNativeImage::~DrawNativeImage() = default;
+
 void DrawNativeImage::apply(GraphicsContext& context) const
 {
 #if USE(CG)
-    context.drawNativeImage(m_image, m_imageSize, m_destination, m_srcRect, m_options);
+    context.drawNativeImage(m_image, m_imageSize, m_destinationRect, m_srcRect, m_options);
 #else
     UNUSED_PARAM(context);
 #endif
@@ -691,7 +693,7 @@ static TextStream& operator<<(TextStream& ts, const DrawNativeImage& item)
     ts << static_cast<const DrawingItem&>(item);
     // FIXME: dump more stuff.
     ts.dumpProperty("source-rect", item.source());
-    ts.dumpProperty("dest-rect", item.destination());
+    ts.dumpProperty("dest-rect", item.destinationRect());
     return ts;
 }
 #endif

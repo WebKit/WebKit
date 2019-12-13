@@ -1329,24 +1329,80 @@ public:
         return adoptRef(*new DrawNativeImage(image, imageSize, destRect, srcRect, options));
     }
 
+    WEBCORE_EXPORT virtual ~DrawNativeImage();
+
     FloatRect source() const { return m_srcRect; }
-    FloatRect destination() const { return m_destination; }
+    FloatRect destinationRect() const { return m_destinationRect; }
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<Ref<DrawNativeImage>> decode(Decoder&);
 
 private:
-    DrawNativeImage(const NativeImagePtr&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&);
+    WEBCORE_EXPORT DrawNativeImage(const NativeImagePtr&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&);
 
     void apply(GraphicsContext&) const override;
 
-    Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_destination; }
+    Optional<FloatRect> localBounds(const GraphicsContext&) const override { return m_destinationRect; }
 
 #if USE(CG)
-    RetainPtr<CGImageRef> m_image;
+    NativeImagePtr m_image;
 #endif
     FloatSize m_imageSize;
-    FloatRect m_destination;
+    FloatRect m_destinationRect;
     FloatRect m_srcRect;
     ImagePaintingOptions m_options;
 };
+
+template<class Encoder>
+void DrawNativeImage::encode(Encoder& encoder) const
+{
+#if USE(CG)
+    NativeImageHandle handle { m_image };
+    encoder << handle;
+#endif
+    encoder << m_imageSize;
+    encoder << m_destinationRect;
+    encoder << m_srcRect;
+    encoder << m_options;
+}
+
+template<class Decoder>
+Optional<Ref<DrawNativeImage>> DrawNativeImage::decode(Decoder& decoder)
+{
+#if USE(CG)
+    Optional<NativeImageHandle> handle;
+    decoder >> handle;
+    if (!handle)
+        return WTF::nullopt;
+#endif
+
+    Optional<FloatSize> imageSize;
+    decoder >> imageSize;
+    if (!imageSize)
+        return WTF::nullopt;
+
+    Optional<FloatRect> destinationRect;
+    decoder >> destinationRect;
+    if (!destinationRect)
+        return WTF::nullopt;
+
+    Optional<FloatRect> srcRect;
+    decoder >> srcRect;
+    if (!srcRect)
+        return WTF::nullopt;
+
+    Optional<ImagePaintingOptions> options;
+    decoder >> options;
+    if (!options)
+        return WTF::nullopt;
+
+#if USE(CG)
+    NativeImagePtr image = handle->image;
+#else
+    NativeImagePtr image = nullptr;
+#endif
+    return DrawNativeImage::create(image, *imageSize, *destinationRect, *srcRect, *options);
+}
 #endif
 
 class DrawPattern : public DrawingItem {
@@ -2679,7 +2735,7 @@ void Item::encode(Encoder& encoder) const
         break;
 #if USE(CG) || USE(CAIRO) || USE(DIRECT2D)
     case ItemType::DrawNativeImage:
-        WTFLogAlways("DisplayList::Item::encode cannot yet encode DrawNativeImage");
+        encoder << downcast<DrawNativeImage>(*this);
         break;
 #endif
     case ItemType::DrawPattern:
@@ -2859,7 +2915,8 @@ Optional<Ref<Item>> Item::decode(Decoder& decoder)
         break;
 #if USE(CG) || USE(CAIRO) || USE(DIRECT2D)
     case ItemType::DrawNativeImage:
-        WTFLogAlways("DisplayList::Item::decode cannot yet decode DrawNativeImage");
+        if (auto item = DrawNativeImage::decode(decoder))
+            return static_reference_cast<Item>(WTFMove(*item));
         break;
 #endif
     case ItemType::DrawPattern:

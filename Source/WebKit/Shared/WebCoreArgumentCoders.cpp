@@ -57,6 +57,7 @@
 #include <WebCore/Length.h>
 #include <WebCore/LengthBox.h>
 #include <WebCore/MediaSelectionOption.h>
+#include <WebCore/NativeImage.h>
 #include <WebCore/Pasteboard.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/PromisedAttachmentInfo.h>
@@ -981,8 +982,11 @@ static void encodeImage(Encoder& encoder, Image& image)
 {
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(IntSize(image.size()), { });
     auto graphicsContext = bitmap->createGraphicsContext();
-    if (graphicsContext)
-        graphicsContext->drawImage(image, IntPoint());
+    encoder << !!graphicsContext;
+    if (!graphicsContext)
+        return;
+
+    graphicsContext->drawImage(image, IntPoint());
 
     ShareableBitmap::Handle handle;
     bitmap->createHandle(handle);
@@ -992,6 +996,11 @@ static void encodeImage(Encoder& encoder, Image& image)
 
 static bool decodeImage(Decoder& decoder, RefPtr<Image>& image)
 {
+    Optional<bool> didCreateGraphicsContext;
+    decoder >> didCreateGraphicsContext;
+    if (!didCreateGraphicsContext.hasValue() || !didCreateGraphicsContext.value())
+        return false;
+
     ShareableBitmap::Handle handle;
     if (!decoder.decode(handle))
         return false;
@@ -1038,6 +1047,82 @@ bool ArgumentCoder<ImageHandle>::decode(Decoder& decoder, ImageHandle& imageHand
     if (!decodeOptionalImage(decoder, imageHandle.image))
         return false;
     return true;
+}
+
+static void encodeNativeImage(Encoder& encoder, NativeImagePtr image)
+{
+    auto imageSize = nativeImageSize(image);
+    auto bitmap = ShareableBitmap::createShareable(imageSize, { });
+    auto graphicsContext = bitmap->createGraphicsContext();
+    encoder << !!graphicsContext;
+    if (!graphicsContext)
+        return;
+
+    graphicsContext->drawNativeImage(image, { }, FloatRect({ }, imageSize), FloatRect({ }, imageSize));
+
+    ShareableBitmap::Handle handle;
+    bitmap->createHandle(handle);
+
+    encoder << handle;
+}
+
+static bool decodeNativeImage(Decoder& decoder, NativeImagePtr& nativeImage)
+{
+    Optional<bool> didCreateGraphicsContext;
+    decoder >> didCreateGraphicsContext;
+    if (!didCreateGraphicsContext.hasValue() || !didCreateGraphicsContext.value())
+        return false;
+
+    ShareableBitmap::Handle handle;
+    if (!decoder.decode(handle))
+        return false;
+
+    auto bitmap = ShareableBitmap::create(handle);
+    if (!bitmap)
+        return false;
+
+    auto image = bitmap->createImage();
+    if (!image)
+        return false;
+
+    nativeImage = image->nativeImage();
+    if (!nativeImage)
+        return false;
+
+    return true;
+}
+
+static void encodeOptionalNativeImage(Encoder& encoder, NativeImagePtr image)
+{
+    bool hasImage = !!image;
+    encoder << hasImage;
+
+    if (hasImage)
+        encodeNativeImage(encoder, image);
+}
+
+static bool decodeOptionalNativeImage(Decoder& decoder, NativeImagePtr& image)
+{
+    image = nullptr;
+
+    bool hasImage;
+    if (!decoder.decode(hasImage))
+        return false;
+
+    if (!hasImage)
+        return true;
+
+    return decodeNativeImage(decoder, image);
+}
+
+void ArgumentCoder<NativeImageHandle>::encode(Encoder& encoder, const NativeImageHandle& imageHandle)
+{
+    encodeOptionalNativeImage(encoder, imageHandle.image.get());
+}
+
+bool ArgumentCoder<NativeImageHandle>::decode(Decoder& decoder, NativeImageHandle& imageHandle)
+{
+    return decodeOptionalNativeImage(decoder, imageHandle.image);
 }
 
 #if !PLATFORM(IOS_FAMILY)

@@ -1,3 +1,30 @@
+2019-12-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Implement encoding/decoding for DisplayList::DrawNativeImage
+        https://bugs.webkit.org/show_bug.cgi?id=205200
+
+        Reviewed by Simon Fraser.
+
+        Add helper functions to encode and decode NativeImagePtr (RetainPtr<CGImageRef> on Cocoa platforms). This
+        mirrors the implementation of encoding and decoding for WebCore::Image, which create and draws into
+        ShareableBitmap, and send a handle to the data over IPC.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::encodeImage):
+        (IPC::decodeImage):
+        (IPC::encodeNativeImage):
+        (IPC::decodeNativeImage):
+
+        Additionally make Image and NativeImagePtr encoding and decoding helpers fail quickly in the case where the
+        ShareableBitmap failed to create a graphics context by having the encoder indicate whether a graphics context
+        was created, and having the decoder fail if the graphics context could not be created.
+
+        (IPC::encodeOptionalNativeImage):
+        (IPC::decodeOptionalNativeImage):
+        (IPC::ArgumentCoder<NativeImageHandle>::encode):
+        (IPC::ArgumentCoder<NativeImageHandle>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+
 2019-12-13  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Deny mach lookup access to "*.apple-extension-service" in the WebContent process

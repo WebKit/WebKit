@@ -1,3 +1,27 @@
+2019-12-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Implement encoding/decoding for DisplayList::DrawNativeImage
+        https://bugs.webkit.org/show_bug.cgi?id=205200
+
+        Reviewed by Simon Fraser.
+
+        Implements basic encoding and decoding for the DrawNativeImage drawing item, such that it can be sent and
+        replayed in the GPU process. See WebKit ChangeLogs for more details. Eventually, we should avoid calling into
+        drawNativeImage in the web process altogether, but for now, both DrawNativeImage and DrawImage drawing items
+        rely on drawing native images into ImageBuffers. See: <https://webkit.org/b/205213>.
+
+        * platform/graphics/NativeImage.h:
+
+        Add a NativeImageHandle wrapper around a NativeImagePtr to make it simpler to decode and encode NativeImagePtrs
+        using << and >> operators.
+
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::DrawNativeImage::encode const):
+        (WebCore::DisplayList::DrawNativeImage::decode):
+        (WebCore::DisplayList::Item::encode const):
+        (WebCore::DisplayList::Item::decode):
+
 2019-12-13  youenn fablet  <youenn@apple.com>
 
         Add support for WebIDL set-like forEach
