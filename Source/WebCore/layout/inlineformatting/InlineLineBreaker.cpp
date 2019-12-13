@@ -68,11 +68,14 @@ static inline bool isTextSplitAtArbitraryPositionAllowed(const RenderStyle& styl
     return false;
 }
 
-static inline bool isTrailingWhitespaceWithPreWrap(const InlineItem& trailingInlineItem)
+static inline bool shouldKeepEndOfLineWhitespace(const LineBreaker::Content& candidateRuns)
 {
-    if (!trailingInlineItem.isText())
-        return false;
-    return trailingInlineItem.style().whiteSpace() == WhiteSpace::PreWrap && downcast<InlineTextItem>(trailingInlineItem).isWhitespace();
+    // Grab the style and check for white-space property to decided whether we should let this whitespace content overflow the current line.
+    // Note that the "keep" in the context means we let the whitespace content sit on the current line.
+    // It might very well get trimmed when we close the line (normal/nowrap/pre-line).
+    // See https://www.w3.org/TR/css-text-3/#white-space-property
+    auto whitespace = candidateRuns.runs()[*candidateRuns.firstTextRunIndex()].inlineItem.style().whiteSpace();
+    return whitespace == WhiteSpace::Normal || whitespace == WhiteSpace::NoWrap || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::PreLine;
 }
 
 LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const Content& candidateRuns, const LineStatus& lineStatus)
@@ -94,6 +97,11 @@ LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const 
         // "text content <span style="padding: 1px"></span>" <- the <span></span> runs could fit after trimming the trailing whitespace.
         if (candidateRuns.width() <= lineStatus.availableWidth + lineStatus.trimmableWidth)
             return { BreakingContext::ContentWrappingRule::Keep, { } };
+    }
+    if (candidateRuns.isVisuallyEmptyWhitespaceContentOnly() && shouldKeepEndOfLineWhitespace(candidateRuns)) {
+        // This overflowing content apparently falls into the remove/hang end-of-line-spaces catergory.
+        // see https://www.w3.org/TR/css-text-3/#white-space-property matrix
+        return { BreakingContext::ContentWrappingRule::Keep, { } };
     }
 
     if (candidateRuns.hasTextContentOnly()) {
@@ -117,10 +125,6 @@ LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const 
         }
         // If we are not allowed to break this content, we still need to decide whether keep it or push it to the next line.
         auto contentShouldOverflow = lineStatus.lineIsEmpty || !isTextContentWrappingAllowed(runs[0].inlineItem.style());
-        // FIXME: white-space: pre-wrap needs clarification. According to CSS Text Module Level 3, content wrapping is as 'normal' but apparently
-        // we need to keep the overlapping whitespace on the line (and hang it I'd assume).
-        if (isTrailingWhitespaceWithPreWrap(runs.last().inlineItem))
-            contentShouldOverflow = true;
         return { contentShouldOverflow ? BreakingContext::ContentWrappingRule::Keep : BreakingContext::ContentWrappingRule::Push, { } };
     }
     // First non-text inline content always stays on line.
@@ -381,6 +385,21 @@ bool LineBreaker::Content::hasTextContentOnly() const
         if (inlineItem.isContainerStart() || inlineItem.isContainerEnd())
             continue;
         return inlineItem.isText();
+    }
+    return false;
+}
+
+bool LineBreaker::Content::isVisuallyEmptyWhitespaceContentOnly() const
+{
+    // [<span></span> ] [<span> </span>] [ <span style="padding: 0px;"></span>] are all considered visually empty whitespace content.
+    // [<span style="border: 1px solid red"></span> ] while this is whitespace content only, it is not considered visually empty.
+    // Due to commit boundary rules, we just need to check the first non-typeless inline item (can't have both [img] and [text])
+    for (auto& run : m_continousRuns) {
+        auto& inlineItem = run.inlineItem;
+        // FIXME: check for padding border etc.
+        if (inlineItem.isContainerStart() || inlineItem.isContainerEnd())
+            continue;
+        return inlineItem.isText() && downcast<InlineTextItem>(inlineItem).isWhitespace();
     }
     return false;
 }

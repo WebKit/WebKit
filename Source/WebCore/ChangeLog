@@ -1,3 +1,25 @@
+2019-12-13  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Fix fast/text/simple-line-with-br.html
+        https://bugs.webkit.org/show_bug.cgi?id=205207
+        <rdar://problem/57913504>
+
+        Reviewed by Antti Koivisto.
+
+        Apply https://www.w3.org/TR/css-text-3/#white-space-property's matrix to end-of-the-line whitespace.
+        (Keep white-space: mormal no-wrap pre-wrap and pre-line content)
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::shouldKeepEndOfLineWhitespace):
+        (WebCore::Layout::LineBreaker::breakingContextForInlineContent):
+        (WebCore::Layout::LineBreaker::Content::isVisuallyEmptyWhitespaceContentOnly const):
+        (WebCore::Layout::isTrailingWhitespaceWithPreWrap): Deleted.
+        * layout/inlineformatting/InlineLineBreaker.h:
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::InlineItemRun::isTrimmableWhitespace const):
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::LineLayoutContext::placeInlineItem):
+
 2019-12-13  Chris Lord  <clord@igalia.com>
 
         Implement OffscreenCanvas.convertToBlob

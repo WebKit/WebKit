@@ -804,6 +804,8 @@ LineBuilder::InlineItemRun::InlineItemRun(const InlineItem& inlineItem, InlineLa
 
 bool LineBuilder::InlineItemRun::isTrimmableWhitespace() const
 {
+    // Return true if the "end-of-line spaces" can be removed.
+    // See https://www.w3.org/TR/css-text-3/#white-space-property matrix.
     if (!isWhitespace())
         return false;
     return !TextUtil::shouldPreserveTrailingWhitespace(style());

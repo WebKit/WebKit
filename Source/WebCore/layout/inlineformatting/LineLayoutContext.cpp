@@ -174,7 +174,9 @@ LineLayoutContext::IsEndOfLine LineLayoutContext::placeInlineItem(LineBuilder& l
     }
     // Line breaks are also special.
     if (inlineItem.isLineBreak()) {
-        auto isEndOfLine = !m_uncommittedContent.isEmpty() ? processUncommittedContent(line) : IsEndOfLine::No;
+        auto isEndOfLine = IsEndOfLine::No;
+        if (!m_uncommittedContent.isEmpty())
+            isEndOfLine = processUncommittedContent(line);
         // When the uncommitted content fits(or the line is empty), add the line break to this line as well.
         if (isEndOfLine == IsEndOfLine::No) {
             m_uncommittedContent.append(inlineItem, itemLogicalWidth);

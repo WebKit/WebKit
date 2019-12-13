@@ -79,6 +79,7 @@ public:
         const RunList& runs() const { return m_continousRuns; }
         bool isEmpty() const { return m_continousRuns.isEmpty(); }
         bool hasTextContentOnly() const;
+        bool isVisuallyEmptyWhitespaceContentOnly() const;
         bool hasNonContentRunsOnly() const;
         unsigned size() const { return m_continousRuns.size(); }
         InlineLayoutUnit width() const { return m_width; }
