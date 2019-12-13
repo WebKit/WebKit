@@ -1,3 +1,13 @@
+2019-12-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Uninitialized variables in RenderLayer
+        https://bugs.webkit.org/show_bug.cgi?id=205165
+
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer): Initialize m_isNormalFlowOnly and m_isCSSStackingContext.
+
 2019-12-12  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Fix the build warnings below since r253353.
