@@ -31,7 +31,9 @@
 #include "CSSValuePool.h"
 #include "CanvasRenderingContext.h"
 #include "ImageBitmap.h"
+#include "JSBlob.h"
 #include "JSDOMPromiseDeferred.h"
+#include "MIMETypeRegistry.h"
 #include "OffscreenCanvasRenderingContext2D.h"
 #include "WebGLRenderingContext.h"
 #include "WorkerGlobalScope.h"
@@ -165,9 +167,63 @@ ExceptionOr<RefPtr<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
     return Exception { NotSupportedError };
 }
 
+static String toEncodingMimeType(const String& mimeType)
+{
+    if (!MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType))
+        return "image/png"_s;
+    return mimeType.convertToASCIILowercase();
+}
+
+static Optional<double> qualityFromDouble(double qualityNumber)
+{
+    if (!(qualityNumber >= 0 && qualityNumber <= 1))
+        return WTF::nullopt;
+
+    return qualityNumber;
+}
+
+void OffscreenCanvas::convertToBlob(ImageEncodeOptions&& options, Ref<DeferredPromise>&& promise)
+{
+    if (!originClean()) {
+        promise->reject(SecurityError);
+        return;
+    }
+    if (size().isEmpty()) {
+        promise->reject(IndexSizeError);
+        return;
+    }
+    if (!buffer()) {
+        promise->reject(InvalidStateError);
+        return;
+    }
+
+    makeRenderingResultsAvailable();
+
+    auto encodingMIMEType = toEncodingMimeType(options.type);
+    auto quality = qualityFromDouble(options.quality);
+
+    Vector<uint8_t> blobData = buffer()->toData(encodingMIMEType, quality);
+    if (blobData.isEmpty()) {
+        promise->reject(EncodingError);
+        return;
+    }
+
+    Ref<Blob> blob = Blob::create(WTFMove(blobData), encodingMIMEType);
+    promise->resolveWithNewlyCreated<IDLInterface<Blob>>(WTFMove(blob));
+}
+
 void OffscreenCanvas::didDraw(const FloatRect& rect)
 {
     notifyObserversCanvasChanged(rect);
+}
+
+SecurityOrigin* OffscreenCanvas::securityOrigin() const
+{
+    auto& context = *canvasBaseScriptExecutionContext();
+    if (is<WorkerGlobalScope>(context))
+        return &downcast<WorkerGlobalScope>(context).topOrigin();
+
+    return &downcast<Document>(context).securityOrigin();
 }
 
 CSSValuePool& OffscreenCanvas::cssValuePool()

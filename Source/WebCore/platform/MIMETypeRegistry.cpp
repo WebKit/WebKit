@@ -28,6 +28,7 @@
 #include "MIMETypeRegistry.h"
 
 #include "MediaPlayer.h"
+#include "ThreadGlobalData.h"
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
@@ -168,43 +169,6 @@ HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::additionalSupported
 {
     static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> additionalSupportedImageMIMETypes;
     return additionalSupportedImageMIMETypes;
-}
-
-static const HashSet<String, ASCIICaseInsensitiveHash>& supportedImageMIMETypesForEncoding()
-{
-#if PLATFORM(COCOA)
-    static const auto supportedImageMIMETypesForEncoding = makeNeverDestroyed([] {
-        RetainPtr<CFArrayRef> supportedTypes = adoptCF(CGImageDestinationCopyTypeIdentifiers());
-        HashSet<String, ASCIICaseInsensitiveHash> supportedImageMIMETypesForEncoding;
-        CFIndex count = CFArrayGetCount(supportedTypes.get());
-        for (CFIndex i = 0; i < count; i++) {
-            CFStringRef supportedType = reinterpret_cast<CFStringRef>(CFArrayGetValueAtIndex(supportedTypes.get(), i));
-            String mimeType = MIMETypeForImageType(supportedType);
-            if (!mimeType.isEmpty())
-                supportedImageMIMETypesForEncoding.add(mimeType);
-        }
-        return supportedImageMIMETypesForEncoding;
-    }());
-#else
-    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> supportedImageMIMETypesForEncoding =std::initializer_list<String> {
-#if USE(CG) || USE(DIRECT2D)
-        // FIXME: Add Windows support for all the supported UTI's when a way to convert from MIMEType to UTI reliably is found.
-        // For now, only support PNG, JPEG and GIF. See <rdar://problem/6095286>.
-        "image/png"_s,
-        "image/jpeg"_s,
-        "image/gif"_s,
-#elif PLATFORM(GTK)
-        "image/png"_s,
-        "image/jpeg"_s,
-        "image/tiff"_s,
-        "image/bmp"_s,
-        "image/ico"_s,
-#elif USE(CAIRO)
-        "image/png"_s,
-#endif
-    };
-#endif
-    return supportedImageMIMETypesForEncoding;
 }
 
 static const HashSet<String, ASCIICaseInsensitiveHash>& supportedJavaScriptMIMETypes()
@@ -474,13 +438,45 @@ bool MIMETypeRegistry::isSupportedImageVideoOrSVGMIMEType(const String& mimeType
     return false;
 }
 
+std::unique_ptr<MIMETypeRegistryThreadGlobalData> MIMETypeRegistry::createMIMETypeRegistryThreadGlobalData()
+{
+#if PLATFORM(COCOA)
+    RetainPtr<CFArrayRef> supportedTypes = adoptCF(CGImageDestinationCopyTypeIdentifiers());
+    HashSet<String, ASCIICaseInsensitiveHash> supportedImageMIMETypesForEncoding;
+    CFIndex count = CFArrayGetCount(supportedTypes.get());
+    for (CFIndex i = 0; i < count; i++) {
+        CFStringRef supportedType = reinterpret_cast<CFStringRef>(CFArrayGetValueAtIndex(supportedTypes.get(), i));
+        String mimeType = MIMETypeForImageType(supportedType);
+        if (!mimeType.isEmpty())
+            supportedImageMIMETypesForEncoding.add(mimeType);
+    }
+#else
+    HashSet<String, ASCIICaseInsensitiveHash> supportedImageMIMETypesForEncoding = std::initializer_list<String> {
+#if USE(CG) || USE(DIRECT2D)
+        // FIXME: Add Windows support for all the supported UTI's when a way to convert from MIMEType to UTI reliably is found.
+        // For now, only support PNG, JPEG and GIF. See <rdar://problem/6095286>.
+        "image/png"_s,
+        "image/jpeg"_s,
+        "image/gif"_s,
+#elif PLATFORM(GTK)
+        "image/png"_s,
+        "image/jpeg"_s,
+        "image/tiff"_s,
+        "image/bmp"_s,
+        "image/ico"_s,
+#elif USE(CAIRO)
+        "image/png"_s,
+#endif
+    };
+#endif
+    return makeUnique<MIMETypeRegistryThreadGlobalData>(WTFMove(supportedImageMIMETypesForEncoding));
+}
+
 bool MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(const String& mimeType)
 {
-    ASSERT(isMainThread());
-
     if (mimeType.isEmpty())
         return false;
-    return supportedImageMIMETypesForEncoding().contains(mimeType);
+    return threadGlobalData().mimeTypeRegistryThreadGlobalData().supportedImageMIMETypesForEncoding().contains(mimeType);
 }
 
 bool MIMETypeRegistry::isSupportedJavaScriptMIMEType(const String& mimeType)

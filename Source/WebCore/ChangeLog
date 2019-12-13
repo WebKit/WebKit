@@ -1,3 +1,34 @@
+2019-12-13  Chris Lord  <clord@igalia.com>
+
+        Implement OffscreenCanvas.convertToBlob
+        https://bugs.webkit.org/show_bug.cgi?id=202573
+
+        Reviewed by Darin Adler.
+
+        Implement OffscreenCanvas.convertToBlob. This also involves making
+        isSupportedImageMIMETypeForEncoding safe to use off the main thread,
+        and implementing OffscreenCanvas.securityOrigin.
+
+        No new tests, these changes fix existing tests.
+
+        * html/OffscreenCanvas.cpp:
+        (WebCore::toEncodingMimeType):
+        (WebCore::qualityFromDouble):
+        (WebCore::OffscreenCanvas::convertToBlob):
+        (WebCore::OffscreenCanvas::securityOrigin const):
+        * html/OffscreenCanvas.h:
+        * html/OffscreenCanvas.idl:
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::createMIMETypeRegistryThreadGlobalData):
+        (WebCore::MIMETypeRegistry::isSupportedImageMIMETypeForEncoding):
+        * platform/MIMETypeRegistry.h:
+        (WebCore::MIMETypeRegistryThreadGlobalData::MIMETypeRegistryThreadGlobalData):
+        (WebCore::MIMETypeRegistryThreadGlobalData::supportedImageMIMETypesForEncoding const):
+        * platform/ThreadGlobalData.cpp:
+        (WebCore::ThreadGlobalData::mimeTypeRegistryThreadGlobalData):
+        * platform/ThreadGlobalData.h:
+        * workers/WorkerGlobalScope.h:
+
 2019-12-13  youenn fablet  <youenn@apple.com>
 
         Make DOMCacheStorage::retrieveCaches take a CompletionHandler

@@ -43,6 +43,7 @@ class ThreadTimers;
 struct CachedResourceRequestInitiators;
 struct EventNames;
 struct ICUConverterWrapper;
+struct MIMETypeRegistryThreadGlobalData;
 
 #if USE(WEB_THREAD)
 class ThreadGlobalData : public ThreadSafeRefCounted<ThreadGlobalData> {
@@ -73,6 +74,8 @@ public:
     bool isInRemoveAllEventListeners() const { return m_isInRemoveAllEventListeners; }
     void setIsInRemoveAllEventListeners(bool value) { m_isInRemoveAllEventListeners = value; }
 
+    const MIMETypeRegistryThreadGlobalData& mimeTypeRegistryThreadGlobalData();
+
 private:
     std::unique_ptr<CachedResourceRequestInitiators> m_cachedResourceRequestInitiators;
     std::unique_ptr<EventNames> m_eventNames;
@@ -87,6 +90,7 @@ private:
     bool m_isInRemoveAllEventListeners { false };
 
     std::unique_ptr<ICUConverterWrapper> m_cachedConverterICU;
+    std::unique_ptr<MIMETypeRegistryThreadGlobalData> m_MIMETypeRegistryThreadGlobalData;
 
     WEBCORE_EXPORT friend ThreadGlobalData& threadGlobalData();
 };

@@ -29,6 +29,7 @@
 
 #include "CachedResourceRequestInitiators.h"
 #include "EventNames.h"
+#include "MIMETypeRegistry.h"
 #include "QualifiedNameCache.h"
 #include "TextCodecICU.h"
 #include "ThreadTimers.h"
@@ -116,5 +117,12 @@ ThreadGlobalData& threadGlobalData()
 }
 
 #endif
+
+const MIMETypeRegistryThreadGlobalData& ThreadGlobalData::mimeTypeRegistryThreadGlobalData()
+{
+    if (UNLIKELY(!m_MIMETypeRegistryThreadGlobalData))
+        m_MIMETypeRegistryThreadGlobalData = MIMETypeRegistry::createMIMETypeRegistryThreadGlobalData();
+    return *m_MIMETypeRegistryThreadGlobalData;
+}
 
 } // namespace WebCore

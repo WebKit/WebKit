@@ -54,6 +54,6 @@ enum OffscreenRenderingContextType
 
     [CallWith=GlobalObject, MayThrowException] OffscreenRenderingContext? getContext(OffscreenRenderingContextType contextType, any... arguments);
     [MayThrowException] ImageBitmap transferToImageBitmap();
-    // Promise<Blob> convertToBlob(optional ImageEncodeOptions options);
+    Promise<Blob> convertToBlob(optional ImageEncodeOptions options);
 
 };
