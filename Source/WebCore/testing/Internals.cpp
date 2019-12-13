@@ -5357,6 +5357,8 @@ bool Internals::hasSandboxMachLookupAccessToGlobalName(const String& process, co
 
     return !sandbox_check(pid, "mach-lookup", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_GLOBAL_NAME | SANDBOX_CHECK_NO_REPORT), service.utf8().data());
 #else
+    UNUSED_PARAM(process);
+    UNUSED_PARAM(service);
     return false;
 #endif
 }
