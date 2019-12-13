@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/1
+/LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/1.headers
 /LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/AbstractWorker.onerror.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/AbstractWorker.onerror.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/Blob-url.html
@@ -25,9 +26,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/ctor-undefined.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/expected-self-properties.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/null
+/LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/null.headers
 /LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/same-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/terminate.html
 /LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/terminate.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/undefined
+/LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/undefined.headers
 /LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/unexpected-self-properties.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/constructors/Worker/use-base-url.html

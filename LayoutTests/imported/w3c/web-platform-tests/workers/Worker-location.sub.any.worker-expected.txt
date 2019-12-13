@@ -1,0 +1,3 @@
+
+PASS Test WorkerLocation properties. 
+

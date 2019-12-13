@@ -16,7 +16,5 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/workers/semantics/interface-objects/001.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/workers/semantics/interface-objects/002.worker.js
-/LayoutTests/imported/w3c/web-platform-tests/workers/semantics/interface-objects/003.html
-/LayoutTests/imported/w3c/web-platform-tests/workers/semantics/interface-objects/003.js
-/LayoutTests/imported/w3c/web-platform-tests/workers/semantics/interface-objects/004.html
-/LayoutTests/imported/w3c/web-platform-tests/workers/semantics/interface-objects/004.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/semantics/interface-objects/003.any.js
+/LayoutTests/imported/w3c/web-platform-tests/workers/semantics/interface-objects/004.any.js

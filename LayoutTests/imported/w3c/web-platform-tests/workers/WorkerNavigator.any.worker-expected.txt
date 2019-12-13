@@ -1,0 +1,3 @@
+
+PASS Testing Navigator properties on workers. 
+

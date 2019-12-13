@@ -1,5 +1,16 @@
 2019-12-12  Chris Dumez  <cdumez@apple.com>
 
+        Re-sync workers web-platform-tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=205180
+
+        Reviewed by Alex Christensen.
+
+        Re-sync workers web-platform-tests from upstream 178762b6fce688979e261f3ac8.
+
+        * web-platform-tests/workers/*: Updated.
+
+2019-12-12  Chris Dumez  <cdumez@apple.com>
+
         Re-sync webmessaging web-platform-tests from upstream
         https://bugs.webkit.org/show_bug.cgi?id=205178
 

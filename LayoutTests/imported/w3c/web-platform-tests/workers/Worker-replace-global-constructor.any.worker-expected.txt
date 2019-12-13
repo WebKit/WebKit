@@ -1,0 +1,3 @@
+
+PASS Test replacing global constructors in a worker context. 
+
