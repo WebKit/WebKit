@@ -90,6 +90,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/fetch-cors-xhr-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/fetch-csp-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/fetch-csp-iframe.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/fetch-error-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/fetch-event-add-async-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/fetch-event-after-navigation-within-page-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/fetch-event-async-respond-with-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/fetch-event-network-error-controllee-iframe.html
@@ -107,6 +109,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/fetch-event-respond-with-stops-propagation-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/fetch-event-test-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/fetch-event-within-sw-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/fetch-event-worker-timing.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/fetch-header-visibility-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/fetch-mixed-content-iframe-inscope-to-inscope.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/fetch-mixed-content-iframe-inscope-to-outscope.html

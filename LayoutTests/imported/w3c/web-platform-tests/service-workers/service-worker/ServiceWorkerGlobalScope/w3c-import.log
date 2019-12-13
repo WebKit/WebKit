@@ -17,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/close.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/extendable-message-event-constructor.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/extendable-message-event.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/fetch-on-the-right-interface.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/isSecureContext.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/isSecureContext.serviceworker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/postmessage.https.html

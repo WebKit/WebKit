@@ -1,3 +1,0 @@
-
-PASS There are no tests for section Response so far. 
-

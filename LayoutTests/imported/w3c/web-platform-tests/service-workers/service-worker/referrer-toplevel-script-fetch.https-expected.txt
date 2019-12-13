@@ -1,0 +1,3 @@
+
+PASS Referrer of the top-level script fetch should be the document URL 
+

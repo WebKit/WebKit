@@ -1,5 +1,16 @@
 2019-12-12  Chris Dumez  <cdumez@apple.com>
 
+        Re-sync service-workers web-platform-tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=205181
+
+        Reviewed by Alex Christensen.
+
+        Resync service-workers web-platform-tests from upstream 178762b6fce688979.
+
+        * web-platform-tests/service-workers/*: Updated
+
+2019-12-12  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, land missing baselines from r253453.
 
         * web-platform-tests/workers/SharedWorker-MessageEvent-source.any-expected.txt: Added.

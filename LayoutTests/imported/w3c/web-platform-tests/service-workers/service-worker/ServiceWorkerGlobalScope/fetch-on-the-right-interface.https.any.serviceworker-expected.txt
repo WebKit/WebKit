@@ -1,0 +1,3 @@
+
+PASS Fetch method on the right interface 
+

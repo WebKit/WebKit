@@ -19,5 +19,5 @@ PASS Cache.addAll with a mix of succeeding and failing requests
 PASS Cache.addAll called with the same Request object specified twice 
 PASS Cache.addAll should succeed when entries differ by vary header 
 PASS Cache.addAll should reject when entries are duplicate by vary header 
-FAIL Cache.addAll should reject when one entry has a vary header matching another entry assert_throws: Cache.addAll() should reject when one entry has a vary header matching an earlier entry. function "function () { throw e }" threw object "TypeError: Response is not OK" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+PASS Cache.addAll should reject when one entry has a vary header matching another entry 
 

@@ -1,5 +1,14 @@
 2019-12-12  Chris Dumez  <cdumez@apple.com>
 
+        Re-sync service-workers web-platform-tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=205181
+
+        Reviewed by Alex Christensen.
+
+        * tests-options.json:
+
+2019-12-12  Chris Dumez  <cdumez@apple.com>
+
         Re-sync workers web-platform-tests from upstream
         https://bugs.webkit.org/show_bug.cgi?id=205180
 

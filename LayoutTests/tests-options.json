@@ -2015,6 +2015,9 @@
     "imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redirect.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/service-workers/service-worker/referrer-toplevel-script-fetch.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/service-workers/service-worker/register-closed-window.https.html": [
         "slow"
     ],
