@@ -36,7 +36,7 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKRetainPtr.h>
 #import <WebKit/WKUIDelegatePrivate.h>
-#import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKHitTestResult.h>
 #import <WebKit/_WKInspector.h>
 #import <wtf/RetainPtr.h>

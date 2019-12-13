@@ -48,6 +48,7 @@
 #import "WKStringCF.h"
 #import "WKViewInternal.h"
 #import "WKWebViewInternal.h"
+#import "WKWebViewPrivateForTestingMac.h"
 #import "WebColorPickerMac.h"
 #import "WebContextMenuProxyMac.h"
 #import "WebDataListSuggestionsDropdownMac.h"

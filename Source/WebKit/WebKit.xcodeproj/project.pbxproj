@@ -98,6 +98,9 @@
 		0F08CF541D63C14000B48DF1 /* WKFormSelectPopover.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F08CF531D63C14000B48DF1 /* WKFormSelectPopover.h */; };
 		0F174AA3142A4CB70039250F /* APIGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F174AA2142A4CB60039250F /* APIGeometry.h */; };
 		0F3C725B196F604E00AEDD0C /* WKInspectorHighlightView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F3C7259196F5F6800AEDD0C /* WKInspectorHighlightView.h */; };
+		0F45A331239D89A100294ABF /* WKWebViewPrivateForTestingIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F45A32F239D89A000294ABF /* WKWebViewPrivateForTestingIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F45A335239D89AF00294ABF /* WKWebViewPrivateForTestingMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F45A333239D89AF00294ABF /* WKWebViewPrivateForTestingMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F45A33D239D8CC400294ABF /* WKWebViewPrivateForTesting.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F45A33B239D8CC400294ABF /* WKWebViewPrivateForTesting.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F594790187B3B3A00437857 /* RemoteScrollingCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F59478D187B3B3A00437857 /* RemoteScrollingCoordinator.h */; };
 		0F59479B187B3B6000437857 /* RemoteScrollingCoordinatorProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F594795187B3B6000437857 /* RemoteScrollingCoordinatorProxy.h */; };
 		0F59479D187B3B6000437857 /* RemoteScrollingTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F594797187B3B6000437857 /* RemoteScrollingTree.h */; };
@@ -109,6 +112,9 @@
 		0F931C1C18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F931C1A18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.h */; };
 		0F931C1C18C5711900DBB8D4 /* ScrollingTreeScrollingNodeDelegateIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F931C1A18C5711900DBB8D4 /* ScrollingTreeScrollingNodeDelegateIOS.h */; };
 		0FB659231208B4DB0044816C /* DrawingAreaInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB659221208B4DB0044816C /* DrawingAreaInfo.h */; };
+		0FB94837239F31D100926A8F /* WKWebViewPrivateForTesting.h in Copy Testing Headers */ = {isa = PBXBuildFile; fileRef = 0F45A33B239D8CC400294ABF /* WKWebViewPrivateForTesting.h */; };
+		0FB94838239F323800926A8F /* WKWebViewPrivateForTestingIOS.h in Copy Testing Headers */ = {isa = PBXBuildFile; fileRef = 0F45A32F239D89A000294ABF /* WKWebViewPrivateForTestingIOS.h */; };
+		0FB94839239F323800926A8F /* WKWebViewPrivateForTestingMac.h in Copy Testing Headers */ = {isa = PBXBuildFile; fileRef = 0F45A333239D89AF00294ABF /* WKWebViewPrivateForTestingMac.h */; };
 		0FCB4E4618BBE044000FCFC9 /* PageClientImplIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCB4E3618BBE044000FCFC9 /* PageClientImplIOS.h */; };
 		0FCB4E4818BBE044000FCFC9 /* WKActionSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCB4E3818BBE044000FCFC9 /* WKActionSheet.h */; };
 		0FCB4E4A18BBE044000FCFC9 /* WKActionSheetAssistant.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCB4E3A18BBE044000FCFC9 /* WKActionSheetAssistant.h */; };
@@ -1924,6 +1930,19 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		0FB94836239F31B700926A8F /* Copy Testing Headers */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = WebKitTestSupport;
+			dstSubfolderSpec = 16;
+			files = (
+				0FB94837239F31D100926A8F /* WKWebViewPrivateForTesting.h in Copy Testing Headers */,
+				0FB94838239F323800926A8F /* WKWebViewPrivateForTestingIOS.h in Copy Testing Headers */,
+				0FB94839239F323800926A8F /* WKWebViewPrivateForTestingMac.h in Copy Testing Headers */,
+			);
+			name = "Copy Testing Headers";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1A07D2F71919B36500ECDA16 /* Copy Message Generation Scripts */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2026,6 +2045,12 @@
 		0F174AA6142AAC610039250F /* WKGeometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKGeometry.cpp; sourceTree = "<group>"; };
 		0F3C7257196F5F5000AEDD0C /* WKInspectorHighlightView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKInspectorHighlightView.mm; sourceTree = "<group>"; };
 		0F3C7259196F5F6800AEDD0C /* WKInspectorHighlightView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKInspectorHighlightView.h; sourceTree = "<group>"; };
+		0F45A32F239D89A000294ABF /* WKWebViewPrivateForTestingIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewPrivateForTestingIOS.h; sourceTree = "<group>"; };
+		0F45A330239D89A100294ABF /* WKWebViewTestingIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewTestingIOS.mm; sourceTree = "<group>"; };
+		0F45A333239D89AF00294ABF /* WKWebViewPrivateForTestingMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewPrivateForTestingMac.h; sourceTree = "<group>"; };
+		0F45A334239D89AF00294ABF /* WKWebViewTestingMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewTestingMac.mm; sourceTree = "<group>"; };
+		0F45A33B239D8CC400294ABF /* WKWebViewPrivateForTesting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewPrivateForTesting.h; sourceTree = "<group>"; };
+		0F45A33C239D8CC400294ABF /* WKWebViewTesting.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewTesting.mm; sourceTree = "<group>"; };
 		0F59478D187B3B3A00437857 /* RemoteScrollingCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteScrollingCoordinator.h; sourceTree = "<group>"; };
 		0F59478E187B3B3A00437857 /* RemoteScrollingCoordinator.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteScrollingCoordinator.messages.in; sourceTree = "<group>"; };
 		0F59478F187B3B3A00437857 /* RemoteScrollingCoordinator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteScrollingCoordinator.mm; sourceTree = "<group>"; };
@@ -5074,6 +5099,15 @@
 			tabWidth = 8;
 			usesTabs = 0;
 		};
+		0F45A32E239D896000294ABF /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				0F45A32F239D89A000294ABF /* WKWebViewPrivateForTestingIOS.h */,
+				0F45A330239D89A100294ABF /* WKWebViewTestingIOS.mm */,
+			);
+			path = ios;
+			sourceTree = "<group>";
+		};
 		1058C7B0FEA5585E11CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -6754,6 +6788,8 @@
 				1AC1415018AC47EE006C602C /* WKWebViewConfigurationPrivate.h */,
 				1A66BF8E18A052ED002071B4 /* WKWebViewInternal.h */,
 				26F9A83A18A3463F00AEB88A /* WKWebViewPrivate.h */,
+				0F45A33B239D8CC400294ABF /* WKWebViewPrivateForTesting.h */,
+				0F45A33C239D8CC400294ABF /* WKWebViewTesting.mm */,
 				1AD60F5C18E20F4C0020C034 /* WKWindowFeatures.h */,
 				1AD60F5B18E20F4C0020C034 /* WKWindowFeatures.mm */,
 				1AD60F5F18E20F740020C034 /* WKWindowFeaturesInternal.h */,
@@ -8185,6 +8221,7 @@
 				BC0C376610F807660076D7CB /* C */,
 				37C4C08318149C2A003688B9 /* Cocoa */,
 				BC8A501311765F4500757573 /* cpp */,
+				0F45A32E239D896000294ABF /* ios */,
 				BC111B47112F616900337BAB /* mac */,
 				6348424F1FB26E7100946E3C /* APIApplicationManifest.h */,
 				2E5C770D1FA7D429005932C3 /* APIAttachment.cpp */,
@@ -8468,6 +8505,8 @@
 			children = (
 				BC8699B3116AADAA002A925B /* WKView.mm */,
 				BC8699B4116AADAA002A925B /* WKViewInternal.h */,
+				0F45A333239D89AF00294ABF /* WKWebViewPrivateForTestingMac.h */,
+				0F45A334239D89AF00294ABF /* WKWebViewTestingMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -10745,6 +10784,9 @@
 				2DC6D9C318C44A610043BAD4 /* WKWebViewContentProviderRegistry.h in Headers */,
 				1A66BF8F18A052ED002071B4 /* WKWebViewInternal.h in Headers */,
 				26F9A83B18A3468100AEB88A /* WKWebViewPrivate.h in Headers */,
+				0F45A33D239D8CC400294ABF /* WKWebViewPrivateForTesting.h in Headers */,
+				0F45A331239D89A100294ABF /* WKWebViewPrivateForTestingIOS.h in Headers */,
+				0F45A335239D89AF00294ABF /* WKWebViewPrivateForTestingMac.h in Headers */,
 				1AD60F5E18E20F4C0020C034 /* WKWindowFeatures.h in Headers */,
 				1AD60F6018E20F740020C034 /* WKWindowFeaturesInternal.h in Headers */,
 				6A5080BF1F0EDAAA00E617C5 /* WKWindowFeaturesPrivate.h in Headers */,
@@ -10862,6 +10904,7 @@
 				1A2180161B5454620046AEC4 /* Add Symlink in /System/Library/PrivateFrameworks */,
 				5379C7AC21E5288500E4A8F6 /* Check .xcfilelists */,
 				933170072234674500B32554 /* Create symlinks to XPC services for engineering builds */,
+				0FB94836239F31B700926A8F /* Copy Testing Headers */,
 			);
 			buildRules = (
 				535E08C422545B7200DF00CA /* PBXBuildRule */,

@@ -29,8 +29,8 @@
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
-
 #import <Carbon/Carbon.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WebKitPrivate.h>
 
 static NSString *GetInputValueJSExpression = @"document.querySelector('input').value";

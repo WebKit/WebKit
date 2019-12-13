@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import <WebKit/WKBase.h>
+#import <WebKit/WKWebView.h>
 
-#import "PlatformUtilities.h"
-#import "Test.h"
-#import "TestNavigationDelegate.h"
-#import "TestWKWebView.h"
-#import <WebKit/WKWebViewConfigurationPrivate.h>
-#import <WebKit/WKWebViewPrivateForTesting.h>
-#import <wtf/RetainPtr.h>
+#if !TARGET_OS_IPHONE
 
-#if PLATFORM(IOS_FAMILY)
+@class _WKFrameHandle;
 
-@interface WKContentView ()
-- (BOOL)hasSelectablePositionAtPoint:(CGPoint)point;
+@interface WKWebView (WKTestingMac)
+
+@property (nonatomic, readonly) BOOL _hasActiveVideoForControlsManager;
+@property (nonatomic, readonly) BOOL _shouldRequestCandidates;
+@property (nonatomic, readonly) NSMenu *_activeMenu;
+
+- (void)_requestControlledElementID;
+- (void)_handleControlledElementIDResponse:(NSString *)identifier;
+
+- (void)_handleAcceptedCandidate:(NSTextCheckingResult *)candidate;
+- (void)_didHandleAcceptedCandidate;
+
+- (void)_forceRequestCandidates;
+- (void)_didUpdateCandidateListVisibility:(BOOL)visible;
+
+- (void)_insertText:(id)string replacementRange:(NSRange)replacementRange;
+- (NSRect)_candidateRect;
+
+- (void)_setHeaderBannerHeight:(int)height;
+- (void)_setFooterBannerHeight:(int)height;
+- (void)_doAfterProcessingAllPendingMouseEvents:(dispatch_block_t)action;
+
 @end
 
-TEST(WebKit, InteractionDeadlockAfterCrash)
-{
-    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
-
-    [webView loadHTMLString:@"test" baseURL:nil];
-    [webView _test_waitForDidFinishNavigation];
-
-    // This will start an asynchronous interaction information update.
-    [webView _simulateLongPressActionAtLocation:CGPointMake(50, 50)];
-
-    [webView _killWebContentProcessAndResetState];
-
-    [webView loadHTMLString:@"test" baseURL:nil];
-    [webView _test_waitForDidFinishNavigation];
-
-    // This will synchronously ensure we have up-to-date interaction information.
-    [[webView wkContentView] hasSelectablePositionAtPoint:CGPointZero];
-}
-
-#endif
+#endif // !TARGET_OS_IPHONE

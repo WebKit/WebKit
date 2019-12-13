@@ -34,6 +34,7 @@
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Variant.h>
+#include <wtf/WeakObjCPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
@@ -68,24 +69,55 @@ class SafeBrowsingWarning;
 class ViewSnapshot;
 class WebPageProxy;
 struct PrintInfo;
+#if PLATFORM(MAC)
+class WebViewImpl;
+#endif
+#if PLATFORM(IOS_FAMILY)
+class ViewGestureController;
+#endif
 }
 
 @class WKWebViewContentProviderRegistry;
 @class WKPasswordView;
 @class _WKFrameHandle;
+#if PLATFORM(IOS_FAMILY)
+@class WKScrollView;
+@class WKFullScreenWindowController;
+#endif
+@protocol _WKTextManipulationDelegate;
 
 @interface WKWebView () WK_WEB_VIEW_PROTOCOLS {
 
 @package
     RetainPtr<WKWebViewConfiguration> _configuration;
-
     RefPtr<WebKit::WebPageProxy> _page;
+    WeakObjCPtr<id <_WKTextManipulationDelegate>> _textManipulationDelegate;
+    Optional<BOOL> _resolutionForShareSheetImmediateCompletionForTesting;
+
+#if PLATFORM(MAC)
+    std::unique_ptr<WebKit::WebViewImpl> _impl;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    RetainPtr<WKScrollView> _scrollView;
+    RetainPtr<WKContentView> _contentView;
+    std::unique_ptr<WebKit::ViewGestureController> _gestureController;
+    Vector<BlockPtr<void ()>> _visibleContentRectUpdateCallbacks;
+
+#if ENABLE(FULLSCREEN_API)
+    RetainPtr<WKFullScreenWindowController> _fullScreenWindowController;
+#endif
+
+    CGRect _inputViewBounds;
+#endif
 }
 
 #if PLATFORM(IOS_FAMILY)
 - (void)_processDidExit;
 - (void)_processWillSwap;
 - (void)_didRelaunchProcess;
+
+- (UIView *)_currentContentView;
 
 - (void)_didCommitLoadForMainFrame;
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction;
@@ -99,8 +131,10 @@ struct PrintInfo;
 
 - (void)_scrollToContentScrollPosition:(WebCore::FloatPoint)scrollPosition scrollOrigin:(WebCore::IntPoint)scrollOrigin;
 - (BOOL)_scrollToRect:(WebCore::FloatRect)targetRect origin:(WebCore::FloatPoint)origin minimumScrollDistance:(float)minimumScrollDistance;
+
 - (double)_initialScaleFactor;
 - (double)_contentZoomScale;
+
 - (double)_targetContentZoomScaleForRect:(const WebCore::FloatRect&)targetRect currentScale:(double)currentScale fitEntireRect:(BOOL)fitEntireRect minimumScale:(double)minimumScale maximumScale:(double)maximumScale;
 - (void)_zoomToFocusRect:(const WebCore::FloatRect&)focusedElementRect selectionRect:(const WebCore::FloatRect&)selectionRectInDocumentCoordinates insideFixed:(BOOL)insideFixed fontSize:(float)fontSize minimumScale:(double)minimumScale maximumScale:(double)maximumScale allowScaling:(BOOL)allowScaling forceScroll:(BOOL)forceScroll;
 - (BOOL)_zoomToRect:(WebCore::FloatRect)targetRect withOrigin:(WebCore::FloatPoint)origin fitEntireRect:(BOOL)fitEntireRect minimumScale:(double)minimumScale maximumScale:(double)maximumScale minimumScrollDistance:(float)minimumScrollDistance;
@@ -156,13 +190,10 @@ struct PrintInfo;
 - (void)_resetFocusPreservationCount;
 
 @property (nonatomic, readonly) WKPasswordView *_passwordView;
-
-@property (nonatomic, readonly) BOOL _isBackground;
-
 @property (nonatomic, readonly) WKWebViewContentProviderRegistry *_contentProviderRegistry;
-
 @property (nonatomic, readonly) WKSelectionGranularity _selectionGranularity;
 
+@property (nonatomic, readonly) BOOL _isBackground;
 @property (nonatomic, readonly) BOOL _allowsDoubleTapGestures;
 @property (nonatomic, readonly) BOOL _stylusTapGestureShouldCreateEditableImage;
 @property (nonatomic, readonly) BOOL _haveSetObscuredInsets;
@@ -172,6 +203,7 @@ struct PrintInfo;
 
 - (BOOL)_effectiveAppearanceIsDark;
 - (BOOL)_effectiveUserInterfaceLevelIsElevated;
+
 #endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -179,6 +211,8 @@ struct PrintInfo;
 - (void)_didInsertAttachment:(API::Attachment&)attachment withSource:(NSString *)source;
 - (void)_didInvalidateDataForAttachment:(API::Attachment&)attachment;
 #endif
+
+- (void)_internalDoAfterNextPresentationUpdate:(void (^)(void))updateBlock withoutWaitingForPainting:(BOOL)withoutWaitingForPainting withoutWaitingForAnimatedResize:(BOOL)withoutWaitingForAnimatedResize;
 
 - (void)_showSafeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler;
 - (void)_clearSafeBrowsingWarning;
@@ -190,7 +224,14 @@ struct PrintInfo;
 - (WebKit::WebPageProxy*)_page;
 
 #if PLATFORM(MAC)
+
+- (void)_prepareForImmediateActionAnimation WK_API_AVAILABLE(macos(10.13.4));
+- (void)_cancelImmediateActionAnimation WK_API_AVAILABLE(macos(10.13.4));
+- (void)_completeImmediateActionAnimation WK_API_AVAILABLE(macos(10.13.4));
+
+- (void)insertText:(id)string replacementRange:(NSRange)replacementRange;
 - (void)_web_grantDOMPasteAccess;
+
 #endif
 
 @end

@@ -1,3 +1,50 @@
+2019-12-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Move WKWebView code related to testing to new files, with new private "for testing" headers.
+        https://bugs.webkit.org/show_bug.cgi?id=205021
+
+        Reviewed by Tim Horton.
+        
+        Move testing-only SPI to new private headers to discourage first parties from using
+        them by mistake. Move test-only code to new files to reduce the size of WKWebView.mm.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        * TestWebKitAPI/EditingTestHarness.mm:
+        * TestWebKitAPI/Tests/WebKit/ResponsivenessTimerCrash.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/AnimatedResize.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/DeviceOrientation.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/DoubleDefersLoading.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/InteractionDeadlockAfterCrash.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/MediaBufferingPolicy.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/NowPlayingControlsTests.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/PictureInPictureDelegate.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSuspendMediaBuffering.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/SnapshotStore.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/SystemPreview.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/UserMediaSimulateFailedSandbox.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/VideoControlsManager.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKRequestActivatedElementInfo.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewCandidateTests.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewEditActions.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewFirstResponderTests.mm:
+        * TestWebKitAPI/Tests/ios/AccessibilityTestsIOS.mm:
+        * TestWebKitAPI/Tests/ios/ActionSheetTests.mm:
+        * TestWebKitAPI/Tests/ios/AutocorrectionTestsIOS.mm:
+        * TestWebKitAPI/Tests/ios/FocusPreservationTests.mm:
+        * TestWebKitAPI/cocoa/TestNavigationDelegate.mm:
+        * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm:
+        * TestWebKitAPI/mac/DragAndDropSimulatorMac.mm:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        * WebKitTestRunner/cocoa/UIScriptControllerCocoa.mm:
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+
 2019-12-12  Jonathan Bedard  <jbedard@apple.com>
 
         Python 3: Support serial webkitpy.common tests

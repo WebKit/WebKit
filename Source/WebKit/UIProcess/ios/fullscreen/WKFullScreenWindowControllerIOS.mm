@@ -33,7 +33,7 @@
 #import "WKFullscreenStackView.h"
 #import "WKWebView.h"
 #import "WKWebViewInternal.h"
-#import "WKWebViewPrivate.h"
+#import "WKWebViewPrivateForTesting.h"
 #import "WebFullScreenManagerProxy.h"
 #import "WebPageProxy.h"
 #import <Foundation/Foundation.h>

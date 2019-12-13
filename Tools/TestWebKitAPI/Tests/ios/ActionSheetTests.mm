@@ -37,7 +37,7 @@
 #import "UIKitSPI.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <WebKit/WKUIDelegatePrivate.h>
-#import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKActivatedElementInfo.h>
 #import <WebKit/_WKElementAction.h>
 #import <wtf/BlockPtr.h>

@@ -36,7 +36,7 @@
 #import <WebKit/WKPage.h>
 #import <WebKit/WKPagePrivate.h>
 #import <WebKit/WKWebView.h>
-#import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/RetainPtr.h>
 
 static bool didForceRepaint;

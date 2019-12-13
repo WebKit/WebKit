@@ -31,6 +31,7 @@
 #import "TestWKWebView.h"
 #import <WebKit/WKPagePrivateMac.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/HashSet.h>
 #import <wtf/RetainPtr.h>
 

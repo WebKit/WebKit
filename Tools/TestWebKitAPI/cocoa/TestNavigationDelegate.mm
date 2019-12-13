@@ -27,6 +27,7 @@
 #import "TestNavigationDelegate.h"
 
 #import "Utilities.h"
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/RetainPtr.h>
 
 @implementation TestNavigationDelegate

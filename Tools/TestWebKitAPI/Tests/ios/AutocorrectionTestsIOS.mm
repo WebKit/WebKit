@@ -32,6 +32,7 @@
 #import "TestWKWebView.h"
 #import "UIKitSPI.h"
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 
 @interface TestWKWebView (AutocorrectionTests)
 - (UIWKAutocorrectionRects *)autocorrectionRectsForString:(NSString *)string;

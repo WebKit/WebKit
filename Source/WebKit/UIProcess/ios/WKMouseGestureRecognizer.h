@@ -25,6 +25,7 @@
 
 #if HAVE(HOVER_GESTURE_RECOGNIZER)
 
+#import <UIKit/UIGestureRecognizer.h>
 #import "NativeWebMouseEvent.h"
 
 @interface WKMouseGestureRecognizer : UIGestureRecognizer

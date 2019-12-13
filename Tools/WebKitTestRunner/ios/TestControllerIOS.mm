@@ -42,6 +42,7 @@
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <objc/runtime.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <wtf/MainThread.h>

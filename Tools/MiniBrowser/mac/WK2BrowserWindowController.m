@@ -35,6 +35,7 @@
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/_WKIconLoadingDelegate.h>

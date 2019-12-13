@@ -29,8 +29,8 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
-#import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKActivatedElementInfo.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>

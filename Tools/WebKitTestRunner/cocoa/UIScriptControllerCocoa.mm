@@ -33,6 +33,7 @@
 #import "UIScriptContext.h"
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 
 namespace WTR {
 

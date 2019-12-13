@@ -33,6 +33,7 @@
 #import "TestWKWebView.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/Function.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>

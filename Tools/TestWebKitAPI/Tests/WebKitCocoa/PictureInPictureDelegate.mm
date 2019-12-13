@@ -38,9 +38,9 @@
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKURLCF.h>
 #import <WebKit/WKView.h>
-#import <WebKit/WKViewPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Seconds.h>
 

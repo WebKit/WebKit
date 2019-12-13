@@ -30,9 +30,8 @@
 #import "EventSerializerMac.h"
 #import "PlatformViewHelpers.h"
 #import "PlatformWebView.h"
-#import "SharedEventStreamsMac.h"
-#import "TestController.h"
 #import "PlatformWebView.h"
+#import "SharedEventStreamsMac.h"
 #import "StringFunctions.h"
 #import "TestController.h"
 #import "TestRunnerWKWebView.h"
@@ -43,6 +42,7 @@
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <JavaScriptCore/OpaqueJSString.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/BlockPtr.h>
 
 namespace WTR {

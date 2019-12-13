@@ -29,9 +29,8 @@
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
-
 #import <WebKit/WKWebViewConfigurationPrivate.h>
-#import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 
 static void waitUntilBufferingPolicyIsEqualTo(WKWebView* webView, const char* expected)
 {

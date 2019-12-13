@@ -28,6 +28,7 @@
 
 #import "WKWebViewConfigurationPrivate.h"
 #import "WKWebViewInternal.h"
+#import "WKWebViewPrivateForTesting.h"
 
 namespace WebKit {
 

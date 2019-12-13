@@ -31,7 +31,7 @@
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
-#import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/RetainPtr.h>
 

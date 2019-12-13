@@ -23,8 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(FULLSCREEN_API)
+#if ENABLE(FULLSCREEN_API) && PLATFORM(MAC)
 
+#import <AppKit/AppKit.h>
 #import "GenericCallback.h"
 #import <wtf/RetainPtr.h>
 

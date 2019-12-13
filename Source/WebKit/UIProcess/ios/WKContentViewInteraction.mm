@@ -71,6 +71,7 @@
 #import "WKWebViewConfigurationPrivate.h"
 #import "WKWebViewInternal.h"
 #import "WKWebViewPrivate.h"
+#import "WKWebViewPrivateForTestingIOS.h"
 #import "WebAutocorrectionContext.h"
 #import "WebAutocorrectionData.h"
 #import "WebDataListSuggestionsDropdownIOS.h"

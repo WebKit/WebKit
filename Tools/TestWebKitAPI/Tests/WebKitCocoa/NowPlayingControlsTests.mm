@@ -27,9 +27,8 @@
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
-
 #import <WebKit/WKWebViewConfigurationPrivate.h>
-#import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 
 #if PLATFORM(IOS_FAMILY)
 
