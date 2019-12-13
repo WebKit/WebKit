@@ -345,6 +345,16 @@
       ],
       "status" : "reviewer"
    },
+   "Alexey Shvayka" : {
+      "emails" : [
+         "shvaikalesh@gmail.com"
+      ],
+      "expertise" : "JavaScript/ECMAScript",
+      "nicks" : [
+         "shvaikalesh"
+      ],
+      "status" : "committer"
+   },
    "Alexis Menard" : {
       "emails" : [
          "menard@kde.org",
