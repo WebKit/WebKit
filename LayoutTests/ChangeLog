@@ -1,3 +1,13 @@
+2019-12-13  Ali Juma  <ajuma@chromium.org>
+
+        Crash in RenderLayerBacking::updateCompositedBounds from using cleared WeakPtr from m_backingSharingLayers
+        https://bugs.webkit.org/show_bug.cgi?id=204648
+
+        Reviewed by Simon Fraser.
+
+        * compositing/shared-backing/move-sharing-child-expected.txt: Added.
+        * compositing/shared-backing/move-sharing-child.html: Added.
+
 2019-12-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Several tests crashing after r247898 "Reorganize UIScriptController into platform-specific subclasses"

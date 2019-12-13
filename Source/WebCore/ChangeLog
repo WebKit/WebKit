@@ -1,3 +1,30 @@
+2019-12-13  Ali Juma  <ajuma@chromium.org>
+
+        Crash in RenderLayerBacking::updateCompositedBounds from using cleared WeakPtr from m_backingSharingLayers
+        https://bugs.webkit.org/show_bug.cgi?id=204648
+
+        Reviewed by Simon Fraser.
+
+        RenderLayerBacking's clearBackingSharingProviders clears layers'
+        backingSharingProviders unconditionally, even when a layer's
+        backingSharingProvider is some other RenderLayerBacking's owning
+        layer. This leaves the layer in a state where its backingProviderLayer
+        is null, even though it appears in the other RenderLayerBacking's
+        m_backingSharingLayers, which leads to a crash if this layer is destroyed
+        and the other RenderLayerBacking tries to use its pointer to this
+        layer.
+
+        Avoid this inconsistency by making clearBackingSharingProviders check
+        whether a layer's backingSharingProvider is the current RenderLayerBacking's
+        owner, before clearing it.
+
+        Test: compositing/shared-backing/move-sharing-child.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::clearBackingSharingLayerProviders):
+        (WebCore::RenderLayerBacking::setBackingSharingLayers):
+        (WebCore::RenderLayerBacking::clearBackingSharingLayers):
+
 2019-12-13  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Fix fast/text/simple-line-with-multiple-renderers.html
