@@ -1,3 +1,22 @@
+2019-12-13  Chris Dumez  <cdumez@apple.com>
+
+        Behavior of [[GetOwnProperty]] for cross-origin windows is not spec-compliant
+        https://bugs.webkit.org/show_bug.cgi?id=205184
+
+        Reviewed by Darin Adler.
+
+        Behavior of [[GetOwnProperty]] for cross-origin windows is not spec-compliant:
+        - https://html.spec.whatwg.org/#crossorigingetownpropertyhelper-(-o,-p-)
+
+        We should be able to return frames by name, even if their name conflict with the name of a
+        same-origin window property (e.g. "close"). Previously, we would throw a SecurityError in
+        this case.
+
+        No new tests, rebaselined existing test.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::jsDOMWindowGetOwnPropertySlotRestrictedAccess):
+
 2019-12-13  Eric Carlson  <eric.carlson@apple.com>
 
         Add infrastructure needed for playing media player in the GPU process

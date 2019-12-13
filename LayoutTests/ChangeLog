@@ -1,3 +1,22 @@
+2019-12-13  Chris Dumez  <cdumez@apple.com>
+
+        Behavior of [[GetOwnProperty]] for cross-origin windows is not spec-compliant
+        https://bugs.webkit.org/show_bug.cgi?id=205184
+
+        Reviewed by Darin Adler.
+
+        * http/tests/security/document-all-expected.txt:
+        The test is accessing the "alert" property on a cross-origin window. We used to throw a SecurityError,
+        but we now return a Window object since there is a Window whose name is "alert". The test still passes
+        as it is not able to call alert() cross-origin. 
+
+        * http/tests/security/xss-DENIED-window-name-navigator-expected.txt:
+        * http/tests/security/xss-DENIED-window-name-navigator.html:
+        Update test to use console.log() to print the result instead of alert() since alert() is not allowed
+        in a sandbox iframe. I updated the expectation so that top.navigator returns the window with the
+        name "navigator" instead of undefined, as per the behavior change in this patch. I have verified that
+        our behavior on this test is consistent with Firefox and Chrome.
+
 2019-12-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Fix some errors on the TestExpectations files.

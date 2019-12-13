@@ -141,13 +141,6 @@ bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject* thisObject
             slot.setCustomGetterSetter(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DontEnum), customGetterSetter);
             return true;
         }
-
-        // For any other entries in the static property table, deny access. (Early return also prevents
-        // named getter from returning frames with matching names - this seems a little questionable, see
-        // FIXME comment on prototype search below.)
-        throwSecurityError(lexicalGlobalObject, scope, errorMessage);
-        slot.setUndefined();
-        return false;
     }
 
     // Check for child frames by name before built-in properties to match Mozilla. This does

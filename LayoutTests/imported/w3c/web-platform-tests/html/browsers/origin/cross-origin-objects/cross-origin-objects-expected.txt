@@ -66,9 +66,9 @@ PASS [[GetOwnProperty]] - Property descriptors for cross-origin properties shoul
 PASS [[GetOwnProperty]] - Subframe named 'then' should shadow the default 'then' value (cross-origin) 
 PASS [[GetOwnProperty]] - Subframe named 'then' should shadow the default 'then' value (same-origin + document.domain) 
 PASS [[GetOwnProperty]] - Subframe named 'then' should shadow the default 'then' value (cross-site) 
-FAIL [[GetOwnProperty]] - Subframes should be visible cross-origin only if their names don't match the names of cross-origin-exposed IDL properties (cross-origin) Blocked a frame with origin "http://localhost:8800" from accessing a cross-origin frame. Protocols, domains, and ports must match.
-FAIL [[GetOwnProperty]] - Subframes should be visible cross-origin only if their names don't match the names of cross-origin-exposed IDL properties (same-origin + document.domain) Blocked a frame with origin "http://localhost:8800" from accessing a cross-origin frame. Protocols, domains, and ports must match.
-FAIL [[GetOwnProperty]] - Subframes should be visible cross-origin only if their names don't match the names of cross-origin-exposed IDL properties (cross-site) Blocked a frame with origin "http://localhost:8800" from accessing a cross-origin frame. Protocols, domains, and ports must match.
+PASS [[GetOwnProperty]] - Subframes should be visible cross-origin only if their names don't match the names of cross-origin-exposed IDL properties (cross-origin) 
+PASS [[GetOwnProperty]] - Subframes should be visible cross-origin only if their names don't match the names of cross-origin-exposed IDL properties (same-origin + document.domain) 
+PASS [[GetOwnProperty]] - Subframes should be visible cross-origin only if their names don't match the names of cross-origin-exposed IDL properties (cross-site) 
 PASS [[GetOwnProperty]] - Should be able to get a property descriptor for an indexed property only if it corresponds to a child window. (cross-origin) 
 PASS [[GetOwnProperty]] - Should be able to get a property descriptor for an indexed property only if it corresponds to a child window. (same-origin + document.domain) 
 PASS [[GetOwnProperty]] - Should be able to get a property descriptor for an indexed property only if it corresponds to a child window. (cross-site) 

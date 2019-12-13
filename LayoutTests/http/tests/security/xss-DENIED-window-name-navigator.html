@@ -5,5 +5,5 @@ if (window.testRunner)
 <iframe sandbox="allow-scripts"
         src="data:text/html,<script>
             window.name='navigator';
-            alert(top.navigator === undefined ? 'PASS' : 'FAIL');
+            console.log(top.navigator === self ? 'PASS' : 'FAIL');
             </script>"></iframe>
