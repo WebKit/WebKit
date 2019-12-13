@@ -468,8 +468,8 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber,
 
         WASM_PARSER_FAIL_IF(index >= m_info->globals.size(), "get_global's index ", index, " exceeds the number of globals ", m_info->globals.size());
         WASM_PARSER_FAIL_IF(index >= m_info->firstInternalGlobal, "get_global import kind index ", index, " exceeds the first internal global ", m_info->firstInternalGlobal);
+        WASM_PARSER_FAIL_IF(m_info->globals[index].mutability != GlobalInformation::Immutable, "get_global import kind index ", index, " is mutable ");
 
-        ASSERT(m_info->globals[index].mutability == GlobalInformation::Immutable);
         resultType = m_info->globals[index].type;
         bitsOrImportNumber = index;
         break;

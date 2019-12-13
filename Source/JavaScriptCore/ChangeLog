@@ -1,3 +1,24 @@
+2019-12-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Wasm init-expr should reject mutable globals
+        https://bugs.webkit.org/show_bug.cgi?id=205191
+
+        Reviewed by Mark Lam.
+
+        For init-expr, expr must be a constant[1]. Constant expr, which is defined in Wasm spec, requires that, if the expr is GetGlobal,
+        global's mutability is immutable. Previously our imported globals are always immutable, so we are using ASSERT instead of checking
+        mutability in WasmSectionParser. But now, we have ability to import mutable globals. We should check mutability when parsing init-expr.
+        We do not have this check previously, which leads to spec-correctness issue that we can initialize globals/elements/data-segments
+        with snapshot values of mutable globals (this is safe, but this is not spec-compliant, and it is not reasonable semantics), while
+        such an attempt should be rejected when compiling Wasm modules.
+
+        This patch adds necessary checks.
+
+        [1]: https://webassembly.github.io/spec/core/valid/instructions.html#valid-constant
+
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseInitExpr):
+
 2019-12-12  Mark Lam  <mark.lam@apple.com>
 
         Fix missing exception in JSValue::toWTFStringSlowCase().

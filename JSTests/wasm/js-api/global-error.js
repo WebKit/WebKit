@@ -51,7 +51,7 @@ import Builder from '../Builder.js';
 
     const bin = builder.WebAssembly();
     bin.trim();
-    new WebAssembly.Module(bin.get());
+    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, `WebAssembly.Module doesn't parse at byte 43: get_global import kind index 0 is mutable  (evaluating 'new WebAssembly.Module(bin.get())')`);
 }
 
 {
