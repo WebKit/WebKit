@@ -1608,6 +1608,7 @@ page/FrameViewLayoutContext.cpp
 page/History.cpp
 page/IntersectionObserver.cpp
 page/IntersectionObserverEntry.cpp
+page/LoggedInStatus.cpp
 page/Location.cpp
 page/MemoryRelease.cpp
 page/MouseEventWithHitTestResults.cpp

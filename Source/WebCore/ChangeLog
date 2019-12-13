@@ -1,3 +1,28 @@
+2019-12-13  John Wilander  <wilander@apple.com>
+
+        IsLoggedIn: Abstract data type for IsLoggedIn state
+        https://bugs.webkit.org/show_bug.cgi?id=205041
+        <rdar://problem/56723904>
+
+        Reviewed by Chris Dumez.
+
+        New API tests added.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/LoggedInStatus.cpp: Added.
+        (WebCore::LoggedInStatus::create):
+        (WebCore::LoggedInStatus::LoggedInStatus):
+        (WebCore::LoggedInStatus::setTimeToLive):
+        (WebCore::LoggedInStatus::hasExpired const):
+        (WebCore::LoggedInStatus::expiry const):
+        * page/LoggedInStatus.h: Added.
+        (WebCore::LoggedInStatus::registrableDomain const):
+        (WebCore::LoggedInStatus::username const):
+        (WebCore::LoggedInStatus::credentialTokenType const):
+        (WebCore::LoggedInStatus::authenticationType const):
+        (WebCore::LoggedInStatus::loggedInTime const):
+
 2019-12-13  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Deny mach lookup access to "*.apple-extension-service" in the WebContent process
