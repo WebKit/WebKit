@@ -4,5 +4,5 @@ This frame should navigate (to 404)
 
 submit
 
-FAIL <button> should have the same double-submit protection as <input type=submit> assert_unreached: Frame1 should not get navigated by this test. Reached unreachable code
+PASS <button> should have the same double-submit protection as <input type=submit> 
 

@@ -1,3 +1,15 @@
+2019-12-13  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION: (r251677) imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-3.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=205164
+        <rdar://problem/57879042>
+
+        Reviewed by Alex Christensen.
+
+        Unskip test that should no longer be flaky.
+
+        * platform/mac/TestExpectations:
+
 2019-12-13  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Deny mach lookup access to "*.apple-extension-service" in the WebContent process

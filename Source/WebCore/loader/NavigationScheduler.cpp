@@ -277,6 +277,9 @@ public:
 
     void fire(Frame& frame) override
     {
+        if (m_submission->wasCancelled())
+            return;
+
         UserGestureIndicator gestureIndicator(userGestureToForward());
 
         // The submitForm function will find a target frame before using the redirection timer.

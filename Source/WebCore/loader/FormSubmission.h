@@ -33,6 +33,7 @@
 #include "FormState.h"
 #include "FrameLoaderTypes.h"
 #include <wtf/URL.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -40,9 +41,9 @@ class Event;
 class FormData;
 class FrameLoadRequest;
 
-class FormSubmission : public RefCounted<FormSubmission> {
+class FormSubmission : public RefCounted<FormSubmission>, public CanMakeWeakPtr<FormSubmission> {
 public:
-    enum class Method { Get, Post };
+    enum class Method : bool { Get, Post };
 
     class Attributes {
     public:
@@ -96,11 +97,15 @@ public:
     void setReferrer(const String& referrer) { m_referrer = referrer; }
     void setOrigin(const String& origin) { m_origin = origin; }
 
+    void cancel() { m_wasCancelled = true; }
+    bool wasCancelled() const { return m_wasCancelled; }
+
 private:
     FormSubmission(Method, const URL& action, const String& target, const String& contentType, Ref<FormState>&&, Ref<FormData>&&, const String& boundary, LockHistory, Event*);
 
     // FIXME: Hold an instance of Attributes instead of individual members.
     Method m_method;
+    bool m_wasCancelled { false };
     URL m_action;
     String m_target;
     String m_contentType;

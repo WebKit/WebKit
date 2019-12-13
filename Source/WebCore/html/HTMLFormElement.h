@@ -181,6 +181,7 @@ private:
     Vector<FormAssociatedElement*> m_associatedElements;
     Vector<WeakPtr<HTMLImageElement>> m_imageElements;
     WeakHashSet<HTMLFormControlElement> m_invalidAssociatedFormControls;
+    WeakPtr<FormSubmission> m_plannedFormSubmission;
 
     bool m_wasUserSubmitted { false };
     bool m_isSubmittingOrPreparingForSubmission { false };
