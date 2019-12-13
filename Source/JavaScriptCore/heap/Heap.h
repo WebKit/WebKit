@@ -171,8 +171,10 @@ public:
     // helping heap.
     JS_EXPORT_PRIVATE bool isCurrentThreadBusy();
     
-    typedef void (*Finalizer)(JSCell*);
-    JS_EXPORT_PRIVATE void addFinalizer(JSCell*, Finalizer);
+    typedef void (*CFinalizer)(JSCell*);
+    JS_EXPORT_PRIVATE void addFinalizer(JSCell*, CFinalizer);
+    using LambdaFinalizer = WTF::Function<void(JSCell*)>;
+    JS_EXPORT_PRIVATE void addFinalizer(JSCell*, LambdaFinalizer);
 
     void notifyIsSafeToCollect();
     bool isSafeToCollect() const { return m_isSafeToCollect; }
@@ -431,7 +433,11 @@ private:
 
     static constexpr size_t minExtraMemory = 256;
     
-    class FinalizerOwner : public WeakHandleOwner {
+    class CFinalizerOwner : public WeakHandleOwner {
+        void finalize(Handle<Unknown>, void* context) override;
+    };
+
+    class LambdaFinalizerOwner : public WeakHandleOwner {
         void finalize(Handle<Unknown>, void* context) override;
     };
 
@@ -634,7 +640,8 @@ private:
     HandleSet m_handleSet;
     std::unique_ptr<CodeBlockSet> m_codeBlocks;
     std::unique_ptr<JITStubRoutineSet> m_jitStubRoutines;
-    FinalizerOwner m_finalizerOwner;
+    CFinalizerOwner m_cFinalizerOwner;
+    LambdaFinalizerOwner m_lambdaFinalizerOwner;
     
     Lock m_parallelSlotVisitorLock;
     bool m_isSafeToCollect { false };

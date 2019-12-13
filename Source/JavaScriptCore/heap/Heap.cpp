@@ -2435,15 +2435,29 @@ bool Heap::isValidAllocation(size_t)
     return true;
 }
 
-void Heap::addFinalizer(JSCell* cell, Finalizer finalizer)
+void Heap::addFinalizer(JSCell* cell, CFinalizer finalizer)
 {
-    WeakSet::allocate(cell, &m_finalizerOwner, reinterpret_cast<void*>(finalizer)); // Balanced by FinalizerOwner::finalize().
+    WeakSet::allocate(cell, &m_cFinalizerOwner, bitwise_cast<void*>(finalizer)); // Balanced by CFinalizerOwner::finalize().
 }
 
-void Heap::FinalizerOwner::finalize(Handle<Unknown> handle, void* context)
+void Heap::addFinalizer(JSCell* cell, LambdaFinalizer function)
+{
+    WeakSet::allocate(cell, &m_lambdaFinalizerOwner, function.leakImpl()); // Balanced by LambdaFinalizerOwner::finalize().
+}
+
+void Heap::CFinalizerOwner::finalize(Handle<Unknown> handle, void* context)
 {
     HandleSlot slot = handle.slot();
-    Finalizer finalizer = reinterpret_cast<Finalizer>(context);
+    CFinalizer finalizer = bitwise_cast<CFinalizer>(context);
+    finalizer(slot->asCell());
+    WeakSet::deallocate(WeakImpl::asWeakImpl(slot));
+}
+
+void Heap::LambdaFinalizerOwner::finalize(Handle<Unknown> handle, void* context)
+{
+    LambdaFinalizer::Impl* impl = bitwise_cast<LambdaFinalizer::Impl*>(context);
+    LambdaFinalizer finalizer(impl);
+    HandleSlot slot = handle.slot();
     finalizer(slot->asCell());
     WeakSet::deallocate(WeakImpl::asWeakImpl(slot));
 }
