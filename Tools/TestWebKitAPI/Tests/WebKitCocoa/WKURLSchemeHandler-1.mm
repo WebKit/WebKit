@@ -30,6 +30,7 @@
 #import "TestNavigationDelegate.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKURLSchemeHandler.h>
 #import <WebKit/WKURLSchemeTaskPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -747,4 +748,58 @@ TEST(URLSchemeHandler, Threads)
         [theTask release];
         theTask = nil;
     })->waitForCompletion();
+}
+
+TEST(URLSchemeHandler, CORS)
+{
+    auto handler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"cors"];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+
+    __block bool done = false;
+    __block bool includeCORSHeaderFieldInResponse = false;
+    __block bool corssuccess = false;
+    __block bool corsfailure = false;
+    [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        if ([task.request.URL.path isEqualToString:@"/main.html"]) {
+            NSData *data = [@"<script>fetch('cors://host2/corsresource').then(function(){fetch('/corssuccess')}).catch(function(){fetch('/corsfailure')})</script>" dataUsingEncoding:NSUTF8StringEncoding];
+            [task didReceiveResponse:[[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:data.length textEncodingName:nil] autorelease]];
+            [task didReceiveData:data];
+            [task didFinish];
+        } else if ([task.request.URL.path isEqualToString:@"/corsresource"]) {
+            if (includeCORSHeaderFieldInResponse) {
+                [task didReceiveResponse:[[[NSHTTPURLResponse alloc] initWithURL:task.request.URL statusCode:200 HTTPVersion:nil headerFields:@{
+                    @"Access-Control-Allow-Origin": @"*",
+                    @"Content-Length": @"2",
+                    @"Content-Type":@"text/html"
+                }] autorelease]];
+            } else
+                [task didReceiveResponse:[[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil] autorelease]];
+            [task didReceiveData:[@"HI" dataUsingEncoding:NSUTF8StringEncoding]];
+            [task didFinish];
+        } else if ([task.request.URL.path isEqualToString:@"/corssuccess"]) {
+            corssuccess = true;
+            done = true;
+        } else if ([task.request.URL.path isEqualToString:@"/corsfailure"]) {
+            corsfailure = true;
+            done = true;
+        }
+    }];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"cors://host1/main.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_TRUE(corsfailure);
+    EXPECT_FALSE(corssuccess);
+
+    corsfailure = false;
+    corssuccess = false;
+    done = false;
+
+    includeCORSHeaderFieldInResponse = true;
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"cors://host1/main.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_TRUE(corssuccess);
+    EXPECT_FALSE(corsfailure);
 }

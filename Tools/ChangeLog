@@ -1,3 +1,15 @@
+2019-12-13  Alex Christensen  <achristensen@webkit.org>
+
+        Allow cross-origin requests to WKURLSchemeHandlers
+        https://bugs.webkit.org/show_bug.cgi?id=205198
+        <rdar://problem/57897836>
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+        Verify that a cross origin request is received by the WKURLSchemeHandler.  It was not before.
+        Verify that loading will fail unless there are CORS headers in the response.
+
 2019-12-13  Devin Rousso  <drousso@apple.com>
 
         Teach prepare-ChangeLog about JavaScript async functions

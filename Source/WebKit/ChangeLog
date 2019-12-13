@@ -1,3 +1,21 @@
+2019-12-13  Alex Christensen  <achristensen@webkit.org>
+
+        Allow cross-origin requests to WKURLSchemeHandlers
+        https://bugs.webkit.org/show_bug.cgi?id=205198
+        <rdar://problem/57897836>
+
+        Reviewed by Brady Eidson.
+
+        Covered by an API test.
+
+        * UIProcess/API/Cocoa/WKURLSchemeTask.h:
+        Document the requirements for cross-origin requests.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::registerURLSchemeHandler):
+        When we register a scheme handler, allow cross origin resources for that scheme.
+        This will make the check in DocumentThreadableLoader::checkURLSchemeAsCORSEnabled allow the request to get to the WKURLSchemeHandler.
+        The resposne must still have CORS header fields in order for the data to get to the web content, like CORS with HTTP.
+
 2019-12-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Implement encoding/decoding for DisplayList::DrawNativeImage

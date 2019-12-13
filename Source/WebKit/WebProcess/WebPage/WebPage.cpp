@@ -6445,6 +6445,7 @@ void WebPage::stopAllURLSchemeTasks()
 
 void WebPage::registerURLSchemeHandler(uint64_t handlerIdentifier, const String& scheme)
 {
+    WebCore::LegacySchemeRegistry::registerURLSchemeAsCORSEnabled(scheme);
     auto schemeResult = m_schemeToURLSchemeHandlerProxyMap.add(scheme, WebURLSchemeHandlerProxy::create(*this, handlerIdentifier));
     m_identifierToURLSchemeHandlerProxyMap.add(handlerIdentifier, schemeResult.iterator->value.get());
 }
