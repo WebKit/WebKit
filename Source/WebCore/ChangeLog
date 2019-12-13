@@ -1,3 +1,21 @@
+2019-12-13  Dean Jackson  <dino@apple.com>
+
+        MacCatalyst build of libANGLE is installed in the incorrect location
+        https://bugs.webkit.org/show_bug.cgi?id=205219
+        <rdar://problem/57713353>
+
+        Reviewed by Simon Fraser.
+
+        The location that WebCore was looking for embedded libraries was
+        incorrect for Catalyst builds. We never noticed because until now
+        there were no embedded libraries, and local builds all go into
+        the same location so this would only happen on Production builds.
+
+        Also, libANGLE became libANGLE-shared.
+
+        * Configurations/WebCore.xcconfig: Link with libANGLE's new name, and
+        look in the correct directory.
+
 2019-12-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [watchOS] Apple.com is rendered in Times New Roman

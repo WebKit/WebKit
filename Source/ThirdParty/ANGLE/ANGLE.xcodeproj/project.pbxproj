@@ -1499,7 +1499,7 @@
 		A3694FC423202C5100A83D8F /* BuiltinsWorkaroundGLSL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuiltinsWorkaroundGLSL.cpp; sourceTree = "<group>"; };
 		A3694FC523202C5200A83D8F /* BuiltinsWorkaroundGLSL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuiltinsWorkaroundGLSL.h; sourceTree = "<group>"; };
 		A3E827A8230CAE2C00E76682 /* commit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = commit.h; sourceTree = "<group>"; };
-		FB39D0D11200F0E300088E69 /* libANGLE.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libANGLE.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		FB39D0D11200F0E300088E69 /* libANGLE-shared.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libANGLE-shared.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB39D2BF1200F3E600088E69 /* ShaderLang.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = ShaderLang.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -2504,7 +2504,7 @@
 		FB39D0CC1200EF9B00088E69 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				FB39D0D11200F0E300088E69 /* libANGLE.dylib */,
+				FB39D0D11200F0E300088E69 /* libANGLE-shared.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2985,7 +2985,7 @@
 			);
 			name = ANGLE;
 			productName = angle;
-			productReference = FB39D0D11200F0E300088E69 /* libANGLE.dylib */;
+			productReference = FB39D0D11200F0E300088E69 /* libANGLE-shared.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 /* End PBXNativeTarget section */

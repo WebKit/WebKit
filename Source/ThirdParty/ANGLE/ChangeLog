@@ -1,3 +1,22 @@
+2019-12-13  Dean Jackson  <dino@apple.com>
+
+        MacCatalyst build of libANGLE is installed in the incorrect location
+        https://bugs.webkit.org/show_bug.cgi?id=205219
+        <rdar://problem/57713353>
+
+        Reviewed by Simon Fraser.
+
+        Rename libANGLE.dylib into libANGLE-shared.dylib, so we can
+        avoid accidentally trying to link to the libANGLE.a that was
+        removed recently (but still exists in the SDK for now).
+
+        Also, make sure that we install into the correct location for
+        a Catalyst build.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * Configurations/ANGLE.xcconfig:
+        * Configurations/Base.xcconfig:
+
 2019-12-11  Dean Jackson  <dino@apple.com>
 
         Produce a dummy libANGLE.a file to fool Apple's build test infrastructure
