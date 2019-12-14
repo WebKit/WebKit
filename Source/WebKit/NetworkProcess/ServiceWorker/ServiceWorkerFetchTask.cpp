@@ -165,7 +165,7 @@ void ServiceWorkerFetchTask::didNotHandle()
     m_timeoutTimer.stop();
     softUpdateIfNeeded();
 
-    m_loader.serviceWorkerDidNotHandle();
+    m_loader.serviceWorkerDidNotHandle(this);
 }
 
 void ServiceWorkerFetchTask::cancelFromClient()
@@ -183,7 +183,7 @@ void ServiceWorkerFetchTask::continueFetchTaskWith(ResourceRequest&& request)
 {
     m_timeoutTimer.startOneShot(m_loader.connectionToWebProcess().networkProcess().serviceWorkerFetchTimeout());
     if (!m_serviceWorkerConnection) {
-        m_loader.serviceWorkerDidNotHandle();
+        m_loader.serviceWorkerDidNotHandle(this);
         return;
     }
     m_currentRequest = WTFMove(request);

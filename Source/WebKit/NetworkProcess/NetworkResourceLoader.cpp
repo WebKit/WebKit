@@ -1265,11 +1265,12 @@ void NetworkResourceLoader::startWithServiceWorker()
     if (m_serviceWorkerFetchTask)
         return;
 
-    serviceWorkerDidNotHandle();
+    serviceWorkerDidNotHandle(nullptr);
 }
 
-void NetworkResourceLoader::serviceWorkerDidNotHandle()
+void NetworkResourceLoader::serviceWorkerDidNotHandle(ServiceWorkerFetchTask* fetchTask)
 {
+    RELEASE_ASSERT(m_serviceWorkerFetchTask.get() == fetchTask);
     if (m_parameters.serviceWorkersMode == ServiceWorkersMode::Only) {
         send(Messages::WebResourceLoader::ServiceWorkerDidNotHandle { }, identifier());
         abort();

@@ -242,7 +242,10 @@ void WebSWServerConnection::startFetch(ServiceWorkerFetchTask& task, SWServerWor
     }
 
     ASSERT(worker.state() == ServiceWorkerState::Activated);
-    runServerWorkerAndStartFetch(true);
+    // Make sure we start the fetch asynchronously because failing synchronously would get the NetworkResourceLoader in a bad state.
+    RunLoop::main().dispatch([runServerWorkerAndStartFetch = WTFMove(runServerWorkerAndStartFetch)]() mutable {
+        runServerWorkerAndStartFetch(true);
+    });
 }
 
 void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier destinationIdentifier, MessageWithMessagePorts&& message, const ServiceWorkerOrClientIdentifier& sourceIdentifier)

@@ -1,3 +1,30 @@
+2019-12-14  Chris Dumez  <cdumez@apple.com>
+
+        WebSWServerConnection::startFetch() should never fail synchronously
+        https://bugs.webkit.org/show_bug.cgi?id=205225
+        <rdar://problem/57490508>
+
+        Reviewed by Geoffrey Garen.
+
+        WebSWServerConnection::startFetch() should never fail synchronously. If it does, it will
+        confuse the NetworkResourceLoader. NetworkResourceLoader::serviceWorkerDidNotHandle() will
+        get called *before* NetworkResourceLoader::m_serviceWorkerFetchTask has been sent, which
+        means that we would not properly deal with redirects. Worse, the call site which creates
+        the ServiceWorkerFetchTask would then null out m_networkLoad, which would silently cancel
+        the load that WebSWServerConnection::startFetch() started synchronously.
+
+        No new tests, I am not sure how to test this. It would have to cause a redirect do a URL
+        that has a service worker and then we would have to get WebSWServerConnection::startFetch()
+        to fail synchronously. I think that to fail synchronously, we would have to not find a
+        ServiceWorker with the given ID, or the ServiceWorker's hasTimedOutAnyFetchTasks would have
+        to be set.
+
+        I added a RELEASE_ASSERT() in NetworkResourceLoader::serviceWorkerDidNotHandle() that would
+        have caught this.
+
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::startFetch):
+
 2019-12-14  Simon Fraser  <simon.fraser@apple.com>
 
         Move code out of WKWebView.mm into platform-specific files, for easier navigation

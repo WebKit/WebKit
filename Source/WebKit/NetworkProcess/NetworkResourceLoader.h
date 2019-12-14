@@ -129,7 +129,7 @@ public:
 
 #if ENABLE(SERVICE_WORKER)
     void startWithServiceWorker();
-    void serviceWorkerDidNotHandle();
+    void serviceWorkerDidNotHandle(ServiceWorkerFetchTask*);
 #endif
 
 private:
