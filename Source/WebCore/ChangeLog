@@ -1,3 +1,11 @@
+2019-12-13  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed 32-bit build fix: explicitly cast the bitrate to an int when creating a JSON
+        object for logging purposes.
+
+        * platform/mediacapabilities/MediaCapabilitiesLogging.cpp:
+        (WebCore::toJSONObject):
+
 2019-12-13  Dean Jackson  <dino@apple.com>
 
         MacCatalyst build of libANGLE is installed in the incorrect location

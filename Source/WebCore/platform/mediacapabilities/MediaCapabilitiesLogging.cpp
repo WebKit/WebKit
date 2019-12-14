@@ -49,7 +49,7 @@ static Ref<JSON::Object> toJSONObject(const VideoConfiguration& configuration)
     object->setString("contentType"_s, configuration.contentType);
     object->setInteger("width"_s, configuration.width);
     object->setInteger("height"_s, configuration.height);
-    object->setInteger("bitrate"_s, configuration.bitrate);
+    object->setInteger("bitrate"_s, static_cast<int>(configuration.bitrate));
     object->setDouble("framerate"_s, configuration.framerate);
     if (configuration.alphaChannel)
         object->setBoolean("alphaChannel"_s, configuration.alphaChannel.value());
@@ -67,7 +67,7 @@ static Ref<JSON::Object> toJSONObject(const AudioConfiguration& configuration)
     auto object = JSON::Object::create();
     object->setString("contentType"_s, configuration.contentType);
     object->setString("channels"_s, configuration.channels);
-    object->setInteger("bitrate"_s, configuration.bitrate);
+    object->setInteger("bitrate"_s, static_cast<int>(configuration.bitrate));
     object->setDouble("samplerate"_s, configuration.samplerate);
     return object;
 }
