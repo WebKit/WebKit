@@ -1,3 +1,21 @@
+2019-12-13  Eric Carlson  <eric.carlson@apple.com>
+
+        Add remote media player message to load and play
+        https://bugs.webkit.org/show_bug.cgi?id=205220
+        <rdar://problem/57927486>
+
+        Reviewed by Jer Noble.
+
+        No new tests. Tested manually because it is not possible to test on a bot yet.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::loadWithNextMediaEngine): Call the new method prepareForPlayback
+        instead of making four calls to set properties on a new player.
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::load): Add a load variant that takes a URL,
+        contentType, and keySystem.
+        (WebCore::MediaPlayerPrivateInterface::prepareForPlayback):
+
 2019-12-13  James Darpinian  <jdarpinian@chromium.org>
 
         ANGLE: fix blending with alpha:false context

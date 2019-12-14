@@ -36,16 +36,16 @@ namespace WebKit {
 
 using namespace WebCore;
 
-RemoteMediaPlayerProxy::RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy& manager, const MediaPlayerPrivateRemoteIdentifier& id, Ref<IPC::Connection>&& connection, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier)
+RemoteMediaPlayerProxy::RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy& manager, MediaPlayerPrivateRemoteIdentifier id, Ref<IPC::Connection>&& connection, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier)
     : m_id(id)
-    , m_connection(WTFMove(connection))
+    , m_webProcessConnection(WTFMove(connection))
     , m_manager(manager)
     , m_engineIdentifier(engineIdentifier)
 #if !RELEASE_LOG_DISABLED
-    , m_logger(manager.logger())
+    , m_logger(m_manager.logger())
 #endif
 {
-    m_player = MediaPlayer::create(*this, engineIdentifier);
+    m_player = MediaPlayer::create(*this, m_engineIdentifier);
 }
 
 void RemoteMediaPlayerProxy::invalidate()
@@ -53,39 +53,78 @@ void RemoteMediaPlayerProxy::invalidate()
     m_player->invalidate();
 }
 
+void RemoteMediaPlayerProxy::load(const URL& url, const ContentType& contentType, const String& keySystem)
+{
+    m_player->load(url, contentType, keySystem);
+}
+
+void RemoteMediaPlayerProxy::prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering)
+{
+    m_player->setPrivateBrowsingMode(privateMode);
+    m_player->setPreload(preload);
+    m_player->setPreservesPitch(preservesPitch);
+    m_player->prepareForRendering();
+}
+
+void RemoteMediaPlayerProxy::cancelLoad()
+{
+    m_player->cancelLoad();
+}
+
+void RemoteMediaPlayerProxy::play()
+{
+    m_player->play();
+}
+
+void RemoteMediaPlayerProxy::pause()
+{
+    m_player->pause();
+}
+
+void RemoteMediaPlayerProxy::setVolume(double volume)
+{
+    m_player->setVolume(volume);
+}
+
+void RemoteMediaPlayerProxy::setMuted(bool muted)
+{
+    m_player->setMuted(muted);
+}
+
+// MediaPlayerClient
 void RemoteMediaPlayerProxy::mediaPlayerNetworkStateChanged()
 {
-    m_connection->send(Messages::RemoteMediaPlayerManager::NetworkStateChanged(m_id, m_player->networkState()), 0);
+    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::NetworkStateChanged(m_id, m_player->networkState()), 0);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerReadyStateChanged()
 {
-    m_connection->send(Messages::RemoteMediaPlayerManager::ReadyStateChanged(m_id, m_player->readyState()), 0);
+    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::ReadyStateChanged(m_id, m_player->readyState()), 0);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerVolumeChanged()
 {
-    m_connection->send(Messages::RemoteMediaPlayerManager::VolumeChanged(m_id, m_player->volume()), 0);
+    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::VolumeChanged(m_id, m_player->volume()), 0);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerMuteChanged()
 {
-    m_connection->send(Messages::RemoteMediaPlayerManager::MuteChanged(m_id, m_player->muted()), 0);
+    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::MuteChanged(m_id, m_player->muted()), 0);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerTimeChanged()
 {
-    m_connection->send(Messages::RemoteMediaPlayerManager::TimeChanged(m_id, m_player->currentTime()), 0);
+    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::TimeChanged(m_id, m_player->currentTime()), 0);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerDurationChanged()
 {
-    m_connection->send(Messages::RemoteMediaPlayerManager::DurationChanged(m_id, m_player->duration()), 0);
+    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::DurationChanged(m_id, m_player->duration()), 0);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerRateChanged()
 {
-    m_connection->send(Messages::RemoteMediaPlayerManager::RateChanged(m_id, m_player->rate()), 0);
+    m_webProcessConnection->send(Messages::RemoteMediaPlayerManager::RateChanged(m_id, m_player->rate()), 0);
 }
 
 } // namespace WebKit

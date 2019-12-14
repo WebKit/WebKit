@@ -30,6 +30,8 @@
 
 #include "DataReference.h"
 #include "GPUConnectionToWebProcessMessages.h"
+#include "RemoteMediaPlayerManager.h"
+#include "RemoteMediaPlayerManagerMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPageMessages.h"
@@ -56,6 +58,14 @@ void GPUProcessConnection::didClose(IPC::Connection&)
 
 void GPUProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)
 {
+}
+
+void GPUProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+{
+    if (decoder.messageReceiverName() == Messages::RemoteMediaPlayerManager::messageReceiverName()) {
+        WebProcess::singleton().supplement<RemoteMediaPlayerManager>()->didReceiveMessageFromWebProcess(connection, decoder);
+        return;
+    }
 }
 
 } // namespace WebKit

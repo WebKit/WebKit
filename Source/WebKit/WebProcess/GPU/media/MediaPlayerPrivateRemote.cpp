@@ -63,15 +63,14 @@ MediaPlayerPrivateRemote::~MediaPlayerPrivateRemote()
     m_manager.deleteRemoteMediaPlayer(m_id);
 }
 
-void MediaPlayerPrivateRemote::MediaPlayerPrivateRemote::load(const String&)
+void MediaPlayerPrivateRemote::prepareForPlayback(bool privateMode, MediaPlayer::Preload preload, bool preservesPitch, bool prepare)
 {
-    notImplemented();
-    callOnMainThread([weakThis = makeWeakPtr(*this), this] {
-        if (!weakThis)
-            return;
+    m_manager.gpuProcessConnection().send(Messages::RemoteMediaPlayerManagerProxy::PrepareForPlayback(m_id, privateMode, preload, preservesPitch, prepare), 0);
+}
 
-        networkStateChanged(MediaPlayer::NetworkState::FormatError);
-    });
+void MediaPlayerPrivateRemote::MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentType, const String& keySystem)
+{
+    m_manager.gpuProcessConnection().send(Messages::RemoteMediaPlayerManagerProxy::Load(m_id, url, contentType, keySystem), 0);
 }
 
 #if ENABLE(MEDIA_SOURCE)
@@ -102,9 +101,8 @@ void MediaPlayerPrivateRemote::load(MediaStreamPrivate&)
 
 void MediaPlayerPrivateRemote::cancelLoad()
 {
-    notImplemented();
+    m_manager.gpuProcessConnection().send(Messages::RemoteMediaPlayerManagerProxy::CancelLoad(m_id), 0);
 }
-
 
 void MediaPlayerPrivateRemote::prepareToPlay()
 {
@@ -176,12 +174,12 @@ long MediaPlayerPrivateRemote::platformErrorCode() const
 
 void MediaPlayerPrivateRemote::play()
 {
-    notImplemented();
+    m_manager.gpuProcessConnection().send(Messages::RemoteMediaPlayerManagerProxy::Play(m_id), 0);
 }
 
 void MediaPlayerPrivateRemote::pause()
 {
-    notImplemented();
+    m_manager.gpuProcessConnection().send(Messages::RemoteMediaPlayerManagerProxy::Pause(m_id), 0);
 }
 
 void MediaPlayerPrivateRemote::setBufferingPolicy(MediaPlayer::BufferingPolicy)
@@ -286,20 +284,14 @@ void MediaPlayerPrivateRemote::setPreservesPitch(bool)
     notImplemented();
 }
 
-bool MediaPlayerPrivateRemote::paused() const
+void MediaPlayerPrivateRemote::setVolumeDouble(double volume)
 {
-    notImplemented();
-    return false;
+    m_manager.gpuProcessConnection().send(Messages::RemoteMediaPlayerManagerProxy::SetVolume(m_id, volume), 0);
 }
 
-void MediaPlayerPrivateRemote::setVolumeDouble(double)
+void MediaPlayerPrivateRemote::setMuted(bool muted)
 {
-    notImplemented();
-}
-
-void MediaPlayerPrivateRemote::setMuted(bool)
-{
-    notImplemented();
+    m_manager.gpuProcessConnection().send(Messages::RemoteMediaPlayerManagerProxy::SetMuted(m_id, muted), 0);
 }
 
 bool MediaPlayerPrivateRemote::hasClosedCaptions() const
@@ -763,18 +755,17 @@ void MediaPlayerPrivateRemote::volumeChanged(double volume)
     m_player->volumeChanged(volume);
 }
 
-
-void MediaPlayerPrivateRemote::muteChanged(bool mute)
+void MediaPlayerPrivateRemote::muteChanged(bool muted)
 {
-    m_mute = mute;
-    m_player->muteChanged(mute);
+    m_muted = muted;
+    m_player->muteChanged(muted);
 }
 
 void MediaPlayerPrivateRemote::timeChanged(MediaTime time)
 {
+    // FIXME: should we cache the current time here for some amount of time?
     m_player->timeChanged();
 }
-
 
 void MediaPlayerPrivateRemote::durationChanged(MediaTime duration)
 {
@@ -786,6 +777,12 @@ void MediaPlayerPrivateRemote::rateChanged(double rate)
 {
     m_rate = rate;
     m_player->rateChanged();
+}
+
+void MediaPlayerPrivateRemote::playbackStateChanged(bool paused)
+{
+    m_paused = paused;
+    m_player->playbackStateChanged();
 }
 
 #if !RELEASE_LOG_DISABLED

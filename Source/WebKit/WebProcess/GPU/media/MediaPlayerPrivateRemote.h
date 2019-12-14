@@ -62,6 +62,7 @@ public:
     void timeChanged(MediaTime);
     void durationChanged(MediaTime);
     void rateChanged(double);
+    void playbackStateChanged(bool);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return *m_logger; }
@@ -71,8 +72,9 @@ public:
 #endif
 
 private:
+    void load(const URL&, const ContentType&, const String&) final;
+    void prepareForPlayback(bool privateMode, MediaPlayer::Preload, bool preservesPitch, bool prepare) final;
 
-    void load(const String&) final;
 #if ENABLE(MEDIA_SOURCE)
     void load(const String&, MediaSourcePrivateClient*) final;
 #endif
@@ -80,7 +82,7 @@ private:
     void load(MediaStreamPrivate&) final;
 #endif
     void cancelLoad() final;
-    
+
     void prepareToPlay() final;
     PlatformLayer* platformLayer() const final;
 
@@ -135,7 +137,7 @@ private:
 
     void setPreservesPitch(bool) final;
 
-    bool paused() const final;
+    bool paused() const final { return m_paused; }
 
     void setVolumeDouble(double) final;
 
@@ -297,9 +299,10 @@ private:
     MediaPlayer::NetworkState m_networkState { MediaPlayer::NetworkState::Empty };
     MediaPlayer::ReadyState m_readyState { MediaPlayer::ReadyState::HaveNothing };
     double m_volume { 1 };
-    bool m_mute { false };
+    bool m_muted { false };
     MediaTime m_duration;
     double m_rate { 1 };
+    bool m_paused { false };
 
 #if !RELEASE_LOG_DISABLED
     RefPtr<const Logger> m_logger;

@@ -1,3 +1,72 @@
+2019-12-13  Eric Carlson  <eric.carlson@apple.com>
+
+        Add remote media player message to load and play
+        https://bugs.webkit.org/show_bug.cgi?id=205220
+        <rdar://problem/57927486>
+
+        Reviewed by Jer Noble.
+        
+        Add WP -> GPU process messages: PrepareForPlayback, Load, CancelLoad, Play, Pause,
+        SetVolume, and SetMuted
+        Add GPUP -> WP message: PlaybackStateChanged
+
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::RemoteMediaPlayerManagerProxy):
+        (WebKit::RemoteMediaPlayerManagerProxy::createMediaPlayer):
+        (WebKit::RemoteMediaPlayerManagerProxy::deleteMediaPlayer):
+        (WebKit::RemoteMediaPlayerManagerProxy::prepareForPlayback):
+        (WebKit::RemoteMediaPlayerManagerProxy::load):
+        (WebKit::RemoteMediaPlayerManagerProxy::cancelLoad):
+        (WebKit::RemoteMediaPlayerManagerProxy::play):
+        (WebKit::RemoteMediaPlayerManagerProxy::pause):
+        (WebKit::RemoteMediaPlayerManagerProxy::setVolume):
+        (WebKit::RemoteMediaPlayerManagerProxy::setMuted):
+        (WebKit::RemoteMediaPlayerManagerProxy::logChannel const):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h:
+        (WebKit::RemoteMediaPlayerManagerProxy::gpuConnectionToWebProcess const):
+        (WebKit::RemoteMediaPlayerManagerProxy::webProcessConnection const): Deleted.
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.messages.in:
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::RemoteMediaPlayerProxy):
+        (WebKit::RemoteMediaPlayerProxy::load):
+        (WebKit::RemoteMediaPlayerProxy::prepareForPlayback):
+        (WebKit::RemoteMediaPlayerProxy::cancelLoad):
+        (WebKit::RemoteMediaPlayerProxy::play):
+        (WebKit::RemoteMediaPlayerProxy::pause):
+        (WebKit::RemoteMediaPlayerProxy::setVolume):
+        (WebKit::RemoteMediaPlayerProxy::setMuted):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerNetworkStateChanged):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerReadyStateChanged):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerVolumeChanged):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerMuteChanged):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerTimeChanged):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerDurationChanged):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerRateChanged):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::didReceiveMessage):
+        * WebProcess/GPU/GPUProcessConnection.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::prepareForPlayback):
+        (WebKit::MediaPlayerPrivateRemote::MediaPlayerPrivateRemote::load):
+        (WebKit::MediaPlayerPrivateRemote::cancelLoad):
+        (WebKit::MediaPlayerPrivateRemote::play):
+        (WebKit::MediaPlayerPrivateRemote::pause):
+        (WebKit::MediaPlayerPrivateRemote::setVolumeDouble):
+        (WebKit::MediaPlayerPrivateRemote::setMuted):
+        (WebKit::MediaPlayerPrivateRemote::muteChanged):
+        (WebKit::MediaPlayerPrivateRemote::timeChanged):
+        (WebKit::MediaPlayerPrivateRemote::playbackStateChanged):
+        (WebKit::MediaPlayerPrivateRemote::paused const): Deleted.
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::RemoteMediaPlayerManager):
+        (WebKit::RemoteMediaPlayerManager::~RemoteMediaPlayerManager):
+        (WebKit::RemoteMediaPlayerManager::playbackStateChanged):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.h:
+        (WebKit::RemoteMediaPlayerManager::didReceiveMessageFromWebProcess):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.messages.in:
+
 2019-12-13  Chris Dumez  <cdumez@apple.com>
 
         [macOS] Swipe gesture snapshot stays too long if provisional load has not started yet when endSwipeGesture() is called

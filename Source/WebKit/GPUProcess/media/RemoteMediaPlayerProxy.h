@@ -48,12 +48,23 @@ class RemoteMediaPlayerProxy
     : public MediaPlayerClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy&, const MediaPlayerPrivateRemoteIdentifier&, Ref<IPC::Connection>&&, MediaPlayerEnums::MediaEngineIdentifier);
+    RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy&, MediaPlayerPrivateRemoteIdentifier, Ref<IPC::Connection>&&, MediaPlayerEnums::MediaEngineIdentifier);
     virtual ~RemoteMediaPlayerProxy()
     {
     }
 
     void invalidate();
+
+    void prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload, bool preservesPitch, bool prepareForRendering);
+
+    void load(const URL&, const ContentType&, const String&);
+    void cancelLoad();
+
+    void play();
+    void pause();
+
+    void setVolume(double);
+    void setMuted(bool);
 
 private:
     // MediaPlayerClient
@@ -71,9 +82,8 @@ private:
     const Logger& mediaPlayerLogger() final { return m_logger; }
 #endif
 
-protected:
     MediaPlayerPrivateRemoteIdentifier m_id;
-    Ref<IPC::Connection> m_connection;
+    Ref<IPC::Connection> m_webProcessConnection;
     RefPtr<MediaPlayer> m_player;
     RemoteMediaPlayerManagerProxy& m_manager;
     MediaPlayerEnums::MediaEngineIdentifier m_engineIdentifier;

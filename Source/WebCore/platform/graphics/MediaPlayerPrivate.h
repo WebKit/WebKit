@@ -38,7 +38,9 @@ public:
     MediaPlayerPrivateInterface() = default;
     virtual ~MediaPlayerPrivateInterface() = default;
 
-    virtual void load(const String& url) = 0;
+    virtual void load(const String&) { }
+    virtual void load(const URL& url, const ContentType&, const String&) { load(url.string()); }
+
 #if ENABLE(MEDIA_SOURCE)
     virtual void load(const String& url, MediaSourcePrivateClient*) = 0;
 #endif
@@ -46,6 +48,15 @@ public:
     virtual void load(MediaStreamPrivate&) = 0;
 #endif
     virtual void cancelLoad() = 0;
+
+    virtual void prepareForPlayback(bool privateMode, MediaPlayer::Preload preload, bool preservesPitch, bool prepare)
+    {
+        setPrivateBrowsingMode(privateMode);
+        setPreload(preload);
+        setPreservesPitch(preservesPitch);
+        if (prepare)
+            prepareForRendering();
+    }
     
     virtual void prepareToPlay() { }
     virtual PlatformLayer* platformLayer() const { return 0; }

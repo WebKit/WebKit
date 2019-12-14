@@ -56,6 +56,8 @@ public:
 
     IPC::Connection& gpuProcessConnection() const;
 
+    void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
+
     void deleteRemoteMediaPlayer(MediaPlayerPrivateRemoteIdentifier);
 
 private:
@@ -75,6 +77,7 @@ private:
     void timeChanged(WebKit::MediaPlayerPrivateRemoteIdentifier, MediaTime&&);
     void durationChanged(WebKit::MediaPlayerPrivateRemoteIdentifier, MediaTime&&);
     void rateChanged(WebKit::MediaPlayerPrivateRemoteIdentifier, double);
+    void playbackStateChanged(WebKit::MediaPlayerPrivateRemoteIdentifier, bool);
 
     friend class MediaPlayerRemoteFactory;
     void getSupportedTypes(WebCore::MediaPlayerEnums::MediaEngineIdentifier, HashSet<String, ASCIICaseInsensitiveHash>&);

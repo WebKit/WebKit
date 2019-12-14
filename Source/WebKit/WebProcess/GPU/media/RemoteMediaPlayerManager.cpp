@@ -95,12 +95,10 @@ private:
 RemoteMediaPlayerManager::RemoteMediaPlayerManager(WebProcess& process)
     : m_process(process)
 {
-    m_process.addMessageReceiver(Messages::RemoteMediaPlayerManager::messageReceiverName(), *this);
 }
 
 RemoteMediaPlayerManager::~RemoteMediaPlayerManager()
 {
-    m_process.removeMessageReceiver(Messages::RemoteMediaPlayerManager::messageReceiverName());
 }
 
 const char* RemoteMediaPlayerManager::supplementName()
@@ -231,6 +229,12 @@ void RemoteMediaPlayerManager::rateChanged(WebKit::MediaPlayerPrivateRemoteIdent
 {
     if (auto player = m_players.get(id))
         player->rateChanged(rate);
+}
+
+void RemoteMediaPlayerManager::playbackStateChanged(WebKit::MediaPlayerPrivateRemoteIdentifier id, bool paused)
+{
+    if (auto player = m_players.get(id))
+        player->playbackStateChanged(paused);
 }
 
 void RemoteMediaPlayerManager::updatePreferences(const Settings& settings)
