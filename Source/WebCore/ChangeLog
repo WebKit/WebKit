@@ -1,3 +1,22 @@
+2019-12-14  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for white-space: break-spaces
+        https://bugs.webkit.org/show_bug.cgi?id=205234
+        <rdar://problem/57938253>
+
+        Reviewed by Antti Koivisto.
+
+        "For break-spaces, a soft wrap opportunity exists after every space and every tab."
+        There are a few different ways to deal with breakable whitespace content.
+        The current approach is to split them into individual InlineTextItems so that
+        line breaking sees them as individual runs so that it never needs to split them in
+        case of overflow.
+
+        * layout/inlineformatting/InlineTextItem.cpp:
+        (WebCore::Layout::InlineTextItem::createAndAppendTextItems):
+        * layout/inlineformatting/text/TextUtil.cpp:
+        (WebCore::Layout::TextUtil::shouldPreserveTrailingWhitespace):
+
 2019-12-14  David Kilzer  <ddkilzer@apple.com>
 
         Add release assert for selectedIndex in WebKit::WebPopupMenu::show()

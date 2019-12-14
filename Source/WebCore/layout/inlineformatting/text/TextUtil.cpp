@@ -131,7 +131,7 @@ TextUtil::SplitData TextUtil::split(const Box& inlineBox, unsigned startPosition
 bool TextUtil::shouldPreserveTrailingWhitespace(const RenderStyle& style)
 {
     auto whitespace = style.whiteSpace();
-    return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap;
+    return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::BreakSpaces;
 }
 
 unsigned TextUtil::findNextBreakablePosition(LazyLineBreakIterator& lineBreakIterator, unsigned startPosition, const RenderStyle& style)
