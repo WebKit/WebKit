@@ -31,6 +31,7 @@
 #include "FormattingContext.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
+#include "LengthFunctions.h"
 
 namespace WebCore {
 namespace Layout {
@@ -71,6 +72,14 @@ ContentHeightAndMargin InlineFormattingContext::Geometry::inlineBlockHeightAndMa
     // 10.6.6 Complicated cases
     // - 'Inline-block', non-replaced elements.
     return complicatedCases(layoutBox, usedHorizontalValues, usedVerticalValues);
+}
+
+Optional<InlineLayoutUnit> InlineFormattingContext::Geometry::computedTextIndent(const Container& formattingContextRoot, const UsedHorizontalValues::Constraints& horizontalConstraints) const
+{
+    auto textIndent = formattingContextRoot.style().textIndent();
+    if (textIndent == RenderStyle::initialTextIndent())
+        return { };
+    return InlineLayoutUnit { minimumValueForLength(textIndent, horizontalConstraints.width) };
 }
 
 }

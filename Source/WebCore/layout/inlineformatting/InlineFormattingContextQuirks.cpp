@@ -74,7 +74,7 @@ bool InlineFormattingContext::Quirks::lineDescentNeedsCollapsing(const LineBuild
     return true;
 }
 
-LineBuilder::Constraints::HeightAndBaseline InlineFormattingContext::Quirks::lineHeightConstraints(const Box& formattingRoot) const
+LineBuilder::Constraints::HeightAndBaseline InlineFormattingContext::Quirks::lineHeightConstraints(const Container& formattingRoot) const
 {
     // computedLineHeight takes font-size into account when line-height is not set.
     // Strut is the imaginary box that we put on every line. It sets the initial vertical constraints for each new line.

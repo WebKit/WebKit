@@ -184,7 +184,6 @@ LineLayoutContext::IsEndOfLine LineLayoutContext::placeInlineItem(LineBuilder& l
         }
         return IsEndOfLine::Yes;
     }
-    //
     auto isEndOfLine = IsEndOfLine::No;
     // Can we commit the pending content already?
     if (LineBreaker::Content::isAtContentBoundary(inlineItem, m_uncommittedContent))

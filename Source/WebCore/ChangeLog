@@ -1,3 +1,25 @@
+2019-12-14  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add text-indent support
+        https://bugs.webkit.org/show_bug.cgi?id=205231
+        <rdar://problem/57932746>
+
+        Reviewed by Antti Koivisto.
+
+        This property specifies the indentation applied to lines of inline content in a block.
+        The indent is treated as a margin applied to the start edge of the line box.
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        (WebCore::Layout::InlineFormattingContext::constraintsForLine):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::InlineFormattingContext::Geometry::computedTextIndent const):
+        * layout/inlineformatting/InlineFormattingContextQuirks.cpp:
+        (WebCore::Layout::InlineFormattingContext::Quirks::lineHeightConstraints const):
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::LineLayoutContext::placeInlineItem):
+
 2019-12-13  Sunny He  <sunny_he@apple.com>
 
         Nullptr crash if SVG element if element parent becomes document node

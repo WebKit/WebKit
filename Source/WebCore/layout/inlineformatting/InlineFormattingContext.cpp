@@ -114,18 +114,18 @@ void InlineFormattingContext::lineLayout(const UsedHorizontalValues& usedHorizon
                 partialLeadingContentLength = lineContent.partialContent->overflowContentLength;
             } else
                 leadingInlineItemIndex = *lineContent.trailingInlineItemIndex + 1;
-        } else {
-            // Floats prevented us placing any content on the line.
-            ASSERT(lineBuilder.hasIntrusiveFloat());
-            // Move the next line below the intrusive float.
-            auto floatingContext = FloatingContext { root(), *this, formattingState().floatingState() };
-            auto floatConstraints = floatingContext.constraints({ lineLogicalTop });
-            ASSERT(floatConstraints.left || floatConstraints.right);
-            static auto inifitePoint = PointInContextRoot::max();
-            // In case of left and right constraints, we need to pick the one that's closer to the current line.
-            lineLogicalTop = std::min(floatConstraints.left.valueOr(inifitePoint).y, floatConstraints.right.valueOr(inifitePoint).y);
-            ASSERT(lineLogicalTop < inifitePoint.y);
+            continue;
         }
+        // Floats prevented us placing any content on the line.
+        ASSERT(lineBuilder.hasIntrusiveFloat());
+        // Move the next line below the intrusive float.
+        auto floatingContext = FloatingContext { root(), *this, formattingState().floatingState() };
+        auto floatConstraints = floatingContext.constraints({ lineLogicalTop });
+        ASSERT(floatConstraints.left || floatConstraints.right);
+        static auto inifitePoint = PointInContextRoot::max();
+        // In case of left and right constraints, we need to pick the one that's closer to the current line.
+        lineLogicalTop = std::min(floatConstraints.left.valueOr(inifitePoint).y, floatConstraints.right.valueOr(inifitePoint).y);
+        ASSERT(lineLogicalTop < inifitePoint.y);
     }
 }
 
@@ -404,6 +404,32 @@ LineBuilder::Constraints InlineFormattingContext::constraintsForLine(const UsedH
             availableWidth = floatConstraints.right->x - lineLogicalLeft;
         }
     }
+
+    auto computedTextIndent = [&] {
+        // text-indent property specifies the indentation applied to lines of inline content in a block.
+        // The indent is treated as a margin applied to the start edge of the line box.
+        // Unless otherwise specified, only lines that are the first formatted line of an element are affected.
+        // For example, the first line of an anonymous block box is only affected if it is the first child of its parent element.
+        // FIXME: Add support for each-line.
+        // [Integration] root()->parent() would normally produce a valid layout box.
+        auto& root = this->root();
+        auto isFormattingContextRootCandidateToTextIndent = !root.isAnonymous() || !root.parent() || root.parent()->firstInFlowChild() == &root;
+        if (!isFormattingContextRootCandidateToTextIndent)
+            return InlineLayoutUnit { };
+        auto invertLineRange = false;
+#if ENABLE(CSS3_TEXT)
+        invertLineRange = root.style().textIndentType() == TextIndentType::Hanging;
+#endif
+        auto isFirstLine = formattingState().ensureDisplayInlineContent().lineBoxes.isEmpty();
+        // text-indent: hanging inverts which lines are affected.
+        // inverted line range -> all the lines except the first one.
+        // !inverted line range -> first line gets the indent.
+        auto shouldIndent = invertLineRange != isFirstLine;
+        if (!shouldIndent)
+            return InlineLayoutUnit { };
+        return geometry().computedTextIndent(root, usedHorizontalValues.constraints).valueOr(InlineLayoutUnit { });
+    };
+    lineLogicalLeft += computedTextIndent();
     return LineBuilder::Constraints { { lineLogicalLeft, lineLogicalTop }, availableWidth, lineIsConstrainedByFloat, quirks().lineHeightConstraints(root()) };
 }
 
