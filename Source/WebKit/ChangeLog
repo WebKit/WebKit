@@ -1,3 +1,16 @@
+2019-12-14  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Deny mach lookup access to "*.viewservice" in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=205240
+
+        Reviewed by Brent Fulgham.
+
+        As part of sandbox hardening in the WebContent process, mach lookup access to “*.viewservice” should be removed.
+
+        Test: fast/sandbox/ios/sandbox-mach-lookup.html
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-12-14  Chris Dumez  <cdumez@apple.com>
 
         WebSWServerConnection::startFetch() should never fail synchronously

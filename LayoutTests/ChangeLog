@@ -1,3 +1,13 @@
+2019-12-14  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Deny mach lookup access to "*.viewservice" in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=205240
+
+        Reviewed by Brent Fulgham.
+
+        * fast/sandbox/ios/sandbox-mach-lookup-expected.txt:
+        * fast/sandbox/ios/sandbox-mach-lookup.html:
+
 2019-12-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [watchOS] Apple.com is rendered in Times New Roman
