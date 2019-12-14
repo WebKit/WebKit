@@ -31,7 +31,7 @@
 #import "UIKitSPI.h"
 #import "VersionChecks.h"
 #import "WKDeferringGestureRecognizer.h"
-#import "WKWebViewInternal.h"
+#import "WKWebViewIOS.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/WeakObjCPtr.h>
 

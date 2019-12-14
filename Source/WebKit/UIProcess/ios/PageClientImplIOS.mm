@@ -48,6 +48,7 @@
 #import "WKProcessPoolInternal.h"
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewContentProviderRegistry.h"
+#import "WKWebViewIOS.h"
 #import "WKWebViewInternal.h"
 #import "WKWebViewPrivateForTesting.h"
 #import "WebContextMenuProxy.h"

@@ -36,7 +36,7 @@
 #import "WKKeyboardScrollingAnimator.h"
 #import "WKUIDelegatePrivate.h"
 #import "WKWebEvent.h"
-#import "WKWebViewInternal.h"
+#import "WKWebViewIOS.h"
 #import "WebPageProxy.h"
 #import "_WKWebViewPrintFormatterInternal.h"
 #import <MobileCoreServices/MobileCoreServices.h>

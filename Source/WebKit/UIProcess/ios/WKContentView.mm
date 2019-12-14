@@ -45,7 +45,7 @@
 #import "WKPreferencesInternal.h"
 #import "WKProcessGroupPrivate.h"
 #import "WKWebViewConfiguration.h"
-#import "WKWebViewInternal.h"
+#import "WKWebViewIOS.h"
 #import "WebFrameProxy.h"
 #import "WebKit2Initialize.h"
 #import "WebPageGroup.h"

@@ -28,8 +28,10 @@
 
 #if PLATFORM(MAC)
 
-#import "WKWebViewInternal.h"
+#import "WKWebViewMac.h"
 #import "_WKFrameHandleInternal.h"
+#import "WebPageProxy.h"
+#import "WebViewImpl.h"
 
 @implementation WKWebView (WKTestingMac)
 

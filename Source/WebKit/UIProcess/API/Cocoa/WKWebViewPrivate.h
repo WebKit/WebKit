@@ -217,9 +217,6 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 
 - (void)_doAfterNextPresentationUpdate:(void (^)(void))updateBlock WK_API_AVAILABLE(macos(10.12), ios(10.0));
 - (void)_doAfterNextPresentationUpdateWithoutWaitingForPainting:(void (^)(void))updateBlock WK_API_AVAILABLE(macos(10.12.3), ios(10.3));
-#if TARGET_OS_IPHONE
-- (void)_doAfterNextStablePresentationUpdate:(dispatch_block_t)updateBlock WK_API_AVAILABLE(ios(10.3));
-#endif
 
 - (void)_executeEditCommand:(NSString *)command argument:(NSString *)argument completion:(void (^)(BOOL))completion WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 
@@ -247,189 +244,10 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 @property (class, nonatomic, copy, setter=_setStringForFind:) NSString *_stringForFind WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 @property (nonatomic, readonly) _WKSelectionAttributes _selectionAttributes WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
-#if TARGET_OS_IPHONE
-
-@property (nonatomic, readonly) CGRect _contentVisibleRect WK_API_AVAILABLE(ios(10.0));
-- (CGPoint)_convertPointFromContentsToView:(CGPoint)point WK_API_AVAILABLE(ios(10.0));
-- (CGPoint)_convertPointFromViewToContents:(CGPoint)point WK_API_AVAILABLE(ios(10.0));
-
-- (void)_setFont:(UIFont *)font sender:(id)sender WK_API_AVAILABLE(ios(12.2));
-- (void)_setFontSize:(CGFloat)fontSize sender:(id)sender WK_API_AVAILABLE(ios(12.2));
-- (void)_setTextColor:(UIColor *)color sender:(id)sender WK_API_AVAILABLE(ios(12.2));
-
-- (void)_detectDataWithTypes:(WKDataDetectorTypes)types completionHandler:(dispatch_block_t)completion WK_API_AVAILABLE(ios(12.2));
-
-// DERECATED: The setters of the three following function are deprecated, please use overrideLayoutParameters.
-// Define the smallest size a page take with a regular viewport.
-@property (nonatomic, readonly) CGSize _minimumLayoutSizeOverride;
-// Define the largest size the unobscured area can get for the current view bounds. This value is used to define viewport units.
-@property (nonatomic, readonly) CGSize _maximumUnobscuredSizeOverride;
-
-// Define the inset of the scrollview unusable by the web page.
-@property (nonatomic, setter=_setObscuredInsets:) UIEdgeInsets _obscuredInsets;
-
-@property (nonatomic, setter=_setUnobscuredSafeAreaInsets:) UIEdgeInsets _unobscuredSafeAreaInsets WK_API_AVAILABLE(ios(11.0));
-@property (nonatomic, readonly) BOOL _safeAreaShouldAffectObscuredInsets WK_API_AVAILABLE(ios(11.0));
-@property (nonatomic, setter=_setObscuredInsetEdgesAffectedBySafeArea:) UIRectEdge _obscuredInsetEdgesAffectedBySafeArea WK_API_AVAILABLE(ios(11.0));
-
-// An ancestor view whose bounds will be intersected with those of this WKWebView to determine the visible region of content to render.
-@property (nonatomic, readonly) UIView *_enclosingViewForExposedRectComputation WK_API_AVAILABLE(ios(11.0));
-
-// Override the interface orientation. Clients using _beginAnimatedResizeWithUpdates: must update the interface orientation
-// in the update block.
-@property (nonatomic, setter=_setInterfaceOrientationOverride:) UIInterfaceOrientation _interfaceOrientationOverride;
-
-@property (nonatomic, setter=_setAllowsViewportShrinkToFit:) BOOL _allowsViewportShrinkToFit;
-
-// FIXME: Remove these three properties once we expose WKWebViewContentProvider as API.
-@property (nonatomic, readonly, getter=_isDisplayingPDF) BOOL _displayingPDF;
-@property (nonatomic, readonly) NSData *_dataForDisplayedPDF;
-// FIXME: This can be removed once WKNavigation's response property is implemented.
-@property (nonatomic, readonly) NSString *_suggestedFilenameForDisplayedPDF;
-
-@property (nonatomic, readonly) _WKWebViewPrintFormatter *_webViewPrintFormatter;
-
-@property (nonatomic, setter=_setDragInteractionPolicy:) _WKDragInteractionPolicy _dragInteractionPolicy WK_API_AVAILABLE(ios(11.0));
-@property (nonatomic, readonly) BOOL _shouldAvoidResizingWhenInputViewBoundsChange WK_API_AVAILABLE(ios(13.0));
-@property (nonatomic, readonly) BOOL _contentViewIsFirstResponder WK_API_AVAILABLE(ios(12.2));
-
-@property (nonatomic, readonly) CGRect _uiTextCaretRect WK_API_AVAILABLE(ios(10.3));
-
-- (void)_requestActivatedElementAtPosition:(CGPoint)position completionBlock:(void (^)(_WKActivatedElementInfo *))block WK_API_AVAILABLE(ios(11.0));
-
-- (void)didStartFormControlInteraction WK_API_AVAILABLE(ios(10.3));
-- (void)didEndFormControlInteraction WK_API_AVAILABLE(ios(10.3));
-
-- (void)_beginInteractiveObscuredInsetsChange;
-- (void)_endInteractiveObscuredInsetsChange;
-- (void)_hideContentUntilNextUpdate;
-
-- (void)_beginAnimatedResizeWithUpdates:(void (^)(void))updateBlock;
-- (void)_endAnimatedResize;
-- (void)_resizeWhileHidingContentWithUpdates:(void (^)(void))updateBlock;
-
-- (void)_snapshotRect:(CGRect)rectInViewCoordinates intoImageOfWidth:(CGFloat)imageWidth completionHandler:(void(^)(CGImageRef))completionHandler;
-
-- (void)_overrideLayoutParametersWithMinimumLayoutSize:(CGSize)minimumLayoutSize maximumUnobscuredSizeOverride:(CGSize)maximumUnobscuredSizeOverride WK_API_AVAILABLE(ios(9_0));
-- (void)_overrideViewportWithArguments:(NSDictionary<NSString *, NSString *> *)arguments WK_API_AVAILABLE(ios(13.0));
-
-- (void)_clearOverrideLayoutParameters WK_API_AVAILABLE(ios(11.0));
-- (void)_clearInterfaceOrientationOverride WK_API_AVAILABLE(ios(11.0));
-
-- (UIView *)_viewForFindUI;
-
-- (void)_setOverlaidAccessoryViewsInset:(CGSize)inset;
-
-// Puts the view into a state where being taken out of the view hierarchy and resigning first responder
-// will not count as becoming inactive and unfocused. The returned block must be called to exit the state.
-- (void (^)(void))_retainActiveFocusedState WK_API_AVAILABLE(ios(9_0));
-
-- (void)_becomeFirstResponderWithSelectionMovingForward:(BOOL)selectingForward completionHandler:(void (^)(BOOL didBecomeFirstResponder))completionHandler WK_API_AVAILABLE(ios(9_0));
-
-- (id)_snapshotLayerContentsForBackForwardListItem:(WKBackForwardListItem *)item WK_API_AVAILABLE(ios(9_0));
-- (NSArray *)_dataDetectionResults;
-
-- (void)_accessibilityRetrieveRectsAtSelectionOffset:(NSInteger)offset withText:(NSString *)text completionHandler:(void (^)(NSArray<NSValue *> *rects))completionHandler WK_API_AVAILABLE(ios(11.3));
-- (void)_accessibilityStoreSelection WK_API_AVAILABLE(ios(11.3));
-- (void)_accessibilityClearSelection WK_API_AVAILABLE(ios(11.3));
-
-- (void)_accessibilityRetrieveSpeakSelectionContent WK_API_AVAILABLE(ios(11.0));
-- (void)_accessibilityDidGetSpeakSelectionContent:(NSString *)content WK_API_AVAILABLE(ios(11.0));
-
-@property (nonatomic, readonly) UIView *_safeBrowsingWarning WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
-
-- (UIView *)_fullScreenPlaceholderView WK_API_AVAILABLE(ios(12.0));
-
-#else
-
-@property (nonatomic, readonly) WKPageRef _pageRefForTransitionToWKWebView  WK_API_AVAILABLE(macos(10.13.4));
-@property (nonatomic, readonly) BOOL _hasActiveVideoForControlsManager WK_API_AVAILABLE(macos(10.12));
-@property (nonatomic, readwrite, setter=_setIgnoresNonWheelEvents:) BOOL _ignoresNonWheelEvents WK_API_AVAILABLE(macos(10.13.4));
-
-@property (nonatomic, readonly) NSView *_safeBrowsingWarning WK_API_AVAILABLE(macos(10.14.4));
-
-@property (nonatomic, readonly) _WKRectEdge _pinnedState WK_API_AVAILABLE(macos(10.13.4));
-@property (nonatomic, setter=_setRubberBandingEnabled:) _WKRectEdge _rubberBandingEnabled WK_API_AVAILABLE(macos(10.13.4));
-
-@property (readonly) NSColor *_pageExtendedBackgroundColor;
-@property (nonatomic, setter=_setBackgroundColor:) NSColor *_backgroundColor WK_API_AVAILABLE(macos(10.14));
-@property (nonatomic, copy, setter=_setUnderlayColor:) NSColor *_underlayColor WK_API_AVAILABLE(macos(10.13.4));
-
-@property (nonatomic, setter=_setTotalHeightOfBanners:) CGFloat _totalHeightOfBanners WK_API_AVAILABLE(macos(10.13.4));
-@property (nonatomic, setter=_setDrawsBackground:) BOOL _drawsBackground;
-@property (nonatomic, setter=_setTopContentInset:) CGFloat _topContentInset;
-
-@property (nonatomic, setter=_setAutomaticallyAdjustsContentInsets:) BOOL _automaticallyAdjustsContentInsets;
-
-// Default value is 0. A value of 0 means the window's backing scale factor will be used and automatically update when the window moves screens.
-@property (nonatomic, setter=_setOverrideDeviceScaleFactor:) CGFloat _overrideDeviceScaleFactor WK_API_AVAILABLE(macos(10.11));
-
-@property (nonatomic, setter=_setWindowOcclusionDetectionEnabled:) BOOL _windowOcclusionDetectionEnabled;
-
-@property (nonatomic, readonly) NSInteger _spellCheckerDocumentTag WK_API_AVAILABLE(macos(10.14));
-
-- (void)_setShouldSuppressFirstResponderChanges:(BOOL)shouldSuppress;
-- (BOOL)_canChangeFrameLayout:(_WKFrameHandle *)frameHandle WK_API_AVAILABLE(macos(10.13.4));
-- (BOOL)_tryToSwipeWithEvent:(NSEvent *)event ignoringPinnedState:(BOOL)ignoringPinnedState WK_API_AVAILABLE(macos(10.13.4));
-
-- (void)_dismissContentRelativeChildWindows WK_API_AVAILABLE(macos(10.13.4));
-- (void)_setFrame:(NSRect)rect andScrollBy:(NSSize)offset WK_API_AVAILABLE(macos(10.13.4));
-
-- (void)_gestureEventWasNotHandledByWebCore:(NSEvent *)event WK_API_AVAILABLE(macos(10.13.4));
-
-- (void)_disableFrameSizeUpdates WK_API_AVAILABLE(macos(10.13.4));
-- (void)_enableFrameSizeUpdates WK_API_AVAILABLE(macos(10.13.4));
-
-- (void)_beginDeferringViewInWindowChanges WK_API_AVAILABLE(macos(10.13.4));
-- (void)_endDeferringViewInWindowChanges WK_API_AVAILABLE(macos(10.13.4));
-- (void)_endDeferringViewInWindowChangesSync WK_API_AVAILABLE(macos(10.13.4));
-
-- (void)_setCustomSwipeViews:(NSArray *)customSwipeViews WK_API_AVAILABLE(macos(10.13.4));
-- (void)_setDidMoveSwipeSnapshotCallback:(void(^)(CGRect))callback WK_API_AVAILABLE(macos(10.13.4));
-- (void)_setCustomSwipeViewsTopContentInset:(float)topContentInset WK_API_AVAILABLE(macos(10.13.4));
-
-- (NSView *)_fullScreenPlaceholderView WK_API_AVAILABLE(macos(10.13.4));
-- (NSWindow *)_fullScreenWindow WK_API_AVAILABLE(macos(10.13.4));
-
-// Clients that want to maintain default behavior can return nil. To disable the immediate action entirely, return NSNull. And to
-// do something custom, return an object that conforms to the NSImmediateActionAnimationController protocol.
-- (id)_immediateActionAnimationControllerForHitTestResult:(_WKHitTestResult *)hitTestResult withType:(_WKImmediateActionType)type userData:(id<NSSecureCoding>)userData;
-
-@property (nonatomic, setter=_setMinimumLayoutWidth:) CGFloat _minimumLayoutWidth WK_API_AVAILABLE(macos(10.12));
-
-// When using _minimumLayoutWidth, the web content will lay out to the intrinsic height
-// of the content; use this property to force it to lay out to the height of the view instead.
-@property (nonatomic, setter=_setShouldExpandContentToViewHeightForAutoLayout:) BOOL _shouldExpandContentToViewHeightForAutoLayout WK_API_AVAILABLE(macos(10.12));
-
-@property (nonatomic, setter=_setAlwaysShowsHorizontalScroller:) BOOL _alwaysShowsHorizontalScroller WK_API_AVAILABLE(macos(10.13.4));
-@property (nonatomic, setter=_setAlwaysShowsVerticalScroller:) BOOL _alwaysShowsVerticalScroller WK_API_AVAILABLE(macos(10.13.4));
-
-- (NSPrintOperation *)_printOperationWithPrintInfo:(NSPrintInfo *)printInfo;
-- (NSPrintOperation *)_printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(_WKFrameHandle *)frameHandle WK_API_AVAILABLE(macos(10.12));
-
-// FIXME: This SPI should become a part of the WKUIDelegate. rdar://problem/26561537
-@property (nonatomic, readwrite, setter=_setWantsMediaPlaybackControlsView:) BOOL _wantsMediaPlaybackControlsView WK_API_AVAILABLE(macos(10.12.3));
-@property (nonatomic, readonly) id _mediaPlaybackControlsView WK_API_AVAILABLE(macos(10.13));
-- (void)_addMediaPlaybackControlsView:(id)mediaPlaybackControlsView WK_API_AVAILABLE(macos(10.13));
-- (void)_removeMediaPlaybackControlsView WK_API_AVAILABLE(macos(10.12.3));
-
-- (void)_prepareForMoveToWindow:(NSWindow *)targetWindow completionHandler:(void(^)(void))completionHandler WK_API_AVAILABLE(macos(10.13));
-
-@property (nonatomic, readwrite, setter=_setUseSystemAppearance:) BOOL _useSystemAppearance WK_API_AVAILABLE(macos(10.14));
-@property (nonatomic, setter=_setOverlayScrollbarStyle:) _WKOverlayScrollbarStyle _overlayScrollbarStyle WK_API_AVAILABLE(macos(10.13.4));
-@property (strong, nonatomic, setter=_setInspectorAttachmentView:) NSView *_inspectorAttachmentView WK_API_AVAILABLE(macos(10.13.4));
-
-@property (nonatomic, setter=_setThumbnailView:) _WKThumbnailView *_thumbnailView WK_API_AVAILABLE(macos(10.13.4));
-@property (nonatomic, setter=_setIgnoresAllEvents:) BOOL _ignoresAllEvents WK_API_AVAILABLE(macos(10.13.4));
-
-// Defaults to YES; if set to NO, WebKit will draw the grey wash and highlights itself.
-@property (nonatomic, setter=_setUsePlatformFindUI:) BOOL _usePlatformFindUI WK_API_AVAILABLE(macos(10.15));
-
-#endif
-
 - (WKNavigation *)_reloadWithoutContentBlockers WK_API_AVAILABLE(macos(10.12), ios(10.0));
 - (WKNavigation *)_reloadExpiredOnly WK_API_AVAILABLE(macos(10.13), ios(11.0));
 
+@property (nonatomic, readonly) BOOL _webProcessIsResponsive WK_API_AVAILABLE(macos(10.12), ios(10.0));
 - (void)_killWebContentProcess;
 - (void)_killWebContentProcessAndResetState;
 
@@ -472,8 +290,6 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 
 @property (nonatomic, getter=_allowsMediaDocumentInlinePlayback, setter=_setAllowsMediaDocumentInlinePlayback:) BOOL _allowsMediaDocumentInlinePlayback;
 
-@property (nonatomic, readonly) BOOL _webProcessIsResponsive WK_API_AVAILABLE(macos(10.12), ios(10.0));
-
 @property (nonatomic, setter=_setFullscreenDelegate:) id<_WKFullscreenDelegate> _fullscreenDelegate WK_API_AVAILABLE(macos(10.13), ios(11.0));
 @property (nonatomic, readonly) BOOL _isInFullscreen WK_API_AVAILABLE(macos(10.12.3));
 
@@ -499,16 +315,212 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (void)_takePDFSnapshotWithConfiguration:(WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void (^)(NSData *pdfSnapshotData, NSError *error))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @end
 
-#if TARGET_OS_IPHONE && !TARGET_OS_WATCH
-@interface WKWebView (FullScreenAPI_Private)
--(BOOL)hasFullScreenWindowController;
--(void)closeFullScreenWindowController;
-@end
-#endif
-
 #if TARGET_OS_IPHONE
+
+@interface WKWebView (WKPrivateIOS)
+
+@property (nonatomic, readonly) CGRect _contentVisibleRect WK_API_AVAILABLE(ios(10.0));
+
+// DERECATED: The setters of the three following function are deprecated, please use overrideLayoutParameters.
+// Define the smallest size a page take with a regular viewport.
+@property (nonatomic, readonly) CGSize _minimumLayoutSizeOverride;
+// Define the largest size the unobscured area can get for the current view bounds. This value is used to define viewport units.
+@property (nonatomic, readonly) CGSize _maximumUnobscuredSizeOverride;
+
+// Define the inset of the scrollview unusable by the web page.
+@property (nonatomic, setter=_setObscuredInsets:) UIEdgeInsets _obscuredInsets;
+
+@property (nonatomic, setter=_setUnobscuredSafeAreaInsets:) UIEdgeInsets _unobscuredSafeAreaInsets WK_API_AVAILABLE(ios(11.0));
+@property (nonatomic, readonly) BOOL _safeAreaShouldAffectObscuredInsets WK_API_AVAILABLE(ios(11.0));
+@property (nonatomic, setter=_setObscuredInsetEdgesAffectedBySafeArea:) UIRectEdge _obscuredInsetEdgesAffectedBySafeArea WK_API_AVAILABLE(ios(11.0));
+
+// An ancestor view whose bounds will be intersected with those of this WKWebView to determine the visible region of content to render.
+@property (nonatomic, readonly) UIView *_enclosingViewForExposedRectComputation WK_API_AVAILABLE(ios(11.0));
+
+// Override the interface orientation. Clients using _beginAnimatedResizeWithUpdates: must update the interface orientation
+// in the update block.
+@property (nonatomic, setter=_setInterfaceOrientationOverride:) UIInterfaceOrientation _interfaceOrientationOverride;
+- (void)_clearInterfaceOrientationOverride WK_API_AVAILABLE(ios(11.0));
+
+@property (nonatomic, setter=_setAllowsViewportShrinkToFit:) BOOL _allowsViewportShrinkToFit;
+
+// FIXME: Remove these three properties once we expose WKWebViewContentProvider as API.
+@property (nonatomic, readonly, getter=_isDisplayingPDF) BOOL _displayingPDF;
+@property (nonatomic, readonly) NSData *_dataForDisplayedPDF;
+// FIXME: This can be removed once WKNavigation's response property is implemented.
+@property (nonatomic, readonly) NSString *_suggestedFilenameForDisplayedPDF;
+
+@property (nonatomic, readonly) _WKWebViewPrintFormatter *_webViewPrintFormatter;
+
+@property (nonatomic, setter=_setDragInteractionPolicy:) _WKDragInteractionPolicy _dragInteractionPolicy WK_API_AVAILABLE(ios(11.0));
+@property (nonatomic, readonly) BOOL _shouldAvoidResizingWhenInputViewBoundsChange WK_API_AVAILABLE(ios(13.0));
+@property (nonatomic, readonly) BOOL _contentViewIsFirstResponder WK_API_AVAILABLE(ios(12.2));
+
+@property (nonatomic, readonly) CGRect _uiTextCaretRect WK_API_AVAILABLE(ios(10.3));
+
+@property (nonatomic, readonly) UIView *_safeBrowsingWarning WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
+
+- (CGPoint)_convertPointFromContentsToView:(CGPoint)point WK_API_AVAILABLE(ios(10.0));
+- (CGPoint)_convertPointFromViewToContents:(CGPoint)point WK_API_AVAILABLE(ios(10.0));
+
+- (void)_doAfterNextStablePresentationUpdate:(dispatch_block_t)updateBlock WK_API_AVAILABLE(ios(10.3));
+
+- (void)_setFont:(UIFont *)font sender:(id)sender WK_API_AVAILABLE(ios(12.2));
+- (void)_setFontSize:(CGFloat)fontSize sender:(id)sender WK_API_AVAILABLE(ios(12.2));
+- (void)_setTextColor:(UIColor *)color sender:(id)sender WK_API_AVAILABLE(ios(12.2));
+
+- (void)_detectDataWithTypes:(WKDataDetectorTypes)types completionHandler:(dispatch_block_t)completion WK_API_AVAILABLE(ios(12.2));
+
+- (void)_requestActivatedElementAtPosition:(CGPoint)position completionBlock:(void (^)(_WKActivatedElementInfo *))block WK_API_AVAILABLE(ios(11.0));
+
+- (void)didStartFormControlInteraction WK_API_AVAILABLE(ios(10.3));
+- (void)didEndFormControlInteraction WK_API_AVAILABLE(ios(10.3));
+
+- (void)_beginInteractiveObscuredInsetsChange;
+- (void)_endInteractiveObscuredInsetsChange;
+- (void)_hideContentUntilNextUpdate;
+
+- (void)_beginAnimatedResizeWithUpdates:(void (^)(void))updateBlock;
+- (void)_endAnimatedResize;
+- (void)_resizeWhileHidingContentWithUpdates:(void (^)(void))updateBlock;
+
+- (void)_snapshotRect:(CGRect)rectInViewCoordinates intoImageOfWidth:(CGFloat)imageWidth completionHandler:(void(^)(CGImageRef))completionHandler;
+
+- (void)_overrideLayoutParametersWithMinimumLayoutSize:(CGSize)minimumLayoutSize maximumUnobscuredSizeOverride:(CGSize)maximumUnobscuredSizeOverride WK_API_AVAILABLE(ios(9_0));
+- (void)_clearOverrideLayoutParameters WK_API_AVAILABLE(ios(11.0));
+- (void)_overrideViewportWithArguments:(NSDictionary<NSString *, NSString *> *)arguments WK_API_AVAILABLE(ios(13.0));
+
+- (UIView *)_viewForFindUI;
+
+- (void)_setOverlaidAccessoryViewsInset:(CGSize)inset;
+
+// Puts the view into a state where being taken out of the view hierarchy and resigning first responder
+// will not count as becoming inactive and unfocused. The returned block must be called to exit the state.
+- (void (^)(void))_retainActiveFocusedState WK_API_AVAILABLE(ios(9_0));
+
+- (void)_becomeFirstResponderWithSelectionMovingForward:(BOOL)selectingForward completionHandler:(void (^)(BOOL didBecomeFirstResponder))completionHandler WK_API_AVAILABLE(ios(9_0));
+
+- (id)_snapshotLayerContentsForBackForwardListItem:(WKBackForwardListItem *)item WK_API_AVAILABLE(ios(9_0));
+
+- (NSArray *)_dataDetectionResults;
+
+- (void)_accessibilityRetrieveRectsAtSelectionOffset:(NSInteger)offset withText:(NSString *)text completionHandler:(void (^)(NSArray<NSValue *> *rects))completionHandler WK_API_AVAILABLE(ios(11.3));
+- (void)_accessibilityStoreSelection WK_API_AVAILABLE(ios(11.3));
+- (void)_accessibilityClearSelection WK_API_AVAILABLE(ios(11.3));
+
+- (void)_accessibilityRetrieveSpeakSelectionContent WK_API_AVAILABLE(ios(11.0));
+- (void)_accessibilityDidGetSpeakSelectionContent:(NSString *)content WK_API_AVAILABLE(ios(11.0));
+
+- (UIView *)_fullScreenPlaceholderView WK_API_AVAILABLE(ios(12.0));
+
+@end
 
 @interface WKWebView () <UIResponderStandardEditActions>
 @end
 
+#if !TARGET_OS_WATCH
+
+@interface WKWebView (FullScreenAPI_Private)
+
+-(BOOL)hasFullScreenWindowController;
+-(void)closeFullScreenWindowController;
+
+@end
+#endif // !TARGET_OS_WATCH
+
 #endif // TARGET_OS_IPHONE
+
+
+#if !TARGET_OS_IPHONE
+
+@interface WKWebView (WKPrivateMac)
+
+@property (nonatomic, readonly) WKPageRef _pageRefForTransitionToWKWebView  WK_API_AVAILABLE(macos(10.13.4));
+@property (nonatomic, readonly) BOOL _hasActiveVideoForControlsManager WK_API_AVAILABLE(macos(10.12));
+@property (nonatomic, readwrite, setter=_setIgnoresNonWheelEvents:) BOOL _ignoresNonWheelEvents WK_API_AVAILABLE(macos(10.13.4));
+
+@property (nonatomic, readonly) NSView *_safeBrowsingWarning WK_API_AVAILABLE(macos(10.14.4));
+
+@property (nonatomic, readonly) _WKRectEdge _pinnedState WK_API_AVAILABLE(macos(10.13.4));
+@property (nonatomic, setter=_setRubberBandingEnabled:) _WKRectEdge _rubberBandingEnabled WK_API_AVAILABLE(macos(10.13.4));
+
+@property (readonly) NSColor *_pageExtendedBackgroundColor;
+@property (nonatomic, setter=_setBackgroundColor:) NSColor *_backgroundColor WK_API_AVAILABLE(macos(10.14));
+@property (nonatomic, copy, setter=_setUnderlayColor:) NSColor *_underlayColor WK_API_AVAILABLE(macos(10.13.4));
+
+@property (nonatomic, setter=_setTotalHeightOfBanners:) CGFloat _totalHeightOfBanners WK_API_AVAILABLE(macos(10.13.4));
+@property (nonatomic, setter=_setDrawsBackground:) BOOL _drawsBackground;
+@property (nonatomic, setter=_setTopContentInset:) CGFloat _topContentInset;
+
+@property (nonatomic, setter=_setAutomaticallyAdjustsContentInsets:) BOOL _automaticallyAdjustsContentInsets;
+
+// Default value is 0. A value of 0 means the window's backing scale factor will be used and automatically update when the window moves screens.
+@property (nonatomic, setter=_setOverrideDeviceScaleFactor:) CGFloat _overrideDeviceScaleFactor WK_API_AVAILABLE(macos(10.11));
+
+@property (nonatomic, setter=_setWindowOcclusionDetectionEnabled:) BOOL _windowOcclusionDetectionEnabled;
+
+@property (nonatomic, readonly) NSInteger _spellCheckerDocumentTag WK_API_AVAILABLE(macos(10.14));
+
+// When using _minimumLayoutWidth, the web content will lay out to the intrinsic height
+// of the content; use this property to force it to lay out to the height of the view instead.
+@property (nonatomic, setter=_setShouldExpandContentToViewHeightForAutoLayout:) BOOL _shouldExpandContentToViewHeightForAutoLayout WK_API_AVAILABLE(macos(10.12));
+
+@property (nonatomic, setter=_setMinimumLayoutWidth:) CGFloat _minimumLayoutWidth WK_API_AVAILABLE(macos(10.12));
+
+@property (nonatomic, setter=_setAlwaysShowsHorizontalScroller:) BOOL _alwaysShowsHorizontalScroller WK_API_AVAILABLE(macos(10.13.4));
+@property (nonatomic, setter=_setAlwaysShowsVerticalScroller:) BOOL _alwaysShowsVerticalScroller WK_API_AVAILABLE(macos(10.13.4));
+
+@property (nonatomic, readwrite, setter=_setUseSystemAppearance:) BOOL _useSystemAppearance WK_API_AVAILABLE(macos(10.14));
+@property (nonatomic, setter=_setOverlayScrollbarStyle:) _WKOverlayScrollbarStyle _overlayScrollbarStyle WK_API_AVAILABLE(macos(10.13.4));
+@property (strong, nonatomic, setter=_setInspectorAttachmentView:) NSView *_inspectorAttachmentView WK_API_AVAILABLE(macos(10.13.4));
+
+@property (nonatomic, setter=_setThumbnailView:) _WKThumbnailView *_thumbnailView WK_API_AVAILABLE(macos(10.13.4));
+@property (nonatomic, setter=_setIgnoresAllEvents:) BOOL _ignoresAllEvents WK_API_AVAILABLE(macos(10.13.4));
+
+// Defaults to YES; if set to NO, WebKit will draw the grey wash and highlights itself.
+@property (nonatomic, setter=_setUsePlatformFindUI:) BOOL _usePlatformFindUI WK_API_AVAILABLE(macos(10.15));
+
+- (void)_setShouldSuppressFirstResponderChanges:(BOOL)shouldSuppress;
+- (BOOL)_canChangeFrameLayout:(_WKFrameHandle *)frameHandle WK_API_AVAILABLE(macos(10.13.4));
+- (BOOL)_tryToSwipeWithEvent:(NSEvent *)event ignoringPinnedState:(BOOL)ignoringPinnedState WK_API_AVAILABLE(macos(10.13.4));
+
+- (void)_dismissContentRelativeChildWindows WK_API_AVAILABLE(macos(10.13.4));
+- (void)_setFrame:(NSRect)rect andScrollBy:(NSSize)offset WK_API_AVAILABLE(macos(10.13.4));
+
+- (void)_gestureEventWasNotHandledByWebCore:(NSEvent *)event WK_API_AVAILABLE(macos(10.13.4));
+
+- (void)_disableFrameSizeUpdates WK_API_AVAILABLE(macos(10.13.4));
+- (void)_enableFrameSizeUpdates WK_API_AVAILABLE(macos(10.13.4));
+
+- (void)_beginDeferringViewInWindowChanges WK_API_AVAILABLE(macos(10.13.4));
+- (void)_endDeferringViewInWindowChanges WK_API_AVAILABLE(macos(10.13.4));
+- (void)_endDeferringViewInWindowChangesSync WK_API_AVAILABLE(macos(10.13.4));
+
+- (void)_setCustomSwipeViews:(NSArray *)customSwipeViews WK_API_AVAILABLE(macos(10.13.4));
+- (void)_setDidMoveSwipeSnapshotCallback:(void(^)(CGRect))callback WK_API_AVAILABLE(macos(10.13.4));
+- (void)_setCustomSwipeViewsTopContentInset:(float)topContentInset WK_API_AVAILABLE(macos(10.13.4));
+
+- (NSView *)_fullScreenPlaceholderView WK_API_AVAILABLE(macos(10.13.4));
+- (NSWindow *)_fullScreenWindow WK_API_AVAILABLE(macos(10.13.4));
+
+// Clients that want to maintain default behavior can return nil. To disable the immediate action entirely, return NSNull. And to
+// do something custom, return an object that conforms to the NSImmediateActionAnimationController protocol.
+- (id)_immediateActionAnimationControllerForHitTestResult:(_WKHitTestResult *)hitTestResult withType:(_WKImmediateActionType)type userData:(id<NSSecureCoding>)userData;
+
+- (NSPrintOperation *)_printOperationWithPrintInfo:(NSPrintInfo *)printInfo;
+- (NSPrintOperation *)_printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(_WKFrameHandle *)frameHandle WK_API_AVAILABLE(macos(10.12));
+
+// FIXME: This SPI should become a part of the WKUIDelegate. rdar://problem/26561537
+@property (nonatomic, readwrite, setter=_setWantsMediaPlaybackControlsView:) BOOL _wantsMediaPlaybackControlsView WK_API_AVAILABLE(macos(10.12.3));
+@property (nonatomic, readonly) id _mediaPlaybackControlsView WK_API_AVAILABLE(macos(10.13));
+
+- (void)_addMediaPlaybackControlsView:(id)mediaPlaybackControlsView WK_API_AVAILABLE(macos(10.13));
+- (void)_removeMediaPlaybackControlsView WK_API_AVAILABLE(macos(10.12.3));
+
+- (void)_prepareForMoveToWindow:(NSWindow *)targetWindow completionHandler:(void(^)(void))completionHandler WK_API_AVAILABLE(macos(10.13));
+
+@end
+
+#endif // !TARGET_OS_IPHONE
+
+

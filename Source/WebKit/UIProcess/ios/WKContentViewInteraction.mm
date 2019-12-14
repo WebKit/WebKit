@@ -69,7 +69,7 @@
 #import "WKUIDelegatePrivate.h"
 #import "WKWebViewConfiguration.h"
 #import "WKWebViewConfigurationPrivate.h"
-#import "WKWebViewInternal.h"
+#import "WKWebViewIOS.h"
 #import "WKWebViewPrivate.h"
 #import "WKWebViewPrivateForTestingIOS.h"
 #import "WebAutocorrectionContext.h"

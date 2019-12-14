@@ -1,3 +1,1134 @@
+2019-12-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Move code out of WKWebView.mm into platform-specific files, for easier navigation
+        https://bugs.webkit.org/show_bug.cgi?id=205233
+
+        Reviewed by Tim Horton.
+
+        Move as much platform-specific code out of WKWebView.mm as possible, moving it to WKWebViewMac/WKWebViewIOS.
+        WKWebView (WKPrivate) is split into WKWebView (WKPrivateIOS) and WKWebView (WKPrivateMac) so the implementations
+        of those functions can move.
+        
+        Code that remains in WKWebView.mm is either Cocoa-generic, or implements API.
+        
+        This is entirely cut/paste, other than the addition of -_takeFindStringFromSelectionInternal: for macOS
+        to allow WKWebView.mm to call -takeFindStringFromSelection:.
+
+        * SourcesCocoa.txt:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (hardwareKeyboardAvailabilityChangedCallback):
+        (-[WKWebView setAllowsBackForwardNavigationGestures:]):
+        (-[WKWebView allowsBackForwardNavigationGestures]):
+        (-[WKWebView setPageZoom:]):
+        (-[WKWebView pageZoom]):
+        (toFindOptions):
+        (-[WKWebView findString:withConfiguration:completionHandler:]):
+        (+[WKWebView handlesURLScheme:]):
+        (-[WKWebView setMediaType:]):
+        (-[WKWebView mediaType]):
+        (-[WKWebView scrollView]):
+        (-[WKWebView setAllowsMagnification:]):
+        (-[WKWebView allowsMagnification]):
+        (-[WKWebView setMagnification:centeredAtPoint:]):
+        (-[WKWebView setMagnification:]):
+        (-[WKWebView magnification]):
+        (-[WKWebView printOperationWithPrintInfo:]):
+        (-[WKWebView _showSafeBrowsingWarning:completionHandler:]):
+        (-[WKWebView _clearSafeBrowsingWarning]):
+        (-[WKWebView _clearSafeBrowsingWarningIfForMainFrameNavigation]):
+        (-[WKWebView _internalDoAfterNextPresentationUpdate:withoutWaitingForPainting:withoutWaitingForAnimatedResize:]):
+        (dictionaryRepresentationForEditorState):
+        (nsTextAlignment):
+        (selectionAttributes):
+        (-[WKWebView _didChangeEditorState]):
+        (-[WKWebView _toggleStrikeThrough:]):
+        (-[WKWebView _increaseListLevel:]):
+        (-[WKWebView _decreaseListLevel:]):
+        (-[WKWebView _changeListType:]):
+        (-[WKWebView inputAccessoryView]):
+        (-[WKWebView inputView]):
+        (-[WKWebView inputAssistantItem]):
+        (-[WKWebView _selectionAttributes]):
+        (-[WKWebView _viewportSizeForCSSViewportUnits]):
+        (-[WKWebView _setViewportSizeForCSSViewportUnits:]):
+        (-[WKWebView _inspector]):
+        (-[WKWebView _mainFrame]):
+        (-[WKWebView _isEditable]):
+        (-[WKWebView _setEditable:]):
+        (-[WKWebView _executeEditCommand:argument:completion:]):
+        (-[WKWebView _textManipulationDelegate]):
+        (-[WKWebView _setTextManipulationDelegate:]):
+        (-[WKWebView _startTextManipulationsWithConfiguration:completion:]):
+        (-[WKWebView _completeTextManipulation:completion:]):
+        (-[WKWebView _takeFindStringFromSelection:]):
+        (+[WKWebView _stringForFind]):
+        (+[WKWebView _setStringForFind:]):
+        (-[WKWebView _remoteObjectRegistry]):
+        (-[WKWebView _handle]):
+        (-[WKWebView _observedRenderingProgressEvents]):
+        (-[WKWebView _historyDelegate]):
+        (-[WKWebView _setHistoryDelegate:]):
+        (-[WKWebView _updateMediaPlaybackControlsManager]):
+        (-[WKWebView _canTogglePictureInPicture]):
+        (-[WKWebView _isPictureInPictureActive]):
+        (-[WKWebView _togglePictureInPicture]):
+        (-[WKWebView _closeAllMediaPresentations]):
+        (-[WKWebView _stopMediaCapture]):
+        (-[WKWebView _stopAllMediaPlayback]):
+        (-[WKWebView _suspendAllMediaPlayback]):
+        (-[WKWebView _resumeAllMediaPlayback]):
+        (-[WKWebView _unreachableURL]):
+        (-[WKWebView _mainFrameURL]):
+        (-[WKWebView _loadAlternateHTMLString:baseURL:forUnreachableURL:]):
+        (-[WKWebView _loadData:MIMEType:characterEncodingName:baseURL:userData:]):
+        (-[WKWebView _loadRequest:shouldOpenExternalURLs:]):
+        (-[WKWebView _certificateChain]):
+        (-[WKWebView _committedURL]):
+        (-[WKWebView _MIMEType]):
+        (-[WKWebView _userAgent]):
+        (-[WKWebView _applicationNameForUserAgent]):
+        (-[WKWebView _setApplicationNameForUserAgent:]):
+        (-[WKWebView _customUserAgent]):
+        (-[WKWebView _setCustomUserAgent:]):
+        (-[WKWebView _setUserContentExtensionsEnabled:]):
+        (-[WKWebView _userContentExtensionsEnabled]):
+        (-[WKWebView _webProcessIdentifier]):
+        (-[WKWebView _provisionalWebProcessIdentifier]):
+        (-[WKWebView _webProcessIsResponsive]):
+        (-[WKWebView _killWebContentProcess]):
+        (-[WKWebView _reloadWithoutContentBlockers]):
+        (-[WKWebView _reloadExpiredOnly]):
+        (-[WKWebView _killWebContentProcessAndResetState]):
+        (-[WKWebView _convertRectFromRootViewCoordinates:]):
+        (-[WKWebView _convertRectToRootViewCoordinates:]):
+        (-[WKWebView _requestTextInputContextsInRect:completionHandler:]):
+        (-[WKWebView _focusTextInputContext:completionHandler:]):
+        (-[WKWebView _takePDFSnapshotWithConfiguration:completionHandler:]):
+        (-[WKWebView _sessionStateData]):
+        (-[WKWebView _sessionState]):
+        (-[WKWebView _sessionStateWithFilter:]):
+        (-[WKWebView _restoreFromSessionStateData:]):
+        (-[WKWebView _restoreSessionState:andNavigate:]):
+        (-[WKWebView _close]):
+        (-[WKWebView _insertAttachmentWithFilename:contentType:data:options:completion:]):
+        (-[WKWebView _insertAttachmentWithFileWrapper:contentType:options:completion:]):
+        (-[WKWebView _insertAttachmentWithFileWrapper:contentType:completion:]):
+        (-[WKWebView _attachmentForIdentifier:]):
+        (-[WKWebView _simulateDeviceOrientationChangeWithAlpha:beta:gamma:]):
+        (+[WKWebView _handlesSafeBrowsing]):
+        (-[WKWebView _showSafeBrowsingWarningWithTitle:warning:details:completionHandler:]):
+        (-[WKWebView _showSafeBrowsingWarningWithURL:title:warning:details:completionHandler:]):
+        (+[WKWebView _confirmMalwareSentinel]):
+        (+[WKWebView _visitUnsafeWebsiteSentinel]):
+        (-[WKWebView _isJITEnabled:]):
+        (-[WKWebView _evaluateJavaScriptWithoutUserGesture:completionHandler:]):
+        (-[WKWebView _updateWebsitePolicies:]):
+        (-[WKWebView _allowsRemoteInspection]):
+        (-[WKWebView _setAllowsRemoteInspection:]):
+        (-[WKWebView _remoteInspectionNameOverride]):
+        (-[WKWebView _setRemoteInspectionNameOverride:]):
+        (-[WKWebView _addsVisitedLinks]):
+        (-[WKWebView _setAddsVisitedLinks:]):
+        (-[WKWebView _networkRequestsInProgress]):
+        (layoutMilestones):
+        (-[WKWebView _setObservedRenderingProgressEvents:]):
+        (-[WKWebView _getMainResourceDataWithCompletionHandler:]):
+        (-[WKWebView _getWebArchiveDataWithCompletionHandler:]):
+        (-[WKWebView _getContentsAsStringWithCompletionHandler:]):
+        (-[WKWebView _getContentsAsAttributedStringWithCompletionHandler:]):
+        (-[WKWebView _getApplicationManifestWithCompletionHandler:]):
+        (-[WKWebView _paginationMode]):
+        (-[WKWebView _setPaginationMode:]):
+        (-[WKWebView _paginationBehavesLikeColumns]):
+        (-[WKWebView _setPaginationBehavesLikeColumns:]):
+        (-[WKWebView _pageLength]):
+        (-[WKWebView _setPageLength:]):
+        (-[WKWebView _gapBetweenPages]):
+        (-[WKWebView _setGapBetweenPages:]):
+        (-[WKWebView _paginationLineGridEnabled]):
+        (-[WKWebView _setPaginationLineGridEnabled:]):
+        (-[WKWebView _pageCount]):
+        (-[WKWebView _supportsTextZoom]):
+        (-[WKWebView _textZoomFactor]):
+        (-[WKWebView _setTextZoomFactor:]):
+        (-[WKWebView _pageZoomFactor]):
+        (-[WKWebView _setPageZoomFactor:]):
+        (-[WKWebView _diagnosticLoggingDelegate]):
+        (-[WKWebView _setDiagnosticLoggingDelegate:]):
+        (-[WKWebView _findDelegate]):
+        (-[WKWebView _setFindDelegate:]):
+        (-[WKWebView _countStringMatches:options:maxCount:]):
+        (-[WKWebView _findString:options:maxCount:]):
+        (-[WKWebView _hideFindUI]):
+        (-[WKWebView _saveBackForwardSnapshotForItem:]):
+        (-[WKWebView _inputDelegate]):
+        (-[WKWebView _setInputDelegate:]):
+        (-[WKWebView _isDisplayingStandaloneImageDocument]):
+        (-[WKWebView _isDisplayingStandaloneMediaDocument]):
+        (-[WKWebView _isPlayingAudio]):
+        (-[WKWebView _isShowingNavigationGestureSnapshot]):
+        (-[WKWebView _layoutMode]):
+        (-[WKWebView _setLayoutMode:]):
+        (-[WKWebView _fixedLayoutSize]):
+        (-[WKWebView _setFixedLayoutSize:]):
+        (-[WKWebView _setBackgroundExtendsBeyondPage:]):
+        (-[WKWebView _backgroundExtendsBeyondPage]):
+        (-[WKWebView _viewScale]):
+        (-[WKWebView _setViewScale:]):
+        (-[WKWebView _setMinimumEffectiveDeviceWidth:]):
+        (-[WKWebView _minimumEffectiveDeviceWidth]):
+        (-[WKWebView _setScrollPerformanceDataCollectionEnabled:]):
+        (-[WKWebView _scrollPerformanceDataCollectionEnabled]):
+        (-[WKWebView _scrollPerformanceData]):
+        (-[WKWebView _allowsMediaDocumentInlinePlayback]):
+        (-[WKWebView _setAllowsMediaDocumentInlinePlayback:]):
+        (-[WKWebView _setFullscreenDelegate:]):
+        (-[WKWebView _fullscreenDelegate]):
+        (-[WKWebView _isInFullscreen]):
+        (-[WKWebView _mediaCaptureState]):
+        (-[WKWebView _setMediaCaptureEnabled:]):
+        (-[WKWebView _mediaCaptureEnabled]):
+        (-[WKWebView _setPageMuted:]):
+        (-[WKWebView _removeDataDetectedLinks:]):
+        (-[WKWebView _doAfterNextPresentationUpdate:]):
+        (-[WKWebView _doAfterNextPresentationUpdateWithoutWaitingForPainting:]):
+        (toAPIScrollbarStyle): Deleted.
+        (toCoreScrollbarStyle): Deleted.
+        (deviceOrientationForUIInterfaceOrientation): Deleted.
+        (deviceOrientation): Deleted.
+        (-[WKWebView setFrame:]): Deleted.
+        (-[WKWebView setBounds:]): Deleted.
+        (-[WKWebView layoutSubviews]): Deleted.
+        (-[WKWebView _isShowingVideoPictureInPicture]): Deleted.
+        (-[WKWebView _mayAutomaticallyShowVideoPictureInPicture]): Deleted.
+        (-[WKWebView _incrementFocusPreservationCount]): Deleted.
+        (-[WKWebView _decrementFocusPreservationCount]): Deleted.
+        (-[WKWebView _resetFocusPreservationCount]): Deleted.
+        (-[WKWebView _isRetainingActiveFocusedState]): Deleted.
+        (-[WKWebView _effectiveAppearanceIsDark]): Deleted.
+        (-[WKWebView _effectiveUserInterfaceLevelIsElevated]): Deleted.
+        (-[WKWebView _shouldAvoidResizingWhenInputViewBoundsChange]): Deleted.
+        (-[WKWebView _dragInteractionPolicy]): Deleted.
+        (-[WKWebView _setDragInteractionPolicy:]): Deleted.
+        (-[WKWebView _populateArchivedSubviews:]): Deleted.
+        (-[WKWebView _isBackground]): Deleted.
+        (-[WKWebView browsingContextController]): Deleted.
+        (-[WKWebView becomeFirstResponder]): Deleted.
+        (-[WKWebView canBecomeFirstResponder]): Deleted.
+        (-[WKWebView resignFirstResponder]): Deleted.
+        (-[WKWebView canPerformAction:withSender:]): Deleted.
+        (-[WKWebView targetForAction:withSender:]): Deleted.
+        (-[WKWebView willFinishIgnoringCalloutBarFadeAfterPerformingAction]): Deleted.
+        (floorToDevicePixel): Deleted.
+        (pointsEqualInDevicePixels): Deleted.
+        (roundScrollViewContentSize): Deleted.
+        (-[WKWebView _currentContentView]): Deleted.
+        (-[WKWebView _contentProviderRegistry]): Deleted.
+        (-[WKWebView _selectionGranularity]): Deleted.
+        (-[WKWebView _setHasCustomContentView:loadedMIMEType:]): Deleted.
+        (-[WKWebView _didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:data:]): Deleted.
+        (-[WKWebView _handleKeyUIEvent:]): Deleted.
+        (-[WKWebView _willInvokeUIScrollViewDelegateCallback]): Deleted.
+        (-[WKWebView _didInvokeUIScrollViewDelegateCallback]): Deleted.
+        (contentZoomScale): Deleted.
+        (baseScrollViewBackgroundColor): Deleted.
+        (scrollViewBackgroundColor): Deleted.
+        (-[WKWebView _updateScrollViewBackground]): Deleted.
+        (-[WKWebView _videoControlsManagerDidChange]): Deleted.
+        (-[WKWebView _initialContentOffsetForScrollView]): Deleted.
+        (-[WKWebView _contentOffsetAdjustedForObscuredInset:]): Deleted.
+        (-[WKWebView _effectiveObscuredInsetEdgesAffectedBySafeArea]): Deleted.
+        (-[WKWebView _computedObscuredInset]): Deleted.
+        (-[WKWebView _computedContentInset]): Deleted.
+        (-[WKWebView _computedUnobscuredSafeAreaInset]): Deleted.
+        (-[WKWebView _processWillSwapOrDidExit]): Deleted.
+        (-[WKWebView _processWillSwap]): Deleted.
+        (-[WKWebView _processDidExit]): Deleted.
+        (-[WKWebView _didRelaunchProcess]): Deleted.
+        (-[WKWebView _didCommitLoadForMainFrame]): Deleted.
+        (contentOffsetBoundedInValidRange): Deleted.
+        (changeContentOffsetBoundedInValidRange): Deleted.
+        (-[WKWebView visibleRectInViewCoordinates]): Deleted.
+        (areEssentiallyEqualAsFloat): Deleted.
+        (-[WKWebView _didCommitLayerTreeDuringAnimatedResize:]): Deleted.
+        (-[WKWebView _didCommitLayerTree:]): Deleted.
+        (-[WKWebView _layerTreeCommitComplete]): Deleted.
+        (-[WKWebView _couldNotRestorePageState]): Deleted.
+        (-[WKWebView _restorePageScrollPosition:scrollOrigin:previousObscuredInset:scale:]): Deleted.
+        (-[WKWebView _restorePageStateToUnobscuredCenter:scale:]): Deleted.
+        (-[WKWebView _takeViewSnapshot]): Deleted.
+        (-[WKWebView _zoomToPoint:atScale:animated:]): Deleted.
+        (-[WKWebView _zoomToRect:atScale:origin:animated:]): Deleted.
+        (constrainContentOffset): Deleted.
+        (-[WKWebView _scrollToContentScrollPosition:scrollOrigin:]): Deleted.
+        (-[WKWebView _scrollToRect:origin:minimumScrollDistance:]): Deleted.
+        (-[WKWebView _zoomOutWithOrigin:animated:]): Deleted.
+        (-[WKWebView _zoomToInitialScaleWithOrigin:animated:]): Deleted.
+        (-[WKWebView _zoomToFocusRect:selectionRect:insideFixed:fontSize:minimumScale:maximumScale:allowScaling:forceScroll:]): Deleted.
+        (-[WKWebView _initialScaleFactor]): Deleted.
+        (-[WKWebView _contentZoomScale]): Deleted.
+        (-[WKWebView _targetContentZoomScaleForRect:currentScale:fitEntireRect:minimumScale:maximumScale:]): Deleted.
+        (-[WKWebView _zoomToRect:withOrigin:fitEntireRect:minimumScale:maximumScale:minimumScrollDistance:]): Deleted.
+        (-[WKWebView didMoveToWindow]): Deleted.
+        (-[WKWebView _setOpaqueInternal:]): Deleted.
+        (-[WKWebView setOpaque:]): Deleted.
+        (-[WKWebView setBackgroundColor:]): Deleted.
+        (-[WKWebView _allowsDoubleTapGestures]): Deleted.
+        (-[WKWebView _stylusTapGestureShouldCreateEditableImage]): Deleted.
+        (-[WKWebView usesStandardContentView]): Deleted.
+        (-[WKWebView scrollView:contentSizeForZoomScale:withProposedSize:]): Deleted.
+        (-[WKWebView viewForZoomingInScrollView:]): Deleted.
+        (-[WKWebView scrollViewWillBeginZooming:withView:]): Deleted.
+        (-[WKWebView scrollViewWillBeginDragging:]): Deleted.
+        (-[WKWebView _didFinishScrolling]): Deleted.
+        (-[WKWebView scrollViewWillEndDragging:withVelocity:targetContentOffset:]): Deleted.
+        (-[WKWebView scrollViewDidEndDragging:willDecelerate:]): Deleted.
+        (-[WKWebView scrollViewDidEndDecelerating:]): Deleted.
+        (-[WKWebView scrollViewDidScrollToTop:]): Deleted.
+        (-[WKWebView _scrollView:adjustedOffsetForOffset:translation:startPoint:locationInView:horizontalVelocity:verticalVelocity:]): Deleted.
+        (-[WKWebView scrollViewDidScroll:]): Deleted.
+        (-[WKWebView scrollViewDidZoom:]): Deleted.
+        (-[WKWebView scrollViewDidEndZooming:withView:atScale:]): Deleted.
+        (-[WKWebView scrollViewDidEndScrollingAnimation:]): Deleted.
+        (-[WKWebView _scrollViewDidInterruptDecelerating:]): Deleted.
+        (-[WKWebView _enclosingViewForExposedRectComputation]): Deleted.
+        (-[WKWebView _visibleRectInEnclosingView:]): Deleted.
+        (-[WKWebView _visibleContentRect]): Deleted.
+        (-[WKWebView _didScroll]): Deleted.
+        (-[WKWebView _enclosingScrollerScrollingEnded:]): Deleted.
+        (-[WKWebView _scrollViewSystemContentInset]): Deleted.
+        (-[WKWebView activeViewLayoutSize:]): Deleted.
+        (-[WKWebView _dispatchSetViewLayoutSize:]): Deleted.
+        (-[WKWebView _dispatchSetMaximumUnobscuredSize:]): Deleted.
+        (-[WKWebView _dispatchSetDeviceOrientation:]): Deleted.
+        (-[WKWebView _frameOrBoundsChanged]): Deleted.
+        (-[WKWebView _contentRectForUserInteraction]): Deleted.
+        (-[WKWebView _scrollViewIsRubberBanding]): Deleted.
+        (-[WKWebView safeAreaInsetsDidChange]): Deleted.
+        (-[WKWebView _scheduleVisibleContentRectUpdate]): Deleted.
+        (-[WKWebView _scrollViewIsInStableState:]): Deleted.
+        (-[WKWebView _addUpdateVisibleContentRectPreCommitHandler]): Deleted.
+        (-[WKWebView _scheduleVisibleContentRectUpdateAfterScrollInView:]): Deleted.
+        (scrollViewCanScroll): Deleted.
+        (-[WKWebView _contentBoundsExtendedForRubberbandingWithScale:]): Deleted.
+        (-[WKWebView _updateVisibleContentRects]): Deleted.
+        (-[WKWebView _didStartProvisionalLoadForMainFrame]): Deleted.
+        (activeMaximumUnobscuredSize): Deleted.
+        (activeOrientation): Deleted.
+        (-[WKWebView _cancelAnimatedResize]): Deleted.
+        (-[WKWebView _didCompleteAnimatedResize]): Deleted.
+        (-[WKWebView _didFinishLoadForMainFrame]): Deleted.
+        (-[WKWebView _didFailLoadForMainFrame]): Deleted.
+        (-[WKWebView _didSameDocumentNavigationForMainFrame:]): Deleted.
+        (-[WKWebView _keyboardChangedWithInfo:adjustScrollView:]): Deleted.
+        (-[WKWebView _shouldUpdateKeyboardWithInfo:]): Deleted.
+        (-[WKWebView _keyboardWillChangeFrame:]): Deleted.
+        (-[WKWebView _keyboardDidChangeFrame:]): Deleted.
+        (-[WKWebView _keyboardWillShow:]): Deleted.
+        (-[WKWebView _keyboardDidShow:]): Deleted.
+        (-[WKWebView _keyboardWillHide:]): Deleted.
+        (-[WKWebView _windowDidRotate:]): Deleted.
+        (-[WKWebView _contentSizeCategoryDidChange:]): Deleted.
+        (-[WKWebView _contentSizeCategory]): Deleted.
+        (-[WKWebView _accessibilitySettingsDidChange:]): Deleted.
+        (-[WKWebView _isNavigationSwipeGestureRecognizer:]): Deleted.
+        (-[WKWebView _navigationGestureDidBegin]): Deleted.
+        (-[WKWebView _navigationGestureDidEnd]): Deleted.
+        (-[WKWebView _showPasswordViewWithDocumentName:passwordHandler:]): Deleted.
+        (-[WKWebView _hidePasswordView]): Deleted.
+        (-[WKWebView _passwordView]): Deleted.
+        (-[WKWebView _updateScrollViewInsetAdjustmentBehavior]): Deleted.
+        (-[WKWebView _setAvoidsUnsafeArea:]): Deleted.
+        (-[WKWebView _haveSetObscuredInsets]): Deleted.
+        (-[WKWebView acceptsFirstResponder]): Deleted.
+        (-[WKWebView viewWillStartLiveResize]): Deleted.
+        (-[WKWebView viewDidEndLiveResize]): Deleted.
+        (-[WKWebView isFlipped]): Deleted.
+        (-[WKWebView intrinsicContentSize]): Deleted.
+        (-[WKWebView prepareContentInRect:]): Deleted.
+        (-[WKWebView setFrameSize:]): Deleted.
+        (-[WKWebView _web_grantDOMPasteAccess]): Deleted.
+        (-[WKWebView _prepareForImmediateActionAnimation]): Deleted.
+        (-[WKWebView _cancelImmediateActionAnimation]): Deleted.
+        (-[WKWebView _completeImmediateActionAnimation]): Deleted.
+        (-[WKWebView ALLOW_DEPRECATED_IMPLEMENTATIONS_END]): Deleted.
+        (-[WKWebView writeSelectionToPasteboard:types:]): Deleted.
+        (-[WKWebView centerSelectionInVisibleArea:]): Deleted.
+        (-[WKWebView validRequestorForSendType:returnType:]): Deleted.
+        (-[WKWebView readSelectionFromPasteboard:]): Deleted.
+        (-[WKWebView changeFont:]): Deleted.
+        (-[WKWebView changeColor:]): Deleted.
+        (-[WKWebView changeAttributes:]): Deleted.
+        (-[WKWebView startSpeaking:]): Deleted.
+        (-[WKWebView stopSpeaking:]): Deleted.
+        (-[WKWebView showGuessPanel:]): Deleted.
+        (-[WKWebView checkSpelling:]): Deleted.
+        (-[WKWebView changeSpelling:]): Deleted.
+        (-[WKWebView toggleContinuousSpellChecking:]): Deleted.
+        (-[WKWebView isGrammarCheckingEnabled]): Deleted.
+        (-[WKWebView setGrammarCheckingEnabled:]): Deleted.
+        (-[WKWebView toggleGrammarChecking:]): Deleted.
+        (-[WKWebView toggleAutomaticSpellingCorrection:]): Deleted.
+        (-[WKWebView orderFrontSubstitutionsPanel:]): Deleted.
+        (-[WKWebView toggleSmartInsertDelete:]): Deleted.
+        (-[WKWebView isAutomaticQuoteSubstitutionEnabled]): Deleted.
+        (-[WKWebView setAutomaticQuoteSubstitutionEnabled:]): Deleted.
+        (-[WKWebView toggleAutomaticQuoteSubstitution:]): Deleted.
+        (-[WKWebView isAutomaticDashSubstitutionEnabled]): Deleted.
+        (-[WKWebView setAutomaticDashSubstitutionEnabled:]): Deleted.
+        (-[WKWebView toggleAutomaticDashSubstitution:]): Deleted.
+        (-[WKWebView isAutomaticLinkDetectionEnabled]): Deleted.
+        (-[WKWebView setAutomaticLinkDetectionEnabled:]): Deleted.
+        (-[WKWebView toggleAutomaticLinkDetection:]): Deleted.
+        (-[WKWebView isAutomaticTextReplacementEnabled]): Deleted.
+        (-[WKWebView setAutomaticTextReplacementEnabled:]): Deleted.
+        (-[WKWebView toggleAutomaticTextReplacement:]): Deleted.
+        (-[WKWebView uppercaseWord:]): Deleted.
+        (-[WKWebView lowercaseWord:]): Deleted.
+        (-[WKWebView capitalizeWord:]): Deleted.
+        (-[WKWebView _wantsKeyDownForEvent:]): Deleted.
+        (-[WKWebView scrollWheel:]): Deleted.
+        (-[WKWebView swipeWithEvent:]): Deleted.
+        (-[WKWebView mouseMoved:]): Deleted.
+        (-[WKWebView mouseDown:]): Deleted.
+        (-[WKWebView mouseUp:]): Deleted.
+        (-[WKWebView mouseDragged:]): Deleted.
+        (-[WKWebView mouseEntered:]): Deleted.
+        (-[WKWebView mouseExited:]): Deleted.
+        (-[WKWebView otherMouseDown:]): Deleted.
+        (-[WKWebView otherMouseDragged:]): Deleted.
+        (-[WKWebView otherMouseUp:]): Deleted.
+        (-[WKWebView rightMouseDown:]): Deleted.
+        (-[WKWebView rightMouseDragged:]): Deleted.
+        (-[WKWebView rightMouseUp:]): Deleted.
+        (-[WKWebView pressureChangeWithEvent:]): Deleted.
+        (-[WKWebView acceptsFirstMouse:]): Deleted.
+        (-[WKWebView shouldDelayWindowOrderingForEvent:]): Deleted.
+        (-[WKWebView doCommandBySelector:]): Deleted.
+        (-[WKWebView insertText:]): Deleted.
+        (-[WKWebView insertText:replacementRange:]): Deleted.
+        (-[WKWebView inputContext]): Deleted.
+        (-[WKWebView performKeyEquivalent:]): Deleted.
+        (-[WKWebView keyUp:]): Deleted.
+        (-[WKWebView keyDown:]): Deleted.
+        (-[WKWebView flagsChanged:]): Deleted.
+        (-[WKWebView setMarkedText:selectedRange:replacementRange:]): Deleted.
+        (-[WKWebView unmarkText]): Deleted.
+        (-[WKWebView selectedRange]): Deleted.
+        (-[WKWebView hasMarkedText]): Deleted.
+        (-[WKWebView markedRange]): Deleted.
+        (-[WKWebView attributedSubstringForProposedRange:actualRange:]): Deleted.
+        (-[WKWebView characterIndexForPoint:]): Deleted.
+        (-[WKWebView typingAttributesWithCompletionHandler:]): Deleted.
+        (-[WKWebView firstRectForCharacterRange:actualRange:]): Deleted.
+        (-[WKWebView selectedRangeWithCompletionHandler:]): Deleted.
+        (-[WKWebView markedRangeWithCompletionHandler:]): Deleted.
+        (-[WKWebView hasMarkedTextWithCompletionHandler:]): Deleted.
+        (-[WKWebView attributedSubstringForProposedRange:completionHandler:]): Deleted.
+        (-[WKWebView firstRectForCharacterRange:completionHandler:]): Deleted.
+        (-[WKWebView characterIndexForPoint:completionHandler:]): Deleted.
+        (-[WKWebView validAttributesForMarkedText]): Deleted.
+        (-[WKWebView draggedImage:endedAt:operation:]): Deleted.
+        (-[WKWebView draggingEntered:]): Deleted.
+        (-[WKWebView draggingUpdated:]): Deleted.
+        (-[WKWebView draggingExited:]): Deleted.
+        (-[WKWebView prepareForDragOperation:]): Deleted.
+        (-[WKWebView performDragOperation:]): Deleted.
+        (-[WKWebView _hitTest:dragTypes:]): Deleted.
+        (-[WKWebView _windowResizeMouseLocationIsInVisibleScrollerThumb:]): Deleted.
+        (-[WKWebView viewWillMoveToWindow:]): Deleted.
+        (-[WKWebView viewDidMoveToWindow]): Deleted.
+        (-[WKWebView drawRect:]): Deleted.
+        (-[WKWebView isOpaque]): Deleted.
+        (-[WKWebView mouseDownCanMoveWindow]): Deleted.
+        (-[WKWebView viewDidHide]): Deleted.
+        (-[WKWebView viewDidUnhide]): Deleted.
+        (-[WKWebView viewDidChangeBackingProperties]): Deleted.
+        (-[WKWebView _activeSpaceDidChange:]): Deleted.
+        (-[WKWebView accessibilityFocusedUIElement]): Deleted.
+        (-[WKWebView accessibilityHitTest:]): Deleted.
+        (-[WKWebView accessibilityAttributeValue:]): Deleted.
+        (-[WKWebView accessibilityAttributeValue:forParameter:]): Deleted.
+        (-[WKWebView hitTest:]): Deleted.
+        (-[WKWebView conversationIdentifier]): Deleted.
+        (-[WKWebView quickLookWithEvent:]): Deleted.
+        (-[WKWebView addTrackingRect:owner:userData:assumeInside:]): Deleted.
+        (-[WKWebView _addTrackingRect:owner:userData:assumeInside:useTrackingNum:]): Deleted.
+        (-[WKWebView _addTrackingRects:owner:userDataList:assumeInsideList:trackingNums:count:]): Deleted.
+        (-[WKWebView removeTrackingRect:]): Deleted.
+        (-[WKWebView _removeTrackingRects:count:]): Deleted.
+        (-[WKWebView view:stringForToolTip:point:userData:]): Deleted.
+        (-[WKWebView pasteboardChangedOwner:]): Deleted.
+        (-[WKWebView pasteboard:provideDataForType:]): Deleted.
+        (-[WKWebView namesOfPromisedFilesDroppedAtDestination:]): Deleted.
+        (-[WKWebView wantsUpdateLayer]): Deleted.
+        (-[WKWebView updateLayer]): Deleted.
+        (-[WKWebView smartMagnifyWithEvent:]): Deleted.
+        (-[WKWebView magnifyWithEvent:]): Deleted.
+        (-[WKWebView rotateWithEvent:]): Deleted.
+        (-[WKWebView _usePlatformFindUI]): Deleted.
+        (-[WKWebView _setUsePlatformFindUI:]): Deleted.
+        (-[WKWebView _ensureTextFinderClient]): Deleted.
+        (-[WKWebView findMatchesForString:relativeToMatch:findOptions:maxResults:resultCollector:]): Deleted.
+        (-[WKWebView replaceMatches:withString:inSelectionOnly:resultCollector:]): Deleted.
+        (-[WKWebView scrollFindMatchToVisible:]): Deleted.
+        (-[WKWebView documentContainerView]): Deleted.
+        (-[WKWebView getSelectedText:]): Deleted.
+        (-[WKWebView selectFindMatch:completionHandler:]): Deleted.
+        (-[WKWebView _web_superInputContext]): Deleted.
+        (-[WKWebView _web_superQuickLookWithEvent:]): Deleted.
+        (-[WKWebView _web_superSwipeWithEvent:]): Deleted.
+        (-[WKWebView _web_superMagnifyWithEvent:]): Deleted.
+        (-[WKWebView _web_superSmartMagnifyWithEvent:]): Deleted.
+        (-[WKWebView _web_superRemoveTrackingRect:]): Deleted.
+        (-[WKWebView _web_superAccessibilityAttributeValue:]): Deleted.
+        (-[WKWebView _web_superDoCommandBySelector:]): Deleted.
+        (-[WKWebView _web_superPerformKeyEquivalent:]): Deleted.
+        (-[WKWebView _web_superKeyDown:]): Deleted.
+        (-[WKWebView _web_superHitTest:]): Deleted.
+        (-[WKWebView _web_immediateActionAnimationControllerForHitTestResultInternal:withType:userData:]): Deleted.
+        (-[WKWebView _web_prepareForImmediateActionAnimation]): Deleted.
+        (-[WKWebView _web_cancelImmediateActionAnimation]): Deleted.
+        (-[WKWebView _web_completeImmediateActionAnimation]): Deleted.
+        (-[WKWebView _web_didChangeContentSize:]): Deleted.
+        (-[WKWebView _web_dragDestinationActionForDraggingInfo:]): Deleted.
+        (-[WKWebView _web_didPerformDragOperation:]): Deleted.
+        (-[WKWebView _web_dismissContentRelativeChildWindows]): Deleted.
+        (-[WKWebView _web_dismissContentRelativeChildWindowsWithAnimation:]): Deleted.
+        (-[WKWebView _web_editorStateDidChange]): Deleted.
+        (-[WKWebView _web_gestureEventWasNotHandledByWebCore:]): Deleted.
+        (-[WKWebView filePromiseProvider:fileNameForType:]): Deleted.
+        (-[WKWebView filePromiseProvider:writePromiseToURL:completionHandler:]): Deleted.
+        (-[WKWebView draggingSession:sourceOperationMaskForDraggingContext:]): Deleted.
+        (-[WKWebView draggingSession:endedAtPoint:operation:]): Deleted.
+        (-[WKWebView makeTouchBar]): Deleted.
+        (-[WKWebView candidateListTouchBarItem]): Deleted.
+        (-[WKWebView _web_didAddMediaControlsManager:]): Deleted.
+        (-[WKWebView _web_didRemoveMediaControlsManager]): Deleted.
+        (-[WKWebView _interactWithMediaControlsForTesting]): Deleted.
+        (-[WKWebView _useSystemAppearance]): Deleted.
+        (-[WKWebView _setUseSystemAppearance:]): Deleted.
+        (-[WKWebView _pageRefForTransitionToWKWebView]): Deleted.
+        (-[WKWebView _canChangeFrameLayout:]): Deleted.
+        (-[WKWebView _tryToSwipeWithEvent:ignoringPinnedState:]): Deleted.
+        (-[WKWebView _ignoresNonWheelEvents]): Deleted.
+        (-[WKWebView _setIgnoresNonWheelEvents:]): Deleted.
+        (-[WKWebView _hasActiveVideoForControlsManager]): Deleted.
+        (-[WKWebView _dismissContentRelativeChildWindows]): Deleted.
+        (-[WKWebView _gestureEventWasNotHandledByWebCore:]): Deleted.
+        (-[WKWebView _disableFrameSizeUpdates]): Deleted.
+        (-[WKWebView _enableFrameSizeUpdates]): Deleted.
+        (-[WKWebView _beginDeferringViewInWindowChanges]): Deleted.
+        (-[WKWebView _endDeferringViewInWindowChanges]): Deleted.
+        (-[WKWebView _endDeferringViewInWindowChangesSync]): Deleted.
+        (-[WKWebView _fullScreenPlaceholderView]): Deleted.
+        (-[WKWebView _fullScreenWindow]): Deleted.
+        (-[WKWebView _underlayColor]): Deleted.
+        (-[WKWebView _setUnderlayColor:]): Deleted.
+        (-[WKWebView _setCustomSwipeViews:]): Deleted.
+        (-[WKWebView _setCustomSwipeViewsTopContentInset:]): Deleted.
+        (-[WKWebView _setDidMoveSwipeSnapshotCallback:]): Deleted.
+        (-[WKWebView _setFrame:andScrollBy:]): Deleted.
+        (-[WKWebView _setTotalHeightOfBanners:]): Deleted.
+        (-[WKWebView _totalHeightOfBanners]): Deleted.
+        (-[WKWebView _setShouldSuppressFirstResponderChanges:]): Deleted.
+        (-[WKWebView _setFont:sender:]): Deleted.
+        (-[WKWebView _setFontSize:sender:]): Deleted.
+        (-[WKWebView _setTextColor:sender:]): Deleted.
+        (-[WKWebView _requestActivatedElementAtPosition:completionBlock:]): Deleted.
+        (-[WKWebView _contentVisibleRect]): Deleted.
+        (-[WKWebView _convertPointFromContentsToView:]): Deleted.
+        (-[WKWebView _convertPointFromViewToContents:]): Deleted.
+        (-[WKWebView didStartFormControlInteraction]): Deleted.
+        (-[WKWebView didEndFormControlInteraction]): Deleted.
+        (-[WKWebView _uiTextCaretRect]): Deleted.
+        (-[WKWebView _accessibilityRetrieveRectsAtSelectionOffset:withText:completionHandler:]): Deleted.
+        (-[WKWebView _accessibilityStoreSelection]): Deleted.
+        (-[WKWebView _accessibilityClearSelection]): Deleted.
+        (-[WKWebView _contentViewIsFirstResponder]): Deleted.
+        (-[WKWebView _retainActiveFocusedState]): Deleted.
+        (-[WKWebView _becomeFirstResponderWithSelectionMovingForward:completionHandler:]): Deleted.
+        (-[WKWebView _snapshotLayerContentsForBackForwardListItem:]): Deleted.
+        (-[WKWebView _dataDetectionResults]): Deleted.
+        (-[WKWebView _accessibilityRetrieveSpeakSelectionContent]): Deleted.
+        (-[WKWebView _accessibilityDidGetSpeakSelectionContent:]): Deleted.
+        (-[WKWebView _safeBrowsingWarning]): Deleted.
+        (-[WKWebView _doAfterNextStablePresentationUpdate:]): Deleted.
+        (-[WKWebView _detectDataWithTypes:completionHandler:]): Deleted.
+        (-[WKWebView removeFromSuperview]): Deleted.
+        (-[WKWebView _minimumLayoutSizeOverride]): Deleted.
+        (-[WKWebView _setViewLayoutSizeOverride:]): Deleted.
+        (-[WKWebView _obscuredInsets]): Deleted.
+        (-[WKWebView _setObscuredInsets:]): Deleted.
+        (-[WKWebView _obscuredInsetEdgesAffectedBySafeArea]): Deleted.
+        (-[WKWebView _setObscuredInsetEdgesAffectedBySafeArea:]): Deleted.
+        (-[WKWebView _unobscuredSafeAreaInsets]): Deleted.
+        (-[WKWebView _setUnobscuredSafeAreaInsets:]): Deleted.
+        (-[WKWebView _safeAreaShouldAffectObscuredInsets]): Deleted.
+        (-[WKWebView _setInterfaceOrientationOverride:]): Deleted.
+        (-[WKWebView _interfaceOrientationOverride]): Deleted.
+        (-[WKWebView _clearInterfaceOrientationOverride]): Deleted.
+        (-[WKWebView _maximumUnobscuredSizeOverride]): Deleted.
+        (-[WKWebView _setMaximumUnobscuredSizeOverride:]): Deleted.
+        (-[WKWebView _setAllowsViewportShrinkToFit:]): Deleted.
+        (-[WKWebView _allowsViewportShrinkToFit]): Deleted.
+        (-[WKWebView _beginInteractiveObscuredInsetsChange]): Deleted.
+        (-[WKWebView _endInteractiveObscuredInsetsChange]): Deleted.
+        (-[WKWebView _hideContentUntilNextUpdate]): Deleted.
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]): Deleted.
+        (-[WKWebView _endAnimatedResize]): Deleted.
+        (-[WKWebView _resizeWhileHidingContentWithUpdates:]): Deleted.
+        (-[WKWebView _firePresentationUpdateForPendingStableStatePresentationCallbacks]): Deleted.
+        (-[WKWebView _setOverlaidAccessoryViewsInset:]): Deleted.
+        (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]): Deleted.
+        (-[WKWebView _overrideLayoutParametersWithMinimumLayoutSize:maximumUnobscuredSizeOverride:]): Deleted.
+        (-[WKWebView _clearOverrideLayoutParameters]): Deleted.
+        (viewportArgumentsFromDictionary): Deleted.
+        (-[WKWebView _overrideViewportWithArguments:]): Deleted.
+        (-[WKWebView _viewForFindUI]): Deleted.
+        (-[WKWebView _isDisplayingPDF]): Deleted.
+        (-[WKWebView _dataForDisplayedPDF]): Deleted.
+        (-[WKWebView _suggestedFilenameForDisplayedPDF]): Deleted.
+        (-[WKWebView _webViewPrintFormatter]): Deleted.
+        (toUserInterfaceLayoutDirection): Deleted.
+        (-[WKWebView setSemanticContentAttribute:]): Deleted.
+        (-[WKWebView _drawsBackground]): Deleted.
+        (-[WKWebView _setDrawsBackground:]): Deleted.
+        (-[WKWebView _backgroundColor]): Deleted.
+        (-[WKWebView _setBackgroundColor:]): Deleted.
+        (-[WKWebView _setDrawsTransparentBackground:]): Deleted.
+        (-[WKWebView _inspectorAttachmentView]): Deleted.
+        (-[WKWebView _setInspectorAttachmentView:]): Deleted.
+        (-[WKWebView _setOverlayScrollbarStyle:]): Deleted.
+        (-[WKWebView _overlayScrollbarStyle]): Deleted.
+        (-[WKWebView _windowOcclusionDetectionEnabled]): Deleted.
+        (-[WKWebView _setWindowOcclusionDetectionEnabled:]): Deleted.
+        (-[WKWebView shareSheetDidDismiss:]): Deleted.
+        (-[WKWebView _setOverrideDeviceScaleFactor:]): Deleted.
+        (-[WKWebView _overrideDeviceScaleFactor]): Deleted.
+        (-[WKWebView _setTopContentInset:]): Deleted.
+        (-[WKWebView _topContentInset]): Deleted.
+        (-[WKWebView _pageExtendedBackgroundColor]): Deleted.
+        (-[WKWebView _pinnedState]): Deleted.
+        (-[WKWebView _rubberBandingEnabled]): Deleted.
+        (-[WKWebView _setRubberBandingEnabled:]): Deleted.
+        (-[WKWebView _immediateActionAnimationControllerForHitTestResult:withType:userData:]): Deleted.
+        (-[WKWebView _setAutomaticallyAdjustsContentInsets:]): Deleted.
+        (-[WKWebView _automaticallyAdjustsContentInsets]): Deleted.
+        (-[WKWebView _minimumLayoutWidth]): Deleted.
+        (-[WKWebView _setMinimumLayoutWidth:]): Deleted.
+        (-[WKWebView _shouldExpandContentToViewHeightForAutoLayout]): Deleted.
+        (-[WKWebView _setShouldExpandContentToViewHeightForAutoLayout:]): Deleted.
+        (-[WKWebView _alwaysShowsHorizontalScroller]): Deleted.
+        (-[WKWebView _setAlwaysShowsHorizontalScroller:]): Deleted.
+        (-[WKWebView _alwaysShowsVerticalScroller]): Deleted.
+        (-[WKWebView _setAlwaysShowsVerticalScroller:]): Deleted.
+        (-[WKWebView _printOperationWithPrintInfo:]): Deleted.
+        (-[WKWebView _printOperationWithPrintInfo:forFrame:]): Deleted.
+        (-[WKWebView setUserInterfaceLayoutDirection:]): Deleted.
+        (-[WKWebView _wantsMediaPlaybackControlsView]): Deleted.
+        (-[WKWebView _setWantsMediaPlaybackControlsView:]): Deleted.
+        (-[WKWebView _mediaPlaybackControlsView]): Deleted.
+        (-[WKWebView _addMediaPlaybackControlsView:]): Deleted.
+        (-[WKWebView _removeMediaPlaybackControlsView]): Deleted.
+        (-[WKWebView _prepareForMoveToWindow:completionHandler:]): Deleted.
+        (-[WKWebView _setThumbnailView:]): Deleted.
+        (-[WKWebView _thumbnailView]): Deleted.
+        (-[WKWebView _setIgnoresAllEvents:]): Deleted.
+        (-[WKWebView _ignoresAllEvents]): Deleted.
+        (-[WKWebView _spellCheckerDocumentTag]): Deleted.
+        (-[WKWebView hasFullScreenWindowController]): Deleted.
+        (-[WKWebView closeFullScreenWindowController]): Deleted.
+        (-[WKWebView fullScreenWindowController]): Deleted.
+        (-[WKWebView validateUserInterfaceItem:]): Deleted.
+        (-[WKWebView goBack:]): Deleted.
+        (-[WKWebView goForward:]): Deleted.
+        (-[WKWebView reload:]): Deleted.
+        (-[WKWebView reloadFromOrigin:]): Deleted.
+        (-[WKWebView stopLoading:]): Deleted.
+        (-[WKWebView _printFormatterClass]): Deleted.
+        (-[WKWebView _printProvider]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        * UIProcess/API/ios/WKWebViewIOS.h: Copied from Source/WebKit/UIProcess/API/Cocoa/WKWebViewInternal.h.
+        * UIProcess/API/ios/WKWebViewIOS.mm: Added.
+        (deviceOrientationForUIInterfaceOrientation):
+        (deviceOrientation):
+        (-[WKWebView setFrame:]):
+        (-[WKWebView setBounds:]):
+        (-[WKWebView layoutSubviews]):
+        (-[WKWebView _isShowingVideoPictureInPicture]):
+        (-[WKWebView _mayAutomaticallyShowVideoPictureInPicture]):
+        (-[WKWebView _incrementFocusPreservationCount]):
+        (-[WKWebView _decrementFocusPreservationCount]):
+        (-[WKWebView _resetFocusPreservationCount]):
+        (-[WKWebView _isRetainingActiveFocusedState]):
+        (-[WKWebView _effectiveAppearanceIsDark]):
+        (-[WKWebView _effectiveUserInterfaceLevelIsElevated]):
+        (-[WKWebView _populateArchivedSubviews:]):
+        (-[WKWebView _isBackground]):
+        (-[WKWebView browsingContextController]):
+        (-[WKWebView becomeFirstResponder]):
+        (-[WKWebView canBecomeFirstResponder]):
+        (-[WKWebView resignFirstResponder]):
+        (-[WKWebView canPerformAction:withSender:]):
+        (-[WKWebView targetForAction:withSender:]):
+        (-[WKWebView willFinishIgnoringCalloutBarFadeAfterPerformingAction]):
+        (floorToDevicePixel):
+        (pointsEqualInDevicePixels):
+        (roundScrollViewContentSize):
+        (-[WKWebView _currentContentView]):
+        (-[WKWebView _contentProviderRegistry]):
+        (-[WKWebView _selectionGranularity]):
+        (-[WKWebView _setHasCustomContentView:loadedMIMEType:]):
+        (-[WKWebView _didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:data:]):
+        (-[WKWebView _handleKeyUIEvent:]):
+        (-[WKWebView _willInvokeUIScrollViewDelegateCallback]):
+        (-[WKWebView _didInvokeUIScrollViewDelegateCallback]):
+        (contentZoomScale):
+        (baseScrollViewBackgroundColor):
+        (scrollViewBackgroundColor):
+        (-[WKWebView _updateScrollViewBackground]):
+        (-[WKWebView _videoControlsManagerDidChange]):
+        (-[WKWebView _initialContentOffsetForScrollView]):
+        (-[WKWebView _contentOffsetAdjustedForObscuredInset:]):
+        (-[WKWebView _effectiveObscuredInsetEdgesAffectedBySafeArea]):
+        (-[WKWebView _computedObscuredInset]):
+        (-[WKWebView _computedContentInset]):
+        (-[WKWebView _computedUnobscuredSafeAreaInset]):
+        (-[WKWebView _processWillSwapOrDidExit]):
+        (-[WKWebView _processWillSwap]):
+        (-[WKWebView _processDidExit]):
+        (-[WKWebView _didRelaunchProcess]):
+        (-[WKWebView _didCommitLoadForMainFrame]):
+        (contentOffsetBoundedInValidRange):
+        (changeContentOffsetBoundedInValidRange):
+        (-[WKWebView visibleRectInViewCoordinates]):
+        (areEssentiallyEqualAsFloat):
+        (-[WKWebView _didCommitLayerTreeDuringAnimatedResize:]):
+        (-[WKWebView _didCommitLayerTree:]):
+        (-[WKWebView _layerTreeCommitComplete]):
+        (-[WKWebView _couldNotRestorePageState]):
+        (-[WKWebView _restorePageScrollPosition:scrollOrigin:previousObscuredInset:scale:]):
+        (-[WKWebView _restorePageStateToUnobscuredCenter:scale:]):
+        (-[WKWebView _takeViewSnapshot]):
+        (-[WKWebView _zoomToPoint:atScale:animated:]):
+        (-[WKWebView _zoomToRect:atScale:origin:animated:]):
+        (constrainContentOffset):
+        (-[WKWebView _scrollToContentScrollPosition:scrollOrigin:]):
+        (-[WKWebView _scrollToRect:origin:minimumScrollDistance:]):
+        (-[WKWebView _zoomOutWithOrigin:animated:]):
+        (-[WKWebView _zoomToInitialScaleWithOrigin:animated:]):
+        (-[WKWebView _zoomToFocusRect:selectionRect:insideFixed:fontSize:minimumScale:maximumScale:allowScaling:forceScroll:]):
+        (-[WKWebView _initialScaleFactor]):
+        (-[WKWebView _contentZoomScale]):
+        (-[WKWebView _targetContentZoomScaleForRect:currentScale:fitEntireRect:minimumScale:maximumScale:]):
+        (-[WKWebView _zoomToRect:withOrigin:fitEntireRect:minimumScale:maximumScale:minimumScrollDistance:]):
+        (-[WKWebView didMoveToWindow]):
+        (-[WKWebView _setOpaqueInternal:]):
+        (-[WKWebView setOpaque:]):
+        (-[WKWebView setBackgroundColor:]):
+        (-[WKWebView _allowsDoubleTapGestures]):
+        (-[WKWebView _stylusTapGestureShouldCreateEditableImage]):
+        (-[WKWebView usesStandardContentView]):
+        (-[WKWebView scrollView:contentSizeForZoomScale:withProposedSize:]):
+        (-[WKWebView viewForZoomingInScrollView:]):
+        (-[WKWebView scrollViewWillBeginZooming:withView:]):
+        (-[WKWebView scrollViewWillBeginDragging:]):
+        (-[WKWebView _didFinishScrolling]):
+        (-[WKWebView scrollViewWillEndDragging:withVelocity:targetContentOffset:]):
+        (-[WKWebView scrollViewDidEndDragging:willDecelerate:]):
+        (-[WKWebView scrollViewDidEndDecelerating:]):
+        (-[WKWebView scrollViewDidScrollToTop:]):
+        (-[WKWebView _scrollView:adjustedOffsetForOffset:translation:startPoint:locationInView:horizontalVelocity:verticalVelocity:]):
+        (-[WKWebView scrollViewDidScroll:]):
+        (-[WKWebView scrollViewDidZoom:]):
+        (-[WKWebView scrollViewDidEndZooming:withView:atScale:]):
+        (-[WKWebView scrollViewDidEndScrollingAnimation:]):
+        (-[WKWebView _scrollViewDidInterruptDecelerating:]):
+        (-[WKWebView _visibleRectInEnclosingView:]):
+        (-[WKWebView _visibleContentRect]):
+        (-[WKWebView _didScroll]):
+        (-[WKWebView _enclosingScrollerScrollingEnded:]):
+        (-[WKWebView _scrollViewSystemContentInset]):
+        (-[WKWebView activeViewLayoutSize:]):
+        (-[WKWebView _dispatchSetViewLayoutSize:]):
+        (-[WKWebView _dispatchSetMaximumUnobscuredSize:]):
+        (-[WKWebView _dispatchSetDeviceOrientation:]):
+        (-[WKWebView _frameOrBoundsChanged]):
+        (-[WKWebView _contentRectForUserInteraction]):
+        (-[WKWebView _scrollViewIsRubberBanding]):
+        (-[WKWebView safeAreaInsetsDidChange]):
+        (-[WKWebView _scheduleVisibleContentRectUpdate]):
+        (-[WKWebView _scrollViewIsInStableState:]):
+        (-[WKWebView _addUpdateVisibleContentRectPreCommitHandler]):
+        (-[WKWebView _scheduleVisibleContentRectUpdateAfterScrollInView:]):
+        (scrollViewCanScroll):
+        (-[WKWebView _contentBoundsExtendedForRubberbandingWithScale:]):
+        (-[WKWebView _updateVisibleContentRects]):
+        (-[WKWebView _didStartProvisionalLoadForMainFrame]):
+        (activeMaximumUnobscuredSize):
+        (activeOrientation):
+        (-[WKWebView _cancelAnimatedResize]):
+        (-[WKWebView _didCompleteAnimatedResize]):
+        (-[WKWebView _didFinishLoadForMainFrame]):
+        (-[WKWebView _didFailLoadForMainFrame]):
+        (-[WKWebView _didSameDocumentNavigationForMainFrame:]):
+        (-[WKWebView _keyboardChangedWithInfo:adjustScrollView:]):
+        (-[WKWebView _shouldUpdateKeyboardWithInfo:]):
+        (-[WKWebView _keyboardWillChangeFrame:]):
+        (-[WKWebView _keyboardDidChangeFrame:]):
+        (-[WKWebView _keyboardWillShow:]):
+        (-[WKWebView _keyboardDidShow:]):
+        (-[WKWebView _keyboardWillHide:]):
+        (-[WKWebView _windowDidRotate:]):
+        (-[WKWebView _contentSizeCategoryDidChange:]):
+        (-[WKWebView _accessibilitySettingsDidChange:]):
+        (-[WKWebView _contentSizeCategory]):
+        (-[WKWebView _isNavigationSwipeGestureRecognizer:]):
+        (-[WKWebView _navigationGestureDidBegin]):
+        (-[WKWebView _navigationGestureDidEnd]):
+        (-[WKWebView _showPasswordViewWithDocumentName:passwordHandler:]):
+        (-[WKWebView _hidePasswordView]):
+        (-[WKWebView _passwordView]):
+        (-[WKWebView _updateScrollViewInsetAdjustmentBehavior]):
+        (-[WKWebView _setAvoidsUnsafeArea:]):
+        (-[WKWebView _haveSetObscuredInsets]):
+        (-[WKWebView removeFromSuperview]):
+        (-[WKWebView _firePresentationUpdateForPendingStableStatePresentationCallbacks]):
+        (toUserInterfaceLayoutDirection):
+        (-[WKWebView setSemanticContentAttribute:]):
+        (-[WKWebView _contentVisibleRect]):
+        (-[WKWebView _minimumLayoutSizeOverride]):
+        (-[WKWebView _setViewLayoutSizeOverride:]):
+        (-[WKWebView _maximumUnobscuredSizeOverride]):
+        (-[WKWebView _setMaximumUnobscuredSizeOverride:]):
+        (-[WKWebView _obscuredInsets]):
+        (-[WKWebView _setObscuredInsets:]):
+        (-[WKWebView _obscuredInsetEdgesAffectedBySafeArea]):
+        (-[WKWebView _setObscuredInsetEdgesAffectedBySafeArea:]):
+        (-[WKWebView _unobscuredSafeAreaInsets]):
+        (-[WKWebView _setUnobscuredSafeAreaInsets:]):
+        (-[WKWebView _safeAreaShouldAffectObscuredInsets]):
+        (-[WKWebView _enclosingViewForExposedRectComputation]):
+        (-[WKWebView _setInterfaceOrientationOverride:]):
+        (-[WKWebView _interfaceOrientationOverride]):
+        (-[WKWebView _clearInterfaceOrientationOverride]):
+        (-[WKWebView _setAllowsViewportShrinkToFit:]):
+        (-[WKWebView _allowsViewportShrinkToFit]):
+        (-[WKWebView _isDisplayingPDF]):
+        (-[WKWebView _dataForDisplayedPDF]):
+        (-[WKWebView _suggestedFilenameForDisplayedPDF]):
+        (-[WKWebView _webViewPrintFormatter]):
+        (-[WKWebView _dragInteractionPolicy]):
+        (-[WKWebView _setDragInteractionPolicy:]):
+        (-[WKWebView _shouldAvoidResizingWhenInputViewBoundsChange]):
+        (-[WKWebView _contentViewIsFirstResponder]):
+        (-[WKWebView _uiTextCaretRect]):
+        (-[WKWebView _safeBrowsingWarning]):
+        (-[WKWebView _convertPointFromContentsToView:]):
+        (-[WKWebView _convertPointFromViewToContents:]):
+        (-[WKWebView _doAfterNextStablePresentationUpdate:]):
+        (-[WKWebView _setFont:sender:]):
+        (-[WKWebView _setFontSize:sender:]):
+        (-[WKWebView _setTextColor:sender:]):
+        (-[WKWebView _detectDataWithTypes:completionHandler:]):
+        (-[WKWebView _requestActivatedElementAtPosition:completionBlock:]):
+        (-[WKWebView didStartFormControlInteraction]):
+        (-[WKWebView didEndFormControlInteraction]):
+        (-[WKWebView _beginInteractiveObscuredInsetsChange]):
+        (-[WKWebView _endInteractiveObscuredInsetsChange]):
+        (-[WKWebView _hideContentUntilNextUpdate]):
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+        (-[WKWebView _endAnimatedResize]):
+        (-[WKWebView _resizeWhileHidingContentWithUpdates:]):
+        (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]):
+        (-[WKWebView _overrideLayoutParametersWithMinimumLayoutSize:maximumUnobscuredSizeOverride:]):
+        (-[WKWebView _clearOverrideLayoutParameters]):
+        (viewportArgumentsFromDictionary):
+        (-[WKWebView _overrideViewportWithArguments:]):
+        (-[WKWebView _viewForFindUI]):
+        (-[WKWebView _setOverlaidAccessoryViewsInset:]):
+        (-[WKWebView _retainActiveFocusedState]):
+        (-[WKWebView _becomeFirstResponderWithSelectionMovingForward:completionHandler:]):
+        (-[WKWebView _snapshotLayerContentsForBackForwardListItem:]):
+        (-[WKWebView _dataDetectionResults]):
+        (-[WKWebView _accessibilityRetrieveRectsAtSelectionOffset:withText:completionHandler:]):
+        (-[WKWebView _accessibilityStoreSelection]):
+        (-[WKWebView _accessibilityClearSelection]):
+        (-[WKWebView _accessibilityRetrieveSpeakSelectionContent]):
+        (-[WKWebView _accessibilityDidGetSpeakSelectionContent:]):
+        (-[WKWebView _fullScreenPlaceholderView]):
+        (-[WKWebView hasFullScreenWindowController]):
+        (-[WKWebView closeFullScreenWindowController]):
+        (-[WKWebView fullScreenWindowController]):
+        (-[WKWebView _printFormatterClass]):
+        (-[WKWebView _printProvider]):
+        * UIProcess/API/ios/WKWebViewTestingIOS.mm:
+        * UIProcess/API/mac/WKView.mm:
+        (toCoreScrollbarStyle): Deleted.
+        (toAPIScrollbarStyle): Deleted.
+        * UIProcess/API/mac/WKWebViewMac.h: Added.
+        * UIProcess/API/mac/WKWebViewMac.mm: Added.
+        (toAPIScrollbarStyle):
+        (toCoreScrollbarStyle):
+        (-[WKWebView acceptsFirstResponder]):
+        (-[WKWebView becomeFirstResponder]):
+        (-[WKWebView resignFirstResponder]):
+        (-[WKWebView viewWillStartLiveResize]):
+        (-[WKWebView viewDidEndLiveResize]):
+        (-[WKWebView isFlipped]):
+        (-[WKWebView intrinsicContentSize]):
+        (-[WKWebView prepareContentInRect:]):
+        (-[WKWebView setFrameSize:]):
+        (-[WKWebView setUserInterfaceLayoutDirection:]):
+        (-[WKWebView ALLOW_DEPRECATED_IMPLEMENTATIONS_END]):
+        (-[WKWebView writeSelectionToPasteboard:types:]):
+        (-[WKWebView centerSelectionInVisibleArea:]):
+        (-[WKWebView validRequestorForSendType:returnType:]):
+        (-[WKWebView readSelectionFromPasteboard:]):
+        (-[WKWebView changeFont:]):
+        (-[WKWebView changeColor:]):
+        (-[WKWebView changeAttributes:]):
+        (-[WKWebView startSpeaking:]):
+        (-[WKWebView stopSpeaking:]):
+        (-[WKWebView showGuessPanel:]):
+        (-[WKWebView checkSpelling:]):
+        (-[WKWebView changeSpelling:]):
+        (-[WKWebView toggleContinuousSpellChecking:]):
+        (-[WKWebView isGrammarCheckingEnabled]):
+        (-[WKWebView setGrammarCheckingEnabled:]):
+        (-[WKWebView toggleGrammarChecking:]):
+        (-[WKWebView toggleAutomaticSpellingCorrection:]):
+        (-[WKWebView orderFrontSubstitutionsPanel:]):
+        (-[WKWebView toggleSmartInsertDelete:]):
+        (-[WKWebView isAutomaticQuoteSubstitutionEnabled]):
+        (-[WKWebView setAutomaticQuoteSubstitutionEnabled:]):
+        (-[WKWebView toggleAutomaticQuoteSubstitution:]):
+        (-[WKWebView isAutomaticDashSubstitutionEnabled]):
+        (-[WKWebView setAutomaticDashSubstitutionEnabled:]):
+        (-[WKWebView toggleAutomaticDashSubstitution:]):
+        (-[WKWebView isAutomaticLinkDetectionEnabled]):
+        (-[WKWebView setAutomaticLinkDetectionEnabled:]):
+        (-[WKWebView toggleAutomaticLinkDetection:]):
+        (-[WKWebView isAutomaticTextReplacementEnabled]):
+        (-[WKWebView setAutomaticTextReplacementEnabled:]):
+        (-[WKWebView toggleAutomaticTextReplacement:]):
+        (-[WKWebView uppercaseWord:]):
+        (-[WKWebView lowercaseWord:]):
+        (-[WKWebView capitalizeWord:]):
+        (-[WKWebView _wantsKeyDownForEvent:]):
+        (-[WKWebView scrollWheel:]):
+        (-[WKWebView swipeWithEvent:]):
+        (-[WKWebView mouseMoved:]):
+        (-[WKWebView mouseDown:]):
+        (-[WKWebView mouseUp:]):
+        (-[WKWebView mouseDragged:]):
+        (-[WKWebView mouseEntered:]):
+        (-[WKWebView mouseExited:]):
+        (-[WKWebView otherMouseDown:]):
+        (-[WKWebView otherMouseDragged:]):
+        (-[WKWebView otherMouseUp:]):
+        (-[WKWebView rightMouseDown:]):
+        (-[WKWebView rightMouseDragged:]):
+        (-[WKWebView rightMouseUp:]):
+        (-[WKWebView pressureChangeWithEvent:]):
+        (-[WKWebView acceptsFirstMouse:]):
+        (-[WKWebView shouldDelayWindowOrderingForEvent:]):
+        (-[WKWebView doCommandBySelector:]):
+        (-[WKWebView inputContext]):
+        (-[WKWebView performKeyEquivalent:]):
+        (-[WKWebView keyUp:]):
+        (-[WKWebView keyDown:]):
+        (-[WKWebView flagsChanged:]):
+        (-[WKWebView setMarkedText:selectedRange:replacementRange:]):
+        (-[WKWebView unmarkText]):
+        (-[WKWebView selectedRange]):
+        (-[WKWebView hasMarkedText]):
+        (-[WKWebView markedRange]):
+        (-[WKWebView attributedSubstringForProposedRange:actualRange:]):
+        (-[WKWebView characterIndexForPoint:]):
+        (-[WKWebView typingAttributesWithCompletionHandler:]):
+        (-[WKWebView firstRectForCharacterRange:actualRange:]):
+        (-[WKWebView selectedRangeWithCompletionHandler:]):
+        (-[WKWebView markedRangeWithCompletionHandler:]):
+        (-[WKWebView hasMarkedTextWithCompletionHandler:]):
+        (-[WKWebView attributedSubstringForProposedRange:completionHandler:]):
+        (-[WKWebView firstRectForCharacterRange:completionHandler:]):
+        (-[WKWebView characterIndexForPoint:completionHandler:]):
+        (-[WKWebView validAttributesForMarkedText]):
+        (-[WKWebView draggedImage:endedAt:operation:]):
+        (-[WKWebView draggingEntered:]):
+        (-[WKWebView draggingUpdated:]):
+        (-[WKWebView draggingExited:]):
+        (-[WKWebView prepareForDragOperation:]):
+        (-[WKWebView performDragOperation:]):
+        (-[WKWebView _hitTest:dragTypes:]):
+        (-[WKWebView _windowResizeMouseLocationIsInVisibleScrollerThumb:]):
+        (-[WKWebView viewWillMoveToWindow:]):
+        (-[WKWebView viewDidMoveToWindow]):
+        (-[WKWebView drawRect:]):
+        (-[WKWebView isOpaque]):
+        (-[WKWebView mouseDownCanMoveWindow]):
+        (-[WKWebView viewDidHide]):
+        (-[WKWebView viewDidUnhide]):
+        (-[WKWebView viewDidChangeBackingProperties]):
+        (-[WKWebView _activeSpaceDidChange:]):
+        (-[WKWebView accessibilityFocusedUIElement]):
+        (-[WKWebView accessibilityHitTest:]):
+        (-[WKWebView accessibilityAttributeValue:]):
+        (-[WKWebView accessibilityAttributeValue:forParameter:]):
+        (-[WKWebView hitTest:]):
+        (-[WKWebView conversationIdentifier]):
+        (-[WKWebView quickLookWithEvent:]):
+        (-[WKWebView addTrackingRect:owner:userData:assumeInside:]):
+        (-[WKWebView _addTrackingRect:owner:userData:assumeInside:useTrackingNum:]):
+        (-[WKWebView _addTrackingRects:owner:userDataList:assumeInsideList:trackingNums:count:]):
+        (-[WKWebView removeTrackingRect:]):
+        (-[WKWebView _removeTrackingRects:count:]):
+        (-[WKWebView view:stringForToolTip:point:userData:]):
+        (-[WKWebView pasteboardChangedOwner:]):
+        (-[WKWebView pasteboard:provideDataForType:]):
+        (-[WKWebView namesOfPromisedFilesDroppedAtDestination:]):
+        (-[WKWebView wantsUpdateLayer]):
+        (-[WKWebView updateLayer]):
+        (-[WKWebView smartMagnifyWithEvent:]):
+        (-[WKWebView magnifyWithEvent:]):
+        (-[WKWebView rotateWithEvent:]):
+        (-[WKWebView _ensureTextFinderClient]):
+        (-[WKWebView findMatchesForString:relativeToMatch:findOptions:maxResults:resultCollector:]):
+        (-[WKWebView replaceMatches:withString:inSelectionOnly:resultCollector:]):
+        (-[WKWebView scrollFindMatchToVisible:]):
+        (-[WKWebView documentContainerView]):
+        (-[WKWebView getSelectedText:]):
+        (-[WKWebView selectFindMatch:completionHandler:]):
+        (-[WKWebView filePromiseProvider:fileNameForType:]):
+        (-[WKWebView filePromiseProvider:writePromiseToURL:completionHandler:]):
+        (-[WKWebView draggingSession:sourceOperationMaskForDraggingContext:]):
+        (-[WKWebView draggingSession:endedAtPoint:operation:]):
+        (-[WKWebView _prepareForImmediateActionAnimation]):
+        (-[WKWebView _cancelImmediateActionAnimation]):
+        (-[WKWebView _completeImmediateActionAnimation]):
+        (-[WKWebView _setDrawsTransparentBackground:]):
+        (-[WKWebView shareSheetDidDismiss:]):
+        (-[WKWebView makeTouchBar]):
+        (-[WKWebView candidateListTouchBarItem]):
+        (-[WKWebView _web_didAddMediaControlsManager:]):
+        (-[WKWebView _web_didRemoveMediaControlsManager]):
+        (-[WKWebView _interactWithMediaControlsForTesting]):
+        (-[WKWebView validateUserInterfaceItem:]):
+        (-[WKWebView goBack:]):
+        (-[WKWebView goForward:]):
+        (-[WKWebView reload:]):
+        (-[WKWebView reloadFromOrigin:]):
+        (-[WKWebView stopLoading:]):
+        (-[WKWebView _web_superInputContext]):
+        (-[WKWebView _web_superQuickLookWithEvent:]):
+        (-[WKWebView _web_superSwipeWithEvent:]):
+        (-[WKWebView _web_superMagnifyWithEvent:]):
+        (-[WKWebView _web_superSmartMagnifyWithEvent:]):
+        (-[WKWebView _web_superRemoveTrackingRect:]):
+        (-[WKWebView _web_superAccessibilityAttributeValue:]):
+        (-[WKWebView _web_superDoCommandBySelector:]):
+        (-[WKWebView _web_superPerformKeyEquivalent:]):
+        (-[WKWebView _web_superKeyDown:]):
+        (-[WKWebView _web_superHitTest:]):
+        (-[WKWebView _web_immediateActionAnimationControllerForHitTestResultInternal:withType:userData:]):
+        (-[WKWebView _web_prepareForImmediateActionAnimation]):
+        (-[WKWebView _web_cancelImmediateActionAnimation]):
+        (-[WKWebView _web_completeImmediateActionAnimation]):
+        (-[WKWebView _web_didChangeContentSize:]):
+        (-[WKWebView _web_dragDestinationActionForDraggingInfo:]):
+        (-[WKWebView _web_didPerformDragOperation:]):
+        (-[WKWebView _web_dismissContentRelativeChildWindows]):
+        (-[WKWebView _web_dismissContentRelativeChildWindowsWithAnimation:]):
+        (-[WKWebView _web_editorStateDidChange]):
+        (-[WKWebView _web_gestureEventWasNotHandledByWebCore:]):
+        (-[WKWebView _web_grantDOMPasteAccess]):
+        (-[WKWebView _takeFindStringFromSelectionInternal:]):
+        (-[WKWebView insertText:]):
+        (-[WKWebView insertText:replacementRange:]):
+        (-[WKWebView _pageRefForTransitionToWKWebView]):
+        (-[WKWebView _hasActiveVideoForControlsManager]):
+        (-[WKWebView _ignoresNonWheelEvents]):
+        (-[WKWebView _setIgnoresNonWheelEvents:]):
+        (-[WKWebView _safeBrowsingWarning]):
+        (-[WKWebView _pinnedState]):
+        (-[WKWebView _rubberBandingEnabled]):
+        (-[WKWebView _setRubberBandingEnabled:]):
+        (-[WKWebView _pageExtendedBackgroundColor]):
+        (-[WKWebView _backgroundColor]):
+        (-[WKWebView _setBackgroundColor:]):
+        (-[WKWebView _underlayColor]):
+        (-[WKWebView _setUnderlayColor:]):
+        (-[WKWebView _setTotalHeightOfBanners:]):
+        (-[WKWebView _totalHeightOfBanners]):
+        (-[WKWebView _drawsBackground]):
+        (-[WKWebView _setDrawsBackground:]):
+        (-[WKWebView _setTopContentInset:]):
+        (-[WKWebView _topContentInset]):
+        (-[WKWebView _setAutomaticallyAdjustsContentInsets:]):
+        (-[WKWebView _automaticallyAdjustsContentInsets]):
+        (-[WKWebView _setOverrideDeviceScaleFactor:]):
+        (-[WKWebView _overrideDeviceScaleFactor]):
+        (-[WKWebView _windowOcclusionDetectionEnabled]):
+        (-[WKWebView _setWindowOcclusionDetectionEnabled:]):
+        (-[WKWebView _spellCheckerDocumentTag]):
+        (-[WKWebView _shouldExpandContentToViewHeightForAutoLayout]):
+        (-[WKWebView _setShouldExpandContentToViewHeightForAutoLayout:]):
+        (-[WKWebView _minimumLayoutWidth]):
+        (-[WKWebView _setMinimumLayoutWidth:]):
+        (-[WKWebView _alwaysShowsHorizontalScroller]):
+        (-[WKWebView _setAlwaysShowsHorizontalScroller:]):
+        (-[WKWebView _alwaysShowsVerticalScroller]):
+        (-[WKWebView _setAlwaysShowsVerticalScroller:]):
+        (-[WKWebView _useSystemAppearance]):
+        (-[WKWebView _setUseSystemAppearance:]):
+        (-[WKWebView _setOverlayScrollbarStyle:]):
+        (-[WKWebView _overlayScrollbarStyle]):
+        (-[WKWebView _inspectorAttachmentView]):
+        (-[WKWebView _setInspectorAttachmentView:]):
+        (-[WKWebView _setThumbnailView:]):
+        (-[WKWebView _thumbnailView]):
+        (-[WKWebView _setIgnoresAllEvents:]):
+        (-[WKWebView _ignoresAllEvents]):
+        (-[WKWebView _usePlatformFindUI]):
+        (-[WKWebView _setUsePlatformFindUI:]):
+        (-[WKWebView _setShouldSuppressFirstResponderChanges:]):
+        (-[WKWebView _canChangeFrameLayout:]):
+        (-[WKWebView _tryToSwipeWithEvent:ignoringPinnedState:]):
+        (-[WKWebView _dismissContentRelativeChildWindows]):
+        (-[WKWebView _setFrame:andScrollBy:]):
+        (-[WKWebView _gestureEventWasNotHandledByWebCore:]):
+        (-[WKWebView _disableFrameSizeUpdates]):
+        (-[WKWebView _enableFrameSizeUpdates]):
+        (-[WKWebView _beginDeferringViewInWindowChanges]):
+        (-[WKWebView _endDeferringViewInWindowChanges]):
+        (-[WKWebView _endDeferringViewInWindowChangesSync]):
+        (-[WKWebView _setCustomSwipeViews:]):
+        (-[WKWebView _setCustomSwipeViewsTopContentInset:]):
+        (-[WKWebView _setDidMoveSwipeSnapshotCallback:]):
+        (-[WKWebView _fullScreenPlaceholderView]):
+        (-[WKWebView _fullScreenWindow]):
+        (-[WKWebView _immediateActionAnimationControllerForHitTestResult:withType:userData:]):
+        (-[WKWebView _printOperationWithPrintInfo:]):
+        (-[WKWebView _printOperationWithPrintInfo:forFrame:]):
+        (-[WKWebView _wantsMediaPlaybackControlsView]):
+        (-[WKWebView _setWantsMediaPlaybackControlsView:]):
+        (-[WKWebView _mediaPlaybackControlsView]):
+        (-[WKWebView _addMediaPlaybackControlsView:]):
+        (-[WKWebView _removeMediaPlaybackControlsView]):
+        (-[WKWebView _prepareForMoveToWindow:completionHandler:]):
+        * UIProcess/API/mac/WKWebViewTestingMac.mm:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        * UIProcess/ios/WKContentView.mm:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        * UIProcess/ios/WKPDFView.mm:
+        * UIProcess/ios/WKScrollView.mm:
+        * UIProcess/ios/WKSystemPreviewView.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-12-14  David Kilzer  <ddkilzer@apple.com>
 
         Add release assert for selectedIndex in WebKit::WebPopupMenu::show()

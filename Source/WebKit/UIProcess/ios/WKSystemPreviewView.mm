@@ -30,7 +30,7 @@
 
 #import "APIFindClient.h"
 #import "APIUIClient.h"
-#import "WKWebViewInternal.h"
+#import "WKWebViewIOS.h"
 #import "WebPageProxy.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <WebCore/FloatRect.h>

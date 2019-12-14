@@ -31,7 +31,7 @@
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "WKFullScreenWindowController.h"
-#import "WKWebViewInternal.h"
+#import "WKWebViewIOS.h"
 #import "WebPageProxy.h"
 #import "_WKActivatedElementInfoInternal.h"
 

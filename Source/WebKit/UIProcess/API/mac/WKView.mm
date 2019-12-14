@@ -34,6 +34,7 @@
 #import "WKBrowsingContextGroupPrivate.h"
 #import "WKNSData.h"
 #import "WKProcessGroupPrivate.h"
+#import "WKWebViewMac.h"
 #import "WebBackForwardListItem.h"
 #import "WebKit2Initialize.h"
 #import "WebPageGroup.h"
@@ -1472,40 +1473,6 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(NSUs
 - (CGFloat)_totalHeightOfBanners
 {
     return _data->_impl->totalHeightOfBanners();
-}
-
-static Optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayScrollbarStyle scrollbarStyle)
-{
-    switch (scrollbarStyle) {
-    case _WKOverlayScrollbarStyleDark:
-        return WebCore::ScrollbarOverlayStyleDark;
-    case _WKOverlayScrollbarStyleLight:
-        return WebCore::ScrollbarOverlayStyleLight;
-    case _WKOverlayScrollbarStyleDefault:
-        return WebCore::ScrollbarOverlayStyleDefault;
-    case _WKOverlayScrollbarStyleAutomatic:
-    default:
-        break;
-    }
-
-    return WTF::nullopt;
-}
-
-static _WKOverlayScrollbarStyle toAPIScrollbarStyle(Optional<WebCore::ScrollbarOverlayStyle> coreScrollbarStyle)
-{
-    if (!coreScrollbarStyle)
-        return _WKOverlayScrollbarStyleAutomatic;
-
-    switch (coreScrollbarStyle.value()) {
-    case WebCore::ScrollbarOverlayStyleDark:
-        return _WKOverlayScrollbarStyleDark;
-    case WebCore::ScrollbarOverlayStyleLight:
-        return _WKOverlayScrollbarStyleLight;
-    case WebCore::ScrollbarOverlayStyleDefault:
-        return _WKOverlayScrollbarStyleDefault;
-    default:
-        return _WKOverlayScrollbarStyleAutomatic;
-    }
 }
 
 - (void)_setOverlayScrollbarStyle:(_WKOverlayScrollbarStyle)scrollbarStyle

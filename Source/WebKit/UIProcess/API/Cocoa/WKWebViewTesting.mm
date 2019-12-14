@@ -28,7 +28,7 @@
 
 #import "UserMediaProcessManager.h"
 #import "ViewGestureController.h"
-#import "WKWebViewInternal.h"
+#import "WKWebViewIOS.h"
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
