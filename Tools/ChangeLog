@@ -1,3 +1,13 @@
+2019-12-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the macCatalyst build after r253486
+
+        Replace the #elif with an #else, so that the codepath is compiled on non-iOS (but iOS-family) platforms such as
+        watchOS and macCatalyst.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ClipboardTests.mm:
+        (readMarkupFromPasteboard):
+
 2019-12-13  Peng Liu  <peng.liu6@apple.com>
 
         Add an option to run_webkit_tests.py to enable all GPU process related features and choose the additional expectations

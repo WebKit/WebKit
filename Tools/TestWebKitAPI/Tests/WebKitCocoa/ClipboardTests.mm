@@ -133,7 +133,7 @@ static NSString *readMarkupFromPasteboard()
 {
 #if PLATFORM(MAC)
     NSData *rawData = [NSPasteboard.generalPasteboard dataForType:WebCore::legacyHTMLPasteboardType()];
-#elif PLATFORM(IOS)
+#else
     NSData *rawData = [UIPasteboard.generalPasteboard dataForPasteboardType:(__bridge NSString *)kUTTypeHTML];
 #endif
     return [[[NSString alloc] initWithData:rawData encoding:NSUTF8StringEncoding] autorelease];
