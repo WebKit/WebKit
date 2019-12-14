@@ -1,3 +1,13 @@
+2019-12-13  Mark Lam  <mark.lam@apple.com>
+
+        Fix bad exception assertion in ExceptionHelpers.cpp's createError().
+        https://bugs.webkit.org/show_bug.cgi?id=205230
+        <rdar://problem/57875688>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/test-exception-assert-in-ExceptionHelpers-createError.js: Added.
+
 2019-12-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Wasm init-expr should reject mutable globals

@@ -266,8 +266,11 @@ JSObject* createError(JSGlobalObject* globalObject, JSValue value, const String&
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     String valueDescription = errorDescriptionForValue(globalObject, value);
-    EXCEPTION_ASSERT(scope.exception() || !!valueDescription);
-    if (!valueDescription) {
+    if (scope.exception() || !valueDescription) {
+        // When we see an exception, we're not returning immediately because
+        // we're in a CatchScope, i.e. no exceptions are thrown past this scope.
+        // We're using a CatchScope because the contract for createError() is
+        // that it only creates an error object; it doesn't throw it.
         scope.clearException();
         return createOutOfMemoryError(globalObject);
     }

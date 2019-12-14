@@ -1,3 +1,32 @@
+2019-12-13  Mark Lam  <mark.lam@apple.com>
+
+        Fix bad exception assertion in ExceptionHelpers.cpp's createError().
+        https://bugs.webkit.org/show_bug.cgi?id=205230
+        <rdar://problem/57875688>
+
+        Reviewed by Yusuke Suzuki.
+
+        The code in createError() was doing the following:
+
+            String valueDescription = errorDescriptionForValue(globalObject, value);
+            EXCEPTION_ASSERT(scope.exception() || !!valueDescription);
+            if (!valueDescription) {
+                scope.clearException();
+                return createOutOfMemoryError(globalObject);
+            }
+
+        If errorDescriptionForValue() throws an exception, then we expect the
+        valueDescription string to be null so that we can throw an OutOfMemoryError.
+        However, errorDescriptionForValue() can detect an imminent overflow in String
+        length and just return a null string without throwing an exception which fails
+        the above assertion.
+
+        The fix is to simply do an explicit exception check in addition to the null string
+        check and remove the assertion.
+
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createError):
+
 2019-12-13  Saam Barati  <sbarati@apple.com>
 
         Add a Heap::finalize function that takes WTF::Function<void()>
