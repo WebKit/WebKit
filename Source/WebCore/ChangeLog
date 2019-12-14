@@ -1,3 +1,15 @@
+2019-12-14  David Kilzer  <ddkilzer@apple.com>
+
+        Add release assert for selectedIndex in WebKit::WebPopupMenu::show()
+        <https://webkit.org/b/205223>
+        <rdar://problem/57929078>
+
+        Reviewed by Wenson Hsieh.
+
+        * platform/PopupMenu.h:
+        (WebCore::PopupMenu::show):
+        - Rename `index` parameter to `selectedIndex`.
+
 2019-12-14  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add text-indent support

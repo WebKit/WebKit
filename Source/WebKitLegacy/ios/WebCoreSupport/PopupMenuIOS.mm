@@ -34,7 +34,7 @@ PopupMenuIOS::PopupMenuIOS(PopupMenuClient* client)
 {
 }
 
-void PopupMenuIOS::show(const IntRect&, FrameView*, int /*index*/)
+void PopupMenuIOS::show(const IntRect&, FrameView*, int /*selectedIndex*/)
 {
 }
 
@@ -48,7 +48,7 @@ void PopupMenuIOS::updateFromElement()
 
 void PopupMenuIOS::disconnectClient()
 {
-    m_popupClient = 0;
+    m_popupClient = nullptr;
 }
 
 #endif // PLATFORM(IOS_FAMILY)

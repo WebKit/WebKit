@@ -1,3 +1,20 @@
+2019-12-14  David Kilzer  <ddkilzer@apple.com>
+
+        Add release assert for selectedIndex in WebKit::WebPopupMenu::show()
+        <https://webkit.org/b/205223>
+        <rdar://problem/57929078>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebCoreSupport/PopupMenuIOS.h:
+        (PopupMenuIOS::show):
+        - Rename `index` parameter to `selectedIndex`.
+        * WebCoreSupport/PopupMenuIOS.mm:
+        (PopupMenuIOS::show):
+        - Rename `index` parameter to `selectedIndex`.
+        (PopupMenuIOS::disconnectClient):
+        - Drive-by fix to change 0 to nullptr.
+
 2019-10-16  Chris Dumez  <cdumez@apple.com>
 
         Rename PageCache to BackForwardCache

@@ -37,7 +37,7 @@ class PopupMenuIOS : public WebCore::PopupMenu {
 public:
     PopupMenuIOS(WebCore::PopupMenuClient*);
 
-    void show(const WebCore::IntRect&, WebCore::FrameView*, int index) override;
+    void show(const WebCore::IntRect&, WebCore::FrameView*, int selectedIndex) override;
     void hide() override;
     void updateFromElement() override;
     void disconnectClient() override;
