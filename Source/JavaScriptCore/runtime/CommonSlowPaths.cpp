@@ -49,7 +49,6 @@
 #include "JSAsyncGenerator.h"
 #include "JSCInlines.h"
 #include "JSCJSValue.h"
-#include "JSFixedArray.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSImmutableButterfly.h"
 #include "JSInternalPromise.h"
@@ -1367,12 +1366,20 @@ SLOW_PATH_DECL(slow_path_new_array_with_spread)
 
     JSValue* values = bitwise_cast<JSValue*>(&GET(bytecode.m_argv));
 
+    if (numItems == 1 && bitVector.get(0)) {
+        Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(CopyOnWriteArrayWithContiguous);
+        if (isCopyOnWrite(structure->indexingMode())) {
+            JSArray* result = CommonSlowPaths::allocateNewArrayBuffer(vm, structure, jsCast<JSImmutableButterfly*>(values[0]));
+            RETURN(result);
+        }
+    }
+
     Checked<unsigned, RecordOverflow> checkedArraySize = 0;
     for (int i = 0; i < numItems; i++) {
         if (bitVector.get(i)) {
             JSValue value = values[-i];
-            JSFixedArray* array = jsCast<JSFixedArray*>(value);
-            checkedArraySize += array->size();
+            JSImmutableButterfly* array = jsCast<JSImmutableButterfly*>(value);
+            checkedArraySize += array->publicLength();
         } else
             checkedArraySize += 1;
     }
@@ -1395,8 +1402,8 @@ SLOW_PATH_DECL(slow_path_new_array_with_spread)
         JSValue value = values[-i];
         if (bitVector.get(i)) {
             // We are spreading.
-            JSFixedArray* array = jsCast<JSFixedArray*>(value);
-            for (unsigned i = 0; i < array->size(); i++) {
+            JSImmutableButterfly* array = jsCast<JSImmutableButterfly*>(value);
+            for (unsigned i = 0; i < array->publicLength(); i++) {
                 RELEASE_ASSERT(array->get(i));
                 result->putDirectIndex(globalObject, index, array->get(i));
                 CHECK_EXCEPTION();
@@ -1456,10 +1463,10 @@ SLOW_PATH_DECL(slow_path_spread)
     if (iterable.isCell() && isJSArray(iterable.asCell())) {
         JSArray* array = jsCast<JSArray*>(iterable);
         if (array->isIteratorProtocolFastAndNonObservable()) {
-            // JSFixedArray::createFromArray does not consult the prototype chain,
+            // JSImmutableButterfly::createFromArray does not consult the prototype chain,
             // so we must be sure that not consulting the prototype chain would
             // produce the same value during iteration.
-            RETURN(JSFixedArray::createFromArray(globalObject, vm, array));
+            RETURN(JSImmutableButterfly::createFromArray(globalObject, vm, array));
         }
     }
 
@@ -1478,7 +1485,7 @@ SLOW_PATH_DECL(slow_path_spread)
         array = jsCast<JSArray*>(arrayResult);
     }
 
-    RETURN(JSFixedArray::createFromArray(globalObject, vm, array));
+    RETURN(JSImmutableButterfly::createFromArray(globalObject, vm, array));
 }
 
 } // namespace JSC

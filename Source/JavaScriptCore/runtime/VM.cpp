@@ -95,7 +95,6 @@
 #include "JSCallee.h"
 #include "JSCustomGetterSetterFunction.h"
 #include "JSDestructibleObjectHeapCellType.h"
-#include "JSFixedArray.h"
 #include "JSFunction.h"
 #include "JSGlobalLexicalEnvironment.h"
 #include "JSGlobalObject.h"
@@ -454,7 +453,6 @@ VM::VM(VMType vmType, HeapType heapType)
     regExpStructure.set(*this, RegExp::createStructure(*this, 0, jsNull()));
     symbolStructure.set(*this, Symbol::createStructure(*this, 0, jsNull()));
     symbolTableStructure.set(*this, SymbolTable::createStructure(*this, 0, jsNull()));
-    fixedArrayStructure.set(*this, JSFixedArray::createStructure(*this, 0, jsNull()));
 
     immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithInt32) - NumberOfIndexingShapes].set(*this, JSImmutableButterfly::createStructure(*this, 0, jsNull(), CopyOnWriteArrayWithInt32));
     immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithDouble) - NumberOfIndexingShapes].set(*this, JSImmutableButterfly::createStructure(*this, 0, jsNull(), CopyOnWriteArrayWithDouble));

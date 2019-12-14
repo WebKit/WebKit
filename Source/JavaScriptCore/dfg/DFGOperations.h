@@ -279,7 +279,7 @@ int32_t JIT_OPERATION operationArrayIndexOfValueInt32OrContiguous(JSGlobalObject
 JSCell* JIT_OPERATION operationSpreadFastArray(JSGlobalObject*, JSCell*);
 JSCell* JIT_OPERATION operationSpreadGeneric(JSGlobalObject*, JSCell*);
 JSCell* JIT_OPERATION operationNewArrayWithSpreadSlow(JSGlobalObject*, void*, uint32_t);
-JSCell* JIT_OPERATION operationCreateFixedArray(JSGlobalObject*, unsigned length);
+JSCell* JIT_OPERATION operationCreateImmutableButterfly(JSGlobalObject*, unsigned length);
 
 JSCell* JIT_OPERATION operationResolveScope(JSGlobalObject*, JSScope*, UniquedStringImpl*);
 EncodedJSValue JIT_OPERATION operationResolveScopeForHoistingFuncDeclInEval(JSGlobalObject*, JSScope*, UniquedStringImpl*);

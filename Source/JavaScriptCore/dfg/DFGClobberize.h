@@ -35,7 +35,6 @@
 #include "DOMJITCallDOMGetterSnippet.h"
 #include "DOMJITSignature.h"
 #include "InlineCallFrame.h"
-#include "JSFixedArray.h"
 #include "JSImmutableButterfly.h"
 
 namespace JSC { namespace DFG {
@@ -1420,8 +1419,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         break;
 
     case NewArrayWithSpread: {
-        // This also reads from JSFixedArray's data store, but we don't have any way of describing that yet.
         read(HeapObjectCount);
+        // This appears to read nothing because it's only reading immutable butterfly data.
         for (unsigned i = 0; i < node->numChildren(); i++) {
             Node* child = graph.varArgChild(node, i).node();
             if (child->op() == PhantomSpread) {

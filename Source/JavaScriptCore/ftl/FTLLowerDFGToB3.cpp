@@ -6290,6 +6290,57 @@ private:
             BitVector* bitVector = m_node->bitVector();
             HashMap<InlineCallFrame*, LValue, WTF::DefaultHash<InlineCallFrame*>::Hash, WTF::NullableHashTraits<InlineCallFrame*>> cachedSpreadLengths;
 
+            if (m_node->numChildren() == 1 && bitVector->get(0)) {
+                Edge use = m_graph.varArgChild(m_node, 0);
+                if (use->op() == PhantomSpread) {
+                    if (use->child1()->op() == PhantomNewArrayBuffer) {
+                        auto* immutableButterfly = use->child1()->castOperand<JSImmutableButterfly*>();
+                        if (hasContiguous(immutableButterfly->indexingType())) {
+                            RegisteredStructure structure = m_graph.registerStructure(globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithContiguous));
+                            LBasicBlock slowPath = m_out.newBlock();
+                            LBasicBlock continuation = m_out.newBlock();
+
+                            LValue fastArray = allocateObject<JSArray>(structure, m_out.constIntPtr(immutableButterfly->toButterfly()), slowPath);
+                            ValueFromBlock fastResult = m_out.anchor(fastArray);
+                            m_out.jump(continuation);
+
+                            m_out.appendTo(slowPath, continuation);
+                            LValue slowArray = vmCall(Int64, operationNewArrayBuffer, m_vmValue, weakStructure(structure), frozenPointer(use->child1()->cellOperand()));
+                            ValueFromBlock slowResult = m_out.anchor(slowArray);
+                            m_out.jump(continuation);
+
+                            m_out.appendTo(continuation);
+
+                            mutatorFence();
+                            setJSValue(m_out.phi(pointerType(), slowResult, fastResult));
+                            return;
+                        }
+                    }
+                } else {
+                    // If a node is producing JSImmutableButterfly, it must be contiguous.
+                    LValue immutableButterfly = lowCell(use);
+
+                    RegisteredStructure structure = m_graph.registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(CopyOnWriteArrayWithContiguous));
+                    LBasicBlock slowPath = m_out.newBlock();
+                    LBasicBlock continuation = m_out.newBlock();
+
+                    LValue fastArray = allocateObject<JSArray>(structure, toButterfly(immutableButterfly), slowPath);
+                    ValueFromBlock fastResult = m_out.anchor(fastArray);
+                    m_out.jump(continuation);
+
+                    m_out.appendTo(slowPath, continuation);
+                    LValue slowArray = vmCall(Int64, operationNewArrayBuffer, m_vmValue, weakStructure(structure), immutableButterfly);
+                    ValueFromBlock slowResult = m_out.anchor(slowArray);
+                    m_out.jump(continuation);
+
+                    m_out.appendTo(continuation);
+
+                    mutatorFence();
+                    setJSValue(m_out.phi(pointerType(), slowResult, fastResult));
+                    return;
+                }
+            }
+
             for (unsigned i = 0; i < m_node->numChildren(); ++i) {
                 if (!bitVector->get(i))
                     ++startLength;
@@ -6321,8 +6372,8 @@ private:
                             lengthCheck = m_out.speculateAdd(length, spreadLength);
                         }
                     } else {
-                        LValue fixedArray = lowCell(use);
-                        lengthCheck = m_out.speculateAdd(length, m_out.load32(fixedArray, m_heaps.JSFixedArray_size));
+                        LValue immutableButterfly = lowCell(use);
+                        lengthCheck = m_out.speculateAdd(length, m_out.load32(toButterfly(immutableButterfly), m_heaps.Butterfly_publicLength));
                     }
 
                     if (lengthCheck) {
@@ -6400,35 +6451,36 @@ private:
                         LBasicBlock loopStart = m_out.newBlock();
                         LBasicBlock continuation = m_out.newBlock();
 
-                        LValue fixedArray = lowCell(use);
+                        LValue immutableButterfly = lowCell(use);
+                        LValue immutableButterflyStorage = toButterfly(immutableButterfly);
 
-                        ValueFromBlock fixedIndexStart = m_out.anchor(m_out.constIntPtr(0));
+                        ValueFromBlock immutableButterflyIndexStart = m_out.anchor(m_out.constIntPtr(0));
                         ValueFromBlock arrayIndexStart = m_out.anchor(index);
                         ValueFromBlock arrayIndexStartForFinish = m_out.anchor(index);
 
-                        LValue fixedArraySize = m_out.zeroExtPtr(m_out.load32(fixedArray, m_heaps.JSFixedArray_size));
+                        LValue immutableButterflySize = m_out.zeroExtPtr(m_out.load32(immutableButterflyStorage, m_heaps.Butterfly_publicLength));
 
                         m_out.branch(
-                            m_out.isZero64(fixedArraySize),
+                            m_out.isZero64(immutableButterflySize),
                             unsure(continuation), unsure(loopStart));
 
                         LBasicBlock lastNext = m_out.appendTo(loopStart, continuation);
 
                         LValue arrayIndex = m_out.phi(pointerType(), arrayIndexStart);
-                        LValue fixedArrayIndex = m_out.phi(pointerType(), fixedIndexStart);
+                        LValue immutableButterflyIndex = m_out.phi(pointerType(), immutableButterflyIndexStart);
 
-                        LValue item = m_out.load64(m_out.baseIndex(m_heaps.JSFixedArray_buffer, fixedArray, fixedArrayIndex));
+                        LValue item = m_out.load64(m_out.baseIndex(m_heaps.indexedContiguousProperties, immutableButterflyStorage, immutableButterflyIndex));
                         m_out.store64(item, m_out.baseIndex(m_heaps.indexedContiguousProperties, storage, arrayIndex));
 
                         LValue nextArrayIndex = m_out.add(arrayIndex, m_out.constIntPtr(1));
-                        LValue nextFixedArrayIndex = m_out.add(fixedArrayIndex, m_out.constIntPtr(1));
+                        LValue nextImmutableButterflyIndex = m_out.add(immutableButterflyIndex, m_out.constIntPtr(1));
                         ValueFromBlock arrayIndexLoopForFinish = m_out.anchor(nextArrayIndex);
 
-                        m_out.addIncomingToPhi(fixedArrayIndex, m_out.anchor(nextFixedArrayIndex));
+                        m_out.addIncomingToPhi(immutableButterflyIndex, m_out.anchor(nextImmutableButterflyIndex));
                         m_out.addIncomingToPhi(arrayIndex, m_out.anchor(nextArrayIndex));
 
                         m_out.branch(
-                            m_out.below(nextFixedArrayIndex, fixedArraySize),
+                            m_out.below(nextImmutableButterflyIndex, immutableButterflySize),
                             unsure(loopStart), unsure(continuation));
 
                         m_out.appendTo(continuation, lastNext);
@@ -6627,34 +6679,44 @@ private:
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
         if (m_node->child1()->op() == PhantomNewArrayBuffer) {
+            ASSERT(m_graph.isWatchingHavingABadTimeWatchpoint(m_node->child1().node()));
+
+            // FIXME: JSImmutableButterfly::createFromArray should support re-using non contiguous indexing types as well.
+            auto* immutableButterfly = m_node->child1()->castOperand<JSImmutableButterfly*>();
+            if (hasContiguous(immutableButterfly->indexingType())) {
+                setJSValue(frozenPointer(m_node->child1()->cellOperand()));
+                return;
+            }
+
             LBasicBlock slowAllocation = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
 
-            auto* immutableButterfly = m_node->child1()->castOperand<JSImmutableButterfly*>();
-
-            LValue fastFixedArrayValue = allocateVariableSizedCell<JSFixedArray>(
-                m_out.constIntPtr(JSFixedArray::allocationSize(immutableButterfly->length()).unsafeGet()),
-                m_graph.m_vm.fixedArrayStructure.get(), slowAllocation);
-            m_out.store32(m_out.constInt32(immutableButterfly->length()), fastFixedArrayValue, m_heaps.JSFixedArray_size);
-            ValueFromBlock fastFixedArray = m_out.anchor(fastFixedArrayValue);
+            LValue fastImmutableButterflyValue = allocateVariableSizedCell<JSImmutableButterfly>(
+                m_out.constIntPtr(JSImmutableButterfly::allocationSize(immutableButterfly->length()).unsafeGet()),
+                m_graph.m_vm.immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithContiguous) - NumberOfIndexingShapes].get(), slowAllocation);
+            LValue fastImmutableButterflyStorage = toButterfly(fastImmutableButterflyValue);
+            m_out.store32(m_out.constInt32(immutableButterfly->length()), fastImmutableButterflyStorage, m_heaps.Butterfly_publicLength);
+            m_out.store32(m_out.constInt32(immutableButterfly->length()), fastImmutableButterflyStorage, m_heaps.Butterfly_vectorLength);
+            ValueFromBlock fastImmutableButterfly = m_out.anchor(fastImmutableButterflyValue);
             m_out.jump(continuation);
 
             LBasicBlock lastNext = m_out.appendTo(slowAllocation, continuation);
-            ValueFromBlock slowFixedArray = m_out.anchor(vmCall(pointerType(), operationCreateFixedArray, weakPointer(globalObject), m_out.constInt32(immutableButterfly->length())));
+            ValueFromBlock slowImmutableButterfly = m_out.anchor(vmCall(pointerType(), operationCreateImmutableButterfly, weakPointer(globalObject), m_out.constInt32(immutableButterfly->length())));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
-            LValue fixedArray = m_out.phi(pointerType(), fastFixedArray, slowFixedArray);
+            LValue immutableButterflyValue = m_out.phi(pointerType(), fastImmutableButterfly, slowImmutableButterfly);
+            LValue immutableButterflyStorage = toButterfly(immutableButterflyValue);
             for (unsigned i = 0; i < immutableButterfly->length(); i++) {
                 // Because forwarded values are drained as JSValue, we should not generate value
                 // in Double form even if PhantomNewArrayBuffer's indexingType is ArrayWithDouble.
                 int64_t value = JSValue::encode(immutableButterfly->get(i));
                 m_out.store64(
                     m_out.constInt64(value),
-                    m_out.baseIndex(m_heaps.JSFixedArray_buffer, fixedArray, m_out.constIntPtr(i), jsNumber(i)));
+                    m_out.baseIndex(m_heaps.indexedContiguousProperties, immutableButterflyStorage, m_out.constIntPtr(i), jsNumber(i)));
             }
             mutatorFence();
-            setJSValue(fixedArray);
+            setJSValue(immutableButterflyValue);
             return;
         }
 
@@ -6664,6 +6726,9 @@ private:
             // accept Spread's result as input. This usually leads to the Spread node not
             // escaping. However, this can happen if for example we generate a PutStack on
             // the Spread but nothing escapes the CreateRest.
+
+            ASSERT(m_graph.isWatchingHavingABadTimeWatchpoint(m_node->child1().node()));
+
             LBasicBlock loopHeader = m_out.newBlock();
             LBasicBlock loopBody = m_out.newBlock();
             LBasicBlock slowAllocation = m_out.newBlock();
@@ -6677,19 +6742,22 @@ private:
             static_assert(sizeof(JSValue) == 8 && 1 << 3 == 8, "Assumed in the code below.");
             LValue size = m_out.add(
                 m_out.shl(m_out.zeroExtPtr(length), m_out.constInt32(3)),
-                m_out.constIntPtr(JSFixedArray::offsetOfData()));
+                m_out.constIntPtr(JSImmutableButterfly::offsetOfData()));
 
-            LValue fastArrayValue = allocateVariableSizedCell<JSFixedArray>(size, m_graph.m_vm.fixedArrayStructure.get(), slowAllocation);
-            m_out.store32(length, fastArrayValue, m_heaps.JSFixedArray_size);
+            LValue fastArrayValue = allocateVariableSizedCell<JSImmutableButterfly>(size, m_graph.m_vm.immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithContiguous) - NumberOfIndexingShapes].get(), slowAllocation);
+            LValue fastArrayStorage = toButterfly(fastArrayValue);
+            m_out.store32(length, fastArrayStorage, m_heaps.Butterfly_vectorLength);
+            m_out.store32(length, fastArrayStorage, m_heaps.Butterfly_publicLength);
             ValueFromBlock fastArray = m_out.anchor(fastArrayValue);
             m_out.jump(loopHeader);
 
             m_out.appendTo(slowAllocation, loopHeader);
-            ValueFromBlock slowArray = m_out.anchor(vmCall(pointerType(), operationCreateFixedArray, weakPointer(globalObject), length));
+            ValueFromBlock slowArray = m_out.anchor(vmCall(pointerType(), operationCreateImmutableButterfly, weakPointer(globalObject), length));
             m_out.jump(loopHeader);
 
             m_out.appendTo(loopHeader, loopBody);
-            LValue fixedArray = m_out.phi(pointerType(), fastArray, slowArray);
+            LValue immutableButterfly = m_out.phi(pointerType(), fastArray, slowArray);
+            LValue immutableButterflyStorage = toButterfly(immutableButterfly);
             ValueFromBlock startIndex = m_out.anchor(m_out.constIntPtr(0));
             m_out.branch(m_out.isZero32(length), unsure(continuation), unsure(loopBody));
 
@@ -6697,14 +6765,14 @@ private:
             LValue index = m_out.phi(pointerType(), startIndex);
             LValue value = m_out.load64(
                 m_out.baseIndex(m_heaps.variables, sourceStart, index));
-            m_out.store64(value, m_out.baseIndex(m_heaps.JSFixedArray_buffer, fixedArray, index));
+            m_out.store64(value, m_out.baseIndex(m_heaps.indexedContiguousProperties, immutableButterflyStorage, index));
             LValue nextIndex = m_out.add(m_out.constIntPtr(1), index);
             m_out.addIncomingToPhi(index, m_out.anchor(nextIndex));
             m_out.branch(m_out.below(nextIndex, m_out.zeroExtPtr(length)), unsure(loopBody), unsure(continuation));
 
             m_out.appendTo(continuation, lastNext);
             mutatorFence();
-            setJSValue(fixedArray);
+            setJSValue(immutableButterfly);
             return;
         }
 
@@ -6716,6 +6784,8 @@ private:
             speculateArray(m_node->child1());
 
         if (m_graph.canDoFastSpread(m_node, m_state.forNode(m_node->child1()))) {
+            LBasicBlock copyOnWriteContiguousCheck = m_out.newBlock();
+            LBasicBlock copyOnWritePropagation = m_out.newBlock();
             LBasicBlock preLoop = m_out.newBlock();
             LBasicBlock loopSelection = m_out.newBlock();
             LBasicBlock contiguousLoopStart = m_out.newBlock();
@@ -6723,25 +6793,33 @@ private:
             LBasicBlock slowPath = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
 
-            LValue indexingShape = m_out.load8ZeroExt32(argument, m_heaps.JSCell_indexingTypeAndMisc);
-            indexingShape = m_out.bitAnd(indexingShape, m_out.constInt32(IndexingShapeMask));
+            LValue indexingMode = m_out.load8ZeroExt32(argument, m_heaps.JSCell_indexingTypeAndMisc);
+            LValue indexingShape = m_out.bitAnd(indexingMode, m_out.constInt32(IndexingShapeMask));
             LValue isOKIndexingType = m_out.belowOrEqual(
                 m_out.sub(indexingShape, m_out.constInt32(Int32Shape)),
                 m_out.constInt32(ContiguousShape - Int32Shape));
 
-            m_out.branch(isOKIndexingType, unsure(preLoop), unsure(slowPath));
-            LBasicBlock lastNext = m_out.appendTo(preLoop, loopSelection);
-
+            m_out.branch(isOKIndexingType, unsure(copyOnWriteContiguousCheck), unsure(slowPath));
+            LBasicBlock lastNext = m_out.appendTo(copyOnWriteContiguousCheck, copyOnWritePropagation);
             LValue butterfly = m_out.loadPtr(argument, m_heaps.JSObject_butterfly);
+            m_out.branch(m_out.equal(m_out.bitAnd(indexingMode, m_out.constInt32(IndexingModeMask)), m_out.constInt32(CopyOnWriteArrayWithContiguous)), unsure(copyOnWritePropagation), unsure(preLoop));
+
+            m_out.appendTo(copyOnWritePropagation, preLoop);
+            ValueFromBlock sharedResult = m_out.anchor(m_out.add(butterfly, m_out.constIntPtr(-JSImmutableButterfly::offsetOfData())));
+            m_out.jump(continuation);
+
+            m_out.appendTo(preLoop, loopSelection);
             LValue length = m_out.load32NonNegative(butterfly, m_heaps.Butterfly_publicLength);
             static_assert(sizeof(JSValue) == 8 && 1 << 3 == 8, "Assumed in the code below.");
             LValue size = m_out.add(
                 m_out.shl(m_out.zeroExtPtr(length), m_out.constInt32(3)),
-                m_out.constIntPtr(JSFixedArray::offsetOfData()));
+                m_out.constIntPtr(JSImmutableButterfly::offsetOfData()));
 
-            LValue fastAllocation = allocateVariableSizedCell<JSFixedArray>(size, m_graph.m_vm.fixedArrayStructure.get(), slowPath);
+            LValue fastAllocation = allocateVariableSizedCell<JSImmutableButterfly>(size, m_graph.m_vm.immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithContiguous) - NumberOfIndexingShapes].get(), slowPath);
+            LValue fastStorage = toButterfly(fastAllocation);
+            m_out.store32(length, fastStorage, m_heaps.Butterfly_vectorLength);
+            m_out.store32(length, fastStorage, m_heaps.Butterfly_publicLength);
             ValueFromBlock fastResult = m_out.anchor(fastAllocation);
-            m_out.store32(length, fastAllocation, m_heaps.JSFixedArray_size);
 
             ValueFromBlock startIndexForContiguous = m_out.anchor(m_out.constIntPtr(0));
             ValueFromBlock startIndexForDouble = m_out.anchor(m_out.constIntPtr(0));
@@ -6759,7 +6837,7 @@ private:
                 TypedPointer loadSite = m_out.baseIndex(m_heaps.root, butterfly, index, ScaleEight); // We read TOP here since we can be reading either int32 or contiguous properties.
                 LValue value = m_out.load64(loadSite);
                 value = m_out.select(m_out.isZero64(value), m_out.constInt64(JSValue::encode(jsUndefined())), value);
-                m_out.store64(value, m_out.baseIndex(m_heaps.JSFixedArray_buffer, fastAllocation, index));
+                m_out.store64(value, m_out.baseIndex(m_heaps.indexedContiguousProperties, fastStorage, index));
 
                 LValue nextIndex = m_out.add(index, m_out.constIntPtr(1));
                 m_out.addIncomingToPhi(index, m_out.anchor(nextIndex));
@@ -6777,7 +6855,7 @@ private:
                 LValue holeResult = m_out.constInt64(JSValue::encode(jsUndefined()));
                 LValue normalResult = boxDouble(value);
                 value = m_out.select(isNaN, holeResult, normalResult);
-                m_out.store64(value, m_out.baseIndex(m_heaps.JSFixedArray_buffer, fastAllocation, index));
+                m_out.store64(value, m_out.baseIndex(m_heaps.indexedContiguousProperties, fastStorage, index));
 
                 LValue nextIndex = m_out.add(index, m_out.constIntPtr(1));
                 m_out.addIncomingToPhi(index, m_out.anchor(nextIndex));
@@ -6791,7 +6869,7 @@ private:
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
-            result = m_out.phi(pointerType(), fastResult, slowResult);
+            result = m_out.phi(pointerType(), sharedResult, fastResult, slowResult);
             mutatorFence();
         } else
             result = vmCall(pointerType(), operationSpreadGeneric, weakPointer(globalObject), argument);
@@ -18002,6 +18080,11 @@ private:
         patchpoint->effects.reads = HeapRange::top();
         patchpoint->append(value, ValueRep::ColdAny);
         patchpoint->setGenerator([=] (CCallHelpers&, const StackmapGenerationParams&) { });
+    }
+
+    LValue toButterfly(LValue immutableButterfly)
+    {
+        return m_out.addPtr(immutableButterfly, JSImmutableButterfly::offsetOfData());
     }
 
     void addWeakReference(JSCell* target)

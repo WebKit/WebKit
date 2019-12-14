@@ -53,7 +53,6 @@
 #include "InByIdStatus.h"
 #include "InstanceOfStatus.h"
 #include "JSCInlines.h"
-#include "JSFixedArray.h"
 #include "JSImmutableButterfly.h"
 #include "JSInternalPromise.h"
 #include "JSInternalPromiseConstructor.h"

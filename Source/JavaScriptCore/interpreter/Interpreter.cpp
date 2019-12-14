@@ -53,7 +53,6 @@
 #include "JSArrayInlines.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
-#include "JSFixedArray.h"
 #include "JSImmutableButterfly.h"
 #include "JSLexicalEnvironment.h"
 #include "JSModuleEnvironment.h"
@@ -198,9 +197,6 @@ unsigned sizeOfVarargs(JSGlobalObject* globalObject, JSValue arguments, uint32_t
     case ScopedArgumentsType:
         length = jsCast<ScopedArguments*>(cell)->length(globalObject);
         break;
-    case JSFixedArrayType:
-        length = jsCast<JSFixedArray*>(cell)->size();
-        break;
     case JSImmutableButterflyType:
         length = jsCast<JSImmutableButterfly*>(cell)->length();
         break;
@@ -270,10 +266,6 @@ void loadVarargs(JSGlobalObject* globalObject, CallFrame* callFrame, VirtualRegi
     case ScopedArgumentsType:
         scope.release();
         jsCast<ScopedArguments*>(cell)->copyToArguments(globalObject, callFrame, firstElementDest, offset, length);
-        return;
-    case JSFixedArrayType:
-        scope.release();
-        jsCast<JSFixedArray*>(cell)->copyToArguments(globalObject, callFrame, firstElementDest, offset, length);
         return;
     case JSImmutableButterflyType:
         scope.release();

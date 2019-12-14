@@ -32,7 +32,6 @@
 #include "FTLAbstractHeap.h"
 #include "HasOwnPropertyCache.h"
 #include "IndexingType.h"
-#include "JSFixedArray.h"
 #include "JSGlobalObject.h"
 #include "JSMap.h"
 #include "JSSet.h"
@@ -162,7 +161,6 @@ namespace JSC { namespace FTL {
     macro(WeakMapBucket_value, WeakMapBucket<WeakMapBucketDataKeyValue>::offsetOfValue()) \
     macro(WeakMapBucket_key, WeakMapBucket<WeakMapBucketDataKeyValue>::offsetOfKey()) \
     macro(Symbol_symbolImpl, Symbol::offsetOfSymbolImpl()) \
-    macro(JSFixedArray_size, JSFixedArray::offsetOfSize()) \
 
 #define FOR_EACH_INDEXED_ABSTRACT_HEAP(macro) \
     macro(ArrayStorage_vector, ArrayStorage::vectorOffset(), sizeof(WriteBarrier<Unknown>)) \
@@ -183,7 +181,6 @@ namespace JSC { namespace FTL {
     macro(structureTable, 0, sizeof(Structure*)) \
     macro(variables, 0, sizeof(Register)) \
     macro(HasOwnPropertyCache, 0, sizeof(HasOwnPropertyCache::Entry)) \
-    macro(JSFixedArray_buffer, JSFixedArray::offsetOfData(), sizeof(EncodedJSValue)) \
     
 #define FOR_EACH_NUMBERED_ABSTRACT_HEAP(macro) \
     macro(properties)

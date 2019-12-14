@@ -40,7 +40,6 @@
 #include "JSAsyncFunction.h"
 #include "JSAsyncGeneratorFunction.h"
 #include "JSCInlines.h"
-#include "JSFixedArray.h"
 #include "JSGeneratorFunction.h"
 #include "JSImmutableButterfly.h"
 #include "JSLexicalEnvironment.h"
@@ -456,11 +455,11 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(JSGlobalObject*
         }
         RELEASE_ASSERT(array);
 
-        // Note: it is sound for JSFixedArray::createFromArray to call getDirectIndex here
+        // Note: it is sound for JSImmutableButterfly::createFromArray to call getDirectIndex here
         // because we're guaranteed we won't be calling any getters. The reason for this is
         // that we only support PhantomSpread over CreateRest, which is an array we create.
         // Any attempts to put a getter on any indices on the rest array will escape the array.
-        JSFixedArray* fixedArray = JSFixedArray::createFromArray(globalObject, vm, array);
+        auto* fixedArray = JSImmutableButterfly::createFromArray(globalObject, vm, array);
         RELEASE_ASSERT(fixedArray);
         return fixedArray;
     }
@@ -528,8 +527,8 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(JSGlobalObject*
             if (property.location().kind() == NewArrayWithSpreadArgumentPLoc) {
                 ++numProperties;
                 JSValue value = JSValue::decode(values[i]);
-                if (JSFixedArray* fixedArray = jsDynamicCast<JSFixedArray*>(vm, value))
-                    checkedArraySize += fixedArray->size();
+                if (JSImmutableButterfly* immutableButterfly = jsDynamicCast<JSImmutableButterfly*>(vm, value))
+                    checkedArraySize += immutableButterfly->publicLength();
                 else
                     checkedArraySize += 1;
             }
@@ -570,10 +569,10 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(JSGlobalObject*
 
         unsigned arrayIndex = 0;
         for (JSValue value : arguments) {
-            if (JSFixedArray* fixedArray = jsDynamicCast<JSFixedArray*>(vm, value)) {
-                for (unsigned i = 0; i < fixedArray->size(); i++) {
-                    ASSERT(fixedArray->get(i));
-                    result->putDirectIndex(globalObject, arrayIndex, fixedArray->get(i));
+            if (JSImmutableButterfly* immutableButterfly = jsDynamicCast<JSImmutableButterfly*>(vm, value)) {
+                for (unsigned i = 0; i < immutableButterfly->publicLength(); i++) {
+                    ASSERT(immutableButterfly->get(i));
+                    result->putDirectIndex(globalObject, arrayIndex, immutableButterfly->get(i));
                     ++arrayIndex;
                 }
             } else {

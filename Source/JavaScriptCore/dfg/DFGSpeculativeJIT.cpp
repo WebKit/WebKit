@@ -54,7 +54,6 @@
 #include "JSAsyncFunction.h"
 #include "JSAsyncGeneratorFunction.h"
 #include "JSCInlines.h"
-#include "JSFixedArray.h"
 #include "JSGeneratorFunction.h"
 #include "JSImmutableButterfly.h"
 #include "JSLexicalEnvironment.h"
@@ -7902,8 +7901,16 @@ void SpeculativeJIT::compileSpread(Node* node)
         FPRReg doubleFPR = doubleRegister.fpr();
 
         MacroAssembler::JumpList slowPath;
+        MacroAssembler::JumpList done;
 
         m_jit.load8(MacroAssembler::Address(argument, JSCell::indexingTypeAndMiscOffset()), scratch1GPR);
+        m_jit.and32(TrustedImm32(IndexingModeMask), scratch1GPR);
+        auto notShareCase = m_jit.branch32(CCallHelpers::NotEqual, scratch1GPR, TrustedImm32(CopyOnWriteArrayWithContiguous));
+        m_jit.loadPtr(MacroAssembler::Address(argument, JSObject::butterflyOffset()), resultGPR);
+        m_jit.addPtr(TrustedImm32(-static_cast<ptrdiff_t>(JSImmutableButterfly::offsetOfData())), resultGPR);
+        done.append(m_jit.jump());
+
+        notShareCase.link(&m_jit);
         m_jit.and32(TrustedImm32(IndexingShapeMask), scratch1GPR);
         m_jit.sub32(TrustedImm32(Int32Shape), scratch1GPR);
 
@@ -7914,14 +7921,13 @@ void SpeculativeJIT::compileSpread(Node* node)
         static_assert(sizeof(JSValue) == 8 && 1 << 3 == 8, "This is strongly assumed in the code below.");
         m_jit.move(lengthGPR, scratch1GPR);
         m_jit.lshift32(TrustedImm32(3), scratch1GPR);
-        m_jit.add32(TrustedImm32(JSFixedArray::offsetOfData()), scratch1GPR);
+        m_jit.add32(TrustedImm32(JSImmutableButterfly::offsetOfData()), scratch1GPR);
 
-        m_jit.emitAllocateVariableSizedCell<JSFixedArray>(vm(), resultGPR, TrustedImmPtr(m_jit.graph().registerStructure(m_jit.graph().m_vm.fixedArrayStructure.get())), scratch1GPR, scratch1GPR, scratch2GPR, slowPath);
-        m_jit.store32(lengthGPR, MacroAssembler::Address(resultGPR, JSFixedArray::offsetOfSize()));
+        m_jit.emitAllocateVariableSizedCell<JSImmutableButterfly>(vm(), resultGPR, TrustedImmPtr(m_jit.graph().registerStructure(m_jit.graph().m_vm.immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithContiguous) - NumberOfIndexingShapes].get())), scratch1GPR, scratch1GPR, scratch2GPR, slowPath);
+        m_jit.store32(lengthGPR, MacroAssembler::Address(resultGPR, JSImmutableButterfly::offsetOfPublicLength()));
+        m_jit.store32(lengthGPR, MacroAssembler::Address(resultGPR, JSImmutableButterfly::offsetOfVectorLength()));
 
         m_jit.loadPtr(MacroAssembler::Address(argument, JSObject::butterflyOffset()), scratch1GPR);
-
-        MacroAssembler::JumpList done;
 
         m_jit.load8(MacroAssembler::Address(argument, JSCell::indexingTypeAndMiscOffset()), scratch2GPR);
         m_jit.and32(TrustedImm32(IndexingShapeMask), scratch2GPR);
@@ -7935,7 +7941,7 @@ void SpeculativeJIT::compileSpread(Node* node)
             auto notEmpty = m_jit.branchIfNotEmpty(scratch2GPR);
             m_jit.move(TrustedImm64(JSValue::encode(jsUndefined())), scratch2GPR);
             notEmpty.link(&m_jit);
-            m_jit.store64(scratch2GPR, MacroAssembler::BaseIndex(resultGPR, lengthGPR, MacroAssembler::TimesEight, JSFixedArray::offsetOfData()));
+            m_jit.store64(scratch2GPR, MacroAssembler::BaseIndex(resultGPR, lengthGPR, MacroAssembler::TimesEight, JSImmutableButterfly::offsetOfData()));
             m_jit.branchTest32(MacroAssembler::NonZero, lengthGPR).linkTo(loopStart, &m_jit);
             done.append(m_jit.jump());
         }
@@ -7952,7 +7958,7 @@ void SpeculativeJIT::compileSpread(Node* node)
             notEmpty.link(&m_jit);
             m_jit.boxDouble(doubleFPR, scratch2GPR);
             doStore.link(&m_jit);
-            m_jit.store64(scratch2GPR, MacroAssembler::BaseIndex(resultGPR, lengthGPR, MacroAssembler::TimesEight, JSFixedArray::offsetOfData()));
+            m_jit.store64(scratch2GPR, MacroAssembler::BaseIndex(resultGPR, lengthGPR, MacroAssembler::TimesEight, JSImmutableButterfly::offsetOfData()));
             m_jit.branchTest32(MacroAssembler::NonZero, lengthGPR).linkTo(loopStart, &m_jit);
             done.append(m_jit.jump());
         }
@@ -8142,6 +8148,7 @@ void SpeculativeJIT::compileNewArray(Node* node)
 void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
 {
     ASSERT(node->op() == NewArrayWithSpread);
+    JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
 
 #if USE(JSVALUE64)
     if (m_jit.graph().isWatchingHavingABadTimeWatchpoint(node)) {
@@ -8149,6 +8156,36 @@ void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
         GPRReg resultGPR = result.gpr();
 
         BitVector* bitVector = node->bitVector();
+
+        if (node->numChildren() == 1 && bitVector->get(0)) {
+            Edge use = m_jit.graph().varArgChild(node, 0);
+            SpeculateCellOperand immutableButterfly(this, use);
+            GPRTemporary result(this);
+            GPRTemporary butterfly(this);
+            GPRTemporary scratch1(this);
+            GPRTemporary scratch2(this);
+
+            GPRReg immutableButterflyGPR = immutableButterfly.gpr();
+            GPRReg resultGPR = result.gpr();
+            GPRReg butterflyGPR = butterfly.gpr();
+            GPRReg scratch1GPR = scratch1.gpr();
+            GPRReg scratch2GPR = scratch2.gpr();
+
+            RegisteredStructure structure = m_jit.graph().registerStructure(globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithContiguous));
+
+            MacroAssembler::JumpList slowCases;
+
+            m_jit.move(immutableButterflyGPR, butterflyGPR);
+            m_jit.addPtr(TrustedImm32(JSImmutableButterfly::offsetOfData()), butterflyGPR);
+
+            emitAllocateJSObject<JSArray>(resultGPR, TrustedImmPtr(structure), butterflyGPR, scratch1GPR, scratch2GPR, slowCases);
+
+            addSlowPathGenerator(slowPathCall(slowCases, this, operationNewArrayBuffer, resultGPR, &vm(), structure, immutableButterflyGPR));
+
+            cellResult(resultGPR, node);
+            return;
+        }
+
         {
             unsigned startLength = 0;
             for (unsigned i = 0; i < node->numChildren(); ++i) {
@@ -8163,9 +8200,9 @@ void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
             for (unsigned i = 0; i < node->numChildren(); ++i) {
                 if (bitVector->get(i)) {
                     Edge use = m_jit.graph().varArgChild(node, i);
-                    SpeculateCellOperand fixedArray(this, use);
-                    GPRReg fixedArrayGPR = fixedArray.gpr();
-                    speculationCheck(Overflow, JSValueRegs(), nullptr, m_jit.branchAdd32(MacroAssembler::Overflow, MacroAssembler::Address(fixedArrayGPR, JSFixedArray::offsetOfSize()), lengthGPR));
+                    SpeculateCellOperand immutableButterfly(this, use);
+                    GPRReg immutableButterflyGPR = immutableButterfly.gpr();
+                    speculationCheck(Overflow, JSValueRegs(), nullptr, m_jit.branchAdd32(MacroAssembler::Overflow, MacroAssembler::Address(immutableButterflyGPR, JSImmutableButterfly::offsetOfPublicLength()), lengthGPR));
                 }
             }
 
@@ -8176,7 +8213,7 @@ void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
             // ensured above that the spread array length will definitely fit in a
             // non-ArrayStorage shaped array.
             bool shouldAllowForArrayStorageStructureForLargeArrays = false;
-            compileAllocateNewArrayWithSize(m_jit.graph().globalObjectFor(node->origin.semantic), resultGPR, lengthGPR, ArrayWithContiguous, shouldAllowForArrayStorageStructureForLargeArrays);
+            compileAllocateNewArrayWithSize(globalObject, resultGPR, lengthGPR, ArrayWithContiguous, shouldAllowForArrayStorageStructureForLargeArrays);
         }
 
         GPRTemporary index(this);
@@ -8191,30 +8228,30 @@ void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
         for (unsigned i = 0; i < node->numChildren(); ++i) {
             Edge use = m_jit.graph().varArgChild(node, i);
             if (bitVector->get(i)) {
-                SpeculateCellOperand fixedArray(this, use);
-                GPRReg fixedArrayGPR = fixedArray.gpr();
+                SpeculateCellOperand immutableButterfly(this, use);
+                GPRReg immutableButterflyGPR = immutableButterfly.gpr();
 
-                GPRTemporary fixedIndex(this);
-                GPRReg fixedIndexGPR = fixedIndex.gpr();
+                GPRTemporary immutableButterflyIndex(this);
+                GPRReg immutableButterflyIndexGPR = immutableButterflyIndex.gpr();
 
                 GPRTemporary item(this);
                 GPRReg itemGPR = item.gpr();
 
-                GPRTemporary fixedLength(this);
-                GPRReg fixedLengthGPR = fixedLength.gpr();
+                GPRTemporary immutableButterflyLength(this);
+                GPRReg immutableButterflyLengthGPR = immutableButterflyLength.gpr();
 
-                m_jit.load32(MacroAssembler::Address(fixedArrayGPR, JSFixedArray::offsetOfSize()), fixedLengthGPR);
-                m_jit.move(TrustedImm32(0), fixedIndexGPR);
-                auto done = m_jit.branchPtr(MacroAssembler::AboveOrEqual, fixedIndexGPR, fixedLengthGPR);
+                m_jit.load32(MacroAssembler::Address(immutableButterflyGPR, JSImmutableButterfly::offsetOfPublicLength()), immutableButterflyLengthGPR);
+                m_jit.move(TrustedImm32(0), immutableButterflyIndexGPR);
+                auto done = m_jit.branchPtr(MacroAssembler::AboveOrEqual, immutableButterflyIndexGPR, immutableButterflyLengthGPR);
                 auto loopStart = m_jit.label();
                 m_jit.load64(
-                    MacroAssembler::BaseIndex(fixedArrayGPR, fixedIndexGPR, MacroAssembler::TimesEight, JSFixedArray::offsetOfData()),
+                    MacroAssembler::BaseIndex(immutableButterflyGPR, immutableButterflyIndexGPR, MacroAssembler::TimesEight, JSImmutableButterfly::offsetOfData()),
                     itemGPR);
 
                 m_jit.store64(itemGPR, MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight));
-                m_jit.addPtr(TrustedImm32(1), fixedIndexGPR);
+                m_jit.addPtr(TrustedImm32(1), immutableButterflyIndexGPR);
                 m_jit.addPtr(TrustedImm32(1), indexGPR);
-                m_jit.branchPtr(MacroAssembler::Below, fixedIndexGPR, fixedLengthGPR).linkTo(loopStart, &m_jit);
+                m_jit.branchPtr(MacroAssembler::Below, immutableButterflyIndexGPR, immutableButterflyLengthGPR).linkTo(loopStart, &m_jit);
 
                 done.link(&m_jit);
             } else {
@@ -8239,13 +8276,13 @@ void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
     for (unsigned i = 0; i < node->numChildren(); ++i) {
         Edge use = m_jit.graph().m_varArgChildren[node->firstChild() + i];
         if (bitVector->get(i)) {
-            SpeculateCellOperand fixedArray(this, use);
-            GPRReg arrayGPR = fixedArray.gpr();
+            SpeculateCellOperand immutableButterfly(this, use);
+            GPRReg immutableButterflyGPR = immutableButterfly.gpr();
 #if USE(JSVALUE64)
-            m_jit.store64(arrayGPR, &buffer[i]);
+            m_jit.store64(immutableButterflyGPR, &buffer[i]);
 #else
             char* pointer = static_cast<char*>(static_cast<void*>(&buffer[i]));
-            m_jit.store32(arrayGPR, pointer + PayloadOffset);
+            m_jit.store32(immutableButterflyGPR, pointer + PayloadOffset);
             m_jit.store32(TrustedImm32(JSValue::CellTag), pointer + TagOffset);
 #endif
         } else {
@@ -8266,7 +8303,7 @@ void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
     GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
 
-    callOperation(operationNewArrayWithSpreadSlow, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), buffer, node->numChildren());
+    callOperation(operationNewArrayWithSpreadSlow, resultGPR, TrustedImmPtr::weakPointer(m_graph, globalObject), buffer, node->numChildren());
     m_jit.exceptionCheck();
     {
         GPRTemporary scratch(this);
@@ -12613,7 +12650,7 @@ void SpeculativeJIT::compileObjectKeys(Node* node)
             RegisteredStructure arrayStructure = m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(CopyOnWriteArrayWithContiguous));
 
             m_jit.move(scratchGPR, scratch3GPR);
-            m_jit.addPtr(TrustedImmPtr(JSImmutableButterfly::offsetOfData()), scratchGPR);
+            m_jit.addPtr(TrustedImm32(JSImmutableButterfly::offsetOfData()), scratchGPR);
 
             emitAllocateJSObject<JSArray>(resultGPR, TrustedImmPtr(arrayStructure), scratchGPR, structureGPR, scratch2GPR, slowButArrayBufferCases);
 
