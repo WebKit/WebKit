@@ -67,7 +67,7 @@ public:
         void reset();
         void trim(unsigned newSize);
 
-        static bool isAtContentBoundary(const InlineItem&, const Content&);
+        static bool isAtSoftWrapOpportunity(const InlineItem&, const Content& priorContent);
 
         struct Run {
             const InlineItem& inlineItem;

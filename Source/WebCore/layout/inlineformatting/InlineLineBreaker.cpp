@@ -227,7 +227,7 @@ Optional<LineBreaker::LeftSide> LineBreaker::tryBreakingTextRun(const Content::R
     return LeftSide { hyphenLocation, trailingPartialRunWidthWithHyphen, true };
 }
 
-static bool endsWithBreakingOpportunity(const InlineTextItem& previousTextItem, const InlineTextItem& nextInlineTextItem)
+static bool endsWithSoftWrapOpportunity(const InlineTextItem& previousTextItem, const InlineTextItem& nextInlineTextItem)
 {
     ASSERT(!previousTextItem.isWhitespace());
     ASSERT(!nextInlineTextItem.isWhitespace());
@@ -251,88 +251,101 @@ static bool endsWithBreakingOpportunity(const InlineTextItem& previousTextItem, 
     return !TextUtil::findNextBreakablePosition(lineBreakIterator, 0, nextInlineTextItem.style());
 }
 
-bool LineBreaker::Content::isAtContentBoundary(const InlineItem& inlineItem, const Content& content)
+bool LineBreaker::Content::isAtSoftWrapOpportunity(const InlineItem& inlineItem, const Content& priorContent)
 {
     // https://drafts.csswg.org/css-text-3/#line-break-details
-    // Figure out if the new incoming content puts the uncommitted content on commit boundary.
-    // e.g. <span>continuous</span> <- uncomitted content ->
-    // [inline container start][text content][inline container end]
-    // An incoming <img> box would enable us to commit the "<span>continuous</span>" content
-    // while additional text content would not.
+    // Figure out if the new incoming content puts the uncommitted content on a soft wrap opportunity.
+    // e.g. [container start][prior_continuous_content][container end] (<span>prior_continuous_content</span>)
+    // An incoming <img> box would enable us to commit the "<span>prior_continuous_content</span>" content
+    // but an incoming text content would not necessarily.
     ASSERT(!inlineItem.isFloat() && !inlineItem.isLineBreak());
-    if (content.isEmpty()) {
+    if (priorContent.isEmpty()) {
         // Can't decide it yet.
         return false;
     }
-    auto* lastUncomittedContent = &content.runs().last().inlineItem;
+    auto* lastUncomittedContent = &priorContent.runs().last().inlineItem;
     if (inlineItem.isText()) {
-        // any content' ' -> whitespace is always a commit boundary.
-        if (downcast<InlineTextItem>(inlineItem).isWhitespace())
+        if (downcast<InlineTextItem>(inlineItem).isWhitespace()) {
+            // [prior content][ ] (<span>some_content</span> )
+            // FIXME: check if we can actually break before the [whitespace] content.
             return true;
-        // <span>text -> the inline container start and the text content form an unbreakable continuous content.
-        if (lastUncomittedContent->isContainerStart())
+        }
+        if (lastUncomittedContent->isContainerStart()) {
+            // [container start][text] (<span>text) : the [container start] and the [text] content form a continuous content.
             return false;
-        // </span>text -> need to check what's before the </span>.
-        // text</span>text -> continuous content
-        // <img></span>text -> commit bounday
+        }
         if (lastUncomittedContent->isContainerEnd()) {
-            auto& runs = content.runs();
-            // text</span><span></span></span>text -> check all the way back until we hit either a box or some text
-            for (auto i = content.size(); i--;) {
+            // [container end][text] (</span>text)
+            // Need to check what's before the </span> to be able to decide whether it's a continuous content.
+            // e.g.
+            // [text][container end][text] (text</span>text) : there's no soft wrap opportunity here.
+            // [inline box][container end][text] (<img></span>text) : after [container end] position is a soft wrap opportunity.
+            auto& runs = priorContent.runs();
+            auto didFindContent = false;
+            for (auto i = priorContent.size(); i--;) {
                 auto& previousInlineItem = runs[i].inlineItem;
                 if (previousInlineItem.isContainerStart() || previousInlineItem.isContainerEnd())
                     continue;
-                ASSERT(previousInlineItem.isText() || previousInlineItem.isBox());
-                lastUncomittedContent = &previousInlineItem;
-                break;
+                if (previousInlineItem.isText() || previousInlineItem.isBox()) {
+                    lastUncomittedContent = &previousInlineItem;
+                    didFindContent = true;
+                    break;
+                }
+                ASSERT_NOT_REACHED();
             }
-            // Did not find any content (e.g. <span></span>text)
-            if (lastUncomittedContent->isContainerEnd())
+            // Did not find any content at all (e.g. [container start][container end][text] (<span></span>text)).
+            if (!didFindContent)
                 return false;
         }
-        // texttext -> continuous content.
-        // text-text -> commit boundary.
-        // ' 'text -> commit boundary.
         if (lastUncomittedContent->isText()) {
-            auto& previousInlineTextItem = downcast<InlineTextItem>(*lastUncomittedContent);
-            if (previousInlineTextItem.isWhitespace())
+            // [text][text] : is a continuous content.
+            // [text-][text] : after [hyphen] position is a soft wrap opportunity.
+            // [ ][text] : after [whitespace] position is a soft wrap opportunity.
+            auto& lastInlineTextItem = downcast<InlineTextItem>(*lastUncomittedContent);
+            if (lastInlineTextItem.isWhitespace())
                 return true;
-            return endsWithBreakingOpportunity(previousInlineTextItem, downcast<InlineTextItem>(inlineItem));
+            return endsWithSoftWrapOpportunity(lastInlineTextItem, downcast<InlineTextItem>(inlineItem));
         }
-        // <img>text -> the inline box is on a commit boundary.
-        if (lastUncomittedContent->isBox())
+        if (lastUncomittedContent->isBox()) {
+            // [inline box][text] (<img>text) : after [inline box] position is a soft wrap opportunity.
             return true;
+        }
         ASSERT_NOT_REACHED();
     }
-
     if (inlineItem.isBox()) {
-        // <span><img> -> the inline container start and the content form an unbreakable continuous content.
-        if (lastUncomittedContent->isContainerStart())
+        if (lastUncomittedContent->isContainerStart()) {
+            // [container start][inline box] (<spam><img>) : the [container start] and the [inline box] form a continuous content.
             return false;
-        // </span><img> -> ok to commit the </span>.
-        if (lastUncomittedContent->isContainerEnd())
+        }
+        if (lastUncomittedContent->isContainerEnd()) {
+            // [container end][inline box] (</span><img>) : after [container end] position is a soft wrap opportunity.
             return true;
-        // <img>text and <img><img> -> these combinations are ok to commit.
-        if (lastUncomittedContent->isText() || lastUncomittedContent->isBox())
+        }
+        if (lastUncomittedContent->isText() || lastUncomittedContent->isBox()) {
+            // [inline box][text] (<img>text) and [inline box][inline box] (<img><img>) : after first [inline box] position is a soft wrap opportunity.
             return true;
+        }
         ASSERT_NOT_REACHED();
     }
 
     if (inlineItem.isContainerStart() || inlineItem.isContainerEnd()) {
-        // <span><span> or </span><span> -> can't commit the previous content yet.
-        if (lastUncomittedContent->isContainerStart() || lastUncomittedContent->isContainerEnd())
+        if (lastUncomittedContent->isContainerStart() || lastUncomittedContent->isContainerEnd()) {
+            // [container start][container end] (<span><span>) or
+            // [container end][container start] (</span><span>) : need more content to decide.
             return false;
-        // ' '<span> -> let's commit the whitespace
-        // text<span> -> but not yet the non-whitespace; we need to know what comes next (e.g. text<span>text or text<span><img>).
-        if (lastUncomittedContent->isText())
+        }
+        if (lastUncomittedContent->isText()) {
+            // [ ][container start] ( <span>) : after [whitespace] position is a soft wrap opportunity.
+            // [text][container start] (text<span>) : Need more content to decide (e.g. text<span>text vs. text<span><img>).
             return downcast<InlineTextItem>(*lastUncomittedContent).isWhitespace();
-        // <img><span> -> it's ok to commit the inline box content.
-        // <img></span> -> the inline box and the closing inline container form an unbreakable continuous content.
-        if (lastUncomittedContent->isBox())
+        }
+        if (lastUncomittedContent->isBox()) {
+            // [inline box][container start] (<img><span>) : after [inline box] position is a soft wrap opportunity.
+            // [inline box][container end] (<img></span>) : the [inline box] and the [container end] form a continuous content.
             return inlineItem.isContainerStart();
+        }
         ASSERT_NOT_REACHED();
     }
-
     ASSERT_NOT_REACHED();
     return true;
 }
@@ -340,7 +353,7 @@ bool LineBreaker::Content::isAtContentBoundary(const InlineItem& inlineItem, con
 void LineBreaker::Content::append(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
 {
     ASSERT(!inlineItem.isFloat());
-    ASSERT(inlineItem.isLineBreak() || !isAtContentBoundary(inlineItem, *this));
+    ASSERT(inlineItem.isLineBreak() || !isAtSoftWrapOpportunity(inlineItem, *this));
     m_continousRuns.append({ inlineItem, logicalWidth });
     m_width += logicalWidth;
     // Figure out the trailing trimmable state.

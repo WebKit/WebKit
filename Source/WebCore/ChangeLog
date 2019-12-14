@@ -1,5 +1,25 @@
 2019-12-14  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Rename LineBreaker::Content::isAtContentBoundary to isAtSoftWrapOpportunity
+        https://bugs.webkit.org/show_bug.cgi?id=205235
+        <rdar://problem/57939955>
+
+        Reviewed by Antti Koivisto.
+
+        The "soft wrap opportunity" is closer to the spec term.
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::endsWithSoftWrapOpportunity):
+        (WebCore::Layout::LineBreaker::Content::isAtSoftWrapOpportunity):
+        (WebCore::Layout::LineBreaker::Content::append):
+        (WebCore::Layout::endsWithBreakingOpportunity): Deleted.
+        (WebCore::Layout::LineBreaker::Content::isAtContentBoundary): Deleted.
+        * layout/inlineformatting/InlineLineBreaker.h:
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::LineLayoutContext::placeInlineItem):
+
+2019-12-14  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Add support for white-space: break-spaces
         https://bugs.webkit.org/show_bug.cgi?id=205234
         <rdar://problem/57938253>
