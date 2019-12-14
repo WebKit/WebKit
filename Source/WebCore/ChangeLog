@@ -1,5 +1,19 @@
 2019-12-14  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Fix imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-003.html
+        https://bugs.webkit.org/show_bug.cgi?id=205237
+        <rdar://problem/57940108>
+
+        Reviewed by Antti Koivisto.
+
+        "white-space: break-spaces" : A line breaking opportunity exists after every preserved white space character,
+        including between white space characters.
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::LineBreaker::Content::isAtSoftWrapOpportunity):
+
+2019-12-14  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Rename LineBreaker::Content::isAtContentBoundary to isAtSoftWrapOpportunity
         https://bugs.webkit.org/show_bug.cgi?id=205235
         <rdar://problem/57939955>
