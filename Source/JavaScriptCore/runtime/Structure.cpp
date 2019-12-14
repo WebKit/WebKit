@@ -256,6 +256,7 @@ Structure::Structure(VM& vm, Structure* previous, DeferredStructureTransitionWat
     , m_transitionWatchpointSet(IsWatched)
     , m_offset(invalidOffset)
     , m_propertyHash(previous->m_propertyHash)
+    , m_seenProperties(previous->m_seenProperties)
 {
     setDictionaryKind(previous->dictionaryKind());
     setIsPinnedPropertyTable(false);

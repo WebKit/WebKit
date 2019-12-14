@@ -144,6 +144,9 @@ ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, PropertyName propertyName, u
     ASSERT(!isCompilationThread());
     ASSERT(structure(vm)->classInfo() == info());
 
+    if (m_seenProperties.ruleOut(bitwise_cast<uintptr_t>(propertyName.uid())))
+        return invalidOffset;
+
     PropertyTable* propertyTable = ensurePropertyTableIfNotEmpty(vm);
     if (!propertyTable)
         return invalidOffset;
@@ -447,6 +450,8 @@ inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned
     PropertyOffset newOffset = table->nextOffset(m_inlineCapacity);
 
     m_propertyHash = m_propertyHash ^ rep->existingSymbolAwareHash();
+
+    m_seenProperties.add(bitwise_cast<uintptr_t>(rep));
     
     PropertyOffset newLastOffset = m_offset;
     table->add(PropertyMapEntry(rep, newOffset, attributes), newLastOffset, PropertyTable::PropertyOffsetMayChange);
