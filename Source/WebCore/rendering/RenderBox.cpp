@@ -4787,7 +4787,7 @@ LayoutRect RenderBox::layoutOverflowRectForPropagation(const RenderStyle* parent
         // to it, and then convert it back.
         flipForWritingMode(rect);
         
-        if (hasTransform)
+        if (hasTransform && hasLayer())
             rect = layer()->currentTransform().mapRect(rect);
 
         if (isInFlowPositioned())

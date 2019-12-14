@@ -1,3 +1,17 @@
+2019-12-13  Sunny He  <sunny_he@apple.com>
+
+        Nullptr crash if SVG element if element parent becomes document node
+        https://bugs.webkit.org/show_bug.cgi?id=205217
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: svg/dom/replaceChild-document-crash.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::layoutOverflowRectForPropagation const):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+
 2019-12-13  Brady Eidson  <beidson@apple.com>
 
         Refactor ScriptController's proliferation of ExceptionDetails*.
