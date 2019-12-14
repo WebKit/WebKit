@@ -158,7 +158,7 @@ bool QuickTimePluginReplacement::ensureReplacementScriptInjected()
     if (replacementFunction.isFunction(vm))
         return true;
     
-    scriptController.evaluateInWorld(ScriptSourceCode(quickTimePluginReplacementScript()), world);
+    scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(quickTimePluginReplacementScript()), world);
     if (UNLIKELY(scope.exception())) {
         LOG(Plugins, "%p - Exception when evaluating QuickTime plugin replacement script", this);
         scope.clearException();

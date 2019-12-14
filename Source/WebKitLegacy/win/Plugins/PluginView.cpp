@@ -439,7 +439,7 @@ void PluginView::performRequest(PluginRequest* request)
     
     // Executing a script can cause the plugin view to be destroyed, so we keep a reference to it.
     RefPtr<PluginView> protector(this);
-    auto result = m_parentFrame->script().executeScript(jsString, request->shouldAllowPopups());
+    auto result = m_parentFrame->script().executeScriptIgnoringException(jsString, request->shouldAllowPopups());
 
     if (targetFrameName.isNull()) {
         CString cstr;

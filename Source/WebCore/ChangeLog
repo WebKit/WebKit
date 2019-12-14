@@ -1,3 +1,65 @@
+2019-12-13  Brady Eidson  <beidson@apple.com>
+
+        Refactor ScriptController's proliferation of ExceptionDetails*.
+        https://bugs.webkit.org/show_bug.cgi?id=205151
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Refactor, no behavior change).
+
+        There's so many ExceptionDetails* null pointers being passed around in the ScriptController
+        family of functions.
+
+        Let's make it a little more explicit which callers get exceptions and which don't.
+
+
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::QuickTimePluginReplacement::ensureReplacementScriptInjected):
+
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateInWorldIgnoringException):
+        (WebCore::ScriptController::evaluateInWorld):
+        (WebCore::ScriptController::evaluateIgnoringException):
+        (WebCore::ScriptController::executeScriptInWorldIgnoringException):
+        (WebCore::ScriptController::executeScriptInWorld):
+        (WebCore::ScriptController::executeUserAgentScriptInWorld):
+        (WebCore::ScriptController::executeScriptIgnoringException):
+        (WebCore::ScriptController::executeIfJavaScriptURL):
+        (WebCore::ScriptController::evaluate): Deleted.
+        (WebCore::ScriptController::executeScript): Deleted.
+        * bindings/js/ScriptController.h:
+        
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::processContentRuleListsForLoad):
+        
+        * dom/Document.cpp:
+        (WebCore::Document::ensurePlugInsInjectedScript):
+        
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::executeClassicScript):
+        
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::ensureMediaControlsInjectedScript):
+        
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::evaluateAsBoolean):
+        (WebCore::InspectorFrontendClientLocal::evaluateOnLoad):
+        
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::didClearWindowObjectInWorld):
+        
+        * loader/ContentFilter.cpp:
+        (WebCore::ContentFilter::didDecide):
+        
+        * page/Frame.cpp:
+        (WebCore::Frame::injectUserScriptImmediately):
+        
+        * xml/XMLTreeViewer.cpp:
+        (WebCore::XMLTreeViewer::transformDocumentToTreeView):
+
 2019-12-13  Eric Carlson  <eric.carlson@apple.com>
 
         Add remote media player message to load and play

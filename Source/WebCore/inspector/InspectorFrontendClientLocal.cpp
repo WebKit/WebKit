@@ -420,7 +420,7 @@ void InspectorFrontendClientLocal::dispatchMessageAsync(const String& messageObj
 bool InspectorFrontendClientLocal::evaluateAsBoolean(const String& expression)
 {
     auto& state = *mainWorldExecState(&m_frontendPage->mainFrame());
-    return m_frontendPage->mainFrame().script().executeScript(expression).toWTFString(&state) == "true";
+    return m_frontendPage->mainFrame().script().executeScriptIgnoringException(expression).toWTFString(&state) == "true";
 }
 
 void InspectorFrontendClientLocal::evaluateOnLoad(const String& expression)
@@ -431,7 +431,7 @@ void InspectorFrontendClientLocal::evaluateOnLoad(const String& expression)
     }
 
     JSC::SuspendExceptionScope scope(&m_frontendPage->inspectorController().vm());
-    m_frontendPage->mainFrame().script().evaluate(ScriptSourceCode(expression));
+    m_frontendPage->mainFrame().script().evaluateIgnoringException(ScriptSourceCode(expression));
 }
 
 Page* InspectorFrontendClientLocal::inspectedPage() const

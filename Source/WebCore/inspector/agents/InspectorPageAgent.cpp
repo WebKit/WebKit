@@ -773,7 +773,7 @@ void InspectorPageAgent::didClearWindowObjectInWorld(Frame& frame)
     if (m_bootstrapScript.isEmpty())
         return;
 
-    frame.script().evaluate(ScriptSourceCode(m_bootstrapScript, URL { URL(), "web-inspector://bootstrap.js"_s }));
+    frame.script().evaluateIgnoringException(ScriptSourceCode(m_bootstrapScript, URL { URL(), "web-inspector://bootstrap.js"_s }));
 }
 
 void InspectorPageAgent::didPaint(RenderObject& renderer, const LayoutRect& rect)

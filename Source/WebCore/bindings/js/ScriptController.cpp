@@ -107,7 +107,13 @@ ScriptController::~ScriptController()
     }
 }
 
-JSValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode, DOMWrapperWorld& world, ExceptionDetails* exceptionDetails)
+JSC::JSValue ScriptController::evaluateInWorldIgnoringException(const ScriptSourceCode& sourceCode, DOMWrapperWorld& world)
+{
+    auto result = evaluateInWorld(sourceCode, world);
+    return result ? result.value() : JSC::JSValue { };
+}
+
+ValueOrException ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode, DOMWrapperWorld& world)
 {
     JSLockHolder lock(world.vm());
 
@@ -135,19 +141,23 @@ JSValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode, DO
 
     InspectorInstrumentation::didEvaluateScript(m_frame);
 
+    Optional<ExceptionDetails> optionalDetails;
     if (evaluationException) {
-        reportException(&globalObject, evaluationException, sourceCode.cachedScript(), exceptionDetails);
-        m_sourceURL = savedSourceURL;
-        return { };
+        ExceptionDetails details;
+        reportException(&globalObject, evaluationException, sourceCode.cachedScript(), &details);
+        optionalDetails = WTFMove(details);
     }
 
     m_sourceURL = savedSourceURL;
+    if (optionalDetails)
+        return makeUnexpected(*optionalDetails);
+
     return returnValue;
 }
 
-JSValue ScriptController::evaluate(const ScriptSourceCode& sourceCode, ExceptionDetails* exceptionDetails)
+JSC::JSValue ScriptController::evaluateIgnoringException(const ScriptSourceCode& sourceCode)
 {
-    return evaluateInWorld(sourceCode, mainThreadNormalWorld(), exceptionDetails);
+    return evaluateInWorldIgnoringException(sourceCode, mainThreadNormalWorld());
 }
 
 void ScriptController::loadModuleScriptInWorld(LoadableModuleScript& moduleScript, const String& moduleName, Ref<ModuleFetchParameters>&& topLevelFetchParameters, DOMWrapperWorld& world)
@@ -548,25 +558,42 @@ void ScriptController::clearScriptObjects()
 #endif
 }
 
-JSValue ScriptController::executeScriptInWorld(DOMWrapperWorld& world, const String& script, bool forceUserGesture, ExceptionDetails* exceptionDetails)
+JSC::JSValue ScriptController::executeScriptIgnoringException(const String& script, bool forceUserGesture)
+{
+    return executeScriptInWorldIgnoringException(mainThreadNormalWorld(), script, forceUserGesture);
+}
+
+JSC::JSValue ScriptController::executeScriptInWorldIgnoringException(DOMWrapperWorld& world, const String& script, bool forceUserGesture)
+{
+    auto result = executeScriptInWorld(world, script, forceUserGesture);
+    return result ? result.value() : JSC::JSValue { };
+}
+
+ValueOrException ScriptController::executeScriptInWorld(DOMWrapperWorld& world, const String& script, bool forceUserGesture)
 {
     UserGestureIndicator gestureIndicator(forceUserGesture ? Optional<ProcessingUserGestureState>(ProcessingUserGesture) : WTF::nullopt);
     ScriptSourceCode sourceCode(script, URL(m_frame.document()->url()), TextPosition(), JSC::SourceProviderSourceType::Program, CachedScriptFetcher::create(m_frame.document()->charset()));
 
+    // FIXME: Instead of returning an empty JSValue, should return an ExceptionDetails.
     if (!canExecuteScripts(AboutToExecuteScript) || isPaused())
         return { };
 
-    return evaluateInWorld(sourceCode, world, exceptionDetails);
+    return evaluateInWorld(sourceCode, world);
 }
 
-JSValue ScriptController::executeUserAgentScriptInWorld(DOMWrapperWorld& world, const String& script, bool forceUserGesture, ExceptionDetails* exceptionDetails)
+JSC::JSValue ScriptController::executeUserAgentScriptInWorldIgnoringException(DOMWrapperWorld& world, const String& script, bool forceUserGesture)
+{
+    auto result = executeUserAgentScriptInWorld(world, script, forceUserGesture);
+    return result ? result.value() : JSC::JSValue { };
+}
+ValueOrException ScriptController::executeUserAgentScriptInWorld(DOMWrapperWorld& world, const String& script, bool forceUserGesture)
 {
     auto& document = *m_frame.document();
     if (!shouldAllowUserAgentScripts(document))
-        return { };
+        return makeUnexpected(ExceptionDetails { "Unable to run user agent scripts in this document for security reasons"_s, 0, 0, { } });
 
     document.setHasEvaluatedUserAgentScripts();
-    return executeScriptInWorld(world, script, forceUserGesture, exceptionDetails);
+    return executeScriptInWorld(world, script, forceUserGesture);
 }
 
 bool ScriptController::shouldAllowUserAgentScripts(Document& document) const
@@ -598,24 +625,6 @@ bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reaso
     return m_frame.loader().client().allowScript(m_frame.settings().isScriptEnabled());
 }
 
-JSValue ScriptController::executeScript(const String& script, bool forceUserGesture, ExceptionDetails* exceptionDetails)
-{
-    UserGestureIndicator gestureIndicator(forceUserGesture ? Optional<ProcessingUserGestureState>(ProcessingUserGesture) : WTF::nullopt);
-    return executeScript(ScriptSourceCode(script, URL(m_frame.document()->url()), TextPosition(), JSC::SourceProviderSourceType::Program, CachedScriptFetcher::create(m_frame.document()->charset())), exceptionDetails);
-}
-
-JSValue ScriptController::executeScript(const ScriptSourceCode& sourceCode, ExceptionDetails* exceptionDetails)
-{
-    if (!canExecuteScripts(AboutToExecuteScript) || isPaused())
-        return { }; // FIXME: Would jsNull be better?
-
-    // FIXME: Preventing Frame from being destroyed is essentially unnecessary.
-    // https://bugs.webkit.org/show_bug.cgi?id=164763
-    Ref<Frame> protector(m_frame); // Script execution can destroy the frame, and thus the ScriptController.
-
-    return evaluate(sourceCode, exceptionDetails);
-}
-
 bool ScriptController::executeIfJavaScriptURL(const URL& url, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL)
 {
     if (!WTF::protocolIsJavaScript(url))
@@ -632,7 +641,7 @@ bool ScriptController::executeIfJavaScriptURL(const URL& url, ShouldReplaceDocum
     const int javascriptSchemeLength = sizeof("javascript:") - 1;
 
     String decodedURL = decodeURLEscapeSequences(url.string());
-    auto result = executeScript(decodedURL.substring(javascriptSchemeLength));
+    auto result = executeScriptIgnoringException(decodedURL.substring(javascriptSchemeLength));
 
     // If executing script caused this frame to be removed from the page, we
     // don't want to try to replace its document!

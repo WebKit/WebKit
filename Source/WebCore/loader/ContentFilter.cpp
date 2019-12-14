@@ -233,7 +233,7 @@ void ContentFilter::didDecide(State state)
     if (!unblockRequestDeniedScript.isEmpty() && frame) {
         unblockHandler.wrapWithDecisionHandler([scriptController = makeWeakPtr(frame->script()), script = unblockRequestDeniedScript.isolatedCopy()](bool unblocked) {
             if (!unblocked && scriptController)
-                scriptController->executeScript(script);
+                scriptController->executeScriptIgnoringException(script);
         });
     }
     m_documentLoader.frameLoader()->client().contentFilterDidBlockLoad(WTFMove(unblockHandler));

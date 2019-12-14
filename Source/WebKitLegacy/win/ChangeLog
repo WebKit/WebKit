@@ -1,3 +1,19 @@
+2019-12-13  Brady Eidson  <beidson@apple.com>
+
+        Refactor ScriptController's proliferation of ExceptionDetails*.
+        https://bugs.webkit.org/show_bug.cgi?id=205151
+
+        Reviewed by Alex Christensen.
+
+        * Plugins/PluginView.cpp:
+        (WebCore::PluginView::performRequest):
+
+        * WebFrame.cpp:
+        (WebFrame::stringByEvaluatingJavaScriptInScriptWorld):
+
+        * WebView.cpp:
+        (WebView::stringByEvaluatingJavaScriptFromString):
+        
 2019-12-05  Chris Dumez  <cdumez@apple.com>
 
         PageConfiguration::dragClient should use a smart pointer

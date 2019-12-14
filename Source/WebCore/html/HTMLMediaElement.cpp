@@ -7317,7 +7317,7 @@ bool HTMLMediaElement::ensureMediaControlsInjectedScript()
 #else
         URL scriptURL;
 #endif
-        scriptController.evaluateInWorld(ScriptSourceCode(mediaControlsScript, WTFMove(scriptURL)), world);
+        scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(mediaControlsScript, WTFMove(scriptURL)), world);
         if (UNLIKELY(scope.exception())) {
             scope.clearException();
             return false;

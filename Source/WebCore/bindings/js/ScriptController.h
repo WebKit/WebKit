@@ -70,6 +70,8 @@ enum ReasonForCallingCanExecuteScripts {
     NotAboutToExecuteScript
 };
 
+using ValueOrException = Expected<JSC::JSValue, ExceptionDetails>;
+
 class ScriptController : public CanMakeWeakPtr<ScriptController> {
     WTF_MAKE_FAST_ALLOCATED;
 
@@ -88,10 +90,11 @@ public:
 
     static void getAllWorlds(Vector<Ref<DOMWrapperWorld>>&);
 
-    JSC::JSValue executeScript(const ScriptSourceCode&, ExceptionDetails* = nullptr);
-    WEBCORE_EXPORT JSC::JSValue executeScript(const String& script, bool forceUserGesture = false, ExceptionDetails* = nullptr);
-    JSC::JSValue executeScriptInWorld(DOMWrapperWorld&, const String& script, bool forceUserGesture = false, ExceptionDetails* = nullptr);
-    WEBCORE_EXPORT JSC::JSValue executeUserAgentScriptInWorld(DOMWrapperWorld&, const String& script, bool forceUserGesture, ExceptionDetails* = nullptr);
+    WEBCORE_EXPORT JSC::JSValue executeScriptIgnoringException(const String& script, bool forceUserGesture = false);
+    JSC::JSValue executeScriptInWorldIgnoringException(DOMWrapperWorld&, const String& script, bool forceUserGesture = false);
+    ValueOrException executeScriptInWorld(DOMWrapperWorld&, const String& script, bool forceUserGesture = false);
+    WEBCORE_EXPORT JSC::JSValue executeUserAgentScriptInWorldIgnoringException(DOMWrapperWorld&, const String& script, bool forceUserGesture);
+    WEBCORE_EXPORT ValueOrException executeUserAgentScriptInWorld(DOMWrapperWorld&, const String& script, bool forceUserGesture);
 
     bool shouldAllowUserAgentScripts(Document&) const;
 
@@ -102,8 +105,9 @@ public:
     // Darwin is an exception to this rule: it is OK to call this function from any thread, even reentrantly.
     static void initializeThreading();
 
-    JSC::JSValue evaluate(const ScriptSourceCode&, ExceptionDetails* = nullptr);
-    JSC::JSValue evaluateInWorld(const ScriptSourceCode&, DOMWrapperWorld&, ExceptionDetails* = nullptr);
+    JSC::JSValue evaluateIgnoringException(const ScriptSourceCode&);
+    JSC::JSValue evaluateInWorldIgnoringException(const ScriptSourceCode&, DOMWrapperWorld&);
+    ValueOrException evaluateInWorld(const ScriptSourceCode&, DOMWrapperWorld&);
 
     void loadModuleScriptInWorld(LoadableModuleScript&, const String& moduleName, Ref<ModuleFetchParameters>&&, DOMWrapperWorld&);
     void loadModuleScript(LoadableModuleScript&, const String& moduleName, Ref<ModuleFetchParameters>&&);

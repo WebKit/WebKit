@@ -1,3 +1,33 @@
+2019-12-13  Brady Eidson  <beidson@apple.com>
+
+        Refactor ScriptController's proliferation of ExceptionDetails*.
+        https://bugs.webkit.org/show_bug.cgi?id=205151
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageRunJavaScriptInMainFrame):
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _evaluateJavaScript:forceUserGesture:completionHandler:]):
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runJavaScriptInMainFrame):
+        (WebKit::WebPageProxy::runJavaScriptInMainFrameScriptWorld):
+        (WebKit::WebPageProxy::runJavaScriptInFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::performJavaScriptURLRequest):
+
+        * WebProcess/WebPage/WebInspectorFrontendAPIDispatcher.cpp:
+        (WebKit::WebInspectorFrontendAPIDispatcher::evaluateOrQueueExpression):
+        (WebKit::WebInspectorFrontendAPIDispatcher::evaluateQueuedExpressions):
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::runJavaScript):
+
 2019-12-13  Eric Carlson  <eric.carlson@apple.com>
 
         Add remote media player message to load and play

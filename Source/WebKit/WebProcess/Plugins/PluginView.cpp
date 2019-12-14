@@ -1253,7 +1253,7 @@ void PluginView::performJavaScriptURLRequest(URLRequest* request)
     // Evaluate the JavaScript code. Note that running JavaScript here could cause the plug-in to be destroyed, so we
     // grab references to the plug-in here.
     RefPtr<Plugin> plugin = m_plugin;
-    auto result = frame->script().executeScript(jsString, request->allowPopups());
+    auto result = frame->script().executeScriptIgnoringException(jsString, request->allowPopups());
 
     if (!result)
         return;

@@ -99,7 +99,7 @@ void WebInspectorFrontendAPIDispatcher::evaluateOrQueueExpression(const String& 
 
     ASSERT(m_queue.isEmpty());
     ASSERT(!m_page.corePage()->mainFrame().script().isPaused());
-    m_page.corePage()->mainFrame().script().executeScript(expression);
+    m_page.corePage()->mainFrame().script().executeScriptIgnoringException(expression);
 }
 
 void WebInspectorFrontendAPIDispatcher::evaluateQueuedExpressions()
@@ -109,7 +109,7 @@ void WebInspectorFrontendAPIDispatcher::evaluateQueuedExpressions()
 
     for (const String& expression : m_queue) {
         ASSERT(!m_page.corePage()->mainFrame().script().isPaused());
-        m_page.corePage()->mainFrame().script().executeScript(expression);
+        m_page.corePage()->mainFrame().script().executeScriptIgnoringException(expression);
     }
 
     m_queue.clear();

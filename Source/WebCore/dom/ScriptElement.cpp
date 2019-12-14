@@ -387,7 +387,7 @@ void ScriptElement::executeClassicScript(const ScriptSourceCode& sourceCode)
     IgnoreDestructiveWriteCountIncrementer ignoreDesctructiveWriteCountIncrementer(m_isExternalScript ? &document : nullptr);
     CurrentScriptIncrementer currentScriptIncrementer(document, m_element);
 
-    frame->script().evaluate(sourceCode);
+    frame->script().evaluateIgnoringException(sourceCode);
 }
 
 void ScriptElement::executeModuleScript(LoadableModuleScript& loadableModuleScript)

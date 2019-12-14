@@ -136,7 +136,7 @@ void ScheduledAction::execute(Document& document)
     if (m_function)
         executeFunctionInContext(window, window->proxy(), document);
     else
-        frame->script().executeScriptInWorld(m_isolatedWorld, m_code);
+        frame->script().executeScriptInWorldIgnoringException(m_isolatedWorld, m_code);
 }
 
 void ScheduledAction::execute(WorkerGlobalScope& workerGlobalScope)

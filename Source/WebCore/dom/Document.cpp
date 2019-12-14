@@ -7201,7 +7201,7 @@ void Document::ensurePlugInsInjectedScript(DOMWrapperWorld& world)
         jsString = String(plugInsJavaScript, sizeof(plugInsJavaScript));
 
     setHasEvaluatedUserAgentScripts();
-    scriptController.evaluateInWorld(ScriptSourceCode(jsString), world);
+    scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(jsString), world);
 
     m_hasInjectedPlugInsScript = true;
 }
