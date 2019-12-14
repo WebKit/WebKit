@@ -322,14 +322,14 @@ void ViewGestureController::SnapshotRemovalTracker::reset()
     m_removalCallback = nullptr;
 }
 
-bool ViewGestureController::SnapshotRemovalTracker::stopWaitingForEvent(Events event, const String& logReason)
+bool ViewGestureController::SnapshotRemovalTracker:: stopWaitingForEvent(Events event, const String& logReason, ShouldIgnoreEventIfPaused shouldIgnoreEventIfPaused)
 {
     ASSERT(hasOneBitSet(event));
 
     if (!(m_outstandingEvents & event))
         return false;
 
-    if (isPaused()) {
+    if (shouldIgnoreEventIfPaused == ShouldIgnoreEventIfPaused::Yes && isPaused()) {
         log("is paused; ignoring event: " + eventsDescription(event));
         return false;
     }
@@ -342,9 +342,9 @@ bool ViewGestureController::SnapshotRemovalTracker::stopWaitingForEvent(Events e
     return true;
 }
 
-bool ViewGestureController::SnapshotRemovalTracker::eventOccurred(Events event)
+bool ViewGestureController::SnapshotRemovalTracker::eventOccurred(Events event, ShouldIgnoreEventIfPaused shouldIgnoreEventIfPaused)
 {
-    return stopWaitingForEvent(event, "outstanding event occurred: ");
+    return stopWaitingForEvent(event, "outstanding event occurred: ", shouldIgnoreEventIfPaused);
 }
 
 bool ViewGestureController::SnapshotRemovalTracker::cancelOutstandingEvent(Events event)
@@ -613,7 +613,7 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
 
     m_webPageProxy.navigationGestureDidEnd(true, *targetItem);
 
-    m_snapshotRemovalTracker.eventOccurred(SnapshotRemovalTracker::SwipeAnimationEnd);
+    m_snapshotRemovalTracker.eventOccurred(SnapshotRemovalTracker::SwipeAnimationEnd, SnapshotRemovalTracker::ShouldIgnoreEventIfPaused::No);
 }
 
 void ViewGestureController::requestRenderTreeSizeNotificationIfNeeded()

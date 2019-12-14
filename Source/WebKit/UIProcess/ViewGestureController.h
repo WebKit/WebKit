@@ -210,7 +210,8 @@ private:
         bool isPaused() const { return m_paused; }
         bool hasRemovalCallback() const { return !!m_removalCallback; }
 
-        bool eventOccurred(Events);
+        enum class ShouldIgnoreEventIfPaused : bool { No, Yes };
+        bool eventOccurred(Events, ShouldIgnoreEventIfPaused = ShouldIgnoreEventIfPaused::Yes);
         bool cancelOutstandingEvent(Events);
         bool hasOutstandingEvent(Event);
 
@@ -227,7 +228,7 @@ private:
         void fireRemovalCallbackIfPossible();
         void watchdogTimerFired();
 
-        bool stopWaitingForEvent(Events, const String& logReason);
+        bool stopWaitingForEvent(Events, const String& logReason, ShouldIgnoreEventIfPaused = ShouldIgnoreEventIfPaused::Yes);
 
         Events m_outstandingEvents { 0 };
         WTF::Function<void()> m_removalCallback;
