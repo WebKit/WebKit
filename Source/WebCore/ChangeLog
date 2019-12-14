@@ -1,3 +1,16 @@
+2019-12-13  James Darpinian  <jdarpinian@chromium.org>
+
+        ANGLE: fix blending with alpha:false context
+        https://bugs.webkit.org/show_bug.cgi?id=205218
+
+        Fixes WebGL conformance test context-hidden-alpha.html.
+
+        Reviewed by Alex Christensen.
+
+        * platform/graphics/cocoa/WebGLLayer.mm:
+        (-[WebGLLayer allocateIOSurfaceBackingStoreWithSize:usingAlpha:]):
+            Specify internalformat GL_RGB instead of GL_BGRA_EXT when alpha is disabled.
+
 2019-12-13  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed 32-bit build fix: explicitly cast the bitrate to an int when creating a JSON
