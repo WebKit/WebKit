@@ -324,6 +324,10 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
         parameters.contentFilterExtensionHandle = WTFMove(handle);
     }
 #endif
+    
+#if PLATFORM(IOS)
+    parameters.cssValueToSystemColorMap = RenderThemeIOS::getOrCreateCSSValueToSystemColorMap();
+#endif
 }
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)

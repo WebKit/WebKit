@@ -169,6 +169,10 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << neHelperExtensionHandle;
     encoder << neSessionManagerExtensionHandle;
 #endif
+
+#if PLATFORM(IOS)
+    encoder << cssValueToSystemColorMap;
+#endif
 }
 
 bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreationParameters& parameters)
@@ -427,6 +431,14 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!neSessionManagerExtensionHandle)
         return false;
     parameters.neSessionManagerExtensionHandle = WTFMove(*neSessionManagerExtensionHandle);
+#endif
+
+#if PLATFORM(IOS)
+    Optional<HashMap<WebCore::CSSValueKey, WebCore::Color>> cssValueToSystemColorMap;
+    decoder >> cssValueToSystemColorMap;
+    if (!cssValueToSystemColorMap)
+        return false;
+    parameters.cssValueToSystemColorMap = WTFMove(*cssValueToSystemColorMap);
 #endif
 
     return true;

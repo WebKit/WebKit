@@ -1,3 +1,38 @@
+2019-12-14  Per Arne Vollan  <pvollan@apple.com>
+
+        Map CSS value ID to system color in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=204314
+        <rdar://problem/57295392>
+
+        Reviewed by Brent Fulgham.
+
+        Currently, RenderThemeIOS is mapping CSS value IDs to system colors in the WebContent process. This mapping leads to
+        invoking selectors on UITraitCollection and UIColor, which will send messages to the runningboard daemon. Since we
+        will be blocking access to this daemon in the WebContent process, this mapping should be moved to the UI process.
+        The UI process will create a mapping between CSS value IDs and system colors, and pass it to the WebContent process.
+
+        No new tests, covered by existing tests.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/CSSValueKey.h: Added.
+        (WebCore::operator==):
+        (WebCore::CSSValueKey::encode const):
+        (WebCore::CSSValueKey::decode):
+        (WebCore::CSSValueKey::hash const):
+        (WTF::CSSValueKeyHash::hash):
+        (WTF::CSSValueKeyHash::equal):
+        (WTF::HashTraits<WebCore::CSSValueKey>::emptyValue):
+        (WTF::HashTraits<WebCore::CSSValueKey>::constructDeletedValue):
+        (WTF::HashTraits<WebCore::CSSValueKey>::isDeletedValue):
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::cssValueIDSelectorList):
+        (WebCore::systemColorFromCSSValueID):
+        (WebCore::globalCSSValueToSystemColorMap):
+        (WebCore::RenderThemeIOS::createCSSValueToSystemColorMap):
+        (WebCore::RenderThemeIOS::setCSSValueToSystemColorMap):
+        (WebCore::RenderThemeIOS::systemColor const):
+
 2019-12-14  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Fix imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-003.html
