@@ -123,7 +123,7 @@ rtc::scoped_refptr<webrtc::I420BufferInterface> GStreamerVideoFrameLibWebRTC::To
 
         GUniquePtr<GstVideoConverter> videoConverter(gst_video_converter_new(inFrame.info(),
             &outInfo, gst_structure_new("GstVideoConvertConfig",
-            GST_VIDEO_CONVERTER_OPT_THREADS, G_TYPE_UINT, std::thread::hardware_concurrency() || 1 , nullptr)));
+            GST_VIDEO_CONVERTER_OPT_THREADS, G_TYPE_UINT, std::max(std::thread::hardware_concurrency(), 1u), nullptr)));
 
         ASSERT(videoConverter);
 

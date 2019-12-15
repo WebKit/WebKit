@@ -1,3 +1,18 @@
+2019-12-15  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        [GStreamer] Fix silly bug in GStreamerVideoFrameLibWebRTC.
+        https://bugs.webkit.org/show_bug.cgi?id=205248
+
+        Reviewed by Philippe Normand.
+
+        Binary operators in C++ don't work like in JavaScript, so this was always
+        passing 1.
+
+        No new tests, no observable behavior change.
+
+        * platform/mediastream/gstreamer/GStreamerVideoFrameLibWebRTC.cpp:
+        (WebCore::GStreamerVideoFrameLibWebRTC::ToI420):
+
 2019-12-15  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Fix imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-009.html
