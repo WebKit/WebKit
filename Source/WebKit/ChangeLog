@@ -1,3 +1,38 @@
+2019-12-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename "customFixedPositionRect" to "layoutViewportRect"
+        https://bugs.webkit.org/show_bug.cgi?id=205241
+
+        Reviewed by Dean Jackson.
+
+        WK2 computes the rect used to layout out position:fixed elements in the UI process.
+        For historical reasons this was called customFixedPositionRect, but rename it to
+        layoutViewportRect since that what it really is.
+
+        * Shared/VisibleContentRectUpdateInfo.cpp:
+        (WebKit::VisibleContentRectUpdateInfo::encode const):
+        (WebKit::VisibleContentRectUpdateInfo::decode):
+        (WebKit::operator<<):
+        * Shared/VisibleContentRectUpdateInfo.h:
+        (WebKit::VisibleContentRectUpdateInfo::VisibleContentRectUpdateInfo):
+        (WebKit::VisibleContentRectUpdateInfo::layoutViewportRect const):
+        (WebKit::operator==):
+        (WebKit::VisibleContentRectUpdateInfo::customFixedPositionRect const): Deleted.
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::currentLayoutViewport const):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::layoutViewportRect const):
+        (WebKit::WebPageProxy::customFixedPositionRect const): Deleted.
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:contentInsets:unobscuredRectInScrollViewCoordinates:obscuredInsets:unobscuredSafeAreaInsets:inputViewBounds:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:enclosedInScrollableAncestorView:]):
+        (-[WKContentView _didCommitLayerTree:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::computeLayoutViewportRect const):
+        (WebKit::WebPageProxy::unconstrainedLayoutViewportRect const):
+        (WebKit::WebPageProxy::computeCustomFixedPositionRect const): Deleted.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2019-12-14  Per Arne Vollan  <pvollan@apple.com>
 
         Map CSS value ID to system color in the UI process

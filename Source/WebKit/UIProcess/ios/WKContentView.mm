@@ -411,7 +411,7 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
     }
 
     CGRect unobscuredContentRectRespectingInputViewBounds = [self _computeUnobscuredContentRectRespectingInputViewBounds:unobscuredContentRect inputViewBounds:inputViewBounds];
-    WebCore::FloatRect fixedPositionRectForLayout = _page->computeCustomFixedPositionRect(unobscuredContentRect, unobscuredContentRectRespectingInputViewBounds, _page->customFixedPositionRect(), zoomScale, WebCore::FrameView::LayoutViewportConstraint::ConstrainedToDocumentRect);
+    WebCore::FloatRect fixedPositionRectForLayout = _page->computeLayoutViewportRect(unobscuredContentRect, unobscuredContentRectRespectingInputViewBounds, _page->layoutViewportRect(), zoomScale, WebCore::FrameView::LayoutViewportConstraint::ConstrainedToDocumentRect);
 
     WebKit::VisibleContentRectUpdateInfo visibleContentRectUpdateInfo(
         visibleContentRect,
@@ -628,8 +628,8 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     }
     
     if (boundsChanged) {
-        // FIXME: factor computeCustomFixedPositionRect() into something that gives us this rect.
-        WebCore::FloatRect fixedPositionRect = _page->computeCustomFixedPositionRect(_page->unobscuredContentRect(), _page->unobscuredContentRectRespectingInputViewBounds(), _page->customFixedPositionRect(), [[_webView scrollView] zoomScale]);
+        // FIXME: factor computeLayoutViewportRect() into something that gives us this rect.
+        WebCore::FloatRect fixedPositionRect = _page->computeLayoutViewportRect(_page->unobscuredContentRect(), _page->unobscuredContentRectRespectingInputViewBounds(), _page->layoutViewportRect(), [[_webView scrollView] zoomScale]);
         [self updateFixedClippingView:fixedPositionRect];
 
         // We need to push the new content bounds to the webview to update fixed position rects.

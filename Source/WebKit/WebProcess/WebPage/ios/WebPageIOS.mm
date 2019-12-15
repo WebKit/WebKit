@@ -3706,8 +3706,8 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
         else
             frameView.setVisualViewportOverrideRect(WTF::nullopt);
 
-        LOG_WITH_STREAM(VisibleRects, stream << "WebPage::updateVisibleContentRects - setLayoutViewportOverrideRect " << visibleContentRectUpdateInfo.customFixedPositionRect());
-        frameView.setLayoutViewportOverrideRect(LayoutRect(visibleContentRectUpdateInfo.customFixedPositionRect()));
+        LOG_WITH_STREAM(VisibleRects, stream << "WebPage::updateVisibleContentRects - setLayoutViewportOverrideRect " << visibleContentRectUpdateInfo.layoutViewportRect());
+        frameView.setLayoutViewportOverrideRect(LayoutRect(visibleContentRectUpdateInfo.layoutViewportRect()));
         if (selectionIsInsideFixedPositionContainer(frame)) {
             // Ensure that the next layer tree commit contains up-to-date caret/selection rects.
             frameView.frame().selection().setCaretRectNeedsUpdate();
@@ -3731,7 +3731,7 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
             viewportStability = ViewportRectStability::Unstable;
             layerAction = ScrollingLayerPositionAction::SetApproximate;
         }
-        scrollingCoordinator->reconcileScrollingState(frameView, scrollPosition, visibleContentRectUpdateInfo.customFixedPositionRect(), ScrollType::User, viewportStability, layerAction);
+        scrollingCoordinator->reconcileScrollingState(frameView, scrollPosition, visibleContentRectUpdateInfo.layoutViewportRect(), ScrollType::User, viewportStability, layerAction);
     }
 }
 

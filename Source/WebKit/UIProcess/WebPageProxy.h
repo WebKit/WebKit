@@ -680,12 +680,12 @@ public:
     bool inStableState() const { return m_lastVisibleContentRectUpdate.inStableState(); }
     const WebCore::FloatRect& unobscuredContentRectRespectingInputViewBounds() const { return m_lastVisibleContentRectUpdate.unobscuredContentRectRespectingInputViewBounds(); }
     // When visual viewports are enabled, this is the layout viewport rect.
-    const WebCore::FloatRect& customFixedPositionRect() const { return m_lastVisibleContentRectUpdate.customFixedPositionRect(); }
+    const WebCore::FloatRect& layoutViewportRect() const { return m_lastVisibleContentRectUpdate.layoutViewportRect(); }
 
     void updateVisibleContentRects(const VisibleContentRectUpdateInfo&);
     void resendLastVisibleContentRects();
 
-    WebCore::FloatRect computeCustomFixedPositionRect(const WebCore::FloatRect& unobscuredContentRect, const WebCore::FloatRect& unobscuredContentRectRespectingInputViewBounds, const WebCore::FloatRect& currentCustomFixedPositionRect, double displayedContentScale, WebCore::FrameView::LayoutViewportConstraint = WebCore::FrameView::LayoutViewportConstraint::Unconstrained) const;
+    WebCore::FloatRect computeLayoutViewportRect(const WebCore::FloatRect& unobscuredContentRect, const WebCore::FloatRect& unobscuredContentRectRespectingInputViewBounds, const WebCore::FloatRect& currentLayoutViewportRect, double displayedContentScale, WebCore::FrameView::LayoutViewportConstraint = WebCore::FrameView::LayoutViewportConstraint::Unconstrained) const;
 
     WebCore::FloatRect unconstrainedLayoutViewportRect() const;
     void adjustLayersForLayoutViewport(const WebCore::FloatRect& layoutViewport);

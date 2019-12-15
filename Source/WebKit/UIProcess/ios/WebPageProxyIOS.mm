@@ -246,8 +246,7 @@ static inline float adjustedUnexposedMaxEdge(float documentEdge, float exposedRe
     return exposedRectEdge;
 }
 
-// FIXME: rename this when visual viewports are the default.
-WebCore::FloatRect WebPageProxy::computeCustomFixedPositionRect(const FloatRect& unobscuredContentRect, const FloatRect& unobscuredContentRectRespectingInputViewBounds, const FloatRect& currentCustomFixedPositionRect, double displayedContentScale, FrameView::LayoutViewportConstraint constraint) const
+WebCore::FloatRect WebPageProxy::computeLayoutViewportRect(const FloatRect& unobscuredContentRect, const FloatRect& unobscuredContentRectRespectingInputViewBounds, const FloatRect& currentLayoutViewportRect, double displayedContentScale, FrameView::LayoutViewportConstraint constraint) const
 {
     FloatRect constrainedUnobscuredRect = unobscuredContentRect;
     FloatRect documentRect = pageClient().documentRect();
@@ -271,16 +270,16 @@ WebCore::FloatRect WebPageProxy::computeCustomFixedPositionRect(const FloatRect&
     FloatRect unobscuredContentRectForViewport = isBelowMinimumScale ? constrainedUnobscuredRect : unobscuredContentRectRespectingInputViewBounds;
 
     auto layoutViewportSize = FrameView::expandedLayoutViewportSize(m_baseLayoutViewportSize, LayoutSize(documentRect.size()), m_preferences->layoutViewportHeightExpansionFactor());
-    FloatRect layoutViewportRect = FrameView::computeUpdatedLayoutViewportRect(LayoutRect(currentCustomFixedPositionRect), LayoutRect(documentRect), LayoutSize(constrainedSize), LayoutRect(unobscuredContentRectForViewport), layoutViewportSize, m_minStableLayoutViewportOrigin, m_maxStableLayoutViewportOrigin, constraint);
+    FloatRect layoutViewportRect = FrameView::computeUpdatedLayoutViewportRect(LayoutRect(currentLayoutViewportRect), LayoutRect(documentRect), LayoutSize(constrainedSize), LayoutRect(unobscuredContentRectForViewport), layoutViewportSize, m_minStableLayoutViewportOrigin, m_maxStableLayoutViewportOrigin, constraint);
     
-    if (layoutViewportRect != currentCustomFixedPositionRect)
-        LOG_WITH_STREAM(VisibleRects, stream << "WebPageProxy::computeCustomFixedPositionRect: new layout viewport  " << layoutViewportRect);
+    if (layoutViewportRect != currentLayoutViewportRect)
+        LOG_WITH_STREAM(VisibleRects, stream << "WebPageProxy::computeLayoutViewportRect: new layout viewport  " << layoutViewportRect);
     return layoutViewportRect;
 }
 
 FloatRect WebPageProxy::unconstrainedLayoutViewportRect() const
 {
-    return computeCustomFixedPositionRect(unobscuredContentRect(), unobscuredContentRectRespectingInputViewBounds(), customFixedPositionRect(), displayedContentScale(), FrameView::LayoutViewportConstraint::Unconstrained);
+    return computeLayoutViewportRect(unobscuredContentRect(), unobscuredContentRectRespectingInputViewBounds(), layoutViewportRect(), displayedContentScale(), FrameView::LayoutViewportConstraint::Unconstrained);
 }
 
 void WebPageProxy::adjustLayersForLayoutViewport(const FloatRect& layoutViewport)

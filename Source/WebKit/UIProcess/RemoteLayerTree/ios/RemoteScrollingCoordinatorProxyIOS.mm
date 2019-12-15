@@ -117,7 +117,7 @@ void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree&
 FloatRect RemoteScrollingCoordinatorProxy::currentLayoutViewport() const
 {
     // FIXME: does this give a different value to the last value pushed onto us?
-    return m_webPageProxy.computeCustomFixedPositionRect(m_webPageProxy.unobscuredContentRect(), m_webPageProxy.unobscuredContentRectRespectingInputViewBounds(), m_webPageProxy.customFixedPositionRect(),
+    return m_webPageProxy.computeLayoutViewportRect(m_webPageProxy.unobscuredContentRect(), m_webPageProxy.unobscuredContentRectRespectingInputViewBounds(), m_webPageProxy.layoutViewportRect(),
         m_webPageProxy.displayedContentScale(), FrameView::LayoutViewportConstraint::Unconstrained);
 }
 

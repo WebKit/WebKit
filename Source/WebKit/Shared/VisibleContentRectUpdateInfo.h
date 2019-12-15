@@ -47,13 +47,13 @@ class VisibleContentRectUpdateInfo {
 public:
     VisibleContentRectUpdateInfo() = default;
 
-    VisibleContentRectUpdateInfo(const WebCore::FloatRect& exposedContentRect, const WebCore::FloatRect& unobscuredContentRect, const WebCore::FloatBoxExtent& contentInsets, const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates, const WebCore::FloatRect& unobscuredContentRectRespectingInputViewBounds, const WebCore::FloatRect& customFixedPositionRect, const WebCore::FloatBoxExtent& obscuredInsets, const WebCore::FloatBoxExtent& unobscuredSafeAreaInsets, double scale, bool inStableState, bool isFirstUpdateForNewViewSize, bool isChangingObscuredInsetsInteractively, bool allowShrinkToFit, bool enclosedInScrollableAncestorView, const WebCore::VelocityData& scrollVelocity, TransactionID lastLayerTreeTransactionId)
+    VisibleContentRectUpdateInfo(const WebCore::FloatRect& exposedContentRect, const WebCore::FloatRect& unobscuredContentRect, const WebCore::FloatBoxExtent& contentInsets, const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates, const WebCore::FloatRect& unobscuredContentRectRespectingInputViewBounds, const WebCore::FloatRect& layoutViewportRect, const WebCore::FloatBoxExtent& obscuredInsets, const WebCore::FloatBoxExtent& unobscuredSafeAreaInsets, double scale, bool inStableState, bool isFirstUpdateForNewViewSize, bool isChangingObscuredInsetsInteractively, bool allowShrinkToFit, bool enclosedInScrollableAncestorView, const WebCore::VelocityData& scrollVelocity, TransactionID lastLayerTreeTransactionId)
         : m_exposedContentRect(exposedContentRect)
         , m_unobscuredContentRect(unobscuredContentRect)
         , m_contentInsets(contentInsets)
         , m_unobscuredContentRectRespectingInputViewBounds(unobscuredContentRectRespectingInputViewBounds)
         , m_unobscuredRectInScrollViewCoordinates(unobscuredRectInScrollViewCoordinates)
-        , m_customFixedPositionRect(customFixedPositionRect)
+        , m_layoutViewportRect(layoutViewportRect)
         , m_obscuredInsets(obscuredInsets)
         , m_unobscuredSafeAreaInsets(unobscuredSafeAreaInsets)
         , m_scrollVelocity(scrollVelocity)
@@ -72,7 +72,7 @@ public:
     const WebCore::FloatBoxExtent& contentInsets() const { return m_contentInsets; }
     const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates() const { return m_unobscuredRectInScrollViewCoordinates; }
     const WebCore::FloatRect& unobscuredContentRectRespectingInputViewBounds() const { return m_unobscuredContentRectRespectingInputViewBounds; }
-    const WebCore::FloatRect& customFixedPositionRect() const { return m_customFixedPositionRect; }
+    const WebCore::FloatRect& layoutViewportRect() const { return m_layoutViewportRect; }
     const WebCore::VelocityData& scrollVelocity() const { return m_scrollVelocity; }
     const WebCore::FloatBoxExtent& obscuredInsets() const { return m_obscuredInsets; }
     const WebCore::FloatBoxExtent& unobscuredSafeAreaInsets() const { return m_unobscuredSafeAreaInsets; }
@@ -98,7 +98,7 @@ private:
     WebCore::FloatBoxExtent m_contentInsets;
     WebCore::FloatRect m_unobscuredContentRectRespectingInputViewBounds;
     WebCore::FloatRect m_unobscuredRectInScrollViewCoordinates;
-    WebCore::FloatRect m_customFixedPositionRect; // When visual viewports are enabled, this is the layout viewport.
+    WebCore::FloatRect m_layoutViewportRect;
     WebCore::FloatBoxExtent m_obscuredInsets;
     WebCore::FloatBoxExtent m_unobscuredSafeAreaInsets;
     WebCore::VelocityData m_scrollVelocity;
@@ -119,7 +119,7 @@ inline bool operator==(const VisibleContentRectUpdateInfo& a, const VisibleConte
         && a.unobscuredContentRect() == b.unobscuredContentRect()
         && a.contentInsets() == b.contentInsets()
         && a.unobscuredContentRectRespectingInputViewBounds() == b.unobscuredContentRectRespectingInputViewBounds()
-        && a.customFixedPositionRect() == b.customFixedPositionRect()
+        && a.layoutViewportRect() == b.layoutViewportRect()
         && a.obscuredInsets() == b.obscuredInsets()
         && a.unobscuredSafeAreaInsets() == b.unobscuredSafeAreaInsets()
         && a.scrollVelocity().equalIgnoringTimestamp(b.scrollVelocity())
