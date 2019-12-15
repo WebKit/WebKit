@@ -281,6 +281,9 @@ bool LineBreaker::Content::isAtSoftWrapOpportunity(const InlineItem& inlineItem,
             // [prior content][ ] (<span>some_content</span> )
             // white-space: break-spaces: line breaking opportunity exists after every preserved white space character, but not before.
             auto isAtSoftWrapOpportunityBeforeWhitespace = inlineItem.style().whiteSpace() != WhiteSpace::BreakSpaces;
+            // [ ][ ] : adjacent whitespace content has soft wrap opportunity.
+            if (lastUncomittedContent->isText() && downcast<InlineTextItem>(*lastUncomittedContent).isWhitespace())
+                isAtSoftWrapOpportunityBeforeWhitespace = true;
             return isAtSoftWrapOpportunityBeforeWhitespace;
         }
         if (lastUncomittedContent->isContainerStart()) {

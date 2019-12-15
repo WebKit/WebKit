@@ -1,5 +1,18 @@
 2019-12-15  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Fix imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-009.html
+        https://bugs.webkit.org/show_bug.cgi?id=205246
+        <rdar://problem/57944015>
+
+        Reviewed by Antti Koivisto.
+
+        Fix the "soft wrap opportunity" case when both the incoming and the previous runs are whitespace.
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::LineBreaker::Content::isAtSoftWrapOpportunity):
+
+2019-12-15  Zalan Bujtas  <zalan@apple.com>
+
         Unreviewed, address review comments missed in the initial commit.
 
         * layout/inlineformatting/InlineLineBreaker.cpp:
