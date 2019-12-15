@@ -117,7 +117,12 @@ public:
     void setHyphenationDisabled() { n_hyphenationIsDisabled = true; }
 
 private:
-    Optional<BreakingContext::PartialTrailingContent> wordBreakingBehavior(const Content::RunList&, const LineStatus&) const;
+    struct TextWrappingContext {
+        unsigned trailingRunIndex { 0 };
+        bool contentOverflows { false };
+        Optional<PartialRun> partialTrailingRun;
+    };
+    Optional<TextWrappingContext> wrapTextContent(const Content::RunList&, const LineStatus&) const;
     Optional<PartialRun> tryBreakingTextRun(const Content::Run& overflowRun, InlineLayoutUnit availableWidth, bool lineIsEmpty) const;
 
     bool n_hyphenationIsDisabled { false };

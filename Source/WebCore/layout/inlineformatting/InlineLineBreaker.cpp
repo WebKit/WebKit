@@ -106,8 +106,8 @@ LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const 
 
     if (candidateRuns.hasTextContentOnly()) {
         auto& runs = candidateRuns.runs();
-        if (auto partialTrailingContent = wordBreakingBehavior(runs, lineStatus)) {
-            if (!partialTrailingContent->partialRun) {
+        if (auto partialTrailingContent = wrapTextContent(runs, lineStatus)) {
+            if (!partialTrailingContent->trailingRunIndex && partialTrailingContent->contentOverflows) {
                 // We tried to split the content but the available space can't even accommodate the first character.
                 // 1. Push the content over to the next line when we've got content on the line already.
                 // 2. Keep the first character on the empty line (or keep the whole run if it has only one character).
@@ -119,10 +119,11 @@ LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const 
                 if (inlineTextItem.length() == 1)
                     return { BreakingContext::ContentWrappingRule::Keep, { } };
                 auto firstCharacterWidth = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.start() + 1);
-                auto splitContent = BreakingContext::PartialTrailingContent { firstTextRunIndex, PartialRun { 1, firstCharacterWidth, false } };
-                return { BreakingContext::ContentWrappingRule::Split, splitContent };
+                auto firstCharacterRun = PartialRun { 1, firstCharacterWidth, false };
+                return { BreakingContext::ContentWrappingRule::Split, BreakingContext::PartialTrailingContent { firstTextRunIndex, firstCharacterRun } };
             }
-            return { BreakingContext::ContentWrappingRule::Split, partialTrailingContent };
+            auto splitContent = BreakingContext::PartialTrailingContent { partialTrailingContent->trailingRunIndex, partialTrailingContent->partialTrailingRun };
+            return { BreakingContext::ContentWrappingRule::Split, splitContent };
         }
         // If we are not allowed to break this content, we still need to decide whether keep it or push it to the next line.
         auto contentShouldOverflow = lineStatus.lineIsEmpty || !isTextContentWrappingAllowed(runs[0].inlineItem.style());
@@ -137,7 +138,7 @@ bool LineBreaker::shouldWrapFloatBox(InlineLayoutUnit floatLogicalWidth, InlineL
     return !lineIsEmpty && floatLogicalWidth > availableWidth;
 }
 
-Optional<LineBreaker::BreakingContext::PartialTrailingContent> LineBreaker::wordBreakingBehavior(const Content::RunList& runs, const LineStatus& lineStatus) const
+Optional<LineBreaker::TextWrappingContext> LineBreaker::wrapTextContent(const Content::RunList& runs, const LineStatus& lineStatus) const
 {
     // Check where the overflow occurs and use the corresponding style to figure out the breaking behaviour.
     // <span style="word-break: normal">first</span><span style="word-break: break-all">second</span><span style="word-break: normal">third</span>
@@ -151,8 +152,15 @@ Optional<LineBreaker::BreakingContext::PartialTrailingContent> LineBreaker::word
             // <span style="word-break: keep-all">textcontentwithnobreak</span><span>textcontentwithyesbreak</span>
             // When the first span computes longer than the available space, by the time we get to the second span, the adjusted available space becomes negative.
             auto adjustedAvailableWidth = std::max<InlineLayoutUnit>(0, lineStatus.availableWidth - accumulatedRunWidth);
-            if (auto partialRun = tryBreakingTextRun(run, adjustedAvailableWidth, lineStatus.lineIsEmpty))
-                return BreakingContext::PartialTrailingContent { index, partialRun };
+             if (auto partialRun = tryBreakingTextRun(run, adjustedAvailableWidth, lineStatus.lineIsEmpty)) {
+                 if (partialRun->length)
+                     return TextWrappingContext { index, false, partialRun };
+                 // When the content is wrapped at the run boundary, the trailing run is the previous run.
+                 if (index)
+                     return TextWrappingContext { index - 1, false, { } };
+                 // Sometimes we can't accommodate even the very first character.
+                 return TextWrappingContext { 0, true, { } };
+             }
             // If this run is not breakable, we need to check if any previous run is breakable
             break;
         }
@@ -166,8 +174,9 @@ Optional<LineBreaker::BreakingContext::PartialTrailingContent> LineBreaker::word
         if (isContentSplitAllowed(run)) {
             ASSERT(run.inlineItem.isText());
             if (auto partialRun = tryBreakingTextRun(run, maxInlineLayoutUnit(), lineStatus.lineIsEmpty)) {
-                // This run itself might not be partial but the content (series of runs) definitely is.
-                return BreakingContext::PartialTrailingContent { index, partialRun };
+                 // We know this run fits, so if wrapping is allowed on the run, it should return a non-empty left-side.
+                 ASSERT(partialRun->length);
+                 return TextWrappingContext { index, false, partialRun };
             }
         }
     }
@@ -185,9 +194,11 @@ Optional<LineBreaker::PartialRun> LineBreaker::tryBreakingTextRun(const Content:
     auto findLastBreakablePosition = availableWidth == maxInlineLayoutUnit();
     auto& inlineTextItem = downcast<InlineTextItem>(overflowRun.inlineItem);
     if (isTextSplitAtArbitraryPositionAllowed(style, lineIsEmpty)) {
-        // When the run can be split at arbitrary positions, let's just return the entire run when it is intended to fit on the line.
-        if (findLastBreakablePosition)
+        if (findLastBreakablePosition) {
+            // When the run can be split at arbitrary positions,
+            // let's just return the entire run when it is intended to fit on the line.
             return PartialRun { inlineTextItem.length(), overflowRun.logicalWidth, false };
+        }
         // FIXME: Pass in the content logical left to be able to measure tabs.
         auto splitData = TextUtil::split(inlineTextItem.layoutBox(), inlineTextItem.start(), inlineTextItem.length(), overflowRun.logicalWidth, availableWidth, { });
         return PartialRun { splitData.length, splitData.logicalWidth, false };
