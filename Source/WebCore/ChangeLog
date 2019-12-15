@@ -1,3 +1,29 @@
+2019-12-15  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add basic support for hanging content
+        https://bugs.webkit.org/show_bug.cgi?id=205252
+        <rdar://problem/57947773>
+
+        Reviewed by Antti Koivisto.
+
+        Collect the hanging content after collapsing trailing whitespace and adjust
+        the available space when computing the extra width for horizontal alignment.
+
+        IFC passes imported/w3c/web-platform-tests/css/css-text/ directory now.
+
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::initialize):
+        (WebCore::Layout::LineBuilder::close):
+        (WebCore::Layout::LineBuilder::alignContentHorizontally const):
+        (WebCore::Layout::LineBuilder::collectHangingContent):
+        (WebCore::Layout::LineBuilder::appendTextContent):
+        * layout/inlineformatting/InlineLineBuilder.h:
+        (WebCore::Layout::LineBuilder::HangingContent::width const):
+        (WebCore::Layout::LineBuilder::HangingContent::isConditional const):
+        (WebCore::Layout::LineBuilder::HangingContent::setIsConditional):
+        (WebCore::Layout::LineBuilder::HangingContent::expand):
+        (WebCore::Layout::LineBuilder::HangingContent::reset):
+
 2019-12-15  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         [GStreamer] Fix silly bug in GStreamerVideoFrameLibWebRTC.

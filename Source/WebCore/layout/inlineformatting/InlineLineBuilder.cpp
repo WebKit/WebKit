@@ -191,6 +191,7 @@ void LineBuilder::initialize(const Constraints& constraints)
 
     m_inlineItemRuns.clear();
     m_trimmableContent.reset();
+    m_hangingContent.reset();
     m_lineIsVisuallyEmptyBeforeTrimmableContent = { };
 }
 
@@ -208,6 +209,7 @@ LineBuilder::RunList LineBuilder::close(IsLastLineWithInlineContent isLastLineWi
     // 2. Join text runs together when possible [foo][ ][bar] -> [foo bar].
     // 3. Align merged runs both vertically and horizontally.
     removeTrailingTrimmableContent();
+    collectHangingContent(isLastLineWithInlineContent);
     RunList runList;
     unsigned runIndex = 0;
     while (runIndex < m_inlineItemRuns.size()) {
@@ -330,7 +332,8 @@ void LineBuilder::justifyRuns(RunList& runList) const
 void LineBuilder::alignContentHorizontally(RunList& runList, IsLastLineWithInlineContent lastLine) const
 {
     ASSERT(!m_skipAlignment);
-    if (runList.isEmpty() || availableWidth() <= 0)
+    auto availableWidth = this->availableWidth() + m_hangingContent.width();
+    if (runList.isEmpty() || availableWidth <= 0)
         return;
 
     if (isTextAlignJustify()) {
@@ -349,10 +352,10 @@ void LineBuilder::alignContentHorizontally(RunList& runList, IsLastLineWithInlin
         case TextAlignMode::Right:
         case TextAlignMode::WebKitRight:
         case TextAlignMode::End:
-            return std::max<InlineLayoutUnit>(availableWidth(), 0);
+            return std::max<InlineLayoutUnit>(availableWidth, 0);
         case TextAlignMode::Center:
         case TextAlignMode::WebKitCenter:
-            return std::max<InlineLayoutUnit>(availableWidth() / 2, 0);
+            return std::max<InlineLayoutUnit>(availableWidth / 2, 0);
         case TextAlignMode::Justify:
             ASSERT_NOT_REACHED();
             break;
@@ -391,6 +394,29 @@ void LineBuilder::removeTrailingTrimmableContent()
     if (lineIsVisuallyEmpty())
         m_lineBox.setIsConsideredEmpty();
     m_lineIsVisuallyEmptyBeforeTrimmableContent = { };
+}
+
+void LineBuilder::collectHangingContent(IsLastLineWithInlineContent isLastLineWithInlineContent)
+{
+    // Can't setup hanging content with removable trailing whitspaces.
+    ASSERT(m_trimmableContent.isEmpty());
+    if (isLastLineWithInlineContent == IsLastLineWithInlineContent::Yes)
+        m_hangingContent.setIsConditional();
+    for (auto& inlineItemRun : WTF::makeReversedRange(m_inlineItemRuns)) {
+        if (inlineItemRun.isContainerStart() || inlineItemRun.isContainerEnd())
+            continue;
+        if (inlineItemRun.isLineBreak()) {
+            m_hangingContent.setIsConditional();
+            continue;
+        }
+        if (!inlineItemRun.isText() || !inlineItemRun.isWhitespace() || inlineItemRun.isCollapsible())
+            break;
+        // Check if we have a preserved or hung whitespace.
+        if (inlineItemRun.style().whiteSpace() != WhiteSpace::PreWrap)
+            break;
+        // This is either a normal or conditionally hanging trailing whitespace.
+        m_hangingContent.expand(inlineItemRun.logicalWidth());
+    }
 }
 
 void LineBuilder::moveLogicalLeft(InlineLayoutUnit delta)
@@ -503,7 +529,7 @@ void LineBuilder::appendTextContent(const InlineTextItem& inlineItem, InlineLayo
 
     m_lineBox.expandHorizontally(lineRun.logicalWidth());
 
-    // Existing trailing trimmable content can only be expanded if the current rus is fully trimmable.
+    // Existing trailing trimmable content can only be expanded if the current run is fully trimmable.
     auto trimmableListNeedsReset = !m_trimmableContent.isEmpty() && !lineRun.isTrimmableWhitespace();
     if (trimmableListNeedsReset)
         m_trimmableContent.reset();

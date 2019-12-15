@@ -140,6 +140,7 @@ private:
     void appendLineBreak(const InlineItem&);
 
     void removeTrailingTrimmableContent();
+    void collectHangingContent(IsLastLineWithInlineContent);
     void alignContentHorizontally(RunList&, IsLastLineWithInlineContent) const;
     void alignContentVertically(RunList&);
 
@@ -222,9 +223,25 @@ private:
         bool m_lastRunIsFullyTrimmable { false };
     };
 
+    struct HangingContent {
+    public:
+        void reset();
+
+        InlineLayoutUnit width() const { return m_width; }
+        bool isConditional() const { return m_isConditional; }
+
+        void setIsConditional() { m_isConditional = true; }
+        void expand(InlineLayoutUnit width) { m_width += width; }
+
+    private:
+        bool m_isConditional { false };
+        InlineLayoutUnit m_width { 0 };
+    };
+
     const InlineFormattingContext& m_inlineFormattingContext;
     InlineItemRunList m_inlineItemRuns;
     TrimmableContent m_trimmableContent;
+    HangingContent m_hangingContent;
     Optional<Display::LineBox::Baseline> m_initialStrut;
     InlineLayoutUnit m_lineLogicalWidth { 0 };
     Optional<TextAlignMode> m_horizontalAlignment;
@@ -239,6 +256,12 @@ inline void LineBuilder::TrimmableContent::reset()
     m_firstRunIndex = { };
     m_width = 0_lu;
     m_lastRunIsFullyTrimmable = false;
+}
+
+inline void LineBuilder::HangingContent::reset()
+{
+    m_isConditional = false;
+    m_width =  0;
 }
 
 }
