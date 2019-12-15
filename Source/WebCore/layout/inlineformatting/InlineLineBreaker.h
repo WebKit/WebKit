@@ -37,6 +37,11 @@ class InlineTextItem;
 
 class LineBreaker {
 public:
+    struct PartialRun {
+        unsigned length { 0 };
+        InlineLayoutUnit logicalWidth { 0 };
+        bool needsHyphen { false };
+    };
     struct BreakingContext {
         enum class ContentWrappingRule {
             Keep, // Keep content on the current line.
@@ -45,10 +50,8 @@ public:
         };
         ContentWrappingRule contentWrappingRule;
         struct PartialTrailingContent {
-            unsigned runIndex { 0 };
-            unsigned length { 0 };
-            InlineLayoutUnit logicalWidth { 0 };
-            bool needsHyphen { false };
+            unsigned triailingRunIndex { 0 };
+            Optional<PartialRun> partialRun; // Empty partial run means the trailing run is a complete run.
         };
         Optional<PartialTrailingContent> partialTrailingContent;
     };
@@ -115,12 +118,7 @@ public:
 
 private:
     Optional<BreakingContext::PartialTrailingContent> wordBreakingBehavior(const Content::RunList&, const LineStatus&) const;
-    struct LeftSide {
-        unsigned length { 0 };
-        InlineLayoutUnit logicalWidth { 0 };
-        bool needsHyphen { false };
-    };
-    Optional<LeftSide> tryBreakingTextRun(const Content::Run& overflowRun, InlineLayoutUnit availableWidth, bool lineIsEmpty) const;
+    Optional<PartialRun> tryBreakingTextRun(const Content::Run& overflowRun, InlineLayoutUnit availableWidth, bool lineIsEmpty) const;
 
     bool n_hyphenationIsDisabled { false };
 };

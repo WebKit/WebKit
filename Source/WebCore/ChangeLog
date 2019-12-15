@@ -1,3 +1,22 @@
+2019-12-15  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Introduce LineBreaker::PartialRun
+        https://bugs.webkit.org/show_bug.cgi?id=205244
+        <rdar://problem/57943825>
+
+        Reviewed by Antti Koivisto.
+
+        Use PartialRun instead of LeftSide and also use it as optional in PartialTrailingContent.
+        This is in preparation for fixing "break-spaces" failing cases.
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::LineBreaker::breakingContextForInlineContent):
+        (WebCore::Layout::LineBreaker::wordBreakingBehavior const):
+        (WebCore::Layout::LineBreaker::tryBreakingTextRun const):
+        * layout/inlineformatting/InlineLineBreaker.h:
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::LineLayoutContext::processUncommittedContent):
+
 2019-12-14  Per Arne Vollan  <pvollan@apple.com>
 
         Map CSS value ID to system color in the UI process

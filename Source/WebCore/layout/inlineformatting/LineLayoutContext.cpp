@@ -214,32 +214,31 @@ LineLayoutContext::IsEndOfLine LineLayoutContext::processUncommittedContent(Line
         commitPendingContent(line);
     else if (breakingContext.contentWrappingRule == LineBreaker::BreakingContext::ContentWrappingRule::Split) {
         ASSERT(breakingContext.partialTrailingContent);
-        ASSERT(m_uncommittedContent.runs()[breakingContext.partialTrailingContent->runIndex].inlineItem.isText());
+        ASSERT(m_uncommittedContent.runs()[breakingContext.partialTrailingContent->triailingRunIndex].inlineItem.isText());
         // Turn the uncommitted trailing run into a partial trailing run.
-        auto trailingRunIndex = breakingContext.partialTrailingContent->runIndex;
+        auto trailingRunIndex = breakingContext.partialTrailingContent->triailingRunIndex;
         auto& trailingInlineTextItem = downcast<InlineTextItem>(m_uncommittedContent.runs()[trailingRunIndex].inlineItem);
 
         ASSERT(!m_partialTrailingTextItem);
         // Construct a partial trailing inline run only if there's a need for one.
         // When splitting multiple runs <span style="word-break: break-all">text</span><span>content</span>, we might end up splitting them at run boundary.
         // In such case we don't need to construct a partial trailing item since the trailing run is not partial at all.
-        if (trailingInlineTextItem.length() == breakingContext.partialTrailingContent->length) {
+        if (auto partialTrailingRun = breakingContext.partialTrailingContent->partialRun) {
+            m_partialTrailingTextItem = trailingInlineTextItem.left(partialTrailingRun->length);
+            m_partialContent = LineContent::PartialContent { partialTrailingRun->needsHyphen, trailingInlineTextItem.length() - partialTrailingRun->length };
+            // Keep the non-overflow part of the uncommitted runs and add the trailing partial content.
+            m_uncommittedContent.trim(trailingRunIndex);
+            m_uncommittedContent.append(*m_partialTrailingTextItem, partialTrailingRun->logicalWidth);
+            // Adjust hyphenated line count.
+            if (partialTrailingRun->needsHyphen)
+                ++m_successiveHyphenatedLineCount;
+        } else {
             // Trim the overflown run and keep the trailing (non-partial) run in the queue.
             auto overflownRunIndex = trailingRunIndex + 1;
             ASSERT(overflownRunIndex < m_uncommittedContent.size());
             m_uncommittedContent.trim(overflownRunIndex);
-        } else {
-            auto trailingContentLength = breakingContext.partialTrailingContent->length;
-            m_partialTrailingTextItem = trailingInlineTextItem.left(trailingContentLength);
-            m_partialContent = LineContent::PartialContent { breakingContext.partialTrailingContent->needsHyphen, trailingInlineTextItem.length() - trailingContentLength };
-            // Keep the non-overflow part of the uncommitted runs and add the trailing partial content.
-            m_uncommittedContent.trim(trailingRunIndex);
-            m_uncommittedContent.append(*m_partialTrailingTextItem, breakingContext.partialTrailingContent->logicalWidth);
         }
         commitPendingContent(line);
-        // Adjust hyphenated line count.
-        if (breakingContext.partialTrailingContent->needsHyphen)
-            ++m_successiveHyphenatedLineCount;
     } else if (breakingContext.contentWrappingRule == LineBreaker::BreakingContext::ContentWrappingRule::Push) {
         m_uncommittedContent.reset();
         // Closing the line without any hyphen.

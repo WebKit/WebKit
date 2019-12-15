@@ -107,8 +107,8 @@ LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const 
     if (candidateRuns.hasTextContentOnly()) {
         auto& runs = candidateRuns.runs();
         if (auto partialTrailingContent = wordBreakingBehavior(runs, lineStatus)) {
-            // We tried to split the content but the available space can't even accommodate the first character.
-            if (!partialTrailingContent->length) {
+            if (!partialTrailingContent->partialRun) {
+                // We tried to split the content but the available space can't even accommodate the first character.
                 // 1. Push the content over to the next line when we've got content on the line already.
                 // 2. Keep the first character on the empty line (or keep the whole run if it has only one character).
                 if (!lineStatus.lineIsEmpty)
@@ -119,7 +119,8 @@ LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const 
                 if (inlineTextItem.length() == 1)
                     return { BreakingContext::ContentWrappingRule::Keep, { } };
                 auto firstCharacterWidth = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.start() + 1);
-                return { BreakingContext::ContentWrappingRule::Split, BreakingContext::PartialTrailingContent { firstTextRunIndex, 1, firstCharacterWidth, false } };
+                auto splitContent = BreakingContext::PartialTrailingContent { firstTextRunIndex, PartialRun { 1, firstCharacterWidth, false } };
+                return { BreakingContext::ContentWrappingRule::Split, splitContent };
             }
             return { BreakingContext::ContentWrappingRule::Split, partialTrailingContent };
         }
@@ -150,8 +151,8 @@ Optional<LineBreaker::BreakingContext::PartialTrailingContent> LineBreaker::word
             // <span style="word-break: keep-all">textcontentwithnobreak</span><span>textcontentwithyesbreak</span>
             // When the first span computes longer than the available space, by the time we get to the second span, the adjusted available space becomes negative.
             auto adjustedAvailableWidth = std::max<InlineLayoutUnit>(0, lineStatus.availableWidth - accumulatedRunWidth);
-            if (auto leftSide = tryBreakingTextRun(run, adjustedAvailableWidth, lineStatus.lineIsEmpty))
-                return BreakingContext::PartialTrailingContent { index, leftSide->length, leftSide->logicalWidth, leftSide->needsHyphen };
+            if (auto partialRun = tryBreakingTextRun(run, adjustedAvailableWidth, lineStatus.lineIsEmpty))
+                return BreakingContext::PartialTrailingContent { index, partialRun };
             // If this run is not breakable, we need to check if any previous run is breakable
             break;
         }
@@ -164,9 +165,9 @@ Optional<LineBreaker::BreakingContext::PartialTrailingContent> LineBreaker::word
         auto& run = runs[index];
         if (isContentSplitAllowed(run)) {
             ASSERT(run.inlineItem.isText());
-            if (auto leftSide = tryBreakingTextRun(run, maxInlineLayoutUnit(), lineStatus.lineIsEmpty)) {
+            if (auto partialRun = tryBreakingTextRun(run, maxInlineLayoutUnit(), lineStatus.lineIsEmpty)) {
                 // This run itself might not be partial but the content (series of runs) definitely is.
-                return BreakingContext::PartialTrailingContent { index, leftSide->length, leftSide->logicalWidth, leftSide->needsHyphen };
+                return BreakingContext::PartialTrailingContent { index, partialRun };
             }
         }
     }
@@ -174,7 +175,7 @@ Optional<LineBreaker::BreakingContext::PartialTrailingContent> LineBreaker::word
     return { };
 }
 
-Optional<LineBreaker::LeftSide> LineBreaker::tryBreakingTextRun(const Content::Run& overflowRun, InlineLayoutUnit availableWidth, bool lineIsEmpty) const
+Optional<LineBreaker::PartialRun> LineBreaker::tryBreakingTextRun(const Content::Run& overflowRun, InlineLayoutUnit availableWidth, bool lineIsEmpty) const
 {
     ASSERT(overflowRun.inlineItem.isText());
     auto& style = overflowRun.inlineItem.style();
@@ -186,10 +187,10 @@ Optional<LineBreaker::LeftSide> LineBreaker::tryBreakingTextRun(const Content::R
     if (isTextSplitAtArbitraryPositionAllowed(style, lineIsEmpty)) {
         // When the run can be split at arbitrary positions, let's just return the entire run when it is intended to fit on the line.
         if (findLastBreakablePosition)
-            return LeftSide { inlineTextItem.length(), overflowRun.logicalWidth, false };
+            return PartialRun { inlineTextItem.length(), overflowRun.logicalWidth, false };
         // FIXME: Pass in the content logical left to be able to measure tabs.
         auto splitData = TextUtil::split(inlineTextItem.layoutBox(), inlineTextItem.start(), inlineTextItem.length(), overflowRun.logicalWidth, availableWidth, { });
-        return LeftSide { splitData.length, splitData.logicalWidth, false };
+        return PartialRun { splitData.length, splitData.logicalWidth, false };
     }
     // Find the hyphen position as follows:
     // 1. Split the text by taking the hyphen width into account
@@ -224,7 +225,7 @@ Optional<LineBreaker::LeftSide> LineBreaker::tryBreakingTextRun(const Content::R
         return { };
     // hyphenLocation is relative to the start of this InlineItemText.
     auto trailingPartialRunWidthWithHyphen = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.start() + hyphenLocation) + hyphenWidth; 
-    return LeftSide { hyphenLocation, trailingPartialRunWidthWithHyphen, true };
+    return PartialRun { hyphenLocation, trailingPartialRunWidthWithHyphen, true };
 }
 
 static bool endsWithSoftWrapOpportunity(const InlineTextItem& previousTextItem, const InlineTextItem& nextInlineTextItem)
