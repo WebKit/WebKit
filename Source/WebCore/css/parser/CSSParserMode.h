@@ -36,8 +36,6 @@ namespace WebCore {
 enum CSSParserMode {
     HTMLStandardMode,
     HTMLQuirksMode,
-    // HTML attributes are parsed in quirks mode but also allows internal properties and values.
-    HTMLAttributeMode,
     // SVG attributes are parsed in quirks mode but rules differ slightly.
     SVGAttributeMode,
     // @viewport rules are parsed in standards mode but CSSOM modifications (via StylePropertySet)
@@ -49,7 +47,7 @@ enum CSSParserMode {
 
 inline bool isQuirksModeBehavior(CSSParserMode mode)
 {
-    return mode == HTMLQuirksMode || mode == HTMLAttributeMode;
+    return mode == HTMLQuirksMode;
 }
 
 inline bool isUASheetBehavior(CSSParserMode mode)
@@ -59,7 +57,7 @@ inline bool isUASheetBehavior(CSSParserMode mode)
 
 inline bool isUnitLessValueParsingEnabledForMode(CSSParserMode mode)
 {
-    return mode == HTMLAttributeMode || mode == SVGAttributeMode;
+    return mode == SVGAttributeMode;
 }
 
 inline bool isCSSViewportParsingEnabledForMode(CSSParserMode mode)

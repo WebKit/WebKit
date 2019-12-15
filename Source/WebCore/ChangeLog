@@ -1,5 +1,21 @@
 2019-12-15  Emilio Cobos Álvarez  <emilio@crisal.io>
 
+        CSSParserMode::HTMLAttributeMode is unused.
+        https://bugs.webkit.org/show_bug.cgi?id=205247
+
+        Reviewed by Antti Koivisto.
+
+        We parse HTML attributes with regular quirks mode parsing mode.
+        Internal properties work anyway as we pass CSSPropertyID directly.
+
+        No new tests, no behavior change.
+
+        * css/parser/CSSParserMode.h:
+        (WebCore::isQuirksModeBehavior):
+        (WebCore::isUnitLessValueParsingEnabledForMode):
+
+2019-12-15  Emilio Cobos Álvarez  <emilio@crisal.io>
+
         Remove -webkit-marquee.
         https://bugs.webkit.org/show_bug.cgi?id=117769
 
