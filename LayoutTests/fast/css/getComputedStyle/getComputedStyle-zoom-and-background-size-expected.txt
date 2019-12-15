@@ -24,7 +24,6 @@ outline-width	PASS	2px	2px
 -webkit-column-rule-style	PASS	solid	solid
 -webkit-column-width	PASS	80px	80px
 -webkit-column-gap	PASS	20px	20px
--webkit-marquee-increment	PASS	10px	10px
 -webkit-mask-position	PASS	10px 10px	10px 10px
 -webkit-mask-size	PASS	10px 10px	10px 10px
 -webkit-perspective	PASS	400px	400px
@@ -77,7 +76,6 @@ outline-width	PASS	2px	2px
 -webkit-column-rule-style	PASS	solid	solid
 -webkit-column-width	PASS	80px	80px
 -webkit-column-gap	PASS	20px	20px
--webkit-marquee-increment	PASS	10px	10px
 -webkit-mask-position	PASS	10px 10px	10px 10px
 -webkit-mask-size	PASS	10px 10px	10px 10px
 -webkit-perspective	PASS	400px	400px

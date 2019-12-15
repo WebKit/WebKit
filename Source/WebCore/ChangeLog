@@ -1,3 +1,31 @@
+2019-12-15  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Remove -webkit-marquee.
+        https://bugs.webkit.org/show_bug.cgi?id=117769
+
+        Reviewed by Simon Fraser.
+
+        This doesn't simplify the code so much yet but makes the CSS properties not
+        accessible by web content, which means that how marquee is implemented is now an
+        implementation detail that WebKit can change.
+
+        Had to keep some of parsing code because addHTMLLengthToStyle uses the
+        CSS parser, which is a bit unfortunate. But we can avoid dealing with
+        identifiers so it can be simplified a bit, and similarly we can avoid
+        having a shorthand altogether.
+
+        Covered by existing tests that are being modified to reflect the
+        change.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSProperties.json:
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getPropertyValue const):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        (WebCore::CSSPropertyParser::parseShorthand):
+
 2019-12-14  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][WPE] Fix various non-unified build issues introduced since r251698

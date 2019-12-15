@@ -2949,16 +2949,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::marginBottom, &RenderBoxModelObject::marginBottom>(style, renderer);
         case CSSPropertyMarginLeft:
             return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::marginLeft, &RenderBoxModelObject::marginLeft>(style, renderer);
-        case CSSPropertyWebkitMarqueeDirection:
-            return cssValuePool.createValue(style.marqueeDirection());
-        case CSSPropertyWebkitMarqueeIncrement:
-            return cssValuePool.createValue(style.marqueeIncrement());
-        case CSSPropertyWebkitMarqueeRepetition:
-            if (style.marqueeLoopCount() < 0)
-                return cssValuePool.createIdentifierValue(CSSValueInfinite);
-            return cssValuePool.createValue(style.marqueeLoopCount(), CSSUnitType::CSS_NUMBER);
-        case CSSPropertyWebkitMarqueeStyle:
-            return cssValuePool.createValue(style.marqueeBehavior());
         case CSSPropertyWebkitUserModify:
             return cssValuePool.createValue(style.userModify());
         case CSSPropertyMaxHeight: {
@@ -3812,7 +3802,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         /* Unimplemented -webkit- properties */
         case CSSPropertyWebkitBorderRadius:
         case CSSPropertyWebkitMarginCollapse:
-        case CSSPropertyWebkitMarquee:
+        case CSSPropertyWebkitMarqueeDirection:
+        case CSSPropertyWebkitMarqueeIncrement:
+        case CSSPropertyWebkitMarqueeRepetition:
+        case CSSPropertyWebkitMarqueeStyle:
         case CSSPropertyWebkitMarqueeSpeed:
         case CSSPropertyWebkitMask:
         case CSSPropertyWebkitMaskRepeatX:

@@ -56,9 +56,6 @@ and adds "".
 Removing -webkit-margin-collapse
 removes "-webkit-margin-before-collapse, -webkit-margin-after-collapse"
 and adds "".
-Removing -webkit-marquee
-removes "-webkit-marquee-direction, -webkit-marquee-increment, -webkit-marquee-repetition, -webkit-marquee-style, -webkit-marquee-speed"
-and adds "".
 Removing -webkit-mask
 removes "-webkit-mask"
 and adds "".

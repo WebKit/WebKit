@@ -1,3 +1,38 @@
+2019-12-15  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Remove -webkit-marquee.
+        https://bugs.webkit.org/show_bug.cgi?id=117769
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-length-unit-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-length-unit.html:
+        * fast/css/getComputedStyle/getComputedStyle-zoom-and-background-size-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-zoom-and-background-size.html:
+        * fast/css/getComputedStyle/resources/property-names.js:
+        * fast/css/getPropertyValue-webkit-marquee-expected.txt: Removed.
+        * fast/css/getPropertyValue-webkit-marquee.html: Removed.
+        * fast/css/inherit-initial-shorthand-values-expected.txt:
+        * fast/css/inherit-initial-shorthand-values.html:
+        * fast/css/remove-shorthand-expected.txt:
+        * fast/css/remove-shorthand.html:
+        * legacy-animation-engine/fast/css/getComputedStyle/resources/property-names.js:
+        * platform/gtk/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/gtk/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/gtk/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/ios/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/ios/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/ios/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/mac/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/wpe/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/wpe/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/wpe/svg/css/getComputedStyle-basic-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2019-12-14  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Deny mach lookup access to "*.viewservice" in the WebContent process

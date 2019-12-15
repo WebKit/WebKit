@@ -3657,22 +3657,16 @@ static RefPtr<CSSValue> consumeHangingPunctuation(CSSParserTokenRange& range)
 
 static RefPtr<CSSValue> consumeWebkitMarqueeIncrement(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
-    if (range.peek().type() == IdentToken)
-        return consumeIdent<CSSValueSmall, CSSValueMedium, CSSValueLarge>(range);
     return consumeLengthOrPercent(range, cssParserMode, ValueRangeAll, UnitlessQuirk::Allow);
 }
 
 static RefPtr<CSSValue> consumeWebkitMarqueeRepetition(CSSParserTokenRange& range)
 {
-    if (range.peek().type() == IdentToken)
-        return consumeIdent<CSSValueInfinite>(range);
     return consumeNumber(range, ValueRangeNonNegative);
 }
 
 static RefPtr<CSSValue> consumeWebkitMarqueeSpeed(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
-    if (range.peek().type() == IdentToken)
-        return consumeIdent<CSSValueSlow, CSSValueNormal, CSSValueFast>(range);
     return consumeTime(range, cssParserMode, ValueRangeNonNegative, UnitlessQuirk::Allow);
 }
 
@@ -5845,8 +5839,6 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return consumePlaceItemsShorthand(important);
     case CSSPropertyPlaceSelf:
         return consumePlaceSelfShorthand(important);
-    case CSSPropertyWebkitMarquee:
-        return consumeShorthandGreedily(webkitMarqueeShorthand(), important);
     default:
         return false;
     }

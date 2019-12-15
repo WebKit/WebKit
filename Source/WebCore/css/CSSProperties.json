@@ -5630,19 +5630,10 @@
                 "status": "experimental"
             }
         },
-        "-webkit-marquee": {
-            "codegen-properties": {
-                "longhands": [
-                    "-webkit-marquee-direction",
-                    "-webkit-marquee-increment",
-                    "-webkit-marquee-repetition",
-                    "-webkit-marquee-style",
-                    "-webkit-marquee-speed"
-                ]
-            },
-            "status": "non-standard"
-        },
         "-webkit-marquee-direction": {
+            "codegen-properties": {
+                "internal-only": true
+            },
             "values": [
                 "forwards",
                 "backwards",
@@ -5658,20 +5649,23 @@
         },
         "-webkit-marquee-increment": {
             "codegen-properties": {
-                "conditional-converter": "MarqueeIncrement"
+                "conditional-converter": "MarqueeIncrement",
+                "internal-only": true
             },
             "status": "non-standard"
         },
         "-webkit-marquee-repetition": {
             "codegen-properties": {
                 "name-for-methods": "MarqueeLoopCount",
-                "converter": "MarqueeRepetition"
+                "converter": "MarqueeRepetition",
+                "internal-only": true
             },
             "status": "non-standard"
         },
         "-webkit-marquee-speed": {
             "codegen-properties": {
-                "converter": "MarqueeSpeed"
+                "converter": "MarqueeSpeed",
+                "internal-only": true
             },
             "status": "non-standard"
         },
@@ -5683,7 +5677,8 @@
                 "alternate"
             ],
             "codegen-properties": {
-                "name-for-methods": "MarqueeBehavior"
+                "name-for-methods": "MarqueeBehavior",
+                "internal-only": true
             },
             "status": "non-standard"
         },
