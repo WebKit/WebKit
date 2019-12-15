@@ -20,6 +20,7 @@ class Metric extends LabeledObject {
             'Allocations': 'B',
             'Size': 'B',
             'Score': 'pt',
+            'Power': 'W',
         }[suffix];
     }
 

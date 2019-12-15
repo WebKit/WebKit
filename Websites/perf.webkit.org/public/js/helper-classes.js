@@ -164,7 +164,9 @@ function PerfTestRuns(metric, platform) {
         'Heap': 'B',
         'Allocations': 'B',
         'Size': 'B',
-        'Score': 'pt'}[suffix];
+        'Score': 'pt',
+        'Power': 'W'
+    }[suffix];
 
     // We can't do this in PerfTestResult because all results for each metric need to share the same unit and the same scaling factor.
     function computeScalingFactorIfNeeded() {

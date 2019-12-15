@@ -412,6 +412,7 @@ RunsData.unitFromMetricName = function (metricName)
         'Allocations': 'B',
         'Size': 'B',
         'Score': 'pt',
+        'Power': 'W'
     }[suffix];
     return unit;
 }

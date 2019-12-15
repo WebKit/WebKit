@@ -44,6 +44,7 @@ class BenchmarkResults(object):
         'Heap': 'B',
         'Allocations': 'B',
         'Score': 'pt',
+        'Power': 'W',
     }
     SI_prefixes = ['n', 'u', 'm', '', 'K', 'M', 'G', 'T', 'P', 'E']
 
