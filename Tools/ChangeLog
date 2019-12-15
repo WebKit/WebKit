@@ -1,3 +1,14 @@
+2019-12-15  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        [GTK] jhbuild fails to configure if gettext 0.20 is installed
+        https://bugs.webkit.org/show_bug.cgi?id=205249
+
+        Reviewed by Michael Catanzaro.
+
+        Update jhbuild.
+
+        * jhbuild/jhbuild-wrapper:
+
 2019-12-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the macCatalyst build after r253486
