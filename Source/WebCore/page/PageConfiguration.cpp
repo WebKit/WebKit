@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PageConfiguration.h"
 
+#include "AlternativeTextClient.h"
 #include "ApplicationCacheStorage.h"
 #include "BackForwardClient.h"
 #include "CacheStorageProvider.h"
@@ -36,6 +37,7 @@
 #include "EditorClient.h"
 #include "LibWebRTCProvider.h"
 #include "PerformanceLoggingClient.h"
+#include "PlugInClient.h"
 #include "PluginInfoProvider.h"
 #include "ProgressTrackerClient.h"
 #include "SocketProvider.h"

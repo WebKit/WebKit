@@ -41,6 +41,7 @@
 #include "WasmOMGForOSREntryPlan.h"
 #include "WasmOMGPlan.h"
 #include "WasmOperations.h"
+#include "WasmSignatureInlines.h"
 #include "WasmThunks.h"
 #include "WasmWorklist.h"
 

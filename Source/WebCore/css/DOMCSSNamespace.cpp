@@ -33,6 +33,7 @@
 #include "CSSMarkup.h"
 #include "CSSParser.h"
 #include "CSSPropertyParser.h"
+#include "Document.h"
 #include "HighlightMap.h"
 #include "StyleProperties.h"
 #include <wtf/text/StringBuilder.h>

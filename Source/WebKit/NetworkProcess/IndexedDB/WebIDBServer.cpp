@@ -35,13 +35,13 @@
 
 namespace WebKit {
 
-Ref<WebIDBServer> WebIDBServer::create(PAL::SessionID sessionID, const String& directory, IDBServer::IDBServer::StorageQuotaManagerSpaceRequester&& spaceRequester)
+Ref<WebIDBServer> WebIDBServer::create(PAL::SessionID sessionID, const String& directory, WebCore::IDBServer::IDBServer::StorageQuotaManagerSpaceRequester&& spaceRequester)
 {
     return adoptRef(*new WebIDBServer(sessionID, directory, WTFMove(spaceRequester)));
 }
 
-WebIDBServer::WebIDBServer(PAL::SessionID sessionID, const String& directory, IDBServer::IDBServer::StorageQuotaManagerSpaceRequester&& spaceRequester)
-    : m_server(IDBServer::IDBServer::create(sessionID, directory, WTFMove(spaceRequester)))
+WebIDBServer::WebIDBServer(PAL::SessionID sessionID, const String& directory, WebCore::IDBServer::IDBServer::StorageQuotaManagerSpaceRequester&& spaceRequester)
+    : m_server(WebCore::IDBServer::IDBServer::create(sessionID, directory, WTFMove(spaceRequester)))
 {
     ASSERT(RunLoop::isMain());
 }
@@ -67,14 +67,14 @@ void WebIDBServer::closeAndDeleteDatabasesModifiedSince(WallTime modificationTim
     m_server->closeAndDeleteDatabasesModifiedSince(modificationTime, WTFMove(callback));
 }
 
-void WebIDBServer::closeAndDeleteDatabasesForOrigins(const Vector<SecurityOriginData>& originDatas, CompletionHandler<void()>&& callback)
+void WebIDBServer::closeAndDeleteDatabasesForOrigins(const Vector<WebCore::SecurityOriginData>& originDatas, CompletionHandler<void()>&& callback)
 {
     ASSERT(RunLoop::isMain());
 
     m_server->closeAndDeleteDatabasesForOrigins(originDatas, WTFMove(callback));
 }
 
-void WebIDBServer::suspend(IDBServer::ShouldForceStop shouldForceStop)
+void WebIDBServer::suspend(WebCore::IDBServer::ShouldForceStop shouldForceStop)
 {
     ASSERT(RunLoop::isMain());
 
@@ -255,7 +255,7 @@ void WebIDBServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifi
     m_server->abortOpenAndUpgradeNeeded(databaseConnectionIdentifier, transactionIdentifier);
 }
 
-void WebIDBServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
+void WebIDBServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
 {
     ASSERT(RunLoop::isMain());
 

@@ -1,3 +1,28 @@
+2019-12-14  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WPE] Fix various non-unified build issues introduced since r251698
+        https://bugs.webkit.org/show_bug.cgi?id=204891
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/IndexedDB/WebIDBServer.cpp: Add missing WebCore namespace prefixes
+        in function declarations.
+        (WebKit::WebIDBServer::create):
+        (WebKit::WebIDBServer::WebIDBServer):
+        (WebKit::WebIDBServer::closeAndDeleteDatabasesForOrigins):
+        (WebKit::WebIDBServer::suspend):
+        (WebKit::WebIDBServer::idFireVersionChangeEvent):
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::requestSpace): Add missing namespace prefix for
+        WebCore::ClientOrigin.
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.cpp: Add missing inclusion of
+        WebCore/RegistrableDomain.h
+        (WebKit::NetworkCache::SubresourceInfo::isFirstParty const): Add missing namespace prefix
+        for WebCore::RegistrableDomain.
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::setFilesForInputFileUpload): Add missing namespace
+        prefix for WebCore::File::create() and WebCore::FileList::create() calls.
+
 2019-12-14  Simon Fraser  <simon.fraser@apple.com>
 
         Rename "customFixedPositionRect" to "layoutViewportRect"

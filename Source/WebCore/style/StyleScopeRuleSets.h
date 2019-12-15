@@ -35,11 +35,11 @@ namespace WebCore {
 class CSSStyleRule;
 class CSSStyleSheet;
 class ExtensionStyleSheets;
-class InspectorCSSOMWrappers;
 class MediaQueryEvaluator;
 
 namespace Style {
 
+class InspectorCSSOMWrappers;
 class Resolver;
 
 struct InvalidationRuleSet {
@@ -74,7 +74,7 @@ public:
     void initializeUserStyle();
 
     void resetAuthorStyle();
-    void appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&, MediaQueryEvaluator*, InspectorCSSOMWrappers&);
+    void appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&, MediaQueryEvaluator*, Style::InspectorCSSOMWrappers&);
 
     void resetUserAgentMediaQueryStyle();
 

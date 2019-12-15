@@ -34,6 +34,7 @@
 
 namespace JSC {
 
+class CallLinkInfo;
 class JITStubRoutineSet;
 
 // Use this stub routine if you know that your code might be on stack when

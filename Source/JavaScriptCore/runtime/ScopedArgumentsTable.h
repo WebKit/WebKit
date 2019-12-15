@@ -27,6 +27,7 @@
 
 #include "JSCast.h"
 #include "ScopeOffset.h"
+#include "VM.h"
 #include <wtf/Assertions.h>
 #include <wtf/CagedUniquePtr.h>
 

@@ -1,3 +1,42 @@
+2019-12-14  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WPE] Fix various non-unified build issues introduced since r251698
+        https://bugs.webkit.org/show_bug.cgi?id=204891
+
+        Reviewed by Alex Christensen.
+
+        No new tests needed.
+
+        * Modules/async-clipboard/ClipboardItemBindingsDataSource.cpp: Add missing inclusion of
+        markup.h
+        * accessibility/AccessibilityObject.cpp: Add missing inclusion of RenderInline.h
+        * animation/WebAnimationUtilities.cpp: Add missing inclusion of Animation.h
+        * animation/WebAnimationUtilities.h: Add inclusion of wtf/Forward.h to ensure that
+        WTF::String is declared.
+        * css/DOMCSSNamespace.cpp: Add missing inclusion of Document.h
+        * dom/WindowEventLoop.cpp: Add missing inclusion of SecurityOrigin.h
+        * dom/WindowEventLoop.h: Add forward declaration of SecurityOrigin
+        * layout/displaytree/DisplayInlineContent.cpp: Move ENABLE(LAYOUT_FORMATTING_CONTEXT) guard
+        after inclusion of config.h, to ensure that the ENABLE() macro is defined before being used.
+        * loader/ProgressTracker.h: Add missing inclusion of wtf/UniqueRef.h
+        * page/LoggedInStatus.cpp: Add missing inclusion of wtf/text/StringConcatenateNumbers.h
+        * page/PageConfiguration.cpp: Add missing inclusions of AlternativeTextClient.h and
+        PlugInClient.h
+        * rendering/RenderFlexibleBox.cpp: Add missing inclusion of wtf/SetForScope.h
+        * rendering/updating/RenderTreeBuilderBlock.h: Add missing forward declaration of
+        RenderBlockFlow.
+        * rendering/updating/RenderTreeBuilderBlockFlow.h: Add missing forward declaration of
+        RenderBlockFlow.
+        * rendering/updating/RenderTreeBuilderMultiColumn.h: Add missing forward declaration of
+        RenderMultiColumnFlow.
+        * rendering/updating/RenderTreeUpdaterGeneratedContent.cpp: Add missin inclusion of
+        RenderView.h
+        * style/StyleBuilder.cpp: Add missing inclusion of HTMLElement.h
+        * style/StyleBuilderState.cpp: Ditto.
+        * style/StyleScopeRuleSets.h: Move forward declaration of InspectorCSSOMWrappers into the
+        Style namespace, where it belongs; add missing namespace prefix in appendAuthorStyleSheets()
+        declaration.
+
 2019-12-15  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add basic support for hanging content

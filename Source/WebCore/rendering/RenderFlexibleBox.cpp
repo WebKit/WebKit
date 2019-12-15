@@ -40,6 +40,7 @@
 #include <limits>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 

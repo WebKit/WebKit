@@ -28,6 +28,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "ExecutionCounter.h"
+#include "InstructionStream.h"
 #include "Options.h"
 #include <wtf/HashMap.h>
 

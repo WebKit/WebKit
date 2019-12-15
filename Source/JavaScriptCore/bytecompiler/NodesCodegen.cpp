@@ -30,6 +30,7 @@
 
 #include "BuiltinNames.h"
 #include "BytecodeGenerator.h"
+#include "BytecodeGeneratorBaseInlines.h"
 #include "CallFrame.h"
 #include "JIT.h"
 #include "JSAsyncGenerator.h"

@@ -28,6 +28,7 @@
 
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/StringCommon.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 

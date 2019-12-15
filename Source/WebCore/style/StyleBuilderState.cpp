@@ -38,6 +38,7 @@
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
 #include "CSSShadowValue.h"
+#include "HTMLElement.h"
 #include "RenderTheme.h"
 #include "SVGElement.h"
 #include "SVGSVGElement.h"

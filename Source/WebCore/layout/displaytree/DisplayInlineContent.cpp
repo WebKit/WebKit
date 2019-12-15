@@ -23,9 +23,10 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include "config.h"
+
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "config.h"
 #include "DisplayInlineContent.h"
 
 namespace WebCore {

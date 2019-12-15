@@ -34,6 +34,7 @@
 #include "RenderImage.h"
 #include "RenderQuote.h"
 #include "RenderTreeUpdater.h"
+#include "RenderView.h"
 #include "StyleTreeResolver.h"
 
 namespace WebCore {

@@ -37,6 +37,7 @@ class CustomElementQueue;
 class Document;
 class HTMLSlotElement;
 class MutationObserver;
+class SecurityOrigin;
 
 // https://html.spec.whatwg.org/multipage/webappapis.html#window-event-loop
 class WindowEventLoop final : public EventLoop {

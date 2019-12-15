@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class RenderBlockFlow;
+class RenderMultiColumnFlow;
 
 class RenderTreeBuilder::MultiColumn {
     WTF_MAKE_FAST_ALLOCATED;

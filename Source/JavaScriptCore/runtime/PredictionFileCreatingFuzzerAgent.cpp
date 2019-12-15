@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "PredictionFileCreatingFuzzerAgent.h"
+#include <wtf/DataLog.h>
 
 namespace JSC {
 

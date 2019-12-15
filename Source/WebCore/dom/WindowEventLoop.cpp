@@ -32,6 +32,7 @@
 #include "HTMLSlotElement.h"
 #include "Microtasks.h"
 #include "MutationObserver.h"
+#include "SecurityOrigin.h"
 
 namespace WebCore {
 

@@ -40,6 +40,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "PasteboardCustomData.h"
 #include "SharedBuffer.h"
+#include "markup.h"
 #include <wtf/Function.h>
 
 namespace WebCore {

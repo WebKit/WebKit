@@ -30,6 +30,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 

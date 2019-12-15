@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebAnimationUtilities.h"
 
+#include "Animation.h"
 #include "CSSAnimation.h"
 #include "CSSTransition.h"
 #include "DeclarativeAnimation.h"

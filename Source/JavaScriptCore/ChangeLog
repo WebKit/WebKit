@@ -1,3 +1,24 @@
+2019-12-14  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WPE] Fix various non-unified build issues introduced since r251698
+        https://bugs.webkit.org/show_bug.cgi?id=204891
+
+        Reviewed by Alex Christensen.
+
+        * API/JSCallbackConstructor.h: Add missing inclusion of JSObject.h
+        * bytecompiler/BytecodeGeneratorBaseInlines.h: Add missing "#pragma once", which
+        caused build breakage when the same unified source would result in multiple inclusions of
+        the header.
+        * bytecompiler/NodesCodegen.cpp: Add missing inclusion of BytecodeGeneratorBaseInlines.h
+        * dfg/DFGDesiredIdentifiers.h: Add missing inclusion of Identifier.h
+        * heap/IsoSubspacePerVM.cpp: Add missing inclusion of MarkedSpaceInlines.h
+        * jit/GCAwareJITStubRoutine.h: Add missing forward declaration for CallLinkInfo.
+        * runtime/PredictionFileCreatingFuzzerAgent.cpp: Add missing inclusion of wtf/DataLog.h
+        * runtime/ScopedArgumentsTable.h: Add missing inclusion of VM.h
+        * wasm/WasmCallee.cpp: Add missing inclusion of WasmCallingConvention.h
+        * wasm/WasmLLIntTierUpCounter.h: Add missing inclusion of InstructionStream.h
+        * wasm/WasmSlowPaths.cpp: Add missing inclusion of WasmSignatureInlines.h
+
 2019-12-13  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove JSFixedArray, and use JSImmutableButterfly instead

@@ -63,6 +63,7 @@
 #include "NodeTraversal.h"
 #include "Page.h"
 #include "RenderImage.h"
+#include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"

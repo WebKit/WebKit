@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+class RenderBlockFlow;
+
 class RenderTreeBuilder::BlockFlow {
     WTF_MAKE_FAST_ALLOCATED;
 public:

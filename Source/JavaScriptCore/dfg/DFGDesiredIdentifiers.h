@@ -27,6 +27,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "Identifier.h"
 #include <wtf/HashMap.h>
 #include <wtf/Variant.h>
 #include <wtf/text/UniquedStringImpl.h>

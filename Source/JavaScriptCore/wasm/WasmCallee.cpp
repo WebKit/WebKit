@@ -30,6 +30,7 @@
 
 #include "LLIntThunks.h"
 #include "WasmCalleeRegistry.h"
+#include "WasmCallingConvention.h"
 
 namespace JSC { namespace Wasm {
 
