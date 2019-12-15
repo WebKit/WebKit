@@ -106,8 +106,8 @@ LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const 
 
     if (candidateRuns.hasTextContentOnly()) {
         auto& runs = candidateRuns.runs();
-        if (auto partialTrailingContent = wrapTextContent(runs, lineStatus)) {
-            if (!partialTrailingContent->trailingRunIndex && partialTrailingContent->contentOverflows) {
+        if (auto wrappedTextContent = wrapTextContent(runs, lineStatus)) {
+            if (!wrappedTextContent->trailingRunIndex && wrappedTextContent->contentOverflows) {
                 // We tried to split the content but the available space can't even accommodate the first character.
                 // 1. Push the content over to the next line when we've got content on the line already.
                 // 2. Keep the first character on the empty line (or keep the whole run if it has only one character).
@@ -122,7 +122,7 @@ LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const 
                 auto firstCharacterRun = PartialRun { 1, firstCharacterWidth, false };
                 return { BreakingContext::ContentWrappingRule::Split, BreakingContext::PartialTrailingContent { firstTextRunIndex, firstCharacterRun } };
             }
-            auto splitContent = BreakingContext::PartialTrailingContent { partialTrailingContent->trailingRunIndex, partialTrailingContent->partialTrailingRun };
+            auto splitContent = BreakingContext::PartialTrailingContent { wrappedTextContent->trailingRunIndex, wrappedTextContent->partialTrailingRun };
             return { BreakingContext::ContentWrappingRule::Split, splitContent };
         }
         // If we are not allowed to break this content, we still need to decide whether keep it or push it to the next line.
@@ -138,7 +138,7 @@ bool LineBreaker::shouldWrapFloatBox(InlineLayoutUnit floatLogicalWidth, InlineL
     return !lineIsEmpty && floatLogicalWidth > availableWidth;
 }
 
-Optional<LineBreaker::TextWrappingContext> LineBreaker::wrapTextContent(const Content::RunList& runs, const LineStatus& lineStatus) const
+Optional<LineBreaker::WrappedTextContent> LineBreaker::wrapTextContent(const Content::RunList& runs, const LineStatus& lineStatus) const
 {
     // Check where the overflow occurs and use the corresponding style to figure out the breaking behaviour.
     // <span style="word-break: normal">first</span><span style="word-break: break-all">second</span><span style="word-break: normal">third</span>
@@ -154,12 +154,12 @@ Optional<LineBreaker::TextWrappingContext> LineBreaker::wrapTextContent(const Co
             auto adjustedAvailableWidth = std::max<InlineLayoutUnit>(0, lineStatus.availableWidth - accumulatedRunWidth);
              if (auto partialRun = tryBreakingTextRun(run, adjustedAvailableWidth, lineStatus.lineIsEmpty)) {
                  if (partialRun->length)
-                     return TextWrappingContext { index, false, partialRun };
+                     return WrappedTextContent { index, false, partialRun };
                  // When the content is wrapped at the run boundary, the trailing run is the previous run.
                  if (index)
-                     return TextWrappingContext { index - 1, false, { } };
+                     return WrappedTextContent { index - 1, false, { } };
                  // Sometimes we can't accommodate even the very first character.
-                 return TextWrappingContext { 0, true, { } };
+                 return WrappedTextContent { 0, true, { } };
              }
             // If this run is not breakable, we need to check if any previous run is breakable
             break;
@@ -176,7 +176,7 @@ Optional<LineBreaker::TextWrappingContext> LineBreaker::wrapTextContent(const Co
             if (auto partialRun = tryBreakingTextRun(run, maxInlineLayoutUnit(), lineStatus.lineIsEmpty)) {
                  // We know this run fits, so if wrapping is allowed on the run, it should return a non-empty left-side.
                  ASSERT(partialRun->length);
-                 return TextWrappingContext { index, false, partialRun };
+                 return WrappedTextContent { index, false, partialRun };
             }
         }
     }
