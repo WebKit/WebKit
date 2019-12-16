@@ -879,13 +879,6 @@ ViewportFitEnabled:
   humanReadableName: "Viewport Fit"
   humanReadableDescription: "Enable viewport-fit viewport parameter"
 
-DisplayContentsEnabled:
-  type: bool
-  defaultValue: true
-  humanReadableName: "CSS display: contents"
-  humanReadableDescription: "Enable CSS display: contents support"
-  webcoreBinding: RuntimeEnabledFeatures
-
 IncrementalRenderingSuppressionTimeout:
   type: double
   defaultValue: 5

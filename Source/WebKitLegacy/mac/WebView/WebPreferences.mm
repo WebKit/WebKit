@@ -679,7 +679,6 @@ public:
 #if ENABLE(INTERSECTION_OBSERVER)
         @NO, WebKitIntersectionObserverEnabledPreferenceKey,
 #endif
-        @YES, WebKitDisplayContentsEnabledPreferenceKey,
         @NO, WebKitUserTimingEnabledPreferenceKey,
         @NO, WebKitResourceTimingEnabledPreferenceKey,
         @NO, WebKitMediaUserGestureInheritsFromDocument,
@@ -3269,16 +3268,6 @@ static NSString *classIBCreatorID = nil;
 - (void)setMenuItemElementEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitMenuItemElementEnabledPreferenceKey];
-}
-
-- (BOOL)displayContentsEnabled
-{
-    return [self _boolValueForKey:WebKitDisplayContentsEnabledPreferenceKey];
-}
-
-- (void)setDisplayContentsEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitDisplayContentsEnabledPreferenceKey];
 }
 
 - (BOOL)userTimingEnabled

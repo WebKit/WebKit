@@ -493,12 +493,6 @@ static bool hasEffectiveDisplayNoneForDisplayContents(const Element& element)
 
 void Adjuster::adjustDisplayContentsStyle(RenderStyle& style) const
 {
-    bool displayContentsEnabled = is<HTMLSlotElement>(m_element) || RuntimeEnabledFeatures::sharedFeatures().displayContentsEnabled();
-    if (!displayContentsEnabled) {
-        style.setDisplay(DisplayType::Inline);
-        return;
-    }
-
     if (!m_element) {
         if (style.styleType() != PseudoId::Before && style.styleType() != PseudoId::After)
             style.setDisplay(DisplayType::None);
