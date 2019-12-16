@@ -125,6 +125,13 @@ private:
     Optional<WrappedTextContent> wrapTextContent(const Content::RunList&, const LineStatus&) const;
     Optional<PartialRun> tryBreakingTextRun(const Content::Run& overflowRun, InlineLayoutUnit availableWidth, bool lineIsEmpty) const;
 
+    enum class WordBreakRule {
+        NoBreak,
+        AtArbitraryPosition,
+        OnlyHyphenationAllowed
+    };
+    WordBreakRule wordBreakBehavior(const RenderStyle&, bool lineIsEmpty) const;
+
     bool n_hyphenationIsDisabled { false };
 };
 
