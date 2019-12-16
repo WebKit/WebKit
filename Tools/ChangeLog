@@ -1,3 +1,22 @@
+2019-12-16  Jonathan Bedard  <jbedard@apple.com>
+
+        python3: wpt exporter should parse a patch as bytes
+        https://bugs.webkit.org/show_bug.cgi?id=205243
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/webkitpy/common/checkout/scm/scm_mock.py:
+        (MockSCM.create_patch): Patches are byte arrays.
+        * Scripts/webkitpy/w3c/test_exporter.py:
+        (WebPlatformTestExporter._wpt_patch): Diff should be byte array.
+        (WebPlatformTestExporter._find_filename): Ditto.
+        (WebPlatformTestExporter._is_ignored_file): Filenames will be encoded bytes.
+        (WebPlatformTestExporter._strip_ignored_files_from_diff): Diff should be byte array.
+        (WebPlatformTestExporter.write_git_patch_file): Ditto.
+        * Scripts/webkitpy/w3c/test_exporter_unittest.py:
+        (TestExporterTest.MockGit): Diff should be byte array.
+        (TestExporterTest.test_ignore_changes_to_expected_file): Ditto.
+
 2019-12-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         TextManipulationController should observe newly inserted or displayed contents

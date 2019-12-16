@@ -48,7 +48,7 @@ class TestExporterTest(unittest.TestCase):
             return True
 
     class MockGit(object):
-        mock_format_patch_result = 'my patch containing some diffs'
+        mock_format_patch_result = b'my patch containing some diffs'
 
         @classmethod
         def clone(cls, url, directory, executive=None):
@@ -217,7 +217,7 @@ class TestExporterTest(unittest.TestCase):
 
     def test_ignore_changes_to_expected_file(self):
         host = TestExporterTest.MyMockHost()
-        host._mockSCM.mock_format_patch_result = """
+        host._mockSCM.mock_format_patch_result = b"""
 Subversion Revision: 231920
 diff --git a/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/header-values-expected.txt b/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/header-values-expected.txt
 
@@ -229,7 +229,7 @@ diff --git a/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/heade
 
     def test_ignore_changes_to_w3c_import_log(self):
         host = TestExporterTest.MyMockHost()
-        host._mockSCM.mock_format_patch_result = """
+        host._mockSCM.mock_format_patch_result = b"""
 Subversion Revision: 231920
 diff --git a/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/w3c-import.log b/LayoutTests/imported/w3c/web-platform-tests/fetch/api/headers/w3c-import.log
 
