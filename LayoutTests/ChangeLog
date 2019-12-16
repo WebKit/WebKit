@@ -1,5 +1,14 @@
 2019-12-16  Truitt Savell  <tsavell@apple.com>
 
+        [ Catalina ] webaudio/silence-after-playback.html is failing on Catalina
+        https://bugs.webkit.org/show_bug.cgi?id=204247
+
+        Unreviewed test gardneing.
+
+        * platform/mac/TestExpectations:
+
+2019-12-16  Truitt Savell  <tsavell@apple.com>
+
         [ Catalina ] editing/mac/selection/context-menu-select-editability.html is failing on Catalina
         https://bugs.webkit.org/show_bug.cgi?id=204246
 

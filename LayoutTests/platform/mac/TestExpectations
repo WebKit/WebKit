@@ -1960,3 +1960,5 @@ webkit.org/b/204820 [ Catalina+ ] fast/text/emoji-gender-8.html [ ImageOnlyFailu
 webkit.org/b/204820 [ Catalina+ ] fast/text/emoji-gender-9.html [ ImageOnlyFailure ]
 
 webkit.org/b/204246 [ Catalina ] editing/mac/selection/context-menu-select-editability.html [ Failure ]
+
+webkit.org/b/204247 [ Catalina ] webaudio/silence-after-playback.html [ Failure ]
