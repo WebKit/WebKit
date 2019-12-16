@@ -67,8 +67,6 @@ chdirWebKit();
 
 my @xcodeOptions = XcodeOptions();
 
-buildProjectOrDie("Source/bmalloc", "bmalloc");
-buildProjectOrDie("Source/WTF", "WTF");
 buildProjectOrDie("Tools/lldb/lldbWebKitTester", "lldbWebKitTester");
 
 sub buildProjectOrDie($$)

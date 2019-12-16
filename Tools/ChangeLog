@@ -1,3 +1,17 @@
+2019-12-16  Jonathan Bedard  <jbedard@apple.com>
+
+        lldbwebkittester: Conform with testing binary format
+        https://bugs.webkit.org/show_bug.cgi?id=205271
+
+        Reviewed by Alexey Proskuryakov.
+
+        lldbwebkittester should be built the same way ImageDiff, TestWebKitAPI and WebKitTestRunner are.
+        This also paves the way for adding lldb tests against WebCore and WebKit, since lldbwebkittestrunner
+        is now packaged with the rest of WebKit's testing binaries.
+
+        * Scripts/build-lldbwebkittester:
+        * Scripts/build-webkit:
+
 2019-12-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove ArrayBufferNeuteringWatchpointSet

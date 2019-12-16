@@ -262,6 +262,10 @@ if (isAppleCocoaWebKit()) {
         (system(@copyLibrariesArgs) == 0) or die;
     }
 
+    if (isAppleMacWebKit()) {
+        push @projects, ("Tools/lldb/lldbWebKitTester");
+    }
+
     # Build Tools needed for Apple ports
     push @projects, ("Tools/DumpRenderTree", "Tools/WebKitTestRunner", "Source/ThirdParty/gtest", "Tools/TestWebKitAPI");
 
