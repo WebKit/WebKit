@@ -1,3 +1,23 @@
+2019-12-16  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION: [ Mac wk2 ] imported/w3c/web-platform-tests/service-workers/service-worker/update-no-cache-request-headers.https.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=205286
+        <rdar://problem/57976344>
+
+        Reviewed by Alexey Proskuryakov.
+
+        The test triggers a registration update and then expects registration.installing to be non-null
+        once the registration update promise is resolved. This is only true if the content of the service
+        worker script is different since last update. The script included a timestamp to try and make
+        the script different every time but it would sometimes not suffice if the update happens quickly
+        enough. To address the issue, include a UUID in the script instead of a timestamp.
+
+        Upstream PR: https://github.com/web-platform-tests/wpt/pull/20797
+
+        * web-platform-tests/service-workers/service-worker/resources/test-request-headers-worker.js:
+        * web-platform-tests/service-workers/service-worker/resources/test-request-headers-worker.py:
+        (main):
+
 2019-12-13  Chris Dumez  <cdumez@apple.com>
 
         Implement PostMessageOptions for postMessage
