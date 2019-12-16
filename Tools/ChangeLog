@@ -1,3 +1,15 @@
+2019-12-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        -[WKWebView _detectDataWithTypes:completionHandler:] crashes when there is no running process
+        https://bugs.webkit.org/show_bug.cgi?id=205254
+
+        Reviewed by Tim Horton.
+
+        Add a test to verify that we don't crash when calling data detection API's immediately after crashing the web
+        content process.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DataDetection.mm:
+
 2019-12-15  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         [GTK] jhbuild fails to configure if gettext 0.20 is installed

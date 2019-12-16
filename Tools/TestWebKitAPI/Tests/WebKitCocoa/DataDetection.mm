@@ -166,6 +166,15 @@ TEST(WebKit, AddAndRemoveDataDetectors)
     checkDataDetectionResults([webView _dataDetectionResults]);
 }
 
+TEST(WebKit, DoNotCrashWhenDetectingDataAfterWebProcessTerminates)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"data-detectors"];
+    [webView _killWebContentProcessAndResetState];
+    [webView synchronouslyDetectDataWithTypes:WKDataDetectorTypeAll];
+    [webView synchronouslyRemoveDataDetectedLinks];
+}
+
 #endif // PLATFORM(IOS)
 
 #endif

@@ -261,6 +261,10 @@
 #include "WebDeviceOrientationUpdateProviderProxy.h"
 #endif
 
+#if ENABLE(DATA_DETECTION)
+#include "DataDetectionResult.h"
+#endif
+
 // This controls what strategy we use for mouse wheel coalescing.
 #define MERGE_WHEEL_EVENTS 1
 
@@ -9366,11 +9370,19 @@ void WebPageProxy::simulateDeviceOrientationChange(double alpha, double beta, do
 
 void WebPageProxy::detectDataInAllFrames(WebCore::DataDetectorTypes types, CompletionHandler<void(const DataDetectionResult&)>&& completionHandler)
 {
+    if (!hasRunningProcess()) {
+        completionHandler({ });
+        return;
+    }
     sendWithAsyncReply(Messages::WebPage::DetectDataInAllFrames(static_cast<uint64_t>(types)), WTFMove(completionHandler));
 }
 
 void WebPageProxy::removeDataDetectedLinks(CompletionHandler<void(const DataDetectionResult&)>&& completionHandler)
 {
+    if (!hasRunningProcess()) {
+        completionHandler({ });
+        return;
+    }
     sendWithAsyncReply(Messages::WebPage::RemoveDataDetectedLinks(), WTFMove(completionHandler));
 }
 

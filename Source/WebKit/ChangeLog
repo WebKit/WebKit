@@ -1,3 +1,15 @@
+2019-12-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        -[WKWebView _detectDataWithTypes:completionHandler:] crashes when there is no running process
+        https://bugs.webkit.org/show_bug.cgi?id=205254
+
+        Reviewed by Tim Horton.
+
+        Bail early and call the completion handler in the case where we don't have a running web process, to avoid a
+        null `Connection*` deref. Speculative fix for <rdar://problem/57463469>.
+
+        * UIProcess/WebPageProxy.cpp:
+
 2019-12-14  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][WPE] Fix various non-unified build issues introduced since r251698
