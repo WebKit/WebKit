@@ -191,7 +191,8 @@ WI.LegacyTabBar = class LegacyTabBar extends WI.View
             if (!nextTabBarItem || nextTabBarItem instanceof WI.PinnedTabBarItem)
                 nextTabBarItem = this._tabBarItems[index - 1];
 
-            this.selectedTabBarItem = nextTabBarItem;
+            let initiatorHint = options.initiatorHint || WI.TabBrowser.TabNavigationInitiator.Unknown;
+            this.selectTabBarItem(nextTabBarItem, {initiatorHint});
         }
 
         if (this.element.classList.contains("animating")) {
@@ -362,6 +363,11 @@ WI.LegacyTabBar = class LegacyTabBar extends WI.View
 
     set selectedTabBarItem(tabBarItemOrIndex)
     {
+        this.selectTabBarItem(tabBarItemOrIndex);
+    }
+
+    selectTabBarItem(tabBarItemOrIndex, options = {})
+    {
         let tabBarItem = this._findTabBarItem(tabBarItemOrIndex);
         if (tabBarItem === this._newTabTabBarItem || tabBarItem === this._tabPickerTabBarItem) {
             // Get the last normal tab item if the item is not selectable.
@@ -384,7 +390,8 @@ WI.LegacyTabBar = class LegacyTabBar extends WI.View
                 this.needsLayout();
         }
 
-        this.dispatchEventToListeners(WI.TabBar.Event.TabBarItemSelected, {previousTabBarItem});
+        let initiatorHint = options.initiatorHint || WI.TabBrowser.TabNavigationInitiator.Unknown;
+        this.dispatchEventToListeners(WI.TabBar.Event.TabBarItemSelected, {previousTabBarItem, initiatorHint});
     }
 
     get tabBarItems()
@@ -621,7 +628,9 @@ WI.LegacyTabBar = class LegacyTabBar extends WI.View
 
             for (let item of this._hiddenTabBarItems) {
                 contextMenu.appendItem(item.title, () => {
-                    this.selectedTabBarItem = item;
+                    this.selectTabBarItem(item, {
+                        initiatorHint: WI.TabBrowser.TabNavigationInitiator.ContextMenu,
+                    });
                 });
             }
 
@@ -633,7 +642,9 @@ WI.LegacyTabBar = class LegacyTabBar extends WI.View
         if (closeButtonElement)
             return;
 
-        this.selectedTabBarItem = tabBarItem;
+        this.selectTabBarItem(tabBarItem, {
+            initiatorHint: WI.TabBrowser.TabNavigationInitiator.TabClick,
+        });
 
         if (tabBarItem instanceof WI.PinnedTabBarItem || !this._hasMoreThanOneNormalTab())
             return;
@@ -682,7 +693,11 @@ WI.LegacyTabBar = class LegacyTabBar extends WI.View
                 return;
 
             if (!event.altKey) {
-                this.removeTabBarItem(tabBarItem, {suppressExpansion: true});
+                let options = {
+                    suppressExpansion: true,
+                    initiatorHint: WI.TabBrowser.TabNavigationInitiator.TabClick,
+                };
+                this.removeTabBarItem(tabBarItem, options);
                 return;
             }
 
@@ -848,7 +863,8 @@ WI.LegacyTabBar = class LegacyTabBar extends WI.View
 
     _handleNewTabClick(event)
     {
-        WI.showNewTabTab();
+        let options = {initiatorHint: WI.TabBrowser.TabNavigationInitiator.TabClick};
+        WI.showNewTabTab(options);
     }
 
     _handleNewTabMouseEnter(event)

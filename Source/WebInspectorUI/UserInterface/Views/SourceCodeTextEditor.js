@@ -1262,7 +1262,10 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
             if (!WI.isShowingSourcesTab()) {
                 contextMenu.appendSeparator();
                 contextMenu.appendItem(WI.UIString("Reveal in Sources Tab"), () => {
-                    WI.showSourcesTab({breakpointToSelect: breakpoints[0]});
+                    WI.showSourcesTab({
+                        breakpointToSelect: breakpoints[0],
+                        initiatorHint: WI.TabBrowser.TabNavigationInitiator.ContextMenu,
+                    });
                 });
             }
 
@@ -1940,7 +1943,9 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
 
                 var goToButton = titleElement.appendChild(WI.createGoToArrowButton());
                 goToButton.addEventListener("click", function() {
-                    WI.domManager.inspectElement(nodeId);
+                    WI.domManager.inspectElement(nodeId, {
+                        initiatorHint: WI.TabBrowser.TabNavigationInitiator.LinkClick,
+                    });
                 });
             });
         }

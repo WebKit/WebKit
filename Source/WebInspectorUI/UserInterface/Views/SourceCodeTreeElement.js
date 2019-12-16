@@ -236,6 +236,7 @@ WI.SourceCodeTreeElement = class SourceCodeTreeElement extends WI.FolderizedTree
         if (blackboxData && blackboxData.type === WI.DebuggerManager.BlackboxType.Pattern) {
             WI.showSettingsTab({
                 blackboxPatternToSelect: blackboxData.regex,
+                initiatorHint: WI.TabBrowser.TabNavigationInitiator.ContextMenu,
             });
             return;
         }

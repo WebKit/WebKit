@@ -60,7 +60,9 @@ WI.DOMNodeTreeElement = class DOMNodeTreeElement extends WI.GeneralTreeElement
         contextMenu.appendSeparator();
 
         contextMenu.appendItem(WI.repeatedUIString.revealInDOMTree(), () => {
-            WI.domManager.inspectElement(this.representedObject.id);
+            WI.domManager.inspectElement(this.representedObject.id, {
+                initiatorHint: WI.TabBrowser.TabNavigationInitiator.ContextMenu,
+            });
         });
     }
 };

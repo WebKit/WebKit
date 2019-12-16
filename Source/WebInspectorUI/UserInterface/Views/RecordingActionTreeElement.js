@@ -434,6 +434,7 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
                 WI.showSourceCodeLocation(sourceCodeLocation, {
                     ignoreNetworkTab: true,
                     ignoreSearchTab: true,
+                    initiatorHint: WI.TabBrowser.TabNavigationInitiator.ContextMenu,
                 });
             });
 

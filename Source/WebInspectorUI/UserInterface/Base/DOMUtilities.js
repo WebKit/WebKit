@@ -85,7 +85,9 @@ WI.linkifyNodeReferenceElement = function(node, element, options = {})
 WI.bindInteractionsForNodeToElement = function(node, element, options = {}) {
     if (!options.ignoreClick) {
         element.addEventListener("click", (event) => {
-            WI.domManager.inspectElement(node.id);
+            WI.domManager.inspectElement(node.id, {
+                initiatorHint: WI.TabBrowser.TabNavigationInitiator.LinkClick,
+            });
         });
     }
 

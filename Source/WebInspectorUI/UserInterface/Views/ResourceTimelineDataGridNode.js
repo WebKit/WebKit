@@ -282,6 +282,7 @@ WI.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode extends WI.
         const options = {
             ignoreNetworkTab: true,
             ignoreSearchTab: true,
+            initiatorHint: WI.TabBrowser.TabNavigationInitiator.LinkClick,
         };
         WI.showSourceCode(this.resource, options);
     }

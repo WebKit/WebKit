@@ -119,7 +119,8 @@ WI.NewTabContentView = class NewTabContentView extends WI.TabContentView
         const options = {
             referencedView: this,
             shouldReplaceTab: !canCreateAdditionalTabs || !WI.modifierKeys.metaKey,
-            shouldShowNewTab: !WI.modifierKeys.metaKey
+            shouldShowNewTab: !WI.modifierKeys.metaKey,
+            initiatorHint: WI.TabBrowser.TabNavigationInitiator.ButtonClick,
         };
         WI.createNewTabWithType(tabType, options);
     }

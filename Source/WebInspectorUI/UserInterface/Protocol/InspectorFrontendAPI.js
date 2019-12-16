@@ -51,7 +51,9 @@ InspectorFrontendAPI = {
             return;
         }
 
-        WI.showTimelineTab();
+        WI.showTimelineTab({
+            initiatorHint: WI.TabBrowser.TabNavigationInitiator.FrontendAPI
+        });
 
         if (WI.timelineManager.isCapturing() === enabled)
             return;
@@ -97,7 +99,10 @@ InspectorFrontendAPI = {
 
     showConsole: function()
     {
-        WI.showConsoleTab();
+        const requestedScope = null;
+        WI.showConsoleTab(requestedScope, {
+            initiatorHint: WI.TabBrowser.TabNavigationInitiator.FrontendAPI,
+        });
 
         WI.quickConsole.prompt.focus();
 
@@ -121,22 +126,26 @@ InspectorFrontendAPI = {
 
     showResources: function()
     {
-        WI.showSourcesTab();
+        WI.showSourcesTab({
+            initiatorHint: WI.TabBrowser.TabNavigationInitiator.FrontendAPI,
+        });
     },
 
     // COMPATIBILITY (iOS 13): merged into InspectorFrontendAPI.setTimelineProfilingEnabled.
     showTimelines: function()
     {
-        WI.showTimelineTab();
+        WI.showTimelineTab({
+            initiatorHint: WI.TabBrowser.TabNavigationInitiator.FrontendAPI
+        });
     },
 
     showMainResourceForFrame: function(frameIdentifier)
     {
-        const options = {
+        WI.showSourceCodeForFrame(frameIdentifier, {
             ignoreNetworkTab: true,
             ignoreSearchTab: true,
-        };
-        WI.showSourceCodeForFrame(frameIdentifier, options);
+            initiatorHint: WI.TabBrowser.TabNavigationInitiator.FrontendAPI,
+        });
     },
 
     contextMenuItemSelected: function(id)

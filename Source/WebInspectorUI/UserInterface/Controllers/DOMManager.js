@@ -460,13 +460,16 @@ WI.DOMManager = class DOMManager extends WI.Object
         return this._restoreSelectedNodeIsAllowed;
     }
 
-    inspectElement(nodeId)
+    inspectElement(nodeId, options = {})
     {
         var node = this._idToDOMNode[nodeId];
         if (!node || !node.ownerDocument)
             return;
 
-        this.dispatchEventToListeners(WI.DOMManager.Event.DOMNodeWasInspected, {node});
+        // This code path is hit by "Reveal in DOM Tree" and clicking element links/console widgets.
+        // Unless overridden by callers, assume that this is navigation is initiated by a Inspect mode.
+        let initiatorHint = options.initiatorHint || WI.TabBrowser.TabNavigationInitiator.Inspect;
+        this.dispatchEventToListeners(WI.DOMManager.Event.DOMNodeWasInspected, {node, initiatorHint});
 
         this._inspectModeEnabled = false;
         this.dispatchEventToListeners(WI.DOMManager.Event.InspectModeStateChanged);

@@ -133,22 +133,24 @@ WI.DefaultDashboardView = class DefaultDashboardView extends WI.DashboardView
 
     _resourcesItemWasClicked()
     {
-        WI.showSourcesTab();
+        WI.showSourcesTab({initiatorHint: WI.TabBrowser.TabNavigationInitiator.Dashboard});
     }
 
     _networkItemWasClicked()
     {
-        WI.showNetworkTab();
+        WI.showNetworkTab({initiatorHint: WI.TabBrowser.TabNavigationInitiator.Dashboard});
     }
 
     _timelineItemWasClicked()
     {
-        WI.showTimelineTab();
+        WI.showTimelineTab({initiatorHint: WI.TabBrowser.TabNavigationInitiator.Dashboard});
     }
 
     _consoleItemWasClicked(scope)
     {
-        WI.showConsoleTab(scope);
+        WI.showConsoleTab(scope, {
+            initiatorHint: WI.TabBrowser.TabNavigationInitiator.Dashboard,
+        });
     }
 
     _setConsoleItemValue(itemName, newValue)

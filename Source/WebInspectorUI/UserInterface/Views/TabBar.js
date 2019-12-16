@@ -335,6 +335,11 @@ WI.TabBar = class TabBar extends WI.View
 
     set selectedTabBarItem(tabBarItemOrIndex)
     {
+        this.selectTabBarItem(tabBarItemOrIndex);
+    }
+
+    selectTabBarItem(tabBarItemOrIndex, options = {})
+    {
         let tabBarItem = this._findTabBarItem(tabBarItemOrIndex);
         if (tabBarItem === this._tabPickerTabBarItem) {
             // Get the last normal tab item if the item is not selectable.
@@ -357,7 +362,8 @@ WI.TabBar = class TabBar extends WI.View
                 this.needsLayout();
         }
 
-        this.dispatchEventToListeners(WI.TabBar.Event.TabBarItemSelected, {previousTabBarItem});
+        let initiatorHint = options.initiatorHint || WI.TabBrowser.TabNavigationInitiator.Unknown;
+        this.dispatchEventToListeners(WI.TabBar.Event.TabBarItemSelected, {previousTabBarItem, initiatorHint});
     }
 
     get tabBarItems()
@@ -586,7 +592,9 @@ WI.TabBar = class TabBar extends WI.View
 
             for (let item of this._hiddenTabBarItems) {
                 contextMenu.appendItem(item.title, () => {
-                    this.selectedTabBarItem = item;
+                    this.selectTabBarItem(item, {
+                        initiator: WI.TabBrowser.TabNavigationInitiator.ContextMenu
+                    });
                 });
             }
 
@@ -598,7 +606,9 @@ WI.TabBar = class TabBar extends WI.View
         if (closeButtonElement)
             return;
 
-        this.selectedTabBarItem = tabBarItem;
+        this.selectTabBarItem(tabBarItem, {
+            initiatorHint: WI.TabBrowser.TabNavigationInitiator.TabClick
+        });
 
         if (tabBarItem instanceof WI.PinnedTabBarItem || !this._hasMoreThanOneNormalTab())
             return;
@@ -647,7 +657,11 @@ WI.TabBar = class TabBar extends WI.View
                 return;
 
             if (!event.altKey) {
-                this.removeTabBarItem(tabBarItem, {suppressExpansion: true});
+                let options = {
+                    suppressExpansion: true,
+                    initiatorHint: WI.TabBrowser.TabNavigationInitiator.TabClick,
+                };
+                this.removeTabBarItem(tabBarItem, options);
                 return;
             }
 

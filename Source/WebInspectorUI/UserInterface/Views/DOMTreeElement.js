@@ -1420,7 +1420,9 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             let goToArrowElement = parentElement.appendChild(WI.createGoToArrowButton());
             goToArrowElement.title = WI.UIString("Reveal in Elements Tab");
             goToArrowElement.addEventListener("click", (event) => {
-                WI.domManager.inspectElement(this.representedObject.id);
+                WI.domManager.inspectElement(this.representedObject.id, {
+                    initiatorHint: WI.TabBrowser.TabNavigationInitiator.LinkClick,
+                });
             });
         }
     }

@@ -88,6 +88,8 @@ WI.CallFrameTreeController = class CallFrameTreeController extends WI.Object
         WI.showSourceCodeLocation(callFrame.sourceCodeLocation, {
             ignoreNetworkTab: true,
             ignoreSearchTab: true,
+            // Treat call frame clicks as link clicks since it jumps to a source location.
+            initiatorHint: WI.TabBrowser.TabNavigationInitiator.LinkClick,
         });
     }
 };

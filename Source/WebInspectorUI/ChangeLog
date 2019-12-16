@@ -1,3 +1,140 @@
+2019-12-11  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add TabNavigation diagnostic event and related hooks
+        https://bugs.webkit.org/show_bug.cgi?id=205138
+        <rdar://problem/57855456>
+
+        Reviewed by Devin Rousso.
+
+        This patch adds a new recorder for the TabNavigation diagnostic event.
+
+        The bulk of this patch is to find all callsites that can possibly change the active
+        tab and annotate them with the type of interaction (tab click, link click,
+        keyboard shortcut, inspect, and others). This patch was developed through
+        trial and error by logging the diagnostic events and debugging any scenarios
+        where a tab navigation is not correctly annotated with the initiating interaction.
+
+        * UserInterface/Main.html: Add new file.
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded): Register new recorder.
+        (WI._handleSettingsKeyboardShortcut): Annotate as keyboard shortcut.
+        - Add options argument to most WI.show*Tab functions, and forward to the underlying
+        TabBrowser or TabBar calls. This allows initiatorHint to be used in these cases.
+        - Add other annotations to linkifyElement
+
+        * UserInterface/Views/TabBrowser.js:
+        (WI.TabBrowser.prototype.showTabForContentView):
+        (WI.TabBrowser.prototype._tabBarItemSelected):
+        - Try to infer an initiator for the tab navigation from TabBrowser API arguments or from TabBar's event.
+        - Add an enum with TabNavigationInitiator values.
+
+        * UserInterface/Base/DOMUtilities.js:
+        Clickable element links should be reported as link clicks. Add an annotation
+        so that it isn't reported as "Inspect" (due to going through DOMManager.inspectElement).
+
+        * UserInterface/Controllers/CallFrameTreeController.js:
+        (WI.CallFrameTreeController):
+        (WI.CallFrameTreeController.prototype._showSourceCodeLocation):
+        This is mainly used by Canvas tab. Annotate call frame links as link clicks.
+
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager.prototype.inspectElement):
+        Accept an options argument. This is used to forward the initiatorHint to
+        the listener of this event, WI._domNodeWasInspected, so it can forward the
+        initiatorHint further on.
+
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.setTimelineProfilingEnabled):
+        (InspectorFrontendAPI.showConsole):
+        (InspectorFrontendAPI.showResources):
+        (InspectorFrontendAPI.showTimelines):
+        (InspectorFrontendAPI.showMainResourceForFrame):
+        Annotate these as FrontendAPI calls. Mainly used by Develop menu items in Safari.
+
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForSourceCode):
+        (WI.appendContextMenuItemsForURL):
+        Annotate as context menu.
+
+        * UserInterface/Views/DOMNodeTreeElement.js:
+        (WI.DOMNodeTreeElement):
+        (WI.DOMNodeTreeElement.prototype.populateContextMenu):
+        Annotate as context menu.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype._buildTagDOM):
+
+
+        * UserInterface/Views/DefaultDashboardView.js:
+        (WI.DefaultDashboardView.prototype._resourcesItemWasClicked):
+        (WI.DefaultDashboardView.prototype._networkItemWasClicked):
+        (WI.DefaultDashboardView.prototype._timelineItemWasClicked):
+        (WI.DefaultDashboardView.prototype._consoleItemWasClicked):
+        Annotate as dashboard.
+
+        * UserInterface/Views/LegacyTabBar.js:
+        (WI.LegacyTabBar.prototype.set selectedTabBarItem):
+        Include the inferred initiator in the event that is dispatched.
+
+        (WI.LegacyTabBar.prototype.selectTabBarItemWithInitiator):
+        Added. This is a convenience method that temporarily sets the
+        initiator before invoking the setter (which reads the initator).
+
+        (WI.LegacyTabBar.prototype._handleMouseDown):
+        (WI.LegacyTabBar.prototype._handleClick):
+        (WI.LegacyTabBar.prototype._handleNewTabClick):
+        Treat these as "tab clicks".
+
+        * UserInterface/Views/TabBar.js:
+        (WI.TabBar.prototype.set selectedTabBarItem):
+        (WI.TabBar.prototype.selectTabBarItemWithInitiator):
+        (WI.TabBar.prototype._handleMouseDown):
+        (WI.TabBar.prototype._handleClick):
+        Changes from LegacyTabBar have been copied to this version, as it's a
+        drop-in replacement.
+
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView.prototype._showConsoleTab):
+        Treat the console chevron as a "button click".
+
+        * UserInterface/Views/NewTabContentView.js:
+        (WI.NewTabContentView.prototype._createNewTabWithType):
+        Treat each tab button as a "button click".
+
+        * UserInterface/Views/RecordingActionTreeElement.js:
+        (WI.RecordingActionTreeElement.prototype.populateContextMenu):
+        Annotate as context menu.
+
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WI.ResourceTimelineDataGridNode.prototype._dataGridNodeGoToArrowClicked):
+        Annotate as link click.
+
+        * UserInterface/Views/SearchResultTreeElement.js:
+        (WI.SearchResultTreeElement):
+        (WI.SearchResultTreeElement.prototype.populateContextMenu):
+        Annotate as context menu.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype.textEditorGutterContextMenu):
+        Annotate as context menu.
+
+        (WI.SourceCodeTextEditor.prototype._showPopoverForObject.):
+        (WI.SourceCodeTextEditor.prototype._showPopoverForObject):
+        Annotate elements in popover as link click.
+
+        * UserInterface/Views/SourceCodeTreeElement.js:
+        (WI.SourceCodeTreeElement):
+        (WI.SourceCodeTreeElement.prototype._handleToggleBlackboxedImageElementClicked):
+        Annotate as context menu.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._populateIconElementContextMenu):
+        Annotate as context menu.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._setupJumpToSymbol):
+        Annotate as link click.
+
 2019-12-15  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Remove -webkit-marquee.
