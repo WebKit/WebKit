@@ -3774,8 +3774,6 @@ webkit.org/b/199437 compositing/geometry/limit-layer-bounds-clipping-ancestor.ht
 
 webkit.org/b/199872 http/tests/inspector/network/resource-sizes-network.html [ Failure ]
 
-webkit.org/b/199873 imported/w3c/web-platform-tests/service-workers/service-worker/ready.https.html [ Failure Pass ]
-
 webkit.org/b/199876 webaudio/oscillator-custom.html [ Failure ]
 webkit.org/b/199876 webaudio/oscillator-sawtooth.html [ Failure ]
 webkit.org/b/199876 webaudio/oscillator-sine.html [ Failure ]

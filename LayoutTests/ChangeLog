@@ -1,3 +1,30 @@
+2019-12-16  Chris Dumez  <cdumez@apple.com>
+
+        Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/ready.https.html is a flaky failure (test harness timeout)
+        https://bugs.webkit.org/show_bug.cgi?id=200794
+        <rdar://problem/54367769>
+
+        Reviewed by Youenn Fablet.
+
+        Skip imported/w3c/web-platform-tests/service-workers/service-worker/ready.https.html on all platforms as it contains some subtests
+        that are not valid in any browser and which cause flaky timeouts.
+
+        To restore test coverage for the ready promise, import work-in-progress test from:
+        https://github.com/web-platform-tests/wpt/pull/20655 (except for the last subtest that is still flaky in Gecko and WebKit)
+
+        * TestExpectations:
+        * http/wpt/service-workers/ready.https.window-expected.txt: Added.
+        * http/wpt/service-workers/ready.https.window.html: Added.
+        * http/wpt/service-workers/ready.https.window.js: Added.
+        (test):
+        (promise_test.async.t.t.add_cleanup.async):
+        * http/wpt/service-workers/resources/empty-worker.js: Added.
+        * http/wpt/service-workers/resources/register-iframe.html: Added.
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2019-12-16  Per Arne Vollan  <pvollan@apple.com>
 
         Layout test imported/blink/fast/sub-pixel/negative-composited-offset.html is flaky
