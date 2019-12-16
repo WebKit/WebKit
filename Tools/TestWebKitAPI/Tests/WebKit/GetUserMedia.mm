@@ -41,6 +41,7 @@
 #import <wtf/text/WTFString.h>
 
 static bool done;
+static bool wasPrompted;
 
 @interface GetUserMediaCaptureUIDelegate : NSObject<WKUIDelegate>
 - (void)_webView:(WKWebView *)webView requestMediaCaptureAuthorization: (_WKCaptureDevices)devices decisionHandler:(void (^)(BOOL))decisionHandler;
@@ -51,6 +52,7 @@ static bool done;
 - (void)_webView:(WKWebView *)webView requestMediaCaptureAuthorization: (_WKCaptureDevices)devices decisionHandler:(void (^)(BOOL))decisionHandler
 {
     decisionHandler(YES);
+    wasPrompted = true;
 }
 
 - (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *salt, BOOL authorized))decisionHandler
@@ -173,8 +175,13 @@ TEST(WebKit2, CaptureStop)
     auto delegate = adoptNS([[GetUserMediaCaptureUIDelegate alloc] init]);
     webView.UIDelegate = delegate.get();
 
+    wasPrompted = false;
+
     [webView loadTestPageNamed:@"getUserMedia"];
     EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateActiveCamera));
+
+    TestWebKitAPI::Util::run(&wasPrompted);
+    wasPrompted = false;
 
     [webView _setPageMuted: _WKMediaCaptureDevicesMuted];
     EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateMutedCamera));
@@ -188,6 +195,10 @@ TEST(WebKit2, CaptureStop)
     done = false;
 
     EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateNone));
+
+    [webView stringByEvaluatingJavaScript:@"promptForCapture()"];
+    TestWebKitAPI::Util::run(&wasPrompted);
+    wasPrompted = false;
 }
 
 #if WK_HAVE_C_SPI

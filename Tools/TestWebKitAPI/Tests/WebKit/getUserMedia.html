@@ -56,6 +56,11 @@
                 navigator.mediaDevices.getUserMedia({audio: true}).then(s => stream = s);
             }
 
+            function captureVideo()
+            {
+                navigator.mediaDevices.getUserMedia({video: true}).then(s => video.srcObject = s);
+            }
+
             function captureAudioAndVideo()
             {
                 navigator.mediaDevices.getUserMedia({audio: true, video: true}).then(s => stream = s);

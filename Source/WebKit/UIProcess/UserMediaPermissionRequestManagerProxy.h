@@ -63,7 +63,7 @@ public:
 
     void requestUserMediaPermissionForFrame(uint64_t userMediaID, WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&&  userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, WebCore::MediaStreamRequest&&);
 
-    void resetAccess(WebCore::FrameIdentifier mainFrameID);
+    void resetAccess(Optional<WebCore::FrameIdentifier> mainFrameID = { });
     void viewIsBecomingVisible();
 
     void grantRequest(UserMediaPermissionRequestProxy&);

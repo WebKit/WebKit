@@ -1,3 +1,14 @@
+2019-12-16  youenn fablet  <youenn@apple.com>
+
+        Reset cached getUserMedia queries when calling stopMediaCapture
+        https://bugs.webkit.org/show_bug.cgi?id=205064
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm:
+        (-[GetUserMediaCaptureUIDelegate _webView:requestMediaCaptureAuthorization:decisionHandler:]):
+        (TestWebKitAPI::TEST):
+
 2019-12-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         -[WKWebView _detectDataWithTypes:completionHandler:] crashes when there is no running process

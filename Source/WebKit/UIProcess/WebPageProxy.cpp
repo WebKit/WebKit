@@ -5730,6 +5730,8 @@ void WebPageProxy::stopMediaCapture()
         return;
 
 #if ENABLE(MEDIA_STREAM)
+    if (m_userMediaPermissionRequestManager)
+        m_userMediaPermissionRequestManager->resetAccess();
     send(Messages::WebPage::StopMediaCapture());
 #endif
 }

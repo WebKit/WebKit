@@ -1,3 +1,21 @@
+2019-12-16  youenn fablet  <youenn@apple.com>
+
+        Reset cached getUserMedia queries when calling stopMediaCapture
+        https://bugs.webkit.org/show_bug.cgi?id=205064
+
+        Reviewed by Eric Carlson.
+
+        Reset cached queries when calling stop media capture API allows to trigger again the prompt
+        after the API call.
+        Covered by updated API test.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::resetAccess):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+        (WebKit::UserMediaPermissionRequestManagerProxy::resetAccess):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::stopMediaCapture):
+
 2019-12-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         -[WKWebView _detectDataWithTypes:completionHandler:] crashes when there is no running process
