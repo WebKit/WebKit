@@ -1065,6 +1065,7 @@ public:
     void* needTrapHandlingAddress() { return m_traps.needTrapHandlingAddress(); }
 
     void notifyNeedDebuggerBreak() { m_traps.fireTrap(VMTraps::NeedDebuggerBreak); }
+    void notifyNeedShellTimeoutCheck() { m_traps.fireTrap(VMTraps::NeedShellTimeoutCheck); }
     void notifyNeedTermination() { m_traps.fireTrap(VMTraps::NeedTermination); }
     void notifyNeedWatchdogCheck() { m_traps.fireTrap(VMTraps::NeedWatchdogCheck); }
 

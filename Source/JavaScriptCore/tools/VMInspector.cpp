@@ -106,6 +106,13 @@ static bool ensureIsSafeToLock(Lock& lock)
 };
 #endif // ENABLE(JIT)
 
+void VMInspector::forEachVM(Function<FunctorStatus(VM&)>&& func)
+{
+    VMInspector& inspector = instance();
+    Locker lock(inspector.getLock());
+    inspector.iterate(func);
+}
+
 auto VMInspector::isValidExecutableMemory(const VMInspector::Locker&, void* machinePC) -> Expected<bool, Error>
 {
 #if ENABLE(JIT)
