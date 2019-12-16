@@ -1,3 +1,17 @@
+2019-12-16  Daniel Bates  <dabates@apple.com>
+
+        Reproducible case of backwards nextParagraph returning a position ahead of the input position
+        https://bugs.webkit.org/show_bug.cgi?id=196127
+        <rdar://problem/49135890>
+
+        Reviewed by Wenson Hsieh.
+
+        Add a test to ensure that requesting two paragraphs around the insertion point that is
+        not in a paragraph still works.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DocumentEditingContext.mm:
+        (TEST):
+
 2019-12-16  Jonathan Bedard  <jbedard@apple.com>
 
         lldbwebkittester: Conform with testing binary format

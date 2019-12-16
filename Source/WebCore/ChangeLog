@@ -1,3 +1,23 @@
+2019-12-16  Daniel Bates  <dabates@apple.com>
+
+        Reproducible case of backwards nextParagraph returning a position ahead of the input position
+        https://bugs.webkit.org/show_bug.cgi?id=196127
+        <rdar://problem/49135890>
+
+        Reviewed by Wenson Hsieh.
+
+        Fix up the code to handle:
+
+                1. When the specified position is at a paragraph boundary.
+                        For this case, we do what we do now for the !withinUnitOfGranularity case.
+                2. When the specified position is actually inside a paragraph:
+                        For this case, we need to return the end of the previous paragraph or the
+                        start of the next paragraph depending on whether we are selecting forward
+                        or backwards, respectively.
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::nextParagraphBoundaryInDirection):
+
 2019-12-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove ArrayBufferNeuteringWatchpointSet

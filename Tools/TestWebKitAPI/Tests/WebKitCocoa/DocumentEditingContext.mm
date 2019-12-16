@@ -625,6 +625,19 @@ TEST(WebKit, DocumentEditingContextRequestLastTwoParagraphs)
     EXPECT_NULL(context.contextAfter);
 }
 
+TEST(WebKit, DocumentEditingContextRequestLastTwoParagraphsWithSelectiontWithinParagraph)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"<span id='the'>The</span> quick brown fox <span id='jumps'>jumps</span> over the lazy <span id='dog'>dog.</span>")];
+    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(jumps, 0, jumps, 1)"]; // Will focus <p>.
+
+    auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularityParagraph, 2)];
+    EXPECT_NOT_NULL(context);
+    EXPECT_NSSTRING_EQ("The quick brown fox ", context.contextBefore);
+    EXPECT_NSSTRING_EQ("jumps", context.selectedText);
+    EXPECT_NSSTRING_EQ(" over the lazy dog.", context.contextAfter);
+}
+
 // MARK: Tests using character granularity
 // Note that we always return results with respect to the nearest word boundary in the direction of the selection.
 

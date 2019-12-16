@@ -3879,9 +3879,6 @@ static VisiblePosition moveByGranularityRespectingWordBoundary(const VisiblePosi
     VisiblePosition nextPosition;
     do {
         nextPosition = positionOfNextBoundaryOfGranularity(currentPosition, granularity, direction);
-        // FIXME (196127): We shouldn't need to do this, but have seen previousParagraphPosition go forwards.
-        if ((backwards && nextPosition > currentPosition) || (!backwards && nextPosition < currentPosition))
-            break;
         if (nextPosition.isNull())
             break;
         currentPosition = nextPosition;
