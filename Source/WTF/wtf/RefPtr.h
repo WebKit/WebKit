@@ -81,8 +81,8 @@ public:
     bool operator!() const { return !m_ptr; }
 
     // This conversion operator allows implicit conversion to bool but not to other integer types.
-    typedef T* (RefPtr::*UnspecifiedBoolType);
-    operator UnspecifiedBoolType() const { return m_ptr ? &RefPtr::m_ptr : nullptr; }
+    using UnspecifiedBoolType = void (RefPtr::*)() const;
+    operator UnspecifiedBoolType() const { return m_ptr ? &RefPtr::unspecifiedBoolTypeInstance : nullptr; }
 
     explicit operator bool() const { return !!m_ptr; }
     
@@ -102,6 +102,8 @@ public:
     RefPtr copyRef() const & WARN_UNUSED_RETURN { return RefPtr(m_ptr); }
 
 private:
+    void unspecifiedBoolTypeInstance() const { }
+
     friend RefPtr adoptRef<T, PtrTraits>(T*);
     template<typename X, typename Y> friend class RefPtr;
 

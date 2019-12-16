@@ -65,6 +65,8 @@ set(TestWTF_SOURCES
     Tests/WTF/OptionSet.cpp
     Tests/WTF/Optional.cpp
     Tests/WTF/Packed.cpp
+    Tests/WTF/PackedRef.cpp
+    Tests/WTF/PackedRefPtr.cpp
     Tests/WTF/ParkingLot.cpp
     Tests/WTF/PriorityQueue.cpp
     Tests/WTF/RedBlackTree.cpp

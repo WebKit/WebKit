@@ -1399,6 +1399,7 @@ JSArrayBufferView* Graph::tryGetFoldableView(JSValue value)
     if (!view->length())
         return nullptr;
     WTF::loadLoadFence();
+    freeze(view);
     watchpoints().addLazily(view);
     return view;
 }

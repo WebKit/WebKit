@@ -26,12 +26,21 @@
 #include "config.h"
 #include "ArrayBuffer.h"
 
-#include "ArrayBufferNeuteringWatchpointSet.h"
 #include "JSArrayBufferView.h"
 #include "JSCInlines.h"
 #include <wtf/Gigacage.h>
 
 namespace JSC {
+
+Ref<SharedTask<void(void*)>> ArrayBuffer::primitiveGigacageDestructor()
+{
+    static LazyNeverDestroyed<Ref<SharedTask<void(void*)>>> destructor;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        destructor.construct(createSharedTask<void(void*)>([] (void* p) { Gigacage::free(Gigacage::Primitive, p); }));
+    });
+    return destructor.get().copyRef();
+}
 
 SharedArrayBufferContents::SharedArrayBufferContents(void* data, unsigned size, ArrayBufferDestructorFunction&& destructor)
     : m_data(data, size)
@@ -42,8 +51,10 @@ SharedArrayBufferContents::SharedArrayBufferContents(void* data, unsigned size, 
 
 SharedArrayBufferContents::~SharedArrayBufferContents()
 {
-    // FIXME: we shouldn't use getUnsafe here https://bugs.webkit.org/show_bug.cgi?id=197698
-    m_destructor(m_data.getUnsafe());
+    if (m_destructor) {
+        // FIXME: we shouldn't use getUnsafe here https://bugs.webkit.org/show_bug.cgi?id=197698
+        m_destructor->run(m_data.getUnsafe());
+    }
 }
 
 ArrayBufferContents::ArrayBufferContents()
@@ -84,15 +95,17 @@ void ArrayBufferContents::clear()
 
 void ArrayBufferContents::destroy()
 {
-    // FIXME: We shouldn't use getUnsafe here: https://bugs.webkit.org/show_bug.cgi?id=197698
-    m_destructor(m_data.getUnsafe());
+    if (m_destructor) {
+        // FIXME: We shouldn't use getUnsafe here: https://bugs.webkit.org/show_bug.cgi?id=197698
+        m_destructor->run(m_data.getUnsafe());
+    }
 }
 
 void ArrayBufferContents::reset()
 {
-    m_destructor = [] (void*) { };
-    m_shared = nullptr;
     m_data = nullptr;
+    m_destructor = nullptr;
+    m_shared = nullptr;
     m_sizeInBytes = 0;
 }
 
@@ -123,13 +136,13 @@ void ArrayBufferContents::tryAllocate(unsigned numElements, unsigned elementByte
 
     m_sizeInBytes = sizeInBytes;
     RELEASE_ASSERT(m_sizeInBytes <= MAX_ARRAY_BUFFER_SIZE);
-    m_destructor = [] (void* p) { Gigacage::free(Gigacage::Primitive, p); };
+    m_destructor = ArrayBuffer::primitiveGigacageDestructor();
 }
 
 void ArrayBufferContents::makeShared()
 {
     m_shared = adoptRef(new SharedArrayBufferContents(data(), sizeInBytes(), WTFMove(m_destructor)));
-    m_destructor = [] (void*) { };
+    m_destructor = nullptr;
 }
 
 void ArrayBufferContents::transferTo(ArrayBufferContents& other)
@@ -158,9 +171,9 @@ void ArrayBufferContents::shareWith(ArrayBufferContents& other)
 {
     ASSERT(!other.m_data);
     ASSERT(m_shared);
-    other.m_destructor = [] (void*) { };
-    other.m_shared = m_shared;
     other.m_data = m_data;
+    other.m_destructor = nullptr;
+    other.m_shared = m_shared;
     other.m_sizeInBytes = m_sizeInBytes;
     RELEASE_ASSERT(other.m_sizeInBytes <= MAX_ARRAY_BUFFER_SIZE);
 }
@@ -197,7 +210,7 @@ Ref<ArrayBuffer> ArrayBuffer::create(ArrayBufferContents&& contents)
 //   from the cage.
 Ref<ArrayBuffer> ArrayBuffer::createAdopted(const void* data, unsigned byteLength)
 {
-    return createFromBytes(data, byteLength, [] (void* p) { Gigacage::free(Gigacage::Primitive, p); });
+    return createFromBytes(data, byteLength, ArrayBuffer::primitiveGigacageDestructor());
 }
 
 // FIXME: We cannot use this except if the memory comes from the cage.
@@ -370,7 +383,7 @@ bool ArrayBuffer::transferTo(VM& vm, ArrayBufferContents& result)
     }
 
     m_contents.transferTo(result);
-    notifyIncommingReferencesOfTransfer(vm);
+    notifyNeutering(vm);
     return true;
 }
 
@@ -380,18 +393,17 @@ void ArrayBuffer::neuter(VM& vm)
     ASSERT(isWasmMemory());
     ArrayBufferContents unused;
     m_contents.transferTo(unused);
-    notifyIncommingReferencesOfTransfer(vm);
+    notifyNeutering(vm);
 }
 
-void ArrayBuffer::notifyIncommingReferencesOfTransfer(VM& vm)
+void ArrayBuffer::notifyNeutering(VM& vm)
 {
     for (size_t i = numberOfIncomingReferences(); i--;) {
         JSCell* cell = incomingReferenceAt(i);
         if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(vm, cell))
             view->neuter();
-        else if (ArrayBufferNeuteringWatchpointSet* watchpoint = jsDynamicCast<ArrayBufferNeuteringWatchpointSet*>(vm, cell))
-            watchpoint->fireAll();
     }
+    m_neuteringWatchpointSet.fireAll(vm, "Array buffer was neutered");
 }
 
 ASCIILiteral errorMesasgeForTransfer(ArrayBuffer* buffer)

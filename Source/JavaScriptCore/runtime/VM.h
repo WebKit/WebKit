@@ -667,7 +667,6 @@ public:
     Strong<Structure> structureChainStructure;
     Strong<Structure> sparseArrayValueMapStructure;
     Strong<Structure> templateObjectDescriptorStructure;
-    Strong<Structure> arrayBufferNeuteringWatchpointStructure;
     Strong<Structure> unlinkedFunctionExecutableStructure;
     Strong<Structure> unlinkedProgramCodeBlockStructure;
     Strong<Structure> unlinkedEvalCodeBlockStructure;

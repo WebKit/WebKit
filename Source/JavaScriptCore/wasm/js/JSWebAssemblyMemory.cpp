@@ -79,7 +79,7 @@ JSArrayBuffer* JSWebAssemblyMemory::buffer(VM& vm, JSGlobalObject* globalObject)
 
     // We can't use a ref here since it doesn't have a copy constructor...
     Ref<Wasm::Memory> protectedMemory = m_memory.get();
-    auto destructor = [protectedMemory = WTFMove(protectedMemory)] (void*) { };
+    auto destructor = createSharedTask<void(void*)>([protectedMemory = WTFMove(protectedMemory)] (void*) { });
     m_buffer = ArrayBuffer::createFromBytes(memory().memory(), memory().size(), WTFMove(destructor));
     m_buffer->makeWasmMemory();
     m_bufferWrapper.set(vm, this, JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(ArrayBufferSharingMode::Default), m_buffer.get()));

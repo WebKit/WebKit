@@ -100,7 +100,7 @@ SpeculatedType FileBasedFuzzerAgent::getPredictionInternal(CodeBlock* codeBlock,
         break;
 
     default:
-        RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled opcode %s", toString(target.opcodeId).utf8().data());
+        RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled opcode %s", opcodeNames[target.opcodeId]);
     }
     if (!generated) {
         if (Options::dumpFuzzerAgentPredictions())

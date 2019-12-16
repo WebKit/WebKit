@@ -184,10 +184,10 @@ JSObjectRef JSObjectMakeTypedArrayWithBytesNoCopy(JSContextRef ctx, JSTypedArray
 
     unsigned elementByteSize = elementSize(toTypedArrayType(arrayType));
 
-    auto buffer = ArrayBuffer::createFromBytes(bytes, length, [=](void* p) {
+    auto buffer = ArrayBuffer::createFromBytes(bytes, length, createSharedTask<void(void*)>([=](void* p) {
         if (destructor)
             destructor(p, destructorContext);
-    });
+    }));
     JSObject* result = createTypedArray(globalObject, arrayType, WTFMove(buffer), 0, length / elementByteSize);
     if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
         return nullptr;
@@ -312,10 +312,10 @@ JSObjectRef JSObjectMakeArrayBufferWithBytesNoCopy(JSContextRef ctx, void* bytes
     JSLockHolder locker(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    auto buffer = ArrayBuffer::createFromBytes(bytes, byteLength, [=](void* p) {
+    auto buffer = ArrayBuffer::createFromBytes(bytes, byteLength, createSharedTask<void(void*)>([=](void* p) {
         if (bytesDeallocator)
             bytesDeallocator(p, deallocatorContext);
-    });
+    }));
 
     JSArrayBuffer* jsBuffer = JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(ArrayBufferSharingMode::Default), WTFMove(buffer));
     if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)

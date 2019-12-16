@@ -1,3 +1,23 @@
+2019-12-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove ArrayBufferNeuteringWatchpointSet
+        https://bugs.webkit.org/show_bug.cgi?id=205194
+
+        Reviewed by Saam Barati.
+
+        This patch adds PackedRef and PackedRefPtr. They are Ref and RefPtr, but its internal pointer is packed.
+        So we can represent them in 6 bytes with 1 byte alignment.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/Packed.h:
+        (WTF::alignof):
+        * wtf/PackedRef.h: Copied from Source/JavaScriptCore/runtime/ArrayBufferNeuteringWatchpointSet.h.
+        * wtf/PackedRefPtr.h: Renamed from Source/JavaScriptCore/runtime/ArrayBufferNeuteringWatchpointSet.h.
+        * wtf/RefPtr.h:
+        (WTF::RefPtr::operator UnspecifiedBoolType const):
+        (WTF::RefPtr::unspecifiedBoolTypeInstance const):
+
 2019-12-13  Saam Barati  <sbarati@apple.com>
 
         Add a Heap::finalize function that takes WTF::Function<void()>

@@ -28,7 +28,6 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "ArrayBufferNeuteringWatchpointSet.h"
 #include "CodeBlock.h"
 #include "DFGGraph.h"
 #include "JSCInlines.h"
@@ -38,19 +37,17 @@ namespace JSC { namespace DFG {
 void ArrayBufferViewWatchpointAdaptor::add(
     CodeBlock* codeBlock, JSArrayBufferView* view, CommonData& common)
 {
-    VM& vm = codeBlock->vm();
+    // view is already frozen. If it is deallocated, jettisoning happens.
     CodeBlockJettisoningWatchpoint* watchpoint = nullptr;
     {
         ConcurrentJSLocker locker(codeBlock->m_lock);
         watchpoint = common.watchpoints.add(codeBlock);
     }
-    ArrayBufferNeuteringWatchpointSet* neuteringWatchpoint =
-        ArrayBufferNeuteringWatchpointSet::create(vm);
-    neuteringWatchpoint->set().add(WTFMove(watchpoint));
-    codeBlock->addConstant(ConcurrentJSLocker(codeBlock->m_lock), neuteringWatchpoint);
+    ArrayBuffer* arrayBuffer = view->possiblySharedBuffer();
+    RELEASE_ASSERT(arrayBuffer);
     // FIXME: We don't need to set this watchpoint at all for shared buffers.
     // https://bugs.webkit.org/show_bug.cgi?id=164108
-    vm.heap.addReference(neuteringWatchpoint, view->possiblySharedBuffer());
+    arrayBuffer->neuteringWatchpointSet().add(WTFMove(watchpoint));
 }
 
 void SymbolTableAdaptor::add(

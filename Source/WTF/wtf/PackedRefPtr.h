@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,38 +20,19 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#include "JSCast.h"
-#include "Watchpoint.h"
+#include <wtf/Packed.h>
+#include <wtf/RefPtr.h>
 
-namespace JSC {
+namespace WTF {
 
-class ArrayBufferNeuteringWatchpointSet final : public JSCell {
-public:
-    typedef JSCell Base;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
+template<typename T>
+using PackedRefPtr = RefPtr<T, PackedPtrTraits<T>>;
 
-    DECLARE_INFO;
-    
-    static ArrayBufferNeuteringWatchpointSet* create(VM&);
+} // namespace WTF
 
-    static constexpr bool needsDestruction = true;
-    static void destroy(JSCell*);
-    
-    static Structure* createStructure(VM&);
-    
-    WatchpointSet& set() { return m_set.get(); }
-    
-    void fireAll();
-
-private:
-    explicit ArrayBufferNeuteringWatchpointSet(VM&);
-    
-    Ref<WatchpointSet> m_set;
-};
-
-} // namespace JSC
+using WTF::PackedRefPtr;

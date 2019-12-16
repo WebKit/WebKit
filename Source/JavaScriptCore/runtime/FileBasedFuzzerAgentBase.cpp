@@ -40,7 +40,7 @@ String FileBasedFuzzerAgentBase::createLookupKey(const String& sourceFilename, O
     StringBuilder lookupKey;
     lookupKey.append(sourceFilename);
     lookupKey.append("|");
-    lookupKey.append(toString(opcodeAliasForLookupKey(opcodeId)));
+    lookupKey.append(opcodeNames[opcodeAliasForLookupKey(opcodeId)]);
     lookupKey.append("|");
     lookupKey.append(startLocation);
     lookupKey.append("|");

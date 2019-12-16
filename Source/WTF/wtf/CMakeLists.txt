@@ -155,6 +155,8 @@ set(WTF_PUBLIC_HEADERS
     Optional.h
     OrderMaker.h
     Packed.h
+    PackedRef.h
+    PackedRefPtr.h
     PackedIntVector.h
     PageAllocation.h
     PageBlock.h

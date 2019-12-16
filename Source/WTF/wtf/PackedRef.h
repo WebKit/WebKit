@@ -23,50 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PredictionFileCreatingFuzzerAgent.h"
-#include <wtf/DataLog.h>
+#pragma once
 
-namespace JSC {
+#include <wtf/Packed.h>
+#include <wtf/Ref.h>
 
-PredictionFileCreatingFuzzerAgent::PredictionFileCreatingFuzzerAgent(VM& vm)
-    : FileBasedFuzzerAgentBase(vm)
-{
-}
+namespace WTF {
 
-SpeculatedType PredictionFileCreatingFuzzerAgent::getPredictionInternal(CodeBlock*, PredictionTarget& predictionTarget, SpeculatedType original)
-{
-    switch (predictionTarget.opcodeId) {
-    case op_to_this:
-    case op_bitand:
-    case op_bitor:
-    case op_bitxor:
-    case op_bitnot:
-    case op_lshift:
-    case op_rshift:
-    case op_get_by_val:
-    case op_get_argument:
-    case op_get_from_arguments:
-    case op_get_from_scope:
-    case op_to_number:
-    case op_get_by_id:
-    case op_get_by_id_with_this:
-    case op_get_by_val_with_this:
-    case op_get_direct_pname:
-    case op_construct:
-    case op_construct_varargs:
-    case op_call:
-    case op_call_eval:
-    case op_call_varargs:
-    case op_tail_call:
-    case op_tail_call_varargs:
-        dataLogF("%s:%" PRIx64 "\n", predictionTarget.lookupKey.utf8().data(), original);
-        break;
+template<typename T>
+using PackedRef = Ref<T, PackedPtrTraits<T>>;
 
-    default:
-        RELEASE_ASSERT_WITH_MESSAGE(false, "unhandled opcode: %s", opcodeNames[predictionTarget.opcodeId]);
-    }
-    return original;
-}
+} // namespace WTF
 
-} // namespace JSC
+using WTF::PackedRef;

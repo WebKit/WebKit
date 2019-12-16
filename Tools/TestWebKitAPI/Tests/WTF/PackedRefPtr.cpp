@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,23 +29,24 @@
 #include "Utilities.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/PackedRef.h>
+#include <wtf/PackedRefPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
 
 namespace TestWebKitAPI {
 
-TEST(WTF_RefPtr, Basic)
+TEST(WTF_PackedRefPtr, Basic)
 {
     DerivedRefLogger a("a");
 
-    RefPtr<RefLogger> empty;
+    PackedRefPtr<RefLogger> empty;
     EXPECT_EQ(nullptr, empty.get());
 
     {
-        RefPtr<RefLogger> ptr(&a);
+        PackedRefPtr<RefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         EXPECT_EQ(&a, &*ptr);
         EXPECT_EQ(&a.name, &ptr->name);
@@ -53,61 +54,61 @@ TEST(WTF_RefPtr, Basic)
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        RefPtr<RefLogger> ptr = &a;
+        PackedRefPtr<RefLogger> ptr = &a;
         EXPECT_EQ(&a, ptr.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        RefPtr<RefLogger> p1 = &a;
-        RefPtr<RefLogger> p2(p1);
+        PackedRefPtr<RefLogger> p1 = &a;
+        PackedRefPtr<RefLogger> p2(p1);
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        RefPtr<RefLogger> p1 = &a;
-        RefPtr<RefLogger> p2 = p1;
+        PackedRefPtr<RefLogger> p1 = &a;
+        PackedRefPtr<RefLogger> p2 = p1;
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        RefPtr<RefLogger> p1 = &a;
-        RefPtr<RefLogger> p2 = WTFMove(p1);
+        PackedRefPtr<RefLogger> p1 = &a;
+        PackedRefPtr<RefLogger> p2 = WTFMove(p1);
         EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        RefPtr<RefLogger> p1 = &a;
-        RefPtr<RefLogger> p2(WTFMove(p1));
+        PackedRefPtr<RefLogger> p1 = &a;
+        PackedRefPtr<RefLogger> p2(WTFMove(p1));
         EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        RefPtr<DerivedRefLogger> p1 = &a;
-        RefPtr<RefLogger> p2 = p1;
+        PackedRefPtr<DerivedRefLogger> p1 = &a;
+        PackedRefPtr<RefLogger> p2 = p1;
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        RefPtr<DerivedRefLogger> p1 = &a;
-        RefPtr<RefLogger> p2 = WTFMove(p1);
+        PackedRefPtr<DerivedRefLogger> p1 = &a;
+        PackedRefPtr<RefLogger> p2 = WTFMove(p1);
         EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        RefPtr<RefLogger> ptr(&a);
+        PackedRefPtr<RefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         ptr = nullptr;
         EXPECT_EQ(nullptr, ptr.get());
@@ -115,26 +116,26 @@ TEST(WTF_RefPtr, Basic)
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }
 
-TEST(WTF_RefPtr, AssignPassRefToRefPtr)
+TEST(WTF_PackedRefPtr, AssignPassRefToRefPtr)
 {
     DerivedRefLogger a("a");
     {
-        Ref<RefLogger> passRef(a);
-        RefPtr<RefLogger> ptr = WTFMove(passRef);
+        PackedRef<RefLogger> passRef(a);
+        PackedRefPtr<RefLogger> ptr = WTFMove(passRef);
         EXPECT_EQ(&a, ptr.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }
 
-TEST(WTF_RefPtr, Adopt)
+TEST(WTF_PackedRefPtr, Adopt)
 {
     DerivedRefLogger a("a");
 
-    RefPtr<RefLogger> empty;
+    PackedRefPtr<RefLogger> empty;
     EXPECT_EQ(nullptr, empty.get());
 
     {
-        RefPtr<RefLogger> ptr(adoptRef(&a));
+        PackedRefPtr<RefLogger> ptr(adoptRef(&a));
         EXPECT_EQ(&a, ptr.get());
         EXPECT_EQ(&a, &*ptr);
         EXPECT_EQ(&a.name, &ptr->name);
@@ -142,21 +143,21 @@ TEST(WTF_RefPtr, Adopt)
     EXPECT_STREQ("deref(a) ", takeLogStr().c_str());
 
     {
-        RefPtr<RefLogger> ptr = adoptRef(&a);
+        PackedRefPtr<RefLogger> ptr = adoptRef(&a);
         EXPECT_EQ(&a, ptr.get());
     }
     EXPECT_STREQ("deref(a) ", takeLogStr().c_str());
 }
 
-TEST(WTF_RefPtr, Assignment)
+TEST(WTF_PackedRefPtr, Assignment)
 {
     DerivedRefLogger a("a");
     RefLogger b("b");
     DerivedRefLogger c("c");
 
     {
-        RefPtr<RefLogger> p1(&a);
-        RefPtr<RefLogger> p2(&b);
+        PackedRefPtr<RefLogger> p1(&a);
+        PackedRefPtr<RefLogger> p2(&b);
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&b, p2.get());
         log() << "| ";
@@ -168,7 +169,7 @@ TEST(WTF_RefPtr, Assignment)
     EXPECT_STREQ("ref(a) ref(b) | ref(b) deref(a) | deref(b) deref(b) ", takeLogStr().c_str());
 
     {
-        RefPtr<RefLogger> ptr(&a);
+        PackedRefPtr<RefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         log() << "| ";
         ptr = &b;
@@ -178,7 +179,7 @@ TEST(WTF_RefPtr, Assignment)
     EXPECT_STREQ("ref(a) | ref(b) deref(a) | deref(b) ", takeLogStr().c_str());
 
     {
-        RefPtr<RefLogger> ptr(&a);
+        PackedRefPtr<RefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         log() << "| ";
         ptr = adoptRef(&b);
@@ -188,7 +189,7 @@ TEST(WTF_RefPtr, Assignment)
     EXPECT_STREQ("ref(a) | deref(a) | deref(b) ", takeLogStr().c_str());
 
     {
-        RefPtr<RefLogger> ptr(&a);
+        PackedRefPtr<RefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         ptr = nullptr;
         EXPECT_EQ(nullptr, ptr.get());
@@ -196,8 +197,8 @@ TEST(WTF_RefPtr, Assignment)
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        RefPtr<RefLogger> p1(&a);
-        RefPtr<RefLogger> p2(&b);
+        PackedRefPtr<RefLogger> p1(&a);
+        PackedRefPtr<RefLogger> p2(&b);
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&b, p2.get());
         log() << "| ";
@@ -209,8 +210,8 @@ TEST(WTF_RefPtr, Assignment)
     EXPECT_STREQ("ref(a) ref(b) | deref(a) | deref(b) ", takeLogStr().c_str());
 
     {
-        RefPtr<RefLogger> p1(&a);
-        RefPtr<DerivedRefLogger> p2(&c);
+        PackedRefPtr<RefLogger> p1(&a);
+        PackedRefPtr<DerivedRefLogger> p2(&c);
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&c, p2.get());
         log() << "| ";
@@ -222,7 +223,7 @@ TEST(WTF_RefPtr, Assignment)
     EXPECT_STREQ("ref(a) ref(c) | ref(c) deref(a) | deref(c) deref(c) ", takeLogStr().c_str());
 
     {
-        RefPtr<RefLogger> ptr(&a);
+        PackedRefPtr<RefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         log() << "| ";
         ptr = &c;
@@ -232,7 +233,7 @@ TEST(WTF_RefPtr, Assignment)
     EXPECT_STREQ("ref(a) | ref(c) deref(a) | deref(c) ", takeLogStr().c_str());
 
     {
-        RefPtr<RefLogger> ptr(&a);
+        PackedRefPtr<RefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         log() << "| ";
         ptr = adoptRef(&c);
@@ -242,8 +243,8 @@ TEST(WTF_RefPtr, Assignment)
     EXPECT_STREQ("ref(a) | deref(a) | deref(c) ", takeLogStr().c_str());
 
     {
-        RefPtr<RefLogger> p1(&a);
-        RefPtr<DerivedRefLogger> p2(&c);
+        PackedRefPtr<RefLogger> p1(&a);
+        PackedRefPtr<DerivedRefLogger> p2(&c);
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&c, p2.get());
         log() << "| ";
@@ -255,7 +256,7 @@ TEST(WTF_RefPtr, Assignment)
     EXPECT_STREQ("ref(a) ref(c) | deref(a) | deref(c) ", takeLogStr().c_str());
 
     {
-        RefPtr<RefLogger> ptr(&a);
+        PackedRefPtr<RefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         log() << "| ";
 #if COMPILER(CLANG)
@@ -274,7 +275,7 @@ TEST(WTF_RefPtr, Assignment)
     EXPECT_STREQ("ref(a) | ref(a) deref(a) | deref(a) ", takeLogStr().c_str());
 
     {
-        RefPtr<RefLogger> ptr(&a);
+        PackedRefPtr<RefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
 #if COMPILER(CLANG)
 #pragma clang diagnostic push
@@ -290,14 +291,14 @@ TEST(WTF_RefPtr, Assignment)
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }
 
-TEST(WTF_RefPtr, Swap)
+TEST(WTF_PackedRefPtr, Swap)
 {
     RefLogger a("a");
     RefLogger b("b");
 
     {
-        RefPtr<RefLogger> p1(&a);
-        RefPtr<RefLogger> p2(&b);
+        PackedRefPtr<RefLogger> p1(&a);
+        PackedRefPtr<RefLogger> p2(&b);
         log() << "| ";
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&b, p2.get());
@@ -309,8 +310,8 @@ TEST(WTF_RefPtr, Swap)
     EXPECT_STREQ("ref(a) ref(b) | | deref(a) deref(b) ", takeLogStr().c_str());
 
     {
-        RefPtr<RefLogger> p1(&a);
-        RefPtr<RefLogger> p2(&b);
+        PackedRefPtr<RefLogger> p1(&a);
+        PackedRefPtr<RefLogger> p2(&b);
         log() << "| ";
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&b, p2.get());
@@ -322,51 +323,51 @@ TEST(WTF_RefPtr, Swap)
     EXPECT_STREQ("ref(a) ref(b) | | deref(a) deref(b) ", takeLogStr().c_str());
 }
 
-TEST(WTF_RefPtr, ReleaseNonNull)
+TEST(WTF_PackedRefPtr, ReleaseNonNull)
 {
     RefLogger a("a");
 
     {
-        RefPtr<RefLogger> refPtr = &a;
-        RefPtr<RefLogger> ref = refPtr.releaseNonNull();
+        PackedRefPtr<RefLogger> refPtr = &a;
+        PackedRefPtr<RefLogger> ref = refPtr.releaseNonNull();
     }
 
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }
 
-TEST(WTF_RefPtr, Release)
+TEST(WTF_PackedRefPtr, Release)
 {
     DerivedRefLogger a("a");
     RefLogger b("b");
     DerivedRefLogger c("c");
 
     {
-        RefPtr<RefLogger> p1 = &a;
-        RefPtr<RefLogger> p2 = WTFMove(p1);
+        PackedRefPtr<RefLogger> p1 = &a;
+        PackedRefPtr<RefLogger> p2 = WTFMove(p1);
         EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        RefPtr<RefLogger> p1 = &a;
-        RefPtr<RefLogger> p2(WTFMove(p1));
+        PackedRefPtr<RefLogger> p1 = &a;
+        PackedRefPtr<RefLogger> p2(WTFMove(p1));
         EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        RefPtr<DerivedRefLogger> p1 = &a;
-        RefPtr<RefLogger> p2 = WTFMove(p1);
+        PackedRefPtr<DerivedRefLogger> p1 = &a;
+        PackedRefPtr<RefLogger> p2 = WTFMove(p1);
         EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        RefPtr<RefLogger> p1(&a);
-        RefPtr<RefLogger> p2(&b);
+        PackedRefPtr<RefLogger> p1(&a);
+        PackedRefPtr<RefLogger> p2(&b);
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&b, p2.get());
         log() << "| ";
@@ -378,8 +379,8 @@ TEST(WTF_RefPtr, Release)
     EXPECT_STREQ("ref(a) ref(b) | deref(a) | deref(b) ", takeLogStr().c_str());
 
     {
-        RefPtr<RefLogger> p1(&a);
-        RefPtr<DerivedRefLogger> p2(&c);
+        PackedRefPtr<RefLogger> p1(&a);
+        PackedRefPtr<DerivedRefLogger> p2(&c);
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&c, p2.get());
         log() << "| ";
@@ -393,10 +394,10 @@ TEST(WTF_RefPtr, Release)
 
 static RefPtr<RefLogger> f1(RefLogger& logger)
 {
-    return RefPtr<RefLogger>(&logger);
+    return PackedRefPtr<RefLogger>(&logger);
 }
 
-TEST(WTF_RefPtr, ReturnValue)
+TEST(WTF_PackedRefPtr, ReturnValue)
 {
     DerivedRefLogger a("a");
 
@@ -426,59 +427,59 @@ static ConstRefCounted& returnRefCountedRef()
     return instance.get();
 }
 
-TEST(WTF_RefPtr, Const)
+TEST(WTF_PackedRefPtr, Const)
 {
     // This test passes if it compiles without an error.
     auto a = ConstRefCounted::create();
-    Ref<const ConstRefCounted> b = WTFMove(a);
-    RefPtr<const ConstRefCounted> c = b.ptr();
-    Ref<const ConstRefCounted> d = returnConstRefCountedRef();
-    RefPtr<const ConstRefCounted> e = &returnConstRefCountedRef();
-    RefPtr<ConstRefCounted> f = ConstRefCounted::create();
-    RefPtr<const ConstRefCounted> g = f;
-    RefPtr<const ConstRefCounted> h(f);
-    Ref<const ConstRefCounted> i(returnRefCountedRef());
+    PackedRef<const ConstRefCounted> b = WTFMove(a);
+    PackedRefPtr<const ConstRefCounted> c = b.ptr();
+    PackedRef<const ConstRefCounted> d = returnConstRefCountedRef();
+    PackedRefPtr<const ConstRefCounted> e = &returnConstRefCountedRef();
+    PackedRefPtr<ConstRefCounted> f = ConstRefCounted::create();
+    PackedRefPtr<const ConstRefCounted> g = f;
+    PackedRefPtr<const ConstRefCounted> h(f);
+    PackedRef<const ConstRefCounted> i(returnRefCountedRef());
 }
 
-struct RefPtrCheckingRefLogger : RefLogger {
-    RefPtrCheckingRefLogger(const char* name);
+struct PackedRefPtrCheckingRefLogger : RefLogger {
+    PackedRefPtrCheckingRefLogger(const char* name);
     void ref();
     void deref();
-    const RefPtr<RefPtrCheckingRefLogger>* slotToCheck { nullptr };
+    const PackedRefPtr<PackedRefPtrCheckingRefLogger>* slotToCheck { nullptr };
 };
 
-RefPtrCheckingRefLogger::RefPtrCheckingRefLogger(const char* name)
+PackedRefPtrCheckingRefLogger::PackedRefPtrCheckingRefLogger(const char* name)
     : RefLogger { name }
 {
 }
 
-static const char* loggerName(const RefPtr<RefPtrCheckingRefLogger>& pointer)
+static const char* loggerName(const PackedRefPtr<PackedRefPtrCheckingRefLogger>& pointer)
 {
     return pointer ? &pointer->name : "null";
 }
 
-void RefPtrCheckingRefLogger::ref()
+void PackedRefPtrCheckingRefLogger::ref()
 {
     if (slotToCheck)
         log() << "slot=" << loggerName(*slotToCheck) << " ";
     RefLogger::ref();
 }
 
-void RefPtrCheckingRefLogger::deref()
+void PackedRefPtrCheckingRefLogger::deref()
 {
     if (slotToCheck)
         log() << "slot=" << loggerName(*slotToCheck) << " ";
     RefLogger::deref();
 }
 
-TEST(WTF_RefPtr, AssignBeforeDeref)
+TEST(WTF_PackedRefPtr, AssignBeforeDeref)
 {
-    RefPtrCheckingRefLogger a("a");
-    RefPtrCheckingRefLogger b("b");
+    PackedRefPtrCheckingRefLogger a("a");
+    PackedRefPtrCheckingRefLogger b("b");
 
     {
-        RefPtr<RefPtrCheckingRefLogger> p1(&a);
-        RefPtr<RefPtrCheckingRefLogger> p2(&b);
+        PackedRefPtr<PackedRefPtrCheckingRefLogger> p1(&a);
+        PackedRefPtr<PackedRefPtrCheckingRefLogger> p2(&b);
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&b, p2.get());
         log() << "| ";
@@ -494,7 +495,7 @@ TEST(WTF_RefPtr, AssignBeforeDeref)
     EXPECT_STREQ("ref(a) ref(b) | slot=a ref(b) slot=b deref(a) | deref(b) deref(b) ", takeLogStr().c_str());
 
     {
-        RefPtr<RefPtrCheckingRefLogger> ptr(&a);
+        PackedRefPtr<PackedRefPtrCheckingRefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         log() << "| ";
         a.slotToCheck = &ptr;
@@ -508,7 +509,7 @@ TEST(WTF_RefPtr, AssignBeforeDeref)
     EXPECT_STREQ("ref(a) | slot=a ref(b) slot=b deref(a) | deref(b) ", takeLogStr().c_str());
 
     {
-        RefPtr<RefPtrCheckingRefLogger> ptr(&a);
+        PackedRefPtr<PackedRefPtrCheckingRefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         a.slotToCheck = &ptr;
         ptr = nullptr;
@@ -518,8 +519,8 @@ TEST(WTF_RefPtr, AssignBeforeDeref)
     EXPECT_STREQ("ref(a) slot=null deref(a) ", takeLogStr().c_str());
 
     {
-        RefPtr<RefPtrCheckingRefLogger> p1(&a);
-        RefPtr<RefPtrCheckingRefLogger> p2(&b);
+        PackedRefPtr<PackedRefPtrCheckingRefLogger> p1(&a);
+        PackedRefPtr<PackedRefPtrCheckingRefLogger> p2(&b);
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&b, p2.get());
         log() << "| ";
@@ -535,12 +536,12 @@ TEST(WTF_RefPtr, AssignBeforeDeref)
     EXPECT_STREQ("ref(a) ref(b) | slot=b deref(a) | deref(b) ", takeLogStr().c_str());
 }
 
-TEST(WTF_RefPtr, ReleaseNonNullBeforeDeref)
+TEST(WTF_PackedRefPtr, ReleaseNonNullBeforeDeref)
 {
-    RefPtrCheckingRefLogger a("a");
+    PackedRefPtrCheckingRefLogger a("a");
 
     {
-        RefPtr<RefPtrCheckingRefLogger> refPtr = &a;
+        PackedRefPtr<PackedRefPtrCheckingRefLogger> refPtr = &a;
         a.slotToCheck = &refPtr;
         refPtr.releaseNonNull();
         a.slotToCheck = nullptr;
@@ -548,51 +549,5 @@ TEST(WTF_RefPtr, ReleaseNonNullBeforeDeref)
 
     EXPECT_STREQ("ref(a) slot=null deref(a) ", takeLogStr().c_str());
 }
-
-// FIXME: Enable these tests once Win platform supports TestWebKitAPI::Util::run
-#if! PLATFORM(WIN)
-
-static bool done;
-static bool isDestroyedInMainThread;
-struct ThreadSafeRefCountedObject : ThreadSafeRefCounted<ThreadSafeRefCountedObject> {
-    static Ref<ThreadSafeRefCountedObject> create() { return adoptRef(*new ThreadSafeRefCountedObject); }
-
-    ~ThreadSafeRefCountedObject()
-    {
-        isDestroyedInMainThread = isMainThread();
-        done = true;
-    }
-};
-
-struct MainThreadSafeRefCountedObject : ThreadSafeRefCounted<MainThreadSafeRefCountedObject, WTF::DestructionThread::Main> {
-    static Ref<MainThreadSafeRefCountedObject> create() { return adoptRef(*new MainThreadSafeRefCountedObject); }
-
-    ~MainThreadSafeRefCountedObject()
-    {
-        isDestroyedInMainThread = isMainThread();
-        done = true;
-    }
-};
-
-TEST(WTF_RefPtr, ReleaseInNonMainThread)
-{
-    done = false;
-    Thread::create("", [object = ThreadSafeRefCountedObject::create()] { });
-    TestWebKitAPI::Util::run(&done);
-
-    EXPECT_FALSE(isDestroyedInMainThread);
-}
-
-TEST(WTF_RefPtr, ReleaseInNonMainThreadDestroyInMainThread)
-{
-    RunLoop::initializeMainRunLoop();
-    done = false;
-    Thread::create("", [object = MainThreadSafeRefCountedObject::create()] { });
-    TestWebKitAPI::Util::run(&done);
-
-    EXPECT_TRUE(isDestroyedInMainThread);
-}
-
-#endif
 
 } // namespace TestWebKitAPI

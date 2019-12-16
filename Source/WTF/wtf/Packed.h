@@ -163,6 +163,10 @@ public:
     T* operator->() const { return get(); }
     T& operator*() const { return *get(); }
     bool operator!() const { return !get(); }
+
+    // This conversion operator allows implicit conversion to bool but not to other integer types.
+    typedef T* (PackedAlignedPtr::*UnspecifiedBoolType);
+    operator UnspecifiedBoolType() const { return get() ? &PackedAlignedPtr::m_storage : nullptr; }
     explicit operator bool() const { return get(); }
 
     PackedAlignedPtr& operator=(T* value)
@@ -172,9 +176,9 @@ public:
     }
 
     template<class U>
-    T exchange(U&& newValue)
+    T* exchange(U&& newValue)
     {
-        T oldValue = get();
+        T* oldValue = get();
         set(std::forward<U>(newValue));
         return oldValue;
     }
@@ -189,15 +193,15 @@ public:
     template<typename Other, typename = std::enable_if_t<Other::isPackedType>>
     void swap(Other& other)
     {
-        T t1 = get();
-        T t2 = other.get();
+        T* t1 = get();
+        T* t2 = other.get();
         set(t2);
         other.set(t1);
     }
 
-    void swap(T& t2)
+    void swap(T* t2)
     {
-        T t1 = get();
+        T* t1 = get();
         std::swap(t1, t2);
         set(t1);
     }

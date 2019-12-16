@@ -170,14 +170,11 @@ RefPtr<SerializedScriptValue> SerializedScriptValue::decode(Decoder& decoder)
             return nullptr;
 
         auto buffer = Gigacage::tryMalloc(Gigacage::Primitive, bufferSize);
-        auto destructor = [] (void* ptr) {
-            Gigacage::free(Gigacage::Primitive, ptr);
-        };
         if (!decoder.decodeFixedLengthData(static_cast<uint8_t*>(buffer), bufferSize, 1)) {
-            destructor(buffer);
+            Gigacage::free(Gigacage::Primitive, buffer);
             return nullptr;
         }
-        arrayBufferContentsArray->append({ buffer, bufferSize, WTFMove(destructor) });
+        arrayBufferContentsArray->append({ buffer, bufferSize, ArrayBuffer::primitiveGigacageDestructor() });
     }
 
     return adoptRef(*new SerializedScriptValue(WTFMove(data), WTFMove(arrayBufferContentsArray)));

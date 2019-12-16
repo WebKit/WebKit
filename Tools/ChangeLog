@@ -1,3 +1,36 @@
+2019-12-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove ArrayBufferNeuteringWatchpointSet
+        https://bugs.webkit.org/show_bug.cgi?id=205194
+
+        Reviewed by Saam Barati.
+
+        Add tests for PackedRef and PackedRefPtr.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/PackedRef.cpp: Added.
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::passWithRef):
+        (TestWebKitAPI::PackedRefCheckingRefLogger::PackedRefCheckingRefLogger):
+        (TestWebKitAPI::PackedRefCheckingRefLogger::ref):
+        (TestWebKitAPI::PackedRefCheckingRefLogger::deref):
+        (TestWebKitAPI::DerivedPackedRefCheckingRefLogger::DerivedPackedRefCheckingRefLogger):
+        * TestWebKitAPI/Tests/WTF/PackedRefPtr.cpp: Copied from Tools/TestWebKitAPI/Tests/WTF/RefPtr.cpp.
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::f1):
+        (TestWebKitAPI::ConstRefCounted::create):
+        (TestWebKitAPI::returnConstRefCountedRef):
+        (TestWebKitAPI::returnRefCountedRef):
+        (TestWebKitAPI::PackedRefPtrCheckingRefLogger::PackedRefPtrCheckingRefLogger):
+        (TestWebKitAPI::loggerName):
+        (TestWebKitAPI::PackedRefPtrCheckingRefLogger::ref):
+        (TestWebKitAPI::PackedRefPtrCheckingRefLogger::deref):
+        * TestWebKitAPI/Tests/WTF/RefPtr.cpp:
+        (TestWebKitAPI::f1):
+        (TestWebKitAPI::returnConstRefCountedRef):
+        (TestWebKitAPI::returnRefCountedRef):
+
 2019-12-16  Keith Miller  <keith_miller@apple.com>
 
         Fix btjs on current lldb
