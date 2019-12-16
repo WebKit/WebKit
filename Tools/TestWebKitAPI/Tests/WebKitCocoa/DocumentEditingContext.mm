@@ -400,8 +400,7 @@ TEST(WebKit, DocumentEditingContextSpatialRequestInTextField)
 TEST(WebKit, DocumentEditingContextRequestFirstTwoWords)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    // FIXME: Use applyAhemStyle() to ensure consistent text metrics.
-    [webView synchronouslyLoadHTMLString:applyStyle(@"<p id='text' contenteditable>The quick brown fox jumps over the lazy dog.</p>")];
+    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"<p id='text' contenteditable>The quick brown fox jumps over the lazy dog.</p>")];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.firstChild, 0, text.firstChild, 0)"]; // Will focus <p>.
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestRects, UITextGranularityWord, 2)];
@@ -412,22 +411,21 @@ TEST(WebKit, DocumentEditingContextRequestFirstTwoWords)
 
     auto *textRects = context.textRects;
     ASSERT_EQ(9U, textRects.count);
-    EXPECT_EQ(CGRectMake(0, 0, 10, 19), textRects[0].CGRectValue); // T
-    EXPECT_EQ(CGRectMake(9, 0, 9, 19), textRects[1].CGRectValue); // h
-    EXPECT_EQ(CGRectMake(17, 0, 8, 19), textRects[2].CGRectValue); // e
-    EXPECT_EQ(CGRectMake(24, 0, 5, 19), textRects[3].CGRectValue); //
-    EXPECT_EQ(CGRectMake(28, 0, 9, 19), textRects[4].CGRectValue); // q
-    EXPECT_EQ(CGRectMake(36, 0, 9, 19), textRects[5].CGRectValue); // u
-    EXPECT_EQ(CGRectMake(44, 0, 6, 19), textRects[6].CGRectValue); // i
-    EXPECT_EQ(CGRectMake(49, 0, 8, 19), textRects[7].CGRectValue); // c
-    EXPECT_EQ(CGRectMake(56, 0, 9, 19), textRects[8].CGRectValue); // k
+    EXPECT_EQ(CGRectMake(0, 0, 25, 25), textRects[0].CGRectValue); // T
+    EXPECT_EQ(CGRectMake(25, 0, 25, 25), textRects[1].CGRectValue); // h
+    EXPECT_EQ(CGRectMake(50, 0, 25, 25), textRects[2].CGRectValue); // e
+    EXPECT_EQ(CGRectMake(75, 0, 25, 25), textRects[3].CGRectValue); //
+    EXPECT_EQ(CGRectMake(100, 0, 25, 25), textRects[4].CGRectValue); // q
+    EXPECT_EQ(CGRectMake(125, 0, 25, 25), textRects[5].CGRectValue); // u
+    EXPECT_EQ(CGRectMake(150, 0, 25, 25), textRects[6].CGRectValue); // i
+    EXPECT_EQ(CGRectMake(175, 0, 25, 25), textRects[7].CGRectValue); // c
+    EXPECT_EQ(CGRectMake(200, 0, 25, 25), textRects[8].CGRectValue); // k
 }
 
 TEST(WebKit, DocumentEditingContextRequestFirstTwoWordWithLeadingNonBreakableSpace)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    // FIXME: Use applyAhemStyle() to ensure consistent text metrics.
-    [webView synchronouslyLoadHTMLString:applyStyle(@"<p id='text' contenteditable>&nbsp;The quick brown fox jumps over the lazy dog.</p>")];
+    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"<p id='text' contenteditable>&nbsp;The quick brown fox jumps over the lazy dog.</p>")];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.firstChild, 0, text.firstChild, 0)"]; // Will focus <p>.
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestRects, UITextGranularityWord, 1)];
@@ -438,17 +436,16 @@ TEST(WebKit, DocumentEditingContextRequestFirstTwoWordWithLeadingNonBreakableSpa
 
     auto *textRects = context.textRects;
     ASSERT_EQ(4U, textRects.count);
-    EXPECT_EQ(CGRectMake(0, 0, 4, 19), textRects[0].CGRectValue); //
-    EXPECT_EQ(CGRectMake(4, 0, 10, 19), textRects[1].CGRectValue); // T
-    EXPECT_EQ(CGRectMake(13, 0, 9, 19), textRects[2].CGRectValue); // h
-    EXPECT_EQ(CGRectMake(21, 0, 8, 19), textRects[3].CGRectValue); // e
+    EXPECT_EQ(CGRectMake(0, 0, 25, 25), textRects[0].CGRectValue); //
+    EXPECT_EQ(CGRectMake(25, 0, 25, 25), textRects[1].CGRectValue); // T
+    EXPECT_EQ(CGRectMake(50, 0, 25, 25), textRects[2].CGRectValue); // h
+    EXPECT_EQ(CGRectMake(75, 0, 25, 25), textRects[3].CGRectValue); // e
 }
 
 TEST(WebKit, DocumentEditingContextRequestLastWord)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    // FIXME: Use applyAhemStyle() to ensure consistent text metrics.
-    [webView synchronouslyLoadHTMLString:applyStyle(@"<p id='text' contenteditable>The quick brown fox jumps over the lazy dog.</p>")];
+    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"<p id='text' contenteditable>The quick brown fox jumps over the lazy dog.</p>")];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.firstChild, text.firstChild.length, text.firstChild, text.firstChild.length)"]; // Will focus <p>.
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestRects, UITextGranularityWord, 1)];
@@ -459,17 +456,16 @@ TEST(WebKit, DocumentEditingContextRequestLastWord)
 
     auto *textRects = context.textRects;
     ASSERT_EQ(4U, textRects.count);
-    EXPECT_EQ(CGRectMake(268, 0, 9, 19), textRects[0].CGRectValue); // d
-    EXPECT_EQ(CGRectMake(276, 0, 9, 19), textRects[1].CGRectValue); // o
-    EXPECT_EQ(CGRectMake(284, 0, 9, 19), textRects[2].CGRectValue); // g
-    EXPECT_EQ(CGRectMake(292, 0, 5, 19), textRects[3].CGRectValue); // .
+    EXPECT_EQ(CGRectMake(0, 25, 25, 25), textRects[0].CGRectValue); // d
+    EXPECT_EQ(CGRectMake(25, 25, 25, 25), textRects[1].CGRectValue); // o
+    EXPECT_EQ(CGRectMake(50, 25, 25, 25), textRects[2].CGRectValue); // g
+    EXPECT_EQ(CGRectMake(75, 25, 25, 25), textRects[3].CGRectValue); // .
 }
 
 TEST(WebKit, DocumentEditingContextRequestLastWordWithTrailingNonBreakableSpace)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    // FIXME: Use applyAhemStyle() to ensure consistent text metrics.
-    [webView synchronouslyLoadHTMLString:applyStyle(@"<p id='text' contenteditable>The quick brown fox jumps over the lazy dog.&nbsp;</p>")];
+    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"<p id='text' contenteditable>The quick brown fox jumps over the lazy dog.&nbsp;</p>")];
     [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(text.firstChild, text.firstChild.length, text.firstChild, text.firstChild.length)"]; // Will focus <p>.
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestRects, UITextGranularityWord, 1)];
@@ -480,11 +476,11 @@ TEST(WebKit, DocumentEditingContextRequestLastWordWithTrailingNonBreakableSpace)
 
     auto *textRects = context.textRects;
     ASSERT_EQ(5U, textRects.count);
-    EXPECT_EQ(CGRectMake(268, 0, 9, 19), textRects[0].CGRectValue); // d
-    EXPECT_EQ(CGRectMake(276, 0, 9, 19), textRects[1].CGRectValue); // o
-    EXPECT_EQ(CGRectMake(284, 0, 9, 19), textRects[2].CGRectValue); // g
-    EXPECT_EQ(CGRectMake(292, 0, 5, 19), textRects[3].CGRectValue); // .
-    EXPECT_EQ(CGRectMake(296, 0, 5, 19), textRects[4].CGRectValue); //
+    EXPECT_EQ(CGRectMake(0, 25, 25, 25), textRects[0].CGRectValue); // d
+    EXPECT_EQ(CGRectMake(25, 25, 25, 25), textRects[1].CGRectValue); // o
+    EXPECT_EQ(CGRectMake(50, 25, 25, 25), textRects[2].CGRectValue); // g
+    EXPECT_EQ(CGRectMake(75, 25, 25, 25), textRects[3].CGRectValue); // .
+    EXPECT_EQ(CGRectMake(100, 25, 25, 25), textRects[4].CGRectValue); //
 }
 
 TEST(WebKit, DocumentEditingContextRequestTwoWordsAroundSelection)
