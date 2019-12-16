@@ -1,3 +1,15 @@
+2019-12-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Fix API availability for -_getResourceLoadStatisticsDataSummary: after r253484
+        https://bugs.webkit.org/show_bug.cgi?id=205256
+
+        Reviewed by Alex Christensen.
+
+        Replaces WK_API_AVAILABLE(macos(10.15), ios(13.0)) with WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)),
+        since this is new WebKit SPI that hasn't made its way into the SDK.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+
 2019-12-16  Daniel Bates  <dabates@apple.com>
 
         -requestDocumentContext always returns 1 text unit more granularity than requested
