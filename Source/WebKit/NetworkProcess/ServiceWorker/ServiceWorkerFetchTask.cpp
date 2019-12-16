@@ -89,8 +89,14 @@ void ServiceWorkerFetchTask::start(WebSWServerToContextConnection& serviceWorker
 
 void ServiceWorkerFetchTask::contextClosed()
 {
-    m_serviceWorkerConnection = nullptr;
-    didFail(ResourceError { errorDomainWebKitInternal, 0, { }, "Service Worker context closed"_s });
+    if (m_isDone)
+        return;
+
+    if (m_wasHandled) {
+        didFail(ResourceError { errorDomainWebKitInternal, 0, { }, "Service Worker context closed"_s });
+        return;
+    }
+    cannotHandle();
 }
 
 void ServiceWorkerFetchTask::startFetch()
@@ -109,7 +115,11 @@ void ServiceWorkerFetchTask::startFetch()
 
 void ServiceWorkerFetchTask::didReceiveRedirectResponse(ResourceResponse&& response)
 {
+    if (m_isDone)
+        return;
+
     RELEASE_LOG_IF_ALLOWED("didReceiveRedirectResponse: %s", m_fetchIdentifier.loggingString().utf8().data());
+    m_wasHandled = true;
     m_timeoutTimer.stop();
     softUpdateIfNeeded();
 
@@ -121,7 +131,11 @@ void ServiceWorkerFetchTask::didReceiveRedirectResponse(ResourceResponse&& respo
 
 void ServiceWorkerFetchTask::didReceiveResponse(ResourceResponse&& response, bool needsContinueDidReceiveResponseMessage)
 {
+    if (m_isDone)
+        return;
+
     RELEASE_LOG_IF_ALLOWED("didReceiveResponse: %s", m_fetchIdentifier.loggingString().utf8().data());
+    m_wasHandled = true;
     m_timeoutTimer.stop();
     softUpdateIfNeeded();
 
@@ -131,12 +145,18 @@ void ServiceWorkerFetchTask::didReceiveResponse(ResourceResponse&& response, boo
 
 void ServiceWorkerFetchTask::didReceiveData(const IPC::DataReference& data, int64_t encodedDataLength)
 {
+    if (m_isDone)
+        return;
+
     ASSERT(!m_timeoutTimer.isActive());
     sendToClient(Messages::WebResourceLoader::DidReceiveData { IPC::SharedBufferDataReference { data.data(), data.size() }, encodedDataLength });
 }
 
 void ServiceWorkerFetchTask::didReceiveFormData(const IPC::FormDataReference& formData)
 {
+    if (m_isDone)
+        return;
+
     ASSERT(!m_timeoutTimer.isActive());
     // FIXME: Allow WebResourceLoader to receive form data.
 }
@@ -145,12 +165,15 @@ void ServiceWorkerFetchTask::didFinish()
 {
     ASSERT(!m_timeoutTimer.isActive());
     RELEASE_LOG_IF_ALLOWED("didFinishFetch: fetchIdentifier: %s", m_fetchIdentifier.loggingString().utf8().data());
+
+    m_isDone = true;
     m_timeoutTimer.stop();
     sendToClient(Messages::WebResourceLoader::DidFinishResourceLoad { { } });
 }
 
 void ServiceWorkerFetchTask::didFail(const ResourceError& error)
 {
+    m_isDone = true;
     if (m_timeoutTimer.isActive()) {
         m_timeoutTimer.stop();
         softUpdateIfNeeded();
@@ -162,10 +185,24 @@ void ServiceWorkerFetchTask::didFail(const ResourceError& error)
 void ServiceWorkerFetchTask::didNotHandle()
 {
     RELEASE_LOG_IF_ALLOWED("didNotHandleFetch: fetchIdentifier: %s", m_fetchIdentifier.loggingString().utf8().data());
+    if (m_isDone)
+        return;
+
+    m_isDone = true;
     m_timeoutTimer.stop();
     softUpdateIfNeeded();
 
     m_loader.serviceWorkerDidNotHandle(this);
+}
+
+void ServiceWorkerFetchTask::cannotHandle()
+{
+    RELEASE_LOG_IF_ALLOWED("cannotHandle: fetchIdentifier: %s", m_fetchIdentifier.loggingString().utf8().data());
+    // Make sure we call didNotHandle asynchronously because failing synchronously would get the NetworkResourceLoader in a bad state.
+    RunLoop::main().dispatch([weakThis = makeWeakPtr(this)] {
+        if (weakThis)
+            weakThis->didNotHandle();
+    });
 }
 
 void ServiceWorkerFetchTask::cancelFromClient()
@@ -181,11 +218,11 @@ void ServiceWorkerFetchTask::continueDidReceiveFetchResponse()
 
 void ServiceWorkerFetchTask::continueFetchTaskWith(ResourceRequest&& request)
 {
-    m_timeoutTimer.startOneShot(m_loader.connectionToWebProcess().networkProcess().serviceWorkerFetchTimeout());
     if (!m_serviceWorkerConnection) {
         m_loader.serviceWorkerDidNotHandle(this);
         return;
     }
+    m_timeoutTimer.startOneShot(m_loader.connectionToWebProcess().networkProcess().serviceWorkerFetchTimeout());
     m_currentRequest = WTFMove(request);
     startFetch();
 }

@@ -61,7 +61,6 @@ public:
 
     void start(WebSWServerToContextConnection&);
     void cancelFromClient();
-    void fail(const WebCore::ResourceError& error) { didFail(error); }
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
     void continueDidReceiveFetchResponse();
@@ -70,11 +69,9 @@ public:
     WebCore::FetchIdentifier fetchIdentifier() const { return m_fetchIdentifier; }
     WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier() const { return m_serviceWorkerIdentifier; }
 
-    void didNotHandle();
-
     WebCore::ResourceRequest takeRequest() { return WTFMove(m_currentRequest); }
-    bool wasHandled() const { return m_wasHandled; }
 
+    void cannotHandle();
     void contextClosed();
 
 private:
@@ -84,6 +81,7 @@ private:
     void didReceiveFormData(const IPC::FormDataReference&);
     void didFinish();
     void didFail(const WebCore::ResourceError&);
+    void didNotHandle();
 
     void startFetch();
 
@@ -101,6 +99,7 @@ private:
     WebCore::ResourceRequest m_currentRequest;
     WebCore::Timer m_timeoutTimer;
     bool m_wasHandled { false };
+    bool m_isDone { false };
     WebCore::ServiceWorkerRegistrationIdentifier m_serviceWorkerRegistrationIdentifier;
     bool m_shouldSoftUpdate { false };
 };

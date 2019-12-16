@@ -1,3 +1,44 @@
+2019-12-16  youenn fablet  <youenn@apple.com>
+
+        http/wpt/service-workers/postMessage-fetch-order.https.html is a flaky failure after r253528
+        https://bugs.webkit.org/show_bug.cgi?id=205261
+
+        Reviewed by Chris Dumez.
+
+        Instead of starting the fetch task asynchronously, start it synchronously but make sure that
+        not handling the fetch is either coming from IPC or is done asynchronously.
+
+        We add a boolean m_isDone that ensures that the loader will only be called once for didFail/didFinish/didNotHandle.
+        This covers the potential case of a task for which cannotHandle is called synchronously at creation but the call to didNotHandle is not yet done.
+        Before the call to didNotHandle is done, a timeout timer is firing and will call didNotHandle a first time.
+        The second didNotHandle should be a no-op.
+
+        Covered by existing tests and unflakes above test.
+
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        (WebKit::ServiceWorkerFetchTask::contextClosed):
+        (WebKit::ServiceWorkerFetchTask::didReceiveRedirectResponse):
+        (WebKit::ServiceWorkerFetchTask::didReceiveResponse):
+        (WebKit::ServiceWorkerFetchTask::didReceiveData):
+        (WebKit::ServiceWorkerFetchTask::didReceiveFormData):
+        (WebKit::ServiceWorkerFetchTask::didFinish):
+        (WebKit::ServiceWorkerFetchTask::didFail):
+        (WebKit::ServiceWorkerFetchTask::didNotHandle):
+        Make sure to call didNotHandle only once based on m_isDone.
+        (WebKit::ServiceWorkerFetchTask::cannotHandle):
+        Do not expose didNotHandle as a public method.
+        Instead expose cannotHandle that will call didNotHandle asynchronously.
+        (WebKit::ServiceWorkerFetchTask::continueFetchTaskWith):
+        No need to set a timer if we will not create a fetch event.
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.h:
+        (WebKit::ServiceWorkerFetchTask::takeRequest):
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::startFetch):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::fetchTaskTimedOut):
+        Small refactoring to only use contextClosed and not expose whether the task is handled or not.
+        This also potentially allows to call didNotHandle in case the service worker crashed before answering the fetch event.
+
 2019-12-16  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         [GTK] Build with USE_WPE_RENDERER=No fails with undefined EGL_WAYLAND_BUFFER_WL

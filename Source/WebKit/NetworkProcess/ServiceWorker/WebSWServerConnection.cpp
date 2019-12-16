@@ -197,19 +197,19 @@ void WebSWServerConnection::startFetch(ServiceWorkerFetchTask& task, SWServerWor
             return;
 
         if (!weakThis) {
-            task->didNotHandle();
+            task->cannotHandle();
             return;
         }
 
         if (!success) {
             SWSERVERCONNECTION_RELEASE_LOG_ERROR_IF_ALLOWED("startFetch: fetchIdentifier: %s DidNotHandle because worker did not become activated", task->fetchIdentifier().loggingString().utf8().data());
-            task->didNotHandle();
+            task->cannotHandle();
             return;
         }
 
         auto* worker = server().workerByID(task->serviceWorkerIdentifier());
         if (!worker || worker->hasTimedOutAnyFetchTasks()) {
-            task->didNotHandle();
+            task->cannotHandle();
             return;
         }
 
@@ -222,13 +222,13 @@ void WebSWServerConnection::startFetch(ServiceWorkerFetchTask& task, SWServerWor
                 return;
             
             if (!weakThis) {
-                task->didNotHandle();
+                task->cannotHandle();
                 return;
             }
 
             if (!contextConnection) {
                 SWSERVERCONNECTION_RELEASE_LOG_ERROR_IF_ALLOWED("startFetch: fetchIdentifier: %s DidNotHandle because failed to run service worker", task->fetchIdentifier().loggingString().utf8().data());
-                task->didNotHandle();
+                task->cannotHandle();
                 return;
             }
             SWSERVERCONNECTION_RELEASE_LOG_IF_ALLOWED("startFetch: Starting fetch %s via service worker %s", task->fetchIdentifier().loggingString().utf8().data(), task->serviceWorkerIdentifier().loggingString().utf8().data());
@@ -242,10 +242,7 @@ void WebSWServerConnection::startFetch(ServiceWorkerFetchTask& task, SWServerWor
     }
 
     ASSERT(worker.state() == ServiceWorkerState::Activated);
-    // Make sure we start the fetch asynchronously because failing synchronously would get the NetworkResourceLoader in a bad state.
-    RunLoop::main().dispatch([runServerWorkerAndStartFetch = WTFMove(runServerWorkerAndStartFetch)]() mutable {
-        runServerWorkerAndStartFetch(true);
-    });
+    runServerWorkerAndStartFetch(true);
 }
 
 void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier destinationIdentifier, MessageWithMessagePorts&& message, const ServiceWorkerOrClientIdentifier& sourceIdentifier)
