@@ -108,12 +108,15 @@ void ServiceWorkerSoftUpdateLoader::fail(ResourceError&& error)
 
 void ServiceWorkerSoftUpdateLoader::loadWithCacheEntry(NetworkCache::Entry& entry)
 {
-    didReceiveResponse(ResourceResponse { entry.response() }, [](auto) { });
-    if (m_completionHandler && entry.buffer())
+    auto error = processResponse(entry.response());
+    if (!error.isNull()) {
+        fail(WTFMove(error));
+        return;
+    }
+
+    if (entry.buffer())
         didReceiveBuffer(makeRef(*entry.buffer()), 0);
-    if (m_completionHandler)
-        didFinishLoading({ });
-    didComplete();
+    didFinishLoading({ });
 }
 
 void ServiceWorkerSoftUpdateLoader::loadFromNetwork(NetworkSession& session, ResourceRequest&& request)
@@ -131,7 +134,6 @@ void ServiceWorkerSoftUpdateLoader::willSendRedirectedRequest(ResourceRequest&&,
     fail(ResourceError { ResourceError::Type::Cancellation });
 }
 
-// https://w3c.github.io/ServiceWorker/#update-algorithm, steps 9.7 to 9.17
 void ServiceWorkerSoftUpdateLoader::didReceiveResponse(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
 {
     if (response.httpStatusCode() == 304 && m_cacheEntry) {
@@ -139,25 +141,31 @@ void ServiceWorkerSoftUpdateLoader::didReceiveResponse(ResourceResponse&& respon
         completionHandler(PolicyAction::Ignore);
         return;
     }
+    auto error = processResponse(response);
+    if (!error.isNull()) {
+        fail(WTFMove(error));
+        completionHandler(PolicyAction::Ignore);
+        return;
+    }
+    completionHandler(PolicyAction::Use);
+}
 
+// https://w3c.github.io/ServiceWorker/#update-algorithm, steps 9.7 to 9.17
+ResourceError ServiceWorkerSoftUpdateLoader::processResponse(const ResourceResponse& response)
+{
     auto error = WorkerScriptLoader::validateWorkerResponse(response, FetchOptions::Destination::Serviceworker);
-    if (!error.isNull()) {
-        fail(WTFMove(error));
-        completionHandler(PolicyAction::Ignore);
-        return;
-    }
+    if (!error.isNull())
+        return error;
+
     error = ServiceWorkerJob::validateServiceWorkerResponse(m_jobData, response);
-    if (!error.isNull()) {
-        fail(WTFMove(error));
-        completionHandler(PolicyAction::Ignore);
-        return;
-    }
+    if (!error.isNull())
+        return error;
 
     m_contentSecurityPolicy = ContentSecurityPolicyResponseHeaders { response };
     m_referrerPolicy = response.httpHeaderField(HTTPHeaderName::ReferrerPolicy);
     m_responseEncoding = response.textEncodingName();
 
-    completionHandler(PolicyAction::Use);
+    return { };
 }
 
 void ServiceWorkerSoftUpdateLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int reportedEncodedDataLength)

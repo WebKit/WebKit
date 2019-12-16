@@ -71,6 +71,7 @@ private:
     void loadFromNetwork(NetworkSession&, WebCore::ResourceRequest&&);
     void fail(WebCore::ResourceError&&);
     void didComplete();
+    WebCore::ResourceError processResponse(const WebCore::ResourceResponse&);
 
     Handler m_completionHandler;
     WebCore::ServiceWorkerJobData m_jobData;

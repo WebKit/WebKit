@@ -1,3 +1,25 @@
+2019-12-16  youenn fablet  <youenn@apple.com>
+
+        Make ServiceWorkerSoftUpdateLoader::loadWithCacheEntry more robust
+        https://bugs.webkit.org/show_bug.cgi?id=205202
+        rdar://problem/57852910
+
+        Reviewed by Chris Dumez.
+
+        In case loading an entry from the cache, we were calling didReceiveResponse,
+        which may destroy the loader and then continue processing.
+        Instead, add a processResponse method that checks the response and returns an error if needed.
+        didReceiveResponse calls this method and returns early in case of error.
+        So does the method loading data from the cache.
+
+        Covered by existing tests.
+
+        * NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.cpp:
+        (WebKit::ServiceWorkerSoftUpdateLoader::loadWithCacheEntry):
+        (WebKit::ServiceWorkerSoftUpdateLoader::didReceiveResponse):
+        (WebKit::ServiceWorkerSoftUpdateLoader::processResponse):
+        * NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.h:
+
 2019-12-16  Antti Koivisto  <antti@apple.com>
 
         Remove display:contents feature flag
