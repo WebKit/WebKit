@@ -3814,3 +3814,5 @@ webgl/1.0.3/conformance/renderbuffers/feedback-loop.html [ Skip ]
 webgl/1.0.3/conformance/textures/copy-tex-image-2d-formats.html [ Skip ]
 webgl/1.0.3/conformance/canvas/rapid-resizing.html [ Skip ]
 webgl/1.0.3/conformance/extensions/webgl-draw-buffers.html [ Skip ]
+
+webkit.org/b/205299 animations/leak-document-with-css-animation.html [ Pass Failure ]

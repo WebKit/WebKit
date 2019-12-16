@@ -1,3 +1,10 @@
+2019-12-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Mark animations/leak-document-with-css-animation.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=205299
+
+        * TestExpectations:
+
 2019-12-16  youenn fablet  <youenn@apple.com>
 
         Consider top-level context whose origin is unique as insecure
