@@ -3541,13 +3541,13 @@ static void testsJSCOptions()
     g_assert_cmpuint(webAssemblyPartialCompileLimit, ==, 6000);
     g_assert_true(jsc_options_set_size("webAssemblyPartialCompileLimit", 5000));
 
-    gdouble smallHeapRAMFraction;
-    g_assert_true(jsc_options_get_double("smallHeapRAMFraction", &smallHeapRAMFraction));
-    g_assert_cmpfloat(smallHeapRAMFraction, ==, 0.25);
-    g_assert_true(jsc_options_set_double("smallHeapRAMFraction", 0.50));
-    g_assert_true(jsc_options_get_double("smallHeapRAMFraction", &smallHeapRAMFraction));
-    g_assert_cmpfloat(smallHeapRAMFraction, ==, 0.50);
-    g_assert_true(jsc_options_set_double("smallHeapRAMFraction", 0.25));
+    gdouble criticalGCMemoryThreshold;
+    g_assert_true(jsc_options_get_double("criticalGCMemoryThreshold", &criticalGCMemoryThreshold));
+    g_assert_cmpfloat(criticalGCMemoryThreshold, ==, 0.80);
+    g_assert_true(jsc_options_set_double("criticalGCMemoryThreshold", 0.90));
+    g_assert_true(jsc_options_get_double("criticalGCMemoryThreshold", &criticalGCMemoryThreshold));
+    g_assert_cmpfloat(criticalGCMemoryThreshold, ==, 0.90);
+    g_assert_true(jsc_options_set_double("criticalGCMemoryThreshold", 0.80));
 
     GUniqueOutPtr<char> configFile;
     g_assert_true(jsc_options_get_string("configFile", &configFile.outPtr()));
@@ -3652,7 +3652,7 @@ static void testsJSCOptions()
         "--jsc-thresholdForJITAfterWarmUp=2000",
         "--jsc-maxPerThreadStackUsage=1024",
         "--jsc-webAssemblyPartialCompileLimit=4000",
-        "--jsc-smallHeapRAMFraction=0.75",
+        "--jsc-criticalGCMemoryThreshold=0.95",
         "--jsc-configFile=/tmp/bar",
         "--jsc-bytecodeRangeToJITCompile=100:300",
         "--jsc-logGC=1",
@@ -3672,8 +3672,8 @@ static void testsJSCOptions()
     g_assert_cmpuint(maxPerThreadStackUsage, ==, 1024);
     g_assert_true(jsc_options_get_size("webAssemblyPartialCompileLimit", &webAssemblyPartialCompileLimit));
     g_assert_cmpuint(webAssemblyPartialCompileLimit, ==, 4000);
-    g_assert_true(jsc_options_get_double("smallHeapRAMFraction", &smallHeapRAMFraction));
-    g_assert_cmpfloat(smallHeapRAMFraction, ==, 0.75);
+    g_assert_true(jsc_options_get_double("criticalGCMemoryThreshold", &criticalGCMemoryThreshold));
+    g_assert_cmpfloat(criticalGCMemoryThreshold, ==, 0.95);
     g_assert_true(jsc_options_get_string("configFile", &configFile.outPtr()));
     g_assert_cmpstr(configFile.get(), ==, "/tmp/bar");
     g_assert_true(jsc_options_get_range_string("bytecodeRangeToJITCompile", &bytecodeRangeToJITCompile.outPtr()));

@@ -1,3 +1,13 @@
+2019-12-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GLib test /jsc/options after r253244.
+
+        The default value of smallHeapRAMFraction option changed in r253244. The test just wants to check a float jsc
+        option, so use criticalGCMemoryThreshold instead that has a fixed default value.
+
+        * TestWebKitAPI/Tests/JavaScriptCore/glib/TestJSC.cpp:
+        (testsJSCOptions):
+
 2019-12-16  youenn fablet  <youenn@apple.com>
 
         Reset cached getUserMedia queries when calling stopMediaCapture
