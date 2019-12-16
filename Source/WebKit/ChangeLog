@@ -1,3 +1,24 @@
+2019-12-16  Daniel Bates  <dabates@apple.com>
+
+        -requestDocumentContext always returns 1 text unit more granularity than requested
+        https://bugs.webkit.org/show_bug.cgi?id=205142
+        <rdar://problem/57858236>
+
+        Reviewed by Darin Adler and Wenson Hsieh.
+
+        Use WebCore::atBoundaryOfGranularity() to identify each boundary so that we return the position
+        exactly granularityCount text units advanced from the specified position. When using sentence
+        granularity we do not need to round the resulting position to the nearest word because it already
+        falls before the next word (if there is one). For all other granularities we do what we do now
+        and round to the nearest word, which may cross that granularity's boundary.
+
+        Additionally, added assertions to ensure that we are passed a non-zero granularity count and a non-
+        null initial position. The function takes advantage of these assumptions to 1) ensure correct results
+        and 2) make use of a do-while loop.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::moveByGranularityRespectingWordBoundary):
+
 2019-12-16  Simon Fraser  <simon.fraser@apple.com>
 
         Let the DrawingArea decide whether scrolling is delegated

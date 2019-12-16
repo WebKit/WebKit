@@ -3869,14 +3869,15 @@ void WebPage::updateSelectionWithDelta(int64_t locationDelta, int64_t lengthDelt
 
 static VisiblePosition moveByGranularityRespectingWordBoundary(const VisiblePosition& position, TextGranularity granularity, uint64_t granularityCount, SelectionDirection direction)
 {
+    ASSERT(granularityCount);
+    ASSERT(position.isNotNull());
     bool backwards = direction == DirectionBackward;
     auto farthestPositionInDirection = backwards ? startOfEditableContent(position) : endOfEditableContent(position);
     if (position == farthestPositionInDirection)
         return backwards ? startOfWord(position) : endOfWord(position);
-
     VisiblePosition currentPosition = position;
     VisiblePosition nextPosition;
-    for (unsigned i = 0; i < granularityCount + 1; ++i) {
+    do {
         nextPosition = positionOfNextBoundaryOfGranularity(currentPosition, granularity, direction);
         // FIXME (196127): We shouldn't need to do this, but have seen previousParagraphPosition go forwards.
         if ((backwards && nextPosition > currentPosition) || (!backwards && nextPosition < currentPosition))
@@ -3884,8 +3885,18 @@ static VisiblePosition moveByGranularityRespectingWordBoundary(const VisiblePosi
         if (nextPosition.isNull())
             break;
         currentPosition = nextPosition;
+        if (atBoundaryOfGranularity(currentPosition, granularity, direction))
+            --granularityCount;
+    } while (granularityCount);
+    if (granularity == SentenceGranularity) {
+        ASSERT(atBoundaryOfGranularity(currentPosition, SentenceGranularity, direction));
+        return currentPosition;
     }
-
+    // Note that this rounds to the nearest word, which may cross a line boundary when using line granularity.
+    // For example, suppose the text is laid out as follows and the insertion point is at |:
+    //     |This is the first sen
+    //      tence in a paragraph.
+    // Then moving 1 line of granularity forward will return the postion after the 'e' in sentence.
     return backwards ? startOfWord(currentPosition) : endOfWord(currentPosition);
 }
 

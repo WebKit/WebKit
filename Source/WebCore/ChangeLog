@@ -1,3 +1,20 @@
+2019-12-16  Daniel Bates  <dabates@apple.com>
+
+        -requestDocumentContext always returns 1 text unit more granularity than requested
+        https://bugs.webkit.org/show_bug.cgi?id=205142
+        <rdar://problem/57858236>
+
+        Reviewed by Darin Adler and Wenson Hsieh.
+
+        Fix up the code to actually determine if the specified position is at a sentence
+        boundary. Currently the code will always return false when asking whether the
+        specified position is at a sentence boundary (i.e. "end of the sentence") because
+        it compares it to the position of the end of the *next* sentence or the beginning
+        of the current sentence when selecting forward or backwards, respectively.
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::atBoundaryOfGranularity):
+
 2019-12-16  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add initial support for line-break: anywhere

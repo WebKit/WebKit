@@ -1591,7 +1591,7 @@ bool atBoundaryOfGranularity(const VisiblePosition& vp, TextGranularity granular
         break;
 
     case SentenceGranularity:
-        boundary = useDownstream ? endOfSentence(vp) : startOfSentence(vp);
+        boundary = useDownstream ? endOfSentence(previousSentencePosition(vp)) : startOfSentence(nextSentencePosition(vp));
         break;
 
     case LineGranularity:
