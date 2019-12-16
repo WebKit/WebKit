@@ -25,6 +25,8 @@
 
 #import "config.h"
 
+#if ENABLE(CONTENT_FILTERING)
+
 #import "ContentFiltering.h"
 #import "MockContentFilterSettings.h"
 #import "PlatformUtilities.h"
@@ -452,3 +454,5 @@ TEST(ContentFiltering, LazilyLoadPlatformFrameworks)
 #endif
     }
 }
+
+#endif // ENABLE(CONTENT_FILTERING)
