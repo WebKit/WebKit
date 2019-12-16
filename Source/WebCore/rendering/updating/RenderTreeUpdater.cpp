@@ -49,6 +49,7 @@
 #include "RuntimeEnabledFeatures.h"
 #include "StyleResolver.h"
 #include "StyleTreeResolver.h"
+#include "TextManipulationController.h"
 #include <wtf/SystemTracing.h>
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
@@ -396,6 +397,10 @@ void RenderTreeUpdater::createRenderer(Element& element, RenderStyle&& style)
 #endif
 
     m_builder.attach(insertionPosition, WTFMove(newRenderer));
+
+    auto* textManipulationController = m_document.textManipulationControllerIfExists();
+    if (UNLIKELY(textManipulationController))
+        textManipulationController->didCreateRendererForElement(element);
 
     if (AXObjectCache* cache = m_document.axObjectCache())
         cache->updateCacheAfterNodeIsAttached(&element);

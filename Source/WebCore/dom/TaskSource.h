@@ -37,7 +37,10 @@ enum class TaskSource : uint8_t {
     Microtask,
     Networking,
     PostedMessageQueue,
-    UserInteraction
+    UserInteraction,
+
+    // Internal to WebCore
+    InternalAsyncTask, // Safe to re-order or delay.
 };
 
 } // namespace WebCore

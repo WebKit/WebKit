@@ -29,6 +29,7 @@
 #include "CharacterData.h"
 #include "Editing.h"
 #include "ElementAncestorIterator.h"
+#include "EventLoop.h"
 #include "ScriptDisallowedScope.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"
@@ -118,9 +119,17 @@ void TextManipulationController::startObservingParagraphs(ManipulationItemCallba
 
     VisiblePosition start = firstPositionInNode(m_document.get());
     VisiblePosition end = lastPositionInNode(m_document.get());
+
+    observeParagraphs(start, end);
+}
+
+void TextManipulationController::observeParagraphs(VisiblePosition& start, VisiblePosition& end)
+{
+    auto document = makeRefPtr(start.deepEquivalent().document());
+    ASSERT(document);
     TextIterator iterator { start.deepEquivalent(), end.deepEquivalent() };
-    if (!document)
-        return; // VisiblePosition or TextIterator's constructor may have updated the layout and executed arbitrary scripts.
+    if (document != start.deepEquivalent().document() || document != end.deepEquivalent().document())
+        return; // TextIterator's constructor may have updated the layout and executed arbitrary scripts.
 
     ExclusionRuleMatcher exclusionRuleMatcher(m_exclusionRules);
     Vector<ManipulationToken> tokensInCurrentParagraph;
@@ -161,6 +170,65 @@ void TextManipulationController::startObservingParagraphs(ManipulationItemCallba
 
     if (!tokensInCurrentParagraph.isEmpty())
         addItem(startOfCurrentParagraph, end.deepEquivalent(), WTFMove(tokensInCurrentParagraph));
+}
+
+void TextManipulationController::didCreateRendererForElement(Element& element)
+{
+    if (m_mutatedElements.computesEmpty())
+        scheduleObservartionUpdate();
+    m_mutatedElements.add(element);
+}
+
+using PositionTuple = std::tuple<RefPtr<Node>, unsigned, unsigned>;
+static const PositionTuple makePositionTuple(const Position& position)
+{
+    return { position.anchorNode(), static_cast<unsigned>(position.anchorType()), position.anchorType() == Position::PositionIsOffsetInAnchor ? position.offsetInContainerNode() : 0 }; 
+}
+
+static const std::pair<PositionTuple, PositionTuple> makeHashablePositionRange(const VisiblePosition& start, const VisiblePosition& end)
+{
+    return { makePositionTuple(start.deepEquivalent()), makePositionTuple(end.deepEquivalent()) };
+}
+
+void TextManipulationController::scheduleObservartionUpdate()
+{
+    if (!m_document)
+        return;
+
+    m_document->eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakThis = makeWeakPtr(*this)] {
+        auto* controller = weakThis.get();
+        if (!controller)
+            return;
+
+        HashSet<Ref<Element>> mutatedElements;
+        for (auto& weakElement : controller->m_mutatedElements)
+            mutatedElements.add(weakElement);
+        controller->m_mutatedElements.clear();
+
+        HashSet<Ref<Element>> filteredElements;
+        for (auto& element : mutatedElements) {
+            auto* parentElement = element->parentElement();
+            if (!parentElement || !mutatedElements.contains(parentElement))
+                filteredElements.add(element.copyRef());
+        }
+        mutatedElements.clear();
+
+        HashSet<std::pair<PositionTuple, PositionTuple>> paragraphSets;
+        for (auto& element : filteredElements) {
+            auto start = startOfParagraph(firstPositionInOrBeforeNode(element.ptr()));
+            auto end = endOfParagraph(lastPositionInOrAfterNode(element.ptr()));
+
+            auto key = makeHashablePositionRange(start, end);
+            if (!paragraphSets.add(key).isNewEntry)
+                continue;
+
+            auto* controller = weakThis.get();
+            if (!controller)
+                return; // Finding the start/end of paragraph may have updated layout & executed arbitrary scripts.
+
+            controller->observeParagraphs(start, end);
+        }
+    });
 }
 
 void TextManipulationController::addItem(const Position& startOfParagraph, const Position& endOfParagraph, Vector<ManipulationToken>&& tokens)

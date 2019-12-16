@@ -30,11 +30,14 @@
 #include <wtf/EnumTraits.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/Optional.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class Document;
+class Element;
+class VisiblePosition;
 
 class TextManipulationController : public CanMakeWeakPtr<TextManipulationController> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -93,6 +96,8 @@ public:
     using ManipulationItemCallback = WTF::Function<void(Document&, ItemIdentifier, const Vector<ManipulationToken>&)>;
     WEBCORE_EXPORT void startObservingParagraphs(ManipulationItemCallback&&, Vector<ExclusionRule>&& = { });
 
+    void didCreateRendererForElement(Element&);
+
     enum class ManipulationResult : uint8_t {
         Success,
         ContentChanged,
@@ -103,6 +108,9 @@ public:
     WEBCORE_EXPORT ManipulationResult completeManipulation(ItemIdentifier, const Vector<ManipulationToken>&);
 
 private:
+    void observeParagraphs(VisiblePosition& start, VisiblePosition& end);
+    void scheduleObservartionUpdate();
+
     struct ManipulationItem {
         Position start;
         Position end;
@@ -113,6 +121,7 @@ private:
     ManipulationResult replace(const ManipulationItem&, const Vector<ManipulationToken>&);
 
     WeakPtr<Document> m_document;
+    WeakHashSet<Element> m_mutatedElements;
     ManipulationItemCallback m_callback;
     Vector<ExclusionRule> m_exclusionRules;
     HashMap<ItemIdentifier, ManipulationItem> m_items;

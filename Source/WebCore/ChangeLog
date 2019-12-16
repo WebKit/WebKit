@@ -1,3 +1,41 @@
+2019-12-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        TextManipulationController should observe newly inserted or displayed contents
+        https://bugs.webkit.org/show_bug.cgi?id=205203
+        <rdar://problem/56567020>
+
+        Reviewed by Wenson Hsieh.
+
+        This patch makes TextManipulationController detect newly inserted or displayed contents and invoke
+        the callbacks with the newly found items.
+
+        To do this, we add a new WeakHashSet to TextManipulationController to which an element is added
+        whenever its renderer is created. Because it's expensive (and not safe) to find paragraphs around
+        a newly inserted content, we schedule a new event loop task to do this work.
+
+        To find newly inserted paragraphs, we first expand the element's boundary to its start and end of
+        paragraphs. Because each element in this paragraph could have been added in the weak hash set, we
+        use hash map to de-duplicate start and end positions. We also filter out any element whose parent
+        is also in the weak hash set since they would simply find inner paragraphs.
+
+        Tests: TextManipulation.StartTextManipulationFindNewlyInsertedParagraph
+               TextManipulation.StartTextManipulationFindNewlyDisplayedParagraph
+               TextManipulation.StartTextManipulationFindSameParagraphWithNewContent
+
+        * dom/TaskSource.h:
+        (WebCore::TaskSource::InternalAsyncTask): Added.
+        * editing/TextManipulationController.cpp:
+        (WebCore::TextManipulationController::startObservingParagraphs):
+        (WebCore::TextManipulationController::observeParagraphs): Extracted out of startObservingParagraphs.
+        (WebCore::TextManipulationController::didCreateRendererForElement): Added. Gets called whenever
+        a new RenderElement is created.
+        (WebCore::makePositionTuple): Added.
+        (WebCore::makeHashablePositionRange): Added.
+        (WebCore::TextManipulationController::scheduleObservartionUpdate): Added.
+        * editing/TextManipulationController.h:
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::createRenderer):
+
 2019-12-16  Daniel Bates  <dabates@apple.com>
 
         Reproducible case of backwards nextParagraph returning a position ahead of the input position
