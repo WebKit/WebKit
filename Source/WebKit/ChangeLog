@@ -1,3 +1,16 @@
+2019-12-16  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        [GTK] Build with USE_WPE_RENDERER=No fails with undefined EGL_WAYLAND_BUFFER_WL
+        https://bugs.webkit.org/show_bug.cgi?id=205250
+
+        Reviewed by Carlos Garcia Campos.
+
+        Define the enum if not present.
+
+        No new tests, just a build fix.
+
+        * UIProcess/gtk/WaylandCompositor.cpp:
+
 2019-12-16  youenn fablet  <youenn@apple.com>
 
         Reset cached getUserMedia queries when calling stopMediaCapture
