@@ -160,7 +160,7 @@ LineLayoutContext::IsEndOfLine LineLayoutContext::placeInlineItem(LineBuilder& l
                 return IsEndOfLine::Yes;
         }
         auto lineIsConsideredEmpty = line.isVisuallyEmpty() && !line.hasIntrusiveFloat();
-        if (LineBreaker().shouldWrapFloatBox(itemLogicalWidth, line.availableWidth() + line.trailingTrimmableWidth(), lineIsConsideredEmpty))
+        if (LineBreaker().shouldWrapFloatBox(itemLogicalWidth, line.availableWidth() + line.trailingCollapsibleWidth(), lineIsConsideredEmpty))
             return IsEndOfLine::Yes;
 
         // This float can sit on the current line.
@@ -207,7 +207,7 @@ LineLayoutContext::IsEndOfLine LineLayoutContext::processUncommittedContent(Line
     auto lineBreaker = LineBreaker { };
     if (shouldDisableHyphenation())
         lineBreaker.setHyphenationDisabled();
-    auto lineStatus = LineBreaker::LineStatus { line.availableWidth(), line.trailingTrimmableWidth(), line.isTrailingRunFullyTrimmable(), lineIsConsideredEmpty };
+    auto lineStatus = LineBreaker::LineStatus { line.availableWidth(), line.trailingCollapsibleWidth(), line.isTrailingRunFullyCollapsible(), lineIsConsideredEmpty };
     auto breakingContext = lineBreaker.breakingContextForInlineContent(m_uncommittedContent, lineStatus);
     // The uncommitted content can fully, partially fit the current line (commit/partial commit) or not at all (reset).
     if (breakingContext.contentWrappingRule == LineBreaker::BreakingContext::ContentWrappingRule::Keep)
@@ -227,7 +227,7 @@ LineLayoutContext::IsEndOfLine LineLayoutContext::processUncommittedContent(Line
             m_partialTrailingTextItem = trailingInlineTextItem.left(partialTrailingRun->length);
             m_partialContent = LineContent::PartialContent { partialTrailingRun->needsHyphen, trailingInlineTextItem.length() - partialTrailingRun->length };
             // Keep the non-overflow part of the uncommitted runs and add the trailing partial content.
-            m_uncommittedContent.trim(trailingRunIndex);
+            m_uncommittedContent.shrink(trailingRunIndex);
             m_uncommittedContent.append(*m_partialTrailingTextItem, partialTrailingRun->logicalWidth);
             // Adjust hyphenated line count.
             if (partialTrailingRun->needsHyphen)
@@ -236,7 +236,7 @@ LineLayoutContext::IsEndOfLine LineLayoutContext::processUncommittedContent(Line
             // Trim the overflown run and keep the trailing (non-partial) run in the queue.
             auto overflownRunIndex = trailingRunIndex + 1;
             ASSERT(overflownRunIndex < m_uncommittedContent.size());
-            m_uncommittedContent.trim(overflownRunIndex);
+            m_uncommittedContent.shrink(overflownRunIndex);
         }
         commitPendingContent(line);
     } else if (breakingContext.contentWrappingRule == LineBreaker::BreakingContext::ContentWrappingRule::Push) {

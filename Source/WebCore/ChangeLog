@@ -1,3 +1,67 @@
+2019-12-16  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Should use the term collapsed/collapsible instead of trimmed/trimmable
+        https://bugs.webkit.org/show_bug.cgi?id=205255
+        <rdar://problem/57954672>
+
+        Reviewed by Antti Koivisto.
+
+        While trimming is also a spec term, collapsible is closer to the spec language.
+
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::shouldKeepEndOfLineWhitespace):
+        (WebCore::Layout::LineBreaker::breakingContextForInlineContent):
+        (WebCore::Layout::LineBreaker::Content::append):
+        (WebCore::Layout::LineBreaker::Content::reset):
+        (WebCore::Layout::LineBreaker::Content::shrink):
+        (WebCore::Layout::LineBreaker::Content::TrailingCollapsibleContent::reset):
+        (WebCore::Layout::LineBreaker::Content::trim): Deleted.
+        (WebCore::Layout::LineBreaker::Content::TrailingTrimmableContent::reset): Deleted.
+        * layout/inlineformatting/InlineLineBreaker.h:
+        (WebCore::Layout::LineBreaker::Content::nonCollapsibleWidth const):
+        (WebCore::Layout::LineBreaker::Content::hasTrailingCollapsibleContent const):
+        (WebCore::Layout::LineBreaker::Content::isTrailingContentFullyCollapsible const):
+        (WebCore::Layout::LineBreaker::Content::nonTrimmableWidth const): Deleted.
+        (WebCore::Layout::LineBreaker::Content::hasTrailingTrimmableContent const): Deleted.
+        (WebCore::Layout::LineBreaker::Content::isTrailingContentFullyTrimmable const): Deleted.
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::LineBuilder):
+        (WebCore::Layout::LineBuilder::initialize):
+        (WebCore::Layout::LineBuilder::close):
+        (WebCore::Layout::LineBuilder::removeTrailingCollapsibleContent):
+        (WebCore::Layout::LineBuilder::collectHangingContent):
+        (WebCore::Layout::LineBuilder::appendInlineContainerEnd):
+        (WebCore::Layout::LineBuilder::appendTextContent):
+        (WebCore::Layout::LineBuilder::appendNonReplacedInlineBox):
+        (WebCore::Layout::LineBuilder::CollapsibleContent::CollapsibleContent):
+        (WebCore::Layout::LineBuilder::CollapsibleContent::append):
+        (WebCore::Layout::LineBuilder::CollapsibleContent::collapse):
+        (WebCore::Layout::LineBuilder::CollapsibleContent::collapseTrailingRun):
+        (WebCore::Layout::LineBuilder::InlineItemRun::isCollapsibleWhitespace const):
+        (WebCore::Layout::LineBuilder::removeTrailingTrimmableContent): Deleted.
+        (WebCore::Layout::LineBuilder::TrimmableContent::TrimmableContent): Deleted.
+        (WebCore::Layout::LineBuilder::TrimmableContent::append): Deleted.
+        (WebCore::Layout::LineBuilder::TrimmableContent::trim): Deleted.
+        (WebCore::Layout::LineBuilder::TrimmableContent::trimTrailingRun): Deleted.
+        (WebCore::Layout::LineBuilder::InlineItemRun::isTrimmableWhitespace const): Deleted.
+        * layout/inlineformatting/InlineLineBuilder.h:
+        (WebCore::Layout::LineBuilder::trailingCollapsibleWidth const):
+        (WebCore::Layout::LineBuilder::isTrailingRunFullyCollapsible const):
+        (WebCore::Layout::LineBuilder::CollapsibleContent::isTrailingRunFullyCollapsible const):
+        (WebCore::Layout::LineBuilder::CollapsibleContent::isTrailingRunPartiallyCollapsible const):
+        (WebCore::Layout::LineBuilder::CollapsibleContent::reset):
+        (WebCore::Layout::LineBuilder::trailingTrimmableWidth const): Deleted.
+        (WebCore::Layout::LineBuilder::isTrailingRunFullyTrimmable const): Deleted.
+        (WebCore::Layout::LineBuilder::TrimmableContent::width const): Deleted.
+        (WebCore::Layout::LineBuilder::TrimmableContent::firstRunIndex): Deleted.
+        (WebCore::Layout::LineBuilder::TrimmableContent::isEmpty const): Deleted.
+        (WebCore::Layout::LineBuilder::TrimmableContent::isTrailingRunFullyTrimmable const): Deleted.
+        (WebCore::Layout::LineBuilder::TrimmableContent::isTrailingRunPartiallyTrimmable const): Deleted.
+        (WebCore::Layout::LineBuilder::TrimmableContent::reset): Deleted.
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::LineLayoutContext::placeInlineItem):
+        (WebCore::Layout::LineLayoutContext::processUncommittedContent):
+
 2019-12-16  youenn fablet  <youenn@apple.com>
 
         SecurityOrigin should be unique for null blob URLs that have been unregistered

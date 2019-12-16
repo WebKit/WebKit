@@ -68,7 +68,7 @@ public:
     struct Content {
         void append(const InlineItem&, InlineLayoutUnit logicalWidth);
         void reset();
-        void trim(unsigned newSize);
+        void shrink(unsigned newSize);
 
         static bool isAtSoftWrapOpportunity(const InlineItem&, const Content& priorContent);
 
@@ -86,29 +86,29 @@ public:
         bool hasNonContentRunsOnly() const;
         unsigned size() const { return m_continousRuns.size(); }
         InlineLayoutUnit width() const { return m_width; }
-        InlineLayoutUnit nonTrimmableWidth() const { return m_width - m_trailingTrimmableContent.width; }
+        InlineLayoutUnit nonCollapsibleWidth() const { return m_width - m_trailingCollapsibleContent.width; }
 
-        bool hasTrailingTrimmableContent() const { return !!m_trailingTrimmableContent.width; }
-        bool isTrailingContentFullyTrimmable() const { return m_trailingTrimmableContent.isFullyTrimmable; }
+        bool hasTrailingCollapsibleContent() const { return !!m_trailingCollapsibleContent.width; }
+        bool isTrailingContentFullyCollapsible() const { return m_trailingCollapsibleContent.isFullyCollapsible; }
 
         Optional<unsigned> firstTextRunIndex() const;
 
     private:
         RunList m_continousRuns;
-        struct TrailingTrimmableContent {
+        struct TrailingCollapsibleContent {
             void reset();
 
-            bool isFullyTrimmable { false };
+            bool isFullyCollapsible { false };
             InlineLayoutUnit width { 0 };
         };
-        TrailingTrimmableContent m_trailingTrimmableContent;
+        TrailingCollapsibleContent m_trailingCollapsibleContent;
         InlineLayoutUnit m_width { 0 };
     };
 
     struct LineStatus {
         InlineLayoutUnit availableWidth { 0 };
-        InlineLayoutUnit trimmableWidth { 0 };
-        bool lineHasFullyTrimmableTrailingRun { false };
+        InlineLayoutUnit collapsibleWidth { 0 };
+        bool lineHasFullyCollapsibleTrailingRun { false };
         bool lineIsEmpty { true };
     };
     BreakingContext breakingContextForInlineContent(const Content& candidateRuns, const LineStatus&);

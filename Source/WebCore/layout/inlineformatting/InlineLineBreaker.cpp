@@ -72,7 +72,7 @@ static inline bool shouldKeepEndOfLineWhitespace(const LineBreaker::Content& can
 {
     // Grab the style and check for white-space property to decided whether we should let this whitespace content overflow the current line.
     // Note that the "keep" in the context means we let the whitespace content sit on the current line.
-    // It might very well get trimmed when we close the line (normal/nowrap/pre-line).
+    // It might very well get collapsed when we close the line (normal/nowrap/pre-line).
     // See https://www.w3.org/TR/css-text-3/#white-space-property
     auto whitespace = candidateRuns.runs()[*candidateRuns.firstTextRunIndex()].inlineItem.style().whiteSpace();
     return whitespace == WhiteSpace::Normal || whitespace == WhiteSpace::NoWrap || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::PreLine;
@@ -83,19 +83,19 @@ LineBreaker::BreakingContext LineBreaker::breakingContextForInlineContent(const 
     ASSERT(!candidateRuns.isEmpty());
     if (candidateRuns.width() <= lineStatus.availableWidth)
         return { BreakingContext::ContentWrappingRule::Keep, { } };
-    if (candidateRuns.hasTrailingTrimmableContent()) {
-        // First check if the content fits without the trailing trimmable part.
-        if (candidateRuns.nonTrimmableWidth() <= lineStatus.availableWidth)
+    if (candidateRuns.hasTrailingCollapsibleContent()) {
+        // First check if the content fits without the trailing collapsible part.
+        if (candidateRuns.nonCollapsibleWidth() <= lineStatus.availableWidth)
             return { BreakingContext::ContentWrappingRule::Keep, { } };
         // Now check if we can trim the line too.
-        if (lineStatus.lineHasFullyTrimmableTrailingRun && candidateRuns.isTrailingContentFullyTrimmable()) {
-            // If this new content is fully trimmable, it shoud surely fit.
+        if (lineStatus.lineHasFullyCollapsibleTrailingRun && candidateRuns.isTrailingContentFullyCollapsible()) {
+            // If this new content is fully collapsible, it shoud surely fit.
             return { BreakingContext::ContentWrappingRule::Keep, { } };
         }
-    } else if (lineStatus.trimmableWidth && candidateRuns.hasNonContentRunsOnly()) {
-        // Let's see if the non-content runs fit when the line has trailing trimmable content
-        // "text content <span style="padding: 1px"></span>" <- the <span></span> runs could fit after trimming the trailing whitespace.
-        if (candidateRuns.width() <= lineStatus.availableWidth + lineStatus.trimmableWidth)
+    } else if (lineStatus.collapsibleWidth && candidateRuns.hasNonContentRunsOnly()) {
+        // Let's see if the non-content runs fit when the line has trailing collapsible content
+        // "text content <span style="padding: 1px"></span>" <- the <span></span> runs could fit after collapsing the trailing whitespace.
+        if (candidateRuns.width() <= lineStatus.availableWidth + lineStatus.collapsibleWidth)
             return { BreakingContext::ContentWrappingRule::Keep, { } };
     }
     if (candidateRuns.isVisuallyEmptyWhitespaceContentOnly() && shouldKeepEndOfLineWhitespace(candidateRuns)) {
@@ -372,33 +372,33 @@ void LineBreaker::Content::append(const InlineItem& inlineItem, InlineLayoutUnit
     ASSERT(inlineItem.isLineBreak() || !isAtSoftWrapOpportunity(inlineItem, *this));
     m_continousRuns.append({ inlineItem, logicalWidth });
     m_width += logicalWidth;
-    // Figure out the trailing trimmable state.
+    // Figure out the trailing collapsible state.
     if (inlineItem.isBox() || inlineItem.isLineBreak())
-        m_trailingTrimmableContent.reset();
+        m_trailingCollapsibleContent.reset();
     else if (inlineItem.isText()) {
         auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
-        auto isFullyTrimmable = [&] {
+        auto isFullyCollapsible = [&] {
             return inlineTextItem.isWhitespace() && !TextUtil::shouldPreserveTrailingWhitespace(inlineTextItem.style());
         };
-        if (isFullyTrimmable()) {
-            m_trailingTrimmableContent.width += logicalWidth;
-            m_trailingTrimmableContent.isFullyTrimmable = true;
-        } else if (auto trimmableWidth = inlineTextItem.style().letterSpacing()) {
-            m_trailingTrimmableContent.width = trimmableWidth;
-            m_trailingTrimmableContent.isFullyTrimmable = false;
+        if (isFullyCollapsible()) {
+            m_trailingCollapsibleContent.width += logicalWidth;
+            m_trailingCollapsibleContent.isFullyCollapsible = true;
+        } else if (auto collapsibleWidth = inlineTextItem.style().letterSpacing()) {
+            m_trailingCollapsibleContent.width = collapsibleWidth;
+            m_trailingCollapsibleContent.isFullyCollapsible = false;
         } else
-            m_trailingTrimmableContent.reset();
+            m_trailingCollapsibleContent.reset();
     }
 }
 
 void LineBreaker::Content::reset()
 {
     m_continousRuns.clear();
-    m_trailingTrimmableContent.reset();
+    m_trailingCollapsibleContent.reset();
     m_width = 0_lu;
 }
 
-void LineBreaker::Content::trim(unsigned newSize)
+void LineBreaker::Content::shrink(unsigned newSize)
 {
     for (auto i = m_continousRuns.size(); i--;)
         m_width -= m_continousRuns[i].logicalWidth;
@@ -454,9 +454,9 @@ bool LineBreaker::Content::hasNonContentRunsOnly() const
     return true;
 }
 
-void LineBreaker::Content::TrailingTrimmableContent::reset()
+void LineBreaker::Content::TrailingCollapsibleContent::reset()
 {
-    isFullyTrimmable = false;
+    isFullyCollapsible = false;
     width = 0_lu;
 }
 
